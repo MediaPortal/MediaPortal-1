@@ -429,10 +429,7 @@ namespace MediaPortal.GUI.TV
 
     public override void Process()
     {
-      if (g_Player.Playing && g_Player.DoesOwnRendering) 
-      {
-        System.Threading.Thread.Sleep(50);
-      }
+      
       if (!g_Player.Playing)
       {
         StartPlaying(true);

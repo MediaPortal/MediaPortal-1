@@ -251,7 +251,7 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Write("Start MediaPortal");
             try
             {
-              app.Run();
+              Application.Run(app);
             }
             catch (Exception ex)
             {

@@ -20,7 +20,7 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
-    const int MILLI_SECONDS_TIMER=5;
+    const int MILLI_SECONDS_TIMER=10;
     protected string    m_strSkin="mce";
     protected string    m_strLanguage="english";
 
@@ -130,7 +130,7 @@ namespace MediaPortal
     int    m_iActiveWindow=-1;
 		bool   m_bRestore=false;
     double m_dCurrentPos=0;
-    int    m_iSleepingTime=34;
+    int    m_iSleepingTime=50;
 
     DirectDraw.Device               m_dddevice=null;
     DirectDraw.SurfaceDescription   m_dddescription=null;
@@ -1072,10 +1072,6 @@ namespace MediaPortal
       }
     }
 
-    void HandleMessage()
-    {
-    }
-
 
     void DoSleep(int sleepTime)
     {
@@ -1104,63 +1100,6 @@ namespace MediaPortal
         }
       }
     }
-
-
-    /// <summary>
-    /// Run the simulation
-    /// </summary>
-    public void Run()
-    {
-      // Now we're ready to recieve and process Windows messages.
-      System.Windows.Forms.Control mainWindow = this;
-
-      // If the render target is a form and *not* this form, use that form instead,
-      // otherwise, use the main form.
-      if ((ourRenderTarget is System.Windows.Forms.Form) && (ourRenderTarget != this))
-        mainWindow = ourRenderTarget;
-
-      mainWindow.Show();	
-      Initialize() ;
-
-      OnStartup();
-
-			// Get the first message
-			
-
-			while(true)
-			{
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-					break;
-				try
-				{
-          HandleMessage();
-          FrameMove();
-          HandleMessage();
-          FullRender();
-					int SleepingTime=GetSleepingTime();
-          DoSleep(SleepingTime);
-          HandleMessage();
-          HandleCursor();
-				}
-				catch(Exception ex)
-				{
-					Log.Write("exception:{0}",ex.ToString());
-#if DEBUG
-					throw ex;
-#endif
-				}
-			}
-      OnExit();
-      try
-      {
-        if (UseMillisecondTiming) timeEndPeriod(MILLI_SECONDS_TIMER);
-      }
-      catch(Exception)
-      {
-      }
-      UseMillisecondTiming=false;
-    }
-
 
 
 
@@ -1234,10 +1173,6 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-        Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-#if DEBUG
-        throw new Exception("exception occured",ex);
-#endif
       }
 
       if (!deviceLost &&!m_bNeedReset)
@@ -1288,7 +1223,8 @@ namespace MediaPortal
 			if (g_Player.Playing&& g_Player.DoesOwnRendering) 
 			{
 				// if we're playing a movie with vmr9 then the player will draw the GUI
-				// so we just sleep 50msec here ...
+        // so we just sleep 50msec here ...
+        m_iSleepingTime=30;
 				return 100;
 			}
 			//if we're playing a movie (fullscreen)
@@ -1297,6 +1233,7 @@ namespace MediaPortal
 				// We're playing a movie fullscreen , so we dont need 2 draw the gui. so sleep 25 msec
 				if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
 				{
+          m_iSleepingTime=30;
 					return 100 ;
 				}
 			}
@@ -1319,8 +1256,8 @@ namespace MediaPortal
         framePerSecond    = frames / (time - lastTime);
         lastTime = time;
         frames  = 0;
-        if (framePerSecond>25) m_iSleepingTime++;
-        if (framePerSecond<25) m_iSleepingTime--;
+        if (framePerSecond>20) m_iSleepingTime++;
+        if (framePerSecond<20) m_iSleepingTime--;
         if (m_iSleepingTime<20) m_iSleepingTime=20;
         if (m_iSleepingTime>200) m_iSleepingTime=200;
 
@@ -1548,8 +1485,11 @@ namespace MediaPortal
       OnSetup(sender,e);    
     }
 
+
     private void D3DApp_Load(object sender, System.EventArgs e)
     {
+      Initialize();
+      OnStartup();
     
     }
 
@@ -1568,9 +1508,26 @@ namespace MediaPortal
     protected override void OnPaintBackground(PaintEventArgs e)
     {
     }
+
     protected override void OnPaint(PaintEventArgs e)
     {
-      m_bNeedUpdate=true;
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+       return;
+      try
+      {
+        FrameMove();
+        
+        FullRender();
+        int SleepingTime=GetSleepingTime();
+        DoSleep(SleepingTime);
+
+        HandleCursor();
+      }
+      catch(Exception)
+      {
+        int x=1;
+      }
+      this.Invalidate();
     }
 
 
