@@ -875,16 +875,19 @@ namespace ProgramsDatabase
 				// use the myGames convention:
 				// every thumb has the postfix "_1", "_2", etc with the same file extension
 				string strExtension = m_pFile.ExtractImageExtension();
-				string strCand = strThumb.Replace(strExtension, "_" + mThumbIndex.ToString() + strExtension);
-				if (System.IO.File.Exists(strCand))
+				if (strThumb != "")
 				{
-					// found another thumb => override the filename!
-					strThumb = strCand;
-				}
-				else 
-				{
-					mThumbIndex = 0; // restart at the first thumb!
-					GetNextThumbFolderIndex(m_pFile); 
+					string strCand = strThumb.Replace(strExtension, "_" + mThumbIndex.ToString() + strExtension);
+					if (System.IO.File.Exists(strCand))
+					{
+						// found another thumb => override the filename!
+						strThumb = strCand;
+					}
+					else 
+					{
+						mThumbIndex = 0; // restart at the first thumb!
+						GetNextThumbFolderIndex(m_pFile); 
+					}
 				}
 			}
 			return strThumb;
