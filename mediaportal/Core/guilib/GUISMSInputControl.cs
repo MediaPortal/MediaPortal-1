@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Library
         {
           if (m_CurrentKey!= (char)0)
           {
-            m_strData+=m_CurrentKey;
+            m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
           }
           m_PrevKey=(char)0;
           m_CurrentKey=(char)0;
@@ -148,7 +148,10 @@ namespace MediaPortal.GUI.Library
       {
         if (m_CurrentKey!= (char)0)
         {
-          m_strData+=m_CurrentKey;
+          if (m_iPos==m_strData.Length)
+            m_strData+=m_CurrentKey;
+          else 
+            m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
           m_iPos++;
         }
         m_PrevKey=(char)0;
@@ -161,7 +164,11 @@ namespace MediaPortal.GUI.Library
     {
       if (Key!=m_PrevKey && m_CurrentKey!=(char)0)
       {
-        m_strData+=m_CurrentKey;
+        if (m_iPos==m_strData.Length)
+          m_strData+=m_CurrentKey;
+        else 
+          m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+
         m_PrevKey=(char)0;
         m_CurrentKey=(char)0;
         m_keyTimer=DateTime.Now;
@@ -328,7 +335,12 @@ namespace MediaPortal.GUI.Library
     }
     void DrawText()
     {
-      m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, m_strData+m_CurrentKey, GUIControl.Alignment.ALIGN_LEFT );
+      string line=m_strData;
+      if (m_CurrentKey!=(char)0)
+      {
+        line=line.Insert(m_iPos,m_CurrentKey.ToString());
+      }
+      m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT );
 
 
       // Draw blinking caret using line primitives.

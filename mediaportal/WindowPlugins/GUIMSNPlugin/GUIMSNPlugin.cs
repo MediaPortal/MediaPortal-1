@@ -155,6 +155,17 @@ namespace MediaPortal.GUI.MSN
           {
             if (!messenger.Connected)
             {
+              if (dlgProgress != null)
+              {
+                dlgProgress.SetHeading(901);
+                dlgProgress.SetLine(1, GUILocalizeStrings.Get(910) );
+                dlgProgress.SetLine(2, "");
+                dlgProgress.SetLine(3, "");
+                dlgProgress.StartModal(GetID);
+                dlgProgress.Progress();
+              }
+              m_bDialogVisible=true;
+
               StartMSN();
             }
             else
@@ -483,6 +494,8 @@ namespace MediaPortal.GUI.MSN
         // make sure we don't use the default settings, since they're invalid
         if(emailadres == "")
         {
+          m_bDialogVisible=false;
+          dlgProgress.Close();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,GUIWindowManager.ActiveWindow,0,0,0,0,null);
           msg.Param1=905;
           msg.Param2=906;
@@ -504,7 +517,7 @@ namespace MediaPortal.GUI.MSN
 
           // notify us when synchronization is completed
           messenger.SynchronizationCompleted += new Messenger.SynchronizationCompletedHandler(OnSynchronizationCompleted);
-
+          messenger.ConnectionFailure+=new DotMSN.Messenger.ConnectionFailureHandler(ConnectionFailure);
           // everything is setup, now connect to the messenger service
           messenger.Connect(emailadres, password);					
           
@@ -528,6 +541,9 @@ namespace MediaPortal.GUI.MSN
       }
       catch(MSNException )
       {
+        m_bDialogVisible=false;
+        dlgProgress.Close();
+
         // in case of an error, report this to the user (or developer)
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
         pDlgOK.SetHeading(GUILocalizeStrings.Get(901));
@@ -547,6 +563,7 @@ namespace MediaPortal.GUI.MSN
     private void ConnectionEstablished(Conversation sender, EventArgs e)
     {
       //Log.Write += "connection established.\r\n";
+
     }
 
     // this is actually just annoying but it proves the concept
@@ -598,6 +615,12 @@ namespace MediaPortal.GUI.MSN
     /// <param name="e">Contains nothing important</param>
     private void OnSynchronizationCompleted(Messenger sender, EventArgs e)
     {
+      if ( m_bDialogVisible)
+      {
+        m_bDialogVisible=false;
+        dlgProgress.Close();
+      }
+
       ReFillContactList=true;
       messenger.SetStatus(MSNStatus.Online);
     }
@@ -687,6 +710,16 @@ namespace MediaPortal.GUI.MSN
     private void ContactStatusChange(Messenger sender, ContactStatusChangeEventArgs e)
     {
       ReFillContactList=true;
+    }
+
+    private void ConnectionFailure(DotMSN.Messenger sender, ConnectionErrorEventArgs e)
+    {
+            
+      if ( m_bDialogVisible)
+      {
+        m_bDialogVisible=false;
+        dlgProgress.Close();
+      }
     }
   }
 }

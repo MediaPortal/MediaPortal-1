@@ -50,13 +50,15 @@ namespace MediaPortal.GUI.MSN
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
           base.OnMessage(message);
+          GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
+          list.WordWrap=true;
+
           GUIMSNPlugin.CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MessageReceived);
           GUIControl.ClearControl(GetID,(int)Controls.List);
           for (int i=0; i < 30;++i)
           {
             AddToList("");
           }
-          GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
           list.ScrollToEnd();
           if (g_Player.Playing && !g_Player.Paused)
           {
@@ -127,6 +129,7 @@ namespace MediaPortal.GUI.MSN
     }
     void AddToList(string text)
     {
+      //TODO: add wordwrapping
       GUIListItem item =new GUIListItem(text);
       item.IsFolder=false;
       GUIControl.AddListItemControl(GetID,(int)Controls.List,item);

@@ -93,6 +93,7 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("spinWidth")]		protected int		m_dwSpinWidth;
 		[XMLSkinElement("spinPosX")]		protected int		m_dwSpinX;
 		[XMLSkinElement("spinPosY")]		protected int		m_dwSpinY;
+    bool  wordWrap=false;                            
     
 		public GUIListControl(int dwParentID) : base(dwParentID)
 		{
@@ -816,12 +817,7 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
 				{
 					GUIListItem pItem = (GUIListItem)message.Object;
-					m_vecItems.Add(pItem);
-					int iPages = m_vecItems.Count / m_iItemsPerPage;
-					if ((m_vecItems.Count % m_iItemsPerPage) != 0) iPages++;
-					m_upDown.SetRange(1, iPages);
-					m_upDown.Value = 1;
-          m_bRefresh = true;
+					Add(pItem);
 				}
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
@@ -1673,7 +1669,21 @@ namespace MediaPortal.GUI.Library
     }
     public void Add(GUIListItem item)
     {
-      m_vecItems.Add(item);
+      if (WordWrap)
+      {
+        ArrayList wrappedLines;
+        int dMaxWidth = (m_dwWidth - m_iImageWidth - 16);
+
+        WordWrapText(item.Label, dMaxWidth, out wrappedLines);
+        foreach(string line in wrappedLines)
+        {
+          m_vecItems.Add( new GUIListItem(line) );
+        }
+      }
+      else
+      {
+        m_vecItems.Add(item);
+      }
       int iPages = m_vecItems.Count / m_iItemsPerPage;
       if ((m_vecItems.Count % m_iItemsPerPage) != 0) iPages++;
       m_upDown.SetRange(1, iPages);
@@ -1728,5 +1738,90 @@ namespace MediaPortal.GUI.Library
 				if (m_upDown!=null) m_upDown.ParentID=value;
 			}
 		}
+    public bool WordWrap
+    {
+      get { return wordWrap;}
+      set { wordWrap=value;}
+    }
+
+    void WordWrapText(string strText, int iMaxWidth, out ArrayList wrappedLines)
+    {
+      wrappedLines = new ArrayList();
+      GUILabelControl cntl1 = new GUILabelControl(m_dwControlID,0,0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height,m_strFontName,"",m_dwTextColor, GUIControl.Alignment.ALIGN_LEFT,false);
+      cntl1.AllocResources();
+
+      // start wordwrapping
+      // Set a flag so we can determine initial justification effects
+      //bool bStartingNewLine = true;
+      //bool bBreakAtSpace = false;
+      int pos=0;
+      int lpos=0;
+      int iLastSpace=-1;
+      int iLastSpaceInLine=-1;
+      string szLine="";
+      strText=strText.Replace("\r", " ");
+      strText.Trim();
+      while( pos < (int)strText.Length )
+      {
+        // Get the current letter in the string
+        char letter = (char)strText[pos];
+        
+        // Handle the newline character
+        if (letter == '\n' )
+        {
+          if (szLine.Length>0 || m_vecItems.Count>0)
+          {
+            wrappedLines.Add(szLine);
+          }
+          iLastSpace=-1;
+          iLastSpaceInLine=-1;
+          lpos=0;
+          szLine="";
+        }
+        else
+        {
+          if (letter==' ') 
+          {
+            iLastSpace=pos;
+            iLastSpaceInLine=lpos;
+          }
+
+          if (lpos < 0 || lpos >1023)
+          {
+            //OutputDebugString("ERRROR\n");
+          }
+          szLine+=letter;
+
+          string wsTmp=szLine;
+          cntl1.Label=wsTmp;
+          if (cntl1.TextWidth > iMaxWidth)
+          {
+            if (iLastSpace > 0 && iLastSpaceInLine != lpos)
+            {
+              szLine=szLine.Substring(0,iLastSpaceInLine);
+              pos=iLastSpace;
+            }
+            if (szLine.Length>0|| m_vecItems.Count>0)
+            {
+              wrappedLines.Add(szLine);
+            }
+            iLastSpaceInLine=-1;
+            iLastSpace=-1;
+            lpos=0;
+            szLine="";
+          }
+          else
+          {
+            lpos++;
+          }
+        }
+        pos++;
+      }
+      if (lpos > 0)
+      {
+        wrappedLines.Add(szLine);
+      }
+      cntl1.FreeResources();
+    }
 	}
 }
