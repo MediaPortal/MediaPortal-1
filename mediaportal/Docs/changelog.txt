@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  26-05-2004  my tv       : fixed : my tv info didnt scroll anymore
+  26-05-2004  general     : fixed : skin page view does not listen to the coordinates you give in references.xml
   26-05-2004  my tv       : added : support for GMT + /- time offsets
   26-05-2004  my tv       : fixed : recording. When using a pre-record interval the filename was using the name of the previous program
   26-05-2004  setup       : fixed : crash when entering country code > 100

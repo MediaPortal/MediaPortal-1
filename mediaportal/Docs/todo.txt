@@ -18,6 +18,8 @@ My TV:
   - A way to browse and resolve recording conflicts. 
   - full screen TV OSD
      - show info about current & next program
+  - Guide cannot be limited in width,should be skinnable
+  - Guide always holds 5 channels, should be definable in skin. 
 
   
   Recorded tv:

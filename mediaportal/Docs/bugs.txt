@@ -1,13 +1,14 @@
-Bugs:
-
-- page view does not listen to the coordinates you give in references.xml
+Bugs i cannot fix (yet):
 - rescale causes borders to appear on topbar buttons (new topbar)
-- scroll in mytV does not work?
-- when out of focus music won't continue.
+    reason : this is produced by DirectX scaling. Gotta know more about DirectX to find out how 2 fix this
+- my pictures: Quality of pics is degraded since DX9 is used. 
+    reason : this is produced by DirectX scaling. Gotta know more about DirectX to find out how 2 fix this
 - window uses wrong resolution, 720x569 instead of 720x576
+    reason : cannot reproduce the bug
+
+Bugs:
+- when out of focus music won't continue.
 - action 79 in keymap does not work
-- Guide cannot be limited in width,should be skinnable
-- Guide always holds 5 channels, should be definable in skin. 
 
 - installer: remove need for uninstall
 - installer: check dx9b
@@ -21,13 +22,10 @@ Bugs:
 
 
 02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
-02-05-2004 my usic	  : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
-01-05-2004 my pictures: Quality of pics is degraded since DX9 is used. 
+02-05-2004 my music	  : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
 01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
 29-04-2004 my tv      : desync audio while viewing tv 
 28-04-2004 my tv      : crossbar Failed to set crossbar routing 
 28-04-2004 my tv      : tuner not found 
 26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3 
 24-04-2004 general    : some WM9 visz. like g-force just show a black screen
-
-
