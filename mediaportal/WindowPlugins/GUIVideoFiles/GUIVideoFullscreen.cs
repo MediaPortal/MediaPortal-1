@@ -1204,6 +1204,14 @@ namespace MediaPortal.GUI.Video
         }
 	      base.Render();
 
+				if (GUIGraphicsContext.graphics!=null)
+				{
+					if (m_bMSNChatVisible)
+						m_msnWindow.Render();
+					if (m_bDialogVisible)
+						dlg.Render();
+
+				}
       }
     }
 
