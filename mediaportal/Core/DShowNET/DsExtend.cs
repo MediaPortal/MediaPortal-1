@@ -995,14 +995,14 @@ namespace DShowNET
     VMR9_SampleFieldSingleOdd = 6,
   } ;
 
-  [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+  [StructLayout(LayoutKind.Sequential), ComVisible(false)]
   public struct VMR9VideoDesc 
   {
-    public uint               dwSize;
-    public uint               dwSampleWidth;
-    public uint               dwSampleHeight;
+    public uint                dwSize;
+    public uint                dwSampleWidth;
+    public uint                dwSampleHeight;
     public VMR9_SampleFormat   SampleFormat;
-    public uint               dwFourCC;
+    public uint                dwFourCC;
     public VMR9Frequency       InputSampleFreq;
     public VMR9Frequency       OutputFrameFreq;
   } ;
@@ -1030,9 +1030,9 @@ namespace DShowNET
   {
     [PreserveSig]
     int GetNumberOfDeinterlaceModes(
-      [In] IntPtr lpVideoDescription,
-      [In, Out]ref uint lpdwNumDeinterlaceModes,
-      [Out]  IntPtr lpDeinterlaceModes
+      [In] ref VMR9VideoDesc desc,
+      [In, Out] ref uint lpdwNumDeinterlaceModes,
+      [In, Out ] ref Guid[] lpDeinterlaceModes
       );
 
     [PreserveSig]

@@ -108,8 +108,7 @@ public interface IPin
 	int ConnectedTo( [Out] out IPin ppPin );
 
 		[PreserveSig]
-	int ConnectionMediaType(
-		[Out, MarshalAs(UnmanagedType.LPStruct)]		AMMediaType	pmt );
+	int ConnectionMediaType([Out] IntPtr pmt);
 
 		[PreserveSig]
     int QueryPinInfo( [Out] out PinInfo pInfo );

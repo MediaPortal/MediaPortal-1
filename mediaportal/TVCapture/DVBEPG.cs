@@ -150,8 +150,6 @@ namespace MediaPortal.TV.Recording
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			
-			if (m_networkType==NetworkType.DVBC ||
-					m_networkType==NetworkType.DVBT)
 				lastTab=0x50;
 
 			if(lastTab>0x50)

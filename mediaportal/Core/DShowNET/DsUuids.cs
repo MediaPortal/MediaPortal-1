@@ -10,6 +10,23 @@ using System.Runtime.InteropServices;
 namespace DShowNET
 {
 
+	public class AmInterlace
+	{
+		static public readonly uint IsInterlaced          =  0x00000001;  // if 0, other interlace bits are irrelevent
+		static public readonly uint OneFieldPerSample       =  0x00000002;  // else 2 fields per media sample
+		static public readonly uint Field1First           =  0x00000004;  // else Field 2 is first;  top field in PAL is field 1, top field in NTSC is field 2?
+		static public readonly uint UNUSED                =  0x00000008;  //
+		static public readonly uint FieldPatternMask      =  0x00000030;  // use this mask with AMINTERLACE_FieldPat*
+		static public readonly uint FieldPatField1Only    =  0x00000000;  // stream never contains a Field2
+		static public readonly uint FieldPatField2Only    =  0x00000010;  // stream never contains a Field1
+		static public readonly uint FieldPatBothRegular   =  0x00000020;  // There will be a Field2 for every Field1 (required for Weave?)
+		static public readonly uint FieldPatBothIrregular =  0x00000030;  // Random pattern of Field1s and Field2s
+		static public readonly uint DisplayModeMask       =  0x000000c0;
+		static public readonly uint DisplayModeBobOnly    =  0x00000000;
+		static public readonly uint DisplayModeWeaveOnly  =  0x00000040;
+		static public readonly uint DisplayModeBobOrWeave =  0x00000080;
+	}
+
   public class HResult
   {
     static public readonly int  S_OK                  =unchecked(0);

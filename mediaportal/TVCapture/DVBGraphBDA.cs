@@ -2284,6 +2284,7 @@ namespace MediaPortal.TV.Recording
 				if (channelInfo.pid_list.Count==0) return;
 				//got all details. Log them
 				shouldDecryptChannel=false;
+				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				channelInfo.freq=currentTuningObject.carrierFrequency;
 				Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6}", 
 														channelInfo.service_provider_name,
