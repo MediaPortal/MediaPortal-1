@@ -505,7 +505,7 @@ namespace MediaPortal
       presentParams.BackBufferCount = 1;
       presentParams.MultiSample = graphicsSettings.MultisampleType;
       presentParams.MultiSampleQuality = graphicsSettings.MultisampleQuality;
-      presentParams.EnableAutoDepthStencil = enumerationSettings.AppUsesDepthBuffer;
+      presentParams.EnableAutoDepthStencil = false;
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
       
 
@@ -522,7 +522,7 @@ namespace MediaPortal
             presentParams.PresentationInterval = PresentInterval.Default;
             presentParams.BackBufferCount = 0;
             presentParams.FullScreenRefreshRateInHz = 0;
-            presentParams.SwapEffect=Direct3D.SwapEffect.Copy;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = ourRenderTarget;
             presentParams.Windowed=true;
@@ -535,7 +535,7 @@ namespace MediaPortal
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
             presentParams.PresentationInterval = Direct3D.PresentInterval.Default;
-            presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = this;
             presentParams.Windowed=false;
