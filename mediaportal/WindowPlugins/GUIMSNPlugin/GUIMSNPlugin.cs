@@ -264,7 +264,7 @@ namespace MediaPortal.GUI.MSN
                 break;
             }
   
-            //OnSort();
+            OnSort();
             UpdateSortButton();
           }
 
@@ -625,6 +625,8 @@ namespace MediaPortal.GUI.MSN
       GUIPropertyManager.SetProperty("#itemcount",strObjects);
       GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_LABELFILES,strObjects);
       ReFillContactList=false;
+
+      OnSort();
     }
 
 
