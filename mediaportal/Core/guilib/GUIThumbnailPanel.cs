@@ -1481,5 +1481,16 @@ GUISpinControl m_upDown = null;
 				if (m_upDown!=null) m_upDown.ParentID=value;
 			}
 		}
+
+    
+    public override int WindowId
+    {
+      get { return m_iWindowID; }
+      set 
+      { 
+        m_iWindowID = value; 
+        if (m_upDown!=null) m_upDown.WindowId=value;
+      }
+    }
  }
 }

@@ -168,7 +168,8 @@ namespace MediaPortal.GUI.Library
 			m_upDown = new GUISpinControl(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwSpinWidth, m_dwSpinHeight, m_strUp, m_strDown, m_strUpFocus, m_strDownFocus, m_strFontName, m_dwSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
 			m_vertScrollbar = new GUIverticalScrollbar(m_dwControlID, 0, 5 + m_dwPosX + m_dwWidth, m_dwPosY, 15, m_dwHeight, m_strScrollBarBG, m_strScrollBarTop, m_strScrollBarBottom);
 			m_vertScrollbar.SendNotifies = false;
-		}
+      m_upDown.WindowId=WindowId;
+    }
 		public override void ScaleToScreenResolution()
 		{
 			base.ScaleToScreenResolution ();
@@ -1822,6 +1823,15 @@ namespace MediaPortal.GUI.Library
         wrappedLines.Add(szLine);
       }
       cntl1.FreeResources();
+    }
+    
+    public override int WindowId
+    {
+      get { return m_iWindowID; }
+      set { 
+        m_iWindowID = value; 
+        if (m_upDown!=null) m_upDown.WindowId=value;
+      }
     }
 	}
 }

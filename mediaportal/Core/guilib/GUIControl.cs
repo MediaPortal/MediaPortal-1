@@ -103,7 +103,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public abstract void Render();
 
-    public int WindowId
+    public virtual int WindowId
     {
       get { return m_iWindowID; }
       set { m_iWindowID = value; }
