@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  23-06-2004  general     : fixed : installer:dont install default tvguide.xml
   23-06-2004  my video    : fixed : fullscreen video: new progress bar which is shown when seeking,ff/rw,pause
   23-06-2004  my TV       : fixed : Recorded tv: added genre
   23-06-2004  my TV       : fixed : Recorded tv: added sort by watched to see which movies you watched

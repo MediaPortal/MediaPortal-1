@@ -1,4 +1,5 @@
 Bugs left:
+  20-06-2004 my music   : songs without an album name dont show up in my music->arists
   19-06-2004 my tv      : when recording channel A on tuner 1, then dont timeshift channel A on tuner 2?
   19-06-2004 my tv      : when playing a movie, stop timeshifting?
   
