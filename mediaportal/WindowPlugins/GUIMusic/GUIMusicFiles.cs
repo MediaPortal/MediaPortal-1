@@ -1182,6 +1182,13 @@ namespace MediaPortal.GUI.Music
           }
           if (!PlayListFactory.IsPlayList(pItem.Path))
           {
+						ArrayList list = new ArrayList();
+						list.Add(pItem);
+						m_bScan=true;
+						OnRetrieveMusicInfo(ref list);
+						m_database.CheckVariousArtistsAndCoverArt();
+						m_bScan=false;
+						
             PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
             playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
             playlistItem.FileName = pItem.Path;
@@ -1298,6 +1305,13 @@ namespace MediaPortal.GUI.Music
         //TODO
         if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
+					ArrayList list = new ArrayList();
+					list.Add(pItem);
+					m_bScan=true;
+					OnRetrieveMusicInfo(ref list);
+					m_database.CheckVariousArtistsAndCoverArt();
+					m_bScan=false;
+
           PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
           playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
@@ -1329,6 +1343,15 @@ namespace MediaPortal.GUI.Music
       if (playlist.Count == 1)
 			{
 				Log.Write("GUIMusicFiles Play:{0}",playlist[0].FileName);
+				ArrayList list = new ArrayList();
+				GUIListItem item =new GUIListItem();
+				item.IsFolder=false;
+				item.Path=playlist[0].FileName;
+				list.Add(item);
+				m_bScan=true;
+				OnRetrieveMusicInfo(ref list);
+				m_database.CheckVariousArtistsAndCoverArt();
+				m_bScan=false;
         g_Player.Play(playlist[0].FileName);
         return;
       }
@@ -1344,6 +1367,16 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < playlist.Count; ++i)
       {
         PlayList.PlayListItem playListItem = playlist[i];
+				ArrayList list = new ArrayList();
+				GUIListItem item =new GUIListItem();
+				item.IsFolder=false;
+				item.Path=playListItem.FileName;
+				list.Add(item);
+				m_bScan=true;
+				OnRetrieveMusicInfo(ref list);
+				m_database.CheckVariousArtistsAndCoverArt();
+				m_bScan=false;
+
         PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playListItem);
       }
 
@@ -1738,6 +1771,13 @@ namespace MediaPortal.GUI.Music
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       GUIListItem pItem = GetItem(iItem);
+
+			ArrayList list = new ArrayList();
+			list.Add(pItem);
+			m_bScan=true;
+			OnRetrieveMusicInfo(ref list);
+			m_database.CheckVariousArtistsAndCoverArt();
+			m_bScan=false;
 
 			string artistName="";
 			string year="";
