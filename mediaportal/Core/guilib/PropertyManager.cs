@@ -99,7 +99,13 @@ namespace MediaPortal.GUI.Library
 			m_properties["#TV.Scheduled.Time"]="";               
 			m_properties["#TV.Scheduled.Description"]="";        
 			m_properties["#TV.Scheduled.thumb"]="";              
-			m_properties["#TV.Scheduled.Genre"]="";        
+			m_properties["#TV.Scheduled.Genre"]="";       
+      
+			m_properties["#TV.Search.Title"]="";              
+			m_properties["#TV.Search.Time"]="";               
+			m_properties["#TV.Search.Description"]="";        
+			m_properties["#TV.Search.thumb"]="";              
+			m_properties["#TV.Search.Genre"]="";        
  
 
     }

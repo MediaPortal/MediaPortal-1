@@ -29,7 +29,12 @@ namespace MediaPortal.GUI.TV
 			SearchByDescription=6,
       Search=7,
       ListControl=10,
-      TitleControl=11
+			TitleControl=11,
+			labelNumberOfItems=12,
+			LabelProgramTitle=13,
+			LabelProgramTime=14,
+			LabelProgramDescription=15,
+			LabelProgramGenre=17,
     }
 
     enum SearchMode
@@ -191,14 +196,18 @@ namespace MediaPortal.GUI.TV
               OnClick(iItem);
             }
           }
-          break;
+					break;
+				case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+					UpdateDescription();
+					break;
       }
       return base.OnMessage(message);
     }
 
     void Update()
     {
-      GUIControl.ClearControl(GetID,(int)Controls.ListControl);
+			GUIListControl cntlList;
+			GUIControl.ClearControl(GetID,(int)Controls.ListControl);
       GUIControl.ClearControl(GetID,(int)Controls.TitleControl);
       if (_Level==0 && _SearchMode==SearchMode.Genre)
       {
@@ -206,6 +215,12 @@ namespace MediaPortal.GUI.TV
         GUIControl.HideControl(GetID,(int)Controls.TitleControl);
         GUIControl.FocusControl(GetID,(int)Controls.ListControl);
         GUIControl.DisableControl(GetID,(int)Controls.Search);
+
+				GUIControl.HideControl(GetID,(int)Controls.LabelProgramDescription);
+				GUIControl.HideControl(GetID,(int)Controls.LabelProgramGenre);
+				GUIControl.HideControl(GetID,(int)Controls.LabelProgramTime);
+				GUIControl.HideControl(GetID,(int)Controls.LabelProgramTitle);
+				cntlList = (GUIListControl)GetControl((int)Controls.ListControl);
       }
       else
       {
@@ -213,7 +228,16 @@ namespace MediaPortal.GUI.TV
         GUIControl.ShowControl(GetID,(int)Controls.TitleControl);
         GUIControl.FocusControl(GetID,(int)Controls.TitleControl);
         GUIControl.EnableControl(GetID,(int)Controls.Search);
+				
+				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramDescription);
+				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramGenre);
+				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTime);
+				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTitle);
+				cntlList = (GUIListControl)GetControl((int)Controls.TitleControl);
       }
+			GUIControl cntlLabel = GetControl((int)Controls.labelNumberOfItems);
+			cntlLabel.YPosition = cntlList.SpinY;
+
       int itemCount=0;
       switch (_SearchMode)
       {
@@ -623,5 +647,57 @@ namespace MediaPortal.GUI.TV
       _SearchCriteria=data;
       Update();
     }
+
+		GUIListItem GetSelectedItem()
+		{
+			int iControl;
+			iControl=(int)Controls.TitleControl;
+			GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
+			return item;
+		}
+		void UpdateDescription()
+		{
+			if (_Level==0 && _SearchMode==SearchMode.Genre) return;
+			GUIListItem item = GetSelectedItem();
+			TVProgram prog = item.MusicTag as TVProgram;
+			if (prog==null)
+			{
+				GUIPropertyManager.SetProperty("#TV.Search.Title","");
+				GUIPropertyManager.SetProperty("#TV.Search.Genre","");
+				GUIPropertyManager.SetProperty("#TV.Search.Time","");
+				GUIPropertyManager.SetProperty("#TV.Search.Description","");
+				GUIPropertyManager.SetProperty("#TV.Search.thumb","");
+				return;
+			}
+
+			string strTime=String.Format("{0} {1} - {2}", 
+				Utils.GetShortDayString(prog.StartTime) , 
+				prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+				prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+
+			GUIPropertyManager.SetProperty("#TV.Search.Title",prog.Title);
+			GUIPropertyManager.SetProperty("#TV.Search.Time",strTime);
+			if (prog!=null)
+			{
+				GUIPropertyManager.SetProperty("#TV.Search.Description",prog.Description);
+				GUIPropertyManager.SetProperty("#TV.Search.Genre",prog.Genre);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Search.Description","");
+				GUIPropertyManager.SetProperty("#TV.Search.Genre","");
+			}
+
+    
+			string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,prog.Channel);
+			if (System.IO.File.Exists(strLogo))
+			{
+				GUIPropertyManager.SetProperty("#TV.Search.thumb",strLogo);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Search.thumb","defaultVideoBig.png");
+			}
+		}
 	}
 }
