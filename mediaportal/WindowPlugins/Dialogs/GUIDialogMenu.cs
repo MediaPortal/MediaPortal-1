@@ -13,6 +13,7 @@ namespace MediaPortal.Dialogs
     enum Controls
     {
 			CONTROL_BACKGROUND=1
+      , CONTROL_CLOSEBTN      =2
       , CONTROL_LIST          =3
 			, CONTROL_HEADING	      =4
 			, CONTROL_BACKGROUNDDLG	=6
@@ -155,6 +156,10 @@ namespace MediaPortal.Dialogs
 						m_iSelected=GetSelectedItemNo();
 						m_strSelected=GetSelectedItem().Label;
 						Close();
+          }
+          if ((int)Controls.CONTROL_CLOSEBTN==iControl)
+          {
+            Close();
           }
         }
           break;
