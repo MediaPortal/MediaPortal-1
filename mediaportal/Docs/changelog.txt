@@ -1,3 +1,4 @@
+31-07-2004  my tv       : fixed : stuttering video when not fullscreen
 31-07-2004  general     : added : autoupdate. Checks for new versions of mediaportal
 
 30-07-2004  general     : added : volume control (keys - and =)
