@@ -97,6 +97,8 @@
 		<textcolor2>FF484848</textcolor2>
 		<textcolor3>FF484848</textcolor3>
 		<colordiffuse>ff000000</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
@@ -137,6 +139,8 @@
 		<selectedColor>FF8080FF</selectedColor>
 		<textcolor>FFFFFFFF</textcolor>
 		<colordiffuse>ff000000</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
 		<suffix>|</suffix>
 		<textureWidthBig>128</textureWidthBig>
 		<textureHeightBig>128</textureHeightBig>
@@ -182,6 +186,8 @@
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
 		<suffix>|</suffix>
 		<textureWidthBig>108</textureWidthBig>
 		<textureHeightBig>108</textureHeightBig>

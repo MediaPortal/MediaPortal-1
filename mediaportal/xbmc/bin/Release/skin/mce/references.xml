@@ -109,6 +109,8 @@
 		<textcolor2>ffffffff</textcolor2>
 		<textcolor3>ffffffff</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
 		<textXOff>5</textXOff>
 		<textYOff>4</textYOff>
 		<textXOff2>0</textXOff2>
@@ -148,6 +150,8 @@
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
 		<suffix>|</suffix>
 		<textureWidthBig>108</textureWidthBig>
 		<textureHeightBig>108</textureHeightBig> 
@@ -189,6 +193,8 @@
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
 		<suffix>|</suffix>
 		<textureWidthBig>108</textureWidthBig>
 		<textureHeightBig>108</textureHeightBig> 
@@ -210,7 +216,7 @@
 		<InfoImagewidth>360</InfoImagewidth>
 		<InfoImageheight>302</InfoImageheight>
 		<InfoImagediffuse>ffffffff</InfoImagediffuse>
-		
+
 	</control>
 	<control>
 		<description>default fadelabel</description>
