@@ -217,6 +217,7 @@ namespace MediaPortal.GUI.Library
 					      if ( m_iPercent >0) m_iPercent --;
 					      break;
 			      }
+						m_fValue=(float)Math.Round(m_fValue,1);
             message=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 			      GUIGraphicsContext.SendMessage(message);
 			    break;
@@ -237,9 +238,10 @@ namespace MediaPortal.GUI.Library
 					      if ( m_iPercent < 100 ) m_iPercent ++;
 					      break;
 			      }
+						m_fValue=(float)Math.Round(m_fValue,1);
             message=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 			      GUIGraphicsContext.SendMessage(message);
-			      break;
+			    break;
 
 		      default:
 			      base.OnAction(action);
