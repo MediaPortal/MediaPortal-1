@@ -105,8 +105,11 @@ namespace Core.Util
         newConnection.Busy=false;
         newConnection.Connection = new FTPClient(hostname,port);
         newConnection.Connection.Login(login,password);
-        newConnection.Connection.ConnectMode=FTPConnectMode.PASV;
+        newConnection.Connection.ConnectMode=FTPConnectMode.ACTIVE;
         ftpConnections.Add(newConnection);
+#if DEBUG
+        newConnection.Connection.DebugResponses(true);
+#endif
         return newConnection.Connection;
       }
       catch(Exception)
