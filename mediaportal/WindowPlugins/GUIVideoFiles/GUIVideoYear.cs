@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Dialogs;
@@ -852,6 +853,7 @@ namespace MediaPortal.GUI.Video
 			if (!item.IsRemote)
 			{
 				VideoDatabase.DeleteMovie(item.Path);
+				TVDatabase.RemoveRecordedTVByFileName(item.Path);
 				Utils.FileDelete(item.Path);
 			}
 		}

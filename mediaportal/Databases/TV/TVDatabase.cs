@@ -1763,6 +1763,26 @@ namespace MediaPortal.TV.Database
 			}
 		} 
 
+		static public void RemoveRecordedTVByFileName(string fileName)
+		{
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null==m_db) return ;
+					string filteredName=fileName;
+					DatabaseUtility.RemoveInvalidChars(ref filteredName);
+					string strSQL=String.Format("delete from recorded where strFileName like '{0}'",filteredName);
+					m_db.Execute(strSQL);
+				}
+				catch(Exception ex)
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		} 
+
 
 		static public bool GetRecordedTV(ref ArrayList recordings)
 		{
