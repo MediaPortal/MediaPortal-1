@@ -306,19 +306,19 @@ namespace MediaPortal.TV.Recording
 							// Check all filters with same name for capture card device...
 							for (int i=0; i < al.Count; i++)
 							{
-								Filter ff = al[i] as Filter;
-								if (ff.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
+								filter = al[i] as Filter;
+								if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
 								{
 									// Filter found matching the capture card device!!!!!!!!!!!!!!!
-									filter=ff;
+									//filter=ff;
 									filterFound = true;
 									break;
 								}
 							} 
 							if (!filterFound)
 							{
-								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: Cannot find unique filter for filter:{0}", filter.Name);
-								filterFound = true;
+								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: ERROR Cannot find unique filter for filter:{0}", filter.Name);
+								//filterFound = true;
 							}
 							else
 							{

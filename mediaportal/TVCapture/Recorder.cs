@@ -603,17 +603,17 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		static public void StopViewing()
 		{
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: StopViewing()");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:StopViewing()");
 			TVCaptureDevice dev ;
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				dev=(TVCaptureDevice)m_tvcards[i];
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
 					dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
 			}
 			if (g_Player.Playing)
 			{
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:currently playing:{0}", g_Player.CurrentFile);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  currently playing:{0}", g_Player.CurrentFile);
 			}
 			// stop any playing..
 			if (g_Player.Playing && g_Player.IsTV) 
@@ -629,12 +629,12 @@ namespace MediaPortal.TV.Recording
 				{
 					if (dev.IsTimeShifting)
 					{
-						Log.WriteFile(Log.LogType.Recorder,"Recorder: stop timeshifting {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop timeshifting {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
 						dev.StopTimeShifting();
 					}
 					if (dev.View) 
 					{
-						Log.WriteFile(Log.LogType.Recorder,"Recorder: stop viewing {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop viewing {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
 						dev.View=false;
 					}
 					dev.DeleteGraph();
@@ -887,7 +887,7 @@ namespace MediaPortal.TV.Recording
 							else
 							{
 								//we dont want timeshifting
-								Log.WriteFile(Log.LogType.Recorder,"Recorder:  view card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, dev.TVChannel);
+								Log.WriteFile(Log.LogType.Recorder,"Recorder:  view card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, channel);
 								
 								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 								if (g_Player.CurrentFile==strTimeShiftFileName)
