@@ -38,7 +38,7 @@ namespace MediaPortal.TV.Recording
 	/// for dvb-s scanning we need : frequency, polarisation, symbolrate, innerFec, SID
 	/// for dvb-c scanning we need : frequency, symbolrate, innerFec, SID,modulation
 	/// </summary>
-	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
+	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph, ISampleGrabberCB
 	{
 
 		public class DVBChannel
@@ -57,6 +57,10 @@ namespace MediaPortal.TV.Recording
 			public int    innerFec;					//innerFec
 			public int    carrierFrequency;	//polarisation
 			public int    modulation;				//modulation
+			public int    videoPid;
+			public int    audioPid;
+			public int    AC3Pid;
+			public int    teletextPid;
 		}
 
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -121,7 +125,9 @@ namespace MediaPortal.TV.Recording
 		IMediaControl						m_mediaControl					= null;
 		IBDA_SignalStatistics[] m_TunerStatistics       = null;
 		NetworkType							m_NetworkType;
-		
+		IBaseFilter							m_sampleGrabber=null;
+		ISampleGrabber					m_sampleInterface=null;
+
 		TVCaptureDevice					m_Card;
 		
 		//streambuffer interfaces
@@ -140,6 +146,8 @@ namespace MediaPortal.TV.Recording
 		bool												graphRunning=false;
 		DVBChannel									currentTuningObject=null;
 		bool												shouldDecryptChannel=false;
+		bool                        m_videoDataFound=false;
+		DVBTeletext									m_teleText=new DVBTeletext();
 
 		/// <summary>
 		/// Constructor
@@ -161,6 +169,10 @@ namespace MediaPortal.TV.Recording
 				hklm.CreateSubKey(@"Software\MediaPortal");
 			}
 			catch(Exception){}
+			
+			GUIWindow win=GUIWindowManager.GetWindow(7700);
+			if(win!=null)
+				win.SetObject(m_teleText);
 		}
 
 		/// <summary>
@@ -231,6 +243,11 @@ namespace MediaPortal.TV.Recording
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 
+				//add the sample grabber filter to the graph
+				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
+				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
+				m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
+
 				// Loop through configured filters for this card, bind them and add them to the graph
 				// Note that while adding filters to a graph, some connections may already be created...
 				Log.Write("DVBGraphBDA: Adding configured filters...");
@@ -279,6 +296,7 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.Write("DVBGraphBDA:CreateGraph() FAILED capture filter not found");
 				}
+
 
 
 				FilterDefinition sourceFilter;
@@ -404,6 +422,13 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+				Log.Write("DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
+				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
+				{
+					Log.Write("DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+					return false;
+				}
+				
 				//=========================================================================================================
 				// add the MPEG-2 Demultiplexer 
 				//=========================================================================================================
@@ -416,15 +441,22 @@ namespace MediaPortal.TV.Recording
 				}
 
 				// Add the Demux to the graph
+				Log.Write("DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
 				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
 				
+				if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
+				{
+					Log.Write("DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+					return false;
+				}
+/*
 				// connect the interface filter->mpeg2 demultiplexer
 				if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
 				{
 					Log.Write("DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
 					return false;
 				}
-
+*/
 				//=========================================================================================================
 				// Add the BDA MPEG2 Transport Information Filter
 				//=========================================================================================================
@@ -507,6 +539,20 @@ namespace MediaPortal.TV.Recording
 				m_mpeg2Analyzer     = new VideoAnalyzer();
 				m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 				m_graphState=State.Created;
+
+				Log.Write("DVBGraphBDA:creategraph() setup SampleGrabber-Interface");
+				if(m_sampleInterface!=null)
+				{
+					AMMediaType mt=new AMMediaType();
+					mt.majorType=DShowNET.MediaType.Stream;
+					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
+					//m_sampleInterface.SetOneShot(true);
+					m_sampleInterface.SetCallback(this,1);
+					m_sampleInterface.SetMediaType(ref mt);
+					m_sampleInterface.SetBufferSamples(true);
+				}
+				else
+					Log.Write("DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
 
 				m_TunerStatistics=GetTunerSignalStatistics();
 				//AdviseProgramInfo();
@@ -680,6 +726,10 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = null;
 			}
 
+			if (m_sampleGrabber != null) 
+				Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
+			m_sampleInterface=null;
+
 			if (m_StreamBufferConfig != null) 
 				Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
 
@@ -789,6 +839,7 @@ namespace MediaPortal.TV.Recording
 			m_iPrevChannel		= m_iCurrentChannel;
 			m_iCurrentChannel = iChannel;
 			m_StartTime				= DateTime.Now;
+			m_videoDataFound=false;
 
 			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
 
@@ -2124,8 +2175,7 @@ namespace MediaPortal.TV.Recording
 			DVBSections.ChannelInfo channelInfo;
 			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, m_iCurrentSID, out channelInfo);
 			if (pmt==null)
-			{
-				
+			{	
 				shouldDecryptChannel=true;
 				return;
 			}
@@ -2147,13 +2197,25 @@ namespace MediaPortal.TV.Recording
 					{
 						DVBSections.PMTData data=(DVBSections.PMTData) channelInfo.pid_list[pids];
 						if (data.isVideo)
-							Log.Write("DVBGraphBDA: video pid: {0:X}",data.elementary_PID);
+						{
+							Log.Write("DVBGraphBDA: video pid: 0x{0:X}",data.elementary_PID);
+							currentTuningObject.videoPid=data.elementary_PID;
+						}
 						if (data.isAC3Audio)
-							Log.Write("DVBGraphBDA: AC3 pid: {0:X}",data.elementary_PID);
+						{
+							Log.Write("DVBGraphBDA: AC3 pid: 0x{0:X}",data.elementary_PID);
+							currentTuningObject.AC3Pid=data.elementary_PID;
+						}
 						if (data.isTeletext)
-							Log.Write("DVBGraphBDA: teletext pid: {0:X}",data.elementary_PID);
+						{
+							Log.Write("DVBGraphBDA: teletext pid: 0x{0:X}",data.elementary_PID);
+							currentTuningObject.teletextPid=data.elementary_PID;
+						}
 						if (data.isAudio)
-							Log.Write("DVBGraphBDA: audio pid: {0:X}",data.elementary_PID);
+						{
+							Log.Write("DVBGraphBDA: audio pid: 0x{0:X}",data.elementary_PID);
+							currentTuningObject.audioPid=data.elementary_PID;
+						}
 					}
 				}
 
@@ -2225,6 +2287,7 @@ namespace MediaPortal.TV.Recording
 			if (m_NetworkProvider==null) return;
 			if (tuningObject		 ==null) return;
 
+			m_videoDataFound=false;
 			//start viewing if we're not yet viewing
 			if (!graphRunning)
 			{
@@ -2584,6 +2647,61 @@ namespace MediaPortal.TV.Recording
 				//space.InputRange=??;
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
+
+		//
+		public int BufferCB(double time,IntPtr data,int len)
+		{
+			if (currentTuningObject==null) return 0;
+			if (currentTuningObject.teletextPid==0) return 0;
+			int add=(int)data;
+			int end=(add+len);
+			//
+			// here write code to record raw ts or mp3 etc.
+			// the callback needs to return as soon as possible!!
+			//
+
+			// the following check should takes care of scrambled video-data
+			// and redraw the vmr9 not to hang
+
+			int pid=currentTuningObject.videoPid;
+			int teleTextPid=currentTuningObject.teletextPid;
+			TSHelperTools tools=new TSHelperTools();
+			for(int pointer=add;pointer<end;pointer+=188)
+			{		
+				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
+				if(header.Pid==pid)
+				{	
+					if(header.TransportScrambling!=0) // data is scrambled?
+						m_videoDataFound=false;
+					else
+						m_videoDataFound=true;
+						
+					break;// stop loop if we got a non-scrambled video-packet 
+				}
+			}
+			//
+			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false)
+				Vmr9.Repaint();// repaint vmr9
+
+
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
+				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
+				if(header.Pid==teleTextPid && m_teleText!=null)
+				{
+					m_teleText.SaveData((IntPtr)pointer);
+				}
+			}
+			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
+			return 0;
+		}
+
+		public int SampleCB(double time,IMediaSample sample)
+		{
+			return 0;
+		
+		}
+
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file
