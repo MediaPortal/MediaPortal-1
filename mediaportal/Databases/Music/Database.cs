@@ -58,13 +58,16 @@ namespace MediaPortal.Music.Database
       Log.Write("Opening music database");
       try 
       {
-        // Open database
-        try
+				// Open database
+
+				String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
+					GetExecutingAssembly().Location); 
+				try
 				{
-					System.IO.Directory.CreateDirectory("database");
+					System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-        m_db = new SQLiteClient(@"database\musicdatabase3.db");
+        m_db = new SQLiteClient(strPath+@"\database\musicdatabase3.db");
         CreateTables();
 
         m_db.Execute("PRAGMA cache_size=8192\n");

@@ -60,13 +60,16 @@ namespace MediaPortal.TV.Database
 				{
 					// Open database
 					Log.Write("opening tvdatabase");
+
+					String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
+						GetExecutingAssembly().Location); 
 					try
 					{
-						System.IO.Directory.CreateDirectory("database");
+						System.IO.Directory.CreateDirectory(strPath+@"\database");
 					}
 					catch(Exception){}
 					//Upgrade();
-					m_db = new SQLiteClient(@"database\TVDatabaseV15.db");
+					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV15.db");
 					CreateTables();
 					UpdateFromPreviousVersion();
 					if (m_db!=null)

@@ -289,7 +289,6 @@ namespace MediaPortal.GUI.TV
 				movieDetails.Genre=rec.Genre;
 				movieDetails.Plot=rec.Description;
 				movieDetails.Year=rec.StartTime.Year;
-				Log.Write("Set movie details");
 				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
 			}
     }

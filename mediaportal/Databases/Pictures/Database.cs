@@ -28,13 +28,16 @@ namespace MediaPortal.Picture.Database
         Log.Write("opening picture database");
         try 
         {
-          // Open database
+					// Open database
+
+					String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
+						GetExecutingAssembly().Location); 
 					try
 					{
-          System.IO.Directory.CreateDirectory("database");
+						System.IO.Directory.CreateDirectory(strPath+@"\database");
 					}
 					catch(Exception){}
-					m_db = new SQLiteClient(@"database\PictureDatabase.db");
+					m_db = new SQLiteClient(strPath+@"\database\PictureDatabase.db");
           CreateTables();
 
         } 

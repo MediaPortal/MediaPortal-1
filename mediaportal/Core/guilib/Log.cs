@@ -22,11 +22,13 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static Log()
 		{
+				String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
+			 GetExecutingAssembly().Location); 
       try
       {
-        System.IO.Directory.CreateDirectory("log");
-				System.IO.File.Delete(@"log\MediaPortalold.log");
-				System.IO.File.Move(@"log\MediaPortal.log",@"log\MediaPortalold.log");
+        System.IO.Directory.CreateDirectory(strPath+@"\log");
+				System.IO.File.Delete(strPath+@"\log\MediaPortalold.log");
+				System.IO.File.Move(strPath+@"\log\MediaPortal.log",strPath+@"\log\MediaPortalold.log");
       }
       catch(Exception)
       {
