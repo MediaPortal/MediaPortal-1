@@ -61,7 +61,7 @@ namespace DShowNET
     } ;
   }
 
-  enum KsPropertySupport:int
+  enum KsPropertySupport:uint
   {
     Get=1,
     Set=2
