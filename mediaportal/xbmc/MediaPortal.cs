@@ -30,7 +30,6 @@ public class MediaPortalApp : D3DApp, IRender
   const int WM_SYSCOMMAND =0x0112;
   const int SC_SCREENSAVE =0xF140;
 
-    [STAThread]
     public static void Main()
     {
       
