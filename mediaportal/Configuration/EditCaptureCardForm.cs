@@ -558,7 +558,15 @@ namespace MediaPortal.Configuration
       //
       // Update controls
       //
-      frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = !capture.SupportsTimeShifting;
+      if(capture != null)
+      {
+        frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = !capture.SupportsTimeShifting;
+      }
+      else
+      {
+        frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = false;
+      }
+
       useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
 
       //
