@@ -437,7 +437,7 @@ namespace MediaPortal.GUI.Library
 				Format fmt=Format.A8R8G8B8;
 				if (IsTemporary(strFileName))
 				{
-					fmt=Format.Dxt3;
+					//fmt=Format.Dxt3;
 					iMaxWidth=MAX_THUMB_WIDTH;
 					iMaxHeight=MAX_THUMB_HEIGHT;
 					imgSrc=Image.FromFile(strFileName);   
@@ -477,7 +477,7 @@ namespace MediaPortal.GUI.Library
 				else
 				{
 					//fmt=GetCompression(strFileName);
-					fmt=Direct3D.Format.Dxt3;
+					//fmt=Direct3D.Format.Dxt3;
 					ImageInformation info2 = new ImageInformation();
 					texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
 																					strFileName,
@@ -492,6 +492,7 @@ namespace MediaPortal.GUI.Library
 																					ref info2);
 					iWidth=info2.Width;
 					iHeight=info2.Height;
+					/*
 					if (iWidth > (GUIGraphicsContext.Width/2) ||
 						iHeight> (GUIGraphicsContext.Height/2) )
 					{
@@ -512,7 +513,7 @@ namespace MediaPortal.GUI.Library
 						iHeight=info2.Height;
 					}
 					Log.Write("Texturemanager loaded:{0} {1}x{2} format:{3}",
-												strFileName,iWidth,iHeight,info2.Format);
+												strFileName,iWidth,iHeight,info2.Format);*/
 					
 				}
       }

@@ -232,7 +232,41 @@ namespace MediaPortal.GUI.Library
           m_vertScrollbar.Percentage = fPercent;
         }
       }
-			// Render the items.
+			// Render the buttons first.
+			for (int i = 0; i < m_iItemsPerPage; i++)
+			{
+				int dwPosX = m_dwPosX;
+				if (i + m_iOffset < m_vecItems.Count)
+				{
+					// render item
+					GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
+					if (m_imgButton!=null)
+					{
+						if (i>=0 && i < m_imgButton.Count)
+						{
+							GUIButtonControl btn=m_imgButton[i] as GUIButtonControl;
+							if (btn!=null)
+							{
+								if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+								{
+									// render focused line
+									btn.Focus = true;
+								}
+								else
+								{
+									// render no-focused line
+									btn.Focus = false;
+								}
+								btn.SetPosition(m_dwPosX, dwPosY);
+								btn.Render();
+							}
+						}
+					}
+				}
+				dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
+			}
+
+			dwPosY = m_dwPosY;
 			for (int i = 0; i < m_iItemsPerPage; i++)
 			{
 				int dwPosX = m_dwPosX;
@@ -240,28 +274,6 @@ namespace MediaPortal.GUI.Library
 				{
 					// render item
           GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
-          if (m_imgButton!=null)
-          {
-            if (i>=0 && i < m_imgButton.Count)
-            {
-              GUIButtonControl btn=m_imgButton[i] as GUIButtonControl;
-              if (btn!=null)
-              {
-                if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
-                {
-                  // render focused line
-                  btn.Focus = true;
-                }
-                else
-                {
-                  // render no-focused line
-                  btn.Focus = false;
-                }
-                btn.SetPosition(m_dwPosX, dwPosY);
-                btn.Render();
-              }
-            }
-          }
 
 					// render the icon
 					if (pItem.HasIcon)
