@@ -194,6 +194,8 @@ namespace MediaPortal
 				RemoteEnabled= xmlreader.GetValueAsBool("remote", "mce2005", false);
 				USAModel= xmlreader.GetValueAsBool("remote", "USAModel", false);
 				if (!RemoteEnabled) return;
+				if (USAModel) Log.Write("Using USA MCE 2005 remote");
+				else  Log.Write("Using European MCE 2005 remote");
 			}
       try
       {
