@@ -25,17 +25,6 @@
 		<texture>mytv.png</texture>
 	</control>
 	<control>
-		<description>Panel</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>50</posX>
-		<posY>100</posY>
-		<width>190</width>
-<!--		<height>272</height> -->
-		<height>328</height>
-		<texture>panel.png</texture>
-	</control>
-	<control>
 		<description>My TV Label</description>
 		<type>label</type>
 		<id>1</id>
@@ -44,6 +33,18 @@
 		<label>4</label>
 		<font>font10</font>
 		<align>right</align>
+	</control>
+
+	<control>
+		<description>Panel</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>50</posX>
+		<posY>100</posY>
+		<width>190</width>
+<!--		<height>272</height> -->
+		<height>356</height>
+		<texture>panel.png</texture>
 	</control>
 	<control>
 		<description>TVGuide</description>
@@ -56,6 +57,7 @@
 		<onup>17</onup>
 		<ondown>3</ondown>
 		<onright>99</onright>
+		<onleft>2</onleft>
 	</control>
 	<control>
 		<description>Record Now</description>
@@ -67,6 +69,7 @@
 		<onup>2</onup>
 		<ondown>4</ondown>
 		<onright>99</onright>
+		<onleft>3</onleft>
 	</control>
 	<control>
 		<description>Panel Split</description>
@@ -87,6 +90,7 @@
 		<onup>3</onup>
 		<ondown>6</ondown>
 		<onright>99</onright>
+		<onleft>4</onleft>
 	</control>
 	<control>
 		<description>Group button</description>
@@ -98,6 +102,7 @@
 		<onup>4</onup>
 		<ondown>7</ondown>
 		<onright>99</onright>
+		<onleft>6</onleft>
 	</control>
 	<control>
 		<description>Channel button</description>
@@ -109,6 +114,7 @@
 		<onup>6</onup>
 		<ondown>8</ondown>
 		<onright>99</onright>
+		<onleft>7</onleft>
 	</control>
 	<control>
 		<description>TV On/Off button</description>
@@ -131,6 +137,7 @@
 		<onup>7</onup>
 		<ondown>9</ondown>
 		<onright>99</onright>
+		<onleft>8</onleft>
 	</control>
 	<control>
 		<description>Timeshifting On/Off button</description>
@@ -153,30 +160,33 @@
 		<onup>8</onup>
 		<ondown>10</ondown>
 		<onright>99</onright>
+		<onleft>9</onleft>
 	</control>
 	<control>
 		<description>Scheduler</description>
 		<type>button</type>
 		<id>10</id>
 		<posX>55</posX>
-  		<posY>329</posY>
+  	<posY>329</posY>
 		<label>603</label>
 		<hyperlink>601</hyperlink>
 		<onup>9</onup>
 		<ondown>11</ondown>
 		<onright>99</onright>
+		<onleft>10</onleft>
 	</control>
 	<control>
 		<description>Recordings</description>
 		<type>button</type>
 		<id>11</id>
 		<posX>55</posX>
-  		<posY>357</posY>
+  	<posY>357</posY>
 		<label>604</label>
 		<hyperlink>603</hyperlink>
 		<onup>10</onup>
 		<ondown>12</ondown>
 		<onright>99</onright>
+		<onleft>11</onleft>
 	</control>
 	<control>
 		<description>Search</description>
@@ -187,8 +197,21 @@
 		<label>137</label>
 		<hyperlink>604</hyperlink>
 		<onup>11</onup>
+		<ondown>13</ondown>
+		<onright>99</onright>
+		<onleft>12</onleft>
+	</control>
+	<control>
+		<description>Teletext</description>
+		<type>button</type>
+		<id>13</id>
+		<posX>55</posX>
+		<posY>413</posY>
+		<label>Teletext</label>
+		<onup>12</onup>
 		<ondown>2</ondown>
 		<onright>99</onright>
+		<onleft>13</onleft>
 	</control>
 
 	<control>
