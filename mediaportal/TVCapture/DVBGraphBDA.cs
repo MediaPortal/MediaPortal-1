@@ -2108,6 +2108,12 @@ namespace MediaPortal.TV.Recording
 			DVBSections sections = new DVBSections();
 			DVBSections.ChannelInfo channelInfo;
 			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, m_iCurrentSID, out channelInfo);
+			if (pmt==null)
+			{
+				
+				shouldDecryptChannel=true;
+				return;
+			}
 			if (pmt!=null && pmt.Length>0 )
 			{
 				//got all details. Log them
