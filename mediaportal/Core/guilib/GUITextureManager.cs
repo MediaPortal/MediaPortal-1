@@ -1,4 +1,4 @@
-#define DO_RESAMPLE
+//#define DO_RESAMPLE
 using System;
 using System.Net;
 using System.Diagnostics;
@@ -425,7 +425,7 @@ namespace MediaPortal.GUI.Library
 					Log.Write("TextureManager: resample {0}x{1} -> {2}x{3} {4}",
 												imgSrc.Width,imgSrc.Height, w,w,strFileName);
 
-					Image imgResampled=Resample(imgSrc,w, w);
+					Image imgResampled=Resample(imgSrc,w, h);
 					imgSrc.Dispose();
 					imgSrc=imgResampled;
 					imgResampled=null;
