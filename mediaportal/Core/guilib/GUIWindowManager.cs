@@ -178,7 +178,6 @@ namespace MediaPortal.GUI.Library
     /// <param name="iWindowID">window id of the window to activate</param>
     static public void ActivateWindow(int iWindowID)
     {
-			UnRoute();
       m_bSwitching=true;
       try
       {
@@ -200,7 +199,8 @@ namespace MediaPortal.GUI.Library
           pWindow.OnMessage(msg);
           m_iActiveWindow=-1;
           m_iActiveWindowID=-1;
-        }
+				}
+				UnRoute();
 
         // activate the new window
         for (int i=0; i < m_vecWindows.Count; i++)
@@ -295,6 +295,8 @@ namespace MediaPortal.GUI.Library
           m_iActiveWindow=-1;
           m_iActiveWindowID=-1;
         }
+
+				UnRoute();
 
         // activate the new window
         for (int i=0; i < m_vecWindows.Count; i++)
