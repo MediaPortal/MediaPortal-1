@@ -130,6 +130,8 @@ setup:
   - all forms: enter should do same as OK key
 
 General:
+  - option to autohide topbar
+  - transitions between GUI screens
   - better cd/dvd handling like
     - remove eject and "play DVD" buttons from myVideos
     - remove eject button from myMusic
