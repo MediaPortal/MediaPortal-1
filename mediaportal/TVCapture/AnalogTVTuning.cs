@@ -11,7 +11,7 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class AnalogTVTuning : ITuning
 	{
-		int																	currentChannel=1;
+		int																	currentChannel=0;
 		AutoTuneCallback										callback = null;
 		private System.Windows.Forms.Timer  timer1;
 		TVCaptureDevice											captureCard;
