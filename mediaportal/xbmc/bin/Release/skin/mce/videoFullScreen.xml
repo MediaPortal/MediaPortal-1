@@ -8,9 +8,8 @@
 		<type>image</type> 
 		<id>0</id> 
 		<posX>0</posX> 
-		<posY>30</posY>
-		<width>720</width> 
-		<texture>video_jump.png</texture> 
+		<posY>33</posY>
+		<texture>calibration_bar.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
 		<visible>no</visible>
