@@ -1131,5 +1131,8 @@ namespace MediaPortal.TV.Recording
 		public void TuneRadioChannel(RadioStation station)
 		{
 		}
+		public void StartRadio(RadioStation station)
+		{
+		}
 	}
 }
