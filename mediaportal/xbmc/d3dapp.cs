@@ -1081,7 +1081,7 @@ namespace MediaPortal
       if (g_Player.Playing&& g_Player.DoesOwnRendering &&!g_Player.Paused) bDoRender=false;
       if (bDoRender) 
       {
-        System.Threading.Thread.Sleep(50);
+        System.Threading.Thread.Sleep(20);
         if (GUIGraphicsContext.DX9Device!=null && rTarget!=null)
         {
           try
