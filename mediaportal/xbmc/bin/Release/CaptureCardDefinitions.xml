@@ -705,6 +705,22 @@
     </tv>
   </capturecard>
    
+  <capturecard commercialname="Dvico Fusion HDTV rev3" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter> 
+        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" 			checkdevice="false"></filter> 
+        <filter cat="capture" name="FusionHDTV, Transport Stream Capture" 	checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections> 
+    </tv> 
+  </capturecard>
+
   <capturecard commercialname="Medion SAA7134 DVB-T" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
