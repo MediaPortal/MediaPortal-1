@@ -112,17 +112,18 @@ namespace DShowNET
 	{
 		[PreserveSig]
 		int GuideDataAcquired();
-		int ProgramChanged([In] object    varProgramDescriptionID);
 		[PreserveSig]
-		int ServiceChanged([In] object    varServiceDescriptionID);
+		int ProgramChanged([In] IntPtr    varProgramDescriptionID);
 		[PreserveSig]
-		int ScheduleEntryChanged([In] object    varScheduleEntryDescriptionID);
+		int ServiceChanged([In] IntPtr    varServiceDescriptionID);
 		[PreserveSig]
-		int ProgramDeleted([In] object    varProgramDescriptionID);
+		int ScheduleEntryChanged([In] IntPtr    varScheduleEntryDescriptionID);
 		[PreserveSig]
-		int ServiceDeleted([In] object    varServiceDescriptionID);
+		int ProgramDeleted([In] IntPtr    varProgramDescriptionID);
 		[PreserveSig]
-		int ScheduleDeleted([In] object    varScheduleEntryDescriptionID);
+		int ServiceDeleted([In] IntPtr    varServiceDescriptionID);
+		[PreserveSig]
+		int ScheduleDeleted([In] IntPtr    varScheduleEntryDescriptionID);
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -134,43 +135,44 @@ namespace DShowNET
 
 		public int GuideDataAcquired()
 		{
-			DirectShowUtil.DebugWrite("GuideDataAcquired()");
+			//DirectShowUtil.DebugWrite("GuideDataAcquired()");
 			return 0;
 		}
 
-		public int ProgramChanged(object    varProgramDescriptionID)
+		public int ProgramChanged([In] IntPtr    varProgramDescriptionID)
 		{
-				DirectShowUtil.DebugWrite("ProgramChanged()");
+//				//DirectShowUtil.DebugWrite("ProgramChanged():");
 				return 0;
 		}
 
-		public int ServiceChanged(object    varServiceDescriptionID)
+		public int ServiceChanged([In] IntPtr    varServiceDescriptionID)
 		{
-			DirectShowUtil.DebugWrite("ServiceChanged()");
+			//DirectShowUtil.DebugWrite("ServiceChanged()");
+		
 			return 0;
 		}
 
-		public int ScheduleEntryChanged(object    varScheduleEntryDescriptionID)
+		public int ScheduleEntryChanged([In] IntPtr    varScheduleEntryDescriptionID)
 		{
-			DirectShowUtil.DebugWrite("ScheduleEntryChanged()");
+			//DirectShowUtil.DebugWrite("ScheduleEntryChanged()");
 			return 0;
 		}
 
-		public int ProgramDeleted(object    varProgramDescriptionID)
+		public int ProgramDeleted([In] IntPtr    varProgramDescriptionID)
 		{
-			DirectShowUtil.DebugWrite("ProgramDeleted()");
+			//DirectShowUtil.DebugWrite("ProgramDeleted()");
 			return 0;
 		}
 
-		public int ServiceDeleted(object    varServiceDescriptionID)
+		public int ServiceDeleted([In] IntPtr    varServiceDescriptionID)
 		{
-			DirectShowUtil.DebugWrite("ServiceDeleted()");
+			//DirectShowUtil.DebugWrite("ServiceDeleted()");
 			return 0;
 		}
 
-		public int ScheduleDeleted(object    varScheduleEntryDescriptionID)
+		public int ScheduleDeleted([In] IntPtr    varScheduleEntryDescriptionID)
 		{
-			DirectShowUtil.DebugWrite("ScheduleDeleted()");
+			//DirectShowUtil.DebugWrite("ScheduleDeleted()");
 			return 0;
 		}
 	}

@@ -453,6 +453,15 @@ namespace MediaPortal.TV.Recording
 			m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 			m_graphState=State.Created;
 
+			AdviseProgramInfo();
+			return true;
+		}
+		
+		void AdviseProgramInfo()
+		{
+			Log.Write("AdivseProgramInfo()");
+			if (m_TIF==null) return;
+
 			m_Event= new GuideDataEvent();
 			myHandle = GCHandle.Alloc(m_Event, GCHandleType.Pinned);
 
@@ -460,7 +469,7 @@ namespace MediaPortal.TV.Recording
 			if (container==null)
 			{
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
-				return false;
+				return ;
 			}
 			Guid iid=typeof(IGuideDataEvent).GUID;
 			IConnectionPoint    connectPoint;      
@@ -468,17 +477,50 @@ namespace MediaPortal.TV.Recording
 			if (connectPoint==null)
 			{
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
-				return false;
+				return ;
 			}
-			hr=connectPoint.Advise( m_Event, out adviseCookie);
+			int hr=connectPoint.Advise( m_Event, out adviseCookie);
 			if (hr!=0)
 			{
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
-				return false;
+				return ;
 			}
-			return true;
+			Log.Write("AdivseProgramInfo() done");
 		}
 
+		void UnAdviseProgramInfo()
+		{
+			Log.Write("UnAdviseProgramInfo()");
+			if (adviseCookie==0) return;
+			if (m_TIF==null) return;
+			IConnectionPointContainer container = m_TIF as IConnectionPointContainer;
+			if (container==null)
+			{
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
+				return ;
+			}
+			Guid iid=typeof(IGuideDataEvent).GUID;
+			IConnectionPoint    connectPoint;      
+			container.FindConnectionPoint( ref iid, out connectPoint);
+			if (connectPoint==null)
+			{
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
+				return ;
+			}
+
+			int hr=connectPoint.Unadvise(adviseCookie);
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
+			}
+			adviseCookie=0;
+			
+			if (myHandle.IsAllocated)
+			{
+				myHandle.Free();
+			}
+			m_Event=null;
+		}
 		/// <summary>
 		/// Deletes the current DirectShow graph created with CreateGraph()
 		/// </summary>
@@ -501,6 +543,7 @@ namespace MediaPortal.TV.Recording
 				Vmr9=null;
 			}
 
+			UnAdviseProgramInfo();
 			if (m_recControl!=null) 
 			{
 				m_recControl.Stop(0);
@@ -1626,7 +1669,7 @@ namespace MediaPortal.TV.Recording
 
 		
 		public void Process()
-		{
+		{/*
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
 			Log.Write("ONID:{0} TSID:{1} SID:{2} signal:{3}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID, myTuner.SignalStrength);
@@ -1635,7 +1678,7 @@ namespace MediaPortal.TV.Recording
 				TunerLib.Component comp=myTuneRequest.Components[i];
 				Log.Write("component:{0} lang:{1} desc:{2} status:{3} type:{4}",
 					          i,comp.DescLangID,comp.Description,comp.Status.ToString(),comp.Type.Category.ToString());
-			}
+			}*/
 		}
 
 		public void Scan()
