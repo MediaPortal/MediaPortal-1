@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  09-06-2004  my music    : added : multi tag reader plugin to read ogg,ape, and flac tags
+  
   08-06-2004  general     : added : added tags for the skin. You can now show all kinds of tags in the skin (see docs/tags.txt)
   08-06-2004  general     : added : extended plugin system so plugins can include setups/configuration screens
   08-06-2004  general     : added : set date format in home page
