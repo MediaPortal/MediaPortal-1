@@ -164,8 +164,7 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found");
       }
 
-      m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
-      if (m_videoCaptureDevice.IsMCEDevice && m_TVTuner!=null)
+      if ( m_TVTuner!=null)
       {
         for (int ipin=0; ipin < 10; ipin++)
         {
@@ -184,6 +183,8 @@ namespace MediaPortal.TV.Recording
         }
       }
 
+      m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
+      
 
       m_FrameSize=m_videoCaptureDevice.GetFrameSize();
 
@@ -650,6 +651,7 @@ namespace MediaPortal.TV.Recording
     {
         // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
         // the crossbar outputs are disconnected
+        // same for the winfast pvr 2000
         DirectShowUtil.DebugWrite("Sinkgraph:FixAverMediaBug()");
         //find crossbar
         int  hr;
@@ -675,8 +677,8 @@ namespace MediaPortal.TV.Recording
 
         //disconnect the output pins of the crossbar
         DirectShowUtil.DebugWrite("Sinkgraph:disconnect crossbar outputs");
-        DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
         DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
+      //DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
 
         //render the output pins of the tvtuner
         DirectShowUtil.DebugWrite("Sinkgraph:connect tvtuner outputs");
@@ -694,7 +696,6 @@ namespace MediaPortal.TV.Recording
           DirectShowUtil.DebugWrite("Sinkgraph:all connected");
         else
           DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
-
     }
  
     void AddPreferredCodecs()
