@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  20-06-2004  my pictures : added : folder thumbnails are now based on previewbackground.png 
   20-06-2004  my video    : fixed : when VMR9 is enabled there was no pause icon when viewing fullscreen video! 
   20-06-2004  my tv       : fixed : TV overlay doesnt show any info when recording ?
   20-06-2004  general     : fixed : have my radio/autotune enter the channels from low to high instead of high to low ?   
