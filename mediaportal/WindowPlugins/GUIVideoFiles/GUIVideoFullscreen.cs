@@ -795,6 +795,12 @@ namespace MediaPortal.GUI.Video
         m_bUpdate=false;
         return true;
       }
+
+      if (NeedFullScreenRender()) // added for progressbar update
+      {
+        return true;
+      }
+
       if (!NeedFullScreenRender() && m_bLastStatusFullScreen) 
       {
         return true;
@@ -827,7 +833,6 @@ namespace MediaPortal.GUI.Video
         if (m_bShowStep) return true;
 				if (m_bDialogVisible) return true;
 				if (m_bMSNChatVisible) return true;
-        
         
         return false;
       }
