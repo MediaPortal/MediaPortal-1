@@ -296,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 30);
+      this.label3.Location = new System.Drawing.Point(16, 31);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(160, 23);
       this.label3.TabIndex = 25;

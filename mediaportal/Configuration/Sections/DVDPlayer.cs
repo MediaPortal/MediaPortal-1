@@ -19,6 +19,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox parametersTextBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox internalPlayerCheckBox;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
+    private System.Windows.Forms.ComboBox videoRendererComboBox;
+    private System.Windows.Forms.Label label4;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
 		private System.ComponentModel.IContainer components = null;
@@ -32,8 +35,11 @@ namespace MediaPortal.Configuration.Sections
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      //
+      // Populate combobox
+      // 
+      videoRendererComboBox.Items.AddRange(VideoRenderersShort.List);
+    }
 
 		/// <summary>
 		/// 
@@ -45,6 +51,10 @@ namespace MediaPortal.Configuration.Sections
 				fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
 				parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer","arguments", "");
         autoPlayCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "autoplay", true);
+
+        int videoRenderer = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
+        if(videoRenderer >= 0 && videoRenderer <= VideoRenderersShort.List.Length)				
+          videoRendererComboBox.SelectedItem = VideoRenderersShort.List[videoRenderer];        
 
 				//
 				// Fake a check changed to force a CheckChanged event
@@ -66,6 +76,14 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
         xmlwriter.SetValueAsBool("dvdplayer", "autoplay", autoPlayCheckBox.Checked);
+
+        for(int index = 0; index < VideoRenderersShort.List.Length; index++)
+        {
+          if(VideoRenderersShort.List[index].Equals(videoRendererComboBox.Text))
+          {
+            xmlwriter.SetValue("dvdplayer", "vmr9", index);
+          }
+        }
       }
     }
 
@@ -112,9 +130,13 @@ namespace MediaPortal.Configuration.Sections
       this.button2 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.videoRendererComboBox = new System.Windows.Forms.ComboBox();
+      this.label4 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.autoPlayCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
+      this.mpGroupBox3.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -218,13 +240,45 @@ namespace MediaPortal.Configuration.Sections
       this.textBox1.TabIndex = 0;
       this.textBox1.Text = "";
       // 
+      // mpGroupBox3
+      // 
+      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Controls.Add(this.videoRendererComboBox);
+      this.mpGroupBox3.Controls.Add(this.label4);
+      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.mpGroupBox3.Location = new System.Drawing.Point(8, 136);
+      this.mpGroupBox3.Name = "mpGroupBox3";
+      this.mpGroupBox3.Size = new System.Drawing.Size(440, 72);
+      this.mpGroupBox3.TabIndex = 4;
+      this.mpGroupBox3.TabStop = false;
+      this.mpGroupBox3.Text = "Renderer Settings";
+      // 
+      // videoRendererComboBox
+      // 
+      this.videoRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.videoRendererComboBox.Location = new System.Drawing.Point(168, 27);
+      this.videoRendererComboBox.Name = "videoRendererComboBox";
+      this.videoRendererComboBox.Size = new System.Drawing.Size(256, 21);
+      this.videoRendererComboBox.TabIndex = 28;
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(16, 31);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(150, 23);
+      this.label4.TabIndex = 27;
+      this.label4.Text = "Video renderer";
+      // 
       // mpGroupBox2
       // 
       this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.autoPlayCheckBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox2.Location = new System.Drawing.Point(8, 136);
+      this.mpGroupBox2.Location = new System.Drawing.Point(8, 216);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(440, 64);
       this.mpGroupBox2.TabIndex = 3;
@@ -242,11 +296,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // DVDPlayer
       // 
+      this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "DVDPlayer";
       this.Size = new System.Drawing.Size(456, 440);
       this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
