@@ -175,7 +175,8 @@ namespace MediaPortal.TV.Recording
 				callback.UpdateList();
 				Log.Write("timeout, goto scanning frequencies");
 				currentState=State.ScanFrequencies;
-				currentOffset=3;
+				currentOffset=0;
+				currentFrequencyIndex++;
 				ScanNextFrequency();
 				return;
 			}
