@@ -2586,7 +2586,7 @@ namespace MediaPortal.TV.Recording
 								}
 								else
 								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} ok",lnb_0);
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: put_LocalOscilatorFrequencyLowBand({0}) ok",lnb_0);
 								}
 								hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
 								if (hr!=0) 
@@ -2596,7 +2596,7 @@ namespace MediaPortal.TV.Recording
 								}
 								else
 								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} ok",lnb_1);
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: set put_LocalOscilatorFrequencyHighBand({0}) ok",lnb_1);
 								}
 								if (ok) break;
 							}//if (info[i] !=null)
