@@ -8,6 +8,7 @@ Skin, gfx, .xml & media:
   - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
+-seperator for texboxscrollup
 vmr9:
 	- overlay
 	- windowless vmr9 

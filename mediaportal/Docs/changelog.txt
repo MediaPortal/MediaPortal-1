@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  04-07-2004  skin engine : added : <seperator> tag for the textscrollup control
   04-07-2004  my tv       : added : option for vmr9 windowless
   04-07-2004  my videos   : added : option for vmr9 windowless
   04-07-2004  setup       : added : splitted vmr9 option in seperate options for tv & video

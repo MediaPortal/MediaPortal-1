@@ -113,6 +113,7 @@
 		<height>175</height>
 		<label>-</label>
 		<font>font13</font>
+		<seperator>-------------------------------------------------------------------------------</seperator>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
