@@ -40,7 +40,7 @@ namespace MediaPortal.Player
       m_bFreeNavigator=true;
       dvdInfo=null;
       dvdCtrl=null;
-
+			videoWin=null;
       string strDVDNavigator="DVD Navigator";
       string strARMode="";
       string strDisplayMode="";
@@ -101,13 +101,13 @@ namespace MediaPortal.Player
 							Marshal.FreeCoTaskMem(ptrFolder);
 							dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
 							dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
-
+/*
 							if (path!=null && path.Length>0)
 							{
 								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
 								dvdHelper.Reset(path);
 							}
-
+*/
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 								
 							m_bFreeNavigator=false;
@@ -170,11 +170,11 @@ namespace MediaPortal.Player
             hr=line21Decoder.SetServiceState(ref state);
             if (hr==0)
             {
-              Log.Write("DVDPlayer:Closed Captions disabled");
+              Log.Write("DVDPlayer9:Closed Captions disabled");
             }
             else
             {
-              Log.Write("DVDPlayer:failed 2 disable Closed Captions");
+              Log.Write("DVDPlayer9:failed 2 disable Closed Captions");
             }
           }
         }
@@ -192,6 +192,7 @@ namespace MediaPortal.Player
 
 				if (!Vmr9.IsVMR9Connected)
 				{
+					Log.Write("DVDPlayer9:failed vmr9 not connected");
 					mediaCtrl=null;
 					Cleanup();
 					return base.GetInterfaces(strPath);
@@ -223,7 +224,7 @@ namespace MediaPortal.Player
       int hr;
       try 
       {
-        Log.Write("DVDPlayer:cleanup DShow graph");
+        Log.Write("DVDPlayer9:cleanup DShow graph");
 				if( dvdCtrl != null )
 				{
 					hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
@@ -299,7 +300,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer9:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
     }
 

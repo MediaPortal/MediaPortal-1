@@ -348,14 +348,30 @@ namespace MediaPortal.Player
 		  SetDefaultLanguages();
         
 
-			    hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero );
-        if (videoWin!=null)
+			  hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero );
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to SetNotifyWindow 0x{0:X}",hr);
+				}
+
+				if (videoWin!=null)
         {
-          if( hr == 0 )
-            hr = videoWin.put_Owner( GUIGraphicsContext.ActiveForm);
-          if( hr == 0 )
-            hr = videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+					if( hr == 0 )
+					{
+						hr = videoWin.put_Owner( GUIGraphicsContext.ActiveForm);
+						if (hr!=0)
+						{
+							Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to set window owner 0x{0:X}",hr);
+						}
+					}
+					if( hr == 0 )
+					{
+							hr = videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+							if (hr!=0)
+								Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to set window style 0x{0:X}",hr);
+					}
         }
+				
 				if( hr != 0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to set options()");
@@ -587,13 +603,13 @@ namespace MediaPortal.Player
 							Marshal.FreeCoTaskMem(ptrFolder);
 							dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
 							dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
-
+/*
 							if (path!=null && path.Length>0)
 							{
 								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
 								dvdHelper.Reset(path);
 							}
-
+*/
 							AddPreferedCodecs(graphBuilder);
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 
