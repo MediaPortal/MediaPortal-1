@@ -1,5 +1,6 @@
-12-08-2004  viz	        : after a new songs start to play while being in full screen viz, you can't exit the viz anymore with X or ESC
-12-09-2004  Pictures    : Screensaver is not disabled during a slideshow
+12-08-2004  viz	        : fixed :  after a new songs start to play while being in full screen viz, you can't exit the viz anymore with X or ESC
+12-09-2004  Pictures    : fixed :  Screensaver is not disabled during a slideshow
+12-08-2004  pictures    : fixed :  slideshow should halt when zooning and resume when original size is selected again
 
 11-08-2004  my music    : fixed : Wrong discography information for Artists.  allmusic.com keeps changing layout...
 11-08-2004  my music    : added : Default thumb when playing a song with no album art.  This was file as a bug for external players, but this was never done even for built-in player
