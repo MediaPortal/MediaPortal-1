@@ -680,7 +680,7 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
-				if (!tvcard.IsTimeShifting && !tvcard.View && !tvcard.IsRecording)
+				if (!tvcard.IsRecording)
 				{
 					if (RadioDatabase.CanCardTuneToStation(radioStationName, tvcard.ID))
 					{
