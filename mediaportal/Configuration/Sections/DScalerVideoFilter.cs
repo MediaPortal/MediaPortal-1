@@ -74,6 +74,14 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.cbAnalogBlanking = new System.Windows.Forms.CheckBox();
+			this.cbColorSpace = new System.Windows.Forms.ComboBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.cbIDCT = new System.Windows.Forms.ComboBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.cbHardcodePal = new System.Windows.Forms.CheckBox();
+			this.cbDVBAR = new System.Windows.Forms.ComboBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tbVideoOffset = new System.Windows.Forms.TextBox();
 			this.cbAspectRatio = new System.Windows.Forms.CheckBox();
@@ -82,14 +90,6 @@ namespace MediaPortal.Configuration.Sections
 			this.cbDeinterlace = new System.Windows.Forms.ComboBox();
 			this.cbSmoothing = new System.Windows.Forms.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.cbDVBAR = new System.Windows.Forms.ComboBox();
-			this.cbHardcodePal = new System.Windows.Forms.CheckBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.cbIDCT = new System.Windows.Forms.ComboBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.cbColorSpace = new System.Windows.Forms.ComboBox();
-			this.cbAnalogBlanking = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -120,6 +120,83 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "DScaler Video  Decoder";
+			// 
+			// cbAnalogBlanking
+			// 
+			this.cbAnalogBlanking.Checked = true;
+			this.cbAnalogBlanking.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cbAnalogBlanking.Location = new System.Drawing.Point(24, 248);
+			this.cbAnalogBlanking.Name = "cbAnalogBlanking";
+			this.cbAnalogBlanking.Size = new System.Drawing.Size(200, 16);
+			this.cbAnalogBlanking.TabIndex = 31;
+			this.cbAnalogBlanking.Text = "Do analog blanking";
+			// 
+			// cbColorSpace
+			// 
+			this.cbColorSpace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbColorSpace.Items.AddRange(new object[] {
+																											"YV12",
+																											"YUY2"});
+			this.cbColorSpace.Location = new System.Drawing.Point(160, 120);
+			this.cbColorSpace.Name = "cbColorSpace";
+			this.cbColorSpace.Size = new System.Drawing.Size(184, 21);
+			this.cbColorSpace.TabIndex = 30;
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(24, 120);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(128, 16);
+			this.label6.TabIndex = 29;
+			this.label6.Text = "Output colorspace:";
+			// 
+			// cbIDCT
+			// 
+			this.cbIDCT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbIDCT.Items.AddRange(new object[] {
+																								"Reference",
+																								"MMX only",
+																								"Accelerated"});
+			this.cbIDCT.Location = new System.Drawing.Point(160, 88);
+			this.cbIDCT.Name = "cbIDCT";
+			this.cbIDCT.Size = new System.Drawing.Size(184, 21);
+			this.cbIDCT.TabIndex = 28;
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(24, 88);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(128, 16);
+			this.label4.TabIndex = 27;
+			this.label4.Text = "IDCT to use:";
+			// 
+			// cbHardcodePal
+			// 
+			this.cbHardcodePal.Location = new System.Drawing.Point(24, 224);
+			this.cbHardcodePal.Name = "cbHardcodePal";
+			this.cbHardcodePal.Size = new System.Drawing.Size(200, 16);
+			this.cbHardcodePal.TabIndex = 26;
+			this.cbHardcodePal.Text = "Hardcode for PAL with FFdshow";
+			// 
+			// cbDVBAR
+			// 
+			this.cbDVBAR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbDVBAR.Items.AddRange(new object[] {
+																								 "16:9 Display",
+																								 "4:3 Display Center cut out",
+																								 "4:3 Display Letterbox"});
+			this.cbDVBAR.Location = new System.Drawing.Point(160, 56);
+			this.cbDVBAR.Name = "cbDVBAR";
+			this.cbDVBAR.Size = new System.Drawing.Size(184, 21);
+			this.cbDVBAR.TabIndex = 25;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(24, 56);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(128, 16);
+			this.label2.TabIndex = 24;
+			this.label2.Text = "DVB Aspect preference:";
 			// 
 			// label1
 			// 
@@ -167,6 +244,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// cbDeinterlace
 			// 
+			this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbDeinterlace.Items.AddRange(new object[] {
 																											 "Automatic",
 																											 "Force Weave",
@@ -175,7 +253,6 @@ namespace MediaPortal.Configuration.Sections
 			this.cbDeinterlace.Name = "cbDeinterlace";
 			this.cbDeinterlace.Size = new System.Drawing.Size(184, 21);
 			this.cbDeinterlace.TabIndex = 12;
-			this.cbDeinterlace.Text = "Automatic";
 			// 
 			// cbSmoothing
 			// 
@@ -194,83 +271,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label3.Size = new System.Drawing.Size(96, 16);
 			this.label3.TabIndex = 8;
 			this.label3.Text = "Deinterlace mode";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(24, 56);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(128, 16);
-			this.label2.TabIndex = 24;
-			this.label2.Text = "DVB Aspect preference:";
-			// 
-			// cbDVBAR
-			// 
-			this.cbDVBAR.Items.AddRange(new object[] {
-																								 "16:9 Display",
-																								 "4:3 Display Center cut out",
-																								 "4:3 Display Letterbox"});
-			this.cbDVBAR.Location = new System.Drawing.Point(160, 56);
-			this.cbDVBAR.Name = "cbDVBAR";
-			this.cbDVBAR.Size = new System.Drawing.Size(184, 21);
-			this.cbDVBAR.TabIndex = 25;
-			this.cbDVBAR.Text = "16:9";
-			// 
-			// cbHardcodePal
-			// 
-			this.cbHardcodePal.Location = new System.Drawing.Point(24, 224);
-			this.cbHardcodePal.Name = "cbHardcodePal";
-			this.cbHardcodePal.Size = new System.Drawing.Size(200, 16);
-			this.cbHardcodePal.TabIndex = 26;
-			this.cbHardcodePal.Text = "Hardcode for PAL with FFdshow";
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(24, 88);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(128, 16);
-			this.label4.TabIndex = 27;
-			this.label4.Text = "IDCT to use:";
-			// 
-			// cbIDCT
-			// 
-			this.cbIDCT.Items.AddRange(new object[] {
-																								"Reference",
-																								"MMX only",
-																								"Accelerated"});
-			this.cbIDCT.Location = new System.Drawing.Point(160, 88);
-			this.cbIDCT.Name = "cbIDCT";
-			this.cbIDCT.Size = new System.Drawing.Size(184, 21);
-			this.cbIDCT.TabIndex = 28;
-			this.cbIDCT.Text = "Accelerated";
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(24, 120);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(128, 16);
-			this.label6.TabIndex = 29;
-			this.label6.Text = "Output colorspace:";
-			// 
-			// cbColorSpace
-			// 
-			this.cbColorSpace.Items.AddRange(new object[] {
-																											"YV12",
-																											"YUY2"});
-			this.cbColorSpace.Location = new System.Drawing.Point(160, 120);
-			this.cbColorSpace.Name = "cbColorSpace";
-			this.cbColorSpace.Size = new System.Drawing.Size(184, 21);
-			this.cbColorSpace.TabIndex = 30;
-			this.cbColorSpace.Text = "YUY2";
-			// 
-			// cbAnalogBlanking
-			// 
-			this.cbAnalogBlanking.Checked = true;
-			this.cbAnalogBlanking.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbAnalogBlanking.Location = new System.Drawing.Point(24, 248);
-			this.cbAnalogBlanking.Name = "cbAnalogBlanking";
-			this.cbAnalogBlanking.Size = new System.Drawing.Size(200, 16);
-			this.cbAnalogBlanking.TabIndex = 31;
-			this.cbAnalogBlanking.Text = "Do analog blanking";
 			// 
 			// DScalerVideoFilter
 			// 

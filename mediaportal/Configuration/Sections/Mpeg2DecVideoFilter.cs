@@ -189,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// cbDeinterlace
 			// 
+			this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbDeinterlace.Items.AddRange(new object[] {
 																											 "Auto",
 																											 "Weave",
@@ -198,7 +199,6 @@ namespace MediaPortal.Configuration.Sections
 			this.cbDeinterlace.Name = "cbDeinterlace";
 			this.cbDeinterlace.Size = new System.Drawing.Size(121, 21);
 			this.cbDeinterlace.TabIndex = 3;
-			this.cbDeinterlace.Text = "Auto";
 			// 
 			// label2
 			// 

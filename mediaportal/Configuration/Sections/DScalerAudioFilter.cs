@@ -66,14 +66,14 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
 			this.checkBoxMPEGOverSPDIF = new System.Windows.Forms.CheckBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.checkBoxSPDIF = new System.Windows.Forms.CheckBox();
 			this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
 			this.checkBoxDynamicRange = new System.Windows.Forms.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
-			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -96,6 +96,22 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "DScaler Audio Decoder";
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(200, 128);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(100, 16);
+			this.label1.TabIndex = 23;
+			this.label1.Text = "msec.";
+			// 
+			// textBoxAudioOffset
+			// 
+			this.textBoxAudioOffset.Location = new System.Drawing.Point(152, 128);
+			this.textBoxAudioOffset.Name = "textBoxAudioOffset";
+			this.textBoxAudioOffset.Size = new System.Drawing.Size(32, 20);
+			this.textBoxAudioOffset.TabIndex = 22;
+			this.textBoxAudioOffset.Text = "0";
 			// 
 			// checkBoxMPEGOverSPDIF
 			// 
@@ -123,6 +139,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// comboBoxSpeakerConfig
 			// 
+			this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
 																															 "Stereo",
 																															 "Dolby Stereo",
@@ -134,7 +151,6 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
 			this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(224, 21);
 			this.comboBoxSpeakerConfig.TabIndex = 12;
-			this.comboBoxSpeakerConfig.Text = "Stereo";
 			// 
 			// checkBoxDynamicRange
 			// 
@@ -151,22 +167,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label3.Size = new System.Drawing.Size(88, 16);
 			this.label3.TabIndex = 8;
 			this.label3.Text = "Speaker config:";
-			// 
-			// textBoxAudioOffset
-			// 
-			this.textBoxAudioOffset.Location = new System.Drawing.Point(152, 128);
-			this.textBoxAudioOffset.Name = "textBoxAudioOffset";
-			this.textBoxAudioOffset.Size = new System.Drawing.Size(32, 20);
-			this.textBoxAudioOffset.TabIndex = 22;
-			this.textBoxAudioOffset.Text = "0";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(200, 128);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(100, 16);
-			this.label1.TabIndex = 23;
-			this.label1.Text = "msec.";
 			// 
 			// DScalerAudioFilter
 			// 

@@ -106,7 +106,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader4;
 		private System.Windows.Forms.Button buttonAddFile;
 		private System.Windows.Forms.Button buttonRemoveFile;
-		private System.Windows.Forms.Button buttonNewMovie;
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Button buttonLookupMovie;
 		private System.Windows.Forms.TextBox textBoxNewGenre;
@@ -126,6 +125,7 @@ namespace MediaPortal.Configuration.Sections
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
+			cbTitle.DropDownStyle = ComboBoxStyle.DropDownList;
       groupBox2.Enabled = false;
 		}
 
@@ -224,7 +224,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label16 = new System.Windows.Forms.Label();
 			this.buttonLookupMovie = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
-			this.buttonNewMovie = new System.Windows.Forms.Button();
 			this.tbTagline = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.cbWatched = new System.Windows.Forms.CheckBox();
@@ -449,7 +448,6 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.Controls.Add(this.label16);
 			this.tabPage3.Controls.Add(this.buttonLookupMovie);
 			this.tabPage3.Controls.Add(this.btnSave);
-			this.tabPage3.Controls.Add(this.buttonNewMovie);
 			this.tabPage3.Controls.Add(this.tbTagline);
 			this.tabPage3.Controls.Add(this.label4);
 			this.tabPage3.Controls.Add(this.cbWatched);
@@ -518,21 +516,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// btnSave
 			// 
-			this.btnSave.Location = new System.Drawing.Point(240, 328);
+			this.btnSave.Location = new System.Drawing.Point(336, 328);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(56, 23);
 			this.btnSave.TabIndex = 32;
 			this.btnSave.Text = "Save";
 			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-			// 
-			// buttonNewMovie
-			// 
-			this.buttonNewMovie.Location = new System.Drawing.Point(328, 328);
-			this.buttonNewMovie.Name = "buttonNewMovie";
-			this.buttonNewMovie.Size = new System.Drawing.Size(64, 24);
-			this.buttonNewMovie.TabIndex = 31;
-			this.buttonNewMovie.Text = "New";
-			this.buttonNewMovie.Click += new System.EventHandler(this.buttonNewMovie_Click);
 			// 
 			// tbTagline
 			// 
@@ -588,7 +577,6 @@ namespace MediaPortal.Configuration.Sections
 			this.cbTitle.Location = new System.Drawing.Point(96, 16);
 			this.cbTitle.Name = "cbTitle";
 			this.cbTitle.Size = new System.Drawing.Size(264, 21);
-			this.cbTitle.Sorted = true;
 			this.cbTitle.TabIndex = 0;
 			this.cbTitle.SelectedIndexChanged += new System.EventHandler(this.cbTitle_SelectedIndexChanged);
 			// 
@@ -1461,6 +1449,11 @@ namespace MediaPortal.Configuration.Sections
 				if (i==0) UpdateEdit(movie);
 				++i;
 			}
+
+			IMDBMovie movieNew = new IMDBMovie();
+			movieNew.Title="New...";
+			ComboBoxItemMovie emptyItem = new ComboBoxItemMovie("New...",movieNew);
+			cbTitle.Items.Add(emptyItem);
 		}
 		void UpdateEdit(IMDBMovie movie)
 		{	
@@ -1734,7 +1727,6 @@ namespace MediaPortal.Configuration.Sections
 			}
 			buttonLookupMovie.Enabled=false;
 			btnSave.Enabled=false;
-			buttonNewMovie.Enabled=false;
 			tabControl2.Enabled=false;
 			tabControl1.Enabled=false;
 			IMDBMovie movie=ScanFile(tbTitle.Text);
@@ -1756,7 +1748,6 @@ namespace MediaPortal.Configuration.Sections
 			}
 			buttonLookupMovie.Enabled=true;
 			btnSave.Enabled=true;
-			buttonNewMovie.Enabled=true;
 			tabControl2.Enabled=true;
 			tabControl1.Enabled=true;
 		}

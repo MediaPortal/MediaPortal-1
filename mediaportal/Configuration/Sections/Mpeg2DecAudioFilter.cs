@@ -194,6 +194,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// comboBoxAC3SpeakerConfig
 			// 
+			this.comboBoxAC3SpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxAC3SpeakerConfig.Items.AddRange(new object[] {
 																																	"Mono",
 																																	"Dual Mono",
@@ -211,7 +212,6 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxAC3SpeakerConfig.Name = "comboBoxAC3SpeakerConfig";
 			this.comboBoxAC3SpeakerConfig.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxAC3SpeakerConfig.TabIndex = 12;
-			this.comboBoxAC3SpeakerConfig.Text = "Stereo";
 			// 
 			// checkBoxAC3DynamicRange
 			// 
@@ -340,6 +340,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// comboBoxDTSSpeakerConfig
 			// 
+			this.comboBoxDTSSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxDTSSpeakerConfig.Items.AddRange(new object[] {
 																																	"Mono",
 																																	"Dual Mono",
@@ -353,7 +354,6 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxDTSSpeakerConfig.Name = "comboBoxDTSSpeakerConfig";
 			this.comboBoxDTSSpeakerConfig.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxDTSSpeakerConfig.TabIndex = 18;
-			this.comboBoxDTSSpeakerConfig.Text = "Stereo";
 			// 
 			// checkBoxDTSDynamicRange
 			// 
