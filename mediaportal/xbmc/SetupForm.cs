@@ -118,7 +118,6 @@ namespace MediaPortal
     private ListViewEx listTVChannels;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.Label label21;
     private System.Windows.Forms.Button btnRecPath;
     private System.Windows.Forms.TextBox textBoxRecPath;
     private System.Windows.Forms.GroupBox groupBox11;
@@ -128,13 +127,8 @@ namespace MediaPortal
     private System.Windows.Forms.RadioButton btnradioAntenna;
     private System.Windows.Forms.RadioButton btnradioCable;
     private System.Windows.Forms.CheckBox checkBoxAutoHideMouse;
-    private System.Windows.Forms.Label label23;
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.NumericUpDown upDownCountry;
-    private System.Windows.Forms.Button btnSetupVideoCompressor;
-    private System.Windows.Forms.Button btnSetupAudioCompressor;
-    private System.Windows.Forms.Button btnSetupVideoDevice;
-    private System.Windows.Forms.Button btnSetupAudioDevice;
     private System.Windows.Forms.Label label25;
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.Label label26;
@@ -166,6 +160,11 @@ namespace MediaPortal
     private System.Windows.Forms.Button btnDelChannel;
     private System.Windows.Forms.Button btnEditChannel;
     private System.Windows.Forms.TextBox textEditBox;
+    private System.Windows.Forms.Label label23;
+    private System.Windows.Forms.TabPage tabTVChannels;
+    private System.Windows.Forms.GroupBox groupBox16;
+    private System.Windows.Forms.ListView listPropertyPages;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
  
     /// <summary>
 		/// Required designer variable.
@@ -245,6 +244,19 @@ namespace MediaPortal
       this.movieFile = new System.Windows.Forms.TextBox();
       this.label3 = new System.Windows.Forms.Label();
       this.checkBoxMovieInternalPlayer = new System.Windows.Forms.CheckBox();
+      this.TabDVDPlayer = new System.Windows.Forms.TabPage();
+      this.DVDPlayerBox = new System.Windows.Forms.GroupBox();
+      this.checkBoxDVDSubtitles = new System.Windows.Forms.CheckBox();
+      this.comboBoxSubtitleLanguage = new System.Windows.Forms.ComboBox();
+      this.comboBoxAudioLanguage = new System.Windows.Forms.ComboBox();
+      this.label29 = new System.Windows.Forms.Label();
+      this.label28 = new System.Windows.Forms.Label();
+      this.checkBoxInternalDVDPlayer = new System.Windows.Forms.CheckBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.dvdFile = new System.Windows.Forms.TextBox();
+      this.dvdbtnSelect = new System.Windows.Forms.Button();
+      this.label2 = new System.Windows.Forms.Label();
+      this.dvdParams = new System.Windows.Forms.TextBox();
       this.tabAudioShares = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.checkBoxShufflePlaylists = new System.Windows.Forms.CheckBox();
@@ -259,19 +271,6 @@ namespace MediaPortal
       this.listAudioShares = new System.Windows.Forms.ListView();
       this.HdrAudioName = new System.Windows.Forms.ColumnHeader();
       this.HdrAudioFolder = new System.Windows.Forms.ColumnHeader();
-      this.TabDVDPlayer = new System.Windows.Forms.TabPage();
-      this.DVDPlayerBox = new System.Windows.Forms.GroupBox();
-      this.checkBoxDVDSubtitles = new System.Windows.Forms.CheckBox();
-      this.comboBoxSubtitleLanguage = new System.Windows.Forms.ComboBox();
-      this.comboBoxAudioLanguage = new System.Windows.Forms.ComboBox();
-      this.label29 = new System.Windows.Forms.Label();
-      this.label28 = new System.Windows.Forms.Label();
-      this.checkBoxInternalDVDPlayer = new System.Windows.Forms.CheckBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.dvdFile = new System.Windows.Forms.TextBox();
-      this.dvdbtnSelect = new System.Windows.Forms.Button();
-      this.label2 = new System.Windows.Forms.Label();
-      this.dvdParams = new System.Windows.Forms.TextBox();
       this.tabVideoShares = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.chkBoxVideoRepeat = new System.Windows.Forms.CheckBox();
@@ -319,11 +318,8 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.tabPageCapture = new System.Windows.Forms.TabPage();
-      this.btnEditChannel = new System.Windows.Forms.Button();
-      this.btnDelChannel = new System.Windows.Forms.Button();
-      this.btnNewChannel = new System.Windows.Forms.Button();
-      this.btnTvChannelDown = new System.Windows.Forms.Button();
-      this.btnTvChannelUp = new System.Windows.Forms.Button();
+      this.listPropertyPages = new System.Windows.Forms.ListView();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.groupBox13 = new System.Windows.Forms.GroupBox();
       this.upDownCountry = new System.Windows.Forms.NumericUpDown();
       this.label24 = new System.Windows.Forms.Label();
@@ -335,26 +331,28 @@ namespace MediaPortal
       this.comboBoxCaptureFormat = new System.Windows.Forms.ComboBox();
       this.btnRecPath = new System.Windows.Forms.Button();
       this.textBoxRecPath = new System.Windows.Forms.TextBox();
-      this.label21 = new System.Windows.Forms.Label();
       this.groupBox12 = new System.Windows.Forms.GroupBox();
-      this.btnSetupAudioCompressor = new System.Windows.Forms.Button();
-      this.btnSetupVideoCompressor = new System.Windows.Forms.Button();
       this.comboCompressorVideo = new System.Windows.Forms.ComboBox();
       this.label20 = new System.Windows.Forms.Label();
       this.label19 = new System.Windows.Forms.Label();
       this.comboCompressorAudio = new System.Windows.Forms.ComboBox();
       this.groupBox10 = new System.Windows.Forms.GroupBox();
-      this.btnSetupVideoDevice = new System.Windows.Forms.Button();
       this.label18 = new System.Windows.Forms.Label();
       this.label17 = new System.Windows.Forms.Label();
       this.comboAudioDevice = new System.Windows.Forms.ComboBox();
       this.comboVideoDevice = new System.Windows.Forms.ComboBox();
-      this.btnSetupAudioDevice = new System.Windows.Forms.Button();
+      this.groupBox16 = new System.Windows.Forms.GroupBox();
+      this.tabTVChannels = new System.Windows.Forms.TabPage();
+      this.textEditBox = new System.Windows.Forms.TextBox();
+      this.btnEditChannel = new System.Windows.Forms.Button();
+      this.btnDelChannel = new System.Windows.Forms.Button();
+      this.btnNewChannel = new System.Windows.Forms.Button();
+      this.btnTvChannelDown = new System.Windows.Forms.Button();
+      this.btnTvChannelUp = new System.Windows.Forms.Button();
       this.listTVChannels = new MediaPortal.WinControls.ListViewEx();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.textEditBox = new System.Windows.Forms.TextBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.tabAudioPlayer.SuspendLayout();
@@ -365,11 +363,11 @@ namespace MediaPortal
       this.groupBox8.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubShadow)).BeginInit();
       this.MoviePlayerBox.SuspendLayout();
+      this.TabDVDPlayer.SuspendLayout();
+      this.DVDPlayerBox.SuspendLayout();
       this.tabAudioShares.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.audioGroupBox.SuspendLayout();
-      this.TabDVDPlayer.SuspendLayout();
-      this.DVDPlayerBox.SuspendLayout();
       this.tabVideoShares.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.VideoGroupBox.SuspendLayout();
@@ -390,6 +388,7 @@ namespace MediaPortal
       this.groupBox11.SuspendLayout();
       this.groupBox12.SuspendLayout();
       this.groupBox10.SuspendLayout();
+      this.tabTVChannels.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl
@@ -397,12 +396,13 @@ namespace MediaPortal
       this.tabControl.Controls.Add(this.tabGeneral);
       this.tabControl.Controls.Add(this.tabAudioPlayer);
       this.tabControl.Controls.Add(this.tabPlayers);
-      this.tabControl.Controls.Add(this.tabAudioShares);
       this.tabControl.Controls.Add(this.TabDVDPlayer);
+      this.tabControl.Controls.Add(this.tabAudioShares);
       this.tabControl.Controls.Add(this.tabVideoShares);
       this.tabControl.Controls.Add(this.tabPictureShares);
       this.tabControl.Controls.Add(this.tabWeather);
       this.tabControl.Controls.Add(this.tabPageCapture);
+      this.tabControl.Controls.Add(this.tabTVChannels);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
@@ -751,6 +751,125 @@ namespace MediaPortal
       this.checkBoxMovieInternalPlayer.Text = "Use Internal player";
       this.checkBoxMovieInternalPlayer.CheckedChanged += new System.EventHandler(this.checkBoxMovieInternalPlayer_CheckedChanged);
       // 
+      // TabDVDPlayer
+      // 
+      this.TabDVDPlayer.Controls.Add(this.DVDPlayerBox);
+      this.TabDVDPlayer.Location = new System.Drawing.Point(4, 22);
+      this.TabDVDPlayer.Name = "TabDVDPlayer";
+      this.TabDVDPlayer.Size = new System.Drawing.Size(616, 374);
+      this.TabDVDPlayer.TabIndex = 7;
+      this.TabDVDPlayer.Text = "DVDPlayer";
+      // 
+      // DVDPlayerBox
+      // 
+      this.DVDPlayerBox.Controls.Add(this.checkBoxDVDSubtitles);
+      this.DVDPlayerBox.Controls.Add(this.comboBoxSubtitleLanguage);
+      this.DVDPlayerBox.Controls.Add(this.comboBoxAudioLanguage);
+      this.DVDPlayerBox.Controls.Add(this.label29);
+      this.DVDPlayerBox.Controls.Add(this.label28);
+      this.DVDPlayerBox.Controls.Add(this.checkBoxInternalDVDPlayer);
+      this.DVDPlayerBox.Controls.Add(this.label1);
+      this.DVDPlayerBox.Controls.Add(this.dvdFile);
+      this.DVDPlayerBox.Controls.Add(this.dvdbtnSelect);
+      this.DVDPlayerBox.Controls.Add(this.label2);
+      this.DVDPlayerBox.Controls.Add(this.dvdParams);
+      this.DVDPlayerBox.Location = new System.Drawing.Point(8, 16);
+      this.DVDPlayerBox.Name = "DVDPlayerBox";
+      this.DVDPlayerBox.Size = new System.Drawing.Size(592, 272);
+      this.DVDPlayerBox.TabIndex = 6;
+      this.DVDPlayerBox.TabStop = false;
+      this.DVDPlayerBox.Text = "DVD Player";
+      // 
+      // checkBoxDVDSubtitles
+      // 
+      this.checkBoxDVDSubtitles.Location = new System.Drawing.Point(328, 184);
+      this.checkBoxDVDSubtitles.Name = "checkBoxDVDSubtitles";
+      this.checkBoxDVDSubtitles.Size = new System.Drawing.Size(104, 16);
+      this.checkBoxDVDSubtitles.TabIndex = 10;
+      this.checkBoxDVDSubtitles.Text = "Show Subtitles";
+      this.checkBoxDVDSubtitles.CheckedChanged += new System.EventHandler(this.checkBoxDVDSubtitles_CheckedChanged);
+      // 
+      // comboBoxSubtitleLanguage
+      // 
+      this.comboBoxSubtitleLanguage.Location = new System.Drawing.Point(160, 184);
+      this.comboBoxSubtitleLanguage.Name = "comboBoxSubtitleLanguage";
+      this.comboBoxSubtitleLanguage.Size = new System.Drawing.Size(152, 21);
+      this.comboBoxSubtitleLanguage.Sorted = true;
+      this.comboBoxSubtitleLanguage.TabIndex = 9;
+      // 
+      // comboBoxAudioLanguage
+      // 
+      this.comboBoxAudioLanguage.Location = new System.Drawing.Point(160, 152);
+      this.comboBoxAudioLanguage.Name = "comboBoxAudioLanguage";
+      this.comboBoxAudioLanguage.Size = new System.Drawing.Size(152, 21);
+      this.comboBoxAudioLanguage.Sorted = true;
+      this.comboBoxAudioLanguage.TabIndex = 8;
+      // 
+      // label29
+      // 
+      this.label29.Location = new System.Drawing.Point(24, 184);
+      this.label29.Name = "label29";
+      this.label29.Size = new System.Drawing.Size(136, 16);
+      this.label29.TabIndex = 7;
+      this.label29.Text = "Default subtitle language:";
+      // 
+      // label28
+      // 
+      this.label28.Location = new System.Drawing.Point(24, 152);
+      this.label28.Name = "label28";
+      this.label28.Size = new System.Drawing.Size(128, 16);
+      this.label28.TabIndex = 6;
+      this.label28.Text = "Default Audio language:";
+      // 
+      // checkBoxInternalDVDPlayer
+      // 
+      this.checkBoxInternalDVDPlayer.Location = new System.Drawing.Point(16, 16);
+      this.checkBoxInternalDVDPlayer.Name = "checkBoxInternalDVDPlayer";
+      this.checkBoxInternalDVDPlayer.Size = new System.Drawing.Size(152, 16);
+      this.checkBoxInternalDVDPlayer.TabIndex = 5;
+      this.checkBoxInternalDVDPlayer.Text = "Use Internal DVD player";
+      this.checkBoxInternalDVDPlayer.CheckedChanged += new System.EventHandler(this.checkBoxInternalDVDPlayer_CheckedChanged);
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(32, 40);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(100, 16);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Filename";
+      // 
+      // dvdFile
+      // 
+      this.dvdFile.Location = new System.Drawing.Point(48, 56);
+      this.dvdFile.Name = "dvdFile";
+      this.dvdFile.Size = new System.Drawing.Size(392, 20);
+      this.dvdFile.TabIndex = 1;
+      this.dvdFile.Text = "";
+      // 
+      // dvdbtnSelect
+      // 
+      this.dvdbtnSelect.Location = new System.Drawing.Point(448, 56);
+      this.dvdbtnSelect.Name = "dvdbtnSelect";
+      this.dvdbtnSelect.Size = new System.Drawing.Size(24, 23);
+      this.dvdbtnSelect.TabIndex = 2;
+      this.dvdbtnSelect.Text = "...";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(32, 80);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(72, 16);
+      this.label2.TabIndex = 3;
+      this.label2.Text = "Parameters";
+      // 
+      // dvdParams
+      // 
+      this.dvdParams.Location = new System.Drawing.Point(48, 96);
+      this.dvdParams.Name = "dvdParams";
+      this.dvdParams.Size = new System.Drawing.Size(160, 20);
+      this.dvdParams.TabIndex = 4;
+      this.dvdParams.Text = "";
+      // 
       // tabAudioShares
       // 
       this.tabAudioShares.Controls.Add(this.groupBox2);
@@ -878,125 +997,6 @@ namespace MediaPortal
       // 
       this.HdrAudioFolder.Text = "Folder";
       this.HdrAudioFolder.Width = 277;
-      // 
-      // TabDVDPlayer
-      // 
-      this.TabDVDPlayer.Controls.Add(this.DVDPlayerBox);
-      this.TabDVDPlayer.Location = new System.Drawing.Point(4, 22);
-      this.TabDVDPlayer.Name = "TabDVDPlayer";
-      this.TabDVDPlayer.Size = new System.Drawing.Size(616, 374);
-      this.TabDVDPlayer.TabIndex = 7;
-      this.TabDVDPlayer.Text = "DVDPlayer";
-      // 
-      // DVDPlayerBox
-      // 
-      this.DVDPlayerBox.Controls.Add(this.checkBoxDVDSubtitles);
-      this.DVDPlayerBox.Controls.Add(this.comboBoxSubtitleLanguage);
-      this.DVDPlayerBox.Controls.Add(this.comboBoxAudioLanguage);
-      this.DVDPlayerBox.Controls.Add(this.label29);
-      this.DVDPlayerBox.Controls.Add(this.label28);
-      this.DVDPlayerBox.Controls.Add(this.checkBoxInternalDVDPlayer);
-      this.DVDPlayerBox.Controls.Add(this.label1);
-      this.DVDPlayerBox.Controls.Add(this.dvdFile);
-      this.DVDPlayerBox.Controls.Add(this.dvdbtnSelect);
-      this.DVDPlayerBox.Controls.Add(this.label2);
-      this.DVDPlayerBox.Controls.Add(this.dvdParams);
-      this.DVDPlayerBox.Location = new System.Drawing.Point(8, 16);
-      this.DVDPlayerBox.Name = "DVDPlayerBox";
-      this.DVDPlayerBox.Size = new System.Drawing.Size(592, 272);
-      this.DVDPlayerBox.TabIndex = 6;
-      this.DVDPlayerBox.TabStop = false;
-      this.DVDPlayerBox.Text = "DVD Player";
-      // 
-      // checkBoxDVDSubtitles
-      // 
-      this.checkBoxDVDSubtitles.Location = new System.Drawing.Point(328, 184);
-      this.checkBoxDVDSubtitles.Name = "checkBoxDVDSubtitles";
-      this.checkBoxDVDSubtitles.Size = new System.Drawing.Size(104, 16);
-      this.checkBoxDVDSubtitles.TabIndex = 10;
-      this.checkBoxDVDSubtitles.Text = "Show Subtitles";
-      this.checkBoxDVDSubtitles.CheckedChanged += new System.EventHandler(this.checkBoxDVDSubtitles_CheckedChanged);
-      // 
-      // comboBoxSubtitleLanguage
-      // 
-      this.comboBoxSubtitleLanguage.Location = new System.Drawing.Point(160, 184);
-      this.comboBoxSubtitleLanguage.Name = "comboBoxSubtitleLanguage";
-      this.comboBoxSubtitleLanguage.Size = new System.Drawing.Size(152, 21);
-      this.comboBoxSubtitleLanguage.Sorted = true;
-      this.comboBoxSubtitleLanguage.TabIndex = 9;
-      // 
-      // comboBoxAudioLanguage
-      // 
-      this.comboBoxAudioLanguage.Location = new System.Drawing.Point(160, 152);
-      this.comboBoxAudioLanguage.Name = "comboBoxAudioLanguage";
-      this.comboBoxAudioLanguage.Size = new System.Drawing.Size(152, 21);
-      this.comboBoxAudioLanguage.Sorted = true;
-      this.comboBoxAudioLanguage.TabIndex = 8;
-      // 
-      // label29
-      // 
-      this.label29.Location = new System.Drawing.Point(24, 184);
-      this.label29.Name = "label29";
-      this.label29.Size = new System.Drawing.Size(136, 16);
-      this.label29.TabIndex = 7;
-      this.label29.Text = "Default subtitle language:";
-      // 
-      // label28
-      // 
-      this.label28.Location = new System.Drawing.Point(24, 152);
-      this.label28.Name = "label28";
-      this.label28.Size = new System.Drawing.Size(128, 16);
-      this.label28.TabIndex = 6;
-      this.label28.Text = "Default Audio language:";
-      // 
-      // checkBoxInternalDVDPlayer
-      // 
-      this.checkBoxInternalDVDPlayer.Location = new System.Drawing.Point(16, 16);
-      this.checkBoxInternalDVDPlayer.Name = "checkBoxInternalDVDPlayer";
-      this.checkBoxInternalDVDPlayer.Size = new System.Drawing.Size(152, 16);
-      this.checkBoxInternalDVDPlayer.TabIndex = 5;
-      this.checkBoxInternalDVDPlayer.Text = "Use Internal DVD player";
-      this.checkBoxInternalDVDPlayer.CheckedChanged += new System.EventHandler(this.checkBoxInternalDVDPlayer_CheckedChanged);
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(32, 40);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 16);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Filename";
-      // 
-      // dvdFile
-      // 
-      this.dvdFile.Location = new System.Drawing.Point(48, 56);
-      this.dvdFile.Name = "dvdFile";
-      this.dvdFile.Size = new System.Drawing.Size(392, 20);
-      this.dvdFile.TabIndex = 1;
-      this.dvdFile.Text = "";
-      // 
-      // dvdbtnSelect
-      // 
-      this.dvdbtnSelect.Location = new System.Drawing.Point(448, 56);
-      this.dvdbtnSelect.Name = "dvdbtnSelect";
-      this.dvdbtnSelect.Size = new System.Drawing.Size(24, 23);
-      this.dvdbtnSelect.TabIndex = 2;
-      this.dvdbtnSelect.Text = "...";
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(32, 80);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(72, 16);
-      this.label2.TabIndex = 3;
-      this.label2.Text = "Parameters";
-      // 
-      // dvdParams
-      // 
-      this.dvdParams.Location = new System.Drawing.Point(48, 96);
-      this.dvdParams.Name = "dvdParams";
-      this.dvdParams.Size = new System.Drawing.Size(160, 20);
-      this.dvdParams.TabIndex = 4;
-      this.dvdParams.Text = "";
       // 
       // tabVideoShares
       // 
@@ -1457,71 +1457,37 @@ namespace MediaPortal
       // 
       // tabPageCapture
       // 
-      this.tabPageCapture.Controls.Add(this.textEditBox);
-      this.tabPageCapture.Controls.Add(this.btnEditChannel);
-      this.tabPageCapture.Controls.Add(this.btnDelChannel);
-      this.tabPageCapture.Controls.Add(this.btnNewChannel);
-      this.tabPageCapture.Controls.Add(this.btnTvChannelDown);
-      this.tabPageCapture.Controls.Add(this.btnTvChannelUp);
+      this.tabPageCapture.Controls.Add(this.listPropertyPages);
       this.tabPageCapture.Controls.Add(this.groupBox13);
       this.tabPageCapture.Controls.Add(this.groupBox11);
       this.tabPageCapture.Controls.Add(this.btnRecPath);
       this.tabPageCapture.Controls.Add(this.textBoxRecPath);
-      this.tabPageCapture.Controls.Add(this.label21);
       this.tabPageCapture.Controls.Add(this.groupBox12);
       this.tabPageCapture.Controls.Add(this.groupBox10);
-      this.tabPageCapture.Controls.Add(this.listTVChannels);
+      this.tabPageCapture.Controls.Add(this.groupBox16);
       this.tabPageCapture.Location = new System.Drawing.Point(4, 22);
       this.tabPageCapture.Name = "tabPageCapture";
       this.tabPageCapture.Size = new System.Drawing.Size(616, 374);
       this.tabPageCapture.TabIndex = 6;
       this.tabPageCapture.Text = "Video Capture";
       // 
-      // btnEditChannel
+      // listPropertyPages
       // 
-      this.btnEditChannel.Location = new System.Drawing.Point(120, 312);
-      this.btnEditChannel.Name = "btnEditChannel";
-      this.btnEditChannel.Size = new System.Drawing.Size(48, 23);
-      this.btnEditChannel.TabIndex = 17;
-      this.btnEditChannel.Text = "Edit";
-      this.btnEditChannel.Click += new System.EventHandler(this.btnEditChannel_Click);
+      this.listPropertyPages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                        this.columnHeader4});
+      this.listPropertyPages.FullRowSelect = true;
+      this.listPropertyPages.Location = new System.Drawing.Point(24, 256);
+      this.listPropertyPages.MultiSelect = false;
+      this.listPropertyPages.Name = "listPropertyPages";
+      this.listPropertyPages.Size = new System.Drawing.Size(384, 97);
+      this.listPropertyPages.TabIndex = 14;
+      this.listPropertyPages.View = System.Windows.Forms.View.Details;
+      this.listPropertyPages.DoubleClick += new System.EventHandler(this.listPropertyPages_DoubleClick);
       // 
-      // btnDelChannel
+      // columnHeader4
       // 
-      this.btnDelChannel.Location = new System.Drawing.Point(64, 312);
-      this.btnDelChannel.Name = "btnDelChannel";
-      this.btnDelChannel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.btnDelChannel.Size = new System.Drawing.Size(48, 23);
-      this.btnDelChannel.TabIndex = 16;
-      this.btnDelChannel.Text = "Delete";
-      this.btnDelChannel.Click += new System.EventHandler(this.btnDelChannel_Click);
-      // 
-      // btnNewChannel
-      // 
-      this.btnNewChannel.Location = new System.Drawing.Point(24, 312);
-      this.btnNewChannel.Name = "btnNewChannel";
-      this.btnNewChannel.Size = new System.Drawing.Size(32, 24);
-      this.btnNewChannel.TabIndex = 15;
-      this.btnNewChannel.Text = "Add";
-      this.btnNewChannel.Click += new System.EventHandler(this.btnNewChannel_Click);
-      // 
-      // btnTvChannelDown
-      // 
-      this.btnTvChannelDown.Location = new System.Drawing.Point(416, 280);
-      this.btnTvChannelDown.Name = "btnTvChannelDown";
-      this.btnTvChannelDown.Size = new System.Drawing.Size(16, 23);
-      this.btnTvChannelDown.TabIndex = 14;
-      this.btnTvChannelDown.Text = "v";
-      this.btnTvChannelDown.Click += new System.EventHandler(this.btnTvChannelDown_Click);
-      // 
-      // btnTvChannelUp
-      // 
-      this.btnTvChannelUp.Location = new System.Drawing.Point(416, 256);
-      this.btnTvChannelUp.Name = "btnTvChannelUp";
-      this.btnTvChannelUp.Size = new System.Drawing.Size(16, 24);
-      this.btnTvChannelUp.TabIndex = 13;
-      this.btnTvChannelUp.Text = "^";
-      this.btnTvChannelUp.Click += new System.EventHandler(this.btnTvChannelUp_Click);
+      this.columnHeader4.Text = "Property";
+      this.columnHeader4.Width = 299;
       // 
       // groupBox13
       // 
@@ -1539,7 +1505,7 @@ namespace MediaPortal
       // 
       // upDownCountry
       // 
-      this.upDownCountry.Location = new System.Drawing.Point(72, 88);
+      this.upDownCountry.Location = new System.Drawing.Point(64, 64);
       this.upDownCountry.Name = "upDownCountry";
       this.upDownCountry.Size = new System.Drawing.Size(56, 20);
       this.upDownCountry.TabIndex = 4;
@@ -1551,7 +1517,7 @@ namespace MediaPortal
       // 
       // label24
       // 
-      this.label24.Location = new System.Drawing.Point(16, 24);
+      this.label24.Location = new System.Drawing.Point(8, 16);
       this.label24.Name = "label24";
       this.label24.Size = new System.Drawing.Size(40, 16);
       this.label24.TabIndex = 3;
@@ -1559,7 +1525,7 @@ namespace MediaPortal
       // 
       // label23
       // 
-      this.label23.Location = new System.Drawing.Point(16, 88);
+      this.label23.Location = new System.Drawing.Point(8, 64);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(48, 16);
       this.label23.TabIndex = 2;
@@ -1567,15 +1533,15 @@ namespace MediaPortal
       // 
       // btnradioCable
       // 
-      this.btnradioCable.Location = new System.Drawing.Point(32, 56);
+      this.btnradioCable.Location = new System.Drawing.Point(56, 40);
       this.btnradioCable.Name = "btnradioCable";
-      this.btnradioCable.Size = new System.Drawing.Size(72, 24);
+      this.btnradioCable.Size = new System.Drawing.Size(72, 16);
       this.btnradioCable.TabIndex = 1;
       this.btnradioCable.Text = "Cable";
       // 
       // btnradioAntenna
       // 
-      this.btnradioAntenna.Location = new System.Drawing.Point(32, 40);
+      this.btnradioAntenna.Location = new System.Drawing.Point(56, 16);
       this.btnradioAntenna.Name = "btnradioAntenna";
       this.btnradioAntenna.Size = new System.Drawing.Size(72, 24);
       this.btnradioAntenna.TabIndex = 0;
@@ -1614,7 +1580,7 @@ namespace MediaPortal
       // 
       // btnRecPath
       // 
-      this.btnRecPath.Location = new System.Drawing.Point(472, 344);
+      this.btnRecPath.Location = new System.Drawing.Point(368, 208);
       this.btnRecPath.Name = "btnRecPath";
       this.btnRecPath.Size = new System.Drawing.Size(24, 23);
       this.btnRecPath.TabIndex = 9;
@@ -1623,24 +1589,14 @@ namespace MediaPortal
       // 
       // textBoxRecPath
       // 
-      this.textBoxRecPath.Location = new System.Drawing.Point(112, 344);
+      this.textBoxRecPath.Location = new System.Drawing.Point(40, 208);
       this.textBoxRecPath.Name = "textBoxRecPath";
-      this.textBoxRecPath.Size = new System.Drawing.Size(352, 20);
+      this.textBoxRecPath.Size = new System.Drawing.Size(312, 20);
       this.textBoxRecPath.TabIndex = 8;
       this.textBoxRecPath.Text = "";
       // 
-      // label21
-      // 
-      this.label21.Location = new System.Drawing.Point(24, 344);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(88, 16);
-      this.label21.TabIndex = 7;
-      this.label21.Text = "Recording path:";
-      // 
       // groupBox12
       // 
-      this.groupBox12.Controls.Add(this.btnSetupAudioCompressor);
-      this.groupBox12.Controls.Add(this.btnSetupVideoCompressor);
       this.groupBox12.Controls.Add(this.comboCompressorVideo);
       this.groupBox12.Controls.Add(this.label20);
       this.groupBox12.Controls.Add(this.label19);
@@ -1652,30 +1608,13 @@ namespace MediaPortal
       this.groupBox12.TabStop = false;
       this.groupBox12.Text = "Compressors";
       // 
-      // btnSetupAudioCompressor
-      // 
-      this.btnSetupAudioCompressor.Location = new System.Drawing.Point(320, 48);
-      this.btnSetupAudioCompressor.Name = "btnSetupAudioCompressor";
-      this.btnSetupAudioCompressor.Size = new System.Drawing.Size(24, 24);
-      this.btnSetupAudioCompressor.TabIndex = 8;
-      this.btnSetupAudioCompressor.Text = "...";
-      this.btnSetupAudioCompressor.Click += new System.EventHandler(this.btnSetupAudioCompressor_Click);
-      // 
-      // btnSetupVideoCompressor
-      // 
-      this.btnSetupVideoCompressor.Location = new System.Drawing.Point(320, 16);
-      this.btnSetupVideoCompressor.Name = "btnSetupVideoCompressor";
-      this.btnSetupVideoCompressor.Size = new System.Drawing.Size(24, 24);
-      this.btnSetupVideoCompressor.TabIndex = 7;
-      this.btnSetupVideoCompressor.Text = "...";
-      this.btnSetupVideoCompressor.Click += new System.EventHandler(this.btnSetupVideoCompressor_Click);
-      // 
       // comboCompressorVideo
       // 
       this.comboCompressorVideo.Location = new System.Drawing.Point(64, 16);
       this.comboCompressorVideo.Name = "comboCompressorVideo";
       this.comboCompressorVideo.Size = new System.Drawing.Size(240, 21);
       this.comboCompressorVideo.TabIndex = 6;
+      this.comboCompressorVideo.SelectedIndexChanged += new System.EventHandler(this.comboCompressorVideo_SelectedIndexChanged);
       // 
       // label20
       // 
@@ -1699,30 +1638,20 @@ namespace MediaPortal
       this.comboCompressorAudio.Name = "comboCompressorAudio";
       this.comboCompressorAudio.Size = new System.Drawing.Size(240, 21);
       this.comboCompressorAudio.TabIndex = 5;
+      this.comboCompressorAudio.SelectedIndexChanged += new System.EventHandler(this.comboCompressorAudio_SelectedIndexChanged);
       // 
       // groupBox10
       // 
-      this.groupBox10.Controls.Add(this.btnSetupVideoDevice);
       this.groupBox10.Controls.Add(this.label18);
       this.groupBox10.Controls.Add(this.label17);
       this.groupBox10.Controls.Add(this.comboAudioDevice);
       this.groupBox10.Controls.Add(this.comboVideoDevice);
-      this.groupBox10.Controls.Add(this.btnSetupAudioDevice);
       this.groupBox10.Location = new System.Drawing.Point(24, 8);
       this.groupBox10.Name = "groupBox10";
       this.groupBox10.Size = new System.Drawing.Size(384, 80);
       this.groupBox10.TabIndex = 0;
       this.groupBox10.TabStop = false;
       this.groupBox10.Text = "Capture Devices";
-      // 
-      // btnSetupVideoDevice
-      // 
-      this.btnSetupVideoDevice.Location = new System.Drawing.Point(320, 16);
-      this.btnSetupVideoDevice.Name = "btnSetupVideoDevice";
-      this.btnSetupVideoDevice.Size = new System.Drawing.Size(24, 23);
-      this.btnSetupVideoDevice.TabIndex = 4;
-      this.btnSetupVideoDevice.Text = "...";
-      this.btnSetupVideoDevice.Click += new System.EventHandler(this.btnSetupVideoDevice_Click);
       // 
       // label18
       // 
@@ -1746,6 +1675,7 @@ namespace MediaPortal
       this.comboAudioDevice.Name = "comboAudioDevice";
       this.comboAudioDevice.Size = new System.Drawing.Size(240, 21);
       this.comboAudioDevice.TabIndex = 1;
+      this.comboAudioDevice.SelectedIndexChanged += new System.EventHandler(this.comboAudioDevice_SelectedIndexChanged);
       // 
       // comboVideoDevice
       // 
@@ -1753,15 +1683,85 @@ namespace MediaPortal
       this.comboVideoDevice.Name = "comboVideoDevice";
       this.comboVideoDevice.Size = new System.Drawing.Size(240, 21);
       this.comboVideoDevice.TabIndex = 0;
+      this.comboVideoDevice.SelectedIndexChanged += new System.EventHandler(this.comboVideoDevice_SelectedIndexChanged);
       // 
-      // btnSetupAudioDevice
+      // groupBox16
       // 
-      this.btnSetupAudioDevice.Location = new System.Drawing.Point(320, 48);
-      this.btnSetupAudioDevice.Name = "btnSetupAudioDevice";
-      this.btnSetupAudioDevice.Size = new System.Drawing.Size(24, 23);
-      this.btnSetupAudioDevice.TabIndex = 4;
-      this.btnSetupAudioDevice.Text = "...";
-      this.btnSetupAudioDevice.Click += new System.EventHandler(this.btnSetupAudioDevice_Click);
+      this.groupBox16.Location = new System.Drawing.Point(24, 176);
+      this.groupBox16.Name = "groupBox16";
+      this.groupBox16.Size = new System.Drawing.Size(384, 72);
+      this.groupBox16.TabIndex = 13;
+      this.groupBox16.TabStop = false;
+      this.groupBox16.Text = "Recording path";
+      // 
+      // tabTVChannels
+      // 
+      this.tabTVChannels.Controls.Add(this.textEditBox);
+      this.tabTVChannels.Controls.Add(this.btnEditChannel);
+      this.tabTVChannels.Controls.Add(this.btnDelChannel);
+      this.tabTVChannels.Controls.Add(this.btnNewChannel);
+      this.tabTVChannels.Controls.Add(this.btnTvChannelDown);
+      this.tabTVChannels.Controls.Add(this.btnTvChannelUp);
+      this.tabTVChannels.Controls.Add(this.listTVChannels);
+      this.tabTVChannels.Location = new System.Drawing.Point(4, 22);
+      this.tabTVChannels.Name = "tabTVChannels";
+      this.tabTVChannels.Size = new System.Drawing.Size(616, 374);
+      this.tabTVChannels.TabIndex = 9;
+      this.tabTVChannels.Text = "TVChannels";
+      // 
+      // textEditBox
+      // 
+      this.textEditBox.Location = new System.Drawing.Point(504, 248);
+      this.textEditBox.Name = "textEditBox";
+      this.textEditBox.TabIndex = 18;
+      this.textEditBox.Text = "textBox1";
+      this.textEditBox.Visible = false;
+      // 
+      // btnEditChannel
+      // 
+      this.btnEditChannel.Location = new System.Drawing.Point(120, 240);
+      this.btnEditChannel.Name = "btnEditChannel";
+      this.btnEditChannel.Size = new System.Drawing.Size(48, 23);
+      this.btnEditChannel.TabIndex = 17;
+      this.btnEditChannel.Text = "Edit";
+      this.btnEditChannel.Click += new System.EventHandler(this.btnEditChannel_Click);
+      // 
+      // btnDelChannel
+      // 
+      this.btnDelChannel.Location = new System.Drawing.Point(64, 240);
+      this.btnDelChannel.Name = "btnDelChannel";
+      this.btnDelChannel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.btnDelChannel.Size = new System.Drawing.Size(48, 23);
+      this.btnDelChannel.TabIndex = 16;
+      this.btnDelChannel.Text = "Delete";
+      this.btnDelChannel.Click += new System.EventHandler(this.btnDelChannel_Click);
+      // 
+      // btnNewChannel
+      // 
+      this.btnNewChannel.Location = new System.Drawing.Point(24, 240);
+      this.btnNewChannel.Name = "btnNewChannel";
+      this.btnNewChannel.Size = new System.Drawing.Size(32, 24);
+      this.btnNewChannel.TabIndex = 15;
+      this.btnNewChannel.Text = "Add";
+      this.btnNewChannel.Click += new System.EventHandler(this.btnNewChannel_Click);
+      // 
+      // btnTvChannelDown
+      // 
+      this.btnTvChannelDown.Location = new System.Drawing.Point(416, 208);
+      this.btnTvChannelDown.Name = "btnTvChannelDown";
+      this.btnTvChannelDown.Size = new System.Drawing.Size(16, 23);
+      this.btnTvChannelDown.TabIndex = 14;
+      this.btnTvChannelDown.Text = "v";
+      this.btnTvChannelDown.Click += new System.EventHandler(this.btnTvChannelDown_Click);
+      // 
+      // btnTvChannelUp
+      // 
+      this.btnTvChannelUp.Location = new System.Drawing.Point(416, 184);
+      this.btnTvChannelUp.Name = "btnTvChannelUp";
+      this.btnTvChannelUp.Size = new System.Drawing.Size(16, 24);
+      this.btnTvChannelUp.TabIndex = 13;
+      this.btnTvChannelUp.Text = "^";
+      this.btnTvChannelUp.Click += new System.EventHandler(this.btnTvChannelUp_Click);
       // 
       // listTVChannels
       // 
@@ -1773,10 +1773,10 @@ namespace MediaPortal
                                                                                      this.columnHeader3});
       this.listTVChannels.FullRowSelect = true;
       this.listTVChannels.HideSelection = false;
-      this.listTVChannels.Location = new System.Drawing.Point(24, 176);
+      this.listTVChannels.Location = new System.Drawing.Point(24, 16);
       this.listTVChannels.MultiSelect = false;
       this.listTVChannels.Name = "listTVChannels";
-      this.listTVChannels.Size = new System.Drawing.Size(384, 128);
+      this.listTVChannels.Size = new System.Drawing.Size(384, 216);
       this.listTVChannels.TabIndex = 0;
       this.listTVChannels.View = System.Windows.Forms.View.Details;
       this.listTVChannels.DoubleClick += new System.EventHandler(this.listTVChannels_DoubleClick);
@@ -1795,14 +1795,6 @@ namespace MediaPortal
       // 
       this.columnHeader3.Text = "Frequency";
       this.columnHeader3.Width = 75;
-      // 
-      // textEditBox
-      // 
-      this.textEditBox.Location = new System.Drawing.Point(504, 248);
-      this.textEditBox.Name = "textEditBox";
-      this.textEditBox.TabIndex = 18;
-      this.textEditBox.Text = "textBox1";
-      this.textEditBox.Visible = false;
       // 
       // SetupForm
       // 
@@ -1823,11 +1815,11 @@ namespace MediaPortal
       this.groupBox8.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubShadow)).EndInit();
       this.MoviePlayerBox.ResumeLayout(false);
+      this.TabDVDPlayer.ResumeLayout(false);
+      this.DVDPlayerBox.ResumeLayout(false);
       this.tabAudioShares.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.audioGroupBox.ResumeLayout(false);
-      this.TabDVDPlayer.ResumeLayout(false);
-      this.DVDPlayerBox.ResumeLayout(false);
       this.tabVideoShares.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.VideoGroupBox.ResumeLayout(false);
@@ -1848,6 +1840,7 @@ namespace MediaPortal
       this.groupBox11.ResumeLayout(false);
       this.groupBox12.ResumeLayout(false);
       this.groupBox10.ResumeLayout(false);
+      this.tabTVChannels.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -2591,6 +2584,7 @@ namespace MediaPortal
         newItem.SubItems.Add(chan.Number.ToString());
         newItem.SubItems.Add(chan.Frequency.ToString());
       }
+      SetupPropertyPageList();
     }
 
     private void listTVChannels_DoubleClick(object sender, System.EventArgs e)
@@ -2683,116 +2677,52 @@ namespace MediaPortal
       
     
       // create new capture!
-      Capture capture = new Capture(videoDevice,audioDevice);
-
-      // add audio compressor
-      foreach (Filter filter in filters.AudioCompressors)
+      Capture capture=null;
+      try
       {
-        if (String.Compare(filter.Name,strCompressorAudio)==0)
-        {
-          capture.AudioCompressor=filter;
-          break;
-        }
+        capture = new Capture(videoDevice,audioDevice);
+      }
+      catch(Exception)
+      {
+        return null;
       }
 
-      //add video compressor
-      foreach (Filter filter in filters.VideoCompressors)
+      try
       {
-        if (String.Compare(filter.Name,strCompressorVideo)==0)
+        // add audio compressor
+        foreach (Filter filter in filters.AudioCompressors)
         {
-          capture.VideoCompressor=filter;
-          break;
+          if (String.Compare(filter.Name,strCompressorAudio)==0)
+          {
+            capture.AudioCompressor=filter;
+            break;
+          }
         }
+      }
+      catch (Exception)
+      {
+      }
+
+      try
+      {
+        //add video compressor
+        foreach (Filter filter in filters.VideoCompressors)
+        {
+          if (String.Compare(filter.Name,strCompressorVideo)==0)
+          {
+            capture.VideoCompressor=filter;
+            break;
+          }
+        }
+
+      }
+      catch (Exception)
+      {
       }
       return capture;
     }
 
-    private void btnSetupVideoCompressor_Click(object sender, System.EventArgs e)
-    {
-      try
-      {
-        Capture cap=setupgraph();
-        foreach (PropertyPage page in cap.PropertyPages)
-        {
-          if ( String.Compare(page.Name,"Video Compressor",true)==0 )
-          {
-            page.Show(this);
-            return;
-          }
-        }
-      }
-      catch (Exception)
-      {
-      }
-    }
 
-
-    private void btnSetupAudioCompressor_Click(object sender, System.EventArgs e)
-    {
-      try
-      {
-        Capture cap=setupgraph();
-        foreach (PropertyPage page in cap.PropertyPages)
-        {
-          if ( String.Compare(page.Name,"Audio Compressor",true)==0 )
-          {
-            page.Show(this);
-            return;
-          }
-        }
-      }
-      catch (Exception)
-      {
-      }      
-    }
-
-    private void btnSetupVideoDevice_Click(object sender, System.EventArgs e)
-    {
-      //show propertry page
-      try
-      {
-        Capture cap = setupgraph();
-        foreach (PropertyPage page in cap.PropertyPages)
-        {
-          if (String.Compare(page.Name,"Video Capture Device", true) ==0)
-          {
-            page.Show(this);
-            return;
-          }
-        }
-
-      }
-      catch (Exception)
-      {
-      }
-      
-      return;
-           
-    }
-
-    private void btnSetupAudioDevice_Click(object sender, System.EventArgs e)
-    {
-      //show propertry page
-      try
-      {
-        Capture cap = setupgraph();
-        foreach (PropertyPage page in cap.PropertyPages)
-        {
-          if (String.Compare(page.Name,"Audio Capture Device", true) ==0)
-          {
-            page.Show(this);
-            return;
-          }
-        }
-
-      }
-      catch (Exception ex)
-      {
-        string strLine=ex.Message;
-      }
-      
-      return;
-    }
 
 
     void AddLanguages(ComboBox box ,string strDefault)
@@ -2969,5 +2899,58 @@ namespace MediaPortal
       listTVChannels_DoubleClick(null,null);
     }
 
+    private void SetupPropertyPageList()
+    {
+      listPropertyPages.Items.Clear();
+      Capture cap=setupgraph();
+      if (cap==null) return;
+      foreach (PropertyPage page in cap.PropertyPages)
+      {
+        listPropertyPages.Items.Add( page.Name);
+      }
+      cap.Stop();
+      cap.Dispose();
+      cap=null;
+    }
+    private void listPropertyPages_DoubleClick(object sender, System.EventArgs e)
+    {
+      if (listPropertyPages.SelectedItems.Count==0) return;
+      int iItem=listPropertyPages.SelectedIndices[0];
+      int i=0;
+      Capture cap=setupgraph();
+      if (cap==null) return;
+      foreach (PropertyPage page in cap.PropertyPages)
+      {
+        if (i==iItem)
+        {
+          page.Show(this);
+          break;
+        }
+        i++;
+      }
+      cap.Stop();
+      cap.Dispose();
+      cap=null;
+    }
+
+    private void comboVideoDevice_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetupPropertyPageList();
+    }
+
+    private void comboAudioDevice_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetupPropertyPageList();
+    }
+
+    private void comboCompressorVideo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetupPropertyPageList();
+    }
+
+    private void comboCompressorAudio_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetupPropertyPageList();
+    }
 	}
 }

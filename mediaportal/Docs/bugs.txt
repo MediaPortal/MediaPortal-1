@@ -6,6 +6,4 @@ Bugs:
   - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
   - 20-04-2005 my tv      : record a program via tvguide which is already running records the next program!
   - 22-04-2005 my video   : OSD flickers with internal dvd player 
-  - 23-04-2004 general    : scrolling items (like musicoverlay) take too much cpu% (disabled for now)
   - 24-04-2004 general    : some WM9 visz. like g-force just show a black screen
-  - 24-04-2004 general    : thumbnail panel needs to scroll faster

@@ -9,16 +9,15 @@ My TV:
     programs and allow the user to pick/play one
   - A way to browse and resolve recording conflicts. 
   - view live tv in fullscreen mode with osd
-  - support multiple tuners/capture cards
    
   TVGuide:
      - 
   Scheduler:
 
   Capture:
-    - in case of video-in/SVHS-in then use also that audio input (now uses tuner audio input)    
     - time shifting. This allows you to pause/ FF/RW live tv      
     - add BDA support
+    - support multiple tuners/capture cards
 
 My Music:
   - search songs by genre,artist,album (based on music database)
