@@ -932,28 +932,26 @@ namespace WindowPlugins.GUIPrograms
 		{
 			bool res = true;
 			AppItem curApp = this.GetSelectedAppItem();
-			if (curApp != null)
+			// curApp can be NULL for the root Element..... so don't catch this!
+			pageCurrentSettings = GetCurrentSettingsPage();
+			if (pageCurrentSettings != null)
 			{
-				pageCurrentSettings = GetCurrentSettingsPage();
-				if (pageCurrentSettings != null)
+				if (pageCurrentSettings.EntriesOK(curApp))
 				{
-					if (pageCurrentSettings.EntriesOK(curApp))
+					pageCurrentSettings.OnUpClick -= new System.EventHandler(this.UpClick);
+					pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
+					pageCurrentSettings.Form2AppObj(curApp);
+					if (curApp != null)
 					{
-						pageCurrentSettings.OnUpClick -= new System.EventHandler(this.UpClick);
-						pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
-						pageCurrentSettings.Form2AppObj(curApp);
-						if (curApp != null)
-						{
-							curApp.Write();
-							appTree.SelectedNode.Text = curApp.Title;
-							res = true;
-						}
+						curApp.Write();
+						appTree.SelectedNode.Text = curApp.Title;
+						res = true;
 					}
-					else
-					{
-						// some of the entries are invalid
-						res = false;
-					}
+				}
+				else
+				{
+					// some of the entries are invalid
+					res = false;
 				}
 			}
 			return res;
