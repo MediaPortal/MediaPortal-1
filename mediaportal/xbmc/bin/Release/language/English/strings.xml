@@ -2565,6 +2565,10 @@
 	<id>970</id>
 	<value>Previous window</value>
 </string>
+<string>
+	<id>971</id>
+	<value>Group</value>
+</string>
 
 
 

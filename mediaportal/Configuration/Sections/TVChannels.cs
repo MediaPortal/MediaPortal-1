@@ -1017,8 +1017,9 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[0].Text = group.GroupName;
 					listItem.SubItems[1].Text = pincode;
 
-					UpdateGroupChannels(group,true);
+					SaveTVChannels();
 					SaveGroups();
+					UpdateGroupChannels(group,true);
 				}
 			}				
 		}
@@ -1037,8 +1038,9 @@ namespace MediaPortal.Configuration.Sections
 				listViewGroups.Items.RemoveAt(listViewGroups.SelectedIndices[0]);
 			}		
 
-			UpdateGroupChannels(null,true);
+			SaveTVChannels();
 			SaveGroups();
+			UpdateGroupChannels(null,true);
 		}
 
 		private void buttonAddGroup_Click(object sender, System.EventArgs e)
@@ -1057,6 +1059,8 @@ namespace MediaPortal.Configuration.Sections
 				listItem.Tag=group;
 				listViewGroups.Items.Add(listItem);
 				
+				SaveGroups();
+				SaveTVChannels();
 				UpdateGroupChannels(group,true);
 
 			}		
@@ -1082,6 +1086,7 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 			}    
+			SaveTVChannels();
 			SaveGroups();
 		}
 
@@ -1112,6 +1117,7 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 			}
+			SaveTVChannels();
 			SaveGroups();
 		}
 

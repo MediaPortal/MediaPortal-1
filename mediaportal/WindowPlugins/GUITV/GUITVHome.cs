@@ -23,16 +23,14 @@ namespace MediaPortal.GUI.TV
 			BTN_TVGUIDE=2,
       BTN_RECORD=3,
       BTN_CARD=4,
-      BTN_CHANNEL=6,
-      BTN_TVONOFF=7,
-      BTN_TIMESHIFTINGONOFF=8,
-			BTN_SCHEDULER=9,
-			BTN_RECORDINGS=10,
+			BTN_GROUP=6,
+			BTN_CHANNEL=7,
+      BTN_TVONOFF=8,
+      BTN_TIMESHIFTINGONOFF=9,
+			BTN_SCHEDULER=10,
+			BTN_RECORDINGS=11,
+			BTN_SEARCH=12,
 			VIDEO_WINDOW=99,
-      IMG_CURRENT_CHANNEL=12,
-      LABEL_PROGRAM_TITLE=13,
-      LABEL_PROGRAM_TIME=14,
-      LABEL_PROGRAM_DESCRIPTION=15,
       
       IMG_REC_CHANNEL=21,
       LABEL_REC_INFO=22,
@@ -41,14 +39,17 @@ namespace MediaPortal.GUI.TV
 
 		};
     static public string TVChannelCovertArt=@"thumbs\tv\logos";
-		string          m_strChannel="Nederland 1";
+		static public string m_strChannel="Nederland 1";
+		string          m_strGroup="";
 		bool            m_bTVON=true;
     bool            m_bTimeShifting=true;
     ArrayList       m_channels=new ArrayList();
+		ArrayList       m_groups=new ArrayList();
     TVUtil          m_util =null;
     DateTime        m_updateTimer=DateTime.Now;
     bool            m_bAlwaysTimeshift=false;
     static int      m_iCurrentCard=0;
+		static TVGroup	currentGroup=null;
     ArrayList       m_recordings=new ArrayList();
 
 		public  GUITVHome()
@@ -78,7 +79,8 @@ namespace MediaPortal.GUI.TV
     {
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        m_strChannel=xmlreader.GetValueAsString("mytv","channel","");
+				m_strChannel=xmlreader.GetValueAsString("mytv","channel","");
+				m_strGroup=xmlreader.GetValueAsString("mytv","group","");
         m_bTVON=xmlreader.GetValueAsBool("mytv","tvon",true);
         m_bTimeShifting=xmlreader.GetValueAsBool("mytv","timeshifting",true);
         m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
@@ -92,7 +94,8 @@ namespace MediaPortal.GUI.TV
         xmlwriter.SetValue("mytv","channel",m_strChannel);
         xmlwriter.SetValueAsBool("mytv","tvon",m_bTVON);
         xmlwriter.SetValueAsBool("mytv","timeshifting",m_bTimeShifting);
-      }
+				xmlwriter.SetValue("mytv","group",m_strGroup);
+			}
     }
     #endregion
 
@@ -199,38 +202,18 @@ namespace MediaPortal.GUI.TV
             GUIControl.SelectItemControl(GetID,(int)Controls.BTN_CARD,m_iCurrentCard);
           }
 					
-					//add all tv channels to the channel selection button
+					//add all groups to the group selection button
+					
+					TVDatabase.GetGroups(ref m_groups);
           TVDatabase.GetChannels(ref m_channels);
-          GUIControl.ClearControl(GetID,(int)Controls.BTN_CHANNEL);
-          int i=0;
-          if (m_channels.Count>0)
-          {
-            foreach (TVChannel chan in m_channels)
-            {
-              GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_CHANNEL,chan.Name);
-              ++i;
-            }
-          }
-					// if no channel selected then set channel button to the first
-					// channel found
-          if (m_strChannel==String.Empty && m_channels.Count>0)
-          {
-            foreach (TVChannel channel in m_channels)
-            {
-              if (channel.Number<(int)ExternalInputs.svhs)
-              {
-                m_strChannel=channel.Name;
-                break;
-              }
-            }
-          }
-			
+          
 					//set video window position
 					GUIControl cntl = GetControl( (int)Controls.VIDEO_WINDOW);
 					if (cntl!=null)
 					{
 						GUIGraphicsContext.VideoWindow = new Rectangle(cntl.XPosition,cntl.YPosition,cntl.Width,cntl.Height);
 					}
+					UpdateChannelButton();
 
           // start viewing tv... 
 					GUIGraphicsContext.IsFullScreenVideo=false;
@@ -241,7 +224,6 @@ namespace MediaPortal.GUI.TV
           
           UpdateStateOfButtons();
           UpdateProgressPercentageBar();
-          UpdateChannelButton();
 
           return true;
 				}
@@ -319,6 +301,19 @@ namespace MediaPortal.GUI.TV
             m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
           }
           
+					if (iControl==(int)Controls.BTN_CHANNEL)
+					{
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
+						OnMessage(msg);         
+						if (msg.Label.Length>0)
+						{
+							m_strChannel="";
+							m_strGroup=msg.Label;
+							UpdateChannelButton();
+							UpdateStateOfButtons();
+							UpdateProgressPercentageBar();
+						}
+					}
 					if (iControl==(int)Controls.BTN_CHANNEL)
 					{
 						//switch to another tv channel
@@ -465,6 +460,56 @@ namespace MediaPortal.GUI.TV
     {
       int i=0;
       int iSelected=-1;
+			currentGroup=null;
+			if (m_groups.Count>0)
+			{
+				GUIControl.ClearControl(GetID, (int)Controls.BTN_GROUP);
+				foreach (TVGroup group in m_groups)
+				{
+					GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_GROUP,group.GroupName);
+					if (group.GroupName==m_strGroup) 
+					{
+						currentGroup=group;
+						iSelected=i;
+					}
+					++i;
+				}
+				if (iSelected==-1)
+				{
+					currentGroup=(TVGroup)m_groups[0];
+					iSelected=0;
+				}
+			}
+			else iSelected=0;
+
+			GUIControl.SelectItemControl(GetID,(int)Controls.BTN_GROUP,iSelected);
+
+			if (currentGroup!=null)
+			{
+				i=0;
+				iSelected=-1;
+				if (currentGroup.tvChannels.Count>0)
+				{
+					GUIControl.ClearControl(GetID, (int)Controls.BTN_CHANNEL);
+					foreach (TVChannel chan in currentGroup.tvChannels)
+					{
+						GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_CHANNEL,chan.Name);
+						if (chan.Name==m_strChannel) iSelected=i;
+						++i;
+					}
+					if (iSelected==-1)
+					{
+						iSelected=0;
+						m_strChannel=((TVChannel)currentGroup.tvChannels[0]).Name;
+					}
+				}
+				else iSelected=0;
+
+				GUIControl.SelectItemControl(GetID,(int)Controls.BTN_CHANNEL,iSelected);
+				return;
+			}
+
+			iSelected=-1;
       if (m_channels.Count>0)
       {
 				GUIControl.ClearControl(GetID, (int)Controls.BTN_CHANNEL);
@@ -480,6 +525,7 @@ namespace MediaPortal.GUI.TV
         }
       }
       else iSelected=0;
+
       GUIControl.SelectItemControl(GetID,(int)Controls.BTN_CHANNEL,iSelected);
 		}
 
@@ -637,10 +683,35 @@ namespace MediaPortal.GUI.TV
 		/// When called this method will switch to the previous TV channel
 		/// </summary>
 		static public void OnPreviousChannel()
-    {	
+		{	
+			string strChannel=Recorder.TVChannelName;
+			if (currentGroup!=null)
+			{
+				for (int i=0; i < currentGroup.tvChannels.Count;++i)
+				{
+					TVChannel chan=(TVChannel)currentGroup.tvChannels[i];
+					if (String.Compare(chan.Name,strChannel,true)==0 )
+					{
+						int iPrev=i-1;
+						if (iPrev<0) iPrev=currentGroup.tvChannels.Count-1;
+						chan=(TVChannel)currentGroup.tvChannels[iPrev];
+					
+						int card=GUITVHome.GetCurrentCard();
+						Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+					  						
+
+						if (GUIGraphicsContext.IsFullScreenVideo)
+						{
+							GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							if (TVWindow != null) TVWindow.UpdateOSD();
+						}
+						return;
+					}
+				}
+			}
+
 			ArrayList m_channels=new ArrayList();
       TVDatabase.GetChannels(ref m_channels);
-      string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
       {
         TVChannel chan=(TVChannel)m_channels[i];
@@ -669,11 +740,38 @@ namespace MediaPortal.GUI.TV
     static public void OnNextChannel()
     {
 			// get list of all channels
+			string strChannel=Recorder.TVChannelName;
+			if (currentGroup!=null)
+			{
+				// get current channel name
+				for (int i=0; i < currentGroup.tvChannels.Count;++i)
+				{
+					TVChannel chan=(TVChannel)currentGroup.tvChannels[i];
+					if (String.Compare(chan.Name,strChannel,true)==0 )
+					{
+						//select next channel
+						int iNext=i+1;
+						if (iNext>currentGroup.tvChannels.Count-1) iNext=0;
+						chan=(TVChannel)currentGroup.tvChannels[iNext];
+
+						//and view that
+						int card=GUITVHome.GetCurrentCard();
+						Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+					
+						if (GUIGraphicsContext.IsFullScreenVideo)
+						{
+							GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							if (TVWindow != null) TVWindow.UpdateOSD();
+						}
+						return;
+					}
+				}
+				return;
+			}
       ArrayList m_channels=new ArrayList();
       TVDatabase.GetChannels(ref m_channels);
 
 			// get current channel name
-      string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
       {
         TVChannel chan=(TVChannel)m_channels[i];
