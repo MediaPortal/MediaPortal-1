@@ -1,3 +1,6 @@
+17-07-2004  my videos   : fixed : Exception when playing DVD for a second time
+17-07-2004  home        : fixed : The date on the home screen does not follow the setting in the Plugins->Home window
+17-07-2004  general     : fixed : #currentmodule  was not reset when dialog was shown
 17-07-2004  my tv       : fixed : unable to play reference recordings directly after recording
 17-07-2004  my videos   : added : when stacking is enabled, the -cd1 etc. are removed from the filename
 17-07-2004  my tv       : fixed : with > 1 capture card both cards tried creating live.tv file
