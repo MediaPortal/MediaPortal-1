@@ -198,7 +198,7 @@
 		<description>Genre txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>420</posX> 
+		<posX>400</posX> 
 		<posY>160</posY> 
 		<label>174</label> 
 		<font>font13</font> 
