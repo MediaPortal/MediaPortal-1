@@ -146,6 +146,7 @@ namespace MediaPortal.GUI.GUIBurner
 		private	bool convertDVR;
 		private	bool deleteDVRSrc;
 		private bool changeTVDatabase;
+		private bool dateTimeFolder;
 		private int maxAutoFiles=0;
 		private	BurnerThread bt = new BurnerThread();
 		static ArrayList dvr_extensions	= new ArrayList();
@@ -642,6 +643,7 @@ namespace MediaPortal.GUI.GUIBurner
 		private void LoadBackupListControl() 
 		{	
 			//clear the list
+			GUIPropertyManager.SetProperty("#convert_info",GUILocalizeStrings.Get(2107));
 			int len=System.IO.Directory.GetCurrentDirectory().Length;
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
 			GetBackup();
@@ -654,6 +656,7 @@ namespace MediaPortal.GUI.GUIBurner
 			}
 			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+			GUIPropertyManager.SetProperty("#convert_info","");
 		}
 
 		private void DisableButtons()
@@ -968,6 +971,7 @@ namespace MediaPortal.GUI.GUIBurner
 				convertDVR=xmlreader.GetValueAsBool("burner","convertdvr",true);
 				deleteDVRSrc=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
 				changeTVDatabase=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
+				dateTimeFolder=xmlreader.GetValueAsBool("burner","dateTimeFolder",false);
 
 				if (isBurner==true) 
 				{
@@ -1038,7 +1042,6 @@ namespace MediaPortal.GUI.GUIBurner
 					{
 						try 
 						{
-							DateTime cur=DateTime.Now;
 							foreach (string file in backupFiles) 
 							{
 								burnClass.AddFile(file,file);
@@ -1231,6 +1234,11 @@ namespace MediaPortal.GUI.GUIBurner
 			string file="";
 			string folder="";
 			backupFiles.Clear();		
+			if (dateTimeFolder==true) 
+			{
+				DateTime cur=DateTime.Now;
+				dest=dest+"\\backup"+cur.Day+"-"+cur.Month+"-"+cur.Year+" "+cur.Hour+cur.Minute;
+			}
 			using (AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				int count=xmlreader.GetValueAsInt("burner","backuplines",0);
@@ -1277,8 +1285,9 @@ namespace MediaPortal.GUI.GUIBurner
 							if (file!="") 
 							{
 								FileInfo fi = new FileInfo(System.IO.Directory.GetCurrentDirectory()+"\\"+file);
-								fi.CopyTo(dest+file, true);
+								fi.CopyTo(dest+"\\"+file, true);
 								backupFiles.Add(dest+"\\"+file);
+								GUIPropertyManager.SetProperty("#convert_info",dest+"\\"+file);
 							}
 						}
 					}
@@ -1301,6 +1310,7 @@ namespace MediaPortal.GUI.GUIBurner
 						string destFile = dest + "\\" + fi.Name;
 						result = result && (fi.CopyTo(destFile, true) != null);
 						backupFiles.Add( destFile);
+						GUIPropertyManager.SetProperty("#convert_info",destFile);
 					}
 				}
 				else 
@@ -1308,6 +1318,7 @@ namespace MediaPortal.GUI.GUIBurner
 					string destFile = dest + "\\" + fi.Name;
 					result = result && (fi.CopyTo(destFile, true) != null);
 					backupFiles.Add( destFile);					
+					GUIPropertyManager.SetProperty("#convert_info",destFile);
 				}
 			}
 			if (ext=="") 

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
@@ -49,6 +50,10 @@ namespace GUIBurner
 		private System.Windows.Forms.Button button6;
 		private System.Windows.Forms.TabPage tabPage4;
 		private System.Windows.Forms.TabPage tabPage5;
+		private System.Windows.Forms.TextBox textBox2;
+		private System.Windows.Forms.Button button7;
+		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.CheckBox DateTimeFolder;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -122,6 +127,10 @@ namespace GUIBurner
 		this.button5 = new System.Windows.Forms.Button();
 		this.tabPage4 = new System.Windows.Forms.TabPage();
 		this.tabPage5 = new System.Windows.Forms.TabPage();
+		this.textBox2 = new System.Windows.Forms.TextBox();
+		this.button7 = new System.Windows.Forms.Button();
+		this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+		this.DateTimeFolder = new System.Windows.Forms.CheckBox();
 		this.tabControl1.SuspendLayout();
 		this.tabPage1.SuspendLayout();
 		this.tabPage2.SuspendLayout();
@@ -373,6 +382,9 @@ namespace GUIBurner
 		// 
 		// tabPage3
 		// 
+		this.tabPage3.Controls.Add(this.DateTimeFolder);
+		this.tabPage3.Controls.Add(this.button7);
+		this.tabPage3.Controls.Add(this.textBox2);
 		this.tabPage3.Controls.Add(this.button6);
 		this.tabPage3.Controls.Add(this.label12);
 		this.tabPage3.Controls.Add(this.listBox1);
@@ -390,6 +402,7 @@ namespace GUIBurner
 		this.button6.Size = new System.Drawing.Size(104, 24);
 		this.button6.TabIndex = 6;
 		this.button6.Text = "Add File";
+		this.button6.Click += new System.EventHandler(this.button6_Click);
 		// 
 		// label12
 		// 
@@ -437,6 +450,31 @@ namespace GUIBurner
 		this.tabPage5.Size = new System.Drawing.Size(632, 390);
 		this.tabPage5.TabIndex = 4;
 		this.tabPage5.Text = "Audio settings";
+		// 
+		// textBox2
+		// 
+		this.textBox2.Location = new System.Drawing.Point(168, 264);
+		this.textBox2.Name = "textBox2";
+		this.textBox2.Size = new System.Drawing.Size(232, 20);
+		this.textBox2.TabIndex = 7;
+		this.textBox2.Text = "";
+		// 
+		// button7
+		// 
+		this.button7.Location = new System.Drawing.Point(416, 264);
+		this.button7.Name = "button7";
+		this.button7.Size = new System.Drawing.Size(32, 24);
+		this.button7.TabIndex = 8;
+		this.button7.Text = "...";
+		this.button7.Click += new System.EventHandler(this.button7_Click);
+		// 
+		// DateTimeFolder
+		// 
+		this.DateTimeFolder.Location = new System.Drawing.Point(40, 312);
+		this.DateTimeFolder.Name = "DateTimeFolder";
+		this.DateTimeFolder.Size = new System.Drawing.Size(408, 32);
+		this.DateTimeFolder.TabIndex = 9;
+		this.DateTimeFolder.Text = "Create new Folder with Date/Time   e.G.     backup 12-03-05 1250";
 		// 
 		// SetupForm
 		// 
@@ -564,6 +602,16 @@ namespace GUIBurner
 			checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
 			checkBox3.Checked=xmlreader.GetValueAsBool("burner","convertautomatic",false);
 			checkBox6.Checked=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
+			DateTimeFolder.Checked=xmlreader.GetValueAsBool("burner","dateTimeFolder",false);
+			int count=xmlreader.GetValueAsInt("burner","backuplines",0);
+			if (count!=0) 
+			{
+				listBox1.Items.Clear();
+				for(int i=0; i<=count; i++)
+				{
+					listBox1.Items.Add(xmlreader.GetValueAsString("burner","backupline#"+i.ToString(),""));
+				}				
+			}
 		}
 	}
 
@@ -582,6 +630,7 @@ namespace GUIBurner
 			xmlwriter.SetValueAsBool("burner","deletedvrsource",checkBox2.Checked);
 			xmlwriter.SetValueAsBool("burner","convertautomatic",checkBox3.Checked);
 			xmlwriter.SetValueAsBool("burner","changetvdatabase",checkBox6.Checked);
+			xmlwriter.SetValueAsBool("burner","dateTimeFolder",DateTimeFolder.Checked);
 			int count=0;
 			foreach (string text in listBox1.Items)
 			{
@@ -613,6 +662,22 @@ namespace GUIBurner
 			burnClass= new XPBurn.XPBurnCD();
 			GetRecorder();
 			comboBox1.SelectedIndex=selIndx;
+		}
+
+		private void button7_Click(object sender, System.EventArgs e)
+		{
+				openFileDialog1.RestoreDirectory = true;
+				openFileDialog1.InitialDirectory=System.IO.Directory.GetCurrentDirectory();
+				if( openFileDialog1.ShowDialog( this ) == DialogResult.OK ) 
+				{
+					string file=openFileDialog1.FileName;
+					textBox2.Text = file.Substring(System.IO.Directory.GetCurrentDirectory().Length+1);
+				}
+		}
+
+		private void button6_Click(object sender, System.EventArgs e)
+		{
+			listBox1.Items.Add(textBox2.Text);
 		}
  }
 }
