@@ -160,7 +160,7 @@ namespace DirectX.Capture
       {
         addIfSupported( videoCompressorFilter, "Video Compressor" );
       }
-
+/*
       if (videoDeviceFilter!=null)
       {
         // 6. the video TV tuner
@@ -172,7 +172,7 @@ namespace DirectX.Capture
           filter = null;
         }
         addIfSupported( filter, "TV Tuner" );
-      }
+      }*/
 
 			// 7. the video compressor (VFW)
 			IAMVfwCompressDialogs compressDialog = videoCompressorFilter as IAMVfwCompressDialogs;

@@ -1062,7 +1062,7 @@ namespace MediaPortal.TV.Recording
 					propertyPages = new PropertyPageCollection( m_captureGraphBuilder, 
 						m_captureFilter, null, 
 						null, null, 
-						VideoSources, null, (IBaseFilter)m_TVTuner );
+						VideoSources, null, null );
 
 				}
 				catch ( Exception ex ) { Log.Write( "PropertyPages: FAILED to get property pages." + ex.ToString() ); }
