@@ -1164,10 +1164,23 @@ namespace MediaPortal.GUI.Library
 				}
 
 				GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-				if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+				if (m_strSearchString.Length<4)
 				{
-					bItemFound = true;
-					break;
+					// Short search string
+					if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+					{
+						bItemFound = true;
+						break;
+					}
+				}
+				else
+				{
+					// Long search string
+					if (pItem.Label.ToUpper().IndexOf(SearchKey.ToUpper()) >= 0)
+					{
+						bItemFound = true;
+						break;
+					}
 				}
 				if (iSearchMethode == SearchType.SEARCH_FIRST)
 				{
