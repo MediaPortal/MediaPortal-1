@@ -533,6 +533,7 @@ namespace MediaPortal.Configuration
 		public Frequency Frequency = new Frequency(0);
     public bool External = false;
     public string ExternalTunerChannel = String.Empty;
+    public bool VisibleInGuide = true;
 	}
 
 	public class Frequency

@@ -182,6 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView.View = System.Windows.Forms.View.Details;
       this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
       this.channelsListView.SelectedIndexChanged += new System.EventHandler(this.channelsListView_SelectedIndexChanged);
+      this.channelsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.channelsListView_ItemCheck);
       // 
       // columnHeader1
       // 
@@ -368,6 +369,7 @@ namespace MediaPortal.Configuration.Sections
 						{
 							channel.Name = tvChannel.Name;
 							channel.Number = tvChannel.Channel;
+              channel.VisibleInGuide = tvChannel.VisibleInGuide;
 							
 							//
 							// Calculate frequency
@@ -469,12 +471,15 @@ namespace MediaPortal.Configuration.Sections
 				tvChannel.Frequency	= channel.Frequency;
         tvChannel.External = channel.External;
         tvChannel.ExternalTunerChannel = channel.ExternalTunerChannel;
+        tvChannel.VisibleInGuide = channel.VisibleInGuide;
 
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),
 																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz),
                                     tvChannel.External ? "External" : "Internal"
 																	  } );
+
+        listItem.Checked = tvChannel.VisibleInGuide;
 
 				listItem.Tag = tvChannel;
 
@@ -555,6 +560,23 @@ namespace MediaPortal.Configuration.Sections
     private void channelsListView_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       deleteButton.Enabled = editButton.Enabled = upButton.Enabled = downButton.Enabled = (channelsListView.SelectedItems.Count > 0);
+    }
+
+    private void channelsListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    {
+      isDirty = true;
+
+      //
+      // Fetch checked item
+      //
+      if(e.Index < channelsListView.Items.Count)
+      {
+        TelevisionChannel tvChannel = channelsListView.Items[e.Index].Tag as TelevisionChannel;
+
+        tvChannel.VisibleInGuide = (e.NewValue == System.Windows.Forms.CheckState.Checked);
+
+        channelsListView.Items[e.Index].Tag = tvChannel;
+      }
     }
 	}
 }
