@@ -45,6 +45,7 @@ protected:
 	void DeleteSurfaces();
 	HRESULT AllocSurfaces();
 
+	void Log(const char *fmt, ...) ;
 	CComPtr<IVMRSurfaceAllocatorNotify9> m_pIVMRSurfAllocNotify;
 	CComPtr<IDirect3DTexture9> m_pVideoTexture;
 	CComPtr<IDirect3DSurface9> m_pVideoSurface;
