@@ -171,7 +171,7 @@
 	</string>
 	<string>
 		<id>112</id>
-		<value>GEPAUZEERD</value>
+		<value>GEPAUSEERD</value>
 	</string>
 	<string>
 		<id>113</id>
@@ -183,11 +183,11 @@
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopiëren</value>
+		<value>Kopieëren</value>
 	</string>
 	<string>
 		<id>116</id>
-		<value>Verplaatsen</value>
+		<value>Verplaats</value>
 	</string>
 	<string>
 		<id>117</id>
@@ -203,7 +203,7 @@
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bevestig bestand kopiëren</value>
+		<value>Bevestig bestand kopieëren</value>
 	</string>
 	<string>
 		<id>121</id>
@@ -215,7 +215,7 @@
 	</string>
 	<string>
 		<id>123</id>
-		<value>Deze bestanden kopiëren?</value>
+		<value>Deze bestanden kopieëren?</value>
 	</string>
 	<string>
 		<id>124</id>
@@ -515,7 +515,7 @@
 	</string>
 	<string>
 		<id>198</id>
-		<value>Film details worden geladen</value>
+		<value>Film details worden opgehaald</value>
 	</string>
 	<string>
 		<id>199</id>
@@ -1227,11 +1227,11 @@
 	</string>
 	<string>
 		<id>378</id>
-		<value>vm</value>
+		<value>AM</value>
 	</string>
 	<string>
 		<id>379</id>
-		<value>nm</value>
+		<value>PM</value>
 	</string>
 	<string>
 		<id>380</id>
@@ -1627,11 +1627,11 @@
 	</string>
 	<string>
 		<id>487</id>
-		<value>Herhaal eenmaal</value>
+		<value>Herhaal één</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Herhaal map playlist</value>
+		<value>Herhaal map playList</value>
 	</string>
 	<string>
 		<id>489</id>
@@ -1691,7 +1691,7 @@
 	</string>
 	<string>
 		<id>611</id>
-		<value>Eén keer opnemen</value>
+		<value>één keer opnemen</value>
 	</string>
 	<string>
 		<id>612</id>
@@ -1819,11 +1819,11 @@
 	</string>
 	<string>
 		<id>643</id>
-		<value>Inlezen TV programma's</value>
+		<value>Inlezen TV programmas</value>
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorteren TV programma's</value>
+		<value>Sorteren TV programmas</value>
 	</string>
 	<string>
 		<id>645</id>
@@ -1835,7 +1835,7 @@
 	</string>
 	<string>
 		<id>647</id>
-		<value>Eén keer</value>
+		<value>Één keer</value>
 	</string>
 	<string>
 		<id>648</id>
@@ -2171,7 +2171,7 @@
   </string>
   <string>
   	<id>802</id>
-  	<value>Eindigt met</value>
+  	<value>Eindigd</value>
   </string>
   <string>
   	<id>803</id>
@@ -2327,7 +2327,7 @@
   </string>
 	<string>
     <id>2005</id>
-    <value>Delete</value>
+    <value>Verwijderen</value>
   </string>
 	<string>
     <id>2006</id>
@@ -2351,7 +2351,7 @@
   </string>
 	<string>
     <id>2011</id>
-    <value>Print</value>
+    <value>Afdrukken</value>
   </string>
 	<string>
     <id>2012</id>
@@ -2890,9 +2890,16 @@
   	<value>Laatst geïmporteerde bestand:</value>
   </string>
   <string>
+  	<id>13006</id>
+  	<value>Klein plaatje</value>
+  </string>
+  <string>
+  	<id>13007</id>
+  	<value>Groot plaatje</value>
+  </string>
+  <string>
   	<id>16001</id>
-  	<value>Party shuffle</value>
+  	<value>Feest mix</value>
   </string>
 </strings>
-
 
