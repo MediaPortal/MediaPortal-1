@@ -845,6 +845,7 @@ namespace MediaPortal.GUI.TV
 		private long			m_zapdelay;
 		private string		m_zapchannel = null;
 		private int				m_zapgroup = -1;
+		private string    m_strGroup="";
 		#endregion
 
 		#region Constructors
@@ -942,6 +943,7 @@ namespace MediaPortal.GUI.TV
 					{
 						// Change current group and zap to the first channel of the group
 						m_currentgroup = m_zapgroup;
+						m_strGroup=CurrentGroup.GroupName;
 						if(CurrentGroup.tvChannels.Count > 0) 
 						{
 							TVChannel chan = (TVChannel)CurrentGroup.tvChannels[0];
@@ -964,6 +966,7 @@ namespace MediaPortal.GUI.TV
 		public void SetCurrentGroup(string groupname)
 		{
 			m_currentgroup = GetGroupIndex(groupname);
+			m_strGroup=groupname;
 		}
 
 		/// <summary>
@@ -1125,13 +1128,22 @@ namespace MediaPortal.GUI.TV
 		public void LoadSettings(Xml xmlreader)
 		{
 			m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", "");
-//			m_strGroup=xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
+			m_strGroup=xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
+			for (int i=0; i < m_groups.Count;++i)
+			{
+				TVGroup group=(TVGroup)m_groups[i];
+				if (m_strGroup==group.GroupName)
+				{
+					m_currentgroup=i;
+					break;
+				}
+			}
 		}
 
 		public void SaveSettings(Xml xmlwriter)
 		{
 			xmlwriter.SetValue("mytv", "channel", m_currentchannel);
-//			xmlwriter.SetValue("mytv", "group", m_strGroup);
+			xmlwriter.SetValue("mytv", "group", m_strGroup);
 		}
 
 		#endregion
