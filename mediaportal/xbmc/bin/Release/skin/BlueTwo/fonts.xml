@@ -19,6 +19,11 @@
     <filename>Arial</filename>
     <height>16</height>
   </font>
+  <font>
+    <name>font18</name>
+    <filename>Arial</filename>
+    <height>18</height>
+  </font>
       <font>
 	<start>48</start>
 	<end>58</end>
