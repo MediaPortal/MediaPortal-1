@@ -37,6 +37,7 @@ namespace MediaPortal.GUI.Pictures
 
     float KENBURNS_ZOOM_FACTOR = 1.20f;
     float KENBURNS_MAXZOOM = 1.30f;
+    int   KENBURNS_XFADE_FRAMES = 15;
 
     int m_iSlideShowTransistionFrames=60;
     int m_iKenBurnTransistionSpeed=40;
@@ -760,6 +761,8 @@ namespace MediaPortal.GUI.Pictures
       if (m_fZoomLeftBackGround+m_fZoomWidth > m_fWidthBackGround) m_fZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
 
       float iStep= 0xff/m_iSlideShowTransistionFrames;
+      if (m_bKenBurns) iStep=0xff/KENBURNS_XFADE_FRAMES;
+
       if (0==iStep) iStep=1;
       int iAlpha=(int)(m_dwFrameCounter*iStep);
       if (iAlpha>= 0xff)
