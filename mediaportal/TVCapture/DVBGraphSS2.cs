@@ -107,6 +107,7 @@ namespace MediaPortal.TV.Recording
 		#endregion
 		#region AVControl2
 	// setup interfaces
+		
 	[ComVisible(true), ComImport,
 	Guid("295950B0-696D-4a04-9EE3-C031A0BFBEDE"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
@@ -114,7 +115,7 @@ namespace MediaPortal.TV.Recording
 	{
 		[PreserveSig]
 		int SetCallbackForVideoMode (
-			[MarshalAs(UnmanagedType.FunctionPtr)] VideoInfoCallback vInfo
+			[MarshalAs(UnmanagedType.FunctionPtr)] Delegate vInfo
 		);
 
 		[PreserveSig]
@@ -497,30 +498,39 @@ namespace MediaPortal.TV.Recording
 			Recording,
 			Viewing
 		};
+
+		public enum TunerType
+		{
+			ttCable=0,
+			ttSat,
+			ttTerrestrical,
+			ttATSC
+		
+		}
 		public struct TunerData
 		{
-			public byte TunerType;
-			public Int32 Frequency;
-			public Int32 SymbolRate;
+			public int tt;
+			public UInt32 Frequency;
+			public UInt32 SymbolRate;
 			public Int16 LNB;           //LNB Frequency, e.g. 9750, 10600
 			public Int16 PMT;           //PMT Pid
-			public Int16 ECM;           //= 0 if unencrypted
+			public Int16 ECM_0; //= 0 if unencrypted
 			public byte Reserved1;
 			public byte AC3;           //= 1 if audio PID = AC3 private stream
 			//= 0 otherwise
 			public Int16 FEC;           //1 = 1/2, 2 = 2/3, 3 = 3/4,
 			//4 = 5/6, 5 = 7/8, 6 = Auto
-			public Int16 Reserved2;
+			public Int16 CAID_0;
 			public Int16 Polarity;      //0 = H, 1 = V
-			//or Modulation or GuardInterval
-			public Int16 Reserved3;
+			//or Modulation or GuardUInterval
+			public Int16 ECM_1;
 			public Int16 LNBSelection;  //0 = none, 1 = 22 khz
-			public Int16 Reserved4;
+			public Int16 CAID_1;
 			public Int16 DiseqC;        //0 = none, 1 = A, 2 = B,
 			//3 = A/A, 4 = B/A, 5 = A/B, 6 = B/B
-			public Int16 Reserved5;
+			public Int16 ECM_2;
 			public Int16 AudioPID;
-			public Int16 Reserved6;
+			public Int16 CAID_2;
 			public Int16 VideoPID;
 			public Int16 TransportStreamID; //from 2.0 R3 on (?), if scanned channel
 			public Int16 TelePID;
@@ -531,25 +541,23 @@ namespace MediaPortal.TV.Recording
 		} 
 		//
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int GetGraph(DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
+		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern void StopGraph();
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool Execute([MarshalAs(System.Runtime.InteropServices.UnmanagedType.Struct)] ref TunerData tunerdata,[MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray)] int[] pids);
+		public static extern bool Execute([In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.Struct)] ref TunerData tunerdata,[Out,MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray)] out Int16[] pids);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool SetAppHandle(IntPtr hnd,[MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback);
+		public static extern bool SetAppHandle([In] IntPtr hnd,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern void PidCallback(IntPtr data);
+		public static extern void PidCallback([In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int MenuItemClick(int ptr);
+		public static extern int MenuItemClick([In] int ptr);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetMenuHandle(long menu);
+		public static extern int SetMenuHandle([In] long menu);
 
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetupDemuxer(IPin videoPin,IPin audioPin,int audio,int video);
 
-
-		// the following are needed from dvblib.dll until all interfaces are in dshownet
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid, int tid, ref int secCount,int tabSec,int timeout);
 
@@ -566,7 +574,6 @@ namespace MediaPortal.TV.Recording
 		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
 		class StreamBufferConfig {}
 		// we dont use this callback yet
-		public delegate int VideoInfoCallback(IntPtr data);
 		public delegate void RebuildFunc(IntPtr tunerData);
 		//
 
@@ -575,12 +582,10 @@ namespace MediaPortal.TV.Recording
 		const int WS_CLIPSIBLINGS = 0x04000000;
 		//
 		// 
+
 		protected bool			m_bOverlayVisible=false;
 		protected DVBChannel	m_currentChannel=new DVBChannel();
 		//
-		protected Hashtable				m_eitPresentFollowTable=null;
-		protected Hashtable				m_eitScheduleTable=null;
-		protected System.Timers.Timer	m_eitTimer=null;
 		//
 		protected bool					m_firstTune=false;
 		//
@@ -628,27 +633,19 @@ namespace MediaPortal.TV.Recording
 		protected VMR9Util				Vmr9=null; 
 		protected string				m_filename="";
 		protected DVBSections			m_sections=new DVBSections();
-		protected int					m_currentTable=0;
-		protected bool					m_grabEPG=false;
 		protected bool					m_pluginsEnabled=false;
 		public RebuildFunc				m_rebuildCB=null;
+		//System.IO.FileStream			m_fileWriter;
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
-			int epgInterval=0;
-			m_eitPresentFollowTable=new Hashtable();
-			m_eitScheduleTable=new Hashtable();
 			m_rebuildCB=new RebuildFunc(RebuildTuner);
 
+			//m_fileWriter=new System.IO.FileStream(@"H:\test.mpg",System.IO.FileMode.CreateNew);
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				m_grabEPG=xmlreader.GetValueAsBool("DVBSS2","grabEPG",false);
-				epgInterval=xmlreader.GetValueAsInt("DVBSS2","grabInterval",750);
 				m_pluginsEnabled=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
 			}
-			m_eitTimer=new System.Timers.Timer(epgInterval);
-			m_eitTimer.AutoReset=false;
-			m_eitTimer.Elapsed+=new System.Timers.ElapsedEventHandler(GetEITData);
 			try
 			{
 				RegistryKey hkcu = Registry.CurrentUser;
@@ -658,41 +655,36 @@ namespace MediaPortal.TV.Recording
 
 			}
 			catch(Exception){}
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			// to vs7: don't give me stupid tips :)
 		}
+		//
 		public void RebuildTuner(IntPtr data)
 		{
-			int channelNr=m_iChannelNr;
-			State state=m_graphState;
 
 			TunerData td=new TunerData();
-			td=(TunerData)Marshal.PtrToStructure(data,typeof(TunerData));
-			m_currentChannel.ECMPid=td.ECM;
-			TVDatabase.UpdateSatChannel(m_currentChannel);
-			//DeleteGraph();
-			//CreateGraph();
-			//if(state==State.TimeShifting)
-			//	StartTimeShifting(0,AnalogVideoStandard.None,channelNr,m_filename);
-			//if(state==State.Viewing)
-			//	StartViewing(AnalogVideoStandard.None,channelNr,0);
-			//m_graphState=state;
+			try
+			{
+				td=(TunerData)Marshal.PtrToStructure(data,typeof(TunerData));
+				m_currentChannel.ECMPid=(int)td.ECM_0;
+				SetPidToPin(m_dataCtrl,0,(int)td.ECM_0);
+				TVDatabase.UpdateSatChannel(m_currentChannel);
+			}
+			catch{}
 			
 		}
 		
-
+		//
 		void ExecTuner()
 		{
 			TunerData tu=new TunerData();
-			tu.PMT=(Int16)m_currentChannel.PMTPid;
-			tu.TunerType=1;
-			tu.Frequency=(Int32)m_currentChannel.Frequency;
-			tu.SymbolRate=(Int32)m_currentChannel.Symbolrate*1000;
+			//tu.TunerType=1;
+			tu.tt=(int)TunerType.ttSat;
+			tu.Frequency=(UInt32)(m_currentChannel.Frequency);
+			tu.SymbolRate=(UInt32)(m_currentChannel.Symbolrate);
 			tu.AC3=0;
 			tu.AudioPID=(Int16)m_currentChannel.AudioPid;
 			tu.DiseqC=(Int16)m_currentChannel.DiSEqC;
-			tu.ECM=(Int16)m_currentChannel.ECMPid;
+			tu.PMT=(Int16)m_currentChannel.PMTPid;
+			tu.ECM_0=(Int16)m_currentChannel.ECMPid;
 			tu.FEC=(Int16)6;
 			tu.LNB=(Int16)m_currentChannel.LNBFrequency;
 			tu.LNBSelection=(Int16)m_currentChannel.LNBKHz;
@@ -703,12 +695,30 @@ namespace MediaPortal.TV.Recording
 			tu.TelePID=(Int16)m_currentChannel.TeletextPid;
 			tu.TransportStreamID=(Int16)m_currentChannel.TransportStreamID;
 			tu.VideoPID=(Int16)m_currentChannel.VideoPid;
+			tu.Reserved1=0;
+			tu.ECM_1=0;
+			tu.ECM_2=0;
+			tu.CAID_0=0;
+			tu.CAID_1=0;
+			tu.CAID_2=0;
 
-			int[] pids=new int[1];
+			Int16[] pids;
 
+			bool flag=false;
 			if(m_pluginsEnabled)
-				Execute(ref tu,pids);
+			{
+				try
+				{
+					flag=Execute(ref tu,out pids);
+				}
+				catch(Exception ex)
+				{
+					Log.Write("Plugins-Exception: {0}",ex.Message);
+				}
+
+			}
 		}
+		//
 		public int BufferCB(double time,IntPtr data,int len)
 		{
 		
@@ -718,11 +728,11 @@ namespace MediaPortal.TV.Recording
 				PidCallback((IntPtr)pointer);
 		
 			// here write code to record raw ts or mp3 etc.
-			//			byte[] b=new byte[len];
-			//			Marshal.Copy(data,b,0,len);
-			//			//m_fileWriter.Write(b,0,len);
-			//			m_buffStream.Write(b,0,len);
-			//			Log.Write("Written to file: {0} byte",len);
+//			byte[] b=new byte[len];
+//			Marshal.Copy(data,b,0,len);
+//			m_fileWriter.Write(b,0,len);
+			//m_buffStream.Write(b,0,len);
+			//Log.Write("Written to file: {0} byte",len);
 			
 
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
@@ -749,6 +759,10 @@ namespace MediaPortal.TV.Recording
 			if(m_pluginsEnabled)
 				GetGraph(m_sourceGraph,false,IntPtr.Zero);
 			
+		
+			if(m_pluginsEnabled==true)
+				SetAppHandle(GUIGraphicsContext.form.Handle,m_rebuildCB);
+
 			int n=0;
 			m_b2c2Adapter=null;
 			// create filters & interfaces
@@ -758,18 +772,12 @@ namespace MediaPortal.TV.Recording
 				m_sinkFilter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_StreamBufferSink, false ) );
 				m_mpeg2Analyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_Mpeg2VideoStreamAnalyzer, true ) );
 				m_sinkInterface=(IStreamBufferSink)m_sinkFilter;
-				// for sections to be read
 				m_mpeg2Data=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_Mpeg2Data, true ) );
-				// the demux is only needed to connect
-				// to the mpeg2data sections filter
-				// we dont need a muxer, demuxer since we get
-				// already mpeg2 from the card
 				m_demux=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.Mpeg2Demultiplexer, true ) );
 				m_demuxInterface=(IMpeg2Demultiplexer) m_demux;
 				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
 				m_csc=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( ColorSpaceConverter, false ) );
-				// all created ok here
 			}
 			
 			catch(Exception ex)
@@ -815,7 +823,7 @@ namespace MediaPortal.TV.Recording
 				{
 					AMMediaType mt=new AMMediaType();
 					mt.majorType=DShowNET.MediaType.Stream;
-					//mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
+					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
 					//m_sampleInterface.SetOneShot(true);
 					m_sampleInterface.SetCallback(this,1);
 					m_sampleInterface.SetMediaType(ref mt);
@@ -832,53 +840,9 @@ namespace MediaPortal.TV.Recording
 			m_graphState=State.Created;
 			return true;
 		}
-		void GetEITData(object obj,System.Timers.ElapsedEventArgs args)
-		{
-			ArrayList eitList=new ArrayList();
 
-			if(m_currentTable<0x4E)
-				m_currentTable=0x4E;
-
-			eitList=m_sections.GetEITSchedule(m_currentTable,m_mpeg2Data);
-			m_eitTimer.Stop();
-			try
-			{
-				foreach(DVBSections.EITDescr eitData in eitList)
-				{
-					if(m_eitScheduleTable.ContainsKey(eitData))
-					{
-						m_eitScheduleTable.Remove(eitData);
-						m_eitScheduleTable.Add(eitData,null);
-					}
-					else
-						m_eitScheduleTable.Add(eitData,eitData);
-				
-					GC.Collect();
-				}
-			}
-			catch(Exception ex)
-			{string text=ex.Message;}
-			// change table
-
-			switch(m_currentTable)
-			{
-				case 0x50:
-					m_currentTable=0x60;
-					break;
-				case 0x60:
-					m_currentTable=0x4e;
-					break;
-				case 0x4E:
-					m_currentTable=0x50;
-					break;
-			}
-			//
-			//
-			if(m_grabEPG==true)
-				m_eitTimer.Start();
-		}
 		//
-		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID)
+		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID)
 		{
 			int hr=0; // the result
 
@@ -960,7 +924,7 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
-					hr = m_avCtrl.SetAudioVideoPIDs (0, 0);
+					SetPidToPin(m_dataCtrl,0,pcrPID);
 				}
 
 
@@ -1093,7 +1057,6 @@ namespace MediaPortal.TV.Recording
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			
 			m_iChannelNr=-1;
-			CommitDataToEPG();
 			m_sampleInterface.SetCallback(null,0);
 			//m_fileWriter.Close();
 			if(m_pluginsEnabled)
@@ -1261,23 +1224,7 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		//
-		void CommitDataToEPG()
-		{
-			foreach(DVBSections.EITDescr eit in m_eitScheduleTable.Keys)
-			{
-				long start=m_sections.GetStartDateFromEIT(eit);
-				long end=m_sections.GetEndDateFromEIT(eit);
-				ArrayList entrys=new ArrayList();
-				TVDatabase.GetPrograms(start,end,ref entrys);
-				if(entrys.Count==0)
-				{
-					m_sections.SetEITToDatabase(eit);
-				}
-			}
-			
-			m_eitScheduleTable.Clear();
 
-		}
 		void AddPreferredCodecs()
 		{				
 			// add preferred video & audio codecs
@@ -1584,7 +1531,6 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.TimeShifting) return false;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:StopTimeShifting()");
 			m_mediaControl.Stop();
-			CommitDataToEPG();
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
@@ -1741,7 +1687,6 @@ namespace MediaPortal.TV.Recording
 			{
 				
 				DVBChannel ch=new DVBChannel();
-				CommitDataToEPG();
 				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
 				{
 					m_channelFound=false;
@@ -1760,23 +1705,22 @@ namespace MediaPortal.TV.Recording
 				
 				m_channelFound=true;
 				
-				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid)==false)
+				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid)==false)
 				{
 					m_channelFound=false;
 					return;
 				}
 				m_currentChannel=ch;
+				ExecTuner();
 				//
 				//
-				if(m_pluginsEnabled==false && m_grabEPG==true)
-					m_eitTimer.Start();
 				
 				//if(m_mediaControl!=null && m_graphState!=State.TimeShifting )
 				//	m_mediaControl.Run();
 
 
-				if(m_pluginsEnabled==true)
-					ExecTuner();
+				//if(m_pluginsEnabled==true)
+				//	ExecTuner();
 
 				m_StartTime=DateTime.Now;
 			}
@@ -1790,11 +1734,11 @@ namespace MediaPortal.TV.Recording
 
 			Size FrameSize=new Size(720,576);
 			mpegVideoOut.unkPtr = IntPtr.Zero;
-			mpegVideoOut.sampleSize = 0;
+			mpegVideoOut.sampleSize = 1536;
 			mpegVideoOut.temporalCompression = false;
 			mpegVideoOut.fixedSizeSamples = true;
 
-			Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
+			//Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
 			mpegVideoOut.formatType = FormatType.Mpeg2Video;
 			mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0) ;
 			mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem( mpegVideoOut.formatSize);
@@ -1960,7 +1904,6 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//
-			// mpeg2data and demux connection
 
 			
 			if(Vmr9.IsVMR9Connected==false && Vmr9.UseVMR9inMYTV==true)// fallback
@@ -1969,7 +1912,6 @@ namespace MediaPortal.TV.Recording
 					m_sourceGraph.RemoveFilter(Vmr9.VMR9Filter);
 				Vmr9.RemoveVMR9();
 				Vmr9.UseVMR9inMYTV=false;
-
 			}
 
 			m_mediaControl = (IMediaControl)m_sourceGraph;
@@ -1997,8 +1939,8 @@ namespace MediaPortal.TV.Recording
 				{
 					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}",hr);
 				}
-      
 				setVisFlag=true;
+
 			}
 
 			m_bOverlayVisible=true;
@@ -2007,12 +1949,9 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext_OnVideoWindowChanged();
 			//
 			
-
 			m_mediaControl.Run();
-			if(m_pluginsEnabled==true)
-				SetAppHandle(GUIGraphicsContext.form.Handle,m_rebuildCB);
-			
-			// show the vid window
+			//ExecTuner();
+
 			if(setVisFlag)
 			{
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
@@ -2022,6 +1961,8 @@ namespace MediaPortal.TV.Recording
 				}
 
 			}
+
+			// show the vid window
 			return true;
 		}
 
@@ -2044,7 +1985,6 @@ namespace MediaPortal.TV.Recording
 			if(m_videoWindow!=null)
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_bOverlayVisible=false;
-			CommitDataToEPG();
 
 			m_graphState = State.Created;
 			DeleteGraph();
