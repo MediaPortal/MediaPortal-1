@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  24-04-2004: my music    : added : new keymap.xml with support for special keys like F1-F12
+  24-04-2004: my music    : fixed : exception when exiting mediaplayer while playing an mp3
   23-04-2004: setup       : added : AudioPlayer tab added, choose between WMP9 or DirectShow player
   23-04-2004: my pictures : fixed : music stopped when viewing a slideshow
   23-04-2004: my video    : fixed : OSD didnt move when you moved the mediaportal window
