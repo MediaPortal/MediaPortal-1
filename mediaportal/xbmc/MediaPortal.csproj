@@ -238,6 +238,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "IRLearnFORM.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IRLearnFORM.resx"
+                    DependentUpon = "IRLearnFORM.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "MediaPortal.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -326,6 +336,11 @@
                     RelPath = "TVChannelFormNew.resx"
                     DependentUpon = "TVChannelFormNew.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "USBUIRT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>

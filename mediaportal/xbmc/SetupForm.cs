@@ -265,6 +265,13 @@ namespace MediaPortal
 		private System.Windows.Forms.RadioButton radioButtonMovieOverlay;
 		private System.Windows.Forms.RadioButton radioButtonMovieVMR9R;
 		private System.Windows.Forms.RadioButton radioButtonMovieVMR9W;
+		private System.Windows.Forms.TabPage tabUsbUIRT;
+		private System.Windows.Forms.CheckBox USBUIRTExternal;
+		private System.Windows.Forms.CheckBox USBUIRTInternal;
+		private System.Windows.Forms.Button IRInternalLearn;
+		private System.Windows.Forms.Button IRExternalLearn;
+		private System.Windows.Forms.CheckBox is3Digit;
+		private System.Windows.Forms.CheckBox needsEnter;
 
 		TunerCountry[] m_countries = new TunerCountry[] {
 
@@ -854,6 +861,13 @@ namespace MediaPortal
 			this.dvdbtnSelect = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.dvdParams = new System.Windows.Forms.TextBox();
+			this.tabUsbUIRT = new System.Windows.Forms.TabPage();
+			this.needsEnter = new System.Windows.Forms.CheckBox();
+			this.is3Digit = new System.Windows.Forms.CheckBox();
+			this.USBUIRTExternal = new System.Windows.Forms.CheckBox();
+			this.IRInternalLearn = new System.Windows.Forms.Button();
+			this.USBUIRTInternal = new System.Windows.Forms.CheckBox();
+			this.IRExternalLearn = new System.Windows.Forms.Button();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.groupBox25 = new System.Windows.Forms.GroupBox();
 			this.radioButtonMovieVMR9R = new System.Windows.Forms.RadioButton();
@@ -908,6 +922,7 @@ namespace MediaPortal
 			this.groupBox11.SuspendLayout();
 			this.groupBox10.SuspendLayout();
 			this.DVDPlayerBox.SuspendLayout();
+			this.tabUsbUIRT.SuspendLayout();
 			this.groupBox25.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -922,6 +937,7 @@ namespace MediaPortal
 			this.tabControl.Controls.Add(this.tabWeather);
 			this.tabControl.Controls.Add(this.tabPlayers);
 			this.tabControl.Controls.Add(this.tabAudioPlayer);
+			this.tabControl.Controls.Add(this.tabUsbUIRT);
 			this.tabControl.Controls.Add(this.tabPageRadio);
 			this.tabControl.Controls.Add(this.TabDVDPlayer);
 			this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -2946,6 +2962,83 @@ namespace MediaPortal
 			this.dvdParams.TabIndex = 2;
 			this.dvdParams.Text = "";
 			// 
+			// tabUsbUIRT
+			// 
+			this.tabUsbUIRT.Controls.Add(this.needsEnter);
+			this.tabUsbUIRT.Controls.Add(this.is3Digit);
+			this.tabUsbUIRT.Controls.Add(this.USBUIRTExternal);
+			this.tabUsbUIRT.Controls.Add(this.IRInternalLearn);
+			this.tabUsbUIRT.Controls.Add(this.USBUIRTInternal);
+			this.tabUsbUIRT.Controls.Add(this.IRExternalLearn);
+			this.tabUsbUIRT.Location = new System.Drawing.Point(4, 40);
+			this.tabUsbUIRT.Name = "tabUsbUIRT";
+			this.tabUsbUIRT.Size = new System.Drawing.Size(616, 356);
+			this.tabUsbUIRT.TabIndex = 11;
+			this.tabUsbUIRT.Text = "usbUIRT";
+			// 
+			// needsEnter
+			// 
+			this.needsEnter.Location = new System.Drawing.Point(40, 208);
+			this.needsEnter.Name = "needsEnter";
+			this.needsEnter.Size = new System.Drawing.Size(272, 16);
+			this.needsEnter.TabIndex = 4;
+			this.needsEnter.Text = "tuner needs Enter after changing channel";
+			this.needsEnter.CheckedChanged += new System.EventHandler(this.needsEnter_CheckedChanged);
+			// 
+			// is3Digit
+			// 
+			this.is3Digit.Location = new System.Drawing.Point(40, 160);
+			this.is3Digit.Name = "is3Digit";
+			this.is3Digit.Size = new System.Drawing.Size(264, 16);
+			this.is3Digit.TabIndex = 3;
+			this.is3Digit.Text = "tuner has 3 digits";
+			this.is3Digit.CheckedChanged += new System.EventHandler(this.is3Digit_CheckedChanged);
+			// 
+			// USBUIRTExternal
+			// 
+			this.USBUIRTExternal.Location = new System.Drawing.Point(40, 96);
+			this.USBUIRTExternal.Name = "USBUIRTExternal";
+			this.USBUIRTExternal.Size = new System.Drawing.Size(296, 24);
+			this.USBUIRTExternal.TabIndex = 2;
+			this.USBUIRTExternal.Text = "Enable USBUIRT for OUTPUT (External TUNERS)";
+			this.USBUIRTExternal.CheckedChanged += new System.EventHandler(this.USBUIRTExternal_CheckedChanged);
+			// 
+			// IRInternalLearn
+			// 
+			this.IRInternalLearn.Location = new System.Drawing.Point(368, 16);
+			this.IRInternalLearn.Name = "IRInternalLearn";
+			this.IRInternalLearn.Size = new System.Drawing.Size(136, 32);
+			this.IRInternalLearn.TabIndex = 1;
+			this.IRInternalLearn.Text = "Learn Internal commands";
+			this.IRInternalLearn.Click += new System.EventHandler(this.IRInternalLearn_Click);
+			// 
+			// USBUIRTInternal
+			// 
+			this.USBUIRTInternal.Location = new System.Drawing.Point(40, 24);
+			this.USBUIRTInternal.Name = "USBUIRTInternal";
+			this.USBUIRTInternal.Size = new System.Drawing.Size(184, 24);
+			this.USBUIRTInternal.TabIndex = 0;
+			this.USBUIRTInternal.Text = "Enable USBUIRT for INPUT";
+			this.USBUIRTInternal.CheckedChanged += new System.EventHandler(this.USBUIRTInternal_CheckedChanged);
+			// 
+			// IRExternalLearn
+			// 
+			this.IRExternalLearn.Location = new System.Drawing.Point(368, 88);
+			this.IRExternalLearn.Name = "IRExternalLearn";
+			this.IRExternalLearn.Size = new System.Drawing.Size(136, 32);
+			this.IRExternalLearn.TabIndex = 1;
+			this.IRExternalLearn.Text = "Learn Tuner Commands";
+			this.IRExternalLearn.Click += new System.EventHandler(this.IRExternalLearn_Click);
+			// 
+			// tabPageRadio
+			// 
+			this.tabPageRadio.Controls.Add(this.groupBox21);
+			this.tabPageRadio.Location = new System.Drawing.Point(4, 40);
+			this.tabPageRadio.Name = "tabPageRadio";
+			this.tabPageRadio.Size = new System.Drawing.Size(616, 356);
+			this.tabPageRadio.TabIndex = 10;
+			this.tabPageRadio.Text = "My Radio";
+			// 
 			// groupBox25
 			// 
 			this.groupBox25.Controls.Add(this.radioButtonMovieVMR9R);
@@ -3041,6 +3134,7 @@ namespace MediaPortal
 			this.groupBox11.ResumeLayout(false);
 			this.groupBox10.ResumeLayout(false);
 			this.DVDPlayerBox.ResumeLayout(false);
+			this.tabUsbUIRT.ResumeLayout(false);
 			this.groupBox25.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -3340,6 +3434,7 @@ namespace MediaPortal
         checkBoxTVGuideColors.Checked=xmlreader.GetValueAsBool("xmltv", "colors",true);
         
         LoadRadioStations(xmlreader);
+	    LoadUSBUIRT(xmlreader);
       }
 		}
 
@@ -3458,7 +3553,35 @@ namespace MediaPortal
 			xmlWriter.SetValue("weather","refresh", cntrlweatherRefresh.Value.ToString());
 
 		}
- 
+
+		void LoadUSBUIRT(AMS.Profile.Xml xmlreader)
+		{
+			USBUIRTInternal.Checked = xmlreader.GetValueAsString("USBUIRT", "internal", "false") == "true";
+			USBUIRTExternal.Checked = xmlreader.GetValueAsString("USBUIRT", "external", "false") == "true";
+			is3Digit.Checked		= xmlreader.GetValueAsString("USBUIRT", "is3digit", "false") == "true";
+			needsEnter.Checked		= xmlreader.GetValueAsString("USBUIRT", "needsenter", "false") == "true"; 
+		}
+
+
+
+		void SaveUSBUIRT(AMS.Profile.Xml xmlWriter)
+		{
+			if (USBUIRTInternal.Checked)
+				xmlWriter.SetValue("USBUIRT", "internal", "true");
+			else
+				xmlWriter.SetValue("USBUIRT", "internal", "false");
+
+			if (USBUIRTExternal.Checked)
+				xmlWriter.SetValue("USBUIRT", "external", "true");
+			else
+				xmlWriter.SetValue("USBUIRT", "external", "false");
+
+			if (is3Digit.Checked)
+				xmlWriter.SetValue("USBUIRT", "is3digit", "true");
+			else
+				xmlWriter.SetValue("USBUIRT", "needsenter", "false");
+
+		}
     void SaveShares(AMS.Profile.Xml xmlWriter, ListView view, string strTag)
     {
       for (int i=0; i < 20; ++i)
@@ -3569,6 +3692,7 @@ namespace MediaPortal
         xmlWriter.SetValue("tvguide","date","");
 
         SaveRadioStations(xmlWriter);
+	    SaveUSBUIRT(xmlWriter);
       }
 			SaveFrequencies();
 		}
@@ -4791,6 +4915,80 @@ namespace MediaPortal
 				box.SelectedIndex=iSelected;
 		}
 
+		private void USBUIRTInternal_CheckedChanged(object sender, System.EventArgs e)
+		{
+			IRInternalLearn.Enabled = USBUIRTInternal.Checked;
+			USBUIRT.Instance.InternalCommandsActive = USBUIRTInternal.Checked;
+		}
+
+		private void USBUIRTExternal_CheckedChanged(object sender, System.EventArgs e)
+		{
+			IRExternalLearn.Enabled = USBUIRTExternal.Checked;
+			USBUIRT.Instance.ExternalCommandsActive = USBUIRTExternal.Checked;
+		}
+
+		private void IRInternalLearn_Click(object sender, System.EventArgs e)
+		{
+			object[] commands = { 
+									Action.ActionType.ACTION_MOVE_LEFT
+									, Action.ActionType.ACTION_MOVE_RIGHT             
+									, Action.ActionType.ACTION_MOVE_UP                
+									, Action.ActionType.ACTION_MOVE_DOWN              
+									, Action.ActionType.ACTION_PAGE_UP                
+									, Action.ActionType.ACTION_PAGE_DOWN              
+									, Action.ActionType.ACTION_SELECT_ITEM            
+									, Action.ActionType.ACTION_PREVIOUS_MENU          
+									, Action.ActionType.ACTION_SHOW_INFO              
+
+									, Action.ActionType.ACTION_PAUSE                  
+									, Action.ActionType.ACTION_STOP                   
+									, Action.ActionType.ACTION_FORWARD                
+									, Action.ActionType.ACTION_REWIND  
+
+                  , Action.ActionType.ACTION_SHOW_GUI
+                  , Action.ActionType.ACTION_QUEUE_ITEM
+      };
+			string[] buttonNames = {
+									   "LEFT",
+									   "RIGHT",
+									   "UP",
+									   "DOWN",
+									   "PAGE_UP",
+									   "PAGE_DOWN",
+									   "SELECT_ITEM",
+									   "PREVIOUS_MENU",
+									   "SHOW_INFO",
+									   "PAUSE",
+									   "STOP",
+									   "FORWARD",
+                     "REWIND",
+                     "FULLSCREEN",
+                     "QUEUE",
+								
+								   };
+               
+
+			USBUIRT.Instance.BulkLearn(commands, buttonNames);
+			USBUIRT.Instance.SaveInternalValues();
+		}
+
+		private void IRExternalLearn_Click(object sender, System.EventArgs e)
+		{
+		
+			USBUIRT.Instance.LearnTunerCodes();
+			USBUIRT.Instance.SaveTunerValues();
+		}
+
+		private void is3Digit_CheckedChanged(object sender, System.EventArgs e)
+		{
+			USBUIRT.Instance.Is3Digit = is3Digit.Checked;
+		
+		}
+
+		private void needsEnter_CheckedChanged(object sender, System.EventArgs e)
+		{
+			USBUIRT.Instance.NeedsEnter = needsEnter.Checked;
+		}
 	}
 
   // Implements the manual sorting of items by columns.

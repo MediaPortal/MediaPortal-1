@@ -26,6 +26,7 @@ public class MediaPortalApp : D3DApp, IRender
     private System.Threading.Mutex  m_Mutex;
     private string                  m_UniqueIdentifier;
     bool                            m_bPlayingState=false;
+	  private USBUIRT                 usbuirtdevice;
 
     const int WM_KEYDOWN    =0x0100;
     const int WM_SYSCOMMAND =0x0112;
@@ -121,6 +122,10 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
     }
+	private void OnRemoteCommand(object command)
+	{
+		OnAction(new Action((Action.ActionType) command, 0, 0));
+	}
 
     public MediaPortalApp()
 		{
@@ -175,6 +180,10 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("Init playlist player");
       PlayListPlayer.Init();
 
+		Log.Write("creating the USBUIRT device");
+		this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
+
+		Log.Write("done creating the USBUIRT device");
       //registers the player for video window size notifications
       Log.Write("Init players");
       g_Player.Init(this);
@@ -648,9 +657,8 @@ public class MediaPortalApp : D3DApp, IRender
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("exception occured",ex);
-				Log.Write("  exception: {0} {1} {2}", ex.Message, ex.Source,ex.StackTrace);
-
+        Log.Write("  exception: {0} {1} {2}", ex.Message, ex.Source,ex.StackTrace);
+        throw new Exception("exception occured",ex);
 			}
     }
 
