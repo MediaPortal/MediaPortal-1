@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Win32;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
@@ -323,6 +324,8 @@ namespace MediaPortal.TV.Recording
       if (m_graphState == State.Recording) return true;
       if (m_graphState != State.Created) return false;
       
+
+      SetRegistryThings();
       int hr;
       DirectShowUtil.DebugWrite("SWGraph:Start recording...");
       Filters filters = new Filters();
@@ -798,6 +801,24 @@ namespace MediaPortal.TV.Recording
 
       }
 
+    }
+
+    void SetRegistryThings()
+    {
+      //disable xvid status window while encoding
+      try
+      {
+        RegistryKey hkcu = Registry.CurrentUser;
+        RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD");
+        if (subkey != null)
+        {
+          long uivalue=0;
+          subkey.SetValue("display_status", (int)uivalue);
+        }
+      }
+      catch(Exception)
+      {
+      }
     }
 	}
 }
