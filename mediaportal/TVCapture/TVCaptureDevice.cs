@@ -5,6 +5,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using DirectX.Capture;
+using MediaPortal.Player;
 
 namespace MediaPortal.TV.Recording
 {
@@ -574,13 +575,30 @@ namespace MediaPortal.TV.Recording
               if (!m_bPreview || capture==null)
               {
                 // start preview
-                if (StartCapture("",m_iPreviewChannel))
+                string strRecPath="";
+                using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+                {
+                  strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+                }
+                string strFileName=String.Format(@"{0}\record{1}.sbe",strRecPath, ID);
+                Utils.FileDelete(strFileName);
+                if (StartCapture(strFileName,m_iPreviewChannel))
                 {
                   // and set video window position
                   m_bVideoWindowChanged=false;
                   capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
                   capture.PreviewWindow=GUIGraphicsContext.form;
                   m_bPreview=value;
+                  if (capture.IsTimeShifting)
+                  {
+                    Log.Write("Is timeshifting, file:{0}", strFileName);
+                    try
+                    {
+                      g_Player.Play( capture.Filename);
+                    }
+                    catch (Exception) {}
+
+                  }
                 }
               }
             }
