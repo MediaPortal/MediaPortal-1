@@ -1,4 +1,6 @@
-History: (dd-mm-yyyy)
+  11-07-2004  my tv       : added : use (0-9) to change channels while watching fullscreen tv
+  11-07-2004  home        : fixed : better scrolling
+
   10-07-2004  my music    : fixed : NullPointerException in my music/artist view and selecting ".." from inside artist
   10-07-2004  my music    : fixed : Album view will show same album multiple times for the same artist
 
