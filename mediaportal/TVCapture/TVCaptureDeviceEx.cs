@@ -939,7 +939,7 @@ namespace MediaPortal.TV.Recording
 			propsToSet.Add("RecordedBy",new MetadataItem("RecordedBy", "Mediaportal", MetadataItemType.String));
 
 			if (_mNewRecordedTV.Title!=null && _mNewRecordedTV.Title.Length>0)
-				propsToSet.Add("programtitle",new MetadataItem("programtitle", StripIllegalChars(_mNewRecordedTV.Title), MetadataItemType.String));
+				propsToSet.Add("title",new MetadataItem("title", StripIllegalChars(_mNewRecordedTV.Title), MetadataItemType.String));
 			
 			if (_mNewRecordedTV.Genre!=null && _mNewRecordedTV.Genre.Length>0)
 				propsToSet.Add("genre",new MetadataItem("genre", StripIllegalChars(_mNewRecordedTV.Genre), MetadataItemType.String));

@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Library
     public GUIControl this[int index]
     {
         get { 
-					if (index<=0 || index>=m_Controls.Count) return null;
+					if (index<0 || index>=m_Controls.Count) return null;
 					return (GUIControl)m_Controls[index]; 
 				}
     }
