@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Collections;
 
 namespace MediaPortal.GUI.Library
 {
@@ -8,7 +9,7 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class TexturePacker
 	{
-		class PackedTextureNode
+		public class PackedTextureNode
 		{
 			public PackedTextureNode	 ChildLeft;
 			public PackedTextureNode	 ChildRight;
@@ -70,15 +71,12 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-		PackedTextureNode root ;
-		Bitmap rootImage;
+		ArrayList rootImages;
+		ArrayList rootNodes;
 		public TexturePacker()
 		{
-			root = new PackedTextureNode();
-			rootImage = new Bitmap(2048,2048);
-			root.Rect=new Rectangle(0,0,2048,2048);
 		}
-		public bool Add(Image img, string fileName)
+		public bool Add(PackedTextureNode root, Image img, Image rootImage, string fileName)
 		{
 			PackedTextureNode node=root.Insert(fileName,img,rootImage);
 			if (node!=null)
@@ -90,21 +88,45 @@ namespace MediaPortal.GUI.Library
 			Log.Write("no room anymore to add:{0}", fileName);
 			return false;
 		}
+
 		public void test()
 		{
+			rootImages=new ArrayList();
+			rootNodes=new ArrayList();
+			
 			string[] files =System.IO.Directory.GetFiles(@"skin\bluetwo\media","*.png");
-			foreach (string file in files)
+			
+			while (true)
 			{
-				AddBitmap(file);
+				bool ImagesLeft=false;
+				
+				PackedTextureNode root =new PackedTextureNode();
+				Bitmap rootImage = new Bitmap(2048,2048);
+				root.Rect=new Rectangle(0,0,2048,2048);
+				for (int i=0; i < files.Length;++i)
+				{
+					if (files[i]!="") 
+					{
+						if (AddBitmap(root,rootImage,files[i]))
+						{
+							files[i]="";
+						}
+						else
+							ImagesLeft=true;
+					}
+				}
+				rootImages.Add(rootImage);
+				rootNodes.Add(root);
+				rootImage.Save(String.Format("bluetwo{0}.png",rootImages.Count), System.Drawing.Imaging.ImageFormat.Png);
+				if (!ImagesLeft) break;
 			}
-			rootImage.Save("bluetwo.png", System.Drawing.Imaging.ImageFormat.Png);
-			rootImage.Dispose();
 		}
-		public bool AddBitmap(string file)
+
+		public bool AddBitmap(PackedTextureNode root, Image rootImage, string file)
 		{
 			//Log.Write("---------------------");
 			Image bmp = Image.FromFile(file);
-			bool result=Add(bmp,file);
+			bool result=Add(root,bmp,rootImage,file);
 			bmp.Dispose();
 			return result;
 		}
