@@ -715,6 +715,9 @@ namespace MediaPortal.TV.Recording
 			if(hr!=0)
 				return false;
 
+			DeleteAllPIDs(m_dataCtrl,0);
+			SetPidToPin(m_dataCtrl,0,18);
+            
 			return true;
 		}
 		//

@@ -98,21 +98,22 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.SaveFileDialog sfd;
 		private System.Windows.Forms.TabPage tabPage5;
 		private System.Windows.Forms.TreeView treeView5;
-		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Button button15;
 		private System.Windows.Forms.Button button16;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.Label chName;
 		private System.Windows.Forms.ProgressBar progressBar2;
 		private System.Windows.Forms.Button button17;
 		private System.Windows.Forms.Button button18;
-		private System.Windows.Forms.Label label17;
-		private System.Windows.Forms.Label label19;
-		private System.Windows.Forms.Label label20;
-		private System.Windows.Forms.Label label21;
 		private System.Windows.Forms.Button button19;
 		private System.Windows.Forms.Button button20;
 		private System.Windows.Forms.CheckBox checkBox5;
+		private System.Windows.Forms.GroupBox groupBox7;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.Label currChannel;
+		private System.Windows.Forms.Label label25;
+		private System.Windows.Forms.Label totalCount;
+		private System.Windows.Forms.Label totalDBcount;
+		private System.Windows.Forms.Label label29;
+		private System.Windows.Forms.GroupBox groupBox8;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -250,21 +251,22 @@ namespace MediaPortal.Configuration.Sections
 			this.lnb0MHZ = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
-			this.label21 = new System.Windows.Forms.Label();
-			this.label20 = new System.Windows.Forms.Label();
-			this.label19 = new System.Windows.Forms.Label();
-			this.label17 = new System.Windows.Forms.Label();
-			this.button18 = new System.Windows.Forms.Button();
-			this.button17 = new System.Windows.Forms.Button();
-			this.progressBar2 = new System.Windows.Forms.ProgressBar();
-			this.chName = new System.Windows.Forms.Label();
-			this.label9 = new System.Windows.Forms.Label();
+			this.groupBox7 = new System.Windows.Forms.GroupBox();
+			this.totalDBcount = new System.Windows.Forms.Label();
+			this.label29 = new System.Windows.Forms.Label();
+			this.totalCount = new System.Windows.Forms.Label();
+			this.label25 = new System.Windows.Forms.Label();
+			this.currChannel = new System.Windows.Forms.Label();
+			this.label16 = new System.Windows.Forms.Label();
 			this.button16 = new System.Windows.Forms.Button();
 			this.button15 = new System.Windows.Forms.Button();
-			this.label6 = new System.Windows.Forms.Label();
+			this.progressBar2 = new System.Windows.Forms.ProgressBar();
+			this.button18 = new System.Windows.Forms.Button();
+			this.button17 = new System.Windows.Forms.Button();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.ofd = new System.Windows.Forms.OpenFileDialog();
 			this.sfd = new System.Windows.Forms.SaveFileDialog();
+			this.groupBox8 = new System.Windows.Forms.GroupBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -278,6 +280,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
+			this.groupBox7.SuspendLayout();
+			this.groupBox8.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -777,11 +781,11 @@ namespace MediaPortal.Configuration.Sections
 			// button14
 			// 
 			this.button14.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button14.Location = new System.Drawing.Point(96, 24);
+			this.button14.Location = new System.Drawing.Point(120, 24);
 			this.button14.Name = "button14";
-			this.button14.Size = new System.Drawing.Size(72, 21);
+			this.button14.Size = new System.Drawing.Size(48, 21);
 			this.button14.TabIndex = 26;
-			this.button14.Text = "Save TPL...";
+			this.button14.Text = "Save...";
 			this.button14.Click += new System.EventHandler(this.button14_Click_1);
 			// 
 			// button10
@@ -797,7 +801,7 @@ namespace MediaPortal.Configuration.Sections
 			// button13
 			// 
 			this.button13.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button13.Location = new System.Drawing.Point(40, 24);
+			this.button13.Location = new System.Drawing.Point(64, 24);
 			this.button13.Name = "button13";
 			this.button13.Size = new System.Drawing.Size(48, 21);
 			this.button13.TabIndex = 25;
@@ -1145,63 +1149,114 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage5
 			// 
-			this.tabPage5.Controls.Add(this.label21);
-			this.tabPage5.Controls.Add(this.label20);
-			this.tabPage5.Controls.Add(this.label19);
-			this.tabPage5.Controls.Add(this.label17);
-			this.tabPage5.Controls.Add(this.button18);
-			this.tabPage5.Controls.Add(this.button17);
-			this.tabPage5.Controls.Add(this.progressBar2);
-			this.tabPage5.Controls.Add(this.chName);
-			this.tabPage5.Controls.Add(this.label9);
-			this.tabPage5.Controls.Add(this.button16);
-			this.tabPage5.Controls.Add(this.button15);
-			this.tabPage5.Controls.Add(this.label6);
-			this.tabPage5.Controls.Add(this.treeView5);
+			this.tabPage5.Controls.Add(this.groupBox8);
+			this.tabPage5.Controls.Add(this.groupBox7);
 			this.tabPage5.Location = new System.Drawing.Point(4, 22);
 			this.tabPage5.Name = "tabPage5";
 			this.tabPage5.Size = new System.Drawing.Size(440, 397);
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "EPG-Grabber";
 			// 
-			// label21
+			// groupBox7
 			// 
-			this.label21.Location = new System.Drawing.Point(64, 352);
-			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(216, 16);
-			this.label21.TabIndex = 19;
-			this.label21.Text = "Events are in Database...";
+			this.groupBox7.Controls.Add(this.totalDBcount);
+			this.groupBox7.Controls.Add(this.label29);
+			this.groupBox7.Controls.Add(this.totalCount);
+			this.groupBox7.Controls.Add(this.label25);
+			this.groupBox7.Controls.Add(this.currChannel);
+			this.groupBox7.Controls.Add(this.label16);
+			this.groupBox7.Controls.Add(this.button16);
+			this.groupBox7.Controls.Add(this.button15);
+			this.groupBox7.Controls.Add(this.progressBar2);
+			this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox7.Location = new System.Drawing.Point(8, 216);
+			this.groupBox7.Name = "groupBox7";
+			this.groupBox7.Size = new System.Drawing.Size(416, 136);
+			this.groupBox7.TabIndex = 20;
+			this.groupBox7.TabStop = false;
+			this.groupBox7.Text = "EPG-Grabbing Status";
 			// 
-			// label20
+			// totalDBcount
 			// 
-			this.label20.Location = new System.Drawing.Point(24, 352);
-			this.label20.Name = "label20";
-			this.label20.Size = new System.Drawing.Size(32, 16);
-			this.label20.TabIndex = 18;
-			this.label20.Text = "0";
-			this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.totalDBcount.Location = new System.Drawing.Point(152, 72);
+			this.totalDBcount.Name = "totalDBcount";
+			this.totalDBcount.Size = new System.Drawing.Size(80, 16);
+			this.totalDBcount.TabIndex = 23;
+			this.totalDBcount.Text = "0";
 			// 
-			// label19
+			// label29
 			// 
-			this.label19.Location = new System.Drawing.Point(64, 336);
-			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(120, 16);
-			this.label19.TabIndex = 17;
-			this.label19.Text = "Events found...";
+			this.label29.Location = new System.Drawing.Point(16, 72);
+			this.label29.Name = "label29";
+			this.label29.Size = new System.Drawing.Size(128, 16);
+			this.label29.TabIndex = 22;
+			this.label29.Text = "Total adds to Database";
 			// 
-			// label17
+			// totalCount
 			// 
-			this.label17.Location = new System.Drawing.Point(24, 336);
-			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(32, 16);
-			this.label17.TabIndex = 16;
-			this.label17.Text = "0";
-			this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.totalCount.Location = new System.Drawing.Point(152, 48);
+			this.totalCount.Name = "totalCount";
+			this.totalCount.Size = new System.Drawing.Size(80, 16);
+			this.totalCount.TabIndex = 21;
+			this.totalCount.Text = "1";
+			this.totalCount.Visible = false;
+			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(16, 48);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(104, 16);
+			this.label25.TabIndex = 20;
+			this.label25.Text = "Total Events found:";
+			this.label25.Visible = false;
+			// 
+			// currChannel
+			// 
+			this.currChannel.Location = new System.Drawing.Point(104, 24);
+			this.currChannel.Name = "currChannel";
+			this.currChannel.Size = new System.Drawing.Size(288, 16);
+			this.currChannel.TabIndex = 1;
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(16, 24);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(88, 16);
+			this.label16.TabIndex = 0;
+			this.label16.Text = "Channel-Name:";
+			// 
+			// button16
+			// 
+			this.button16.Enabled = false;
+			this.button16.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button16.Location = new System.Drawing.Point(368, 96);
+			this.button16.Name = "button16";
+			this.button16.Size = new System.Drawing.Size(40, 24);
+			this.button16.TabIndex = 10;
+			this.button16.Text = "Stop";
+			this.button16.Click += new System.EventHandler(this.button16_Click);
+			// 
+			// button15
+			// 
+			this.button15.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button15.Location = new System.Drawing.Point(320, 96);
+			this.button15.Name = "button15";
+			this.button15.Size = new System.Drawing.Size(40, 24);
+			this.button15.TabIndex = 9;
+			this.button15.Text = "Start";
+			this.button15.Click += new System.EventHandler(this.button15_Click);
+			// 
+			// progressBar2
+			// 
+			this.progressBar2.Location = new System.Drawing.Point(16, 101);
+			this.progressBar2.Name = "progressBar2";
+			this.progressBar2.Size = new System.Drawing.Size(288, 16);
+			this.progressBar2.TabIndex = 13;
 			// 
 			// button18
 			// 
 			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button18.Location = new System.Drawing.Point(80, 224);
+			this.button18.Location = new System.Drawing.Point(352, 160);
 			this.button18.Name = "button18";
 			this.button18.Size = new System.Drawing.Size(48, 21);
 			this.button18.TabIndex = 15;
@@ -1211,74 +1266,22 @@ namespace MediaPortal.Configuration.Sections
 			// button17
 			// 
 			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button17.Location = new System.Drawing.Point(24, 224);
+			this.button17.Location = new System.Drawing.Point(352, 136);
 			this.button17.Name = "button17";
 			this.button17.Size = new System.Drawing.Size(48, 21);
 			this.button17.TabIndex = 14;
 			this.button17.Text = "All";
 			this.button17.Click += new System.EventHandler(this.button17_Click);
 			// 
-			// progressBar2
-			// 
-			this.progressBar2.Location = new System.Drawing.Point(24, 312);
-			this.progressBar2.Name = "progressBar2";
-			this.progressBar2.Size = new System.Drawing.Size(400, 16);
-			this.progressBar2.TabIndex = 13;
-			// 
-			// chName
-			// 
-			this.chName.Location = new System.Drawing.Point(112, 288);
-			this.chName.Name = "chName";
-			this.chName.Size = new System.Drawing.Size(312, 16);
-			this.chName.TabIndex = 12;
-			this.chName.Text = "Stopped.";
-			// 
-			// label9
-			// 
-			this.label9.Location = new System.Drawing.Point(24, 288);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(96, 16);
-			this.label9.TabIndex = 11;
-			this.label9.Text = "Current Channel:";
-			// 
-			// button16
-			// 
-			this.button16.Enabled = false;
-			this.button16.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button16.Location = new System.Drawing.Point(368, 360);
-			this.button16.Name = "button16";
-			this.button16.Size = new System.Drawing.Size(56, 24);
-			this.button16.TabIndex = 10;
-			this.button16.Text = "Stop";
-			this.button16.Click += new System.EventHandler(this.button16_Click);
-			// 
-			// button15
-			// 
-			this.button15.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button15.Location = new System.Drawing.Point(304, 360);
-			this.button15.Name = "button15";
-			this.button15.Size = new System.Drawing.Size(56, 24);
-			this.button15.TabIndex = 9;
-			this.button15.Text = "Start";
-			this.button15.Click += new System.EventHandler(this.button15_Click);
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(24, 32);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(128, 16);
-			this.label6.TabIndex = 8;
-			this.label6.Text = "TV-Channels:";
-			// 
 			// treeView5
 			// 
 			this.treeView5.CheckBoxes = true;
 			this.treeView5.HideSelection = false;
 			this.treeView5.ImageIndex = -1;
-			this.treeView5.Location = new System.Drawing.Point(24, 48);
+			this.treeView5.Location = new System.Drawing.Point(16, 24);
 			this.treeView5.Name = "treeView5";
 			this.treeView5.SelectedImageIndex = -1;
-			this.treeView5.Size = new System.Drawing.Size(184, 168);
+			this.treeView5.Size = new System.Drawing.Size(328, 160);
 			this.treeView5.TabIndex = 7;
 			// 
 			// ofd
@@ -1289,6 +1292,19 @@ namespace MediaPortal.Configuration.Sections
 			// sfd
 			// 
 			this.sfd.Filter = "Transponder-Files|*.tpl";
+			// 
+			// groupBox8
+			// 
+			this.groupBox8.Controls.Add(this.treeView5);
+			this.groupBox8.Controls.Add(this.button17);
+			this.groupBox8.Controls.Add(this.button18);
+			this.groupBox8.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox8.Location = new System.Drawing.Point(8, 16);
+			this.groupBox8.Name = "groupBox8";
+			this.groupBox8.Size = new System.Drawing.Size(416, 192);
+			this.groupBox8.TabIndex = 21;
+			this.groupBox8.TabStop = false;
+			this.groupBox8.Text = "TV-Channels";
 			// 
 			// DVBSSS2
 			// 
@@ -1308,6 +1324,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
+			this.groupBox7.ResumeLayout(false);
+			this.groupBox8.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -2583,10 +2601,12 @@ namespace MediaPortal.Configuration.Sections
 			m_stopEPGGrab=false;
 			button16.Enabled=true;
 			button15.Enabled=false;
+			treeView5.Enabled=false;
 			int counter=0;
 			bool tuned=false;
 			if(m_b2c2Helper.Run()==false)
 				return;
+			ResetStatus();
 			do
 			{
 				GC.Collect();
@@ -2597,13 +2617,23 @@ namespace MediaPortal.Configuration.Sections
 					if(tn.Checked==true)
 					{
 						DVBChannel ch=(DVBChannel)tn.Tag;
-						chName.Text=ch.ServiceName;
+						if(m_stopEPGGrab==true)
+							break;
+						if(ch==null)
+							continue;
 						tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
-						//System.Threading.Thread.Sleep(200);
 						if(tuned==false)
-							return ;
-						counter=m_dvbSec.GrabEIT(ch,m_b2c2Helper.Mpeg2DataFilter);
-						label17.Text=counter.ToString();
+							continue ;
+						currChannel.Text=ch.ServiceName;
+						counter+=m_dvbSec.GrabEIT(m_b2c2Helper.Mpeg2DataFilter);
+						totalDBcount.Text=counter.ToString();
+						Application.DoEvents();
+						if(m_stopEPGGrab==true)
+							break;
+
+						
+						//
+						// refresh prograssbar
 						try
 						{
 							progressBar2.Value=progressBar2.Value+1;
@@ -2611,17 +2641,20 @@ namespace MediaPortal.Configuration.Sections
 						catch
 						{
 							progressBar2.Value=0;
-						}		
+						}
 					}
 					Application.DoEvents();
 				}
 			}while(m_stopEPGGrab==false);
-			chName.Text="Stopped.";
 			button15.Enabled=true;
 			button16.Enabled=false;
-			label17.Text="0";
 			m_b2c2Helper.CleanUp();
+			treeView5.Enabled=true;
 			GC.Collect();
+		}
+		void ResetStatus()
+		{
+			Application.DoEvents();
 		}
 		int CountSelectedNodes()
 		{

@@ -159,6 +159,8 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin);
 		
+		[DllImport("kernel32.dll", EntryPoint="RtlCopyMemory")]
+		public static extern void CopyMemory(IntPtr Destination, IntPtr Source,[MarshalAs(UnmanagedType.U4)] int Length);
 		// registry settings
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
@@ -232,6 +234,13 @@ namespace MediaPortal.TV.Recording
 		bool							m_vmr9Running=false;
 		DVBTeletext						m_teleText=new DVBTeletext();
 		int								m_retryCount=0;
+		bool							m_performRepaint=false;
+		bool							m_performCyclePid=false;
+		bool							m_performTeletext=false;
+		byte[]							m_streamBufferArray=new byte[65535];
+		int								m_dataLen=0;
+		TSHelperTools					m_tsHelper=new TSHelperTools();
+
 
 //
 		
@@ -245,10 +254,9 @@ namespace MediaPortal.TV.Recording
 				m_pluginsEnabled=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
 			}
 			
-
-				GUIWindow win=GUIWindowManager.GetWindow(7700);
-				if(win!=null)
-					win.SetObject(m_teleText);
+			GUIWindow win=GUIWindowManager.GetWindow(7700);
+			if(win!=null)
+				win.SetObject(m_teleText);
 
 			try
 			{
@@ -259,6 +267,9 @@ namespace MediaPortal.TV.Recording
 
 			}
 			catch(Exception){}
+		}
+		~DVBGraphSS2()
+		{
 		}
 		//
 		public void RebuildTuner(IntPtr data)
@@ -331,10 +342,26 @@ namespace MediaPortal.TV.Recording
 			int add=(int)data;
 			int end=(add+len);
 
-			if(m_pluginsEnabled==true)
+			if(m_teleText==null)
 			{
-				for(int pointer=add;pointer<end;pointer+=188)
-					PidCallback((IntPtr)pointer);
+				if(m_pluginsEnabled==true)
+				{
+					for(int pointer=add;pointer<end;pointer+=188)
+						PidCallback((IntPtr)pointer);
+					
+				}
+			}
+			else
+			{
+				if(m_pluginsEnabled==true)
+				{
+					for(int pointer=add;pointer<end;pointer+=188)
+					{
+						PidCallback((IntPtr)pointer);
+						m_teleText.SaveData((IntPtr)pointer);
+					}
+					
+				}
 			}
 		
 			//
@@ -345,50 +372,43 @@ namespace MediaPortal.TV.Recording
 			// the following check should takes care of scrambled video-data
 			// and redraw the vmr9 not to hang
 
-				int pid=m_currentChannel.VideoPid;
-				int teleTextPid=m_currentChannel.TeletextPid;
-				TSHelperTools tools=new TSHelperTools();
-				for(int pointer=add;pointer<end;pointer+=188)
+			int pid=m_currentChannel.VideoPid;
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
+					
+				TSHelperTools.TSHeader header=m_tsHelper.GetHeader((IntPtr)pointer);
+				if(header.Pid==pid)
 				{
 					
-					TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-					if(header.Pid==pid)
-					{
-					
-						if(header.TransportScrambling!=0) // data is scrambled?
-							m_videoDataFound=false;
-						else
-							m_videoDataFound=true;
+					if(header.TransportScrambling!=0) // data is scrambled?
+						m_videoDataFound=false;
+					else
+						m_videoDataFound=true;
 						
-						break;// stop loop if we got a non-scrambled video-packet 
-					}
+					break;// stop loop if we got a non-scrambled video-packet 
 				}
+			}
 			//
 			if(m_vmr9Running==true  && m_videoDataFound==false)
-				Vmr9.Repaint();// repaint vmr9
+				m_performRepaint=true;
 
 			// call the plugins tuner
 			if(m_videoDataFound==false && m_retryCount>=0)
 			{
 				m_retryCount++;
 				if(m_retryCount>=250)//
-				{
-						m_retryCount=0;
-						CyclePid();
-						ExecTuner();
-						Log.Write("Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
-				}
+					m_performCyclePid=true;
 			}
 			else m_retryCount=-1;
 
 
-			for(int pointer=add;pointer<end;pointer+=188)
+			if(m_performTeletext==false)
 			{
-				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-				if(header.Pid==teleTextPid && m_teleText!=null)
-				{
-					m_teleText.SaveData((IntPtr)pointer);
-				}
+				m_dataLen=len;
+				if(m_dataLen>65535)
+					m_dataLen=65535;
+				Marshal.Copy(data,m_streamBufferArray,0,m_dataLen);
+				m_performTeletext=true;
 			}
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
@@ -410,7 +430,6 @@ namespace MediaPortal.TV.Recording
 			int		currentPid=m_currentChannel.ECMPid;
 			int		nextPid=0;
 			int		startCheck=1;
-			int		tmpPid=0;
 			string	pidString=m_currentChannel.AudioLanguage3;
 
 			// get actual pid position
@@ -547,7 +566,7 @@ namespace MediaPortal.TV.Recording
 					//m_sampleInterface.SetOneShot(true);
 					m_sampleInterface.SetCallback(this,1);
 					m_sampleInterface.SetMediaType(ref mt);
-					m_sampleInterface.SetBufferSamples(true);
+					m_sampleInterface.SetBufferSamples(false);
 				}
 				else
 					Log.Write("DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
@@ -1693,12 +1712,7 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphSS2:StartViewing() start graph");
 
 			m_mediaControl.Run();
-			
-
-
-			//ExecTuner();
-
-			
+				
 			if(setVisFlag)
 			{
 				Log.Write("DVBGraphSS2:StartViewing() show video window");
@@ -1815,6 +1829,37 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+			//
+			if(m_performRepaint==true) // redraw vmr9
+			{
+				Vmr9.Repaint();
+				m_performRepaint=false;
+			}
+			//
+			if(m_performCyclePid==true) // cycle pid
+			{
+				m_performCyclePid=false;
+				m_retryCount=0;
+				CyclePid();
+				ExecTuner();
+				Log.Write("Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
+			}
+			//
+			// actions for streamBufferPtr
+//			if(m_performTeletext==true)
+//			{
+//				for(int pointer=0;pointer<m_dataLen;pointer+=188)
+//				{
+//					TSHelperTools.TSHeader header=m_tsHelper.GetHeader(m_streamBufferArray,pointer);
+//					if(header.Pid==m_currentChannel.TeletextPid && m_teleText!=null)
+//					{
+//						m_teleText.SaveData(m_streamBufferArray,pointer);
+//					}
+//				}
+//				m_performTeletext=false;
+//			}
+			//
+
 		}
 		
 		public PropertyPageCollection PropertyPages()

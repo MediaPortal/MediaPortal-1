@@ -1883,6 +1883,113 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
+		//
+		public int GrabEIT(DShowNET.IBaseFilter filter)
+		{
+			// there must be an ts (card tuned) to get eit
+			
+			int eventsCount=0;
+
+			ArrayList eitList=new ArrayList();
+			eitList=GetEITSchedule(0x4e,filter);
+			foreach(EITDescr eit in eitList)
+			{
+				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+				eventsCount+=SetEITToDatabase(eit,progName,0);
+			}
+			eitList=GetEITSchedule(0x4f,filter);
+			foreach(EITDescr eit in eitList)
+			{
+				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+				eventsCount+=SetEITToDatabase(eit,progName,0);
+			}
+			int lastTable=0x50;
+			eitList=GetEITSchedule(0x50,filter);
+
+			foreach(EITDescr eit in eitList)
+			{
+				if(eit.lastTable>lastTable)
+					lastTable=eit.lastTable;
+				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+				eventsCount+=SetEITToDatabase(eit,progName,0);
+			}
+			for(int table=0x51;table<lastTable;table++)
+			{
+				eitList=GetEITSchedule(table,filter);
+				foreach(EITDescr eit in eitList)
+				{
+					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+					eventsCount+=SetEITToDatabase(eit,progName,0);
+				}
+
+			}
+
+			lastTable=0x60;
+			eitList=GetEITSchedule(0x60,filter);
+
+			foreach(EITDescr eit in eitList)
+			{
+				if(eit.lastTable>lastTable)
+					lastTable=eit.lastTable;
+				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+				eventsCount+=SetEITToDatabase(eit,progName,0);
+			}
+			for(int table=0x61;table<lastTable;table++)
+			{
+				eitList=GetEITSchedule(table,filter);
+				foreach(EITDescr eit in eitList)
+				{
+					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+					eventsCount+=SetEITToDatabase(eit,progName,0);
+				}
+
+
+			}			
+			GC.Collect();
+			return 	eventsCount;
+
+		}
+		//
+		public int SetEITToDatabase(EITDescr data,string channelName,int dummy)
+		{
+			try
+			{
+				int retVal=0;
+				TVProgram tv=new TVProgram();
+				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
+				date=date.ToLocalTime();
+				if(date<System.DateTime.Now)
+					return 0;
+				System.DateTime dur=new DateTime();
+				dur=date;
+				dur=dur.AddHours((double)data.duration_hh);
+				dur=dur.AddMinutes((double)data.duration_mm);
+				dur=dur.AddSeconds((double)data.duration_ss);
+				if(dur<date)
+					return 0;
+				tv.Channel=channelName;
+				tv.Genre=data.genere_text;
+				tv.Description=data.event_item_text;
+				tv.Title=data.event_name;
+				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
+				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+				ArrayList programsInDatabase = new ArrayList();
+				TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start,tv.End,ref programsInDatabase);
+				if(programsInDatabase.Count==0 && channelName!="")
+				{
+					int programID=TVDatabase.AddProgram(tv);
+					TVDatabase.RemoveOverlappingPrograms();
+					if(programID!=-1)
+					{
+						Log.Write("added to database for channel {0} event start:{1} end:{2} text:{3}",tv.Channel,tv.Start,tv.End,data.event_name);
+						retVal= 1;
+					}
+				}
+				return retVal;
+			}
+			catch{return 0;}
+		}
+		//
 		public void SetEITToDatabase(EITDescr data, string channelName)
 		{
 			try
