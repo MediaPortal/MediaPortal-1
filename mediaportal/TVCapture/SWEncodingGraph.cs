@@ -34,6 +34,8 @@ namespace MediaPortal.TV.Recording
     IBaseFilter             m_filterCaptureVideo=null;
     IBaseFilter             m_filterCaptureAudio=null;
     
+    IFileSinkFilter	        m_fileWriterFilter = null;			// DShow Filter: file writer
+    IBaseFilter		          m_muxFilter = null;					// DShow Filter: multiplexor (combine video and audio streams)
     IBaseFilter             m_filterCompressorVideo=null;
     IBaseFilter             m_filterCompressorAudio=null;
     IAMTVTuner              m_TVTuner=null;
@@ -226,6 +228,12 @@ namespace MediaPortal.TV.Recording
       if (m_filterCompressorAudio!=null)
         Marshal.ReleaseComObject(m_filterCompressorAudio);m_filterCompressorAudio=null;   
 
+      if (m_muxFilter!=null)
+        Marshal.ReleaseComObject(m_muxFilter);m_muxFilter=null;
+   
+      if (m_fileWriterFilter!=null)
+        Marshal.ReleaseComObject(m_fileWriterFilter);m_fileWriterFilter=null;   
+
       if( m_TVTuner != null )
         Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
 
@@ -302,8 +310,124 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartRecording(string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
-      ///@@@todo
-      return false;
+      if (m_graphState!=State.Created) return false;
+      
+      int hr;
+      DirectShowUtil.DebugWrite("SWGraph:Start recording...");
+      Filters  filters = new Filters();
+      Filter   filterVideoCompressor=null;
+      Filter   filterAudioCompressor=null;
+      
+      DirectShowUtil.DebugWrite("SWGraph:find video compressor filter...");
+      foreach (Filter filter in filters.VideoCompressors)
+      {
+        if (filter.Name.Equals(m_strVideoCompressor))
+        {
+          filterVideoCompressor=filter;
+          break;
+        }
+      }
+      
+      DirectShowUtil.DebugWrite("SWGraph:find audio compressor filter...");
+      foreach (Filter filter in filters.AudioCompressors)
+      {
+        if (filter.Name.Equals(m_strAudioCompressor))
+        {
+          filterAudioCompressor=filter;
+          break;
+        }
+      }
+
+      if (filterVideoCompressor==null) 
+      {
+        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find video compressor:{0}",m_strVideoCompressor);
+        return false;
+      }
+      if (filterAudioCompressor==null) 
+      {
+        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find audio compressor:{0}",m_strAudioCompressor);
+        return false;
+      }
+
+      // add the video/audio compressor filters
+      DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add video compressor {0}",m_strVideoCompressor);
+      m_filterCompressorVideo = Marshal.BindToMoniker( filterVideoCompressor.MonikerString ) as IBaseFilter;
+      if (m_filterCompressorVideo!=null)
+      {
+        hr = m_graphBuilder.AddFilter( m_filterCompressorVideo, filterVideoCompressor.Name );
+        if( hr < 0 ) 
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add video compressor to filtergraph");
+          return false;
+        }
+      }
+      else
+      {
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:Add video compressor to filtergraph");
+        return false;
+      }
+
+      DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add audio compressor {0}",m_strAudioCompressor);
+      m_filterCompressorAudio = Marshal.BindToMoniker( filterAudioCompressor.MonikerString ) as IBaseFilter;
+      if (m_filterCompressorAudio!=null)
+      {
+        hr = m_graphBuilder.AddFilter( m_filterCompressorAudio, filterAudioCompressor.Name );
+        if( hr < 0 ) 
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph");
+          return false;
+        }
+      }
+      else
+      {
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph");
+        return false;
+      }
+    
+      // set filename
+      strFileName=System.IO.Path.ChangeExtension(strFileName,".avi");
+      DirectShowUtil.DebugWrite("SWGraph:record to :{0} ", strFileName);
+
+      Guid cat,med;
+      Guid mediaSubTypeAvi = MediaSubType.Avi;
+      hr = m_captureGraphBuilder.SetOutputFileName( ref mediaSubTypeAvi, strFileName, out m_muxFilter, out m_fileWriterFilter );
+      if (hr!=0)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:to set output filename to :{0} ", strFileName);
+        return false;
+      }
+
+      if (m_videoCaptureDevice.CapturePin!=null)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:connect video capture->compressor ");
+        cat = PinCategory.Capture;
+        med = MediaType.Interleaved;
+        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
+        if (hr!=0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect video capture->compressor ");
+          return false;
+        }
+      }
+
+
+      if (m_filterCaptureAudio!=null)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:connect audio capture->compressor ");
+        cat = PinCategory.Capture;
+        med = MediaType.Interleaved;
+        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureAudio, m_filterCompressorAudio, m_muxFilter ); 
+        if (hr!=0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect audio capture->compressor ");
+          return false;
+        }
+      }
+      m_mediaControl.Run();
+      m_graphState=State.Recording;
+
+      DirectShowUtil.DebugWrite("SWGraph:recording...");
+      return true;
     }
     
     
@@ -316,7 +440,12 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public void StopRecording()
     {
-      ///@@@todo
+      if (m_graphState!=State.Recording) return ;
+      DirectShowUtil.DebugWrite("SWGraph:stop recording...");
+      m_mediaControl.Stop();
+      m_graphState=State.Created;
+      DeleteGraph();
+      DirectShowUtil.DebugWrite("SWGraph:stopped recording...");
     }
 
 
