@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  24-06-2004  general     : fixed : skin engine:fixed some scaling bugs for large displays (1280x1024 and higher)
+  24-06-2004  home        : fixed : home now stretches back panel so the auto-added plugins buttons show nicely
+  24-06-2004  my video    : fixed : hangups when VMR9 was enabled and entering my TV or stopping the movie
   24-06-2004  my TV       : added : scheduled tv: sort & show status (waiting,recording,recorded) of each schedule
   
   23-06-2004  general     : fixed : installer:dont install default tvguide.xml

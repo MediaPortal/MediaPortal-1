@@ -1254,8 +1254,8 @@ namespace MediaPortal
 			// 
 			// columnHeader3
 			// 
-			this.columnHeader3.Text = "Frequency (MHz)";
-			this.columnHeader3.Width = 118;
+			this.columnHeader3.Text = "Frequency Override (MHz)";
+			this.columnHeader3.Width = 142;
 			// 
 			// groupBox18
 			// 
@@ -3053,7 +3053,7 @@ namespace MediaPortal
         checkBoxHideFileExtensions.Checked=xmlreader.GetValueAsBool("general","hideextensions",true);
         checkBoxAlwaysTimeShift.Checked=xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
 
-        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",false);
+        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",true);
         dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
         dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);

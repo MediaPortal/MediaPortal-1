@@ -4,7 +4,9 @@ playing file. These special tags currently work for the following controls:
     - label 
     - fadelabel 
     - textscrollup
-    - progress 
+    - progress
+    - image
+    - tvprogress 
 These special tags are placed in the <label></label> field of the controls and contain the
 tagname and any other text you want.
 
@@ -38,68 +40,82 @@ example of an fadelabel:
     </control>
 
 List of special tags:
-Tagname                     description
+Tagname							description
 ---------------------------------------------------------
-#title                      title of current playing song or movie
-#artist                     artist of current playing song
-#album                      albumname of current playing song 
-#track                      tracknumber of current playing song
-#year                       release year of current playing song or movie
-#comment                    comment of of current playing song 
-#duration                   duration in seconds of current playing song or movie
-#thumb                      filename to the thumbnail for the current playing song or movie
-#director                   Director of current playing movie
-#genre                      genre of current playing song/movie
-#cast                       cast of current playing movie
-#dvdlabel                   dvd# of current playing movie
-#imdbnumber                 imdbnumber of current playing movie
-#file                       filename of current playing movie
-#plot                       plot of current playing movie
-#plotoutline                plotoutline of current playing movie
-#rating                     rating of current playing movie
-#tagline                    tagline of current playing movie
-#votes                      votes of current playing movie
-#credits                    credits of current playing movie
-#currentplaytime            current playtime of current playing movie/song
-#playspeed                  playspeed (-2x, 1x, 2x, 4x,...) of current playing movie/song
-#percentage                 % (0-100 of current playing movie/song)
-#channel                    current TV channel
-#selecteditem               text of selected item
-#selecteditem2              2nd text of selected item
-#selectedthumb              filename of thumbnail of selected item
-#itemcount                  number of items in list/album/thumbnail view
-#currentmodule              contains the name of the current window (like My Movies or My Pictures)
+Metadata of the currently playing movie / song
+	#title                      title 
+	#artist                     artist
+	#album                      albumname 
+	#track                      tracknumber
+	#year                       release year 
+	#comment                    comment 
+	#director                   Director
+	#genre                      genre/movie
+	#cast                       cast
+	#dvdlabel                   dvd#
+	#imdbnumber                 imdbnumber
+	#file                       filename
+	#plot                       plot
+	#plotoutline                plotoutline
+	#rating                     rating
+	#tagline                    tagline
+	#votes                      votes
+	#credits                    credits
+	#thumb                      filename of the thumbnail containg the movie/song art
+	
+	#currentplaytime            current playtime in HH:MM:SS
+	#shortcurrentplaytime		current playtime in HH:MM
+	#duration                   duration in seconds of  in HH:MM:SS
+	#shortduration              duration in seconds of  in HH:MM
+	#playlogo					contains the filename of the logo which shows the current status (FF/RW/PAUSE/PLAY)
+	#playspeed                  playspeed (-2x, 1x, 2x, 4x,...)/song
+	#percentage                 % (0-100/song)
 
-#TV.start					start time of the current tvprogram you're watching/recording
-#TV.stop					stop time of the current tvprogram you're watching/recording
-#TV.current					current time of the current tvprogram you're watching/recording
+Metadata of the listcontrol/thumbnail panel controls
+	#selecteditem               text of current selected item
+	#selecteditem2              2nd text of for current selected item
+	#selectedthumb              filename of thumbnail for current selected item
+	#itemcount                  number of items 
 
-#TV.Record.channel          TV channel of the current tvprogram which gets recorded
-#TV.Record.start            start time of the current tvprogram which gets recorded
-#TV.Record.stop             stop time of the current tvprogram which gets recorded
-#TV.Record.genre            genre of the current tvprogram which gets recorded
-#TV.Record.title            title of the current tvprogram which gets recorded
-#TV.Record.description      description of the current tvprogram which gets recorded
-#TV.Record.thumb            thumbnail filename of the current tvprogram which gets recorded
+Various:
+	#currentmodule              contains the name of the current window (like My Movies or My Pictures)
 
-#TV.View.channel            TV channel of the current tvprogram you're watching
-#TV.View.thumb              thumbnail of the current tvprogram you're watching
-#TV.View.start              start time of the current tvprogram you're watching
-#TV.View.stop               stop time of the current tvprogram you're watching
-#TV.View.genre              genre of the current tvprogram you're watching
-#TV.View.title              title of the current tvprogram you're watching
-#TV.View.description        description of the current tvprogram you're watching
-#TV.View.Percentage         contains how much percent (0%-100%) of the current tvprogram has past
+Metadata of My TV & recorder
+	#channel                    current TV channel
+	#TV.start					start time of the current tvprogram you're watching/recording
+	#TV.stop					stop time of the current tvprogram you're watching/recording
+	#TV.current					current time of the current tvprogram you're watching/recording
 
-#TV.Guide.Day               contains the day you're browsing
-#TV.Guide.thumb             thumbnail of current selected tv channel
-#TV.Guide.Title             title of current selected program
-#TV.Guide.Time              start-endtime of current selected program
-#TV.Guide.Description       description of current selected program
-#TV.Guide.Genre             genre of current selected program
+metadata of My TV/recorder:
+	#TV.Record.channel          TV channel of the current tvprogram which gets recorded
+	#TV.Record.start            start time of the current tvprogram which gets recorded
+	#TV.Record.stop             stop time of the current tvprogram which gets recorded
+	#TV.Record.genre            genre of the current tvprogram which gets recorded
+	#TV.Record.title            title of the current tvprogram which gets recorded
+	#TV.Record.description      description of the current tvprogram which gets recorded
+	#TV.Record.thumb            thumbnail filename of the current tvprogram which gets recorded
 
-#TV.RecordedTV.Title        title of current selected recording
-#TV.RecordedTV.Time         time of current selected recording
-#TV.RecordedTV.Description  description of current selected recording
-#TV.RecordedTV.thumb        thumbnail of current selected recording
-#TV.RecordedTV.Genre        genre of current selected recording
+metadata of My TV/ tv viewing:
+	#TV.View.channel            TV channel of the current tvprogram you're watching
+	#TV.View.thumb              thumbnail of the current tvprogram you're watching
+	#TV.View.start              start time of the current tvprogram you're watching
+	#TV.View.stop               stop time of the current tvprogram you're watching
+	#TV.View.genre              genre of the current tvprogram you're watching
+	#TV.View.title              title of the current tvprogram you're watching
+	#TV.View.description        description of the current tvprogram you're watching
+	#TV.View.Percentage         contains how much percent (0%-100%) of the current tvprogram has past
+
+metadata of My TV/TVGuide:
+	#TV.Guide.Day               contains the day you're browsing
+	#TV.Guide.thumb             thumbnail of current selected tv channel
+	#TV.Guide.Title             title of current selected program
+	#TV.Guide.Time              start-endtime of current selected program
+	#TV.Guide.Description       description of current selected program
+	#TV.Guide.Genre             genre of current selected program
+
+metadata of My TV/ Recorded TV:
+	#TV.RecordedTV.Title        title of current selected recording
+	#TV.RecordedTV.Time         time of current selected recording
+	#TV.RecordedTV.Description  description of current selected recording
+	#TV.RecordedTV.thumb        thumbnail of current selected recording
+	#TV.RecordedTV.Genre        genre of current selected recording

@@ -358,9 +358,9 @@ public class MediaPortalApp : D3DApp, IRender
 
 			GUIPropertyManager.Properties["#currentplaytime"]=Utils.SecondsToHMSString((int)g_Player.CurrentPosition );
 			GUIPropertyManager.Properties["#shortcurrentplaytime"]=Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition );
+			GUIPropertyManager.Properties["#duration"]=Utils.SecondsToHMSString((int)g_Player.Duration );
 			GUIPropertyManager.Properties["#shortduration"]=Utils.SecondsToShortHMSString((int)g_Player.Duration );
 			GUIPropertyManager.Properties["#playspeed"]=g_Player.Speed.ToString();
-			GUIPropertyManager.Properties["#duration"]=Utils.SecondsToHMSString((int)g_Player.Duration );
 
 			double fPercentage=g_Player.CurrentPosition / g_Player.Duration;
 			int iPercent=(int)(100*fPercentage);
