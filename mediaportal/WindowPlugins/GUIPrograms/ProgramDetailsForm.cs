@@ -8,9 +8,8 @@ using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using ProgramsDatabase;
 using Programs.Utils;
-using WindowPlugins.GUIPrograms;
 
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for SetupForum.
