@@ -981,7 +981,7 @@ namespace MediaPortal.GUI.TV
 
 			ArrayList programs=new ArrayList();
 			DateTime dtStart=DateTime.Now;
-			DateTime dtEnd  =dtStart.AddHours(10);
+			DateTime dtEnd  =dtStart.AddDays(30);
 			long iStart=Utils.datetolong(dtStart);
 			long iEnd=Utils.datetolong(dtEnd);
 			TVDatabase.GetProgramsPerChannel(channel.Name,iStart,iEnd,ref programs);
@@ -1086,10 +1086,23 @@ namespace MediaPortal.GUI.TV
 				img.TextOffsetY1=5;
 				img.FontName1="font13";
 				img.TextColor1=0xffffffff;
+				string strTimeSingle=String.Format("{0}", 
+					program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+
 				string strTime=String.Format("{0}-{1}", 
 					program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
 					program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
+				if (program.StartTime.Date != DateTime.Now.Date)
+				{
+						strTime=String.Format("{0} {1}-{2}", 
+							Utils.GetShortDayString(program.StartTime),
+					 program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+					 program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					strTimeSingle=String.Format("{0} {1}", 
+						Utils.GetShortDayString(program.StartTime),
+						program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+				}
 				img.Label1=program.Title;
 				GUILabelControl labelTemplate;
 				if (program.IsRunningAt(dt))
@@ -1122,7 +1135,7 @@ namespace MediaPortal.GUI.TV
         else
         {
           // No genre displayed, display start time as part of the program name
-          img.Label1=String.Format("{0} {1}", program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat), program.Title);
+          img.Label1=String.Format("{0} {1}", strTimeSingle, program.Title);
         }
 
 				if (program.IsRunningAt(dt))
