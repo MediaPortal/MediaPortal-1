@@ -371,13 +371,10 @@ namespace MediaPortal.TV.Recording
 				m_retryCount++;
 				if(m_retryCount>=250)//
 				{
-					lock(typeof(DVBGraphSS2))
-					{
 						m_retryCount=0;
 						CyclePid();
 						ExecTuner();
 						Log.Write("Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
-					}
 				}
 			}
 			else m_retryCount=-1;
