@@ -62,12 +62,17 @@ Tagname                     description
 #credits                    credits of current playing movie
 #currentplaytime            current playtime of current playing movie/song
 #playspeed                  playspeed (-2x, 1x, 2x, 4x,...) of current playing movie/song
+#percentage                 % (0-100 of current playing movie/song)
 #channel                    current TV channel
 #selecteditem               text of selected item
 #selecteditem2              2nd text of selected item
 #selectedthumb              filename of thumbnail of selected item
 #itemcount                  number of items in list/album/thumbnail view
 #currentmodule              contains the name of the current window (like My Movies or My Pictures)
+
+#TV.start					start time of the current tvprogram you're watching/recording
+#TV.stop					stop time of the current tvprogram you're watching/recording
+#TV.current					current time of the current tvprogram you're watching/recording
 
 #TV.Record.channel          TV channel of the current tvprogram which gets recorded
 #TV.Record.start            start time of the current tvprogram which gets recorded

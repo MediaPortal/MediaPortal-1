@@ -1,4 +1,11 @@
 History: (dd-mm-yyyy)
+  23-06-2004  my video    : fixed : fullscreen video: new progress bar which is shown when seeking,ff/rw,pause
+  23-06-2004  my TV       : fixed : Recorded tv: added genre
+  23-06-2004  my TV       : fixed : Recorded tv: added sort by watched to see which movies you watched
+  23-06-2004  my TV       : fixed : Recorded tv: show duration of recording instead of begin-end time
+  23-06-2004  my TV       : fixed : 100% cpu usage when entering my tv & capture card was in use by other app.
+  
+  22-06-2004  my TV       : fixed : tv recording overlay
   22-06-2004  my music    : fixed : cd player was broken
   22-06-2004  my video    : added : show progressbar & time when FF/RW or skip+/-
   22-06-2004  my tv       : fixed : hauppage PVR 350/USB2 doesnt seem to user frequency overrides?

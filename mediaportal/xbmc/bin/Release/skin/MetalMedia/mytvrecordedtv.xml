@@ -109,8 +109,10 @@
 		<textYOff>4</textYOff>
 		<textXOff2>425</textXOff2>
 		<textYOff2>50</textYOff2>
-		<itemWidth>65</itemWidth>
-		<itemHeight>65</itemHeight>
+		<textXOff3>101</textXOff3>
+		<textYOff3>50</textYOff3>
+		<itemWidth>81</itemWidth>
+		<itemHeight>81</itemHeight>
 		<spinPosY>394</spinPosY>
 		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>blue-rectangleNF.png</textureNoFocus>		

@@ -29,7 +29,7 @@ public class MediaPortalApp : D3DApp, IRender
   const int WM_KEYDOWN    =0x0100;
   const int WM_SYSCOMMAND =0x0112;
   const int SC_SCREENSAVE =0xF140;
-
+		[STAThread]
     public static void Main()
     {
       
@@ -344,11 +344,27 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.DispatchThreadMessages(); 
 
 
+		if (g_Player.Paused) GUIPropertyManager.Properties["#playlogo"]="logo_pause.png";
+		else if (g_Player.Speed>1) GUIPropertyManager.Properties["#playlogo"]="logo_fastforward.png";
+		else if (g_Player.Speed<1) GUIPropertyManager.Properties["#playlogo"]="logo_rewind.png";
+		else if (g_Player.Playing) GUIPropertyManager.Properties["#playlogo"]="logo_play.png";
+		else GUIPropertyManager.Properties["#playlogo"]="";
+
     // update playing status
     if (g_Player.Playing)
     {
       GUIGraphicsContext.IsPlaying=true;
 			GUIGraphicsContext.IsPlayingVideo=(g_Player.IsVideo || g_Player.IsTV) ;
+
+			GUIPropertyManager.Properties["#currentplaytime"]=Utils.SecondsToHMSString((int)g_Player.CurrentPosition );
+			GUIPropertyManager.Properties["#shortcurrentplaytime"]=Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition );
+			GUIPropertyManager.Properties["#shortduration"]=Utils.SecondsToShortHMSString((int)g_Player.Duration );
+			GUIPropertyManager.Properties["#playspeed"]=g_Player.Speed.ToString();
+			GUIPropertyManager.Properties["#duration"]=Utils.SecondsToHMSString((int)g_Player.Duration );
+
+			double fPercentage=g_Player.CurrentPosition / g_Player.Duration;
+			int iPercent=(int)(100*fPercentage);
+			GUIPropertyManager.Properties["#percentage"]=iPercent.ToString();
     }
     else
     {

@@ -8,11 +8,11 @@ Skin, gfx, .xml & media:
   - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
-- my tv/video : use properties in fullscreen.xml & tvosd.xml for percentage & time
 
 My Radio:
     - add support for more cards
-    - prev/next buttons dont work yet      
+    - prev/next buttons dont work yet 
+         
 My TV:
   general
 	- option:fade in/out when switching between fullscreen video/tv<->gui
@@ -123,3 +123,4 @@ General:
        - fullscreen: osd
        - mouse wheel for scrolling
   - autoplay anything thats in the cd/dvd
+  

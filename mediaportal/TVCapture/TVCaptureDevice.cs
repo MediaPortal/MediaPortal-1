@@ -230,6 +230,7 @@ namespace MediaPortal.TV.Recording
       if (filterVideoDevice==null) 
       {
         Log.Write("  CaptureCard:{0} video capture device not found",ID);
+				System.Threading.Thread.Sleep(1000);
         return false;
       }
 

@@ -33,6 +33,7 @@
 		<midtexture>osd_progress_mid.png</midtexture> 
 		<righttexture>osd_progress_right.png</righttexture> 
 		<visible>yes</visible> 
+		<label>#percentage</label>
 	</control>
 	<control>
 		<description>Skip Bwd</description> 
@@ -247,7 +248,7 @@
 		<id>100</id> 
 		<posX>535</posX> 
 		<posY>532</posY> 
-		<label>-</label> 
+		<label>#currentplaytime/#duration</label> 
 		<align>left</align> 
 		<font>font10</font> 
 		<textcolor>FF000000</textcolor> 

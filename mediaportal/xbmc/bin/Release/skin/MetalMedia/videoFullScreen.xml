@@ -174,48 +174,28 @@
   <colordiffuse>ffffffff</colordiffuse> 
   </control> 
   
- 
-	<control>
-		<description>Panel</description> 
-		<type>image</type> 
-		<id>101</id> 
-		<posX>0</posX> 
-		<posY>495</posY>
-		<texture>osd_panel.png</texture>		
-		<visible>yes</visible> 
-	</control>
-	<control>
-		<description>display bg</description> 
-		<type>image</type> 
-		<id>102</id> 
-		<posX>400</posX> 
-		<posY>510</posY>
-		<texture>lcd_display.png</texture> 
-	</control>
 	<control>
 		<description>Progress Bar</description> 
-		<type>progress</type> 
+		<type>tvprogress</type> 
 		<id>1</id> 
 		<posX>65</posX> 
-		<posY>501</posY> 
-		<height>25</height>
-		<width>400</width>
-		<texturebg>osd_progress_back.png</texturebg> 
-		<lefttexture>osd_progress_left.png</lefttexture> 
-		<midtexture>osd_progress_mid.png</midtexture> 
-		<righttexture>osd_progress_right.png</righttexture> 
+		<posY>400</posY> 
+		<width>600</width>
+		<toptexture>ProgressBar-Top.png</toptexture> 
+		<lefttexture>ProgressBar-Left.png</lefttexture> 
+		<midtexture>ProgressBar-Base.png</midtexture> 
+		<righttexture>ProgressBar-Right.png</righttexture> 
+		<filltexture1>ProgressBar-Recorded.png</filltexture1>
+		<bottomtexture>Overlay-Info.png</bottomtexture>
+		<texturetick>ProgressBar-Tick.png</texturetick>
 		<visible>yes</visible> 
-	</control> 
-	<control>
-		<description>Current Time Info</description> 
-		<type>label</type> 
-		<id>100</id> 
-		<posX>535</posX> 
-		<posY>532</posY> 
-		<label>-</label> 
-		<align>left</align> 
-		<font>font10</font> 
+		<label>#percentage</label>
+		<startlabel>0:00</startlabel>
+		<endlabel>#shortduration</endlabel>
+		<toplabel>#shortcurrentplaytime</toplabel>
+		<font>font13</font> 
 		<textcolor>FF000000</textcolor> 
-	</control>
+	</control> 
+	
   </controls>
   </window>

@@ -100,6 +100,7 @@
 		<selectedColor>FF000000</selectedColor>
 		<textcolor>FF484848</textcolor>
 		<textcolor2>FF484848</textcolor2>
+		<textcolor3>FF484848</textcolor3>
 		<colordiffuse>ff000000</colordiffuse>
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
