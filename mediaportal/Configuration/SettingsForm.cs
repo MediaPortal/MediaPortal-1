@@ -5,19 +5,22 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Runtime;
-
+using System.Runtime.InteropServices;
 
 using MediaPortal;
 using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
+  /// <summary>
 	/// Summary description for Settings.
 	/// </summary>
 	public class SettingsForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.Button cancelButton;
+    [DllImport("user32.dll")]
+    public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
+    
+    private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button okButton;
 		private MPBeveledLine beveledLine1;
 		private System.Windows.Forms.TreeView sectionTree;
@@ -429,21 +432,29 @@ namespace MediaPortal.Configuration
           {
 
             try
-            {
+            {              
               //
-              // Kill the MediaPortal process
+              // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
               //
-              process.Kill();
-
+              process.CloseMainWindow();
+  
               //
-              // Start the MediaPortal process
-              // 
-              Process.Start(processName + ".exe");
+              // Wait for the process to die, we wait for a maximum of 10 seconds
+              //
+              if(process.WaitForExit(10000) == true)
+              {
+                //
+                // Start the MediaPortal process
+                // 
+                Process.Start(processName + ".exe");
+              }
             }
             catch
             {
               // Ignore
             }
+
+            break;
           }
         }
       }
