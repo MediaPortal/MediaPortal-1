@@ -743,6 +743,14 @@ namespace MediaPortal.GUI.Library
     {
       m_SubItems.Add(obj);
     }
+    public void RemoveSubItem(object obj)
+    {
+      m_SubItems.Remove(obj);
+    }
+    public void RemoveSubItem(int index)
+    {
+      m_SubItems.RemoveAt(index);
+    }
 
     public int SubItemCount
     {
