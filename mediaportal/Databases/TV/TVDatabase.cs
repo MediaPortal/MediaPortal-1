@@ -2183,7 +2183,7 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBSMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,polarisation,ONID,TSID,SID,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},1)"
+						strSQL=String.Format("insert into tblDVBSMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,polarisation,ONID,TSID,SID,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},1)"
 																,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,polarisation,ONID,TSID,SID);
 						//Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
