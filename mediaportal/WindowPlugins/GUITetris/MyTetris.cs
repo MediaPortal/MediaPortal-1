@@ -101,7 +101,9 @@ namespace MediaPortal.Games.Tetris
 
 		public override bool Init()
 		{
+			// pre-register the control class so that the factory knows how to create it
 			GUIControlFactory.RegisterControl("tetris", typeof(MyTetrisControl));
+
 			return Load(GUIGraphicsContext.Skin + @"\mytetris.xml");
 		}
 
@@ -109,11 +111,9 @@ namespace MediaPortal.Games.Tetris
 		{
 			if(action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
-				MyTetrisControl tetris = (MyTetrisControl)GetControl((int)Controls.Tetris);
-
-				if(tetris != null && tetris.Focus && tetris.State == State.Running)
+				if(m_wndTetris != null && m_wndTetris.Focus && m_wndTetris.State == State.Running)
 				{
-					tetris.State = State.Paused;
+					m_wndTetris.State = State.Paused;
 				}
 				else
 				{
@@ -164,14 +164,6 @@ namespace MediaPortal.Games.Tetris
 			base.Render();
 		}
 
-		public override void Process()
-		{
-			if(m_wndTetris != null)
-			{
-				m_wndTetris.Tick();
-			}
-		}
-
 		#endregion
 
 		#region Implementation
@@ -212,6 +204,13 @@ namespace MediaPortal.Games.Tetris
 
 				m_wndTetris.Sound = _Settings.Sound;
 				m_wndTetris.Music = _Settings.Music;
+
+				// we don't get told when the green (return to home window) button is hit so
+				// we make it look like we correctly paused the game when it was hit here
+				if(m_wndTetris.State == State.Running)
+				{
+					m_wndTetris.State = State.Paused;
+				}
 			}
 
 			GUIPropertyManager.SetProperty("#tetris_score", nScore.ToString());
@@ -631,6 +630,17 @@ namespace MediaPortal.Games.Tetris
 				m_imgBlocksNext[6] = new GUIImage(m_dwParentID, 10027, m_dwPosX, m_dwPosY, 0, 0, m_strTextureJ, m_dwColorDiffuse);
 			}
 
+			if(m_imgBlocksNext != null)
+			{
+				foreach(GUIImage image in m_imgBlocksNext)
+				{
+					if(image != null)
+					{
+						image.ScaleToScreenResolution();
+					}
+				}
+			}
+
 			if(m_strTextureLeft != "" && m_strTextureLeft != "-")
 			{
 				m_imgGuide[0] = new GUIImage(m_dwParentID, 9996, m_dwPosX, m_dwPosY, 0, 0, m_strTextureLeft, m_dwColorDiffuse);
@@ -699,7 +709,12 @@ namespace MediaPortal.Games.Tetris
 				}
 			}
 
-			GUIGraphicsContext.ScalePosToScreenResolution(ref m_nNextBlockX, ref m_nNextBlockY);
+			// we must use local variables for the following transform or we'll lose the original next
+			// block positions and experience problems if the user performs multiple fullscreen toggles
+			int nNextBlockX = m_nNextBlockX;
+			int nNextBlockY = m_nNextBlockY;
+
+			GUIGraphicsContext.ScalePosToScreenResolution(ref nNextBlockX, ref nNextBlockY);
 
 			if(m_imgBlocksNext != null)
 			{
@@ -709,15 +724,15 @@ namespace MediaPortal.Games.Tetris
 
 					if(m_nNextBlockAlign == Alignment.ALIGN_LEFT)
 					{
-						image.SetPosition(m_nNextBlockX, m_nNextBlockY - (image.Height / 2));
+						image.SetPosition(nNextBlockX, nNextBlockY - (image.Height / 2));
 					}
 					else if(m_nNextBlockAlign == Alignment.ALIGN_CENTER)
 					{
-						image.SetPosition(m_nNextBlockX - (image.Width / 2), m_nNextBlockY - (image.Height / 2));
+						image.SetPosition(nNextBlockX - (image.Width / 2), nNextBlockY - (image.Height / 2));
 					}
 					else if(m_nNextBlockAlign == Alignment.ALIGN_RIGHT)
 					{
-						image.SetPosition(m_nNextBlockX - image.Width, m_nNextBlockY - (image.Height / 2));
+						image.SetPosition(nNextBlockX - image.Width, nNextBlockY - (image.Height / 2));
 					}
 				}
 			}
@@ -748,29 +763,32 @@ namespace MediaPortal.Games.Tetris
 			
 			if(m_theGame != null)
 			{
+				m_theGame.Tick();
 				m_theGame.Render();
 			}
 
 			RenderText();
-			RenderNext();
 
 			if(bRenderTexture)
 			{
 				// draw the now so that the blocks appear faded
 				RenderTexture();
 			}
+
+			RenderNext();
 		}
 
 		public void RenderNext()
 		{
 			int nBlock = m_theGame != null ? (m_theGame.NextBlock - 1) : -1;
 
-			if(nBlock != -1 && (nBlock < 0 || nBlock > 6))
+			if(nBlock < 0 || nBlock > 6)
 			{
+				Log.Write("MyTetrisControl.RenderNext: Block index is out of range");
 				return;
 			}
 
-			if(nBlock != -1 && m_imgBlocksNext != null && m_imgBlocksNext[nBlock] != null)
+			if(m_imgBlocksNext != null && m_imgBlocksNext[nBlock] != null)
 			{
 				m_imgBlocksNext[nBlock].Render();
 			}
