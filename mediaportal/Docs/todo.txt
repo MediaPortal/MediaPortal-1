@@ -91,6 +91,7 @@ new plugins:
   - my TV-series
   
 General:
+  - support for VFD/LCD displays
   - show properties in skin: 
      - tv/recording properties
      
