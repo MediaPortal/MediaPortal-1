@@ -2463,4 +2463,8 @@
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
+<string>
+	<id>16001</id>
+	<value>Party Shuffle</value>
+</string>
 </strings>

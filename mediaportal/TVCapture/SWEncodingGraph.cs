@@ -1069,6 +1069,10 @@ namespace MediaPortal.TV.Recording
         m_graphState = State.Recording;
         return true;
       }
+      else
+      {
+        if (!AddCompressors()) return false;
+      }
 
       //change the filename extension to .wmv or .avi 
       strFileName = System.IO.Path.ChangeExtension(strFileName, ".avi");
