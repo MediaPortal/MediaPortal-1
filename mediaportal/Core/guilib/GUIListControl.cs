@@ -250,6 +250,14 @@ namespace MediaPortal.GUI.Library
               btn.SetPosition(m_dwPosX, dwPosY);
               btn.Render();
             }
+            else
+            {
+              int x=0;
+            }
+          }
+          else
+          {
+            int x=0;
           }
 
 					// render the icon
@@ -327,6 +335,14 @@ namespace MediaPortal.GUI.Library
                   label2.FontName=m_strFont2Name;
                   dMaxWidth -= (int)(label2.TextWidth + 20);
                 }
+                else
+                {
+                  int x=0;
+                }
+              }
+              else
+              {
+                int x=0;
               }
 						}
 					}
@@ -368,6 +384,10 @@ namespace MediaPortal.GUI.Library
                   int x=0;
                 }
               }
+              else 
+              {
+                int x=0;
+              }
             }
 					}	
 					if (pItem.Label3.Length > 0)
@@ -406,6 +426,10 @@ namespace MediaPortal.GUI.Library
                 {
                   int x=1;
                 }
+              }
+              else 
+              {
+                int x=1;
               }
             }
 					}

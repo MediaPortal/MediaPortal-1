@@ -510,7 +510,8 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      if (m_strFileName==null||m_strFileName==String.Empty) return;
+      if (m_strFileName==null) return;
+      if (m_strFileName==String.Empty) return;
 
       if (ContainsProperty)
       {
@@ -533,6 +534,8 @@ namespace MediaPortal.GUI.Library
       
 			
 			// Do not render if there are not textures
+      if (m_vecTextures==null) 
+        return;
 			if (0==m_vecTextures.Count)
 				return ;
 			// Do not render if there is no vertex buffer
@@ -587,9 +590,14 @@ namespace MediaPortal.GUI.Library
           return;        
         }
       }
+      if (GUIGraphicsContext.DX9Device==null) return;
+      if (GUIGraphicsContext.DX9Device.Disposed) return;
+
       if (m_vecTextures.Count != 1)
 			  Process();
+      if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return;
       CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      if (frame==null) return;
 			Direct3D.Texture texture=frame.Image;
       if (texture==null)
       {
@@ -601,23 +609,26 @@ namespace MediaPortal.GUI.Library
         FreeResources();
         return;
       }
-			GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
       
 			// Render the image
-      if (savedStateBlock!=null && savedStateBlock.Disposed) savedStateBlock=null;
-      if (savedStateBlock.Disposed) savedStateBlock=null;
+      if (savedStateBlock!=null)
+      {
+        if (savedStateBlock.Disposed) savedStateBlock=null;
+      }
       if (savedStateBlock==null)
       {
         CreateStateBlock();
       }
-      savedStateBlock.Apply();
-			GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
-			GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-			GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
-
+      if (savedStateBlock!=null)
+      {
+        savedStateBlock.Apply();
+        GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
+        GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
+        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
+        GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
+      }
 			// unset the texture and palette or the texture caching crashes because the runtime still has a reference
 			//GUIGraphicsContext.DX9Device.SetTexture( 0, null);
-
 		}
 
 		/// <summary>
