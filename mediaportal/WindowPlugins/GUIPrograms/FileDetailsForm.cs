@@ -203,17 +203,17 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.cbRating.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbRating.Items.AddRange(new object[] {
-														  "0 - poor",
-														  "1",
-														  "2",
-														  "3",
-														  "4",
-														  "5 - average",
-														  "6",
-														  "7",
-														  "8",
-														  "9",
-														  "10 - perfect"});
+																									"0 - poor",
+																									"1",
+																									"2",
+																									"3",
+																									"4",
+																									"5 - average",
+																									"6",
+																									"7",
+																									"8",
+																									"9",
+																									"10 - perfect"});
 			this.cbRating.Location = new System.Drawing.Point(88, 192);
 			this.cbRating.Name = "cbRating";
 			this.cbRating.Size = new System.Drawing.Size(192, 21);
@@ -516,5 +516,11 @@ namespace WindowPlugins.GUIPrograms
 			}
 		
 		}
+
+
+//		private void button1_Click(object sender, System.EventArgs e)
+//		{
+//			CurFile.FindFileInfo(myProgScraperType.ALLGAME);
+//		}
 	}
 }

@@ -35,7 +35,8 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.MenuItem menuItem1;
 		private System.Windows.Forms.MenuItem menuItem2;
 
-		private AppItem mCurApp = null; 
+		private AppItem mCurApp = null;
+		private System.Windows.Forms.Button startScraperButton; 
 		private Applist apps = ProgramDatabase.AppList;
 		public event EventHandler OnRefreshClick;
 
@@ -89,6 +90,7 @@ namespace WindowPlugins.GUIPrograms
 			this.popupFavourites = new System.Windows.Forms.ContextMenu();
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
+			this.startScraperButton = new System.Windows.Forms.Button();
 			this.TopPanel.SuspendLayout();
 			this.bottomPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -103,7 +105,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnLaunch.Enabled = false;
-			this.btnLaunch.Location = new System.Drawing.Point(296, 144);
+			this.btnLaunch.Location = new System.Drawing.Point(296, 128);
 			this.btnLaunch.Name = "btnLaunch";
 			this.btnLaunch.Size = new System.Drawing.Size(88, 23);
 			this.btnLaunch.TabIndex = 18;
@@ -161,7 +163,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnAddToFavourites.Enabled = false;
-			this.btnAddToFavourites.Location = new System.Drawing.Point(296, 104);
+			this.btnAddToFavourites.Location = new System.Drawing.Point(296, 88);
 			this.btnAddToFavourites.Name = "btnAddToFavourites";
 			this.btnAddToFavourites.Size = new System.Drawing.Size(88, 40);
 			this.btnAddToFavourites.TabIndex = 19;
@@ -204,6 +206,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// bottomPanel
 			// 
+			this.bottomPanel.Controls.Add(this.startScraperButton);
 			this.bottomPanel.Controls.Add(this.btnAddToFavourites);
 			this.bottomPanel.Controls.Add(this.btnLaunch);
 			this.bottomPanel.Controls.Add(this.UpdateDatabaseButton);
@@ -223,7 +226,7 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																					   this.FileTitle});
+																																							 this.FileTitle});
 			this.FileList.FullRowSelect = true;
 			this.FileList.HideSelection = false;
 			this.FileList.Location = new System.Drawing.Point(0, 0);
@@ -243,8 +246,8 @@ namespace WindowPlugins.GUIPrograms
 			// popupFavourites
 			// 
 			this.popupFavourites.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																							this.menuItem1,
-																							this.menuItem2});
+																																										this.menuItem1,
+																																										this.menuItem2});
 			this.popupFavourites.Popup += new System.EventHandler(this.popupFavourites_Popup);
 			// 
 			// menuItem1
@@ -256,6 +259,17 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.menuItem2.Index = 1;
 			this.menuItem2.Text = "Grouper B";
+			// 
+			// startScraperButton
+			// 
+			this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.startScraperButton.Location = new System.Drawing.Point(296, 176);
+			this.startScraperButton.Name = "startScraperButton";
+			this.startScraperButton.Size = new System.Drawing.Size(88, 40);
+			this.startScraperButton.TabIndex = 20;
+			this.startScraperButton.Text = "Internet Search...";
+			this.ToolTip.SetToolTip(this.startScraperButton, "removes a file / filelink from the database");
+			this.startScraperButton.Click += new System.EventHandler(this.startScraperButton_Click);
 			// 
 			// AppFilesView
 			// 
@@ -592,6 +606,20 @@ namespace WindowPlugins.GUIPrograms
 
 		private void btnRefresh_Click(object sender, System.EventArgs e)
 		{
+			SyncListView();
+		}
+
+		private void startScraperButton_Click(object sender, System.EventArgs e)
+		{
+			ShowFileScraper();
+		}
+
+		void ShowFileScraper()
+		{
+			FileInfoScraperForm frmScraper = new FileInfoScraperForm();
+			frmScraper.CurApp = mCurApp;
+			frmScraper.Setup();
+			frmScraper.ShowDialog( this );
 			SyncListView();
 		}
 

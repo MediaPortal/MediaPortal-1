@@ -469,6 +469,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\AllGameInfoScraper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIPrograms\appDirBrowse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -626,6 +631,21 @@
                 <File
                     RelPath = "GUIPrograms\FileDetailsForm.resx"
                     DependentUpon = "FileDetailsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\FileInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\FileInfoScraperForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\FileInfoScraperForm.resx"
+                    DependentUpon = "FileInfoScraperForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

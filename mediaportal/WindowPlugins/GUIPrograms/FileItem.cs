@@ -33,6 +33,9 @@ namespace ProgramsDatabase
 		int mLaunchCount;
 		int mExtFileID;
 		bool mIsFolder;
+		ArrayList mFileInfoList = null;
+		FileInfo mFileInfoFavourite = null;
+
 
 		public FileItem(SQLiteClient paramDB)
 		{
@@ -93,6 +96,10 @@ namespace ProgramsDatabase
 		{
 			get{ return mTitle; }
 			set{ mTitle = value; }
+		}
+		public string NormalizedTitle
+		{
+			get{ return GetNormalizeTitle();}
 		}
 		public string Filename
 		{
@@ -178,6 +185,18 @@ namespace ProgramsDatabase
 		public string YearManu
 		{
 			get {return GetYearManu();}
+		}
+
+		public ArrayList FileInfoList
+		{
+			get {return mFileInfoList;}
+		}
+
+
+		public FileInfo FileInfoFavourite
+		{
+			get {return mFileInfoFavourite;}
+			set {mFileInfoFavourite = value;}
 		}
 
 		private int CountQuotes(string strVal)
@@ -423,5 +442,143 @@ namespace ProgramsDatabase
 			}	
 		}
 
+
+		string GetNormalizeTitle()
+		{
+			return ProgramUtils.NormalizedString(mTitle);
+		}
+
+		public void FindFileInfo(myProgScraperType ScraperType)
+		{
+			int iRetries = 0;
+			bool bSuccess = false;
+			switch (ScraperType)
+			{
+				case myProgScraperType.ALLGAME:
+				{
+					AllGameInfoScraper scraper = new AllGameInfoScraper();
+					string strTitle = NormalizedTitle;
+					while ((!bSuccess) && (iRetries < 3))
+					{
+						// brute force! Try three times.... sometimes I get
+						// a PostHTTP false result... don't know why!
+						bSuccess = scraper.FindGameinfo(strTitle);
+						if (!bSuccess)
+						{
+							iRetries++;
+						}
+					}
+					mFileInfoList = scraper.FileInfos;
+				}
+				break;
+			}
+		}
+
+		public void FindFileInfoDetail(AppItem curApp, FileInfo curInfo, myProgScraperType ScraperType)
+		{
+			switch (ScraperType)
+			{
+				case myProgScraperType.ALLGAME:
+				{
+					AllGameInfoScraper scraper = new AllGameInfoScraper();
+					scraper.FindGameinfoDetail(curApp, this, curInfo);
+				}
+				break;
+			}
+		}
+
+
+		public void SaveFromFileInfoFavourite()
+		{
+			if (this.FileInfoFavourite != null)
+			{
+				// DON'T overwrite title! this.Title = FileInfoFavourite.Title;
+				this.Genre = FileInfoFavourite.Genre;
+				this.Manufacturer = FileInfoFavourite.Manufacturer;
+				this.Year = ProgramUtils.StrToIntDef(FileInfoFavourite.Year, -1);
+				this.Overview = FileInfoFavourite.Overview;
+				this.Rating = ProgramUtils.StrToIntDef(FileInfoFavourite.Rating, 5);
+				this.System_ = FileInfoFavourite.Platform;
+				this.Write();
+			}
+		}
+
+		public string GetNewImageFile(AppItem curApp, string strExtension)
+		{
+			if (curApp == null) return "";
+			if (curApp.ImageDirs == null) return "";
+			if (curApp.ImageDirs.Length == 0) return "";
+			if ((this.Imagefile == "") && (this.Filename == "")) return "";
+
+			string strFolder = "";
+			string strFileName = "";
+			string strCand = "";
+			int iImgIndex = -1;
+			bool bFound = false;
+
+			strFolder = curApp.ImageDirs[0];
+
+			if (Imagefile != "")
+			{
+				strFileName = Imagefile.TrimEnd('\"');
+				strFileName = strFileName.TrimStart('\"');
+				strFileName = Path.GetFileName(strFileName);
+			}
+			else
+			{
+				strFileName = Filename.TrimEnd('\"');
+				strFileName = strFileName.TrimStart('\"');
+				strFileName = Path.GetFileName(strFileName);
+			}
+			strFileName = Path.ChangeExtension(strFileName, null);
+
+			while (!bFound)
+			{
+				iImgIndex ++;
+				if (iImgIndex == 0)
+				{
+					strCand = String.Format("{0}\\{1}{2}", strFolder, strFileName, strExtension);
+				}
+				else
+				{
+					strCand = String.Format("{0}\\{1}_{2}{3}", strFolder, strFileName, iImgIndex, strExtension);
+				}
+				bFound = !System.IO.File.Exists(strCand); 
+			}
+			return strCand;
+		}
+
+		public void DeleteImages(AppItem curApp)
+		{
+			if (curApp == null) return;
+			if (curApp.ImageDirs == null) return;
+			if (curApp.ImageDirs.Length == 0) return;
+			string strFolder = "";
+			string strFileName = "";
+//			string strCand = "";
+
+			strFolder = curApp.ImageDirs[0];
+			strFileName = Filename.TrimEnd('\"');
+			strFileName = strFileName.TrimStart('\"');
+			strFileName = Path.GetFileName(strFileName);
+			strFileName = Path.ChangeExtension(strFileName, null);
+			strFileName = strFileName + "*.jpg";  // todo: also treat other pic extensions!
+
+
+			// Log.Write("dw scraper delete files \n{0}", strCand);
+			if(Directory.Exists(strFolder))
+			{
+				string[] files = Directory.GetFiles(strFolder, strFileName);
+				foreach (string file2Delete in files)
+				{
+					Log.Write("dw scraper delete file \n{0}", file2Delete);
+					File.Delete(file2Delete);
+					
+				}
+			}
+
+		}
+
 	}
+
 }

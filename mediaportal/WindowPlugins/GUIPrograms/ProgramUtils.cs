@@ -27,6 +27,13 @@ namespace Programs.Utils
 		GROUPER = 7
 	};
 
+	public enum myProgScraperType
+	{
+		UNKNOWN = 0,
+		ALLGAME = 1
+		// VGMUSEUM / AMAZON etc. etc. etc. :)
+	}
+
 
 	/// <summary>
 	/// Summary description for ProgramUtils.
@@ -340,6 +347,24 @@ namespace Programs.Utils
 			}
 			return Result;
 		}
+
+		static public string NormalizedString(string strVal)
+		{
+			string strRes = strVal;
+			// trim away trailing [..] (..) codes
+			int iPos = strRes.IndexOf("[");
+			if (iPos > 0) 
+			{
+				strRes = strRes.Substring(0, iPos - 1);
+			}
+			iPos = strRes.IndexOf("(");
+			if (iPos > 0) 
+			{
+				strRes = strRes.Substring(0, iPos - 1);
+			}
+			return strRes;
+		}
+
 
 	}
 }

@@ -58,6 +58,18 @@
 		<fileextensions>.zip</fileextensions>
 	</profile>
 	<profile>
+		<id>145</id>
+		<section>Emulator Profiles</section>
+		<title>Kawaks</title>
+		<launchingApplication>...yourKawaksPathHere...\WinKawaks.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>%FILEnoPATHnoEXT% -fullscreen</arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourKawaksPathHere...</startupDir>
+		<useQuotes>F</useQuotes>
+		<fileextensions>.zip</fileextensions>
+	</profile>
+	<profile>
 		<id>150</id>
 		<section>Emulator Profiles</section>
 		<title>Kega Fusion (for Sega Genesis)</title>
@@ -153,5 +165,5 @@
 		<useQuotes>F</useQuotes>
 		<fileextensions>.adf</fileextensions>
 	</profile>
-	
+
 </profiles>

@@ -153,6 +153,7 @@ namespace WindowPlugins.GUIPrograms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SetupForm));
 			this.appTree = new System.Windows.Forms.TreeView();
 			this.toolBarMenu = new System.Windows.Forms.ToolBar();
 			this.buttonAddChild = new System.Windows.Forms.ToolBarButton();
@@ -178,14 +179,14 @@ namespace WindowPlugins.GUIPrograms
 			this.SourceTypeToMyIni = new System.Windows.Forms.MenuItem();
 			this.SourceTypeToMLF = new System.Windows.Forms.MenuItem();
 			this.SourceTypeToFilelauncher = new System.Windows.Forms.MenuItem();
+			this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
+			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.sep5 = new System.Windows.Forms.ToolBarButton();
 			this.DetailsTabControl = new System.Windows.Forms.TabControl();
 			this.DetailsPage = new System.Windows.Forms.TabPage();
 			this.holderPanel = new System.Windows.Forms.Panel();
 			this.FilesPage = new System.Windows.Forms.TabPage();
 			this.holderPanelFiles = new System.Windows.Forms.Panel();
-			this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
-			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.DetailsTabControl.SuspendLayout();
 			this.DetailsPage.SuspendLayout();
 			this.FilesPage.SuspendLayout();
@@ -205,8 +206,8 @@ namespace WindowPlugins.GUIPrograms
 			this.appTree.Location = new System.Drawing.Point(8, 40);
 			this.appTree.Name = "appTree";
 			this.appTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-																				new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
-																																										 new System.Windows.Forms.TreeNode("whazzz up")})});
+																																				new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
+																																																																															 new System.Windows.Forms.TreeNode("whazzz up")})});
 			this.appTree.SelectedImageIndex = -1;
 			this.appTree.Size = new System.Drawing.Size(224, 448);
 			this.appTree.TabIndex = 8;
@@ -224,16 +225,16 @@ namespace WindowPlugins.GUIPrograms
 			this.toolBarMenu.Appearance = System.Windows.Forms.ToolBarAppearance.Flat;
 			this.toolBarMenu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.toolBarMenu.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
-																						   this.buttonAddChild,
-																						   this.sep1,
-																						   this.buttonDelete,
-																						   this.sep2,
-																						   this.buttonUp,
-																						   this.sep3,
-																						   this.buttonDown,
-																						   this.sep4,
-																						   this.buttonTools,
-																						   this.sep5});
+																																									 this.buttonAddChild,
+																																									 this.sep1,
+																																									 this.buttonDelete,
+																																									 this.sep2,
+																																									 this.buttonUp,
+																																									 this.sep3,
+																																									 this.buttonDown,
+																																									 this.sep4,
+																																									 this.buttonTools,
+																																									 this.sep5});
 			this.toolBarMenu.ButtonSize = new System.Drawing.Size(60, 36);
 			this.toolBarMenu.Divider = false;
 			this.toolBarMenu.DropDownArrows = true;
@@ -254,12 +255,12 @@ namespace WindowPlugins.GUIPrograms
 			// popupAddChild
 			// 
 			this.popupAddChild.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																						  this.menuDirBrowse,
-																						  this.menuDirCache,
-																						  this.menuMyFile,
-																						  this.menuMLFFile,
-																						  this.menuFileLauncher,
-																						  this.menuGrouper});
+																																									this.menuDirBrowse,
+																																									this.menuDirCache,
+																																									this.menuMyFile,
+																																									this.menuMLFFile,
+																																									this.menuFileLauncher,
+																																									this.menuGrouper});
 			// 
 			// menuDirBrowse
 			// 
@@ -334,19 +335,19 @@ namespace WindowPlugins.GUIPrograms
 			// popupTools
 			// 
 			this.popupTools.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																					   this.MenuItemChangeSourceType,
-																					   this.menuItemReadFromProfile});
+																																							 this.MenuItemChangeSourceType,
+																																							 this.menuItemReadFromProfile});
 			this.popupTools.Popup += new System.EventHandler(this.popupTools_Popup);
 			// 
 			// MenuItemChangeSourceType
 			// 
 			this.MenuItemChangeSourceType.Index = 0;
 			this.MenuItemChangeSourceType.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																									 this.SourceTypeToDirBrowse,
-																									 this.SourceTypeToDirCache,
-																									 this.SourceTypeToMyIni,
-																									 this.SourceTypeToMLF,
-																									 this.SourceTypeToFilelauncher});
+																																														 this.SourceTypeToDirBrowse,
+																																														 this.SourceTypeToDirCache,
+																																														 this.SourceTypeToMyIni,
+																																														 this.SourceTypeToMLF,
+																																														 this.SourceTypeToFilelauncher});
 			this.MenuItemChangeSourceType.Text = "Change Source Type to";
 			this.MenuItemChangeSourceType.Select += new System.EventHandler(this.MenuItemChangeSourceType_Select);
 			// 
@@ -379,6 +380,18 @@ namespace WindowPlugins.GUIPrograms
 			this.SourceTypeToFilelauncher.Index = 4;
 			this.SourceTypeToFilelauncher.Text = "Filelauncher";
 			this.SourceTypeToFilelauncher.Click += new System.EventHandler(this.SourceTypeToFilelauncher_Click);
+			// 
+			// menuItemReadFromProfile
+			// 
+			this.menuItemReadFromProfile.Index = 1;
+			this.menuItemReadFromProfile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																														this.menuItem2});
+			this.menuItemReadFromProfile.Text = "Read From Profile";
+			// 
+			// menuItem2
+			// 
+			this.menuItem2.Index = 0;
+			this.menuItem2.Text = "<dummy>";
 			// 
 			// sep5
 			// 
@@ -436,18 +449,6 @@ namespace WindowPlugins.GUIPrograms
 			this.holderPanelFiles.Size = new System.Drawing.Size(397, 416);
 			this.holderPanelFiles.TabIndex = 13;
 			// 
-			// menuItemReadFromProfile
-			// 
-			this.menuItemReadFromProfile.Index = 1;
-			this.menuItemReadFromProfile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																									this.menuItem2});
-			this.menuItemReadFromProfile.Text = "Read From Profile";
-			// 
-			// menuItem2
-			// 
-			this.menuItem2.Index = 0;
-			this.menuItem2.Text = "<dummy>";
-			// 
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -455,6 +456,7 @@ namespace WindowPlugins.GUIPrograms
 			this.Controls.Add(this.DetailsTabControl);
 			this.Controls.Add(this.toolBarMenu);
 			this.Controls.Add(this.appTree);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "SetupForm";
 			this.Text = "my Programs Setup";
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.SetupForm_Closing);
@@ -787,22 +789,35 @@ namespace WindowPlugins.GUIPrograms
 
 		private void DoRefresh()
 		{
+			bool DoIt = false;
 			AppItem curApp = GetSelectedAppItem();
 			if (curApp != null) 
 			{
-				try
+				if (curApp.Files.Count > 0)
 				{
-					AttachImportRunningView();
-					BlockControls();
-					filesProgress.CurApp = curApp;
-					filesProgress.RunImport();
+					DialogResult dialogResult = MessageBox.Show("Are you sure to reimport?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					DoIt =(dialogResult == DialogResult.Yes);
 				}
-				finally
+				else
 				{
-					AttachFilesView();
-					UnblockControls();
+					DoIt = true;
 				}
 
+				if (DoIt)
+				{
+					try
+					{
+						AttachImportRunningView();
+						BlockControls();
+						filesProgress.CurApp = curApp;
+						filesProgress.RunImport();
+					}
+					finally
+					{
+						AttachFilesView();
+						UnblockControls();
+					}
+				}
 			}
 		}
 

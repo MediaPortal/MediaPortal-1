@@ -56,6 +56,10 @@ namespace ProgramsDatabase
 				{
 					strFolderThumb = Path.ChangeExtension(strFolderThumb, ".png");
 				}
+				if( !System.IO.File.Exists(strFolderThumb) )
+				{
+					strFolderThumb = "";
+				}
 			}
 			return strFolderThumb;
 		}
@@ -69,6 +73,7 @@ namespace ProgramsDatabase
 			curFile.FileID = -1; // to force an INSERT statement when writing the item
 			curFile.AppID = this.AppID;
 			curFile.Title = guiFile.Label;
+			curFile.Title = curFile.NormalizedTitle;
 			curFile.Filename = guiFile.Path;
 			if (this.UseQuotes)
 			{

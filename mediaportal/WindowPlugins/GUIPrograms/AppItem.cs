@@ -159,16 +159,30 @@ namespace ProgramsDatabase
 					// avoid double quotes around the filename-argument.....
 					curFilename = "\"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
 				}
-				// the fileitem-argument can be positioned anywhere in the argument string...
-				if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
+
+				if (proc.StartInfo.Arguments.IndexOf("%FILEnoPATHnoEXT%") >= 0)
 				{
-					// no placeholder found => default handling: add the fileitem as the last argument
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments + curFilename;
+					// ex. kawaks:
+					// winkawaks.exe alpham2
+					// => filename without path and extension is necessary!
+					string strFileNoPathNoExt = curFile.ExtractFileName();
+					strFileNoPathNoExt = (strFileNoPathNoExt.TrimStart('\"')).TrimEnd('\"');
+					strFileNoPathNoExt = Path.GetFileNameWithoutExtension(strFileNoPathNoExt);
+					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILEnoPATHnoEXT%", strFileNoPathNoExt);
 				}
 				else
 				{
-					// placeholder found => replace the placeholder by the correct filename
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFilename);
+					// the fileitem-argument can be positioned anywhere in the argument string...
+					if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
+					{
+						// no placeholder found => default handling: add the fileitem as the last argument
+						proc.StartInfo.Arguments = proc.StartInfo.Arguments + curFilename;
+					}
+					else
+					{
+						// placeholder found => replace the placeholder by the correct filename
+						proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFilename);
+					}
 				}
 				proc.StartInfo.WorkingDirectory  = Startupdir;
 				if (proc.StartInfo.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
