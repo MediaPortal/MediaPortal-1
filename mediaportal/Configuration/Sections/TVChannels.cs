@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton = new System.Windows.Forms.Button();
 			this.downButton = new System.Windows.Forms.Button();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.treeViewChannels = new MWTreeView();
+			this.treeViewChannels = new MWControls.MWTreeView();
 			this.btnGrpChnDown = new System.Windows.Forms.Button();
 			this.btnGrpChnUp = new System.Windows.Forms.Button();
 			this.buttonMap = new System.Windows.Forms.Button();
@@ -420,6 +420,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																															this.columnHeader9});
+			this.listViewTVGroupChannels.FullRowSelect = true;
+			this.listViewTVGroupChannels.HideSelection = false;
 			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 88);
 			this.listViewTVGroupChannels.Name = "listViewTVGroupChannels";
 			this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
@@ -528,6 +530,8 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																										 this.columnHeader6,
 																																										 this.columnHeader7});
+			this.listViewGroups.FullRowSelect = true;
+			this.listViewGroups.HideSelection = false;
 			this.listViewGroups.Location = new System.Drawing.Point(8, 8);
 			this.listViewGroups.Name = "listViewGroups";
 			this.listViewGroups.Size = new System.Drawing.Size(416, 304);
