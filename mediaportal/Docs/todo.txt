@@ -8,7 +8,7 @@ My TV:
   - recordings button doesnt do anything. Should show all recorded 
     programs and allow the user to pick/play one
   - A way to browse and resolve recording conflicts. 
-  - view live tv in fullscreen mode with osd
+  - OSD for full screen TV
    
   TVGuide:
      - 
@@ -44,7 +44,7 @@ General:
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
-  - better mouse control
+  - better mouse control / mouse wheel for scrolling
   - specify default share. 
   - OSD keyboard : add mouse control & keyboard control
   - my files  

@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  26-04-2004: my tv       : added : started with fullscreen TV (press X in my tv)
+  26-04-2004: tvguide     : added : page up/down = next/previous day
   26-04-2004: setup       : added : tvcapture:edit/add/delete channel
   26-04-2004: general     : added : more capture card logging
   26-04-2004: general     : added : dynamic font scaling

@@ -678,4 +678,18 @@
       <key>p</key>
     </action>
   </window>
+  <window>
+	<description>Fullscreen TVs</description>
+	<id>602</id>
+	<action>
+	  <description>Next tv channel</description>
+	  <key>right</key>
+	  <id>95</id>
+	</action>
+	<action>
+	  <description>Previous tv channel</description>
+	  <key>left</key>
+	  <id>94</id>
+	</action>
+  </window>
 </keymap>
