@@ -120,6 +120,11 @@ namespace MediaPortal.GUI.TV
 						GUIWindowManager.PreviousWindow();
 						return false;
 					}
+					GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
+					if(pictureBox!=null && m_teleText!=null)
+					{
+						m_teleText.SetPageSize(pictureBox.Width,pictureBox.Height);
+					}
 					m_teleText.GetPage(0x100,0);
 					GUIToggleButtonControl hiddenButton=(GUIToggleButtonControl)GetControl((int)Controls.BTN_HIDDEN);
 					if(hiddenButton!=null && m_teleText!=null)
@@ -334,14 +339,7 @@ namespace MediaPortal.GUI.TV
 				pictureBox.IsVisible=false;
 				Utils.FileDelete(@"temp\teletext.jpg");
 				GUITextureManager.ReleaseTexture(@"temp\teletext.jpg");
-				using (Bitmap img = new Bitmap (pictureBox.Width,pictureBox.Height))
-				{
-					using (Graphics g = Graphics.FromImage(img))
-					{
-						g.DrawImage(m_pageBitmap,0,0,pictureBox.Width,pictureBox.Height);
-					}
-					img.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
-				}
+				m_pageBitmap.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
 				pictureBox.FileName=@"temp\teletext.jpg";
 				pictureBox.AllocResources();
 				pictureBox.IsVisible=true;
