@@ -2,7 +2,7 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
-		<version>0.1.0.6</version>
+		<version>0.1.0.9</version>
 	</skin>
 	<control>
 		<description>default image</description>
