@@ -43,7 +43,10 @@ public class MediaPortalApp : D3DApp, IRender
     int                             m_ixpos=50;
     int                             m_iFrameCount=0;
 	  private USBUIRT                 usbuirtdevice;
-    string                          strNewVersion="";
+    string                          m_strNewVersion="";
+    string                          m_strCurrentVersion="";
+    bool                            m_bNewVersionAvailable=false;
+    bool                            m_bCancelVersion=false;
 
     const int WM_KEYDOWN    =0x0100;
     const int WM_SYSCOMMAND =0x0112;
@@ -248,25 +251,24 @@ public class MediaPortalApp : D3DApp, IRender
       System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir+@"\xml");
       System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir+@"\log");
 
+
       ClientApplicationInfo clientInfo =ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
       clientInfo.AppFolderName=System.IO.Directory.GetCurrentDirectory();
       ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName,clientInfo.InstalledVersion);
-      
+      m_strCurrentVersion=clientInfo.InstalledVersion;
+      Text += (" - [v"+m_strCurrentVersion+"]");
 
       //  make an Updater for use in-process with us
       _updater = new ApplicationUpdateManager();
 
       //  hook Updater events
       _updater.DownloadStarted +=new UpdaterActionEventHandler( OnUpdaterDownloadStarted );
-      _updater.FilesValidated +=new UpdaterActionEventHandler( OnUpdaterFilesValidated );
       _updater.UpdateAvailable +=new UpdaterActionEventHandler( OnUpdaterUpdateAvailable );
       _updater.DownloadCompleted +=new UpdaterActionEventHandler(OnUpdaterDownloadCompleted);
 
       //  start the updater on a separate thread so that our UI remains responsive
       _updaterThread = new Thread( new ThreadStart( _updater.StartUpdater ) );
       _updaterThread.Start();
-
-
     }
 
     void RenderStats()
@@ -331,6 +333,7 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     public void Process()
     {
+      
       FrameMove();
       FullRender();
       System.Windows.Forms.Application.DoEvents();
@@ -437,6 +440,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void FrameMove()
   {
+    CheckForNewUpdate();
     System.Windows.Forms.Application.DoEvents();
     Recorder.Process();
     System.Windows.Forms.Application.DoEvents();
@@ -945,79 +949,59 @@ public class MediaPortalApp : D3DApp, IRender
 	//---------------------------------------------------
   private void OnUpdaterDownloadStartedHandler( object sender, UpdaterActionEventArgs e ) 
   {		
-    Log.Write("Thread: " + Thread.CurrentThread.GetHashCode().ToString() );
-    Log.Write("  DownloadStarted for application '{0}'", e.ApplicationName );
+    Log.Write("update:Download started for:{0}",e.ApplicationName );
   }
 
   private void OnUpdaterDownloadStarted( object sender, UpdaterActionEventArgs e )
   { 
-    Log.Write( "[OnUpdaterDownloadStarted]Thread: {0}", Thread.CurrentThread.GetHashCode().ToString() );
     this.Invoke( 
       new MarshalEventDelegate( this.OnUpdaterDownloadStartedHandler ), 
       new object[] { sender, e } );
   }
 
-	//---------------------------------------------------
-  private void OnUpdaterFilesValidatedHandler( object sender, UpdaterActionEventArgs e )
+  private void CheckForNewUpdate()
   {
-    Log.Write("FilesValidated successfully for application '{0}' ", e.ApplicationName) ;
-			
-    //  ask user to use new app
-    DialogResult dialog = MessageBox.Show( "Would you like to stop this application and open the new version?", "Open New Version?", MessageBoxButtons.YesNo );
-    if( DialogResult.Yes == dialog )
+    if (!m_bNewVersionAvailable) return;
+    if (GUIWindowManager.IsRouted) return;
+    g_Player.Stop();
+    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+    if (null==dlgYesNo) return;
+    dlgYesNo.SetHeading(GUILocalizeStrings.Get(709) ); //Auto update
+    dlgYesNo.SetLine(0,GUILocalizeStrings.Get(710));//A new version is available
+    string strFmt=GUILocalizeStrings.Get(711);
+    strFmt=strFmt.Replace("#old", m_strCurrentVersion);
+    strFmt=strFmt.Replace("#new", m_strNewVersion);
+    dlgYesNo.SetLine(1, strFmt);
+    dlgYesNo.SetLine(2, "");
+    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+    if (!dlgYesNo.IsConfirmed) 
     {
-      StartNewVersion( );
+      Log.Write("update:User canceled download");
+      m_bCancelVersion=true;
+      m_bNewVersionAvailable=false;
+      return;
     }
+    m_bCancelVersion=false;
+    m_bNewVersionAvailable=false;
   }
 
-  private void OnUpdaterFilesValidated( object sender, UpdaterActionEventArgs e )
-  {
-    this.BeginInvoke( 
-      new MarshalEventDelegate( this.OnUpdaterFilesValidatedHandler ),
-      new object[] { sender, e } );
-  }
-  
-  //---------------------------------------------------
-  private void OnUpdaterUpdateAvailableHandler( object sender, UpdaterActionEventArgs e )
-  {			
-    Debug.WriteLine("Thread: " + Thread.CurrentThread.GetHashCode().ToString());
-
-    strNewVersion=e.ServerInformation.AvailableVersion;
-    string message = String.Format( 
-      "Update available:  The new version on the server is {0} and current version is {1} would you like to upgrade?", 
-      e.ServerInformation.AvailableVersion,  
-      ConfigurationSettings.AppSettings["version"] ) ;
-
-    //  for update available we actually WANT to block the downloading thread so we can refuse an update
-    //  and reset until next polling cycle;
-    //  NOTE that we don't block the thread _in the UI_, we have it blocked at the marshalling dispatcher "OnUpdaterUpdateAvailable"
-    DialogResult dialog = MessageBox.Show( message, "Update Available", MessageBoxButtons.YesNo );
-
-    if( DialogResult.No == dialog )
-    {
-      //  if no, stop the updater for this app
-      _updater.StopUpdater( e.ApplicationName );
-      Log.Write("Update Cancelled." );
-    }
-    else
-    {
-      Log.Write( "Update in progress." );
-    }
-  }
   private void OnUpdaterUpdateAvailable( object sender, UpdaterActionEventArgs e )
   {
-    //  using the synchronous "Invoke".  This marshals from the eventing thread--which comes from the Updater and should not
-    //  be allowed to enter and "touch" the UI's window thread
-    //  so we use Invoke which allows us to block the Updater thread at will while only allowing window thread to update UI
-    this.Invoke( 
-      new MarshalEventDelegate( this.OnUpdaterUpdateAvailableHandler ), 
-      new object[] { sender, e } );
+    Log.Write("update:new version available:{0}", e.ApplicationName);
+    m_strNewVersion=e.ServerInformation.AvailableVersion;
+    m_bNewVersionAvailable=true;
+    while (m_bNewVersionAvailable) System.Threading.Thread.Sleep(100);
+    if (m_bCancelVersion)
+    {
+      _updater.StopUpdater(e.ApplicationName);
+    }
   }
 
   //---------------------------------------------------
   private void OnUpdaterDownloadCompletedHandler( object sender, UpdaterActionEventArgs e )
   {
-    Log.Write("Download Completed." );
+    Log.Write("update:Download Completed." );
     StartNewVersion( );
   }
 
@@ -1035,6 +1019,7 @@ public class MediaPortalApp : D3DApp, IRender
   //---------------------------------------------------
   private void StartNewVersion( )
   {
+    Log.Write("update:start appstart.exe");
     XmlDocument doc = new XmlDocument();
 
     //  load config file to get base dir
@@ -1057,6 +1042,7 @@ public class MediaPortalApp : D3DApp, IRender
     System.Diagnostics.Process.Start( process );
 
     //  tell updater to stop
+    Log.Write("update:stop mp...");
     CurrentDomain_ProcessExit( null, null );
     //  leave this app
     Environment.Exit( 0 );

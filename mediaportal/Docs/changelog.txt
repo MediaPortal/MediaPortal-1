@@ -1,3 +1,5 @@
+31-07-2004  general     : added : autoupdate. Checks for new versions of mediaportal
+
 30-07-2004  general     : added : volume control (keys - and =)
 30-07-2004  my tv       : added : faster channel switching
 30-07-2004  my music    : added : In album view - second level - sort by name or track
