@@ -1318,7 +1318,6 @@ namespace MediaPortal.TV.Recording
 			if(CreateSinkSource(fileName)==true)
 			{
 				m_mediaControl=(IMediaControl)m_graphBuilder;
-				if (Vmr9!=null) Vmr9.SetDeinterlace();
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
 

@@ -1088,7 +1088,6 @@ namespace MediaPortal.TV.Recording
 				}
 				//now start the graph
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: start graph");
-				if (Vmr9!=null) Vmr9.SetDeinterlace();
 				int hr=m_mediaControl.Run();
 				if (hr<0)
 				{
