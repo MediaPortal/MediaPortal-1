@@ -996,7 +996,7 @@ namespace MediaPortal.TV.Recording
       if (m_TVTuner==null) return true;
       AMTunerSignalStrength strength;
       m_TVTuner.SignalPresent(out strength);
-      return strength==AMTunerSignalStrength.SignalPresent;
+      return ( ( (int)strength ) >=1 );
     }
 
     public long VideoFrequency()

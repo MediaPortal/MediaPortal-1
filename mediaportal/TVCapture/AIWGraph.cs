@@ -940,7 +940,10 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
 		public bool SignalPresent()
 		{
-			return true;
+			if (m_TVTuner==null) return true;
+			AMTunerSignalStrength strength;
+			m_TVTuner.SignalPresent(out strength);
+			return ( ( (int)strength ) >=1 );
 		}
 
 		/// <summary>

@@ -348,9 +348,9 @@ namespace MediaPortal.Player
       {
         if (m_graphState != State.Listening) return false;
         if (m_TVTuner == null) return false;
-        AMTunerSignalStrength sig;
-        int hr = m_TVTuner.SignalPresent( out sig );
-        return( sig == AMTunerSignalStrength.SignalPresent );
+        AMTunerSignalStrength strength;
+        int hr = m_TVTuner.SignalPresent( out strength );
+        return ( ( (int)strength ) >=1 );
       }
     }
 	}
