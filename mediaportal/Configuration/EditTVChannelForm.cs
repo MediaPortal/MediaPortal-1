@@ -598,7 +598,7 @@ namespace MediaPortal.Configuration
           //
           if(channel.Name.Equals("Composite #1") || channel.Name.Equals("Composite #2") || channel.Name.Equals("SVHS"))
           {
-            nameTextBox.Enabled = channelTextBox.Enabled = frequencyTextBox.Enabled = advancedButton.Enabled = false;
+            comboTvStandard.Enabled = nameTextBox.Enabled = channelTextBox.Enabled = frequencyTextBox.Enabled = advancedButton.Enabled = false;
           }
           comboTvStandard.SelectedIndex=0;
           if ( channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex=0;
