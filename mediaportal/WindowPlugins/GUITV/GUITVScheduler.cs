@@ -512,7 +512,7 @@ namespace MediaPortal.GUI.TV
       if (item==null) return;
       TVRecording rec=(TVRecording)item.TVTag;
 
-      GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+      GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg==null) return;
       
       dlg.Reset();
@@ -561,7 +561,7 @@ namespace MediaPortal.GUI.TV
     
     void ChangeType(TVRecording rec)
     {
-			GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
 			{
 				dlg.Reset();

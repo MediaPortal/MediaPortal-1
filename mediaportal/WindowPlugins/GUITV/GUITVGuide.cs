@@ -1856,7 +1856,7 @@ namespace MediaPortal.GUI.TV
 			if (m_currentProgram==null) return;
 			if (m_strCurrentChannel.Length<=0) return;
 			if (m_strCurrentTitle.Length<=0) return;
-			GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
 			{
 				dlg.Reset();

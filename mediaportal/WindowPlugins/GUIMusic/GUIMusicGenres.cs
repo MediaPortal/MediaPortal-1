@@ -958,7 +958,7 @@ namespace MediaPortal.GUI.Music
       int itemNo=GetSelectedItemNo();
       if (item==null) return;
 
-      GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+      GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg==null) return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
