@@ -193,7 +193,7 @@ namespace MediaPortal.TV.Recording
 
       DirectShowUtil.DebugWrite("SWGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       int hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
-      if (hr < 0) 
+      if (hr != 0) 
       {
         DirectShowUtil.DebugWrite("SWGraph:link FAILED:0x{0:X}",hr);
         return false;
@@ -207,7 +207,7 @@ namespace MediaPortal.TV.Recording
       if (m_filterCaptureVideo != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCaptureVideo, filterVideoCaptureDevice.Name);
-        if (hr < 0) 
+        if (hr != 0) 
         {
           DirectShowUtil.DebugWrite("SWGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}",hr);
           return false;
@@ -222,7 +222,7 @@ namespace MediaPortal.TV.Recording
         if (m_filterCaptureAudio != null)
         {
           hr = m_graphBuilder.AddFilter(m_filterCaptureAudio, filterAudioCaptureDevice.Name);
-          if (hr < 0) 
+          if (hr != 0) 
           {
             DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}",hr);
             return false;
@@ -548,7 +548,7 @@ namespace MediaPortal.TV.Recording
       if (m_filterCompressorVideo != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCompressorVideo, filterVideoCompressor.Name);
-        if (hr < 0) 
+        if (hr != 0) 
         {
           DirectShowUtil.DebugWrite("SWGraph:AddCompressors() FAILED:Add video compressor to filtergraph:0x{0:X}",hr);
           return false;
@@ -566,7 +566,7 @@ namespace MediaPortal.TV.Recording
       if (m_filterCompressorAudio != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCompressorAudio, filterAudioCompressor.Name);
-        if (hr < 0) 
+        if (hr != 0) 
         {
           DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph");
           return false;

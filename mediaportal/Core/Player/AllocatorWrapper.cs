@@ -72,13 +72,13 @@ namespace MediaPortal.Player
 				if (m_surface2!=IntPtr.Zero)
 				{
 					Log.Write("AllocatorWrapper:alloc 2nd:{0}x{1}", allocInfo.dwWidth,allocInfo.dwHeight);
-					if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=768)
+					if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=1024)
 					{
 						Log.Write("return surface2");
 						m_surface1=m_surface2;
 						m_surface2=IntPtr.Zero;
 						m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
-						float fTU = (float)(allocInfo.dwWidth ) / 768.0f;
+						float fTU = (float)(allocInfo.dwWidth ) / 1024.0f;
 						float fTV = (float)(allocInfo.dwHeight) / 576.0f;
 						scene.SetSrcRect( fTU, fTV );
 						return 0;
@@ -167,7 +167,7 @@ namespace MediaPortal.Player
 						Marshal.Release(m_surface1);
 					}
 
-					allocInfo.dwWidth=768;
+					allocInfo.dwWidth=1024;
 					allocInfo.dwHeight=576;
 					if (m_surface2!=IntPtr.Zero)
 					{
@@ -175,8 +175,8 @@ namespace MediaPortal.Player
 						m_surface2=IntPtr.Zero;
 					}
 					hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface2);
-					if (hr==0) Log.Write("AllocatorWrapper:allocted 768x576");
-					else Log.Write("AllocatorWrapper:failed:allocted 768x576");
+					if (hr==0) Log.Write("AllocatorWrapper:allocted 1024x576");
+					else Log.Write("AllocatorWrapper:failed:allocted 1024x576");
 					hr=0;
         }
         return hr;

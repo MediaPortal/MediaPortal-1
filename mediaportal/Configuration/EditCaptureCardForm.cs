@@ -599,6 +599,38 @@ namespace MediaPortal.Configuration
 		/// <param name="e"></param>
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
+			if (videoCompressorComboBox.Enabled)
+			{
+				if (videoCompressorComboBox.SelectedItem==null)
+				{
+					MessageBox.Show("No video compressor selected.Please choose a video compressor", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+			}
+			if (audioCompressorComboBox.Enabled)
+			{
+				if (audioCompressorComboBox.SelectedItem==null)
+				{
+					MessageBox.Show("No audio compressor selected.Please choose an audio compressor", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+			}
+			if (audioDeviceComboBox.Enabled)
+			{
+				if (audioDeviceComboBox.SelectedItem==null)
+				{
+					MessageBox.Show("No audio device selected.Please choose an audio device", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+			}
+			if (comboBoxLineInput.Enabled)
+			{
+				if (comboBoxLineInput.SelectedItem==null)
+				{
+					MessageBox.Show("No line input selected.Please choose a line input", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+			}
 			this.DialogResult = DialogResult.OK;
 			this.Hide();
 		}
