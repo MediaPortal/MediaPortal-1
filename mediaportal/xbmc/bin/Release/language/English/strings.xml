@@ -2365,8 +2365,12 @@
 	<value>local share?</value>
 </string>
 <string>
+	<id>920</id>
+	<value>Unable to download remote file</value>
+</string>
+<string>
 	<id>921</id>
-	<value>The remote file is being downloaded</value>
+	<value>File is being downloaded</value>
 </string>
 
 	<!-- My Status Strings -->
