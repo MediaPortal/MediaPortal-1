@@ -370,11 +370,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="false"></filter>
-        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="false"></filter>
-        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="false"></filter>
-        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
@@ -389,10 +389,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="false"></filter>
-        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="false"></filter>
-        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -409,10 +409,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Typhoon TV PVR Tuner"       checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Typhoon TV PVR Audio"       checkdevice="false"></filter>
-        <filter cat="crossbar" name="Typhoon TV PVR CrossBar"    checkdevice="false"></filter>
-        <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Typhoon TV PVR Tuner"       checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Typhoon TV PVR Audio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Typhoon TV PVR CrossBar"    checkdevice="true"></filter>
+        <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -424,10 +424,10 @@
     <radio>
       <interface cat="capture" video="" audio="2" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Typhoon TV PVR Tuner"       checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Typhoon TV PVR Audio"       checkdevice="false"></filter>
-        <filter cat="crossbar" name="Typhoon TV PVR CrossBar"    checkdevice="false"></filter>
-        <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Typhoon TV PVR Tuner"       checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Typhoon TV PVR Audio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Typhoon TV PVR CrossBar"    checkdevice="true"></filter>
+        <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -444,8 +444,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBT"          checkdevice="false"></filter>
-        <filter cat="capture"         name="Firesat BDA Receiver DVBT"       checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBT"          checkdevice="true"></filter>
+        <filter cat="capture"         name="Firesat BDA Receiver DVBT"       checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -460,8 +460,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBS"          checkdevice="false"></filter>
-        <filter cat="capture"         name="Firesat BDA Receiver DVBS"       checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBS"          checkdevice="true"></filter>
+        <filter cat="capture"         name="Firesat BDA Receiver DVBS"       checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -476,8 +476,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBC"          checkdevice="false"></filter>
-        <filter cat="capture"         name="Firesat BDA Receiver DVBC"       checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBC"          checkdevice="true"></filter>
+        <filter cat="capture"         name="Firesat BDA Receiver DVBC"       checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -491,9 +491,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"    checkdevice="false"></filter>
-        <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"   checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"     checkdevice="true"></filter>
+        <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -508,8 +508,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
-        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="true"></filter>
+        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -524,8 +524,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
-        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="true"></filter>
+        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -540,8 +540,8 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="false"></filter>
-        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -556,8 +556,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="false"></filter>
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -572,8 +572,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="false"></filter>
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -588,8 +588,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="false"></filter>
-        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -604,8 +604,8 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="false"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -620,8 +620,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"              checkdevice="false"></filter>
-        <filter cat="capture"         name="MEDION BDA Digital Capture"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"              checkdevice="true"></filter>
+        <filter cat="capture"         name="MEDION BDA Digital Capture"			checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -707,8 +707,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="false"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -724,8 +724,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="AVerMedia AVerEIT"                      checkdevice="false"></filter>
-        <filter cat="capture"         name="AVerMedia Transport Stream Capture"     checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="AVerMedia AVerEIT"                      checkdevice="true"></filter>
+        <filter cat="capture"         name="AVerMedia Transport Stream Capture"     checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -740,8 +740,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="false"></filter>
-        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="true"></filter>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -756,8 +756,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"         checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Xpert BDA DVB-T Tuner/Demod"             checkdevice="false"></filter>
-        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture" checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Xpert BDA DVB-T Tuner/Demod"             checkdevice="true"></filter>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture" checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -822,8 +822,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="false"></filter>
-        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -899,8 +899,8 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"			  checkdevice="false"></filter>
-        <filter cat="capture"         name="Bluebird, WDM TsCapture"		  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"			  checkdevice="true"></filter>
+        <filter cat="capture"         name="Bluebird, WDM TsCapture"		  checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -915,11 +915,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="false"></filter>
-        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="false"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="false"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -934,11 +934,11 @@
     <radio>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="false"></filter>
-        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="false"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="false"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -958,8 +958,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"					checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Pinnacle PCTV 300i PAL Stereo BDA DVBT Tuner"		checkdevice="false"></filter>
-        <filter cat="capture"         name="Pinnacle PCTV 300i PAL Stereo BDA Digital Capture"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 300i PAL Stereo BDA DVBT Tuner"		checkdevice="true"></filter>
+        <filter cat="capture"         name="Pinnacle PCTV 300i PAL Stereo BDA Digital Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -974,8 +974,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant BDA DVB Tuner/Demod"				checkdevice="false"></filter>
-        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB Tuner/Demod"				checkdevice="true"></filter>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -990,8 +990,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="ATI DTV Wonder Digital BDA Tuner"		checkdevice="false"></filter>
-        <filter cat="capture"         name="ATI DTV Wonder Digital BDA Capture"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="ATI DTV Wonder Digital BDA Tuner"		checkdevice="true"></filter>
+        <filter cat="capture"         name="ATI DTV Wonder Digital BDA Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1005,10 +1005,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"		checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"		checkdevice="false"></filter>
-        <filter cat="crossbar" name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"			checkdevice="false"></filter>
-        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1021,10 +1021,10 @@
     <radio>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"		checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"		checkdevice="false"></filter>
-        <filter cat="crossbar" name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"			checkdevice="false"></filter>
-        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1042,9 +1042,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"		checkdevice="false"></filter>
-        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"		checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"				checkdevice="true"></filter>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1100,8 +1100,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner 1"		checkdevice="false"></filter>
-        <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner 1"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner 1"		checkdevice="true"></filter>
+        <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner 1"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1117,8 +1117,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"    checkdevice="false"></filter>
-        <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"   checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"		checkdevice="true"></filter>
+        <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1132,8 +1132,8 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="false"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
       <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1148,11 +1148,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"				checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"			checkdevice="false"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"			checkdevice="false"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"		checkdevice="false"></filter>
-        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"		checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1167,11 +1167,11 @@
     <radio>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"				checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"			checkdevice="false"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"			checkdevice="false"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"		checkdevice="false"></filter>
-        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"		checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
