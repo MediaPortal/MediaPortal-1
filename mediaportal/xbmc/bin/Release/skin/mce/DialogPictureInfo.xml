@@ -286,7 +286,8 @@
 		<posY>240</posY> 
 		<width>400</width> 
 		<height>300</height> 
-		<texture>-</texture> 
+		<texture>-</texture>
+		<centered>yes</centered>  
 		<colorkey>FFFF00FF</colorkey> 
 		<colordiffuse>FFFFFFFF</colordiffuse>
 		<keepaspectratio>yes</keepaspectratio>
