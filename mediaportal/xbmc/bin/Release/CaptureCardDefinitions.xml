@@ -696,7 +696,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Pinnacle Deluxe USB2" capturename="Pinnacle PCTV Deluxe USB (PAL) Device" devid="usb#vid_2304&amp;pid_061e">
+  <capturecard commercialname="Pinnacle Deluxe USB2" capturename="Pinnacle PCTV Deluxe USB (PAL) Device" devid="vid_2304&amp;pid_061e">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
@@ -977,5 +977,19 @@
       </connections>
     </tv>
   </capturecard>
-     
+	<capturecard commercialname="V-Stream Xpert DTV" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+	<tv>
+		<interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+		<filters>
+			<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+			<filter cat="tunerdevice"		name="Xpert BDA DVB-T Tuner/Demod"				checkdevice="false"></filter>
+			<filter cat="capture"			name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
+		</filters>
+		<connections>
+			<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+			<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+		</connections>
+	</tv>
+  </capturecard>      
 </capturecards>
