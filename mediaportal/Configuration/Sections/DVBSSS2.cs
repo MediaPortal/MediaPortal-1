@@ -1696,6 +1696,8 @@ namespace MediaPortal.Configuration.Sections
 			System.IO.TextReader tin;
 			int count = 0;
 			// set diseq & lnb
+			if(System.IO.File.Exists(fileName)==false)
+				return;
 			tin = System.IO.File.OpenText(fileName);
 			treeView4.Nodes.Clear();
 			do
