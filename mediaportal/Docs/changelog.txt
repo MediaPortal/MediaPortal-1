@@ -1,3 +1,5 @@
+19-07-2004  my music    : fixed : F3 artist info due to allmusic.com changed of layout.  Any info gathering from allmusic.com will take some time since the site is slow and information has to be gather from multiple http requests.
+
 17-07-2004  my tv       : fixed : MCE cards with HW mpeg2 encoder didnt work
 17-07-2004  my videos   : fixed : Exception when playing DVD for a second time
 17-07-2004  home        : fixed : The date on the home screen does not follow the setting in the Plugins->Home window
