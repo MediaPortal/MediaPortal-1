@@ -317,7 +317,7 @@ namespace MediaPortal.TV.Recording
 					{
 						// FriendlyName found. Now check if this name should be checked against a (PnP) device
 						// to make sure that we found the right filter...
-						if (fd.CheckDevice)
+						if (fd.CheckDevice && al.Count>1)
 						{
 							// Check all filters with same name for capture card device...
 							for (int i=0; i < al.Count; i++)
@@ -334,7 +334,6 @@ namespace MediaPortal.TV.Recording
 							if (!filterFound)
 							{
 								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: ERROR Cannot find unique filter for filter:{0}", filter.Name);
-								//filterFound = true;
 							}
 							else
 							{
@@ -392,7 +391,7 @@ namespace MediaPortal.TV.Recording
 					{
 						// FriendlyName found. Now check if this name should be checked against a (PnP) device
 						// to make sure that we found the right filter...
-						if (fd.CheckDevice)
+						if (fd.CheckDevice && al.Count>1)
 						{
 							// Check all filters with same name for capture card device...
 							for (int i=0; i < al.Count; i++)
