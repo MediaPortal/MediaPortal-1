@@ -385,6 +385,8 @@ namespace MediaPortal.Configuration.Sections
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
 				textBoxTimeShiftBuffer.Text= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
 				int DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+				if (DeInterlaceMode<0 || DeInterlaceMode>3)
+					DeInterlaceMode=3;
 				cbDeinterlace.SelectedIndex=DeInterlaceMode;
 
 				//
@@ -476,7 +478,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
+				if (cbDeinterlace.SelectedIndex>=0)
+					xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
 
 				xmlwriter.SetValueAsBool("mytv", "alwaystimeshift", alwaysTimeShiftCheckBox.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);

@@ -1279,7 +1279,8 @@ namespace MediaPortal.Configuration
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("tv", "hiquality", checkBoxHiQuality.Checked);
-				xmlwriter.SetValue("tv", "profile", comboBoxQuality.SelectedIndex);
+				if (comboBoxQuality.SelectedIndex>=0)
+					xmlwriter.SetValue("tv", "profile", comboBoxQuality.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
@@ -1630,7 +1631,10 @@ namespace MediaPortal.Configuration
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				checkBoxHiQuality.Checked=xmlreader.GetValueAsBool("tv", "hiquality", false);
-				comboBoxQuality.SelectedIndex=xmlreader.GetValueAsInt("tv", "profile", 1);
+				
+				int quality=xmlreader.GetValueAsInt("tv", "profile", 1);
+				if (comboBoxQuality.Items.Count>0 && quality >=0 && quality < comboBoxQuality.Items.Count)
+					comboBoxQuality.SelectedIndex=quality;
 				
 				comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
 				comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
