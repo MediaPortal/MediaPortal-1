@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  21-06-2004  my video    : fixed : F3 when not connected to the internet
+  21-06-2004  my weather  : fixed : F3 when not connected to the internet
+  
   20-06-2004  my music    : added : save artist info to db.  New db table to hold info
   20-06-2004  my music    : fixed : problem reading some artist info giving exception
   20-06-2004  my music    : fixed : F3 when not connected to the internet
