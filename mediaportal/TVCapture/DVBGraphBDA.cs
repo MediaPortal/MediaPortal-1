@@ -888,7 +888,7 @@ namespace MediaPortal.TV.Recording
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
 					Log.Write("DVBGraphBDA:TuneChannel() get DVBS tuning details");
 					int polarisation=0,symbolrate=0,innerFec=0;
-					TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out polarisation, out symbolrate, out innerFec, out ONID, out TSID, out SID);
+					TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out polarisation, out ONID, out TSID, out SID);
 					if (frequency<=0) 
 					{
 						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
