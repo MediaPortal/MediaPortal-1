@@ -19,6 +19,10 @@ namespace MediaPortal.GUI.Library
     {
     }
 
+		static public int Count
+		{
+			get { return m_fonts.Count;}
+		}
 		/// <summary>
 		/// Loads the fonts from a file.
 		/// </summary>
@@ -31,11 +35,14 @@ namespace MediaPortal.GUI.Library
 			int counter=0;
       Log.Write("  Load fonts from {0}", strFilename);
 			m_fonts.Clear();
+
 			// Load the debug font
 			GUIFont fontDebug = new GUIFont("debug","Arial",12);
 			fontDebug.ID=counter++;
       fontDebug.Load();
       m_fonts.Add(fontDebug);			
+
+
       try
 			{
 				// Load the XML document

@@ -5,6 +5,11 @@
     <height>10</height>
   </font>
   <font>
+    <name>font12</name>
+    <filename>Arial</filename>
+    <height>12</height>
+  </font>
+  <font>
     <name>font13</name>
     <filename>Arial</filename>
     <height>13</height>
@@ -12,7 +17,7 @@
   <font>
     <name>font14</name>
     <filename>Arial</filename>
-    <height>13</height>
+    <height>14</height>
   </font>
   <font>
     <name>font16</name>
@@ -24,7 +29,12 @@
     <filename>Arial</filename>
     <height>18</height>
   </font>
-      <font>
+  <font>
+    <name>dingbats</name>
+    <filename>dingbats</filename>
+    <height>24</height>
+  </font>
+  <font>
 	<start>48</start>
 	<end>58</end>
     <name>font32</name>

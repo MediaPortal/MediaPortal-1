@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Library
 		private int									textureHeight;
 		private float								textureScale;
     private FontStyle						m_FontStyle=FontStyle.Regular;
-		int													m_ID;
+		int													m_ID=-1;
 		bool												FontAdded=false;
 		private string							m_strFontName;
 		private string							m_strFileName;
@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.Library
 			{
 				Trace.WriteLine("Fontengine Present(): ERROR font not added:"+ ID.ToString());
 			}
-			else
+			else if (ID>=0)
 			{
 				FontEnginePresent3D(ID);
 			}
@@ -291,7 +291,7 @@ namespace MediaPortal.GUI.Library
 				Trace.WriteLine("Fontengine Draw(): ERROR font not added:"+ ID.ToString());
 				return;
 			}
-			else
+			else if (ID>=0)
 			{
 				unsafe
 				{
@@ -391,7 +391,7 @@ namespace MediaPortal.GUI.Library
       fontTexture=null;
 			systemFont = null;
 			Trace.WriteLine("fontengine: Remove font:"+ID.ToString());
-			FontEngineRemoveFont(ID);	
+			if (ID>=0) FontEngineRemoveFont(ID);	
 			FontAdded=false;
 		}
 
@@ -594,6 +594,7 @@ namespace MediaPortal.GUI.Library
 		public void RestoreDeviceObjects()
 		{
 
+			if (ID<0) return;
 			Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget( 0 );
 			
 			Trace.WriteLine("fontengine: add font:"+ID.ToString());
