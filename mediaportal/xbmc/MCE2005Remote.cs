@@ -411,6 +411,9 @@ namespace MediaPortal
 							GUIGraphicsContext.SendMessage(msgtv);
             break;
 
+					case 0x46://My tv (yellow on USA model)
+						goto case 0x25;
+					
 					case 0x25://My tv (yellow on USA model)
 						if (USAModel)
 						{
