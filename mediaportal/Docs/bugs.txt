@@ -10,6 +10,7 @@ Cosmetic bugs:
 
 crash/things not working Bugs:
 
+  28-07-2004 viz        : when song ends in full screen viz, you return to GUI
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   19-06-2004 my video   : vmr9: lines/stripes?
