@@ -379,31 +379,72 @@ namespace MediaPortal.TV.Database
 								}
 								if (nodeEpisodeNum!=null && nodeEpisodeNum.InnerText!=null)
 								{
+                  if (nodeEpisodeNum.Attributes.GetNamedItem("system").InnerText=="xmltv_ns")
+                  {
 									strSerEpNum=nodeEpisodeNum.InnerText;
 									int pos=0;
 									int Epos=0;
 									pos = strSerEpNum.IndexOf(".",pos);
-									if (pos>0)
-									{
-										strSeriesNum= strSerEpNum.Substring(0,pos);
-										Epos=pos;
-										pos = strSerEpNum.IndexOf(".",pos+1);
-										strEpisodeNum=strSerEpNum.Substring(Epos+1,(pos-1)-Epos);
-										strEpisodePart=strSerEpNum.Substring(pos+1,strSerEpNum.Length-(pos+1));
-										if (strEpisodePart.Substring(2,1)=="1") strEpisodePart = "";
-										else
-										{
-											int p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
-											int t = Convert.ToInt32(strEpisodePart.Substring(2,1));
-											strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
-										}
-									}
-									else
-									{
-										strSeriesNum = strSerEpNum;
-										strEpisodeNum = "";
-										strEpisodePart = "";
-									}
+                    if (pos==0) //na_dd grabber only gives '..0/2' etc
+                    {
+                      Epos=pos;
+                      pos = strSerEpNum.IndexOf(".",pos+1);
+                      strEpisodeNum=strSerEpNum.Substring(Epos+1,(pos-1)-Epos);
+                      strEpisodePart=strSerEpNum.Substring(pos+1,strSerEpNum.Length-(pos+1));
+                      if (strEpisodePart.IndexOf("/",0)!=-1)// danish guide gives: episode-num system="xmltv_ns"> . 113 . </episode-num>
+                      {
+                        if (strEpisodePart.Substring(2,1)=="1") strEpisodePart = "";
+                        else
+                        {
+                          int p=0;
+                          int t=0;
+                          if (Convert.ToInt32(strEpisodePart.Substring(0,1))==0)
+                          {
+                            p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
+                          }
+                          else
+                          {
+                            p = Convert.ToInt32(strEpisodePart.Substring(0,1));
+                          }
+                          t = Convert.ToInt32(strEpisodePart.Substring(2,1));
+                          strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
+                        }
+                      }
+                    }
+                    else if (pos>0)
+                    {
+                      strSeriesNum= strSerEpNum.Substring(0,pos);
+                      Epos=pos;
+                      pos = strSerEpNum.IndexOf(".",pos+1);
+                      strEpisodeNum=strSerEpNum.Substring(Epos+1,(pos-1)-Epos);
+                      strEpisodePart=strSerEpNum.Substring(pos+1,strSerEpNum.Length-(pos+1));
+                      if (strEpisodePart.IndexOf("/",0)!=-1)
+                      {
+                        if (strEpisodePart.Substring(2,1)=="1") strEpisodePart = "";
+                        else
+                        {
+                          int p=0;
+                          int t=0;
+                          if (Convert.ToInt32(strEpisodePart.Substring(0,1))==0)
+                          {
+                            p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
+                          }
+                          else
+                          {
+                            p = Convert.ToInt32(strEpisodePart.Substring(0,1));
+                          }
+                          t = Convert.ToInt32(strEpisodePart.Substring(2,1));
+                          strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
+                        }
+                      }
+                    }
+                    else
+                    {
+                      strSeriesNum = strSerEpNum;
+                      strEpisodeNum = "";
+                      strEpisodePart = "";
+                    }
+                  }
 								}
 								if (nodeDate!=null && nodeDate.InnerText!=null)
 								{
