@@ -7,8 +7,9 @@
 		<description>bar image</description> 
 		<type>image</type> 
 		<id>0</id> 
-		<posX>400</posX> 
-		<posY>30</posY> 
+		<posX>0</posX> 
+		<posY>30</posY>
+		<width>720</width> 
 		<texture>video_jump.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -18,7 +19,7 @@
 		<description>row 1 label</description> 
 		<type>label</type> 
 		<id>10</id> 
-		<posX>430</posX> 
+		<posX>70</posX> 
 		<posY>40</posY> 
 		<label>-</label> 
 		<align>left</align> 
