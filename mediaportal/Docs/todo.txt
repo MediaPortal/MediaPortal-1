@@ -60,6 +60,7 @@ Settings:
   - all :-)
 
 General:
+  - global actions (shutdown,reboot,...)
   - setup:Auto Tune 
   - caller ID
   - seperate module/database for TV-series
