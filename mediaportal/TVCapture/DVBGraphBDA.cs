@@ -2237,26 +2237,25 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
-			if (!shouldDecryptChannel) return;
 			if (m_SectionsTables==null) return;
-
-			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false)
+			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false )
 			{
-//				Log.Write("vmr9 repaint");
 				Vmr9.Repaint();// repaint vmr9
 			}
+			if (!shouldDecryptChannel) return;
+
 
 			//check if tuner is locked to a tv channel
 			if (!SignalPresent()) return;
 			if (m_iRetyCount>=10) 
 			{
+				Log.Write("DVBGraphBDA: timeout getting PMT");
 				shouldDecryptChannel=false;
 				return;
 			}
 			m_iRetyCount++;
 
 			Log.Write("DVBGraphBDA:Process() Tuner locked to signal");	
-			shouldDecryptChannel=false;
 			//yes, lets get all details for the current channel
 			
 			Log.Write("DVBGraphBDA:Process() Get PMT and channel info");	
@@ -2265,46 +2264,46 @@ namespace MediaPortal.TV.Recording
 			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, m_iCurrentSID, out channelInfo);
 			if (pmt==null)
 			{	
-				shouldDecryptChannel=true;
+				Log.Write("DVBGraphBDA:Process() PMT not found");	
 				return;
 			}
 			if (pmt!=null && pmt.Length>0 )
 			{
+				if (channelInfo.pid_list==null) return;
+				if (channelInfo.pid_list.Count==0) return;
 				//got all details. Log them
+				shouldDecryptChannel=false;
 				channelInfo.freq=currentTuningObject.carrierFrequency;
 				Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6}", 
-					channelInfo.service_provider_name,
-					channelInfo.service_name,
-					channelInfo.scrambled,
-					channelInfo.freq,
-					channelInfo.networkID,
-					channelInfo.transportStreamID,
-					channelInfo.serviceID);
-				if (channelInfo.pid_list!=null)
+														channelInfo.service_provider_name,
+														channelInfo.service_name,
+														channelInfo.scrambled,
+														channelInfo.freq,
+														channelInfo.networkID,
+														channelInfo.transportStreamID,
+														channelInfo.serviceID);
+				for (int pids =0; pids < channelInfo.pid_list.Count;pids++)
 				{
-					for (int pids =0; pids < channelInfo.pid_list.Count;pids++)
+					DVBSections.PMTData data=(DVBSections.PMTData) channelInfo.pid_list[pids];
+					if (data.isVideo)
 					{
-						DVBSections.PMTData data=(DVBSections.PMTData) channelInfo.pid_list[pids];
-						if (data.isVideo)
-						{
-							Log.Write("DVBGraphBDA: video pid: 0x{0:X}",data.elementary_PID);
-							currentTuningObject.videoPid=data.elementary_PID;
-						}
-						if (data.isAC3Audio)
-						{
-							Log.Write("DVBGraphBDA: AC3 pid: 0x{0:X}",data.elementary_PID);
-							currentTuningObject.AC3Pid=data.elementary_PID;
-						}
-						if (data.isTeletext)
-						{
-							Log.Write("DVBGraphBDA: teletext pid: 0x{0:X}",data.elementary_PID);
-							currentTuningObject.teletextPid=data.elementary_PID;
-						}
-						if (data.isAudio)
-						{
-							Log.Write("DVBGraphBDA: audio pid: 0x{0:X}",data.elementary_PID);
-							currentTuningObject.audioPid=data.elementary_PID;
-						}
+						Log.Write("DVBGraphBDA: video pid: 0x{0:X}",data.elementary_PID);
+						currentTuningObject.videoPid=data.elementary_PID;
+					}
+					if (data.isAC3Audio)
+					{
+						Log.Write("DVBGraphBDA: AC3 pid: 0x{0:X}",data.elementary_PID);
+						currentTuningObject.AC3Pid=data.elementary_PID;
+					}
+					if (data.isTeletext)
+					{
+						Log.Write("DVBGraphBDA: teletext pid: 0x{0:X}",data.elementary_PID);
+						currentTuningObject.teletextPid=data.elementary_PID;
+					}
+					if (data.isAudio)
+					{
+						Log.Write("DVBGraphBDA: audio pid: 0x{0:X}",data.elementary_PID);
+						currentTuningObject.audioPid=data.elementary_PID;
 					}
 				}
 
@@ -2773,22 +2772,27 @@ namespace MediaPortal.TV.Recording
 			// the callback needs to return as soon as possible!!
 			//
 
-			if (!m_videoDataFound && GUIGraphicsContext.Vmr9Active)
+			if (currentTuningObject.videoPid==0) 
 			{
-				// the following check should takes care of scrambled video-data
-				// and redraw the vmr9 not to hang
-				for(int pointer=add;pointer<end;pointer+=188)
-				{		
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-//					Log.Write("TransportScrambling:{0:X} {1}",currentTuningObject.videoPid,header.TransportScrambling);
-					if(header.Pid==currentTuningObject.videoPid)
-					{	
-						if(header.TransportScrambling!=0) // data is scrambled?
-							m_videoDataFound=false;
-						else
-							m_videoDataFound=true;
-							
-						break;// stop loop if we got a non-scrambled video-packet 
+				m_videoDataFound=false;
+			}
+			else
+			{
+				if (!m_videoDataFound)
+				{
+					// the following check should takes care of scrambled video-data
+					// and redraw the vmr9 not to hang
+					for(int pointer=add;pointer<end;pointer+=188)
+					{		
+						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+						if(header.Pid==currentTuningObject.videoPid)
+						{
+							//Log.Write("TransportScrambling:{0:X} {1:X} {2}",header.Pid,currentTuningObject.videoPid,header.TransportScrambling);
+							if(header.TransportScrambling==0) 
+								m_videoDataFound=true;
+								
+							break;// stop loop if we got a non-scrambled video-packet 
+						}
 					}
 				}
 			}
