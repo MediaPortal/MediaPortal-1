@@ -256,11 +256,13 @@ namespace MediaPortal
       listViewRadio.SubItemClicked += new ListViewEx.SubItemClickEventHandler(listViewRadio_SubItemClicked);
       
       //general
-      toolTip1.SetToolTip(checkStartFullScreen ,"If you enable this then MediaPortal will start in fullscreen mode instead of windowed mode");
-      toolTip1.SetToolTip(checkBoxAutoHideMouse,"If enabled then Mediaportal will automaticly hide the mouse pointer when its inactive for 3 seconds");
-      toolTip1.SetToolTip(comboBoxLanguage     ,"Select which language file Mediaportal should use");
-      toolTip1.SetToolTip(comboBoxSkins        ,"Select which skin Mediaportal should use");
-
+      toolTip1.SetToolTip(checkStartFullScreen        ,"If you enable this then MediaPortal will start in fullscreen mode instead of windowed mode");
+      toolTip1.SetToolTip(checkBoxAutoHideMouse       ,"If enabled then Mediaportal will automaticly hide the mouse pointer when its inactive for 3 seconds");
+      toolTip1.SetToolTip(comboBoxLanguage            ,"Select which language file Mediaportal should use");
+      toolTip1.SetToolTip(comboBoxSkins               ,"Select which skin Mediaportal should use");
+      toolTip1.SetToolTip(checkBoxVMR9                ,"Enable this to use the advanced VMR9 video renderer\rVMR9 is a more advanced renderer for video and livetv\rBut its not supported by every codec and/or card");
+      toolTip1.SetToolTip(checkBoxHideFileExtensions  ,"If enabled MediaPortal wont show any file extensions\rLike .mpg or .avi of .mp3");
+      toolTip1.SetToolTip(checkBoxMouseSupport        ,"Enable this option if you are using the mouse to control\rMediaPortal. If enabled Mediaportal will draw mouse\rspecific controls like scrollbars");
 
       //movieplayer
       toolTip1.SetToolTip(movieFile                   ,"Select the filename of an external video player mediaportal should use for playing movies");
@@ -307,7 +309,7 @@ namespace MediaPortal
 
 
       //MY TV
-      toolTip1.SetToolTip(checkBoxAlwaysTimeShift   ,"Enable this option if you want MediaPortal to timeshift live video in the background. When this option is disabled timeshifting live TV will only be running when you are in the My TV section");
+      toolTip1.SetToolTip(checkBoxAlwaysTimeShift   ,"Enable this option if you want MediaPortal to timeshift\rlive video in the background.When this option is disabled\rtimeshifting live TV will only be running when you are in the My TV section");
 
       UpdateCaptureCardList();
 
