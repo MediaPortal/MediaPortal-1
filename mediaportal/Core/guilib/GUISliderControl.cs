@@ -199,6 +199,9 @@ namespace MediaPortal.GUI.Library
                 m_iPercent = (int) ( 100f *  x);
                 break;
             }
+						m_fValue=(float)Math.Round(m_fValue,1);
+						message=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
+						GUIGraphicsContext.SendMessage(message);
           break;
            
 						// decrease the slider value
