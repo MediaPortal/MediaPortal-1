@@ -2395,11 +2395,11 @@
   </string>
   <string>
   	<id>928</id>
-  	<value>Find coverart</value>
+  	<value>Zoek naar hoesjes</value>
   </string>
   <string>
   	<id>929</id>
-  	<value>Menu sluitenClose menu</value>
+  	<value>Menu sluiten</value>
   </string>
   <string>
   	<id>930</id>
@@ -2438,8 +2438,8 @@
     <value>Bekijk dit kanaal</value>
   </string>
   <string>
-    <id>939</id>
-    <value>Switch mode</value>    <!-- TODO: Figure out where it is used and what it means -->
+    <id>940</id>
+    <value>Eigenschappen</value>
   </string>
   <string>
   	<id>1440</id>
@@ -2878,7 +2878,7 @@
   </string>
   <string>
   	<id>9004</id>
-  	<value>Exposure Compensation:</value>
+  	<value>Exposure Comp.:</value>
   </string>
   <string>
   	<id>9005</id>
@@ -3175,6 +3175,10 @@
   <string>
     <id>12013</id>
     <value>Waardering instellen</value>
+  </string>
+  <string>
+    <id>12014</id>
+    <value>Afbeelding informatie</value>
   </string>
 	<string>
 		<id>12600</id>

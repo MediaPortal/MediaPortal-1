@@ -50,7 +50,7 @@
 			<id>15</id>
 			<posX>280</posX>
 			<posY>50</posY>
-			<label>132</label>
+			<label>133</label>
 			<font>font10</font>
 			<align>right</align>
 		</control>
@@ -184,8 +184,8 @@
 			<textYOff2>50</textYOff2>
 			<itemWidth>81</itemWidth>
 			<itemHeight>81</itemHeight>
-			<textureFocus>list_nofocus.png</textureFocus>
-			<textureNoFocus>blue-rectangleNF.png</textureNoFocus>
+			<textureFocus>list_big_focus.png</textureFocus>
+			<textureNoFocus>list_big_nofocus.png</textureNoFocus>
 			<spaceBetweenItems>14</spaceBetweenItems>
 			<textureHeight>90</textureHeight>
 			<onleft>2</onleft>

@@ -26,6 +26,7 @@
 		<posY>60</posY>
 		<label>6</label>
 		<font>font13</font>
+		<align>left</align>
 		<textcolor>FFFFFFFF</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 	</control>
