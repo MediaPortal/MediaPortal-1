@@ -359,7 +359,10 @@ namespace MediaPortal
           case 0x4C://DVD audio
             break;
           case 0x24://DVD menu
-            action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+            if (header.hid.RawData3==0)
+              action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+            else
+              GUIWindowManager.PreviousWindow();
             break;
           case 0x4D://DVD subtitle
             break;
