@@ -286,6 +286,8 @@
 		<font>font14</font>
 		<textXOff>15</textXOff>
 		<textYOff>2</textYOff>
+		<textXOff2>10</textXOff2>
+		<textYOff2>2</textYOff2>
 		<textureFocus>button_focus.png</textureFocus>
 		<textureNoFocus>button_nofocus.png</textureNoFocus>
 		<texturebg>button_background.png</texturebg>
