@@ -175,7 +175,7 @@
             <Include>
                 <File
                     RelPath = "AnalogTVTuningForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -190,7 +190,7 @@
                 />
                 <File
                     RelPath = "AutoTuningForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -200,7 +200,7 @@
                 />
                 <File
                     RelPath = "EditCaptureCardForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -210,7 +210,7 @@
                 />
                 <File
                     RelPath = "EditRadioStationForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -220,7 +220,7 @@
                 />
                 <File
                     RelPath = "EditShareForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -230,7 +230,7 @@
                 />
                 <File
                     RelPath = "EditTVChannelForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -240,7 +240,7 @@
                 />
                 <File
                     RelPath = "EditWeatherCityForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -260,7 +260,7 @@
                 />
                 <File
                     RelPath = "ParameterForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -270,7 +270,7 @@
                 />
                 <File
                     RelPath = "RadioAutoTuningForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -285,7 +285,7 @@
                 />
                 <File
                     RelPath = "SearchCityForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -295,7 +295,7 @@
                 />
                 <File
                     RelPath = "SectionSettings.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -310,7 +310,7 @@
                 />
                 <File
                     RelPath = "SettingsForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -349,7 +349,7 @@
                 />
                 <File
                     RelPath = "WizardForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -359,7 +359,7 @@
                 />
                 <File
                     RelPath = "Controls\MPBeveledLine.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -369,12 +369,12 @@
                 />
                 <File
                     RelPath = "Controls\MPCheckBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\MPGradientLabel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -384,17 +384,17 @@
                 />
                 <File
                     RelPath = "Controls\MPGroupBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\MPListView.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Sections\DVD.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -404,7 +404,7 @@
                 />
                 <File
                     RelPath = "Sections\DVDCodec.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -414,7 +414,7 @@
                 />
                 <File
                     RelPath = "Sections\DVDPlayer.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -424,7 +424,7 @@
                 />
                 <File
                     RelPath = "Sections\DVDPostProcessing.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -434,7 +434,7 @@
                 />
                 <File
                     RelPath = "Sections\FileExtensions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -444,7 +444,7 @@
                 />
                 <File
                     RelPath = "Sections\General.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -454,7 +454,7 @@
                 />
                 <File
                     RelPath = "Sections\Keys.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -464,7 +464,7 @@
                 />
                 <File
                     RelPath = "Sections\MovieExtensions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -474,7 +474,7 @@
                 />
                 <File
                     RelPath = "Sections\MoviePlayer.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -484,7 +484,7 @@
                 />
                 <File
                     RelPath = "Sections\MoviePostProcessing.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -494,7 +494,7 @@
                 />
                 <File
                     RelPath = "Sections\Movies.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -504,7 +504,7 @@
                 />
                 <File
                     RelPath = "Sections\MovieShares.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -514,7 +514,7 @@
                 />
                 <File
                     RelPath = "Sections\Music.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -524,7 +524,7 @@
                 />
                 <File
                     RelPath = "Sections\MusicDatabase.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -534,7 +534,7 @@
                 />
                 <File
                     RelPath = "Sections\MusicExtensions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -544,12 +544,12 @@
                 />
                 <File
                     RelPath = "Sections\MusicShares.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Sections\PictureExtensions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -559,7 +559,7 @@
                 />
                 <File
                     RelPath = "Sections\Pictures.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -569,7 +569,7 @@
                 />
                 <File
                     RelPath = "Sections\PictureShares.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -579,7 +579,7 @@
                 />
                 <File
                     RelPath = "Sections\Plugins.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -589,7 +589,7 @@
                 />
                 <File
                     RelPath = "Sections\Project.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -599,7 +599,7 @@
                 />
                 <File
                     RelPath = "Sections\Radio.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -609,7 +609,7 @@
                 />
                 <File
                     RelPath = "Sections\RadioStations.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -619,7 +619,7 @@
                 />
                 <File
                     RelPath = "Sections\Shares.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -629,7 +629,7 @@
                 />
                 <File
                     RelPath = "Sections\Skin.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -639,7 +639,7 @@
                 />
                 <File
                     RelPath = "Sections\Television.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -649,7 +649,7 @@
                 />
                 <File
                     RelPath = "Sections\TVCaptureCards.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -659,7 +659,7 @@
                 />
                 <File
                     RelPath = "Sections\TVChannels.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -669,7 +669,7 @@
                 />
                 <File
                     RelPath = "Sections\TVPostProcessing.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -679,7 +679,7 @@
                 />
                 <File
                     RelPath = "Sections\TVProgramGuide.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -689,7 +689,7 @@
                 />
                 <File
                     RelPath = "Sections\TVRecording.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -699,7 +699,7 @@
                 />
                 <File
                     RelPath = "Sections\USBUIRT.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -709,7 +709,7 @@
                 />
                 <File
                     RelPath = "Sections\Weather.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -719,7 +719,7 @@
                 />
                 <File
                     RelPath = "Sections\Wizard_Finished.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -729,7 +729,7 @@
                 />
                 <File
                     RelPath = "Sections\Wizard_SelectPlugins.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -739,7 +739,7 @@
                 />
                 <File
                     RelPath = "Sections\Wizard_Welcome.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

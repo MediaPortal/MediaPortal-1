@@ -567,7 +567,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", true);
+				useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
 
 				useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
 				compensateTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("xmltv", "timezonecorrection", 0));
