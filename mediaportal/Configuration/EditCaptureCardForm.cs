@@ -18,6 +18,7 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class EditCaptureCardForm : System.Windows.Forms.Form
 	{
+    bool    m_bMPEG2=false;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox cardComboBox;
@@ -424,6 +425,7 @@ namespace MediaPortal.Configuration
 			{
 				capture = new Capture(videoDevice, null);
 				capture.LoadSettings(cardId);
+        m_bMPEG2=capture.SupportsTimeShifting;
 			}
 			catch
 			{
@@ -570,6 +572,7 @@ namespace MediaPortal.Configuration
         card.VideoCompressor = videoCompressorComboBox.Text;
         card.AudioCompressor = audioCompressorComboBox.Text;
         card.AudioDevice = audioDeviceComboBox.Text;
+        card.SupportsMPEG2=m_bMPEG2;
 
 				return card;
 			}
@@ -590,6 +593,7 @@ namespace MediaPortal.Configuration
           videoCompressorComboBox.SelectedItem = card.VideoCompressor;
           audioCompressorComboBox.SelectedItem = card.AudioCompressor;
           audioDeviceComboBox.SelectedItem = card.AudioDevice;
+          m_bMPEG2=card.SupportsMPEG2;
         }
 			}
 		}

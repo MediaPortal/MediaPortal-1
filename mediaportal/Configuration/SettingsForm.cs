@@ -30,7 +30,7 @@ namespace MediaPortal.Configuration
 		}
 		static Hashtable settingSections = new Hashtable();
 		private System.Windows.Forms.Button applyButton;
-    private System.ComponentModel.IContainer components;
+    //private System.ComponentModel.IContainer components;
 
 		public SettingsForm()
 		{
@@ -153,10 +153,10 @@ namespace MediaPortal.Configuration
 		{
 			if( disposing )
 			{
-				if(components != null)
+				/*if(components != null)
 				{
 					components.Dispose();
-				}
+				}*/
 			}
 			base.Dispose( disposing );
 		}

@@ -21,6 +21,7 @@ namespace MediaPortal.TV.Recording
     string        m_strAudioCompressor="";
     bool          m_bUseForRecording;
     bool          m_bUseForTV;			
+    bool          m_bSupportsMPEG2;
     
     [NonSerialized]
     int           m_iID;
@@ -35,8 +36,6 @@ namespace MediaPortal.TV.Recording
       PostRecording,
       Viewing
     }
-    [NonSerialized]
-    bool          m_bSupportsMPEG2=true;
 
     [NonSerialized]
     State         m_eState=State.None;
@@ -70,7 +69,6 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public TVCaptureDevice()
     {
-      m_bSupportsMPEG2=true;
     }
 
     /// <summary>
@@ -87,7 +85,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public bool SupportsMPEG2
     {
-      get { return true;}
+      get { return m_bSupportsMPEG2;}
       set { m_bSupportsMPEG2=value;}
     }
 
