@@ -11,7 +11,7 @@ using DShowNET.Device;
 using DirectX.Capture;
 
 using MediaPortal.TV.Recording;
-
+using MediaPortal.GUI.Library;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -57,7 +57,7 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.TrackBar trackRecording;
     private System.Windows.Forms.Label lblRecordingLevel;
-
+    private Size m_size = new Size(0,0);
 		int cardId = 0;
 
 		/// <summary>
@@ -210,9 +210,10 @@ namespace MediaPortal.Configuration
       this.trackRecording.Location = new System.Drawing.Point(120, 352);
       this.trackRecording.Maximum = 100;
       this.trackRecording.Name = "trackRecording";
-      this.trackRecording.Size = new System.Drawing.Size(136, 45);
+      this.trackRecording.Size = new System.Drawing.Size(136, 42);
       this.trackRecording.TabIndex = 48;
       this.trackRecording.TickFrequency = 10;
+      this.trackRecording.Value = 80;
       this.trackRecording.ValueChanged += new System.EventHandler(this.trackRecording_ValueChanged);
       // 
       // label10
@@ -710,6 +711,20 @@ namespace MediaPortal.Configuration
         capture.Stop();
         capture.Dispose();
       }
+
+      // select the correct framesize
+      if (frameSizeComboBox.Items.Count>0)
+        frameSizeComboBox.SelectedIndex=0;
+
+      for (int i=0; i < frameSizeComboBox.Items.Count;++i)
+      {
+        CaptureFormat fmt =(CaptureFormat)frameSizeComboBox.Items[i];
+        if (m_size.Width==fmt.Width && m_size.Height==fmt.Height)
+        {
+          frameSizeComboBox.SelectedIndex = i;
+          break;
+        }
+      }
     }
 
 		private void setupButton_Click(object sender, System.EventArgs e)
@@ -843,17 +858,17 @@ namespace MediaPortal.Configuration
           
           comboBoxLineInput.Text = card.AudioInputPin;
           trackRecording_ValueChanged(null,null);
-          
+          m_size=new Size(card.FrameSize.Width,card.FrameSize.Height);
           FillInAll(); // fill all framerates & audio in types...
 
           comboBoxLineInput.Text = card.AudioInputPin;
           trackRecording_ValueChanged(null,null);
           
-
           // select the correct framesize
           for (int i=0; i < frameSizeComboBox.Items.Count;++i)
           {
             CaptureFormat fmt =(CaptureFormat)frameSizeComboBox.Items[i];
+            
             if (card.FrameSize.Width==fmt.Width && card.FrameSize.Height==fmt.Height)
             {
               frameSizeComboBox.SelectedIndex = i;
