@@ -458,6 +458,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\DaemonTools.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DaemonTools.resx"
+                    DependentUpon = "DaemonTools.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\DVD.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -69,11 +69,12 @@ namespace MediaPortal.Configuration
 			Sections.General general = new Sections.General();
 			AddSection(general);
 
+			Log.Write("add skins section");
+			AddChildSection(general, new Sections.Skin());
 			AddChildSection(general, new Sections.KeyboardControl());
-      AddChildSection(general, new Sections.Keys());
+			AddChildSection(general, new Sections.Keys());
+			AddChildSection(general, new Sections.DeamonTools());
 
-      Log.Write("add skins section");
-      AddChildSection(general, new Sections.Skin());
 
 
       Log.Write("add DVD section");
