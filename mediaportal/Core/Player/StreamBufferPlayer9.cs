@@ -170,9 +170,12 @@ namespace MediaPortal.Player
             mediaEvt = null;
           }
 
-
-					Vmr9.RemoveVMR9();
-					Vmr9=null;
+			//added from agree: check if Vmr9 already null
+			if(Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9=null;
+			}
 
           basicAudio	= null;
           m_mediaSeeking=null;
@@ -200,8 +203,8 @@ namespace MediaPortal.Player
           Log.Write("StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
         }
         //switch back to directx windowed mode
-        GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-        GUIWindowManager.SendMessage(msg);
+        //GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+        //GUIWindowManager.SendMessage(msg);
       }
     }
 
