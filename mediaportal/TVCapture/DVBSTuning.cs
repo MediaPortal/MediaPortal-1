@@ -34,7 +34,7 @@ namespace MediaPortal.TV.Recording
 		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
-		TPList[]														transp=new TPList[200];
+		TPList[]														transp=new TPList[800];
 		int																	count = 0;
 
 		public DVBSTuning()
