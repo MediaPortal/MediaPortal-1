@@ -2422,6 +2422,26 @@
   	<value>Waardering instellen</value>
   </string>
   <string>
+  	<id>935</id>
+  	<value>Toon: Waardering</value> <!-- TODO: Check if it fits -->
+  </string>
+  <string>
+    <id>936</id>
+    <value>Doorgaan vanaf:</value> <!-- TODO: Check if it fits -->
+  </string>
+  <string>
+    <id>937</id>
+    <value>TV Gids importeren</value>
+  </string>
+  <string>
+    <id>938</id>
+    <value>Bekijk dit kanaal</value>
+  </string>
+  <string>
+    <id>939</id>
+    <value>Switch mode</value>    <!-- TODO: Figure out where it is used and what it means -->
+  </string>
+  <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
   </string>
@@ -3208,6 +3228,22 @@
   	<id>13007</id>
   	<value>Groot plaatje</value>
   </string>
+  <string>
+  	<id>13008</id>
+  	<value>Ken Burns effect</value>
+  </string>
+  <string>
+  	<id>13009</id>
+  	<value>Willekeurige overgangen</value>
+  </string>
+  <string>
+  	<id>13010</id>
+  	<value>Overloop overgangen</value>
+  </string>
+  <string>
+    <id>13011</id>
+    <value>Ken Burns snelheid</value>
+  </string>  
   <string>
   	<id>16001</id>
   	<value>Feest mix</value>
