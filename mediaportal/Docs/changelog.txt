@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  25-05-2004  my music    : fixed : when you put an .m3u file in a folder with mp3's then when you select the 3rd song, the 4th will play etc
   25-05-2004  my pictures : fixed : play a song, view a picture, press X->visualisation shows and picture disappears!
   25-05-2004  my tv       : fixed : click in empty 'recorded tv'->crash
   25-05-2004  my music    : fixed : play song, press F5->crash

@@ -1,8 +1,7 @@
 
 - page view does not listen to the coordinates you give in references.xml
-- when you put an .m3u file in a folder with mp3's then when you select the 3rd song, the 4th will play etc
-- scroll in mytV does not work?
 - rescale causes borders to appear on topbar buttons (new topbar)
+- scroll in mytV does not work?
 - when out of focus music won't continue.
 - window uses wrong resolution, 720x569 instead of 720x576
 - action 79 in keymap does not work
