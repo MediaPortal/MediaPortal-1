@@ -676,19 +676,19 @@ namespace MediaPortal.TV.Recording
         {
           DateTime dt=currentProgram.StartTime;
           strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-                            currentProgram.Channel,currentProgram.Title,
-                            dt.Year,dt.Month,dt.Day,
-                            dt.Hour,
-                            dt.Minute,strCaptureFormat);
+            currentProgram.Channel,currentProgram.Title,
+            dt.Year,dt.Month,dt.Day,
+            dt.Hour,
+            dt.Minute,strCaptureFormat);
         }
         else
         {
           DateTime dt=DateTime.Now;
           strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-                                    rec.Channel,rec.Title,
-                                    dt.Year,dt.Month,dt.Day,
-                                    dt.Hour,
-                                    dt.Minute,strCaptureFormat);
+            rec.Channel,rec.Title,
+            dt.Year,dt.Month,dt.Day,
+            dt.Hour,
+            dt.Minute,strCaptureFormat);
         }
         string strFilenameEnd=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
         string strFilenameTmp=String.Format(@"{0}\record{1}",strRecPath, strCaptureFormat );
@@ -718,7 +718,25 @@ namespace MediaPortal.TV.Recording
         // capture is now running
         // now just wait till recording has ended
         // or user has canceled the recording
-        
+        TVUtil util=new TVUtil();
+        TVProgram currentRunningProgram=util.GetCurrentProgram(rec.Channel);
+        util=null;
+        TVRecorded newRecordedTV = new TVRecorded();
+        newRecordedTV.Start=Utils.datetolong(DateTime.Now);
+        newRecordedTV.Channel=rec.Channel;
+        newRecordedTV.FileName=strFilenameEnd;
+        if (currentProgram!=null)
+        {
+          newRecordedTV.Title=currentRunningProgram.Title;
+          newRecordedTV.Genre=currentRunningProgram.Genre;
+          newRecordedTV.Description=currentRunningProgram.Description;
+        }
+        else
+        {
+          newRecordedTV.Title="";
+          newRecordedTV.Genre="";
+          newRecordedTV.Description="";
+        }
         while ( rec.ShouldRecord(DateTime.Now,currentProgram,iPreRecordInterval, iPostRecordInterval) )
         {
           // did user cancel the recording?
@@ -753,6 +771,9 @@ namespace MediaPortal.TV.Recording
         {
           Log.Write("unable to move file {0}-{1} {2}", strFilenameTmp, strFilenameEnd,ex.Message);
         }
+
+        newRecordedTV.End=Utils.datetolong(DateTime.Now);
+        TVDatabase.AddRecordedTV(newRecordedTV);
       }
       catch(Exception ex)
       {

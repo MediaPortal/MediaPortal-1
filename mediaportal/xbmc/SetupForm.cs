@@ -187,6 +187,9 @@ namespace MediaPortal
     private System.Windows.Forms.ColumnHeader HdrDefault;
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.ColumnHeader columnHeader6;
+    private System.Windows.Forms.GroupBox groupBox20;
+    private System.Windows.Forms.TextBox textBoxXMLTVFolder;
+    private System.Windows.Forms.Button btnXMLTVFolder;
  
     /// <summary>
 		/// Required designer variable.
@@ -395,6 +398,9 @@ namespace MediaPortal
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.groupBox18 = new System.Windows.Forms.GroupBox();
       this.textEditBox = new System.Windows.Forms.TextBox();
+      this.groupBox20 = new System.Windows.Forms.GroupBox();
+      this.textBoxXMLTVFolder = new System.Windows.Forms.TextBox();
+      this.btnXMLTVFolder = new System.Windows.Forms.Button();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.tabAudioPlayer.SuspendLayout();
@@ -437,6 +443,7 @@ namespace MediaPortal
       this.groupBox19.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
       this.groupBox18.SuspendLayout();
+      this.groupBox20.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl
@@ -1846,6 +1853,7 @@ namespace MediaPortal
       // 
       // tabTVChannels
       // 
+      this.tabTVChannels.Controls.Add(this.groupBox20);
       this.tabTVChannels.Controls.Add(this.groupBox19);
       this.tabTVChannels.Controls.Add(this.btnEditChannel);
       this.tabTVChannels.Controls.Add(this.btnDelChannel);
@@ -2013,6 +2021,34 @@ namespace MediaPortal
       this.textEditBox.Text = "textBox1";
       this.textEditBox.Visible = false;
       // 
+      // groupBox20
+      // 
+      this.groupBox20.Controls.Add(this.btnXMLTVFolder);
+      this.groupBox20.Controls.Add(this.textBoxXMLTVFolder);
+      this.groupBox20.Location = new System.Drawing.Point(8, 304);
+      this.groupBox20.Name = "groupBox20";
+      this.groupBox20.Size = new System.Drawing.Size(432, 56);
+      this.groupBox20.TabIndex = 21;
+      this.groupBox20.TabStop = false;
+      this.groupBox20.Text = "XMLTV Folder";
+      // 
+      // textBoxXMLTVFolder
+      // 
+      this.textBoxXMLTVFolder.Location = new System.Drawing.Point(16, 24);
+      this.textBoxXMLTVFolder.Name = "textBoxXMLTVFolder";
+      this.textBoxXMLTVFolder.Size = new System.Drawing.Size(352, 20);
+      this.textBoxXMLTVFolder.TabIndex = 0;
+      this.textBoxXMLTVFolder.Text = "";
+      // 
+      // btnXMLTVFolder
+      // 
+      this.btnXMLTVFolder.Location = new System.Drawing.Point(376, 24);
+      this.btnXMLTVFolder.Name = "btnXMLTVFolder";
+      this.btnXMLTVFolder.Size = new System.Drawing.Size(32, 23);
+      this.btnXMLTVFolder.TabIndex = 1;
+      this.btnXMLTVFolder.Text = "...";
+      this.btnXMLTVFolder.Click += new System.EventHandler(this.btnXMLTVFolder_Click);
+      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -2064,6 +2100,7 @@ namespace MediaPortal
       this.groupBox19.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
       this.groupBox18.ResumeLayout(false);
+      this.groupBox20.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -2245,6 +2282,8 @@ namespace MediaPortal
 
         LoadWeather(xmlreader);
 
+
+        textBoxXMLTVFolder.Text=xmlreader.GetValueAsString("xmltv","folder","xmltv");
 
         string strLanguage=xmlreader.GetValueAsString("skin","language","english");
         comboBoxLanguage.Items.Clear();
@@ -2482,6 +2521,7 @@ namespace MediaPortal
           
         xmlWriter.SetValueAsBool("xmltv","usetimezone",xmltvTimeZoneCheck.Checked);
         xmlWriter.SetValue("xmltv","timezonecorrection",timeZoneCorrection.Value.ToString() );
+        xmlWriter.SetValue("xmltv","folder",textBoxXMLTVFolder.Text);
       }
 		}
 
@@ -3298,6 +3338,15 @@ namespace MediaPortal
         item.SubItems[2].Text="";
       }
       e.Item.SubItems[2].Text="X";
+    }
+
+    private void btnXMLTVFolder_Click(object sender, System.EventArgs e)
+    {
+      FolderBrowserDialog dlg=new FolderBrowserDialog();
+      dlg.ShowNewFolderButton=true;
+      dlg.ShowDialog(this);
+      if (dlg.SelectedPath==null) return;
+      textBoxXMLTVFolder.Text=dlg.SelectedPath;
     }
 	}
   // Implements the manual sorting of items by columns.

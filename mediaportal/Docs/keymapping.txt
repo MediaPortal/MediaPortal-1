@@ -31,7 +31,10 @@ My TV:
         pageup     = goto next day
         pagedown   = goto previous day
         F3         = load new tvguide.xml
-        
+  
+  Recorded TV
+        0          = delete recording
+                
 My Music:
   Playlist:
         Y         = remove selected item from playlist       

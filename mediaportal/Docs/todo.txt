@@ -19,11 +19,7 @@ My TV:
      - show info about current & next program
   
   Recorded tv:
-     - show all recorded tv programs
-     - allow user to play one
-     - allow user to delete one
-     - sort : date/time , channel, program
-     
+	 -     
   TVGuide:
      - 
   

@@ -1,4 +1,11 @@
 History: (dd-mm-yyyy)
+  05-05-2004  My video    : added : bookmarks now works
+  05-05-2004  My pictures : added : fade-in transition to slideshow
+  05-05-2004  My tv       : added : my tv->record tv now works
+  05-05-2004  My tv       : added : spiced up my tv->scheduled
+  05-05-2004  My tv       : added : tvguide now shows genre for current selected program
+  05-05-2004  setup       : added : you can now specify the folder where the xmltv file is located
+    
   04-05-2004  my pictures : fixed : ar problems
   04-05-2004  tvguide     : added : added nicer looking mytv->'scheduled'
   04-05-2004  tvguide     : added : started with recorded tv
