@@ -1,11 +1,11 @@
 History: (dd-mm-yyyy)
-  31-04-2004: general     : fixed : page number didnt show total pages
-  31-04-2004: setup       : fixed : sorting channels in setup is 1,10,11,2,
-  31-04-2004: my tv       : fixed : timezone correction corrected minutes instead of hours
-  31-04-2004: my music    : fixed : in fullscreen mode WMP9 got all keyboard presses and thus prev/next song etc where not working
-  31-04-2004: my video    : fixed : dvd player didnt play commercial discs
-  31-04-2004: setup       : fixed : crash if entering setup during recording/previewing
-  31-04-2004: my pictures : fixed : problem with photo's not shown fullscreen in slideshow
+  01-05-2004: general     : fixed : page number didnt show total pages
+  01-05-2004: setup       : fixed : sorting channels in setup is 1,10,11,2,
+  01-05-2004: my tv       : fixed : timezone correction corrected minutes instead of hours
+  01-05-2004: my music    : fixed : in fullscreen mode WMP9 got all keyboard presses and thus prev/next song etc where not working
+  01-05-2004: my video    : fixed : dvd player didnt play commercial discs
+  01-05-2004: setup       : fixed : crash if entering setup during recording/previewing
+  01-05-2004: my pictures : fixed : problem with photo's not shown fullscreen in slideshow
   
   30-04-2004: my music    : fixed : visz disappeared after album art lookup
   30-04-2004: my music    : fixed : visz disappeared after play same song twice
