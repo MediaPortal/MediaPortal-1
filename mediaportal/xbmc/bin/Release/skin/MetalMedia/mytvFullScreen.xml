@@ -14,6 +14,7 @@
   <texture>bluebar.png</texture> 
   <colorkey>0</colorkey> 
   <colordiffuse>ffffffff</colordiffuse> 
+  <visible>no</visible>
   </control>
  <control>
   <description>row 1 label</description> 
@@ -25,6 +26,7 @@
   <align>left</align> 
   <font>font13</font> 
   <textcolor>FFFFFFFF</textcolor> 
+  <visible>no</visible>
   </control>
  <control>
   <description>row 2 label</description> 
@@ -36,6 +38,7 @@
   <align>left</align> 
   <font>font13</font> 
   <textcolor>FFFFFFFF</textcolor> 
+  <visible>no</visible>
   </control>
  <control>
   <description>row 3 label</description> 
