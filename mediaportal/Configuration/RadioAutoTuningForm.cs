@@ -3,8 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 
 using DShowNET;
-using DirectX.Capture;
-
+using MediaPortal.Player;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -13,22 +12,22 @@ namespace MediaPortal.Configuration
 	public class RadioAutoTuningForm : AutoTuningForm
 	{
 		int		currentChannel = 0;
-		Capture captureDevice = null;
+		RadioGraph m_graph=null;
 
-		public RadioAutoTuningForm(Capture captureDevice)
+		public RadioAutoTuningForm(RadioGraph graph)
 		{
-			this.captureDevice = captureDevice;
+			this.m_graph = graph;
 
 			//
 			// Setup progress bar
 			//
 			SetStep(100000);
-			SetInterval(captureDevice.Tuner.ChanelMinMax[0], captureDevice.Tuner.ChanelMinMax[1]);
+			SetInterval(87500000, 108000000);
 		}
 
 		public override void OnStartTuning(int startValue)
 		{
-			captureDevice.Tuner.Channel = startValue;
+			m_graph.Tune(startValue);
 		}
 
 		public override void OnStopTuning()
@@ -40,15 +39,15 @@ namespace MediaPortal.Configuration
 		{
       try
       {
-        if(captureDevice.Tuner.SignalPresent == true)
+        if(m_graph.SignalPresent == true)
         {
           //
           // We have found a channel!
           //
-          RadioStation newStation =new RadioStation(currentChannel, captureDevice.Tuner.Channel);
+          RadioStation newStation =new RadioStation(currentChannel, m_graph.Channel);
           newStation.Name=String.Format("Station{0}", currentChannel++);
           newStation.Type="Radio";
-          newStation.Frequency=captureDevice.Tuner.Channel;
+          newStation.Frequency=m_graph.Channel;
           AddItem(newStation);
         }
       }
@@ -62,10 +61,10 @@ namespace MediaPortal.Configuration
 			//
       try
       {
-        captureDevice.Tuner.Channel += stepSize;
-        double dFreq=(double)captureDevice.Tuner.Channel ;
+        m_graph.Tune(m_graph.Channel + stepSize);
+        double dFreq=(double)m_graph.Channel ;
         dFreq/=1000000d;
-        Text=String.Format("Radio tuning:{0:#,##} MHz", captureDevice.Tuner.Channel );
+        Text=String.Format("Radio tuning:{0:#,##} MHz", m_graph.Channel );
       }
       catch(Exception)
       {

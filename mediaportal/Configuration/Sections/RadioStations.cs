@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 using DShowNET;
 using DirectX.Capture;
-
+using MediaPortal.Player;
 using SQLite.NET;
 using MediaPortal.Radio.Database;
 
@@ -357,45 +357,60 @@ namespace MediaPortal.Configuration.Sections
 		{
 			isDirty = true;
 
-			Capture captureDevice = SetupCaptureDevice();
+              
+      int iTunerCountry=31;
+      string strTunerType="Antenna";
+      string strRadioDevice="";
+      string strAudioDevice="";
+      string strLineInput="";
 
-			if(captureDevice != null)
+      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        strTunerType  =xmlreader.GetValueAsString("radio","tuner","Antenna");
+        iTunerCountry =xmlreader.GetValueAsInt("capture","country",31);
+        strRadioDevice=xmlreader.GetValueAsString("radio","device","");
+        strAudioDevice=xmlreader.GetValueAsString("radio","audiodevice","");
+        strLineInput=xmlreader.GetValueAsString("radio","lineinput","");
+      }
+      bool bAntenna=false;
+      if (strTunerType.Equals("Antenna"))
+        bAntenna=true;
+        
+      RadioGraph m_capture = new RadioGraph(strRadioDevice,strAudioDevice,strLineInput);
+      if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
+      {
+          m_capture.DeleteGraph();
+          m_capture=null;
+          MessageBox.Show("No internal tuner was found, please check your tuner settings.", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);				
+          return;
+      }
+
+		  RadioAutoTuningForm radioTuning = new RadioAutoTuningForm(m_capture);
+		  DialogResult dialogResult = radioTuning.ShowDialog(this);
+
+			if(dialogResult == DialogResult.OK)
 			{
-				RadioAutoTuningForm radioTuning = new RadioAutoTuningForm(captureDevice);
+				ArrayList tunedItems = radioTuning.TunedItems;
 
-				DialogResult dialogResult = radioTuning.ShowDialog(this);
-
-				if(dialogResult == DialogResult.OK)
+				//
+				// Add the tuned items to the list
+				//
+				foreach(RadioStation radioStation in tunedItems)
 				{
-					ArrayList tunedItems = radioTuning.TunedItems;
+					ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
+																				radioStation.Name,
+																				radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
+																				radioStation.Genre,
+																				radioStation.Bitrate.ToString(),
+																				radioStation.URL
+																			} );
+					listItem.Tag = radioStation;
 
-					//
-					// Add the tuned items to the list
-					//
-					foreach(RadioStation radioStation in tunedItems)
-					{
-						ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
-																				  radioStation.Name,
-																				  radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
-																				  radioStation.Genre,
-																				  radioStation.Bitrate.ToString(),
-																				  radioStation.URL
-																			  } );
-						listItem.Tag = radioStation;
-
-						stationsListView.Items.Add(listItem);
-					}
+					stationsListView.Items.Add(listItem);
 				}
-
-				//
-				// Dispose capture device
-				//
-				captureDevice.Dispose();
 			}
-			else
-			{
-				MessageBox.Show("No internal tuner was found, please check your tuner settings.", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);				
-			}
+      m_capture.DeleteGraph();
+      m_capture=null;
 		}
 
 		private Capture SetupCaptureDevice()
