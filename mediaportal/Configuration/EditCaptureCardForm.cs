@@ -1850,6 +1850,7 @@ namespace MediaPortal.Configuration
 
 		private void button15_Click(object sender, System.EventArgs e)
 		{
+			progressBar2.Step=1;
 			progressBar2.Maximum=CountSelectedNodes();
 			progressBar2.Minimum=0;
 			progressBar2.Value=0;
