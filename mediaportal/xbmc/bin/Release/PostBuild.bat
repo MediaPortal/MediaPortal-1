@@ -39,8 +39,8 @@ copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
-copy ..\..\..\mmedia\bin\Release\yeti.mmedia.dll
-copy ..\..\..\wmfsdk\bin\Release\yeti.wmfsdk.dll
+copy ..\..\..\mmedia\bin\Release\yeti.mmedia.dll plugins\TagReaders
+copy ..\..\..\wmfsdk\bin\Release\yeti.wmfsdk.dll plugins\TagReaders
 
 
 copy ..\..\..\TagReader\bin\Release\TagReader.dll .

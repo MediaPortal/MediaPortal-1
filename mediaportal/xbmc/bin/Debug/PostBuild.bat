@@ -43,8 +43,8 @@ copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.dll plugins\TagReaders
 copy ..\..\..\WmaTagReader\bin\Debug\WmaTagReader.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
-copy ..\..\..\mmedia\bin\Debug\yeti.mmedia.dll
-copy ..\..\..\wmfsdk\bin\Debug\yeti.wmfsdk.dll
+copy ..\..\..\mmedia\bin\Debug\yeti.mmedia.dll plugins\TagReaders
+copy ..\..\..\wmfsdk\bin\Debug\yeti.wmfsdk.dll plugins\TagReaders
 
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.dll plugins\ExternalPlayers
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.pdb plugins\ExternalPlayers
