@@ -138,8 +138,11 @@ namespace MediaPortal.GUI.Library
       // if there is only one label just draw the text
 			if (m_vecLabels.Count==1 )
       {
-        m_label.Render();
-        return;
+        if (m_label.TextWidth< m_dwWidth)
+        {
+          m_label.Render();
+          return;
+        }
       }
       
       TimeSpan ts= DateTime.Now-m_dtTime;
