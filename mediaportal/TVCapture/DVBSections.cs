@@ -1907,7 +1907,12 @@ namespace MediaPortal.TV.Recording
 				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				Log.Write("program:{0} {1} {2} {3} {4}-{5}",
 						tv.Channel,tv.Genre,tv.Description,tv.Title,tv.StartTime,tv.EndTime);
-				int ok=TVDatabase.AddProgram(tv);
+				ArrayList programsInDatabase;
+				TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start,tv.End,ref programsInDatabase);
+				if(programsInDatabase.Count==0)
+				{
+					int programID=TVDatabase.AddProgram(tv);
+				}
 			}
 			catch{}
 
