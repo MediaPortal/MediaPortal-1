@@ -60,11 +60,16 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     IGraph      m_graph=null;
 
-		[NonSerialized]
-		TVRecorded    m_newRecordedTV = null;
+    [NonSerialized]
+    TVRecorded    m_newRecordedTV = null;
 
-		[NonSerialized]
+    [NonSerialized]
     bool					m_bAllocated=false;
+
+    [NonSerialized]
+    DateTime      m_dtRecordingStartTime;
+    [NonSerialized]
+    DateTime      m_dtTimeShiftingStarted;
 
     /// <summary>
     /// Default constructor
@@ -77,10 +82,10 @@ namespace MediaPortal.TV.Recording
     /// Will return the filtername of the capture device
     /// </summary>
     /// <returns>filtername of the capture device</returns>
-		public override string ToString()
-		{
-			return m_strVideoDevice;
-		}
+    public override string ToString()
+    {
+      return m_strVideoDevice;
+    }
 
     /// <summary>
     /// Property which indicates if this card has an onboard mpeg2 encoder or not
@@ -107,6 +112,22 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_FrameRate;}
       set { m_FrameRate=value;}
+    }
+
+    /// <summary>
+    /// property which returns the date&time when recording was started
+    /// </summary>
+    public DateTime TimeRecordingStarted
+    {
+      get { return m_dtRecordingStartTime;}
+    }
+
+    /// <summary>
+    /// property which returns the date&time when timeshifting was started
+    /// </summary>
+    public DateTime TimeShiftingStarted
+    {
+      get { return m_dtTimeShiftingStarted;}
     }
 
     /// <summary>
@@ -475,6 +496,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_graph.GetChannelNumber()!=iChannelNr)
 				{
+          m_dtTimeShiftingStarted=DateTime.Now;
 					m_graph.TuneChannel(iChannelNr);
 				}
 				return true;
@@ -507,6 +529,7 @@ namespace MediaPortal.TV.Recording
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
       bool bResult=m_graph.StartTimeShifting(iChannelNr, strFileName);
+      m_dtTimeShiftingStarted=DateTime.Now;
       m_eState=State.Timeshifting;
       return bResult;
     }
@@ -615,6 +638,7 @@ namespace MediaPortal.TV.Recording
 				m_newRecordedTV.Description="";
 			}
 
+      m_dtRecordingStartTime=DateTime.Now;
       m_eState=State.Recording;
       return bResult;
     }

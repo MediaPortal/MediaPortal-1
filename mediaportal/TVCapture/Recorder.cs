@@ -49,6 +49,9 @@ namespace MediaPortal.TV.Recording
     private Recorder()
     {
     }
+    static Recorder()
+    {
+    }
 
     /// <summary>
     /// This method will Start the scheduler. It
@@ -774,8 +777,138 @@ namespace MediaPortal.TV.Recording
           GUIPropertyManager.Properties["#TV.Record.thumb"]  ="";
         }
       }//if (IsRecording != m_bWasRecording)
+
+      if (IsRecording)
+      {
+        TVProgram prog=ProgramRecording;
+        DateTime dtStart,dtEnd,dtStarted;
+        if (prog !=null)
+        {
+          dtStart=prog.StartTime;
+          dtEnd=prog.EndTime;
+          dtStarted=Recorder.TimeRecordingStarted;
+          Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
+        }
+        else 
+        {
+          TVRecording rec=CurrentTVRecording;
+          if (rec!=null)
+          {
+            dtStart=rec.StartTime;
+            dtEnd=rec.EndTime;
+            dtStarted=Recorder.TimeRecordingStarted;
+            Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
+          }
+        }
+      }
+      else if (Recorder.IsTimeShifting)
+      {
+        TVProgram prog=m_TVUtil.GetCurrentProgram(Recorder.TVChannelName);
+        if (prog!=null)
+        {
+          DateTime dtStart,dtEnd,dtStarted;
+          dtStart=prog.StartTime;
+          dtEnd=prog.EndTime;
+          dtStarted=Recorder.TimeTimeshiftingStarted;
+          Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
+        }
+      }
     }
     
+    /// <summary>
+    /// property which returns the date&time the recording was started
+    /// </summary>
+    static DateTime TimeRecordingStarted
+    {
+      get { 
+        for (int i=0; i < m_tvcards.Count;++i)
+        {
+          TVCaptureDevice dev=(TVCaptureDevice )m_tvcards[i];
+          if (dev.IsRecording)
+          {
+            return dev.TimeRecordingStarted;
+          }
+        }
+        return DateTime.Now;
+      }
+    }
+
+    /// <summary>
+    /// property which returns the date&time that timeshifting  was started
+    /// </summary>
+    static DateTime TimeTimeshiftingStarted
+    {
+      get 
+      { 
+        for (int i=0; i < m_tvcards.Count;++i)
+        {
+          TVCaptureDevice dev=(TVCaptureDevice )m_tvcards[i];
+          if (!dev.IsRecording && dev.IsTimeShifting)
+          {
+            return dev.TimeShiftingStarted;
+          }
+        }
+        return DateTime.Now;
+      }
+    }
+    
+    /// <summary>
+    /// property which returns whether or not a card is timeshifting and not recording
+    /// </summary>
+    static bool IsTimeShifting
+    {
+      get 
+      { 
+        for (int i=0; i < m_tvcards.Count;++i)
+        {
+          TVCaptureDevice dev=(TVCaptureDevice )m_tvcards[i];
+          if (!dev.IsRecording && dev.IsTimeShifting)
+          {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// this method will update all tags for the tv progress bar
+    /// </summary>
+    static void SetProgressBarProperties(DateTime StartTime,DateTime RecordingStarted, DateTime EndTime)
+    {
+      TimeSpan tsDuration = (EndTime-StartTime);
+      float fDuration=(float)tsDuration.TotalSeconds;
+
+      // get start recording point
+      TimeSpan tsRecStart= (RecordingStarted-StartTime);
+      float fRecStartSec=(float)tsRecStart.TotalSeconds;
+      float percentRecStart = (fRecStartSec/fDuration)*100.00f;
+      int iPercentRecStart=(int)Math.Floor(percentRecStart);
+      GUIPropertyManager.Properties["#TV.Record.percent1"]=iPercentRecStart.ToString();
+
+      // get current view point
+      if (g_Player.Playing && g_Player.IsTV)
+      {
+        float fViewPointSec=(float)g_Player.CurrentPosition;
+        float fPercentViewPoint = (fViewPointSec/fDuration)*100.00f;
+        int iPercentViewPoint=(int)Math.Floor(fPercentViewPoint);
+        GUIPropertyManager.Properties["#TV.Record.percent2"]=iPercentViewPoint.ToString();
+
+      } 
+      else
+      {
+        GUIPropertyManager.Properties["#TV.Record.percent2"]=iPercentRecStart.ToString();
+      }
+
+      // get live point
+      TimeSpan tsLive= (DateTime.Now-StartTime);
+      float   fLiveSec=(float)tsLive.TotalSeconds;
+      float percentLive = (fLiveSec/fDuration)*100.00f;
+      int   iPercentLive=(int)Math.Floor(percentLive);
+      GUIPropertyManager.Properties["#TV.Record.percent3"]=iPercentLive.ToString();
+
+    }
+
     /// <summary>
     /// This function gets called by the TVDatabase when a recording has been
     /// added,changed or deleted. It forces the Scheduler to get update its list of
@@ -808,6 +941,10 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.Properties["#TV.Record.title"]="";
       GUIPropertyManager.Properties["#TV.Record.description"]="";
       GUIPropertyManager.Properties["#TV.Record.thumb"]  ="";
+
+      GUIPropertyManager.Properties["#TV.Record.percent1"]="";
+      GUIPropertyManager.Properties["#TV.Record.percent2"]="";
+      GUIPropertyManager.Properties["#TV.Record.percent3"]="";
     }
 		
     /// <summary>
