@@ -2121,7 +2121,18 @@
 	<id>726</id>
 	<value>Title</value>
 </string>
-
+<string>
+	<id>727</id>
+	<value>Live tv in background</value>
+</string>
+<string>
+	<id>728</id>
+	<value>Unable to start</value>
+</string>
+<string>
+	<id>729</id>
+	<value>Make sure you use VMR9 and that something is playing</value>
+</string>
 <string>
 	<id>800</id>
 	<value>Starts with</value>

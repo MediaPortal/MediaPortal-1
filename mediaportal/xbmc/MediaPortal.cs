@@ -765,7 +765,9 @@ public class MediaPortalApp : D3DApp, IRender
                 }
                 if (!ok)
                 {
-                  ShowInfo("Live tv in background","Unable to start","Make sure you use VMR9 and that something is playing");
+                  ShowInfo(GUILocalizeStrings.Get(727),
+                           GUILocalizeStrings.Get(728),
+                           GUILocalizeStrings.Get(729));
                   return;
                 }
                 GUIGraphicsContext.ShowBackground = false;

@@ -866,7 +866,7 @@ namespace MediaPortal.Configuration
             string input = (string)comboBoxLineInput.Items[i];
             if (card.AudioInputPin==input)
             {
-              frameSizeComboBox.SelectedIndex = i;
+              comboBoxLineInput.SelectedIndex = i;
               break;
             }
           }

@@ -565,6 +565,7 @@ namespace MediaPortal.Configuration.Sections
     {
       comboBoxLineInput.Items.Clear();
       string Device=comboBoxAudioDevice.Text;
+      if (Device==String.Empty) return;
       Filters filters = new Filters();
       foreach (Filter filter in filters.AudioInputDevices)
       {
@@ -598,6 +599,8 @@ namespace MediaPortal.Configuration.Sections
             }
             while( hr == 0 );
           }
+          Marshal.ReleaseComObject(audioDevice);
+          return;
         }
       }
     }
