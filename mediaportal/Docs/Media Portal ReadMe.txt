@@ -1,8 +1,8 @@
 MediaPortal
 
 Information:
-    sources / binaries : http://sourceforge.net/projects/MediaPortal
-    forums & support   : http://dott.lir.dk/mediaportal/forum
+    sources / binaries : http://sourceforge.net/projects/mediaportal
+    forums & support   : http://nolanparty.com/mediaportal.sourceforge.net/phpBB2/
     Chatting & support : IRC efnet #MediaPortal
 
 History:
@@ -24,7 +24,7 @@ History:
 Requirements:
     - PC running Windows 2000 or Windows  XP
     - .NET Framework 1.1   ( www.windowsupdate.com )
-    - DirectX 9b or higher ( www.windowsupdate.com )
+    - DirectX 9c or higher ( www.windowsupdate.com )
     - Windows MediaPlayer 9
   
 Optional:
