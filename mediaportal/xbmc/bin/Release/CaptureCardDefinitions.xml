@@ -477,7 +477,22 @@
       </connections>
     </tv>
   </capturecard>
-   
+  <capturecard commercialname="Twinhan VisionDTV Ter" capturename="THDTV DVB-t BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+       <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
+        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+ 
   <capturecard commercialname="Lifeview DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03015168&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
