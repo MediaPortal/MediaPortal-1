@@ -54,6 +54,17 @@
 		<visible>no</visible>
 	</control>
 	<control>
+		<description>template label for small font</description>
+		<type>label</type>
+		<id>1003</id>
+		<posX>530</posX>
+		<posY>490</posY>
+		<label></label>
+		<align>left</align>
+		<font>font13</font>
+		<visible>no</visible>
+	</control>
+	<control>
 		<description>Date</description>
 		<type>label</type>
 		<id>200</id>
