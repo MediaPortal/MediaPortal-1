@@ -1996,7 +1996,9 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
+#if DEBUG
           Log.Write("exception:{0}",ex.ToString());
+#endif
       }
     }
 
