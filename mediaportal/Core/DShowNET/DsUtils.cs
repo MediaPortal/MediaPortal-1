@@ -337,7 +337,7 @@ namespace DShowNET
 		}
 			public static string GetFriendlyName( UCOMIMoniker mon )
 			{
-        if (mon==null) return;
+        if (mon==null) return String.Empty;
 				object bagObj = null;
 				DShowNET.Device.IPropertyBag bag = null;
 				try 
@@ -367,8 +367,8 @@ namespace DShowNET
 			}
 		public static bool ShowCapPinDialog( ICaptureGraphBuilder2 bld, IBaseFilter flt, IntPtr hwnd )
     {
-      if (bld==null) return;
-      if (flt==null) return;
+      if (bld==null) return false;
+      if (flt==null) return false;
 			int hr;
 			object comObj = null;
 			ISpecifyPropertyPages	spec = null;
@@ -409,8 +409,8 @@ namespace DShowNET
 
 		public static bool ShowTunerPinDialog( ICaptureGraphBuilder2 bld, IBaseFilter flt, IntPtr hwnd )
     {
-      if (bld==null) return;
-      if (flt==null) return;
+      if (bld==null) return false;
+      if (flt==null) return false;
 
 			int hr;
 			object comObj = null;
@@ -454,8 +454,8 @@ namespace DShowNET
 		// from 'DShowUtil.cpp'
 		static public int GetPin( IBaseFilter filter, PinDirection dirrequired, int num, out IPin ppPin )
     {
-      if (filter==null) return;
-			ppPin = null;
+      ppPin = null;
+      if (filter==null) return 0;
 			int hr;
 			IEnumPins pinEnum;
 			hr = filter.EnumPins( out pinEnum );
@@ -494,7 +494,7 @@ namespace DShowNET
 			public static int GetUnconnectedPin( IBaseFilter filter, PinDirection dirrequired,  out IPin ppPin )
       {
 				ppPin = null;
-        if (filter==null) return;
+        if (filter==null) return 0;
         int hr;
 				IEnumPins pinEnum;
 				hr = filter.EnumPins( out pinEnum );
@@ -538,9 +538,9 @@ namespace DShowNET
 		public static int RenderFileToVMR9(IGraphBuilder pGB, string wFileName, 
 			IBaseFilter pRenderer)
 		{
-      if (pGB==null) return;
-      if (wFileName==null) return;
-      if (pRenderer==null) return;
+      if (pGB==null) return  0;
+      if (wFileName==null) return 0;
+      if (pRenderer==null) return 0;
       return RenderFileToVMR9(pGB, wFileName, pRenderer, true);
 		}
 
@@ -548,9 +548,9 @@ namespace DShowNET
 										   IBaseFilter pRenderer, bool bRenderAudio)
 		{
 
-      if (pGB==null) return;
-      if (wFileName==null) return;
-      if (pRenderer==null) return;
+      if (pGB==null) return 0;
+      if (wFileName==null) return 0;
+      if (pRenderer==null) return 0;
 			int hr;
 			try 
 			{
@@ -630,7 +630,7 @@ public struct DsBITMAPINFOHEADER
 		public static bool AddGraphToRot( object graph, out int cookie )
     {
       cookie = 0;
-      if (graph==null) return;
+      if (graph==null) return false;
 			int hr = 0;
 			UCOMIRunningObjectTable rot = null;
 			UCOMIMoniker mk = null;
