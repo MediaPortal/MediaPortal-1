@@ -169,6 +169,11 @@
                     AssemblyName = "Microsoft.DirectX.DirectDraw"
                     HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
                 />
+                <Reference
+                    Name = "System.Management"
+                    AssemblyName = "System.Management"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
+                />
             </References>
         </Build>
         <Files>

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Management; 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
@@ -44,6 +45,9 @@ namespace MediaPortal.TV.Recording
 		static string        m_strRecPath="";
 		static DateTime      m_dtStart=DateTime.Now;
 		static int           m_iCurrentCard=-1;
+		static long          m_lMaxRecordingSize=0;
+		static bool					 m_bDeleteWatchedShow=false;
+		static bool					 m_bDeleteWhenLowOnDiskspace=false;
 
 		/// <summary>
 		/// singleton. Dont allow any instance of this class so make the constructor private
@@ -113,6 +117,20 @@ namespace MediaPortal.TV.Recording
 					m_strRecPath=System.IO.Directory.GetCurrentDirectory();
 					m_strRecPath=Utils.RemoveTrailingSlash(m_strRecPath);
 				}
+				try
+				{
+					int percentage= xmlreader.GetValueAsInt("capture", "maxsizeallowed", 50);
+					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , m_strRecPath[0]);
+					using (ManagementObject disk = new ManagementObject(cmd))
+					{
+						disk.Get();
+						long diskSize=Int64.Parse(disk["Size"].ToString());
+						m_lMaxRecordingSize= (long) ( ((float)diskSize) * ( ((float)percentage) / 100f ));
+					}
+				}
+				catch(Exception){}
+				m_bDeleteWatchedShow= xmlreader.GetValueAsBool("capture", "deletewatchedshows", true);
+				m_bDeleteWhenLowOnDiskspace= xmlreader.GetValueAsBool("capture", "deletewhenlowondiskspace", true);
 			}
 
 			for (int i=0; i < m_tvcards.Count;++i)
@@ -1557,5 +1575,6 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){}
 		}//static void DeleteOldTimeShiftFiles(string strPath)
+		
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

@@ -3,8 +3,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using System.Management; 
+
 namespace MediaPortal.Configuration.Sections
 {
 	public class TVRecording : MediaPortal.Configuration.SectionSettings
@@ -281,7 +281,7 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 			}		
-			Update();	
+			UpdatePercentageLabel();	
 		}
 
 		public override void SaveSettings()
@@ -333,9 +333,9 @@ namespace MediaPortal.Configuration.Sections
 
 		private void trackBar1_ValueChanged(object sender, System.EventArgs e)
 		{
-			Update();
+			UpdatePercentageLabel();
 		}
-		void Update()
+		void UpdatePercentageLabel()
 		{
 			if (folderNameTextBox.Text.Length<=0) return;
 
