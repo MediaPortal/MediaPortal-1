@@ -235,6 +235,8 @@ namespace MediaPortal.TV.Recording
 
 			// Determine the deviceid "hidden" in the moniker of the capture device and use that to load
 			// the definitions of the card... The id is between the first and second "#" character
+			// example:
+			// @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
 			string 	 deviceId =m_strVideoDeviceMoniker;
 			string[] tmp1			= m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
 			if (tmp1.Length>=2) 
@@ -287,8 +289,10 @@ namespace MediaPortal.TV.Recording
 
 			// Determine what PnP device the capture device is. This is done very, very simple by extracting
 			// the first part of the moniker display name, which contains device specific information
-			string[] tmp										 = m_strVideoDeviceMoniker.Split((char[])"{".ToCharArray());
-			string 	 captureDeviceDeviceName = tmp[0];
+			// @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
+			string 	 captureDeviceDeviceName = m_strVideoDeviceMoniker;
+			int pos = captureDeviceDeviceName.LastIndexOf("#");
+			if (pos>=0)captureDeviceDeviceName = captureDeviceDeviceName.Substring(0,pos);
 
 			Log.Write("TVCaptureDevice.LoadDefinition() video device moniker   :{0}", m_strVideoDeviceMoniker);
 			Log.Write("TVCaptureDevice.LoadDefinition() captureDeviceDeviceName:{0}", captureDeviceDeviceName);
