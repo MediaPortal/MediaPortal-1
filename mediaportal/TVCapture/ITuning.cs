@@ -15,23 +15,59 @@ namespace MediaPortal.TV.Recording
 	/// 
 	public interface AutoTuneCallback
 	{
+		/// <summary>
+		/// new channel found. tuning is paused and user can now map it to a tv channel or continue
+		/// </summary>
 		void OnNewChannel();
+
+		/// <summary>
+		/// Shows current status of the tuning progress
+		/// </summary>
+		/// <param name="description"></param>
 		void OnStatus(string description);
+
+		/// <summary>
+		/// Shows how much percent of the tuning has been done
+		/// </summary>
+		/// <param name="percentDone"></param>
 		void OnProgress(int percentDone);
+
+		/// <summary>
+		/// called when tuning has ended
+		/// </summary>
 		void OnEnded();
 	}
 
 	public interface ITuning
 	{
 		/// <summary>
-		/// This method should do all auto-tuning
+		/// This method should do all auto-tuning for TV
 		/// It should locate & find all tv channels for the card specified and store them in the database
 		/// </summary>
 		/// <param name="card">specifies the tvcapture card for which tuning should occur</param>
 		/// <param name="callback">specifies a callback interface to indicate status updates</param>
 		void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback);
+
+		
+		/// <summary>
+		/// This method should do all auto-tuning for Radio
+		/// It should locate & find all radio channels for the card specified and store them in the database
+		/// </summary>
+		/// <param name="card">specifies the tvcapture card for which tuning should occur</param>
+		/// <param name="callback">specifies a callback interface to indicate status updates</param>
 		void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback);
+
+
+		/// <summary>
+		/// This method continues the scanning progress
+		/// </summary>
 		void Continue();
+
+		
+		/// <summary>
+		/// This method maps the current tv/radio channel found to a tv channel name
+		/// The method should store all info for the current tuned channel in the database
+		/// </summary>
 		int  MapToChannel(string channel);
 	}
 }

@@ -39,6 +39,7 @@ namespace MediaPortal.TV.Recording
 		public void Continue()
 		{
 			timer1.Enabled=true;
+			NextChannel();
 		}
 
 		private void timer1_Tick(object sender, System.EventArgs e)
@@ -57,6 +58,10 @@ namespace MediaPortal.TV.Recording
 				callback.OnNewChannel();
 				return;
 			}
+			NextChannel();
+		}
+		void NextChannel()
+		{
 			
 			currentChannel++;
 			if (currentChannel>=256)
