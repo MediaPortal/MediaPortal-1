@@ -261,6 +261,7 @@ namespace MediaPortal.GUI.Video
             Utils.FileDelete(strThumb);
             Utils.FileDelete(LargeThumb);
             Refresh();            
+						Update();
             int lMovieId = -1;
             if (m_movie.SearchString != "")
             {
