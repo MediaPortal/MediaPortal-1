@@ -7,9 +7,6 @@ Bugs:
   - 28-04-2004 my tv      : crossbar  Failed to set crossbar routing
   - 28-04-2004 my tv      : tuner not found
   - 29-04-2004 my tv      : desync audio while viewing tv
-  - 01-05-2004 my music   : Album Art shows too small now in bottom left 
   - 01-05-2004 general    : After playing a movie, or showing a pic and returning from full screen a different file is selected. Annoying. 
   - 01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
-  - 01-05-2004 general    : calibration doesnt work for all preview windows
   - 01-05-2004 my music   : database doesnt support same album name for different artists
-  - 01-05-2004 general    : mp can be started twice

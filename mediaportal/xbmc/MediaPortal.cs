@@ -70,7 +70,7 @@ public class MediaPortalApp : D3DApp
       Utils.FileDelete("capture.log");
       if (Screen.PrimaryScreen.Bounds.Width>720)
       {
-        this.MinimumSize = new Size(768+8,576+46);
+        this.MinimumSize = new Size(720+8,556+27);
       }
       else
       {

@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  02-05-2004  general     : fixed : tvguide showed didnt show default logo for channels without an logo
+  02-05-2004  general     : fixed : playing music->cursor keys didnt work anymore
+  02-05-2004  general     : fixed : MP started default in my pictures in fullscreen mode
+  02-05-2004  general     : fixed : setup: only 1 share worked, others where lost when re-entering the setup
   02-05-2004  general     : added : setup: specify default share for my movies/pictures/music
   02-05-2004  general     : fixed : only react on mouse moves
   02-05-2004  general     : fixed : calibration didnt work for music/video/tv preview windows 
