@@ -1202,6 +1202,10 @@ public class MediaPortalApp : D3DApp, IRender
   {
     switch (message.Message)
     {
+      case GUIMessage.MessageType.GUI_MSG_CD_INSERTED:
+        AutoPlay.ExamineCD(message.Label);
+      break;
+
       case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
       {
         string strHead=GUILocalizeStrings.Get(message.Param1);
