@@ -368,7 +368,11 @@ namespace MediaPortal.Player
 					//render GUI if needed
           if (bRenderGUIFirst)
           {
-            if (m_renderer != null) m_renderer.RenderFrame();
+						if (m_renderer != null) 
+						{
+							m_renderer.RenderFrame();
+							GUIFontManager.Present();
+						}
           }
     
 					//Render video texture
@@ -393,7 +397,11 @@ namespace MediaPortal.Player
 					//render GUI if needed
           if (!bRenderGUIFirst)
           {
-            if (m_renderer != null) m_renderer.RenderFrame();
+						if (m_renderer != null) 
+						{
+							m_renderer.RenderFrame();
+							GUIFontManager.Present();
+						}
           }
 
 					//and present it onscreen
