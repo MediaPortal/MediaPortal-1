@@ -153,51 +153,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Dialogs\GUIDialogDateTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogFileStacking.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogOK.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogProgress.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogSelect.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogSelect2.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogYesNo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\VirtualKeyboard.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\VirtualSearchKeyboard.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "DirectX.Capture\AudioCapabilities.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
