@@ -167,11 +167,8 @@ namespace MediaPortal.GUI.Home
 			GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
 			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
-			if (useTopBarSub==true) 
-			{
-				topBar.UseTopBarSub=false;
-				topBarHome.UseTopBarSub=false;
-			}
+			topBar.UseTopBarSub=false;
+			topBarHome.UseTopBarSub=false;
 		}
 		
 		private void OnGlobalMessage(GUIMessage message)

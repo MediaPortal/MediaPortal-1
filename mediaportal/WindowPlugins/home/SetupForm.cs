@@ -712,7 +712,7 @@ namespace home
 			this.groupBox5.Controls.Add(this.chkBoxScrolling);
 			this.groupBox5.Location = new System.Drawing.Point(32, 24);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(232, 192);
+			this.groupBox5.Size = new System.Drawing.Size(232, 200);
 			this.groupBox5.TabIndex = 28;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Home Settings";
@@ -720,7 +720,7 @@ namespace home
 			// useMenuShortcuts
 			// 
 			this.useMenuShortcuts.Enabled = false;
-			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 144);
+			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 160);
 			this.useMenuShortcuts.Name = "useMenuShortcuts";
 			this.useMenuShortcuts.Size = new System.Drawing.Size(168, 24);
 			this.useMenuShortcuts.TabIndex = 9;
@@ -728,7 +728,7 @@ namespace home
 			// 
 			// useTopBarSub
 			// 
-			this.useTopBarSub.Location = new System.Drawing.Point(24, 120);
+			this.useTopBarSub.Location = new System.Drawing.Point(24, 136);
 			this.useTopBarSub.Name = "useTopBarSub";
 			this.useTopBarSub.Size = new System.Drawing.Size(168, 24);
 			this.useTopBarSub.TabIndex = 8;
@@ -736,7 +736,7 @@ namespace home
 			// 
 			// BackButtons
 			// 
-			this.BackButtons.Location = new System.Drawing.Point(24, 96);
+			this.BackButtons.Location = new System.Drawing.Point(24, 112);
 			this.BackButtons.Name = "BackButtons";
 			this.BackButtons.Size = new System.Drawing.Size(168, 24);
 			this.BackButtons.TabIndex = 7;
@@ -920,6 +920,7 @@ namespace home
 			this.AddSpecial.Size = new System.Drawing.Size(88, 32);
 			this.AddSpecial.TabIndex = 36;
 			this.AddSpecial.Text = "Add Special Function";
+			this.AddSpecial.Click += new System.EventHandler(this.AddSpecial_Click);
 			// 
 			// groupBox1
 			// 
@@ -1307,7 +1308,7 @@ namespace home
 					item.SubItems.Add(" ");
 					item.SubItems.Add("no");
 					listView.Items.Add(item);
-				}
+				} 
 			}
 		}
 
@@ -2126,6 +2127,11 @@ namespace home
 		private void TestDate_Click(object sender, System.EventArgs e)
 		{
 			DateTest.Text=GetDate();
+		}
+
+		private void AddSpecial_Click(object sender, System.EventArgs e)
+		{
+		
 		}
 	}
 }
