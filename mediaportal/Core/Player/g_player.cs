@@ -115,6 +115,7 @@ namespace MediaPortal.Player
 				}
         if (PlayBackStarted!=null)        
           PlayBackStarted(currentMedia, CurrentFilePlaying);
+				Log.Write("Started:{0} media:{1}", CurrentFilePlaying, currentMedia);
       }
     }
     public static void Stop()

@@ -54,6 +54,7 @@ namespace MediaPortal.GUI.TV
     }
     public override bool DoesPostRender()
     {
+			return false;
       if (Recorder.IsRecording==false && Recorder.View==false) return  false;
 			if (g_Player.Playing && !g_Player.IsTV) return false;
 			if (g_Player.IsTVRecording) return false;

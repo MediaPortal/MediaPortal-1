@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Video
       }
 			if ( !(g_Player.IsRadio && g_Player.HasVideo))
 			{
-				if (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording )       
+				if (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV)       
 				{
 					m_strFile = String.Empty;
 					return false;
