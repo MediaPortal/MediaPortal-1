@@ -2242,6 +2242,7 @@ namespace MediaPortal.TV.Recording
 
 			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false)
 			{
+//				Log.Write("vmr9 repaint");
 				Vmr9.Repaint();// repaint vmr9
 			}
 
@@ -2765,7 +2766,6 @@ namespace MediaPortal.TV.Recording
 		public int BufferCB(double time,IntPtr data,int len)
 		{
 			if (currentTuningObject==null) return 0;
-			if (currentTuningObject.teletextPid==0) return 0;
 			int add=(int)data;
 			int end=(add+len);
 			//
@@ -2780,6 +2780,7 @@ namespace MediaPortal.TV.Recording
 				for(int pointer=add;pointer<end;pointer+=188)
 				{		
 					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+//					Log.Write("TransportScrambling:{0:X} {1}",currentTuningObject.videoPid,header.TransportScrambling);
 					if(header.Pid==currentTuningObject.videoPid)
 					{	
 						if(header.TransportScrambling!=0) // data is scrambled?
@@ -2790,7 +2791,6 @@ namespace MediaPortal.TV.Recording
 						break;// stop loop if we got a non-scrambled video-packet 
 					}
 				}
-				
 			}
 
 			if (currentTuningObject.teletextPid!=0)
