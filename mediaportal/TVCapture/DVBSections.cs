@@ -79,6 +79,7 @@ namespace MediaPortal.TV.Recording
 			public int lastSection;
 			public int table;
 			public int lastTable;
+			public string languageCode;
 		}
 		public struct EIT_Program_Info
 		{
@@ -1116,19 +1117,26 @@ namespace MediaPortal.TV.Recording
 					indicator = buf[pointer];
 					x = buf[pointer + 1] + 2;
 					byte[] descrEIT = new byte[x + 1];
-					System.Array.Copy(buf, pointer, descrEIT, 0, x);
-					switch (indicator)
+					try
 					{
-						case 0x4E:
-							DVB_ExtendedEvent(descrEIT,ref eit);
-							break;
-						case 0x4D:
-							DVB_ShortEvent(descrEIT,ref eit);
-							break;
-						case 0x54:
-							DVB_ContentDescription(descrEIT,ref eit);
-							break;
+						System.Array.Copy(buf, pointer, descrEIT, 0, x);
+						switch (indicator)
+						{
+							case 0x4E:
+								DVB_ExtendedEvent(descrEIT,ref eit);
+								break;
+							case 0x4D:
+								DVB_ShortEvent(descrEIT,ref eit);
+								break;
+							case 0x54:
+								DVB_ContentDescription(descrEIT,ref eit);
+								break;
 							
+						}
+
+					}
+					catch
+					{
 					}
 
 					eit.section=section_number;
@@ -1202,14 +1210,22 @@ namespace MediaPortal.TV.Recording
 			{
 				event_name_length = buf[5];
 				int pointer = 6;
-				System.Array.Copy(buf, pointer, b, 0, event_name_length);
-				eit.event_name = getString468A(b, event_name_length);
+				try
+				{
+					System.Array.Copy(buf, pointer, b, 0, event_name_length);
+					eit.event_name = getString468A(b, event_name_length);
 				
-				pointer += event_name_length;
-				text_length = buf[pointer];
-				pointer += 1;
-				System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
-				eit.event_text = getString468A(b, text_length);
+					pointer += event_name_length;
+					text_length = buf[pointer];
+					pointer += 1;
+					System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
+					eit.event_text = getString468A(b, text_length);
+				}
+				catch
+				{
+					eit.event_text="";
+					eit.event_name="";
+				}
 			}
 		}
 		private void DVB_ContentDescription(byte[] buf, ref EITDescr eit)
@@ -1418,7 +1434,7 @@ namespace MediaPortal.TV.Recording
 		{
 			int descriptor_tag;
 			int descriptor_length;
-			//string ISO639_2_language_code;
+			string ISO639_2_language_code;
 			int descriptor_number;
 			int last_descriptor_number;
 			//int event_name_length;
@@ -1427,47 +1443,57 @@ namespace MediaPortal.TV.Recording
 			//string event_Name;
 			byte[] b = new byte[4097];
 			byte[] data = new byte[8];
-			string text = "not avail.";
+			string text = "";
 			int pointer = 0;
 			int lenB;
 			int len1;
 			int item_description_length;
 			int item_length;
-			string item = "n.a. ";
-			
-			System.Array.Copy(buf, 0, data, 0, 7);
-			
-			descriptor_tag = data[0];
-			descriptor_length = data[1];
-			descriptor_number = (data[1]>>4) & 0xF;
-			last_descriptor_number = data[1] & 0xF;
-			length_of_items = data[6];
-			
-			pointer += 7;
-			lenB = descriptor_length - 5;
-			len1 = length_of_items;
-			
-			while (len1 > 0)
+			string item = "";
+			try
 			{
-				System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
-				item_description_length = b[0];
-				pointer += 1 + item_description_length;
-				System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
-				item_length = b[0];
-				System.Array.Copy(buf, pointer + 1, b, 0, item_length);
-				item = getString468A(b, item_length);
-				pointer += 1 + item_length;
-				len1 -= (2 + item_description_length + item_length);
-				lenB -= (2 + item_description_length + item_length);
+				System.Array.Copy(buf, 0, data, 0, 7);
+			
+				descriptor_tag = data[0];
+				descriptor_length = data[1];
+				descriptor_number = (data[1]>>4) & 0xF;
+				last_descriptor_number = data[1] & 0xF;
+				ISO639_2_language_code=System.Text.Encoding.ASCII.GetString(data,3,3);
+				length_of_items = data[6];
+
+				if(ISO639_2_language_code.Length>0)
+				{
+					Log.Write("epg-grab: language={0}", ISO639_2_language_code);
+					eit.languageCode=ISO639_2_language_code;
+				}
+				pointer += 7;
+				lenB = descriptor_length - 5;
+				len1 = length_of_items;
+			
+				while (len1 > 0)
+				{
+					System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+					item_description_length = b[0];
+					pointer += 1 + item_description_length;
+					System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+					item_length = b[0];
+					System.Array.Copy(buf, pointer + 1, b, 0, item_length);
+					item = getString468A(b, item_length);
+					pointer += 1 + item_length;
+					len1 -= (2 + item_description_length + item_length);
+					lenB -= (2 + item_description_length + item_length);
+				}
+				System.Array.Copy(buf, pointer, b, 0, 1);
+				text_length = b[0];
+				pointer += 1;
+				lenB -= 1;
+				System.Array.Copy(buf, pointer, b, 0, text_length);
+				text = getString468A(b, text_length);
+				eit.event_item += item;
+				eit.event_item_text += text;
 			}
-			System.Array.Copy(buf, pointer, b, 0, 1);
-			text_length = b[0];
-			pointer += 1;
-			lenB -= 1;
-			System.Array.Copy(buf, pointer, b, 0, text_length);
-			text = getString468A(b, text_length);
-			eit.event_item += item;
-			eit.event_item_text += text;
+			catch
+			{}
 			return 0;
 		}
 		//
@@ -1995,6 +2021,10 @@ namespace MediaPortal.TV.Recording
 			}//for
 			ReleaseSectionsBuffer();
 			return true;
+		}
+		string DVB_GetLanguageFromISOCode(string code)
+		{
+			return "";
 		}
 		string DVB_GetNetworkProvider(int orgNetworkID)
 		{

@@ -49,6 +49,7 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				int retVal=0;
+				Log.Write("start *********************************************");
 				TVProgram tv=new TVProgram();
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 				date=date.ToLocalTime();
@@ -61,7 +62,7 @@ namespace MediaPortal.TV.Recording
 				tv.Title=data.event_name;
 				tv.Description=data.event_item_text;
 
-
+				Log.Write("epg-grab: language-code={0}",data.languageCode);
 				if(tv.Title=="" || tv.Title=="n.a.") 
 				{
 					Log.Write("epg: entrie without title found");
@@ -103,6 +104,7 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 					Log.Write("epg-grab: SKIPPED already exists in database: {0} : {1}",tv.Start,tv.End);
+				Log.Write("end ****************************************");
 				return retVal;
 			}
 			catch(Exception ex)
