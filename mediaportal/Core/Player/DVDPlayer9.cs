@@ -41,13 +41,11 @@ namespace MediaPortal.Player
       dvdInfo=null;
       dvdCtrl=null;
 
-      string strDVDAudioRenderer="";
       string strDVDNavigator="DVD Navigator";
       string strARMode="";
       string strDisplayMode="";
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
         strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( strARMode=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
         if ( strARMode=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;

@@ -533,14 +533,12 @@ namespace MediaPortal.Player
       dvdInfo=null;
       dvdCtrl=null;
 
-      string strDVDAudioRenderer="";
       string strDVDNavigator="";
       string strARMode="";
       string strDisplayMode="";
       bool  bUseAC3Filter=false;
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
         strDVDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","");
         strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( strARMode=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
@@ -1754,7 +1752,7 @@ namespace MediaPortal.Player
 			}
 			if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 			if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-			if (strAudiorenderer.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudiorenderer);
+			if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer);
       if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
       //Type comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
