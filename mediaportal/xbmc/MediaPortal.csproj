@@ -90,11 +90,6 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "VideoPlayer"
-                    Project = "{88929413-4722-41CE-B763-FC25466CD971}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "PlayList"
                     Project = "{49365A9E-B202-4BB7-AB28-B79CEB6199C3}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -166,6 +161,11 @@
                 <Reference
                     Name = "RadioDatabase"
                     Project = "{50E428C2-230C-4549-8BB7-F269203C2C3C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Player"
+                    Project = "{88929413-4722-41CE-B763-FC25466CD971}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
