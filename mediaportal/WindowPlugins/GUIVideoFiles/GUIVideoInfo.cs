@@ -465,6 +465,7 @@ namespace MediaPortal.GUI.Video
         int height;
         GUIGraphicsContext.Correct(ref x, ref y);
 
+				GUIFontManager.Present();
         GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, pControl.Width, pControl.Height, out width, out height);
         MediaPortal.Util.Picture.RenderImage(ref m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
       }

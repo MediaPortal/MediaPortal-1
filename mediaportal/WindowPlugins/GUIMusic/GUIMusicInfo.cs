@@ -264,6 +264,7 @@ namespace MediaPortal.GUI.Music
         int iMaxHeight=pControl.Height;
         GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight,iMaxWidth,iMaxHeight, out iwidth,out iheight);
 
+				GUIFontManager.Present();
 	      MediaPortal.Util.Picture.RenderImage(ref m_pTexture,(int)x,(int)y,iwidth,iheight,m_iTextureWidth,m_iTextureHeight,0,0,true);
       }
     }
