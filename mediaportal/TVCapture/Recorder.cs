@@ -488,12 +488,15 @@ namespace MediaPortal.TV.Recording
 			if (rec==null) return;
 			foreach (TVCaptureDevice dev in m_tvcards)
 			{
-				if (dev.CurrentTVRecording.ID==rec.ID) 
+				if (dev.IsRecording)
 				{
-					Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
-					rec.Canceled=Utils.datetolong(DateTime.Now);
-					TVDatabase.ChangeRecording(ref rec);
-					dev.Stop();
+					if (dev.CurrentTVRecording.ID==rec.ID) 
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
+						rec.Canceled=Utils.datetolong(DateTime.Now);
+						TVDatabase.ChangeRecording(ref rec);
+						dev.Stop();
+					}
 				}
 			}
 		}
