@@ -197,6 +197,8 @@ namespace MediaPortal.GUI.TV
           GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
           msg.SendToTargetWindow=true;
 					GUIWindowManager.SendThreadMessage(msg);
+					
+					while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
 					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iSelectedItem);
 					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_ALBUM,m_iSelectedItem);
 
@@ -602,7 +604,6 @@ namespace MediaPortal.GUI.TV
         case 1: // delete
         {
           OnDeleteItem(iItem);
-          LoadDirectory();
         }
         break;
 
@@ -694,6 +695,7 @@ namespace MediaPortal.GUI.TV
       TVDatabase.RemoveRecordedTV(rec);
       DeleteRecording(rec.FileName);
       LoadDirectory();
+			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
 			GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iSelectedItem);
 			GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_ALBUM,m_iSelectedItem);
     }
@@ -723,6 +725,7 @@ namespace MediaPortal.GUI.TV
       }
 
 			LoadDirectory();
+			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
 			GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iSelectedItem);
 			GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_ALBUM,m_iSelectedItem);
     }
