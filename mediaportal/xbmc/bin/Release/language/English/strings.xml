@@ -2224,7 +2224,7 @@
 </string>
 <string>
 	<id>8007</id>
-	<value>Autocheck On/Off</value>
+	<value>Autocheck</value>
 </string>
 <string>
 	<id>8008</id>
@@ -2252,7 +2252,7 @@
 </string>
 <string>
 	<id>8014</id>
-	<value>The Server '{0}' doesn't response!</value>
+	<value>The Server '{0}' doesn't respond!</value>
 </string>
 <string>
 	<id>8015</id>
