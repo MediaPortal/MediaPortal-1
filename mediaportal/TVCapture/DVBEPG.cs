@@ -270,43 +270,37 @@ namespace MediaPortal.TV.Recording
 						{
 							string codeEE="";
 							string codeSE="";
-							int lenShort=0;
-							int lenExtended=0;
-
-							if(codeEE==null && codeSE==null)
-								continue;
-							
+				
 							if(eit.eeLanguageCode!=null)
 							{
-								codeEE=eit.eeLanguageCode;
+								codeEE=eit.eeLanguageCode.ToLower();
 								if(codeEE.Length==3)
-									codeEE=codeEE.ToLower();
-								lenExtended=codeEE.Length;
+								{
+									if(lang.ToLower().Equals(codeEE))
+									{
+										ignoreFlag=false;
+										break;
+									}
+								}
 							}
 
 							if(eit.seLanguageCode!=null)
 							{
-								codeSE=eit.seLanguageCode;
+								codeSE=eit.seLanguageCode.ToLower();
 								if(codeSE.Length==3)
-									codeSE=codeSE.ToLower();
-								lenShort=codeSE.Length;
+								{
+									if(lang.ToLower().Equals(codeSE))
+									{
+										ignoreFlag=false;
+										break;
+									}
+
+								}
 
 							}
 
-							if(lenShort!=3 && lenExtended!=3)
-								continue;
 							
-							if(lang.ToLower().Equals(codeSE))
-							{
-								ignoreFlag=false;
-								break;
-							}
 
-							if(lang.ToLower().Equals(codeEE))
-							{
-								ignoreFlag=false;
-								break;
-							}
 						}
 						if(ignoreFlag==true)
 						{
