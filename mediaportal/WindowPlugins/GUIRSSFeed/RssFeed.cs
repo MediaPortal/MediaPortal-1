@@ -150,13 +150,13 @@ namespace Rss
 			switch (uri.Scheme)
 			{	
 				case "file":
-					feed.lastModified = File.GetLastWriteTime(url);
+					feed.lastModified = File.GetLastWriteTime(uri.LocalPath);
 					if ((oldFeed != null) && (feed.LastModified == oldFeed.LastModified))
 					{
 						oldFeed.cached = true;
 						return oldFeed;
 					}
-					stream = new FileStream(url, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+					stream = new FileStream(uri.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 					break;
 				case "https":
 					goto case "http";

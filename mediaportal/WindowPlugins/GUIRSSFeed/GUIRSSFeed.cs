@@ -45,20 +45,20 @@ namespace MediaPortal.GUI.RSS
 
 		enum Controls
 		{
-				CONTROL_BACKGROUND 		= 1,
-				CONTROL_BTNREFRESH		= 2,
-				CONTROL_BTNCHANNEL    = 4,
-				CONTROL_LABELUPDATED	= 11,
-				CONTROL_LABELCHANNEL	= 12,
-				CONTROL_IMAGELOGO		= 101,
-				CONTROL_LIST			= 50,
-				CONTROL_FEEDTITLE 		= 500,
-				CONTROL_STORY1			= 501,
-				CONTROL_STORY2			= 502,
-				CONTROL_STORY3			= 503,
-				CONTROL_STORY4			= 504,
-				CONTROL_STORY5			= 505,
-				CONTROL_STORYTEXT		= 506
+			CONTROL_BACKGROUND 		= 1,
+			CONTROL_BTNREFRESH		= 2,
+			CONTROL_BTNCHANNEL    = 4,
+			CONTROL_LABELUPDATED	= 11,
+			CONTROL_LABELCHANNEL	= 12,
+			CONTROL_IMAGELOGO		= 101,
+			CONTROL_LIST			= 50,
+			CONTROL_FEEDTITLE 		= 500,
+			CONTROL_STORY1			= 501,
+			CONTROL_STORY2			= 502,
+			CONTROL_STORY3			= 503,
+			CONTROL_STORY4			= 504,
+			CONTROL_STORY5			= 505,
+			CONTROL_STORYTEXT		= 506
 		}
 
 		public static int WINDOW_RSS = 2700;
@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.RSS
 					LoadSettings();
 					m_pSiteImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGELOGO);
 
-          UpdateNews(true);
+					UpdateNews(true);
 
 					return true;
 				}
@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.RSS
 				{
 					SaveSettings();
 				}
-				break;
+					break;
 
 				case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
 				{
@@ -143,20 +143,20 @@ namespace MediaPortal.GUI.RSS
 						UpdateDetails();
 					}
 				}
-				break;
+					break;
 
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 				{
 					int iControl=message.SenderControlId;
-          if (iControl == (int)Controls.CONTROL_BTNREFRESH)
-          {            
-            UpdateNews(true);
-          }
+					if (iControl == (int)Controls.CONTROL_BTNREFRESH)
+					{            
+						UpdateNews(true);
+					}
 
 					if (iControl==(int)Controls.CONTROL_LIST)
-         	{
-           	UpdateDetails();
-         	}
+					{
+						UpdateDetails();
+					}
 
 					if (iControl==(int)Controls.CONTROL_BTNCHANNEL)
 					{
@@ -170,18 +170,18 @@ namespace MediaPortal.GUI.RSS
 						m_strSiteIcon = ((Site)m_sites[nSelected]).m_Image;
 						m_strDescription = ((Site)m_sites[nSelected]).m_Description;
 
- 						if (m_strDescription == "")
- 						{
-       						m_strDescription = ((Site)m_sites[nSelected]).m_Name;
- 						}
+						if (m_strDescription == "")
+						{
+							m_strDescription = ((Site)m_sites[nSelected]).m_Name;
+						}
 
-            UpdateNews(true);
+						UpdateNews(true);
 
 						return true;
 					}
 
 				}
-				break;
+					break;
 			}
 			return base.OnMessage(message);
 		}
@@ -220,20 +220,20 @@ namespace MediaPortal.GUI.RSS
 			System.GC.Collect();
 		}
 
-    void UpdateNews(bool bShowWarning)
-    {
-      try
-      {
-				if (m_strSiteURL.ToLower().StartsWith("http://") ==false)
+		void UpdateNews(bool bShowWarning)
+		{
+			try
+			{
+				if (m_strSiteURL.ToLower().StartsWith("http://") ==false && m_strSiteURL.ToLower().StartsWith("file://") == false)
 				{
 					m_strSiteURL="http://"+m_strSiteURL;
 				}
-        Uri newURL=new Uri(m_strSiteURL);
-        Download(newURL);
-        UpdateButtons();
-      }
-      catch(Exception)
-      {
+				Uri newURL=new Uri(m_strSiteURL);
+				Download(newURL);
+				UpdateButtons();
+			}
+			catch(Exception)
+			{
 				if (bShowWarning)
 				{
 					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
@@ -243,8 +243,8 @@ namespace MediaPortal.GUI.RSS
 					msg.Label3=m_strSiteURL;
 					GUIWindowManager.SendMessage(msg);
 				}
-      }
-    }
+			}
+		}
 
 		#region Serialisation
 		void LoadSettings()
@@ -311,14 +311,14 @@ namespace MediaPortal.GUI.RSS
 			}
 
 			LoadSettings();
-      UpdateNews(true);
+			UpdateNews(true);
 		}
 
 		void UpdateButtons()
 		{
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNREFRESH, GUILocalizeStrings.Get(184));			//Refresh
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELCHANNEL, m_strDescription);			//Channel name label
-      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(9) + @"/" + m_strSiteName);
+			GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(9) + @"/" + m_strSiteName);
 
 			int posX = m_pSiteImage.XPosition;
 			int posY = m_pSiteImage.YPosition;
@@ -333,24 +333,24 @@ namespace MediaPortal.GUI.RSS
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST);
 
 			int iTotalItems=0;
-   		foreach (feed_details feed in m_feed_details)
-     	{
-      	  if (feed.m_title == "" && feed.m_description == "")
-          {
-	      	  	// Skip this empty item
-	      			continue;
-	      	}
+			foreach (feed_details feed in m_feed_details)
+			{
+				if (feed.m_title == "" && feed.m_description == "")
+				{
+					// Skip this empty item
+					continue;
+				}
 
-		      GUIListItem item = new GUIListItem();
-		      item.Label=feed.m_title;
-		      item.IsFolder=false;
-		      item.MusicTag = feed;
-		      item.ThumbnailImage="";
-		      item.IconImage="defaultMyNews.png";
+				GUIListItem item = new GUIListItem();
+				item.Label=feed.m_title;
+				item.IsFolder=false;
+				item.MusicTag = feed;
+				item.ThumbnailImage="";
+				item.IconImage="defaultMyNews.png";
 
-	        GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
-  				iTotalItems++;
-     	}
+				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
+				iTotalItems++;
+			}
 
 			string strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
@@ -358,7 +358,7 @@ namespace MediaPortal.GUI.RSS
 			GUIControl.FocusControl(GetID,(int)Controls.CONTROL_LIST);
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, m_feed_details[0].m_description);
 
-      // Setup the selectionbutton for the channels
+			// Setup the selectionbutton for the channels
 			int i=0;
 
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_BTNCHANNEL);
@@ -367,11 +367,17 @@ namespace MediaPortal.GUI.RSS
 				GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_BTNCHANNEL, loc.m_Name);
 				if (m_strSiteURL==loc.m_URL )
 				{
-    	    GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_BTNCHANNEL, i);
+					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_BTNCHANNEL, i);
 				}
 				i++;
 			}
 		}
+
+		public override void Render()
+		{
+			base.Render();
+		}
+
 
 		bool Download(Uri location)
 		{
@@ -385,100 +391,100 @@ namespace MediaPortal.GUI.RSS
 				m_feed_details[j].m_description = "";
 			}
 
-      try
-      {
-        RssFeed feed = RssFeed.Read(location.ToString());
-        Rss.RssChannel channel = (Rss.RssChannel)feed.Channels[0];
+			try
+			{
+				RssFeed feed = RssFeed.Read(location.ToString());
+				Rss.RssChannel channel = (Rss.RssChannel)feed.Channels[0];
 
-        // Download the image from the feed if available/needed
-        if (channel.Image != null && m_strSiteIcon == DEFAULT_NEWS_ICON)
-        {
-          string strImage=channel.Image.Url.ToString();
+				// Download the image from the feed if available/needed
+				if (channel.Image != null && m_strSiteIcon == DEFAULT_NEWS_ICON)
+				{
+					string strImage=channel.Image.Url.ToString();
 
-          if (strImage.Length >0)
-          {
-            m_strSiteIcon=Utils.GetThumb(m_strSiteURL);
-            if (!System.IO.File.Exists(m_strSiteIcon) )
-            {
-              string strExtension;
-              strExtension=System.IO.Path.GetExtension(strImage);
-              if ( strExtension.Length>0)
-              {
-                string strTemp="temp";
-                strTemp+=strExtension;
-                Utils.FileDelete(strTemp);
+					if (strImage.Length >0)
+					{
+						m_strSiteIcon=Utils.GetThumb(m_strSiteURL);
+						if (!System.IO.File.Exists(m_strSiteIcon) )
+						{
+							string strExtension;
+							strExtension=System.IO.Path.GetExtension(strImage);
+							if ( strExtension.Length>0)
+							{
+								string strTemp="temp";
+								strTemp+=strExtension;
+								Utils.FileDelete(strTemp);
 
-                Utils.DownLoadImage(strImage, strTemp);
-                if (System.IO.File.Exists(strTemp) )
-                {
-                  MediaPortal.Util.Picture.CreateThumbnail(strTemp,m_strSiteIcon,128,128,0);
-                }
+								Utils.DownLoadImage(strImage, strTemp);
+								if (System.IO.File.Exists(strTemp) )
+								{
+									MediaPortal.Util.Picture.CreateThumbnail(strTemp,m_strSiteIcon,128,128,0);
+								}
 
-                Utils.FileDelete(strTemp);
-              }//if ( strExtension.Length>0)
-              else
-              {
-                Log.Write("image has no extension:{0}", strImage);
-              }
-            }
-            m_strSiteIcon=Utils.GetThumb(m_strSiteURL);
-          }
-        }
+								Utils.FileDelete(strTemp);
+							}//if ( strExtension.Length>0)
+							else
+							{
+								Log.Write("image has no extension:{0}", strImage);
+							}
+						}
+						m_strSiteIcon=Utils.GetThumb(m_strSiteURL);
+					}
+				}
 
-        // Fill the items
-        foreach(Rss.RssItem item in channel.Items)
-        {
-          // Check if there are HTML tags in the description, if so we need to "parse" the HTML
-          // which is actually just stripping the tags.
-          if (Regex.IsMatch(item.Description, @"<[^>]*>"))
-          {
-            // Strip \n's
-            item.Description = Regex.Replace(item.Description, @"(\n|\r)", "", RegexOptions.Multiline);
+				// Fill the items
+				foreach(Rss.RssItem item in channel.Items)
+				{
+					// Check if there are HTML tags in the description, if so we need to "parse" the HTML
+					// which is actually just stripping the tags.
+					if (Regex.IsMatch(item.Description, @"<[^>]*>"))
+					{
+						// Strip \n's
+						item.Description = Regex.Replace(item.Description, @"(\n|\r)", "", RegexOptions.Multiline);
 
-            // Remove whitespace (double spaces)
-            item.Description = Regex.Replace(item.Description, @"  +", "", RegexOptions.Multiline);
+						// Remove whitespace (double spaces)
+						item.Description = Regex.Replace(item.Description, @"  +", "", RegexOptions.Multiline);
 
-            // Replace <br/> with \n
-            item.Description = Regex.Replace(item.Description, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+						// Replace <br/> with \n
+						item.Description = Regex.Replace(item.Description, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
 
-            // Remove remaining HTML tags
-            item.Description = Regex.Replace(item.Description, @"<[^>]*>", "", RegexOptions.Multiline);
-          }
+						// Remove remaining HTML tags
+						item.Description = Regex.Replace(item.Description, @"<[^>]*>", "", RegexOptions.Multiline);
+					}
 
-          // Strip newlines from titles because it looks funny to see multiple lines in the listbox
-          item.Title = Regex.Replace(item.Title, @" *(\n|\r)+ *", " ", RegexOptions.Multiline);
+					// Strip newlines from titles because it looks funny to see multiple lines in the listbox
+					item.Title = Regex.Replace(item.Title, @" *(\n|\r)+ *", " ", RegexOptions.Multiline);
 
-          if (item.Description == "")
-          {
-            item.Description = item.Title;
-          }
-          else
-          {
-            item.Description = item.Title + ": \n\n" + item.Description + "\n";
-          }
+					if (item.Description == "")
+					{
+						item.Description = item.Title;
+					}
+					else
+					{
+						item.Description = item.Title + ": \n\n" + item.Description + "\n";
+					}
 
-          //
-          m_feed_details[i].m_site = channel.Title;
-          m_feed_details[i].m_title = item.Title;
-          m_feed_details[i].m_description = item.Description;
+					//
+					m_feed_details[i].m_site = channel.Title;
+					m_feed_details[i].m_title = item.Title;
+					m_feed_details[i].m_description = item.Description;
 
-          // Make sure that everything is "decoded" like &amp; becomes &
-          m_feed_details[i].m_title = HttpUtility.HtmlDecode(m_feed_details[i].m_title);
-          m_feed_details[i].m_description = HttpUtility.HtmlDecode(m_feed_details[i].m_description);
+					// Make sure that everything is "decoded" like &amp; becomes &
+					m_feed_details[i].m_title = HttpUtility.HtmlDecode(m_feed_details[i].m_title);
+					m_feed_details[i].m_description = HttpUtility.HtmlDecode(m_feed_details[i].m_description);
 
-          i++;
-          if (i >= NUM_STORIES)
-            break;
-        }
+					i++;
+					if (i >= NUM_STORIES)
+						break;
+				}
 
-        UpdateButtons();
-        m_lRefreshTime = DateTime.Now;
-      }
-      catch (WebException ex)
-      {
-        m_lRefreshTime = DateTime.Now;
-        throw ex;
-      }
+				UpdateButtons();
+				m_lRefreshTime = DateTime.Now;
+			}
+			catch (WebException ex)
+			{
+				m_lRefreshTime = DateTime.Now;
+				throw ex;
+			}
 
 			return true;
 		}
@@ -510,34 +516,34 @@ namespace MediaPortal.GUI.RSS
 			{
 				if (node.InnerText!=null)
 				{
-          			try
-		          	{
-		            	iValue=Int32.Parse(node.InnerText);
-		          	}
-		          	catch(Exception)
-		          	{
-          			}
+					try
+					{
+						iValue=Int32.Parse(node.InnerText);
+					}
+					catch(Exception)
+					{
+					}
 				}
 			}
 		}
 
 		GUIListItem GetSelectedItem()
-   	{
-   		int iControl;
+		{
+			int iControl;
 
-   	  iControl=(int)Controls.CONTROL_LIST;
-     	GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
-     	return item;
-   	}
+			iControl=(int)Controls.CONTROL_LIST;
+			GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
+			return item;
+		}
 
 		void UpdateDetails()
-    {
-      GUIListItem item = GetSelectedItem();
-	    if (item==null) return;
+		{
+			GUIListItem item = GetSelectedItem();
+			if (item==null) return;
 
-      feed_details feed = (feed_details)item.MusicTag;
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, feed.m_description);
-    }
+			feed_details feed = (feed_details)item.MusicTag;
+			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, feed.m_description);
+		}
 
 	}
 }
