@@ -61,7 +61,7 @@ namespace MediaPortal.Player
         if (strDisplayMode=="4:3 letterbox") m_iVideoPref=3;
       }
 			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-			GUIWindowManager.SendMessage(msg);
+			//GUIWindowManager.SendMessage(msg);
 
       try 
       {
@@ -92,6 +92,8 @@ namespace MediaPortal.Player
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 							dvdInfo = (IDvdInfo2) cntl;
 							dvdCtrl = (IDvdControl2)cntl;
+							if (dvdCtrl!=null)
+							Log.Write("Dvdplayer9: got IDvdControl2");
 							//videoWin	= graphBuilder as IVideoWindow;
 							m_bFreeNavigator=false;
 						}
@@ -117,11 +119,16 @@ namespace MediaPortal.Player
 
         if (dvdCtrl==null)
         {
+					Log.Write("Dvdplayer9: get IDvdControl2");
           riid = typeof( IDvdControl2 ).GUID;
           hr = dvdGraph.GetDvdInterface( ref riid, out comobj );
           if( hr < 0 )
             Marshal.ThrowExceptionForHR( hr );
           dvdCtrl = (IDvdControl2) comobj; comobj = null;
+					if (dvdCtrl!=null)
+						Log.Write("Dvdplayer9: get IDvdControl2");
+					else
+						Log.Write("Dvdplayer9: FAILED TO get get IDvdControl2");
         }
 
         dvdbasefilter=dvdInfo as IBaseFilter;
@@ -331,7 +338,7 @@ namespace MediaPortal.Player
         m_state = PlayState.Init;
 
 				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-				GUIWindowManager.SendMessage(msg);
+				//GUIWindowManager.SendMessage(msg);
 
         GUIGraphicsContext.form.Invalidate(true);          
         GUIGraphicsContext.form.Activate();

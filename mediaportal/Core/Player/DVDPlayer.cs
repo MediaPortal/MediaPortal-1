@@ -128,32 +128,37 @@ namespace MediaPortal.Player
     }
     public override void WndProc( ref Message m )
     {
-      DsPOINT pt;
-      long lParam=m.LParam.ToInt32();
-      if( m.Msg == WM_DVD_EVENT )
-      {
-        if( mediaEvt != null )
-          OnDvdEvent();
-        return;
-      }
-      if( m.Msg==WM_MOUSEMOVE)
-        {
-            pt.X = (int)(lParam  & 0xffff); 
-            pt.Y = (int)((lParam>>16)  & 0xffff); 
+			try
+			{
+				DsPOINT pt;
+				long lParam=m.LParam.ToInt32();
+				if( m.Msg == WM_DVD_EVENT )
+				{
+					if( mediaEvt != null )
+						OnDvdEvent();
+					return;
+				}
+				if( m.Msg==WM_MOUSEMOVE)
+				{
+					pt.X = (int)(lParam  & 0xffff); 
+					pt.Y = (int)((lParam>>16)  & 0xffff); 
 
-            // Select the button at the current position, if it exists
-            if (dvdCtrl!=null) dvdCtrl.SelectAtPosition(pt);
-        }
+					// Select the button at the current position, if it exists
+					if (dvdCtrl!=null) dvdCtrl.SelectAtPosition(pt);
+					else Log.Write("dvdctrl==null?");
+				}
 
-       if( m.Msg==WM_LBUTTONUP)
-       {
-            pt.X = (int)(lParam  & 0xffff); 
-            pt.Y = (int)((lParam>>16)  & 0xffff); 
+				if( m.Msg==WM_LBUTTONUP)
+				{
+					pt.X = (int)(lParam  & 0xffff); 
+					pt.Y = (int)((lParam>>16)  & 0xffff); 
 
-            // Highlight the button at the current position, if it exists
-            if (dvdCtrl!=null) dvdCtrl.ActivateAtPosition(pt);
-        }
-
+					// Highlight the button at the current position, if it exists
+					if (dvdCtrl!=null) dvdCtrl.ActivateAtPosition(pt);
+					else Log.Write("dvdctrl==null?");
+				}
+			}
+			catch(Exception){}
     }
 
     public override bool Play(string strFile)
@@ -829,15 +834,15 @@ namespace MediaPortal.Player
                 Log.Write("EVT:DVDPlayer:domain=stop");
                 break;
               case DvdDomain.VideoManagerMenu:
-                Log.Write("EVT:DVDPlayer:domain=videomanagermenu");
+                Log.Write("EVT:DVDPlayer:domain=videomanagermenu (menu)");
                 m_bMenuOn=true;
                 break;
               case DvdDomain.VideoTitleSetMenu:
-                Log.Write("EVT:DVDPlayer:domain=videotitlesetmenu");
+                Log.Write("EVT:DVDPlayer:domain=videotitlesetmenu (menu)");
                 m_bMenuOn=true;
                 break;
               case DvdDomain.Title:
-                Log.Write("EVT:DVDPlayer:domain=title");
+                Log.Write("EVT:DVDPlayer:domain=title (no menu)");
                 m_bMenuOn=false;
                 break;  
               default:
@@ -1373,13 +1378,15 @@ namespace MediaPortal.Player
         case Action.ActionType.ACTION_MOVE_LEFT:
           if( m_bMenuOn )
           {
+						Log.Write("DVDPlayer: move left");
             dvdCtrl.SelectRelativeButton( DvdRelButton.Left );
             return true;
           }
           break;
         case Action.ActionType.ACTION_MOVE_RIGHT:
           if( m_bMenuOn )
-          {
+					{
+						Log.Write("DVDPlayer: move right");
             dvdCtrl.SelectRelativeButton( DvdRelButton.Right );
             return true;
           }
@@ -1387,25 +1394,30 @@ namespace MediaPortal.Player
         case Action.ActionType.ACTION_MOVE_UP:
           if( m_bMenuOn )
           {
+						
+						Log.Write("DVDPlayer: move up");
             dvdCtrl.SelectRelativeButton( DvdRelButton.Upper );
             return true;
           }
           break;
         case Action.ActionType.ACTION_MOVE_DOWN:
           if( m_bMenuOn )
-          {
+          {	
+						Log.Write("DVDPlayer: move down");
             dvdCtrl.SelectRelativeButton( DvdRelButton.Lower );
             return true;
           }
           break;
         case Action.ActionType.ACTION_SELECT_ITEM:
           if( (menuMode == MenuMode.Buttons) && (dvdCtrl != null) )
-          {
+          {	
+						Log.Write("DVDPlayer: select");
             dvdCtrl.ActivateButton();
             return true;
           }
           else if( (menuMode == MenuMode.Still) && (dvdCtrl != null) )
-          {
+					{
+						Log.Write("DVDPlayer: still off");
             dvdCtrl.StillOff();
             return true;
           }
