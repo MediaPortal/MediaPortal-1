@@ -510,7 +510,18 @@ namespace MediaPortal.TV.Recording
     {
       if (Previewing && capture!=null)
       {
-        capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+        Log.Write("OnVideoWindowChanged()");
+        if (GUIGraphicsContext.IsFullScreenVideo)
+        {
+          Log.Write("  fullscreenmode");
+          capture.SetVideoPosition( new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
+        }
+        else
+        {
+          Log.Write("  windowed mode");
+          capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+        }
+        Log.Write("OnVideoWindowChanged() done");
       }
     }
 
@@ -777,13 +788,48 @@ namespace MediaPortal.TV.Recording
     }
 
 
+    public bool IsPreRecording
+    {
+      get
+      {
+        if (!IsRecording) return false;
+        if (m_CurrentTVRecording==null) return false;
+        if ( m_CurrentTVRecording.IsRecording(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, m_iPostRecordInterval) )
+        {
+          if ( !m_CurrentTVRecording.IsRecording(DateTime.Now,m_CurrentProgramRecording,0, m_iPostRecordInterval) )
+          {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+
+    public bool IsPostRecording
+    {
+      get
+      {
+        if (!IsRecording) return false;
+        if (m_CurrentTVRecording==null) return false;
+        if ( m_CurrentTVRecording.IsRecording(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, m_iPostRecordInterval) )
+        {
+          if ( !m_CurrentTVRecording.IsRecording(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, 0) )
+          {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+
+
     public void Process()
     {
       // are we recording?
       if (!IsRecording) return; // no, then just return
 
       //yes, recording still running?
-      if ( m_CurrentTVRecording.ShouldRecord(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, m_iPostRecordInterval) )
+      if ( m_CurrentTVRecording.IsRecording(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, m_iPostRecordInterval) )
       {
         // yes, if user didnt cancel recording then just return
         if (m_bStopRecording==false) return;

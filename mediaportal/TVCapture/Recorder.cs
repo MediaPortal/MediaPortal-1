@@ -307,7 +307,7 @@ namespace MediaPortal.TV.Recording
       Log.Write("Recorder: time to record a program on channel:"+rec.Channel);
       Log.Write("Recorder: find free capture card");
 
-      // find free device
+      // find free device for recording
       foreach (TVCaptureDevice dev in m_tvcards)
       {
         if (dev.UseForRecording)
@@ -337,8 +337,26 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+
+      // still no device found. Stop any post-recording
+      Log.Write("check if a capture card is post-recording");
+      foreach (TVCaptureDevice dev in m_tvcards)
+      {
+        if (dev.UseForRecording)
+        {
+          if (dev.IsPostRecording)
+          {
+            Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
+            dev.StopRecording();
+            dev.Process();dev.Process();dev.Process();
+            dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
+            return true;
+          }
+        }
+      }
+
       //no device free...
-      Log.Write("No free capture cards found to record program");
+      Log.Write("no capture cards are available right now for recording");
       System.Threading.Thread.Sleep(1000);
       return false;
     }

@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  14-05-2004  my tv       : fixed : recording: if we need to start a new capture and there's no free tuner and a tuner is recording in post recordingtime, then stop it and use that tuner
+  14-05-2004  my tv       : fixed : recording: if we're doing a manual recording (user specified date/time) then use those start/end times, not the current programs start/end time
+
   13-05-2004  general     : fixed : default movies path in setup was empty
   13-05-2004  my tv       : added : fixed preview/recording problems
   13-05-2004  my movies   : added : deinterlace filter for DVD playback
