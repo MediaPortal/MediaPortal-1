@@ -146,6 +146,7 @@ namespace MediaPortal.TV.Recording
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
 		int                         m_iRetyCount=0;
+		DateTime                    lastTime=DateTime.Now;
 #if DUMP
 		System.IO.FileStream fileout;
 #endif
@@ -1141,6 +1142,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			catch(Exception){}
+			lastTime=DateTime.Now;
 
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -2329,6 +2331,9 @@ namespace MediaPortal.TV.Recording
 			if (!shouldDecryptChannel) return;
 
 
+			TimeSpan ts=DateTime.Now-lastTime;
+			if (ts.Milliseconds<500) return;
+			lastTime=DateTime.Now;
 			//check if tuner is locked to a tv channel
 			if (!SignalPresent()) return;
 			if (m_iRetyCount>=10) 
@@ -2346,6 +2351,7 @@ namespace MediaPortal.TV.Recording
 			DVBSections sections = new DVBSections();
 			DVBSections.ChannelInfo channelInfo;
 			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, currentTuningObject.ProgramNumber, out channelInfo);
+			lastTime=DateTime.Now;
 			if (pmt==null)
 			{	
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() PMT not found");	
