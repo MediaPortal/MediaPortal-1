@@ -358,6 +358,7 @@ namespace MediaPortal.GUI.Library
         {
           //	Set for visual feedback
           m_bLeftSelected=true;
+          m_bRightSelected=false;
           m_iStartFrame=0;
 
           //	Reset timer for automatically selecting
@@ -377,6 +378,7 @@ namespace MediaPortal.GUI.Library
         {
           //	Set for visual feedback
           m_bRightSelected=true;
+          m_bLeftSelected=false;
           m_iStartFrame=0;
 
           //	Reset timer for automatically selecting
@@ -782,6 +784,7 @@ namespace MediaPortal.GUI.Library
           if (!m_bLeftSelected)
           {
             m_bLeftSelected=true;
+            m_bRightSelected=false;
             m_dwTicks=DateTime.Now.Ticks;
             m_iStartFrame=0;
           }
@@ -799,6 +802,7 @@ namespace MediaPortal.GUI.Library
           if (!m_bRightSelected)
           {
             m_bRightSelected=true;
+            m_bLeftSelected=false;
             m_dwTicks=DateTime.Now.Ticks;
             m_iStartFrame=0;
             return true;
