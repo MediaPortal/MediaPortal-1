@@ -255,5 +255,14 @@
 		<height>294</height>
 		<visible>yes</visible>
 	</control>	
+	<control>
+		<description>record pin</description>
+		<type>image</type>
+		<id>31</id>
+		<posX>440</posX>
+		<posY>530</posY>
+		<texture>tvguide_record_button.png</texture>
+		<visible>no</visible>
+	</control>
 </controls>
 </window>
