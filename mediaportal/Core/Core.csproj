@@ -153,11 +153,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "AutoPlay\AutoPlay.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Dialogs\GUIDialogDateTime.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
