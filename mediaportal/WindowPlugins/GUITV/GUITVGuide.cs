@@ -2216,7 +2216,7 @@ namespace MediaPortal.GUI.TV
 		{
 			m_channels.Clear();
 			TVGroup group=GUITVHome.CurrentGroup;
-			if (group!=null)
+			if (group!=null && group.tvChannels.Count>0)
 			{
 				foreach (TVChannel channel in group.tvChannels)
 					m_channels.Add(channel );
