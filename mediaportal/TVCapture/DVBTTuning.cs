@@ -29,6 +29,8 @@ namespace MediaPortal.TV.Recording
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
 		DateTime														channelScanTimeOut;
+		int																	currentOffset=0;
+		int                                 tunedFrequency=0;
 
 		public DVBTTuning()
 		{
@@ -37,6 +39,8 @@ namespace MediaPortal.TV.Recording
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+			tunedFrequency=0;
+			currentOffset=0;
 			captureCard=card;
 			callback=statusCallback;
 
@@ -130,7 +134,7 @@ namespace MediaPortal.TV.Recording
 			callback.OnProgress((int)percent);
 			int[] tmp = frequencies[currentFrequencyIndex] as int[];
 			//Log.Write("FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
-			float frequency = (float)tmp[0];
+			float frequency = tunedFrequency;
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
 			callback.OnStatus(description);
@@ -139,38 +143,10 @@ namespace MediaPortal.TV.Recording
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.Write("Found signal at:{0} MHz",frequency);
+					Log.Write("Found signal at:{0} MHz,scan for channels",frequency);
 					currentState=State.ScanChannels;
 					channelScanTimeOut=DateTime.Now;
-				} 
-				else 
-				{
-					int[] scanObject;
-					for (int i = 0; i < 2; i++)
-					{
-            scanObject = frequencies[currentFrequencyIndex] as int[];
-						if (i == 0)
-						{
-							scanObject[0] -= scanOffset;
-							//Log.Write("trying offset -{0} of {1)", scanOffset, scanObject[0]);
-							description=String.Format("frequency:{0:###.##} MHz. - trying offset -{1}", frequency, scanOffset);
-							
-						}
-						else if (i == 1)
-						{
-							scanObject[0] += scanOffset;
-							//Log.Write("trying offset +{0} of {1)", scanOffset, scanObject[0]);
-							description=String.Format("frequency:{0:###.##} MHz. - trying offset +{1}", frequency, scanOffset);
-						}
-						captureCard.Tune(scanObject);
-						callback.OnStatus(description);
-						if (captureCard.SignalPresent())
-						{
-							Log.Write("Found signal at:{0} MHz", scanObject[0] / 1000);
-							currentState=State.ScanChannels;
-							channelScanTimeOut=DateTime.Now;
-						} 
-					} 
+					currentOffset=0;
 				}
 			}
 
@@ -186,7 +162,6 @@ namespace MediaPortal.TV.Recording
 				callback.OnStatus(description);
 				ScanChannels();
 			}
-			
 		}
 
 		void ScanChannels()
@@ -201,24 +176,50 @@ namespace MediaPortal.TV.Recording
 				Log.Write("timeout, goto scanning frequencies");
 				currentState=State.ScanFrequencies;
 				ScanNextFrequency();
+				currentOffset=0;
 				return;
 			}
 		}
 
 		void ScanNextFrequency()
 		{
-			currentFrequencyIndex++;
-			if (currentFrequencyIndex>=frequencies.Count)
+			if (currentFrequencyIndex >=frequencies.Count) return;
+			int[] tmp = (int[])frequencies[currentFrequencyIndex];
+			tunedFrequency=tmp[0];
+			if (currentOffset==0)
 			{
-				timer1.Enabled=false;
-				callback.OnProgress(100);
-				callback.OnEnded();
-				captureCard.DeleteGraph();
-				return;
+				Log.Write("tune:{0}",tunedFrequency);
+				captureCard.Tune(tunedFrequency);
+				if (scanOffset==0) currentOffset=3;
+				else currentOffset++;
 			}
-
-			Log.Write("tune:{0}",(frequencies[currentFrequencyIndex] as int[])[0]);
-			captureCard.Tune(frequencies[currentFrequencyIndex]);
+			else if (currentOffset==1)
+			{
+				tunedFrequency-=scanOffset;
+				Log.Write("tune:{0}",tunedFrequency);
+				captureCard.Tune(tunedFrequency);
+				currentOffset++;
+			}
+			else if (currentOffset==2)
+			{
+				tunedFrequency+=scanOffset;
+				Log.Write("tune:{0}",tunedFrequency);
+				captureCard.Tune(tunedFrequency);
+				currentOffset++;
+			}
+			else
+			{
+				currentOffset=0;
+				currentFrequencyIndex++;
+				if (currentFrequencyIndex>=frequencies.Count)
+				{
+					timer1.Enabled=false;
+					callback.OnProgress(100);
+					callback.OnEnded();
+					captureCard.DeleteGraph();
+					return;
+				}
+			}
 		}
 
 		#endregion

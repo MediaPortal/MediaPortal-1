@@ -54,7 +54,7 @@
 		<carrier frequency="809500" bandwidth="7" />
 		<carrier frequency="816500" bandwidth="7" />
 	</country>
-	<country name="All">
+	<country name="Europe">
 		<carrier frequency="84500" />
 		<carrier frequency="56000" />
 		<carrier frequency="64500" />

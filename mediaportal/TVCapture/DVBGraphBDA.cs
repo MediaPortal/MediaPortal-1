@@ -2376,7 +2376,6 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 				
-				Log.Write("4");
 				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
 				if (myTuneRequest ==null)
 				{
@@ -2533,7 +2532,6 @@ namespace MediaPortal.TV.Recording
 			{
 				//todo: add tuning for ATSC
 			}
-Log.Write("8");
 		}//public void Tune(object tuningObject)
 		
 		/// <summary>
