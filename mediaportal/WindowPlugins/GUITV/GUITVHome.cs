@@ -166,7 +166,11 @@ namespace MediaPortal.GUI.TV
 					GUITVHome.OnNextChannel();
 					break;
 
-				case Action.ActionType.ACTION_PREVIOUS_MENU:
+        case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL:  // mPod
+          GUITVHome.OnLastViewedChannel();
+          break;
+
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
 					// goto home 
 					// are we watching tv & doing timeshifting
@@ -746,6 +750,13 @@ namespace MediaPortal.GUI.TV
 		}
 
 		/// <summary>
+    /// When called this method will switch to the last viewed TV channel   // mPod
+    /// </summary>
+    static public void OnLastViewedChannel()
+    {
+      Navigator.ZapToLastViewedChannel();
+    }
+    /// <summary>
 		/// Returns true if the specified window belongs to the my tv plugin
 		/// </summary>
 		/// <param name="windowId">id of window</param>
@@ -851,6 +862,7 @@ namespace MediaPortal.GUI.TV
 		private long			m_zapdelay;
 		private string		m_zapchannel = null;
 		private int				m_zapgroup = -1;
+    private string    lastViewedChannel = null; // saves the last viewed Channel  // mPod
 		#endregion
 
 		#region Constructors
@@ -963,6 +975,7 @@ namespace MediaPortal.GUI.TV
 					}
 					m_zapgroup = -1;
 
+          lastViewedChannel = m_currentchannel;
 					// Zap to desired channel
 					GUITVHome.ViewChannel(m_zapchannel);
 					m_zapchannel = null;
@@ -1126,6 +1139,14 @@ namespace MediaPortal.GUI.TV
 				m_zaptime = DateTime.Now;
 		}
 
+    /// <summary>
+    /// Zaps to the last viewed Channel (without ZapDelay).  // mPod
+    /// </summary>
+    public void ZapToLastViewedChannel()
+    {
+      m_zapchannel = lastViewedChannel;
+      m_zaptime = DateTime.Now;
+    }
 		#endregion
 
 		#region Private methods

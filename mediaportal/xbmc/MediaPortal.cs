@@ -1103,6 +1103,10 @@ public class MediaPortalApp : D3DApp, IRender
 					window.OnAction(action);
 					return;
 
+        case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL:  // mPod
+          window=(GUIWindow )GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+          window.OnAction(action);
+          return;
 				case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN:
 					ToggleFullWindowed(); 
 					return;
