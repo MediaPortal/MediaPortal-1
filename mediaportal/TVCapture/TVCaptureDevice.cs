@@ -279,13 +279,14 @@ namespace MediaPortal.TV.Recording
       Log.Write("  CaptureCard:{0}   Setup brightness, contrast, gamma settings",ID);
       SetBrightnessContrastGamma();
 
-      Log.Write("  CaptureCard:{0}   load settings",ID);
-      capture.LoadSettings();
-
       Log.Write("  CaptureCard:{0}   set framesize={1}x{2} & rate={3:00}",ID,m_FrameSize.Width,m_FrameSize.Height, m_FrameRate);
       capture.FrameSize=m_FrameSize;
       capture.FrameRate=m_FrameRate;
-      
+
+      Log.Write("  CaptureCard:{0}   load settings",ID);
+      capture.LoadSettings(ID);
+
+ 
       // set filename for capture
       Log.Write("  CaptureCard:{0}   set filename",ID);
       if (strFileName!=null && strFileName.Length>0)

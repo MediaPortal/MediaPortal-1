@@ -55,7 +55,7 @@ namespace MediaPortal
     double m_FrameRate=25.0d;
 		private System.Windows.Forms.Button buttonSetupFilter;
 		private System.Windows.Forms.ToolTip toolTip1;
-
+    int     m_iID=0;
     ArrayList m_formats=new ArrayList();
 
 		public FormCapture()
@@ -577,6 +577,12 @@ namespace MediaPortal
       get { return m_bUseForRecording;}
       set { m_bUseForRecording=value;}
     }
+    
+    public int ID
+    {
+      get { return m_iID;}
+      set { m_iID=value;}
+    }
     private void SetupPropertyPageList()
     {
       listFilters.Items.Clear();
@@ -630,7 +636,7 @@ namespace MediaPortal
           if (i==iItem)
           {
             page.Show(this);
-            cap.SaveSettings();
+            cap.SaveSettings(m_iID);
             break;
           }
           i++;
@@ -735,7 +741,7 @@ namespace MediaPortal
       catch (Exception)
       {
       }
-      if (capture!=null) capture.LoadSettings();
+      if (capture!=null) capture.LoadSettings(ID);
       return capture;
     }
 

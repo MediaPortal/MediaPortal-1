@@ -3827,6 +3827,11 @@ namespace MediaPortal
           m_tvcards = (ArrayList)c.Deserialize(r);
           r.Close();
         } 
+        for (int i=0; i < m_tvcards.Count;i++)
+        {
+          TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
+          card.ID=(i+1);
+        }
       }
       catch(Exception)
       {
@@ -4235,6 +4240,7 @@ namespace MediaPortal
     private void btnAddCaptureDevice_Click(object sender, System.EventArgs e)
     {
       FormCapture dlg = new FormCapture();
+      dlg.ID=m_tvcards.Count+1;
       dlg.ShowDialog(this.Parent);
       if (dlg.VideoDevice!="")
       {
@@ -4248,6 +4254,7 @@ namespace MediaPortal
         dev.CaptureFormat=dlg.CaptureFormat;
         dev.FrameRate=dlg.FrameRate;
         dev.FrameSize=dlg.FrameSize;
+        dev.ID=dlg.ID;
         m_tvcards.Add(dev);
         UpdateCaptureCardList();
       }
@@ -4269,7 +4276,7 @@ namespace MediaPortal
       dlg.CaptureFormat=dev.CaptureFormat;
       dlg.FrameRate=dev.FrameRate;
       dlg.FrameSize=dev.FrameSize;
-
+      dlg.ID=dev.ID;
       dlg.ShowDialog(this.Parent);
       if (dlg.VideoDevice!="")
       {
