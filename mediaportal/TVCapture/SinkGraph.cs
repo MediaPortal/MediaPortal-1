@@ -213,7 +213,7 @@ namespace MediaPortal.TV.Recording
 
       Log.Write("SinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph( m_graphBuilder );
-      if( hr < 0 ) 
+      if( hr != 0 ) 
       {
         Log.Write("SinkGraph:link FAILED");
         return false;
@@ -454,12 +454,10 @@ namespace MediaPortal.TV.Recording
 				Log.Write("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
 				return;
 			}
-			if (m_mpeg2Demux==null) 
+			if (m_mpeg2Demux!=null) 
 			{
-				Log.Write("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED mpeg2demux filter=null");
-				return;
+				if (m_mpeg2Demux.IsRendered) return;
 			}
-      if (m_mpeg2Demux.IsRendered) return;
 
       // connect video capture pin->mpeg2 demux input
       if (!m_videoCaptureDevice.IsMCEDevice)
@@ -471,19 +469,23 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
-      Log.Write("SinkGraph:find MPEG2 demuxer input pin");
-      IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
-      if (pinIn!=null) 
-      {
-        Log.Write("SinkGraph:found MPEG2 demuxer input pin");
-        int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
-        if (hr==0)
-          Log.Write("SinkGraph:connected video capture out->MPEG2 demuxer input");
-        else
-          Log.Write("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
-      }
-      else
-        Log.Write("SinkGraph:FAILED could not find mpeg2 demux input pin");
+
+			if (m_mpeg2Demux!=null)
+			{
+				Log.Write("SinkGraph:find MPEG2 demuxer input pin");
+				IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
+				if (pinIn!=null) 
+				{
+					Log.Write("SinkGraph:found MPEG2 demuxer input pin");
+					int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
+					if (hr==0)
+						Log.Write("SinkGraph:connected video capture out->MPEG2 demuxer input");
+					else
+						Log.Write("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
+				}
+				else
+					Log.Write("SinkGraph:FAILED could not find mpeg2 demux input pin");
+			}
     }
 
     /// <summary>
@@ -496,9 +498,10 @@ namespace MediaPortal.TV.Recording
     public bool StopTimeShifting()
     {
       if ( m_graphState!=State.TimeShifting) return false;
-
+			
 			Log.Write("SinkGraph:StopTimeShifting()");
-			m_mpeg2Demux.StopTimeShifting();
+			if (m_mpeg2Demux!=null)
+				m_mpeg2Demux.StopTimeShifting();
       m_graphState=State.Created;
 
       return true;
@@ -744,7 +747,7 @@ namespace MediaPortal.TV.Recording
        
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       Log.Write("SinkGraph:StopViewing()");
-			
+			if (m_mpeg2Demux!=null)
 				m_mpeg2Demux.StopViewing();
       m_graphState=State.Created;
       DeleteGraph();
