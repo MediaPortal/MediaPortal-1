@@ -36,6 +36,8 @@ namespace MediaPortal.TV.Recording
 		State                               currentState;
 		TPList[]														transp=new TPList[800];
 		int																	count = 0;
+		int m_diseqcLoops=1;
+		int m_currentDiseqc=1;
 
 		public DVBSTuning()
 		{
@@ -44,8 +46,22 @@ namespace MediaPortal.TV.Recording
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+			
 			captureCard=card;
 			callback=statusCallback;
+			string filename=String.Format(@"database\card_{0}.xml",card.FriendlyName);
+			//
+			// load card settings to check diseqc
+			m_diseqcLoops=1;
+			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+			{
+				if(xmlreader.GetValueAsBool("dvbs","useLNB2",false)==true)
+					m_diseqcLoops++;
+				if(xmlreader.GetValueAsBool("dvbs","useLNB3",false)==true)
+					m_diseqcLoops++;
+				if(xmlreader.GetValueAsBool("dvbs","useLNB4",false)==true)
+					m_diseqcLoops++;
+			}
 
 			currentState=State.ScanStart;
 			currentIndex=-1;
@@ -195,10 +211,18 @@ namespace MediaPortal.TV.Recording
 			currentIndex++;
 			if (currentIndex>=count)
 			{
-				timer1.Enabled=false;
-				callback.OnProgress(100);
-				callback.OnEnded();
-				captureCard.DeleteGraph();
+				if(m_currentDiseqc>=m_diseqcLoops)
+				{
+					timer1.Enabled=false;
+					callback.OnProgress(100);
+					callback.OnEnded();
+					captureCard.DeleteGraph();
+				}
+				else
+				{
+					m_currentDiseqc++;
+					AutoTuneTV(captureCard,callback);
+				}
 				return;
 			}
 			DVBChannel newchan = new DVBChannel();
@@ -216,7 +240,9 @@ namespace MediaPortal.TV.Recording
 
 			Log.Write("tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
 									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
-			captureCard.Tune(newchan,0);
+			Application.DoEvents();
+			Application.DoEvents();
+			captureCard.Tune(newchan,m_currentDiseqc);
 		}
 
 		#endregion

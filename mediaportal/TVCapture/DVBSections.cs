@@ -36,6 +36,7 @@ namespace MediaPortal.TV.Recording
 		DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 m_dataControl=null;
 		System.Timers.Timer					m_eitTimeoutTimer=null;
 		bool								m_breakAction=false;
+		object								m_dataCtrl=null;
 		//
 
 		//
@@ -155,6 +156,7 @@ namespace MediaPortal.TV.Recording
 			public ArrayList	NITDescriptorList;
 			public string		NetworkName;
 		}
+
 		//
 		//
 		public struct ChannelInfo
@@ -202,7 +204,18 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		//
-
+		public bool SetPidsForTechnisat
+		{
+			get{return m_setPid;}
+			set{m_setPid=value;}
+		}
+		public object DataControl
+		{
+			get{return m_dataCtrl;}
+			set{m_dataCtrl=value;}
+		}
+		//
+		//
 		public void SetLNBParams(int diseqc,int lnb0,int lnb1,int lnbsw,int lnbkhz,int selKhz,int lnbfreq)
 		{
 			m_diseqc=diseqc;
@@ -264,6 +277,14 @@ namespace MediaPortal.TV.Recording
 		{
 			m_sectionsList=new ArrayList();	
 			Transponder transponder = new Transponder();
+			if(m_setPid==true)
+			{
+				DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
+				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,0);
+				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,16);
+				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,17);
+				Log.Write("auto-tune ss2: pids set");
+			}
 			try
 			{
 				transponder.channels = new ArrayList();
@@ -601,8 +622,8 @@ namespace MediaPortal.TV.Recording
 					int res=0;
 					if(m_setPid)
 					{
-						DVBSkyStar2Helper.DeleteAllPIDs(m_dataControl,0);
-						DVBSkyStar2Helper.SetPidToPin(m_dataControl,0,pat.network_pmt_PID);
+						DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
+						DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,pat.network_pmt_PID);
 					}
 
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); // get here the pmt
@@ -2025,6 +2046,10 @@ namespace MediaPortal.TV.Recording
 		string DVB_GetLanguageFromISOCode(string code)
 		{
 			return "";
+		}
+		public string GetNetworkProvider(int onid)
+		{
+			return DVB_GetNetworkProvider(onid);
 		}
 		string DVB_GetNetworkProvider(int orgNetworkID)
 		{
