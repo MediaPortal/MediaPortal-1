@@ -1720,24 +1720,13 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_Event==null) return;
 
-			/*
-			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
-			Log.Write("ONID:{0} TSID:{1} SID:{2} signal:{3}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID, myTuner.SignalStrength);
-			for (int i=0; i < myTuneRequest.Components.Count;++i)
-			{
-				TunerLib.Component comp=myTuneRequest.Components[i];
-				Log.Write("component:{0} lang:{1} desc:{2} status:{3} type:{4}",
-					          i,comp.DescLangID,comp.Description,comp.Status.ToString(),comp.Type.Category.ToString());
-			}
-
+			
+/*
 			if (GuideDataEvent.mutexProgramChanged.WaitOne(1,true))
 			{
-				Log.Write("got program change");
 				IGuideData data= m_TIF as IGuideData;
 				if (data!=null)
 				{
-					//Log.Write("got guide data");
 					int iFetched;
 					object[] varResults = new object[1];
 					string[] channelParams = new string[20];
@@ -1746,10 +1735,8 @@ namespace MediaPortal.TV.Recording
 					data.GetGuideProgramIDs(out varEnum);
 					if (varEnum!=null)
 					{
-						//Log.Write("variant enum");
 						while(varEnum.Next(1,  varResults, out iFetched) == 0) 
 						{
-							//Log.Write("Get program properties for:{0}",varResults[0].ToString());
 							IEnumGuideDataProperties enumProgramProperties;
 							data.GetProgramProperties(varResults[0],out enumProgramProperties);
 							if (enumProgramProperties!=null)
@@ -1757,7 +1744,6 @@ namespace MediaPortal.TV.Recording
 								IGuideDataProperty[] properties = new IGuideDataProperty[1];
 								while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
 								{
-									//Log.Write("got property");
 									object chanValue;
 									int chanLanguage;
 									string chanName;
@@ -1765,13 +1751,21 @@ namespace MediaPortal.TV.Recording
 									properties[0].Value(out chanValue);
 									properties[0].Language(out chanLanguage);
 									Log.Write("channel name:{0} value:{1} language:{2}",chanName, chanValue, chanLanguage);
+									
+									if (Network() == NetworkType.DVBT)
+									{
+										//name											value											language
+										//Description.ID						8720:3:32:300							0
+										//Description.Title					title of program					0
+										//Description.One Sentence	description of program		0
+									}
 								}
 							}
 						}
 					}
 				}
-			}*/
-
+			}
+*/
 			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
 			{
 				IGuideData data= m_TIF as IGuideData;
