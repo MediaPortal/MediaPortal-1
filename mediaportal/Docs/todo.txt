@@ -128,6 +128,8 @@ my programs:
   - application/program arguments  
 
 General:
+  - Make it possible to browse to an image control and selecting enter will show it large drawn over the GUI
+  - New view ala FilmStrip in explorer
   - plugin structure for non-gui plugins
   - Support for right to left languages
   - Use Y to play a folder, this for video, music and pictures
