@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Threading;
 
 // Credit and thanks to edx (felix.arends@gmx.de) for his Managed C++ version, a fair amount of copy and
-// paste took was involved.  Felix's version can be found at:
+// paste was involved.  Felix's version can be found at:
 //
 // http://www.codeproject.com/managedcpp/Tetris3D.asp
 //
@@ -26,7 +26,7 @@ namespace Tetris
 	}
 
 	/// <summary>
-	/// Summary description for Game.
+	/// Written by Smirnoff (lee@netpoint-it.co.uk)
 	/// </summary>
 	public class Game
 	{

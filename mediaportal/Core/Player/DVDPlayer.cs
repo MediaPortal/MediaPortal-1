@@ -193,14 +193,6 @@ namespace MediaPortal.Player
 
       m_bUpdateNeeded=true;
 
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        m_strAudioLanguage   =xmlreader.GetValueAsString("dvdplayer","audiolanguage","english");
-        m_strSubtitleLanguage=xmlreader.GetValueAsString("dvdplayer","subtitlelanguage","english");
-        m_bSubtitlesEnabled  =xmlreader.GetValueAsBool("dvdplayer","showsubtitles",true);
-      }
-      
-      SetDefaultLanguages();        
       m_bFullScreen=true;
       m_bUpdateNeeded=true;
 
@@ -346,6 +338,15 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+
+		  using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+		  {
+			  m_strAudioLanguage   =xmlreader.GetValueAsString("dvdplayer","audiolanguage","english");
+			  m_strSubtitleLanguage=xmlreader.GetValueAsString("dvdplayer","subtitlelanguage","english");
+			  m_bSubtitlesEnabled  =xmlreader.GetValueAsBool("dvdplayer","showsubtitles",true);
+		  }
+      
+		  SetDefaultLanguages();
         
 
         hr = dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
@@ -1486,45 +1487,108 @@ namespace MediaPortal.Player
       return false;
     }
 
-    void SetDefaultLanguages()
-    {
-      Log.Write("SetDefaultLanguages");
-      int lCID=GetLCID(m_strAudioLanguage);
-      if (lCID>=0)
-      {
-        dvdCtrl.SelectDefaultAudioLanguage(lCID, DvdAudioLangExt.NotSpecified);
-        Log.Write("DVDPlayer:Set default language:{0} {1}", m_strAudioLanguage,lCID);
-      }
-      lCID=GetLCID(m_strSubtitleLanguage);
-      if (lCID>=0)
-      {
-        dvdCtrl.SelectDefaultMenuLanguage(lCID);
-        Log.Write("DVDPlayer:Set default menu language:{0} {1}", m_strSubtitleLanguage,lCID);
-      }
-      lCID=GetLCID(m_strSubtitleLanguage);
-      if (lCID>=0)
-      {
-        dvdCtrl.SelectDefaultSubpictureLanguage(lCID, DvdSubPicLangExt.NotSpecified);
-        Log.Write("DVDPlayer:Set subtitle language:{0} {1}", m_strSubtitleLanguage,lCID);
-      }
+	  void SetDefaultLanguages()
+	  {
+		  Log.Write("SetDefaultLanguages");
+		  // Flip: Added more detailed message
+		  int iSetError=0;
+		  string sError = "";
+		  int lCID=GetLCID(m_strAudioLanguage);
+		  if (lCID>=0)
+		  {
+			  iSetError=0;
+			  sError = "";
+			  // Flip: Added more detailed message
+			  iSetError=dvdCtrl.SelectDefaultAudioLanguage(lCID, DvdAudioLangExt.NotSpecified);
+			  switch (iSetError)
+			  {
+				  case 0:
+					  sError = "Success.";
+					  break;
+				  case 631:
+					  sError = "The DVD Navigator filter is not in the Stop domain.";
+					  break;
+				  default:
+					  sError = "Unknown Error. "+iSetError;
+					  break;
+			  }
 
-      dvdCtrl.SetSubpictureState(m_bSubtitlesEnabled,DvdCmdFlags.None,null);
+
+			  Log.Write("DVDPlayer:Set default language:{0} {1} {2}", m_strAudioLanguage,lCID,sError);
+		  }
+		  lCID=GetLCID(m_strSubtitleLanguage);
+		  if (lCID>=0)
+		  {
+			  iSetError=0;
+			  sError = "";
+			  iSetError=dvdCtrl.SelectDefaultMenuLanguage(lCID);
+			  // Flip: Added more detailed message
+			  switch (iSetError)
+			  {
+				  case 0:
+					  sError = "Success.";
+					  break;
+				  case 631:
+					  sError = "The DVD Navigator filter is not in a valid domain.";
+					  break;
+				  default:
+					  sError = "Unknown Error. "+iSetError;
+					  break;
+			  }
+			  Log.Write("DVDPlayer:Set default menu language:{0} {1} {2}", m_strSubtitleLanguage,lCID,sError);
+		  }
+		  lCID=GetLCID(m_strSubtitleLanguage);
+		  if (lCID>=0)
+		  {
+			  iSetError=0;
+			  sError = "";
+			  iSetError=dvdCtrl.SelectDefaultSubpictureLanguage(lCID, DvdSubPicLangExt.NotSpecified);
+			  // Flip: Added more detailed message
+			  switch (iSetError)
+			  {
+				  case 0:
+					  sError = "Success.";
+					  break;
+				  case 631:
+					  sError = "The DVD Navigator filter is not in a valid domain.";
+					  break;
+				  default:
+					  sError = "Unknown Error. "+iSetError;
+					  break;
+			  }
+			  Log.Write("DVDPlayer:Set subtitle language:{0} {1} {2}", m_strSubtitleLanguage,lCID,sError);
+		  }
+
+		  dvdCtrl.SetSubpictureState(m_bSubtitlesEnabled,DvdCmdFlags.None,null);
       
-    }
+	  }
 
-    int GetLCID(string strLanguage)
-    {
-      if (strLanguage==null) return -1;
-      if (strLanguage.Length==0) return -1;
-      foreach ( CultureInfo ci in CultureInfo.GetCultures( CultureTypes.NeutralCultures ) )  
-      {
-        if (String.Compare(ci.EnglishName,strLanguage,true)==0) 
-        {
-          return ci.LCID;
-        }
-      }
-      return -1;
-    }
+	  int GetLCID(string strLanguage)
+	  {
+		  if (strLanguage==null) return -1;
+		  if (strLanguage.Length==0) return -1;
+		  // Flip: Added to cut off the detailed name info
+		  string	strCutName;
+		  int		iStart = 0;
+		  // Flip: Changed from CultureTypes.NeutralCultures to CultureTypes.SpecificCultures
+		  // Flip: CultureTypes.NeutralCultures did not work, provided the wrong CLID
+		  foreach ( CultureInfo ci in CultureInfo.GetCultures( CultureTypes.SpecificCultures ) )  
+		  {
+			  // Flip: cut off detailed info, e.g. "English (United States)" -> "English"
+			  // Flip: to get correct compare
+			  iStart = ci.EnglishName.IndexOf(" (");
+			  if (iStart>0)
+				  strCutName = ci.EnglishName.Substring(0,iStart);
+			  else
+				  strCutName = ci.EnglishName;
+
+			  if (String.Compare(strCutName,strLanguage,true)==0) 
+			  {
+				  return ci.LCID;
+			  }
+		  }
+		  return -1;
+	  }
 
     public override int AudioStreams
     {
