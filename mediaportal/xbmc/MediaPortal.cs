@@ -18,9 +18,14 @@ public class MediaPortalApp : D3DApp
     string    m_strLanguage="english";
     Timer     Clock;
     DateTime  m_dtClockTime=DateTime.Now;
+
+    private Bitmap bmpBackground=null;				// Background bitmap containing grid
     
     int       m_iLastMousePositionX=0;
     int       m_iLastMousePositionY=0;
+    bool      m_bRefresh=true;
+    bool      m_bLastRefresh=true;
+
     public static void Main()
     {
       try
@@ -95,14 +100,7 @@ public class MediaPortalApp : D3DApp
 
     protected override void OnPaint(PaintEventArgs e)
     {
-      GUIGraphicsContext.graphics=e.Graphics;
-      Render();
-      if (m_bResized)
-      {
-        InitializeDeviceObjects();
-        OnDeviceReset(null, null);
-        m_bResized=false;
-      }
+      e.Graphics.DrawImageUnscaled(bmpBackground, 0, 0);
     }
 
     public void Process()
@@ -110,16 +108,15 @@ public class MediaPortalApp : D3DApp
       System.Windows.Forms.Application.DoEvents();
     }
 
-
     protected override void OnStartup() 
     {
       SetStyle(ControlStyles.Opaque, true);
       SetStyle(ControlStyles.UserPaint, true);
       SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-      SetStyle(ControlStyles.DoubleBuffer, true);
+      SetStyle(ControlStyles.DoubleBuffer, false);
 
       m_MouseTimeOut=DateTime.Now;
-      System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
+      //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
       GUIWindowManager.OnAppStarting();
       Clock = new Timer();
       Clock.Interval=50;
@@ -127,42 +124,88 @@ public class MediaPortalApp : D3DApp
       Clock.Tick+=new EventHandler(Timer_Tick);
       m_bResized=false;
 
+      bmpBackground = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
     }
 
     public void Timer_Tick(object sender,EventArgs eArgs)
     {
       if(sender==Clock)
       {
+        if ( GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING)
+        {
+          this.Close();
+          return;
+        }
+
+        if (m_bResized)
+        {
+          OnDeviceLost(null,null);
+          InitializeDeviceObjects();
+          OnDeviceReset(null, null);
+
+          bmpBackground.Dispose();
+          bmpBackground = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+          m_bResized=false;
+        }
+
         GUIWindowManager.DispatchThreadMessages();
         g_Player.Process();
 
-        bool bPlayVideo=false;
-        // update video window when playing video
-        if (g_Player.Playing && g_Player.HasVideo)
+        if (g_Player.Playing)
         {
-          bPlayVideo=true;
           SetVideoRect();
+          GUIGraphicsContext.IsPlaying=true;
+        }
+        else
+        {
+          GUIGraphicsContext.IsFullScreenVideo=false;
+          GUIGraphicsContext.IsPlaying=false;
         }
 
-        // if not playing video, or we're playing a video but not fullscreen
-        // then check if GUI should b updated
-        if (GUIGraphicsContext.IsFullScreenVideo==false || !bPlayVideo)
+        m_bRefresh|=GUIWindowManager.NeedRefresh();
+        if (m_bRefresh || m_bLastRefresh) 
         {
-          bool bNeedRefresh=GUIWindowManager.NeedRefresh();
-          
-          if (bNeedRefresh) 
+          if (m_bRefresh)
           {
-            // yes, then invalidate the screen
+            m_bLastRefresh=true;
+            m_bRefresh=false;
+          }
+          else m_bLastRefresh=false;
+
+          if (!GUIGraphicsContext.IsFullScreenVideo)
+          {
+            using (GUIGraphicsContext.graphics = Graphics.FromImage( bmpBackground) )
+            { 
+              GUIWindowManager.Render(); 
+              RenderVideoOverlay();
+              RenderMusicOverlay();
+            }
             Invalidate();
           }
           else
           {
-            Graphics g=GUIGraphicsContext.graphics ;
-            using (GUIGraphicsContext.graphics = this.CreateGraphics())
-            {
-              RenderMusicOverlay();
+            using (GUIGraphicsContext.graphics = Graphics.FromImage( bmpBackground) )
+            { 
+              System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(Color.FromArgb(255,1,1,1));
+              GUIGraphicsContext.graphics.FillRectangle(myBrush, new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
+              myBrush.Dispose();
             }
-            GUIGraphicsContext.graphics =g;
+            Invalidate();
+          }
+        }
+        else // of if (m_bRefresh || m_bLastRefresh) 
+        {
+          if (g_Player.Playing && !GUIGraphicsContext.IsFullScreenVideo) 
+          {
+            if (GUIGraphicsContext.Overlay && Utils.IsAudio(g_Player.CurrentFile)) 
+            {
+              using (GUIGraphicsContext.graphics = Graphics.FromImage( bmpBackground) )
+              { 
+                RenderVideoOverlay();
+                RenderMusicOverlay();
+              }
+              Invalidate();
+            }
           }
         }
         
@@ -213,7 +256,6 @@ public class MediaPortalApp : D3DApp
       if (GUIGraphicsContext.IsFullScreenVideo) return;
       if (!GUIGraphicsContext.Overlay) return;
       if (!Utils.IsAudio(g_Player.CurrentFile)) return;
-
       GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
       if (null!=windowOverlay)
       {
@@ -234,29 +276,6 @@ public class MediaPortalApp : D3DApp
       g_Player.ARType=GUIGraphicsContext.ARType;
     }
 
-    protected override void Render()
-    {
-      if ( GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING)
-      {
-        this.Close();
-        return;
-      }
-      SetVideoRect();
-      GUIWindowManager.DispatchThreadMessages();
-      g_Player.Process();
-
-      if (g_Player.Playing)
-      {
-        GUIGraphicsContext.IsPlaying=true;
-      }
-      else
-      {
-        GUIGraphicsContext.IsPlaying=false;
-      }
-      
-      GUIWindowManager.Render(); 
-      RenderVideoOverlay();
-    }
 
   /// <summary>
   /// The device has been created.  Resources that are not lost on
@@ -419,7 +438,7 @@ public class MediaPortalApp : D3DApp
 					OnAction(action);
 				}
       
-      Invalidate();
+      m_bRefresh=true;
 	  }
 
 
@@ -449,7 +468,7 @@ public class MediaPortalApp : D3DApp
       OnAction(action);
       if (window.GetFocusControl() != iControl)
       {
-        Invalidate();
+        m_bRefresh=true;
       }
     }
 	}
@@ -491,7 +510,7 @@ public class MediaPortalApp : D3DApp
       }
     }
 
-    Invalidate();
+    m_bRefresh=true;
     m_MouseTimeOut=DateTime.Now;
     Cursor.Show();
 	}
