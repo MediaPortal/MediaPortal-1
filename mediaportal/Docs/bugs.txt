@@ -1,4 +1,5 @@
 Bugs left:
+  10-06-04 general      :  when you have MP on videoinfo or audio info screen and exit it, it keeps running
   31-05-04 my tv        : PVR350 does not give any image and sound on latest version. (weird huh Frodo? I can't get it to work either while it did at first) we all have the same error log. 
   31-05-04 my music     : remove album info does not delete the thumbnail. 
   31-05-04 my music     : album art cannot be re-searched like imdb does with the on screen keyboard. 

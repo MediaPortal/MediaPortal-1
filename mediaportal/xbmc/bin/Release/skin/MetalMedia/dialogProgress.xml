@@ -60,7 +60,9 @@
   <posX>500</posX> 
   <posY>325</posY> 
   <width>70</width> 
-  <height>32</height> 
+  <height>32</height>
+  <textureFocus>list_focus.png</textureFocus>
+  <textureNoFocus>list_nofocus.png</textureNoFocus>
   <label>222</label> 
   <onleft>10</onleft> 
   <onright>10</onright> 

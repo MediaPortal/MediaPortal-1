@@ -28,7 +28,7 @@
 		<posY>425</posY> 
 		<width>90</width> 
 		<height>100</height> 
-		<texture>music.jpg</texture> 
+		<texture>#thumb</texture> 
 	</control>
 	<control>
 		<description>play logo</description> 
@@ -68,7 +68,7 @@
 		<id>2</id> 
 		<posX>370</posX> 
 		<posY>32</posY> 
-		<label>-</label> 
+		<label>#currentplaytime</label> 
 		<align>right</align> 
 		<font>font10</font> 
 		<textcolor>FF000000</textcolor> 
@@ -82,6 +82,7 @@
 		<posY>32</posY>
 		<align>right</align>  
 		<font>font10</font> 
+		<label>#title\r#artist\r#album\r#duration</label>
 		<textcolor>FF000000</textcolor>
 		<id>5</id> 
 	</control>

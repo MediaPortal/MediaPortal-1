@@ -314,7 +314,9 @@
 			<posX>360</posX> 
 			<posY>420</posY> 
 			<width>40</width> 
-			<height>32</height> 
+			<height>32</height>
+			<textureFocus>list_focus.png</textureFocus>
+			<textureNoFocus>list_nofocus.png</textureNoFocus>
 			<label>186</label> 
 			<onleft>10</onleft> 
 			<onright>10</onright> 

@@ -246,11 +246,11 @@
 		<type>button</type>
 		<id>2</id>
 		<posX>55</posX>
-		<posY>115</posY>
+		<posY>143</posY>
 		<label>620</label>
 		<onleft>10</onleft>
 		<onright>4</onright>
-		<onup>21</onup>
+		<onup>17</onup>
 		<ondown>6</ondown>
 	</control>
 	<control>
@@ -258,7 +258,7 @@
 		<type>togglebutton</type>
 		<id>4</id>
 		<posX>198</posX>
-		<posY>121</posY>
+		<posY>149</posY>
 		<label>-</label>
 		<onleft>3</onleft>
 		<onright>10</onright>
@@ -266,24 +266,23 @@
 		<ondown>4</ondown>
 	</control>
 	<control>
-		<description>Panel Split</description>
+		<description>Panel SPlit</description>
 		<type>image</type>
 		<id>1</id>
 		<posX>55</posX>
-		<posY>152</posY>
-		<width>145</width>
+		<posY>180</posY>
 		<texture>panel_split.png</texture>
-	</control>	
+	</control>
 	<control>
 		<description>New button</description>
 		<type>button</type>
 		<id>6</id>
 		<posX>55</posX>
-		<posY>160</posY>
+		<posY>189</posY>
 		<label>617</label>
 		<onleft>10</onleft>
 		<onright>10</onright>
-		<onup>2</onup>
+		<onup>3</onup>
 		<ondown>7</ondown>
 	</control>
 	<control>
@@ -291,7 +290,7 @@
 		<type>button</type>
 		<id>7</id>
 		<posX>55</posX>
-		<posY>188</posY>
+		<posY>217</posY>
 		<label>624</label>
 		<onleft>10</onleft>
 		<onright>10</onright>
@@ -308,7 +307,7 @@
 		<textYOff2>50</textYOff2>
 		<itemWidth>81</itemWidth>
 		<itemHeight>81</itemHeight>
-		<textureFocus>blue-rectangle.png</textureFocus>
+		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>blue-rectangleNF.png</textureNoFocus>		
 		<spaceBetweenItems>14</spaceBetweenItems>
 		<textureHeight>90</textureHeight>

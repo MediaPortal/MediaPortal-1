@@ -223,40 +223,42 @@
 		<description>Number of Files Label</description>
 		<type>label</type>
 		<id>12</id>
-		<posX>238</posX>
-		<posY>394</posY>
+		<posX>370</posX>
+		<posY>50</posY>
 		<label>-</label>
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>RecordedTV text label</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>242</posX>
-		<posY>65</posY>
+		<posX>280</posX>
+		<posY>50</posY>
 		<label>652</label>
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Sort-by button</description>
 		<type>button</type>
 		<id>2</id>
-		<posX>64</posX>
-		<posY>128</posY>
+		<posX>55</posX>
+		<posY>143</posY>
 		<label>620</label>
 		<onleft>10</onleft>
 		<onright>4</onright>
-		<onup>21</onup>
+		<onup>19</onup>
 		<ondown>6</ondown>
 	</control>
 	<control>
 		<description>Sort Asc</description>
 		<type>togglebutton</type>
 		<id>4</id>
-		<posX>221</posX>
-		<posY>168</posY>
+		<posX>198</posX>
+		<posY>149</posY>
 		<label>-</label>
 		<onleft>3</onleft>
 		<onright>10</onright>
@@ -264,14 +266,13 @@
 		<ondown>4</ondown>
 	</control>
 	<control>
-		<description>Middle Bar</description>
+		<description>Panel SPlit</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>64</posX>
-		<posY>200</posY>
-		<width>145</width>
-		<texture>middle-bar.png</texture>
-	</control>		
+		<posX>55</posX>
+		<posY>180</posY>
+		<texture>panel_split.png</texture>
+	</control>	
 	<control>
 		<description>scheduler recordings listcontrol</description>
 		<type>listcontrol</type>
@@ -284,7 +285,7 @@
 		<itemWidth>81</itemWidth>
 		<itemHeight>81</itemHeight>
 		<spinPosY>394</spinPosY>
-		<textureFocus>blue-rectangle.png</textureFocus>
+		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>blue-rectangleNF.png</textureNoFocus>		
 		<spaceBetweenItems>14</spaceBetweenItems>
 		<textureHeight>90</textureHeight>

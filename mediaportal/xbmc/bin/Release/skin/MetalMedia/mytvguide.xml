@@ -23,7 +23,7 @@
 	<control>
 		<description>home button</description>
 		<type>button</type>
-		<id>20</id>
+		<id>17</id>
 		<posX>50</posX>
 		<posY>30</posY>
 		<width>37</width>
@@ -40,7 +40,7 @@
 	<control>
 		<description>Back button</description>
 		<type>button</type>
-		<id>21</id>
+		<id>20</id>
 		<posX>88</posX>
 		<posY>30</posY>
 		<width>37</width>
@@ -66,7 +66,7 @@
 	<control>
 		<description>back button</description>
 		<type>button</type>
-		<id>22</id>
+		<id>21</id>
 		<posX>388</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -83,7 +83,7 @@
 	<control>
 		<description>rewind button</description>
 		<type>button</type>
-		<id>23</id>
+		<id>22</id>
 		<posX>423</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -100,7 +100,7 @@
 	<control>
 		<description>play button</description>
 		<type>button</type>
-		<id>24</id>
+		<id>44</id>
 		<posX>458</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -117,7 +117,7 @@
 	<control>
 		<description>pause button</description>
 		<type>button</type>
-		<id>25</id>
+		<id>45</id>
 		<posX>493</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -134,7 +134,7 @@
 	<control>
 		<description>record button</description>
 		<type>button</type>
-		<id>26</id>
+		<id>46</id>
 		<posX>528</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -150,7 +150,7 @@
 	<control>
 		<description>stop button</description>
 		<type>button</type>
-		<id>27</id>
+		<id>47</id>
 		<posX>563</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -167,7 +167,7 @@
 	<control>
 		<description>fast forward button</description>
 		<type>button</type>
-		<id>28</id>
+		<id>48</id>
 		<posX>598</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -184,7 +184,7 @@
 	<control>
 		<description>next button</description>
 		<type>button</type>
-		<id>29</id>
+		<id>49</id>
 		<posX>633</posX>
 		<posY>30</posY>
 		<width>35</width> 
@@ -208,6 +208,17 @@
 		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
 		<texture>mytv.png</texture>
+	</control>
+	<control>
+		<description>My TVGuide Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>280</posX>
+		<posY>50</posY>
+		<label>4</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Current program background</description>
@@ -288,8 +299,8 @@
 		<description>Current Channel</description>
 		<type>image</type>
 		<id>12</id>
-		<posX>60</posX>
-		<posY>110</posY>
+		<posX>56</posX>
+		<posY>108</posY>
 		<width>85</width>
 		<height>85</height>
 		<texture>defaultVideoBig.png</texture>
@@ -346,15 +357,6 @@
 		<font>font10</font>
 		<textcolor>FFB2D4F5</textcolor>
 	</control>	
-	<control>
-		<description>title</description>
-		<type>label</type>
-		<id>24</id>
-		<visible>no</visible>
-		<label>-</label>
-		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
-	</control>
 	<control>
 		<description>vertical timeline</description>
 		<type>image</type>
