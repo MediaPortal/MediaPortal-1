@@ -38,17 +38,28 @@ namespace MediaPortal.Configuration
 
 		public override void OnPerformTuning(int stepSize)
 		{
-			if(captureDevice.Tuner.SignalPresent == true)
-			{
-				//
-				// We have found a channel!
-				//
-        RadioStation newStation =new RadioStation(currentChannel, captureDevice.Tuner.Channel);
-        newStation.Name=String.Format("Station{0}", currentChannel++);
-        newStation.Type="Radio";
-        newStation.Frequency=captureDevice.Tuner.Channel;
-				AddItem(newStation);
-			}
+      try
+      {
+        if(captureDevice.Tuner.SignalPresent == true)
+        {
+          //
+          // We have found a channel!
+          //
+          RadioStation newStation =new RadioStation(currentChannel, captureDevice.Tuner.Channel);
+          newStation.Name=String.Format("Station{0}", currentChannel++);
+          newStation.Type="Radio";
+          newStation.Frequency=captureDevice.Tuner.Channel;
+          AddItem(newStation);
+        }
+      }
+      catch(NotSupportedException)
+      {
+        //
+        // The device does not support checking the signal strength, thus we can't perform
+        // autotuning.
+        //
+        MessageBox.Show("Failed to perform autotuning, the tuner card does not support reading of signal strength.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      }
 
 			//
 			// Move forward
@@ -61,7 +72,9 @@ namespace MediaPortal.Configuration
         Text=String.Format("Radio tuning:{0:#,##} MHz", captureDevice.Tuner.Channel );
       }
       catch(Exception)
-      {}
+      {
+        MessageBox.Show("Failed to perform autotuning, the tuner card did not supply the data needed.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      }
 		}
 	}
 }
