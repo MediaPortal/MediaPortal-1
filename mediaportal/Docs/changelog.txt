@@ -1,3 +1,7 @@
+16-08-2004  my tv       : fixed : spiced up the tvguide. Looks better now
+16-08-2004  general     : fixed : video osd submenu's didnt work anymore
+16-08-2004  general     : fixed : onscreen keyboard : mouse control was broken
+
 15-08-2004  setup       : added : Configuration for autoplaying audio cd's.
 15-08-2004  my tv       : fixed : spiced up the tvguide. Looks better now
 15-08-2004  setup       : fixed : Default channels were not saved if no other channels were added.
