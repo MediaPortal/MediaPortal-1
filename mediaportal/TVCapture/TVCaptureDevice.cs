@@ -920,10 +920,10 @@ namespace MediaPortal.TV.Recording
 			_mGraph.Tune(tuningObject);
 		}
 
-		public void StoreTunedChannels()
+		public void StoreTunedChannels(bool radio, bool tv)
 		{
 			if (_mGraph==null) return ;
-			_mGraph.StoreChannels();
+			_mGraph.StoreChannels(radio,tv);
 		}
   }
 }  

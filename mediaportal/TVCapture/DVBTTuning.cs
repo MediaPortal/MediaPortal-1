@@ -122,7 +122,7 @@ namespace MediaPortal.TV.Recording
 			TimeSpan ts = DateTime.Now-channelScanTimeOut;
 			if (ts.TotalSeconds>=15)
 			{
-				captureCard.StoreTunedChannels();
+				captureCard.StoreTunedChannels(false,true);
 				callback.Update();
 				Log.Write("timeout, goto scanning frequencies");
 				currentState=State.ScanFrequencies;

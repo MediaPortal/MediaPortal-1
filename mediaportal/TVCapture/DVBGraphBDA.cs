@@ -33,12 +33,14 @@ namespace MediaPortal.TV.Recording
 	{
 		class DVBTChannel
 		{
-			public int ONID;
-			public int TSID;
-			public int SID;
+			public int		ONID;
+			public int		TSID;
+			public int		SID;
 			public string ChannelName;
 			public string NetworkName;
 			public int    NetworkType;
+			public bool		IsTv;
+			public bool		IsRadio;
 		}
 
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -1808,6 +1810,10 @@ namespace MediaPortal.TV.Recording
 										channel.ONID = Int32.Parse(parts[0]);
 										channel.TSID = Int32.Parse(parts[1]);
 										channel.SID  = Int32.Parse(parts[2]);
+
+										//TODO: determine if channel found is an radio or tv channel
+										channel.IsTv=true;
+										channel.IsRadio=true;
 										gotAll++;
 									}
 									if (chanName=="Description.Name")
@@ -1911,7 +1917,7 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 		
-		public void StoreChannels()
+		public void StoreChannels(bool radio, bool tv)
 		{
 			ArrayList tvChannels = new ArrayList();
 			TVDatabase.GetChannels(ref tvChannels);
@@ -1920,27 +1926,30 @@ namespace MediaPortal.TV.Recording
 				if (Network() == NetworkType.DVBT)
 				{
 					DVBTChannel channel=(DVBTChannel)channelList[x];
-					bool newChannel=true;
-					int iChannelNumber=0;
-					foreach (TVChannel tvchan in tvChannels)
+					if ( (channel.IsRadio && radio) || (channel.IsTv && tv))
 					{
-						if (tvchan.Name.Equals(channel.ChannelName))
+						bool newChannel=true;
+						int iChannelNumber=0;
+						foreach (TVChannel tvchan in tvChannels)
 						{
-							iChannelNumber=tvchan.Number;
-							newChannel=false;
-							break;
+							if (tvchan.Name.Equals(channel.ChannelName))
+							{
+								iChannelNumber=tvchan.Number;
+								newChannel=false;
+								break;
+							}
 						}
+						if (newChannel)
+						{
+							TVChannel tvChan = new TVChannel();
+							tvChan.Name=channel.ChannelName;
+							tvChan.Number=channel.SID;
+							tvChan.VisibleInGuide=true;
+							iChannelNumber=tvChan.Number;
+							TVDatabase.AddChannel(tvChan);
+						}
+						TVDatabase.MapDVBTChannel(channel.ChannelName,iChannelNumber, currentFrequency, channel.ONID,channel.TSID,channel.SID);
 					}
-					if (newChannel)
-					{
-						TVChannel tvChan = new TVChannel();
-						tvChan.Name=channel.ChannelName;
-						tvChan.Number=channel.SID;
-						tvChan.VisibleInGuide=true;
-						iChannelNumber=tvChan.Number;
-						TVDatabase.AddChannel(tvChan);
-					}
-					TVDatabase.MapDVBTChannel(channel.ChannelName,iChannelNumber, currentFrequency, channel.ONID,channel.TSID,channel.SID);
 				}
 			}
 		}
