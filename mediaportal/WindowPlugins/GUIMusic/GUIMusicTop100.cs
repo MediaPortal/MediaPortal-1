@@ -75,8 +75,24 @@ namespace MediaPortal.GUI.Music
 		{
 			base.OnPageLoad ();
 			LoadSettings();
+			switch (currentView)
+			{
+				case View.List : 
+					facadeView.View=GUIFacadeControl.ViewMode.List;
+					break;
+				case View.Icons : 
+					facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
+					break;
+				case View.LargeIcons: 
+					facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
+					break;
+				case View.Albums: 
+					facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
+					break;
+			}
           
 			SelectCurrentItem();
+			UpdateButtonStates();
 			LoadDirectory(m_strDirectory);
 		}
 		protected override void OnPageDestroy(int newWindowId)
