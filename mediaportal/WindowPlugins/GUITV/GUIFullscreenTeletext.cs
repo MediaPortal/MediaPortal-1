@@ -20,18 +20,12 @@ namespace MediaPortal.GUI.TV
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUITVTeletext : GUIWindow
+	public class GUITVFullscreenTeletext : GUIWindow
 	{
 		enum Controls
 		{
 			LBL_MESSAGE=27,
 			IMG_TELETEXT_PAGE=500,
-			BTN_PAGE100=502,
-			BTN_PAGE200,
-			BTN_PAGE300,
-			BTN_HIDDEN,
-			BTN_SUBPAGE,
-			BTN_LANG
 		};
 
 		DVBTeletext	m_teleText;
@@ -43,9 +37,10 @@ namespace MediaPortal.GUI.TV
 
 
 
-		public  GUITVTeletext()
+
+		public  GUITVFullscreenTeletext()
 		{
-			GetID=(int)GUIWindow.Window.WINDOW_TELETEXT;
+			GetID=(int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
 		}
     
 		public override bool Init()
@@ -58,7 +53,7 @@ namespace MediaPortal.GUI.TV
 			catch
 			{
 			}
-			return Load (GUIGraphicsContext.Skin+@"\myteletext.xml");
+			return Load (GUIGraphicsContext.Skin+@"\myfsteletext.xml");
 		}
 		
     
@@ -96,7 +91,7 @@ namespace MediaPortal.GUI.TV
 					break;
 
 			}
-					base.OnAction(action);
+			base.OnAction(action);
 			
 		}
 		public override bool OnMessage(GUIMessage message)
@@ -126,6 +121,7 @@ namespace MediaPortal.GUI.TV
 				{
 					base.OnMessage(message);
 					ShowMessage(100,0);
+					
 					if(m_teleText==null)
 					{
 						Log.Write("dvb-teletext: no teletext object");
@@ -136,16 +132,21 @@ namespace MediaPortal.GUI.TV
 					GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
 					if(pictureBox!=null && m_teleText!=null)
 					{
+						pictureBox.Width=GUIGraphicsContext.Width;
+						pictureBox.Height=GUIGraphicsContext.Height;
+						pictureBox.XPosition=0;
+						pictureBox.YPosition=0;
 						m_teleText.SetPageSize(pictureBox.Width,pictureBox.Height);
+					
 					}
 					m_teleText.GetPage(100,0);
-					GUIToggleButtonControl hiddenButton=(GUIToggleButtonControl)GetControl((int)Controls.BTN_HIDDEN);
-					if(hiddenButton!=null && m_teleText!=null)
-					{
-						m_teleText.HiddenMode=true;
-						hiddenButton.Selected=true;
-						GetNewPage();
-					}
+//					GUIToggleButtonControl hiddenButton=(GUIToggleButtonControl)GetControl((int)Controls.BTN_HIDDEN);
+//					if(hiddenButton!=null && m_teleText!=null)
+//					{
+//						m_teleText.HiddenMode=true;
+//						hiddenButton.Selected=true;
+//						GetNewPage();
+//					}
 
 					return true;
 				}
@@ -153,62 +154,44 @@ namespace MediaPortal.GUI.TV
 
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					int iControl=message.SenderControlId;
-					if(iControl==(int)Controls.BTN_PAGE100)
-					{
-						m_actualPage=100;
-						m_actualSubPage=0;
-						GetNewPage();
-					}
-					if(iControl==(int)Controls.BTN_PAGE200)
-					{
-						m_actualPage=200;
-						m_actualSubPage=0;
-						GetNewPage();
-					}
-					if(iControl==(int)Controls.BTN_PAGE300)
-					{
-						m_actualPage=300;
-						m_actualSubPage=0;
-						GetNewPage();
-					}
-					if(iControl==(int)Controls.BTN_HIDDEN)
-					{
-						GUIToggleButtonControl button=(GUIToggleButtonControl)GetControl(iControl);
-						
-						if(m_teleText!=null && button!=null)
-						{
-							m_teleText.HiddenMode=button.Selected;
-							GetNewPage();
-						}
-					}
-
-					if(iControl==(int)Controls.BTN_LANG)
-					{
-						GUISelectButtonControl button=(GUISelectButtonControl)GetControl(iControl);
-						
-						if(m_teleText!=null && button!=null)
-						{
-							m_teleText.PageLanguage=button.SelectedItem;
-							GetNewPage();
-						}
-
-					}
-					if(iControl==(int)Controls.BTN_SUBPAGE)
-					{
-						GUISelectButtonControl button=(GUISelectButtonControl)GetControl(iControl);
-						
-						if(m_teleText!=null && button!=null)
-						{
-							m_actualSubPage=button.SelectedItem;
-							GetNewPage();
-						}
-
-					}
+//					if(iControl==(int)Controls.BTN_HIDDEN)
+//					{
+//						GUIToggleButtonControl button=(GUIToggleButtonControl)GetControl(iControl);
+//						
+//						if(m_teleText!=null && button!=null)
+//						{
+//							m_teleText.HiddenMode=button.Selected;
+//							GetNewPage();
+//						}
+//					}
+//
+//					if(iControl==(int)Controls.BTN_LANG)
+//					{
+//						GUISelectButtonControl button=(GUISelectButtonControl)GetControl(iControl);
+//						
+//						if(m_teleText!=null && button!=null)
+//						{
+//							m_teleText.PageLanguage=button.SelectedItem;
+//							GetNewPage();
+//						}
+//
+//					}
+//					if(iControl==(int)Controls.BTN_SUBPAGE)
+//					{
+//						GUISelectButtonControl button=(GUISelectButtonControl)GetControl(iControl);
+//						
+//						if(m_teleText!=null && button!=null)
+//						{
+//							m_actualSubPage=button.SelectedItem;
+//							GetNewPage();
+//						}
+//
+//					}
 
 					
-//					if (iControl==(int)Controls.SPINCONTROL_TIME_INTERVAL)
-//					{
-//					}
+					//					if (iControl==(int)Controls.SPINCONTROL_TIME_INTERVAL)
+					//					{
+					//					}
 
 					break;
 
@@ -298,6 +281,7 @@ namespace MediaPortal.GUI.TV
 				if(m_teleText==null)
 					return;
 				m_teleText.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(m_teleText_PageUpdatedEvent);
+				m_teleText.TransparentMode=true;
 			}
 		}
 		//

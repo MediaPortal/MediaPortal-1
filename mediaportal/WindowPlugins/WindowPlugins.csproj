@@ -1015,6 +1015,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "GUITV\GUIFullscreenTeletext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUITV\GUIFullScreenTV.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
