@@ -1,31 +1,27 @@
 Bugs i cannot fix (yet):
-- rescale causes borders to appear on topbar buttons (new topbar)
-    reason : this is produced by DirectX scaling. Gotta know more about DirectX to find out how 2 fix this
-- my pictures: Quality of pics is degraded since DX9 is used. 
-    reason : this is produced by DirectX scaling. Gotta know more about DirectX to find out how 2 fix this
-- window uses wrong resolution, 720x569 instead of 720x576
-    reason : cannot reproduce the bug
+    - rescale causes borders to appear on topbar buttons (new topbar)
+        reason : this is produced by DirectX scaling. Gotta know more about DirectX to find out how 2 fix this
+    - my pictures: Quality of pics is degraded since DX9 is used. 
+        reason : this is produced by DirectX scaling. Gotta know more about DirectX to find out how 2 fix this
+    - window uses wrong resolution, 720x569 instead of 720x576
+        reason : cannot reproduce the bug
 
-Bugs:
-- when out of focus music won't continue.
-- action 79 in keymap does not work
+Need to check/confirm if these bugs really exist:
+    - the Playlists no longer seem to work in the Music Player. I create them inside MP, and they work as I'm building them, but if I save them and try to load them later, they won't play at all. 
+    - When first going to the TV module--it takes a long time for the channel to display, and when it does, it has no sound until I change the channel. 
+    - When it does record, there is no sound in the recording. I've tried different compressors, etc, as well as setting my audio capture device to None. 
+    - there is indeed a bug that causes the folder.jpg not to be used on the music overlay. 
+    - when out of focus music won't continue.
+    - at the end of a song, mp rewrites id3 v1 in a mp3 file. this happens when wmp is set as audio player... 
 
-- installer: remove need for uninstall
-- installer: check dx9b
-- MPReader : XCDs dont work anymore
-
-   
--dvd        : osd pause doesnt work
--listcontrol: doesnt adjust x-pos of page counter
--capture    : CVBS/SVHS in  doesnt work
--capture    : tuner not found
-
-
-02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
-02-05-2004 my music	  : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
-01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
-29-04-2004 my tv      : desync audio while viewing tv 
-28-04-2004 my tv      : crossbar Failed to set crossbar routing 
-28-04-2004 my tv      : tuner not found 
-26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3 
-24-04-2004 general    : some WM9 visz. like g-force just show a black screen
+Confirmed Bugs:
+    - action 79 in keymap does not work
+    - MPReader : XCDs dont work anymore
+    - dvd        : osd pause doesnt work
+    - capture    : CVBS/SVHS in  doesnt work
+    - capture    : tuner not found
+    - reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
+    - When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
+    - Some TV-cards do not change channel till after exiting and entering MyTv again. 
+    - F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3 
+    - some WM9 visz. like g-force just show a black screen

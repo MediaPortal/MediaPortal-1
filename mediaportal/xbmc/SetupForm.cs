@@ -1083,14 +1083,14 @@ namespace MediaPortal
                                                                 "16:9",
                                                                 "4:3 Pan Scan",
                                                                 "4:3 Letterbox"});
-      this.comboBoxDVDDisplayMode.Location = new System.Drawing.Point(136, 72);
+      this.comboBoxDVDDisplayMode.Location = new System.Drawing.Point(136, 48);
       this.comboBoxDVDDisplayMode.Name = "comboBoxDVDDisplayMode";
       this.comboBoxDVDDisplayMode.Size = new System.Drawing.Size(121, 21);
       this.comboBoxDVDDisplayMode.TabIndex = 18;
       // 
       // label20
       // 
-      this.label20.Location = new System.Drawing.Point(24, 80);
+      this.label20.Location = new System.Drawing.Point(24, 56);
       this.label20.Name = "label20";
       this.label20.Size = new System.Drawing.Size(80, 16);
       this.label20.TabIndex = 17;
@@ -1098,7 +1098,7 @@ namespace MediaPortal
       // 
       // label19
       // 
-      this.label19.Location = new System.Drawing.Point(24, 40);
+      this.label19.Location = new System.Drawing.Point(24, 16);
       this.label19.Name = "label19";
       this.label19.Size = new System.Drawing.Size(96, 24);
       this.label19.TabIndex = 16;
@@ -1111,14 +1111,14 @@ namespace MediaPortal
                                                                      "Letterbox",
                                                                      "Stretched",
                                                                      "Follow stream"});
-      this.comboBoxDVDARCorrectionMode.Location = new System.Drawing.Point(136, 40);
+      this.comboBoxDVDARCorrectionMode.Location = new System.Drawing.Point(136, 16);
       this.comboBoxDVDARCorrectionMode.Name = "comboBoxDVDARCorrectionMode";
       this.comboBoxDVDARCorrectionMode.Size = new System.Drawing.Size(121, 21);
       this.comboBoxDVDARCorrectionMode.TabIndex = 9;
       // 
       // checkBoxARDVD
       // 
-      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 16);
+      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 80);
       this.checkBoxARDVD.Name = "checkBoxARDVD";
       this.checkBoxARDVD.Size = new System.Drawing.Size(224, 16);
       this.checkBoxARDVD.TabIndex = 8;

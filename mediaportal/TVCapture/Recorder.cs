@@ -468,7 +468,7 @@ namespace MediaPortal.TV.Recording
       get
       {
 #if DEBUG
-        return true;
+//        return true;
 #endif
         return m_bPreviewing;
       }

@@ -35,7 +35,7 @@ My Music:
   - CDDA playback with CDDB text
   - query info about artists from www.allmusic.com
   - refresh/lookup album art
-    
+  -In XBMC, when I scan to make database for MP3s, it creates a thumbnail from the folder.jpg in each album sub-folder. This thumbnail displays in albums view.     
 Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - 1st time it takes a long time b4 OSD appears
