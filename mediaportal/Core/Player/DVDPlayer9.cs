@@ -105,10 +105,10 @@ namespace MediaPortal.Player
 
         try
         {
-            hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
+            hr = SetAllocPresenter(dvdGraph, GUIGraphicsContext.form as Control);
             if (hr!=0) 
             {
-              Log.Write("VideoPlayer9:Failed to set VMR9 allocator/presentor");
+              Log.Write("Dvdplayer9:Failed to set VMR9 allocator/presentor");
               return false;
             }
 
@@ -206,17 +206,21 @@ namespace MediaPortal.Player
       //IVideoMixingRenderer9
 
       //IVMRFilterConfig9
-      IVMRFilterConfig9 FilterConfig9 = dvdBuilder as IVMRFilterConfig9;
+      Guid guidVMR9FilterConfig = typeof( IVMRFilterConfig9 ).GUID;;
+      object objFound;
+      IVMRFilterConfig9 FilterConfig9;
+      dvdBuilder.GetDvdInterface(ref guidVMR9FilterConfig,out objFound);
+      FilterConfig9 = objFound as IVMRFilterConfig9;
       if (FilterConfig9==null) 
       {
-        Log.Write("VideoPlayer9:Failed to get IVMRFilterConfig9 ");
+        Log.Write("Dvdplayer9:Failed to get IVMRFilterConfig9 ");
         return;
       }
+      Log.Write("DVDPlayer9:Got IVMRFilterConfig9, set rendering mode");
       int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
       if (hr!=0) 
       {
-        Log.Write("VideoPlayer9:Failed to set VMR9 to renderless mode");
-        return;
+        Log.Write("Dvdplayer9:Failed to set VMR9 to renderless mode");
       }
 
       // needed to put VMR9 in mixing mode instead of pass-through mode
@@ -224,7 +228,7 @@ namespace MediaPortal.Player
       hr = FilterConfig9.SetNumberOfStreams(1);
       if (hr!=0) 
       {
-        Log.Write("VideoPlayer9:Failed to set VMR9 streams to 1");
+        Log.Write("Dvdplayer9:Failed to set VMR9 streams to 1");
         return;
       }
     }
@@ -319,13 +323,17 @@ namespace MediaPortal.Player
       }
     }
 
-    int SetAllocPresenter(IBaseFilter filter, Control control)
+    int SetAllocPresenter(IDvdGraphBuilder dvdBuilder, Control control)
     {
-      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = filter as IVMRSurfaceAllocatorNotify9;
+      object objNew;
+      Guid guidIVMRSurfaceAllocatorNotify9=typeof(IVMRSurfaceAllocatorNotify9).GUID;
+
+      dvdBuilder.GetDvdInterface(ref guidIVMRSurfaceAllocatorNotify9, out objNew);
+      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = objNew as IVMRSurfaceAllocatorNotify9;
 
       if (lpIVMRSurfAllocNotify == null)
       {
-        Log.Write("VideoPlayer9:Failed to get IVMRSurfaceAllocatorNotify9");
+        Log.Write("Dvdplayer9:Failed to get IVMRSurfaceAllocatorNotify9");
         return -1;
       }
       m_scene= new PlaneScene(m_renderFrame);
@@ -341,7 +349,7 @@ namespace MediaPortal.Player
       //Marshal.AddRef(upDevice);
       if (hr != 0)
       {
-        Log.Write("VideoPlayer9:Failed to get SetD3DDevice()");
+        Log.Write("Dvdplayer9:Failed to get SetD3DDevice()");
         return hr;
       }
       // this must be global. If it gets garbage collected, pinning won't exist...
@@ -349,13 +357,13 @@ namespace MediaPortal.Player
       hr = allocator.AdviseNotify(lpIVMRSurfAllocNotify);
       if (hr != 0)
       {
-        Log.Write("VideoPlayer9:Failed to AdviseNotify()");
+        Log.Write("Dvdplayer9:Failed to AdviseNotify()");
         return hr;
       }
       hr = lpIVMRSurfAllocNotify.AdviseSurfaceAllocator(0xACDCACDC, allocator);
       if (hr !=0)
       {
-        Log.Write("VideoPlayer9:Failed to AdviseSurfaceAllocator()");
+        Log.Write("Dvdplayer9:Failed to AdviseSurfaceAllocator()");
       }
       return hr;
     }
