@@ -72,6 +72,7 @@ static FONT_DATA_T*			fontData    = new FONT_DATA_T[MAX_FONTS];
 static TEXTURE_DATA_T*		textureData = new TEXTURE_DATA_T[MAX_TEXTURES];
 static LPDIRECT3DDEVICE9	m_pDevice=NULL;	
 static int                  textureZ[MAX_TEXTURES];
+static D3DTEXTUREFILTERTYPE m_Filter;
 int                         textureCount;
 
 int							m_iTexturesInUse=0;
@@ -463,6 +464,16 @@ void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int first
 	if (firstChar<0 || firstChar>endChar) return;
 
 	m_pDevice = (LPDIRECT3DDEVICE9)device;
+
+	m_Filter = D3DTEXF_NONE;
+
+	D3DCAPS9 caps;
+    ZeroMemory(&caps, sizeof(caps));
+	m_pDevice->GetDeviceCaps(&caps);
+	if((caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
+	&& (caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR))
+		m_Filter = D3DTEXF_LINEAR;
+
 	fontData[fontNumber].vertices      = new CUSTOMVERTEX[MaxNumfontVertices];
 	for (int i=0; i < MaxNumfontVertices;++i)
 	{
@@ -714,7 +725,7 @@ void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
 		// IMPORTANT: rSrcVid has to be aligned on mod2 for yuy2->rgb conversion with StretchRect!!!
 		srcRect.left &= ~1; srcRect.right &= ~1;
 		srcRect.top &= ~1; srcRect.bottom &= ~1;
-		m_pDevice->StretchRect(pSurface, &srcRect, pBackBuffer, &dstRect, D3DTEXF_NONE);
+		m_pDevice->StretchRect(pSurface, &srcRect, pBackBuffer, &dstRect, m_Filter);
 
 		pBackBuffer->Release();
 	}

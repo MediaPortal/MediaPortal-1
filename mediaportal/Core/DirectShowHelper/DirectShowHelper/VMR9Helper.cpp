@@ -21,6 +21,8 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 
 	if(FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Renderless)))
 		return E_FAIL;
+	
+	
 
 	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
 	if(!pSAN)

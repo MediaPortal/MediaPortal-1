@@ -249,10 +249,14 @@ HRESULT CVMR9AllocatorPresenter::AllocSurfaces()
 //	if(s.iAPSurfaceUsage == VIDRNDT_AP_TEXTURE2D || s.iAPSurfaceUsage == VIDRNDT_AP_TEXTURE3D)
 	{
 		if(FAILED(hr = m_pD3DDev->CreateTexture(
-			m_NativeVideoSize.cx, m_NativeVideoSize.cy, 1, D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_X8R8G8B8, 
+			m_NativeVideoSize.cx, m_NativeVideoSize.cy, 1, D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_A8R8G8B8, 
 			D3DPOOL_DEFAULT, &m_pVideoTexture, NULL)))
-			return hr;
-
+		{
+			if(FAILED(hr = m_pD3DDev->CreateTexture(
+				m_NativeVideoSize.cx, m_NativeVideoSize.cy, 1, D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_X8R8G8B8, 
+				D3DPOOL_DEFAULT, &m_pVideoTexture, NULL)))
+				return hr;
+		}
 		if(FAILED(hr = m_pVideoTexture->GetSurfaceLevel(0, &m_pVideoSurface)))
 			return hr;
 

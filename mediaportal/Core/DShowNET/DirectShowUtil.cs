@@ -719,16 +719,24 @@ namespace DShowNET
 										{
 											videodesc.OutputFrameFreq.dwNumerator=2*videodesc.InputSampleFreq.dwNumerator;
 										}
-										Log.WriteFile(Log.LogType.Capture,"src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11}",
+										string format="";
+										char k=(char)((videodesc.dwFourCC)&0xff);
+										format +=k;
+										k=(char)((videodesc.dwFourCC>>8)&0xff);
+										format +=k;
+										k=(char)((videodesc.dwFourCC>>16)&0xff);
+										format +=k;
+										k=(char)((videodesc.dwFourCC>>24)&0xff);
+										format +=k;
+										Log.WriteFile(Log.LogType.Capture,"vmr9:src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11} format:{12}",
 												vidInfo2.rcsource.left,vidInfo2.rcsource.top,
 												vidInfo2.rcsource.right,vidInfo2.rcsource.bottom,
 												vidInfo2.rctarget.left,vidInfo2.rctarget.top,
 												vidInfo2.rctarget.right,vidInfo2.rctarget.bottom,
 												vidInfo2.AvgTimePerFrame,
 												vidInfo2.dwPictAspectRatioX,vidInfo2.dwPictAspectRatioY,
-												IsInterlaced(vidInfo2.dwInterlaceFlags) );
-
-
+												IsInterlaced(vidInfo2.dwInterlaceFlags),
+												format);
 									}
 								}
 								Marshal.FreeCoTaskMem(ptrPMT);
