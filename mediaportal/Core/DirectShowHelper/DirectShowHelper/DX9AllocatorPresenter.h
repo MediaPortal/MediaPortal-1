@@ -9,7 +9,7 @@ class CVMR9AllocatorPresenter
 {
 
 public:
-	CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMRSurfaceAllocatorNotify9* vmr9Filter,IVMR9Callback* callback,HMONITOR monitor);
+	CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice,IVMR9Callback* callback,HMONITOR monitor);
 
 	DECLARE_IUNKNOWN
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);

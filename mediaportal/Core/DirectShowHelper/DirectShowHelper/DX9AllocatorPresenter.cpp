@@ -3,12 +3,11 @@
 #include ".\Vector.h"
 
 
-CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMRSurfaceAllocatorNotify9* allocNotify,IVMR9Callback* callback, HMONITOR monitor)
+CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : CUnknown(NAME("IVMR9AllocatorPresenter"), NULL)
 {
 	m_hMonitor=monitor;
 	m_pD3DDev.Attach(direct3dDevice);
-	m_pIVMRSurfAllocNotify.Attach(allocNotify);
 	m_pCallback=callback;
 	for (int x=0; x < 20; ++x)
 		m_pSurfaces[x]=NULL;

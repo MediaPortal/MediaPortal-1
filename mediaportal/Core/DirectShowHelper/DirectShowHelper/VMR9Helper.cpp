@@ -25,10 +25,12 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
 	if(!pSAN)
 		return E_FAIL;
-	m_allocator = new CVMR9AllocatorPresenter(m_pDevice, pSAN,callback,(HMONITOR)monitor);
+	m_allocator = new CVMR9AllocatorPresenter(m_pDevice, callback,(HMONITOR)monitor);
 
-	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, static_cast<IVMRSurfaceAllocator9*>(m_allocator)))
-	|| FAILED(hr = m_allocator->AdviseNotify(pSAN)))
+	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, static_cast<IVMRSurfaceAllocator9*>(m_allocator))))
+		return E_FAIL;
+	
+	if (FAILED(hr = m_allocator->AdviseNotify(pSAN)))
 		return E_FAIL;
 
 	return S_OK;
@@ -39,6 +41,7 @@ STDMETHODIMP CVMR9Helper::Deinit(void)
 	if (m_allocator!=NULL)
 	{
 		m_allocator->Deinit();
+		m_allocator->Release();
 		delete m_allocator;
 		m_allocator=NULL;
 		m_pVMR9Filter->Release();
