@@ -32,7 +32,8 @@ namespace MediaPortal.TV.Recording
 		//
 		enum TextColors
 		{
-			Black  =0x01,
+			None,
+			Black,
 			Red   ,
 			Green ,
 			Yellow,
@@ -41,44 +42,43 @@ namespace MediaPortal.TV.Recording
 			Cyan   ,
 			White  ,
 			Trans1 ,
-			MenuA  ,
-			MenuB  ,
-			MenuC  ,
 			Trans2
 		}
-		/* spacing attributes */
-		const byte alpha_black        =0x00;
-		const byte alpha_red          =0x01;
-		const byte alpha_green        =0x02;
-		const byte alpha_yellow       =0x03;
-		const byte alpha_blue         =0x04;
-		const byte alpha_magenta      =0x05;
-		const byte alpha_cyan         =0x06;
-		const byte alpha_white        =0x07;
-		const byte flash              =0x08;
-		const byte steady             =0x09;
-		const byte end_box            =0x0A;
-		const byte start_box          =0x0B;
-		const byte normal_size        =0x0C;
-		const byte double_height      =0x0D;
-		const byte double_width       =0x0E;
-		const byte double_size        =0x0F;
-		const byte mosaic_black       =0x10;
-		const byte mosaic_red         =0x11;
-		const byte mosaic_green       =0x12;
-		const byte mosaic_yellow      =0x13;
-		const byte mosaic_blue        =0x14;
-		const byte mosaic_magenta     =0x15;
-		const byte mosaic_cyan        =0x16;
-		const byte mosaic_white       =0x17;
-		const byte conceal            =0x18;
-		const byte contiguous_mosaic  =0x19;
-		const byte separated_mosaic   =0x1A;
-		const byte esc                =0x1B;
-		const byte black_background   =0x1C;
-		const byte new_background     =0x1D;
-		const byte hold_mosaic        =0x1E;
-		const byte release_mosaic     =0x1F;
+		enum Attributes
+		{
+			AlphaBlack,
+			AlphaRed,
+			AlphaGreen,
+			AlphaYellow ,
+			AlphaBlue,
+			AlphaMagenta,
+			AlphaCyan ,
+			AlphaWhite,
+			Flash,
+			Steady,
+			EndBox,
+			StartBox,
+			NormalSize,
+			DoubleHeight,
+			DoubleWidth,
+			DoubleSize,
+			MosaicBlack,
+			MosaicRed,
+			MosaicGreen,
+			MosaicYellow,
+			MosaicBlue,
+			MosaicMagenta,
+			MosaicCyan,
+			MosaicWhite,
+			Conceal,
+			ContiguousMosaic,
+			SeparatedMosaic,
+			Esc,
+			BlackBackground,
+			NewBackground,
+			HoldMosaic,
+			ReleaseMosaic
+		}
 		//
 		int[,] m_charTableA =new int[,]{{ '#', 367 },{ '£', '$' }, 
 	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
@@ -468,53 +468,53 @@ namespace MediaPortal.TV.Recording
 					{
 						switch (pageChars[index])
 						{
-							case alpha_black:
+							case (int)Attributes.AlphaBlack:
 								foreground = (int)TextColors.Black;
 								charset = 0;
 								break;
 
-							case alpha_red:
+							case (int)Attributes.AlphaRed:
 								foreground = (int)TextColors.Red;
 								charset = 0;
 								break;
 
-							case alpha_green:
+							case (int)Attributes.AlphaGreen:
 								foreground = (int)TextColors.Green;
 								charset = 0;
 								break;
 
-							case alpha_yellow:
+							case (int)Attributes.AlphaYellow:
 								foreground = (int)TextColors.Yellow;
 								charset = 0;
 								break;
 
-							case alpha_blue:
+							case (int)Attributes.AlphaBlue:
 								foreground = (int)TextColors.Blue;
 								charset = 0;
 								break;
 
-							case alpha_magenta:
+							case (int)Attributes.AlphaMagenta:
 								foreground = (int)TextColors.Magenta;
 								charset = 0;
 								break;
 
-							case alpha_cyan:
+							case (int)Attributes.AlphaCyan:
 								foreground = (int)TextColors.Cyan;
 								charset = 0;
 								break;
 
-							case alpha_white:
+							case (int)Attributes.AlphaWhite:
 								foreground = (int)TextColors.White;
 								charset = 0;
 								break;
 
-							case flash:
+							case (int)Attributes.Flash:
 								break;
 
-							case steady:
+							case (int)Attributes.Steady:
 								break;
 
-							case end_box:
+							case (int)Attributes.EndBox:
 								if (boxed>0)
 								{
 									foreground = (int)TextColors.Trans1;
@@ -522,7 +522,7 @@ namespace MediaPortal.TV.Recording
 								}
 								break;
 
-							case start_box:
+							case (int)Attributes.StartBox:
 								if (boxed>0)
 								{
 									if (col > 0)
@@ -533,57 +533,57 @@ namespace MediaPortal.TV.Recording
 								}
 								break;
 
-							case normal_size:
+							case (int)Attributes.NormalSize:
 								doubleheight = 0;
 								pageAttribs[index] =( doubleheight<<10 | charset<<8 | background<<4 | foreground);
 								break;
 
-							case double_height:
+							case (int)Attributes.DoubleHeight:
 								if (row < 23)
 									doubleheight = 1;
 								break;
 
-							case mosaic_black:
+							case (int)Attributes.MosaicBlack:
 								foreground = (int)TextColors.Black;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_red:
+							case (int)Attributes.MosaicRed:
 								foreground = (int)TextColors.Red;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_green:
+							case (int)Attributes.MosaicGreen:
 								foreground = (int)TextColors.Green;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_yellow:
+							case (int)Attributes.MosaicYellow:
 								foreground = (int)TextColors.Yellow;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_blue:
+							case (int)Attributes.MosaicBlue:
 								foreground = (int)TextColors.Blue;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_magenta:
+							case (int)Attributes.MosaicMagenta:
 								foreground = (int)TextColors.Magenta;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_cyan:
+							case (int)Attributes.MosaicCyan:
 								foreground = (int)TextColors.Cyan;
 								charset = 1 + mosaictype;
 								break;
 
-							case mosaic_white:
+							case (int)Attributes.MosaicWhite:
 								foreground = (int)TextColors.White;
 								charset = 1 + mosaictype;
 								break;
 
-							case conceal:
+							case (int)Attributes.Conceal:
 								if (m_hiddenMode==true) 
 								{
 									foreground = background;
@@ -591,7 +591,7 @@ namespace MediaPortal.TV.Recording
 								}
 								break;
 
-							case contiguous_mosaic:
+							case (int)Attributes.ContiguousMosaic:
 								mosaictype = 0;
 								if (charset>0)
 								{
@@ -600,7 +600,7 @@ namespace MediaPortal.TV.Recording
 								}
 								break;
 
-							case separated_mosaic:
+							case (int)Attributes.SeparatedMosaic:
 								mosaictype = 1;
 								if (charset>0)
 								{
@@ -609,24 +609,24 @@ namespace MediaPortal.TV.Recording
 								}
 								break;
 
-							case esc:
+							case (int)Attributes.Esc:
 								break;
 
-							case black_background:
+							case (int)Attributes.BlackBackground:
 								background = (int)TextColors.Black;
 								pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
 								break;
 
-							case new_background:
+							case (int)Attributes.NewBackground:
 								background = foreground;
 								pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
 								break;
 
-							case hold_mosaic:
+							case (int)Attributes.HoldMosaic:
 								hold = 1;
 								break;
 
-							case release_mosaic:
+							case (int)Attributes.ReleaseMosaic:
 								hold = 2;
 								break;
 						}
@@ -964,11 +964,6 @@ namespace MediaPortal.TV.Recording
 					return System.Drawing.Color.Transparent;
 				case (int)TextColors.Trans2:
 					return System.Drawing.Color.Transparent;
-				case (int)TextColors.MenuA:
-					return System.Drawing.Color.DarkBlue;
-				case (int)TextColors.MenuB:
-					return System.Drawing.Color.DarkGray;
-				case (int)TextColors.MenuC:
 					return System.Drawing.Color.LightGreen;
 			}
 			return System.Drawing.Color.Black;
