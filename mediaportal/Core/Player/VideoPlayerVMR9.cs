@@ -31,7 +31,7 @@ namespace MediaPortal.Player
 		{
       //switch back to directx fullscreen mode
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindowManager.SendMessage(msg);
 
 			Type comtype = null;
 			object comobj = null;
@@ -160,7 +160,7 @@ namespace MediaPortal.Player
         IBaseFilter filter;
         DsUtils.FindFilterByClassID(graphBuilder,  classID, out filter);
         vobSub = null;
-        vobSub = (IDirectVobSub)filter;
+        vobSub = filter as IDirectVobSub;
         if (vobSub!=null)
         {
           using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -192,6 +192,8 @@ namespace MediaPortal.Player
             int res = vobSub.put_TextSettings(logFont, size, txtcolor,  fShadow, fOutLine, fAdvancedRenderer);
           }
         }
+        if( filter != null )
+          Marshal.ReleaseComObject( filter ); filter = null;
 
 
         if( FilterConfig9 != null )
@@ -308,6 +310,9 @@ namespace MediaPortal.Player
 			
           DsUtils.RemoveFilters(graphBuilder);
 
+          if( vobSub != null )
+            Marshal.ReleaseComObject( vobSub ); vobSub = null;
+
           if( rotCookie != 0 )
             DsROT.RemoveGraphFromRot( ref rotCookie );
           rotCookie=0;
@@ -326,7 +331,7 @@ namespace MediaPortal.Player
         }
         //switch back to directx windowed mode
         GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-        GUIGraphicsContext.SendMessage(msg);
+        GUIWindowManager.SendMessage(msg);
       }
 		}
 

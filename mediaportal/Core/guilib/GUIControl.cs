@@ -139,7 +139,8 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlDown, (int)action.wID, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            if (window!=null) window.OnMessage(msg);
           }
         }
           break;
@@ -151,7 +152,8 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlUp, (int)action.wID, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            if (window!=null) window.OnMessage(msg);
           }
         }
           break;
@@ -163,7 +165,8 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlLeft, (int)action.wID, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            if (window!=null) window.OnMessage(msg);
           }
         }
           break;
@@ -175,7 +178,8 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlRight, (int)action.wID, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            if (window!=null) window.OnMessage(msg);
           }
         }
           break;
@@ -207,7 +211,8 @@ namespace MediaPortal.GUI.Library
               if (dwControl!=GetID)
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, dwControl, message.Param1, 0, null);
-                GUIGraphicsContext.SendMessage(msg);
+                GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+                if (window!=null) window.OnMessage(msg);
               }
               return true;
             }
@@ -544,7 +549,8 @@ namespace MediaPortal.GUI.Library
     public static void HideControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
     }
 
     /// <summary>
@@ -555,14 +561,18 @@ namespace MediaPortal.GUI.Library
     public static void ShowControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     
     public static void RefreshControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     /// <summary>
@@ -573,7 +583,9 @@ namespace MediaPortal.GUI.Library
     public static void UnfocusControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
     /// <summary>
     /// Sends a GUI_MSG_SETFOCUS message to a control (Set the focus on a control).
@@ -583,7 +595,9 @@ namespace MediaPortal.GUI.Library
     public static void FocusControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     /// <summary>
@@ -596,7 +610,9 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strText;
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     /// <summary>
@@ -609,7 +625,9 @@ namespace MediaPortal.GUI.Library
     {
       // TODO The AddListItemControl should use another message type for adding Items. (REQUIRES a check of every GUI_MSG_LABEL_ADD!).
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, item);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     /// <summary>
@@ -622,7 +640,9 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strLabel;
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 		
     /// <summary>
@@ -633,7 +653,9 @@ namespace MediaPortal.GUI.Library
     public static void ClearControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 		
     /// <summary>
@@ -645,7 +667,9 @@ namespace MediaPortal.GUI.Library
     public static void SelectItemControl(int iWindowId, int iControlId, int iItem)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, iWindowId, 0, iControlId, iItem, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 		
     /// <summary>
@@ -657,7 +681,9 @@ namespace MediaPortal.GUI.Library
     public static void FocusItemControl(int iWindowId, int iControlId, int iItem)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, iWindowId, 0, iControlId, iItem, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     /// <summary>
@@ -670,8 +696,10 @@ namespace MediaPortal.GUI.Library
     public static GUIListItem GetListItem(int lWindowId, int iControlId, int iItem)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_ITEM, lWindowId, 0, iControlId, iItem, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
-      return (GUIListItem)msg.Object;
+      GUIWindow window=GUIWindowManager.GetWindow(lWindowId);
+      if (window!=null) window.OnMessage(msg);
+
+      return msg.Object as GUIListItem;
     }
 
     /// <summary>
@@ -683,8 +711,10 @@ namespace MediaPortal.GUI.Library
     public static GUIListItem GetSelectedListItem(int lWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, 0, lWindowId, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
-      return (GUIListItem)msg.Object;
+      GUIWindow window=GUIWindowManager.GetWindow(lWindowId);
+      if (window!=null) window.OnMessage(msg);
+
+      return msg.Object as GUIListItem;
     }
 
     /// <summary>
@@ -696,7 +726,9 @@ namespace MediaPortal.GUI.Library
     public static int GetItemCount(int lWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEMS, lWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(lWindowId);
+      if (window!=null) window.OnMessage(msg);
+
       return msg.Param1;
     }
 
@@ -708,7 +740,9 @@ namespace MediaPortal.GUI.Library
     public static void SelectControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SELECTED, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
     /// <summary>
@@ -719,7 +753,9 @@ namespace MediaPortal.GUI.Library
     public static void DeSelectControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DESELECTED, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 		
     /// <summary>
@@ -730,7 +766,9 @@ namespace MediaPortal.GUI.Library
     public static void DisableControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 		
     /// <summary>
@@ -741,7 +779,9 @@ namespace MediaPortal.GUI.Library
     public static void EnableControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+      if (window!=null) window.OnMessage(msg);
+
     }
 
 		/// <summary>

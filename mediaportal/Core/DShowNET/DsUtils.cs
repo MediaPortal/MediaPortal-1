@@ -65,7 +65,7 @@ namespace DShowNET
 				{
 					IEnumFilters ienumFilt;
 					int hr=m_graphBuilder.EnumFilters(out ienumFilt);
-					if (hr==0 && ienumFilt==null)
+					if (hr==0)
 					{
 						uint iFetched;
 						IBaseFilter filter;
@@ -99,7 +99,7 @@ namespace DShowNET
           int iFilter=0;
           IEnumFilters ienumFilt;
           int hr=m_graphBuilder.EnumFilters(out ienumFilt);
-          if (hr==0 && ienumFilt!=null)
+          if (hr==0)
           {
             uint iFetched;
             IBaseFilter filter;
@@ -327,12 +327,10 @@ namespace DShowNET
 
 			public static IntPtr GetUnmanagedSurface(Microsoft.DirectX.Direct3D.Surface surface) 
 			{
-        if (surface==null) return IntPtr.Zero;
 				return surface.GetObjectByValue(magicConstant);
 			}
 		public static IntPtr GetUnmanagedDevice(Microsoft.DirectX.Direct3D.Device device) 
     {
-      if (device==null) return IntPtr.Zero;
 			return device.GetObjectByValue(magicConstant);
 		}
 			public static string GetFriendlyName( UCOMIMoniker mon )
@@ -455,7 +453,7 @@ namespace DShowNET
 		static public int GetPin( IBaseFilter filter, PinDirection dirrequired, int num, out IPin ppPin )
     {
       ppPin = null;
-      if (filter==null) return 0;
+      if (filter==null) return -1;
 			int hr;
 			IEnumPins pinEnum;
 			hr = filter.EnumPins( out pinEnum );
@@ -494,7 +492,7 @@ namespace DShowNET
 			public static int GetUnconnectedPin( IBaseFilter filter, PinDirection dirrequired,  out IPin ppPin )
       {
 				ppPin = null;
-        if (filter==null) return 0;
+        if (filter==null) return -1;
         int hr;
 				IEnumPins pinEnum;
 				hr = filter.EnumPins( out pinEnum );

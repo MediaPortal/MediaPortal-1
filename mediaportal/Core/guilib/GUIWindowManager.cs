@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Library
       m_bSwitching=false;
       
       //register ourselves for the messages from the GUIGraphicsContext 
-			GUIGraphicsContext.Receivers += new SendMessageHandler(SendMessage);
+			GUIGraphicsContext.Receivers += new SendMessageHandler(SendThreadMessage);
 			GUIGraphicsContext.OnNewAction  += new OnActionHandler(OnActionReceived);
     }
 

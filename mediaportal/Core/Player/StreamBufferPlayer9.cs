@@ -30,7 +30,7 @@ namespace MediaPortal.Player
       
       //switch back to directx fullscreen mode
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-      GUIGraphicsContext.SendMessage(msg);
+      GUIWindowManager.SendMessage(msg);
 
       try 
       {
@@ -277,7 +277,7 @@ namespace MediaPortal.Player
         }
         //switch back to directx windowed mode
         GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-        GUIGraphicsContext.SendMessage(msg);
+        GUIWindowManager.SendMessage(msg);
       }
     }
 		public override bool DoesOwnRendering

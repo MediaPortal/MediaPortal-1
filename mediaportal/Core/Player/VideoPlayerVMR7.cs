@@ -697,7 +697,7 @@ namespace MediaPortal.Player
         DsUtils.FindFilterByClassID(graphBuilder,  classID, out filter);
 
         vobSub = null;
-        vobSub = (IDirectVobSub)filter;
+        vobSub = filter as IDirectVobSub;
         if (vobSub!=null)
         {
           using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -728,7 +728,11 @@ namespace MediaPortal.Player
             if (iShadow>0) fShadow=true;
             int res = vobSub.put_TextSettings(logFont, size, color,  fShadow, fOutLine, fAdvancedRenderer);
           }
+
         }
+        if( filter != null )
+          Marshal.ReleaseComObject( filter ); filter = null;
+
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
         mediaSeek	= (IMediaSeeking)  graphBuilder;
@@ -812,6 +816,9 @@ namespace MediaPortal.Player
         basicVideo	= null;
         videoStep	= null;
         basicAudio	= null;
+
+        if( vobSub != null )
+          Marshal.ReleaseComObject( vobSub ); vobSub = null;
 
         DsUtils.RemoveFilters(graphBuilder);
 
