@@ -70,13 +70,14 @@
 <!--    VA2000                                -->
 <!--    VideoMate DVB-T 300                   -->
 <!--    V-Stream Xpert DTV                    -->
+<!--    Vstream Xpert TV – PVR 883            -->
 <!--    Winfast PVR 2000                      -->
 <!--    general s/w card                      -->
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.30                                                               -->
-<!-- changed : 8-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.32                                                               -->
+<!-- changed : 9-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -424,6 +425,8 @@
       </connections>
     </tv>
   </capturecard>
+
+<!--   below is currently causing lock-ups - investigating with animation technologies	  -->
 
   <capturecard commercialname="Lifeview DVB-T Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03015168&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -1052,5 +1055,25 @@
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
       </connections> 
     </tv> 
+  </capturecard>
+
+  <capturecard commercialname="Vstream Xpert TV – PVR 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"   checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"  checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"    checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
   </capturecard>
 </capturecards>
