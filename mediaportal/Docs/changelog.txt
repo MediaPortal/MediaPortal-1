@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  11-06-2004  general     : fixed : MP keeps running if you stop it when a dialog is onscreen
   11-06-2004  my TV       : added : recorded tv:sort on watched/nonwatched
   11-06-2004  my TV       : added : recorded tv:cleanup ->cleans up any (already watched) tv recordings 
   

@@ -1292,6 +1292,7 @@ namespace MediaPortal
 
     private void D3DApp_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
+      GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
       g_Player.Stop();
     }
 

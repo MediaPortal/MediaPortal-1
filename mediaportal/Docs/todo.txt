@@ -17,7 +17,7 @@ Skin, gfx & media:
   - need graphics & .xml for 'mouse control OSD' which slides in when cursor hits bottom of window/screen
   - need new a new .xml (ala DialogAlbumInfo.xml or DialogVideoInfo.xml) to show information about 
     artists (for audio) or actors (for video)
-     
+--------------------------------------------------------------------------------------------------------------     
 My Radio:
   - AM/FM
 
@@ -39,7 +39,6 @@ My TV:
      
   Recorded tv:
      - change layout of screen so it becomes more readable
-     - remove all watched recordings button
      
   TVGuide:
      - in the tv guide, when you select a program, it would be nice to have an option 
@@ -56,6 +55,7 @@ My TV:
      - add screenshot option    
 	 - add current recording properties which can b used in the skin
 	 - add Record Monday-Friday     
+	 - FF/RW
 	 
 My Music: (int_20h)
   - faster start of 1st song played
@@ -77,6 +77,7 @@ My Video:
   - query info about actors from www.imdb.com
   - favorite system to add a movie, actor, to your favorites
   - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
+  - FF/RW
   
 My Pictures:
   - exif/picture tag information (excentric is looking at this)

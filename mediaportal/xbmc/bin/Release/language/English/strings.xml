@@ -1922,6 +1922,10 @@
 	<string>
 		<id>670</id>
 		<value>Delete watched recordings?</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Sort by Watched</value>
 	</string>	
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>

@@ -1,5 +1,8 @@
 Bugs left:
-  10-06-04 general      :  when you have MP on videoinfo or audio info screen and exit it, it keeps running
+  10-06-04 general      : switch skin->font colors are wrong
+  10-06-04 my music     : some mp3's got an tracknumber like 10/12 which confuses MP
+  10-06-04 my TV        : scheduled->New : dialog is messed up
+  
   31-05-04 my tv        : PVR350 does not give any image and sound on latest version. (weird huh Frodo? I can't get it to work either while it did at first) we all have the same error log. 
   31-05-04 my music     : remove album info does not delete the thumbnail. 
   31-05-04 my music     : album art cannot be re-searched like imdb does with the on screen keyboard. 
