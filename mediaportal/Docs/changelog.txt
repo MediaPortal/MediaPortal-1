@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  30-06-2004  general     : added : configuration for external player as plugin.  External players 
+                                    are now picked up and can be enabled through tools->plugins.
+
   29-06-2004  my news     : fixed : cursor disappeared when you only got 1 newsfeed
   29-06-2004  My TV       : added : reference recording (when you press record now)
   29-06-2004  general     : added : skin updates voor MetalMedia & CrystalCenter (thx MrMario64/Aurora13)
