@@ -27,7 +27,6 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
-copy ..\..\..\IControl.dll .
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\debug\Configuration.exe .
 copy ..\..\..\Configuration\bin\debug\Configuration.pdb .

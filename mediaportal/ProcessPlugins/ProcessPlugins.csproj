@@ -156,7 +156,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
             </References>
@@ -187,11 +187,6 @@
                     RelPath = "MPExTuneCmd\MPExTunerCmdForm.resx"
                     DependentUpon = "MPExTunerCmdForm.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "NetworkControl\NetworkController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "NVPPowerScheduler\AssemblyInfo.cs"
