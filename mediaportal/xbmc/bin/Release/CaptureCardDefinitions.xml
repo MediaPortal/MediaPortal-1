@@ -44,6 +44,7 @@
 <!--    FireDTV (BDA DVB-S)                   -->
 <!--    FlyDVB-T DUO                          -->
 <!--    FlyDVB-T DUO Analog			          -->
+<!--    Hauppauge Nova-C                      -->
 <!--    Hauppauge Nova-T                      -->
 <!--    Hauppauge Nova-S                      -->
 <!--    Hauppauge Nova-T 90002                -->
@@ -76,7 +77,7 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.32                                                               -->
+<!-- version : 1.0.0.33                                                               -->
 <!-- changed : 9-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -450,7 +451,7 @@
     </tv>
   </capturecard>
    
-  <capturecard commercialname="Hauppage Nova-T" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101113c2&amp;rev_01">
+  <capturecard commercialname="Hauppage Nova-T (Philips1)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101113c2&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -466,7 +467,39 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppage Nova-S" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100f13c2&amp;rev_01">
+  <capturecard commercialname="Hauppage Nova-T (Grundig)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101113c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppage Nova-T (Philips2)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101113c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppage Nova-S (Philips)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100f13c2&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -482,7 +515,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppage Nova-S (b)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100f13c2&amp;rev_01">
+  <capturecard commercialname="Hauppage Nova-S (ALPS1)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100313c2&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -496,8 +529,41 @@
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard>      
-   <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_90020070&amp;rev_05">
+  </capturecard>
+   
+  <capturecard commercialname="Hauppage Nova-S (ALPS2)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100C13c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppage Nova-S (Samsung)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101613c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_90020070&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -511,6 +577,54 @@
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend BDA/DVB-C Tuner (Alps1)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100413c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"    checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="false"></filter> 
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter> 
+      </filters> 
+      <connections> 
+      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend BDA/DVB-C Tuner (Alps2)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100D13c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"    checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="false"></filter> 
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter> 
+      </filters> 
+      <connections> 
+      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend BDA/DVB-C Tuner (Philips)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101013c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"    checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="false"></filter> 
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter> 
+      </filters> 
+      <connections> 
+      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
   </capturecard>
    
   <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_05">
