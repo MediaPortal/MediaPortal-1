@@ -338,12 +338,14 @@ namespace WindowPlugins.GUIPrograms
 			this.FileList.ContextMenu = this.menuFileList;
 			this.FileList.FullRowSelect = true;
 			this.FileList.HideSelection = false;
+			this.FileList.LabelEdit = true;
 			this.FileList.Location = new System.Drawing.Point(8, 40);
 			this.FileList.Name = "FileList";
 			this.FileList.Size = new System.Drawing.Size(344, 375);
 			this.FileList.TabIndex = 13;
 			this.FileList.View = System.Windows.Forms.View.Details;
 			this.FileList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FileList_MouseUp);
+			this.FileList.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.FileList_AfterLabelEdit);
 			this.FileList.SelectedIndexChanged += new System.EventHandler(this.FileList_SelectedIndexChanged);
 			// 
 			// FileTitle
@@ -834,6 +836,13 @@ namespace WindowPlugins.GUIPrograms
 		private void SyncFileLabel()
 		{
 			lblFiles.Text = String.Format("Files: ({0} of {1} selected)", FileList.CheckedItems.Count, FileList.Items.Count);
+		}
+
+		private void FileList_AfterLabelEdit(object sender, System.Windows.Forms.LabelEditEventArgs e)
+		{
+			FileItem curItem = GetSelectedFileItem();
+			if (curItem == null) return;
+			curItem.Title = e.Label;
 		}
 
 

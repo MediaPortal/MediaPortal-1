@@ -109,6 +109,18 @@ namespace ProgramsDatabase
 			get{ return m_db; }
 		}
 
+		public int CurrentSortIndex
+		{
+			get{ return GetCurrentSortIndex(); }
+			set{ SetCurrentSortIndex(value);}
+		}
+
+		public bool CurrentSortIsAscending
+		{
+			get { return GetCurrentSortIsAscending(); }
+			set { SetCurrentSortIsAscending(value); }
+		}
+
 
 		public FileItem PrevFile(FileItem curFile)
 		{
@@ -325,9 +337,21 @@ namespace ProgramsDatabase
 		}
 
 		
-		public virtual void OnSort(GUIFacadeControl view)
+		public virtual void OnSort(GUIFacadeControl view, bool bDoSwitch)
 		{
-			dbPc.updateState();
+			Log.Write(" dw onsort: ENTER");
+			if (!bFilesLoaded)
+			{
+				Log.Write(" dw onsort: loadfiles");
+				LoadFiles();
+			} 
+
+			if (bDoSwitch)
+			{
+				Log.Write(" dw onsort: updatestate");
+				dbPc.updateState();
+			}
+			Log.Write(" dw onsort: sort");
 			view.Sort(dbPc);
 		}
 
@@ -337,14 +361,29 @@ namespace ProgramsDatabase
 			view.Sort(dbPc);
 		}
 
+		public virtual int GetCurrentSortIndex()
+		{
+			return dbPc.currentSortMethodIndex;
+		}
+
+		public virtual void SetCurrentSortIndex(int newValue)
+		{
+			dbPc.currentSortMethodIndex = newValue;
+		}
+
 		public virtual string CurrentSortTitle()
 		{
 			return dbPc.currentSortMethodAsText;
 		}
 
-		public virtual bool CurrentSortIsAscending()
+		public virtual bool GetCurrentSortIsAscending()
 		{
 			return dbPc.bAsc;
+		}
+
+		public virtual void SetCurrentSortIsAscending(bool newValue)
+		{
+			dbPc.bAsc = newValue;
 		}
 
 		public virtual bool RefreshButtonVisible()
@@ -674,7 +713,7 @@ namespace ProgramsDatabase
 		}
 
 
-		protected virtual void LoadFiles()
+		public virtual void LoadFiles()
 		{
 			if (m_db != null)
 			{

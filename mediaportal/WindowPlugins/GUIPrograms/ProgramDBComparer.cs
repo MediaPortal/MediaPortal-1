@@ -22,7 +22,7 @@ namespace WindowPlugins.GUIPrograms
 			SORT_RATING=3
 		}
 
-		SortMethod  currentSortMethod=SortMethod.SORT_NAME;
+		SortMethod  mCurrentSortMethod=SortMethod.SORT_NAME;
 		public bool bAsc = true;
 		
 
@@ -35,10 +35,16 @@ namespace WindowPlugins.GUIPrograms
 			get {return GetCurrentSortMethodAsText();}
 		}
 
+		public int currentSortMethodIndex
+		{
+			get {return (int)mCurrentSortMethod;}
+			set {SetCurrentSortMethodAsIndex(value);}
+		}
+
 		private string GetCurrentSortMethodAsText()
 		{
 			string strLine = "";
-			SortMethod method = currentSortMethod;
+			SortMethod method = mCurrentSortMethod;
 			switch (method)
 			{
 				case SortMethod.SORT_NAME:
@@ -57,9 +63,23 @@ namespace WindowPlugins.GUIPrograms
 			return strLine;
 		}
 
+		private void SetCurrentSortMethodAsIndex(int value)
+		{
+			try
+			{
+				mCurrentSortMethod = (SortMethod)value;
+			}
+			catch
+			{
+				mCurrentSortMethod = 0;
+			}
+		}
+
+
+
 		public void updateState()
 		{
-			switch( currentSortMethod )
+			switch( mCurrentSortMethod )
 			{
 					//			SORT_NAME=0,
 					//			SORT_LAUNCHES=1,
@@ -67,19 +87,19 @@ namespace WindowPlugins.GUIPrograms
 					//			SORT_RATING=3
 				
 				case SortMethod.SORT_NAME:
-					currentSortMethod = SortMethod.SORT_LAUNCHES;
+					mCurrentSortMethod = SortMethod.SORT_LAUNCHES;
 					bAsc = false;
 					break;
 				case SortMethod.SORT_LAUNCHES:
-					currentSortMethod = SortMethod.SORT_RECENT;
+					mCurrentSortMethod = SortMethod.SORT_RECENT;
 					bAsc = false;
 					break;
 				case SortMethod.SORT_RECENT:
-					currentSortMethod = SortMethod.SORT_RATING;
+					mCurrentSortMethod = SortMethod.SORT_RATING;
 					bAsc = false;
 					break;
 				case SortMethod.SORT_RATING:
-					currentSortMethod = SortMethod.SORT_NAME;
+					mCurrentSortMethod = SortMethod.SORT_NAME;
 					bAsc = true;
 					break;
 			}
@@ -102,7 +122,7 @@ namespace WindowPlugins.GUIPrograms
 			else if (!item1.IsFolder && item2.IsFolder) return 1; 
 
 
-			if (currentSortMethod != SortMethod.SORT_NAME)
+			if (mCurrentSortMethod != SortMethod.SORT_NAME)
 			{ 
 				curFile1 = (FileItem)item1.MusicTag; 
 				curFile2 = (FileItem)item2.MusicTag;
@@ -112,7 +132,7 @@ namespace WindowPlugins.GUIPrograms
 
 			// ok let's start sorting :-)
 			int nTemp;
-			switch (currentSortMethod)
+			switch (mCurrentSortMethod)
 			{
 				case SortMethod.SORT_NAME:
 					item1.Label2 = "";
@@ -234,7 +254,7 @@ namespace WindowPlugins.GUIPrograms
 //			if (item1.FileInfo!=null) strSize1=Utils.GetSize(item1.FileInfo.Length);
 //			if (item2.FileInfo!=null) strSize2=Utils.GetSize(item2.FileInfo.Length);
 //
-//			SortMethod method=currentSortMethod;
+//			SortMethod method=mCurrentSortMethod;
 //
 //			switch (method)
 //			{

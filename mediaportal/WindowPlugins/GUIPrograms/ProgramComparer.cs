@@ -21,7 +21,7 @@ namespace WindowPlugins.GUIPrograms
 			SORT_SIZE=2
 		}
 
-		private SortMethod  currentSortMethod=SortMethod.SORT_NAME;
+		private SortMethod  mCurrentSortMethod=SortMethod.SORT_NAME;
 		public bool bAsc = true;
 		
 
@@ -34,10 +34,16 @@ namespace WindowPlugins.GUIPrograms
 			get {return GetCurrentSortMethodAsText();}
 		}
 
+		public int currentSortMethodIndex
+		{
+			get {return (int)mCurrentSortMethod;}
+			set {SetCurrentSortMethodAsIndex(value);}
+		}
+
 		private string GetCurrentSortMethodAsText()
 		{
 			string strLine = "";
-			SortMethod method = currentSortMethod;
+			SortMethod method = mCurrentSortMethod;
 			switch (method)
 			{
 				case ProgramComparer.SortMethod.SORT_NAME:
@@ -53,20 +59,32 @@ namespace WindowPlugins.GUIPrograms
 			return strLine;
 		}
 
+		private void SetCurrentSortMethodAsIndex(int value)
+		{
+			try
+			{
+				mCurrentSortMethod = (SortMethod)value;
+			}
+			catch
+			{
+				mCurrentSortMethod = 0;
+			}
+		}
+
 		public void updateState()
 		{
-			switch( currentSortMethod )
+			switch( mCurrentSortMethod )
 			{
 				case SortMethod.SORT_NAME:
-					currentSortMethod = SortMethod.SORT_DATE;
+					mCurrentSortMethod = SortMethod.SORT_DATE;
 					bAsc = true;
 					break;
 				case SortMethod.SORT_DATE:
-					currentSortMethod = SortMethod.SORT_SIZE;
+					mCurrentSortMethod = SortMethod.SORT_SIZE;
 					bAsc = true;
 					break;
 				case SortMethod.SORT_SIZE:
-					currentSortMethod = SortMethod.SORT_NAME;
+					mCurrentSortMethod = SortMethod.SORT_NAME;
 					bAsc = true;
 					break;
 			}
@@ -91,7 +109,7 @@ namespace WindowPlugins.GUIPrograms
 			if (item1.FileInfo!=null) strSize1=Utils.GetSize(item1.FileInfo.Length);
 			if (item2.FileInfo!=null) strSize2=Utils.GetSize(item2.FileInfo.Length);
 
-			SortMethod method=currentSortMethod;
+			SortMethod method=mCurrentSortMethod;
 
 			switch (method)
 			{

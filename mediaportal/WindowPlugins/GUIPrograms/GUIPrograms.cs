@@ -101,6 +101,7 @@ namespace WindowPlugins.GUIPrograms
 		string lastFilepath = "";
 		MapSettings       _MapSettings = new MapSettings();
 		int m_iItemSelected=-1;   
+		string m_iItemSelectedLabel= "";
 		
 		// filmstrip slideshow timer stuff
 		int m_iSpeed=3; // speed in seconds between two slides
@@ -156,6 +157,8 @@ namespace WindowPlugins.GUIPrograms
 						break;
 				}
 				xmlwriter.SetValue("myprograms","lastAppID", _MapSettings.LastAppID.ToString());
+				xmlwriter.SetValue("myprograms","sortby", _MapSettings.SortBy);
+				xmlwriter.SetValue("myprograms","sortasc", _MapSettings.SortAscending);
 				//Log.Write("dw myPrograms: saving xmlsettings lastappid {0}", _MapSettings.LastAppID);
 			}
 		}
@@ -174,6 +177,8 @@ namespace WindowPlugins.GUIPrograms
 					else if (strTmp=="filmstrip") _MapSettings.ViewAs = (int)View.VIEW_AS_FILMSTRIP;
 				}
 				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
+				_MapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
+				_MapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
 			}
 		}
 
@@ -215,7 +220,7 @@ namespace WindowPlugins.GUIPrograms
 			if (pControl == null) return;
 			if (pControl.FilmstripView == null) return;
 			if (pControl.FilmstripView.InfoImageFileName == "") return;
-				if (_MapSettings == null) return;
+			if (_MapSettings == null) return;
 			if (_MapSettings.ViewAs == (int)View.VIEW_AS_FILMSTRIP)
 			{
 				// does the thumb needs replacing??
@@ -263,6 +268,7 @@ namespace WindowPlugins.GUIPrograms
 				{
 					m_iItemSelected=GetSelectedItemNo();
 					GUIListItem item = GetSelectedItem();
+					m_iItemSelectedLabel = item.Label;
 					if (!item.Label.Equals( ProgramUtils.cBackLabel ))
 					{
 						// show file info but only if the selected item is not the back button
@@ -278,11 +284,12 @@ namespace WindowPlugins.GUIPrograms
 
 		public override bool OnMessage(GUIMessage message)
 		{
+			GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
 			switch ( message.Message )
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					// display application list
-//					Log.Write("GUIPrograms: gui_msg_windows_init");
+					//					Log.Write("GUIPrograms: gui_msg_windows_init");
 					base.OnMessage(message);
 					LoadFolderSettings("");
 					LoadLastAppIDFromSettings(); // hacky load back the last app id, otherwise this can get lost from dx resets....
@@ -290,8 +297,10 @@ namespace WindowPlugins.GUIPrograms
 					if (lastApp != null)
 					{
 						lastFilepath = lastApp.DefaultFilepath();
-//						Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
-//						Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
+						lastApp.CurrentSortIndex = _MapSettings.SortBy;
+						lastApp.CurrentSortIsAscending = _MapSettings.SortAscending;
+						Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
+						Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
 					}
 					else
 					{
@@ -303,7 +312,7 @@ namespace WindowPlugins.GUIPrograms
 					return true;
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-//					Log.Write("GUIPrograms: gui_msg_windows_deinit");
+					//					Log.Write("GUIPrograms: gui_msg_windows_deinit");
 					SaveSettings();
 					// make sure the selected index wasn't reseted already
 					// and save the index only if it's non-zero
@@ -311,7 +320,10 @@ namespace WindowPlugins.GUIPrograms
 					int iItemIndex = GetSelectedItemNo();
 					if (iItemIndex > 0)
 					{
+						GUIListItem item = GetSelectedItem();
 						m_iItemSelected=GetSelectedItemNo();
+						m_iItemSelectedLabel = item.Label;
+
 					}
 					break;
 			
@@ -352,7 +364,8 @@ namespace WindowPlugins.GUIPrograms
 							if( !item.IsFolder )
 							{
 								m_iItemSelected=GetSelectedItemNo();
-//								Log.Write("GUIPrograms: ACTION_SELECT_ITEM writes itemsel: {0}", m_iItemSelected);
+								m_iItemSelectedLabel = item.Label;
+								//								Log.Write("GUIPrograms: ACTION_SELECT_ITEM writes itemsel: {0}", m_iItemSelected);
 								// non-folder item clicked => always a fileitem!
 								FileItemClicked(item);
 							}
@@ -360,6 +373,7 @@ namespace WindowPlugins.GUIPrograms
 							{
 								// folder-item clicked.... 
 								m_iItemSelected=-1;
+								m_iItemSelectedLabel = "";
 								if( item.Label.Equals( ProgramUtils.cBackLabel ) )
 								{
 									BackItemClicked(item);
@@ -379,8 +393,8 @@ namespace WindowPlugins.GUIPrograms
 						// get next sort method...
 						if (lastApp != null)
 						{
-							GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
-							lastApp.OnSort(view);
+							lastApp.OnSort(view, true);
+							_MapSettings.SortBy = lastApp.CurrentSortIndex;
 							UpdateButtons();
 						}
 						GUIControl.FocusControl(GetID,iControl);
@@ -390,8 +404,8 @@ namespace WindowPlugins.GUIPrograms
 						// toggle asc / desc for current sort method...
 						if (lastApp != null)
 						{
-							GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
 							lastApp.OnSortToggle(view);
+							_MapSettings.SortAscending = lastApp.CurrentSortIsAscending;
 						}
 						GUIControl.FocusControl(GetID,iControl);
 					}
@@ -427,7 +441,7 @@ namespace WindowPlugins.GUIPrograms
 			{
 				_MapSettings.LastAppID = lastApp.AppID;
 				lastFilepath = lastApp.DefaultFilepath(); 
-//				Log.Write("dw myPrograms: FileItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+				//				Log.Write("dw myPrograms: FileItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
 
 				lastApp.LaunchFile(item);
 			}
@@ -450,7 +464,7 @@ namespace WindowPlugins.GUIPrograms
 						lastApp = candidate;
 						_MapSettings.LastAppID = lastApp.AppID;
 						lastFilepath = lastApp.DefaultFilepath();
-//						Log.Write("dw myPrograms: FolderItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+						//						Log.Write("dw myPrograms: FolderItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
 
 					}
 				}
@@ -500,14 +514,14 @@ namespace WindowPlugins.GUIPrograms
 					{
 						_MapSettings.LastAppID = lastApp.AppID;
 						lastFilepath = lastApp.DefaultFilepath(); 
-//						Log.Write("dw myPrograms: BackItemClicked 1: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+						//						Log.Write("dw myPrograms: BackItemClicked 1: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
 					}
 					else
 					{
 						// back to home screen.....
 						_MapSettings.LastAppID = -1;
 						lastFilepath = "";
-//						Log.Write("dw myPrograms: BackItemClicked 2: lastAppID changes to {0}", _MapSettings.LastAppID);
+						//						Log.Write("dw myPrograms: BackItemClicked 2: lastAppID changes to {0}", _MapSettings.LastAppID);
 					}
 				}
 				UpdateListControl();
@@ -572,7 +586,7 @@ namespace WindowPlugins.GUIPrograms
 			if (lastApp != null)
 			{
 				GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSORTBY, lastApp.CurrentSortTitle());
-				if (lastApp.CurrentSortIsAscending())
+				if (lastApp.CurrentSortIsAscending)
 					GUIControl.DeSelectControl(GetID,(int)Controls.CONTROL_BTNSORTASC);
 				else
 					GUIControl.SelectControl(GetID,(int)Controls.CONTROL_BTNSORTASC);
@@ -660,13 +674,29 @@ namespace WindowPlugins.GUIPrograms
 				TotalItems = TotalItems + DisplayFiles();
 			}
 
+			GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+			lastApp.OnSort(pControl, false);
+			
+
 			string strObjects=String.Format("{0} {1}", TotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
 			if (m_iItemSelected>=0)
 			{
+//				int nIndex = IndexOfLabelText(this.m_iItemSelectedLabel);
+//				if ((nIndex >= 0) && (nIndex <= pControl.ListView.Count - 1))
+//				{
+//				}
 				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
 			}
+		}
+
+		int IndexOfLabelText(string strValue)
+		{
+			// TODO: if launch changes position of item..... index is wrong!
+			int res = -1;
+
+			return res;
 		}
 
 

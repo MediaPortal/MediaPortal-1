@@ -178,7 +178,7 @@ namespace ProgramsDatabase
 		}
 
 
-		override protected void LoadFiles()
+		override public void LoadFiles()
 		{
 			// load Files and fill Files-arraylist here!
 			if (mFiles == null) 

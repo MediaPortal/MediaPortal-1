@@ -24,7 +24,7 @@ namespace ProgramsDatabase
 		{
 		}
 
-		override protected void LoadFiles()
+		override public void LoadFiles()
 		{
 			// nothing to load, because directory is directly displayed
 			// no FileItems!
@@ -224,10 +224,14 @@ namespace ProgramsDatabase
 			// no info screen for directory items
 		}
 
-		override public void OnSort(GUIFacadeControl view)
+		override public void OnSort(GUIFacadeControl view, bool bDoSwitch)
 		{
 			// todo: polymorph it! pc => dbPc
-			pc.updateState();
+			if (bDoSwitch)
+			{
+				pc.updateState();
+			}
+			Log.Write("dw sorting with: {0}", pc.currentSortMethodAsText );
 			view.Sort(pc);
 		}
 
@@ -242,9 +246,24 @@ namespace ProgramsDatabase
 			return pc.currentSortMethodAsText;
 		}
 
-		override public bool CurrentSortIsAscending()
+		override public bool GetCurrentSortIsAscending()
 		{
 			return pc.bAsc;
+		}
+
+		override public void SetCurrentSortIndex(int newValue)
+		{
+			pc.currentSortMethodIndex = newValue;
+		}
+
+		override public void SetCurrentSortIsAscending(bool newValue)
+		{
+			pc.bAsc = newValue;
+		}
+
+		override public int GetCurrentSortIndex()
+		{
+			return pc.currentSortMethodIndex;
 		}
 
 
