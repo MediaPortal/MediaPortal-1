@@ -83,6 +83,7 @@
 <!--    Pinnacle 300i Analog		      -->
 <!--    Snazzi III USB2                       -->
 <!--    Sony MPEG RealTime Encoder            -->
+<!--    TV Station DVB-S          	      -->
 <!--    Twinhan VisionDTV Ter                 -->
 <!--    Twinhan VisionDTV Sat                 -->
 <!--    Typhoon TV PVR (USB)                  -->
@@ -95,7 +96,7 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.53                                                               -->
+<!-- version : 1.0.0.54                                                               -->
 <!-- changed : 30-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -604,7 +605,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"        checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="true"></filter>
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
@@ -620,7 +621,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"        checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="true"></filter>
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
@@ -636,7 +637,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"        checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="true"></filter>
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
@@ -1830,8 +1831,8 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"></filter>
-        <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  	checkdevice="true"></filter>
+        <filter cat="crossbar"	 	name="Plextor ConvertX M402U CrossBar"		checkdevice="true"></filter>
+        <filter cat="capture"  		name="Plextor ConvertX M402U A/V Capture"  	checkdevice="true"></filter>
         <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="true"></filter>
         <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="true"></filter>
       </filters>
@@ -2157,9 +2158,25 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"      	checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TV Station DVB-S" capturename="TV Station DVB-S X2 MCE (SU1200_2)" devid="ven_1131&amp;dev_7146&amp;subsys_00101894&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="true"></filter>
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"      	checkdevice="true"></filter>
+        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"        	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
