@@ -12,6 +12,7 @@ namespace MyMail
 	/// </summary>
 	public class MailOverlay : GUIWindow
 	{
+    bool Enabled=false;
 		enum Controls
 		{
 			CONTROL_INFO=2
@@ -24,6 +25,7 @@ namespace MyMail
 		}
 		public override bool DoesPostRender()
 		{
+      if (!Enabled) return false;
 			if (GUIGraphicsContext.IsFullScreenVideo) return false;
 			if (!GUIGraphicsContext.Overlay) return false;
 			return true;
@@ -40,6 +42,10 @@ namespace MyMail
 				fader.IsVisible=false;// hide notification on init
 			}
 
+      if (PluginManager.IsPluginNameEnabled("My Mail"))
+      {
+        Enabled=true;
+      }
 			return bResult;
 		}
 

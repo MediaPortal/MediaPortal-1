@@ -526,17 +526,6 @@ namespace MediaPortal.GUI.MSN
           // remember you can only do this once per session!
           // after synchronizing the initial status will be set.
           messenger.SynchronizeList();
-					
-
-          /* uncomment this when you want to automatically add
-           * people who have added you to their contactlist on your own
-           * contactlist. (remember the pop-up dialog in MSN Messenger client when someone adds you, this is the 'automatic' method)					 
-          foreach(Contact contact in
-            messenger.GetListEnumerator(MSNList.ReverseList))
-          {						
-            messenger.AddContact(contact.Mail);
-          }
-          */
         }
       }
       catch(MSNException )

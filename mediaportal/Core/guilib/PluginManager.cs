@@ -237,12 +237,12 @@ namespace MediaPortal.GUI.Library
         
       } 
     }
-    static public bool IsPluginNameEnabled(string strType)
+    static public bool IsPluginNameEnabled(string strPluginName)
     {
 
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        bool bEnabled=xmlreader.GetValueAsBool("plugins",strType,true);
+        bool bEnabled=xmlreader.GetValueAsBool("plugins",strPluginName,true);
         return bEnabled;
         
       } 
