@@ -109,6 +109,7 @@ namespace MediaPortal.Configuration.Sections
       // upButton
       // 
       this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.Enabled = false;
       this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.upButton.Location = new System.Drawing.Point(340, 392);
       this.upButton.Name = "upButton";
@@ -120,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
       // downButton
       // 
       this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.Enabled = false;
       this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.downButton.Location = new System.Drawing.Point(392, 392);
       this.downButton.Name = "downButton";
@@ -131,6 +133,7 @@ namespace MediaPortal.Configuration.Sections
       // deleteButton
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.Enabled = false;
       this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.deleteButton.Location = new System.Drawing.Point(176, 392);
       this.deleteButton.Name = "deleteButton";
@@ -141,6 +144,7 @@ namespace MediaPortal.Configuration.Sections
       // editButton
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.Enabled = false;
       this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.editButton.Location = new System.Drawing.Point(96, 392);
       this.editButton.Name = "editButton";
@@ -176,6 +180,7 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView.TabIndex = 0;
       this.channelsListView.View = System.Windows.Forms.View.Details;
       this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
+      this.channelsListView.SelectedIndexChanged += new System.EventHandler(this.channelsListView_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -544,6 +549,11 @@ namespace MediaPortal.Configuration.Sections
     private void downButton_Click(object sender, System.EventArgs e)
     {
       MoveSelectionDown();
+    }
+
+    private void channelsListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      deleteButton.Enabled = editButton.Enabled = upButton.Enabled = downButton.Enabled = (channelsListView.SelectedItems.Count > 0);
     }
 	}
 }

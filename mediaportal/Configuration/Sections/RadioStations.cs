@@ -82,6 +82,8 @@ namespace MediaPortal.Configuration.Sections
 		{
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.upButton = new System.Windows.Forms.Button();
+      this.downButton = new System.Windows.Forms.Button();
       this.autoTuneButton = new System.Windows.Forms.Button();
       this.deleteButton = new System.Windows.Forms.Button();
       this.editButton = new System.Windows.Forms.Button();
@@ -92,8 +94,6 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-      this.upButton = new System.Windows.Forms.Button();
-      this.downButton = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -122,6 +122,30 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
+      // upButton
+      // 
+      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.Enabled = false;
+      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.upButton.Location = new System.Drawing.Point(340, 376);
+      this.upButton.Name = "upButton";
+      this.upButton.Size = new System.Drawing.Size(48, 23);
+      this.upButton.TabIndex = 7;
+      this.upButton.Text = "Up";
+      this.upButton.Click += new System.EventHandler(this.upButton_Click);
+      // 
+      // downButton
+      // 
+      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.Enabled = false;
+      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.downButton.Location = new System.Drawing.Point(392, 376);
+      this.downButton.Name = "downButton";
+      this.downButton.Size = new System.Drawing.Size(48, 23);
+      this.downButton.TabIndex = 6;
+      this.downButton.Text = "Down";
+      this.downButton.Click += new System.EventHandler(this.downButton_Click);
+      // 
       // autoTuneButton
       // 
       this.autoTuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -135,6 +159,7 @@ namespace MediaPortal.Configuration.Sections
       // deleteButton
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.Enabled = false;
       this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.deleteButton.Location = new System.Drawing.Point(176, 376);
       this.deleteButton.Name = "deleteButton";
@@ -145,6 +170,7 @@ namespace MediaPortal.Configuration.Sections
       // editButton
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.Enabled = false;
       this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.editButton.Location = new System.Drawing.Point(96, 376);
       this.editButton.Name = "editButton";
@@ -182,6 +208,7 @@ namespace MediaPortal.Configuration.Sections
       this.stationsListView.TabIndex = 0;
       this.stationsListView.View = System.Windows.Forms.View.Details;
       this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
+      this.stationsListView.SelectedIndexChanged += new System.EventHandler(this.stationsListView_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -207,28 +234,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.columnHeader6.Text = "Server";
       this.columnHeader6.Width = 86;
-      // 
-      // upButton
-      // 
-      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.upButton.Location = new System.Drawing.Point(340, 376);
-      this.upButton.Name = "upButton";
-      this.upButton.Size = new System.Drawing.Size(48, 23);
-      this.upButton.TabIndex = 7;
-      this.upButton.Text = "Up";
-      this.upButton.Click += new System.EventHandler(this.upButton_Click);
-      // 
-      // downButton
-      // 
-      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.downButton.Location = new System.Drawing.Point(392, 376);
-      this.downButton.Name = "downButton";
-      this.downButton.Size = new System.Drawing.Size(48, 23);
-      this.downButton.TabIndex = 6;
-      this.downButton.Text = "Down";
-      this.downButton.Click += new System.EventHandler(this.downButton_Click);
       // 
       // RadioStations
       // 
@@ -601,6 +606,11 @@ namespace MediaPortal.Configuration.Sections
     private void downButton_Click(object sender, System.EventArgs e)
     {
       MoveSelectionDown();
+    }
+
+    private void stationsListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      deleteButton.Enabled = editButton.Enabled = upButton.Enabled = downButton.Enabled = (stationsListView.SelectedItems.Count > 0);
     }
   }
 }
