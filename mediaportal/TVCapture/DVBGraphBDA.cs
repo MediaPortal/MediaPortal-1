@@ -821,10 +821,8 @@ namespace MediaPortal.TV.Recording
 				case NetworkType.DVBC: 
 				{
 					//get the DVB-C tuning details from the tv database
-					//for DVB-C this is the frequency
 					int frequency=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1,modulation=0;
-					//todo: implement TVDatabase.GetDVBSTuneRequest()
-					//TVDatabase.GetDVBCTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out diseqc,out ONID, out TSID, out SID,out modulation);
+					TVDatabase.GetDVBCTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID);
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ", frequency);
 
 					//get the IDVBTuningSpace2 from the tuner
@@ -883,8 +881,7 @@ namespace MediaPortal.TV.Recording
 					//get the DVB-S tuning details from the tv database
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
 					int frequency=0,polarisation=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1;
-					//todo: implement TVDatabase.GetDVBSTuneRequest()
-					//TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out polarisation, out symbolrate, out innerFec, out diseqc,out ONID, out TSID, out SID);
+					TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out polarisation, out symbolrate, out innerFec, out ONID, out TSID, out SID);
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} ", frequency);
 
 					//get the IDVBTuningSpace2 from the tuner
