@@ -283,7 +283,17 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
 	if (needRedraw)
 	{
+		D3DVIEWPORT9 orgViewPort;
+		m_pDevice->GetViewport(&orgViewPort);
+
+		D3DVIEWPORT9 viewportWholeScreen;
+		viewportWholeScreen.X=0;
+		viewportWholeScreen.Y=0;
+		viewportWholeScreen.Width =m_iScreenWidth;
+		viewportWholeScreen.Height=m_iScreenHeight;
+		m_pDevice->SetViewport(&viewportWholeScreen);
 		FontEnginePresentTextures();
+		m_pDevice->SetViewport(&orgViewPort);
 	}
 	texture=&textureData[textureNo];
 	if (texture->iv==0)
