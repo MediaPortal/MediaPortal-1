@@ -668,7 +668,6 @@ namespace MediaPortal.TV.Recording
       if (prog!=null) currentRunningProgram=prog.Clone();
       util=null;
       
-      CaptureFormat=".sbe";
       // compose the filename in format [channel][date][time].mpg
       try
       {
