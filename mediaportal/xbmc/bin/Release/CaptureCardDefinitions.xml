@@ -1323,25 +1323,105 @@
       <filters>
         <filter cat="tvtuner"  		name="ATI TV Tuner"			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="ATI TV Audio"			checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="crossbaraudio" 	name="ATI TV Audio Crossbar"    	checkdevice="true"></filter>      
+        <filter cat="crossbarvideo" 	name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
         <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
         <filter cat="encodervideo"  	name="ATI MPEG Video Encoder"  		checkdevice="true"></filter>
         <filter cat="encoderaudio"  	name="ATI MPEG Audio Encoder"  		checkdevice="true"></filter>
         <filter cat="mux"      		name="ATI MPEG Multiplexer"		checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="capture"	 	sinkpin="1"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encodervideo"  	sinkpin="0"></connection>
-        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoderaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="4"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideor" sinkpin="2"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"  sinkpin="1"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  	   sinkpin="1"></connection>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"   sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"   sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
 
+<!--    Not confirmed working yet   -->  
 
+  <capturecard commercialname="Nvidia Personal Cinema FX 5700" capturename="nVidia WDM Video Capture (universal)" devid="nvcap">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="nVidia WDM TVTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="nVidia WDM TVAudio Crossbar"		checkdevice="true"></filter>
+        <filter cat="crossbaraudio" 	name="nVidia WDM A/V Crossbar" 		    	checkdevice="true"></filter>      
+        <filter cat="crossbarvideo" 	name="nVidia WDM Video Crossbar (universal)"	checkdevice="true"></filter>
+        <filter cat="capture"  		name="nVidia WDM Video Capture (universal)"  	checkdevice="true"></filter>
+        <filter cat="encodervideo"  	name="NVIDIA Video Encoder"	  		checkdevice="true"></filter>
+        <filter cat="encoderaudio"  	name="NVIDIA Audio Encoder"	  		checkdevice="true"></filter>
+        <filter cat="mux"      		name="NVIDIA MPEG Multiplexer"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="4"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideor" sinkpin="2"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"  sinkpin="1"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="encoderaudio"   sinkpin="1"></connection>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"   sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 
+<!--    Not confirmed working yet   -->  
+
+  <capturecard commercialname="AverMedia UltraTV Media Center PCI 550" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_80111461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="AverMedia, MPEG TVAudio (88x)"		checkdevice="true"></filter>
+        <filter cat="crossbar"	 	name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  		name="AVerMedia, MPEG Video Capture (88x)"  	checkdevice="true"></filter>
+        <filter cat="mux"      		name="AVerMedia 61051 MPEG Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	 sourcepin="1" sinkfilter="capture"        sinkpin="1"></connection>
+        <connection sourcefilter="capture"       sourcepin="2" sinkfilter="mux"		   sinkpin="0"></connection>
+        <connection sourcefilter="capture" 	 sourcepin="3" sinkfilter="mux"  	   sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!--    Not confirmed working yet   -->
+
+  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="ven_093b&amp;pid_a104&amp">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="2" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="Plextor ConvertX TV402U TV Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="Plextor ConvertX TV402U TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"></filter>
+        <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
