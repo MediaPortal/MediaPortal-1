@@ -98,7 +98,7 @@ namespace MediaPortal.GUI.Settings
 					if (iControl==(int)Controls.CONTROL_FPS)
 					{
 						string strLabel=message.Label;
-						GUIGraphicsContext.MaxFPS=Int32.Parse(strLabel);
+						GUIGraphicsContext.MaxFPS=Int32.Parse(strLabel)+10;
 					}
 
         }
