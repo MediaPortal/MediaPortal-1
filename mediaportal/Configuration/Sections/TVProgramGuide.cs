@@ -215,7 +215,10 @@ namespace MediaPortal.Configuration.Sections
 
 		private void compensateTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      //
+      // Allow only numbers, '-' and backspace.
+      //
+			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8 && e.KeyChar != '-')
 			{
 				e.Handled = true;
 			}
