@@ -311,35 +311,35 @@ public class MediaPortalApp : D3DApp
           break;
           
           case Action.ActionType.ACTION_PREV_ITEM:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               PlayListPlayer.PlayPrevious();
             }
             break;
 
           case Action.ActionType.ACTION_NEXT_ITEM:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               PlayListPlayer.PlayNext(true);
             }
           break;
 
           case Action.ActionType.ACTION_STOP:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Stop();
             }
             break;
           
           case Action.ActionType.ACTION_PAUSE:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Pause();
             }
           break;
 
           case Action.ActionType.ACTION_PLAY:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               if (g_Player.Speed!=1)
               {
@@ -350,13 +350,13 @@ public class MediaPortalApp : D3DApp
 
           
           case Action.ActionType.ACTION_MUSIC_FORWARD:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Speed++;
             }
             break;
           case Action.ActionType.ACTION_MUSIC_REWIND:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
+            if (Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Speed--;
             }
