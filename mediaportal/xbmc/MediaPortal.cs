@@ -839,12 +839,13 @@ public class MediaPortalApp : D3DApp, IRender
           case Action.ActionType.ACTION_PREV_CHANNEL:
             window=(GUIWindow )GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
-            break;
+            return;
         
           case Action.ActionType.ACTION_NEXT_CHANNEL:
             window=(GUIWindow )GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
-            break;
+            return;
+
           case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN:
             ToggleFullWindowed(); 
             return;
