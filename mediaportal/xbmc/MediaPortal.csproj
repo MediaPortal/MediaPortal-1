@@ -203,16 +203,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DragAndDropListView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DragAndDropListView.resx"
-                    DependentUpon = "DragAndDropListView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "DXUtil.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
