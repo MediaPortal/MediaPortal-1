@@ -111,7 +111,6 @@ namespace MediaPortal.TV.Recording
       {
         Log.Write("Recorder: no capture cards found. Use file->setup to setup tvcapture!");
         m_eState=State.Idle;
-        return;
       }
       for (int i=0; i < m_tvcards.Count;i++)
       {
@@ -151,7 +150,7 @@ namespace MediaPortal.TV.Recording
         try
         {
 
-          HandlePreview();
+          if (m_tvcards.Count!=0) HandlePreview();
 
           HandleRecordings(DateTime.Now,channels,recordings,iPreRecordInterval,iPostRecordInterval);
 
@@ -241,6 +240,8 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+
+      if (m_tvcards.Count==0)  return;
 
       foreach (TVChannel chan in channels)
       {
