@@ -63,10 +63,6 @@ namespace MediaPortal.GUI.GUIExplorer
 	string[] pictures = new string[20]; // pictures shares folder
 	string[] pname = new string[20];		// pictures shares names
 
-	static ArrayList m_extensions	= new ArrayList();
-	private bool useVideo=false;
-	private bool useMusic=false;
-	private bool usePics =false;
 	private string tempFolder="";				// trashcan folder
 	private bool showOnlyShares=false;	// shows only shares in destination folder
 	private bool enableDelete=false;		// shows delete button
@@ -76,7 +72,7 @@ namespace MediaPortal.GUI.GUIExplorer
 	private ArrayList files = new ArrayList(); 
 	private ArrayList selected = new ArrayList();
 	private string tmpStr;
-	private ArrayList currentExt=null;
+	private ArrayList currentExt= new ArrayList();
 	private string currentFolder=null;
 	private string[] drives=new string[27];
 	private string[] drivesCd=new string[27];
@@ -132,14 +128,12 @@ namespace MediaPortal.GUI.GUIExplorer
 					GetDrives();														// loads all drives
 					LoadSettings();													// loads all settings from XML
 					ResetValues();																
-					currentExt=m_extensions;
-					if (useMusic==true) currentExt.AddRange(Util.Utils.AudioExtensions);
-					if (usePics==true) currentExt.AddRange(Util.Utils.PictureExtensions);
-					if (useVideo==true) currentExt.AddRange(Util.Utils.VideoExtensions);
+					currentExt.Add("*");
 					return true;
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					//get sender control
 					base.OnMessage(message);
+					Log.Write("Count:{0} I:{1}",currentExt.Count,currentExt[0]);
 					int iControl=message.SenderControlId;
 					if (iControl==(int)Controls.CONTROL_SELECT_SOURCE)		// select source
 					{
@@ -730,25 +724,9 @@ namespace MediaPortal.GUI.GUIExplorer
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 			{
 				tempFolder=xmlreader.GetValueAsString("myexplorer","temp_folder","");
-				string strTmp=xmlreader.GetValueAsString("myexplorer","extensions","");
-				try 
-				{
-					Tokens tok = new Tokens(strTmp, new char[] {','} );
-					foreach (string strExt in tok)
-					{
-						m_extensions.Add(strExt.ToLower());
-					}
-				}
-				catch (Exception) 
-				{
-					m_extensions.Clear();
-				}
 				enableDelete=xmlreader.GetValueAsBool("myexplorer","enable_delete",false);
 				deleteImmed=xmlreader.GetValueAsBool("myexplorer","delete_immediately",false);
 				deleteTemp=xmlreader.GetValueAsBool("myexplorer","delete_temp",false);
-				useVideo=xmlreader.GetValueAsBool("myexplorer","use_video",false);
-				useMusic=xmlreader.GetValueAsBool("myexplorer","use_music",false);
-				usePics =xmlreader.GetValueAsBool("myexplorer","use_pic",false);
 				for (int i=0; i<20; i++) 
 				{
 					sound[i]=xmlreader.GetValueAsString("music","sharepath"+i.ToString()," ").Trim();		
