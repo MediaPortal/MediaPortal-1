@@ -18,12 +18,12 @@
 #include "stdafx.h"
 #include <stdio.h>
 
-#include "b2c2_defs.h"
+#include "Include\b2c2_defs.h"
 
 #include <tchar.h>
 #include <Dshow.h>
 #include <initguid.h>
-#include "B2C2_Guids.h"
+#include "Include\B2C2_Guids.h"
 
 #if defined _B2C2_USE_DEVICE_NOTIFICATION
 
@@ -46,11 +46,11 @@
 
 #endif //defined _B2C2_USE_DEVICE_NOTIFICATION
 
-#include "b2c2mpeg2adapter.h"
+#include "Include\b2c2mpeg2adapter.h"
 
-#include "ib2c2mpeg2tunerctrl.h"
-#include "ib2c2mpeg2datactrl.h"
-#include "ib2c2mpeg2avctrl.h"
+#include "Include\ib2c2mpeg2tunerctrl.h"
+#include "Include\ib2c2mpeg2datactrl.h"
+#include "Include\ib2c2mpeg2avctrl.h"
 
 B2C2MPEG2Adapter::B2C2MPEG2Adapter (const TCHAR *pszAdapterName )
 {

@@ -9,12 +9,12 @@
 #include "Include\b2c2mpeg2adapter.h"
 #include "mpeg2data.h"
 #include "dvblib.h"
-#include "b2c2_defs.h"
+#include "Include\b2c2_defs.h"
 #include "Include\B2C2_Guids.h"
-#include "b2c2mpeg2adapter.h"
-#include "ib2c2mpeg2tunerctrl.h"
-#include "ib2c2mpeg2datactrl.h"
-#include "ib2c2mpeg2avctrl.h"
+#include "Include\b2c2mpeg2adapter.h"
+#include "Include\ib2c2mpeg2tunerctrl.h"
+#include "Include\ib2c2mpeg2datactrl.h"
+#include "Include\ib2c2mpeg2avctrl.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -247,7 +247,31 @@ long SetPidToPin(IB2C2MPEG2DataCtrl3 *pB2C2FilterDataCtrl,long pin,long pid)
 	}
 	return 0;
 }
+HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
 
+	int hr=pin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+    if(FAILED(hr))
+		return 1;
+	// 
+	hr=pMap->EnumPIDMap(&pPidEnum);
+	if(FAILED(hr))
+		return 5;
+	// enum and unmap the pids
+	PID_MAP			pm;
+	ULONG			count;
+	if(pPidEnum->Next(1,&pm,&count)== S_OK)
+	{
+		*pid=pm.ulPID;
+		*mediasampletype=pm.ulPID;
+	}
+	
+	pPidEnum->Release();
+	pMap->Release();
+	return 0;
+}
 
 HRESULT SetupDemuxer(IPin *pVideo,IPin *pAudio,int audioPID,int videoPID)
 {

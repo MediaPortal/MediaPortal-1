@@ -11,3 +11,4 @@ SetPidToPin				@4
 GetSectionPtr			@5
 ReleaseSectionsBuffer	@6
 SetupDemuxer			@7
+GetPidMap				@8
