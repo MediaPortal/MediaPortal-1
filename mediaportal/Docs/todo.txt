@@ -36,6 +36,8 @@ My TV:
      - in the tv guide, when you select a program, it would be nice to have an option 
      - which directly switches to the channel. Of course only if the program currently runs. 
      - add to program favorites (will b highlighted next time)
+     - allow user to specify which channels should b displayed and which not (hide channels)
+     - View by : movies, news, Whats playing now... 
      
   Scheduled:
      - remove all schedules button
