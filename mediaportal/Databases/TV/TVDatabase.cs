@@ -247,7 +247,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 		//b2c2
-		static public string GetSatChannelName(int program_number,int x)
+		static public string GetSatChannelName(int program_number,int tsID)
 		{
 			lock (typeof(TVDatabase))
 			{
