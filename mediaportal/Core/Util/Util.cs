@@ -59,6 +59,9 @@ namespace MediaPortal.Util
 		static extern bool CloseHandle(IntPtr hObject);
 
 
+		public delegate void UtilEventHandler();
+		static public event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
+		static public event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
 		static ArrayList m_AudioExtensions		=new ArrayList();
 		static ArrayList m_VideoExtensions		=new ArrayList();
 		static ArrayList m_PictureExtensions		=new ArrayList();
@@ -803,8 +806,16 @@ namespace MediaPortal.Util
 				dvdplayer.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
 				dvdplayer.StartInfo.CreateNoWindow=true;
 			}
+			if (OnStartExternal != null)
+			{
+				OnStartExternal();		// Event: Starting external process
+			}
 			dvdplayer.Start();
 			if (bWaitForExit) dvdplayer.WaitForExit();
+			if (OnStopExternal != null)
+			{
+				OnStopExternal();		// Event: External process stopped
+			}
 			return dvdplayer;
 		}
 		static public bool PlayDVD()
@@ -834,8 +845,16 @@ namespace MediaPortal.Util
 						}
 						Log.Write("start process {0} {1}",strPath,dvdplayer.StartInfo.Arguments);
 
+						if (OnStartExternal != null)
+						{
+							OnStartExternal();		// Event: Starting external process
+						}
 						dvdplayer.Start();
 						dvdplayer.WaitForExit();
+						if (OnStopExternal != null)
+						{
+							OnStopExternal();		// Event: External process stopped
+						}
 						Log.Write("{0} done",strPath);
 					}
 					else
@@ -896,8 +915,16 @@ namespace MediaPortal.Util
 								movieplayer.StartInfo.Arguments="\""+strFile+"\"";
 							}
 							Log.Write("start process {0} {1}",strPath,movieplayer.StartInfo.Arguments);
+							if (OnStartExternal != null)
+							{
+								OnStartExternal();		// Event: Starting external process
+							}
 							movieplayer.Start();
 							movieplayer.WaitForExit();
+							if (OnStopExternal != null)
+							{
+								OnStopExternal();		// Event: External process stopped
+							}
 							Log.Write("{0} done",strPath);
 							return true;
 						}
