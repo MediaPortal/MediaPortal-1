@@ -1,3 +1,4 @@
+03-08-2004  setup       : fixed : cant sort radio channels in setup like you can in tv
 03-08-2004  imdb        : fixed : multipage descriptions do not work, example "Liever verliefd"
 03-08-2004  keyboard    : fixed : When the On Screen Keyboard is on screen (e.g. entering a movie name for IMDB) and 
 								  you type with the normal letter keys on your keyboard. MP will still process the keys.
