@@ -125,7 +125,7 @@
 	<control>
 		<description>System</description>
 		<type>label</type>
-		<id>1</id>
+		<id>31</id>
 		<posX>242</posX>
 		<posY>100</posY>
 		<label>13000</label>
@@ -133,7 +133,7 @@
 	<control>
 		<description>Manufacturer</description>
 		<type>label</type>
-		<id>1</id>
+		<id>32</id>
 		<posX>242</posX>
 		<posY>120</posY>
 		<label>13001</label>
@@ -141,7 +141,7 @@
 	<control>
 		<description>Rating</description>
 		<type>label</type>
-		<id>1</id>
+		<id>33</id>
 		<posX>242</posX>
 		<posY>140</posY>
 		<label>173</label>
@@ -149,7 +149,7 @@
 	<control>
 		<description>Genre</description>
 		<type>label</type>
-		<id>1</id>
+		<id>34</id>
 		<posX>242</posX>
 		<posY>160</posY>
 		<label>174</label>
