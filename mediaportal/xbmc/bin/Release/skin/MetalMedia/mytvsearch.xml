@@ -150,8 +150,8 @@
 			<spinPosY>503</spinPosY>
 			<itemWidth>65</itemWidth>
 			<itemHeight>65</itemHeight>
-			<textureFocus>recording_background_focus.png</textureFocus>
-			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+   		<textureFocus>list_big_focus.png</textureFocus>
+	   	<textureNoFocus>list_big_nofocus.png</textureNoFocus>
 			<spaceBetweenItems>14</spaceBetweenItems>
 			<textureHeight>90</textureHeight>
 			<keepaspectratio>no</keepaspectratio>
