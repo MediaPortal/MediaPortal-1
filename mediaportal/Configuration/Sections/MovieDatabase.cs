@@ -579,7 +579,7 @@ namespace MediaPortal.Configuration.Sections
 						if (stopRebuild) return;
 						int pos =actors[i].IndexOf(" as ");
 						if (pos <0) continue;
-						string actor=actors[i].Substring(0,pos-1);
+						string actor=actors[i].Substring(0,pos);
 						string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
 						if (!System.IO.File.Exists(strThumb))
 						{
@@ -613,6 +613,8 @@ namespace MediaPortal.Configuration.Sections
     }
 		void DownloadThumnail(string folder,string url, string name)
 		{
+			if (url==null) return;
+			if (url.Length==0) return;
 			Application.DoEvents();
 			string strThumb = Utils.GetCoverArtName(folder,name);
 			string LargeThumb = Utils.GetLargeCoverArtName(folder,name);
