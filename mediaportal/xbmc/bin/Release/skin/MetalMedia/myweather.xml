@@ -474,6 +474,9 @@
 		<visible>no</visible>
 		<colorkey>FFFFFFFF</colorkey>
 		<colordiffuse>FFFFFFFF</colordiffuse>
+		<filtered>yes</filtered>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
 	</control>	
 </controls>
 </window>

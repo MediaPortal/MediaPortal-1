@@ -12,6 +12,9 @@
 		<texture>background.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
+		<filtered>yes</filtered>
+		<centered>no</centered>
+		<keepaspectratio>no</keepaspectratio>
 	</control>
 	<control>
 		<description>default label</description>
