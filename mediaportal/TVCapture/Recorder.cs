@@ -28,6 +28,9 @@ namespace MediaPortal.TV.Recording
     static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
     static ArrayList     m_tvcards=new ArrayList();
     static string        m_strPreviewChannel;
+    static bool          m_bPreviewing=false;
+    static bool          m_bPreviewChanged=false;
+
     public Recorder()
     {
     }
@@ -86,6 +89,7 @@ namespace MediaPortal.TV.Recording
       if (m_tvcards.Count==0) 
       {
         Log.Write("Recorder: no capture cards found. Use file->setup to setup tvcapture!");
+        m_eState=State.Idle;
         return;
       }
       for (int i=0; i < m_tvcards.Count;i++)
@@ -131,15 +135,20 @@ namespace MediaPortal.TV.Recording
           m_bRecordingsChanged=false;
         }
 
+        HandlePreview();
+        
+        int iRec=0;
 
         // for each tv-channel
         foreach (TVChannel chan in channels)
         {
           if (m_eState !=State.Running) break;
+          if (m_bPreviewChanged) break;
+          if (m_bRecordingsChanged) break;
           // get all programs running for this TV channel
           // between  (now-iPreRecordInterval) - (now+iPostRecordInterval+3 hours)
 
-          DateTime dtStart=DateTime.Now.AddMinutes(-iPreRecordInterval);
+          DateTime dtStart=DateTime.Now.AddHours(-4);
           DateTime dtEnd=DateTime.Now.AddMinutes(iPostRecordInterval+3*60);
           long iStartTime=Utils.datetolong(dtStart);
           long iEndTime=Utils.datetolong(dtEnd);
@@ -148,23 +157,14 @@ namespace MediaPortal.TV.Recording
           TVDatabase.GetPrograms(chan.Name,iStartTime,iEndTime,ref runningPrograms);
 
           // for each TV recording scheduled
-          int iRec=0;
+          iRec=0;
           foreach (TVRecording rec in recordings)
           {
             if (m_eState !=State.Running) break;
-           
-            // 1st check if the recording itself should b recording
-            bool bRecorded=false;
-            if ( rec.ShouldRecord(DateTime.Now,null,iPreRecordInterval, iPostRecordInterval) )
-            {
-              // yes, then record it
-              if ( Record(rec,null,iPreRecordInterval, iPostRecordInterval))
-              {
-                bRecorded=true;
-                recordings.RemoveAt(iRec);
-              }
-            }
+            if (m_bPreviewChanged) break;
+            if (m_bRecordingsChanged) break;
 
+            bool bRecorded=false;
             
             // if not, then check each check for each tv program
             foreach (TVProgram currentProgram in runningPrograms)
@@ -186,18 +186,55 @@ namespace MediaPortal.TV.Recording
             if (bRecorded) break;
           }
         }
+ 
+
+        iRec=0;
+        if (!m_bRecordingsChanged)
+        {
+          foreach (TVRecording rec in recordings)
+          {
+            if (m_bPreviewChanged) break;
+            if (m_bRecordingsChanged) break;
+            // 1st check if the recording itself should b recorded
+            if ( rec.ShouldRecord(DateTime.Now,null,iPreRecordInterval, iPostRecordInterval) )
+            {
+              // yes, then record it
+              if ( Record(rec,null,iPreRecordInterval, iPostRecordInterval))
+              {
+                recordings.RemoveAt(iRec);
+                break;
+              }
+            }
+            iRec++;
+          }
+        }
+
         Process();
         
         // wait for the next minute
         TimeSpan ts=DateTime.Now-dtTime;
-        while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute && !m_bRecordingsChanged)
+        while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute)
         {
           if (m_eState !=State.Running) break;
+          if (m_bPreviewChanged) break;
           if (m_bRecordingsChanged) break;
-          System.Threading.Thread.Sleep(1000);
+          System.Threading.Thread.Sleep(500);
           ts=DateTime.Now-dtTime;
         }
         dtTime=DateTime.Now;
+      }
+
+      foreach (TVCaptureDevice cap in m_tvcards)
+      {
+        if (cap.Previewing)
+        {
+          cap.Previewing=false;
+        }
+        if (cap.IsRecording)
+        {
+          cap.StopRecording();
+        }
+        cap.Process();cap.Process();cap.Process();
       }
       m_eState=State.Idle;
       Log.Write("Recorder: thread stopped");
@@ -289,6 +326,7 @@ namespace MediaPortal.TV.Recording
           {
             Log.Write("Recorder: Stop recording on channel:{0} capture card:{1}", m_strChannel,dev.ID);
             dev.StopRecording();
+            dev.Process();
           }
         }
       }
@@ -328,6 +366,48 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    static void HandlePreview()
+    {
+      //check if we are already previewing
+      if (!m_bPreviewChanged) return;
+      m_bPreviewChanged=false;
+
+      if (m_bPreviewing)
+      {
+        foreach (TVCaptureDevice dev in m_tvcards)
+        {
+          if (dev.Previewing) 
+          {
+            dev.PreviewChannel=m_strPreviewChannel;
+            return;
+          }
+        }
+        Log.Write("Recorder: Start preview, find free tuner");
+        foreach (TVCaptureDevice dev in m_tvcards)
+        {
+          if (!dev.IsRecording && dev.UseForTV) 
+          {
+            Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
+            dev.Previewing=true;
+            dev.PreviewChannel=m_strPreviewChannel;
+          }
+        }
+        return;
+      }
+      else
+      {
+        Log.Write("Recorder: stop preview");
+        foreach (TVCaptureDevice dev in m_tvcards)
+        {
+          if (dev.Previewing) 
+          {
+            dev.Previewing=false;
+          }
+        }
+        m_strPreviewChannel="";
+      }
+    }
+
     static public bool Previewing
     {
       get{
@@ -339,41 +419,10 @@ namespace MediaPortal.TV.Recording
       }
       set
       {
-        if (value==true)
+        if (m_bPreviewing!=value)
         {
-          //check if we are already previewing
-          foreach (TVCaptureDevice dev in m_tvcards)
-          {
-            if (dev.Previewing) return;
-          }
-
-          Log.Write("Recorder: Start preview, find free tuner");
-          
-          //no, then find 1st device free for previewing
-          foreach (TVCaptureDevice dev in m_tvcards)
-          {
-            if (!dev.IsRecording && dev.UseForTV) 
-            {
-              Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
-              dev.Previewing=true;
-              dev.PreviewChannel=m_strPreviewChannel;
-              return;
-            }
-            
-          }
-        }
-        else
-        {
-          //check if we are already previewing
-          foreach (TVCaptureDevice dev in m_tvcards)
-          {
-            if (dev.Previewing) 
-            {
-              Log.Write("Recorder: stop preview on capture card:{0}", dev.ID);
-              dev.Previewing=false;
-              m_strPreviewChannel="";
-            }
-          }
+          m_bPreviewing=value;
+          m_bPreviewChanged=true;
         }
       }
     }
@@ -382,26 +431,14 @@ namespace MediaPortal.TV.Recording
     {
       get 
       {
-        foreach (TVCaptureDevice dev in m_tvcards)
-        {
-          if (dev.Previewing) 
-          {
-            return dev.PreviewChannel;
-          }
-        }
         return m_strPreviewChannel;
       }
       set
       {
-        if (m_strPreviewChannel==value) return;
-        m_strPreviewChannel=value;
-        foreach (TVCaptureDevice dev in m_tvcards)
+        if (m_strPreviewChannel!=value) 
         {
-          if (dev.Previewing) 
-          {
-            Log.Write("Recorder: set capture card:{0} to channel:{1}", dev.ID,m_strPreviewChannel);
-            dev.PreviewChannel=m_strPreviewChannel;
-          }
+          m_strPreviewChannel=value;
+          m_bPreviewChanged=true;
         }
       }
     }

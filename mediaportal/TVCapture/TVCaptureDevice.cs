@@ -593,8 +593,12 @@ namespace MediaPortal.TV.Recording
       }
 
       Log.Write("  CaptureCard:{0} start recording:{1}",ID, rec.ToString());
+      if (currentProgram!=null) 
+      {
+        Log.Write("  CaptureCard:{0} title:{1}", ID,currentProgram.Title);
+      }
       m_bStopRecording=false;
-      m_CurrentProgramRecording=currentProgram;
+      m_CurrentProgramRecording=currentProgram.Clone();
       m_CurrentTVRecording=rec;
       m_bIsRecording=true;
       Previewing=false;
@@ -662,8 +666,9 @@ namespace MediaPortal.TV.Recording
         // capture is now running
         // now just wait till recording has ended
         // or user has canceled the recording
+        DateTime dtNow = DateTime.Now.AddMinutes(iPreRecordInterval);
         TVUtil util=new TVUtil();
-        TVProgram currentRunningProgram=util.GetCurrentProgram(rec.Channel);
+        TVProgram currentRunningProgram=util.GetProgramAt(rec.Channel, dtNow);
         util=null;
         m_newRecordedTV = new TVRecorded();        
         m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);
@@ -710,6 +715,7 @@ namespace MediaPortal.TV.Recording
     {
       if (IsRecording)
       {
+        Log.Write("  CaptureCard:{0} Stop recording",ID);
         m_bStopRecording=true;
       }
     }
