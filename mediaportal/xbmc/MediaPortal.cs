@@ -380,6 +380,7 @@ public class MediaPortalApp : D3DApp, IRender
           m_strLanguage = xmlreader.GetValueAsString("skin","language","English");
           m_bAutoHideMouse = xmlreader.GetValueAsBool("general","autohidemouse",false);
           GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general","mousesupport",true);
+					GUIGraphicsContext.DBLClickAsRightClick = xmlreader.GetValueAsBool("general","dblclickasrightclick",false);
         }
       }
       catch (Exception)
@@ -680,7 +681,7 @@ public class MediaPortalApp : D3DApp, IRender
 
 			tMouseClickTimer = new System.Timers.Timer(SystemInformation.DoubleClickTime);
 			tMouseClickTimer.Enabled = false;
-			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(_clickTimer_Elapsed);
+			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(tMouseClickTimer_Elapsed);
 			tMouseClickTimer.SynchronizingObject = this;
     } 
 
@@ -1254,7 +1255,8 @@ public class MediaPortalApp : D3DApp, IRender
       if (GUIWindowManager.IsRouted && 
         (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD ||
          GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) ||
-				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_TVMSNOSD) 
+				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_TVMSNOSD ||
+				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_MSNOSD)
       {
         action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
         GUIGraphicsContext.OnAction(action);
@@ -1311,7 +1313,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (m_iLastMousePositionX != e.X || m_iLastMousePositionY != e.Y)
     {
 			// check any still waiting single click events
-			CheckSingleClick();
+			if (GUIGraphicsContext.DBLClickAsRightClick) CheckSingleClick();
 
       //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,m_iLastMousePositionX,m_iLastMousePositionY);
       m_iLastMousePositionX = e.X;
@@ -1336,28 +1338,83 @@ public class MediaPortalApp : D3DApp, IRender
 	{
     base.mouseclick(e);
     if (!m_bShowCursor) return;
-    Action action;
+    Action actionMove;
+		Action action;
+		bool MouseButtonRightClick = false;
 
     // first move mouse
     float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
     float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
     float x = (fX * ((float)m_iLastMousePositionX)) - GUIGraphicsContext.OffsetX;
     float y = (fY * ((float)m_iLastMousePositionY)) - GUIGraphicsContext.OffsetY; ;
-    action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
-    GUIGraphicsContext.OnAction(action);
+    actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+    GUIGraphicsContext.OnAction(actionMove);
+
+		if (e.Button == MouseButtons.Left)
+		{		
+			if (GUIGraphicsContext.DBLClickAsRightClick)
+			{
+				if(tMouseClickTimer != null)
+				{
+					bMouseClickFired = false;
+
+					if(e.Clicks < 2)
+					{
+						eLastMouseClickEvent = e;
+						bMouseClickFired = true;
+						tMouseClickTimer.Start();
+						return;
+					}
+					else
+					{
+						// Double click used as right click
+						eLastMouseClickEvent = null;
+						tMouseClickTimer.Stop();
+						MouseButtonRightClick = true;
+					}
+				}
+			}
+			else
+			{
+				action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
+				action.MouseButton = e.Button;
+				action.SoundFileName = "click.wav";
+				if (action.SoundFileName.Length > 0)
+					Utils.PlaySound(action.SoundFileName, false, true);
+
+				GUIGraphicsContext.OnAction(action);
+				return;
+			}
+		}   
 
     // right mouse button=back
-    if (e.Button == MouseButtons.Right)
+    if ((e.Button == MouseButtons.Right) || (MouseButtonRightClick))
     {
-      Key key = new Key(0, (int)Keys.Escape);
-      action = new Action();
-      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
-      {
-        if (action.SoundFileName.Length > 0)
-          Utils.PlaySound(action.SoundFileName, false, true);
-        GUIGraphicsContext.OnAction(action);
-      }
-      return;
+			GUIWindow window = (GUIWindow) GUIWindowManager.GetWindow( GUIWindowManager.ActiveWindow );
+			if ((window.GetFocusControlId() != -1) ||	GUIGraphicsContext.IsFullScreenVideo ||
+				  (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_SLIDESHOW))
+			{
+				// Get context menu
+				action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, x, y);
+				action.MouseButton = e.Button;
+				action.SoundFileName = "click.wav";
+				if (action.SoundFileName.Length > 0)
+					Utils.PlaySound(action.SoundFileName, false, true);
+
+				GUIGraphicsContext.OnAction(action);
+			}
+			else
+			{
+				Key key = new Key(0, (int)Keys.Escape);
+				action = new Action();
+				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+				{
+					if (action.SoundFileName.Length > 0)
+						Utils.PlaySound(action.SoundFileName, false, true);
+					GUIGraphicsContext.OnAction(action);
+					return;
+				}      
+			}
     }
 /*
     //left mouse button = A
@@ -1383,40 +1440,12 @@ public class MediaPortalApp : D3DApp, IRender
         if (action.SoundFileName.Length > 0)
           Utils.PlaySound(action.SoundFileName, false, true);
         GUIGraphicsContext.OnAction(action);
+				return;
       }
-    }
-	
-		if (e.Button == MouseButtons.Left)
-		{			
-			if(tMouseClickTimer != null)
-			{
-				bMouseClickFired = false;
-
-				if(e.Clicks < 2)
-				{
-					eLastMouseClickEvent = e;
-					bMouseClickFired = true;
-					tMouseClickTimer.Start();
-				}
-				else
-				{
-					eLastMouseClickEvent = null;
-					tMouseClickTimer.Stop();
-					//action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y);
-					action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, x, y);
-				}
-			}
-		}
-
-    action.MouseButton = e.Button;
-    action.SoundFileName = "click.wav";
-    if (action.SoundFileName.Length > 0)
-      Utils.PlaySound(action.SoundFileName, false, true);
-
-		GUIGraphicsContext.OnAction(action);
+    }	
 	}
 	
-	private void _clickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+	private void tMouseClickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 	{
 		CheckSingleClick();
 	}
