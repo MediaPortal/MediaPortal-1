@@ -5,6 +5,7 @@ mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.dll plugins\windows
+copy ..\..\..\GUIPrograms\bin\Debug\GUIPrograms.dll plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.dll plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.dll plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.dll plugins\windows
@@ -42,6 +43,8 @@ copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.dll plugins\ExternalPlayers
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.pdb plugins\ExternalPlayers
 
+
+copy ..\..\..\GUIPrograms\bin\Debug\GUIPrograms.pdb plugins\windows
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.pdb plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.pdb plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.pdb plugins\windows
