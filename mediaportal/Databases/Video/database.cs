@@ -1147,28 +1147,15 @@ namespace MediaPortal.Video.Database
 				}
 
 				// add cast...
-				ArrayList vecActors=new ArrayList();
-				string strCast;
-				int ipos=0;
-				strCast=details.Cast;
-				ipos=strCast.IndexOf(" as ");
-				while (ipos > 0)
+				ArrayList vecActors = new ArrayList();
+				string[] actors=details.Cast.Split('\n');
+				for (int i=1; i < actors.Length;++i)
 				{
-					string strActor;
-					int x=ipos;
-					while (x > 0)
-					{
-						if (strCast[x] != '\r'&& strCast[x]!='\n') x--;
-						else 
-						{
-							x++;
-							break;
-						}
-					}
-					strActor=strCast.Substring(x,ipos-x);          
-					int lActorId=AddActor(strActor);
+					int pos =actors[i].IndexOf(" as ");
+					if (pos <0) continue;
+					string actor=actors[i].Substring(0,pos);
+					int lActorId=AddActor(actor);
 					vecActors.Add(lActorId);
-					ipos=strCast.IndexOf(" as ",ipos+3);
 				}
 
 				for (int i=0; i < vecGenres.Count; ++i)

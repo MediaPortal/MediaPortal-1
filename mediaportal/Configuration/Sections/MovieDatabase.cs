@@ -573,59 +573,8 @@ namespace MediaPortal.Configuration.Sections
 			if (id>=0)
 			{
 				//"Cast overview:\nNaomi Watts as Rachel Keller\nMartin Henderson as Noah Clay\nDavid Dorfman as Aidan Keller\nBrian Cox as Richard Morgan\nJane Alexander as Dr. Grasnik\nLindsay Frost as Ruth Embry\nAmber Tamblyn as Katie Embry\nRachael Bella as Rebecca ''Becca'' Kotler\nDaveigh Chase as Samara Morgan\nShannon Cochran as Anna Morgan\nSandra Thigpen as Teacher\nRichard Lineback as Innkeeper\nSasha Barrese as Girl Teen #1\nTess Hall as Girl Teen #2\nAdam Brody as Kellen, Male Teen #1"
-				string[] actors=movieDetails.Cast.Split('\n');
-				if (actors.Length>1)
-				{
-					float width=(float)(100-progressBarFile.Value);
-					width/= (float)(actors.Length*3);
-					int step=(int)width;
-					for (int i=1; i < actors.Length;++i)
-					{
-						if (stopRebuild) return;
-						int pos =actors[i].IndexOf(" as ");
-						if (pos <0) continue;
-						string actor=actors[i].Substring(0,pos);
-						string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
-						if (!System.IO.File.Exists(strThumb))
-						{
-							Application.DoEvents();
-							imdb.FindActor(actor);
-							progressBarFile.Value+=step;
-							Application.DoEvents();
-							if (imdb.Count<=0) continue;
-							IMDBActor imdbActor=new IMDBActor();
-							Application.DoEvents();
-							for (int x=0; x < imdb.Count;++x)
-							{
-								imdb.GetActorDetails(imdb[x],out imdbActor);
-								if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
-							}
-							progressBarFile.Value+=step;
-							Application.DoEvents();
-							if (stopRebuild) return;
-							if (imdbActor.ThumbnailUrl!=null)
-							{
-								if (imdbActor.ThumbnailUrl.Length!=0)
-								{
-									DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
-								}
-								else Log.Write("url=empty for actor {0}", actor);
-							}
-							else Log.Write("url=null for actor {0}", actor);
-							
-							if (stopRebuild) return;
-							progressBarFile.Value+=step;
-							Application.DoEvents();
-						}
-						else
-						{
-							progressBarFile.Value+=step;
-							progressBarFile.Value+=step;
-							progressBarFile.Value+=step;
-							Application.DoEvents();
-						}
-					}
-				}
+				DownloadActors(movieDetails);
+				DownloadDirector(movieDetails);
 			}
     }
 		void DownloadThumnail(string folder,string url, string name)
@@ -656,7 +605,65 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 		}
-
+		void DownloadDirector(IMDBMovie movieDetails)
+		{
+			IMDB imdb = new IMDB(this);
+			string actor=movieDetails.Director;
+			string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+			if (!System.IO.File.Exists(strThumb))
+			{
+				imdb.FindActor(actor);
+				IMDBActor imdbActor=new IMDBActor();
+				for (int x=0; x < imdb.Count;++x)
+				{
+					imdb.GetActorDetails(imdb[x],out imdbActor);
+					if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
+				}
+				if (imdbActor.ThumbnailUrl!=null)
+				{
+					if (imdbActor.ThumbnailUrl.Length!=0)
+					{
+						DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+					}
+					else Log.Write("url=empty for actor {0}", actor);
+				}
+				else Log.Write("url=null for actor {0}", actor);
+			}
+		}
+		void DownloadActors(IMDBMovie movieDetails)
+		{	
+			IMDB imdb = new IMDB(this);
+			string[] actors=movieDetails.Cast.Split('\n');
+			if (actors.Length>1)
+			{
+				for (int i=1; i < actors.Length;++i)
+				{
+					int pos =actors[i].IndexOf(" as ");
+					if (pos <0) continue;
+					string actor=actors[i].Substring(0,pos);
+					string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+					if (!System.IO.File.Exists(strThumb))
+					{
+						imdb.FindActor(actor);
+						IMDBActor imdbActor=new IMDBActor();
+						for (int x=0; x < imdb.Count;++x)
+						{
+							imdb.GetActorDetails(imdb[x],out imdbActor);
+							if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
+						}
+						if (imdbActor.ThumbnailUrl!=null)
+						{
+							if (imdbActor.ThumbnailUrl.Length!=0)
+							{
+								DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+							}
+							else Log.Write("url=empty for actor {0}", actor);
+						}
+						else Log.Write("url=null for actor {0}", actor);
+					}
+				}
+			}
+		}
     private void clearButton_Click(object sender, System.EventArgs e)
     {
       DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire video database?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);

@@ -1203,7 +1203,7 @@ namespace MediaPortal.GUI.Video
       if (!VideoDatabase.HasMovieInfo(strFile))
       {
         // set initial movie info
-      VideoDatabase.AddMovieFile(strFile);
+				VideoDatabase.AddMovieFile(strFile);
   
         IMDBMovie movieDetails = new IMDBMovie();             
         int iMovieId=VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
@@ -1695,36 +1695,8 @@ namespace MediaPortal.GUI.Video
                 {
                   // got all movie details :-)
 									//get all actors...
-									string[] actors=movieDetails.Cast.Split('\n');
-									if (actors.Length>1)
-									{
-										for (int i=1; i < actors.Length;++i)
-										{
-											int pos =actors[i].IndexOf(" as ");
-											if (pos <0) continue;
-											string actor=actors[i].Substring(0,pos);
-											string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
-											if (!System.IO.File.Exists(strThumb))
-											{
-												imdb.FindActor(actor);
-												IMDBActor imdbActor=new IMDBActor();
-												for (int x=0; x < imdb.Count;++x)
-												{
-													imdb.GetActorDetails(imdb[x],out imdbActor);
-													if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
-												}
-												if (imdbActor.ThumbnailUrl!=null)
-												{
-													if (imdbActor.ThumbnailUrl.Length!=0)
-													{
-														DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
-													}
-													else Log.Write("url=empty for actor {0}", actor);
-												}
-												else Log.Write("url=null for actor {0}", actor);
-											}
-										}
-									}
+									DownloadActors(movieDetails);
+									DownloadDirector(movieDetails);
                   pDlgProgress.Close();
                   bError = false;
 
@@ -2403,6 +2375,63 @@ namespace MediaPortal.GUI.Video
 					}
 					else Log.Write("Unable to download {0}->{1}", url,strTemp);
 					Utils.FileDelete(strTemp);
+				}
+			}
+		}
+		static void DownloadDirector(IMDBMovie movieDetails)
+		{
+			string actor=movieDetails.Director;
+			string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+			if (!System.IO.File.Exists(strThumb))
+			{
+				imdb.FindActor(actor);
+				IMDBActor imdbActor=new IMDBActor();
+				for (int x=0; x < imdb.Count;++x)
+				{
+					imdb.GetActorDetails(imdb[x],out imdbActor);
+					if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
+				}
+				if (imdbActor.ThumbnailUrl!=null)
+				{
+					if (imdbActor.ThumbnailUrl.Length!=0)
+					{
+						DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+					}
+					else Log.Write("url=empty for actor {0}", actor);
+				}
+				else Log.Write("url=null for actor {0}", actor);
+			}
+		}
+		static void DownloadActors(IMDBMovie movieDetails)
+		{
+			string[] actors=movieDetails.Cast.Split('\n');
+			if (actors.Length>1)
+			{
+				for (int i=1; i < actors.Length;++i)
+				{
+					int pos =actors[i].IndexOf(" as ");
+					if (pos <0) continue;
+					string actor=actors[i].Substring(0,pos);
+					string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+					if (!System.IO.File.Exists(strThumb))
+					{
+						imdb.FindActor(actor);
+						IMDBActor imdbActor=new IMDBActor();
+						for (int x=0; x < imdb.Count;++x)
+						{
+							imdb.GetActorDetails(imdb[x],out imdbActor);
+							if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
+						}
+						if (imdbActor.ThumbnailUrl!=null)
+						{
+							if (imdbActor.ThumbnailUrl.Length!=0)
+							{
+								DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+							}
+							else Log.Write("url=empty for actor {0}", actor);
+						}
+						else Log.Write("url=null for actor {0}", actor);
+					}
 				}
 			}
 		}

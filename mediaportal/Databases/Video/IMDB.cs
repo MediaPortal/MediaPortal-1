@@ -459,12 +459,11 @@ namespace MediaPortal.Video.Database
 			elements.Clear();			
 
 			string line1,line2,line3;
-			line1=GUILocalizeStrings.Get(984);
+			line1=GUILocalizeStrings.Get(986);
 			line2=strSearch;
 			line3="";
 			int percent=0;
 			if (m_progress!=null) m_progress.OnProgress(line1,line2,line3,percent);
-			line1=GUILocalizeStrings.Get(984) +":IMDB";
 			percent=0;
 			if (m_progress!=null) m_progress.OnProgress(line1,line2,line3,percent);
 			strURL=String.Format( "http://us.imdb.com/find?q={0};nm=on;mx=20",strSearch);

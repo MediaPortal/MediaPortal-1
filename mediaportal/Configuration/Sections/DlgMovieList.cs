@@ -92,6 +92,7 @@ namespace MediaPortal.Configuration.Sections
 			this.listView1.Size = new System.Drawing.Size(360, 248);
 			this.listView1.TabIndex = 0;
 			this.listView1.View = System.Windows.Forms.View.Details;
+			this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
 			// 
 			// columnHeader1
 			// 
@@ -157,6 +158,14 @@ namespace MediaPortal.Configuration.Sections
 		{
 			this.DialogResult=DialogResult.Cancel;
 			this.Close();
+		}
+
+		private void listView1_DoubleClick(object sender, System.EventArgs e)
+		{
+			base.OnDoubleClick(e);
+			this.DialogResult=DialogResult.OK;
+			this.Close();
+
 		}
 	}
 }
