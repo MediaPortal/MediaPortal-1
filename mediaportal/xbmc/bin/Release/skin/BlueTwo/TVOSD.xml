@@ -76,8 +76,8 @@
 		<description>rec logo</description> 
 		<type>image</type> 
 		<id>39</id> 
-		<posX>620</posX> 
-		<posY>420</posY> 
+		<posX>400</posX> 
+		<posY>508</posY> 
 		<texture>rec.png</texture> 
 		<colordiffuse>50ffffff</colordiffuse>
 		<visible>yes</visible> 

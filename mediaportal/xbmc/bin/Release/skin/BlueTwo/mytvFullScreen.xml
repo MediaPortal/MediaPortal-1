@@ -231,7 +231,7 @@
 			<type>label</type> 
 			<id>105</id> 
 			<posX>70</posX> 
-			<posY>440</posY> 
+			<posY>430</posY> 
 			<label>#TV.Record.current</label> 
 			<align>left</align> 
 			<font>font72</font> 
@@ -263,8 +263,8 @@
 			<description>rec logo</description> 
 			<type>image</type> 
 			<id>39</id> 
-			<posX>555</posX> 
-			<posY>445</posY> 
+			<posX>400</posX> 
+			<posY>484</posY> 
 			<texture>rec.png</texture> 
 			<colordiffuse>50ffffff</colordiffuse>
 			<visible>yes</visible> 

@@ -55,7 +55,7 @@
 		<description>rec logo</description> 
 		<type>image</type> 
 		<id>39</id> 
-		<posX>370</posX> 
+		<posX>340</posX> 
 		<posY>445</posY> 
 		<texture>rec.png</texture> 
 		<colordiffuse>50ffffff</colordiffuse>
