@@ -1984,4 +1984,8 @@
 <string><id>12600</id><value>My Weather</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>Fullscreen OSD</value></string>
+<string><id>12902</id><value>Born</value></string>
+<string><id>12903</id><value>Years Active</value></string>
+<string><id>12904</id><value>Instruments</value></string>
+<string><id>12905</id><value>Bio.</value></string>
 </strings>
