@@ -30,6 +30,7 @@ using MediaPortal.IR;
 using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.RedEyeIR;//PB00//
 using MediaPortal.Ripper;
+using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
 
 /// Performance issues: 
@@ -1109,7 +1110,7 @@ public class MediaPortalApp : D3DApp, IRender
 					break;
             
 				case Action.ActionType.ACTION_BACKGROUND_TOGGLE : 
-/*
+
 					//show livetv or video as background instead of the static GUI background
 					// toggle livetv/video in background on/pff
 					if (GUIGraphicsContext.ShowBackground)
@@ -1123,61 +1124,20 @@ public class MediaPortalApp : D3DApp, IRender
 						}
 						else
 						{
-							bool ok=false;
-							for (int i=0; i < Recorder.Count;++i)
-							{
-								if (Recorder.DoesCardSupportTimeshifting(i))
-								{
-									if (Recorder.IsCardRecording(i)) 
-									{
-										ok=true;
-										break;
-									}
-									else
-									{
-										GUIMessage msgView = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL,(int)GUIWindow.Window.WINDOW_TV,0,0,0,0,null);
-										msgView.Label=Recorder.GetTVChannelName();
-										GUIWindowManager.SendMessage(msgView);
-										if (GUIGraphicsContext.Vmr9Active)
-										{
-											ok=true;
-											break;
-										}
-										else
-										{
-											GUIMessage msgStopView = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING,(int)GUIWindow.Window.WINDOW_TV,0,0,0,0,null);
-											GUIWindowManager.SendMessage(msgStopView);
-										}
-									}
-								}
-							}
-							if (!ok)
-							{
-								GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
-								msg.Param1=727;
-								msg.Param2=728;
-								msg.Param3=729;
-								GUIWindowManager.SendMessage(msg);
-								return;
-							}
-							GUIGraphicsContext.ShowBackground = false;
-							GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
+							//show warning message
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+							msg.Param1=727;//Live tv in background
+							msg.Param2=728;//No Video/TV playing
+							msg.Param3=729;//Make sure you use VMR9 and that something is playing
+							GUIWindowManager.SendMessage(msg);
+							return;
 						}
 					}
 					else
 					{
 						Log.Write("Use GUI as background");
 						GUIGraphicsContext.ShowBackground = true;
-						for (int i=0; i < Recorder.Count;++i)
-						{
-							if (Recorder.IsCardViewing(i) && !Recorder.IsCardRecording(i))
-							{
-								GUIMessage msgView = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING,(int)GUIWindow.Window.WINDOW_TV,0,0,0,0,null);
-								msgView.Label=Recorder.GetTVChannelName(i);
-								GUIWindowManager.SendMessage(msgView);
-							}
-						}
-					}*/
+					}
 					return;
 
 				case Action.ActionType.ACTION_EXIT : 

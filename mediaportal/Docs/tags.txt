@@ -121,9 +121,16 @@
 		#TV.RecordedTV.Genre        genre of current selected recording
 
 	meta data of current recording/program
-		#TV.Record.percent1			total percentage of show not recorded
-		#TV.Record.percent2			total percentage of show recorded
-		#TV.Record.percent3			total percentage of show viewed
-		#TV.Record.duration			duration of current program (recording of viewing)
-		#TV.Record.current			position we're currently viewing
+		#TV.Record.percent1	    total percentage of show not recorded
+		#TV.Record.percent2	    total percentage of show recorded
+		#TV.Record.percent3	    total percentage of show viewed
+		#TV.Record.duration	    duration of current program (recording of viewing)
+		#TV.Record.current	    position we're currently viewing
 
+
+	metadata of My TV/ Scheduled:
+		#TV.Scheduled.Title         title of current selected schedule
+		#TV.Scheduled.Time          time of current selected schedule
+		#TV.Scheduled.Description   description of current selected schedule
+		#TV.Scheduled.thumb         thumbnail of current selected schedule
+		#TV.Scheduled.Genre         genre of current selected schedule

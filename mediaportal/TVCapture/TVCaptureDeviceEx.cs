@@ -1476,67 +1476,36 @@ namespace MediaPortal.TV.Recording
 			get { return radioStationName;}
 		}
 		
-		public void CheckRecordingDiskSpace()
+		public void GetRecordings(string drive, ref ArrayList recordings)
 		{
 			if (!DeleteOnLowDiskspace) return;
-
-			//get total size of all recordings.
-			Int64 totalSize=0;
-			ArrayList files=new ArrayList();
-
+			if (RecordingPath.ToLower().Substring(0,2) !=drive.ToLower()) return;
 			try
 			{
-				string[] recordings=System.IO.Directory.GetFiles(RecordingPath,"*.dvr-ms");
-				for (int i=0; i < recordings.Length;++i)
+				string[] fileNames=System.IO.Directory.GetFiles(RecordingPath,"*.dvr-ms");
+				for (int i=0; i < fileNames.Length;++i)
 				{
-					FileInfo info = new FileInfo(recordings[i]);
-					totalSize+=info.Length;
-					RecordingFileInfo fi = new RecordingFileInfo();
-					fi.info=info;
-					fi.filename=recordings[i];
-					files.Add(fi);
+					bool add=true;
+					foreach (RecordingFileInfo fi in recordings)
+					{
+						if (fi.filename.ToLower() == fileNames[i].ToLower())
+						{
+							add=false;
+						}
+					}
+					if (add)
+					{
+						FileInfo info = new FileInfo(fileNames[i]);
+						RecordingFileInfo fi = new RecordingFileInfo();
+						fi.info=info;
+						fi.filename=fileNames[i];
+						recordings.Add(fi);
+					}
 				}
 			}
 			catch(Exception)
 			{
 			}
-			long lMaxRecordingSize=0;
-			try
-			{
-				int percentage= MaxSizeLimit;
-				string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , RecordingPath[0]);
-				using (ManagementObject disk = new ManagementObject(cmd))
-				{
-					disk.Get();
-					long diskSize=Int64.Parse(disk["Size"].ToString());
-					lMaxRecordingSize= (long) ( ((float)diskSize) * ( ((float)percentage) / 100f ));
-				}
-			}
-			catch(Exception){}
-
-			if (totalSize < lMaxRecordingSize) return;
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: exceeded diskspace limit for recordings");
-			Log.WriteFile(Log.LogType.Recorder,"Recorder:   {0} recordings contain {1} while limit is {2}",
-										files.Count, Utils.GetSize(totalSize), Utils.GetSize(lMaxRecordingSize) );
-
-			// we exceeded the diskspace
-			//delete oldest files...
-			files.Sort();
-			while (totalSize > lMaxRecordingSize && files.Count>0)
-			{
-				RecordingFileInfo fi = (RecordingFileInfo)files[0];
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} size:{1} date:{2} {3}",
-															fi.filename,
-															Utils.GetSize(fi.info.Length),
-															fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-				totalSize -= fi.info.Length;
-				if (Utils.FileDelete(fi.filename))
-				{
-					VideoDatabase.DeleteMovie(fi.filename);
-					VideoDatabase.DeleteMovieInfo(fi.filename);
-				}
-				files.RemoveAt(0);
-			}//while (totalSize > m_lMaxRecordingSize && files.Count>0)
 		}
   }
 }  

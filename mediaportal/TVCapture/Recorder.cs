@@ -1636,10 +1636,83 @@ namespace MediaPortal.TV.Recording
 			if (ts.TotalMinutes<1) return;
 
 			m_dtCheckDiskSpace=DateTime.Now;
+
+			//first get all drives..
+			ArrayList drives = new ArrayList();
 			foreach (TVCaptureDevice dev in m_tvcards)
 			{
-				dev.CheckRecordingDiskSpace();
+				if (dev.RecordingPath==null) continue;
+				if (dev.RecordingPath.Length<2) continue;
+				string drive=dev.RecordingPath.Substring(0,2);
+				bool newDrive=true;
+				foreach (string tmpDrive in drives)
+				{
+					if (drive.ToLower()==tmpDrive.ToLower())
+					{
+						newDrive=false;
+					}
+				}
+				if (newDrive) drives.Add(drive);
 			}
+
+			// for each drive get all recordings
+			ArrayList recordings = new ArrayList();
+			foreach (string drive in drives)
+			{
+				recordings.Clear();
+
+				long lMaxRecordingSize=0;
+				long diskSize=0;
+				string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , drive[0]);
+				using (ManagementObject disk = new ManagementObject(cmd))
+				{
+					disk.Get();
+					diskSize=Int64.Parse(disk["Size"].ToString());
+				}
+
+				foreach (TVCaptureDevice dev in m_tvcards)
+				{
+					dev.GetRecordings(drive,ref recordings);
+					
+					int percentage= dev.MaxSizeLimit;
+					long lMaxSize= (long) ( ((float)diskSize) * ( ((float)percentage) / 100f ));
+					if (lMaxSize > lMaxRecordingSize) 
+						lMaxRecordingSize=lMaxSize;
+				}//foreach (TVCaptureDevice dev in m_tvcards)
+
+				long totalSize=0;
+				foreach (RecordingFileInfo info in recordings)
+				{
+					totalSize +=  info.info.Length;
+				}
+
+				if (totalSize >= lMaxRecordingSize && lMaxRecordingSize >0) 
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: exceeded diskspace limit for recordings on drive:{0}",drive);
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:   {0} recordings contain {1} while limit is {2}",
+												recordings.Count, Utils.GetSize(totalSize), Utils.GetSize(lMaxRecordingSize) );
+
+					// we exceeded the diskspace
+					//delete oldest files...
+					recordings.Sort();
+					while (totalSize > lMaxRecordingSize && recordings.Count>0)
+					{
+						RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
+						Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} size:{1} date:{2} {3}",
+																								fi.filename,
+																								Utils.GetSize(fi.info.Length),
+																								fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
+						totalSize -= fi.info.Length;
+						if (Utils.FileDelete(fi.filename))
+						{
+							VideoDatabase.DeleteMovie(fi.filename);
+							VideoDatabase.DeleteMovieInfo(fi.filename);
+						}
+						recordings.RemoveAt(0);
+					}//while (totalSize > m_lMaxRecordingSize && files.Count>0)
+				}//if (totalSize >= lMaxRecordingSize && lMaxRecordingSize >0) 
+			}//foreach (string drive in drives)
 		}//static void CheckRecordingDiskSpace()
+
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

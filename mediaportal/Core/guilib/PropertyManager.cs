@@ -93,7 +93,13 @@ namespace MediaPortal.GUI.Library
       m_properties["#TV.RecordedTV.Time"]="";               
       m_properties["#TV.RecordedTV.Description"]="";        
       m_properties["#TV.RecordedTV.thumb"]="";              
-      m_properties["#TV.RecordedTV.Genre"]="";              
+      m_properties["#TV.RecordedTV.Genre"]="";  
+      
+			m_properties["#TV.Scheduled.Title"]="";              
+			m_properties["#TV.Scheduled.Time"]="";               
+			m_properties["#TV.Scheduled.Description"]="";        
+			m_properties["#TV.Scheduled.thumb"]="";              
+			m_properties["#TV.Scheduled.Genre"]="";        
  
 
     }

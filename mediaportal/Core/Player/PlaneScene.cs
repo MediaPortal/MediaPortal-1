@@ -153,6 +153,23 @@ namespace MediaPortal.Player
 			//m_iFrameCounter=0;
 		}
 
+		public bool InTv
+		{
+			get
+			{
+				int windowId=GUIWindowManager.ActiveWindow;
+				if (windowId==(int)GUIWindow.Window.WINDOW_TV||
+					windowId==(int)GUIWindow.Window.WINDOW_TVGUIDE||  
+					windowId==(int)GUIWindow.Window.WINDOW_SEARCHTV||  
+					windowId==(int)GUIWindow.Window.WINDOW_TELETEXT||  
+					windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||  
+					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV||
+					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL||
+					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
+					return true;
+				return false;
+			}
+		}
     
 		/// <summary>
 		/// This method calculates the rectangle on screen where the video should be presented
@@ -192,19 +209,8 @@ namespace MediaPortal.Player
         else 
         {
 					// we're in preview mode. Check if we are in the tv module
-          bool inTV=false;
-          int windowId=GUIWindowManager.ActiveWindow;
-          if (windowId==(int)GUIWindow.Window.WINDOW_TV||
-              windowId==(int)GUIWindow.Window.WINDOW_TVGUIDE||  
-              windowId==(int)GUIWindow.Window.WINDOW_SEARCHTV||  
-							windowId==(int)GUIWindow.Window.WINDOW_TELETEXT||  
-							windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||  
-              windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV||
-              windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL||
-              windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
-            inTV=true;
 
-          if (!inTV)
+          if (!InTv)
           {
 						//we are not in the my tv module
 						//then check if video/tv preview window is enable

@@ -329,10 +329,16 @@ namespace MediaPortal.Player
 				//when not fullscreen, limit the FPS 
 				if (!GUIGraphicsContext.IsFullScreenVideo)
 				{
-					//skip every 2nd frame
-					if ( (frameCounter %2)==0)
+					if (scene.InTv)
 					{
-						return 0;
+						if (GUIGraphicsContext.Vmr9FPS>40)
+						{
+							//skip every 2nd frame
+							if ( (frameCounter %2)==0)
+							{
+								return 0;
+							}
+						}
 					}
 				}
 				scene.Render(m_nativeSize);
