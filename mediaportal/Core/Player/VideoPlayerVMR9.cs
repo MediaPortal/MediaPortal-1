@@ -143,8 +143,14 @@ namespace MediaPortal.Player
         m_iVideoWidth=allocator.NativeSize.Width;
         m_iVideoHeight=allocator.NativeSize.Height;
 
+        ushort b;
+        unchecked
+        {
+          b=(ushort)0xfffff845;
+        }
+        Guid classID=new Guid(0x9852a670,b,0x491b,0x9b,0xe6,0xeb,0xd8,0x41,0xb8,0xa6,0x13);
         IBaseFilter filter;
-        graphBuilder.FindFilterByName("DirectVobSub (auto-loading version)", out filter);
+        DsUtils.FindFilterByClassID(graphBuilder,  classID, out filter);
         vobSub = null;
         vobSub = (IDirectVobSub)filter;
         if (vobSub!=null)

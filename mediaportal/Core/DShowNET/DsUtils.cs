@@ -19,7 +19,40 @@ namespace DShowNET
 	{
 
 		const int magicConstant = -759872593;
-		
+
+      static public void FindFilterByClassID(IGraphBuilder m_graphBuilder, Guid classID, out IBaseFilter filterFound)
+      {
+        filterFound=null;
+        try
+        {
+          IEnumFilters ienumFilt;
+          int hr=m_graphBuilder.EnumFilters(out ienumFilt);
+          if (hr==0)
+          {
+            uint iFetched;
+            IBaseFilter filter;
+            ienumFilt.Reset();
+            do
+            {
+              hr=ienumFilt.Next(1,out filter,out iFetched); 
+              if (hr==0 && iFetched==1)
+              {
+                Guid filterGuid;
+                filter.GetClassID(out filterGuid);
+                if (filterGuid == classID)
+                {
+                  filterFound=filter;
+                  return;
+                }
+              }
+            } while (iFetched==1 && hr==0);
+          }
+        }
+        catch(Exception)
+        {
+        }
+        return ; 
+      }
 		static public void RemoveFilters(IGraphBuilder m_graphBuilder)
 		{
 			while(true)
