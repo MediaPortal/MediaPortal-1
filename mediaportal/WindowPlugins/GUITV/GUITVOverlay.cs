@@ -5,6 +5,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Player;
 namespace MediaPortal.GUI.TV
 {
 	/// <summary>
@@ -87,12 +88,11 @@ namespace MediaPortal.GUI.TV
 
       if (GUIGraphicsContext.IsFullScreenVideo) return  false;
       if (GUIGraphicsContext.Calibrating) return  false;
-      if (GUIGraphicsContext.Overlay==false) 
-      {
-        return false;
-      }
+      if (GUIGraphicsContext.Overlay==false) return false;
+      if (g_Player.Playing && !g_Player.IsTV) return false;
       return true;
     }
+
     public override void PostRender(int iLayer)
     {
       if (iLayer!=2) return;

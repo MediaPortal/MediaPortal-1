@@ -109,6 +109,7 @@ namespace MediaPortal.GUI.Music
       }
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       if (!GUIGraphicsContext.Overlay) return false;
+      if (g_Player.Playing && (g_Player.IsTV || g_Player.IsDVD) ) return false;
       return true;
     }
 
