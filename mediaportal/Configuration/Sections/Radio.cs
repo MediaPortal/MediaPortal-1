@@ -12,7 +12,6 @@ namespace MediaPortal.Configuration.Sections
 		protected System.Windows.Forms.Label label2;
 		protected System.Windows.Forms.RadioButton internalRadioButton;
 		protected System.Windows.Forms.ComboBox deviceComboBox;
-		protected System.Windows.Forms.Label label1;
 		protected System.Windows.Forms.Label label3;
 		protected System.Windows.Forms.ComboBox inputComboBox;
 		protected System.Windows.Forms.Button parametersButton;
@@ -76,6 +75,8 @@ namespace MediaPortal.Configuration.Sections
 		protected void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.countryComboBox = new System.Windows.Forms.ComboBox();
+      this.label6 = new System.Windows.Forms.Label();
       this.parametersButton = new System.Windows.Forms.Button();
       this.parametersTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
@@ -85,7 +86,6 @@ namespace MediaPortal.Configuration.Sections
       this.externalRadioButton = new System.Windows.Forms.RadioButton();
       this.inputComboBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
       this.deviceComboBox = new System.Windows.Forms.ComboBox();
       this.internalRadioButton = new System.Windows.Forms.RadioButton();
       this.label2 = new System.Windows.Forms.Label();
@@ -95,8 +95,6 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameLabel = new System.Windows.Forms.Label();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.countryComboBox = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
@@ -116,7 +114,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.externalRadioButton);
       this.groupBox1.Controls.Add(this.inputComboBox);
       this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.deviceComboBox);
       this.groupBox1.Controls.Add(this.internalRadioButton);
       this.groupBox1.Controls.Add(this.label2);
@@ -127,6 +124,26 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Player Settings";
+      // 
+      // countryComboBox
+      // 
+      this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.countryComboBox.Location = new System.Drawing.Point(168, 117);
+      this.countryComboBox.MaxDropDownItems = 16;
+      this.countryComboBox.Name = "countryComboBox";
+      this.countryComboBox.Size = new System.Drawing.Size(256, 21);
+      this.countryComboBox.Sorted = true;
+      this.countryComboBox.TabIndex = 17;
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 121);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(150, 23);
+      this.label6.TabIndex = 16;
+      this.label6.Text = "Country";
       // 
       // parametersButton
       // 
@@ -216,15 +233,6 @@ namespace MediaPortal.Configuration.Sections
       this.label3.TabIndex = 5;
       this.label3.Text = "Input source";
       // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label1.Location = new System.Drawing.Point(168, 32);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(256, 32);
-      this.label1.TabIndex = 4;
-      this.label1.Text = "Please note that the only supported devices are the Hauppauge 350 and USB2.";
-      // 
       // deviceComboBox
       // 
       this.deviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -295,26 +303,6 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameLabel.Size = new System.Drawing.Size(80, 23);
       this.folderNameLabel.TabIndex = 11;
       this.folderNameLabel.Text = "Playlist folder";
-      // 
-      // countryComboBox
-      // 
-      this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.countryComboBox.Location = new System.Drawing.Point(168, 117);
-      this.countryComboBox.MaxDropDownItems = 16;
-      this.countryComboBox.Name = "countryComboBox";
-      this.countryComboBox.Size = new System.Drawing.Size(256, 21);
-      this.countryComboBox.Sorted = true;
-      this.countryComboBox.TabIndex = 17;
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(16, 121);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(150, 23);
-      this.label6.TabIndex = 16;
-      this.label6.Text = "Country";
       // 
       // Radio
       // 
