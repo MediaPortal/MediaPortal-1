@@ -2796,7 +2796,11 @@ namespace MediaPortal.TV.Recording
 			{
 				for(int pointer=add;pointer<end;pointer+=188)
 				{
-					m_teleText.SaveData((IntPtr)pointer);
+					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+					if (header.Pid==currentTuningObject.teletextPid)
+					{
+						m_teleText.SaveData((IntPtr)pointer);
+					}
 				}
 			}
 			return 0;
