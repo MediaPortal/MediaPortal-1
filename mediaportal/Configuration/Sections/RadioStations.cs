@@ -34,6 +34,7 @@ namespace MediaPortal.Configuration.Sections
 		// Private members
 		//
 		bool isDirty = false;
+    ListViewItem currentlyCheckedItem = null;
 
 		public RadioStations() : this("Stations")
 		{
@@ -193,6 +194,7 @@ namespace MediaPortal.Configuration.Sections
       this.stationsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.stationsListView.CheckBoxes = true;
       this.stationsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                        this.columnHeader1,
                                                                                        this.columnHeader2,
@@ -209,11 +211,12 @@ namespace MediaPortal.Configuration.Sections
       this.stationsListView.View = System.Windows.Forms.View.Details;
       this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
       this.stationsListView.SelectedIndexChanged += new System.EventHandler(this.stationsListView_SelectedIndexChanged);
+      this.stationsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.stationsListView_ItemCheck);
       // 
       // columnHeader1
       // 
       this.columnHeader1.Text = "Type";
-      this.columnHeader1.Width = 49;
+      this.columnHeader1.Width = 65;
       // 
       // columnHeader2
       // 
@@ -233,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader6
       // 
       this.columnHeader6.Text = "Server";
-      this.columnHeader6.Width = 86;
+      this.columnHeader6.Width = 70;
       // 
       // RadioStations
       // 
@@ -478,7 +481,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(isDirty == true)
 			{
-				//
+        //
 				// Start by removing the currently available stations from the database
 				//
 				RadioDatabase.RemoveStations();
@@ -509,12 +512,30 @@ namespace MediaPortal.Configuration.Sections
 					{
 						RadioDatabase.AddStation(ref station);
 					}
+
+          //
+          // Save default station
+          //
+          if(listItem.Checked == true)
+          {
+            using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+            {
+              xmlwriter.SetValue("myradio", "default", station.Name);
+            }
+          }
 				}
 			}
 		}
 
 		private void LoadRadioStations()
 		{
+      string defaultStation = string.Empty;
+
+      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        defaultStation = xmlreader.GetValueAsString("myradio", "default", "");
+      }
+
 			ArrayList stations = new ArrayList();
 			RadioDatabase.GetStations(ref stations);
 
@@ -529,7 +550,6 @@ namespace MediaPortal.Configuration.Sections
 				radioStation.Bitrate = station.BitRate;
 				radioStation.URL = station.URL;
 
-
 				ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
 																		radioStation.Name,
 																		radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
@@ -537,6 +557,12 @@ namespace MediaPortal.Configuration.Sections
 																		radioStation.Bitrate.ToString(),
 																		radioStation.URL
 																	  } );
+
+        //
+        // Check default station
+        //
+        listItem.Checked = radioStation.Name.Equals(defaultStation);
+
 				listItem.Tag = radioStation;
 
 				stationsListView.Items.Add(listItem);
@@ -611,6 +637,38 @@ namespace MediaPortal.Configuration.Sections
     private void stationsListView_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       deleteButton.Enabled = editButton.Enabled = upButton.Enabled = downButton.Enabled = (stationsListView.SelectedItems.Count > 0);
+    }
+
+    private void stationsListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    {
+      isDirty = true;
+
+      if(e.NewValue == CheckState.Checked)
+      {
+        //
+        // Check if the new selected item is the same as the current one
+        //
+        if(stationsListView.Items[e.Index] != currentlyCheckedItem)
+        {
+          //
+          // We have a new selection
+          //
+          if(currentlyCheckedItem != null)
+            currentlyCheckedItem.Checked = false;
+          currentlyCheckedItem = stationsListView.Items[e.Index];
+        }
+      }
+
+      if(e.NewValue == CheckState.Unchecked)
+      {
+        //
+        // Check if the new selected item is the same as the current one
+        //
+        if(stationsListView.Items[e.Index] == currentlyCheckedItem)
+        {
+          currentlyCheckedItem = null;
+        }
+      }        
     }
   }
 }
