@@ -146,12 +146,19 @@ namespace MediaPortal.GUI.Video
         return;
       }
   		    
-
+      case Action.ActionType.ACTION_PLAY:
       case Action.ActionType.ACTION_MUSIC_PLAY:
       {
-        // push a message through to this window to handle the remote control button
-        GUIMessage msgSet=new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,GetID,(int)Controls.OSD_PLAY,(int)Controls.OSD_PLAY,0,0,null);
-        OnMessage(msgSet);
+        g_Player.Speed=1;		// drop back to single speed
+        ToggleButton((int)Controls.OSD_REWIND, false);	// pop all the relevant
+        ToggleButton((int)Controls.OSD_FFWD, false);		// buttons back to
+        ToggleButton((int)Controls.OSD_PLAY, false);		// their up state
+
+        if (g_Player.Paused)
+        {
+          g_Player.Pause();
+          ToggleButton((int)Controls.OSD_PLAY, false);		// make sure play button is up (so it shows the play symbol)
+        }          
         return;
       }
   		    
@@ -287,6 +294,9 @@ namespace MediaPortal.GUI.Video
 
         if (iControl == (int)Controls.OSD_REWIND)
         {
+          if (g_Player.Paused)
+            g_Player.Pause();	// Unpause playback
+            
           g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
           if (g_Player.Speed < 1)	// are we not playing back at normal speed
           {
@@ -303,6 +313,9 @@ namespace MediaPortal.GUI.Video
 
         if (iControl == (int)Controls.OSD_FFWD)
         {
+          if (g_Player.Paused)
+            g_Player.Pause();	// Unpause playback
+            
           g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
           if (g_Player.Speed > 1)	// are we not playing back at normal speed
           {
