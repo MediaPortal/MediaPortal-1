@@ -251,7 +251,7 @@ namespace MediaPortal.Util
             {
               string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,Utils.RemoveTrailingSlash(share.FtpFolder));
-              if (strDir.IndexOf(remoteFolder)>=0) 
+              if (strDir == remoteFolder) 
               {
                 iPincode = share.Pincode;
                 if (share.Pincode >= 0)
