@@ -516,11 +516,15 @@ namespace MediaPortal.Configuration.Sections
           //
           // Save default station
           //
-          if(listItem.Checked == true)
+          using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
           {
-            using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+            if(listItem.Checked == true)
             {
               xmlwriter.SetValue("myradio", "default", station.Name);
+            }
+            else
+            {
+              xmlwriter.SetValue("myradio", "default", "");
             }
           }
 				}
