@@ -22,7 +22,7 @@
 		<posY>55</posY> 
 		<label>-</label> 
 		<align>left</align> 
-		<font>font16</font> 
+		<font>font14</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 		<visible>no</visible>
 	</control>
