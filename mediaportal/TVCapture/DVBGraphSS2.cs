@@ -89,7 +89,8 @@ namespace MediaPortal.TV.Recording
 			Created,
 			TimeShifting,
 			Recording,
-			Viewing
+			Viewing,
+			Radio
 		};
 
 		public enum TunerType
@@ -250,7 +251,7 @@ namespace MediaPortal.TV.Recording
 
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				m_pluginsEnabled=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
+				m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				m_cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
 				m_cardFilename=xmlreader.GetValueAsString("dvb_ts_cards","filename","");
 			}
@@ -404,7 +405,7 @@ namespace MediaPortal.TV.Recording
 			//
 
 			// call the plugins tuner
-			if(m_videoDataFound==false && m_retryCount>=0)
+			if(m_videoDataFound==false && m_retryCount>=0 && m_graphState!=State.Radio)
 			{
 				m_retryCount++;
 				if(m_retryCount>=300)//
@@ -1100,7 +1101,7 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 
-		void AddPreferredCodecs()
+		void AddPreferredCodecs(bool audio, bool video)
 		{				
 			// add preferred video & audio codecs
 			string strVideoCodec="";
@@ -1112,9 +1113,9 @@ namespace MediaPortal.TV.Recording
 				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
 				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
 			}
-			if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
-			if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
-			if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
+			if (video && strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
+			if (audio && strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
+			if (video && bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
 		}
 		/// <summary>
 		/// Starts timeshifting the TV channel and stores the timeshifting 
@@ -1542,7 +1543,7 @@ namespace MediaPortal.TV.Recording
 			}
 			int hr=0;
 
-			Log.Write("DVBGraphSS2:SetDemux() audio pid:0x{0X} video pid:0x{1:X}",audioPid,videoPid);
+			Log.Write("DVBGraphSS2:SetDemux() audio pid:0x{0:X} video pid:0x{1:X}",audioPid,videoPid);
 			AMMediaType mpegVideoOut = new AMMediaType();
 			mpegVideoOut.majorType = MediaType.Video;
 			mpegVideoOut.subType = MediaSubType.MPEG2_Video;
@@ -1638,7 +1639,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBGraphSS2:StartViewing() channel not found");
 				return false;
 			}
-			AddPreferredCodecs();
+			AddPreferredCodecs(true,true);
 			
 			if(Vmr9.UseVMR9inMYTV)
 			{
@@ -2066,7 +2067,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.HasEITPresentFollow=info.eitPreFollow;
 				newchannel.AudioLanguage3=info.pidCache;
 			
-				if (IsTv && tv)
+				if (info.serviceType==1 && tv)
 				{
 					Log.Write("auto-tune ss2: channel {0} is a tv channel",newchannel.ServiceName);
 					//check if this channel already exists in the tv database
@@ -2105,9 +2106,9 @@ namespace MediaPortal.TV.Recording
 
 				
 
-						Log.Write("auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
-						newchannel.ID=channelId;
-						TVDatabase.AddSatChannel(newchannel);
+					Log.Write("auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+					newchannel.ID=channelId;
+					TVDatabase.AddSatChannel(newchannel);
 					//}
 					TVDatabase.MapChannelToCard(channelId,ID);
 
@@ -2143,8 +2144,63 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					//todo: radio channels
-					Log.Write("auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
+					if(info.serviceType==2)
+					{
+						//todo: radio channels
+						Log.Write("auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
+						//check if this channel already exists in the radio database
+						bool isNewChannel=true;
+						int channelId=-1;
+						ArrayList radioStations = new ArrayList();
+						foreach (RadioStation station in radioStations)
+						{
+							if (station.Name.Equals(newchannel.ServiceName))
+							{
+								//yes already exists
+								isNewChannel=false;
+								channelId=station.ID;
+								break;
+							}
+						}
+
+						//if the tv channel found is not yet in the tv database
+						if (isNewChannel)
+						{
+							//then add a new channel to the database
+							Log.Write("auto-tune ss2: create new radio channel for {0}",newchannel.ServiceName);
+							RadioStation station = new RadioStation();
+							station.Name=newchannel.ServiceName;
+							station.Channel=newchannel.ProgramNumber;
+							station.Frequency=newchannel.Frequency;
+							int id=RadioDatabase.AddStation(ref station);
+							channelId=id;
+						}
+						else
+						{
+							Log.Write("DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
+						}
+
+						if (Network() == NetworkType.DVBS)
+						{
+							Log.Write("auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+							newchannel.ID=channelId;
+
+							int scrambled=0;
+							if (newchannel.IsScrambled) scrambled=1;
+							RadioDatabase.MapDVBSChannel(newchannel.ID,newchannel.Frequency,newchannel.Symbolrate,
+								newchannel.FEC,newchannel.LNBKHz,0,newchannel.ProgramNumber,
+								0,newchannel.ServiceProvider,newchannel.ServiceName,
+								0,0,newchannel.AudioPid,0,newchannel.AC3Pid,
+								0,0,0,0,scrambled,
+								newchannel.Polarity,newchannel.LNBFrequency
+								,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.PCRPid,
+								newchannel.AudioLanguage,newchannel.AudioLanguage1,
+								newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+								newchannel.ECMPid,newchannel.PMTPid);
+						}
+						RadioDatabase.MapChannelToCard(channelId,ID);
+						Log.Write("auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
+					}
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
 		}
@@ -2241,10 +2297,115 @@ namespace MediaPortal.TV.Recording
 
 		public void TuneRadioChannel(RadioStation station)
 		{
+			Log.Write("DVBGraphSS2:TuneChannel() get DVBS tuning details");
+			DVBChannel ch=new DVBChannel();
+			if(RadioDatabase.GetDVBSTuneRequest(station.ID,0,ref ch)==false)//only radio
+			{
+				Log.Write("DVBGraphSS2:database invalid tuning details for channel:{0}", station.Channel);
+				return;
+			}
+			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0)==true)
+				Log.Write("DVBGraphSS2: Radio tune ok");
+			else
+				Log.Write("DVBGraphSS2: FAILED cannot tune");
+
+			m_currentChannel=ch;
+			
+			if(m_demuxVideoPin!=null && m_demuxAudioPin!=null)
+				SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+
 		}
 
 		public void StartRadio(RadioStation station)
 		{
+			if (m_graphState != State.Radio) 
+			{
+				if(m_graphState!=State.Created)
+					return;
+
+				Log.Write("DVBGraphSS2: start radio");
+
+				int hr=0;
+				AddPreferredCodecs(true,false);
+			
+				if (Vmr9!=null)
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9=null;
+				}
+
+
+				Log.Write("DVBGraphSS2:StartRadio() Using plugins");
+				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
+				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
+
+				if (samplePin==null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
+					return ;
+				}
+				if (demuxInPin==null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+					return ;
+				}
+
+				hr=m_graphBuilder.Connect(m_data0,samplePin);
+				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
+					return ;
+				}
+				samplePin=null;
+				samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Output,0);			
+				if(samplePin==null)
+				{
+					Log.Write("DVBGraphSS2:StartRadio() FAILED: cannot find sampleGrabber output pin");
+					return ;
+				}
+				hr=m_graphBuilder.Connect(samplePin,demuxInPin);
+				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartRadio() FAILED: connect sample->demux");
+					return ;
+				}
+
+				SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+			
+				if(m_demuxAudioPin==null)
+				{
+					Log.Write("DVBGraphSS2:StartRadio() FAILED: cannot find demux audio output pin");
+					return ;
+				}
+
+				hr=m_graphBuilder.Render(m_demuxAudioPin);
+				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartRadio() FAILED: cannot render demux audio output pin");
+					return ;
+				}
+				//
+				//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
+				if(demuxInPin!=null)
+					Marshal.ReleaseComObject(demuxInPin);
+				if(samplePin!=null)
+					Marshal.ReleaseComObject(samplePin);
+
+				//
+
+			
+				//
+				//
+				m_mediaControl = (IMediaControl)m_graphBuilder;
+				m_graphState = State.Radio;
+				//
+				m_mediaControl.Run();
+
+			}
+
+			// tune to the correct channel
+			TuneRadioChannel(station);
+			Log.Write("DVBGraphSS2:Listening to radio..");
 		}
 		public void TuneRadioFrequency(int frequency)
 		{

@@ -1034,14 +1034,6 @@ namespace MediaPortal.TV.Recording
 		public void CleanUp ()
 		{
 			DeleteGraph();
-			m_breakScan=false;
-			m_diseqc=0;
-			m_lnb0=0;
-			m_lnb1=0;
-			m_lnbsw=0;
-			m_lnbkhz=0;
-			m_lnbfreq=0;
-			m_selKhz=0;
 		}
 
 		public bool Run()
