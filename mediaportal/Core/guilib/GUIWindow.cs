@@ -339,8 +339,11 @@ namespace MediaPortal.GUI.Library
 							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
 							OnMessage(msg);
 
-							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
-              GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + GetID);
+              if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
+              {
+                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
+                GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + GetID);
+              }
 							Log.Write( "window:{0} init", this.ToString());
 						}
 							return true;
@@ -349,7 +352,7 @@ namespace MediaPortal.GUI.Library
 							// Cleanup and free resources
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 						{
-              if (m_dwPreviousWindowId != -1)
+              if (m_dwPreviousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
               {
                 GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId));
                 GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId);

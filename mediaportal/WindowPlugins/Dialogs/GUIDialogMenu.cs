@@ -130,7 +130,7 @@ namespace MediaPortal.Dialogs
       GUIWindowManager.RouteToWindow( GetID );
 
       // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,-1,0,null);
       OnMessage(msg);
 
       m_bRunning=true;
@@ -156,8 +156,7 @@ namespace MediaPortal.Dialogs
         }
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-        {
-          
+        {        
           m_bPrevOverlay=GUIGraphicsContext.Overlay;
           base.OnMessage(message);
           GUIGraphicsContext.Overlay=false;

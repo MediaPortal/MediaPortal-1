@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.TV
 			GUIWindowManager.RouteToWindow( GetID );
 
 			// active this window...
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,-1,0,null);
 			OnMessage(msg);
 
 			if (TriggerMsg != null)
@@ -188,7 +188,6 @@ namespace MediaPortal.GUI.TV
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
-          base.OnMessage(message);
 					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION, (int)GUIWindow.Window.WINDOW_MSN, GetID, 0,0,0,null );
 					msg.SendToTargetWindow = true;
 					GUIGraphicsContext.SendMessage(msg);
