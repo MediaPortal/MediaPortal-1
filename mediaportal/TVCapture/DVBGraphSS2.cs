@@ -545,9 +545,9 @@ namespace MediaPortal.TV.Recording
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern void StopGraph();
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool Execute([In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.Struct)] ref TunerData tunerdata,[Out,MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray)] out Int16[] pids);
+		public static extern bool Execute(IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetAppHandle([In] IntPtr hnd,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback);
+		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern void PidCallback([In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
@@ -636,6 +636,8 @@ namespace MediaPortal.TV.Recording
 		public RebuildFunc				m_rebuildCB=null;
 		bool							m_checkVMR9=false;
 		int	[]							m_ecmPids=new int[3]{0,0,0};
+		int[]							m_ecmIDs=new int[3]{0,0,0};
+
 		
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
@@ -696,20 +698,21 @@ namespace MediaPortal.TV.Recording
 			tu.TransportStreamID=(Int16)m_currentChannel.TransportStreamID;
 			tu.VideoPID=(Int16)m_currentChannel.VideoPid;
 			tu.Reserved1=0;
-			tu.ECM_1=(Int16)0;
-			tu.ECM_2=(Int16)0;
-			tu.CAID_0=0;
-			tu.CAID_1=0;
-			tu.CAID_2=0;
+			tu.ECM_1=(Int16)m_ecmPids[1];
+			tu.ECM_2=(Int16)m_ecmPids[2];
+			tu.CAID_0=(Int16)m_currentChannel.Audio3;
+			tu.CAID_1=(Int16)m_ecmIDs[1];
+			tu.CAID_2=(Int16)m_ecmIDs[2];
 
-			Int16[] pids;
+			IntPtr data=Marshal.AllocHGlobal(50);
+			Marshal.StructureToPtr(tu,data,true);
 
 			bool flag=false;
 			if(m_pluginsEnabled)
 			{
 				try
 				{
-					flag=Execute(ref tu,out pids);
+					flag=Execute(data/*,out pids*/);
 				}
 				catch(Exception ex)
 				{
@@ -717,6 +720,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 			}
+			Marshal.FreeHGlobal(data);
 		}
 		//
 		public int BufferCB(double time,IntPtr data,int len)
@@ -735,8 +739,8 @@ namespace MediaPortal.TV.Recording
 			// the following check should takes care of scrambled video-data
 			// and redraw the vmr9 not to hang
 
-			if(m_checkVMR9==true)
-			{
+//			if(m_checkVMR9==true)
+//			{
 				int pid=m_currentChannel.VideoPid;
 				TSHelperTools tools=new TSHelperTools();
 				for(int pointer=add;pointer<end;pointer+=188)
@@ -758,7 +762,7 @@ namespace MediaPortal.TV.Recording
 						break;// stop loop if we got or video-packet
 					}
 				}
-			}
+//			}
 
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
@@ -939,32 +943,39 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					int epid=0;
+
+					int eid=0;
 					DeleteAllPIDs(m_dataCtrl,0);
 
 					int count=0;
 					for(int t=1;t<11;t++)
 					{
 						epid=GetPidNumber(pidText,t);
+						eid=GetPidID(pidText,t);
 						if(epid>0)
 						{
 							if(count<3)
 							{
 								m_ecmPids[count]=epid;
+								m_ecmIDs[count]=eid;
 								count++;
 							}
 							SetPidToPin(m_dataCtrl,0,epid);
 						}
 					}
 
-					SetPidToPin(m_dataCtrl,0,18);
 					SetPidToPin(m_dataCtrl,0,0);
 					SetPidToPin(m_dataCtrl,0,1);
+					SetPidToPin(m_dataCtrl,0,16);
+					SetPidToPin(m_dataCtrl,0,17);
+					SetPidToPin(m_dataCtrl,0,18);
 					SetPidToPin(m_dataCtrl,0,ecmPID);
 					SetPidToPin(m_dataCtrl,0,ttxtPID);
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
-					SetPidToPin(m_dataCtrl,0,pcrPID);
+					if(pcrPID!=VideoPID)
+						SetPidToPin(m_dataCtrl,0,pcrPID);
 				}
 
 
@@ -1101,7 +1112,7 @@ namespace MediaPortal.TV.Recording
 			if(m_pluginsEnabled)
 			{
 				StopGraph();
-				m_sampleInterface.SetCallback(null,0);
+				//m_sampleInterface.SetCallback(null,0);
 			}
 
 			StopRecording();
@@ -2032,6 +2043,29 @@ namespace MediaPortal.TV.Recording
 				return 0;
 			}
 		}
+		int GetPidID(string pidText,int number)
+		{
+			if(pidText=="")
+				return 0;
+			string[] pidSegments;
+
+			pidSegments=pidText.Split(new char[]{';'});
+			if(pidSegments.Length-1<number || pidSegments.Length==0)
+				return 0;
+
+			string[] pid=pidSegments[number-1].Split(new char[]{'/'});
+			if(pid.Length!=2)
+				return 0;
+
+			try
+			{
+				return Convert.ToInt16(pid[1]);
+			}
+			catch
+			{
+				return 0;
+			}
+		}
 
 		/// <summary>
 		/// Stops viewing the TV channel 
@@ -2116,5 +2150,6 @@ namespace MediaPortal.TV.Recording
 		public void StoreChannels(int ID,bool radio, bool tv)
 		{
 		}
+
 	}
 }
