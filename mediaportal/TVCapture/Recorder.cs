@@ -116,6 +116,7 @@ namespace MediaPortal.TV.Recording
       {
         string dir=String.Format(@"{0}\card{1}",m_strRecPath,i+1);
         System.IO.Directory.CreateDirectory(dir);
+        DeleteOldTimeShiftFiles(dir);
       }
 
       m_TVChannels.Clear();
@@ -1057,6 +1058,65 @@ namespace MediaPortal.TV.Recording
     static public string TVChannelName
     {
       get { return m_strTVChannel;}
+    }
+
+
+    static void DeleteOldTimeShiftFiles(string strPath)
+    {
+      // Remove any trailing slashes
+      strPath=Utils.RemoveTrailingSlash(strPath);
+
+      
+      // clean the TempDVR\ folder
+      string strDir="";
+      string[] strFiles;
+      try
+      {
+        strDir=String.Format(@"{0}\TempDVR",strPath);
+        strFiles=System.IO.Directory.GetFiles(strDir,"*.tmp");
+        foreach (string strFile in strFiles)
+        {
+          try
+          {
+            System.IO.File.Delete(strFile);
+          }
+          catch(Exception){}
+        }
+      }
+      catch(Exception){}
+
+      // clean the TempSBE\ folder
+      try
+      {      
+        strDir=String.Format(@"{0}\TempSBE",strPath);
+        strFiles=System.IO.Directory.GetFiles(strDir,"*.tmp");
+        foreach (string strFile in strFiles)
+        {
+          try
+          {
+            System.IO.File.Delete(strFile);
+          }
+          catch(Exception){}
+        }
+      }
+      catch(Exception){}
+
+      // delete *.tv
+      try
+      {      
+        strDir=String.Format(@"{0}",strPath);
+        strFiles=System.IO.Directory.GetFiles(strDir,"*.tv");
+        foreach (string strFile in strFiles)
+        {
+          try
+          {
+            System.IO.File.Delete(strFile);
+          }
+          catch(Exception){}
+        }
+      }
+      catch(Exception){}
+  
     }
   }
 }
