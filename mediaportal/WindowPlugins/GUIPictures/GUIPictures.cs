@@ -759,19 +759,33 @@ namespace MediaPortal.GUI.Pictures
 
     void OnSlideShow()
     {
+      OnSlideShow(0);
+    }
+    void OnSlideShow(int iStartItem)
+    {
       GUISlideShow SlideShow = (GUISlideShow )GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
-      if (SlideShow==null) return;
-      
+      if (SlideShow==null) return;     
 
       SlideShow.Reset();
-      for (int i=0; i < GetItemCount(); ++i)
+
+      if ((iStartItem<0) || (iStartItem>GetItemCount())) iStartItem=0;
+      int i=iStartItem;
+      do
       {
         GUIListItem item = GetItem(i);
         if (!item.IsFolder && !item.IsRemote)
         {
           SlideShow.Add(item.Path);
         }
+
+        i++;
+        if (i >= GetItemCount())
+        {
+          i=0;
+        }
       }
+      while (i != iStartItem);
+
       SlideShow.StartSlideShow();
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
     }
@@ -1158,33 +1172,45 @@ namespace MediaPortal.GUI.Pictures
 			GUIListItem item=GetSelectedItem();
 			int itemNo=GetSelectedItemNo();
 			if (item==null) return;
+      if (item.IsFolder && item.Label=="..") return;
+
+      GUIControl cntl=GetControl((int)Controls.CONTROL_VIEW);
+      if (cntl==null) return; // Control not found
 
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg==null) return;
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
-			dlg.Add( GUILocalizeStrings.Get(117)); //delete
-			dlg.Add( GUILocalizeStrings.Get(735)); //rotate
-			dlg.Add( GUILocalizeStrings.Get(923)); //show
-			dlg.Add( GUILocalizeStrings.Get(940)); //properties
+			if (!item.IsRemote) dlg.AddLocalizedString(117); //delete
+      if (!item.IsFolder)
+      {
+        dlg.AddLocalizedString(735); //rotate
+        dlg.AddLocalizedString(923); //show
+        dlg.AddLocalizedString(108); //start slideshow
+        dlg.AddLocalizedString(940); //properties
+      }
 
-			dlg.DoModal( GetID);
-			if (dlg.SelectedLabel==-1) return;
-			switch (dlg.SelectedLabel)
+			dlg.DoModal(GetID);
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
 			{
-				case 0: // delete
+				case 117: // delete
 					OnDeleteItem(item);
 					break;
 
-				case 1: // rotate
+				case 735: // rotate
 					OnRotatePicture();
 				break;
 
-				case 2: // play
+				case 923: // show
 					OnClick(itemNo);	
 					break;
 
-				case 3: // properties
+        case 108: // start slideshow
+          OnSlideShow(itemNo);	
+          break;
+
+				case 940: // properties
 					OnInfo(itemNo);	
 					break;
 			}
@@ -1217,18 +1243,22 @@ namespace MediaPortal.GUI.Pictures
 
 		void DoDeleteItem(GUIListItem item)
 		{
-			if (item.IsFolder && item.Label!="..")
+			if (item.IsFolder)
 			{
-				ArrayList items = new ArrayList();
-				items=m_directory.GetDirectory(item.Path);
-				foreach(GUIListItem subItem in items)
-				{
-					DoDeleteItem(subItem);
-				}
+        if (item.Label != "..")
+        {
+          ArrayList items = new ArrayList();
+          items=m_directory.GetDirectory(item.Path);
+          foreach(GUIListItem subItem in items)
+          {
+            DoDeleteItem(subItem);
+          }
+          Utils.DirectoryDelete(item.Path);
+        }
 			}
 			else if (!item.IsRemote)
-			{
-					Utils.FileDelete(item.Path);
+			{  			
+        Utils.FileDelete(item.Path);
 			}
 		}
 
