@@ -162,6 +162,60 @@
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
 	</control>
 	<control>
+		<description>default filmstrip</description>
+		<type>filmstrip</type>
+		<id>11</id>
+		<posX>220</posX>
+		<posY>420</posY>
+		<width>500</width>
+		<height>100</height>
+		<spinWidth>26</spinWidth>
+		<spinHeight>27</spinHeight>
+		<spinPosX>590</spinPosX>
+		<spinPosY>530</spinPosY>
+		<spinColor>ffffffff</spinColor>
+		<textureUp>arrow_round_right_nofocus.png</textureUp>
+		<textureDown>arrow_round_left_nofocus.png</textureDown>
+		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+		<itemWidth>108</itemWidth>
+		<itemHeight>108</itemHeight>
+		<textureWidth>80</textureWidth>
+		<textureHeight>80</textureHeight> 
+		<thumbWidth>62</thumbWidth>
+		<thumbHeight>62</thumbHeight>
+		<thumbPosX>9</thumbPosX>
+		<thumbPosY>9</thumbPosY>		
+		<imageFolder>icon_empty_nofocus.png</imageFolder>
+		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
+		<font>font14</font>
+		<selectedColor>ffffffff</selectedColor>
+		<textcolor>ffffffff</textcolor>
+		<colordiffuse>ffffffff</colordiffuse>
+		<suffix>|</suffix>
+		<textureWidthBig>108</textureWidthBig>
+		<textureHeightBig>108</textureHeightBig> 
+		<itemWidthBig>136</itemWidthBig>
+		<itemHeightBig>134</itemHeightBig>
+		<thumbWidthBig>84</thumbWidthBig>
+		<thumbHeightBig>84</thumbHeightBig>
+		<thumbPosXBig>12</thumbPosXBig>
+		<thumbPosYBig>12</thumbPosYBig>	
+		<background>previewbackground.png</background>
+		<backgroundx>290</backgroundx>
+		<backgroundy>97</backgroundy>
+		<backgroundwidth>370</backgroundwidth>
+		<backgroundheight>312</backgroundheight>
+		<backgrounddiffuse>60ffffff</backgrounddiffuse>
+		<InfoImage>-</InfoImage>
+		<InfoImagex>295</InfoImagex>
+		<InfoImagey>102</InfoImagey>
+		<InfoImagewidth>360</InfoImagewidth>
+		<InfoImageheight>302</InfoImageheight>
+		<InfoImagediffuse>ffffffff</InfoImagediffuse>
+		
+	</control>
+	<control>
 		<description>default fadelabel</description>
 		<type>fadelabel</type>
 		<id>5</id>

@@ -136,6 +136,10 @@
 		<onup>7</onup>
 		<ondown>2</ondown>
 	</control>
+			<control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+			    <type>facadeview</type>
+			    <id>10</id>
 	<control>
 		<description>listcontrol</description>
 		<type>listcontrol</type>
@@ -154,5 +158,15 @@
 		<onup>2</onup>
 		<ondown>2</ondown>
 	</control>
+			    <control>
+				    <description>Filmstrip view</description>
+				    <type>filmstrip</type>
+				    <id>11</id>
+				    <onleft>2</onleft>
+				    <onright>2</onright>
+				    <onup>2</onup>
+				    <ondown>2</ondown>
+			    </control>
+			</control>
 </controls>
 </window>
