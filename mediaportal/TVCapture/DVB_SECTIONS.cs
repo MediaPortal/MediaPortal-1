@@ -404,36 +404,27 @@ namespace MediaPortal.TV.Recording
 			ArrayList	tab42=new ArrayList();
 			ArrayList	tab46=new ArrayList();
 
-			GetStreamData(filter,17, 0x42,0,5000);
-			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,17, 0x46,0,5000);
-			tab46=(ArrayList)m_sectionsList.Clone();
+			//GetStreamData(filter,17, 0x42,0,5000);
+			//tab42=(ArrayList)m_sectionsList.Clone();
+			//GetStreamData(filter,17, 0x46,0,5000);
+			//tab46=(ArrayList)m_sectionsList.Clone();
 
 			ChannelInfo pat;
 			ArrayList pmtList = transponder.PMTTable;
-			int pmtScans;
-			pmtScans = (pmtList.Count / 20) + 1;
-			for (t = 1; t <= pmtScans; t++)
+			for (t = 0; t < pmtList.Count; t++)
 			{
-				for (n = 0; n <= 19; n++)
+				pat = (ChannelInfo) pmtList[t];
+				if (pat.program_number==serviceId)
 				{
-					if (((t - 1) * 20) + n > pmtList.Count - 1)
+					info=pat;
+					// get pmt
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+					foreach(byte[] wdata in m_sectionsList)
 					{
-						break;
-					}
-					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-					if (pat.serviceID==serviceId)
-					{
-						info=pat;
-						// get pmt
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
-						foreach(byte[] wdata in m_sectionsList)
+						if (wdata.Length> 0)
 						{
-							if (wdata.Length>=67)
-							{
-								//return pmt
-								return wdata;
-							}
+							//return pmt
+							return wdata;
 						}
 					}
 				}

@@ -98,6 +98,7 @@ namespace MediaPortal.TV.Recording
 
 		int                     m_cardID								= -1;
 		int                     m_iCurrentChannel				= 28;
+		int                     m_iCurrentSID           =0;
 		int											m_rotCookie							= 0;			// Cookie into the Running Object Table
 		int                     m_iPrevChannel					= -1;
 		bool                    m_bIsUsingMPEG					= false;
@@ -138,6 +139,7 @@ namespace MediaPortal.TV.Recording
 		int                         adviseCookie;
 		bool												graphRunning=false;
 		int													currentFrequency;
+		bool												shouldDecryptChannel=false;
 
 		/// <summary>
 		/// Constructor
@@ -173,7 +175,7 @@ namespace MediaPortal.TV.Recording
 				//check if we didnt already create a graph
 				if (m_graphState != State.None) 
 					return false;
-		      
+		    shouldDecryptChannel=false;
 				graphRunning=false;
 				Log.Write("DVBGraphBDA:CreateGraph(). ");
 
@@ -922,45 +924,9 @@ namespace MediaPortal.TV.Recording
 			//submit tune request to the tuner
 			myTuner.TuneRequest = newTuneRequest;
 			Marshal.ReleaseComObject(myTuneRequest);
+			m_iCurrentSID=SID;
+			shouldDecryptChannel=true;
 
-			//check if tuner is locked to a tv channel
-			if (SignalPresent())
-			{	
-				//yes, lets get all details for the current channel
-				if (m_SectionsTables!=null)
-				{
-					DVBSections sections = new DVBSections();
-					DVBSections.ChannelInfo channelInfo;
-					byte[] pmt= sections.GetRAWPMT(m_SectionsTables, SID, out channelInfo);
-					if (pmt!=null && pmt.Length>0)
-					{
-						//got all details. Log them
-						Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6}", 
-											channelInfo.service_provider_name,
-											channelInfo.service_name,
-											channelInfo.scrambled,
-											channelInfo.freq,
-											channelInfo.networkID,
-											channelInfo.transportStreamID,
-											channelInfo.serviceID);
-
-						//First check if channel is scrambled
-						if (channelInfo.scrambled)
-						{
-							//Tv channels is scrambled. To view them
-							//we need to send the raw PMT table to the FireDTV device
-							//Note this only works for FireDTV devices, so 
-							//first check if this device supports the FireDTV properties
-							VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-							if (props.SupportsFireDTVProperties)
-							{
-								//yes, then send the PMT table to the device
-								props.SendPMTToFireDTV(pmt);
-							}//if (props.SupportsFireDTVProperties)
-						}//if (channelInfo.scrambled)
-					}//if (pmt!=null && pmt.Length>0 && channelInfo!=null)
-				}//if (m_SectionsTables!=null)
-			}//if (SignalPresent())
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		/// <summary>
@@ -2074,6 +2040,44 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+			if (!shouldDecryptChannel) return;
+			if (m_SectionsTables==null) return;
+			//check if tuner is locked to a tv channel
+			if (!SignalPresent()) return;
+				
+			shouldDecryptChannel=false;
+			//yes, lets get all details for the current channel
+			
+			DVBSections sections = new DVBSections();
+			DVBSections.ChannelInfo channelInfo;
+			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, m_iCurrentSID, out channelInfo);
+			if (pmt!=null && pmt.Length>0)
+			{
+				//got all details. Log them
+				Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6}", 
+					channelInfo.service_provider_name,
+					channelInfo.service_name,
+					channelInfo.scrambled,
+					channelInfo.freq,
+					channelInfo.networkID,
+					channelInfo.transportStreamID,
+					channelInfo.serviceID);
+
+				//First check if channel is scrambled
+				if (channelInfo.scrambled)
+				{
+					//Tv channels is scrambled. To view them
+					//we need to send the raw PMT table to the FireDTV device
+					//Note this only works for FireDTV devices, so 
+					//first check if this device supports the FireDTV properties
+					VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+					if (props.SupportsFireDTVProperties)
+					{
+						//yes, then send the PMT table to the device
+						props.SendPMTToFireDTV(pmt);
+					}//if (props.SupportsFireDTVProperties)
+				}//if (channelInfo.scrambled)
+			}//if (pmt!=null && pmt.Length>0 && channelInfo!=null)
 		}//public void Process()
 
 		//not used

@@ -350,6 +350,12 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
+			if (reloadList)
+			{
+				LoadTVChannels();
+				reloadList=false;
+				isDirty=true;
+			}
 			SaveTVChannels();
 		}
 
@@ -706,7 +712,7 @@ namespace MediaPortal.Configuration.Sections
     }
 		static public void UpdateList()
 		{
-			reloadList=true;
+			reloadList=false;
 		}
 		protected override void OnPaint(PaintEventArgs e)
 		{
