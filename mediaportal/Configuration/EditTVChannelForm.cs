@@ -1662,6 +1662,9 @@ namespace MediaPortal.Configuration
 			//dvb-S
 			try
 			{
+				DVBChannel ch = new DVBChannel();
+				TVDatabase.GetSatChannel(tvchannel.ID,1,ref ch);
+
 				freq=Int32.Parse(tbDVBSFreq.Text);
 				ONID=Int32.Parse(tbDVBSONID.Text);
 				TSID=Int32.Parse(tbDVBSTSID.Text);
@@ -1675,7 +1678,6 @@ namespace MediaPortal.Configuration
 				teletextPid=Int32.Parse(tbDVBSTeletextPid.Text);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					DVBChannel ch = new DVBChannel();
 					ch.ServiceType=1;
 					ch.Frequency=freq;
 					ch.NetworkID=ONID;
