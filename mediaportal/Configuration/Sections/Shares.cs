@@ -217,7 +217,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (shareData.IsRemote)
       {
-        listItem.SubItems[2].Text=String.Format("{0}:{1}",shareData.Server,shareData.Port);
+        listItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.Folder);
       }
       listItem.Tag = shareData;
 			listItem.Checked = check;
@@ -266,6 +266,8 @@ namespace MediaPortal.Configuration.Sections
             selectedItem.SubItems[0].Text = shareData.Name;
             selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
             selectedItem.SubItems[2].Text = shareData.Folder;
+            selectedItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.Folder);
+
           }
         }
 			}

@@ -11,7 +11,7 @@ using MediaPortal.Topbar;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Player;
 using System.Runtime.InteropServices;
-
+using Core.Util;
 namespace MyMail
 {
 	/// <summary>
@@ -273,7 +273,7 @@ namespace MyMail
 							theItem.ThumbnailImage="defaultHardDiskBig.png";
 						}
 					
-						theItem.FileInfo=new System.IO.FileInfo(theItem.Path);
+						theItem.FileInfo=new FileInformation(theItem.Path);
 						theItem.Label3=Convert.ToString(theItem.FileInfo.Length);
 						theItem.IsFolder=false;
 						theItem.Label2=Convert.ToString(mailAttachment.attKind);

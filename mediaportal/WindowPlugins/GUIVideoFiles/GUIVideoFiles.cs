@@ -160,7 +160,7 @@ namespace MediaPortal.GUI.Video
           share.FtpPassword= xmlreader.GetValueAsString("movies", sharePwd,"");
           share.FtpPort= xmlreader.GetValueAsInt("movies", sharePort,21);
 
-          if (share.Name.Length > 0 && share.Path.Length > 0)
+          if (share.Name.Length > 0)
           {
             if (m_strDirectory.Length == 0 && strDefault == share.Name)
               m_strDirectory = share.Path;

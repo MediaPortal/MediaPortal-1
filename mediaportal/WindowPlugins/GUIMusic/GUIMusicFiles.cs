@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Music
           share.FtpPassword= xmlreader.GetValueAsString("music", sharePwd,"");
           share.FtpPort= xmlreader.GetValueAsInt("music", sharePort,21);
 
-          if (share.Name.Length > 0 && share.Path.Length > 0)
+          if (share.Name.Length > 0)
           {
             if (m_strDirectory.Length == 0 && strDefault == share.Name)
               m_strDirectory = share.Path;

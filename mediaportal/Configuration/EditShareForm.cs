@@ -363,7 +363,6 @@ namespace MediaPortal.Configuration
     {
       if (checkBoxRemote.Checked)
       {
-        folderTextBox.Enabled=false;
         textBoxLogin.Enabled=true;
         textBoxPassword.Enabled=true;
         textBoxPort.Enabled=true;
@@ -371,7 +370,6 @@ namespace MediaPortal.Configuration
       }
       else
       {
-        folderTextBox.Enabled=true;
         textBoxLogin.Enabled=false;
         textBoxPassword.Enabled=false;
         textBoxPort.Enabled=false;

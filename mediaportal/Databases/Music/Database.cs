@@ -3,6 +3,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Collections;
 using SQLite.NET;
+using Core.Util;
 
 namespace MediaPortal.Music.Database
 {
@@ -782,7 +783,7 @@ namespace MediaPortal.Music.Database
 				  item.Label2 = "";
 				  item.Label3="";
 				  item.Path = strFileName;
-				  item.FileInfo = new System.IO.FileInfo(strFileName);
+				  item.FileInfo = new FileInformation(strFileName);
 				  Utils.SetDefaultIcons(item);
 				  Utils.SetThumbnails(ref item);
 				  songs.Add(item);

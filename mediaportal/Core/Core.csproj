@@ -143,6 +143,11 @@
                     AssemblyName = "wmppia"
                     HintPath = "..\Setup\postsetup\wmppia.dll"
                 />
+                <Reference
+                    Name = "edtftpnet-1.1.3"
+                    AssemblyName = "edtftpnet-1.1.3"
+                    HintPath = "..\edtftpnet-1.1.3.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -1048,12 +1053,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Util\FileInformation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Util\FolderSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Util\ftplib.cs"
+                    RelPath = "Util\FtpConnectionCache.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

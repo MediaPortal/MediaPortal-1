@@ -3,6 +3,8 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using System.Management;
 using System.IO;
+using EnterpriseDT.Net.Ftp;
+using Core.Util;
 
 namespace MediaPortal.Util
 {
@@ -11,6 +13,7 @@ namespace MediaPortal.Util
 	/// A virtual directory holds one or more shares (see share.cs)
 	/// 
 	/// </summary>
+
 	public class VirtualDirectory
 	{
     const int Removable = 2;
@@ -61,7 +64,6 @@ namespace MediaPortal.Util
     public void Add(Share share)
     {
 			if (share==null) return;
-      if (share.IsFtpShare) return;//TODO: add support for ftp shares
       m_shares.Add(share);
 		}
 
@@ -101,6 +103,12 @@ namespace MediaPortal.Util
         else
           item.Label = share.Name;
 				item.IsFolder = true;
+
+        if (share.IsFtpShare)
+        {
+          item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,share.Path);
+        }
 				Utils.SetDefaultIcons(item);
         items.Add(item);
       }
@@ -119,19 +127,33 @@ namespace MediaPortal.Util
     {
 			if (strDir==null) return false;
       if (strDir.Length <= 0) return false;
-      string strRoot = "";
-      if (strDir != "cdda:")
-        strRoot = System.IO.Path.GetFullPath(strDir);
-      else 
-        strRoot = strDir;
+      string strRoot = strDir;
+      bool isRemote=IsRemote(strDir);
+      if (!isRemote)
+      {
+        if (strDir != "cdda:")
+          strRoot = System.IO.Path.GetFullPath(strDir);
+      }
 
       foreach (Share share in m_shares)
       {
         try
         {
-          if (System.IO.Path.GetFullPath(share.Path) == strRoot)
+          if (isRemote)
           {
-            return true;
+            if (share.IsFtpShare)
+            {
+              string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,share.Path);
+              if (remoteFolder==strDir) return true;
+            }
+          }
+          else
+          {
+            if (System.IO.Path.GetFullPath(share.Path) == strRoot)
+            {
+              return true;
+            }
           }
         }
         catch (Exception)
@@ -155,22 +177,43 @@ namespace MediaPortal.Util
 			iPincode = -1;
 			if (strDir==null) return false;
       if (strDir.Length <= 0) return false;
-      string strRoot = "";
-      if (strDir != "cdda:")
-        strRoot = System.IO.Path.GetFullPath(strDir);
-      else 
-        strRoot = strDir;
+      string strRoot = strDir;
+
+      bool isRemote=IsRemote(strDir);
+      if (!isRemote)
+      {
+        if (strDir != "cdda:")
+          strRoot = System.IO.Path.GetFullPath(strDir);
+      }
 
       foreach (Share share in m_shares)
       {
         try
         {
-          if (System.IO.Path.GetFullPath(share.Path) == strRoot)
+          if (isRemote)
           {
-            iPincode = share.Pincode;
-            if (share.Pincode >= 0)
-              return true;
-            return false;
+            if (share.IsFtpShare)
+            {
+              string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,share.Path);
+              if (strDir.IndexOf(remoteFolder)>=0) 
+              {
+                iPincode = share.Pincode;
+                if (share.Pincode >= 0)
+                  return true;
+                return false;
+              }
+            }
+          }
+          else
+          {
+            if (System.IO.Path.GetFullPath(share.Path) == strRoot)
+            {
+              iPincode = share.Pincode;
+              if (share.Pincode >= 0)
+                return true;
+              return false;
+            }
           }
         }
         catch (Exception)
@@ -200,6 +243,13 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public bool IsRemote(string folder)
+    {
+      if (folder==null) return false;
+      if (folder.IndexOf("remote:")==0) return true;
+      return false;
+    }
+
 		/// <summary>
 		/// This method returns an arraylist of GUIListItems for the specified folder
 		/// If the folder is protected by a pincode then the user is asked to enter the pincode
@@ -221,24 +271,42 @@ namespace MediaPortal.Util
         m_strPreviousDir = "";
         return GetRoot();
       }
-      
-      if (strDir.Substring(1) == @"\") strDir = strDir.Substring(0, strDir.Length - 1);
+     
+      //if we have a folder like D:\
+      //then remove the \
+      if (strDir.Length==2 && strDir.Substring(1) == @"\") 
+        strDir = strDir.Substring(0, strDir.Length - 1);
+
       ArrayList items = new ArrayList();
       
+      //get the parent folder
       string strParent = "";
-      int ipos = strDir.LastIndexOf(@"\");
-      if (ipos > 0)
+      if (IsRemote(strDir))
       {
-        strParent = strDir.Substring(0, ipos);
+        int ipos = strDir.LastIndexOf(@"/");
+        if (ipos > 0)
+        {
+          strParent = strDir.Substring(0, ipos);
+        }
+      }
+      else
+      {
+        int ipos = strDir.LastIndexOf(@"\");
+        if (ipos > 0)
+        {
+          strParent = strDir.Substring(0, ipos);
+        }
       }
 
 
+      //is this directory protected
       int iPincodeCorrect;
       if (IsProtectedShare(strDir, out iPincodeCorrect))
       {
+        //yes, check if this is a subdirectory of the share
         if (m_strPreviousDir.IndexOf(strDir) < 0)
         {
-          //check pincode
+          //no, then ask user to enter the pincode
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
           GUIWindowManager.SendMessage(msg);
           int iPincode = -1;
@@ -266,41 +334,37 @@ namespace MediaPortal.Util
       }
 
 
+      //check if this is an image file like .iso, .nrg,...
+      //ifso then ask daemontools to automount it
+
       bool VirtualShare=false;
-      if (DaemonTools.IsEnabled)
+      if (!IsRemote(strDir))
       {
-        string strExtension=System.IO.Path.GetExtension(strDir);
-        if ( IsImageFile(strExtension) )
+        if (DaemonTools.IsEnabled)
         {
-          if (!DaemonTools.IsMounted(strDir))
+          string strExtension=System.IO.Path.GetExtension(strDir);
+          if ( IsImageFile(strExtension) )
           {
-            string virtualPath;
-            if (DaemonTools.Mount(strDir,out virtualPath))
+            if (!DaemonTools.IsMounted(strDir))
             {
-              strDir=virtualPath;
+              string virtualPath;
+              if (DaemonTools.Mount(strDir,out virtualPath))
+              {
+                strDir=virtualPath;
+                VirtualShare=true;
+              }
+            }
+            else
+            {
+              strDir=DaemonTools.GetVirtualDrive();
               VirtualShare=true;
             }
           }
-          else
-          {
-            strDir=DaemonTools.GetVirtualDrive();
-            VirtualShare=true;
-          }
         }
       }
-      
+
       string[] strDirs = null;
       string[] strFiles = null;
-      try
-      {
-        strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
-        strFiles = System.IO.Directory.GetFiles(strDir + @"\");
-      }
-      catch (Exception)
-      {
-      }
-      
-
       GUIListItem item = null;
       if (!IsRootShare(strDir) || VirtualShare)
       { 
@@ -310,7 +374,7 @@ namespace MediaPortal.Util
         item.Label2 = "";
         Utils.SetDefaultIcons(item);
         Utils.SetThumbnails(ref item);
-      
+        
         if (strParent == strDir)
         {
           item.Path = "";
@@ -330,69 +394,154 @@ namespace MediaPortal.Util
         Utils.SetThumbnails(ref item);
         items.Add(item);
       }
-      if (strDirs != null)
+      
+      if (IsRemote(strDir))
       {
-        for (int i = 0; i < strDirs.Length; ++i)
+        string folder=strDir.Substring( "remote:".Length);
+        string[] subitems = folder.Split(new char[]{'?'});
+        if (subitems[4]==String.Empty) subitems[4]="/";
+        int port=21;
+        unchecked
         {
-          string strPath = strDirs[i].Substring(strDir.Length + 1);
-
-          // Skip hidden folders
-          if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
-          {
-             continue;
-          }
-
-          item = new GUIListItem();
-          item.IsFolder = true;
-          item.Label = strPath;
-          item.Label2 = "";
-          item.Path = strDirs[i];
-          Utils.SetDefaultIcons(item);
-          Utils.SetThumbnails(ref item);
-
-          items.Add(item);
+          port=Int32.Parse(subitems[1]);
         }
-      }
-
-      if (strFiles != null)
-      {
-        for (int i = 0; i < strFiles.Length; ++i)
+        FTPClient ftp;
+        if (!FtpConnectionCache.InCache(subitems[0],subitems[2],subitems[3], port,out ftp))
         {
-          string strExtension=System.IO.Path.GetExtension(strFiles[i]);
-          if (IsImageFile(strExtension))
-          {
-            if (DaemonTools.IsEnabled)
-            {
+          ftp=FtpConnectionCache.MakeConnection(subitems[0],subitems[2],subitems[3], port);
+        }
+        if (ftp==null) return items;
 
-              item = new GUIListItem();
-              item.IsFolder = true;
-              item.Label = Utils.GetFilename(strFiles[i]);
-              item.Label2 = "";
-              item.Path = strFiles[i];
-              item.FileInfo = null;
-              Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
-              items.Add(item);
-              continue;
-            }
+        FTPFile[] files;
+        try
+        {
+          ftp.ChDir(subitems[4]);
+          files=ftp.DirDetails(subitems[4]);
+        }
+        catch(Exception)
+        {
+          //maybe this socket has timed out, remove it and get a new one
+          FtpConnectionCache.Remove(ftp);
+          ftp=FtpConnectionCache.MakeConnection(subitems[0],subitems[2],subitems[3], port);
+          if (ftp==null) return items;
+          try
+          {
+            ftp.ChDir(subitems[4]);
+            files=ftp.DirDetails(subitems[4]);
           }
-          if (IsValidExtension(strFiles[i]))
+          catch(Exception)
           {
-            // Skip hidden files
-            if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
-               continue;
-            }
-
+            return items;
+          }
+        }
+        for (int i=0; i < files.Length; ++i)
+        {
+          FTPFile file=files[i];
+          if (file.Dir)
+          {
             item = new GUIListItem();
-            item.IsFolder = false;
-            item.Label = Utils.GetFilename(strFiles[i]);
+            item.IsFolder = true;
+            item.Label = file.Name;
             item.Label2 = "";
-            item.Path = strFiles[i];
-            item.FileInfo = new System.IO.FileInfo(strFiles[i]);
+            item.Path = String.Format("{0}/{1}",strDir,file.Name);
             Utils.SetDefaultIcons(item);
             Utils.SetThumbnails(ref item);
             items.Add(item);
+          }
+          else
+          {
+            item = new GUIListItem();
+            item.IsFolder = false;
+            item.Label = file.Name;
+            item.Label2 = "";
+            item.Path = String.Format("{0}/{1}",strDir,file.Name);
+            item.FileInfo = new FileInformation();
+            DateTime modified=file.LastModified;
+            item.FileInfo.CreationTime=modified;
+            item.FileInfo.Length=file.Size;
+            Utils.SetDefaultIcons(item);
+            Utils.SetThumbnails(ref item);
+            items.Add(item);
+          }
+        }
+      }
+      else
+      {
+        try
+        {
+          strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
+          strFiles = System.IO.Directory.GetFiles(strDir + @"\");
+        }
+        catch (Exception)
+        {
+        }
+        
+
+        if (strDirs != null)
+        {
+          for (int i = 0; i < strDirs.Length; ++i)
+          {
+            string strPath = strDirs[i].Substring(strDir.Length + 1);
+
+            // Skip hidden folders
+            if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
+              continue;
+            }
+
+            item = new GUIListItem();
+            item.IsFolder = true;
+            item.Label = strPath;
+            item.Label2 = "";
+            item.Path = strDirs[i];
+            Utils.SetDefaultIcons(item);
+            Utils.SetThumbnails(ref item);
+
+            items.Add(item);
+          }
+        }
+
+        if (strFiles != null)
+        {
+          for (int i = 0; i < strFiles.Length; ++i)
+          {
+            string strExtension=System.IO.Path.GetExtension(strFiles[i]);
+            if (IsImageFile(strExtension))
+            {
+              if (DaemonTools.IsEnabled)
+              {
+
+                item = new GUIListItem();
+                item.IsFolder = true;
+                item.Label = Utils.GetFilename(strFiles[i]);
+                item.Label2 = "";
+                item.Path = strFiles[i];
+                item.FileInfo = null;
+                Utils.SetDefaultIcons(item);
+                Utils.SetThumbnails(ref item);
+                items.Add(item);
+                continue;
+              }
+            }
+            if (IsValidExtension(strFiles[i]))
+            {
+              // Skip hidden files
+              if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+              {
+                continue;
+              }
+
+              item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = Utils.GetFilename(strFiles[i]);
+              item.Label2 = "";
+              item.Path = strFiles[i];
+
+              item.FileInfo = new FileInformation(strFiles[i]);
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+            }
           }
         }
       }
@@ -549,7 +698,7 @@ namespace MediaPortal.Util
             item.Label = Utils.GetFilename(strFiles[i]);
             item.Label2 = "";
             item.Path = strFiles[i];
-            item.FileInfo = new System.IO.FileInfo(strFiles[i]);
+            item.FileInfo = new FileInformation(strFiles[i]);
             Utils.SetDefaultIcons(item);
             Utils.SetThumbnails(ref item);
             items.Add(item);
