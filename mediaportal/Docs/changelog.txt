@@ -1,7 +1,14 @@
 History: (dd-mm-yyyy)
-  27-04-2004: my tv       : fixed : recording: filter invalid characters for final recording filename
-  27-04-2004: my tv       : fixed : tvguide failed for tvguide.xml which contains programs without a stop time
+  27-04-2004: general     : fixed : thumbnails where messed up if file with same filename was present in different folders
+  27-04-2004: general     : fixed : after switching skins all files / folders where added twice and could not browse anymore
+  27-04-2004: DVD player  : added : internal dvd player now disables closed captions 
+  27-04-2004: setup       : added : tvcapture: you can now specify the pre/post recording times
+  27-04-2004: my tv       : fixed : now filters out any invalid characters for final recording filename
+  27-04-2004: my tv       : fixed : tvguide failed for (italian) tvguide.xml which contains programs without a endtime
+
   26-04-2004: setup       : fixed : tvcapture: country code was always 31
+  26-04-2004: my video    : fixed : flickering OSD
+  26-04-2004: my video    : fixed : choppy visualisation and/or video playback
   26-04-2004: general     : fixed : several sorting bugs
   26-04-2004: general     : added : B=goto to parent directory/folder
   26-04-2004: general     : fixed : bug with diacritics not showing like german umlaut etc.
@@ -14,6 +21,7 @@ History: (dd-mm-yyyy)
   26-04-2004: general     : added : more capture card logging
   26-04-2004: general     : added : dynamic font scaling
   26-04-2004: my TV       : added : scheduler->new/edit recording
+  
   25-04-2004: my music    : added : show both visz & album art
   25-04-2004: my music    : fixed : visz. disappeared when refreshing my weather
   25-04-2004: general     : fixed : space=pause didnt work
@@ -24,27 +32,33 @@ History: (dd-mm-yyyy)
   25-04-2004: my TV       : fixed : switched back to DirectX for smooth scrolling
   25-04-2004: setup       : fixed : switching skins in setup now reloads the skin
   25-04-2004: setup       : fixed : switching language in the setup now works 
+  
   24-04-2004: my TV       : fixed : some channels didnt show in the tvguide
   24-04-2004: my music    : fixed : album art didnt show up my songs or my album view
   24-04-2004: my music    : fixed : playback stopped when resizing or alt+enter
   24-04-2004: my music    : fixed : virtual keyboard (backspace & keyboard work now)
   24-04-2004: my music    : added : new keymap.xml with support for special keys like F1-F12
   24-04-2004: my music    : fixed : exception when exiting mediaplayer while playing an mp3
+  
   23-04-2004: setup       : added : AudioPlayer tab added, choose between WMP9 or DirectShow player
   23-04-2004: my pictures : fixed : music stopped when viewing a slideshow
   23-04-2004: my video    : fixed : OSD didnt move when you moved the mediaportal window
+  
   22-04-2004: my music    : added : visualisations when playing music
   22-04-2004: tvguide     : fixed : Mediaportal didnt use the timezone settings specified in tvguide.xml
   21-04-2004: setup       : fixed : made dvd language lists a bit shorter
   21-04-2004: setup       : added : file setup->setup channelnumbers/frequencies in 1 place
   21-04-2004: setup       : added : file setup->video capture: sort tv channels via up/down or drag&drop
   21-04-2004: setup       : added : file setup->video capture: inplace editing for channel numbers/frequencies
+  
   20-04-2004: My tv       : added : added support for <icon src> tag in tvguide.xml to automaticly download the channel icons
   20-04-2004: video OSD   : added : subtitle / audio stream selection when playing DVD with internal DVD player
   20-04-2004: video OSD   : added : turn DVD subtitles on off
   20-04-2004: setup       : added : file->setup->dvd player : default audio & subtitle language
   20-04-2004: general     : fixed : fixed: folder.jpg didnt work if folder contained a '.' character in the foldername
+  
   19-04-2004: my weather  : fixed : DELETE existing three cities (London, Oslo and Madrid) ADD a new city (Melbourne, Australia), going to MY WEATHER will get the weather report for LONDON.
+  
   18-04-2004: tvguide     : fixed : didnt work with o2grabber produced xml files
   18-04-2004: my weather  : fixed : not all texts where taken from strings.xml
   18-04-2004: general     : fixed : '1 Objects' was hardcoded instead of using strings.xml
@@ -52,6 +66,7 @@ History: (dd-mm-yyyy)
   18-04-2004: my video    : fixed : internal DVD player just showed black screen in fullscreen mode
   18-04-2004: my tv       : added : MY Tv tv-preview
   18-04-2004: skin        : fixed : scroll/fade label 
+  
   17-04-2004: my tv       : fixed : capture: no audio was recorded for some capture cards
   17-04-2004: my tv       : fixed : some tvguides won't let you scroll down to a diff channel. So you r stuck on the first channel
   17-04-2004: home        : added : ask user to confirm reboot/shutdown
@@ -60,6 +75,7 @@ History: (dd-mm-yyyy)
   17-04-2004: general     : fixed : autohide mouse
   17-04-2004: setup       : added : video capture->property pages 
   17-04-2004: setup       : added : video capture->frequency overrides for european countries
+  
   16-04-2004: skin        : fixed : skin bug in musicsettings.xml
   16-04-2004: setup       : added : video capture->country code for tuner
   16-04-2004: my video    : added : internal DVD player (still needs some work)
@@ -71,6 +87,7 @@ History: (dd-mm-yyyy)
   16-04-2004: my music    : fixed : album with ' character in id3 tag appeared twice in database 
   16-04-2004: my music    : fixed : musicoverlay was shown incorrect if song didnt had an id3tag
   15-04-2004: setup       : added : option for autohide mouse
+  
   15-04-2004: general     : fixed : removed all dependencies with directx
   15-04-2004: keyboard    : fixed : was broken 
   15-04-2004: my weather  : fixed : refresh dialog didnt disappear
@@ -81,6 +98,7 @@ History: (dd-mm-yyyy)
   15-04-2004: settings    : fixed : cant return to home when you resize xbmc during calibration
   15-04-2004: my music    : fixed : view by artist: sort didnt work
   15-04-2004: my music    : fixed : view by genre: sort didnt work
+  
   14-04-2004: general     : fixed : corrupt xbmc.xml
   14-04-2004: my music    : fixed : exception when querying album art
   14-04-2004: general     : fixed : resize
@@ -89,15 +107,18 @@ History: (dd-mm-yyyy)
   14-04-2004: general     : added : changed app into a winform app. Its not using directX anymore
   14-04-2004: my music    : fixed : scan music is now much faster
   14-04-2004: my pictures : fixed : ugly scaling of single picture view 
+  
   13-04-2004: my music    : fixed : AR of album art in view album/icon
   13-04-2004: setup       : added : file->setup audio:auto shuffle playlist on load
   13-04-2004: setup       : added : file->setup players:OSD timeout for internal player
   13-04-2004: setup       : added : file->setup players:subtitle settings
   13-04-2004: settings    : added : settings->my music->reorganize music database 
   13-04-2004: settings    : added : settings->my music->delete album info & delete single album
+  
   12-04-2004: settings    : fixed : movie calibration->OSD calibration : OSD didnt move
   12-04-2004: general     : fixed : fullscreen mode
   12-04-2004: general     : added : auto hide mouse cursor 
+  
   11-04-2004: setup       : fixed : added option to select internal or external movie player
   11-04-2004: my mymusic  : fixed : retrieving album art didnt load all tracks
   11-04-2004: my mymusic  : fixed : retrieving album art didnt work for some albums
@@ -107,15 +128,18 @@ History: (dd-mm-yyyy)
   11-04-2004: my mymusic  : added : save playlist to .m3u playlist
   11-04-2004: my video    : added : manual imdb
   11-04-2004: my pictures : added : seperate view/sort settings for root shares & folders
+  
   10-04-2004: my pictures : fixed : exception when loading pic
   10-04-2004: my pictures : fixed : slideshow didnt work nicely for images where height>width
   10-04-2004: my video    : fixed : set current working directory for external players
+  
   09-04-2004: my tv       : added : now shows title/time/description about current program on TV
   09-04-2004: my tv       : added : now shows title/time/channel about current program being recorded
   09-04-2004: my tv       : added : record now/stop now works
   09-04-2004: recorder    : added : started with recorder. for now it just logs when it should start/top recording.
   09-04-2004: my pictures : fixed : speeded up loading of large (5 meg pixel) pictures
   09-04-2004: general     : fixed : Aspect Ratio of thumbnails was wrong
+  
   08-04-2004: my pictures : fixed : picture database problems 
   08-04-2004: my music    : fixed : exception when album art didnt have a thumbnail
   08-04-2004: general     : fixed : sorting/view preferences where not only saved when xbmc was stopped in home
@@ -132,6 +156,7 @@ History: (dd-mm-yyyy)
   08-04-2004: my movies   : added : root dir. now has its own sort/view settings
   08-04-2004: general     : fixed : cursor was lost sometimes
   08-04-2004: my music    : fixed : scan dialog now shows last part of path
+  
   07-04-2004: my music    : added : album art lookup via www.allmusic.com (works in album & songs view )
   07-04-2004: my music    : fixed : sometimes songs/albums did appear more then once in the music database
   07-04-2004: my music    : added : files which have been played show up darker in the playlist window

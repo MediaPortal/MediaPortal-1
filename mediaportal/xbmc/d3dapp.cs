@@ -627,8 +627,11 @@ namespace MediaPortal
         try
         {
           InitializeDeviceObjects();
-          OnDeviceReset(null, null);
+          //OnDeviceReset(null, null);
           active = true;
+					GC.Collect();
+					GC.Collect();
+					GC.Collect();
           return;
         }
         catch (Exception )
@@ -1115,7 +1118,6 @@ namespace MediaPortal
         GUITextureManager.Dispose();
         GUIFontManager.Dispose();
         InitializeDeviceObjects();
-        OnDeviceReset(null, null);
         GUIWindowManager.OnAppStarting();
       }
     }

@@ -77,6 +77,7 @@ public class MediaPortalApp : D3DApp
         m_strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
         m_strLanguage=xmlreader.GetValueAsString("skin","language","English");
         m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
+				xmlreader=null;
       }
       catch(Exception)
       {
@@ -243,7 +244,9 @@ public class MediaPortalApp : D3DApp
         Log.Write("initialize skin");
         GUIWindowManager.PreInit();
         GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.RUNNING;
-        Log.Write("skin initalized");
+				GUIGraphicsContext.Load();
+				GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
+				Log.Write("skin initalized");
       }
       else
       {
