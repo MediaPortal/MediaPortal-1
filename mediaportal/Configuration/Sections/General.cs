@@ -23,6 +23,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.ComboBox comboBoxDrive;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ComboBox comboDriveNo;
 		private System.ComponentModel.IContainer components = null;
 
 		public General() : this("General")
@@ -112,6 +114,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDaemonTools.Checked= xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text= xmlreader.GetValueAsString("daemon", "path", "");
         comboBoxDrive.SelectedItem=xmlreader.GetValueAsString("daemon", "drive", "E:");
+        comboDriveNo.SelectedItem=xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
 			}
       checkBoxDaemonTools_CheckedChanged(null,null);
 
@@ -151,6 +154,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);
         xmlwriter.SetValue("daemon", "path", textBoxDaemonTools.Text);
         xmlwriter.SetValue("daemon", "drive", (string)comboBoxDrive.SelectedItem);
+        xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string)comboDriveNo.SelectedItem));
       }
 		}
 
@@ -167,12 +171,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.checkBoxDaemonTools = new System.Windows.Forms.CheckBox();
-      this.textBoxDaemonTools = new System.Windows.Forms.TextBox();
-      this.buttonSelectFolder = new System.Windows.Forms.Button();
-      this.label1 = new System.Windows.Forms.Label();
-      this.comboBoxDrive = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
+      this.comboBoxDrive = new System.Windows.Forms.ComboBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.buttonSelectFolder = new System.Windows.Forms.Button();
+      this.textBoxDaemonTools = new System.Windows.Forms.TextBox();
+      this.checkBoxDaemonTools = new System.Windows.Forms.CheckBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.comboDriveNo = new System.Windows.Forms.ComboBox();
       this.mpGroupBox1.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -240,6 +246,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
+      this.groupBox2.Controls.Add(this.comboDriveNo);
+      this.groupBox2.Controls.Add(this.label4);
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.comboBoxDrive);
       this.groupBox2.Controls.Add(this.label1);
@@ -248,45 +256,18 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.checkBoxDaemonTools);
       this.groupBox2.Location = new System.Drawing.Point(8, 248);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 120);
+      this.groupBox2.Size = new System.Drawing.Size(440, 144);
       this.groupBox2.TabIndex = 3;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Daemon tools";
       // 
-      // checkBoxDaemonTools
+      // label3
       // 
-      this.checkBoxDaemonTools.Location = new System.Drawing.Point(16, 24);
-      this.checkBoxDaemonTools.Name = "checkBoxDaemonTools";
-      this.checkBoxDaemonTools.Size = new System.Drawing.Size(296, 16);
-      this.checkBoxDaemonTools.TabIndex = 0;
-      this.checkBoxDaemonTools.Text = "Automount .iso/.bin files using Daemon tools";
-      this.checkBoxDaemonTools.CheckedChanged += new System.EventHandler(this.checkBoxDaemonTools_CheckedChanged);
-      // 
-      // textBoxDaemonTools
-      // 
-      this.textBoxDaemonTools.Location = new System.Drawing.Point(128, 48);
-      this.textBoxDaemonTools.Name = "textBoxDaemonTools";
-      this.textBoxDaemonTools.Size = new System.Drawing.Size(232, 20);
-      this.textBoxDaemonTools.TabIndex = 1;
-      this.textBoxDaemonTools.Text = "";
-      // 
-      // buttonSelectFolder
-      // 
-      this.buttonSelectFolder.Location = new System.Drawing.Point(368, 48);
-      this.buttonSelectFolder.Name = "buttonSelectFolder";
-      this.buttonSelectFolder.Size = new System.Drawing.Size(24, 23);
-      this.buttonSelectFolder.TabIndex = 2;
-      this.buttonSelectFolder.Text = "...";
-      this.buttonSelectFolder.Click += new System.EventHandler(this.buttonSelectFolder_Click);
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(32, 80);
-      this.label1.Name = "label1";
-      this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.label1.Size = new System.Drawing.Size(80, 16);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "Virtual drive:";
+      this.label3.Location = new System.Drawing.Point(32, 56);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(80, 16);
+      this.label3.TabIndex = 5;
+      this.label3.Text = "Daemon tools:";
       // 
       // comboBoxDrive
       // 
@@ -320,13 +301,61 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDrive.TabIndex = 4;
       this.comboBoxDrive.Text = "L:";
       // 
-      // label3
+      // label1
       // 
-      this.label3.Location = new System.Drawing.Point(32, 56);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(80, 16);
-      this.label3.TabIndex = 5;
-      this.label3.Text = "Daemon tools:";
+      this.label1.Location = new System.Drawing.Point(32, 80);
+      this.label1.Name = "label1";
+      this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.label1.Size = new System.Drawing.Size(80, 16);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "Virtual drive:";
+      // 
+      // buttonSelectFolder
+      // 
+      this.buttonSelectFolder.Location = new System.Drawing.Point(368, 48);
+      this.buttonSelectFolder.Name = "buttonSelectFolder";
+      this.buttonSelectFolder.Size = new System.Drawing.Size(24, 23);
+      this.buttonSelectFolder.TabIndex = 2;
+      this.buttonSelectFolder.Text = "...";
+      this.buttonSelectFolder.Click += new System.EventHandler(this.buttonSelectFolder_Click);
+      // 
+      // textBoxDaemonTools
+      // 
+      this.textBoxDaemonTools.Location = new System.Drawing.Point(128, 48);
+      this.textBoxDaemonTools.Name = "textBoxDaemonTools";
+      this.textBoxDaemonTools.Size = new System.Drawing.Size(232, 20);
+      this.textBoxDaemonTools.TabIndex = 1;
+      this.textBoxDaemonTools.Text = "";
+      // 
+      // checkBoxDaemonTools
+      // 
+      this.checkBoxDaemonTools.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxDaemonTools.Name = "checkBoxDaemonTools";
+      this.checkBoxDaemonTools.Size = new System.Drawing.Size(296, 16);
+      this.checkBoxDaemonTools.TabIndex = 0;
+      this.checkBoxDaemonTools.Text = "Automount .iso/.bin files using Daemon tools";
+      this.checkBoxDaemonTools.CheckedChanged += new System.EventHandler(this.checkBoxDaemonTools_CheckedChanged);
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(32, 104);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(64, 16);
+      this.label4.TabIndex = 6;
+      this.label4.Text = "Drive No:";
+      // 
+      // comboDriveNo
+      // 
+      this.comboDriveNo.Items.AddRange(new object[] {
+                                                      "0",
+                                                      "1",
+                                                      "2",
+                                                      "3"});
+      this.comboDriveNo.Location = new System.Drawing.Point(128, 104);
+      this.comboDriveNo.Name = "comboDriveNo";
+      this.comboDriveNo.Size = new System.Drawing.Size(121, 21);
+      this.comboDriveNo.TabIndex = 7;
+      this.comboDriveNo.Text = "0";
       // 
       // General
       // 
@@ -371,12 +400,14 @@ namespace MediaPortal.Configuration.Sections
         textBoxDaemonTools.Enabled=true;
         comboBoxDrive.Enabled=true;
         buttonSelectFolder.Enabled=true;
+        comboDriveNo.Enabled=true;
       }
       else
       {
         textBoxDaemonTools.Enabled=false;
         comboBoxDrive.Enabled=false;
         buttonSelectFolder.Enabled=false;
+        comboDriveNo.Enabled=false;
       }
 
     }
