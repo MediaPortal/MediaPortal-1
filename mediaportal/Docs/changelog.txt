@@ -1,3 +1,4 @@
+17-07-2004  general     : fixed : keep focus on buttons after pressing them (view as)
 17-07-2004  home        : fixed : home showed no background graphics if language was not english
 17-07-2004  general     : added : support for USBUIRT (input)
 

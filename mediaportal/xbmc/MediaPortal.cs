@@ -680,10 +680,14 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
 			if (key.KeyChar=='?')
 			{
+        Log.Write("Memory used before GC:{0}", GC.GetTotalMemory(false));
+        GC.WaitForPendingFinalizers();
 				GC.Collect();
 				GC.Collect();
 				GC.Collect();
-				GC.Collect();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        Log.Write("Memory used after GC:{0}", GC.GetTotalMemory(true));
 			}
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))

@@ -1,16 +1,18 @@
-Skin, gfx, .xml & media:
-  - my tv    : OSD/fullscreen   : need new progress bar to show all timeshifting info (we need new .xml & graphics)
-                                  example: http://www.sage.tv/0_imgDir/tvosdv2.jpg
-  - my tv    : OSD/fullscreen   : xml:add option 'Record Now'
-  - my tv    : TVGuide          : xml:add View By (movies,news,...) button
-  - my tv    : TVGuide          : xml:Hide this channel button
-  - my videos: OSD/fullscreen   : xml:show IMDB info in video OSD. (we need new .xml & graphics) 
-  - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
-                                  example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
+todo for 1.0:
+ - tvprogressbar
+ - bonkalord's setup
+ - A way to solve the OSD look on vmr7 when it is based on transparent graphics.
+ - auto launch movie,dvd,audiocd
+ - dialog saying database is empty when you wanna change the view
+ - my tv: show fullscreen or windowed tv option
+ - remember view by icon/list preference based per folder
+ - drop -cd1 etc. when stacking
+ - make album art position configurable 
+ - OSD mouse support
+ - foobar integration (depends on int20h)
 --------------------------------------------------------------------------------------------------------------     
 	- remember 'fullscreen tv' state when entering/leaving my tv
 	- new preview.png for both skins
-	- xbmc-er's fixes
 	- scrolling : base on time instead of frame
 fix:
 vmr9:
