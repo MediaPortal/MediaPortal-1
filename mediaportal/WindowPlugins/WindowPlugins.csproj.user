@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "C:\mediaportal\mediaportal\WindowPlugins\GUIMSNPlugin\;C:\mediaportal\mediaportal\;C:\mediaportal\;C:\mediaportal\WindowPlugins\GUIMSNPlugin\;D:\mediaportal\;D:\mediaportal\WindowPlugins\GUIMSNPlugin\" >
+            <Settings ReferencePath = "d:\dev\mediaportal\;d:\dev\mediaportal\WindowPlugins\GUIMSNPlugin\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"
@@ -16,7 +16,7 @@
                     StartProgram = ""
                     StartURL = ""
                     StartWorkingDirectory = ""
-                    StartWithIE = "true"
+                    StartWithIE = "false"
                 />
                 <Config
                     Name = "Release"
@@ -48,7 +48,7 @@
                     StartProgram = ""
                     StartURL = ""
                     StartWorkingDirectory = ""
-                    StartWithIE = "true"
+                    StartWithIE = "false"
                 />
             </Settings>
         </Build>
