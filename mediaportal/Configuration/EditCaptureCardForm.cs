@@ -1763,7 +1763,9 @@ namespace MediaPortal.Configuration
 				MessageBox.Show("No recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			
+			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
+			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(filename))
 			{
 				xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
@@ -2150,7 +2152,8 @@ namespace MediaPortal.Configuration
 		{
 
 			bool result=FillInAll();    
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(filename))
 			{
 				
 				
