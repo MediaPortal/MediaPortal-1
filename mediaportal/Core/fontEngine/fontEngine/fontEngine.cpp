@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 
 #define MAX_TEXTURES			200
-#define MAX_TEXTURE_COORDS		300
+#define MAX_TEXTURE_COORDS		500
 #define MaxNumfontVertices		5000
 #define MAX_FONTS				20
 #define MaxNumTextureVertices	3000
