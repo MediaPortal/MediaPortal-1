@@ -291,6 +291,8 @@ namespace MediaPortal.Configuration
       // 
       // useRecordingCheckBox
       // 
+      this.useRecordingCheckBox.Checked = true;
+      this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useRecordingCheckBox.Location = new System.Drawing.Point(32, 227);
       this.useRecordingCheckBox.Name = "useRecordingCheckBox";
@@ -300,6 +302,8 @@ namespace MediaPortal.Configuration
       // 
       // useWatchingCheckBox
       // 
+      this.useWatchingCheckBox.Checked = true;
+      this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 203);
       this.useWatchingCheckBox.Name = "useWatchingCheckBox";
