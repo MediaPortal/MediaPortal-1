@@ -120,8 +120,8 @@ namespace MediaPortal.GUI.Music
 					 break;
 			 }
 				LoadDirectory(m_strDirectory);
-				GUIControl.FocusControl(GetID, btnChangeInfo.GetID);
 				UpdateButtonStates();
+				GUIControl.FocusControl(GetID, btnChangeInfo.GetID);
 			}
 		}
 
