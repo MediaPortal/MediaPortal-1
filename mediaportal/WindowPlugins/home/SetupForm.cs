@@ -126,6 +126,8 @@ namespace home
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.CheckBox useTopBarSub;
 		private System.Windows.Forms.CheckBox useMenuShortcuts;
+		private System.Windows.Forms.CheckBox NoTopBar;
+		private System.Windows.Forms.Label label24;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -290,7 +292,9 @@ namespace home
 			this.addConfig = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.TopBar = new System.Windows.Forms.TabPage();
+			this.label24 = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.NoTopBar = new System.Windows.Forms.CheckBox();
 			this.useMenuShortcuts = new System.Windows.Forms.CheckBox();
 			this.useTopBarSub = new System.Windows.Forms.CheckBox();
 			this.BackButtons = new System.Windows.Forms.CheckBox();
@@ -693,6 +697,7 @@ namespace home
 			// 
 			// TopBar
 			// 
+			this.TopBar.Controls.Add(this.label24);
 			this.TopBar.Controls.Add(this.groupBox5);
 			this.TopBar.Controls.Add(this.groupBox4);
 			this.TopBar.Controls.Add(this.button1);
@@ -702,8 +707,17 @@ namespace home
 			this.TopBar.TabIndex = 0;
 			this.TopBar.Text = "Home Design";
 			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(32, 248);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(240, 16);
+			this.label24.TabIndex = 29;
+			this.label24.Text = "*Topbar2 is with Navigation Buttons";
+			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.NoTopBar);
 			this.groupBox5.Controls.Add(this.useMenuShortcuts);
 			this.groupBox5.Controls.Add(this.useTopBarSub);
 			this.groupBox5.Controls.Add(this.BackButtons);
@@ -712,15 +726,24 @@ namespace home
 			this.groupBox5.Controls.Add(this.chkBoxScrolling);
 			this.groupBox5.Location = new System.Drawing.Point(32, 24);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(232, 200);
+			this.groupBox5.Size = new System.Drawing.Size(232, 216);
 			this.groupBox5.TabIndex = 28;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Home Settings";
 			// 
+			// NoTopBar
+			// 
+			this.NoTopBar.Location = new System.Drawing.Point(24, 160);
+			this.NoTopBar.Name = "NoTopBar";
+			this.NoTopBar.Size = new System.Drawing.Size(168, 24);
+			this.NoTopBar.TabIndex = 10;
+			this.NoTopBar.Text = "No Topbar in Submenus";
+			this.NoTopBar.CheckedChanged += new System.EventHandler(this.NoTopBar_CheckedChanged);
+			// 
 			// useMenuShortcuts
 			// 
 			this.useMenuShortcuts.Enabled = false;
-			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 160);
+			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 184);
 			this.useMenuShortcuts.Name = "useMenuShortcuts";
 			this.useMenuShortcuts.Size = new System.Drawing.Size(168, 24);
 			this.useMenuShortcuts.TabIndex = 9;
@@ -732,7 +755,8 @@ namespace home
 			this.useTopBarSub.Name = "useTopBarSub";
 			this.useTopBarSub.Size = new System.Drawing.Size(168, 24);
 			this.useTopBarSub.TabIndex = 8;
-			this.useTopBarSub.Text = "Topbar in Submenus";
+			this.useTopBarSub.Text = "Topbar2*  in Submenus";
+			this.useTopBarSub.CheckedChanged += new System.EventHandler(this.useTopBarSub_CheckedChanged);
 			// 
 			// BackButtons
 			// 
@@ -1172,6 +1196,7 @@ namespace home
 				xmlWriter.SetValueAsBool("home","noScrollsubs",NoScrollSubs.Checked);		
 				xmlWriter.SetValueAsBool("home","backbuttons",BackButtons.Checked);		
 				xmlWriter.SetValueAsBool("home","useTopBarSub",useTopBarSub.Checked);		
+				xmlWriter.SetValueAsBool("home","noTopBarSub",NoTopBar.Checked);		
 				xmlWriter.SetValueAsBool("home","useMenuShortcuts",useMenuShortcuts.Checked);		
 				xmlWriter.SetValue("home","ownDate",OwnDate.Text);		
 		}
@@ -1193,6 +1218,7 @@ namespace home
 				NoScrollSubs.Checked=xmlreader.GetValueAsBool("home","noScrollsubs",false);
 				BackButtons.Checked=xmlreader.GetValueAsBool("home","backbuttons",false);
 				useTopBarSub.Checked=xmlreader.GetValueAsBool("home","useTopBarSub",false);
+				NoTopBar.Checked=xmlreader.GetValueAsBool("home","noTopBarSub",false);
 				useMenuShortcuts.Checked=xmlreader.GetValueAsBool("home","useMenuShortcuts",false);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				OwnDate.Text=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
@@ -2132,6 +2158,16 @@ namespace home
 		private void AddSpecial_Click(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void NoTopBar_CheckedChanged(object sender, System.EventArgs e)
+		{
+			useTopBarSub.Checked=false;
+		}
+
+		private void useTopBarSub_CheckedChanged(object sender, System.EventArgs e)
+		{
+			NoTopBar.Checked=false;
 		}
 	}
 }

@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.Home
 		bool					fixedScroll=false;
 		bool					backButtons=false;
 		bool					useTopBarSub=false;
+		bool					noTopBar=false;
 		bool					useMenuShortcuts=false;
 		int[]         m_iButtonIds = new int[60];  
 		DateTime      m_updateTimer=DateTime.MinValue;
@@ -141,6 +142,7 @@ namespace MediaPortal.GUI.Home
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				ownDate=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
 				useTopBarSub=xmlreader.GetValueAsBool("home","useTopBarSub",false);
+				noTopBar=xmlreader.GetValueAsBool("home","noTopBarSub",false);
 				useMenuShortcuts=xmlreader.GetValueAsBool("home","useMenuShortcuts",false);
 			}
 			if (useMenus==true) 
@@ -265,7 +267,7 @@ namespace MediaPortal.GUI.Home
 					}
 					m_iButtons=0;
 					inMyPlugins=false;
-					if (useTopBarSub==true) 
+					if (useTopBarSub==true || noTopBar==true) 
 					{
 						topBar.UseTopBarSub=false;
 						topBarHome.UseTopBarSub=false;
@@ -630,6 +632,11 @@ namespace MediaPortal.GUI.Home
 									topBar.UseTopBarSub=true;
 									topBarHome.UseTopBarSub=true;
 								}
+								if (noTopBar==true) 
+								{
+									topBar.UseTopBarSub=false;
+									topBarHome.UseTopBarSub=true;
+								}
 
 								GUIButtonControl cButt = GetControl(bControl) as GUIButtonControl;
 								selectedButton=cButt.Label;
@@ -743,7 +750,7 @@ namespace MediaPortal.GUI.Home
 			{
 				inSubMenu=false;
 				inMyPlugins=false;
-				if (useTopBarSub==true) 
+				if (useTopBarSub==true || noTopBar==true) 
 				{
 					topBar.UseTopBarSub=false;
 					topBarHome.UseTopBarSub=false;
