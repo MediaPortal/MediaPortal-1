@@ -4,14 +4,11 @@ My Radio:
          
 My TV:
   general
-    - recoding recordings to divx, mpeg,...
-    - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
     - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
     - watch Live TV on two TVs if user has two Tuners
 	- option:fade in/out when switching between fullscreen video/tv<->gui
 	- option:show fullscreen TV when going to my tv (instead of windowed)
 	- option:show live tv in 'tv gfx' on home
-	- A way to browse and resolve recording conflicts. 
 	- picture in picture
 	- TV-out through PVR 350
   
@@ -24,19 +21,25 @@ My TV:
      - show 'red dot' if program is being recorded
      
   Recorded tv:
+     -
      
   TVGuide:
      - Search function in EPG 
      - add to program favorites (will b highlighted next time)
-     - allow user to specify which channels should b displayed and which not (hide channels)
+     - allow user to specify which channels should be displayed and which not (hide channels)
      - different views like View by : movies, news, Whats playing now... 
      - show multiple red dots when recording series
+     - Indicate that recording is already busy when user tries to record something while recording is already started
 
   Scheduled:
      - remove all schedules button
   
-  Recorder/Capture:
-     - add screenshot option    
+  Recorder:
+    - A way to browse and resolve recording conflicts. 
+    - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
+    - support for timeshifting with SW encoding cards
+    - support for recording to mpeg with SW encoding cards
+    - recoding recordings to divx, mpeg,...
      
 My Music: (int_20h)
   - auto-resume 
