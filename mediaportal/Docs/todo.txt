@@ -57,6 +57,7 @@ Settings:
   - all :-)
 
 General:
+  - Eject CD/DVD button
   - setup:Auto Tune 
   - caller ID
   - seperate module/database for TV-series

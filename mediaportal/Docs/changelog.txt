@@ -1,5 +1,6 @@
 History: (dd-mm-yyyy)
   09-05-2004  my music    : fixed : songs with ' character in it where gone after reoganizing the music database
+  09-05-2004  my tv       : fixed : video compressor was not used
   
   08-05-2004  my music    : fixed : artists view didnt show thumbs
   08-05-2004  general     : fixed : lowered usage of video ram. Solved a number of problems for ppl with low memory memory & high resolutions

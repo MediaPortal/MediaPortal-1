@@ -549,7 +549,7 @@ namespace MediaPortal.TV.Recording
         string strVideoDevice=xmlreader.GetValueAsString("capture","videodevice","none");
         string strAudioDevice=xmlreader.GetValueAsString("capture","audiodevice","none");
         string strCompressorAudio=xmlreader.GetValueAsString("capture","audiocompressor","none");
-        string strCompressorVideo=xmlreader.GetValueAsString("capture","Videocompressor","none");
+        string strCompressorVideo=xmlreader.GetValueAsString("capture","videocompressor","none");
         if (strVideoDevice=="none") 
         {
           Log.Write("err:no video capture device selected in setup");
@@ -593,27 +593,30 @@ namespace MediaPortal.TV.Recording
         Log.Write("  create directshow graph");
         capture = new Capture(VideoDevice,audioDevice);
 
-        // add audio compressor
-        Log.Write("  find audio compressor:{0}",strCompressorAudio);
-        foreach (Filter filter in filters.AudioCompressors)
+        if (strFileName.Length>0)
         {
-          if (String.Compare(filter.Name,strCompressorAudio)==0)
+          // add audio compressor
+          Log.Write("  find audio compressor:{0}",strCompressorAudio);
+          foreach (Filter filter in filters.AudioCompressors)
           {
-            Log.Write("    add audio compressor:{0}", strCompressorAudio);
-            capture.AudioCompressor=filter;
-            break;
+            if (String.Compare(filter.Name,strCompressorAudio)==0)
+            {
+              Log.Write("    add audio compressor:{0}", strCompressorAudio);
+              capture.AudioCompressor=filter;
+              break;
+            }
           }
-        }
 
-        //add Video compressor
-        Log.Write("  find video compressor:{0}",strCompressorVideo);
-        foreach (Filter filter in filters.VideoCompressors)
-        {
-          if (String.Compare(filter.Name,strCompressorVideo)==0)
+          //add Video compressor
+          Log.Write("  find video compressor:{0}",strCompressorVideo);
+          foreach (Filter filter in filters.VideoCompressors)
           {
-            Log.Write("    add Video compressor:{0}", strCompressorVideo);
-            capture.VideoCompressor=filter;
-            break;
+            if (String.Compare(filter.Name,strCompressorVideo)==0)
+            {
+              Log.Write("    add Video compressor:{0}", strCompressorVideo);
+              capture.VideoCompressor=filter;
+              break;
+            }
           }
         }
 
