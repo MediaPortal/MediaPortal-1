@@ -1,3 +1,4 @@
+07-08-2004  setup     	: fixed : The browse button had didn't work in the Program Guide section.
 07-08-2004  general     : fixed : application didnt start if there was no C: drive
 07-08-2004  my music    : fixed : album lookup failed because www.allmusic.com changed website layout again
 07-08-2004  my tv       : fixed : external tv channels did not appear in the tvguide
