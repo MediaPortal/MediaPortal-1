@@ -106,6 +106,18 @@ namespace MediaPortal.GUI.TV
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
+					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					{
+						if (! g_Player.Playing)
+						{
+							if (GUIGraphicsContext.ShowBackground)
+							{
+								// stop timeshifting & viewing... 
+	              
+								Recorder.StopViewing();
+							}
+						}
+					}
 					base.OnMessage(message);
 					return true;
 				}
