@@ -327,8 +327,10 @@ namespace PostSetup
 					targetDirectory += @"\";
 
 				//creates dir that dont exists.
+				try{
 				Directory.CreateDirectory(targetDirectory);
-
+				}
+				catch(Exception){}
 				ZipInputStream zis = new ZipInputStream(new MemoryStream(indata));
 				ZipEntry theEntry;
 
@@ -352,7 +354,10 @@ namespace PostSetup
 					if (theEntry.IsDirectory)
 					{						
 						// if its a directory, create it.
+						try{
 						Directory.CreateDirectory(cfile);
+						}
+						catch(Exception){}
 					}
 					else
 					{
@@ -694,7 +699,11 @@ namespace PostSetup
 			try
 			{
 				//creates directoris if they dont exists.
+				try
+				{
 				Directory.CreateDirectory(targetDirectory);
+				}
+				catch(Exception){}
 				//write byte to disk.
 				FileStream fs = new FileStream(@targetDirectory + "/" + filename, FileMode.CreateNew);
 				for (int i = 0; i < indata.Length; i++)

@@ -126,6 +126,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
+			//Log.Write("Add window :{0} id:{1}", Window.ToString(), Window.GetID);
 			m_vecWindows.Add(Window);
     }
     static public bool IsSwitchingToNewWindow

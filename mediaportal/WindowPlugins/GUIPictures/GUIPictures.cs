@@ -111,7 +111,11 @@ namespace MediaPortal.GUI.Pictures
     public override bool Init()
     {
       m_strDirectory="";
+			try
+			{
       System.IO.Directory.CreateDirectory(ThumbsFolder);
+			}
+			catch(Exception){}
       return Load (GUIGraphicsContext.Skin+@"\mypics.xml");
     }
 

@@ -24,8 +24,12 @@ namespace MediaPortal.Picture.Database
         try 
         {
           // Open database
+					try
+					{
           System.IO.Directory.CreateDirectory("database");
-          m_db = new SQLiteClient(@"database\PictureDatabase.db");
+					}
+					catch(Exception){}
+					m_db = new SQLiteClient(@"database\PictureDatabase.db");
           CreateTables();
 
         } 

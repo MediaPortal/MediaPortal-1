@@ -455,7 +455,6 @@ public class MediaPortalApp : D3DApp, IRender
 			
 			try
 			{
-        System.IO.Directory.CreateDirectory("thumbs");
 #if DEBUG
 #else
         UpdaterConfiguration config = UpdaterConfiguration.Instance;
@@ -465,9 +464,14 @@ public class MediaPortalApp : D3DApp, IRender
 				config.Applications[0].Client.XmlFile = System.IO.Directory.GetCurrentDirectory() + @"\MediaPortal.exe.config";
 				config.Applications[0].Server.ServerManifestFileDestination = System.IO.Directory.GetCurrentDirectory() + @"\xml\ServerManifest.xml";
 				
-				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
-				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
-				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
+				try
+				{
+					System.IO.Directory.CreateDirectory("thumbs");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
+				}
+				catch(Exception){}
 				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
 				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();

@@ -55,8 +55,11 @@ namespace MediaPortal.TV.Database
         {
           // Open database
           Log.Write("opening tvdatabase");
+					try{
           System.IO.Directory.CreateDirectory("database");
-          //Upgrade();
+					}
+					catch(Exception){}
+					//Upgrade();
           m_db = new SQLiteClient(@"database\TVDatabaseV9.db");
           CreateTables();
 

@@ -54,7 +54,11 @@ namespace MediaPortal.Music.Database
       try 
       {
         // Open database
-        System.IO.Directory.CreateDirectory("database");
+        try
+				{
+					System.IO.Directory.CreateDirectory("database");
+				}
+				catch(Exception){}
         m_db = new SQLiteClient(@"database\musicdatabase3.db");
         CreateTables();
 

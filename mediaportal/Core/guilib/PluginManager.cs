@@ -56,8 +56,12 @@ namespace MediaPortal.GUI.Library
       if (nonWindowPluginsLoaded) return;
       nonWindowPluginsLoaded=true;
       Log.Write("PlugInManager.Load()");
-      System.IO.Directory.CreateDirectory(@"plugins");
-      System.IO.Directory.CreateDirectory(@"plugins\process");
+			try
+			{
+				System.IO.Directory.CreateDirectory(@"plugins");
+				System.IO.Directory.CreateDirectory(@"plugins\process");
+			}
+			catch(Exception){}
       string[] strFiles=System.IO.Directory.GetFiles(@"plugins\process", "*.dll");
       foreach (string strFile in strFiles)
       {
@@ -69,8 +73,12 @@ namespace MediaPortal.GUI.Library
       if (windowPluginsLoaded) return;
       windowPluginsLoaded=true;
       Log.Write("PlugInManager.LoadWindowPlugins()");
-      System.IO.Directory.CreateDirectory(@"plugins");
-      System.IO.Directory.CreateDirectory(@"plugins\windows");
+			try
+			{
+				System.IO.Directory.CreateDirectory(@"plugins");
+				System.IO.Directory.CreateDirectory(@"plugins\windows");
+			}
+			catch(Exception){}
       string [] strFiles=System.IO.Directory.GetFiles(@"plugins\windows", "*.dll");
       foreach (string strFile in strFiles)
       {
@@ -131,6 +139,7 @@ namespace MediaPortal.GUI.Library
     static void LoadPlugin(string strFile)
     {
       if (!IsPlugInEnabled(strFile)) return;
+			Log.Write("Load plugins from :{0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
@@ -194,6 +203,7 @@ namespace MediaPortal.GUI.Library
     {
       if (!IsPlugInEnabled(strFile)) return;
 
+			Log.Write("Load plugins from :{0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
@@ -204,19 +214,26 @@ namespace MediaPortal.GUI.Library
           foreach (Type t in types)
           {
             try
-            {
+						{
               if (t.IsClass)
-              {
-                if (t.IsSubclassOf (typeof(GUIWindow)))
+							{
+                if (t.IsSubclassOf (typeof(MediaPortal.GUI.Library.GUIWindow)))
                 {
                   object newObj=(object)Activator.CreateInstance(t);
                   GUIWindow win=(GUIWindow)newObj;
                   if (IsWindowPlugInEnabled(win.GetType().ToString()))
                   {
-                    win.Init();
+										try
+										{
+											win.Init();
+										}
+										catch(Exception ex)
+										{
+											Log.Write("Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message,ex.Source,ex.StackTrace);
+										}
                     GUIWindowManager.Add(ref win);
                   }
-                  //Log.Write("  load plugin:{0} in {1}",t.ToString(), strFile);
+                  //else Log.Write("  plugin:{0} not enabled",win.GetType().ToString());
                 }
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
                 Type[] foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
@@ -251,6 +268,7 @@ namespace MediaPortal.GUI.Library
       catch (Exception ex)
       {
         string strEx=ex.Message;
+				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
       }
     }
 

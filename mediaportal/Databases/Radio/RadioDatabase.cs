@@ -21,8 +21,12 @@ namespace MediaPortal.Radio.Database
       {
         // Open database
         Log.Write("open radiodatabase");
+				try
+				{
         System.IO.Directory.CreateDirectory("database");
-        m_db = new SQLiteClient(@"database\RadioDatabase.db");
+				}
+				catch(Exception){}
+				m_db = new SQLiteClient(@"database\RadioDatabase.db");
         CreateTables();
 
         if (m_db!=null)

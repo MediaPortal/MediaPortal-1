@@ -22,8 +22,12 @@ namespace MediaPortal.Video.Database
       try 
       {
         // Open database
+				try
+				{
         System.IO.Directory.CreateDirectory("database");
-        m_db = new SQLiteClient(@"database\videodatabase2.db");
+				}
+				catch(Exception){}
+				m_db = new SQLiteClient(@"database\videodatabase2.db");
         CreateTables();
 
       } 

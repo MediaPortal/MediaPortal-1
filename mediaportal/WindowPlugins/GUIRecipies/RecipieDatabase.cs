@@ -51,7 +51,11 @@ namespace GUIRecipies
 		private RecipieDatabase() {
 			try {
 				// Open database
-				System.IO.Directory.CreateDirectory("database");
+				try
+				{
+					System.IO.Directory.CreateDirectory("database");
+				}
+				catch(Exception){}
 				dbExists = System.IO.File.Exists( @"database\RecipieDatabaseV3.db" );
 				m_db = new SQLiteClient(@"database\RecipieDatabaseV3.db");
 				if( !dbExists ){

@@ -124,9 +124,13 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackEnded +=new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted +=new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
       m_strDirectory = "";
-      System.IO.Directory.CreateDirectory(@"Thumbs\videos");
-      System.IO.Directory.CreateDirectory(@"Thumbs\videos\genre");
-      System.IO.Directory.CreateDirectory(ThumbsFolder);
+			try
+			{
+				System.IO.Directory.CreateDirectory(@"Thumbs\videos");
+				System.IO.Directory.CreateDirectory(@"Thumbs\videos\genre");
+				System.IO.Directory.CreateDirectory(ThumbsFolder);
+			}
+			catch(Exception){}
 			return Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
 		}
 

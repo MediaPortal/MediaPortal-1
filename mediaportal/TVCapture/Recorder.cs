@@ -116,9 +116,13 @@ namespace MediaPortal.TV.Recording
       }
       for (int i=0; i < m_tvcards.Count;++i)
       {
-        string dir=String.Format(@"{0}\card{1}",m_strRecPath,i+1);
-        System.IO.Directory.CreateDirectory(dir);
-        DeleteOldTimeShiftFiles(dir);
+				try
+				{
+					string dir=String.Format(@"{0}\card{1}",m_strRecPath,i+1);
+					System.IO.Directory.CreateDirectory(dir);
+					DeleteOldTimeShiftFiles(dir);
+				}
+				catch(Exception){}
       }
 
       m_TVChannels.Clear();

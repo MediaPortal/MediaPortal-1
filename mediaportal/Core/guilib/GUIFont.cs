@@ -546,7 +546,10 @@ namespace MediaPortal.GUI.Library
 
 			// Create a directory to cache the font bitmaps
       string strCache=String.Format(@"{0}\fonts\",GUIGraphicsContext.Skin);
+			try{
       System.IO.Directory.CreateDirectory(strCache);
+			}
+			catch(Exception){}
       strCache=String.Format(@"{0}\fonts\{1}_{2}.png",GUIGraphicsContext.Skin, m_strFontName, m_iFontHeight);
      
 			// If the cached bitmap file exists load from file.

@@ -23,7 +23,7 @@ namespace MediaPortal.GUI.Home
 			ScrollUp,
 			ScrollDown
 		}
-		enum Controls:int
+		enum Controls:int 
 		{
 			TemplateHoverImage=1000,
 			TemplateButton=1001,

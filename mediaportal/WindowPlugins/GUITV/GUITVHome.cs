@@ -61,8 +61,12 @@ namespace MediaPortal.GUI.TV
     }
 		public override bool Init()
 		{
+			try
+			{
       System.IO.Directory.CreateDirectory(@"thumbs\tv");
       System.IO.Directory.CreateDirectory(@"thumbs\tv\logos");
+			}
+			catch(Exception){}
       bool bResult= Load (GUIGraphicsContext.Skin+@"\mytvhome.xml");
       LoadSettings();
       return bResult;

@@ -120,7 +120,11 @@ namespace MediaPortal.GUI.TV
 			}
 
 			// Create a new FileSystemWatcher and set its properties.
-			System.IO.Directory.CreateDirectory(m_strTVGuideFile);
+			try
+			{
+				System.IO.Directory.CreateDirectory(m_strTVGuideFile);
+			}
+			catch(Exception){}
 			m_watcher = new FileSystemWatcher();
 			m_watcher.Path=m_strTVGuideFile;
 			m_watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;

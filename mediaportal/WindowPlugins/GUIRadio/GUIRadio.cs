@@ -81,7 +81,11 @@ namespace MediaPortal.GUI.Radio
     {
       m_strDirectory="";
       bool bResult=Load (GUIGraphicsContext.Skin+@"\MyRadio.xml");
-      System.IO.Directory.CreateDirectory(ThumbsFolder);
+			try
+			{
+				System.IO.Directory.CreateDirectory(ThumbsFolder);
+			}
+			catch(Exception){}
       return bResult;
     }
 

@@ -26,7 +26,11 @@ namespace ProgramsDatabase
 			try 
 			{
 				// Open database
+				try
+				{
 				System.IO.Directory.CreateDirectory("database");
+				}
+				catch(Exception){}
 				m_db = new SQLiteClient(@"database\ProgramDatabase.db");
 				// make sure the DB-structure is complete
 				CreateObjects();
