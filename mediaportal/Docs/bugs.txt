@@ -1,5 +1,4 @@
 Bugs left:
-  02-07-2004 my tv      : uses 100% cpu when recording due to TVUtil.GetProgramAt()
   02-07-2004 skin engine: On a selectbutton you cannot control the text position of the initial button text. Only the text after you select it.
   30-06-2004 my programs: returns to home when stopping a game
   29-06-2004 home       : scroll speed 9 / 10 are the same
