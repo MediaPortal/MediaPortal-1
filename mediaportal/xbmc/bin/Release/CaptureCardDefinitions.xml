@@ -1,21 +1,27 @@
 <?xml version="1.0"?>
-<!-- This file contains the capture card definitions to create the capture card dependant part of a graph -->
-<!-- -->
-<!-- Each capture card is identified by its friendly name and its its unique identification: its guid. -->
-<!-- Depending on the cards capabilities, it has a TV and Radio section that defines the graph -->
-<!-- -->
-<!-- Each graph is defined upto a certain capture card dependant filter, upon which point the software will take over and -->
-<!-- create the rest of the graph, which should be generic, ie INDEPENDANT of the capture card!!! -->
-<!-- -->
-<!-- The last filter/output pin is defined under the interface section: -->
-<!--    name="...", "Video" (for video pin), "Audio" (for audio pin) and "Mpeg2" (for mpeg2 output video/audio). -->
-<!-- It shall depend on the kind of card (MPEG2/Software) what exactly is offered on the video, audio and mpeg2 pins... -->
-<!-- MPEG2 cards will usually only have the mpeg2 output and audio output if they have radio also... -->
-<!-- -->
-<!-- Regarding connection pin definition: -->
-<!--  1. Define the Name of the pin. This might work and might not as this might be language dependant -->
-<!--  2. Define the 0-based index of the pin. This always should work... -->
-<!-- -->
+<!-- This file contains the capture card definitions to create the capture card dependant part of a graph	-->
+<!--																										-->
+<!-- Each capture card is identified by its friendly name and its its unique identification: its guid.		-->
+<!-- Depending on the cards capabilities, it has a TV and Radio section that defines the graph				-->
+<!--																										-->
+<!-- Each graph is defined upto a certain capture card dependant filter, upon which point the software will --> 
+<!-- take over and create the rest of the graph, which should be generic, ie INDEPENDANT of the capture card!!! -->
+<!--																										-->
+<!-- The last filter/output pin is defined under the interface section:										-->
+<!-- name="...", "Video" (for video pin), "Audio" (for audio pin) and "Mpeg2" (for mpeg2 output video/audio). -->
+<!-- It shall depend on the kind of card (MPEG2/Software/BDA) what exactly is offered					-->
+<!--   MPEG2/MCE cards 																					-->
+<!--      the mpeg2 pin describes which output pin of the video capture filter contains the				-->
+<!--      the captured mpeg2 stream																		-->
+<!--																									-->
+<!--   DVB-T cards																						-->
+<!--      The interface pins audio,video,mpeg2 and sectiontables pins describe which					-->
+<!--      mpeg2 demultiplexer pins should be used for audio,video,mpeg2 and sectiontables				-->
+<!--																									-->
+<!-- Regarding connection pin definition:																-->
+<!--  1. Define the Name of the pin. This might work and might not as this might be language dependant	-->
+<!--  2. Define the 0-based index of the pin. This always should work...								-->
+<!--																									-->
 <!-- cards supported so far:                                                          -->
 <!--    AVerTV DVB-T 771			added by Frodo        (untested)                  -->
 <!--    Dvico Fusion HDTV			added by Frodo        (untested)                  -->
@@ -41,8 +47,8 @@
 <!--    general MCE card			added by Frodo                                    -->
 <!--    general MPEG2 card			added by Frodo                                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.9                                                                -->
-<!-- changed : 6-jan-2005 by Frodo                                                   -->
+<!-- version : 1.0.0.10                                                                -->
+<!-- changed : 8-jan-2005 by Frodo                                                   -->
 <!--                                                                                  -->
 
 <capturecards>
