@@ -562,24 +562,28 @@ namespace MediaPortal.GUI.TV
       {
         case 0: // delete
         {
-          if (Recorder.IsRecordingSchedule(rec, out card))
-          {
-            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-            if (null != dlgYesNo)
-            {
-              dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-              dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));
-              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));
-              dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));
-              dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+					if (Recorder.IsRecordingSchedule(rec, out card))
+					{
+						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+						if (null != dlgYesNo)
+						{
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+							dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));
+							dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));
+							dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));
+							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
 							if (dlgYesNo.IsConfirmed) 
 							{
 								Recorder.StopRecording(rec);
 								TVDatabase.RemoveRecording(rec);
 							}
-            }
-          }
+						}
+					}
+					else
+					{
+						TVDatabase.RemoveRecording(rec);
+					}
           LoadDirectory();
         }
         break;
