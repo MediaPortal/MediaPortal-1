@@ -993,7 +993,7 @@ namespace home
 				xmlWriter.SetValueAsBool("home","usemenus",useMenus.Checked);
 				xmlWriter.SetValueAsBool("home","usemyplugins",useMyPlugins.Checked);
 				xmlWriter.SetValueAsBool("home","noScrollsubs",NoScrollSubs.Checked);		
-				xmlWriter.GetValueAsString("home","ownDate",OwnDate.Text);		
+				xmlWriter.SetValue("home","ownDate",OwnDate.Text);		
 		}
 			this.Close();
 		}
