@@ -7,6 +7,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  15-07-2004 my pics    : show pic->zoom in->0=delete foto->dialog yes/no heeft geen yes->esc->weer die dialog
   13-07-2004 my tv      : duration of recorded programs is not correct. 
                           I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
@@ -14,11 +15,11 @@ crash/things not working Bugs:
   19-06-2004 my video   : vmr9: lines/stripes?
   
   13-07-2004 my music   : press F3 on an artist (a-ha) in artist view and it crashes
-  11-07-2004 my music   : cddb doesnt work for some cds? (MrMario64 )
-  02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various 
+  11-07-2004 my music   : cddb doesnt work for some case does not update tags. Meaning an album it finds wich had various 
                           artists first, now only 1 still shows as various artists. 
   02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. 
-                          However, there r albums with the same name from different artists. (big change needed in database engine) 
+                          However, there r albums withds? (MrMario64 )
+  02-05-2004 my music   : reorganise datab the same name from different artists. (big change needed in database engine) 
   
 
   
