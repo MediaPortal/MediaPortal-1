@@ -407,6 +407,8 @@ namespace MediaPortal.GUI.Video
 			{
 				if ( i >= (int)(m_movie.Rating+0.5f) )
 					GUIControl.HideControl(GetID, (int)Controls.CONTROL_STARS+i);
+				else
+					GUIControl.ShowControl(GetID, (int)Controls.CONTROL_STARS+i);
 			}
 
       strTmp = m_movie.Votes.Trim();
