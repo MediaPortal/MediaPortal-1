@@ -540,6 +540,8 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="file"></param>
     private void ScanFile(string file)
 		{
+			if(stopRebuild)  return;
+
 			string ext=System.IO.Path.GetExtension(file.ToLower());
 			if (ext==".ifo") return;
 			if (ext==".vob") return;
@@ -552,6 +554,7 @@ namespace MediaPortal.Configuration.Sections
 				Application.DoEvents();
 				imdb.Find( Utils.GetFilename(file));
 				Application.DoEvents();
+				if(stopRebuild)  return;
 				if (imdb.Count<=0) return;
 				if (imdb.Count>0)
 				{
@@ -566,6 +569,7 @@ namespace MediaPortal.Configuration.Sections
 				if (stopRebuild) return;
 				if ( imdb.GetDetails(imdb[selectedItem],ref movieDetails))
 				{
+					if(stopRebuild)  return;
 					Application.DoEvents();
 					id=VideoDatabase.AddMovie(file,false);
 					VideoDatabase.SetMovieInfo(file,ref movieDetails);
@@ -587,6 +591,7 @@ namespace MediaPortal.Configuration.Sections
     }
 		void DownloadThumnail(string folder,string url, string name)
 		{
+			if(stopRebuild)  return;
 			if (url==null) return;
 			if (url.Length==0) return;
 			Application.DoEvents();
@@ -615,6 +620,7 @@ namespace MediaPortal.Configuration.Sections
 		}
 		void DownloadDirector(IMDBMovie movieDetails)
 		{
+			if(stopRebuild)  return;
 			IMDB imdb = new IMDB(this);
 			string actor=movieDetails.Director;
 			string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
@@ -646,6 +652,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				for (int i=1; i < actors.Length;++i)
 				{
+					if(stopRebuild)  return;
 					int pos =actors[i].IndexOf(" as ");
 					if (pos <0) continue;
 					string actor=actors[i].Substring(0,pos);
