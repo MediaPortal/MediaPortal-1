@@ -24,6 +24,7 @@ namespace MediaPortal.GUI.TV
 	{
 		enum Controls
 		{
+			LBL_MESSAGE=27,
 			IMG_TELETEXT_PAGE=500,
 			BTN_PAGE100=502,
 			BTN_PAGE200,
@@ -39,31 +40,17 @@ namespace MediaPortal.GUI.TV
 		int		m_actualPage=0x100;
 		int		m_actualSubPage=0;
 		bool	m_pageDirty=false;
-		// form control
-		System.Windows.Forms.PictureBox m_pictureBox;
-		// timer
-		System.Timers.Timer	m_grabPageTimer=new System.Timers.Timer(500);
+
 
 
 		public  GUITVTeletext()
 		{
-			GetID=7700;
+			GetID=(int)GUIWindow.Window.WINDOW_TELETEXT;
 		}
     
 		public override bool Init()
 		{
-			// adding the page box
-			m_pictureBox=new PictureBox();
-			m_pictureBox.Top=0;
-			m_pictureBox.Left=0;
-			m_pictureBox.Width=1;
-			m_pictureBox.Height=1;
-			m_pictureBox.Visible=false;
-			m_pictureBox.Image=new Bitmap(440,460);
-			GUIGraphicsContext.form.Controls.Add(m_pictureBox);
 			//
-			m_grabPageTimer.AutoReset=true;
-			m_grabPageTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_grabPageTimer_Elapsed);
 			return Load (GUIGraphicsContext.Skin+@"\myteletext.xml");
 		}
 		
@@ -112,8 +99,6 @@ namespace MediaPortal.GUI.TV
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
-					if(m_pictureBox!=null)
-						m_pictureBox.Visible=false;
 					base.OnMessage(message);
 					return true;
 				}
@@ -121,7 +106,7 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
-					GUIImage gImg=(GUIImage)this.GetControl(500);
+					ShowMessage(100,0);
 					if(m_teleText==null)
 					{
 						Log.Write("dvb-teletext: no teletext object");
@@ -129,24 +114,6 @@ namespace MediaPortal.GUI.TV
 						return false;
 					}
 					m_teleText.GetPage(0x100,0);
-					m_grabPageTimer.Start();
-					if(gImg!=null)
-					{	// setting the coordinates from the image-control
-						m_pictureBox.Top=gImg.rect.Y;
-						m_pictureBox.Left=gImg.rect.X;
-						m_pictureBox.Width=gImg.rect.Width;
-						m_pictureBox.Height=gImg.rect.Height;
-						m_teleText.SetPageSize(gImg.rect.Width,gImg.rect.Height);
-						m_pictureBox.Image.Dispose();
-						m_pictureBox.Image=new Bitmap(gImg.rect.Width,gImg.rect.Height);
-						Graphics g=Graphics.FromImage(m_pictureBox.Image);
-						g.FillRectangle(new System.Drawing.SolidBrush(Color.Black),0,0,gImg.rect.Width,gImg.rect.Height);
-						g.Dispose();
-						if(m_pictureBox!=null)
-							m_pictureBox.Visible=true;
-						else
-							Log.Write("dvb-teletext: getting PictureBox-Object failed.");
-					}
 					GUIToggleButtonControl hiddenButton=(GUIToggleButtonControl)GetControl((int)Controls.BTN_HIDDEN);
 					if(hiddenButton!=null && m_teleText!=null)
 					{
@@ -154,9 +121,6 @@ namespace MediaPortal.GUI.TV
 						hiddenButton.Selected=true;
 						GetNewPage();
 					}
-					
-
-
 
 					return true;
 				}
@@ -233,7 +197,6 @@ namespace MediaPortal.GUI.TV
 			{
 				m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
 				Redraw();
-				m_grabPageTimer.Start();
 				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage,16),Convert.ToString(m_actualSubPage,16));
 			}
 		}
@@ -256,7 +219,6 @@ namespace MediaPortal.GUI.TV
 					{
 						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
 						Redraw();
-						m_grabPageTimer.Start();
 						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage,16),Convert.ToString(m_actualSubPage,16));
 						m_strInput="";
 						return;
@@ -272,7 +234,6 @@ namespace MediaPortal.GUI.TV
 					{
 						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
 						Redraw();
-						m_grabPageTimer.Start();
 						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage,16),Convert.ToString(m_actualSubPage,16));
 						m_strInput="";
 						return;
@@ -293,7 +254,6 @@ namespace MediaPortal.GUI.TV
 					{
 						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
 						Redraw();
-						m_grabPageTimer.Start();
 					}
 					Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage,16),Convert.ToString(m_actualSubPage,16));
 					m_strInput="";
@@ -314,17 +274,10 @@ namespace MediaPortal.GUI.TV
 		//
 		void ShowMessage(int page,int subpage)
 		{
-			
-			if(m_pictureBox==null)
-				return;
-			Graphics g=Graphics.FromImage(m_pictureBox.Image);
-			if(g==null)
-				return;
 
-			g.FillRectangle(new SolidBrush(Color.Black),0,0,m_pictureBox.Width,m_pictureBox.Height);
-			g.DrawString("waiting for Page "+Convert.ToString(page,16)+"/"+subpage.ToString()+"...",new Font("Arial",16),new SolidBrush(Color.White),0,0);
-			m_pageBitmap=(Bitmap)m_pictureBox.Image.Clone();
-			m_pictureBox.Refresh();
+			string msg="waiting for Page "+Convert.ToString(page,16)+"/"+subpage.ToString()+"...";
+			GUIControl.SetControlLabel(GetID,(int)Controls.LBL_MESSAGE,msg);
+			GUIControl.ShowControl(GetID,(int)Controls.LBL_MESSAGE);
 		}
 		//
 		//
@@ -334,14 +287,13 @@ namespace MediaPortal.GUI.TV
 			// here is only a flag set to true, the bitmap is getting
 			// in a timer-elapsed event!
 
-			if(GUIWindowManager.ActiveWindow==7700)
+			if(GUIWindowManager.ActiveWindow==GetID)
 			{
 				m_pageDirty=true;
-				
 			}
 		}
 
-		private void m_grabPageTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		public override void Process()
 		{
 			if(m_pageDirty==true)
 			{
@@ -360,13 +312,20 @@ namespace MediaPortal.GUI.TV
 					ShowMessage(m_actualPage,m_actualSubPage);
 					return;
 				}
-				Graphics g=System.Drawing.Graphics.FromImage(m_pictureBox.Image);
-				g.DrawImage(m_pageBitmap,0,0);
-				g.Dispose();
-				m_pictureBox.Refresh();
+				GUIControl.HideControl(GetID,(int)Controls.LBL_MESSAGE);
+				GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
+				
+				
+				pictureBox.FreeResources();
+				GUITextureManager.ReleaseTexture(@"temp\teletext.jpg");
+				Utils.FileDelete(@"temp\teletext.jpg");
+				m_pageBitmap.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+				pictureBox.SetFileName(@"temp\teletext.jpg");
 			}
-			catch
-			{}
+			catch (Exception ex)
+			{
+				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+			}
 		}
 	}// class
 }// namespace
