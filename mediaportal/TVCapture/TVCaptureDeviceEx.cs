@@ -878,13 +878,14 @@ namespace MediaPortal.TV.Recording
 			// set the meta data in the dvr-ms or .wmv file
 			TimeSpan ts = (_mNewRecordedTV.EndTime-_mNewRecordedTV.StartTime);
 			Hashtable propsToSet = new Hashtable();
-			propsToSet.Add("channel"    ,_mNewRecordedTV.Channel);
-			propsToSet.Add("title"      ,_mNewRecordedTV.Title);
-			propsToSet.Add("genre"      ,_mNewRecordedTV.Genre);
-			propsToSet.Add("description",_mNewRecordedTV.Description);
-			propsToSet.Add("id"         ,_mNewRecordedTV.ID);
-			propsToSet.Add("cardno"     ,this.ID);;
-			propsToSet.Add("duration"   ,ts.TotalSeconds);
+
+			propsToSet.Add(new MetadataItem("channel", _mNewRecordedTV.Channel, MetadataItemType.String));
+			propsToSet.Add(new MetadataItem("title", _mNewRecordedTV.Title, MetadataItemType.String));
+			propsToSet.Add(new MetadataItem("genre", _mNewRecordedTV.Genre, MetadataItemType.String));
+			propsToSet.Add(new MetadataItem("description", _mNewRecordedTV.Description, MetadataItemType.String));
+			propsToSet.Add(new MetadataItem("id", this.ID, _mNewRecordedTV.ID));
+			propsToSet.Add(new MetadataItem("cardno", this.ID, MetadataItemType.Dword));
+			propsToSet.Add(new MetadataItem("duration", ts.TotalSeconds, MetadataItemType.Dword));
 			string startTime=String.Format("{0}-{1}-{2} {3}:{4}:{5}",
 																			_mNewRecordedTV.StartTime.Day,
 																			_mNewRecordedTV.StartTime.Month,
@@ -900,8 +901,10 @@ namespace MediaPortal.TV.Recording
 																			_mNewRecordedTV.EndTime.Hour,
 																			_mNewRecordedTV.EndTime.Minute,
 																			_mNewRecordedTV.EndTime.Second);
-			propsToSet.Add("start",_mNewRecordedTV.StartTime);
-			propsToSet.Add("end"  ,_mNewRecordedTV.EndTime);
+			propsToSet.Add(new MetadataItem("start", startTime, MetadataItemType.String));
+			propsToSet.Add(new MetadataItem("end", endTime, MetadataItemType.String));
+			
+			
 			if (_mNewRecordedTV.FileName.ToLower().IndexOf(".dvr-ms")>=0)
 			{
 				using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(_mNewRecordedTV.FileName))

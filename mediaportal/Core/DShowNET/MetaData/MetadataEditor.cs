@@ -44,7 +44,7 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 		/// <param name="name">The name of the attribute.</param>
 		/// <param name="value">The value of the attribute.</param>
 		/// <param name="type">The type of the attribute value.</param>
-		internal MetadataItem(string name, object value, MetadataItemType type)
+		public MetadataItem(string name, object value, MetadataItemType type)
 		{
 			Name = name;
 			Value = value;

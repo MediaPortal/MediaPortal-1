@@ -13,6 +13,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.Player;
+using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace MediaPortal.TV.Recording
 {
@@ -70,7 +71,6 @@ namespace MediaPortal.TV.Recording
 			CleanProperties();
 			m_bRecordingsChanged=false;
     
-
 			Log.WriteFile(Log.LogType.Recorder,"Recorder: Loading capture cards from capturecards.xml");
 			m_tvcards.Clear();
 			try
