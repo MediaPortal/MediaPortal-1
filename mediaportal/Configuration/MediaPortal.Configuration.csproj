@@ -486,6 +486,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\DScalerVideoFilter.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DScalerVideoFilter.resx"
+                    DependentUpon = "DScalerVideoFilter.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\DVD.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
