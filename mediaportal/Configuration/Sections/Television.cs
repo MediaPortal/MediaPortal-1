@@ -315,7 +315,10 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 
-				xmlwriter.SetValue("capture", "countryname", countryComboBox.Text);
+        if(countryComboBox.Text.Length > 0)
+        {
+          xmlwriter.SetValue("capture", "countryname", countryComboBox.Text);
+        }
 
 				//
 				// Set codecs
@@ -342,11 +345,37 @@ namespace MediaPortal.Configuration.Sections
 
 					return countryId;
 				}
-			}
+
+        case "television.countryname" :
+          return countryComboBox.Text;
+      }
 
 			return null;
 		}
 
+    public override void OnSectionActivated()
+    {
+      //
+      // Check if the radio section has changed the country selection
+      //
+      SectionSettings section = SectionSettings.GetSection("Radio");
+
+      if(section != null)
+      {
+        //
+        // The television section has been loaded
+        //
+        string selectedCountry = (string)section.GetSetting("radio.countryname");
+
+        if(selectedCountry.Length > 0 && countryComboBox.Text.Equals(selectedCountry) == false)
+        {
+          //
+          // We have other country selection, change our country
+          //
+          countryComboBox.Text = selectedCountry;
+        }
+      }
+    }
 	}
 }
 

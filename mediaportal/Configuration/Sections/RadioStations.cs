@@ -406,7 +406,7 @@ namespace MediaPortal.Configuration.Sections
 			string	selectedDevice = (string)radioSection.GetSetting("radio.device");
 			string	selectedTuner = (string)radioSection.GetSetting("radio.tuner");
 
-			int		selectedCountry = 46;
+			int		selectedCountry = (int)radioSection.GetSetting("radio.country");
 
 			//
 			// Find the selected device
