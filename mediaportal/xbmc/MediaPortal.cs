@@ -1171,7 +1171,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED : 
         if (isMaximized == false) return;
-
+/*
         if (message.Param1 != 0)
         {
           //switch to fullscreen mode
@@ -1184,6 +1184,7 @@ public class MediaPortalApp : D3DApp, IRender
           if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
           SwitchFullScreenOrWindowed(true);
         }
+*/
       break;
     }
   }

@@ -153,6 +153,10 @@ namespace MediaPortal.TV.Recording
       bool bShouldTimeshift=(m_bAlwaysTimeshift || m_bTimeshifting );
       if (!bShouldTimeshift)
       {
+        if (g_Player.Playing && g_Player.IsTV)
+        {
+          g_Player.Stop();
+        }
         // stop timeshifting
         // check each card to see if it is timeshifting
         for (int i=0; i < m_tvcards.Count;++i)
