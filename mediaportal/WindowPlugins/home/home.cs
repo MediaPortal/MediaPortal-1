@@ -79,10 +79,15 @@ namespace MediaPortal.GUI.Home
 		TreeView			treeView = new TreeView();
 		string				selectedButton="";
 		string				subButton="";
-	
+		string				selectedTexture="";
+		string				skinName;
+
 		//Tracking controls by id
 		System.Collections.ArrayList m_aryPreControlList = new ArrayList();
 		System.Collections.ArrayList m_aryPostControlList = new ArrayList();	
+
+		protected GUIImage	m_imgFocus=null;
+	
 		#endregion
 
 		#region Constructor
@@ -121,6 +126,7 @@ namespace MediaPortal.GUI.Home
 				useMenus=xmlreader.GetValueAsBool("home","usemenus",false);						// use new menu handling
 				useMyPlugins=xmlreader.GetValueAsBool("home","usemyplugins",true);		// use previous menu handling
 				noScrollSubs=xmlreader.GetValueAsBool("home","noScrollsubs",true);	
+				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 			}
 			if (useMenus==true) 
 			{
@@ -135,6 +141,10 @@ namespace MediaPortal.GUI.Home
 			{
 				while (m_iButtons<10)
 					ProcessPlugins(ref plugins);
+			}
+			if (fixedScroll==true) 
+			{
+				AddScrollBar();
 			}
 			plugins=null;
 			m_iCurrentButton=m_iButtons/2;
@@ -387,19 +397,21 @@ namespace MediaPortal.GUI.Home
 						}
 						else 
 						{
-							m_keepState=State.Idle;
-							if (fixedScroll==false) 
+							if (fixedScroll!=true) 
 							{
-								if (y >= m_iStartYoff && y <= m_iStartYoff+m_iMaxHeight) 
+								m_keepState=State.Idle;
+								if (fixedScroll==false) 
 								{
-									for (int i=0; i < m_iVisibleItems;++i)
+									if (y >= m_iStartYoff && y <= m_iStartYoff+m_iMaxHeight) 
 									{
-										GUIButtonControl button = GetControl( m_iButtonIds[i]) as GUIButtonControl;
-										if (y >=button.YPosition && y <= button.YPosition+button.Height)
+										for (int i=0; i < m_iVisibleItems;++i)
 										{
-											m_iOffset=i-m_iMiddle;
-											//Trace.WriteLine(String.Format("offset:{0}", m_iOffset));
-											break;
+											GUIButtonControl button = GetControl( m_iButtonIds[i]) as GUIButtonControl;
+											if (y >=button.YPosition && y <= button.YPosition+button.Height)
+											{
+												m_iOffset=i-m_iMiddle;
+												break;
+											}
 										}
 									}
 								}
@@ -530,7 +542,10 @@ namespace MediaPortal.GUI.Home
 						//
 						FocusControl(GetID, buttonIndex + 2);
 					}
-
+					/*m_imgFocus  = new GUIImage(GetID, 61, 10, 10,200, 30, selectedTexture,0);
+					m_imgFocus.IsVisible=true;
+					m_imgFocus.Render();
+					*/
 					m_bSkipFirstMouseMove=true;
 					return true;
 				}
@@ -722,8 +737,7 @@ namespace MediaPortal.GUI.Home
 		/// Renders the home window.
 		/// </summary>
 		public override void Render()
-		{
-
+		{			
 			if (m_eState!=State.Idle)
 			{
 				State newState=Scroll();
@@ -737,7 +751,6 @@ namespace MediaPortal.GUI.Home
 					{
 						m_iCurrentButton--;
 					}
-
 					LayoutButtons(0);
 
           if (m_bTopBar) m_keepState=State.Idle;
@@ -757,6 +770,7 @@ namespace MediaPortal.GUI.Home
 					}
 				}
 			}
+
 			IEnumerator enumControls = m_aryPreControlList.GetEnumerator();
       while (enumControls.MoveNext())
       {
@@ -995,7 +1009,36 @@ namespace MediaPortal.GUI.Home
 			}
 		}
 
-		
+		public void AddScrollBar() // Creates a dummy button for fixed scroll bar
+		{
+			string strButtonImage= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureNoFocusName;
+			string strButtonImageFocus= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureFocusName;
+			string strFontName= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).FontName;
+			long   lFontColor = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextColor;
+			long   lDisabledColor = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).DisabledColor;
+			int xpos  =GetControl( (int)Controls.TemplateButton).XPosition;
+			int width =GetControl( (int)Controls.TemplateButton).Width;
+			int height=GetControl( (int)Controls.TemplateButton).Height;
+			int ypos  =GetControl( (int)Controls.TemplateButton).YPosition;
+			
+			GUIControl cntl = GetControl(61) as GUIControl;
+			if (cntl==null)
+			{
+				GUIButtonControl button= new GUIButtonControl(GetID,61,xpos,ypos,width,height,strButtonImageFocus,strButtonImage);
+				button.Label="";
+				button.HyperLink=-1;
+				button.FontName=strFontName;
+				button.DisabledColor=lDisabledColor;
+				button.TextColor=lFontColor;
+				button.TextOffsetX= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetX;
+				button.TextOffsetY= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetY;
+				button.ColourDiffuse= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).ColourDiffuse;			
+				button.AllocResources();
+				GUIControl btnControl = (GUIControl) button;
+				Add(ref btnControl);
+			}
+		}
+
 		public void AddPluginButton(int iHyperLink,string strButtonText, string strButtonImageFocus, string strButtonImage,  string strPictureImage)
 		{
 			if (strButtonImage.Length==0)
@@ -1076,7 +1119,6 @@ namespace MediaPortal.GUI.Home
 			//
 			if(m_iButtons == 0)
 				return;
-
 			// todo:
 			// - pressing keys fast is acting weird, and when skipping to the next item the current item is gone for a small period
 			// - musicoverlay scrolling is slower now?
@@ -1109,6 +1151,7 @@ namespace MediaPortal.GUI.Home
 			int iMaxItems = (m_iMaxHeight+iSpaceBetween)/(m_iButtonHeight+iSpaceBetween);
 
 			int iMid=(m_iMaxHeight/2) - ((m_iButtonHeight)/2);
+			int iScMid=iMid+m_iStartYoff;
 			iMid += iStartYoff;
 
 			iMaxItems/=2;
@@ -1120,6 +1163,14 @@ namespace MediaPortal.GUI.Home
 			
 			m_iVisibleItems=0;
 			m_iMiddle=iMaxItems;
+
+			if (fixedScroll==true) 
+			{
+				GUIButtonControl scbutton = GetControl(61) as GUIButtonControl;  // Dummy Button for fixed scroll bar
+				int xscpos=scbutton.XPosition;
+				scbutton.SetPosition(xscpos, iScMid);
+				scbutton.IsVisible=true;
+			}
 
 			while (iTel <= iMaxItems)
 			{
@@ -1194,8 +1245,7 @@ namespace MediaPortal.GUI.Home
 					}
 					float fPercent = 1f - ((fPos) / ((float)(iMaxItems+1)));
 
-
-					//			button.Height = (int) (fPercent * ((float)m_iButtonHeight));
+					//	button.Height = (int) (fPercent * ((float)m_iButtonHeight));
 					button.SetAlpha( (int)(fPercent * 255f) );
 
 					long lAlpha=(long)(fPercent * 255f);
@@ -1223,6 +1273,14 @@ namespace MediaPortal.GUI.Home
 
 		State Scroll()
 		{
+			if (fixedScroll==true) 
+			{
+				if (m_iFrame==0) 
+				{
+					UnFocusControl(GetID,GetFocusControlId());
+					FocusControl(GetID,61);
+				}	
+			}
 			State newState=m_eState;
 			float fPercent = ((float)m_iFrame)  / ((float)MAX_FRAMES);
 			fPercent*=100f;
@@ -1302,6 +1360,12 @@ namespace MediaPortal.GUI.Home
       if (m_bTopBar) return;
       GUIControl.FocusControl(iWindowID,iControlId);
     }
+
+		protected void UnFocusControl(int iWindowID, int iControlId)
+		{
+			if (m_bTopBar) return;
+			GUIControl.UnfocusControl(iWindowID,iControlId);
+		}
 
 		public override void Process()
 		{
