@@ -116,6 +116,19 @@
 		<keepaspectratio>yes</keepaspectratio>
 	</control>
 	<control>
+		<description>Screenshot big</description> 
+		<type>image</type> 
+		<id>10</id> 
+		<posX>220</posX> 
+		<posY>190</posY> 
+		<width>410</width> 
+		<height>340</height> 
+		<texture>-</texture> 
+		<colorkey>FFFF00FF</colorkey> 
+		<colordiffuse>FFFFFFFF</colordiffuse>
+		<keepaspectratio>yes</keepaspectratio>
+	</control>
+	<control>
 		<description>Overview</description>
 		<type>textboxscrollup</type>
 		<id>4</id>
@@ -148,6 +161,19 @@
 		<label>8008</label>
 		<font>font13</font>
 		<onup>8</onup>
+		<ondown>11</ondown>
+	</control>
+	<control>
+		<description>Overview / Screenshot Toggle</description> 
+		<type>button</type> 
+		<id>11</id> 
+		<posX>60</posX> 
+		<posY>360</posY> 
+		<width>130</width> 
+		<height>32</height> 
+		<label>13006</label> 
+		<font>font13</font> 
+		<onup>5</onup>
 		<ondown>7</ondown>
 	</control>
 	<control>
@@ -160,7 +186,7 @@
 		<height>32</height>
 		<label>210</label>
 		<font>font13</font>
-		<onup>5</onup>
+		<onup>11</onup>
 		<ondown>9</ondown>
 	</control>
 	<control>
