@@ -2351,8 +2351,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return false;
 					SQLiteResultSet results;
 
-					strSQL=String.Format( "select * from tblChannelCard,channel where channel.idChannel=tblChannelCard.idChannel and channel.strChannel={0} and tblChannelCard.card={1}", tvChannelName,card);
-
+					strSQL=String.Format( "select * from tblChannelCard,channel where channel.idChannel=tblChannelCard.idChannel and channel.strChannel like '{0}' and tblChannelCard.card={1}", tvChannelName,card);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count!=0) 
 					{

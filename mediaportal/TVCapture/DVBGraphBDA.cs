@@ -2655,7 +2655,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA: map channel {0} to DVBS",newchannel.ChannelName);
 						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
-					TVDatabase.MapChannelToCard(iChannelNumber,ID);
+					TVDatabase.MapChannelToCard(channelId,ID);
 
 					
 					TVGroup group = new TVGroup();
