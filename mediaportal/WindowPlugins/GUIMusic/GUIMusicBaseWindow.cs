@@ -50,6 +50,7 @@ namespace MediaPortal.GUI.Music
 		protected   SortMethod currentSortMethodRoot = SortMethod.Name;
 		protected   bool       m_bSortAscending;
 		protected   bool       m_bSortAscendingRoot;
+		private     bool       m_bUseID3=false;
 		protected MusicDatabase		      m_database = new MusicDatabase();
 		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView=null;
 		[SkinControlAttribute(7)]			protected GUISelectButtonControl btnType=null;
@@ -59,6 +60,11 @@ namespace MediaPortal.GUI.Music
 
 		public GUIMusicBaseWindow()
 		{
+		}
+		protected bool UseID3
+		{
+			get { return m_bUseID3;}
+			set { m_bUseID3=value;}
 		}
 
 		protected virtual bool AllowView(View view)
@@ -105,6 +111,7 @@ namespace MediaPortal.GUI.Music
 				currentSortMethodRoot=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)SortMethod.Name);
 				m_bSortAscending=xmlreader.GetValueAsBool(SerializeName,"sortasc", true);
 				m_bSortAscendingRoot=xmlreader.GetValueAsBool(SerializeName,"sortascroot", true);
+				m_bUseID3 = xmlreader.GetValueAsBool("musicfiles","showid3",true);
 			}
 
 			SwitchView();

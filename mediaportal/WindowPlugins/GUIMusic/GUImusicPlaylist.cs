@@ -14,36 +14,9 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-	public class GUIMusicPlayList : GUIWindow
+	public class GUIMusicPlayList : GUIMusicBaseWindow
 	{
-		enum Controls 
-		{
-			CONTROL_BTNVIEWASICONS = 2, 
-			CONTROL_BTNSHUFFLE = 20, 
-			CONTROL_BTNSAVE = 21, 
-			CONTROL_BTNCLEAR = 22, 
-
-			CONTROL_BTNPLAY = 23, 
-			CONTROL_BTNNEXT = 24, 
-			CONTROL_BTNPREVIOUS = 25,
-			//added by Sam
-			CONTROL_BTNPSHUFFLE = 26,
-
-			CONTROL_LABELFILES = 12, 
-
-			CONTROL_LIST = 50, 
-			CONTROL_THUMBS = 51
-
-		};
 		#region Base variabeles
-		enum View
-		{
-			VIEW_AS_LIST = 0, 
-			VIEW_AS_ICONS = 1, 
-			VIEW_AS_LARGEICONS = 2, 
-		}
-		View currentView = View.VIEW_AS_LIST;
-		
 		DirectoryHistory m_history = new DirectoryHistory();
 		string m_strDirectory = "";
 		int m_iItemSelected = -1;
@@ -51,15 +24,19 @@ namespace MediaPortal.GUI.Music
 		int m_nTempPlayListWindow = 0;
 		string m_strTempPlayListDirectory = "";
     string m_strCurrentFile = "";
-    bool m_bUseID3 = true;
 		VirtualDirectory m_directory = new VirtualDirectory();
+		const int MaxNumPShuffleSongPredict = 12;
+		private bool PShuffleOn = false;
 		#endregion
     
-    MusicDatabase	m_database = new MusicDatabase();
+		[SkinControlAttribute(20)]			protected GUIButtonControl btnShuffle=null;
+		[SkinControlAttribute(21)]			protected GUIButtonControl btnSave=null;
+		[SkinControlAttribute(22)]			protected GUIButtonControl btnClear=null;
+		[SkinControlAttribute(23)]			protected GUIButtonControl btnPlay=null;
+		[SkinControlAttribute(24)]			protected GUIButtonControl btnNext=null;
+		[SkinControlAttribute(25)]			protected GUIButtonControl btnPrevious=null;
+		[SkinControlAttribute(26)]			protected GUIToggleButtonControl btnPartyShuffle=null;
 
-		//added by Sam
-  const int MaxNumPShuffleSongPredict = 12;
-		private bool PShuffleOn = false;
 
 		public GUIMusicPlayList()
 		{
@@ -67,10 +44,6 @@ namespace MediaPortal.GUI.Music
       
 			m_directory.AddDrives();
 			m_directory.SetExtensions(Utils.AudioExtensions);
-      LoadSettings();
-    }
-    ~GUIMusicPlayList()
-    {
     }
 
 		public override bool Init()
@@ -80,7 +53,129 @@ namespace MediaPortal.GUI.Music
 			 GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
 		}
-//added by Sam
+		#region overrides
+		protected override string SerializeName
+		{
+			get
+			{
+				return "mymusicplaylist";
+			}
+		}
+		protected override bool AllowView(View view)
+		{
+			if (view==View.Albums) return false;
+			return true;
+		}
+		public override void OnAction(Action action)
+		{
+			if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
+			{
+				GUIWindowManager.PreviousWindow();
+				return;
+			}
+
+			base.OnAction(action);
+		}
+
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+          
+			LoadDirectory("");
+          
+			if (m_iItemSelected >= 0)
+			{
+				GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
+			}
+			if ((m_iLastControl == facadeView.GetID) && GetItemCount() <= 0)
+			{
+				m_iLastControl = btnViewAs.GetID;
+				GUIControl.FocusControl(GetID, m_iLastControl);
+			}
+			if (GetItemCount() <=0)
+			{
+				GUIControl.FocusControl(GetID, btnViewAs.GetID);
+			}
+			SelectCurrentPlayingSong();
+
+		}
+
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			m_iItemSelected = GetSelectedItemNo();
+			base.OnPageDestroy (newWindowId);
+		}
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+
+			if (control == btnShuffle)
+			{
+				ShufflePlayList();
+			}
+			else if (control==btnSave)
+			{
+				SavePlayList();
+			}
+			else if (control == btnClear)
+			{
+				ClearPlayList();
+			}
+			else if (control == btnPlay)
+			{
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.Reset();
+				if (PShuffleOn == true)
+				{
+					for (int i=0; i<GetSelectedItemNo(); i++)
+					{
+						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
+					}
+					UpdatePartyShuffle();
+					//LoadDirectory("");
+					PlayListPlayer.Play(0);
+				}
+				else
+				{
+					PlayListPlayer.Play(GetSelectedItemNo());
+				}
+				UpdateButtonStates();
+			}
+			else if (control==btnNext)
+			{
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.PlayNext(true);
+				SelectCurrentPlayingSong();
+			}
+			else if (control==btnPrevious)
+			{
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.PlayPrevious();
+				SelectCurrentPlayingSong();
+			}
+			else if (control == btnPartyShuffle)
+			{
+				//get state of button
+				if (btnPartyShuffle.Selected) 
+				{
+					PShuffleOn = true;
+					UpdatePartyShuffle();
+					LoadDirectory("");
+					GUIListItem item=GetItem(0);
+					if (item!=null) item.Shaded = false;
+					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+					PlayListPlayer.Reset();
+					PlayListPlayer.Play(0);
+				}
+				else PShuffleOn=false;
+
+				UpdateButtonStates();
+			}
+		}
+
+		#endregion
+
 		void OnThreadMessage(GUIMessage message)
 		{
 			switch (message.Message)
@@ -108,207 +203,13 @@ namespace MediaPortal.GUI.Music
 					break;
 			}
 		}
-//end of changes by Sam
 
-    #region Serialisation
-    void LoadSettings()
-    {
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        string strTmp = "";
-        strTmp = (string)xmlreader.GetValue("musicplaylist","viewby");
-        if (strTmp != null)
-        {
-          if (strTmp == "list") currentView = View.VIEW_AS_LIST;
-          else if (strTmp == "icons") currentView = View.VIEW_AS_ICONS;
-          else if (strTmp == "largeicons") currentView = View.VIEW_AS_LARGEICONS;
-        }
-        m_bUseID3 = xmlreader.GetValueAsBool("musicfiles","showid3",true);
-      }
-    }
-
-    void SaveSettings()
-    {
-      using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        switch (currentView)
-        {
-          case View.VIEW_AS_LIST : 
-            xmlwriter.SetValue("musicplaylist","viewby","list");
-            break;
-          case View.VIEW_AS_ICONS : 
-            xmlwriter.SetValue("musicplaylist","viewby","icons");
-            break;
-          case View.VIEW_AS_LARGEICONS : 
-            xmlwriter.SetValue("musicplaylist","viewby","largeicons");
-            break;
-        }
-      }
-    }
-    #endregion
-
-
-		#region BaseWindow Members
-		public override void OnAction(Action action)
-		{
-			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
-			{
-				return;
-			}
-
-			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-			{
-				GUIWindowManager.PreviousWindow();
-				return;
-			}
-			if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
-			{
-				GUIWindowManager.PreviousWindow();
-				return;
-			}
-
-			base.OnAction(action);
-		}
-
+		
 		
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch (message.Message)
 			{
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
-					base.OnMessage(message);
-					LoadSettings();
-					ShowThumbPanel();
-          
-					LoadDirectory("");
-          
-					if (m_iItemSelected >= 0)
-					{
-						GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, m_iItemSelected);
-						GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, m_iItemSelected);
-					}
-					if ((m_iLastControl == (int)Controls.CONTROL_THUMBS || m_iLastControl == (int)Controls.CONTROL_LIST) && GetItemCount() <= 0)
-					{
-						m_iLastControl = (int)Controls.CONTROL_BTNVIEWASICONS;
-						GUIControl.FocusControl(GetID, m_iLastControl);
-					}
-          if (GetItemCount() <=0)
-          {
-            GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTNVIEWASICONS);
-          }
-          SelectCurrentPlayingSong();
-					return true;
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-					m_iItemSelected = GetSelectedItemNo();
-					SaveSettings();
-          break;
-
-				case GUIMessage.MessageType.GUI_MSG_CLICKED : 
-					int iControl = message.SenderControlId;
-					if (iControl == (int)Controls.CONTROL_BTNVIEWASICONS)
-					{
-						switch (currentView)
-						{
-							case View.VIEW_AS_LIST : 
-								currentView = View.VIEW_AS_ICONS;
-								break;
-							case View.VIEW_AS_ICONS : 
-								currentView = View.VIEW_AS_LARGEICONS;
-								break;
-							case View.VIEW_AS_LARGEICONS : 
-								currentView = View.VIEW_AS_LIST;
-								break;
-						}
-            ShowThumbPanel();
-            GUIControl.FocusControl(GetID, iControl);
-					}
-          
-					if (iControl == (int)Controls.CONTROL_THUMBS || iControl == (int)Controls.CONTROL_LIST)
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-						OnMessage(msg);
-						int iItem = (int)msg.Param1;
-						int iAction = (int)message.Param1;
-						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-						{
-							OnClick(iItem);
-						}
-						if (iAction == (int)Action.ActionType.ACTION_QUEUE_ITEM)
-						{
-							OnQueueItem(iItem);
-						}
-
-					}
-
-					else if (iControl == (int)Controls.CONTROL_BTNSHUFFLE)
-					{
-						ShufflePlayList();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNSAVE)
-					{
-						SavePlayList();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNCLEAR)
-					{
-						ClearPlayList();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNPLAY)
-					{
-						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-						PlayListPlayer.Reset();
-						if (PShuffleOn == true)
-						{
-							for (int i=0; i<GetSelectedItemNo(); i++)
-							{
-								PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
-							}
-							UpdatePartyShuffle();
-							//LoadDirectory("");
-							PlayListPlayer.Play(0);
-						}
-						else
-						{
-							PlayListPlayer.Play(GetSelectedItemNo());
-						}
-						UpdateButtons();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNNEXT)
-					{
-						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-						PlayListPlayer.PlayNext(true);
-            SelectCurrentPlayingSong();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNPREVIOUS)
-					{
-						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-						PlayListPlayer.PlayPrevious();
-            SelectCurrentPlayingSong();
-					}
-
-						//added by Sam
-					else if (iControl == (int)Controls.CONTROL_BTNPSHUFFLE )
-					{
-						//get state of button
-						GUIToggleButtonControl btnPShuffle = GetControl((int)Controls.CONTROL_BTNPSHUFFLE ) as GUIToggleButtonControl;
-            if (btnPShuffle==null) return true;
-						if (btnPShuffle.Selected) 
-						{
-							PShuffleOn = true;
-							UpdatePartyShuffle();
-							LoadDirectory("");
-							GUIListItem item=GetItem(0);
-              if (item!=null) item.Shaded = false;
-							PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-							PlayListPlayer.Reset();
-							PlayListPlayer.Play(0);
-						}
-						else PShuffleOn=false;
-
-						UpdateButtons();
-					}
-					break;
-
 				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED : 
 				{
 					for (int i = 0; i < GetItemCount(); ++i)
@@ -321,7 +222,7 @@ namespace MediaPortal.GUI.Music
 						}
 					}
 
-					UpdateButtons();
+					UpdateButtonStates();
 				}
 					break;
 
@@ -333,13 +234,13 @@ namespace MediaPortal.GUI.Music
 					if (PShuffleOn==true) 
 					{
 						LoadDirectory("");
-						UpdateButtons();
+						UpdateButtonStates();
 					}
 					//ended changes
 
-					if ((m_iLastControl == (int)Controls.CONTROL_THUMBS || m_iLastControl == (int)Controls.CONTROL_LIST) && GetItemCount() <= 0)
+					if (m_iLastControl == facadeView.GetID && GetItemCount() <= 0)
 					{
-						m_iLastControl = (int)Controls.CONTROL_BTNVIEWASICONS;
+						m_iLastControl = btnViewAs.GetID;
 						GUIControl.FocusControl(GetID, m_iLastControl);
 					}
 
@@ -351,164 +252,45 @@ namespace MediaPortal.GUI.Music
 		}
 
 
-		bool ViewByIcon
+		protected override void UpdateButtonStates()
 		{
-			get 
-			{
-				if (currentView != View.VIEW_AS_LIST) return true;
-				return false;
-			}
-		}
-
-		bool ViewByLargeIcon
-		{
-			get
-			{
-				if (currentView == View.VIEW_AS_LARGEICONS) return true;
-				return false;
-			}
-		}
-
-		GUIListItem GetSelectedItem()
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-			GUIListItem item = GUIControl.GetSelectedListItem(GetID, iControl);
-			return item;
-		}
-
-		GUIListItem GetItem(int iItem)
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-			GUIListItem item = GUIControl.GetListItem(GetID, iControl, iItem);
-			return item;
-		}
-
-		int GetSelectedItemNo()
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-			OnMessage(msg);
-			int iItem = (int)msg.Param1;
-			return iItem;
-		}
-		int GetItemCount()
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-
-			return GUIControl.GetItemCount(GetID, iControl);
-		}
-
-		void UpdateButtons()
-		{
-
-      GUIControl.HideControl(GetID, (int)Controls.CONTROL_LIST);
-      GUIControl.HideControl(GetID, (int)Controls.CONTROL_THUMBS);
-      
-      int iControl = (int)Controls.CONTROL_LIST;
-      if (ViewByIcon)
-        iControl = (int)Controls.CONTROL_THUMBS;
-      GUIControl.ShowControl(GetID, iControl);
-      GUIControl.FocusControl(GetID, iControl);
-      
-
-			string strLine = "";
-			switch (currentView)
-			{
-				case View.VIEW_AS_LIST : 
-					strLine = GUILocalizeStrings.Get(101);
-					break;
-				case View.VIEW_AS_ICONS : 
-					strLine = GUILocalizeStrings.Get(100);
-					break;
-				case View.VIEW_AS_LARGEICONS : 
-					strLine = GUILocalizeStrings.Get(417);
-					break;
-			}
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEWASICONS, strLine);
-
-
+			base.UpdateButtonStates ();
+		
 			if (GetItemCount() > 0)
 			{
-				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNCLEAR);
-				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNPLAY);
+				GUIControl.EnableControl(GetID, btnClear.GetID);
+				GUIControl.EnableControl(GetID, btnPlay.GetID);
 				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC)
 				{
-					GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNNEXT);
-					GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
+					GUIControl.EnableControl(GetID, btnNext.GetID);
+					GUIControl.EnableControl(GetID, btnPrevious.GetID);
 				}
 				else
 				{
-					GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNNEXT);
-					GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
+					GUIControl.DisableControl(GetID, btnNext.GetID);
+					GUIControl.DisableControl(GetID, btnPrevious.GetID);
 				}
 			}
 			else
 			{
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNCLEAR);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPLAY);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNNEXT);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
+				GUIControl.DisableControl(GetID, btnClear.GetID);
+				GUIControl.DisableControl(GetID, btnPlay.GetID);
+				GUIControl.DisableControl(GetID, btnNext.GetID);
+				GUIControl.DisableControl(GetID, btnPrevious.GetID);
 			}
 
 			//disable shuffle/save/previous if party shuffle is on
-			GUIToggleButtonControl btnPShuffle = (GUIToggleButtonControl)GetControl((int)Controls.CONTROL_BTNPSHUFFLE );
-			if (btnPShuffle.Selected) 
+			if (btnPartyShuffle.Selected) 
 			{
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNSHUFFLE);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNSAVE );
+				GUIControl.DisableControl(GetID, btnShuffle.GetID);
+				GUIControl.DisableControl(GetID, btnNext.GetID);
+				GUIControl.DisableControl(GetID, btnPrevious.GetID );
+				GUIControl.DisableControl(GetID, btnSave.GetID );
 			}
 			else
 			{
-				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNSHUFFLE);
-				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNSAVE );
+				GUIControl.EnableControl(GetID, btnShuffle.GetID);
 			}
-		}
-
-		void ShowThumbPanel()
-		{
-			int iItem = GetSelectedItemNo();
-			if (ViewByLargeIcon)
-			{
-				GUIThumbnailPanel pControl = (GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-				pControl.ShowBigIcons(true);
-			}
-			else
-			{
-				GUIThumbnailPanel pControl = (GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-				pControl.ShowBigIcons(false);
-			}
-			if (iItem > -1)
-			{
-				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
-			}
-			UpdateButtons();
 		}
 
     void OnRetrieveMusicInfo(ref ArrayList items)
@@ -553,7 +335,7 @@ namespace MediaPortal.GUI.Music
             tag.Track = song.Track;
             item.MusicTag = tag;
           }
-          else if (m_bUseID3)
+          else if (UseID3)
           {
             item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
           }
@@ -583,8 +365,7 @@ namespace MediaPortal.GUI.Music
 				}
 			}
 			m_strDirectory = strNewDirectory;
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS);
+			GUIControl.ClearControl(GetID, facadeView.GetID);
             
 			string strObjects = "";
 
@@ -652,9 +433,7 @@ namespace MediaPortal.GUI.Music
 			int iItem = 0;
 			foreach (GUIListItem item in itemlist)
 			{
-				GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
-				GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_THUMBS, item);
-        
+				facadeView.Add(item);
 				//	synchronize playlist with current directory
 				if (strFileName.Length > 0 && item.Path == strFileName)
 				{
@@ -666,8 +445,7 @@ namespace MediaPortal.GUI.Music
 				GUIListItem item = GetItem(i);
 				if (item.Label == strSelectedItem)
 				{
-					GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-					GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+					GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
 					break;
 				}
 				iItem++;
@@ -680,53 +458,15 @@ namespace MediaPortal.GUI.Music
 			}
 			strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount", strObjects);
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
       SetLabels();
-      UpdateButtons();
+      UpdateButtonStates();
 		}
-		#endregion
 
     
-    void SetLabels()
-    {
-      for (int i = 0; i < GetItemCount(); ++i)
-      {
-        GUIListItem item = GetItem(i);
-        MusicTag tag = (MusicTag)item.MusicTag;
-        if (tag != null)
-        {
-          if (tag.Title.Length > 0)
-          {
-            if (tag.Artist.Length > 0)
-            {
-              if (tag.Track > 0)
-                item.Label = String.Format("{0:00}. {1} - {2}",tag.Track, tag.Artist, tag.Title);
-              else
-                item.Label = String.Format("{0} - {1}",tag.Artist, tag.Title);
-            }
-            else
-            {
-              if (tag.Track > 0)
-                item.Label = String.Format("{0:00}. {1} ",tag.Track, tag.Title);
-              else
-                item.Label = String.Format("{0}",tag.Title);
-            }
-          }
-					
-          int nDuration = tag.Duration;
-          if (nDuration > 0)
-          {
-            item.Label2 = Utils.SecondsToHMSString(nDuration);
-          }
-        }
-      }
-    }
-
 
 		void ClearFileItems()
 		{
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS);
+			GUIControl.ClearControl(GetID, facadeView.GetID);
 		}
   
 		void ClearPlayList()
@@ -761,13 +501,14 @@ namespace MediaPortal.GUI.Music
 				if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC)
 					PlayListPlayer.Reset();
 				LoadDirectory("");
-				UpdateButtons();
-				GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTNVIEWASICONS);
+				UpdateButtonStates();
+				GUIControl.FocusControl(GetID, btnViewAs.GetID);
 			}
 			//ended changes
 		}
 
-		void OnClick(int iItem)
+
+		protected override void OnClick(int iItem)
 		{
 			GUIListItem item = GetSelectedItem();
 			if (item == null) return;
@@ -813,7 +554,7 @@ namespace MediaPortal.GUI.Music
 			//ended changes
 		}
     
-		void OnQueueItem(int iItem)
+		protected override  void OnQueueItem(int iItem)
 		{
 			RemovePlayListItem(iItem);
 		}
@@ -837,9 +578,8 @@ namespace MediaPortal.GUI.Music
 			if (PShuffleOn==true) UpdatePartyShuffle();
 
 			LoadDirectory(m_strDirectory);
-			UpdateButtons();
-			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-      GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+			UpdateButtonStates();
+			GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
       SelectCurrentPlayingSong();
 		}
 
@@ -952,10 +692,7 @@ namespace MediaPortal.GUI.Music
         int iSong = PlayListPlayer.CurrentSong;
         if (iSong >= 0 && iSong <= GetItemCount())
         {
-          GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iSong);
-          GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iSong);
-
-          GUIControl.FocusItemControl(GetID, (int)Controls.CONTROL_LIST, iSong);
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
         }
       }
     }
