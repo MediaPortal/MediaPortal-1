@@ -1763,7 +1763,7 @@
 	</string>
 	<string>
 		<id>629</id>
-		<value>Opname afbreken</value>
+		<value>Opname stoppen</value>
 	</string>
 	<string>
 		<id>630</id>
@@ -2071,7 +2071,7 @@
 	</string>
 	<string>
 		<id>714</id>
-		<value>DVD gevonden, nu afspelen?</value>
+		<value>CD/DVD gevonden, nu afspelen?</value>
 	</string>
 	<string>
 		<id>715</id>
@@ -2162,6 +2162,58 @@
   	<value>Geen informatie voor de TV-gids.</value>
   </string>
   <string>
+  	<id>737</id>
+  	<value>Bekijk: Satelliet</value>
+  </string>
+  <string>
+  	<id>738</id>
+  	<value>Bekijk: Temperatuur</value>
+  </string>
+  <string>
+  	<id>739</id>
+  	<value>Bekijk: UV Index</value>
+  </string>
+  <string>
+  	<id>740</id>
+  	<value>Bekijk: Winden</value>
+  </string>
+  <string>
+  	<id>741</id>
+  	<value>Bekijk: Vochtigheid</value>
+  </string>
+  <string>
+  	<id>742</id>
+  	<value>Bekijk: Neerslag</value>
+  </string>
+  <string>
+  	<id>743</id>
+  	<value>4 Dagen vooruit</value>
+  </string>
+  <string>
+  	<id>744</id>
+  	<value>Zon op</value>
+  </string>
+  <string>
+  	<id>745</id>
+  	<value>Zon onder</value>
+  </string>
+  <string>
+  	<id>746</id>
+  	<value>Max. temp.</value>
+  </string>
+  <string>
+  	<id>747</id>
+  	<value>Min. temp.</value>
+  </string>
+  <string>
+  	<id>748</id>
+  	<value>Neerslag</value>
+  </string>
+  <string>
+  	<id>750</id>
+  	<value>Plaatjes</value>
+  </string>
+  <string>
   	<id>800</id>
   	<value>Start met</value>
   </string>
@@ -2205,6 +2257,8 @@
   	<id>810</id>
   	<value>Kaart</value>
   </string>
+  
+  <!-- MyAlarm -->
   <string>
   	<id>850</id>
   	<value>Mijn Wekker</value>
@@ -2281,14 +2335,11 @@
   	<id>868</id>
   	<value>Reset</value>
   </string>
-  
-  <!-- Default name for new alarm -->
   <string>
 	<id>869</id>
 	<value>NieuwAlarm</value>
   </string>
-
-<!-- End My Alarm Strings -->
+  <!-- End My Alarm Strings -->
   
   <string>
 	<id>900</id>
@@ -2404,7 +2455,7 @@
   </string>
   <string>
   	<id>928</id>
-  	<value>Zoek naar hoesjes</value>
+  	<value>Informatie opzoeken</value>
   </string>
   <string>
   	<id>929</id>
@@ -2544,12 +2595,23 @@
   	<value>Vorig venster</value>
   </string>
   <string>
+  	<id>971</id>
+  	<value>Groep</value>
+  </string>
+  <string>
+  	<id>972</id>
+  	<value>Alle kanalen</value>
+  </string>
+  <string>
+  	<id>973</id>
+  	<value>Maximum FPS</value>
+  </string>
+  <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
   </string>
-  
-  <!-- My Status strings -->
 
+  <!-- My Status strings -->
 	<string>
     <id>1950</id>
     <value>Mijn Status</value>
@@ -2933,7 +2995,18 @@
 		<id>2115</id>
 		<value>Voer CD/DVD RW in</value>
 	</string>
-
+	<string>
+		<id>2116</id>
+		<value>Station niet gereed</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>er is een fout opgetreden!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Converteer DVR-MS</value>
+	</string>
 
 	<!-- My Explorer Strings -->
 	<string>
@@ -2950,7 +3023,7 @@
 	</string>
 	<string>
 		<id>2203</id>
-		<value>Bestanden kopiëren</value>
+		<value>Kopiëren</value>
 	</string>
 	<string>
 		<id>2204</id>
@@ -3004,6 +3077,136 @@
 		<id>2216</id>
 		<value>De bestanden zijn verplaatst.</value>
 	</string>
+	<string>
+		<id>2217</id>
+		<value>Doel bestand bestaat al!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Bestand overschrijven?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>Kan bestanden niet verplaatsen vanaf dit station!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Geselecteerd bestand kopiëren?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Wilt U de geselecteerde bestanden verwijderen?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>bestanden verwijderd</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Prullenbak</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Map bestaat al!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Map aangemaakt</value>
+	</string>
+
+  <!-- Misc -->
+  <string>
+    <id>3000</id>
+    <value>Programma Opties</value>
+  </string>
+  <string>
+    <id>3001</id>
+    <value>Uur</value>
+  </string>
+  <string>
+    <id>3002</id>
+    <value>Uren</value>
+  </string>
+  <string>
+    <id>3003</id>
+    <value>Minuut</value>
+  </string>
+  <string>
+    <id>3004</id>
+    <value>Minuten</value>
+  </string>
+  <string>
+    <id>3005</id>
+    <value>uur geleden</value>
+  </string>
+  <string>
+    <id>3006</id>
+    <value>uren geleden</value>
+  </string>
+  <string>
+    <id>3007</id>
+    <value>minuut ago</value>
+  </string>
+  <string>
+    <id>3008</id>
+    <value>minuten ago</value>
+  </string>
+  <string>
+    <id>3009</id>
+    <value>Begint over</value>
+  </string>
+  <string>
+    <id>3010</id>
+    <value>minuten te gaan</value>
+  </string>
+  <string>
+    <id>3011</id>
+    <value>uur te gaan</value>
+  </string>
+  <string>
+    <id>3012</id>
+    <value>uren te gaan</value>
+  </string>
+  <string>
+    <id>3013</id>
+    <value>Begint nu</value>
+  </string>
+  <string>
+    <id>3014</id>
+    <value>Dag</value>
+  </string>
+  <string>
+    <id>3015</id>
+    <value>Dagen</value>
+  </string>
+  <string>
+    <id>3016</id>
+    <value>Al afgelopen</value>
+  </string>
+  <string>
+    <id>3017</id>
+    <value>Begonnen </value>
+  </string>
+  <string>
+    <id>3018</id>
+    <value>Minuut te gaan</value>
+  </string>
+  <string>
+    <id>3019</id>
+    <value>Series</value>
+  </string>
+  <string>
+    <id>3020</id>
+    <value>Aflevering</value>
+  </string>
+  <string>
+    <id>3021</id>
+    <value>Deel</value>
+  </string>
+  <string>
+    <id>3022</id>
+    <value>van</value>
+  </string>
 
   <!-- My Mail strings -->
   <string>
