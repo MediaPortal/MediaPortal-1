@@ -1188,6 +1188,7 @@ namespace MediaPortal
         else
         {
 #if DEBUG
+          System.Threading.Thread.Sleep(25);
 #else
           //we're not playing a movie in fullscreen mode and we are looking @ the normal GUI
           System.Threading.Thread.Sleep(25);

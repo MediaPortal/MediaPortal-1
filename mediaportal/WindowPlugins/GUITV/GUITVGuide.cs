@@ -1649,7 +1649,7 @@ namespace MediaPortal.GUI.TV
       Log.Write(@"import done");
     }
 
-    public override void Render()
+    public override void Process()
     {
       OnKeyTimeout();
       if (m_bNeedUpdate)
@@ -1675,7 +1675,7 @@ namespace MediaPortal.GUI.TV
           TimeSpan ts=dateNow-datePrev;
           if (ts.TotalDays==1)
           {
-              m_dtTime=DateTime.Now;
+            m_dtTime=DateTime.Now;
           }
           
           
@@ -1704,6 +1704,11 @@ namespace MediaPortal.GUI.TV
           else vertLine.IsVisible=false;
         }
       }
+    }
+
+    public override void Render()
+    {
+      GUIImage vertLine=GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
       base.Render ();
       if (vertLine!=null)
         vertLine.Render();
