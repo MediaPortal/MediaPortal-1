@@ -383,6 +383,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\EventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\MPBeveledLine.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -416,6 +421,31 @@
                     RelPath = "Controls\MPListView.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MWCommon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MWEnums.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MWTreeNodeWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MWTreeView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MWTreeView.resx"
+                    DependentUpon = "MWTreeView.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Sections\DVBSSS2.cs"

@@ -6,7 +6,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
-
+using MWCommon;
+using MWControls;
 using Microsoft.Win32;
 
 using SQLite.NET;
@@ -77,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ListView listViewTVChannelsForCard;
 		private System.Windows.Forms.Button btnMapChannelToCard;
 		private System.Windows.Forms.Button btnUnmapChannelFromCard;
-		private System.Windows.Forms.TreeView treeViewChannels;
+		private MWTreeView treeViewChannels;
 
 		//
 		// Private members
@@ -92,6 +93,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
+			treeViewChannels.MultiSelect=TreeViewMultiSelect.MultiSameBranchAndLevel;
 		}
 
 		/// <summary>
@@ -133,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton = new System.Windows.Forms.Button();
 			this.downButton = new System.Windows.Forms.Button();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.treeViewChannels = new System.Windows.Forms.TreeView();
+			this.treeViewChannels = new MWTreeView();
 			this.btnGrpChnDown = new System.Windows.Forms.Button();
 			this.btnGrpChnUp = new System.Windows.Forms.Button();
 			this.buttonMap = new System.Windows.Forms.Button();
@@ -1312,17 +1314,22 @@ namespace MediaPortal.Configuration.Sections
 
 		private void buttonMap_Click(object sender, System.EventArgs e)
 		{
-			if (treeViewChannels.SelectedNode==null) return;
-			TVChannel chan=treeViewChannels.SelectedNode.Tag as TVChannel;
-			if (chan==null) return;
-			TVGroup group = comboBox1.SelectedItem as TVGroup;
-			ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
-			listItem.Tag=chan;
-			listViewTVGroupChannels.Items.Add(listItem);
-			if (group!=null && chan != null)
-			TVDatabase.MapChannelToGroup(group, chan);
+			if (treeViewChannels.SelNodes==null) return;
+			Hashtable htSelNodes = treeViewChannels.SelNodes.Clone() as Hashtable;
+			treeViewChannels.SelNodes=null;
+			foreach(MWTreeNodeWrapper node in htSelNodes.Values)
+			{
+				TVChannel chan=node.Node.Tag as TVChannel;
+				if (chan==null) return;
+				TVGroup group = comboBox1.SelectedItem as TVGroup;
+				ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
+				listItem.Tag=chan;
+				listViewTVGroupChannels.Items.Add(listItem);
+				if (group!=null && chan != null)
+					TVDatabase.MapChannelToGroup(group, chan);
+				treeViewChannels.Nodes.Remove(node.Node);
+			}
 
-			treeViewChannels.Nodes.Remove(treeViewChannels.SelectedNode);
 		}
 
 		private void btnUnmap_Click(object sender, System.EventArgs e)
