@@ -16,7 +16,7 @@ namespace MediaPortal.TV.Recording
 	/// <summary>
 	/// This class is a singleton which implements the
 	/// -task scheduler to schedule, (start,stop) all tv recordings on time
-	/// -a front end to other classes to control the tv capture cards
+	/// -a front end to other classes to control the tv capture cardsd
 	/// </summary>
   public class Recorder
   {
@@ -177,6 +177,20 @@ namespace MediaPortal.TV.Recording
         TVDatabase.GetRecordings(ref m_Recordings);
         TVDatabase.GetChannels(ref m_TVChannels);
         m_bRecordingsChanged=false;
+        foreach (TVRecording recording in m_Recordings)
+        {
+          for (int i=0; i < m_tvcards.Count;++i)
+          {
+            TVCaptureDevice dev=(TVCaptureDevice )m_tvcards[i];
+            if (dev.IsRecording)
+            {
+              if (dev.CurrentTVRecording.ID==recording.ID)
+              {
+                dev.CurrentTVRecording=recording;
+              }
+            }
+          }
+        }
       }
 
       // no TV cards? then we cannot record anything, so just return
@@ -544,13 +558,18 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     /// <param name="rec">TVRecording <seealso cref="MediaPortal.TV.Database.TVRecording"/></param>
     /// <returns>true if a card is recording the specified TVRecording, else false</returns>
-    static public bool IsRecordingSchedule(TVRecording rec)
+    static public bool IsRecordingSchedule(TVRecording rec, out int card)
     {
+      card=-1;
       if (m_eState!= State.Initialized) return false;
       for (int i=0; i < m_tvcards.Count;++i)
       {
         TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-        if (dev.IsRecording && dev.CurrentTVRecording!=null&&dev.CurrentTVRecording.ID==rec.ID) return true;
+        if (dev.IsRecording && dev.CurrentTVRecording!=null&&dev.CurrentTVRecording.ID==rec.ID) 
+        {
+          card=i;
+          return true;
+        }
       }
       return false;
     }

@@ -273,6 +273,10 @@ namespace MediaPortal.TV.Recording
         if (!IsRecording) return null;
         return m_CurrentTVRecording;
       }
+      set 
+      {
+        m_CurrentTVRecording=value;
+      }
     }
 
     /// <summary>

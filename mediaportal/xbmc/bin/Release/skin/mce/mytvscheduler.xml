@@ -122,6 +122,8 @@
 				<textYOff3>55</textYOff3>
 				<IconXOff>12</IconXOff>
 				<IconYOff>8</IconYOff>
+				<PinIconXOff>55</PinIconXOff>
+				<PinIconYOff>50</PinIconYOff>
 				<itemWidth>65</itemWidth>
 				<itemHeight>65</itemHeight>
 				<textureFocus>recording_background_focus.png</textureFocus>

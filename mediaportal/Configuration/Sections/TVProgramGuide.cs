@@ -440,8 +440,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // createScheduleCheckBox
       // 
-      this.createScheduleCheckBox.Checked = true;
-      this.createScheduleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.createScheduleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.createScheduleCheckBox.Location = new System.Drawing.Point(16, 26);
       this.createScheduleCheckBox.Name = "createScheduleCheckBox";

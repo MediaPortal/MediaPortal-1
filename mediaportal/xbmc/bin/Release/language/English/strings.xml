@@ -2134,6 +2134,18 @@
 	<value>Make sure you use VMR9 and that something is playing</value>
 </string>
 <string>
+	<id>730</id>
+	<value>This schedule is recording. If you delete</value>
+</string>
+<string>
+	<id>731</id>
+	<value>the schedule then the recording is stopped.</value>
+</string>
+<string>
+	<id>732</id>
+	<value>Are you sure?</value>
+</string>
+<string>
 	<id>800</id>
 	<value>Starts with</value>
 </string>
