@@ -325,7 +325,7 @@
 			<posX>242</posX>
 			<posY>320</posY>
 			<height>240</height>
-			<onleft>2</onleft>
+			<onleft>20</onleft>
 			<onright>20</onright>
 			<onup>3</onup>
 			<ondown>3</ondown>

@@ -30,11 +30,11 @@
 		<description>GUI Settings text label</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>300</posX>
-		<posY>80</posY>
+		<posX>280</posX>
+		<posY>50</posY>
 		<label>674</label>
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>font10</font>
+		<align>right</align>
 	</control>
 	<control>
 		<description>Scroll Speed label</description>
@@ -44,7 +44,6 @@
 		<posY>218</posY>
 		<label>673</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Speedselect</description>
@@ -53,25 +52,24 @@
 		<posX>220</posX>
 		<posY>222</posY>
 		<reverse>yes</reverse>
-		<onup>2</onup>
+		<onup>20</onup>
 		<ondown>2</ondown>
 		<onleft>2</onleft>
 		<onright>2</onright>
-		<textcolor>FFFFFFFF</textcolor>
 		<buddycontrolid>100</buddycontrolid>
 	</control>
 	<control>
-		<description>Example value</description> 
-		<type>label</type> 
-		<id>0</id> 
-		<posX>100</posX> 
-		<posY>300</posY> 
-		<width>400</width> 
-		<label>675</label> 
-		<font>font13</font> 
+		<description>Example value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>100</posX>
+		<posY>300</posY>
+		<width>400</width>
+		<label>675</label>
+		<font>font13</font>
 	</control>
 	<control>
-		<description>TagLine value</description>
+		<description>Horizontal example</description>
 		<type>fadelabel</type>
 		<id>25</id>
 		<posX>120</posX>
@@ -81,7 +79,7 @@
 		<font>font13</font>
 	</control>
 	<control>
-		<description>Description1</description>
+		<description>Textarea example</description>
 		<type>textboxscrollup</type>
 		<id>26</id>
 		<posX>120</posX>

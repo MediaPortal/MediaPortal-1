@@ -57,7 +57,7 @@
 	</control>
 
 	<control>
-		<description>back button</description>
+<!--		<description>back button</description>
 		<type>button</type>
 		<id>2</id>
 		<posX>55</posX>
@@ -66,7 +66,7 @@
 		<onleft>2</onleft>
 		<onright>10</onright>
 		<onup>17</onup>
-		<ondown>6</ondown>
+		<ondown>6</ondown> -->
 	</control>
 	<control>
 		<description>favourite button</description>

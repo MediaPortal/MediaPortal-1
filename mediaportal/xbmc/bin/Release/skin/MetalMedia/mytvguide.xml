@@ -23,6 +23,7 @@
 		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
 		<texture>mytv.png</texture>
+		<visible>false</visible>
 	</control>
 	<control>
 		<description>My TVGuide Label</description>
@@ -34,6 +35,7 @@
 		<font>font10</font>
 		<align>right</align>
 	</control>
+
 	<control>
 		<description>Current program background</description>
 		<type>image</type>
@@ -41,9 +43,65 @@
 		<posX>35</posX>
 		<posY>99</posY>
 		<width>655</width>
-		<height>100</height>
+		<height>105</height>
 		<colordiffuse>ffffffff</colordiffuse>
 		<texture>panel.png</texture>
+	</control>
+	<control>
+		<description>Current Channel</description>
+		<type>image</type>
+		<id>12</id>
+		<posX>6</posX>
+		<posY>108</posY>
+		<width>85</width>
+		<height>85</height>
+		<texture>#TV.Guide.thumb</texture>
+	</control>
+	<control>
+		<description>Current program title</description>
+		<type>fadelabel</type>
+		<id>13</id>
+		<posX>150</posX>
+		<posY>105</posY>
+		<width>375</width>
+		<label>#TV.Guide.Title</label>
+		<font>font14</font>
+		<textcolor>ff484848</textcolor>
+	</control>
+	<control>
+		<description>Current program time</description>
+		<type>label</type>
+		<id>14</id>
+		<posX>670</posX>
+		<posY>105</posY>
+		<label>#TV.Guide.Time</label>
+		<align>right</align>
+		<font>font14</font>
+		<textcolor>ff484848</textcolor>
+	</control>
+	<control>
+		<description>Current program genre</description>
+		<type>label</type>
+		<id>27</id>
+		<posX>670</posX>
+		<posY>132</posY>
+		<label>#TV.Guide.Genre</label>
+		<align>right</align>
+		<font>font14</font>
+		<textcolor>ff484848</textcolor>
+	</control>
+	<control>
+		<description>Description1</description>
+		<type>textboxscrollup</type>
+		<id>15</id>
+		<posX>150</posX>
+		<posY>130</posY>
+		<width>400</width>
+		<height>65</height>
+		<seperator>----------------------------------------------------------------------------------------------</seperator>
+		<label>#TV.Guide.Description</label>
+		<font>font14</font>
+		<textcolor>ff484848</textcolor>
 	</control>
 
 	<control>
@@ -64,7 +122,6 @@
 		<posX>186</posX>
 		<posY>220</posY>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>time header background image template</description>
@@ -76,12 +133,13 @@
 		<height>28</height>
 		<texture>bar.png</texture>
 	</control>
+
 	<control>
 		<description>day spin control</description>
 		<type>spincontrol</type>
 		<id>6</id>
 		<posX>60</posX>
-		<posY>222</posY>
+		<posY>221</posY>
 		<showrange>no</showrange>
 		<orientation>horizontal</orientation>
 		<align>center</align>
@@ -94,7 +152,7 @@
 		<type>spincontrol</type>
 		<id>8</id>
 		<posX>165</posX>
-		<posY>230</posY>
+		<posY>229</posY>
 		<showrange>no</showrange>
 		<orientation>vertical</orientation>
 		<textureUp>arrow_up_nofocus.png</textureUp>
@@ -106,6 +164,7 @@
 		<onleft>6</onleft>
 		<onright>8</onright>
 	</control>
+
 	<control>
 		<description>Channel image template</description>
 		<type>image</type>
@@ -126,73 +185,9 @@
 		<width>100</width>
 		<height>15</height>
 		<font>font13</font>
-		<textcolor>FF000000</textcolor>
+		<textcolor>ff484848</textcolor>
 	</control>
 
-	<control>
-		<description>Current Channel</description>
-		<type>image</type>
-		<id>12</id>
-		<posX>56</posX>
-		<posY>108</posY>
-		<width>85</width>
-		<height>85</height>
-		<texture>#TV.Guide.thumb</texture>
-	</control>
-	<control>
-		<description>Current program title</description>
-		<type>fadelabel</type>
-		<id>13</id>
-		<posX>150</posX>
-		<posY>105</posY>
-		<width>375</width>
-		<label>#TV.Guide.Title</label>
-		<font>font14</font>
-		<textcolor>FF000000</textcolor>
-	</control>
-	<control>
-		<description>Current program time</description>
-		<type>label</type>
-		<id>14</id>
-		<posX>670</posX>
-		<posY>105</posY>
-		<label>#TV.Guide.Time</label>
-		<align>right</align>
-		<font>font14</font>
-		<textcolor>FF000000</textcolor>
-	</control>
-	<control>
-		<description>Current program genre</description>
-		<type>label</type>
-		<id>27</id>
-		<posX>670</posX>
-		<posY>135</posY>
-		<label>#TV.Guide.Genre</label>
-		<align>right</align>
-		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
-	</control>
-	<control>
-		<description>Description1</description>
-		<type>textboxscrollup</type>
-		<id>15</id>
-		<posX>150</posX>
-		<posY>130</posY>
-		<width>400</width> 
-		<height>65</height>
-		<seperator>----------------------------------------------------------------------------------------------</seperator> 
-		<label>#TV.Guide.Description</label>
-		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
-	</control>	
-	<control>
-		<description>template for program genre light area</description>
-		<type>label</type>
-		<id>23</id>
-		<label>-</label>
-		<font>font10</font>
-		<textcolor>FF101010</textcolor>
-	</control>	
 	<control>
 		<description>template for program title light area</description>
 		<type>label</type>
@@ -200,19 +195,16 @@
 		<visible>no</visible>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FF101010</textcolor>
+		<textcolor>ff484848</textcolor>
 	</control>
 	<control>
-		<description>vertical timeline</description>
-		<type>image</type>
-		<id>25</id>
-		<posX>30</posX>
-		<posY>210</posY>
-		<width>8</width>
-		<height>330</height>
-		<colordiffuse>c0ffffff</colordiffuse>
-		<texture>vertical-line.png</texture>
-	</control>	
+		<description>template for program genre light area</description>
+		<type>label</type>
+		<id>23</id>
+		<label>-</label>
+		<font>font10</font>
+		<textcolor>ff484848</textcolor>
+	</control>
 	<control>
 		<description>template for program title darkarea </description>
 		<type>label</type>
@@ -231,26 +223,37 @@
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
-	
-	
+
 	<control>
-		<description>TV preview window</description> 
-		<type>videowindow</type> 
-		<id>1</id> 
-		<posX>610</posX> 
-		<posY>20</posY> 
+		<description>vertical timeline</description>
+		<type>image</type>
+		<id>25</id>
+		<posX>30</posX>
+		<posY>210</posY>
+		<width>8</width>
+		<height>330</height>
+		<colordiffuse>c0ffffff</colordiffuse>
+		<texture>vertical-line.png</texture>
+	</control>
+
+	<control>
+		<description>TV preview window</description>
+		<type>videowindow</type>
+		<id>1</id>
+		<posX>610</posX>
+		<posY>20</posY>
 		<width>1</width>
 		<height>1</height>
 	</control>
+
 	<control>
 		<description>Horizontal scrollbar</description>
 		<type>hscrollbar</type>
 		<id>28</id>
-		<posX>180</posX>
+		<posX>185</posX>
 		<posY>540</posY>
-		<width>475</width>
+		<width>472</width>
 		<height>12</height>
-		<scrollbarbg>bar.png</scrollbarbg>
 		<visible>yes</visible>
 	</control>
 	<control>
@@ -258,10 +261,9 @@
 		<type>vscrollbar</type>
 		<id>29</id>
 		<posX>663</posX>
-		<posY>220</posY>
+		<posY>221</posY>
 		<width>12</width>
-		<height>315</height>
-		<scrollbarbg>bar_vert.png</scrollbarbg>
+		<height>308</height>
 		<visible>yes</visible>
 	</control>
 </controls>

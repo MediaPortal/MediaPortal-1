@@ -54,7 +54,7 @@
 			<label>8001</label>
 			<onleft>20</onleft>
 			<onright>50</onright>
-			<onup>22</onup>
+			<onup>1111</onup> <!-- Go to topbar -->
 			<ondown>21</ondown>
 		</control>
 		<control>

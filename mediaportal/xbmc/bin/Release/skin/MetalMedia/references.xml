@@ -137,11 +137,11 @@
 		<itemWidth>115</itemWidth>
 		<itemHeight>115</itemHeight>
 		<textureWidth>80</textureWidth>
-		<textureHeight>80</textureHeight> 
+		<textureHeight>80</textureHeight>
 		<thumbWidth>64</thumbWidth>
 		<thumbHeight>64</thumbHeight>
 		<thumbPosX>8</thumbPosX>
-		<thumbPosY>8</thumbPosY>		
+		<thumbPosY>8</thumbPosY>
 		<imageFolder>-</imageFolder>
 		<imageFolderFocus>folder_focus.png</imageFolderFocus>
 		<font>font14</font>
@@ -150,13 +150,13 @@
 		<colordiffuse>ff000000</colordiffuse>
 		<suffix>|</suffix>
 		<textureWidthBig>128</textureWidthBig>
-		<textureHeightBig>128</textureHeightBig> 
+		<textureHeightBig>128</textureHeightBig>
 		<itemWidthBig>150</itemWidthBig>
 		<itemHeightBig>150</itemHeightBig>
 		<thumbWidthBig>100</thumbWidthBig>
 		<thumbHeightBig>100</thumbHeightBig>
 		<thumbPosXBig>14</thumbPosXBig>
-		<thumbPosYBig>14</thumbPosYBig>	
+		<thumbPosYBig>14</thumbPosYBig>
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
@@ -266,7 +266,7 @@
 		<id>20</id>
 		<posX>100</posX>
 		<posY>325</posY>
-		<texturebg>bluebar.png</texturebg>
+		<texturebg>slider_horizontal.png</texturebg>
 		<lefttexture>progress_left.png</lefttexture>
 		<righttexture>progress_right.png</righttexture>
 		<visible>no</visible>
@@ -277,7 +277,7 @@
 		<id>20</id>
 		<posX>100</posX>
 		<posY>25</posY>
-		<scrollbarbg>bar_vert.png</scrollbarbg>
+		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
 		<visible>no</visible>

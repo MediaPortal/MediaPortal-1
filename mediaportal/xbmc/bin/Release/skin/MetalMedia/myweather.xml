@@ -73,7 +73,7 @@
 		<type>spincontrol</type>
 		<id>4</id>
 		<posX>68</posX>
-		<posY>175</posY>
+		<posY>177</posY>
 		<textcolor>ff484848</textcolor>
 		<reverse>yes</reverse>
 		<showrange>no</showrange>
@@ -87,7 +87,7 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>55</posX>
-		<posY>200</posY>
+		<posY>202</posY>
 		<texture>panel_split.png</texture>
 	</control>
 
@@ -96,7 +96,7 @@
 		<type>image</type>
 		<id>101</id>
 		<posX>100</posX>
-		<posY>210</posY>
+		<posY>212</posY>
 		<width>86</width>
 		<height>64</height>
 		<texture>weather\logos\TWClogo_64px.png</texture>
@@ -431,13 +431,14 @@
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
 	</control>
-	<control>
+  
+  <control>
 		<description>Satellite image</description>
 		<type>image</type>
 		<id>1000</id>
-		<posX>240</posX>
-		<posY>190</posY>
-		<width>440</width>
+		<posX>242</posX>
+		<posY>100</posY>
+		<width>433</width>
 		<height>350</height>
 		<texture></texture>
 		<visible>no</visible>
