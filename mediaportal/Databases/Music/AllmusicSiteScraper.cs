@@ -151,7 +151,6 @@ namespace MediaPortal.Music.Database
 			{
 				string strBody;
         WebRequest req = WebRequest.Create(strURL);
-        req.Proxy=WebProxy.GetDefaultProxy();
 				req.Method="POST";
 				req.ContentType = "application/x-www-form-urlencoded";
 
@@ -190,7 +189,6 @@ namespace MediaPortal.Music.Database
 
       // Initialize the WebRequest.
       WebRequest myRequest = WebRequest.Create(strURL);
-      myRequest.Proxy=WebProxy.GetDefaultProxy();
 
       // Return the response. 
       WebResponse myResponse = myRequest.GetResponse();

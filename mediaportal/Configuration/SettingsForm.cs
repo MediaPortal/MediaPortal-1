@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 
 using MediaPortal;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration
 {
@@ -40,6 +41,7 @@ namespace MediaPortal.Configuration
 
 		public SettingsForm()
 		{
+      Log.Write("SettingsForm constructor");
 			//
 			// Required for Windows Form Designer support
 			//
@@ -53,59 +55,100 @@ namespace MediaPortal.Configuration
 			//
 			// Build options tree
 			//
+      
+      Log.Write("add general section");
 			AddSection(new Sections.General());
-			AddSection(new Sections.Keys());
-			AddSection(new Sections.Skin());
 
-			SectionSettings dvd = new Sections.DVD();
+      Log.Write("add keys section");
+      AddSection(new Sections.Keys());
+
+      Log.Write("add skins section");
+      AddSection(new Sections.Skin());
+
+
+      Log.Write("add DVD section");
+      SectionSettings dvd = new Sections.DVD();
 			AddSection(dvd);
-			AddChildSection(dvd, new Sections.DVDCodec());
-			AddChildSection(dvd, new Sections.DVDPlayer());
+
+      Log.Write("  add DVD codec section");
+      AddChildSection(dvd, new Sections.DVDCodec());
+      
+      Log.Write("  add DVD player section");
+      AddChildSection(dvd, new Sections.DVDPlayer());
+
+      Log.Write("  add DVD postprocessing section");
       AddChildSection(dvd, new Sections.DVDPostProcessing());
 			
-			SectionSettings movie = new Sections.Movies();
+      Log.Write("add movie section");
+      SectionSettings movie = new Sections.Movies();
 			AddSection(movie);
-			AddChildSection(movie, new Sections.MovieExtensions());
-			AddChildSection(movie, new Sections.MovieShares());
-			AddChildSection(movie, new Sections.MoviePlayer());
+
+      Log.Write("  add movie extensions section");
+      AddChildSection(movie, new Sections.MovieExtensions());
+      Log.Write("  add movie shares section");
+      AddChildSection(movie, new Sections.MovieShares());
+      Log.Write("  add movie player section");
+      AddChildSection(movie, new Sections.MoviePlayer());
+      Log.Write("  add movie postprocessing section");
       AddChildSection(movie, new Sections.MoviePostProcessing());
 
-			SectionSettings music = new Sections.Music();
+      Log.Write("add music section");
+      SectionSettings music = new Sections.Music();
 			AddSection(music);
-			AddChildSection(music, new Sections.MusicExtensions());
-			AddChildSection(music, new Sections.MusicShares());
+      Log.Write("  add music extension section");
+      AddChildSection(music, new Sections.MusicExtensions());
+      Log.Write("  add music shares section");
+      AddChildSection(music, new Sections.MusicShares());
+      Log.Write("  add music database section");
       AddChildSection(music, new Sections.MusicDatabase());
 
-			SectionSettings picture = new Sections.Pictures();
+      Log.Write("add pictures section");
+      SectionSettings picture = new Sections.Pictures();
 			AddSection(picture);
-			AddChildSection(picture, new Sections.PictureExtensions());
-			AddChildSection(picture, new Sections.PictureShares());
+      Log.Write("  add pictures extensions section");
+      AddChildSection(picture, new Sections.PictureExtensions());
+      Log.Write("  add pictures shares section");
+      AddChildSection(picture, new Sections.PictureShares());
 
-			SectionSettings radio = new Sections.Radio();
+      Log.Write("add radio section");
+      SectionSettings radio = new Sections.Radio();
 			AddSection(radio);
-			AddChildSection(radio, new Sections.RadioStations());
+      Log.Write("  add radio stations section");
+      AddChildSection(radio, new Sections.RadioStations());
 
-			SectionSettings television = new Sections.Television();
+      Log.Write("add television section");
+      SectionSettings television = new Sections.Television();
 			AddSection(television);
-			AddChildSection(television, new Sections.TVCaptureCards());
-			AddChildSection(television, new Sections.TVChannels());
-			AddChildSection(television, new Sections.TVProgramGuide());
-			AddChildSection(television, new Sections.TVRecording());
+      Log.Write("  add tv capture cards section");
+      AddChildSection(television, new Sections.TVCaptureCards());
+      Log.Write("  add tv channels section");
+      AddChildSection(television, new Sections.TVChannels());
+      Log.Write("  add tv program guide section");
+      AddChildSection(television, new Sections.TVProgramGuide());
+      Log.Write("  add tv recording section");
+      AddChildSection(television, new Sections.TVRecording());
+      Log.Write("  add tv postprocessing section");
       AddChildSection(television, new Sections.TVPostProcessing());
 
-			AddSection(new Sections.USBUIRT());
-			AddSection(new Sections.Weather());
-			AddSection(new Sections.Plugins());
-			AddSection(new Sections.Project());
+      Log.Write("add USBUIRT section");
+      AddSection(new Sections.USBUIRT());
+      Log.Write("add weather section");
+      AddSection(new Sections.Weather());
+      Log.Write("add plugins section");
+      AddSection(new Sections.Plugins());
+      Log.Write("add project section");
+      AddSection(new Sections.Project());
 
 			//
 			// Select first item in the section tree
 			//
 			sectionTree.SelectedNode = sectionTree.Nodes[0];
 
+      Log.Write("bring to front");
       // make sure window is in front of mediaportal
       this.BringToFront();
-		}
+      Log.Write("settingsform constructor done");
+    }
 
 		/// <summary>
 		/// 
@@ -329,22 +372,27 @@ namespace MediaPortal.Configuration
 		/// <param name="e"></param>
 		private void SettingsForm_Load(object sender, System.EventArgs e)
 		{
+      Log.Write("Load settings");
 			foreach(TreeNode treeNode in sectionTree.Nodes)
 			{
 				//
 				// Load settings for all sections
 				//
+        
+        Log.Write("  Load settings:{0}",treeNode.Text);
 				LoadSectionSettings(treeNode);
 			}
-		}
+      Log.Write("Load settings done");
+    }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="currentNode"></param>
 		private void LoadSectionSettings(TreeNode currentNode)
-		{
-			if(currentNode != null)
+    {
+      Log.Write("LoadSectionSettings()");
+      if(currentNode != null)
 			{
 				//
 				// Load settings for current node
@@ -361,10 +409,12 @@ namespace MediaPortal.Configuration
 				//
 				foreach(TreeNode childNode in treeNode.Nodes)
 				{
-					LoadSectionSettings(childNode);
+          Log.Write("  Load settings:{0}",childNode.Text);
+          LoadSectionSettings(childNode);
 				}
 			}
-		}
+      Log.Write("LoadSectionSettings() done");
+    }
 
 		/// <summary>
 		/// 
@@ -372,7 +422,8 @@ namespace MediaPortal.Configuration
 		/// <param name="currentNode"></param>
 		private void SaveSectionSettings(TreeNode currentNode)
 		{
-			if(currentNode != null)
+      Log.Write("SaveSectionSettings()");
+      if(currentNode != null)
 			{
 				//
 				// Save settings for current node
@@ -388,10 +439,12 @@ namespace MediaPortal.Configuration
 				// Load settings for all child nodes
 				//
 				foreach(TreeNode childNode in treeNode.Nodes)
-				{
+        {
+          Log.Write("SaveSectionSettings:{0}",childNode.Text);		
 					SaveSectionSettings(childNode);
 				}
-			}		
+      }
+      Log.Write("SaveSectionSettings done()");		
 		}
 
 		private void cancelButton_Click(object sender, System.EventArgs e)

@@ -1,6 +1,6 @@
 using System;
 using System.Windows.Forms;
-
+using MediaPortal.GUI.Library;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -54,14 +54,18 @@ namespace MediaPortal.Configuration
 			switch(startupMode)
 			{
 				case StartupMode.Normal:
+          Log.Write("Create new standard setup");
 					applicationForm = new SettingsForm();
 					break;
 
-				case StartupMode.Wizard:
+        case StartupMode.Wizard:
+          Log.Write("Create new wizard setup");
 					applicationForm = new WizardForm(sectionsConfiguration);
 					break;
 			}
 
+      
+      Log.Write("determine proxy servers");
       // One time setup for proxy servers
       // also set credentials to allow use with firewalls that require them
       // this means we can use the .NET internet objects and not have
@@ -72,6 +76,8 @@ namespace MediaPortal.Configuration
 
 			if(applicationForm != null)
 			{
+        
+        Log.Write("start application");
 				Application.Run(applicationForm);
 			}
 		}

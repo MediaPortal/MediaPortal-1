@@ -262,7 +262,6 @@ namespace MediaPortal.FoobarPlugin
 
       // Initialize the WebRequest.
       WebRequest myRequest = WebRequest.Create(strURL);
-      myRequest.Proxy=WebProxy.GetDefaultProxy();
 
       // Return the response. 
       WebResponse myResponse = myRequest.GetResponse();
