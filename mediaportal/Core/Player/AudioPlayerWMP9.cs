@@ -149,15 +149,17 @@ namespace MediaPortal.Player
     }
 
     public override bool Play(string strFile)
-    {
-      
+    {     
       m_state=PlayState.Init;
       m_strCurrentFile=strFile;
-
 
       m_bNotifyPlaying=true;
       GC.Collect();
       CreateInstance();
+
+      if (m_player == null) return false;
+      if (m_player.cdromCollection == null) return false;
+
       m_player.PlayStateChange += new AxMicrosoft.MediaPlayer.Interop._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
       m_player.enableContextMenu=false;
@@ -188,12 +190,20 @@ namespace MediaPortal.Player
           }
         }
 
-        int iTrack = Convert.ToInt32(strTrack);
         if (m_player.cdromCollection.count<=0) return false;
-        if (m_player.cdromCollection.Item(0).Playlist==null) return false;
-        int tracks=m_player.cdromCollection.Item(0).Playlist.count ;
+        string strDrive = strFile.Substring(0,1);
+        strDrive += ":";
+        int iCdRomDriveNr=0;
+        while ((m_player.cdromCollection.Item(iCdRomDriveNr).driveSpecifier != strDrive) && (iCdRomDriveNr<m_player.cdromCollection.count))
+        {
+          iCdRomDriveNr++;
+        }
+
+        int iTrack = Convert.ToInt32(strTrack);
+        if (m_player.cdromCollection.Item(iCdRomDriveNr).Playlist==null) return false;
+        int tracks=m_player.cdromCollection.Item(iCdRomDriveNr).Playlist.count ;
         if (iTrack >tracks ) return false;
-        m_player.currentMedia =m_player.cdromCollection.Item(0).Playlist.get_Item(iTrack-1);
+        m_player.currentMedia =m_player.cdromCollection.Item(iCdRomDriveNr).Playlist.get_Item(iTrack-1);
         if (m_player.currentMedia==null) return false;
         /*
         string strStart=strFile.Substring(0,2)+@"\";
