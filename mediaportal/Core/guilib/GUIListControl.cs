@@ -231,20 +231,26 @@ namespace MediaPortal.GUI.Library
 				if (i + m_iOffset < m_vecItems.Count)
 				{
 					// render item
-          GUIButtonControl btn=(GUIButtonControl)m_imgButton[i];
-					GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
-					if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
-					{
-						// render focused line
-						btn.Focus = true;
-					}
-					else
-					{
-						// render no-focused line
-						btn.Focus = false;
-					}
-					btn.SetPosition(m_dwPosX, dwPosY);
-					btn.Render();
+          GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
+          if (m_imgButton!=null)
+          {
+            GUIButtonControl btn=m_imgButton[i] as GUIButtonControl;
+            if (btn!=null)
+            {
+              if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+              {
+                // render focused line
+                btn.Focus = true;
+              }
+              else
+              {
+                // render no-focused line
+                btn.Focus = false;
+              }
+              btn.SetPosition(m_dwPosX, dwPosY);
+              btn.Render();
+            }
+          }
 
 					// render the icon
 					if (pItem.HasIcon)

@@ -200,8 +200,9 @@ GUISpinControl m_upDown = null;
 
 		void RenderItem(int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
 		{
-      GUIButtonControl btn=(GUIButtonControl)m_button[iButton];
-			
+      if (m_button==null) return;
+      GUIButtonControl btn=m_button[iButton] as GUIButtonControl;
+			if (btn==null) return;
 			
 			float fTextPosY = (float)dwPosY + (float)m_iTextureHeight;
 
