@@ -28,8 +28,6 @@ namespace MediaPortal.Configuration.Sections
 				return String.Format("{0} - {1}", FriendlyName, VideoDevice);
 			}
 		};
-
-		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.Button deleteButton;
@@ -119,7 +117,6 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -136,15 +133,6 @@ namespace MediaPortal.Configuration.Sections
 			this.editButton = new System.Windows.Forms.Button();
 			this.upButton = new System.Windows.Forms.Button();
 			this.downButton = new System.Windows.Forms.Button();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.btnGroupDown = new System.Windows.Forms.Button();
-			this.buttonGroupUp = new System.Windows.Forms.Button();
-			this.buttonEditGroup = new System.Windows.Forms.Button();
-			this.buttonDeleteGroup = new System.Windows.Forms.Button();
-			this.buttonAddGroup = new System.Windows.Forms.Button();
-			this.listViewGroups = new System.Windows.Forms.ListView();
-			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.btnGrpChnDown = new System.Windows.Forms.Button();
 			this.btnGrpChnUp = new System.Windows.Forms.Button();
@@ -158,6 +146,15 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.btnGroupDown = new System.Windows.Forms.Button();
+			this.buttonGroupUp = new System.Windows.Forms.Button();
+			this.buttonEditGroup = new System.Windows.Forms.Button();
+			this.buttonDeleteGroup = new System.Windows.Forms.Button();
+			this.buttonAddGroup = new System.Windows.Forms.Button();
+			this.listViewGroups = new System.Windows.Forms.ListView();
+			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.btnMapChannelToCard = new System.Windows.Forms.Button();
 			this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
@@ -172,15 +169,10 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
-			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.tabPage2.SuspendLayout();
 			this.tabPage4.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// columnHeader3
-			// 
-			this.columnHeader3.Text = "Frequency (MHz)";
-			this.columnHeader3.Width = 94;
 			// 
 			// columnHeader2
 			// 
@@ -248,7 +240,6 @@ namespace MediaPortal.Configuration.Sections
 			this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																											 this.columnHeader1,
 																																											 this.columnHeader2,
-																																											 this.columnHeader3,
 																																											 this.columnHeader5,
 																																											 this.columnHeader4});
 			this.channelsListView.FullRowSelect = true;
@@ -276,7 +267,7 @@ namespace MediaPortal.Configuration.Sections
 			// columnHeader4
 			// 
 			this.columnHeader4.Text = "Type";
-			this.columnHeader4.Width = 61;
+			this.columnHeader4.Width = 155;
 			// 
 			// btnImport
 			// 
@@ -358,85 +349,6 @@ namespace MediaPortal.Configuration.Sections
 			this.downButton.TabIndex = 4;
 			this.downButton.Text = "Down";
 			this.downButton.Click += new System.EventHandler(this.downButton_Click);
-			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.btnGroupDown);
-			this.tabPage2.Controls.Add(this.buttonGroupUp);
-			this.tabPage2.Controls.Add(this.buttonEditGroup);
-			this.tabPage2.Controls.Add(this.buttonDeleteGroup);
-			this.tabPage2.Controls.Add(this.buttonAddGroup);
-			this.tabPage2.Controls.Add(this.listViewGroups);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(432, 390);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Groups";
-			// 
-			// btnGroupDown
-			// 
-			this.btnGroupDown.Location = new System.Drawing.Point(240, 344);
-			this.btnGroupDown.Name = "btnGroupDown";
-			this.btnGroupDown.Size = new System.Drawing.Size(48, 23);
-			this.btnGroupDown.TabIndex = 5;
-			this.btnGroupDown.Text = "Down";
-			this.btnGroupDown.Click += new System.EventHandler(this.btnGroupDown_Click);
-			// 
-			// buttonGroupUp
-			// 
-			this.buttonGroupUp.Location = new System.Drawing.Point(200, 344);
-			this.buttonGroupUp.Name = "buttonGroupUp";
-			this.buttonGroupUp.Size = new System.Drawing.Size(32, 23);
-			this.buttonGroupUp.TabIndex = 4;
-			this.buttonGroupUp.Text = "Up";
-			this.buttonGroupUp.Click += new System.EventHandler(this.buttonGroupUp_Click);
-			// 
-			// buttonEditGroup
-			// 
-			this.buttonEditGroup.Location = new System.Drawing.Point(112, 344);
-			this.buttonEditGroup.Name = "buttonEditGroup";
-			this.buttonEditGroup.Size = new System.Drawing.Size(40, 23);
-			this.buttonEditGroup.TabIndex = 3;
-			this.buttonEditGroup.Text = "Edit";
-			this.buttonEditGroup.Click += new System.EventHandler(this.buttonEditGroup_Click);
-			// 
-			// buttonDeleteGroup
-			// 
-			this.buttonDeleteGroup.Location = new System.Drawing.Point(56, 344);
-			this.buttonDeleteGroup.Name = "buttonDeleteGroup";
-			this.buttonDeleteGroup.Size = new System.Drawing.Size(48, 23);
-			this.buttonDeleteGroup.TabIndex = 2;
-			this.buttonDeleteGroup.Text = "Delete";
-			this.buttonDeleteGroup.Click += new System.EventHandler(this.buttonDeleteGroup_Click);
-			// 
-			// buttonAddGroup
-			// 
-			this.buttonAddGroup.Location = new System.Drawing.Point(8, 344);
-			this.buttonAddGroup.Name = "buttonAddGroup";
-			this.buttonAddGroup.Size = new System.Drawing.Size(40, 23);
-			this.buttonAddGroup.TabIndex = 1;
-			this.buttonAddGroup.Text = "Add";
-			this.buttonAddGroup.Click += new System.EventHandler(this.buttonAddGroup_Click);
-			// 
-			// listViewGroups
-			// 
-			this.listViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																										 this.columnHeader6,
-																																										 this.columnHeader7});
-			this.listViewGroups.Location = new System.Drawing.Point(8, 8);
-			this.listViewGroups.Name = "listViewGroups";
-			this.listViewGroups.Size = new System.Drawing.Size(416, 304);
-			this.listViewGroups.TabIndex = 0;
-			this.listViewGroups.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader6
-			// 
-			this.columnHeader6.Text = "Group name";
-			this.columnHeader6.Width = 342;
-			// 
-			// columnHeader7
-			// 
-			this.columnHeader7.Text = "Pincode";
 			// 
 			// tabPage3
 			// 
@@ -556,6 +468,85 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1.TabIndex = 0;
 			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.btnGroupDown);
+			this.tabPage2.Controls.Add(this.buttonGroupUp);
+			this.tabPage2.Controls.Add(this.buttonEditGroup);
+			this.tabPage2.Controls.Add(this.buttonDeleteGroup);
+			this.tabPage2.Controls.Add(this.buttonAddGroup);
+			this.tabPage2.Controls.Add(this.listViewGroups);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(432, 390);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "Groups";
+			// 
+			// btnGroupDown
+			// 
+			this.btnGroupDown.Location = new System.Drawing.Point(240, 344);
+			this.btnGroupDown.Name = "btnGroupDown";
+			this.btnGroupDown.Size = new System.Drawing.Size(48, 23);
+			this.btnGroupDown.TabIndex = 5;
+			this.btnGroupDown.Text = "Down";
+			this.btnGroupDown.Click += new System.EventHandler(this.btnGroupDown_Click);
+			// 
+			// buttonGroupUp
+			// 
+			this.buttonGroupUp.Location = new System.Drawing.Point(200, 344);
+			this.buttonGroupUp.Name = "buttonGroupUp";
+			this.buttonGroupUp.Size = new System.Drawing.Size(32, 23);
+			this.buttonGroupUp.TabIndex = 4;
+			this.buttonGroupUp.Text = "Up";
+			this.buttonGroupUp.Click += new System.EventHandler(this.buttonGroupUp_Click);
+			// 
+			// buttonEditGroup
+			// 
+			this.buttonEditGroup.Location = new System.Drawing.Point(112, 344);
+			this.buttonEditGroup.Name = "buttonEditGroup";
+			this.buttonEditGroup.Size = new System.Drawing.Size(40, 23);
+			this.buttonEditGroup.TabIndex = 3;
+			this.buttonEditGroup.Text = "Edit";
+			this.buttonEditGroup.Click += new System.EventHandler(this.buttonEditGroup_Click);
+			// 
+			// buttonDeleteGroup
+			// 
+			this.buttonDeleteGroup.Location = new System.Drawing.Point(56, 344);
+			this.buttonDeleteGroup.Name = "buttonDeleteGroup";
+			this.buttonDeleteGroup.Size = new System.Drawing.Size(48, 23);
+			this.buttonDeleteGroup.TabIndex = 2;
+			this.buttonDeleteGroup.Text = "Delete";
+			this.buttonDeleteGroup.Click += new System.EventHandler(this.buttonDeleteGroup_Click);
+			// 
+			// buttonAddGroup
+			// 
+			this.buttonAddGroup.Location = new System.Drawing.Point(8, 344);
+			this.buttonAddGroup.Name = "buttonAddGroup";
+			this.buttonAddGroup.Size = new System.Drawing.Size(40, 23);
+			this.buttonAddGroup.TabIndex = 1;
+			this.buttonAddGroup.Text = "Add";
+			this.buttonAddGroup.Click += new System.EventHandler(this.buttonAddGroup_Click);
+			// 
+			// listViewGroups
+			// 
+			this.listViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																										 this.columnHeader6,
+																																										 this.columnHeader7});
+			this.listViewGroups.Location = new System.Drawing.Point(8, 8);
+			this.listViewGroups.Name = "listViewGroups";
+			this.listViewGroups.Size = new System.Drawing.Size(416, 304);
+			this.listViewGroups.TabIndex = 0;
+			this.listViewGroups.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader6
+			// 
+			this.columnHeader6.Text = "Group name";
+			this.columnHeader6.Width = 342;
+			// 
+			// columnHeader7
+			// 
+			this.columnHeader7.Text = "Pincode";
+			// 
 			// tabPage4
 			// 
 			this.tabPage4.Controls.Add(this.btnMapChannelToCard);
@@ -660,8 +651,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
-			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -683,7 +674,6 @@ namespace MediaPortal.Configuration.Sections
 
 				ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
 																		editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
-																		editedChannel.Frequency.ToString(Frequency.Format.MegaHerz),
                                     GetStandardName(editedChannel.standard),
                                     editedChannel.External ? "External" : "Internal"
 																	  } );
@@ -720,9 +710,8 @@ namespace MediaPortal.Configuration.Sections
 
 					listItem.SubItems[0].Text = editedChannel.Name;
 					listItem.SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
-					listItem.SubItems[2].Text = editedChannel.Frequency.ToString(Frequency.Format.MegaHerz);
-          listItem.SubItems[3].Text = GetStandardName(editedChannel.standard);
-          listItem.SubItems[4].Text = editedChannel.External ? "External" : "Internal";
+          listItem.SubItems[2].Text = GetStandardName(editedChannel.standard);
+          listItem.SubItems[3].Text = editedChannel.External ? "External" : "Internal";
 					SaveSettings();
 					UpdateGroupChannels(null,true);
 				}
@@ -981,7 +970,6 @@ namespace MediaPortal.Configuration.Sections
         tvChannel.standard = channel.TVStandard;
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),
-																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz),
                                     GetStandardName(tvChannel.standard),
                                     tvChannel.External ? "External" : "Internal"
 																	  } );
