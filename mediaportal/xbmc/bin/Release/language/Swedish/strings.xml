@@ -2155,11 +2155,63 @@
     </string>
     <string>
         <id>735</id>
-        <value>Rotatera</value>
+        <value>Rotera</value>
     </string>
     <string>
         <id>736</id>
         <value>Ingen TVGuide-data finns</value>
+    </string>
+    <string>
+	<id>737</id>
+	<value>Visa: Satellit</value>
+</string>
+<string>
+	<id>738</id>
+	<value>Visa: Temperatur</value>
+</string>
+    <string>
+        <id>739</id>
+        <value>Visa: UV Index</value>
+    </string>
+    <string>
+        <id>740</id>
+        <value>Visa: Vindar</value>
+    </string>
+    <string>
+        <id>741</id>
+        <value>Visa: Luftfuktighet</value>
+    </string>
+    <string>
+        <id>742</id>
+        <value>Visa: Nederbörd</value>
+    </string>
+    <string>
+        <id>743</id>
+        <value>4 Dagars Prognos</value>
+    </string>
+    <string>
+        <id>744</id>
+        <value>Soluppgång</value>
+    </string>
+    <string>
+        <id>745</id>
+        <value>Solnedgång</value>
+    </string>
+    <string>
+        <id>746</id>
+        <value>Hög</value>
+    </string>
+    <string>
+        <id>747</id>
+        <value>Låg</value>
+    </string>
+    <string>
+        <id>748</id>
+        <value>Nederbörd</value>
+    </string>
+    <string>
+        <id>750</id>
+        <value>Bilder</value>
     </string>
     <string>
         <id>800</id>
@@ -2282,6 +2334,12 @@
         <id>868</id>
         <value>Reset</value>
     </string>
+    <!-- Default name for new alarm -->
+    <string>
+        <id>869</id>
+        <value>Nytt Alarm</value>
+    </string>
+    <!-- End My Alarm Strings -->
     <string>
         <id>900</id>
         <value>Fortsätta filmen där den stannade senast?</value>
@@ -2535,6 +2593,30 @@
         <value>Föregående fönster</value>
     </string>
     <string>
+        <id>971</id>
+        <value>Grupp</value>
+    </string>
+    <string>
+        <id>972</id>
+        <value>Alla Kanaler</value>
+    </string>
+    <string>
+        <id>973</id>
+        <value>Maximal FPS</value>
+    </string>
+    <string>
+        <id>974</id>
+        <value>Rot Meny</value>
+    </string>
+    <string>
+        <id>975</id>
+        <value>Föregående kapitel</value>
+    </string>
+    <string>
+        <id>976</id>
+        <value>Nästa kapitel</value>
+    </string>
+    <string>
         <id>1440</id>
         <value>Min SVT Text</value>
     </string>
@@ -2642,6 +2724,18 @@
     <string>
         <id>1975</id>
         <value>Nästa Sida</value>
+    </string>
+    <string>
+        <id>1976</id>
+        <value>rpm</value>
+    </string>
+    <string>
+        <id>1977</id>
+        <value>Filsystem</value>
+    </string>
+    <string>
+        <id>1978</id>
+        <value>Virtuellt Minne</value>
     </string>
     <!-- My Recipie Strings -->
     <string>
@@ -2909,6 +3003,18 @@
         <id>2115</id>
         <value>Sätt i CD/DVD RW</value>
     </string>
+    <string>
+        <id>2116</id>
+        <value>Enhet ej redo</value>
+    </string>
+    <string>
+        <id>2117</id>
+        <value>Ett allvarligt fel har inträffat!</value>
+    </string>
+    <string>
+        <id>2118</id>
+        <value>Konvertera DVR-MS</value>
+    </string>
     <!-- My Explorer Strings -->
     <string>
         <id>2200</id>
@@ -2977,6 +3083,134 @@
     <string>
         <id>2216</id>
         <value>Filer flyttade!</value>
+    </string>
+    <string>
+        <id>2217</id>
+        <value>Det finns redan en fil med det namnet!</value>
+    </string>
+    <string>
+        <id>2218</id>
+        <value>Skriva över filen??</value>
+    </string>
+    <string>
+        <id>2219</id>
+        <value>Kan inte flytta från vald enhet!</value>
+    </string>
+    <string>
+        <id>2220</id>
+        <value>Vill du kopiera markerade filer?</value>
+    </string>
+    <string>
+        <id>2221</id>
+        <value>Vill du ta bort valda filer?</value>
+    </string>
+    <string>
+        <id>2222</id>
+        <value>Filer borttagna!</value>
+    </string>
+    <string>
+        <id>2223</id>
+        <value>Papperskorg</value>
+    </string>
+    <string>
+        <id>2224</id>
+        <value>Mappen finns redan!</value>
+    </string>
+    <string>
+        <id>2225</id>
+        <value>Mappen skapad!</value>
+    </string>
+    <string>
+        <id>3000</id>
+        <value>Program Alternativ</value>
+    </string>
+    <string>
+        <id>3001</id>
+        <value>Timme</value>
+    </string>
+    <string>
+        <id>3002</id>
+        <value>Timmar</value>
+    </string>
+    <string>
+        <id>3003</id>
+        <value>Minut</value>
+    </string>
+    <string>
+        <id>3004</id>
+        <value>Minuter</value>
+    </string>
+    <string>
+        <id>3005</id>
+        <value>Timme sen</value>
+    </string>
+    <string>
+        <id>3006</id>
+        <value>Timmar sen</value>
+    </string>
+    <string>
+        <id>3007</id>
+        <value>Minut sen</value>
+    </string>
+    <string>
+        <id>3008</id>
+        <value>Minuter sen</value>
+    </string>
+    <string>
+        <id>3009</id>
+        <value>Startar om</value>
+    </string>
+    <string>
+        <id>3010</id>
+        <value>Minuter kvar</value>
+    </string>
+    <string>
+        <id>3011</id>
+        <value>Timme kvar</value>
+    </string>
+    <string>
+        <id>3012</id>
+        <value>Timmar kvar</value>
+    </string>
+    <string>
+        <id>3013</id>
+        <value>Startar Nu</value>
+    </string>
+    <string>
+        <id>3014</id>
+        <value>Dag</value>
+    </string>
+    <string>
+        <id>3015</id>
+        <value>Dagar</value>
+    </string>
+    <string>
+        <id>3016</id>
+        <value>Redan Slut</value>
+    </string>
+    <string>
+        <id>3017</id>
+        <value>Startad </value>
+    </string>
+    <string>
+        <id>3018</id>
+        <value>Minut kvar</value>
+    </string>
+    <string>
+        <id>3019</id>
+        <value>Serie</value>
+    </string>
+    <string>
+        <id>3020</id>
+        <value>Avsnitt</value>
+    </string>
+    <string>
+        <id>3021</id>
+        <value>Del</value>
+    </string>
+    <string>
+        <id>3022</id>
+        <value>av</value>
     </string>
     <string>
         <id>8000</id>
@@ -3489,5 +3723,54 @@
     <string>
         <id>16001</id>
         <value>Partyblanda</value>
+    </string>
+    <!-- My Tetris -->
+    <string>
+        <id>19001</id>
+        <value>Mitt Tetris</value>
+    </string>
+    <string>
+        <id>19002</id>
+        <value>Nytt Spel</value>
+    </string>
+    <string>
+        <id>19003</id>
+        <value>Musik</value>
+    </string>
+    <string>
+        <id>19004</id>
+        <value>Ljud</value>
+    </string>
+    <string>
+        <id>19005</id>
+        <value>Poäng</value>
+    </string>
+    <string>
+        <id>19006</id>
+        <value>Nivå</value>
+    </string>
+    <string>
+        <id>19007</id>
+        <value>Rader</value>
+    </string>
+    <string>
+        <id>19008</id>
+        <value>Rekord</value>
+    </string>
+    <string>
+        <id>19009</id>
+        <value>Nästa</value>
+    </string>
+    <string>
+        <id>19010</id>
+        <value>Tryck eller klicka för att starta...</value>
+    </string>
+    <string>
+        <id>19011</id>
+        <value>Pausad</value>
+    </string>
+    <string>
+        <id>19012</id>
+        <value>Game Over</value>
     </string>
 </strings>
