@@ -460,23 +460,12 @@ namespace MediaPortal.TV.Recording
 			if (IsDEC(mPage))
 			{
 				int i;
-
 				string pageNumber=Convert.ToString(mPage,16);
-				for(int loop1=5;loop1<(5+pageNumber.Length);loop1++)
-					pageChars[loop1]=Convert.ToByte(pageNumber.Substring(loop1-5,1));
-
-				pageChars[0]=(byte)'M';
-				pageChars[1]=(byte)'P';
-				pageChars[2]=(byte)'-';
-				pageChars[3]=(byte)'T';
-				pageChars[4]=(byte)'x';
-				pageChars[5]=(byte)'T';
-
-
-
-				for (i = 0; i < 40; i++)
-					pageAttribs[i] = (((int)TextColors.Black<<4) | (int)TextColors.White);
-
+				string subpageNumber=Convert.ToString(sPage,16);
+				byte[] mpText=System.Text.Encoding.ASCII.GetBytes("MediaPortal P."+pageNumber+"/"+subpageNumber);
+				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
+				for (i = 0; i < mpText.Length; i++)
+					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.Blue);
 
 			}
 
