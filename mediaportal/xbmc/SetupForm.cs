@@ -3224,11 +3224,19 @@ namespace MediaPortal
 			
       if (m_bAscending)
       {
-        return String.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
+        int i1=Convert.ToInt32(((ListViewItem)x).SubItems[col].Text);
+        int i2=Convert.ToInt32(((ListViewItem)y).SubItems[col].Text);
+        if (i1>i2) return 1;
+        if (i1<i2) return -1;
+        return 0;
       }
       else
       {
-        return String.Compare(((ListViewItem)y).SubItems[col].Text, ((ListViewItem)x).SubItems[col].Text);
+        int i2=Convert.ToInt32(((ListViewItem)x).SubItems[col].Text);
+        int i1=Convert.ToInt32(((ListViewItem)y).SubItems[col].Text);
+        if (i1>i2) return 1;
+        if (i1<i2) return -1;
+        return 0;
       }
     }
   }
