@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.TV.Database;
 using DShowNET;
 
 using System.Globalization;
@@ -431,7 +432,7 @@ namespace MediaPortal.Configuration
       if(channelTextBox.Text.Length > 0)
       {
         int channel = Int32.Parse(channelTextBox.Text);
-        frequencyTextBox.Enabled = (channel > 0 && channel < 10000);
+        frequencyTextBox.Enabled = (channel > 0 && channel < (int)ExternalInputs.svhs);
       }
     }    
 
@@ -477,15 +478,15 @@ namespace MediaPortal.Configuration
       switch(inputComboBox.Text)
       {
         case "SVHS":
-          channelTextBox.Text = "10000";
+          channelTextBox.Text = ExternalInputs.svhs.ToString();
           break;
 
         case "Composite #1":
-          channelTextBox.Text = "10001";
+          channelTextBox.Text = ExternalInputs.cvbs1.ToString();
           break;
 
         case "Composite #2":
-          channelTextBox.Text = "10002";
+          channelTextBox.Text = ExternalInputs.cvbs2.ToString();
           break;
       }
     }
@@ -625,15 +626,15 @@ namespace MediaPortal.Configuration
           {
             switch(channel.Channel)
             {
-              case 10000:
+              case (int)ExternalInputs.svhs:
                 inputComboBox.Text = "SVHS";
                 break;
 
-              case 10001:
+              case (int)ExternalInputs.cvbs1:
                 inputComboBox.Text = "Composite #1";
                 break;
 
-              case 10002:
+              case (int)ExternalInputs.cvbs2:
                 inputComboBox.Text = "Composite #2";
                 break;
             }

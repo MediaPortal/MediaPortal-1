@@ -51,20 +51,24 @@ namespace MediaPortal.Configuration
 			//
 			// Set caption
 			//
-			this.Text = "Configuration - " + Application.ProductVersion;
+			this.Text = "Media Portal Configuration - " + Application.ProductVersion;
 
 			//
 			// Build options tree
 			//
       
+			Log.Write("add project section");
+			AddSection(new Sections.Project());
+
       Log.Write("add general section");
-			AddSection(new Sections.General());
+			Sections.General general = new Sections.General();
+			AddSection(general);
 
       Log.Write("add keys section");
-      AddSection(new Sections.Keys());
+      AddChildSection(general, new Sections.Keys());
 
       Log.Write("add skins section");
-      AddSection(new Sections.Skin());
+      AddChildSection(general, new Sections.Skin());
 
 
       Log.Write("add DVD section");
@@ -84,32 +88,32 @@ namespace MediaPortal.Configuration
       SectionSettings movie = new Sections.Movies();
 			AddSection(movie);
 
-      Log.Write("  add movie extensions section");
-      AddChildSection(movie, new Sections.MovieExtensions());
       Log.Write("  add movie shares section");
       AddChildSection(movie, new Sections.MovieShares());
       Log.Write("  add movie player section");
-      AddChildSection(movie, new Sections.MoviePlayer());
+			AddChildSection(movie, new Sections.MoviePlayer());
+			Log.Write("  add movie extensions section");
+			AddChildSection(movie, new Sections.MovieExtensions());
       Log.Write("  add movie postprocessing section");
       AddChildSection(movie, new Sections.MoviePostProcessing());
 
       Log.Write("add music section");
       SectionSettings music = new Sections.Music();
 			AddSection(music);
-      Log.Write("  add music extension section");
-      AddChildSection(music, new Sections.MusicExtensions());
       Log.Write("  add music shares section");
       AddChildSection(music, new Sections.MusicShares());
       Log.Write("  add music database section");
       AddChildSection(music, new Sections.MusicDatabase());
+			Log.Write("  add music extension section");
+			AddChildSection(music, new Sections.MusicExtensions());
 
-      Log.Write("add pictures section");
+			Log.Write("add pictures section");
       SectionSettings picture = new Sections.Pictures();
 			AddSection(picture);
-      Log.Write("  add pictures extensions section");
-      AddChildSection(picture, new Sections.PictureExtensions());
       Log.Write("  add pictures shares section");
-      AddChildSection(picture, new Sections.PictureShares());
+			AddChildSection(picture, new Sections.PictureShares());
+			Log.Write("  add pictures extensions section");
+			AddChildSection(picture, new Sections.PictureExtensions());
 
       Log.Write("add radio section");
       SectionSettings radio = new Sections.Radio();
@@ -146,8 +150,6 @@ namespace MediaPortal.Configuration
       AddSection(new Sections.Weather());
       Log.Write("add plugins section");
       AddSection(new Sections.Plugins());
-      Log.Write("add project section");
-      AddSection(new Sections.Project());
 
 			//
 			// Select first item in the section tree

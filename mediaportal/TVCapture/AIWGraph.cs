@@ -6,6 +6,7 @@ using DShowNET;
 using DirectX.Capture;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -763,7 +764,7 @@ namespace MediaPortal.TV.Recording
 				m_iCountryCode,standard.ToString(),
 				m_bUseCable);
 
-			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 10000, (iChannel == 10001),(iChannel == 10002),(iChannel == 10000),cardName);
+			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < (int)ExternalInputs.svhs, (iChannel == (int)ExternalInputs.cvbs1),(iChannel == (int)ExternalInputs.cvbs2),(iChannel == (int)ExternalInputs.svhs),cardName);
 		}
 
 		/// <summary>

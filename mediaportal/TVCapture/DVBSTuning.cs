@@ -20,12 +20,12 @@ namespace MediaPortal.TV.Recording
 		struct TPList
 		{
 			public int TPfreq; // frequency
-			public int TPpol; // polarisation 0=hori, 1=vert
+			public int TPpol;  // polarisation 0=hori, 1=vert
 			public int TPsymb; // symbol rate
 		}
 		enum State
 		{
-			ScanFrequencies,
+			ScanTransponders,
 			ScanChannels
 		}
 		TVCaptureDevice											captureCard;
@@ -47,7 +47,7 @@ namespace MediaPortal.TV.Recording
 			captureCard=card;
 			callback=statusCallback;
 
-			currentState=State.ScanFrequencies;
+			currentState=State.ScanTransponders;
 			currentIndex=0;
 
 			OpenFileDialog ofd =new OpenFileDialog();
@@ -143,7 +143,7 @@ namespace MediaPortal.TV.Recording
 			TPList transponder=transp[currentIndex];
 			string description=String.Format("Transponder:{0}/{1}", currentIndex,count);
 
-			if (currentState==State.ScanFrequencies)
+			if (currentState==State.ScanTransponders)
 			{
 				if (captureCard.SignalPresent())
 				{
@@ -153,7 +153,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 
-			if (currentState==State.ScanFrequencies)
+			if (currentState==State.ScanTransponders)
 			{
 				callback.OnStatus(description);
 				ScanNextTransponder();
@@ -178,7 +178,7 @@ namespace MediaPortal.TV.Recording
 				captureCard.StoreTunedChannels(false,true);
 				callback.UpdateList();
 				Log.Write("timeout, goto scanning transponders");
-				currentState=State.ScanFrequencies;
+				currentState=State.ScanTransponders;
 				ScanNextTransponder();
 				return;
 			}

@@ -17,8 +17,6 @@ using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
-
-
 	/// <summary>
 	/// Implementation of IGraph for digital TV capture cards using the BDA driver architecture
 	/// It handles any DVB-T, DVB-C, DVB-S TV Capture card with BDA drivers
@@ -30,9 +28,10 @@ namespace MediaPortal.TV.Recording
 	/// -tv timeshifting
 	/// 
 	/// todo:
-	///   -add support for DVB-S and DVB-C  (just the parsing needs to be added)
-	///   -when scanning for channels we need to parse IGuideData to see if the channel found is radio,tv,encrypted or not etc
-	///   -get TVGuide data from stream
+	///   -finish support for DVB-S and DVB-C  (things left todo: parsing of IGuiData in Process() )
+	///   -when scanning for channels we need to parse IGuideData to see if the channel 
+	///    found is a radio or tv channel and if its encrypted or free-2-air
+	///   -get EPG data from stream
 	///   
 	/// for dvb-t scanning we need : frequency
 	/// for dvb-s scanning we need : frequency, polarisation, symbolrate, innerFec, SID
@@ -2105,52 +2104,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_Event==null) return;
 			if (m_TIF==null) return;
-			
-/*
-			if (GuideDataEvent.mutexProgramChanged.WaitOne(1,true))
-			{
-				IGuideData data= m_TIF as IGuideData;
-				if (data!=null)
-				{
-					int iFetched;
-					object[] varResults = new object[1];
-					string[] channelParams = new string[20];
-					IEnumVARIANT varEnum;
-					Log.Write("GetGuideProgramIDs");
-					data.GetGuideProgramIDs(out varEnum);
-					if (varEnum!=null)
-					{
-						while(varEnum.Next(1,  varResults, out iFetched) == 0) 
-						{
-							IEnumGuideDataProperties enumProgramProperties;
-							data.GetProgramProperties(varResults[0],out enumProgramProperties);
-							if (enumProgramProperties!=null)
-							{
-								IGuideDataProperty[] properties = new IGuideDataProperty[1];
-								while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
-								{
-									object chanValue;
-									int chanLanguage;
-									string chanName;
-									properties[0].Name( out chanName);
-									properties[0].Value(out chanValue);
-									properties[0].Language(out chanLanguage);
-									Log.Write("channel name:{0} value:{1} language:{2}",chanName, chanValue, chanLanguage);
-									
-									if (Network() == NetworkType.DVBT)
-									{
-										//name											value											language
-										//Description.ID						ONID:TSID:SID							0
-										//Description.Title					title of program					0
-										//Description.One Sentence	description of program		0
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-*/
 			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
 			{
 				IGuideData data= m_TIF as IGuideData;
@@ -2277,6 +2230,51 @@ namespace MediaPortal.TV.Recording
 					}//if (enumProgramProperties!=null)
 				}//while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
 			}//if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
+/*
+			if (GuideDataEvent.mutexProgramChanged.WaitOne(1,true))
+			{
+				IGuideData data= m_TIF as IGuideData;
+				if (data!=null)
+				{
+					int iFetched;
+					object[] varResults = new object[1];
+					string[] channelParams = new string[20];
+					IEnumVARIANT varEnum;
+					Log.Write("GetGuideProgramIDs");
+					data.GetGuideProgramIDs(out varEnum);
+					if (varEnum!=null)
+					{
+						while(varEnum.Next(1,  varResults, out iFetched) == 0) 
+						{
+							IEnumGuideDataProperties enumProgramProperties;
+							data.GetProgramProperties(varResults[0],out enumProgramProperties);
+							if (enumProgramProperties!=null)
+							{
+								IGuideDataProperty[] properties = new IGuideDataProperty[1];
+								while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
+								{
+									object chanValue;
+									int chanLanguage;
+									string chanName;
+									properties[0].Name( out chanName);
+									properties[0].Value(out chanValue);
+									properties[0].Language(out chanLanguage);
+									Log.Write("channel name:{0} value:{1} language:{2}",chanName, chanValue, chanLanguage);
+						
+									if (Network() == NetworkType.DVBT)
+									{
+										//name											value											language
+										//Description.ID						ONID:TSID:SID							0
+										//Description.Title					title of program					0
+										//Description.One Sentence	description of program		0
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+*/
 		}//public void Process()
 
 		//not used
@@ -2582,11 +2580,91 @@ namespace MediaPortal.TV.Recording
 				}//if (Network() == NetworkType.DVBT)
 				else if (Network() == NetworkType.DVBC)
 				{
-					//todo: store DVB-C channels found in tvdatabase
+					//get the DVBC channel
+					DVBCChannel channel=(DVBCChannel)channelList[x];
+
+					//if this is a tv channel and we should store tv channels in the database
+					if ( (channel.IsTv && tv))
+					{
+						//check if this channel already exists in the database
+						bool newChannel=true;
+						int iChannelNumber=0;
+						foreach (TVChannel tvchan in tvChannels)
+						{
+							if (tvchan.Name.Equals(channel.ChannelName))
+							{
+								//yes already exists
+								iChannelNumber=tvchan.Number;
+								newChannel=false;
+								break;
+							}
+						}
+						//if the channel found is not yet in the tv database
+						if (newChannel)
+						{
+							//then add a new channel to the database
+							TVChannel tvChan = new TVChannel();
+							tvChan.Name=channel.ChannelName;
+							tvChan.Number=channel.SID;
+							tvChan.VisibleInGuide=true;
+							iChannelNumber=tvChan.Number;
+							TVDatabase.AddChannel(tvChan);
+						}
+
+						//set the dvb-t tuning parameters for the tv channel
+						TVDatabase.MapDVBCChannel(channel.ChannelName,iChannelNumber, currentFrequency, channel.symbolRate,channel.innerFec,channel.modulation,channel.ONID,channel.TSID,channel.SID);
+					}//if ( (channel.IsTv && tv))
+
+					
+					//if this is a radio channel and we should store radio channels in the database
+					if (channel.IsRadio && radio)
+					{
+						//todo: store radio channels
+					}//if (channel.IsRadio && radio)
 				}
 				else if (Network() == NetworkType.DVBS)
 				{
-					//todo: store DVB-S channels found in tvdatabase
+					//get the DVBS channel
+					DVBSChannel channel=(DVBSChannel)channelList[x];
+
+					//if this is a tv channel and we should store tv channels in the database
+					if ( (channel.IsTv && tv))
+					{
+						//check if this channel already exists in the database
+						bool newChannel=true;
+						int iChannelNumber=0;
+						foreach (TVChannel tvchan in tvChannels)
+						{
+							if (tvchan.Name.Equals(channel.ChannelName))
+							{
+								//yes already exists
+								iChannelNumber=tvchan.Number;
+								newChannel=false;
+								break;
+							}
+						}
+						//if the channel found is not yet in the tv database
+						if (newChannel)
+						{
+							//then add a new channel to the database
+							TVChannel tvChan = new TVChannel();
+							tvChan.Name=channel.ChannelName;
+							tvChan.Number=channel.SID;
+							tvChan.VisibleInGuide=true;
+							iChannelNumber=tvChan.Number;
+							TVDatabase.AddChannel(tvChan);
+						}
+
+						//set the dvb-t tuning parameters for the tv channel
+						TVDatabase.MapDVBSChannel(channel.ChannelName,iChannelNumber, currentFrequency, channel.symbolRate,channel.innerFec,channel.polarisation,channel.ONID,channel.TSID,channel.SID);
+					}//if ( (channel.IsTv && tv))
+
+					
+					//if this is a radio channel and we should store radio channels in the database
+					if (channel.IsRadio && radio)
+					{
+						//todo: store radio channels
+					}//if (channel.IsRadio && radio)
 				}
 				else if (Network() == NetworkType.ATSC)
 				{

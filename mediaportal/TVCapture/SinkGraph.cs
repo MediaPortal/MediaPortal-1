@@ -7,6 +7,7 @@ using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using DirectX.Capture;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -581,12 +582,10 @@ namespace MediaPortal.TV.Recording
       bool bFixCrossbar=true;
       if (m_iPrevChannel>=0)
       {
-        // tuner : channel < 10000
-        // SVHS/composite : channel >=10000
-        if (m_iPrevChannel< 10000 && iChannel < 10000) bFixCrossbar=false;
-        if (m_iPrevChannel==10000 && iChannel ==10000) bFixCrossbar=false;
-        if (m_iPrevChannel==10001 && iChannel ==10001) bFixCrossbar=false;
-        if (m_iPrevChannel==10002 && iChannel ==10002) bFixCrossbar=false;
+        if (m_iPrevChannel< (int)ExternalInputs.svhs  && iChannel < (int)ExternalInputs.svhs) bFixCrossbar=false;
+        if (m_iPrevChannel==(int)ExternalInputs.svhs  && iChannel ==(int)ExternalInputs.svhs) bFixCrossbar=false;
+        if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && iChannel ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
+        if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && iChannel ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
       }
       else bFixCrossbar=false;
       return bFixCrossbar;
@@ -607,7 +606,7 @@ namespace MediaPortal.TV.Recording
 			m_iCountryCode=country;
     
       Log.Write("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
-      if (iChannel <10000)
+      if (iChannel < (int)ExternalInputs.svhs)
       {
         if (m_TVTuner==null) return;
         if (m_bFirstTune)
@@ -646,15 +645,22 @@ namespace MediaPortal.TV.Recording
 
       bool bFixCrossbar=true;
       if (m_iPrevChannel>=0)
-      {
-        if (m_iPrevChannel< 10000 && iChannel < 10000) bFixCrossbar=false;
-        if (m_iPrevChannel==10000 && iChannel ==10000) bFixCrossbar=false;
-        if (m_iPrevChannel==10001 && iChannel ==10001) bFixCrossbar=false;
-        if (m_iPrevChannel==10002 && iChannel ==10002) bFixCrossbar=false;
+			{
+				if (m_iPrevChannel< (int)ExternalInputs.svhs  && iChannel < (int)ExternalInputs.svhs) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.svhs  && iChannel ==(int)ExternalInputs.svhs) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && iChannel ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && iChannel ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder,m_captureFilter, iChannel<10000, (iChannel==10001), (iChannel==10002), (iChannel==10000) ,cardName);
+        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+																		 m_captureGraphBuilder,
+																		 m_captureFilter, 
+																		 iChannel<(int)ExternalInputs.svhs, 
+																	   (iChannel==(int)ExternalInputs.cvbs1), 
+																		 (iChannel==(int)ExternalInputs.cvbs2), 
+																		 (iChannel==(int)ExternalInputs.svhs) ,
+																		 cardName);
       }
       m_iPrevChannel=iChannel;
       m_StartTime=DateTime.Now;

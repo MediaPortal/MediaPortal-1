@@ -17,6 +17,10 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.LinkLabel linkLabel3;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.LinkLabel linkLabel4;
 		private System.ComponentModel.IContainer components = null;
 
 		public Project() : this("Project")
@@ -62,6 +66,10 @@ namespace MediaPortal.Configuration.Sections
 			this.label3 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label2 = new System.Windows.Forms.Label();
+			this.label6 = new System.Windows.Forms.Label();
+			this.linkLabel3 = new System.Windows.Forms.LinkLabel();
+			this.label7 = new System.Windows.Forms.Label();
+			this.linkLabel4 = new System.Windows.Forms.LinkLabel();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -93,6 +101,10 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox2.Controls.Add(this.linkLabel4);
+			this.groupBox2.Controls.Add(this.label7);
+			this.groupBox2.Controls.Add(this.linkLabel3);
+			this.groupBox2.Controls.Add(this.label6);
 			this.groupBox2.Controls.Add(this.label5);
 			this.groupBox2.Controls.Add(this.label4);
 			this.groupBox2.Controls.Add(this.linkLabel2);
@@ -102,29 +114,31 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox2.Location = new System.Drawing.Point(8, 136);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(440, 160);
+			this.groupBox2.Size = new System.Drawing.Size(440, 232);
 			this.groupBox2.TabIndex = 1;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Contact";
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 120);
+			this.label5.Location = new System.Drawing.Point(24, 200);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(248, 23);
+			this.label5.Size = new System.Drawing.Size(232, 16);
 			this.label5.TabIndex = 17;
-			this.label5.Text = "EFNet #MediaPortal";
+			this.label5.Text = "IRC network:EFNet  channel: #MediaPortal";
+			this.label5.Click += new System.EventHandler(this.label5_Click);
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(16, 104);
+			this.label4.Location = new System.Drawing.Point(16, 184);
 			this.label4.Name = "label4";
 			this.label4.TabIndex = 16;
 			this.label4.Text = "IRC";
+			this.label4.Click += new System.EventHandler(this.label4_Click);
 			// 
 			// linkLabel2
 			// 
-			this.linkLabel2.Location = new System.Drawing.Point(16, 80);
+			this.linkLabel2.Location = new System.Drawing.Point(24, 80);
 			this.linkLabel2.Name = "linkLabel2";
 			this.linkLabel2.Size = new System.Drawing.Size(320, 16);
 			this.linkLabel2.TabIndex = 15;
@@ -135,12 +149,14 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.label3.Location = new System.Drawing.Point(16, 64);
 			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(128, 16);
 			this.label3.TabIndex = 14;
-			this.label3.Text = "Forums";
+			this.label3.Text = "Forums:";
+			this.label3.Click += new System.EventHandler(this.label3_Click);
 			// 
 			// linkLabel1
 			// 
-			this.linkLabel1.Location = new System.Drawing.Point(16, 40);
+			this.linkLabel1.Location = new System.Drawing.Point(24, 40);
 			this.linkLabel1.Name = "linkLabel1";
 			this.linkLabel1.Size = new System.Drawing.Size(224, 16);
 			this.linkLabel1.TabIndex = 13;
@@ -151,8 +167,43 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.label2.Location = new System.Drawing.Point(16, 24);
 			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(152, 16);
 			this.label2.TabIndex = 12;
-			this.label2.Text = "Website";
+			this.label2.Text = "Homepage:";
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(16, 105);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(100, 15);
+			this.label6.TabIndex = 18;
+			this.label6.Text = "Wiki:";
+			// 
+			// linkLabel3
+			// 
+			this.linkLabel3.Location = new System.Drawing.Point(24, 120);
+			this.linkLabel3.Name = "linkLabel3";
+			this.linkLabel3.Size = new System.Drawing.Size(320, 16);
+			this.linkLabel3.TabIndex = 19;
+			this.linkLabel3.TabStop = true;
+			this.linkLabel3.Text = "http://nolanparty.com/mediaportal.sourceforge.net/phpBB2/";
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(16, 144);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(100, 15);
+			this.label7.TabIndex = 20;
+			this.label7.Text = "Sourceforge:";
+			// 
+			// linkLabel4
+			// 
+			this.linkLabel4.Location = new System.Drawing.Point(24, 160);
+			this.linkLabel4.Name = "linkLabel4";
+			this.linkLabel4.Size = new System.Drawing.Size(320, 16);
+			this.linkLabel4.TabIndex = 21;
+			this.linkLabel4.TabStop = true;
+			this.linkLabel4.Text = "http://sourceforge.net/projects/mediaportal";
 			// 
 			// Project
 			// 
@@ -166,6 +217,21 @@ namespace MediaPortal.Configuration.Sections
 
 		}
 		#endregion
+
+		private void label5_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label4_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label3_Click(object sender, System.EventArgs e)
+		{
+		
+		}
 	}
 }
 

@@ -131,14 +131,21 @@ namespace MediaPortal.Configuration
 			//	else continue
 
 
-			bool addEmpty=true;
+			//array indicating if we should show the 'general card' for each video capture device on this system
+			bool[] addGeneral=new bool[availableVideoDevices.Count];
+			for (int i=0; i < addGeneral.Length;++i)
+				addGeneral[i]=true;
+
+			//if capturecardsdefinition.xml contains a definition for 1 or more cards on this system
+			//then we wont add the general s/w card, general h/w card and general MCE card choices
+			//for this device. Instead we only present the definition from the .xml file
 			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
 			{
 				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
-							((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addEmpty=false;
+							((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addGeneral[i]=false;
 				}
 			}
 
@@ -160,7 +167,7 @@ namespace MediaPortal.Configuration
 					bool add=false;
 					if (ccd.CaptureName==String.Empty) 
 					{
-						if (addEmpty)
+						if (addGeneral[i])
 							add=true;
 					}
 					else
@@ -210,7 +217,7 @@ namespace MediaPortal.Configuration
 
 			if (cardComboBox.Items.Count == 0)
 			{
-				MessageBox.Show("No supported video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show("No video capture card(s) where found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = cardComboBox.Enabled = okButton.Enabled = setupButton.Enabled = audioCompressorComboBox.Enabled = audioDeviceComboBox.Enabled = videoCompressorComboBox.Enabled = false;
 				comboBoxLineInput.Enabled = false;
 				trackRecording.Enabled    = false;

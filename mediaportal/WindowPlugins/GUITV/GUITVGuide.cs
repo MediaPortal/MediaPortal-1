@@ -2149,7 +2149,7 @@ namespace MediaPortal.GUI.TV
 				for (int iChan=0; iChan < m_channels.Count;++iChan)
 				{
 					TVChannel chan=(TVChannel)m_channels[iChan];
-					if ( (chan.Number>= 10000 && !chan.External) || !chan.VisibleInGuide)
+					if ( (chan.Number>= (int)ExternalInputs.svhs && !chan.External) || !chan.VisibleInGuide)
 					{
 						m_channels.RemoveAt(iChan);
 						bRemoved=true;

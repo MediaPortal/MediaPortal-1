@@ -6,6 +6,12 @@ using SQLite.NET;
 using DShowNET;
 namespace MediaPortal.TV.Database
 {
+	public enum ExternalInputs:int
+	{
+		svhs =10000,
+		cvbs1=10001,
+		cvbs2=10002,
+	}
   /// <summary>
   /// Class which holds all information about a tv channel
   /// </summary>

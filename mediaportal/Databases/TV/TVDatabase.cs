@@ -62,7 +62,7 @@ namespace MediaPortal.TV.Database
 					//Upgrade();
           m_db = new SQLiteClient(@"database\TVDatabaseV12.db");
           CreateTables();
-
+					UpdateFromPreviousVersion();
           if (m_db!=null)
           {
             m_db.Execute("PRAGMA cache_size=8192\n");
@@ -78,6 +78,34 @@ namespace MediaPortal.TV.Database
         Log.Write("tvdatabase opened");
       }
     }
+
+		static void UpdateFromPreviousVersion()
+		{
+			if (null==m_db) return ;
+			// upgrade from 0.1.0.5.1 to 0.1.0.6
+			// the CVBS1, CVBS2, SVHS channels are remapped from channels 1000-1002 to channels 10000-100002
+			// the tables dvbcchannels,dvbschannels and dvbtchannels have changed and have been renamed to
+			// dvbcmapping, dvbsmapping, dvbtmapping. because the user can autotune to get the channels back
+			// we simply drop the old tables
+			
+			//delete the current CVBS1, CVBS2, SVHS channels
+			m_db.Execute("delete from channel where strChannel like 'SVHS' and iChannelNr=1000");
+			m_db.Execute("delete from channel where strChannel like 'Composite #1' and iChannelNr=1001");
+			m_db.Execute("delete from channel where strChannel like 'Composite #2' and iChannelNr=1002");
+
+			//and add them again
+			TVChannel chan = new TVChannel();
+			chan.Name="SVHS"        ; chan.Number=(int)ExternalInputs.svhs; AddChannel(chan);
+			chan.Name="Composite #1"; chan.Number=(int)ExternalInputs.cvbs1; AddChannel(chan);
+			chan.Name="Composite #2"; chan.Number=(int)ExternalInputs.cvbs2; AddChannel(chan);
+
+			// tables dvbcchannels, dvbtchannels, dvbschannels have been renamed to
+			// dvbcmapping, dvbtmapping, dvbsmapping
+			// just drop the tables since user can autotune to get the channels back
+			m_db.Execute("drop table dvbcchannels");
+			m_db.Execute("drop table dvbschannels");
+			m_db.Execute("drop table dvbtchannels");
+		}
   
     /// <summary>
     /// clears the tv channel & genre cache
