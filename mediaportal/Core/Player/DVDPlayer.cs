@@ -114,6 +114,7 @@ namespace MediaPortal.Player
     protected bool                          m_bMenuOn=false;
     protected int                           m_iUOPs;
     protected string                        m_strCurrentFile;
+		protected double												m_dDuration;
     protected MediaPortal.GUI.Library.Geometry.Type             m_ar=MediaPortal.GUI.Library.Geometry.Type.Normal;
 
     protected const int WM_DVD_EVENT		= 0x00008002;	// message from dvd graph
@@ -773,6 +774,14 @@ namespace MediaPortal.Player
 							currnChapter = p1;
 
 							SelectSubtitleLanguage(m_strSubtitleLanguage);
+							DvdTimeCode totaltime;
+							int         ulTimeCodeFlags; 
+							dvdInfo.GetTotalTitleTime( out totaltime, out ulTimeCodeFlags );
+          
+							m_dDuration=( (double)totaltime.bHours)* 3600d;
+							m_dDuration +=( ( (double)totaltime.bMinutes)* 60d );
+							m_dDuration +=( ( (double)totaltime.bSeconds) );
+
 							break;
 						}
 						case DsEvCode.DvdTitleChange:
@@ -780,6 +789,15 @@ namespace MediaPortal.Player
 							Log.Write("EVT:DvdTitleChange:{0}",p1);
 							currnTitle = p1;
 							SelectSubtitleLanguage(m_strSubtitleLanguage);
+
+							DvdTimeCode totaltime;
+							int         ulTimeCodeFlags; 
+							dvdInfo.GetTotalTitleTime( out totaltime, out ulTimeCodeFlags );
+          
+							m_dDuration=( (double)totaltime.bHours)* 3600d;
+							m_dDuration +=( ( (double)totaltime.bMinutes)* 60d );
+							m_dDuration +=( ( (double)totaltime.bSeconds) );
+
 							break;
 						}
 	          
@@ -987,13 +1005,6 @@ namespace MediaPortal.Player
       {
         if (m_state!=PlayState.Init) 
         {
-          DvdTimeCode totaltime;
-          int         ulTimeCodeFlags; 
-          dvdInfo.GetTotalTitleTime( out totaltime, out ulTimeCodeFlags );
-          
-          double m_dDuration=( (double)totaltime.bHours)* 3600d;
-          m_dDuration +=( ( (double)totaltime.bMinutes)* 60d );
-          m_dDuration +=( ( (double)totaltime.bSeconds) );
 
           return m_dDuration;
         }
