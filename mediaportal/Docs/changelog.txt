@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  25-04-2004: my TV       : fixed : switched back to DirectX for smooth scrolling
+  25-04-2004: setup       : fixed : switching skins in setup now reloads the skin
+  25-04-2004: setup       : fixed : switching language in the setup now works 
   24-04-2004: my TV       : fixed : some channels didnt show in the tvguide
   24-04-2004: my music    : fixed : album art didnt show up my songs or my album view
   24-04-2004: my music    : fixed : playback stopped when resizing or alt+enter

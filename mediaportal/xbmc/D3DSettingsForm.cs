@@ -8,9 +8,9 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
+using Microsoft.DirectX.Direct3D;
 
-
-namespace D3D
+namespace MediaPortal
 {
 
 

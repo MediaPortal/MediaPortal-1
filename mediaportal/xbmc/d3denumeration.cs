@@ -7,10 +7,10 @@
 //-----------------------------------------------------------------------------
 using System;
 using System.Collections;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 
-
-
-namespace D3D
+namespace MediaPortal
 {
 
 

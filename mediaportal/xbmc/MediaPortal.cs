@@ -4,28 +4,25 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Direct3D = Microsoft.DirectX.Direct3D;
 
 
 using MediaPortal.GUI.Library;
-using D3D;
+using MediaPortal;
+
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
 
 public class MediaPortalApp : D3DApp
 {
-    string    m_strSkin="MediaCenter";
-    string    m_strLanguage="english";
-    Timer     Clock;
-    DateTime  m_dtClockTime=DateTime.Now;
 
-    private Bitmap bmpBackground=null;				// Background bitmap containing grid
-    
     int       m_iLastMousePositionX=0;
     int       m_iLastMousePositionY=0;
-    bool      m_bRefresh=true;
-    bool      m_bLastRefresh=true;
 
+    [STAThread]
     public static void Main()
     {
       try
@@ -34,11 +31,11 @@ public class MediaPortalApp : D3DApp
         MediaPortalApp app = new MediaPortalApp();
         if( app.CreateGraphicsSample() )
         {
-          app.PreRun();
+          //app.PreRun();
           Log.Write("Start MediaPortal");
           try
           {
-            Application.Run(app);
+            app.Run();
           }
           catch (Exception ex)
           {
@@ -71,7 +68,7 @@ public class MediaPortalApp : D3DApp
       Log.Write("-------------------------------------------------------------------------------");
       Log.Write("starting");
       GUIGraphicsContext.form=this;
-      GUIGraphicsContext.graphics=this.CreateGraphics();
+      GUIGraphicsContext.graphics=null;
       try
       {
         AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
@@ -98,13 +95,10 @@ public class MediaPortalApp : D3DApp
       base.WndProc( ref m );
     }
 
-    protected override void OnPaint(PaintEventArgs e)
-    {
-      e.Graphics.DrawImageUnscaled(bmpBackground, 0, 0);
-    }
 
     public void Process()
     {
+      FullRender();
       System.Windows.Forms.Application.DoEvents();
     }
 
@@ -118,120 +112,16 @@ public class MediaPortalApp : D3DApp
       m_MouseTimeOut=DateTime.Now;
       //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
       GUIWindowManager.OnAppStarting();
-      Clock = new Timer();
-      Clock.Interval=50;
-      Clock.Start();
-      Clock.Tick+=new EventHandler(Timer_Tick);
+      //Clock = new Timer();
+      //Clock.Interval=50;
+      //Clock.Start();
+      //Clock.Tick+=new EventHandler(Timer_Tick);
       m_bResized=false;
 
-      bmpBackground = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-    }
-
-    public void Timer_Tick(object sender,EventArgs eArgs)
-    {
-      if(sender==Clock)
-      {
-        if ( GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING)
-        {
-          this.Close();
-          return;
-        }
-
-        if (m_bResized)
-        {
-          OnDeviceLost(null,null);
-          InitializeDeviceObjects();
-          OnDeviceReset(null, null);
-
-          bmpBackground.Dispose();
-          bmpBackground = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-          m_bResized=false;
-        }
-
-        GUIWindowManager.DispatchThreadMessages();
-        g_Player.Process();
-
-        if (g_Player.Playing)
-        {
-          SetVideoRect();
-          GUIGraphicsContext.IsPlaying=true;
-        }
-        else
-        {
-          GUIGraphicsContext.IsFullScreenVideo=false;
-          GUIGraphicsContext.IsPlaying=false;
-        }
-
-        m_bRefresh|=GUIWindowManager.NeedRefresh();
-        if (m_bRefresh || m_bLastRefresh) 
-        {
-          if (m_bRefresh)
-          {
-            m_bLastRefresh=true;
-            m_bRefresh=false;
-          }
-          else m_bLastRefresh=false;
-
-          if (!GUIGraphicsContext.IsFullScreenVideo)
-          {
-            using (GUIGraphicsContext.graphics = Graphics.FromImage( bmpBackground) )
-            { 
-              GUIWindowManager.Render(); 
-              RenderVideoOverlay();
-              RenderMusicOverlay();
-            }
-            Invalidate();
-          }
-          else
-          {
-            using (GUIGraphicsContext.graphics = Graphics.FromImage( bmpBackground) )
-            { 
-              System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(Color.FromArgb(255,1,1,1));
-              GUIGraphicsContext.graphics.FillRectangle(myBrush, new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
-              myBrush.Dispose();
-            }
-            Invalidate();
-          }
-        }
-        else // of if (m_bRefresh || m_bLastRefresh) 
-        {
-          if (g_Player.Playing && !GUIGraphicsContext.IsFullScreenVideo) 
-          {
-            if (GUIGraphicsContext.Overlay && Utils.IsAudio(g_Player.CurrentFile)) 
-            {
-              using (GUIGraphicsContext.graphics = Graphics.FromImage( bmpBackground) )
-              { 
-                RenderVideoOverlay();
-                RenderMusicOverlay();
-              }
-              Invalidate();
-            }
-          }
-        }
-        
-        if (m_bAutoHideMouse) 
-        {
-          TimeSpan ts = DateTime.Now - m_MouseTimeOut;
-          if (ts.TotalSeconds>=3)
-          {
-            Cursor.Hide();
-          }
-          else
-          {
-            Cursor.Show();
-          }
-        }
-        else
-        {
-          Cursor.Show();
-        }
-      }
-    }
-    
+    } 
     protected override void OnExit() 
     {
       g_Player.Stop();
-      Clock.Stop();
       GUIWindowManager.OnAppClosing();
     }
 	
@@ -260,6 +150,74 @@ public class MediaPortalApp : D3DApp
       if (null!=windowOverlay)
       {
         windowOverlay.Render();
+      }
+    }
+
+    protected override void Render() 
+    { 
+      if (GUIGraphicsContext.DX9Device==null) return;
+
+      while (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing)
+      {
+        System.Threading.Thread.Sleep(20);
+        GUIWindowManager.DispatchThreadMessages();
+        SetVideoRect();
+        g_Player.Process();
+        GUIGraphicsContext.IsPlaying=true;
+
+        System.Windows.Forms.Application.DoEvents();
+        if ( GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING)
+        {
+          this.Close();
+          return;
+        }
+      }
+
+      GUIWindowManager.DispatchThreadMessages();
+      g_Player.Process();
+
+      if (g_Player.Playing)
+      {
+        SetVideoRect();
+        GUIGraphicsContext.IsPlaying=true;
+      }
+      else
+      {
+        GUIGraphicsContext.IsFullScreenVideo=false;
+        GUIGraphicsContext.IsPlaying=false;
+      }
+      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+      GUIGraphicsContext.DX9Device.BeginScene();
+      GUIWindowManager.Render(); 
+      RenderVideoOverlay();
+      RenderMusicOverlay();
+      GUIGraphicsContext.DX9Device.EndScene();
+      try
+      {
+        // Show the frame on the primary surface.
+        GUIGraphicsContext.DX9Device.Present();
+      }
+      catch(DeviceLostException)
+      {
+        g_Player.Stop();
+        deviceLost = true;
+      }
+        
+      if (m_bAutoHideMouse) 
+      {
+        TimeSpan ts = DateTime.Now - m_MouseTimeOut;
+        if (ts.TotalSeconds>=3)
+        {
+          Cursor.Hide();
+        }
+        else
+        {
+          Cursor.Show();
+        }
+      }
+      else
+      {
+        Cursor.Show();
       }
     }
 
@@ -315,13 +273,14 @@ public class MediaPortalApp : D3DApp
     {
       Log.Write("OnDeviceLost() ");
       GUIWindowManager.Dispose();
+      GUITextureManager.Dispose();
       GUIWindowManager.OnDeviceLost();
-      
     }
     protected override void OnDeviceDisposing(System.Object sender, System.EventArgs e)
     {
       Log.Write("OnDeviceDisposing()");
 			GUIWindowManager.Dispose();
+      GUITextureManager.Dispose();
       Log.Write("  done");
     }
 
@@ -338,11 +297,14 @@ public class MediaPortalApp : D3DApp
       //g_Player.Stop();
       GUIGraphicsContext.Load();
 			GUIFontManager.RestoreDeviceObjects();
-      GUIWindowManager.Restore();
-      GUIWindowManager.PreInit();
-      GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
-      GUIWindowManager.OnDeviceRestored();
-      GUIGraphicsContext.Load();
+      if (GUIGraphicsContext.DX9Device!=null)
+      {
+        GUIWindowManager.Restore();
+        GUIWindowManager.PreInit();
+        GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
+        GUIWindowManager.OnDeviceRestored();
+        GUIGraphicsContext.Load();
+      }
       Log.Write(" done");
 		}
 
@@ -438,7 +400,6 @@ public class MediaPortalApp : D3DApp
 					OnAction(action);
 				}
       
-      m_bRefresh=true;
 	  }
 
 
@@ -466,10 +427,7 @@ public class MediaPortalApp : D3DApp
       int iControl=window.GetFocusControl();
       Action action=new Action(Action.ActionType.ACTION_MOUSE_MOVE,x,y);
       OnAction(action);
-      if (window.GetFocusControl() != iControl)
-      {
-        m_bRefresh=true;
-      }
+      
     }
 	}
 
@@ -510,7 +468,6 @@ public class MediaPortalApp : D3DApp
       }
     }
 
-    m_bRefresh=true;
     m_MouseTimeOut=DateTime.Now;
     Cursor.Show();
 	}

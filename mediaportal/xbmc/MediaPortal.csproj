@@ -134,6 +134,30 @@
                     Project = "{CA8C51E1-B600-4AC4-8A84-D654F70646BA}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Microsoft.DirectX.Direct3D"
+                    AssemblyName = "Microsoft.DirectX.Direct3D"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.00.0900\Microsoft.DirectX.Direct3D.dll"
+                    AssemblyFolderKey = "hklm\managed directx 9.0"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.Direct3DX"
+                    AssemblyName = "Microsoft.DirectX.Direct3DX"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.00.0900\Microsoft.DirectX.Direct3DX.dll"
+                    AssemblyFolderKey = "hklm\managed directx 9.0"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.DirectDraw"
+                    AssemblyName = "Microsoft.DirectX.DirectDraw"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.00.0900\Microsoft.DirectX.DirectDraw.dll"
+                    AssemblyFolderKey = "hklm\managed directx 9.0"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX"
+                    AssemblyName = "Microsoft.DirectX"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.00.0900\Microsoft.DirectX.dll"
+                    AssemblyFolderKey = "hklm\managed directx 9.0"
+                />
             </References>
         </Build>
         <Files>
@@ -147,6 +171,21 @@
                     RelPath = "d3dapp.resx"
                     DependentUpon = "d3dapp.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "d3denumeration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "D3DSettingsForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "d3dutil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "DragAndDropListView.cs"
