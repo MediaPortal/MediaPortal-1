@@ -34,10 +34,9 @@ namespace MediaPortal.TV.Recording
 		AutoTuneCallback										callback = null;
 		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
-		State                               currentState;
 		DVBCList[]													dvbcChannels=new DVBCList[1000];
 		int																	count = 0;
-		int																	tryAgain=0;
+		int																	retryCount=0;
 
 		public DVBCTuning()
 		{
@@ -51,11 +50,10 @@ namespace MediaPortal.TV.Recording
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
-			tryAgain=0;
+			retryCount=0;
 			captureCard=card;
 			callback=statusCallback;
 
-			currentState=State.ScanStart;
 			currentIndex=-1;
 
 			OpenFileDialog ofd =new OpenFileDialog();
@@ -168,60 +166,45 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
+			timer1.Enabled=false;
 			int index=currentIndex;
 			if (index<0) index=0;
 			float percent = ((float)index) / ((float)count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			DVBCList dvbcChan=dvbcChannels[index];
-			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate, tryAgain);
-			string description=String.Format("Channel:{0}/{1} {2}", index,count,chanDesc);
-
-			if (currentState==State.ScanFrequencies)
+			
+			if (retryCount==0)
 			{
+				ScanNextDVBCChannel();
 				if (captureCard.SignalPresent())
 				{
-					if (tryAgain<=1)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Found signal for Channel:{0} {1} {2}",currentIndex,chanDesc, tryAgain);
-						currentState=State.ScanChannels;
-					}
-					else currentState=State.ScanFrequencies;
+					ScanChannels();
 				}
+				retryCount=1;
 			}
-
-			if (currentState==State.ScanFrequencies || currentState==State.ScanStart)
+			else 
 			{
-				currentState=State.ScanFrequencies ;
-				callback.OnStatus(description);
-				if (tryAgain!=1)
+				ScanDVBCChannel();
+				if (captureCard.SignalPresent())
 				{
-					ScanNextDVBCChannel();
-					tryAgain=1;
+					ScanChannels();
 				}
-				else 
-				{
-					ScanDVBCChannel();
-					tryAgain=0;
-				}
+				retryCount=0;
 			}
-			if (currentState==State.ScanChannels)
-			{
-				description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
-				callback.OnStatus(description);
-				ScanChannels();
-			}
+			timer1.Enabled=true;
 		}
 
 		void ScanChannels()
 		{
+			DVBCList dvbcChan=dvbcChannels[currentIndex];
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate, retryCount);
+			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
+			callback.OnStatus(description);
+
 			timer1.Enabled=false;
 			Application.DoEvents();
 			captureCard.StoreTunedChannels(false,true);
 			callback.UpdateList();
-			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning channels {0}/{1} {2}", currentIndex,count,tryAgain);
-			currentState=State.ScanFrequencies;
-			tryAgain++;
 			timer1.Enabled=true;
 			return;
 		}
@@ -244,8 +227,12 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",
-												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate, tryAgain);
-			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2} {3}",currentIndex ,count,chanDesc, tryAgain);
+												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate, retryCount);
+			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,count,chanDesc);
+			callback.OnStatus(description);
+
+			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
+
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;
