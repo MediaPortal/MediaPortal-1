@@ -345,6 +345,7 @@ namespace MediaPortal
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCapture";
 			this.Text = "FormCapture";
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormCapture_Closing);
 			this.Load += new System.EventHandler(this.FormCapture_Load);
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -398,20 +399,6 @@ namespace MediaPortal
 
     private void buttonOK_Click(object sender, System.EventArgs e)
     {
-      VideoDevice=(string)comboVideoDevice.SelectedItem;
-      AudioCodec=(string)comboAudioCodec.SelectedItem;
-      VideoCodec=(string)comboVideoCodec.SelectedItem;
-      m_bUseForRecording=checkBoxRecord.Checked;
-      m_bUseForTV=checkBoxTV.Checked;
-      string strItem=(string)comboFrameSize.SelectedItem;
-      foreach (CapFormat fmt in m_formats)
-      {
-        if (String.Compare(fmt.description,strItem,true)==0)
-        {
-          m_FrameSize=new Size(fmt.width,fmt.height);
-        }
-      }
-      m_FrameRate=Convert.ToDouble(textBoxFrameRate.Text);
       this.Close();
     }
 
@@ -631,6 +618,25 @@ namespace MediaPortal
 				box.SelectedIndex=iSelected;
 
 			
+		}
+
+		private void FormCapture_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			VideoDevice=(string)comboVideoDevice.SelectedItem;
+			AudioCodec=(string)comboAudioCodec.SelectedItem;
+			VideoCodec=(string)comboVideoCodec.SelectedItem;
+			m_bUseForRecording=checkBoxRecord.Checked;
+			m_bUseForTV=checkBoxTV.Checked;
+			string strItem=(string)comboFrameSize.SelectedItem;
+			foreach (CapFormat fmt in m_formats)
+			{
+				if (String.Compare(fmt.description,strItem,true)==0)
+				{
+					m_FrameSize=new Size(fmt.width,fmt.height);
+				}
+			}
+			m_FrameRate=Convert.ToDouble(textBoxFrameRate.Text);
+						
 		}
 
 

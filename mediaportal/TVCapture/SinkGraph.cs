@@ -279,7 +279,7 @@ namespace MediaPortal.TV.Recording
 				double dFreq;
 				m_TVTuner.get_VideoFrequency(out iFreq);
 				dFreq=iFreq/1000000d;
-				DirectShowUtil.DebugWrite("Capture.TuneChannel() tuned to freq:{0}", dFreq);
+				DirectShowUtil.DebugWrite("Capture.TuneChannel() tuned to {0} MHz.", dFreq);
 			}
 			catch(Exception){} 
 

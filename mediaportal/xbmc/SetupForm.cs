@@ -242,7 +242,6 @@ namespace MediaPortal
     private System.Windows.Forms.TextBox textBoxRadio;
     private System.Windows.Forms.GroupBox groupBox21;
     private System.Windows.Forms.ColumnHeader columnHeader14;
-    private System.Windows.Forms.CheckBox checkBoxVMR9;
 		private System.Windows.Forms.GroupBox groupBox23;
 		private System.Windows.Forms.RadioButton btnRadioInternal;
 		private System.Windows.Forms.RadioButton btnRadioExternal;
@@ -258,6 +257,14 @@ namespace MediaPortal
 		private System.Windows.Forms.ComboBox comboBoxDVDAudioCodec;
 		private System.Windows.Forms.Label label41;
 		private System.Windows.Forms.Label label42;
+		private System.Windows.Forms.GroupBox groupBox24;
+		private System.Windows.Forms.RadioButton radioButtonTVOverlay;
+		private System.Windows.Forms.RadioButton radioButtonTVVMR9W;
+		private System.Windows.Forms.RadioButton radioButtonTVVMR9R;
+		private System.Windows.Forms.GroupBox groupBox25;
+		private System.Windows.Forms.RadioButton radioButtonMovieOverlay;
+		private System.Windows.Forms.RadioButton radioButtonMovieVMR9R;
+		private System.Windows.Forms.RadioButton radioButtonMovieVMR9W;
 
 		TunerCountry[] m_countries = new TunerCountry[] {
 
@@ -528,7 +535,6 @@ namespace MediaPortal
       toolTip1.SetToolTip(checkBoxAutoHideMouse       ,"If enabled then Mediaportal will automaticly hide the mouse pointer when its inactive for 3 seconds");
       toolTip1.SetToolTip(comboBoxLanguage            ,"Select which language file Mediaportal should use");
       toolTip1.SetToolTip(comboBoxSkins               ,"Select which skin Mediaportal should use");
-      toolTip1.SetToolTip(checkBoxVMR9                ,"Enable this to use the advanced VMR9 video renderer\rVMR9 is a more advanced renderer for video and livetv\rBut its not supported by every codec and/or card");
       toolTip1.SetToolTip(checkBoxHideFileExtensions  ,"If enabled MediaPortal wont show any file extensions\rLike .mpg or .avi of .mp3");
       toolTip1.SetToolTip(checkBoxMouseSupport        ,"Enable this option if you are using the mouse to control\rMediaPortal. If enabled Mediaportal will draw mouse\rspecific controls like scrollbars");
 
@@ -594,6 +600,10 @@ namespace MediaPortal
 			toolTip1.SetToolTip(comboBoxCountries         ,"Select your country. This way MediaPortal\rknows which TV standard you are using");
 
 
+			toolTip1.SetToolTip(radioButtonTVOverlay      ,"Enable this to use standard overlay device for rendering video\r");
+			toolTip1.SetToolTip(radioButtonTVVMR9W        ,"Enable this to use the advanced VMR9 video renderer\rVMR9 is a more advanced renderer for video and livetv\r");
+			toolTip1.SetToolTip(radioButtonTVVMR9R        ,"Enable this to use the advanced VMR9 video renderer\rVMR9 is a more advanced renderer for video and livetv\rBut its not supported by every codec and/or card");
+
 
 			//MY TVGUIDE
 			toolTip1.SetToolTip(listTVChannels            ,"This list shows all your tvchannels");           
@@ -642,7 +652,6 @@ namespace MediaPortal
 			this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
 			this.checkStartFullScreen = new System.Windows.Forms.CheckBox();
 			this.Skin = new System.Windows.Forms.GroupBox();
-			this.checkBoxVMR9 = new System.Windows.Forms.CheckBox();
 			this.checkBoxHideFileExtensions = new System.Windows.Forms.CheckBox();
 			this.checkBoxMouseSupport = new System.Windows.Forms.CheckBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -670,6 +679,10 @@ namespace MediaPortal
 			this.buttonAutoTune2 = new System.Windows.Forms.Button();
 			this.textEditBox = new System.Windows.Forms.TextBox();
 			this.tabPageCapture = new System.Windows.Forms.TabPage();
+			this.groupBox24 = new System.Windows.Forms.GroupBox();
+			this.radioButtonTVVMR9R = new System.Windows.Forms.RadioButton();
+			this.radioButtonTVVMR9W = new System.Windows.Forms.RadioButton();
+			this.radioButtonTVOverlay = new System.Windows.Forms.RadioButton();
 			this.groupbox22 = new System.Windows.Forms.GroupBox();
 			this.checkBoxAlwaysTimeShift = new System.Windows.Forms.CheckBox();
 			this.btnEditCaptureDevice = new System.Windows.Forms.Button();
@@ -842,6 +855,10 @@ namespace MediaPortal
 			this.label2 = new System.Windows.Forms.Label();
 			this.dvdParams = new System.Windows.Forms.TextBox();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.groupBox25 = new System.Windows.Forms.GroupBox();
+			this.radioButtonMovieVMR9R = new System.Windows.Forms.RadioButton();
+			this.radioButtonMovieVMR9W = new System.Windows.Forms.RadioButton();
+			this.radioButtonMovieOverlay = new System.Windows.Forms.RadioButton();
 			this.tabControl.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
 			this.Skin.SuspendLayout();
@@ -851,6 +868,7 @@ namespace MediaPortal
 			((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
 			this.groupBox18.SuspendLayout();
 			this.tabPageCapture.SuspendLayout();
+			this.groupBox24.SuspendLayout();
 			this.groupbox22.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).BeginInit();
 			this.groupBox13.SuspendLayout();
@@ -890,6 +908,7 @@ namespace MediaPortal
 			this.groupBox11.SuspendLayout();
 			this.groupBox10.SuspendLayout();
 			this.DVDPlayerBox.SuspendLayout();
+			this.groupBox25.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabControl
@@ -1025,7 +1044,6 @@ namespace MediaPortal
 			// 
 			// Skin
 			// 
-			this.Skin.Controls.Add(this.checkBoxVMR9);
 			this.Skin.Controls.Add(this.checkBoxHideFileExtensions);
 			this.Skin.Controls.Add(this.checkBoxMouseSupport);
 			this.Skin.Controls.Add(this.pictureBox1);
@@ -1035,14 +1053,6 @@ namespace MediaPortal
 			this.Skin.TabIndex = 0;
 			this.Skin.TabStop = false;
 			this.Skin.Text = "General";
-			// 
-			// checkBoxVMR9
-			// 
-			this.checkBoxVMR9.Location = new System.Drawing.Point(16, 104);
-			this.checkBoxVMR9.Name = "checkBoxVMR9";
-			this.checkBoxVMR9.Size = new System.Drawing.Size(224, 16);
-			this.checkBoxVMR9.TabIndex = 14;
-			this.checkBoxVMR9.Text = "Use VMR9";
 			// 
 			// checkBoxHideFileExtensions
 			// 
@@ -1297,6 +1307,7 @@ namespace MediaPortal
 			// 
 			// tabPageCapture
 			// 
+			this.tabPageCapture.Controls.Add(this.groupBox24);
 			this.tabPageCapture.Controls.Add(this.groupbox22);
 			this.tabPageCapture.Controls.Add(this.btnEditCaptureDevice);
 			this.tabPageCapture.Controls.Add(this.btnDelCaptureDevice);
@@ -1312,6 +1323,42 @@ namespace MediaPortal
 			this.tabPageCapture.Size = new System.Drawing.Size(616, 356);
 			this.tabPageCapture.TabIndex = 6;
 			this.tabPageCapture.Text = "My TV";
+			// 
+			// groupBox24
+			// 
+			this.groupBox24.Controls.Add(this.radioButtonTVVMR9R);
+			this.groupBox24.Controls.Add(this.radioButtonTVVMR9W);
+			this.groupBox24.Controls.Add(this.radioButtonTVOverlay);
+			this.groupBox24.Location = new System.Drawing.Point(24, 200);
+			this.groupBox24.Name = "groupBox24";
+			this.groupBox24.Size = new System.Drawing.Size(336, 72);
+			this.groupBox24.TabIndex = 11;
+			this.groupBox24.TabStop = false;
+			this.groupBox24.Text = "Video renderer:";
+			// 
+			// radioButtonTVVMR9R
+			// 
+			this.radioButtonTVVMR9R.Location = new System.Drawing.Point(24, 48);
+			this.radioButtonTVVMR9R.Name = "radioButtonTVVMR9R";
+			this.radioButtonTVVMR9R.Size = new System.Drawing.Size(144, 16);
+			this.radioButtonTVVMR9R.TabIndex = 2;
+			this.radioButtonTVVMR9R.Text = "VMR9 Renderless";
+			// 
+			// radioButtonTVVMR9W
+			// 
+			this.radioButtonTVVMR9W.Location = new System.Drawing.Point(24, 32);
+			this.radioButtonTVVMR9W.Name = "radioButtonTVVMR9W";
+			this.radioButtonTVVMR9W.Size = new System.Drawing.Size(128, 16);
+			this.radioButtonTVVMR9W.TabIndex = 1;
+			this.radioButtonTVVMR9W.Text = "VMR9 Windowless";
+			// 
+			// radioButtonTVOverlay
+			// 
+			this.radioButtonTVOverlay.Location = new System.Drawing.Point(24, 16);
+			this.radioButtonTVOverlay.Name = "radioButtonTVOverlay";
+			this.radioButtonTVOverlay.Size = new System.Drawing.Size(104, 16);
+			this.radioButtonTVOverlay.TabIndex = 0;
+			this.radioButtonTVOverlay.Text = "Overlay";
 			// 
 			// groupbox22
 			// 
@@ -1333,7 +1380,7 @@ namespace MediaPortal
 			// 
 			// btnEditCaptureDevice
 			// 
-			this.btnEditCaptureDevice.Location = new System.Drawing.Point(128, 232);
+			this.btnEditCaptureDevice.Location = new System.Drawing.Point(128, 152);
 			this.btnEditCaptureDevice.Name = "btnEditCaptureDevice";
 			this.btnEditCaptureDevice.Size = new System.Drawing.Size(40, 23);
 			this.btnEditCaptureDevice.TabIndex = 3;
@@ -1342,7 +1389,7 @@ namespace MediaPortal
 			// 
 			// btnDelCaptureDevice
 			// 
-			this.btnDelCaptureDevice.Location = new System.Drawing.Point(64, 232);
+			this.btnDelCaptureDevice.Location = new System.Drawing.Point(64, 152);
 			this.btnDelCaptureDevice.Name = "btnDelCaptureDevice";
 			this.btnDelCaptureDevice.Size = new System.Drawing.Size(56, 23);
 			this.btnDelCaptureDevice.TabIndex = 2;
@@ -1351,7 +1398,7 @@ namespace MediaPortal
 			// 
 			// btnAddCaptureDevice
 			// 
-			this.btnAddCaptureDevice.Location = new System.Drawing.Point(16, 232);
+			this.btnAddCaptureDevice.Location = new System.Drawing.Point(16, 152);
 			this.btnAddCaptureDevice.Name = "btnAddCaptureDevice";
 			this.btnAddCaptureDevice.Size = new System.Drawing.Size(40, 23);
 			this.btnAddCaptureDevice.TabIndex = 1;
@@ -1369,7 +1416,7 @@ namespace MediaPortal
 			this.listCaptureCards.FullRowSelect = true;
 			this.listCaptureCards.Location = new System.Drawing.Point(16, 16);
 			this.listCaptureCards.Name = "listCaptureCards";
-			this.listCaptureCards.Size = new System.Drawing.Size(352, 208);
+			this.listCaptureCards.Size = new System.Drawing.Size(352, 128);
 			this.listCaptureCards.TabIndex = 0;
 			this.listCaptureCards.View = System.Windows.Forms.View.Details;
 			this.listCaptureCards.DoubleClick += new System.EventHandler(this.listCaptureCards_DoubleClick);
@@ -2225,6 +2272,7 @@ namespace MediaPortal
 			// 
 			// tabPlayers
 			// 
+			this.tabPlayers.Controls.Add(this.groupBox25);
 			this.tabPlayers.Controls.Add(this.comboMovieAudioRenderer);
 			this.tabPlayers.Controls.Add(this.label39);
 			this.tabPlayers.Controls.Add(this.groupBox9);
@@ -2238,14 +2286,14 @@ namespace MediaPortal
 			// 
 			// comboMovieAudioRenderer
 			// 
-			this.comboMovieAudioRenderer.Location = new System.Drawing.Point(120, 264);
+			this.comboMovieAudioRenderer.Location = new System.Drawing.Point(120, 232);
 			this.comboMovieAudioRenderer.Name = "comboMovieAudioRenderer";
 			this.comboMovieAudioRenderer.Size = new System.Drawing.Size(184, 21);
 			this.comboMovieAudioRenderer.TabIndex = 3;
 			// 
 			// label39
 			// 
-			this.label39.Location = new System.Drawing.Point(24, 272);
+			this.label39.Location = new System.Drawing.Point(24, 240);
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(100, 16);
 			this.label39.TabIndex = 9;
@@ -2258,7 +2306,7 @@ namespace MediaPortal
 			this.groupBox9.Controls.Add(this.trackBarOSDTimeout);
 			this.groupBox9.Location = new System.Drawing.Point(304, 128);
 			this.groupBox9.Name = "groupBox9";
-			this.groupBox9.Size = new System.Drawing.Size(200, 120);
+			this.groupBox9.Size = new System.Drawing.Size(200, 104);
 			this.groupBox9.TabIndex = 2;
 			this.groupBox9.TabStop = false;
 			this.groupBox9.Text = "Onscreen display";
@@ -2297,16 +2345,16 @@ namespace MediaPortal
 			this.groupBox8.Controls.Add(this.checkBoxShowSubtitles);
 			this.groupBox8.Location = new System.Drawing.Point(24, 128);
 			this.groupBox8.Name = "groupBox8";
-			this.groupBox8.Size = new System.Drawing.Size(264, 120);
+			this.groupBox8.Size = new System.Drawing.Size(264, 104);
 			this.groupBox8.TabIndex = 1;
 			this.groupBox8.TabStop = false;
 			this.groupBox8.Text = "Subtitles";
 			// 
 			// btnChooseSubFont
 			// 
-			this.btnChooseSubFont.Location = new System.Drawing.Point(224, 56);
+			this.btnChooseSubFont.Location = new System.Drawing.Point(216, 48);
 			this.btnChooseSubFont.Name = "btnChooseSubFont";
-			this.btnChooseSubFont.Size = new System.Drawing.Size(24, 23);
+			this.btnChooseSubFont.Size = new System.Drawing.Size(24, 24);
 			this.btnChooseSubFont.TabIndex = 2;
 			this.btnChooseSubFont.Text = "...";
 			this.btnChooseSubFont.Click += new System.EventHandler(this.btnChooseSubFont_Click);
@@ -2314,7 +2362,7 @@ namespace MediaPortal
 			// txtBoxSubFont
 			// 
 			this.txtBoxSubFont.Enabled = false;
-			this.txtBoxSubFont.Location = new System.Drawing.Point(104, 56);
+			this.txtBoxSubFont.Location = new System.Drawing.Point(96, 48);
 			this.txtBoxSubFont.Name = "txtBoxSubFont";
 			this.txtBoxSubFont.Size = new System.Drawing.Size(112, 20);
 			this.txtBoxSubFont.TabIndex = 1;
@@ -2322,7 +2370,7 @@ namespace MediaPortal
 			// 
 			// numericUpDownSubShadow
 			// 
-			this.numericUpDownSubShadow.Location = new System.Drawing.Point(104, 88);
+			this.numericUpDownSubShadow.Location = new System.Drawing.Point(96, 72);
 			this.numericUpDownSubShadow.Name = "numericUpDownSubShadow";
 			this.numericUpDownSubShadow.Size = new System.Drawing.Size(48, 20);
 			this.numericUpDownSubShadow.TabIndex = 3;
@@ -2330,7 +2378,7 @@ namespace MediaPortal
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(24, 88);
+			this.label16.Location = new System.Drawing.Point(16, 80);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(72, 16);
 			this.label16.TabIndex = 6;
@@ -2338,7 +2386,7 @@ namespace MediaPortal
 			// 
 			// label14
 			// 
-			this.label14.Location = new System.Drawing.Point(24, 56);
+			this.label14.Location = new System.Drawing.Point(16, 48);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(32, 16);
 			this.label14.TabIndex = 1;
@@ -2346,9 +2394,9 @@ namespace MediaPortal
 			// 
 			// checkBoxShowSubtitles
 			// 
-			this.checkBoxShowSubtitles.Location = new System.Drawing.Point(24, 24);
+			this.checkBoxShowSubtitles.Location = new System.Drawing.Point(16, 24);
 			this.checkBoxShowSubtitles.Name = "checkBoxShowSubtitles";
-			this.checkBoxShowSubtitles.Size = new System.Drawing.Size(56, 24);
+			this.checkBoxShowSubtitles.Size = new System.Drawing.Size(56, 16);
 			this.checkBoxShowSubtitles.TabIndex = 0;
 			this.checkBoxShowSubtitles.Text = "Show";
 			this.checkBoxShowSubtitles.CheckedChanged += new System.EventHandler(this.checkBoxShowSubtitles_CheckedChanged);
@@ -2898,6 +2946,42 @@ namespace MediaPortal
 			this.dvdParams.TabIndex = 2;
 			this.dvdParams.Text = "";
 			// 
+			// groupBox25
+			// 
+			this.groupBox25.Controls.Add(this.radioButtonMovieVMR9R);
+			this.groupBox25.Controls.Add(this.radioButtonMovieVMR9W);
+			this.groupBox25.Controls.Add(this.radioButtonMovieOverlay);
+			this.groupBox25.Location = new System.Drawing.Point(24, 264);
+			this.groupBox25.Name = "groupBox25";
+			this.groupBox25.Size = new System.Drawing.Size(336, 72);
+			this.groupBox25.TabIndex = 12;
+			this.groupBox25.TabStop = false;
+			this.groupBox25.Text = "Video renderer:";
+			// 
+			// radioButtonMovieVMR9R
+			// 
+			this.radioButtonMovieVMR9R.Location = new System.Drawing.Point(24, 48);
+			this.radioButtonMovieVMR9R.Name = "radioButtonMovieVMR9R";
+			this.radioButtonMovieVMR9R.Size = new System.Drawing.Size(144, 16);
+			this.radioButtonMovieVMR9R.TabIndex = 2;
+			this.radioButtonMovieVMR9R.Text = "VMR9 Renderless";
+			// 
+			// radioButtonMovieVMR9W
+			// 
+			this.radioButtonMovieVMR9W.Location = new System.Drawing.Point(24, 32);
+			this.radioButtonMovieVMR9W.Name = "radioButtonMovieVMR9W";
+			this.radioButtonMovieVMR9W.Size = new System.Drawing.Size(128, 16);
+			this.radioButtonMovieVMR9W.TabIndex = 1;
+			this.radioButtonMovieVMR9W.Text = "VMR9 Windowless";
+			// 
+			// radioButtonMovieOverlay
+			// 
+			this.radioButtonMovieOverlay.Location = new System.Drawing.Point(24, 16);
+			this.radioButtonMovieOverlay.Name = "radioButtonMovieOverlay";
+			this.radioButtonMovieOverlay.Size = new System.Drawing.Size(104, 16);
+			this.radioButtonMovieOverlay.TabIndex = 0;
+			this.radioButtonMovieOverlay.Text = "Overlay";
+			// 
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -2917,6 +3001,7 @@ namespace MediaPortal
 			((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
 			this.groupBox18.ResumeLayout(false);
 			this.tabPageCapture.ResumeLayout(false);
+			this.groupBox24.ResumeLayout(false);
 			this.groupbox22.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).EndInit();
 			this.groupBox13.ResumeLayout(false);
@@ -2956,6 +3041,7 @@ namespace MediaPortal
 			this.groupBox11.ResumeLayout(false);
 			this.groupBox10.ResumeLayout(false);
 			this.DVDPlayerBox.ResumeLayout(false);
+			this.groupBox25.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -3100,7 +3186,16 @@ namespace MediaPortal
         checkBoxHideFileExtensions.Checked=xmlreader.GetValueAsBool("general","hideextensions",true);
         checkBoxAlwaysTimeShift.Checked=xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
 
-        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",false);
+        int iValue=xmlreader.GetValueAsInt("mytv","vmr9",0);
+				if (iValue==0) radioButtonTVOverlay.Checked=true;
+				if (iValue==1) radioButtonTVVMR9W.Checked=true;
+				if (iValue==2) radioButtonTVVMR9R.Checked=true;
+
+				iValue=xmlreader.GetValueAsInt("movieplayer","vmr9",0);
+				if (iValue==0) radioButtonMovieOverlay.Checked=true;
+				if (iValue==1) radioButtonMovieVMR9W.Checked=true;
+				if (iValue==2) radioButtonMovieVMR9R.Checked=true;
+
         dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
         dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
@@ -3397,7 +3492,7 @@ namespace MediaPortal
         xmlWriter.SetValueAsBool("general","autohidemouse", checkBoxAutoHideMouse.Checked);
         xmlWriter.SetValueAsBool("general","mousesupport", checkBoxMouseSupport.Checked);
         xmlWriter.SetValueAsBool("general","hideextensions", checkBoxHideFileExtensions.Checked);
-        xmlWriter.SetValueAsBool("general","vmr9", checkBoxVMR9.Checked);
+        
         xmlWriter.SetValueAsBool("mytv","alwaystimeshift", checkBoxAlwaysTimeShift.Checked);
         
         xmlWriter.SetValue("dvdplayer","path",dvdFile.Text);
@@ -3428,6 +3523,16 @@ namespace MediaPortal
         xmlWriter.SetValue("audioplayer","player", (string)comboAudioPlayer.SelectedItem);
   			
 
+				int iValue=0;
+				if (radioButtonTVOverlay.Checked) iValue=0;
+				if (radioButtonTVVMR9W.Checked) iValue=1;
+				if (radioButtonTVVMR9R.Checked) iValue=2;
+				xmlWriter.SetValue("mytv","vmr9",iValue.ToString() );
+
+				if (radioButtonMovieOverlay.Checked) iValue=0;
+				if (radioButtonMovieVMR9W.Checked) iValue=1;
+				if (radioButtonMovieVMR9R.Checked) iValue=2;
+				xmlWriter.SetValue("movieplayer","vmr9",iValue.ToString() );
 
         SaveShares(xmlWriter, listAudioShares,"music");
         SaveShares(xmlWriter, listPictureShares,"pictures");

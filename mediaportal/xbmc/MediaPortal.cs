@@ -217,7 +217,6 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         GUIWindowManager.Render();
-
       }
       catch(Exception ex)
       {
