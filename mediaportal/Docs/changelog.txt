@@ -1,9 +1,13 @@
 History: (dd-mm-yyyy)
-  01-06-2004  general     : added : MP now disables the screensaver if movie/tv/vis. is fullscreen
-  01-06-2004  my tv       : added : fullscreen tv    : skip +/-
-  01-06-2004  my tv       : added : fullscreen tv    : ff/RW
-  01-06-2004  my tv       : added : fullscreen tvosd : show timeshifting info in progressbar
-  01-06-2004  my tv       : fixed : recording overlay was messed up
+  02-06-2004  my tv       : added : tvguide colors/genre are now optional (set on/off in the setup)
+  02-06-2004  my music    : fixed : eject cd button
+  02-06-2004  my music    : added : new CDplayer, which no longer depends in wmp9 (thx go to int20_h!)
+  02-06-2004  general     : added : MP now disables the screensaver if movie/tv/vis. is fullscreen
+  02-06-2004  my tv       : added : fullscreen tv    : skip +/-
+  02-06-2004  my tv       : added : fullscreen tv    : ff/RW
+  02-06-2004  my tv       : added : fullscreen tvosd : show timeshifting info in progressbar
+  02-06-2004  my tv       : fixed : recording overlay was messed up
+
   01-06-2004  general     : added : action 100 = eject cd
   01-06-2004  my music    : fixed : pause/stop etc where not working if visz. was fullscreen
   01-06-2004  my music    : fixed : action 79 in keymap does not work 

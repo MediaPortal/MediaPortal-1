@@ -18,7 +18,6 @@ My TV:
   TVGuide:
      - in the tv guide, when you select a program, it would be nice to have an option 
      - which directly switches to the channel. Of course only if the program currently runs. 
-     - make colors optional  
   Scheduled:
      -
   
@@ -28,6 +27,8 @@ My TV:
      - add support for digital capture cards (BDA tuners)
     
 My Music:
+  - cache freeDB info
+  
   - faster start of 1st song played
   - gapless playback
   - search songs by genre,artist,album (based on music database)
@@ -55,7 +56,6 @@ Settings:
 General:
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
-  - disable screensaver during playback of movie/tv
   - setup:Auto Tune needs some work
   - caller ID
   - seperate module/database for TV-series
