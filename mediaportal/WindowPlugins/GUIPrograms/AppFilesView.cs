@@ -429,7 +429,7 @@ namespace WindowPlugins.GUIPrograms
 
 		private void DeleteItems()
 		{
-			if (FileList.SelectedItems.Count > 1)
+			if (FileList.SelectedItems.Count >= 1)
 			{
 				DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the selected item(s)?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				if (dialogResult == DialogResult.Yes)
