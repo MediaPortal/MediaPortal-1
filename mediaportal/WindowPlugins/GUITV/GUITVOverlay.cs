@@ -55,14 +55,14 @@ namespace MediaPortal.GUI.TV
     public override bool DoesPostRender()
     {
       if (Recorder.IsRecording==false && Recorder.View==false) return  false;
-
+			if (g_Player.Playing && !g_Player.IsTV) return false;
 
 			if (m_util==null)
 			{
 				m_util=new TVUtil();
 			}
 
-			if (Recorder.View)
+	 		if (Recorder.View)
 			{
 				string strChannel=Recorder.TVChannelName;
 				TVProgram prog=m_util.GetCurrentProgram(strChannel);
@@ -86,10 +86,10 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
-      if (GUIGraphicsContext.IsFullScreenVideo) return  false;
-      if (GUIGraphicsContext.Calibrating) return  false;
-      if (GUIGraphicsContext.Overlay==false) return false;
-      if (g_Player.Playing && !g_Player.IsTV) return false;
+			if (GUIGraphicsContext.IsFullScreenVideo) return  false;
+			if (GUIGraphicsContext.Calibrating) return  false;
+			if (GUIGraphicsContext.Overlay==false) return false;
+
       return true;
     }
 
@@ -168,7 +168,6 @@ namespace MediaPortal.GUI.TV
       GUIPropertyManager.SetProperty("#channel", rec.Channel );
       GUIPropertyManager.SetProperty("#title", rec.Title );
       
-
 			SetChannelLogo(rec.Channel);
 			GUIPropertyManager.Changed=true;
     }
