@@ -877,22 +877,21 @@ namespace MediaPortal.TV.Recording
 			if (m_recControl!=null) 
 			{
 				int hr=m_recControl.Stop(0);
-				if (m_recControl!=null) 
-				{
-					Marshal.ReleaseComObject(m_recControl); 
-					Marshal.ReleaseComObject(m_recControl); 
-					Marshal.ReleaseComObject(m_recControl); 
-					m_recControl=null;
-					
-					Marshal.ReleaseComObject(objRecord);
-					Marshal.ReleaseComObject(objRecord);
-					Marshal.ReleaseComObject(objRecord);
-					objRecord=null;
-					GC.Collect();
-					GC.Collect();
-					GC.Collect();
-					GC.Collect();
-				}
+				
+				Marshal.ReleaseComObject(m_recControl); 
+				Marshal.ReleaseComObject(m_recControl); 
+				Marshal.ReleaseComObject(m_recControl); 
+				m_recControl=null;
+				
+				Marshal.ReleaseComObject(objRecord);
+				Marshal.ReleaseComObject(objRecord);
+				Marshal.ReleaseComObject(objRecord);
+				objRecord=null;
+				GC.Collect();
+				GC.Collect();
+				GC.Collect();
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
 				if (hr!=0) 
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
