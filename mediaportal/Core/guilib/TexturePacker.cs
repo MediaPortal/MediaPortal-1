@@ -1,6 +1,9 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Direct3D=Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Library
 {
@@ -16,6 +19,24 @@ namespace MediaPortal.GUI.Library
 			public Rectangle					 Rect;
 			public string              FileName;
 			
+			public PackedTextureNode Get(string fileName)
+			{
+				if (FileName!=null && FileName.Length>0) 
+				{
+					if (FileName==FileName) return this;
+				}
+				if (ChildLeft!=null)
+				{
+					PackedTextureNode node=ChildLeft.Get(fileName);
+					if (node!=null) return node;
+				}
+				if (ChildRight!=null)
+				{
+					return ChildRight.Get(fileName);
+				}
+				return null;
+			}
+
 			public PackedTextureNode Insert(string fileName,Image img, Image rootImage)
 			{
 					//Log.Write("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
@@ -71,30 +92,31 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-		ArrayList rootImages;
 		ArrayList rootNodes;
+		ArrayList textures;
 		public TexturePacker()
 		{
 		}
-		public bool Add(PackedTextureNode root, Image img, Image rootImage, string fileName)
+
+		bool Add(PackedTextureNode root, Image img, Image rootImage, string fileName)
 		{
 			PackedTextureNode node=root.Insert(fileName,img,rootImage);
 			if (node!=null)
 			{
-				Log.Write("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
+				//Log.Write("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
 				node.FileName = fileName;
 				return true;
 			}
-			Log.Write("no room anymore to add:{0}", fileName);
+			//Log.Write("no room anymore to add:{0}", fileName);
 			return false;
 		}
 
-		public void test()
+		
+		public void PackSkinGraphics(string skinName)
 		{
-			rootImages=new ArrayList();
 			rootNodes=new ArrayList();
-			
-			string[] files =System.IO.Directory.GetFiles(@"skin\bluetwo\media","*.png");
+			textures=new ArrayList();
+			string[] files =System.IO.Directory.GetFiles( String.Format(@"skin\{0}\media",skinName),"*.png" );
 			
 			while (true)
 			{
@@ -115,20 +137,67 @@ namespace MediaPortal.GUI.Library
 							ImagesLeft=true;
 					}
 				}
-				rootImages.Add(rootImage);
+				string fileName=String.Format(@"skin\{0}\bluetwo{0}.png",skinName,rootNodes.Count);
 				rootNodes.Add(root);
-				rootImage.Save(String.Format("bluetwo{0}.png",rootImages.Count), System.Drawing.Imaging.ImageFormat.Png);
+				rootImage.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
+				rootImage.Dispose();
+				ImageInformation info2 = new ImageInformation();
+				Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+																						fileName,
+																						0,0,//width/height
+																						1,//mipslevels
+																						0,//Usage.Dynamic,
+																						Format.A8R8G8B8,
+																						Pool.Managed,
+																						Filter.None,
+																						Filter.None,
+																						(int)0,
+																						ref info2);
+				textures.Add(tex);
 				if (!ImagesLeft) break;
 			}
 		}
 
-		public bool AddBitmap(PackedTextureNode root, Image rootImage, string file)
+		bool AddBitmap(PackedTextureNode root, Image rootImage, string file)
 		{
-			//Log.Write("---------------------");
-			Image bmp = Image.FromFile(file);
-			bool result=Add(root,bmp,rootImage,file);
-			bmp.Dispose();
+			bool result=false;
+			using (Image bmp = Image.FromFile(file))
+			{
+				result=Add(root,bmp,rootImage,file);
+			}
 			return result;
+		}
+		
+		public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax)
+		{
+			uoffs=voffs=umax=vmax=0.0f;
+			if (rootNodes==null) return false;
+			foreach (PackedTextureNode root in rootNodes)
+			{
+				PackedTextureNode foundNode=root.Get(fileName);
+				if (foundNode!=null)
+				{
+					uoffs = ((float)foundNode.Rect.Left)   / 2048f;
+					voffs = ((float)foundNode.Rect.Top)    / 2048f;
+					umax  = ((float)foundNode.Rect.Right)  / 2048f;
+					vmax  = ((float)foundNode.Rect.Bottom) / 2048f;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void Dispose()
+		{
+			rootNodes=null;
+			if (textures!=null)
+			{
+				foreach (Texture tex in textures)
+				{
+					tex.Dispose();
+				}
+			}
+			textures=null;
 		}
 	}
 }

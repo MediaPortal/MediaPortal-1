@@ -108,8 +108,6 @@ public class MediaPortalApp : D3DApp, IRender
     public static void Main()
     {
 
-			//TexturePacker packer = new TexturePacker();
-			//packer.test();
 			/*
 			TranscodeInfo info = new TranscodeInfo();
 			info.file=@"C:\media\movies\Chart Show TV (90)_Manual_200412121542p4224.dvr-ms";
