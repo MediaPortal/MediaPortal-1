@@ -15,14 +15,14 @@ namespace DShowNET
 	public class VideoCaptureProperties
 	{
 		static readonly Guid KSPROPSETID_Firesat = new Guid( 0xab132414, 0xd060, 0x11d0,  0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba,0xf3  );
-		[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
+		
+		
 		struct FIRESAT_CA_DATA
 		{								
 			public Byte			uSlot;								
 			public Byte			uTag;									
 			public Byte			bMore;								
-			public ushort		uLength;								
-			public byte[]		uData;				
+			public ushort		uLength;					
 		}
 
 		[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
@@ -598,7 +598,8 @@ namespace DShowNET
 				return ;
 			}
 
-			IntPtr pDataReturned = Marshal.AllocCoTaskMem(Marshal.SizeOf(structureType));
+			int iSize=Marshal.SizeOf(structureType);
+			IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
 			Marshal.StructureToPtr(structValue,pDataReturned,true);
 			hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,(uint)Marshal.SizeOf(structureType) );
 			if (hr!=0)
@@ -681,15 +682,62 @@ namespace DShowNET
 			FIRESAT_CA_DATA caData = new FIRESAT_CA_DATA();
 			caData.uSlot    = 0;
 			caData.uTag     = 2;	
-			caData.uData    = new byte[1024];
-			caData.uData[0] = 3;	// List Management = ONLY		
-			caData.uData[1] = 1;	// pmt_cmd = OK DESCRAMBLING		
 			caData.uLength  = (ushort)(2 + PMT.Length);
+			byte[] uData    = new byte[1024];
+			
+			uData[0] = 3;	// List Management = ONLY		
+			uData[1] = 1;	// pmt_cmd = OK DESCRAMBLING		
 			for (int i=0; i < PMT.Length;++i)
-				caData.uData[2+i]=PMT[i];
+				uData[2+i]=PMT[i];
 
 			Guid propertyGuid=KSPROPSETID_Firesat;
-			SetStructure(KSPROPSETID_Firesat, 22, typeof(FIRESAT_CA_DATA), caData);
+			int propId=22;
+			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+			uint IsTypeSupported=0;
+			if (propertySet==null) 
+			{
+				Log.Write("SetStructure() properySet=null");
+				return ;
+			}
+
+			int hr=propertySet.QuerySupported( ref propertyGuid, (uint)propId, out IsTypeSupported);
+			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
+			{
+				Log.Write("GetString() GetStructure is not supported");
+				return ;
+			}
+
+			int iSize=12+2+PMT.Length;
+			IntPtr pDataInstance = Marshal.AllocCoTaskMem(1036);
+			IntPtr pDataReturned = Marshal.AllocCoTaskMem(1036);
+			int offs=0;
+
+			Marshal.WriteByte(pDataReturned,offs, caData.uSlot); offs++;
+			Marshal.WriteByte(pDataReturned,offs, caData.uTag); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, (byte)(caData.uLength/256)); offs++;
+			Marshal.WriteByte(pDataReturned,offs, (byte)(caData.uLength%256)); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
+			for (int i=0; i < 2+PMT.Length;++i)
+			{
+				Marshal.WriteByte(pDataReturned,offs, uData[i]);
+				offs++;
+			}
+
+			hr=propertySet.RemoteSet(ref propertyGuid,(uint)propId,pDataInstance,(uint)1036, pDataReturned,(uint)1036 );
+			if (hr!=0)
+			{
+				Log.Write("SetStructure() failed 0x{0:X}",hr);
+			}
+			Marshal.FreeCoTaskMem(pDataReturned);
+			Marshal.FreeCoTaskMem(pDataInstance);
+
 		}//public void SendPMTToFireDTV(byte[] PMT)
 
 	}//public class VideoCaptureProperties
