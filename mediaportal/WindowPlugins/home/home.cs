@@ -500,12 +500,10 @@ namespace MediaPortal.GUI.Home
       {
         ((GUIControl)enumControls.Current).Render();  
       }
-			int x1=m_iStartXoff+GUIGraphicsContext.OffsetX;
-			int y1=m_iStartYoff+GUIGraphicsContext.OffsetY;
-      
+
 			m_oldviewport=GUIGraphicsContext.DX9Device.Viewport;
-			m_newviewport.X      = (int)x1;
-			m_newviewport.Y			 = (int)y1;
+			m_newviewport.X      = m_iStartXoff+GUIGraphicsContext.OffsetX;
+			m_newviewport.Y      = m_iStartYoff+GUIGraphicsContext.OffsetY;
 			m_newviewport.Width  = (int)(m_iMaxWidth);
 			m_newviewport.Height = (int)(m_iMaxHeight);
 			m_newviewport.MinZ   = 0.0f;
@@ -526,7 +524,7 @@ namespace MediaPortal.GUI.Home
       while (enumControls.MoveNext())
       {
         GUIControl cntl=((GUIControl)enumControls.Current);
-        if (cntl.YPosition>=y1 && cntl.YPosition <y1+m_iMaxHeight)
+        if (cntl.YPosition >= m_iStartYoff && cntl.YPosition < (m_iStartYoff+m_iMaxHeight))
         {
           cntl.Render();
         }
