@@ -33,7 +33,7 @@ namespace ProgramsDatabase
 				ArrayList arr = (ArrayList)results.Rows[0];
 				res = (string)arr[0];
 			}
-			Log.Write("dw read setting key:{0}\nvalue:{1}", Key, res);
+			//Log.Write("dw read setting key:{0}\nvalue:{1}", Key, res);
 			return res;
 		}
 

@@ -299,8 +299,8 @@ namespace WindowPlugins.GUIPrograms
 						lastFilepath = lastApp.DefaultFilepath();
 						lastApp.CurrentSortIndex = _MapSettings.SortBy;
 						lastApp.CurrentSortIsAscending = _MapSettings.SortAscending;
-						Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
-						Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
+						//Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
+						//Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
 					}
 					else
 					{
