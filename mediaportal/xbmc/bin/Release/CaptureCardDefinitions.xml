@@ -68,8 +68,9 @@
 <!--    Hauppauge WinTV PVR USB2              -->
 <!--    InnoDV DV-3300  `	              -->
 <!--    Kona One TV                           -->
-<!--    KNC ONE TV-Station DVB-T              -->
+<!--    KNC ONE TV Station DVB-C       	      -->
 <!--    KNC ONE TV Station DVB-S       	      -->
+<!--    KNC ONE TV-Station DVB-T              -->
 <!--    Leadtek LR6650			      -->
 <!--    LifeView DVB-T                        -->
 <!--    LifeView DVB-T Analog                 -->
@@ -96,8 +97,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.54                                                               -->
-<!-- changed : 30-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.55                                                               -->
+<!-- changed : 31-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -2153,7 +2154,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppage Nova-S (Samsung2)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101713c2&amp;rev_01">
+  <capturecard commercialname="Hauppauge Nova-S (Samsung2)" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101713c2&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -2206,9 +2207,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner (SU1200_K)"      	checkdevice="true"></filter>
-        <filter cat="capture"         name="TV Station DVB-S MCE (SU1200_K)"        	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner (SU1200_K)"  checkdevice="true"></filter>
+        <filter cat="capture"         name="TV Station DVB-S MCE (SU1200_K)"    checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -2222,9 +2223,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice" name="TV Station DVB-T Tuner (TU1216)" checkdevice="true"></filter>
-        <filter cat="capture" name="TV Station DVB-T MCE (TU1216)" checkdevice="true"></filter>
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
+        <filter cat="tunerdevice" 	name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="capture" 		name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
