@@ -2280,6 +2280,18 @@
 </string>
 <string>
 	<id>8021</id>
-	<value>Mail is known</value>
+	<value>Mark as Read</value>
+</string>
+<string>
+	<id>8030</id>
+	<value>Connected to server</value>
+</string>
+<string>
+	<id>8031</id>
+	<value>Getting mail number</value>
+</string>
+<string>
+	<id>8033</id>
+	<value>Progress</value>
 </string>
 </strings>
