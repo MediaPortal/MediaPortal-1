@@ -46,7 +46,6 @@ namespace MediaPortal.TV.Recording{
 			header.AdaptionFieldControl=(data[3]>>4) & 0x3;
 			header.ContinuityCounter=data[3] & 0x0F;
 			header.AdaptionField=data[4];
-
 			return header;
 		}
 	}

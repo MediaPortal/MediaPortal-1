@@ -2788,7 +2788,7 @@ namespace MediaPortal.TV.Recording
 						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
 						if(header.Pid==currentTuningObject.videoPid)
 						{
-							//Log.Write("TransportScrambling:{0:X} {1:X} {2}",header.Pid,currentTuningObject.videoPid,header.TransportScrambling);
+							Log.Write("TransportScrambling:{0:X} {1:X} {2}",header.Pid,currentTuningObject.videoPid,header.TransportScrambling);
 							if(header.TransportScrambling==0) 
 								m_videoDataFound=true;
 								
