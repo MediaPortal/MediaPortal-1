@@ -154,6 +154,8 @@ namespace MediaPortal.Database
 			{
 				if (strColum == columnName)
 				{
+					if(arr[iCol]==null)
+						continue;
 					string strLine = ((string)arr[iCol]).Trim();
 					strLine = strLine.Replace("''","'");
 					return strLine;
