@@ -83,7 +83,6 @@ namespace MediaPortal.TV.Recording
 
 				// Initialize settings. No channel tuned yet...
 				m_iPrevChannel = -1;
-				m_bFirstTune   = true;
 
 				int hr = 0;
 							

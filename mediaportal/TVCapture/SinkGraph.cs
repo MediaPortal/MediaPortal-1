@@ -50,7 +50,6 @@ namespace MediaPortal.TV.Recording
     protected bool                    m_bUseCable=false;
     protected DateTime                m_StartTime=DateTime.Now;
     protected int                     m_iPrevChannel=-1;
-    protected bool                    m_bFirstTune=true;
     protected Size                    m_FrameSize;
     protected double                  m_FrameRate;
     protected IAMVideoProcAmp         m_videoprocamp=null;
@@ -70,7 +69,6 @@ namespace MediaPortal.TV.Recording
 		{
 			cardName=friendlyName;
       m_cardID=ID;
-      m_bFirstTune=true;
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
@@ -108,7 +106,6 @@ namespace MediaPortal.TV.Recording
 
 			// Add legacy code to be compliant to other call, ie fill in membervariables...
 			cardName=pCard.FriendlyName;
-			m_bFirstTune             = true;
 			m_graphState             = State.None;
 			m_cardID                 = mCard.ID;
 			m_bUseCable              = mCard.IsCableInput;
@@ -146,7 +143,6 @@ namespace MediaPortal.TV.Recording
 		public SinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, string strVideoCaptureMoniker, Size frameSize, double frameRate)
 		{
 			m_cardID=ID;
-			m_bFirstTune=true;
 			m_bUseCable=bCable;
 			m_iCountryCode=iCountryCode;
 			m_graphState=State.None;
@@ -182,7 +178,6 @@ namespace MediaPortal.TV.Recording
 			Log.Write("SinkGraph:CreateGraph()");
       GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
-      m_bFirstTune=true;
       Log.Write("SinkGraph:CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
@@ -620,21 +615,16 @@ namespace MediaPortal.TV.Recording
       if (m_iChannelNr < (int)ExternalInputs.svhs)
       {
         if (m_TVTuner==null) return;
-        if (m_bFirstTune)
-        {
-          m_bFirstTune=false;
-          InitializeTuner();
-          SetVideoStandard(standard);
-          
-          
-          Log.Write("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
-            m_iCountryCode,standard.ToString(),
-            m_bUseCable);
-        }
-        try
-        {
+				try
+				{
+					InitializeTuner();
+					SetVideoStandard(standard);
+        
+        
+					Log.Write("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+						m_iCountryCode,standard.ToString(),
+						m_bUseCable);
           int iCurrentChannel,iVideoSubChannel,iAudioSubChannel;
-          SetVideoStandard(standard);
           m_TVTuner.get_TVFormat(out standard);
           m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
           if (iCurrentChannel!=m_iChannelNr)

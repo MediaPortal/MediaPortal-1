@@ -39,7 +39,6 @@ namespace MediaPortal.TV.Recording
 				Vmr9 =new VMR9Util("mytv");
 
         m_iPrevChannel=-1;
-        m_bFirstTune=true;
         DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph()");
         int hr=0;
         Filters filters = new Filters();
