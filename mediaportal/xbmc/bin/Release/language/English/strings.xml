@@ -1,4 +1,5 @@
  <strings>
+	<characters>255</characters>
 	<string>
 		<id>0</id>
 		<value>My Programs</value>

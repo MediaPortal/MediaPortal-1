@@ -601,11 +601,11 @@ public class MediaPortalApp : D3DApp, IRender
 
       GUIGraphicsContext.Skin = @"skin\" + m_strSkin;
       GUIGraphicsContext.ActiveForm = this.Handle;
+      GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
       
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
       
-      GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
       
       Log.Write("Load skin {0}", m_strSkin);
       GUIWindowManager.Initialize();
