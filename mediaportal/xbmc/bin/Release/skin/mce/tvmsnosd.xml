@@ -83,15 +83,15 @@
 			<onup>2</onup>
 			<ondown>2</ondown>
 			<font>font14</font>
-			<textcolor>ff000000</textcolor>
+			<textcolor>ff5111111</textcolor>
 			<textcolor2>ffaaaaaa</textcolor2>
 			<textboxFont>font14</textboxFont>
 			<textboxXpos>58</textboxXpos>
 			<textboxYpos>443</textboxYpos>
 			<textboxWidth>500</textboxWidth>
 			<textboxHeight>20</textboxHeight>
-			<textboxColor>ffffffff</textboxColor>
-			<textboxBgColor>ff000000</textboxBgColor>
+			<textboxColor>ff111111</textboxColor>
+			<textboxBgColor>ffffffff</textboxBgColor>
 		</control>
 </controls>
 </window>
