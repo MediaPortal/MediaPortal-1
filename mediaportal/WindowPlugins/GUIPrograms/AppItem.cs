@@ -258,8 +258,8 @@ namespace ProgramsDatabase
 				gli.MusicTag = curFile;
 				gli.IsFolder = curFile.IsFolder; 
 				gli.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
+				gli.OnItemSelected +=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnItemSelected);
+				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,gli);
 			}
 			return Total;
 		}
@@ -284,19 +284,25 @@ namespace ProgramsDatabase
 				}
 			}
 		}
-		
-		public virtual void OnSort(GUIListControl list, GUIThumbnailPanel panel)
+
+		private void OnItemSelected(GUIListItem item, GUIControl parent)
 		{
-			dbPc.updateState();
-			list.Sort(dbPc);
-			panel.Sort(dbPc);
+			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
+			if (filmstrip==null) return;
+			filmstrip.InfoImageFileName=item.ThumbnailImage;
 		}
 
-		public virtual void OnSortToggle(GUIListControl list, GUIThumbnailPanel panel)
+		
+		public virtual void OnSort(GUIFacadeControl view)
+		{
+			dbPc.updateState();
+			view.Sort(dbPc);
+		}
+
+		public virtual void OnSortToggle(GUIFacadeControl view)
 		{
 			dbPc.bAsc = (!dbPc.bAsc);
-			list.Sort(dbPc);
-			panel.Sort(dbPc);
+			view.Sort(dbPc);
 		}
 
 		public virtual string CurrentSortTitle()

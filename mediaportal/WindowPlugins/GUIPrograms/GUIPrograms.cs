@@ -18,10 +18,9 @@ namespace WindowPlugins.GUIPrograms
 		CONTROL_BTNSORTBY		=    4,
 		CONTROL_BTNSORTASC    =    5,
 		CONTROL_BTNREFRESH      =    3,
-		CONTROL_LIST            =    7,
-		CONTROL_THUMBS			=    8,
 		CONTROL_LBLMYPROGRAMS   =    9,
 		CONTROL_LBLCURAPP        =   10,
+		CONTROL_VIEW				= 7,
 	};
 
 
@@ -94,8 +93,8 @@ namespace WindowPlugins.GUIPrograms
 			VIEW_AS_LIST    =       0,
 			VIEW_AS_ICONS    =      1,
 			VIEW_AS_LARGEICONS  =   2,
+			VIEW_AS_FILMSTRIP  =    3,
 		}
-		View currentView = View.VIEW_AS_LARGEICONS;
 
 		static Applist apps = ProgramsDatabase.ProgramDatabase.AppList;
 		AppItem lastApp = null;
@@ -136,7 +135,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			using(AMS.Profile.Xml xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				switch (currentView)
+				switch ((View)_MapSettings.ViewAs)
 				{
 					case View.VIEW_AS_LIST: 
 						xmlwriter.SetValue("myprograms","viewby","list");
@@ -146,6 +145,9 @@ namespace WindowPlugins.GUIPrograms
 						break;
 					case View.VIEW_AS_LARGEICONS: 
 						xmlwriter.SetValue("myprograms","viewby","largeicons");
+						break;
+					case View.VIEW_AS_FILMSTRIP: 
+						xmlwriter.SetValue("myprograms","viewby","filmstrip");
 						break;
 				}
 			}
@@ -159,9 +161,10 @@ namespace WindowPlugins.GUIPrograms
 				strTmp=(string)xmlreader.GetValue("myprograms","viewby");
 				if (strTmp!=null)
 				{
-					if (strTmp=="list") currentView=View.VIEW_AS_LIST;
-					else if (strTmp=="icons") currentView=View.VIEW_AS_ICONS;
-					else if (strTmp=="largeicons") currentView=View.VIEW_AS_LARGEICONS;
+					if (strTmp=="list") _MapSettings.ViewAs = (int)View.VIEW_AS_LIST;
+					else if (strTmp=="icons") _MapSettings.ViewAs = (int)View.VIEW_AS_ICONS;
+					else if (strTmp=="largeicons") _MapSettings.ViewAs = (int)View.VIEW_AS_LARGEICONS;
+					else if (strTmp=="filmstrip") _MapSettings.ViewAs = (int)View.VIEW_AS_FILMSTRIP;
 				}
 			}
 		}
@@ -253,22 +256,25 @@ namespace WindowPlugins.GUIPrograms
 					if (iControl==(int)Controls.CONTROL_BTNVIEWASICONS)
 					{
 						// switch to next view
-						switch (currentView)
+						switch ((View)_MapSettings.ViewAs)
 						{
 							case View.VIEW_AS_LIST:
-								currentView=View.VIEW_AS_ICONS;
+								_MapSettings.ViewAs = (int)View.VIEW_AS_ICONS;
 								break;
 							case View.VIEW_AS_ICONS:
-								currentView=View.VIEW_AS_LARGEICONS;
+								_MapSettings.ViewAs = (int)View.VIEW_AS_LARGEICONS;
 								break;
 							case View.VIEW_AS_LARGEICONS:
-								currentView=View.VIEW_AS_LIST;
+								_MapSettings.ViewAs = (int)View.VIEW_AS_FILMSTRIP;
+								break;
+							case View.VIEW_AS_FILMSTRIP:
+								_MapSettings.ViewAs = (int)View.VIEW_AS_LIST;
 								break;
 						}
 						ShowThumbPanel();
 						GUIControl.FocusControl(GetID,iControl);
 					}
-					else if (iControl==(int)Controls.CONTROL_THUMBS||iControl==(int)Controls.CONTROL_LIST)
+					else if (iControl==(int)Controls.CONTROL_VIEW)
 					{
 						// application or file-item was clicked....
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
@@ -309,9 +315,8 @@ namespace WindowPlugins.GUIPrograms
 						// get next sort method...
 						if (lastApp != null)
 						{
-							GUIListControl list=(GUIListControl)GetControl((int)Controls.CONTROL_LIST);
-							GUIThumbnailPanel panel=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-							lastApp.OnSort(list, panel);
+							GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+							lastApp.OnSort(view);
 							UpdateButtons();
 						}
 						GUIControl.FocusControl(GetID,iControl);
@@ -321,9 +326,8 @@ namespace WindowPlugins.GUIPrograms
 						// toggle asc / desc for current sort method...
 						if (lastApp != null)
 						{
-							GUIListControl list=(GUIListControl)GetControl((int)Controls.CONTROL_LIST);
-							GUIThumbnailPanel panel=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-							lastApp.OnSortToggle(list, panel);
+							GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+							lastApp.OnSortToggle(view);
 						}
 						GUIControl.FocusControl(GetID,iControl);
 					}
@@ -449,9 +453,6 @@ namespace WindowPlugins.GUIPrograms
 		void UpdateButtons()
 		{
 
-			GUIControl.HideControl(GetID,(int)Controls.CONTROL_LIST);
-			GUIControl.HideControl(GetID,(int)Controls.CONTROL_THUMBS);
-      
 			if (RefreshButtonVisible())
 			{
 				GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNREFRESH);
@@ -478,19 +479,8 @@ namespace WindowPlugins.GUIPrograms
 				GUIControl.HideControl(GetID, (int)Controls.CONTROL_BTNSORTASC);
 			}
       
-
-			int iControl=(int)Controls.CONTROL_LIST;
-			if (currentView != View.VIEW_AS_LIST )
-			{
-				iControl=(int)Controls.CONTROL_THUMBS;
-			}
-			GUIControl.ShowControl(GetID,iControl);
-			GUIControl.FocusControl(GetID,iControl);
-      
-
 			string strLine="";
-			View view=currentView;
-			switch (view)
+			switch ((View)_MapSettings.ViewAs)
 			{
 				case View.VIEW_AS_LIST:
 					strLine=GUILocalizeStrings.Get(101);
@@ -500,6 +490,9 @@ namespace WindowPlugins.GUIPrograms
 					break;
 				case View.VIEW_AS_LARGEICONS:
 					strLine=GUILocalizeStrings.Get(417);
+					break;
+				case View.VIEW_AS_FILMSTRIP:
+					strLine=GUILocalizeStrings.Get(733);
 					break;
 			}
 			GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNVIEWASICONS,strLine);
@@ -517,12 +510,26 @@ namespace WindowPlugins.GUIPrograms
 		void ShowThumbPanel()
 		{
 			int iItem=GetSelectedItemNo(); 
-			GUIThumbnailPanel pControl=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-			pControl.ShowBigIcons( currentView == View.VIEW_AS_LARGEICONS );
+			GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+			if ( _MapSettings.ViewAs== (int)View.VIEW_AS_LARGEICONS )
+			{
+				pControl.View=GUIFacadeControl.ViewMode.LargeIcons;
+			}
+			else if (_MapSettings.ViewAs== (int)View.VIEW_AS_ICONS)
+			{
+				pControl.View=GUIFacadeControl.ViewMode.SmallIcons;
+			}
+			else if (_MapSettings.ViewAs== (int)View.VIEW_AS_LIST)
+			{
+				pControl.View=GUIFacadeControl.ViewMode.List;
+			}
+			else if (_MapSettings.ViewAs== (int)View.VIEW_AS_FILMSTRIP)
+			{
+				pControl.View=GUIFacadeControl.ViewMode.Filmstrip;
+			}
 			if (iItem>-1)
 			{
-				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST,iItem);
-				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS,iItem);
+				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_VIEW,iItem);
 			}
 			UpdateButtons();
 		}
@@ -565,8 +572,7 @@ namespace WindowPlugins.GUIPrograms
 		void UpdateListControl()
 		{
 			int TotalItems = 0;
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST ); 
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS );
+			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_VIEW);
 			if (isBackButtonNecessary())
 			{
 				ProgramUtils.AddBackButton();
@@ -587,8 +593,7 @@ namespace WindowPlugins.GUIPrograms
 
 			if (m_iItemSelected>=0)
 			{
-				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iItemSelected);
-				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_THUMBS,m_iItemSelected);
+				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
 			}
 		}
 
@@ -624,39 +629,38 @@ namespace WindowPlugins.GUIPrograms
 					}
 					gli.MusicTag = app;
 					gli.IsFolder = true; // pseudo-folder....
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
+					gli.OnItemSelected +=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnItemSelected);
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,gli);
 				}
 			}
 			return(Total);
 		}
 
 
+		private void OnItemSelected(GUIListItem item, GUIControl parent)
+		{
+			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
+			if (filmstrip==null) return;
+			string thumbName = "";
+			if ((item.ThumbnailImage != GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png")
+				  && (item.ThumbnailImage != ""))
+			{
+				// only show big thumb if there is really one....
+				thumbName = item.ThumbnailImage;
+			}
+			filmstrip.InfoImageFileName= thumbName;
+		}
+
 		private GUIListItem GetSelectedItem()
 		{
-			int iControl;
-			if (currentView != View.VIEW_AS_LIST )
-			{
-				iControl=(int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl=(int)Controls.CONTROL_LIST;
-			GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
+			GUIListItem item = GUIControl.GetSelectedListItem(GetID,(int)Controls.CONTROL_VIEW);
 			return item;
 		}
 
 
 		int GetSelectedItemNo()
 		{
-			int iControl;
-			if (currentView != View.VIEW_AS_LIST )
-			{
-				iControl=(int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl=(int)Controls.CONTROL_LIST;
-
-			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
+			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,(int)Controls.CONTROL_VIEW,0,0,null);
 			OnMessage(msg);         
 			int iItem=(int)msg.Param1;
 			return iItem;

@@ -111,13 +111,27 @@ namespace ProgramsDatabase
 				
 				if (file.Label != ProgramUtils.cBackLabel)
 				{
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,file);
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,file);
+					file.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(file_OnItemSelected);
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,file);
 					iTotalItems++;
 				}
 			}
 
 			return iTotalItems;
+		}
+
+		private void file_OnItemSelected(GUIListItem item, GUIControl parent)
+		{
+			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
+			if (filmstrip==null) return;
+			string thumbName = "";
+			if ((item.ThumbnailImage != GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png")
+				&& (item.ThumbnailImage != ""))
+			{
+				// only show big thumb if there is really one....
+				thumbName = item.ThumbnailImage;
+			}
+			filmstrip.InfoImageFileName= thumbName;
 		}
 
 
@@ -207,19 +221,17 @@ namespace ProgramsDatabase
 			// no info screen for directory items
 		}
 
-		override public void OnSort(GUIListControl list, GUIThumbnailPanel panel)
+		override public void OnSort(GUIFacadeControl view)
 		{
 			// todo: polymorph it! pc => dbPc
 			pc.updateState();
-			list.Sort(pc);
-			panel.Sort(pc);
+			view.Sort(pc);
 		}
 
-		override public void OnSortToggle(GUIListControl list, GUIThumbnailPanel panel)
+		override public void OnSortToggle(GUIFacadeControl view)
 		{
 			pc.bAsc = (!pc.bAsc);
-			list.Sort(pc);
-			panel.Sort(pc);
+			view.Sort(pc);
 		}
 
 		override public string CurrentSortTitle()

@@ -304,9 +304,17 @@ namespace Programs.Utils
 			gliBack.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBack.png";
 			gliBack.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBack.png";
 			gliBack.IsFolder = true;
-			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gliBack);
-			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gliBack);
+			gliBack.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(gliBack_OnItemSelected);
+			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,gliBack);
 		}
+
+		static private void gliBack_OnItemSelected(GUIListItem item, GUIControl parent)
+		{
+			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
+			if (filmstrip==null) return;
+			filmstrip.InfoImageFileName=""; // clear filmstrip image if back button is selected
+		}
+
 
 		static public string GetAvailableExtensions(string curDirectory)
 		{
