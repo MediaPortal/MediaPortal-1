@@ -59,9 +59,9 @@
 		<description>progress control</description> 
 		<type>progress</type> 
 		<id>20</id> 
-		<posX>200</posX> 
-		<posY>345</posY>
-		<width>370</width> 
+		<posX>195</posX> 
+		<posY>325</posY>
+		<width>367</width> 
 		<height>25</height>
 		<visible>no</visible> 
 	</control>
