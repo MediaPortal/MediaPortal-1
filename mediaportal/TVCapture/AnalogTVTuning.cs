@@ -21,6 +21,11 @@ namespace MediaPortal.TV.Recording
 		}
 		#region ITuning Members
 
+		public void Stop()
+		{
+			timer1.Enabled=false;
+			captureCard.DeleteGraph();
+		}
 		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
 			callback.OnEnded();

@@ -75,5 +75,7 @@ namespace MediaPortal.TV.Recording
 		/// The method should store all info for the current tuned channel in the database
 		/// </summary>
 		int  MapToChannel(string channel);
+
+		void Stop();
 	}
 }

@@ -173,6 +173,7 @@ namespace MediaPortal
 			this.Name = "AnalogTVTuningForm";
 			this.Text = "Find all TV channels";
 			this.Load += new System.EventHandler(this.AnalogTVTuningForm_Load);
+			this.Closed += new System.EventHandler(this.AnalogTVTuningForm_Closed);
 			this.ResumeLayout(false);
 
 		}
@@ -336,6 +337,16 @@ namespace MediaPortal
 					return number;
 				}
 			}
+		}
+
+		private void AnalogTVTuningForm_Closed(object sender, System.EventArgs e)
+		{
+			try
+			{
+				if (tuningInterface==null) return;
+				tuningInterface.Stop();		
+			}
+			catch (Exception){}
 		}
 	}
 }
