@@ -48,6 +48,7 @@ namespace MediaPortal.TV.Database
     /// <returns>DateTime object containing the date/time</returns>
     DateTime longtodate(long ldate)
     {
+      if (ldate<=0) return DateTime.MinValue;
       int year,month,day,hour,minute,sec;
       sec=(int)(ldate%100L); ldate /=100L;
       minute=(int)(ldate%100L); ldate /=100L;
@@ -55,8 +56,21 @@ namespace MediaPortal.TV.Database
       day=(int)(ldate%100L); ldate /=100L;
       month=(int)(ldate%100L); ldate /=100L;
       year=(int)ldate;
-      DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
-      return dt;
+      if (day < 0 || day > 31) return DateTime.MinValue;
+      if (month < 0 || month > 12) return DateTime.MinValue;
+      if (year < 1900 || year > 2100) return DateTime.MinValue;
+      if (sec<0 || sec>59) return DateTime.MinValue;
+      if (minute<0 || minute>59) return DateTime.MinValue;
+      if (hour<0 || hour>23) return DateTime.MinValue;
+      try
+      {
+        DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
+        return dt;
+      }
+      catch(Exception)
+      {
+      }
+      return DateTime.MinValue;
     }
 
     /// <summary>
