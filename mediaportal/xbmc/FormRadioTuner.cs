@@ -76,123 +76,123 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FormRadioTuner));
-      this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.label1 = new System.Windows.Forms.Label();
-      this.labelCurrentChannel = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.labelTotal = new System.Windows.Forms.Label();
-      this.btnCancel = new System.Windows.Forms.Button();
-      this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.labelFreq = new System.Windows.Forms.Label();
-      this.trackBar1 = new System.Windows.Forms.TrackBar();
-      this.label3 = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-      this.SuspendLayout();
-      // 
-      // progressBar1
-      // 
-      this.progressBar1.Location = new System.Drawing.Point(16, 56);
-      this.progressBar1.Maximum = 300;
-      this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(424, 16);
-      this.progressBar1.Step = 1;
-      this.progressBar1.TabIndex = 0;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(24, 8);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(56, 16);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Channel:";
-      // 
-      // labelCurrentChannel
-      // 
-      this.labelCurrentChannel.Location = new System.Drawing.Point(80, 8);
-      this.labelCurrentChannel.Name = "labelCurrentChannel";
-      this.labelCurrentChannel.Size = new System.Drawing.Size(48, 16);
-      this.labelCurrentChannel.TabIndex = 2;
-      this.labelCurrentChannel.Text = "0";
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(176, 8);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(104, 16);
-      this.label2.TabIndex = 3;
-      this.label2.Text = "Channels found:";
-      // 
-      // labelTotal
-      // 
-      this.labelTotal.Location = new System.Drawing.Point(272, 8);
-      this.labelTotal.Name = "labelTotal";
-      this.labelTotal.Size = new System.Drawing.Size(112, 16);
-      this.labelTotal.TabIndex = 4;
-      this.labelTotal.Text = "0";
-      // 
-      // btnCancel
-      // 
-      this.btnCancel.Location = new System.Drawing.Point(384, 128);
-      this.btnCancel.Name = "btnCancel";
-      this.btnCancel.Size = new System.Drawing.Size(64, 23);
-      this.btnCancel.TabIndex = 5;
-      this.btnCancel.Text = "Cancel";
-      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-      // 
-      // timer1
-      // 
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
-      // labelFreq
-      // 
-      this.labelFreq.Location = new System.Drawing.Point(80, 32);
-      this.labelFreq.Name = "labelFreq";
-      this.labelFreq.Size = new System.Drawing.Size(96, 16);
-      this.labelFreq.TabIndex = 6;
-      this.labelFreq.Text = "label3";
-      // 
-      // trackBar1
-      // 
-      this.trackBar1.Location = new System.Drawing.Point(80, 104);
-      this.trackBar1.Minimum = 1;
-      this.trackBar1.Name = "trackBar1";
-      this.trackBar1.Size = new System.Drawing.Size(208, 42);
-      this.trackBar1.TabIndex = 8;
-      this.trackBar1.Value = 1;
-      this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(16, 104);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(64, 16);
-      this.label3.TabIndex = 9;
-      this.label3.Text = "Sensitivity:";
-      // 
-      // FormRadioTuner
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(464, 165);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.trackBar1);
-      this.Controls.Add(this.labelFreq);
-      this.Controls.Add(this.btnCancel);
-      this.Controls.Add(this.labelTotal);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.labelCurrentChannel);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.progressBar1);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "FormRadioTuner";
-      this.Text = "FormRadioTuner";
-      this.Closing += new System.ComponentModel.CancelEventHandler(this.FormRadioTuner_Closing);
-      this.Load += new System.EventHandler(this.FormRadioTuner_Load);
-      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-      this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FormRadioTuner));
+			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.label1 = new System.Windows.Forms.Label();
+			this.labelCurrentChannel = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.labelTotal = new System.Windows.Forms.Label();
+			this.btnCancel = new System.Windows.Forms.Button();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.labelFreq = new System.Windows.Forms.Label();
+			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.label3 = new System.Windows.Forms.Label();
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// progressBar1
+			// 
+			this.progressBar1.Location = new System.Drawing.Point(16, 56);
+			this.progressBar1.Maximum = 300;
+			this.progressBar1.Name = "progressBar1";
+			this.progressBar1.Size = new System.Drawing.Size(424, 16);
+			this.progressBar1.Step = 1;
+			this.progressBar1.TabIndex = 0;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(24, 8);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(56, 16);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Channel:";
+			// 
+			// labelCurrentChannel
+			// 
+			this.labelCurrentChannel.Location = new System.Drawing.Point(80, 8);
+			this.labelCurrentChannel.Name = "labelCurrentChannel";
+			this.labelCurrentChannel.Size = new System.Drawing.Size(48, 16);
+			this.labelCurrentChannel.TabIndex = 2;
+			this.labelCurrentChannel.Text = "0";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(176, 8);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(104, 16);
+			this.label2.TabIndex = 3;
+			this.label2.Text = "Channels found:";
+			// 
+			// labelTotal
+			// 
+			this.labelTotal.Location = new System.Drawing.Point(272, 8);
+			this.labelTotal.Name = "labelTotal";
+			this.labelTotal.Size = new System.Drawing.Size(112, 16);
+			this.labelTotal.TabIndex = 4;
+			this.labelTotal.Text = "0";
+			// 
+			// btnCancel
+			// 
+			this.btnCancel.Location = new System.Drawing.Point(384, 128);
+			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(64, 23);
+			this.btnCancel.TabIndex = 1;
+			this.btnCancel.Text = "Cancel";
+			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			// 
+			// timer1
+			// 
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
+			// labelFreq
+			// 
+			this.labelFreq.Location = new System.Drawing.Point(80, 32);
+			this.labelFreq.Name = "labelFreq";
+			this.labelFreq.Size = new System.Drawing.Size(96, 16);
+			this.labelFreq.TabIndex = 6;
+			this.labelFreq.Text = "label3";
+			// 
+			// trackBar1
+			// 
+			this.trackBar1.Location = new System.Drawing.Point(80, 104);
+			this.trackBar1.Minimum = 1;
+			this.trackBar1.Name = "trackBar1";
+			this.trackBar1.Size = new System.Drawing.Size(208, 45);
+			this.trackBar1.TabIndex = 0;
+			this.trackBar1.Value = 1;
+			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(16, 104);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(64, 16);
+			this.label3.TabIndex = 9;
+			this.label3.Text = "Sensitivity:";
+			// 
+			// FormRadioTuner
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(464, 165);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this.trackBar1);
+			this.Controls.Add(this.labelFreq);
+			this.Controls.Add(this.btnCancel);
+			this.Controls.Add(this.labelTotal);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this.labelCurrentChannel);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.progressBar1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "FormRadioTuner";
+			this.Text = "FormRadioTuner";
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormRadioTuner_Closing);
+			this.Load += new System.EventHandler(this.FormRadioTuner_Load);
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+			this.ResumeLayout(false);
 
-    }
+		}
     #endregion
 
     private void timer1_Tick(object sender, System.EventArgs e)

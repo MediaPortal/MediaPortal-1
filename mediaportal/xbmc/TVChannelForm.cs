@@ -124,25 +124,25 @@ namespace MediaPortal
 			// 
 			// buttonOK
 			// 
-			this.buttonOK.Location = new System.Drawing.Point(208, 256);
+			this.buttonOK.Location = new System.Drawing.Point(248, 232);
 			this.buttonOK.Name = "buttonOK";
-			this.buttonOK.Size = new System.Drawing.Size(48, 23);
-			this.buttonOK.TabIndex = 3;
+			this.buttonOK.Size = new System.Drawing.Size(56, 23);
+			this.buttonOK.TabIndex = 2;
 			this.buttonOK.Text = "OK";
 			this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Location = new System.Drawing.Point(144, 256);
+			this.buttonCancel.Location = new System.Drawing.Point(248, 264);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(56, 23);
-			this.buttonCancel.TabIndex = 2;
+			this.buttonCancel.TabIndex = 3;
 			this.buttonCancel.Text = "Cancel";
 			this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
 			// 
 			// txtBoxFreq
 			// 
-			this.txtBoxFreq.Location = new System.Drawing.Point(96, 224);
+			this.txtBoxFreq.Location = new System.Drawing.Point(96, 208);
 			this.txtBoxFreq.Name = "txtBoxFreq";
 			this.txtBoxFreq.TabIndex = 1;
 			this.txtBoxFreq.Text = "";
@@ -189,7 +189,7 @@ namespace MediaPortal
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(24, 232);
+			this.label9.Location = new System.Drawing.Point(24, 224);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(48, 16);
 			this.label9.TabIndex = 18;
@@ -197,7 +197,7 @@ namespace MediaPortal
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(24, 216);
+			this.label10.Location = new System.Drawing.Point(24, 208);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(64, 16);
 			this.label10.TabIndex = 17;
@@ -205,7 +205,7 @@ namespace MediaPortal
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(208, 224);
+			this.label2.Location = new System.Drawing.Point(208, 208);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(40, 16);
 			this.label2.TabIndex = 19;
@@ -214,7 +214,7 @@ namespace MediaPortal
 			// TVChannelForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(296, 301);
+			this.ClientSize = new System.Drawing.Size(320, 302);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.label10);

@@ -195,7 +195,7 @@ namespace MediaPortal
 			this.comboVideoCodec.Location = new System.Drawing.Point(128, 64);
 			this.comboVideoCodec.Name = "comboVideoCodec";
 			this.comboVideoCodec.Size = new System.Drawing.Size(248, 21);
-			this.comboVideoCodec.TabIndex = 2;
+			this.comboVideoCodec.TabIndex = 1;
 			// 
 			// label4
 			// 
@@ -210,15 +210,15 @@ namespace MediaPortal
 			this.comboAudioCodec.Location = new System.Drawing.Point(128, 104);
 			this.comboAudioCodec.Name = "comboAudioCodec";
 			this.comboAudioCodec.Size = new System.Drawing.Size(248, 21);
-			this.comboAudioCodec.TabIndex = 3;
+			this.comboAudioCodec.TabIndex = 2;
 			// 
 			// buttonOK
 			// 
-			this.buttonOK.Location = new System.Drawing.Point(544, 320);
+			this.buttonOK.Location = new System.Drawing.Point(520, 288);
 			this.buttonOK.Name = "buttonOK";
 			this.buttonOK.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.buttonOK.Size = new System.Drawing.Size(40, 23);
-			this.buttonOK.TabIndex = 8;
+			this.buttonOK.Size = new System.Drawing.Size(56, 23);
+			this.buttonOK.TabIndex = 6;
 			this.buttonOK.Text = "Ok";
 			this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
 			// 
@@ -226,10 +226,10 @@ namespace MediaPortal
 			// 
 			this.listFilters.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																									this.columnHeader1});
-			this.listFilters.Location = new System.Drawing.Point(24, 184);
+			this.listFilters.Location = new System.Drawing.Point(24, 152);
 			this.listFilters.Name = "listFilters";
-			this.listFilters.Size = new System.Drawing.Size(352, 128);
-			this.listFilters.TabIndex = 4;
+			this.listFilters.Size = new System.Drawing.Size(352, 144);
+			this.listFilters.TabIndex = 8;
 			this.listFilters.View = System.Windows.Forms.View.Details;
 			this.listFilters.DoubleClick += new System.EventHandler(this.listFilters_DoubleClick);
 			// 
@@ -243,7 +243,7 @@ namespace MediaPortal
 			this.checkBoxTV.Location = new System.Drawing.Point(416, 56);
 			this.checkBoxTV.Name = "checkBoxTV";
 			this.checkBoxTV.Size = new System.Drawing.Size(136, 24);
-			this.checkBoxTV.TabIndex = 5;
+			this.checkBoxTV.TabIndex = 3;
 			this.checkBoxTV.Text = "Use for watching TV";
 			// 
 			// checkBoxRecord
@@ -251,7 +251,7 @@ namespace MediaPortal
 			this.checkBoxRecord.Location = new System.Drawing.Point(416, 80);
 			this.checkBoxRecord.Name = "checkBoxRecord";
 			this.checkBoxRecord.Size = new System.Drawing.Size(120, 24);
-			this.checkBoxRecord.TabIndex = 6;
+			this.checkBoxRecord.TabIndex = 4;
 			this.checkBoxRecord.Text = "Use for recording";
 			// 
 			// groupBox1
@@ -265,7 +265,7 @@ namespace MediaPortal
 			// 
 			// btnCancel
 			// 
-			this.btnCancel.Location = new System.Drawing.Point(464, 320);
+			this.btnCancel.Location = new System.Drawing.Point(520, 320);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(56, 23);
 			this.btnCancel.TabIndex = 7;
@@ -277,17 +277,17 @@ namespace MediaPortal
 			this.comboFrameSize.Location = new System.Drawing.Point(432, 224);
 			this.comboFrameSize.Name = "comboFrameSize";
 			this.comboFrameSize.Size = new System.Drawing.Size(112, 21);
-			this.comboFrameSize.TabIndex = 16;
+			this.comboFrameSize.TabIndex = 5;
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this.textBoxFrameRate);
 			this.groupBox2.Controls.Add(this.label6);
 			this.groupBox2.Controls.Add(this.label5);
-			this.groupBox2.Location = new System.Drawing.Point(400, 192);
+			this.groupBox2.Location = new System.Drawing.Point(400, 136);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(176, 120);
-			this.groupBox2.TabIndex = 17;
+			this.groupBox2.TabIndex = 10;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Size/Rate";
 			// 
@@ -296,7 +296,7 @@ namespace MediaPortal
 			this.textBoxFrameRate.Location = new System.Drawing.Point(32, 88);
 			this.textBoxFrameRate.Name = "textBoxFrameRate";
 			this.textBoxFrameRate.Size = new System.Drawing.Size(64, 20);
-			this.textBoxFrameRate.TabIndex = 2;
+			this.textBoxFrameRate.TabIndex = 0;
 			this.textBoxFrameRate.Text = "";
 			// 
 			// label6
@@ -317,9 +317,9 @@ namespace MediaPortal
 			// 
 			// buttonSetupFilter
 			// 
-			this.buttonSetupFilter.Location = new System.Drawing.Point(24, 320);
+			this.buttonSetupFilter.Location = new System.Drawing.Point(24, 304);
 			this.buttonSetupFilter.Name = "buttonSetupFilter";
-			this.buttonSetupFilter.TabIndex = 18;
+			this.buttonSetupFilter.TabIndex = 9;
 			this.buttonSetupFilter.Text = "Setup Filter";
 			this.buttonSetupFilter.Click += new System.EventHandler(this.buttonSetupFilter_Click);
 			// 

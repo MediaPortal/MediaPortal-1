@@ -137,7 +137,7 @@ namespace MediaPortal
 			this.textBoxArgs.Location = new System.Drawing.Point(32, 152);
 			this.textBoxArgs.Name = "textBoxArgs";
 			this.textBoxArgs.Size = new System.Drawing.Size(304, 20);
-			this.textBoxArgs.TabIndex = 4;
+			this.textBoxArgs.TabIndex = 1;
 			this.textBoxArgs.Text = "";
 			// 
 			// label2
@@ -162,7 +162,7 @@ namespace MediaPortal
 			this.textBoxPlayer.Location = new System.Drawing.Point(32, 96);
 			this.textBoxPlayer.Name = "textBoxPlayer";
 			this.textBoxPlayer.Size = new System.Drawing.Size(304, 20);
-			this.textBoxPlayer.TabIndex = 1;
+			this.textBoxPlayer.TabIndex = 0;
 			this.textBoxPlayer.Text = "";
 			// 
 			// label1
@@ -194,7 +194,7 @@ namespace MediaPortal
 			this.btnOK.Location = new System.Drawing.Point(392, 256);
 			this.btnOK.Name = "btnOK";
 			this.btnOK.Size = new System.Drawing.Size(40, 23);
-			this.btnOK.TabIndex = 1;
+			this.btnOK.TabIndex = 0;
 			this.btnOK.Text = "OK";
 			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
 			// 

@@ -112,19 +112,19 @@ namespace MediaPortal
 			// 
 			// buttonOK
 			// 
-			this.buttonOK.Location = new System.Drawing.Point(232, 248);
+			this.buttonOK.Location = new System.Drawing.Point(240, 240);
 			this.buttonOK.Name = "buttonOK";
-			this.buttonOK.Size = new System.Drawing.Size(48, 23);
-			this.buttonOK.TabIndex = 4;
+			this.buttonOK.Size = new System.Drawing.Size(56, 23);
+			this.buttonOK.TabIndex = 3;
 			this.buttonOK.Text = "OK";
 			this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Location = new System.Drawing.Point(168, 248);
+			this.buttonCancel.Location = new System.Drawing.Point(240, 272);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(56, 23);
-			this.buttonCancel.TabIndex = 3;
+			this.buttonCancel.TabIndex = 4;
 			this.buttonCancel.Text = "Cancel";
 			this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
 			// 
@@ -210,7 +210,7 @@ namespace MediaPortal
 			// TVChannelFormNew
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(304, 285);
+			this.ClientSize = new System.Drawing.Size(320, 310);
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.label8);

@@ -3604,7 +3604,7 @@ namespace MediaPortal
           string strNumber=listTVChannels.Items[i].SubItems[1].Text;
           string strFreq=listTVChannels.Items[i].SubItems[2].Text;
           int iNumber=GetInt(strNumber);
-          if (iNumber <254)
+          if (iNumber <1000)
           {
             int iChanNumber=GetInt(strNumber);
             if (iChanNumber==0)
@@ -3880,7 +3880,7 @@ namespace MediaPortal
           string strNumber=listTVChannels.Items[i].SubItems[1].Text;
           string strFreq=listTVChannels.Items[i].SubItems[2].Text;
           int iNumber=GetInt(strNumber);
-          if (iNumber <254)
+          if (iNumber <1000)
           {
             long lFreq=0;
             double dTmp=2.50;
@@ -3976,7 +3976,7 @@ namespace MediaPortal
           newItem = listTVChannels.Items.Add(chan.Name);
           newItem.SubItems.Add(chan.Number.ToString());
           double dFreq=(double)chan.Frequency;
-          if (chan.Number>=254) dFreq=0;
+          if (chan.Number>=1000) dFreq=0;
           dFreq /=1000000d;
 					dFreq =Math.Round(dFreq,3);
           string strFreq=dFreq.ToString();
@@ -4011,7 +4011,7 @@ namespace MediaPortal
       try
       {
         int iChannel=Int32.Parse(item.SubItems[1].Text);
-        if (iChannel<254)
+        if (iChannel<1000)
         {
           TVChannelForm dlg= new TVChannelForm();
           dlg.Channel = (string)item.SubItems[0].Text;
@@ -4197,7 +4197,7 @@ namespace MediaPortal
 				string strTagChan=String.Format("channel{0}",iChan);
 				try
 				{
-					if (chan.Number <254)
+					if (chan.Number <1000)
 					{
             if (chan.Frequency>0)
             {

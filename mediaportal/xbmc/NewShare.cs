@@ -56,89 +56,89 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(formNewShare));
-      this.label1 = new System.Windows.Forms.Label();
-      this.shareName = new System.Windows.Forms.TextBox();
-      this.textBox1 = new System.Windows.Forms.TextBox();
-      this.Folder = new System.Windows.Forms.Label();
-      this.btnSelectFolder = new System.Windows.Forms.Button();
-      this.btnCancel = new System.Windows.Forms.Button();
-      this.btnAdd = new System.Windows.Forms.Button();
-      this.SuspendLayout();
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(16, 16);
-      this.label1.Name = "label1";
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Name";
-      // 
-      // shareName
-      // 
-      this.shareName.Location = new System.Drawing.Point(64, 16);
-      this.shareName.Name = "shareName";
-      this.shareName.TabIndex = 0;
-      this.shareName.Text = "";
-      // 
-      // textBox1
-      // 
-      this.textBox1.Location = new System.Drawing.Point(64, 48);
-      this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(264, 20);
-      this.textBox1.TabIndex = 1;
-      this.textBox1.Text = "";
-      // 
-      // Folder
-      // 
-      this.Folder.Location = new System.Drawing.Point(16, 48);
-      this.Folder.Name = "Folder";
-      this.Folder.Size = new System.Drawing.Size(40, 23);
-      this.Folder.TabIndex = 3;
-      this.Folder.Text = "Folder";
-      // 
-      // btnSelectFolder
-      // 
-      this.btnSelectFolder.Location = new System.Drawing.Point(344, 48);
-      this.btnSelectFolder.Name = "btnSelectFolder";
-      this.btnSelectFolder.Size = new System.Drawing.Size(32, 23);
-      this.btnSelectFolder.TabIndex = 2;
-      this.btnSelectFolder.Text = "...";
-      this.btnSelectFolder.Click += new System.EventHandler(this.btnSelectFolder_Click);
-      // 
-      // btnCancel
-      // 
-      this.btnCancel.Location = new System.Drawing.Point(208, 88);
-      this.btnCancel.Name = "btnCancel";
-      this.btnCancel.TabIndex = 3;
-      this.btnCancel.Text = "Cancel";
-      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-      // 
-      // btnAdd
-      // 
-      this.btnAdd.Location = new System.Drawing.Point(304, 88);
-      this.btnAdd.Name = "btnAdd";
-      this.btnAdd.TabIndex = 4;
-      this.btnAdd.Text = "Add";
-      this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-      // 
-      // formNewShare
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(392, 125);
-      this.Controls.Add(this.btnAdd);
-      this.Controls.Add(this.btnCancel);
-      this.Controls.Add(this.btnSelectFolder);
-      this.Controls.Add(this.Folder);
-      this.Controls.Add(this.textBox1);
-      this.Controls.Add(this.shareName);
-      this.Controls.Add(this.label1);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "formNewShare";
-      this.Text = "Select folder";
-      this.Load += new System.EventHandler(this.formNewShare_Load);
-      this.ResumeLayout(false);
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(formNewShare));
+			this.label1 = new System.Windows.Forms.Label();
+			this.shareName = new System.Windows.Forms.TextBox();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.Folder = new System.Windows.Forms.Label();
+			this.btnSelectFolder = new System.Windows.Forms.Button();
+			this.btnCancel = new System.Windows.Forms.Button();
+			this.btnAdd = new System.Windows.Forms.Button();
+			this.SuspendLayout();
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(16, 16);
+			this.label1.Name = "label1";
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Name";
+			// 
+			// shareName
+			// 
+			this.shareName.Location = new System.Drawing.Point(64, 16);
+			this.shareName.Name = "shareName";
+			this.shareName.TabIndex = 0;
+			this.shareName.Text = "";
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(64, 48);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(264, 20);
+			this.textBox1.TabIndex = 1;
+			this.textBox1.Text = "";
+			// 
+			// Folder
+			// 
+			this.Folder.Location = new System.Drawing.Point(16, 48);
+			this.Folder.Name = "Folder";
+			this.Folder.Size = new System.Drawing.Size(40, 23);
+			this.Folder.TabIndex = 3;
+			this.Folder.Text = "Folder";
+			// 
+			// btnSelectFolder
+			// 
+			this.btnSelectFolder.Location = new System.Drawing.Point(344, 48);
+			this.btnSelectFolder.Name = "btnSelectFolder";
+			this.btnSelectFolder.Size = new System.Drawing.Size(32, 23);
+			this.btnSelectFolder.TabIndex = 2;
+			this.btnSelectFolder.Text = "...";
+			this.btnSelectFolder.Click += new System.EventHandler(this.btnSelectFolder_Click);
+			// 
+			// btnCancel
+			// 
+			this.btnCancel.Location = new System.Drawing.Point(304, 120);
+			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.TabIndex = 4;
+			this.btnCancel.Text = "Cancel";
+			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			// 
+			// btnAdd
+			// 
+			this.btnAdd.Location = new System.Drawing.Point(304, 88);
+			this.btnAdd.Name = "btnAdd";
+			this.btnAdd.TabIndex = 3;
+			this.btnAdd.Text = "Add";
+			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+			// 
+			// formNewShare
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(400, 150);
+			this.Controls.Add(this.btnAdd);
+			this.Controls.Add(this.btnCancel);
+			this.Controls.Add(this.btnSelectFolder);
+			this.Controls.Add(this.Folder);
+			this.Controls.Add(this.textBox1);
+			this.Controls.Add(this.shareName);
+			this.Controls.Add(this.label1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "formNewShare";
+			this.Text = "Select folder";
+			this.Load += new System.EventHandler(this.formNewShare_Load);
+			this.ResumeLayout(false);
 
-    }
+		}
 		#endregion
 
     private void btnSelectFolder_Click(object sender, System.EventArgs e)

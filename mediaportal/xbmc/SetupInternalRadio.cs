@@ -61,13 +61,13 @@ namespace MediaPortal
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.radioAntenne = new System.Windows.Forms.RadioButton();
 			this.radioCable = new System.Windows.Forms.RadioButton();
 			this.label2 = new System.Windows.Forms.Label();
 			this.comboBoxRadioDevice = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
-			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -86,12 +86,20 @@ namespace MediaPortal
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Radio Tuner";
 			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(24, 24);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(344, 16);
+			this.label3.TabIndex = 5;
+			this.label3.Text = "Please note. Only the Hauppauge PVR 350 && USB2 are supported";
+			// 
 			// radioAntenne
 			// 
 			this.radioAntenne.Location = new System.Drawing.Point(40, 120);
 			this.radioAntenne.Name = "radioAntenne";
 			this.radioAntenne.Size = new System.Drawing.Size(104, 16);
-			this.radioAntenne.TabIndex = 4;
+			this.radioAntenne.TabIndex = 2;
 			this.radioAntenne.Text = "Antenna";
 			// 
 			// radioCable
@@ -99,7 +107,7 @@ namespace MediaPortal
 			this.radioCable.Location = new System.Drawing.Point(40, 104);
 			this.radioCable.Name = "radioCable";
 			this.radioCable.Size = new System.Drawing.Size(104, 16);
-			this.radioCable.TabIndex = 3;
+			this.radioCable.TabIndex = 1;
 			this.radioCable.Text = "Cable";
 			// 
 			// label2
@@ -115,7 +123,7 @@ namespace MediaPortal
 			this.comboBoxRadioDevice.Location = new System.Drawing.Point(72, 48);
 			this.comboBoxRadioDevice.Name = "comboBoxRadioDevice";
 			this.comboBoxRadioDevice.Size = new System.Drawing.Size(192, 21);
-			this.comboBoxRadioDevice.TabIndex = 1;
+			this.comboBoxRadioDevice.TabIndex = 0;
 			this.comboBoxRadioDevice.Text = "comboBox1";
 			// 
 			// label1
@@ -131,17 +139,9 @@ namespace MediaPortal
 			this.button1.Location = new System.Drawing.Point(352, 184);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(48, 23);
-			this.button1.TabIndex = 1;
+			this.button1.TabIndex = 0;
 			this.button1.Text = "OK";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(24, 24);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(344, 16);
-			this.label3.TabIndex = 5;
-			this.label3.Text = "Please note. Only the Hauppauge PVR 350 && USB2 are supported";
 			// 
 			// SetupInternalRadio
 			// 

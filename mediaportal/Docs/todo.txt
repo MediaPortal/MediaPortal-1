@@ -123,6 +123,8 @@ setup:
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
   - setup deinterlace method (vmr9)
+  - needs an OK button for saving, closing the dialog is not very intuitive
+  - all forms: enter should do same as OK key
 
 General:
   - volume control via remote

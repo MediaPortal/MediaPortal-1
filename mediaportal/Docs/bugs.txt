@@ -1,9 +1,9 @@
 Bugs left:
-  11-07-2004 my music   : cddb doesnt work anymore?
-  
+  11-07-2004 my music   : cddb doesnt work for some cds? (MrMario64 has more info)
+  11-07-2004 my music   : View by artists->select artist->takes 13 mins (musicdatabase line 669 takes sooo long)
+  11-07-2004 my music   : When you now enter the Album view there will be 2 (or more) times the album 'unknown'.  
   30-06-2004 my programs: returns to home when stopping a game
   29-06-2004 home       : scroll speed 9 / 10 are the same
-  27-06-2004 my TV      : some cards have 2 CVBS inputs
   
   27-06-2004 general    : The thumbnails for movies and artists are not always shown. 
                           this happens if the name of the artist in the tag 
