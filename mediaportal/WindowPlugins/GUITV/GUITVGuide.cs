@@ -2235,21 +2235,6 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
-			bool bRemoved;
-			do
-			{
-				bRemoved=false;
-				for (int iChan=0; iChan < m_channels.Count;++iChan)
-				{
-					TVChannel chan=(TVChannel)m_channels[iChan];
-					if ( (chan.Number>= (int)ExternalInputs.svhs && !chan.External) || !chan.VisibleInGuide)
-					{
-						m_channels.RemoveAt(iChan);
-						bRemoved=true;
-						break;
-					}
-				}
-			} while (bRemoved==true);
 			if (m_channels.Count==0)
 			{
 				TVChannel newChannel = new TVChannel();
