@@ -101,6 +101,7 @@
 				<width>128</width>
 				<height>128</height>
 				<texture>thumbs\ars_article.png</texture>
+				<keepaspectratio>yes</keepaspectratio>				
 			</control>
 		</control>
 		<control>
