@@ -255,7 +255,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(526, 414);
+      this.cancelButton.Location = new System.Drawing.Point(534, 430);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "&Cancel";
@@ -265,7 +265,7 @@ namespace MediaPortal.Configuration
       // 
       this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.nextButton.Location = new System.Drawing.Point(441, 414);
+      this.nextButton.Location = new System.Drawing.Point(449, 430);
       this.nextButton.Name = "nextButton";
       this.nextButton.TabIndex = 4;
       this.nextButton.Text = "&Next >";
@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration
       // 
       this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.backButton.Location = new System.Drawing.Point(363, 414);
+      this.backButton.Location = new System.Drawing.Point(371, 430);
       this.backButton.Name = "backButton";
       this.backButton.TabIndex = 5;
       this.backButton.Text = "< &Back";
@@ -290,7 +290,7 @@ namespace MediaPortal.Configuration
       this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
       this.topPanel.Location = new System.Drawing.Point(0, 0);
       this.topPanel.Name = "topPanel";
-      this.topPanel.Size = new System.Drawing.Size(610, 72);
+      this.topPanel.Size = new System.Drawing.Size(618, 72);
       this.topPanel.TabIndex = 6;
       // 
       // pictureBox1
@@ -326,7 +326,7 @@ namespace MediaPortal.Configuration
       this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
       this.panel1.Location = new System.Drawing.Point(0, 72);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(610, 1);
+      this.panel1.Size = new System.Drawing.Size(618, 1);
       this.panel1.TabIndex = 7;
       // 
       // panel2
@@ -335,30 +335,30 @@ namespace MediaPortal.Configuration
       this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
       this.panel2.Location = new System.Drawing.Point(0, 73);
       this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(610, 1);
+      this.panel2.Size = new System.Drawing.Size(618, 1);
       this.panel2.TabIndex = 9;
       // 
       // holderPanel
       // 
       this.holderPanel.Location = new System.Drawing.Point(0, 74);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(610, 327);
+      this.holderPanel.Size = new System.Drawing.Size(616, 342);
       this.holderPanel.TabIndex = 10;
       // 
       // panel3
       // 
       this.panel3.BackColor = System.Drawing.SystemColors.ControlDark;
-      this.panel3.Location = new System.Drawing.Point(0, 400);
+      this.panel3.Location = new System.Drawing.Point(0, 416);
       this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(616, 1);
+      this.panel3.Size = new System.Drawing.Size(618, 1);
       this.panel3.TabIndex = 11;
       // 
       // panel4
       // 
       this.panel4.BackColor = System.Drawing.SystemColors.ControlLightLight;
-      this.panel4.Location = new System.Drawing.Point(0, 401);
+      this.panel4.Location = new System.Drawing.Point(0, 417);
       this.panel4.Name = "panel4";
-      this.panel4.Size = new System.Drawing.Size(616, 1);
+      this.panel4.Size = new System.Drawing.Size(618, 1);
       this.panel4.TabIndex = 12;
       // 
       // WizardForm
@@ -366,7 +366,7 @@ namespace MediaPortal.Configuration
       this.AcceptButton = this.nextButton;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(610, 448);
+      this.ClientSize = new System.Drawing.Size(618, 464);
       this.Controls.Add(this.panel4);
       this.Controls.Add(this.panel3);
       this.Controls.Add(this.holderPanel);
