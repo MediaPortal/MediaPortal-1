@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 
 namespace MediaPortal
 {
@@ -366,7 +367,12 @@ namespace MediaPortal
             break;
           case 0x24://DVD menu
             if (header.hid.RawData3==0)
-              action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+            {
+              if (g_Player.Playing && g_Player.IsDVD)
+              {
+                action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+              }
+            }
             else if (header.hid.RawData3==2)
             {
               Log.Write("key=27");
@@ -431,10 +437,16 @@ namespace MediaPortal
             action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
             break;
           case 0xB5: //next
-            action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
+            if (g_Player.Player.Playing && g_Player.IsDVD)
+              action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+            else
+              action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
             break;
           case 0xb6: //previous
-            action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
+            if (g_Player.Player.Playing && g_Player.IsDVD)
+              action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+            else
+              action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
             break;
           case 0xb7: //stop
             action=new Action(Action.ActionType.ACTION_STOP,0,0);
