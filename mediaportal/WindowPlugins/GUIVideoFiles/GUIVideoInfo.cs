@@ -355,9 +355,10 @@ namespace MediaPortal.GUI.Video
 
 					if (iControl==(int)Controls.CONTROL_PLAY)
 					{
+						int id=m_movie.ID;
 						Close();
-						GUIVideoTitle.PlayMovie(m_movie.ID);
-						return;
+						GUIVideoTitle.PlayMovie(id);
+						return true;
 					}
         }
         break;
