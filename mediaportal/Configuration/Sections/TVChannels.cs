@@ -1198,6 +1198,8 @@ namespace MediaPortal.Configuration.Sections
 				{
 					TVGroup group = editgroup.Group;
 					listItem.Tag = group;
+					TVDatabase.DeleteGroup(group);
+					group.ID=-1;
 					
 					string pincode="No";
 					if (group.Pincode!=0)
@@ -1205,6 +1207,7 @@ namespace MediaPortal.Configuration.Sections
 
 					listItem.SubItems[0].Text = group.GroupName;
 					listItem.SubItems[1].Text = pincode;
+					TVDatabase.AddGroup(group);
 
 					SaveTVChannels();
 					SaveGroups();
