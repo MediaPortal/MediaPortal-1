@@ -830,8 +830,11 @@ namespace MediaPortal.Configuration
 					cardComboBox.SelectedItem = card.VideoDevice;
           audioDeviceComboBox.SelectedItem  = card.AudioDevice          ;
 					useRecordingCheckBox.Checked = card.UseForRecording;
-					useWatchingCheckBox.Checked = card.UseForTV;
+          useWatchingCheckBox.Checked = card.UseForTV;
+          frameRateTextBox.Text = card.FrameRate.ToString();
           trackRecording.Value=card.RecordingLevel  ;
+          comboBoxLineInput.Text = card.AudioInputPin;
+
           trackRecording_ValueChanged(null,null);
           Capture capture = CreateCaptureDevice();
 
@@ -850,7 +853,6 @@ namespace MediaPortal.Configuration
               }
               ++i;
             }
-            frameRateTextBox.Text = card.FrameRate.ToString();
 
 //            for (int x=0; x < comboBoxLineInput.Items.Count;++x)
 //            {
@@ -861,7 +863,6 @@ namespace MediaPortal.Configuration
 //                break;
 //              }
 //            }
-            comboBoxLineInput.Text = card.AudioInputPin;
 
             capture.Stop();
             capture.Dispose();
