@@ -17,8 +17,8 @@ namespace MediaPortal.TVGuideScheduler
 		public Grabber(string xmltvGrabberName)
 		{
 			m_strGrabberName = xmltvGrabberName;
-			SetDefaults(m_strGrabberName);
-			GetSettings();
+      GetSettings();
+      SetDefaults(m_strGrabberName);
 		}
 
 		public string GrabberName
@@ -107,6 +107,15 @@ namespace MediaPortal.TVGuideScheduler
 					m_intDays = 7;
 					m_intOffset = 0;
 					break;
+        case "tv_grab_it_lt":
+          m_strConfigFile = "tv_grab_it_lt.conf";
+          m_intDays = 7;
+          m_intOffset = 0;
+          if (m_strOptions.IndexOf("password",0)>0)
+          {
+            m_strOptions = m_strOptions + " " + m_strOutput + "tv_grab_it_lt_password.txt";
+          }
+          break;
         case "tv_grab_na_dd":
           m_strConfigFile = "tv_grab_na_dd.conf";
           m_intDays = 7;
@@ -134,19 +143,26 @@ namespace MediaPortal.TVGuideScheduler
 					break;
 				case "tv_grab_se":
 					m_strConfigFile = "tv_grab_se.conf";
-					m_intDays = 7;
+					m_intDays = 5;
 					m_intOffset = 0;
 					break;
-				case "tv_grab_uk_rt":
+        case "tv_grab_se_swedb":
+          m_strConfigFile = "tv_grab_se_swedb.conf";
+          m_intDays = 5;
+          m_intOffset = 0;
+          break;
+        case "tv_grab_uk_rt":
 					//    tv_grab_uk_rt [--config-file FILE] --configure
 					//    tv_grab_uk_rt [--config-file FILE] [--output FILE] [--days N] [--offset N] [--slow] [--limit-details HH:MM-HH:MM]
 					//                  [--get-categories] [--quiet]
 					m_strConfigFile = "tv_grab_uk_rt.conf";
-					m_intDays = 7;
+					m_intDays = 14;
 					m_intOffset = 0;
 					break;
 				case "tv_grab_uk_bleb":
-
+          m_strConfigFile = "tv_grab_uk_bleb.conf";
+          m_intDays = 7;
+          m_intOffset = 0;
 					break;
 			}
 		}
@@ -157,7 +173,7 @@ namespace MediaPortal.TVGuideScheduler
 			{
 				grabberOutput=xmlreader.GetValueAsString("xmltv", "folder","xmltv");
 				m_intGuidedays=xmlreader.GetValueAsInt("xmltv", "daystokeep",7);
-				m_strOptions=xmlreader.GetValueAsString("xmltv", "args","--quiet");
+				m_strOptions=xmlreader.GetValueAsString("xmltv", "args","");
 			}
 			m_strOutput= @System.IO.Path.GetFullPath(grabberOutput);
 

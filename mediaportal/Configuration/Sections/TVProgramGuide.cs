@@ -605,12 +605,15 @@ namespace MediaPortal.Configuration.Sections
       GrabbercomboBox.Items.Add("tv_grab_fr");
       GrabbercomboBox.Items.Add("tv_grab_huro");
       GrabbercomboBox.Items.Add("tv_grab_it");
+      GrabbercomboBox.Items.Add("tv_grab_it_lt");
       GrabbercomboBox.Items.Add("tv_grab_na_dd");
       GrabbercomboBox.Items.Add("tv_grab_nl");
       GrabbercomboBox.Items.Add("tv_grab_nl_wolf");
       GrabbercomboBox.Items.Add("tv_grab_no");
       GrabbercomboBox.Items.Add("tv_grab_pt");
       GrabbercomboBox.Items.Add("tv_grab_se");
+      GrabbercomboBox.Items.Add("tv_grab_se_swedb");
+      GrabbercomboBox.Items.Add("tv_grab_uk_bleb");
       GrabbercomboBox.Items.Add("tv_grab_uk_rt");
       GrabbercomboBox.Items.Add("TVguide.xml File");
     }
@@ -755,11 +758,13 @@ namespace MediaPortal.Configuration.Sections
 
       if(GrabbercomboBox.Text=="tv_grab_fi") 
         daysToKeepTextBox.Text="10";
+      else if(GrabbercomboBox.Text=="tv_grab_uk_rt") 
+        daysToKeepTextBox.Text="14";
       else if(GrabbercomboBox.Text=="tv_grab_huro") 
         daysToKeepTextBox.Text="8";
       else if((GrabbercomboBox.Text=="tv_grab_es")|(GrabbercomboBox.Text=="tv_grab_es_digital")|(GrabbercomboBox.Text=="tv_grab_pt")) 
         daysToKeepTextBox.Text="3";
-      else if(GrabbercomboBox.Text=="tv_grab_se") 
+      else if((GrabbercomboBox.Text=="tv_grab_se")|(GrabbercomboBox.Text=="tv_grab_se_swedb"))
         daysToKeepTextBox.Text="5";
       else 
         daysToKeepTextBox.Text="7";
@@ -796,7 +801,8 @@ namespace MediaPortal.Configuration.Sections
 			
       if(GrabbercomboBox.Text==("tv_grab_dk") | GrabbercomboBox.Text==("tv_grab_es") | GrabbercomboBox.Text==("tv_grab_es_digital")
         | GrabbercomboBox.Text==("tv_grab_fi") | GrabbercomboBox.Text==("tv_grab_huro") | GrabbercomboBox.Text==("tv_grab_no")
-        | GrabbercomboBox.Text==("tv_grab_pt") | GrabbercomboBox.Text==("tv_grab_se") | GrabbercomboBox.Text==("tv_grab_nl_wolf"))
+        | GrabbercomboBox.Text==("tv_grab_pt") | GrabbercomboBox.Text==("tv_grab_se") | GrabbercomboBox.Text==("tv_grab_nl_wolf")
+        |(GrabbercomboBox.Text=="tv_grab_se_swedb")|(GrabbercomboBox.Text=="tv_grab_uk_bleb")|(GrabbercomboBox.Text=="tv_grab_uk_rt"))
       {
         parameters.AddParameter("", "No options available for this grabber");
       }
@@ -810,11 +816,6 @@ namespace MediaPortal.Configuration.Sections
         parameters.AddParameter("--nosqueezeout", "Don't parse program descriptions for adiitional information (actors,director,etc");
         parameters.AddParameter("--slow --nosqueezeout", "Fetch full program details and don't parse descriptions");
       }
-      else if(GrabbercomboBox.Text=="tv_grab_uk_rt")
-      {
-        parameters.AddParameter("--slow", "Fetch full program details (but takes longer)");
-        parameters.AddParameter("--slow --get-categories", "Fetch full program details and categories (but takes even longer)");
-      }
       else if(GrabbercomboBox.Text=="tv_grab_na_dd")
       {
         parameters.AddParameter("--auto-config add", "Appends new channels to the config file");
@@ -822,6 +823,12 @@ namespace MediaPortal.Configuration.Sections
         parameters.AddParameter("--old-chan-id", "Use old tv_grab_na style channel ids");
         parameters.AddParameter("--old-chan-id --auto-config add", "Old tv_grab_na style channel ids and append new channels");
         parameters.AddParameter("--old-chan-id --auto-config ignore", "Old tv_grab_na style channel ids and ignore new channels");
+      }
+      else if(GrabbercomboBox.Text=="tv_grab_it_lt")
+      {
+        parameters.AddParameter("--password-file", "Use password file - tv_grab_it_lt_password.txt in XMLTV folder");
+        parameters.AddParameter("--slow", "Fetch full program details (but takes longer)");
+        parameters.AddParameter("--slow --password-file", "Use password file  - tv_grab_it_lt_password.txt in XMLTV folder and fetch full program details");
       }
 
       if(parameters.ShowDialog(parametersButton) == DialogResult.OK)
@@ -928,7 +935,7 @@ namespace MediaPortal.Configuration.Sections
     private void RunGrabberButton_Click(object sender, System.EventArgs e)
     {
       SaveSettings();
-      if(File.Exists(folderNameTextBox.Text + @"\xmltv.exe"))
+      if((File.Exists(folderNameTextBox.Text + @"\xmltv.exe"))|(GrabbercomboBox.Text=="TVguide.xml File"))
       {
         SetupGrabber.LaunchGuideScheduler();
       }

@@ -93,7 +93,7 @@ namespace GUIRecipies
 		public override void OnAction(Action action)
 		{
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) {
-				GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+				GUIWindowManager.PreviousWindow();
 				return;
 			}
 			if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)	{

@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.GUIStatus
         onWindow=false;
         onDetails=false;
         onStatus=false;
-        GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+				GUIWindowManager.PreviousWindow();
         return;
       }
       base.OnAction(action);
