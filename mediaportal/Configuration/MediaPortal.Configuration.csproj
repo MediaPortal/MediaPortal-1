@@ -313,6 +313,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Controls\DataGridBooleanNoNull.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\MPBeveledLine.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Data;
-
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -43,20 +43,20 @@ namespace MediaPortal.Configuration.Sections
       ts1.AlternatingBackColor = Color.LightBlue;
 
 
-      DataGridColumnStyle boolCol = new DataGridBoolColumn();
+      DataGridColumnStyle boolCol = new FormattableBooleanColumn();
       boolCol.MappingName = "bool1";
       boolCol.HeaderText = "Enabled";
       boolCol.Width = 60;
       ts1.GridColumnStyles.Add(boolCol);
 
-      boolCol = new DataGridBoolColumn();
+      boolCol = new FormattableBooleanColumn();
       boolCol.MappingName = "bool2";
       boolCol.HeaderText = "Home";
       boolCol.Width = 50;
       ts1.GridColumnStyles.Add(boolCol);
 
 			
-      boolCol = new DataGridBoolColumn();
+      boolCol = new FormattableBooleanColumn();
       boolCol.MappingName = "bool3";
       boolCol.HeaderText = "My Plugins";
       boolCol.Width = 80;
@@ -417,6 +417,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return al;
     }
+
 
 /*
 		private void pluginsListView_DoubleClick(object sender, System.EventArgs e)
