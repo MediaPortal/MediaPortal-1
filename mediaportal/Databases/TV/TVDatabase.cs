@@ -364,6 +364,10 @@ namespace MediaPortal.TV.Database
             if (cache.strChannel==strChannel) return cache.idChannel;
           }
           SQLiteResultSet results;
+          strSQL=String.Format( "select * from channel ");
+          results=m_db.Execute(strSQL);
+          int totalchannels=results.Rows.Count;
+
           strSQL=String.Format( "select * from channel where strChannel like '{0}'", strChannel);
           results=m_db.Execute(strSQL);
           if (results.Rows.Count==0) 
@@ -375,9 +379,9 @@ namespace MediaPortal.TV.Database
             if (channel.External) iExternal=1;
             int iVisible=0;
             if (channel.VisibleInGuide) iVisible=1;
-            strSQL=String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible) values ( NULL, '{0}', {1}, {2}, 100, {3},'{4}', {5}, {6} )", 
+            strSQL=String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7} )", 
                                     strChannel,channel.Number,channel.Frequency.ToString(),
-                                    iExternal, strExternal, (int)channel.TVStandard, iVisible);
+                                    totalchannels+1,iExternal, strExternal, (int)channel.TVStandard, iVisible);
             m_db.Execute(strSQL);
             int iNewID=m_db.LastInsertID();
             CChannelCache chan=new CChannelCache();

@@ -250,14 +250,6 @@ namespace MediaPortal.GUI.Library
               btn.SetPosition(m_dwPosX, dwPosY);
               btn.Render();
             }
-            else
-            {
-              int x=0;
-            }
-          }
-          else
-          {
-            int x=0;
           }
 
 					// render the icon
@@ -335,22 +327,20 @@ namespace MediaPortal.GUI.Library
                   label2.FontName=m_strFont2Name;
                   dMaxWidth -= (int)(label2.TextWidth + 20);
                 }
-                else
-                {
-                  int x=0;
-                }
-              }
-              else
-              {
-                int x=0;
               }
 						}
 					}
 
 					m_wszText = pItem.Label;
           if (m_bTextVisible1)
+          {
+            dwColor = m_dwTextColor;
+            if (pItem.Selected)
+            {
+              dwColor = m_dwSelectedColor;
+            }
             RenderText(i,(float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY, (float)dMaxWidth, dwColor, m_wszText, bSelected);
-
+          }
 					if (pItem.Label2.Length > 0)
 					{
 						dwColor = m_dwTextColor2;
@@ -379,14 +369,6 @@ namespace MediaPortal.GUI.Library
                   label2.Render();
                   //m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
                 }
-                else 
-                {
-                  int x=0;
-                }
-              }
-              else 
-              {
-                int x=0;
               }
             }
 					}	
@@ -422,14 +404,6 @@ namespace MediaPortal.GUI.Library
                   label3.Render();
                   //m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
                 }
-                else
-                {
-                  int x=1;
-                }
-              }
-              else 
-              {
-                int x=1;
               }
             }
 					}
