@@ -712,7 +712,7 @@ namespace DShowNET
 							strFormat+=(char)((videodesc.dwFourCC>>16)&0xff);
 							strFormat+=(char)((videodesc.dwFourCC>>24)&0xff);
 							DirectShowUtil.DebugWrite("VMR9 Get best deinterlace mode for {0}x{1} format:{2} 4cc:{3} size:{4}", 
-								videodesc.dwSampleWidth, videodesc.dwSampleWidth, 
+								videodesc.dwSampleWidth, videodesc.dwSampleHeight, 
 								videodesc.SampleFormat.ToString(),
 								strFormat,
 								videodesc.dwSize);
@@ -723,6 +723,17 @@ namespace DShowNET
 							{
 								guidDeint = guidsDeint[0];
 								DirectShowUtil.DebugWrite("VMR9 supports {0} interlace modes",uiNumberOfDeinterlaceModes);
+								DirectShowUtil.DebugWrite("Set VMR9 deinterlace mode to:{0}", guidDeint.ToString());
+								hr=vmrdeinterlace9.SetDeinterlaceMode(0xFFFFFFFF,ref guidDeint);
+								if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace mode:0x{0:X}",hr);
+
+								hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
+								if (hr!=0 ) 
+									hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
+								if (hr!=0 ) 
+									DirectShowUtil.DebugWrite("VMR9 Unable to get current deinterlace mode:0x{0:X}",hr);
+								else
+									DirectShowUtil.DebugWrite("VMR9 uses deinterlace guid:{0}",guidDeint.ToString());
 							}
 							else
 							{
@@ -733,17 +744,6 @@ namespace DShowNET
 							hr=vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_NextBest);
 							if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace preferences to next best:0x{0:X}",hr);
 
-							DirectShowUtil.DebugWrite("Set VMR9 deinterlace mode to:{0}", guidDeint.ToString());
-							hr=vmrdeinterlace9.SetDeinterlaceMode(0xFFFFFFFF,ref guidDeint);
-							if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace mode:0x{0:X}",hr);
-
-							hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
-							if (hr!=0 ) 
-								hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
-							if (hr!=0 ) 
-								DirectShowUtil.DebugWrite("VMR9 Unable to get current deinterlace mode:0x{0:X}",hr);
-							else
-								DirectShowUtil.DebugWrite("VMR9 uses deinterlace guid:{0}",guidDeint.ToString());
 
 						}
 					}
