@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  02-05-2004  my music    : added : in folder view: folder.jpg is used for mp3s without album art
+  02-05-2004  mytv        : added : stack/unstack setting was not saved
   02-05-2004  general     : added : tvcapture property settings are saved for filters which support it
   02-05-2004  general     : fixed : tvguide showed didnt show default logo for channels without an logo
   02-05-2004  general     : fixed : playing music->cursor keys didnt work anymore
