@@ -60,7 +60,6 @@ My TV:
   
   Recorder/Capture:
      - add screenshot option    
-     - pal/secam/ntsc setup per channel
      
 My Music: (int_20h)
   - show which songs are 'queued'
@@ -127,8 +126,6 @@ setup:
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
   - setup deinterlace method (vmr9)
-  - needs an OK button for saving, closing the dialog is not very intuitive
-  - all forms: enter should do same as OK key
 
 General:
   - Gui renderspeed slider in setup. COntrol how fast the GUI is rendered. Can save CPU, thus Temperature, thus noise.
@@ -144,16 +141,12 @@ General:
       "Eject Drive"
       "(Exit)" 
   - integrated support for remote controls instead of using girder
-  - The ability to search for and download new skins from within MP
-  - The ability to search for and download new plugins from within MP
   - Screenshot taking
   - A PPC client
   - seperate frontend for client/server
-  - autoplay anything thats in the cd/dvd
   - support for VFD/LCD displays
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
-  - remember 'view as' setting per folder
   - caller ID
   - better mouse control 
      - my tv: 
