@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -14,6 +15,13 @@ namespace MediaPortal.GUI.Library
   {
     const int SLEEP_FRAME_COUNT=1;
 		const int THUMBNAIL_OVERSIZED_DIVIDER=32;
+
+		public enum SearchType
+		{
+			SEARCH_FIRST,
+			SEARCH_PREV,
+			SEARCH_NEXT
+		};
 		    
     [XMLSkinElement("remoteColor")] protected long	m_dwRemoteColor = 0xffff0000;
     [XMLSkinElement("downloadColor")] protected long	m_dwDownloadColor = 0xff00ff00;
@@ -59,10 +67,6 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("imageFolderFocus")]protected string	m_strImageFolderFocus="";    
     protected ArrayList	m_button = null;
 
-		
-		
-		
-  
 		int m_iThumbXPosLow = 0;
 		int m_iThumbYPosLow = 0;
 		int m_iThumbWidthLow = 0;
@@ -102,6 +106,13 @@ namespace MediaPortal.GUI.Library
 		protected GUIverticalScrollbar m_vertScrollbar = null;
 		protected string m_strBrackedText;
 		protected string m_strScrollText;
+
+		// Search
+		DateTime      m_keyTimer=DateTime.Now;
+		char          m_CurrentKey=(char)0;
+		char          m_PrevKey=(char)0;
+		protected string m_strSearchString="";
+		protected int    m_iLastSearchItem=0;
 
 		public GUIThumbnailPanel(int dwParentID) : base(dwParentID)
 		{
@@ -193,6 +204,15 @@ namespace MediaPortal.GUI.Library
     protected void OnSelectionChanged()
     {
       if (!IsVisible) return;
+
+			// Reset searchstring
+			if (m_iLastSearchItem != (m_iOffset + m_iCursorY * m_iColumns + m_iCursorX)) 
+			{
+				m_PrevKey=(char)0;
+				m_CurrentKey=(char)0;
+				m_strSearchString="";
+			}
+
       string strSelected = "";
       string strSelected2 = "";
       string strThumb = "";
@@ -200,6 +220,10 @@ namespace MediaPortal.GUI.Library
       GUIPropertyManager.SetProperty("#selecteditem", strSelected);
       GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
       GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+
+			// ToDo: add searchstring property
+			if (m_strSearchString.Length>0)
+				GUIPropertyManager.SetProperty("#selecteditem", "{"+m_strSearchString.ToLower()+"}");
     }
 
 
@@ -579,90 +603,64 @@ namespace MediaPortal.GUI.Library
 
 				case Action.ActionType.ACTION_MOVE_DOWN : 
 				{
-					OnDown();
-          m_bRefresh = true;
+					if (m_strSearchString != "")
+						SearchItem(m_strSearchString, SearchType.SEARCH_NEXT);						
+					else
+						OnDown();
+					m_bRefresh = true;
 				}
 				break;
 		    
 				case Action.ActionType.ACTION_MOVE_UP : 
 				{
-					OnUp();
-          m_bRefresh = true;
+					if (m_strSearchString != "")
+						SearchItem(m_strSearchString, SearchType.SEARCH_PREV);						
+					else
+						OnUp();
+					m_bRefresh = true;
 				}
 				break;
 
 				case Action.ActionType.ACTION_MOVE_LEFT : 
 				{
 					OnLeft();
-          m_bRefresh = true;
+					m_bRefresh = true;
 				}
 				break;
 
 				case Action.ActionType.ACTION_MOVE_RIGHT : 
 				{
 					OnRight();
-          m_bRefresh = true;
+					m_bRefresh = true;
 				}
 				break;
-        case Action.ActionType.ACTION_KEY_PRESSED : 
-        {
-          if (action.m_key!=null)
-          {
-            // Check key
-            if ( ( (action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90) ) || 
-              ( (action.m_key.KeyChar >= 48) && (action.m_key.KeyChar <= 57) ) )
-            {
-              // Get selected item
-              bool bItemFound = false;
-              int iCurrentItem = m_iOffset + m_iCursorY * m_iColumns + m_iCursorX;
-              int iChan = iCurrentItem;
-              do
-              {
-                iChan++;
-                if (iChan >= m_vecItems.Count) iChan=0;
 
-                GUIListItem pItem = (GUIListItem)m_vecItems[iChan];
-                if (action.m_key.KeyChar == pItem.Label.ToUpper()[0])
-                {
-                  bItemFound = true;
-                  break;
-                }
-              }
-              while (iChan != iCurrentItem);
+				case Action.ActionType.ACTION_KEY_PRESSED : 
+				{
+					if (action.m_key!=null)
+					{
+						// Check key
+						if ( ( (action.m_key.KeyChar >= 49) && (action.m_key.KeyChar <= 57) ) ||
+							action.m_key.KeyChar == '*' || action.m_key.KeyChar =='#')
+						{
+							Press((char)action.m_key.KeyChar);
+							return;
+						}
 
-              if ( (bItemFound) && (iChan >= 0 && iChan < m_vecItems.Count) )
-              {
-                // update spin controls
-                int iItemsPerPage = m_iRows * m_iColumns;
-                int iPage = 1;
-                int iSel = iChan;
-                while (iSel >= iItemsPerPage)
-                {
-                  iPage++;
-                  iSel -= iItemsPerPage;
-                }
-                m_upDown.Value = iPage;
-
-                // find item
-                m_iOffset = 0;
-                m_iCursorY = 0;
-                while (iChan >= iItemsPerPage) 
-                {
-                  iChan -= iItemsPerPage;
-                  m_iOffset += iItemsPerPage;
-                }
-                while (iChan >= m_iColumns) 
-                {
-                  iChan -= m_iColumns;
-                  m_iCursorY++;
-                }
-                m_iCursorX = iChan;
-                OnSelectionChanged();
-              }
-            }
-          }
-        }
-          break;
+						if (action.m_key.KeyChar == (int)Keys.Back)
+						{
+							if (m_strSearchString.Length>0)
+								m_strSearchString=m_strSearchString.Remove(m_strSearchString.Length-1,1);
+							SearchItem(m_strSearchString, SearchType.SEARCH_FIRST);
+						}
+						if ( ((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) || (action.m_key.KeyChar == (int)Keys.Space) )
+						{
+							m_strSearchString += (char)action.m_key.KeyChar;
+							SearchItem(m_strSearchString, SearchType.SEARCH_FIRST);
+						}
+					}
+				}
+					break;
 
         case Action.ActionType.ACTION_MOUSE_MOVE : 
         {
@@ -945,6 +943,211 @@ namespace MediaPortal.GUI.Library
 
 			return false;
 
+		}
+
+		/// <summary>
+		/// Search for first item starting with searchkey
+		/// </summary>
+		/// <param name="SearchKey">SearchKey</param>
+		/// <param name="bSearchNext">SearchNext</param>
+		void SearchItem(string SearchKey, SearchType iSearchMethode)
+		{
+			// Get selected item
+			bool bItemFound = false;
+			int iCurrentItem = m_iOffset + m_iCursorY * m_iColumns + m_iCursorX;
+			if (iSearchMethode == SearchType.SEARCH_FIRST) iCurrentItem=0;
+			int iItem = iCurrentItem;
+			do
+			{
+				if (iSearchMethode == SearchType.SEARCH_NEXT)
+				{
+					iItem++;
+					if (iItem >= m_vecItems.Count) iItem=0;
+				}
+				if (iSearchMethode == SearchType.SEARCH_PREV && m_vecItems.Count > 0)
+				{
+					iItem--;
+					if (iItem < 0) iItem=m_vecItems.Count-1;				
+				}
+
+				GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+				if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+				{
+					bItemFound = true;
+					break;
+				}
+
+				if (iSearchMethode == SearchType.SEARCH_FIRST)
+				{
+					iItem++;
+					if (iItem >= m_vecItems.Count) iItem=0;
+				}
+			}
+			while (iItem != iCurrentItem);
+
+			if ( (bItemFound) && (iItem >= 0 && iItem < m_vecItems.Count) )
+			{
+				// update spin controls
+				int iItemsPerPage = m_iRows * m_iColumns;
+				int iPage = 1;
+				int iSel = iItem;
+				while (iSel >= iItemsPerPage)
+				{
+					iPage++;
+					iSel -= iItemsPerPage;
+				}
+				m_upDown.Value = iPage;
+
+				// find item
+				m_iOffset = 0;
+				m_iCursorY = 0;
+				while (iItem >= iItemsPerPage) 
+				{
+					iItem -= iItemsPerPage;
+					m_iOffset += iItemsPerPage;
+				}
+				while (iItem >= m_iColumns) 
+				{
+					iItem -= m_iColumns;
+					m_iCursorY++;
+				}
+				m_iCursorX = iItem;
+			}
+
+			m_iLastSearchItem = m_iOffset + m_iCursorY * m_iColumns + m_iCursorX;
+			OnSelectionChanged();
+			m_bRefresh = true;
+		}
+
+
+		/// <summary>
+		/// Handle keypress events for SMS style search (key '1'..'9')
+		/// </summary>
+		/// <param name="Key"></param>
+		void Press(char Key)
+		{
+			// Check key timeout
+			CheckTimer();			
+
+			// Check different key pressed
+			if ( (Key!=m_PrevKey) && (Key>='1' && Key<='9') ) 
+				m_CurrentKey=(char)0;
+			
+			if (Key=='*')
+			{
+				// Backspace
+				if (m_strSearchString.Length>0)
+					m_strSearchString=m_strSearchString.Remove(m_strSearchString.Length-1,1);
+				m_PrevKey=(char)0;
+				m_CurrentKey=(char)0;
+				m_keyTimer=DateTime.Now;
+			}			
+			else if (Key=='#')
+			{
+				m_keyTimer=DateTime.Now;
+			}
+			else if (Key=='1')
+			{
+				if (m_CurrentKey==0) m_CurrentKey=' ';
+				else if (m_CurrentKey==' ') m_CurrentKey='!';
+				else if (m_CurrentKey=='!') m_CurrentKey='?';
+				else if (m_CurrentKey=='?') m_CurrentKey='.';
+				else if (m_CurrentKey=='.') m_CurrentKey='0';
+				else if (m_CurrentKey=='0') m_CurrentKey='1';
+				else if (m_CurrentKey=='1') m_CurrentKey='-';
+				else if (m_CurrentKey=='-') m_CurrentKey='+';
+				else if (m_CurrentKey=='+') m_CurrentKey=' ';
+			}
+			else if (Key=='2')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='a';
+				else if (m_CurrentKey=='a') m_CurrentKey='b';
+				else if (m_CurrentKey=='b') m_CurrentKey='c';
+				else if (m_CurrentKey=='c') m_CurrentKey='2';
+				else if (m_CurrentKey=='2') m_CurrentKey='a';
+			}
+			else if (Key=='3')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='d';
+				else if (m_CurrentKey=='d') m_CurrentKey='e';
+				else if (m_CurrentKey=='e') m_CurrentKey='f';
+				else if (m_CurrentKey=='f') m_CurrentKey='3';
+				else if (m_CurrentKey=='3') m_CurrentKey='d';
+			}
+			else if (Key=='4')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='g';
+				else if (m_CurrentKey=='g') m_CurrentKey='h';
+				else if (m_CurrentKey=='h') m_CurrentKey='i';
+				else if (m_CurrentKey=='i') m_CurrentKey='4';
+				else if (m_CurrentKey=='4') m_CurrentKey='g';
+			}
+			else if (Key=='5')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='j';
+				else if (m_CurrentKey=='j') m_CurrentKey='k';
+				else if (m_CurrentKey=='k') m_CurrentKey='l';
+				else if (m_CurrentKey=='l') m_CurrentKey='5';
+				else if (m_CurrentKey=='5') m_CurrentKey='j';
+			}
+			else if (Key=='6')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='m';
+				else if (m_CurrentKey=='m') m_CurrentKey='n';
+				else if (m_CurrentKey=='n') m_CurrentKey='o';
+				else if (m_CurrentKey=='o') m_CurrentKey='6';
+				else if (m_CurrentKey=='6') m_CurrentKey='m';
+			}
+			else if (Key=='7')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='p';
+				else if (m_CurrentKey=='p') m_CurrentKey='q';
+				else if (m_CurrentKey=='q') m_CurrentKey='r';
+				else if (m_CurrentKey=='r') m_CurrentKey='s';
+				else if (m_CurrentKey=='s') m_CurrentKey='7';
+				else if (m_CurrentKey=='7') m_CurrentKey='p';
+			}
+			else if (Key=='8')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='t';
+				else if (m_CurrentKey=='t') m_CurrentKey='u';
+				else if (m_CurrentKey=='u') m_CurrentKey='v';
+				else if (m_CurrentKey=='v') m_CurrentKey='8';
+				else if (m_CurrentKey=='8') m_CurrentKey='t';
+			}
+			else if (Key=='9')
+			{
+				if (m_CurrentKey==0) m_CurrentKey='w';
+				else if (m_CurrentKey=='w') m_CurrentKey='x';
+				else if (m_CurrentKey=='x') m_CurrentKey='y';
+				else if (m_CurrentKey=='y') m_CurrentKey='z';
+				else if (m_CurrentKey=='z') m_CurrentKey='9';
+				else if (m_CurrentKey=='9') m_CurrentKey='w';
+			}
+
+			if (Key>='1' && Key<='9') 
+			{
+				// Check different key pressed
+				if (Key==m_PrevKey)
+				{
+					if (m_strSearchString.Length>0)
+						m_strSearchString=m_strSearchString.Remove(m_strSearchString.Length-1,1);						
+				}
+				m_PrevKey=Key;
+				m_strSearchString += m_CurrentKey;			
+			}			
+			SearchItem(m_strSearchString, SearchType.SEARCH_FIRST);
+			m_keyTimer=DateTime.Now;						
+		}
+
+		void CheckTimer()
+		{
+			TimeSpan ts=DateTime.Now-m_keyTimer;
+			if (ts.TotalMilliseconds>=800)
+			{
+				m_PrevKey=(char)0;
+				m_CurrentKey=(char)0;
+			}
 		}
 
 		public override void PreAllocResources()
