@@ -255,7 +255,7 @@ namespace MediaPortal.GUI.Library
 	
     public void Present()
     {
-			/*
+			
       // Set the data for the vertex buffer
       if (dwNumTriangles > 0)
       {
@@ -280,7 +280,7 @@ namespace MediaPortal.GUI.Library
 
 			}
       dwNumTriangles=0;
-      iv=0;*/
+      iv=0;
     }
 
     public bool GetFontCache(float xpos, float ypos, long color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.graphics.DrawString(text,systemFont,new SolidBrush(color),xpos,ypos);
         return;
       }
-/*
+
 			if (fontVertices==null) return;
 			if (fontTexture==null) return;
 			if (textureCoords==null) return;
@@ -365,7 +365,7 @@ namespace MediaPortal.GUI.Library
 			if (vertexBuffer.Disposed) return;
 			if (GUIGraphicsContext.DX9Device==null) return;
 			if (GUIGraphicsContext.DX9Device.Disposed) return;
-*/
+
 			int intColor = color.ToArgb();
 #if NEWFONTENGINE
 			unsafe
