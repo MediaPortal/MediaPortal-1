@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("USBUIRT", "internal", inputCheckBox.Checked ? "true" : "false");
 				xmlwriter.SetValue("USBUIRT", "external", outputCheckBox.Checked ? "true" : "false");
 				xmlwriter.SetValue("USBUIRT", "is3digit", digitCheckBox.Checked ? "true" : "false");
-				xmlwriter.SetValue("USBUIRT", "needsenter", inputCheckBox.Checked ? "true" : "false");			
+				xmlwriter.SetValue("USBUIRT", "needsenter", enterCheckBox.Checked ? "true" : "false");			
 
 				//				xmlwriter.SetValueAsBool("USBUIRT", "internal", inputCheckBox.Checked);
 				//				xmlwriter.SetValueAsBool("USBUIRT", "externak", outputCheckBox.Checked);

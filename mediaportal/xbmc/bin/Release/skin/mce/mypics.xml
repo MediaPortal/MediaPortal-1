@@ -66,7 +66,7 @@
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>10</onright>
-				<onup>8</onup>
+				<onup>9</onup>
 				<ondown>3</ondown>
 			</control>
 			<control>
@@ -127,6 +127,18 @@
 				<onleft>8</onleft>
 				<onright>10</onright>
 				<onup>7</onup>
+				<ondown>9</ondown>
+			</control>
+			<control>
+				<description>ROtate</description>
+				<type>button</type>
+				<id>9</id>
+				<posX>60</posX>
+				<posY>267</posY>
+				<label>735</label>
+				<onleft>8</onleft>
+				<onright>10</onright>
+				<onup>8</onup>
 				<ondown>2</ondown>
 			</control>
 		</control>
