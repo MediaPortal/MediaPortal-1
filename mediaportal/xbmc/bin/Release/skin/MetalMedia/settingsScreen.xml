@@ -32,8 +32,8 @@
 		<posX>400</posX>
 		<posY>150</posY>
 		<width>238</width>
-		<height>94</height>
-		<texture>home-bluebox.png</texture>
+		<height>130</height>
+		<texture>panel.png</texture>
 	</control>
 	<control>
 		<description>UI Calibration button</description>

@@ -16,15 +16,17 @@ Skin, gfx & media:
 My Radio:
   
 My TV:
-  - option:show live tv in 'tv gfx' on home
-  - option:fade in/out when switching between fullscreen video/tv<->gui
-  - option:show fullscreen TV when going to my tv (instead of windowed)
-  - option:turn timeshifting on/off
-  - A way to browse and resolve recording conflicts. 
-  - support of external tuners (http://www.usbuirt.com/) (xbmc-er is looking at this)
-  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
-  - picture in picture
-  - TV-out through PVR 350
+  general
+	- option:show live tv in 'tv gfx' on home
+	- option:fade in/out when switching between fullscreen video/tv<->gui
+	- option:show fullscreen TV when going to my tv (instead of windowed)
+	- option:turn timeshifting on/off
+	- A way to browse and resolve recording conflicts. 
+	- support of external tuners (http://www.usbuirt.com/) (xbmc-er is looking at this)
+	- show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
+	- picture in picture
+	- TV-out through PVR 350
+	- when in FF mode, auto stop when live-point is reached
   
   TV OSD:
      - timeshifting info:
@@ -97,6 +99,7 @@ Skin engine:
   - property for current module 
   
 General:
+  - let user specify scrolling speed
   - setup : add tooltips 
   - show properties in skin: 
      - tv/recording properties

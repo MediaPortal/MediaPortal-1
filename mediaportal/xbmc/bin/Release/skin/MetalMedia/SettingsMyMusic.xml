@@ -30,11 +30,12 @@
 		<description>Settings text label</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>300</posX>
-		<posY>80</posY>
+		<posX>280</posX>
+		<posY>50</posY>
 		<label>2</label>
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
 	</control>
 
 	<control>
@@ -64,7 +65,7 @@
 		<ondown>8</ondown>
 	</control>
 	<control>
-		<description>Reorganize My Music Database</description>
+		<description>Reorganize My Music Database label</description>
 		<type>label</type>
 		<id>7</id>
 		<posX>288</posX>
@@ -74,14 +75,14 @@
 		<font>font13</font>
 	</control>
 	<control>
-		<description>Reorganize My Music Database</description>
+		<description>Reorganize My Music Database button</description>
 		<type>button</type>
 		<id>8</id>
 		<label>335</label>
 		<posX>520</posX>
 		<posY>286</posY>
-		<width>64</width>
-		<height>32</height>
+		<width>140</width>
+		<height>24</height>
 		<onleft>8</onleft>
 		<onright>8</onright>
 		<onup>6</onup>
@@ -104,8 +105,8 @@
 		<label>424</label>
 		<posX>520</posX>
 		<posY>320</posY>
-		<width>64</width>
-		<height>30</height>
+		<width>140</width>
+		<height>24</height>
 		<onup>8</onup>
 		<ondown>10</ondown>
 		<onleft>13</onleft>
@@ -128,8 +129,8 @@
 		<label>424</label>
 		<posX>520</posX>
 		<posY>354</posY>
-		<width>64</width>
-		<height>32</height>
+		<width>140</width>
+		<height>24</height>
 		<onleft>10</onleft>
 		<onright>10</onright>
 		<onup>13</onup>

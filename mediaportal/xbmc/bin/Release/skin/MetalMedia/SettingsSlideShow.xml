@@ -27,14 +27,24 @@
 		<texture>settings.png</texture>
 	</control>
 	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>273</posX>
+		<posY>208</posY>
+		<width>278</width>
+		<height>80</height>
+		<texture>panel.png</texture>
+	</control>
+	<control>
 		<description>Settings text label</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>300</posX>
-		<posY>80</posY>
+		<posX>280</posX>
+		<posY>50</posY>
 		<label>108</label>
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF484848</textcolor>
 	</control>
 	<control>
 		<description>Speed label</description>
@@ -44,20 +54,21 @@
 		<posY>218</posY>
 		<label>224</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF484848</textcolor>
 	</control>
 	<control>
 		<description>Speedselect</description>
 		<type>spincontrol</type>
 		<id>2</id>
-		<posX>420</posX>
+		<posX>500</posX>
 		<posY>222</posY>
 		<reverse>yes</reverse>
 		<onup>21</onup>
 		<ondown>3</ondown>
 		<onleft>2</onleft>
 		<onright>2</onright>
-		<textcolor>FFFFFFFF</textcolor>
+		<align>right</align>
+		<textcolor>FF484848</textcolor>
 		<buddycontrolid>100</buddycontrolid>
 	</control>
 	<control>
@@ -68,20 +79,21 @@
 		<posY>252</posY>
 		<label>225</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF484848</textcolor>
 	</control>
 	<control>
 		<description>transition select </description>
 		<type>spincontrol</type>
 		<id>3</id>
-		<posX>430</posX>
+		<posX>500</posX>
 		<posY>256</posY>
 		<reverse>yes</reverse>
 		<onup>2</onup>
 		<ondown>2</ondown>
 		<onleft>3</onleft>
 		<onright>3</onright>
-		<textcolor>FFFFFFFF</textcolor>
+		<align>right</align>
+		<textcolor>FF484848</textcolor>
 		<buddycontrolid>101</buddycontrolid>
 	</control>	
 </controls>
