@@ -224,21 +224,29 @@ namespace MediaPortal.TV.Recording
 
       // Get the video device and add it to the filter graph
 			Log.Write("SinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
-      m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
-      if (m_captureFilter!=null)
-      {
-        hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
-        if( hr != 0 ) 
-        {
-          Log.Write("SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
-          return false;
-        }
-      }
-      else
-      {
-        Log.Write("SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
-        return false;
-      }
+			try
+			{
+				m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
+				if (m_captureFilter!=null)
+				{
+					hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
+					if( hr != 0 ) 
+					{
+						Log.Write("SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
+						return false;
+					}
+				}
+				else
+				{
+					Log.Write("SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
+					return false;
+				}
+			}
+			catch(Exception)
+			{
+				Log.Write("SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
+				return false;
+			}
 
       // Retrieve the stream control interface for the video device
       // FindInterface will also add any required filters
@@ -313,7 +321,8 @@ namespace MediaPortal.TV.Recording
 
       // Retreive the media control interface (for starting/stopping graph)
       ConnectVideoCaptureToMPEG2Demuxer();
-      m_mpeg2Demux.CreateMappings();
+			if (m_mpeg2Demux!=null)
+				m_mpeg2Demux.CreateMappings();
       m_videoprocamp=m_captureFilter as IAMVideoProcAmp;
       if (m_videoprocamp!=null)
       {
@@ -445,7 +454,7 @@ namespace MediaPortal.TV.Recording
     protected void ConnectVideoCaptureToMPEG2Demuxer()
 		{
 			Log.Write("SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
-			if (m_captureFilter==null) 
+			if (m_captureFilter==null || m_graphBuilder==null) 
 			{
 				Log.Write("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
 				return;
@@ -461,7 +470,7 @@ namespace MediaPortal.TV.Recording
 			}
 
       // connect video capture pin->mpeg2 demux input
-      if (!m_videoCaptureDevice.IsMCEDevice)
+      if (!m_videoCaptureDevice.IsMCEDevice && m_mpeg2Demux!=null)
       {
         Guid cat = PinCategory.Capture;
         int hr=m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 

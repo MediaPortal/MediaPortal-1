@@ -81,16 +81,24 @@ namespace MediaPortal.TV.Recording
 
         // Get the video device and add it to the filter graph
         DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
-        m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
-        if (m_captureFilter!=null)
-        {
-          hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
-          if( hr < 0 ) 
-          {
-            DirectShowUtil.DebugWrite("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
-            return false;
-          }
-        }
+				try
+				{
+					m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
+					if (m_captureFilter!=null)
+					{
+						hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
+						if( hr < 0 ) 
+						{
+							DirectShowUtil.DebugWrite("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
+							return false;
+						}
+					}
+				}
+				catch(Exception)
+				{
+					DirectShowUtil.DebugWrite("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
+					return false;
+				}
 
         // Retrieve the stream control interface for the video device
         // FindInterface will also add any required filters
