@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SQLite.NET;
 using MediaPortal.TV.Database;
+using MediaPortal.Radio.Database;
 using System.Xml;
 
 
@@ -708,22 +709,24 @@ namespace MediaPortal.Configuration.Sections
 				using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(path+"MediaPortal.xml"))
 				{
 					checkBox1.Checked=xmlreader.GetValueAsBool("DVBSS2","use_diseqc",checkBox1.Checked);
-					if(checkBox1.Checked==true)
-						EnableSatConfig();
-					else
-						DisableSatConfig();
 					diseqca.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqca",0);
-					diseqcb.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqcb",0);
-					diseqcc.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqcc",0);	
-					diseqcd.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqcd",0);	
 					lnbconfig1.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig1",0);
-					lnbconfig2.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig2",0);
-					lnbconfig3.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig3",0);
-					lnbconfig4.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig4",0);
 					sat1.Text=xmlreader.GetValueAsString("DVBSS2","sata","");
-					sat2.Text=xmlreader.GetValueAsString("DVBSS2","satb","");
-					sat3.Text=xmlreader.GetValueAsString("DVBSS2","satc","");
-					sat4.Text=xmlreader.GetValueAsString("DVBSS2","satd","");
+					if(checkBox1.Checked==false)
+						DisableSatConfig();
+					else
+					{
+						EnableSatConfig();
+						diseqcb.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqcb",0);
+						diseqcc.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqcc",0);	
+						diseqcd.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqcd",0);	
+						lnbconfig2.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig2",0);
+						lnbconfig3.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig3",0);
+						lnbconfig4.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig4",0);
+						sat2.Text=xmlreader.GetValueAsString("DVBSS2","satb","");
+						sat3.Text=xmlreader.GetValueAsString("DVBSS2","satc","");
+						sat4.Text=xmlreader.GetValueAsString("DVBSS2","satd","");
+					}
 				}
 			}
 			catch (Exception ex)
@@ -903,7 +906,6 @@ namespace MediaPortal.Configuration.Sections
 						m_dvbSec.OpenTPLFile(comboBox3.SelectedItem.ToString(),ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback);
 						
 						// setting up list
-						TVDatabase.RemoveAllSatChannels();
 						transpList=(DVBSections.Transponder[])list.Clone();
 						m_dvbSec.CleanUp();
 						BuildUpTreeView(treeView1);
@@ -948,7 +950,7 @@ namespace MediaPortal.Configuration.Sections
 			// ckeck providers
 			foreach(DVBSections.Transponder transponder in list)
 			{
-				foreach(DVBSections.PAT_LIST ch in transponder.channels)
+				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					string provName=ch.service_provider_name;
 					int service=ch.serviceType;
@@ -984,7 +986,7 @@ namespace MediaPortal.Configuration.Sections
 			// add the cannels
 			foreach(DVBSections.Transponder transponder in list)
 			{
-				foreach(DVBSections.PAT_LIST ch in transponder.channels)
+				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					string provName=ch.service_provider_name;
 					string servName=ch.service_name;
@@ -1001,7 +1003,7 @@ namespace MediaPortal.Configuration.Sections
 							{// add channel nodes
 								TreeNode node=new TreeNode(servName);
 								node.Tag="channel";
-								foreach(DVBSections.PMT_LIST2 pids in ch.pid_list)
+								foreach(DVBSections.PMTData pids in ch.pid_list)
 								{
 									string descrStream="unknown stream (type "+pids.stream_type.ToString()+")";
 									if(pids.isVideo==true)
@@ -1075,7 +1077,11 @@ namespace MediaPortal.Configuration.Sections
 		private void SaveChannelList()
 		{
 			DVBSections.Transponder[]	list=transpList;
-			int n=1;
+			int televisionCounter=1;
+			int radioCounter=1;
+
+			// clear sat database
+			TVDatabase.RemoveAllSatChannels();
 
 			if(list==null)
 			{
@@ -1085,40 +1091,63 @@ namespace MediaPortal.Configuration.Sections
 			
 			foreach(DVBSections.Transponder transponder in list)
 			{
-				foreach(DVBSections.PAT_LIST ch in transponder.channels)
+				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					if(ch.scrambled==true && checkBox2.Checked==true)
 						continue;
-					int ret=-1;
-					DShowNET.AnalogVideoStandard standard=new DShowNET.AnalogVideoStandard();
-					standard=DShowNET.AnalogVideoStandard.None;
-					string channelText=ch.service_name;
-					if(ch.serviceType!=1 && ch.serviceType!=2)
-						continue;
-					if(channelText==null)
-						channelText="unnamed service "+n.ToString();
-					TVChannel tv=new TVChannel();
-					tv.VisibleInGuide=true;
-					tv.Name=channelText;//+" ("+n.ToString()+")";
-					tv.Frequency=0;
-					tv.Number=n;
-					tv.XMLId="";
-					int dbID=TVDatabase.AddChannel(tv);
-					if(dbID==-1)
-						continue;
-					tv.ID=dbID;
-					int audioPid=GetAudioPid(ch.pid_list);
-					int videoPid=GetVideoPid(ch.pid_list);
-					int teleTextPid=GetTeletextPid(ch.pid_list);
-					int ac3Pid=GetAC3Pid(ch.pid_list);
-					int[] otherAudio=GetOtherAudioPids(ch.pid_list,audioPid);
-					if(otherAudio==null)
-						otherAudio=new int[]{0,0,0};
+					if(ch.serviceType==1) // television
+					{
+						int ret=-1;
+						DShowNET.AnalogVideoStandard standard=new DShowNET.AnalogVideoStandard();
+						standard=DShowNET.AnalogVideoStandard.None;
+						string channelText=ch.service_name;
+						if(channelText==null)
+							channelText="unnamed service "+televisionCounter.ToString();
+						TVChannel tv=new TVChannel();
+						tv.VisibleInGuide=true;
+						tv.Name=channelText;//+" ("+n.ToString()+")";
+						tv.Frequency=0;
+						tv.Number=televisionCounter;
+						tv.XMLId="";
+						int dbID=TVDatabase.AddChannel(tv);
+						if(dbID==-1)
+							continue;
+						tv.ID=dbID;
+						int audioPid=GetAudioPid(ch.pid_list);
+						int videoPid=GetVideoPid(ch.pid_list);
+						int teleTextPid=GetTeletextPid(ch.pid_list);
+						int ac3Pid=GetAC3Pid(ch.pid_list);
+						int[] otherAudio=GetOtherAudioPids(ch.pid_list,audioPid);
+						if(otherAudio==null)
+							otherAudio=new int[]{0,0,0};
 
-					ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-						ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-						audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
-					n++;
+						ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+							ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+							audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+						televisionCounter++;
+					}
+					if(ch.serviceType==2) // for radio
+					{
+						MediaPortal.Radio.Database.RadioStation rc=new MediaPortal.Radio.Database.RadioStation();
+						string channelText=ch.service_name;
+						if(channelText==null)
+							channelText="unnamed service "+radioCounter.ToString();
+						rc.Name=channelText;
+						
+						rc.URL="";
+						rc.Genre="DVB-Radio Service";
+						rc.Frequency=(radioCounter<< 16);
+						
+						int dbID=RadioDatabase.AddStation(ref rc);
+						if(dbID==-1)
+							continue;
+						int audioPid=GetAudioPid(ch.pid_list);
+						int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+							ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+							audioPid,0,0,0,0,0,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+						radioCounter++;
+
+					}
 						
 
 				}
@@ -1134,7 +1163,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(ch==null)
 				return -1;
-			foreach(DVBSections.PMT_LIST2 pids in ch)
+			foreach(DVBSections.PMTData pids in ch)
 				if(pids.isAudio)
 					return pids.elementary_PID;
 			return 0;
@@ -1145,7 +1174,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(ch==null)
 				return -1;
-			foreach(DVBSections.PMT_LIST2 pids in ch)
+			foreach(DVBSections.PMTData pids in ch)
 				if(pids.isVideo)
 					return pids.elementary_PID;
 			return 0;
@@ -1154,7 +1183,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(ch==null)
 				return -1;
-			foreach(DVBSections.PMT_LIST2 pids in ch)
+			foreach(DVBSections.PMTData pids in ch)
 				if(pids.isTeletext)
 					return pids.elementary_PID;
 			return 0;
@@ -1163,7 +1192,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(ch==null)
 				return -1;
-			foreach(DVBSections.PMT_LIST2 pids in ch)
+			foreach(DVBSections.PMTData pids in ch)
 				if(pids.isAC3Audio)
 					return pids.elementary_PID;
 			return 0;
@@ -1175,7 +1204,7 @@ namespace MediaPortal.Configuration.Sections
 			int n=0;
 			if(ch==null)
 				return null;
-			foreach(DVBSections.PMT_LIST2 pids in ch)
+			foreach(DVBSections.PMTData pids in ch)
 			{
 				if(pids.isAudio && pids.elementary_PID!=audio)
 				{pidArray[n]=pids.elementary_PID;n++;}

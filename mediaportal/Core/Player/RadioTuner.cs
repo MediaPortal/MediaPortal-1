@@ -20,6 +20,7 @@ namespace MediaPortal.Player
 	public class RadioTuner: IPlayer
 	{
     RadioGraph m_capture=null;
+		DVBRadioGraph	m_dvbCapture=null;
     string		m_strFile;
 		bool			m_bInternal=false;
 		Process		m_player=null;
@@ -88,7 +89,22 @@ namespace MediaPortal.Player
         bool bAntenna=false;
         if (strTunerType.Equals("Antenna"))
           bAntenna=true;
-        
+				if(m_strRadioDevice=="B2C2 MPEG-2 Source")
+				{
+					m_dvbCapture=new DVBRadioGraph(m_strRadioDevice,m_strAudioDevice,m_strLineInput);
+					if (!m_dvbCapture.Create())
+					{
+						Log.Write("RadioTuner:failed to Tune to channel:{0}",iChannel);
+						m_dvbCapture.DeleteGraph();
+						m_dvbCapture=null;
+						FreeCard(m_strRadioDevice);
+						return false;
+					}
+					m_dvbCapture.Tune(iChannel);
+					Log.Write("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz",  m_dvbCapture.Channel);
+				}
+				else
+				{
         m_capture = new RadioGraph(m_strRadioDevice,m_strAudioDevice,m_strLineInput);
         if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
         {
@@ -104,11 +120,22 @@ namespace MediaPortal.Player
       }
       catch(Exception ex)
       {
-        Log.Write("RadioTuner:failed to Tune to channel:{0} {1} {2}",iChannel,ex.Message,ex.StackTrace);
-        m_capture.DeleteGraph();
-        m_capture=null;
-				FreeCard(m_strRadioDevice);
-				return false;
+				if(m_strRadioDevice!="B2C2 MPEG-2 Source")
+				{
+					Log.Write("RadioTuner:failed to Tune to channel:{0} {1} {2}",iChannel,ex.Message,ex.StackTrace);
+					m_capture.DeleteGraph();
+					m_capture=null;
+					FreeCard(m_strRadioDevice);
+					return false;
+				}
+				else
+				{
+					Log.Write("RadioTuner:failed to Tune to channel:{0} {1} {2}",iChannel,ex.Message,ex.StackTrace);
+					m_dvbCapture.DeleteGraph();
+					m_dvbCapture=null;
+					FreeCard(m_strRadioDevice);
+					return false;
+				}
       }
       m_strFile=strFile;
       return true;
@@ -120,7 +147,9 @@ namespace MediaPortal.Player
       {
 				if (m_bInternal)
 				{
-					return (m_capture!=null); //TEST
+					if(m_capture!=null || m_dvbCapture!=null)
+						return true;
+					return false; //TEST
 				}
 				else
 				{
@@ -133,7 +162,9 @@ namespace MediaPortal.Player
     {
 			if (m_bInternal)
 			{
+				if (m_dvbCapture!=null) m_dvbCapture.DeleteGraph();
 				if (m_capture!=null) m_capture.DeleteGraph();
+				m_dvbCapture=null;
 				m_capture=null;
 				FreeCard(m_strRadioDevice);
 			}
