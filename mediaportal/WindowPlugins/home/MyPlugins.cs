@@ -13,7 +13,7 @@ using Direct3D=Microsoft.DirectX.Direct3D;
 namespace MediaPortal.GUI.Home
 {
   /// <summary>
-  /// The implementation of the HomeWindow.  (This window is coupled to the home.xml skin file).
+  /// The implementation of the HomeWindow.  (This window is coupled to the myplugin.xml skin file).
   /// </summary>
   public class MyPluginsWindow : GUIWindow, ISetupForm
   {
@@ -999,7 +999,7 @@ namespace MediaPortal.GUI.Home
       strButtonText = GUILocalizeStrings.Get(913);
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "plugin_icon.png";
+      strPictureImage = "hover_my plugins.png";
       return true;
     }
 
