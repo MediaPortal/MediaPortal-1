@@ -1,6 +1,6 @@
 <window>
 		<id>8001</id>
-		<defaultcontrol>25</defaultcontrol>
+		<defaultcontrol>26</defaultcontrol>
 		<allowoverlay>no</allowoverlay>
 		<controls>
 			<control>
@@ -54,10 +54,10 @@
 				<posY>165</posY>
 				<width>175</width>
 				<label>8022</label>
-				<onleft>26</onleft>
+				<onleft>27</onleft>
 				<onright>24</onright>
-				<onup>25</onup>
-				<ondown>25</ondown>
+				<onup>26</onup>
+				<ondown>26</ondown>
 			</control>
 			<control>
 				<description>Message label</description>
@@ -137,14 +137,14 @@
 				<description>textarea</description>
 				<type>textbox</type>
 				<id>24</id>
-				<posX>20</posX>
+				<posX>60</posX>
 				<posY>225</posY>
-				<width>640</width>
+				<width>600</width>
 				<height>350</height>
-				<onleft>25</onleft>
-				<onright>25</onright>
-				<onup>25</onup>
-				<ondown>25</ondown>
+				<onleft>26</onleft>
+				<onright>24</onright>
+				<onup>24</onup>
+				<ondown>24</ondown>
 			</control>
 			<control> 
 				<description>pic tumbview</description>
