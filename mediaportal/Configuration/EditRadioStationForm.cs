@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace MediaPortal.Configuration
@@ -323,45 +324,53 @@ namespace MediaPortal.Configuration
 				station.Type = (string)typeComboBox.SelectedItem;
 				station.Name = nameTextBox.Text;
 				
-        if(frequencyTextBox.Text.IndexOfAny(new char[] { ',','.' }) >= 0)
+        try
         {
-          char[] separators = new char[] {'.', ','};
 
-          for(int index = 0; index < separators.Length; index++)
+          if(frequencyTextBox.Text.IndexOfAny(new char[] { ',','.' }) >= 0)
           {
-            try
-            {
-              frequencyTextBox.Text = frequencyTextBox.Text.Replace(',', separators[index]);
-              frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
+            char[] separators = new char[] {'.', ','};
 
-              //
-              // MegaHerz
-              //
-              station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
-
-              break;
-            }
-            catch
+            for(int index = 0; index < separators.Length; index++)
             {
-              //
-              // Failed to convert, try next separator
-              //
+              try
+              {
+                frequencyTextBox.Text = frequencyTextBox.Text.Replace(',', separators[index]);
+                frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
+
+                //
+                // MegaHerz
+                //
+                station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+
+                break;
+              }
+              catch
+              {
+                //
+                // Failed to convert, try next separator
+                //
+              }
             }
-          }
-        }
-        else
-        {
-          //
-          // Herz
-          //
-          if(frequencyTextBox.Text.Length > 3)
-          {
-            station.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
           }
           else
           {
-            station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+            //
+            // Herz
+            //
+            if(frequencyTextBox.Text.Length > 3)
+            {
+              station.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+            }
+            else
+            {
+              station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+            }					
           }
+        }
+        catch
+        {
+          station.Frequency = 0;
         }
         
         station.Genre = genreTextBox.Text.Length > 0 ? genreTextBox.Text : "unknown";
