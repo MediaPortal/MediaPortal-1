@@ -23,7 +23,9 @@ My TV:
      -
   
   Capture:
-     - time shifting. This allows you to pause/ FF/RW live tv      
+     - TVOSD: FF/RW live TV, skip commercial (pause already works)
+     - TVOSD: show progress bar where we are in time
+     - view & record @ same time (optional)
      - add support for digital capture cards (BDA tuners)
     
 My Music:
