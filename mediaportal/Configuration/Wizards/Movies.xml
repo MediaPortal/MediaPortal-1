@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+  <caption>MediaPortal - Music Wizard</caption>
+  <sections>
+    	<section>
+      		<description>Welcome screen</description>
+      		<name>Wizard_Welcome</name>
+      		<topic>MediaPortal Wizard</topic>
+      		<information />
+      		
+			<header>Welcome to the Movie-setup wizard</header>
+			<body>This wizard will take you through the steps needed to configuration MediaPortals Movie-playback. Take your time to read the information on each page carefully for a successful setup.</body>
+			<image>wizards/wizard_movie.png</image>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>Movies</name>
+      		<topic>General Movie Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>MoviePlayer</name>
+      		<topic>Movie Player Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>MovieExtensions</name>
+      		<topic>Movie Extension Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>MovieShares</name>
+      		<topic>Movie Shares</topic>
+      		<information></information>
+    	</section>
+    	    	
+    	<section>
+      		<description>Wizard done screen</description>
+      		<name>Wizard_Finished</name>
+      		<topic>Congratulations!</topic>
+      		<information>You have now finished the movie setup wizard, if you wish to alter any of these settings later you can change them by pressing 'F2' from inside MediaPortal.</information>
+      		<dependency></dependency>
+    	</section>
+    	
+	</sections>
+</wizard>

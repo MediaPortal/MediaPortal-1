@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Data;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace MediaPortal.Configuration
 {
@@ -25,6 +26,11 @@ namespace MediaPortal.Configuration
 		public virtual void LoadSettings()
 		{
 		}
+
+    public virtual void LoadWizardSettings(XmlNode node)
+    {
+
+    }
 
 		/// <summary> 
 		/// Required designer variable.

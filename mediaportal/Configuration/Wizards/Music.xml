@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+  <caption>MediaPortal - Music Wizard</caption>
+  <sections>
+    	<section>
+      		<description>Welcome screen</description>
+      		<name>Wizard_Welcome</name>
+      		<topic>MediaPortal Wizard</topic>
+      		<information />
+      		
+			<header>Welcome to the Music-setup wizard</header>
+			<body>This wizard will take you through the steps needed to configuration MediaPortals Music-playback. Take your time to read the information on each page carefully for a successful setup.</body>
+			<image>wizards/wizard_music.png</image>
+    	</section>
+
+    	<section>
+      		<description>Let the user do some initial configuration as hiding mouse cursor at startup etc.</description>
+      		<name>Music</name>
+      		<topic>General Music Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>MusicExtensions</name>
+      		<topic>Music Extension Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>MusicShares</name>
+      		<topic>Music Shares</topic>
+      		<information></information>
+    	</section>
+    	
+    	<section>
+      		<description>Wizard done screen</description>
+      		<name>Wizard_Finished</name>
+      		<topic>Congratulations!</topic>
+      		<information>You have now finished the music setup wizard, if you wish to alter any of these settings later you can change them by pressing 'F2' from inside MediaPortal.</information>
+      		<dependency></dependency>
+    	</section>
+    	
+	</sections>
+</wizard>

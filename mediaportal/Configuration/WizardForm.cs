@@ -38,7 +38,9 @@ namespace MediaPortal.Configuration
 		// Private members
 		//
 		ArrayList wizardPages = new ArrayList();
-		private System.Windows.Forms.Button cancelButton;
+    string wizardCaption = String.Empty;
+    
+    private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button nextButton;
 		private System.Windows.Forms.Button backButton;
 		private System.Windows.Forms.Panel topPanel;
@@ -72,7 +74,7 @@ namespace MediaPortal.Configuration
 			//
 			// Set caption
 			//
-			this.Text = "MediaPortal Settings Wizard - " + Application.ProductVersion;
+			wizardCaption = "MediaPortal Settings Wizard - " + Application.ProductVersion;
 
 			//
 			// Check if we got a sections file to read from, or if we should specify
@@ -126,7 +128,7 @@ namespace MediaPortal.Configuration
 					XmlNode	wizardTopicNode = rootElement.SelectSingleNode("/wizard/caption");
 					if(wizardTopicNode != null)
 					{
-						this.Text = wizardTopicNode.InnerText;
+						wizardCaption = wizardTopicNode.InnerText;
 					}
 
 					//
@@ -153,6 +155,14 @@ namespace MediaPortal.Configuration
 
 							if(section != null)
 							{
+                //
+                // Load wizard specific settings
+                //
+                section.LoadWizardSettings(node);
+              
+                //
+                // Add the section to the sections list
+                //
 								if(dependencyNode == null)
 								{
 									AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
@@ -219,155 +229,157 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.nextButton = new System.Windows.Forms.Button();
-			this.backButton = new System.Windows.Forms.Button();
-			this.topPanel = new System.Windows.Forms.Panel();
-			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.infoLabel = new System.Windows.Forms.Label();
-			this.topicLabel = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.holderPanel = new System.Windows.Forms.Panel();
-			this.panel3 = new System.Windows.Forms.Panel();
-			this.panel4 = new System.Windows.Forms.Panel();
-			this.topPanel.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// cancelButton
-			// 
-			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cancelButton.Location = new System.Drawing.Point(526, 414);
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 1;
-			this.cancelButton.Text = "Cancel";
-			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-			// 
-			// nextButton
-			// 
-			this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.nextButton.Location = new System.Drawing.Point(441, 414);
-			this.nextButton.Name = "nextButton";
-			this.nextButton.TabIndex = 4;
-			this.nextButton.Text = "Next >";
-			this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
-			// 
-			// backButton
-			// 
-			this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.backButton.Location = new System.Drawing.Point(363, 414);
-			this.backButton.Name = "backButton";
-			this.backButton.TabIndex = 5;
-			this.backButton.Text = "< Back";
-			this.backButton.Click += new System.EventHandler(this.backButton_Click);
-			// 
-			// topPanel
-			// 
-			this.topPanel.BackColor = System.Drawing.SystemColors.Window;
-			this.topPanel.Controls.Add(this.pictureBox1);
-			this.topPanel.Controls.Add(this.infoLabel);
-			this.topPanel.Controls.Add(this.topicLabel);
-			this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
-			this.topPanel.Location = new System.Drawing.Point(0, 0);
-			this.topPanel.Name = "topPanel";
-			this.topPanel.Size = new System.Drawing.Size(610, 72);
-			this.topPanel.TabIndex = 6;
-			// 
-			// pictureBox1
-			// 
-			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-			this.pictureBox1.Location = new System.Drawing.Point(528, 14);
-			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.Size = new System.Drawing.Size(70, 48);
-			this.pictureBox1.TabIndex = 2;
-			this.pictureBox1.TabStop = false;
-			// 
-			// infoLabel
-			// 
-			this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.infoLabel.Location = new System.Drawing.Point(8, 26);
-			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(512, 40);
-			this.infoLabel.TabIndex = 1;
-			this.infoLabel.Text = "Information information information information information";
-			// 
-			// topicLabel
-			// 
-			this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.topicLabel.Location = new System.Drawing.Point(8, 8);
-			this.topicLabel.Name = "topicLabel";
-			this.topicLabel.Size = new System.Drawing.Size(272, 23);
-			this.topicLabel.TabIndex = 0;
-			this.topicLabel.Text = "Topic";
-			// 
-			// panel1
-			// 
-			this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-			this.panel1.Location = new System.Drawing.Point(0, 72);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(610, 1);
-			this.panel1.TabIndex = 7;
-			// 
-			// panel2
-			// 
-			this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-			this.panel2.Location = new System.Drawing.Point(0, 73);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(610, 1);
-			this.panel2.TabIndex = 9;
-			// 
-			// holderPanel
-			// 
-			this.holderPanel.Location = new System.Drawing.Point(24, 74);
-			this.holderPanel.Name = "holderPanel";
-			this.holderPanel.Size = new System.Drawing.Size(560, 326);
-			this.holderPanel.TabIndex = 10;
-			// 
-			// panel3
-			// 
-			this.panel3.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.panel3.Location = new System.Drawing.Point(0, 400);
-			this.panel3.Name = "panel3";
-			this.panel3.Size = new System.Drawing.Size(616, 1);
-			this.panel3.TabIndex = 11;
-			// 
-			// panel4
-			// 
-			this.panel4.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			this.panel4.Location = new System.Drawing.Point(0, 401);
-			this.panel4.Name = "panel4";
-			this.panel4.Size = new System.Drawing.Size(616, 1);
-			this.panel4.TabIndex = 12;
-			// 
-			// WizardForm
-			// 
-			this.AcceptButton = this.nextButton;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(610, 448);
-			this.Controls.Add(this.panel4);
-			this.Controls.Add(this.panel3);
-			this.Controls.Add(this.holderPanel);
-			this.Controls.Add(this.panel2);
-			this.Controls.Add(this.panel1);
-			this.Controls.Add(this.topPanel);
-			this.Controls.Add(this.backButton);
-			this.Controls.Add(this.nextButton);
-			this.Controls.Add(this.cancelButton);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "WizardForm";
-			this.Text = "WizardForm";
-			this.Load += new System.EventHandler(this.WizardForm_Load);
-			this.topPanel.ResumeLayout(false);
-			this.ResumeLayout(false);
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
+      this.cancelButton = new System.Windows.Forms.Button();
+      this.nextButton = new System.Windows.Forms.Button();
+      this.backButton = new System.Windows.Forms.Button();
+      this.topPanel = new System.Windows.Forms.Panel();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.infoLabel = new System.Windows.Forms.Label();
+      this.topicLabel = new System.Windows.Forms.Label();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.panel2 = new System.Windows.Forms.Panel();
+      this.holderPanel = new System.Windows.Forms.Panel();
+      this.panel3 = new System.Windows.Forms.Panel();
+      this.panel4 = new System.Windows.Forms.Panel();
+      this.topPanel.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // cancelButton
+      // 
+      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cancelButton.Location = new System.Drawing.Point(526, 414);
+      this.cancelButton.Name = "cancelButton";
+      this.cancelButton.TabIndex = 1;
+      this.cancelButton.Text = "&Cancel";
+      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+      // 
+      // nextButton
+      // 
+      this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.nextButton.Location = new System.Drawing.Point(441, 414);
+      this.nextButton.Name = "nextButton";
+      this.nextButton.TabIndex = 4;
+      this.nextButton.Text = "&Next >";
+      this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
+      // 
+      // backButton
+      // 
+      this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.backButton.Location = new System.Drawing.Point(363, 414);
+      this.backButton.Name = "backButton";
+      this.backButton.TabIndex = 5;
+      this.backButton.Text = "< &Back";
+      this.backButton.Click += new System.EventHandler(this.backButton_Click);
+      // 
+      // topPanel
+      // 
+      this.topPanel.BackColor = System.Drawing.SystemColors.Window;
+      this.topPanel.Controls.Add(this.pictureBox1);
+      this.topPanel.Controls.Add(this.infoLabel);
+      this.topPanel.Controls.Add(this.topicLabel);
+      this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
+      this.topPanel.Location = new System.Drawing.Point(0, 0);
+      this.topPanel.Name = "topPanel";
+      this.topPanel.Size = new System.Drawing.Size(610, 72);
+      this.topPanel.TabIndex = 6;
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(528, 14);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(70, 48);
+      this.pictureBox1.TabIndex = 2;
+      this.pictureBox1.TabStop = false;
+      // 
+      // infoLabel
+      // 
+      this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.infoLabel.Location = new System.Drawing.Point(8, 26);
+      this.infoLabel.Name = "infoLabel";
+      this.infoLabel.Size = new System.Drawing.Size(512, 40);
+      this.infoLabel.TabIndex = 1;
+      this.infoLabel.Text = "Information information information information information";
+      // 
+      // topicLabel
+      // 
+      this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.topicLabel.Location = new System.Drawing.Point(8, 8);
+      this.topicLabel.Name = "topicLabel";
+      this.topicLabel.Size = new System.Drawing.Size(272, 23);
+      this.topicLabel.TabIndex = 0;
+      this.topicLabel.Text = "Topic";
+      // 
+      // panel1
+      // 
+      this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+      this.panel1.Location = new System.Drawing.Point(0, 72);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(610, 1);
+      this.panel1.TabIndex = 7;
+      // 
+      // panel2
+      // 
+      this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
+      this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+      this.panel2.Location = new System.Drawing.Point(0, 73);
+      this.panel2.Name = "panel2";
+      this.panel2.Size = new System.Drawing.Size(610, 1);
+      this.panel2.TabIndex = 9;
+      // 
+      // holderPanel
+      // 
+      this.holderPanel.Location = new System.Drawing.Point(0, 74);
+      this.holderPanel.Name = "holderPanel";
+      this.holderPanel.Size = new System.Drawing.Size(610, 327);
+      this.holderPanel.TabIndex = 10;
+      // 
+      // panel3
+      // 
+      this.panel3.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.panel3.Location = new System.Drawing.Point(0, 400);
+      this.panel3.Name = "panel3";
+      this.panel3.Size = new System.Drawing.Size(616, 1);
+      this.panel3.TabIndex = 11;
+      // 
+      // panel4
+      // 
+      this.panel4.BackColor = System.Drawing.SystemColors.ControlLightLight;
+      this.panel4.Location = new System.Drawing.Point(0, 401);
+      this.panel4.Name = "panel4";
+      this.panel4.Size = new System.Drawing.Size(616, 1);
+      this.panel4.TabIndex = 12;
+      // 
+      // WizardForm
+      // 
+      this.AcceptButton = this.nextButton;
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.CancelButton = this.cancelButton;
+      this.ClientSize = new System.Drawing.Size(610, 448);
+      this.Controls.Add(this.panel4);
+      this.Controls.Add(this.panel3);
+      this.Controls.Add(this.holderPanel);
+      this.Controls.Add(this.panel2);
+      this.Controls.Add(this.panel1);
+      this.Controls.Add(this.topPanel);
+      this.Controls.Add(this.backButton);
+      this.Controls.Add(this.nextButton);
+      this.Controls.Add(this.cancelButton);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.Name = "WizardForm";
+      this.Text = "WizardForm";
+      this.Load += new System.EventHandler(this.WizardForm_Load);
+      this.topPanel.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		/// <summary>
@@ -605,12 +617,17 @@ namespace MediaPortal.Configuration
 
 			if(visiblePageIndex == wizardPages.Count - 1)
 			{
-				nextButton.Text = "Finish";
+				nextButton.Text = "&Finish";
 			}
 			else
 			{
-				nextButton.Text = "Next >";
+				nextButton.Text = "&Next >";
 			}
+
+      //
+      // Set caption
+      //
+      this.Text = String.Format("{0} [{1}/{2}]", wizardCaption, visiblePageIndex + 1, wizardPages.Count);
 		}
 
 		/// <summary>

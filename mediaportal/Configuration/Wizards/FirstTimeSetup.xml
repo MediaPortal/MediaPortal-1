@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+  <caption>First-time-setup wizard</caption>
+  <sections>
+    	<section>
+      		<description>Welcome screen</description>
+      		<name>Wizard_Welcome</name>
+      		<topic>MediaPortal Wizard</topic>
+      		<information />
+
+			<header>Welcome to the first-time-setup wizard!</header>
+			<body>This wizard will take you through the basic configuration steps needed to get MediaPortal up and running for the first time. Take your time to read the information on each page.</body>
+			<image>wizards/wizard_fts.png</image>
+    	</section>
+
+    	<section>
+      		<description>Let the user do some initial configuration as hiding mouse cursor at startup etc.</description>
+      		<name>General</name>
+      		<topic>Language and general settings</topic>
+      		<information>Please select the display language and set various general settings.</information>
+    	</section>
+		
+    	<section>
+      		<description>Let the user select the initial skin for MediaPortal.</description>
+      		<name>Skin</name>
+      		<topic>Skin settings</topic>
+      		<information>Please select the skin that you would like to use with MediaPortal.</information>
+    	</section>
+
+    	<section>
+      		<description>Select plugins that should be enabled by default</description>
+      		<name>Wizard_SelectPlugins</name>
+      		<topic>Select default plugins</topic>
+      		<information>Please check which plugins you would like to be loaded automatcially when MediaPortal starts.</information>
+    	</section>
+    	
+    	<section>
+      		<description>Picture Shares</description>
+      		<name>PictureShares</name>
+      		<topic>Picture Shares</topic>
+      		<information>Picture share information, yada yada. By checking one of the shares you will make that share the default share, this share will be automatically shown when you enter My Pictures.</information>
+      		<dependency>Wizard_SelectPlugins.Plugin.MyPictures</dependency>
+    	</section>
+    	
+    	<section>
+      		<description>Movie Shares</description>
+      		<name>MovieShares</name>
+      		<topic>Movie Shares</topic>
+      		<information>Movie share information, yada yada, By checking one of the shares you will make that share the default share, this share will be automatically shown when you enter My Movies.</information>
+      		<dependency>Wizard_SelectPlugins.Plugin.MyMovies</dependency>
+    	</section>
+    	
+    	<section>
+      		<description>Music Shares</description>
+      		<name>MusicShares</name>
+      		<topic>Music Shares</topic>
+      		<information>Music share information, yada yada. By checking one of the shares you will make that share the default share, this share will be automatically shown when you enter My Music.</information>
+      		<dependency>Wizard_SelectPlugins.Plugin.MyMusic</dependency>
+    	</section>
+    	
+    	<section>
+      		<description>Wizard done screen</description>
+      		<name>Wizard_Finished</name>
+      		<topic>Congratulations!</topic>
+      		<information>You have now finished the setup wizard, if you wish to alter any of these settings later you can change them by pressing 'F2' from inside MediaPortal.</information>
+      		<dependency></dependency>
+    	</section>
+    	
+	</sections>
+</wizard>

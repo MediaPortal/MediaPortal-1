@@ -279,6 +279,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "wizard_background.png"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "WizardForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -638,6 +642,7 @@
                     DependentUpon = "Wizard_Welcome.cs"
                     BuildAction = "EmbeddedResource"
                 />
+                <Folder RelPath = "Wizards\" />
             </Include>
         </Files>
     </CSHARP>

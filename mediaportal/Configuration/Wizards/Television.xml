@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<wizard>
+  <caption>MediaPortal - Television Wizard</caption>
+  <sections>
+    	<section>
+      		<description>Welcome screen</description>
+      		<name>Wizard_Welcome</name>
+      		<topic>MediaPortal Wizard</topic>
+      		<information />
+      		
+			<header>Welcome to the Television-setup wizard</header>
+			<body>This wizard will take you through the steps needed to configure MediaPortals Television and PVR functionality. Take your time to read the information on each page carefully for a successful setup.</body>
+			<image>wizards/wizard_television.png</image>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>Television</name>
+      		<topic>General Television Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>TVCaptureCards</name>
+      		<topic>Capture Card Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>TVChannels</name>
+      		<topic>Channel Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>TVProgramGuide</name>
+      		<topic>Program Guide Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description></description>
+      		<name>TVRecording</name>
+      		<topic>PVR Settings</topic>
+      		<information></information>
+    	</section>
+
+    	<section>
+      		<description>Wizard done screen</description>
+      		<name>Wizard_Finished</name>
+      		<topic>Congratulations!</topic>
+      		<information>You have now finished the picture setup wizard, if you wish to alter any of these settings later you can change them by pressing 'F2' from inside MediaPortal.</information>
+      		<dependency></dependency>
+    	</section>
+    	
+	</sections>
+</wizard>
