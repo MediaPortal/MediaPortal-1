@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  30-06-2004  winamp      : added : configuration to what extensions to enable it to play
   30-06-2004  general     : added : configuration for external player as plugin.  External players 
                                     are now picked up and can be enabled through tools->plugins.
 
