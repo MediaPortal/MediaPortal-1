@@ -124,7 +124,7 @@ namespace MediaPortal.Dialogs
     public void DoModal(int dwParentId)
     {
       if (m_vecList.Count == 0)
-        Close();
+				return;
 
       m_dwParentWindowID=dwParentId;
       m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
