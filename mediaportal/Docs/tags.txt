@@ -33,31 +33,48 @@ example of an fadelabel:
     </control>
 
 List of special tags:
-Tagname             description
+Tagname                     description
 ---------------------------------------------------------
-#title              title of current playing song or movie
-#artist             artist of current playing song
-#album              albumname of current playing song 
-#track              tracknumber of current playing song
-#year               release year of current playing song or movie
-#comment            comment of of current playing song 
-#duration           duration in seconds of current playing song or movie
-#thumb              filename to the thumbnail for the current playing song or movie
-#director           Director of current playing movie
-#genre              genre of current playing song/movie
-#cast               cast of current playing movie
-#dvdlabel           dvd# of current playing movie
-#imdbnumber         imdbnumber of current playing movie
-#file               filename of current playing movie
-#plot               plot of current playing movie
-#plotoutline        plotoutline of current playing movie
-#rating             rating of current playing movie
-#tagline            tagline of current playing movie
-#votes              votes of current playing movie
-#credits            credits of current playing movie
-#currentplaytime    current playtime of current playing movie/song
-#playspeed          playspeed (-2x, 1x, 2x, 4x,...) of current playing movie/song
-#channel            current TV channel
-#selecteditem		text of selected item
-#selecteditem2		2nd text of selected item
-#selectedthumb		filename of thumbnail of selected item
+#title                      title of current playing song or movie
+#artist                     artist of current playing song
+#album                      albumname of current playing song 
+#track                      tracknumber of current playing song
+#year                       release year of current playing song or movie
+#comment                    comment of of current playing song 
+#duration                   duration in seconds of current playing song or movie
+#thumb                      filename to the thumbnail for the current playing song or movie
+#director                   Director of current playing movie
+#genre                      genre of current playing song/movie
+#cast                       cast of current playing movie
+#dvdlabel                   dvd# of current playing movie
+#imdbnumber                 imdbnumber of current playing movie
+#file                       filename of current playing movie
+#plot                       plot of current playing movie
+#plotoutline                plotoutline of current playing movie
+#rating                     rating of current playing movie
+#tagline                    tagline of current playing movie
+#votes                      votes of current playing movie
+#credits                    credits of current playing movie
+#currentplaytime            current playtime of current playing movie/song
+#playspeed                  playspeed (-2x, 1x, 2x, 4x,...) of current playing movie/song
+#channel                    current TV channel
+#selecteditem               text of selected item
+#selecteditem2              2nd text of selected item
+#selectedthumb              filename of thumbnail of selected item
+
+
+#TV.Record.channel          TV channel of current the tvprogram which gets recorded
+#TV.Record.start            start time of current the tvprogram which gets recorded
+#TV.Record.stop             stop time of current the tvprogram which gets recorded
+#TV.Record.genre            genre of current the tvprogram which gets recorded
+#TV.Record.title            title of current the tvprogram which gets recorded
+#TV.Record.description      description of current the tvprogram which gets recorded
+#TV.Record.thumb            thumbnail filename of current the tvprogram which gets recorded
+
+#TV.View.channel            TV channel of the current tvprogram you're watching
+#TV.View.thumb              thumbnail of the current tvprogram you're watching
+#TV.View.start              start time of current the tvprogram you're watching
+#TV.View.stop               stop time of current the tvprogram you're watching
+#TV.View.genre              genre of current the tvprogram you're watching
+#TV.View.title              title of current the tvprogram you're watching
+#TV.View.description        description of current the tvprogram you're watching

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Globalization;
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -195,6 +196,27 @@ namespace MediaPortal.TV.Recording
 			TVUtil tvutil = new TVUtil();
       foreach (TVChannel chan in channels)
       {
+        if (chan.Name.Equals(m_strPreviewChannel))
+        {
+          TVProgram prog=tvutil.GetCurrentProgram(chan.Name);
+          if (m_bPreviewing && prog!=null)
+          {
+            GUIPropertyManager.Properties["#TV.View.start"]=prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+            GUIPropertyManager.Properties["#TV.View.stop"] =prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+            GUIPropertyManager.Properties["#TV.View.genre"]=prog.Genre;
+            GUIPropertyManager.Properties["#TV.View.title"]=prog.Title;
+            GUIPropertyManager.Properties["#TV.View.description"]=prog.Description;
+          }
+          else
+          {
+            GUIPropertyManager.Properties["#TV.View.start"]="";
+            GUIPropertyManager.Properties["#TV.View.stop"] ="";
+            GUIPropertyManager.Properties["#TV.View.genre"]="";
+            GUIPropertyManager.Properties["#TV.View.title"]="";
+            GUIPropertyManager.Properties["#TV.View.description"]="";
+          }
+        }
+
         if (m_eState !=State.Running) break;
         if (m_bPreviewChanged) break;
         if (m_bRecordingsChanged) break;
@@ -249,6 +271,58 @@ namespace MediaPortal.TV.Recording
             // recording it
           }
         }
+      }
+
+      // handle properties...
+      if (IsRecording)
+      {
+        TVRecording recording = ScheduleRecording;
+        TVProgram program     = ProgramRecording;
+        if (program==null)
+        {
+          if (!GUIPropertyManager.Properties["#TV.Record.channel"].Equals(recording.Channel))
+          {
+            string strLogo=Utils.GetLogo(recording.Channel);
+            if (!System.IO.File.Exists(strLogo))
+            {
+              strLogo="defaultVideoBig.png";
+            }
+            GUIPropertyManager.Properties["#TV.Record.thumb"]=strLogo;
+          }
+          GUIPropertyManager.Properties["#TV.Record.start"]=recording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+          GUIPropertyManager.Properties["#TV.Record.stop"] =recording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+          GUIPropertyManager.Properties["#TV.Record.genre"]="";
+          GUIPropertyManager.Properties["#TV.Record.title"]=recording.Title;
+          GUIPropertyManager.Properties["#TV.Record.description"]="";
+        }
+        else
+        {
+          if (!GUIPropertyManager.Properties["#TV.Record.channel"].Equals(program.Channel))
+          {
+            string strLogo=Utils.GetLogo(program.Channel);
+            if (!System.IO.File.Exists(strLogo))
+            {
+              strLogo="defaultVideoBig.png";
+            }
+            GUIPropertyManager.Properties["#TV.Record.thumb"]=strLogo;
+          }
+          GUIPropertyManager.Properties["#TV.Record.channel"]=program.Channel;
+          GUIPropertyManager.Properties["#TV.Record.start"]=program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+          GUIPropertyManager.Properties["#TV.Record.stop"] =program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+          GUIPropertyManager.Properties["#TV.Record.genre"]=program.Genre;
+          GUIPropertyManager.Properties["#TV.Record.title"]=program.Title;
+          GUIPropertyManager.Properties["#TV.Record.description"]=program.Description;
+        }
+      }
+      else
+      {
+        GUIPropertyManager.Properties["#TV.Record.channel"]="";
+        GUIPropertyManager.Properties["#TV.Record.start"]="";
+        GUIPropertyManager.Properties["#TV.Record.stop"] ="";
+        GUIPropertyManager.Properties["#TV.Record.genre"]="";
+        GUIPropertyManager.Properties["#TV.Record.title"]="";
+        GUIPropertyManager.Properties["#TV.Record.description"]="";
+        GUIPropertyManager.Properties["#TV.Record.thumb"]  ="";
       }
     }
 
@@ -389,6 +463,7 @@ namespace MediaPortal.TV.Recording
         return false;
       }
     }
+    
     static public TVProgram ProgramRecording
     {
       get
@@ -400,6 +475,7 @@ namespace MediaPortal.TV.Recording
         return null;
       }
     }
+
     static public TVRecording ScheduleRecording
     {
       get
@@ -427,6 +503,28 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    static void OnPreviewChannelChanged()
+    {
+      string strLogo=Utils.GetLogo(m_strPreviewChannel);
+      if (!System.IO.File.Exists(strLogo))
+      {
+        strLogo="defaultVideoBig.png";
+      }
+      GUIPropertyManager.Properties["#TV.View.channel"]=m_strPreviewChannel;
+      GUIPropertyManager.Properties["#TV.View.thumb"]  =strLogo;
+    }
+
+    static void OnPreviewStopped()
+    {
+      GUIPropertyManager.Properties["#TV.View.channel"]="";
+      GUIPropertyManager.Properties["#TV.View.thumb"]  ="";
+    }
+    
+    static void OnPreviewStarted()
+    {
+      OnPreviewChannelChanged();
+    }
+
     static void HandlePreview()
     {
       //check if we are already previewing
@@ -435,47 +533,71 @@ namespace MediaPortal.TV.Recording
 
       if (m_bPreviewing)
       {
+        // check if we're already previewing
         foreach (TVCaptureDevice dev in m_tvcards)
         {
           if (dev.Previewing) 
           {
+            //yes then just change channels
             dev.PreviewChannel=m_strPreviewChannel;
-            if (!dev.Previewing) m_bPreviewing=false;
+
+            // if that failed
+            if (!dev.Previewing) 
+            {
+              //we're not previewing anymore!
+              m_bPreviewing=false;
+              OnPreviewStopped();
+            }
+
+            // else we continue previewing on the new channel
+            OnPreviewChannelChanged();
             return;
           }
         }
+
+        // find free tuner for previewing
         Log.Write("Recorder: Start preview, find free tuner");
         foreach (TVCaptureDevice dev in m_tvcards)
         {
           if (!dev.IsRecording && dev.UseForTV) 
           {
+            // found one. Set it to previewing
             Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
             dev.PreviewChannel=m_strPreviewChannel;
             dev.Previewing=true;
             if (!dev.Previewing) 
             {
+              // failed...still not previewing
               Log.Write("Recorder: preview failed");
               m_bPreviewing=false;
             }
             else
             {
+              // succeeded. We're now previewing
               Log.Write("Recorder: previewing...");
+              OnPreviewStarted();
             }
             return;
           }
         }
+
+        // no free tuner right now
+        // we're still not previewing
         Log.Write("Recorder: no free tuner for previewing...");
         m_bPreviewing=false;
         return;
       }
       else
       {
+        // preview should be stopped
         Log.Write("Recorder: stop preview");
         foreach (TVCaptureDevice dev in m_tvcards)
         {
           if (dev.Previewing) 
           {
+            // stop previewing
             dev.Previewing=false;
+            OnPreviewStopped();
           }
         }
       }
@@ -485,9 +607,6 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-#if DEBUG
-//        return true;
-#endif
         return m_bPreviewing;
       }
       set
@@ -517,5 +636,6 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+
   }
 }
