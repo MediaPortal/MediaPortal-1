@@ -160,6 +160,7 @@ namespace MediaPortal.Configuration
 			Sections.FiltersSection filterSection = new Sections.FiltersSection();
 			AddSection(filterSection);
 			AddChildSection(filterSection,new Sections.MPEG2DecAudioFilter());
+			AddChildSection(filterSection,new Sections.DScalerAudioFilter());
 
 
       Log.Write("add weather section");
