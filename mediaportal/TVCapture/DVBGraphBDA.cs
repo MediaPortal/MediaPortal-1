@@ -30,26 +30,58 @@ namespace MediaPortal.TV.Recording
 	/// -tv timeshifting
 	/// 
 	/// todo:
-	///   -add support for DVB-S and DVB-C  (just the tuning/scanning needs to be added)
+	///   -add support for DVB-S and DVB-C  (just the scanning & parsing needs to be added)
 	///   -when scanning for channels we need to parse IGuideData to see if the channel found is radio,tv,encrypted or not etc
 	///   -get TVGuide data from stream
 	///   
 	/// for dvb-t scanning we need : frequency
-	/// for dvb-s scanning we need : frequency, polarisation, symbolrate,lnb-config, diseqc-config
-	/// for dvb-c scanning we need : ?
+	/// for dvb-s scanning we need : frequency, polarisation, symbolrate, innerFec, SID
+	/// for dvb-c scanning we need : frequency, symbolrate, innerFec, SID,modulation
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
 		class DVBTChannel
 		{
-			public int		ONID;
-			public int		TSID;
-			public int		SID;
-			public string ChannelName;
-			public string NetworkName;
-			public int    NetworkType;
-			public bool		IsTv;
-			public bool		IsRadio;
+			public int		ONID;				 //original network id
+			public int		TSID;				 //transport service id
+			public int		SID;				 // service id
+			public string ChannelName; //name of channel
+			public string NetworkName; //name of network provide
+			public int    NetworkType; //type of network
+			public bool		IsTv;				 //if true this is a TV channel
+			public bool		IsRadio;     //if true this is a radio channel
+		}
+		
+		class DVBCChannel
+		{
+			public int		ONID;				 //original network id
+			public int		TSID;				 //transport service id
+			public int		SID;				 // service id
+			public string ChannelName; //name of channel
+			public string NetworkName; //name of network provide
+			public int    NetworkType; //type of network
+			public bool		IsTv;				 //if true this is a TV channel
+			public bool		IsRadio;     //if true this is a radio channel
+			public int    symbolRate;
+			public int    innerFec;
+			public int    carrierFrequency;
+			public int    modulation;
+		}
+
+		class DVBSChannel
+		{
+			public int		ONID;				 //original network id
+			public int		TSID;				 //transport service id
+			public int		SID;				 // service id
+			public string ChannelName; //name of channel
+			public string NetworkName; //name of network provide
+			public int    NetworkType; //type of network
+			public bool		IsTv;				 //if true this is a TV channel
+			public bool		IsRadio;     //if true this is a radio channel
+			public int    polarisation;
+			public int    symbolRate;
+			public int    innerFec;
+			public int    carrierFrequency;
 		}
 
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -783,13 +815,129 @@ namespace MediaPortal.TV.Recording
 			{
 				case NetworkType.ATSC: 
 				{
+					//todo
 				} break;
+				
 				case NetworkType.DVBC: 
 				{
+					//get the DVB-C tuning details from the tv database
+					//for DVB-C this is the frequency
+					int frequency=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1,modulation=0;
+					//todo: implement TVDatabase.GetDVBSTuneRequest()
+					//TVDatabase.GetDVBCTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out diseqc,out ONID, out TSID, out SID,out modulation);
+					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ", frequency);
+
+					//get the IDVBTuningSpace2 from the tuner
+					TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+					if (myTuningSpace==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. Invalid tuningspace", frequency);
+						return ;
+					}
+
+					//create a new tuning request
+					newTuneRequest = myTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot create new tuningrequest", frequency);
+						return ;
+					}
+
+					TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
+					if (myTuneRequest ==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot create new dvbt tuningrequest", frequency);
+						return ;
+					}
+
+					//get the IDVBCLocator interface from the new tuning request
+					TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
+					if (myLocator==null)
+					{
+						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
+					}
+					
+					if (myLocator ==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0}. cannot get locator", frequency);
+						return ;
+					}
+					//set the properties on the new tuning request
+					myLocator.CarrierFrequency		= frequency;
+					myLocator.SymbolRate				  = symbolrate;
+					myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
+					myLocator.Modulation					= (TunerLib.ModulationType)modulation;
+					myTuneRequest.ONID	= ONID;					//original network id
+					myTuneRequest.TSID	= TSID;					//transport stream id
+					myTuneRequest.SID		= SID;					//service id
+					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+
+					//submit tune request to the tuner
+					myTuner.TuneRequest = newTuneRequest;
+					Marshal.ReleaseComObject(myTuneRequest);
+					currentFrequency=(int)frequency;
 				} break;
+
 				case NetworkType.DVBS: 
-				{
+				{					
+					//get the DVB-S tuning details from the tv database
+					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
+					int frequency=0,polarisation=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1;
+					//todo: implement TVDatabase.GetDVBSTuneRequest()
+					//TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out polarisation, out symbolrate, out innerFec, out diseqc,out ONID, out TSID, out SID);
+					Log.Write("DVBGraphBDA:tuning to frequency:{0} ", frequency);
+
+					//get the IDVBTuningSpace2 from the tuner
+					TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+					if (myTuningSpace==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. Invalid tuningspace", frequency);
+						return ;
+					}
+
+					//create a new tuning request
+					newTuneRequest = myTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot create new tuningrequest", frequency);
+						return ;
+					}
+
+					TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
+					if (myTuneRequest ==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz . cannot create new dvbt tuningrequest", frequency);
+						return ;
+					}
+
+					//get the IDVBSLocator interface from the new tuning request
+					TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
+					if (myLocator==null)
+					{
+						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
+					}
+					
+					if (myLocator ==null)
+					{
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
+						return ;
+					}
+					//set the properties on the new tuning request
+					myLocator.CarrierFrequency		= frequency;
+					myLocator.SignalPolarisation  = (TunerLib.Polarisation)polarisation;
+					myLocator.SymbolRate				  = symbolrate;
+					myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
+					myTuneRequest.ONID	= ONID;		//original network id
+					myTuneRequest.TSID	= TSID;		//transport stream id
+					myTuneRequest.SID		= SID;		//service id
+					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+
+					//submit tune request to the tuner
+					myTuner.TuneRequest = newTuneRequest;
+					Marshal.ReleaseComObject(myTuneRequest);
+					currentFrequency=(int)frequency;
 				} break;
+
 				case NetworkType.DVBT: 
 				{
 					//get the DVB-T tuning details from the tv database
@@ -2015,7 +2163,9 @@ namespace MediaPortal.TV.Recording
 				data.GetServices(out varRequests);
 				if (varRequests==null) return;
 
-				DVBTChannel channel = new DVBTChannel();
+				DVBTChannel DvbtChannel = new DVBTChannel();
+				DVBCChannel DvbcChannel = new DVBCChannel();
+				DVBSChannel DvbsChannel = new DVBSChannel();
 				int         gotAll=0;
 				TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
 				while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
@@ -2035,6 +2185,7 @@ namespace MediaPortal.TV.Recording
 							properties[0].Name( out chanName);
 							properties[0].Value(out chanValue);
 							properties[0].Language(out chanLanguage);
+
 							if (Network()==NetworkType.DVBT)
 							{
 								//service name							value						language
@@ -2052,13 +2203,13 @@ namespace MediaPortal.TV.Recording
 									{
 										try
 										{
-											channel.ONID = Int32.Parse(parts[0]);
-											channel.TSID = Int32.Parse(parts[1]);
-											channel.SID  = Int32.Parse(parts[2]);
+											DvbtChannel.ONID = Int32.Parse(parts[0]);
+											DvbtChannel.TSID = Int32.Parse(parts[1]);
+											DvbtChannel.SID  = Int32.Parse(parts[2]);
 
 											//TODO: determine if channel found is an radio or tv channel
-											channel.IsTv=true;
-											channel.IsRadio=true;
+											DvbtChannel.IsTv=true;
+											DvbtChannel.IsRadio=true;
 											gotAll++;
 										}
 										catch(Exception)
@@ -2071,19 +2222,19 @@ namespace MediaPortal.TV.Recording
 
 								if (chanName=="Description.Name")
 								{
-									channel.ChannelName=(string)chanValue;
+									DvbtChannel.ChannelName=(string)chanValue;
 									gotAll++;
 								}
 								
 								if (chanName=="Provider.Name")
 								{
-									channel.NetworkName=(string)chanValue;
+									DvbtChannel.NetworkName=(string)chanValue;
 									gotAll++;
 								}
 								
 								if (chanName=="Description.ServiceType")
 								{
-									channel.NetworkType=Int32.Parse( chanValue.ToString());
+									DvbtChannel.NetworkType=Int32.Parse( chanValue.ToString());
 									gotAll++;
 								}
 								
@@ -2093,7 +2244,7 @@ namespace MediaPortal.TV.Recording
 									for (int x=0; x < channelList.Count;++x)
 									{
 										DVBTChannel chan=(DVBTChannel)channelList[x];
-										if (chan.ONID==channel.ONID && chan.TSID==channel.TSID && chan.SID==channel.SID)
+										if (chan.ONID==DvbtChannel.ONID && chan.TSID==DvbtChannel.TSID && chan.SID==DvbtChannel.SID)
 										{	
 											add=false;
 											break;
@@ -2102,13 +2253,24 @@ namespace MediaPortal.TV.Recording
 	
 									if (add)
 									{
-										Log.Write("Network:{0} channel:{1} ONID:{2} TSID:{3} SID:{4}",channel.NetworkName,channel.ChannelName,channel.ONID,channel.TSID,channel.SID);
-										channelList.Add(channel);
+										Log.Write("Network:{0} channel:{1} ONID:{2} TSID:{3} SID:{4}",DvbtChannel.NetworkName,DvbtChannel.ChannelName,DvbtChannel.ONID,DvbtChannel.TSID,DvbtChannel.SID);
+										channelList.Add(DvbtChannel);
 									}
 									gotAll=0;
-									channel=new DVBTChannel();
+									DvbtChannel=new DVBTChannel();
 								}//if (gotAll==4)
 							}//if (Network()==NetworkType.DVBT)
+							else if (Network()==NetworkType.DVBC)
+							{
+								//todo: parse guide data for DVB-C
+								Log.Write("DVBC:name:{0} value:{1} language:{2}", chanName,chanValue,chanLanguage);
+
+							}
+							else if (Network()==NetworkType.DVBS)
+							{
+								//todo: parse guide data for DVB-S
+								Log.Write("DVBS:name:{0} value:{1} language:{2}", chanName,chanValue,chanLanguage);
+							}						
 						}//while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
 					}//if (enumProgramProperties!=null)
 				}//while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
@@ -2154,6 +2316,8 @@ namespace MediaPortal.TV.Recording
 		/// <param name="tuningObject">
 		/// tuning object. Differs for dvb-c/dvb-s/dvb-t.
 		/// For DVB-T this is simply an int which contains the desired frequency in KHz
+		/// For DVB-C this is simply an int which contains the desired frequency in KHz
+		/// For DVB-S this is a DVBSChannel object
 		/// </param>
 		/// <remarks>
 		/// Graph should be created 
@@ -2228,6 +2392,128 @@ namespace MediaPortal.TV.Recording
 
 				currentFrequency=(int)tuningObject;
 			}//if (Network() == NetworkType.DVBT)
+			else if (Network() == NetworkType.DVBC)
+			{
+				//get the ITuner from the network provider
+				TunerLib.TuneRequest newTuneRequest = null;
+				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+				if (myTuner ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() tuner=null");
+					return;
+				}
+
+				//get the IDVBTuningSpace2 from the tuner
+				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+				if (myTuningSpace ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() tuningspace=null");
+					return;
+				}
+
+				//create a new tuning request
+				newTuneRequest = myTuningSpace.CreateTuneRequest();
+				if (newTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not create new tuningrequest");
+					return;
+				}
+				
+				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
+				if (myTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
+					return;
+				}
+				
+				//get the IDVBCLocator interface
+				TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
+				if (myLocator == null)
+					myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
+				if (myLocator ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBCLocator");
+					return;
+				}
+
+				//set the properties for the new tuning request. For DVB-C we only set the frequency
+				DVBCChannel chan=(DVBCChannel)tuningObject;
+				myLocator.CarrierFrequency		= chan.carrierFrequency;
+				myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
+				myLocator.SymbolRate					= chan.symbolRate;
+				myLocator.Modulation					= (TunerLib.ModulationType)chan.modulation;
+
+				myTuneRequest.ONID						= chan.ONID;	//original network id
+				myTuneRequest.TSID						= chan.TSID;	//transport stream id
+				myTuneRequest.SID							= chan.SID;		//service id
+				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+
+				//and submit the tunre request
+				myTuner.TuneRequest  = newTuneRequest;
+				Marshal.ReleaseComObject(myTuneRequest);
+				currentFrequency=(int)tuningObject;
+			}
+			else if (Network() == NetworkType.DVBS)
+			{
+				//todo: add tuning for DVB-S
+				//get the ITuner from the network provider
+				TunerLib.TuneRequest newTuneRequest = null;
+				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+				if (myTuner ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() tuner=null");
+					return;
+				}
+
+				//get the IDVBTuningSpace2 from the tuner
+				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+				if (myTuningSpace ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() tuningspace=null");
+					return;
+				}
+
+				//create a new tuning request
+				newTuneRequest = myTuningSpace.CreateTuneRequest();
+				if (newTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not create new tuningrequest");
+					return;
+				}
+				
+				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
+				if (myTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
+					return;
+				}
+				
+				//get the IDVBSLocator interface
+				TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
+				if (myLocator == null)
+					myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
+				if (myLocator ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBSLocator");
+					return;
+				}
+
+				DVBSChannel chan=(DVBSChannel)tuningObject;
+				//set the properties for the new tuning request. 
+				myLocator.CarrierFrequency		= chan.carrierFrequency;
+				myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
+				myLocator.SignalPolarisation	= (TunerLib.Polarisation)chan.polarisation;
+				myLocator.SymbolRate					= chan.symbolRate;
+				myTuneRequest.ONID						= chan.ONID;	//original network id
+				myTuneRequest.TSID						= chan.TSID;	//transport stream id
+				myTuneRequest.SID							= chan.SID;		//service id
+				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+
+				//and submit the tune request
+				myTuner.TuneRequest  = newTuneRequest;
+				Marshal.ReleaseComObject(myTuneRequest);
+				currentFrequency=(int)tuningObject;
+			}
 		}//public void Tune(object tuningObject)
 		
 		/// <summary>
@@ -2286,9 +2572,17 @@ namespace MediaPortal.TV.Recording
 					//if this is a radio channel and we should store radio channels in the database
 					if (channel.IsRadio && radio)
 					{
-						//todo store radio channels
+						//todo: store radio channels
 					}//if (channel.IsRadio && radio)
 				}//if (Network() == NetworkType.DVBT)
+				else if (Network() == NetworkType.DVBC)
+				{
+					//todo: store DVB-C channels found in tvdatabase
+				}
+				else if (Network() == NetworkType.DVBS)
+				{
+					//todo: store DVB-S channels found in tvdatabase
+				}
 			}//for (int x=0; x < channelList.Count;++x)
 		}//public void StoreChannels(bool radio, bool tv)
 
