@@ -1886,9 +1886,10 @@ namespace MediaPortal.Configuration
       }    
     }
 
-    private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
-    {
-      bool result=FillInAll();    
+		private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
+		{
+
+			bool result=FillInAll();    
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				checkBoxHiQuality.Checked=xmlreader.GetValueAsBool("tv", "hiquality", false);
@@ -1911,9 +1912,13 @@ namespace MediaPortal.Configuration
 			{
 				MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
-		if(CaptureCard.VideoDevice!="B2C2 MPEG-2 Source")
-			checkBox1.Enabled=false;
-    }
+
+			if (CaptureCard!=null)
+			{
+				if(CaptureCard.VideoDevice!="B2C2 MPEG-2 Source")
+					checkBox1.Enabled=false;
+			}
+		}
   
     private void audioDeviceComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
@@ -2324,13 +2329,16 @@ namespace MediaPortal.Configuration
 		private void button1_Click(object sender, System.EventArgs e)
 		{
 			// save settings for card
-			if(CaptureCard.VideoDevice=="B2C2 MPEG-2 Source")
+			if (CaptureCard!=null)
 			{
-				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
-				// save settings for get the filename in mp.xml
-				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+				if(CaptureCard.VideoDevice=="B2C2 MPEG-2 Source")
 				{
-					xmlwriter.SetValue("dvb_ts_cards","filename",filename);
+					string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
+					// save settings for get the filename in mp.xml
+					using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+					{
+						xmlwriter.SetValue("dvb_ts_cards","filename",filename);
+					}
 				}
 			}
 
