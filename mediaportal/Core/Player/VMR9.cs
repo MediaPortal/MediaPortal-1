@@ -94,7 +94,7 @@ namespace MediaPortal.Player
 
 			vmr9Helper.Init(m_scene,  (uint)upDevice.ToInt32(), baseFilter,(uint)hMonitor.ToInt32());
 
-			int hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
+			int hr=graphBuilder.AddFilter(VMR9Filter,"Video Mixing Renderer 9");
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");

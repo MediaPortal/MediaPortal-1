@@ -70,7 +70,7 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
 		return E_FAIL;
 	}
-	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
+	if(FAILED(hr = pConfig->SetNumberOfStreams(4)))
 	{
 		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
 		return E_FAIL;
@@ -141,7 +141,17 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
 	pins[0]->Release();
 
 	VIDEOINFOHEADER2* vidInfo2 =(VIDEOINFOHEADER2*)pmt.pbFormat;
-	
+	if (vidInfo2==NULL)
+	{
+		Log("vmr9:SetDeinterlace() VMR9 not connected");
+		return S_OK;
+	}
+	if ((pmt.formattype != FORMAT_VideoInfo2) || (pmt.cbFormat< sizeof(VIDEOINFOHEADER2)))
+	{
+		Log("vmr9:SetDeinterlace() not using VIDEOINFOHEADER2");
+		return S_OK;
+	}
+
 	Log("vmr9:SetDeinterlace() resolution:%dx%d planes:%d bitcount:%d fmt:%d %c%c%c%c",
 		vidInfo2->bmiHeader.biWidth,vidInfo2->bmiHeader.biHeight,
 		vidInfo2->bmiHeader.biPlanes,
@@ -152,6 +162,76 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
 		(char)((vidInfo2->bmiHeader.biCompression>>16)&0xff),
 		(char)((vidInfo2->bmiHeader.biCompression>>24)&0xff)
 		);
+	char major[128];
+	char subtype[128];
+	strcpy(major,"unknown");
+	sprintf(subtype,"unknown (0x%x-0x%x-0x%x-0x%x)",pmt.subtype.Data1,pmt.subtype.Data2,pmt.subtype.Data3,pmt.subtype.Data4);
+	if (pmt.majortype==MEDIATYPE_AnalogVideo)
+		strcpy(major,"Analog video");
+	if (pmt.majortype==MEDIATYPE_Video)
+		strcpy(major,"video");
+	if (pmt.majortype==MEDIATYPE_Stream)
+		strcpy(major,"stream");
+
+	if (pmt.subtype==MEDIASUBTYPE_MPEG2_VIDEO)
+		strcpy(subtype,"mpeg2 video");
+	if (pmt.subtype==MEDIASUBTYPE_MPEG1System)
+		strcpy(subtype,"mpeg1 system");
+	if (pmt.subtype==MEDIASUBTYPE_MPEG1VideoCD)
+		strcpy(subtype,"mpeg1 videocd");
+
+	if (pmt.subtype==MEDIASUBTYPE_MPEG1Packet)
+		strcpy(subtype,"mpeg1 packet");
+	if (pmt.subtype==MEDIASUBTYPE_MPEG1Payload )
+		strcpy(subtype,"mpeg1 payload");
+	if (pmt.subtype==MEDIASUBTYPE_ATSC_SI)
+		strcpy(subtype,"ATSC SI");
+	if (pmt.subtype==MEDIASUBTYPE_DVB_SI)
+		strcpy(subtype,"DVB SI");
+	if (pmt.subtype==MEDIASUBTYPE_MPEG2DATA)
+		strcpy(subtype,"MPEG2 Data");
+	if (pmt.subtype==MEDIASUBTYPE_MPEG2_TRANSPORT)
+		strcpy(subtype,"MPEG2 Transport");
+	if (pmt.subtype==MEDIASUBTYPE_MPEG2_PROGRAM)
+		strcpy(subtype,"MPEG2 Program");
+	
+	if (pmt.subtype==MEDIASUBTYPE_CLPL)
+		strcpy(subtype,"MEDIASUBTYPE_CLPL");
+	if (pmt.subtype==MEDIASUBTYPE_YUYV)
+		strcpy(subtype,"MEDIASUBTYPE_YUYV");
+	if (pmt.subtype==MEDIASUBTYPE_IYUV)
+		strcpy(subtype,"MEDIASUBTYPE_IYUV");
+	if (pmt.subtype==MEDIASUBTYPE_YVU9)
+		strcpy(subtype,"MEDIASUBTYPE_YVU9");
+	if (pmt.subtype==MEDIASUBTYPE_Y411)
+		strcpy(subtype,"MEDIASUBTYPE_Y411");
+	if (pmt.subtype==MEDIASUBTYPE_Y41P)
+		strcpy(subtype,"MEDIASUBTYPE_Y41P");
+	if (pmt.subtype==MEDIASUBTYPE_YUY2)
+		strcpy(subtype,"MEDIASUBTYPE_YUY2");
+	if (pmt.subtype==MEDIASUBTYPE_YVYU)
+		strcpy(subtype,"MEDIASUBTYPE_YVYU");
+	if (pmt.subtype==MEDIASUBTYPE_UYVY)
+		strcpy(subtype,"MEDIASUBTYPE_UYVY");
+	if (pmt.subtype==MEDIASUBTYPE_Y211)
+		strcpy(subtype,"MEDIASUBTYPE_Y211");
+	if (pmt.subtype==MEDIASUBTYPE_RGB565)
+		strcpy(subtype,"MEDIASUBTYPE_RGB565");
+	if (pmt.subtype==MEDIASUBTYPE_RGB32)
+		strcpy(subtype,"MEDIASUBTYPE_RGB32");
+	if (pmt.subtype==MEDIASUBTYPE_ARGB32)
+		strcpy(subtype,"MEDIASUBTYPE_ARGB32");
+	if (pmt.subtype==MEDIASUBTYPE_RGB555)
+		strcpy(subtype,"MEDIASUBTYPE_RGB555");
+	if (pmt.subtype==MEDIASUBTYPE_RGB24)
+		strcpy(subtype,"MEDIASUBTYPE_RGB24");
+	if (pmt.subtype==MEDIASUBTYPE_AYUV)
+		strcpy(subtype,"MEDIASUBTYPE_AYUV");
+	if (pmt.subtype==MEDIASUBTYPE_YV12)
+		strcpy(subtype,"MEDIASUBTYPE_YV12");
+	if (pmt.subtype==MEDIASUBTYPE_NV12)
+		strcpy(subtype,"MEDIASUBTYPE_NV12");
+	Log("vmr9:SetDeinterlace() major:%s subtype:%s", major,subtype);
 	VideoDesc.dwSize = sizeof(VMR9VideoDesc);
 	VideoDesc.dwFourCC=vidInfo2->bmiHeader.biCompression;
 	VideoDesc.dwSampleWidth=vidInfo2->bmiHeader.biWidth;
