@@ -457,6 +457,49 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 */
+				for (int i=0; i < 10; ++i)
+				{
+					IPin pin;
+					DsUtils.GetPin(m_MPEG2Demultiplexer,PinDirection.Output,i,out pin);
+					if (pin!=null)
+					{
+						IEnumMediaTypes enumMedia;
+						pin.EnumMediaTypes(out enumMedia);
+						enumMedia.Reset();
+						AMMediaTypeClass mt = new AMMediaTypeClass();
+						uint fetched;
+						while (enumMedia.Next(1,out mt, out fetched)==0)
+						{
+							if (fetched==1)
+							{
+								if (mt.majorType==MediaType.Video)
+								{
+									Log.Write("DVBGraphBDA:   pin:{0} contains video",i+1);
+									m_Card.TvInterfaceDefinition.VideoPinName = String.Format("{0}",i+1);
+
+								}
+								if (mt.majorType==MediaType.Audio)
+								{
+									Log.Write("DVBGraphBDA:   pin:{0} contains audio",i+1);
+									m_Card.TvInterfaceDefinition.AudioPinName = String.Format("{0}",i+1);
+								}
+							}
+						}
+					}
+				}
+				if (m_Card.TvInterfaceDefinition.AudioPinName=="3" &&
+						m_Card.TvInterfaceDefinition.VideoPinName=="2")
+				{
+					m_Card.TvInterfaceDefinition.Mpeg2PinName="1";
+					m_Card.TvInterfaceDefinition.SectionsAndTablesPinName="5";
+				}
+				
+				if (m_Card.TvInterfaceDefinition.AudioPinName=="4" &&
+						m_Card.TvInterfaceDefinition.VideoPinName=="3")
+				{
+					m_Card.TvInterfaceDefinition.Mpeg2PinName="1";
+					m_Card.TvInterfaceDefinition.SectionsAndTablesPinName="2";
+				}
 				//=========================================================================================================
 				// Add the BDA MPEG2 Transport Information Filter
 				//=========================================================================================================

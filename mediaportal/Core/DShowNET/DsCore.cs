@@ -124,10 +124,10 @@ public interface IPin
 
 		[PreserveSig]
 	int QueryAccept(
-		[In, MarshalAs(UnmanagedType.LPStruct)]			AMMediaType	pmt );
+		[In]		ref	AMMediaType	pmt );
 
 		[PreserveSig]
-	int EnumMediaTypes( IntPtr ppEnum );
+	int EnumMediaTypes( [Out] out IEnumMediaTypes ppEnum );
 
 		[PreserveSig]
 	int QueryInternalConnections( IntPtr apPin, [In, Out] ref int nPin );
@@ -927,6 +927,25 @@ public interface IReferenceClock
 
 
 // ---------------------------------------------------------------------------------------
+
+	[ComVisible(true), ComImport,
+	Guid("89c31040-846b-11ce-97d3-00aa0055595a"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEnumMediaTypes
+	{
+		[PreserveSig]
+		int Next(
+			[In]						uint				cFilters,
+			out AMMediaTypeClass	x,
+			[Out]						out uint pcFetched );
+
+
+		[PreserveSig]
+		int Skip( [In] int cFilters );
+		void Reset();
+		void Clone( [Out] out IEnumMediaTypes ppEnum );
+	}
+
 
 	[ComVisible(true), ComImport,
 	Guid("56a86893-0ad4-11ce-b03a-0020af0ba770"),
