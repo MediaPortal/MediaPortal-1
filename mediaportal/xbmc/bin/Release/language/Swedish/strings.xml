@@ -1257,6 +1257,14 @@
         <value>Lagom</value>
     </string>
     <string>
+		<id>386</id>
+		<value>Rensa</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Tidig</value>
+	</string>
+    <string>
         <id>396</id>
         <value>V&#228;lj plats</value>
     </string>
@@ -2137,6 +2145,7 @@
         <id>10030</id>
         <value>Min Radio</value>
     </string>
+    <string><id>10031</id><value>Inställningar->Skärm->scroll hastighet</value></string>
     <string>
         <id>10100</id>
         <value>ja/nej dialog</value>
@@ -2169,6 +2178,10 @@
         <id>10505</id>
         <value>Min Musik/top100</value>
     </string>
+    <string><id>10600</id><value>Min TV/Guide</value></string>
+<string><id>10601</id><value>Min TV/Schemaläggare</value></string>
+<string><id>10602</id><value>Min TV/Fullskärm</value></string>
+<string><id>10603</id><value>Min TV/Inspelad TV</value></string>
     <string>
         <id>11000</id>
         <value>tangentbord</value>
