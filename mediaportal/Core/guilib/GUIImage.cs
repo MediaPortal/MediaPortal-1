@@ -435,8 +435,11 @@ namespace MediaPortal.GUI.Library
 			else
 			{
 				if (m_vecTextures==null) return;
-
+				if (m_vecTextures.Length==0) return;
+				if (m_iCurrentImage< 0 || m_iCurrentImage > m_vecTextures.Length) return;
+				
 				CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
+				if (frame==null) return;
 				Direct3D.Texture texture=frame.Image;
 				if (texture==null)
 				{
