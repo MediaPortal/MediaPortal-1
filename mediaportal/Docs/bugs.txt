@@ -10,6 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  15-08-2004 general    : On screen keyboard not working. (E.g.,when hitting search in my music nothing happens.)
   13-07-2004 vmr9       : cannot switch between windowed/fullscreen mode after playing a movie with vmr9  
   
   13-07-2004 my music   : After adding an audio cd to the playlist selecting a different song from the playlist does not work.
