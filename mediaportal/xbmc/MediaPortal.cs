@@ -583,7 +583,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       if (key.KeyChar=='g')
       {
-        Utils.StartProcess(@"C:\media\graphedt.exe","",true);
+        Utils.StartProcess(@"C:\media\graphedt.exe","",true,false);
       }
       if (key.KeyChar=='.')
       {

@@ -278,6 +278,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "SetupExternalRadio.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SetupExternalRadio.resx"
+                    DependentUpon = "SetupExternalRadio.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "SetupForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -285,6 +295,16 @@
                 <File
                     RelPath = "SetupForm.resx"
                     DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "SetupInternalRadio.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SetupInternalRadio.resx"
+                    DependentUpon = "SetupInternalRadio.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
