@@ -249,9 +249,9 @@
 		<description>Horizontal scrollbar</description>
 		<type>hscrollbar</type>
 		<id>28</id>
-		<posX>50</posX>
+		<posX>61</posX>
 		<posY>399</posY>
-		<width>607</width>
+		<width>598</width>
 		<height>20</height>
 		<visible>yes</visible>
 	</control>	
@@ -259,7 +259,7 @@
 		<description>Vertical scrollbar</description>
 		<type>vscrollbar</type>
 		<id>29</id>
-		<posX>658</posX>
+		<posX>665</posX>
 		<posY>125</posY>
 		<width>20</width>
 		<height>294</height>
