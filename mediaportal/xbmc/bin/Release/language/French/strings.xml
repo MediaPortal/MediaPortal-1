@@ -629,4 +629,10 @@
 	<string><id>8020</id><value>Supprimer le message</value></string>
 	<string><id>10</id><value>Mes recettes</value></string>
 	<string><id>9</id><value>Mes Informations</value></string>
+	<string><id>13000</id><value>Système:</value></string>
+	<string><id>13001</id><value>Fabricant:</value></string>
+	<string><id>13002</id><value>Démarrer</value></string>
+	<string><id>13003</id><value>Importer un fichier *.mlf</value></string>
+	<string><id>13004</id><value>Importer un fichier *.my</value></string>
+	<string><id>13005</id><value>Dernier fichier:</value></string>
 </strings>
