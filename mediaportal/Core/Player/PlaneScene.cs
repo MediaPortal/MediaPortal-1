@@ -307,94 +307,106 @@ namespace MediaPortal.Player
       if (m_bStop) return;
       lock(this) 
       {
-        try
-        {
+				Direct3D.Surface backBuffer=null;
+				try
+				{
 					//sanity checks
-          if (GUIGraphicsContext.DX9Device==null) return;
-          if (GUIGraphicsContext.DX9Device.Disposed) return;
-          if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
-          if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
+					if (GUIGraphicsContext.DX9Device==null) return;
+					if (GUIGraphicsContext.DX9Device.Disposed) return;
+					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+					if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
-  				//first time, fade in the video in 12 steps
-          int iMaxSteps = 12;
-          if (m_iFrame < iMaxSteps)
-          {
+					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+					//first time, fade in the video in 12 steps
+					int iMaxSteps = 12;
+					if (m_iFrame < iMaxSteps)
+					{
 						// fade in
 						int iStep = 0xff / iMaxSteps;
-            if (m_bFadeIn)
-            {
-              m_lColorDiffuse = iStep * m_iFrame;
-              m_lColorDiffuse <<= 24;
-              m_lColorDiffuse |= 0xffffff;
-            }
-            else
-            {
-              m_lColorDiffuse = (iMaxSteps - iStep) * m_iFrame;
-              m_lColorDiffuse <<= 24;
-              m_lColorDiffuse |= 0xffffff;
-            }
-            m_iFrame++;
-          }
-          else 
-          {
-            //after 12 steps, just present the video texture
+						if (m_bFadeIn)
+						{
+							m_lColorDiffuse = iStep * m_iFrame;
+							m_lColorDiffuse <<= 24;
+							m_lColorDiffuse |= 0xffffff;
+						}
+						else
+						{
+							m_lColorDiffuse = (iMaxSteps - iStep) * m_iFrame;
+							m_lColorDiffuse <<= 24;
+							m_lColorDiffuse |= 0xffffff;
+						}
+						m_iFrame++;
+					}
+					else 
+					{
+						//after 12 steps, just present the video texture
 						m_lColorDiffuse = 0xFFffffff;
-          }
+					}
 
 					//get desired video window
-          renderTexture= SetVideoWindow(nativeSize);
+					renderTexture= SetVideoWindow(nativeSize);
 
 					//clear screen
-          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-          GUIGraphicsContext.DX9Device.BeginScene();
+					GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+					GUIGraphicsContext.DX9Device.BeginScene();
 
-  				//check if we should render the GUI first and then the video or
+					//check if we should render the GUI first and then the video or
 					//first the video and then the GUI
-          bool bRenderGUIFirst = false;
-          if (!GUIGraphicsContext.IsFullScreenVideo)
-          {
-            if (GUIGraphicsContext.ShowBackground)
-            {
+					bool bRenderGUIFirst = false;
+					if (!GUIGraphicsContext.IsFullScreenVideo)
+					{
+						if (GUIGraphicsContext.ShowBackground)
+						{
 							//when we're looking at the GUI and the video is presented in a video preview window
 							//then first render the GUI
 							//In the other case the video is presented fullscreen. Then we first draw the video
 							//and after that we draw the GUI (like the OSD)
-              bRenderGUIFirst = true;
-            }
-          }
+							bRenderGUIFirst = true;
+						}
+					}
 
 					//render GUI if needed
-          if (bRenderGUIFirst)
-          {
+					if (bRenderGUIFirst)
+					{
 						if (m_renderer != null) 
 						{
 							m_renderer.RenderFrame(timePassed);
 						}
-          }
+					}
     
 					//Render video texture
-          if (renderTexture && _textureNo>=0)
+					if (renderTexture && _textureNo>=0)
 					{
 						FontEngineDrawTexture(_textureNo,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, (int)m_lColorDiffuse);
-          }
+					}
 
 					//render GUI if needed
-          if (!bRenderGUIFirst)
-          {
+					if (!bRenderGUIFirst)
+					{
 						if (m_renderer != null) 
 						{
 							m_renderer.RenderFrame(timePassed);
 						}
-          }
+					}
 
+					using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
+					{
+					}
+					backBuffer.UnlockRectangle();
 					GUIFontManager.Present();
 					//and present it onscreen
-          GUIGraphicsContext.DX9Device.EndScene();
-          GUIGraphicsContext.DX9Device.Present();
-        }
-        catch (Exception)
-        {
-        }
+
+					GUIGraphicsContext.DX9Device.EndScene();
+					GUIGraphicsContext.DX9Device.Present();
+				}
+				catch (Exception)
+				{
+				}
+				finally
+				{
+					if (backBuffer!=null)
+						backBuffer.Dispose();
+				}
       }//lock(this) 
 		}//public void Render(Device device, Texture tex, Size nativeSize) 
 
