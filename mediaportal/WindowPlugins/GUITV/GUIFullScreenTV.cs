@@ -566,7 +566,7 @@ namespace MediaPortal.GUI.TV
       dlg.AddLocalizedString(941); // Change aspect ratio
       dlg.AddLocalizedString(12902); // MSN Messenger
       dlg.AddLocalizedString(902); // MSN Online contacts
-			dlg.AddLocalizedString(605); // My TV
+			dlg.AddLocalizedString(970); // Previous window
 
 			m_bDialogVisible=true;
 			m_bUpdate=true;
@@ -591,8 +591,8 @@ namespace MediaPortal.GUI.TV
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
           break;
 
-				case 605:
-					// switch back to MyTv window
+				case 970:
+					// switch back to previous window
 					m_bOSDVisible=false;
 					m_bMSNChatVisible=false;
 					GUIGraphicsContext.IsFullScreenVideo=false;

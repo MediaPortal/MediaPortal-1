@@ -652,7 +652,7 @@ namespace MediaPortal.GUI.Video
 			dlg.AddLocalizedString(941); // Change aspect ratio
       dlg.AddLocalizedString(12902); // MSN Messenger
       dlg.AddLocalizedString(902); // MSN Online contacts
-			dlg.AddLocalizedString(3); // My Movies
+			dlg.AddLocalizedString(970); // Previous window
 
 			m_bDialogVisible=true;
 			m_bUpdate=true;
@@ -677,7 +677,7 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
           break;
 
-				case 3:
+				case 970:
 					// switch back to MyMovies window
 					m_bOSDVisible=false;
 					m_bMSNChatVisible=false;
