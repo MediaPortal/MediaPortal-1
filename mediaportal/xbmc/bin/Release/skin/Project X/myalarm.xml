@@ -1,0 +1,89 @@
+<window>
+	<id>5000</id>
+	<defaultcontrol>3</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<controls>
+		<control>
+			<description>background image</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>720</width>
+			<height>576</height>
+			<texture>background.png</texture>
+		</control>
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>20</posY>
+			<texture>alarm_logo.png</texture>
+		</control>
+		<control>
+			<description>My alarm text label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>250</posX>
+			<posY>70</posY>
+			<label>850</label>
+			<font>font16</font>
+			<align>right</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>Number of Files Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>270</posX>
+			<posY>530</posY>
+			<label>#itemcount</label>
+			<align>left</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>Selected item Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>660</posX>
+			<posY>70</posY>
+			<label>#selecteditem</label>
+			<font>font14</font>
+			<align>right</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>New button</description>
+			<type>button</type>
+			<id>3</id>
+			<posX>60</posX>
+			<posY>97</posY>
+			<label>617</label>
+			<onright>5</onright>
+			<onleft>5</onleft>
+			<onup>21</onup>
+			<ondown>4</ondown>
+		</control>
+		<control>
+			<description>Sleep timer Button</description>
+			<type>button</type>
+			<id>4</id>
+			<posX>60</posX>
+			<posY>131</posY>
+			<label>859</label>
+			<onright>5</onright>
+			<onleft>5</onleft>
+			<onup>3</onup>
+			<ondown>3</ondown>
+		</control>
+		<control>
+			<description>alarms listcontrol</description>
+			<type>listcontrol</type>
+			<id>5</id>
+			<onright>3</onright>
+			<onleft>3</onleft>
+			<onup>5</onup>
+			<ondown>5</ondown>
+		</control>
+	</controls>
+</window>
