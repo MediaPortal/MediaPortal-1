@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DShowNET;
 using DirectX.Capture;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -80,13 +81,13 @@ namespace MediaPortal.TV.Recording
     /// Starts timeshifting the TV channel and stores the timeshifting 
     /// files in the specified filename
     /// </summary>
-    /// <param name="iChannelNr">TV channel to which card should be tuned</param>
+    /// <param name="channel">TV channel to which card should be tuned</param>
     /// <param name="strFileName">Filename for the timeshifting buffers</param>
     /// <returns>boolean indicating if timeshifting is running or not</returns>
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    bool StartTimeShifting(int country,AnalogVideoStandard standard,int iChannelNr, string strFileName);
+    bool StartTimeShifting(TVChannel channel, string strFileName);
     
     /// <summary>
     /// Stops timeshifting and cleans up the timeshifting files
@@ -99,8 +100,8 @@ namespace MediaPortal.TV.Recording
 
 
     /// <summary>
-    /// Starts recording live TV to a file
-    /// <param name="iChannelNr">TV channel to record</param>
+		/// Starts recording live TV to a file
+		/// <param name="channel">TV channel to which card should be tuned</param>
     /// <param name="strFileName">filename for the new recording</param>
     /// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
     /// <param name="timeProgStart">Contains the starttime of the current tv program</param>
@@ -117,7 +118,7 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    bool StartRecording(int country, AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
+    bool StartRecording(TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
     
     
     /// <summary>
@@ -132,12 +133,12 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Switches / tunes to another TV channel
-    /// </summary>
-    /// <param name="iChannel">New channel</param>
+		/// </summary>
+		/// <param name="channel">TV channel to which card should be tuned</param>
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    void TuneChannel(AnalogVideoStandard standard,  int iChannel, int country);
+    void TuneChannel(TVChannel channel);
 
     /// <summary>
     /// Returns the current tv channel
@@ -154,13 +155,13 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Starts viewing the TV channel 
-    /// </summary>
-    /// <param name="iChannelNr">TV channel to which card should be tuned</param>
+		/// </summary>
+		/// <param name="channel">TV channel to which card should be tuned</param>
     /// <returns>boolean indicating if succeed</returns>
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    bool StartViewing(AnalogVideoStandard standard,int iChannelNr, int country);
+    bool StartViewing(TVChannel channel);
 
 
     /// <summary>

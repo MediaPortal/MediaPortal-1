@@ -685,10 +685,8 @@ namespace MediaPortal.TV.Recording
 					_mTvChannelName = value;
 					if (_mGraph != null)
 					{
-						AnalogVideoStandard standard;
-						int country;
-						int ichannel=GetChannelNr(_mTvChannelName, out standard, out country);
-						if (_mGraph.ShouldRebuildGraph(ichannel))
+						TVChannel channel=GetChannel(_mTvChannelName);
+						if (_mGraph.ShouldRebuildGraph(channel.Number))
 						{
 							RebuildGraph();
 							// for ss2: restore full screen
@@ -704,7 +702,7 @@ namespace MediaPortal.TV.Recording
               GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
               return;
             }*/
-						_mGraph.TuneChannel(standard, ichannel,country);
+						_mGraph.TuneChannel(channel);
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
@@ -934,18 +932,16 @@ namespace MediaPortal.TV.Recording
       if (IsRecording) return false;
 
       Log.Write("Card:{0} start timeshifting :{1}",ID, _mTvChannelName);
-      AnalogVideoStandard standard;
-			int country;
-      int iChannelNr = GetChannelNr(_mTvChannelName, out standard, out country);
+      TVChannel channel=GetChannel(_mTvChannelName);
 
 			if (_mState == State.Timeshifting) 
 			{
-				if (_mGraph.GetChannelNumber() != iChannelNr)
+				if (_mGraph.GetChannelNumber() != channel.Number)
 				{
-          if (!_mGraph.ShouldRebuildGraph(iChannelNr))
+          if (!_mGraph.ShouldRebuildGraph(channel.Number))
           {
             _mTimeshiftingStartedTime = DateTime.Now;
-            _mGraph.TuneChannel(standard, iChannelNr,country);
+            _mGraph.TuneChannel(channel);
             return true;
           }
 				}
@@ -973,7 +969,7 @@ namespace MediaPortal.TV.Recording
   
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
-      bool bResult = _mGraph.StartTimeShifting(country,standard, iChannelNr, strFileName);
+      bool bResult = _mGraph.StartTimeShifting(channel, strFileName);
       if ( bResult ==true)
       {
         _mTimeshiftingStartedTime = DateTime.Now;
@@ -1069,11 +1065,9 @@ namespace MediaPortal.TV.Recording
       string strFileName = String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName));
       Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
 
-      AnalogVideoStandard standard;
-			int country;
-      int iChannelNr=GetChannelNr(_mTvChannelName, out standard, out country);
+      TVChannel channel=GetChannel(_mTvChannelName);
 
-      bool bResult = _mGraph.StartRecording(country,standard,iChannelNr, ref strFileName, bContentRecording, timeProgStart);
+      bool bResult = _mGraph.StartRecording(channel, ref strFileName, bContentRecording, timeProgStart);
 
 			_mNewRecordedTV = new TVRecorded();
 			_mNewRecordedTV.Start = Utils.datetolong(DateTime.Now);
@@ -1120,10 +1114,15 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Channel names and numbers are stored in the TVDatabase
     /// </remarks>
-    int GetChannelNr(string strChannelName, out AnalogVideoStandard standard, out int Country)
+    TVChannel GetChannel(string strChannelName)
     { 
-      standard=AnalogVideoStandard.None;
-			Country=CountryCode;
+			TVChannel retChannel = new TVChannel();
+			retChannel.Number=0;
+			retChannel.Name=strChannelName;
+			retChannel.ID=0;
+			retChannel.TVStandard=AnalogVideoStandard.None;
+			retChannel.Country=CountryCode;
+			
       ArrayList channels = new ArrayList();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
@@ -1135,12 +1134,11 @@ namespace MediaPortal.TV.Recording
             Log.Write("error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
               strChannelName, chan.Number, chan.Frequency);
           }
-          standard=chan.TVStandard;
-					if (chan.Country>=0) Country=chan.Country;
-          return chan.Number;
+					if (chan.Country<=0) chan.Country=CountryCode;
+          return chan;
         }
       }
-      return 0;
+      return retChannel;
     }
 
 
@@ -1160,11 +1158,10 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public void Tune(int channel, int CountryCode)
+    public void Tune(TVChannel channel)
     {
-      AnalogVideoStandard standard=AnalogVideoStandard.None;
       if (_mState != State.Viewing) return;
-      _mGraph.TuneChannel( standard, channel, CountryCode);
+      _mGraph.TuneChannel( channel);
     }
 
     /// <summary>
@@ -1194,11 +1191,9 @@ namespace MediaPortal.TV.Recording
           DeleteGraph();
           if (CreateGraph())
           {
-						int country;
             Log.Write("Card:{0} start viewing :{1}",ID, _mTvChannelName);
-            AnalogVideoStandard standard;
-            int iChannelNr = GetChannelNr(_mTvChannelName, out standard, out country);
-            _mGraph.StartViewing(standard, iChannelNr,country);
+            TVChannel chan = GetChannel(_mTvChannelName);
+            _mGraph.StartViewing(chan);
 						SetTvSettings();
             _mState = State.Viewing;
           }
@@ -1218,13 +1213,13 @@ namespace MediaPortal.TV.Recording
       return _mGraph.SignalPresent();
     }
 
-		public bool ViewChannel(int channelNumber, int country, AnalogVideoStandard standard)
+		public bool ViewChannel(TVChannel channel)
 		{
 			if (_mGraph==null)
 			{
 				if (!CreateGraph()) return false;
 			}
-			_mGraph.StartViewing(standard, channelNumber,country);
+			_mGraph.StartViewing(channel);
 			SetTvSettings();
 
 			return true;

@@ -2073,7 +2073,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public void GetDVBTTuneRequest(int iLCN, out int frequency, out int ONID, out int TSID, out int SID) 
+		static public void GetDVBTTuneRequest(int idChannel, out int frequency, out int ONID, out int TSID, out int SID) 
 		{
 			frequency=-1;
 			ONID=-1;
@@ -2087,7 +2087,7 @@ namespace MediaPortal.TV.Database
 				{
 					if (null == m_db) return ;
 					string strSQL;
-					strSQL = String.Format("select * from tblDVBTMapping where iLCN={0}",iLCN);
+					strSQL = String.Format("select * from tblDVBTMapping where iLCN={0}",idChannel);
 					SQLiteResultSet results;
 					results = m_db.Execute(strSQL);
 					if (results.Rows.Count != 1) return ;
@@ -2103,7 +2103,7 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
-		static public void GetDVBCTuneRequest(int iLCN, out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID) 
+		static public void GetDVBCTuneRequest(int idChannel, out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID) 
 		{
 			frequency=-1;
 			symbolrate=-1;
@@ -2120,7 +2120,7 @@ namespace MediaPortal.TV.Database
 				{
 					if (null == m_db) return ;
 					string strSQL;
-					strSQL = String.Format("select * from tblDVBCMapping where iLCN={0}",iLCN);
+					strSQL = String.Format("select * from tblDVBCMapping where iLCN={0}",idChannel);
 					SQLiteResultSet results;
 					results = m_db.Execute(strSQL);
 					if (results.Rows.Count != 1) return ;
@@ -2140,7 +2140,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public void GetDVBSTuneRequest(int iLCN, out int frequency,out int symbolrate,out int innerFec,out int polarisation, out int ONID, out int TSID, out int SID) 
+		static public void GetDVBSTuneRequest(int idChannel, out int frequency,out int symbolrate,out int innerFec,out int polarisation, out int ONID, out int TSID, out int SID) 
 		{
 			frequency=-1;
 			symbolrate=-1;
@@ -2157,7 +2157,7 @@ namespace MediaPortal.TV.Database
 				{
 					if (null == m_db) return ;
 					string strSQL;
-					strSQL = String.Format("select * from tblDVBSMapping where iLCN={0}",iLCN);
+					strSQL = String.Format("select * from tblDVBSMapping where iLCN={0}",idChannel);
 					SQLiteResultSet results;
 					results = m_db.Execute(strSQL);
 					if (results.Rows.Count != 1) return ;

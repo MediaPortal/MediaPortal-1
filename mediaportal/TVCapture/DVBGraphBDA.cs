@@ -889,15 +889,16 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph should be viewing or timeshifting. 
 		/// </remarks>
-		public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
+		public void TuneChannel(TVChannel channel)
 		{
 			if (m_NetworkProvider==null) return;
+
 			m_iPrevChannel		= m_iCurrentChannel;
-			m_iCurrentChannel = iChannel;
+			m_iCurrentChannel = channel.Number;
 			m_StartTime				= DateTime.Now;
 			m_iRetyCount=0;
 
-			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
+			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.Number);
 
 			//get the ITuner interface from the network provider filter
 			TunerLib.TuneRequest newTuneRequest = null;
@@ -945,10 +946,10 @@ namespace MediaPortal.TV.Recording
 					//get the DVB-C tuning details from the tv database
 					Log.Write("DVBGraphBDA:TuneChannel() get DVBC tuning details");
 					int symbolrate=0,innerFec=0,modulation=0;
-					TVDatabase.GetDVBCTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID);
+					TVDatabase.GetDVBCTuneRequest(channel.ID,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID);
 					if (frequency<=0) 
 					{
-						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
+						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
 						return;
 					}
 					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6}", 
@@ -996,10 +997,10 @@ namespace MediaPortal.TV.Recording
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
 					Log.Write("DVBGraphBDA:TuneChannel() get DVBS tuning details");
 					int polarisation=0,symbolrate=0,innerFec=0;
-					TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out polarisation, out ONID, out TSID, out SID);
+					TVDatabase.GetDVBSTuneRequest(channel.ID,out frequency, out symbolrate, out innerFec, out polarisation, out ONID, out TSID, out SID);
 					if (frequency<=0) 
 					{
-						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
+						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
 						return;
 					}
 					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6}", 
@@ -1050,10 +1051,10 @@ namespace MediaPortal.TV.Recording
 					//get the DVB-T tuning details from the tv database
 					//for DVB-T this is the frequency, ONID , TSID and SID
 					Log.Write("DVBGraphBDA:TuneChannel() get DVBT tuning details");
-					TVDatabase.GetDVBTTuneRequest(iChannel,out frequency, out ONID, out TSID, out SID);
+					TVDatabase.GetDVBTTuneRequest(channel.ID,out frequency, out ONID, out TSID, out SID);
 					if (frequency<=0) 
 					{
-						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
+						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
 						return;
 					}
 					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3}", frequency, ONID, TSID, SID);
@@ -1170,7 +1171,7 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph must be created first with CreateGraph()
 		/// </remarks>
-		public bool StartViewing(AnalogVideoStandard standard, int iChannel,int country)
+		public bool StartViewing(TVChannel channel)
 		{
 			if (m_graphState != State.Created) return false;
 			
@@ -1249,8 +1250,8 @@ namespace MediaPortal.TV.Recording
 
 
 			// tune to the correct channel
-			if (iChannel>=0)
-				TuneChannel(standard,iChannel,country);
+			if (channel.Number>=0)
+				TuneChannel(channel);
 
 			Log.Write("DVBGraphBDA:Viewing..");
 			return true;
@@ -1667,7 +1668,7 @@ namespace MediaPortal.TV.Recording
 		/// It will examine the timeshifting files and try to record as much data as is available
 		/// from the timeProgStart till the moment recording is stopped again
 		/// </remarks>
-		public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+		public bool StartRecording(TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
 		{
 			if (m_graphState != State.TimeShifting) 
 				return false;
@@ -1765,7 +1766,7 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph must be created first with CreateGraph()
 		/// </remarks>
-		public bool StartTimeShifting(int country,AnalogVideoStandard standard, int iChannel, string strFileName)
+		public bool StartTimeShifting(TVChannel channel, string strFileName)
 		{
 			if(m_graphState!=State.Created)
 				return false;
@@ -1793,7 +1794,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBGraphBDA:Unable to create sinksource()");
 				return false;
 			}
-			TuneChannel(standard, iChannel,country);
+			TuneChannel(channel);
 
 			Log.Write("DVBGraphBDA:timeshifting started");			
 			return true;
@@ -2399,7 +2400,10 @@ namespace MediaPortal.TV.Recording
 				//start viewing if we're not yet viewing
 				if (!graphRunning)
 				{
-					StartViewing(AnalogVideoStandard.None,-1,-1);
+					TVChannel chan = new TVChannel();
+					chan.Number=0;
+					chan.ID=0;
+					StartViewing(chan);
 				}
 				//get the ITuner from the network provider
 				TunerLib.TuneRequest newTuneRequest = null;
@@ -2662,17 +2666,17 @@ namespace MediaPortal.TV.Recording
 					if (Network() == NetworkType.DVBT)
 					{
 						Log.Write("DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ChannelName,channelId,ID);
-						TVDatabase.MapDVBTChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.ONID,newchannel.TSID,newchannel.SID);
+						TVDatabase.MapDVBTChannel(newchannel.ChannelName,channelId, newchannel.carrierFrequency, newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBC)
 					{
 						Log.Write("DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ChannelName,channelId,ID);
-						TVDatabase.MapDVBCChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.modulation,newchannel.ONID,newchannel.TSID,newchannel.SID);
+						TVDatabase.MapDVBCChannel(newchannel.ChannelName,channelId, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.modulation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
 						Log.Write("DVBGraphBDA: map channel {0} id:{1} to DVBS card:{2}",newchannel.ChannelName,channelId,ID);
-						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
+						TVDatabase.MapDVBSChannel(newchannel.ChannelName,channelId, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					TVDatabase.MapChannelToCard(channelId,ID);
 

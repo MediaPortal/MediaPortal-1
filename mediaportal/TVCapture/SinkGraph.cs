@@ -426,24 +426,24 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartTimeShifting(int country, AnalogVideoStandard standard,int iChannelNr, string strFileName)
+    public bool StartTimeShifting(TVChannel channel, string strFileName)
     {
       if (m_graphState!=State.Created && m_graphState!= State.TimeShifting) return false;
       if (m_mpeg2Demux==null) return false;
-			m_iCountryCode=country;
+			m_iCountryCode=channel.Country;
 
       if (m_graphState==State.TimeShifting) 
       {
-        if (iChannelNr!=m_iChannelNr)
+        if (channel.Number!=m_iChannelNr)
         {
-          TuneChannel(standard, iChannelNr,m_iCountryCode);
+          TuneChannel(channel);
         }
         return true;
       }
 
 			Log.Write("SinkGraph:StartTimeShifting()");
       m_graphState=State.TimeShifting;
-      TuneChannel(standard,iChannelNr, m_iCountryCode);
+      TuneChannel(channel);
       m_mpeg2Demux.StartTimeshifting(strFileName);
       
       return true;
@@ -536,14 +536,14 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState != State.TimeShifting) return false;
 			if (m_mpeg2Demux==null) return false;
-			m_iCountryCode=country;
-      if (iChannelNr != m_iChannelNr)
+			m_iCountryCode=channel.Country;
+      if (channel.Number!= m_iChannelNr)
       {
-        TuneChannel(standard,iChannelNr,m_iCountryCode);
+        TuneChannel(channel);
       }
       Log.Write("SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
       m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
@@ -608,15 +608,16 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    public void TuneChannel(AnalogVideoStandard standard,int iChannel, int country)
+    public void TuneChannel(TVChannel channel)
     {
       if (m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return;
 
-      m_iChannelNr=iChannel;
-			m_iCountryCode=country;
+      m_iChannelNr=channel.Number;
+			m_iCountryCode=channel.Country;
     
-      Log.Write("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
-      if (iChannel < (int)ExternalInputs.svhs)
+			AnalogVideoStandard standard=channel.TVStandard;
+      Log.Write("SinkGraph:TuneChannel() tune to channel:{0}", m_iChannelNr);
+      if (m_iChannelNr < (int)ExternalInputs.svhs)
       {
         if (m_TVTuner==null) return;
         if (m_bFirstTune)
@@ -636,9 +637,9 @@ namespace MediaPortal.TV.Recording
           SetVideoStandard(standard);
           m_TVTuner.get_TVFormat(out standard);
           m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
-          if (iCurrentChannel!=iChannel)
+          if (iCurrentChannel!=m_iChannelNr)
           {
-            m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
+            m_TVTuner.put_Channel(channel.Number,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
 						DirectShowUtil.EnableDeInterlace(m_graphBuilder);
           }
           int iFreq;
@@ -652,29 +653,29 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        SetVideoStandard(standard);
+        SetVideoStandard(channel.TVStandard);
       }
 
       bool bFixCrossbar=true;
       if (m_iPrevChannel>=0)
 			{
-				if (m_iPrevChannel< (int)ExternalInputs.svhs  && iChannel < (int)ExternalInputs.svhs) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.svhs  && iChannel ==(int)ExternalInputs.svhs) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && iChannel ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && iChannel ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
+				if (m_iPrevChannel< (int)ExternalInputs.svhs  && channel.Number < (int)ExternalInputs.svhs) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.svhs  && channel.Number ==(int)ExternalInputs.svhs) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && channel.Number ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && channel.Number ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
       }
       if (bFixCrossbar)
       {
         DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
 																		 m_captureGraphBuilder,
 																		 m_captureFilter, 
-																		 iChannel<(int)ExternalInputs.svhs, 
-																	   (iChannel==(int)ExternalInputs.cvbs1), 
-																		 (iChannel==(int)ExternalInputs.cvbs2), 
-																		 (iChannel==(int)ExternalInputs.svhs) ,
+																		 channel.Number<(int)ExternalInputs.svhs, 
+																	   (channel.Number==(int)ExternalInputs.cvbs1), 
+																		 (channel.Number==(int)ExternalInputs.cvbs2), 
+																		 (channel.Number==(int)ExternalInputs.svhs) ,
 																		 cardName);
       }
-      m_iPrevChannel=iChannel;
+      m_iPrevChannel=channel.Number;
       m_StartTime=DateTime.Now;
     }
 
@@ -696,21 +697,21 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-		public bool StartViewing(AnalogVideoStandard standard,  int iChannelNr,int country)
+		public bool StartViewing(TVChannel channel)
 		{
 
 			Log.Write("SinkGraph:StartViewing()");
 			if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
 
-			m_iCountryCode=country;
+			m_iCountryCode=channel.Country;
 			if (m_mpeg2Demux==null) return false;
 			if (m_videoCaptureDevice==null) return false;
 
 			if (m_graphState==State.Viewing) 
 			{
-				if (iChannelNr!=m_iChannelNr)
+				if (channel.Number!=m_iChannelNr)
 				{
-					TuneChannel(standard, iChannelNr,country);
+					TuneChannel(channel);
 				}
 				return true;
 			}
@@ -724,8 +725,8 @@ namespace MediaPortal.TV.Recording
 			ConnectVideoCaptureToMPEG2Demuxer();
 #endif
 			m_graphState=State.Viewing;
-			TuneChannel(standard, iChannelNr, m_iCountryCode);
-				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9);
+			TuneChannel(channel);
+			m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9);
 
       
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);

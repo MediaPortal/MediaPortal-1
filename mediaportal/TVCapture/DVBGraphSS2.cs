@@ -1237,14 +1237,14 @@ namespace MediaPortal.TV.Recording
 			return res;
 		}
 		//
-		public bool StartTimeShifting(int country,AnalogVideoStandard standard,int channel,string fileName)
+		public bool StartTimeShifting(TVChannel channel,string fileName)
 		{
 
 			if(m_graphState!=State.Created)
 				return false;
 			int hr=0;
 
-			TuneChannel(standard,channel,-1);
+			TuneChannel(channel);
 
 			if(m_channelFound==false)
 				return false;
@@ -1298,7 +1298,7 @@ namespace MediaPortal.TV.Recording
 		/// It will examine the timeshifting files and try to record as much data as is available
 		/// from the timeProgStart till the moment recording is stopped again
 		/// </remarks>
-		public bool StartRecording(int country,AnalogVideoStandard standard,int channel, ref string strFilename, bool bContentRecording, DateTime timeProgStart)
+		public bool StartRecording(TVChannel channel, ref string strFilename, bool bContentRecording, DateTime timeProgStart)
 		{		
 			if (m_graphState != State.TimeShifting ) return false;
 
@@ -1419,13 +1419,14 @@ namespace MediaPortal.TV.Recording
 
 		//
 		//
-		public void TuneChannel(AnalogVideoStandard standard,int channel, int country)
+
+		public void TuneChannel(TVChannel channel)
 		{
 			if(m_graphState==State.Recording)
 				return;
 
-			int channelID=TVDatabase.GetChannelId(channel);
-			m_iChannelNr=channel;
+			int channelID=channel.ID;
+			m_iChannelNr=channel.Number;
 			if(channelID!=-1)
 			{
 				
@@ -1564,11 +1565,11 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph must be created first with CreateGraph()
 		/// </remarks>
-		public bool StartViewing(AnalogVideoStandard standard,int channel, int country)
+		public bool StartViewing(TVChannel channel)
 		{
 			if (m_graphState != State.Created) return false;
 			Log.Write("DVBGraphSS2:StartViewing()");
-			TuneChannel(standard,channel,country);
+			TuneChannel(channel);
 			int hr=0;
 			bool setVisFlag=false;
 			

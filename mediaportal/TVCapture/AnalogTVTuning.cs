@@ -73,7 +73,11 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
-			if (!captureCard.ViewChannel(currentChannel,captureCard.CountryCode,AnalogVideoStandard.None) )
+			TVChannel chan = new TVChannel();
+			chan.Number=currentChannel;
+			chan.Country=captureCard.CountryCode;
+			chan.TVStandard=AnalogVideoStandard.None;
+			if (!captureCard.ViewChannel(chan) )
 			{
 				timer1.Enabled=false;
 				callback.OnProgress(100);
