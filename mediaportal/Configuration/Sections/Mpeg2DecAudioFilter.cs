@@ -92,6 +92,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxAC3SpeakerConfig = new System.Windows.Forms.ComboBox();
 			this.checkBoxAC3DynamicRange = new System.Windows.Forms.CheckBox();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.label4 = new System.Windows.Forms.Label();
 			this.radioPCM16Bit = new System.Windows.Forms.RadioButton();
 			this.radioButtonPCM24Bit = new System.Windows.Forms.RadioButton();
 			this.radioButtonPCM32Bit = new System.Windows.Forms.RadioButton();
@@ -105,7 +106,6 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxDTSSpeakerConfig = new System.Windows.Forms.ComboBox();
 			this.checkBoxDTSDynamicRange = new System.Windows.Forms.CheckBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox5.SuspendLayout();
 			this.groupBox4.SuspendLayout();
@@ -237,12 +237,22 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "AC3/AAC/DTS/LPCM Format";
 			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(104, 64);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(64, 23);
+			this.label4.TabIndex = 7;
+			this.label4.Text = "Boost:";
+			// 
 			// radioPCM16Bit
 			// 
+			this.radioPCM16Bit.Checked = true;
 			this.radioPCM16Bit.Location = new System.Drawing.Point(8, 24);
 			this.radioPCM16Bit.Name = "radioPCM16Bit";
 			this.radioPCM16Bit.Size = new System.Drawing.Size(80, 16);
 			this.radioPCM16Bit.TabIndex = 1;
+			this.radioPCM16Bit.TabStop = true;
 			this.radioPCM16Bit.Text = "PCM 16 bit";
 			// 
 			// radioButtonPCM24Bit
@@ -311,10 +321,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// radioButtonDTSSpeakers
 			// 
+			this.radioButtonDTSSpeakers.Checked = true;
 			this.radioButtonDTSSpeakers.Location = new System.Drawing.Point(16, 24);
 			this.radioButtonDTSSpeakers.Name = "radioButtonDTSSpeakers";
 			this.radioButtonDTSSpeakers.Size = new System.Drawing.Size(128, 16);
 			this.radioButtonDTSSpeakers.TabIndex = 15;
+			this.radioButtonDTSSpeakers.TabStop = true;
 			this.radioButtonDTSSpeakers.Text = "Decode to speakers:";
 			this.radioButtonDTSSpeakers.CheckedChanged += new System.EventHandler(this.radioButtonDTSSpeakers_CheckedChanged);
 			// 
@@ -362,14 +374,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label2.Size = new System.Drawing.Size(48, 16);
 			this.label2.TabIndex = 7;
 			this.label2.Text = "Boost:";
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(104, 64);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(64, 23);
-			this.label4.TabIndex = 7;
-			this.label4.Text = "Boost:";
 			// 
 			// MPEG2DecAudioFilter
 			// 
