@@ -98,9 +98,8 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 							attributeValueBytes, (ushort)attributeValueBytes.Length);
 					}
 					catch(ArgumentException){}
-					catch(COMException ex)
+					catch(COMException )
 					{
-						int x=1;
 					}
 				}
 			}

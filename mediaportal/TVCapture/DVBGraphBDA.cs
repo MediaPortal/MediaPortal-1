@@ -3013,7 +3013,6 @@ namespace MediaPortal.TV.Recording
 						//copy pmt pid...
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}");
 						shouldDecryptChannel=false;
-						refreshPmtTable=true;
 						byte[] pmtTable=new byte[188];
 						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
 						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
@@ -3029,6 +3028,7 @@ namespace MediaPortal.TV.Recording
 							stream.Close();
 						}
 						catch(Exception){}
+						refreshPmtTable=true;
 						break;
 					}
 				}
