@@ -7,8 +7,8 @@ Bugs left:
   
   18-06-2004 topbar     : the topbar buttons keep focus even when cursor is in the rest of the GUI
   18-06-2004 my video   : page counter goes wrong when > 9 pages
-  18-06-2004 my video   : F3 when no inet connection
-  18-06-2004 my music   : F3 when no inet connection
+  18-06-2004 my video   : problems when F3 when no inet connection
+  18-06-2004 my music   : problems when F3 when no inet connection
   18-06-2004 my weather : problems when no inet connection
   16-06-2004 general    : have autotune enter the channels from low to high instead of high to low ?   
   
