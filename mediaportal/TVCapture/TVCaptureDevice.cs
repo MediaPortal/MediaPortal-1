@@ -16,8 +16,8 @@ namespace MediaPortal.TV.Recording
     string        m_strAudioCompressor="";
     string        m_strVideoCompressor="";
     string        m_strVideoDevice="";
-    string        m_strCaptureFormat;
     string        m_strAudioDevice="";
+    string        m_strCaptureFormat="";
     bool          m_bUseForRecording;
     bool          m_bUseForTV;			
     [NonSerialized]
@@ -619,23 +619,23 @@ namespace MediaPortal.TV.Recording
         {
           DateTime dt=currentProgram.StartTime;
           strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-            currentProgram.Channel,currentProgram.Title,
-            dt.Year,dt.Month,dt.Day,
-            dt.Hour,
-            dt.Minute,CaptureFormat);
+                                currentProgram.Channel,currentProgram.Title,
+                                dt.Year,dt.Month,dt.Day,
+                                dt.Hour,
+                                dt.Minute,CaptureFormat);
         }
         else
         {
           DateTime dt=DateTime.Now;
           strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-            rec.Channel,rec.Title,
-            dt.Year,dt.Month,dt.Day,
-            dt.Hour,
-            dt.Minute,CaptureFormat);
+                                        rec.Channel,rec.Title,
+                                        dt.Year,dt.Month,dt.Day,
+                                        dt.Hour,
+                                        dt.Minute,CaptureFormat);
         }
         
         m_strFilenameEnd=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
-        m_strFilenameTmp=String.Format(@"{0}\record{2}{3}",strRecPath, ID,CaptureFormat );
+        m_strFilenameTmp=String.Format(@"{0}\record{1}{2}",strRecPath, ID,CaptureFormat );
         try
         {
           System.IO.File.Delete(m_strFilenameTmp);

@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  09-05-2004  my movies   : fixed : IMDB tagline was not shown
   09-05-2004  setup       : fixed : file->setup: tab order was messed up
   09-05-2004  general     : fixed : numerous skin changes to remove wasted empty space
   09-05-2004  my tv       : added : support for multiple tuners

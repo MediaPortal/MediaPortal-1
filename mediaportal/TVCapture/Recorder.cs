@@ -190,7 +190,7 @@ namespace MediaPortal.TV.Recording
         
         // wait for the next minute
         TimeSpan ts=DateTime.Now-dtTime;
-        while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute)
+        while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute && !m_bRecordingsChanged)
         {
           if (m_eState !=State.Running) break;
           if (m_bRecordingsChanged) break;
@@ -209,7 +209,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="strChannel"></param>
     static public void RecordNow(string strChannel)
     {
-      Log.Write("Recorder: record now"+strChannel);
+      Log.Write("Recorder: record now:"+strChannel);
       // create a new recording which records the next 2 hours...
       TVRecording tmpRec = new TVRecording();
       tmpRec.Start=Utils.datetolong(DateTime.Now);
@@ -275,6 +275,7 @@ namespace MediaPortal.TV.Recording
       }
       //no device free...
       Log.Write("No free capture cards found to record program");
+      System.Threading.Thread.Sleep(1000);
       return false;
     }
 
@@ -370,6 +371,7 @@ namespace MediaPortal.TV.Recording
             {
               Log.Write("Recorder: stop preview on capture card:{0}", dev.ID);
               dev.Previewing=false;
+              m_strPreviewChannel="";
             }
           }
         }
@@ -391,6 +393,7 @@ namespace MediaPortal.TV.Recording
       }
       set
       {
+        if (m_strPreviewChannel==value) return;
         m_strPreviewChannel=value;
         foreach (TVCaptureDevice dev in m_tvcards)
         {

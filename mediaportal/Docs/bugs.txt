@@ -3,7 +3,10 @@ Bugs:
 - installer: check dx9b
 - MPReader : XCDs dont work anymore
 
--imdb    : tagline=gone?
+-xml        : tag to specify whether music overlay should b visible or not
+-dvd        : osd pause doesnt work
+-listcontrol: doesnt adjust x-pos of page counter
+
 -capture : missing audio capture device for pinnacle!!
 -capture : CVBS/SVHS in  doesnt work
 

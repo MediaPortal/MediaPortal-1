@@ -14,6 +14,7 @@ using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.WinControls;
 using MediaPortal.TV.Recording;
+using MediaPortal.Util;
 
 namespace MediaPortal
 {
@@ -2848,6 +2849,7 @@ namespace MediaPortal
 
       try
       {
+        Utils.FileDelete(@"capturecards.xml");
         using (Stream s = File.Open(@"capturecards.xml", FileMode.CreateNew, FileAccess.ReadWrite))
         {
           SoapFormatter b = new SoapFormatter();
@@ -2879,6 +2881,7 @@ namespace MediaPortal
         if (strTunerType=="Antenna") btnradioAntenna.Checked=true;
         else btnradioCable.Checked=true;
 
+        textBoxRecPath.Text=strRecPath;
 
         // setup tv channel list
         listTVChannels.Items.Clear();
