@@ -149,6 +149,11 @@
                     Project = "{46847F6F-7AEC-4CBB-B6D5-78C18FCDD2C0}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Util"
+                    Project = "{3049EF7D-BE85-40E9-9EA4-81900BC543ED}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -284,12 +289,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "VideoRenderers.cs"
+                    RelPath = "WeatherChannel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "WeatherChannel.cs"
+                    RelPath = "VideoRenderers.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
