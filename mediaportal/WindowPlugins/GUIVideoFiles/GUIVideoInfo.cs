@@ -102,6 +102,7 @@ namespace MediaPortal.GUI.Video
 
     void Close()
 		{
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 			lock (this)
 			{
 				m_bRunning = false;
@@ -111,10 +112,11 @@ namespace MediaPortal.GUI.Video
 				GUIWindowManager.UnRoute();
 				m_pParentWindow = null;
 			}
+			GUIWindowManager.IsSwitchingToNewWindow=false;
     }
 
     public void DoModal(int dwParentId)
-    {
+    {	
       m_dwParentWindowID = dwParentId;
       m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
       if (null == m_pParentWindow)
@@ -123,12 +125,15 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
+			GUIWindowManager.IsSwitchingToNewWindow=true;
       GUIWindowManager.RouteToWindow(GetID);
 
       // active this window...
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
 
+
+			GUIWindowManager.IsSwitchingToNewWindow=false;
       m_bRunning = true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {

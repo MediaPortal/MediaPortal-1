@@ -94,6 +94,7 @@ namespace MediaPortal.Dialogs
 
 		public void Close()
 		{
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 			lock (this)
 			{
 				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
@@ -104,6 +105,7 @@ namespace MediaPortal.Dialogs
 				m_bRunning=false;
 				GUIGraphicsContext.Overlay=m_bOverlay;
 			}
+			GUIWindowManager.IsSwitchingToNewWindow=false;
 		}
     
 		public void Progress()
@@ -134,6 +136,7 @@ namespace MediaPortal.Dialogs
 				return;
 			}
 
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 			GUIWindowManager.RouteToWindow( GetID );
 
 			// active this window...
@@ -172,6 +175,7 @@ namespace MediaPortal.Dialogs
 			m_iFileNr = 1;
 			m_strDirectory = System.IO.Path.GetDirectoryName(m_itemSourceItem.Path);
 
+			GUIWindowManager.IsSwitchingToNewWindow=false;
 			m_bRunning=true;
 			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
 			{

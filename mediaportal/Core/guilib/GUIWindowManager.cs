@@ -139,6 +139,7 @@ namespace MediaPortal.GUI.Library
     static public bool IsSwitchingToNewWindow
     {
       get { return m_bSwitching;}
+			set { m_bSwitching=value;}
     }
 
     /// <summary>

@@ -100,6 +100,7 @@ namespace MediaPortal.Dialogs
 		void Close()
 		{
 			
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 			lock (this)
 			{
 				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
@@ -109,10 +110,13 @@ namespace MediaPortal.Dialogs
 				m_pParentWindow=null;
 				m_bRunning=false;
 			}
+			
+			GUIWindowManager.IsSwitchingToNewWindow=false;
 		}
 
 		public void DoModal(int dwParentId)
 		{
+			
 			m_dwParentWindowID=dwParentId;
 			m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
 			if (null==m_pParentWindow)
@@ -121,11 +125,14 @@ namespace MediaPortal.Dialogs
 				return;
 			}
 
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 			GUIWindowManager.RouteToWindow( GetID );
 
 			// active this window...
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
 			OnMessage(msg);
+			
+			GUIWindowManager.IsSwitchingToNewWindow=false;
 
 			m_bRunning=true;
 			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)

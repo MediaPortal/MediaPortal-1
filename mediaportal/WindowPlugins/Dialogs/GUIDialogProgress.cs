@@ -66,6 +66,7 @@ namespace MediaPortal.Dialogs
 
     public void Close()
 		{
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 			lock (this)
 			{
 				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
@@ -76,10 +77,11 @@ namespace MediaPortal.Dialogs
 				m_bRunning=false;
 				GUIGraphicsContext.Overlay=m_bOverlay;
 			}
+			GUIWindowManager.IsSwitchingToNewWindow=false;
     }
     
     public void StartModal(int dwParentId)
-    {
+		{
       m_bCanceled=false;
       m_dwParentWindowID=dwParentId;
       m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
@@ -88,6 +90,7 @@ namespace MediaPortal.Dialogs
         m_dwParentWindowID=0;
         return;
       }
+			GUIWindowManager.IsSwitchingToNewWindow=true;
 
       GUIWindowManager.RouteToWindow( GetID );
 
@@ -96,7 +99,8 @@ namespace MediaPortal.Dialogs
       OnMessage(msg);
       ShowProgressBar(false);
       SetPercentage(0);
-      m_bRunning=true;
+			m_bRunning=true;
+			GUIWindowManager.IsSwitchingToNewWindow=false;
     }
 
 		public void ContinueModal()
