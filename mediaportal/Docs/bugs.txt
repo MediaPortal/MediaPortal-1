@@ -1,3 +1,6 @@
+-home,mytv : GUIMessage:
+-vertexbuffers
+
 Cosmetic bugs:
   13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
   13-07-2004 general    : The cancel buttons dont work
