@@ -238,8 +238,8 @@
 			<onleft>8</onleft>
 			<onright>10</onright>
 			<onleft>2</onleft>
-			<onup>8</onup>
-			<ondown>10</ondown>
+			<onup>7</onup>
+			<ondown>20</ondown>
 		</control> 
 		<control>
 			<description>Monday checkbox</description>
@@ -251,6 +251,7 @@
 			<height>20</height>
 			<label>657</label>
 			<onleft>16</onleft>
+			<onright>11</onright>
 			<onup>7</onup>
 			<ondown>20</ondown>			
 		</control> 
@@ -336,7 +337,7 @@
 			<label>860</label>
 			<onleft>2</onleft>
 			<onright>3</onright>
-			<onup>15</onup>
+			<onup>16</onup>
 			<ondown>3</ondown>
 		</control> 
   </controls>
