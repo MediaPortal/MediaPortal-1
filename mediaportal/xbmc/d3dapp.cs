@@ -15,7 +15,7 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
-    protected string    m_strSkin="MediaCenter";
+    protected string    m_strSkin="MetalMedia";
     protected string    m_strLanguage="english";
 
     #region Menu Information
@@ -1118,7 +1118,7 @@ namespace MediaPortal
       string strNewLanguage="";
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        strNewSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
+        strNewSkin=xmlreader.GetValueAsString("skin","name","MetalMedia");
         strNewLanguage=xmlreader.GetValueAsString("skin","language","English");
         m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
         GUIGraphicsContext.MouseSupport=xmlreader.GetValueAsBool("general","mousesupport",true);

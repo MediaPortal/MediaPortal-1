@@ -1,0 +1,97 @@
+<window>
+  <id>2004</id> 
+  <defaultcontrol>2</defaultcontrol> 
+  <controls>
+	<control>
+		<description>music rectangle</description> 
+		<type>image</type> 
+		<id>0</id> 
+		<posX>65</posX> 
+		<posY>420</posY> 
+		<width>100</width> 
+		<height>110</height> 
+		<texture>panel.png</texture> 
+	</control>
+	<control>
+		<description>lcd display shine</description> 
+		<type>image</type> 
+		<id>19</id> 
+		<posX>125</posX> 
+		<posY>29</posY> 
+		<texture>lcdtopnoshine.png</texture> 
+	</control>
+	<control>
+		<description>music logo</description> 
+		<type>image</type> 
+		<id>1</id> 
+		<posX>70</posX> 
+		<posY>425</posY> 
+		<width>90</width> 
+		<height>100</height> 
+		<texture>music.jpg</texture> 
+	</control>
+	<control>
+		<description>play logo</description> 
+		<type>image</type> 
+		<id>3</id> 
+		<posX>330</posX> 
+		<posY>35</posY> 
+		<texture>logo_play.png</texture> 
+	</control>
+	<control>
+		<description>Pause logo</description> 
+		<type>image</type> 
+		<id>4</id> 
+		<posX>330</posX> 
+		<posY>35</posY> 
+		<texture>logo_pause.png</texture> 
+	</control>
+	<control>
+		<description>FF logo</description> 
+		<type>image</type> 
+		<id>7</id> 
+		<posX>330</posX> 
+		<posY>35</posY> 
+		<texture>logo_fastforward.png</texture> 
+	</control>
+	<control>
+		<description>RW logo</description> 
+		<type>image</type> 
+		<id>8</id> 
+		<posX>330</posX> 
+		<posY>35</posY>  
+		<texture>logo_rewind.png</texture> 
+	</control>
+	<control>
+		<description>play time label</description> 
+		<type>label</type> 
+		<id>2</id> 
+		<posX>370</posX> 
+		<posY>32</posY> 
+		<label>-</label> 
+		<align>right</align> 
+		<font>font10</font> 
+		<textcolor>FF000000</textcolor> 
+	</control>
+	<control>
+		<description>album/artist/genre etc info label</description> 
+		<type>fadelabel</type> 
+		<width>140</width> 
+		<height>30</height>
+		<posX>280</posX> 
+		<posY>32</posY>
+		<align>right</align>  
+		<font>font10</font> 
+		<textcolor>FF000000</textcolor>
+		<id>5</id> 
+	</control>
+	<control>
+		<description>lcd display shine</description> 
+		<type>image</type> 
+		<id>10</id> 
+		<posX>126</posX> 
+		<posY>29</posY> 
+		<texture>lcdtopshine.png</texture> 
+	</control>
+    </controls>
+</window>

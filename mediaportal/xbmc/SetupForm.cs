@@ -2837,7 +2837,7 @@ namespace MediaPortal
         }
   			
 
-        string strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
+        string strSkin=xmlreader.GetValueAsString("skin","name","MetalMedia");
         comboBoxSkins.Items.Clear();
         iItem=0;
         Folders=System.IO.Directory.GetDirectories(@"skin\","*.*");

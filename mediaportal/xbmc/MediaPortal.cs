@@ -149,7 +149,7 @@ public class MediaPortalApp : D3DApp
       {
         using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
         {
-          m_strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
+          m_strSkin=xmlreader.GetValueAsString("skin","name","MetalMedia");
           m_strLanguage=xmlreader.GetValueAsString("skin","language","English");
           m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
           GUIGraphicsContext.MouseSupport=xmlreader.GetValueAsBool("general","mousesupport",true);
@@ -157,7 +157,7 @@ public class MediaPortalApp : D3DApp
       }
       catch(Exception)
       {
-        m_strSkin="MediaCenter";
+        m_strSkin="MetalMedia";
         m_strLanguage="english";
       }
      
