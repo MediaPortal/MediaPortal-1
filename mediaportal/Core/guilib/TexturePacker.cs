@@ -80,21 +80,24 @@ namespace MediaPortal.GUI.Library
 					if (FileName!=null && FileName.Length>0) return null;
 
 					//(if we're too small, return)
-					if (img.Width > Rect.Width || img.Height > Rect.Height)
+					if ((img.Width+2) > Rect.Width || (img.Height+2) > Rect.Height)
 					{
 						return null;
 					}
 					//(if we're just right, accept)
-					if (img.Width == Rect.Width && img.Height == Rect.Height)
+					if ((img.Width+2) == Rect.Width && (img.Height+2) == Rect.Height)
 					{
 						using (Graphics g = Graphics.FromImage(rootImage))
 						{
 							FileName=fileName;
 							g.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-							g.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceOver;
+							g.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 							g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 							g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-							g.DrawImage(img,Rect.Left,Rect.Top,Rect.Width,Rect.Height);
+              // draw oversized image first
+              g.DrawImage(img,Rect.Left,Rect.Top,Rect.Width,Rect.Height);              
+              // draw original image ontop of oversized image
+							g.DrawImage(img,Rect.Left+1,Rect.Top+1,Rect.Width-2,Rect.Height-2);
 						}
 						return this;
 					}
@@ -105,18 +108,18 @@ namespace MediaPortal.GUI.Library
 					ChildRight= new PackedTextureNode();
 	        
 					//(decide which way to split)
-					int dw = Rect.Width  - img.Width;
-					int dh = Rect.Height - img.Height;
+					int dw = Rect.Width  - (img.Width+2);
+					int dh = Rect.Height - (img.Height+2);
 
 					if (dw > dh)
 					{
-						ChildLeft.Rect  = new Rectangle(Rect.Left, Rect.Top, img.Width, Rect.Height);
-						ChildRight.Rect = new Rectangle(Rect.Left+img.Width, Rect.Top, Rect.Width-img.Width, Rect.Height);
+						ChildLeft.Rect  = new Rectangle(Rect.Left, Rect.Top, (img.Width+2), Rect.Height);
+						ChildRight.Rect = new Rectangle(Rect.Left+(img.Width+2), Rect.Top, Rect.Width-(img.Width+2), Rect.Height);
 					}
 					else
 					{
-						ChildLeft.Rect  = new Rectangle(Rect.Left, Rect.Top, Rect.Width, img.Height);
-						ChildRight.Rect = new Rectangle(Rect.Left, Rect.Top+img.Height, Rect.Width, Rect.Height-img.Height);
+						ChildLeft.Rect  = new Rectangle(Rect.Left, Rect.Top, Rect.Width, (img.Height+2));
+						ChildRight.Rect = new Rectangle(Rect.Left, Rect.Top+(img.Height+2), Rect.Width, Rect.Height-(img.Height+2));
 					}
 					//(insert into first child we created)
 					PackedTextureNode newNode=ChildLeft.Insert(fileName, img, rootImage);
@@ -255,9 +258,9 @@ namespace MediaPortal.GUI.Library
 			return result;
 		}
 		
-		public bool Get(string fileName, out double uoffs, out double voffs, out double umax, out double vmax, out int iWidth, out int iHeight, out Texture tex, out int TextureNo)
+		public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax, out int iWidth, out int iHeight, out Texture tex, out int TextureNo)
 		{
-			uoffs=voffs=umax=vmax=0.0d;
+			uoffs=voffs=umax=vmax=0.0f;
 			iWidth=iHeight=0;
 			TextureNo=-1;
 			tex=null;
@@ -273,12 +276,12 @@ namespace MediaPortal.GUI.Library
 				PackedTextureNode foundNode=bigOne.root.Get(fileName.ToLower());
 				if (foundNode!=null)
 				{
-					uoffs  = ((double)foundNode.Rect.Left)   / ((double)bigOne.root.Rect.Width);
-					voffs  = ((double)foundNode.Rect.Top)    / ((double)bigOne.root.Rect.Height);
-					umax   = ((double)foundNode.Rect.Width)  / ((double)bigOne.root.Rect.Width);
-					vmax   = ((double)foundNode.Rect.Height) / ((double)bigOne.root.Rect.Height);
-					iWidth = foundNode.Rect.Width;
-					iHeight= foundNode.Rect.Height;
+					uoffs  = ((float)foundNode.Rect.Left+1)   / ((float)bigOne.root.Rect.Width);
+					voffs  = ((float)foundNode.Rect.Top+1)    / ((float)bigOne.root.Rect.Height);
+					umax   = ((float)foundNode.Rect.Width-2)  / ((float)bigOne.root.Rect.Width);
+					vmax   = ((float)foundNode.Rect.Height-2) / ((float)bigOne.root.Rect.Height);         
+					iWidth = foundNode.Rect.Width-2;
+					iHeight= foundNode.Rect.Height-2;
 					if (bigOne.texture==null)
 					{
 						LoadPackedGraphics();
