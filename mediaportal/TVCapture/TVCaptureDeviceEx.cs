@@ -777,13 +777,6 @@ namespace MediaPortal.TV.Recording
 
 			_mNewRecordedTV.End = Utils.datetolong(DateTime.Now);
 			TVDatabase.AddRecordedTV(_mNewRecordedTV);
-			_mNewRecordedTV = null;
-
-      // cleanup...
-      _mCurrentProgramRecording = null;
-      _mCurrentTVRecording = null;
-      _mPreRecordInterval = 0;
-      _mPostRecordInterval = 0;
 
       // back to timeshifting state
       _mState = State.Timeshifting;
@@ -798,6 +791,13 @@ namespace MediaPortal.TV.Recording
 				movieDetails.Year=_mNewRecordedTV.StartTime.Year;
 				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
 			}
+			_mNewRecordedTV = null;
+
+			// cleanup...
+			_mCurrentProgramRecording = null;
+			_mCurrentTVRecording = null;
+			_mPreRecordInterval = 0;
+			_mPostRecordInterval = 0;
     }
 
     /// <summary>
