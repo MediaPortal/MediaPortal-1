@@ -92,7 +92,8 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "autostart", "false" },
 												new string[] { "general", "baloontips", "false" },
 												new string[] { "general", "dblclickasrightclick", "false" },
-												new string[] { "general", "hidetaskbar", "true" }
+												new string[] { "general", "hidetaskbar", "true" },
+												new string[] { "general", "alwaysontop", "false" }
 												};
 
 		/// <summary>
@@ -236,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.mpGroupBox1.Location = new System.Drawing.Point(8, 8);
 			this.mpGroupBox1.Name = "mpGroupBox1";
-			this.mpGroupBox1.Size = new System.Drawing.Size(440, 72);
+			this.mpGroupBox1.Size = new System.Drawing.Size(440, 56);
 			this.mpGroupBox1.TabIndex = 1;
 			this.mpGroupBox1.TabStop = false;
 			this.mpGroupBox1.Text = "Language Settings";
@@ -245,14 +246,14 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.languageComboBox.Location = new System.Drawing.Point(168, 27);
+			this.languageComboBox.Location = new System.Drawing.Point(168, 16);
 			this.languageComboBox.Name = "languageComboBox";
 			this.languageComboBox.Size = new System.Drawing.Size(256, 21);
 			this.languageComboBox.TabIndex = 0;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 30);
+			this.label2.Location = new System.Drawing.Point(16, 24);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(150, 23);
 			this.label2.TabIndex = 4;
@@ -264,9 +265,9 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.settingsCheckedListBox);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 88);
+			this.groupBox1.Location = new System.Drawing.Point(8, 64);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 176);
+			this.groupBox1.Size = new System.Drawing.Size(440, 200);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "General Settings";
@@ -277,18 +278,19 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.settingsCheckedListBox.Items.AddRange(new object[] {
-																																"Start Media Portal in fullscreen mode",
-																																"Auto hide mouse cursor",
-																																"Show special mouse controls (scrollbars, etc)",
-																																"Hide file extensions for known file types",
-																																"Enable animations",
-																																"Autostart Mediaportal when windows starts",
-																																"Disable Windows XP balloon tips",
-																																"Use mouse left double click as right click",
-																																"Hide taskbar in fullscreen mode"});
+																		"Start Media Portal in fullscreen mode",
+																		"Auto hide mouse cursor",
+																		"Show special mouse controls (scrollbars, etc)",
+																		"Hide file extensions for known file types",
+																		"Enable animations",
+																		"Autostart Mediaportal when windows starts",
+																		"Disable Windows XP balloon tips",
+																		"Use mouse left double click as right click",
+																		"Hide taskbar in fullscreen mode",
+																		"MediaPortal always on top"});
 			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
 			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 139);
+			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 154);
 			this.settingsCheckedListBox.TabIndex = 0;
 			// 
 			// groupBox2
@@ -314,10 +316,10 @@ namespace MediaPortal.Configuration.Sections
 			// comboDriveNo
 			// 
 			this.comboDriveNo.Items.AddRange(new object[] {
-																											"0",
-																											"1",
-																											"2",
-																											"3"});
+															  "0",
+															  "1",
+															  "2",
+															  "3"});
 			this.comboDriveNo.Location = new System.Drawing.Point(128, 104);
 			this.comboDriveNo.Name = "comboDriveNo";
 			this.comboDriveNo.Size = new System.Drawing.Size(121, 21);
@@ -343,29 +345,29 @@ namespace MediaPortal.Configuration.Sections
 			// comboBoxDrive
 			// 
 			this.comboBoxDrive.Items.AddRange(new object[] {
-																											 "D:",
-																											 "E:",
-																											 "F:",
-																											 "G",
-																											 "H:",
-																											 "I:",
-																											 "J:",
-																											 "K:",
-																											 "L:",
-																											 "M:",
-																											 "N:",
-																											 "O:",
-																											 "P:",
-																											 "Q:",
-																											 "R:",
-																											 "S:",
-																											 "T:",
-																											 "U:",
-																											 "V:",
-																											 "W:",
-																											 "X:",
-																											 "Y:",
-																											 "Z:"});
+															   "D:",
+															   "E:",
+															   "F:",
+															   "G",
+															   "H:",
+															   "I:",
+															   "J:",
+															   "K:",
+															   "L:",
+															   "M:",
+															   "N:",
+															   "O:",
+															   "P:",
+															   "Q:",
+															   "R:",
+															   "S:",
+															   "T:",
+															   "U:",
+															   "V:",
+															   "W:",
+															   "X:",
+															   "Y:",
+															   "Z:"});
 			this.comboBoxDrive.Location = new System.Drawing.Point(128, 80);
 			this.comboBoxDrive.Name = "comboBoxDrive";
 			this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);

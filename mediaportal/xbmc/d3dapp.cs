@@ -142,6 +142,7 @@ namespace MediaPortal
     double m_dCurrentPos=0;
     int    m_iSleepingTime=50;
 		bool	 autoHideTaskbar=true;
+		bool	 alwaysOnTop=false;
     DirectDraw.Device               m_dddevice=null;
     DirectDraw.SurfaceDescription   m_dddescription=null;
     DirectDraw.Surface              m_ddfront=null;
@@ -191,6 +192,7 @@ namespace MediaPortal
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
 				autoHideTaskbar=xmlreader.GetValueAsBool("general","hidetaskbar",true);
+				alwaysOnTop=xmlreader.GetValueAsBool("general","alwaysontop",false);
       }
       //      startFullscreen=true;
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -202,6 +204,7 @@ namespace MediaPortal
       InitializeComponent();
       this.timer1.Interval=300;
       this.timer1.Start();
+			this.TopMost=alwaysOnTop;
 
     }
 
@@ -602,7 +605,7 @@ namespace MediaPortal
         
         if (bRemoveHandler)
           GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
-        if (windowed) TopMost=false;
+        if (windowed) TopMost=alwaysOnTop;
         this.Activate();
       }
       catch(Exception ex)
@@ -703,6 +706,7 @@ namespace MediaPortal
           this.SendToBack();
           this.BringToFront();
           this.ClientSize = currentClientSize;
+					this.TopMost=alwaysOnTop;
         }
 
         // Store device Caps
@@ -817,6 +821,7 @@ namespace MediaPortal
             this.SendToBack();
             this.BringToFront();
             this.ClientSize = currentClientSize;
+						this.TopMost=alwaysOnTop;
 
             // Let the user know we are switching from HAL to the reference rasterizer
             HandleSampleException(null, ApplicationMessage.WarnSwitchToRef);
@@ -1010,6 +1015,7 @@ namespace MediaPortal
         this.BringToFront();
         this.ClientSize = storedSize;
         this.Location = storedLocation;
+				this.TopMost=alwaysOnTop;
         //this.FormBorderStyle=FormBorderStyle.None;
       }
       else
