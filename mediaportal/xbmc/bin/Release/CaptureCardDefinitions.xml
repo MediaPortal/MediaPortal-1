@@ -23,13 +23,13 @@
 <!--  2. Define the 0-based index of the pin. This always should work...                                -->
 <!--                                                                                                    -->
 <!-- Cards supported so far:                                                          -->
-<!--    Aito DVB-T DUO CardBus			-->
-<!--    Asus PVR 416						  -->
-<!--    ATI HDTV							  -->
-<!--    ATI TV Wonder Elite					  -->
+<!--    Aito DVB-T DUO CardBus		      -->
+<!--    Asus PVR 416			      -->
+<!--    ATI HDTV			      -->
+<!--    ATI TV Wonder Elite		      -->
 <!--    AverMedia 1500MCE                     -->
-<!--    AverMedia A16A DVB-T 			  -->
-<!--    BlackGold GDI						  -->
+<!--    AverMedia A16A DVB-T 		      -->
+<!--    BlackGold GDI			      -->
 <!--    Chaintech DTT-1000                    -->
 <!--    Conexant DVB-T                        -->
 <!--    Diamond XtremeTV PVR550		      -->
@@ -43,7 +43,7 @@
 <!--    FireDTV (BDA DVB-C)                   -->
 <!--    FireDTV (BDA DVB-S)                   -->
 <!--    FlyDVB-T DUO                          -->
-<!--    FlyDVB-T DUO Analog			          -->
+<!--    FlyDVB-T DUO Analog		      -->
 <!--    Hauppauge Nova-C                      -->
 <!--    Hauppauge Nova-T                      -->
 <!--    Hauppauge Nova-S                      -->
@@ -51,20 +51,22 @@
 <!--    Hauppauge WinTV PVR 150               -->
 <!--    Hauppauge WinTV PVR 150MCE            -->
 <!--    Hauppauge WinTV PVR 250               -->
-<!--    Hauppauge WinTV PVR 250MCE  		  -->
+<!--    Hauppauge WinTV PVR 250MCE  	      -->
 <!--    Hauppauge WinTV PVR 350               -->
 <!--    Hauppauge WinTV PVR 500MCE            -->
 <!--    Hauppauge WinTV PVR USB2              -->
 <!--    Kona One TV                           -->
-<!--    Leadtek LR6650						  -->
+<!--    Leadtek LR6650			      -->
 <!--    LifeView DVB-T                        -->
 <!--    LifeView DVB-T Analog                 -->
-<!--    Meedion SAA1734                       -->
+<!--    Meedion SAA1734 DVBS                  -->
+<!--    Meedion SAA1734 DVBT                  -->
 <!--    NVTV Dual Tuner                       -->
-<!--    NVTV Single Tuner                       -->
-<!--    Pinnacle Deluxe USB2		          -->
-<!--    Pinnacle 300i DVBT			          -->
-<!--    Pinnacle 300i Analog		          -->
+<!--    NVTV Single Tuner                     -->
+<!--    Pinnacle Deluxe USB2		      -->
+<!--    Pinnacle 300i DVBT		      -->
+<!--    Pinnacle 300i Analog		      -->
+<!--    SMRT TV Card 			      -->
 <!--    Snazzi III USB2                       -->
 <!--    Twinhan VisionDTV Ter                 -->
 <!--    Twinhan VisionDTV Sat                 -->
@@ -72,14 +74,14 @@
 <!--    VA2000                                -->
 <!--    VideoMate DVB-T 300                   -->
 <!--    V-Stream Xpert DTV                    -->
-<!--    Vstream Xpert TV PVR 883	          -->
+<!--    Vstream Xpert TV PVR 883	      -->
 <!--    Winfast PVR 2000                      -->
 <!--    general s/w card                      -->
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.34                                                               -->
-<!-- changed : 11-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.35                                                               -->
+<!-- changed : 17-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -671,14 +673,30 @@
     </tv>
   </capturecard>
    
-   <capturecard commercialname="Medion SAA7134" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+  <capturecard commercialname="Medion SAA7134 DVB-T" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"              checkdevice="true"></filter>
-        <filter cat="capture"         name="MEDION BDA Digital Capture"			checkdevice="true"></filter>
+        <filter cat="capture"         name="MEDION BDA Digital Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Medion SAA7134 DVB-S" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000516be&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="MEDION BDA DVBS Tuner"              checkdevice="true"></filter>
+        <filter cat="capture"         name="MEDION BDA Digital Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1237,6 +1255,29 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="SMRT TV Card" capturename="SMRT Capture" devid="ven_4444&amp;dev_0016&amp;subsys_813d104d&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="SMRT TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="SMRT TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar" name="SMRT Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="SMRT Capture"  	checkdevice="true"></filter>
+        <filter cat="encoder"  name="SMRT Encoder"  	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
