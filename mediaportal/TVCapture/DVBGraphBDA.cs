@@ -1490,7 +1490,7 @@ namespace MediaPortal.TV.Recording
 				m_mediaControl.GetState(10,out  state);
 				if (state==FilterState.Paused)
 				{
-					m_mediaControl.Pause();
+					m_mediaControl.Run();
 				}
 			}
 			
