@@ -150,6 +150,12 @@ namespace MediaPortal.GUI.TV
     {
       if(sender==Clock)
       {
+        if (Focused)
+        {
+          Debug.WriteLine("set focus->main form");
+          GUIGraphicsContext.form.Focus();
+        }
+
         if (Recorder.View &&GUIGraphicsContext.IsFullScreenVideo)
         {
           GUIFullScreenTV win=(GUIFullScreenTV)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
