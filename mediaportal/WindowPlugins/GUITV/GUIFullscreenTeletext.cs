@@ -213,7 +213,11 @@ namespace MediaPortal.GUI.TV
 		void OnKeyCode(char chKey)
 		{
 
-			GUIImage gImg=(GUIImage)this.GetControl( (int)Controls.IMG_TELETEXT_PAGE);
+
+			if(chKey=='w' || chKey=='W')
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
+			}
 			if((chKey>='0'&& chKey <='9') || (chKey=='+' || chKey=='-')) //navigation
 			{
 				if (chKey=='0' && m_strInput.Length==0) return;
@@ -258,6 +262,8 @@ namespace MediaPortal.GUI.TV
 					m_actualSubPage=0;
 					if(m_actualPage<100)
 						m_actualPage=100;
+					if(m_actualPage>899)
+						m_actualPage=899;
 					if(m_teleText!=null)
 					{
 						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
@@ -289,7 +295,7 @@ namespace MediaPortal.GUI.TV
 		void ShowMessage(int page,int subpage)
 		{
 
-			string msg=String.Format("Waiting for Page {0:X}/{1}...",page,subpage);
+			string msg=String.Format("Waiting for Page {0}/{1}...",page,subpage);
 			GUIControl.SetControlLabel(GetID,(int)Controls.LBL_MESSAGE,msg);
 			GUIControl.ShowControl(GetID,(int)Controls.LBL_MESSAGE);
 
