@@ -1462,7 +1462,8 @@ namespace MediaPortal.GUI.Video
         for (int i = 0; i < vecitems.Count; ++i)
         {
           pItem = (GUIListItem)vecitems[i];
-          if (!pItem.IsFolder)
+          if (!pItem.IsFolder 
+          || ( pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
           {
 						if (Utils.IsVideo(pItem.Path) && /*!Utils.IsNFO(pItem.Path) && */!PlayListFactory.IsPlayList(pItem.Path))
 						{

@@ -307,7 +307,7 @@ namespace MediaPortal.Player
       if (m_bStop) return;
       lock(this) 
       {
-				Direct3D.Surface backBuffer=null;
+				//Direct3D.Surface backBuffer=null;
 				try
 				{
 					//sanity checks
@@ -316,7 +316,7 @@ namespace MediaPortal.Player
 					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 					if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
-					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 					//first time, fade in the video in 12 steps
 					int iMaxSteps = 12;
 					if (m_iFrame < iMaxSteps)
@@ -389,10 +389,10 @@ namespace MediaPortal.Player
 						}
 					}
 
-					using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
-					{
-					}
-					backBuffer.UnlockRectangle();
+					//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
+					//{
+					//}
+					//backBuffer.UnlockRectangle();
 					GUIFontManager.Present();
 					//and present it onscreen
 
@@ -404,8 +404,8 @@ namespace MediaPortal.Player
 				}
 				finally
 				{
-					if (backBuffer!=null)
-						backBuffer.Dispose();
+					//if (backBuffer!=null)
+					//	backBuffer.Dispose();
 				}
       }//lock(this) 
 		}//public void Render(Device device, Texture tex, Size nativeSize) 

@@ -95,6 +95,8 @@ namespace MediaPortal.GUI.Video
 		public GUIVideoTitle()
 		{
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
+      m_directory.AddDrives();
+      m_directory.SetExtensions(Utils.VideoExtensions);
       LoadSettings();
     }
     ~GUIVideoTitle()
@@ -663,17 +665,106 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-				if (movies.Count > 1)
+        bool bAskResume=true;        
+        int iDuration = 0;
+        {
+          //get all movies belonging to each other
+          ArrayList items = m_directory.GetDirectory(System.IO.Path.GetDirectoryName((string)movies[0]));
+
+          //check if we can resume 1 of those movies
+          int stoptime=0;
+          bool asked=false;
+          ArrayList newItems = new ArrayList();
+          for (int i = 0; i < items.Count; ++i)
+          {
+            GUIListItem pItemTmp = (GUIListItem)items[i];
+            if (Utils.ShouldStack(pItemTmp.Path, (string)movies[0]))
+            {   
+              if (!asked) iSelectedFile++;                
+              IMDBMovie movieDetails = new IMDBMovie();
+              int fileid=VideoDatabase.GetFileId(pItemTmp.Path);
+              if ( (iMovieId >= 0) && (fileid >= 0) )
+              {                 
+                VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
+                string title=System.IO.Path.GetFileName((string)movies[0]);
+                Utils.RemoveStackEndings(ref title);
+                if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
+                    
+                stoptime=VideoDatabase.GetMovieStopTime(fileid);
+                if (stoptime>0)
+                {
+                  if (!asked)
+                  {
+                    asked=true;
+                    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                    if (null == dlgYesNo) return;
+                    dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+                    dlgYesNo.SetLine(1, title);
+                    dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936)+" "+Utils.SecondsToHMSString(iDuration + stoptime));
+                    dlgYesNo.SetDefaultToYes(true);
+                    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                    if (dlgYesNo.IsConfirmed) 
+                    {
+                      bAskResume=false;
+                      newItems.Add(pItemTmp);
+                    }
+                    else
+                    {
+                      VideoDatabase.DeleteMovieStopTime(fileid);
+                            newItems.Add(pItemTmp);
+                    }
+                  } //if (!asked)
+                  else
+                  {
+                    newItems.Add(pItemTmp);
+                  }
+                } //if (stoptime>0)
+                else
+                {
+                  newItems.Add(pItemTmp);
+                }
+
+                // Total movie duration
+                iDuration += VideoDatabase.GetMovieDuration(fileid);
+              } 
+              else //if (movieid >=0)
+              {
+                newItems.Add(pItemTmp);
+              }
+            }//if (Utils.ShouldStack(pItemTmp.Path, item.Path))
+          }
+
+          // If we have found stackable items, clear the movies array
+          // so, that we can repopulate it.
+          if (newItems.Count > 0)
+          {
+            movies.Clear();
+          }
+
+          for (int i = 0; i < newItems.Count; ++i)
+          {
+            GUIListItem pItemTmp = (GUIListItem)newItems[i];
+            if (Utils.IsVideo(pItemTmp.Path) && !PlayListFactory.IsPlayList(pItemTmp.Path))
+            {
+              movies.Add(pItemTmp.Path);
+            }
+          }
+        }
+
+        if (movies.Count > 1)
 				{
-					GUIDialogFileStacking dlg = (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING);
-					if (dlg != null)
-					{
-						dlg.SetNumberOfFiles(movies.Count);
-						dlg.DoModal(GetID);
-					}
-					iSelectedFile = dlg.SelectedFile;
-					if (iSelectedFile < 1) return;
-				}
+          if (bAskResume)
+          {
+            GUIDialogFileStacking dlg = (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING);
+            if (null != dlg)
+            {
+              dlg.SetNumberOfFiles(movies.Count);
+              dlg.DoModal(GetID);
+              iSelectedFile = dlg.SelectedFile;
+              if (iSelectedFile < 1) return;
+            }
+          }
+        }
     
 				PlayListPlayer.Reset();
 				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -689,7 +780,7 @@ namespace MediaPortal.GUI.Video
 				}
 
         // play movie...
-        GUIVideoFiles.PlayMovieFromPlayList(true);
+        GUIVideoFiles.PlayMovieFromPlayList(bAskResume);
 			}
 		}
     
