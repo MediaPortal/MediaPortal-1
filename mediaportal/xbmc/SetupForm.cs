@@ -8,8 +8,10 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using DShowNET;
+using DShowNET.Device;
 using DirectX.Capture;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
@@ -252,6 +254,10 @@ namespace MediaPortal
 		private System.Windows.Forms.TextBox textBoxStreamListFolder;
     ArrayList m_tvcards = new ArrayList();
 		private System.Windows.Forms.ComboBox comboBoxCountries;
+		private System.Windows.Forms.ComboBox comboBoxDVDVideoCodec;
+		private System.Windows.Forms.ComboBox comboBoxDVDAudioCodec;
+		private System.Windows.Forms.Label label41;
+		private System.Windows.Forms.Label label42;
 
 		TunerCountry[] m_countries = new TunerCountry[] {
 
@@ -814,6 +820,10 @@ namespace MediaPortal
 			this.label29 = new System.Windows.Forms.Label();
 			this.label28 = new System.Windows.Forms.Label();
 			this.groupBox11 = new System.Windows.Forms.GroupBox();
+			this.label42 = new System.Windows.Forms.Label();
+			this.label41 = new System.Windows.Forms.Label();
+			this.comboBoxDVDAudioCodec = new System.Windows.Forms.ComboBox();
+			this.comboBoxDVDVideoCodec = new System.Windows.Forms.ComboBox();
 			this.comboDVDNavigator = new System.Windows.Forms.ComboBox();
 			this.label40 = new System.Windows.Forms.Label();
 			this.comboDVDAudioRenderer = new System.Windows.Forms.ComboBox();
@@ -2271,7 +2281,7 @@ namespace MediaPortal
 			// 
 			this.trackBarOSDTimeout.Location = new System.Drawing.Point(24, 48);
 			this.trackBarOSDTimeout.Name = "trackBarOSDTimeout";
-			this.trackBarOSDTimeout.Size = new System.Drawing.Size(120, 42);
+			this.trackBarOSDTimeout.Size = new System.Drawing.Size(120, 45);
 			this.trackBarOSDTimeout.TabIndex = 0;
 			this.trackBarOSDTimeout.ValueChanged += new System.EventHandler(this.trackBarOSDTimeout_ValueChanged);
 			// 
@@ -2681,6 +2691,10 @@ namespace MediaPortal
 			// 
 			// groupBox11
 			// 
+			this.groupBox11.Controls.Add(this.label42);
+			this.groupBox11.Controls.Add(this.label41);
+			this.groupBox11.Controls.Add(this.comboBoxDVDAudioCodec);
+			this.groupBox11.Controls.Add(this.comboBoxDVDVideoCodec);
 			this.groupBox11.Controls.Add(this.comboDVDNavigator);
 			this.groupBox11.Controls.Add(this.label40);
 			this.groupBox11.Controls.Add(this.comboDVDAudioRenderer);
@@ -2691,6 +2705,37 @@ namespace MediaPortal
 			this.groupBox11.TabIndex = 8;
 			this.groupBox11.TabStop = false;
 			this.groupBox11.Text = "DVD Codec";
+			this.groupBox11.Enter += new System.EventHandler(this.groupBox11_Enter);
+			// 
+			// label42
+			// 
+			this.label42.Location = new System.Drawing.Point(336, 40);
+			this.label42.Name = "label42";
+			this.label42.Size = new System.Drawing.Size(72, 16);
+			this.label42.TabIndex = 17;
+			this.label42.Text = "Audio codec:";
+			// 
+			// label41
+			// 
+			this.label41.Location = new System.Drawing.Point(336, 16);
+			this.label41.Name = "label41";
+			this.label41.Size = new System.Drawing.Size(72, 16);
+			this.label41.TabIndex = 16;
+			this.label41.Text = "Video codec:";
+			// 
+			// comboBoxDVDAudioCodec
+			// 
+			this.comboBoxDVDAudioCodec.Location = new System.Drawing.Point(424, 40);
+			this.comboBoxDVDAudioCodec.Name = "comboBoxDVDAudioCodec";
+			this.comboBoxDVDAudioCodec.Size = new System.Drawing.Size(160, 21);
+			this.comboBoxDVDAudioCodec.TabIndex = 15;
+			// 
+			// comboBoxDVDVideoCodec
+			// 
+			this.comboBoxDVDVideoCodec.Location = new System.Drawing.Point(424, 16);
+			this.comboBoxDVDVideoCodec.Name = "comboBoxDVDVideoCodec";
+			this.comboBoxDVDVideoCodec.Size = new System.Drawing.Size(160, 21);
+			this.comboBoxDVDVideoCodec.TabIndex = 14;
 			// 
 			// comboDVDNavigator
 			// 
@@ -3059,6 +3104,12 @@ namespace MediaPortal
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
         checkBoxARDVD.Checked=xmlreader.GetValueAsBool("dvdplayer","pixelratiocorrection",false);
         string strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
+
+				string strVideoCodec=xmlreader.GetValueAsString("dvdplayer","videocodec","");
+				string strAudioCodec=xmlreader.GetValueAsString("dvdplayer","audiocodec","");
+				AddAllDecoders(comboBoxDVDVideoCodec,MediaType.Video,MediaSubType.MPEG2,strVideoCodec);
+				AddAllDecoders(comboBoxDVDAudioCodec,MediaType.Audio,MediaSubType.MPEG2_Audio,strAudioCodec);
+
         string strARMode=xmlreader.GetValueAsString("dvdplayer","armode","Stretched");
         int iSel=0;
         comboBoxDVDARCorrectionMode.SelectedIndex=0;
@@ -3355,6 +3406,11 @@ namespace MediaPortal
         xmlWriter.SetValue("dvdplayer","subtitlelanguage",(string)comboBoxSubtitleLanguage.SelectedItem);
         xmlWriter.SetValue("dvdplayer","audiorenderer",(string)comboDVDAudioRenderer.SelectedItem);
         xmlWriter.SetValue("dvdplayer","navigator",(string)comboDVDNavigator.SelectedItem);
+
+				xmlWriter.SetValue("dvdplayer","videocodec",(string)comboBoxDVDVideoCodec.SelectedItem);
+				xmlWriter.SetValue("dvdplayer","audiocodec",(string)comboBoxDVDAudioCodec.SelectedItem);
+
+
 
         xmlWriter.SetValue("dvdplayer","armode",(string)comboBoxDVDARCorrectionMode.SelectedItem);
         xmlWriter.SetValue("dvdplayer","displaymode",(string)comboBoxDVDDisplayMode.SelectedItem);
@@ -4241,9 +4297,27 @@ namespace MediaPortal
     {
       FormCapture dlg = new FormCapture();
       dlg.ID=m_tvcards.Count+1;
+			string strVideoCodec="";
+			string strAudioCodec="";
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
+				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
+			}
+			dlg.VideoCodec=strVideoCodec;
+			dlg.AudioCodec=strAudioCodec;
+			dlg.UseForTV=true;
+			dlg.UseForRecording=true;
+
       dlg.ShowDialog(this.Parent);
       if (dlg.VideoDevice!="")
       {
+				using (AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
+				{
+					xmlWriter.SetValue("mytv","videocodec",dlg.VideoCodec);
+					xmlWriter.SetValue("mytv","audiocodec",dlg.AudioCodec);
+				}
+				
         TVCaptureDevice dev = new TVCaptureDevice();
         dev.UseForRecording=dlg.UseForRecording;
         dev.UseForTV=dlg.UseForTV;
@@ -4260,18 +4334,33 @@ namespace MediaPortal
       if (listCaptureCards.SelectedItems.Count==0) return;
       int iItem=listCaptureCards.SelectedIndices[0];
       if (iItem<0 || iItem >= m_tvcards.Count) return;
+			string strVideoCodec="";
+			string strAudioCodec="";
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
+				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
+			}
       TVCaptureDevice dev=(TVCaptureDevice)m_tvcards[iItem];
       dlg.UseForRecording=dev.UseForRecording;
       dlg.UseForTV=dev.UseForTV;
-      dlg.VideoDevice=dev.VideoDevice;
+			dlg.VideoDevice=dev.VideoDevice;
+			dlg.VideoCodec=strVideoCodec;
+			dlg.AudioCodec=strAudioCodec;
       dlg.ID=dev.ID;
       dlg.ShowDialog(this.Parent);
       if (dlg.VideoDevice!="")
       {
         dev.UseForRecording=dlg.UseForRecording;
         dev.UseForTV=dlg.UseForTV;
-        dev.VideoDevice=dlg.VideoDevice;
+				dev.VideoDevice=dlg.VideoDevice;
 
+
+				using (AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
+				{
+					xmlWriter.SetValue("mytv","videocodec",dlg.VideoCodec);
+					xmlWriter.SetValue("mytv","audiocodec",dlg.AudioCodec);
+				}
         UpdateCaptureCardList();
       }
     }
@@ -4516,6 +4605,71 @@ namespace MediaPortal
 			if (dlg.SelectedPath==null) return;
 			textBoxStreamListFolder.Text=dlg.SelectedPath;
 		}
+
+		private void groupBox11_Enter(object sender, System.EventArgs e)
+		{
+		
+		}
+		public  void AddAllDecoders(ComboBox box, Guid med, Guid sub , string strDefaultCodec)
+		{
+			box.Items.Clear();
+			int hr;
+			object comObj = null;
+			UCOMIEnumMoniker enumMon = null;
+			UCOMIMoniker[] mon = new UCOMIMoniker[1];
+			Type	srvType = Type.GetTypeFromCLSID( Clsid.Clsid_FilterMapper2);
+			if( srvType == null )
+				return;
+
+			comObj = Activator.CreateInstance( srvType );
+			IFilterMapper2 mapper = (IFilterMapper2) comObj;
+			GuidCouple media = new GuidCouple();
+			    
+			media.type = med;
+			media.subtype =  sub;
+			GuidCouple[] arrayInType = new GuidCouple[] { media };
+				
+			Console.WriteLine("assigned");
+			hr = mapper.EnumMatchingFilters(
+				out enumMon,
+				0,
+				true,
+				0x080001,
+				true,
+				1,
+				new Guid[] {med, sub},//arrayInType,//arrayInType,
+				IntPtr.Zero,
+				IntPtr.Zero,
+				false,
+				true,
+				0,
+				new Guid[0],
+				IntPtr.Zero,
+				IntPtr.Zero);
+			
+			int f, count = 0;
+			//Console.WriteLine(hr);
+			int iSelected=0;
+			do
+			{
+				hr = enumMon.Next( 1, mon, out f );
+				if( (mon[0] == null) )
+				{
+					//Console.WriteLine("no results");
+					break;
+				}
+				string strName=DShowNET.DsUtils.GetFriendlyName( mon[0] );
+				if (strName.Equals(strDefaultCodec)) iSelected=count;
+				box.Items.Add( strName );
+				mon[0] = null;
+				count++;
+			}
+			while(true);
+			box.SelectedIndex=iSelected;
+
+			
+		}
+
 	}
 
   // Implements the manual sorting of items by columns.

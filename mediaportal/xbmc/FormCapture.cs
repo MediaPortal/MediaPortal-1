@@ -4,7 +4,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using DShowNET;
+using DShowNET.Device;
 using DirectX.Capture;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal
 {
@@ -108,8 +110,8 @@ namespace MediaPortal
 			InitializeComponent();
 
 			toolTip1.SetToolTip(comboVideoDevice,"Select your TV capture card from the list");
-			toolTip1.SetToolTip(comboVideoCodec,"Select which video Codec to use when recording\rNot needed if your TV capture card has an hardware MPEG2 encoder");
-			toolTip1.SetToolTip(comboAudioCodec,"Select which audio Codec to use when recording\rNot needed if your TV capture card has an hardware MPEG2 encoder");
+			toolTip1.SetToolTip(comboVideoCodec,"Select which video Codec to use when recording");
+			toolTip1.SetToolTip(comboAudioCodec,"Select which audio Codec to use when recording");
 			toolTip1.SetToolTip(listFilters,"This list shows which filters are running when you watch or record tv.\rYou can configure one by selecting it\rand choose Setup Filter");
 			toolTip1.SetToolTip(buttonSetupFilter,"Setup selected filter");
 			toolTip1.SetToolTip(checkBoxTV,"Use this TV capture card for watching live TV");
@@ -145,9 +147,9 @@ namespace MediaPortal
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboVideoDevice = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboVideoCodec= new System.Windows.Forms.ComboBox();
+			this.comboVideoCodec = new System.Windows.Forms.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboAudioCodec= new System.Windows.Forms.ComboBox();
+			this.comboAudioCodec = new System.Windows.Forms.ComboBox();
 			this.buttonOK = new System.Windows.Forms.Button();
 			this.listFilters = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -182,30 +184,30 @@ namespace MediaPortal
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(24, 96);
+			this.label3.Location = new System.Drawing.Point(24, 64);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(104, 23);
+			this.label3.Size = new System.Drawing.Size(88, 32);
 			this.label3.TabIndex = 4;
-			this.label3.Text = "Video Codec";
+			this.label3.Text = "Preferred Video Codec";
 			// 
 			// comboVideoCodec
 			// 
-			this.comboVideoCodec.Location = new System.Drawing.Point(128, 96);
+			this.comboVideoCodec.Location = new System.Drawing.Point(128, 64);
 			this.comboVideoCodec.Name = "comboVideoCodec";
 			this.comboVideoCodec.Size = new System.Drawing.Size(248, 21);
 			this.comboVideoCodec.TabIndex = 2;
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(24, 128);
+			this.label4.Location = new System.Drawing.Point(24, 104);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(104, 23);
+			this.label4.Size = new System.Drawing.Size(88, 32);
 			this.label4.TabIndex = 6;
-			this.label4.Text = "Audio Codec";
+			this.label4.Text = "Preferred Audio Codec";
 			// 
 			// comboAudioCodec
 			// 
-			this.comboAudioCodec.Location = new System.Drawing.Point(128, 128);
+			this.comboAudioCodec.Location = new System.Drawing.Point(128, 104);
 			this.comboAudioCodec.Name = "comboAudioCodec";
 			this.comboAudioCodec.Size = new System.Drawing.Size(248, 21);
 			this.comboAudioCodec.TabIndex = 3;
@@ -238,7 +240,7 @@ namespace MediaPortal
 			// 
 			// checkBoxTV
 			// 
-			this.checkBoxTV.Location = new System.Drawing.Point(416, 120);
+			this.checkBoxTV.Location = new System.Drawing.Point(416, 56);
 			this.checkBoxTV.Name = "checkBoxTV";
 			this.checkBoxTV.Size = new System.Drawing.Size(136, 24);
 			this.checkBoxTV.TabIndex = 5;
@@ -246,7 +248,7 @@ namespace MediaPortal
 			// 
 			// checkBoxRecord
 			// 
-			this.checkBoxRecord.Location = new System.Drawing.Point(416, 144);
+			this.checkBoxRecord.Location = new System.Drawing.Point(416, 80);
 			this.checkBoxRecord.Name = "checkBoxRecord";
 			this.checkBoxRecord.Size = new System.Drawing.Size(120, 24);
 			this.checkBoxRecord.TabIndex = 6;
@@ -254,7 +256,7 @@ namespace MediaPortal
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Location = new System.Drawing.Point(400, 96);
+			this.groupBox1.Location = new System.Drawing.Point(400, 32);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(176, 88);
 			this.groupBox1.TabIndex = 15;
@@ -367,31 +369,12 @@ namespace MediaPortal
       comboVideoDevice.SelectedIndex=index;
 
 
-      // audio Codecs
+      // audio/video Codecs
       comboAudioCodec.Items.Clear();
-      comboAudioCodec.Items.Add("none");
-      i=1;
-      index=0;
-      foreach (Filter filter in filters.LegacyFilters)
-      {           
-        comboAudioCodec.Items.Add(filter.Name);
-        if (m_strAudioCodec.Length>0 && String.Compare(filter.Name,m_strAudioCodec,true)==0) index=i;
-        ++i;
-      }
-      comboAudioCodec.SelectedIndex=index;
 
       // Video Codecs
-      comboVideoCodec.Items.Clear();
-      comboVideoCodec.Items.Add("none");
-      i=1;
-      index=0;
-      foreach (Filter filter in filters.LegacyFilters)
-      {
-        comboVideoCodec.Items.Add(filter.Name);
-        if (m_strVideoCodec.Length>0 && String.Compare(filter.Name,m_strVideoCodec,true)==0) index=i;
-        ++i;
-      }
-      comboVideoCodec.SelectedIndex=index;
+      AddAllDecoders(comboVideoCodec,   MediaType.Video,MediaSubType.MPEG2, m_strVideoCodec);
+			AddAllDecoders(comboAudioCodec,   MediaType.Audio,MediaSubType.MPEG2_Audio, m_strAudioCodec);
 
       checkBoxRecord.Checked=m_bUseForRecording;
       checkBoxTV.Checked=m_bUseForTV;
@@ -598,6 +581,66 @@ namespace MediaPortal
 		private void buttonSetupFilter_Click(object sender, System.EventArgs e)
 		{
 			listFilters_DoubleClick(null,null);		
+		}
+
+		public  void AddAllDecoders(ComboBox box, Guid med, Guid sub , string strDefaultCodec)
+		{
+			box.Items.Clear();
+			int hr;
+			object comObj = null;
+			UCOMIEnumMoniker enumMon = null;
+			UCOMIMoniker[] mon = new UCOMIMoniker[1];
+			Type	srvType = Type.GetTypeFromCLSID( Clsid.Clsid_FilterMapper2);
+			if( srvType == null )
+				return;
+
+			comObj = Activator.CreateInstance( srvType );
+			IFilterMapper2 mapper = (IFilterMapper2) comObj;
+			GuidCouple media = new GuidCouple();
+			    
+			media.type = med;
+			media.subtype =  sub;
+			GuidCouple[] arrayInType = new GuidCouple[] { media };
+				
+			Console.WriteLine("assigned");
+			hr = mapper.EnumMatchingFilters(
+				out enumMon,
+				0,
+				true,
+				0x080001,
+				true,
+				1,
+				new Guid[] {med, sub},//arrayInType,//arrayInType,
+				IntPtr.Zero,
+				IntPtr.Zero,
+				false,
+				true,
+				0,
+				new Guid[0],
+				IntPtr.Zero,
+				IntPtr.Zero);
+			
+			int f, count = 0;
+			//Console.WriteLine(hr);
+			int iSelected=0;
+			do
+			{
+				hr = enumMon.Next( 1, mon, out f );
+				if( (mon[0] == null) )
+				{
+					//Console.WriteLine("no results");
+					break;
+				}
+				string strName=DShowNET.DsUtils.GetFriendlyName( mon[0] );
+				if (strName.Equals(strDefaultCodec)) iSelected=count;
+				box.Items.Add( strName );
+				mon[0] = null;
+				count++;
+			}
+			while(true);
+			box.SelectedIndex=iSelected;
+
+			
 		}
 
 

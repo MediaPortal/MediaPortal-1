@@ -14,7 +14,7 @@ namespace MediaPortal.TV.Recording
   [Serializable]
   public class TVCaptureDevice
   {
-    string        m_strVideoDevice="";
+		string        m_strVideoDevice="";
     bool          m_bUseForRecording;
     bool          m_bUseForTV;			
     
@@ -63,6 +63,7 @@ namespace MediaPortal.TV.Recording
       get { return m_strVideoDevice;}
       set { m_strVideoDevice=value;}
     }
+
 
     /// <summary>
     /// Property to specify if this card should be used for TV viewing or not
