@@ -9,6 +9,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  29-07-2004 my videos  : -CD1 is still shown when stacking. This is caused by the capital letters
   29-07-2004 my music   : Big Icons not working in album view
   29-07-2004 my music   : sorting is always z>a initially in album view
   29-07-2004 my music   : folder.jpg does not show as albumart in albumview
