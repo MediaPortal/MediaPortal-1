@@ -339,6 +339,7 @@ namespace MediaPortal.Player
         if (m_surface1==IntPtr.Zero) return;
 				scene.Render(m_nativeSize);
       }//Repaint()
+
 			public void Process()
 			{
 				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);

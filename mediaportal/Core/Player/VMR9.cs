@@ -250,10 +250,8 @@ namespace MediaPortal.Player
 
 		public void Process()
 		{
-			if (allocator!=null && VMR9Filter!=null && UseVMR9inMYTV)
-			{
-				allocator.Process();
-			}
+			if (allocator==null) return;
+			allocator.Process();
 		}
 
 		/// <summary>
