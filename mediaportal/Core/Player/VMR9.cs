@@ -29,7 +29,7 @@ namespace MediaPortal.Player
 		public bool									UseVMR9inMYTV=false;
 		IRender											m_renderFrame;
 		public IBaseFilter          VMR9Filter=null;
-
+		public int                  textureCount=0;
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -50,6 +50,11 @@ namespace MediaPortal.Player
 			}
 			if (GUIGraphicsContext.DX9Device==null) UseVMR9inMYTV=false;
 			if (m_renderFrame==null) UseVMR9inMYTV=false;
+		}
+
+		public void SetTextureCount(int count)
+		{
+			textureCount=count;
 		}
 
 		/// <summary>
@@ -139,6 +144,10 @@ namespace MediaPortal.Player
 			}
 			m_scene= new PlaneScene(m_renderFrame);
 			allocator = new AllocatorWrapper.Allocator(control, m_scene);
+			if (textureCount>0)
+			{
+				allocator.SetTextureCount(textureCount);
+			}
 			IntPtr hMonitor;
 			AdapterInformation ai = Manager.Adapters.Default;
 

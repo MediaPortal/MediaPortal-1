@@ -33,8 +33,9 @@ namespace MediaPortal.Player
     static Size m_nativeSize = new Size(0,0);
 		//this in reality should be an array, but doesn't work. In the common case
 		// only a surface will be requested.
-		static IntPtr m_surface1 = IntPtr.Zero;
-		static IntPtr m_surface2 = IntPtr.Zero;
+		static IntPtr		m_surface1 = IntPtr.Zero;
+		static IntPtr[] m_surface2 = new IntPtr[10];
+		static int			textureCount=1;
     
 		[StructLayout(LayoutKind.Sequential)]
 	  public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
@@ -51,6 +52,10 @@ namespace MediaPortal.Player
 					return GUIGraphicsContext.DX9Device;
 					}
 			}
+			public void SetTextureCount(int count)
+			{
+				textureCount=count;
+			}
 
 			/// <summary>
 			/// Constructor.
@@ -59,6 +64,8 @@ namespace MediaPortal.Player
 			/// <param name="renderScene">instance of Planescene to use for presenting the video frames</param>
 			public Allocator (Control window, PlaneScene renderScene)
 			{
+				for (int i=0; i < 10; ++i)
+					m_surface2[i]=IntPtr.Zero;
   			scene = renderScene;
 				scene.Init(GUIGraphicsContext.DX9Device);
 			}
@@ -88,19 +95,23 @@ namespace MediaPortal.Player
           Marshal.Release(m_surface1);
           m_surface1=IntPtr.Zero;
         }
-				if (m_surface2!=IntPtr.Zero)
+
+				for (int i=0; i < textureCount; i++)
 				{
-					Log.Write("AllocatorWrapper:alloc 2nd:{0}x{1}", allocInfo.dwWidth,allocInfo.dwHeight);
-					if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=1024)
+					if (m_surface2[i]!=IntPtr.Zero)
 					{
-						Log.Write("return surface2");
-						m_surface1=m_surface2;
-						m_surface2=IntPtr.Zero;
-						m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
-						float fTU = (float)(allocInfo.dwWidth ) / 1024.0f;
-						float fTV = (float)(allocInfo.dwHeight) / 576.0f;
-						scene.SetSrcRect( fTU, fTV );
-						return 0;
+						Log.Write("AllocatorWrapper:alloc 2nd:{0}x{1}", allocInfo.dwWidth,allocInfo.dwHeight);
+						if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=1024)
+						{
+							Log.Write("AllocatorWrapper:return surface2:{0}",i);
+							m_surface1=m_surface2[i];
+							m_surface2[i]=IntPtr.Zero;
+							m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
+							float fTU = (float)(allocInfo.dwWidth ) / 1024.0f;
+							float fTV = (float)(allocInfo.dwHeight) / 576.0f;
+							scene.SetSrcRect( fTU, fTV );
+							return 0;
+						}
 					}
 				}
 
@@ -178,14 +189,17 @@ namespace MediaPortal.Player
 
 					allocInfo.dwWidth=1024;
 					allocInfo.dwHeight=576;
-					if (m_surface2!=IntPtr.Zero)
+					for (int i=0; i < textureCount;++i)
 					{
-						Marshal.Release(m_surface2);
-						m_surface2=IntPtr.Zero;
+						if (m_surface2[i]!=IntPtr.Zero)
+						{
+							Marshal.Release(m_surface2[i]);
+							m_surface2[i]=IntPtr.Zero;
+						}
+						hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface2[i]);
+						if (hr==0) Log.Write("AllocatorWrapper:  allocted {0} 1024x576",i);
+						else Log.Write("AllocatorWrapper:failed:  allocted {1} 1024x576",i);
 					}
-					hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface2);
-					if (hr==0) Log.Write("AllocatorWrapper:allocted 1024x576");
-					else Log.Write("AllocatorWrapper:failed:allocted 1024x576");
 					hr=0;
         }
         return hr;
@@ -255,8 +269,11 @@ namespace MediaPortal.Player
           Marshal.ReleaseComObject( allocNotify ); allocNotify = null;
 				if (m_surface1 !=IntPtr.Zero)
 					Marshal.Release(m_surface1); m_surface1= IntPtr.Zero;
-				if (m_surface2 !=IntPtr.Zero)
-					Marshal.Release(m_surface2); m_surface2= IntPtr.Zero;				
+				for (int i=0; i < textureCount;++i)
+				{
+					if (m_surface2[i] !=IntPtr.Zero)
+						Marshal.Release(m_surface2[i]); m_surface2[i]= IntPtr.Zero;				
+				}
 				return 0;
       }
 

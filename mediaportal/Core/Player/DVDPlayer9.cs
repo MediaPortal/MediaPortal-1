@@ -67,6 +67,7 @@ namespace MediaPortal.Player
       {
 
         Vmr9=new VMR9Util("dvdplayer");
+				Vmr9.SetTextureCount(4);
         comtype = Type.GetTypeFromCLSID( Clsid.DvdGraphBuilder );
         if( comtype == null )
           throw new NotSupportedException( "DirectX (8.1 or higher) not installed?" );
