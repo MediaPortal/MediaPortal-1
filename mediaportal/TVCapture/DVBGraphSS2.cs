@@ -234,7 +234,6 @@ namespace MediaPortal.TV.Recording
 		bool							m_vmr9Running=false;
 		DVBTeletext						m_teleText=new DVBTeletext();
 		int								m_retryCount=0;
-		bool							m_performRepaint=false;
 		TSHelperTools					m_tsHelper=new TSHelperTools();
 
 
@@ -397,8 +396,6 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			//
-			if(m_vmr9Running==true  && m_videoDataFound==false)
-				m_performRepaint=true;
 
 			// call the plugins tuner
 			if(m_videoDataFound==false && m_retryCount>=0)
@@ -1835,11 +1832,21 @@ namespace MediaPortal.TV.Recording
 		public void Process()
 		{
 			//
-			if(m_performRepaint==true) // redraw vmr9
+			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
 			{
-				Vmr9.Repaint();
-				m_performRepaint=false;
+				Vmr9.Process();
+				if (GUIGraphicsContext.Vmr9FPS < 1f)
+				{
+					Vmr9.Repaint();// repaint vmr9
+				}
 			}
+
+
+//			if(m_performRepaint==true) // redraw vmr9
+//			{
+//				Vmr9.Repaint();
+//				m_performRepaint=false;
+//			}
 			//
 
 
@@ -1865,6 +1872,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public void Tune(object tuningObject)
 		{
+			int a=0;
 		}
 		public void StoreChannels(int ID,bool radio, bool tv)
 		{
