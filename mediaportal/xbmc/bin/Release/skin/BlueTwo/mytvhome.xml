@@ -140,7 +140,7 @@
 				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-				<onup>9</onup>
+				<onup>8</onup>
 				<ondown>10</ondown>
 				<onright>99</onright>
 			</control>
