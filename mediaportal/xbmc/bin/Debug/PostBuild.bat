@@ -23,7 +23,8 @@ copy ..\..\..\GUIVideoFullScreen\bin\Debug\GUIVideoFullScreen.dll plugins\window
 copy ..\..\..\home\bin\Debug\home.dll plugins\windows
 copy ..\..\..\SetupScreens\bin\Debug\SetupScreens.dll plugins\windows
 copy ..\..\..\GUIWeather\bin\Debug\GUIWeather.dll plugins\windows
-copy ..\..\..\GUIWeather\bin\Debug\GUIAlarm.dll plugins\windows
+copy ..\..\..\GUIAlarm\bin\Debug\GUIAlarm.dll plugins\windows
+copy ..\..\..\GUIMyMail\bin\Debug\MyMailPlugin.dll plugins\windows
 copy ..\..\..\SMIReader\bin\Debug\SMIReader.dll plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.dll plugins\subtitle
 copy ..\..\..\RadioDatabase\bin\Debug\RadioDatabase.dll .
@@ -72,7 +73,8 @@ copy ..\..\..\GUIVideoFullScreen\bin\Debug\GUIVideoFullScreen.pdb plugins\window
 copy ..\..\..\home\bin\Debug\home.pdb plugins\windows
 copy ..\..\..\SetupScreens\bin\Debug\SetupScreens.pdb plugins\windows
 copy ..\..\..\GUIWeather\bin\Debug\GUIWeather.pdb plugins\windows
-copy ..\..\..\GUIWeather\bin\Debug\GUIAlarm.pdb plugins\windows
+copy ..\..\..\GUIAlarm\bin\Debug\GUIAlarm.pdb plugins\windows
+copy ..\..\..\GUIMyMail\bin\Debug\MyMailPlugin.pdb plugins\windows
 copy ..\..\..\SMIReader\bin\Debug\SMIReader.pdb plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.pdb plugins\subtitle
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.pdb plugins\TagReaders

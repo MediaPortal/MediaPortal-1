@@ -2198,4 +2198,84 @@
 	<id>860</id>
 	<value>Volume fade in/out</value>
 </string>
+<string>
+	<id>8000</id>
+	<value>My Mail</value>
+</string>
+<string>
+	<id>8001</id>
+	<value>Check Mailbox</value>
+</string>
+<string>
+	<id>8002</id>
+	<value>Autocheck off</value>
+</string>
+<string>
+	<id>8003</id>
+	<value>Autocheck on</value>
+</string>
+<string>
+	<id>8004</id>
+	<value>You have new Mail!</value>
+</string>
+<string>
+	<id>8005</id>
+	<value>Refreshing Mailbox</value>
+</string>
+<string>
+	<id>8007</id>
+	<value>Autocheck On/Off</value>
+</string>
+<string>
+	<id>8008</id>
+	<value>Back</value>
+</string>
+<string>
+	<id>8010</id>
+	<value>No Mailbox defined</value>
+</string>
+<string>
+	<id>8011</id>
+	<value>Please go to Setup and define</value>
+</string>
+<string>
+	<id>8012</id>
+	<value>at least 1 Mailbox to use the Mail-Plugin.</value>
+</string>
+<string>
+	<id>8013</id>
+	<value>No Server response</value>
+</string>
+<string>
+	<id>8014</id>
+	<value>The Server '{0}' doesn't response!</value>
+</string>
+<string>
+	<id>8015</id>
+	<value>Check your config for Mailbox '{0}'</value>
+</string>
+<string>
+	<id>8016</id>
+	<value>From</value>
+</string>
+<string>
+	<id>8017</id>
+	<value>To</value>
+</string>
+<string>
+	<id>8018</id>
+	<value>Subject</value>
+</string>
+<string>
+	<id>8019</id>
+	<value>Message</value>
+</string>
+<string>
+	<id>8020</id>
+	<value>Delete Mail</value>
+</string>
+<string>
+	<id>8021</id>
+	<value> *NEW!* </value>
+</string>
 </strings>
