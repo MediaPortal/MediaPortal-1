@@ -234,6 +234,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mp4TagReader", "mp4TagReade
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NVPPowerScheduler", "NVPPowerScheduler\NVPPowerScheduler.csproj", "{D21BBECD-A71C-4FAB-87D2-E7C6C223CA2A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -430,6 +434,10 @@ Global
 		{6F8B394C-C1C0-48D7-BD4D-A777CB37671A}.Debug.Build.0 = Debug|.NET
 		{6F8B394C-C1C0-48D7-BD4D-A777CB37671A}.Release.ActiveCfg = Release|.NET
 		{6F8B394C-C1C0-48D7-BD4D-A777CB37671A}.Release.Build.0 = Release|.NET
+		{D21BBECD-A71C-4FAB-87D2-E7C6C223CA2A}.Debug.ActiveCfg = Debug|.NET
+		{D21BBECD-A71C-4FAB-87D2-E7C6C223CA2A}.Debug.Build.0 = Debug|.NET
+		{D21BBECD-A71C-4FAB-87D2-E7C6C223CA2A}.Release.ActiveCfg = Release|.NET
+		{D21BBECD-A71C-4FAB-87D2-E7C6C223CA2A}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -45,6 +45,8 @@ copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
 copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
+copy ..\..\..\NVPPowerScheduler\bin\debug\NVPPowerScheduler.dll plugins\windows
+copy ..\..\..\NVPPowerScheduler\bin\debug\NVPPowerScheduler.pdb plugins\windows
 
 copy ..\..\..\mp4TagReader\bin\Debug\mp4TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders

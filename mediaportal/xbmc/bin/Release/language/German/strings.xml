@@ -2160,6 +2160,10 @@
 		<id>735</id>
 		<value>Drehen</value>
 	</string>
+	<string>
+		<id>736</id>
+		<value>Keine EPG-Daten verfügbar</value>
+	</string>
 
 	<string>
 		<id>800</id>
@@ -2216,11 +2220,11 @@
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm Ein</value>
+		<value>Alarm Ein/Aus</value>
 	</string>
 	<string>
 		<id>853</id>
-		<value>Wiedergabeliste auswählen</value>
+		<value>Name:</value>
 	</string>
 	<string>
 		<id>854</id>
@@ -2232,7 +2236,7 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleeptimer Ein</value>
+		<value>Sleeptimer Ein/Aus</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2244,65 +2248,258 @@
 	</string>
 	<string>
 		<id>859</id>
-		<value>Sleep Zeit</value>
+		<value>Sleep Timer</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Lautstärke ein/ausblenden</value>
+		<value>Lautstärke langsam erhöhen</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Alarm Details</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Datei</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Medientyp</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Minuten bis zum Schlaf:</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Lautstärke langsam ausblenden</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Computer herunterfahren</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Reset</value>
+	</string>
+	<!-- End My Alarm Strings -->
+
+	<string>
+		<id>900</id>
+		<value>Den letzten Film fortsetzen?</value>
 	</string>
 
+	<string>
+		<id>1440</id>
+		<value>Videotext</value>
+	</string>
 
 	<!-- My Recipie Strings -->
-	<string><id>2005</id><value>Löschen</value></string>
-	<string><id>2006</id><value>Titel</value></string>
-	<string><id>2007</id><value>Menge</value></string>
-	<string><id>2008</id><value>Zutaten</value></string>
-	<string><id>2009</id><value>Anweisungen</value></string>
-	<string><id>2010</id><value>Karte</value></string>
-	<string><id>2011</id><value>Drucken</value></string>
-	<string><id>2012</id><value>Löschen</value></string>
-	<string><id>2013</id><value>Favoriten</value></string>
-	<string><id>2014</id><value>Unbekannt</value></string>
-	<string><id>2015</id><value>pro Rezept</value></string>
-	<string><id>2016</id><value>klein</value></string>
-	<string><id>2017</id><value>~ 30 ml</value></string>
-	<string><id>2018</id><value>Tasse</value></string>
-	<string><id>2019</id><value>1/2 Liter</value></string>
-	<string><id>2020</id><value>mittel</value></string>
-	<string><id>2021</id><value>groß</value></string>
-	<string><id>2022</id><value>Dose</value></string>
-	<string><id>2023</id><value>Packung</value></string>
-	<string><id>2024</id><value>Prise</value></string>
-	<string><id>2025</id><value>Tropfen</value></string>
-	<string><id>2026</id><value>Schuss</value></string>
-	<string><id>2027</id><value>Becher</value></string>
-	<string><id>2028</id><value>Bund</value></string>
-	<string><id>2029</id><value>Scheibe</value></string>
-	<string><id>2030</id><value>Stück</value></string>
-	<string><id>2031</id><value>Teelöffel</value></string>
-	<string><id>2032</id><value>Teelöffel</value></string>
-	<string><id>2033</id><value>Esslöffel</value></string>
-	<string><id>2034</id><value>Esslöffel</value></string>
-	<string><id>2035</id><value>1 Liter</value></string>
-	<string><id>2036</id><value>4 Liter</value></string>
-	<string><id>2037</id><value>~ 30 Gramm</value></string>
-	<string><id>2038</id><value>~ 450 Gramm</value></string>
-	<string><id>2039</id><value>ml</value></string>
-	<string><id>2040</id><value>ml</value></string>
-	<string><id>2041</id><value>10 ml</value></string>
-	<string><id>2042</id><value>100 ml</value></string>
-	<string><id>2043</id><value>Liter</value></string>
-	<string><id>2044</id><value>Milligramm</value></string>
-	<string><id>2045</id><value>1/100 Gramm</value></string>
-	<string><id>2046</id><value>1/10 Gramm</value></string>
-	<string><id>2047</id><value>Gramm</value></string>
-	<string><id>2048</id><value>Kilogramm</value></string>
-	<string><id>2049</id><value>Dieses Rezept löschen?</value></string>
-	<string><id>2050</id><value>Diese Kategorie löschen?</value></string>
-	<string><id>2051</id><value>Im Titel suchen</value></string>
-	<string><id>2052</id><value>Im Rezept suchen</value></string>
-	<string><id>2053</id><value>Kategorie</value></string>
-	<string><id>2054</id><value>Kein Eintrag!</value></string>
+	<string>
+		<id>2005</id>
+		<value>Löschen</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Titel</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Menge</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Zutaten</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Anweisungen</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Karte</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Drucken</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Löschen</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Favoriten</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Unbekannt</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>pro Rezept</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>klein</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>~ 30 ml</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>Tasse</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>1/2 Liter</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>mittel</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>groß</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>Dose</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>Packung</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>Prise</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>Tropfen</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>Schuss</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>Becher</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>Bund</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>Scheibe</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>Stück</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>Teelöffel</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>Teelöffel</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>Esslöffel</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>Esslöffel</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>1 Liter</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>4 Liter</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>~ 30 Gramm</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>~ 450 Gramm</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>ml</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>ml</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>10 ml</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>100 ml</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>Liter</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>Milligramm</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>1/100 Gramm</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>1/10 Gramm</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>Gramm</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>Kilogramm</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Dieses Rezept löschen?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Diese Kategorie löschen?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Im Titel suchen</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Im Rezept suchen</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Kategorie</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>Kein Eintrag!</value>
+	</string>
+
 	<string>
 		<id>8000</id>
 		<value>Mail</value>
@@ -2329,7 +2526,7 @@
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autocheck Ein</value>
+		<value>Autocheck Ein/Aus</value>
 	</string>
 	<string>
 		<id>8008</id>
@@ -2381,7 +2578,7 @@
 	</string>
 	<string>
 		<id>8020</id>
-		<value>Zeige HTML</value>
+		<value>Mail löschen</value>
 	</string>
 	<string>
 		<id>8021</id>
@@ -2661,6 +2858,11 @@
 	<string>
 		<id>13005</id>
 		<value>Zuletzt importierte Datei:</value>
+	</string>
+
+	<string>
+		<id>16001</id>
+		<value>Partymix</value>
 	</string>
 
 </strings>
