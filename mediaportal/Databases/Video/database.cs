@@ -161,7 +161,7 @@ namespace MediaPortal.Video.Database
 
 
 
-		static int AddPath( string strPath)
+		static public int AddPath( string strPath)
 		{
 			try
 			{
@@ -281,7 +281,7 @@ namespace MediaPortal.Video.Database
 		{
 			try
 			{
-				string strGenre=strGenre1;
+				string strGenre=strGenre1.Trim();
 				DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
 				if (null==m_db) return -1;
@@ -643,7 +643,52 @@ namespace MediaPortal.Video.Database
       }
     }
 
-		static void AddGenreToMovie(int lMovieId, int lGenreId)
+		static public void RemoveGenresForMovie(int lMovieId)
+		{
+			try
+			{
+				if (null==m_db) return ;
+				string strSQL=String.Format ("delete from genrelinkmovie where idMovie={0}",lMovieId);
+				m_db.Execute(strSQL);
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
+
+		static public void RemoveActorsForMovie(int lMovieId)
+		{
+			try
+			{
+				if (null==m_db) return ;
+				string strSQL=String.Format ("delete from actorlinkmovie where idMovie={0}",lMovieId);
+				m_db.Execute(strSQL);
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
+
+		static public void RemoveFilesForMovie(int lMovieId)
+		{
+			try
+			{
+				if (null==m_db) return ;
+				string strSQL=String.Format ("delete from files where idMovie={0}",lMovieId);
+				m_db.Execute(strSQL);
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
+
+		static public void AddGenreToMovie(int lMovieId, int lGenreId)
 		{
 			try
 			{
@@ -825,7 +870,7 @@ namespace MediaPortal.Video.Database
 					details.Votes=DatabaseUtility.Get(results,iRow,"movieinfo.strVotes");
 					details.Cast=DatabaseUtility.Get(results,iRow,"movieinfo.strCast");
 					details.Year=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iYear"));
-					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre");
+					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre").Trim();
 					details.ThumbURL=DatabaseUtility.Get(results,iRow,"movieinfo.strPictureURL");
 					details.Title=DatabaseUtility.Get(results,iRow,"movieinfo.strTitle");
 					details.Path=DatabaseUtility.Get(results,iRow,"path.strPath");
@@ -888,7 +933,7 @@ namespace MediaPortal.Video.Database
 				details.Votes=DatabaseUtility.Get(results,0,"movieinfo.strVotes");
 				details.Cast=DatabaseUtility.Get(results,0,"movieinfo.strCast");
 				details.Year=System.Int32.Parse(DatabaseUtility.Get(results,0,"movieinfo.iYear"));
-				details.Genre=DatabaseUtility.Get(results,0,"movieinfo.strGenre");
+				details.Genre=DatabaseUtility.Get(results,0,"movieinfo.strGenre").Trim();
 				details.ThumbURL=DatabaseUtility.Get(results,0,"movieinfo.strPictureURL");
 				details.Title=DatabaseUtility.Get(results,0,"movieinfo.strTitle");
 				details.Path=DatabaseUtility.Get(results,0,"path.strPath");
@@ -934,7 +979,7 @@ namespace MediaPortal.Video.Database
 					details.Votes=DatabaseUtility.Get(results,iRow,"movieinfo.strVotes");
 					details.Cast=DatabaseUtility.Get(results,iRow,"movieinfo.strCast");
 					details.Year=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iYear"));
-					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre");
+					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre").Trim();
 					details.ThumbURL=DatabaseUtility.Get(results,iRow,"movieinfo.strPictureURL");
 					details.Title=DatabaseUtility.Get(results,iRow,"movieinfo.strTitle");
 					details.Path=DatabaseUtility.Get(results,iRow,"path.strPath");
@@ -982,7 +1027,7 @@ namespace MediaPortal.Video.Database
 					details.Votes=DatabaseUtility.Get(results,iRow,"movieinfo.strVotes");
 					details.Cast=DatabaseUtility.Get(results,iRow,"movieinfo.strCast");
 					details.Year=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iYear"));
-					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre");
+					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre").Trim();
 					details.ThumbURL=DatabaseUtility.Get(results,iRow,"movieinfo.strPictureURL");
 					details.Title=DatabaseUtility.Get(results,iRow,"movieinfo.strTitle");
 					details.Path=DatabaseUtility.Get(results,iRow,"path.strPath");
@@ -1029,7 +1074,7 @@ namespace MediaPortal.Video.Database
 					details.Votes=DatabaseUtility.Get(results,iRow,"movieinfo.strVotes");
 					details.Cast=DatabaseUtility.Get(results,iRow,"movieinfo.strCast");
 					details.Year=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iYear"));
-					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre");
+					details.Genre=DatabaseUtility.Get(results,iRow,"movieinfo.strGenre").Trim();
 					details.ThumbURL=DatabaseUtility.Get(results,iRow,"movieinfo.strPictureURL");
 					details.Title=DatabaseUtility.Get(results,iRow,"movieinfo.strTitle");
 					details.Path=DatabaseUtility.Get(results,iRow,"path.strPath");
