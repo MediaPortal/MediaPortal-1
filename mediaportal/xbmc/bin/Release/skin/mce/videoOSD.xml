@@ -27,8 +27,8 @@
 		<description>Progress Bar</description> 
 		<type>progress</type> 
 		<id>1</id> 
-		<posX>160</posX> 
-		<posY>390</posY> 
+		<posX>159</posX> 
+		<posY>391</posY> 
 		<width>400</width>
 		<height>20</height>
 		<texturebg>osd_progress_back.png</texturebg> 
