@@ -1864,6 +1864,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.Created) return false;
 			TuneChannel(standard,channel,country);
 			int hr=0;
+			bool setVisFlag=false;
 			
 			if(m_channelFound==false)
 				return false;
@@ -1997,11 +1998,7 @@ namespace MediaPortal.TV.Recording
 					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}",hr);
 				}
       
-				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
-				if (hr != 0) 
-				{
-					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}",hr);
-				}
+				setVisFlag=true;
 			}
 
 			m_bOverlayVisible=true;
@@ -2014,7 +2011,17 @@ namespace MediaPortal.TV.Recording
 			m_mediaControl.Run();
 			if(m_pluginsEnabled==true)
 				SetAppHandle(GUIGraphicsContext.form.Handle,m_rebuildCB);
+			
+			// show the vid window
+			if(setVisFlag)
+			{
+				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
+				if (hr != 0) 
+				{
+					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}",hr);
+				}
 
+			}
 			return true;
 		}
 
