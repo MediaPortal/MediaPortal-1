@@ -703,6 +703,18 @@ namespace MediaPortal.TV.Recording
 
 
 		/// <summary>
+		/// Property which returns true if this card is currently has a teletext
+		/// </summary>
+		public bool HasTeletext
+		{
+			get 
+			{
+				if (_mGraph==null) return false;
+				return _mGraph.HasTeletext();
+			}
+		}
+
+		/// <summary>
 		/// Property which returns true if this card is currently timeshifting
 		/// </summary>
 		public bool IsTimeShifting

@@ -2448,6 +2448,12 @@ namespace MediaPortal.TV.Recording
 		public void TuneRadioFrequency(int frequency)
 		{
 		}
-
+		public bool HasTeletext()
+		{
+			if (m_graphState!= State.TimeShifting && m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
+			if (m_currentChannel==null) return false;
+			if (m_currentChannel.TeletextPid>0) return true;
+			return false;
+		}
 	}// class
 }// namespace

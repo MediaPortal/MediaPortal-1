@@ -1218,5 +1218,9 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture," gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
 			}//if (props.SupportsHauppaugePVRProperties)
 		}//protected void SetQuality(int Quality)
+		public bool HasTeletext()
+		{
+			return false;
+		}
   }
 }

@@ -2042,5 +2042,9 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"SWGraph:  tuned to {0} hz", frequency);
 			SetRecordingLevel(true,_RecordingLevel);
 		}
+		public bool HasTeletext()
+		{
+			return false;
+		}
   }
 }

@@ -1344,5 +1344,9 @@ namespace MediaPortal.TV.Recording
 			m_TVTuner.get_AudioFrequency(out frequency);
 			Log.WriteFile(Log.LogType.Capture,"AIWGraph:  tuned to {0} hz", frequency);
 		}
+		public bool HasTeletext()
+		{
+			return false;
+		}
 	}
 }

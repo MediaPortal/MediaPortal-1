@@ -2610,6 +2610,7 @@ namespace MediaPortal.TV.Recording
 		{
 			return m_SectionsTables;
 		}
+		
 
 		#region AutoTuning
 		/// <summary>
@@ -3395,6 +3396,15 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 		#endregion
+		
+		public bool HasTeletext()
+		{
+			if (m_graphState!= State.TimeShifting && m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
+			if (currentTuningObject==null) return false;
+			if (m_NetworkProvider==null) return false;
+			if (currentTuningObject.TeletextPid>0) return true;
+			return false;
+		}
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file
