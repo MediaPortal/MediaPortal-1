@@ -42,6 +42,7 @@
 <!--    Dvico Fusion HDTV Lite                -->
 <!--    Dvico Fusion HDTV USB2                -->
 <!--    Dvico Fusion HDTV Plus (Driver 2.80)  -->
+<!--    Emuzed Maui I NTSC	              -->
 <!--    Emuzed Maui II NTSC	              -->
 <!--    Emuzed Maui II NTSC FM	              -->
 <!--    Emuzed Maui II PAL FM	              -->
@@ -765,7 +766,7 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
       <filters> 
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter> 
-        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" 			checkdevice="false"></filter> 
+        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" 			checkdevice="true"></filter> 
         <filter cat="capture" name="FusionHDTV, Transport Stream Capture" 	checkdevice="true"></filter> 
       </filters> 
       <connections> 
@@ -853,7 +854,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" 			    checkdevice="true"></filter>
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
@@ -1695,7 +1696,7 @@
         <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
         <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
         <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
-        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
         <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
         <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
       </filters>
@@ -2322,4 +2323,106 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Creative Video Blaster Digital VCR" capturename="VBDVCR Capture" devid="ven_1274&amp;dev_5882&amp;subsys_58821274&amp;rev_02">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="1" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"	name="VBDVCR TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="VBDVCR TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"	name="VBDVCR Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"	name="VBDVCR Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Medion (7134) Analog TV" capturename="MEDION (7134) WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="PhTVTune"				checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MEDION Cap7134 TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MEDION Cap7134 Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="MEDION (7134) WDM Video Capture"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="CyberLink MPEG Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="mux"		name="CyberLink MPEG Muxer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverTV Cardbus" capturename="AVerMedia, AVerTV WDM Video Capture (E500)" devid="ven_1131&amp;dev_7134&amp;subsys_d6ee1461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="PhTVTune"						checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Cap7134 TV Audio"					checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Cap7134 Crossbar"					checkdevice="true"></filter>
+	<filter cat="capture"		name="AVerMedia, AVerTV WDM Video Capture (E500)"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="InterVideo Video Encoder"				checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"				checkdevice="false"></filter>
+	<filter cat="mux"		name="InterVideo Multiplexer"				checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Leadtek LR6650 Analog" capturename="DVBT 2388x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="3" mpeg2=""></interface>
+      <filters>
+        <filter cat="crossbar"  name="Connexant 2388x Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"   name="DVBT 2388x Video Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+	<connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard> 
+
+<capturecard commercialname="AVerMedia DVB-T USB2" capturename="AVerMedia DVB-T BDA Video Capture(A800)" devid="vid_07ca&amp;pid_a800">
+  <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" 		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="AVerMedia DVB-T BDA Video Capture(A800)" 	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+</capturecard>
 </capturecards>
