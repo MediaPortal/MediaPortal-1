@@ -12,7 +12,7 @@ namespace MediaPortal.TV.Database
 			int idChannel,int sFreq ,int sSymbrate,int sFEC,int sLNBKhz,int sDiseqc,int sProgramNumber,int sServiceType,
 			string sProviderName,string sChannelName,int sEitSched,
 			int sEitPreFol,int sAudioPid,int sVideoPid,int sAC3Pid,int sAudio1Pid,int sAudio2Pid,int sAudio3Pid,int sTeletextPid,
-			int sScrambled,int sPol,int sLNBFreq,int sNetworkID,int sTSID,int sPCRPid)
+			int sScrambled,int sPol,int sLNBFreq,int sNetworkID,int sTSID,int sPCRPid,string aLangCode,string aLangCode1,string aLangCode2,string aLangCode3,int ecm,int pmt)
 		{
 			 m_idChannel=idChannel;
 			 m_sFreq =sFreq;
@@ -39,6 +39,12 @@ namespace MediaPortal.TV.Database
 			 m_sNetworkID=sNetworkID ;
 			 m_sTSID= sTSID;
 			 m_sPCRPid= sPCRPid;
+			 m_sLangCodeAudio=aLangCode;
+			 m_sLangCodeAudio1=aLangCode1;
+			 m_sLangCodeAudio2=aLangCode2;
+			 m_sLangCodeAudio3=aLangCode3;
+			 m_sECMPid=ecm;
+			 m_sPMTPid=pmt;
 			//
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
@@ -72,6 +78,13 @@ namespace MediaPortal.TV.Database
 		int m_sNetworkID;
 		int m_sTSID;
 		int m_sPCRPid;
+		string m_sLangCodeAudio;
+		string m_sLangCodeAudio1;
+		string m_sLangCodeAudio2;
+		string m_sLangCodeAudio3;
+		int m_sECMPid;
+		int m_sPMTPid;
+
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int ID
@@ -303,6 +316,66 @@ namespace MediaPortal.TV.Database
 			{return m_sProviderName;}
 			set
 			{m_sProviderName=value;}
+		}
+
+		[BrowsableAttribute(true),Category("Service Data"),
+		ReadOnly(false)]
+		public string AudioLanguage
+		{
+			get
+			{return m_sLangCodeAudio;}
+			set
+			{m_sLangCodeAudio=value;}
+		}
+
+		[BrowsableAttribute(true),Category("Service Data"),
+		ReadOnly(false)]
+		public string AudioLanguage1
+		{
+			get
+			{return m_sLangCodeAudio1;}
+			set
+			{m_sLangCodeAudio1=value;}
+		}
+
+		[BrowsableAttribute(true),Category("Service Data"),
+		ReadOnly(false)]
+		public string AudioLanguage2
+		{
+			get
+			{return m_sLangCodeAudio2;}
+			set
+			{m_sLangCodeAudio2=value;}
+		}
+
+		[BrowsableAttribute(true),Category("Service Data"),
+		ReadOnly(false)]
+		public string AudioLanguage3
+		{
+			get
+			{return m_sLangCodeAudio3;}
+			set
+			{m_sLangCodeAudio3=value;}
+		}
+
+		[BrowsableAttribute(true),Category("Service Data"),
+		ReadOnly(false)]
+		public int ECMPid
+		{
+			get
+			{return m_sECMPid;}
+			set
+			{m_sECMPid=value;}
+		}
+
+		[BrowsableAttribute(true),Category("Service Data"),
+		ReadOnly(false)]
+		public int PMTPid
+		{
+			get
+			{return m_sPMTPid;}
+			set
+			{m_sPMTPid=value;}
 		}
 
 		public override string ToString()

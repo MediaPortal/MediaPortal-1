@@ -60,7 +60,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-          m_db = new SQLiteClient(@"database\TVDatabaseV11.db");
+          m_db = new SQLiteClient(@"database\TVDatabaseV12.db");
           CreateTables();
 
           if (m_db!=null)
@@ -190,7 +190,7 @@ namespace MediaPortal.TV.Database
 
         AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
 		
-				AddTable("satchannels","CREATE TABLE satchannels ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer)\n");
+				AddTable("satchannels","CREATE TABLE satchannels ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
 				AddTable("dvbcchannels","CREATE TABLE dvbcchannels ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, symbolrate integer, IFEC text, IFECRate text, OFEC text, OFECRate text, modulation text, ONID integer, TSID integer, SID integer, iSort integer, standard integer, Visible integer)\n");
 				AddTable("dvbschannels","CREATE TABLE dvbschannels ( idChannel integer primary key, strChannel text, iLCN integer, frequency integer, symbolrate integer, IFEC text, IFECRate text, OFEC text, OFECRate text, modulation text, azimuth integer, elevation integer, OPos integer, polarisation text, WPos integer, ONID integer, TSID integer, SID integer, iSort integer, standard integer, Visible integer)\n");
 				AddTable("dvbtchannels","CREATE TABLE dvbtchannels ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
@@ -203,7 +203,7 @@ namespace MediaPortal.TV.Database
 	  static public int AddSatChannel(int idChannel,int freq,int symrate,int fec,int lnbkhz,int diseqc,
 		  int prognum,int servicetype,string provider,string channel,int eitsched,
 		  int eitprefol,int audpid,int vidpid,int ac3pid,int apid1,int apid2,int apid3,
-		  int teltxtpid,int scrambled,int pol,int lnbfreq,int networkid,int tsid,int pcrpid)
+		  int teltxtpid,int scrambled,int pol,int lnbfreq,int networkid,int tsid,int pcrpid,string aLangCode,string aLangCode1,string aLangCode2,string aLangCode3,int ecmPid,int pmtPid)
 	  {
 		  lock (typeof(TVDatabase))
 		  {
@@ -234,11 +234,11 @@ namespace MediaPortal.TV.Database
 					  //eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
 					  // teltxtpid,scrambled, pol,lnbfreq,networkid
 
-					  strSQL=String.Format("insert into satchannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24})", 
+					  strSQL=String.Format("insert into satchannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 						  idChannel,freq,symrate, fec,lnbkhz,diseqc,
 						  prognum,servicetype,provider,channel, eitsched,
 						  eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
-						  teltxtpid,scrambled, pol,lnbfreq,networkid,tsid,pcrpid);
+						  teltxtpid,scrambled, pol,lnbfreq,networkid,tsid,pcrpid,aLangCode,aLangCode1,aLangCode2,aLangCode3,ecmPid,pmtPid);
 					  
 					  m_db.Execute(strSQL);
 					  return 0;
@@ -284,11 +284,11 @@ namespace MediaPortal.TV.Database
 					  //eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
 					  // teltxtpid,scrambled, pol,lnbfreq,networkid
 
-					  strSQL=String.Format("insert into satchannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24})", 
+					  strSQL=String.Format("insert into satchannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 						  ch.ID,ch.Frequency,ch.Symbolrate,ch.FEC,ch.LNBKHz,ch.DiSEqC,
 						  ch.ProgramNumber,ch.ServiceType,ch.ServiceProvider,ch.ServiceName,(ch.HasEITSchedule==true?1:0),
 						  (ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
-						  ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid);
+						  ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.AudioLanguage,ch.AudioLanguage1,ch.AudioLanguage2,ch.AudioLanguage3,ch.ECMPid,ch.PMTPid);
 					  
 					  m_db.Execute(strSQL);
 					  return 0;
@@ -340,6 +340,7 @@ namespace MediaPortal.TV.Database
 		  int prognum=0;int servicetype=0;string provider="";string channel="";int eitsched=0;
 		  int eitprefol=0;int audpid=0;int vidpid=0;int ac3pid=0;int apid1=0;int apid2=0;int apid3=0;
 		  int teltxtpid=0;int scrambled=0;int pol=0;int lnbfreq=0;int networkid=0;int tsid=0;int pcrpid=0;
+		  string audioLang;string audioLang1;string audioLang2;string audioLang3;int ecm;int pmt;
 	  
 	  
 		  if (m_db==null) return false;
@@ -385,10 +386,17 @@ namespace MediaPortal.TV.Database
 					  networkid=Int32.Parse(Get(results,i,"sNetworkID"));
 					  tsid=Int32.Parse(Get(results,i,"sTSID"));
 					  pcrpid=Int32.Parse(Get(results,i,"sPCRPid"));
+					  // sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid
+					  audioLang=Get(results,i,"sAudioLang");
+					  audioLang1=Get(results,i,"sAudioLang1");
+					  audioLang2=Get(results,i,"sAudioLang2");
+					  audioLang3=Get(results,i,"sAudioLang3");
+					  ecm=Int32.Parse(Get(results,i,"sECMPid"));
+					  pmt=Int32.Parse(Get(results,i,"sPMTPid"));
 					  retChannel=new DVBChannel(idChannel, freq, symrate, fec, lnbkhz, diseqc,
 						  prognum, servicetype,provider, channel, eitsched,
 						  eitprefol, audpid, vidpid, ac3pid, apid1, apid2, apid3,
-						  teltxtpid, scrambled, pol, lnbfreq, networkid, tsid, pcrpid);
+						  teltxtpid, scrambled, pol, lnbfreq, networkid, tsid, pcrpid,audioLang,audioLang1,audioLang2,audioLang3,ecm,pmt);
 
 				  }
 
@@ -866,7 +874,7 @@ namespace MediaPortal.TV.Database
 		  int prognum=0;int servicetype=0;string provider="";string channel="";int eitsched=0;
 		  int eitprefol=0;int audpid=0;int vidpid=0;int ac3pid=0;int apid1=0;int apid2=0;int apid3=0;
 		  int teltxtpid=0;int scrambled=0;int pol=0;int lnbfreq=0;int networkid=0;int tsid=0;int pcrpid=0;
-		  
+		  string audioLang="";string audioLang1="";string audioLang2="";string audioLang3="";int ecm=0;int pmt=0;
 		  lock (typeof(TVDatabase))
 		  {
 			  channels.Clear();
@@ -907,10 +915,16 @@ namespace MediaPortal.TV.Database
 					  networkid=Int32.Parse(Get(results,i,"sNetworkID"));
 					  tsid=Int32.Parse(Get(results,i,"sTSID"));
 					  pcrpid=Int32.Parse(Get(results,i,"sPCRPid"));
+					  audioLang=Get(results,i,"sAudioLang");
+					  audioLang1=Get(results,i,"sAudioLang1");
+					  audioLang2=Get(results,i,"sAudioLang2");
+					  audioLang3=Get(results,i,"sAudioLang3");
+					  ecm=Int32.Parse(Get(results,i,"sECMPid"));
+					  pmt=Int32.Parse(Get(results,i,"sPMTPid"));
 					  dvbChannel=new DVBChannel(idChannel, freq, symrate, fec, lnbkhz, diseqc,
 						  prognum, servicetype,provider, channel, eitsched,
 						  eitprefol, audpid, vidpid, ac3pid, apid1, apid2, apid3,
-						  teltxtpid, scrambled, pol, lnbfreq, networkid, tsid, pcrpid);
+						  teltxtpid, scrambled, pol, lnbfreq, networkid, tsid, pcrpid,audioLang,audioLang1,audioLang2,audioLang3,ecm,pmt);
 					  channels.Add(dvbChannel);
 				  }
 
