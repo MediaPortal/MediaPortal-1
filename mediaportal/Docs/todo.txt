@@ -15,7 +15,6 @@ vmr9:
 	- windowless vmr9 / renderless vmr9
 
 My Radio:
-    - prev/next buttons dont work yet 
     - add support for more cards
     - Timeshifting & recording
     - Use RDS signals in myRadio
@@ -23,7 +22,6 @@ My Radio:
 My TV:
   general
     - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
-    - support for SW encoding capture cards for watching and recording
     - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
     - watch Live TV on two TVs if user has two Tuners
 	- option:fade in/out when switching between fullscreen video/tv<->gui
@@ -36,7 +34,6 @@ My TV:
 	- TV-out through PVR 350
   
   Fullscreen TV:
-	- show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
 	- when in FF mode, auto stop when live-point is reached
   
   TV OSD:
@@ -50,7 +47,6 @@ My TV:
      - Some sort of a TV OSD system. Most TV OSDs can be browsed with the standard keys (0-9, play, pause, etc. up, down, left, right, enter) and the four special color keys (red, green, yellow and blue)
      
   Recorded tv:
-     - change layout of screen so it becomes more readable
      
   TVGuide:
      - Search function in EPG 
@@ -78,22 +74,20 @@ My Music: (int_20h)
   - repeat none, once, always
 
 My Video:
+  - Make video streams possible (.asx)
   - Queue stacked files in Zoomplayer using command line like:
     zplayer.exe /Queue:movie-cd1.mpg /Queue:movie-cd2.mpg /F /PLAY /Q
-  - show IMDB info when fullscreen/osd
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
-  - 1st time it takes a long time b4 OSD appears
   - OSD: when submenu is opened, dont use the osd timeout
   - query info about actors from www.imdb.com
   - favorite system to add a movie, actor, to your favorites
   - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
-  - FF/RW
   
 My Pictures:
   - exif/picture tag information (excentric is looking at this)
   
 Topbar:
-  - add volume control
+
     
 Settings:
   - all :-)
@@ -104,7 +98,6 @@ new plugins:
   - my DVD's
   
 DVD player:
-  - VMR9
 
 Skin engine:
   - the possibility for the skinner to change the position of the album art
