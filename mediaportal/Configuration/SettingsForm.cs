@@ -58,12 +58,14 @@ namespace MediaPortal.Configuration
 			AddSection(dvd);
 			AddChildSection(dvd, new Sections.DVDCodec());
 			AddChildSection(dvd, new Sections.DVDPlayer());
+      AddChildSection(dvd, new Sections.DVDPostProcessing());
 			
 			SectionSettings movie = new Sections.Movies();
 			AddSection(movie);
 			AddChildSection(movie, new Sections.MovieExtensions());
 			AddChildSection(movie, new Sections.MovieShares());
 			AddChildSection(movie, new Sections.MoviePlayer());
+      AddChildSection(movie, new Sections.MoviePostProcessing());
 
 			SectionSettings music = new Sections.Music();
 			AddSection(music);
@@ -86,6 +88,7 @@ namespace MediaPortal.Configuration
 			AddChildSection(television, new Sections.TVChannels());
 			AddChildSection(television, new Sections.TVProgramGuide());
 			AddChildSection(television, new Sections.TVRecording());
+      AddChildSection(television, new Sections.TVPostProcessing());
 
 			AddSection(new Sections.USBUIRT());
 			AddSection(new Sections.Weather());
@@ -146,7 +149,7 @@ namespace MediaPortal.Configuration
 
 			settingSections.Add(section.Text, treeNode);
 
-			treeNode.EnsureVisible();
+			//treeNode.EnsureVisible();
 		}
 
 		/// <summary>
