@@ -64,6 +64,7 @@ General:
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
+  - hide file extensions (option)
   - better mouse control 
      - my tv: 
          tvguide   : next/prev day, current time/day, scroll up/down, scroll left/right, time interval+/-
