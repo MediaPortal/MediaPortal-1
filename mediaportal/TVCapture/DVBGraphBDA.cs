@@ -2727,7 +2727,6 @@ namespace MediaPortal.TV.Recording
 						if (data.isTeletext)
 						{
 							currentTuningObject.TeletextPid=data.elementary_PID;
-							hasAudio=true;
 						}
 					}
 				}
