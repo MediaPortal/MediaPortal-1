@@ -133,7 +133,8 @@ namespace MediaPortal.GUI.Library
 //      sprite.End();
 
 			// render the 1st line of text on the button
-      int iWidth=m_imgNoFocusMid.Width;
+      int iWidth=m_imgNoFocusMid.Width-10;
+			if (iWidth<=0) iWidth=1;
 			if (m_strText1.Length>0 )
 			{
         int widthLeft =(int)((float)m_imgFocusLeft.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusLeft.TextureHeight));
@@ -147,7 +148,7 @@ namespace MediaPortal.GUI.Library
         cntlLabel1.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
         cntlLabel1.FontName=fontName1;
         cntlLabel1.Label=m_strText1;
-        cntlLabel1.Width=iWidth-10;
+        cntlLabel1.Width=iWidth;
         cntlLabel1.Render();
 			}
      
