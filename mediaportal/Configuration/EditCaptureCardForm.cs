@@ -171,6 +171,7 @@ namespace MediaPortal.Configuration
       this.audioDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.audioDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioDeviceComboBox.Enabled = false;
       this.audioDeviceComboBox.ItemHeight = 13;
       this.audioDeviceComboBox.Location = new System.Drawing.Point(120, 53);
       this.audioDeviceComboBox.Name = "audioDeviceComboBox";
@@ -201,6 +202,7 @@ namespace MediaPortal.Configuration
       this.filterComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.filterComboBox.Enabled = false;
       this.filterComboBox.Location = new System.Drawing.Point(120, 79);
       this.filterComboBox.Name = "filterComboBox";
       this.filterComboBox.Size = new System.Drawing.Size(240, 21);
@@ -219,6 +221,7 @@ namespace MediaPortal.Configuration
       this.audioCompressorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioCompressorComboBox.Enabled = false;
       this.audioCompressorComboBox.ItemHeight = 13;
       this.audioCompressorComboBox.Location = new System.Drawing.Point(120, 147);
       this.audioCompressorComboBox.Name = "audioCompressorComboBox";
@@ -238,6 +241,7 @@ namespace MediaPortal.Configuration
       this.videoCompressorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.videoCompressorComboBox.Enabled = false;
       this.videoCompressorComboBox.ItemHeight = 13;
       this.videoCompressorComboBox.Location = new System.Drawing.Point(120, 120);
       this.videoCompressorComboBox.Name = "videoCompressorComboBox";
@@ -293,6 +297,7 @@ namespace MediaPortal.Configuration
       // 
       this.useRecordingCheckBox.Checked = true;
       this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.useRecordingCheckBox.Enabled = false;
       this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useRecordingCheckBox.Location = new System.Drawing.Point(32, 227);
       this.useRecordingCheckBox.Name = "useRecordingCheckBox";
@@ -304,6 +309,7 @@ namespace MediaPortal.Configuration
       // 
       this.useWatchingCheckBox.Checked = true;
       this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.useWatchingCheckBox.Enabled = false;
       this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 203);
       this.useWatchingCheckBox.Name = "useWatchingCheckBox";
@@ -440,24 +446,7 @@ namespace MediaPortal.Configuration
         catch
         {
           return null;
-        }
-        
-        if (m_bMPEG2)
-        {
-          videoCompressorComboBox.Enabled=false;
-          audioCompressorComboBox.Enabled=false;
-          audioDeviceComboBox.Enabled=false;
-          frameRateTextBox.Enabled=false;
-          frameSizeComboBox.Enabled=false;
-        }
-        else
-        {
-          videoCompressorComboBox.Enabled=true;
-          audioCompressorComboBox.Enabled=true;
-          audioDeviceComboBox.Enabled=true;
-          frameRateTextBox.Enabled=true;
-          frameSizeComboBox.Enabled=true;
-        }
+        }        
       }
 
       return capture;
@@ -522,7 +511,53 @@ namespace MediaPortal.Configuration
 		private void cardComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			SetupPropertyPages();
-		}
+
+      //
+      // Setup frame sizes
+      //
+      Capture capture = CreateCaptureDevice();
+
+      if(capture != null && capture.SupportsTimeShifting == false)
+      {
+        //
+        // Clear combo box
+        //
+        frameSizeComboBox.Items.Clear();
+
+        //
+        // Loop through available frame sizes and try to assign them to the card, if we succeed we
+        // know the card supports the size.
+        //
+        foreach(CaptureFormat format in captureFormats)
+        {
+          Size frameSize = new Size(format.Width, format.Height);
+          capture.FrameSize = frameSize;
+
+          if(capture.FrameSize == frameSize)
+          {
+            //
+            // Card supports the current frame size
+            //
+            frameSizeComboBox.Items.Add(format);
+          }
+        }
+      }
+
+      //
+      // Update controls
+      //
+      frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = !capture.SupportsTimeShifting;
+      useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
+
+      //
+      // Dispose objects
+      //
+      if(capture != null)
+      {
+        capture.Stop();
+        capture.Dispose();
+      }
+    }
 
 		private void setupButton_Click(object sender, System.EventArgs e)
 		{
@@ -602,17 +637,24 @@ namespace MediaPortal.Configuration
 
 				card.VideoDevice = cardComboBox.Text;
 
-				card.UseForRecording	= useRecordingCheckBox.Checked;
-				card.UseForTV			= useWatchingCheckBox.Checked;
+				card.UseForRecording = useRecordingCheckBox.Checked;
+				card.UseForTV	= useWatchingCheckBox.Checked;
 				
-        CaptureFormat fmt = (CaptureFormat)frameSizeComboBox.SelectedItem;
-				card.FrameSize = new Size(fmt.Width, fmt.Height);
-				card.FrameRate = Int32.Parse(frameRateTextBox.Text);
+        if(frameSizeComboBox.SelectedItem != null)
+        {
+          CaptureFormat fmt = (CaptureFormat)frameSizeComboBox.SelectedItem;
+          card.FrameSize = new Size(fmt.Width, fmt.Height);
+
+          if(frameRateTextBox.Text.Length > 0)
+          {
+            card.FrameRate = Int32.Parse(frameRateTextBox.Text);
+          }
+        }
 
         card.VideoCompressor = videoCompressorComboBox.Text;
         card.AudioCompressor = audioCompressorComboBox.Text;
         card.AudioDevice = audioDeviceComboBox.Text;
-        card.SupportsMPEG2=m_bMPEG2;
+        card.SupportsMPEG2 = m_bMPEG2;
 
 				return card;
 			}
