@@ -49,7 +49,10 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("spinColor")]		protected long			m_dwSpinColor;
 		[XMLSkinElement("spinPosX")]		protected int			m_dwSpinX;
 		[XMLSkinElement("spinPosY")]		protected int			m_dwSpinY;
-		
+		[XMLSkinElement("label")]			protected string	m_strProperty="";
+
+		bool                            containsProperty=false;
+		string                          m_strPrevProperty="a";
 		public GUITextControl (int dwParentID) : base(dwParentID)
 		{
 		}
@@ -80,6 +83,9 @@ namespace MediaPortal.GUI.Library
 			base.FinalizeConstruction ();
 			m_upDown=new GUISpinControl(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwSpinWidth, m_dwSpinHeight, m_strUp, m_strDown, m_strUpFocus, m_strDownFocus, m_strFontName, m_dwSpinColor,GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT,GUIControl.Alignment.ALIGN_LEFT);
 			m_pFont=GUIFontManager.GetFont(m_strFontName);
+			if (m_strProperty.IndexOf("#")>=0) 
+				containsProperty=true;
+
 		}
 		public override void ScaleToScreenResolution()
 		{
@@ -94,7 +100,22 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible) return;
       }
-			
+
+			if (containsProperty)
+			{ 
+				string strText=GUIPropertyManager.Parse(m_strProperty);
+				
+				strText=strText.Replace("\\r","\r");
+				if (strText!=m_strPrevProperty)
+				{
+					m_iOffset=0;
+					m_vecItems.Clear();
+
+					m_strPrevProperty=strText;
+					SetText(strText);
+				}
+			}
+
 			int dwPosY=m_dwPosY;
 
       for (int i=0; i < m_iItemsPerPage; i++)
@@ -224,6 +245,8 @@ namespace MediaPortal.GUI.Library
         }
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
 				{
+					containsProperty=false;
+					m_strProperty="";
 					GUIListItem pItem=message.Object as GUIListItem;
           if (pItem!=null)
           {
@@ -234,6 +257,8 @@ namespace MediaPortal.GUI.Library
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
 				{
+					containsProperty=false;
+					m_strProperty="";
 					m_iOffset=0;
 					m_vecItems.Clear();
 					m_upDown.SetRange(1,1);
@@ -255,11 +280,20 @@ namespace MediaPortal.GUI.Library
 
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
-          m_iOffset=0;
-          m_vecItems.Clear();
-          m_upDown.SetRange(1,1);
-          m_upDown.Value=1;
-          SetText( message.Label );
+					if (message.Label!=null)
+					{
+						if (m_strProperty!=message.Label)
+						{
+							m_strProperty=message.Label;
+							if (m_strProperty.IndexOf("#")>=0) 
+								containsProperty=true;
+
+							m_vecItems.Clear();
+							m_upDown.SetRange(1,1);
+							m_upDown.Value=1;
+							SetText( message.Label );
+						}
+					}
         }
 
 
@@ -296,6 +330,7 @@ namespace MediaPortal.GUI.Library
 
 		public override void FreeResources()
     {
+			m_strPrevProperty="";
       m_vecItems.Clear();
 			base.FreeResources();
 			m_upDown.FreeResources();
@@ -669,5 +704,19 @@ namespace MediaPortal.GUI.Library
       get { return m_bEnableUpDown;}
       set { m_bEnableUpDown=value;}
     }
+
+		/// <summary>
+		/// Get/set the text of the label.
+		/// </summary>
+		public string Property
+		{
+			get { return m_strProperty; }
+			set 
+			{
+				m_strProperty=value;
+				if (m_strProperty.IndexOf("#")>=0) 
+					containsProperty=true;
+			}
+		}
 	}
 }

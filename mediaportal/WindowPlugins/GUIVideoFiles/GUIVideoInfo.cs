@@ -32,17 +32,18 @@ namespace MediaPortal.GUI.Video
 
       , CONTROL_IMAGE = 3
       , CONTROL_SPIN = 4
-      , CONTROL_TEXTAREA = 5
+			, CONTROL_TEXTAREA = 5
+			, CONTROL_PLOTAREA = 10
 
       , CONTROL_BTN_TRACKS = 6
       , CONTROL_BTN_REFRESH = 7
       , CONTROL_DISC = 8
+			, CONTROL_PLAY=9
 			, CONTROL_STARS=100
     };
     enum ViewMode
     {
       Image,
-      Plot,
       Cast,
     }
 
@@ -57,7 +58,6 @@ namespace MediaPortal.GUI.Video
     ViewMode viewmode= ViewMode.Image;
     bool m_bRefresh = false;
     IMDBMovie m_movie = null;
-    Texture m_pTexture = null;
     int m_iTextureWidth = 0;
     int m_iTextureHeight = 0;
     bool m_bPrevOverlay = false;
@@ -140,12 +140,6 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
         {
           m_movie = null;
-          if (null != m_pTexture)
-          {
-            m_pTexture.Dispose();
-            m_pTexture = null;
-            m_movie = null;
-          }
           GUIGraphicsContext.Overlay = m_bPrevOverlay;
         }
         break;
@@ -204,7 +198,6 @@ namespace MediaPortal.GUI.Video
             }
           }
         
-          m_pTexture = null;
           viewmode=ViewMode.Image;			    
           GUIControl.ClearControl(GetID, (int)Controls.CONTROL_DISC);
           GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_DISC, "HD");
@@ -259,7 +252,7 @@ namespace MediaPortal.GUI.Video
             //2=DVD#001
             GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_DISC, iItem);
           }
-          Refresh();
+          Refresh();Update();
           return true;
         }
 
@@ -328,9 +321,6 @@ namespace MediaPortal.GUI.Video
             switch (viewmode)
             {
               case ViewMode.Image: 
-                viewmode=ViewMode.Plot;
-                break;
-              case ViewMode.Plot: 
                 viewmode=ViewMode.Cast;
                 break;
                 
@@ -374,75 +364,22 @@ namespace MediaPortal.GUI.Video
     void Update()
     {
       if (m_movie == null) return;
-      string strTmp;
-      strTmp = m_movie.Title.Trim();
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TITLE, strTmp);
 
-      strTmp = m_movie.Director.Trim();
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_DIRECTOR, strTmp);
-
-      strTmp = m_movie.WritingCredits.Trim();
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_CREDITS, strTmp);
-
-      strTmp = m_movie.Genre.Trim();
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_GENRE, strTmp);
-
-      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_TAGLINE);
-
-      strTmp = m_movie.TagLine.Trim();
-      GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_TAGLINE, strTmp);
-
-      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_PLOTOUTLINE);
-
-      strTmp = m_movie.PlotOutline.Trim();
-      GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_PLOTOUTLINE, strTmp);
-
-      string strYear = String.Format("{0}", m_movie.Year);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_YEAR, strYear);
-
-      string strRating = String.Format("{0}", m_movie.Rating);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_RATING, strRating);
-
-			for (int i=0; i < 10; ++i)
-			{
-				if ( i > (int)(m_movie.Rating+0.5f) )
-					GUIControl.HideControl(GetID, (int)Controls.CONTROL_STARS+i);
-				else
-					GUIControl.ShowControl(GetID, (int)Controls.CONTROL_STARS+i);
-			}
-
-      strTmp = m_movie.Votes.Trim();
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_VOTES, strTmp);
-      //GUIControl.SetControlLabel( GetID, (int)Controls.CONTROL_CAST, m_movie.m_strCast );
-
-      //plot->cast
-      if (viewmode==ViewMode.Plot)
-      {
-        strTmp = m_movie.Plot.Trim();
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA, strTmp);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(206));
-        GUIControl.ShowControl(GetID,(int)Controls.CONTROL_TEXTAREA);
-        GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE);
-        GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
-        GUIControl.HideControl(GetID,(int)Controls.CONTROL_SPIN);
-      }
       //cast->image
       if (viewmode==ViewMode.Cast)
       {
-        strTmp = m_movie.Cast.Trim();
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA, strTmp);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(734));
-        
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_PLOTAREA);
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_TEXTAREA);
-        GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE);
-        GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE);
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_SPIN);
       }
       //cast->plot
       if (viewmode==ViewMode.Image)
-      {
-        GUIControl.HideControl(GetID,(int)Controls.CONTROL_TEXTAREA);
-        GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE);
+			{
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_PLOTAREA);
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_TEXTAREA);
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE);
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_SPIN);
         GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(207));
@@ -453,22 +390,6 @@ namespace MediaPortal.GUI.Video
     public override void Render(float timePassed)
     {
       RenderDlg(timePassed);
-      if (null == m_pTexture) return;
-
-      if (viewmode!=ViewMode.Image) return;
-      GUIControl pControl = (GUIControl)GetControl((int)Controls.CONTROL_IMAGE);
-      if (null != pControl)
-      {
-        float x = (float)pControl.XPosition;
-        float y = (float)pControl.YPosition;
-        int width;
-        int height;
-        GUIGraphicsContext.Correct(ref x, ref y);
-
-				GUIFontManager.Present();
-        GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, pControl.Width, pControl.Height, out width, out height);
-        MediaPortal.Util.Picture.RenderImage(ref m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
-      }
     }
 
     
@@ -477,11 +398,6 @@ namespace MediaPortal.GUI.Video
 			string strThumb = "";
 			try
       {
-        if (m_pTexture != null)
-        {
-          m_pTexture.Dispose();
-          m_pTexture = null;
-        }
 
         string strImage = m_movie.ThumbURL;
         if (strImage.Length > 0)
@@ -514,15 +430,7 @@ namespace MediaPortal.GUI.Video
           }
         }
         
-        //string strAlbum;
-        //Utils.GetIMDBInfo(m_movie.m_strSearchString,strAlbum);
-        //m_movie.Save(strAlbum);
-
-        strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,m_movie.Title);
-        if (strThumb.Length > 0 && System.IO.File.Exists(strThumb))
-        {
-          m_pTexture = MediaPortal.Util.Picture.Load(strThumb, 0, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
-        }
+       
         Update();
       }
       catch (Exception)
