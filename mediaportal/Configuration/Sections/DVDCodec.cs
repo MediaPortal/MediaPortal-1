@@ -78,10 +78,57 @@ namespace MediaPortal.Configuration.Sections
 				string audioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
 				string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         checkBoxAC3.Checked= xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
-				audioCodecComboBox.SelectedItem = audioCodec;
+				
 				audioRendererComboBox.SelectedItem = audioRenderer;
-				videoCodecComboBox.SelectedItem = videoCodec;
 				dvdNavigatorComboBox.SelectedItem = dvdNavigator;
+
+        if (audioCodec==String.Empty)
+        {
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+          if (availableAudioFilters.Count>0)
+          {
+            bool interVideoFound=true;
+            bool CyberlinkFound=true;
+            audioCodec=(string)availableAudioFilters[0];
+            foreach (string filter in availableAudioFilters)
+            {
+              if (filter.Equals("InterVideo Audio Decoder"))
+              {
+                interVideoFound=true;
+              }
+              if (filter.Equals("CyberLink Audio Decoder"))
+              {
+                CyberlinkFound=true;
+              }
+            }
+            if (interVideoFound) audioCodec="InterVideo Audio Decoder";
+            else if (CyberlinkFound) audioCodec="CyberLink Audio Decoder";
+          }
+        }
+        if (videoCodec==String.Empty)
+        {
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
+          bool interVideoFound=true;
+          bool CyberlinkFound=true;
+          videoCodec=(string)availableVideoFilters[0];
+          foreach (string filter in availableVideoFilters)
+          {
+            if (filter.Equals("InterVideo Video Decoder"))
+            {
+              interVideoFound=true;
+            }
+            if (filter.Equals("CyberLink Video/SP Decoder"))
+            {
+              CyberlinkFound=true;
+            }
+          }
+          if (interVideoFound) videoCodec="InterVideo Video Decoder";
+          else if (CyberlinkFound) videoCodec="CyberLink Video/SP Decoder";
+        }
+
+        audioCodecComboBox.SelectedItem = audioCodec;
+        videoCodecComboBox.SelectedItem = videoCodec;
+
 			}
 		}
 

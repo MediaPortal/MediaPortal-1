@@ -328,13 +328,58 @@ namespace MediaPortal.Configuration.Sections
 				//
 				// Set codecs
 				//
-				audioCodecComboBox.SelectedItem = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-				videoCodecComboBox.SelectedItem = xmlreader.GetValueAsString("mytv", "videocodec", "");
+        string audioCodec=xmlreader.GetValueAsString("mytv", "audiocodec", "");
+        string videoCodec=xmlreader.GetValueAsString("mytv", "videocodec", "");
+        if (audioCodec==String.Empty)
+        {
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+          if (availableAudioFilters.Count>0)
+          {
+            bool interVideoFound=true;
+            bool CyberlinkFound=true;
+            audioCodec=(string)availableAudioFilters[0];
+            foreach (string filter in availableAudioFilters)
+            {
+              if (filter.Equals("InterVideo Audio Decoder"))
+              {
+                interVideoFound=true;
+              }
+              if (filter.Equals("CyberLink Audio Decoder"))
+              {
+                CyberlinkFound=true;
+              }
+            }
+            if (interVideoFound) audioCodec="InterVideo Audio Decoder";
+            else if (CyberlinkFound) audioCodec="CyberLink Audio Decoder";
+          }
+        }
+        if (videoCodec==String.Empty)
+        {
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
+          bool interVideoFound=true;
+          bool CyberlinkFound=true;
+          videoCodec=(string)availableVideoFilters[0];
+          foreach (string filter in availableVideoFilters)
+          {
+            if (filter.Equals("InterVideo Video Decoder"))
+            {
+              interVideoFound=true;
+            }
+            if (filter.Equals("CyberLink Video/SP Decoder"))
+            {
+              CyberlinkFound=true;
+            }
+          }
+          if (interVideoFound) videoCodec="InterVideo Video Decoder";
+          else if (CyberlinkFound) videoCodec="CyberLink Video/SP Decoder";
+        }
+				audioCodecComboBox.SelectedItem = audioCodec;
+				videoCodecComboBox.SelectedItem = videoCodec;
 
         //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("mytv","defaultar", "original");
+        string defaultAspectRatio = xmlreader.GetValueAsString("mytv","defaultar", "normal");
 
         for(int index = 0; index < aspectRatio.Length; index++)
         {
