@@ -575,7 +575,8 @@ namespace MediaPortal.GUI.TV
 				{
 					dlg.Add( GUILocalizeStrings.Get(i));
         }
-        dlg.Add( GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
+				dlg.Add( GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
+				dlg.Add( GUILocalizeStrings.Get(929)); //close window
         switch (rec.RecType)
         {
           case TVRecording.RecordingType.Once:

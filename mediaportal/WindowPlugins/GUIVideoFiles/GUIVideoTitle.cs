@@ -789,6 +789,7 @@ namespace MediaPortal.GUI.Video
 			dlg.Add( GUILocalizeStrings.Get(925)); //delete
 			dlg.Add( GUILocalizeStrings.Get(368)); //IMDB
 			dlg.Add( GUILocalizeStrings.Get(208)); //play
+			dlg.Add( GUILocalizeStrings.Get(929)); //close window
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;

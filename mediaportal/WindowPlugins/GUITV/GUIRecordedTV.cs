@@ -486,7 +486,8 @@ namespace MediaPortal.GUI.TV
       for (int i=655; i <= 656; ++i)
       {
         dlg.Add( GUILocalizeStrings.Get(i));
-      }
+			}
+			dlg.Add( GUILocalizeStrings.Get(929)); //close window
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
       switch (dlg.SelectedLabel)

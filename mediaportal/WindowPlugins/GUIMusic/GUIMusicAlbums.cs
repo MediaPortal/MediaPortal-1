@@ -427,7 +427,8 @@ namespace MediaPortal.GUI.Music
       dlg.Add( GUILocalizeStrings.Get(928)); //IMDB
       dlg.Add( GUILocalizeStrings.Get(208)); //play
       dlg.Add( GUILocalizeStrings.Get(926)); //Queue
-      dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
+			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
+			dlg.Add( GUILocalizeStrings.Get(929)); //close window
 
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
