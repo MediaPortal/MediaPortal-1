@@ -181,6 +181,7 @@ namespace MediaPortal
 
     bool RemoteFound=false;
 		bool RemoteEnabled=false;
+		bool USAModel=false;
 		public MCE2005Remote()
 		{
 		}
@@ -191,6 +192,7 @@ namespace MediaPortal
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				RemoteEnabled= xmlreader.GetValueAsBool("remote", "mce2005", false);
+				USAModel= xmlreader.GetValueAsBool("remote", "USAModel", false);
 				if (!RemoteEnabled) return;
 			}
       try
@@ -372,15 +374,14 @@ namespace MediaPortal
               return false;
             }
             break;
-          case 0x25://My tv
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+          
+					case 0x4B://DVD angle
             break;
-          case 0x4B://DVD angle
+          
+					case 0x4C://DVD audio
             break;
-          case 0x4C://DVD audio
-            break;
-          case 0x24://DVD menu
+          
+					case 0x24://DVD menu
             if (header.hid.RawData3==0)
             {
               if (g_Player.Playing && g_Player.IsDVD)
@@ -399,21 +400,61 @@ namespace MediaPortal
               return false;
             }
             break;
-          case 0x4D://DVD subtitle
+          
+					case 0x4D://DVD subtitle
             break;
-          case 0x8D://TV guide
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TVGUIDE);
+          
+					case 0x8D://TV guide
+							GUIGraphicsContext.IsFullScreenVideo=false;
+							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TVGUIDE);
             break;
-          case 0x47://My Music
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+
+					case 0x25://My tv (yellow on USA model)
+						if (USAModel)
+						{
+							//show context menu
+							action = new Action(Action.ActionType.ACTION_CONTEXT_MENU,0,0);  
+						}
+						else
+						{
+							GUIGraphicsContext.IsFullScreenVideo=false;
+							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+						}
+						break;
+          
+          
+					case 0x47://My Music (green on USA model)
+							GUIGraphicsContext.IsFullScreenVideo=false;
+							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
             break;
-          case 0x49://My Pictures
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
+          
+					case 0x49://My Pictures (blue on USA model)
+						if (USAModel)
+						{
+							//TV Change aspect ratio (Blue button)
+							action = new Action(Action.ActionType.ACTION_ASPECT_RATIO,0,0);  
+						}
+						else
+						{
+							GUIGraphicsContext.IsFullScreenVideo=false;
+							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
+						}
             break;
-          case 0x5B://TV show GUI/fullscreen (Red button)
+          
+					case 0x4A://My Video (red on USA model)
+						if (USAModel)
+						{
+							//TV show GUI/fullscreen (Red button)
+							action = new Action(Action.ActionType.ACTION_SHOW_GUI,0,0);  
+						}
+						else
+						{
+							GUIGraphicsContext.IsFullScreenVideo=false;
+							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
+						}
+						break;
+          
+					case 0x5B://TV show GUI/fullscreen (Red button)
             if (header.hid.RawData3==0)
             {
               action = new Action(Action.ActionType.ACTION_SHOW_GUI,0,0);  
@@ -424,10 +465,12 @@ namespace MediaPortal
               return false;
             }
             break;
-          case 0x5C: //green home
+          
+					case 0x5C: //green home
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
             break;
+
           case 0x5D://Show context menu (Yellow button)
             if (header.hid.RawData3==0)
             {
@@ -439,7 +482,8 @@ namespace MediaPortal
               return false;
             }
             break;
-          case 0x5E://TV Change aspect ratio (Blue button)
+          
+					case 0x5E: //TV Change aspect ratio (Blue button)
             if (header.hid.RawData3==0)
             {
               action = new Action(Action.ActionType.ACTION_ASPECT_RATIO,0,0);  
@@ -450,69 +494,84 @@ namespace MediaPortal
               return false;
             }
             break;
-          case 0x4A://My Video
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
+          
+					case 0x80://OEM1
             break;
-          case 0x80://OEM1
+          
+					case 0x81://OEM2
             break;
-          case 0x81://OEM2
-            break;
-          case 0x48://Recorded TV
+          
+					case 0x48://Recorded TV
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_RECORDEDTV);
             break;
-          case 0x82://Standbye
+          
+					case 0x82://Standbye
             break;
-          case 0x0d:// home
+          
+					case 0x0d:// home
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
             break;
-          case 0xB0: //play
+          
+					case 0xB0: //play
             action=new Action(Action.ActionType.ACTION_PLAY,0,0);
             break;
-          case 0xB1: //pause
+          
+					case 0xB1: //pause
             action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
             break;
-          case 0xB2: //record
+          
+					case 0xB2: //record
             action=new Action(Action.ActionType.ACTION_RECORD,0,0);
             break;
-          case 0xB4: //rewind
+          
+					case 0xB4: //rewind
             action=new Action(Action.ActionType.ACTION_REWIND,0,0);
             break;
-          case 0xB3: //fast forward
+          
+					case 0xB3: //fast forward
             action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
             break;
-          case 0xB5: //next
+          
+					case 0xB5: //next
             if ((g_Player.Playing) && (g_Player.IsDVD))
                 action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
               else
                 action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
             break;
-          case 0xB6: //previous
+          
+					case 0xB6: //previous
             if ((g_Player.Playing) && (g_Player.IsDVD))
               action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
             else
               action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
             break;
-          case 0xb7: //stop
+          
+					case 0xb7: //stop
             action=new Action(Action.ActionType.ACTION_STOP,0,0);
             break;
-          case 0xe9: //volume+
+          
+					case 0xe9: //volume+
             action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
             break;
-          case 0xea: //volume-
+          
+					case 0xea: //volume-
             action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
             break;
-          case 0x9c: //channel+
+          
+					case 0x9c: //channel+
             action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
             break;
-          case 0x9d: //channel-
+          
+					case 0x9d: //channel-
             action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
             break;
-          case 0xe2: //mute
+          
+					case 0xe2: //mute
             break;
-          default:
+          
+					default:
             Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
             return false;
         }
