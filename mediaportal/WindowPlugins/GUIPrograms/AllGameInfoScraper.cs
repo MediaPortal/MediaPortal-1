@@ -6,6 +6,7 @@ using System.Text;
 using MediaPortal.Util;
 
 using MediaPortal.GUI.Library;		
+using Programs.Utils;
 
 namespace ProgramsDatabase
 {
@@ -121,7 +122,8 @@ namespace ProgramsDatabase
 								}
 							}
 						}
-						newGame.Relevance = strRelevance;
+						newGame.RelevanceOrig = strRelevance;
+						newGame.RelevanceNorm =	(ProgramUtils.StrToIntDef(strRelevance, -1) + 44);
 					}
 					else if (iCol == 1)
 					{
@@ -209,7 +211,8 @@ namespace ProgramsDatabase
 								}
 							}
 						}
-						newGame.Rating = strRating;
+						newGame.RatingOrig = strRating;
+						newGame.RatingNorm = (ProgramUtils.StrToIntDef(strRating, 4) + 1); // add 1 to get a max rating of 10!
 						m_games.Add(newGame);
 					}
 				}

@@ -124,14 +124,14 @@
   <data name="label1.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="MinRelevanceNum.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="MinRelevanceNum.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="MinRelevanceNum.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
+  </data>
+  <data name="MinRelevanceNum.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="ResetFilterButton.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -235,18 +235,18 @@
   <data name="uncheckAllButton.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk0GAwAAAAAAADYAAAAoAAAADwAAAA8AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////////
-        ////////////////////////////////////////////////////T4gH////////gVIdgVIdgVIdgVId
-        gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdT4gH////////gVId7/Hx8fPz9PX19vf3+Pn5+vv7/P39
-        /v7+////////////gVIdT4gH////////gVId7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39/v7+////////
-        gVIdT4gH////////gVId6ezs7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39/v7+////gVIdT4gH////////
-        gVId5ejo6ezs7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39/v7+gVIdT4gH////////gVId4uXl5ejo6ezs
-        7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39gVIdT4gH////////gVId3uLi4uXl5ejo6ezs7O/v7/Hx8fPz
-        9PX19vf3+Pn5+vv7gVIdT4gH////////gVId2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPz9PX19vf3+Pn5
-        gVIdT4gH////////gVId2d7e2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPz9PX19vf3gVIdT4gH////////
-        gVId19zc2d7e2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPz9PX1gVIdT4gH////////gVId19zc19zc2d7e
-        2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPzgVIdT4gH////////gVId19zc19zc19zc2d7e2+Dg3uLi4uXl
-        5ejo6ezs7O/v7/HxgVIdT4gH////////gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVId
-        gVIdT4gH////////////////////////////////////////////////////////////T4gH
+        ////////////////////////////////////////////////////AAAA////////gVIdgVIdgVIdgVId
+        gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdAAAA////////gVId7/Hx8fPz9PX19vf3+Pn5+vv7/P39
+        /v7+////////////gVIdAAAA////////gVId7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39/v7+////////
+        gVIdAAAA////////gVId6ezs7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39/v7+////gVIdAAAA////////
+        gVId5ejo6ezs7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39/v7+gVIdAAAA////////gVId4uXl5ejo6ezs
+        7O/v7/Hx8fPz9PX19vf3+Pn5+vv7/P39gVIdAAAA////////gVId3uLi4uXl5ejo6ezs7O/v7/Hx8fPz
+        9PX19vf3+Pn5+vv7gVIdAAAA////////gVId2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPz9PX19vf3+Pn5
+        gVIdAAAA////////gVId2d7e2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPz9PX19vf3gVIdAAAA////////
+        gVId19zc2d7e2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPz9PX1gVIdAAAA////////gVId19zc19zc2d7e
+        2+Dg3uLi4uXl5ejo6ezs7O/v7/Hx8fPzgVIdAAAA////////gVId19zc19zc19zc2d7e2+Dg3uLi4uXl
+        5ejo6ezs7O/v7/HxgVIdAAAA////////gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVId
+        gVIdAAAA////////////////////////////////////////////////////////////AAAA
 </value>
   </data>
   <data name="checkAllButton.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -261,18 +261,18 @@
   <data name="checkAllButton.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk0GAwAAAAAAADYAAAAoAAAADwAAAA8AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////////
-        ////////////////////////////////////////////////////T4gH////////gVIdgVIdgVIdgVId
-        gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdT4gH////////gVId8fPz8/X19vf3+Pn5+fr6+/z8/f39
-        /v7+////////////gVIdT4gH////////gVId7/Hx8fPz8/X19vf3+Pn5+fr6+/z8/f39/v7+////////
-        gVIdT4gH////////gVId7O/v7/Hx8fPz8/X1IqEi+Pn5+fr6+/z8/f39/v7+////gVIdT4gH////////
-        gVId6ezs7O/v7/HxIqEiIqEiIqEi+Pn5+fr6+/z8/f39/v7+gVIdT4gH////////gVId5urq6ezsIqEi
-        IqEiIqEiIqEiIqEi+Pn5+fr6+/z8/f39gVIdT4gH////////gVId4+fn5urqIqEiIqEi7/HxIqEiIqEi
-        IqEi+Pn5+fr6+/z8gVIdT4gH////////gVId4eXl4+fnIqEi6ezs7O/v7/HxIqEiIqEiIqEi+Pn5+fr6
-        gVIdT4gH////////gVId3+Pj4eXl4+fn5urq6ezs7O/v7/HxIqEiIqEi9vf3+Pn5gVIdT4gH////////
-        gVId3eLi3+Pj4eXl4+fn5urq6ezs7O/v7/HxIqEi8/X19vf3gVIdT4gH////////gVId3eLi3eLi3+Pj
-        4eXl4+fn5urq6ezs7O/v7/Hx8fPz8/X1gVIdT4gH////////gVId3eLi3eLi3eLi3+Pj4eXl4+fn5urq
-        6ezs7O/v7/Hx8fPzgVIdT4gH////////gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVId
-        gVIdT4gH////////////////////////////////////////////////////////////T4gH
+        ////////////////////////////////////////////////////AAAA////////gVIdgVIdgVIdgVId
+        gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdAAAA////////gVId8fPz8/X19vf3+Pn5+fr6+/z8/f39
+        /v7+////////////gVIdAAAA////////gVId7/Hx8fPz8/X19vf3+Pn5+fr6+/z8/f39/v7+////////
+        gVIdAAAA////////gVId7O/v7/Hx8fPz8/X1IqEi+Pn5+fr6+/z8/f39/v7+////gVIdAAAA////////
+        gVId6ezs7O/v7/HxIqEiIqEiIqEi+Pn5+fr6+/z8/f39/v7+gVIdAAAA////////gVId5urq6ezsIqEi
+        IqEiIqEiIqEiIqEi+Pn5+fr6+/z8/f39gVIdAAAA////////gVId4+fn5urqIqEiIqEi7/HxIqEiIqEi
+        IqEi+Pn5+fr6+/z8gVIdAAAA////////gVId4eXl4+fnIqEi6ezs7O/v7/HxIqEiIqEiIqEi+Pn5+fr6
+        gVIdAAAA////////gVId3+Pj4eXl4+fn5urq6ezs7O/v7/HxIqEiIqEi9vf3+Pn5gVIdAAAA////////
+        gVId3eLi3+Pj4eXl4+fn5urq6ezs7O/v7/HxIqEi8/X19vf3gVIdAAAA////////gVId3eLi3eLi3+Pj
+        4eXl4+fn5urq6ezs7O/v7/Hx8fPz8/X1gVIdAAAA////////gVId3eLi3eLi3eLi3+Pj4eXl4+fn5urq
+        6ezs7O/v7/Hx8fPzgVIdAAAA////////gVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVIdgVId
+        gVIdAAAA////////////////////////////////////////////////////////////AAAA
 </value>
   </data>
   <data name="lblFiles.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -308,10 +308,10 @@
   <data name="splitterVert.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="splitterVert.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="splitterVert.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="splitterVert.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="splitterVert.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="rightPanel.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -331,6 +331,15 @@
   </data>
   <data name="rightPanel.GridSize" type="System.Drawing.Size, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>8, 8</value>
+  </data>
+  <data name="LaunchURLButton.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </data>
+  <data name="LaunchURLButton.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="LaunchURLButton.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
   </data>
   <data name="lblMatches.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -371,15 +380,6 @@
   <data name="toolTip1.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="LaunchURLButton.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
-  <data name="LaunchURLButton.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Private</value>
-  </data>
-  <data name="LaunchURLButton.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Private</value>
-  </data>
   <data name="$this.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
@@ -389,14 +389,14 @@
   <data name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="$this.Name">
-    <value>FileInfoScraperForm</value>
-  </data>
   <data name="$this.Localizable" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
   <data name="$this.GridSize" type="System.Drawing.Size, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>8, 8</value>
+  </data>
+  <data name="$this.Name">
+    <value>FileInfoScraperForm</value>
   </data>
   <data name="$this.DrawGrid" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

@@ -15,6 +15,7 @@ namespace ProgramsDatabase
 	{
 
 		string mRelevance;
+		int mRelevanceNorm;
 		string mYear;
 		string mGameURL;
 		string mTitle;
@@ -22,6 +23,7 @@ namespace ProgramsDatabase
 		string mStyle;
 		string mPlatform;
 		string mRating;
+		int mRatingNorm;
 		string mImageURLs;
 		string mManufacturer;
 		string mOverview;
@@ -33,6 +35,7 @@ namespace ProgramsDatabase
 			// TODO: Add constructor logic here
 			//
 			mRelevance = "";
+			mRelevanceNorm = 0;
 			mYear = "";
 			mGameURL = "";
 			mTitle = "";
@@ -40,16 +43,23 @@ namespace ProgramsDatabase
 			mStyle = "";
 			mPlatform = "";
 			mRating = "";
+			mRatingNorm = 0;
 			mImageURLs = "";
 			mManufacturer = "";
 			mOverview = "";
 			bLoaded = false;
 
 		}
-		public string Relevance
+		public string RelevanceOrig
 		{
 			get{ return mRelevance; }
 			set{ mRelevance = value; }
+		}
+
+		public int RelevanceNorm
+		{
+			get { return mRelevanceNorm; }
+			set { mRelevanceNorm = value; }
 		}
 
 		public string Year
@@ -93,10 +103,16 @@ namespace ProgramsDatabase
 			set{ mPlatform = value; }
 		}
 		
-		public string Rating
+		public string RatingOrig
 		{
 			get{ return mRating; }
 			set{ mRating = value; }
+		}
+
+		public int RatingNorm
+		{
+			get{ return mRatingNorm; }
+			set{ mRatingNorm = value; }
 		}
 
 		public string Manufacturer

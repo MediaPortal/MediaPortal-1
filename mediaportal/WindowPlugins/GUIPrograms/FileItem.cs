@@ -508,7 +508,7 @@ namespace ProgramsDatabase
 				this.Manufacturer = FileInfoFavourite.Manufacturer;
 				this.Year = ProgramUtils.StrToIntDef(FileInfoFavourite.Year, -1);
 				this.Overview = FileInfoFavourite.Overview;
-				this.Rating = ProgramUtils.StrToIntDef(FileInfoFavourite.Rating, 5);
+				this.Rating = FileInfoFavourite.RatingNorm;
 				this.System_ = FileInfoFavourite.Platform;
 				this.Write();
 			}

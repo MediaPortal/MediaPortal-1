@@ -107,12 +107,12 @@ namespace WindowPlugins.GUIPrograms
 			this.status = new System.Windows.Forms.ColumnHeader();
 			this.splitterVert = new System.Windows.Forms.Splitter();
 			this.rightPanel = new System.Windows.Forms.Panel();
+			this.LaunchURLButton = new System.Windows.Forms.Button();
 			this.lblMatches = new System.Windows.Forms.Label();
 			this.MatchList = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.LaunchURLButton = new System.Windows.Forms.Button();
 			this.bottomPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).BeginInit();
 			this.leftPanel.SuspendLayout();
@@ -149,20 +149,20 @@ namespace WindowPlugins.GUIPrograms
 			// MinRelevanceNum
 			// 
 			this.MinRelevanceNum.Increment = new System.Decimal(new int[] {
-																																			10,
-																																			0,
-																																			0,
-																																			0});
+																			  10,
+																			  0,
+																			  0,
+																			  0});
 			this.MinRelevanceNum.Location = new System.Drawing.Point(431, 14);
 			this.MinRelevanceNum.Name = "MinRelevanceNum";
 			this.MinRelevanceNum.Size = new System.Drawing.Size(56, 20);
 			this.MinRelevanceNum.TabIndex = 24;
 			this.toolTip1.SetToolTip(this.MinRelevanceNum, "This is the minimal RELEVANCE value to autoselect a match");
 			this.MinRelevanceNum.Value = new System.Decimal(new int[] {
-																																	70,
-																																	0,
-																																	0,
-																																	0});
+																		  70,
+																		  0,
+																		  0,
+																		  0});
 			this.MinRelevanceNum.ValueChanged += new System.EventHandler(this.MinRelevanceNum_ValueChanged);
 			// 
 			// ResetFilterButton
@@ -174,37 +174,40 @@ namespace WindowPlugins.GUIPrograms
 			this.ResetFilterButton.TabIndex = 23;
 			this.ResetFilterButton.Text = "Clear";
 			this.toolTip1.SetToolTip(this.ResetFilterButton, "Reset Filter");
+			this.ResetFilterButton.Click += new System.EventHandler(this.ResetFilterButton_Click);
 			// 
 			// filterComboBox
 			// 
 			this.filterComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.filterComboBox.Items.AddRange(new object[] {
-																												"Arcade",
-																												"Atari 5200",
-																												"Atari 7800",
-																												"Atari Lynx",
-																												"Atari ST",
-																												"Atari Video Computer System",
-																												"Commodore 64/128",
-																												"Commodore Amiga",
-																												"Game Boy",
-																												"Game Boy Advance",
-																												"Game Boy Color",
-																												"Neo Geo",
-																												"Nintendo 64",
-																												"Nintendo Entertainment System",
-																												"PlayStation",
-																												"Sega Dreamcast",
-																												"Sega Game Gear",
-																												"Sega Genesis",
-																												"Sega Master System",
-																												"Super NES",
-																												"TurboGrafx-16"});
+																"Arcade",
+																"Atari 5200",
+																"Atari 7800",
+																"Atari Lynx",
+																"Atari ST",
+																"Atari Video Computer System",
+																"Commodore 64/128",
+																"Commodore Amiga",
+																"Game Boy",
+																"Game Boy Advance",
+																"Game Boy Color",
+																"Neo Geo",
+																"Nintendo 64",
+																"Nintendo Entertainment System",
+																"PlayStation",
+																"Sega Dreamcast",
+																"Sega Game Gear",
+																"Sega Genesis",
+																"Sega Master System",
+																"Super NES",
+																"TurboGrafx-16"});
 			this.filterComboBox.Location = new System.Drawing.Point(72, 13);
 			this.filterComboBox.Name = "filterComboBox";
 			this.filterComboBox.Size = new System.Drawing.Size(208, 21);
 			this.filterComboBox.TabIndex = 22;
 			this.toolTip1.SetToolTip(this.filterComboBox, "Enter platform to filter results");
+			this.filterComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.filterComboBox_KeyUp);
+			this.filterComboBox.SelectedIndexChanged += new System.EventHandler(this.filterComboBox_SelectedIndexChanged);
 			// 
 			// filterLabel
 			// 
@@ -323,8 +326,8 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.FileList.CheckBoxes = true;
 			this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																							 this.FileTitle,
-																																							 this.status});
+																					   this.FileTitle,
+																					   this.status});
 			this.FileList.FullRowSelect = true;
 			this.FileList.HideSelection = false;
 			this.FileList.Location = new System.Drawing.Point(8, 40);
@@ -365,6 +368,18 @@ namespace WindowPlugins.GUIPrograms
 			this.rightPanel.Size = new System.Drawing.Size(387, 429);
 			this.rightPanel.TabIndex = 7;
 			// 
+			// LaunchURLButton
+			// 
+			this.LaunchURLButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.LaunchURLButton.Enabled = false;
+			this.LaunchURLButton.Location = new System.Drawing.Point(272, 12);
+			this.LaunchURLButton.Name = "LaunchURLButton";
+			this.LaunchURLButton.Size = new System.Drawing.Size(104, 24);
+			this.LaunchURLButton.TabIndex = 16;
+			this.LaunchURLButton.Text = "Launch URL";
+			this.toolTip1.SetToolTip(this.LaunchURLButton, "Show allgame-page in your browser");
+			this.LaunchURLButton.Click += new System.EventHandler(this.LaunchURLButton_Click);
+			// 
 			// lblMatches
 			// 
 			this.lblMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
@@ -380,8 +395,8 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.MatchList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																								this.columnHeader1,
-																																								this.columnHeader2});
+																						this.columnHeader1,
+																						this.columnHeader2});
 			this.MatchList.FullRowSelect = true;
 			this.MatchList.HideSelection = false;
 			this.MatchList.Location = new System.Drawing.Point(16, 40);
@@ -402,18 +417,6 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.columnHeader2.Text = "Relevance";
 			this.columnHeader2.Width = 80;
-			// 
-			// LaunchURLButton
-			// 
-			this.LaunchURLButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.LaunchURLButton.Enabled = false;
-			this.LaunchURLButton.Location = new System.Drawing.Point(272, 12);
-			this.LaunchURLButton.Name = "LaunchURLButton";
-			this.LaunchURLButton.Size = new System.Drawing.Size(104, 24);
-			this.LaunchURLButton.TabIndex = 16;
-			this.LaunchURLButton.Text = "Launch URL";
-			this.toolTip1.SetToolTip(this.LaunchURLButton, "Show allgame-page in your browser");
-			this.LaunchURLButton.Click += new System.EventHandler(this.LaunchURLButton_Click);
 			// 
 			// FileInfoScraperForm
 			// 
@@ -538,8 +541,7 @@ namespace WindowPlugins.GUIPrograms
 			bool result = (filterComboBox.Text == "") || (info.Platform.ToLower().IndexOf(filterComboBox.Text.ToLower()) == 0);
 			if (result)
 			{
-				int nRelevancePercent = (ProgramUtils.StrToIntDef(info.Relevance, -1) + 44);
-				result = (nRelevancePercent >= MinRelevanceNum.Value);
+				result = (info.RelevanceNorm >= MinRelevanceNum.Value);
 			}
 			return result;
 		}
@@ -560,7 +562,7 @@ namespace WindowPlugins.GUIPrograms
 							if (IsGoodMatch(item))
 							{
 								ListViewItem curItem = new ListViewItem(String.Format("{0} ({1})", item.Title, item.Platform));
-								curItem.SubItems.Add(String.Format("{0}%", ProgramUtils.StrToIntDef(item.Relevance, -1) + 44));
+								curItem.SubItems.Add(String.Format("{0}%", item.RelevanceNorm));
 								//							curItem.SubItems[1].Text = String.Format("{0}%", item.Relevance);
 								curItem.Tag = item;
 								curItem = MatchList.Items.Add(curItem);
@@ -645,7 +647,7 @@ namespace WindowPlugins.GUIPrograms
 				file.FileInfoFavourite = info;
 				LaunchURLButton.Enabled = true;
 				btnSaveSearch.Enabled = true;
-				FileList.FocusedItem.SubItems[1].Text = String.Format("best: {0}%", ProgramUtils.StrToIntDef(file.FileInfoFavourite.Relevance, -1) + 44);
+				FileList.FocusedItem.SubItems[1].Text = String.Format("best: {0}%", file.FileInfoFavourite.RelevanceNorm);
 			}
 			else
 			{
@@ -724,7 +726,7 @@ namespace WindowPlugins.GUIPrograms
 						}
 						if (file.FileInfoFavourite != null)
 						{
-							curItem.SubItems[1].Text = String.Format("best: {0}%", ProgramUtils.StrToIntDef(file.FileInfoFavourite.Relevance, -1) + 44);
+							curItem.SubItems[1].Text = String.Format("best: {0}%", file.FileInfoFavourite.RelevanceNorm);
 						}
 						else
 						{
@@ -733,6 +735,7 @@ namespace WindowPlugins.GUIPrograms
 					}
 				}
 			}
+			ChangeFileSelection();
 		}
 
 		private void MinRelevanceNum_ValueChanged(object sender, System.EventArgs e)
