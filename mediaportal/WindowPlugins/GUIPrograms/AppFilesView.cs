@@ -424,14 +424,15 @@ namespace WindowPlugins.GUIPrograms
 
 		private void DeleteItem()
 		{
-			if (FileList.SelectedItems.Count == 1)
+			if (FileList.SelectedItems.Count > 1)
 			{
-				DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete this item?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the selected item(s)?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				if (dialogResult == DialogResult.Yes)
 				{
-					if (FileList.SelectedItems[0].Tag is FilelinkItem)
+					foreach (ListViewItem curItem in FileList.SelectedItems)
+					if (curItem.Tag is FilelinkItem)
 					{
-						FilelinkItem filelink = (FilelinkItem)FileList.SelectedItems[0].Tag;
+						FilelinkItem filelink = (FilelinkItem)curItem.Tag;
 						if (filelink != null)
 						{
 							filelink.Delete();
@@ -439,7 +440,7 @@ namespace WindowPlugins.GUIPrograms
 					}
 					else
 					{
-						FileItem file = (FileItem)FileList.SelectedItems[0].Tag;
+						FileItem file = (FileItem)curItem.Tag;
 						if (file != null)
 						{
 							file.Delete();
@@ -479,6 +480,12 @@ namespace WindowPlugins.GUIPrograms
 					}
 				}
 			}
+			else if (FileList.SelectedItems.Count > 1)
+			{
+				btnDelete.Enabled = true;
+			}
+
+
 
 			if (mCurApp != null)
 			{
