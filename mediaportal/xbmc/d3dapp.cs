@@ -1511,6 +1511,7 @@ namespace MediaPortal
 
     protected override void OnPaint(PaintEventArgs e)
     {
+      /*
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
        return;
       try
@@ -1526,7 +1527,7 @@ namespace MediaPortal
       catch(Exception)
       {
       }
-      this.Invalidate();
+      this.Invalidate();*/
     }
 
 
@@ -1988,6 +1989,76 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
+    }
+
+    void HandleMessage()
+    {
+      NativeMethods.Message msg;
+      if (NativeMethods.PeekMessage(out msg, IntPtr.Zero, 0, 0, NativeMethods.PeekMessageFlags.NoRemove))
+      {
+        if (msg.msg==NativeMethods.WindowMessage.Quit)
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+          return;
+        }
+        NativeMethods.TranslateMessage(ref msg);
+        NativeMethods.DispatchMessage(ref msg);
+      }
+    }
+
+    /// <summary>
+    /// Run the simulation
+    /// </summary>
+    public void Run()
+    {
+      // Now we're ready to recieve and process Windows messages.
+      System.Windows.Forms.Control mainWindow = this;
+
+      // If the render target is a form and *not* this form, use that form instead,
+      // otherwise, use the main form.
+      if ((ourRenderTarget is System.Windows.Forms.Form) && (ourRenderTarget != this))
+        mainWindow = ourRenderTarget;
+
+      mainWindow.Show();	
+      Initialize() ;
+
+      OnStartup();
+
+      // Get the first message
+			
+
+      while(true)
+      {
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+          break;
+        try
+        {
+          HandleMessage();
+          FrameMove();
+          HandleMessage();
+          FullRender();
+          int SleepingTime=GetSleepingTime();
+          DoSleep(SleepingTime);
+          HandleMessage();
+          HandleCursor();
+        }
+        catch(Exception ex)
+        {
+          Log.Write("exception:{0}",ex.ToString());
+#if DEBUG
+          throw ex;
+#endif
+        }
+      }
+      OnExit();
+      try
+      {
+        if (UseMillisecondTiming) timeEndPeriod(MILLI_SECONDS_TIMER);
+      }
+      catch(Exception)
+      {
+      }
+      UseMillisecondTiming=false;
     }
   }
 
