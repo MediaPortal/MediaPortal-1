@@ -313,6 +313,9 @@ namespace MediaPortal.TV.Recording
       if( m_graphBuilder != null )
         Marshal.ReleaseComObject( m_graphBuilder ); m_graphBuilder = null;
 
+      GUIGraphicsContext.form.Invalidate(true);
+      GC.Collect();
+
       m_graphState=State.None;
       return ;
     }
@@ -635,7 +638,7 @@ namespace MediaPortal.TV.Recording
        
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SinkGraph:StopViewing()");
-			if (!Vmr9.UseVMR9inMYTV)
+			
 				m_mpeg2Demux.StopViewing();
       m_graphState=State.Created;
       DeleteGraph();

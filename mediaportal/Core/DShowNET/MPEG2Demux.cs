@@ -182,6 +182,7 @@ namespace DShowNET
         {
           DirectShowUtil.DebugWrite("mpeg2:StopViewing() stop mediactl");
           if (m_bRunning) m_mediaControl.Stop(); 
+
           m_bRunning=false;
           DirectShowUtil.DebugWrite("mpeg2:StopViewing() stopped");
         }
