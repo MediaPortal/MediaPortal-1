@@ -33,12 +33,14 @@ namespace MediaPortal.Configuration.Sections
 				{
 					string shareName = String.Format("sharename{0}", index);
 					string sharePath = String.Format("sharepath{0}", index);
+          string sharePin  = String.Format("pincode{0}", index);
 
 					string shareNameData = xmlreader.GetValueAsString("movies", shareName, "");
 					string sharePathData = xmlreader.GetValueAsString("movies", sharePath, "");
+          string sharePinData = xmlreader.GetValueAsString("pictures", sharePin, "");
 
 					if(shareNameData != null && shareNameData.Length > 0)
-						AddShare(shareNameData, sharePathData, shareNameData.Equals(defaultShare));
+						AddShare(new ShareData(shareNameData, sharePathData, sharePinData), shareNameData.Equals(defaultShare));
 				}
 			}				
 
@@ -58,21 +60,30 @@ namespace MediaPortal.Configuration.Sections
 				{
 					string shareName = String.Format("sharename{0}", index);
 					string sharePath = String.Format("sharepath{0}", index);
+          string sharePin  = String.Format("pincode{0}", index);
 
 					string shareNameData = String.Empty;
 					string sharePathData = String.Empty;
+          string sharePinData  = String.Empty;
 
 					if(CurrentShares != null && CurrentShares.Count > index)
 					{
-						shareNameData = CurrentShares[index].SubItems[0].Text;
-						sharePathData = CurrentShares[index].SubItems[1].Text;
+            ShareData shareData = CurrentShares[index].Tag as ShareData;
 
-						if(CurrentShares[index] == DefaultShare)
-							defaultShare = shareNameData;
+            if(shareData != null)
+            {
+              shareNameData = shareData.Name;
+              sharePathData = shareData.Folder;
+              sharePinData  = shareData.PinCode;
+
+              if(CurrentShares[index] == DefaultShare)
+                defaultShare = shareNameData;
+            }
 					}
 
 					xmlwriter.SetValue("movies", shareName, shareNameData);
 					xmlwriter.SetValue("movies", sharePath, sharePathData);
+          xmlwriter.SetValue("movies", sharePin, sharePinData);
 				}
 
 				xmlwriter.SetValue("movies", "default", defaultShare);

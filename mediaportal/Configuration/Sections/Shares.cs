@@ -8,7 +8,26 @@ namespace MediaPortal.Configuration.Sections
 {
 	public abstract class Shares : MediaPortal.Configuration.SectionSettings
 	{
-		protected const int MaximumShares = 20;
+    protected class ShareData
+    {
+      public string Name;
+      public string Folder;
+      public string PinCode;
+
+      public bool   HasPinCode
+      {
+        get { return(PinCode.Length > 0); }
+      }
+
+      public ShareData(string name, string folder, string pinCode)
+      {
+        this.Name = name;
+        this.Folder = folder;
+        this.PinCode = pinCode;
+      }
+    }
+
+    protected const int MaximumShares = 20;
 
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -17,6 +36,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button editButton;
 		private System.Windows.Forms.Button addButton;
 		private MediaPortal.UserInterface.Controls.MPListView sharesListView;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.ComponentModel.IContainer components = null;
 
 		public Shares() : base("<Unknown>")
@@ -57,99 +77,106 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.deleteButton = new System.Windows.Forms.Button();
-			this.editButton = new System.Windows.Forms.Button();
-			this.addButton = new System.Windows.Forms.Button();
-			this.sharesListView = new MediaPortal.UserInterface.Controls.MPListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.deleteButton);
-			this.groupBox1.Controls.Add(this.editButton);
-			this.groupBox1.Controls.Add(this.addButton);
-			this.groupBox1.Controls.Add(this.sharesListView);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(384, 352);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Shares";
-			// 
-			// deleteButton
-			// 
-			this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.deleteButton.Location = new System.Drawing.Point(176, 312);
-			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.TabIndex = 10;
-			this.deleteButton.Text = "Delete";
-			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
-			// 
-			// editButton
-			// 
-			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.editButton.Location = new System.Drawing.Point(96, 312);
-			this.editButton.Name = "editButton";
-			this.editButton.TabIndex = 9;
-			this.editButton.Text = "Edit";
-			this.editButton.Click += new System.EventHandler(this.editButton_Click);
-			// 
-			// addButton
-			// 
-			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.addButton.Location = new System.Drawing.Point(16, 312);
-			this.addButton.Name = "addButton";
-			this.addButton.TabIndex = 8;
-			this.addButton.Text = "Add";
-			this.addButton.Click += new System.EventHandler(this.addButton_Click);
-			// 
-			// sharesListView
-			// 
-			this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.sharesListView.CheckBoxes = true;
-			this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																							 this.columnHeader1,
-																							 this.columnHeader2});
-			this.sharesListView.FullRowSelect = true;
-			this.sharesListView.Location = new System.Drawing.Point(16, 24);
-			this.sharesListView.Name = "sharesListView";
-			this.sharesListView.Size = new System.Drawing.Size(352, 280);
-			this.sharesListView.TabIndex = 4;
-			this.sharesListView.View = System.Windows.Forms.View.Details;
-			this.sharesListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListView_ItemCheck);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Name";
-			this.columnHeader1.Width = 106;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Folder";
-			this.columnHeader2.Width = 242;
-			// 
-			// Shares
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "Shares";
-			this.Size = new System.Drawing.Size(400, 368);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.deleteButton = new System.Windows.Forms.Button();
+      this.editButton = new System.Windows.Forms.Button();
+      this.addButton = new System.Windows.Forms.Button();
+      this.sharesListView = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.deleteButton);
+      this.groupBox1.Controls.Add(this.editButton);
+      this.groupBox1.Controls.Add(this.addButton);
+      this.groupBox1.Controls.Add(this.sharesListView);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(384, 352);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Shares";
+      // 
+      // deleteButton
+      // 
+      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.deleteButton.Location = new System.Drawing.Point(176, 312);
+      this.deleteButton.Name = "deleteButton";
+      this.deleteButton.TabIndex = 10;
+      this.deleteButton.Text = "Delete";
+      this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+      // 
+      // editButton
+      // 
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.editButton.Location = new System.Drawing.Point(96, 312);
+      this.editButton.Name = "editButton";
+      this.editButton.TabIndex = 9;
+      this.editButton.Text = "Edit";
+      this.editButton.Click += new System.EventHandler(this.editButton_Click);
+      // 
+      // addButton
+      // 
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.addButton.Location = new System.Drawing.Point(16, 312);
+      this.addButton.Name = "addButton";
+      this.addButton.TabIndex = 8;
+      this.addButton.Text = "Add";
+      this.addButton.Click += new System.EventHandler(this.addButton_Click);
+      // 
+      // sharesListView
+      // 
+      this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.sharesListView.CheckBoxes = true;
+      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                     this.columnHeader1,
+                                                                                     this.columnHeader3,
+                                                                                     this.columnHeader2});
+      this.sharesListView.FullRowSelect = true;
+      this.sharesListView.Location = new System.Drawing.Point(16, 24);
+      this.sharesListView.Name = "sharesListView";
+      this.sharesListView.Size = new System.Drawing.Size(352, 280);
+      this.sharesListView.TabIndex = 4;
+      this.sharesListView.View = System.Windows.Forms.View.Details;
+      this.sharesListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListView_ItemCheck);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Name";
+      this.columnHeader1.Width = 106;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Pin";
+      this.columnHeader3.Width = 57;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Folder";
+      this.columnHeader2.Width = 185;
+      // 
+      // Shares
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "Shares";
+      this.Size = new System.Drawing.Size(400, 368);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		ListViewItem currentlyCheckedItem = null;
@@ -162,14 +189,15 @@ namespace MediaPortal.Configuration.Sections
 
 			if(dialogResult == DialogResult.OK)
 			{
-				AddShare(editShare.ShareName, editShare.Folder, currentlyCheckedItem == null);
+				AddShare(new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode), currentlyCheckedItem == null);
 			}
 		}
 
-		protected void AddShare(string name, string folder, bool check)
+		protected void AddShare(ShareData shareData, bool check)
 		{
-			ListViewItem listItem = new ListViewItem(new string[] { name, folder });
+			ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder });
 
+      listItem.Tag = shareData;
 			listItem.Checked = check;
 			if(check) currentlyCheckedItem = listItem;
 
@@ -180,18 +208,31 @@ namespace MediaPortal.Configuration.Sections
 		{
 			foreach(ListViewItem selectedItem in sharesListView.SelectedItems)
 			{
-				EditShareForm editShare = new EditShareForm();
-				
-				editShare.ShareName = selectedItem.SubItems[0].Text;
-				editShare.Folder = selectedItem.SubItems[1].Text;
+        ShareData shareData = selectedItem.Tag as ShareData;
 
-				DialogResult dialogResult = editShare.ShowDialog(this);
+        if(shareData != null)
+        {
+          EditShareForm editShare = new EditShareForm();
+	
+          editShare.ShareName = shareData.Name;
+          editShare.PinCode = shareData.PinCode;
+          editShare.Folder = shareData.Folder;
 
-				if(dialogResult == DialogResult.OK)
-				{
-					selectedItem.SubItems[0].Text = editShare.ShareName;
-					selectedItem.SubItems[1].Text = editShare.Folder;
-				}
+          DialogResult dialogResult = editShare.ShowDialog(this);
+
+          if(dialogResult == DialogResult.OK)
+          {
+            shareData.Name = editShare.ShareName;
+            shareData.Folder = editShare.Folder;
+            shareData.PinCode = editShare.PinCode;
+
+            selectedItem.Tag = shareData;
+
+            selectedItem.SubItems[0].Text = shareData.Name;
+            selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
+            selectedItem.SubItems[2].Text = shareData.Folder;
+          }
+        }
 			}
 		}
 
@@ -283,7 +324,7 @@ namespace MediaPortal.Configuration.Sections
           //
           foreach(ListViewItem listItem in CurrentShares)
           {
-            if(listItem.SubItems[1].Text == drive)
+            if(listItem.SubItems[2].Text == drive)
             {
               driveFound = true;
               break;
@@ -295,7 +336,7 @@ namespace MediaPortal.Configuration.Sections
             //
             // Add share
             //
-            AddShare(driveName, drive, false);
+            AddShare(new ShareData(driveName, drive, String.Empty), false);
           }
         }
       }
