@@ -124,7 +124,9 @@ namespace MediaPortal.Topbar
 				if (m_bTopBarHidden) m_iMoveUp = m_iTopbarRegion;
 				foreach (CPosition pos in m_vecPositions)
 				{
-					pos.control.SetPosition((int)pos.XPos,(int)pos.YPos - m_iMoveUp);         
+					int y=(int)pos.YPos - m_iMoveUp;
+					y+=GUIGraphicsContext.OverScanTop;
+					pos.control.SetPosition((int)pos.XPos,y);         
 				}
 			}
 			else if (m_bTopBarHidden != m_bTopBarHide)
@@ -169,8 +171,10 @@ namespace MediaPortal.Topbar
           }
 
           foreach (CPosition pos in m_vecPositions)
-          {
-            pos.control.SetPosition((int)pos.XPos,(int)pos.YPos - m_iMoveUp);         
+					{
+						int y=(int)pos.YPos - m_iMoveUp;
+						y+=GUIGraphicsContext.OverScanTop;
+						pos.control.SetPosition((int)pos.XPos,y);         
           }
         }
       }

@@ -184,8 +184,6 @@ namespace MediaPortal.GUI.Library
 		{
 			base.ScaleToScreenResolution ();
 			
-			m_dwSpinX+= GUIGraphicsContext.OverScanLeft;
-			m_dwSpinY+= GUIGraphicsContext.OverScanTop;
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwSpinX, ref m_dwSpinY , ref m_dwSpinWidth, ref m_dwSpinHeight);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextureWidth, ref m_iTextureHeight);
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_iThumbXPos, ref m_iThumbYPos, ref m_iThumbWidth, ref m_iThumbHeight);
