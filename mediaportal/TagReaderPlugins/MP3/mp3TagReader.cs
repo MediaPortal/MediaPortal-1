@@ -254,10 +254,22 @@ namespace MediaPortal.TagReader.ID3
               m_tag.Genre=GetGenre((int)id3v1.Genre);
               m_tag.Title=Strip(id3v1.Song).Trim();
               m_tag.Album=Strip(id3v1.Album).Trim();
-              m_tag.Artist=Strip(id3v1.Artist).Trim();
-              m_tag.Track=Int32.Parse(id3v1.Track);
-              m_tag.Year=Int32.Parse(id3v1.Year);
+              m_tag.Artist=Strip(id3v1.Artist).Trim();  
               m_tag.Duration=ReadDuration(s);
+              try{
+                m_tag.Track=Int32.Parse(id3v1.Track);
+              }
+              catch(Exception )
+              {
+                //Log.Write (" error reading id3tagv1");
+              }
+              try{
+                m_tag.Year=Int32.Parse(id3v1.Year);
+              }
+              catch(Exception )
+              {
+                //Log.Write (" error reading id3tagv1");
+              }
             }
             catch(Exception )
             {
