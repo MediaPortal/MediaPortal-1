@@ -409,6 +409,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\MetaData\AsfMetadataEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DShowNET\MetaData\DvrmsMetadataEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DShowNET\MetaData\MetadataEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FreeDB\CDInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -14,6 +14,7 @@ using MediaPortal.Player;
 using DShowNET;
 using TVCapture;
 using DirectX.Capture;
+using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace MediaPortal.TV.Recording
 {
@@ -874,6 +875,50 @@ namespace MediaPortal.TV.Recording
 			// back to timeshifting state
 			_mState = State.Timeshifting;
 
+			// set the meta data in the dvr-ms or .wmv file
+			TimeSpan ts = (_mNewRecordedTV.EndTime-_mNewRecordedTV.StartTime);
+			Hashtable propsToSet = new Hashtable();
+			propsToSet.Add("channel"    ,_mNewRecordedTV.Channel);
+			propsToSet.Add("title"      ,_mNewRecordedTV.Title);
+			propsToSet.Add("genre"      ,_mNewRecordedTV.Genre);
+			propsToSet.Add("description",_mNewRecordedTV.Description);
+			propsToSet.Add("id"         ,_mNewRecordedTV.ID);
+			propsToSet.Add("cardno"     ,this.ID);;
+			propsToSet.Add("duration"   ,ts.TotalSeconds);
+			string startTime=String.Format("{0}-{1}-{2} {3}:{4}:{5}",
+																			_mNewRecordedTV.StartTime.Day,
+																			_mNewRecordedTV.StartTime.Month,
+																			_mNewRecordedTV.StartTime.Year,
+																			_mNewRecordedTV.StartTime.Hour,
+																			_mNewRecordedTV.StartTime.Minute,
+																			_mNewRecordedTV.StartTime.Second);
+
+			string endTime=String.Format("{0}-{1}-{2} {3}:{4}:{5}",
+																			_mNewRecordedTV.EndTime.Day,
+																			_mNewRecordedTV.EndTime.Month,
+																			_mNewRecordedTV.EndTime.Year,
+																			_mNewRecordedTV.EndTime.Hour,
+																			_mNewRecordedTV.EndTime.Minute,
+																			_mNewRecordedTV.EndTime.Second);
+			propsToSet.Add("start",_mNewRecordedTV.StartTime);
+			propsToSet.Add("end"  ,_mNewRecordedTV.EndTime);
+			if (_mNewRecordedTV.FileName.ToLower().IndexOf(".dvr-ms")>=0)
+			{
+				using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(_mNewRecordedTV.FileName))
+				{
+					editor.SetAttributes(propsToSet);
+				}
+			}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
+
+			if (_mNewRecordedTV.FileName.ToLower().IndexOf(".wmv")>=0)
+			{
+				using (AsfMetadataEditor editor = new AsfMetadataEditor(_mNewRecordedTV.FileName))
+				{
+					editor.SetAttributes(propsToSet);
+				}
+			}//if (_mNewRecordedTV.FileName.IndexOf(".wmv")>=0)
+
+			//add new recorded show to video database
 			int movieid=VideoDatabase.AddMovieFile(_mNewRecordedTV.FileName);
 			IMDBMovie movieDetails = new IMDBMovie();
 			if (movieid>=0)
