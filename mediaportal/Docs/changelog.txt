@@ -1,4 +1,5 @@
-07-08-2004  my pictures : fixed :  Quality of pics is degraded since DX9 is used. Slideshow quality is fine 
+07-08-2004  my tv       : fixed : external tv channels did not appear in the tvguide
+07-08-2004  my pictures : fixed : Quality of pics is degraded since DX9 is used. Slideshow quality is fine 
 07-08-2004  my radio    : fixed : streams with a commercial track stop playing after the commercial. This does work in wmp9. example stream http://www.nwrweb.com/player/asx/199.asx
 
 06-08-2004  my music    : fixed : problems with muliple hit artists and bio not displaying
