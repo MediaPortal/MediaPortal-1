@@ -298,6 +298,11 @@ namespace MediaPortal.GUI.TV
 				m_teleText.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(m_teleText_PageUpdatedEvent);
 			}
 		}
+
+		public bool HasTeletext()
+		{
+			return (m_teleText!=null);
+		}
 		//
 		//
 		void ShowMessage(int page,int subpage)
