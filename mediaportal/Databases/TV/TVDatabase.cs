@@ -663,10 +663,10 @@ namespace MediaPortal.TV.Database
 					if (channel.VisibleInGuide) iVisible=1;
 
 
-					strSQL=String.Format( "update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6}, Country={7} where strChannel like '{8}'", 
+					strSQL=String.Format( "update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6}, Country={7},strChannel='{8}' where idChannel like {9}", 
 						channel.Number,channel.Frequency.ToString(),
 						sort,iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country,
-						strChannel);
+						strChannel, channel.ID);
 					m_db.Execute(strSQL);
 				} 
 				catch (Exception ex) 

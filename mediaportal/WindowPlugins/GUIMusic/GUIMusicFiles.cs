@@ -265,7 +265,10 @@ namespace MediaPortal.GUI.Music
           base.OnMessage(message);
           if (MusicState.StartWindow != GetID)
           {
-            GUIWindowManager.ReplaceWindow(MusicState.StartWindow);
+						if (MusicState.StartWindow!= (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+						{
+							GUIWindowManager.ReplaceWindow(MusicState.StartWindow);
+						}
             return false;
           }
           LoadFolderSettings(m_strDirectory);

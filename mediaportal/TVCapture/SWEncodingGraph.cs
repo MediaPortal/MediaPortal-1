@@ -43,7 +43,8 @@ namespace MediaPortal.TV.Recording
       Created, 
       TimeShifting,
       Recording, 
-      Viewing
+      Viewing,
+			Radio
     };
     int                     m_cardID=-1;
     int                     m_iCurrentChannel = 28;
@@ -1984,13 +1985,80 @@ namespace MediaPortal.TV.Recording
 		
 		public void TuneRadioChannel(RadioStation station)
 		{
+			if (m_TVTuner==null) return;
+			Log.WriteFile(Log.LogType.Capture,"SWGraph:tune to {0} {1} hz", station.Name,station.Frequency);
+			
+			m_TVTuner.put_TuningSpace(0);
+			m_TVTuner.put_CountryCode(m_iCountryCode);
+			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+			if (m_bUseCable)
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+			}
+			else
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+			}
+			m_TVTuner.put_Channel((int)station.Frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			int frequency;
+			m_TVTuner.get_AudioFrequency(out frequency);
+			Log.WriteFile(Log.LogType.Capture,"SWGraph:  tuned to {0} hz", frequency);
 		}
 		
 		public void StartRadio(RadioStation station)
 		{
+			if (m_graphState != State.Radio)  
+			{
+				if (m_graphState != State.Created)  return;
+				if (m_videoCaptureDevice == null) return ;
+				
+				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+																			m_captureGraphBuilder,
+																			m_filterCaptureVideo, 
+																			true, 
+																			false, 
+																			false, 
+																			false ,
+																			cardName);
+				TuneRadioChannel(station);
+
+
+				if (m_mediaControl == null)
+				{
+					m_mediaControl = (IMediaControl)m_graphBuilder;
+				}
+				if (m_mediaControl != null)
+				{
+					m_mediaControl.Run();
+				}
+
+				m_graphState = State.Radio;
+
+				Log.WriteFile(Log.LogType.Capture,"SWGraph:StartRadio() started");
+
+				return;
+			}
+
+			TuneRadioChannel(station);
 		}
 		public void TuneRadioFrequency(int frequency)
 		{
+			if (m_TVTuner==null) return;
+			Log.WriteFile(Log.LogType.Capture,"SWGraph:tune to {0} hz", frequency);
+			m_TVTuner.put_TuningSpace(0);
+			m_TVTuner.put_CountryCode(m_iCountryCode);
+			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+			if (m_bUseCable)
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+			}
+			else
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+			}
+			m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			m_TVTuner.get_AudioFrequency(out frequency);
+			Log.WriteFile(Log.LogType.Capture,"SWGraph:  tuned to {0} hz", frequency);
 		}
   }
 }

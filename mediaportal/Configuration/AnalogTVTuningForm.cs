@@ -104,9 +104,9 @@ namespace MediaPortal
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(288, 104);
+			this.label1.Location = new System.Drawing.Point(288, 96);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(112, 23);
+			this.label1.Size = new System.Drawing.Size(112, 16);
 			this.label1.TabIndex = 6;
 			this.label1.Text = "TVGuide channels:";
 			// 
@@ -125,17 +125,17 @@ namespace MediaPortal
 			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																								this.columnHeader1,
 																																								this.columnHeader2});
-			this.listView1.Location = new System.Drawing.Point(288, 128);
+			this.listView1.Location = new System.Drawing.Point(288, 120);
 			this.listView1.MultiSelect = false;
 			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(216, 152);
+			this.listView1.Size = new System.Drawing.Size(216, 168);
 			this.listView1.TabIndex = 5;
 			this.listView1.View = System.Windows.Forms.View.Details;
 			// 
 			// columnHeader1
 			// 
 			this.columnHeader1.Text = "Name";
-			this.columnHeader1.Width = 147;
+			this.columnHeader1.Width = 152;
 			// 
 			// columnHeader2
 			// 
