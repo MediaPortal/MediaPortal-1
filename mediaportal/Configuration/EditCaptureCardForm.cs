@@ -614,7 +614,9 @@ namespace MediaPortal.Configuration
 #else
 		private Capture CreateCaptureDevice()
 		{
-			Capture capture = null;
+			try
+			{
+				Capture capture = null;
 #endif
 				DShowNET.Filter videoDevice = null;
 				DShowNET.Filter audioDevice = null;
@@ -1119,8 +1121,10 @@ namespace MediaPortal.Configuration
 #endif
 					card.SupportsMPEG2 = m_bMPEG2;
 				card.IsMCECard     = m_bISMCE;
+#if (UseCaptureCardDefinitions)
 				card.IsBDACard=m_bIsBDA;
-        card.RecordingLevel = trackRecording.Value;
+#endif
+				card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;
 				return card;
 			}

@@ -1,3 +1,4 @@
+#if (UseCaptureCardDefinitions)
 using System;
 using System.Collections;
 using System.Drawing;
@@ -1809,3 +1810,4 @@ namespace MediaPortal.TV.Recording
 	}
 }
 //end of file
+#endif
