@@ -58,6 +58,17 @@ namespace MediaPortal.Configuration.Sections
 			}
 			base.Dispose( disposing );
 		}
+		public override object GetSetting(string name)
+		{
+			switch(name.ToLower())
+			{
+				case "extensions":
+					return Extensions;
+			}
+
+			return null;
+		}
+
 
 		#region Designer generated code
 		/// <summary>

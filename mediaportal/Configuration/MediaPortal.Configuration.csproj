@@ -476,6 +476,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\DlgMovieList.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DlgMovieList.resx"
+                    DependentUpon = "DlgMovieList.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\DScalerAudioFilter.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -593,6 +603,16 @@
                 <File
                     RelPath = "Sections\Keys.resx"
                     DependentUpon = "Keys.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MovieDatabase.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MovieDatabase.resx"
+                    DependentUpon = "MovieDatabase.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

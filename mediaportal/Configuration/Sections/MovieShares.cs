@@ -160,6 +160,26 @@ namespace MediaPortal.Configuration.Sections
 			base.Dispose( disposing );
 		}
 
+		public override object GetSetting(string name)
+		{
+			switch(name.ToLower())
+			{
+				case "shares.available":
+					return CurrentShares.Count > 0;
+        
+				case "shares":
+					ArrayList shares = new ArrayList();
+
+					foreach(ListViewItem listItem in CurrentShares)
+					{
+						shares.Add(listItem.SubItems[2].Text);
+					}
+					return shares;
+			}
+
+			return null;
+		}
+
 		#region Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify

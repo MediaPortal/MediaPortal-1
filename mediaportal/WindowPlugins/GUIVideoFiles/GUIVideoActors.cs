@@ -84,6 +84,8 @@ namespace MediaPortal.GUI.Video
 		}
 
     const string ThumbsFolder=@"thumbs\Videos\Title";
+		const string ActorThumbsFolder=@"thumbs\Videos\actors";
+
 		DirectoryHistory m_history = new DirectoryHistory();
     static VirtualDirectory  m_directory = new VirtualDirectory();
     string m_strDirectory = "";
@@ -466,6 +468,14 @@ namespace MediaPortal.GUI.Video
 					GUIListItem item = new GUIListItem((string)actors[i]);
 					item.Path = ((string)actors[i]).Trim();
 					item.IsFolder = true;
+					string strThumb = Utils.GetCoverArt(ActorThumbsFolder,item.Path);
+					if (System.IO.File.Exists(strThumb))
+					{
+						item.ThumbnailImage = strThumb;
+						item.IconImageBig = strThumb;
+						item.IconImage = strThumb;
+					}
+
 					itemlist.Add(item);
 				}
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_GENRE, "");

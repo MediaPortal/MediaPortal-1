@@ -103,6 +103,7 @@ namespace MediaPortal.Configuration
 			AddChildSection(movie, new Sections.MovieExtensions());
       Log.Write("  add movie postprocessing section");
       AddChildSection(movie, new Sections.MoviePostProcessing());
+			AddChildSection(movie, new Sections.MovieDatabase());
 
       Log.Write("add music section");
       SectionSettings music = new Sections.Music();

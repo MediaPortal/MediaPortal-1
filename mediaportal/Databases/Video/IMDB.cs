@@ -443,6 +443,98 @@ namespace MediaPortal.Video.Database
 
 		} // END Find()
 
+		#region actors
+		public void FindActor(string strActor)
+		{
+			string strURL;
+			// getting searchstring
+			string strSearch = HttpUtility.UrlEncode(GetSearchString(strActor));
+
+			// be aware of german special chars äöüß Ã¤Ã¶Ã¼ÃŸ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
+			strSearch = strSearch.Replace("%c3%a4","%E4");
+			strSearch = strSearch.Replace("%c3%b6","%F6");
+			strSearch = strSearch.Replace("%c3%bc","%FC");
+			strSearch = strSearch.Replace("%c3%9f","%DF");
+
+			elements.Clear();			
+
+			string line1,line2,line3;
+			line1=GUILocalizeStrings.Get(984);
+			line2=strSearch;
+			line3="";
+			int percent=0;
+			if (m_progress!=null) m_progress.OnProgress(line1,line2,line3,percent);
+			line1=GUILocalizeStrings.Get(984) +":IMDB";
+			percent=0;
+			if (m_progress!=null) m_progress.OnProgress(line1,line2,line3,percent);
+			strURL=String.Format( "http://us.imdb.com/find?q={0};nm=on;mx=20",strSearch);
+			FindIMDBActor(strURL);
+
+		} // END FindActor()
+
+		private void FindIMDBActor(string strURL)
+		{
+			try
+			{
+				HTMLUtil htmlUtil=new HTMLUtil();
+				string strBody = GetPage(strURL,"utf-8");
+				int posStart=0,posEnd;
+				do
+				{
+					//<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
+					posStart=strBody.IndexOf("<a href=\"/name/",posStart);
+					if (posStart < 0)  break;
+					
+					posEnd=strBody.IndexOf(@"</a>",posStart);
+					if (posEnd < 0)  break;
+				
+					string ahref=strBody.Substring(posStart, (posEnd+4)-posStart);
+					string title,url;
+					htmlUtil.ParseAHREF(ahref, out title, out url);
+					title=Utils.stripHTMLtags(title);
+					htmlUtil.ConvertHTMLToAnsi(title,out title);
+					IMDBUrl newUrl =new IMDBUrl("http://us.imdb.com"+url,title,"IMDB");
+					elements.Add(newUrl);
+					posStart=posEnd;
+				}while(true);
+			}
+			catch(Exception ex) 
+			{
+				Log.Write("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
+			}
+		}
+		public bool GetActorDetails(IMDB.IMDBUrl url, out IMDBActor actor)
+		{
+			actor = new IMDBActor();
+			//<a name="headshot" href="photogallery"><img border="0" src="http://ia.imdb.com/media/imdb/01/I/84/36/12m.jpg" width="100" height="140" alt="Bruce Willis (I)"></a>
+			string strBody;
+			WebRequest req = WebRequest.Create(url.URL);
+			WebResponse result = req.GetResponse();
+			Stream ReceiveStream = result.GetResponseStream();
+			Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
+			StreamReader sr = new StreamReader( ReceiveStream, encode );
+			strBody=sr.ReadToEnd();
+
+			//get picture
+			int posStart=strBody.IndexOf("<a name=\"headshot");
+			if (posStart<0) return false;
+			posStart=strBody.IndexOf("<img",posStart);
+
+			int posEnd=strBody.IndexOf(">",posStart);
+			if (posEnd<0) return false;
+			string imgTag=strBody.Substring(posStart,posEnd-posStart);
+			string strURL="";
+			HTMLUtil util= new HTMLUtil();
+			util.getAttributeOfTag(imgTag, "src=\"", ref strURL);
+
+			actor.Name=url.Title;
+			actor.ThumbnailUrl=strURL;
+			return true;
+
+		}
+
+
+		#endregion
 		// this method switches between the different databases to fetche the search result into movieDetails
 		public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
 		{

@@ -269,6 +269,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Video\IMDBActor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Video\IMDBMovie.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
