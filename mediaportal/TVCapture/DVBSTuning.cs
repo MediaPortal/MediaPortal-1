@@ -134,7 +134,7 @@ namespace MediaPortal.TV.Recording
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			if (currentIndex > count)
+			if (currentIndex >= count)
 				return;
 			
 			float percent = ((float)currentIndex) / ((float)count);

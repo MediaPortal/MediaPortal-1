@@ -513,7 +513,7 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="false"></filter>
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter>
       </filters>
