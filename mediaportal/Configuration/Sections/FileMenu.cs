@@ -79,12 +79,12 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.textTrashcanFolder = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textPinCodeBox = new System.Windows.Forms.TextBox();
 			this.chbEnabled = new System.Windows.Forms.CheckBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.textTrashcanFolder = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -105,6 +105,24 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabIndex = 3;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "File Menu Settings";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(32, 96);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(88, 23);
+			this.label3.TabIndex = 5;
+			this.label3.Text = "Trashcan folder:";
+			this.label3.Visible = false;
+			// 
+			// textTrashcanFolder
+			// 
+			this.textTrashcanFolder.Location = new System.Drawing.Point(144, 96);
+			this.textTrashcanFolder.Name = "textTrashcanFolder";
+			this.textTrashcanFolder.Size = new System.Drawing.Size(280, 20);
+			this.textTrashcanFolder.TabIndex = 4;
+			this.textTrashcanFolder.Text = "";
+			this.textTrashcanFolder.Visible = false;
 			// 
 			// label2
 			// 
@@ -137,22 +155,6 @@ namespace MediaPortal.Configuration.Sections
 			this.chbEnabled.Size = new System.Drawing.Size(24, 24);
 			this.chbEnabled.TabIndex = 0;
 			this.chbEnabled.CheckedChanged += new System.EventHandler(this.chbEnabled_CheckedChanged);
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(32, 96);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(88, 23);
-			this.label3.TabIndex = 5;
-			this.label3.Text = "Trashcan folder:";
-			// 
-			// textTrashcanFolder
-			// 
-			this.textTrashcanFolder.Location = new System.Drawing.Point(144, 96);
-			this.textTrashcanFolder.Name = "textTrashcanFolder";
-			this.textTrashcanFolder.Size = new System.Drawing.Size(280, 20);
-			this.textTrashcanFolder.TabIndex = 4;
-			this.textTrashcanFolder.Text = "";
 			// 
 			// FileMenu
 			// 
