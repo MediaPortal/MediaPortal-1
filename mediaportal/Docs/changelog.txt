@@ -1,5 +1,7 @@
 History: (dd-mm-yyyy)
-  07-06-2004  general     : added : extended plugin system so plugin writers can include setups/configuration screens
+  08-06-2004  general     : added : extended plugin system so plugins can include setups/configuration screens
+  08-06-2004  general     : added : set date format in home page
+  
   07-06-2004  general     : fixed : skin engine: added left/right alignment for fadelabel
   07-06-2004  general     : added : skin engine: added mouse support for overlay windows
   
