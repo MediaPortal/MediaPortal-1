@@ -854,7 +854,21 @@ public class MediaPortalApp : D3DApp, IRender
               g_Player.OnAction(action);
               return;
             }
-          break;
+            break;
+          case Action.ActionType.ACTION_NEXT_CHAPTER:
+            if (g_Player.IsDVD && g_Player.Playing)
+            {
+              g_Player.OnAction(action);
+              return;
+            }
+            break;
+          case Action.ActionType.ACTION_PREV_CHAPTER:
+            if (g_Player.IsDVD && g_Player.Playing)
+            {
+              g_Player.OnAction(action);
+              return;
+            }
+            break;
           case Action.ActionType.ACTION_PREV_CHANNEL:
             window=(GUIWindow )GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);

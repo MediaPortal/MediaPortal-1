@@ -349,8 +349,17 @@ namespace MediaPortal
           case 0x9: // info
             if (header.hid.RawData3==2)
             {
-              Log.Write("key=f3");
-              keyCode=Keys.F3;
+              if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)
+              {
+                //pop up OSD
+                key='y';
+                return true;
+              }
+              else
+              {
+                //get info dialog
+                keyCode=Keys.F3;
+              }
             }
             else
             {
