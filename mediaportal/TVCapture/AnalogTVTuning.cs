@@ -11,6 +11,7 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class AnalogTVTuning : ITuning
 	{
+		const int MaxChannelNo=400;
 		int																	currentChannel=0;
 		AutoTuneCallback										callback = null;
 		private System.Windows.Forms.Timer  timer1;
@@ -49,7 +50,7 @@ namespace MediaPortal.TV.Recording
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			float percent = ((float)currentChannel) / 256.0f;
+			float percent = ((float)currentChannel) / ((float)MaxChannelNo);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			float frequency=(float)captureCard.VideoFrequency();
@@ -69,7 +70,7 @@ namespace MediaPortal.TV.Recording
 		{
 			
 			currentChannel++;
-			if (currentChannel>=256)
+			if (currentChannel>=MaxChannelNo)
 			{
 				timer1.Enabled=false;
 				callback.OnProgress(100);
