@@ -1,18 +1,19 @@
 History: (dd-mm-yyyy)
-  09-05-2004  MY TV       : added : specify capture frame size & frame rate in file->setup
-  09-05-2004  MY TV       : fixed : avsync problems when watching TV. (only when using seperate audio capture device)
-  09-05-2004  MY TV       : fixed : recorded TV showed info from previous program. Not recorded program
-  09-05-2004  MY TV       : fixed : speeded up going from home->my tv
-  09-05-2004  MY TV       : fixed : when recording, tv overlay now shows tv logo
+  11-05-2004  MY TV       : fixed : problem with tvguide.xml if start/stop times where only 12 instead of 14 digits
+  11-05-2004  MY TV       : added : specify capture frame size & frame rate in file->setup
+  11-05-2004  MY TV       : fixed : avsync problems when watching TV. (only when using seperate audio capture device)
+  11-05-2004  MY TV       : fixed : recorded TV showed info from previous program. Not recorded program
+  11-05-2004  MY TV       : fixed : speeded up going from home->my tv
+  11-05-2004  MY TV       : fixed : when recording, tv overlay now shows tv logo
 
-  09-05-2004  DVD         : added : option to enable/disable AR PixelRatio correction for DVD's
-  09-05-2004  general     : added : default startup resolution is now 720x576 instead of 768x576
-  09-05-2004  my movies   : fixed : IMDB tagline was not shown
-  09-05-2004  setup       : fixed : file->setup: tab order was messed up
-  09-05-2004  general     : fixed : numerous skin changes to remove wasted empty space
-  09-05-2004  my tv       : added : support for multiple tuners
-  09-05-2004  my music    : fixed : songs with ' character in it where gone after reoganizing the music database
-  09-05-2004  my tv       : fixed : video compressor was not used
+  10-05-2004  DVD         : added : option to enable/disable AR PixelRatio correction for DVD's
+  10-05-2004  general     : added : default startup resolution is now 720x576 instead of 768x576
+  10-05-2004  my movies   : fixed : IMDB tagline was not shown
+  10-05-2004  setup       : fixed : file->setup: tab order was messed up
+  10-05-2004  general     : fixed : numerous skin changes to remove wasted empty space
+  10-05-2004  my tv       : added : support for multiple tuners
+  10-05-2004  my music    : fixed : songs with ' character in it where gone after reoganizing the music database
+  10-05-2004  my tv       : fixed : video compressor was not used
   
   08-05-2004  my music    : fixed : artists view didnt show thumbs
   08-05-2004  general     : fixed : lowered usage of video ram. Solved a number of problems for ppl with low memory memory & high resolutions
