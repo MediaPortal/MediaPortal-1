@@ -9,3 +9,4 @@ Bugs:
   - 29-04-2004 setup      : F2 in my tv crashes
   - 29-04-2004 my pictures: test pic of mario
   - 29-04-2004 my tv      : desync audio while viewing tv
+  - 29-04-2004 my tv      : sorting channels in setup is 1,10,11,2,

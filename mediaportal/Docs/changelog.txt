@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  31-04-2004: my video    : fixed : dvd player didnt play commercial discs
+  31-04-2004: setup       : fixed : crash if entering setup during recording/previewing
+  31-04-2004: my pictures : fixed : problem with photo's not shown fullscreen in slideshow
+  
   30-04-2004: my music    : fixed : visz disappeared after album art lookup
   30-04-2004: my music    : fixed : visz disappeared after play same song twice
   30-04-2004: my music    : fixed : taskbar was visible in fullscreen mode

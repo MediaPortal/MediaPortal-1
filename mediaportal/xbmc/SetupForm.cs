@@ -9,6 +9,8 @@ using Microsoft.Win32;
 using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.WinControls;
+using MediaPortal.TV.Recording;
+
 namespace MediaPortal
 {
 	/// <summary>
@@ -190,10 +192,9 @@ namespace MediaPortal
 
 		public SetupForm()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+      Recorder.StopRecording();
+      Recorder.Previewing=false;
+      InitializeComponent();
 
 			LoadSettings();
       SetupCapture();
