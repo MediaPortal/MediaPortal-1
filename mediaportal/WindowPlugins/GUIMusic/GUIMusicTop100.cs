@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnPageLoad()
 		{
+			useAlbumView=false;
 			base.OnPageLoad ();
           
 			SelectCurrentItem();

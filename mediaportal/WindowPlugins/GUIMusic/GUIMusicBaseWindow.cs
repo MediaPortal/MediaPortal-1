@@ -28,7 +28,11 @@ namespace MediaPortal.GUI.Music
 			LargeIcons = 2, 
 			Albums= 3
 		}
-		
+
+		protected bool useAlbumView   = true;
+		protected bool useLargeIconView   = true;
+		protected bool useSmallIconView   = true;
+		protected bool useListView   = true;
 		protected View currentView		 = View.List;
 		protected MusicDatabase		      m_database = new MusicDatabase();
 		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView;
@@ -124,25 +128,42 @@ namespace MediaPortal.GUI.Music
 		{
 			if (control == btnViewAs)
 			{
-				switch (currentView)
+				bool shouldContinue=false;
+				do 
 				{
-					case View.List : 
-						currentView = View.Icons;
-						facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
-						break;
-					case View.Icons : 
-						currentView = View.LargeIcons;
-						facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
-						break;
-					case View.LargeIcons: 
-						currentView = View.Albums;
-						facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
-						break;
-					case View.Albums: 
-						currentView = View.List;
-						facadeView.View=GUIFacadeControl.ViewMode.List;
-						break;
-				}
+					shouldContinue=false;
+					switch (currentView)
+					{
+						case View.List : 
+							currentView = View.Icons;
+							if (!useSmallIconView || facadeView.ThumbnailView==null)
+								shouldContinue=true;
+							else
+								facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
+							break;
+						case View.Icons : 
+							currentView = View.LargeIcons;
+							if (!useLargeIconView || facadeView.ThumbnailView==null)
+								shouldContinue=true;
+							else 
+								facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
+							break;
+						case View.LargeIcons: 
+							currentView = View.Albums;
+							if (!useAlbumView || facadeView.AlbumListView==null)
+								shouldContinue=true;
+							else 
+								facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
+							break;
+						case View.Albums: 
+							currentView = View.List;
+							if (!useListView || facadeView.ListView==null)
+								shouldContinue=true;
+							else 
+								facadeView.View=GUIFacadeControl.ViewMode.List;
+							break;
+					}
+				} while (shouldContinue);
 				SelectCurrentItem();
 				GUIControl.FocusControl(GetID, controlId);
 				return;
