@@ -1,3 +1,4 @@
+	#region Usings
 using System;
 using System.IO;
 using System.Drawing;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using XPBurn;
+#endregion
 
 namespace GUIBurner
 {
@@ -14,6 +16,7 @@ namespace GUIBurner
 	/// </summary>
   public class SetupForm : System.Windows.Forms.Form, ISetupForm 
   {
+		#region Private Variables
 	private	XPBurn.XPBurnCD burnClass; 
 	private int selIndx=0; 
 	private System.Windows.Forms.ComboBox comboBox1;
@@ -49,17 +52,24 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Button button6;
 		private System.Windows.Forms.TabPage tabPage4;
-		private System.Windows.Forms.TabPage tabPage5;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.Button button7;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.CheckBox DateTimeFolder;
 		private System.Windows.Forms.Button button8;
+		private System.Windows.Forms.TextBox textBox3;
+		private System.Windows.Forms.Button button9;
+		private System.Windows.Forms.CheckBox checkBox7;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.CheckBox checkBox8;
+		private System.Windows.Forms.Label label14;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
 	private System.ComponentModel.Container components = null;
+		#endregion
 
+		#region SetupForm
 	public SetupForm()
 	{
 	  //
@@ -71,7 +81,9 @@ namespace GUIBurner
 	  // TODO: Add any constructor code after InitializeComponent call
 	  //
 	}
+		#endregion
 
+		#region Overtides
 	/// <summary>
 	/// Clean up any resources being used.
 	/// </summary>
@@ -86,8 +98,9 @@ namespace GUIBurner
 	  }
 	  base.Dispose( disposing );
 	}
+		#endregion
 
-	#region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 	/// <summary>
 	/// Required method for Designer support - do not modify
 	/// the contents of this method with the code editor.
@@ -121,18 +134,23 @@ namespace GUIBurner
 		this.tabPage1 = new System.Windows.Forms.TabPage();
 		this.button3 = new System.Windows.Forms.Button();
 		this.tabPage2 = new System.Windows.Forms.TabPage();
+		this.checkBox8 = new System.Windows.Forms.CheckBox();
+		this.label14 = new System.Windows.Forms.Label();
+		this.checkBox7 = new System.Windows.Forms.CheckBox();
+		this.label13 = new System.Windows.Forms.Label();
+		this.button9 = new System.Windows.Forms.Button();
+		this.textBox3 = new System.Windows.Forms.TextBox();
+		this.tabPage4 = new System.Windows.Forms.TabPage();
 		this.tabPage3 = new System.Windows.Forms.TabPage();
+		this.button8 = new System.Windows.Forms.Button();
+		this.DateTimeFolder = new System.Windows.Forms.CheckBox();
+		this.button7 = new System.Windows.Forms.Button();
+		this.textBox2 = new System.Windows.Forms.TextBox();
 		this.button6 = new System.Windows.Forms.Button();
 		this.label12 = new System.Windows.Forms.Label();
 		this.listBox1 = new System.Windows.Forms.ListBox();
 		this.button5 = new System.Windows.Forms.Button();
-		this.tabPage4 = new System.Windows.Forms.TabPage();
-		this.tabPage5 = new System.Windows.Forms.TabPage();
-		this.textBox2 = new System.Windows.Forms.TextBox();
-		this.button7 = new System.Windows.Forms.Button();
 		this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-		this.DateTimeFolder = new System.Windows.Forms.CheckBox();
-		this.button8 = new System.Windows.Forms.Button();
 		this.tabControl1.SuspendLayout();
 		this.tabPage1.SuspendLayout();
 		this.tabPage2.SuspendLayout();
@@ -227,7 +245,7 @@ namespace GUIBurner
 		// 
 		// label5
 		// 
-		this.label5.Location = new System.Drawing.Point(16, 120);
+		this.label5.Location = new System.Drawing.Point(16, 184);
 		this.label5.Name = "label5";
 		this.label5.Size = new System.Drawing.Size(184, 24);
 		this.label5.TabIndex = 12;
@@ -235,10 +253,11 @@ namespace GUIBurner
 		// 
 		// checkBox3
 		// 
-		this.checkBox3.Location = new System.Drawing.Point(224, 120);
+		this.checkBox3.Location = new System.Drawing.Point(224, 184);
 		this.checkBox3.Name = "checkBox3";
 		this.checkBox3.Size = new System.Drawing.Size(16, 16);
 		this.checkBox3.TabIndex = 11;
+		this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
 		// 
 		// label7
 		// 
@@ -257,9 +276,9 @@ namespace GUIBurner
 		// 
 		// label8
 		// 
-		this.label8.Location = new System.Drawing.Point(16, 168);
+		this.label8.Location = new System.Drawing.Point(8, 320);
 		this.label8.Name = "label8";
-		this.label8.Size = new System.Drawing.Size(384, 40);
+		this.label8.Size = new System.Drawing.Size(608, 24);
 		this.label8.TabIndex = 18;
 		this.label8.Text = "If you want to convert DVR-MS in MPEG Files you must instal the Cyberlink Filters" +
 			".  Push the Help Button for more Infos";
@@ -314,20 +333,19 @@ namespace GUIBurner
 		// 
 		// label6
 		// 
-		this.label6.Location = new System.Drawing.Point(248, 120);
+		this.label6.Location = new System.Drawing.Point(248, 184);
 		this.label6.Name = "label6";
-		this.label6.Size = new System.Drawing.Size(344, 32);
+		this.label6.Size = new System.Drawing.Size(368, 32);
 		this.label6.TabIndex = 25;
-		this.label6.Text = "This Option converts automatic all TV-Record Files! Attention, after convert DVR-" +
-			"MS Files will be deleted!!!";
+		this.label6.Text = "This Option converts automatic all TV-Record Files! TV-Database entry will be cha" +
+			"nged. Attention, after convert DVR-MS Files will be deleted!!!";
 		// 
 		// tabControl1
 		// 
 		this.tabControl1.Controls.Add(this.tabPage1);
 		this.tabControl1.Controls.Add(this.tabPage2);
-		this.tabControl1.Controls.Add(this.tabPage3);
 		this.tabControl1.Controls.Add(this.tabPage4);
-		this.tabControl1.Controls.Add(this.tabPage5);
+		this.tabControl1.Controls.Add(this.tabPage3);
 		this.tabControl1.Location = new System.Drawing.Point(0, 0);
 		this.tabControl1.Name = "tabControl1";
 		this.tabControl1.SelectedIndex = 0;
@@ -364,6 +382,12 @@ namespace GUIBurner
 		// 
 		// tabPage2
 		// 
+		this.tabPage2.Controls.Add(this.checkBox8);
+		this.tabPage2.Controls.Add(this.label14);
+		this.tabPage2.Controls.Add(this.checkBox7);
+		this.tabPage2.Controls.Add(this.label13);
+		this.tabPage2.Controls.Add(this.button9);
+		this.tabPage2.Controls.Add(this.textBox3);
 		this.tabPage2.Controls.Add(this.checkBox2);
 		this.tabPage2.Controls.Add(this.label4);
 		this.tabPage2.Controls.Add(this.label6);
@@ -381,6 +405,67 @@ namespace GUIBurner
 		this.tabPage2.Size = new System.Drawing.Size(632, 390);
 		this.tabPage2.TabIndex = 1;
 		this.tabPage2.Text = "DVR-MS Convert";
+		this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+		// 
+		// checkBox8
+		// 
+		this.checkBox8.Location = new System.Drawing.Point(224, 152);
+		this.checkBox8.Name = "checkBox8";
+		this.checkBox8.Size = new System.Drawing.Size(16, 16);
+		this.checkBox8.TabIndex = 30;
+		this.checkBox8.CheckedChanged += new System.EventHandler(this.checkBox8_CheckedChanged);
+		// 
+		// label14
+		// 
+		this.label14.Location = new System.Drawing.Point(16, 152);
+		this.label14.Name = "label14";
+		this.label14.Size = new System.Drawing.Size(184, 24);
+		this.label14.TabIndex = 31;
+		this.label14.Text = "Delete File from Database";
+		// 
+		// checkBox7
+		// 
+		this.checkBox7.Location = new System.Drawing.Point(224, 128);
+		this.checkBox7.Name = "checkBox7";
+		this.checkBox7.Size = new System.Drawing.Size(16, 16);
+		this.checkBox7.TabIndex = 28;
+		this.checkBox7.CheckedChanged += new System.EventHandler(this.checkBox7_CheckedChanged);
+		// 
+		// label13
+		// 
+		this.label13.Location = new System.Drawing.Point(16, 128);
+		this.label13.Name = "label13";
+		this.label13.Size = new System.Drawing.Size(208, 24);
+		this.label13.TabIndex = 29;
+		this.label13.Text = "Copy MPEG after convert";
+		// 
+		// button9
+		// 
+		this.button9.Enabled = false;
+		this.button9.Location = new System.Drawing.Point(528, 128);
+		this.button9.Name = "button9";
+		this.button9.Size = new System.Drawing.Size(32, 24);
+		this.button9.TabIndex = 27;
+		this.button9.Text = "...";
+		this.button9.Click += new System.EventHandler(this.button9_Click);
+		// 
+		// textBox3
+		// 
+		this.textBox3.Enabled = false;
+		this.textBox3.Location = new System.Drawing.Point(248, 128);
+		this.textBox3.Name = "textBox3";
+		this.textBox3.Size = new System.Drawing.Size(264, 20);
+		this.textBox3.TabIndex = 26;
+		this.textBox3.Text = "";
+		this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+		// 
+		// tabPage4
+		// 
+		this.tabPage4.Location = new System.Drawing.Point(4, 22);
+		this.tabPage4.Name = "tabPage4";
+		this.tabPage4.Size = new System.Drawing.Size(632, 390);
+		this.tabPage4.TabIndex = 3;
+		this.tabPage4.Text = "Video settings";
 		// 
 		// tabPage3
 		// 
@@ -397,6 +482,40 @@ namespace GUIBurner
 		this.tabPage3.Size = new System.Drawing.Size(632, 390);
 		this.tabPage3.TabIndex = 2;
 		this.tabPage3.Text = "Backup settings";
+		// 
+		// button8
+		// 
+		this.button8.Location = new System.Drawing.Point(40, 296);
+		this.button8.Name = "button8";
+		this.button8.Size = new System.Drawing.Size(104, 24);
+		this.button8.TabIndex = 10;
+		this.button8.Text = "Delete File";
+		this.button8.Click += new System.EventHandler(this.button8_Click);
+		// 
+		// DateTimeFolder
+		// 
+		this.DateTimeFolder.Location = new System.Drawing.Point(40, 344);
+		this.DateTimeFolder.Name = "DateTimeFolder";
+		this.DateTimeFolder.Size = new System.Drawing.Size(408, 32);
+		this.DateTimeFolder.TabIndex = 9;
+		this.DateTimeFolder.Text = "Create new Folder with Date/Time   e.G.     backup 12-03-05 1250";
+		// 
+		// button7
+		// 
+		this.button7.Location = new System.Drawing.Point(416, 264);
+		this.button7.Name = "button7";
+		this.button7.Size = new System.Drawing.Size(32, 24);
+		this.button7.TabIndex = 8;
+		this.button7.Text = "...";
+		this.button7.Click += new System.EventHandler(this.button7_Click);
+		// 
+		// textBox2
+		// 
+		this.textBox2.Location = new System.Drawing.Point(168, 264);
+		this.textBox2.Name = "textBox2";
+		this.textBox2.Size = new System.Drawing.Size(232, 20);
+		this.textBox2.TabIndex = 7;
+		this.textBox2.Text = "";
 		// 
 		// button6
 		// 
@@ -438,56 +557,6 @@ namespace GUIBurner
 		this.button5.Text = "OK";
 		this.button5.Click += new System.EventHandler(this.button1_Click);
 		// 
-		// tabPage4
-		// 
-		this.tabPage4.Location = new System.Drawing.Point(4, 22);
-		this.tabPage4.Name = "tabPage4";
-		this.tabPage4.Size = new System.Drawing.Size(632, 390);
-		this.tabPage4.TabIndex = 3;
-		this.tabPage4.Text = "Video settings";
-		// 
-		// tabPage5
-		// 
-		this.tabPage5.Location = new System.Drawing.Point(4, 22);
-		this.tabPage5.Name = "tabPage5";
-		this.tabPage5.Size = new System.Drawing.Size(632, 390);
-		this.tabPage5.TabIndex = 4;
-		this.tabPage5.Text = "Audio settings";
-		// 
-		// textBox2
-		// 
-		this.textBox2.Location = new System.Drawing.Point(168, 264);
-		this.textBox2.Name = "textBox2";
-		this.textBox2.Size = new System.Drawing.Size(232, 20);
-		this.textBox2.TabIndex = 7;
-		this.textBox2.Text = "";
-		// 
-		// button7
-		// 
-		this.button7.Location = new System.Drawing.Point(416, 264);
-		this.button7.Name = "button7";
-		this.button7.Size = new System.Drawing.Size(32, 24);
-		this.button7.TabIndex = 8;
-		this.button7.Text = "...";
-		this.button7.Click += new System.EventHandler(this.button7_Click);
-		// 
-		// DateTimeFolder
-		// 
-		this.DateTimeFolder.Location = new System.Drawing.Point(40, 344);
-		this.DateTimeFolder.Name = "DateTimeFolder";
-		this.DateTimeFolder.Size = new System.Drawing.Size(408, 32);
-		this.DateTimeFolder.TabIndex = 9;
-		this.DateTimeFolder.Text = "Create new Folder with Date/Time   e.G.     backup 12-03-05 1250";
-		// 
-		// button8
-		// 
-		this.button8.Location = new System.Drawing.Point(40, 296);
-		this.button8.Name = "button8";
-		this.button8.Size = new System.Drawing.Size(104, 24);
-		this.button8.TabIndex = 10;
-		this.button8.Text = "Delete File";
-		this.button8.Click += new System.EventHandler(this.button8_Click);
-		// 
 		// SetupForm
 		// 
 		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -504,7 +573,7 @@ namespace GUIBurner
 	}
 	#endregion
 
-	#region plugin vars
+		#region plugin vars
 
 	public string PluginName() 
 	{
@@ -567,94 +636,105 @@ namespace GUIBurner
 	}
 	#endregion
 
-	private void GetRecorder()
-	{
-		//Fill The Combobox with available drives
-		string name;
+		#region Private Methods
+		private void GetRecorder()
+		{
+			//Fill The Combobox with available drives
+			string name;
 	
-		for (int i=0; i<burnClass.NumberOfDrives; i++ )
-		{
-			burnClass.BurnerDrive = burnClass.RecorderDrives[i].ToString();
-			name=burnClass.Vendor+" "+burnClass.ProductID+" "+burnClass.Revision;
-			comboBox1.Items.Add(name); 
-			comboBox1.SelectedIndex=0;
-		}
-	}
-
-	private void button1_Click(object sender, System.EventArgs e)
-	{
-	  SaveSettings();
-	  this.Visible = false;
-	}
-
-	private void button2_Click(object sender, System.EventArgs e)
-	{
-	  using(folderBrowserDialog1 = new FolderBrowserDialog()) 
-	  {
-			folderBrowserDialog1.Description = "Select the folder where recorder temp file will be stored";
-			folderBrowserDialog1.ShowNewFolderButton = true;
-			folderBrowserDialog1.SelectedPath = textBox1.Text;
-			DialogResult dialogResult = folderBrowserDialog1.ShowDialog(this);
-
-			if(dialogResult == DialogResult.OK) 
+			for (int i=0; i<burnClass.NumberOfDrives; i++ )
 			{
-				textBox1.Text = folderBrowserDialog1.SelectedPath;
-			}
-	  }		
-	} 
-
-	private void LoadSettings() 
-	{
-		using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
-		{
-			textBox1.Text=xmlreader.GetValueAsString("burner","temp_folder","");
-			selIndx=xmlreader.GetValueAsInt("burner","recorder",0);
-			checkBox1.Checked=xmlreader.GetValueAsBool("burner","fastformat",true);
-			checkBox4.Checked=xmlreader.GetValueAsBool("burner","convertdvr",true);
-			checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
-			checkBox3.Checked=xmlreader.GetValueAsBool("burner","convertautomatic",false);
-			checkBox6.Checked=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
-			DateTimeFolder.Checked=xmlreader.GetValueAsBool("burner","dateTimeFolder",false);
-			int count=xmlreader.GetValueAsInt("burner","backuplines",0);
-			if (count!=0) 
-			{
-				listBox1.Items.Clear();
-				for(int i=0; i<=count; i++)
-				{
-					listBox1.Items.Add(xmlreader.GetValueAsString("burner","backupline#"+i.ToString(),""));
-				}				
+				burnClass.BurnerDrive = burnClass.RecorderDrives[i].ToString();
+				name=burnClass.Vendor+" "+burnClass.ProductID+" "+burnClass.Revision;
+				comboBox1.Items.Add(name); 
+				comboBox1.SelectedIndex=0;
 			}
 		}
-	}
 
-	private void SaveSettings() 
-	{
-		using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
+		private void button1_Click(object sender, System.EventArgs e)
 		{
-			xmlwriter.SetValue("burner","temp_folder",textBox1.Text);
-			if(checkBox5.Checked==true) 
+			SaveSettings();
+			this.Visible = false;
+		}
+
+		private void button2_Click(object sender, System.EventArgs e)
+		{
+			using(folderBrowserDialog1 = new FolderBrowserDialog()) 
 			{
-				xmlwriter.SetValue("burner","recorder",comboBox1.SelectedIndex);
-			}
-			xmlwriter.SetValueAsBool("burner","burn",checkBox5.Checked);
-			xmlwriter.SetValueAsBool("burner","fastformat",checkBox1.Checked);
-			xmlwriter.SetValueAsBool("burner","convertdvr",checkBox4.Checked);
-			xmlwriter.SetValueAsBool("burner","deletedvrsource",checkBox2.Checked);
-			xmlwriter.SetValueAsBool("burner","convertautomatic",checkBox3.Checked);
-			xmlwriter.SetValueAsBool("burner","changetvdatabase",checkBox6.Checked);
-			xmlwriter.SetValueAsBool("burner","dateTimeFolder",DateTimeFolder.Checked);
-			int count=0;
-			foreach (string text in listBox1.Items)
-			{
-				if (text!="") 
+				folderBrowserDialog1.Description = "Select the folder where recorder temp file will be stored";
+				folderBrowserDialog1.ShowNewFolderButton = true;
+				folderBrowserDialog1.SelectedPath = textBox1.Text;
+				DialogResult dialogResult = folderBrowserDialog1.ShowDialog(this);
+
+				if(dialogResult == DialogResult.OK) 
 				{
-					xmlwriter.SetValue("burner","backupline#"+count.ToString(),text);
-					count++;
+					textBox1.Text = folderBrowserDialog1.SelectedPath;
+				}
+			}		
+		} 
+
+		private void LoadSettings() 
+		{
+			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			{
+				string tempPath = Path.GetTempPath();
+				textBox1.Text=xmlreader.GetValueAsString("burner","temp_folder",tempPath);
+				if(textBox1.Text=="") textBox1.Text=tempPath;
+
+				selIndx=xmlreader.GetValueAsInt("burner","recorder",0);
+				checkBox5.Checked=xmlreader.GetValueAsBool("burner","burn",false);
+				checkBox1.Checked=xmlreader.GetValueAsBool("burner","fastformat",true);
+				checkBox4.Checked=xmlreader.GetValueAsBool("burner","convertdvr",true);
+				checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
+				checkBox3.Checked=xmlreader.GetValueAsBool("burner","convertautomatic",false);
+				checkBox6.Checked=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
+				checkBox7.Checked=xmlreader.GetValueAsBool("burner","mpegpath",false);
+				checkBox8.Checked=xmlreader.GetValueAsBool("burner","deletetvdatabase",false);
+				textBox3.Text=xmlreader.GetValueAsString("burner","mpeg_folder","");
+				DateTimeFolder.Checked=xmlreader.GetValueAsBool("burner","dateTimeFolder",false);
+				int count=xmlreader.GetValueAsInt("burner","backuplines",0);
+				if (count!=0) 
+				{
+					listBox1.Items.Clear();
+					for(int i=0; i<=count; i++)
+					{
+						listBox1.Items.Add(xmlreader.GetValueAsString("burner","backupline#"+i.ToString(),""));
+					}				
 				}
 			}
-			xmlwriter.SetValue("burner","backuplines",count);
 		}
-	}
+
+		private void SaveSettings() 
+		{
+			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
+			{
+				xmlwriter.SetValue("burner","temp_folder",textBox1.Text);
+				if(checkBox5.Checked==true) 
+				{
+					xmlwriter.SetValue("burner","recorder",comboBox1.SelectedIndex);
+				}
+				xmlwriter.SetValueAsBool("burner","burn",checkBox5.Checked);
+				xmlwriter.SetValueAsBool("burner","fastformat",checkBox1.Checked);
+				xmlwriter.SetValueAsBool("burner","convertdvr",checkBox4.Checked);
+				xmlwriter.SetValueAsBool("burner","deletedvrsource",checkBox2.Checked);
+				xmlwriter.SetValueAsBool("burner","convertautomatic",checkBox3.Checked);
+				xmlwriter.SetValueAsBool("burner","changetvdatabase",checkBox6.Checked);
+				xmlwriter.SetValueAsBool("burner","mpegpath",checkBox7.Checked);
+				xmlwriter.SetValueAsBool("burner","changetvdatabase",checkBox8.Checked);
+				xmlwriter.SetValueAsBool("burner","deletetvdatabase",DateTimeFolder.Checked);
+				xmlwriter.SetValue("burner","mpeg_folder",textBox3.Text);
+				int count=0;
+				foreach (string text in listBox1.Items)
+				{
+					if (text!="") 
+					{
+						xmlwriter.SetValue("burner","backupline#"+count.ToString(),text);
+						count++;
+					}
+				}
+				xmlwriter.SetValue("burner","backuplines",count);
+			}
+		}
 
 		private void button4_Click(object sender, System.EventArgs e)
 		{
@@ -669,25 +749,32 @@ namespace GUIBurner
 
 		private void checkBox5_CheckedChanged(object sender, System.EventArgs e)
 		{	
-			checkBox5.Checked=true;
-			comboBox1.Enabled=true;
-			textBox1.Enabled=true;
-			button2.Enabled=true;
-			checkBox1.Enabled=true;
-			burnClass= new XPBurn.XPBurnCD();
-			GetRecorder();
-			comboBox1.SelectedIndex=selIndx;
+			try 
+			{
+				burnClass= new XPBurn.XPBurnCD();
+				GetRecorder();
+				checkBox5.Checked=true;
+				comboBox1.Enabled=true;
+				textBox1.Enabled=true;
+				button2.Enabled=true;
+				checkBox1.Enabled=true;
+				comboBox1.SelectedIndex=selIndx;
+			} 				
+			catch(Exception)
+			{
+				checkBox5.Checked=false;
+			}
 		}
 
 		private void button7_Click(object sender, System.EventArgs e)
 		{
-				openFileDialog1.RestoreDirectory = true;
-				openFileDialog1.InitialDirectory=System.IO.Directory.GetCurrentDirectory();
-				if( openFileDialog1.ShowDialog( this ) == DialogResult.OK ) 
-				{
-					string file=openFileDialog1.FileName;
-					textBox2.Text = file.Substring(System.IO.Directory.GetCurrentDirectory().Length+1);
-				}
+			openFileDialog1.RestoreDirectory = true;
+			openFileDialog1.InitialDirectory=System.IO.Directory.GetCurrentDirectory();
+			if( openFileDialog1.ShowDialog( this ) == DialogResult.OK ) 
+			{
+				string file=openFileDialog1.FileName;
+				textBox2.Text = file.Substring(System.IO.Directory.GetCurrentDirectory().Length+1);
+			}
 		}
 
 		private void button6_Click(object sender, System.EventArgs e)
@@ -707,5 +794,65 @@ namespace GUIBurner
 		{
 			listBox1.Items.RemoveAt(listBox1.SelectedIndex);
 		}
+
+		private void tabPage2_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void textBox3_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void button9_Click(object sender, System.EventArgs e)
+		{
+			using(folderBrowserDialog1 = new FolderBrowserDialog()) 
+			{
+				folderBrowserDialog1.Description = "Select the folder where MPEG temp file will be stored";
+				folderBrowserDialog1.ShowNewFolderButton = true;
+				folderBrowserDialog1.SelectedPath = textBox3.Text;
+				DialogResult dialogResult = folderBrowserDialog1.ShowDialog(this);
+
+				if(dialogResult == DialogResult.OK) 
+				{
+					textBox3.Text = folderBrowserDialog1.SelectedPath;
+				}
+			}		
+		}
+
+		private void checkBox7_CheckedChanged(object sender, System.EventArgs e)
+		{
+			if (checkBox7.Checked==true) 
+			{
+				textBox3.Enabled=true;
+				button9.Enabled=true;
+			} 
+			else 
+			{
+				button9.Enabled=false;
+				textBox3.Enabled=false;
+			}
+		}
+
+		private void checkBox8_CheckedChanged(object sender, System.EventArgs e)
+		{
+			if(checkBox8.Checked==true) 
+			{
+				checkBox6.Checked=false;
+			} 
+		}
+
+		private void checkBox3_CheckedChanged(object sender, System.EventArgs e)
+		{
+			if(checkBox8.Checked==true) 
+			{
+				checkBox2.Checked=true;
+				checkBox6.Checked=true;
+				checkBox7.Checked=false;
+				checkBox8.Checked=false;
+			} 		
+		}
+		#endregion
  }
 }

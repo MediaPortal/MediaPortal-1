@@ -24,6 +24,9 @@ namespace MediaPortal.GUI.GUIBurner
 		protected bool									converting = false;
 		protected bool									deleteDvrSrc = false;
 		protected bool									changeTVDatabase = false;
+		protected bool									copyMpegPath = false;
+		protected bool									deleteTVDatabase = false;
+		protected string								mpegpath = "";
 		protected int										rotCookie = 0;
 		protected IGraphBuilder			  	graphBuilder =null;
 		protected IStreamBufferSource 	bufferSource=null ;
@@ -57,14 +60,41 @@ namespace MediaPortal.GUI.GUIBurner
 		}
 
 		/// <summary>
-		/// Update TV Databes after converting?
+		/// Update TV Database after converting?
 		/// </summary>
 		public bool changeDatabase
 		{
 			get{ return changeTVDatabase; }
 			set{ changeTVDatabase = value; }
 		}
-		
+	
+		/// <summary>
+		/// Delete TV Database after converting?
+		/// </summary>
+		public bool deleteDatabase
+		{
+			get{ return deleteTVDatabase; }
+			set{ deleteTVDatabase = value; }
+		}
+
+		/// <summary>
+		/// Copy MPeg after converting?
+		/// </summary>
+		public bool copyMpeg
+		{
+			get{ return copyMpegPath; }
+			set{ copyMpegPath = value; }
+		}
+
+		/// <summary>
+		/// MPeg Path?
+		/// </summary>
+		public string mpegPath
+		{
+			get{ return mpegpath; }
+			set{ mpegpath = value; }
+		}
+
 		/// <summary>
 		/// clear converter file list.
 		/// </summary>
@@ -191,7 +221,7 @@ namespace MediaPortal.GUI.GUIBurner
 					if (f1.Exists)				
 					{
 						string oName=System.IO.Path.ChangeExtension(f.path+"\\"+f.name,".mpg");
-						UpdateTVDatabase(f.path+"\\"+f.name,oName);
+						UpdateTVDatabase(f.path+"\\"+f.name,oName,deleteDatabase);
 					}
 				}
 				if (deleteDvrSrc==true) //Delete DVR-MS Source File
@@ -202,6 +232,16 @@ namespace MediaPortal.GUI.GUIBurner
 					{
 						FileInfo f2 = new FileInfo(f.path+"\\"+f.name);
 						f2.Delete();
+					}
+				}
+				if (copyMpeg==true) //Copy Mpeg File
+				{
+					string oName=System.IO.Path.ChangeExtension(f.path+"\\"+f.name,".mpg");
+					string dName=System.IO.Path.ChangeExtension(copyMpegPath+"\\"+f.name,".mpg");
+					FileInfo f1 = new FileInfo(oName);	
+					if (f1.Exists)					// Output file exist
+					{
+						f1.MoveTo(dName);
 					}
 				}
 			}
@@ -335,11 +375,10 @@ namespace MediaPortal.GUI.GUIBurner
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 		}
 
-
 		private SQLiteClient m_db;
 		private bool dbExists;
 
-		private void UpdateTVDatabase(string fileName,string oName) 
+		private void UpdateTVDatabase(string fileName,string oName,bool delete) 
 		{
 			string rSQL;
 			try 
@@ -356,10 +395,17 @@ namespace MediaPortal.GUI.GUIBurner
 				{
  					rSQL = String.Format("SELECT * FROM recorded WHERE strFileName LIKE '{0}'",fileName);
 					m_db.Execute(rSQL);
-					rSQL = String.Format("update recorded set strFileName='{0}' where strFileName like '{1}'",oName,fileName);
-					m_db.Execute(rSQL);
+					if (delete==false) 
+					{
+						rSQL = String.Format("update recorded set strFileName='{0}' where strFileName like '{1}'",oName,fileName);
+						m_db.Execute(rSQL);
+					} 
+					else 
+					{
+						rSQL = String.Format("delete recorded where strFileName = '{0}'",fileName);
+						m_db.Execute(rSQL);
+					}
 				}
-
 			} 
 			catch (SQLiteException ex)
 			{

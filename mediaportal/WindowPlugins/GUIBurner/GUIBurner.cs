@@ -1,5 +1,7 @@
 #region Usings
 using System;
+using System.Text;
+using System.Runtime.InteropServices;
 using System.IO;
 using System.Threading;
 using System.Globalization;
@@ -90,7 +92,8 @@ namespace MediaPortal.GUI.GUIBurner
 			MP3_DVD			= 3,
 			DIVX_CD			= 4,
 			DIVX_DVD		= 5,
-			MP_BACKUP		= 6
+			MP_BACKUP		= 6,
+			AUDIO_CD		= 7
 	};
 		private BurnTypes burnType = BurnTypes.DATA_CD;
 		private States currentState = States.STATE_MAIN;
@@ -147,13 +150,34 @@ namespace MediaPortal.GUI.GUIBurner
 		private	bool deleteDVRSrc;
 		private bool changeTVDatabase;
 		private bool dateTimeFolder;
+		private bool copyMpegPath=false;
+		private bool deleteDatabase=false;
+		private string mpegPath="";
 		private int maxAutoFiles=0;
 		private	BurnerThread bt = new BurnerThread();
 		static ArrayList dvr_extensions	= new ArrayList();
+		static ArrayList mp3_extensions	= new ArrayList();
+		public static int soundFileSize = 0;
 		private bool convertAuto;
 		private System.Windows.Forms.Timer convertTimer = new System.Windows.Forms.Timer();
+		private static long lStartTime=0;
 
 		#endregion
+
+		// Convert to short pathnames
+		// (madlldlib)
+
+		[DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
+		[return:MarshalAs(UnmanagedType.U4)]
+		public static extern int 
+			GetShortPathName(
+			[MarshalAs(UnmanagedType.LPTStr)] 
+			string inputFilePath,
+			[MarshalAs(UnmanagedType.LPTStr)] 
+			StringBuilder outputFilePath,
+			[MarshalAs(UnmanagedType.U4)] 
+			int bufferSize);
+		
 
 		#region Constructor
 		public GUIBurner()
@@ -254,8 +278,8 @@ namespace MediaPortal.GUI.GUIBurner
 								UpdateButtons();
 								break;
 							case States.STATE_AUDIO :
-								currentState=States.STATE_MAIN;		
-								UpdateButtons();
+								currentState=States.STATE_MAKE_AUDIO;		
+								ShowList();
 								break;
 							case States.STATE_VIDEO :
 								currentState=States.STATE_CONVERT;
@@ -266,6 +290,10 @@ namespace MediaPortal.GUI.GUIBurner
 								break;
 							case States.STATE_MAKE_DATA_CD :
 								burnType = BurnTypes.DATA_CD;
+								BurnCD(burnType);
+								break;
+							case States.STATE_MAKE_AUDIO :
+								burnType = BurnTypes.AUDIO_CD;
 								BurnCD(burnType);
 								break;
 							case States.STATE_MAKE_DATA_DVD :
@@ -508,6 +536,18 @@ namespace MediaPortal.GUI.GUIBurner
 									}
 									if (isdoub==false) 
 									{
+										if (currentState==States.STATE_MAKE_AUDIO) 
+										{
+											string outName=System.IO.Path.ChangeExtension(pItem.FileInfo.Name,".wav");
+											GUIPropertyManager.SetProperty("#burner_size","MP3->WAV  "+outName);
+											
+											makeWav(pItem.Path+"\\"+pItem.FileInfo.Name,tmpFolder+"\\"+outName);
+											pItem.Label=outName;
+											pItem.FileInfo.Name=outName;
+											pItem.Path=tmpFolder;
+											FileInfo fi = new FileInfo(tmpFolder+"\\"+outName);		
+											pItem.FileInfo.Length = (int)fi.Length;
+										} 
 										GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_COPY,pItem);
 										actSize=actSize+pItem.FileInfo.Length;
 										if (actSize>0) 
@@ -529,6 +569,73 @@ namespace MediaPortal.GUI.GUIBurner
 		}
 		#endregion
 
+		#region Audio Functions
+		// Decoding callback (madlldlib)
+		
+		private static bool	ReportStatusMad(uint frameCount, uint byteCount, ref MadlldlibWrapper.mad_header mh, bool kill) 
+		{
+			int perc = (int)(((float)byteCount/(float)soundFileSize)*100);
+			long lDiff = (DateTime.Now.Ticks - lStartTime)/10000;
+			if (lDiff>500) 
+			{
+				lStartTime = DateTime.Now.Ticks;
+				GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
+				GUIWindowManager.Process();
+			}
+			return true;
+		}
+
+
+		private void makeWav(string inputFile,string outputFile)
+		{
+			lStartTime = DateTime.Now.Ticks;
+			StringBuilder inputFilePath = new StringBuilder();
+			StringBuilder outputFilePath = new StringBuilder();
+			const int MAX_STRLEN = 260;	
+
+			MadlldlibWrapper.Callback defaultCallback = new MadlldlibWrapper.Callback(ReportStatusMad);
+			// Convert to short pathnames
+
+			inputFilePath.Capacity = MAX_STRLEN;
+			outputFilePath.Capacity = MAX_STRLEN;
+			GetShortPathName(inputFile, inputFilePath, MAX_STRLEN);
+			GetShortPathName(outputFile, outputFilePath, MAX_STRLEN);			
+
+			// Assign if returned path is not zero:
+
+			if (inputFilePath.Length > 0) 
+				inputFile = inputFilePath.ToString();
+
+			if (outputFilePath.Length > 0)
+				outputFile = outputFilePath.ToString();			
+								
+			// Determine file size
+			FileInfo fi = new FileInfo(inputFile);		
+			soundFileSize = (int)fi.Length;
+		
+			// status/error message reporting. 
+			// String length must be set 
+			// explicitly
+
+			StringBuilder status = new StringBuilder(); 
+			status.Capacity=256;				
+			
+			// call the decoding function
+			try 
+			{
+				int st=MadlldlibWrapper.DecodeMP3(inputFile, outputFile,MadlldlibWrapper.DEC_WAV, status, defaultCallback);
+			} 
+			catch(Exception) 
+			{
+				Log.Write("Error converting MP3");
+			}
+			// this prevents garbage collection
+			// from occurring on callback
+
+			GC.KeepAlive(defaultCallback);				
+		}
+		#endregion
+
 		#region Private Methods
 
 		private void ConvertDvrMs()
@@ -539,6 +646,9 @@ namespace MediaPortal.GUI.GUIBurner
 				bt.ClearFiles();
 				bt.deleteDvrMsSrc=deleteDVRSrc;
 				bt.changeDatabase=changeTVDatabase;
+				bt.copyMpeg=copyMpegPath;
+				bt.deleteDatabase=deleteDatabase;
+		    bt.mpegPath=mpegPath;
 				int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
 				for (int i=0; i<count; i++) 
 				{
@@ -717,6 +827,15 @@ namespace MediaPortal.GUI.GUIBurner
 					max=cdSize;
 					actSize=0;
 					break;
+				case States.STATE_MAKE_AUDIO :
+					UpdateButtons();
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2102));
+					currentExt=mp3_extensions;
+					LoadDriveListControl();
+					currentFolder="";
+					max=cdSize;
+					actSize=0;
+					break;
 				case States.STATE_MP3_CD :
 					UpdateButtons();
 					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2139));
@@ -868,6 +987,15 @@ namespace MediaPortal.GUI.GUIBurner
 					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_AUDIO);
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_AUDIO,GUILocalizeStrings.Get(2100));
 					break;
+				case States.STATE_MAKE_AUDIO : // Burn MP3 CD Menu
+					AllButtonsOff();
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_AUDIO,GUILocalizeStrings.Get(2100));
+					break;
 				case States.STATE_MP3_DVD : // Burn MP3 DVD Menu
 					AllButtonsOff();
 					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BACK);
@@ -966,13 +1094,17 @@ namespace MediaPortal.GUI.GUIBurner
 			{
 				isBurner=xmlreader.GetValueAsBool("burner","burn",true);
 				fastFormat=xmlreader.GetValueAsBool("burner","fastformat",true);
-				tmpFolder=xmlreader.GetValueAsString("burner","temp_folder","c:\\image.iso");
+				tmpFolder=xmlreader.GetValueAsString("burner","temp_folder","c:\\");
 				recorder=xmlreader.GetValueAsInt("burner","recorder",0);
 				convertDVR=xmlreader.GetValueAsBool("burner","convertdvr",true);
 				deleteDVRSrc=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
 				changeTVDatabase=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
 				dateTimeFolder=xmlreader.GetValueAsBool("burner","dateTimeFolder",false);
 
+				copyMpegPath=xmlreader.GetValueAsBool("burner","mpegpath",false);
+				deleteDatabase=xmlreader.GetValueAsBool("burner","deletetvdatabase",false);
+				mpegPath=xmlreader.GetValueAsString("burner","mpeg_folder","");
+				
 				if (isBurner==true) 
 				{
 					burnClass= new XPBurn.XPBurnCD();
@@ -1060,14 +1192,7 @@ namespace MediaPortal.GUI.GUIBurner
 							GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
 							try 
 							{
-								if (bTyp == BurnTypes.DATA_CD || bTyp == BurnTypes.DATA_DVD) 
-								{
-									burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
-								}
-								if (bTyp == BurnTypes.MP3_CD || bTyp == BurnTypes.MP3_DVD) 
-								{
-									burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
-								}
+								burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
 							}
 							catch(Exception ex)
 							{
@@ -1075,7 +1200,14 @@ namespace MediaPortal.GUI.GUIBurner
 							}
 						}
 					}
-					burnClass.ActiveFormat = XPBurn.RecordType.afData;
+					if (bTyp == BurnTypes.AUDIO_CD) 
+					{
+						burnClass.ActiveFormat = XPBurn.RecordType.afMusic;
+					} 
+					else 
+					{
+						burnClass.ActiveFormat = XPBurn.RecordType.afData;
+					}
 					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
 					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
 					if(burnClass.MediaInfo.isWritable == false) 
@@ -1288,6 +1420,7 @@ namespace MediaPortal.GUI.GUIBurner
 								fi.CopyTo(dest+"\\"+file, true);
 								backupFiles.Add(dest+"\\"+file);
 								GUIPropertyManager.SetProperty("#convert_info",dest+"\\"+file);
+								GUIWindowManager.Process();
 							}
 						}
 					}
@@ -1311,6 +1444,7 @@ namespace MediaPortal.GUI.GUIBurner
 						result = result && (fi.CopyTo(destFile, true) != null);
 						backupFiles.Add( destFile);
 						GUIPropertyManager.SetProperty("#convert_info",destFile);
+						GUIWindowManager.Process();
 					}
 				}
 				else 
@@ -1319,6 +1453,7 @@ namespace MediaPortal.GUI.GUIBurner
 					result = result && (fi.CopyTo(destFile, true) != null);
 					backupFiles.Add( destFile);					
 					GUIPropertyManager.SetProperty("#convert_info",destFile);
+					GUIWindowManager.Process();
 				}
 			}
 			if (ext=="") 
@@ -1339,9 +1474,12 @@ namespace MediaPortal.GUI.GUIBurner
 		/// </summary>
 		private void InitializeConvertTimer() 
 		{
-			ArrayList     m_tvcards    = new ArrayList();
 			dvr_extensions.Clear();
 			dvr_extensions.Add(".dvr-ms");
+			mp3_extensions.Clear();
+			mp3_extensions.Add(".mp3");
+			
+			ArrayList     m_tvcards    = new ArrayList();
 			recordCards=0;
 		
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
