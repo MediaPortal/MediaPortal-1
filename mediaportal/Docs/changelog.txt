@@ -1,3 +1,5 @@
+17-07-2004  my tv       : fixed : duration of recorded programs is not correct. 
+17-07-2004  my tv       : fixed : failed to play .sbe files
 17-07-2004  general     : fixed : keep focus on buttons after pressing them (view as)
 17-07-2004  home        : fixed : home showed no background graphics if language was not english
 17-07-2004  general     : added : support for USBUIRT (input)

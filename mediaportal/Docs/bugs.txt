@@ -10,8 +10,6 @@ Cosmetic bugs:
 
 crash/things not working Bugs:
 
-  13-07-2004 my tv      : duration of recorded programs is not correct. 
-                          I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   19-06-2004 my video   : vmr9: lines/stripes?
