@@ -1954,8 +1954,10 @@ namespace MediaPortal.TV.Recording
 		public void Tune(object tuningObject, int disecqNo)
 		{
 		}
-		public void StoreChannels(int ID,bool radio, bool tv)
+		public void StoreChannels(int ID,bool radio, bool tv, out int newChannels, out int updatedChannels)
 		{
+			newChannels=0;
+			updatedChannels=0;
 		}
 		public IBaseFilter Mpeg2DataFilter()
 		{

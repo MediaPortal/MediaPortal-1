@@ -25,6 +25,11 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		/// <param name="description"></param>
 		void OnStatus(string description);
+		/// <summary>
+		/// Shows current status of the tuning progress
+		/// </summary>
+		/// <param name="description"></param>
+		void OnStatus2(string description);
 
 		/// <summary>
 		/// Shows how much percent of the tuning has been done

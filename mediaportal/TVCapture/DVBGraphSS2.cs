@@ -1928,8 +1928,10 @@ namespace MediaPortal.TV.Recording
 
 		}
 		//
-		public void StoreChannels(int ID,bool radio, bool tv)
+		public void StoreChannels(int ID,bool radio, bool tv, out int newChannels, out int updatedChannels)
 		{
+			newChannels=0;
+			updatedChannels=0;
 			Log.WriteFile(Log.LogType.Capture,"called StoreChannels()");
 			if (m_mpeg2Data==null) return;
 
@@ -2109,9 +2111,11 @@ namespace MediaPortal.TV.Recording
 						iChannelNumber=tvChan.Number;
 						int id=TVDatabase.AddChannel(tvChan);
 						channelId=id;
+						newChannels++;
 					}
 					else
 					{
+						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
 
@@ -2188,9 +2192,11 @@ namespace MediaPortal.TV.Recording
 							station.Scrambled=info.scrambled;
 							int id=RadioDatabase.AddStation(ref station);
 							channelId=id;
+							newChannels++;
 						}
 						else
 						{
+							updatedChannels++;
 							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 						}
 

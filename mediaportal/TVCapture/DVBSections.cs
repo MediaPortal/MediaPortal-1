@@ -238,8 +238,10 @@ namespace MediaPortal.TV.Recording
 			int loop;
 			// check
 			if(buf.Length<10)
+			{
+				Log.Write("decodePATTable() length < 10 length={0}", buf.Length);
 				return 0;
-
+			}
 			int table_id = buf[0];
 			int section_syntax_indicator = (buf[1]>>7) & 1;
 			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -253,8 +255,10 @@ namespace MediaPortal.TV.Recording
 			loop =(section_length - 9) / 4;
 			//Log.WriteFile(Log.LogType.Capture,"dvbsections:decodePatTable() loop={0}", loop);
 			if(loop<1)
+			{
+				Log.Write("decodePATTable() loop < 1 loop={0}", buf.Length);
 				return 0;
-
+			}
 			ChannelInfo ch=new ChannelInfo();
 			for (int count=0;count<loop;count++)
 			{
@@ -266,7 +270,13 @@ namespace MediaPortal.TV.Recording
 				ch.network_pmt_PID = ((b[2] & 0x1F)<<8)+b[3];
 				//Log.WriteFile(Log.LogType.Capture,"dvbsections:decodePatTable() chan:{0} {1} {2}", ch.transportStreamID,ch.networkID,ch.network_pmt_PID);
 				if(ch.program_number!=0)
+				{
 					tp.PMTTable.Add(ch);
+				}
+				else
+				{
+					Log.Write("decodePATTable() program number=0");
+				}
 			}
 			return loop;
 		}
@@ -292,14 +302,18 @@ namespace MediaPortal.TV.Recording
 			}
 			try
 			{
+				Log.Write("AutoTune()");
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
 				GetStreamData(filter,0, 0,0,Timeout);
 				// jump to parser
+				Log.Write("AutoTune() sectionlist count:{0}",m_sectionsList.Count);
 				foreach(byte[] arr in m_sectionsList)
 					decodePATTable(arr, transp[0], ref transponder);
 
 				LoadPMTTables(filter,transp[0],ref transponder);
+				
+				Log.Write("AutoTune() done");
 			}
 			catch(Exception ex)
 			{
@@ -674,7 +688,10 @@ namespace MediaPortal.TV.Recording
 		private int decodePMTTable(byte[] buf, TPList transponderInfo, Transponder tp,ref ChannelInfo pat)
 		{
 			if(buf.Length<13)
+			{
+				Log.Write("decodePMTTable() len < 13 len={0}", buf.Length);
 				return 0;
+			}
 			int table_id = buf[0];
 			int section_syntax_indicator = (buf[1]>>7) & 1;
 			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -689,8 +706,11 @@ namespace MediaPortal.TV.Recording
 			// store info about the channel
 			//
 			if(pat.program_number!=program_number)
+			{
+				
+				Log.Write("decodePMTTable() pat program#!=program numer {0}!={1}", pat.program_number,program_number);
 				return 0;
-			
+			}
 			pat.pid_list = new ArrayList();
 			pat.pcr_pid = pcr_pid;
 			string pidText="";
@@ -990,8 +1010,10 @@ namespace MediaPortal.TV.Recording
 		{
 
 			if(buf.Length<12)
+			{
+				Log.Write("decodeSDTTable() len < 12 len={0}", buf.Length);
 				return -1;
-
+			}
 			int table_id = buf[0];
 			int section_syntax_indicator = (buf[1]>>7) & 1;
 			int section_length = ((buf[1]& 0xF)<<8) + buf[2];

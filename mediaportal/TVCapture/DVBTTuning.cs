@@ -179,7 +179,9 @@ namespace MediaPortal.TV.Recording
 		void ScanChannels()
 		{
 			timer1.Enabled=false;
-			captureCard.StoreTunedChannels(false,true);
+			int newChannels, updatedChannels;
+			captureCard.StoreTunedChannels(false,true,out newChannels, out updatedChannels);
+			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();
 			currentState=State.ScanFrequencies;
 			currentOffset=0;

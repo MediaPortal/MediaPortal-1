@@ -199,9 +199,10 @@ namespace MediaPortal.TV.Recording
 
 		void ScanChannels()
 		{
-
+			int newChannels, updatedChannels;
 			timer1.Enabled=false;
-			captureCard.StoreTunedChannels(false,true);
+			captureCard.StoreTunedChannels(false,true,out newChannels, out updatedChannels);
+			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();
 			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning transponders");
 			currentState=State.ScanTransponders;

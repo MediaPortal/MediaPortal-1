@@ -2837,8 +2837,10 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		/// <param name="radio">if true:Store radio channels found in the database</param>
 		/// <param name="tv">if true:Store tv channels found in the database</param>
-		public void StoreChannels(int ID, bool radio, bool tv)
+		public void StoreChannels(int ID, bool radio, bool tv, out int newChannels, out int updatedChannels)
 		{	
+			newChannels=0;
+			updatedChannels=0;
 			if (m_SectionsTables==null) return;
 
 			//get list of current tv channels present in the database
@@ -2896,7 +2898,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11}", 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11} program#:{12}", 
 					info.service_provider_name,
 					info.service_name,
 					info.scrambled,
@@ -2905,12 +2907,13 @@ namespace MediaPortal.TV.Recording
 					info.transportStreamID,
 					info.serviceID,
 					hasVideo, ((!hasVideo) && hasAudio),
-					currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid);
+					currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
+					info.program_number);
 
 				if (info.serviceID==0) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel#{0} has no service id",i);
-					continue;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel#{0} has no service id",i);
+						continue;
 				}
 				bool IsRadio		  = ((!hasVideo) && hasAudio);
 				bool IsTv   		  = (hasVideo);//some tv channels dont have an audio stream
@@ -2963,9 +2966,11 @@ namespace MediaPortal.TV.Recording
 						iChannelNumber=tvChan.Number;
 						int id=TVDatabase.AddChannel(tvChan);
 						channelId=id;
+						newChannels++;
 					}
 					else
 					{
+						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
 
@@ -3050,9 +3055,11 @@ namespace MediaPortal.TV.Recording
 						station.Scrambled=info.scrambled;
 						int id=RadioDatabase.AddStation(ref station);
 						channelId=id;
+						newChannels++;
 					}
 					else
 					{
+						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
 
