@@ -1927,7 +1927,7 @@ namespace MediaPortal.GUI.Video
             if (null == dlgYesNo) return;
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
             dlgYesNo.SetLine(1, title);
-            dlgYesNo.SetLine(2, "");
+            dlgYesNo.SetLine(2, Utils.SecondsToHMSString(stoptime) );
             dlgYesNo.SetDefaultToYes(true);
             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
             
