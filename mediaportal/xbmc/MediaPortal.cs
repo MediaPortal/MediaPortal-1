@@ -744,6 +744,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
 			tMouseClickTimer = new System.Timers.Timer(SystemInformation.DoubleClickTime);
+      tMouseClickTimer.AutoReset = false;
 			tMouseClickTimer.Enabled = false;
 			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(tMouseClickTimer_Elapsed);
 			tMouseClickTimer.SynchronizingObject = this;
@@ -1516,6 +1517,12 @@ public class MediaPortalApp : D3DApp, IRender
     float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
     float x = (fX * ((float)iCursorX)) - GUIGraphicsContext.OffsetX;
     float y = (fY * ((float)iCursorY)) - GUIGraphicsContext.OffsetY; ;
+    
+    // Save last position
+    m_iLastMousePositionX = iCursorX;
+    m_iLastMousePositionY = iCursorY;
+
+    // Send move moved action
     actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
     GUIGraphicsContext.OnAction(actionMove);
 
@@ -1599,10 +1606,6 @@ public class MediaPortalApp : D3DApp, IRender
 				return;
       }
     }	
-
-    // Save last position
-    m_iLastMousePositionX = iCursorX;
-    m_iLastMousePositionY = iCursorY;
 	}
 	
 	private void tMouseClickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
