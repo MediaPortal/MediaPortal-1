@@ -135,12 +135,9 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
                 />
                 <Reference
-                    Name = "TunerLib"
-                    Guid = "{9B085638-018E-11D3-9D8E-00C04F72D980}"
-                    VersionMajor = "1"
-                    VersionMinor = "0"
-                    Lcid = "0"
-                    WrapperTool = "tlbimp"
+                    Name = "Interop.TunerLib"
+                    AssemblyName = "Interop.TunerLib"
+                    HintPath = "..\Interop.TunerLib.dll"
                 />
             </References>
         </Build>
