@@ -907,11 +907,11 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case 6: // For Landscape picutres zoomstart 100 / Zoom in to BestWidth / pan 
-          bEnd = KenBurnsLandscape1(m_iKenBurnsState, m_iFrameNr, iNrOfFramesPerEffect, bReset);
+          bEnd = KenBurnsLandscapeZoom(m_iKenBurnsState, m_iFrameNr, iNrOfFramesPerEffect, bReset);
           break;
 
         case 7: // For Landscape picutres zoomstart BestWidth / Pan / Zoom to 100%
-          bEnd = KenBurnsLandscape2(m_iKenBurnsState, m_iFrameNr, iNrOfFramesPerEffect, bReset);
+          bEnd = KenBurnsLandscapePan(m_iKenBurnsState, m_iFrameNr, iNrOfFramesPerEffect, bReset);
           break;
 
       }
@@ -967,31 +967,23 @@ namespace MediaPortal.GUI.Pictures
 
     bool KenBurnsLandscape1(int iState, int iFrameNr, int iNrOfFramesPerEffect, bool bReset)
     {
-      // For Landscape picutres zoomstart 100 / Zoom in to BestWidth / pan 
+      // For Landscape pictures zoomstart 100 / Zoom in to BestWidth / pan 
       int iRandom;
       bool bEnd = false;
       if (bReset)
       {
         // find start and end points (8 possible points around the rectangle)
-        iRandom = randomizer.Next(4);
+        iRandom = randomizer.Next(2);
         switch(iRandom)
         {
           default:
           case 0:
-            iStartPoint = 1;
+            iStartPoint = 0;
             iEndPoint = 4;
             break;
           case 1:
-            iStartPoint = 8;
-            iEndPoint = 3;
-            break;
-          case 2:
-            iStartPoint = 8;
-            iEndPoint = 5;
-            break;
-          case 3:
-            iStartPoint = 7;
-            iEndPoint = 4;
+            iStartPoint = 0;
+            iEndPoint = 8;
             break;
         }
 
@@ -1086,25 +1078,17 @@ namespace MediaPortal.GUI.Pictures
       if (bReset)
       {
         // find start and end points (8 possible points around the rectangle)
-        iRandom = randomizer.Next(4);
+        iRandom = randomizer.Next(2);
         switch(iRandom)
         {
           default:
           case 0:
-            iStartPoint = 1;
+            iStartPoint = 8;
             iEndPoint = 4;
             break;
           case 1:
-            iStartPoint = 8;
-            iEndPoint = 3;
-            break;
-          case 2:
-            iStartPoint = 8;
-            iEndPoint = 5;
-            break;
-          case 3:
-            iStartPoint = 7;
-            iEndPoint = 4;
+            iStartPoint = 4;
+            iEndPoint = 8;
             break;
         }
 
@@ -1193,6 +1177,121 @@ namespace MediaPortal.GUI.Pictures
     
       return bEnd;
     }
+
+    bool KenBurnsLandscapeZoom(int iState, int iFrameNr, int iNrOfFramesPerEffect, bool bReset)
+    {
+      // For Landscape pictures zoomstart 100 / Zoom in to BestWidth / pan 
+      int iRandom;
+      bool bEnd = false;
+      if (bReset)
+      {
+        // find start and end points (8 possible points around the rectangle)
+        iRandom = randomizer.Next(2);
+        switch(iRandom)
+        {
+          default:
+          case 0:
+            m_fEndZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)
+            m_fStartZoomFactor = m_fBestZoomFactorCurrent;
+            m_fZoomChange = (m_fEndZoomFactor - m_fStartZoomFactor)/iNrOfFramesPerEffect;            break;
+          case 1:
+            m_fEndZoomFactor = m_fBestZoomFactorCurrent;
+            m_fStartZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)
+            m_fZoomChange = (m_fEndZoomFactor - m_fStartZoomFactor)/iNrOfFramesPerEffect;
+            break;
+        }
+
+        Log.Write("Start point: {0}", iStartPoint);
+        Log.Write("End Point : {0}", iEndPoint);
+
+        // Init 100% top center fixed
+        m_fZoomFactor = m_fStartZoomFactor;
+        m_iZoomType = 0; // Centered
+      }
+      else
+      {
+        switch (iState)
+        {
+          case 0: // - Zoom
+            m_fZoomFactor = m_fStartZoomFactor + m_fZoomChange * iFrameNr;
+            Zoom(m_fZoomFactor);
+            break;
+
+          default:
+            bEnd = true;
+            break;
+        }
+      }
+
+      return bEnd;
+    }
+
+    bool KenBurnsLandscapePan(int iState, int iFrameNr, int iNrOfFramesPerEffect, bool bReset)
+    {
+      // For Landscape pictures zoomstart BestWidth / Pan / Zoom to 100%
+      int iRandom;
+      bool bEnd = false;
+      if (bReset)
+      {
+        // find start and end points (8 possible points around the rectangle)
+        iRandom = randomizer.Next(2);
+        switch(iRandom)
+        {
+          default:
+          case 0:
+            iStartPoint = 8;
+            iEndPoint = 4;
+            break;
+          case 1:
+            iStartPoint = 4;
+            iEndPoint = 8;
+            break;
+        }
+
+        Log.Write("Start point: {0}", iStartPoint);
+        Log.Write("End Point : {0}", iEndPoint);
+
+        // Init 120% height centered
+        m_fZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)
+        m_iZoomType = iStartPoint;
+      }
+      else
+      {
+        switch (iState)
+        {
+          case 0: // - Pan start point to end point
+            if (iFrameNr == 0)
+            {
+              // Init single effect
+              float iDestY=0;
+              float iDestX=0;
+              switch (iEndPoint)
+              {
+                case 8:
+                  iDestX = (float)m_iZoomWidth/2;
+                  //m_fPanXChange = m_iZoomLeft/iNrOfFramesPerEffect;
+                  break;
+                case 4:
+                  iDestX = (float)m_dwWidthBackGround - (float)m_iZoomWidth/2;
+                  //m_fPanXChange = ((float)m_iZoomWidth - (float)m_dwWidthBackGround)/iNrOfFramesPerEffect;
+                  break;
+              }   
+
+              m_fPanXChange = (iDestX - (m_iZoomLeft+(float)m_iZoomWidth/2))/iNrOfFramesPerEffect; // Travel Y;
+            }
+
+            Pan(m_fPanXChange, 0);
+            break;    
+
+          default:
+            bEnd = true;
+            break;
+        }
+      }
+    
+      return bEnd;
+    }
+
 
     bool KenBurnsEffectRandom(int iState, int iFrameNr, int iNrOfFramesPerEffect, bool bReset)
     {
@@ -1525,7 +1624,7 @@ namespace MediaPortal.GUI.Pictures
             m_iZoomType = 0; // centered, centered
 
             // Calc changes per slide
-            m_fEndZoomFactor = BestZoomCurrent()*1.25f; // Calc best zoom (whole screen filled + 25%)
+            m_fEndZoomFactor = BestZoomCurrent() * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 25%)
             m_fStartZoomFactor = m_fZoomFactor;
             m_fZoomChange = (m_fEndZoomFactor - m_fZoomFactor)/iNrOfFramesPerEffect;
           }
@@ -1588,7 +1687,7 @@ namespace MediaPortal.GUI.Pictures
             m_iZoomType = 1; // Top Left unchanged
 
             // Calc changes per slide
-            m_fEndZoomFactor = BestZoomCurrent()*1.25f; // Calc best zoom (whole screen filled + 25%)
+            m_fEndZoomFactor = BestZoomCurrent() * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 25%)
             m_fStartZoomFactor = m_fZoomFactor;
             m_fZoomChange = (m_fEndZoomFactor - m_fZoomFactor)/iNrOfFramesPerEffect;
           }
@@ -1657,7 +1756,7 @@ namespace MediaPortal.GUI.Pictures
               m_iZoomType = 2;
 
               // Calc changes per slide
-              m_fEndZoomFactor = m_fBestZoomFactorCurrent*1.25f; // Calc best zoom (whole screen filled + 25%)
+              m_fEndZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 25%)
               m_fStartZoomFactor = m_fZoomFactor;
               m_fZoomChange = (m_fEndZoomFactor - m_fZoomFactor)/iNrOfFramesPerEffect;
             }
@@ -1697,7 +1796,7 @@ namespace MediaPortal.GUI.Pictures
       if (bReset)
       {
         // Init 100% top center fixed
-        m_fZoomFactor = m_fBestZoomFactorCurrent*1.25f;
+        m_fZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR;
         m_iZoomType = 2;
       }
       else
@@ -1727,7 +1826,7 @@ namespace MediaPortal.GUI.Pictures
               m_fZoomChange = (m_fZoomFactor - m_fEndZoomFactor)/iNrOfFramesPerEffect;
             }
 
-            m_fZoomFactor = m_fStartZoomFactor + m_fZoomChange * iFrameNr;
+            m_fZoomFactor = m_fStartZoomFactor - m_fZoomChange * iFrameNr;
             if (m_fZoomFactor < m_fEndZoomFactor) m_fZoomFactor = m_fEndZoomFactor;
             Zoom(m_fZoomFactor);
             break;
@@ -2093,20 +2192,32 @@ namespace MediaPortal.GUI.Pictures
             * 8: // Heigth centered, Left unchanged            
             * */
           case 0: // centered, centered
+            m_iZoomWidth >>= 1;
+            m_iZoomWidth <<= 1;
+            m_iZoomHeight >>= 1;
+            m_iZoomHeight <<= 1;
             m_iZoomLeft = (int)(middlex - m_iZoomWidth*0.5f);
             m_iZoomTop = (int)(middley - m_iZoomHeight*0.5f);
             break;
           case 2: // Width centered, Top unchanged
+            m_iZoomWidth >>= 1;
+            m_iZoomWidth <<= 1;
             m_iZoomLeft = (int)(middlex - m_iZoomWidth*0.5f);
             break;
           case 8: // Heigth centered, Left unchanged
+            m_iZoomHeight >>= 1;
+            m_iZoomHeight <<= 1;
             m_iZoomTop = (int)(middley - m_iZoomHeight*0.5f);
             break;
           case 6: // Widht centered, Bottom unchanged
+            m_iZoomWidth >>= 1;
+            m_iZoomWidth <<= 1;
             m_iZoomLeft = (int)(middlex - m_iZoomWidth*0.5f);
             m_iZoomTop = yend - m_iZoomHeight;
             break;
           case 4: // Height centered, Right unchanged
+            m_iZoomHeight >>= 1;
+            m_iZoomHeight <<= 1;
             m_iZoomTop = (int)(middley - m_iZoomHeight*0.5f);
             m_iZoomLeft = xend - m_iZoomWidth;
             break;
