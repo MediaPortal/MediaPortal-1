@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using DShowNET;
 using DirectX.Capture;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Recording
 {
@@ -99,7 +100,7 @@ namespace MediaPortal.TV.Recording
 			[PreserveSig]
 			int AddPIDs (
 				int count, 
-				[In] ref int[] pidArray
+				[In,MarshalAs(UnmanagedType.LPArray)] int[] pidArray
 				);
 
 			//this function is obselete, please use IB2C2MPEG2DataCtrl2's DeletePIDsFromPin function
@@ -800,7 +801,13 @@ namespace MediaPortal.TV.Recording
 			{
 				for (t = 0; t <= count; t++)
 				{
-					System.Windows.Forms.Application.DoEvents();
+					if(m_textBox!=null)
+					{
+						m_textBox.Text=Convert.ToString(m_transponder[t].TPfreq)+" MHz ("+Convert.ToString(servCount)+" services found yet)";
+						System.Windows.Forms.Application.DoEvents();
+						m_textBox.Refresh();
+					}
+
 					if(m_breakScan==true)
 						break;
 					DeleteAllPIDs(m_dataCtrl,0);
@@ -817,7 +824,6 @@ namespace MediaPortal.TV.Recording
 					// set the tranponder data
 					transplist[t].channels = new ArrayList();
 					transplist[t].PMTTable = new ArrayList();
-					// first get pmt
 					if(m_lnb1!=-1 && m_lnbsw!=-1)
 					{
 						if (m_transponder[t].TPfreq >= m_lnbsw*1000)
@@ -840,36 +846,37 @@ namespace MediaPortal.TV.Recording
 					m_selKhz=lnbkhz;
 					m_dvbSections.SetLNBParams(m_diseqc,m_lnb0,m_lnb1,m_lnbsw,m_lnbkhz,lnbkhz,lnbFreq);
 					// feedback
-					if(m_textBox!=null)
-					{
-						m_textBox.Text=Convert.ToString(m_transponder[t].TPfreq/1000)+" MHz...("+Convert.ToString(servCount)+" services found yet)";
-						System.Windows.Forms.Application.DoEvents();
-					}
+					tunedFlag=false;
 					tuneTryCount=0;
 					TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, 0, lnbFreq);	
 					do // try 3 times to tune
 					{
 						tunedFlag=TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
 						tuneTryCount++;
-						//System.Threading.Thread.Sleep(500);
 					}while(tunedFlag==false && tuneTryCount<3);
-
+					//
 					if (tunedFlag==true)
 					{
 					
+						m_dvbSections.Timeout=2500;
 						m_dvbSections.ProcessPATSections(m_dataCtrl,m_mpeg2Data,m_transponder[t],ref transplist[t]);
 						if(m_textBox!=null)
 						{
 							servCount+=transplist[t].channels.Count;
 						}
+						if(m_textBox!=null)
+						{
+							m_textBox.Text=Convert.ToString(m_transponder[t].TPfreq)+" MHz ("+Convert.ToString(servCount)+" services found yet)";
+							System.Windows.Forms.Application.DoEvents();
+						}
 					}
 					System.Windows.Forms.Application.DoEvents();
-
-				}
-			}
+				}// for (t=
+			}// try
 			catch(Exception ex)
 			{
-				System.Windows.Forms.MessageBox.Show(ex.Message);
+				Log.Write("skystar2: FAILED scan exception:{0}",ex.Message);
+				//System.Windows.Forms.MessageBox.Show(ex.Message);
 			}
 		}
 
