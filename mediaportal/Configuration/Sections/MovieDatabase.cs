@@ -45,6 +45,21 @@ namespace MediaPortal.Configuration.Sections
 				return Title;
 			}
     }
+		internal class ComboBoxArt
+		{
+			public string		Title;
+			public string   URL;
+
+			public ComboBoxArt(string title, string url)
+			{
+				this.Title = title;
+				this.URL   = url;
+			}
+			public override string ToString()
+			{
+				return Title;
+			}
+		}
 
     bool stopRebuild = false;
     ArrayList extractedTags;
@@ -118,6 +133,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.TextBox tbWritingCredits;
 		private System.Windows.Forms.Button btnDelete;
+		private System.Windows.Forms.ComboBox comboBoxPictures;
+		private System.Windows.Forms.Label label19;
     ArrayList availableFiles;
 
     public MovieDatabase() :  this("Movie Database")
@@ -281,6 +298,8 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewFiles = new System.Windows.Forms.ListView();
 			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage7 = new System.Windows.Forms.TabPage();
+			this.label19 = new System.Windows.Forms.Label();
+			this.comboBoxPictures = new System.Windows.Forms.ComboBox();
 			this.btnLookupImage = new System.Windows.Forms.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
@@ -447,6 +466,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl2.SelectedIndex = 0;
 			this.tabControl2.Size = new System.Drawing.Size(416, 384);
 			this.tabControl2.TabIndex = 31;
+			this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
 			// 
 			// tabPage3
 			// 
@@ -979,6 +999,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage7
 			// 
+			this.tabPage7.Controls.Add(this.label19);
+			this.tabPage7.Controls.Add(this.comboBoxPictures);
 			this.tabPage7.Controls.Add(this.btnLookupImage);
 			this.tabPage7.Controls.Add(this.label15);
 			this.tabPage7.Controls.Add(this.textBoxPictureURL);
@@ -988,6 +1010,22 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage7.Size = new System.Drawing.Size(408, 358);
 			this.tabPage7.TabIndex = 4;
 			this.tabPage7.Text = "Coverart";
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(256, 32);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(100, 16);
+			this.label19.TabIndex = 32;
+			this.label19.Text = "Pictures:";
+			// 
+			// comboBoxPictures
+			// 
+			this.comboBoxPictures.Location = new System.Drawing.Point(256, 56);
+			this.comboBoxPictures.Name = "comboBoxPictures";
+			this.comboBoxPictures.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxPictures.TabIndex = 31;
+			this.comboBoxPictures.SelectedIndexChanged += new System.EventHandler(this.comboBoxPictures_SelectedIndexChanged);
 			// 
 			// btnLookupImage
 			// 
@@ -1019,7 +1057,7 @@ namespace MediaPortal.Configuration.Sections
 			this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pictureBox1.Location = new System.Drawing.Point(24, 16);
 			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.Size = new System.Drawing.Size(336, 232);
+			this.pictureBox1.Size = new System.Drawing.Size(208, 232);
 			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.pictureBox1.TabIndex = 27;
 			this.pictureBox1.TabStop = false;
@@ -1345,6 +1383,7 @@ namespace MediaPortal.Configuration.Sections
 					if (ID < 0)
 					{
 						id=VideoDatabase.AddMovie(file,false);
+						movieDetails.ID=id;
 					}
 					else
 					{
@@ -1535,7 +1574,18 @@ namespace MediaPortal.Configuration.Sections
 			string file=Utils.GetLargeCoverArtName(TitleThumbsFolder,movie.Title);
 			if (System.IO.File.Exists(file))
 			{
-				pictureBox1.Image=Image.FromFile(file);
+				using (Image img = Image.FromFile(file))
+				{
+					Bitmap result= new Bitmap(img.Width,img.Height);
+					using (Graphics g = Graphics.FromImage(result))
+					{
+						g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+						g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+						g.DrawImage(img, new Rectangle(0,0,img.Width,img.Height) );
+					}
+					pictureBox1.Image=result;
+				}
 			}
 			listViewMovieActors.Items.Clear();
 			string[] actors=movie.Cast.Split('\n');
@@ -1883,7 +1933,18 @@ namespace MediaPortal.Configuration.Sections
 			string file=Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
 			if (System.IO.File.Exists(file))
 			{
-				pictureBox1.Image=Image.FromFile(file);
+				using (Image img = Image.FromFile(file))
+				{
+					Bitmap result= new Bitmap(img.Width,img.Height);
+					using (Graphics g = Graphics.FromImage(result))
+					{
+						g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+						g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+						g.DrawImage(img, new Rectangle(0,0,img.Width,img.Height) );
+					}
+					pictureBox1.Image=result;
+				}
 			}
 		}
 
@@ -1898,6 +1959,33 @@ namespace MediaPortal.Configuration.Sections
 			{
 				VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
 				LoadMovies();
+			}
+		}
+
+		private void comboBoxPictures_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			ComboBoxArt art = comboBoxPictures.SelectedItem as ComboBoxArt;
+			if (art!=null)
+			{
+				textBoxPictureURL.Text=art.URL;
+			}
+		}
+
+		private void tabControl2_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if (tabControl2.SelectedTab==tabPage7)
+			{
+				comboBoxPictures.Items.Clear();
+				AmazonImageSearch search = new AmazonImageSearch();
+				search.Search(CurrentMovie.Title);
+				if (search.Count>0)
+				{
+					for (int i=0; i < search.Count;++i)
+					{
+						ComboBoxArt art = new ComboBoxArt(String.Format("{0}", (i+1)),search[i]);
+						comboBoxPictures.Items.Add(art);
+					}
+				}
 			}
 		}
 
