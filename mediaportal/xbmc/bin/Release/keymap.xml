@@ -532,20 +532,6 @@
     </action>
   </window>
 
-  <window>
-    <description>Select Dialog Specific Actions (CDDB lookups etc.)</description>
-    <id>2000</id>
-    <action>
-      <description>Close Window</description>
-      <id>51</id>
-      <key>A</key>
-    </action>
-    <action>
-      <description>Close Window</description>
-      <id>51</id>
-      <key>enter</key>
-    </action>
-  </window>
   
   <window>
     <description>OSD keys</description>

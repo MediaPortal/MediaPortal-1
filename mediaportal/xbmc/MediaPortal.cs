@@ -149,8 +149,18 @@ public class MediaPortalApp : D3DApp
         if (GUIGraphicsContext.IsFullScreenVideo==false || !bPlayVideo)
         {
           bool bNeedRefresh=GUIWindowManager.NeedRefresh();
-          //if (bPlayVideo && GUIGraphicsContext.Overlay)
-          //  bNeedRefresh=true;
+          //
+          // DISABLED: this lets the musicoverlay etc scroll
+          // but it takes a LOT of CPU%. Need to find a better way todo this
+
+          if (GUIGraphicsContext.Overlay)
+          {
+            GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
+            if (null!=windowOverlay)
+            {
+              if (windowOverlay.NeedRefresh() ) bNeedRefresh=true;
+            }
+          }
           if (bNeedRefresh) 
           {
             // yes, then invalidate the screen
@@ -308,7 +318,7 @@ public class MediaPortalApp : D3DApp
     protected override void OnDeviceReset(System.Object sender, System.EventArgs e) 
 		{
       Log.Write("OnDeviceReset()");
-      g_Player.Stop();
+      //g_Player.Stop();
       GUIGraphicsContext.Load();
 			GUIFontManager.RestoreDeviceObjects();
       GUIWindowManager.Restore();
