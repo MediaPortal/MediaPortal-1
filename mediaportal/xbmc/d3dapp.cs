@@ -588,18 +588,6 @@ namespace MediaPortal
       }
     }
 
-    public void ResetMouseCursor()
-    {
-      if (!m_bShowCursor)
-      {
-        m_bShowCursor=true;
-        m_bNeedUpdate=true;
-        Invalidate(true);
-      }
-      m_MouseTimeOut=DateTime.Now;
-      //HandleCursor();
-    }
-
     public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
     {
       if (bRemoveHandler)
@@ -2007,7 +1995,7 @@ namespace MediaPortal
       {
         //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,lastx,lasty);
         lastx=e.X;
-        lasty=e.Y;
+        lasty=e.Y;        
         System.Windows.Forms.Cursor ourCursor = this.Cursor;
         if (!m_bShowCursor)
         {
@@ -2153,7 +2141,6 @@ namespace MediaPortal
           int SleepingTime=GetSleepingTime();
           DoSleep(SleepingTime);
           HandleMessage();
-          //HandleCursor();
         }
         catch(Exception ex)
         {

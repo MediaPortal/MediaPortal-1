@@ -989,11 +989,6 @@ public class MediaPortalApp : D3DApp, IRender
 			GUIWindow window;
 			switch (action.wID)
 			{
-        case Action.ActionType.ACTION_MOUSE_MOVE:
-        case Action.ActionType.ACTION_MOUSE_CLICK:
-          if (!GUIGraphicsContext.Vmr9Active) ResetMouseCursor();
-          break;
-
 				case Action.ActionType.ACTION_RECORD:
 					// record current program
 					GUIWindow tvHome = GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_TV);
@@ -1347,15 +1342,31 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void OnMouseWheel(MouseEventArgs e)
   {
+    // Calculate Mouse position
+    Point ptClientUL = new Point();
+    Point ptScreenUL = new Point();
+
+    ptScreenUL.X = Cursor.Position.X;
+    ptScreenUL.Y = Cursor.Position.Y;
+    ptClientUL = this.PointToClient(ptScreenUL);
+
+    int iCursorX = ptClientUL.X;
+    int iCursorY = ptClientUL.Y;
+
+    float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
+    float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
+    float x = (fX * ((float)iCursorX)) - GUIGraphicsContext.OffsetX;
+    float y = (fY * ((float)iCursorY)) - GUIGraphicsContext.OffsetY;
+
     if (e.Delta>0)
     {
-        Action action = new Action(Action.ActionType.ACTION_MOVE_UP, e.X, e.Y);
+        Action action = new Action(Action.ActionType.ACTION_MOVE_UP, x, y);
       action.MouseButton = e.Button;
       GUIGraphicsContext.OnAction(action);
     }
     else if (e.Delta<0)
     {
-        Action action = new Action(Action.ActionType.ACTION_MOVE_DOWN, e.X,e.Y);
+        Action action = new Action(Action.ActionType.ACTION_MOVE_DOWN, x, y);
       action.MouseButton = e.Button;
       GUIGraphicsContext.OnAction(action);
     }
@@ -1367,30 +1378,43 @@ public class MediaPortalApp : D3DApp, IRender
     base.mousemove(e);
     if (!m_bShowCursor) return;
 
-    if (m_iLastMousePositionX != e.X || m_iLastMousePositionY != e.Y)
+    // Calculate Mouse position
+    Point ptClientUL = new Point();
+    Point ptScreenUL = new Point();
+
+    ptScreenUL.X = Cursor.Position.X;
+    ptScreenUL.Y = Cursor.Position.Y;
+    ptClientUL = this.PointToClient(ptScreenUL);
+
+    int iCursorX = ptClientUL.X;
+    int iCursorY = ptClientUL.Y;
+
+    if (m_iLastMousePositionX != iCursorX || m_iLastMousePositionY != iCursorY)
     {
 			// check any still waiting single click events
 			if (GUIGraphicsContext.DBLClickAsRightClick)
 			{
-				if ((Math.Abs(m_iLastMousePositionX - e.X) > 10) || (Math.Abs(m_iLastMousePositionY - e.Y) > 10))
+				if ((Math.Abs(m_iLastMousePositionX - iCursorX) > 10) || (Math.Abs(m_iLastMousePositionY - iCursorY) > 10))
 				  CheckSingleClick();
 			}
 
+      // Save last position
+      m_iLastMousePositionX = iCursorX;
+      m_iLastMousePositionY = iCursorY;
+
       //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,m_iLastMousePositionX,m_iLastMousePositionY);
-      m_iLastMousePositionX = e.X;
-      m_iLastMousePositionY = e.Y;
 
       float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
       float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
-      float x = (fX * ((float)e.X)) - GUIGraphicsContext.OffsetX;
-      float y = (fY * ((float)e.Y)) - GUIGraphicsContext.OffsetY; ;
+      float x = (fX * ((float)iCursorX)) - GUIGraphicsContext.OffsetX;
+      float y = (fY * ((float)iCursorY)) - GUIGraphicsContext.OffsetY;
+      
       GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       if (window != null)
       {
         Action action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
         action.MouseButton = e.Button;
-        GUIGraphicsContext.OnAction(action);
-        
+        GUIGraphicsContext.OnAction(action);        
       }
     }
 	}
@@ -1403,11 +1427,22 @@ public class MediaPortalApp : D3DApp, IRender
 		Action action;
 		bool MouseButtonRightClick = false;
 
+    // Calculate Mouse position
+    Point ptClientUL = new Point();
+    Point ptScreenUL = new Point();
+
+    ptScreenUL.X = Cursor.Position.X;
+    ptScreenUL.Y = Cursor.Position.Y;
+    ptClientUL = this.PointToClient(ptScreenUL);
+
+    int iCursorX = ptClientUL.X;
+    int iCursorY = ptClientUL.Y;
+
     // first move mouse
     float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
     float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
-    float x = (fX * ((float)m_iLastMousePositionX)) - GUIGraphicsContext.OffsetX;
-    float y = (fY * ((float)m_iLastMousePositionY)) - GUIGraphicsContext.OffsetY; ;
+    float x = (fX * ((float)iCursorX)) - GUIGraphicsContext.OffsetX;
+    float y = (fY * ((float)iCursorY)) - GUIGraphicsContext.OffsetY; ;
     actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
     GUIGraphicsContext.OnAction(actionMove);
 
@@ -1477,19 +1512,6 @@ public class MediaPortalApp : D3DApp, IRender
 				}      
 			}
     }
-/*
-    //left mouse button = A
-    if (e.Button==MouseButtons.Left)
-    {
-      Key key = new Key(0,(int)Keys.Enter);
-      action=new Action();
-      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
-      {
-        if (action.SoundFileName.Length>0)
-            Utils.PlaySound(action.SoundFileName, false, true);
-        GUIGraphicsContext.OnAction(action);
-      }
-    }*/
 
     //middle mouse button=Y
     if (e.Button == MouseButtons.Middle)
@@ -1504,6 +1526,10 @@ public class MediaPortalApp : D3DApp, IRender
 				return;
       }
     }	
+
+    // Save last position
+    m_iLastMousePositionX = iCursorX;
+    m_iLastMousePositionY = iCursorY;
 	}
 	
 	private void tMouseClickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -1520,8 +1546,13 @@ public class MediaPortalApp : D3DApp, IRender
 			tMouseClickTimer.Stop();
 			if(bMouseClickFired)
 			{
+        float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
+        float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
+        float x = (fX * ((float)m_iLastMousePositionX)) - GUIGraphicsContext.OffsetX;
+        float y = (fY * ((float)m_iLastMousePositionY)) - GUIGraphicsContext.OffsetY;
+
 				bMouseClickFired = false;
-				action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, eLastMouseClickEvent.X, eLastMouseClickEvent.Y);
+				action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
 				action.MouseButton = eLastMouseClickEvent.Button;
 				action.SoundFileName = "click.wav";
 				if (action.SoundFileName.Length > 0)
