@@ -99,6 +99,7 @@
 		<shadedColor>20484848</shadedColor>
 		<selectedColor>FF000000</selectedColor>
 		<textcolor>FF000000</textcolor>
+		<textcolor2>FF000000</textcolor2>
 		<colordiffuse>ff000000</colordiffuse>
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
