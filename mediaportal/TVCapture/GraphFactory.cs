@@ -20,6 +20,7 @@ namespace MediaPortal.TV.Recording
 #else
 			if (card.IsBDACard)
 			{
+				return new BDATVTuning();
 			}
 			else
 			{
