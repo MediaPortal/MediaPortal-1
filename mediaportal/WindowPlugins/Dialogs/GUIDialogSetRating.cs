@@ -12,8 +12,8 @@ namespace MediaPortal.Dialogs
 	{
 		enum Controls
 		{
-				ID_BUTTON_MIN   =10
-			, ID_BUTTON_PLUS  =11
+				ID_BUTTON_MIN   =11
+			, ID_BUTTON_PLUS  =10
 			,	CONTROL_STARS=100
 		};
 
@@ -130,7 +130,7 @@ namespace MediaPortal.Dialogs
         
 					if (iControl==(int)Controls.ID_BUTTON_MIN)
 					{
-						if (m_iRating >1) m_iRating--;
+						if (m_iRating >=1) m_iRating--;
 						Update();
 						return true;
 					}
@@ -163,7 +163,7 @@ namespace MediaPortal.Dialogs
 		{
 			for (int i=0; i < 5; ++i)
 			{
-				if ( i > (int)(Rating) )
+				if ( (i+1) > (int)(Rating) )
 					GUIControl.HideControl(GetID, (int)Controls.CONTROL_STARS+i);
 				else
 					GUIControl.ShowControl(GetID, (int)Controls.CONTROL_STARS+i);

@@ -1141,7 +1141,9 @@ namespace MediaPortal.GUI.Music
 		{
 			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
 			dialog.DoModal(GetID);
+			m_database.SetRating(item.Path,dialog.Rating);
 		}
+
     void OnQueueItem(int iItem)
     {
       // add item 2 playlist
