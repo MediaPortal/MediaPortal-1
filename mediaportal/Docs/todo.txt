@@ -49,6 +49,7 @@ My TV:
     - support for timeshifting with SW encoding cards
     - support for recording to mpeg with SW encoding cards
     - recoding recordings to divx, mpeg,... or .dvr-ms -> .mpeg
+    - Let MP watch used diskspace, currently goes on till exeption occurs with full disk.
 
  TVSearch
     - Make IMDB search possible on a movie title
