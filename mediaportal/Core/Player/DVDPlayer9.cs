@@ -96,8 +96,12 @@ namespace MediaPortal.Player
 							string path;
 							int size;
 							IntPtr ptrFolder = Marshal.AllocCoTaskMem(256);
-							hr=dvdInfo.GetDVDDirectory( ptrFolder,256,out size);
+							dvdInfo.GetDVDDirectory( ptrFolder,256,out size);
 							path=Marshal.PtrToStringAuto(ptrFolder);
+							Marshal.FreeCoTaskMem(ptrFolder);
+							dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
+							dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
+
 							if (path!=null && path.Length>0)
 							{
 								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();

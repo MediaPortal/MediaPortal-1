@@ -348,11 +348,7 @@ namespace MediaPortal.Player
 		  SetDefaultLanguages();
         
 
-        hr = dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
-        if( hr == 0 )
-          hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
-        if( hr == 0 )
-          hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero );
+			    hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_DVD_EVENT, IntPtr.Zero );
         if (videoWin!=null)
         {
           if( hr == 0 )
@@ -588,12 +584,15 @@ namespace MediaPortal.Player
 							IntPtr ptrFolder = Marshal.AllocCoTaskMem(256);
 							dvdInfo.GetDVDDirectory( ptrFolder,256,out size);
 							path=Marshal.PtrToStringAuto(ptrFolder);
+							Marshal.FreeCoTaskMem(ptrFolder);
+							dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
+							dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
+
 							if (path!=null && path.Length>0)
 							{
 								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
 								dvdHelper.Reset(path);
 							}
-							Marshal.FreeCoTaskMem(ptrFolder);
 
 							AddPreferedCodecs(graphBuilder);
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
