@@ -582,8 +582,10 @@ namespace MediaPortal.GUI.Music
                 }
               }
             }
-
-
+          }
+        }
+        if (tag==null)
+        {
             // if we're playing a radio 
             if (g_Player.IsRadio)
             {
@@ -618,7 +620,7 @@ namespace MediaPortal.GUI.Music
               } //foreach (RadioStation station in stations)
             } //if (g_Player.IsRadio)
           } //if (tag==null)
-        } //if (UseID3)
+        
 			}// if (!bFound )
 			else
 			{

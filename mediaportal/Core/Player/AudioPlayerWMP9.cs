@@ -620,5 +620,18 @@ namespace MediaPortal.Player
         }
       }
     }
+
+    public override bool IsRadio
+    {
+      get 
+      {
+        //TODO: this has to be changed if we are gonna support video streams in the future
+        if (m_strCurrentFile.ToLower().IndexOf("http:")>=0) return true;
+        if (m_strCurrentFile.ToLower().IndexOf("https:")>=0) return true;
+        if (m_strCurrentFile.ToLower().IndexOf("mms:")>=0) return true;
+        if (m_strCurrentFile.ToLower().IndexOf("rtsp:")>=0) return true;
+        return false;
+      }
+    }
   }
 }

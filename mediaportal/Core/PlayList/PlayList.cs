@@ -11,10 +11,22 @@ namespace MediaPortal.Playlists
 	{
     public class PlayListItem
     {
+      public enum PlayListItemType
+      {
+        Unknown,
+        Radio,
+        AudioStream,
+        VideoStream,
+        Video,
+        DVD,
+        TV,
+        Pictures
+      }
       protected string m_strFilename="";
       protected string m_strDescription="";
       protected int    m_iDuration=0;
       bool             m_bPlayed=false;
+      PlayListItemType m_Type=PlayListItemType.Unknown;
 
       public PlayListItem()
       {
@@ -34,6 +46,12 @@ namespace MediaPortal.Playlists
         m_iDuration=iDuration;
       }
       
+      public PlayListItem.PlayListItemType Type
+      {
+        get { return m_Type;}
+        set { m_Type=value;}
+      }
+
       public string FileName
       {
         get { return m_strFilename;}
