@@ -132,6 +132,8 @@ namespace MediaPortal.Configuration.Sections
 		private DVBSections.Transponder[]	transpList=null;
 		private bool						m_bIsDirty=false;
 		private bool						m_stopEPGGrab=false;
+//		string								m_currentSatName="";
+
 		//
 
 		
@@ -284,7 +286,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 256);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(424, 128);
+			this.groupBox1.Size = new System.Drawing.Size(360, 80);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Plugins:";
@@ -296,8 +298,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(376, 32);
 			this.label16.TabIndex = 1;
-			this.label16.Text = "There is currently NO Timeshifting/Recording when using Plugins!! This is due to " +
-				"an Exception on the Stream-Buffer-Sink!";
 			this.label16.Visible = false;
 			// 
 			// checkBox4
@@ -705,6 +705,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// numericUpDown1
 			// 
+			this.numericUpDown1.Enabled = false;
 			this.numericUpDown1.Increment = new System.Decimal(new int[] {
 																			 10,
 																			 0,
@@ -732,6 +733,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// checkBox3
 			// 
+			this.checkBox3.Enabled = false;
 			this.checkBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkBox3.Location = new System.Drawing.Point(24, 192);
 			this.checkBox3.Name = "checkBox3";
@@ -1581,6 +1583,13 @@ namespace MediaPortal.Configuration.Sections
 				if(line!=null)
 					if (line.Length > 0)
 					{
+//						if(line.IndexOf("=")>0)
+//						{
+//							string[] satName=line.Split(new char[]{'='});
+//							if(satName.Length==2)
+//								if(satName[0].ToLower()=="satname")
+//									m_currentSatName=satName[1];
+//						}
 						if(line.StartsWith(";"))
 							continue;
 						tpdata = line.Split(new char[]{','});
@@ -1793,6 +1802,8 @@ namespace MediaPortal.Configuration.Sections
 				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					string provName=ch.service_provider_name;
+					
+					//provName+="("+m_currentSatName+")";
 
 					if(provName==null)
 						continue;
@@ -1834,6 +1845,8 @@ namespace MediaPortal.Configuration.Sections
 						string provName=ch.service_provider_name;
 						string servName=ch.service_name;
 						string service=(ch.serviceType==1?" (TV)":" (Radio)");
+
+						//service+="("+m_currentSatName+")";
 
 						if(provName==null || servName==null)
 							continue;
