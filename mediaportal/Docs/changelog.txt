@@ -1,3 +1,4 @@
+17-07-2004  my videos   : added : when stacking is enabled, the -cd1 etc. are removed from the filename
 17-07-2004  my tv       : fixed : with > 1 capture card both cards tried creating live.tv file
 17-07-2004  my tv       : fixed : duration of recorded programs is not correct. 
 17-07-2004  my tv       : fixed : failed to play .sbe files

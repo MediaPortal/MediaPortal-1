@@ -6,7 +6,6 @@ todo for 1.0:
  - dialog saying database is empty when you wanna change the view
  - my tv: show fullscreen or windowed tv option
  - remember view by icon/list preference based per folder
- - drop -cd1 etc. when stacking
  - make album art position configurable 
  - OSD mouse support
  - foobar integration (depends on int20h)
@@ -68,6 +67,7 @@ My TV:
   
   Recorder/Capture:
      - add screenshot option    
+     - pal/secam/ntsc setup per channel
      
 My Music: (int_20h)
   - foobar plugin (int20h is working on this)
