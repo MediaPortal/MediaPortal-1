@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.MSN
       this.textBoxPassword.Name = "textBoxPassword";
       this.textBoxPassword.PasswordChar = '*';
       this.textBoxPassword.Size = new System.Drawing.Size(232, 20);
-      this.textBoxPassword.TabIndex = 3;
+      this.textBoxPassword.TabIndex = 2;
       this.textBoxPassword.Text = "";
       // 
       // buttonOK
@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.MSN
       this.chkSignIn.Location = new System.Drawing.Point(24, 144);
       this.chkSignIn.Name = "chkSignIn";
       this.chkSignIn.Size = new System.Drawing.Size(168, 24);
-      this.chkSignIn.TabIndex = 6;
+      this.chkSignIn.TabIndex = 3;
       this.chkSignIn.Text = "Auto signin";
       // 
       // MessengerSetup

@@ -349,16 +349,19 @@ namespace MediaPortal
           case 0x9: // info
             if (header.hid.RawData3==2)
             {
-              if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)
+              if (g_Player.Player != null)
               {
-                //pop up OSD
-                key='y';
-                return true;
-              }
-              else
-              {
-                //get info dialog
-                keyCode=Keys.F3;
+                if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)
+                {
+                  //pop up OSD
+                  key='y';
+                  return true;
+                }
+                else
+                {
+                  //get info dialog
+                  keyCode=Keys.F3;
+                }
               }
             }
             else
@@ -378,9 +381,12 @@ namespace MediaPortal
           case 0x24://DVD menu
             if (header.hid.RawData3==0)
             {
-              if (g_Player.Playing && g_Player.IsDVD)
+              if (g_Player.Player != null)
               {
-                action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+                if (g_Player.Playing && g_Player.IsDVD)
+                {
+                  action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+                }
               }
             }
             else if (header.hid.RawData3==2)
@@ -408,7 +414,7 @@ namespace MediaPortal
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
             break;
-          case 0x65://TV
+          case 0x5B://TV (Red button)
             if (header.hid.RawData3==0)
             {
               key='x';//GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
@@ -453,16 +459,18 @@ namespace MediaPortal
             action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
             break;
           case 0xB5: //next
-            if (g_Player.Player.Playing && g_Player.IsDVD)
-              action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
-            else
-              action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
+            if (g_Player.Player != null)
+              if ((g_Player.Player.Playing) && (g_Player.IsDVD))
+                action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+              else
+                action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
             break;
           case 0xb6: //previous
-            if (g_Player.Player.Playing && g_Player.IsDVD)
-              action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
-            else
-              action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
+            if (g_Player.Player != null)
+              if ((g_Player.Player.Playing) && (g_Player.IsDVD))
+                  action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+                else
+                  action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
             break;
           case 0xb7: //stop
             action=new Action(Action.ActionType.ACTION_STOP,0,0);

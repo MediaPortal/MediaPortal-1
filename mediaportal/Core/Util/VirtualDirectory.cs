@@ -87,6 +87,18 @@ namespace MediaPortal.Util
         GUIListItem item = new GUIListItem();
         item.Label = share.Name;
         item.Path = share.Path;
+        if (Utils.IsDVD(item.Path))
+        {
+          item.DVDLabel = Utils.GetDriveName(item.Path);
+          item.DVDLabel = item.DVDLabel.Replace('_', ' ');
+        }
+
+        if (item.DVDLabel != "")
+        {
+          item.Label = String.Format( "({0}) {1}",  item.Path, item.DVDLabel);        
+        }
+        else
+          item.Label = share.Name;
 				item.IsFolder = true;
 				Utils.SetDefaultIcons(item);
         items.Add(item);

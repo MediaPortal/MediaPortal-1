@@ -1322,11 +1322,17 @@ namespace MediaPortal.GUI.TV
 				}
 				else
 				{
-					if (m_iChannelOffset+5 < m_channels.Count) 
-					{
-						m_iChannelOffset++;
-						Update();
-					}
+          if (m_iChannelOffset+5 < m_channels.Count) 
+          {
+            m_iChannelOffset++;
+            Update();
+          }
+          else
+          {
+            m_iCursorY = 0;
+            m_iChannelOffset = 0;
+            Update();
+          }
 				}
 				SetFocus();
 				SetProperties();
@@ -1356,7 +1362,12 @@ namespace MediaPortal.GUI.TV
 						m_iChannelOffset++;
 						Update();
 					}
-					else break;
+          else
+          {
+            m_iCursorY = 0;
+            m_iChannelOffset = 0;
+            Update();
+          }
 				}
 
 				for (int x=1; x < 10; x++)
@@ -1977,10 +1988,19 @@ namespace MediaPortal.GUI.TV
 		void ChangeChannelNr(int iChannelNr)
 		{
 			iChannelNr--;
-			if (iChannelNr>0 && iChannelNr < m_channels.Count)
+			if (iChannelNr>=0 && iChannelNr < m_channels.Count)
 			{
+        UnFocus();
 				m_iChannelOffset=0;
 				m_iCursorY=0;
+        
+        // Last page adjust (To get a full page channel listing)
+        if (iChannelNr > m_channels.Count-m_iChannels+1) 
+        {
+          m_iChannelOffset = m_channels.Count- m_iChannels;
+          iChannelNr = iChannelNr - m_iChannelOffset;
+        }
+
 				while (iChannelNr >=m_iChannels) 
 				{
 					iChannelNr -=m_iChannels;

@@ -1282,6 +1282,11 @@ namespace MediaPortal.GUI.Video
       GUIListItem pItem = GetSelectedItem();
       string strFile = pItem.Path;
       string strMovie = pItem.Label;
+      // Use DVD label as movie name
+      if (Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != ""))
+      {
+        strMovie = pItem.DVDLabel;
+      }
       if (pItem.IsFolder)
       {
         // IMDB is done on a folder, find first file in folder

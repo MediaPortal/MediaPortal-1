@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.MSN
     void Update()
     {
       Conversation conversation=GUIMSNPlugin.CurrentConversation;
-      if (conversation!=null) return;
+      if (conversation==null) return;
       if (conversation.Connected==false) return;
 
       if (GUIMSNPlugin.IsTyping)
