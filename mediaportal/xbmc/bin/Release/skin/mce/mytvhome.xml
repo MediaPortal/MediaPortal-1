@@ -43,7 +43,7 @@
 				<posY>97</posY>
 				<label>600</label>
 				<hyperlink>600</hyperlink>
-				<onup>10</onup>
+				<onup>11</onup>
 				<ondown>3</ondown>
 			</control>	
 			<control>
@@ -140,6 +140,17 @@
 				<label>604</label>
 				<hyperlink>603</hyperlink>
 				<onup>9</onup>
+				<ondown>11</ondown>
+			</control>
+			<control>
+				<description>Search</description>
+				<type>button</type>
+				<id>11</id>
+				<posX>60</posX>
+				<posY>369</posY>
+				<label>137</label>
+				<hyperlink>604</hyperlink>
+				<onup>10</onup>
 				<ondown>2</ondown>
 			</control>
 		</control>

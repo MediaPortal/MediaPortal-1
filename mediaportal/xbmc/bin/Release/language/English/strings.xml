@@ -2110,6 +2110,19 @@
 	<value>Did you insert a Disc?</value>
 </string>
 <string>
+	<id>724</id>
+	<value>Search TVGuide</value>
+</string>
+<string>
+	<id>725</id>
+	<value>Genres</value>
+</string>
+<string>
+	<id>726</id>
+	<value>Title</value>
+</string>
+
+<string>
 	<id>800</id>
 	<value>Starts with</value>
 </string>
