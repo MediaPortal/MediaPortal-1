@@ -1,4 +1,5 @@
 Bugs left:
+  13-07-2004 general    : scrolling : base on time instead of frame
   13-07-2004 my tv      : duration of recorded programs is not correct. 
                           I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
   12-07-2004 my tv      : home : current program title goes out of box if its 2 long (zipperzip)
