@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  10-07-2004  my music    : fixed : NullPointerException in my music/artist view and selecting ".." from inside artist
+  10-07-2004  my music    : fixed : Album view will show same album multiple times for the same artist
+
   08-07-2004  my videos   : fixed : imdb info gets retrieved from inet every time?
   08-07-2004  general     : added : use default proxy settings when accessing the internet
   08-07-2004  home        : added : mouse scrolling support
