@@ -625,8 +625,13 @@ public class MediaPortalApp : D3DApp, IRender
 
 
   static int prevwindow=0;
+  static bool reentrant=false;
   protected override void Render() 
-    { 
+  { 
+    if (reentrant) return;
+    try
+    {
+      reentrant=true;
       // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device == null) return;
 
@@ -641,7 +646,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
           // yes, then just handle the outstanding messages
           GUIGraphicsContext.IsPlaying = true;
-          
+              
           // and return
           return;
         }
@@ -651,7 +656,7 @@ public class MediaPortalApp : D3DApp, IRender
       // or screen needs a refresh
       m_bNeedUpdate = false;
 
- 
+     
       // clear the surface
       if (prevwindow!=GUIWindowManager.ActiveWindow)
       {
@@ -663,7 +668,7 @@ public class MediaPortalApp : D3DApp, IRender
       // ask the window manager to render the current active window
       GUIWindowManager.Render();
       RenderStats();
-     
+         
       GUIFontManager.Present();
       GUIGraphicsContext.DX9Device.EndScene();
       try
@@ -677,6 +682,11 @@ public class MediaPortalApp : D3DApp, IRender
         deviceLost = true;
       }
     }
+    finally
+    {
+      reentrant=false;
+    }
+  }
 
   protected override void FrameMove()
   {
