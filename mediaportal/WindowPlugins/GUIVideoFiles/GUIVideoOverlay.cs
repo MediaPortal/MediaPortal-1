@@ -27,6 +27,7 @@ namespace MediaPortal.GUI.Video
     };
 
     string TVChannelCovertArt=@"thumbs\tv\logos";
+		string m_strThumb="";
 		public GUIVideoOverlay()
 		{
 		}
@@ -83,6 +84,12 @@ namespace MediaPortal.GUI.Video
     public override void PostRender(float timePassed,int iLayer)
     {
       if (iLayer != 2) return;
+			if (GUIPropertyManager.GetProperty("#thumb") != m_strThumb)
+			{
+				m_strFile=g_Player.CurrentFile ;
+				SetCurrentFile(m_strFile);
+			}
+
       int iSpeed = g_Player.Speed;
 			double dPos = g_Player.CurrentPosition;
       if (dPos < 5d)
@@ -213,9 +220,10 @@ namespace MediaPortal.GUI.Video
           {
             strLogo = "defaultVideoBig.png";
           }
-          GUIPropertyManager.SetProperty("#thumb", strLogo);
+					GUIPropertyManager.SetProperty("#thumb", strLogo);
+					m_strThumb=strLogo;
+					return;
         }
-        return;
       }
 
 			IMDBMovie movieDetails = new IMDBMovie();
@@ -228,35 +236,7 @@ namespace MediaPortal.GUI.Video
       }
       if (bMovieInfoFound)
       {
-        GUIPropertyManager.SetProperty("#title", movieDetails.Title);
-        
-        string wsGenre = GUILocalizeStrings.Get(174);
-        string wsTmp = String.Format("{0} {1}", wsGenre, movieDetails.Genre);
-        GUIPropertyManager.SetProperty("#genre",wsTmp);
-        
-        string wsYear = GUILocalizeStrings.Get(201);
-        wsTmp = String.Format("{0} {1}", wsYear, movieDetails.Year);
-        GUIPropertyManager.SetProperty("#year",wsTmp);
-				
-        string wsDirector = GUILocalizeStrings.Get(199);
-        wsTmp = String.Format("{0} {1}", wsDirector, movieDetails.Director);
-        GUIPropertyManager.SetProperty("#director",wsTmp);
-				
-        GUIPropertyManager.SetProperty("#cast",movieDetails.Cast);
-        GUIPropertyManager.SetProperty("#dvdlabel",movieDetails.DVDLabel);
-        GUIPropertyManager.SetProperty("#imdbnumber", movieDetails.IMDBNumber);
-        GUIPropertyManager.SetProperty("#plot", movieDetails.Plot);
-        GUIPropertyManager.SetProperty("#plotoutline", movieDetails.PlotOutline);
-        GUIPropertyManager.SetProperty("#rating", movieDetails.Rating.ToString());
-        GUIPropertyManager.SetProperty("#tagline", movieDetails.TagLine);
-        GUIPropertyManager.SetProperty("#votes", movieDetails.Votes);
-        GUIPropertyManager.SetProperty("#credits", movieDetails.WritingCredits);
-        string strThumb;
-        strThumb = Utils.GetCoverArt(ThumbsFolder,movieDetails.Title);
-        if (System.IO.File.Exists(strThumb))
-        {
-          GUIPropertyManager.SetProperty("#thumb",strThumb);
-        }
+				movieDetails.SetProperties();
       }
       else
       {
@@ -266,6 +246,7 @@ namespace MediaPortal.GUI.Video
         Utils.SetThumbnails(ref item);
         GUIPropertyManager.SetProperty("#thumb",item.ThumbnailImage);
       }
+			m_strThumb=GUIPropertyManager.GetProperty("#thumb");
     }
 	}
 }
