@@ -758,6 +758,14 @@ namespace MediaPortal.Player
 
 							break;
 						}
+					
+						case DsEvCode.DvdSubPicStChange:
+						{
+							Log.Write("EVT:DvdSubPicture Changed to:{0}",p1);
+							m_strSubtitleLanguage = p1.ToString();
+						}
+							break;
+
 						case DsEvCode.DvdChaptStart:
 						{
 							Log.Write("EVT:DvdChaptStart:{0}",p1);
