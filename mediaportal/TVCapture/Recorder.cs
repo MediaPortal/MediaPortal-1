@@ -334,6 +334,7 @@ namespace MediaPortal.TV.Recording
             Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
             TuneExternalChannel(rec.Channel);
             dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
+
             return true;
           }
         }
@@ -525,6 +526,8 @@ namespace MediaPortal.TV.Recording
                 return;
               }
             }
+            // no card supports timeshifting
+            m_bTimeshifting =false;
           }
         }
       }
