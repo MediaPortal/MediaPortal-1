@@ -352,18 +352,16 @@ namespace MediaPortal
             {
               if (g_Player.Player != null)
               {
-                if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)
+                if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)                   
                 {
-                  //pop up OSD
-                  key='y';
+                  //pop up OSD during fullscreen video
+                  action=new Action(Action.ActionType.ACTION_SHOW_OSD,0,0);
                   return true;
                 }
-                else
-                {
-                  //get info dialog
-                  keyCode=Keys.F3;
-                }
               }
+
+              action=new Action(Action.ActionType.ACTION_SHOW_INFO,0,0);
+              return true;
             }
             else
             {
@@ -415,10 +413,10 @@ namespace MediaPortal
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
             break;
-          case 0x5B://TV (Red button)
+          case 0x5B://TV show GUI/fullscreen (Red button)
             if (header.hid.RawData3==0)
             {
-              key='x';//GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+              action = new Action(Action.ActionType.ACTION_SHOW_GUI,0,0);  
             }
             else
             {
@@ -426,10 +424,10 @@ namespace MediaPortal
               return false;
             }
             break;
-          case 0x5E://TV (Blue button)
+          case 0x5E://TV Change aspect ratio (Blue button)
             if (header.hid.RawData3==0)
             {
-              key = 's'; // switch zoom mode
+              action = new Action(Action.ActionType.ACTION_ASPECT_RATIO,0,0);  
             }
             break;
           case 0x4A://My Video

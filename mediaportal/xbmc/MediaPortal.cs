@@ -546,6 +546,11 @@ public class MediaPortalApp : D3DApp, IRender
         if (action!=null && action.wID!=Action.ActionType.ACTION_INVALID)
         {
           Log.Write("action:{0} ", action.wID);
+          if (ActionTranslator.GetActionDetail(GUIWindowManager.ActiveWindow, action))
+          {
+            if (action.SoundFileName.Length > 0)
+              Utils.PlaySound(action.SoundFileName, false, true);
+          }
           GUIGraphicsContext.OnAction(action);
         }
         

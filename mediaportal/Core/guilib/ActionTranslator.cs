@@ -233,6 +233,35 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
+
+    /// <summary>
+    /// Update action with soundfilename based on a window id and action id
+    /// </summary>
+    /// <param name="wWindow">The window id.</param>
+    /// <param name="action">The action</param>
+    /// <returns>True if it is found in the map, fales if not.</returns>
+    static public bool GetActionDetail(int wWindow, Action action)
+    {
+      if (action.wID == 0) return false;
+      for (int iw=0; iw < mapWindows.Count;++iw)
+      {
+        WindowMap window =(WindowMap )mapWindows[iw];
+        if (window.iWindow == wWindow)
+        {
+          for (int ib=0; ib < window.mapButtons.Count;ib++)
+          {
+            button but =(button)window.mapButtons[ib];
+          
+            if (but.eAction == (Action.ActionType)action.wID)
+            {
+              action.SoundFileName = but.m_strSoundFile;
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
     static public bool HasKeyMapped (int iWindow, Key key)
     {
       string strSoundFile;
