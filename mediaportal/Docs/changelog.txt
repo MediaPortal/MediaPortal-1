@@ -1,3 +1,4 @@
+04-08-2004  setup       : fixed : Music database update will only scan for known extensions
 04-08-2004  home        : added : option to enable/disable scrolling of the menu items
 04-08-2004  skinengine  : added : option launch external application when pressing a button
 

@@ -44,6 +44,18 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+    public override object GetSetting(string name)
+    {
+      switch(name.ToLower())
+      {
+        case "extensions":
+          return Extensions;
+      }
+
+      return null;
+    }
+
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>

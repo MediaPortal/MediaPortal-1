@@ -40,6 +40,7 @@ namespace MediaPortal.Configuration.Sections
 
     bool stopRebuild = false;
     ArrayList extractedTags;
+    ArrayList availableFiles;
 
     public MusicDatabase() :  this("Music Database")
     {
@@ -52,6 +53,13 @@ namespace MediaPortal.Configuration.Sections
 
       groupBox2.Enabled = false;
 		}
+
+    private string[] Extensions
+    {
+      get { return extensions; }
+      set { extensions = value; }
+    }
+    string[] extensions = new string[] { ".mp3" };
 
     public override void OnSectionActivated()
     {
@@ -76,6 +84,17 @@ namespace MediaPortal.Configuration.Sections
           //
           sharesListBox.Items.Add(share, CheckState.Checked);
         }
+      }
+
+      //
+      // Fetch extensions
+      //
+      section = SectionSettings.GetSection("MusicExtensions");
+
+      if(section != null)
+      {
+        string extensions = (string)section.GetSetting("extensions");
+        Extensions = extensions.Split(new char[] { ',' });
       }
 
       UpdateControlStatus();
@@ -310,6 +329,7 @@ namespace MediaPortal.Configuration.Sections
             //
             // Count files
             //
+            availableFiles = new ArrayList();
             totalFiles = CountFiles();
       
             //
@@ -394,17 +414,35 @@ namespace MediaPortal.Configuration.Sections
       //
       // Count the files in the current directory
       //
-      string[] files = Directory.GetFiles(path);
-      totalFiles += files.Length;
+      try
+      {
+        foreach(string extension in Extensions)
+        {
+          string[] files = Directory.GetFiles(path, String.Format("*{0}", extension));
+          availableFiles.AddRange(files);
+          totalFiles += files.Length;
+        }
+      }
+      catch
+      {
+        // Ignore
+      }
 
       //
       // Count files in subdirectories
       //
-      string[] directories = Directory.GetDirectories(path);
-
-      foreach(string directory in directories)
+      try
       {
-        CountFiles(directory, ref totalFiles);
+        string[] directories = Directory.GetDirectories(path);
+
+        foreach(string directory in directories)
+        {
+          CountFiles(directory, ref totalFiles);
+        }
+      }
+      catch
+      {
+        // Ignore
       }
     }
 
@@ -446,40 +484,9 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="totalFiles"></param>
     private void ScanFiles(int totalFiles)
     {
-      int currentFile = 0;
+      int currentCount = 0;
 
-      for(int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
-      {
-        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
-
-        //
-        // Make sure the path exists
-        //
-        if(Directory.Exists(path))
-        {
-          ScanFiles(path, totalFiles, ref currentFile);
-        }
-      }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path"></param>
-    private void ScanFiles(string path, int totalFiles, ref int currentCount)
-    {
-      //
-      // Exit counting if we requested so
-      //
-      if(stopRebuild) 
-        return;
-
-      //
-      // Count the files in the current directory
-      //
-      string[] files = Directory.GetFiles(path);
-      
-      foreach(string file in files)
+      foreach(string file in availableFiles)
       {
         ScanFile(file);
 
@@ -489,17 +496,13 @@ namespace MediaPortal.Configuration.Sections
         SetCount(++currentCount, totalFiles);
 
         progressBar.PerformStep();
+
+        //
+        // Exit counting if we requested so
+        //
+        if(stopRebuild) 
+          return;
       }
-
-      //
-      // Count files in subdirectories
-      //
-      string[] directories = Directory.GetDirectories(path);
-
-      foreach(string directory in directories)
-      {
-        ScanFiles(directory, totalFiles, ref currentCount);
-      }    
     }
 
     /// <summary>
