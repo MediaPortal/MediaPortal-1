@@ -12,6 +12,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using TVCapture;
+using MediaPortal.Configuration.Sections;
 
 namespace MediaPortal
 {
@@ -187,6 +188,7 @@ namespace MediaPortal
 			{
 				xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
 			}
+			TVChannels.UpdateList();
       this.Close();
     }
 

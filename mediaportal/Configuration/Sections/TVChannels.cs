@@ -29,6 +29,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.Button btnImport;
     private System.Windows.Forms.Button btnClear;
+		static bool reloadList=false;
 
 		//
 		// Private members
@@ -114,7 +115,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Settings";
-			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
 			// 
 			// btnClear
 			// 
@@ -235,7 +235,6 @@ namespace MediaPortal.Configuration.Sections
 			this.Controls.Add(this.groupBox1);
 			this.Name = "TVChannels";
 			this.Size = new System.Drawing.Size(472, 448);
-			this.Load += new System.EventHandler(this.TVChannels_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -721,16 +720,20 @@ namespace MediaPortal.Configuration.Sections
       LoadTVChannels();
     
     }
-
-		private void groupBox1_Enter(object sender, System.EventArgs e)
+		static public void UpdateList()
 		{
-		
+			reloadList=true;
+		}
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			if (reloadList)
+			{
+				reloadList=false;
+				LoadTVChannels();
+			}
+			base.OnPaint (e);
 		}
 
-		private void TVChannels_Load(object sender, System.EventArgs e)
-		{
-			LoadSettings();		
-		}
 	}
 }
 
