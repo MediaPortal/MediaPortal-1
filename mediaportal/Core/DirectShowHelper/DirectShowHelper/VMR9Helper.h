@@ -13,9 +13,7 @@ class ATL_NO_VTABLE CVMR9Helper :
 {
 public:
 	CVMR9Helper()
-		: m_allocator(NULL)
-		, m_pDevice(NULL)
-		, m_pVMR9Filter(NULL)
+		: m_pDevice(NULL)
 	{
 	}
 
@@ -43,9 +41,9 @@ public:
 	STDMETHOD(Init)(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor);
 	STDMETHOD(Deinit)(void);
 protected:
-	CVMR9AllocatorPresenter*	m_allocator;
-	IBaseFilter*				m_pVMR9Filter;
-	LPDIRECT3DDEVICE9			m_pDevice;
+	CComPtr<IVMRSurfaceAllocator9>  g_allocator;
+	CComPtr<IBaseFilter>			m_pVMR9Filter;
+	LPDIRECT3DDEVICE9				m_pDevice;
 public:
 	STDMETHOD(Version)(void);
 	STDMETHOD(GetVideoSize)(ULONG* Width, ULONG* Height);

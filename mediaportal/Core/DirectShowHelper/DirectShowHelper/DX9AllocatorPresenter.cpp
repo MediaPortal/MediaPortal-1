@@ -4,27 +4,67 @@
 
 
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
-: CUnknown(NAME("IVMR9AllocatorPresenter"), NULL)
+: m_refCount(1)
 {
 	m_hMonitor=monitor;
 	m_pD3DDev.Attach(direct3dDevice);
 	m_pCallback=callback;
-	for (int x=0; x < 20; ++x)
-		m_pSurfaces[x]=NULL;
 	m_surfaceCount=0;
 
 }
 
-STDMETHODIMP CVMR9AllocatorPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
+CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
 {
-    CheckPointer(ppv, E_POINTER);
-
-	return 
-		QI(IVMRSurfaceAllocator9)
-		QI(IVMRImagePresenter9)
-		__super::NonDelegatingQueryInterface(riid, ppv);
+	Deinit();
 }
 
+
+// IUnknown
+HRESULT CVMR9AllocatorPresenter::QueryInterface( 
+        REFIID riid,
+        void** ppvObject)
+{
+    HRESULT hr = E_NOINTERFACE;
+
+    if( ppvObject == NULL ) {
+        hr = E_POINTER;
+    } 
+    else if( riid == IID_IVMRSurfaceAllocator9 ) {
+        *ppvObject = static_cast<IVMRSurfaceAllocator9*>( this );
+        AddRef();
+        hr = S_OK;
+    } 
+    else if( riid == IID_IVMRImagePresenter9 ) {
+        *ppvObject = static_cast<IVMRImagePresenter9*>( this );
+        AddRef();
+        hr = S_OK;
+    } 
+    else if( riid == IID_IUnknown ) {
+        *ppvObject = 
+            static_cast<IUnknown*>( 
+            static_cast<IVMRSurfaceAllocator9*>( this ) );
+        AddRef();
+        hr = S_OK;    
+    }
+
+    return hr;
+}
+
+ULONG CVMR9AllocatorPresenter::AddRef()
+{
+    return InterlockedIncrement(& m_refCount);
+}
+
+ULONG CVMR9AllocatorPresenter::Release()
+{
+    ULONG ret = InterlockedDecrement(& m_refCount);
+    if( ret == 0 )
+    {
+        delete this;
+    }
+
+    return ret;
+}
 
 STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9AllocationInfo* lpAllocInfo, DWORD* lpNumBuffers)
 {
@@ -44,7 +84,8 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 	
     HRESULT hr;
 
-	hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, m_pSurfaces);
+	m_pSurfaces.resize(*lpNumBuffers);
+	hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, & m_pSurfaces.at(0) );
 	if(FAILED(hr))
 		return hr;
 
@@ -79,14 +120,15 @@ STDMETHODIMP CVMR9AllocatorPresenter::GetSurface(DWORD_PTR dwUserID, DWORD Surfa
     if(!lplpSurface)
 		return E_POINTER;
 
-	if(SurfaceIndex >= m_surfaceCount) 
-        return E_FAIL;
 
+
+    if (SurfaceIndex >= m_pSurfaces.size() ) 
+    {
+        return E_FAIL;
+    }
     CAutoLock cAutoLock(this);
 
-	(*lplpSurface = m_pSurfaces[SurfaceIndex]);//->AddRef();
-
-	return S_OK;
+	return m_pSurfaces[SurfaceIndex].CopyTo(lplpSurface) ;
 }
 
 STDMETHODIMP CVMR9AllocatorPresenter::AdviseNotify(IVMRSurfaceAllocatorNotify9* lpIVMRSurfAllocNotify)
@@ -161,12 +203,11 @@ void CVMR9AllocatorPresenter::DeleteSurfaces()
 	m_pVideoTexture = NULL;
 	m_pVideoSurface = NULL;
 
-	for (int x=0; x < 20;++x)
-	{
-		if (m_pSurfaces[x]!=NULL) 
-			m_pSurfaces[x]->Release();
-		m_pSurfaces[x]=NULL;
-	}
+	for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
+    {
+        m_pSurfaces[i] = NULL;
+    }
+
 	
 }
 
@@ -241,7 +282,7 @@ CSize CVMR9AllocatorPresenter::GetVideoSize(bool fCorrectAR)
 	return(VideoSize);
 }
 
-STDMETHODIMP_(bool) CVMR9AllocatorPresenter::Paint(bool fAll)
+void CVMR9AllocatorPresenter::Paint(bool fAll)
 {
 	if (m_pCallback!=NULL)
 	{
@@ -259,19 +300,12 @@ STDMETHODIMP_(bool) CVMR9AllocatorPresenter::Paint(bool fAll)
 			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, dwPtr);
 		}
 		//tex->Release();
-		return S_OK;
 	}
-	return(true);
 }
 
 void CVMR9AllocatorPresenter::Deinit()
 {
-	for (int x=0; x < 20;++x)
-	{
-		if (m_pSurfaces[x]!=NULL) 
-			m_pSurfaces[x]->Release();
-		m_pSurfaces[x]=NULL;
-	}
+	DeleteSurfaces();
 	m_surfaceCount=NULL;
 	m_pVideoSurfaceOff = NULL;
 	m_pVideoSurfaceYUY2 = NULL;
