@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Diagnostics;
 using SQLite.NET;
@@ -283,7 +284,7 @@ namespace ProgramsDatabase
 
 		public virtual void LaunchFile(FileItem curFile)
 		{
-			string strFilename = curFile.Filename;
+			string curFilename = curFile.Filename;
 			// Launch File by item
 			curFile.UpdateLaunchInfo();
 			Process proc = new Process();
@@ -296,20 +297,25 @@ namespace ProgramsDatabase
 				if (UseQuotes) 
 				{
 					// avoid double quotes around the filename-argument.....
-					strFilename = " \"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
+					curFilename = " \"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
 				}
 				// the fileitem-argument can be positioned anywhere in the argument string...
 				if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
 				{
 					// no placeholder found => default handling: add the fileitem as the last argument
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments + strFilename;
+					proc.StartInfo.Arguments = proc.StartInfo.Arguments + curFilename;
 				}
 				else
 				{
 					// placeholder found => replace the placeholder by the correct filename
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", strFilename);
+					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFile.Filename);
 				}
 				proc.StartInfo.WorkingDirectory  = Startupdir;
+				if (proc.StartInfo.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
+				{
+					//Log.Write("curFile.Filename {0}", curFile.Filename);
+					proc.StartInfo.WorkingDirectory = proc.StartInfo.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(curFile.Filename));
+				}
 				proc.StartInfo.UseShellExecute = UseShellExecute;
 			}
 			else 
@@ -883,11 +889,11 @@ namespace ProgramsDatabase
 		}
 
 
-		public string ExtractDirectory(string strFilename)
+		public string ExtractDirectory(string curFilename)
 		{
 			string strRes = "";
 			string strSep = "";
-			string[] parts = ((string)strFilename).Split('\\');
+			string[] parts = ((string)curFilename).Split('\\');
 			for (int i = 0; i < parts.Length - 1; i++)
 			{
 				strRes = strRes + strSep + parts[i];

@@ -144,7 +144,7 @@ namespace ProgramsDatabase
 
 		override public void LaunchFile(GUIListItem item)
 		{
-			string strFilename = item.Path;
+			string curFilename = item.Path;
 			Process proc = new Process();
 			if (Filename != "")
 			{
@@ -152,17 +152,17 @@ namespace ProgramsDatabase
 				proc.StartInfo.Arguments = this.Arguments;
 				if (UseQuotes) 
 				{
-					strFilename = " \"" + item.Path + "\"";
+					curFilename = " \"" + item.Path + "\"";
 				}
 				if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
 				{
 					// no placeholder found => default handling: add the fileitem as the last argument
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments + strFilename;
+					proc.StartInfo.Arguments = proc.StartInfo.Arguments + curFilename;
 				}
 				else
 				{
 					// placeholder found => replace the placeholder by the correct filename
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", strFilename);
+					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFilename);
 				}
 			}
 			else 
@@ -171,6 +171,10 @@ namespace ProgramsDatabase
 				proc.StartInfo.FileName = item.Path;
 			}
 			proc.StartInfo.WorkingDirectory  = Startupdir;
+			if (proc.StartInfo.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
+			{
+				proc.StartInfo.WorkingDirectory = proc.StartInfo.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(item.Path));
+			}
 			proc.StartInfo.UseShellExecute = UseShellExecute;
 			proc.StartInfo.WindowStyle = this.WindowStyle;
 			try
