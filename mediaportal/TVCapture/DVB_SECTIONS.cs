@@ -61,7 +61,8 @@ namespace MediaPortal.TV.Recording
 		System.Windows.Forms.TextBox		m_textBox=null;
 		int									m_lnbfreq=0;
 		int									m_selKhz=0;
-		ArrayList							m_sectionsList=new ArrayList();				
+		ArrayList							m_sectionsList=new ArrayList();	
+		bool								m_breakScan=false;	
 		
 
 		// tables
@@ -275,6 +276,12 @@ namespace MediaPortal.TV.Recording
 			}
 			return 0;
 		}
+		public void InterruptScan()
+		{
+			m_breakScan=true;
+			m_textBox.Text="(Stopping scan...please wait a moment!)";
+
+		}
 		//
 		//
 		private void StartScan (int count, ref Transponder[] transplist)
@@ -288,6 +295,8 @@ namespace MediaPortal.TV.Recording
 			transplist = new Transponder[count + 1];
 			for (t = 0; t <= count; t++)
 			{
+				if(m_breakScan==true)
+					break;
 				DeleteAllPIDsI();
 				AddTSPid(17);
 				AddTSPid(0);
@@ -302,10 +311,18 @@ namespace MediaPortal.TV.Recording
 				transplist[t].channels = new ArrayList();
 				transplist[t].PMTTable = new ArrayList();
 				// first get pmt
-				if (transp[t].TPfreq >= m_lnbsw*1000)
+				if(m_lnb1!=-1 && m_lnbsw!=-1)
 				{
-					lnbFreq = m_lnb1;
-					lnbkhz=m_lnbkhz;
+					if (transp[t].TPfreq >= m_lnbsw*1000)
+					{
+						lnbFreq = m_lnb1;
+						lnbkhz=m_lnbkhz;
+					}
+					else
+					{
+						lnbFreq = m_lnb0;
+						lnbkhz=0;
+					}
 				}
 				else
 				{
@@ -1622,6 +1639,7 @@ namespace MediaPortal.TV.Recording
 		public void CleanUp ()
 		{
 			ClearAllUp();
+			m_breakScan=false;
 		}
 		public bool Run()
 		{
