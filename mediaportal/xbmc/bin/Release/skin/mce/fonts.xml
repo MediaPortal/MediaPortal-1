@@ -20,6 +20,8 @@
     <height>16</height>
   </font>
   <font>
+	<start>48</start>
+	<end>58</end>
     <name>font72</name>
     <filename>Arial</filename>
     <height>72</height>
