@@ -1405,6 +1405,7 @@ namespace MediaPortal.GUI.Pictures
 
 			dlg.AddLocalizedString(117); //delete
 			dlg.AddLocalizedString(735); //rotate
+			if (!m_bSlideShow) dlg.AddLocalizedString(108); //start slideshow    
 			dlg.AddLocalizedString(940); //properties
 			dlg.AddLocalizedString(970); //Exit
 
@@ -1419,7 +1420,11 @@ namespace MediaPortal.GUI.Pictures
 				case 735: // Rotate					
 					DoRotate();
 					break;
-					
+				
+        case 108: // Start slideshow
+          StartSlideShow();
+          break;
+
 				case 940: // Properties
 					OnShowInfo();
 					break;
