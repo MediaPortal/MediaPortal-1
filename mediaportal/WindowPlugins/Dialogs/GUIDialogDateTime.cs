@@ -54,11 +54,10 @@ namespace MediaPortal.Dialogs
 
     public override bool SupportsDelayedLoad
     {
-      get { return false;}
+      get { return true;}
     }    
     public override void PreInit()
     {
-      AllocResources();
     }
 
 
@@ -380,6 +379,10 @@ namespace MediaPortal.Dialogs
     }
     public void  SetHeading( string strLine)
     {
+			LoadSkin();
+			AllocResources();
+			InitControls();
+
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Controls.Heading,0,0,null);
       msg.Label=strLine; 
       OnMessage(msg);

@@ -446,7 +446,7 @@ namespace MediaPortal.GUI.Library
 		/// This method will call the PreInit() on each control belonging to this window
 		/// this gives the control a way to do some pre-initalisation stuff
 		/// </summary>
-    void InitControls()
+    public void InitControls()
     {
 			try
 			{

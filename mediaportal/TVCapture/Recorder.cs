@@ -71,6 +71,7 @@ namespace MediaPortal.TV.Recording
       m_bRecordingsChanged=false;
     
 
+			Log.Write("Loading capture cards from capturecards.xml");
       m_tvcards.Clear();
       try
       {

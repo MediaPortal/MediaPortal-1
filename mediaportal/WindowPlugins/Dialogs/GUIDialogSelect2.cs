@@ -42,11 +42,10 @@ namespace MediaPortal.Dialogs
     
     public override bool SupportsDelayedLoad
     {
-      get { return false;}
+      get { return true;}
     }
     public override void PreInit()
     {
-      AllocResources();
     }
 
 
@@ -165,6 +164,10 @@ namespace MediaPortal.Dialogs
 
     public void Reset()
     {
+			LoadSkin();
+			AllocResources();
+			InitControls();
+
       m_iSelected=-1;
       m_vecList.Clear();
     }
@@ -186,6 +189,10 @@ namespace MediaPortal.Dialogs
 
     public void  SetHeading( string strLine)
     {
+			LoadSkin();
+			AllocResources();
+			InitControls();
+
       SetControlLabel(GetID,(int)Controls.CONTROL_HEADING,strLine);
     }
 

@@ -74,7 +74,6 @@ namespace MediaPortal.GUI.Video
     }
     public override void PreInit()
     {
-      AllocResources();
     }
 
 

@@ -60,7 +60,6 @@ namespace MediaPortal.GUI.Music
     }
     public override void PreInit()
     {
-      AllocResources();
     }
 
     public override void OnAction(Action action)

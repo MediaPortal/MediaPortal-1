@@ -167,7 +167,7 @@ namespace MediaPortal.GUI.Library
       {
         if (disposing)
         {
-          Log.Write("texturemanager:dispose()");
+          Log.Write("  texturemanager:dispose()");
           foreach (CachedTexture cached in m_cache)
           {
             cached.Dispose();
@@ -351,7 +351,7 @@ namespace MediaPortal.GUI.Library
             theImage=null;
             m_cache.Add(newCache);
             
-            Log.Write("texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
+            Log.Write("  texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
             return newCache.Frames;
           }
         }
@@ -374,7 +374,7 @@ namespace MediaPortal.GUI.Library
           newCache.Width=iWidth;
           newCache.Height=iHeight;
           newCache.texture=new CachedTexture.Frame(dxtexture,0);
-          Log.Write("texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
+          Log.Write("  texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
           m_cache.Add(newCache);
           return 1;
         }
@@ -488,7 +488,7 @@ namespace MediaPortal.GUI.Library
         newCache.Width=img.Width;
         newCache.Height=img.Height;
 				newCache.image=img;
-				Log.Write("texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
+				Log.Write("  texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
         m_cache.Add(newCache);
         return img;
       }

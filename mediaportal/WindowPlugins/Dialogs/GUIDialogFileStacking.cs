@@ -19,7 +19,7 @@ namespace MediaPortal.Dialogs
     bool m_bPrevOverlay;
     public GUIDialogFileStacking()
     {
-      GetID=(int)GUIWindow.Window.WINDOW_DIALOG_OK;
+      GetID=(int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING;
     }
 
     public override bool Init()
@@ -29,11 +29,10 @@ namespace MediaPortal.Dialogs
 
     public override bool SupportsDelayedLoad
     {
-      get { return false;}
+      get { return true;}
     }    
     public override void PreInit()
     {
-      AllocResources();
     }
 
 
@@ -171,11 +170,16 @@ namespace MediaPortal.Dialogs
 
 
     public int SelectedFile 
-    {                                           
+    {
+                                           
       get { return m_iSelectedFile;}
     }
     public void SetNumberOfFiles(int iFiles)
-    {
+		{
+				LoadSkin();
+			AllocResources();
+			InitControls();
+
       m_iNumberOfFiles=iFiles;
     }
     

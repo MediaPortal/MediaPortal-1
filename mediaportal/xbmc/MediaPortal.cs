@@ -120,7 +120,7 @@ public class MediaPortalApp : D3DApp, IRender
 			applicationPath=System.IO.Path.GetDirectoryName(applicationPath);
 			System.IO.Directory.SetCurrentDirectory(applicationPath);
 
-			Log.Write("Set current directory to :{0}", applicationPath);
+			Log.Write("  Set current directory to :{0}", applicationPath);
       // Display splash screen
       //
 
@@ -147,7 +147,7 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.Update();
 #endif
 
-      Log.Write("Set registry keys for intervideo codecs");
+      Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
       // Set Intervideo registry keys 
       try
       {
@@ -184,6 +184,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
 
+			Log.Write("  verify that directx 9 is installed");
 			try 
 			{
 				// CHECK if DirectX 9.0c if installed
@@ -241,6 +242,7 @@ public class MediaPortalApp : D3DApp, IRender
 				}
 
 				// CHECK if Windows MediaPlayer 9 is installed
+				Log.Write("  verify that windows mediaplayer 9 or 10 is installed");
 				subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\9.0");
         if (subkey == null)
           subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\10.0");
@@ -263,15 +265,17 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 			}
 
+			Log.Write("  Stop any known recording processes");
 			Utils.KillExternalTVProcesses();
       try
       {
 				if (splashScreen!=null) splashScreen.SetInformation("Initializing DirectX...");
         MediaPortalApp app = new MediaPortalApp();
+				Log.Write("  initializing DirectX");
         if (app.CreateGraphicsSample())
         {
           //app.PreRun();
-          Log.Write("Start MediaPortal");
+          Log.Write("running...");
           try
           {
             app.Run();
@@ -339,12 +343,12 @@ public class MediaPortalApp : D3DApp, IRender
 
       // check if MediaPortal is already running...
 
-      Log.Write("Check if mediaportal is already started");
+      Log.Write("  Check if mediaportal is already started");
       m_UniqueIdentifier = Application.ExecutablePath.Replace("\\","_");
       m_Mutex = new System.Threading.Mutex(false, m_UniqueIdentifier);
       if (!m_Mutex.WaitOne(1, true))
       {
-        Log.Write("Check if mediaportal is already running...");
+        Log.Write("  Check if mediaportal is already running...");
         string strMsg = "Mediaportal is already running!";
 
         // Find the other instance of MP (use System.Diagnostics. because Process is also a method in this class)
@@ -375,7 +379,7 @@ public class MediaPortalApp : D3DApp, IRender
         throw new Exception(strMsg);
       }
 
-      Log.Write(@"delete old log\capture.log file...");
+      Log.Write(@"  delete old log\capture.log file...");
       Utils.FileDelete(@"log\capture.log");
       if (Screen.PrimaryScreen.Bounds.Width > 720)
       {
@@ -387,8 +391,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
 			this.Text = "Media Portal";
       
-      Log.Write("-------------------------------------------------------------------------------");
-      Log.Write("starting");
+
       GUIGraphicsContext.form = this;
       GUIGraphicsContext.graphics = null;
 			GUIGraphicsContext.RenderGUI=this;
@@ -411,6 +414,7 @@ public class MediaPortalApp : D3DApp, IRender
         m_strLanguage = "english";
       }
      
+			Log.Write("  Check skin version");
 			CheckSkinVersion();
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
@@ -429,7 +433,7 @@ public class MediaPortalApp : D3DApp, IRender
       System.Net.GlobalProxySelection.Select = proxy;
 
       //register the playlistplayer for thread messages (like playback stopped,ended)
-      Log.Write("Init playlist player");
+      Log.Write("  Init playlist player");
       PlayListPlayer.Init();
 
 		//
@@ -442,34 +446,33 @@ public class MediaPortalApp : D3DApp, IRender
 
 			if (inputEnabled == true || outputEnabled == true)
 			{
-				Log.Write("creating the USBUIRT device");
+				Log.Write("  Creating the USBUIRT device");
 				this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
-				Log.Write("done creating the USBUIRT device");
+				Log.Write("  done creating the USBUIRT device");
 			}
 			//Load Winlirc if enabled.
 			//sd00//
 			bool winlircInputEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
 			if (winlircInputEnabled == true)
 			{
-				Log.Write("creating the WINLIRC device");
+				Log.Write("  creating the WINLIRC device");
 				this.winlircdevice = new WinLirc();
-				Log.Write("done creating the WINLIRC device");
+				Log.Write("  done creating the WINLIRC device");
 			}
 			//sd00//
 			inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
 
 			if (inputEnabled == true)
 			{
-				Log.Write("creating the SerialUIR device");
+				Log.Write("  creating the SerialUIR device");
 				this.serialuirdevice = SerialUIR.Create(new SerialUIR.OnRemoteCommand(OnRemoteCommand));
-				Log.Write("done creating the SerialUIR device");
+				Log.Write("  done creating the SerialUIR device");
 			}
 		}
 
       //registers the player for video window size notifications
-      Log.Write("Init players");
+      Log.Write("  Init players");
       g_Player.Init();
-      Log.Write("done");
 
 
       //  hook ProcessExit for a chance to clean up when closed peremptorily
@@ -893,7 +896,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUITextureManager.Dispose();
       GUIFontManager.Dispose();
 
-      if (splashScreen!=null) splashScreen.SetInformation("Loading keymap.xml...");
+			if (splashScreen!=null) splashScreen.SetInformation("Loading keymap.xml...");
       ActionTranslator.Load();
       
       if (splashScreen!=null) splashScreen.SetInformation("Loading strings...");
@@ -907,23 +910,28 @@ public class MediaPortalApp : D3DApp, IRender
       GUIFontManager.RestoreDeviceObjects();
       
       if (splashScreen!=null) splashScreen.SetInformation("Loading skin...");
-      Log.Write("Load skin {0}", m_strSkin);
+      Log.Write("  Load skin {0}", m_strSkin);
       GUIWindowManager.Initialize();
       
       if (splashScreen!=null) splashScreen.SetInformation("Loading window plugins...");
       PluginManager.LoadWindowPlugins();
       
       if (splashScreen!=null) splashScreen.SetInformation("Initializing skin...");
-      Log.Write("initialize skin");
+      Log.Write("  WindowManager.Preinitialize");
       GUIWindowManager.PreInit();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+
+			Log.Write("  WindowManager.Load");
 			GUIGraphicsContext.Load();
+
+			Log.Write("  WindowManager.ActivateWindow");
 			GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-			Log.Write("skin initalized");
+			
+			Log.Write("  skin initalized");
       if (GUIGraphicsContext.DX9Device != null)
       {
-        Log.Write("DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
-        Log.Write("video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
+        Log.Write("  DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
+        Log.Write("  video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
       }
 
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);

@@ -104,6 +104,7 @@ namespace MediaPortal.GUI.Library
 			if (strFileName==String.Empty) return false;
 			System.Collections.Hashtable mapEnglish = new Hashtable();
       m_mapStrings.Clear();
+			Log.Write("  load localized strings from:{0}", strFileName);
 			// load the text for the current language
 			LoadMap(strFileName,ref m_mapStrings,true);
 			//load the text for the english language

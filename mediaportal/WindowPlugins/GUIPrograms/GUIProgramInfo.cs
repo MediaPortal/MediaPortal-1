@@ -64,7 +64,6 @@ namespace WindowPlugins.GUIPrograms
     }
     public override void PreInit()
     {
-      AllocResources();
     }
 
     public override void OnAction(Action action)

@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     static public event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged;
 
-    static protected Direct3D.Device m_device=null;								// pointer to current DX9 device
+    static public Direct3D.Device   DX9Device=null;								// pointer to current DX9 device
     static private string           m_strSkin="";									// name of the current skin
     static private bool             m_bFullScreenVideo=false;			// boolean indicating if we're in GUI or fullscreen video/tv mode
     static private System.IntPtr    m_ipActiveForm   ;						// pointer to the current GDI window
@@ -147,7 +147,7 @@ namespace MediaPortal.GUI.Library
       OverScanHeight=Height;
 
       string strFileName=String.Format("calibration{0}x{1}.xml", Width,Height);
-      Log.Write("load {0}" ,strFileName);
+      Log.Write("  load {0}" ,strFileName);
       using (Xml xmlReader= new Xml(strFileName))
       {
         m_iOffsetX=xmlReader.GetValueAsInt("screen","offsetx",0);
@@ -192,16 +192,6 @@ namespace MediaPortal.GUI.Library
 				OnNewAction(action);
 			}
 		}
-
-
-		/// <summary>
-		/// Get/set DX9 device.
-		/// </summary>
-    static public Direct3D.Device DX9Device
-    {
-      get { return m_device;}
-      set { m_device=value;Load();}
-    }
 
 		/// <summary>
 		/// Return screen/window Height

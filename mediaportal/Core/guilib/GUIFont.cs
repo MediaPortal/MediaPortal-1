@@ -612,7 +612,7 @@ namespace MediaPortal.GUI.Library
           textureHeight=info.Height;
           textureWidth=info.Width;
           RestoreDeviceObjects();
-          Log.Write("Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] memleft:{6}",
+          Log.Write("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] memleft:{6}",
               m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
           return;
         }

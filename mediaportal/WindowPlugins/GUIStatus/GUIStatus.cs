@@ -112,7 +112,7 @@ namespace MediaPortal.GUI.GUIStatus
       onWindow=false;
       onDetails=false;
       onStatus=false;
-      Log.Write("Start My Status");
+      //Log.Write("Start My Status");
       LoadSettings();
       InitializeStatusTimer();
       return Load (GUIGraphicsContext.Skin+@"\mystatus.xml");

@@ -100,10 +100,7 @@ namespace MediaPortal.GUI.GUIExplorer
 
 	public override bool Init() 
 	{
-	  Log.Write("Start My Explorer");
-		LoadShareSettings();										// loads showShares settings from XML
-		GetDrives();														// loads all drives
-		LoadSettings();													// loads all settings from XML
+	  //Log.Write("Start My Explorer");
 	  return Load (GUIGraphicsContext.Skin+@"\myexplorer.xml");
 	}
 
@@ -123,6 +120,10 @@ namespace MediaPortal.GUI.GUIExplorer
 			{  
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// MyExplorer starts
 					base.OnMessage(message);
+					LoadShareSettings();										// loads showShares settings from XML
+					GetDrives();														// loads all drives
+					LoadSettings();													// loads all settings from XML
+
 					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(2200));
 					GUIPropertyManager.SetProperty("#explorer_title",GUILocalizeStrings.Get(2200));
 					GUIPropertyManager.SetProperty("#explorer_size"," ");

@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.Library
     {
       if (nonWindowPluginsLoaded) return;
       nonWindowPluginsLoaded=true;
-      Log.Write("PlugInManager.Load()");
+      Log.Write("  PlugInManager.Load()");
 			try
 			{
 				System.IO.Directory.CreateDirectory(@"plugins");
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
     {
       if (windowPluginsLoaded) return;
       windowPluginsLoaded=true;
-      Log.Write("PlugInManager.LoadWindowPlugins()");
+      Log.Write("  LoadWindowPlugins()");
 			try
 			{
 				System.IO.Directory.CreateDirectory(@"plugins");
@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_Started) return;
       
-      Log.Write("PlugInManager.Start()");
+      Log.Write("  PlugInManager.Start()");
       foreach (IPlugin plugin in _NonGUIPlugins)
       {
         try
@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Library
     static public void Stop()
     {
       if (!_Started) return;
-      Log.Write("PlugInManager.Stop()");
+      Log.Write("  PlugInManager.Stop()");
       foreach (IPlugin plugin in _NonGUIPlugins)
       {
         plugin.Stop();
@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Library
     static void LoadPlugin(string strFile)
     {
       if (!IsPlugInEnabled(strFile)) return;
-			Log.Write("Load plugins from :{0}", strFile);
+			Log.Write("  Load plugins from :{0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.Library
     {
       if (!IsPlugInEnabled(strFile)) return;
 
-			Log.Write("Load plugins from :{0}", strFile);
+			Log.Write("  Load plugins from :{0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);

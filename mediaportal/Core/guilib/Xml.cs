@@ -12,11 +12,12 @@ namespace AMS.Profile
 	public class Xml :IDisposable
 	{
 		// Fields
-		private string m_rootName = "profile";
-		private Encoding m_encoding = Encoding.UTF8;
-    XmlDocument m_doc=null;
-    string m_strFileName="";
-    bool   m_bChanged=false;
+		static private string		m_rootName = "profile";
+		static private Encoding m_encoding = Encoding.UTF8;
+    static XmlDocument			m_doc=null;
+    static string						m_strFileName="";
+    static bool							m_bChanged=false;
+
 		/// <summary>
 		///   Initializes a new instance of the Xml class by setting the <see cref="Profile.Name" /> to <see cref="Profile.DefaultName" />. </summary>
 		public Xml()
@@ -29,6 +30,11 @@ namespace AMS.Profile
 		///   The name of the XML file to initialize the <see cref="Profile.Name" /> property with. </param>
 		public Xml(string fileName) 
 		{
+			if (m_strFileName!=fileName)
+			{
+				Save();
+				m_doc=null;
+			}
       m_strFileName=fileName;
 		}
 
@@ -39,6 +45,7 @@ namespace AMS.Profile
 		///   or null if the file does not exist. </returns>
 		private XmlDocument GetXmlDocument()
 		{
+
 			if (!File.Exists(m_strFileName))
 				return null;
 

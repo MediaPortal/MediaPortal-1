@@ -30,7 +30,7 @@ namespace MediaPortal.GUI.Library
 			{		
 				if (m_referenceNodesByControlType != null)
 					return;
-				Log.Write("Loading references from {0}", referenceFile);
+				Log.Write("  Loading references from {0}", referenceFile);
 				m_referenceNodesByControlType = new Hashtable();
 				XmlDocument doc = new XmlDocument();
 				doc.Load(referenceFile);
@@ -74,7 +74,7 @@ namespace MediaPortal.GUI.Library
 				{
 					int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
 					int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
-					Log.Write("original skin size:{0}x{1}", iWidth, iHeight);
+					Log.Write("  original skin size:{0}x{1}", iWidth, iHeight);
 					GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
 				}
 				catch (FormatException) // Size values were invalid.

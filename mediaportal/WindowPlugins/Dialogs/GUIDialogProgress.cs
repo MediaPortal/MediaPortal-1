@@ -32,11 +32,10 @@ namespace MediaPortal.Dialogs
 
     public override bool SupportsDelayedLoad
     {
-      get { return false;}
+      get { return true;}
     }    
     public override void PreInit()
     {
-      AllocResources();
     }
 
 
@@ -192,6 +191,10 @@ namespace MediaPortal.Dialogs
 
     public void  SetHeading( string strLine)
     {
+			LoadSkin();
+			AllocResources();
+			InitControls();
+
       SetLine(1,"");
       SetLine(2,"");
       SetLine(3,"");
@@ -203,6 +206,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
+
       SetHeading (GUILocalizeStrings.Get(iString) );
     }
 

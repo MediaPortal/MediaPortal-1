@@ -737,7 +737,7 @@ namespace MediaPortal.Util
 		{
 			if (strProgram==null) return null;
 			if (strProgram.Length==0) return null;
-			Log.Write("Start {0} {1}", strProgram,strParams);
+			Log.Write("Start process {0} {1}", strProgram,strParams);
 			Process dvdplayer = new Process();
 
 			string strWorkingDir=System.IO.Path.GetFullPath(strProgram);
@@ -780,7 +780,7 @@ namespace MediaPortal.Util
 						{
 							dvdplayer.StartInfo.Arguments=strParams;
 						}
-						Log.Write("start {0} {1}",strPath,dvdplayer.StartInfo.Arguments);
+						Log.Write("start process {0} {1}",strPath,dvdplayer.StartInfo.Arguments);
 
 						dvdplayer.Start();
 						dvdplayer.WaitForExit();
@@ -843,7 +843,7 @@ namespace MediaPortal.Util
 							{
 								movieplayer.StartInfo.Arguments="\""+strFile+"\"";
 							}
-							Log.Write("start {0} {1}",strPath,movieplayer.StartInfo.Arguments);
+							Log.Write("start process {0} {1}",strPath,movieplayer.StartInfo.Arguments);
 							movieplayer.Start();
 							movieplayer.WaitForExit();
 							Log.Write("{0} done",strPath);
@@ -1405,6 +1405,7 @@ namespace MediaPortal.Util
 						myProcess.Kill();
 					}
 					catch(Exception){}
+					return;
 				}
 			}
 		}

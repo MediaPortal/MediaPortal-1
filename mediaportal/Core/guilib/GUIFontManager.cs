@@ -25,7 +25,7 @@ namespace MediaPortal.GUI.Library
 		{
 			// Clear current set of fonts
       Dispose();
-      Log.Write("Load fonts from {0}", strFilename);
+      Log.Write("  Load fonts from {0}", strFilename);
 			m_fonts.Clear();
 			// Load the debug font
       GUIFont fontDebug = new GUIFont("debug","Arial",12);
@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void InitializeDeviceObjects()
 		{
-      Log.Write("fonts.InitializeDeviceObjects()");
+      Log.Write("  fonts.InitializeDeviceObjects()");
 			foreach (GUIFont font in m_fonts)
 			{
 				font.InitializeDeviceObjects();
