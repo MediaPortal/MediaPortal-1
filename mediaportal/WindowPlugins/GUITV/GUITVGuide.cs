@@ -212,7 +212,7 @@ namespace MediaPortal.GUI.TV
 						OnKeyCode((char)action.m_key.KeyChar);
 					break;
 
-				case Action.ActionType.ACTION_SHOW_GUI:
+        case Action.ActionType.ACTION_SELECT_ITEM:
 					int card=GUITVHome.GetCurrentCard();
 					if (Recorder.View)
 					{  
@@ -288,8 +288,8 @@ namespace MediaPortal.GUI.TV
 					m_dtTime=DateTime.Now;
 					Update();
 					break;
-
-				case Action.ActionType.ACTION_SELECT_ITEM:
+				
+        case Action.ActionType.ACTION_CONTEXT_MENU:
 				{
 					if (m_iCursorX>=0&& m_iCursorY>=0)
 					{
@@ -316,6 +316,7 @@ namespace MediaPortal.GUI.TV
 					}
 				}
 					break;
+
 				case Action.ActionType.ACTION_PAGE_UP:
 					OnPageUp();
 					break;
