@@ -812,9 +812,12 @@ public class MediaPortalApp : D3DApp, IRender
 								{
                   if (!g_Player.IsTV)
                   {
-                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-                    GUIGraphicsContext.IsFullScreenVideo = true;
-                    return;
+                    if (g_Player.HasVideo)
+                    {
+                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                      GUIGraphicsContext.IsFullScreenVideo = true;
+                      return;
+                    }
                   }
 								}
 							}
