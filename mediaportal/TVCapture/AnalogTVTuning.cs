@@ -95,6 +95,13 @@ namespace MediaPortal.TV.Recording
 					TVDatabase.SetChannelNumber(chan.Name,currentChannel);
 					TVDatabase.SetChannelFrequency(chan.Name,captureCard.VideoFrequency().ToString());
 					TVDatabase.MapChannelToCard(chan.ID,captureCard.ID);
+
+					TVGroup group = new TVGroup();
+					group.GroupName="Analog";
+					int groupid=TVDatabase.AddGroup(group);
+					group.ID=groupid;
+					TVDatabase.MapChannelToGroup(group,chan);
+
 				}
 			}
 			return currentChannel;

@@ -2536,13 +2536,13 @@ namespace MediaPortal.TV.Recording
 				info.service_name=info.service_name.Trim();
 				if (info.service_provider_name.Length==0 ) 
 				{
-					
-						info.service_provider_name="NoName";
-					
+						info.service_provider_name="Unknown";
 				}
 				if (info.service_name.Length==0)
-					info.service_name=String.Format("NoName:{0}{1}{2}",info.networkID,info.transportStreamID, info.serviceID );
+					info.service_name=String.Format("NoName:{0}{1}{2}{3}",info.networkID,info.transportStreamID, info.serviceID,i );
 
+
+				if (info.serviceID==0) continue;
 				bool hasAudio=false;
 				bool hasVideo=false;
 				info.freq=currentTuningObject.carrierFrequency;
