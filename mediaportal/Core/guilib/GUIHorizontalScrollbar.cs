@@ -73,11 +73,14 @@ namespace MediaPortal.GUI.Library
 			float fPercent= (float)m_fPercent;
 			float fPosXOff= (fPercent/100.0f);
 
-			m_iStartX    =12+m_guiBackground.XPosition;
-			m_iEndX      =m_iStartX+(m_guiBackground.Width-12);
+			m_iKnobWidth = (int)(2*m_guiLeft.TextureWidth);
+			int inset=4;
+			GUIGraphicsContext.ScaleHorizontal(ref inset);
+			inset+=(m_iKnobWidth/2);
+			m_iStartX    =inset+m_guiBackground.XPosition;
+			m_iEndX      =m_iStartX+(m_guiBackground.Width-inset);
 
 			fPosXOff    *= (float) (m_iEndX-m_iStartX);
-			m_iKnobWidth = (int)(2*m_guiLeft.TextureWidth);
       
 			m_iXStartKnob=m_iStartX+(int)fPosXOff - (m_iKnobWidth/2);
 			int iXPos=m_iXStartKnob;
@@ -113,7 +116,10 @@ namespace MediaPortal.GUI.Library
 		public float Percentage
 		{
 			get { return m_fPercent;}
-			set { m_fPercent=value;}
+			set { m_fPercent=value;
+				if (m_fPercent<0) m_fPercent=0;
+				if (m_fPercent>100) m_fPercent=100;
+			}
 		}
 
 		/// <summary>

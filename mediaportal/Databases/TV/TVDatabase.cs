@@ -359,6 +359,39 @@ namespace MediaPortal.TV.Database
       }
     }
 
+		static public void UpdateChannel(TVChannel channel, int sort)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					string strChannel=channel.Name;
+					RemoveInvalidChars(ref strChannel);
+					if (null==m_db) return ;
+					m_channelCache.Clear();
+					string strExternal=channel.ExternalTunerChannel;
+					RemoveInvalidChars(ref strExternal);
+
+					int iExternal=0;
+					if (channel.External) iExternal=1;
+					int iVisible=0;
+					if (channel.VisibleInGuide) iVisible=1;
+
+
+					strSQL=String.Format( "update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6} where strChannel like '{7}'", 
+																	channel.Number,channel.Frequency.ToString(),
+																	sort,iExternal, strExternal, (int)channel.TVStandard, iVisible,
+																	strChannel);
+					m_db.Execute(strSQL);
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+
     static public int AddChannel(TVChannel channel)
     {
       lock (typeof(TVDatabase))

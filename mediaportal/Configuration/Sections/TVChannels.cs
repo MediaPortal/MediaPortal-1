@@ -384,7 +384,7 @@ namespace MediaPortal.Configuration.Sections
 															  };
 
 					//
-					// Start by removing existing channels from the database and from the registry.
+					// Start by removing any old tv channels from the database and from the registry.
 					// Information stored in the registry is the channel frequency.
 					//
 					ArrayList channels = new ArrayList();
@@ -394,7 +394,18 @@ namespace MediaPortal.Configuration.Sections
 					{
 						foreach(MediaPortal.TV.Database.TVChannel channel in channels)
 						{
-              TVDatabase.RemoveChannel(channel.Name);
+							bool found=false;
+							foreach(ListViewItem listItem in channelsListView.Items)
+							{
+								TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
+								if (channel.Name.ToLower() == tvChannel.Name.ToLower())
+								{
+									found=true;
+									break;
+								}
+							}
+							if (!found)
+								TVDatabase.RemoveChannel(channel.Name);
 						}
 
 						//
@@ -417,6 +428,7 @@ namespace MediaPortal.Configuration.Sections
 					//
 					// Add current channels
 					//
+					TVDatabase.GetChannels(ref channels);
 					foreach(ListViewItem listItem in channelsListView.Items)
 					{
 						MediaPortal.TV.Database.TVChannel channel = new MediaPortal.TV.Database.TVChannel();
@@ -439,15 +451,31 @@ namespace MediaPortal.Configuration.Sections
               channel.External = tvChannel.External;
               channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
               channel.TVStandard = tvChannel.standard;
-							//
-							// Finally add the channel
-							//
-							TVDatabase.AddChannel(channel);
 
-              //
-              // Set the sort order
-              //
-              TVDatabase.SetChannelSort(channel.Name, listItem.Index);
+							//does channel already exists in database?
+							bool exists=false;
+							foreach (TVChannel chan in channels)
+							{
+								if (chan.Name.ToLower() == channel.Name.ToLower())
+								{
+									exists=true;
+									break;
+								}
+							}
+							
+							if (exists)
+							{
+								TVDatabase.UpdateChannel(channel, listItem.Index);
+							}
+							else
+							{
+								TVDatabase.AddChannel(channel);
+
+								//
+								// Set the sort order
+								//
+								TVDatabase.SetChannelSort(channel.Name, listItem.Index);
+							}
 						}
 					}
 

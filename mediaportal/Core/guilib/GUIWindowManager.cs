@@ -12,9 +12,11 @@ namespace MediaPortal.GUI.Library
 
 		public delegate void OnCallBackHandler();
 		static public event  SendMessageHandler Receivers;
+		static public event  OnActionHandler	  OnNewAction;
 		static public event  OnCallBackHandler  Callbacks;
     static ArrayList		 m_vecWindows				= new ArrayList();
-    static ArrayList		 m_vecThreadMessages	= new ArrayList();
+		static ArrayList		 m_vecThreadMessages	= new ArrayList();
+		static ArrayList		 m_vecThreadActions	= new ArrayList();
     static int					 m_iActiveWindow=-1;
     static int					 m_iActiveWindowID=-1;
     static GUIWindow     m_pRouteWindow=null;
@@ -98,6 +100,7 @@ namespace MediaPortal.GUI.Library
       
       //register ourselves for the messages from the GUIGraphicsContext 
 			GUIGraphicsContext.Receivers += new SendMessageHandler(SendMessage);
+			GUIGraphicsContext.OnNewAction  += new OnActionHandler(OnActionReceived);
     }
 
     /// <summary>
@@ -309,6 +312,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+		static void OnActionReceived(Action action)
+		{
+			if (action!=null)
+				m_vecThreadActions.Add(action);
+		}
 
     /// <summary>
     /// Called when a new action has been arrived for the window
@@ -520,6 +528,7 @@ namespace MediaPortal.GUI.Library
       m_pRouteWindow=null;
       m_vecWindows.Clear();
       m_vecThreadMessages.Clear();
+			m_vecThreadActions.Clear();
       GUIWindow.Clear();
     }
 
@@ -604,6 +613,15 @@ namespace MediaPortal.GUI.Library
           SendMessage(message);
         }
       }
+			if (m_vecThreadActions.Count>0)
+			{
+				ArrayList list=m_vecThreadActions;
+				m_vecThreadActions=new ArrayList();
+				foreach(Action action in list)
+				{
+					if (OnNewAction!=null) OnNewAction(action);
+				}
+			}
     }
 
     /// <summary>

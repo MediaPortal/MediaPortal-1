@@ -29,10 +29,14 @@ using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.Ripper;
 
 /// <summary>
+/// - fixed issues in tvguide
+/// - fixed possible hangups when 2 threads where accessing onmessage() or onaction()
+/// -
 /// performance issues:
 /// guilib
 ///   thumbpanel     : better to use an array of GUILabelControls
 ///   autoplay&dialogs subproject is gone.
+///   batch DX9      : sprite class?
 /// 
 /// performance enhancements made:
 ///   - re-packaged all subprojects into 10 assemblies
@@ -283,7 +287,7 @@ public class MediaPortalApp : D3DApp, IRender
 
 	  private void OnRemoteCommand(object command)
 	  {
-		  OnAction(new Action((Action.ActionType) command, 0, 0));
+		  GUIGraphicsContext.OnAction(new Action((Action.ActionType) command, 0, 0));
 	  }
 
     public MediaPortalApp()
@@ -341,7 +345,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("starting");
       GUIGraphicsContext.form = this;
       GUIGraphicsContext.graphics = null;
-      GUIGraphicsContext.ActionHandlers += new OnActionHandler(this.OnAction);
+      GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
       try
       {
         using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
@@ -525,7 +529,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (action!=null && action.wID!=Action.ActionType.ACTION_INVALID)
         {
           Log.Write("action:{0} ", action.wID);
-          OnAction(action);
+          GUIGraphicsContext.OnAction(action);
         }
         
         if (keyCode !=Keys.A)
@@ -916,7 +920,8 @@ public class MediaPortalApp : D3DApp, IRender
             iStep = (iMax - iMin) / 10;
             iCurrent -= iStep;
             if (iCurrent < iMin) iCurrent = iMin;
-            AudioMixerHelper.SetVolume(iCurrent);
+						AudioMixerHelper.SetVolume(iCurrent);
+						return;
           break;
 
 					case Action.ActionType.ACTION_VOLUME_UP : 
@@ -993,11 +998,11 @@ public class MediaPortalApp : D3DApp, IRender
                 }
               }
             }
-						break;
+						return;
 
 					case Action.ActionType.ACTION_EXIT : 
 						GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-						break;
+						return;
 
 					case Action.ActionType.ACTION_REBOOT : 
 					{
@@ -1013,11 +1018,11 @@ public class MediaPortalApp : D3DApp, IRender
 							GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 						}
 					}
-						break;
+						return;
 
 					case Action.ActionType.ACTION_EJECTCD : 
 						Utils.EjectCDROM();
-						break;
+						return;
 
 					case Action.ActionType.ACTION_SHUTDOWN : 
 					{
@@ -1027,14 +1032,16 @@ public class MediaPortalApp : D3DApp, IRender
             msg.Param3=0;
             GUIWindowManager.SendMessage(msg);
 
-						if (msg.Param1==0)
+						if (msg.Param1==1)
 						{
 							WindowsController.ExitWindows(RestartOptions.PowerOff, true);
 							GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 						}
 						break;
 					}
+						return;
 				}
+
 				if (g_Player.Playing)
 				{
 					switch (action.wID)
@@ -1159,7 +1166,7 @@ public class MediaPortalApp : D3DApp, IRender
          GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) )
       {
         action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-        OnAction(action);
+        GUIGraphicsContext.OnAction(action);
         return;
       }
 
@@ -1167,10 +1174,10 @@ public class MediaPortalApp : D3DApp, IRender
       {
         if (action.SoundFileName.Length > 0)
           Utils.PlaySound(action.SoundFileName, false, true);
-				OnAction(action);
+				GUIGraphicsContext.OnAction(action);
 			}
       action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      OnAction(action);
+      GUIGraphicsContext.OnAction(action);
 		}
 
 		protected override void keydown(System.Windows.Forms.KeyEventArgs e)
@@ -1181,7 +1188,7 @@ public class MediaPortalApp : D3DApp, IRender
 				{
           if (action.SoundFileName.Length > 0)
             Utils.PlaySound(action.SoundFileName, false, true);
-					OnAction(action);
+					GUIGraphicsContext.OnAction(action);
 				}
       
 	  }
@@ -1207,7 +1214,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Action action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
         action.MouseButton = e.Button;
-        OnAction(action);
+        GUIGraphicsContext.OnAction(action);
         
       }
     }
@@ -1226,7 +1233,7 @@ public class MediaPortalApp : D3DApp, IRender
     float x = (fX * ((float)m_iLastMousePositionX)) - GUIGraphicsContext.OffsetX;
     float y = (fY * ((float)m_iLastMousePositionY)) - GUIGraphicsContext.OffsetY; ;
     action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
-    OnAction(action);
+    GUIGraphicsContext.OnAction(action);
 
     // right mouse button=back
     if (e.Button == MouseButtons.Right)
@@ -1237,7 +1244,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         if (action.SoundFileName.Length > 0)
           Utils.PlaySound(action.SoundFileName, false, true);
-        OnAction(action);
+        GUIGraphicsContext.OnAction(action);
       }
     }
 /*
@@ -1250,7 +1257,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         if (action.SoundFileName.Length>0)
             Utils.PlaySound(action.SoundFileName, false, true);
-        OnAction(action);
+        GUIGraphicsContext.OnAction(action);
       }
     }*/
 
@@ -1263,7 +1270,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         if (action.SoundFileName.Length > 0)
           Utils.PlaySound(action.SoundFileName, false, true);
-        OnAction(action);
+        GUIGraphicsContext.OnAction(action);
       }
     }
     if (e.Clicks==1)
@@ -1274,7 +1281,7 @@ public class MediaPortalApp : D3DApp, IRender
     action.SoundFileName = "click.wav";
     if (action.SoundFileName.Length > 0)
       Utils.PlaySound(action.SoundFileName, false, true);
-    OnAction(action);
+    GUIGraphicsContext.OnAction(action);
 
 	}
 	
@@ -1406,7 +1413,7 @@ public class MediaPortalApp : D3DApp, IRender
       //  check if we joined, if we didn't interrupt the thread
       if (!isThreadJoined)
       {
-        _updaterThread.Interrupt();
+        _updaterThread.Interrupt();	
       }
       _updaterThread = null;
     }

@@ -10,7 +10,7 @@ using AMS.Profile;
 namespace MediaPortal.GUI.Library
 {
   public delegate void OnActionHandler(Action action);
-  public delegate void SendMessageHandler(GUIMessage message);
+	public delegate void SendMessageHandler(GUIMessage message);
   public delegate void VideoWindowChangedHandler();
   public delegate void VideoGammaContrastBrightnessHandler();
 
@@ -31,11 +31,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public event SendMessageHandler     Receivers;
 
-		
 		/// <summary>
 		/// Event which will be triggered when a action has arrived
 		/// </summary>
-    static public event OnActionHandler        ActionHandlers;
+		static public event OnActionHandler     OnNewAction;
+		
 		
     /// <summary>
     /// Event which will be triggered when the video window location/size or AR have been changed
@@ -187,7 +187,20 @@ namespace MediaPortal.GUI.Library
       {
         Receivers(msg);
       }
-    }
+		}
+
+		/// <summary>
+		/// Send a action to anyone interested
+		/// </summary>
+		/// <param name="msg">The message.</param>
+		static public void OnAction(Action action)
+		{
+			if (OnNewAction!=null)
+			{
+				OnNewAction(action);
+			}
+		}
+
 
 		/// <summary>
 		/// Get/set DX9 device.
@@ -674,14 +687,6 @@ namespace MediaPortal.GUI.Library
       set { m_skinSize=value;}
     }
  
-		/// <summary>
-		/// Delegates an action if there are actionhandlers.
-		/// </summary>
-		/// <param name="action">The action that needs to be delegated.</param>
-		static public void OnAction(Action action)
-    {
-      if (ActionHandlers!=null) ActionHandlers(action);
-    }
 
 		/// <summary>
 		/// Get/Set whether we should show the GUI as background or 
