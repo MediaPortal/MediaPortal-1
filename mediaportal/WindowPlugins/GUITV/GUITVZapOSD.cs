@@ -35,12 +35,13 @@ namespace MediaPortal.GUI.TV
 
 	  bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
-    TVUtil m_util=null;
+	  TVUtil m_util = new TVUtil();
     ArrayList m_channels = new ArrayList();
 
     public GUITVZAPOSD()
     {
 		
+		TVDatabase.GetChannels(ref m_channels);
     }
 
     public override bool Init()
@@ -130,8 +131,6 @@ namespace MediaPortal.GUI.TV
           ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
           m_bNeedRefresh=false;
           m_dateTime=DateTime.Now;
-          m_channels.Clear();
-          TVDatabase.GetChannels(ref m_channels);
           SetCurrentChannelLogo();
           return true;
         }
@@ -373,8 +372,11 @@ namespace MediaPortal.GUI.TV
         cntlNext.OnMessage(msg);
       }
 
-      TVUtil util = new TVUtil();
-      TVProgram prog=util.GetProgramAt(GetChannelName(),m_dateTime);
+		if (m_util==null)
+		{
+			m_util=new TVUtil();
+		}
+      TVProgram prog=m_util.GetProgramAt(GetChannelName(),m_dateTime);
       
       if (prog!=null)
       {
@@ -399,7 +401,7 @@ namespace MediaPortal.GUI.TV
         }
 
         // next program
-        prog=util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(1));
+        prog=m_util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(1));
         if (prog!=null)
         {
           strTime=String.Format("{0} ", 

@@ -83,10 +83,11 @@ namespace MediaPortal.GUI.TV
     int m_iActiveMenuButtonID = 0;
     bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
-    TVUtil m_util=null;
+    TVUtil m_util = new TVUtil();
     ArrayList m_channels = new ArrayList();
     public GUITVOSD()
     {
+		TVDatabase.GetChannels(ref m_channels);
     }
 
     public override bool Init()
@@ -271,8 +272,6 @@ namespace MediaPortal.GUI.TV
           m_dateTime=DateTime.Now;
           Reset();
           FocusControl(GetID, (int)Controls.OSD_PLAY, 0);	// set focus to play button by default when window is shown
-          m_channels.Clear();
-          TVDatabase.GetChannels(ref m_channels);
           SetCurrentChannelLogo();
           return true;
         }
@@ -299,11 +298,14 @@ namespace MediaPortal.GUI.TV
           }
           if (iControl==(int)Controls.BTN_PROGRAM_LEFT)
           {
-            TVUtil util = new TVUtil();
-            TVProgram prog=util.GetProgramAt(GetChannelName(),m_dateTime);
+			  if (m_util==null)
+			  {
+				  m_util=new TVUtil();
+			  }
+            TVProgram prog=m_util.GetProgramAt(GetChannelName(),m_dateTime);
             if (prog!=null)
             {
-              prog=util.GetProgramAt(GetChannelName(),prog.StartTime.AddMinutes(-1));
+              prog=m_util.GetProgramAt(GetChannelName(),prog.StartTime.AddMinutes(-1));
               if (prog!=null)
               {
                 m_dateTime=prog.StartTime;
@@ -314,11 +316,14 @@ namespace MediaPortal.GUI.TV
           }
           if (iControl==(int)Controls.BTN_PROGRAM_RIGHT)
           {
-            TVUtil util = new TVUtil();
-            TVProgram prog=util.GetProgramAt(GetChannelName(),m_dateTime);
+			  if (m_util==null)
+			  {
+				  m_util=new TVUtil();
+			  }
+            TVProgram prog=m_util.GetProgramAt(GetChannelName(),m_dateTime);
             if (prog!=null)
             {
-              prog=util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(+1));
+              prog=m_util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(+1));
               if (prog!=null)
               {
                 m_dateTime=prog.StartTime.AddMinutes(1);
@@ -1255,8 +1260,11 @@ namespace MediaPortal.GUI.TV
         cntlNext.OnMessage(msg);
       }
 
-      TVUtil util = new TVUtil();
-      TVProgram prog=util.GetProgramAt(GetChannelName(),m_dateTime);
+		if (m_util==null)
+		{
+			m_util=new TVUtil();
+		}
+      TVProgram prog=m_util.GetProgramAt(GetChannelName(),m_dateTime);
       
       if (prog!=null)
       {
@@ -1281,7 +1289,7 @@ namespace MediaPortal.GUI.TV
         }
 
         // next program
-        prog=util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(1));
+        prog=m_util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(1));
         if (prog!=null)
         {
           strTime=String.Format("{0} ", 
