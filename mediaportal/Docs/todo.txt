@@ -7,7 +7,6 @@ My Radio:
       
 My TV:
   general
-	- reload tvguide.xml if something in the setup has been changed
 	- option:fade in/out when switching between fullscreen video/tv<->gui
 	- option:turn timeshifting on/off
 	- option:show fullscreen TV when going to my tv (instead of windowed)
