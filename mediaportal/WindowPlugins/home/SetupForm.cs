@@ -65,9 +65,9 @@ namespace home
 			public TagTypes			tagType;
 		};
 
-		ArrayList availablePlugins = new ArrayList();
+		private ArrayList availablePlugins = new ArrayList();
 		private System.Windows.Forms.CheckBox chkBoxFixed;
-		ArrayList loadedPlugins = new ArrayList();
+		private ArrayList loadedPlugins = new ArrayList();
 		bool	addPicture=false;
 		string	skinName;
 
@@ -88,7 +88,6 @@ namespace home
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.PictureBox pictureBox3;
 		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.RadioButton useMyPlugins;
 		private System.Windows.Forms.RadioButton useMenus;
@@ -114,6 +113,18 @@ namespace home
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.ListBox SpecialFunctions;
 		private System.Windows.Forms.CheckBox BackButtons;
+		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.ListView listView;
+		private System.Windows.Forms.ColumnHeader Plugin;
+		private System.Windows.Forms.ColumnHeader Key;
+		private System.Windows.Forms.ColumnHeader Fullscreen;
+		private System.Windows.Forms.ColumnHeader Type;
+		private System.Windows.Forms.Label label22;
+		private System.Windows.Forms.Label label23;
+		private System.Windows.Forms.TabPage TopBar;
+		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -191,9 +202,10 @@ namespace home
 			this.treeView.Indent = this.treeView.Indent + 3;
 
 			EnumeratePlugins();
-			LoadSettings();
 			LoadPlugins();
 			PopulateListBox();
+			LoadSettings();
+			PopulateListViewBox();
 			MakeMenu.Visible=false;
 
 			textBox1.Text="";
@@ -276,8 +288,9 @@ namespace home
 			this.pictureBox3 = new System.Windows.Forms.PictureBox();
 			this.addConfig = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.TopBar = new System.Windows.Forms.TabPage();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.BackButtons = new System.Windows.Forms.CheckBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.label21 = new System.Windows.Forms.Label();
 			this.TestDate = new System.Windows.Forms.Button();
@@ -297,26 +310,37 @@ namespace home
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.AddSpecial = new System.Windows.Forms.Button();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label23 = new System.Windows.Forms.Label();
+			this.label22 = new System.Windows.Forms.Label();
 			this.useMyPlugins = new System.Windows.Forms.RadioButton();
 			this.useMenus = new System.Windows.Forms.RadioButton();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.SpecialFunctions = new System.Windows.Forms.ListBox();
-			this.BackButtons = new System.Windows.Forms.CheckBox();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.listView = new System.Windows.Forms.ListView();
+			this.Type = new System.Windows.Forms.ColumnHeader();
+			this.Plugin = new System.Windows.Forms.ColumnHeader();
+			this.Key = new System.Windows.Forms.ColumnHeader();
+			this.Fullscreen = new System.Windows.Forms.ColumnHeader();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.button2 = new System.Windows.Forms.Button();
+			this.button3 = new System.Windows.Forms.Button();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
+			this.TopBar.SuspendLayout();
 			this.groupBox5.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox3
 			// 
 			this.groupBox3.Controls.Add(this.pictureBox1);
-			this.groupBox3.Location = new System.Drawing.Point(248, 8);
+			this.groupBox3.Location = new System.Drawing.Point(272, 8);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(216, 192);
 			this.groupBox3.TabIndex = 27;
@@ -347,16 +371,16 @@ namespace home
 			this.groupBox2.Controls.Add(this.textBox4);
 			this.groupBox2.Controls.Add(this.textBox2);
 			this.groupBox2.Controls.Add(this.textBox1);
-			this.groupBox2.Location = new System.Drawing.Point(472, 8);
+			this.groupBox2.Location = new System.Drawing.Point(496, 8);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(344, 192);
+			this.groupBox2.Size = new System.Drawing.Size(320, 192);
 			this.groupBox2.TabIndex = 26;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Tag Info";
 			// 
 			// SearchPicture
 			// 
-			this.SearchPicture.Location = new System.Drawing.Point(304, 16);
+			this.SearchPicture.Location = new System.Drawing.Point(272, 16);
 			this.SearchPicture.Name = "SearchPicture";
 			this.SearchPicture.Size = new System.Drawing.Size(32, 24);
 			this.SearchPicture.TabIndex = 12;
@@ -366,7 +390,7 @@ namespace home
 			// 
 			// MakeMenu
 			// 
-			this.MakeMenu.Location = new System.Drawing.Point(144, 160);
+			this.MakeMenu.Location = new System.Drawing.Point(112, 160);
 			this.MakeMenu.Name = "MakeMenu";
 			this.MakeMenu.Size = new System.Drawing.Size(80, 24);
 			this.MakeMenu.TabIndex = 1;
@@ -375,7 +399,7 @@ namespace home
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(48, 120);
+			this.label7.Location = new System.Drawing.Point(16, 120);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(80, 16);
 			this.label7.TabIndex = 11;
@@ -383,7 +407,7 @@ namespace home
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(48, 144);
+			this.label8.Location = new System.Drawing.Point(16, 144);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(80, 16);
 			this.label8.TabIndex = 10;
@@ -391,7 +415,7 @@ namespace home
 			// 
 			// textBox5
 			// 
-			this.textBox5.Location = new System.Drawing.Point(128, 112);
+			this.textBox5.Location = new System.Drawing.Point(96, 112);
 			this.textBox5.Name = "textBox5";
 			this.textBox5.Size = new System.Drawing.Size(168, 20);
 			this.textBox5.TabIndex = 9;
@@ -399,7 +423,7 @@ namespace home
 			// 
 			// textBox6
 			// 
-			this.textBox6.Location = new System.Drawing.Point(128, 136);
+			this.textBox6.Location = new System.Drawing.Point(96, 136);
 			this.textBox6.Name = "textBox6";
 			this.textBox6.Size = new System.Drawing.Size(168, 20);
 			this.textBox6.TabIndex = 8;
@@ -407,7 +431,7 @@ namespace home
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(48, 72);
+			this.label5.Location = new System.Drawing.Point(16, 72);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(80, 16);
 			this.label5.TabIndex = 7;
@@ -415,7 +439,7 @@ namespace home
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(48, 96);
+			this.label6.Location = new System.Drawing.Point(16, 96);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(80, 16);
 			this.label6.TabIndex = 6;
@@ -423,7 +447,7 @@ namespace home
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(48, 48);
+			this.label4.Location = new System.Drawing.Point(16, 48);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(80, 16);
 			this.label4.TabIndex = 5;
@@ -431,7 +455,7 @@ namespace home
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(48, 24);
+			this.label3.Location = new System.Drawing.Point(16, 24);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(80, 16);
 			this.label3.TabIndex = 4;
@@ -439,7 +463,7 @@ namespace home
 			// 
 			// textBox3
 			// 
-			this.textBox3.Location = new System.Drawing.Point(128, 64);
+			this.textBox3.Location = new System.Drawing.Point(96, 64);
 			this.textBox3.Name = "textBox3";
 			this.textBox3.Size = new System.Drawing.Size(168, 20);
 			this.textBox3.TabIndex = 3;
@@ -447,7 +471,7 @@ namespace home
 			// 
 			// textBox4
 			// 
-			this.textBox4.Location = new System.Drawing.Point(128, 88);
+			this.textBox4.Location = new System.Drawing.Point(96, 88);
 			this.textBox4.Name = "textBox4";
 			this.textBox4.Size = new System.Drawing.Size(168, 20);
 			this.textBox4.TabIndex = 2;
@@ -455,7 +479,7 @@ namespace home
 			// 
 			// textBox2
 			// 
-			this.textBox2.Location = new System.Drawing.Point(128, 40);
+			this.textBox2.Location = new System.Drawing.Point(96, 40);
 			this.textBox2.Name = "textBox2";
 			this.textBox2.Size = new System.Drawing.Size(168, 20);
 			this.textBox2.TabIndex = 1;
@@ -463,7 +487,7 @@ namespace home
 			// 
 			// textBox1
 			// 
-			this.textBox1.Location = new System.Drawing.Point(128, 16);
+			this.textBox1.Location = new System.Drawing.Point(96, 16);
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(168, 20);
 			this.textBox1.TabIndex = 0;
@@ -604,16 +628,16 @@ namespace home
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(8, 96);
+			this.label9.Location = new System.Drawing.Point(8, 88);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(160, 32);
+			this.label9.Size = new System.Drawing.Size(208, 32);
 			this.label9.TabIndex = 30;
 			this.label9.Text = "You can move any Menu Item with drag and drop";
 			// 
 			// pictureBox2
 			// 
 			this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-			this.pictureBox2.Location = new System.Drawing.Point(8, 136);
+			this.pictureBox2.Location = new System.Drawing.Point(8, 120);
 			this.pictureBox2.Name = "pictureBox2";
 			this.pictureBox2.Size = new System.Drawing.Size(16, 24);
 			this.pictureBox2.TabIndex = 31;
@@ -621,24 +645,24 @@ namespace home
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(32, 136);
+			this.label10.Location = new System.Drawing.Point(32, 120);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(168, 16);
 			this.label10.TabIndex = 32;
-			this.label10.Text = "is a Menu Item    (MENU NAME)";
+			this.label10.Text = "is a Menu Item ";
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(32, 160);
+			this.label11.Location = new System.Drawing.Point(32, 144);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(184, 16);
+			this.label11.Size = new System.Drawing.Size(88, 16);
 			this.label11.TabIndex = 34;
-			this.label11.Text = "is a Plugin Item   {PICTURE NAME}";
+			this.label11.Text = "is a Plugin Item";
 			// 
 			// pictureBox3
 			// 
 			this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-			this.pictureBox3.Location = new System.Drawing.Point(8, 160);
+			this.pictureBox3.Location = new System.Drawing.Point(8, 144);
 			this.pictureBox3.Name = "pictureBox3";
 			this.pictureBox3.Size = new System.Drawing.Size(16, 24);
 			this.pictureBox3.TabIndex = 33;
@@ -655,38 +679,48 @@ namespace home
 			// 
 			// tabControl1
 			// 
-			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.TopBar);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(840, 520);
 			this.tabControl1.TabIndex = 36;
 			// 
-			// tabPage1
+			// TopBar
 			// 
-			this.tabPage1.Controls.Add(this.groupBox5);
-			this.tabPage1.Controls.Add(this.groupBox4);
-			this.tabPage1.Controls.Add(this.button1);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(832, 494);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "Home Design";
+			this.TopBar.Controls.Add(this.groupBox5);
+			this.TopBar.Controls.Add(this.groupBox4);
+			this.TopBar.Controls.Add(this.button1);
+			this.TopBar.Location = new System.Drawing.Point(4, 22);
+			this.TopBar.Name = "TopBar";
+			this.TopBar.Size = new System.Drawing.Size(832, 494);
+			this.TopBar.TabIndex = 0;
+			this.TopBar.Text = "Home Design";
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.checkBox1);
 			this.groupBox5.Controls.Add(this.BackButtons);
 			this.groupBox5.Controls.Add(this.NoScrollSubs);
 			this.groupBox5.Controls.Add(this.chkBoxFixed);
 			this.groupBox5.Controls.Add(this.chkBoxScrolling);
-			this.groupBox5.Location = new System.Drawing.Point(16, 24);
+			this.groupBox5.Location = new System.Drawing.Point(32, 24);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(272, 192);
+			this.groupBox5.Size = new System.Drawing.Size(232, 192);
 			this.groupBox5.TabIndex = 28;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Home Settings";
+			// 
+			// BackButtons
+			// 
+			this.BackButtons.Location = new System.Drawing.Point(24, 96);
+			this.BackButtons.Name = "BackButtons";
+			this.BackButtons.Size = new System.Drawing.Size(168, 24);
+			this.BackButtons.TabIndex = 7;
+			this.BackButtons.Text = "Back Button in Submenus";
 			// 
 			// groupBox4
 			// 
@@ -830,7 +864,7 @@ namespace home
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(24, 448);
+			this.button1.Location = new System.Drawing.Point(40, 448);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(88, 24);
 			this.button1.TabIndex = 26;
@@ -869,6 +903,8 @@ namespace home
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label23);
+			this.groupBox1.Controls.Add(this.label22);
 			this.groupBox1.Controls.Add(this.useMyPlugins);
 			this.groupBox1.Controls.Add(this.useMenus);
 			this.groupBox1.Controls.Add(this.label9);
@@ -878,37 +914,54 @@ namespace home
 			this.groupBox1.Controls.Add(this.pictureBox3);
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(224, 192);
+			this.groupBox1.Size = new System.Drawing.Size(256, 192);
 			this.groupBox1.TabIndex = 15;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Menu settings";
+			// 
+			// label23
+			// 
+			this.label23.Location = new System.Drawing.Point(8, 168);
+			this.label23.Name = "label23";
+			this.label23.Size = new System.Drawing.Size(88, 16);
+			this.label23.TabIndex = 36;
+			this.label23.Text = "(MENU NAME)";
+			// 
+			// label22
+			// 
+			this.label22.Location = new System.Drawing.Point(104, 168);
+			this.label22.Name = "label22";
+			this.label22.Size = new System.Drawing.Size(112, 16);
+			this.label22.TabIndex = 35;
+			this.label22.Text = "{PICTURE NAME}";
 			// 
 			// useMyPlugins
 			// 
 			this.useMyPlugins.Checked = true;
 			this.useMyPlugins.Location = new System.Drawing.Point(16, 16);
 			this.useMyPlugins.Name = "useMyPlugins";
-			this.useMyPlugins.Size = new System.Drawing.Size(168, 24);
+			this.useMyPlugins.Size = new System.Drawing.Size(216, 24);
 			this.useMyPlugins.TabIndex = 1;
 			this.useMyPlugins.TabStop = true;
-			this.useMyPlugins.Text = "Use MyPlugins (Frodo)";
+			this.useMyPlugins.Text = "Use MyPlugins (2-level home screen)";
 			// 
 			// useMenus
 			// 
-			this.useMenus.Location = new System.Drawing.Point(16, 48);
+			this.useMenus.Location = new System.Drawing.Point(16, 40);
 			this.useMenus.Name = "useMenus";
 			this.useMenus.Size = new System.Drawing.Size(168, 16);
 			this.useMenus.TabIndex = 0;
-			this.useMenus.Text = "Use Menus (Gucky62)";
+			this.useMenus.Text = "Use Menus (custom menus)";
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.button2);
 			this.tabPage3.Controls.Add(this.SpecialFunctions);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
 			this.tabPage3.Size = new System.Drawing.Size(832, 494);
 			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "Special Funktions";
+			this.tabPage3.Text = "Special Functions";
 			// 
 			// SpecialFunctions
 			// 
@@ -917,13 +970,75 @@ namespace home
 			this.SpecialFunctions.Size = new System.Drawing.Size(328, 342);
 			this.SpecialFunctions.TabIndex = 0;
 			// 
-			// BackButtons
+			// tabPage4
 			// 
-			this.BackButtons.Location = new System.Drawing.Point(24, 96);
-			this.BackButtons.Name = "BackButtons";
-			this.BackButtons.Size = new System.Drawing.Size(168, 24);
-			this.BackButtons.TabIndex = 7;
-			this.BackButtons.Text = "Back Button in Submenus";
+			this.tabPage4.Controls.Add(this.button3);
+			this.tabPage4.Controls.Add(this.listView);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Size = new System.Drawing.Size(832, 494);
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "Menu Shortcuts";
+			// 
+			// listView
+			// 
+			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																							 this.Type,
+																																							 this.Plugin,
+																																							 this.Key,
+																																							 this.Fullscreen});
+			this.listView.GridLines = true;
+			this.listView.Location = new System.Drawing.Point(240, 16);
+			this.listView.Name = "listView";
+			this.listView.Size = new System.Drawing.Size(552, 432);
+			this.listView.TabIndex = 19;
+			this.listView.View = System.Windows.Forms.View.Details;
+			// 
+			// Type
+			// 
+			this.Type.Text = "Type";
+			this.Type.Width = 72;
+			// 
+			// Plugin
+			// 
+			this.Plugin.Text = "Plugin";
+			this.Plugin.Width = 264;
+			// 
+			// Key
+			// 
+			this.Key.Text = "Key";
+			this.Key.Width = 62;
+			// 
+			// Fullscreen
+			// 
+			this.Fullscreen.Text = "Full Screen";
+			this.Fullscreen.Width = 72;
+			// 
+			// checkBox1
+			// 
+			this.checkBox1.Location = new System.Drawing.Point(24, 120);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(168, 24);
+			this.checkBox1.TabIndex = 8;
+			this.checkBox1.Text = "Topbar in Submenus";
+			// 
+			// button2
+			// 
+			this.button2.Location = new System.Drawing.Point(40, 448);
+			this.button2.Name = "button2";
+			this.button2.Size = new System.Drawing.Size(88, 24);
+			this.button2.TabIndex = 27;
+			this.button2.Text = "Save";
+			this.button2.Click += new System.EventHandler(this.SaveAll_Click);
+			// 
+			// button3
+			// 
+			this.button3.Location = new System.Drawing.Point(40, 448);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(88, 24);
+			this.button3.TabIndex = 27;
+			this.button3.Text = "Save";
+			this.button3.Click += new System.EventHandler(this.SaveAll_Click);
 			// 
 			// SetupForm
 			// 
@@ -938,12 +1053,13 @@ namespace home
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
+			this.TopBar.ResumeLayout(false);
 			this.groupBox5.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1069,56 +1185,64 @@ namespace home
 
 		private void UpdateTagInfo(string name)
 		{
-			if (name.StartsWith("(")) 
+			try 
 			{
-				string strBtnFile="";
-				int l1=name.IndexOf("{",0);
-				int l2=name.IndexOf("}",0);
-				string strBtnText=name.Substring(1,name.IndexOf(")",0)-1);
-				if(l1>0) 
+				if (name.StartsWith("(")) 
 				{
-					strBtnFile=name.Substring(l1+1,(l2-l1)-1);
-					pictureBox1.Image=Image.FromFile(System.IO.Directory.GetCurrentDirectory()+"\\skin\\"+skinName+"\\media\\"+strBtnFile,true);
-				}
-				label3.Text="Tag Type";
-				textBox1.Text="Menu Tag";
-				label4.Text="Button Text";
-				textBox2.Text=strBtnText;
-				label5.Text="Button Picture";
-				textBox3.Text=strBtnFile;
-				label6.Text="";
-				textBox4.Text="";
-				label7.Text="";
-				textBox5.Text="";
-				label8.Text="";
-				textBox6.Text="";
-			} 
-			else 
-			{
-				foreach(ItemTag tag in loadedPlugins)
-				{
-					if (name==tag.pluginName) 
+					string strBtnFile="";
+					int l1=name.IndexOf("{",0);
+					int l2=name.IndexOf("}",0);
+					string strBtnText=name.Substring(1,name.IndexOf(")",0)-1);
+					if(l1>0) 
 					{
-						if(tag.tagType==TagTypes.PLUGIN) 
+						strBtnFile=name.Substring(l1+1,(l2-l1)-1);
+						pictureBox1.Image=Image.FromFile(System.IO.Directory.GetCurrentDirectory()+"\\skin\\"+skinName+"\\media\\"+strBtnFile,true);
+						groupBox3.Text=strBtnFile;
+					}
+					label3.Text="Tag Type";
+					textBox1.Text="Menu Tag";
+					label4.Text="Button Text";
+					textBox2.Text=strBtnText;
+					label5.Text="Button Picture";
+					textBox3.Text=strBtnFile;
+					label6.Text="";
+					textBox4.Text="";
+					label7.Text="";
+					textBox5.Text="";
+					label8.Text="";
+					textBox6.Text="";
+				} 
+				else 
+				{
+					foreach(ItemTag tag in loadedPlugins)
+					{
+						if (name==tag.pluginName) 
 						{
-							pictureBox1.Image=null;
-							label3.Text="Tag Type";
-							textBox1.Text="Plugin";
-							label4.Text="Button Text";
-							textBox2.Text=tag.buttonText;
-							label5.Text="DLL Name";
-							textBox3.Text=tag.DLLName;
-							label6.Text="Plugin Name";
-							textBox4.Text=tag.pluginName;
-							label7.Text="Author";
-							textBox5.Text=tag.author;
-							label8.Text="Description";
-							textBox6.Text=tag.description;
-							groupBox3.Text=tag.picture;
-						} 
-						break;	
+							if(tag.tagType==TagTypes.PLUGIN) 
+							{
+								pictureBox1.Image=null;
+								label3.Text="Tag Type";
+								textBox1.Text="Plugin";
+								label4.Text="Button Text";
+								textBox2.Text=tag.buttonText;
+								label5.Text="DLL Name";
+								textBox3.Text=tag.DLLName;
+								label6.Text="Plugin Name";
+								textBox4.Text=tag.pluginName;
+								label7.Text="Author";
+								textBox5.Text=tag.author;
+								label8.Text="Description";
+								textBox6.Text=tag.description;
+								groupBox3.Text=tag.picture;
+								pictureBox1.Image=Image.FromFile(System.IO.Directory.GetCurrentDirectory()+"\\skin\\"+skinName+"\\media\\"+tag.picture,true);
+							} 
+							break;	
+						}
 					}
 				}
+			}
+			catch(Exception)
+			{
 			}
 		}
 
@@ -1146,6 +1270,28 @@ namespace home
 			foreach(ItemTag tag in loadedPlugins)
 			{
 				listBox.Items.Add(tag.pluginName);
+				ListViewItem item = new ListViewItem("Plugin");
+				item.SubItems.Add(tag.pluginName);
+				item.SubItems.Add(" ");
+				item.SubItems.Add(" ");
+				item.SubItems.Add("no");
+				listView.Items.Add(item);
+			}
+		}
+
+		private void PopulateListViewBox()
+		{
+			foreach(ItemTag tag in loadedPlugins)
+			{
+				if (tag.tagType==TagTypes.MENU_TAG) 
+				{
+					ListViewItem item = new ListViewItem("Menu");
+					item.SubItems.Add(tag.pluginName);
+					item.SubItems.Add(" ");
+					item.SubItems.Add(" ");
+					item.SubItems.Add("no");
+					listView.Items.Add(item);
+				}
 			}
 		}
 
@@ -1238,7 +1384,7 @@ namespace home
 
 		#region Load and Save Tree
 
-		public static int saveTree(TreeView tree, string filename)
+		private static int saveTree(TreeView tree, string filename)
 		{
 			ArrayList al = new ArrayList();
 			foreach (TreeNode tn in tree.Nodes)
@@ -1275,10 +1421,9 @@ namespace home
 			{
 				saveNode(n, al);
 			}
-
 		}
 
-		public static int loadTree(TreeView tree, string filename)
+		private int loadTree(TreeView tree, string filename)
 		{
 			if (File.Exists(filename))
 			{
@@ -1300,7 +1445,17 @@ namespace home
 				foreach (object item in alist)
 				{
 					Hashtable ht = item as Hashtable;
-					TreeNode tn = new TreeNode(ht["Text"].ToString());
+					string name=ht["Text"].ToString();
+					TreeNode tn = new TreeNode(name);
+
+					if (name.StartsWith("(")) 
+					{
+						ItemTag tag = new ItemTag();
+						tag.pluginName=name;
+						tag.tagType=TagTypes.MENU_TAG;
+						loadedPlugins.Add(tag);
+					}
+
 					tn.Tag = ht["Tag"];
 					tn.ImageIndex = Convert.ToInt32(ht["SelectedImageIndex"].ToString());
 					tn.SelectedImageIndex = Convert.ToInt32(ht["SelectedImageIndex"].ToString());
@@ -1846,6 +2001,7 @@ namespace home
 
 			DateTime cur=DateTime.Now;
 			s=cown.ToString();
+			s=s.ToUpper();
 			int inx=s.IndexOf("MM",0);
 			if (inx>=0) 
 			{	
@@ -1853,6 +2009,7 @@ namespace home
 				cown.Insert(inx,cur.Month.ToString());
 			}
 			s=cown.ToString();
+			s=s.ToUpper();
 			inx=s.IndexOf("DD",0);
 			if (inx>=0) 
 			{	
@@ -1860,20 +2017,23 @@ namespace home
 				cown.Insert(inx,cur.Day.ToString());
 			}
 			s=cown.ToString();
-			inx=s.IndexOf("Month",0);
+			s=s.ToUpper();
+			inx=s.IndexOf("MONTH",0);
 			if (inx>=0) 
 			{	
 				cown.Remove(inx,5);
 				cown.Insert(inx,month);
 			}
 			s=cown.ToString();
-			inx=s.IndexOf("Day",0);
+			s=s.ToUpper();
+			inx=s.IndexOf("DAY",0);
 			if (inx>=0) 
 			{	
 				cown.Remove(inx,3);
 				cown.Insert(inx,day);
 			}
 			s=cown.ToString();
+			s=s.ToUpper();
 			inx=s.IndexOf("YY",0);
 			if (inx>=0) 
 			{	
@@ -1889,7 +2049,8 @@ namespace home
 				}
 			}
 			s=cown.ToString();
-			inx=s.IndexOf("Year",0);
+			s=s.ToUpper();
+			inx=s.IndexOf("YEAR",0);
 			if (inx>=0) 
 			{	
 				cown.Remove(inx,4);
@@ -1897,6 +2058,7 @@ namespace home
 			}
 			return(cown.ToString());
 		}		
+
 		protected string GetDate()
 		{
 			string strDate="";

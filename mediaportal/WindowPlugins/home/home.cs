@@ -1536,6 +1536,7 @@ namespace MediaPortal.GUI.Home
 
 			DateTime cur=DateTime.Now;
 			s=cown.ToString();
+			s=s.ToUpper();
 			int inx=s.IndexOf("MM",0);
 			if (inx>=0) 
 			{	
@@ -1543,6 +1544,7 @@ namespace MediaPortal.GUI.Home
 				cown.Insert(inx,cur.Month.ToString());
 			}
 			s=cown.ToString();
+			s=s.ToUpper();
 			inx=s.IndexOf("DD",0);
 			if (inx>=0) 
 			{	
@@ -1550,20 +1552,23 @@ namespace MediaPortal.GUI.Home
 				cown.Insert(inx,cur.Day.ToString());
 			}
 			s=cown.ToString();
-			inx=s.IndexOf("Month",0);
+			s=s.ToUpper();
+			inx=s.IndexOf("MONTH",0);
 			if (inx>=0) 
 			{	
 				cown.Remove(inx,5);
 				cown.Insert(inx,month);
 			}
 			s=cown.ToString();
-			inx=s.IndexOf("Day",0);
+			s=s.ToUpper();
+			inx=s.IndexOf("DAY",0);
 			if (inx>=0) 
 			{	
 				cown.Remove(inx,3);
 				cown.Insert(inx,day);
 			}
 			s=cown.ToString();
+			s=s.ToUpper();
 			inx=s.IndexOf("YY",0);
 			if (inx>=0) 
 			{	
@@ -1579,15 +1584,15 @@ namespace MediaPortal.GUI.Home
 				}
 			}
 			s=cown.ToString();
-			inx=s.IndexOf("Year",0);
+			s=s.ToUpper();
+			inx=s.IndexOf("YEAR",0);
 			if (inx>=0) 
 			{	
 				cown.Remove(inx,4);
 				cown.Insert(inx,cur.Year.ToString());
 			}
-			s=cown.ToString();
 			return(cown.ToString());
-		}
+		}		
 
 		/// <summary>
 		/// Get the current date from the system and localize it based on the user preferences.
