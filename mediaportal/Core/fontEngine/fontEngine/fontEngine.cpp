@@ -78,9 +78,18 @@ int							m_iTexturesInUse=0;
 int							m_iVertexBuffersUpdated=0;
 int							m_iFontVertexBuffersUpdated=0;
 
+void Log(char* txt)
+{
+	FILE* fp = fopen("fontengine.log","a+");
+	fseek(fp,0,SEEK_END);
+	fprintf(fp,txt);
+	fclose(fp);
+
+}
 //*******************************************************************************************************************
 void FontEngineInitialize()
 {
+	//Log("FontEngineInitialize()\n");
 	textureCount=0;
 	static bool initialized=false;
 	if (!initialized)
@@ -111,6 +120,9 @@ void FontEngineInitialize()
 //*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
+	//char log[128];
+	//sprintf(log,"FontEngineRemoveTexture(%d)\n", textureNo);
+	//Log(log);
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	textureData[textureNo].hashCode=-1;
 	textureData[textureNo].dwNumTriangles=0;
@@ -131,11 +143,16 @@ void FontEngineRemoveTexture(int textureNo)
 		textureData[textureNo].pTexture->Release();
 	}
 	textureData[textureNo].pTexture=NULL;
+	textureData[textureNo].updateVertexBuffer=true;
+	textureData[textureNo].useAlphaBlend=true;
 }
 
 //*******************************************************************************************************************
 int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 {
+	//char log[128];
+	//sprintf(log,"FontEngineAddTexture(%x)\n", hashCode);
+	//Log(log);
 	int selected=-1;
 	for (int i=0; i < MAX_TEXTURES;++i)
 	{
@@ -151,12 +168,13 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 	}
 	if (selected==-1)
 	{
-		OutputDebugString("ERROR FontEngine:Ran out of textures!");
+		Log("ERROR FontEngine:Ran out of textures!\n");
 		return -1;
 	}
 	textureData[selected].useAlphaBlend=useAlphaBlend;
 	textureData[selected].hashCode=hashCode;
 	textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
+	textureData[selected].updateVertexBuffer=true;
 	
 	if (textureData[selected].pVertexBuffer==NULL)
 	{
@@ -184,6 +202,9 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 //*******************************************************************************************************************
 int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 {
+	//char log[128];
+	//sprintf(log,"FontEngineAddSurface(%x)\n", hashCode);
+	//Log(log);
 	int selected=-1;
 	for (int i=0; i < MAX_TEXTURES;++i)
 	{
@@ -199,7 +220,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 	}
 	if (selected==-1)
 	{
-		OutputDebugString("ERROR Fontengine:Ran out of textures!");
+		Log("ERROR Fontengine:Ran out of textures!\n");
 		return -1;
 	}
 	LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
@@ -235,6 +256,9 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 //*******************************************************************************************************************
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
 {
+	//char log[128];
+	//sprintf(log,"FontEngineDrawTexture(%d) (%d,%d) (%dx%d) %03.3f %03.3f\n", textureNo,x,y,nw,nh,umax,vmax);
+	//Log(log);
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	TEXTURE_DATA_T* texture=&textureData[textureNo];
 	if (texture->iv==0)
@@ -245,7 +269,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	int iv=texture->iv;
 	if (iv+6 >=MaxNumTextureVertices)
 	{
-		OutputDebugString("ERROR Fontengine:Ran out of texture vertices\n");
+		Log("ERROR Fontengine:Ran out of texture vertices\n");
 		return;
 	}
 	
@@ -373,7 +397,7 @@ void FontEnginePresentTextures()
 		{
 			char log[128];
 			sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() exception drawing texture:%d\n", index);
-			OutputDebugString(log);
+			Log(log);
 		}
 		texture->dwNumTriangles = 0;
 		texture->iv = 0;
@@ -579,7 +603,7 @@ void FontEnginePresent3D(int fontNumber)
 	{	
 		char log[128];
 		sprintf(log,"ERROR Fontengine:FontEnginePresent3D(%i) exception \n", fontNumber);
-		OutputDebugString(log);
+		Log(log);
 		font->dwNumTriangles = 0;
 		font->iv = 0;
 		font->updateVertexBuffer=false;
