@@ -170,6 +170,17 @@
 				<label>137</label>
 				<hyperlink>604</hyperlink>
 				<onup>11</onup>
+				<ondown>13</ondown>
+				<onright>99</onright>
+			</control>
+			<control>
+				<description>Teletext</description>
+				<type>button</type>
+				<id>13</id>
+				<posX>60</posX>
+				<posY>437</posY>
+				<label>Teletext</label>
+				<onup>12</onup>
 				<ondown>2</ondown>
 				<onright>99</onright>
 			</control>
