@@ -200,6 +200,10 @@ namespace MediaPortal.GUI.Library
       GUIPropertyManager.SetProperty("#selecteditem", strSelected);
       GUIPropertyManager.SetProperty("#selecteditem2",strSelected2);
       GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+      
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
+			msg.SendToTargetWindow = true;
+      GUIGraphicsContext.SendMessage(msg);
     }
 		/// <summary>
 		/// Renders the control.
