@@ -23,7 +23,7 @@
     </string>
     <string>
         <id>5</id>
-        <value>InstÃ¤llningar</value>
+        <value>Inställningar</value>
     </string>
     <string>
         <id>6</id>
@@ -35,7 +35,7 @@
     </string>
     <string>
         <id>8</id>
-        <value>Mitt VÃ¤der</value>
+        <value>Mitt Väder</value>
     </string>
     <string>
         <id>9</id>
@@ -47,7 +47,7 @@
     </string>
     <string>
         <id>11</id>
-        <value>MÃ¥ndag</value>
+        <value>Måndag</value>
     </string>
     <string>
         <id>12</id>
@@ -67,11 +67,11 @@
     </string>
     <string>
         <id>16</id>
-        <value>LÃ¶rdag</value>
+        <value>Lördag</value>
     </string>
     <string>
         <id>17</id>
-        <value>SÃ¶ndag</value>
+        <value>Söndag</value>
     </string>
     <string>
         <id>21</id>
@@ -167,7 +167,7 @@
     </string>
     <string>
         <id>111</id>
-        <value>GenvÃ¤gar</value>
+        <value>Genvägar</value>
     </string>
     <string>
         <id>112</id>
@@ -175,7 +175,7 @@
     </string>
     <string>
         <id>113</id>
-        <value>Mina Filer : KÃ¤lla</value>
+        <value>Mina Filer : Källa</value>
     </string>
     <string>
         <id>114</id>
@@ -203,15 +203,15 @@
     </string>
     <string>
         <id>120</id>
-        <value>BekrÃ¤fta kopiera fil</value>
+        <value>Bekräfta kopiera fil</value>
     </string>
     <string>
         <id>121</id>
-        <value>BekrÃ¤fta flytta fil</value>
+        <value>Bekräfta flytta fil</value>
     </string>
     <string>
         <id>122</id>
-        <value>BekrÃ¤fta ta bort fil</value>
+        <value>Bekräfta ta bort fil</value>
     </string>
     <string>
         <id>123</id>
@@ -235,7 +235,7 @@
     </string>
     <string>
         <id>128</id>
-        <value>AllmÃ¤nt</value>
+        <value>Allmänt</value>
     </string>
     <string>
         <id>129</id>
@@ -247,7 +247,7 @@
     </string>
     <string>
         <id>131</id>
-        <value>SkÃ¤rm</value>
+        <value>Skärm</value>
     </string>
     <string>
         <id>132</id>
@@ -259,7 +259,7 @@
     </string>
     <string>
         <id>134</id>
-        <value>SÃ¥nger</value>
+        <value>Sånger</value>
     </string>
     <string>
         <id>135</id>
@@ -271,7 +271,7 @@
     </string>
     <string>
         <id>137</id>
-        <value>SÃ¶k</value>
+        <value>Sök</value>
     </string>
     <string>
         <id>138</id>
@@ -303,7 +303,7 @@
     </string>
     <string>
         <id>145</id>
-        <value>NÃ¤tverk:</value>
+        <value>Nätverk:</value>
     </string>
     <string>
         <id>146</id>
@@ -359,7 +359,7 @@
     </string>
     <string>
         <id>159</id>
-        <value>Ingen lÃ¤nk</value>
+        <value>Ingen länk</value>
     </string>
     <string>
         <id>160</id>
@@ -367,15 +367,15 @@
     </string>
     <string>
         <id>161</id>
-        <value>OtillgÃ¤nglig</value>
+        <value>Otillgänglig</value>
     </string>
     <string>
         <id>162</id>
-        <value>SlÃ¤de Ã–ppen</value>
+        <value>Släde Ã–ppen</value>
     </string>
     <string>
         <id>163</id>
-        <value>LÃ¤ser</value>
+        <value>Läser</value>
     </string>
     <string>
         <id>164</id>
@@ -399,7 +399,7 @@
     </string>
     <string>
         <id>169</id>
-        <value>UpplÃ¶sning:</value>
+        <value>Upplösning:</value>
     </string>
     <string>
         <id>170</id>
@@ -435,23 +435,23 @@
     </string>
     <string>
         <id>178</id>
-        <value>SpÃ¥r:</value>
+        <value>Spår:</value>
     </string>
     <string>
         <id>179</id>
-        <value>SÃ¥ng</value>
+        <value>Sång</value>
     </string>
     <string>
         <id>180</id>
-        <value>LÃ¤ngd</value>
+        <value>Längd</value>
     </string>
     <string>
         <id>181</id>
-        <value>VÃ¤lj album</value>
+        <value>Välj album</value>
     </string>
     <string>
         <id>182</id>
-        <value>SpÃ¥r</value>
+        <value>Spår</value>
     </string>
     <string>
         <id>183</id>
@@ -463,7 +463,7 @@
     </string>
     <string>
         <id>185</id>
-        <value>SÃ¶ker album</value>
+        <value>Söker album</value>
     </string>
     <string>
         <id>186</id>
@@ -475,11 +475,11 @@
     </string>
     <string>
         <id>188</id>
-        <value>VÃ¤lj alla</value>
+        <value>Välj alla</value>
     </string>
     <string>
         <id>189</id>
-        <value>SÃ¶ker media info</value>
+        <value>Söker media info</value>
     </string>
     <string>
         <id>190</id>
@@ -495,11 +495,11 @@
     </string>
     <string>
         <id>193</id>
-        <value>SÃ¶k</value>
+        <value>Sök</value>
     </string>
     <string>
         <id>194</id>
-        <value>SÃ¶ker...</value>
+        <value>Söker...</value>
     </string>
     <string>
         <id>195</id>
@@ -507,11 +507,11 @@
     </string>
     <string>
         <id>196</id>
-        <value>VÃ¤lj film:</value>
+        <value>Välj film:</value>
     </string>
     <string>
         <id>197</id>
-        <value>FrÃ¥gar IMDB info</value>
+        <value>Frågar IMDB info</value>
     </string>
     <string>
         <id>198</id>
@@ -519,15 +519,15 @@
     </string>
     <string>
         <id>199</id>
-        <value>RegissÃ¶r:</value>
+        <value>Regissör:</value>
     </string>
     <string>
         <id>200</id>
-        <value>FÃ¶rfattare:</value>
+        <value>Författare:</value>
     </string>
     <string>
         <id>201</id>
-        <value>Ã„r:</value>
+        <value>Är:</value>
     </string>
     <string>
         <id>202</id>
@@ -543,7 +543,7 @@
     </string>
     <string>
         <id>205</id>
-        <value>RÃ¶ster:</value>
+        <value>Röster:</value>
     </string>
     <string>
         <id>206</id>
@@ -559,15 +559,15 @@
     </string>
     <string>
         <id>209</id>
-        <value>NÃ¤sta</value>
+        <value>Nästa</value>
     </string>
     <string>
         <id>210</id>
-        <value>FÃ¶regÃ¥ende</value>
+        <value>Föregående</value>
     </string>
     <string>
         <id>211</id>
-        <value>SÃ¶ker efter program</value>
+        <value>Söker efter program</value>
     </string>
     <string>
         <id>212</id>
@@ -579,7 +579,7 @@
     </string>
     <string>
         <id>214</id>
-        <value>SkÃ¤rm Kalib.</value>
+        <value>Skärm Kalib.</value>
     </string>
     <string>
         <id>215</id>
@@ -599,7 +599,7 @@
     </string>
     <string>
         <id>219</id>
-        <value>SÃ¤tt i en skiva</value>
+        <value>Sätt i en skiva</value>
     </string>
     <string>
         <id>220</id>
@@ -607,7 +607,7 @@
     </string>
     <string>
         <id>221</id>
-        <value>NÃ¤tverket Ã¤r anslutet</value>
+        <value>Nätverket är anslutet</value>
     </string>
     <string>
         <id>222</id>
@@ -655,7 +655,7 @@
     </string>
     <string>
         <id>233</id>
-        <value>LinjÃ¤r</value>
+        <value>Linjär</value>
     </string>
     <string>
         <id>234</id>
@@ -711,7 +711,7 @@
     </string>
     <string>
         <id>248</id>
-        <value>SprÃ¥k</value>
+        <value>Språk</value>
     </string>
     <string>
         <id>249</id>
@@ -783,7 +783,7 @@
     </string>
     <string>
         <id>266</id>
-        <value>Sortera: SpÃ¥r</value>
+        <value>Sortera: Spår</value>
     </string>
     <string>
         <id>267</id>
@@ -815,7 +815,7 @@
     </string>
     <string>
         <id>274</id>
-        <value>Subtitles Position</value>
+        <value>Text Position</value>
     </string>
     <string>
         <id>275</id>
@@ -827,15 +827,15 @@
     </string>
     <string>
         <id>277</id>
-        <value>Move the bar to change the subtitles position</value>
+        <value>Flytta linjen för att ändra textens position</value>
     </string>
     <string>
         <id>278</id>
-        <value>Change the rectangle so that it is perfectly square</value>
+        <value>Ändra rektangeln så att den är kvadratisk</value>
     </string>
     <string>
         <id>279</id>
-        <value>Unable to load settings</value>
+        <value>kunde inte ladda inställningar</value>
     </string>
     <string>
         <id>280</id>
@@ -843,7 +843,7 @@
     </string>
     <string>
         <id>281</id>
-        <value>Please check the .xml files</value>
+        <value>kolla .xml filerna</value>
     </string>
     <string>
         <id>282</id>
@@ -851,11 +851,11 @@
     </string>
     <string>
         <id>283</id>
-        <value>Search Results</value>
+        <value>Sökresultat</value>
     </string>
     <string>
         <id>284</id>
-        <value>No results found</value>
+        <value>Inga objekt hittades</value>
     </string>
     <string>
         <id>285</id>
@@ -915,7 +915,7 @@
     </string>
     <string>
         <id>300</id>
-        <value>1. SprÃ¥k</value>
+        <value>1. Språk</value>
     </string>
     <string>
         <id>301</id>
@@ -931,7 +931,7 @@
     </string>
     <string>
         <id>304</id>
-        <value>SprÃ¥k</value>
+        <value>Språk</value>
     </string>
     <string>
         <id>305</id>
@@ -971,7 +971,7 @@
     </string>
     <string>
         <id>314</id>
-        <value>FÃ¶rbereder...</value>
+        <value>Förbereder...</value>
     </string>
     <string>
         <id>315</id>
@@ -979,7 +979,7 @@
     </string>
     <string>
         <id>316</id>
-        <value>SÃ¶ker lÃ¥tar...</value>
+        <value>Söker låtar...</value>
     </string>
     <string>
         <id>317</id>
@@ -987,15 +987,15 @@
     </string>
     <string>
         <id>318</id>
-        <value>Markerar raderade lÃ¥tar</value>
+        <value>Markerar raderade låtar</value>
     </string>
     <string>
         <id>319</id>
-        <value>Fel vid omorganisering av lÃ¥tar</value>
+        <value>Fel vid omorganisering av låtar</value>
     </string>
     <string>
         <id>320</id>
-        <value>SÃ¶ker artister...</value>
+        <value>Söker artister...</value>
     </string>
     <string>
         <id>321</id>
@@ -1003,7 +1003,7 @@
     </string>
     <string>
         <id>322</id>
-        <value>SÃ¶ker genrer...</value>
+        <value>Söker genrer...</value>
     </string>
     <string>
         <id>323</id>
@@ -1019,7 +1019,7 @@
     </string>
     <string>
         <id>326</id>
-        <value>SÃ¶ker album...</value>
+        <value>Söker album...</value>
     </string>
     <string>
         <id>327</id>
@@ -1027,11 +1027,11 @@
     </string>
     <string>
         <id>328</id>
-        <value>Skriver Ã¤ndringar...</value>
+        <value>Skriver ändringar...</value>
     </string>
     <string>
         <id>329</id>
-        <value>Fel vid skrivning av Ã¤ndringar</value>
+        <value>Fel vid skrivning av ändringar</value>
     </string>
     <string>
         <id>330</id>
@@ -1091,11 +1091,11 @@
     </string>
     <string>
         <id>344</id>
-        <value>SkÃ¥despelare</value>
+        <value>Skådespelare</value>
     </string>
     <string>
         <id>345</id>
-        <value>Ã„r</value>
+        <value>Är</value>
     </string>
     <string>
         <id>346</id>
@@ -1155,7 +1155,7 @@
     </string>
     <string>
         <id>360</id>
-        <value>SkÃ¤rmslÃ¤ckare</value>
+        <value>Skärmsläckare</value>
     </string>
     <string>
         <id>361</id>
@@ -1163,7 +1163,7 @@
     </string>
     <string>
         <id>362</id>
-        <value>SkÃ¤rmslÃ¤ckare ToningsnivÃ¥ (%)</value>
+        <value>Skärmsläckare Toningsnivå (%)</value>
     </string>
     <string>
         <id>363</id>
@@ -1179,7 +1179,7 @@
     </string>
     <string>
         <id>366</id>
-        <value>Sortera: Ã„r</value>
+        <value>Sortera: Är</value>
     </string>
     <string>
         <id>367</id>
@@ -1195,7 +1195,7 @@
     </string>
     <string>
         <id>370</id>
-        <value>Ã„ska</value>
+        <value>Äska</value>
     </string>
     <string>
         <id>371</id>
@@ -1215,7 +1215,7 @@
     </string>
     <string>
         <id>375</id>
-        <value>SnÃ¶</value>
+        <value>Snö</value>
     </string>
     <string>
         <id>376</id>
@@ -1223,7 +1223,7 @@
     </string>
     <string>
         <id>377</id>
-        <value>LÃ¤tt</value>
+        <value>Lätt</value>
     </string>
     <string>
         <id>378</id>
@@ -1239,7 +1239,7 @@
     </string>
     <string>
         <id>381</id>
-        <value>FÃ¥</value>
+        <value>Få</value>
     </string>
     <string>
         <id>382</id>
@@ -1267,7 +1267,7 @@
     </string>
     <string>
         <id>396</id>
-        <value>VÃ¤lj plats</value>
+        <value>Välj plats</value>
     </string>
     <string>
         <id>397</id>
@@ -1283,7 +1283,7 @@
     </string>
     <string>
         <id>400</id>
-        <value>VÃ¤der</value>
+        <value>Väder</value>
     </string>
     <string>
         <id>401</id>
@@ -1291,7 +1291,7 @@
     </string>
     <string>
         <id>402</id>
-        <value>KÃ¤nns som</value>
+        <value>Känns som</value>
     </string>
     <string>
         <id>403</id>
@@ -1311,7 +1311,7 @@
     </string>
     <string>
         <id>407</id>
-        <value>FrÃ¥n</value>
+        <value>Från</value>
     </string>
     <string>
         <id>408</id>
@@ -1319,15 +1319,15 @@
     </string>
     <string>
         <id>410</id>
-        <value>HÃ¤mtar ifrÃ¥n Weather.com</value>
+        <value>Hämtar ifrån Weather.com</value>
     </string>
     <string>
         <id>411</id>
-        <value>HÃ¤mtar vÃ¤der fÃ¶r:</value>
+        <value>Hämtar väder för:</value>
     </string>
     <string>
         <id>412</id>
-        <value>Kunde inte hÃ¤mta VÃ¤derdata</value>
+        <value>Kunde inte hämta Väderdata</value>
     </string>
     <string>
         <id>413</id>
@@ -1343,7 +1343,7 @@
     </string>
     <string>
         <id>416</id>
-        <value>Ej tillgÃ¤nglig</value>
+        <value>Ej tillgänglig</value>
     </string>
     <string>
         <id>417</id>
@@ -1375,7 +1375,7 @@
     </string>
     <string>
         <id>424</id>
-        <value>VÃ¤lj</value>
+        <value>Välj</value>
     </string>
     <string>
         <id>425</id>
@@ -1391,11 +1391,11 @@
     </string>
     <string>
         <id>428</id>
-        <value>SÃ¤tt i rÃ¤tt CD/DVD</value>
+        <value>Sätt i rätt CD/DVD</value>
     </string>
     <string>
         <id>429</id>
-        <value>SÃ¤tt i fÃ¶ljande CD/DVD</value>
+        <value>Sätt i följande CD/DVD</value>
     </string>
     <string>
         <id>430</id>
@@ -1407,11 +1407,11 @@
     </string>
     <string>
         <id>432</id>
-        <value>Radera film frÃ¥n databasen</value>
+        <value>Radera film från databasen</value>
     </string>
     <string>
         <id>433</id>
-        <value>Ã„r du sÃ¤ker pÃ¥ att du vill radera</value>
+        <value>Är du säker på att du vill radera</value>
     </string>
     <string>
         <id>434</id>
@@ -1419,15 +1419,15 @@
     </string>
     <string>
         <id>435</id>
-        <value>SpÃ¥r</value>
+        <value>Spår</value>
     </string>
     <string>
         <id>436</id>
-        <value>Ã„r:</value>
+        <value>Är:</value>
     </string>
     <string>
         <id>437</id>
-        <value>LÃ¤ngd:</value>
+        <value>Längd:</value>
     </string>
     <string>
         <id>438</id>
@@ -1439,7 +1439,7 @@
     </string>
     <string>
         <id>440</id>
-        <value>HÃ¥rddisk</value>
+        <value>Hårddisk</value>
     </string>
     <string>
         <id>441</id>
@@ -1519,7 +1519,7 @@
     </string>
     <string>
         <id>460</id>
-        <value>Audio StrÃ¶m</value>
+        <value>Audio Ström</value>
     </string>
     <string>
         <id>461</id>
@@ -1595,11 +1595,11 @@
     </string>
     <string>
         <id>479</id>
-        <value>Skal och sprÃ¥k</value>
+        <value>Skal och språk</value>
     </string>
     <string>
         <id>480</id>
-        <value>AnvÃ¤ndargrÃ¤nssnitt</value>
+        <value>Användargränssnitt</value>
     </string>
     <string>
         <id>481</id>
@@ -1635,15 +1635,15 @@
     </string>
     <string>
         <id>489</id>
-        <value>AnvÃ¤nd spellsitor i lÃ¥tar</value>
+        <value>Använd spellsitor i låtar</value>
     </string>
     <string>
         <id>490</id>
-        <value>VÃ¤xla autom. listor och ikoner i lÃ¥tar</value>
+        <value>Växla autom. listor och ikoner i låtar</value>
     </string>
     <string>
         <id>491</id>
-        <value>AnvÃ¤nd stora ikoner</value>
+        <value>Använd stora ikoner</value>
     </string>
     <string>
         <id>600</id>
@@ -1659,7 +1659,7 @@
     </string>
     <string>
         <id>603</id>
-        <value>SchemalÃ¤ggare</value>
+        <value>Schemaläggare</value>
     </string>
     <string>
         <id>604</id>
@@ -1691,15 +1691,15 @@
     </string>
     <string>
         <id>611</id>
-        <value>Spela in 1 gÃ¥ng</value>
+        <value>Spela in 1 gång</value>
     </string>
     <string>
         <id>612</id>
-        <value>Spela alltid in pÃ¥ denna kanal</value>
+        <value>Spela alltid in på denna kanal</value>
     </string>
     <string>
         <id>613</id>
-        <value>Spela alltid in pÃ¥ alla kanaler</value>
+        <value>Spela alltid in på alla kanaler</value>
     </string>
     <string>
         <id>614</id>
@@ -1711,7 +1711,7 @@
     </string>
     <string>
         <id>616</id>
-        <value>VÃ¤lj inspelningstyp</value>
+        <value>Välj inspelningstyp</value>
     </string>
     <string>
         <id>617</id>
@@ -1771,7 +1771,7 @@
     </string>
     <string>
         <id>631</id>
-        <value>Vill du stÃ¤nga av datorn??</value>
+        <value>Vill du stänga av datorn??</value>
     </string>
     <string>
         <id>632</id>
@@ -1807,11 +1807,11 @@
     </string>
     <string>
         <id>640</id>
-        <value>MÃ¤ttnad</value>
+        <value>Mättnad</value>
     </string>
     <string>
         <id>641</id>
-        <value>SkÃ¤rpa</value>
+        <value>Skärpa</value>
     </string>
     <string>
         <id>642</id>
@@ -1835,7 +1835,7 @@
     </string>
     <string>
         <id>647</id>
-        <value>En gÃ¥ng</value>
+        <value>En gång</value>
     </string>
     <string>
         <id>648</id>
@@ -1847,11 +1847,11 @@
     </string>
     <string>
         <id>650</id>
-        <value>Varje gÃ¥ng pÃ¥ denna kanalen</value>
+        <value>Varje gång på denna kanalen</value>
     </string>
     <string>
         <id>651</id>
-        <value>Varje GÃ¥ng pÃ¥ nÃ¥gon kanal</value>
+        <value>Varje Gång på någon kanal</value>
     </string>
     <string>
         <id>652</id>
@@ -1875,7 +1875,7 @@
     </string>
     <string>
         <id>657</id>
-        <value>MÃ¥n</value>
+        <value>Mån</value>
     </string>
     <string>
         <id>658</id>
@@ -1895,11 +1895,11 @@
     </string>
     <string>
         <id>662</id>
-        <value>LÃ¶r</value>
+        <value>Lör</value>
     </string>
     <string>
         <id>663</id>
-        <value>SÃ¶n</value>
+        <value>Sön</value>
     </string>
     <string>
         <id>664</id>
@@ -1915,7 +1915,7 @@
     </string>
     <string>
         <id>667</id>
-        <value>Auto SÃ¶k</value>
+        <value>Auto Sök</value>
     </string>
     <string>
         <id>668</id>
@@ -1935,7 +1935,7 @@
     </string>
     <string>
         <id>672</id>
-        <value>Spela in MÃ¥n-Fre</value>
+        <value>Spela in Mån-Fre</value>
     </string>
     <string>
         <id>673</id>
@@ -1967,11 +1967,11 @@
     </string>
     <string>
         <id>680</id>
-        <value>MÃ¥n-Fre</value>
+        <value>Mån-Fre</value>
     </string>
     <string>
         <id>681</id>
-        <value>VÃ¤ntar</value>
+        <value>Väntar</value>
     </string>
     <string>
         <id>682</id>
@@ -1991,7 +1991,7 @@
     </string>
     <string>
         <id>686</id>
-        <value>FÃ¶dd</value>
+        <value>Född</value>
     </string>
     <string>
         <id>687</id>
@@ -2035,15 +2035,15 @@
     </string>
     <string>
         <id>705</id>
-        <value>HÃ¤mtar RSS Feed fÃ¶r </value>
+        <value>Hämtar RSS Feed för </value>
     </string>
     <string>
         <id>706</id>
-        <value>VÃ¤lj Feed</value>
+        <value>Välj Feed</value>
     </string>
     <string>
         <id>707</id>
-        <value>TV PÃ¥/Av</value>
+        <value>TV På/Av</value>
     </string>
     <string>
         <id>708</id>
@@ -2055,11 +2055,11 @@
     </string>
     <string>
         <id>710</id>
-        <value>En ny version finns tillgÃ¤nglig</value>
+        <value>En ny version finns tillgänglig</value>
     </string>
     <string>
         <id>711</id>
-        <value>Upgradera frÃ¥n v#old ->v#new ?</value>
+        <value>Upgradera från v#old ->v#new ?</value>
     </string>
     <string>
         <id>712</id>
@@ -2083,7 +2083,7 @@
     </string>
     <string>
         <id>717</id>
-        <value>VÃ¤der</value>
+        <value>Väder</value>
     </string>
     <string>
         <id>718</id>
@@ -2091,11 +2091,11 @@
     </string>
     <string>
         <id>719</id>
-        <value>Ã„r det sÃ¤kert att du vill rensa Top 100?</value>
+        <value>Är det säkert att du vill rensa Top 100?</value>
     </string>
     <string>
         <id>720</id>
-        <value>Program: LÃ¤ngd</value>
+        <value>Program: Längd</value>
     </string>
     <string>
         <id>721</id>
@@ -2111,7 +2111,7 @@
     </string>
     <string>
         <id>724</id>
-        <value>SÃ¶k i Tv-Guiden</value>
+        <value>Sök i Tv-Guiden</value>
     </string>
     <string>
         <id>725</id>
@@ -2131,19 +2131,19 @@
     </string>
     <string>
         <id>729</id>
-        <value>Kolla att du anvÃ¤nder VMR9 och att nÃ¥got spelas upp</value>
+        <value>Kolla att du använder VMR9 och att något spelas upp</value>
     </string>
     <string>
         <id>730</id>
-        <value>Denna inspelning pÃ¥gÃ¥r. Om du raderar den</value>
+        <value>Denna inspelning pågår. Om du raderar den</value>
     </string>
     <string>
         <id>731</id>
-        <value>sÃ¥ kommer den att avbrytas.</value>
+        <value>så kommer den att avbrytas.</value>
     </string>
     <string>
         <id>732</id>
-        <value>Ã„r du SÃ¤ker?</value>
+        <value>Är du Säker?</value>
     </string>
     <string>
         <id>733</id>
@@ -2168,7 +2168,7 @@
     </string>
     <string>
         <id>801</id>
-        <value>InnehÃ¥ller</value>
+        <value>Innehåller</value>
     </string>
     <string>
         <id>802</id>
@@ -2176,7 +2176,7 @@
     </string>
     <string>
         <id>803</id>
-        <value>  Ã„r  </value>
+        <value>  Är  </value>
     </string>
     <string>
         <id>804</id>
@@ -2192,7 +2192,7 @@
     </string>
     <string>
         <id>807</id>
-        <value>GÃ¶ra</value>
+        <value>Göra</value>
     </string>
     <string>
         <id>808</id>
@@ -2200,7 +2200,7 @@
     </string>
     <string>
         <id>809</id>
-        <value>SÃ¶kvÃ¤gar</value>
+        <value>Sökvägar</value>
     </string>
     <string>
         <id>810</id>
@@ -2217,15 +2217,15 @@
     </string>
     <string>
         <id>852</id>
-        <value>Alarm PÃ¥</value>
+        <value>Alarm På</value>
     </string>
     <string>
         <id>853</id>
-        <value>VÃ¤lj Spellista</value>
+        <value>Välj Spellista</value>
     </string>
     <string>
         <id>854</id>
-        <value>GÃ¤ller pÃ¥ Dessa Dagar</value>
+        <value>Gäller på Dessa Dagar</value>
     </string>
     <string>
         <id>855</id>
@@ -2233,7 +2233,7 @@
     </string>
     <string>
         <id>856</id>
-        <value>Insomningstimer PÃ¥</value>
+        <value>Insomningstimer På</value>
     </string>
     <string>
         <id>857</id>
@@ -2273,11 +2273,11 @@
 </string>
 <string>
 	<id>866</id>
-	<value>SÃ¤nk volymen under tiden</value>
+	<value>Sänk volymen under tiden</value>
 </string>
 <string>
 	<id>867</id>
-	<value>StÃ¤ng av datorn</value>
+	<value>Stäng av datorn</value>
 </string>
 <string>
 	<id>868</id>
@@ -2285,7 +2285,43 @@
 </string>
 <string>
 	<id>900</id>
-	<value>FortsÃ¤tta filmen dÃ¤r den stannade senast?</value>
+	<value>Fortsätta filmen där den stannade senast?</value>
+</string>
+<string>
+	<id>901</id>
+	<value>MSN Messenger</value>
+</string>
+<string>
+	<id>902</id>
+	<value>Online kontakter</value>
+</string>
+<string>
+	<id>903</id>
+	<value>Logga in</value>
+</string>
+<string>
+	<id>904</id>
+	<value>Logga ut</value>
+</string>
+<string>
+	<id>905</id>
+	<value>Du måste konfigurera detta Plugin först</value>
+</string>
+<string>
+	<id>906</id>
+	<value>Fyll i din E-post adress i setupen</value>
+</string>
+<string>
+	<id>907</id>
+	<value>Kunde inte ansluta till MSN</value>
+</string>
+<string>
+	<id>908</id>
+	<value>skriver ett meddelande...</value>
+</string>
+<string>
+	<id>909</id>
+	<value>Ansluter...</value>
 </string>
     <string>
         <id>1440</id>
@@ -2301,7 +2337,7 @@
 	<string><id>2011</id><value>Skriv Ut</value></string>
 	<string><id>2012</id><value>Ta bort</value></string>
 	<string><id>2013</id><value>Favoriter</value></string>
-	<string><id>2014</id><value>OkÃ¤nd</value></string>
+	<string><id>2014</id><value>Okänd</value></string>
 	<string><id>2015</id><value>per portion</value></string>
 	<string><id>2016</id><value>liten</value></string>
 	<string><id>2017</id><value>fluid ounce</value></string>
@@ -2338,17 +2374,17 @@
 	<string><id>2048</id><value>kilogram</value></string>
 	<string><id>2049</id><value>Ta bort detta recept?</value></string>
 	<string><id>2050</id><value>Ta bort denna kategori?</value></string>
-	<string><id>2051</id><value>SÃ¶k pÃ¥ titeln</value></string>
-	<string><id>2052</id><value>SÃ¶k i recept</value></string>
+	<string><id>2051</id><value>Sök på titeln</value></string>
+	<string><id>2052</id><value>Sök i recept</value></string>
 	<string><id>2053</id><value>Kategori</value></string>
-	<string><id>2054</id><value>Ingen trÃ¤ff!</value></string>
+	<string><id>2054</id><value>Ingen träff!</value></string>
     <string>
         <id>8000</id>
         <value>Min Epost</value>
     </string>
     <string>
         <id>8001</id>
-        <value>Kolla BrevlÃ¥dan</value>
+        <value>Kolla Brevlådan</value>
     </string>
     <string>
         <id>8002</id>
@@ -2356,7 +2392,7 @@
     </string>
     <string>
         <id>8003</id>
-        <value>Autokoll PÃ¥</value>
+        <value>Autokoll På</value>
     </string>
     <string>
         <id>8004</id>
@@ -2364,11 +2400,11 @@
     </string>
     <string>
         <id>8005</id>
-        <value>Uppdaterar BrevlÃ¥dan</value>
+        <value>Uppdaterar Brevlådan</value>
     </string>
     <string>
         <id>8007</id>
-        <value>Autokoll PÃ¥</value>
+        <value>Autokoll På</value>
     </string>
     <string>
         <id>8008</id>
@@ -2376,19 +2412,19 @@
     </string>
     <string>
         <id>8009</id>
-        <value>Markera alla olÃ¤sta</value>
+        <value>Markera alla olästa</value>
     </string>
     <string>
         <id>8010</id>
-        <value>Ingen BrevlÃ¥da Skapad</value>
+        <value>Ingen Brevlåda Skapad</value>
     </string>
     <string>
         <id>8011</id>
-        <value>GÃ¥ till Setup och skapa</value>
+        <value>Gå till Setup och skapa</value>
     </string>
     <string>
         <id>8012</id>
-        <value>minst 1 brevlÃ¥da fÃ¶r att anvÃ¤nda Mail-Pluginen.</value>
+        <value>minst 1 brevlåda för att använda Mail-Pluginen.</value>
     </string>
     <string>
         <id>8013</id>
@@ -2400,11 +2436,11 @@
     </string>
     <string>
         <id>8015</id>
-        <value>Kolla inst. fÃ¶r BrevlÃ¥dan '{0}'</value>
+        <value>Kolla inst. för Brevlådan '{0}'</value>
     </string>
     <string>
         <id>8016</id>
-        <value>FrÃ¥n</value>
+        <value>Från</value>
     </string>
     <string>
         <id>8017</id>
@@ -2412,7 +2448,7 @@
     </string>
     <string>
         <id>8018</id>
-        <value>Ã„mne</value>
+        <value>Ämne</value>
     </string>
     <string>
         <id>8019</id>
@@ -2424,7 +2460,7 @@
     </string>
     <string>
         <id>8021</id>
-        <value>Markera som LÃ¤st</value>
+        <value>Markera som Läst</value>
     </string>
     <string>
         <id>8022</id>
@@ -2452,7 +2488,7 @@
     </string>
     <string>
         <id>8033</id>
-        <value>HÃ¤mtar</value>
+        <value>Hämtar</value>
     </string>
     <string>
         <id>10000</id>
@@ -2472,7 +2508,7 @@
     </string>
     <string>
         <id>10004</id>
-        <value>InstÃ¤llningar</value>
+        <value>Inställningar</value>
     </string>
     <string>
         <id>10005</id>
@@ -2488,47 +2524,47 @@
     </string>
     <string>
         <id>10008</id>
-        <value>InstÃ¤llningar->Generella</value>
+        <value>Inställningar->Generella</value>
     </string>
     <string>
         <id>10009</id>
-        <value>InstÃ¤llningar->SkÃ¤rm</value>
+        <value>Inställningar->Skärm</value>
     </string>
     <string>
         <id>10010</id>
-        <value>InstÃ¤llningar->SkÃ¤rm->UI Kalibrering</value>
+        <value>Inställningar->Skärm->UI Kalibrering</value>
     </string>
     <string>
         <id>10011</id>
-        <value>InstÃ¤llningar->SkÃ¤rm->SkÃ¤rm Kalibrering</value>
+        <value>Inställningar->Skärm->Skärm Kalibrering</value>
     </string>
     <string>
         <id>10012</id>
-        <value>InstÃ¤llningar->Bildspel</value>
+        <value>Inställningar->Bildspel</value>
     </string>
     <string>
         <id>10013</id>
-        <value>InstÃ¤llningar->SkÃ¤rm->Filter</value>
+        <value>Inställningar->Skärm->Filter</value>
     </string>
     <string>
         <id>10014</id>
-        <value>InstÃ¤llningar->Musik</value>
+        <value>Inställningar->Musik</value>
     </string>
     <string>
         <id>10015</id>
-        <value>InstÃ¤llningar->SkÃ¤rm->Textning</value>
+        <value>Inställningar->Skärm->Textning</value>
     </string>
     <string>
         <id>10016</id>
-        <value>InstÃ¤llningar->SkÃ¤rm->SkÃ¤rmslÃ¤ckare</value>
+        <value>Inställningar->Skärm->Skärmsläckare</value>
     </string>
     <string>
         <id>10017</id>
-        <value>InstÃ¤llningar->VÃ¤der</value>
+        <value>Inställningar->Väder</value>
     </string>
     <string>
         <id>10020</id>
-        <value>InstÃ¤llningar->Script</value>
+        <value>Inställningar->Script</value>
     </string>
     <string>
         <id>10021</id>
@@ -2536,15 +2572,15 @@
     </string>
     <string>
         <id>10022</id>
-        <value>Mina Videor/skÃ¥desp.</value>
+        <value>Mina Videor/skådesp.</value>
     </string>
     <string>
         <id>10023</id>
-        <value>Mina Videor/Ã¥r</value>
+        <value>Mina Videor/år</value>
     </string>
     <string>
         <id>10024</id>
-        <value>InstÃ¤llningar->Program</value>
+        <value>Inställningar->Program</value>
     </string>
     <string>
         <id>10025</id>
@@ -2552,11 +2588,11 @@
     </string>
     <string>
         <id>10026</id>
-        <value>InstÃ¤llningar->Generella->Cache</value>
+        <value>Inställningar->Generella->Cache</value>
     </string>
     <string>
         <id>10027</id>
-        <value>InstÃ¤llningar->Generella->Autouppsp.</value>
+        <value>Inställningar->Generella->Autouppsp.</value>
     </string>
     <string>
         <id>10028</id>
@@ -2564,7 +2600,7 @@
     </string>
     <string>
         <id>10029</id>
-        <value>InstÃ¤llningar->Generella->LCD</value>
+        <value>Inställningar->Generella->LCD</value>
     </string>
     <string>
         <id>10030</id>
@@ -2572,7 +2608,7 @@
     </string>
     <string>
         <id>10031</id>
-        <value>InstÃ¤llningar->SkÃ¤rm->scroll hastighet</value>
+        <value>Inställningar->Skärm->scroll hastighet</value>
     </string>
     <string>
         <id>10100</id>
@@ -2612,11 +2648,11 @@
     </string>
     <string>
         <id>10601</id>
-        <value>Min TV/SchemalÃ¤ggare</value>
+        <value>Min TV/Schemaläggare</value>
     </string>
     <string>
         <id>10602</id>
-        <value>Min TV/FullskÃ¤rm</value>
+        <value>Min TV/Fullskärm</value>
     </string>
     <string>
         <id>10603</id>
@@ -2628,7 +2664,7 @@
     </string>
     <string>
         <id>12000</id>
-        <value>VÃ¤lj Dialog</value>
+        <value>Välj Dialog</value>
     </string>
     <string>
         <id>12001</id>
@@ -2648,7 +2684,7 @@
     </string>
     <string>
         <id>12005</id>
-        <value>FullskÃ¤rm video</value>
+        <value>Fullskärm video</value>
     </string>
     <string>
         <id>12006</id>
@@ -2664,15 +2700,15 @@
     </string>
     <string>
         <id>12600</id>
-        <value>Mitt VÃ¤der</value>
+        <value>Mitt Väder</value>
     </string>
     <string>
         <id>12900</id>
-        <value>SkÃ¤rmslÃ¤ckare</value>
+        <value>Skärmsläckare</value>
     </string>
     <string>
         <id>12901</id>
-        <value>FullskÃ¤rm OSD</value>
+        <value>Fullskärm OSD</value>
     </string>
     <string>
         <id>13000</id>
@@ -2698,6 +2734,14 @@
         <id>13005</id>
         <value>Senast Importerad fil:</value>
     </string>
+<string>
+	<id>13006</id>
+	<value>Liten Bild</value>
+</string>
+<string>
+	<id>13007</id>
+	<value>Stor Bild</value>
+</string>
     <string>
 	<id>16001</id>
 	<value>Partyblanda</value>
