@@ -1,4 +1,5 @@
 02-08-2004  tag reader  : added : wma tag reader
+02-08-2004  my music    : fixed : folder.jpg is not shown on music overlay
 
 01-08-2004  setup       : added : Setup of external tuner channels
 01-08-2004  setup       : fixed : Sort order of radio channels
