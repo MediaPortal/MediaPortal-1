@@ -1,12 +1,11 @@
-<!-- version : 1.0.0.3                                                               -->
-<!-- changed : 13-jan-2005 by Frodo                                                  -->
+<!-- version : 1.0.0.2                                                               -->
+<!-- changed : 11-jan-2005 by Frodo                                                  -->
 <!-- added all european and australian frequencies                                   -->
 <dvbt>
 	<country name="Australia" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="184500" bandwidth="7" />
 		<carrier frequency="191500" bandwidth="7" />
-		<carrier frequency="191625" bandwidth="7" />
 		<carrier frequency="198500" bandwidth="7" />
 		<carrier frequency="205500" bandwidth="7" />
 		<carrier frequency="212500" bandwidth="7" />
@@ -55,7 +54,7 @@
 		<carrier frequency="809500" bandwidth="7" />
 		<carrier frequency="816500" bandwidth="7" />
 	</country>
-	<country name="Europe" offset="125">
+	<country name="Europe">
 		<carrier frequency="84500" />
 		<carrier frequency="56000" />
 		<carrier frequency="64500" />
@@ -72,20 +71,25 @@
 		<carrier frequency="219500" />
 		<carrier frequency="226500" />
 		<carrier frequency="474000" />
+		<carrier frequency="481833" />
 		<carrier frequency="482000" />
 		<carrier frequency="490000" />
 		<carrier frequency="498000" />
+		<carrier frequency="505833" />
 		<carrier frequency="506000" />
 		<carrier frequency="514000" />
 		<carrier frequency="522000" />
 		<carrier frequency="529500" />
+		<carrier frequency="529833" />
 		<carrier frequency="530000" />
 		<carrier frequency="536500" />
+		<carrier frequency="537833" />
 		<carrier frequency="538000" />
 		<carrier frequency="543500" />
 		<carrier frequency="546000" />
 		<carrier frequency="550500" />
 		<carrier frequency="554000" />
+		<carrier frequency="561833" />
 		<carrier frequency="564500" />
 		<carrier frequency="557500" />
 		<carrier frequency="562000" />
@@ -93,6 +97,7 @@
 		<carrier frequency="571500" />
 		<carrier frequency="578000" />
 		<carrier frequency="578500" />
+		<carrier frequency="578833" />
 		<carrier frequency="585500" />
 		<carrier frequency="585625" />
 		<carrier frequency="586000" />

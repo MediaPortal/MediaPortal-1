@@ -551,7 +551,7 @@ namespace MediaPortal.GUI.Weather
 			if(null!=pDlgProgress && !autoUpdate)	//close progress dialog
 				pDlgProgress.Close();
 
-			if(dlRes)	//dont load if download failed
+			if ( System.IO.File.Exists(strWeatherFile) || dlRes)
 				ldRes = LoadWeather(strWeatherFile);	//parse
 
 			//if the download or load failed, display an error message

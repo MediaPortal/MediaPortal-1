@@ -1219,6 +1219,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
+			ArrayList groupChannels = new ArrayList();
 			listViewTVGroupChannels.Items.Clear();
 			if (group!=null)
 			{
@@ -1228,6 +1229,7 @@ namespace MediaPortal.Configuration.Sections
 					ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
 					listItem.Tag=chan;
 					listViewTVGroupChannels.Items.Add(listItem);
+					groupChannels.Add(chan);
 				}
 			}
 
@@ -1236,9 +1238,21 @@ namespace MediaPortal.Configuration.Sections
 			TVDatabase.GetChannels(ref channels);
 			foreach (TVChannel chan in channels)
 			{
-				ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
-				listItem.Tag=chan;
-				listViewTVChannels.Items.Add(listItem);
+				bool add=true;
+				foreach (TVChannel grpChan in groupChannels)
+				{
+					if (grpChan.Name == chan.Name)
+					{
+						add=false;
+						break;
+					}
+				}
+				if (add)
+				{
+					ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
+					listItem.Tag=chan;
+					listViewTVChannels.Items.Add(listItem);
+				}
 			}
 		}
 	}
