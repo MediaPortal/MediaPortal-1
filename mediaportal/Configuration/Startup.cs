@@ -62,6 +62,14 @@ namespace MediaPortal.Configuration
 					break;
 			}
 
+      // One time setup for proxy servers
+      // also set credentials to allow use with firewalls that require them
+      // this means we can use the .NET internet objects and not have
+      // to worry about proxies elsewhere in the code
+      System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
+      proxy.Credentials  = System.Net.CredentialCache.DefaultCredentials;
+      System.Net.GlobalProxySelection.Select = proxy;
+
 			if(applicationForm != null)
 			{
 				Application.Run(applicationForm);
