@@ -34,8 +34,8 @@
 		<onright>5</onright> 
 		<onup>5</onup> 
 		<ondown>5</ondown>
-		<spinPosX>450</spinPosX>
-		<spinPosY>370</spinPosY>
+		<spinPosX>500</spinPosX>
+		<spinPosY>450</spinPosY>
 	</control>
     </controls>
 </window>
