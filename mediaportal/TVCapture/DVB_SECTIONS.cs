@@ -32,6 +32,10 @@ namespace MediaPortal.TV.Recording
 		int									m_lnbkhz=0;
 		int									m_lnbfreq=0;
 		int									m_selKhz=0;
+		// two skystar2 specific globals
+		bool								m_setPid=false;
+		DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 m_dataControl=null;
+		//
 
 		//
 		public DVBSections()
@@ -160,7 +164,7 @@ namespace MediaPortal.TV.Recording
 		
 		private int decodePATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
 		{
-			int a;
+			int loop;
 			byte[] bytes = new byte[9];
 			int n;
 			// check
@@ -180,11 +184,14 @@ namespace MediaPortal.TV.Recording
 			int section_number = BitsFromBArray(bytes, 0, 48, 8);
 			int last_section_number = BitsFromBArray(bytes, 0, 56, 8);
 			
-			n = section_length - 5 - 4;
 			byte[] b = new byte[5];
-			a = n / 4;
+			loop =(section_length - 9) / 4;
+			if(loop<1)
+				return 0;
+
 			ChannelInfo ch=new ChannelInfo();
-			for (int count=0;count<a;count++)
+			
+			for (int count=0;count<loop;count++)
 			{
 				System.Array.Copy(buf, 8 +(count * 4), b, 0, 4);
 				ch.transportStreamID=transport_stream_id;
@@ -194,7 +201,7 @@ namespace MediaPortal.TV.Recording
 				if(ch.program_number!=0)
 					tp.PMTTable.Add(ch);
 			}
-			return 0;
+			return loop;
 		}
 		//
 		//
@@ -366,6 +373,12 @@ namespace MediaPortal.TV.Recording
 					
 					// parse pmt
 					int res=0;
+					if(m_setPid)
+					{
+						DVBSkyStar2Helper.DeleteAllPIDs(m_dataControl,0);
+						DVBSkyStar2Helper.SetPidToPin(m_dataControl,0,pat.network_pmt_PID);
+					}
+
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
 						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
@@ -1775,10 +1788,23 @@ namespace MediaPortal.TV.Recording
 			return text;
 		}
 
-
-		public bool ProcessPATSections(DShowNET.IBaseFilter filter,int pid,int tid,int tableSections,int timeout,TPList tp,ref Transponder transponder)
+		public bool ProcessPATSections(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
 		{
-			GetStreamData(filter,pid, tid,tableSections,timeout);
+			m_setPid=true;
+			m_dataControl=dataCtrl;
+			int count=0;
+			GetStreamData(filter,0, 0,0,5000);
+			foreach(byte[] arr in m_sectionsList)
+				count=decodePATTable(arr, tp, ref transponder);
+			if(count>0)
+				LoadPMTTables(filter,tp,ref transponder);
+			return true;
+		}
+		public bool ProcessPATSections(DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
+		{
+			
+			m_setPid=false;
+			GetStreamData(filter,0, 0,0,5000);
 			foreach(byte[] arr in m_sectionsList)
 				decodePATTable(arr, tp, ref transponder);
 			LoadPMTTables(filter,tp,ref transponder);
@@ -1799,14 +1825,7 @@ namespace MediaPortal.TV.Recording
 			IntPtr sectionBuffer=IntPtr.Zero;
 
 			m_sectionsList=new ArrayList();
-			if(filter!=null)
-				flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
-			else
-			{
-				DVBSkyStar2Helper.AddTSPid(pid);
-				System.Threading.Thread.Sleep(150);
-				flag = GetSectionDataI(pid, tid,ref sectLast,tableSection,timeout);
-			}
+			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
 			if(flag==false)
 				return false;
 

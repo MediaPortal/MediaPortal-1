@@ -21,15 +21,6 @@ namespace MediaPortal.TV.Recording
 	{
 
 	// iids 0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b
-	private static Guid IID_IB2C2AVCTRL2 = new Guid( 0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40, 0x75 );
-	private static Guid CLSID_B2C2Adapter = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);	
-	private static Guid CLSID_StreamBufferSink = new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9, 0x46, 0xf4);
-	private static Guid CLSID_Mpeg2VideoStreamAnalyzer= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
-	private static Guid CLSID_StreamBufferConfig = new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
-	private static Guid CLSID_Mpeg2Data = new Guid( 0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D, 0x99);
-	private static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid( 0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
-	private static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid( 0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
-	private static Guid ColorSpaceConverter = new Guid("CC58E280-8AA1-11D1-B3F1-00AA003761C5");
 	//
 	static byte[] Mpeg2ProgramVideo = 
 				{
@@ -89,407 +80,6 @@ namespace MediaPortal.TV.Recording
 		} ;
 		//
 
-		#region AVControl
-	[ComVisible(true), ComImport,
-	Guid("9C0563CE-2EF7-4568-A297-88C7BB824075"),
-	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IB2C2MPEG2AVCtrl
-	{
-				// Argument 1: Audio PID
-				// Argument 2: Video PID
-
-		[PreserveSig]
-		int SetAudioVideoPIDs (
-			int pida,
-			int pidb
-		);
-	};
-		#endregion
-		#region AVControl2
-	// setup interfaces
-		
-	[ComVisible(true), ComImport,
-	Guid("295950B0-696D-4a04-9EE3-C031A0BFBEDE"),
-	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IB2C2MPEG2AVCtrl2 : IB2C2MPEG2AVCtrl
-	{
-		[PreserveSig]
-		int SetCallbackForVideoMode (
-			[MarshalAs(UnmanagedType.FunctionPtr)] Delegate vInfo
-		);
-
-		[PreserveSig]
-		int DeleteAudioVideoPIDs(  
-			int pida,
-			int pidv
-		);
-		[PreserveSig]
-		int GetAudioVideoState (
-			[Out] out int a,
-			[Out] out int b,
-			[Out] out int c,
-			[Out] out int d,
-			[Out] out int e,
-			[Out] out int f
-		);
-	};
-		#endregion
-		#region DataControl
-		[ComVisible(true), ComImport,
-			Guid("7F35C560-08B9-11d5-A469-00D0D7B2C2D7"),
-			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-			public interface IB2C2MPEG2DataCtrl		
-		{
-
-
-			// Transport Stream methods
-			[PreserveSig]
-			int GetMaxPIDCount (
-				[Out] out int pidCount
-				);
-
-			//this function is obselete, please use IB2C2MPEG2DataCtrl2's AddPIDsToPin function
-			[PreserveSig]
-			int AddPIDs (
-				int count, 
-				[In] ref int[] pidArray
-				);
-
-			//this function is obselete, please use IB2C2MPEG2DataCtrl2's DeletePIDsFromPin function
-			[PreserveSig]
-			int DeletePIDs (
-				int count, 
-				[In] ref int[] pidArray
-				);
-
-			// IP methods
-			[PreserveSig]
-			int GetMaxIpPIDCount (
-				[Out] out int maxIpPidCount
-				);
-
-			[PreserveSig]
-			int AddIpPIDs (
-				int count, 
-				[In] ref int[] ipPids
-				) ;
-
-			[PreserveSig]
-			int DeleteIpPIDs (
-				int count, 
-				[In] ref int[] ipPids
-				) ;
-
-			[PreserveSig]
-			int GetIpPIDs (
-				[Out] out int count, 
-				[Out] out int[]  ipPids
-				);
-
-			// All protocols
-
-			[PreserveSig]
-			int PurgeGlobalPIDs ();
-
-			[PreserveSig]
-			int GetMaxGlobalPIDCount ();
-
-			[PreserveSig]
-			int GetGlobalPIDs (
-				[Out] out int count ,
-				[Out] out int[] globalPids
-				);
-
-
-			[PreserveSig]
-			int ResetDataReceptionStats ();
-
-			[PreserveSig]
-			int GetDataReceptionStats (
-				[Out] out int ipQuality , 
-				[Out] out int tsQuality 
-				);
-
-		};
-		#endregion // do NOT use data control interface !!!
-		#region DataControl2
-		[ComVisible(true), ComImport,
-			Guid("B0666B7C-8C7D-4c20-BB9B-4A7FE0F313A8"),
-			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-			public interface IB2C2MPEG2DataCtrl2 : IB2C2MPEG2DataCtrl	
-		{
-			[PreserveSig]
-			int AddPIDsToPin (
-				ref int count , 
-				[In, MarshalAs(UnmanagedType.LPArray)] int[] pidsArray, 
-				int dataPin
-			);
-
-			[PreserveSig]
-			int DeletePIDsFromPin (
-				int count,
-				[In, MarshalAs(UnmanagedType.LPArray, SizeConst=39)] int[] pidsArray, 
-				int dataPin
-			);
-		};
-		#endregion// do NOT use data control interface !!!
-		#region DataControl3
-		[ComVisible(true), ComImport,
-			Guid("E2857B5B-84E7-48b7-B842-4EF5E175F315"),
-			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-			public interface IB2C2MPEG2DataCtrl3 : IB2C2MPEG2DataCtrl2	
-		{
-			[PreserveSig]
-			int AddTsPIDs (
-				int count, 
-				[In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=39)] int[] pids
-				) ;
-			[PreserveSig]
-			int DeleteTsPIDs (
-				int count, 
-				[In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=39)] int[] pids
-				) ;
-
-			[PreserveSig]
-			int GetTsState (
-				ref Int32 plOpen,
-				ref Int32 plRunning,
-				ref Int32 plCount,
-				ref Int32[] plPIDArray
-				) ;
-
-			[PreserveSig]
-			int GetIpState (										
-				[Out] out int plOpen,
-				[Out] out int plRunning,
-				[Out] out int plCount,
-				[Out] out int[] plPIDArray
-				);
-			
-			[PreserveSig]
-			int GetReceivedDataIp (
-				IntPtr ptrA,IntPtr ptrB
-				);
-
-			[PreserveSig]
-			int AddMulticastMacAddress (
-				IntPtr  pMacAddrList
-				);
-
-			[PreserveSig]
-			int GetMulticastMacAddressList (
-				IntPtr  pMacAddrList
-				);
-
-			[PreserveSig]
-			int DeleteMulticastMacAddress (
-				IntPtr  pMacAddrList
-				);
-
-			[PreserveSig]
-			int SetUnicastMacAddress (
-				IntPtr  pMacAddr
-			);
-
-			[PreserveSig]
-			int GetUnicastMacAddress (
-				IntPtr pMacAddr
-			);
-
-			[PreserveSig]
-			int RestoreUnicastMacAddress ();
-		};
-		#endregion// do NOT use data control interface !!!
-		#region TunerControl
-		//
-		// tuner follows
-		//
-		[ComVisible(true), ComImport,
-			Guid("D875D4A9-0749-4fe8-ADB9-CC13F9B3DD45"),
-			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-			public interface IB2C2MPEG2TunerCtrl
-		{
-			// Satellite, Cable, Terrestrial (ATSC and DVB)
-
-			[PreserveSig]
-			int SetFrequency (
-				int frequency	
-				) ;
-
-			// Satellite, Cable
-
-			[PreserveSig]
-			int SetSymbolRate (
-				int symbolRate
-				) ;
-
-			// Satellite only
-
-			[PreserveSig]
-			int SetLnbFrequency (
-				int lnbFrequency
-				);
-
-			[PreserveSig]
-			int SetFec (
-				int fec
-				) ;
-
-			[PreserveSig]
-			int SetPolarity (
-				int polarity
-				) ;
-
-			[PreserveSig]
-			int SetLnbKHz (
-				int lnbKHZ
-				) ;
-	
-			[PreserveSig]
-			int SetDiseqc (
-				int diseqc
-				) ;
-
-			// Cable only
-
-			[PreserveSig]
-			int SetModulation (
-				int modulation
-				) ;
-	
-			// All tuners
-
-			[PreserveSig]
-			int Initialize () ;
-
-			[PreserveSig]
-			int SetTunerStatus () ;
-
-			[PreserveSig]
-			int CheckLock () ;
-
-			[PreserveSig]
-			int GetTunerCapabilities (
-				IntPtr tunerCaps, 
-				int count
-			) ;
-
-			// Terrestrial (ATSC)
-
-			[PreserveSig]
-			int GetFrequency (
-				[Out] out int freq
-				) ;
-
-			[PreserveSig]
-			int GetSymbolRate (
-				[Out] out int symbRate
-				) ;
-
-			[PreserveSig]
-			int GetModulation (
-				[Out] out int modulation
-				) ;
-
-			[PreserveSig]
-			int GetSignalStrength (
-				[Out] out int signalStrength
-				) ;
-
-			[PreserveSig]
-			int GetSignalLevel (
-				[Out] out float signalLevel
-				) ;
-
-			[PreserveSig]
-			int GetSNR (
-				[Out] out float SNR
-				) ;
-
-			[PreserveSig]
-			int GetPreErrorCorrectionBER (
-				[Out] out float ber, 
-				bool flag
-				) ;
-
-			[PreserveSig]
-			int GetUncorrectedBlocks (
-				[Out] out int uncorrectedBlocks
-				) ;
-
-			[PreserveSig]
-			int GetTotalBlocks (
-				[Out] out int correctedBlocks
-				) ;
-
-			[PreserveSig]
-			int GetChannel (
-				[Out] out int  channel
-				) ;
-
-			[PreserveSig]
-			int SetChannel (
-				int channel
-				) ;
-		};
-		#endregion
-		#region TunerControl2
-		[ComVisible(true), ComImport,
-			Guid("CD900832-50DF-4f8f-882D-1C358F90B3F2"),
-			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-			public interface IB2C2MPEG2TunerCtrl2 : IB2C2MPEG2TunerCtrl
-		{
-			int SetTunerStatusEx (
-				int count
-				);
-
-			int SetFrequencyKHz (
-				long freqKHZ	
-				);
-
-			// Terrestrial DVB only
-
-			int SetGuardInterval (
-				int interval
-				);
-
-			int GetGuardInterval (
-				[Out] out int interval
-				);
-
-			int GetFec (
-				[Out] out int plFec
-				);
-
-			int GetPolarity (
-										
-				[Out] out int plPolarity
-				);
-
-			int GetDiseqc (
-									  
-				[Out] out int plDiseqc
-				);
-
-			int GetLnbKHz (
-				[Out] out int plLnbKHz
-				);
-
-			int GetLnbFrequency (
-				[Out] out int plFrequencyMHz
-				);
-
-			int GetCorrectedBlocks (
-				[Out] out int plCorrectedBlocks
-				);
-
-			int GetSignalQuality (
-				[Out] out int pdwSignalQuality
-				);
-		};
-		#endregion
-		//
-		// end interfaces
 		protected enum State
 		{ 
 			None,
@@ -562,10 +152,10 @@ namespace MediaPortal.TV.Recording
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid, int tid, ref int secCount,int tabSec,int timeout);
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		public static extern int SetPidToPin(DVBGraphSS2.IB2C2MPEG2DataCtrl3 dataCtrl,int pin,int pid);		
+		public static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin,int pid);		
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		public static extern bool DeleteAllPIDs(DVBGraphSS2.IB2C2MPEG2DataCtrl3 dataCtrl,int pin);
+		public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin);
 		
 		// registry settings
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
@@ -614,13 +204,11 @@ namespace MediaPortal.TV.Recording
 		protected IBaseFilter					m_sinkFilter=null;
 		protected IBaseFilter					m_mpeg2Analyzer=null;
 		protected IBaseFilter					m_sourceFilter=null;
-		protected IBaseFilter					m_smartTee=null;
 		protected IBaseFilter					m_demux=null;
-		protected IBaseFilter					m_csc=null;
 		// def. the interfaces
-		protected IB2C2MPEG2DataCtrl3	m_dataCtrl=null;
-		protected IB2C2MPEG2TunerCtrl2	m_tunerCtrl=null;
-		protected IB2C2MPEG2AVCtrl2		m_avCtrl=null;
+		protected DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3		m_dataCtrl=null;
+		protected DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2	m_tunerCtrl=null;
+		protected DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2		m_avCtrl=null;
         // player graph
 		protected IGraphBuilder			m_sourceGraph=null;
 		protected bool					m_timeShift=true;
@@ -634,10 +222,13 @@ namespace MediaPortal.TV.Recording
 		protected DVBSections			m_sections=new DVBSections();
 		protected bool					m_pluginsEnabled=false;
 		public RebuildFunc				m_rebuildCB=null;
-		bool							m_checkVMR9=false;
 		int	[]							m_ecmPids=new int[3]{0,0,0};
 		int[]							m_ecmIDs=new int[3]{0,0,0};
-
+		bool							m_videoDataFound=false;
+		bool							m_vmr9Running=false;
+//		byte[]							m_teleTextBuffer=new byte[188];
+//		ArrayList						m_teleTextStream=new ArrayList();
+//
 		
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
@@ -739,30 +330,27 @@ namespace MediaPortal.TV.Recording
 			// the following check should takes care of scrambled video-data
 			// and redraw the vmr9 not to hang
 
-//			if(m_checkVMR9==true)
-//			{
-				int pid=m_currentChannel.VideoPid;
-				TSHelperTools tools=new TSHelperTools();
-				for(int pointer=add;pointer<end;pointer+=188)
+			int pid=m_currentChannel.VideoPid;
+			int teleTextPid=m_currentChannel.TeletextPid;
+			TSHelperTools tools=new TSHelperTools();
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
+					
+				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
+				if(header.Pid==pid)
 				{
 					
-					TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-					if(header.Pid==pid)
-					{
-					
-						if(header.TransportScrambling!=0) // data is scrambled?
-						{
-							// if syncbyte is 255 the header is not valid
-							Vmr9.Repaint();// repaint vmr9
-						}
-						else
-							m_checkVMR9=false;// if we here its un-scrambled and we need
-											  // no checks anymore
-
-						break;// stop loop if we got or video-packet
-					}
+					if(header.TransportScrambling!=0) // data is scrambled?
+						m_videoDataFound=false;
+					else
+						m_videoDataFound=true;
+						
+					break;// stop loop if we got or video-packet
 				}
-//			}
+			}
+			//			}
+			if(m_vmr9Running==true && m_videoDataFound==false)
+				Vmr9.Repaint();// repaint vmr9
 
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
@@ -795,16 +383,15 @@ namespace MediaPortal.TV.Recording
 			// create filters & interfaces
 			try
 			{
-				m_b2c2Adapter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_B2C2Adapter, false ) );
-				m_sinkFilter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_StreamBufferSink, false ) );
-				m_mpeg2Analyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_Mpeg2VideoStreamAnalyzer, true ) );
+				m_b2c2Adapter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_B2C2Adapter, false ) );
+				m_sinkFilter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_StreamBufferSink, false ) );
+				m_mpeg2Analyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_Mpeg2VideoStreamAnalyzer, true ) );
 				m_sinkInterface=(IStreamBufferSink)m_sinkFilter;
-				m_mpeg2Data=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_Mpeg2Data, true ) );
+				m_mpeg2Data=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_Mpeg2Data, true ) );
 				m_demux=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.Mpeg2Demultiplexer, true ) );
 				m_demuxInterface=(IMpeg2Demultiplexer) m_demux;
 				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
-				m_csc=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( ColorSpaceConverter, false ) );
 			}
 			
 			catch(Exception ex)
@@ -825,13 +412,13 @@ namespace MediaPortal.TV.Recording
 				if(n!=0)
 					return false;
 				// get interfaces
-				m_dataCtrl=(IB2C2MPEG2DataCtrl3) m_b2c2Adapter;
+				m_dataCtrl=(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3) m_b2c2Adapter;
 				if(m_dataCtrl==null)
 					return false;
-				m_tunerCtrl=(IB2C2MPEG2TunerCtrl2) m_b2c2Adapter;
+				m_tunerCtrl=(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2) m_b2c2Adapter;
 				if(m_tunerCtrl==null)
 					return false;
-				m_avCtrl=(IB2C2MPEG2AVCtrl2) m_b2c2Adapter;
+				m_avCtrl=(DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2) m_b2c2Adapter;
 				if(m_avCtrl==null)
 					return false;
 				// init for tuner
@@ -872,6 +459,7 @@ namespace MediaPortal.TV.Recording
 		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText)
 		{
 			int hr=0; // the result
+			int tuneTryCount=0;
 
 			if(Frequency>13000)
 				Frequency/=1000;
@@ -1454,8 +1042,8 @@ namespace MediaPortal.TV.Recording
 						IPin demuxOutPin=null;
 						IPin m2dIn=DirectShowUtil.FindPinNr(m_mpeg2Data,PinDirection.Input,0);
 						AMMediaType mt=new AMMediaType();
-						mt.majorType=MEDIATYPE_MPEG2_SECTIONS;
-						mt.subType=MEDIASUBTYPE_MPEG2_DATA;
+						mt.majorType=DVBSkyStar2Helper.MEDIATYPE_MPEG2_SECTIONS;
+						mt.subType=DVBSkyStar2Helper.MEDIASUBTYPE_MPEG2_DATA;
 						hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2DATA",out demuxOutPin);
 						if(hr!=0)
 							return false;
@@ -1558,8 +1146,6 @@ namespace MediaPortal.TV.Recording
 			if(m_channelFound==false)
 				return false;
 			
-
-			m_checkVMR9=true;
 
 			if(CreateSinkSource(fileName)==true)
 			{
@@ -1740,6 +1326,7 @@ namespace MediaPortal.TV.Recording
 			if(channelID!=-1)
 			{
 				
+
 				DVBChannel ch=new DVBChannel();
 				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
 				{
@@ -1752,6 +1339,8 @@ namespace MediaPortal.TV.Recording
 					m_channelFound=false;
 					return;
 				}
+				if(m_mediaControl!=null)
+					m_mediaControl.Stop();
 
 				m_channelFound=true;
 				
@@ -1761,11 +1350,15 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 				m_currentChannel=ch;
+
+				m_videoDataFound=false;
+
 				
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 				
 				m_StartTime=DateTime.Now;
+
 			}
 			
 		}
@@ -1879,8 +1472,8 @@ namespace MediaPortal.TV.Recording
 				IPin demuxOutPin=null;
 				IPin m2dIn=DirectShowUtil.FindPinNr(m_mpeg2Data,PinDirection.Input,0);
 				AMMediaType mt=new AMMediaType();
-				mt.majorType=MEDIATYPE_MPEG2_SECTIONS;
-				mt.subType=MEDIASUBTYPE_MPEG2_DATA;
+				mt.majorType=DVBSkyStar2Helper.MEDIATYPE_MPEG2_SECTIONS;
+				mt.subType=DVBSkyStar2Helper.MEDIASUBTYPE_MPEG2_DATA;
 				hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2DATA",out demuxOutPin);
 				if(hr!=0)
 					return false;
@@ -1952,13 +1545,12 @@ namespace MediaPortal.TV.Recording
 					m_sourceGraph.RemoveFilter(Vmr9.VMR9Filter);
 				Vmr9.RemoveVMR9();
 				Vmr9.UseVMR9inMYTV=false;
-				m_checkVMR9=false;
 			}
 			//
 			//
 			if(Vmr9.IsVMR9Connected==true && Vmr9.UseVMR9inMYTV==true)// fallback
 			{
-				m_checkVMR9=true;
+				m_vmr9Running=true;
 			}
 			//
 			//
@@ -2094,10 +1686,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool ShouldRebuildGraph(int iChannel)
 		{
-			//if(m_graphState==State.TimeShifting)
 			return true;
-
-			//return false;
 		}
 
 		/// <summary>
@@ -2109,7 +1698,7 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
 		public bool SignalPresent()
 		{
-				return false;
+				return true;
 		}
 
 		/// <summary>
