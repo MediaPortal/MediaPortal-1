@@ -792,6 +792,12 @@
     <id>602</id>
     <description>Fullscreen TVs</description>
     <action>
+      <id>19</id>
+      <key>s</key>
+      <sound />
+      <description>Zoom/Stretch/Normal</description>
+    </action>
+    <action>
       <id>12</id>
       <key>SPACE</key>
       <sound />

@@ -537,7 +537,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      if (!Recorder.Timeshifting)
+      if (!Recorder.View)
         GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying=false;			
     }
