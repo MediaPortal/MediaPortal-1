@@ -245,6 +245,26 @@ namespace MediaPortal.TV.Recording
         hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat}, null, m_filterCaptureVideo, ref iid, out o);
       }
 
+      // For some reason, it happens alot that the capture card can NOT be connected (pin 656 for the
+      // PRV150MCE) to the encoder because for some reason the videostandard is GONE...
+      // So fetch the standard from the TvTuner and define it for the capture card.
+
+      if (m_TVTuner!=null )
+      {
+        m_TVTuner.put_TuningSpace(0);
+        m_TVTuner.put_CountryCode(m_iCountryCode);
+        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+
+        m_IAMAnalogVideoDecoder = m_filterCaptureVideo as IAMAnalogVideoDecoder;
+        if (m_IAMAnalogVideoDecoder!=null)
+        {
+          AnalogVideoStandard videoStandard;
+          m_TVTuner.get_TVFormat(out videoStandard);
+          if (videoStandard==AnalogVideoStandard.None) videoStandard=AnalogVideoStandard.PAL_B;
+          m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
+        }
+      }
+
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
 
 
@@ -637,6 +657,7 @@ namespace MediaPortal.TV.Recording
           if (m_IAMAnalogVideoDecoder!=null)
           {
             DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
+            if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
             int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
             if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
           }
@@ -648,6 +669,7 @@ namespace MediaPortal.TV.Recording
           if (m_IAMAnalogVideoDecoder!=null)
           {
             DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
+            if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
             int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
             if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
           }
@@ -667,12 +689,10 @@ namespace MediaPortal.TV.Recording
       {
         if (m_IAMAnalogVideoDecoder!=null)
         {
-          if (standard != AnalogVideoStandard.None)
-          {
-            DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
-            int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-            if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
-          }
+          if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
+          DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
+          int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+          if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
         }
       }
       DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",

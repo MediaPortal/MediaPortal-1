@@ -119,11 +119,16 @@ namespace MediaPortal.TV.Recording
 
       if (m_TVTuner!=null )
       {
+        m_TVTuner.put_TuningSpace(0);
+        m_TVTuner.put_CountryCode(m_iCountryCode);
+        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+
         m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
         if (m_IAMAnalogVideoDecoder!=null)
         {
           AnalogVideoStandard videoStandard;
           m_TVTuner.get_TVFormat(out videoStandard);
+          if (videoStandard==AnalogVideoStandard.None) videoStandard=AnalogVideoStandard.PAL_B;
           m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
         }
       }
