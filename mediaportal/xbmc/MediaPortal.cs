@@ -796,6 +796,8 @@ public class MediaPortalApp : D3DApp, IRender
       GUITextureManager.Dispose();
       GUIFontManager.Dispose();
 
+      if (splashScreen!=null) splashScreen.SetInformation("Loading keymap.xml...");
+      ActionTranslator.Load();
       
       if (splashScreen!=null) splashScreen.SetInformation("Loading strings...");
       GUIGraphicsContext.Skin = @"skin\" + m_strSkin;

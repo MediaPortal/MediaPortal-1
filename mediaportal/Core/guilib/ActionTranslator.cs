@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>True if the load was successfull, false if it failed.</returns>
     static public bool Load()
     {
+      mapWindows.Clear();
       string strFilename="keymap.xml";
       Log.Write("Load key mapping from {0}", strFilename);
       try
@@ -227,6 +228,7 @@ namespace MediaPortal.GUI.Library
               return (int)but.eAction;
             }
           }
+          return 0;
         }
       }
       return 0;
