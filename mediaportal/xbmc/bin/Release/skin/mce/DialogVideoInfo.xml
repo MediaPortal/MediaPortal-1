@@ -203,56 +203,56 @@
 	<control>
 		<type>image</type>
 		<id>101</id>
-		<posX>300</posX>
-		<posY>223</posY>
-		<texture>star.png</texture>
-	</control>	
-	<control>
-		<type>image</type>
-		<id>102</id>
 		<posX>320</posX>
 		<posY>223</posY>
 		<texture>star.png</texture>
 	</control>	
 	<control>
 		<type>image</type>
-		<id>103</id>
-		<posX>340</posX>
-		<posY>223</posY>
-		<texture>star.png</texture>
-	</control>	
-	<control>
-		<type>image</type>
-		<id>104</id>
+		<id>102</id>
 		<posX>360</posX>
 		<posY>223</posY>
 		<texture>star.png</texture>
 	</control>	
 	<control>
 		<type>image</type>
-		<id>106</id>
-		<posX>380</posX>
-		<posY>223</posY>
-		<texture>star.png</texture>
-	</control>	
-	<control>
-		<type>image</type>
-		<id>107</id>
+		<id>103</id>
 		<posX>400</posX>
 		<posY>223</posY>
 		<texture>star.png</texture>
 	</control>	
 	<control>
 		<type>image</type>
+		<id>104</id>
+		<posX>440</posX>
+		<posY>223</posY>
+		<texture>star.png</texture>
+	</control>	
+	<control>
+		<type>image</type>
+		<id>106</id>
+		<posX>480</posX>
+		<posY>223</posY>
+		<texture>star.png</texture>
+	</control>	
+	<control>
+		<type>image</type>
+		<id>107</id>
+		<posX>520</posX>
+		<posY>223</posY>
+		<texture>star.png</texture>
+	</control>	
+	<control>
+		<type>image</type>
 		<id>108</id>
-		<posX>420</posX>
+		<posX>560</posX>
 		<posY>223</posY>
 		<texture>star.png</texture>
 	</control>	
 	<control>
 		<type>image</type>
 		<id>109</id>
-		<posX>440</posX>
+		<posX>600</posX>
 		<posY>223</posY>
 		<texture>star.png</texture>
 	</control>	
