@@ -290,19 +290,25 @@ namespace MediaPortal.TV.Recording
 			string[] tmp										 = m_strVideoDeviceMoniker.Split((char[])"{".ToCharArray());
 			string 	 captureDeviceDeviceName = tmp[0];
 
+			Log.Write("TVCaptureDevice.LoadDefinition() video device moniker   :{0}", m_strVideoDeviceMoniker);
+			Log.Write("TVCaptureDevice.LoadDefinition() captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 			bool filterFound;
 
 			Log.Write("TVCaptureDevice.LoadDefinition() check video filters");
+			//for each video filter we need
 			foreach (string friendlyName in _mCaptureCardDefinition.Tv.FilterDefinitions.Keys)
 			{
 				Log.Write("TVCaptureDevice.LoadDefinition()   video filter:{0}",friendlyName);
 				FilterDefinition fd = _mCaptureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
 				filterFound         = false;
+
+				//for each directshow filter present
 				foreach (string key in AvailableFilters.Filters.Keys)
 				{
 					Filter    filter;
 					ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
 					filter    = (Filter)al[0];
+					// if directshow filter name == video filter name
 					if (filter.Name.Equals(fd.FriendlyName))
 					{
 						// FriendlyName found. Now check if this name should be checked against a (PnP) device
@@ -320,6 +326,7 @@ namespace MediaPortal.TV.Recording
 									break;
 								}
 							} 
+
 							if (!filterFound)
 							{
 								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: ERROR Cannot find unique filter for filter:{0}", filter.Name);
