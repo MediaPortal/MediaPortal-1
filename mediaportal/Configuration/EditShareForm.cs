@@ -23,6 +23,15 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox pinCodeTextBox;
+    private System.Windows.Forms.CheckBox checkBoxRemote;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.TextBox textBoxServer;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.TextBox textBoxLogin;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.TextBox textBoxPassword;
+    private System.Windows.Forms.TextBox textBoxPort;
+    private System.Windows.Forms.Label label8;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -75,6 +84,15 @@ namespace MediaPortal.Configuration
       this.cancelButton = new System.Windows.Forms.Button();
       this.okButton = new System.Windows.Forms.Button();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.checkBoxRemote = new System.Windows.Forms.CheckBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.textBoxServer = new System.Windows.Forms.TextBox();
+      this.label6 = new System.Windows.Forms.Label();
+      this.textBoxLogin = new System.Windows.Forms.TextBox();
+      this.label7 = new System.Windows.Forms.Label();
+      this.textBoxPassword = new System.Windows.Forms.TextBox();
+      this.textBoxPort = new System.Windows.Forms.TextBox();
+      this.label8 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -83,6 +101,15 @@ namespace MediaPortal.Configuration
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.label8);
+      this.groupBox1.Controls.Add(this.textBoxPort);
+      this.groupBox1.Controls.Add(this.textBoxPassword);
+      this.groupBox1.Controls.Add(this.label7);
+      this.groupBox1.Controls.Add(this.textBoxLogin);
+      this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.Controls.Add(this.textBoxServer);
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.checkBoxRemote);
       this.groupBox1.Controls.Add(this.pinCodeTextBox);
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.label3);
@@ -94,28 +121,29 @@ namespace MediaPortal.Configuration
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(400, 256);
+      this.groupBox1.Size = new System.Drawing.Size(408, 354);
       this.groupBox1.TabIndex = 6;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Share settings";
+      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
       // 
       // pinCodeTextBox
       // 
       this.pinCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.pinCodeTextBox.Location = new System.Drawing.Point(17, 217);
+      this.pinCodeTextBox.Location = new System.Drawing.Point(224, 144);
       this.pinCodeTextBox.MaxLength = 4;
       this.pinCodeTextBox.Name = "pinCodeTextBox";
-      this.pinCodeTextBox.Size = new System.Drawing.Size(55, 20);
+      this.pinCodeTextBox.Size = new System.Drawing.Size(63, 20);
       this.pinCodeTextBox.TabIndex = 13;
       this.pinCodeTextBox.Text = "";
       this.pinCodeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pinCodeTextBox_KeyPress);
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(17, 201);
+      this.label4.Location = new System.Drawing.Point(224, 128);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(168, 23);
+      this.label4.Size = new System.Drawing.Size(168, 16);
       this.label4.TabIndex = 12;
       this.label4.Text = "Pin Code";
       // 
@@ -125,7 +153,7 @@ namespace MediaPortal.Configuration
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(368, 72);
+      this.label3.Size = new System.Drawing.Size(376, 72);
       this.label3.TabIndex = 11;
       this.label3.Text = @"Select the location of the share and give the share a common name. The name will later on be shown in MediaPortal instead of the more complex folder name. If you want to protect the share with a secret pin code, simply enter the pin you want to use in the box below. The pin must be numeric and has a max length of four digits.";
       // 
@@ -133,7 +161,7 @@ namespace MediaPortal.Configuration
       // 
       this.folderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.folderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.folderButton.Location = new System.Drawing.Point(360, 169);
+      this.folderButton.Location = new System.Drawing.Point(368, 192);
       this.folderButton.Name = "folderButton";
       this.folderButton.Size = new System.Drawing.Size(24, 20);
       this.folderButton.TabIndex = 10;
@@ -144,15 +172,15 @@ namespace MediaPortal.Configuration
       // 
       this.folderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.folderTextBox.Location = new System.Drawing.Point(16, 169);
+      this.folderTextBox.Location = new System.Drawing.Point(16, 192);
       this.folderTextBox.Name = "folderTextBox";
-      this.folderTextBox.Size = new System.Drawing.Size(336, 20);
+      this.folderTextBox.Size = new System.Drawing.Size(344, 20);
       this.folderTextBox.TabIndex = 9;
       this.folderTextBox.Text = "";
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 153);
+      this.label2.Location = new System.Drawing.Point(16, 176);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(168, 23);
       this.label2.TabIndex = 8;
@@ -162,15 +190,15 @@ namespace MediaPortal.Configuration
       // 
       this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.nameTextBox.Location = new System.Drawing.Point(16, 121);
+      this.nameTextBox.Location = new System.Drawing.Point(16, 144);
       this.nameTextBox.Name = "nameTextBox";
-      this.nameTextBox.Size = new System.Drawing.Size(336, 20);
+      this.nameTextBox.Size = new System.Drawing.Size(184, 20);
       this.nameTextBox.TabIndex = 7;
       this.nameTextBox.Text = "";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 105);
+      this.label1.Location = new System.Drawing.Point(16, 128);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(168, 23);
       this.label1.TabIndex = 6;
@@ -181,7 +209,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(334, 271);
+      this.cancelButton.Location = new System.Drawing.Point(342, 369);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 7;
       this.cancelButton.Text = "Cancel";
@@ -191,18 +219,89 @@ namespace MediaPortal.Configuration
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.okButton.Location = new System.Drawing.Point(254, 271);
+      this.okButton.Location = new System.Drawing.Point(262, 369);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 8;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
+      // 
+      // checkBoxRemote
+      // 
+      this.checkBoxRemote.Location = new System.Drawing.Point(16, 104);
+      this.checkBoxRemote.Name = "checkBoxRemote";
+      this.checkBoxRemote.Size = new System.Drawing.Size(136, 16);
+      this.checkBoxRemote.TabIndex = 14;
+      this.checkBoxRemote.Text = "Remote FTP Share";
+      this.checkBoxRemote.CheckedChanged += new System.EventHandler(this.checkBoxRemote_CheckedChanged);
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(16, 224);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(100, 16);
+      this.label5.TabIndex = 15;
+      this.label5.Text = "FTP Server:";
+      // 
+      // textBoxServer
+      // 
+      this.textBoxServer.Location = new System.Drawing.Point(16, 240);
+      this.textBoxServer.Name = "textBoxServer";
+      this.textBoxServer.Size = new System.Drawing.Size(344, 20);
+      this.textBoxServer.TabIndex = 16;
+      this.textBoxServer.Text = "";
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 264);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(100, 16);
+      this.label6.TabIndex = 17;
+      this.label6.Text = "Login:";
+      // 
+      // textBoxLogin
+      // 
+      this.textBoxLogin.Location = new System.Drawing.Point(16, 280);
+      this.textBoxLogin.Name = "textBoxLogin";
+      this.textBoxLogin.TabIndex = 18;
+      this.textBoxLogin.Text = "";
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(224, 264);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(100, 16);
+      this.label7.TabIndex = 19;
+      this.label7.Text = "Password:";
+      // 
+      // textBoxPassword
+      // 
+      this.textBoxPassword.Location = new System.Drawing.Point(224, 280);
+      this.textBoxPassword.Name = "textBoxPassword";
+      this.textBoxPassword.PasswordChar = '*';
+      this.textBoxPassword.TabIndex = 20;
+      this.textBoxPassword.Text = "textBox2";
+      // 
+      // textBoxPort
+      // 
+      this.textBoxPort.Location = new System.Drawing.Point(16, 328);
+      this.textBoxPort.Name = "textBoxPort";
+      this.textBoxPort.TabIndex = 21;
+      this.textBoxPort.Text = "21";
+      // 
+      // label8
+      // 
+      this.label8.Location = new System.Drawing.Point(16, 304);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(100, 16);
+      this.label8.TabIndex = 22;
+      this.label8.Text = "Port:";
       // 
       // EditShareForm
       // 
       this.AcceptButton = this.okButton;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(418, 304);
+      this.ClientSize = new System.Drawing.Size(426, 402);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.groupBox1);
@@ -214,6 +313,7 @@ namespace MediaPortal.Configuration
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "EditShare";
+      this.Load += new System.EventHandler(this.EditShareForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -259,6 +359,38 @@ namespace MediaPortal.Configuration
       }        
     }
 
+    private void checkBoxRemote_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (checkBoxRemote.Checked)
+      {
+        folderTextBox.Enabled=false;
+        textBoxLogin.Enabled=true;
+        textBoxPassword.Enabled=true;
+        textBoxPort.Enabled=true;
+        textBoxServer.Enabled=true;
+      }
+      else
+      {
+        folderTextBox.Enabled=true;
+        textBoxLogin.Enabled=false;
+        textBoxPassword.Enabled=false;
+        textBoxPort.Enabled=false;
+        textBoxServer.Enabled=false;
+      }
+    }
+
+    private void groupBox1_Enter(object sender, System.EventArgs e)
+    {
+    
+    }
+
+    private void EditShareForm_Load(object sender, System.EventArgs e)
+    {
+      bool remote=IsRemote;
+      checkBoxRemote.Checked=!remote;
+      checkBoxRemote.Checked=remote;
+    }
+
 		public string Folder
 		{
 			get { return folderTextBox.Text; }
@@ -275,6 +407,39 @@ namespace MediaPortal.Configuration
     {
       get { return pinCodeTextBox.Text; }
       set { pinCodeTextBox.Text = value; }
+    }
+    public bool IsRemote
+    {
+      get { return checkBoxRemote.Checked;}
+      set { checkBoxRemote.Checked=value; }
+    }
+    public int Port
+    {
+      get {
+        int port=21;
+        try
+        {
+          port=Int32.Parse(textBoxPort.Text);
+        }
+        catch(Exception){}
+        return port;
+      }
+      set { textBoxPort.Text=value.ToString(); }
+    }
+    public string Server
+    {
+      get { return textBoxServer.Text;}
+      set { textBoxServer.Text=value; }
+    }
+    public string LoginName
+    {
+      get { return textBoxLogin.Text;}
+      set { textBoxLogin.Text=value; }
+    }
+    public string PassWord
+    {
+      get { return textBoxPassword.Text;}
+      set { textBoxPassword.Text=value; }
     }
 	}
 }

@@ -10,9 +10,16 @@ namespace MediaPortal.Configuration.Sections
 	{
     protected class ShareData
     {
+
       public string Name;
       public string Folder;
       public string PinCode;
+
+      public bool   IsRemote=false;
+      public string Server=String.Empty;
+      public string LoginName=String.Empty;
+      public string PassWord=String.Empty;
+      public int    Port=21;
 
       public bool   HasPinCode
       {
@@ -192,7 +199,15 @@ namespace MediaPortal.Configuration.Sections
 
 			if(dialogResult == DialogResult.OK)
 			{
-				AddShare(new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode), currentlyCheckedItem == null);
+        ShareData shareData=new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode);
+        shareData.IsRemote=editShare.IsRemote;
+        shareData.Server=editShare.Server;
+        shareData.LoginName=editShare.LoginName;
+        shareData.PassWord=editShare.PassWord;
+        shareData.Port=editShare.Port;
+            
+
+				AddShare(shareData, currentlyCheckedItem == null);
 			}
 		}
 
@@ -200,6 +215,10 @@ namespace MediaPortal.Configuration.Sections
 		{
 			ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder });
 
+      if (shareData.IsRemote)
+      {
+        listItem.SubItems[2].Text=String.Format("{0}:{1}",shareData.Server,shareData.Port);
+      }
       listItem.Tag = shareData;
 			listItem.Checked = check;
 			if(check) currentlyCheckedItem = listItem;
@@ -220,6 +239,12 @@ namespace MediaPortal.Configuration.Sections
           editShare.ShareName = shareData.Name;
           editShare.PinCode = shareData.PinCode;
           editShare.Folder = shareData.Folder;
+          
+          editShare.IsRemote=shareData.IsRemote;
+          editShare.Server=shareData.Server;
+          editShare.Port=shareData.Port;
+          editShare.LoginName=shareData.LoginName;
+          editShare.PassWord=shareData.PassWord;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -228,6 +253,13 @@ namespace MediaPortal.Configuration.Sections
             shareData.Name = editShare.ShareName;
             shareData.Folder = editShare.Folder;
             shareData.PinCode = editShare.PinCode;
+
+            shareData.IsRemote=editShare.IsRemote;
+            shareData.Server=editShare.Server;
+            shareData.LoginName=editShare.LoginName;
+            shareData.PassWord=editShare.PassWord;
+            shareData.Port=editShare.Port;
+            
 
             selectedItem.Tag = shareData;
 

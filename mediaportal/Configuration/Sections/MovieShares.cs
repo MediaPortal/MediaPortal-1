@@ -34,13 +34,34 @@ namespace MediaPortal.Configuration.Sections
 					string shareName = String.Format("sharename{0}", index);
 					string sharePath = String.Format("sharepath{0}", index);
           string sharePin  = String.Format("pincode{0}", index);
+          
+          string shareType = String.Format("sharetype{0}", index);
+          string shareServer = String.Format("shareserver{0}", index);
+          string shareLogin = String.Format("sharelogin{0}", index);
+          string sharePwd  = String.Format("sharepassword{0}", index);
+          string sharePort = String.Format("shareport{0}", index);
 
 					string shareNameData = xmlreader.GetValueAsString("movies", shareName, "");
 					string sharePathData = xmlreader.GetValueAsString("movies", sharePath, "");
           string sharePinData = xmlreader.GetValueAsString("movies", sharePin, "");
 
-					if(shareNameData != null && shareNameData.Length > 0)
-						AddShare(new ShareData(shareNameData, sharePathData, sharePinData), shareNameData.Equals(defaultShare));
+          bool   shareTypeData = xmlreader.GetValueAsBool("movies", shareType, false);
+          string shareServerData = xmlreader.GetValueAsString("movies", shareServer, "");
+          string shareLoginData = xmlreader.GetValueAsString("movies", shareLogin, "");
+          string sharePwdData = xmlreader.GetValueAsString("movies", sharePwd, "");
+          int    sharePortData = xmlreader.GetValueAsInt("movies", sharePort, 21);
+
+          if(shareNameData != null && shareNameData.Length > 0)
+          {
+            ShareData newShare= new ShareData(shareNameData, sharePathData, sharePinData);
+            newShare.IsRemote=shareTypeData;
+            newShare.Server=shareServerData;
+            newShare.LoginName=shareLoginData;
+            newShare.PassWord=sharePwdData;
+            newShare.Port=sharePortData;
+           
+            AddShare(newShare, shareNameData.Equals(defaultShare));
+          }
 				}
 			}				
 
@@ -62,9 +83,21 @@ namespace MediaPortal.Configuration.Sections
 					string sharePath = String.Format("sharepath{0}", index);
           string sharePin  = String.Format("pincode{0}", index);
 
+          string shareType = String.Format("sharetype{0}", index);
+          string shareServer = String.Format("shareserver{0}", index);
+          string shareLogin = String.Format("sharelogin{0}", index);
+          string sharePwd  = String.Format("sharepassword{0}", index);
+          string sharePort = String.Format("shareport{0}", index);
+
 					string shareNameData = String.Empty;
 					string sharePathData = String.Empty;
           string sharePinData  = String.Empty;
+
+          bool   shareTypeData = false;
+          string shareServerData = String.Empty;
+          string shareLoginData = String.Empty;
+          string sharePwdData = String.Empty;
+          int    sharePortData = 21;
 
 					if(CurrentShares != null && CurrentShares.Count > index)
 					{
@@ -76,6 +109,14 @@ namespace MediaPortal.Configuration.Sections
               sharePathData = shareData.Folder;
               sharePinData  = shareData.PinCode;
 
+              shareTypeData = shareData.IsRemote;
+              shareServerData = shareData.Server;
+              shareLoginData = shareData.LoginName;
+              sharePwdData = shareData.PassWord;
+              sharePortData = shareData.Port;
+
+
+
               if(CurrentShares[index] == DefaultShare)
                 defaultShare = shareNameData;
             }
@@ -84,6 +125,13 @@ namespace MediaPortal.Configuration.Sections
 					xmlwriter.SetValue("movies", shareName, shareNameData);
 					xmlwriter.SetValue("movies", sharePath, sharePathData);
           xmlwriter.SetValue("movies", sharePin, sharePinData);
+
+          xmlwriter.SetValueAsBool("movies", shareType, shareTypeData);
+          xmlwriter.SetValue("movies", shareServer, shareServerData);
+          xmlwriter.SetValue("movies", shareLogin, shareLoginData);
+          xmlwriter.SetValue("movies", sharePwd, sharePwdData);
+          xmlwriter.SetValue("movies", sharePort, sharePortData.ToString());
+
 				}
 
 				xmlwriter.SetValue("movies", "default", defaultShare);
