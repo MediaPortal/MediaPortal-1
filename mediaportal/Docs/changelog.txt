@@ -1,5 +1,9 @@
 History: (dd-mm-yyyy)
-  15-06-2004  my radio    : fixed : no sound for hauppauge PVR 350
+  17-06-2004  topbar      : fixed : topbar was not shown when dialog is presented
+  17-06-2004  my music    : fixed : album art was looked up 2 times
+  17-06-2004  my tv       : fixed : tvguide was broken due too new topbar plugin
+  
+  16-06-2004  my radio    : fixed : no sound for hauppauge PVR 350
   15-06-2004  general     : added : plugin for topbar (topbar now has seperate .xml skin files and can be turned on/off)
   15-06-2004  general     : added : support for VMR9 (optional, turn it on/off in file setup->general)
   15-06-2004  my tv		  : fixed : some crashes & hangups

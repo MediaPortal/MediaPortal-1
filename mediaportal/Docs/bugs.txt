@@ -1,4 +1,7 @@
 Bugs left:
+  16-06-2004 general    : movie & dvd player:check audio renderer specified in setup
+  16-06-2004 my tv      : tv is jerky/choppy
+  16-06-2004 my tv      : changing channels 
   16-06-2004 general    : scrolling is now depended on FPS
   16-06-2004 general    : have autotune enter the channels from low to high instead of high to low ?   
   
