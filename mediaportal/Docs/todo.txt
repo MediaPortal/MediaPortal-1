@@ -110,6 +110,7 @@ setup:
   - setup deinterlace method (vmr9)
 
 General:
+  - seperate frontend for client/server
   - autoplay anything thats in the cd/dvd
   - support for VFD/LCD displays
   - change sort by button into same button as view by
