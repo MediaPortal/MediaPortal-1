@@ -1,0 +1,63 @@
+ My Radio:
+  - AM/FM
+  - Scan channels
+  - Name channels
+  - listen to channel
+
+My TV:
+  - recordings button doesnt do anything. Should show all recorded 
+    programs and allow the user to pick/play one
+  - A way to browse and resolve recording conflicts. 
+  - view live tv in fullscreen mode with osd
+  - support multiple tuners/capture cards
+ 
+  TVGuide:
+
+  Scheduler:
+     - New button     doesnt do anything. Should allow user to create a new recording manually
+     - Edit Date/Time doesnt do anything. Should allow user to change date/time of a recording
+
+  Capture:
+    - in case of video-in/SVHS-in then use also that audio input (now uses tuner audio input)    
+    - time shifting. This allows you to pause/ FF/RW live tv      
+
+My Music:
+  - search songs by genre,artist,album (based on music database)
+  - support for external audio players based on file extension
+  - wmp9 visualisations   
+  - FF/RW/pause/volume control
+  - crossfading ?
+  - repeat none, once, always
+  - tag readers for formats like ogg,flac,wma,...
+  - CDDA playback with CDDB text
+  - use folder.jpg for album art
+
+Video:
+  - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
+  - bookmarks
+
+Pictures:
+  
+Settings:
+  - all :-)
+
+General:
+  - seperate module/database for TV-series
+
+  - remember 'view as' setting per folder
+  - better mouse control
+  - specify default share. 
+  - OSD keyboard : add mouse control & keyboard control
+  - my files  
+  - my programs
+  - autoplay anything thats in the cd/dvd
+    
+Bugs:
+  - 14-04-2004 my video   : internal video player: mpeg2 files stop doesnt work
+  - 14-04-2004 general    : xbmc doesnt start from D: 
+  - 16-04-2004 OSD        : someone also had a problem with the OSD not wanting to go away again with Y
+  - 18-04-2004 my video   : view by title: not all movies are shown
+  - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
+  - 20-04-2005 my tv      : record a program via tvguide which is already running records the next program!
+
+ i start mediaportal, goto tv then tvguide, then click on the first selected programme, then click none, then press right mouse button to return to tv section

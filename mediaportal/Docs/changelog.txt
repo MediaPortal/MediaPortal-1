@@ -1,0 +1,105 @@
+History: (dd-mm-yyyy)
+  21-04-2004: setup       : fixed : made dvd language lists a bit shorter
+  21-04-2004: setup       : added : file setup->setup channelnumbers/frequencies in 1 place
+  21-04-2004: setup       : added : file setup->video capture: sort tv channels via up/down or drag&drop
+  21-04-2004: setup       : added : file setup->video capture: inplace editing for channel numbers/frequencies
+  20-04-2004: My tv       : added : added support for <icon src> tag in tvguide.xml to automaticly download the channel icons
+  20-04-2004: video OSD   : added : subtitle / audio stream selection when playing DVD with internal DVD player
+  20-04-2004: video OSD   : added : turn DVD subtitles on off
+  20-04-2004: setup       : added : file->setup->dvd player : default audio & subtitle language
+  20-04-2004: general     : fixed : fixed: folder.jpg didnt work if folder contained a '.' character in the foldername
+  19-04-2004: my weather  : fixed : DELETE existing three cities (London, Oslo and Madrid) ADD a new city (Melbourne, Australia), going to MY WEATHER will get the weather report for LONDON.
+  18-04-2004: tvguide     : fixed : didnt work with o2grabber produced xml files
+  18-04-2004: my weather  : fixed : not all texts where taken from strings.xml
+  18-04-2004: general     : fixed : '1 Objects' was hardcoded instead of using strings.xml
+  18-04-2004: my video    : fixed : IMDB query failed for 'Ondskan'
+  18-04-2004: my video    : fixed : internal DVD player just showed black screen in fullscreen mode
+  18-04-2004: my tv       : added : MY Tv tv-preview
+  18-04-2004: skin        : fixed : scroll/fade label 
+  17-04-2004: my tv       : fixed : capture: no audio was recorded for some capture cards
+  17-04-2004: my tv       : fixed : some tvguides won't let you scroll down to a diff channel. So you r stuck on the first channel
+  17-04-2004: home        : added : ask user to confirm reboot/shutdown
+  17-04-2004: my music    : fixed : next mp3 isnt played when 1st has ended
+  17-04-2004: dialogs     : fixed : The music overlay comes on screen when you selected a recording type in the tv guide
+  17-04-2004: general     : fixed : autohide mouse
+  17-04-2004: setup       : added : video capture->property pages 
+  17-04-2004: setup       : added : video capture->frequency overrides for european countries
+  16-04-2004: skin        : fixed : skin bug in musicsettings.xml
+  16-04-2004: setup       : added : video capture->country code for tuner
+  16-04-2004: my video    : added : internal DVD player (still needs some work)
+  16-04-2004: my video    : fixed : OSD (y button)
+  16-04-2004: IMDB        : fixed : special characters like &#34;
+  16-04-2004: general     : fixed : skin 'switch view' button
+  16-04-2004: my TV       : fixed : XMLTV import didnt work for many countries
+  16-04-2004: my pictures : fixed : sometimes slideshow showed only parts of pictures
+  16-04-2004: my music    : fixed : album with ' character in id3 tag appeared twice in database 
+  16-04-2004: my music    : fixed : musicoverlay was shown incorrect if song didnt had an id3tag
+  15-04-2004: setup       : added : option for autohide mouse
+  15-04-2004: general     : fixed : removed all dependencies with directx
+  15-04-2004: keyboard    : fixed : was broken 
+  15-04-2004: my weather  : fixed : refresh dialog didnt disappear
+  15-04-2004: general     : fixed : CPU % is now back to normal
+  15-04-2004: my video    : fixed : zoom/stretch/normal
+  15-04-2004: my video    : fixed : OSD
+  15-04-2004: settings    : fixed : calibration
+  15-04-2004: settings    : fixed : cant return to home when you resize xbmc during calibration
+  15-04-2004: my music    : fixed : view by artist: sort didnt work
+  15-04-2004: my music    : fixed : view by genre: sort didnt work
+  14-04-2004: general     : fixed : corrupt xbmc.xml
+  14-04-2004: my music    : fixed : exception when querying album art
+  14-04-2004: general     : fixed : resize
+  14-04-2004: my tv       : added : capture video (still very buggy)
+  14-04-2004: videoplayer : added : changed internal video player
+  14-04-2004: general     : added : changed app into a winform app. Its not using directX anymore
+  14-04-2004: my music    : fixed : scan music is now much faster
+  14-04-2004: my pictures : fixed : ugly scaling of single picture view 
+  13-04-2004: my music    : fixed : AR of album art in view album/icon
+  13-04-2004: setup       : added : file->setup audio:auto shuffle playlist on load
+  13-04-2004: setup       : added : file->setup players:OSD timeout for internal player
+  13-04-2004: setup       : added : file->setup players:subtitle settings
+  13-04-2004: settings    : added : settings->my music->reorganize music database 
+  13-04-2004: settings    : added : settings->my music->delete album info & delete single album
+  12-04-2004: settings    : fixed : movie calibration->OSD calibration : OSD didnt move
+  12-04-2004: general     : fixed : fullscreen mode
+  12-04-2004: general     : added : auto hide mouse cursor 
+  11-04-2004: setup       : fixed : added option to select internal or external movie player
+  11-04-2004: my mymusic  : fixed : retrieving album art didnt load all tracks
+  11-04-2004: my mymusic  : fixed : retrieving album art didnt work for some albums
+  11-04-2004: my mymusic  : fixed : double albums if album was located in multiple folders
+  11-04-2004: general     : fixed : nasty scaling bug in the skin engine
+  11-04-2004: general     : added : onscreen keyboard
+  11-04-2004: my mymusic  : added : save playlist to .m3u playlist
+  11-04-2004: my video    : added : manual imdb
+  11-04-2004: my pictures : added : seperate view/sort settings for root shares & folders
+  10-04-2004: my pictures : fixed : exception when loading pic
+  10-04-2004: my pictures : fixed : slideshow didnt work nicely for images where height>width
+  10-04-2004: my video    : fixed : set current working directory for external players
+  09-04-2004: my tv       : added : now shows title/time/description about current program on TV
+  09-04-2004: my tv       : added : now shows title/time/channel about current program being recorded
+  09-04-2004: my tv       : added : record now/stop now works
+  09-04-2004: recorder    : added : started with recorder. for now it just logs when it should start/top recording.
+  09-04-2004: my pictures : fixed : speeded up loading of large (5 meg pixel) pictures
+  09-04-2004: general     : fixed : Aspect Ratio of thumbnails was wrong
+  08-04-2004: my pictures : fixed : picture database problems 
+  08-04-2004: my music    : fixed : exception when album art didnt have a thumbnail
+  08-04-2004: general     : fixed : sorting/view preferences where not only saved when xbmc was stopped in home
+  08-04-2004: tvguide     : fixed : dont import programs from the past
+  08-04-2004: general     : fixed : dialog headings
+  08-04-2004: general     : fixed : (changed) thumbnails didnt get refreshed
+  08-04-2004: general     : added : default icons for network shares, DVD drive & HD
+  08-04-2004: general     : added : keymap.xml now supports any key, not just a,b,x,y
+  08-04-2004: my pictures : added : picture rotation/orientation is now stored in seperate database
+  08-04-2004: my pictures : added : picture rotation/orientation now works for thumbnails too
+  08-04-2004: my pictures : fixed : picture info (F1)
+  08-04-2004: setup       : fixed : general tab showed empty boxes for skin/language
+  08-04-2004: my music    : added : switched audio player core. Is now using native DirectShow 
+  08-04-2004: my movies   : added : root dir. now has its own sort/view settings
+  08-04-2004: general     : fixed : cursor was lost sometimes
+  08-04-2004: my music    : fixed : scan dialog now shows last part of path
+  07-04-2004: my music    : added : album art lookup via www.allmusic.com (works in album & songs view )
+  07-04-2004: my music    : fixed : sometimes songs/albums did appear more then once in the music database
+  07-04-2004: my music    : added : files which have been played show up darker in the playlist window
+  07-04-2004: setup       : fixed : delete share didnt work
+  07-04-2004: setup       : added : edit share
+  07-04-2004: setup       : added : repeat playlist options
+  07-04-2004: setup       : added : scan for id3 tags is now optional
