@@ -1867,6 +1867,38 @@
 		<id>656</id>
 		<value>Aufnahme löschen</value>
 	</string>
+	<string>
+		<id>657</id>
+		<value>Mon</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Die</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Mit</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Don</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Fre</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Sam</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Son</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Dieses Bild löschen?</value>
+	</string>
 
 	<string>
 		<id>10000</id>
@@ -2065,3 +2097,4 @@
 		<value>Vollbild OSD</value>
 	</string>
 </strings>
+
