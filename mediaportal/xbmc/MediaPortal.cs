@@ -1356,7 +1356,11 @@ public class MediaPortalApp : D3DApp, IRender
     if (m_iLastMousePositionX != e.X || m_iLastMousePositionY != e.Y)
     {
 			// check any still waiting single click events
-			if (GUIGraphicsContext.DBLClickAsRightClick) CheckSingleClick();
+			if (GUIGraphicsContext.DBLClickAsRightClick)
+			{
+				if ((Math.Abs(m_iLastMousePositionX - e.X) > 10) || (Math.Abs(m_iLastMousePositionY - e.Y) > 10))
+				  CheckSingleClick();
+			}
 
       //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,m_iLastMousePositionX,m_iLastMousePositionY);
       m_iLastMousePositionX = e.X;
