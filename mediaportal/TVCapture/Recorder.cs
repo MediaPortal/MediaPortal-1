@@ -33,7 +33,8 @@ namespace MediaPortal.TV.Recording
     static bool          m_bPreviewChanged=false;
     static bool          m_bStopRecording=false;
 
-    public Recorder()
+    // singleton. Dont allow any instance of this class
+    private Recorder()
     {
     }
 
