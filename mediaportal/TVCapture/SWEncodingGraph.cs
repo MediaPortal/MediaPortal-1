@@ -310,7 +310,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartRecording(string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
-      if (m_graphState!=State.Recording) return true;
+      if (m_graphState==State.Recording) return true;
       if (m_graphState!=State.Created) return false;
       
       int hr;
