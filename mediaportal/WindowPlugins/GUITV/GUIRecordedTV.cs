@@ -778,14 +778,7 @@ namespace MediaPortal.GUI.TV
 		{
 			try
 			{
-				string strFName=System.IO.Path.GetFileNameWithoutExtension(strFilename);
-				string strDir=System.IO.Path.GetDirectoryName(strFilename);
-				string[] strFiles=System.IO.Directory.GetFiles(strDir,strFName+"*.*");
-				if (strFiles==null) return;
-				for (int i=0; i < strFiles.Length; ++i)
-				{
-					Utils.FileDelete(strFiles[i]);
-				}
+					Utils.FileDelete(strFilename);
 			}
 			catch(Exception)
 			{}
