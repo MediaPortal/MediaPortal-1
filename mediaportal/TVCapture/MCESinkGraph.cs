@@ -131,8 +131,7 @@ namespace MediaPortal.TV.Recording
         {
           AnalogVideoStandard videoStandard;
           m_TVTuner.get_TVFormat(out videoStandard);
-          if (videoStandard==AnalogVideoStandard.None) videoStandard=AnalogVideoStandard.PAL_B;
-          m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
+          SetVideoStandard(videoStandard);
         }
       }
 

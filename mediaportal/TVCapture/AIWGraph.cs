@@ -703,12 +703,7 @@ namespace MediaPortal.TV.Recording
             m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
           if (m_IAMAnalogVideoDecoder!=null)
           {
-            if (standard != AnalogVideoStandard.None)
-            {
-              DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
-              int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-              if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
-            }
+            SetVideoStandard(standard);
           }
           m_TVTuner.get_TVFormat(out standard);
         }
@@ -726,15 +721,7 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        if (m_IAMAnalogVideoDecoder!=null)
-        {
-          if (standard != AnalogVideoStandard.None)
-          {
-            DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
-            int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-            if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
-          }
-        }
+        SetVideoStandard(standard);
       }
       DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
                                   m_iCountryCode,standard.ToString(),
@@ -931,5 +918,20 @@ namespace MediaPortal.TV.Recording
       return 0;
     }
 
+    
+
+    protected void SetVideoStandard(AnalogVideoStandard standard)
+    {
+      if (standard==AnalogVideoStandard.None) return;
+      if (m_IAMAnalogVideoDecoder==null) return;
+      AnalogVideoStandard currentStandard;
+      int hr=m_IAMAnalogVideoDecoder.get_TVFormat(out currentStandard);
+      if (currentStandard==standard) return;
+
+      DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+      if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
+      hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+      if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+    }
 	}
 }
