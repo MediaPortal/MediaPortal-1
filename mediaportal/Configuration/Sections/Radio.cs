@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 248);
+      this.groupBox1.Size = new System.Drawing.Size(440, 240);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Player Settings";
@@ -130,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
       this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.countryComboBox.Location = new System.Drawing.Point(168, 117);
+      this.countryComboBox.Location = new System.Drawing.Point(168, 102);
       this.countryComboBox.MaxDropDownItems = 16;
       this.countryComboBox.Name = "countryComboBox";
       this.countryComboBox.Size = new System.Drawing.Size(256, 21);
@@ -139,7 +139,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 121);
+      this.label6.Location = new System.Drawing.Point(16, 106);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(150, 23);
       this.label6.TabIndex = 16;
@@ -149,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.parametersButton.Location = new System.Drawing.Point(368, 206);
+      this.parametersButton.Location = new System.Drawing.Point(368, 192);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(56, 20);
       this.parametersButton.TabIndex = 13;
@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersTextBox.Location = new System.Drawing.Point(96, 206);
+      this.parametersTextBox.Location = new System.Drawing.Point(96, 192);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(265, 20);
       this.parametersTextBox.TabIndex = 12;
@@ -168,7 +168,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(16, 209);
+      this.label4.Location = new System.Drawing.Point(16, 195);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(80, 23);
       this.label4.TabIndex = 11;
@@ -178,7 +178,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.fileNameButton.Location = new System.Drawing.Point(368, 181);
+      this.fileNameButton.Location = new System.Drawing.Point(368, 167);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(56, 20);
       this.fileNameButton.TabIndex = 10;
@@ -189,7 +189,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameTextBox.Location = new System.Drawing.Point(96, 181);
+      this.fileNameTextBox.Location = new System.Drawing.Point(96, 167);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(265, 20);
       this.fileNameTextBox.TabIndex = 9;
@@ -197,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(16, 184);
+      this.label5.Location = new System.Drawing.Point(16, 170);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(80, 23);
       this.label5.TabIndex = 8;
@@ -206,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
       // externalRadioButton
       // 
       this.externalRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.externalRadioButton.Location = new System.Drawing.Point(16, 155);
+      this.externalRadioButton.Location = new System.Drawing.Point(16, 137);
       this.externalRadioButton.Name = "externalRadioButton";
       this.externalRadioButton.TabIndex = 7;
       this.externalRadioButton.Text = "External radio";
@@ -220,14 +220,14 @@ namespace MediaPortal.Configuration.Sections
       this.inputComboBox.Items.AddRange(new object[] {
                                                        "Antenna",
                                                        "Cable"});
-      this.inputComboBox.Location = new System.Drawing.Point(168, 93);
+      this.inputComboBox.Location = new System.Drawing.Point(168, 78);
       this.inputComboBox.Name = "inputComboBox";
       this.inputComboBox.Size = new System.Drawing.Size(256, 21);
       this.inputComboBox.TabIndex = 6;
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 97);
+      this.label3.Location = new System.Drawing.Point(16, 82);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(150, 23);
       this.label3.TabIndex = 5;
@@ -238,7 +238,7 @@ namespace MediaPortal.Configuration.Sections
       this.deviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.deviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.deviceComboBox.Location = new System.Drawing.Point(168, 69);
+      this.deviceComboBox.Location = new System.Drawing.Point(168, 54);
       this.deviceComboBox.Name = "deviceComboBox";
       this.deviceComboBox.Size = new System.Drawing.Size(256, 21);
       this.deviceComboBox.TabIndex = 3;
@@ -254,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 72);
+      this.label2.Location = new System.Drawing.Point(16, 57);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(150, 23);
       this.label2.TabIndex = 1;
@@ -268,7 +268,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.folderNameTextBox);
       this.groupBox2.Controls.Add(this.folderNameLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 264);
+      this.groupBox2.Location = new System.Drawing.Point(8, 256);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(440, 72);
       this.groupBox2.TabIndex = 2;
