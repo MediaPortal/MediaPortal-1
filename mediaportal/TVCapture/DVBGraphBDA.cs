@@ -2357,6 +2357,11 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA: StoreChannels()");
 			DVBSections sections = new DVBSections();
 			DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
+			if (transp.channels==null)
+			{
+				Log.Write("DVBGraphBDA: found no channels", transp.channels);
+				return;
+			}
 			Log.Write("DVBGraphBDA: found {0} channels", transp.channels.Count);
 			for (int i=0; i < transp.channels.Count;++i)
 			{
