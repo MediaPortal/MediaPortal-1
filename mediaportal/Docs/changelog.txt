@@ -1,3 +1,5 @@
+24-07-2004  my music    : fixed : MP stopped after playing 2 songs
+
 23-07-2004  gui         : fixed :  when only one page of info you can still go to pageviewbuttons but they won't get focus like in videoinfo or albuminfo 
 23-07-2004  my weather  : fixed : When you only have 1 city in my weather, you can lose the cursor when going 1 to the selectbutton 
 23-07-2004  my video    : fixed : video osd only shown once. show info (Y) then again Y to remove then Y again to show. Tags will be empty now. 
