@@ -891,6 +891,7 @@ namespace MediaPortal.GUI.TV
               "tvguide_button_light_right.png",
               "");
             img.AllocResources();
+            img.ColourDiffuse=GetColorForGenre(program.Genre);
             GUIControl cntl=(GUIControl)img;
             Add(ref cntl);
         }
@@ -898,6 +899,7 @@ namespace MediaPortal.GUI.TV
         {
           img.SetPosition(iStartXPos,ypos);
           img.Width=iTotalWidth;
+          img.ColourDiffuse=GetColorForGenre(program.Genre);
           img.DoUpdate();
         }
         bool bRecording=false;
@@ -918,7 +920,7 @@ namespace MediaPortal.GUI.TV
         else
           img.TexutureIcon="";
         img.Data=program.Clone();
-        img.ColourDiffuse=0xffffffff;
+        img.ColourDiffuse=GetColorForGenre(program.Genre);
         height=height-10;
         height/=2;
         int iWidth=iTotalWidth;
