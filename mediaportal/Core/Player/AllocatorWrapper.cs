@@ -28,14 +28,12 @@ namespace MediaPortal.Player
 	public class AllocatorWrapper
 	{
 		//static Device device = null;
-		static PlaneScene scene;
-		static IVMRSurfaceAllocatorNotify9 allocNotify;
-    static Size m_nativeSize = new Size(0,0);
-		//this in reality should be an array, but doesn't work. In the common case
-		// only a surface will be requested.
-		static IntPtr		m_surface1 = IntPtr.Zero;
-		static IntPtr[] m_surface2 = new IntPtr[10];
-		static int			textureCount=1;
+		static PlaneScene										scene;
+		static IVMRSurfaceAllocatorNotify9	allocNotify;
+    static Size     										m_nativeSize = new Size(0,0);
+		static IntPtr												m_surface1    = IntPtr.Zero;
+		static IntPtr[] 										extraTextures = new IntPtr[10];
+		static int													textureCount  = 1;
     
 		[StructLayout(LayoutKind.Sequential)]
 	  public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
@@ -52,6 +50,10 @@ namespace MediaPortal.Player
 					return GUIGraphicsContext.DX9Device;
 					}
 			}
+			/// <summary>
+			/// specify how many extra video textures should be allocated
+			/// </summary>
+			/// <param name="count">number of extra video textures (1-10)</param>
 			public void SetTextureCount(int count)
 			{
 				textureCount=count;
@@ -64,8 +66,10 @@ namespace MediaPortal.Player
 			/// <param name="renderScene">instance of Planescene to use for presenting the video frames</param>
 			public Allocator (Control window, PlaneScene renderScene)
 			{
+				//clear the extra video textures
 				for (int i=0; i < 10; ++i)
-					m_surface2[i]=IntPtr.Zero;
+					extraTextures[i]=IntPtr.Zero;
+
   			scene = renderScene;
 				scene.Init(GUIGraphicsContext.DX9Device);
 			}
@@ -96,16 +100,19 @@ namespace MediaPortal.Player
           m_surface1=IntPtr.Zero;
         }
 
+				//first check if we still got a texture available
 				for (int i=0; i < textureCount; i++)
 				{
-					if (m_surface2[i]!=IntPtr.Zero)
+					//is this texture valid
+					if (extraTextures[i]!=IntPtr.Zero)
 					{
-						Log.Write("AllocatorWrapper:alloc 2nd:{0}x{1}", allocInfo.dwWidth,allocInfo.dwHeight);
+						//yes, then use it
+						Log.Write("AllocatorWrapper:alloc extra texture#[0} :{1}x{2}", i,allocInfo.dwWidth,allocInfo.dwHeight);
 						if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=1024)
 						{
-							Log.Write("AllocatorWrapper:return surface2:{0}",i);
-							m_surface1=m_surface2[i];
-							m_surface2[i]=IntPtr.Zero;
+							Log.Write("AllocatorWrapper:return extra texture:{0}",i);
+							m_surface1=extraTextures[i];
+							extraTextures[i]=IntPtr.Zero; // dont use it anymore after this
 							m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
 							float fTU = (float)(allocInfo.dwWidth ) / 1024.0f;
 							float fTV = (float)(allocInfo.dwHeight) / 576.0f;
@@ -187,18 +194,21 @@ namespace MediaPortal.Player
 						Marshal.Release(m_surface1);
 					}
 
+					//allocate the extra video textures
 					allocInfo.dwWidth=1024;
 					allocInfo.dwHeight=576;
 					for (int i=0; i < textureCount;++i)
 					{
-						if (m_surface2[i]!=IntPtr.Zero)
+						//release first
+						if (extraTextures[i]!=IntPtr.Zero)
 						{
-							Marshal.Release(m_surface2[i]);
-							m_surface2[i]=IntPtr.Zero;
+							Marshal.Release(extraTextures[i]);
+							extraTextures[i]=IntPtr.Zero;
 						}
-						hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface2[i]);
-						if (hr==0) Log.Write("AllocatorWrapper:  allocted {0} 1024x576",i);
-						else Log.Write("AllocatorWrapper:failed:  allocted {1} 1024x576",i);
+						//and alloc
+						hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out extraTextures[i]);
+						if (hr==0) Log.Write("AllocatorWrapper:  allocted extra texture#{0} 1024x576",i);
+						else Log.Write("AllocatorWrapper:failed:  allocted extra texture#{1} 1024x576",i);
 					}
 					hr=0;
         }
@@ -269,10 +279,13 @@ namespace MediaPortal.Player
           Marshal.ReleaseComObject( allocNotify ); allocNotify = null;
 				if (m_surface1 !=IntPtr.Zero)
 					Marshal.Release(m_surface1); m_surface1= IntPtr.Zero;
+
+				//release the extra video textures
 				for (int i=0; i < textureCount;++i)
 				{
-					if (m_surface2[i] !=IntPtr.Zero)
-						Marshal.Release(m_surface2[i]); m_surface2[i]= IntPtr.Zero;				
+					if (extraTextures[i] !=IntPtr.Zero)
+						Marshal.Release(extraTextures[i]); 
+					extraTextures[i]= IntPtr.Zero;				
 				}
 				return 0;
       }

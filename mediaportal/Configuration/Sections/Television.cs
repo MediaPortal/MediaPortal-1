@@ -323,7 +323,7 @@ namespace MediaPortal.Configuration.Sections
 				//
 				// We can't set the SelectedItem here as the items in the combobox are of TunerCountry type.
 				//
-				countryComboBox.Text = xmlreader.GetValueAsString("capture", "countryname", "");
+				countryComboBox.Text = xmlreader.GetValueAsString("capture", "countryname", "Netherlands");
 
 				//
 				// Set codecs
