@@ -67,106 +67,112 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.Show();
       splashScreen.Update();
 
-      // CHECK if DirectX 9.0c if installed
-      bool bDirectXInstalled = false;
-      //bool bManagedDirectXInstalled = false;
-      bool bWindowsMediaPlayer9 = false;
-      string strVersion = "";
-      //string strVersionMng = "";
-      RegistryKey hkcu = Registry.CurrentUser;
-      hkcu.CreateSubKey(@"Software\MediaPortal");
-      RegistryKey hklm = Registry.LocalMachine;
-      
-      hklm.CreateSubKey(@"Software\MediaPortal");
-      RegistryKey subkey = hklm.OpenSubKey(@"Software\Microsoft\DirectX");
-      if (subkey != null)
-      {
-        strVersion = (string)subkey.GetValue("Version");
-        if (strVersion != null)
-        {
-          if (strVersion.Length > 0)
-          {
-            string strTmp = "";
-            for (int i = 0; i < strVersion.Length; ++i)
-            {
-              if (Char.IsDigit(strVersion[i])) strTmp += strVersion[i];
-            }
-            long lVersion = System.Convert.ToInt64(strTmp);
-            if (lVersion >= 409000904)
-            {
-              bDirectXInstalled = true;
-            }
-          }
-          else strVersion = "?";
-        }
-        else strVersion = "?";
-/*
-        strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
-        if (strVersionMng != null)
-        {
-          if (strVersionMng.Length > 0)
-          {
-            string strTmp = "";
-            for (int i = 0; i < strVersionMng.Length; ++i)
-            {
-              if (Char.IsDigit(strVersionMng[i])) strTmp += strVersionMng[i];
-            }
-            long lVersion = System.Convert.ToInt64(strTmp);
-            if (lVersion >= 409001126)
-            {
-              bManagedDirectXInstalled = true;
-            }
-          }
-          else strVersionMng = "?";
-        }
-        else strVersionMng = "?";
-        */
-        subkey.Close();
-        subkey = null;
-      }
+			bool bDirectXInstalled = false;
+			bool bWindowsMediaPlayer9 = false;
+			try 
+			{
+				// CHECK if DirectX 9.0c if installed
+				string strVersion = "";
+				//string strVersionMng = "";
+				RegistryKey hkcu = Registry.CurrentUser;
+				hkcu.CreateSubKey(@"Software\MediaPortal");
+				RegistryKey hklm = Registry.LocalMachine;
+	      
+				hklm.CreateSubKey(@"Software\MediaPortal");
+				RegistryKey subkey = hklm.OpenSubKey(@"Software\Microsoft\DirectX");
+				if (subkey != null)
+				{
+					strVersion = (string)subkey.GetValue("Version");
+					if (strVersion != null)
+					{
+						if (strVersion.Length > 0)
+						{
+							string strTmp = "";
+							for (int i = 0; i < strVersion.Length; ++i)
+							{
+								if (Char.IsDigit(strVersion[i])) strTmp += strVersion[i];
+							}
+							long lVersion = System.Convert.ToInt64(strTmp);
+							if (lVersion >= 409000904)
+							{
+								bDirectXInstalled = true;
+							}
+						}
+						else strVersion = "?";
+					}
+					else strVersion = "?";
+					/*
+									strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
+									if (strVersionMng != null)
+									{
+										if (strVersionMng.Length > 0)
+										{
+											string strTmp = "";
+											for (int i = 0; i < strVersionMng.Length; ++i)
+											{
+												if (Char.IsDigit(strVersionMng[i])) strTmp += strVersionMng[i];
+											}
+											long lVersion = System.Convert.ToInt64(strTmp);
+											if (lVersion >= 409001126)
+											{
+												bManagedDirectXInstalled = true;
+											}
+										}
+										else strVersionMng = "?";
+									}
+									else strVersionMng = "?";
+									*/
+					subkey.Close();
+					subkey = null;
+				}
 
+				// CHECK if Windows MediaPlayer 9 is installed
+				subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\9.0");
+				if (subkey != null)
+				{
+					bWindowsMediaPlayer9 = true;
+					subkey.Close();
+					subkey = null;
+				}
+				hklm.Close();
+				hklm = null;
 
-      // CHECK if Windows MediaPlayer 9 is installed
-      subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\9.0");
-      if (subkey != null)
-      {
-        bWindowsMediaPlayer9 = true;
-        subkey.Close();
-        subkey = null;
-      }
-      hklm.Close();
-      hklm = null;
+				if (!bDirectXInstalled)
+				{
+					string strLine = "Please install DirectX 9.0c!\r\n";
+					strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
+					strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
+					strLine = strLine + "http://www.microsoft.com/directx";
+					System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+				}
+				/*
+				if (!bManagedDirectXInstalled)
+				{
+					string strLine="Please install Managed DirectX 9.0c!\r\n";
+					strLine=strLine+ "Current version installed:"+strVersion+"\r\n\r\n";
+					strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
+					strLine=strLine+ "http://www.microsoft.com/directx";
+					System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+				}*/
 
-      if (!bDirectXInstalled)
-      {
-        string strLine = "Please install DirectX 9.0c!\r\n";
-        strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
-        strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
-        strLine = strLine + "http://www.microsoft.com/directx";
-        System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-      }
-      /*
-      if (!bManagedDirectXInstalled)
-      {
-        string strLine="Please install Managed DirectX 9.0c!\r\n";
-        strLine=strLine+ "Current version installed:"+strVersion+"\r\n\r\n";
-        strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
-        strLine=strLine+ "http://www.microsoft.com/directx";
-        System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-      }*/
-
-      if (!bWindowsMediaPlayer9)
-      {
-        string strLine = "Please install Windows Mediaplayer 9\r\n";
-        strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9";
-        System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-      }
-      
+				if (!bWindowsMediaPlayer9)
+				{
+					string strLine = "Please install Windows Mediaplayer 9\r\n";
+					strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9";
+					System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+				}
+			}
+			catch(Exception)
+			{
+				bDirectXInstalled =true;
+				bWindowsMediaPlayer9=true;
+			}
       if (bDirectXInstalled && bWindowsMediaPlayer9)
       {
 
         try
         {
+					
           MediaPortalApp app = new MediaPortalApp();
           if (app.CreateGraphicsSample())
           {
@@ -309,36 +315,42 @@ public class MediaPortalApp : D3DApp, IRender
       catch (Exception)
       {
       }
-      UpdaterConfiguration config = UpdaterConfiguration.Instance;
-      config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
-      config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
-      config.Applications[0].Client.TempDir = System.IO.Directory.GetCurrentDirectory() + @"\temp";
-      config.Applications[0].Client.XmlFile = System.IO.Directory.GetCurrentDirectory() + @"\MediaPortal.exe.config";
-      config.Applications[0].Server.ServerManifestFileDestination = System.IO.Directory.GetCurrentDirectory() + @"\xml\ServerManifest.xml";
-      System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
-      System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
-      System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
+			
+			try
+			{
+				UpdaterConfiguration config = UpdaterConfiguration.Instance;
+				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
+				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
+				config.Applications[0].Client.TempDir = System.IO.Directory.GetCurrentDirectory() + @"\temp";
+				config.Applications[0].Client.XmlFile = System.IO.Directory.GetCurrentDirectory() + @"\MediaPortal.exe.config";
+				config.Applications[0].Server.ServerManifestFileDestination = System.IO.Directory.GetCurrentDirectory() + @"\xml\ServerManifest.xml";
+				
+				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
+				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
+				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
 
-      Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
-      
+				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
+				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
+				ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
+				m_strCurrentVersion = clientInfo.InstalledVersion;
+				Text += (" - [v" + m_strCurrentVersion + "]");
 
-      ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
-      clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
-      ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
-      m_strCurrentVersion = clientInfo.InstalledVersion;
-      Text += (" - [v" + m_strCurrentVersion + "]");
+				//  make an Updater for use in-process with us
+				_updater = new ApplicationUpdateManager();
 
-      //  make an Updater for use in-process with us
-      _updater = new ApplicationUpdateManager();
+				//  hook Updater events
+				_updater.DownloadStarted += new UpdaterActionEventHandler(OnUpdaterDownloadStarted);
+				_updater.UpdateAvailable += new UpdaterActionEventHandler(OnUpdaterUpdateAvailable);
+				_updater.DownloadCompleted += new UpdaterActionEventHandler(OnUpdaterDownloadCompleted);
 
-      //  hook Updater events
-      _updater.DownloadStarted += new UpdaterActionEventHandler(OnUpdaterDownloadStarted);
-      _updater.UpdateAvailable += new UpdaterActionEventHandler(OnUpdaterUpdateAvailable);
-      _updater.DownloadCompleted += new UpdaterActionEventHandler(OnUpdaterDownloadCompleted);
-
-      //  start the updater on a separate thread so that our UI remains responsive
-      _updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
-      _updaterThread.Start();
+				//  start the updater on a separate thread so that our UI remains responsive
+				_updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
+				_updaterThread.Start();
+			}
+			catch(Exception )
+			{
+			}
     }
 
     void RenderStats()
