@@ -1218,6 +1218,10 @@
                     RelPath = "home\resources\node.png"
                     BuildAction = "EmbeddedResource"
                 />
+                <File
+                    RelPath = "home\resources\script.png"
+                    BuildAction = "EmbeddedResource"
+                />
             </Include>
         </Files>
     </CSHARP>
