@@ -798,13 +798,32 @@ namespace MediaPortal.GUI.Library
       if (texture==null)
       {
         // no texture? then return
+				m_image=null;
+			
+				m_vecTextures=null;
+				m_iCurrentImage=0;
+				m_iCurrentLoop=0;
+				m_iImageWidth=0;
+				m_iImageHeight=0;
+				m_iTextureWidth=0;
+				m_iTextureHeight=0;
+				AllocResources();
         return false;
       }
       // is texture still valid?
       if (texture.Disposed)
       {
-        //no? then return
-        FreeResources();
+				//no? then return
+				m_image=null;
+			
+				m_vecTextures=null;
+				m_iCurrentImage=0;
+				m_iCurrentLoop=0;
+				m_iImageWidth=0;
+				m_iImageHeight=0;
+				m_iTextureWidth=0;
+				m_iTextureHeight=0;
+				AllocResources();
         return false;
       }
         

@@ -486,6 +486,10 @@ namespace MediaPortal.GUI.Library
 		static public void ReleaseTexture(string strFileName)
     {
       if (strFileName==String.Empty) return;
+
+			//dont dispose radio/tv logo's since they are used by the overlay windows
+			if (strFileName.ToLower().IndexOf(@"thumbs\tv\logos")>=0) return;
+			if (strFileName.ToLower().IndexOf(@"thumbs\radio")>=0) return;
       try
       {
 				bool continueRemoving=false;
@@ -547,6 +551,9 @@ namespace MediaPortal.GUI.Library
     {
       if (strFileName.Length==0) return false;
       if (strFileName == "-") return false;
+
+			if (strFileName.ToLower().IndexOf(@"thumbs\tv\logos")>=0) return false;
+			if (strFileName.ToLower().IndexOf(@"thumbs\radio")>=0) return false;
 
       /* Temporary: (textures that are disposed)
        * - all not skin images
