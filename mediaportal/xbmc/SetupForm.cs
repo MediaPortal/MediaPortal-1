@@ -5004,7 +5004,7 @@ namespace MediaPortal
 
 		private void Instance_StartLearning(object sender, LearningEventArgs e)
 		{
-			if(irLearnForm != null && irLearnForm.Visible == false)
+			if(irLearnForm != null && irLearnForm.Visible == true)
 			{
 				irLearnForm.SetMessage("Press and hold the '" + e.Button + "' button on your TUNER remote");
 			}
