@@ -690,8 +690,11 @@ namespace MediaPortal.Video.Database
 									strTitle+=strSub;
 								}
 
-								IMDBUrl url =new IMDBUrl(strURL,strTitle+" (imdb)","IMDB");
-								elements.Add(url);
+								if (strTitle.IndexOf("\n")<0)
+								{
+									IMDBUrl url =new IMDBUrl(strURL,strTitle+" (imdb)","IMDB");
+									elements.Add(url);
+								}
 								iCount++;
 							}
 							if (iEndAHREF+1>=strBody.Length) break;
