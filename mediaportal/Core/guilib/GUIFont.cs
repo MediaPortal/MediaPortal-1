@@ -1,4 +1,4 @@
-//#define NEWFONTENGINE
+#define NEWFONTENGINE
 using System;
 using System.Text;
 using System.Diagnostics;

@@ -1132,7 +1132,6 @@ namespace MediaPortal
           System.Threading.Thread.Sleep(MILLI_SECONDS_TIMER);
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
             return;
-          HandleMessage();
         }
       }
       catch (Exception ex)

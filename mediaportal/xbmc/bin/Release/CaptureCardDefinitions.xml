@@ -30,6 +30,7 @@
 <!--    Dvico Fusion HDTV Lite                -->
 <!--    Dvico Fusion HDTV USB2                -->
 <!--    FireDTV (BDA DVB-T)                   -->
+<!--    FireDTV (BDA DVB-C)                   -->
 <!--    FlyDVB-T DUO                          -->
 <!--    FlyDVB-T DUO Analog			          -->
 <!--    Hauppauge Nova-T                      -->
@@ -58,8 +59,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.19                                                               -->
-<!-- changed : 18-jan-2005 by Frodo                                                   -->
+<!-- version : 1.0.0.20                                                               -->
+<!-- changed : 22-jan-2005 by Frodo                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->

@@ -15,6 +15,7 @@ del /F /Q plugins\process\*.*
 del *.dll
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
+copy ..\..\..\mfc71.dll .
 copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
