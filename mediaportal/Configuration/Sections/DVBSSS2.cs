@@ -130,6 +130,7 @@ namespace MediaPortal.Configuration.Sections
 
 		// globals
 		private DVBSections					m_dvbSec=null;
+		private	DVBSkyStar2Helper			m_b2c2Helper=null;
 		private DVBSections.Transponder[]	transpList=null;
 		private bool						m_bIsDirty=false;
 		private bool						m_stopEPGGrab=false;
@@ -144,6 +145,7 @@ namespace MediaPortal.Configuration.Sections
 			InitializeComponent();
 			LoadConfig();
 			m_dvbSec=new DVBSections();
+			m_b2c2Helper=new DVBSkyStar2Helper();
 
 			// TODO: Initialisierungen nach dem Aufruf von InitializeComponent hinzufügen
 
@@ -159,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
 				if(components != null)
 				{
 					components.Dispose();
-					m_dvbSec.CleanUp();
+					m_b2c2Helper.CleanUp();
 				}
 			}
 			base.Dispose( disposing );
@@ -1850,13 +1852,13 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if(System.IO.File.Exists(fileName)==true)
 				{
-					if(m_dvbSec.Run()==true)
+					if(m_b2c2Helper.Run()==true)
 					{
-						m_dvbSec.OpenTPLFile(ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback,treeView4);
+						m_b2c2Helper.OpenTPLFile(ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback,treeView4);
 						m_bIsDirty=true;
 						// setting up list
 						transpList=(DVBSections.Transponder[])list.Clone();
-						m_dvbSec.CleanUp();
+						m_b2c2Helper.CleanUp();
 						feedback.Text="Ready.";
 						progressBar1.Value=progressBar1.Minimum;
 						BuildUpTreeView(treeView1);
@@ -2285,7 +2287,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void button7_Click(object sender, System.EventArgs e)
 		{
-			m_dvbSec.InterruptScan();
+			m_b2c2Helper.InterruptScan();
 			button7.Enabled=false;
 		}
 
@@ -2548,8 +2550,10 @@ namespace MediaPortal.Configuration.Sections
 			m_stopEPGGrab=false;
 			button16.Enabled=true;
 			button15.Enabled=false;
+			DVBSkyStar2Helper b2c2Helper=new DVBSkyStar2Helper();
 			int counter=0;
-			if(m_dvbSec.Run()==false)
+			bool tuned=false;
+			if(m_b2c2Helper.Run()==false)
 				return;
 			do
 			{
@@ -2562,7 +2566,12 @@ namespace MediaPortal.Configuration.Sections
 					{
 						DVBChannel ch=(DVBChannel)tn.Tag;
 						chName.Text=ch.ServiceName;
-						counter=m_dvbSec.GrabEIT(ch);
+						tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
+						//System.Threading.Thread.Sleep(200);
+						if(tuned==false)
+							return ;
+						m_b2c2Helper.ClearPids();
+						counter=m_dvbSec.GrabEIT(ch,m_b2c2Helper.Mpeg2DataFilter);
 						label17.Text=counter.ToString();
 						try
 						{
@@ -2580,7 +2589,7 @@ namespace MediaPortal.Configuration.Sections
 			button15.Enabled=true;
 			button16.Enabled=false;
 			label17.Text="0";
-			m_dvbSec.CleanUp();
+			m_b2c2Helper.CleanUp();
 			GC.Collect();
 		}
 		int CountSelectedNodes()

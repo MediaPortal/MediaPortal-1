@@ -59,6 +59,7 @@ typedef enum
 	DATA_PIN_3
 } tDataPinIndex;
 //
+BOOL AddTSPid(int pidnum);
 HRESULT LoadGraphFile(IGraphBuilder *pGraph, const WCHAR* wszName);
 IPin *GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir);
 HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath);
@@ -152,6 +153,13 @@ bool GetSectionData(IBaseFilter *filter,PID pid,TID tid,WORD *sectionCount,int t
 	HRESULT			hr;
 	IMpeg2Stream	*pStream = NULL;
 
+	if(filter==NULL)
+	{
+		filter=m_mpeg2Data;
+		if(m_mpeg2Data==NULL)
+			return false;
+	}
+
 	hr=filter->QueryInterface(IID_IMpeg2Data,(void**)&pMPEG);
 	if(FAILED(hr))
 		return false;
@@ -182,6 +190,8 @@ bool GetSectionDataI(PID pid,TID tid,WORD *sectionCount,int tableSection,int tim
 	HRESULT			hr;
 
 
+	if(AddTSPid(pid)==false)
+		return false;
 	if(timeout<1 || timeout>8000) // max. timeout 5 sec
 		timeout=1;
 	// grab table (tableSection=0) or section (tableSection!=0)
@@ -810,6 +820,7 @@ bool SetupB2C2Graph(void)
 	pinMPEG2DATAIn->Release();
 	pinDemuxIn->Release();
 	pPin->Release();
+
 
 
 	return true;

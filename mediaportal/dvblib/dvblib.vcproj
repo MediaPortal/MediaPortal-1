@@ -82,7 +82,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;D:\Downloads Internet\1023\SDK0404\Windows_v190\SDK\Include&quot;;C:\DXSDK\Include"
+				AdditionalIncludeDirectories="&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses&quot;;&quot;D:\Downloads Internet\1023\SDK0404\Windows_v190\SDK\Include&quot;;C:\DXSDK\Include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="TRUE"
