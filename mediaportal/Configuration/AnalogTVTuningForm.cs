@@ -39,6 +39,7 @@ namespace MediaPortal
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.ImageList imageList1;
 		private System.ComponentModel.IContainer components;
+		private System.Windows.Forms.Label labelChannels;
 		TVCaptureDevice captureCard;
 
 		public AnalogTVTuningForm()
@@ -71,11 +72,12 @@ namespace MediaPortal
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.buttonAdd = new System.Windows.Forms.Button();
 			this.labelStatus2 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.labelChannels = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// labelStatus
@@ -115,7 +117,7 @@ namespace MediaPortal
 			// 
 			this.label1.Location = new System.Drawing.Point(288, 96);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(112, 16);
+			this.label1.Size = new System.Drawing.Size(56, 16);
 			this.label1.TabIndex = 6;
 			this.label1.Text = "Channels:";
 			// 
@@ -151,6 +153,12 @@ namespace MediaPortal
 			// 
 			this.columnHeader2.Text = "Channel";
 			// 
+			// imageList1
+			// 
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			// 
 			// progressBar1
 			// 
 			this.progressBar1.Location = new System.Drawing.Point(24, 64);
@@ -183,16 +191,18 @@ namespace MediaPortal
 			this.button1.Text = "Stop";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// imageList1
+			// labelChannels
 			// 
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			this.labelChannels.Location = new System.Drawing.Point(360, 96);
+			this.labelChannels.Name = "labelChannels";
+			this.labelChannels.Size = new System.Drawing.Size(100, 16);
+			this.labelChannels.TabIndex = 12;
 			// 
 			// AnalogTVTuningForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(520, 341);
+			this.Controls.Add(this.labelChannels);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.labelStatus2);
 			this.Controls.Add(this.buttonAdd);
@@ -332,6 +342,7 @@ namespace MediaPortal
 					listView1.Items.Add(item);
 				}
 			}
+			labelChannels.Text=listView1.Items.Count.ToString();
 		}
 		#endregion
 

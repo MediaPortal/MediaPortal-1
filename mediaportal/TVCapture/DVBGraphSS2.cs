@@ -1928,10 +1928,8 @@ namespace MediaPortal.TV.Recording
 
 		}
 		//
-		public void StoreChannels(int ID,bool radio, bool tv, out int newChannels, out int updatedChannels)
+		public void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels)
 		{
-			newChannels=0;
-			updatedChannels=0;
 			Log.WriteFile(Log.LogType.Capture,"called StoreChannels()");
 			if (m_mpeg2Data==null) return;
 

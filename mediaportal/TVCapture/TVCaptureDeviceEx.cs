@@ -1478,12 +1478,10 @@ namespace MediaPortal.TV.Recording
 			if (_mGraph==null) return ;
 			_mGraph.Tune(tuningObject, disecqNo);
 		}
-		public void StoreTunedChannels(bool radio, bool tv, out int newChannels, out int updateChannels)
+		public void StoreTunedChannels(bool radio, bool tv, ref int newChannels, ref int updateChannels)
 		{
-			newChannels=0;
-			updateChannels=0;
 			if (_mGraph==null) return ;
-			_mGraph.StoreChannels(ID, radio,tv, out newChannels, out updateChannels);
+			_mGraph.StoreChannels(ID, radio,tv, ref newChannels, ref updateChannels);
 		}
 		
 		void SetTvSettings()

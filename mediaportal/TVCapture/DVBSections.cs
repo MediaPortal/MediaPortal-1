@@ -303,6 +303,14 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				Log.Write("AutoTune()");
+/*
+				MediaPortal.Util.Utils.FileDelete("table0x1f.dat");
+				System.IO.FileStream fileout = new System.IO.FileStream("table0x1f.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
+				GetStreamData(filter,0x1f, 0x5d,0,10000);
+				foreach(byte[] arr in m_sectionsList)
+				fileout.Write(arr,0,arr.Length);
+				fileout.Close();
+*/
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
 				GetStreamData(filter,0, 0,0,Timeout);
@@ -1057,6 +1065,7 @@ namespace MediaPortal.TV.Recording
 					x = buf[pointer + 1] + 2;
 					byte[] service = new byte[buf.Length-pointer + 1];
 					System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
+						//Log.Write("indicator = {0:X}",indicator);
 					if (indicator == 0x48)
 					{
 						ServiceData serviceData;

@@ -2837,10 +2837,8 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		/// <param name="radio">if true:Store radio channels found in the database</param>
 		/// <param name="tv">if true:Store tv channels found in the database</param>
-		public void StoreChannels(int ID, bool radio, bool tv, out int newChannels, out int updatedChannels)
+		public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels)
 		{	
-			newChannels=0;
-			updatedChannels=0;
 			if (m_SectionsTables==null) return;
 
 			//get list of current tv channels present in the database

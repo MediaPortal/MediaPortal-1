@@ -1954,7 +1954,7 @@ namespace MediaPortal.TV.Recording
 		public void Tune(object tuningObject, int disecqNo)
 		{
 		}
-		public void StoreChannels(int ID,bool radio, bool tv, out int newChannels, out int updatedChannels)
+		public void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels)
 		{
 			newChannels=0;
 			updatedChannels=0;
