@@ -680,7 +680,7 @@ public class MediaPortalApp : D3DApp, IRender
           case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN:
             ToggleFullWindowed(); 
             return;
-          break;
+          //break;
 
 					case Action.ActionType.ACTION_VOLUME_DOWN : 
             iCurrent = AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
@@ -1191,6 +1191,21 @@ public class MediaPortalApp : D3DApp, IRender
         }
         else message.Label = "";
       break;
+
+      case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD: 
+        VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard2) return;
+        keyboard2.Reset();
+        keyboard2.Password=true;
+        keyboard2.Text = message.Label;
+        keyboard2.DoModal(GUIWindowManager.ActiveWindow);
+        if (keyboard2.IsConfirmed)
+        {
+          message.Label = keyboard2.Text;
+        }
+        else message.Label = "";
+        break;
+
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED : 
         if (isMaximized == false) return;
