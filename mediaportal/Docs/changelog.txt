@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  27-06-2004  general     : added : external player plugin framework
+  27-06-2006  my music    : added : winamp external player sample/working external music plugin
+
   26-06-2004  MY TV       : fixed : framerate / framesize specified in the setup was not working anymore
 
   24-06-2004  general     : added : RSS Feed plugin (thx 2 Gilthalas)
