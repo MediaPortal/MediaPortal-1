@@ -20,6 +20,7 @@
 <!--    Dvico Fusion HDTV			added by Frodo        (untested)                  -->
 <!--    FireDTV (BDA DVB-T)			added by Frodo        ()						  -->
 <!--    Hauppauge Nova-T			added by Frodo                                    -->
+<!--    Hauppauge WinTV PVR 150M	added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 150MCE	added by Mars                                     -->
 <!--    Hauppauge WinTV PVR 250		added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 350		added by Frodo                                    -->
@@ -34,8 +35,8 @@
 <!--    general MCE card			added by Frodo                                    -->
 <!--    general MPEG2 card			added by Frodo                                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.7                                                                -->
-<!-- changed : 1-jan-2005 by Frodo                                                   -->
+<!-- version : 1.0.0.8                                                                -->
+<!-- changed : 2-jan-2005 by Frodo                                                   -->
 <!--                                                                                  -->
 
 <capturecards>
@@ -412,5 +413,43 @@
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard>
+  
+   <capturecard commercialname="Hauppauge PVR150" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_80030070&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+    <radio>
+      <interface cat="capture" video="" audio="1" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </radio>
+  </capturecard>
+   
 </capturecards>
