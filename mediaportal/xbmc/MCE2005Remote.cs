@@ -364,6 +364,9 @@ namespace MediaPortal
             break;
           case 0x25://TV/jump
             break;
+          case 0x0d:// home
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+            break;
           default:
             Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
           break;
