@@ -1770,6 +1770,41 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+
+			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
+			{
+				//Log.Write("got guide data");
+				IGuideData data= m_TIF as IGuideData;
+				int iFetched;
+				IEnumTuneRequests varRequests;
+				Log.Write("GetServices");
+				data.GetServices(out varRequests);
+				if (varRequests!=null)
+				{
+					//Log.Write("variant enum");
+					TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
+					while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
+					{
+						IEnumGuideDataProperties enumProgramProperties;
+						data.GetServiceProperties(tunerequests[0],out enumProgramProperties);
+						if (enumProgramProperties!=null)
+						{
+							IGuideDataProperty[] properties = new IGuideDataProperty[1];
+							while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
+							{
+								//Log.Write("got property");
+								object chanValue;
+								int chanLanguage;
+								string chanName;
+								properties[0].Name( out chanName);
+								properties[0].Value(out chanValue);
+								properties[0].Language(out chanLanguage);
+								Log.Write("service name:{0} value:{1} language:{2}",chanName, chanValue, chanLanguage);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }
