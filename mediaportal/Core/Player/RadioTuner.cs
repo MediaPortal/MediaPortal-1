@@ -199,7 +199,7 @@ namespace MediaPortal.Player
 			if (strDevice.Length==0) return;
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD,0,0,0,0,0,null);
 			msg.Label=strDevice;
-			GUIGraphicsContext.SendMessage(msg);
+			GUIWindowManager.SendMessage(msg);
 			GC.Collect();GC.Collect();GC.Collect();
 		}
 
@@ -209,7 +209,7 @@ namespace MediaPortal.Player
 			if (strDevice.Length==0) return;
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_FREE_CARD,0,0,0,0,0,null);
 			msg.Label=strDevice;
-			GUIGraphicsContext.SendMessage(msg);
+			GUIWindowManager.SendMessage(msg);
 		}
 	}
 }

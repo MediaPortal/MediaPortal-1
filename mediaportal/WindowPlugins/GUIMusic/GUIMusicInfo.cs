@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.Music
 			    strTmp=Utils.SecondsToHMSString(song.Duration);
 			    msg1=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL2_SET,GetID,0,(int)Controls.CONTROL_TEXTAREA,i,0,null);
 			    msg1.Label=(strTmp);
-			    GUIGraphicsContext.SendMessage(msg1);
+			    OnMessage(msg1);
 		    }
 
 		    GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS,GUILocalizeStrings.Get(183));

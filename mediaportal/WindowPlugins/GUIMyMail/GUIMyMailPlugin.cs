@@ -220,7 +220,7 @@ namespace MyMail
 					if(iControl==(int)Controls.CONTROL_LIST)
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-						GUIGraphicsContext.SendMessage(msg);
+						OnMessage(msg);
 						int iItem = (int)msg.Param1;
 						int iAction = (int)message.Param1;
 						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)

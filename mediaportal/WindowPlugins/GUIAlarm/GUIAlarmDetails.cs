@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Alarm
 						if (iControl==(int)Controls.SoundList)
 						{
 							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-							GUIGraphicsContext.SendMessage(msg);
+							OnMessage(msg);
 							int iItem=(int)msg.Param1;
 							int iAction=(int)message.Param1;
 							if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Alarm
 						if(iControl == (int)Controls.PlayType)
 						{
 							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-							GUIGraphicsContext.SendMessage(msg);
+							OnMessage(msg);
 							int nSelected = (int)msg.Param1;
 
 							switch(nSelected)

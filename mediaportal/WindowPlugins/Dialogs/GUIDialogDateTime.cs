@@ -403,7 +403,7 @@ namespace MediaPortal.Dialogs
     void DisableControl(int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, iControlId, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      OnMessage(msg);
     }
 		
     void EnableControl( int iControlId)

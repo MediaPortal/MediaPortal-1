@@ -244,5 +244,21 @@ namespace MediaPortal.GUI.Library
       base.Animate(animator);
     }
 
+		/// <summary>
+		/// Property to get/set the id of the window 
+		/// to which this control belongs
+		/// </summary>
+		public override int WindowId
+		{
+			get { return m_iWindowID; }
+			set { 
+				m_iWindowID = value; 
+				for (int x = 0; x < m_Controls.Count; ++x)
+				{
+					((GUIControl)m_Controls[x]).WindowId=value;
+				}
+			}
+		}
+
 	}
 }

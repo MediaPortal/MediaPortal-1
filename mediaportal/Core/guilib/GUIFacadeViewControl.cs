@@ -39,7 +39,11 @@ namespace MediaPortal.GUI.Library
       get { return m_ListView;}
       set { 
             m_ListView=value;
-            if (m_ListView!=null) m_ListView.GetID=GetID;
+						if (m_ListView!=null) 
+						{
+							m_ListView.GetID=GetID;
+							m_ListView.WindowId=WindowId;
+						}
       }
     }
 
@@ -52,7 +56,11 @@ namespace MediaPortal.GUI.Library
       set 
       { 
         m_FilmStripView=value;
-        if (m_FilmStripView!=null) m_FilmStripView.GetID=GetID;
+				if (m_FilmStripView!=null) 
+				{
+					m_FilmStripView.GetID=GetID;
+					m_FilmStripView.WindowId=WindowId;
+				}
       }
     }
 
@@ -64,7 +72,11 @@ namespace MediaPortal.GUI.Library
         get { return m_ThumbnailView;}
         set { 
           m_ThumbnailView=value;
-          if (m_ThumbnailView!=null) m_ThumbnailView.GetID=GetID;
+					if (m_ThumbnailView!=null) 
+					{
+						m_ThumbnailView.GetID=GetID;
+						m_ThumbnailView.WindowId=WindowId;
+					}
         }
     }
 
@@ -99,20 +111,34 @@ namespace MediaPortal.GUI.Library
 			{
 				m_ListView.AllocResources();
 				m_ListView.GetID=GetID;
+				m_ListView.WindowId=WindowId;
 			}
 
 			if (m_ThumbnailView!=null)
 			{
 				m_ThumbnailView.AllocResources();
 				m_ThumbnailView.GetID=GetID;
+				m_ThumbnailView.WindowId=WindowId;
 			}
 
 			if (m_FilmStripView!=null)
 			{
 				m_FilmStripView.AllocResources();
 				m_FilmStripView.GetID=GetID;
+				m_FilmStripView.WindowId=WindowId;
 			}
     }
+		public override int WindowId
+		{
+			get { return m_iWindowID; }
+			set 
+			{ 
+				m_iWindowID = value; 
+				if (m_ListView!=null) m_ListView.WindowId=value;
+				if (m_ThumbnailView!=null) m_ThumbnailView.WindowId=value;
+				if (m_FilmStripView!=null) m_FilmStripView.WindowId=value;
+			}
+		}
 
 		/// <summary>
 		/// pre-Allocate any resources needed for the controls

@@ -168,7 +168,7 @@ namespace GUIPrograms
 					{
 						// application or file-item was clicked....
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						GUIGraphicsContext.SendMessage(msg);         
+						OnMessage(msg);         
 						int iItem=(int)msg.Param1;
 						int iAction=(int)message.Param1;
 	

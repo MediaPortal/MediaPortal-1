@@ -111,7 +111,7 @@ namespace MediaPortal.Player
           if ( strExt==".sbe" ||strExt==".dvr-ms" )
           {
              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
-             GUIGraphicsContext.SendMessage(msg);
+             GUIWindowManager.SendMessage(msg);
           }
           if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseStreamBufferPlayer();
 					if (iUseVMR9inMYTV==1) newPlayer=new Player.StreamBufferPlayerVMR9wl();

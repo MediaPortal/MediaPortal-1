@@ -259,7 +259,7 @@ namespace MediaPortal.GUI.TV
 					if (iControl==(int)Controls.BTN_CHANNEL)
 					{
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            GUIGraphicsContext.SendMessage(msg);         
+            OnMessage(msg);         
             if (msg.Label.Length>0)
             {
               m_strChannel=msg.Label;
@@ -276,7 +276,7 @@ namespace MediaPortal.GUI.TV
           if (iControl == (int)Controls.BTN_CARD)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            GUIGraphicsContext.SendMessage(msg);
+            OnMessage(msg);
             
             m_strChannel=Recorder.GetTVChannelName(m_iCurrentCard);
             m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);

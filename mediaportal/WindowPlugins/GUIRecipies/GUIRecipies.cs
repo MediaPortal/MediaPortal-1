@@ -140,7 +140,7 @@ namespace GUIRecipies
 					} 
 					else if (iControl==(int)Controls.CONTROL_SEARCH_TYP) {  // Select type of search
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						GUIGraphicsContext.SendMessage(msg);         
+						OnMessage(msg);         
 						switch (currentSearch) {
 							case Search_Types.SEARCH_RECIPIE :				// search by title
 								currentSearch = Search_Types.SEARCH_TITLE;
@@ -155,7 +155,7 @@ namespace GUIRecipies
 					else if ( iControl==(int)Controls.CONTROL_LIST )		// Click on Control_List ?
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						GUIGraphicsContext.SendMessage(msg);         
+						OnMessage(msg);         
 						int iItem=(int)msg.Param1;
 						int iAction=(int)message.Param1;
 						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM) {

@@ -239,7 +239,7 @@ namespace MediaPortal.Util
         {
           //check pincode
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-          GUIGraphicsContext.SendMessage(msg);
+          GUIWindowManager.SendMessage(msg);
           int iPincode = -1;
           try
           {

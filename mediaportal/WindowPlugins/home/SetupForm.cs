@@ -100,75 +100,75 @@ namespace home
   /// </summary>
   private void InitializeComponent()
 {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SetupForm));
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.radioButton2 = new System.Windows.Forms.RadioButton();
-      this.radioButton1 = new System.Windows.Forms.RadioButton();
-      this.button1 = new System.Windows.Forms.Button();
-      this.chkBoxScrolling = new System.Windows.Forms.CheckBox();
-      this.groupBox1.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Controls.Add(this.chkBoxScrolling);
-      this.groupBox1.Controls.Add(this.radioButton2);
-      this.groupBox1.Controls.Add(this.radioButton1);
-      this.groupBox1.Location = new System.Drawing.Point(16, 16);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(248, 136);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Home settings";
-      // 
-      // radioButton2
-      // 
-      this.radioButton2.Location = new System.Drawing.Point(24, 48);
-      this.radioButton2.Name = "radioButton2";
-      this.radioButton2.TabIndex = 1;
-      this.radioButton2.Text = "MM-DD-YYYY";
-      // 
-      // radioButton1
-      // 
-      this.radioButton1.Location = new System.Drawing.Point(24, 24);
-      this.radioButton1.Name = "radioButton1";
-      this.radioButton1.Size = new System.Drawing.Size(112, 24);
-      this.radioButton1.TabIndex = 0;
-      this.radioButton1.Text = "DD-MM-YYYY";
-      // 
-      // button1
-      // 
-      this.button1.Location = new System.Drawing.Point(216, 184);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(64, 23);
-      this.button1.TabIndex = 1;
-      this.button1.Text = "Save";
-      this.button1.Click += new System.EventHandler(this.button1_Click);
-      // 
-      // chkBoxScrolling
-      // 
-      this.chkBoxScrolling.Checked = true;
-      this.chkBoxScrolling.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkBoxScrolling.Location = new System.Drawing.Point(24, 80);
-      this.chkBoxScrolling.Name = "chkBoxScrolling";
-      this.chkBoxScrolling.Size = new System.Drawing.Size(168, 24);
-      this.chkBoxScrolling.TabIndex = 2;
-      this.chkBoxScrolling.Text = "Scroll menu items";
-      // 
-      // SetupForm
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(292, 222);
-      this.Controls.Add(this.button1);
-      this.Controls.Add(this.groupBox1);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "SetupForm";
-      this.Text = "Home Setup";
-      this.Load += new System.EventHandler(this.SetupForm_Load);
-      this.groupBox1.ResumeLayout(false);
-      this.ResumeLayout(false);
+		System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SetupForm));
+		this.groupBox1 = new System.Windows.Forms.GroupBox();
+		this.chkBoxScrolling = new System.Windows.Forms.CheckBox();
+		this.radioButton2 = new System.Windows.Forms.RadioButton();
+		this.radioButton1 = new System.Windows.Forms.RadioButton();
+		this.button1 = new System.Windows.Forms.Button();
+		this.groupBox1.SuspendLayout();
+		this.SuspendLayout();
+		// 
+		// groupBox1
+		// 
+		this.groupBox1.Controls.Add(this.chkBoxScrolling);
+		this.groupBox1.Controls.Add(this.radioButton2);
+		this.groupBox1.Controls.Add(this.radioButton1);
+		this.groupBox1.Location = new System.Drawing.Point(16, 16);
+		this.groupBox1.Name = "groupBox1";
+		this.groupBox1.Size = new System.Drawing.Size(344, 96);
+		this.groupBox1.TabIndex = 0;
+		this.groupBox1.TabStop = false;
+		this.groupBox1.Text = "Home settings";
+		// 
+		// chkBoxScrolling
+		// 
+		this.chkBoxScrolling.Checked = true;
+		this.chkBoxScrolling.CheckState = System.Windows.Forms.CheckState.Checked;
+		this.chkBoxScrolling.Location = new System.Drawing.Point(160, 24);
+		this.chkBoxScrolling.Name = "chkBoxScrolling";
+		this.chkBoxScrolling.Size = new System.Drawing.Size(168, 24);
+		this.chkBoxScrolling.TabIndex = 2;
+		this.chkBoxScrolling.Text = "Scroll menu items";
+		// 
+		// radioButton2
+		// 
+		this.radioButton2.Location = new System.Drawing.Point(24, 48);
+		this.radioButton2.Name = "radioButton2";
+		this.radioButton2.TabIndex = 1;
+		this.radioButton2.Text = "MM-DD-YYYY";
+		// 
+		// radioButton1
+		// 
+		this.radioButton1.Location = new System.Drawing.Point(24, 24);
+		this.radioButton1.Name = "radioButton1";
+		this.radioButton1.Size = new System.Drawing.Size(112, 24);
+		this.radioButton1.TabIndex = 0;
+		this.radioButton1.Text = "DD-MM-YYYY";
+		// 
+		// button1
+		// 
+		this.button1.Location = new System.Drawing.Point(288, 128);
+		this.button1.Name = "button1";
+		this.button1.Size = new System.Drawing.Size(64, 23);
+		this.button1.TabIndex = 1;
+		this.button1.Text = "Save";
+		this.button1.Click += new System.EventHandler(this.button1_Click);
+		// 
+		// SetupForm
+		// 
+		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+		this.ClientSize = new System.Drawing.Size(368, 165);
+		this.Controls.Add(this.button1);
+		this.Controls.Add(this.groupBox1);
+		this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+		this.Name = "SetupForm";
+		this.Text = "Home Setup";
+		this.Load += new System.EventHandler(this.SetupForm_Load);
+		this.groupBox1.ResumeLayout(false);
+		this.ResumeLayout(false);
 
-  }
+	}
   #endregion
 
     private void button1_Click(object sender, System.EventArgs e)

@@ -138,7 +138,7 @@ namespace MediaPortal.Dialogs
           if (m_iSelected>=0)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,(int)Controls.CONTROL_LIST,m_iSelected,0,null);
-            GUIGraphicsContext.SendMessage(msg);
+            OnMessage(msg);
           }
           m_iSelected=-1;
           string wszText=String.Format("{0} {1}", m_vecList.Count,GUILocalizeStrings.Get(127) );

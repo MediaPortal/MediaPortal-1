@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.Music
           if (iControl==(int)Controls.CONTROL_BTNTYPE)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            GUIGraphicsContext.SendMessage(msg);         
+            OnMessage(msg);         
             int nSelected=(int)msg.Param1;
             int nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_ALBUM;
             switch (nSelected)
@@ -516,7 +516,7 @@ namespace MediaPortal.GUI.Music
         iControl=(int)Controls.CONTROL_LIST;
 
       GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-      GUIGraphicsContext.SendMessage(msg);         
+      OnMessage(msg);         
       int iItem=(int)msg.Param1;
       return iItem;
     }
