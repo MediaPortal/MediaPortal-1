@@ -1843,6 +1843,10 @@
 		<id>653</id>
 		<value>Delete this recording?</value>
 	</string>
+	<string>
+		<id>654</id>
+		<value>Eject</value>
+	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
 <string><id>10002</id><value>My Pictures</value></string>
