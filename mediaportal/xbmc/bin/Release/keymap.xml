@@ -355,6 +355,39 @@
     </action>
   </window>
   <window>
+    <id>506</id>
+    <description>My Music favorites specific actions</description>
+    <action>
+      <id>33</id>
+      <key>F1</key>
+      <sound />
+      <description>Toggle between Playlist and Filelist</description>
+    </action>
+    <action>
+      <id>34</id>
+      <key>Y</key>
+      <sound />
+      <description>Add Item to the Playlist</description>
+    </action>
+  </window>
+
+  <window>
+    <id>507</id>
+    <description>My Music years specific actions</description>
+    <action>
+      <id>33</id>
+      <key>F1</key>
+      <sound />
+      <description>Toggle between Playlist and Filelist</description>
+    </action>
+    <action>
+      <id>34</id>
+      <key>Y</key>
+      <sound />
+      <description>Add Item to the Playlist</description>
+    </action>
+  </window>
+  <window>
     <id>2005</id>
     <description>Fullscreen Video specific actions</description>
     <action>
