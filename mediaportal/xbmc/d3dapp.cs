@@ -1165,28 +1165,30 @@ namespace MediaPortal
         deviceLost = false;
         m_bNeedUpdate=true;
       }
-      // Render the scene as normal
       
+      // Render the scene as normal
       if (g_Player.Playing&& g_Player.DoesOwnRendering) 
       {
-        System.Windows.Forms.Application.DoEvents();
+        // if we're playing a movie with vmr9 then the player will draw the GUI
+        // so we just sleep 50msec here ...
         System.Threading.Thread.Sleep(50);
-        //System.Windows.Forms.Application.DoEvents();
       }
       else
       {
-        System.Windows.Forms.Application.DoEvents();
+        //if we're playing a movie (fullscreen)
         if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
+        {
+          // then we dont need 2 draw the gui. so sleep 25 msec
+          System.Threading.Thread.Sleep(25);  
+        }
+        else
         {
           System.Threading.Thread.Sleep(25);  
         }
-        System.Windows.Forms.Application.DoEvents();
 
         try
         {
-          System.Windows.Forms.Application.DoEvents();
           Render();
-          System.Windows.Forms.Application.DoEvents();
         }
         catch (Exception ex)
         {
