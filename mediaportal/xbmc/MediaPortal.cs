@@ -189,7 +189,8 @@ public class MediaPortalApp : D3DApp
       }
       else
       {
-        GUIGraphicsContext.IsFullScreenVideo=false;
+        if (!Recorder.Previewing)
+          GUIGraphicsContext.IsFullScreenVideo=false;
         GUIGraphicsContext.IsPlaying=false;
       }
  

@@ -691,5 +691,71 @@
 	  <key>left</key>
 	  <id>94</id>
 	</action>
+    <action>
+      <description>Toggle the OSD</description>
+      <id>24</id>
+      <key>Y</key>
+    </action>
+	
   </window>
+  
+ 
+  <window>
+    <description>TV OSD keys</description>
+    <id>3003</id>
+    <action>
+      <description>value plus</description>
+      <id>74</id>
+      <key>pageup</key>
+    </action>
+    <action>
+      <description>value min</description>
+      <id>75</id>
+      <key>pagedown</key>
+    </action>
+    <action>
+      <description>Hide SubMenu</description>
+      <id>84</id>
+      <key>X</key>
+    </action>
+    <action>
+      <description>Exit OSD</description>
+      <id>24</id>
+      <key>Y</key>
+    </action>
+    <action>
+      <description>Exit OSD alternative buttons</description>
+      <id>24</id>
+      <key>ESC</key>
+      <!-- remote>back</key -->
+    </action>
+    <action>
+      <description>Zoom/Stretch/Normal</description>
+      <id>19</id>
+      <key>s</key>
+      <!-- remote>display</key -->
+    </action>
+    <action>
+      <description>Stop</description>
+      <id>13</id>
+      <key>B</key>
+    </action>
+    <action>
+      <description>Pause</description>
+      <id>12</id>
+      <!-- key>back</key -->
+      <key>SPACE</key>
+    </action> 
+    <action>
+      <description>FastForward</description>
+      <id>16</id>
+      <key>F6</key>
+    </action>
+    <action>
+      <description>Rewind</description>
+      <id>17</id>
+      <key>F5</key>
+    </action>
+  </window>
+ 
 </keymap>

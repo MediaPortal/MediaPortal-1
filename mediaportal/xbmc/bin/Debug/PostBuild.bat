@@ -19,6 +19,7 @@ copy ..\..\..\PictureDatabase\bin\Debug\PictureDatabase.dll .
 copy ..\..\..\VideoDatabase\bin\Debug\VideoDatabase.dll .
 copy ..\..\..\TVDatabase\bin\Debug\TVDatabase.dll .
 copy ..\..\..\TVCapture\bin\Debug\TVCapture.dll .
+copy ..\..\..\TagReader\bin\Debug\TagReader.dll .
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\SQLiteProxy.dll .
@@ -47,3 +48,4 @@ copy ..\..\..\TVDatabase\bin\Debug\TVDatabase.pdb .
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.pdb .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.pdb .
 copy ..\..\..\TVCapture\bin\Debug\TVCapture.pdb .
+copy ..\..\..\TagReader\bin\Debug\TagReader.pdb .

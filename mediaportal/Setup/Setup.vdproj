@@ -21,12 +21,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_01C03BF38A6F4E57858105687666125A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_01EEBBD049E448CC9EC5D8E91D493275"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -58,6 +52,12 @@
         "Entry"
         {
         "MsmKey" = "8:_04065DE6333D4BA88102C360DE7B3518"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_06EABC868E23472B91ED8E15F56ECD77"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -100,12 +100,6 @@
         "Entry"
         {
         "MsmKey" = "8:_09FB872169926F3522610E970A3C117D"
-        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_09FB872169926F3522610E970A3C117D"
         "OwnerKey" = "8:_2B8A509C3CE7CCDC62C7428B0ECB43A7"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -189,6 +183,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_09FB872169926F3522610E970A3C117D"
+        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0C099E167C1F424E9F02A255324A99C1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -202,6 +202,24 @@
         "Entry"
         {
         "MsmKey" = "8:_0C88619DC7D24CE586208886A9C464CC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0D328B646C95467996B50F3FD453A19B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0E0854070E264DD2A8976B366AC30211"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0E0BBBE511414C7DA6D2884972B430C5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -243,6 +261,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_11DB1743952840578B29D0D3612DBE5D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_120128D27C504E27B2E03BBC01610C7B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_122B9593F0304D59B02C53356AAF3D97"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -273,19 +303,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_144FA5E34BE44D848AADEEA5AF3E86D5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1579D66D15E84CA399622AEAE136C117"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_157CC2364FEB4660BAB8454CF1F83E1B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -303,223 +321,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_F993A7E96ABDFB3D7D45653BEACD7E21"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_2D73546222EAACD995BEF947D765F3B9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_7FE9EF6D9C66C809D4AD00CAF943DE46"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_8A0E9487C4D4FCE1050436BEF077D554"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_C9E028AE53D00416D991E311550C5A9F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_51F5F03C1CD008FF39F78E796A4B438A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_60B09462CA3C1F619D1416748455BF4C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_FE8EF670938A04D93FE2AC072B7C5214"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_DFB2E4311DDF6CEC6F21F5D1D648AEF1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_EC9FFFEED2AB56B30264012B05C6F8D1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_FAA1F9C2451EB84564C603F8642908CD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_3B36805BB3D1B024BF9016B1A86190B8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_8C0076A9212D101F7184AB7EBC9B33B3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_A32173BCA4DDD33C6396CA0B83D83B6D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_2B8A509C3CE7CCDC62C7428B0ECB43A7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_6F2BBDD8C07D41E89ED4C8D9F254CF9F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_3FC5B2AF8B564519875620248E083E54"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_FD03F9C24FA048B0BB2BD0718482EFAD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_FC1C0C03E5814C1396222FA443505387"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_DD835609F7064E11938689F52AA7B263"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_D4E44A4124D7425B93D7F4552E724983"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_C59CD6755D9D4478879738C765AB5C55"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_C372F8488842473A9F79872A6CCDEF8C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_B53B3126995440B48B1EEF9F770C0E89"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_B321445DD17C4EE3939407EEC020F579"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_ADFD601F227C4E068C4379E49AFEE1F2"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_A290B3ED7AB4436A9396ED9B1F1ED9FF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_51D36249EDF744CD9FA312D26268D772"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_2248F9DB859C40E8B9B1E733AA946139"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_038A2FCD256C4CD2A310AC7E64909968"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_3EB444623CBF19287FB771FB5C247F7C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1786915D0B934687A99B80217BADBBF6"
-        "OwnerKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_18987D5E696C4C3BBEC7B246F87FB140"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1979B22716B845E5BF0C3DBE5CF966B3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_19A47D1C05BA4A56857BD4B639018AD4"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1A19950F82F2429DB078674CC7E60326"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -538,12 +340,6 @@
         "Entry"
         {
         "MsmKey" = "8:_1D206AAC19D64EDCB7CE068B32C3D9D2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1D2650541D8846BF9EAD21624DC8E637"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -597,25 +393,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2061BA8F82CE456DB86851DCFB2B4EAA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_209634B1F86B4CEEB51768D858931501"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_211F6E7B64844CE0B24887E2AE5C0180"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2173128CA6A843B3BFC87E22642C80E4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -639,6 +417,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_22C494CF749C42E492AA17FE1B030D8C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_22F7A8D285B5468BB4B297D3E7AA8B85"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -651,7 +435,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_241543609D3C4D7EAB8AA799E2D9BDF0"
+        "MsmKey" = "8:_2467A99B744745D881D9D3E749993C8A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -675,12 +459,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2543EF3416304B8E81771C3DF3FF410C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_256B24181B6C4EDBB8C3AF1D66CC4457"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -693,13 +471,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2652A21C352546F89A12E29603094117"
+        "MsmKey" = "8:_27A2528A15F14AC1B03105359CDC71BA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_27EBA41BE55F4F5F9CDCF9FAD17158B6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2AF67E5D159047DD9E0347C70DAF1EF6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -897,7 +681,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2FB90E3320834EC786708577FEF7504C"
+        "MsmKey" = "8:_2EE3335DD3834751807F4690EEB7B3A1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2FAE965BD4EA41678EC75521882FFDEF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -951,6 +741,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_36E450E761FC4A21A96E3E4056A52A2E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_37496D4BA0BE40DE8B3A18607B2A57DA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -963,6 +759,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_386888CE81D54D3AAC716000540249C4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_38BB4D2EB9924303A65A0F67C26F4419"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -970,6 +772,18 @@
         "Entry"
         {
         "MsmKey" = "8:_38CA3680FD73461F8D54669D83CDBAA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_395567F9961B4795AD45128A5DB49DC6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3A0B92056691401285254EB0ACED9564"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -993,6 +807,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3AAB9B83CCEC4B5BB2628AE650F03EF1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3AE3E01557CA439E8BDD5C19BD2661F6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1001,6 +821,12 @@
         {
         "MsmKey" = "8:_3B36805BB3D1B024BF9016B1A86190B8"
         "OwnerKey" = "8:_038A2FCD256C4CD2A310AC7E64909968"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3CA2E56C70B84E11AB9DECBFF5BC0A87"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1113,7 +939,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_40F809F9A8424711A79B78C67A79CC4C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_411D3300D3044037B1290D7195848D02"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_41648955BE8C4FBCAAA75CD40E2AD69A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1125,31 +963,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_45E06B277E3C4E00B786A762475902AF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_480F6D763E9B4C3E8B9BC80B2F235D84"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_495BAC934DA545C3B452816742719F0C"
+        "MsmKey" = "8:_48E3A14372504B6C8AB6F82BE1D12735"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_48E446873D504BD2A7FB443094880207"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_49F92FB3CC3B4626A03C9F8805C6B0BC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4A30F4F97C9F4515B324C2C67456EF4B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1197,12 +1029,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4DAE60E7F8184A1EAD6FC16C2C58F5BE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_4DCF6137389546CDB7D4773063BB06B9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1216,6 +1042,12 @@
         "Entry"
         {
         "MsmKey" = "8:_4F1F271C5A70441FACF376C64AC43593"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4FFC816596A94C0496167F8AD00C0C8C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1353,6 +1185,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5437970596524133B78355D104A228EE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_54872033798D4C3188DEA72DA7580D76"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1365,13 +1203,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_58D85824338C496AA91BB197C429C359"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_59A55BCB40CD449B92BFB1C452693D4E"
+        "MsmKey" = "8:_59DA08D543894F728D1FC043EEF4E8D7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1432,12 +1264,6 @@
         "Entry"
         {
         "MsmKey" = "8:_60B98B493B6F4CA7BB2B9935072E07E2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_618A0E0712EF44AF87B67A2BCEE1E522"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1569,7 +1395,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_65EE1A07B34C48F0BE8A9EE8CAA05EAB"
+        "MsmKey" = "8:_65E508B95A804E2ABF1D118BDF67D621"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1582,6 +1408,12 @@
         "Entry"
         {
         "MsmKey" = "8:_667ACBFC33EE4D6BB20FCBE649874F1C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_66A5B07D59274318A83F5D53E8D2D26E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1641,12 +1473,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6BDD9542660C4D96BA67AFD3F5C8F98B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6C1C06EA430F4F678FF816E62C6F7E94"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1665,13 +1491,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6D9D5B1521BE4DE5B7E7BAE204F9A10B"
+        "MsmKey" = "8:_6E4EACAAD12644AFAA68987DD05D6A1D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_6E4EACAAD12644AFAA68987DD05D6A1D"
+        "MsmKey" = "8:_6E877590F9574D71989FBA7BA7683827"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1690,6 +1516,18 @@
         "Entry"
         {
         "MsmKey" = "8:_6F2BBDD8C07D41E89ED4C8D9F254CF9F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6FAC403CEF714F64B744F488EF98CB2F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7058960AE2A047B89C80F500AA1E019E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1743,12 +1581,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_74654903CF9048D28E27436FA4E057D2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_750A904059D041A7860C945E4EC286E6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1756,12 +1588,6 @@
         "Entry"
         {
         "MsmKey" = "8:_756545FABDC54DEC99622DAC27BA99B7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_764A69A26FFD4D839CE70A47BAC1A2E0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1803,12 +1629,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_794D4787D09A45D99C374A399F3B5B78"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7A1C7A65120648AB9CB1BCAA2C85260D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1822,6 +1642,12 @@
         "Entry"
         {
         "MsmKey" = "8:_7A703D1AE2764247AB102529E1751665"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7AE4A069F5E549BC9A04345DFA203D2C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1851,12 +1677,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7DFC1F142E8A4F3BAFA315526843003F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7E19F42F846C4F27825A8E61950BA691"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1864,12 +1684,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7EA17693F1CB4C7EA907254865A2BB3A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7FA3388F0C5349BEB9AF671B0618B311"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1893,6 +1707,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_81B04FC64C3A4A7EAF655523C7C54A63"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_820C0022409E48F6B5B27147EEDB4221"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1905,12 +1725,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_831A0BB2F75C48D3A6BB691B11663F3C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_840A5F7DA77A4B27AE759A56CA31F29C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1918,12 +1732,6 @@
         "Entry"
         {
         "MsmKey" = "8:_844CAB0B00074DA8BC00B2E74D15557F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_84574E5A9318495FB9EDD829045EE6D0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1965,12 +1773,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8735F30A6CE6427E8D628ABCDE4B3FB7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_87CD09AE4F9946598EF3E1E683A74053"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1978,18 +1780,6 @@
         "Entry"
         {
         "MsmKey" = "8:_87E4AC5914A74EAC964A9E85CBAE47C0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_890FA4272F3C433EBBBCC384BAD23205"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_893160DC4C9E4DCEA3AB33D46FF67EDD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2025,8 +1815,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8A0E9487C4D4FCE1050436BEF077D554"
-        "OwnerKey" = "8:_C59CD6755D9D4478879738C765AB5C55"
+        "MsmKey" = "8:_8B6641929135446BA7423E8C9FF7B83A"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2091,6 +1881,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8C1D7593B38D4B2E93E9E0568A7C3B8D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8CA681CA64494888A8F13283398586D2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2115,12 +1911,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8F94BD2E84E241BFA5174FCBC00B32F1"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8F9F92DC935748998BFC0F17B4F0AD09"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2139,13 +1929,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_90497F37C7B84A08BF7FCF35AAD5390E"
+        "MsmKey" = "8:_9037429952F7454C97BDF48CADF4C58C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_911528EA855642BDB7A4C0B655CF9753"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_91E959B0E2DE4BC98323A1ADF702A5C7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_920E33A30B6D4E45813F193E3436FDEE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2175,7 +1977,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_96325EF1788248AC8758B46C3D92B919"
+        "MsmKey" = "8:_96153C5A01F14B7D8998B365963C6DAE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2187,13 +1989,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9833915A084544D7B67061BA03AD5FAB"
+        "MsmKey" = "8:_989E60CC86534766BDB9363C306D0799"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_989E60CC86534766BDB9363C306D0799"
+        "MsmKey" = "8:_98A149E2A9D84F079FAF14F82A1AE6FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2205,7 +2007,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_98CA322491764F4DAB68A349452C6C21"
+        "MsmKey" = "8:_98E8E75DF36F4AC891D6ECA66F8DDF07"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2217,7 +2019,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_996C6063F5294F54B490A0A079C62463"
+        "MsmKey" = "8:_99AE0AF2CAD94B868EE95E9568C1BC2E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_99FFF37E6FDE4E3AB5909897206E2FC2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2241,7 +2049,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9D9ADFB72B0F47E7A7D530FBAB9D64EB"
+        "MsmKey" = "8:_9D38E34ADCF64EBE96BAD5274ECFC8AA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2325,6 +2133,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A426FFC1661E48DB9336A26B94A35DB0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A49CB78B22954C78B7EB80E254558027"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2391,7 +2205,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A7F3574211504FA2A5BC1CB36680F063"
+        "MsmKey" = "8:_A78DF3A5BFE148A89767CF201A302373"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2409,20 +2223,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
-        "OwnerKey" = "8:_EC9FFFEED2AB56B30264012B05C6F8D1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
-        "OwnerKey" = "8:_A32173BCA4DDD33C6396CA0B83D83B6D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
-        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
+        "MsmKey" = "8:_AA0705C1C98347A098255E9A16C5A377"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2512,6 +2314,24 @@
         "Entry"
         {
         "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
+        "OwnerKey" = "8:_EC9FFFEED2AB56B30264012B05C6F8D1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
+        "OwnerKey" = "8:_A32173BCA4DDD33C6396CA0B83D83B6D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
+        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
         "OwnerKey" = "8:_09FB872169926F3522610E970A3C117D"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2524,6 +2344,12 @@
         "Entry"
         {
         "MsmKey" = "8:_ADFD601F227C4E068C4379E49AFEE1F2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AE822E1B41414E8A85BE3E45FEDE1482"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2583,7 +2409,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B532B04185584941BA89C11D4BE42DF5"
+        "MsmKey" = "8:_B4A5F4E7E3AA483FA527507320EF1881"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2613,13 +2439,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B8CCDBA1C5BC48AFA59CC43DBDFD54FE"
+        "MsmKey" = "8:_B8D5D4E02C2D4ED4857FEFA9F9996810"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_B8D5D4E02C2D4ED4857FEFA9F9996810"
+        "MsmKey" = "8:_B8E11364E0D14066A31CE8FBE48FCA5A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2673,12 +2499,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_BE011964AF4540E898EDE57609D76BA3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_BE7926D8F7034F8D84654E4B9FC7C695"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2709,12 +2529,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C243FD868F1F4612A81571512A814783"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C2DF712C2E7A448AAAAD16F3D8184031"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2734,6 +2548,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C609A861B6944FD99AFF1DECA97CF741"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C7C47122D3C6498FA611D6977ABC27FD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2775,12 +2595,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_CA65C8C1778042A3BA535584842F1437"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_CA9D9CFA0DF14048A3ADBA11A45D1F02"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2788,6 +2602,12 @@
         "Entry"
         {
         "MsmKey" = "8:_CC7195540D9144FF8D63E693FB4D4458"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CCBB067D60EF4048BA997A4DAA31A22C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2829,6 +2649,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CF5F87ED36B84ED4BEA60231B244E10E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CF73F125D6CF4ECFB420B1DB16629B9E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2853,7 +2679,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D0D0BB684A724598BD279C9506DF5B05"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D21D1E6753BA406695725D1110F369D1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D3B4071104944207A07084E6475919C6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2872,24 +2710,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
-        "OwnerKey" = "8:_7FE9EF6D9C66C809D4AD00CAF943DE46"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
-        "OwnerKey" = "8:_51F5F03C1CD008FF39F78E796A4B438A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
-        "OwnerKey" = "8:_FE8EF670938A04D93FE2AC072B7C5214"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
         "OwnerKey" = "8:_FD03F9C24FA048B0BB2BD0718482EFAD"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2897,6 +2717,12 @@
         {
         "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
         "OwnerKey" = "8:_DD835609F7064E11938689F52AA7B263"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
+        "OwnerKey" = "8:_7FE9EF6D9C66C809D4AD00CAF943DE46"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2915,6 +2741,18 @@
         {
         "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
         "OwnerKey" = "8:_B321445DD17C4EE3939407EEC020F579"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
+        "OwnerKey" = "8:_51F5F03C1CD008FF39F78E796A4B438A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
+        "OwnerKey" = "8:_FE8EF670938A04D93FE2AC072B7C5214"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2944,6 +2782,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D76166D30D7742CDA88F46782F5168B3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D82659F2389349F3821DA892E6EB86E9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2979,6 +2823,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DCAA3F164E5844098E3BDFC4D35296A4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DCBCA6D821D34FECB01E212ACB1B7AA2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3003,26 +2853,14 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DE3F27710E6042AFA81BF62122ABD3E5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
         "OwnerKey" = "8:_ABEBDDC11B8926B9278D1395F9832C68"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
-        "OwnerKey" = "8:_A32173BCA4DDD33C6396CA0B83D83B6D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
-        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
-        "OwnerKey" = "8:_2B8A509C3CE7CCDC62C7428B0ECB43A7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3112,6 +2950,24 @@
         "Entry"
         {
         "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
+        "OwnerKey" = "8:_A32173BCA4DDD33C6396CA0B83D83B6D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
+        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
+        "OwnerKey" = "8:_2B8A509C3CE7CCDC62C7428B0ECB43A7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DEB4D700DEB5789C4545BCE2796D3B6A"
         "OwnerKey" = "8:_09FB872169926F3522610E970A3C117D"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3147,12 +3003,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E0135FF29C4C4C95B5E2C30F89246900"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_E028147BC4A54B6A916936964820CD1D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3160,12 +3010,6 @@
         "Entry"
         {
         "MsmKey" = "8:_E0331ACCFF954D20B9F06AB9498A99E0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E076AFC25CF24E3A9DDBA31BCE065AB8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3195,12 +3039,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E1FA54BF2F434687BBFF169BC8E1F787"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_E234625F32114A1E946716A738872229"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3208,6 +3046,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E23E24B5B82C45E6B67D5C9792F0649B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E2638E0CAF684DAC8AE3D614B1324151"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3243,14 +3087,212 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E470A3652919482B82907EA53121CB1E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E58C0BD0958C4975AA50D5D2EA091AD9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_E5BDE47BFC2E4012819244C1B89320A1"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_F993A7E96ABDFB3D7D45653BEACD7E21"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_6F2BBDD8C07D41E89ED4C8D9F254CF9F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_3FC5B2AF8B564519875620248E083E54"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_FD03F9C24FA048B0BB2BD0718482EFAD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_FC1C0C03E5814C1396222FA443505387"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_2D73546222EAACD995BEF947D765F3B9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_DD835609F7064E11938689F52AA7B263"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_D4E44A4124D7425B93D7F4552E724983"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_7FE9EF6D9C66C809D4AD00CAF943DE46"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_C59CD6755D9D4478879738C765AB5C55"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_C372F8488842473A9F79872A6CCDEF8C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_B53B3126995440B48B1EEF9F770C0E89"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_B321445DD17C4EE3939407EEC020F579"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_8A0E9487C4D4FCE1050436BEF077D554"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_C9E028AE53D00416D991E311550C5A9F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_51F5F03C1CD008FF39F78E796A4B438A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_ADFD601F227C4E068C4379E49AFEE1F2"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_60B09462CA3C1F619D1416748455BF4C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_FE8EF670938A04D93FE2AC072B7C5214"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_DFB2E4311DDF6CEC6F21F5D1D648AEF1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_A290B3ED7AB4436A9396ED9B1F1ED9FF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_51D36249EDF744CD9FA312D26268D772"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_2248F9DB859C40E8B9B1E733AA946139"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_038A2FCD256C4CD2A310AC7E64909968"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_EC9FFFEED2AB56B30264012B05C6F8D1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_FAA1F9C2451EB84564C603F8642908CD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_3EB444623CBF19287FB771FB5C247F7C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_3B36805BB3D1B024BF9016B1A86190B8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_D5AFBC6F9EB05584C8DC0D4F9AAE02D2"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_8C0076A9212D101F7184AB7EBC9B33B3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_A32173BCA4DDD33C6396CA0B83D83B6D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_62D3D315A20E9856BB7EF53C6AFF5165"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E59441F1697F4D6C98378222034DE378"
+        "OwnerKey" = "8:_2B8A509C3CE7CCDC62C7428B0ECB43A7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3273,25 +3315,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EA18808D5CCD47FEBE8B124BBB02BC72"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EA78521D83594B97802709EB4E179362"
+        "MsmKey" = "8:_EA1C55FA6C7B4209BBF3ECC669DDCA66"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_EABCBC2855C74CFE9D45505A6D538133"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EACC2D0663BE483A986A2DFFD0C64A22"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3369,12 +3399,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EECE6D5A096545EEA4EC03AFAEC52954"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_EEE06D76EBF44856AF34E5DE90342FDB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3399,19 +3423,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F0A4DE0E889546EBA1728EDF60F11962"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F0A69893C17D4FD3B4D0C1028C58A56D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F0C8A2DDE49648C3A9F75C5488AD597A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3436,6 +3448,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F1EE81ACBACD42BAAEEB6017E2A5F517"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F23796DD5C064083883644C786D5BEE5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3471,7 +3489,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F62711E583A145918F3E82232B366D34"
+        "MsmKey" = "8:_F587AE4E5FF4402EA6B95CA2C9506241"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3495,12 +3513,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F7A4578595DD4217A06FD62A0284EAD5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F7B85A4AF04C4F8096FDD956AFACA44E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3509,12 +3521,6 @@
         {
         "MsmKey" = "8:_F993A7E96ABDFB3D7D45653BEACD7E21"
         "OwnerKey" = "8:_038A2FCD256C4CD2A310AC7E64909968"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F993A7E96ABDFB3D7D45653BEACD7E21"
-        "OwnerKey" = "8:_EC9FFFEED2AB56B30264012B05C6F8D1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3549,8 +3555,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FA218832A62B4C4D9B8F6C33C7DAA8E1"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_F993A7E96ABDFB3D7D45653BEACD7E21"
+        "OwnerKey" = "8:_EC9FFFEED2AB56B30264012B05C6F8D1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3609,19 +3615,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FACDBB6F7397462681287E99CD4F562A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_FB16BEC0CC7547CAA3FD64EA87CE55BE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_FB3B4A68410D45AAB84D89DAB6C15818"
+        "MsmKey" = "8:_FB1AA80CE5D64FB7A166FE558442F8DB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3645,13 +3645,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FC7AA8B1BB8446B4B43C957CD5CE18A4"
+        "MsmKey" = "8:_FC88351FCFB44AAFA9BF1674B1D06AD4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_FD03F9C24FA048B0BB2BD0718482EFAD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FD39CAB4082D45288E50FF3A51126B35"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3677,12 +3683,6 @@
         {
         "MsmKey" = "8:_FE8EF670938A04D93FE2AC072B7C5214"
         "OwnerKey" = "8:_ADFD601F227C4E068C4379E49AFEE1F2"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FEC47DE926BC423980B707B30B7E88DB"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -3756,26 +3756,6 @@
             "TargetName" = "8:video-8x.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_01C03BF38A6F4E57858105687666125A"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settingsScreenCalibration.xml"
-            "TargetName" = "8:settingsScreenCalibration.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3876,6 +3856,26 @@
             "TargetName" = "8:47.png"
             "Tag" = "8:"
             "Folder" = "8:_B687B337DA3C42BA87AAD42FE9A66D09"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_06EABC868E23472B91ED8E15F56ECD77"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsMyMusic.xml"
+            "TargetName" = "8:SettingsMyMusic.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4101,6 +4101,66 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0D328B646C95467996B50F3FD453A19B"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsSkinLanguage.xml"
+            "TargetName" = "8:SettingsSkinLanguage.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0E0854070E264DD2A8976B366AC30211"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsWeather.xml"
+            "TargetName" = "8:SettingsWeather.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0E0BBBE511414C7DA6D2884972B430C5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicartists.xml"
+            "TargetName" = "8:mymusicartists.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_0E540A5A9789482FA205E251CF7FD217"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\32.png"
@@ -4221,6 +4281,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_11DB1743952840578B29D0D3612DBE5D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoactors.xml"
+            "TargetName" = "8:myvideoactors.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_120128D27C504E27B2E03BBC01610C7B"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideo.xml"
+            "TargetName" = "8:myvideo.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_122B9593F0304D59B02C53356AAF3D97"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\progress_right.png"
@@ -4321,52 +4421,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_144FA5E34BE44D848AADEEA5AF3E86D5"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settingsUICalibration.xml"
-            "TargetName" = "8:settingsUICalibration.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_1579D66D15E84CA399622AEAE136C117"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\39.png"
             "TargetName" = "8:39.png"
             "Tag" = "8:"
             "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_157CC2364FEB4660BAB8454CF1F83E1B"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsPrograms.xml"
-            "TargetName" = "8:SettingsPrograms.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4421,72 +4481,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_18987D5E696C4C3BBEC7B246F87FB140"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoactors.xml"
-            "TargetName" = "8:myvideoactors.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_1979B22716B845E5BF0C3DBE5CF966B3"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\check-box.png"
             "TargetName" = "8:check-box.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_19A47D1C05BA4A56857BD4B639018AD4"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsFilter.xml"
-            "TargetName" = "8:SettingsFilter.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1A19950F82F2429DB078674CC7E60326"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\font.xml"
-            "TargetName" = "8:font.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4547,26 +4547,6 @@
             "TargetName" = "8:scroll-down.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1D2650541D8846BF9EAD21624DC8E637"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsScreenSubtitles.xml"
-            "TargetName" = "8:SettingsScreenSubtitles.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4741,72 +4721,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2061BA8F82CE456DB86851DCFB2B4EAA"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settings.xml"
-            "TargetName" = "8:settings.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_209634B1F86B4CEEB51768D858931501"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\defaultDVDRom.png"
             "TargetName" = "8:defaultDVDRom.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_211F6E7B64844CE0B24887E2AE5C0180"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogDateTime.xml"
-            "TargetName" = "8:DialogDateTime.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2173128CA6A843B3BFC87E22642C80E4"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsGeneral.xml"
-            "TargetName" = "8:SettingsGeneral.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4861,6 +4781,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_22C494CF749C42E492AA17FE1B030D8C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsAudioOptions.xml"
+            "TargetName" = "8:SettingsAudioOptions.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_22F7A8D285B5468BB4B297D3E7AA8B85"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\17.png"
@@ -4901,10 +4841,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_241543609D3C4D7EAB8AA799E2D9BDF0"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2467A99B744745D881D9D3E749993C8A"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicalbum.xml"
-            "TargetName" = "8:mymusicalbum.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvguide.xml"
+            "TargetName" = "8:mytvguide.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -4981,26 +4921,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2543EF3416304B8E81771C3DF3FF410C"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvguide.xml"
-            "TargetName" = "8:mytvguide.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_256B24181B6C4EDBB8C3AF1D66CC4457"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\DefaultProgramBig.png"
@@ -5041,10 +4961,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2652A21C352546F89A12E29603094117"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_27A2528A15F14AC1B03105359CDC71BA"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogSelect2.xml"
-            "TargetName" = "8:DialogSelect2.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsCache.xml"
+            "TargetName" = "8:SettingsCache.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -5081,11 +5001,31 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2AF67E5D159047DD9E0347C70DAF1EF6"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsMusic.xml"
+            "TargetName" = "8:SettingsMusic.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_2B8A509C3CE7CCDC62C7428B0ECB43A7"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:guilib, Version=1.0.1580.22651, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:guilib, Version=1.0.1581.14507, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_2B8A509C3CE7CCDC62C7428B0ECB43A7"
@@ -5283,10 +5223,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2FB90E3320834EC786708577FEF7504C"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2EE3335DD3834751807F4690EEB7B3A1"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvFullScreen.xml"
-            "TargetName" = "8:mytvFullScreen.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\videoOverlay.xml"
+            "TargetName" = "8:videoOverlay.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2FAE965BD4EA41678EC75521882FFDEF"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsSystemInfo.xml"
+            "TargetName" = "8:SettingsSystemInfo.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -5463,6 +5423,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_36E450E761FC4A21A96E3E4056A52A2E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myprograms.xml"
+            "TargetName" = "8:myprograms.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_37496D4BA0BE40DE8B3A18607B2A57DA"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\defaultDVDEmpty.png"
@@ -5503,6 +5483,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_386888CE81D54D3AAC716000540249C4"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myscripts.xml"
+            "TargetName" = "8:myscripts.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_38BB4D2EB9924303A65A0F67C26F4419"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\3.png"
@@ -5529,6 +5529,46 @@
             "TargetName" = "8:osd_button_volumeSELFO.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_395567F9961B4795AD45128A5DB49DC6"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsLCD.xml"
+            "TargetName" = "8:SettingsLCD.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3A0B92056691401285254EB0ACED9564"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\fonts.xml"
+            "TargetName" = "8:fonts.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -5603,6 +5643,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3AAB9B83CCEC4B5BB2628AE650F03EF1"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settingsScreen.xml"
+            "TargetName" = "8:settingsScreen.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_3AE3E01557CA439E8BDD5C19BD2661F6"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\9.png"
@@ -5627,7 +5687,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PictureDatabase, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:PictureDatabase, Version=1.0.1581.14510, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_3B36805BB3D1B024BF9016B1A86190B8"
@@ -5652,6 +5712,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3CA2E56C70B84E11AB9DECBFF5BC0A87"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\orghome.xml"
+            "TargetName" = "8:orghome.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_3DC528ABE1584391B405CBA46F2F3D70"
@@ -5896,12 +5976,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_40F809F9A8424711A79B78C67A79CC4C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoYear.xml"
+            "TargetName" = "8:myvideoYear.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_411D3300D3044037B1290D7195848D02"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\xmltv\\xmltv.dtd"
             "TargetName" = "8:xmltv.dtd"
             "Tag" = "8:"
             "Folder" = "8:_83BAC66FE1CE4D09987A80BE7A17BAEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_41648955BE8C4FBCAAA75CD40E2AD69A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogDateTime.xml"
+            "TargetName" = "8:DialogDateTime.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -5936,26 +6056,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_45E06B277E3C4E00B786A762475902AF"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvhome.xml"
-            "TargetName" = "8:mytvhome.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_480F6D763E9B4C3E8B9BC80B2F235D84"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\scroll-right-focus.png"
@@ -5976,10 +6076,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_495BAC934DA545C3B452816742719F0C"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_48E3A14372504B6C8AB6F82BE1D12735"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoplaylist.xml"
-            "TargetName" = "8:myvideoplaylist.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvFullScreen.xml"
+            "TargetName" = "8:mytvFullScreen.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_48E446873D504BD2A7FB443094880207"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsMyVideo.xml"
+            "TargetName" = "8:SettingsMyVideo.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -6002,26 +6122,6 @@
             "TargetName" = "8:defaultVideo.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4A30F4F97C9F4515B324C2C67456EF4B"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogProgress.xml"
-            "TargetName" = "8:dialogProgress.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -6176,26 +6276,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4DAE60E7F8184A1EAD6FC16C2C58F5BE"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\slideshow.xml"
-            "TargetName" = "8:slideshow.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_4DCF6137389546CDB7D4773063BB06B9"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\vertical-line.png"
@@ -6242,6 +6322,26 @@
             "TargetName" = "8:register.bat"
             "Tag" = "8:"
             "Folder" = "8:_05E6F7A55A784143A3FE0475371300BC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4FFC816596A94C0496167F8AD00C0C8C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsPrograms.xml"
+            "TargetName" = "8:SettingsPrograms.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -6331,7 +6431,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MusicDatabase, Version=1.0.1580.22653, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:MusicDatabase, Version=1.0.1581.14509, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_51F5F03C1CD008FF39F78E796A4B438A"
@@ -6438,6 +6538,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5437970596524133B78355D104A228EE"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicalbum.xml"
+            "TargetName" = "8:mymusicalbum.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_54872033798D4C3188DEA72DA7580D76"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\26.png"
@@ -6478,30 +6598,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_58D85824338C496AA91BB197C429C359"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_59DA08D543894F728D1FC043EEF4E8D7"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsAutoRun.xml"
-            "TargetName" = "8:SettingsAutoRun.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_59A55BCB40CD449B92BFB1C452693D4E"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\fonts.xml"
-            "TargetName" = "8:fonts.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogOK.xml"
+            "TargetName" = "8:dialogOK.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -6662,7 +6762,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1581.14510, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_60B09462CA3C1F619D1416748455BF4C"
@@ -6709,26 +6809,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_618A0E0712EF44AF87B67A2BCEE1E522"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\videoOverlay.xml"
-            "TargetName" = "8:videoOverlay.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_62142BC0EFEC4D53985DFCE310D6E116"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_slider_nibFO.png"
@@ -6753,7 +6833,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Util, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Util, Version=1.0.1581.14507, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_62D3D315A20E9856BB7EF53C6AFF5165"
@@ -6840,10 +6920,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_65EE1A07B34C48F0BE8A9EE8CAA05EAB"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_65E508B95A804E2ABF1D118BDF67D621"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogFileStacking.xml"
-            "TargetName" = "8:dialogFileStacking.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicgenres.xml"
+            "TargetName" = "8:mymusicgenres.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -6886,6 +6966,26 @@
             "TargetName" = "8:2.png"
             "Tag" = "8:"
             "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_66A5B07D59274318A83F5D53E8D2D26E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\font.xml"
+            "TargetName" = "8:font.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7080,26 +7180,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6BDD9542660C4D96BA67AFD3F5C8F98B"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogVideoInfo.xml"
-            "TargetName" = "8:DialogVideoInfo.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_6C1C06EA430F4F678FF816E62C6F7E94"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\dialog-popuplarge.png"
@@ -7160,12 +7240,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6D9D5B1521BE4DE5B7E7BAE204F9A10B"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6E4EACAAD12644AFAA68987DD05D6A1D"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\musicVisualisation.xml"
-            "TargetName" = "8:musicVisualisation.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\30.png"
+            "TargetName" = "8:30.png"
             "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7180,12 +7260,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6E4EACAAD12644AFAA68987DD05D6A1D"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6E877590F9574D71989FBA7BA7683827"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\30.png"
-            "TargetName" = "8:30.png"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogSelect2.xml"
+            "TargetName" = "8:DialogSelect2.xml"
             "Tag" = "8:"
-            "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7257,6 +7337,46 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_05E6F7A55A784143A3FE0475371300BC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6FAC403CEF714F64B744F488EF98CB2F"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsUserInterface.xml"
+            "TargetName" = "8:SettingsUserInterface.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7058960AE2A047B89C80F500AA1E019E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsScreensaver.xml"
+            "TargetName" = "8:SettingsScreensaver.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7431,26 +7551,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_74654903CF9048D28E27436FA4E057D2"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicartists.xml"
-            "TargetName" = "8:mymusicartists.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_750A904059D041A7860C945E4EC286E6"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_button_subtitlesSELFO.png"
@@ -7477,26 +7577,6 @@
             "TargetName" = "8:list-nofocus-alt.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_764A69A26FFD4D839CE70A47BAC1A2E0"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myweather.xml"
-            "TargetName" = "8:myweather.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7631,26 +7711,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_794D4787D09A45D99C374A399F3B5B78"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicgenres.xml"
-            "TargetName" = "8:mymusicgenres.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_7A1C7A65120648AB9CB1BCAA2C85260D"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\progress_mid.png"
@@ -7697,6 +7757,26 @@
             "TargetName" = "8:DefaultPlaylistBig.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7AE4A069F5E549BC9A04345DFA203D2C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\musicOverlay.xml"
+            "TargetName" = "8:musicOverlay.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7791,26 +7871,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7DFC1F142E8A4F3BAFA315526843003F"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\references.xml"
-            "TargetName" = "8:references.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_7E19F42F846C4F27825A8E61950BA691"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\button-cd-nofocus.png"
@@ -7831,31 +7891,11 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7FA3388F0C5349BEB9AF671B0618B311"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\videoFullScreen.xml"
-            "TargetName" = "8:videoFullScreen.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_7FE9EF6D9C66C809D4AD00CAF943DE46"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:VideoDatabase, Version=1.0.1580.22653, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:VideoDatabase, Version=1.0.1581.14509, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_7FE9EF6D9C66C809D4AD00CAF943DE46"
@@ -7888,6 +7928,26 @@
             "TargetName" = "8:42.png"
             "Tag" = "8:"
             "Folder" = "8:_B687B337DA3C42BA87AAD42FE9A66D09"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_81B04FC64C3A4A7EAF655523C7C54A63"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvscheduler.xml"
+            "TargetName" = "8:mytvscheduler.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7942,26 +8002,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_831A0BB2F75C48D3A6BB691B11663F3C"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsMusic.xml"
-            "TargetName" = "8:SettingsMusic.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_840A5F7DA77A4B27AE759A56CA31F29C"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\35.png"
@@ -7988,26 +8028,6 @@
             "TargetName" = "8:8.png"
             "Tag" = "8:"
             "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_84574E5A9318495FB9EDD829045EE6D0"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsSystemInfo.xml"
-            "TargetName" = "8:SettingsSystemInfo.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8142,26 +8162,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8735F30A6CE6427E8D628ABCDE4B3FB7"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogOK.xml"
-            "TargetName" = "8:dialogOK.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_87CD09AE4F9946598EF3E1E683A74053"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\na.png"
@@ -8188,46 +8188,6 @@
             "TargetName" = "8:todo.txt"
             "Tag" = "8:"
             "Folder" = "8:_6C315C96DB0E461CA03C0F35479EC599"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_890FA4272F3C433EBBBCC384BAD23205"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsSkinLanguage.xml"
-            "TargetName" = "8:SettingsSkinLanguage.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_893160DC4C9E4DCEA3AB33D46FF67EDD"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsAudioOptions.xml"
-            "TargetName" = "8:SettingsAudioOptions.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8286,7 +8246,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TagReader, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TagReader, Version=1.0.1581.14509, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_8A0E9487C4D4FCE1050436BEF077D554"
@@ -8311,6 +8271,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8B6641929135446BA7423E8C9FF7B83A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoplaylist.xml"
+            "TargetName" = "8:myvideoplaylist.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_8BF14419822B48BB8C0401110A94C436"
@@ -8362,6 +8342,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8C1D7593B38D4B2E93E9E0568A7C3B8D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoTitle.xml"
+            "TargetName" = "8:myvideoTitle.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_8CA681CA64494888A8F13283398586D2"
@@ -8444,26 +8444,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8F94BD2E84E241BFA5174FCBC00B32F1"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsOSD.xml"
-            "TargetName" = "8:SettingsOSD.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_8F9F92DC935748998BFC0F17B4F0AD09"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\31.png"
@@ -8524,10 +8504,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_90497F37C7B84A08BF7FCF35AAD5390E"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9037429952F7454C97BDF48CADF4C58C"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoYear.xml"
-            "TargetName" = "8:myvideoYear.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\home.xml"
+            "TargetName" = "8:home.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_911528EA855642BDB7A4C0B655CF9753"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsFilter.xml"
+            "TargetName" = "8:SettingsFilter.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -8550,6 +8550,26 @@
             "TargetName" = "8:3.png"
             "Tag" = "8:"
             "Folder" = "8:_B687B337DA3C42BA87AAD42FE9A66D09"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_920E33A30B6D4E45813F193E3436FDEE"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogAlbumInfo.xml"
+            "TargetName" = "8:DialogAlbumInfo.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8644,10 +8664,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_96325EF1788248AC8758B46C3D92B919"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_96153C5A01F14B7D8998B365963C6DAE"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mypics.xml"
-            "TargetName" = "8:mypics.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicsongs.xml"
+            "TargetName" = "8:mymusicsongs.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -8684,12 +8704,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9833915A084544D7B67061BA03AD5FAB"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_989E60CC86534766BDB9363C306D0799"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsSlideShow.xml"
-            "TargetName" = "8:SettingsSlideShow.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_button_skip_plusSELFO.png"
+            "TargetName" = "8:osd_button_skip_plusSELFO.png"
             "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8704,12 +8724,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_989E60CC86534766BDB9363C306D0799"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_98A149E2A9D84F079FAF14F82A1AE6FB"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_button_skip_plusSELFO.png"
-            "TargetName" = "8:osd_button_skip_plusSELFO.png"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsGeneral.xml"
+            "TargetName" = "8:SettingsGeneral.xml"
             "Tag" = "8:"
-            "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8744,10 +8764,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_98CA322491764F4DAB68A349452C6C21"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_98E8E75DF36F4AC891D6ECA66F8DDF07"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicsongs.xml"
-            "TargetName" = "8:mymusicsongs.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusictop100.xml"
+            "TargetName" = "8:mymusictop100.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -8784,10 +8804,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_996C6063F5294F54B490A0A079C62463"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_99AE0AF2CAD94B868EE95E9568C1BC2E"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvscheduler.xml"
-            "TargetName" = "8:mytvscheduler.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideogenre.xml"
+            "TargetName" = "8:myvideogenre.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_99FFF37E6FDE4E3AB5909897206E2FC2"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\videoOSD.xml"
+            "TargetName" = "8:videoOSD.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -8864,10 +8904,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9D9ADFB72B0F47E7A7D530FBAB9D64EB"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9D38E34ADCF64EBE96BAD5274ECFC8AA"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsLCD.xml"
-            "TargetName" = "8:SettingsLCD.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogFileStacking.xml"
+            "TargetName" = "8:dialogFileStacking.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -8928,7 +8968,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Dialogs, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Dialogs, Version=1.0.1581.14509, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_A32173BCA4DDD33C6396CA0B83D83B6D"
@@ -9001,6 +9041,26 @@
             "TargetName" = "8:28.png"
             "Tag" = "8:"
             "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A426FFC1661E48DB9336A26B94A35DB0"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsScreenSubtitles.xml"
+            "TargetName" = "8:SettingsScreenSubtitles.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9106,10 +9166,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A7F3574211504FA2A5BC1CB36680F063"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_A78DF3A5BFE148A89767CF201A302373"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\home.xml"
-            "TargetName" = "8:home.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\references.xml"
+            "TargetName" = "8:references.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -9166,6 +9226,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AA0705C1C98347A098255E9A16C5A377"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settingsScreenCalibration.xml"
+            "TargetName" = "8:settingsScreenCalibration.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_ABEBDDC11B8926B9278D1395F9832C68"
             {
             "AssemblyRegister" = "3:1"
@@ -9203,6 +9283,26 @@
             "TargetName" = "8:net 5.PNG"
             "Tag" = "8:"
             "Folder" = "8:_83BAC66FE1CE4D09987A80BE7A17BAEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AE822E1B41414E8A85BE3E45FEDE1482"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settingsUICalibration.xml"
+            "TargetName" = "8:settingsUICalibration.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9377,10 +9477,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B532B04185584941BA89C11D4BE42DF5"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B4A5F4E7E3AA483FA527507320EF1881"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\orghome.xml"
-            "TargetName" = "8:orghome.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\videoFullScreen.xml"
+            "TargetName" = "8:videoFullScreen.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -9457,12 +9557,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B8CCDBA1C5BC48AFA59CC43DBDFD54FE"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B8D5D4E02C2D4ED4857FEFA9F9996810"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myprograms.xml"
-            "TargetName" = "8:myprograms.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\progress_back.png"
+            "TargetName" = "8:progress_back.png"
             "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9477,12 +9577,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B8D5D4E02C2D4ED4857FEFA9F9996810"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B8E11364E0D14066A31CE8FBE48FCA5A"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\progress_back.png"
-            "TargetName" = "8:progress_back.png"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogYesNo.xml"
+            "TargetName" = "8:dialogYesNo.xml"
             "Tag" = "8:"
-            "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9657,26 +9757,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BE011964AF4540E898EDE57609D76BA3"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideo.xml"
-            "TargetName" = "8:myvideo.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_BE7926D8F7034F8D84654E4B9FC7C695"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\22.png"
@@ -9777,26 +9857,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C243FD868F1F4612A81571512A814783"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsWeather.xml"
-            "TargetName" = "8:SettingsWeather.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_C2DF712C2E7A448AAAAD16F3D8184031"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\40.png"
@@ -9823,6 +9883,26 @@
             "TargetName" = "8:folder-nofocus.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C7C47122D3C6498FA611D6977ABC27FD"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogProgress.xml"
+            "TargetName" = "8:dialogProgress.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9901,7 +9981,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PlayList, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:PlayList, Version=1.0.1581.14509, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_C9E028AE53D00416D991E311550C5A9F"
@@ -9926,26 +10006,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CA65C8C1778042A3BA535584842F1437"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\dialogYesNo.xml"
-            "TargetName" = "8:dialogYesNo.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_CA9D9CFA0DF14048A3ADBA11A45D1F02"
@@ -9974,6 +10034,26 @@
             "TargetName" = "8:osd_slider_nibNF.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CCBB067D60EF4048BA997A4DAA31A22C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mypics.xml"
+            "TargetName" = "8:mypics.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10108,6 +10188,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CF5F87ED36B84ED4BEA60231B244E10E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogScriptInfo.xml"
+            "TargetName" = "8:DialogScriptInfo.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_CF73F125D6CF4ECFB420B1DB16629B9E"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\27.png"
@@ -10188,12 +10288,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D0D0BB684A724598BD279C9506DF5B05"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicplaylist.xml"
+            "TargetName" = "8:mymusicplaylist.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_D21D1E6753BA406695725D1110F369D1"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_button_volumeSELNF.png"
             "TargetName" = "8:osd_button_volumeSELNF.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D3B4071104944207A07084E6475919C6"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myweather.xml"
+            "TargetName" = "8:myweather.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10245,6 +10385,26 @@
             "TargetName" = "8:home-myvideos.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D82659F2389349F3821DA892E6EB86E9"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\slideshow.xml"
+            "TargetName" = "8:slideshow.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10359,6 +10519,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DCAA3F164E5844098E3BDFC4D35296A4"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settings.xml"
+            "TargetName" = "8:settings.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_DCBCA6D821D34FECB01E212ACB1B7AA2"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\64x64\\12.png"
@@ -10405,6 +10585,26 @@
             "TargetName" = "8:defaultFolderBack.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DE3F27710E6042AFA81BF62122ABD3E5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsOSD.xml"
+            "TargetName" = "8:SettingsOSD.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10474,7 +10674,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DirectX.Capture, Version=1.0.1580.22640, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:DirectX.Capture, Version=1.0.1581.14508, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_DFB2E4311DDF6CEC6F21F5D1D648AEF1"
@@ -10521,26 +10721,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E0135FF29C4C4C95B5E2C30F89246900"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusicplaylist.xml"
-            "TargetName" = "8:mymusicplaylist.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_E028147BC4A54B6A916936964820CD1D"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\logos\\TWClogo_64px.png"
@@ -10567,26 +10747,6 @@
             "TargetName" = "8:defaultXBOXDVDBig.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E076AFC25CF24E3A9DDBA31BCE065AB8"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideoTitle.xml"
-            "TargetName" = "8:myvideoTitle.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10681,26 +10841,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E1FA54BF2F434687BBFF169BC8E1F787"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsCache.xml"
-            "TargetName" = "8:SettingsCache.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_E234625F32114A1E946716A738872229"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\panel-weather.png"
@@ -10727,6 +10867,26 @@
             "TargetName" = "8:rtl 5.PNG"
             "Tag" = "8:"
             "Folder" = "8:_83BAC66FE1CE4D09987A80BE7A17BAEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E2638E0CAF684DAC8AE3D614B1324151"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\tvOverlay.xml"
+            "TargetName" = "8:tvOverlay.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10841,12 +11001,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E58C0BD0958C4975AA50D5D2EA091AD9"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E470A3652919482B82907EA53121CB1E"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_button_bookmarkSELNF.png"
-            "TargetName" = "8:osd_button_bookmarkSELNF.png"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogSelect.xml"
+            "TargetName" = "8:DialogSelect.xml"
             "Tag" = "8:"
-            "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10861,12 +11021,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E5BDE47BFC2E4012819244C1B89320A1"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E58C0BD0958C4975AA50D5D2EA091AD9"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\musicOverlay.xml"
-            "TargetName" = "8:musicOverlay.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\osd_button_bookmarkSELNF.png"
+            "TargetName" = "8:osd_button_bookmarkSELNF.png"
             "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10941,30 +11101,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EA18808D5CCD47FEBE8B124BBB02BC72"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EA1C55FA6C7B4209BBF3ECC669DDCA66"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\videoOSD.xml"
-            "TargetName" = "8:videoOSD.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EA78521D83594B97802709EB4E179362"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsMyMusic.xml"
-            "TargetName" = "8:SettingsMyMusic.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\musicVisualisation.xml"
+            "TargetName" = "8:musicVisualisation.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -11001,31 +11141,11 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EACC2D0663BE483A986A2DFFD0C64A22"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogScriptInfo.xml"
-            "TargetName" = "8:DialogScriptInfo.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_EC9FFFEED2AB56B30264012B05C6F8D1"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:VideoPlayer, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:VideoPlayer, Version=1.0.1581.14508, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_EC9FFFEED2AB56B30264012B05C6F8D1"
@@ -11152,26 +11272,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EECE6D5A096545EEA4EC03AFAEC52954"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsScreensaver.xml"
-            "TargetName" = "8:SettingsScreensaver.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_EEE06D76EBF44856AF34E5DE90342FDB"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\40.png"
@@ -11252,52 +11352,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F0A4DE0E889546EBA1728EDF60F11962"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsUserInterface.xml"
-            "TargetName" = "8:SettingsUserInterface.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_F0A69893C17D4FD3B4D0C1028C58A56D"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\defaultPictureBig.png"
             "TargetName" = "8:defaultPictureBig.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F0C8A2DDE49648C3A9F75C5488AD597A"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myscripts.xml"
-            "TargetName" = "8:myscripts.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -11378,6 +11438,26 @@
             "TargetName" = "8:defaultFolderBackBig.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F23796DD5C064083883644C786D5BEE5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myfiles.xml"
+            "TargetName" = "8:myfiles.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -11492,10 +11572,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F62711E583A145918F3E82232B366D34"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F587AE4E5FF4402EA6B95CA2C9506241"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogAlbumInfo.xml"
-            "TargetName" = "8:DialogAlbumInfo.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsAutoRun.xml"
+            "TargetName" = "8:SettingsAutoRun.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -11572,26 +11652,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F7A4578595DD4217A06FD62A0284EAD5"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myfiles.xml"
-            "TargetName" = "8:myfiles.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_F7B85A4AF04C4F8096FDD956AFACA44E"
             {
             "SourcePath" = "8:..\\Docs\\bugs.txt"
@@ -11643,31 +11703,11 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FA218832A62B4C4D9B8F6C33C7DAA8E1"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\settingsScreen.xml"
-            "TargetName" = "8:settingsScreen.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_FAA1F9C2451EB84564C603F8642908CD"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SubTitleReader, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:SubTitleReader, Version=1.0.1581.14507, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_FAA1F9C2451EB84564C603F8642908CD"
@@ -11694,26 +11734,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FACDBB6F7397462681287E99CD4F562A"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogSelect.xml"
-            "TargetName" = "8:DialogSelect.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_FB16BEC0CC7547CAA3FD64EA87CE55BE"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\media\\defaultPicture.png"
@@ -11734,10 +11754,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FB3B4A68410D45AAB84D89DAB6C15818"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FB1AA80CE5D64FB7A166FE558442F8DB"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\myvideogenre.xml"
-            "TargetName" = "8:myvideogenre.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mytvhome.xml"
+            "TargetName" = "8:mytvhome.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -11794,10 +11814,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FC7AA8B1BB8446B4B43C957CD5CE18A4"
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FC88351FCFB44AAFA9BF1674B1D06AD4"
             {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsMyVideo.xml"
-            "TargetName" = "8:SettingsMyVideo.xml"
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\DialogVideoInfo.xml"
+            "TargetName" = "8:DialogVideoInfo.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FD39CAB4082D45288E50FF3A51126B35"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\SettingsSlideShow.xml"
+            "TargetName" = "8:SettingsSlideShow.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
@@ -11838,7 +11878,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVDatabase, Version=1.0.1580.22652, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVDatabase, Version=1.0.1581.14509, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_FE8EF670938A04D93FE2AC072B7C5214"
@@ -11863,26 +11903,6 @@
             "Register" = "3:1"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FEC47DE926BC423980B707B30B7E88DB"
-            {
-            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MediaCenter\\mymusictop100.xml"
-            "TargetName" = "8:mymusictop100.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -12675,20 +12695,6 @@
         }
         "MergeModule"
         {
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_1786915D0B934687A99B80217BADBBF6"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:dotnetfxredist_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:1033"
-            "Exclude" = "11:TRUE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
             "{35A69C6E-5BA4-440D-803D-762B59A45393}:_7EA17693F1CB4C7EA907254865A2BB3A"
             {
             "UseDynamicProperties" = "11:TRUE"
@@ -12699,6 +12705,20 @@
                 }
             "LanguageId" = "3:0"
             "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_E59441F1697F4D6C98378222034DE378"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:dotnetfxredist_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:1033"
+            "Exclude" = "11:TRUE"
             "Folder" = "8:"
             "Feature" = "8:"
             "IsolateTo" = "8:"

@@ -1,4 +1,10 @@
 History: (dd-mm-yyyy)
+  30-04-2004: my music    : fixed : visz disappeared after album art lookup
+  30-04-2004: my music    : fixed : visz disappeared after play same song twice
+  30-04-2004: my music    : fixed : taskbar was visible in fullscreen mode
+  30-04-2004: my TV       : added : contrast/gamma/brightness control when watching fullscreen tv
+  30-04-2004: my music    : added : artist view: if no albums for an artists are available, then just show songs
+
   29-04-2004: my TV       : added : TV overlay
   29-04-2004: my music    : added : artists view now shows artists->artist->albums of artist->songs of album&artist
   29-04-2004: general     : added : speed-up of loading&saving mediaportal.xml file

@@ -35,6 +35,41 @@ namespace MediaPortal.TV.Recording
     {
     }
 
+    static void OnGammaContrastChanged()
+    {
+      if (Previewing && capture!=null)
+      {
+        if (capture.VideoAmp!=null)
+        {
+          if (GUIGraphicsContext.Brightness>0)
+          {
+            Log.Write("set brightness:{0}", GUIGraphicsContext.Brightness);
+            capture.VideoAmp.Brightness=GUIGraphicsContext.Brightness;
+            GUIGraphicsContext.Save();
+          }
+          if (GUIGraphicsContext.Contrast>0)
+          {
+            Log.Write("set Contrast:{0}", GUIGraphicsContext.Contrast);
+            capture.VideoAmp.Contrast=GUIGraphicsContext.Contrast;
+            GUIGraphicsContext.Save();
+          }
+          if (GUIGraphicsContext.Gamma>0)
+          {
+            Log.Write("set Gamma:{0}", GUIGraphicsContext.Gamma);
+            capture.VideoAmp.Gamma=GUIGraphicsContext.Gamma;
+            GUIGraphicsContext.Save();
+          }
+          if (GUIGraphicsContext.Saturation>0)
+          {
+            Log.Write("set Saturation:{0}", GUIGraphicsContext.Saturation);
+            capture.VideoAmp.Saturation=GUIGraphicsContext.Saturation;
+            GUIGraphicsContext.Save();
+          }
+
+        }
+      }
+    }
+
     static void OnVideoWindowChanged()
     {
       if (Previewing && capture!=null)
@@ -123,8 +158,8 @@ namespace MediaPortal.TV.Recording
               if (StartCapture("",m_iPreviewChannel))
               {
                 // and set video window position
-                capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
                 capture.PreviewWindow=GUIGraphicsContext.form;
+                capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
                 if (!capture.Running)
                 {
                   capture.Start();
@@ -145,7 +180,7 @@ namespace MediaPortal.TV.Recording
       if (m_eState!=State.Idle) Stop();
       
       TVDatabase.OnRecordingsChanged += new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
-
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(Recorder.OnGammaContrastChanged);
       workerThread =new Thread( new ThreadStart(ThreadFunctionRecord)); 
       workerThread.Start();
     }
@@ -574,8 +609,11 @@ namespace MediaPortal.TV.Recording
           }
         }
 
-        
         SelectChannel(iChannelNr,false);
+
+        // set brightness, contrast, gamma etc...
+        SetBrightnessContrastGamma();
+
         // set filename for capture
         if (strFileName!=null && strFileName.Length>0)
         {
@@ -797,6 +835,23 @@ namespace MediaPortal.TV.Recording
         }
       }
       return iChannelNr;
+    }
+    static void SetBrightnessContrastGamma()
+    {
+      if (capture==null) return;
+      if (capture.VideoAmp==null) return;
+
+      if (GUIGraphicsContext.Brightness==0) GUIGraphicsContext.Brightness=capture.VideoAmp.BrightnessDefault;
+      if (GUIGraphicsContext.Contrast==0) GUIGraphicsContext.Contrast=capture.VideoAmp.ContrastDefault;
+      if (GUIGraphicsContext.Gamma==0) GUIGraphicsContext.Gamma=capture.VideoAmp.GammaDefault;
+      if (GUIGraphicsContext.Saturation==0) GUIGraphicsContext.Saturation=capture.VideoAmp.SaturationDefault;
+
+      capture.VideoAmp.Brightness=GUIGraphicsContext.Brightness;
+      capture.VideoAmp.Contrast=GUIGraphicsContext.Contrast;
+      capture.VideoAmp.Gamma=GUIGraphicsContext.Gamma;
+      capture.VideoAmp.Saturation=GUIGraphicsContext.Saturation;
+
+
     }
   }
 }

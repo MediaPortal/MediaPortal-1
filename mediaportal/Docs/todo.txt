@@ -1,3 +1,10 @@
+Skin:
+  - we need another version of music-play.png which will be shown when we're recording so
+    instead of the play symbol it should show the recording symbol (red filled rectangle)
+  - Home  : need special gfx for my tv
+  - My Tv : need special gfx for my tv
+
+
 My Radio:
   - AM/FM
   - Scan channels

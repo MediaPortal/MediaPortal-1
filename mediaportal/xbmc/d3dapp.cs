@@ -122,8 +122,6 @@ namespace MediaPortal
     public D3DApp()
     {
       //GUIGraphicsContext.DX9Device = null;
-      Win32API.EnableStartBar(true);
-      Win32API.ShowStartBar(true);
       active = false;
       ready = false;
       hasFocus = false;
@@ -958,6 +956,9 @@ namespace MediaPortal
         string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
         if (strStartFull!=null && strStartFull=="yes")
         {
+          Win32API.EnableStartBar(false);
+          Win32API.ShowStartBar(false);
+
           Log.Write("start fullscreen");
           this.FormBorderStyle=FormBorderStyle.None;
           this.MaximizeBox=false;
@@ -1220,6 +1221,9 @@ namespace MediaPortal
       CleanupEnvironment();
       mnuMain.Dispose();
       base.Dispose(disposing);
+
+      Win32API.EnableStartBar(true);
+      Win32API.ShowStartBar(true);
     }
 
 
@@ -1287,6 +1291,8 @@ namespace MediaPortal
         if (isMaximized)
         {
           Log.Write("windowed->fullscreen");
+          Win32API.EnableStartBar(false);
+          Win32API.ShowStartBar(false);
           this.FormBorderStyle=FormBorderStyle.None;
           this.MaximizeBox=false;
           this.MinimizeBox=false;
@@ -1302,6 +1308,9 @@ namespace MediaPortal
         else
         {
           Log.Write("fullscreen->windowed");
+          Win32API.EnableStartBar(true);
+          Win32API.ShowStartBar(true);
+
           this.WindowState = FormWindowState.Normal;
           this.FormBorderStyle=FormBorderStyle.Sizable;
           this.MaximizeBox=true;
