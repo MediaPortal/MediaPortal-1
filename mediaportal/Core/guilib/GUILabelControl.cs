@@ -6,11 +6,10 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
-	/// A GUIControl for displaying labels.
+	/// A GUIControl for displaying text.
 	/// </summary>
 	public class GUILabelControl :GUIControl
 	{
-		GUIFont								m_pFont=null;
 		[XMLSkinElement("font")]			protected string	m_strFontName="";
 		[XMLSkinElement("label")]			protected string	m_strLabel="";
 		[XMLSkinElement("textcolor")]	protected long  	m_dwTextColor=0xFFFFFFFF;
@@ -23,6 +22,7 @@ namespace MediaPortal.GUI.Library
     bool                                      m_bUseFontCache=false;
     CustomVertex.TransformedColoredTextured[] m_cachedFontVertices=null;
     int                                       m_iFontTriangles=0;
+    GUIFont								        m_pFont=null;
 
 		/// <summary>
 		/// The constructor of the GUILabelControl class.
@@ -50,7 +50,13 @@ namespace MediaPortal.GUI.Library
 		}
 		public GUILabelControl (int dwParentID) : base(dwParentID)
 		{
-		}
+    }
+    /// <summary> 
+    /// This function is called after all of the XmlSkinnable fields have been filled
+    /// with appropriate data.
+    /// Use this to do any construction work other than simple data member assignments,
+    /// for example, initializing new reference types, extra calculations, etc..
+    /// </summary>
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
@@ -61,7 +67,7 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Renders the control.
+		/// Renders the text onscreen.
 		/// </summary>
 		public override void Render()
 		{
@@ -89,14 +95,14 @@ namespace MediaPortal.GUI.Library
 			if (null!=m_pFont)
 			{
         
-      if (GUIGraphicsContext.graphics!=null)
-      {
-        if (m_dwWidth>0)
-          m_pFont.DrawTextWidth(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwWidth,m_dwTextAlign);
-        else
-          m_pFont.DrawText(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwTextAlign);
-        return;
-      }
+        if (GUIGraphicsContext.graphics!=null)
+        {
+          if (m_dwWidth>0)
+            m_pFont.DrawTextWidth(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwWidth,m_dwTextAlign);
+          else
+            m_pFont.DrawText(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwTextAlign);
+          return;
+        }
 
         if (m_dwTextAlign==GUIControl.Alignment.ALIGN_CENTER)
         {
@@ -275,8 +281,6 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
 					Label = (string)(message.Label.Clone());
-					if ( m_bHasPath )
-						ShortenPath();
 					return true;
 				}
 			}
@@ -322,7 +326,10 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string FontName
 		{
-			get { return m_pFont.FontName; }
+			get { 
+        if (m_pFont==null) return String.Empty;
+        return m_pFont.FontName; 
+      }
       set 
       { 
         if (value==null) return;
@@ -360,38 +367,57 @@ namespace MediaPortal.GUI.Library
       }
 		}
 
-		protected void ShortenPath()
-		{
-			// TODO: Implement this functionality if needed.
-		}
+
+    /// <summary>
+    /// Property which returns true if the label contains a property
+    /// or false when it doenst
+    /// </summary>
     public bool ContainsPropertyKey
     {
       get { return ContainsProperty;}
     }
 
+    /// <summary>
+    /// Allocate any direct3d sources
+    /// </summary>
     public override void AllocResources()
     {
       m_iFontTriangles=0;
       m_cachedFontVertices=null;
     }
 
+    /// <summary>
+    /// Free any direct3d resources
+    /// </summary>
     public override void FreeResources()
     {
       m_cachedFontVertices=null;
       m_iFontTriangles=0;
     }
 
+    /// <summary>
+    /// Property to get/set the usage of the font cache
+    /// if enabled the renderd text is cached
+    /// if not it will be re-created on every render() call
+    /// </summary>
     public bool CacheFont
     {
       get { return m_bUseFontCache;}
       set { m_bUseFontCache=false;}
     }
 
+    /// <summary>
+    /// updates the current label by deleting the fontcache 
+    /// </summary>
     protected override void Update()
     {
       m_cachedFontVertices=null;
       m_iFontTriangles=0;      
     }
+
+    /// <summary>
+    /// Returns the width of the current text
+    /// </summary>
     public int TextWidth
     {
       get 
@@ -409,6 +435,10 @@ namespace MediaPortal.GUI.Library
         return textwidth;
       }
     }
+
+    /// <summary>
+    /// Returns the height of the current text
+    /// </summary>
     public int TextHeight
     {
       get 

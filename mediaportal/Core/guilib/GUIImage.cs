@@ -81,7 +81,11 @@ namespace MediaPortal.GUI.Library
 			m_iImageHeight = 0;
 			FinalizeConstruction();
 			
-		}
+    }
+    /// <summary>
+    /// Does any scaling on the inital size\position values to fit them to screen 
+    /// resolution. 
+    /// </summary>
 		public override void ScaleToScreenResolution()
 		{
 			if (m_strFileName != "-" && m_strFileName != "")
@@ -108,7 +112,13 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 			base.ScaleToScreenResolution();
-		}
+    }
+    /// <summary> 
+    /// This function is called after all of the XmlSkinnable fields have been filled
+    /// with appropriate data.
+    /// Use this to do any construction work other than simple data member assignments,
+    /// for example, initializing new reference types, extra calculations, etc..
+    /// </summary>
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
@@ -190,29 +200,30 @@ namespace MediaPortal.GUI.Library
 		}
 		
 		/// <summary>
-		/// 
+		/// If the texture holds more then 1 frame (like an animated gif)
+		/// then you can select the current frame with this method
 		/// </summary>
 		/// <param name="iBitmap"></param>
 		public void Select(int iBitmap)
 		{
-			// TODO Figure out what this is used for.
 			m_iBitmap=iBitmap;
 			Update();
 		}
 		
 		/// <summary>
-		/// 
+		/// If the texture has more then 1 frame like an animated gif then
+		/// you can specify the max# of frames to play with this method
 		/// </summary>
 		/// <param name="iItems"></param>
 		public void SetItems(int iItems)
 		{
-			// TODO The SetItems method does not seem to be used at all, do we need it?
 			m_dwItems=iItems;
 		}
 
 
 		/// <summary>
-		/// 
+		/// This function will do the animation (when texture is an animated gif)
+		/// by switching from frame 1->frame2->frame 3->...
 		/// </summary>
 		protected void Process()
 		{
@@ -277,31 +288,6 @@ namespace MediaPortal.GUI.Library
 		}
 		
 		/// <summary>
-		/// An action occured on the GUIImage. (Does nothing).
-		/// </summary>
-		/// <param name="action">The action.</param>
-		public override void OnAction(Action action)
-		{
-		}
-
-		/// <summary>
-		/// A message was recieved by the GUIImage. (base class handles everything)
-		/// </summary>
-		/// <param name="message">The message.</param>
-		/// <returns></returns>
-		public override bool OnMessage(GUIMessage message)
-		{
-			return base.OnMessage(message);
-		}
-
-		/// <summary>
-		/// PreAllocates the DirectX resources (E.g., preload the textures). 
-		/// </summary>
-		public override void PreAllocResources()
-		{
-		}
-
-		/// <summary>
 		/// Allocate the DirectX resources needed for rendering this GUIImage.
 		/// </summary>
 		public override void AllocResources()
@@ -311,15 +297,20 @@ namespace MediaPortal.GUI.Library
       g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
 			if (m_strFileName=="-") return;
 
+      //reset animation
 			m_iCurrentImage=0;
 			m_iCurrentLoop=0;
 
+      //get the filename of the texture
       string strFile=m_strFileName;
       if (ContainsProperty)
         strFile=GUIPropertyManager.Parse(m_strFileName);
 
+      //load the texture
 			int iImages = GUITextureManager.Load(strFile, m_dwColorKey,m_iRenderWidth,m_iTextureHeight);
-			if (0==iImages) return;
+			if (0==iImages) return;// unable to load texture
+
+      //get each frame of the texture
 			for (int i=0; i < iImages; i++)
 			{
 				CachedTexture.Frame frame;
@@ -327,8 +318,7 @@ namespace MediaPortal.GUI.Library
 				if (frame!=null) m_vecTextures.Add(frame);
 			}
 
-  
-			
+  		
       // Create a vertex buffer for rendering the image
       m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                     4, GUIGraphicsContext.DX9Device, 
@@ -337,6 +327,8 @@ namespace MediaPortal.GUI.Library
 
 			// Set state to render the image
       Update();
+
+      //create a directx9 stateblock
       CreateStateBlock();
 		}
 
@@ -386,15 +378,18 @@ namespace MediaPortal.GUI.Library
       Direct3D.Texture texture=frame.Image;
       if (texture==null)
       {
+        //no texture? then nothing todo
         return;
       }
 
+      // if texture is disposed then free its resources and return
       if (texture.Disposed)
       {
         FreeResources();
         return;
       }
-      // Set the m_iImageWidth and m_iImageHeight based on the Direct3D surface for the texture.
+
+      // on first run, get the image width/height of the texture
       if (0==m_iImageWidth|| 0==m_iImageHeight)
       {
         Direct3D.SurfaceDescription desc;
@@ -403,7 +398,8 @@ namespace MediaPortal.GUI.Library
         m_iImageHeight = desc.Height;
       }
 
-      // Calculate the m_iTextureWidth and m_iTextureHeight based on the m_iImageWidth and m_iImageHeight
+      // Calculate the m_iTextureWidth and m_iTextureHeight 
+      // based on the m_iImageWidth and m_iImageHeight
       if (0==m_iTextureWidth|| 0==m_iTextureHeight)
       {
         m_iTextureWidth  = (int)Math.Round( ((float)m_iImageWidth) / ((float)m_dwItems) );
@@ -416,7 +412,7 @@ namespace MediaPortal.GUI.Library
           m_iTextureWidth = (int)GUIGraphicsContext.Width;
       }
 			
-      // If there are multiple items in the GUIImage the m_iTextureWidth is equal to the m_dwWidth
+      // If there are multiple frames in the GUIImage thne the e m_iTextureWidth is equal to the m_dwWidth
       if (m_dwWidth >0 && m_dwItems>1)
       {
         m_iTextureWidth=(int)m_dwWidth;
@@ -425,6 +421,7 @@ namespace MediaPortal.GUI.Library
       // Initialize the with of the control based on the texture width
       if (m_dwWidth==0) 
         m_dwWidth=m_iTextureWidth;
+
       // Initialize the height of the control based on the texture height
       if (m_dwHeight==0) 
         m_dwHeight=m_iTextureHeight;
@@ -433,7 +430,7 @@ namespace MediaPortal.GUI.Library
       float nw =(float)m_dwWidth;
       float nh =(float)m_dwHeight;
 
-      //TODO: Is this todo still needed? keepaspect ratio			
+      //adjust image based on current aspect ratio setting
       if (m_bKeepAspectRatio && m_iTextureWidth!=0 && m_iTextureHeight!=0)
       {
         // TODO: remove or complete HDTV_1080i code
@@ -462,7 +459,7 @@ namespace MediaPortal.GUI.Library
         nh=fNewHeight;
       }
 			
-      // 
+      // set the width/height the image gets rendererd
       m_iRenderWidth=(int)Math.Round(nw);
       m_iRenderHeight=(int)Math.Round(nh);
 
@@ -472,11 +469,15 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.Correct(ref x,ref y);
       }
 
+      // if necessary then center the image 
+      // in the controls rectangle
       if (m_bCentered)
       {
         x += ((((float)m_dwWidth)-nw)/2.0f);
         y += ((((float)m_dwHeight)-nh)/2.0f); 
       }
+
+      // copy all coordinates to the vertex buffer
 
 			// x-offset in texture
       float uoffs = ((float)(m_iBitmap * m_dwWidth)) / ((float)m_iImageWidth);
@@ -514,7 +515,7 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Renders the GUIImage
+		/// Renders the Image
 		/// </summary>
 		public override void Render()
     {
@@ -527,18 +528,25 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
+        // if no filename present then return
         if (m_strFileName==null) return;
         if (m_strFileName==String.Empty) return;
 
+        // if filename contains a property, then get the value of the property
         if (ContainsProperty)
         {
           m_strTxt=GUIPropertyManager.Parse(m_strFileName);
+          
+          // if value changed or if we dont got any textures yet
           if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Count)
           {
+            // then free our resources, and reload the (new) image
             FreeResources();
             m_strTextureFileName =m_strTxt;
             if (m_strTxt.Length==0)
             {
+              // filename for new image is empty
+              // no need to load it
               return;
             }
             IsVisible=true;
@@ -554,25 +562,31 @@ namespace MediaPortal.GUI.Library
           return;
         if (0==m_vecTextures.Count)
           return ;
+
         // Do not render if there is no vertex buffer
         if (null==m_vbBuffer)
           return ;
   			
   			
+        // if we are not rendering the GUI background
         if (!GUIGraphicsContext.ShowBackground)
         {
+          // then check if this image is the background
           if (m_iRenderWidth==GUIGraphicsContext.Width && m_iRenderHeight==GUIGraphicsContext.Height)
           {
+            // and we're playing video or tv
             if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
             {
+              //if all true then don't render this image
               return;
             }
           }
         }
 
+        //check if we should use GDI to draw the image
         if (GUIGraphicsContext.graphics!=null)
         {
-          // If the Image is not loaded, load the Image
+          // yes, If the GDI Image is not loaded, load the Image
           if (m_image==null)
           {
             string strFileName=m_strFileName;
@@ -588,7 +602,8 @@ namespace MediaPortal.GUI.Library
               m_image= GUITextureManager.GetImage(strFileName);
             }
           }
-          // Draw the image
+
+          // Draw the GDI image
           if (m_image!=null)
           {
             GUIGraphicsContext.graphics.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
@@ -606,27 +621,39 @@ namespace MediaPortal.GUI.Library
             return;        
           }
         }
+        //we need to draw the image using direct3d
+        //check if direct3d device is still valid
         if (GUIGraphicsContext.DX9Device==null) return;
         if (GUIGraphicsContext.DX9Device.Disposed) return;
 
+        // if image is an animation then present the next frame
         if (m_vecTextures.Count != 1)
           Process();
+
+        // if the current frame is invalid then return
         if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return;
+
+        //get the current frame
         CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
-        if (frame==null) return;
+        if (frame==null) return; // no frame? then return
+
+        //get the texture of the frame
         Direct3D.Texture texture=frame.Image;
         if (texture==null)
         {
+          // no texture? then return
           FreeResources();
           return;
         }
+        // is texture still valid?
         if (texture.Disposed)
         {
+          //no? then return
           FreeResources();
           return;
         }
         
-        // Render the image
+        // check if the stateblock is valid, if not allocate one
         if (savedStateBlock!=null)
         {
           if (savedStateBlock.Disposed) savedStateBlock=null;
@@ -636,8 +663,10 @@ namespace MediaPortal.GUI.Library
           CreateStateBlock();
         }
 
+        // if we have a stateblock
         if (savedStateBlock!=null)
         {
+          //then finally render the texture
           savedStateBlock.Apply();
 
           GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
@@ -651,16 +680,19 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Set the filename of the texture and allocated the DirectX resources for this GUIImage.
+		/// Set the filename of the texture and re-allocates the DirectX resources for this GUIImage.
 		/// </summary>
 		/// <param name="strFileName"></param>
 		public void SetFileName(string strFileName)
 		{
-      if (m_strFileName==strFileName) return;
+      if (m_strFileName==strFileName) return;// same file, no need to do anything
+
 			m_strFileName=strFileName;
       if (m_strFileName.IndexOf("#")>=0) ContainsProperty=true;
       else ContainsProperty=false;
-			FreeResources();
+			
+      //reallocate & load then new image
+      FreeResources();
       AllocResources();
 		}
     
@@ -683,7 +715,7 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// Property which indicates if the image should be centered in the
-    /// given (x,y)-(x+width,y+height) rectangles
+    /// given rectangle of the control
     /// </summary>
     public bool Centered
     {
@@ -691,10 +723,15 @@ namespace MediaPortal.GUI.Library
       set {m_bCentered=value;}
     }
 
+    // recalculate the image dimensions & position
     public void Refresh()
     {
       Update();
     }
+
+    /// <summary>
+    /// property which returns true when this instance has a valid image
+    /// </summary>
     public bool Allocated
     {
       get
@@ -704,6 +741,10 @@ namespace MediaPortal.GUI.Library
         return true;
       }
     }
+
+    /// <summary>
+    /// Create a Direct3d stateblock
+    /// </summary>
     void CreateStateBlock()
     {
       

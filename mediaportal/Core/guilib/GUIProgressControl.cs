@@ -47,6 +47,12 @@ namespace MediaPortal.GUI.Library
 			FinalizeConstruction();
 		}
 
+    /// <summary> 
+    /// This function is called after all of the XmlSkinnable fields have been filled
+    /// with appropriate data.
+    /// Use this to do any construction work other than simple data member assignments,
+    /// for example, initializing new reference types, extra calculations, etc..
+    /// </summary>
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
@@ -60,6 +66,9 @@ namespace MediaPortal.GUI.Library
 			m_guiRight.KeepAspectRatio=false;
 		}
 
+    /// <summary>
+    /// Update the subcontrols with the current position of the progress control
+    /// </summary>
 		protected override void Update()
 		{
 			base.Update ();
@@ -70,7 +79,7 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Renders the control.
+		/// Renders the progress control.
 		/// </summary>
 		public override void Render()
 		{

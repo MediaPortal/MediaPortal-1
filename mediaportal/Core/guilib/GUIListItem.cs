@@ -8,11 +8,16 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIListItem
   {
-    public delegate void ItemSelectedHandler(GUIListItem item, GUIControl parent);
+    public delegate void    ItemSelectedHandler(GUIListItem item, GUIControl parent);
+    public delegate void    RetrieveCoverArtHandler(GUIListItem item);
+
+    //event which gets fired when the user has selected the item in the
+    //list,thumbnail or filmstrip view
     public event ItemSelectedHandler OnItemSelected=null;
 
-    public delegate void RetrieveCoverArtHandler(GUIListItem item);
-    public event RetrieveCoverArtHandler OnRetrieveArt=null;
+    //even which gets fired if the list,thumbnail or filmstrip few needs the
+    //coverart for the specified item
+    public event            RetrieveCoverArtHandler OnRetrieveArt=null;
 		protected string        m_strLabel="";							// text of column1
 		protected string        m_strLabel2="";							// text of column2
 		protected string        m_strLabel3="";							// text of column3
@@ -37,6 +42,7 @@ namespace MediaPortal.GUI.Library
     bool                    m_bArtRetrieved=false;
 	  string                  m_PinIcon=String.Empty;
 	  protected GUIImage      m_PinIconImage=null;
+
     /// <summary>
 		/// The (empty) constructor of the GUIListItem.
 		/// </summary>
@@ -408,6 +414,10 @@ namespace MediaPortal.GUI.Library
       m_PinIcon="";
 		}
     
+    /// <summary>
+    /// This method will raise the OnRetrieveArt() event to
+    /// ask the listener to supply the thumbnail(s) for this item
+    /// </summary>
     void RetrieveArt()
     {
       if (m_bArtRetrieved) return;
@@ -416,6 +426,12 @@ namespace MediaPortal.GUI.Library
     }
     
     
+    /// <summary>
+    /// this method will raise the OnItemSelected() event to let any
+    /// listener know that this item has been selected by the user in a
+    /// list,thumbnail or filmstrip control
+    /// </summary>
+    /// <param name="parent"></param>
     public void ItemSelected(GUIControl parent)
     {
       if (OnItemSelected!=null) 
@@ -424,6 +440,7 @@ namespace MediaPortal.GUI.Library
         OnItemSelected.BeginInvoke(this, parent,callback,this);
       }
     }
+
     private void itemSelectedCallback(IAsyncResult ar)
     {
       OnItemSelected.EndInvoke(ar);
