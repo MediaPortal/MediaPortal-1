@@ -34,6 +34,7 @@ namespace MediaPortal.GUI.Library
 										protected ArrayList m_SubItems = new ArrayList();
                     protected Rectangle m_originalRect;
                     protected bool m_bAnimating=false;
+										protected long m_lOriginalColorDiffuse;
 
 		/// <summary>
 		/// enum to specify the alignment of the control
@@ -935,6 +936,7 @@ namespace MediaPortal.GUI.Library
     {
       m_bAnimating=false;
       m_originalRect=new Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_dwHeight);
+			m_lOriginalColorDiffuse=m_colDiffuse;
     }
 
 		/// <summary>
@@ -954,7 +956,8 @@ namespace MediaPortal.GUI.Library
       m_dwPosY=m_originalRect.Y;
       m_dwWidth=m_originalRect.Width;
       m_dwHeight=m_originalRect.Height;
-      Update();
+			m_colDiffuse=m_lOriginalColorDiffuse;
+			Update();
       m_bAnimating=false;
     }
 		
@@ -979,9 +982,10 @@ namespace MediaPortal.GUI.Library
       int y=m_originalRect.Y;
       int w=m_originalRect.Width;
       int h=m_originalRect.Height;
+			long color=m_colDiffuse;
+      animator.Animate( timePassed, ref x, ref y, ref w, ref h, ref color);
 
-      animator.Animate( timePassed, ref x, ref y, ref w, ref h);
-
+			m_colDiffuse=color;
       m_dwPosX=x;
       m_dwPosY=y;
       m_dwWidth=w;
