@@ -34,7 +34,7 @@
 		<textureNoFocus>arrow_right_nofocus.png</textureNoFocus>
 		<label></label> 
 		<onleft>11</onleft> 
-		<onright>11</onright> 
+		<onright>10</onright> 
 		<onup>12</onup> 
 		<ondown>12</ondown> 
 	</control>
@@ -49,7 +49,7 @@
 		<textureFocus>arrow_left_focus.png</textureFocus>
 		<textureNoFocus>arrow_left_nofocus.png</textureNoFocus>
 		<label></label>
-		<onleft>10</onleft> 
+		<onleft>11</onleft> 
 		<onright>10</onright> 
 		<onup>12</onup> 
 		<ondown>12</ondown> 
