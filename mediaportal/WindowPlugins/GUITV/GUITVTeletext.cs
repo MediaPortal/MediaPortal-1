@@ -349,16 +349,6 @@ namespace MediaPortal.GUI.TV
 				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
-		public override void Render()
-		{
-			base.Render ();
-			GUIFontManager.Present();
-			GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
-			pictureBox.IsVisible=true;
-			pictureBox.FileName=@"temp\teletext.jpg";
-			pictureBox.Render();
-			GUIFontManager.Present();
-		}
 
 	}// class
 }// namespace
