@@ -25,7 +25,7 @@ namespace MediaPortal.Util
     public string this[int index]
     {
       get { 
-				if (index<0 || index>m_imageList.Count) return String.Empty;
+				if (index<0 || index>=m_imageList.Count) return String.Empty;
 				return (string)m_imageList[index];
 			}
     }

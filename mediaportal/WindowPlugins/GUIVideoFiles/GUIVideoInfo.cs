@@ -242,6 +242,7 @@ namespace MediaPortal.GUI.Video
 
             if (m_sIMDBThumbURL == "")
             {
+							if (item < 0 || item >= m_search.Count) item=0;
               m_movie.ThumbURL = m_search[item];
             }
             else
@@ -252,6 +253,7 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
+								if (item-1 < 0 || item-1 >= m_search.Count) item=1;
                 m_movie.ThumbURL = m_search[item-1];
               }
             }
