@@ -325,7 +325,7 @@ namespace MediaPortal.Configuration
 				
         if(frequencyTextBox.Text.IndexOfAny(new char[] { ',','.' }) >= 0)
         {
-          char[] separators = new char[] {',', '.'};
+          char[] separators = new char[] {'.', ','};
 
           for(int index = 0; index < separators.Length; index++)
           {

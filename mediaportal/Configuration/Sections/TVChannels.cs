@@ -272,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
 
 					if(channel != null)
 					{
-						if(channel.Channel > highestChannelNumber)
+						if(channel.Channel < 1000 && channel.Channel > highestChannelNumber)
 							highestChannelNumber = channel.Channel;
 					}
 				}
@@ -320,11 +320,11 @@ namespace MediaPortal.Configuration.Sections
 					{
 						foreach(MediaPortal.TV.Database.TVChannel channel in channels)
 						{
-							TVDatabase.RemoveChannel(channel.Name);
+              TVDatabase.RemoveChannel(channel.Name);
 						}
 
 						//
-						// Remove channel frquencies from the registry
+						// Remove channel frequencies from the registry
 						//
 						for(int index = 0; index < registryLocations.Length; index++)
 						{
@@ -387,7 +387,17 @@ namespace MediaPortal.Configuration.Sections
 
 							if(tvChannel != null)
 							{
-								registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
+                //
+                // Don't add frequency to the registry if it has no frequency or if we have the predefined
+                // channels for Composite and SVIDEO
+                //
+                if(tvChannel.Frequency.Herz > 0 && 
+                  tvChannel.Channel != 1000 && 
+                  tvChannel.Channel != 1001 &&
+                  tvChannel.Channel != 1002)
+                {
+                  registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
+                }
 							}
 						}
 

@@ -4,6 +4,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+using System.Globalization;
+
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -122,6 +124,7 @@ namespace MediaPortal.Configuration
       this.channelTextBox.TabIndex = 7;
       this.channelTextBox.Text = "0";
       this.channelTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.channelTextBox_KeyPress);
+      this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged);
       // 
       // label3
       // 
@@ -230,6 +233,15 @@ namespace MediaPortal.Configuration
 			this.Hide();
 		}
 
+    private void channelTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+      if(channelTextBox.Text.Length > 0)
+      {
+        int channel = Int32.Parse(channelTextBox.Text);
+        frequencyTextBox.Enabled = (channel > 0 && channel < 1000);
+      }
+    }
+
 		public TelevisionChannel Channel
 		{
 			get 
@@ -244,7 +256,7 @@ namespace MediaPortal.Configuration
 
 					if(frequencyTextBox.Text.IndexOfAny(new char[] { ',','.' }) >= 0)
 					{
-						char[] separators = new char[] {',', '.'};
+						char[] separators = new char[] {'.', ','};
 
 						for(int index = 0; index < separators.Length; index++)
 						{
@@ -256,7 +268,7 @@ namespace MediaPortal.Configuration
 								//
 								// MegaHerz
 								//
-								channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+								channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
 
 								break;
 							}
@@ -279,7 +291,7 @@ namespace MediaPortal.Configuration
             }
             else
             {
-              channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+              channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
             }					
           }
 				}
