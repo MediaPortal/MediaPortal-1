@@ -134,6 +134,7 @@ namespace MediaPortal.Configuration.Sections
 		string								m_currentSatName="";
 		string[]							m_satNames=new string[4]{"Unknown Sat 1","Unknown Sat 2","Unknown Sat 3","Unknown Sat 4"};
 
+		bool								m_scanRunning=false;
 		//
 
 		
@@ -1325,7 +1326,8 @@ namespace MediaPortal.Configuration.Sections
 
 		private void Channelmanagment_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			
+			if(m_scanRunning==true)
+				return;
 			comboBox3.Items.Clear();
 			// disable ...
 			if(comboBox3.Text!="")
@@ -1790,7 +1792,7 @@ namespace MediaPortal.Configuration.Sections
 		private void button5_Click(object sender, System.EventArgs e)
 		{
 			m_b2c2Helper.Run();
-
+			m_scanRunning=true;
 			DVBSections.Transponder[] list=null;
 			int						dIndex=comboBox3.SelectedIndex;
 			int						lnbkhz=0;
@@ -1908,8 +1910,8 @@ namespace MediaPortal.Configuration.Sections
 
 			button5.Enabled=true;
 			button7.Enabled=false;
-
 			m_b2c2Helper.CleanUp();
+			m_scanRunning=false;
 		}
 
 		void FindUsedLangs()
@@ -2561,6 +2563,10 @@ namespace MediaPortal.Configuration.Sections
 
 			System.IO.TextWriter tout;
 			tout=System.IO.File.CreateText(fileName);
+			if(comboBox3.Text.Length==0)
+				comboBox3.Text="Unknown Sat";
+
+			tout.WriteLine("satname="+comboBox3.Text);
 			foreach(TreeNode node in treeView4.Nodes)
 			{
 				tout.WriteLine((string)node.Tag);
