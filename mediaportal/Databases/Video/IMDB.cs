@@ -370,77 +370,82 @@ namespace MediaPortal.Video.Database
 		// this method switches between the different databases to get the search results
 		public void Find(string strMovie)
 		{
-			string strURL;
-			// getting searchstring
-			string strSearch = HttpUtility.UrlEncode(GetSearchString(strMovie));
-
-			// be aware of german special chars äöüß Ã¤Ã¶Ã¼ÃŸ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
-			strSearch = strSearch.Replace("%c3%a4","%E4");
-			strSearch = strSearch.Replace("%c3%b6","%F6");
-			strSearch = strSearch.Replace("%c3%bc","%FC");
-			strSearch = strSearch.Replace("%c3%9f","%DF");
-
-			elements.Clear();			
-
-			string line1,line2,line3;
-			line1=GUILocalizeStrings.Get(984);
-			line2=strSearch;
-			line3="";
-			int percent=0;
-			m_progress.OnProgress(line1,line2,line3,percent);
-			// search the desired databases
-			for (int i = 0; i < aDatabases.Length; i++)
+			try
 			{
-				// only do a search if requested
-				if (aLimits[i]>0)
+				string strURL;
+				// getting searchstring
+				string strSearch = HttpUtility.UrlEncode(GetSearchString(strMovie));
+
+				// be aware of german special chars äöüß Ã¤Ã¶Ã¼ÃŸ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
+				strSearch = strSearch.Replace("%c3%a4","%E4");
+				strSearch = strSearch.Replace("%c3%b6","%F6");
+				strSearch = strSearch.Replace("%c3%bc","%FC");
+				strSearch = strSearch.Replace("%c3%9f","%DF");
+
+				elements.Clear();			
+
+				string line1,line2,line3;
+				line1=GUILocalizeStrings.Get(984);
+				line2=strSearch;
+				line3="";
+				int percent=0;
+				m_progress.OnProgress(line1,line2,line3,percent);
+				// search the desired databases
+				for (int i = 0; i < aDatabases.Length; i++)
 				{
-					switch (aDatabases[i].ToUpper())
+					// only do a search if requested
+					if (aLimits[i]>0)
 					{
+						switch (aDatabases[i].ToUpper())
+						{
 
-						case "IMDB":
-							// IMDB support
+							case "IMDB":
+								// IMDB support
 							
-							line1=GUILocalizeStrings.Get(984) +":IMDB";
-							percent=0;
-							m_progress.OnProgress(line1,line2,line3,percent);
-							strURL = "http://us.imdb.com/Tsearch?title="+strSearch;
-							FindIMDB(strURL,aLimits[i]);
-							percent=33;
-							m_progress.OnProgress(line1,line2,line3,percent);
-							// END IMDB support
-							break;
-						case "OFDB":
-							// OFDB support
-							line1=GUILocalizeStrings.Get(984) +":OFDB";
-							percent=33;
-							m_progress.OnProgress(line1,line2,line3,percent);
-							strURL = "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText="+strSearch;
-							FindOFDB(strURL,aLimits[i]);
-							percent=66;
-							m_progress.OnProgress(line1,line2,line3,percent);
-							// END OFDB support
-							break;
+								line1=GUILocalizeStrings.Get(984) +":IMDB";
+								percent=0;
+								m_progress.OnProgress(line1,line2,line3,percent);
+								strURL = "http://us.imdb.com/Tsearch?title="+strSearch;
+								FindIMDB(strURL,aLimits[i]);
+								percent=33;
+								m_progress.OnProgress(line1,line2,line3,percent);
+								// END IMDB support
+								break;
+							case "OFDB":
+								// OFDB support
+								line1=GUILocalizeStrings.Get(984) +":OFDB";
+								percent=33;
+								m_progress.OnProgress(line1,line2,line3,percent);
+								strURL = "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText="+strSearch;
+								FindOFDB(strURL,aLimits[i]);
+								percent=66;
+								m_progress.OnProgress(line1,line2,line3,percent);
+								// END OFDB support
+								break;
 
-						case "FRDB":
-							// FRDB support
-							percent=66;
-							m_progress.OnProgress(line1,line2,line3,percent);
-							line1=GUILocalizeStrings.Get(984) +":FRDB";
-							strURL = "http://www.dvdfr.com/search/search.php?multiname="+strSearch;
-							FindFRDB(strURL,aLimits[i]);
-							percent=100;
-							m_progress.OnProgress(line1,line2,line3,percent);
-							// END FRDB support
-							break;
+							case "FRDB":
+								// FRDB support
+								percent=66;
+								m_progress.OnProgress(line1,line2,line3,percent);
+								line1=GUILocalizeStrings.Get(984) +":FRDB";
+								strURL = "http://www.dvdfr.com/search/search.php?multiname="+strSearch;
+								FindFRDB(strURL,aLimits[i]);
+								percent=100;
+								m_progress.OnProgress(line1,line2,line3,percent);
+								// END FRDB support
+								break;
 
-						default:
-							// unsupported database?
-							Log.Write("Movie database lookup - database not supported: {0}",aDatabases[i].ToUpper());
-							break;
+							default:
+								// unsupported database?
+								Log.Write("Movie database lookup - database not supported: {0}",aDatabases[i].ToUpper());
+								break;
+						}
 					}
 				}
 			}
-
+			catch(Exception)
+			{
+			}
 		} // END Find()
 
 		#region actors
@@ -514,33 +519,39 @@ namespace MediaPortal.Video.Database
 		public bool GetActorDetails(IMDB.IMDBUrl url, out IMDBActor actor)
 		{
 			actor = new IMDBActor();
-			//<a name="headshot" href="photogallery"><img border="0" src="http://ia.imdb.com/media/imdb/01/I/84/36/12m.jpg" width="100" height="140" alt="Bruce Willis (I)"></a>
-			string strBody;
-			WebRequest req = WebRequest.Create(url.URL);
-			WebResponse result = req.GetResponse();
-			Stream ReceiveStream = result.GetResponseStream();
-			Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
-			StreamReader sr = new StreamReader( ReceiveStream, encode );
-			strBody=sr.ReadToEnd();
+			try
+			{
+				//<a name="headshot" href="photogallery"><img border="0" src="http://ia.imdb.com/media/imdb/01/I/84/36/12m.jpg" width="100" height="140" alt="Bruce Willis (I)"></a>
+				string strBody;
+				WebRequest req = WebRequest.Create(url.URL);
+				WebResponse result = req.GetResponse();
+				Stream ReceiveStream = result.GetResponseStream();
+				Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
+				StreamReader sr = new StreamReader( ReceiveStream, encode );
+				strBody=sr.ReadToEnd();
 
-			//get picture
-			int posStart=strBody.IndexOf("<a name=\"headshot");
-			if (posStart<0) return false;
-			posStart=strBody.IndexOf("<img",posStart);
+				//get picture
+				int posStart=strBody.IndexOf("<a name=\"headshot");
+				if (posStart<0) return false;
+				posStart=strBody.IndexOf("<img",posStart);
 
-			int posEnd=strBody.IndexOf(">",posStart);
-			if (posEnd<0) return false;
-			string imgTag=strBody.Substring(posStart,posEnd-posStart);
-			string strURL="";
-			HTMLUtil util= new HTMLUtil();
-			util.getAttributeOfTag(imgTag, "src=\"", ref strURL);
-			if (strURL==null)
-				util.getAttributeOfTag(imgTag, "SRC=\"", ref strURL);
+				int posEnd=strBody.IndexOf(">",posStart);
+				if (posEnd<0) return false;
+				string imgTag=strBody.Substring(posStart,posEnd-posStart);
+				string strURL="";
+				HTMLUtil util= new HTMLUtil();
+				util.getAttributeOfTag(imgTag, "src=\"", ref strURL);
+				if (strURL==null)
+					util.getAttributeOfTag(imgTag, "SRC=\"", ref strURL);
 
-			actor.Name=url.Title;
-			actor.ThumbnailUrl=strURL;
-			return true;
-
+				actor.Name=url.Title;
+				actor.ThumbnailUrl=strURL;
+				return true;
+			}
+			catch(Exception)
+			{
+			}
+			return false;
 		}
 
 
@@ -548,32 +559,39 @@ namespace MediaPortal.Video.Database
 		// this method switches between the different databases to fetche the search result into movieDetails
 		public bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
 		{
-			/*
-			// extract host from url, to find out which mezhod should be called
-			int		iStart = url.URL.IndexOf(".")+1;
-			int		iEnd = url.URL.IndexOf(".",iStart);
-			if ((iStart<0) || (iEnd<0))
+			try
 			{
-				// could not extract hostname!
-				Log.Write("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
-				return false;
+				/*
+				// extract host from url, to find out which mezhod should be called
+				int		iStart = url.URL.IndexOf(".")+1;
+				int		iEnd = url.URL.IndexOf(".",iStart);
+				if ((iStart<0) || (iEnd<0))
+				{
+					// could not extract hostname!
+					Log.Write("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
+					return false;
+				}
+				string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
+				switch (url.Database)
+				{
+					case "IMDB":
+						return	GetDetailsIMDB(url, ref movieDetails);
+					case "OFDB":
+						return	GetDetailsOFDB(url, ref movieDetails);
+
+					case "FRDB":
+						return	GetDetailsFRDB(url, ref movieDetails);
+
+					default:
+						// Not supported Database / Host
+						Log.Write("Movie DB lookup GetDetails(): Unknown Database {0}",url.Database);
+						return	false;
+				}
 			}
-			string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
-			switch (url.Database)
+			catch (Exception)
 			{
-				case "IMDB":
-					return	GetDetailsIMDB(url, ref movieDetails);
-				case "OFDB":
-					return	GetDetailsOFDB(url, ref movieDetails);
-
-				case "FRDB":
-					return	GetDetailsFRDB(url, ref movieDetails);
-
-				default:
-					// Not supported Database / Host
-					Log.Write("Movie DB lookup GetDetails(): Unknown Database {0}",url.Database);
-					return	false;
 			}
+			return false;
 		} // END GetDetails()
 
 		

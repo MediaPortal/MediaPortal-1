@@ -918,7 +918,7 @@ namespace MediaPortal.Util
               g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
               g.DrawImage(theImage, new Rectangle(0,0,iWidth,iHeight) );
             }
-            result.Save(strThumb);//,System.Drawing.Imaging.ImageFormat.Jpeg);
+            result.Save(strThumb,System.Drawing.Imaging.ImageFormat.Jpeg);
           }
 
         }
