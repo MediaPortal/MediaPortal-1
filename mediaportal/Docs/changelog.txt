@@ -1,3 +1,4 @@
+23-07-2004  home	: fixed : Home screen didn't render correctly if no plugins were enabled, draining the cpu and causing MP to hang at startup.
 22-07-2004  my tv       : fixed : when playing a recorded movie the video osd didnt show the movies properties like channel,description,title,...
 22-07-2004  my tv       : fixed : turn on/off timeshifting
 
