@@ -305,6 +305,10 @@ namespace MediaPortal
       toolTip1.SetToolTip(checkBoxARDVD              ,"Use pixel ratio correction for DVD or not");
       toolTip1.SetToolTip(comboBoxDVDDisplayMode     ,"Specify the preffered display mode");
 
+
+      //MY TV
+      toolTip1.SetToolTip(checkBoxAlwaysTimeShift   ,"Enable this option if you want MediaPortal to timeshift live video in the background. When this option is disabled timeshifting live TV will only be running when you are in the My TV section");
+
       UpdateCaptureCardList();
 
     
