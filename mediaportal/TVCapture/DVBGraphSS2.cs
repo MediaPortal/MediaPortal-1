@@ -19,7 +19,6 @@ namespace MediaPortal.TV.Recording
 	
 	{
 
-	private System.Collections.Hashtable m_epgTable=new System.Collections.Hashtable(); 
 	// iids 0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b
 	private static Guid IID_IB2C2AVCTRL2 = new Guid( 0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40, 0x75 );
 	private static Guid CLSID_B2C2Adapter = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);	
@@ -535,7 +534,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.None) return false;
 			// create graphs
-			System.Threading.Thread.Sleep(350);
 			m_sourceGraph=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
 
 			int n=0;
@@ -658,14 +656,6 @@ namespace MediaPortal.TV.Recording
 			hr=m_tunerCtrl.CheckLock();
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
-				// add pmt pid
-				bool su=false;
-				int res=0;
-				su=DeleteDataPids(0);
-
-				res=AddDataPidsToPin(0,18);
-
-				//su=DeleteDataPids(0);
 				hr = m_avCtrl.SetAudioVideoPIDs (AudioPID, VideoPID);
 				if (hr!=0)
 				{
@@ -751,18 +741,18 @@ namespace MediaPortal.TV.Recording
 				m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 				m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
 				m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-				DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-				DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-				DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
+				DirectShowUtil.DebugWrite("DVBGraphSS2: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+				DirectShowUtil.DebugWrite("DVBGraphSS2: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
+				DirectShowUtil.DebugWrite("DVBGraphSS2: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
 			}
 			else
 			{
 				m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 				m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 				m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-				DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-				DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
-				DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
+				DirectShowUtil.DebugWrite("DVBGraphSS2: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+				DirectShowUtil.DebugWrite("DVBGraphSS2: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
+				DirectShowUtil.DebugWrite("DVBGraphSS2: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
 
 			}
 
@@ -777,7 +767,7 @@ namespace MediaPortal.TV.Recording
 		public void DeleteGraph()
 		{
 			if (m_graphState < State.Created) return;
-			DirectShowUtil.DebugWrite("SWGraph:DeleteGraph()");
+			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			StopRecording();
 			StopViewing();
 			if (m_mediaControl != null)
@@ -961,7 +951,7 @@ namespace MediaPortal.TV.Recording
 
 			if(m_videoPin==null || m_audioPin==null)
 			{
-				Log.Write("DVBSS2: pins not found on adapter");
+				Log.Write("DVBGraphSS2: pins not found on adapter");
 				return false;
 			}
 			m_audioPin.QueryPinInfo(out pInfo);
@@ -1116,12 +1106,12 @@ namespace MediaPortal.TV.Recording
 			return res;
 		}
 		//
-		public bool StartTimeShifting(AnalogVideoStandard xxx,int channel,string fileName)
+		public bool StartTimeShifting(AnalogVideoStandard standard,int channel,string fileName)
 		{
 			if(m_graphState!=State.Created)
 				return false;
 			int hr=0;
-			TuneChannel(xxx,channel);
+			TuneChannel(standard,channel);
 			if(CreateSinkSource(fileName)==true)
 			{
 				m_mediaControl=(IMediaControl)m_sourceGraph;
@@ -1143,7 +1133,7 @@ namespace MediaPortal.TV.Recording
 		public bool StopTimeShifting()
 		{
 			if (m_graphState != State.TimeShifting) return false;
-			DirectShowUtil.DebugWrite("DVBSS2:StopViewing()");
+			DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
 			m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();
@@ -1289,35 +1279,28 @@ namespace MediaPortal.TV.Recording
 
 		}
 
-
-
-		/// <summary>
-		/// functions to set / delete pids from data pin
-		/// </summary>
-		/// <param name="iChannel">New channel</param>
-		/// <remarks>
-		/// Graph should be timeshifting. 
-		/// </remarks>
-		/// 
-
 		//
 		//
-		private int GetServiceID()
+		public void TuneChannel(AnalogVideoStandard standard,int channel)
 		{
-			return 12003;
-		}
-		public void TuneChannel(AnalogVideoStandard xxx,int channel)
-		{
+			if(m_graphState==State.Recording)
+				return;
 			int channelID=TVDatabase.GetChannelId(channel);
-		
+			if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
+			{
+				m_mediaControl.Stop();
+				
+			}
 			m_iChannelNr=channel;
 			if(channelID!=-1)
 			{
-
 				DVBChannel ch=new DVBChannel();
-				TVDatabase.GetSatChannel(channelID,ref ch);
+				TVDatabase.GetSatChannel(channelID,1,ref ch);//only television
 				m_currentChannel=ch;
 				Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency);
+
+				if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
+					m_mediaControl.Run();
 			}
 			
 			m_StartTime=DateTime.Now;
@@ -1338,10 +1321,7 @@ namespace MediaPortal.TV.Recording
 		/// <returns>boolean indiciating if the graph supports timeshifting</returns>
 		public bool SupportsTimeshifting()
 		{
-			if(m_currentChannel.ServiceType==1)
 			return true;
-			else
-				return false;
 		}
 
 
@@ -1353,17 +1333,16 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph must be created first with CreateGraph()
 		/// </remarks>
-		public bool StartViewing(AnalogVideoStandard xxx,int channel)
+		public bool StartViewing(AnalogVideoStandard standard,int channel)
 		{
 			if (m_graphState != State.Created) return false;
-			TuneChannel(xxx,channel);
+			TuneChannel(standard,channel);
 			int hr=0;
 
 			AddPreferredCodecs();
 
 			
 			// render here for viewing
-			if(m_currentChannel.ServiceType==1)
 			hr=m_sourceGraph.Render(m_videoPin);
 			if(hr!=0)
 				return false;
@@ -1377,7 +1356,7 @@ namespace MediaPortal.TV.Recording
 			m_videoWindow = (IVideoWindow) m_sourceGraph as IVideoWindow;
 			if (m_videoWindow==null)
 			{
-				Log.Write("DVBSS2:FAILED:Unable to get IVideoWindow");
+				Log.Write("DVBGraphSS2:FAILED:Unable to get IVideoWindow");
 				return false;
 			}
 
@@ -1385,21 +1364,21 @@ namespace MediaPortal.TV.Recording
 			m_basicVideo = m_sourceGraph as IBasicVideo2;
 			if (m_basicVideo==null)
 			{
-				Log.Write("DVBSS2:FAILED:Unable to get IBasicVideo2");
+				Log.Write("DVBGraphSS2:FAILED:Unable to get IBasicVideo2");
 				return false;
 			}
 			hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
 			if (hr != 0) 
-				DirectShowUtil.DebugWrite("DVBSS2:FAILED:set Video window:0x{0:X}",hr);
+				DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window:0x{0:X}",hr);
 
 			hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 			if (hr != 0) 
-				DirectShowUtil.DebugWrite("DVBSS2:FAILED:set Video window style:0x{0:X}",hr);
+				DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}",hr);
 
       
 			hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 			if (hr != 0) 
-				DirectShowUtil.DebugWrite("DVBSS2:FAILED:put_Visible:0x{0:X}",hr);
+				DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}",hr);
 
             //
 			n=m_mediaControl.Run();
@@ -1425,7 +1404,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.Viewing) 
 				return false;
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-			DirectShowUtil.DebugWrite("DVBSS2:StopViewing()");
+			DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
 			m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_bOverlayVisible=false;
 			m_mediaControl.Stop();
@@ -1438,11 +1417,10 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool ShouldRebuildGraph(int iChannel)
 		{
-			// we always need to rebuild
-			// the ds graph, so return always
-			// true. the tunning is done in 
-			// start viewing/timeshifting/recording methods
-			return true;
+			if(m_graphState==State.Viewing)
+				return false;
+			else
+				return true;
 		}
 
 		/// <summary>
