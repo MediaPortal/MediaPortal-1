@@ -199,13 +199,8 @@ namespace MediaPortal.TV.Recording
 			newchan.ONID=-1;
 			newchan.TSID=-1;
 			newchan.SID=-1;
-			TunerLib.Polarisation pol=TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
-			if (transp[currentIndex].TPpol==1)
-				pol=TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
-			if (transp[currentIndex].TPpol==0)
-				pol=TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
 
-			newchan.polarisation=(int)pol;
+			newchan.polarisation=transp[currentIndex].TPpol;
 			newchan.symbolRate=transp[currentIndex].TPsymb;
 			newchan.innerFec=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.carrierFrequency=transp[currentIndex].TPfreq;

@@ -913,7 +913,11 @@ namespace MediaPortal.TV.Recording
 					//set the properties on the new tuning request
 					Log.Write("DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= frequency;
-					myLocator.SignalPolarisation  = (TunerLib.Polarisation)polarisation;
+					if (polarisation==0) 
+						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
+					else
+						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
+
 					myLocator.SymbolRate				  = symbolrate;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
 					myTuneRequest.ONID	= ONID;		//original network id
@@ -1357,7 +1361,7 @@ namespace MediaPortal.TV.Recording
 			//on some signalpresent is only true when tuned to a channel
 			//on others  signalpresent is true when tuned to a transponder
 			//so we just look if any variables returns true
-			//Log.Write("  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
+			Log.Write("  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
 
 			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
 			{
@@ -2314,13 +2318,17 @@ namespace MediaPortal.TV.Recording
 				//set the properties for the new tuning request. 
 				myLocator.CarrierFrequency		= chan.carrierFrequency;
 				myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
-				myLocator.SignalPolarisation	= (TunerLib.Polarisation)chan.polarisation;
+				if (chan.polarisation==0) 
+					myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
+				else
+					myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
 				myLocator.SymbolRate					= chan.symbolRate;
 				myTuneRequest.ONID						= chan.ONID;	//original network id
 				myTuneRequest.TSID						= chan.TSID;	//transport stream id
 				myTuneRequest.SID							= chan.SID;		//service id
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
 				
+				Log.Write("  dvbs freq:{0} Khz  SR:{1} Pol:{2}", myLocator.CarrierFrequency,myLocator.SymbolRate,myLocator.SignalPolarisation);
 				currentTuningObject = chan;
 			}
 			else if (Network() == NetworkType.ATSC)
