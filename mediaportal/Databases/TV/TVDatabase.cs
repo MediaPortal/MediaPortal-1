@@ -247,7 +247,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 		//b2c2
-		static public string GetSatChannelName(int program_number,int network_id,int ts_id)
+		static public string GetSatChannelName(int program_number,int x)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -258,7 +258,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return "";
 
 					SQLiteResultSet results;
-					strSQL=String.Format( "select * from tblSatChannels where sProgramNumber={0} and sNetworkID={1} and sTSID={2}", program_number,network_id,ts_id);
+					strSQL=String.Format( "select * from tblSatChannels where sProgramNumber={0}", program_number);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) return "";
 					channelName=DatabaseUtility.Get(results,0,"sChannelName");
