@@ -552,6 +552,8 @@ namespace MediaPortal.GUI.TV
 			
       for (int i=618; i <= 619; ++i)
       {
+				//Delete
+				//Edit Date/Time
         dlg.Add( GUILocalizeStrings.Get(i));
       }
       dlg.Add( GUILocalizeStrings.Get(626));//Change type
@@ -559,8 +561,10 @@ namespace MediaPortal.GUI.TV
 			int card;
 			if (Recorder.IsRecordingSchedule(rec,out card))
 			{
-				dlg.Add( GUILocalizeStrings.Get(655)); //play recorded tv
+				dlg.Add( GUILocalizeStrings.Get(979)); //Play recording from beginning
+				dlg.Add( GUILocalizeStrings.Get(980)); //Play recording from live point
 			}
+
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
       switch (dlg.SelectedLabel)
@@ -572,10 +576,10 @@ namespace MediaPortal.GUI.TV
 						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 						if (null != dlgYesNo)
 						{
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-							dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));
-							dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));
-							dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
+							dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
+							dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
+							dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
 							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
 							if (dlgYesNo.IsConfirmed) 
@@ -601,9 +605,25 @@ namespace MediaPortal.GUI.TV
           ChangeType(rec);
 					break;
 
-				case 3: // Play
+				case 3: // Play recording from beginning
+					GUITVHome.IsTVOn=true;
 					GUITVHome.ViewChannel(rec.Channel);
-					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					g_Player.SeekAbsolute(0);
+					if (Recorder.IsViewing())
+					{
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+						return;
+					}
+					break;
+
+				case 4: // Play recording from live point
+					GUITVHome.IsTVOn=true;
+					GUITVHome.ViewChannel(rec.Channel);
+					if (Recorder.IsViewing())
+					{
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+						return;
+					}
 					break;
 			}
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;

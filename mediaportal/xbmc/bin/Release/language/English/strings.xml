@@ -2688,6 +2688,14 @@
 	<id>978</id>
 	<value>which can watch this channel</value>
 </string>
+<string>
+	<id>979</id>
+	<value>Play recording from beginning</value>
+</string>
+<string>
+	<id>980</id>
+	<value>Play recording from live point</value>
+</string>
 
 
 

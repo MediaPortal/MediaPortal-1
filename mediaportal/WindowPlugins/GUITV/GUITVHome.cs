@@ -851,6 +851,11 @@ namespace MediaPortal.GUI.TV
 				else m_strGroup=GUILocalizeStrings.Get(972);
 			}
 		}
+		static public bool IsTVOn
+		{
+			get { return m_bTVON;}
+			set { m_bTVON=value;}
+		}
 
 		#region ISetupForm Members
 
