@@ -1,11 +1,5 @@
 Skin:
-  - We need another version of music-play.png which will be shown when we're recording tv 
-    instead of the play symbol it should show the recording symbol (red filled circle)
-  - Home  : need special gfx for my tv
-  - My Tv : need special gfx for my tv panel
-  - when watching fullscreen live-tv we need a background to show info about  current & next running program
-    something like mythv : http://mythtv.sourceforge.net/mc/blueosdone.png
-
+  -
 My Radio:
   - AM/FM
   - Scan channels
@@ -14,9 +8,6 @@ My Radio:
 
 My TV:
   - A way to browse and resolve recording conflicts. 
-  - full screen TV OSD
-     - show info about current & next program
-
   
   Recorded tv:
 	 -     
@@ -31,7 +22,6 @@ My TV:
   Capture:
      - time shifting. This allows you to pause/ FF/RW live tv      
      - add support for digital capture cards (BDA tuners)
-     - stutter /avsync ?
     
 My Music:
   - faster start of 1st song played
@@ -75,7 +65,6 @@ General:
      - my movies:
          queue movies, get/view imdb info, prev/next movie, pause, play, skip+/skip-,ff/rw
      - general:
-       - scrollbar
        - general   : switch fullscreen<->windowed
        - fullscreen: osd
        - mouse wheel for scrolling
