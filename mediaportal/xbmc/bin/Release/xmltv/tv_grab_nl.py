@@ -3,6 +3,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.2  2004/04/22 12:12:53  yamp
+#   22-04-2004: tvguide     : fixed : Mediaportal didnt use the timezone settings specified in tvguide.xml
+#
 # Revision 1.1  2004/04/21 14:56:30  yamp
 # no message
 #
@@ -772,7 +775,7 @@ def xmlefy_programs(programs, channel):
     """
     output = []
     for program in programs:
-        output.append('  <programme start="%s +0000" stop="%s +0000" channel="%s">\n' % (program[0], program[1], channel))
+        output.append('  <programme start="%s +0100" stop="%s +0100" channel="%s">\n' % (program[0], program[1], channel))
         output.append('    <title lang="nl">%s</title>\n' % filter_line(program[3]))
         if len(program)==5:
             try:
