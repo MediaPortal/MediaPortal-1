@@ -35,7 +35,6 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 
 CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
 {
-	Deinit();
 }
 
 
@@ -108,7 +107,8 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 			((char)(lpAllocInfo->Format>>24)&0xff));
 	// StretchRect's yv12 -> rgb conversion looks horribly bright compared to the result of yuy2 -> rgb
 
-		if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y')
+	if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y' ||
+		lpAllocInfo->Format == '2YUY' || lpAllocInfo->Format=='YVYU')
 	{
 		Log("InitializeDevice()   invalid format");
 		return E_FAIL;
@@ -146,14 +146,14 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 		return hr;
 	}
 	// test if the colorspace is acceptable
-	if(FAILED(hr = m_pD3DDev->StretchRect(m_pSurfaces[0], NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
+	if(FAILED(hr = m_pD3DDev->StretchRect(m_pSurfaces[0], NULL, m_pVideoSurface[0], NULL, D3DTEXF_NONE)))
 	{
 		Log("vmr9:InitializeDevice()   StretchRect failed with hr:0x%x",hr);
 		DeleteSurfaces();
 		return E_FAIL;
 	}
 
-	hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
+	hr = m_pD3DDev->ColorFill(m_pVideoSurface[0], NULL, 0);
 
 	Log("vmr9:InitializeDevice() done()");
 	return hr;
@@ -229,7 +229,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 
 		CAutoLock cAutoLock(this);
 
-		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE);
+		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface[0], NULL, D3DTEXF_NONE);
 
 		m_fps = 10000000.0 / (lpPresInfo->rtEnd - lpPresInfo->rtStart);
 
@@ -260,11 +260,9 @@ void CVMR9AllocatorPresenter::DeleteSurfaces()
 {
     CAutoLock cAutoLock(this);
 
-	m_pVideoSurfaceOff = NULL;
-	m_pVideoSurfaceYUY2 = NULL;
 
-	m_pVideoTexture = NULL;
-	m_pVideoSurface = NULL;
+	m_pVideoTexture[0] = m_pVideoTexture[1] = NULL;
+	m_pVideoSurface[0] = m_pVideoSurface[1] = NULL;
 
 	for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
     {
@@ -280,8 +278,6 @@ HRESULT CVMR9AllocatorPresenter::AllocSurfaces()
 
 	m_pVideoSurfaceOff = NULL;
 	m_pVideoSurfaceYUY2 = NULL;
-	m_pVideoTexture = NULL;
-	m_pVideoSurface = NULL;
 
 	HRESULT hr;
 
@@ -312,8 +308,11 @@ HRESULT CVMR9AllocatorPresenter::AllocSurfaces()
 
 //	AppSettings& s = AfxGetAppSettings();
 
-	m_pVideoTexture = NULL;
-	m_pVideoSurface = NULL;
+
+	m_pVideoTexture[0] = NULL;
+	m_pVideoTexture[1] = NULL;
+	m_pVideoSurface[0] = NULL;
+	m_pVideoSurface[1] = NULL;
 
 
 	bool use2d=false;
@@ -322,36 +321,41 @@ HRESULT CVMR9AllocatorPresenter::AllocSurfaces()
 	{
 		if(FAILED(hr = m_pD3DDev->CreateTexture(
 			m_NativeVideoSize.cx, m_NativeVideoSize.cy, 1, D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_A8R8G8B8, 
-			D3DPOOL_DEFAULT, &m_pVideoTexture, NULL)))
+			D3DPOOL_DEFAULT, &m_pVideoTexture[0], NULL)))
 		{
 			Log("vmr9:AllocSurfaces()   cannot create texture for A8R8G8B8 :0x%x",hr);
-
-			if(FAILED(hr = m_pD3DDev->CreateTexture(
-				m_NativeVideoSize.cx, m_NativeVideoSize.cy, 1, D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_X8R8G8B8, 
-				D3DPOOL_DEFAULT, &m_pVideoTexture, NULL)))
-			{	
-				Log("vmr9:AllocSurfaces()   cannot create texture for X8R8G8B8 :0x%x",hr);
-				return hr;
-			}
-			else
-				Log("vmr9:AllocSurfaces()   created texture X8R8G8B8");
+			return hr;
 		}
 		else
 			Log("vmr9:AllocSurfaces()   created texture A8R8G8B8");
 
-		if(FAILED(hr = m_pVideoTexture->GetSurfaceLevel(0, &m_pVideoSurface)))
+		if(FAILED(hr = m_pVideoTexture[0]->GetSurfaceLevel(0, &m_pVideoSurface[0])))
 		{
 			Log("vmr9:AllocSurfaces()   cannot get surface level 0x:%x",hr);
 			return hr;
 		}
+		if(use3d) 
+		{	
+			if(FAILED(hr = m_pD3DDev->CreateTexture(
+				m_NativeVideoSize.cx, m_NativeVideoSize.cy, 1, D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_A8R8G8B8, 
+				D3DPOOL_DEFAULT, &m_pVideoTexture[1], NULL)))
+				return hr;
+
+			if(FAILED(hr = m_pVideoTexture[1]->GetSurfaceLevel(0, &m_pVideoSurface[1])))
+				return hr;
+		
+		}
 		if(use2d) 
-			m_pVideoTexture = NULL;
+		{
+			m_pVideoTexture[0] = NULL;
+			m_pVideoTexture[1] = NULL;
+		}
 	}
 	else
 	{
 		if(FAILED(hr = m_pD3DDev->CreateOffscreenPlainSurface(
 			m_NativeVideoSize.cx, m_NativeVideoSize.cy, D3DFMT_X8R8G8B8, 
-			D3DPOOL_DEFAULT, &m_pVideoSurface, NULL)))
+			D3DPOOL_DEFAULT, &m_pVideoSurface[0], NULL)))
 		{
 			Log("vmr9:AllocSurfaces()   cannot create offscreen surface for X8R8G8B8 :0x%x",hr);
 			return hr;
@@ -360,7 +364,7 @@ HRESULT CVMR9AllocatorPresenter::AllocSurfaces()
 			Log("vmr9:AllocSurfaces()   created offscreen surface for X8R8G8B8");
 	}
 
-	hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
+	hr = m_pD3DDev->ColorFill(m_pVideoSurface[0], NULL, 0);
 
 	return S_OK;
 }
@@ -380,10 +384,10 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 	if (m_pCallback!=NULL)
 	{
 		CSize videoSize = GetVideoSize(false);
-		if (m_pVideoTexture!=NULL)
+		if (m_pVideoTexture[0]!=NULL)
 		{
 			//DWORD dwPtr=(DWORD)(pSurface);
-			IDirect3DTexture9* tex=m_pVideoTexture;
+			IDirect3DTexture9* tex=m_pVideoTexture[0];
 			DWORD dwPtr=(DWORD)(tex);
 			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, dwPtr);
 			if (m_bfirstFrame)
@@ -394,7 +398,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 		}
 		else
 		{
-			IDirect3DSurface9* tex=m_pVideoSurface;
+			IDirect3DSurface9* tex=m_pVideoSurface[0];
 			DWORD dwPtr=(DWORD)(tex);
 			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, dwPtr);
 			if (m_bfirstFrame)
@@ -405,17 +409,4 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 		}
 		//tex->Release();
 	}
-}
-
-void CVMR9AllocatorPresenter::Deinit()
-{
-	DeleteSurfaces();
-	m_surfaceCount=NULL;
-	m_pVideoSurfaceOff = NULL;
-	m_pVideoSurfaceYUY2 = NULL;
-
-	m_pVideoTexture = NULL;
-	m_pVideoSurface = NULL;
-	m_pD3DDev=NULL;
-	m_pIVMRSurfAllocNotify=NULL;
 }

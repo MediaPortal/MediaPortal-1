@@ -38,7 +38,7 @@ public:
 
 	void DrawTexture(FLOAT fx, FLOAT fy, FLOAT nw, FLOAT nh, FLOAT uoff, FLOAT voff, FLOAT umax, FLOAT vmax, long color);
 	CSize GetVideoSize(bool fCorrectAR=true);
-	void Deinit();
+
 
 protected:
 	void Paint(IDirect3DSurface9* pSurface);
@@ -47,8 +47,9 @@ protected:
 
 	void Log(const char *fmt, ...) ;
 	CComPtr<IVMRSurfaceAllocatorNotify9> m_pIVMRSurfAllocNotify;
-	CComPtr<IDirect3DTexture9> m_pVideoTexture;
-	CComPtr<IDirect3DSurface9> m_pVideoSurface;
+
+	CComPtr<IDirect3DTexture9> m_pVideoTexture[2];
+	CComPtr<IDirect3DSurface9> m_pVideoSurface[2];
     CComPtr<IDirect3DDevice9> m_pD3DDev;
 	CComPtr<IDirect3D9> m_pD3D;
 	CComPtr<IDirect3DSurface9> m_pVideoSurfaceOff;
