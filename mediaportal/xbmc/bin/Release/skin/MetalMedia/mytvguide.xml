@@ -241,7 +241,7 @@
 		<posY>220</posY>
 		<width>12</width>
 		<height>315</height>
-		<scrollbarbg>bluebar_vert.png</scrollbarbg>
+		<scrollbarbg>bar_vert.png</scrollbarbg>
 		<visible>yes</visible>
 	</control>	
 </controls>

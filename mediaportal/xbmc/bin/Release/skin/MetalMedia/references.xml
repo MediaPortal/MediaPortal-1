@@ -215,7 +215,7 @@
 		<id>20</id>
 		<posX>100</posX>
 		<posY>25</posY>
-		<scrollbarbg>bluebar_vert.png</scrollbarbg>
+		<scrollbarbg>bar_vert.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
 		<visible>no</visible>
