@@ -1667,5 +1667,9 @@ namespace MediaPortal.TV.Recording
 		{
 			return 0;
 		}
+		
+		public void Process()
+		{
+		}
 	}
 }

@@ -187,5 +187,12 @@ namespace MediaPortal.TV.Recording
     /// <returns>frequency in Hertz
     /// </returns>
     long VideoFrequency();
+
+		/// <summary>
+		/// MP will call this function on a regular basis
+		/// It allows the tv card todo any progressing like
+		/// getting/updating the EPG, channel information etc (for DVB cards)
+		/// </summary>
+		void Process();
 	}
 }

@@ -830,6 +830,13 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+			if (_mState == State.Timeshifting || _mState == State.PreRecording || _mState == State.Recording || _mState == State.PostRecording || _mState == State.Viewing)
+			{
+				if (_mGraph!=null)
+				{
+					_mGraph.Process();
+				}
+			}
     }
 
     /// <summary>

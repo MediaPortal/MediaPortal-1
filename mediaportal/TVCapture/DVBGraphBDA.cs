@@ -1585,8 +1585,8 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
 
 			myLocator.CarrierFrequency		= 698000;
-	
-			myLocator.Bandwidth						= 8;//8; // in megahertz (7 or 8)
+	/*
+			myLocator.Bandwidth						= 8;// in megahertz (7 or 8)
 			myLocator.SymbolRate					= -1;
 			myLocator.OtherFrequencyInUse	= false;
 			myLocator.Guard								= TunerLib.GuardInterval.BDA_GUARD_NOT_SET;
@@ -1599,23 +1599,14 @@ namespace MediaPortal.TV.Recording
 			myLocator.Modulation					= TunerLib.ModulationType.BDA_MOD_NOT_SET;
 			myLocator.OuterFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			myLocator.OuterFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-
-			myTuneRequest.ONID	= 1;//8720;					//original network id
-			myTuneRequest.TSID	= 1;//1;						//transport stream id
+*/
+			myTuneRequest.ONID	= -1;					//original network id
+			myTuneRequest.TSID	= 1;						//transport stream id
 			myTuneRequest.SID		= 12;						//service id
 			myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 			
-			Log.Write("ONID:{0} TSID:{1} SID:{2} signal:{3}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID, myTuner.SignalStrength);
-			Log.Write("frequency:{0} bandwidth:{1} symbolrate:{2}", myLocator.CarrierFrequency,myLocator.Bandwidth,myLocator.SymbolRate);
-			Log.Write("tune");
 			myTuner.TuneRequest = newTuneRequest;
 
-			System.Threading.Thread.Sleep(1000);
-			myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
-			myLocator = (TunerLib.IDVBTLocator) myTuner.TuningSpace.DefaultLocator;	
-			Log.Write("ONID:{0} TSID:{1} SID:{2} signal:{3}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID, myTuner.SignalStrength);
-			Log.Write("frequency:{0} bandwidth:{1} symbolrate:{2}", myLocator.CarrierFrequency,myLocator.Bandwidth,myLocator.SymbolRate);
- 
 			//Marshal.ReleaseComObject(myTuneRequest);
 
 			//chid=340
@@ -1629,6 +1620,13 @@ namespace MediaPortal.TV.Recording
 			//fec=0
 		}
 
+		
+		public void Process()
+		{
+			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
+			Log.Write("ONID:{0} TSID:{1} SID:{2} signal:{3}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID, myTuner.SignalStrength);
+		}
 	}
 }
 //end of file

@@ -939,5 +939,9 @@ namespace MediaPortal.TV.Recording
           m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
       }
     }
+		
+		public void Process()
+		{
+		}
   }
 }
