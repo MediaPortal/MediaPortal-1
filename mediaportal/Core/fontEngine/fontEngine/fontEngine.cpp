@@ -317,13 +317,13 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 			//58/108 => ty1= 0.53
 			float off=viewport.Y - ypos;
 			ypos=(float)viewport.Y;
-			ty1 += ( (off / h) * (vmax-voff) );
+			ty1 += ( (off / h) * (umax-uoff) );
 		}
 		if (ypos2 >	viewport.Y+viewport.Height)
 		{
 			float off= (viewport.Y+viewport.Height) - ypos2;
 			ypos2=(float)viewport.Y+(float)viewport.Height;
-			ty2 += ( (off / h) * (vmax-voff) );
+			ty2 += ( (off / h) * (umax-uoff) );
 			if (ty2>=1.0f) ty2=1.0f;
 		}
 	}
