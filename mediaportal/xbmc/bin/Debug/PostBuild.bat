@@ -38,6 +38,9 @@ copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.dll plugins\Windows
 copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.pdb plugins\Windows
 copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
 
+copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll plugins\process\
+copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll.pdb  plugins\process\
+
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .

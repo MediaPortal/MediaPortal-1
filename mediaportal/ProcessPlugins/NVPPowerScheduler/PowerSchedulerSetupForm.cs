@@ -108,7 +108,7 @@ namespace MediaPortal.PowerScheduler
 			// 
 			// cb_ok
 			// 
-			this.cb_ok.Location = new System.Drawing.Point(280, 240);
+			this.cb_ok.Location = new System.Drawing.Point(280, 248);
 			this.cb_ok.Name = "cb_ok";
 			this.cb_ok.TabIndex = 0;
 			this.cb_ok.Text = "OK";
@@ -208,7 +208,7 @@ namespace MediaPortal.PowerScheduler
 			this.groupBox1.Controls.Add(this.cbxForced);
 			this.groupBox1.Controls.Add(this.cbxTVoff);
 			this.groupBox1.Controls.Add(this.cbxExtensive);
-			this.groupBox1.Location = new System.Drawing.Point(8, 120);
+			this.groupBox1.Location = new System.Drawing.Point(8, 128);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(352, 112);
 			this.groupBox1.TabIndex = 18;
@@ -218,7 +218,7 @@ namespace MediaPortal.PowerScheduler
 			// PowerSchedulerSetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(368, 269);
+			this.ClientSize = new System.Drawing.Size(368, 277);
 			this.Controls.Add(this.nud_shutdown);
 			this.Controls.Add(this.nud_wakeup);
 			this.Controls.Add(this.cobx_shutdown);
@@ -228,7 +228,7 @@ namespace MediaPortal.PowerScheduler
 			this.Controls.Add(this.cb_ok);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "PowerSchedulerSetupForm";
-			this.Text = "Power Scheduler configuration 0.1 beta (3)";
+			this.Text = "Power Scheduler configuration 0.2 ";
 			((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
 			this.groupBox1.ResumeLayout(false);

@@ -850,41 +850,6 @@
                     DependentUpon = "SetupForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
-                <File
-                    RelPath = "PowerScheduler\NVPPowerScheduler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PowerScheduler\PowerException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PowerScheduler\PowerManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PowerScheduler\PowerSchedulerSetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PowerScheduler\PowerSchedulerSetupForm.resx"
-                    DependentUpon = "PowerSchedulerSetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "PowerScheduler\TimerException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PowerScheduler\WaitableTimer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
             </Include>
         </Files>
     </CSHARP>

@@ -28,6 +28,7 @@ copy ..\..\..\TagReaderPlugins\bin\release\TagReaderPlugins.dll plugins\TagReade
 copy ..\..\..\ExternalPlayers\bin\release\ExternalPlayers.dll plugins\ExternalPlayers
 copy ..\..\..\WindowPlugins\bin\release\WindowPlugins.dll plugins\Windows
 copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
+copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
 
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .

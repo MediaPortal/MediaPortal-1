@@ -10,65 +10,46 @@ namespace MediaPortal.PowerScheduler
 	/// <summary>
 	/// Summary description for NVPPowerScheduler.
 	/// </summary>
-	//public class NVPPowerScheduler: IPlugin, ISetupForm
-	public class NVPPowerScheduler: GUIWindow, IPlugin, ISetupForm
+	public class NVPPowerScheduler: IPlugin, ISetupForm
 	{
-		public static int WINDOW_POWERSCHEDULER = 6039;	// a window ID Won't be needed when converted to non visual plugin
-														// Tried it but after one sleep we weren't doing well
+		public static int WINDOW_POWERSCHEDULER = 6039;	// a window ID shouldn't be needed when a non visual plugin ?!
 
-		static int		m_iPreRecordInterval = 0;	// Interval to start recording before entered starttime
-		static int		m_iStartupInterval = 1;		// 1 minute to give computer time to startup
-		static int		m_iShutdownInterval = 3;	// idle minutes before shutdown(hibernate/standby)
-		static	long	m_iCurrentStart = 0;		// store current wakeup time (ticks) for comparesing
-		static	int		m_iActiveWindow = -1;		// current active window, used to check when WINDOW_HOME is activated
-		static string	m_shutdownMode = "None";
-		static bool		m_bShutdownEnabled = false;	// shutdown enabled if true
-		static DateTime	m_dtShutdownTime = new DateTime();
-		static bool		m_bExtensiveLog = false;
-		static bool		m_bProgramsChanged = false;
-		static bool		m_bRecordingsChanged = false;
-		static bool		m_bResetWakeuptime = true;
-		static bool		m_bForceShutdown = false;
-		static bool		m_bDisableTV = false;
-		static bool		m_bDisabled = false;
+		static int		m_iPreRecordInterval = 0;		// Interval to start recording before entered starttime
+		static int		m_iStartupInterval = 1;			// 1 minute to give computer time to startup
+		static int		m_iShutdownInterval = 3;		// idle minutes before shutdown(hibernate/standby)
+		static long		m_iCurrentStart = 0;			// store current wakeup time (ticks) for comparesing
+		static int		m_iActiveWindow = -1;			// current active window, used to check when WINDOW_HOME is activated
+		static string	m_shutdownMode = "None";		// mode to use for shutdown (Hibernate, Suspend, Shutdown, None)
+		static bool		m_bShutdownEnabled = false;		// shutdown enabled/disabled
+		static DateTime	m_dtShutdownTime = new DateTime();	// Next time system will automaticly shutdown
+		static bool		m_bExtensiveLog = false;		// Write a lot to Mediaportal.log
+		static bool		m_bProgramsChanged = false;		// flag - TVGuide has changed, reset wake up time
+		static bool		m_bRecordingsChanged = false;	// flag - recordings has changed, reset wake up time	
+		static bool		m_bResetWakeuptime = true;		// flag - reset wake up time
+		static bool		m_bForceShutdown = false;		// Force shutdown
+		static bool		m_bDisableTV = false;			// Whether to disable/enable TVcards when shutdown/wake up
+		static bool		m_bDisabled = false;			// if plugin is enabled or disabled
+		static bool		m_settingsread = false;			// keep track if settings are read
+		static DateTime m_dtLastTimercheck = DateTime.Now;	// store last time 
+		static bool		m_bFirstLogRec = true;			// when aborting shutdown due to recording in progress, write to log only once
 
 		// Instanceate a waitabletimer
 		static private	WaitableTimer m_Timer = new WaitableTimer();
 
 		// Instanceate a ShutdownTimer
-		// Shutdown will only be activated on HOME-window and is prohibited by ongoing and
+		// Shutdown will only be active on HOME-window but is deactivated by ongoing and
 		// near in time pending recordings
 		static private System.Windows.Forms.Timer  m_SDTimer = new System.Windows.Forms.Timer();
 
 		public NVPPowerScheduler()
 		{	
-			GetID = WINDOW_POWERSCHEDULER;
 		}
 	
-		public override bool Init()
-		{
-			if (m_bExtensiveLog) Log.Write(" PowerScheduler: Init() ");
-			LoadSettings();
-			
-			if (m_bDisabled)
-			{
-				return false;
-			}
-			else
-			{
-				if (m_bExtensiveLog) Log.Write("PowerScheduler: Call Start()");	
-				this.Start();
-			}
-			return true;
-		}
-    public override void DeInit()
-    {
-      m_Timer .Close();
-    }
-
-
 		public void Start()
 		{
+			if (! m_settingsread)
+				LoadSettings();
+			
 			if (m_bExtensiveLog) Log.Write(" PowerScheduler: Start() ");
 
 			if (m_bDisabled)
@@ -77,9 +58,8 @@ namespace MediaPortal.PowerScheduler
 				return;
 			}
 
-			// start recorder if needed and option choosed
-			if (m_bDisableTV)
-				Recorder.Start();
+			// start recorder if needed
+			Recorder.Start();
 
 			// if StartupInterval is larger than 0 register startup timer events
 			if (m_iStartupInterval > 0)
@@ -98,27 +78,18 @@ namespace MediaPortal.PowerScheduler
 			m_bResetWakeuptime = true;
 			m_iCurrentStart = -1;
 
+			// Initialize timer
 			m_SDTimer.Tick +=new EventHandler(OnTimer);
-			//m_SDTimer.Interval = 30000; // 30 secs between every check 
 			m_SDTimer.Interval = 10000; // 10 secs between every check 
-
-			if (m_iShutdownInterval > 0)
-			{
-				m_SDTimer.Start();
-				ResetShutdownTimer(m_iShutdownInterval);	// set and enable the shutdown timer
-			}
-			else
-			{	
-				ResetShutdownTimer(0);
-				m_SDTimer.Stop();
-			}
-		
+			m_SDTimer.Start();
+			ResetShutdownTimer(m_iShutdownInterval);
 		}
 
 		public void Stop()
-		{
-			if (m_bExtensiveLog) Log.Write(" PowerScheduler: Stop() ");
+		{	
+			// turn off m_timer to allow system to exit
 			m_Timer.SecondsToWait = -1;
+			Log.Write("PowerScheduler: Stop() ");	
 		}
  
 		/// <summary>
@@ -134,8 +105,7 @@ namespace MediaPortal.PowerScheduler
 			SetPowerUpTimer();
 
 			// start recorder if needed
-			if (m_bDisableTV)
-				Recorder.Start();
+			Recorder.Start();
 		}
 
 		/// <summary>
@@ -165,6 +135,20 @@ namespace MediaPortal.PowerScheduler
 
 			if (m_bExtensiveLog) Log.Write(" PowerScheduler: Active window {0}, {1}, {2}",GUIWindowManager.ActiveWindow,m_iActiveWindow, m_bShutdownEnabled);
 			
+			// If it's been more than 30 secs since last time this method was called
+			// assume system has been asleep 
+			if (DateTime.Now.Subtract(m_dtLastTimercheck).TotalSeconds > 30 )
+			{
+				Log.Write("PowerScheduler: System powerup detected ");
+
+				// start recorder if needed
+				Recorder.Start();
+
+				m_bShutdownEnabled = false;
+				ResetShutdownTimer(m_iShutdownInterval);
+			}
+			m_dtLastTimercheck = DateTime.Now;	
+
 			// Manages when to wake up
 			WakeupManager();
 
@@ -215,7 +199,9 @@ namespace MediaPortal.PowerScheduler
 			}
 
 			// Find the next pending recording 
-			DateTime nextStart = GetNextRecordingStarttime(m_iStartupInterval + m_iPreRecordInterval);
+			// add an extra 1 min to the interval to make sure we're in the future even if
+			// m_iStartupInterval and m_iPreRecordInterval = 0
+			DateTime nextStart = GetNextRecordingStarttime(m_iStartupInterval + m_iPreRecordInterval +1);
 			
 			// if Starttime differs set new starttime
 			if (nextStart.Ticks != m_iCurrentStart) 
@@ -284,7 +270,7 @@ namespace MediaPortal.PowerScheduler
 		}
 
 		/// <summary>
-		/// Check prior to shutdown if, shutdown is canceled by any 
+		/// Check prior to shutdown, if shutdown is canceled by any 
 		/// ongoing or pending recording. 
 		/// </summary>
 		private bool PreShutdownCheck()
@@ -300,10 +286,14 @@ namespace MediaPortal.PowerScheduler
 
 			if (Recorder.IsRecording)
 			{
-				Log.Write("PowerScheduler: Shutdown process aborted - TVrecording in progress");
+				if (m_bFirstLogRec) Log.Write("PowerScheduler: Shutdown process aborted - TVrecording in progress");
+				m_bFirstLogRec = false;
+
 				ResetShutdownTimer(m_iShutdownInterval);
 				return false;
 			}
+			else
+				m_bFirstLogRec = true; 
 
 			// Find the next pending recording
 			// If it's due in less than the "ShutdownInterval" cancel shutdown
@@ -338,13 +328,9 @@ namespace MediaPortal.PowerScheduler
 			TimeSpan tDelta = m_dtShutdownTime.Subtract(DateTime.Now);			
 			if (m_bShutdownEnabled && (DateTime.Now.CompareTo(m_dtShutdownTime)>0) )
 			{
-				Log.Write("PowerScheduler: Shutdown timer expired");
+				if (m_bExtensiveLog) Log.Write("PowerScheduler: Shutdown timer expired");
 				if (PreShutdownCheck())
 				{
-					// about to shutdown - disable shutdown timer
-					ResetShutdownTimer(0);
-					m_SDTimer.Stop();
-					
 					if (m_bDisableTV)
 					{
 						Log.Write("PowerScheduler: Prepare for shutdown, disable any TVcard ");
@@ -382,11 +368,11 @@ namespace MediaPortal.PowerScheduler
 		/// </summary>
 		static void ResetShutdownTimer(int aMinutes)
 		{	
-			Log.Write("PowerScheduler: ResetShutdownTimer() ");
+			if (m_bExtensiveLog) Log.Write(" PowerScheduler: ResetShutdownTimer() ");
 
 			if (aMinutes == 0)
 			{	// shutdown disabled (set shutdown time 1 year into the future)
-				// - this is probably not the best solution
+				// - this is probably not the best solution but it works
 				m_dtShutdownTime = DateTime.Now.AddYears(1);
 
 				if (m_bShutdownEnabled)
@@ -413,7 +399,7 @@ namespace MediaPortal.PowerScheduler
 
 		void LoadSettings()
 		{
-			Log.Write("PowerScheduler: 0.1 beta(3)");
+			Log.Write("PowerScheduler: version 0.2");
 
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
@@ -463,8 +449,15 @@ namespace MediaPortal.PowerScheduler
 			// care not to set it to the current recording (due in a minute or so) 
 			ArrayList recordings = new ArrayList();
 			ArrayList TVGuideRecordings = new ArrayList();
-			DateTime nextStarttime = DateTime.Now.AddMonths(1);
+			
+			// Set the timeframe in which we will look in the TVGuide for new programs to record
+			// If the TVGuide helds data for more thans a month we're not interested in more than the fist month anyway.
+			// If no recording is found system will be set to wake in a month from now
+			DateTime nextStarttime = DateTime.Now.AddMonths(1);	
+																					
 			DateTime earliestStarttime = DateTime.Now.AddMinutes(minutes);	
+
+			if (m_bExtensiveLog) Log.Write(" PowerScheduler: Earliest valid starttime {0}", earliestStarttime);
 
 			recordings.Clear();
 			TVGuideRecordings.Clear();
@@ -473,7 +466,7 @@ namespace MediaPortal.PowerScheduler
 			{
 				foreach (TVRecording recording in recordings)
 				{
-					DateTime tmpNextStarttime = new DateTime();
+					DateTime tmpNextStarttime = new DateTime();	
 
 					if (recording.Canceled > 0)
 					{
@@ -517,19 +510,19 @@ namespace MediaPortal.PowerScheduler
 							double days = - Math.Round(tmpNextStarttime.Subtract(earliestStarttime).TotalDays,0) ;	
 							double weeks = Math.Round((days / 7),0);
 							tmpNextStarttime = tmpNextStarttime.AddDays(weeks * 7 + 7);
-							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  Weekly next starttime {0} ", tmpNextStarttime);
+							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  Weekly next starttime {0}", tmpNextStarttime);
 							break;
 						}
 						case (TVRecording.RecordingType.EveryTimeOnEveryChannel):
 						{
 							TVGuideRecordings.Add(recording);
-							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  EveryTimeOnEveryChannel ");
+							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  EveryTimeOnEveryChannel {0}",recording.Title);
 							break;
 						}
 						case (TVRecording.RecordingType.EveryTimeOnThisChannel):
 						{
 							TVGuideRecordings.Add(recording);
-							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  EveryTimeOnThisChannel ");
+							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  EveryTimeOnThisChannel {0} {1}",recording.Title, recording.Channel);
 							break;
 						}
 					}
@@ -553,34 +546,38 @@ namespace MediaPortal.PowerScheduler
 					{
 						foreach (TVProgram program in tvPrograms)
 						{
-							foreach (TVRecording rec in TVGuideRecordings)
+							// make sure we're only looking at programs from the future
+							if (program.StartTime.AddMinutes(- m_iPreRecordInterval).Ticks > earliestStarttime.Ticks)
 							{
-		
-								switch (rec.RecType)
+								foreach (TVRecording rec in TVGuideRecordings)
 								{
-									case (TVRecording.RecordingType.EveryTimeOnEveryChannel):
-									{		
-										if (program.Title == rec.Title)
-										{
+				
+									switch (rec.RecType)
+									{
+										case (TVRecording.RecordingType.EveryTimeOnEveryChannel):
+										{		
 											tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
-											programfound = true;
-											if (m_bExtensiveLog) Log.Write(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
+											if (tmpNextStarttime.Ticks > earliestStarttime.Ticks)
+											{
+												programfound = true;
+												if (m_bExtensiveLog) Log.Write(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
+											}
+											break;
 										}
-										break;
-									}
-									case (TVRecording.RecordingType.EveryTimeOnThisChannel):
-									{		
-										if (program.Title == rec.Title && program.Channel == rec.Channel)
-										{
-											tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
-											programfound = true;
-											if (m_bExtensiveLog) Log.Write(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
+										case (TVRecording.RecordingType.EveryTimeOnThisChannel):
+										{		
+											if (program.Title == rec.Title && program.Channel == rec.Channel)
+											{
+												tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
+												programfound = true;
+												if (m_bExtensiveLog) Log.Write(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
+											}
+											break;
 										}
-										break;
 									}
+									if (programfound)
+										break;
 								}
-								if (programfound)
-									break;
 							}
 							if (programfound)
 								break;
