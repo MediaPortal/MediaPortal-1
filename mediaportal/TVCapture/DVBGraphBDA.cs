@@ -894,7 +894,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
 						return;
 					}
-					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} symbolrate:{1} polarisation:{2} innerFec:{3} symbolrate:{4} ONID:{5} TSID:{6} SID:{7}", 
+					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6}", 
 						frequency,polarisation, innerFec, symbolrate, ONID, TSID, SID);
 
 					//get the IDVBSLocator interface from the new tuning request
@@ -1364,7 +1364,7 @@ namespace MediaPortal.TV.Recording
 			//on some signalpresent is only true when tuned to a channel
 			//on others  signalpresent is true when tuned to a transponder
 			//so we just look if any variables returns true
-			Log.Write("  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
+		//	Log.Write("  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
 
 			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
 			{
