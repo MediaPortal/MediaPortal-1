@@ -762,7 +762,7 @@ namespace MediaPortal.GUI.Video
 			if (item.IsFolder)
 			{
 				// Check if folder is actually a DVD. If so don't browse this folder, but play the DVD!
-        if (System.IO.File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+        if ((System.IO.File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO")) && (item.Label!=".."))
         {
           bFolderIsMovie = true;
           item.Path      = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
@@ -840,7 +840,10 @@ namespace MediaPortal.GUI.Video
           }
         }
         
-        if (!m_directory.IsRemoteFileDownloaded(item.Path,item.FileInfo.Length) ) return;
+        if (item.FileInfo != null)
+        {
+          if (!m_directory.IsRemoteFileDownloaded(item.Path,item.FileInfo.Length) ) return;
+        }
         string strFileName = item.Path;
         strFileName=m_directory.GetLocalFilename(strFileName);
 
@@ -1116,7 +1119,36 @@ namespace MediaPortal.GUI.Video
       //if ( Utils.IsNFO(strFile)) return;
       if (PlayListFactory.IsPlayList(strFile)) return;
 
+      if (!VideoDatabase.HasMovieInfo(strFile))
+      {
+        // set initial movie info
       VideoDatabase.AddMovieFile(strFile);
+  
+        IMDBMovie movieDetails = new IMDBMovie();             
+        int iMovieId=VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
+        if (iMovieId>=0)
+        {
+          if (Utils.IsDVD(strFile))
+          {
+            //DVD
+            movieDetails.DVDLabel = Utils.GetDriveName(System.IO.Path.GetPathRoot(strFile));
+            movieDetails.Title = movieDetails.DVDLabel;
+          }
+          else if (strFile.ToLower().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >=0)
+          {
+            //DVD folder
+            strFile = strFile.Substring(0,strFile.ToLower().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO")-1);
+            movieDetails.DVDLabel = Utils.GetDriveName(System.IO.Path.GetFileName(strFile));
+            movieDetails.Title = movieDetails.DVDLabel;
+          }
+          else
+          {
+            //Movie 
+            movieDetails.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
+          }
+          VideoDatabase.SetMovieInfoById(iMovieId, ref movieDetails);
+        }
+      }
 		}
 
 		bool OnScan(ArrayList items)

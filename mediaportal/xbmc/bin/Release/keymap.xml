@@ -504,8 +504,8 @@
       <description>Previous Picture</description>
     </action>
     <action>
-      <id>12</id>
-      <key>SPACE</key>
+      <id>105</id>
+      <key>Enter</key>
       <sound />
       <description>Pause/Continue</description>
     </action>

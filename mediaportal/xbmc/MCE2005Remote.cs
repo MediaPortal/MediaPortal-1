@@ -350,25 +350,22 @@ namespace MediaPortal
           case 0x9: // info
             if (header.hid.RawData3==2)
             {
-              if (g_Player.Player != null)
+              if (GUIGraphicsContext.IsFullScreenVideo)                   
               {
-                if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)                   
-                {
-                  //pop up OSD during fullscreen video
-                  action=new Action(Action.ActionType.ACTION_SHOW_OSD,0,0);
-                  return true;
-                }
+                //pop up OSD during fullscreen video or live tv (even without timeshift)
+                action=new Action(Action.ActionType.ACTION_SHOW_OSD,0,0);
+                return true;
               }
 
+              // Pop up info display
               action=new Action(Action.ActionType.ACTION_SHOW_INFO,0,0);
-              return true;
             }
             else
             {
               Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
               return false;
             }
-          //break;
+            break;
           case 0x25://My tv
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
@@ -380,12 +377,9 @@ namespace MediaPortal
           case 0x24://DVD menu
             if (header.hid.RawData3==0)
             {
-              if (g_Player.Player != null)
+              if (g_Player.Playing && g_Player.IsDVD)
               {
-                if (g_Player.Playing && g_Player.IsDVD)
-                {
-                  action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
-                }
+                action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
               }
             }
             else if (header.hid.RawData3==2)
@@ -429,6 +423,11 @@ namespace MediaPortal
             {
               action = new Action(Action.ActionType.ACTION_ASPECT_RATIO,0,0);  
             }
+            else
+            {
+              Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+              return false;
+            }
             break;
           case 0x4A://My Video
             GUIGraphicsContext.IsFullScreenVideo=false;
@@ -464,18 +463,16 @@ namespace MediaPortal
             action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
             break;
           case 0xB5: //next
-            if (g_Player.Player != null)
-              if ((g_Player.Player.Playing) && (g_Player.IsDVD))
+            if ((g_Player.Playing) && (g_Player.IsDVD))
                 action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
               else
                 action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
             break;
-          case 0xb6: //previous
-            if (g_Player.Player != null)
-              if ((g_Player.Player.Playing) && (g_Player.IsDVD))
-                  action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
-                else
-                  action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
+          case 0xB6: //previous
+            if ((g_Player.Playing) && (g_Player.IsDVD))
+              action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+            else
+              action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
             break;
           case 0xb7: //stop
             action=new Action(Action.ActionType.ACTION_STOP,0,0);
@@ -496,7 +493,7 @@ namespace MediaPortal
             break;
           default:
             Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
-          break;
+            return false;
         }
         return true;
       }

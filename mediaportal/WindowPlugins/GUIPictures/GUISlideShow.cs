@@ -766,20 +766,16 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
 
-        case Action.ActionType.ACTION_PAUSE:
+        case Action.ActionType.ACTION_PAUSE_PICTURE:
           if (m_bSlideShow) 
           {
-            m_bPause=!m_bPause;
-          }
-          m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
-        break;
-
-        case Action.ActionType.ACTION_PLAY:
-          if (m_bSlideShow) 
-          {
-            m_bPause=false;
             if (m_iZoomFactor != 1)
+            {
               Zoom(1);
+              m_bPause = false;
+            }
+            else
+              m_bPause=!m_bPause;
           }
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           break;

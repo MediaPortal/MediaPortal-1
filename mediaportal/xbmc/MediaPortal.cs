@@ -1148,7 +1148,7 @@ public class MediaPortalApp : D3DApp, IRender
 							break;
 	          
 						case Action.ActionType.ACTION_PAUSE : 
-							if (!GUIGraphicsContext.IsFullScreenVideo && GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_SLIDESHOW)
+							if (!GUIGraphicsContext.IsFullScreenVideo)
 							{
 								g_Player.Pause();
 								return;
@@ -1156,7 +1156,7 @@ public class MediaPortalApp : D3DApp, IRender
 							break;
 
 						case Action.ActionType.ACTION_PLAY : 
-							if (!GUIGraphicsContext.IsFullScreenVideo && GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_SLIDESHOW)
+							if (!GUIGraphicsContext.IsFullScreenVideo)
 							{
 								if (g_Player.Speed != 1)
 								{
