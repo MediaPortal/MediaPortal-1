@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 
+using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Video.Database;
@@ -531,42 +532,46 @@ namespace MediaPortal.Configuration.Sections
 			if (ext==".ifo") return;
 			if (ext==".vob") return;
 			IMDBMovie movieDetails=new IMDBMovie();
-			int id=VideoDatabase.GetMovieInfo(file,ref movieDetails);
-			if (id>=0) return;
-
-			progressBarFile.Value=5;
-			int selectedItem=0;
 			IMDB imdb = new IMDB(this);
-			Application.DoEvents();
-			imdb.Find( Utils.GetFilename(file));
-			progressBarFile.Value=10;
-			Application.DoEvents();
-			if (imdb.Count<=0) return;
-			if (imdb.Count>0)
+			int selectedItem=0;
+			int id=VideoDatabase.GetMovieInfo(file,ref movieDetails);
+			if (id<0) 
 			{
-				DlgMovieList dlg = new DlgMovieList();
-				dlg.Filename=file;
-				for (int i=0; i < imdb.Count;++i)
-					dlg.AddMovie(imdb[i].Title);
-				if (dlg.ShowDialog() == DialogResult.Cancel) return;
-				selectedItem=dlg.SelectedItem;
+				progressBarFile.Value=5;
+				Application.DoEvents();
+				imdb.Find( Utils.GetFilename(file));
+				progressBarFile.Value=10;
+				Application.DoEvents();
+				if (imdb.Count<=0) return;
+				if (imdb.Count>0)
+				{
+					DlgMovieList dlg = new DlgMovieList();
+					dlg.Filename=file;
+					for (int i=0; i < imdb.Count;++i)
+						dlg.AddMovie(imdb[i].Title);
+					if (dlg.ShowDialog() == DialogResult.Cancel) return;
+					selectedItem=dlg.SelectedItem;
+				}
+
+				if (stopRebuild) return;
+				if ( imdb.GetDetails(imdb[selectedItem],ref movieDetails))
+				{
+					progressBarFile.Value=20;
+					Application.DoEvents();
+					id=VideoDatabase.AddMovie(file,false);
+					VideoDatabase.SetMovieInfo(file,ref movieDetails);
+
+					if (stopRebuild) return;
+					//download thumbnail
+					DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);
+					
+					if (stopRebuild) return;
+					progressBarFile.Value=30;
+					Application.DoEvents();
+				}
 			}
-
-			if (stopRebuild) return;
-			if ( imdb.GetDetails(imdb[selectedItem],ref movieDetails))
+			if (id>=0)
 			{
-				progressBarFile.Value=20;
-				Application.DoEvents();
-				VideoDatabase.AddMovie(file,false);
-				VideoDatabase.SetMovieInfo(file,ref movieDetails);
-
-				if (stopRebuild) return;
-				//download thumbnail
-				DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);
-				
-				if (stopRebuild) return;
-				progressBarFile.Value=30;
-				Application.DoEvents();
 				//"Cast overview:\nNaomi Watts as Rachel Keller\nMartin Henderson as Noah Clay\nDavid Dorfman as Aidan Keller\nBrian Cox as Richard Morgan\nJane Alexander as Dr. Grasnik\nLindsay Frost as Ruth Embry\nAmber Tamblyn as Katie Embry\nRachael Bella as Rebecca ''Becca'' Kotler\nDaveigh Chase as Samara Morgan\nShannon Cochran as Anna Morgan\nSandra Thigpen as Teacher\nRichard Lineback as Innkeeper\nSasha Barrese as Girl Teen #1\nTess Hall as Girl Teen #2\nAdam Brody as Kellen, Male Teen #1"
 				string[] actors=movieDetails.Cast.Split('\n');
 				if (actors.Length>1)
@@ -594,7 +599,15 @@ namespace MediaPortal.Configuration.Sections
 							progressBarFile.Value+=step;
 							Application.DoEvents();
 							if (stopRebuild) return;
-							DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+							if (imdbActor.ThumbnailUrl!=null)
+							{
+								if (imdbActor.ThumbnailUrl.Length!=0)
+								{
+									DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+								}
+								else Log.Write("url=empty for actor {0}", actor);
+							}
+							else Log.Write("url=null for actor {0}", actor);
 							
 							if (stopRebuild) return;
 							progressBarFile.Value+=step;
@@ -634,6 +647,7 @@ namespace MediaPortal.Configuration.Sections
 						MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, 128, 128, 0);
 						MediaPortal.Util.Picture.CreateThumbnail(strTemp, LargeThumb, 512, 512, 0);
 					}
+					else Log.Write("Unable to download {0}->{1}", url,strTemp);
 					Utils.FileDelete(strTemp);
 				}
 			}

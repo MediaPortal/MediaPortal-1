@@ -468,19 +468,28 @@ namespace MediaPortal.Video.Database
 			percent=0;
 			if (m_progress!=null) m_progress.OnProgress(line1,line2,line3,percent);
 			strURL=String.Format( "http://us.imdb.com/find?q={0};nm=on;mx=20",strSearch);
-			FindIMDBActor(strURL);
+			FindIMDBActor(strURL,strActor);
 
 		} // END FindActor()
 
-		private void FindIMDBActor(string strURL)
+		private void FindIMDBActor(string strURL, string strActor)
 		{
 			try
 			{
 				HTMLUtil htmlUtil=new HTMLUtil();
 				string strBody = GetPage(strURL,"utf-8");
 				int posStart=0,posEnd;
+				posStart=strBody.IndexOf("<a name=\"headshot");
+				if (posStart>0)
+				{
+					IMDBUrl oneUrl =new IMDBUrl(strURL,strActor,"IMDB");
+					elements.Add(oneUrl);
+					return;
+				}
+				posStart=0;
 				do
 				{
+
 					//<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
 					posStart=strBody.IndexOf("<a href=\"/name/",posStart);
 					if (posStart < 0)  break;
@@ -526,6 +535,8 @@ namespace MediaPortal.Video.Database
 			string strURL="";
 			HTMLUtil util= new HTMLUtil();
 			util.getAttributeOfTag(imgTag, "src=\"", ref strURL);
+			if (strURL==null)
+				util.getAttributeOfTag(imgTag, "SRC=\"", ref strURL);
 
 			actor.Name=url.Title;
 			actor.ThumbnailUrl=strURL;

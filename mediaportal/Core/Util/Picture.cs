@@ -831,7 +831,7 @@ namespace MediaPortal.Util
       GC.Collect();
       if (strFile==null) return;
       if (strFile.Length==0) return;
-      Log.Write("create thumbnail for {0}", strFile);
+      Log.Write("create {0}x{1} thumbnail from {2}->{3}", iMaxWidth,iMaxHeight,strFile,strThumb);
       Image theImage=null;
       try
       {
@@ -880,7 +880,7 @@ namespace MediaPortal.Util
               g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
               g.DrawImage(theImage, new Rectangle(0,0,iWidth,iHeight) );
             }
-            result.Save(strThumb,System.Drawing.Imaging.ImageFormat.Jpeg);
+            result.Save(strThumb);//,System.Drawing.Imaging.ImageFormat.Jpeg);
           }
 
         }
