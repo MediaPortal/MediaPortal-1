@@ -159,8 +159,6 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin);
 		
-		[DllImport("kernel32.dll", EntryPoint="RtlCopyMemory")]
-		public static extern void CopyMemory(IntPtr Destination, IntPtr Source,[MarshalAs(UnmanagedType.U4)] int Length);
 		// registry settings
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
@@ -235,7 +233,7 @@ namespace MediaPortal.TV.Recording
 		DVBTeletext						m_teleText=new DVBTeletext();
 		int								m_retryCount=0;
 		TSHelperTools					m_tsHelper=new TSHelperTools();
-
+		string							m_cardType="";
 
 //
 		
@@ -247,6 +245,7 @@ namespace MediaPortal.TV.Recording
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				m_pluginsEnabled=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
+				m_cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
 			}
 			
 			// teletext settings
@@ -597,56 +596,59 @@ namespace MediaPortal.TV.Recording
 			if(m_tunerCtrl==null || m_dataCtrl==null || m_b2c2Adapter==null || m_avCtrl==null)
 				return false;
 
-
-			hr = m_tunerCtrl.SetFrequency(Frequency);
-			if (hr!=0)
+			// skystar
+			if(m_cardType=="" || m_cardType=="skystar")
 			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetFrequency");
-				return false;	// *** FUNCTION EXIT POINT
+				hr = m_tunerCtrl.SetFrequency(Frequency);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetFrequency");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetSymbolRate");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetLnbFrequency");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetFec(FEC);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetFec");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetPolarity(POL);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetPolarity");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetLnbKHz");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetDiseqc(Diseq);
+				if (hr!=0)
+				{
+					Log.Write("Tune for SkyStar2 FAILED: on SetDiseqc");
+					return false;	// *** FUNCTION EXIT POINT
+				}
 			}
-        
-			hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
-			if (hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetSymbolRate");
-				return false;	// *** FUNCTION EXIT POINT
-			}
-        
-			hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
-			if (hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetLnbFrequency");
-				return false;	// *** FUNCTION EXIT POINT
-			}
-        
-			hr = m_tunerCtrl.SetFec(FEC);
-			if (hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetFec");
-				return false;	// *** FUNCTION EXIT POINT
-			}
-        
-			hr = m_tunerCtrl.SetPolarity(POL);
-			if (hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetPolarity");
-				return false;	// *** FUNCTION EXIT POINT
-			}
-        
-			hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
-			if (hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetLnbKHz");
-				return false;	// *** FUNCTION EXIT POINT
-			}
-        
-			hr = m_tunerCtrl.SetDiseqc(Diseq);
-			if (hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetDiseqc");
-				return false;	// *** FUNCTION EXIT POINT
-			}
+			// cablestar
 			
+			
+			
+			// airstar
+
+			// final
 			hr = m_tunerCtrl.SetTunerStatus();
 			if (hr!=0)	
 			{
@@ -692,6 +694,9 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
 					SetPidToPin(m_dataCtrl,0,dvbsubPID);
+					SetPidToPin(m_dataCtrl,0,0xD3);
+					SetPidToPin(m_dataCtrl,0,0xD2);
+
 					if(pcrPID!=VideoPID)
 						SetPidToPin(m_dataCtrl,0,pcrPID);
 
@@ -726,6 +731,9 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,17);
 					SetPidToPin(m_dataCtrl,0,18);
 					SetPidToPin(m_dataCtrl,0,ecmPID);
+					SetPidToPin(m_dataCtrl,0,0xD3);
+					SetPidToPin(m_dataCtrl,0,0xD2);
+
 					SetPidToPin(m_dataCtrl,0,ttxtPID);
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,VideoPID);

@@ -115,13 +115,17 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button button21;
 		private System.Windows.Forms.CheckBox checkBox6;
 		private System.Windows.Forms.Button button22;
+		private System.Windows.Forms.GroupBox groupBox9;
+		private System.Windows.Forms.RadioButton cablestar;
+		private System.Windows.Forms.RadioButton airstar;
+		private System.Windows.Forms.RadioButton skystar;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		
-		public DVBSSS2(): this("SkyStar2 Settings")
+		public DVBSSS2(): this("Technisat DVB Cards")
 		{
 			LoadConfig();
 			TVChannel	tv=new TVChannel();
@@ -209,6 +213,10 @@ namespace MediaPortal.Configuration.Sections
 			this.button5 = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.groupBox9 = new System.Windows.Forms.GroupBox();
+			this.cablestar = new System.Windows.Forms.RadioButton();
+			this.airstar = new System.Windows.Forms.RadioButton();
+			this.skystar = new System.Windows.Forms.RadioButton();
 			this.label4 = new System.Windows.Forms.Label();
 			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
@@ -273,6 +281,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
+			this.groupBox9.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.groupBox6.SuspendLayout();
@@ -290,9 +299,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox1.Controls.Add(this.checkBox4);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 256);
+			this.groupBox1.Location = new System.Drawing.Point(8, 320);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(424, 80);
+			this.groupBox1.Size = new System.Drawing.Size(424, 56);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Plugins:";
@@ -300,7 +309,7 @@ namespace MediaPortal.Configuration.Sections
 			// checkBox4
 			// 
 			this.checkBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox4.Location = new System.Drawing.Point(24, 24);
+			this.checkBox4.Location = new System.Drawing.Point(24, 16);
 			this.checkBox4.Name = "checkBox4";
 			this.checkBox4.Size = new System.Drawing.Size(328, 32);
 			this.checkBox4.TabIndex = 0;
@@ -629,6 +638,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.treeView1.CheckBoxes = true;
 			this.treeView1.ImageIndex = -1;
+			this.treeView1.LabelEdit = true;
 			this.treeView1.Location = new System.Drawing.Point(8, 48);
 			this.treeView1.Name = "treeView1";
 			this.treeView1.SelectedImageIndex = -1;
@@ -636,6 +646,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView1.Sorted = true;
 			this.treeView1.TabIndex = 5;
 			this.treeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeSelect);
+			this.treeView1.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView1_AfterLabelEdit);
 			this.treeView1.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeCheck);
 			// 
 			// label8
@@ -680,6 +691,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.groupBox9);
 			this.tabPage1.Controls.Add(this.label4);
 			this.tabPage1.Controls.Add(this.numericUpDown1);
 			this.tabPage1.Controls.Add(this.checkBox3);
@@ -693,13 +705,58 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.Text = "Card config";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
 			// 
+			// groupBox9
+			// 
+			this.groupBox9.Controls.Add(this.cablestar);
+			this.groupBox9.Controls.Add(this.airstar);
+			this.groupBox9.Controls.Add(this.skystar);
+			this.groupBox9.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox9.Location = new System.Drawing.Point(8, 200);
+			this.groupBox9.Name = "groupBox9";
+			this.groupBox9.Size = new System.Drawing.Size(424, 56);
+			this.groupBox9.TabIndex = 8;
+			this.groupBox9.TabStop = false;
+			this.groupBox9.Text = "Card-Type";
+			// 
+			// cablestar
+			// 
+			this.cablestar.Enabled = false;
+			this.cablestar.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.cablestar.Location = new System.Drawing.Point(256, 24);
+			this.cablestar.Name = "cablestar";
+			this.cablestar.Size = new System.Drawing.Size(120, 16);
+			this.cablestar.TabIndex = 2;
+			this.cablestar.Text = "CableStar (DVB-C)";
+			// 
+			// airstar
+			// 
+			this.airstar.Enabled = false;
+			this.airstar.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.airstar.Location = new System.Drawing.Point(144, 24);
+			this.airstar.Name = "airstar";
+			this.airstar.Size = new System.Drawing.Size(112, 16);
+			this.airstar.TabIndex = 1;
+			this.airstar.Text = "AirStar (DVB-T)";
+			// 
+			// skystar
+			// 
+			this.skystar.Checked = true;
+			this.skystar.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.skystar.Location = new System.Drawing.Point(16, 24);
+			this.skystar.Name = "skystar";
+			this.skystar.Size = new System.Drawing.Size(112, 16);
+			this.skystar.TabIndex = 0;
+			this.skystar.TabStop = true;
+			this.skystar.Text = "SkyStar (DVB-S)";
+			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(232, 216);
+			this.label4.Location = new System.Drawing.Point(232, 288);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(72, 16);
 			this.label4.TabIndex = 7;
 			this.label4.Text = "milliseconds";
+			this.label4.Visible = false;
 			// 
 			// numericUpDown1
 			// 
@@ -709,7 +766,7 @@ namespace MediaPortal.Configuration.Sections
 																			 0,
 																			 0,
 																			 0});
-			this.numericUpDown1.Location = new System.Drawing.Point(168, 214);
+			this.numericUpDown1.Location = new System.Drawing.Point(168, 288);
 			this.numericUpDown1.Maximum = new System.Decimal(new int[] {
 																		   2000,
 																		   0,
@@ -728,25 +785,28 @@ namespace MediaPortal.Configuration.Sections
 																		 0,
 																		 0,
 																		 0});
+			this.numericUpDown1.Visible = false;
 			// 
 			// checkBox3
 			// 
 			this.checkBox3.Enabled = false;
 			this.checkBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox3.Location = new System.Drawing.Point(24, 192);
+			this.checkBox3.Location = new System.Drawing.Point(24, 264);
 			this.checkBox3.Name = "checkBox3";
 			this.checkBox3.Size = new System.Drawing.Size(104, 16);
 			this.checkBox3.TabIndex = 5;
 			this.checkBox3.Text = "Grab EPG-Data";
+			this.checkBox3.Visible = false;
 			this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(40, 216);
+			this.label3.Location = new System.Drawing.Point(40, 288);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(128, 16);
 			this.label3.TabIndex = 4;
 			this.label3.Text = "EPG-Grabbing Interval:";
+			this.label3.Visible = false;
 			// 
 			// tabPage2
 			// 
@@ -776,7 +836,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox6.Location = new System.Drawing.Point(256, 8);
 			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(176, 312);
+			this.groupBox6.Size = new System.Drawing.Size(176, 288);
 			this.groupBox6.TabIndex = 26;
 			this.groupBox6.TabStop = false;
 			this.groupBox6.Text = "Transponder to Scan";
@@ -805,7 +865,7 @@ namespace MediaPortal.Configuration.Sections
 			// button10
 			// 
 			this.button10.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button10.Location = new System.Drawing.Point(64, 280);
+			this.button10.Location = new System.Drawing.Point(64, 256);
 			this.button10.Name = "button10";
 			this.button10.Size = new System.Drawing.Size(48, 21);
 			this.button10.TabIndex = 23;
@@ -825,7 +885,7 @@ namespace MediaPortal.Configuration.Sections
 			// button11
 			// 
 			this.button11.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button11.Location = new System.Drawing.Point(120, 280);
+			this.button11.Location = new System.Drawing.Point(120, 256);
 			this.button11.Name = "button11";
 			this.button11.Size = new System.Drawing.Size(48, 21);
 			this.button11.TabIndex = 24;
@@ -840,7 +900,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView4.Location = new System.Drawing.Point(8, 48);
 			this.treeView4.Name = "treeView4";
 			this.treeView4.SelectedImageIndex = -1;
-			this.treeView4.Size = new System.Drawing.Size(160, 224);
+			this.treeView4.Size = new System.Drawing.Size(160, 200);
 			this.treeView4.Sorted = true;
 			this.treeView4.TabIndex = 18;
 			this.treeView4.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView4_AfterLabelEdit);
@@ -1332,6 +1392,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
+			this.groupBox9.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			this.groupBox6.ResumeLayout(false);
@@ -1460,6 +1521,14 @@ namespace MediaPortal.Configuration.Sections
 					xmlwriter.SetValue("DVBSS2","lnbkind2",lnbkind2.SelectedIndex);
 					xmlwriter.SetValue("DVBSS2","lnbkind3",lnbkind3.SelectedIndex);
 					xmlwriter.SetValue("DVBSS2","lnbkind4",lnbkind4.SelectedIndex);
+					if(skystar.Checked==true)
+						xmlwriter.SetValue("DVBSS2","cardtype","skystar");
+					if(airstar.Checked==true)
+						xmlwriter.SetValue("DVBSS2","cardtype","airstar");
+					if(cablestar.Checked==true)
+						xmlwriter.SetValue("DVBSS2","cardtype","cablestar");
+
+					
 				}
 			}
 			catch (Exception ex)
@@ -1470,11 +1539,30 @@ namespace MediaPortal.Configuration.Sections
 		void LoadConfig()
 		{
 			string path=@Application.StartupPath+@"\";
-
+			string cardType="";
 			try
 			{
 				using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(path+"MediaPortal.xml"))
 				{
+					cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
+					switch(cardType)
+					{
+						case "skystar":
+							skystar.Checked=true;
+							airstar.Checked=false;
+							cablestar.Checked=false;
+							break;
+						case "airstar":
+							skystar.Checked=false;
+							airstar.Checked=true;
+							cablestar.Checked=false;
+							break;	
+						case "cablestar":
+							skystar.Checked=false;
+							airstar.Checked=false;
+							cablestar.Checked=true;
+							break;
+					}
 					checkBox1.Checked=xmlreader.GetValueAsBool("DVBSS2","use_diseqc",checkBox1.Checked);
 					diseqca.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqca",0);
 					lnbconfig1.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig1",0);
@@ -2706,6 +2794,8 @@ namespace MediaPortal.Configuration.Sections
 			treeView5.Enabled=false;
 			m_scanRunning=true;
 			SaveList();
+			m_b2c2Helper.TuneChannel(12515,22000,6,0,1,1,10600);
+			ssEPG.GetMHWEPG(m_b2c2Helper.Mpeg2DataFilter);
 			int counter=0;
 			bool tuned=false;
 			int channelCount=0;
@@ -2741,6 +2831,7 @@ namespace MediaPortal.Configuration.Sections
 							tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
 							if(tuned==false)
 								continue ;
+							
 							currChannel.Text=ch.ServiceName;
 							counter+=ssEPG.GetEPG(m_b2c2Helper.Mpeg2DataFilter,0/*all services*/);
 							totalDBcount.Text=counter.ToString();
@@ -3022,6 +3113,16 @@ namespace MediaPortal.Configuration.Sections
 		{
 			button18.PerformClick();
 			LoadList();
+		}
+
+		private void treeView1_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+		{
+			if(e.Node.Tag==null)
+				return;
+			DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)e.Node.Tag;
+			ch.service_name=e.Label;
+			e.Node.Tag=ch;
+			e.Node.Text+=(ch.serviceType==1?" (TV)":" (Radio)");
 		}
 	}// class
 }// namespace

@@ -20,8 +20,6 @@ namespace MediaPortal.TV.Recording
 		private static extern bool ReleaseSectionsBuffer();
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid,int tid,ref int sectionCount,int tableSection,int timeout);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool GetSectionDataI(int pid,int tid,ref int sectionCount,int tableSection,int timeout);
 		// globals
 		TPList[]							transp;
 		ArrayList							m_sectionsList;	
@@ -1697,7 +1695,16 @@ namespace MediaPortal.TV.Recording
 			
 		}		//
 
+		// get mhw epg
+		// program titles	= pid 0xD2, table 0x90
+		// program summaries= pid 0xD3, table 0x90
+		// theme names		= pid 0xD3, table 0x92
 		//
+		public void GetMHWData(DShowNET.IBaseFilter filter)
+		{
+			GetStreamData(filter,0xd3,0x90,1,m_timeoutMS);
+			int a=0;
+		}
 		// get current/next info
 		//
 		public ArrayList GetEITPresentFollowing(DShowNET.IBaseFilter filter)

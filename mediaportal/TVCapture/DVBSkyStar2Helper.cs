@@ -540,6 +540,8 @@ namespace MediaPortal.TV.Recording
 		void SetEITPid()
 		{
 			SetPidToPin(m_dataCtrl,0,18);
+			SetPidToPin(m_dataCtrl,0,0xd2);
+			SetPidToPin(m_dataCtrl,0,0xd3);
 		}
 		void DeletePids()
 		{
@@ -716,7 +718,7 @@ namespace MediaPortal.TV.Recording
 				return false;
 
 			DeleteAllPIDs(m_dataCtrl,0);
-			SetPidToPin(m_dataCtrl,0,18);
+			SetEITPid();
             
 			return true;
 		}

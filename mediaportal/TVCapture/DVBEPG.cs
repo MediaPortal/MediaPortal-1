@@ -150,7 +150,7 @@ namespace MediaPortal.TV.Recording
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			
-				lastTab=0x50;
+			lastTab=0x50;
 
 			if(lastTab>0x50)
 			{
@@ -243,10 +243,14 @@ namespace MediaPortal.TV.Recording
 						eventsCount+=SetEITToDatabase(eit,progName,0x50);
 					n++;
 				}
-
 		
 			GC.Collect();
 			return 	eventsCount;
+
+		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
+		public void GetMHWEPG(DShowNET.IBaseFilter filter)
+		{
+			m_sections.GetMHWData(filter);
 
 		}
 	}// class

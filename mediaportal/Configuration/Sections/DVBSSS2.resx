@@ -196,11 +196,11 @@
   <data name="label10.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="label7.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="label7.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
+  </data>
+  <data name="label7.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="label7.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
@@ -262,11 +262,11 @@
   <data name="diseqcc.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="diseqcc.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="diseqcc.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
+  </data>
+  <data name="diseqcc.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="diseqcb.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
@@ -298,11 +298,11 @@
   <data name="sat2.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="sat2.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="sat2.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
+  </data>
+  <data name="sat2.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="button4.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -448,6 +448,51 @@
   <data name="tabPage1.GridSize" type="System.Drawing.Size, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>8, 8</value>
   </data>
+  <data name="groupBox9.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="groupBox9.GridSize" type="System.Drawing.Size, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>8, 8</value>
+  </data>
+  <data name="groupBox9.SnapToGrid" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </data>
+  <data name="groupBox9.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </data>
+  <data name="groupBox9.DrawGrid" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </data>
+  <data name="groupBox9.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="cablestar.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </data>
+  <data name="cablestar.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="cablestar.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="airstar.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </data>
+  <data name="airstar.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="airstar.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="skystar.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </data>
+  <data name="skystar.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="skystar.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
   <data name="label4.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
@@ -457,14 +502,14 @@
   <data name="label4.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="numericUpDown1.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="numericUpDown1.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="numericUpDown1.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
+  </data>
+  <data name="numericUpDown1.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="checkBox3.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -550,10 +595,10 @@
   <data name="button13.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="button13.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="button13.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="button13.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="button13.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="button11.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -574,9 +619,6 @@
   <data name="treeView4.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="groupBox5.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="groupBox5.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
@@ -585,6 +627,9 @@
   </data>
   <data name="groupBox5.SnapToGrid" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </data>
+  <data name="groupBox5.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="groupBox5.DrawGrid" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -646,13 +691,13 @@
   <data name="checkBox2.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
+  <data name="button7.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
   <data name="button7.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
   <data name="button7.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Private</value>
-  </data>
-  <data name="button7.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="feedback.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -955,10 +1000,10 @@
   <data name="button17.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="button17.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="button17.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="button17.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="button17.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="button18.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -1015,11 +1060,11 @@
   <data name="label29.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="currChannel.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </data>
   <data name="currChannel.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
+  </data>
+  <data name="currChannel.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </data>
   <data name="currChannel.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
@@ -1078,6 +1123,9 @@
   <data name="sfd.Location" type="System.Drawing.Point, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>84, 17</value>
   </data>
+  <data name="$this.Name">
+    <value>DVBSSS2</value>
+  </data>
   <data name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
@@ -1101,9 +1149,6 @@
   </data>
   <data name="$this.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
-  </data>
-  <data name="$this.Name">
-    <value>DVBSSS2</value>
   </data>
   <data name="$this.GridSize" type="System.Drawing.Size, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>8, 8</value>
