@@ -1,6 +1,6 @@
 <window>
 	<id>5000</id>
-	<defaultcontrol>5</defaultcontrol> 
+	<defaultcontrol>3</defaultcontrol> 
 	<allowoverlay>yes</allowoverlay>
 	<controls>
 		<control>
@@ -59,9 +59,10 @@
 			<posX>60</posX>
 			<posY>97</posY>
 			<label>617</label>
-			<onup>5</onup>
-			<ondown>5</ondown>
 			<onright>5</onright> 
+			<onleft>5</onleft>
+			<onup>4</onup>
+			<ondown>4</ondown>
 		</control>
 		<control>
 			<description>Sleep timer Button</description> 
@@ -70,15 +71,17 @@
 			<posX>60</posX> 
 			<posY>131</posY> 
 			<label>859</label> 
-			<onright>7</onright> 
-			<onup>4</onup> 
-			<ondown>6</ondown> 
+			<onright>5</onright> 
+			<onleft>5</onleft>
+			<onup>3</onup> 
+			<ondown>3</ondown> 
 		</control>
 		<control>
 			<description>alarms listcontrol</description> 
 			<type>listcontrol</type> 
 			<id>5</id> 
-			<onleft>3</onleft> 
+			<onright>3</onright>
+			<onleft>3</onleft>
 			<onup>5</onup> 
 			<ondown>5</ondown> 
 		</control>

@@ -2232,7 +2232,7 @@
 </string>
 <string>
 	<id>856</id>
-	<value>Sleep Timer On/Off</value>
+	<value>Sleep Timer</value>
 </string>
 <string>
 	<id>857</id>
@@ -2366,7 +2366,7 @@
 </string>
 <string>
 	<id>8007</id>
-	<value>Autocheck On/Off</value>
+	<value>Autocheck</value>
 </string>
 <string>
 	<id>8008</id>

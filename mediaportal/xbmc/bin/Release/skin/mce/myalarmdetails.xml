@@ -70,11 +70,11 @@
 			<posX>270</posX>
 			<posY>310</posY>
 			<height>240</height>
-			<onleft>20</onleft> 
 			<onright>2</onright> 
+			<onleft>20</onleft> 
 			<onup>20</onup> 
 			<ondown>2</ondown> 
-		</control>
+	</control>
 		<control>
 			<description>Alarm On/Off button</description>
 			<type>togglebutton</type>
@@ -95,6 +95,7 @@
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<onright>7</onright>
+			<onleft>7</onleft>
 			<onup>18</onup>
 			<ondown>4</ondown>
 		</control>
@@ -106,8 +107,9 @@
 			    <posY>131</posY>
 			    <label>864</label>
 			    <onright>7</onright>
+					<onleft>7</onleft>
 			    <onup>2</onup>
-			    <ondown>5</ondown>
+	  		  <ondown>5</ondown>
 			    <subitems>
 				    <subitem>851</subitem>
 				    <subitem>862</subitem>
@@ -121,7 +123,8 @@
 			<posX>60</posX> 
 			<posY>165</posY> 
 			<label>118</label> 
-			<onright>7</onright> 
+			<onright>7</onright>
+			<onleft>7</onleft> 
 			<onup>4</onup> 
 			<ondown>18</ondown> 
 		</control>
@@ -132,9 +135,10 @@
 			<posX>60</posX>
 			<posY>199</posY>
 			<label>618</label>
+			<onright>7</onright>
+			<onleft>7</onleft>
 			<onup>5</onup>
 			<ondown>2</ondown>
-			<onright>7</onright>
 		</control>
 		<control>
 			<description>Name</description>
@@ -180,7 +184,7 @@
 			<posY>140</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
-			<onup>8</onup>
+			<onup>20</onup>
 			<ondown>8</ondown>
 			<onleft>2</onleft>
 			<onright>8</onright>
@@ -201,7 +205,7 @@
 			<posY>140</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
-			<onup>16</onup>
+			<onup>20</onup>
 			<ondown>16</ondown>
 			<onleft>7</onleft>
 			<onright>16</onright>
@@ -223,92 +227,7 @@
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
-			<description>day 1 checkbox</description>
-			<type>checkmark</type>
-			<id>10</id>
-			<posX>335</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>20</height>
-			<label>657</label>
-			<onup>16</onup>
-			<onleft>16</onleft>
-			<onright>11</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control> 
-		<control>
-			<description>day 2 checkbox</description>
-			<type>checkmark</type>
-			<id>11</id>
-			<posX>400</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>20</height>
-			<label>658</label>
-			<onleft>10</onleft>
-			<onright>12</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control> 
-		<control>
-			<description>day 3 checkbox</description>
-			<type>checkmark</type>
-			<id>12</id>
-			<posX>465</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>20</height>
-			<label>659</label>
-			<onleft>11</onleft>
-			<onright>13</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control> 
-		<control>
-			<description>day 4 checkbox</description>
-			<type>checkmark</type>
-			<id>13</id>
-			<posX>530</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>20</height>
-			<label>660</label>
-			<onleft>12</onleft>
-			<onright>14</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control> 
-		<control>
-			<description>day 5 checkbox</description>
-			<type>checkmark</type>
-			<id>14</id>
-			<posX>585</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>20</height>
-			<label>661</label>
-			<onleft>13</onleft>
-			<onright>15</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control> 
-		<control>
-			<description>day 6 checkbox</description>
-			<type>checkmark</type>
-			<id>15</id>
-			<posX>645</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>20</height>
-			<label>662</label>
-			<onleft>14</onleft>
-			<onright>20</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control> 
-		<control>
-			<description>day 7 checkbox</description>
+			<description>Sunday checkbox</description>
 			<type>checkmark</type>
 			<id>16</id>
 			<posX>270</posX>
@@ -318,10 +237,93 @@
 			<label>663</label>
 			<onleft>8</onleft>
 			<onright>10</onright>
+			<onleft>2</onleft>
 			<onup>8</onup>
 			<ondown>10</ondown>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
+		</control> 
+		<control>
+			<description>Monday checkbox</description>
+			<type>checkmark</type>
+			<id>10</id>
+			<posX>335</posX>
+			<posY>210</posY>
+			<width>50</width>
+			<height>20</height>
+			<label>657</label>
+			<onleft>16</onleft>
+			<onup>7</onup>
+			<ondown>20</ondown>			
+		</control> 
+		<control>
+			<description>Tuesday checkbox</description>
+			<type>checkmark</type>
+			<id>11</id>
+			<posX>400</posX>
+			<posY>210</posY>
+			<width>50</width>
+			<height>20</height>
+			<label>658</label>
+			<onleft>10</onleft>
+			<onright>12</onright>
+			<onup>7</onup>
+			<ondown>20</ondown>			
+		</control> 
+		<control>
+			<description>Wednesday checkbox</description>
+			<type>checkmark</type>
+			<id>12</id>
+			<posX>465</posX>
+			<posY>210</posY>
+			<width>50</width>
+			<height>20</height>
+			<label>659</label>
+			<onleft>11</onleft>
+			<onright>13</onright>
+			<onup>7</onup>
+			<ondown>20</ondown>			
+		</control> 
+		<control>
+			<description>Thursday checkbox</description>
+			<type>checkmark</type>
+			<id>13</id>
+			<posX>530</posX>
+			<posY>210</posY>
+			<width>50</width>
+			<height>20</height>
+			<label>660</label>
+			<onleft>12</onleft>
+			<onright>14</onright>
+			<onup>7</onup>
+			<ondown>20</ondown>			
+		</control> 
+		<control>
+			<description>Friday checkbox</description>
+			<type>checkmark</type>
+			<id>14</id>
+			<posX>585</posX>
+			<posY>210</posY>
+			<width>50</width>
+			<height>20</height>
+			<label>661</label>
+			<onleft>13</onleft>
+			<onright>15</onright>
+			<onup>7</onup>
+			<ondown>20</ondown>			
+		</control> 
+		<control>
+			<description>Saturday checkbox</description>
+			<type>checkmark</type>
+			<id>15</id>
+			<posX>645</posX>
+			<posY>210</posY>
+			<width>50</width>
+			<height>20</height>
+			<label>662</label>
+			<onleft>14</onleft>
+			<onright>20</onright>
+			<onup>14</onup>
+			<onup>7</onup>
+			<ondown>20</ondown>			
 		</control> 
 		<control>
 			<description>fade in volume</description>
@@ -332,12 +334,10 @@
 			<width>200</width>
 			<height>20</height>
 			<label>860</label>
-			<onleft>15</onleft>
+			<onleft>2</onleft>
 			<onright>3</onright>
 			<onup>15</onup>
 			<ondown>3</ondown>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
 		</control> 
-    </controls>
+  </controls>
 </window>
