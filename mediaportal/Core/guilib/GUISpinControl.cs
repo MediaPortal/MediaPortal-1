@@ -62,7 +62,6 @@ namespace MediaPortal.GUI.Library
     
 		protected GUIFont  m_pFont=null;
 		protected string   m_szTyped="";
-		protected  int       m_iTypedPos=0;
     GUILabelControl      m_label=null;
 	
 		public GUISpinControl (int dwParentID) : base(dwParentID)
@@ -106,14 +105,12 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible)
         {
-          m_iTypedPos=0;
           m_szTyped=String.Empty;
           return;
         }
       }
       if (!Focus)
       {
-        m_iTypedPos=0;
         m_szTyped=String.Empty;
       }
       int dwPosX=m_dwPosX;
@@ -296,9 +293,8 @@ namespace MediaPortal.GUI.Library
 				}
         m_label.Render();
       }
-
-
     }
+
     public override void 	OnAction(Action action)
     {
       switch (action.wID)
@@ -314,9 +310,9 @@ namespace MediaPortal.GUI.Library
         case Action.ActionType.REMOTE_8:
         case Action.ActionType.REMOTE_9:
         {
-          if ( m_szTyped.Length >= 3)
+          if ( ((m_iDigits == -1) && (m_szTyped.Length >= 3)) ||
+               ((m_iDigits != -1) && (m_szTyped.Length >= m_iDigits)) )
           {
-            m_iTypedPos=0;
             m_szTyped="";
           }
           int iNumber = action.wID - Action.ActionType.REMOTE_0;
@@ -328,21 +324,28 @@ namespace MediaPortal.GUI.Library
           {
             case SpinType.SPIN_CONTROL_TYPE_INT:
             {
-              if (iValue < m_iStart || iValue > m_iEnd)
+              // Value entered
+              if ( ((m_iDigits == -1) && (m_szTyped.Length >= 3)) ||
+                   ((m_iDigits != -1) && (m_szTyped.Length >= m_iDigits)) )
               {
-                m_iTypedPos=0;
-                m_szTyped+=iNumber.ToString();
-                iValue=Int32.Parse(m_szTyped);
-                if (iValue < m_iStart || iValue > m_iEnd)
-                {
-                  m_iTypedPos=0;
-                  m_szTyped="";
-                  return;
-                }
+                // Check value
+                if (iValue < m_iStart) iValue = m_iStart;
+                m_szTyped=iValue.ToString();
               }
+
+              if (iValue > m_iEnd)
+              {
+                m_szTyped="";
+                m_szTyped += (char)(iNumber+'0');
+                iValue=Int32.Parse(m_szTyped);
+              }
+
               m_iValue=iValue;
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
-              GUIGraphicsContext.SendMessage(msg);
+              if (m_iValue >= m_iStart && m_iValue <= m_iEnd)
+              {
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
+                GUIGraphicsContext.SendMessage(msg);
+              }
             }  
               break;
 
@@ -350,19 +353,16 @@ namespace MediaPortal.GUI.Library
             {
               if (iValue < 0|| iValue >= m_vecLabels.Count)
               {
-                m_iTypedPos=0;
-                m_szTyped+= iNumber.ToString();
-                iValue=Int32.Parse(m_szTyped);
-                if (iValue < 0|| iValue >= (int)m_vecLabels.Count)
-                {
-                  m_iTypedPos=0;
-                  m_szTyped="";
-                  return;
-                }
+                iValue = 0;
               }
+
               m_iValue=iValue;
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
-              GUIGraphicsContext.SendMessage(msg);
+              if (m_iValue >= 0 && m_iValue < m_vecLabels.Count)
+              {
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
+                msg.Label = (string)m_vecLabels[m_iValue];
+                GUIGraphicsContext.SendMessage(msg);
+              }
             }  
               break;
 
@@ -559,7 +559,6 @@ namespace MediaPortal.GUI.Library
       m_imgspinUpFocus.FreeResources();
       m_imgspinDown.FreeResources();
       m_imgspinDownFocus.FreeResources();
-      m_iTypedPos=0;
       m_szTyped="";
 
     }
@@ -613,12 +612,22 @@ namespace MediaPortal.GUI.Library
     }
     public int Value
     {
-      get { return m_iValue;}
+      get 
+      {
+        if (m_iValue < m_iStart) m_iValue = m_iStart;
+        if (m_iValue > m_iEnd) m_iValue = m_iEnd;
+        return m_iValue;
+      }
       set { m_iValue=value;}
     }
     public float FloatValue
     {
-      get { return m_fValue;}
+      get
+      {
+        if (m_fValue < m_fStart) m_fValue = m_fStart;
+        if (m_fValue > m_fEnd) m_fValue = m_fEnd;
+        return m_fValue;
+      }
       set { m_fValue=value;}
     }
     public void AddLabel(string strLabel, int  iValue)
@@ -637,8 +646,7 @@ namespace MediaPortal.GUI.Library
     {
       if (m_iValue <0 || m_iValue >= m_vecLabels.Count) return "";
       string strLabel=(string)m_vecLabels[ m_iValue];
-      return strLabel;
-    
+      return strLabel;    
     }
     public override bool Focus
     {
@@ -646,6 +654,25 @@ namespace MediaPortal.GUI.Library
       set 
       { 
         m_bHasFocus=value;
+        if (!m_bHasFocus)
+        {
+          switch (m_iType)
+          {
+            case SpinType.SPIN_CONTROL_TYPE_INT:
+              if (m_iValue < m_iStart) m_iValue = m_iStart;
+              if (m_iValue > m_iEnd) m_iValue = m_iEnd;
+              break;          
+    
+            case SpinType.SPIN_CONTROL_TYPE_TEXT:
+              if (m_iValue <0 || m_iValue >= m_vecLabels.Count) m_iValue = 0;
+              break;
+          
+            case SpinType.SPIN_CONTROL_TYPE_FLOAT:
+              if (m_fValue < m_fStart) m_fValue = m_fStart;
+              if (m_fValue > m_fEnd) m_fValue = m_fEnd;
+              break;          
+          }
+        }
       }
     }
     public void SetReverse(bool bOnOff)
