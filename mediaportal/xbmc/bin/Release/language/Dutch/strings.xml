@@ -1265,6 +1265,34 @@
 		<id>387</id>
 		<value>vroeg</value>
 	</string>
+  <string>
+    <id>388</id>
+    <value>en</value>
+  </string>
+  <string>
+    <id>389</id>
+    <value>mist</value>
+  </string>
+  <string>
+    <id>390</id>
+    <value>nevel</value>
+  </string>
+  <string>
+    <id>391</id>
+    <value>wind</value>
+  </string>
+  <string>
+    <id>392</id>
+    <value>motregen</value>
+  </string>
+  <string>
+    <id>393</id>
+    <value>vriezen</value>
+  </string>
+  <string>
+    <id>394</id>
+    <value>n.v.t.</value>
+  </string>
 	<string>
 		<id>396</id>
 		<value>Kies locatie</value>
@@ -2342,7 +2370,11 @@
   <!-- End My Alarm Strings -->
   
   <string>
-	<id>900</id>
+  	<id>890</id>
+  	<value>CD afspelen</value>
+  </string>
+  <string>
+  	<id>900</id>
   	<value>Afspelen hervatten vanaf laatste punt?</value>
   </string>
   <string>
@@ -2621,6 +2653,10 @@
   <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
+  </string>
+  <string>
+  	<id>1441</id>
+  	<value>Teletekst</value>
   </string>
 
   <!-- My Status strings -->
@@ -3019,6 +3055,74 @@
 		<id>2118</id>
 		<value>Converteer DVR-MS</value>
 	</string>
+  <string>
+		<id>2119</id>
+		<value>Start conversie</value>
+  </string>
+  <string>
+		<id>2120</id>
+		<value>Bestanden worden geconverteerd...</value>
+  </string>
+  <string>
+		<id>2121</id>
+		<value>Bestanden kunnen niet omgezet worden!</value>
+  </string>
+  <string>
+		<id>2122</id>
+		<value>begint!</value>
+  </string>
+  <string>
+		<id>2123</id>
+		<value>Schijf informatie</value>
+  </string>
+  <string>
+		<id>2124</id>
+		<value>Cannot Erase: Media is not writable</value>
+  </string>
+  <string>
+		<id>2125</id>
+		<value>Leegmaken schijf....</value>
+  </string>
+  <string>
+		<id>2126</id>
+		<value>CD uitwerpen</value>
+  </string>
+  <string>
+		<id>2127</id>
+		<value>Deze schijf kan niet beschreven worden</value>
+  </string>
+  <string>
+		<id>2128</id>
+		<value>Voorbereiden: estimated time:</value>
+  </string>
+  <string>
+		<id>2129</id>
+		<value>Preparing to Burn</value>
+  </string>
+  <string>
+		<id>2130</id>
+		<value>Blokkeren</value>
+  </string>
+  <string>
+		<id>2131</id>
+		<value>van</value>
+  </string>
+  <string>
+		<id>2132</id>
+		<value>Closing disc: estimated time:</value>
+  </string>
+  <string>
+		<id>2133</id>
+		<value>Kan niet converteren van DVR-MS naar MPG</value>
+  </string>
+  <string>
+		<id>2134</id>
+		<value>de benodigde "DirectShow filters" zijn niet</value>
+  </string>
+  <string>
+		<id>2135</id>
+		<value>geïnstalleed</value>
+  </string>
 
 	<!-- My Explorer Strings -->
 	<string>
