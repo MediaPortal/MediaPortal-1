@@ -18,6 +18,7 @@ namespace MediaPortal.Player
     protected Rectangle m_VideoRect = new Rectangle(0,0,0,0);
     protected Rectangle m_SourceRect = new Rectangle(0,0,0,0);
     protected IRender                   m_renderFrame=null;
+    protected bool                      m_bIsVisible=false;
     public IPlayer()
 		{
 		}
@@ -81,6 +82,14 @@ namespace MediaPortal.Player
     {
       get {return 0;}
       set{}
+    }
+    public virtual bool Visible
+    {
+      get {return m_bIsVisible;}
+      set{ 
+        if (value==m_bIsVisible) return;
+        m_bIsVisible=value;
+      }
     }
     public virtual int Width
     {

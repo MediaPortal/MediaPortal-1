@@ -467,6 +467,21 @@ namespace MediaPortal.Player
         }
       }
     }
+    static public bool Visible
+    {
+        get 
+     { 
+       if (m_player==null) return false;
+       return m_player.Visible;
+     }
+      set 
+      {
+        if (m_player != null)
+        {
+          m_player.Visible=value;
+        }
+      }
+    }
     static public int RenderHeight
     {
       get 
@@ -884,6 +899,7 @@ namespace MediaPortal.Player
         RenderWidth=GUIGraphicsContext.VideoWindow.Width;
         RenderHeight=GUIGraphicsContext.VideoWindow.Height;
       }
+      Visible=(FullScreen||GUIGraphicsContext.Overlay);
       SetVideoWindow();
     }
 

@@ -31,7 +31,7 @@ namespace MediaPortal.Player
 		/// <summary> create the used COM components and get the interfaces. </summary>
 		protected override bool GetInterfaces(string filename)
 		{
-			m_bVisible=true;
+			m_bIsVisible=true;
 			Type comtype = null;
 			object comobj = null;
     
@@ -278,7 +278,7 @@ namespace MediaPortal.Player
 
 				if( videoWin != null )
 				{
-					m_bVisible=false;
+					m_bIsVisible=false;
 					hr = videoWin.put_Visible( DsHlp.OAFALSE );
 					hr = videoWin.put_Owner( IntPtr.Zero );
 					videoWin = null;
@@ -377,13 +377,13 @@ namespace MediaPortal.Player
 		public override bool DoesOwnRendering
 		{
 			get { 
-				 return m_bVisible;
+				 return m_bIsVisible;
 			}
 		}      
 
 		protected override void OnProcess()
 		{
-			if (!m_bVisible) return; 
+			if (!m_bIsVisible) return; 
       
 
 			memDC.FillRectangle(Brushes.Black, 0 , 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);

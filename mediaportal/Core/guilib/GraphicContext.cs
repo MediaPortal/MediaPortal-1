@@ -434,11 +434,9 @@ namespace MediaPortal.GUI.Library
       get { return m_bOverlay;}
       set 
       { 
-        if ( m_bOverlay!=value)
-        {
-          if (OnVideoWindowChanged!=null) OnVideoWindowChanged();
-          m_bOverlay=value;
-        }
+        m_bOverlay=value;
+        if (!m_bOverlay ) { m_RectVideo.Width=1; m_RectVideo.Height=1;}
+        if (OnVideoWindowChanged!=null) OnVideoWindowChanged();
       }
     }
 

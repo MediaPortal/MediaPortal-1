@@ -45,6 +45,7 @@ namespace MediaPortal.Player
     protected bool          										m_bStarted=false;
     protected bool          										m_bLive=false;
     protected double                            m_dLastPosition=0;
+    protected bool                              m_bWindowVisible=false;
 		protected int												rotCookie = 0;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
@@ -65,7 +66,7 @@ namespace MediaPortal.Player
 		protected const int WS_CHILD			= 0x40000000;	// attributes for video window
 		protected const int WS_CLIPCHILDREN	= 0x02000000;
 		protected const int WS_CLIPSIBLINGS	= 0x04000000;
-		protected bool															m_bVisible=false;
+		
 		protected MediaPortal.GUI.Library.Geometry.Type             m_ar=MediaPortal.GUI.Library.Geometry.Type.Normal;
 
 		public BaseStreamBufferPlayer()
@@ -111,7 +112,8 @@ namespace MediaPortal.Player
         }
       }
 
-			m_bVisible=false;
+			m_bIsVisible=false;
+      m_bWindowVisible=false;
 			m_iVolume=100;
 			m_state=PlayState.Init;
 			m_strCurrentFile=strFile;
@@ -223,6 +225,7 @@ namespace MediaPortal.Player
 			}
 
 			if (!m_bUpdateNeeded) return;
+      
 			m_bUpdateNeeded=false;
 			m_bStarted=true;
 			float x=m_iPositionX;
@@ -369,19 +372,20 @@ namespace MediaPortal.Player
         m_dLastPosition=CurrentPosition;
 			}
 
-			if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
+      if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
+      {
+        m_bIsVisible=false;
+      }
+			if (m_bWindowVisible && !m_bIsVisible)
 			{
-				if (m_bVisible)
-				{
-					Log.Write("StreamBufferPlayer:hide window");
-					m_bVisible=false;
-					if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
-				}
+        m_bWindowVisible=false;
+				Log.Write("StreamBufferPlayer:hide window");
+				if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
 			}
-			else if (!m_bVisible)
+			else if (!m_bWindowVisible && m_bIsVisible)
 			{
+        m_bWindowVisible=true;
 				Log.Write("StreamBufferPlayer:show window");
-				m_bVisible=true;
 				if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
 			}      
 		}
@@ -865,7 +869,8 @@ namespace MediaPortal.Player
 
 				if( videoWin != null )
 				{
-					m_bVisible=false;
+          m_bWindowVisible=false;
+          m_bIsVisible=false;
 					hr = videoWin.put_Visible( DsHlp.OAFALSE );
 					hr = videoWin.put_Owner( IntPtr.Zero );
 					videoWin = null;
