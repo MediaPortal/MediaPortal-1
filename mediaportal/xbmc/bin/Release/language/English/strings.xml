@@ -2019,6 +2019,9 @@
 <string><id>10029</id><value>Settings->General->LCD</value></string>
 <string><id>10030</id><value>My Radio</value></string>
 <string><id>10031</id><value>Settings->Screen->scroll speed</value></string>
+<string><id>10032</id><value>MSN Messenger</value></string>
+<string><id>10033</id><value>MSN Messenger chat</value></string>
+<string><id>10034</id><value>My Plugins</value></string>
 <string><id>10100</id><value>Yes/no dialog</value></string>
 <string><id>10101</id><value>Progress dialog</value></string>
 <string><id>10500</id><value>My Music/playlist</value></string>
@@ -2031,6 +2034,13 @@
 <string><id>10601</id><value>My TV/Scheduler</value></string>
 <string><id>10602</id><value>My TV/fullscreen</value></string>
 <string><id>10603</id><value>My TV/Recorded TV</value></string>
+<string><id>10604</id><value>My TV/Search</value></string>
+<string><id>10605</id><value>My TV/Recorded Tv/Genre</value></string>
+<string><id>10606</id><value>My TV/Recorded Tv/channels</value></string>
+<string><id>10750</id><value>My Recipies</value></string>
+<string><id>10755</id><value>My Status</value></string>
+<string><id>10756</id><value>My Status details</value></string>
+<string><id>10757</id><value>My Status preferences</value></string>
 <string><id>11000</id><value>keyboard</value></string>
 <string><id>12000</id><value>Select dialog</value></string>
 <string><id>12001</id><value>My Music/info</value></string>
@@ -2050,7 +2060,7 @@
 <string><id>688</id><value>Instruments</value></string>
 <string><id>689</id><value>Bio.</value></string>
 <string><id>690</id><value>Discography (Albums)</value></string>
-<string><id>691</id><value>Discography (compilations, boxes)</value></string>
+<string><id>691</`id><value>Discography (compilations, boxes)</value></string>
 <string><id>700</id><value>Discography (eps, singles)</value></string>
 <string><id>701</id><value>Discography (bootlegs, videos, interviews)</value></string>
 <string><id>702</id><value>No artists found!</value></string>
