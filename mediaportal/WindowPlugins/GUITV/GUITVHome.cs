@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -262,7 +263,7 @@ namespace MediaPortal.GUI.TV
 						}
 
 						// turn tv on/off
-						ViewChannel( m_strChannel);
+						ViewChannelAndCheck( m_strChannel);
 					}
 
 					if (iControl==(int)Controls.BTN_TIMESHIFTINGONOFF)
@@ -280,7 +281,7 @@ namespace MediaPortal.GUI.TV
 						}
 						SaveSettings();
 						
-						ViewChannel( m_strChannel);
+						ViewChannelAndCheck( m_strChannel);
 					}
           
 					if (iControl==(int)Controls.BTN_GROUP)
@@ -292,7 +293,7 @@ namespace MediaPortal.GUI.TV
 							m_strChannel="";
 							m_strGroup=msg.Label;
 							UpdateChannelButton();
-							ViewChannel(m_strChannel);
+							ViewChannelAndCheck(m_strChannel);
 							SaveSettings();
 
 							UpdateStateOfButtons();
@@ -310,7 +311,7 @@ namespace MediaPortal.GUI.TV
 							UpdateStateOfButtons();
 							UpdateProgressPercentageBar();
 							UpdateChannelButton();
-							ViewChannel(m_strChannel );
+							ViewChannelAndCheck(m_strChannel );
 							SaveSettings();
 						}
 					}
@@ -697,6 +698,21 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
+		static public void ViewChannelAndCheck(string channel)
+		{
+			ViewChannel(channel);
+			if (Recorder.TVChannelName!=channel)
+			{
+				GUIDialogOK pDlgOK	= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+				if (pDlgOK!=null)
+				{
+					pDlgOK.SetHeading(605);//my tv
+					pDlgOK.SetLine(1,977);//there is no free card available
+					pDlgOK.SetLine(2,978);//which can watch this channel
+					pDlgOK.DoModal((int)GUIWindow.Window.WINDOW_TV);
+				}
+			}
+		}
 		static public void ViewChannel(string channel)
 		{
 			Recorder.StartViewing( channel, m_bTVON, m_bTimeShifting) ;
