@@ -603,6 +603,10 @@ namespace WindowPlugins.GUIPrograms
 			}
 			this.txtArguments.Text = tempApp.Arguments;
 			SetWindowStyle(tempApp.WindowStyle);
+			if (this.txtStartupDir.Text == "")
+			{
+				this.txtStartupDir.Text = tempApp.Startupdir;
+			}
 			this.chkbUseShellExecute.Checked = (tempApp.UseShellExecute);
 			this.chkbUseQuotes.Checked = (tempApp.UseQuotes);
 		}

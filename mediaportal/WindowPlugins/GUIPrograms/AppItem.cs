@@ -809,10 +809,22 @@ namespace ProgramsDatabase
 				this.WindowStyle = ProgramUtils.StringToWindowStyle(windowStyleNode.InnerText);
 			}
 
+			XmlNode startupDirNode = node.SelectSingleNode("startupDir");
+			if (startupDirNode != null)
+			{
+				this.Startupdir = startupDirNode.InnerText;
+			}
+
 			XmlNode useQuotesNode = node.SelectSingleNode("useQuotes");
 			if (useQuotesNode != null)
 			{
 				this.UseQuotes = ProgramUtils.StrToBoolean(useQuotesNode.InnerText);
+			}
+
+			XmlNode fileExtensioneNode = node.SelectSingleNode("fileextensions");
+			if (fileExtensioneNode != null)
+			{
+				this.ValidExtensions = fileExtensioneNode.InnerText;
 			}
 
 		}
