@@ -2,7 +2,7 @@ using System;
 using System.Xml;
 using DShowNET;
 using System.Collections;
-
+using MediaPortal.GUI.Library;
 namespace TVCapture
 {
 	#region Data Classes
@@ -86,10 +86,11 @@ namespace TVCapture
 
 				// The last part of the moniker contains the classid category of the filter
 				// Use this to fetch another FilterCollection to be added to the complete list of filters
+				// 
 				string[] tmp = f.MonikerString.Split(@"\".ToCharArray());
 				clsIdName = tmp[tmp.GetUpperBound(0)];
 				clsId     = new Guid(clsIdName);
-				FilterCollection fc = new FilterCollection(clsId);
+			  FilterCollection fc = new FilterCollection(clsId);
 				if (null != fc)
 				{
 					for (int y = 0; y < fc.Count; y++)
