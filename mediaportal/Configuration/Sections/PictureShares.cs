@@ -66,6 +66,11 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 			}				
+
+			//
+			// Add static shares
+			//
+			AddStaticShares(DriveType.DVD, "DVD");
 		}
 
 		public override void SaveSettings()
