@@ -1,11 +1,12 @@
 Frodo's priority list:
   1). fix    : any (new) bugs
-  2). new    : add filmstrip to my music 
-  3). enhance: IMDB info dialog : cache downloaded google-images
-  4). fix    : animations : fix bug with filmstrip 
-  5). new    : add wakeup from standbye / sleep mode to recorder
-  6). enhance: ken burns effect for my picture slideshow
-  7). new    : add support for DVB-T/S/C
+  2). new    : add MapSettings to my music 
+  3). new    : add filmstrip to my music artist,albums,genre,top100 views
+  4). enhance: IMDB info dialog : cache downloaded google-images
+  5). fix    : animations : fix bug with filmstrip 
+  6). new    : add wakeup from standbye / sleep mode to recorder
+  7). enhance: ken burns effect for my picture slideshow
+  8). new    : add support for DVB-T/S/C
 
 My Radio:
     - Timeshifting & recording
