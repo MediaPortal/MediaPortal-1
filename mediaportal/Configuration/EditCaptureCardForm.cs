@@ -91,6 +91,11 @@ namespace MediaPortal.Configuration
         
       FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
+			for (int i=0; i < availableVideoDevices.Count;++i)
+			{
+				Log.Write("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
+			}
+
 
 #if (!UseCaptureCardDefinitions)
 			cardComboBox.Items.AddRange(availableVideoDevices.ToArray());
@@ -122,11 +127,14 @@ namespace MediaPortal.Configuration
 			//	if list is empty, inform user and block further input
 			//	else continue
 
+
+
 			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
 			{
 				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
+					
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
 						 ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 ))
 					{

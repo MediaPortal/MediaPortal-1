@@ -153,7 +153,9 @@ namespace MediaPortal.TV.Recording
 				sourceFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
 				sinkFilter   = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 
-				DirectShowUtil.DebugWrite("SinkGraphEx:  Connecting <{0}> with <{1}>", sourceFilter.FriendlyName, sinkFilter.FriendlyName);
+				DirectShowUtil.DebugWrite("SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
+									sourceFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName,
+									sinkFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
 				//sourceFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
 				sourcePin    = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName);
 				if (sourcePin == null)
@@ -162,7 +164,10 @@ namespace MediaPortal.TV.Recording
 					if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
 					{
 						sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
-						DirectShowUtil.DebugWrite("SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+						if (sourcePin==null)
+							DirectShowUtil.DebugWrite("SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
+						else
+							DirectShowUtil.DebugWrite("SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
 					}
 				}
 				else
@@ -175,27 +180,33 @@ namespace MediaPortal.TV.Recording
 					String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName;
 					if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
 					{
-						sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
-						DirectShowUtil.DebugWrite("SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+						sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+						if (sinkPin==null)
+							DirectShowUtil.DebugWrite("SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
+						else
+							DirectShowUtil.DebugWrite("SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
 					}
 				}
 				else
 					DirectShowUtil.DebugWrite("SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
 
-				IPin conPin;
-				hr      = sourcePin.ConnectedTo(out conPin);
-				if (hr != 0)
-					hr = m_graphBuilder.Connect(sourcePin, sinkPin);
-				if (hr == 0)
-					DirectShowUtil.DebugWrite("SinkGraphEx:   Pins connected...");
-
-				// Give warning and release pin...
-				if (conPin != null)
+				if (sourcePin!=null && sinkPin!=null)
 				{
-					DirectShowUtil.DebugWrite("SinkGraphEx:   (Pin was already connected...)");
-					Marshal.ReleaseComObject(conPin as Object);
-					conPin = null;
-					hr     = 0;
+					IPin conPin;
+					hr      = sourcePin.ConnectedTo(out conPin);
+					if (hr != 0)
+						hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+					if (hr == 0)
+						DirectShowUtil.DebugWrite("SinkGraphEx:   Pins connected...");
+
+					// Give warning and release pin...
+					if (conPin != null)
+					{
+						DirectShowUtil.DebugWrite("SinkGraphEx:   (Pin was already connected...)");
+						Marshal.ReleaseComObject(conPin as Object);
+						conPin = null;
+						hr     = 0;
+					}
 				}
 
 				if (hr != 0)
