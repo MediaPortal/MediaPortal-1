@@ -106,18 +106,18 @@
 				<onup>4</onup>
 				<ondown>6</ondown>
 			</control>		
-		    <control>
-			    <description>Search button</description>
-			    <type>button</type>
-			    <id>6</id>
-			    <posX>60</posX>
-			    <posY>199</posY>
-			    <label>137</label>
-			    <onleft>6</onleft>
-			    <onright>10</onright>
-			    <onup>5</onup>
-			    <ondown>2</ondown>
-		    </control>
+	    <control>
+		    <description>Search button</description>
+		    <type>button</type>
+		    <id>6</id>
+		    <posX>60</posX>
+		    <posY>199</posY>
+		    <label>137</label>
+		    <onleft>6</onleft>
+		    <onright>10</onright>
+		    <onup>5</onup>
+		    <ondown>2</ondown>
+	    </control>
 		</control>
 		<control>
 			<type>group</type>
