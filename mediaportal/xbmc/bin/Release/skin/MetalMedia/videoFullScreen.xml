@@ -182,12 +182,18 @@
 		<posY>400</posY> 
 		<width>600</width>
 		<toptexture>ProgressBar-Top.png</toptexture> 
+		<bottomtexture>Overlay-Info.png</bottomtexture>
+		<texturetick>ProgressBar-Tick.png</texturetick>
 		<lefttexture>ProgressBar-Left.png</lefttexture> 
 		<midtexture>ProgressBar-Base.png</midtexture> 
 		<righttexture>ProgressBar-Right.png</righttexture> 
+		
+		<fillbackgroundtexture>ProgressBar-inner.png</fillbackgroundtexture>
+		<fillbgxoff>10</fillbgxoff>
+		<fillbgyoff>10</fillbgyoff>
+		
 		<filltexture1>ProgressBar-Recorded.png</filltexture1>
-		<bottomtexture>Overlay-Info.png</bottomtexture>
-		<texturetick>ProgressBar-Tick.png</texturetick>
+		<fillheight>30</fillheight>
 		<visible>yes</visible> 
 		<label>#percentage</label>
 		<startlabel>0:00</startlabel>
