@@ -70,9 +70,10 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      int iHeight=m_guiBackground.Height; //25;
-      m_guiBackground.Render();
+      int iHeight=m_dwHeight; //25;
       m_guiBackground.Height=iHeight;
+      m_guiBackground.DoUpdate();
+      m_guiBackground.Render();
 
       //iHeight=20;
       float fPercent= (float)m_fPercent;
@@ -271,5 +272,12 @@ namespace MediaPortal.GUI.Library
       get { return m_bSendNotifies;}
       set { m_bSendNotifies=false;}
     }
+    public override void DoUpdate()
+    {
+      m_guiBackground.Height=m_dwHeight;
+      m_guiBackground.DoUpdate();
+      base.DoUpdate ();
+    }
+
   }
 }
