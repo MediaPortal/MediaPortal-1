@@ -3,3 +3,5 @@ Bugs:
   - 24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   - 26-04-2004 my music   : F3 on a song -> the cursor gets set at the beginning of the list
   - 26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3
+
+  - 28-04-2004 my tv : crossbar  Failed to set crossbar routing

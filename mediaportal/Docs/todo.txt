@@ -20,7 +20,7 @@ My TV:
     - add BDA support
     - support multiple tuners/capture cards
     - brightness/contrast etc. control
-    - stutter?
+    - stutter ?
     
 My Music:
   - faster start of 1st song played
