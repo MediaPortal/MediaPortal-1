@@ -194,6 +194,7 @@ namespace MediaPortal.TV.Recording
       if (m_videoWindow!=null)
       {
         m_videoWindow.put_Visible( DsHlp.OAFALSE);
+        m_videoWindow.put_Owner( IntPtr.Zero);
         Marshal.ReleaseComObject(m_videoWindow);m_videoWindow=null;
       }
       if (m_basicVideo!=null)
@@ -204,10 +205,13 @@ namespace MediaPortal.TV.Recording
       {
         Marshal.ReleaseComObject(m_mediaControl);m_mediaControl=null;
       }
-      
 
-      if (m_filterCaptureVideo!=null)
-        Marshal.ReleaseComObject(m_filterCaptureVideo);m_filterCaptureVideo=null;
+      if (m_videoCaptureDevice!=null)
+      {
+        m_videoCaptureDevice.CloseInterfaces();
+        m_videoCaptureDevice=null;
+      }
+
 
       if (m_filterCaptureAudio!=null)
         Marshal.ReleaseComObject(m_filterCaptureAudio);m_filterCaptureAudio=null;      
@@ -220,19 +224,16 @@ namespace MediaPortal.TV.Recording
 
       if( m_TVTuner != null )
         Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
-			
 
-      if (m_videoCaptureDevice!=null)
-      {
-        m_videoCaptureDevice.CloseInterfaces();
-        m_videoCaptureDevice=null;
-      }
+      DsUtils.RemoveFilters(m_graphBuilder);
+
+      if (m_filterCaptureVideo!=null)
+        Marshal.ReleaseComObject(m_filterCaptureVideo);m_filterCaptureVideo=null;
 
       if( m_rotCookie != 0 )
         DsROT.RemoveGraphFromRot( ref m_rotCookie);
       m_rotCookie=0;
 
-      DsUtils.RemoveFilters(m_graphBuilder);
 
 
       if( m_captureGraphBuilder != null )
