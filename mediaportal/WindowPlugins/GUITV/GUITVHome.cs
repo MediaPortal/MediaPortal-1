@@ -1144,7 +1144,7 @@ namespace MediaPortal.GUI.TV
 					break;
 				}
 			}
-			if (m_currentgroup<0)  
+			if (m_currentgroup<0 || m_currentgroup >= m_groups.Count)  
 				m_currentgroup=0;
 			
 			if (m_currentchannel=="")
