@@ -347,6 +347,7 @@ namespace MediaPortal.GUI.Video
 					}
 					if (iControl == (int)Controls.CONTROL_BTNSCAN) 
 					{
+            if (m_directory.IsRemote(m_strDirectory)) return true;
             ArrayList itemlist = m_directory.GetDirectory(m_strDirectory);
             OnScan(itemlist);
             LoadDirectory(m_strDirectory);
@@ -985,6 +986,7 @@ namespace MediaPortal.GUI.Video
 			GUIListItem pItem = GetItem(iItem);
       
       if (pItem==null) return;
+      if (pItem.IsRemote) return;
       if (PlayListFactory.IsPlayList(pItem.Path))
       {
         LoadPlayList(pItem.Path);
@@ -1339,6 +1341,8 @@ namespace MediaPortal.GUI.Video
       string strFolder = "";
       int iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetSelectedItem();
+      if (pItem==null) return;
+      if (pItem.IsRemote) return;
       string strFile = pItem.Path;
       string strMovie = pItem.Label;
       // Use DVD label as movie name
