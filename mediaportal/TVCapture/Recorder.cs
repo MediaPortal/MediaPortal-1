@@ -350,15 +350,15 @@ namespace MediaPortal.TV.Recording
 
 			// not recording this yet
 			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record a {0} on channel:{1} from {2}-{3}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString());
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: find free capture card");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:  find free capture card");
 			foreach (TVCaptureDevice dev in m_tvcards)
 			{
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
 					dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
 			}
 			if (g_Player.Playing)
 			{
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: currently playing:{0}", g_Player.CurrentFile);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  currently playing:{0}", g_Player.CurrentFile);
 			}
 
 			// find free device for recording
@@ -406,7 +406,7 @@ namespace MediaPortal.TV.Recording
 				//yes then record
 				cardNo=highestCard;
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[cardNo];
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: using capture card:{0} {1} prio:{2}", dev.ID, dev.VideoDevice,dev.Priority);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  using capture card:{0} {1} prio:{2}", dev.ID, dev.VideoDevice,dev.Priority);
 				bool viewing=(m_iCurrentCard==cardNo);
 				TuneExternalChannel(rec.Channel);
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
@@ -420,7 +420,7 @@ namespace MediaPortal.TV.Recording
 			if ( rec.IsRecordingProgramAtTime(currentTime,currentProgram,0,0) )
 			{
 				// yes, then find & stop any capture running which is busy post-recording
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: No card found, check if a card is post-recording");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  No card found, check if a card is post-recording");
 				cardNo=0;
 				highestPrio=-1;
 				highestCard=-1;
@@ -468,7 +468,7 @@ namespace MediaPortal.TV.Recording
 				cardNo=highestCard;
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[cardNo];
 				bool viewing=(m_iCurrentCard==cardNo);
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
 				dev.StopRecording();
 				TuneExternalChannel(rec.Channel);
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
@@ -478,7 +478,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//no device free...
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: no capture cards are available right now for recording");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:  no capture cards are available right now for recording");
 			return false;
 		}//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
