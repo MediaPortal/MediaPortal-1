@@ -274,6 +274,12 @@ namespace WindowPlugins.GUIPrograms
 
 		public override void OnAction(Action action)
 		{
+			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
+			{
+				BackItemClicked();
+				return;
+			}
+
 			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
 				// <ESC> keypress in some myProgram Menu => jump to main menu
@@ -397,7 +403,7 @@ namespace WindowPlugins.GUIPrograms
 								m_iItemSelectedLabel = "";
 								if( item.Label.Equals( ProgramUtils.cBackLabel ) )
 								{
-									BackItemClicked(item);
+									BackItemClicked();
 									UpdateButtons();
 								}
 								else
@@ -516,7 +522,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		void BackItemClicked(GUIListItem item)
+		void BackItemClicked()
 		{
 			if (lastApp != null)
 			{
