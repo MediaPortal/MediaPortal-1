@@ -13,9 +13,6 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class SWEncodingGraph : MediaPortal.TV.Recording.IGraph
 	{
-    [ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
-      class VideoAnalyzer {};
-
     [ComImport, Guid("2DB47AE5-CF39-43c2-B4D6-0CD8D90946F4")]
       class StreamBufferSink {};
 
@@ -76,12 +73,9 @@ namespace MediaPortal.TV.Recording
     bool                    m_bFirstTune = true;
     int                     m_iPrevChannel=-1;
     bool                    m_bRecordWMV = false;
+    bool                    m_bIsUsingMPEG = false;
 
     //streambuffer interfaces
-    IPin                      m_pinAnalyserInput=null;
-    IPin                      m_pinAnalyserOutput=null;
-    VideoAnalyzer             m_VideoAnalyzer=null;
-    IBaseFilter               m_VidAnalyzer=null;
     IPin                      m_pinAudioOut=null;
     IPin                      m_pinVideoOut=null;
 
@@ -110,6 +104,7 @@ namespace MediaPortal.TV.Recording
       if (strAudioInputPin != null && strAudioInputPin.Length > 0)
         m_strAudioInputPin = strAudioInputPin;
       _RecordingLevel = RecordingLevel;
+      m_bIsUsingMPEG = false;
 		}
 
     /// <summary>
@@ -119,6 +114,12 @@ namespace MediaPortal.TV.Recording
     public bool CreateGraph()
     {
       if (m_graphState != State.None) return false;
+      m_bIsUsingMPEG = false;
+      
+      Filter filterVideoCompressor ;
+      Filter filterAudioCompressor;
+      GetCompressors(out filterVideoCompressor , out filterAudioCompressor);
+
       DirectShowUtil.DebugWrite("SWGraph:CreateGraph()");
 
       // find the video capture device
@@ -239,6 +240,7 @@ namespace MediaPortal.TV.Recording
       m_IAMAnalogVideoDecoder = m_filterCaptureVideo as IAMAnalogVideoDecoder;
 
       m_graphState = State.Created;
+
       return true;
     }
 
@@ -270,11 +272,6 @@ namespace MediaPortal.TV.Recording
       }
 
       
-      if ( m_VideoAnalyzer!=null) 
-      {
-        Marshal.ReleaseComObject(m_VideoAnalyzer);
-        m_VideoAnalyzer=null;
-      }
 
       if (m_mediaControl != null)
       {
@@ -307,9 +304,6 @@ namespace MediaPortal.TV.Recording
       if (m_pinStreamBufferIn1!=null) Marshal.ReleaseComObject(m_pinStreamBufferIn1); m_pinStreamBufferIn1=null;
       if (m_pinStreamBufferIn0!=null) Marshal.ReleaseComObject(m_pinStreamBufferIn0); m_pinStreamBufferIn0=null;
       if (m_bSink!=null) Marshal.ReleaseComObject(m_bSink); m_bSink=null;
-      if (m_pinAnalyserOutput!=null) Marshal.ReleaseComObject(m_pinAnalyserOutput); m_pinAnalyserOutput=null;
-      if (m_pinAnalyserInput!=null) Marshal.ReleaseComObject(m_pinAnalyserInput); m_pinAnalyserInput=null;
-      if (m_VidAnalyzer!=null) Marshal.ReleaseComObject(m_VidAnalyzer); m_VidAnalyzer=null;
 
       if (m_IAMAnalogVideoDecoder!=null)
         Marshal.ReleaseComObject( m_IAMAnalogVideoDecoder ); m_IAMAnalogVideoDecoder = null;
@@ -356,14 +350,13 @@ namespace MediaPortal.TV.Recording
       m_graphState = State.None;
       return;
     }
-    
-    bool AddCompressors()
+
+    void GetCompressors(out Filter filterVideoCompressor , out Filter filterAudioCompressor)
     {
-      int hr;
       Filters filters = new Filters();
-      Filter filterVideoCompressor = null;
-      Filter filterAudioCompressor = null;
-      DirectShowUtil.DebugWrite("SWGraph:find video compressor filter...");
+      filterVideoCompressor = null;
+      filterAudioCompressor = null;
+      DirectShowUtil.DebugWrite("SWGraph:GetCompressors() find video compressor filter {0}...", m_strVideoCompressor);
       
       // find video compressor filter
       foreach (Filter filter in filters.VideoCompressors)
@@ -407,7 +400,7 @@ namespace MediaPortal.TV.Recording
       }
       
       //find audio compressor filter
-      DirectShowUtil.DebugWrite("SWGraph:find audio compressor filter...");
+      DirectShowUtil.DebugWrite("SWGraph:GetCompressors() find audio compressor filter {0}...", m_strAudioCompressor);
       foreach (Filter filter in filters.AudioCompressors)
       {
         if (filter.Name.Equals(m_strAudioCompressor))
@@ -433,16 +426,31 @@ namespace MediaPortal.TV.Recording
       //no video compressor? then fail
       if (filterVideoCompressor == null) 
       {
-        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find video compressor:{0}",m_strVideoCompressor);
-        return false;
+        DirectShowUtil.DebugWrite("SWGraph:GetCompressors() FAILED couldnt find video compressor:{0}",m_strVideoCompressor);
+        return ;
       }
 
       //no audio compressor? then fail
       if (filterAudioCompressor == null) 
       {
-        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find audio compressor:{0}",m_strAudioCompressor);
-        return false;
+        DirectShowUtil.DebugWrite("SWGraph:GetCompressors() FAILED couldnt find audio compressor:{0}",m_strAudioCompressor);
+        return ;
       }
+
+      m_bIsUsingMPEG=IsUsingMPEGCompressors(filterVideoCompressor.MonikerString, filterAudioCompressor.MonikerString);
+      DirectShowUtil.DebugWrite("SWGraph:GetCompressors() using mpeg2 compressors:{0}", m_bIsUsingMPEG);
+    }
+
+    bool AddCompressors()
+    {
+      if (m_filterCompressorAudio!=null) return true;
+      if (m_filterCompressorVideo!=null) return true;
+      int hr;
+      Filter filterVideoCompressor ;
+      Filter filterAudioCompressor;
+      GetCompressors(out filterVideoCompressor , out filterAudioCompressor);
+      DirectShowUtil.DebugWrite("SWGraph:AddCompressors()");
+      if (filterVideoCompressor ==null || filterAudioCompressor==null) return false;
 
       // add the video compressor filters to the graph
       DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add video compressor {0}",m_strVideoCompressor);
@@ -452,13 +460,13 @@ namespace MediaPortal.TV.Recording
         hr = m_graphBuilder.AddFilter(m_filterCompressorVideo, filterVideoCompressor.Name);
         if (hr < 0) 
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add video compressor to filtergraph:0x{0:X}",hr);
+          DirectShowUtil.DebugWrite("SWGraph:AddCompressors() FAILED:Add video compressor to filtergraph:0x{0:X}",hr);
           return false;
         }
       }
       else
       {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:Add video compressor to filtergraph");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:AddCompressors() Add video compressor to filtergraph");
         return false;
       }
 
@@ -661,7 +669,7 @@ namespace MediaPortal.TV.Recording
     /// <returns>boolean indiciating if the graph supports timeshifting</returns>
     public bool SupportsTimeshifting()
     {
-      return false;
+      return m_bIsUsingMPEG;
     }
 
 
@@ -862,7 +870,7 @@ namespace MediaPortal.TV.Recording
     /// when true it will make a content recording. A content recording writes the data to a new permanent file. 
     /// when false it will make a reference recording. A reference recording creates a stub file that refers to the existing backing files, which are made permanent. Create a reference recording if you want to save data that has already been captured.</param>
     public void Record(string strFilename, bool bContentRecording,DateTime timeProgStart, DateTime timeFirstMoment)
-    {		
+    {
       //      strFilename=@"C:\media\movies\test.dvr-ms";
       DirectShowUtil.DebugWrite("mpeg2: Record : {0} {1}",strFilename,bContentRecording);
       IntPtr recorderObj;
@@ -973,24 +981,6 @@ namespace MediaPortal.TV.Recording
 
     void CreateSBESink()
     {
-      DirectShowUtil.DebugWrite("mpeg2:add Videoanalyzer");
-      try
-      {
-
-        m_VideoAnalyzer=new VideoAnalyzer();
-        m_VidAnalyzer = (IBaseFilter) m_VideoAnalyzer;
-      } 
-      catch (Exception) {}
-      if (m_VidAnalyzer ==null)
-      {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to add Videoanalyzer (You need at least Windows XP SP1!!)");
-        return;
-      }
-      m_graphBuilder.AddFilter(m_VidAnalyzer, "MPEG-2 Video Analyzer");
-      
-      m_pinAnalyserInput=DirectShowUtil.FindPinNr(m_VidAnalyzer,PinDirection.Input,0);
-      if (m_pinAnalyserInput==null) DirectShowUtil.DebugWrite("mpeg2:FAILED to find analyser input pin");
-
       DirectShowUtil.DebugWrite("mpeg2:add streambuffersink");
       m_StreamBufferSink=new StreamBufferSink();
       m_streamBuffer = (IBaseFilter) m_StreamBufferSink;
@@ -1048,9 +1038,21 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:Start recording...");
 
       m_bRecordWMV = false;
+      strFileName = System.IO.Path.ChangeExtension(strFileName, ".avi");
 
       // add compressors
-      if (!AddCompressors()) return false;
+      if (m_bIsUsingMPEG)
+      {
+        if (m_graphState!=State.TimeShifting)
+        {
+          strFileName=System.IO.Path.ChangeExtension(strFileName, ".tv");
+          if (!StartTimeShifting(standard,iChannelNr,strFileName)) return false;
+          strFileName=System.IO.Path.ChangeExtension(strFileName, ".dvr-ms");
+        }
+        Record(strFileName,true,timeProgStart,DateTime.Now);
+        m_graphState = State.Recording;
+        return true;
+      }
 
       //change the filename extension to .wmv or .avi 
       strFileName = System.IO.Path.ChangeExtension(strFileName, ".avi");
@@ -1062,7 +1064,6 @@ namespace MediaPortal.TV.Recording
       // set filename
       DirectShowUtil.DebugWrite("SWGraph:record to :{0} ", strFileName);
 
-      Guid cat, med;
       Guid mediaSubTypeAvi = MediaSubType.Avi;
       if (m_bRecordWMV)
         mediaSubTypeAvi = MediaSubType.Asf;
@@ -1093,60 +1094,7 @@ namespace MediaPortal.TV.Recording
         else DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAsfWriter");
       }
 
-
-      // connect video capture->compressor->muxer
-      if (m_videoCaptureDevice.CapturePin != null)
-      {
-        // NOTE that we try to render the interleaved pin before the video pin, because
-        // if BOTH exist, it's a DV filter and the only way to get the audio is to use
-        // the interleaved pin.  Using the Video pin on a DV filter is only useful if
-        // you don't want the audio.
-        DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (interleaved)");
-        cat = PinCategory.Capture;
-        med = MediaType.Interleaved;
-        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter);
-        if (hr != 0)
-        {
-          DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (video)");
-          cat = PinCategory.Capture;
-          med = MediaType.Video;
-          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter);
-          if (hr != 0)
-          {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED:videocap:to connect video capture->compressor :0x{0:X}",hr);
-            return false;
-          }
-        }
-
-        // connect audio capture->compressor->muxer
-        if (m_filterCaptureAudio == null)
-        {
-          DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor ");
-          cat = PinCategory.Capture;
-          med = MediaType.Audio;
-          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorAudio, m_muxFilter);
-          if (hr == 0)
-          {
-            DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor :succeeded");
-          }
-        }
-      }
-
-
-      // connect audio capture->compressor->muxer
-      if (m_filterCaptureAudio != null)
-      {
-        DirectShowUtil.DebugWrite("SWGraph:audiocap:connect audio capture->compressor ");
-        cat = PinCategory.Capture;
-        med = MediaType.Audio;
-        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureAudio, m_filterCompressorAudio, m_muxFilter);
-        if (hr != 0)
-        {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:audiocap:to connect audio capture->compressor :0x{0:X}",hr);
-          return false;
-        }
-      } 
-
+      ConnectCompressors(m_muxFilter);
       // for avi files, set the audio as the masterstream
       if (!m_bRecordWMV)
       {
@@ -1211,6 +1159,10 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.Created) return false;;
 
+      if (!AddCompressors()) return false;
+
+      ConnectCompressors(null);
+
       int hr;
       if (m_StreamBufferSink==null)
       {
@@ -1224,10 +1176,10 @@ namespace MediaPortal.TV.Recording
       {
         //DeleteOldTimeShiftFiles(strDir);
         DirectShowUtil.DebugWrite("mpeg2:render graph");
-        /// [               ]    [              ]    [                ]
-        /// [mpeg2 video enc] -> [video analyzer] -> [#0              ]
-        /// [               ]    [              ]    [  streambuffer  ]
-        /// [            aud] ---------------------> [#1              ]
+        /// [                 ]        [                ]
+        /// [mpeg2 video comp ] ->     [#0              ]
+        /// [                 ]        [  streambuffer  ]
+        /// [mpeg2 audio comp ] -------[#1              ]
 				
 	      
         DirectShowUtil.DebugWrite("mpeg2:render to :{0}",strFileName);
@@ -1236,32 +1188,16 @@ namespace MediaPortal.TV.Recording
         m_pinAudioOut=  DirectShowUtil.FindPinNr(m_filterCompressorAudio,PinDirection.Output,0);
 
         if (m_pinVideoOut==null) return false;
-        if (m_pinAnalyserInput==null) return false;
+        if (m_pinAudioOut==null) return false;
         if (m_pinStreamBufferIn0==null) return false;
 	    
-        //mpeg2 encoder->analyzer in
-        DirectShowUtil.DebugWrite("mpeg2:connect demux video out->analyzer in");
-        hr=m_graphBuilder.Connect(m_pinVideoOut, m_pinAnalyserInput);
-        if (hr==0) 
-          DirectShowUtil.DebugWrite("mpeg2:demux video out connected to analyzer");
-        else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect video out to analyzer:0x{0:X}",hr);
-	      
-        //find analyzer out pin
-        m_pinAnalyserOutput=DirectShowUtil.FindPinNr(m_VidAnalyzer,PinDirection.Output,0);
-        if (m_pinAnalyserOutput==null) 
-        {
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to find analyser output pin");
-          return false;
-        }
-	  
-        //analyzer out ->streambuffer in#0
-        DirectShowUtil.DebugWrite("mpeg2:analyzer out->stream buffer");
-        hr=m_graphBuilder.Connect(m_pinAnalyserOutput, m_pinStreamBufferIn0);
+        //mpeg2 video compressor out ->streambuffer in#0
+        DirectShowUtil.DebugWrite("mpeg2:video compressor out->stream buffer");
+        hr=m_graphBuilder.Connect(m_pinVideoOut, m_pinStreamBufferIn0);
         if (hr==0) 
           DirectShowUtil.DebugWrite("mpeg2:connected to streambuffer");
         else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect analyzer output to streambuffer:0x{0:X}",hr);
+          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect video compressor  output to streambuffer:0x{0:X}",hr);
 
 
         //find streambuffer in#1 pin
@@ -1315,13 +1251,16 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("mpeg2:lock profile");
       hr=m_bSink.LockProfile(strFileName);
       if (hr !=0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set streambuffer filename:0x{0:X}",hr);
-      //m_bRendered=true;
+
+      TuneChannel(standard, iChannelNr);
+
+      m_mediaControl = (IMediaControl)m_graphBuilder;
       if (m_mediaControl!=null)
       {
-        DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() start mediactl");
-        m_mediaControl.Run();
-        DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() started mediactl");
+        hr=m_mediaControl.Run();
+        DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() started mediactl:{0}",hr);
       }
+      m_graphState=State.TimeShifting;
       return true;
     }
 
@@ -1364,6 +1303,144 @@ namespace MediaPortal.TV.Recording
       }
       
       return true;
+    }
+
+    bool ConnectCompressors(IBaseFilter muxer)
+    {
+      Guid cat,med;
+      int hr;
+      
+      DirectShowUtil.DebugWrite("SWGraph:ConnectCompressors()");
+      if (muxer==null)
+      {
+        // connect video capture->compressor
+        IPin videoIn=DirectShowUtil.FindPinNr(m_filterCompressorVideo,PinDirection.Input,0);
+        IPin audioIn=DirectShowUtil.FindPinNr(m_filterCompressorAudio,PinDirection.Input,0);
+        if (videoIn==null)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED unable to find video compressor input");
+          return false;
+        }
+        if (audioIn==null)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED unable to find audio compressor input");
+          return false;
+        }
+        if (m_videoCaptureDevice.CapturePin != null)
+        {
+          hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin ,videoIn);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect videocap:capture->video compressor");
+            return false;
+          }
+        }
+        else if (m_videoCaptureDevice.PreviewVideoPin!= null)
+        {
+          hr=m_graphBuilder.Connect(m_videoCaptureDevice.PreviewVideoPin,videoIn);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect videocap:preview->video compressor");
+            return false;
+          }
+        }
+        else if (m_videoCaptureDevice.VideoPort!= null)
+        {
+          hr=m_graphBuilder.Connect(m_videoCaptureDevice.VideoPort ,videoIn);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect videocap:vport->video compressor");
+            return false;
+          }
+        }
+
+        // connect audio capture->compressor->muxer
+        if (m_filterCaptureAudio != null)
+        {
+          IPin audioOut=DirectShowUtil.FindPinNr(m_filterCaptureAudio,PinDirection.Output,0);
+          if (audioOut==null)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to find audiocap:output ");
+            return false;
+          }
+          hr=m_graphBuilder.Connect(audioOut ,audioIn);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect audiocap:output->audio compressor");
+            return false;
+          }
+        }
+        return true;
+      }
+
+
+      // connect video capture->compressor->muxer
+      if (m_videoCaptureDevice.CapturePin != null)
+      {
+        // NOTE that we try to render the interleaved pin before the video pin, because
+        // if BOTH exist, it's a DV filter and the only way to get the audio is to use
+        // the interleaved pin.  Using the Video pin on a DV filter is only useful if
+        // you don't want the audio.
+        DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (interleaved)");
+        cat = PinCategory.Capture;
+        med = MediaType.Interleaved;
+        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorVideo, muxer);
+        if (hr != 0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (video)");
+          cat = PinCategory.Capture;
+          med = MediaType.Video;
+          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorVideo, muxer);
+          if (hr != 0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED:videocap:to connect video capture->compressor :0x{0:X}",hr);
+            return false;
+          }
+        }
+
+        // connect audio capture->compressor->muxer
+        if (m_filterCaptureAudio == null)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor ");
+          cat = PinCategory.Capture;
+          med = MediaType.Audio;
+          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorAudio, muxer);
+          if (hr == 0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor :succeeded");
+          }
+        }
+      }
+
+
+      // connect audio capture->compressor->muxer
+      if (m_filterCaptureAudio != null)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:audiocap:connect audio capture->compressor ");
+        cat = PinCategory.Capture;
+        med = MediaType.Audio;
+        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureAudio, m_filterCompressorAudio, muxer);
+        if (hr != 0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:audiocap:to connect audio capture->compressor :0x{0:X}",hr);
+          return false;
+        }
+      } 
+      return true;
+    }
+
+    bool IsUsingMPEGCompressors(string monikerVideo,string monikerAudio)
+    {
+      bool VideoIsMPEG=false;
+      bool AudioIsMPEG=false;
+
+      //Cyberlink MPEG Audio encoder
+      if (monikerAudio==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A3D70AC0-9023-11D2-8D55-0080C84E9C68}") AudioIsMPEG=true;
+      
+      //Cyberlink MPEG Video encoder
+      if (monikerVideo==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}") VideoIsMPEG=true;
+
+      return (VideoIsMPEG==true && AudioIsMPEG==true);
     }
 
   }

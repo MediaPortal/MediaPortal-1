@@ -97,7 +97,41 @@ namespace MediaPortal.Configuration
 			}
 			
 			return navigators;
-		}
+    }
+
+    public static void GetMPEG2AudioEncoders(ArrayList list)
+    {
+      Filters filters = new Filters();
+
+      foreach (Filter filter in filters.LegacyFilters) 
+      {
+        
+        bool add=false;
+        //Cyberlink MPEG Audio encoder
+        if (filter.MonikerString==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A3D70AC0-9023-11D2-8D55-0080C84E9C68}") add=true;
+        if (add)
+        {
+          list.Add(filter.Name);      
+        }
+      }
+    }
+
+    public static void GetMPEG2VideoEncoders(ArrayList list)
+    {
+      Filters filters = new Filters();
+
+      foreach (Filter filter in filters.LegacyFilters) 
+      {
+        
+        bool add=false;
+        //Cyberlink MPEG Video encoder
+        if (filter.MonikerString==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}") add=true;
+        if (add)
+        {
+          list.Add(filter.Name);      
+        }
+      }
+    }
 
 		public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
 		{

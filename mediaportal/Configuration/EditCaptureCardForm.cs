@@ -80,6 +80,9 @@ namespace MediaPortal.Configuration
       ArrayList availableVideoCompressors = FilterHelper.GetVideoCompressors();
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
         
+      FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
+      FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
+
       cardComboBox.Items.AddRange(availableVideoDevices.ToArray());
       audioDeviceComboBox.Items.AddRange(availableAudioDevices.ToArray());
       videoCompressorComboBox.Items.AddRange(availableVideoCompressors.ToArray());
