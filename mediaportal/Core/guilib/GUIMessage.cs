@@ -71,7 +71,11 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_RECORDER_STOP_VIEWING,
 				GUI_MSG_GOTO_WINDOW,
 				GUI_MSG_RECORDER_TUNE_RADIO,
-				GUI_MSG_RECORDER_STOP_RADIO
+				GUI_MSG_RECORDER_STOP_RADIO,
+				GUI_MSG_VOLUME_INSERTED,
+				GUI_MSG_VOLUME_REMOVED,
+				GUI_MSG_AUTOPLAY_VOLUME,
+				GUI_MSG_SHOW_DIRECTORY
 		};
 
 		private string 				m_strLabel="";
@@ -223,7 +227,7 @@ namespace MediaPortal.GUI.Library
 		/// The constructor of the GUIMessage class.
 		/// </summary>
     /// <param name="dwMsg">The MessageType.</param>
-    /// <param name="dwMsg">The ID of the target window.</param>
+    /// <param name="iWindowId">The ID of the target window.</param>
 		/// <param name="dwSenderId">The ID of the control sending the message.</param>
 		/// <param name="dwControlID">The ID of the target control.</param>
 		/// <param name="dwParam1">The first parameter.</param>
