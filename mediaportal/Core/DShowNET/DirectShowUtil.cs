@@ -87,105 +87,113 @@ namespace DShowNET
     }
     static public IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder,string strFilterName)
     {
-      int hr;
-      IPin pinOut=null;
-      IBaseFilter NewFilter=null;
-      DebugWrite("add filter:{0} to graph", strFilterName);
-      Filters filters = new Filters();
-      
-      //check first if audio renderer exists!
-      bool bRendererExists=false;
-      foreach (Filter filter in filters.AudioRenderers)
-      {
-        if (String.Compare(filter.Name,strFilterName,true) ==0)
-        {
-          bRendererExists=true;
-        }
-      }
-      if (!bRendererExists) 
-      {
-        DirectShowUtil.DebugWrite("FAILED: audio renderer:{0} doesnt exists", strFilterName);
-        return null;
-      }
+			try
+			{
+				int hr;
+				IPin pinOut=null;
+				IBaseFilter NewFilter=null;
+				DebugWrite("add filter:{0} to graph", strFilterName);
+				Filters filters = new Filters();
+	      
+				//check first if audio renderer exists!
+				bool bRendererExists=false;
+				foreach (Filter filter in filters.AudioRenderers)
+				{
+					if (String.Compare(filter.Name,strFilterName,true) ==0)
+					{
+						bRendererExists=true;
+					}
+				}
+				if (!bRendererExists) 
+				{
+					DirectShowUtil.DebugWrite("FAILED: audio renderer:{0} doesnt exists", strFilterName);
+					return null;
+				}
 
-      // first remove all audio renderers
-      bool bAllRemoved=false;
-      bool bNeedAdd=true;
-      IEnumFilters enumFilters;
-      hr=graphBuilder.EnumFilters(out enumFilters);
-      if (hr>=0 && enumFilters!=null)
-      {
-        uint iFetched;
-        enumFilters.Reset();
-        while(!bAllRemoved)
-        {
-          IBaseFilter pBasefilter=null;
-          hr=enumFilters.Next(1,out pBasefilter,out iFetched);
-          if (hr<0 || iFetched!=1 || pBasefilter==null) break;
+				// first remove all audio renderers
+				bool bAllRemoved=false;
+				bool bNeedAdd=true;
+				IEnumFilters enumFilters;
+				hr=graphBuilder.EnumFilters(out enumFilters);
+				if (hr>=0 && enumFilters!=null)
+				{
+					uint iFetched;
+					enumFilters.Reset();
+					while(!bAllRemoved)
+					{
+						IBaseFilter pBasefilter=null;
+						hr=enumFilters.Next(1,out pBasefilter,out iFetched);
+						if (hr<0 || iFetched!=1 || pBasefilter==null) break;
 
-          foreach (Filter filter in filters.AudioRenderers)
-          {
-            Guid classId1;
-            Guid classId2;
-            pBasefilter.GetClassID(out classId1);            
-            
-            NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
-            NewFilter.GetClassID(out classId2);
-            Marshal.ReleaseComObject( NewFilter );
+						foreach (Filter filter in filters.AudioRenderers)
+						{
+							Guid classId1;
+							Guid classId2;
+							pBasefilter.GetClassID(out classId1);            
+	            
+							NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
+							NewFilter.GetClassID(out classId2);
+							Marshal.ReleaseComObject( NewFilter );
 
-            if (classId1.Equals(classId2))
-            { 
-              if (filter.Name== strFilterName)
-              {
-                DebugWrite("filter already in graph");
-                Marshal.ReleaseComObject( pBasefilter );
-                bNeedAdd=false;
-                break;
-              }
-              else
-              {
-                DebugWrite("remove "+ filter.Name + " from graph");
-                pinOut=FindSourcePinOf(pBasefilter);
-                graphBuilder.RemoveFilter(pBasefilter);
-                bAllRemoved=true;
-                break;
-              }
-            }
-          }
-          Marshal.ReleaseComObject( pBasefilter );
-        }
-      }
+							if (classId1.Equals(classId2))
+							{ 
+								if (filter.Name== strFilterName)
+								{
+									DebugWrite("filter already in graph");
+									Marshal.ReleaseComObject( pBasefilter );
+									bNeedAdd=false;
+									break;
+								}
+								else
+								{
+									DebugWrite("remove "+ filter.Name + " from graph");
+									pinOut=FindSourcePinOf(pBasefilter);
+									graphBuilder.RemoveFilter(pBasefilter);
+									bAllRemoved=true;
+									break;
+								}
+							}
+						}
+						Marshal.ReleaseComObject( pBasefilter );
+					}
+				}
 
-      if (!bNeedAdd) return null;
-      // next add the new one...
-      foreach (Filter filter in filters.AudioRenderers)
-      {
-        if (String.Compare(filter.Name,strFilterName,true) ==0)
-        {
-          NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
-          hr = graphBuilder.AddFilter( NewFilter, strFilterName );
-          if( hr < 0 ) 
-          {
-            DebugWrite("failed:unable to add filter:{0} to graph", strFilterName);
-            NewFilter=null;
-          }
-          else
-          {
-            DebugWrite("added filter:{0} to graph", strFilterName);
-            if (pinOut!=null)
-            {
-              hr=graphBuilder.Render(pinOut);
-              if (hr==0) DebugWrite(" pinout rendererd");
-              else DebugWrite(" failed: pinout render");
-            }
-            return NewFilter;
-          }
-        }
-      }
-      if (NewFilter==null)
-      {
-        DebugWrite("failed filter:{0} not found", strFilterName);
-      }
+				if (!bNeedAdd) return null;
+				// next add the new one...
+				foreach (Filter filter in filters.AudioRenderers)
+				{
+					if (String.Compare(filter.Name,strFilterName,true) ==0)
+					{
+						NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
+						hr = graphBuilder.AddFilter( NewFilter, strFilterName );
+						if( hr < 0 ) 
+						{
+							DebugWrite("failed:unable to add filter:{0} to graph", strFilterName);
+							NewFilter=null;
+						}
+						else
+						{
+							DebugWrite("added filter:{0} to graph", strFilterName);
+							if (pinOut!=null)
+							{
+								hr=graphBuilder.Render(pinOut);
+								if (hr==0) DebugWrite(" pinout rendererd");
+								else DebugWrite(" failed: pinout render");
+							}
+							return NewFilter;
+						}
+					}
+				}
+				if (NewFilter==null)
+				{
+					DebugWrite("failed filter:{0} not found", strFilterName);
+				}
+			}
+			catch(Exception ex)
+			{
+				DebugWrite("DirectshowUtil. Failed to add filter:{0} to graph :{0} {1} [2}", 
+							strFilterName,ex.Message,ex.Source,ex.StackTrace);
+			}
       return null;
     }
 
