@@ -82,7 +82,8 @@ namespace WindowPlugins.GUIPrograms
 		// render the parent window
 		if (null!=m_pParentWindow) 
 			m_pParentWindow.Render();
-		// render this dialog box
+		GUIFontManager.Present();
+ 		// render this dialog box
 		base.Render();
 	}
 
@@ -382,7 +383,7 @@ namespace WindowPlugins.GUIPrograms
 				int iMaxWidth=pControl.Width;
 				int iMaxHeight=pControl.Height;
 				GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight,iMaxWidth,iMaxHeight, out iwidth,out iheight);
-
+				GUIFontManager.Present();
 				Picture.RenderImage(ref m_pTexture,(int)x,(int)y,iwidth,iheight,m_iTextureWidth,m_iTextureHeight,0,0,true);
 			}
 		}
