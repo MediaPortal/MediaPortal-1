@@ -1361,7 +1361,7 @@ namespace MediaPortal.TV.Recording
 				hr=m_sourceGraph.AddFilter(m_sinkFilter,"StreamBufferSink");
 				hr=m_sourceGraph.AddFilter(m_mpeg2Analyzer,"Stream-Analyzer");
 
-				DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
+				//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
 				// setup sampleGrabber and demuxer
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
