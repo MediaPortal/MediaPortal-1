@@ -181,9 +181,14 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){}
 			
-			GUIWindow win=GUIWindowManager.GetWindow(7700);
+			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
 			if(win!=null)
 				win.SetObject(m_teleText);
+
+			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+			if(win!=null)
+				win.SetObject(m_teleText);
+
 		}
 
 		/// <summary>
