@@ -989,6 +989,11 @@ public class MediaPortalApp : D3DApp, IRender
 			GUIWindow window;
 			switch (action.wID)
 			{
+        case Action.ActionType.ACTION_MOUSE_MOVE:
+        case Action.ActionType.ACTION_MOUSE_CLICK:
+          if (!GUIGraphicsContext.Vmr9Active) ResetMouseCursor();
+          break;
+
 				case Action.ActionType.ACTION_RECORD:
 					// record current program
 					GUIWindow tvHome = GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_TV);

@@ -588,6 +588,18 @@ namespace MediaPortal
       }
     }
 
+    public void ResetMouseCursor()
+    {
+      if (!m_bShowCursor)
+      {
+        m_bShowCursor=true;
+        m_bNeedUpdate=true;
+        Invalidate(true);
+      }
+      m_MouseTimeOut=DateTime.Now;
+      //HandleCursor();
+    }
+
     public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
     {
       if (bRemoveHandler)
