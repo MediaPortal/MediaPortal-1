@@ -322,6 +322,7 @@ public class MediaPortalApp : D3DApp, IRender
 			
 			try
 			{
+        System.IO.Directory.CreateDirectory("thumbs");
 				UpdaterConfiguration config = UpdaterConfiguration.Instance;
 				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
 				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
