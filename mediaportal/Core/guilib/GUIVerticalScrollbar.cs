@@ -120,7 +120,11 @@ namespace MediaPortal.GUI.Library
     public float Percentage
     {
       get { return m_fPercent;}
-      set { m_fPercent=value;}
+      set { 
+        m_fPercent=value;
+        if (m_fPercent<0) m_fPercent=0;
+        if (m_fPercent>100) m_fPercent=100;
+      }
     }
 
 		/// <summary>

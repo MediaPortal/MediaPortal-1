@@ -254,6 +254,7 @@ namespace MediaPortal.GUI.Library
 
     public void Add(GUIListItem item)
     {
+      if (item==null) return;
       if (m_ListView!=null) m_ListView.Add(item);
       if (m_ThumbnailView!=null) m_ThumbnailView.Add(item);
       if (m_FilmStripView!=null) m_FilmStripView.Add(item);

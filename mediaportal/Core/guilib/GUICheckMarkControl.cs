@@ -177,7 +177,8 @@ namespace MediaPortal.GUI.Library
 				// Set the label.
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
-			    m_strLabel=message.Label;
+          if (message.Label!=null)
+			      m_strLabel=message.Label;
           return true;
         }
       }
@@ -233,6 +234,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName,string strLabel,long dwColor)
     {
+      if (strFontName==null || strLabel==null) return;
       m_strLabel=strLabel;
 	    m_dwTextColor=dwColor;
 	    m_pFont=GUIFontManager.GetFont(strFontName);
@@ -270,7 +272,10 @@ namespace MediaPortal.GUI.Library
     public string Label 
     { 
       get { return m_strLabel; }
-      set { m_strLabel=value;}
+      set { 
+        if (value==null) return;
+        m_strLabel=value;
+      }
     }
 
 		/// <summary>

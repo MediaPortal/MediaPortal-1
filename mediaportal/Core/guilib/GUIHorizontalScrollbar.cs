@@ -47,6 +47,9 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
+      if (m_strBackground==null) m_strBackground="";
+      if (m_strRight==null) m_strRight="";
+      if (m_strLeft==null) m_strLeft="";
 			m_guiBackground	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strBackground,0);
 			m_guiLeft		= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strLeft,0);
 			m_guiRight		= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strRight,0);

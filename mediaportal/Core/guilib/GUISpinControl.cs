@@ -565,6 +565,8 @@ namespace MediaPortal.GUI.Library
     }
     public override void 	SetPosition(int dwPosX, int dwPosY)
     {
+      if (dwPosX<0) return;
+      if (dwPosY<0) return;
       base.SetPosition(dwPosX, dwPosY);
 
       if (Orientation==eOrientation.Horizontal)
@@ -621,6 +623,7 @@ namespace MediaPortal.GUI.Library
     }
     public void AddLabel(string strLabel, int  iValue)
     {
+      if (strLabel==null) return;
       m_vecLabels.Add(strLabel);
       m_vecValues.Add(iValue);
     }

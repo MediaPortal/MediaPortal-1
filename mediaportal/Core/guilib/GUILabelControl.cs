@@ -14,7 +14,7 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("label")]			protected string	m_strLabel="";
 		[XMLSkinElement("textcolor")]	protected long  	m_dwTextColor=0xFFFFFFFF;
 		[XMLSkinElement("align")]			Alignment         m_dwTextAlign=Alignment.ALIGN_LEFT;
-		[XMLSkinElement("hasPath")]		bool				      m_bHasPath=false;
+		
     string                        m_strText;
     bool                          ContainsProperty=false;
     int                           textwidth=0;
@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Library
 			m_strFontName = strFont;
 			m_dwTextColor = dwTextColor;
 			m_dwTextAlign = dwTextAlign;
-			m_bHasPath = bHasPath;
+			
 			FinalizeConstruction();
 		}
 		public GUILabelControl (int dwParentID) : base(dwParentID)
@@ -60,9 +60,11 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			if (m_strFontName!="" && m_strFontName!="-")
+			if (m_strFontName==null) m_strFontName=String.Empty;
+      if (m_strFontName!="" && m_strFontName!="-")
 				m_pFont=GUIFontManager.GetFont(m_strFontName);
 			GUILocalizeStrings.LocalizeLabel(ref m_strLabel);
+      if (m_strLabel==null) m_strLabel=String.Empty;
       if (m_strLabel.IndexOf("#")>=0) ContainsProperty=true;
 		}
 
@@ -339,12 +341,14 @@ namespace MediaPortal.GUI.Library
           m_pFont=GUIFontManager.GetFont(value);
           m_cachedFontVertices=null;
           m_iFontTriangles=0;
+          m_strFontName=value;
         }
         else if (value != m_pFont.FontName)
         {
           m_pFont=GUIFontManager.GetFont(value);
           m_cachedFontVertices=null;
           m_iFontTriangles=0;
+          m_strFontName=value;
         }
       }
 		}
@@ -356,6 +360,7 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return m_strLabel; }
 			set {
+        if (value==null) return;
         if (value.Equals(m_strLabel)) return;
         m_strLabel=value;
         if (m_strLabel.IndexOf("#")>=0) ContainsProperty=true;

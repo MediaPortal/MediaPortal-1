@@ -196,7 +196,8 @@ namespace MediaPortal.GUI.Library
 			{
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
-					Label=message.Label;
+          if (message.Label!=null)
+					  Label=message.Label;
 					return true;
 				}
 			}
@@ -255,6 +256,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwPosY">The Y position.</param>		
 		public override void SetPosition(int dwPosX, int dwPosY)
 		{
+      if (dwPosX<0 || dwPosY<0) return;
 			base.SetPosition(dwPosX, dwPosY);
 			m_imgFocus.SetPosition(dwPosX, dwPosY);
 			m_imgNoFocus.SetPosition(dwPosX, dwPosY);
@@ -312,6 +314,7 @@ namespace MediaPortal.GUI.Library
 		{ 
 			get { return m_strFontName; }
 			set { 
+        if (value==null) return;
         m_strFontName=value;
         m_label.FontName=m_strFontName;
       }
@@ -325,6 +328,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwColor">The font color.</param>
 		public void SetLabel( string strFontName,string strLabel,long dwColor)
 		{
+      if (strFontName==null) return;
+      if (strLabel==null) return;
 			Label=strLabel;
 			m_dwTextColor=dwColor;
       m_strFontName=strFontName;
@@ -340,7 +345,10 @@ namespace MediaPortal.GUI.Library
 		public string Label
 		{ 
 			get { return m_strLabel; }
-			set { 
+      set 
+      {
+        if (value==null) return;
+             
         m_strLabel=value;
         m_label.Label=m_strLabel;
       }
@@ -361,7 +369,11 @@ namespace MediaPortal.GUI.Library
 		public string ScriptAction  
 		{ 
 			get { return m_strScriptAction; }
-			set { m_strScriptAction=value; }
+      set 
+      { 
+        if (value==null) return;
+        m_strScriptAction=value; 
+      }
 		}
 
 		/// <summary>
@@ -380,7 +392,11 @@ namespace MediaPortal.GUI.Library
     public int TextOffsetX
     {
       get { return m_iTextOffsetX;}
-      set { m_iTextOffsetX=value;}
+      set 
+      { 
+        if (value<0) return;
+        m_iTextOffsetX=value;
+      }
     }
     /// <summary>
     /// Get/set the Y-offset of the label.
@@ -388,7 +404,10 @@ namespace MediaPortal.GUI.Library
     public int TextOffsetY
     {
       get { return m_iTextOffsetY;}
-      set { m_iTextOffsetY=value;}
+      set { 
+            if (value<0) return;
+            m_iTextOffsetY=value;
+      }
     }
 
 		/// <summary>
@@ -425,7 +444,11 @@ namespace MediaPortal.GUI.Library
 	  public string Application
 	  {
 	    get { return m_strApplication; }
-	    set { m_strApplication = value; }
+      set 
+      { 
+        if (value==null) return;
+        m_strApplication = value; 
+      }
 	  }
 
 		/// <summary>
@@ -435,7 +458,10 @@ namespace MediaPortal.GUI.Library
 		public string Arguments
 	  {
 	    get { return m_strArguments; }
-	    set { m_strArguments = value; }
+	    set { 
+        if (value==null) return;
+        m_strArguments = value; 
+      }
 	  }
 
 		/// <summary>
@@ -448,7 +474,8 @@ namespace MediaPortal.GUI.Library
     public override int SelectedItem
     {
       get { return m_SelectedItem;}
-      set { 
+      set {
+        if (value<0) return;
         if (SubItemCount>0)
         {
           m_SelectedItem=value;

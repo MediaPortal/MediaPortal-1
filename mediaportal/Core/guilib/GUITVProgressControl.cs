@@ -388,17 +388,32 @@ namespace MediaPortal.GUI.Library
     public int Percentage1
     {
       get { return m_iPercent1;}
-      set { m_iPercent1=value;}
+      set 
+      {  
+        m_iPercent1=value;
+        if (m_iPercent1<0) m_iPercent1=0;
+        if (m_iPercent1>100) m_iPercent1=100;
+      }
     }
 		public int Percentage2
 		{
 			get { return m_iPercent2;}
-			set { m_iPercent2=value;}
-		}
+      set 
+      {  
+        m_iPercent2=value;
+        if (m_iPercent2<0) m_iPercent2=0;
+        if (m_iPercent2>100) m_iPercent2=100;
+      }		
+    }
 		public int Percentage3
 		{
 			get { return m_iPercent3;}
-			set { m_iPercent3=value;}
+      set 
+      {  
+        m_iPercent3=value;
+        if (m_iPercent3<0) m_iPercent3=0;
+        if (m_iPercent3>100) m_iPercent3=100;
+      }
 		}
 
     public override void FreeResources()
@@ -523,23 +538,39 @@ namespace MediaPortal.GUI.Library
 		public string Property
 		{
 			get { return m_strProperty; }
-			set {m_strProperty=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strProperty=value;
+      }
 		}
 		public string LabelLeft
 		{
 			get { return m_strLabelLeft; }
-			set {m_strLabelLeft=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabelLeft=value;
+      }
 		}
 		
 		public string LabelTop
 		{
 			get { return m_strLabelTop; }
-			set {m_strLabelTop=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabelTop=value;
+      }
 		}
 		public string LabelRight
 		{
 			get { return m_strLabelRight; }
-			set {m_strLabelRight=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabelRight=value;
+      }
 		}
 
 		/// <summary>
@@ -557,43 +588,74 @@ namespace MediaPortal.GUI.Library
 		public string FontName
 		{
 			get { return m_pFont.FontName; }
-			set { m_pFont=GUIFontManager.GetFont(value);}
+      set 
+      {  
+        if (value==null) return;
+        m_pFont=GUIFontManager.GetFont(value);
+      }
 		}
 
     public int	FillX
     { 
       get { return m_iFillX;}
-      set { m_iFillX=value;}
+      set 
+      {  
+        if (value<0) return;
+        m_iFillX=value;
+      }
     }
     public int	FillY
     { 
       get { return m_iFillY;}
-      set { m_iFillY=value;}
+      set 
+      {  
+        if (value<0) return;
+        m_iFillY=value;
+      }
     }
     public int	FillHeight
     { 
       get { return m_iFillHeight;}
-      set { m_iFillHeight=value;}
+      set 
+      {  
+        if (value<0) return;
+        m_iFillHeight=value;
+      }
     }
     public string Label1
     {
       get {return m_strLabel1;}
-      set {m_strLabel1=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabel1=value;
+      }
     }
     public string Label2
     {
       get {return m_strLabel2;}
-      set {m_strLabel2=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabel2=value;
+      }
     }
     public string Label3
     {
       get {return m_strLabel3;}
-      set {m_strLabel3=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabel3=value;
+      }
     }
     public int TopTextureYOffset
     {
       get { return m_iTopTextureYOffset;}
-      set { m_iTopTextureYOffset=value;}
+      set { 
+        if (value<0) return;
+        m_iTopTextureYOffset=value;
+      }
     }
     
   }

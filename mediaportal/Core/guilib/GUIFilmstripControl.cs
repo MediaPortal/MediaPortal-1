@@ -1199,6 +1199,7 @@ namespace MediaPortal.GUI.Library
       get { return m_iItemWidth; }
       set
       {
+        if (value<0) return;
         m_iItemWidth = (int)value;
 				if (m_iItemWidth<1) m_iItemWidth=1;
         FreeResources();
@@ -1211,6 +1212,7 @@ namespace MediaPortal.GUI.Library
       get { return m_iItemHeight; }
       set
       {
+        if (value<0) return;
 				m_iItemHeight = (int)value;
 				if (m_iItemHeight<1) m_iItemHeight=1;
         FreeResources();
@@ -1423,7 +1425,9 @@ namespace MediaPortal.GUI.Library
     public int TextureWidthBig 
     {	 
       get { return m_iTextureWidthBig; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iTextureWidthBig = value; 
 				if (m_iTextureWidthBig <0) m_iTextureWidthBig =0;
 			}
@@ -1431,7 +1435,9 @@ namespace MediaPortal.GUI.Library
     public int TextureHeightBig
     { 
       get { return m_iTextureHeightBig; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iTextureHeightBig = value; 
 				if (m_iTextureHeightBig< 0) m_iTextureHeightBig=0;
 			}
@@ -1439,7 +1445,9 @@ namespace MediaPortal.GUI.Library
     public int ItemWidthBig
     { 
       get { return m_iItemWidthBig; }
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iItemWidthBig = value; 
 				if (m_iItemWidthBig<0) m_iItemWidthBig=0;
 			}
@@ -1447,7 +1455,9 @@ namespace MediaPortal.GUI.Library
     public int ItemHeightBig 
     { 
       get { return m_iItemHeightBig; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iItemHeightBig = value; 
 				if (m_iItemHeightBig < 0) m_iItemHeightBig =0;
 			}
@@ -1456,7 +1466,9 @@ namespace MediaPortal.GUI.Library
     public int TextureWidthLow 
     { 
       get { return m_iTextureWidthLow; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iTextureWidthLow = value; 
 				if (m_iTextureWidthLow<0) m_iTextureWidthLow=0;
 			}
@@ -1464,7 +1476,9 @@ namespace MediaPortal.GUI.Library
     public int TextureHeightLow
     { 
       get { return m_iTextureHeightLow; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iTextureHeightLow = value; 
 				if (m_iTextureHeightLow <0) m_iTextureHeightLow =0;
 			}
@@ -1472,7 +1486,9 @@ namespace MediaPortal.GUI.Library
     public int ItemWidthLow
     { 
       get { return m_iItemWidthLow; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iItemWidthLow = value; 
 				if (m_iItemWidthLow<0) m_iItemWidthLow=0;
 			}
@@ -1480,7 +1496,9 @@ namespace MediaPortal.GUI.Library
     public int ItemHeightLow 
     { 
       get { return m_iItemHeightLow; } 
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iItemHeightLow = value; 
 				if (m_iItemHeightLow <0) m_iItemHeightLow =0;
 			}
@@ -1618,7 +1636,9 @@ namespace MediaPortal.GUI.Library
     public int BackgroundX
     {
       get { return m_iBackgroundX;}
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iBackgroundX=value;
 				if (m_backgroundImage!=null) m_backgroundImage.XPosition=value;
 			}
@@ -1626,7 +1646,9 @@ namespace MediaPortal.GUI.Library
     public int BackgroundY
     {
       get { return m_iBackgroundY;}
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iBackgroundY=value; 
 				if (m_backgroundImage!=null) m_backgroundImage.YPosition=value;
 			}
@@ -1634,7 +1656,9 @@ namespace MediaPortal.GUI.Library
     public int BackgroundWidth
     {
       get { return m_iBackgroundWidth;}
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iBackgroundWidth=value;
 				if (m_backgroundImage!=null) m_backgroundImage.Width=value;
 			}
@@ -1642,7 +1666,9 @@ namespace MediaPortal.GUI.Library
     public int BackgroundHeight
     {
       get { return m_iBackgroundHeight;}
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iBackgroundHeight=value;
 				if (m_backgroundImage!=null) m_backgroundImage.Height=value;
 			}
@@ -1664,6 +1690,7 @@ namespace MediaPortal.GUI.Library
 				return String.Empty;
 			}
       set { 
+        if (value==null) return;
 				if (m_backgroundImage!=null) m_backgroundImage.SetFileName(value);
 			}
     }
@@ -1673,6 +1700,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_iInfoImageX;}
       set { 
+        if (value<0) return;
 				m_iInfoImageX=value;
 				if (m_infoImage!=null) m_infoImage.XPosition=value;
 			}
@@ -1681,6 +1709,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_iInfoImageY;}
       set { 
+        if (value<0) return;
 				m_iInfoImageY=value;
 				if (m_infoImage!=null) m_infoImage.YPosition=value;
 			}
@@ -1689,6 +1718,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_iInfoImageWidth;}
       set { 
+        if (value<0) return;
 				m_iInfoImageWidth=value;
 				if (m_infoImage!=null) m_infoImage.Width=value;
 			}
@@ -1696,7 +1726,9 @@ namespace MediaPortal.GUI.Library
     public int InfoImageHeight
     {
       get { return m_iInfoImageHeight;}
-      set { 
+      set 
+      { 
+        if (value<0) return;
 				m_iInfoImageHeight=value;
 				if (m_infoImage!=null) m_infoImage.Height=value;
 			}
@@ -1721,6 +1753,7 @@ namespace MediaPortal.GUI.Library
 				return String.Empty;
 			}
       set { 
+        if (value==null) return;
         m_strNewInfoImage=value;
         m_bInfoChanged=true;
         m_dateTimeIdle=DateTime.Now;
@@ -1784,6 +1817,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public override void Animate(Animator animator)
     {
+      if (animator==null) return;
       if (m_infoImage!=null) m_infoImage.Animate(animator);
       if (m_upDown!=null) m_upDown.Animate(animator);
       if (m_backgroundImage!=null) m_backgroundImage.Animate(animator);

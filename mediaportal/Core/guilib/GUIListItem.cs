@@ -83,6 +83,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="strLabel">The text of the first label of the item.</param>
 		public GUIListItem(string strLabel)
 		{
+      if (strLabel==null) return;
 			 m_strLabel=strLabel;
 		}
 
@@ -92,7 +93,11 @@ namespace MediaPortal.GUI.Library
 		public string Label
 		{
 			get { return m_strLabel;}
-			set {m_strLabel=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strLabel=value;
+      }
 		}
 
 		/// <summary>
@@ -101,7 +106,11 @@ namespace MediaPortal.GUI.Library
 		public string Label2
 		{
 			get { return m_strLabel2;}
-			set {m_strLabel2=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strLabel2=value;
+      }
 		}
 
 		/// <summary>
@@ -110,7 +119,11 @@ namespace MediaPortal.GUI.Library
 		public string Label3
 		{
 			get { return m_strLabel3;}
-			set {m_strLabel3=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strLabel3=value;
+      }
 		}
 
 		/// <summary>
@@ -123,7 +136,11 @@ namespace MediaPortal.GUI.Library
         RetrieveArt();
         return m_strThumbnailImage;
       }
-			set {m_strThumbnailImage=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strThumbnailImage=value;
+      }
 		}
 
 		/// <summary>
@@ -136,7 +153,11 @@ namespace MediaPortal.GUI.Library
         RetrieveArt();
         return m_strIcon;
       }
-			set {m_strIcon=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strIcon=value;
+      }
     }
 		
     public string PinImage
@@ -147,7 +168,11 @@ namespace MediaPortal.GUI.Library
         RetrieveArt();
         return m_PinIcon;
       }
-      set {m_PinIcon=value;}
+      set 
+      {
+        if (value==null) return;
+        m_PinIcon=value;
+      }
     }
 		
 
@@ -161,7 +186,11 @@ namespace MediaPortal.GUI.Library
         RetrieveArt();
         return m_strIconBig;
       }
-      set {m_strIconBig=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strIconBig=value;
+      }
     }
 
 		/// <summary>
@@ -268,7 +297,11 @@ namespace MediaPortal.GUI.Library
     public string Path
     {
 			get { return m_strPath;}
-      set {m_strPath=value;}
+      set 
+      {
+        if (value==null) return;
+        m_strPath=value;
+      }
 		}
 
 		/// <summary>
@@ -277,7 +310,10 @@ namespace MediaPortal.GUI.Library
 		public string DVDLabel
 		{
 			get { return m_strDVDLabel;}
-			set {m_strDVDLabel=value;}
+			set {
+        if (value==null) return;
+        m_strDVDLabel=value;
+      }
 		}
 
 		/// <summary>

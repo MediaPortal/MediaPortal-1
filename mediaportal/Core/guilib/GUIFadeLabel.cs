@@ -234,10 +234,13 @@ namespace MediaPortal.GUI.Library
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
-          string strLabel = message.Label;
-          if (strLabel.Length>0)
+          if (message.Label!=null)
           {
-            m_vecLabels.Add(strLabel);
+            string strLabel = message.Label;
+            if (strLabel.Length>0)
+            {
+              m_vecLabels.Add(strLabel);
+            }
           }
         }
 
@@ -450,6 +453,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_strFont;}
       set { 
+        if (value==null) return;
         m_strFont=value;
         m_pFont=GUIFontManager.GetFont(m_strFont);
       }
@@ -508,6 +512,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="strLabel"></param>
     public void Add(string strLabel)
     {
+      if (strLabel==null) return;
       m_vecLabels.Add(strLabel);
     }
 
@@ -540,6 +545,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_strLabel; }
       set {
+        if (value==null) return;
         m_strLabel=value;
         if (m_strLabel.IndexOf("#")>=0) ContainsProperty=true;
         else ContainsProperty=false;

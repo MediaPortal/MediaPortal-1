@@ -691,7 +691,8 @@ GUISpinControl m_upDown = null;
 				}
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
 				{
-					m_vecItems.Add((GUIListItem) message.Object);
+          GUIListItem newItem=message.Object as GUIListItem;
+					if (newItem!=null) m_vecItems.Add(newItem);
 					int iItemsPerPage = m_iRows * m_iColumns;
 					int iPages = m_vecItems.Count / iItemsPerPage;
 					if ((m_vecItems.Count % iItemsPerPage) != 0) iPages++;
@@ -832,6 +833,8 @@ GUISpinControl m_upDown = null;
 		
 		bool ValidItem(int iX, int iY)
 		{
+      if (iX<0) return false;
+      if (iY<0) return false;
 			if (iX >= m_iColumns) return false;
 			if (iY >= m_iRows) return false;
 			if (m_iOffset + iY * m_iColumns + iX < (int)m_vecItems.Count) return true;
@@ -1183,6 +1186,7 @@ GUISpinControl m_upDown = null;
 
 		public void SetTextureDimensions(int iWidth, int iHeight)
 		{
+      if (iWidth<0 || iHeight<0) return;
 			m_iTextureWidth = iWidth;
 			m_iTextureHeight = iHeight;
 			
@@ -1199,6 +1203,7 @@ GUISpinControl m_upDown = null;
 
 		public void SetThumbDimensions(int iXpos, int iYpos, int iWidth, int iHeight)
 		{
+      if (iXpos<0 || iYpos<0 || iWidth<0 || iHeight<0) return;
 			m_iThumbWidth = iWidth;
 			m_iThumbHeight = iHeight;
 			m_iThumbXPos = iXpos;
@@ -1218,7 +1223,9 @@ GUISpinControl m_upDown = null;
 		{
 			get { return m_iItemWidth; }
 			set
-			{
+      { 
+        if (value < 0) return;
+        
 				m_iItemWidth = (int)value;
 				FreeResources();
 				AllocResources();
@@ -1230,7 +1237,9 @@ GUISpinControl m_upDown = null;
 			get { return m_iItemHeight; }
 			set
 			{
-				m_iItemHeight = (int)value;
+				 
+        if (value < 0) return;
+        m_iItemHeight = (int)value;
 				FreeResources();
 				AllocResources();
 			}
@@ -1326,54 +1335,87 @@ GUISpinControl m_upDown = null;
 		public int TextureWidthBig 
 		{	 
 			get { return m_iTextureWidthBig; } 
-			set { m_iTextureWidthBig = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextureWidthBig = value; 
+      }
 		}
 		public int TextureHeightBig
 		{ 
 			get { return m_iTextureHeightBig; } 
-			set { m_iTextureHeightBig = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextureHeightBig = value; 
+      }
 		}
 		public int ItemWidthBig
 		{ 
 			get { return m_iItemWidthBig; }
-			set { m_iItemWidthBig = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iItemWidthBig = value; 
+      }
 		}
 		public int ItemHeightBig 
 		{ 
 			get { return m_iItemHeightBig; } 
-			set { m_iItemHeightBig = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iItemHeightBig = value; 
+      }
 		}
 
 		public int TextureWidthLow 
 		{ 
 			get { return m_iTextureWidthLow; } 
-			set { m_iTextureWidthLow = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextureWidthLow = value; 
+      }
 		}
 		public int TextureHeightLow
 		{ 
 			get { return m_iTextureHeightLow; } 
-			set { m_iTextureHeightLow = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextureHeightLow = value; 
+      }
 		}
 		public int ItemWidthLow
 		{ 
 			get { return m_iItemWidthLow; } 
-			set { m_iItemWidthLow = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iItemWidthLow = value; 
+      }
 		}
 		public int ItemHeightLow 
 		{ 
 			get { return m_iItemHeightLow; } 
-			set { m_iItemHeightLow = value; }
+			set { 
+        if (value < 0) return;
+        m_iItemHeightLow = value; 
+      }
 		}
   
 		public void SetThumbDimensionsLow(int iXpos, int iYpos, int iWidth, int iHeight) 
-		{ 
+    { 
+      if (iXpos<0 || iYpos<0 || iWidth<0 || iHeight<0) return;
 			m_iThumbXPosLow = iXpos;
 			m_iThumbYPosLow = iYpos;
 			m_iThumbWidthLow = iWidth;
 			m_iThumbHeightLow = iHeight;
 		}
 		public void SetThumbDimensionsBig(int iXpos, int iYpos, int iWidth, int iHeight) 
-		{ 
+		{
+      if (iXpos<0 || iYpos<0 || iWidth<0 || iHeight<0) return;
 			m_iThumbXPosBig = iXpos;
 			m_iThumbYPosBig = iYpos;
 			m_iThumbWidthBig = iWidth;
@@ -1426,7 +1468,11 @@ GUISpinControl m_upDown = null;
 		}
     public void Sort(System.Collections.IComparer comparer)
     {
-      m_vecItems.Sort(comparer);
+      try
+      {
+        m_vecItems.Sort(comparer);
+      }
+      catch(Exception){}
       m_bRefresh = true;
     }
     
@@ -1461,6 +1507,7 @@ GUISpinControl m_upDown = null;
     }
     public void Add(GUIListItem item)
     {
+      if (item==null) return;
       m_vecItems.Add(item);
       int iItemsPerPage = m_iRows * m_iColumns;
       int iPages = m_vecItems.Count / iItemsPerPage;

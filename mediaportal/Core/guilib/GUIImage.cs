@@ -88,6 +88,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
 		public override void ScaleToScreenResolution()
 		{
+      if (m_strFileName==null) m_strFileName=String.Empty;
 			if (m_strFileName != "-" && m_strFileName != "")
 			{
 				if (m_dwWidth == 0 || m_dwHeight == 0)
@@ -137,7 +138,10 @@ namespace MediaPortal.GUI.Library
 		public int TextureWidth
 		{ 
 			get { return m_iTextureWidth;}
-			set { m_iTextureWidth=value;Update();}
+			set {
+        if (m_iTextureWidth<0) return;
+        m_iTextureWidth=value;Update();
+      }
 		}
 
 		/// <summary>
@@ -146,7 +150,10 @@ namespace MediaPortal.GUI.Library
 		public int TextureHeight
 		{
 			get { return m_iTextureHeight;}
-			set { m_iTextureHeight=value;Update();}
+			set { 
+        if (m_iTextureHeight<0) return;
+        m_iTextureHeight=value;Update();
+      }
 		}
 
 		/// <summary>
@@ -685,6 +692,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="strFileName"></param>
 		public void SetFileName(string strFileName)
 		{
+      if (strFileName==null) return;
       if (m_strFileName==strFileName) return;// same file, no need to do anything
 
 			m_strFileName=strFileName;

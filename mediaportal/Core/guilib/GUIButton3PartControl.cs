@@ -205,7 +205,8 @@ namespace MediaPortal.GUI.Library
 			{
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
-					m_strLabel1=message.Label;
+          if (message.Label!=null)
+					  m_strLabel1=message.Label;
 					return true;
 				}
 			}
@@ -275,17 +276,29 @@ namespace MediaPortal.GUI.Library
 		public string TexutureNoFocusLeftName
 		{ 
       get { return m_imgNoFocusLeft.FileName;} 
-      set { m_imgNoFocusLeft.SetFileName(value);}
+      set 
+      {
+        if (value==null) return;
+        m_imgNoFocusLeft.SetFileName(value);
+      }
 		}
     public string TexutureNoFocusMidName
     { 
       get { return m_imgNoFocusMid.FileName;} 
-      set { m_imgNoFocusMid.SetFileName(value);}
+      set 
+      {
+        if (value==null) return;
+        m_imgNoFocusMid.SetFileName(value);
+      }
     }
     public string TexutureNoFocusRightName
     { 
       get { return m_imgNoFocusRight.FileName;} 
-      set { m_imgNoFocusRight.SetFileName(value);}
+      set 
+      {
+        if (value==null) return;
+        m_imgNoFocusRight.SetFileName(value);
+      }
     }
 
 		/// <summary>
@@ -294,17 +307,31 @@ namespace MediaPortal.GUI.Library
 		public string TexutureFocusLeftName
 		{ 
       get {return m_imgFocusLeft.FileName;} 
-      set { m_imgFocusLeft.SetFileName(value);}
+      set 
+      {
+        if (value==null) return;
+        m_imgFocusLeft.SetFileName(value);
+      }
 		}
     public string TexutureFocusMidName
     { 
       get {return m_imgFocusMid.FileName;} 
-      set { m_imgFocusMid.SetFileName(value);}
+      set 
+      {
+        if (value==null) return;
+        m_imgFocusMid.SetFileName(value);
+      }
     }
     public string TexutureFocusRightName
     { 
-      get {return m_imgFocusRight.FileName;} 
-      set { m_imgFocusRight.SetFileName(value);}
+      get 
+      {
+        return m_imgFocusRight.FileName;
+      } 
+      set { 
+        if (value==null) return;
+        m_imgFocusRight.SetFileName(value);
+      }
     }
 
 		/// <summary>
@@ -376,7 +403,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="strLabel">The text.</param>
 		/// <param name="dwColor">The font color.</param>
 		public void SetLabel1( string strFontName,string strLabel,long dwColor)
-		{
+    {
+      if (strFontName==null) return;
+      if (strLabel==null) return;
 			m_strLabel1=strLabel;
 			m_dwTextColor1=dwColor;
       if (strFontName!="" && strFontName!="-")
@@ -384,6 +413,8 @@ namespace MediaPortal.GUI.Library
 		}
     public void SetLabel2( string strFontName,string strLabel,long dwColor)
     {
+      if (strFontName==null) return;
+      if (strLabel==null) return;
       m_strLabel2=strLabel;
       m_dwTextColor2=dwColor;
       if (strFontName!="" && strFontName!="-")
@@ -396,12 +427,20 @@ namespace MediaPortal.GUI.Library
 		public string Label1
 		{ 
 			get { return m_strLabel1; }
-			set { m_strLabel1=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabel1=value;
+      }
     }
     public string Label2
     { 
       get { return m_strLabel2; }
-      set { m_strLabel2=value;}
+      set 
+      { 
+        if (value==null) return;
+        m_strLabel2=value;
+      }
     }
 
 		/// <summary>
@@ -419,7 +458,11 @@ namespace MediaPortal.GUI.Library
 		public string ScriptAction  
 		{ 
 			get { return m_strScriptAction; }
-			set { m_strScriptAction=value; }
+      set 
+      { 
+        if (value==null) return;
+        m_strScriptAction=value; 
+      }
 		}
 
 		/// <summary>
@@ -438,12 +481,20 @@ namespace MediaPortal.GUI.Library
     public int TextOffsetX1
     {
       get { return m_iTextOffsetX1;}
-      set { m_iTextOffsetX1=value;}
+      set 
+      { 
+        if (value<0) return;
+        m_iTextOffsetX1=value;
+      }
     }
     public int TextOffsetX2
     {
       get { return m_iTextOffsetX2;}
-      set { m_iTextOffsetX2=value;}
+      set 
+      { 
+        if (value<0) return;
+        m_iTextOffsetX2=value;
+      }
     }
     /// <summary>
     /// Get/set the Y-offset of the label.
@@ -451,12 +502,19 @@ namespace MediaPortal.GUI.Library
     public int TextOffsetY1
     {
       get { return m_iTextOffsetY1;}
-      set { m_iTextOffsetY1=value;}
+      set 
+      { 
+        if (value<0) return;
+        m_iTextOffsetY1=value;
+      }
     }
     public int TextOffsetY2
     {
       get { return m_iTextOffsetY2;}
-      set { m_iTextOffsetY2=value;}
+      set { 
+        if (value<0) return;
+        m_iTextOffsetY2=value;
+      }
     }
 
 		/// <summary>
@@ -575,7 +633,11 @@ namespace MediaPortal.GUI.Library
 	  public string Application
 	  {
 	    get { return m_strApplication; }
-	    set { m_strApplication = value; }
+      set 
+      { 
+        if (m_strApplication==null) return;
+        m_strApplication = value; 
+      }
 	  }
 
 		/// <summary>
@@ -585,7 +647,10 @@ namespace MediaPortal.GUI.Library
 	  public string Arguments
 	  {
 	    get { return m_strArguments; }
-	    set { m_strArguments = value; }
+	    set { 
+        if (m_strArguments==null) return;
+        m_strArguments = value; 
+      }
 	  }
 	
 		/// <summary>
@@ -612,7 +677,8 @@ namespace MediaPortal.GUI.Library
     public int IconWidth
     {
       get { return m_iIconWidth; }
-      set { 
+      set 
+      { 
         m_iIconWidth= value; 
         if (m_imgIcon!=null) m_imgIcon.Width=m_iIconWidth;
       }
@@ -624,6 +690,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_iIconHeight; }
       set { 
+        if (value<0) return;
         m_iIconHeight= value; 
         if (m_imgIcon!=null) m_imgIcon.Height=m_iIconHeight;
       }

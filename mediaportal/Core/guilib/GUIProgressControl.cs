@@ -4,6 +4,12 @@ namespace MediaPortal.GUI.Library
 {
 	/// <summary>
 	/// The implementation of a progress bar used by the OSD.
+	/// The progress bar uses the following images 
+	/// -) a background image 
+	/// -) a left texture which presents the left part of the progress bar
+	/// -) a mid texture which presents the middle part of the progress bar
+	/// -) a right texture which presents the right part of the progress bar
+	/// -) a label which is drawn inside the progressbar control
 	/// </summary>
 	public class GUIProgressControl : GUIControl
 	{
@@ -65,6 +71,8 @@ namespace MediaPortal.GUI.Library
 			m_guiBackground.KeepAspectRatio=false;
 			m_guiMid.KeepAspectRatio=false;
 			m_guiRight.KeepAspectRatio=false;
+      if (m_strProperty==null) m_strProperty=String.Empty;
+      if (m_strProperty.IndexOf("#")>=0) ContainsProperty=true;
 		}
 
     /// <summary>

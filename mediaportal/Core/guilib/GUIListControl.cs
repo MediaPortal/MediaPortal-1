@@ -818,7 +818,7 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
 				{
 					GUIListItem pItem = (GUIListItem)message.Object;
-					Add(pItem);
+					if (pItem!=null) Add(pItem);
 				}
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
@@ -1146,7 +1146,10 @@ namespace MediaPortal.GUI.Library
 		public String ScrollySuffix
 		{
 			get { return m_strSuffix; }
-			set { m_strSuffix = value; }
+			set { 
+        if (value==null) return;
+        m_strSuffix = value; 
+      }
 		}
 
 		/// <summary>
@@ -1208,6 +1211,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iYOffset2">The Y offset of the third label.</param>
 		public void SetTextOffsets(int iXoffset, int iYOffset, int iXoffset2, int iYOffset2, int iXoffset3, int iYOffset3)
 		{
+      if (iXoffset< 0 || iYOffset<0) return;
+      if (iXoffset2< 0 || iYOffset2<0) return;
+      if (iXoffset3< 0 || iYOffset3<0) return;
 			m_iTextOffsetX = iXoffset;
 			m_iTextOffsetY = iYOffset;
 			m_iTextOffsetX2 = iXoffset2;
@@ -1223,6 +1229,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iHeight">The height.</param>
 		public void SetImageDimensions(int iWidth, int iHeight)
 		{
+      if (iWidth<0) return;
+      if (iHeight<0) return;
 			m_iImageWidth = iWidth;
 			m_iImageHeight = iHeight;
 		}
@@ -1233,7 +1241,11 @@ namespace MediaPortal.GUI.Library
 		public int ItemHeight
 		{
 			get { return m_iItemHeight; }
-			set { m_iItemHeight = value; }
+      set 
+      {  
+        if (value < 0) return;
+        m_iItemHeight = value; 
+      }
 		}
 		
 		/// <summary>
@@ -1242,7 +1254,10 @@ namespace MediaPortal.GUI.Library
 		public int Space
 		{
 			get { return m_iSpaceBetweenItems; }
-			set { m_iSpaceBetweenItems = value; }
+			set { 
+        if (value < 0) return;
+        m_iSpaceBetweenItems = value; 
+      }
 		}
 
 		/// <summary>
@@ -1252,6 +1267,7 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return m_pFont2.FontName; }
 			set {
+        if (value==null) return;
         if (value != "")
         {
           m_pFont2 = GUIFontManager.GetFont(value);
@@ -1513,7 +1529,11 @@ namespace MediaPortal.GUI.Library
     public int IconOffsetX 
     { 
       get { return m_iIconOffsetX; }
-      set { m_iIconOffsetX = value; }
+      set 
+      { 
+        if (value<0) return;
+        m_iIconOffsetX = value; 
+      }
     }
 
     /// <summary>
@@ -1522,7 +1542,11 @@ namespace MediaPortal.GUI.Library
     public int IconOffsetY 
     { 
       get { return m_iIconOffsetY; }
-      set { m_iIconOffsetY = value; }
+      set 
+      { 
+        if (value<0) return;
+        m_iIconOffsetY = value; 
+      }
     }
 
     public bool TextVisible1
@@ -1621,7 +1645,11 @@ namespace MediaPortal.GUI.Library
 		/// <param name="comparer">The comparer on which the sort is based.</param>
     public void Sort(System.Collections.IComparer comparer)
     {
-      m_vecItems.Sort(comparer);
+      try
+      {
+        m_vecItems.Sort(comparer);
+      }
+      catch(Exception){}
       m_bRefresh = true;
     }
 
@@ -1668,8 +1696,10 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public void Add(GUIListItem item)
     {
+      if (item==null) return;
       if (WordWrap)
       {
         ArrayList wrappedLines;
@@ -1695,13 +1725,21 @@ namespace MediaPortal.GUI.Library
     public int PinIconOffsetX
     {
       get { return m_iPinIconOffsetX; }
-      set { m_iPinIconOffsetX = value; }
+      set 
+      { 
+        if (value<0) return;
+        m_iPinIconOffsetX = value; 
+      }
     }
 	
     public int PinIconOffsetY
     {
       get { return m_iPinIconOffsetY; }
-      set { m_iPinIconOffsetY= value; }
+      set 
+      { 
+        if (value<0) return;
+        m_iPinIconOffsetY= value; 
+      }
     }
 	
     public int PinIconWidth
@@ -1709,6 +1747,7 @@ namespace MediaPortal.GUI.Library
       get { return m_iPinIconWidth; }
       set 
       { 
+        if (value<0) return;
         m_iPinIconWidth= value; 
       }
     }
@@ -1717,6 +1756,7 @@ namespace MediaPortal.GUI.Library
       get { return m_iPinIconHeight; }
       set 
       { 
+        if (value<0) return;
         m_iPinIconHeight= value; 
       }
     }

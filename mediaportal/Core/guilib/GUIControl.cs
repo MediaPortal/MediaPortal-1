@@ -499,7 +499,10 @@ namespace MediaPortal.GUI.Library
     public string Type
     {
       get { return m_strControlType; }
-      set { m_strControlType = value; }
+      set { 
+        if (m_strControlType ==null) return;
+        m_strControlType = value; 
+      }
     }
 
     /// <summary>
@@ -822,6 +825,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="o">subitem</param>
     public void SetSubItem(int index, object o)
     { 
+      if (index < 0 || index >= m_SubItems.Count) return;
       m_SubItems[index]=o;
     }
 
@@ -869,7 +873,10 @@ namespace MediaPortal.GUI.Library
     public string Description
     {
       get { return m_Description;}
-      set { m_Description=value;}
+      set { 
+        if (value==null) return;
+        m_Description=value;
+      }
 	  }
 
 		/// <summary>

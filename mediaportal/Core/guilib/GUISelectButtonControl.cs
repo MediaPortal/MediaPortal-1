@@ -456,7 +456,8 @@ namespace MediaPortal.GUI.Library
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
-          m_strLabel=message.Label ;
+          if (message.Label!=null)
+            m_strLabel=message.Label ;
 
           return true;
         }
@@ -551,6 +552,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwPosY">The Y position.</param>	
     public override void SetPosition(int dwPosX, int dwPosY)
     {
+      if (dwPosX<0) return;
+      if (dwPosY<0) return;
       base.SetPosition(dwPosX, dwPosY);
       m_imgFocus.SetPosition(dwPosX, dwPosY);
       m_imgNoFocus.SetPosition(dwPosX, dwPosY);
@@ -607,7 +610,10 @@ namespace MediaPortal.GUI.Library
     public string FontName
     { 
       get { return m_pFont.FontName; }
-      set { m_pFont.FontName=value;}
+      set 
+      {   
+        if (value ==null) return;
+        m_pFont.FontName=value;}
     }
 
 		/// <summary>
@@ -618,6 +624,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwColor">The font color.</param>
     public void SetLabel( string strFontName,string strLabel,long dwColor)
     {
+      if (strLabel ==null) return;
+      if (strFontName ==null) return;
       m_strLabel=strLabel;
       m_dwTextColor=dwColor;
       m_pFont=GUIFontManager.GetFont(strFontName);
@@ -629,7 +637,11 @@ namespace MediaPortal.GUI.Library
     public string Label
     { 
       get { return m_strLabel; }
-      set { m_strLabel=value;}
+      set 
+      {  
+        if (value ==null) return;
+        m_strLabel=value;
+      }
     }
 
 		/// <summary>
@@ -780,7 +792,11 @@ namespace MediaPortal.GUI.Library
     public int TextOffsetX
     {
       get { return m_iTextOffsetX;}
-      set { m_iTextOffsetX=value;}
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextOffsetX=value;
+      }
     }
     /// <summary>
     /// Get/set the Y-offset of the label.
@@ -788,7 +804,11 @@ namespace MediaPortal.GUI.Library
     public int TextOffsetY
     {
       get { return m_iTextOffsetY;}
-      set { m_iTextOffsetY=value;}
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextOffsetY=value;
+      }
 		}
 		/// <summary>
 		/// Get/set the X-offset of the label.
@@ -796,7 +816,11 @@ namespace MediaPortal.GUI.Library
 		public int TextOffsetX2
 		{
 			get { return m_iTextOffsetX2;}
-			set { m_iTextOffsetX2=value;}
+      set 
+      {  
+        if (value < 0) return;
+        m_iTextOffsetX2=value;
+      }
 		}
 		/// <summary>
 		/// Get/set the Y-offset of the label.
@@ -804,7 +828,10 @@ namespace MediaPortal.GUI.Library
 		public int TextOffsetY2
 		{
 			get { return m_iTextOffsetY2;}
-			set { m_iTextOffsetY2=value;}
+			set { 
+        if (value < 0) return;
+        m_iTextOffsetY2=value;
+      }
 		}
 	}
 }
