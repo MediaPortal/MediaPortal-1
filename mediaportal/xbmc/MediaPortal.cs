@@ -382,6 +382,7 @@ public class MediaPortalApp : D3DApp, IRender
     Recorder.Process();
     g_Player.Process();
     GUIWindowManager.DispatchThreadMessages(); 
+    GUIWindowManager.ProcessWindows();
 
     // update playing status
     if (g_Player.Playing)

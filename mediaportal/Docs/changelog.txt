@@ -1,4 +1,8 @@
-19-07-2004  my music    : fixed : F3 artist info due to allmusic.com changed of layout.  Any info gathering from allmusic.com will take some time since the site is slow and information has to be gather from multiple http requests.
+20-07-2004  my music    : fixed : crash when playing a movie (vmr9) and opening the music/playlists window
+20-07-2004  my tv       : fixed : reset timeshift buffer after changing tv channels and recording
+
+19-07-2004  my music    : fixed : F3 artist info due to allmusic.com changed of layout.  
+								  Any info gathering from allmusic.com will take some time since the site is slow and information has to be gather from multiple http requests.
 
 17-07-2004  my tv       : fixed : MCE cards with HW mpeg2 encoder didnt work
 17-07-2004  my videos   : fixed : Exception when playing DVD for a second time
