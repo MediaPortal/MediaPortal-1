@@ -1,3 +1,4 @@
+24-07-2004  skin engine : fixed : icon view: big icons where not scaled correctly
 24-07-2004  my music    : fixed : fixed bad albumart position
 24-07-2004  my videos   : fixed : fixed crash when playing a HDTV movie with VMR9
 24-07-2004  my music    : fixed : MP stopped after playing 2 songs
