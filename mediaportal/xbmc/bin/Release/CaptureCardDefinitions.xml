@@ -917,8 +917,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant 2388x Transport Stream Capture"	checkdevice="false"></filter>
-        <filter cat="capture"         name="Conexant BDA DVB Tuner/Demod"				checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB Tuner/Demod"				checkdevice="false"></filter>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="false"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
