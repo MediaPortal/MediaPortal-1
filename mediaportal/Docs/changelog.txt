@@ -1,6 +1,11 @@
+29-07-2004  my music    : fixed : when song ends in full screen viz, you return to GUI
+29-07-2004  general     : fixed : scaling of small icon view was broken
+29-07-2004  my music    : fixed : Big Icons not working in album view
+29-07-2004  my music    : fixed : folder.jpg does not show as albumart in albumview
 29-07-2004  general     : added : Foobar2000 plugin.  This plugin needs a counterpart plugin in Foobar itself which  can be found at http://sourceforge.net/projects/foohttpserver
 29-07-2004  my music    : fixed : sorting is always z>a initially in album view
 29-07-2004  my videos   : fixed : -CD1 is still shown when stacking. This is caused by the capital letters
+
 27-07-2004  setup       : fixed : Ability to manually enter the frequency of radion stations
 
 26-07-2004  setup       : added : Ability to arrange the order of the television channels.

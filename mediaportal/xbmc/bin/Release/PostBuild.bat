@@ -47,4 +47,3 @@ copy ..\..\..\mp3TagReader\NZLib\bin\release\zlib.dll plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Release\MultiTagReader.dll plugins\TagReaders
 copy ..\..\..\WinampExternalPlayer\bin\Release\WinampExternalPlayer.dll plugins\ExternalPlayers
 copy ..\..\..\FoobarExternalPlayer\bin\Release\FoobarExternalPlayer.dll plugins\ExternalPlayers
-

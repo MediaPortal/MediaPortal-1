@@ -363,18 +363,6 @@ public class MediaPortalApp : D3DApp, IRender
       // or screen needs a refresh
       m_bNeedUpdate=false;
 
-
-      // update playing status
-      if (g_Player.Playing)
-      {
-        GUIGraphicsContext.IsPlaying=true;
-      }
-      else
-      {
-        if (!Recorder.Timeshifting)
-          GUIGraphicsContext.IsFullScreenVideo=false;
-        GUIGraphicsContext.IsPlaying=false;
-      }
  
       // clear the surface
       GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
