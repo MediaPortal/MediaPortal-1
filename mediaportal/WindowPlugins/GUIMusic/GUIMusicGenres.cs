@@ -44,7 +44,8 @@ namespace MediaPortal.GUI.Music
       SORT_TITLE=5,
       SORT_ARTIST=6,
       SORT_ALBUM=7,
-      SORT_FILENAME=8
+      SORT_FILENAME=8,
+			SORT_RATING=9
     }
 
     enum View
@@ -116,6 +117,7 @@ namespace MediaPortal.GUI.Music
           else if (strTmp=="duration") currentSortMethod=SortMethod.SORT_DURATION;
           else if (strTmp=="filename") currentSortMethod=SortMethod.SORT_FILENAME;
           else if (strTmp=="title") currentSortMethod=SortMethod.SORT_TITLE;
+					else if (strTmp=="rating") currentSortMethod=SortMethod.SORT_RATING;
         }
         strTmp=(string)xmlreader.GetValue("musicgenre","sortroot");
         if (strTmp!=null)
@@ -129,6 +131,7 @@ namespace MediaPortal.GUI.Music
           else if (strTmp=="duration") currentSortMethodRoot=SortMethod.SORT_DURATION;
           else if (strTmp=="filename") currentSortMethodRoot=SortMethod.SORT_FILENAME;
           else if (strTmp=="title") currentSortMethodRoot=SortMethod.SORT_TITLE;
+					else if (strTmp=="rating") currentSortMethodRoot=SortMethod.SORT_RATING;
         }
         m_bSortAscending=xmlreader.GetValueAsBool("musicgenre","sortascending",true);
         m_bSortAscendingRoot=xmlreader.GetValueAsBool("musicgenre","sortascendingroot",true);
@@ -191,7 +194,10 @@ namespace MediaPortal.GUI.Music
             break;
           case SortMethod.SORT_FILENAME:
             xmlwriter.SetValue("musicgenre","sort","filename");
-            break;
+						break;
+					case SortMethod.SORT_RATING:
+						xmlwriter.SetValue("musicgenre","sort","rating");
+						break;
         }
         switch (currentSortMethodRoot)
         {
@@ -221,7 +227,10 @@ namespace MediaPortal.GUI.Music
             break;
           case SortMethod.SORT_FILENAME:
             xmlwriter.SetValue("musicgenre","sortroot","filename");
-            break;
+						break;
+					case SortMethod.SORT_RATING:
+						xmlwriter.SetValue("musicgenre","sortroot","rating");
+						break;
         }
 
         xmlwriter.SetValueAsBool("musicgenre","sortascending",m_bSortAscending);
@@ -369,8 +378,11 @@ namespace MediaPortal.GUI.Music
                   currentSortMethod=SortMethod.SORT_FILENAME;
                   break;
                 case SortMethod.SORT_FILENAME:
-                  currentSortMethod=SortMethod.SORT_NAME;
-                  break;
+                  currentSortMethod=SortMethod.SORT_RATING;
+									break;
+								case SortMethod.SORT_RATING:
+									currentSortMethod=SortMethod.SORT_NAME;
+									break;
               }
             }
             OnSort();
@@ -521,7 +533,11 @@ namespace MediaPortal.GUI.Music
               {
                 item.Label=String.Format("{0} - {1}", tag.Album,tag.Title);
               }
-            }
+						}
+						if (method == SortMethod.SORT_RATING)
+						{
+							item.Label2 = String.Format("{0}", tag.Rating);
+						}
           }
         }
         
@@ -548,7 +564,7 @@ namespace MediaPortal.GUI.Music
             item.Label2 =item.FileInfo.CreationTime.ToShortDateString() + " "+item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
           }
         }
-        else
+        else if (method!=SortMethod.SORT_RATING)
         {
           item.Label2 = "";
           if (tag!=null)
@@ -678,7 +694,10 @@ namespace MediaPortal.GUI.Music
           break;
         case SortMethod.SORT_FILENAME:
           strLine=GUILocalizeStrings.Get(363);
-          break;
+					break;
+				case SortMethod.SORT_RATING:
+					strLine=GUILocalizeStrings.Get(367);
+					break;
       }
       GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSORTBY,strLine);
 
@@ -799,6 +818,7 @@ namespace MediaPortal.GUI.Music
 					tag.Genre=song.Genre;
 					tag.Track=song.Track;
 					tag.Year=song.Year;
+					tag.Rating=song.Rating;
 					item.MusicTag=tag;
           item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
 		
@@ -1001,7 +1021,10 @@ namespace MediaPortal.GUI.Music
 
 		void OnSetRating(GUIListItem item)
 		{
-			int x=1;
+			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+			dialog.DoModal(GetID);
+			m_database.SetRating(item.Path,dialog.Rating);
+
 		}
 
     void OnQueueGenre(string strGenre)
@@ -1265,6 +1288,21 @@ namespace MediaPortal.GUI.Music
             return String.Compare(strArtist2 ,strArtist1,true);
           }
         
+
+				case SortMethod.SORT_RATING:
+					int iRating1 = 0;
+					int iRating2 = 0;
+					if (item1.MusicTag != null) iRating1 = ((MusicTag)item1.MusicTag).Rating;
+					if (item2.MusicTag != null) iRating2 = ((MusicTag)item2.MusicTag).Rating;
+					if (bAscending)
+					{
+						return (int)(iRating1 - iRating2);
+					}
+					else
+					{
+						return (int)(iRating2 - iRating1);
+					}
+					break;
         case SortMethod.SORT_ALBUM:
           string strAlbum1="";
           string strAlbum2="";

@@ -561,7 +561,10 @@ namespace MediaPortal.GUI.Music
     }
 		void OnSetRating(GUIListItem item)
 		{
-			int x=1;
+				GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+			dialog.DoModal(GetID);
+			m_database.SetRating(item.Path,dialog.Rating);
+
 		}
 
     GUIListItem GetSelectedItem()
@@ -909,7 +912,8 @@ namespace MediaPortal.GUI.Music
             tag.Duration=song.Duration;
             tag.Genre=song.Genre;
             tag.Track=song.Track;
-            tag.Year=song.Year;
+						tag.Year=song.Year;
+						tag.Rating=song.Rating;
             item.MusicTag=tag;
             Utils.SetDefaultIcons(item);
 
@@ -956,7 +960,8 @@ namespace MediaPortal.GUI.Music
             tag.Duration=song.Duration;
             tag.Genre=song.Genre;
             tag.Track=song.Track;
-            tag.Year=song.Year;
+						tag.Year=song.Year;
+						tag.Rating=song.Rating;
             item.MusicTag=tag;
             item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
 

@@ -369,7 +369,9 @@ namespace MediaPortal.GUI.Music
 
 		void OnSetRating(GUIListItem item)
 		{
-			int x=1;
+			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+			dialog.DoModal(GetID);
+			m_database.SetRating(item.Path,dialog.Rating);
 		}
 
     bool ViewByIcon
