@@ -144,6 +144,7 @@ namespace MediaPortal.Player
 				if ( !Vmr9.IsVMR9Connected )
 				{
 					//VMR9 is not supported, switch to overlay
+					mediaCtrl=null;
 					Cleanup();
 					return base.GetInterfaces();
 				}
@@ -170,73 +171,67 @@ namespace MediaPortal.Player
 		/// <summary> do cleanup and release DirectShow. </summary>
 		protected override void CloseInterfaces()
 		{
-			if (Vmr9!=null)
-			{
-				if (!Vmr9.IsVMR9Connected)
-				{
-					Vmr9.RemoveVMR9();
-					base.CloseInterfaces();
-					return;
-				}
-			}
 			Cleanup();
 		}
 
 		void Cleanup()
 		{
-      //lock(this)
+      if (graphBuilder==null) return;
+      int hr;
+      Log.Write("VideoPlayer9:cleanup DShow graph");
+      try 
       {
-        int hr;
-        Log.Write("VideoPlayer9:cleanup DShow graph");
-        try 
+        if( mediaCtrl != null )
         {
-          if( mediaCtrl != null )
-          {
-            hr = mediaCtrl.Stop();
-            System.Threading.Thread.Sleep(500);
-            System.Threading.Thread.Sleep(500);
-          }
-  	      if( mediaEvt != null )
-          {
-            hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-            mediaEvt = null;
-          }
+          hr = mediaCtrl.Stop();
+          System.Threading.Thread.Sleep(500);
+          System.Threading.Thread.Sleep(500);
+        }
+  	    if( mediaEvt != null )
+        {
+          hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+          mediaEvt = null;
+        }
 
 
 
+				if (Vmr9!=null)
+				{
 					Vmr9.RemoveVMR9();
+					Vmr9.Release();
 					Vmr9=null;
+				}
 
-          mediaSeek	= null;
-          mediaPos	= null;
-          basicAudio	= null;
-          mediaCtrl = null;
-			
-          DsUtils.RemoveFilters(graphBuilder);
+        mediaSeek	= null;
+        mediaPos	= null;
+        basicAudio	= null;
+        mediaCtrl = null;
+		
+        DsUtils.RemoveFilters(graphBuilder);
 
-          if( vobSub != null )
-            Marshal.ReleaseComObject( vobSub ); vobSub = null;
+        if( vobSub != null )
+          Marshal.ReleaseComObject( vobSub ); vobSub = null;
 
-          if( rotCookie != 0 )
-            DsROT.RemoveGraphFromRot( ref rotCookie );
-          rotCookie=0;
+        if( rotCookie != 0 )
+          DsROT.RemoveGraphFromRot( ref rotCookie );
+        rotCookie=0;
 
-          if( graphBuilder != null )
-            Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+        if( graphBuilder != null )
+          Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 
 
-          GUIGraphicsContext.form.Invalidate(true);
-          m_state = PlayState.Init;
-          GC.Collect();
-        }
-        catch( Exception ex)
-        {
-          Log.Write("VideoPlayer9:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
-        }
-        //switch back to directx windowed mode
-        GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-        GUIWindowManager.SendMessage(msg);
+        GUIGraphicsContext.form.Invalidate(true);
+        m_state = PlayState.Init;
+        GC.Collect();
       }
+      catch( Exception ex)
+      {
+        Log.Write("VideoPlayer9:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+      }
+
+      //switch back to directx windowed mode
+      GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+      GUIWindowManager.SendMessage(msg);
 		}
 	}
 }

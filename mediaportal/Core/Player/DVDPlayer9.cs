@@ -60,6 +60,9 @@ namespace MediaPortal.Player
         if (strDisplayMode=="4:3 pan scan") m_iVideoPref=2;
         if (strDisplayMode=="4:3 letterbox") m_iVideoPref=3;
       }
+			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+			GUIWindowManager.SendMessage(msg);
+
       try 
       {
 
@@ -177,6 +180,7 @@ namespace MediaPortal.Player
 
 				if (!Vmr9.IsVMR9Connected)
 				{
+					mediaCtrl=null;
 					Cleanup();
 					return base.GetInterfaces(strPath);
 				}
@@ -252,20 +256,12 @@ namespace MediaPortal.Player
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
 		{
-			if (Vmr9!=null)
-			{
-				if (!Vmr9.IsVMR9Connected)
-				{
-					Vmr9.RemoveVMR9();
-					base.CloseInterfaces();
-					return;
-				}
-			}
 			Cleanup();
 		}
 
 		void Cleanup()
 		{
+			if (graphBuilder==null) return;
       int hr;
       try 
       {
@@ -286,7 +282,11 @@ namespace MediaPortal.Player
           mediaEvt = null;
         }
 
-				if (Vmr9!=null) Vmr9.RemoveVMR9();
+				if (Vmr9!=null) 
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9.Release();
+				}
 				Vmr9=null;
 
 
@@ -329,6 +329,10 @@ namespace MediaPortal.Player
         basicAudio=null;
         mediaPos=null;
         m_state = PlayState.Init;
+
+				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msg);
+
         GUIGraphicsContext.form.Invalidate(true);          
         GUIGraphicsContext.form.Activate();
       }

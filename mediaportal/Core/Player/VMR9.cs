@@ -168,6 +168,10 @@ namespace MediaPortal.Player
 			return hr;
 		}
 
+		public void Release()
+		{
+		}
+
 		/// <summary>
 		/// removes the vmr9 filter from the graph and free up all unmanaged resources
 		/// </summary>

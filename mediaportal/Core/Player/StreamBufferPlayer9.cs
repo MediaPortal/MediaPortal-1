@@ -15,7 +15,6 @@ namespace MediaPortal.Player
   public class StreamBufferPlayer9 : BaseStreamBufferPlayer
   {
 		VMR9Util Vmr9 = null;
-		bool		 inFullscreenMode=false;
     public StreamBufferPlayer9()
     {
     }
@@ -34,7 +33,6 @@ namespace MediaPortal.Player
 			Log.Write("StreamBufferPlayer9: switch to fullscreen mode");
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
-			inFullscreenMode=true;
 
       try 
       {
@@ -119,7 +117,8 @@ namespace MediaPortal.Player
 				{
 					//VMR9 is not supported, switch to overlay
 					Log.Write("StreamBufferPlayer9: switch to overlay");
-					Cleanup(false);
+					mediaCtrl=null;
+					Cleanup();
 					return base.GetInterfaces(filename);
 				}
 
@@ -143,22 +142,13 @@ namespace MediaPortal.Player
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
 		{
-			if (Vmr9!=null)
-			{
-				if (!Vmr9.IsVMR9Connected)
-				{
-					Vmr9.RemoveVMR9();
-					base.CloseInterfaces();
-					return;
-				}
-			}
-			Cleanup(true );
+			Cleanup();
 		}
 
-		void Cleanup(bool switchToWindowedMode)
+		void Cleanup()
 		{
-      //lock(this)
-      {
+				if (graphBuilder==null) return;
+
         int hr;
         Log.Write("StreamBufferPlayer9:cleanup DShow graph");
         try 
@@ -176,48 +166,43 @@ namespace MediaPortal.Player
             mediaEvt = null;
           }
 
-			//added from agree: check if Vmr9 already null
-			if(Vmr9!=null)
-			{
-				Vmr9.RemoveVMR9();
-				Vmr9=null;
-			}
-
-          basicAudio	= null;
-          m_mediaSeeking=null;
-          mediaCtrl = null;
-	
-		      DsUtils.RemoveFilters(graphBuilder);
-
-          if( rotCookie != 0 )
-            DsROT.RemoveGraphFromRot( ref rotCookie );
-          rotCookie=0;
-
-          if( graphBuilder != null )
-            Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
-
-
-          GUIGraphicsContext.form.Invalidate(true);
-          //GUIGraphicsContext.form.Update();
-          //GUIGraphicsContext.form.Validate();
-          m_state = PlayState.Init;
-          GC.Collect();
-//          Log.Write("StreamBufferPlayer9:cleaned up");
-        }
-        catch( Exception ex)
-        {
-          Log.Write("StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
-        }
-
-        //switch back to directx windowed mode
-				if (switchToWindowedMode && inFullscreenMode)
+				//added from agree: check if Vmr9 already null
+				if(Vmr9!=null)
 				{
-					Log.Write("StreamBufferPlayer9: switch to windowed mode");
-					inFullscreenMode=false;
-					GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-					GUIWindowManager.SendMessage(msg);
+					Vmr9.RemoveVMR9();
+					Vmr9.Release();
+					Vmr9=null;
 				}
+
+				basicAudio	= null;
+				m_mediaSeeking=null;
+				mediaCtrl = null;
+
+
+				DsUtils.RemoveFilters(graphBuilder);
+
+				if( rotCookie != 0 )
+				DsROT.RemoveGraphFromRot( ref rotCookie );
+				rotCookie=0;
+
+				if( graphBuilder != null )
+				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+
+
+				GUIGraphicsContext.form.Invalidate(true);
+				//GUIGraphicsContext.form.Update();
+				//GUIGraphicsContext.form.Validate();
+				m_state = PlayState.Init;
+				GC.Collect();
       }
+      catch( Exception ex)
+      {
+        Log.Write("StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
+      }
+
+      //switch back to directx windowed mode
+			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+			GUIWindowManager.SendMessage(msg);
     }
 
     protected override void OnProcess()
