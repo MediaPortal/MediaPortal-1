@@ -668,7 +668,7 @@ namespace MediaPortal.TV.Recording
         // or user has canceled the recording
         DateTime dtNow = DateTime.Now.AddMinutes(iPreRecordInterval);
         TVUtil util=new TVUtil();
-        TVProgram currentRunningProgram=util.GetProgramAt(rec.Channel, dtNow);
+        TVProgram currentRunningProgram=util.GetProgramAt(rec.Channel, dtNow).Clone();
         util=null;
         m_newRecordedTV = new TVRecorded();        
         m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);

@@ -30,6 +30,7 @@ namespace MediaPortal.TV.Recording
     static string        m_strPreviewChannel;
     static bool          m_bPreviewing=false;
     static bool          m_bPreviewChanged=false;
+    static bool          m_bStopRecording=false;
 
     public Recorder()
     {
@@ -145,6 +146,7 @@ namespace MediaPortal.TV.Recording
           if (m_eState !=State.Running) break;
           if (m_bPreviewChanged) break;
           if (m_bRecordingsChanged) break;
+          if (m_bStopRecording) break;
           // get all programs running for this TV channel
           // between  (now-iPreRecordInterval) - (now+iPostRecordInterval+3 hours)
 
@@ -163,7 +165,7 @@ namespace MediaPortal.TV.Recording
             if (m_eState !=State.Running) break;
             if (m_bPreviewChanged) break;
             if (m_bRecordingsChanged) break;
-
+            if (m_bStopRecording) break;
             bool bRecorded=false;
             
             // if not, then check each check for each tv program
@@ -195,6 +197,7 @@ namespace MediaPortal.TV.Recording
           {
             if (m_bPreviewChanged) break;
             if (m_bRecordingsChanged) break;
+            if (m_bStopRecording) break;
             // 1st check if the recording itself should b recorded
             if ( rec.ShouldRecord(DateTime.Now,null,iPreRecordInterval, iPostRecordInterval) )
             {
@@ -218,6 +221,7 @@ namespace MediaPortal.TV.Recording
           if (m_eState !=State.Running) break;
           if (m_bPreviewChanged) break;
           if (m_bRecordingsChanged) break;
+          if (m_bStopRecording) break;
           System.Threading.Thread.Sleep(500);
           ts=DateTime.Now-dtTime;
         }
@@ -264,6 +268,7 @@ namespace MediaPortal.TV.Recording
       {
         dev.Process();
       }
+      m_bStopRecording=false;
     }
 
     static bool Record(TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
@@ -326,7 +331,7 @@ namespace MediaPortal.TV.Recording
           {
             Log.Write("Recorder: Stop recording on channel:{0} capture card:{1}", m_strChannel,dev.ID);
             dev.StopRecording();
-            dev.Process();
+            m_bStopRecording=true;
           }
         }
       }
