@@ -101,7 +101,6 @@ namespace WindowPlugins.GUIPrograms
 		string lastFilepath = "";
 		MapSettings       _MapSettings = new MapSettings();
 		int m_iItemSelected=-1;   
-		string m_iItemSelectedLabel= "";
 		
 		// filmstrip slideshow timer stuff
 		int m_iSpeed=3; // speed in seconds between two slides
@@ -157,8 +156,6 @@ namespace WindowPlugins.GUIPrograms
 						break;
 				}
 				xmlwriter.SetValue("myprograms","lastAppID", _MapSettings.LastAppID.ToString());
-				xmlwriter.SetValue("myprograms","sortby", _MapSettings.SortBy);
-				xmlwriter.SetValue("myprograms","sortasc", _MapSettings.SortAscending);
 				//Log.Write("dw myPrograms: saving xmlsettings lastappid {0}", _MapSettings.LastAppID);
 			}
 		}
@@ -177,8 +174,6 @@ namespace WindowPlugins.GUIPrograms
 					else if (strTmp=="filmstrip") _MapSettings.ViewAs = (int)View.VIEW_AS_FILMSTRIP;
 				}
 				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
-				_MapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
-				_MapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
 			}
 		}
 
@@ -268,7 +263,6 @@ namespace WindowPlugins.GUIPrograms
 				{
 					m_iItemSelected=GetSelectedItemNo();
 					GUIListItem item = GetSelectedItem();
-					m_iItemSelectedLabel = item.Label;
 					if (!item.Label.Equals( ProgramUtils.cBackLabel ))
 					{
 						// show file info but only if the selected item is not the back button
@@ -284,7 +278,6 @@ namespace WindowPlugins.GUIPrograms
 
 		public override bool OnMessage(GUIMessage message)
 		{
-			GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
 			switch ( message.Message )
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
@@ -297,8 +290,6 @@ namespace WindowPlugins.GUIPrograms
 					if (lastApp != null)
 					{
 						lastFilepath = lastApp.DefaultFilepath();
-						lastApp.CurrentSortIndex = _MapSettings.SortBy;
-						lastApp.CurrentSortIsAscending = _MapSettings.SortAscending;
 						//Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
 						//Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
 					}
@@ -320,10 +311,7 @@ namespace WindowPlugins.GUIPrograms
 					int iItemIndex = GetSelectedItemNo();
 					if (iItemIndex > 0)
 					{
-						GUIListItem item = GetSelectedItem();
 						m_iItemSelected=GetSelectedItemNo();
-						m_iItemSelectedLabel = item.Label;
-
 					}
 					break;
 			
@@ -364,7 +352,6 @@ namespace WindowPlugins.GUIPrograms
 							if( !item.IsFolder )
 							{
 								m_iItemSelected=GetSelectedItemNo();
-								m_iItemSelectedLabel = item.Label;
 								//								Log.Write("GUIPrograms: ACTION_SELECT_ITEM writes itemsel: {0}", m_iItemSelected);
 								// non-folder item clicked => always a fileitem!
 								FileItemClicked(item);
@@ -373,7 +360,6 @@ namespace WindowPlugins.GUIPrograms
 							{
 								// folder-item clicked.... 
 								m_iItemSelected=-1;
-								m_iItemSelectedLabel = "";
 								if( item.Label.Equals( ProgramUtils.cBackLabel ) )
 								{
 									BackItemClicked(item);
@@ -393,8 +379,8 @@ namespace WindowPlugins.GUIPrograms
 						// get next sort method...
 						if (lastApp != null)
 						{
+							GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
 							lastApp.OnSort(view, true);
-							_MapSettings.SortBy = lastApp.CurrentSortIndex;
 							UpdateButtons();
 						}
 						GUIControl.FocusControl(GetID,iControl);
@@ -404,8 +390,8 @@ namespace WindowPlugins.GUIPrograms
 						// toggle asc / desc for current sort method...
 						if (lastApp != null)
 						{
+							GUIFacadeControl view=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
 							lastApp.OnSortToggle(view);
-							_MapSettings.SortAscending = lastApp.CurrentSortIsAscending;
 						}
 						GUIControl.FocusControl(GetID,iControl);
 					}
@@ -674,29 +660,13 @@ namespace WindowPlugins.GUIPrograms
 				TotalItems = TotalItems + DisplayFiles();
 			}
 
-			GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
-			lastApp.OnSort(pControl, false);
-			
-
 			string strObjects=String.Format("{0} {1}", TotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
 			if (m_iItemSelected>=0)
 			{
-//				int nIndex = IndexOfLabelText(this.m_iItemSelectedLabel);
-//				if ((nIndex >= 0) && (nIndex <= pControl.ListView.Count - 1))
-//				{
-//				}
 				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
 			}
-		}
-
-		int IndexOfLabelText(string strValue)
-		{
-			// TODO: if launch changes position of item..... index is wrong!
-			int res = -1;
-
-			return res;
 		}
 
 
@@ -745,7 +715,7 @@ namespace WindowPlugins.GUIPrograms
 			if (filmstrip==null) return;
 			string thumbName = "";
 			if ((item.ThumbnailImage != GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png")
-				  && (item.ThumbnailImage != ""))
+				&& (item.ThumbnailImage != ""))
 			{
 				// only show big thumb if there is really one....
 				thumbName = item.ThumbnailImage;

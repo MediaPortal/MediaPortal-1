@@ -45,9 +45,14 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.ContextMenu menuFileList;
 		private System.Windows.Forms.MenuItem mnuCheckWithoutImages;
 		private System.Windows.Forms.MenuItem mnuCheckWithoutOverview;
+		private System.Windows.Forms.ProgressBar progressBar;
+		private System.Windows.Forms.Panel progressPanel;
+		private System.Windows.Forms.Label progressStatusLabel;
+		private System.Windows.Forms.Button cancelButton;
 		private System.ComponentModel.IContainer components;
 
 
+		bool stopSearching = false;
 
 		public AppItem CurApp
 		{
@@ -109,6 +114,9 @@ namespace WindowPlugins.GUIPrograms
 			this.FileList = new System.Windows.Forms.ListView();
 			this.FileTitle = new System.Windows.Forms.ColumnHeader();
 			this.status = new System.Windows.Forms.ColumnHeader();
+			this.menuFileList = new System.Windows.Forms.ContextMenu();
+			this.mnuCheckWithoutImages = new System.Windows.Forms.MenuItem();
+			this.mnuCheckWithoutOverview = new System.Windows.Forms.MenuItem();
 			this.splitterVert = new System.Windows.Forms.Splitter();
 			this.rightPanel = new System.Windows.Forms.Panel();
 			this.LaunchURLButton = new System.Windows.Forms.Button();
@@ -117,18 +125,21 @@ namespace WindowPlugins.GUIPrograms
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.menuFileList = new System.Windows.Forms.ContextMenu();
-			this.mnuCheckWithoutImages = new System.Windows.Forms.MenuItem();
-			this.mnuCheckWithoutOverview = new System.Windows.Forms.MenuItem();
+			this.progressPanel = new System.Windows.Forms.Panel();
+			this.progressBar = new System.Windows.Forms.ProgressBar();
+			this.progressStatusLabel = new System.Windows.Forms.Label();
+			this.cancelButton = new System.Windows.Forms.Button();
 			this.bottomPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).BeginInit();
 			this.leftPanel.SuspendLayout();
 			this.rightPanel.SuspendLayout();
+			this.progressPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// bottomPanel
 			// 
 			this.bottomPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.bottomPanel.Controls.Add(this.progressPanel);
 			this.bottomPanel.Controls.Add(this.label1);
 			this.bottomPanel.Controls.Add(this.MinRelevanceNum);
 			this.bottomPanel.Controls.Add(this.ResetFilterButton);
@@ -140,16 +151,16 @@ namespace WindowPlugins.GUIPrograms
 			this.bottomPanel.Controls.Add(this.btnSaveSearch);
 			this.bottomPanel.Controls.Add(this.btnStartSearch);
 			this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.bottomPanel.Location = new System.Drawing.Point(0, 429);
+			this.bottomPanel.Location = new System.Drawing.Point(0, 422);
 			this.bottomPanel.Name = "bottomPanel";
-			this.bottomPanel.Size = new System.Drawing.Size(752, 96);
+			this.bottomPanel.Size = new System.Drawing.Size(752, 112);
 			this.bottomPanel.TabIndex = 0;
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(343, 16);
+			this.label1.Location = new System.Drawing.Point(344, 6);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(88, 24);
+			this.label1.Size = new System.Drawing.Size(88, 14);
 			this.label1.TabIndex = 25;
 			this.label1.Text = "Min. Relevance";
 			// 
@@ -160,7 +171,7 @@ namespace WindowPlugins.GUIPrograms
 																																			0,
 																																			0,
 																																			0});
-			this.MinRelevanceNum.Location = new System.Drawing.Point(431, 14);
+			this.MinRelevanceNum.Location = new System.Drawing.Point(432, 3);
 			this.MinRelevanceNum.Name = "MinRelevanceNum";
 			this.MinRelevanceNum.Size = new System.Drawing.Size(56, 20);
 			this.MinRelevanceNum.TabIndex = 24;
@@ -175,7 +186,7 @@ namespace WindowPlugins.GUIPrograms
 			// ResetFilterButton
 			// 
 			this.ResetFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.ResetFilterButton.Location = new System.Drawing.Point(287, 13);
+			this.ResetFilterButton.Location = new System.Drawing.Point(282, 3);
 			this.ResetFilterButton.Name = "ResetFilterButton";
 			this.ResetFilterButton.Size = new System.Drawing.Size(40, 21);
 			this.ResetFilterButton.TabIndex = 23;
@@ -208,7 +219,7 @@ namespace WindowPlugins.GUIPrograms
 																												"Sega Master System",
 																												"Super NES",
 																												"TurboGrafx-16"});
-			this.filterComboBox.Location = new System.Drawing.Point(72, 13);
+			this.filterComboBox.Location = new System.Drawing.Point(72, 3);
 			this.filterComboBox.Name = "filterComboBox";
 			this.filterComboBox.Size = new System.Drawing.Size(208, 21);
 			this.filterComboBox.TabIndex = 22;
@@ -219,7 +230,7 @@ namespace WindowPlugins.GUIPrograms
 			// filterLabel
 			// 
 			this.filterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.filterLabel.Location = new System.Drawing.Point(8, 16);
+			this.filterLabel.Location = new System.Drawing.Point(8, 5);
 			this.filterLabel.Name = "filterLabel";
 			this.filterLabel.Size = new System.Drawing.Size(80, 16);
 			this.filterLabel.TabIndex = 21;
@@ -227,10 +238,9 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// buttonSelectBestMatch
 			// 
-			this.buttonSelectBestMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.buttonSelectBestMatch.Enabled = false;
 			this.buttonSelectBestMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.buttonSelectBestMatch.Location = new System.Drawing.Point(168, 52);
+			this.buttonSelectBestMatch.Location = new System.Drawing.Point(168, 32);
 			this.buttonSelectBestMatch.Name = "buttonSelectBestMatch";
 			this.buttonSelectBestMatch.Size = new System.Drawing.Size(160, 32);
 			this.buttonSelectBestMatch.TabIndex = 20;
@@ -253,7 +263,7 @@ namespace WindowPlugins.GUIPrograms
 			// btnCancel
 			// 
 			this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnCancel.Location = new System.Drawing.Point(668, 60);
+			this.btnCancel.Location = new System.Drawing.Point(668, 76);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.TabIndex = 2;
 			this.btnCancel.Text = "Close";
@@ -261,9 +271,8 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnSaveSearch
 			// 
-			this.btnSaveSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.btnSaveSearch.Enabled = false;
-			this.btnSaveSearch.Location = new System.Drawing.Point(328, 52);
+			this.btnSaveSearch.Location = new System.Drawing.Point(328, 32);
 			this.btnSaveSearch.Name = "btnSaveSearch";
 			this.btnSaveSearch.Size = new System.Drawing.Size(160, 32);
 			this.btnSaveSearch.TabIndex = 1;
@@ -273,9 +282,8 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnStartSearch
 			// 
-			this.btnStartSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.btnStartSearch.Enabled = false;
-			this.btnStartSearch.Location = new System.Drawing.Point(8, 52);
+			this.btnStartSearch.Location = new System.Drawing.Point(8, 32);
 			this.btnStartSearch.Name = "btnStartSearch";
 			this.btnStartSearch.Size = new System.Drawing.Size(160, 32);
 			this.btnStartSearch.TabIndex = 0;
@@ -292,7 +300,7 @@ namespace WindowPlugins.GUIPrograms
 			this.leftPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.leftPanel.Location = new System.Drawing.Point(0, 0);
 			this.leftPanel.Name = "leftPanel";
-			this.leftPanel.Size = new System.Drawing.Size(360, 429);
+			this.leftPanel.Size = new System.Drawing.Size(360, 422);
 			this.leftPanel.TabIndex = 5;
 			// 
 			// uncheckAllButton
@@ -341,7 +349,7 @@ namespace WindowPlugins.GUIPrograms
 			this.FileList.LabelEdit = true;
 			this.FileList.Location = new System.Drawing.Point(8, 40);
 			this.FileList.Name = "FileList";
-			this.FileList.Size = new System.Drawing.Size(344, 375);
+			this.FileList.Size = new System.Drawing.Size(344, 368);
 			this.FileList.TabIndex = 13;
 			this.FileList.View = System.Windows.Forms.View.Details;
 			this.FileList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FileList_MouseUp);
@@ -358,12 +366,30 @@ namespace WindowPlugins.GUIPrograms
 			this.status.Text = "Status";
 			this.status.Width = 102;
 			// 
+			// menuFileList
+			// 
+			this.menuFileList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																								 this.mnuCheckWithoutImages,
+																																								 this.mnuCheckWithoutOverview});
+			// 
+			// mnuCheckWithoutImages
+			// 
+			this.mnuCheckWithoutImages.Index = 0;
+			this.mnuCheckWithoutImages.Text = "Check all files without images";
+			this.mnuCheckWithoutImages.Click += new System.EventHandler(this.mnuCheckWithoutImages_Click);
+			// 
+			// mnuCheckWithoutOverview
+			// 
+			this.mnuCheckWithoutOverview.Index = 1;
+			this.mnuCheckWithoutOverview.Text = "Check all files without an overview";
+			this.mnuCheckWithoutOverview.Click += new System.EventHandler(this.mnuCheckWithoutOverview_Click);
+			// 
 			// splitterVert
 			// 
 			this.splitterVert.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.splitterVert.Location = new System.Drawing.Point(360, 0);
 			this.splitterVert.Name = "splitterVert";
-			this.splitterVert.Size = new System.Drawing.Size(5, 429);
+			this.splitterVert.Size = new System.Drawing.Size(5, 422);
 			this.splitterVert.TabIndex = 6;
 			this.splitterVert.TabStop = false;
 			// 
@@ -375,7 +401,7 @@ namespace WindowPlugins.GUIPrograms
 			this.rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.rightPanel.Location = new System.Drawing.Point(365, 0);
 			this.rightPanel.Name = "rightPanel";
-			this.rightPanel.Size = new System.Drawing.Size(387, 429);
+			this.rightPanel.Size = new System.Drawing.Size(387, 422);
 			this.rightPanel.TabIndex = 7;
 			// 
 			// LaunchURLButton
@@ -412,7 +438,7 @@ namespace WindowPlugins.GUIPrograms
 			this.MatchList.Location = new System.Drawing.Point(16, 40);
 			this.MatchList.MultiSelect = false;
 			this.MatchList.Name = "MatchList";
-			this.MatchList.Size = new System.Drawing.Size(358, 375);
+			this.MatchList.Size = new System.Drawing.Size(358, 368);
 			this.MatchList.TabIndex = 14;
 			this.MatchList.View = System.Windows.Forms.View.Details;
 			this.MatchList.DoubleClick += new System.EventHandler(this.MatchList_DoubleClick);
@@ -428,28 +454,45 @@ namespace WindowPlugins.GUIPrograms
 			this.columnHeader2.Text = "Relevance";
 			this.columnHeader2.Width = 80;
 			// 
-			// menuFileList
+			// progressPanel
 			// 
-			this.menuFileList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																								 this.mnuCheckWithoutImages,
-																																								 this.mnuCheckWithoutOverview});
+			this.progressPanel.Controls.Add(this.cancelButton);
+			this.progressPanel.Controls.Add(this.progressStatusLabel);
+			this.progressPanel.Controls.Add(this.progressBar);
+			this.progressPanel.Enabled = false;
+			this.progressPanel.Location = new System.Drawing.Point(8, 69);
+			this.progressPanel.Name = "progressPanel";
+			this.progressPanel.Size = new System.Drawing.Size(480, 40);
+			this.progressPanel.TabIndex = 27;
 			// 
-			// mnuCheckWithoutImages
+			// progressBar
 			// 
-			this.mnuCheckWithoutImages.Index = 0;
-			this.mnuCheckWithoutImages.Text = "Check all files without images";
-			this.mnuCheckWithoutImages.Click += new System.EventHandler(this.mnuCheckWithoutImages_Click);
+			this.progressBar.Location = new System.Drawing.Point(0, 0);
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(480, 16);
+			this.progressBar.TabIndex = 27;
 			// 
-			// mnuCheckWithoutOverview
+			// progressStatusLabel
 			// 
-			this.mnuCheckWithoutOverview.Index = 1;
-			this.mnuCheckWithoutOverview.Text = "Check all files without an overview";
-			this.mnuCheckWithoutOverview.Click += new System.EventHandler(this.mnuCheckWithoutOverview_Click);
+			this.progressStatusLabel.Location = new System.Drawing.Point(0, 20);
+			this.progressStatusLabel.Name = "progressStatusLabel";
+			this.progressStatusLabel.Size = new System.Drawing.Size(392, 16);
+			this.progressStatusLabel.TabIndex = 28;
+			this.progressStatusLabel.Text = "Progress status";
+			// 
+			// cancelButton
+			// 
+			this.cancelButton.Location = new System.Drawing.Point(392, 16);
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.Size = new System.Drawing.Size(88, 23);
+			this.cancelButton.TabIndex = 29;
+			this.cancelButton.Text = "Cancel Search";
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
 			// FileInfoScraperForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(752, 525);
+			this.ClientSize = new System.Drawing.Size(752, 534);
 			this.Controls.Add(this.rightPanel);
 			this.Controls.Add(this.splitterVert);
 			this.Controls.Add(this.leftPanel);
@@ -462,6 +505,7 @@ namespace WindowPlugins.GUIPrograms
 			((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).EndInit();
 			this.leftPanel.ResumeLayout(false);
 			this.rightPanel.ResumeLayout(false);
+			this.progressPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -505,10 +549,33 @@ namespace WindowPlugins.GUIPrograms
 			this.Close();
 		}
 
+		void InitProgressBar(string msg)
+		{
+			progressPanel.Enabled = true;
+			progressBar.Value = 0;
+			progressBar.Maximum = FileList.CheckedItems.Count - 1;
+			progressBar.Step = 1;
+			progressStatusLabel.Text = msg;
+		}
+
+		void StepProgressBar()
+		{
+			progressBar.PerformStep();
+			progressStatusLabel.Text = String.Format("Searching file {0} of {1}", progressBar.Value, progressBar.Maximum + 1);
+		}
+
+		void DeInitProgressBar(string msg)
+		{
+			progressPanel.Enabled = false;
+			progressStatusLabel.Text = msg;
+		}
+
 		private void btnStartSearch_Click(object sender, System.EventArgs e)
 		{
+			InitProgressBar("Starting search");
 			foreach (ListViewItem curItem in FileList.CheckedItems)
 			{
+				if (stopSearching) break;
 				ListViewItem nextItem = null;
 				FileItem file = (FileItem)curItem.Tag;
 				if (file != null)
@@ -527,12 +594,21 @@ namespace WindowPlugins.GUIPrograms
 					Application.DoEvents();
 					file.FindFileInfo(myProgScraperType.ALLGAME);
 					curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
-//					curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
+					StepProgressBar();
 					Application.DoEvents();
 				}
 			}
 			ChangeFileSelection();
 			buttonSelectBestMatch.Enabled = true;
+			if (stopSearching)
+			{
+				DeInitProgressBar("Search aborted");
+			}
+			else
+			{
+				DeInitProgressBar("Search finished");
+			}
+			stopSearching = false;
 		}
 
 	
@@ -694,9 +770,11 @@ namespace WindowPlugins.GUIPrograms
 
 		private void btnSaveSearch_Click(object sender, System.EventArgs e)
 		{
+			InitProgressBar("Starting search");
 			ListViewItem nextItem = null;
 			foreach (ListViewItem curItem in FileList.CheckedItems)
 			{
+				if (stopSearching) break;
 				FileItem file = (FileItem)curItem.Tag;
 				if (file != null)
 				{
@@ -709,6 +787,7 @@ namespace WindowPlugins.GUIPrograms
 						nextItem = curItem;
 					}
 					nextItem.EnsureVisible();
+					StepProgressBar();
 					if (file.FileInfoFavourite != null)
 					{
 						curItem.SubItems[1].Text = String.Format("<searching...>");
@@ -720,6 +799,15 @@ namespace WindowPlugins.GUIPrograms
 					}
 				}
 			}
+			if (stopSearching)
+			{
+				DeInitProgressBar("Search aborted");
+			}
+			else
+			{
+				DeInitProgressBar("Search finished");
+			}
+			stopSearching = false;
 		}
 
 		private void filterComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -843,6 +931,11 @@ namespace WindowPlugins.GUIPrograms
 			FileItem curItem = GetSelectedFileItem();
 			if (curItem == null) return;
 			curItem.Title = e.Label;
+		}
+
+		private void cancelButton_Click(object sender, System.EventArgs e)
+		{
+			stopSearching = true;
 		}
 
 
