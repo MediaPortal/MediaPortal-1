@@ -271,6 +271,16 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "OldSkinForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OldSkinForm.resx"
+                    DependentUpon = "OldSkinForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "SplashScreen.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

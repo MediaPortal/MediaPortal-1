@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
@@ -13,10 +14,11 @@ namespace MediaPortal.Configuration.Sections
 		const string SkinDirectory = @"skin\";
 
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.ListBox availableSkinsListBox;
 		private System.Windows.Forms.PictureBox previewPictureBox;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.ListView listViewAvailableSkins;
+		private System.Windows.Forms.ColumnHeader colName;
+		private System.Windows.Forms.ColumnHeader colVersion;
 		private System.ComponentModel.IContainer components = null;
 
 		public Skin() : this("Skin")
@@ -32,7 +34,7 @@ namespace MediaPortal.Configuration.Sections
 			//
 			// Load available skins
 			//
-			availableSkinsListBox.Items.Clear();
+			listViewAvailableSkins.Items.Clear();
 
 			if(Directory.Exists(SkinDirectory))
 			{
@@ -62,9 +64,17 @@ namespace MediaPortal.Configuration.Sections
               // Check if we have a home.xml located in the directory, if so we consider it as a
               // valid skin directory
               //
-              if(File.Exists(Path.Combine(SkinDirectory, Path.Combine(directoryName, "home.xml"))))
-              {
-                availableSkinsListBox.Items.Add(directoryName);
+							string filename=Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
+              if(File.Exists(filename))
+              {	
+								XmlDocument doc=new XmlDocument();
+								doc.Load(filename);
+								XmlNode node=doc.SelectSingleNode("/controls/skin/version");
+                ListViewItem item=listViewAvailableSkins.Items.Add(directoryName);
+								if (node!=null && node.InnerText!=null)
+									item.SubItems.Add(node.InnerText);
+								else
+									item.SubItems.Add("?");
               }
 						}
 					}
@@ -99,11 +109,11 @@ namespace MediaPortal.Configuration.Sections
 				//
 				// Make sure the skin actually exists before setting it as the current skin
 				//
-				foreach(string availableSkin in availableSkinsListBox.Items)
+				foreach(ListViewItem item in listViewAvailableSkins.Items)
 				{
-					if(availableSkin.Equals(currentSkin))
+					if(item .SubItems[0].Text.Equals(currentSkin))
 					{
-						availableSkinsListBox.SelectedItem = currentSkin;
+						item.Selected=true;
 						break;
 					}
 				}
@@ -112,14 +122,15 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
+			if (listViewAvailableSkins.SelectedItems.Count==0) return;
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				string prevSkin = xmlwriter.GetValueAsString("skin", "name", "mce");
-				if (prevSkin!=availableSkinsListBox.Text)
+				if (prevSkin!=listViewAvailableSkins.SelectedItems[0].Text)
 				{
-					Utils.DeleteFiles(@"skin\"+availableSkinsListBox.Text+@"\fonts","*");
+					Utils.DeleteFiles(@"skin\"+listViewAvailableSkins.Text+@"\fonts","*");
 				}
-				xmlwriter.SetValue("skin", "name", availableSkinsListBox.Text);
+				xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
 			}
 		}
 
@@ -131,10 +142,11 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.listViewAvailableSkins = new System.Windows.Forms.ListView();
+			this.colName = new System.Windows.Forms.ColumnHeader();
+			this.colVersion = new System.Windows.Forms.ColumnHeader();
 			this.previewPictureBox = new System.Windows.Forms.PictureBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.availableSkinsListBox = new System.Windows.Forms.ListBox();
-			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -143,10 +155,9 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.listViewAvailableSkins);
 			this.groupBox1.Controls.Add(this.previewPictureBox);
 			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.availableSkinsListBox);
-			this.groupBox1.Controls.Add(this.label1);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
@@ -155,11 +166,35 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "General settings";
 			// 
+			// listViewAvailableSkins
+			// 
+			this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																														 this.colName,
+																																														 this.colVersion});
+			this.listViewAvailableSkins.FullRowSelect = true;
+			this.listViewAvailableSkins.HideSelection = false;
+			this.listViewAvailableSkins.Location = new System.Drawing.Point(48, 24);
+			this.listViewAvailableSkins.Name = "listViewAvailableSkins";
+			this.listViewAvailableSkins.Size = new System.Drawing.Size(336, 104);
+			this.listViewAvailableSkins.TabIndex = 5;
+			this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
+			this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
+			// 
+			// colName
+			// 
+			this.colName.Text = "Name";
+			this.colName.Width = 202;
+			// 
+			// colVersion
+			// 
+			this.colVersion.Text = "Version";
+			this.colVersion.Width = 81;
+			// 
 			// previewPictureBox
 			// 
-			this.previewPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.previewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.previewPictureBox.Location = new System.Drawing.Point(200, 40);
+			this.previewPictureBox.Location = new System.Drawing.Point(48, 160);
 			this.previewPictureBox.Name = "previewPictureBox";
 			this.previewPictureBox.Size = new System.Drawing.Size(300, 256);
 			this.previewPictureBox.TabIndex = 1;
@@ -167,29 +202,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label2
 			// 
-			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label2.Location = new System.Drawing.Point(200, 24);
+			this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.label2.Location = new System.Drawing.Point(48, 144);
 			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(100, 16);
 			this.label2.TabIndex = 4;
 			this.label2.Text = "Preview";
-			// 
-			// availableSkinsListBox
-			// 
-			this.availableSkinsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.availableSkinsListBox.Location = new System.Drawing.Point(16, 40);
-			this.availableSkinsListBox.Name = "availableSkinsListBox";
-			this.availableSkinsListBox.Size = new System.Drawing.Size(168, 381);
-			this.availableSkinsListBox.TabIndex = 0;
-			this.availableSkinsListBox.SelectedIndexChanged += new System.EventHandler(this.availableSkinsListBox_SelectedIndexChanged);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 24);
-			this.label1.Name = "label1";
-			this.label1.TabIndex = 3;
-			this.label1.Text = "Available skins";
 			// 
 			// Skin
 			// 
@@ -203,14 +221,15 @@ namespace MediaPortal.Configuration.Sections
 		}
 		#endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void availableSkinsListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+
+		private void listViewAvailableSkins_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			string currentSkin = (string)availableSkinsListBox.SelectedItem;
+			if (listViewAvailableSkins.SelectedItems.Count==0) 
+			{
+				previewPictureBox.Image=null;
+				return;
+			}
+			string currentSkin = (string)listViewAvailableSkins.SelectedItems[0].Text;
 			string previewFile = String.Format(@"{0}{1}\media\preview.png", SkinDirectory, currentSkin);
 
 			//
@@ -232,8 +251,6 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
-			//
-			// Check for the 
 		}
 	}
 }

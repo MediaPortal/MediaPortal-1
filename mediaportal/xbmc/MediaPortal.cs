@@ -389,6 +389,7 @@ public class MediaPortalApp : D3DApp, IRender
         m_strLanguage = "english";
       }
      
+			CheckSkinVersion();
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
       GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(this.Process);
@@ -1784,5 +1785,11 @@ public class MediaPortalApp : D3DApp, IRender
 	}
 
 
+	protected void CheckSkinVersion()
+	{
+		OldSkinForm form = new OldSkinForm();
+		if (form.CheckSkinVersion(m_strSkin)) return;
+		form.ShowDialog(this);
+	}
  
 }
