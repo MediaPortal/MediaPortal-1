@@ -188,7 +188,22 @@ namespace MediaPortal.TV.Recording
 		void ScanNextFrequency()
 		{
 			if (currentFrequencyIndex >=frequencies.Count) return;
+
 			int[] tmp = (int[])frequencies[currentFrequencyIndex];
+			if (currentFrequencyIndex<0)
+			{
+				currentOffset=0;
+				currentFrequencyIndex++;
+				if (currentFrequencyIndex>=frequencies.Count)
+				{
+					timer1.Enabled=false;
+					callback.OnProgress(100);
+					callback.OnEnded();
+					captureCard.DeleteGraph();
+					return;
+				}
+				return;
+			}
 			tunedFrequency=tmp[0];
 			if (currentOffset==0)
 			{
