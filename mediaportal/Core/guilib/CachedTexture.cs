@@ -1,5 +1,6 @@
 #define USE_NEW_TEXTURE_ENGINE
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
 using Microsoft.DirectX;
@@ -120,6 +121,8 @@ namespace MediaPortal.GUI.Library
 			public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
 			{
 #if USE_NEW_TEXTURE_ENGINE
+				//string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_TextureNo,x,y,nw,nh);
+				//Trace.WriteLine(logline);
 				FontEngineDrawTexture(_TextureNo,x, y, nw, nh, uoff, voff, umax, vmax, color);
 #endif
 			}

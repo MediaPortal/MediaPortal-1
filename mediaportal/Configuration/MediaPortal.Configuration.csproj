@@ -658,6 +658,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\RedEye.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\RedEye.resx"
+                    DependentUpon = "RedEye.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Remote.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

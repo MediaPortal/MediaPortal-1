@@ -28,6 +28,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.SerialIR;
 using MediaPortal.IR;
 using MediaPortal.WINLIRC;//sd00//
+using MediaPortal.RedEyeIR;//PB00//
 using MediaPortal.Ripper;
 using MediaPortal.Core.Transcoding;
 
@@ -49,10 +50,9 @@ using MediaPortal.Core.Transcoding;
 ///    - Textures now use a single vertexbuffer, are grouped & rendered by the C++ fontengine
 ///    - GUIWindowManager.PostRender() is optimized
 ///    - FPS Speed selection in settings->gui->speed
+///    - removed most locks on vertexbuffers
 ///    
 ///  Current issues:
-///    - black video preview window
-///    - music overlay  
 /// </summary>
 public class MediaPortalApp : D3DApp, IRender
 { 
@@ -71,6 +71,7 @@ public class MediaPortalApp : D3DApp, IRender
 	private SerialUIR serialuirdevice = null;
     private USBUIRT usbuirtdevice;
 	  private WinLirc winlircdevice;//sd00//
+	private RedEye redeyedevice;//PB00//
     string m_strNewVersion = "";
     string m_strCurrentVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -465,6 +466,14 @@ public class MediaPortalApp : D3DApp, IRender
 				Log.Write("  done creating the WINLIRC device");
 			}
 			//sd00//
+			//Load RedEye if enabled.
+			bool redeyeInputEnabled = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
+			if (redeyeInputEnabled == true)
+			{
+				Log.Write("creating the REDEYE device");
+				this.redeyedevice = RedEye.Create(new RedEye.OnRemoteCommand(OnRemoteCommand));
+				Log.Write("done creating the RedEye device");
+			}
 			inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
 
 			if (inputEnabled == true)
@@ -734,6 +743,8 @@ public class MediaPortalApp : D3DApp, IRender
     {
 			if(serialuirdevice != null)
 				serialuirdevice.Close();
+			if(redeyedevice != null)
+				redeyedevice.Close();
       StopUpdater();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
       // stop any file playback
@@ -1730,6 +1741,12 @@ public class MediaPortalApp : D3DApp, IRender
 					winlircdevice.ChangeTunerChannel(message.Label);
 				}
         catch (Exception) {}
+		  try
+		  {
+			  if(bIsInteger) 
+				  redeyedevice.ChangeTunerChannel(message.Label);
+		  }
+		  catch (Exception) {}
       break;
 
 

@@ -1053,6 +1053,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "RedEye\RedEye.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Ripper\AutoPlay.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

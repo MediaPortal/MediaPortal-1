@@ -467,24 +467,27 @@ GUISpinControl m_upDown = null;
 				}
 			}
 			//free memory
-			if (iStartItem < 30000)
+			if (iScrollYOffset==0)
 			{
-				for (int i = 0; i < iStartItem; ++i)
+				if (iStartItem < 30000)
+				{
+					for (int i = 0; i < iStartItem; ++i)
+					{
+						GUIListItem pItem = (GUIListItem)m_vecItems[i];
+						if (null != pItem)
+						{
+							pItem.FreeMemory();
+						}
+					}
+				}
+
+				for (int i = iEndItem + 1; i < m_vecItems.Count; ++i) 
 				{
 					GUIListItem pItem = (GUIListItem)m_vecItems[i];
 					if (null != pItem)
 					{
 						pItem.FreeMemory();
 					}
-				}
-			}
-
-			for (int i = iEndItem + 1; i < m_vecItems.Count; ++i) 
-			{
-				GUIListItem pItem = (GUIListItem)m_vecItems[i];
-				if (null != pItem)
-				{
-					pItem.FreeMemory();
 				}
 			}
       
@@ -1110,6 +1113,11 @@ GUISpinControl m_upDown = null;
 
       if (fPosCX<=0) fPosCX=0;
       if (fPosCY<=0) fPosCY=0;
+			int viewportMaxY=GUIGraphicsContext.DX9Device.Viewport.Height+GUIGraphicsContext.DX9Device.Viewport.Y;
+			if (fPosCY+fHeight > viewportMaxY)
+			{
+				fHeight=(float)viewportMaxY-fPosCY;
+			}
       Viewport newviewport = new Viewport();
       Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
       newviewport.X = (int)fPosCX;

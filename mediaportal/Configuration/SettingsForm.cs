@@ -29,6 +29,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Panel holderPanel;
 		private MPGradientLabel headerLabel;
 		private Sections.SerialUIR serialuir;
+		private Sections.RedEye redeye;//PB00//
 
 		//
 		// Hashtable where we store each added tree node/section for faster access
@@ -150,6 +151,9 @@ namespace MediaPortal.Configuration
 			AddChildSection(remote, serialuir);
 			Log.Write("add WINLIRC section");//sd00//
 			AddChildSection(remote, new Sections.WINLIRC());//sd00//
+			Log.Write("add RedEye section");//PB00//
+			redeye = new Sections.RedEye();//PB00//
+			AddChildSection(remote, redeye);//PB00//
       Log.Write("add weather section");
       AddSection(new Sections.Weather());
       Log.Write("add plugins section");

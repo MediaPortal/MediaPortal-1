@@ -144,6 +144,31 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "MPExTuneCmd\MPExTuneCmd.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MPExTuneCmd\MPExTuneCmdForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MPExTuneCmd\MPExTuneCmdForm.resx"
+                    DependentUpon = "MPExTuneCmdForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "MPExTuneCmd\MPExTunerCmdForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MPExTuneCmd\MPExTunerCmdForm.resx"
+                    DependentUpon = "MPExTunerCmdForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "NVPPowerScheduler\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
