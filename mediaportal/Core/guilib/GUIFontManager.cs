@@ -66,6 +66,10 @@ namespace MediaPortal.GUI.Library
               int end=Int32.Parse(nodeEnd.InnerText);
               font.SetRange(start,end);
             }
+            else
+            {
+              font.SetRange(0,GUIGraphicsContext.CharsInCharacterSet);
+            }
 
 						font.Load();
 						m_fonts.Add(font);
