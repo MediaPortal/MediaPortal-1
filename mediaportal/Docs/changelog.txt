@@ -1,3 +1,4 @@
+16-08-2004  skinengine  : added : listcontrol added properties <textvisible1>yes|no</textvisible1> (and same for textvisible2 and textvisible3)
 16-08-2004  setup       : fixed : Enablig and disabling of buttons in the radio stations and television sections.
 16-08-2004  setup       : fixed : Country selection when autotuning radio stations.
 16-08-2004  my tv       : fixed : spiced up the tvguide. Looks better now
