@@ -401,8 +401,8 @@ namespace MediaPortal.TV.Database
 									else
 									{
 										strSeriesNum = strSerEpNum;
-										strEpisodeNum = "0";
-										strEpisodePart = "0";
+										strEpisodeNum = "";
+										strEpisodePart = "";
 									}
 								}
 								if (nodeDate!=null && nodeDate.InnerText!=null)
