@@ -1095,6 +1095,8 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA:TuneChannel() submit tuning request");
 			myTuner.TuneRequest = newTuneRequest;
 			Marshal.ReleaseComObject(myTuneRequest);
+
+			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 			m_iCurrentSID=SID;
 			shouldDecryptChannel=true;
 			Log.Write("DVBGraphBDA:TuneChannel() done");

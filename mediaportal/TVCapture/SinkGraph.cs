@@ -639,12 +639,14 @@ namespace MediaPortal.TV.Recording
           if (iCurrentChannel!=iChannel)
           {
             m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
+						DirectShowUtil.EnableDeInterlace(m_graphBuilder);
           }
           int iFreq;
           double dFreq;
           m_TVTuner.get_VideoFrequency(out iFreq);
           dFreq=iFreq/1000000d;
           Log.Write("SinkGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq,standard.ToString());
+			
         }
         catch(Exception){} 
       }
