@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
 							try
 							{
 			
-								transp[count].TPfreq = Int32.Parse(tpdata[0]) ;
+								transp[count].TPfreq = Int32.Parse(tpdata[0]) *1000;
 								switch (tpdata[1].ToLower())
 								{
 									case "v":

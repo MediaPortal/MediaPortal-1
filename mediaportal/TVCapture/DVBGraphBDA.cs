@@ -1357,6 +1357,8 @@ namespace MediaPortal.TV.Recording
 			//on some signalpresent is only true when tuned to a channel
 			//on others  signalpresent is true when tuned to a transponder
 			//so we just look if any variables returns true
+			//Log.Write("  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
+
 			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
 			{
 				return true;
