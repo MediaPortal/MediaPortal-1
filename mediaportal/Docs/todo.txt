@@ -45,7 +45,7 @@ Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - bookmarks
   - 1st time it takes a long time b4 OSD appears
-  
+  - OSD: when submenu is opened, dont use the osd timeout
 Pictures:
   
 Settings:
