@@ -61,6 +61,7 @@
 <!--    LifeView DVB-T Analog                 -->
 <!--    Meedion SAA1734                       -->
 <!--    NVTV Dual Tuner                       -->
+<!--    NVTV Single Tuner                       -->
 <!--    Pinnacle Deluxe USB2		          -->
 <!--    Pinnacle 300i DVBT			          -->
 <!--    Pinnacle 300i Analog		          -->
@@ -77,8 +78,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.33                                                               -->
-<!-- changed : 9-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.34                                                               -->
+<!-- changed : 11-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -186,6 +187,33 @@
     </tv>
   </capturecard>
   
+  <capturecard commercialname="NVTV Single Tuner" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e210de&amp;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
+        <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"      sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"     sinkpin="2"></connection>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"     sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"      sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"      sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"          sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"          sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="VA2000" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e310de&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
@@ -1117,6 +1145,8 @@
       </connections>
     </tv>
   </capturecard>
+
+<!-- Not sure if this works, it needs to be verified, please advise -->
 
   <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0070FF92&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
