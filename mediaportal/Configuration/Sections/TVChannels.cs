@@ -27,6 +27,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button upButton;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.Button btnImport;
+    private System.Windows.Forms.Button btnClear;
 
 		//
 		// Private members
@@ -68,6 +70,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnImport = new System.Windows.Forms.Button();
       this.upButton = new System.Windows.Forms.Button();
       this.downButton = new System.Windows.Forms.Button();
       this.deleteButton = new System.Windows.Forms.Button();
@@ -75,8 +78,9 @@ namespace MediaPortal.Configuration.Sections
       this.addButton = new System.Windows.Forms.Button();
       this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.btnClear = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -95,6 +99,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.btnClear);
+      this.groupBox1.Controls.Add(this.btnImport);
       this.groupBox1.Controls.Add(this.upButton);
       this.groupBox1.Controls.Add(this.downButton);
       this.groupBox1.Controls.Add(this.deleteButton);
@@ -108,6 +114,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // btnImport
+      // 
+      this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnImport.Location = new System.Drawing.Point(16, 360);
+      this.btnImport.Name = "btnImport";
+      this.btnImport.Size = new System.Drawing.Size(112, 23);
+      this.btnImport.TabIndex = 6;
+      this.btnImport.Text = "Import from tvguide";
+      this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
       // 
       // upButton
       // 
@@ -181,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView.HideSelection = false;
       this.channelsListView.Location = new System.Drawing.Point(16, 24);
       this.channelsListView.Name = "channelsListView";
-      this.channelsListView.Size = new System.Drawing.Size(424, 360);
+      this.channelsListView.Size = new System.Drawing.Size(424, 320);
       this.channelsListView.TabIndex = 0;
       this.channelsListView.View = System.Windows.Forms.View.Details;
       this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
@@ -193,14 +210,24 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1.Text = "Channel name";
       this.columnHeader1.Width = 146;
       // 
-      // columnHeader4
-      // 
-      this.columnHeader4.Text = "Type";
-      // 
       // columnHeader5
       // 
       this.columnHeader5.Text = "Standard";
       this.columnHeader5.Width = 63;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Type";
+      // 
+      // btnClear
+      // 
+      this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnClear.Location = new System.Drawing.Point(152, 360);
+      this.btnClear.Name = "btnClear";
+      this.btnClear.TabIndex = 7;
+      this.btnClear.Text = "Clear";
+      this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
       // 
       // TVChannels
       // 
@@ -460,6 +487,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void LoadTVChannels()
 		{
+      channelsListView.Items.Clear();
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
       bool bCVBS1=false;
@@ -595,6 +623,58 @@ namespace MediaPortal.Configuration.Sections
 
         channelsListView.Items[e.Index].Tag = tvChannel;
       }
+    }
+
+    private void btnImport_Click(object sender, System.EventArgs e)
+    {
+      using(AMS.Profile.Xml  xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        string strTVGuideFile=xmlreader.GetValueAsString("xmltv","folder","xmltv");
+        strTVGuideFile=RemoveTrailingSlash(strTVGuideFile);
+        strTVGuideFile+=@"\tvguide.xml";
+        XMLTVImport import = new XMLTVImport();
+        bool bSucceeded=import.Import(strTVGuideFile,true);
+        if (bSucceeded)
+        {
+          string strtext=String.Format("Imported:{0} channels\r{1} programs\r{2}", 
+                                import.ImportStats.Channels,
+                                import.ImportStats.Programs,
+                                import.ImportStats.Status);
+          MessageBox.Show(this,strtext,"tvguide",MessageBoxButtons.OK,MessageBoxIcon.Error);
+
+          isDirty =true;
+          LoadTVChannels();
+        }
+        else
+        {
+          string strError=String.Format("Error importing tvguide from:\r{0}\rerror:{1}",
+                              strTVGuideFile,import.ImportStats.Status);
+          MessageBox.Show(this,strError,"Error importing tvguide",MessageBoxButtons.OK,MessageBoxIcon.Error);
+        }
+      }
+    }
+    string RemoveTrailingSlash(string strLine)
+    {
+      string strPath=strLine;
+      while (strPath.Length>0)
+      {
+        if ( strPath[strPath.Length-1]=='\\' || strPath[strPath.Length-1]=='/')
+        {
+          strPath=strPath.Substring(0,strPath.Length-1);
+        }
+        else break;
+      }
+      return strPath;
+    }
+
+    private void btnClear_Click(object sender, System.EventArgs e)
+    {
+      DialogResult result=MessageBox.Show(this,"Are you sure you want to delete all channels?","Delete channels",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+      if (result!=DialogResult.Yes) return;
+      channelsListView.Items.Clear();
+      isDirty =true;
+      SaveTVChannels();
+      
     }
 	}
 }
