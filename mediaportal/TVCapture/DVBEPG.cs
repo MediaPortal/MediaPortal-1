@@ -21,13 +21,15 @@ namespace MediaPortal.TV.Recording
 		}
 		DVBSections		m_sections=new DVBSections();
 		int				m_cardType=0;
+		string			m_channelName="";
 		
 		public enum EPGCard
 		{
 			Invalid=0,
 			TechnisatStarCards,
 			BDACards,
-			Unknown
+			Unknown,
+			ChannelName
 		}
 		//
 		// commits epg-data to database
@@ -84,6 +86,11 @@ namespace MediaPortal.TV.Recording
 				Log.Write("epg-grab: FAILED to add to database. message:{0}",ex.Message);
 				return 0;
 			}
+		}
+		public string ChannelName
+		{
+			get{return m_channelName;}
+			set{m_channelName=value;}
 		}
 		//
 		// returns long-value from sep. date
@@ -157,6 +164,10 @@ namespace MediaPortal.TV.Recording
 							break;
 
 						case (int)EPGCard.BDACards:
+							break;
+
+						case (int)EPGCard.ChannelName:
+							progName=m_channelName;
 							break;
 					}
 					if(progName==null)
