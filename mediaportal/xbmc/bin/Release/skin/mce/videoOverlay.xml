@@ -10,7 +10,7 @@
 		<posY>470</posY> 
 		<label>#currentplaytime</label> 
 		<align>left</align> 
-		<font>font70</font> 
+		<font>font72</font> 
 		<textcolor>20ffffff</textcolor> 
 	</control>
 	<control>

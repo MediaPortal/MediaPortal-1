@@ -11,7 +11,7 @@
 		<posY>54</posY> 
 		<width>720</width> 
 		<height>65</height> 
-		<texture>bluebar.png</texture> 
+		<texture>calibration_bar.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
 		<visible>no</visible>
@@ -235,28 +235,28 @@
 		<label>#TV.Record.current</label> 
 		<align>left</align> 
 		<font>font72</font> 
-		<textcolor>10ffffff</textcolor> 
+		<textcolor>30ffffff</textcolor> 
 	</control>
 	<control>
 		<description>Start Time Info</description> 
 		<type>label</type> 
 		<id>106</id> 
-		<posX>165</posX> 
-		<posY>392</posY> 
+		<posX>160</posX> 
+		<posY>390</posY> 
 		<label>#TV.Record.start</label> 
 		<align>right</align> 
-		<font>font13</font> 
+		<font>font16</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
 	<control>
 		<description>End Time Info</description> 
 		<type>label</type> 
 		<id>107</id> 
-		<posX>550</posX> 
-		<posY>392</posY> 
+		<posX>555</posX> 
+		<posY>390</posY> 
 		<label>#TV.Record.duration</label> 
 		<align>left</align> 
-		<font>font13</font> 
+		<font>font16</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
   </controls>
