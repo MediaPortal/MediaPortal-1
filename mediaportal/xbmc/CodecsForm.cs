@@ -274,14 +274,16 @@ namespace MediaPortal
 
       try
       {
-        RegistryKey hklm = Registry.CurrentUser;
-        RegistryKey subkey = hklm.OpenSubKey(@"Software\GNU\ffdshow");
+        RegistryKey hklm = Registry.LocalMachine;
+        RegistryKey subkey = hklm.OpenSubKey(@"SOFTWARE\Classes\CLSID\{007FC171-01AA-4B3A-B2DB-062DEE815A1E}\InProcServer32");
         if (subkey!=null)
         {
           FFDShowInstalled=true;
           subkey.Close();
-        }
-         subkey = hklm.OpenSubKey(@"Software\Gabest\DVobSub");
+		}
+		
+		hklm = Registry.CurrentUser;
+        subkey = hklm.OpenSubKey(@"Software\Gabest\DVobSub");
         if (subkey!=null)
         {
           VobSubInstalled=true;
