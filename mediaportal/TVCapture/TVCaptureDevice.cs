@@ -320,7 +320,7 @@ namespace MediaPortal.TV.Recording
             m_graph.TuneChannel(standard, ichannel);
             if (IsTimeShifting && !View)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE, 0, 0, 0, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END, 0, 0, 0, 0, 0, null);
               msg.Param1 = 99;
               GUIWindowManager.SendThreadMessage(msg);
             }
