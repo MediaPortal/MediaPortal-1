@@ -40,6 +40,7 @@ namespace MediaPortal.GUI.Library
 		char          m_PrevKey=(char)0;
 		bool          usingKeyboard=false;
 		bool					m_bNeedRefresh=false;
+		GUIImage			image;
 
 		public GUISMSInputControl(int dwParentID) : base(dwParentID)
 		{
@@ -83,10 +84,16 @@ namespace MediaPortal.GUI.Library
       
 			if (m_strTextBoxFontName!="" && m_strTextBoxFontName!="-")
 				m_pTextBoxFont=GUIFontManager.GetFont(m_strTextBoxFontName);
+
+			image = new GUIImage(this.GetID, 1, 0, 0, m_dwTextBoxWidth, 10, "bar_hor.png" ,1);
+			image.AllocResources();
 		}
     
 		public override void FreeResources()
 		{
+			image.FreeResources();
+			image=null;
+
 			base.FreeResources ();
 		}
     
@@ -388,58 +395,25 @@ namespace MediaPortal.GUI.Library
       m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2,"pqrs tuv wxyz",GUIControl.Alignment.ALIGN_LEFT,-1);posY+=step;
     }
 
-    void DrawTextBox() 
-    {
-			if (GUIGraphicsContext.graphics!=null)
-			{
-				Rectangle[] vidWindow= new Rectangle[1];
+		void DrawTextBox() 
+		{
+			int x1=m_dwTextBoxXpos;
+			int y1=m_dwTextBoxYpos;
+			int x2=m_dwTextBoxXpos+m_dwTextBoxWidth;
+			int y2=m_dwTextBoxYpos+m_dwTextBoxHeight;
 
-				float x=(float)m_dwTextBoxXpos;
-				float y=(float)m_dwTextBoxYpos;
-				GUIGraphicsContext.Correct(ref x ,ref y);
+			GUIGraphicsContext.ScalePosToScreenResolution(ref x2,ref y2);
+			x1+=GUIGraphicsContext.OffsetX;
+			x2+=GUIGraphicsContext.OffsetX;
+			y1+=GUIGraphicsContext.OffsetY;
+			y2+=GUIGraphicsContext.OffsetY;
 
-				vidWindow[0].X=(int)x;
-				vidWindow[0].Y=(int)y;
-				vidWindow[0].Width=m_dwTextBoxWidth;
-				vidWindow[0].Height=m_dwTextBoxHeight;
-				GUIGraphicsContext.graphics.FillRectangle(Brushes.White, vidWindow[0].X, vidWindow[0].Y, vidWindow[0].Width, vidWindow[0].Height);
-				return;
-			}
+			image.SetPosition(x1,y1);
+			image.Width=(x2-x1);
+			image.Height=(y2-y1);
+			image.Render();
+		}
 
-      long lColor=m_dwTextBoxBgColor;
-			int oldTextureFactor=GUIGraphicsContext.DX9Device.RenderState.TextureFactor;
-      GUIGraphicsContext.DX9Device.SetTexture( 0, null );
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.SelectArg1;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TFactor;
-      GUIGraphicsContext.DX9Device.VertexFormat=CustomVertex.TransformedColored.Format;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=false;
-      VertexBuffer vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColored),4, GUIGraphicsContext.DX9Device, 0, CustomVertex.TransformedColored.Format, Pool.Managed);
-
-      int x1=m_dwTextBoxXpos, x2=x1+m_dwTextBoxWidth;
-      int y1=m_dwTextBoxYpos,  y2=y1+m_dwTextBoxHeight;
-
-      CustomVertex.TransformedColored[] verts = (CustomVertex.TransformedColored[])vertexBuffer.Lock(0,0);
-      verts[0].X=x1-0.5f  ;verts[0].Y= y2-0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f;
-      verts[1].X=x1-0.5f  ;verts[1].Y= y1-0.5f;verts[1].Z= 0.0f;verts[1].Rhw=1.0f;
-      verts[2].X=x2- 0.5f;verts[2].Y= y2-0.5f;verts[2].Z= 0.0f;verts[2].Rhw=1.0f;
-      verts[3].X=x2-0.5f ;verts[3].Y= y1-0.5f;verts[3].Z= 0.0f;verts[3].Rhw=1.0f;
-      verts[0].Color=(int)lColor;
-      verts[1].Color=(int)lColor;
-      verts[2].Color=(int)lColor;
-      verts[3].Color=(int)lColor;
-      vertexBuffer.Unlock();
-      GUIGraphicsContext.DX9Device.SetStreamSource( 0, vertexBuffer, 0);
-      GUIGraphicsContext.DX9Device.RenderState.TextureFactor=(int)0xe0e0e0 ;
-			GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip,0,2);
-			
-			vertexBuffer.Dispose();
-
-			GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =TextureOperation.Modulate;
-			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =TextureArgument.TextureColor;
-			GUIGraphicsContext.DX9Device.VertexFormat=CustomVertex.TransformedColored.Format;
-			GUIGraphicsContext.DX9Device.RenderState.TextureFactor=oldTextureFactor;
-			GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-    }
     void DrawText()
     {
       string line=m_strData;
