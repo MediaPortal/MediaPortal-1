@@ -3,7 +3,7 @@ playing file. These special tags currently work for the following controls:
     - button
     - label 
     - fadelabel 
-    - textscrollup
+    - textboxscrollup
     - progress
     - image
     - tvprogress 
