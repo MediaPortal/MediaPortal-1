@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -52,6 +53,7 @@ namespace MediaPortal.TV.Database
 		bool        m_bSeries=false;
 		int         m_iPriority=0;
 		QualityType	m_iQuality=QualityType.NotSet;
+		ArrayList   m_canceledSeries = new ArrayList();
 
     /// <summary>
     /// Constructor.
@@ -74,6 +76,7 @@ namespace MediaPortal.TV.Database
 			m_bSeries=rec.m_bSeries;
 			m_iPriority=rec.m_iPriority;
 			m_iQuality=rec.m_iQuality;
+			m_canceledSeries=(ArrayList)rec.m_canceledSeries.Clone();
 
 		}
 
@@ -193,22 +196,37 @@ namespace MediaPortal.TV.Database
     /// Checks if the recording should record the specified tvprogram
     /// </summary>
     /// <param name="program">TVProgram to check</param>
-    /// <returns>true if the specified tvprogram should be recorded</returns>
+		/// <returns>true if the specified tvprogram should be recorded</returns>
+		/// <returns>filterCanceledRecordings (true/false)
+		/// if true then  we'll return false if recording has been canceled for this program</returns>
+		/// if false then we'll return true if recording has been not for this program</returns>
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
-		public bool IsRecordingProgram(TVProgram program)
+		public bool IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
 		{
 			switch (m_eType)
 			{
 				case RecordingType.Once:
 				{
-					if (program.Start==Start && program.End==End && program.Channel==Channel) return true;
+					if (program.Start==Start && program.End==End && program.Channel==Channel) 
+					{
+						if (filterCanceledRecordings && Canceled>0) return false;
+						return true;
+					}
 				}
 					break;
 				case RecordingType.EveryTimeOnEveryChannel:
-					if (program.Title==Title) return true;
+					if (program.Title==Title) 
+					{	
+						if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
+						return true;
+					}
 					break;
 				case RecordingType.EveryTimeOnThisChannel:
-					if (program.Title==Title && program.Channel==Channel) return true;
+					if (program.Title==Title && program.Channel==Channel) 
+					{
+						if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
+						return true;
+					}
 					break;
 				case RecordingType.Daily:
 					if (program.Channel==Channel)
@@ -219,7 +237,11 @@ namespace MediaPortal.TV.Database
 						{
 							iHourProg=program.EndTime.Hour;
 							iMinProg=program.EndTime.Minute;
-							if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) return true;
+							if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) 
+							{	
+								if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
+								return true;
+							}
 						}
 					}
           break;
@@ -234,7 +256,11 @@ namespace MediaPortal.TV.Database
               {
                 iHourProg=program.EndTime.Hour;
                 iMinProg=program.EndTime.Minute;
-                if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) return true;
+								if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) 
+								{
+									if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
+									return true;
+								}
               }
             }
           }
@@ -253,6 +279,7 @@ namespace MediaPortal.TV.Database
 							{
 								if (StartTime.DayOfWeek==program.StartTime.DayOfWeek)
 								{
+									if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
 									return true;
 								}
 							}
@@ -261,7 +288,7 @@ namespace MediaPortal.TV.Database
 					break;
 			}
 			return false;
-		}
+		}//IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
 
     /// <summary>
     /// Checks whether the recording should be recording at the specified time including the pre/post intervals
@@ -298,13 +325,10 @@ namespace MediaPortal.TV.Database
           if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
           {
             // not canceled?
-            if (Canceled>0)
-            {
-              if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-              {
-                return false;
-              }
-            }
+						if (IsSerieIsCanceled(currentProgram.StartTime))
+						{
+							return false;
+						}
             return true;
           }
           break;
@@ -319,13 +343,10 @@ namespace MediaPortal.TV.Database
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
             {
               // not canceled?
-              if (Canceled>0)
-              {
-                if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                {
-                  return false;
-                }
-              }
+							if (IsSerieIsCanceled(currentProgram.StartTime))
+							{
+								return false;
+							}
               return true;
             }
           }
@@ -342,13 +363,10 @@ namespace MediaPortal.TV.Database
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
             {
               // not canceled?
-              if (Canceled>0)
-              {
-                if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                {
-                  return false;
-                }
-              }
+							if (IsSerieIsCanceled(currentProgram.StartTime))
+							{
+								return false;
+							}
               return true;
             }
           }
@@ -364,16 +382,10 @@ namespace MediaPortal.TV.Database
                 dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
             {
               // not canceled?
-              if (Canceled>0)
-              {
-                if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                {
-                  if (CanceledTime >=currentProgram.StartTime.AddMinutes(-iPreInterval) && CanceledTime <=currentProgram.EndTime.AddMinutes(+iPostInterval))
-                  {
-                    return false;
-                  }
-                }
-              }
+							if (IsSerieIsCanceled(currentProgram.StartTime))
+							{
+								return false;
+							}
               return true;
             }
           }
@@ -392,13 +404,10 @@ namespace MediaPortal.TV.Database
             {
 
               // not canceled?
-              if (Canceled>0)
-              {
-                if (CanceledTime >=currentProgram.StartTime.AddMinutes(-iPreInterval) && CanceledTime <=currentProgram.EndTime.AddMinutes(+iPostInterval))
-                {
-                  return false;
-                }
-              }
+							if (IsSerieIsCanceled(currentProgram.StartTime))
+							{
+								return false;
+							}
               return true;
             }
           }
@@ -468,13 +477,10 @@ namespace MediaPortal.TV.Database
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
                 {
                   // not canceled?
-                  if (Canceled>0)
-                  {
-                    if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                    {
-                      return false;
-                    }
-                  }
+									if (IsSerieIsCanceled(currentProgram.StartTime))
+									{
+										return false;
+									}
                   return true;
                 }
               }
@@ -498,13 +504,10 @@ namespace MediaPortal.TV.Database
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
               {
                 // not canceled?
-                if (Canceled>0)
-                {
-                  if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                  {
-                    return false;
-                  }
-                }
+								if (IsSerieIsCanceled(currentProgram.StartTime))
+								{
+									return false;
+								}
                 return true;
               }
             }
@@ -536,13 +539,10 @@ namespace MediaPortal.TV.Database
                   if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
                   {
                     // not canceled?
-                    if (Canceled>0)
-                    {
-                      if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                      {
-                        return false;
-                      }
-                    }
+										if (IsSerieIsCanceled(currentProgram.StartTime))
+										{
+											return false;
+										}
                     return true;
                   }
                 }
@@ -561,16 +561,10 @@ namespace MediaPortal.TV.Database
                 dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
             {
               // not canceled?
-              if (Canceled>0)
-              {
-                if (CanceledTime.Day==dtTime.Day && CanceledTime.Month==dtTime.Month && CanceledTime.Year==dtTime.Year)
-                {
-                  if (CanceledTime >=currentProgram.StartTime.AddMinutes(-iPreInterval) && CanceledTime <=currentProgram.EndTime.AddMinutes(+iPostInterval))
-                  {
-                    return false;
-                  }
-                }
-              }
+							if (IsSerieIsCanceled(currentProgram.StartTime))
+							{
+								return false;
+							}
               return true;
             }
           }
@@ -589,13 +583,10 @@ namespace MediaPortal.TV.Database
             {
 
               // not canceled?
-              if (Canceled>0)
-              {
-                if (CanceledTime >=currentProgram.StartTime.AddMinutes(-iPreInterval) && CanceledTime <=currentProgram.EndTime.AddMinutes(+iPostInterval))
-                {
-                  return false;
-                }
-              }
+							if (IsSerieIsCanceled(currentProgram.StartTime))
+							{
+								return false;
+							}
               return true;
             }
           }
@@ -711,6 +702,25 @@ namespace MediaPortal.TV.Database
 		{
 			get { return m_iQuality;}
 			set { m_iQuality=value;}
+		}
+		public void CancelSerie(long datetime)
+		{
+			m_canceledSeries.Add(datetime);
+		}
+
+		public ArrayList CanceledSeries
+		{
+			get { return m_canceledSeries;}
+		}
+		
+		public bool IsSerieIsCanceled(DateTime datetime)
+		{
+			long dtProgram=Utils.datetolong(datetime);
+			foreach (long dtCanceled in m_canceledSeries)
+			{
+				if (dtCanceled==dtProgram) return true;
+			}
+			return false;
 		}
 	}
 }

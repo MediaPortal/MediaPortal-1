@@ -549,14 +549,25 @@ namespace MediaPortal.GUI.TV
         switch (dlg.SelectedLabel)
         {
           case 0://none
-            foreach (TVRecording rec1 in _recordings)
-            {
-              if (rec1.IsRecordingProgram(program))
-              {
-                TVDatabase.RemoveRecordingByTime(rec1);
-                break;
-              }
-            }
+						foreach (TVRecording rec1 in _recordings)
+						{
+							if (rec1.IsRecordingProgram(program,true))
+							{
+								if (rec1.RecType != TVRecording.RecordingType.Once)
+								{
+									//delete specific series
+									rec1.CanceledSeries.Add(program.Start);
+									TVDatabase.AddCanceledSerie(rec1,program.Start);
+								}
+								else
+								{
+									//cancel recording
+									rec1.Canceled=Utils.datetolong(DateTime.Now);
+									TVDatabase.UpdateRecording( rec1);
+								}
+								Recorder.StopRecording(rec1);
+							}
+						}
             _recordings.Clear();
             TVDatabase.GetRecordings(ref _recordings);
             Update();
@@ -593,7 +604,7 @@ namespace MediaPortal.GUI.TV
 			isSerie=false;
       foreach (TVRecording record in _recordings)
       {
-        if (record.IsRecordingProgram(program) ) 
+        if (record.IsRecordingProgram(program,true) ) 
         {
 					if (record.RecType !=TVRecording.RecordingType.Once)
 						isSerie=true;

@@ -129,6 +129,7 @@ namespace MediaPortal.TV.Database
 				}
 
 				DatabaseUtility.AddTable(m_db,"recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer, priority integer, quality integer)\n");
+				DatabaseUtility.AddTable(m_db,"canceledseries","CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text)\n");
 
 				DatabaseUtility.AddTable(m_db,"recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
 		
@@ -1108,6 +1109,9 @@ namespace MediaPortal.TV.Database
 					string strSQL=String.Format("delete from tblPrograms where idChannel={0}", iChannelId);
 					m_db.Execute(strSQL);
           
+					strSQL=String.Format("delete from canceledseries where idChannel={0}", iChannelId);
+					m_db.Execute(strSQL);
+
 					strSQL=String.Format("delete from recording where idChannel={0}", iChannelId);
 					m_db.Execute(strSQL);
           
@@ -1416,7 +1420,7 @@ namespace MediaPortal.TV.Database
 			return SearchPrograms(iStartTime, iEndTime,ref progs,-1,String.Empty);
 		}
 
-		static public void ChangeRecording(ref TVRecording recording)
+		static public void UpdateRecording(TVRecording recording)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -1446,6 +1450,13 @@ namespace MediaPortal.TV.Database
 						recording.Priority,
 						recording.ID);
 					m_db.Execute(strSQL);
+
+					DeleteCanceledSeries(recording);
+					foreach (long datetime in recording.CanceledSeries)
+					{
+						AddCanceledSerie(recording, datetime);
+					}
+
 				} 
 				catch (Exception ex) 
 				{
@@ -1487,6 +1498,11 @@ namespace MediaPortal.TV.Database
 					m_db.Execute(strSQL);
 					lNewId=m_db.LastInsertID();
 					recording.ID=lNewId;
+					
+					foreach (long datetime in recording.CanceledSeries)
+					{
+						AddCanceledSerie(recording, datetime);
+					}
 				} 
 				catch (Exception ex) 
 				{
@@ -1507,28 +1523,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return ;
 					string strSQL=String.Format("delete from recording where idRecording={0}",record.ID);
 					m_db.Execute(strSQL);
-				}
-				catch(Exception ex)
-				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-					Open();
-				}
-			}
-			RecordingsChanged();
-		}
-
-		static public void RemoveRecordingByTime(TVRecording record)
-		{
-			lock (typeof(TVDatabase))
-			{
-				try
-				{
-					if (null==m_db) return ;
-					int iChannelId=GetChannelId(record.Channel);
-					if (iChannelId<0) return ;
-
-					string strSQL=String.Format("delete from recording where iStartTime like {0} and iEndTime like {1} and idChannel={2}",
-						record.Start,record.End,iChannelId);
+					strSQL=String.Format("delete from canceledseries where idRecording={0}",record.ID);
 					m_db.Execute(strSQL);
 				}
 				catch(Exception ex)
@@ -1539,6 +1534,8 @@ namespace MediaPortal.TV.Database
 			}
 			RecordingsChanged();
 		}
+
+
 		static public bool GetRecordingsForChannel(string strChannel1,long iStartTime, long iEndTime,ref ArrayList recordings)
 		{
 			lock (typeof(TVDatabase))
@@ -1578,6 +1575,7 @@ namespace MediaPortal.TV.Database
 							int iContectRec=Int32.Parse(DatabaseUtility.Get(results,i,"recording.bContentRecording"));
 							if (iContectRec==1) rec.IsContentRecording=true;
 							else rec.IsContentRecording=false;
+							GetCanceledRecordings(ref rec);
 							recordings.Add(rec);
 						}
 					}
@@ -1624,6 +1622,7 @@ namespace MediaPortal.TV.Database
 						int iContectRec=Int32.Parse(DatabaseUtility.Get(results,i,"recording.bContentRecording"));
 						if (iContectRec==1) rec.IsContentRecording=true;
 						else rec.IsContentRecording=false;
+						GetCanceledRecordings(ref rec);
 						recordings.Add(rec);
 					}
 
@@ -2686,5 +2685,61 @@ namespace MediaPortal.TV.Database
 				return false;
 			}
 		}
-	}
-}
+		static public void DeleteCanceledSeries(TVRecording rec)
+		{
+			try
+			{
+				string strSQL=String.Format("delete from canceledseries where idRecording={0}", rec.ID);
+				m_db.Execute(strSQL);
+			}
+			catch(Exception ex)
+			{
+				Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
+
+		static public void AddCanceledSerie(TVRecording rec, long datetime)
+		{	
+			try
+			{
+				long idChannel=GetChannelId(rec.Channel);
+				string strSQL=String.Format("insert into canceledseries (idRecording , idChannel,iCancelTime ) values ( {0}, {1},'{2}' )", 
+															rec.ID,idChannel,datetime);
+				m_db.Execute(strSQL);
+			}
+			catch(Exception ex)
+			{
+				Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
+
+		static public void GetCanceledRecordings(ref TVRecording rec)
+		{
+			rec.CanceledSeries.Clear();
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+					strSQL=String.Format( "select * from canceledseries where idRecording={0}", rec.ID);
+					results=m_db.Execute(strSQL);
+					for (int x=0; x < results.Rows.Count;++x)
+					{
+						long datetime=Int64.Parse(DatabaseUtility.Get(results,0,"iCancelTime"));
+						rec.CanceledSeries.Add(datetime);
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}		
+		}//static public void GetCanceledRecordings(ref TVRecording rec)
+
+	}//public class TVDatabase
+}//namespace MediaPortal.TV.Database

@@ -2696,6 +2696,14 @@
 	<id>980</id>
 	<value>Play recording from live point</value>
 </string>
+<string>
+	<id>981</id>
+	<value>Cancel this show</value>
+</string>
+<string>
+	<id>982</id>
+	<value>Delete this entire recording</value>
+</string>
 
 
 

@@ -922,15 +922,12 @@ namespace MediaPortal.GUI.TV
 				bool bSeries=false;
 				foreach (TVRecording record in m_recordings)
 				{
-					if (record.Canceled==0)
+					if (record.IsRecordingProgram(m_currentProgram,true) ) 
 					{
-						if (record.IsRecordingProgram(m_currentProgram) ) 
-						{
-							if (record.RecType !=TVRecording.RecordingType.Once)
-								bSeries=true;
-							bRecording=true;
-							break;
-						}
+						if (record.RecType !=TVRecording.RecordingType.Once)
+							bSeries=true;
+						bRecording=true;
+						break;
 					}
 				}
 				if (bRecording)
@@ -1055,15 +1052,12 @@ namespace MediaPortal.GUI.TV
 				bool bSeries=false;
 				foreach (TVRecording record in m_recordings)
 				{
-					if (record.IsRecordingProgram(program) ) 
+					if (record.IsRecordingProgram(program,true) ) 
 					{
-						if (record.Canceled==0)
-						{
-							if (record.RecType !=TVRecording.RecordingType.Once)
-								bSeries=true;
-							bRecording=true;
-							break;
-						}
+						if (record.RecType !=TVRecording.RecordingType.Once)
+							bSeries=true;
+						bRecording=true;
+						break;
 					}
 				}
 
@@ -1215,15 +1209,12 @@ namespace MediaPortal.GUI.TV
 					bool bRecording=false;
 					foreach (TVRecording record in m_recordings)
 					{
-						if (record.IsRecordingProgram(program) ) 
+						if (record.IsRecordingProgram(program,true) ) 
 						{
-							if (record.Canceled==0)
-							{
-								if (record.RecType !=TVRecording.RecordingType.Once)
-									bSeries=true;
-								bRecording=true;
-								break;
-							}
+							if (record.RecType !=TVRecording.RecordingType.Once)
+								bSeries=true;
+							bRecording=true;
+							break;
 						}
 					}
 
@@ -2112,11 +2103,21 @@ namespace MediaPortal.GUI.TV
 					case 0://none
 						foreach (TVRecording rec1 in m_recordings)
 						{
-							if (rec1.IsRecordingProgram(m_currentProgram))
+							if (rec1.IsRecordingProgram(m_currentProgram,true))
 							{
-								TVDatabase.RemoveRecordingByTime(rec1);
+								if (rec1.RecType != TVRecording.RecordingType.Once)
+								{
+									//delete specific series
+									rec1.CanceledSeries.Add(m_currentProgram.Start);
+									TVDatabase.AddCanceledSerie(rec1,m_currentProgram.Start);
+								}
+								else
+								{
+									//cancel recording
+									rec1.Canceled=Utils.datetolong(DateTime.Now);
+									TVDatabase.UpdateRecording(rec1);
+								}
 								Recorder.StopRecording(rec1);
-								break;
 							}
 						}
 						Update();

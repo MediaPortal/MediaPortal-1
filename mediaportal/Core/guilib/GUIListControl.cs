@@ -977,9 +977,9 @@ namespace MediaPortal.GUI.Library
 					{
 						m_iOffset = (m_upDown.Value - 1) * m_iItemsPerPage;
 						while (m_iOffset + m_iCursorY >= m_vecItems.Count) m_iCursorY--;
+						OnSelectionChanged();
+						m_bRefresh = true;
           }
-          OnSelectionChanged();
-          m_bRefresh = true;
 				}
         if (message.Message == GUIMessage.MessageType.GUI_MSG_GET_ITEM)
         {

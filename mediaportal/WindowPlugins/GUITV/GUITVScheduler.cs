@@ -21,7 +21,11 @@ namespace MediaPortal.GUI.TV
       CONTROL_BTNSORTASC=4,
       CONTROL_NEW=6,
       CONTROL_CLEANUP=7,
-      CONTROL_LIST=10,
+			CONTROL_LIST=10,
+			LABEL_PROGRAMTITLE=13,
+			LABEL_PROGRAMTIME=14,
+			LABEL_PROGRAMDESCRIPTION=15,
+			LABEL_PROGRAMGENRE=17,
     };
     enum SortMethod
     {
@@ -214,7 +218,9 @@ namespace MediaPortal.GUI.TV
             OnNewShedule();
           }
         break;
-
+				case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+					UpdateDescription();
+					break;
       }
       return base.OnMessage(message);
     }
@@ -601,26 +607,60 @@ namespace MediaPortal.GUI.TV
       dlg.Reset();
       dlg.SetHeading(rec.Title);
 			
-      for (int i=618; i <= 619; ++i)
-      {
-				//Delete
-				//Edit Date/Time
-        dlg.Add( GUILocalizeStrings.Get(i));
-      }
-      dlg.Add( GUILocalizeStrings.Get(626));//Change type
-
+			if (rec.Series==false)
+			{
+				dlg.AddLocalizedString( 618);//delete
+			}
+			else
+			{
+				dlg.AddLocalizedString( 981);//Delete this recording
+				dlg.AddLocalizedString( 982);//Delete series recording
+			}
 			int card;
 			if (Recorder.IsRecordingSchedule(rec,out card))
 			{
-				dlg.Add( GUILocalizeStrings.Get(979)); //Play recording from beginning
-				dlg.Add( GUILocalizeStrings.Get(980)); //Play recording from live point
+				dlg.AddLocalizedString( 979); //Play recording from beginning
+				dlg.AddLocalizedString( 980); //Play recording from live point
 			}
 
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
-      switch (dlg.SelectedLabel)
+      switch (dlg.SelectedId)
       {
-        case 0: // delete
+				case 981: //Delete this recording only
+				{
+					if (Recorder.IsRecordingSchedule(rec, out card))
+					{
+						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+						if (null != dlgYesNo)
+						{
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
+							dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
+							dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
+							dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+							if (dlgYesNo.IsConfirmed) 
+							{
+								Recorder.StopRecording(rec);
+								rec.CanceledSeries.Add(Utils.datetolong(rec.StartTime));
+								TVDatabase.AddCanceledSerie(rec,Utils.datetolong(rec.StartTime));
+							}
+						}
+					}
+					else
+					{
+						rec.CanceledSeries.Add(Utils.datetolong(rec.StartTime));
+						TVDatabase.AddCanceledSerie(rec,Utils.datetolong(rec.StartTime));
+					}
+					LoadDirectory();
+				}
+				break;
+
+				case 982: //Delete series recording
+					goto case 618;
+
+        case 618: // delete entire recording
         {
 					if (Recorder.IsRecordingSchedule(rec, out card))
 					{
@@ -647,16 +687,8 @@ namespace MediaPortal.GUI.TV
           LoadDirectory();
         }
         break;
-        
-        case 1: // edit date/time
-          OnEdit(rec);
-        break;
 
-        case 2: // edit Type
-          ChangeType(rec);
-					break;
-
-				case 3: // Play recording from beginning
+				case 979: // Play recording from beginning
 					if (g_Player.Playing && g_Player.IsTVRecording)
 					{
 						g_Player.Stop();
@@ -671,7 +703,7 @@ namespace MediaPortal.GUI.TV
 					}
 					break;
 
-				case 4: // Play recording from live point
+				case 980: // Play recording from live point
 					GUITVHome.IsTVOn=true;
 					GUITVHome.ViewChannel(rec.Channel);
 					if (Recorder.IsViewing())
@@ -756,7 +788,7 @@ namespace MediaPortal.GUI.TV
             rec.Canceled=0;
             break;
 				}
-				TVDatabase.ChangeRecording(ref rec);
+				TVDatabase.UpdateRecording(rec);
         LoadDirectory();
 
 			}
@@ -823,7 +855,7 @@ namespace MediaPortal.GUI.TV
           rec.Start=Utils.datetolong(dlg.StartDateTime);
           rec.End=Utils.datetolong(dlg.EndDateTime);
           rec.Canceled=0;
-          TVDatabase.ChangeRecording(ref rec);
+          TVDatabase.UpdateRecording( rec);
           LoadDirectory();
         }
       }
@@ -879,5 +911,50 @@ namespace MediaPortal.GUI.TV
         pDlgOK.DoModal(GetID);
       }
     }
+
+		void UpdateDescription()
+		{
+			GUIListItem pItem=GetItem( GetSelectedItemNo() );
+			if (pItem==null)
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Title","");
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre","");
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Time","");
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Description","");
+				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb","");
+				return;
+			}
+			TVRecording rec=(TVRecording)pItem.TVTag;
+			TVProgram prog=util.GetProgramAt(rec.Channel,rec.StartTime);
+			string strTime=String.Format("{0} {1} - {2}", 
+				Utils.GetShortDayString(rec.StartTime) , 
+				rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+				rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Title",rec.Title);
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Time",strTime);
+			if (prog!=null)
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Description",prog.Description);
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",prog.Genre);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Description","");
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre","");
+			}
+
+    
+			string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
+			if (System.IO.File.Exists(strLogo))
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",strLogo);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb","defaultVideoBig.png");
+			}
+		}
+
   }
 }

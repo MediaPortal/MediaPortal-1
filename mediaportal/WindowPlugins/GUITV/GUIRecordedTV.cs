@@ -294,6 +294,9 @@ namespace MediaPortal.GUI.TV
           }
           break;
 
+					case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+						Update();
+					break;
       }
       return base.OnMessage(message);
     }

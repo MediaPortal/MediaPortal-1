@@ -16,6 +16,7 @@
 		  <change date="25-2-2005">changed mytvrecordedtvchannel.xml</change>
 		  <change date="25-2-2005">changed mytvrecordedtvgenre.xml</change>
 		  <change date="25-2-2005">changed mytvscheduler.xml</change>
+		  <change date="28-2-2005">changed mytvscheduler.xml</change>
 		</changelog>
 	</skin>
 	<control>

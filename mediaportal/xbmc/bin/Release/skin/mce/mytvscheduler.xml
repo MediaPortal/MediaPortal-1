@@ -163,6 +163,53 @@
 				<ondown>2</ondown>
 			</control>
 		</control>	
+	
+		<control>
+			<description>Current program title</description>
+			<type>fadelabel</type>
+			<id>13</id>
+			<posX>260</posX>
+			<posY>440</posY>
+			<width>250</width>
+			<label>#TV.Scheduled.Title</label>
+			<font>font14</font>
+			<align>left</align>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>Current program time</description>
+			<type>label</type>
+			<id>14</id>
+			<posX>260</posX>
+			<posY>460</posY>
+			<label>#TV.Scheduled.Time</label>
+			<align>left</align>
+			<font>font14</font>
+			<textcolor>FFB2D4F5</textcolor>
+		</control>
+		<control>
+			<description>Description1</description>
+			<type>textboxscrollup</type>
+			<id>15</id>
+			<posX>260</posX>
+			<posY>485</posY>
+			<width>430</width> 
+			<height>65</height> 
+			<label>#TV.Scheduled.Description</label>
+			<font>font14</font>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>genre</description>
+			<type>label</type>
+			<id>17</id>
+			<posX>660</posX>
+			<posY>460</posY>
+			<label>#TV.Scheduled.Genre</label>
+			<align>right</align>
+			<font>font14</font>
+			<textcolor>FFB2D4F5</textcolor>
+		</control>	
 		<control>
 			<description>TV background</description>
 			<type>image</type>
