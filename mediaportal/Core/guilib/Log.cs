@@ -22,8 +22,14 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static Log()
 		{
-      System.IO.Directory.CreateDirectory("log");
-      System.IO.File.Delete(@"log\MediaPortal.log");
+      try
+      {
+        System.IO.Directory.CreateDirectory("log");
+        System.IO.File.Delete(@"log\MediaPortal.log");
+      }
+      catch(Exception)
+      {
+      }
 		}
 
 		/// <summary>
@@ -35,15 +41,21 @@ namespace MediaPortal.GUI.Library
 		{
       lock (typeof(Log))
       {
-        using (StreamWriter writer = new StreamWriter(@"log\MediaPortal.log",true))
+        try
         {
-          writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-          writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-          writer.WriteLine(strFormat,arg);
-          writer.Close();
+          using (StreamWriter writer = new StreamWriter(@"log\MediaPortal.log",true))
+          {
+            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+            writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
+            writer.WriteLine(strFormat,arg);
+            writer.Close();
+          }
+          string strLine=String.Format(strFormat,arg);
+          Debug.WriteLine(strLine);
         }
-        string strLine=String.Format(strFormat,arg);
-        Debug.WriteLine(strLine);
+        catch(Exception)
+        {
+        }
       }
 		}
 	}

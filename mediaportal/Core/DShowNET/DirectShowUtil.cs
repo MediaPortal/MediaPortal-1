@@ -191,19 +191,25 @@ namespace DShowNET
 
     static public void DebugWrite(string strFormat, params object[] arg)
     {
-      using (StreamWriter writer = new StreamWriter(@"log\capture.log",true))
+      try
       {
-        writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-        writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-        writer.WriteLine(strFormat,arg);
-        writer.Close();
+        using (StreamWriter writer = new StreamWriter(@"log\capture.log",true))
+        {
+          writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+          writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
+          writer.WriteLine(strFormat,arg);
+          writer.Close();
+        }
+        using (StreamWriter writer = new StreamWriter(@"log\mediaportal.log",true))
+        {
+          writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+          writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
+          writer.WriteLine(strFormat,arg);
+          writer.Close();
+        }
       }
-      using (StreamWriter writer = new StreamWriter(@"log\mediaportal.log",true))
+      catch(Exception)
       {
-        writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-        writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-        writer.WriteLine(strFormat,arg);
-        writer.Close();
       }
     }
     static public IPin FindPin (IBaseFilter filter, PinDirection dir,string strPinName)
