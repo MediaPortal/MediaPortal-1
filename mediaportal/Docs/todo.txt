@@ -63,6 +63,7 @@ My TV:
      - pal/secam/ntsc setup per channel
      
 My Music: (int_20h)
+  - show which songs are 'queued'
   - highlight currently playing file somehow
   - search songs by genre,artist,album (based on music database)
   - favorite system to add an album, song, artists to your favorites
@@ -72,6 +73,7 @@ My Music: (int_20h)
   - FF/RW control
   - crossfading ?
   - repeat none, once, always
+  - cd ripper
 
 My Video:
   - Make video streams possible (.asx)
