@@ -171,7 +171,7 @@
 	</string>
 	<string>
 		<id>112</id>
-		<value>GEPAUSEERD</value>
+		<value>GEPAUZEERD</value>
 	</string>
 	<string>
 		<id>113</id>
@@ -183,11 +183,11 @@
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopieëren</value>
+		<value>Kopiëren</value>
 	</string>
 	<string>
 		<id>116</id>
-		<value>Verplaats</value>
+		<value>Verplaatsen</value>
 	</string>
 	<string>
 		<id>117</id>
@@ -203,7 +203,7 @@
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bevestig bestand kopieëren</value>
+		<value>Bevestig bestand kopiëren</value>
 	</string>
 	<string>
 		<id>121</id>
@@ -215,7 +215,7 @@
 	</string>
 	<string>
 		<id>123</id>
-		<value>Deze bestanden kopieëren?</value>
+		<value>Deze bestanden kopiëren?</value>
 	</string>
 	<string>
 		<id>124</id>
@@ -1227,11 +1227,11 @@
 	</string>
 	<string>
 		<id>378</id>
-		<value>AM</value>
+		<value>vm</value>
 	</string>
 	<string>
 		<id>379</id>
-		<value>PM</value>
+		<value>nm</value>
 	</string>
 	<string>
 		<id>380</id>
@@ -1627,11 +1627,11 @@
 	</string>
 	<string>
 		<id>487</id>
-		<value>Herhaal één</value>
+		<value>Herhaal eenmaal</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Herhaal map playList</value>
+		<value>Herhaal map playlist</value>
 	</string>
 	<string>
 		<id>489</id>
@@ -1691,7 +1691,7 @@
 	</string>
 	<string>
 		<id>611</id>
-		<value>één keer opnemen</value>
+		<value>Één keer opnemen</value>
 	</string>
 	<string>
 		<id>612</id>
@@ -1819,11 +1819,11 @@
 	</string>
 	<string>
 		<id>643</id>
-		<value>Inlezen TV programmas</value>
+		<value>Inlezen TV programma's</value>
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorteren TV programmas</value>
+		<value>Sorteren TV programma's</value>
 	</string>
 	<string>
 		<id>645</id>
@@ -2171,7 +2171,7 @@
   </string>
   <string>
   	<id>802</id>
-  	<value>Eindigd</value>
+  	<value>Eindigt op</value>
   </string>
   <string>
   	<id>803</id>
@@ -2319,7 +2319,15 @@
   </string>
   <string>
   	<id>909</id>
-  	<value>Verbinding zoeken...</value>
+  	<value>Verbinding maken...</value>
+  </string>
+  <string>
+  	<id>910</id>
+  	<value>Bezig met aanmelden...</value>
+  </string>
+  <string>
+  	<id>911</id>
+  	<value>Geen kanalen</value>
   </string>
   <string>
   	<id>1440</id>
@@ -2443,7 +2451,7 @@
   </string>
 	<string>
     <id>2034</id>
-    <value>eeltlepel</value>
+    <value>eetlepel</value>
   </string>
 	<string>
     <id>2035</id>
