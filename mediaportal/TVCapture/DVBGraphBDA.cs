@@ -876,11 +876,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 
-			Log.Write("DVBGraphBDA: stop graph");
-			m_mediaControl.Stop();
-			graphRunning=false;
-			m_graphState = State.Created;
-			DeleteGraph();
+			m_graphState = State.TimeShifting;
 			Log.Write("DVBGraphBDA:stopped recording...");
 		}//public void StopRecording()
 
