@@ -82,7 +82,6 @@ namespace MediaPortal.Player
 
     /// <summary> interface to single-step video. </summary>
     protected IVideoFrameStep			  videoStep=null;
-    protected IBaseFilter           audioRenderer=null;
     protected int                           m_iVolume=100;
     //protected OVTOOLLib.OvMgrClass	m_ovMgr=null;
 
@@ -462,9 +461,6 @@ namespace MediaPortal.Player
           hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero );
           mediaEvt = null;
         }
-
-        if( audioRenderer != null )
-          Marshal.ReleaseComObject( audioRenderer); audioRenderer = null;
 
         if( videoWin != null )
         {

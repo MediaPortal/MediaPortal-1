@@ -235,9 +235,6 @@ namespace MediaPortal.Player
 				 Marshal.ReleaseComObject( dvdbasefilter); 
 				dvdbasefilter = null;              
 
-        if( audioRenderer != null )
-          Marshal.ReleaseComObject( audioRenderer); audioRenderer = null;
-
           m_bVisible=false;
     		
         if( cmdOption.dvdCmd != null )
