@@ -956,8 +956,8 @@ namespace MediaPortal
         string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
         if (strStartFull!=null && strStartFull=="yes")
         {
-          //Win32API.EnableStartBar(false);
-          //Win32API.ShowStartBar(false);
+          Win32API.EnableStartBar(false);
+          Win32API.ShowStartBar(false);
 
           Log.Write("start fullscreen");
           this.FormBorderStyle=FormBorderStyle.None;
@@ -1233,8 +1233,8 @@ namespace MediaPortal
       mnuMain.Dispose();
       base.Dispose(disposing);
 
-      //Win32API.EnableStartBar(true);
-      //Win32API.ShowStartBar(true);
+      Win32API.EnableStartBar(true);
+      Win32API.ShowStartBar(true);
     }
 
 
@@ -1307,8 +1307,8 @@ namespace MediaPortal
         if (isMaximized)
         {
           Log.Write("windowed->fullscreen");
-          //Win32API.EnableStartBar(false);
-          //Win32API.ShowStartBar(false);
+          Win32API.EnableStartBar(false);
+          Win32API.ShowStartBar(false);
           this.FormBorderStyle=FormBorderStyle.None;
           this.MaximizeBox=false;
           this.MinimizeBox=false;
@@ -1332,8 +1332,8 @@ namespace MediaPortal
         else
         {
           Log.Write("fullscreen->windowed");
-          //Win32API.EnableStartBar(true);
-          //Win32API.ShowStartBar(true);
+          Win32API.EnableStartBar(true);
+          Win32API.ShowStartBar(true);
 
           this.WindowState = FormWindowState.Normal;
           this.FormBorderStyle=FormBorderStyle.Sizable;
@@ -1554,8 +1554,8 @@ namespace MediaPortal
     /// </summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-      //Win32API.EnableStartBar(true);
-      //Win32API.ShowStartBar(true);
+      Win32API.EnableStartBar(true);
+      Win32API.ShowStartBar(true);
       isClosing = true;
       base.OnClosing(e);
     }
