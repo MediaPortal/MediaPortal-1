@@ -109,12 +109,12 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.GroupBox groupBox7;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.Label currChannel;
-		private System.Windows.Forms.Label label25;
-		private System.Windows.Forms.Label totalCount;
 		private System.Windows.Forms.Label totalDBcount;
 		private System.Windows.Forms.Label label29;
 		private System.Windows.Forms.GroupBox groupBox8;
 		private System.Windows.Forms.Button button21;
+		private System.Windows.Forms.CheckBox checkBox6;
+		private System.Windows.Forms.Button button22;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 		private bool						m_stopEPGGrab=false;
 		string								m_currentSatName="";
 		string[]							m_satNames=new string[4]{"Unknown Sat 1","Unknown Sat 2","Unknown Sat 3","Unknown Sat 4"};
-
+		bool								m_ignoreCheck=false;
 		bool								m_scanRunning=false;
 		//
 
@@ -258,10 +258,9 @@ namespace MediaPortal.Configuration.Sections
 			this.button17 = new System.Windows.Forms.Button();
 			this.button18 = new System.Windows.Forms.Button();
 			this.groupBox7 = new System.Windows.Forms.GroupBox();
+			this.checkBox6 = new System.Windows.Forms.CheckBox();
 			this.totalDBcount = new System.Windows.Forms.Label();
 			this.label29 = new System.Windows.Forms.Label();
-			this.totalCount = new System.Windows.Forms.Label();
-			this.label25 = new System.Windows.Forms.Label();
 			this.currChannel = new System.Windows.Forms.Label();
 			this.label16 = new System.Windows.Forms.Label();
 			this.button16 = new System.Windows.Forms.Button();
@@ -269,6 +268,7 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar2 = new System.Windows.Forms.ProgressBar();
 			this.ofd = new System.Windows.Forms.OpenFileDialog();
 			this.sfd = new System.Windows.Forms.SaveFileDialog();
+			this.button22 = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -1173,6 +1173,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox8
 			// 
+			this.groupBox8.Controls.Add(this.button22);
 			this.groupBox8.Controls.Add(this.treeView5);
 			this.groupBox8.Controls.Add(this.button17);
 			this.groupBox8.Controls.Add(this.button18);
@@ -1219,10 +1220,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox7
 			// 
+			this.groupBox7.Controls.Add(this.checkBox6);
 			this.groupBox7.Controls.Add(this.totalDBcount);
 			this.groupBox7.Controls.Add(this.label29);
-			this.groupBox7.Controls.Add(this.totalCount);
-			this.groupBox7.Controls.Add(this.label25);
 			this.groupBox7.Controls.Add(this.currChannel);
 			this.groupBox7.Controls.Add(this.label16);
 			this.groupBox7.Controls.Add(this.button16);
@@ -1236,9 +1236,18 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox7.TabStop = false;
 			this.groupBox7.Text = "EPG-Grabbing Status";
 			// 
+			// checkBox6
+			// 
+			this.checkBox6.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkBox6.Location = new System.Drawing.Point(16, 72);
+			this.checkBox6.Name = "checkBox6";
+			this.checkBox6.Size = new System.Drawing.Size(200, 16);
+			this.checkBox6.TabIndex = 24;
+			this.checkBox6.Text = "endless Running";
+			// 
 			// totalDBcount
 			// 
-			this.totalDBcount.Location = new System.Drawing.Point(152, 72);
+			this.totalDBcount.Location = new System.Drawing.Point(136, 48);
 			this.totalDBcount.Name = "totalDBcount";
 			this.totalDBcount.Size = new System.Drawing.Size(80, 16);
 			this.totalDBcount.TabIndex = 23;
@@ -1246,29 +1255,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label29
 			// 
-			this.label29.Location = new System.Drawing.Point(16, 72);
+			this.label29.Location = new System.Drawing.Point(16, 48);
 			this.label29.Name = "label29";
 			this.label29.Size = new System.Drawing.Size(128, 16);
 			this.label29.TabIndex = 22;
-			this.label29.Text = "Total adds to Database";
-			// 
-			// totalCount
-			// 
-			this.totalCount.Location = new System.Drawing.Point(152, 48);
-			this.totalCount.Name = "totalCount";
-			this.totalCount.Size = new System.Drawing.Size(80, 16);
-			this.totalCount.TabIndex = 21;
-			this.totalCount.Text = "1";
-			this.totalCount.Visible = false;
-			// 
-			// label25
-			// 
-			this.label25.Location = new System.Drawing.Point(16, 48);
-			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(104, 16);
-			this.label25.TabIndex = 20;
-			this.label25.Text = "Total Events found:";
-			this.label25.Visible = false;
+			this.label29.Text = "Total adds to Database:";
 			// 
 			// currChannel
 			// 
@@ -1321,6 +1312,16 @@ namespace MediaPortal.Configuration.Sections
 			// sfd
 			// 
 			this.sfd.Filter = "Transponder-Files|*.tpl";
+			// 
+			// button22
+			// 
+			this.button22.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button22.Location = new System.Drawing.Point(352, 112);
+			this.button22.Name = "button22";
+			this.button22.Size = new System.Drawing.Size(48, 21);
+			this.button22.TabIndex = 16;
+			this.button22.Text = "Load";
+			this.button22.Click += new System.EventHandler(this.button22_Click);
 			// 
 			// DVBSSS2
 			// 
@@ -1414,6 +1415,7 @@ namespace MediaPortal.Configuration.Sections
 			if(tabControl1.SelectedIndex==4)
 			{
 				GetChannels(true,treeView5);
+				LoadList();
 			}
 
 		}
@@ -2383,7 +2385,7 @@ namespace MediaPortal.Configuration.Sections
 					{
 						TreeNode node=new TreeNode(channel.ServiceProvider);
 						node.Tag=channel.ServiceProvider;
-						node.Checked=true;
+						node.Checked=false;
 						tv.Nodes.Add(node);
 						provider.Add(node);
 					}
@@ -2402,7 +2404,7 @@ namespace MediaPortal.Configuration.Sections
 						{
 							TreeNode servNode=new TreeNode(channel.ServiceName);
 							servNode.Tag=channel;
-							servNode.Checked=true;
+							servNode.Checked=false;
 							if(channel.ServiceType==serviceType)
 								node.Nodes.Add(servNode);
 						}
@@ -2673,7 +2675,8 @@ namespace MediaPortal.Configuration.Sections
 			foreach(TreeNode parentNode in treeView5.Nodes)
 				parentNode.Checked=false;
 			foreach(TreeNode parentNode in treeView5.Nodes)
-				parentNode.Checked=true;
+				if(parentNode.Nodes.Count>0)
+					parentNode.Checked=true;
 			
 		}
 
@@ -2697,10 +2700,14 @@ namespace MediaPortal.Configuration.Sections
 			m_stopEPGGrab=false;
 			button16.Enabled=true;
 			button15.Enabled=false;
+			button17.Enabled=false;
+			button18.Enabled=false;
+			button22.Enabled=false;
 			treeView5.Enabled=false;
+			m_scanRunning=true;
+			SaveList();
 			int counter=0;
 			bool tuned=false;
-			ResetStatus();
 			int channelCount=0;
 			foreach(TreeNode parentNode in treeView5.Nodes)
 			{
@@ -2756,17 +2763,77 @@ namespace MediaPortal.Configuration.Sections
 					}
 					progressBar2.Value=0;
 				}
-			}while(m_stopEPGGrab==false);
+			}while(m_stopEPGGrab==false && checkBox6.Checked==true);
 			button15.Enabled=true;
 			button16.Enabled=false;
+			button18.Enabled=true;
+			button17.Enabled=true;
+			button22.Enabled=true;
 			m_b2c2Helper.CleanUp();
 			treeView5.Enabled=true;
+			m_scanRunning=false;
 			GC.Collect();
 		}
-		void ResetStatus()
+
+		void SaveList()
 		{
-			Application.DoEvents();
+			int count=0;
+			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			{
+				xmlwriter.RemoveSection("DVBEPGGrabber");
+
+				foreach(TreeNode parentNode in treeView5.Nodes)
+				{
+					
+					if(parentNode.Checked==true)
+						foreach(TreeNode tn in parentNode.Nodes)
+						{
+							if(tn.Checked==true)
+							{
+								xmlwriter.SetValue("DVBEPGGrabber",String.Format("channel{0:0000}",count),((DVBChannel)tn.Tag).ProgramNumber.ToString()+"/"+((DVBChannel)tn.Tag).NetworkID.ToString());
+								count++;
+							}
+						}
+				}
+				if(count>0)
+					xmlwriter.SetValue("DVBEPGGrabber","entries",count.ToString());
+
+			}
 		}
+		void LoadList()
+		{
+			int count=0;
+			string check="";
+			int tmpCount=0;
+			m_ignoreCheck=true;
+			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			{
+				count=xmlreader.GetValueAsInt("DVBEPGGrabber","entries",0);
+
+				foreach(TreeNode parentNode in treeView5.Nodes)
+				{
+					foreach(TreeNode tn in parentNode.Nodes)
+					{
+						for(tmpCount=0;	tmpCount<count;tmpCount++)
+						{
+							check=xmlreader.GetValueAsString("DVBEPGGrabber",String.Format("channel{0:0000}",tmpCount),"");
+							if(check.Equals(((DVBChannel)tn.Tag).ProgramNumber.ToString()+"/"+((DVBChannel)tn.Tag).NetworkID.ToString()))
+							{
+								tn.Checked=true;
+								parentNode.Checked=true;
+								break;
+							}
+
+
+						}
+					}
+				}
+
+			}
+			m_ignoreCheck=false;
+		}
+		//
+		//
 		int CountSelectedNodes()
 		{
 			int retCount=0;
@@ -2812,6 +2879,9 @@ namespace MediaPortal.Configuration.Sections
 		private void treeView5_BeforeCheck(object sender, TreeViewCancelEventArgs e)
 		{
 			TreeNode node=e.Node;
+
+			if(m_ignoreCheck==true)
+				return;
 
 			if(node.Tag.GetType()!=typeof(DVBChannel))
 			{
@@ -2947,6 +3017,12 @@ namespace MediaPortal.Configuration.Sections
 				MessageBox.Show(ex.Message);
 			}
 
+		}
+
+		private void button22_Click(object sender, System.EventArgs e)
+		{
+			button18.PerformClick();
+			LoadList();
 		}
 	}// class
 }// namespace
