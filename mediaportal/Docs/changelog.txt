@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  28-05-2004  my tv       : fixed : recording was broken
+  28-05-2004  my tv       : fixed : tvguide navigation
   28-05-2004  my music    : fixed : sometimes wrong (previous) mp3 was played 
   28-05-2004  my videos   : fixed : IMDB thumbs where broken
   28-05-2004  my tv       : fixed : show recording overlay when recording
