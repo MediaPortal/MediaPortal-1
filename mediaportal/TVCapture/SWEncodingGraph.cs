@@ -41,6 +41,7 @@ namespace MediaPortal.TV.Recording
     VideoCaptureDevice      m_videoCaptureDevice=null;
     IVideoWindow            m_videoWindow = null;
     IBasicVideo2            m_basicVideo = null;
+    IMediaControl					  m_mediaControl=null;
     const int WS_CHILD			= 0x40000000;	
     const int WS_CLIPCHILDREN	= 0x02000000;
     const int WS_CLIPSIBLINGS	= 0x04000000;
@@ -193,6 +194,10 @@ namespace MediaPortal.TV.Recording
       if (m_basicVideo!=null)
       {
         Marshal.ReleaseComObject(m_basicVideo);m_basicVideo=null;
+      }
+      if (m_mediaControl!=null)
+      {
+        Marshal.ReleaseComObject(m_mediaControl);m_mediaControl=null;
       }
       
 
@@ -376,6 +381,7 @@ namespace MediaPortal.TV.Recording
 
       m_videoWindow = (IVideoWindow) m_graphBuilder;
       m_basicVideo = (IBasicVideo2) m_graphBuilder;
+      m_mediaControl=(IMediaControl)m_graphBuilder;
       int hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
       if( hr != 0 ) 
         DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window");
@@ -388,6 +394,8 @@ namespace MediaPortal.TV.Recording
       if( hr != 0 ) 
         DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible");
 
+      m_mediaControl.Run();
+      
       GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       m_graphState=State.Viewing;
       GUIGraphicsContext_OnVideoWindowChanged();
@@ -409,6 +417,7 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
       m_videoWindow.put_Visible( DsHlp.OAFALSE);
+      m_mediaControl.Stop();
       m_graphState=State.Created;
       DeleteGraph();
       return true;
