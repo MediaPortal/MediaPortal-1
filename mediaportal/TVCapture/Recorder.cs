@@ -612,11 +612,18 @@ namespace MediaPortal.TV.Recording
 				Log.Write("Recorder:Start TV viewing but recorder is not initalised");
 				return ;
 			}
-	
-			Log.Write("Recorder:Start TV viewing:{0} {1} {2}", channel,TVOnOff,timeshift);
+
 			TVCaptureDevice dev;
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				dev=(TVCaptureDevice)m_tvcards[i];
+				Log.Write("Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+								dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
+			}
+	
 			if (TVOnOff==false)
 			{
+				Log.Write("Recorder:turn TV off");
 				//TV should be turned off
 				if (m_iCurrentCard>=0 && m_iCurrentCard<m_tvcards.Count)
 				{
@@ -653,7 +660,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			}//if (TVOnOff==false)
 			
-			Log.Write("Recorder:start watching TV on channel:{0}", channel);
+			Log.Write("Recorder:Turn tv on channel:{0}", channel);
 
 			// tv should be turned on
 			// check if any card is already timeshifting / recording the channel we want
@@ -693,7 +700,7 @@ namespace MediaPortal.TV.Recording
 						dev.View=false;
 
 						//now start viewing without timeshifting
-						Log.Write("Recorder:using card:{0} {1} view", dev.ID, dev.FriendlyName);
+						Log.Write("Recorder:Start viewing card:{0} {1} view", dev.ID, dev.FriendlyName);
 						dev.TVChannel=channel;
 						dev.View=true;
 						return;

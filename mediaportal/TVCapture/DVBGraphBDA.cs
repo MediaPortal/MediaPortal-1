@@ -106,7 +106,6 @@ namespace MediaPortal.TV.Recording
 
 		int                     m_cardID								= -1;
 		int                     m_iCurrentChannel				= 28;
-		int                     m_iCurrentSID           =0;
 		int											m_rotCookie							= 0;			// Cookie into the Running Object Table
 		int                     m_iPrevChannel					= -1;
 		bool                    m_bIsUsingMPEG					= false;
@@ -1098,13 +1097,12 @@ namespace MediaPortal.TV.Recording
 			Marshal.ReleaseComObject(myTuneRequest);
 
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-			m_iCurrentSID=SID;
 			shouldDecryptChannel=true;
 			Log.Write("DVBGraphBDA:TuneChannel() done");
 
 			try
 			{
-				string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
+				string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",currentTuningObject.ProgramNumber,(int)Network());
 				if (System.IO.File.Exists(pmtName))
 				{
 					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
@@ -2273,7 +2271,7 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA:Process() Get PMT and channel info");	
 			DVBSections sections = new DVBSections();
 			DVBSections.ChannelInfo channelInfo;
-			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, m_iCurrentSID, out channelInfo);
+			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, currentTuningObject.ProgramNumber, out channelInfo);
 			if (pmt==null)
 			{	
 				Log.Write("DVBGraphBDA:Process() PMT not found");	
@@ -2330,7 +2328,7 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
-						string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
+						string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",currentTuningObject.ProgramNumber,(int)Network());
 						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 						stream.Write(pmt,0,pmt.Length);
 						stream.Close();
