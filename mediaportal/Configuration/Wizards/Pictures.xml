@@ -36,7 +36,7 @@
          <information></information>
          <header>This Modules Configuration is Complete!</header>
          <body>You have now finished the configuration of this Wizard. If at anytime, you wish to alter any of these settings, press F2 from within MediaPortal. Please consult the appropriate MediaPortal documentation for further explanation of each setting.</body>
-         <dependency/>
+         <image>wizards/wizard_done.png</image>
       </section>
    </sections>
 </wizard>
