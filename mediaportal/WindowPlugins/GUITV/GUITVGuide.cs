@@ -2020,30 +2020,13 @@ namespace MediaPortal.GUI.TV
 					case 971: //group
 						dlg.Reset();
 						dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
-						ArrayList groups=new ArrayList();
-						TVDatabase.GetGroups(ref groups);
-						dlg.Add(GUILocalizeStrings.Get(972));//All channels
-						foreach (TVGroup group in groups)
+						foreach (TVGroup group in GUITVHome.Navigator.Groups)
 						{
 							dlg.Add(group.GroupName);
 						}
 						dlg.DoModal( GetID);
 						if (dlg.SelectedLabel==-1) return;
-						if (dlg.SelectedLabelText == GUILocalizeStrings.Get(972))
-						{
-							GUITVHome.CurrentGroup = null;
-						}
-						else
-						{
-							foreach (TVGroup group in groups)
-							{
-								if (group.GroupName==dlg.SelectedLabelText)
-								{
-									GUITVHome.CurrentGroup=group;
-									break;
-								}
-							}
-						}
+						GUITVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
 						GetChannels();
 						Update();
 						SetFocus();
@@ -2287,23 +2270,11 @@ namespace MediaPortal.GUI.TV
 		void GetChannels()
 		{
 			m_channels.Clear();
-			TVGroup group=GUITVHome.CurrentGroup;
-			if (group!=null && group.tvChannels.Count>0)
+			foreach (TVChannel chan in GUITVHome.Navigator.CurrentGroup.tvChannels)
 			{
-				foreach (TVChannel channel in group.tvChannels)
-					m_channels.Add(channel );
-			}
-			else
-			{
-				m_channels= new ArrayList();
-				ArrayList chans = new ArrayList();
-				TVDatabase.GetChannels(ref chans); 
-				foreach (TVChannel chan in chans)
+				if (chan.VisibleInGuide)
 				{
-					if (chan.VisibleInGuide)
-					{
-						m_channels.Add(chan);
-					}
+					m_channels.Add(chan);
 				}
 			}
 

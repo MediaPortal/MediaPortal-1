@@ -102,6 +102,7 @@ namespace MediaPortal.GUI.Video
 		int               m_iItemSelected = -1;
 		static VirtualDirectory  m_directory = new VirtualDirectory();
     MapSettings       _MapSettings = new MapSettings();
+    bool              m_askBeforePlayingDVDImage = false;
 		#endregion
 
 		public GUIVideoFiles()
@@ -188,6 +189,7 @@ namespace MediaPortal.GUI.Video
           }
           else break;
         }
+        m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
       }
     }
 
@@ -602,11 +604,42 @@ namespace MediaPortal.GUI.Video
 
       m_strDirectory = strNewDirectory;
 
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_VIEW);
-            
 			string strObjects = "";
 
-			ArrayList itemlist = m_directory.GetDirectory(m_strDirectory);
+      ArrayList itemlist;
+
+      // Mounting and loading a DVD image file takes a long time,
+      // so display a message letting the user know that something 
+      // is happening.
+      if (!m_askBeforePlayingDVDImage && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(m_strDirectory)))
+      {
+        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        if (dlgProgress != null)
+        {
+          dlgProgress.SetHeading(13013);
+          dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(m_strDirectory));
+          dlgProgress.StartModal(GetID);
+          dlgProgress.Progress();
+        }
+
+        itemlist = m_directory.GetDirectory(m_strDirectory);
+        
+        if (dlgProgress!=null) dlgProgress.Close();
+
+        // Remember the directory that the image file is in rather than the
+        // image file itself.  This prevents repeated playing of the image file.
+        if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(m_strDirectory)))
+        {
+          m_strDirectory = System.IO.Path.GetDirectoryName(m_strDirectory);
+        }
+      }
+      else
+      {
+			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_VIEW);
+            
+        itemlist = m_directory.GetDirectory(m_strDirectory);
+      }
+
       if (_MapSettings.Stack)
       {
         ArrayList itemfiltered = new ArrayList();

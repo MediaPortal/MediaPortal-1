@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
+using MediaPortal.Ripper;
+using MediaPortal.Player;
 using System.Management;
 using System.IO;
 using EnterpriseDT.Net.Ftp;
@@ -108,9 +110,10 @@ namespace MediaPortal.Util
 
         if (item.DVDLabel != "")
         {
-					item.Label = String.Format( "{1} {0}",  item.Path, item.DVDLabel);        
+          item.Label = String.Format( "({0}) {1}",  item.Path, item.DVDLabel);        
         }
-				
+        else
+          item.Label = share.Name;
 				item.IsFolder = true;
 
         if (share.IsFtpShare)
@@ -397,13 +400,33 @@ namespace MediaPortal.Util
           string strExtension=System.IO.Path.GetExtension(strDir);
           if ( IsImageFile(strExtension) )
           {
+            bool askBeforePlayingDVDImage = false;
+
+            using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+            {
+              askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+            }
+
             if (!DaemonTools.IsMounted(strDir))
             {
+              if (!askBeforePlayingDVDImage)
+              {
+                AutoPlay.StopListening();
+
+                // yield some time before we try to mount
+                System.Threading.Thread.Sleep(50);
+              }
+
               string virtualPath;
               if (DaemonTools.Mount(strDir,out virtualPath))
               {
                 strDir=virtualPath;
                 VirtualShare=true;
+              }
+
+              if (!askBeforePlayingDVDImage)
+              {
+                AutoPlay.StartListening();
               }
             }
             else
@@ -411,6 +434,23 @@ namespace MediaPortal.Util
               strDir=DaemonTools.GetVirtualDrive();
               VirtualShare=true;
             }
+
+            if (!askBeforePlayingDVDImage && VirtualShare)
+            {
+              // dont interrupt if we're already playing
+              if (!g_Player.Playing)
+              {
+                // Check if the mounted image is actually a DVD. If so, bypass
+                // autoplay to play the DVD without user intervention
+                if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+                {
+                  Log.Write("\"Autoplaying\" DVD image mounted on {0}",strDir);
+                  g_Player.PlayDVD(strDir+@"\VIDEO_TS\VIDEO_TS.IFO");
+                  return items;
+                }
+              }
+            }
+
           }
         }
       }
