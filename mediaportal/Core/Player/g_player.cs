@@ -205,8 +205,14 @@ namespace MediaPortal.Player
 
     public static bool PlayDVD(string strPath)
 		{
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msg);
+			//stop playing radio
+			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgRadio);
+			
+			//stop timeshifting tv
+			GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgTv);
+
 			Log.Write("g_Player.PlayDVD()");
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
@@ -262,8 +268,15 @@ namespace MediaPortal.Player
 
     public static bool PlayAudioStream(string strURL)
 		{
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msg);
+
+			//stop radio
+			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgRadio);
+			
+			//stop timeshifting tv
+			GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgTv);
+
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
       m_bInit=true;
@@ -299,8 +312,18 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile)
 		{
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msg);
+			//stop radio
+			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgRadio);
+
+			if (!Utils.IsLiveTv(strFile))
+			{
+				//file is not a live tv file
+				//so tell recorder to stop timeshifting live-tv
+				GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
+				GUIGraphicsContext.SendMessage(msgTv);
+			}
+
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
       if (strFile==null) return false;

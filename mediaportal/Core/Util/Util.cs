@@ -213,6 +213,18 @@ namespace MediaPortal.Util
 			return szTemp;
 		}
 
+		static public bool IsLiveTv(string strPath)
+		{
+			if (strPath==null) return false;
+			try
+			{
+				string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
+				if (strExtFile.ToLower().Equals(".tv") ) return true;
+			}
+			catch(Exception){}
+			return false;
+
+		}
 		static public bool IsVideo(string strPath)
 		{
 			if (strPath==null) return false;
