@@ -663,6 +663,7 @@ namespace MediaPortal.TV.Recording
 				if (dev.IsTimeShifting && dev.TVChannel == channel)
 				{
 					m_iCurrentCard=i;
+					m_strTVChannel=channel;
 					Log.Write("Recorder:using card:{0} {1}", dev.ID, dev.FriendlyName);
 					// do we want timeshifting?
 					if  (timeshift || dev.IsRecording)
@@ -685,7 +686,14 @@ namespace MediaPortal.TV.Recording
 					else
 					{
 						//we dont want timeshifting
-						dev.StopTimeShifting();
+						Log.Write("Recorder.StartViewing() stop timeshifting on card:{0} {1}", dev.ID, dev.FriendlyName);
+						g_Player.Stop();
+						dev.View=false;
+
+						//now start viewing without timeshifting
+						Log.Write("Recorder:using card:{0} {1} view", dev.ID, dev.FriendlyName);
+						dev.TVChannel=channel;
+						dev.View=true;
 						return;
 					}
 				}//if (dev.IsTimeShifting && dev.TVChannel == channel)
