@@ -1202,7 +1202,19 @@ namespace MediaPortal.GUI.TV
 		void ChangeChannelNr(int iChannelNr)
 		{
 			ArrayList channels = new ArrayList();
-			TVDatabase.GetChannels(ref channels);
+			TVGroup group = GUITVHome.CurrentGroup;
+			if (group!=null && group.tvChannels.Count>0)
+			{
+				TVDatabase.GetTVChannelsForGroup(group);
+				for (int i=0; i < group.tvChannels.Count;++i)
+				{
+					channels.Add(group.tvChannels[i]);
+				}
+			}
+			else
+			{
+				TVDatabase.GetChannels(ref channels);
+			}
       iChannelNr--;
 			if (iChannelNr>=0 && iChannelNr< channels.Count)
 			{
