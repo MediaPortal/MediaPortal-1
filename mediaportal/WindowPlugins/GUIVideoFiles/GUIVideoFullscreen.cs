@@ -185,10 +185,13 @@ namespace MediaPortal.GUI.Video
 							}
 							else
 							{
-								GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
-								m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-								m_bOSDVisible=false;
-								m_bUpdate=true;
+								if (!m_osdWindow.SubMenuVisible)
+								{
+									GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+									m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+									m_bOSDVisible=false;
+									m_bUpdate=true;
+								}
 							}
 						}
 					}
@@ -949,25 +952,26 @@ namespace MediaPortal.GUI.Video
       {
         RenderFullScreen();  
         // do we need 2 render the OSD?
-        if (m_bOSDVisible)
-        {
-          m_osdWindow.Render();
-          //times up?
-          if (m_iMaxTimeOSDOnscreen>0)
-          {
-            TimeSpan ts =DateTime.Now - m_dwOSDTimeOut;
-            if ( ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
-            {
-              //yes, then remove osd offscreen
-              GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
-              m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-
-              m_bOSDVisible=false;
-            }
-          }
-        }
+				if (m_bOSDVisible)
+				{
+					m_osdWindow.Render();
+				}
         //base.Render();
       }
+
+			// OSD Timeout?
+			if (m_iMaxTimeOSDOnscreen>0)
+			{
+				TimeSpan ts =DateTime.Now - m_dwOSDTimeOut;
+				if ( ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
+				{
+					//yes, then remove osd offscreen
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+					m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+
+					m_bOSDVisible=false;
+				}
+			}
     }
 
     void RenderFullScreen()
