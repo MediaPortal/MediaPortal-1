@@ -99,6 +99,7 @@ DVD player:
   - VMR9
 
 Skin engine:
+  - add text of the 'next movie/song' to play
   - fade in for controls
   - transitions between windows
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle

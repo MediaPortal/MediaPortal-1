@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  08-07-2004  general     : fixed : .pls playlist loader
+  08-07-2004  home        : added : option to disable core plugins
+  08-07-2004  home        : added : scrolling button items
   07-07-2004  my music    : fixed : no thumbnail in mymusic/artists:if artist name retrieved from www.allmusic.com differs from the one in id3tag
   07-07-2004  my music    : fixed : songs without an album name dont show up in my music->arists
 
