@@ -44,8 +44,6 @@ Bugs which wont be fixed before 0.1
 Bugs i cannot fix (at the moment)
   23-05-2004 skin engine: rescale causes borders to appear on topbar buttons (new topbar) 
                           reason : DirectX scaling causes this. Need to find out if this can b solved
-  01-05-2004 my pictures: Quality of pics is degraded since DX9 is used. Slideshow quality is fine 
-                          reason : DirectX scaling causes this. Need to find out if this can b solved
   30-06-2004 my programs: returns to home when stopping a application
 						  reason : cannot reproduce it (i tried .txt files with notepad)
   18-06-2004 my video   : page counter goes wrong when > 9 pages
