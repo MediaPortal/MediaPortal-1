@@ -35,7 +35,7 @@ namespace MediaPortal.TV.Recording
 		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
-		DVBCList[]													dvbcChannels=new DVBCList[200];
+		DVBCList[]													dvbcChannels=new DVBCList[1000];
 		int																	count = 0;
 
 		public DVBCTuning()
@@ -64,11 +64,14 @@ namespace MediaPortal.TV.Recording
 			// load dvbcChannelsList list and start scan
 			System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
 			
+			int LineNr=0;
 			do
 			{
 				line = null;
 				line = tin.ReadLine();
 				if(line!=null)
+				{
+					LineNr++;
 					if (line.Length > 0)
 					{
 						if(line.StartsWith(";"))
@@ -113,9 +116,12 @@ namespace MediaPortal.TV.Recording
 								count += 1;
 							}
 							catch
-							{}
+							{
+								Log.Write("Error in line:{0}", LineNr);
+							}
 						}
 					}
+				}
 			} while (!(line == null));
 			tin.Close();
 			
