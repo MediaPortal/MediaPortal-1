@@ -61,9 +61,6 @@ namespace MediaPortal.Configuration.Sections
 		int									m_selKhz=0;
 		ArrayList							m_sectionsList=new ArrayList();				
 
-		PAT_LIST	m_thePATList;
-		PMT_LIST2	m_thePMTList;
-		Transponder m_transponderData;
 
 		// tables
 		public struct EITDescr
@@ -107,88 +104,27 @@ namespace MediaPortal.Configuration.Sections
 			public int TPpol; // polarisation 0=hori, 1=vert
 			public int TPsymb; // symbol rate
 		}
-		public struct Channel
-		{
-			public int program_number;
-			public int pcr_pid;
-			public int service_id;
-			public int t_id;
-			public int networkID;
-			public int transportStreamID;
-			public ArrayList pid_list;
-		}
-		
-		//
-		//
-		//
-		public struct Transponder_Data
-		{
-			public int org_Network_ID;
-			public int transport_Stream_ID;
-			public int frequency;
-			public int orbital_position;
-			public int west_east_flag;
-			public int polarisation;
-			public int modulation;
-			public int symbol_rate;
-			public int FEC_inner;
-		}
-		//
+
 		//
 		//
 		public struct Transponder
 		{
-			public ArrayList PMT_Table;
-			public ArrayList transp_List;
+			public ArrayList PMTTable;
 			public ArrayList channels;
-			public ArrayList serviceData;
 		}
-		//
+
 		//
 		//
 		public struct ServiceData
 		{
 			public string serviceProviderName;
 			public string serviceName;
-			public int serviceID;
-			public int networkID;
-			public int transportStreamID;
 			public int serviceType;
-			public bool eitSchedule;
-			public bool eitPreFollow;
-			public bool scrambled;
-			public int freq;// 12188
-			public int symb;// 27500
-			public int fec;// 6
-			public int diseqc;// 1
-			public int lnb01;// 10600
-			public int lnbkhz;// 1 = 22
-			public int pol; // 0 - h
 		}
+
 		//
 		//
-		// sdt
-		
-		//
-		
-		// pat
-		//
-		//
-		public struct PAT
-		{
-			public int table_id;
-			public int section_syntax_indicator;
-			public int reserved_1;
-			public int section_length;
-			public int transport_stream_id;
-			public int reserved_2;
-			public int version_number;
-			public int current_next_indicator;
-			public int section_number;
-			public int last_section_number;
-			public long CRC;
-		}
-		public struct PAT_LIST
+		public struct ChannelInfo
 		{
 			public int			program_number;
 			public int			reserved;
@@ -215,48 +151,23 @@ namespace MediaPortal.Configuration.Sections
 		}
 		//
 		//
-		//
-		public struct PMT
+		public struct PMTData
 		{
-			public int table_id;
-			public int section_syntax_indicator;
-			public int b_null;
-			public int reserved_1;
-			public int section_length;
-			public int program_number;
-			public int reserved_2;
-			public int version_number;
-			public int current_next_indicator;
-			public int section_number;
-			public int last_section_number;
-			public int reserved_3;
-			public int pcr_pid;
-			public int reserved_4;
-			public int program_info_length;
-			public int crc;
+			public int		stream_type;
+			public int		reserved_1;
+			public int		elementary_PID;
+			public int		reserved_2;
+			public int		ES_info_length;
+			public string	data;
+			public bool		isAC3Audio;
+			public bool		isAudio;
+			public bool		isVideo;
+			public bool		isTeletext;
+			public string	teletextLANG;
 		}
 		//
 		//
-		//
-		public struct PMT_LIST2
-		{
-			public int stream_type;
-			public int reserved_1;
-			public int elementary_PID;
-			public int reserved_2;
-			public int ES_info_length;
-			public string data;
-			public bool isAC3Audio;
-			public bool isAudio;
-			public bool isVideo;
-			public bool isTeletext;
-			public string teletextLANG;
-		}
-		//
-		//
-		//
-		
-	
+
 		private void ListBox1_SelectedIndexChanged (System.Object sender, System.EventArgs e)
 		{
 		}
@@ -285,27 +196,37 @@ namespace MediaPortal.Configuration.Sections
 				if(line!=null)
 				if (line.Length > 0)
 				{
+					if(line.StartsWith(";"))
+						continue;
 					tpdata = line.Split(new char[]{','});
+					if(tpdata.Length!=3)
+						tpdata = line.Split(new char[]{';'});
 					if (tpdata.Length == 3)
 					{
-						transp[count].TPfreq = Convert.ToInt16(tpdata[0]) * 1000;
-						switch (tpdata[1].ToLower())
+						try
 						{
-							case "v":
+						
+							transp[count].TPfreq = Convert.ToInt16(tpdata[0]) * 1000;
+							switch (tpdata[1].ToLower())
+							{
+								case "v":
 									
-								transp[count].TPpol = 1;
-								break;
-							case "h":
+									transp[count].TPpol = 1;
+									break;
+								case "h":
 									
-								transp[count].TPpol = 0;
-								break;
-							default:
+									transp[count].TPpol = 0;
+									break;
+								default:
 									
-								transp[count].TPpol = 0;
-								break;
+									transp[count].TPpol = 0;
+									break;
+							}
+							transp[count].TPsymb = Convert.ToInt16(tpdata[2]);
+							count += 1;
 						}
-						transp[count].TPsymb = Convert.ToInt16(tpdata[2]);
-						count += 1;
+						catch
+						{}
 					}
 				}
 			} while (!(line == null));
@@ -319,7 +240,6 @@ namespace MediaPortal.Configuration.Sections
 			int a;
 			byte[] bytes = new byte[9];
 			int n;
-			byte[] adapHead = new byte[1];
 			// check
 			if(buf.Length<10)
 				return 0;
@@ -337,35 +257,24 @@ namespace MediaPortal.Configuration.Sections
 			int section_number = BitsFromBArray(bytes, 0, 48, 8);
 			int last_section_number = BitsFromBArray(bytes, 0, 56, 8);
 			
-			m_thePATList=new PAT_LIST();
 			n = section_length - 5 - 4;
 			byte[] b = new byte[5];
 			a = n / 4;
-			a -= 1;
-			PAT_LIST[] pmtTab = new PAT_LIST[a + 1];
-			a = 0;
-			foreach (PAT_LIST tempLoopVar_thePATList in pmtTab)
+			ChannelInfo ch=new ChannelInfo();
+			for (int count=0;count<a;count++)
 			{
-				m_thePATList = tempLoopVar_thePATList;
-				System.Array.Copy(buf, 8 +(a * 4), b, 0, 4);
-				m_thePATList.transportStreamID=transport_stream_id;
-				m_thePATList.program_number = BitsFromBArray(b, 0, 0, 16);
-				m_thePATList.reserved = BitsFromBArray(b, 0, 16, 3);
-				m_thePATList.network_pmt_PID = BitsFromBArray(b, 0, 19, 13);
-				pmtTab[a] = m_thePATList;
-				
-				a += 1;
-			}
-			foreach (PAT_LIST tempLoopVar_thePATList in pmtTab)
-			{
-				m_thePATList = tempLoopVar_thePATList;
-				if (m_thePATList.program_number != 0)
-				{
-					tp.PMT_Table.Add(m_thePATList);
-				}
+				System.Array.Copy(buf, 8 +(count * 4), b, 0, 4);
+				ch.transportStreamID=transport_stream_id;
+				ch.program_number = BitsFromBArray(b, 0, 0, 16);
+				ch.reserved = BitsFromBArray(b, 0, 16, 3);
+				ch.network_pmt_PID = BitsFromBArray(b, 0, 19, 13);
+				if(ch.program_number!=0)
+					tp.PMTTable.Add(ch);
 			}
 			return 0;
 		}
+		//
+		//
 		private void StartScan (int count, ref Transponder[] transplist)
 		{
 			int t;
@@ -389,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 				// set the tranponder data
 				transplist[t].channels = new ArrayList();
-				transplist[t].PMT_Table = new ArrayList();
+				transplist[t].PMTTable = new ArrayList();
 				// first get pmt
 				if (transp[t].TPfreq >= m_lnbsw*1000)
 				{
@@ -443,8 +352,8 @@ namespace MediaPortal.Configuration.Sections
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			bool flag;
-			PAT_LIST pat;
-			ArrayList pmtList = tp.PMT_Table;
+			ChannelInfo pat;
+			ArrayList pmtList = tp.PMTTable;
 			int pmtScans;
 			pmtScans = (pmtList.Count / 20) + 1;
 			for (t = 1; t <= pmtScans; t++)
@@ -456,7 +365,7 @@ namespace MediaPortal.Configuration.Sections
 					{
 						break;
 					}
-					pat = (PAT_LIST) pmtList[((t - 1) * 20) + n];
+					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
 					flag = AddTSPid(pat.network_pmt_PID);
 					if (flag == false)
 					{
@@ -488,7 +397,7 @@ namespace MediaPortal.Configuration.Sections
 		//
 		//
 		//
-		private int decodePMTTable(byte[] buf, TPList transponderInfo, Transponder tp,ref PAT_LIST pat)
+		private int decodePMTTable(byte[] buf, TPList transponderInfo, Transponder tp,ref ChannelInfo pat)
 		{
 			byte[] bytes = new byte[14];
 			// check
@@ -517,7 +426,6 @@ namespace MediaPortal.Configuration.Sections
 			if(pat.program_number!=program_number)
 				return 0;
 			
-			m_thePMTList=new PMT_LIST2();
 			pat.pid_list = new ArrayList();
 			pat.pcr_pid = pcr_pid;
 			//
@@ -535,34 +443,35 @@ namespace MediaPortal.Configuration.Sections
 				len1 -= x;
 			}
 			byte[] b = new byte[6];
+			PMTData pmt;
 			while (len1 > 4)
 			{
-				m_thePMTList=new PMT_LIST2();
+				pmt=new PMTData();
 				System.Array.Copy(buf, pointer, b, 0, 5);
-				m_thePMTList.stream_type = BitsFromBArray(b, 0, 0, 8);
-				m_thePMTList.reserved_1 = BitsFromBArray(b, 0, 8, 3);
-				m_thePMTList.elementary_PID = BitsFromBArray(b, 0, 11, 13);
-				m_thePMTList.reserved_2 = BitsFromBArray(b, 0, 24, 4);
-				m_thePMTList.ES_info_length = BitsFromBArray(b, 0, 28, 12);
+				pmt.stream_type = BitsFromBArray(b, 0, 0, 8);
+				pmt.reserved_1 = BitsFromBArray(b, 0, 8, 3);
+				pmt.elementary_PID = BitsFromBArray(b, 0, 11, 13);
+				pmt.reserved_2 = BitsFromBArray(b, 0, 24, 4);
+				pmt.ES_info_length = BitsFromBArray(b, 0, 28, 12);
 
-				switch(m_thePMTList.stream_type)
+				switch(pmt.stream_type)
 				{
 					case 0x1:
-						m_thePMTList.isVideo=true;
+						pmt.isVideo=true;
 						break;
 					case 0x2:
-						m_thePMTList.isVideo=true;
+						pmt.isVideo=true;
 						break;
 					case 0x3:
-						m_thePMTList.isAudio=true;
+						pmt.isAudio=true;
 						break;
 					case 0x4:
-						m_thePMTList.isAudio=true;
+						pmt.isAudio=true;
 						break;
 				}
 				pointer += 5;
 				len1 -= 5;
-				len2 = m_thePMTList.ES_info_length;
+				len2 = pmt.ES_info_length;
 				if (len1 > 0)
 				{
 					while (len2 > 0)
@@ -579,17 +488,17 @@ namespace MediaPortal.Configuration.Sections
 								switch(indicator)
 								{
 									case 0x0A:
-										m_thePMTList.data=DVB_GetMPEGISO639Lang(data);
+										pmt.data=DVB_GetMPEGISO639Lang(data);
 										break;
 									case 0x6A:
-										m_thePMTList.isAC3Audio=true;
+										pmt.isAC3Audio=true;
 										break;
 									case 0x56:
-										m_thePMTList.isTeletext=true;
-										m_thePMTList.teletextLANG=DVB_GetTeletextDescriptor(data);
+										pmt.isTeletext=true;
+										pmt.teletextLANG=DVB_GetTeletextDescriptor(data);
 										break;
 									default:
-										m_thePMTList.data="";
+										pmt.data="";
 										break;
 								}
 
@@ -604,7 +513,7 @@ namespace MediaPortal.Configuration.Sections
 						pointer += x;
 					}
 				}
-				pat.pid_list.Add(m_thePMTList);
+				pat.pid_list.Add(pmt);
 
 			} // kill
 			//tp.channels.Add(ch);
@@ -631,10 +540,10 @@ namespace MediaPortal.Configuration.Sections
 			{
 				int pointer  = 2;
 
-				while ( len > 0 && (len+pointer<b.Length)) 
+				while ( len > 0 && (pointer+3<=b.Length)) 
 				{
 					System.Array.Copy(b,pointer,bytes,0,3);
-					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes)+";;";
+					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
 					teletext_type		= BitsFromBArray (bytes,0,24,5);
 					teletext_magazine_number	= BitsFromBArray (bytes,0,29,3);
 					teletext_page_number	= BitsFromBArray (bytes,0,32,8);
@@ -748,7 +657,7 @@ namespace MediaPortal.Configuration.Sections
 		}
 		//
 		//
-		private int decodeSDTTable(byte[] buf, TPList transponderInfo, ref Transponder tp,ref PAT_LIST pat)
+		private int decodeSDTTable(byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
 		{
 			byte[] bytes = new byte[14];
 			// check
@@ -1330,7 +1239,7 @@ namespace MediaPortal.Configuration.Sections
 		//
 		//
 		//
-		private object get_nit(byte[] buf)
+		private object decodeNITTable(byte[] buf)
 		{
 			int table_id;
 			int section_syntax_indicator;
@@ -1383,7 +1292,7 @@ namespace MediaPortal.Configuration.Sections
 			pointer += 10;
 			int x = 0;
 			byte[] b0 = new byte[buf.Length-pointer + 1];
-			m_transponderData.transp_List = new ArrayList();
+			//m_transponderData.transp_List = new ArrayList();
 			
 			while (l1 > 0)
 			{
@@ -1414,7 +1323,7 @@ namespace MediaPortal.Configuration.Sections
 					x = buf[pointer + 1] + 2;
 					byte[] service = new byte[x + 1];
 					System.Array.Copy(buf, pointer, service, 0, x);
-					m_transponderData.transp_List.Add(DVB_GetSatDelivSys(service, transport_stream_id, original_network_id));
+					//m_transponderData.transp_List.Add(DVB_GetSatDelivSys(service, transport_stream_id, original_network_id));
 					pointer += x;
 					l2 -= x;
 					l1 -= x;
@@ -1423,21 +1332,20 @@ namespace MediaPortal.Configuration.Sections
 			x = 0;
 			return 0;
 		}
-		private Transponder_Data DVB_GetSatDelivSys(byte[] b, int tr, int onid)
+		private object DVB_GetSatDelivSys(byte[] b, int tr, int onid)
 		{
-			Transponder_Data td;
 			int descriptor_tag = b[0];
 			int descriptor_length = b[1];
-			td.frequency = BitsFromBArray(b, 0, 16, 32);
-			td.orbital_position = BitsFromBArray(b, 0, 48, 16);
-			td.west_east_flag = BitsFromBArray(b, 0, 64, 1);
-			td.polarisation = BitsFromBArray(b, 0, 65, 2);
-			td.modulation = BitsFromBArray(b, 0, 67, 5);
-			td.symbol_rate = BitsFromBArray(b, 0, 72, 28);
-			td.FEC_inner = BitsFromBArray(b, 0, 100, 4);
-			td.org_Network_ID = onid;
-			td.transport_Stream_ID = tr;
-			return td;
+			int frequency = BitsFromBArray(b, 0, 16, 32);
+			int orbital_position = BitsFromBArray(b, 0, 48, 16);
+			int west_east_flag = BitsFromBArray(b, 0, 64, 1);
+			int polarisation = BitsFromBArray(b, 0, 65, 2);
+			int modulation = BitsFromBArray(b, 0, 67, 5);
+			int symbol_rate = BitsFromBArray(b, 0, 72, 28);
+			int FEC_inner = BitsFromBArray(b, 0, 100, 4);
+			int org_Network_ID = onid;
+			int transport_Stream_ID = tr;
+			return null;
 		}
 		//
 		//
@@ -1592,10 +1500,6 @@ namespace MediaPortal.Configuration.Sections
 		}
 
 		
-		private int descriptor(byte[] b, int scope)
-		{
-			return b[1] + 2; //(descriptor total length)
-		}
 		private ServiceData DVB_GetService(byte[] b)
 		{
 			int descriptor_tag;
@@ -1684,15 +1588,7 @@ namespace MediaPortal.Configuration.Sections
 			flag = SetupB2C2Graph();
 			if (flag == true)
 			{
-//				for (t = 0; t <= 10; t++)
-//				{
-//					//flag=Tune(0,0,0,0,0,0,0);//dummy tune
-					flag = RunSITable();
-//					if (flag)
-//					{
-//						break;
-//					}
-//				}
+				flag = RunSITable();
 			}
 			if (flag == false)
 			{
