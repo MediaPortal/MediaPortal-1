@@ -549,7 +549,6 @@ namespace MediaPortal.TV.Recording
     {
       get 
       {
-        if (!m_bViewing) return false;
         if (Timeshifting)
         {
           if (g_Player.Playing && g_Player.IsTV) return true;
