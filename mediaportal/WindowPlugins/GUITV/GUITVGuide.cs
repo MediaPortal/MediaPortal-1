@@ -1944,18 +1944,26 @@ namespace MediaPortal.GUI.TV
 						dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
 						ArrayList groups=new ArrayList();
 						TVDatabase.GetGroups(ref groups);
+						dlg.Add(GUILocalizeStrings.Get(972));//All channels
 						foreach (TVGroup group in groups)
 						{
 							dlg.Add(group.GroupName);
 						}
 						dlg.DoModal( GetID);
 						if (dlg.SelectedLabel==-1) return;
-						foreach (TVGroup group in groups)
+						if (dlg.SelectedLabelText == GUILocalizeStrings.Get(972))
 						{
-							if (group.GroupName==dlg.SelectedLabelText)
+							GUITVHome.CurrentGroup = null;
+						}
+						else
+						{
+							foreach (TVGroup group in groups)
 							{
-								GUITVHome.CurrentGroup=group;
-								break;
+								if (group.GroupName==dlg.SelectedLabelText)
+								{
+									GUITVHome.CurrentGroup=group;
+									break;
+								}
 							}
 						}
 						GetChannels();
