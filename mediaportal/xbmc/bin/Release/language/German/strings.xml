@@ -2647,6 +2647,10 @@
 		<id>1975</id>
 		<value>Nächste Seite</value>
 	</string>
+	<string>
+		<id>1976</id>
+		<value>upm</value>
+	</string>	
 	<!-- My Recipie Strings -->
 	<string>
 		<id>2005</id>
