@@ -9,9 +9,12 @@ Skin, gfx, .xml & media:
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
 vmr9:
-	- no vmr
-	- windowless vmr
-	- renderless vmr
+	- overlay
+	- windowless vmr9 
+	   - z-order
+	   - alpha transparency
+	   - 
+	- renderless vmr9
 
 My Radio:
     - add support for more cards

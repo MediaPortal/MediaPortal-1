@@ -1445,7 +1445,11 @@ namespace MediaPortal
       {
         //DoSelectNewDevice();
         OnSetup(null,null);
-      }
+			}
+			else if (e.KeyCode == System.Windows.Forms.Keys.F3)
+			{
+				menuItem3_Click(null,null);
+			}
 
       if (e.Handled==false)
       {
@@ -1461,92 +1465,94 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
-      this.mnuMain = new System.Windows.Forms.MainMenu();
-      this.mnuFile = new System.Windows.Forms.MenuItem();
-      this.mnuChange = new System.Windows.Forms.MenuItem();
-      this.mnuBreak2 = new System.Windows.Forms.MenuItem();
-      this.mnuExit = new System.Windows.Forms.MenuItem();
-      this.menuItem1 = new System.Windows.Forms.MenuItem();
-      this.menuItem2 = new System.Windows.Forms.MenuItem();
-      this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.menuItem3 = new System.Windows.Forms.MenuItem();
-      // 
-      // mnuMain
-      // 
-      this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                            this.mnuFile,
-                                                                            this.menuItem1});
-      // 
-      // mnuFile
-      // 
-      this.mnuFile.Index = 0;
-      this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                            this.mnuChange,
-                                                                            this.mnuBreak2,
-                                                                            this.mnuExit});
-      this.mnuFile.Text = "&File";
-      // 
-      // mnuChange
-      // 
-      this.mnuChange.Index = 0;
-      this.mnuChange.Text = "&Change Device...";
-      this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
-      // 
-      // mnuBreak2
-      // 
-      this.mnuBreak2.Index = 1;
-      this.mnuBreak2.Text = "-";
-      // 
-      // mnuExit
-      // 
-      this.mnuExit.Index = 2;
-      this.mnuExit.Text = "Exit";
-      this.mnuExit.Click += new System.EventHandler(this.ExitSample);
-      // 
-      // menuItem1
-      // 
-      this.menuItem1.Index = 1;
-      this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuItem2,
-                                                                              this.menuItem3});
-      this.menuItem1.Text = "&Tools";
-      // 
-      // menuItem2
-      // 
-      this.menuItem2.Index = 0;
-      this.menuItem2.Text = "&Options...";
-      this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
-      // 
-      // timer1
-      // 
-      this.timer1.Enabled = true;
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
-      // menuItem3
-      // 
-      this.menuItem3.Index = 1;
-      this.menuItem3.Text = "Plugins...";
-      this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
-      // 
-      // D3DApp
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(720, 576);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.KeyPreview = true;
-      this.MinimumSize = new System.Drawing.Size(100, 100);
-      this.Name = "D3DApp";
-      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-      this.Resize += new System.EventHandler(this.D3DApp_Resize);
-      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
-      this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
-      this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
-      this.Load += new System.EventHandler(this.D3DApp_Load);
-      this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
+			this.components = new System.ComponentModel.Container();
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
+			this.mnuMain = new System.Windows.Forms.MainMenu();
+			this.mnuFile = new System.Windows.Forms.MenuItem();
+			this.mnuChange = new System.Windows.Forms.MenuItem();
+			this.mnuBreak2 = new System.Windows.Forms.MenuItem();
+			this.mnuExit = new System.Windows.Forms.MenuItem();
+			this.menuItem1 = new System.Windows.Forms.MenuItem();
+			this.menuItem2 = new System.Windows.Forms.MenuItem();
+			this.menuItem3 = new System.Windows.Forms.MenuItem();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			// 
+			// mnuMain
+			// 
+			this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																						this.mnuFile,
+																																						this.menuItem1});
+			// 
+			// mnuFile
+			// 
+			this.mnuFile.Index = 0;
+			this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																						this.mnuChange,
+																																						this.mnuBreak2,
+																																						this.mnuExit});
+			this.mnuFile.Text = "&File";
+			// 
+			// mnuChange
+			// 
+			this.mnuChange.Index = 0;
+			this.mnuChange.Text = "&Change Device...";
+			this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
+			// 
+			// mnuBreak2
+			// 
+			this.mnuBreak2.Index = 1;
+			this.mnuBreak2.Text = "-";
+			// 
+			// mnuExit
+			// 
+			this.mnuExit.Index = 2;
+			this.mnuExit.Text = "Exit";
+			this.mnuExit.Click += new System.EventHandler(this.ExitSample);
+			// 
+			// menuItem1
+			// 
+			this.menuItem1.Index = 1;
+			this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuItem2,
+																																							this.menuItem3});
+			this.menuItem1.Text = "&Tools";
+			// 
+			// menuItem2
+			// 
+			this.menuItem2.Index = 0;
+			this.menuItem2.Shortcut = System.Windows.Forms.Shortcut.F2;
+			this.menuItem2.Text = "&Options...";
+			this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
+			// 
+			// menuItem3
+			// 
+			this.menuItem3.Index = 1;
+			this.menuItem3.Shortcut = System.Windows.Forms.Shortcut.F3;
+			this.menuItem3.Text = "Plugins...";
+			this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
+			// 
+			// timer1
+			// 
+			this.timer1.Enabled = true;
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
+			// D3DApp
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(720, 576);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.KeyPreview = true;
+			this.MinimumSize = new System.Drawing.Size(100, 100);
+			this.Name = "D3DApp";
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+			this.Resize += new System.EventHandler(this.D3DApp_Resize);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
+			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
+			this.Load += new System.EventHandler(this.D3DApp_Load);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
-    }
+		}
 
 
 
