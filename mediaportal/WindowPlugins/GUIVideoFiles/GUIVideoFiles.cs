@@ -2093,7 +2093,7 @@ namespace MediaPortal.GUI.Video
 
 			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 			if (null==dlgYesNo) return;
-			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+			dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
 			dlgYesNo.SetLine(1,strFileName);
 			dlgYesNo.SetLine(2, "");
 			dlgYesNo.SetLine(3, "");
@@ -2116,6 +2116,7 @@ namespace MediaPortal.GUI.Video
     {
       if (item.IsFolder)
       {
+				if (item.IsRemote) return;
         if (item.Label != "..")
         {
           ArrayList items = new ArrayList();
@@ -2130,6 +2131,8 @@ namespace MediaPortal.GUI.Video
       else		
       {
 				VideoDatabase.DeleteMovie(item.Path);
+				
+				if (item.IsRemote) return;
 				Utils.FileDelete(item.Path);
 			}
 		}
