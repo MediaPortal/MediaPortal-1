@@ -1176,7 +1176,8 @@ namespace MediaPortal.GUI.TV
 
 			if (m_currentchannel=="")
 			{
-				m_currentchannel=((TVChannel)m_groups[m_currentgroup]).Name;
+				TVGroup group=(TVGroup )m_groups[m_currentgroup];
+				m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
 			}
 		}
 
