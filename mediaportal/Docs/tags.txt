@@ -1,10 +1,10 @@
 In the .xml files of the skin you can use the list of tags (see below) to show info about the current
 playing file. These special tags currently work for the following controls:
-	- button
-	- label 
-	- fadelabel 
-	- textscrollup
-	- progress 
+    - button
+    - label 
+    - fadelabel 
+    - textscrollup
+    - progress 
 These special tags are placed in the <label></label> field of the controls and contain the
 tagname and any other text you want.
 
@@ -66,7 +66,7 @@ Tagname                     description
 #selecteditem               text of selected item
 #selecteditem2              2nd text of selected item
 #selectedthumb              filename of thumbnail of selected item
-#itemcount					number of items in list/album/thumbnail view
+#itemcount                  number of items in list/album/thumbnail view
 
 #TV.Record.channel          TV channel of the current tvprogram which gets recorded
 #TV.Record.start            start time of the current tvprogram which gets recorded
@@ -83,17 +83,17 @@ Tagname                     description
 #TV.View.genre              genre of the current tvprogram you're watching
 #TV.View.title              title of the current tvprogram you're watching
 #TV.View.description        description of the current tvprogram you're watching
-#TV.View.Percentage			contains how much percent (0%-100%) of the current tvprogram has past
+#TV.View.Percentage         contains how much percent (0%-100%) of the current tvprogram has past
 
-#TV.Guide.Day				contains the day you're browsing
-#TV.Guide.thumb				thumbnail of current selected tv channel
-#TV.Guide.Title				title of current selected program
-#TV.Guide.Time				start-endtime of current selected program
-#TV.Guide.Description		description of current selected program
-#TV.Guide.Genre				genre of current selected program
+#TV.Guide.Day               contains the day you're browsing
+#TV.Guide.thumb             thumbnail of current selected tv channel
+#TV.Guide.Title             title of current selected program
+#TV.Guide.Time              start-endtime of current selected program
+#TV.Guide.Description       description of current selected program
+#TV.Guide.Genre             genre of current selected program
 
-#TV.RecordedTV.Title		title of current selected recording
-#TV.RecordedTV.Time			time of current selected recording
-#TV.RecordedTV.Description	description of current selected recording
-#TV.RecordedTV.thumb		thumbnail of current selected recording
-#TV.RecordedTV.Genre		genre of current selected recording
+#TV.RecordedTV.Title        title of current selected recording
+#TV.RecordedTV.Time         time of current selected recording
+#TV.RecordedTV.Description  description of current selected recording
+#TV.RecordedTV.thumb        thumbnail of current selected recording
+#TV.RecordedTV.Genre        genre of current selected recording

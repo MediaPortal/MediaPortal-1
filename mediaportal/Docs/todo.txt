@@ -17,21 +17,22 @@ My Radio:
   - AM/FM
 
 My TV:
+  - start timeshifting when MP starts and leave it running 
+  - add option to directly show fullscreen TV when going to my tv
   - speed up my tv (takes 2 long b4 picture is shown)
+  - turn timeshifting on/off
   - A way to browse and resolve recording conflicts. 
-  - support of external tuners (http://www.usbuirt.com/)
+  - support of external tuners (http://www.usbuirt.com/) (xbmc-er is looking at this)
+  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
   - picture in picture
   - TV-out through PVR 350
-  - Mix Direct3D & video (xbmc-er is working on this)
-  - turn timeshifting on/off
-  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
   
   TV OSD:
      - timeshifting info:
-		- show how much of current running program is recorded
-		- which part has been watched  
-		- which part isnt watched yet
-		- where in time you're watching
+        - show how much of current running program is recorded
+        - which part has been watched  
+        - which part isnt watched yet
+        - where in time you're watching
      - show description of current program
      - record this program now option
      
@@ -47,13 +48,9 @@ My TV:
      - remove all schedules button
   
   Recorder/Capture:
-     - add option to directly show fullscreen TV when going to my tv
-     - view & record @ same time (optional)
      - add support for digital capture cards (BDA tuners)
      - add screenshot option    
-	 - FF/RW
-	 - start timeshifting when MP starts and leave it running 
-	 
+     
 My Music: (int_20h)
   - faster start of 1st song played
   - gapless playback
