@@ -235,7 +235,7 @@ namespace MediaPortal.GUI.TV
 
             if (nNewWindow != GetID)
             {
-              GUIWindowManager.ActivateWindow(nNewWindow);
+              GUIWindowManager.ReplaceWindow(nNewWindow);
               return true;
             }
           }
