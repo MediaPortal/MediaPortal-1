@@ -720,7 +720,7 @@ namespace DShowNET
 								if (hr!=0 ) 
 									vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNull);
 								if (hr!=0 ) 
-									DirectShowUtil.DebugWrite("VMR9 Unable to get turn off s/w deinterlacing :0x{0:X}",hr);
+									DirectShowUtil.DebugWrite("VMR9 Unable to get off s/w deinterlacing :0x{0:X}",hr);
 								else
 									DirectShowUtil.DebugWrite("VMR9 s/w deinterlacing is turned off");
 							}
