@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
 		  0x04, 0x00,             // nBlockAlign      = 4 (channels*(bitspersample/8))
 		  0x10, 0x00,             // wBitsPerSample   = 0
 		  0x00, 0x00,             // extra size       = 0x0000 = 0 bytes
-		} ;
+		};
 		//
 
 		protected enum State
@@ -1872,7 +1872,7 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
 		public bool SignalPresent()
 		{
-				return true;
+				return (m_tunerCtrl.CheckLock()==0?true:false);
 		}
 
 		/// <summary>
@@ -1981,6 +1981,9 @@ namespace MediaPortal.TV.Recording
 				System.Windows.Forms.Application.DoEvents();
 				System.Windows.Forms.Application.DoEvents();
 
+
+				int audioOptions=0;
+
 				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
 				if (info.service_provider_name==null) info.service_provider_name="";
 				if (info.service_name==null) info.service_name="";
@@ -2008,6 +2011,31 @@ namespace MediaPortal.TV.Recording
 					for (int pids =0; pids < info.pid_list.Count;pids++)
 					{
 						DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
+						if(data.isAudio && hasAudio==true && audioOptions<2)
+						{
+							switch(audioOptions)
+							{
+								case 0:
+									newchannel.Audio1=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											newchannel.AudioLanguage1=sections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+								case 1:
+									newchannel.Audio2=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											newchannel.AudioLanguage2=sections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+
+							}
+						}
 						if (data.isAC3Audio)
 						{
 							m_currentTuningObject.AC3Pid=data.elementary_PID;
@@ -2017,15 +2045,19 @@ namespace MediaPortal.TV.Recording
 							m_currentTuningObject.VideoPid=data.elementary_PID;
 							hasVideo=true;
 						}
-						if (data.isAudio)
+						if (data.isAudio && hasAudio==false)
 						{
 							m_currentTuningObject.AudioPid=data.elementary_PID;
+							if(data.data!=null)
+							{
+								if(data.data.Length==3)
+									newchannel.AudioLanguage=sections.GetLanguageFromCode(data.data);
+							}
 							hasAudio=true;
 						}
 						if (data.isTeletext)
 						{
 							m_currentTuningObject.TeletextPid=data.elementary_PID;
-							hasAudio=true;
 						}
 					}
 				}
@@ -2053,7 +2085,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.Polarity = m_currentTuningObject.Polarity;
 				newchannel.Modulation = m_currentTuningObject.Modulation;
 				newchannel.Symbolrate = m_currentTuningObject.Symbolrate;
-				newchannel.ServiceType=1;//tv
+				newchannel.ServiceType=info.serviceType;//tv
 				newchannel.PCRPid=info.pcr_pid;
 				newchannel.PMTPid=info.network_pmt_PID;
 				newchannel.LNBFrequency=m_currentTuningObject.LNBFrequency;

@@ -56,32 +56,36 @@ namespace MediaPortal.TV.Recording
 		// tables
 		public struct EITDescr
 		{
-			public int version;
-			public int event_id;
-			public string genere_text;
-			public string event_item;
-			public string event_item_text;
-			public string event_name;
-			public string event_text;
-			public int starttime_y;
-			public int starttime_m;
-			public int starttime_d;
-			public int starttime_hh;
-			public int starttime_mm;
-			public int starttime_ss;
-			public int duration_hh;
-			public int duration_mm;
-			public int duration_ss;
-			public int program_number;
-			public int ts_id;
-			public int org_network_id;
-			public bool handled;
-			public int section;
-			public int lastSection;
-			public int table;
-			public int lastTable;
-			public string eeLanguageCode;
-			public string seLanguageCode;
+			public int		version;
+			public int		event_id;
+			public string	genere_text;
+			public string	event_item;
+			public string	event_item_text;
+			public string	event_name;
+			public string	event_text;
+			public int		starttime_y;
+			public int		starttime_m;
+			public int		starttime_d;
+			public int		starttime_hh;
+			public int		starttime_mm;
+			public int		starttime_ss;
+			public int		duration_hh;
+			public int		duration_mm;
+			public int		duration_ss;
+			public int		program_number;
+			public int		ts_id;
+			public int		org_network_id;
+			public bool		handled;
+			public int		section;
+			public int		lastSection;
+			public int		table;
+			public int		lastTable;
+			public string	eeLanguageCode;
+			public string	seLanguageCode;
+			public bool		extendedEventUseable;
+			public bool		extendedEventComplete;
+			public bool		shortEventUseable;
+			public bool		shortEventComplete;
 		}
 		public struct EIT_Program_Info
 		{
@@ -1167,9 +1171,11 @@ namespace MediaPortal.TV.Recording
 						switch (indicator)
 						{
 							case 0x4E:
+								Log.Write("dvbsection: extended event found...");
 								DVB_ExtendedEvent(descrEIT,ref eit);
 								break;
 							case 0x4D:
+								Log.Write("dvbsection: short event found...");
 								DVB_ShortEvent(descrEIT,ref eit);
 								break;
 							case 0x54:
@@ -1179,8 +1185,9 @@ namespace MediaPortal.TV.Recording
 						}
 
 					}
-					catch
+					catch(Exception ex)
 					{
+						Log.Write("dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
 					}
 
 					eit.section=section_number;
@@ -1252,8 +1259,8 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.seLanguageCode);
 			}
-			eit.event_name = "n.v.";
-			eit.event_text = "n.v.";
+			eit.event_name = "";
+			eit.event_text = "";
 			if (descriptor_tag == 0x4D)
 			{
 				event_name_length = buf[5];
@@ -1268,11 +1275,15 @@ namespace MediaPortal.TV.Recording
 					System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
 					eit.event_text = getString468A(b, text_length);
 				}
-				catch
+				catch(Exception ex)
 				{
+					Log.Write("dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
 					eit.event_text="";
 					eit.event_name="";
 				}
+				if(eit.event_name.Length>0 && eit.event_text.Length>0)
+					eit.shortEventComplete=true;
+
 			}
 		}
 		private void DVB_ContentDescription(byte[] buf, ref EITDescr eit)
@@ -1521,6 +1532,10 @@ namespace MediaPortal.TV.Recording
 					item_description_length = b[0];
 					pointer += 1 + item_description_length;
 					System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+					string testText=getString468A(b, item_description_length);
+					if (testText==null)
+						testText="-not avail.-";
+					Log.WriteFile(Log.LogType.Capture,"dvbsections: item-description={0}",testText);
 					item_length = b[0];
 					System.Array.Copy(buf, pointer + 1, b, 0, item_length);
 					item = getString468A(b, item_length);
@@ -1537,8 +1552,18 @@ namespace MediaPortal.TV.Recording
 				eit.event_item += item;
 				eit.event_item_text += text;
 			}
-			catch
-			{}
+			catch(Exception ex)
+			{
+					Log.WriteFile(Log.LogType.Capture,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+			}
+			if(eit.event_item==null)
+				eit.event_item="";
+			if(eit.event_item_text==null)
+				eit.event_item_text="";
+
+			if(eit.event_item.Length>0 && eit.event_item_text.Length>0)
+				eit.extendedEventComplete=true;
+
 			return 0;
 		}
 		//
@@ -1821,20 +1846,27 @@ namespace MediaPortal.TV.Recording
 					descr=(EITDescr)eit.eitList[0];
 					lastTab=descr.lastTable;
 					Log.WriteFile(Log.LogType.Capture,"epg-grab: last Table={0}",lastTab);
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: last section={0}",descr.lastSection);
 				}
 				
 				if(ret==-1)
 				{
+					
 					startFlag=true;
 					Log.WriteFile(Log.LogType.Capture,"epg-grab: start grabbing table");
 					m_eitTimeoutTimer.Start();
 				}
+
 				if(ret==-2)
 				{
 					endFlag=true;
 					Log.WriteFile(Log.LogType.Capture,"epg-grab: end grabbing table");
 					m_eitTimeoutTimer.Start();
+
 				}
+				
+				if(ret>=0 && startFlag==true)
+				Log.WriteFile(Log.LogType.Capture,"epg-grab: grab section {0} complete",ret);
 
 				if(startFlag==false)
 				{
@@ -1844,11 +1876,13 @@ namespace MediaPortal.TV.Recording
 				if(startFlag==true && endFlag==true)
 					break;
 				
+				
 				if(m_breakAction==true)
 				{
 					Log.WriteFile(Log.LogType.Capture,"epg-grab: FAILED timeout on getting epg");
 					break;
 				}
+
 
 			}
 

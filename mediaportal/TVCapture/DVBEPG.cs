@@ -75,14 +75,32 @@ namespace MediaPortal.TV.Recording
 				dur=dur.AddHours((double)data.duration_hh);
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
-				tv.Title=data.event_name;
+
+				tv.Title=data.event_item;
 				tv.Description=data.event_item_text;
 				//
+				Log.Write(" ");
+				Log.Write("epg-grabbing: short-event-use={0}",data.shortEventUseable==true?"yes":"no");
+				Log.Write("epg-grabbing: extended-event-use={0}",data.extendedEventUseable==true?"yes":"no");
+				Log.Write("epg-grabbing: short-event-complete={0}",data.shortEventComplete==true?"yes":"no");
+				Log.Write("epg-grabbing: extended-event-complete={0}",data.extendedEventComplete==true?"yes":"no");
+				Log.Write(" ");
+				//
+				if(tv.Title==null)
+					tv.Title="";
+
 				if(tv.Description==null)
 					tv.Description="";
 
+				if(tv.Description=="")
+					tv.Description=data.event_text;
+
+				if(tv.Title=="")
+					tv.Title=data.event_name;
+
 				if(tv.Description.Length<2)
 				{
+					tv.Title=data.event_name;
 					tv.Description=data.event_text;
 					Log.Write("epg-grab: used short description");
 				}
@@ -262,6 +280,19 @@ namespace MediaPortal.TV.Recording
 						Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
 						continue;
 					}
+					DVBSections.EITDescr eit2DB=new MediaPortal.TV.Recording.DVBSections.EITDescr();
+					eit2DB=eit;
+					if(m_languagesToGrab!="")
+					{
+						eit2DB.extendedEventUseable=false;
+						eit2DB.shortEventUseable=false;
+					}
+					else
+					{
+						eit2DB.extendedEventUseable=true;
+						eit2DB.shortEventUseable=true;
+					}
+
 					if(m_languagesToGrab!="")
 					{
 						bool ignoreFlag=true;
@@ -284,13 +315,12 @@ namespace MediaPortal.TV.Recording
 								{
 									if(lang.ToLower().Equals(codeEE))
 									{
-										ignoreFlag=false;
-										break;
+										eit2DB.extendedEventUseable=true;	
 									}
 								}
 							}
 
-							if(eit.seLanguageCode!=null && eitItem=="")
+							if(eit.seLanguageCode!=null)
 							{
 								Log.Write("epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
 								codeSE=eit.seLanguageCode.ToLower();
@@ -298,8 +328,7 @@ namespace MediaPortal.TV.Recording
 								{
 									if(lang.ToLower().Equals(codeSE))
 									{
-										ignoreFlag=false;
-										break;
+										eit2DB.shortEventUseable=true;
 									}
 
 								}
@@ -319,10 +348,10 @@ namespace MediaPortal.TV.Recording
 					if(serviceID!=0)
 					{
 						if(eit.program_number==serviceID)
-							eventsCount+=SetEITToDatabase(eit,progName,0x50);
+							eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
 					}
 					else
-						eventsCount+=SetEITToDatabase(eit,progName,0x50);
+						eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
 					n++;
 				}
 		
