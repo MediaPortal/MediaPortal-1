@@ -1,7 +1,7 @@
 <window>
 	<id>2600</id>
 	<defaultcontrol>2</defaultcontrol>
-	<allowoverlay>no</allowoverlay>
+	<allowoverlay>yes</allowoverlay>
 <controls>
 	<control>
 		<description>background image</description>
@@ -17,10 +17,10 @@
 		<description>Weather BG</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>215</posX>
-		<posY>65</posY>
-		<width>450</width>
-		<height>450</height>
+		<posX>300</posX>
+		<posY>150</posY>
+		<width>350</width>
+		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
 		<texture>background_myweather.png</texture>
 	</control>
@@ -28,7 +28,7 @@
 		<description>Panel</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>48</posX>
+		<posX>42</posX>
 		<posY>95</posY>
 		<width>180</width>
 		<height>205</height>
@@ -43,13 +43,14 @@
 		<label>8</label>
 		<font>font14</font>
 		<textcolor>FFB2D4F5</textcolor>
+		<align>left</align>
 	</control>
 	<control>
 		<description>TWC Logo</description>
 		<type>image</type>
 		<id>101</id>
 		<posX>90</posX>
-		<posY>200</posY>
+		<posY>205</posY>
 		<width>86</width>
 		<height>64</height>
 		<texture>weather\logos\TWClogo_64px.png</texture>
@@ -59,34 +60,47 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>64</posX>
-		<posY>188</posY>
+		<posY>200</posY>
 		<width>145</width>
-		<texture>middle-bar.png</texture>
+		<texture>No_middle-bar.png</texture>
 	</control>
+	<control>
+		<description>Switch Button</description>
+		<type>button</type>
+		<id>2</id>
+		<posX>55</posX>
+		<posY>115</posY>
+ 		<label>716</label>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<onup>21</onup>
+		<ondown>3</ondown>
+	</control>
+
 	<control>
 		<description>Refresh Button</description>
 		<type>button</type>
-		<id>2</id>
-		<posX>64</posX>
-		<posY>128</posY>
+		<id>3</id>
+		<posX>55</posX>
+		<posY>145</posY>
  		<label>184</label>
-		<onleft>2</onleft>
-		<onright>2</onright>
-		<onup>17</onup>
-		<ondown>3</ondown>
+		<onleft>3</onleft>
+		<onright>3</onright>
+		<onup>2</onup>
+		<ondown>4</ondown>
 	</control>
 	<control>
 		<description>weather location select</description>
 		<type>spincontrol</type>
-		<id>3</id>
-		<posX>90</posX>
-		<posY>168</posY>
+		<id>4</id>
+		<posX>68</posX>
+		<posY>180</posY>
 		<reverse>yes</reverse>
 		<showrange>no</showrange>
-		<onup>2</onup>
+		<onup>3</onup>
 		<ondown>2</ondown>
-		<onleft>3</onleft>
-		<onright>3</onright>
+		<onleft>4</onleft>
+		<onright>4</onright>
 	</control>
  	<control>
 		<description>Current Temp static label</description>
@@ -96,7 +110,7 @@
 		<posY>150</posY>
 		<label>Temp</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current feels like static label</description>
@@ -106,7 +120,7 @@
 		<posY>175</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current UV Index static label</description>
@@ -116,7 +130,7 @@
 		<posY>200</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current wind static label</description>
@@ -126,7 +140,7 @@
 		<posY>225</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current dew static label</description>
@@ -136,7 +150,7 @@
 		<posY>250</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current humidity static label</description>
@@ -146,33 +160,33 @@
 		<posY>275</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>location label</description>
 		<type>label</type>
 		<id>10</id>
 		<posX>394</posX>
-		<posY>75</posY>
+		<posY>85</posY>
 		<label>-</label>
 		<font>font16</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>update time label</description>
 		<type>label</type>
 		<id>11</id>
 		<posX>394</posX>
-		<posY>105</posY>
+		<posY>115</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current weather icon</description>
 		<type>image</type>
 		<id>21</id>
-		<posX>220</posX>
+		<posX>250</posX>
 		<posY>130</posY>
 		<texture>-</texture>
 		<colorkey>FFFF00FF</colorkey>
@@ -182,12 +196,12 @@
 		<description>current condition label</description>
 		<type>label</type>
 		<id>22</id>
-		<posX>230</posX>
+		<posX>250</posX>
 		<posY>275</posY>
 		<width>50</width>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current temp label</description>
@@ -197,7 +211,7 @@
 		<posY>150</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current feels like label</description>
@@ -207,7 +221,7 @@
 		<posY>175</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current UV Index label</description>
@@ -217,7 +231,7 @@
 		<posY>200</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current wind label</description>
@@ -227,7 +241,7 @@
 		<posY>225</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current dew label</description>
@@ -237,7 +251,7 @@
 		<posY>250</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>current humidity label</description>
@@ -247,7 +261,7 @@
 		<posY>275</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 0 label</description>
@@ -257,7 +271,7 @@
 		<posY>330</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 0 Hi label</description>
@@ -267,7 +281,7 @@
 		<posY>355</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 0 low label</description>
@@ -277,7 +291,7 @@
 		<posY>380</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 0 general weather label</description>
@@ -287,7 +301,7 @@
 		<posY>480</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 0 icon</description>
@@ -307,7 +321,7 @@
 		<posY>330</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 1 Hi label</description>
@@ -317,7 +331,7 @@
 		<posY>355</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 1 low label</description>
@@ -327,7 +341,7 @@
 		<posY>380</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 1 general weather label</description>
@@ -337,7 +351,7 @@
 		<posY>480</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 1 icon</description>
@@ -357,7 +371,7 @@
 		<posY>330</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 2 Hi label</description>
@@ -367,7 +381,7 @@
 		<posY>355</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 2 low label</description>
@@ -377,7 +391,7 @@
 		<posY>380</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 2 general weather label</description>
@@ -387,7 +401,7 @@
 		<posY>480</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 2 icon</description>
@@ -407,7 +421,7 @@
 		<posY>330</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 3 Hi label</description>
@@ -417,7 +431,7 @@
 		<posY>355</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 3 low label</description>
@@ -427,7 +441,7 @@
 		<posY>380</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 3 general weather label</description>
@@ -437,7 +451,7 @@
 		<posY>480</posY>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>day 3 icon</description>
@@ -449,5 +463,21 @@
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
 	</control>
-</controls>
+	<control>
+		<description>Satellite image</description>
+		<type>image</type>
+		<id>1000</id>
+		<posX>240</posX>
+		<posY>190</posY>
+		<width>440</width>
+		<height>350</height>
+		<texture></texture>
+		<visible>no</visible>
+		<colorkey>FFFFFFFF</colorkey>
+		<colordiffuse>FFFFFFFF</colordiffuse>
+		<filtered>yes</filtered>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio>
+	</control>
+  </controls>
 </window>

@@ -14,11 +14,31 @@
 				<texture>background.png</texture>
 			</control>
 			<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>215</posX>
+			<posY>65</posY>
+			<width>450</width>
+			<height>450</height>
+			<colordiffuse>20ffffff</colordiffuse>
+			<texture>background_mymail.png</texture>
+		</control>
+		<control>
+			<description>Panel</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>48</posX>
+			<posY>95</posY>
+			<width>180</width>
+			<height>250</height>
+			<texture>panel.png</texture>
+		</control>
+			<control>
 				<description>Delete Button</description>
 				<type>button</type>
 				<id>25</id>
-				<posX>40</posX>
-				<posY>230</posY>
+				<posX>64</posX>
+				<posY>128</posY>
 				<width>135</width>
 				<label>8020</label>
 				<onleft>25</onleft>
@@ -30,8 +50,8 @@
 				<description>Set mail readed Button</description>
 				<type>button</type>
 				<id>26</id>
-				<posX>40</posX>
-				<posY>266</posY>
+				<posX>64</posX>
+				<posY>160</posY>
 				<width>135</width>
 				<label>8021</label>
 				<onleft>26</onleft>
@@ -111,7 +131,7 @@
 				<font>font13</font>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>
-			<control> 
+			<control>
 				<description>textarea</description>
 				<type>textbox</type>
 				<id>24</id>

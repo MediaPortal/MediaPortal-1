@@ -17,10 +17,23 @@
 		<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>mail_logo.png</texture>
+			<posX>215</posX>
+			<posY>65</posY>
+			<width>450</width>
+			<height>450</height>
+			<colordiffuse>20ffffff</colordiffuse>
+			<texture>background_mymail.png</texture>
 		</control>
+		<control>
+		<description>Panel</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>48</posX>
+		<posY>95</posY>
+		<width>180</width>
+		<height>350</height>
+		<texture>panel.png</texture>
+	</control>
 		<control>
 			<description>Number of Mails/Mailboxes Label</description>
 			<type>label</type>
@@ -51,8 +64,8 @@
 				<description>refresh mailbox</description>
 				<type>button</type>
 				<id>20</id>
-				<posX>60</posX>
-				<posY>100</posY>
+				<posX>64</posX>
+				<posY>128</posY>
 				<label>8001</label>
 				<onleft>20</onleft>
 				<onright>50</onright>
@@ -63,8 +76,8 @@
 				<description>delete known mails list</description>
 				<type>button</type>
 				<id>22</id>
-				<posX>60</posX>
-				<posY>168</posY>
+				<posX>64</posX>
+				<posY>160</posY>
 				<label>8009</label>
 				<onleft>20</onleft>
 				<onright>50</onright>
@@ -75,8 +88,8 @@
 				<description>AutocheckMail</description>
 				<type>togglebutton</type>
 				<id>21</id>
-				<posX>60</posX>
-				<posY>134</posY>
+				<posX>64</posX>
+				<posY>192</posY>
 				<label>8007</label>
 				<width>190</width>
 				<height>32</height>
@@ -98,24 +111,24 @@
 
 		</control>
 	<control>
-		<description>textarea</description> 
-		<type>textbox</type> 
-		<id>23</id> 
-		<posX>280</posX> 
-		<posY>100</posY> 
-		<width>410</width> 
-		<height>300</height> 
-		<onleft>20</onleft> 
-		<onright>20</onright> 
-		<onup>20</onup> 
-		<ondown>20</ondown> 
+		<description>textarea</description>
+		<type>textbox</type>
+		<id>23</id>
+		<posX>280</posX>
+		<posY>100</posY>
+		<width>410</width>
+		<height>300</height>
+		<onleft>20</onleft>
+		<onright>20</onright>
+		<onup>20</onup>
+		<ondown>20</ondown>
 	</control>
 		<control>
 			<description>listcontrol</description>
 			<type>listcontrol</type>
 			<id>50</id>
 			<onleft>20</onleft>
-			<onright>20</onright> 
+			<onright>20</onright>
 			<onup>20</onup>
 			<ondown>20</ondown>
 			<textcolor>FFFFFFFF</textcolor>

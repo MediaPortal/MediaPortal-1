@@ -60,20 +60,20 @@
       <posY>28</posY>
       <label>#currentplaytime</label>
       <align>right</align>
-      <font>font10</font>
-      <textcolor>F000000F</textcolor>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
     </control>
- <control>
+    <control>
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
-      <width>150</width>
+      <width>180</width>
       <height>30</height>
-      <posX>420</posX>
-      <posY>35</posY>
+      <posX>433</posX>
+      <posY>28</posY>
       <align>right</align>
-      <font>font10</font>
+      <font>font13</font>
       <label>#title\r#artist\r#album\r#duration</label>
-      <textcolor>F000000F</textcolor>
+      <textcolor>FFFFFFFF</textcolor>
       <id>5</id>
     </control>
 	 <control>

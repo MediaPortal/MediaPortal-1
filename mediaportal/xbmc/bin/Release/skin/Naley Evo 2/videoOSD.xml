@@ -28,10 +28,10 @@
 		<posY>540</posY>
 		<width>190</width>
 		<height>20</height>
-		<texturebg>osd_progress_back.png</texturebg>
-		<lefttexture>osd_progress_left.png</lefttexture>
-		<midtexture>osd_progress_mid.png</midtexture>
-		<righttexture>osd_progress_right.png</righttexture>
+		<texturebg>No_osd_progress_back.png</texturebg>
+		<lefttexture>No_osd_progress_left.png</lefttexture>
+		<midtexture>No_osd_progress_mid.png</midtexture>
+		<righttexture>No_osd_progress_right.png</righttexture>
 		<visible>yes</visible>
 		<label>#percentage</label>
 	</control>
@@ -247,11 +247,23 @@
 		<type>label</type>
 		<id>100</id>
 		<posX>535</posX>
-		<posY>532</posY>
+		<posY>515</posY>
 		<label>#currentplaytime/#duration</label>
 		<align>left</align>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Movie Info</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>465</posX>
+		<posY>536</posY>
+		<width>222</width>
+		<label>#title\</label>
+		<align>left</align>
 		<font>font12</font>
-		<textcolor>FF000000</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Sub Menu Background (volume)</description>

@@ -73,23 +73,23 @@
 		<description>Date</description>
 		<type>label</type>
 		<id>200</id>
-		<posX>679</posX>
-		<posY>115</posY>
+		<posX>620</posX>
+		<posY>125</posY>
 		<label>date</label>
-		<align>right</align>
-		<font>font12</font>
+		<align>center</align>
+		<font>font10</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Time</description>
 		<type>label</type>
 		<id>201</id>
-		<posX>642</posX>
-		<posY>91</posY>
+		<posX>622</posX>
+		<posY>105</posY>
 		<label>time</label>
-		<align>right</align>
-		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
-	</control>
+		<align>center</align>
+		<font>font14</font>
+	<textcolor>FFFFFFFF</textcolor>
+</control>
 </controls>
 </window>

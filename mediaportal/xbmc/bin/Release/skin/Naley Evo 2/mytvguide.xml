@@ -33,9 +33,9 @@
 		<width>625</width>
 		<height>94</height>
 		<colordiffuse>60ffffff</colordiffuse>
-		<texture>blue_rectangle_music.png</texture>
+		<texture>blue_rectangle.png</texture>
 	</control>
-		
+
 	<control>
 		<description>TVGUIDE Panel</description>
 		<type>image</type>
@@ -45,7 +45,7 @@
 		<width>605</width>
 		<height>315</height>
 		<colordiffuse>60ffffff</colordiffuse>
-		<texture>blue_rectangle_music.png</texture>
+		<texture>blue_rectangle.png</texture>
 	</control>
 	<control>
 		<description>time header label template</description>
@@ -78,6 +78,10 @@
 		<reverse>yes</reverse>
 		<onleft>6</onleft>
 		<onright>8</onright>
+		<textureUp>scroll-right.png</textureUp>
+		<textureDown>scroll-left.png</textureDown>
+		<textureUpFocus>scroll-right-focus.png</textureUpFocus>
+		<textureDownFocus>scroll-left-focus.png</textureDownFocus>
 	</control>
 	<control>
 		<description>time interval spin control</description>
@@ -116,9 +120,9 @@
 		<width>100</width>
 		<height>15</height>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
-	
+
 	<control>
 		<description>Current Channel</description>
 		<type>image</type>
@@ -167,58 +171,67 @@
 		<id>15</id>
 		<posX>150</posX>
 		<posY>130</posY>
-		<width>400</width> 
-		<height>85</height> 
+		<width>400</width>
+		<height>65</height>
 		<label>#TV.Guide.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
-	</control>	
+	</control>
 	<control>
-		<description>genre</description>
+		<description>template for program genre light area</description>
 		<type>label</type>
 		<id>23</id>
 		<label>-</label>
 		<font>font10</font>
-		<textcolor>FFB2D4F5</textcolor>
-	</control>	
+		<textcolor>FF101010</textcolor>
+	</control>
 	<control>
-		<description>title</description>
+		<description>template for program title light area</description>
 		<type>label</type>
 		<id>24</id>
 		<visible>no</visible>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF101010</textcolor>
 	</control>
 	<control>
 		<description>vertical timeline</description>
 		<type>image</type>
 		<id>25</id>
 		<posX>30</posX>
-		<posY>210</posY>
-		<width>8</width>
-		<height>330</height>
+		<posY>255</posY>
+		<height>273</height>
 		<colordiffuse>c0ffffff</colordiffuse>
-		<texture>vertical-line.png</texture>
-	</control>	
+		<texture>tvguide_slider.png</texture>
+	</control>
 	<control>
-		<description>title REC</description>
+		<description>template for program title darkarea </description>
 		<type>label</type>
 		<visible>no</visible>
 		<id>26</id>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFF0000</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
-	
 	<control>
-		<description>TV preview window</description> 
-		<type>videowindow</type> 
-		<id>1</id> 
-		<posX>610</posX> 
-		<posY>20</posY> 
-		<width>1</width> 
-		<height>1</height> 
+		<description>template for genre  dark area</description>
+		<type>label</type>
+		<visible>no</visible>
+		<id>30</id>
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+
+
+	<control>
+		<description>TV preview window</description>
+		<type>videowindow</type>
+		<id>1</id>
+		<posX>610</posX>
+		<posY>20</posY>
+		<width>1</width>
+		<height>1</height>
 	</control>
 	<control>
 		<description>Horizontal scrollbar</description>
@@ -230,7 +243,7 @@
 		<height>12</height>
 		<scrollbarbg>bluebar.png</scrollbarbg>
 		<visible>yes</visible>
-	</control>	
+	</control>
 	<control>
 		<description>Vertical scrollbar</description>
 		<type>vscrollbar</type>
@@ -241,6 +254,6 @@
 		<height>315</height>
 		<scrollbarbg>bluebar_vert.png</scrollbarbg>
 		<visible>yes</visible>
-	</control>	
+	</control>
 </controls>
 </window>

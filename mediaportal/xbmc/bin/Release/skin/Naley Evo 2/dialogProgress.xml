@@ -1,71 +1,71 @@
  <window>
-  <id>101</id> 
-  <defaultcontrol>10</defaultcontrol> 
+  <id>101</id>
+  <defaultcontrol>10</defaultcontrol>
   <allowoverlay>no</allowoverlay>
  <controls>
  <control>
-  <type>image</type> 
-  <id>0</id> 
-  <posX>177</posX> 
-  <posY>225</posY> 
-  <width>406</width> 
-  <height>140</height> 
-  <texture>dialog-popup.png</texture> 
+  <type>image</type>
+  <id>0</id>
+  <posX>177</posX>
+  <posY>225</posY>
+  <width>406</width>
+  <height>140</height>
+  <texture>dialog-popup.png</texture>
   </control>
   <control>
-  <description>dialog Heading</description> 
-  <type>label</type> 
-  <id>2</id> 
-  <posX>190</posX> 
-  <posY>226</posY> 
-  <label>0</label> 
-  <font>font13</font> 
-  <textcolor>FF000000</textcolor> 
+  <description>dialog Heading</description>
+  <type>label</type>
+  <id>2</id>
+  <posX>190</posX>
+  <posY>226</posY>
+  <label>0</label>
+  <font>font13</font>
+  <textcolor>FFFFFFFF</textcolor>
   </control>
- 
+
  <control>
-  <description>dialog line 1</description> 
-  <type>label</type> 
-  <id>3</id> 
-  <posX>190</posX> 
-  <posY>260</posY> 
-  <hasPath>yes</hasPath> 
-  <label>0</label> 
-  <font>font13</font> 
-  <textcolor>FFB2D4F5</textcolor> 
-  </control>
- <control>
-  <description>dialog line 2</description> 
-  <type>label</type> 
-  <id>4</id> 
-  <posX>190</posX> 
-  <posY>280</posY> 
-  <hasPath>yes</hasPath> 
-  <label>0</label> 
-  <font>font13</font> 
-  <textcolor>FFB2D4F5</textcolor> 
+  <description>dialog line 1</description>
+  <type>label</type>
+  <id>3</id>
+  <posX>190</posX>
+  <posY>260</posY>
+  <hasPath>yes</hasPath>
+  <label>0</label>
+  <font>font13</font>
+  <textcolor>FFFFFFFF</textcolor>
   </control>
  <control>
-  <description>progress control</description> 
-  <type>progress</type> 
-  <id>20</id> 
-  <posX>190</posX> 
-  <posY>325</posY> 
-  <visible>no</visible> 
+  <description>dialog line 2</description>
+  <type>label</type>
+  <id>4</id>
+  <posX>190</posX>
+  <posY>280</posY>
+  <hasPath>yes</hasPath>
+  <label>0</label>
+  <font>font13</font>
+  <textcolor>FFFFFFFF</textcolor>
   </control>
  <control>
-  <description>Cancel button</description> 
-  <type>button</type> 
-  <id>10</id> 
-  <posX>500</posX> 
-  <posY>325</posY> 
-  <width>70</width> 
-  <height>32</height> 
-  <label>222</label> 
-  <onleft>10</onleft> 
-  <onright>10</onright> 
-  <onup>10</onup> 
-  <ondown>10</ondown> 
+  <description>progress control</description>
+  <type>progress</type>
+  <id>20</id>
+  <posX>190</posX>
+  <posY>325</posY>
+  <visible>no</visible>
+  </control>
+ <control>
+  <description>Cancel button</description>
+  <type>button</type>
+  <id>10</id>
+  <posX>500</posX>
+  <posY>325</posY>
+  <width>70</width>
+  <height>32</height>
+  <label>222</label>
+  <onleft>10</onleft>
+  <onright>10</onright>
+  <onup>10</onup>
+  <ondown>10</ondown>
   </control>
   </controls>
   </window>

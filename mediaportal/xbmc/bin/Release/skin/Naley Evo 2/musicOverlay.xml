@@ -10,7 +10,7 @@
 		<posY>440</posY>
 		<width>110</width>
 		<height>90</height>
-		<texture>Visuelpanel.png</texture>
+		<texture>No_Visuelpanel.png</texture>
 	</control>
 	<control>
 		<description>music logo</description>

@@ -20,7 +20,7 @@
 			<posY>267</posY>
 			<label>602</label>
 			<font>font13</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>Channel Select</description>
@@ -34,7 +34,7 @@
 			<ondown>2</ondown>
 			<onleft>1</onleft>
 			<onright>1</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 
 		<control>
@@ -45,7 +45,7 @@
 			<posY>290</posY>
 			<label>633</label>
 			<font>font14</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 
 		<control>
@@ -56,7 +56,7 @@
 			<posY>310</posY>
 			<label>635</label>
 			<font>font13</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>time hours</description>
@@ -73,7 +73,7 @@
 			<ondown>4</ondown>
 			<onleft>2</onleft>
 			<onright>3</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -94,7 +94,7 @@
 			<ondown>4</ondown>
 			<onleft>2</onleft>
 			<onright>3</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -109,7 +109,7 @@
 			<posY>360</posY>
 			<label>636</label>
 			<font>font13</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>DD</description>
@@ -125,7 +125,7 @@
 			<ondown>7</ondown>
 			<onleft>4</onleft>
 			<onright>5</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -145,7 +145,7 @@
 			<ondown>7</ondown>
 			<onleft>4</onleft>
 			<onright>6</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -165,7 +165,7 @@
 			<ondown>7</ondown>
 			<onleft>5</onleft>
 			<onright>7</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -180,7 +180,7 @@
 			<posY>290</posY>
 			<label>634</label>
 			<font>font14</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 
 		<control>
@@ -191,7 +191,7 @@
 			<posY>310</posY>
 			<label>635</label>
 			<font>font13</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>time hours</description>
@@ -208,7 +208,7 @@
 			<ondown>9</ondown>
 			<onleft>7</onleft>
 			<onright>8</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -229,7 +229,7 @@
 			<ondown>9</ondown>
 			<onleft>7</onleft>
 			<onright>9</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -244,7 +244,7 @@
 			<posY>360</posY>
 			<label>636</label>
 			<font>font13</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
 			<description>DD</description>
@@ -260,7 +260,7 @@
 			<ondown>12</ondown>
 			<onleft>9</onleft>
 			<onright>10</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -280,7 +280,7 @@
 			<ondown>12</ondown>
 			<onleft>9</onleft>
 			<onright>11</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -300,7 +300,7 @@
 			<ondown>12</ondown>
 			<onleft>10</onleft>
 			<onright>11</onright>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 			<textureUp>scroll-up.png</textureUp>
 			<textureDown>scroll-down.png</textureDown>
 			<textureUpFocus>scroll-up-focus.png</textureUpFocus>
@@ -312,8 +312,8 @@
 			<type>button</type>
 			<id>12</id>
 			<posX>360</posX>
-			<posY>420</posY>
-			<width>40</width>
+			<posY>415</posY>
+			<width>42</width>
 			<height>32</height>
 			<label>186</label>
 			<onleft>10</onleft>
@@ -329,7 +329,7 @@
 			<posY>226</posY>
 			<label>0</label>
 			<font>font13</font>
-			<textcolor>FF000000</textcolor>
+			<textcolor>FFFFFFFF</textcolor>
 		</control>
 
 	</controls>

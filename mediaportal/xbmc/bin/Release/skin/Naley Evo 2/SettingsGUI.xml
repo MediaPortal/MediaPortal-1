@@ -41,7 +41,7 @@
 		<type>label</type>
 		<id>1</id>
 		<posX>100</posX>
-		<posY>218</posY>
+		<posY>180</posY>
 		<label>673</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -50,7 +50,7 @@
 		<description>Speedselect</description>
 		<type>spincontrol</type>
 		<id>2</id>
-		<posX>220</posX>
+		<posX>200</posX>
 		<posY>222</posY>
 		<reverse>yes</reverse>
 		<onup>2</onup>
@@ -61,26 +61,26 @@
 		<buddycontrolid>100</buddycontrolid>
 	</control>
 	<control>
-		<description>Example value</description> 
-		<type>label</type> 
-		<id>0</id> 
-		<posX>100</posX> 
-		<posY>300</posY> 
-		<width>400</width> 
-		<label>675</label> 
-		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor> 
+		<description>Example value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>100</posX>
+		<posY>300</posY>
+		<width>400</width>
+		<label>675</label>
+		<font>font13</font>
+		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
-		<description>TagLine value</description> 
-		<type>fadelabel</type> 
-		<id>25</id> 
-		<posX>120</posX> 
-		<posY>320</posY> 
-		<width>300</width> 
-		<label>-</label> 
-		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor> 
+		<description>TagLine value</description>
+		<type>fadelabel</type>
+		<id>25</id>
+		<posX>120</posX>
+		<posY>320</posY>
+		<width>300</width>
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
 		<description>Description1</description>
@@ -88,8 +88,8 @@
 		<id>26</id>
 		<posX>120</posX>
 		<posY>350</posY>
-		<width>300</width> 
-		<height>100</height> 
+		<width>300</width>
+		<height>100</height>
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>FFB2D4F5</textcolor>

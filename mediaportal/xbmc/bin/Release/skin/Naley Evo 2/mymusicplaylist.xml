@@ -121,7 +121,7 @@
 		<type>button</type>
 		<id>24</id>
 		<posX>64</posX>
-		<posY>298</posY>
+		<posY>288</posY>
 		<label>209</label>
 		<onleft>50</onleft>
 		<onright>50</onright>

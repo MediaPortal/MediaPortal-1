@@ -97,9 +97,8 @@
 		<onleft>10</onleft>
 		<onright>10</onright>
 		<onup>2</onup>
-		<ondown>10</ondown>
+		<ondown>2</ondown>
 	</control>		
-			
 	<control>
 		<description>scheduler recordings listcontrol</description>
 		<type>listcontrol</type>
@@ -116,7 +115,7 @@
 		<spinPosY>394</spinPosY>
 		<textureFocus>blue-rectangle.png</textureFocus>
 		<textureNoFocus>blue-rectangleNF.png</textureNoFocus>		
-		<spaceBetweenItems>14</spaceBetweenItems>
+		<spaceBetweenItems>5</spaceBetweenItems>
 		<textureHeight>90</textureHeight>
 		<keepaspectratio>no</keepaspectratio>
 		<onleft>2</onleft>
@@ -124,7 +123,6 @@
 		<onup>2</onup>
 		<ondown>2</ondown>
 	</control>
-	
 	<control>
 		<description>Current Channel Logo</description>
 		<type>image</type>
@@ -144,7 +142,7 @@
 		<width>610</width>
 		<height>110</height>
 		<colordiffuse>60ffffff</colordiffuse>
-		<texture>blue_rectangle_music.png</texture>
+		<texture>blue_rectangle.png</texture>
 	</control>
 	<control>
 		<description>Current program title</description>
@@ -154,7 +152,7 @@
 		<posY>425</posY>
 		<label>#TV.RecordedTV.Title</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
 		<description>Current program time</description>
@@ -172,9 +170,9 @@
 		<type>textboxscrollup</type>
 		<id>15</id>
 		<posX>175</posX>
-		<posY>445</posY>
-		<width>450</width> 
-		<height>80</height> 
+		<posY>450</posY>
+		<width>400</width> 
+		<height>65</height> 
 		<label>#TV.RecordedTV.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -184,7 +182,7 @@
 		<type>label</type>
 		<id>17</id>
 		<posX>670</posX>
-		<posY>445</posY>
+		<posY>450</posY>
 		<label>#TV.RecordedTV.Genre</label>
 		<align>right</align>
 		<font>font14</font>
@@ -199,6 +197,5 @@
 		<width>1</width> 
 		<height>1</height> 
 	</control>	
-	
 </controls>
 </window>

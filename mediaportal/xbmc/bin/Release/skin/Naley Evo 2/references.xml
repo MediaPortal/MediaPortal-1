@@ -35,6 +35,7 @@
 		<textXOff>7</textXOff>
 		<textYOff>4</textYOff>
 		<textureFocus>button-focus.png</textureFocus>
+		<textureNoFocus>-</textureNoFocus>
 		<font>font14</font>
 	    <textcolor>F858585F</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -63,8 +64,8 @@
 		<id>4</id>
 		<posX>192</posX>
 		<posY>162</posY>
-		<width>16</width>
-		<height>16</height>
+		<width>22</width>
+		<height>22</height>
 		<textXOff>10</textXOff>
 		<textYOff>2</textYOff>
 		<textureFocus>scroll-up-focus.png</textureFocus>
@@ -116,8 +117,8 @@
 		<posY>80</posY>
 		<width>465</width>
 		<height>471</height>
-		<spinWidth>16</spinWidth>
-		<spinHeight>16</spinHeight>
+		<spinWidth>22</spinWidth>
+		<spinHeight>22</spinHeight>
 		<spinPosX>610</spinPosX>
 		<spinPosY>530</spinPosY>
 		<spinColor>FFB2D4F5</spinColor>
@@ -171,8 +172,8 @@
 		<posY>220</posY>
 		<width>410</width>
 		<height>300</height>
-		<spinWidth>16</spinWidth>
-		<spinHeight>16</spinHeight>
+		<spinWidth>22</spinWidth>
+		<spinHeight>22</spinHeight>
 		<spinPosX>610</spinPosX>
 		<spinPosY>530</spinPosY>
 		<spinColor>ffffffff</spinColor>
@@ -230,11 +231,11 @@
 		<textureUpFocus>scroll-right-focus.png</textureUpFocus>
 		<textureDownFocus>scroll-left-focus.png</textureDownFocus>
 		<align>left</align>
-		<width>16</width>
-		<height>16</height>
+		<width>22</width>
+		<height>22</height>
 		<font>font13</font>
 		<reverse>yes</reverse>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>F858585F</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 		<subtype>text</subtype>
 	</control>

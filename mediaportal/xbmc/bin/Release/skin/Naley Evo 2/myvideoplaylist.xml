@@ -90,8 +90,8 @@
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>20</onup>
-		<ondown>22</ondown> 		
-  	</control>	
+		<ondown>22</ondown>
+  	</control>
 	<control>
 		<description>Clear button</description>
 		<type>button</type>
@@ -129,7 +129,7 @@
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>23</onup>
-		<ondown>25</ondown>			
+		<ondown>25</ondown>
 	</control>
 	<control>
 		<description>Previous button</description>

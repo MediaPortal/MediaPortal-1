@@ -101,7 +101,19 @@
 		<onup>4</onup>
 		<ondown>4</ondown>
 	</control>
-	<control>
+		<control>
+			<description>Search button</description>
+			<type>button</type>
+			<id>8</id>
+			<posX>64</posX>
+			<posY>279</posY>
+			<label>137</label>
+			<onleft>50</onleft>
+			<onright>50</onright>
+			<onup>7</onup>
+			<ondown>10</ondown>
+		</control>
+		<control>
 		<description>Middle Bar</description>
 		<type>image</type>
 		<id>1</id>
@@ -120,30 +132,51 @@
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>3</onup>
-		<ondown>8</ondown>
+		<ondown>7</ondown>
+		<subitems>
+			<subitem>134</subitem>
+			<subitem>132</subitem>
+			<subitem>133</subitem>
+			<subitem>135</subitem>
+			<subitem>271</subitem>
+		</subitems>
 	</control>
 	<control>
-		<description>Search button</description>
+		<description>Playlist button</description>
 		<type>button</type>
-		<id>8</id>
+		<id>7</id>
 		<posX>64</posX>
 		<posY>247</posY>
-		<label>137</label>
+		<label>136</label>
+		<action>33</action>
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>6</onup>
+			<ondown>8</ondown>
+	</control>
+	<control>
+		<description>Eject Disc</description>
+		<type>button</type>
+		<id>10</id>
+		<posX>64</posX>
+			<posY>311</posY>
+		<label>654</label>
+		<onleft>50</onleft>
+		<onright>50</onright>
+			<onup>8</onup>
 		<ondown>9</ondown>
+		<action>100</action>
 	</control>
 	<control>
 		<description>Recently played/All albums button</description>
 		<type>button</type>
 		<id>9</id>
 		<posX>64</posX>
-		<posY>279</posY>
+			<posY>343</posY>
 		<label>358</label>
 		<onleft>50</onleft>
 		<onright>50</onright>
-		<onup>8</onup>
+		<onup>10</onup>
 		<ondown>2</ondown>
 	</control>
 	<control>
@@ -170,10 +203,20 @@
 		<textureNoFocus>blue-rectangleNF.png</textureNoFocus>		
 		<spaceBetweenItems>14</spaceBetweenItems>
 		<textureHeight>90</textureHeight>
+		<onleft>52</onleft>
+		<onright>52</onright>
+		<onup>2</onup>
+		<ondown>2</ondown>
+	</control>
+	<control>
+		<description>Thumbnail Panel</description>
+		<type>thumbnailpanel</type>
+		<id>52</id>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 </controls>
 </window>
