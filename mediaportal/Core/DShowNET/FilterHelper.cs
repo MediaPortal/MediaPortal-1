@@ -141,6 +141,7 @@ namespace DShowNET
 			{
 				if ( String.Compare(filter.Name, "DVD Navigator", true) == 0 ||
 					String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
+					String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
 					String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
 					String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
 					String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD6)", true) == 0)
