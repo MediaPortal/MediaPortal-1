@@ -517,11 +517,11 @@
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"              checkdevice="false"></filter>
-        <filter cat="capture"         name="MEDION BDA Digital Capture"     checkdevice="false"></filter>
+        <filter cat="capture"         name="MEDION BDA Digital Capture"			checkdevice="false"></filter>
       </filters>
       <connections>
-    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
