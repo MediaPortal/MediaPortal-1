@@ -32,6 +32,7 @@ My Music:
 Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - bookmarks
+  - DVD player: turn on/off Closed Caption 
 
 Pictures:
   
@@ -39,16 +40,19 @@ Settings:
   - all :-)
 
 General:
-  - Auto Tune 
+  - setup:Auto Tune 
   - setup:specify recording +/- interval
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
-  - better mouse control / mouse wheel for scrolling
+  - better mouse control 
+     - mouse wheel for scrolling
+     - OSD onscreen for mouse control
+     - scrollbar
+     - tvguide
   - specify default share. 
   - OSD keyboard : add mouse control & keyboard control
   - my files  
   - my programs
   - autoplay anything thats in the cd/dvd
-    
   

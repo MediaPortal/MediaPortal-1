@@ -2490,7 +2490,6 @@ namespace MediaPortal
 
     void SetupCapture()
     {
-      int iTunerCountry=31;
       AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
       string strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
       string strVideoDevice=xmlreader.GetValueAsString("capture","videodevice","none");
@@ -2500,7 +2499,6 @@ namespace MediaPortal
       string strCaptureFormat=xmlreader.GetValueAsString("capture","format",".avi");
       string strTunerType=xmlreader.GetValueAsString("capture","tuner","Antenna");
       upDownCountry.Value=xmlreader.GetValueAsInt("capture","country",31);
-      upDownCountry.Value=iTunerCountry;
       if (strRecPath=="") 
       {
         strRecPath=String.Format(@"{0}\My Movies",Environment.GetFolderPath( Environment.SpecialFolder.Personal).ToString());

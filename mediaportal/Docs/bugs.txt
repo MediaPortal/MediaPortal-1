@@ -1,14 +1,7 @@
 Bugs:
-  - 14-04-2004 my video   : internal video player: mpeg2 files stop doesnt work
-  - 14-04-2004 general    : xbmc doesnt start from D: 
-  - 16-04-2004 OSD        : someone also had a problem with the OSD not wanting to go away again with Y
-  - 18-04-2004 my video   : view by title: not all movies are shown
   - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
-  - 20-04-2005 my tv      : record a program via tvguide which is already running records the next program!
-  - 22-04-2005 my video   : OSD flickers with internal dvd player 
   - 24-04-2004 general    : some WM9 visz. like g-force just show a black screen
-
- It is annoying that when you do F3 on a song and get the album art, that the cursor gets set at the beginning of the list
-also, when you do F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3
+  - 26-04-2004 my music   : F3 on a song -> the cursor gets set at the beginning of the list
+  - 26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3
 
 
