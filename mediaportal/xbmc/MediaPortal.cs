@@ -384,81 +384,21 @@ public class MediaPortalApp : D3DApp
 		protected override void keypressed(System.Windows.Forms.KeyPressEventArgs e)
 		{
 			char keyc=e.KeyChar;
-			Key key = new Key();
-
-			if (keyc=='s'||keyc=='S')
+			Key key = new Key(e.KeyChar,0);
+			Action action=new Action();
+			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
 			{
-				e.Handled=true;
-				key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_START;
-			}
-			else
-			{
-				e.Handled=true;
-				key.ButtonCode=(int)Key.KeyType.KEY_PRESSED+(int)Char.ToLower(keyc);
-			}
-
-			if (e.Handled)
-			{
-				Action action=new Action();
-				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
-				{
-					OnAction(action);
-				}
+				OnAction(action);
 			}
 		}
 
 		protected override void keydown(System.Windows.Forms.KeyEventArgs e)
 		{
-				Key key = new Key();
-				switch (e.KeyCode)
+				Key key = new Key(0,(int)e.KeyCode);
+				Action action=new Action();
+				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
 				{
-					case Keys.Up:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_DPAD_UP;
-					break;
-					case Keys.Down:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_DPAD_DOWN;
-					break;
-					case Keys.Left:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_DPAD_LEFT;
-					break;
-					case Keys.Right:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_DPAD_RIGHT;
-					break;
-					case Keys.Enter:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_PRESSED+(int)'a';;
-						break;
-					case Keys.Escape:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_BACK;
-						break;
-					case Keys.F1:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_BLACK;
-						break;
-					case Keys.F3:
-						e.Handled=true;
-						key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_WHITE;
-						break;
-          case Keys.F10:
-            e.Handled=true;
-            GC.Collect();
-            GC.Collect();
-            GC.Collect();
-            GC.Collect();
-            return;
-        }
-				if (e.Handled)
-				{
-					Action action=new Action();
-					if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
-					{
-						OnAction(action);
-					}
+					OnAction(action);
 				}
       
       Invalidate();
@@ -503,8 +443,7 @@ public class MediaPortalApp : D3DApp
     // right mouse button=back
     if (e.Button==MouseButtons.Right)
     {
-      Key key = new Key();
-      key.ButtonCode=(int)Key.KeyType.KEY_BUTTON_BACK;
+      Key key = new Key(0,(int)Keys.Escape);
       action=new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {
@@ -515,8 +454,7 @@ public class MediaPortalApp : D3DApp
     //left mouse button = A
     if (e.Button==MouseButtons.Left)
     {
-      Key key = new Key();
-      key.ButtonCode=(int)Key.KeyType.KEY_PRESSED+(int)'a';
+      Key key = new Key(0,(int)Keys.Enter);
       action=new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {
@@ -527,8 +465,7 @@ public class MediaPortalApp : D3DApp
     //middle mouse button=Y
     if (e.Button==MouseButtons.Middle)
     {
-      Key key = new Key();
-      key.ButtonCode=(int)Key.KeyType.KEY_PRESSED+(int)'y';
+      Key key = new Key('y',0);
       action=new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {

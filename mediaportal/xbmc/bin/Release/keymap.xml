@@ -1,4 +1,4 @@
-<!-- This file contains the mapping of keys (gamepad and remote) to actions within XBMC -->
+<!-- This file contains the mapping of keys (key and remote) to actions within XBMC -->
 <!-- See the guilib\key.h file for the definition of the windows, actions, and keys. -->
 <!-- The <global> section is a fall through - they will only be used if the button is not -->
 <!-- used in the current window's <window> section.  Note that there is only handling for -->
@@ -12,175 +12,147 @@
     <action>
       <description>Remote Button 0</description>
       <id>58</id>
-      <remote>0</remote>
+      <key>0</key>
     </action>
     <action>
       <description>Remote Button 1</description>
       <id>59</id>
-      <remote>1</remote>
+      <key>1</key>
     </action>
     <action>
       <description>Remote Button 2</description>
       <id>60</id>
-      <remote>2</remote>
+      <key>2</key>
     </action>
     <action>
       <description>Remote Button 3</description>
       <id>61</id>
-      <remote>3</remote>
+      <key>3</key>
     </action>
     <action>
       <description>Remote Button 4</description>
       <id>62</id>
-      <remote>4</remote>
+      <key>4</key>
     </action>
     <action>
       <description>Remote Button 5</description>
       <id>63</id>
-      <remote>5</remote>
+      <key>5</key>
     </action>
     <action>
       <description>Remote Button 6</description>
       <id>64</id>
-      <remote>6</remote>
+      <key>6</key>
     </action>
     <action>
       <description>Remote Button 7</description>
       <id>65</id>
-      <remote>7</remote>
+      <key>7</key>
     </action>
     <action>
       <description>Remote Button 8</description>
       <id>66</id>
-      <remote>8</remote>
+      <key>8</key>
     </action>
     <action>
       <description>Remote Button 9</description>
       <id>67</id>
-      <remote>9</remote>
+      <key>9</key>
     </action>  
     <action>
       <description>play music</description>
       <id>79</id>
-      <remote>play</remote>
+      <key>p</key>
     </action>
     <action>
       <description>FastForward music</description>
       <id>77</id>
-      <remote>forward</remote>
+      <key>F6</key>
     </action>
     <action>
       <description>Rewind music</description>
       <id>78</id>
-      <remote>reverse</remote>
+      <key>F5</key>
     </action>
     <action>
       <description>Move Left</description>
       <id>1</id>
-      <gamepad>dpadleft</gamepad>
-      <remote>left</remote>
-      <remotecode></remotecode>
+      <key>left</key>
     </action>
     <action>
       <description>Move Right</description>
       <id>2</id>
-      <gamepad>dpadright</gamepad>
-      <remote>right</remote>
-      <remotecode></remotecode>
+      <key>right</key>
     </action>
     <action>
       <description>Move Up</description>
       <id>3</id>
-      <gamepad>dpadup</gamepad>
-      <remote>up</remote>
-      <remotecode></remotecode>
+      <key>up</key>
     </action>
     <action>
       <description>Move Down</description>
       <id>4</id>
-      <gamepad>dpaddown</gamepad>
-      <remote>down</remote>
-      <remotecode></remotecode>
+      <key>down</key>
     </action>
     <action>
       <description>Page Up</description>
       <id>5</id>
-      <gamepad>lefttrigger</gamepad>
-      <remotecode></remotecode>
+      <key>pageup</key>
     </action>
     <action>
       <description>Page Down</description>
       <id>6</id>
-      <gamepad>righttrigger</gamepad>
-      <remotecode></remotecode>
+      <key>pagedown</key>
     </action>
     <action>
       <description>Select Item</description>
       <id>7</id>
-      <gamepad>A</gamepad>
-      <remote>select</remote>
-      <remotecode></remotecode>
+      <key>A</key>
+    </action>
+    <action>
+      <description>Select Item</description>
+      <id>7</id>
+      <key>enter</key>
     </action>
     <action>
       <description>Parent Directory</description>
       <id>9</id>
-      <gamepad>B</gamepad>
-      <remote>back</remote>
+      <key>B</key>
     </action>
     <action>
       <description>Previous Menu</description>
       <id>10</id>
-      <gamepad>back</gamepad>
-      <remote>menu</remote>
+      <key>esc</key>
     </action>
     <action>
       <description>Show File Info</description>
       <id>11</id>
-      <gamepad>white</gamepad>
-      <remote>info</remote>
-      <remotecode></remotecode>
+      <key>F3</key>
     </action>
     <action>
       <description>Pause</description>
       <id>12</id>
-      <remote>pause</remote>
-      <remotecode></remotecode>
+      <key>SPACE</key>
     </action>
     <action>
       <description>Stop</description>
       <id>13</id>
-      <gamepad>start</gamepad>
-      <remote>stop</remote>
-      <remotecode></remotecode>
+      <key>BACKSPACE</key>
     </action>
     <action>
       <description>Skip Next</description>
       <id>14</id>
-      <remote>skipplus</remote>
-      <remotecode></remotecode>
+      <key>F8</key>
     </action>
     <action>
       <description>Skip Previous</description>
       <id>15</id>
-      <remote>skipminus</remote>
-      <remotecode></remotecode>
+      <key>F7</key>
     </action>
     <action>
       <description>Toggle between GUI and fullscreen</description>
       <id>18</id>
-      <gamepad>X</gamepad>
-      <remote>display</remote>
-      <remotecode></remotecode>
-    </action>
-    <action>
-      <description>Analog Movement</description>
-      <id>49</id>
-      <gamepad>leftthumbstick</gamepad>
-    </action>
-    <action>
-      <description>Screenshot</description> 
-      <id>85</id> 
-      <gamepad>leftthumbbutton</gamepad> 
+      <key>X</key>
     </action>
   </global>   
 
@@ -190,37 +162,27 @@
     <action>
       <description>Switch Source and Destination</description>
       <id>32</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>f12</key>
     </action>
     <action>
       <description>Select/Deselect a File</description>
       <id>8</id>
-      <gamepad>Y</gamepad>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
     <action>
       <description>delete item</description>
       <id>80</id>
-      <gamepad></gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>0</key>
     </action>
     <action>
       <description>copy item</description>
       <id>81</id>
-      <gamepad>white</gamepad>
-      <remote>2</remote>
-      <remotecode></remotecode>
+      <key>2</key>
     </action>
     <action>
       <description>move item</description>
       <id>82</id>
-      <gamepad>start</gamepad>
-      <remote>3</remote>
-      <remotecode></remotecode>
+      <key>3</key>
     </action>
   </window>   
   
@@ -230,16 +192,12 @@
     <action>
       <description>Toggle between Playlist and Filelist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>back</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>Remove Item from the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
 
@@ -249,16 +207,12 @@
     <action>
       <description>Toggle between Playlist and Filelist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>Add Item to the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
  
@@ -268,16 +222,12 @@
     <action>
       <description>Toggle between Playlist and Filelist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>Add Item to the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
 
@@ -287,16 +237,12 @@
     <action>
       <description>Toggle between Playlist and Filelist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>Add Item to the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
 
@@ -306,16 +252,12 @@
     <action>
       <description>Toggle between Playlist and Filelist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>Add Item to the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
 
@@ -325,16 +267,12 @@
     <action>
       <description>Toggle between Playlist and Filelist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>Add Item to the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
 
@@ -344,146 +282,112 @@
     <action>
       <description>Zoom/Stretch/Normal</description>
       <id>19</id>
-      <gamepad>start</gamepad>
-      <remote>select</remote>
+      <key>s</key>
     </action>
     <action>
       <description>Play</description>
       <id>68</id>
-      <remote>play</remote>
+      <key>a</key>
     </action>
     <action>
       <description>Pause</description>
       <id>12</id>
-      <gamepad>A</gamepad>
-      <remote>pause</remote>
+      <key>SPACE</key>
     </action>
     <action>
       <description>Stop</description>
       <id>13</id>
-      <gamepad>B</gamepad>
-      <remote>stop</remote>
+      <key>B</key>
     </action>
     <action>
       <description>FastForward</description>
       <id>16</id>
-      <remote>forward</remote>
-      <gamepad>righttrigger</gamepad>
+      <key>F6</key>
     </action>
     <action>
       <description>Rewind</description>
       <id>17</id>
-      <remote>reverse</remote>
-      <gamepad>lefttrigger</gamepad>
+      <key>F5</key>
     </action>
     <action>
       <description>Step Forward</description>
       <id>20</id>
-      <gamepad>dpadright</gamepad>
-      <remote>right</remote>
+      <key>right</key>
     </action>
     <action>
       <description>Step Backward</description>
       <id>21</id>
-      <gamepad>dpadleft</gamepad>
-      <remote>left</remote>
+      <key>left</key>
     </action>
     <action>
      <description>Small step back</description>
      <id>76</id>
-     <remote>back</remote>
-     <gamepad>back</gamepad>
+     <key>BACKSPACE</key>
     </action>
     <action>
       <description>Big Step Forward</description>
       <id>22</id>
-      <gamepad>dpadup</gamepad>
-      <remote>up</remote>
+      <key>up</key>
     </action>
     <action>
       <description>Big Step Backward</description>
       <id>23</id>
-      <gamepad>dpaddown</gamepad>
-      <remote>down</remote>
+      <key>down</key>
     </action>
     <action>
       <description>Toggle the OSD</description>
       <id>24</id>
-      <gamepad>Y</gamepad>
-      <remote>menu</remote>
-    </action>
-    <action>
-      <description>Show/Hide Subtitles</description>
-      <id>25</id>
-      <!-- gamepad>back</gamepad   now in OSD  -->
-      <remote>title</remote>
-    </action>
-    <action>
-      <description>Next Subtitle Language</description>
-      <id>26</id>
-      <!-- gamepad>B</gamepad   redundant, in OSD anyway -->
-    </action>
-    <action>
-      <description>Show Codec Info</description>
-      <id>27</id>
-      <gamepad>black</gamepad>
-      <remote>info</remote>
-    </action>
-    <action>
-      <description>Toggle mplayer OSD state</description>
-      <id>83</id>
-      <gamepad>white</gamepad>
-      <!-- remote>back</remote  -->
+      <key>Y</key>
     </action>
     <action>
       <description>Remote Button 0</description>
       <id>58</id>
-      <remote>0</remote>
+      <key>0</key>
     </action>
     <action>
       <description>Remote Button 1</description>
       <id>59</id>
-      <remote>1</remote>
+      <key>1</key>
     </action>
     <action>
       <description>Remote Button 2</description>
       <id>60</id>
-      <remote>2</remote>
+      <key>2</key>
     </action>
     <action>
       <description>Remote Button 3</description>
       <id>61</id>
-      <remote>3</remote>
+      <key>3</key>
     </action>
     <action>
       <description>Remote Button 4</description>
       <id>62</id>
-      <remote>4</remote>
+      <key>4</key>
     </action>
     <action>
       <description>Remote Button 5</description>
       <id>63</id>
-      <remote>5</remote>
+      <key>5</key>
     </action>
     <action>
       <description>Remote Button 6</description>
       <id>64</id>
-      <remote>6</remote>
+      <key>6</key>
     </action>
     <action>
       <description>Remote Button 7</description>
       <id>65</id>
-      <remote>7</remote>
+      <key>7</key>
     </action>
     <action>
       <description>Remote Button 8</description>
       <id>66</id>
-      <remote>8</remote>
+      <key>8</key>
     </action>
     <action>
       <description>Remote Button 9</description>
       <id>67</id>
-      <remote>9</remote>
+      <key>9</key>
     </action>
   </window>
   
@@ -493,126 +397,108 @@
     <action>
       <description>Show Picture Info</description>
       <id>27</id>
-      <gamepad>black</gamepad>
-      <remote>info</remote>
+      <key>F1</key>
     </action>
     <action>
       <description>Next Picture</description>
       <id>28</id>
-      <gamepad>righttrigger</gamepad>
-      <remote>skipplus</remote>
+      <key>right</key>
     </action>
     <action>
       <description>Previous Picture</description>
       <id>29</id>
-      <gamepad>lefttrigger</gamepad>
-      <remote>skipminus</remote>
+      <key>left</key>
     </action>
     <action>
       <description>Pause/Continue</description>
       <id>12</id>
-      <gamepad>start</gamepad>
-      <remote>pause</remote>
+      <key>SPACE</key>
     </action>
     <action>
       <description>Zoom Out</description>
       <id>30</id>
-      <gamepad>X</gamepad>
+      <key>X</key>
     </action>
     <action>
       <description>Zoom In</description>
       <id>31</id>
-      <gamepad>A</gamepad>
+      <key>A</key>
     </action>
     <action>
       <description>Zoom Level 1 (normal)</description>
       <id>37</id>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>0</key>
+      
     </action>
     <action>
       <description>Zoom Level 2</description>
       <id>38</id>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>1</key>
     </action>
     <action>
       <description>Zoom Level 3</description>
       <id>39</id>
-      <remote>2</remote>
-      <remotecode></remotecode>
+      <key>2</key>
     </action>
     <action>
       <description>Zoom Level 4</description>
       <id>40</id>
-      <remote>3</remote>
-      <remotecode></remotecode>
+      <key>3</key>
     </action>
     <action>
       <description>Zoom Level 5</description>
       <id>41</id>
-      <remote>4</remote>
-      <remotecode></remotecode>
+      <key>4</key>
     </action>
     <action>
       <description>Zoom Level 6</description>
       <id>42</id>
-      <remote>5</remote>
-      <remotecode></remotecode>
+      <key>5</key>
     </action>
     <action>
       <description>Zoom Level 7</description>
       <id>43</id>
-      <remote>6</remote>
-      <remotecode></remotecode>
+      <key>6</key>
     </action>
     <action>
       <description>Zoom Level 8</description>
       <id>44</id>
-      <remote>7</remote>
-      <remotecode></remotecode>
+      <key>7</key>
     </action>
     <action>
       <description>Zoom Level 9</description>
       <id>45</id>
-      <remote>8</remote>
-      <remotecode></remotecode>
+      <key>8</key>
     </action>
     <action>
       <description>Zoom Level 10</description>
       <id>46</id>
-      <remote>9</remote>
-      <remotecode></remotecode>
+      <key>9</key>
     </action>
     <action>
       <description>Move Picture Left (in Zoom mode)</description>
       <id>1</id>
-      <gamepad>dpadleft</gamepad>
-      <remote>left</remote>
+      <key>left</key>
     </action>
     <action>
       <description>Move Picture Right (in Zoom mode)</description>
       <id>2</id>
-      <gamepad>dpadright</gamepad>
-      <remote>right</remote>
+      <key>right</key>
     </action>
     <action>
       <description>Move Picture Up (in Zoom mode)</description>
       <id>3</id>
-      <gamepad>dpadup</gamepad>
-      <remote>up</remote>
+      <key>up</key>
     </action>
     <action>
       <description>Move Picture Down (in Zoom mode)</description>
       <id>4</id>
-      <gamepad>dpaddown</gamepad>
-      <remote>down</remote>
+      <key>down</key>
     </action>
     <action>
       <description>Rotate Picture</description>
       <id>50</id>
-      <gamepad>Y</gamepad>
-      <remote>title</remote>
+      <key>R</key>
     </action>
   </window>
 
@@ -622,20 +508,12 @@
     <action>
       <description>Swap calibration arrows</description>
       <id>47</id>
-      <gamepad>A</gamepad>
-      <remote>select</remote>
+      <key>A</key>
     </action>
     <action>
       <description>Reset the calibration</description>
       <id>48</id>
-      <gamepad>black</gamepad>
-      <remote>0</remote>
-    </action>
-    <action>
-      <description>Change Resolution</description>
-      <id>57</id>
-      <gamepad>white</gamepad>
-      <remote>display</remote>
+      <key>F1</key>
     </action>
   </window>
 
@@ -645,8 +523,7 @@
     <action>
       <description>Reset the calibration</description>
       <id>48</id>
-      <gamepad>black</gamepad>
-      <remote>0</remote>
+      <key>F1</key>
     </action>
   </window>
 
@@ -656,8 +533,7 @@
     <action>
       <description>Close Window</description>
       <id>51</id>
-      <gamepad>back</gamepad>
-      <remote>back</remote>
+      <key>A</key>
     </action>
   </window>
   
@@ -667,85 +543,55 @@
     <action>
       <description>value plus</description>
       <id>74</id>
-      <gamepad>righttrigger</gamepad>
-      <remote>skipplus</remote>
-      <remotecode></remotecode>
+      <key>pageup</key>
     </action>
     <action>
       <description>value min</description>
       <id>75</id>
-      <gamepad>lefttrigger</gamepad>
-      <remote>skipminus</remote>
-      <remotecode></remotecode>
+      <key>pagedown</key>
     </action>
     <action>
       <description>Hide SubMenu</description>
       <id>84</id>
-      <gamepad>X</gamepad>
-      <remote>back</remote>
+      <key>X</key>
     </action>
     <action>
       <description>Exit OSD</description>
       <id>24</id>
-      <gamepad>Y</gamepad>
-      <remote>menu</remote>
+      <key>Y</key>
     </action>
     <action>
       <description>Exit OSD alternative buttons</description>
       <id>24</id>
-      <gamepad>back</gamepad>
-      <!-- remote>back</remote -->
-    </action>
-    <action>
-      <description>Toggle mplayer OSD state</description>
-      <id>83</id>
-      <gamepad>white</gamepad>
-      <!-- remote>back</remote  -->
+      <key>ESC</key>
+      <!-- remote>back</key -->
     </action>
     <action>
       <description>Zoom/Stretch/Normal</description>
       <id>19</id>
-      <gamepad>start</gamepad>
-      <!-- remote>display</remote -->
+      <key>s</key>
+      <!-- remote>display</key -->
     </action>
     <action>
       <description>Stop</description>
       <id>13</id>
-      <gamepad>B</gamepad>
-      <remote>stop</remote>
+      <key>B</key>
     </action>
     <action>
       <description>Pause</description>
       <id>12</id>
-      <!-- gamepad>back</gamepad -->
-      <remote>pause</remote>
+      <!-- key>back</key -->
+      <key>SPACE</key>
     </action> 
     <action>
       <description>FastForward</description>
       <id>16</id>
-      <remote>forward</remote>
+      <key>F6</key>
     </action>
     <action>
       <description>Rewind</description>
       <id>17</id>
-      <remote>reverse</remote>
-    </action>
-    <action>
-      <description>Show/Hide Subtitles</description>
-      <id>25</id>
-      <!-- gamepad>white</gamepad -->
-      <!-- remote>title</remote  use subtitle on/off setting in OSD  -->
-    </action>
-    <action>
-      <description>Next Subtitle Language</description>
-      <id>26</id>
-      <!-- gamepad>B</gamepad -->
-    </action>
-    <action>
-      <description>Show Codec Info</description>
-      <id>27</id>
-      <!-- gamepad>black</gamepad -->
-      <!-- remote>info</remote   not displayed while OSD is up anyway  -->
+      <key>F5</key>
     </action>
   </window>
 
@@ -755,9 +601,7 @@
     <action>
       <description>delete item</description>
       <id>80</id>
-      <gamepad>black</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
   </window>  
 
@@ -767,16 +611,12 @@
     <action>
       <description>Switch to Video Playlist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>title</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action> 
     <action>
       <description>Add Item to the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
 
@@ -786,16 +626,12 @@
     <action>
       <description>Exit to filelist from playlist</description>
       <id>33</id>
-      <gamepad>black</gamepad>
-      <remote>back</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action> 
     <action>
       <description>Remove Item from the Playlist</description>
       <id>34</id>
-      <gamepad>Y</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action>
   </window>
   <window>
@@ -804,30 +640,22 @@
     <action>
       <description>increase time</description>
       <id>86</id>
-      <gamepad>Y</gamepad>
-      <remote>back</remote>
-      <remotecode></remotecode>
+      <key>Y</key>
     </action> 
     <action>
       <description>decrease time</description>
       <id>87</id>
-      <gamepad>X</gamepad>
-      <remote>0</remote>
-      <remotecode></remotecode>
+      <key>X</key>
     </action> 
     <action>
       <description>default time</description>
       <id>88</id>
-      <gamepad>black</gamepad>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>F1</key>
     </action>
     <action>
       <description>record</description>
       <id>89</id>
-      <gamepad>A</gamepad>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>A</key>
     </action>
   </window>
   <window>
@@ -836,23 +664,17 @@
     <action>
       <description>menu</description>
       <id>90</id>
-      <gamepad>M</gamepad>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>M</key>
     </action>
     <action>
       <description>Next Chapter</description>
       <id>91</id>
-      <gamepad>n</gamepad>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>n</key>
     </action>
     <action>
       <description>Previous Chapter</description>
       <id>92</id>
-      <gamepad>p</gamepad>
-      <remote>1</remote>
-      <remotecode></remotecode>
+      <key>p</key>
     </action>
   </window>
 </keymap>
