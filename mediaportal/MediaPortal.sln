@@ -47,6 +47,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -150,6 +154,14 @@ Global
 		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
 		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
 		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.Debug.ActiveCfg = Debug
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.Debug.Build.0 = Debug
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.Release.ActiveCfg = Release
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.Release.Build.0 = Release
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease
+		{37E8414B-C84E-44AD-AE8B-0ECEF16B8910}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
