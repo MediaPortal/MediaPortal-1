@@ -2740,7 +2740,7 @@ namespace MediaPortal
         checkBoxMouseSupport.Checked=xmlreader.GetValueAsBool("general","mousesupport",true);
         checkBoxHideFileExtensions.Checked=xmlreader.GetValueAsBool("general","hideextensions",true);
 
-        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",true);
+        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",false);
         dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
         dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);

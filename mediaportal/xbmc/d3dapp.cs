@@ -1077,7 +1077,14 @@ namespace MediaPortal
       {
         if (GUIGraphicsContext.DX9Device!=null && rTarget!=null)
         {
-          GUIGraphicsContext.DX9Device.SetRenderTarget(0,rTarget);
+          try
+          {
+            GUIGraphicsContext.DX9Device.SetRenderTarget(0,rTarget);
+          }
+          catch(Exception)
+          {
+            rTarget=null;
+          }
         }
 
         Render();
@@ -1085,7 +1092,14 @@ namespace MediaPortal
         {
           if (GUIGraphicsContext.DX9Device!=null)
           {
-            rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+            try
+            {
+              rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+            }
+            catch(Exception)
+            {
+              rTarget=null;
+            }
           }
         }
       }
