@@ -1,8 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Runtime;
+
 
 using MediaPortal;
 using MediaPortal.UserInterface.Controls;
@@ -406,6 +409,41 @@ namespace MediaPortal.Configuration
 				//
 				SaveSectionSettings(treeNode);
 			}		
+
+      //
+      // Check if MediaPortal is running, if so inform user that it needs to be restarted
+      // for the changes to take effect.
+      //
+      string processName = "MediaPortal";
+
+      foreach(Process process in Process.GetProcesses())
+      {
+        if(process.ProcessName.Equals(processName))
+        {
+          DialogResult dialogResult = MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?", "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+          if(dialogResult == DialogResult.Yes)
+          {
+
+            try
+            {
+              //
+              // Kill the MediaPortal process
+              //
+              process.Kill();
+
+              //
+              // Start the MediaPortal process
+              // 
+              Process.Start(processName + ".exe");
+            }
+            catch
+            {
+              // Ignore
+            }
+          }
+        }
+      }
 		}
 	}
 }
