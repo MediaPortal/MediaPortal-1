@@ -34,7 +34,7 @@ namespace MediaPortal.Player
 		static IntPtr												m_surface1    = IntPtr.Zero;
 		//static IntPtr[] 										extraTextures = new IntPtr[10];
 		static int													textureCount  = 1;
-		static int												  MaxTextureWidth=1600;
+		static int												  MaxTextureWidth=1900;
 		static int												  MaxTextureHeight=1200;
     
 		[StructLayout(LayoutKind.Sequential)]
