@@ -17,6 +17,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
+using MediaPortal.Playlists;
 
 namespace MediaPortal
 {
@@ -137,10 +138,11 @@ namespace MediaPortal
 
 
     bool   m_bWasPlaying=false;
-    string m_strCurrentFile="";
     int    m_iActiveWindow=-1;
 		bool   m_bRestore=false;
     double m_dCurrentPos=0;
+    string   m_strCurrentFile;
+    PlayListPlayer.PlayListType m_currentPlayList=PlayListPlayer.PlayListType.PLAYLIST_NONE;
     int    m_iSleepingTime=50;
 		bool	 autoHideTaskbar=true;
 		bool	 alwaysOnTop=false;
@@ -1214,8 +1216,22 @@ namespace MediaPortal
 					{
 						Log.Write("App.Render3dEnvironment() play:{0}",m_strCurrentFile);
 						m_bWasPlaying=false;
-						g_Player.Play(m_strCurrentFile);
-						if (g_Player.Playing)
+
+            // If a single file was played, play only that file - don't
+            // try to restore the playlist - otherwise restore the PlayListPlayer
+            if (m_currentPlayList == PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP
+            ||  m_currentPlayList == PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP)
+            {
+              g_Player.Play(m_strCurrentFile);
+            }
+            else
+            {
+              PlayListPlayer.Init();
+              PlayListPlayer.CurrentPlaylist = m_currentPlayList;
+              PlayListPlayer.Play(m_strCurrentFile);
+            }
+            Log.Write("App.Render3dEnvironment() play:{0}",m_strCurrentFile);
+            if (g_Player.Playing)
 						{
 							g_Player.SeekAbsolute(m_dCurrentPos);
 						}
@@ -1615,9 +1631,10 @@ namespace MediaPortal
 				Log.Write("App.ToggleFullWindowed() stop media");
         m_bRestore=true;
         m_bWasPlaying =g_Player.Playing;
-        m_strCurrentFile=g_Player.CurrentFile;
-        m_iActiveWindow=GUIWindowManager.ActiveWindow;
         m_dCurrentPos=g_Player.CurrentPosition;
+        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
+        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
+        m_iActiveWindow=GUIWindowManager.ActiveWindow;
         g_Player.Stop();
       }
         
