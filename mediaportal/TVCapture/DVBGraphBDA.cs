@@ -107,6 +107,9 @@ namespace MediaPortal.TV.Recording
 		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		StreamBufferConfig					m_StreamBufferConfig	= null;
 		VMR9Util									  Vmr9								  = null; 
+		GuideDataEvent							m_Event               = null;
+		GCHandle										myHandle;
+		int                         adviseCookie;
 
 
 		/// <summary>
@@ -450,6 +453,29 @@ namespace MediaPortal.TV.Recording
 			m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 			m_graphState=State.Created;
 
+			m_Event= new GuideDataEvent();
+			myHandle = GCHandle.Alloc(m_Event, GCHandleType.Pinned);
+
+			IConnectionPointContainer container = m_TIF as IConnectionPointContainer;
+			if (container==null)
+			{
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
+				return false;
+			}
+			Guid iid=typeof(IGuideDataEvent).GUID;
+			IConnectionPoint    connectPoint;      
+			container.FindConnectionPoint( ref iid, out connectPoint);
+			if (connectPoint==null)
+			{
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
+				return false;
+			}
+			hr=connectPoint.Advise( m_Event, out adviseCookie);
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
+				return false;
+			}
 			return true;
 		}
 
@@ -1575,7 +1601,7 @@ namespace MediaPortal.TV.Recording
 
 		void TestTune()
 		{
-			Scan();
+			//Scan();
 			Log.Write("tune to nl 2");
 
 			TunerLib.TuneRequest newTuneRequest = null;
@@ -1589,40 +1615,13 @@ namespace MediaPortal.TV.Recording
 
 			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
 
-			myLocator.CarrierFrequency		= 778000;
-	/*
-			myLocator.Bandwidth						= 8;// in megahertz (7 or 8)
-			myLocator.SymbolRate					= -1;
-			myLocator.OtherFrequencyInUse	= false;
-			myLocator.Guard								= TunerLib.GuardInterval.BDA_GUARD_NOT_SET;
-			myLocator.HAlpha							= TunerLib.HierarchyAlpha.BDA_HALPHA_NOT_SET;
-			myLocator.LPInnerFEC					= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-			myLocator.LPInnerFECRate			= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-			myLocator.Mode								= TunerLib.TransmissionMode.BDA_XMIT_MODE_NOT_SET;
-			myLocator.InnerFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-			myLocator.InnerFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-			myLocator.Modulation					= TunerLib.ModulationType.BDA_MOD_NOT_SET;
-			myLocator.OuterFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-			myLocator.OuterFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-*/
+			myLocator.CarrierFrequency		= 698000;
 			myTuneRequest.ONID	= -1;					//original network id
 			myTuneRequest.TSID	= 1;						//transport stream id
 			myTuneRequest.SID		= 12;						//service id
 			myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-			
 			myTuner.TuneRequest = newTuneRequest;
-
-			//Marshal.ReleaseComObject(myTuneRequest);
-
-			//chid=340
-			//TranspID=698000
-			//SID=12
-			//NETID=8720
-			//TSID=1
-			//freq=6980000
-			//symbolrate=6900000
-			//pol=1
-			//fec=0
+			Marshal.ReleaseComObject(myTuneRequest);
 		}
 
 		
@@ -1663,9 +1662,11 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 				myTuner.TuneRequest = newTuneRequest;
 				int x=0;
-				while (myTuner.SignalStrength<=0 && x<10)
+				while (myTuner.SignalStrength<=0 && x<20)
 				{
-					System.Threading.Thread.Sleep(100);
+					System.Windows.Forms.Application.DoEvents();
+					System.Threading.Thread.Sleep(50);
+					System.Windows.Forms.Application.DoEvents();
 					x++;
 				}
 				if (myTuner.SignalStrength>0)
@@ -1673,9 +1674,13 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
 					Log.Write("found signal on carrier:{0} signal strength:{1} ONID:{2} TSID:{3} {4}", 
 							carrierFrequency,myTuner.SignalStrength,myTuneRequest.ONID, myTuneRequest.TSID,x);
+					GetAllPrograms(carrierFrequency);
 				}
 			}
 			Log.Write("Scanning done...");
+		}
+		public void GetAllPrograms(int carrierFrequency)
+		{
 		}
 	}
 }

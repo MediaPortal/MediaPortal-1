@@ -283,6 +283,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\BDAInterfaces.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DShowNET\BDAMedia.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
