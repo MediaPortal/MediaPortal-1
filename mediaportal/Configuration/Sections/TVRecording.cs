@@ -96,7 +96,7 @@ namespace MediaPortal.Configuration.Sections
 			this.endTextBox.MaxLength = 3;
 			this.endTextBox.Name = "endTextBox";
 			this.endTextBox.Size = new System.Drawing.Size(40, 20);
-			this.endTextBox.TabIndex = 27;
+			this.endTextBox.TabIndex = 3;
 			this.endTextBox.Text = "";
 			this.endTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.endTextBox_KeyPress);
 			// 
@@ -106,7 +106,7 @@ namespace MediaPortal.Configuration.Sections
 			this.startTextBox.MaxLength = 3;
 			this.startTextBox.Name = "startTextBox";
 			this.startTextBox.Size = new System.Drawing.Size(40, 20);
-			this.startTextBox.TabIndex = 26;
+			this.startTextBox.TabIndex = 2;
 			this.startTextBox.Text = "";
 			this.startTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.startTextBox_KeyPress);
 			// 
@@ -117,7 +117,7 @@ namespace MediaPortal.Configuration.Sections
 			this.browseButton.Location = new System.Drawing.Point(367, 27);
 			this.browseButton.Name = "browseButton";
 			this.browseButton.Size = new System.Drawing.Size(56, 20);
-			this.browseButton.TabIndex = 16;
+			this.browseButton.TabIndex = 1;
 			this.browseButton.Text = "Browse";
 			this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
 			// 
@@ -128,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
 			this.folderNameTextBox.Location = new System.Drawing.Point(97, 27);
 			this.folderNameTextBox.Name = "folderNameTextBox";
 			this.folderNameTextBox.Size = new System.Drawing.Size(264, 20);
-			this.folderNameTextBox.TabIndex = 15;
+			this.folderNameTextBox.TabIndex = 0;
 			this.folderNameTextBox.Text = "";
 			// 
 			// folderNameLabel
@@ -171,10 +171,10 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.TabIndex = 9;
 			this.label1.Text = "Start recording";
 			// 
-			// Recording
+			// TVRecording
 			// 
 			this.Controls.Add(this.groupBox1);
-			this.Name = "Recording";
+			this.Name = "TVRecording";
 			this.Size = new System.Drawing.Size(456, 448);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);

@@ -119,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox1.Location = new System.Drawing.Point(8, 8);
 			this.mpGroupBox1.Name = "mpGroupBox1";
 			this.mpGroupBox1.Size = new System.Drawing.Size(440, 336);
-			this.mpGroupBox1.TabIndex = 2;
+			this.mpGroupBox1.TabIndex = 0;
 			this.mpGroupBox1.TabStop = false;
 			this.mpGroupBox1.Text = "General Settings";
 			// 

@@ -334,7 +334,7 @@ namespace MediaPortal.Configuration
 			this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 264);
 			this.checkBoxHiQuality.Name = "checkBoxHiQuality";
 			this.checkBoxHiQuality.Size = new System.Drawing.Size(344, 16);
-			this.checkBoxHiQuality.TabIndex = 51;
+			this.checkBoxHiQuality.TabIndex = 7;
 			this.checkBoxHiQuality.Text = "Use Hiquality for Hauppauge PVR cards (VBR 6-12 MBPs)";
 			// 
 			// lblRecordingLevel
@@ -358,7 +358,7 @@ namespace MediaPortal.Configuration
 			this.trackRecording.Maximum = 100;
 			this.trackRecording.Name = "trackRecording";
 			this.trackRecording.Size = new System.Drawing.Size(136, 45);
-			this.trackRecording.TabIndex = 48;
+			this.trackRecording.TabIndex = 11;
 			this.trackRecording.TickFrequency = 10;
 			this.trackRecording.Value = 80;
 			this.trackRecording.ValueChanged += new System.EventHandler(this.trackRecording_ValueChanged);
@@ -377,7 +377,7 @@ namespace MediaPortal.Configuration
 			this.comboBoxLineInput.Location = new System.Drawing.Point(120, 80);
 			this.comboBoxLineInput.Name = "comboBoxLineInput";
 			this.comboBoxLineInput.Size = new System.Drawing.Size(320, 21);
-			this.comboBoxLineInput.TabIndex = 46;
+			this.comboBoxLineInput.TabIndex = 2;
 			// 
 			// audioDeviceComboBox
 			// 
@@ -389,7 +389,7 @@ namespace MediaPortal.Configuration
 			this.audioDeviceComboBox.Location = new System.Drawing.Point(120, 56);
 			this.audioDeviceComboBox.Name = "audioDeviceComboBox";
 			this.audioDeviceComboBox.Size = new System.Drawing.Size(320, 21);
-			this.audioDeviceComboBox.TabIndex = 44;
+			this.audioDeviceComboBox.TabIndex = 1;
 			this.audioDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.audioDeviceComboBox_SelectedIndexChanged);
 			// 
 			// label2
@@ -407,7 +407,7 @@ namespace MediaPortal.Configuration
 			this.setupButton.Location = new System.Drawing.Point(366, 160);
 			this.setupButton.Name = "setupButton";
 			this.setupButton.Size = new System.Drawing.Size(75, 21);
-			this.setupButton.TabIndex = 42;
+			this.setupButton.TabIndex = 4;
 			this.setupButton.Text = "Setup";
 			this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
 			// 
@@ -420,7 +420,7 @@ namespace MediaPortal.Configuration
 			this.filterComboBox.Location = new System.Drawing.Point(120, 160);
 			this.filterComboBox.Name = "filterComboBox";
 			this.filterComboBox.Size = new System.Drawing.Size(240, 21);
-			this.filterComboBox.TabIndex = 41;
+			this.filterComboBox.TabIndex = 3;
 			this.filterComboBox.SelectedIndexChanged += new System.EventHandler(this.filterComboBox_SelectedIndexChanged);
 			// 
 			// label9
@@ -440,7 +440,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(120, 224);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
 			this.audioCompressorComboBox.Size = new System.Drawing.Size(320, 21);
-			this.audioCompressorComboBox.TabIndex = 39;
+			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
 			// label5
@@ -460,7 +460,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(120, 192);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
 			this.videoCompressorComboBox.Size = new System.Drawing.Size(320, 21);
-			this.videoCompressorComboBox.TabIndex = 37;
+			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
 			// label3
@@ -498,7 +498,7 @@ namespace MediaPortal.Configuration
 			this.frameSizeComboBox.Location = new System.Drawing.Point(120, 336);
 			this.frameSizeComboBox.Name = "frameSizeComboBox";
 			this.frameSizeComboBox.Size = new System.Drawing.Size(320, 21);
-			this.frameSizeComboBox.TabIndex = 19;
+			this.frameSizeComboBox.TabIndex = 10;
 			// 
 			// label7
 			// 
@@ -516,7 +516,7 @@ namespace MediaPortal.Configuration
 			this.useRecordingCheckBox.Location = new System.Drawing.Point(152, 304);
 			this.useRecordingCheckBox.Name = "useRecordingCheckBox";
 			this.useRecordingCheckBox.Size = new System.Drawing.Size(112, 24);
-			this.useRecordingCheckBox.TabIndex = 15;
+			this.useRecordingCheckBox.TabIndex = 9;
 			this.useRecordingCheckBox.Text = "Use for recording";
 			// 
 			// useWatchingCheckBox
@@ -528,7 +528,7 @@ namespace MediaPortal.Configuration
 			this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 304);
 			this.useWatchingCheckBox.Name = "useWatchingCheckBox";
 			this.useWatchingCheckBox.Size = new System.Drawing.Size(112, 24);
-			this.useWatchingCheckBox.TabIndex = 14;
+			this.useWatchingCheckBox.TabIndex = 8;
 			this.useWatchingCheckBox.Text = "Use for watching";
 			// 
 			// label4
@@ -547,7 +547,7 @@ namespace MediaPortal.Configuration
 			this.cardComboBox.Location = new System.Drawing.Point(120, 24);
 			this.cardComboBox.Name = "cardComboBox";
 			this.cardComboBox.Size = new System.Drawing.Size(320, 21);
-			this.cardComboBox.TabIndex = 1;
+			this.cardComboBox.TabIndex = 0;
 			this.cardComboBox.SelectedIndexChanged += new System.EventHandler(this.cardComboBox_SelectedIndexChanged);
 			// 
 			// label1
@@ -586,7 +586,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cancelButton.Location = new System.Drawing.Point(389, 450);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 1;
+			this.cancelButton.TabIndex = 4;
 			this.cancelButton.Text = "Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
@@ -596,7 +596,7 @@ namespace MediaPortal.Configuration
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.okButton.Location = new System.Drawing.Point(309, 450);
 			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 2;
+			this.okButton.TabIndex = 3;
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
@@ -604,7 +604,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.buttonAutotune.Location = new System.Drawing.Point(224, 448);
 			this.buttonAutotune.Name = "buttonAutotune";
-			this.buttonAutotune.TabIndex = 3;
+			this.buttonAutotune.TabIndex = 2;
 			this.buttonAutotune.Text = "Autotune";
 			this.buttonAutotune.Click += new System.EventHandler(this.buttonAutotune_Click);
 			// 
@@ -613,7 +613,7 @@ namespace MediaPortal.Configuration
 			this.buttonAudioMapping.Location = new System.Drawing.Point(120, 448);
 			this.buttonAudioMapping.Name = "buttonAudioMapping";
 			this.buttonAudioMapping.Size = new System.Drawing.Size(88, 23);
-			this.buttonAudioMapping.TabIndex = 4;
+			this.buttonAudioMapping.TabIndex = 1;
 			this.buttonAudioMapping.Text = "Audio Mapping";
 			this.buttonAudioMapping.Click += new System.EventHandler(this.buttonAudioMapping_Click);
 			// 

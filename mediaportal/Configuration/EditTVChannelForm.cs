@@ -105,14 +105,14 @@ namespace MediaPortal.Configuration
 			this.okButton = new System.Windows.Forms.Button();
 			this.advancedButton = new System.Windows.Forms.Button();
 			this.advancedGroupBox = new System.Windows.Forms.GroupBox();
+			this.countryComboBox = new System.Windows.Forms.ComboBox();
+			this.label8 = new System.Windows.Forms.Label();
 			this.inputComboBox = new System.Windows.Forms.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.typeComboBox = new System.Windows.Forms.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.externalChannelTextBox = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.countryComboBox = new System.Windows.Forms.ComboBox();
-			this.label8 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.advancedGroupBox.SuspendLayout();
 			this.SuspendLayout();
@@ -165,7 +165,7 @@ namespace MediaPortal.Configuration
 			this.comboTvStandard.Location = new System.Drawing.Point(120, 93);
 			this.comboTvStandard.Name = "comboTvStandard";
 			this.comboTvStandard.Size = new System.Drawing.Size(224, 21);
-			this.comboTvStandard.TabIndex = 12;
+			this.comboTvStandard.TabIndex = 3;
 			this.comboTvStandard.SelectedIndexChanged += new System.EventHandler(this.comboTvStandard_SelectedIndexChanged);
 			// 
 			// label7
@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration
 			this.frequencyTextBox.MaxLength = 10;
 			this.frequencyTextBox.Name = "frequencyTextBox";
 			this.frequencyTextBox.Size = new System.Drawing.Size(224, 20);
-			this.frequencyTextBox.TabIndex = 9;
+			this.frequencyTextBox.TabIndex = 2;
 			this.frequencyTextBox.Text = "0";
 			this.frequencyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frequencyTextBox_KeyPress);
 			// 
@@ -201,7 +201,7 @@ namespace MediaPortal.Configuration
 			this.channelTextBox.MaxLength = 4;
 			this.channelTextBox.Name = "channelTextBox";
 			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
-			this.channelTextBox.TabIndex = 7;
+			this.channelTextBox.TabIndex = 1;
 			this.channelTextBox.Text = "0";
 			this.channelTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.channelTextBox_KeyPress);
 			this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged);
@@ -220,7 +220,7 @@ namespace MediaPortal.Configuration
 			this.nameTextBox.Location = new System.Drawing.Point(120, 21);
 			this.nameTextBox.Name = "nameTextBox";
 			this.nameTextBox.Size = new System.Drawing.Size(224, 20);
-			this.nameTextBox.TabIndex = 5;
+			this.nameTextBox.TabIndex = 0;
 			this.nameTextBox.Text = "";
 			// 
 			// label2
@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cancelButton.Location = new System.Drawing.Point(293, 313);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 1;
+			this.cancelButton.TabIndex = 3;
 			this.cancelButton.Text = "Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
@@ -257,7 +257,7 @@ namespace MediaPortal.Configuration
 			this.advancedButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.advancedButton.Location = new System.Drawing.Point(8, 314);
 			this.advancedButton.Name = "advancedButton";
-			this.advancedButton.TabIndex = 3;
+			this.advancedButton.TabIndex = 1;
 			this.advancedButton.Text = "Advanced >>";
 			this.advancedButton.Click += new System.EventHandler(this.advancedButton_Click);
 			// 
@@ -278,9 +278,29 @@ namespace MediaPortal.Configuration
 			this.advancedGroupBox.Location = new System.Drawing.Point(8, 152);
 			this.advancedGroupBox.Name = "advancedGroupBox";
 			this.advancedGroupBox.Size = new System.Drawing.Size(360, 154);
-			this.advancedGroupBox.TabIndex = 4;
+			this.advancedGroupBox.TabIndex = 1;
 			this.advancedGroupBox.TabStop = false;
 			this.advancedGroupBox.Text = "Advanced Settings";
+			// 
+			// countryComboBox
+			// 
+			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.countryComboBox.Location = new System.Drawing.Point(120, 112);
+			this.countryComboBox.MaxDropDownItems = 16;
+			this.countryComboBox.Name = "countryComboBox";
+			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
+			this.countryComboBox.Sorted = true;
+			this.countryComboBox.TabIndex = 3;
+			// 
+			// label8
+			// 
+			this.label8.Location = new System.Drawing.Point(16, 112);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(56, 23);
+			this.label8.TabIndex = 14;
+			this.label8.Text = "Country";
 			// 
 			// inputComboBox
 			// 
@@ -294,7 +314,7 @@ namespace MediaPortal.Configuration
 			this.inputComboBox.Location = new System.Drawing.Point(120, 54);
 			this.inputComboBox.Name = "inputComboBox";
 			this.inputComboBox.Size = new System.Drawing.Size(224, 21);
-			this.inputComboBox.TabIndex = 13;
+			this.inputComboBox.TabIndex = 1;
 			this.inputComboBox.SelectedIndexChanged += new System.EventHandler(this.inputComboBox_SelectedIndexChanged);
 			// 
 			// label6
@@ -313,7 +333,7 @@ namespace MediaPortal.Configuration
 			this.typeComboBox.Location = new System.Drawing.Point(120, 28);
 			this.typeComboBox.Name = "typeComboBox";
 			this.typeComboBox.Size = new System.Drawing.Size(224, 21);
-			this.typeComboBox.TabIndex = 11;
+			this.typeComboBox.TabIndex = 0;
 			this.typeComboBox.SelectedIndexChanged += new System.EventHandler(this.typeComboBox_SelectedIndexChanged);
 			// 
 			// label5
@@ -331,7 +351,7 @@ namespace MediaPortal.Configuration
 			this.externalChannelTextBox.Location = new System.Drawing.Point(120, 80);
 			this.externalChannelTextBox.Name = "externalChannelTextBox";
 			this.externalChannelTextBox.Size = new System.Drawing.Size(224, 20);
-			this.externalChannelTextBox.TabIndex = 7;
+			this.externalChannelTextBox.TabIndex = 2;
 			this.externalChannelTextBox.Text = "";
 			// 
 			// label4
@@ -340,26 +360,6 @@ namespace MediaPortal.Configuration
 			this.label4.Name = "label4";
 			this.label4.TabIndex = 8;
 			this.label4.Text = "External channel";
-			// 
-			// countryComboBox
-			// 
-			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.countryComboBox.Location = new System.Drawing.Point(120, 112);
-			this.countryComboBox.MaxDropDownItems = 16;
-			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
-			this.countryComboBox.Sorted = true;
-			this.countryComboBox.TabIndex = 15;
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(16, 112);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(56, 23);
-			this.label8.TabIndex = 14;
-			this.label8.Text = "Country";
 			// 
 			// EditTVChannelForm
 			// 

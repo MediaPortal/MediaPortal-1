@@ -102,49 +102,49 @@ namespace MediaPortal.Configuration
 			this.comboBox1Video.Location = new System.Drawing.Point(80, 16);
 			this.comboBox1Video.Name = "comboBox1Video";
 			this.comboBox1Video.Size = new System.Drawing.Size(121, 21);
-			this.comboBox1Video.TabIndex = 3;
+			this.comboBox1Video.TabIndex = 0;
 			// 
 			// comboBox1Audio
 			// 
 			this.comboBox1Audio.Location = new System.Drawing.Point(80, 40);
 			this.comboBox1Audio.Name = "comboBox1Audio";
 			this.comboBox1Audio.Size = new System.Drawing.Size(121, 21);
-			this.comboBox1Audio.TabIndex = 4;
+			this.comboBox1Audio.TabIndex = 1;
 			// 
 			// comboBox2Video
 			// 
 			this.comboBox2Video.Location = new System.Drawing.Point(80, 72);
 			this.comboBox2Video.Name = "comboBox2Video";
 			this.comboBox2Video.Size = new System.Drawing.Size(121, 21);
-			this.comboBox2Video.TabIndex = 5;
+			this.comboBox2Video.TabIndex = 2;
 			// 
 			// comboBox2Audio
 			// 
 			this.comboBox2Audio.Location = new System.Drawing.Point(80, 96);
 			this.comboBox2Audio.Name = "comboBox2Audio";
 			this.comboBox2Audio.Size = new System.Drawing.Size(121, 21);
-			this.comboBox2Audio.TabIndex = 6;
+			this.comboBox2Audio.TabIndex = 3;
 			// 
 			// comboBox3Video
 			// 
 			this.comboBox3Video.Location = new System.Drawing.Point(80, 136);
 			this.comboBox3Video.Name = "comboBox3Video";
 			this.comboBox3Video.Size = new System.Drawing.Size(121, 21);
-			this.comboBox3Video.TabIndex = 7;
+			this.comboBox3Video.TabIndex = 4;
 			// 
 			// comboBox3Audio
 			// 
 			this.comboBox3Audio.Location = new System.Drawing.Point(80, 160);
 			this.comboBox3Audio.Name = "comboBox3Audio";
 			this.comboBox3Audio.Size = new System.Drawing.Size(121, 21);
-			this.comboBox3Audio.TabIndex = 8;
+			this.comboBox3Audio.TabIndex = 5;
 			// 
 			// buttonOK
 			// 
 			this.buttonOK.Location = new System.Drawing.Point(184, 192);
 			this.buttonOK.Name = "buttonOK";
 			this.buttonOK.Size = new System.Drawing.Size(32, 23);
-			this.buttonOK.TabIndex = 9;
+			this.buttonOK.TabIndex = 6;
 			this.buttonOK.Text = "OK";
 			this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
 			// 

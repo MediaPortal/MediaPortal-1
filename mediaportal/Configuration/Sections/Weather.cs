@@ -198,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
 			this.intervalTextBox.Location = new System.Drawing.Point(168, 77);
 			this.intervalTextBox.Name = "intervalTextBox";
 			this.intervalTextBox.Size = new System.Drawing.Size(40, 20);
-			this.intervalTextBox.TabIndex = 5;
+			this.intervalTextBox.TabIndex = 2;
 			this.intervalTextBox.Text = "";
 			// 
 			// label3
@@ -217,7 +217,7 @@ namespace MediaPortal.Configuration.Sections
 			this.windSpeedComboBox.Location = new System.Drawing.Point(168, 52);
 			this.windSpeedComboBox.Name = "windSpeedComboBox";
 			this.windSpeedComboBox.Size = new System.Drawing.Size(256, 21);
-			this.windSpeedComboBox.TabIndex = 3;
+			this.windSpeedComboBox.TabIndex = 1;
 			// 
 			// label2
 			// 
@@ -235,7 +235,7 @@ namespace MediaPortal.Configuration.Sections
 			this.temperatureComboBox.Location = new System.Drawing.Point(168, 27);
 			this.temperatureComboBox.Name = "temperatureComboBox";
 			this.temperatureComboBox.Size = new System.Drawing.Size(256, 21);
-			this.temperatureComboBox.TabIndex = 1;
+			this.temperatureComboBox.TabIndex = 0;
 			// 
 			// label1
 			// 
@@ -278,7 +278,7 @@ namespace MediaPortal.Configuration.Sections
 			this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.searchButton.Location = new System.Drawing.Point(16, 126);
 			this.searchButton.Name = "searchButton";
-			this.searchButton.TabIndex = 2;
+			this.searchButton.TabIndex = 1;
 			this.searchButton.Text = "Add";
 			this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
 			// 
@@ -289,7 +289,7 @@ namespace MediaPortal.Configuration.Sections
 			this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.removeButton.Location = new System.Drawing.Point(96, 126);
 			this.removeButton.Name = "removeButton";
-			this.removeButton.TabIndex = 1;
+			this.removeButton.TabIndex = 2;
 			this.removeButton.Text = "Remove";
 			this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
 			// 

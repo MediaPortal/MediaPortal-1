@@ -125,7 +125,7 @@ namespace MediaPortal.Configuration
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(408, 354);
-			this.groupBox1.TabIndex = 6;
+			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Folder settings";
 			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
@@ -137,7 +137,7 @@ namespace MediaPortal.Configuration
 			this.textBoxRemoteFolder.Location = new System.Drawing.Point(16, 320);
 			this.textBoxRemoteFolder.Name = "textBoxRemoteFolder";
 			this.textBoxRemoteFolder.Size = new System.Drawing.Size(344, 20);
-			this.textBoxRemoteFolder.TabIndex = 24;
+			this.textBoxRemoteFolder.TabIndex = 8;
 			this.textBoxRemoteFolder.Text = "/";
 			// 
 			// label3
@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.textBoxPort.Location = new System.Drawing.Point(16, 272);
 			this.textBoxPort.Name = "textBoxPort";
-			this.textBoxPort.TabIndex = 21;
+			this.textBoxPort.TabIndex = 7;
 			this.textBoxPort.Text = "21";
 			// 
 			// textBoxPassword
@@ -168,7 +168,7 @@ namespace MediaPortal.Configuration
 			this.textBoxPassword.Location = new System.Drawing.Point(224, 232);
 			this.textBoxPassword.Name = "textBoxPassword";
 			this.textBoxPassword.PasswordChar = '*';
-			this.textBoxPassword.TabIndex = 20;
+			this.textBoxPassword.TabIndex = 6;
 			this.textBoxPassword.Text = "";
 			// 
 			// label7
@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.textBoxLogin.Location = new System.Drawing.Point(16, 232);
 			this.textBoxLogin.Name = "textBoxLogin";
-			this.textBoxLogin.TabIndex = 18;
+			this.textBoxLogin.TabIndex = 5;
 			this.textBoxLogin.Text = "";
 			// 
 			// label6
@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration
 			this.textBoxServer.Location = new System.Drawing.Point(16, 192);
 			this.textBoxServer.Name = "textBoxServer";
 			this.textBoxServer.Size = new System.Drawing.Size(344, 20);
-			this.textBoxServer.TabIndex = 16;
+			this.textBoxServer.TabIndex = 4;
 			this.textBoxServer.Text = "127.0.0.1";
 			// 
 			// label5
@@ -215,7 +215,7 @@ namespace MediaPortal.Configuration
 			this.checkBoxRemote.Location = new System.Drawing.Point(16, 152);
 			this.checkBoxRemote.Name = "checkBoxRemote";
 			this.checkBoxRemote.Size = new System.Drawing.Size(136, 16);
-			this.checkBoxRemote.TabIndex = 14;
+			this.checkBoxRemote.TabIndex = 3;
 			this.checkBoxRemote.Text = "Remote FTP Folder";
 			this.checkBoxRemote.CheckedChanged += new System.EventHandler(this.checkBoxRemote_CheckedChanged);
 			// 
@@ -227,7 +227,7 @@ namespace MediaPortal.Configuration
 			this.pinCodeTextBox.MaxLength = 4;
 			this.pinCodeTextBox.Name = "pinCodeTextBox";
 			this.pinCodeTextBox.Size = new System.Drawing.Size(63, 20);
-			this.pinCodeTextBox.TabIndex = 13;
+			this.pinCodeTextBox.TabIndex = 1;
 			this.pinCodeTextBox.Text = "";
 			this.pinCodeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pinCodeTextBox_KeyPress);
 			// 
@@ -246,7 +246,7 @@ namespace MediaPortal.Configuration
 			this.folderButton.Location = new System.Drawing.Point(368, 96);
 			this.folderButton.Name = "folderButton";
 			this.folderButton.Size = new System.Drawing.Size(24, 20);
-			this.folderButton.TabIndex = 10;
+			this.folderButton.TabIndex = 3;
 			this.folderButton.Text = "...";
 			this.folderButton.Click += new System.EventHandler(this.folderButton_Click);
 			// 
@@ -257,7 +257,7 @@ namespace MediaPortal.Configuration
 			this.folderTextBox.Location = new System.Drawing.Point(16, 96);
 			this.folderTextBox.Name = "folderTextBox";
 			this.folderTextBox.Size = new System.Drawing.Size(344, 20);
-			this.folderTextBox.TabIndex = 9;
+			this.folderTextBox.TabIndex = 2;
 			this.folderTextBox.Text = "";
 			// 
 			// label2
@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration
 			this.nameTextBox.Location = new System.Drawing.Point(16, 48);
 			this.nameTextBox.Name = "nameTextBox";
 			this.nameTextBox.Size = new System.Drawing.Size(184, 20);
-			this.nameTextBox.TabIndex = 7;
+			this.nameTextBox.TabIndex = 0;
 			this.nameTextBox.Text = "";
 			// 
 			// label1
@@ -293,7 +293,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cancelButton.Location = new System.Drawing.Point(342, 369);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 7;
+			this.cancelButton.TabIndex = 1;
 			this.cancelButton.Text = "Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
@@ -303,7 +303,7 @@ namespace MediaPortal.Configuration
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.okButton.Location = new System.Drawing.Point(262, 369);
 			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 8;
+			this.okButton.TabIndex = 0;
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
@@ -320,7 +320,7 @@ namespace MediaPortal.Configuration
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(424, 248);
-			this.Name = "Edit Folder";
+			this.Name = "EditShareForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit Folder";

@@ -176,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewAvailableSkins.Location = new System.Drawing.Point(48, 24);
 			this.listViewAvailableSkins.Name = "listViewAvailableSkins";
 			this.listViewAvailableSkins.Size = new System.Drawing.Size(336, 104);
-			this.listViewAvailableSkins.TabIndex = 5;
+			this.listViewAvailableSkins.TabIndex = 0;
 			this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
 			this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
 			// 

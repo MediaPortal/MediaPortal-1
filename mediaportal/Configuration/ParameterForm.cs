@@ -69,7 +69,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cancelButton.Location = new System.Drawing.Point(286, 144);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 1;
+			this.cancelButton.TabIndex = 2;
 			this.cancelButton.Text = "Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
@@ -80,7 +80,7 @@ namespace MediaPortal.Configuration
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.okButton.Location = new System.Drawing.Point(206, 144);
 			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 2;
+			this.okButton.TabIndex = 1;
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
@@ -90,13 +90,13 @@ namespace MediaPortal.Configuration
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.parametersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																								 this.columnHeader1,
-																								 this.columnHeader2});
+																																												 this.columnHeader1,
+																																												 this.columnHeader2});
 			this.parametersListView.FullRowSelect = true;
 			this.parametersListView.Location = new System.Drawing.Point(8, 8);
 			this.parametersListView.Name = "parametersListView";
 			this.parametersListView.Size = new System.Drawing.Size(352, 128);
-			this.parametersListView.TabIndex = 3;
+			this.parametersListView.TabIndex = 0;
 			this.parametersListView.View = System.Windows.Forms.View.Details;
 			this.parametersListView.DoubleClick += new System.EventHandler(this.parametersListView_DoubleClick);
 			this.parametersListView.SelectedIndexChanged += new System.EventHandler(this.parametersListView_SelectedIndexChanged);

@@ -248,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
 			this.languageComboBox.Location = new System.Drawing.Point(168, 27);
 			this.languageComboBox.Name = "languageComboBox";
 			this.languageComboBox.Size = new System.Drawing.Size(256, 21);
-			this.languageComboBox.TabIndex = 5;
+			this.languageComboBox.TabIndex = 0;
 			// 
 			// label2
 			// 
@@ -321,7 +321,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboDriveNo.Location = new System.Drawing.Point(128, 104);
 			this.comboDriveNo.Name = "comboDriveNo";
 			this.comboDriveNo.Size = new System.Drawing.Size(121, 21);
-			this.comboDriveNo.TabIndex = 7;
+			this.comboDriveNo.TabIndex = 4;
 			this.comboDriveNo.Text = "0";
 			// 
 			// label4
@@ -369,7 +369,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxDrive.Location = new System.Drawing.Point(128, 80);
 			this.comboBoxDrive.Name = "comboBoxDrive";
 			this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);
-			this.comboBoxDrive.TabIndex = 4;
+			this.comboBoxDrive.TabIndex = 3;
 			this.comboBoxDrive.Text = "L:";
 			// 
 			// label1

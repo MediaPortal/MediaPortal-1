@@ -73,14 +73,14 @@ namespace MediaPortal
 			this.checkBox1.Location = new System.Drawing.Point(16, 96);
 			this.checkBox1.Name = "checkBox1";
 			this.checkBox1.Size = new System.Drawing.Size(120, 40);
-			this.checkBox1.TabIndex = 1;
+			this.checkBox1.TabIndex = 0;
 			this.checkBox1.Text = "Dont show this message again";
 			// 
 			// button1
 			// 
 			this.button1.Location = new System.Drawing.Point(216, 104);
 			this.button1.Name = "button1";
-			this.button1.TabIndex = 2;
+			this.button1.TabIndex = 1;
 			this.button1.Text = "OK";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 

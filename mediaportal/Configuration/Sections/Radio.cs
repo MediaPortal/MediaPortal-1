@@ -155,7 +155,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxLineInput.Name = "comboBoxLineInput";
 			this.comboBoxLineInput.Size = new System.Drawing.Size(256, 21);
 			this.comboBoxLineInput.Sorted = true;
-			this.comboBoxLineInput.TabIndex = 21;
+			this.comboBoxLineInput.TabIndex = 5;
 			// 
 			// label7
 			// 
@@ -175,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxAudioDevice.Name = "comboBoxAudioDevice";
 			this.comboBoxAudioDevice.Size = new System.Drawing.Size(256, 21);
 			this.comboBoxAudioDevice.Sorted = true;
-			this.comboBoxAudioDevice.TabIndex = 19;
+			this.comboBoxAudioDevice.TabIndex = 4;
 			this.comboBoxAudioDevice.SelectedIndexChanged += new System.EventHandler(this.comboBoxAudioDevice_SelectedIndexChanged);
 			// 
 			// label1
@@ -196,7 +196,7 @@ namespace MediaPortal.Configuration.Sections
 			this.countryComboBox.Name = "countryComboBox";
 			this.countryComboBox.Size = new System.Drawing.Size(256, 21);
 			this.countryComboBox.Sorted = true;
-			this.countryComboBox.TabIndex = 17;
+			this.countryComboBox.TabIndex = 3;
 			// 
 			// label6
 			// 
@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
 			this.parametersButton.Location = new System.Drawing.Point(368, 248);
 			this.parametersButton.Name = "parametersButton";
 			this.parametersButton.Size = new System.Drawing.Size(56, 20);
-			this.parametersButton.TabIndex = 13;
+			this.parametersButton.TabIndex = 10;
 			this.parametersButton.Text = "List";
 			this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
 			// 
@@ -224,7 +224,7 @@ namespace MediaPortal.Configuration.Sections
 			this.parametersTextBox.Location = new System.Drawing.Point(96, 248);
 			this.parametersTextBox.Name = "parametersTextBox";
 			this.parametersTextBox.Size = new System.Drawing.Size(265, 20);
-			this.parametersTextBox.TabIndex = 12;
+			this.parametersTextBox.TabIndex = 9;
 			this.parametersTextBox.Text = "";
 			// 
 			// label4
@@ -242,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
 			this.fileNameButton.Location = new System.Drawing.Point(368, 224);
 			this.fileNameButton.Name = "fileNameButton";
 			this.fileNameButton.Size = new System.Drawing.Size(56, 20);
-			this.fileNameButton.TabIndex = 10;
+			this.fileNameButton.TabIndex = 8;
 			this.fileNameButton.Text = "Browse";
 			this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
 			// 
@@ -253,7 +253,7 @@ namespace MediaPortal.Configuration.Sections
 			this.fileNameTextBox.Location = new System.Drawing.Point(96, 224);
 			this.fileNameTextBox.Name = "fileNameTextBox";
 			this.fileNameTextBox.Size = new System.Drawing.Size(265, 20);
-			this.fileNameTextBox.TabIndex = 9;
+			this.fileNameTextBox.TabIndex = 7;
 			this.fileNameTextBox.Text = "";
 			// 
 			// label5
@@ -269,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
 			this.externalRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.externalRadioButton.Location = new System.Drawing.Point(16, 192);
 			this.externalRadioButton.Name = "externalRadioButton";
-			this.externalRadioButton.TabIndex = 7;
+			this.externalRadioButton.TabIndex = 6;
 			this.externalRadioButton.Text = "External radio";
 			this.externalRadioButton.CheckedChanged += new System.EventHandler(this.externalRadioButton_CheckedChanged);
 			// 
@@ -284,7 +284,7 @@ namespace MediaPortal.Configuration.Sections
 			this.inputComboBox.Location = new System.Drawing.Point(168, 78);
 			this.inputComboBox.Name = "inputComboBox";
 			this.inputComboBox.Size = new System.Drawing.Size(256, 21);
-			this.inputComboBox.TabIndex = 6;
+			this.inputComboBox.TabIndex = 2;
 			// 
 			// label3
 			// 
@@ -302,7 +302,7 @@ namespace MediaPortal.Configuration.Sections
 			this.deviceComboBox.Location = new System.Drawing.Point(168, 54);
 			this.deviceComboBox.Name = "deviceComboBox";
 			this.deviceComboBox.Size = new System.Drawing.Size(256, 21);
-			this.deviceComboBox.TabIndex = 3;
+			this.deviceComboBox.TabIndex = 1;
 			this.deviceComboBox.SelectedIndexChanged += new System.EventHandler(this.deviceComboBox_SelectedIndexChanged);
 			// 
 			// internalRadioButton
@@ -310,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
 			this.internalRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.internalRadioButton.Location = new System.Drawing.Point(16, 24);
 			this.internalRadioButton.Name = "internalRadioButton";
-			this.internalRadioButton.TabIndex = 2;
+			this.internalRadioButton.TabIndex = 0;
 			this.internalRadioButton.Text = "Internal radio";
 			this.internalRadioButton.CheckedChanged += new System.EventHandler(this.internalRadioButton_CheckedChanged);
 			// 
@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration.Sections
 			this.browseFolderButton.Location = new System.Drawing.Point(369, 27);
 			this.browseFolderButton.Name = "browseFolderButton";
 			this.browseFolderButton.Size = new System.Drawing.Size(56, 20);
-			this.browseFolderButton.TabIndex = 13;
+			this.browseFolderButton.TabIndex = 1;
 			this.browseFolderButton.Text = "Browse";
 			this.browseFolderButton.Click += new System.EventHandler(this.browseFolderButton_Click);
 			// 
@@ -355,7 +355,7 @@ namespace MediaPortal.Configuration.Sections
 			this.folderNameTextBox.Location = new System.Drawing.Point(96, 27);
 			this.folderNameTextBox.Name = "folderNameTextBox";
 			this.folderNameTextBox.Size = new System.Drawing.Size(265, 20);
-			this.folderNameTextBox.TabIndex = 12;
+			this.folderNameTextBox.TabIndex = 0;
 			this.folderNameTextBox.Text = "";
 			// 
 			// folderNameLabel

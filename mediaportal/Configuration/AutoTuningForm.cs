@@ -67,14 +67,14 @@ namespace MediaPortal.Configuration
 		{
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.sensitivityComboBox = new System.Windows.Forms.ComboBox();
 			this.stopButton = new System.Windows.Forms.Button();
 			this.startButton = new System.Windows.Forms.Button();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.itemsListBox = new System.Windows.Forms.ListBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.okButton = new System.Windows.Forms.Button();
 			this.tunerTimer = new System.Timers.Timer();
-			this.label1 = new System.Windows.Forms.Label();
-			this.sensitivityComboBox = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).BeginInit();
 			this.SuspendLayout();
@@ -109,13 +109,27 @@ namespace MediaPortal.Configuration
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Auto Tuning";
 			// 
+			// sensitivityComboBox
+			// 
+			this.sensitivityComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.sensitivityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.sensitivityComboBox.Items.AddRange(new object[] {
+																														 "High",
+																														 "Medium",
+																														 "Low"});
+			this.sensitivityComboBox.Location = new System.Drawing.Point(336, 134);
+			this.sensitivityComboBox.Name = "sensitivityComboBox";
+			this.sensitivityComboBox.Size = new System.Drawing.Size(72, 21);
+			this.sensitivityComboBox.TabIndex = 2;
+			this.sensitivityComboBox.SelectedIndexChanged += new System.EventHandler(this.sensitivityComboBox_SelectedIndexChanged);
+			// 
 			// stopButton
 			// 
 			this.stopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.stopButton.Location = new System.Drawing.Point(336, 76);
 			this.stopButton.Name = "stopButton";
-			this.stopButton.TabIndex = 7;
+			this.stopButton.TabIndex = 1;
 			this.stopButton.Text = "Stop";
 			this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
 			// 
@@ -125,7 +139,7 @@ namespace MediaPortal.Configuration
 			this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.startButton.Location = new System.Drawing.Point(336, 48);
 			this.startButton.Name = "startButton";
-			this.startButton.TabIndex = 6;
+			this.startButton.TabIndex = 0;
 			this.startButton.Text = "Start";
 			this.startButton.Click += new System.EventHandler(this.startButton_Click);
 			// 
@@ -148,22 +162,6 @@ namespace MediaPortal.Configuration
 			this.itemsListBox.Size = new System.Drawing.Size(312, 108);
 			this.itemsListBox.TabIndex = 0;
 			// 
-			// okButton
-			// 
-			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.okButton.Location = new System.Drawing.Point(277, 192);
-			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 3;
-			this.okButton.Text = "OK";
-			this.okButton.Click += new System.EventHandler(this.okButton_Click);
-			// 
-			// tunerTimer
-			// 
-			this.tunerTimer.Interval = 1000;
-			this.tunerTimer.SynchronizingObject = this;
-			this.tunerTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.tunerTimer_Elapsed);
-			// 
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -173,19 +171,21 @@ namespace MediaPortal.Configuration
 			this.label1.TabIndex = 9;
 			this.label1.Text = "Sensitivity";
 			// 
-			// sensitivityComboBox
+			// okButton
 			// 
-			this.sensitivityComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.sensitivityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.sensitivityComboBox.Items.AddRange(new object[] {
-																	 "High",
-																	 "Medium",
-																	 "Low"});
-			this.sensitivityComboBox.Location = new System.Drawing.Point(336, 134);
-			this.sensitivityComboBox.Name = "sensitivityComboBox";
-			this.sensitivityComboBox.Size = new System.Drawing.Size(72, 21);
-			this.sensitivityComboBox.TabIndex = 10;
-			this.sensitivityComboBox.SelectedIndexChanged += new System.EventHandler(this.sensitivityComboBox_SelectedIndexChanged);
+			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.okButton.Location = new System.Drawing.Point(277, 192);
+			this.okButton.Name = "okButton";
+			this.okButton.TabIndex = 0;
+			this.okButton.Text = "OK";
+			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
+			// tunerTimer
+			// 
+			this.tunerTimer.Interval = 1000;
+			this.tunerTimer.SynchronizingObject = this;
+			this.tunerTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.tunerTimer_Elapsed);
 			// 
 			// AutoTuningForm
 			// 

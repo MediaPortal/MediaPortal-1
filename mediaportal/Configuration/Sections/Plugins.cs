@@ -373,7 +373,7 @@ namespace MediaPortal.Configuration.Sections
 			this.dataGrid1.Location = new System.Drawing.Point(16, 24);
 			this.dataGrid1.Name = "dataGrid1";
 			this.dataGrid1.Size = new System.Drawing.Size(408, 344);
-			this.dataGrid1.TabIndex = 2;
+			this.dataGrid1.TabIndex = 0;
 			this.dataGrid1.LocationChanged += new System.EventHandler(this.dataGrid1_LocationChanged);
 			// 
 			// setupButton

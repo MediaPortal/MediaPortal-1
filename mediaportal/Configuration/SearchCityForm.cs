@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration
 			this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.searchButton.Location = new System.Drawing.Point(288, 24);
 			this.searchButton.Name = "searchButton";
-			this.searchButton.TabIndex = 4;
+			this.searchButton.TabIndex = 1;
 			this.searchButton.Text = "Search";
 			this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
 			// 
@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration
 			this.searchTextBox.Location = new System.Drawing.Point(16, 24);
 			this.searchTextBox.Name = "searchTextBox";
 			this.searchTextBox.Size = new System.Drawing.Size(264, 20);
-			this.searchTextBox.TabIndex = 3;
+			this.searchTextBox.TabIndex = 0;
 			this.searchTextBox.Text = "";
 			this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
 			// 
@@ -132,7 +132,7 @@ namespace MediaPortal.Configuration
 			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.addButton.Location = new System.Drawing.Point(228, 168);
 			this.addButton.Name = "addButton";
-			this.addButton.TabIndex = 6;
+			this.addButton.TabIndex = 0;
 			this.addButton.Text = "Add";
 			this.addButton.Click += new System.EventHandler(this.addButton_Click);
 			// 

@@ -71,7 +71,7 @@ namespace MediaPortal
 			this.textBoxName.Location = new System.Drawing.Point(16, 40);
 			this.textBoxName.Name = "textBoxName";
 			this.textBoxName.Size = new System.Drawing.Size(256, 20);
-			this.textBoxName.TabIndex = 1;
+			this.textBoxName.TabIndex = 0;
 			this.textBoxName.Text = "";
 			// 
 			// btnOk
@@ -79,7 +79,7 @@ namespace MediaPortal
 			this.btnOk.Location = new System.Drawing.Point(232, 72);
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Size = new System.Drawing.Size(40, 23);
-			this.btnOk.TabIndex = 2;
+			this.btnOk.TabIndex = 1;
 			this.btnOk.Text = "Ok";
 			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
 			// 

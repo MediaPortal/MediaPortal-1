@@ -3,6 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using System.Xml;
 
@@ -17,12 +18,14 @@ namespace MediaPortal.TV.Recording
 		enum State
 		{
 			ScanFrequencies,
-			ScanChannels
+			ScanChannels,
+			ScanOffset
 		}
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
 		ArrayList                           frequencies=new ArrayList();
 		int                                 currentFrequencyIndex=0;
+		int																	scanOffset = 0;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
 		DateTime														channelScanTimeOut;
@@ -40,19 +43,56 @@ namespace MediaPortal.TV.Recording
 			currentState=State.ScanFrequencies;
 			frequencies.Clear();
 			currentFrequencyIndex=0;
+			String countryCode = String.Empty;
 
 			Log.Write("Opening dvbt.xml");
 			XmlDocument doc= new XmlDocument();
 			doc.Load("dvbt.xml");
-			XmlNodeList frequencyList= doc.DocumentElement.SelectNodes("/dvbt/frequencies/frequency");
-			foreach (XmlNode node in frequencyList)
+
+			FormCountry formCountry = new FormCountry();
+			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
+			foreach (XmlNode nodeCountry in countryList)
 			{
-				int carrierFrequency= XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"carrier").InnerText);
-				frequencies.Add(carrierFrequency);
-				//Log.Write("added:{0}", carrierFrequency);
+				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
+				formCountry.AddCountry(name);
 			}
-			
+			formCountry.ShowDialog();
+			string countryName=formCountry.countryName;
+			if (countryName==String.Empty) return;
+
+			frequencies.Clear();
+
+			countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
+			foreach (XmlNode nodeCountry in countryList)
+			{
+				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
+				if (name!=countryName) continue;
+				
+				try
+				{
+					scanOffset =  XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+				}
+				catch(Exception){}
+
+				XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+				int[] carrier;
+				foreach (XmlNode node in frequencyList)
+				{
+					carrier = new int[2];
+					carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+					try
+					{
+						carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+					}
+					catch(Exception){}
+
+					frequencies.Add(carrier);
+					Log.Write("added:{0}", carrier[0]);
+				}
+			}
+
 			Log.Write("loaded:{0} frequencies", frequencies.Count);
+			Log.Write("{0} has a scan offset of {1}KHz", countryCode, scanOffset);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -85,10 +125,12 @@ namespace MediaPortal.TV.Recording
 			float percent = ((float)currentFrequencyIndex) / ((float)frequencies.Count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			float frequency=(float)((int)frequencies[currentFrequencyIndex]);
+			int[] tmp = frequencies[currentFrequencyIndex] as int[];
+			//Log.Write("FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
+			float frequency = (float)tmp[0];
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
-
+			callback.OnStatus(description);
 
 			if (currentState==State.ScanFrequencies)
 			{
@@ -97,6 +139,35 @@ namespace MediaPortal.TV.Recording
 					Log.Write("Found signal at:{0} MHz",frequency);
 					currentState=State.ScanChannels;
 					channelScanTimeOut=DateTime.Now;
+				} 
+				else 
+				{
+					int[] scanObject;
+					for (int i = 0; i < 2; i++)
+					{
+            scanObject = frequencies[currentFrequencyIndex] as int[];
+						if (i == 0)
+						{
+							scanObject[0] -= scanOffset;
+							//Log.Write("trying offset -{0} of {1)", scanOffset, scanObject[0]);
+							description=String.Format("frequency:{0:###.##} MHz. - trying offset -{1}", frequency, scanOffset);
+							
+						}
+						else if (i == 1)
+						{
+							scanObject[0] += scanOffset;
+							//Log.Write("trying offset +{0} of {1)", scanOffset, scanObject[0]);
+							description=String.Format("frequency:{0:###.##} MHz. - trying offset +{1}", frequency, scanOffset);
+						}
+						captureCard.Tune(scanObject);
+						callback.OnStatus(description);
+						if (captureCard.SignalPresent())
+						{
+							Log.Write("Found signal at:{0} MHz", scanObject[0] / 1000);
+							currentState=State.ScanChannels;
+							channelScanTimeOut=DateTime.Now;
+						} 
+					} 
 				}
 			}
 
@@ -143,7 +214,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
-			Log.Write("tune:{0}",frequencies[currentFrequencyIndex]);
+			Log.Write("tune:{0}",(frequencies[currentFrequencyIndex] as int[])[0]);
 			captureCard.Tune(frequencies[currentFrequencyIndex]);
 		}
 

@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
 			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 123);
 			this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
 			this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
-			this.defaultZoomModeComboBox.TabIndex = 32;
+			this.defaultZoomModeComboBox.TabIndex = 5;
 			// 
 			// label6
 			// 
@@ -221,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
 			this.parametersButton.Location = new System.Drawing.Point(366, 78);
 			this.parametersButton.Name = "parametersButton";
 			this.parametersButton.Size = new System.Drawing.Size(58, 20);
-			this.parametersButton.TabIndex = 5;
+			this.parametersButton.TabIndex = 4;
 			this.parametersButton.Text = "List";
 			this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
 			// 
@@ -232,7 +232,7 @@ namespace MediaPortal.Configuration.Sections
 			this.parametersTextBox.Location = new System.Drawing.Point(96, 78);
 			this.parametersTextBox.Name = "parametersTextBox";
 			this.parametersTextBox.Size = new System.Drawing.Size(264, 20);
-			this.parametersTextBox.TabIndex = 4;
+			this.parametersTextBox.TabIndex = 3;
 			this.parametersTextBox.Text = "";
 			// 
 			// label2
@@ -307,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
 			this.videoRendererComboBox.Location = new System.Drawing.Point(168, 27);
 			this.videoRendererComboBox.Name = "videoRendererComboBox";
 			this.videoRendererComboBox.Size = new System.Drawing.Size(256, 21);
-			this.videoRendererComboBox.TabIndex = 28;
+			this.videoRendererComboBox.TabIndex = 0;
 			// 
 			// label4
 			// 

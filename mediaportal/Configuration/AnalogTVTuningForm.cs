@@ -96,7 +96,7 @@ namespace MediaPortal
 			this.btnOk.Location = new System.Drawing.Point(456, 296);
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Size = new System.Drawing.Size(48, 23);
-			this.btnOk.TabIndex = 2;
+			this.btnOk.TabIndex = 4;
 			this.btnOk.Text = "Ok";
 			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
 			// 
@@ -113,7 +113,7 @@ namespace MediaPortal
 			this.buttonMap.Location = new System.Drawing.Point(352, 296);
 			this.buttonMap.Name = "buttonMap";
 			this.buttonMap.Size = new System.Drawing.Size(40, 23);
-			this.buttonMap.TabIndex = 5;
+			this.buttonMap.TabIndex = 2;
 			this.buttonMap.Text = "Map";
 			this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
 			// 
@@ -131,7 +131,7 @@ namespace MediaPortal
 			this.buttonSkip.Location = new System.Drawing.Point(400, 296);
 			this.buttonSkip.Name = "buttonSkip";
 			this.buttonSkip.Size = new System.Drawing.Size(40, 23);
-			this.buttonSkip.TabIndex = 7;
+			this.buttonSkip.TabIndex = 3;
 			this.buttonSkip.Text = "Skip";
 			this.buttonSkip.Click += new System.EventHandler(this.buttonSkip_Click);
 			// 
@@ -144,7 +144,7 @@ namespace MediaPortal
 			this.listView1.MultiSelect = false;
 			this.listView1.Name = "listView1";
 			this.listView1.Size = new System.Drawing.Size(216, 152);
-			this.listView1.TabIndex = 8;
+			this.listView1.TabIndex = 5;
 			this.listView1.View = System.Windows.Forms.View.Details;
 			// 
 			// columnHeader1
@@ -168,7 +168,7 @@ namespace MediaPortal
 			this.buttonAdd.Location = new System.Drawing.Point(304, 296);
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.Size = new System.Drawing.Size(40, 23);
-			this.buttonAdd.TabIndex = 10;
+			this.buttonAdd.TabIndex = 1;
 			this.buttonAdd.Text = "Add";
 			this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
 			// 
