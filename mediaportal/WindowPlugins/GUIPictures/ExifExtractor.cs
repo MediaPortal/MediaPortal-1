@@ -236,7 +236,7 @@ namespace MediaPortal.GUI.Pictures
               int int2;
               int1 = BitConverter.ToInt32(propItem.Value,0);
               int2 = BitConverter.ToInt32(propItem.Value,4);
-              MyMetadata.Fstop.DisplayValue = "F/" + (int1/int2);
+              MyMetadata.Fstop.DisplayValue = "F/" + ((float)int1/(float)int2);
             }
 
 						
