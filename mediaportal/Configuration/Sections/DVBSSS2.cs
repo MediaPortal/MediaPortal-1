@@ -3104,7 +3104,7 @@ namespace MediaPortal.Configuration.Sections
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Log.Write("technisat config: exception= {0}",ex.Message);
 			}
 
 		}
@@ -3123,6 +3123,7 @@ namespace MediaPortal.Configuration.Sections
 			ch.service_name=e.Label;
 			e.Node.Tag=ch;
 			e.Node.Text+=(ch.serviceType==1?" (TV)":" (Radio)");
+			treeView1.Refresh();
 		}
 	}// class
 }// namespace
