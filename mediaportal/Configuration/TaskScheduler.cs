@@ -107,16 +107,22 @@ namespace MediaPortal.Configuration
         // or create a new scheduled task
       else
       {
-        string path = Application.StartupPath;
-        t = st.CreateTask("MPGuideScheduler");
-        t.ApplicationName = path + @"\TVGuideScheduler.exe";
-        t.WorkingDirectory = path;
-        t.Comment = "MediaPortal TV Guide Download Scheduler";
-        t.SetAccountInformation(user, password);
-        t.MaxRunTime = new TimeSpan(72, 0, 0);
-        t.Triggers.Add(new DailyTrigger(hour, minute, frequency));
-        t.Save();
-        t.Close();
+        try
+        {
+          string path = Application.StartupPath;
+          t = st.CreateTask("MPGuideScheduler");
+          t.ApplicationName = path + @"\TVGuideScheduler.exe";
+          t.WorkingDirectory = path;
+          t.Comment = "MediaPortal TV Guide Download Scheduler";
+          t.SetAccountInformation(user, password);
+          t.MaxRunTime = new TimeSpan(72, 0, 0);
+          t.Triggers.Add(new DailyTrigger(hour, minute, frequency));
+          t.Save();
+          t.Close();
+        }
+        catch(Exception)
+        {
+        }
       }
       st.Dispose();
     }
