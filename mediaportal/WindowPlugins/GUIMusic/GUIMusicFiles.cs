@@ -417,8 +417,14 @@ namespace MediaPortal.GUI.Music
 					
 					if (iControl == (int)Controls.CONTROL_BTNPLAYCD)
 					{
-						//ToDo: Find the first cd/dvd drive
-						OnPlayCD("D:");
+            for ( char c = 'C'; c <= 'Z'; c++)
+            {
+              if ((Utils.GetDriveType(c+":") & 5)==5)
+              {
+                OnPlayCD(c+":");
+                break;
+              }
+            }
 					}
 					
           // search-button handling
