@@ -118,6 +118,8 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label10 = new System.Windows.Forms.Label();
+      this.comboBoxLineInput = new System.Windows.Forms.ComboBox();
       this.audioDeviceComboBox = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.setupButton = new System.Windows.Forms.Button();
@@ -139,8 +141,6 @@ namespace MediaPortal.Configuration
       this.label8 = new System.Windows.Forms.Label();
       this.cancelButton = new System.Windows.Forms.Button();
       this.okButton = new System.Windows.Forms.Button();
-      this.comboBoxLineInput = new System.Windows.Forms.ComboBox();
-      this.label10 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -173,11 +173,27 @@ namespace MediaPortal.Configuration
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(456, 392);
+      this.groupBox1.Size = new System.Drawing.Size(456, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Capture Card Settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // label10
+      // 
+      this.label10.Location = new System.Drawing.Point(16, 83);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(104, 16);
+      this.label10.TabIndex = 47;
+      this.label10.Text = "Line input";
+      // 
+      // comboBoxLineInput
+      // 
+      this.comboBoxLineInput.Enabled = false;
+      this.comboBoxLineInput.Location = new System.Drawing.Point(120, 80);
+      this.comboBoxLineInput.Name = "comboBoxLineInput";
+      this.comboBoxLineInput.Size = new System.Drawing.Size(320, 21);
+      this.comboBoxLineInput.TabIndex = 46;
       // 
       // audioDeviceComboBox
       // 
@@ -273,7 +289,7 @@ namespace MediaPortal.Configuration
       // frameRateTextBox
       // 
       this.frameRateTextBox.Enabled = false;
-      this.frameRateTextBox.Location = new System.Drawing.Point(120, 344);
+      this.frameRateTextBox.Location = new System.Drawing.Point(120, 366);
       this.frameRateTextBox.MaxLength = 3;
       this.frameRateTextBox.Name = "frameRateTextBox";
       this.frameRateTextBox.Size = new System.Drawing.Size(40, 20);
@@ -283,7 +299,7 @@ namespace MediaPortal.Configuration
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 347);
+      this.label6.Location = new System.Drawing.Point(16, 369);
       this.label6.Name = "label6";
       this.label6.TabIndex = 20;
       this.label6.Text = "Framerate";
@@ -295,14 +311,14 @@ namespace MediaPortal.Configuration
       this.frameSizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.frameSizeComboBox.Enabled = false;
       this.frameSizeComboBox.ItemHeight = 13;
-      this.frameSizeComboBox.Location = new System.Drawing.Point(120, 319);
+      this.frameSizeComboBox.Location = new System.Drawing.Point(120, 341);
       this.frameSizeComboBox.Name = "frameSizeComboBox";
       this.frameSizeComboBox.Size = new System.Drawing.Size(320, 21);
       this.frameSizeComboBox.TabIndex = 19;
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(16, 322);
+      this.label7.Location = new System.Drawing.Point(16, 344);
       this.label7.Name = "label7";
       this.label7.TabIndex = 18;
       this.label7.Text = "Framesize";
@@ -313,7 +329,7 @@ namespace MediaPortal.Configuration
       this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useRecordingCheckBox.Enabled = false;
       this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.useRecordingCheckBox.Location = new System.Drawing.Point(152, 272);
+      this.useRecordingCheckBox.Location = new System.Drawing.Point(32, 304);
       this.useRecordingCheckBox.Name = "useRecordingCheckBox";
       this.useRecordingCheckBox.Size = new System.Drawing.Size(112, 24);
       this.useRecordingCheckBox.TabIndex = 15;
@@ -325,7 +341,7 @@ namespace MediaPortal.Configuration
       this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useWatchingCheckBox.Enabled = false;
       this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 272);
+      this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 282);
       this.useWatchingCheckBox.Name = "useWatchingCheckBox";
       this.useWatchingCheckBox.Size = new System.Drawing.Size(112, 24);
       this.useWatchingCheckBox.TabIndex = 14;
@@ -333,7 +349,7 @@ namespace MediaPortal.Configuration
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(16, 256);
+      this.label4.Location = new System.Drawing.Point(16, 266);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(100, 16);
       this.label4.TabIndex = 13;
@@ -370,7 +386,7 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(389, 408);
+      this.cancelButton.Location = new System.Drawing.Point(389, 424);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "Cancel";
@@ -380,32 +396,16 @@ namespace MediaPortal.Configuration
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.okButton.Location = new System.Drawing.Point(309, 408);
+      this.okButton.Location = new System.Drawing.Point(309, 424);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 2;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
-      // comboBoxLineInput
-      // 
-      this.comboBoxLineInput.Enabled = false;
-      this.comboBoxLineInput.Location = new System.Drawing.Point(120, 80);
-      this.comboBoxLineInput.Name = "comboBoxLineInput";
-      this.comboBoxLineInput.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxLineInput.TabIndex = 46;
-      // 
-      // label10
-      // 
-      this.label10.Location = new System.Drawing.Point(56, 80);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(32, 16);
-      this.label10.TabIndex = 47;
-      this.label10.Text = "Input:";
-      // 
       // EditCaptureCardForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(474, 440);
+      this.ClientSize = new System.Drawing.Size(474, 456);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.groupBox1);
@@ -620,41 +620,48 @@ namespace MediaPortal.Configuration
 
       useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
 
-
+      //
+      // Setup line input combo box
+      //
       comboBoxLineInput.Items.Clear();
-      capture.FixCrossbarRouting(false);
 
-      IBaseFilter audioDevice=capture.AudiodeviceFilter;
-      if (audioDevice!=null)
+      if(capture != null)
       {
-        int hr=0;
-        IEnumPins pinEnum;
-        hr=audioDevice.EnumPins(out pinEnum);
-        if( (hr == 0) && (pinEnum != null) )
+        capture.FixCrossbarRouting(false);
+
+        IBaseFilter audioDevice=capture.AudiodeviceFilter;
+        if (audioDevice!=null)
         {
-          pinEnum.Reset();
-          IPin[] pins = new IPin[1];
-          int f;
-          do
+          int hr=0;
+          IEnumPins pinEnum;
+          hr=audioDevice.EnumPins(out pinEnum);
+          if( (hr == 0) && (pinEnum != null) )
           {
-            // Get the next pin
-            hr = pinEnum.Next( 1, pins, out f );
-            if( (hr == 0) && (pins[0] != null) )
+            pinEnum.Reset();
+            IPin[] pins = new IPin[1];
+            int f;
+            do
             {
-              PinDirection pinDir;
-              pins[0].QueryDirection(out pinDir);
-              if (pinDir==PinDirection.Input)
+              // Get the next pin
+              hr = pinEnum.Next( 1, pins, out f );
+              if( (hr == 0) && (pins[0] != null) )
               {
-                PinInfo info;
-                pins[0].QueryPinInfo(out info);
-                comboBoxLineInput.Items.Add(info.name);
+                PinDirection pinDir;
+                pins[0].QueryDirection(out pinDir);
+                if (pinDir==PinDirection.Input)
+                {
+                  PinInfo info;
+                  pins[0].QueryPinInfo(out info);
+                  comboBoxLineInput.Items.Add(info.name);
+                }
+                Marshal.ReleaseComObject( pins[0] );
               }
-              Marshal.ReleaseComObject( pins[0] );
             }
+            while( hr == 0 );
           }
-          while( hr == 0 );
         }
       }
+
       //
       // Dispose objects
       //
@@ -766,7 +773,7 @@ namespace MediaPortal.Configuration
         card.VideoCompressor = videoCompressorComboBox.Text;
         card.AudioCompressor = audioCompressorComboBox.Text;
         card.AudioDevice = audioDeviceComboBox.Text;
-        card.AudioInputPin = comboBoxLineInput.SelectedItem as String;
+        card.AudioInputPin = comboBoxLineInput.Text;
         card.SupportsMPEG2 = m_bMPEG2;
 
 				return card;
@@ -802,15 +809,16 @@ namespace MediaPortal.Configuration
             }
             frameRateTextBox.Text = card.FrameRate.ToString();
 
-            for (int x=0; x < comboBoxLineInput.Items.Count;++x)
-            {
-              string strTxt=(string)comboBoxLineInput.Items[x];
-              if (strTxt.Equals(card.AudioInputPin))
-              {
-                comboBoxLineInput.SelectedIndex=x;
-                break;
-              }
-            }
+//            for (int x=0; x < comboBoxLineInput.Items.Count;++x)
+//            {
+//              string strTxt=(string)comboBoxLineInput.Items[x];
+//              if (strTxt.Equals(card.AudioInputPin))
+//              {
+//                comboBoxLineInput.SelectedIndex=x;
+//                break;
+//              }
+//            }
+            comboBoxLineInput.Text = card.AudioInputPin;
 
             capture.Stop();
             capture.Dispose();
