@@ -173,6 +173,7 @@ namespace WindowPlugins.GUIPrograms
 			this.appTree.SelectedImageIndex = -1;
 			this.appTree.Size = new System.Drawing.Size(224, 448);
 			this.appTree.TabIndex = 8;
+			this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
 			this.appTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
 			this.appTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.appTree_BeforeSelect);
 			this.appTree.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.appTree_AfterLabelEdit);
@@ -740,6 +741,7 @@ namespace WindowPlugins.GUIPrograms
 					pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
 					pageCurrentSettings.Form2AppObj(curApp);
 					curApp.Write();
+					appTree.SelectedNode.Text = curApp.Title;
 				}
 				else 
 				{
@@ -788,29 +790,75 @@ namespace WindowPlugins.GUIPrograms
 
 		private void appTree_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
 		{
-			TreeNode NewNode;
+			// Retrieve the client coordinates of the drop location.
+			Point targetPoint = appTree.PointToClient(new Point(e.X, e.Y));
 
-			if(e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+			// Retrieve the node at the drop location.
+			TreeNode targetNode = appTree.GetNodeAt(targetPoint);
+
+			// Retrieve the node that was dragged.
+			TreeNode draggedNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
+
+			// Confirm that the node at the drop location is not 
+			// the dragged node or a descendant of the dragged node.
+			if (!draggedNode.Equals(targetNode) && !ContainsNode(draggedNode, targetNode))
 			{
-				Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
-				TreeNode DestinationNode = ((TreeView)sender).GetNodeAt(pt);
-				NewNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
-				DestinationNode.Nodes.Add((TreeNode) NewNode.Clone());
-				DestinationNode.Expand();
-				//Remove Original Node
-				NewNode.Remove();
+				// If it is a move operation, remove the node from its current 
+				// location and add it to the node at the drop location.
+				if (e.Effect == DragDropEffects.Move)
+				{
+					draggedNode.Remove();
+					targetNode.Nodes.Add(draggedNode);
+				}
+
+					// If it is a copy operation, clone the dragged node 
+					// and add it to the node at the drop location.
+				else if (e.Effect == DragDropEffects.Copy)
+				{
+					targetNode.Nodes.Add((TreeNode)draggedNode.Clone());
+				}
+
+				// Expand the node at the location 
+				// to show the dropped node.
+				targetNode.Expand();
 			}
 		}
 
 		private void appTree_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
 		{
-			e.Effect = DragDropEffects.Move; 
+			e.Effect = e.AllowedEffect;
 		}
 
 		private void appTree_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
 		{
-			DoDragDrop(e.Item, DragDropEffects.Move); 		
+			// Move the dragged node when the left mouse button is used.
+			if (e.Button == MouseButtons.Left)
+			{
+				DoDragDrop(e.Item, DragDropEffects.Move);
+			}
+
+				// Copy the dragged node when the right mouse button is used.
+			else if (e.Button == MouseButtons.Right) 
+			{
+				DoDragDrop(e.Item, DragDropEffects.Copy);
+			}
 		}
+
+		// Determine whether one node is a parent 
+		// or ancestor of a second node.
+		private bool ContainsNode(TreeNode node1, TreeNode node2)
+		{
+			// Check the parent node of the second node.
+			if (node2.Parent == null) return false;
+			if (node2.Parent.Equals(node1)) return true;
+
+			// If the parent node is not null or equal to the first node, 
+			// call the ContainsNode method recursively using the parent of 
+			// the second node.
+			return ContainsNode(node1, node2.Parent);
+		}
+
+
 
 		private void toolBarMenu_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
@@ -884,6 +932,15 @@ namespace WindowPlugins.GUIPrograms
 					e.Cancel = true;
 				}
 			}
+		}
+
+		private void appTree_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+		{
+			// Retrieve the client coordinates of the mouse position.
+			Point targetPoint = appTree.PointToClient(new Point(e.X, e.Y));
+
+			// Select the node at the mouse position.
+			appTree.SelectedNode = appTree.GetNodeAt(targetPoint);
 		}
 
 	}
