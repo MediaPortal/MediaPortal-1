@@ -36,6 +36,8 @@ namespace MediaPortal.TV.Recording
 		// two skystar2 specific globals
 		bool								m_setPid=false;
 		DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 m_dataControl=null;
+		System.Timers.Timer					m_eitTimeoutTimer=null;
+		bool								m_breakAction=false;
 		//
 
 		//
@@ -43,6 +45,8 @@ namespace MediaPortal.TV.Recording
 		{
 			m_sectionsList=new ArrayList();	
 			transp=new TPList[200];
+			m_eitTimeoutTimer=new System.Timers.Timer(3000);
+			m_eitTimeoutTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_eitTimeoutTimer_Elapsed);
 		}
 		//
 		public int Timeout
@@ -367,34 +371,34 @@ namespace MediaPortal.TV.Recording
 						// parse pmt
 						int res=0;
 						//if (pat.program_number==serviceId)
+					{
+						Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
+						foreach(byte[] wdata in m_sectionsList)
 						{
-							Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
-							GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
-							foreach(byte[] wdata in m_sectionsList)
+							if (pat.program_number==serviceId)
 							{
-								if (pat.program_number==serviceId)
-								{
-									Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
-									for (int l=0; l < wdata.Length;++l)
-										sectionTable.Add(wdata[l]);
-								}
-								Debug.WriteLine("decode PMT:"+n.ToString());
-								res=decodePMTTable(wdata, transp[0], transponder,ref pat);
+								Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
+								for (int l=0; l < wdata.Length;++l)
+									sectionTable.Add(wdata[l]);
 							}
-
-							if(res>0)
-							{
-
-								Debug.WriteLine("decode SDT table42");
-								foreach(byte[] wdata in tab42)
-									decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-
-								Debug.WriteLine("decode SDT table46");
-								foreach(byte[] wdata in tab46)
-									decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-							}
-							transponder.channels.Add(pat);
+							Debug.WriteLine("decode PMT:"+n.ToString());
+							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
 						}
+
+						if(res>0)
+						{
+
+							Debug.WriteLine("decode SDT table42");
+							foreach(byte[] wdata in tab42)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+
+							Debug.WriteLine("decode SDT table46");
+							foreach(byte[] wdata in tab46)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+						}
+						transponder.channels.Add(pat);
+					}
 					}
 				}
 
@@ -545,7 +549,7 @@ namespace MediaPortal.TV.Recording
 						chan.ECMPid=0;
 						chan.DiSEqC=0;
 						Log.Write("name:{0} audio:{1:X} video:{2:X} txt:{3:X} EIT:{4} EITPF:{5}",
-										chan.ServiceName,chan.AudioPid,chan.VideoPid,chan.TeletextPid,chan.HasEITSchedule,chan.HasEITPresentFollow);
+							chan.ServiceName,chan.AudioPid,chan.VideoPid,chan.TeletextPid,chan.HasEITSchedule,chan.HasEITPresentFollow);
 					}
 				}
 			}
@@ -730,7 +734,7 @@ namespace MediaPortal.TV.Recording
 										pmt.isTeletext=true;
 										pmt.teletextLANG=DVB_GetTeletextDescriptor(data);
 										break;
-									//case 0xc2:
+										//case 0xc2:
 									case 0x59:
 										pmt.isDVBSubtitle=true;
 										pmt.data=DVB_SubtitleDescriptior(data);
@@ -774,21 +778,21 @@ namespace MediaPortal.TV.Recording
 			len = descriptor_length;
 			byte[] bytes=new byte[len+1];
 			if(len<b.Length)
-			if (descriptor_tag==0x56)
-			{
-				int pointer  = 2;
-
-				while ( len > 0 && (pointer+3<=b.Length)) 
+				if (descriptor_tag==0x56)
 				{
-					System.Array.Copy(b,pointer,bytes,0,3);
-					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
-					teletext_type		= (bytes[3]>>3) & 0x1F;
-					teletext_magazine_number	= bytes[3] & 7;
-					teletext_page_number	= bytes[4];
-					pointer += 5;
-					len -= 5;
+					int pointer  = 2;
+
+					while ( len > 0 && (pointer+3<=b.Length)) 
+					{
+						System.Array.Copy(b,pointer,bytes,0,3);
+						ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
+						teletext_type		= (bytes[3]>>3) & 0x1F;
+						teletext_magazine_number	= bytes[3] & 7;
+						teletext_page_number	= bytes[4];
+						pointer += 5;
+						len -= 5;
+					}
 				}
-			}
 			if(ISO_639_language_code.Length>=3)
 				return ISO_639_language_code.Substring(0,3);
 			return "";
@@ -846,23 +850,23 @@ namespace MediaPortal.TV.Recording
 			descriptor_tag= b[0];
 			descriptor_length= b[1];
 			if(descriptor_length<b.Length)
-			if(descriptor_tag==0xa)
-			{
-				len = descriptor_length;
-				byte[] bytes=new byte[len+1];
-
-				int pointer= 2;
-
-				while ( len > 0) 
+				if(descriptor_tag==0xa)
 				{
-					System.Array.Copy(b,pointer,bytes,0,len);
-					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
-					if(bytes.Length>=4)
-						audio_type = bytes[3];
-					pointer += 4;
-					len -= 4;
+					len = descriptor_length;
+					byte[] bytes=new byte[len+1];
+
+					int pointer= 2;
+
+					while ( len > 0) 
+					{
+						System.Array.Copy(b,pointer,bytes,0,len);
+						ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
+						if(bytes.Length>=4)
+							audio_type = bytes[3];
+						pointer += 4;
+						len -= 4;
+					}
 				}
-			}
 			
 			return ISO_639_language_code;
 		}
@@ -878,9 +882,9 @@ namespace MediaPortal.TV.Recording
 			int      asvc_flag;
 			int      reserved_1;
 			int      component_type=0;
-//			int      bsid_type=0;
-//			int      mainid_type=0;
-//			int      asvc_type=0;
+			//			int      bsid_type=0;
+			//			int      mainid_type=0;
+			//			int      asvc_type=0;
 			int      len;
 
 
@@ -907,22 +911,22 @@ namespace MediaPortal.TV.Recording
 			if (bsid_flag!=0) 
 			{
 				pointer++;
-//				bsid_flag	= b[pointer];
-//				len--;
+				//				bsid_flag	= b[pointer];
+				//				len--;
 			}
 
 			if (mainid_flag!=0) 
 			{
 				pointer++;
-//				mainid_flag	= b[pointer];
-//				len--;
+				//				mainid_flag	= b[pointer];
+				//				len--;
 			}
 
 			if (asvc_flag!=0) 
 			{
 				pointer++;
-//				asvc_flag	= b[pointer];
-//				len--;
+				//				asvc_flag	= b[pointer];
+				//				len--;
 			}
 			if((component_type & 0x4)!=0)// multichannel
 				return true;
@@ -971,12 +975,12 @@ namespace MediaPortal.TV.Recording
 				running_status = (buf[pointer+3]>>5) & 7;
 				free_CA_mode = (buf[pointer+3]>>4) &1;
 				descriptors_loop_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
-					//
+				//
 				pointer += 5;
 				len1 -= 5;
 				len2 = descriptors_loop_length;
 				
-					//
+				//
 				while (len2 > 0)
 				{
 					int indicator=buf[pointer];
@@ -1042,7 +1046,7 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 
-		private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo)
+		private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo,int lastSection,bool flag)
 		{
 			int table_id;
 			int section_syntax_indicator;
@@ -1172,10 +1176,16 @@ namespace MediaPortal.TV.Recording
 					pointer += x;
 					len2 -= x;
 				}
-				eitInfo.eitList.Add(eit);
+				if(eit.program_number>0)
+					eitInfo.eitList.Add(eit);
 			}
 			//eitInfo.evt_info_act_ts=eit;
-			return 0;
+			if(section_number==0 && lastSection==last_section_number && flag==false)
+				return -1;// start grab
+			if(section_number==0 && lastSection==last_section_number && flag==true)
+				return -2;// end grab
+
+			return section_number; // normal grab
 		}
 		private void DVB_ShortEvent(byte[] buf, ref EITDescr eit)
 		{
@@ -1214,7 +1224,7 @@ namespace MediaPortal.TV.Recording
 			int      user_nibble_2;
 			int nibble=0;
 			string genereText="";
-            int           len;
+			int           len;
 			byte[]	b=new byte[2];
 
 
@@ -1704,15 +1714,72 @@ namespace MediaPortal.TV.Recording
 			returnValue = System.Convert.ToByte(Math.Pow(InByte,(Math.Pow(2, Bit))));
 			return returnValue;
 		}
-
-		//
 		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter)
 		{
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
 			GetStreamData(filter,18,tab,1,200);
+
 			foreach(byte[] arr in m_sectionsList)
-				decodeEITTable(arr,ref eit);
+				decodeEITTable(arr,ref eit,0,false);
+			return eit.eitList;
+		}
+		//
+		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter,ref int lastTab)
+		{
+			EIT_Program_Info eit=new EIT_Program_Info();
+			eit.eitList=new ArrayList();
+			EITDescr descr=new EITDescr();
+
+			bool startFlag=false;
+			bool endFlag=false;
+			int ret=-1;
+			m_breakAction=false;
+			m_eitTimeoutTimer.Interval=60000;// one minute
+			m_eitTimeoutTimer.Start();
+			while(1!=0)
+			{
+				System.Windows.Forms.Application.DoEvents();
+				GetStreamData(filter,18,tab,1,1500);
+
+				foreach(byte[] arr in m_sectionsList)
+					ret=decodeEITTable(arr,ref eit,ret,startFlag);
+				
+				if(eit.eitList.Count>0)
+				{
+					descr=(EITDescr)eit.eitList[0];
+					lastTab=descr.lastTable;
+					Log.Write("epg-grab: last Table={0}",lastTab);
+				}
+				
+				if(ret==-1)
+				{
+					startFlag=true;
+					Log.Write("epg-grab: start grabbing table");
+					m_eitTimeoutTimer.Start();
+				}
+				if(ret==-2)
+				{
+					endFlag=true;
+					Log.Write("epg-grab: end grabbing table");
+					m_eitTimeoutTimer.Start();
+				}
+
+				if(startFlag==false)
+				{
+					eit.eitList.Clear();
+				}
+
+				if(startFlag==true && endFlag==true)
+					break;
+				
+				if(m_breakAction==true)
+				{
+					Log.Write("epg-grab: FAILED timeout on getting epg");
+					break;
+				}
+
+			}
 
 			return eit.eitList;
 		}
@@ -1766,13 +1833,14 @@ namespace MediaPortal.TV.Recording
 			
 			GC.Collect();
 			return 	eventsCount;
+			return 0;
 
 		}
 		//
 		public long GetStartDateFromEIT(EITDescr data)
 		{
 			
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
+			string chName=TVDatabase.GetSatChannelName(data.program_number,data.ts_id);
 			try
 			{
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
@@ -1788,7 +1856,7 @@ namespace MediaPortal.TV.Recording
 		public long GetEndDateFromEIT(EITDescr data)
 		{
 			
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
+			string chName=TVDatabase.GetSatChannelName(data.program_number,data.ts_id);
 			try
 			{
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
@@ -1806,68 +1874,48 @@ namespace MediaPortal.TV.Recording
 		}
 
 		//
-		public int GrabEIT(DShowNET.IBaseFilter filter)
+		public int GrabEIT(DShowNET.IBaseFilter filter,int serviceID)
 		{
 			// there must be an ts (card tuned) to get eit
 			
 			int eventsCount=0;
 
 			ArrayList eitList=new ArrayList();
-//			eitList=GetEITSchedule(0x4e,filter);
-//			foreach(EITDescr eit in eitList)
-//			{
-//				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-//				eventsCount+=SetEITToDatabase(eit,progName,0x4e);
-//			}
-//			eitList=GetEITSchedule(0x4f,filter);
-//			foreach(EITDescr eit in eitList)
-//			{
-//				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-//				eventsCount+=SetEITToDatabase(eit,progName,0x4f);
-//			}
-			int lastTable=0x50;
 
-				eitList=GetEITSchedule(0x50,filter);
-				foreach(EITDescr eit in eitList)
-				{
-					if(eit.lastTable>lastTable)
-						lastTable=eit.lastTable;
-					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-					eventsCount+=SetEITToDatabase(eit,progName,0x50);
-				}
-
-			for(int table=0x51;table<lastTable;table++)
+			int lastTab=0;
+			eitList=GetEITSchedule(0x50,filter,ref lastTab);
+			Log.Write("epg-grabber: got {0} events for this grab",eitList.Count);
+			int n=0;
+			foreach(EITDescr eit in eitList)
 			{
-					eitList=GetEITSchedule(table,filter);
+				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
+				Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
+				if(progName==null)
+				{
+					Log.Write("epg-grab: FAILED name is NULL");
+					continue;
+				}
+				if(progName=="")
+					Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
+
+				eventsCount+=SetEITToDatabase(eit,progName,0x50);
+				n++;
+			}
+			if(lastTab>0x50)
+			{
+				for(int tab=0x51;tab<lastTab;tab++)
+				{
+					eitList=GetEITSchedule(0x50,filter,ref lastTab);
+					Log.Write("epg-grabber: got {0} events for this grab",eitList.Count);
 					foreach(EITDescr eit in eitList)
 					{
-						string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+						string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
 						eventsCount+=SetEITToDatabase(eit,progName,0x50);
 					}
 
-			}
-
-			lastTable=0x60;
-			eitList=GetEITSchedule(0x60,filter);
-
-			foreach(EITDescr eit in eitList)
-			{
-				if(eit.lastTable>lastTable)
-					lastTable=eit.lastTable;
-				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-				eventsCount+=SetEITToDatabase(eit,progName,0x50);
-			}
-			for(int table=0x61;table<lastTable;table++)
-			{
-				eitList=GetEITSchedule(table,filter);
-				foreach(EITDescr eit in eitList)
-				{
-					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-					eventsCount+=SetEITToDatabase(eit,progName,0x50);
 				}
-
-
-			}			
+			}
+		
 			GC.Collect();
 			return 	eventsCount;
 
@@ -1881,19 +1929,15 @@ namespace MediaPortal.TV.Recording
 				TVProgram tv=new TVProgram();
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 				date=date.ToLocalTime();
-				if(date<System.DateTime.Now)
-					return 0;
 				System.DateTime dur=new DateTime();
 				dur=date;
 				dur=dur.AddHours((double)data.duration_hh);
 				dur=dur.AddMinutes((double)data.duration_mm);
 				dur=dur.AddSeconds((double)data.duration_ss);
-				if(dur<date)
-					return 0;
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
 				tv.Title=data.event_name;
-				tv.Description=data.event_text;
+				tv.Description=data.event_item_text;
 
 
 				if(tv.Title=="" || tv.Title=="n.a.") 
@@ -1901,24 +1945,34 @@ namespace MediaPortal.TV.Recording
 					Log.Write("epg: entrie without title found");
 					return 0;
 				}
-
+				long checkStart=0;
+				long checkEnd=0;
+				// for check
+				checkStart=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute+2,date.Second);
+				checkEnd=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute-2,dur.Second);
+				//
 				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				ArrayList programsInDatabase = new ArrayList();
-				TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start,tv.End,ref programsInDatabase);
+				TVDatabase.GetProgramsPerChannel(tv.Channel,checkStart,checkEnd,ref programsInDatabase);
 				if(programsInDatabase.Count==0 && channelName!="")
 				{
 					int programID=TVDatabase.AddProgram(tv);
-					TVDatabase.RemoveOverlappingPrograms();
+					//TVDatabase.RemoveOverlappingPrograms();
 					if(programID!=-1)
 					{
-						Log.Write("added to database for channel {0} event start:{1} end:{2} text:{3}",tv.Channel,tv.Start,tv.End,data.event_name);
 						retVal= 1;
 					}
 				}
+				else
+					Log.Write("epg-grab: FAILED to add to database: {0} : {1}",tv.Start,tv.End);
 				return retVal;
 			}
-			catch{return 0;}
+			catch(Exception ex)
+			{
+				Log.Write("epg-grab: FAILED to add to database. message:{0}",ex.Message);
+				return 0;
+			}
 		}
 		//
 		public void SetEITToDatabase(EITDescr data, string channelName)
@@ -1928,15 +1982,11 @@ namespace MediaPortal.TV.Recording
 				TVProgram tv=new TVProgram();
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 				date=date.ToLocalTime();
-				if(date<System.DateTime.Now)
-					return;
 				System.DateTime dur=new DateTime();
 				dur=date;
 				dur=dur.AddHours((double)data.duration_hh);
 				dur=dur.AddMinutes((double)data.duration_mm);
 				dur=dur.AddSeconds((double)data.duration_ss);
-				if(dur<date)
-					return;
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
 				tv.Description=data.event_item_text;
@@ -2359,6 +2409,11 @@ namespace MediaPortal.TV.Recording
 				case 0xFFfe: return "ESTI Private" ;
 				default: return "Unknown Network Provider";
 			}
+		}
+
+		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			m_breakAction=true;
 		}
 	}// class
 }// namespace

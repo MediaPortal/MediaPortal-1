@@ -404,7 +404,7 @@ namespace MediaPortal.TV.Recording
 			if(m_videoDataFound==false && m_retryCount>=0)
 			{
 				m_retryCount++;
-				if(m_retryCount>=200)//
+				if(m_retryCount>=250)//
 				{
 					m_retryCount=0;
 					CyclePid();

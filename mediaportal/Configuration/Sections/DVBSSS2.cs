@@ -2371,7 +2371,7 @@ namespace MediaPortal.Configuration.Sections
 			// services
 			foreach(DVBChannel channel in chList)
 			{
-				if(channel.ToString()!="")
+				if(channel.ToString()!="" && channel.HasEITSchedule==true)
 				{
 					TreeNode node=GetNodeByTag(channel.ServiceProvider,provider);
 					if(node!=null)
@@ -2389,6 +2389,15 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
+			foreach(TreeNode tn in tv.Nodes)
+			{
+				try
+				{
+					if(tn.Nodes.Count<1)
+						tn.Checked=false;
+				}
+				catch{}
+			}
 		}
 		private void button6_Click_2(object sender, System.EventArgs e)
 		{
@@ -2679,59 +2688,51 @@ namespace MediaPortal.Configuration.Sections
 					channelCount+=parentNode.Nodes.Count;
 			}
 			progressBar2.Maximum=channelCount+1;
-			DVBChannel oldChannel=null;
+			DVBChannel oldChannel=new DVBChannel();
 			do
 			{
 				GC.Collect();
 				foreach(TreeNode parentNode in treeView5.Nodes)
-				foreach(TreeNode tn in parentNode.Nodes)
 				{
 					if(m_stopEPGGrab==true)
 						break;
-					if(tn.Checked==true)
+			
+					foreach(TreeNode tn in parentNode.Nodes)
 					{
+						if(m_stopEPGGrab==true)
+							break;
+						if(tn.Checked==true)
+						{
 						
-						DVBChannel ch=(DVBChannel)tn.Tag;
-						if(m_stopEPGGrab==true)
-							break;
-						if(ch==null)
-							continue;
-						if(oldChannel==null)
-						{
-							oldChannel=ch;
+							DVBChannel ch=(DVBChannel)tn.Tag;
+							if(m_stopEPGGrab==true)
+								break;
+							if(ch==null)
+								continue;
 							tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
 							if(tuned==false)
 								continue ;
-						}
-						if(oldChannel.Frequency!=ch.Frequency || oldChannel.Symbolrate!=ch.Symbolrate
-							|| oldChannel.FEC!=ch.FEC || oldChannel.Polarity!=ch.Polarity
-							|| oldChannel.LNBKHz!=ch.LNBKHz || oldChannel.DiSEqC!=ch.DiSEqC || oldChannel.LNBFrequency!=ch.LNBFrequency)
-						{
-							oldChannel=ch;
-							tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
-							if(tuned==false)
-								continue ;
-						}
-						currChannel.Text=ch.ServiceName;
-						counter+=m_dvbSec.GrabEIT(m_b2c2Helper.Mpeg2DataFilter);
-						totalDBcount.Text=counter.ToString();
-						Application.DoEvents();
-						if(m_stopEPGGrab==true)
-							break;
+							currChannel.Text=ch.ServiceName;
+							counter+=m_dvbSec.GrabEIT(m_b2c2Helper.Mpeg2DataFilter,ch.ProgramNumber);
+							totalDBcount.Text=counter.ToString();
+							Application.DoEvents();
+							if(m_stopEPGGrab==true)
+								break;
 
 						
-						//
-						// refresh prograssbar
-						try
-						{
-							progressBar2.Value=progressBar2.Value+1;
+							//
+							// refresh prograssbar
+							try
+							{
+								progressBar2.Value++;
+							}
+							catch
+							{
+							}
 						}
-						catch
-						{
-							progressBar2.Value=0;
-						}
+						Application.DoEvents();
 					}
-					Application.DoEvents();
+					progressBar2.Value=0;
 				}
 			}while(m_stopEPGGrab==false);
 			button15.Enabled=true;
