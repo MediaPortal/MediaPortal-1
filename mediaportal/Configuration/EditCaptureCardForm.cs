@@ -84,6 +84,9 @@ namespace MediaPortal.Configuration
 
 			SetupCaptureFormats();
 			frameSizeComboBox.Items.AddRange(captureFormats.ToArray());
+
+
+      SetupPropertyPages();
 		}
 
 		/// <summary>
@@ -431,7 +434,18 @@ namespace MediaPortal.Configuration
 			{
 				return null;
 			}
-			
+      if (m_bMPEG2)
+      {
+        videoCompressorComboBox.Enabled=false;
+        audioCompressorComboBox.Enabled=false;
+        audioDeviceComboBox.Enabled=false;
+      }
+      else
+      {
+        videoCompressorComboBox.Enabled=true;
+        audioCompressorComboBox.Enabled=true;
+        audioDeviceComboBox.Enabled=true;
+      }
 			return capture;
 		}
 
