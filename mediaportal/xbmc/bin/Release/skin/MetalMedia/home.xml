@@ -29,8 +29,8 @@
 		<posX>70</posX>
 		<posY>150</posY>
 		<width>215</width>
-		<height>255</height>
-		<texture>home-bluebox.png</texture>
+		<height>249</height>
+		<texture>-</texture>
 	</control>
 	<control>
 	  <description>template for hover image</description>
@@ -44,7 +44,7 @@
 		<visible>no</visible>
 	</control>
 	<control>
-		<description>template for buton</description>
+		<description>template for button</description>
 		<type>button</type>
 		<id>1001</id>
 		<posX>79</posX>

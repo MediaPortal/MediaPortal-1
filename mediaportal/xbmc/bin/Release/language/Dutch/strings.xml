@@ -914,6 +914,10 @@
 		<value>Voortgang</value>
 	</string>
 	<string>
+		<id>299</id>
+		<value>Speelduur</value>
+	</string>
+	<string>
 		<id>300</id>
 		<value>1. Taal</value>
 	</string>
@@ -3997,11 +4001,11 @@
   </string>
   <string>
   	<id>13006</id>
-  	<value>Klein plaatje</value>
+  	<value>Groot plaatje</value>
   </string>
   <string>
   	<id>13007</id>
-  	<value>Groot plaatje</value>
+  	<value>Klein plaatje</value>
   </string>
   <string>
   	<id>13008</id>

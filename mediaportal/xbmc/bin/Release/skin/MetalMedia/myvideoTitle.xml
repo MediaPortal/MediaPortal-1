@@ -24,16 +24,7 @@
 		<colordiffuse>20ffffff</colordiffuse>
 		<texture>myvideos.png</texture>
 	</control>
-	<control>
-		<description>Panel</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>50</posX>
-		<posY>100</posY>
-		<width>190</width>
-		<height>272</height>
-		<texture>panel.png</texture>
-	</control>
+
 	<control>
 		<description>My Movies/Title text label</description>
 		<type>label</type>
@@ -54,6 +45,17 @@
 		<font>font14</font>
 		<align>right</align>
 		<textcolor>FFB2D4F5</textcolor>
+	</control>
+
+	<control>
+		<description>Panel</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>50</posX>
+		<posY>100</posY>
+		<width>190</width>
+		<height>272</height>
+		<texture>panel.png</texture>
 	</control>
 	<control>
 		<description>View-As button</description>
@@ -111,7 +113,7 @@
 		<onleft>3</onleft>
 		<onright>10</onright>
 		<onup>3</onup>
-		<ondown>6</ondown>
+		<ondown>20</ondown>
 		<subitems>
 			<subitem>342</subitem>
 			<subitem>135</subitem>
@@ -119,18 +121,30 @@
 			<subitem>345</subitem>
 			<subitem>369</subitem>
 		</subitems>
-
+	</control>
+	<control>
+		<description>Playlist button</description>
+		<type>button</type>
+		<id>20</id>
+		<posX>55</posX>
+		<posY>217</posY>
+		<label>136</label>
+		<action>33</action>
+		<onleft>20</onleft>
+		<onright>10</onright>
+		<onup>5</onup>
+		<ondown>6</ondown>
 	</control>
 	<control>
 		<description>Play DVD</description>
 		<type>button</type>
 		<id>6</id>
 		<posX>55</posX>
-		<posY>217</posY>
+		<posY>245</posY>
 		<label>341</label>
 		<onleft>3</onleft>
 		<onright>10</onright>
-		<onup>5</onup>
+		<onup>20</onup>
 		<ondown>7</ondown>
 	</control>
 	<control>
@@ -138,13 +152,42 @@
 		<type>button</type>
 		<id>7</id>
 		<posX>55</posX>
-		<posY>245</posY>
+		<posY>273</posY>
 		<label>346</label>
 		<onleft>3</onleft>
 		<onright>10</onright>
 		<onup>6</onup>
 		<ondown>2</ondown>
 	</control>
+
+  <control> <!-- Below panel -->
+  	<type>imagelist</type>
+  	<id>101</id>
+  	<posX>135</posX>
+  	<posY>380</posY>
+  	<width>100</width>
+  	<height>32</height>
+  	<textureWidth>16</textureWidth>
+  	<textureHeight>16</textureHeight>
+  	<subitems>
+  		<subitem>greystar.png</subitem>
+  		<subitem>star.png</subitem>
+  	</subitems>
+  	<orientation>horizontal</orientation>
+  	<align>left</align>
+  	<percentage>#rating</percentage>
+  </control>
+  <control>
+  	<description>year</description>
+  	<type>label</type>
+  	<id>1</id>
+  	<posX>60</posX>
+  	<posY>378</posY>
+  	<label>#year</label>
+  	<font>font14</font>
+  	<align>left</align>
+  </control>
+
 	<control>
 		<description>composite control consisting of a list control and a thumbnail panel</description>
     <type>facadeview</type>

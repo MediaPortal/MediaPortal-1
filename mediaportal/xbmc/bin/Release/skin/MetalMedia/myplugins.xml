@@ -29,7 +29,7 @@
 		<posX>70</posX>
 		<posY>150</posY>
 		<width>215</width>
-		<height>255</height>
+		<height>249</height>
 		<texture>home-bluebox.png</texture>
 	</control>	
 	<control>
