@@ -2302,6 +2302,13 @@
 	<id>868</id>
 	<value>Reset</value>
 </string>
+
+<!-- Default name for new alarm -->
+<string>
+	<id>869</id>
+	<value>NewAlarm</value>
+</string>
+
 <!-- End My Alarm Strings -->
 
 <string>
@@ -2589,6 +2596,9 @@
 	<string><id>1974</id><value>Memory</value></string>
 	<string><id>1975</id><value>Next Page</value></string>
 	<string><id>1976</id><value>rpm</value></string>	
+	<string><id>1977</id><value>Filesystem</value></string>	
+	<string><id>1978</id><value>VirtualMem</value></string>	
+	
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Delete</value></string>
 	<string><id>2006</id><value>Title</value></string>
