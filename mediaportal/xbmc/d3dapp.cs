@@ -1069,7 +1069,13 @@ namespace MediaPortal
       FrameMove();
 
       // Render the scene as normal
-      Render();
+      bool bDoRender=true;
+      if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
+      if (bDoRender) 
+      {
+        Render();
+      }
+      else System.Threading.Thread.Sleep(10);
 
       UpdateStats();
 

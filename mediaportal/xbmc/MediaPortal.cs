@@ -18,7 +18,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
 using MediaPortal.Dialogs;
 
-public class MediaPortalApp : D3DApp
+public class MediaPortalApp : D3DApp, IRender
 {
 
     int       m_iLastMousePositionX=0;
@@ -174,7 +174,7 @@ public class MediaPortalApp : D3DApp
 
       //registers the player for video window size notifications
       Log.Write("Init players");
-      g_Player.Init();
+      g_Player.Init(this);
       Log.Write("done");
     }
 
@@ -211,6 +211,34 @@ public class MediaPortalApp : D3DApp
     {
       FullRender();
       System.Windows.Forms.Application.DoEvents();
+    }
+
+    public void RenderFrame()
+    {
+      try
+      {
+        bool bIsFullscreen=GUIGraphicsContext.IsFullScreenVideo;
+        GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        // ask the window manager to render the current active window
+        GUIWindowManager.Render(); 
+
+        GUIWindowManager.DispatchThreadMessages();
+        //g_Player.Process();
+
+        // update playing status
+        if (g_Player.Playing)
+        {
+          GUIGraphicsContext.IsPlaying=true;
+        }
+        else
+        {
+          if (!Recorder.Previewing)
+            GUIGraphicsContext.IsFullScreenVideo=false;
+          GUIGraphicsContext.IsPlaying=false;
+        }
+
+      }
+      catch(Exception){}
     }
 
     /// <summary>
@@ -263,9 +291,7 @@ public class MediaPortalApp : D3DApp
         }
       }
 
-      // sleep 10msec so we dont use 100% cpu time
-      System.Threading.Thread.Sleep(10);
-
+      
       // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device==null) return;
 
