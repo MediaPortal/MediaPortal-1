@@ -32,6 +32,7 @@ namespace MediaPortal.TV.Recording
 		int									m_lnbkhz=0;
 		int									m_lnbfreq=0;
 		int									m_selKhz=0;
+		int									m_timeoutMS=1000; // the timeout in milliseconds
 		// two skystar2 specific globals
 		bool								m_setPid=false;
 		DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 m_dataControl=null;
@@ -42,6 +43,12 @@ namespace MediaPortal.TV.Recording
 		{
 			m_sectionsList=new ArrayList();	
 			transp=new TPList[200];
+		}
+		//
+		public int Timeout
+		{
+			get{return m_timeoutMS;}
+			set{m_timeoutMS=value;}
 		}
 		// tables
 		public struct EITDescr
@@ -145,6 +152,7 @@ namespace MediaPortal.TV.Recording
 			public bool		isAudio;
 			public bool		isVideo;
 			public bool		isTeletext;
+			public bool		isDVBSubtitle;
 			public string	teletextLANG;
 		}
 		//
@@ -520,9 +528,9 @@ namespace MediaPortal.TV.Recording
 			// check tables
 			//AddTSPid(17);
 			//
-			GetStreamData(filter,17, 0x42,0,5000);
+			GetStreamData(filter,17, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,17, 0x46,0,5000);
+			GetStreamData(filter,17, 0x46,0,250); // low value, nothing in most of time
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//bool flag;
@@ -554,7 +562,7 @@ namespace MediaPortal.TV.Recording
 						DVBSkyStar2Helper.SetPidToPin(m_dataControl,0,pat.network_pmt_PID);
 					}
 
-					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
 						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
 
@@ -690,6 +698,11 @@ namespace MediaPortal.TV.Recording
 									case 0x56:
 										pmt.isTeletext=true;
 										pmt.teletextLANG=DVB_GetTeletextDescriptor(data);
+										break;
+									//case 0xc2:
+									case 0x59:
+										pmt.isDVBSubtitle=true;
+										pmt.data=DVB_SubtitleDescriptior(data);
 										break;
 									default:
 										pmt.data="";
@@ -1231,9 +1244,6 @@ namespace MediaPortal.TV.Recording
 						case 0x54:
 							DVB_ContentDescription(descrEIT,ref eit);
 							break;
-						case 0x50:
-							DVB_ComponentDescription(descrEIT,ref eit);
-							break;
 							
 					}
 
@@ -1475,13 +1485,43 @@ namespace MediaPortal.TV.Recording
 				}
 		}
 		//
-		void DVB_ComponentDescription(byte[] buf,ref EITDescr eit)
+		string DVB_SubtitleDescriptior(byte[] buf)
 		{
-			if(buf[4]>=0x20 && buf[4]<=0x23)
-			{
-				System.Windows.Forms.MessageBox.Show("Gefunden");
-			}
-			int a=0;
+			int		descriptor_tag;
+			int     descriptor_length;		
+			string  ISO_639_language_code="";
+			int		subtitling_type	;
+			int		composition_page_id;
+			int		ancillary_page_id;
+			int     len;
+
+			descriptor_tag= buf[0];
+			descriptor_length= buf[1];
+			if(descriptor_length<buf.Length)
+				if(descriptor_tag==0x59)
+				{
+					len = descriptor_length;
+					byte[] bytes=new byte[len+1];
+
+					int pointer= 2;
+
+					while ( len > 0) 
+					{
+						System.Array.Copy(buf,pointer,bytes,0,len);
+						ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
+						if(bytes.Length>=4)
+							subtitling_type = bytes[3];
+						if(bytes.Length>=6)
+							composition_page_id = (bytes[4]<<8)+bytes[5];
+						if(bytes.Length>=8)
+							ancillary_page_id = (bytes[6]<<8)+bytes[7];
+						
+						pointer += 8;
+						len -= 8;
+					}
+				}
+			
+			return ISO_639_language_code;		
 		}
 		//
 		private object DVB_ExtendedEvent(byte[] buf, ref EITDescr eit)
@@ -1794,6 +1834,7 @@ namespace MediaPortal.TV.Recording
 				for(int table=0x51;table<lastTable;table++)
 				{
 					eitList=GetEITSchedule(table,filter);
+					eventsCount+=eitList.Count;
 					foreach(EITDescr eit in eitList)
 						SetEITToDatabase(eit,ch.ServiceName);
 
@@ -1984,7 +2025,7 @@ namespace MediaPortal.TV.Recording
 			m_setPid=true;
 			m_dataControl=dataCtrl;
 			int count=0;
-			GetStreamData(filter,0, 0,0,5000);
+			GetStreamData(filter,0, 0,0,m_timeoutMS);
 			foreach(byte[] arr in m_sectionsList)
 				count=decodePATTable(arr, tp, ref transponder);
 			if(count>0)
@@ -1995,7 +2036,7 @@ namespace MediaPortal.TV.Recording
 		{
 			
 			m_setPid=false;
-			GetStreamData(filter,0, 0,0,5000);
+			GetStreamData(filter,0, 0,0,m_timeoutMS);
 			foreach(byte[] arr in m_sectionsList)
 				decodePATTable(arr, tp, ref transponder);
 			LoadPMTTables(filter,tp,ref transponder);
