@@ -158,7 +158,11 @@ namespace MediaPortal.TV.Recording
       {
         if (g_Player.Playing && g_Player.IsTV)
         {
-          g_Player.Stop();
+          string strExt=System.IO.Path.GetExtension(g_Player.CurrentFile).ToLower();
+          if (strExt.Equals(".tv"))
+          {
+            g_Player.Stop();
+          }
         }
         // stop timeshifting
         // check each card to see if it is timeshifting
