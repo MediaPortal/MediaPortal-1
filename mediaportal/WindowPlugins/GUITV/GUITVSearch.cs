@@ -143,7 +143,8 @@ namespace MediaPortal.GUI.TV
 						_FilterShow="";
             _SearchKind=-1;
             _SearchCriteria=String.Empty;
-            Update();
+						Update();
+						GUIControl.FocusControl(GetID,iControl);
           }
           if (iControl==(int)Controls.SearchByTitle)
 					{
@@ -154,7 +155,8 @@ namespace MediaPortal.GUI.TV
             _Level=0;
             _SearchKind=-1;
             _SearchCriteria=String.Empty;
-            Update();
+						Update();
+						GUIControl.FocusControl(GetID,iControl);
 					}
 					if (iControl==(int)Controls.SearchByDescription)
 					{
@@ -166,6 +168,7 @@ namespace MediaPortal.GUI.TV
 						_SearchKind=-1;
 						_SearchCriteria=String.Empty;
 						Update();
+						GUIControl.FocusControl(GetID,iControl);
 					}
           if (iControl==(int)Controls.SortAscending)
           {
@@ -211,6 +214,7 @@ namespace MediaPortal.GUI.TV
 						_FilterShow="";
 						_FilterEpsiode="";
 						Update();
+						GUIControl.FocusControl(GetID,iControl);
 					}
 					if (iControl==(int)Controls.btnShow)
 					{
@@ -219,6 +223,7 @@ namespace MediaPortal.GUI.TV
 						_FilterShow=msg.Label;
 						_FilterEpsiode="";
 						Update();
+						GUIControl.FocusControl(GetID,iControl);
 					}
 					if (iControl==(int)Controls.btnEpisode)
 					{
@@ -226,6 +231,7 @@ namespace MediaPortal.GUI.TV
 						OnMessage(msg);
 						_FilterEpsiode=msg.Label;
 						Update();
+						GUIControl.FocusControl(GetID,iControl);
 					}
 					break;
 
@@ -347,6 +353,7 @@ namespace MediaPortal.GUI.TV
 										add=false;
 									}
 								}
+								if (!add && _FilterShow=="") continue;
 								if (add)
 								{
 									programs.Add(program);
@@ -420,6 +427,7 @@ namespace MediaPortal.GUI.TV
 										add=false;
 									}
 								}
+								if (!add && _FilterShow=="") continue;
 								if (add)
 								{
 									programs.Add(program);
@@ -496,6 +504,7 @@ namespace MediaPortal.GUI.TV
 									add=false;
 								}
 							}
+							if (!add && _FilterShow=="") continue;
 							if (add)
 							{
 								programs.Add(program);
