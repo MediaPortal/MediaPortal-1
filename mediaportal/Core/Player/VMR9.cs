@@ -248,6 +248,14 @@ namespace MediaPortal.Player
 			allocator.Repaint();
 		}
 
+		public void Process()
+		{
+			if (allocator!=null && VMR9Filter!=null && UseVMR9inMYTV)
+			{
+				allocator.Process();
+			}
+		}
+
 		/// <summary>
 		/// This method returns true if VMR9 is enabled AND WORKING!
 		/// this allows players to check if if VMR9 is working after setting up the playing graph

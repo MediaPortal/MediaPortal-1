@@ -752,7 +752,7 @@ namespace MediaPortal.TV.Recording
     static public void Process()
     {
       if (m_eState!=State.Initialized) return;
-			if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f)
+			if (GUIGraphicsContext.Vmr9Active)
 			{
 				for (int i=0; i < m_tvcards.Count;++i)
 				{

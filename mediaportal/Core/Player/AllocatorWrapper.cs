@@ -104,7 +104,9 @@ namespace MediaPortal.Player
 			/// <param name="numBuffers">number of surfaces wanted</param>
 			/// <returns></returns>
 			public int InitializeDevice(Int32 dwUserId, VMR9AllocationInfo allocInfo, IntPtr numBuffers)
-      {
+			{
+				GUIGraphicsContext.Vmr9FPS=0;
+				frameCounter=0;
 				float fTU ,fTV;
         Log.Write("AllocatorWrapper:InitializeDevice({0:x})",dwUserId);
 				scene.SetSrcRect( 1.0f, 1.0f);
@@ -236,7 +238,9 @@ namespace MediaPortal.Player
 			/// <returns></returns>
 			public int TerminateDevice(int dwUserId)
 			{
-        Log.Write("AllocatorWrapper:TerminateDevice({0:x})",dwUserId);
+				Log.Write("AllocatorWrapper:TerminateDevice({0:x})",dwUserId);
+				GUIGraphicsContext.Vmr9FPS=0;
+				frameCounter=0;
         if (m_surface1!=IntPtr.Zero)
 				{
 					//scene.ReleaseSurface(m_surface1);
@@ -265,7 +269,9 @@ namespace MediaPortal.Player
 			/// <returns></returns>
       public int UnAdviseNotify()
       {
-        Log.Write("AllocatorWrapper:UnAdviseNotify()");
+				Log.Write("AllocatorWrapper:UnAdviseNotify()");
+				GUIGraphicsContext.Vmr9FPS=0;
+				frameCounter=0;
         if (allocNotify !=null)
           Marshal.ReleaseComObject( allocNotify );
 				allocNotify = null;
@@ -320,13 +326,6 @@ namespace MediaPortal.Player
       {
 				scene.Render(m_nativeSize);
 				frameCounter++;
-				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-				if (time - lastTime >= 0.01f)
-				{
-					GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
-					lastTime=time;
-					frameCounter=0;
-				}
         return 0;
       }
       
@@ -340,6 +339,16 @@ namespace MediaPortal.Player
         if (m_surface1==IntPtr.Zero) return;
 				scene.Render(m_nativeSize);
       }//Repaint()
+			public void Process()
+			{
+				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+				if (time - lastTime >= 0.2f)
+				{
+					GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
+					lastTime=time;
+					frameCounter=0;
+				}
+			}
 		}//public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
 	}//public class AllocatorWrapper
 }//namespace MediaPortal.Player 

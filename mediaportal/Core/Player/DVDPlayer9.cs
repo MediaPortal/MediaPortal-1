@@ -352,12 +352,12 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Paused || menuMode!=MenuMode.No || GUIGraphicsContext.Vmr9FPS<1f)
+      if (Paused || menuMode!=MenuMode.No ||  (GUIGraphicsContext.Vmr9Active && Vmr9!=null))
       {
-				if (GUIGraphicsContext.Vmr9Active)
+				Vmr9.Process();
+				if (GUIGraphicsContext.Vmr9FPS < 1f)
 				{
-					//repaint
-					if (Vmr9!=null) Vmr9.Repaint();
+					Vmr9.Repaint();// repaint vmr9
 				}
       }
       //m_SourceRect=m_scene.SourceRect;
