@@ -8,6 +8,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  01-08-2004 my music   : folder.jpg is not shown on music overlay
   29-07-2004 DVD player : Settings for AR control and display mode are not respected. It always uses default modes
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
