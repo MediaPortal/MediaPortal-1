@@ -1,3 +1,5 @@
+02-08-2004  foobar      : fixed : lost of focus from MP when foobar is started
+02-08-2004  winamp      : fixed : lost of focus from MP when winamp is started
 02-08-2004  my tv       : fixed : crashed if user pressed Record Now and there's no xmltv tvguide present
 02-08-2004  my tv       : added : fullscreen tv: 's' to switch between normal/zoom/stretct/original
 02-08-2004  tag reader  : added : wma tag reader
