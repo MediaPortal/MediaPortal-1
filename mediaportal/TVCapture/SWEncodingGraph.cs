@@ -512,13 +512,17 @@ namespace MediaPortal.TV.Recording
             return false;
           }
         }
-        DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor ");
-        cat = PinCategory.Capture;
-        med = MediaType.Audio;
-        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorAudio, m_muxFilter);
-        if (hr == 0)
+
+        if (m_filterCaptureAudio == null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor :succeeded");
+          DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor ");
+          cat = PinCategory.Capture;
+          med = MediaType.Audio;
+          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat}, new Guid[1] { med}, m_filterCaptureVideo, m_filterCompressorAudio, m_muxFilter);
+          if (hr == 0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor :succeeded");
+          }
         }
       }
 
