@@ -1,3 +1,4 @@
+15-08-2004  keybaord    : fixed : keyboard was not scaled correctly
 15-08-2004  setup       : added : Autoplay functionality for CDs.
 15-08-2004  setup       : added : Codec selection for movie player.
 15-08-2004  my music    : fixed : After adding an audio cd to the playlist selecting a different song from the playlist does not work.
