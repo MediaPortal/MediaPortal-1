@@ -186,6 +186,14 @@ public class MediaPortalApp : D3DApp, IRender
       // load keymapping from keymap.xml
       ActionTranslator.Load();
 
+      // One time setup for proxy servers
+      // also set credentials to allow use with firewalls that require them
+      // this means we can use the .NET internet objects and not have
+      // to worry about proxies elsewhere in the code
+      System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
+      proxy.Credentials  = System.Net.CredentialCache.DefaultCredentials;
+      System.Net.GlobalProxySelection.Select = proxy;
+
       //register the playlistplayer for thread messages (like playback stopped,ended)
       Log.Write("Init playlist player");
       PlayListPlayer.Init();
