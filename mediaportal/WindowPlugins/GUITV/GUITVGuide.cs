@@ -752,6 +752,7 @@ namespace MediaPortal.GUI.TV
 
     void SetProperties()
     {
+      if (m_channels.Count==0) return;
       if (m_iCursorX==0)
       {
         TVChannel chan=(TVChannel)m_channels[m_iCursorY+m_iChannelOffset];
