@@ -209,6 +209,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "editName.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "editName.resx"
+                    DependentUpon = "editName.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "EditRadioStationForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

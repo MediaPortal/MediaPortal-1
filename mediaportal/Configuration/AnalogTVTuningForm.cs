@@ -35,6 +35,7 @@ namespace MediaPortal
 		ITuning				tuningInterface;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		int videoRenderer;
+		private System.Windows.Forms.Button buttonAdd;
 		TVCaptureDevice captureCard;
 
 		public AnalogTVTuningForm()
@@ -80,6 +81,7 @@ namespace MediaPortal
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.buttonAdd = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// labelStatus
@@ -161,10 +163,20 @@ namespace MediaPortal
 			this.progressBar1.Size = new System.Drawing.Size(472, 16);
 			this.progressBar1.TabIndex = 9;
 			// 
+			// buttonAdd
+			// 
+			this.buttonAdd.Location = new System.Drawing.Point(304, 296);
+			this.buttonAdd.Name = "buttonAdd";
+			this.buttonAdd.Size = new System.Drawing.Size(40, 23);
+			this.buttonAdd.TabIndex = 10;
+			this.buttonAdd.Text = "Add";
+			this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+			// 
 			// AnalogTVTuningForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(520, 341);
+			this.Controls.Add(this.buttonAdd);
 			this.Controls.Add(this.progressBar1);
 			this.Controls.Add(this.listView1);
 			this.Controls.Add(this.buttonSkip);
@@ -210,6 +222,7 @@ namespace MediaPortal
 
     private void AnalogTVTuningForm_Load(object sender, System.EventArgs e)
     {
+			UpdateList();
 			GUIGraphicsContext.form=this;
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
@@ -288,5 +301,52 @@ namespace MediaPortal
 			}
 		}
 		#endregion
+
+		private void buttonAdd_Click(object sender, System.EventArgs e)
+		{
+			editName formName = new editName();
+			formName.ShowDialog(this);
+			if (formName.ChannelName==String.Empty)
+			{
+				return;
+			}
+
+
+			TVChannel chan = new TVChannel();
+			chan.Name = formName.ChannelName;
+			chan.Number=GetUniqueNumber();
+			chan.VisibleInGuide=true;
+			TVDatabase.AddChannel(chan);
+			tuningInterface.MapToChannel(chan.Name);
+
+			UpdateList();
+			NextChannel();
+		}
+		int GetUniqueNumber()
+		{
+			ArrayList channels=new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			int number=1;
+			while (true)
+			{
+				bool unique=true;
+				foreach (TVChannel chan in channels)
+				{
+					if (chan.Number==number)
+					{
+						unique=false;
+						break;
+					}
+				}
+				if (!unique)
+				{
+					number++;
+				}
+				else
+				{
+					return number;
+				}
+			}
+		}
 	}
 }

@@ -926,6 +926,10 @@ namespace MediaPortal.Configuration
 				dialog.Card=CaptureCard;
 				dialog.ShowDialog(this);
 			}
+			else
+			{
+				MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 		}
 
 
