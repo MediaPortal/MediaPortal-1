@@ -1296,12 +1296,11 @@ namespace MediaPortal
       if (time - lastTime >= 1.0f)
       {
         framePerSecond    = frames / (time - lastTime);
+				GUIGraphicsContext.CurrentFPS=framePerSecond;
         lastTime = time;
         frames  = 0;
-        if (framePerSecond>20) m_iSleepingTime++;
-        if (framePerSecond<20) m_iSleepingTime--;
-        if (m_iSleepingTime<20) m_iSleepingTime=20;
-        if (m_iSleepingTime>200) m_iSleepingTime=200;
+        if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
+        if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
 
         string strFmt;
         Format fmtAdapter = graphicsSettings.DisplayMode.Format;

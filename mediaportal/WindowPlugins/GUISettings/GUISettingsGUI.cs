@@ -10,7 +10,8 @@ namespace MediaPortal.GUI.Settings
   {
     enum Controls
     {
-      CONTROL_SPEED =2,
+			CONTROL_SPEED =2,
+			CONTROL_FPS   =3,
       CONTROL_EXAMPLE=25,
       CONTROL_EXAMPLE2=26,
     };
@@ -38,6 +39,13 @@ namespace MediaPortal.GUI.Settings
       }
       base.OnAction(action);
     }
+		public override void Render()
+		{
+			string fps=String.Format("{0} fps",GUIGraphicsContext.CurrentFPS.ToString("f2"));
+			GUIPropertyManager.SetProperty("#fps", fps);
+			base.Render ();
+		}
+
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
@@ -47,12 +55,21 @@ namespace MediaPortal.GUI.Settings
         {
           base.OnMessage(message);
           LoadSettings();
+					GUISpinControl cntl = (GUISpinControl )GetControl((int)Controls.CONTROL_FPS);
+					cntl.ShowRange=false;
           GUIControl.ClearControl(GetID,(int)Controls.CONTROL_SPEED);
           for (int i=1; i <=10;++i)
           {
             GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_SPEED,i.ToString());
-          }
-          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED,m_iSpeed-1);
+					}
+					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED,m_iSpeed-1);
+					
+					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_FPS);
+					for (int i=10; i <=100;++i)
+					{
+						GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_FPS,i.ToString());
+					}
+					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_FPS,GUIGraphicsContext.MaxFPS-10);
 
           GUIControl.ClearControl(GetID,(int)Controls.CONTROL_EXAMPLE);
           GUIControl.ClearControl(GetID,(int)Controls.CONTROL_EXAMPLE2);
@@ -78,6 +95,11 @@ namespace MediaPortal.GUI.Settings
             m_iSpeed=Int32.Parse(strLabel);
             GUIGraphicsContext.ScrollSpeed=m_iSpeed;
           }
+					if (iControl==(int)Controls.CONTROL_FPS)
+					{
+						string strLabel=message.Label;
+						GUIGraphicsContext.MaxFPS=Int32.Parse(strLabel);
+					}
 
         }
           break;

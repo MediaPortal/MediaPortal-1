@@ -85,6 +85,8 @@ namespace MediaPortal.GUI.Library
     static bool                     m_bAnimations=true;						//boolean indicating animiations are turned on or off
 		static IRender                  m_renderFrame=null;
 		static bool                     vmr9Active=false;
+		static int											m_iMaxFPS=20;
+		static float                    m_fCurrentFPS=0;
 
 		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -119,6 +121,7 @@ namespace MediaPortal.GUI.Library
       // Log.Write("save {0}" ,strFileName);
       using (Xml xmlWriter= new Xml(strFileName))
       {
+				xmlWriter.SetValue("screen","maxfps",m_iMaxFPS.ToString());
         xmlWriter.SetValue("screen","offsetx",m_iOffsetX.ToString() );
         xmlWriter.SetValue("screen","offsety",m_iOffsetY.ToString() );
         xmlWriter.SetValue("screen","offsetosd",m_iOSDOffset.ToString());
@@ -150,6 +153,7 @@ namespace MediaPortal.GUI.Library
       Log.Write("  load {0}" ,strFileName);
       using (Xml xmlReader= new Xml(strFileName))
       {
+				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",20);
         m_iOffsetX=xmlReader.GetValueAsInt("screen","offsetx",0);
         m_iOffsetY=xmlReader.GetValueAsInt("screen","offsety",0);
         m_iOSDOffset=xmlReader.GetValueAsInt("screen","offsetosd",0);
@@ -678,7 +682,33 @@ namespace MediaPortal.GUI.Library
         if (m_iScrollSpeed<0) return;
         m_iScrollSpeed=value;
       }
-    }
+		}
+
+		/// <summary>
+		/// Get/Set the current maximum number of FPS
+		/// </summary>
+		static public int MaxFPS
+		{
+			get { return m_iMaxFPS;}
+			set 
+			{ 
+				if (m_iMaxFPS<0) return;
+				m_iMaxFPS=value;
+			}
+		}
+
+		/// <summary>
+		/// Get/Set the current maximum number of FPS
+		/// </summary>
+		static public float CurrentFPS
+		{
+			get { return m_fCurrentFPS;}
+			set 
+			{ 
+				if (m_fCurrentFPS<0) return;
+				m_fCurrentFPS=value;
+			}
+		}
 
 		/// <summary>
 		/// Get/Set the number of characters used for the fonts

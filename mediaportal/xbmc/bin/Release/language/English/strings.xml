@@ -2625,6 +2625,10 @@
 	<id>972</id>
 	<value>All Channels</value>
 </string>
+<string>
+	<id>973</id>
+	<value>Maximum FPS</value>
+</string>
 
 
 
