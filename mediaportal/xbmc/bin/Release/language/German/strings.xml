@@ -1051,7 +1051,7 @@
 	</string>
 	<string>
 		<id>334</id>
-		<value>Datenbank reorganisieren</value>
+		<value>DB reorganisieren</value>
 	</string>
 	<string>
 		<id>335</id>
@@ -1266,6 +1266,34 @@
 		<value>morgens</value>
 	</string>
 	<string>
+		<id>388</id>
+		<value>und</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>nebelig</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>diesig</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>windig</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Nieselregen</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>frostig</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>n.a.</value>
+	</string>
+	<string>
 		<id>396</id> 
 		<value>Ortsauswahl</value> 
 	</string>
@@ -1367,7 +1395,7 @@
 	</string> 
 	<string>
 		<id>422</id>
-		<value>Albuminformation löschen</value>
+		<value>Albuminfo löschen</value>
 	</string> 
 	<string>
 		<id>423</id>
@@ -1764,7 +1792,7 @@
 	</string>
 	<string>
 		<id>629</id>
-		<value>Aufnahme beenden</value>
+		<value>beenden</value>
 	</string>
 	<string>
 		<id>630</id>
@@ -2339,6 +2367,30 @@
 		<value>neuer Alarm</value>
 	</string>
 	<string>
+		<id>870</id>
+		<value>wiederholend</value>
+	</string>
+	<string>
+		<id>871</id>
+		<value>HTPC aufwecken</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>starte mit</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>Fernsehsendung</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Folge</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>CD-Wiedergabe</value>
+	</string>
+	<string>
 		<id>900</id>
 		<value>Film fortsetzen?</value>
 	</string>
@@ -2615,8 +2667,36 @@
 		<value>nächster Kanal</value>
 	</string>
 	<string>
+		<id>977</id>
+		<value>Es ist keine freie Karte verfügbar</value>
+	</string>
+	<string>
+		<id>978</id>
+		<value>welche den Sender anzeigen kann!</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Aufnahme vom Anfang an wiedergeben</value>
+	</string>
+	<string>
+		<id>980</id>
+		<value>Aufnahme vom aktuellen Zeitpunkt an wiedergeben</value>
+	</string>
+	<string>
+		<id>981</id>
+		<value>Sendung löschen</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Aufnahme vollständig löschen</value>
+	</string>
+	<string>
 		<id>1440</id>
 		<value>Videotext</value>
+	</string>
+	<string>
+		<id>1441</id>
+		<value>Teletext</value>
 	</string>
 	<string>
 		<id>1950</id>
@@ -3687,7 +3767,11 @@
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Ken Burns Geschwindigkeit</value>
+		<value>Ken Burns</value>
+	</string>
+	<string>
+		<id>13012</id>
+		<value>Bild wird geladen, bitte warten</value>
 	</string>
 	<string>
 		<id>16001</id>

@@ -2368,10 +2368,22 @@
 	<value>Vekke opp pc</value>
 </string>
 <string>
+	<id>872</id>
+	<value>Start med</value>
+</string>
+<string>
+	<id>873</id>
+	<value>TV Show</value>
+</string>
+<string>
+	<id>874</id>
+	<value>Episode</value>
+</string>
+<!-- End My Alarm Strings -->
+<string>
 	<id>890</id>
 	<value>Spill CD</value>
 </string>
-<!-- End My Alarm Strings -->
 <string>
 	<id>900</id>
 	<value>Fortsette film fra sist gang ?</value>
@@ -2656,7 +2668,23 @@
 </string>
 <string>
 	<id>978</id>
-	<value>som kan overv&#229;ke denne kanalenwhich can watch this channel</value>
+	<value>som kan overv&#229;ke denne kanalen</value>
+</string>
+<string>
+	<id>979</id>
+	<value>Spill opptaket fra begynnelsen</value>
+</string>
+<string>
+	<id>980</id>
+	<value>Spill opptak fra "live" punktet</value>
+</string>
+<string>
+	<id>981</id>
+	<value>Avbryt dette showet</value>
+</string>
+<string>
+	<id>982</id>
+	<value>Slett hele dette opptaket</value>
 </string>
 
 
@@ -2776,9 +2804,18 @@
 	<string><id>2130</id><value>Blokkere</value></string>
 	<string><id>2131</id><value>av</value></string>
 	<string><id>2132</id><value>Lukk disk: estimert tid:</value></string>
-	<string><id>2133</id><value>Kan ikke konvertere DVR-MS til MPG</value></string>
-	<string><id>2134</id><value>N&#248;dvendige DirectShow filtere er</value></string>
-	<string><id>2135</id><value>ikke installert</value></string>
+	<string><id>2133</id><value>TV-Opptak</value></string>
+	<string><id>2134</id><value>Video</value></string>
+	<string><id>2135</id><value>Audio</value></string>
+	<string><id>2136</id><value>Data</value></string>
+	<string><id>2137</id><value>Konvertere</value></string>
+	<string><id>2138</id><value>Kutt</value></string>
+	<string><id>2139</id><value>Lage MP3-CD</value></string>
+	<string><id>2140</id><value>Lage MP3-DVD</value></string>
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
+	<string><id>2143</id><value>Hjem</value></string>
+
 	<!-- End of My Burner Strings -->
 
 
@@ -3099,6 +3136,10 @@
 <string>
 	<id>13011</id>
 	<value>Ken Burns hastighet</value>
+</string>
+<string>
+	<id>13012</id>
+	<value>Laster bilde, venligst vent</value>
 </string>
 <string>
 	<id>1440</id>
