@@ -673,6 +673,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\WinLirc.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\WinLirc.resx"
+                    DependentUpon = "WinLirc.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Wizard_Finished.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -1,0 +1,289 @@
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+
+using MediaPortal.WINLIRC;
+using MediaPortal.GUI.Library;
+
+namespace MediaPortal.Configuration.Sections
+{
+	public class WINLIRC : MediaPortal.Configuration.SectionSettings
+	{
+		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.Label PathToWinlircLabel;
+		private System.Windows.Forms.TextBox pathToWinlircTextBox;
+		private System.Windows.Forms.Button browsePathToWinlircButton;
+		private System.Windows.Forms.TextBox infoTextBox;
+		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.TextBox IRDelayTextBox;
+		private System.Windows.Forms.Label IRDelayLabel;
+		private System.ComponentModel.IContainer components = null;
+
+		public WINLIRC() : this("WINLIRC")
+		{
+		}
+
+		public WINLIRC(string name) : base(name)
+		{
+			// This call is required by the Windows Form Designer.
+			InitializeComponent();
+
+			// 
+			// Initialize the WINLIRC component
+			//
+		}
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+				if (components != null) 
+				{
+					components.Dispose();
+				}
+			}
+			base.Dispose( disposing );
+		}
+
+		public override void LoadSettings()
+		{
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				inputCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "enabled", "true") == "true";
+				pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
+				IRDelayTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "delay", "300") ;
+				//useMultipleCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "use_multiple_remotes", "true") == "true";
+				//remoteNameTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "remote", "") ;
+				//repeatValTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "repeat", "0");
+				//enterCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "needs_enter", "false") == "true";
+			}
+			UpdateForm();
+			LoadInfo();
+		}
+
+		public override void SaveSettings()
+		{
+			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("WINLIRC", "enabled", inputCheckBox.Checked ? "true" : "false");
+				xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);
+				if(IsInteger(IRDelayTextBox.Text) == false)
+					IRDelayTextBox.Text = "300";
+				xmlwriter.SetValue("WINLIRC", "delay", IRDelayTextBox.Text);			
+				//xmlwriter.SetValue("WINLIRC", "use_multiple_remotes", useMultipleCheckBox.Checked ? "true" : "false");
+				//xmlwriter.SetValue("WINLIRC", "remote", remoteNameTextBox.Text);
+				//xmlwriter.SetValue("WINLIRC", "repeat", repeatValTextBox.Text);			
+				//xmlwriter.SetValue("WINLIRC", "needs_enter", enterCheckBox.Checked ? "true" : "false");			
+			}			
+		}
+
+
+		#region Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.browsePathToWinlircButton = new System.Windows.Forms.Button();
+			this.pathToWinlircTextBox = new System.Windows.Forms.TextBox();
+			this.PathToWinlircLabel = new System.Windows.Forms.Label();
+			this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.infoTextBox = new System.Windows.Forms.TextBox();
+			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.IRDelayTextBox = new System.Windows.Forms.TextBox();
+			this.IRDelayLabel = new System.Windows.Forms.Label();
+			this.groupBox1.SuspendLayout();
+			this.groupBox2.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.IRDelayTextBox);
+			this.groupBox1.Controls.Add(this.IRDelayLabel);
+			this.groupBox1.Controls.Add(this.browsePathToWinlircButton);
+			this.groupBox1.Controls.Add(this.pathToWinlircTextBox);
+			this.groupBox1.Controls.Add(this.PathToWinlircLabel);
+			this.groupBox1.Controls.Add(this.inputCheckBox);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(8, 8);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(440, 112);
+			this.groupBox1.TabIndex = 1;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "General settings";
+			// 
+			// browsePathToWinlircButton
+			// 
+			this.browsePathToWinlircButton.Location = new System.Drawing.Point(352, 56);
+			this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
+			this.browsePathToWinlircButton.Size = new System.Drawing.Size(64, 23);
+			this.browsePathToWinlircButton.TabIndex = 9;
+			this.browsePathToWinlircButton.Text = "Browse";
+			this.browsePathToWinlircButton.Click += new System.EventHandler(this.browsePathToWinlircButton_Click);
+			// 
+			// pathToWinlircTextBox
+			// 
+			this.pathToWinlircTextBox.Location = new System.Drawing.Point(152, 56);
+			this.pathToWinlircTextBox.Name = "pathToWinlircTextBox";
+			this.pathToWinlircTextBox.Size = new System.Drawing.Size(192, 20);
+			this.pathToWinlircTextBox.TabIndex = 8;
+			this.pathToWinlircTextBox.Text = "";
+			// 
+			// PathToWinlircLabel
+			// 
+			this.PathToWinlircLabel.Location = new System.Drawing.Point(32, 56);
+			this.PathToWinlircLabel.Name = "PathToWinlircLabel";
+			this.PathToWinlircLabel.Size = new System.Drawing.Size(88, 16);
+			this.PathToWinlircLabel.TabIndex = 7;
+			this.PathToWinlircLabel.Text = "Path to WinLIRC";
+			// 
+			// inputCheckBox
+			// 
+			this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
+			this.inputCheckBox.Name = "inputCheckBox";
+			this.inputCheckBox.Size = new System.Drawing.Size(264, 24);
+			this.inputCheckBox.TabIndex = 1;
+			this.inputCheckBox.Text = "Enable WINLIRC for input from remote controls";
+			this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox2.Controls.Add(this.infoTextBox);
+			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox2.Location = new System.Drawing.Point(8, 128);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(440, 288);
+			this.groupBox2.TabIndex = 2;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Info";
+			// 
+			// infoTextBox
+			// 
+			this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.infoTextBox.Location = new System.Drawing.Point(8, 16);
+			this.infoTextBox.Multiline = true;
+			this.infoTextBox.Name = "infoTextBox";
+			this.infoTextBox.Size = new System.Drawing.Size(424, 264);
+			this.infoTextBox.TabIndex = 0;
+			this.infoTextBox.Text = "";
+			this.infoTextBox.WordWrap = false;
+			// 
+			// IRDelayTextBox
+			// 
+			this.IRDelayTextBox.Location = new System.Drawing.Point(152, 80);
+			this.IRDelayTextBox.Name = "IRDelayTextBox";
+			this.IRDelayTextBox.Size = new System.Drawing.Size(192, 20);
+			this.IRDelayTextBox.TabIndex = 11;
+			this.IRDelayTextBox.Text = "300";
+			// 
+			// IRDelayLabel
+			// 
+			this.IRDelayLabel.Location = new System.Drawing.Point(32, 80);
+			this.IRDelayLabel.Name = "IRDelayLabel";
+			this.IRDelayLabel.Size = new System.Drawing.Size(88, 16);
+			this.IRDelayLabel.TabIndex = 10;
+			this.IRDelayLabel.Text = "IR Delay (ms)";
+			// 
+			// WINLIRC
+			// 
+			this.Controls.Add(this.groupBox2);
+			this.Controls.Add(this.groupBox1);
+			this.Name = "WINLIRC";
+			this.Size = new System.Drawing.Size(456, 440);
+			this.Load += new System.EventHandler(this.WINLIRC_Load);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox2.ResumeLayout(false);
+			this.ResumeLayout(false);
+
+		}
+		#endregion
+
+		private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+		{
+			UpdateForm();
+		}
+
+		private void UpdateForm()
+		{
+			PathToWinlircLabel.Enabled = inputCheckBox.Checked;
+			pathToWinlircTextBox.Enabled  = inputCheckBox.Checked ;
+			browsePathToWinlircButton.Enabled  = inputCheckBox.Checked;
+			IRDelayTextBox.Enabled  = inputCheckBox.Checked;
+			IRDelayLabel.Enabled  = inputCheckBox.Checked;
+			//remoteNameLabel.Enabled  = inputCheckBox.Checked;
+			//remoteNameTextBox.Enabled  = inputCheckBox.Checked;
+		}
+
+		private void WINLIRC_Load(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void browsePathToWinlircButton_Click(object sender, System.EventArgs e)
+		{
+			using(openFileDialog1 = new OpenFileDialog())
+			{
+				openFileDialog1.FileName = pathToWinlircTextBox.Text;
+				openFileDialog1.CheckFileExists = true;
+				openFileDialog1.RestoreDirectory=true;
+				openFileDialog1.Filter= "exe files (*.exe)|*.exe";
+				openFileDialog1.FilterIndex = 0;
+				openFileDialog1.Title = "Select WinLirc Executable";
+
+				DialogResult dialogResult = openFileDialog1.ShowDialog();
+
+				if(dialogResult == DialogResult.OK)
+				{
+					pathToWinlircTextBox.Text = openFileDialog1.FileName;
+				}
+			}
+		}
+		private void LoadInfo()
+		{
+			string[] lines = {
+												 "::Winlirc::\n",
+												 "> Winlirc must be installed on your PC",
+												 "> You should set-up Winlirc with the remote(s) you require.",
+												 "> To have Winlirc start when MP does, set the Path to WinLIRC.",
+												 "> You should use short names for remotes (like CABLE or AMP).",
+												 "> All remotes should be in 1 config file.",
+												 "",
+												 "::Media Portal::",
+												 "Set-up your external channels in this format...",
+												 "  Remote1:Repeat:Code1[,Code2[,Code...]]|Remote2:Repeat:Code1[,Code2[,Code...]]",
+												 "Examples...",
+												 "  PACE4000:0:1,0,2,OK",
+												 "  PACE4000:0:1,0,2,OK|AMP:2:PowerOn",
+												 "  X10:8:dim_lounge|AMP:2:PowerOn|HIFI:0:mode_radio,3",
+												 "",
+												 "::ADDITIONAL::",
+												 "> Check out the remote configs @ http://lirc.sourceforge.net/remotes/"};
+			infoTextBox.Lines = lines;
+		}
+		private bool IsInteger(object Expression)
+		{
+			bool isNum;
+			double retNum;	
+			isNum = Double.TryParse(Convert.ToString(Expression), System.Globalization.NumberStyles.Integer,System.Globalization.NumberFormatInfo.InvariantInfo, out retNum );
+			return isNum;
+		}
+	}
+}
+

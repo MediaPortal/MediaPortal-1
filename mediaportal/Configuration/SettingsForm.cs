@@ -132,6 +132,8 @@ namespace MediaPortal.Configuration
 
       Log.Write("add USBUIRT section");
       AddSection(new Sections.USBUIRT());
+			Log.Write("add WINLIRC section");//sd00//
+			AddSection(new Sections.WINLIRC());//sd00//
       Log.Write("add weather section");
       AddSection(new Sections.Weather());
       Log.Write("add plugins section");

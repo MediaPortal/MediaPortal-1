@@ -25,6 +25,7 @@ using MediaPortal.Util;
 using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
 using MediaPortal.IR;
+using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.Ripper;
 
 /// <summary>
@@ -58,6 +59,7 @@ public class MediaPortalApp : D3DApp, IRender
     int m_ixpos = 50;
     int m_iFrameCount = 0;
 	  private USBUIRT usbuirtdevice;
+	  private WinLirc winlircdevice;//sd00//
     string m_strNewVersion = "";
     string m_strCurrentVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -377,6 +379,16 @@ public class MediaPortalApp : D3DApp, IRender
 				this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
 				Log.Write("done creating the USBUIRT device");
 			}
+			//Load Winlirc if enabled.
+			//sd00//
+			bool winlircInputEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
+			if (winlircInputEnabled == true)
+			{
+				Log.Write("creating the WINLIRC device");
+				this.winlircdevice = new WinLirc();
+				Log.Write("done creating the WINLIRC device");
+			}
+			//sd00//
 		}
 
       //registers the player for video window size notifications
@@ -1396,10 +1408,19 @@ public class MediaPortalApp : D3DApp, IRender
       break;
 
       case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL : 
+				bool bIsInteger;
+				double retNum;	
+				bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer,System.Globalization.NumberFormatInfo.InvariantInfo, out retNum );
         try
         {
+          if(bIsInteger) //sd00//
           usbuirtdevice.ChangeTunerChannel(message.Label);
         }
+        catch (Exception) {}
+				try
+				{
+					winlircdevice.ChangeTunerChannel(message.Label);
+				}
         catch (Exception) {}
       break;
 

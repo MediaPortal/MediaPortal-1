@@ -1078,6 +1078,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "WinLirc\WinLirc.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "wmfsdk\BufferTypes.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
