@@ -1,6 +1,10 @@
-Skin, gfx & media:
-  - my tv    : need new progress bar to show all timeshifting info (we need new .xml & graphics)
-  - my videos: show IMDB info in video OSD. (we need new .xml & graphics) 
+Skin, gfx, .xml & media:
+  - my tv    : OSD/fullscreen   : need new progress bar to show all timeshifting info (we need new .xml & graphics)
+  - my tv    : OSD/fullscreen   : xml:add option 'Record Now'
+  - my tv    : TVGuide          : xml:add View By (movies,news,...) button
+  - my tv    : TVGuide          : xml:Hide this channel button
+  - my videos: OSD/fullscreen   : xml:show IMDB info in video OSD. (we need new .xml & graphics) 
+  - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
 --------------------------------------------------------------------------------------------------------------     
 My Radio:
     - add support for more cards
