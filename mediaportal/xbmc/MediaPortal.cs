@@ -851,20 +851,20 @@ public class MediaPortalApp : D3DApp, IRender
 							}
 							break;
 	          
-						case Action.ActionType.ACTION_PREV_ITEM : 
-							if (Utils.IsCDDA(g_Player.CurrentFile) || Utils.IsAudio(g_Player.CurrentFile))
-							{
-								PlayListPlayer.PlayPrevious();
-								return;
-							}
+						case Action.ActionType.ACTION_PREV_ITEM :
+              if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindow,action.m_key))
+              {
+                return;
+              }
+              PlayListPlayer.PlayPrevious();
 							break;
 
-						case Action.ActionType.ACTION_NEXT_ITEM : 
-							if (!GUIGraphicsContext.IsFullScreenVideo)
-							{
-								PlayListPlayer.PlayNext(true);
-								return;
-							}
+            case Action.ActionType.ACTION_NEXT_ITEM :
+              if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindow,action.m_key))
+              {
+                return;
+              }
+              PlayListPlayer.PlayNext(true);
 							break;
 
 						case Action.ActionType.ACTION_STOP : 
