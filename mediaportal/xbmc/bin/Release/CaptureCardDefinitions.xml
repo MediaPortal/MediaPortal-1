@@ -1,55 +1,55 @@
 <?xml version="1.0"?>
-<!-- This file contains the capture card definitions to create the capture card dependant part of a graph	-->
-<!--																										-->
-<!-- Each capture card is identified by its friendly name and its its unique identification: its guid.		-->
-<!-- Depending on the cards capabilities, it has a TV and Radio section that defines the graph				-->
-<!--																										-->
+<!-- This file contains the capture card definitions to create the capture card dependant part of a graph   -->
+<!--                                                                                                        -->
+<!-- Each capture card is identified by its friendly name and its its unique identification: its guid.      -->
+<!-- Depending on the cards capabilities, it has a TV and Radio section that defines the graph              -->
+<!--                                                                                                        -->
 <!-- Each graph is defined upto a certain capture card dependant filter, upon which point the software will --> 
 <!-- take over and create the rest of the graph, which should be generic, ie INDEPENDANT of the capture card!!! -->
-<!--																										-->
-<!-- The last filter/output pin is defined under the interface section:										-->
+<!--                                                                                                        -->
+<!-- The last filter/output pin is defined under the interface section:                                     -->
 <!-- name="...", "Video" (for video pin), "Audio" (for audio pin) and "Mpeg2" (for mpeg2 output video/audio). -->
-<!-- It shall depend on the kind of card (MPEG2/Software/BDA) what exactly is offered					-->
-<!--   MPEG2/MCE cards 																					-->
-<!--      the mpeg2 pin describes which output pin of the video capture filter contains the				-->
-<!--      the captured mpeg2 stream																		-->
-<!--																									-->
-<!--   DVB-T cards																						-->
-<!--      The interface pins audio,video,mpeg2 and sectiontables pins describe which					-->
-<!--      mpeg2 demultiplexer pins should be used for audio,video,mpeg2 and sectiontables				-->
-<!--																									-->
-<!-- Regarding connection pin definition:																-->
-<!--  1. Define the Name of the pin. This might work and might not as this might be language dependant	-->
-<!--  2. Define the 0-based index of the pin. This always should work...								-->
-<!--																									-->
+<!-- It shall depend on the kind of card (MPEG2/Software/BDA) what exactly is offered                   -->
+<!--   MPEG2/MCE cards                                                                                  -->
+<!--      the mpeg2 pin describes which output pin of the video capture filter contains the             -->
+<!--      the captured mpeg2 stream                                                                     -->
+<!--                                                                                                    -->
+<!--   DVB-T cards                                                                                      -->
+<!--      The interface pins audio,video,mpeg2 and sectiontables pins describe which                    -->
+<!--      mpeg2 demultiplexer pins should be used for audio,video,mpeg2 and sectiontables               -->
+<!--                                                                                                    -->
+<!-- Regarding connection pin definition:                                                               -->
+<!--  1. Define the Name of the pin. This might work and might not as this might be language dependant  -->
+<!--  2. Define the 0-based index of the pin. This always should work...                                -->
+<!--                                                                                                    -->
 <!-- cards supported so far:                                                          -->
-<!--    AVerTV DVB-T 771			added by Frodo        (untested)                  -->
-<!--    Dvico Fusion HDTV			added by Frodo        (untested)                  -->
-<!--    Dvico Fusion HDTV WDM		added by Frodo        (untested)                  -->
-<!--    Dvico Fusion HDTV Lite		added by Frodo        (untested)                  -->
-<!--    FireDTV (BDA DVB-T)			added by Frodo        ()						  -->
-<!--    Hauppauge Nova-T			added by Frodo                                    -->
-<!--    Hauppauge Nova-T 90002		added by Frodo                                    -->
-<!--    Hauppauge WinTV PVR 150 	added by Frodo                                    -->
-<!--    Hauppauge WinTV PVR 150MCE	added by Mars                                     -->
-<!--    Hauppauge WinTV PVR 250		added by Frodo                                    -->
-<!--    Hauppauge WinTV PVR 350		added by Frodo                                    -->
+<!--    AVerTV DVB-T 771            added by Frodo        (untested)                  -->
+<!--    Dvico Fusion HDTV           added by Frodo        (untested)                  -->
+<!--    Dvico Fusion HDTV WDM       added by Frodo        (untested)                  -->
+<!--    Dvico Fusion HDTV Lite      added by Frodo        (untested)                  -->
+<!--    FireDTV (BDA DVB-T)         added by Frodo        ()                          -->
+<!--    Hauppauge Nova-T            added by Frodo                                    -->
+<!--    Hauppauge Nova-T 90002      added by Frodo                                    -->
+<!--    Hauppauge WinTV PVR 150     added by Frodo                                    -->
+<!--    Hauppauge WinTV PVR 150MCE  added by Mars                                     -->
+<!--    Hauppauge WinTV PVR 250     added by Frodo                                    -->
+<!--    Hauppauge WinTV PVR 350     added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 500MCE  added by Frodo        (untested)                  -->
 <!--    Hauppauge WinTV PVR USB2    added by Frodo                                    -->
-<!--    Meedion SAA1734				added by Frodo                                    -->
-<!--    NVTV Dual Tuner				added by Mars                                     -->
-<!--    LifeView DVB-T			    added by Frodo                                    -->
-<!--    Twinhan VisionDTV Ter		added by Frodo        (untested)                  -->
-<!--    Typhoon TV PVR (USB)		added by Frodo        (untested)                  -->
-<!--    VA2000						added by Frodo									  -->
-<!--    Winfast PVR 2000			added by Hwarmann                                 -->
-<!--    VideoMate DVB-T 300			added by Frodo                                    -->
-<!--    general s/w card			added by Frodo                                    -->
-<!--    general MCE card			added by Frodo                                    -->
-<!--    general MPEG2 card			added by Frodo                                    -->
+<!--    Meedion SAA1734             added by Frodo                                    -->
+<!--    NVTV Dual Tuner             added by Mars                                     -->
+<!--    LifeView DVB-T              added by Frodo                                    -->
+<!--    Twinhan VisionDTV Ter       added by Frodo        (untested)                  -->
+<!--    Typhoon TV PVR (USB)        added by Frodo        (untested)                  -->
+<!--    VA2000                      added by Frodo                                    -->
+<!--    Winfast PVR 2000            added by Hwarmann                                 -->
+<!--    VideoMate DVB-T 300         added by Frodo                                    -->
+<!--    general s/w card            added by Frodo                                    -->
+<!--    general MCE card            added by Frodo                                    -->
+<!--    general MPEG2 card          added by Frodo                                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.11                                                               -->
-<!-- changed : 9-jan-2005 by Frodo													  -->
+<!-- version : 1.0.0.12                                                                 -->
+<!-- changed : 9-jan-2005 by Frodo                                                    -->
 <!--                                                                                  -->
 
 <capturecards>
@@ -353,7 +353,7 @@
         <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+    <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -391,7 +391,7 @@
         <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+    <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -406,7 +406,7 @@
         <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+    <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -421,11 +421,11 @@
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBT"          checkdevice="false"></filter>
-        <filter cat="capture"		  name="Firesat BDA Receiver DVBT"       checkdevice="false"></filter>
+        <filter cat="capture"         name="Firesat BDA Receiver DVBT"       checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -435,13 +435,13 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
         <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -451,13 +451,13 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="false"></filter>
         <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -467,13 +467,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="false"></filter>
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -483,13 +483,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="false"></filter>
-        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"				checkdevice="false"></filter>
+        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -499,29 +499,29 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Fusion HDTV, BDA DVB-T Tuner/Demod"		checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Fusion HDTV, BDA DVB-T Tuner/Demod"     checkdevice="false"></filter>
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
    
-   <capturecard commercialname="Meedion SAA1734" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+   <capturecard commercialname="Medion SAA1734" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"				checkdevice="false"></filter>
-        <filter cat="capture"         name="MEDION BDA Digital Capture"		checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"              checkdevice="false"></filter>
+        <filter cat="capture"         name="MEDION BDA Digital Capture"     checkdevice="false"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -569,9 +569,9 @@
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"				 checkdevice="true"></filter>
-        <filter cat="crossbar" name="FusionHDTV, Crossbar"				 checkdevice="true"></filter>
-        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"		 checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
+        <filter cat="crossbar" name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
+        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -584,9 +584,9 @@
       <interface cat="capture" video="" audio="" mpeg2="1"></interface>
       <filters>
         <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"				 checkdevice="true"></filter>
-        <filter cat="crossbar" name="FusionHDTV, Crossbar"				 checkdevice="true"></filter>
-        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"		 checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
+        <filter cat="crossbar" name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
+        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -620,8 +620,8 @@
       <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="AVerMedia AVerEIT"						checkdevice="false"></filter>
-        <filter cat="capture"         name="AVerMedia Transport Stream Capture"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="AVerMedia AVerEIT"                      checkdevice="false"></filter>
+        <filter cat="capture"         name="AVerMedia Transport Stream Capture"     checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -636,8 +636,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"				checkdevice="false"></filter>
-        <filter cat="capture"         name="VideoMate BDA Digital Capture"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="false"></filter>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
