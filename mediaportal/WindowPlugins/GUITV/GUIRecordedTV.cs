@@ -497,9 +497,9 @@ namespace MediaPortal.GUI.TV
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null==dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-      dlgYesNo.SetLine(0, "");
       dlgYesNo.SetLine(1, "");
       dlgYesNo.SetLine(2, "");
+      dlgYesNo.SetLine(3, "");
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
@@ -513,9 +513,9 @@ namespace MediaPortal.GUI.TV
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null==dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(676));//delete watched recordings?
-      dlgYesNo.SetLine(0, "");
       dlgYesNo.SetLine(1, "");
       dlgYesNo.SetLine(2, "");
+      dlgYesNo.SetLine(3, "");
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;

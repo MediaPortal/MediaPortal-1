@@ -372,6 +372,7 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       m_iFontTriangles=0;
+      m_cachedFontVertices=null;
     }
 
     public override void FreeResources()

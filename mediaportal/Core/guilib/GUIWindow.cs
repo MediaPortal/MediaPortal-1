@@ -362,7 +362,7 @@ namespace MediaPortal.GUI.Library
       }
     }
     
-    void DeInitControls()
+    protected void DeInitControls()
     {
       for (int x = 0; x < m_vecControls.Count; ++x)
       {

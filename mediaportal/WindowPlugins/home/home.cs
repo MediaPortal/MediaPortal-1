@@ -106,10 +106,10 @@ namespace MediaPortal.GUI.Home
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          
-          string Head=GUILocalizeStrings.Get(message.Param1);
-          string Line1=GUILocalizeStrings.Get(message.Param2);
-          string Line2=GUILocalizeStrings.Get(message.Param3);
+          string Head="",Line1="",Line2="";
+          if (message.Param1!=0) Head=GUILocalizeStrings.Get(message.Param1);
+          if (message.Param2!=0) Line1=GUILocalizeStrings.Get(message.Param2);
+          if (message.Param3!=0) Line2=GUILocalizeStrings.Get(message.Param3);
           if ( AskYesNo(Head,Line1,Line2))
             message.Param1=1;
           else
@@ -118,9 +118,10 @@ namespace MediaPortal.GUI.Home
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
         {
-          string strHead=GUILocalizeStrings.Get(message.Param1);
-          string strLine1=GUILocalizeStrings.Get(message.Param2);
-          string strLine2=GUILocalizeStrings.Get(message.Param3);
+          string strHead="",strLine1="",strLine2="";
+          if (message.Param1!=0) strHead=GUILocalizeStrings.Get(message.Param1);
+          if (message.Param2!=0) strLine1=GUILocalizeStrings.Get(message.Param2);
+          if (message.Param3!=0) strLine2=GUILocalizeStrings.Get(message.Param3);
           ShowInfo(strHead,strLine1,strLine2);
         }
           break;
@@ -159,6 +160,7 @@ namespace MediaPortal.GUI.Home
       pDlgOK.SetHeading(strHeading);
       pDlgOK.SetLine(1,strLine1);
       pDlgOK.SetLine(2,strLine2);
+      pDlgOK.SetLine(3,"");
       pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
 
     }
@@ -169,6 +171,7 @@ namespace MediaPortal.GUI.Home
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetLine(1,strLine1);
       dlgYesNo.SetLine(2,strLine2);
+      dlgYesNo.SetLine(3,"");
       dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
       return dlgYesNo.IsConfirmed;
 

@@ -675,9 +675,9 @@ namespace MediaPortal.GUI.Pictures
 					m_bPause=true;
 					string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
 					dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
-					dlgYesNo.SetLine(0,String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count) );
-					dlgYesNo.SetLine(1, strFileName);
-					dlgYesNo.SetLine(2, "");
+					dlgYesNo.SetLine(1,String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count) );
+					dlgYesNo.SetLine(2, strFileName);
+					dlgYesNo.SetLine(3, "");
 					dlgYesNo.DoModal(GetID);
 
 					m_bPause=bPause;

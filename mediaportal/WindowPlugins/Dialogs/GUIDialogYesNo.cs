@@ -112,6 +112,8 @@ namespace MediaPortal.Dialogs
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
           GUIGraphicsContext.Overlay=m_bPrevOverlay;				
+          FreeResources();
+          DeInitControls();
           return true;
 				}
 
@@ -182,7 +184,7 @@ namespace MediaPortal.Dialogs
 		public void SetLine(int iLine, string strLine)
     {
       if (iLine<=0) return;
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, 2+iLine,0,0,null);
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, 1+iLine,0,0,null);
 			msg.Label=strLine; 
 			OnMessage(msg);
 		}

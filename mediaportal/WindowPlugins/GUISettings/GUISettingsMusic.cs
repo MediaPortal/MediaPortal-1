@@ -126,9 +126,9 @@ namespace MediaPortal.GUI.Settings
 						if (null!=dlgYesNo)
 						{
 							dlgYesNo.SetHeading(313);
-							dlgYesNo.SetLine(0, "");
 							dlgYesNo.SetLine(1, "");
 							dlgYesNo.SetLine(2, "");
+							dlgYesNo.SetLine(3, "");
 							dlgYesNo.DoModal(GetID);
 
 							if (dlgYesNo.IsConfirmed)

@@ -534,9 +534,9 @@ namespace MediaPortal.GUI.TV
             if (null != dlgYesNo)
             {
               dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-              dlgYesNo.SetLine(0, GUILocalizeStrings.Get(730));
-              dlgYesNo.SetLine(1, GUILocalizeStrings.Get(731));
-              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(732));
+              dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));
+              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));
+              dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));
               dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
               Recorder.StopRecording(card);

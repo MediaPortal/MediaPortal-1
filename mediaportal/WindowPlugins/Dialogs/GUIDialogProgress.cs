@@ -144,6 +144,9 @@ namespace MediaPortal.Dialogs
         {
           m_pParentWindow=null;
           GUIGraphicsContext.Overlay=m_bOverlay;				
+          FreeResources();
+          DeInitControls();
+
           return true;
         }
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:

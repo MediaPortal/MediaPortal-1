@@ -181,9 +181,9 @@ namespace MediaPortal.GUI.Pictures
 						if (null==dlgYesNo) return;
 						string strFileName=System.IO.Path.GetFileName(item.Path);
 						dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
-						dlgYesNo.SetLine(0,strFileName);
-						dlgYesNo.SetLine(1, "");
+						dlgYesNo.SetLine(1,strFileName);
 						dlgYesNo.SetLine(2, "");
+						dlgYesNo.SetLine(3, "");
 						dlgYesNo.DoModal(GetID);
 
 						if (!dlgYesNo.IsConfirmed) return;

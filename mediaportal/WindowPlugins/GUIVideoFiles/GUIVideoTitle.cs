@@ -679,8 +679,7 @@ namespace MediaPortal.GUI.Video
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(432)); //Delete movie from database
-      dlgYesNo.SetLine(0, item.Label);
-      dlgYesNo.SetLine(1, "");
+      dlgYesNo.SetLine(1, item.Label);
       dlgYesNo.SetLine(2, "");
       dlgYesNo.DoModal(GetID);
 
