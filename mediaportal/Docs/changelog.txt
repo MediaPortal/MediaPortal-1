@@ -1,8 +1,9 @@
-31-07-2004  my movies   : added : view by genres->will use thumb\genre.jpg for thumbnails (where genre = action, comics,...)
-31-07-2004  my music    : added : view by genres->will use thumb\genre.jpg for thumbnails (where genre = rock, pop,...)
-31-07-2004  my pictures : fixed : thumbnails where not refreshed after re-creating them
-31-07-2004  my tv       : added : support for controlling external tuner devices via USBUIRT
-31-07-2004  general     : fixed : upgraded to Directx 9.0c
+01-08-2004  my movies   : added : view by genres->will use thumb\genre.jpg for thumbnails (where genre = action, comics,...)
+01-08-2004  my music    : added : view by genres->will use thumb\genre.jpg for thumbnails (where genre = rock, pop,...)
+01-08-2004  my pictures : fixed : thumbnails where not refreshed after re-creating them
+01-08-2004  my tv       : added : support for controlling external tuner devices via USBUIRT
+01-08-2004  general     : fixed : upgraded to Directx 9.0c
+
 31-07-2004  foobar      : fixed : slow response from MP because of foobar.  Requires foohttpserver version 0.2 from http://sourceforge.net/projects/foohttpserver
 31-07-2004  my tv       : fixed : xmltv import : channel icons where not downloaded anymore
 31-07-2004  my tv       : fixed : stuttering video when not fullscreen
