@@ -26,9 +26,12 @@ copy ..\..\..\TVCapture\bin\Debug\TVCapture.dll .
 copy ..\..\..\TagReader\bin\Debug\TagReader.dll .
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
+copy ..\..\..\tag.exe .
+copy ..\..\..\tag.cfg .
 
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders
+copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
 
@@ -47,6 +50,7 @@ copy ..\..\..\GUIWeather\bin\Debug\GUIWeather.pdb plugins\windows
 copy ..\..\..\SMIReader\bin\Debug\SMIReader.pdb plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.pdb plugins\subtitle
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.pdb plugins\TagReaders
+copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.pdb plugins\TagReaders
 copy ..\..\..\RadioDatabase\bin\Debug\RadioDatabase.pdb .
 copy ..\..\..\MusicDatabase\bin\Debug\MusicDatabase.pdb .
 copy ..\..\..\PictureDatabase\bin\Debug\PictureDatabase.pdb .
