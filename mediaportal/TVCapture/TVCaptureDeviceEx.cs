@@ -1261,7 +1261,7 @@ namespace MediaPortal.TV.Recording
 		public void StoreTunedChannels(bool radio, bool tv)
 		{
 			if (_mGraph==null) return ;
-			_mGraph.StoreChannels(radio,tv);
+			_mGraph.StoreChannels(ID, radio,tv);
 		}
 		
 		void SetTvSettings()
