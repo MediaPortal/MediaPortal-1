@@ -1129,7 +1129,6 @@ namespace MediaPortal
         GUITextureManager.Dispose();
         GUIFontManager.Dispose();
         InitializeDeviceObjects();
-        GUIWindowManager.OnAppStarting();
       }
     }
     /// <summary>

@@ -142,9 +142,7 @@ public class MediaPortalApp : D3DApp
       m_MouseTimeOut=DateTime.Now;
       //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
 
-      // tell window manager we're gonna start
-      // this gives the windows a chance to initialize themselves
-      GUIWindowManager.OnAppStarting();
+      Recorder.Start();
     } 
 
     /// <summary>
@@ -157,7 +155,7 @@ public class MediaPortalApp : D3DApp
       
       // tell window manager that application is closing
       // this gives the windows the change to do some cleanup
-      GUIWindowManager.OnAppClosing();
+      Recorder.Stop();
     }
 
 
