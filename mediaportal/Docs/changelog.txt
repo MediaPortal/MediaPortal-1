@@ -1,4 +1,9 @@
 History: (dd-mm-yyyy)
+  19-06-2004  My TV       : fixed : losts of crashes/exceptions/hangups 
+  19-06-2004  My Radio    : fixed : sorting issues
+  19-06-2004  My Radio    : fixed : .. folder appearing in root folder
+  19-06-2004  My Radio    : added : seperate icons for local & internet radio stations
+  
   18-06-2004  general     : fixed : list view:scrolling up(cursor) doesnt change page number
   18-06-2004  my radio    : added : added streamlist folder which can contain .pls/.asx files
   18-06-2004  my TV       : added : option : background live tv or GUI
