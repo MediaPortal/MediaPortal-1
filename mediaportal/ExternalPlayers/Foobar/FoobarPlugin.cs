@@ -414,6 +414,25 @@ namespace MediaPortal.FoobarPlugin
     /// <returns></returns>
     public override bool Play(string strFile)
     {
+			
+			if ( strFile.IndexOf(".cda")>=0 )
+			{
+				string strTrack="";
+				int pos=strFile.IndexOf(".cda");
+				if (pos >=0)
+				{
+					pos--;
+					while (Char.IsDigit(strFile[pos]) && pos>0) 
+					{
+						strTrack=strFile[pos]+strTrack;
+						pos--;
+					}
+				}
+
+				string strDrive = strFile.Substring(0,1);
+				strDrive += ":";
+				strFile=String.Format("{0}{1}.cda",strDrive,strTrack);
+			}
       try
       {
         m_bStoppedManualy=false;
