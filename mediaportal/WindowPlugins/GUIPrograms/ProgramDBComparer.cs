@@ -119,6 +119,7 @@ namespace WindowPlugins.GUIPrograms
 			if (item1.IsFolder && item1.Label=="..") return -1;
 			if (item2.IsFolder && item2.Label=="..") return -1;
 			if (item1.IsFolder && !item2.IsFolder) return -1;
+			if (item1.IsFolder && item2.IsFolder) return 0; //don't sort folders!
 			else if (!item1.IsFolder && item2.IsFolder) return 1; 
 
 
@@ -204,7 +205,6 @@ namespace WindowPlugins.GUIPrograms
 				case SortMethod.SORT_RECENT:
 					if (curFile1.LastTimeLaunched > DateTime.MinValue)
 					{
-//					item1.Label2 = String.Format("{0}", curFile1.LastTimeLaunched);
 					item1.Label2 = curFile1.LastTimeLaunched.ToShortDateString();
 					}
 					else
@@ -213,7 +213,6 @@ namespace WindowPlugins.GUIPrograms
 					}
 					if (curFile2.LastTimeLaunched > DateTime.MinValue)
 					{
-//						item2.Label2 = String.Format("{0}", curFile2.LastTimeLaunched);
 						item2.Label2 = curFile1.LastTimeLaunched.ToShortDateString();
 					}
 					else
@@ -247,60 +246,6 @@ namespace WindowPlugins.GUIPrograms
 					}
 			}
 
-
-
-//			string strSize1="";
-//			string strSize2="";
-//			if (item1.FileInfo!=null) strSize1=Utils.GetSize(item1.FileInfo.Length);
-//			if (item2.FileInfo!=null) strSize2=Utils.GetSize(item2.FileInfo.Length);
-//
-//			SortMethod method=mCurrentSortMethod;
-//
-//			switch (method)
-//			{
-//				case SortMethod.SORT_NAME:
-//					item1.Label2="";
-//					item2.Label2="";
-//
-//					if (bAsc)
-//					{
-//						return String.Compare(item1.Label ,item2.Label,true);
-//					}
-//					else
-//					{
-//						return String.Compare(item2.Label ,item1.Label,true);
-//					}
-//        
-//
-//				case SortMethod.SORT_DATE:
-//					if (item1.FileInfo==null) return -1;
-//					if (item2.FileInfo==null) return -1;
-//          
-//					item1.Label2 =item1.FileInfo.CreationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-//					item2.Label2 =item2.FileInfo.CreationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-//					if (bAsc)
-//					{
-//						return DateTime.Compare(item1.FileInfo.CreationTime,item2.FileInfo.CreationTime);
-//					}
-//					else
-//					{
-//						return DateTime.Compare(item2.FileInfo.CreationTime,item1.FileInfo.CreationTime);
-//					}
-//
-//				case SortMethod.SORT_SIZE:
-//					if (item1.FileInfo==null) return -1;
-//					if (item2.FileInfo==null) return -1;
-//					item1.Label2=strSize1;
-//					item2.Label2=strSize2;
-//					if (bAsc)
-//					{
-//						return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
-//					}
-//					else
-//					{
-//						return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
-//					}
-//			} 
 			return 0;
 		}
 		
