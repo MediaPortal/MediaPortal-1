@@ -723,9 +723,9 @@ namespace MediaPortal.Configuration
 #else
           capture = new Capture(videoDevice, audioDevice);
 #endif	
-					if (videoCompressor!=null)
+
 						capture.VideoCompressor = videoCompressor;
-					if (audioCompressor!=null)
+
 						capture.AudioCompressor = audioCompressor;
 
           capture.LoadSettings(cardId);        
@@ -882,7 +882,6 @@ namespace MediaPortal.Configuration
           }
         }
       }
-
       //
       // Update controls
       //
@@ -1104,9 +1103,28 @@ namespace MediaPortal.Configuration
 				{
           textBoxName.Text=card.FriendlyName;
 #if (UseCaptureCardDefinitions)
-          ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(card);
-          cardComboBox.SelectedItem					= cbcc;
-					card.DeviceType=card.DeviceId;
+					if (card.DeviceId!=null)
+					{
+						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(card);
+						card.DeviceType=card.DeviceId;
+						cardComboBox.SelectedItem					= cbcc;
+					}
+					else
+					{
+						card.DeviceType=card.DeviceType;
+						for (int i=0; i < cardComboBox.Items.Count;++i)
+						{
+							ComboBoxCaptureCard cd= (ComboBoxCaptureCard)cardComboBox.Items[i];
+							if (cd.CaptureDevice.DeviceId==card.DeviceType)
+							{
+								if (card.VideoDeviceMoniker==cd.VideoDeviceMoniker)
+								{
+									cardComboBox.SelectedIndex=i;
+									break;
+								}
+							}
+						}
+					}
 #else
           cardComboBox.SelectedItem = card.VideoDevice;
 #endif
@@ -1122,8 +1140,10 @@ namespace MediaPortal.Configuration
           
           comboBoxLineInput.Text = card.AudioInputPin;
           trackRecording_ValueChanged(null,null);
-          m_size=new Size(card.FrameSize.Width,card.FrameSize.Height);
+					m_size=new Size(card.FrameSize.Width,card.FrameSize.Height);
+
           FillInAll(); // fill all framerates & audio in types...
+
 
           comboBoxLineInput.Text = card.AudioInputPin;
           trackRecording_ValueChanged(null,null);

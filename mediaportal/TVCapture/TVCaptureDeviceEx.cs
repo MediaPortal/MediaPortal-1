@@ -212,12 +212,13 @@ namespace MediaPortal.TV.Recording
 			CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[deviceId] as CaptureCardDefinition;
 			//
 			// If card is unsupported, simply return
+			if (_mCaptureCardDefinition==null)
+				_mCaptureCardDefinition											 = new CaptureCardDefinition();
 			if (ccd == null)
 			{
 				Log.Write("TVCaptureDevice.LoadDefinitions: CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
 				return (false);
 			}
-			_mCaptureCardDefinition											 = new CaptureCardDefinition();
 			_mCaptureCardDefinition.CaptureName          = ccd.CaptureName;
 			_mCaptureCardDefinition.CommercialName       = ccd.CommercialName;
 			_mCaptureCardDefinition.DeviceId             = ccd.DeviceId.ToLower();

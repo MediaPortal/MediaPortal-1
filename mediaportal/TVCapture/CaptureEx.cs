@@ -1167,7 +1167,6 @@ namespace MediaPortal.TV.Recording
 			if (!mCard.LoadDefinitions())												// Load configuration for this card
 			{
 				DirectShowUtil.DebugWrite("The TVCaptureDevice does NOT contain valid definitions" );
-				throw new ArgumentException( "The TVCaptureDevice does NOT contain valid definitions\n" );
 			}
 
 			DirectShowUtil.DebugWrite("------------ Create new capture ------------ ");
