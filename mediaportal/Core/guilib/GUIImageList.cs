@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Library
 				string percent=GUIPropertyManager.Parse(m_strTag);
 				try
 				{
-					Percentage=Int32.Parse(percent);
+					Percentage=(int)Math.Floor(Double.Parse(percent)*10d);
 				}
 				catch(Exception){}
 			}

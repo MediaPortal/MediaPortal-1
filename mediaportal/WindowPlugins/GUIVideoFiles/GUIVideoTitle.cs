@@ -896,8 +896,7 @@ namespace MediaPortal.GUI.Video
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
 
-			int rating=(int)(item.Rating*10f);
-			GUIPropertyManager.SetProperty("#rating", rating.ToString());
+			GUIPropertyManager.SetProperty("#rating", item.Rating.ToString());
 			GUIPropertyManager.SetProperty("#year", item.Year.ToString());
 			GUIPropertyManager.SetProperty("#title", item.Label);
 
