@@ -1,3 +1,4 @@
+//#define NEWFONTENGINE
 using System;
 using System.Text;
 using System.Diagnostics;
@@ -6,7 +7,8 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
-using Microsoft.DirectX;using Microsoft.DirectX.Direct3D;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 
@@ -255,7 +257,7 @@ namespace MediaPortal.GUI.Library
 	
     public void Present()
     {
-			
+#if !NEWFONTENGINE			
       // Set the data for the vertex buffer
       if (dwNumTriangles > 0)
       {
@@ -281,6 +283,7 @@ namespace MediaPortal.GUI.Library
 			}
       dwNumTriangles=0;
       iv=0;
+#endif
     }
 
     public bool GetFontCache(float xpos, float ypos, long color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
@@ -357,6 +360,16 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+			int intColor = color.ToArgb();
+#if NEWFONTENGINE
+			unsafe
+			{
+				IntPtr ptrStr=Marshal.StringToCoTaskMemAnsi(text); //SLOW
+				DrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor);
+				Marshal.FreeCoTaskMem(ptrStr);
+				return;
+			}
+#else
 			if (fontVertices==null) return;
 			if (fontTexture==null) return;
 			if (textureCoords==null) return;
@@ -366,15 +379,6 @@ namespace MediaPortal.GUI.Library
 			if (GUIGraphicsContext.DX9Device==null) return;
 			if (GUIGraphicsContext.DX9Device.Disposed) return;
 
-			int intColor = color.ToArgb();
-#if NEWFONTENGINE
-			unsafe
-			{
-				IntPtr ptrStr=Marshal.StringToCoTaskMemAnsi(text); //SLOW
-				DrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor);
-				Marshal.FreeCoTaskMem(ptrStr);
-			}
-#endif
 			//if (savedStateBlock==null) return;
 			//if (savedStateBlock.Disposed) return;
 			// Setup renderstate
@@ -460,7 +464,7 @@ namespace MediaPortal.GUI.Library
         Present();
 			// Restore the modified renderstates
 			//savedStateBlock.Apply();
-
+#endif
 		}
     
 		/// <summary>

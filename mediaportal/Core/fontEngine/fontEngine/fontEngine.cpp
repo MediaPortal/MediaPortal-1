@@ -75,7 +75,7 @@ void AddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int 
 	LPDIRECT3DVERTEXBUFFER9 g_pVB        = NULL;
 	int hr=m_pDevice->CreateVertexBuffer(	maxVertices*sizeof(CUSTOMVERTEX),
 											0, D3DFVF_CUSTOMVERTEX,
-											D3DPOOL_DEFAULT, 
+											D3DPOOL_MANAGED, 
 											&g_pVB, 
 											NULL) ;
 	fontData[fontNumber].pVertexBuffer=g_pVB;
@@ -96,6 +96,7 @@ void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD 
 	if (m_pDevice==NULL) return;
 	if (fontData[fontNumber].pVertexBuffer==NULL) return;
 
+	FONT_DATA_T* font = &(fontData[fontNumber]);
 	float xpos = (float)xposStart;
 	float ypos = (float)yposStart;
 	xpos -= fontData[fontNumber].fSpacingPerChar;
@@ -103,13 +104,13 @@ void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD 
 	float fStartX = xpos;
 	ypos -=0.5f;
 
-	float yoff    = (fontData[fontNumber].textureCoord[0][3]-fontData[fontNumber].textureCoord[0][1])*fontData[fontNumber].fTextureHeight;
-	float fScaleX = fontData[fontNumber].fTextureWidth  / fontData[fontNumber].fTextureScale;
-	float fScaleY = fontData[fontNumber].fTextureHeight / fontData[fontNumber].fTextureScale;
-	float fSpacing= 2 * fontData[fontNumber].fSpacingPerChar;
+	float yoff    = (font->textureCoord[0][3]-font->textureCoord[0][1])*font->fTextureHeight;
+	float fScaleX = font->fTextureWidth  / font->fTextureScale;
+	float fScaleY = font->fTextureHeight / font->fTextureScale;
+	float fSpacing= 2 * font->fSpacingPerChar;
 
 	CUSTOMVERTEX* pVertices=NULL;
-    fontData[fontNumber].pVertexBuffer->Lock( 0, 0, (void**)&pVertices, 0 ) ;
+	font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
 
 	int dwNumTriangles=0;
 	int iv=0;
@@ -123,14 +124,14 @@ void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD 
 			ypos += yoff;
 		}
 
-		if (c < fontData[fontNumber].iFirstChar || c >= fontData[fontNumber].iEndChar )
+		if (c < font->iFirstChar || c >= font->iEndChar )
 			continue;
 
-        int index=c-fontData[fontNumber].iFirstChar;
-		float tx1 = fontData[fontNumber].textureCoord[index][0];
-		float ty1 = fontData[fontNumber].textureCoord[index][1];
-		float tx2 = fontData[fontNumber].textureCoord[index][2];
-		float ty2 = fontData[fontNumber].textureCoord[index][3];
+        int index=c-font->iFirstChar;
+		float tx1 = font->textureCoord[index][0];
+		float ty1 = font->textureCoord[index][1];
+		float tx2 = font->textureCoord[index][2];
+		float ty2 = font->textureCoord[index][3];
 
 		float w = (tx2-tx1) * fScaleX;
 		float h = (ty2-ty1) * fScaleY;
@@ -155,15 +156,15 @@ void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD 
 			dwNumTriangles += 2;
 			if (iv > (MaxNumfontVertices-12))
 			{
-				fontData[fontNumber].pVertexBuffer->Unlock();
-				m_pDevice->SetTexture(0, fontData[fontNumber].pTexture);
+				font->pVertexBuffer->Unlock();
+				m_pDevice->SetTexture(0, font->pTexture);
 				m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-				m_pDevice->SetStreamSource(0, fontData[fontNumber].pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
+				m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 				m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, dwNumTriangles);
 				m_pDevice->SetTexture(0, NULL);
 				dwNumTriangles = 0;
 				iv = 0;
-				fontData[fontNumber].pVertexBuffer->Lock( 0, 0, (void**)&pVertices, 0 ) ;
+				font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
 			}
 		}
 
@@ -172,10 +173,10 @@ void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD 
 
 	if (iv > 0)
 	{
-		fontData[fontNumber].pVertexBuffer->Unlock();
-		m_pDevice->SetTexture(0, fontData[fontNumber].pTexture);
+		font->pVertexBuffer->Unlock();
+		m_pDevice->SetTexture(0, font->pTexture);
 		m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-		m_pDevice->SetStreamSource(0, fontData[fontNumber].pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
+		m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, dwNumTriangles);
 		m_pDevice->SetTexture(0, NULL);
 		dwNumTriangles = 0;
@@ -183,6 +184,6 @@ void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD 
 	}
 	else
 	{
-		fontData[fontNumber].pVertexBuffer->Unlock();
+		font->pVertexBuffer->Unlock();
 	}
 }

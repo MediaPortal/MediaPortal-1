@@ -778,6 +778,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void Render()
     {
+			//return;
       lock (this)
       {
         if (!PreRender()) return;
