@@ -1,3 +1,6 @@
+04-08-2004  home        : added : option to enable/disable scrolling of the menu items
+04-08-2004  skinengine  : added : option launch external application when pressing a button
+
 03-08-2004  foobar      : fixed : Not displaying the music overlay when playing songs via foobar
 03-08-2004  setup       : fixed : Drive letter is now added to static CD/DVD share names
 03-08-2004  my tv       : fixed : sw encoding cards didnt work
