@@ -458,7 +458,7 @@ namespace ProgramsDatabase
 				{
 					AllGameInfoScraper scraper = new AllGameInfoScraper();
 					string strTitle = NormalizedTitle;
-					while ((!bSuccess) && (iRetries < 3))
+					while ((!bSuccess) && (iRetries < 5))
 					{
 						// brute force! Try three times.... sometimes I get
 						// a PostHTTP false result... don't know why!

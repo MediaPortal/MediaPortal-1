@@ -176,6 +176,7 @@ namespace ProgramsDatabase
 
 			// delete images from this fileitem
 			curFile.DeleteImages(curApp);
+			curFile.Imagefile = "";
 
 			// download all images
 			foreach(string strImgUrl in mImgUrls)
