@@ -309,25 +309,27 @@ namespace MediaPortal.TV.Recording
       if (m_TVTuner==null) return;
 
       DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tune to channel:{0}", iChannel);
-      m_TVTuner.put_TuningSpace(0);
-      m_TVTuner.put_CountryCode(m_iCountryCode);
-      m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
-      if (m_bUseCable)
-        m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
-      else
-        m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
-      try
+      if (iChannel<1000)
       {
-        m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
+        m_TVTuner.put_TuningSpace(0);
+        m_TVTuner.put_CountryCode(m_iCountryCode);
+        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+        if (m_bUseCable)
+          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
+        else
+          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+        try
+        {
+          m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
 
-        int iFreq;
-        double dFreq;
-        m_TVTuner.get_VideoFrequency(out iFreq);
-        dFreq=iFreq/1000000d;
-        DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuned to {0} MHz.", dFreq);
+          int iFreq;
+          double dFreq;
+          m_TVTuner.get_VideoFrequency(out iFreq);
+          dFreq=iFreq/1000000d;
+          DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuned to {0} MHz.", dFreq);
+        }
+        catch(Exception){} 
       }
-      catch(Exception){} 
-
       DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
     }
 

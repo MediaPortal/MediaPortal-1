@@ -376,26 +376,28 @@ namespace MediaPortal.TV.Recording
       m_iChannelNr=iChannel;
       if (m_TVTuner==null) return;
 
-			DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
-      m_TVTuner.put_TuningSpace(0);
-      m_TVTuner.put_CountryCode(m_iCountryCode);
-      m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
-      if (m_bUseCable)
-        m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
-      else
-        m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
-			try
-			{
-				m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
+      DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
+      if (iChannel <1000)
+      {
+        m_TVTuner.put_TuningSpace(0);
+        m_TVTuner.put_CountryCode(m_iCountryCode);
+        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+        if (m_bUseCable)
+          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
+        else
+          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+        try
+        {
+          m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
 
-				int iFreq;
-				double dFreq;
-				m_TVTuner.get_VideoFrequency(out iFreq);
-				dFreq=iFreq/1000000d;
-				DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuned to {0} MHz.", dFreq);
-			}
-			catch(Exception){} 
-
+          int iFreq;
+          double dFreq;
+          m_TVTuner.get_VideoFrequency(out iFreq);
+          dFreq=iFreq/1000000d;
+          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuned to {0} MHz.", dFreq);
+        }
+        catch(Exception){} 
+      }
 			DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
       m_StartTime=DateTime.Now;
     }
