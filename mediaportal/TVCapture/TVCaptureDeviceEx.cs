@@ -310,7 +310,6 @@ namespace MediaPortal.TV.Recording
 								if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
 								{
 									// Filter found matching the capture card device!!!!!!!!!!!!!!!
-									//filter=ff;
 									filterFound = true;
 									break;
 								}
