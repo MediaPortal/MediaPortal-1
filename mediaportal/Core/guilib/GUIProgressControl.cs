@@ -117,6 +117,8 @@ namespace MediaPortal.GUI.Library
 			m_guiBackground.SetPosition(m_guiBackground.XPosition,m_guiBackground.YPosition);
 			m_guiBackground.Render();
 
+      GUIFontManager.Present();
+
 			int iWidthLeft=m_guiLeft.TextureWidth;
 			int iHeightLeft=m_guiLeft.TextureHeight;
 			int iWidthRight=m_guiRight.TextureWidth;
