@@ -2158,10 +2158,9 @@
         <value>Rotatera</value>
     </string>
     <string>
-	<id>736</id>
-	<value>Ingen TVGuide-data finns</value>
-</string>
-
+        <id>736</id>
+        <value>Ingen TVGuide-data finns</value>
+    </string>
     <string>
         <id>800</id>
         <value>Startar med</value>
@@ -2252,133 +2251,733 @@
         <value>Volym tona in/ut</value>
     </string>
     <string>
-	<id>861</id>
-	<value>Alarm Detaljer</value>
-</string>
-<string>
-	<id>862</id>
-	<value>Radio</value>
-</string>
-<string>
-	<id>863</id>
-	<value>Fil</value>
-</string>
-<string>
-	<id>864</id>
-	<value>Mediatyp</value>
-</string>
-<string>
-	<id>865</id>
-	<value>Antal minuter till insomning:</value>
-</string>
-<string>
-	<id>866</id>
-	<value>Sänk volymen under tiden</value>
-</string>
-<string>
-	<id>867</id>
-	<value>Stäng av datorn</value>
-</string>
-<string>
-	<id>868</id>
-	<value>Reset</value>
-</string>
-<string>
-	<id>900</id>
-	<value>Fortsätta filmen där den stannade senast?</value>
-</string>
-<string>
-	<id>901</id>
-	<value>MSN Messenger</value>
-</string>
-<string>
-	<id>902</id>
-	<value>Online kontakter</value>
-</string>
-<string>
-	<id>903</id>
-	<value>Logga in</value>
-</string>
-<string>
-	<id>904</id>
-	<value>Logga ut</value>
-</string>
-<string>
-	<id>905</id>
-	<value>Du måste konfigurera detta plugin först</value>
-</string>
-<string>
-	<id>906</id>
-	<value>Fyll i din e-post adress i setupen</value>
-</string>
-<string>
-	<id>907</id>
-	<value>Kunde inte ansluta till MSN</value>
-</string>
-<string>
-	<id>908</id>
-	<value>skriver ett meddelande...</value>
-</string>
-<string>
-	<id>909</id>
-	<value>Ansluter...</value>
-</string>
-
+        <id>861</id>
+        <value>Alarm Detaljer</value>
+    </string>
+    <string>
+        <id>862</id>
+        <value>Radio</value>
+    </string>
+    <string>
+        <id>863</id>
+        <value>Fil</value>
+    </string>
+    <string>
+        <id>864</id>
+        <value>Mediatyp</value>
+    </string>
+    <string>
+        <id>865</id>
+        <value>Antal minuter till insomning:</value>
+    </string>
+    <string>
+        <id>866</id>
+        <value>Sänk volymen under tiden</value>
+    </string>
+    <string>
+        <id>867</id>
+        <value>Stäng av datorn</value>
+    </string>
+    <string>
+        <id>868</id>
+        <value>Reset</value>
+    </string>
+    <string>
+        <id>900</id>
+        <value>Fortsätta filmen där den stannade senast?</value>
+    </string>
+    <string>
+        <id>901</id>
+        <value>MSN Messenger</value>
+    </string>
+    <string>
+        <id>902</id>
+        <value>Online kontakter</value>
+    </string>
+    <string>
+        <id>903</id>
+        <value>Logga in</value>
+    </string>
+    <string>
+        <id>904</id>
+        <value>Logga ut</value>
+    </string>
+    <string>
+        <id>905</id>
+        <value>Du måste konfigurera detta plugin först</value>
+    </string>
+    <string>
+        <id>906</id>
+        <value>Fyll i din e-post adress i setupen</value>
+    </string>
+    <string>
+        <id>907</id>
+        <value>Kunde inte ansluta till MSN</value>
+    </string>
+    <string>
+        <id>908</id>
+        <value>skriver ett meddelande...</value>
+    </string>
+    <string>
+        <id>909</id>
+        <value>Ansluter...</value>
+    </string>
+    <string>
+        <id>910</id>
+        <value>Loggar in...</value>
+    </string>
+    <string>
+        <id>911</id>
+        <value>Inga kanaler</value>
+    </string>
+    <string>
+        <id>912</id>
+        <value>Kunde inte ladda ner senaste nyheterna</value>
+    </string>
+    <string>
+        <id>913</id>
+        <value>Mina Plugins</value>
+    </string>
+    <string>
+        <id>914</id>
+        <value>Inspelningar</value>
+    </string>
+    <string>
+        <id>915</id>
+        <value>TV Kanaler</value>
+    </string>
+    <string>
+        <id>916</id>
+        <value>Fjärrfil</value>
+    </string>
+    <string>
+        <id>917</id>
+        <value>Denna fil finns i en fjärrmapp</value>
+    </string>
+    <string>
+        <id>918</id>
+        <value>Vill du ladda ner det till din vanliga</value>
+    </string>
+    <string>
+        <id>919</id>
+        <value>lokala share?</value>
+    </string>
+    <string>
+        <id>920</id>
+        <value>Kunde inte ladda ner fjärr fil</value>
+    </string>
+    <string>
+        <id>921</id>
+        <value>Filen laddas ner</value>
+    </string>
+    <string>
+        <id>922</id>
+        <value>Beskrivning</value>
+    </string>
+    <string>
+        <id>923</id>
+        <value>Visa</value>
+    </string>
+    <string>
+        <id>924</id>
+        <value>Meny</value>
+    </string>
+    <string>
+        <id>925</id>
+        <value>Ta bort denna film</value>
+    </string>
+    <string>
+        <id>926</id>
+        <value>Lägg till spellistan</value>
+    </string>
+    <string>
+        <id>927</id>
+        <value>Varning!</value>
+    </string>
+    <string>
+        <id>928</id>
+        <value>Hitta omslag</value>
+    </string>
+    <string>
+        <id>929</id>
+        <value>Stäng menyn</value>
+    </string>
+    <string>
+        <id>930</id>
+        <value>Lägg till favoriter</value>
+    </string>
+    <string>
+        <id>931</id>
+        <value>Betyg</value>
+    </string>
+    <string>
+        <id>932</id>
+        <value>Favoriter</value>
+    </string>
+    <string>
+        <id>933</id>
+        <value>Ta bort från favoriter</value>
+    </string>
+    <string>
+        <id>934</id>
+        <value>Sätt betyg</value>
+    </string>
+    <string>
+        <id>935</id>
+        <value>Visa: Betyg</value>
+    </string>
+    <string>
+        <id>936</id>
+        <value>Fortsätt från:</value>
+    </string>
+    <string>
+        <id>937</id>
+        <value>Importera TV Guide</value>
+    </string>
+    <string>
+        <id>938</id>
+        <value>Titta på denna kanalen</value>
+    </string>
+    <string>
+        <id>939</id>
+        <value>Byta läge</value>
+    </string>
+    <string>
+        <id>940</id>
+        <value>Egenskaper</value>
+    </string>
+    <string>
+        <id>941</id>
+        <value>Ändra aspect ratio</value>
+    </string>
+    <string>
+        <id>942</id>
+        <value>Stretch</value>
+    </string>
+    <string>
+        <id>943</id>
+        <value>Normal</value>
+    </string>
+    <string>
+        <id>944</id>
+        <value>Original</value>
+    </string>
+    <string>
+        <id>945</id>
+        <value>Letterbox</value>
+    </string>
+    <string>
+        <id>946</id>
+        <value>Pan and Scan</value>
+    </string>
+    <string>
+        <id>947</id>
+        <value>Zoom</value>
+    </string>
+    <string>
+        <id>948</id>
+        <value>Online</value>
+    </string>
+    <string>
+        <id>949</id>
+        <value>Upptagen</value>
+    </string>
+    <string>
+        <id>950</id>
+        <value>Snart tillbaka</value>
+    </string>
+    <string>
+        <id>951</id>
+        <value>Inte vid datorn</value>
+    </string>
+    <string>
+        <id>952</id>
+        <value>Telefon</value>
+    </string>
+    <string>
+        <id>953</id>
+        <value>Lunch</value>
+    </string>
+    <string>
+        <id>954</id>
+        <value>Osynlig</value>
+    </string>
+    <string>
+        <id>955</id>
+        <value>Upptagen</value>
+    </string>
+    <string>
+        <id>956</id>
+        <value>Online</value>
+    </string>
+    <string>
+        <id>957</id>
+        <value>MSN Messenger</value>
+    </string>
+    <string>
+        <id>958</id>
+        <value>Pratar med</value>
+    </string>
+    <string>
+        <id>959</id>
+        <value>har anslutit till konversationen</value>
+    </string>
+    <string>
+        <id>960</id>
+        <value>har lämnat konversationen</value>
+    </string>
+    <string>
+        <id>961</id>
+        <value>MSN Status</value>
+    </string>
+    <string>
+        <id>970</id>
+        <value>Föregående fönster</value>
+    </string>
     <string>
         <id>1440</id>
         <value>Min SVT Text</value>
     </string>
+    <!-- My Status Strings -->
+    <string>
+        <id>1950</id>
+        <value>Min Status</value>
+    </string>
+    <string>
+        <id>1951</id>
+        <value>Hårddisk</value>
+    </string>
+    <string>
+        <id>1952</id>
+        <value>Fläkt</value>
+    </string>
+    <string>
+        <id>1953</id>
+        <value>Ledigt</value>
+    </string>
+    <string>
+        <id>1954</id>
+        <value>Temperatur</value>
+    </string>
+    <string>
+        <id>1955</id>
+        <value>C</value>
+    </string>
+    <string>
+        <id>1956</id>
+        <value>Välj alarm signal</value>
+    </string>
+    <string>
+        <id>1957</id>
+        <value>Egenskaper</value>
+    </string>
+    <string>
+        <id>1958</id>
+        <value>CPU användning</value>
+    </string>
+    <string>
+        <id>1959</id>
+        <value>Spänning</value>
+    </string>
+    <string>
+        <id>1960</id>
+        <value>Volt</value>
+    </string>
+    <string>
+        <id>1961</id>
+        <value>Klockfrekvens</value>
+    </string>
+    <string>
+        <id>1962</id>
+        <value>Egenskaper</value>
+    </string>
+    <string>
+        <id>1963</id>
+        <value>Sensor finesser</value>
+    </string>
+    <string>
+        <id>1964</id>
+        <value>Sensor alarm</value>
+    </string>
+    <string>
+        <id>1965</id>
+        <value>Högsta Värde</value>
+    </string>
+    <string>
+        <id>1966</id>
+        <value>Lägsta Värde</value>
+    </string>
+    <string>
+        <id>1967</id>
+        <value>Övre alarmgräns</value>
+    </string>
+    <string>
+        <id>1968</id>
+        <value>Nedre alarmgräns</value>
+    </string>
+    <string>
+        <id>1969</id>
+        <value>Testa ljudet</value>
+    </string>
+    <string>
+        <id>1970</id>
+        <value>Alarm intervall (i sekunder)</value>
+    </string>
+    <string>
+        <id>1971</id>
+        <value>Stäng ner vid larm</value>
+    </string>
+    <string>
+        <id>1972</id>
+        <value>Status detaljer</value>
+    </string>
+    <string>
+        <id>1973</id>
+        <value>av</value>
+    </string>
+    <string>
+        <id>1974</id>
+        <value>Minne</value>
+    </string>
+    <string>
+        <id>1975</id>
+        <value>Nästa Sida</value>
+    </string>
     <!-- My Recipie Strings -->
-	<string><id>2005</id><value>Ta bort</value></string>
-	<string><id>2006</id><value>Titel</value></string>
-	<string><id>2007</id><value>Yield</value></string>
-	<string><id>2008</id><value>Ingredienser</value></string>
-	<string><id>2009</id><value>Riktningar</value></string>
-	<string><id>2010</id><value>Kort</value></string>
-	<string><id>2011</id><value>Skriv Ut</value></string>
-	<string><id>2012</id><value>Ta bort</value></string>
-	<string><id>2013</id><value>Favoriter</value></string>
-	<string><id>2014</id><value>Okänd</value></string>
-	<string><id>2015</id><value>per portion</value></string>
-	<string><id>2016</id><value>liten</value></string>
-	<string><id>2017</id><value>fluid ounce</value></string>
-	<string><id>2018</id><value>cup</value></string>
-	<string><id>2019</id><value>pint</value></string>
-	<string><id>2020</id><value>medium</value></string>
-	<string><id>2021</id><value>stor</value></string>
-	<string><id>2022</id><value>can</value></string>
-	<string><id>2023</id><value>package</value></string>
-	<string><id>2024</id><value>pinch</value></string>
-	<string><id>2025</id><value>drop</value></string>
-	<string><id>2026</id><value>dash</value></string>
-	<string><id>2027</id><value>carton</value></string>
-	<string><id>2028</id><value>bunch</value></string>
-	<string><id>2029</id><value>slice</value></string>
-	<string><id>2030</id><value>varje</value></string>
-	<string><id>2031</id><value>teaspoon</value></string>
-	<string><id>2032</id><value>teaspoon</value></string>
-	<string><id>2033</id><value>tablespoon</value></string>
-	<string><id>2034</id><value>tablespoon</value></string>
-	<string><id>2035</id><value>quart</value></string>
-	<string><id>2036</id><value>gallon</value></string>
-	<string><id>2037</id><value>ounce</value></string>
-	<string><id>2038</id><value>pound</value></string>
-	<string><id>2039</id><value>mililiter</value></string>
-	<string><id>2040</id><value>mililiter</value></string>
-	<string><id>2041</id><value>centiliter</value></string>
-	<string><id>2042</id><value>deciliter</value></string>
-	<string><id>2043</id><value>liter</value></string>
-	<string><id>2044</id><value>milligram</value></string>
-	<string><id>2045</id><value>centigram</value></string>
-	<string><id>2046</id><value>decigram</value></string>
-	<string><id>2047</id><value>gram</value></string>
-	<string><id>2048</id><value>kilogram</value></string>
-	<string><id>2049</id><value>Ta bort detta recept?</value></string>
-	<string><id>2050</id><value>Ta bort denna kategori?</value></string>
-	<string><id>2051</id><value>Sök på titeln</value></string>
-	<string><id>2052</id><value>Sök i recept</value></string>
-	<string><id>2053</id><value>Kategori</value></string>
-	<string><id>2054</id><value>Ingen träff!</value></string>
+    <string>
+        <id>2005</id>
+        <value>Ta bort</value>
+    </string>
+    <string>
+        <id>2006</id>
+        <value>Titel</value>
+    </string>
+    <string>
+        <id>2007</id>
+        <value>Yield</value>
+    </string>
+    <string>
+        <id>2008</id>
+        <value>Ingredienser</value>
+    </string>
+    <string>
+        <id>2009</id>
+        <value>Riktningar</value>
+    </string>
+    <string>
+        <id>2010</id>
+        <value>Kort</value>
+    </string>
+    <string>
+        <id>2011</id>
+        <value>Skriv Ut</value>
+    </string>
+    <string>
+        <id>2012</id>
+        <value>Ta bort</value>
+    </string>
+    <string>
+        <id>2013</id>
+        <value>Favoriter</value>
+    </string>
+    <string>
+        <id>2014</id>
+        <value>Okänd</value>
+    </string>
+    <string>
+        <id>2015</id>
+        <value>per portion</value>
+    </string>
+    <string>
+        <id>2016</id>
+        <value>liten</value>
+    </string>
+    <string>
+        <id>2017</id>
+        <value>fluid ounce</value>
+    </string>
+    <string>
+        <id>2018</id>
+        <value>cup</value>
+    </string>
+    <string>
+        <id>2019</id>
+        <value>pint</value>
+    </string>
+    <string>
+        <id>2020</id>
+        <value>medium</value>
+    </string>
+    <string>
+        <id>2021</id>
+        <value>stor</value>
+    </string>
+    <string>
+        <id>2022</id>
+        <value>can</value>
+    </string>
+    <string>
+        <id>2023</id>
+        <value>package</value>
+    </string>
+    <string>
+        <id>2024</id>
+        <value>pinch</value>
+    </string>
+    <string>
+        <id>2025</id>
+        <value>drop</value>
+    </string>
+    <string>
+        <id>2026</id>
+        <value>dash</value>
+    </string>
+    <string>
+        <id>2027</id>
+        <value>carton</value>
+    </string>
+    <string>
+        <id>2028</id>
+        <value>bunch</value>
+    </string>
+    <string>
+        <id>2029</id>
+        <value>slice</value>
+    </string>
+    <string>
+        <id>2030</id>
+        <value>varje</value>
+    </string>
+    <string>
+        <id>2031</id>
+        <value>teaspoon</value>
+    </string>
+    <string>
+        <id>2032</id>
+        <value>teaspoon</value>
+    </string>
+    <string>
+        <id>2033</id>
+        <value>tablespoon</value>
+    </string>
+    <string>
+        <id>2034</id>
+        <value>tablespoon</value>
+    </string>
+    <string>
+        <id>2035</id>
+        <value>quart</value>
+    </string>
+    <string>
+        <id>2036</id>
+        <value>gallon</value>
+    </string>
+    <string>
+        <id>2037</id>
+        <value>ounce</value>
+    </string>
+    <string>
+        <id>2038</id>
+        <value>pound</value>
+    </string>
+    <string>
+        <id>2039</id>
+        <value>mililiter</value>
+    </string>
+    <string>
+        <id>2040</id>
+        <value>mililiter</value>
+    </string>
+    <string>
+        <id>2041</id>
+        <value>centiliter</value>
+    </string>
+    <string>
+        <id>2042</id>
+        <value>deciliter</value>
+    </string>
+    <string>
+        <id>2043</id>
+        <value>liter</value>
+    </string>
+    <string>
+        <id>2044</id>
+        <value>milligram</value>
+    </string>
+    <string>
+        <id>2045</id>
+        <value>centigram</value>
+    </string>
+    <string>
+        <id>2046</id>
+        <value>decigram</value>
+    </string>
+    <string>
+        <id>2047</id>
+        <value>gram</value>
+    </string>
+    <string>
+        <id>2048</id>
+        <value>kilogram</value>
+    </string>
+    <string>
+        <id>2049</id>
+        <value>Ta bort detta recept?</value>
+    </string>
+    <string>
+        <id>2050</id>
+        <value>Ta bort denna kategori?</value>
+    </string>
+    <string>
+        <id>2051</id>
+        <value>Sök på titeln</value>
+    </string>
+    <string>
+        <id>2052</id>
+        <value>Sök i recept</value>
+    </string>
+    <string>
+        <id>2053</id>
+        <value>Kategori</value>
+    </string>
+    <string>
+        <id>2054</id>
+        <value>Ingen träff!</value>
+    </string>
+    <!-- My Burner Strings -->
+    <string>
+        <id>2100</id>
+        <value>Bränn</value>
+    </string>
+    <string>
+        <id>2101</id>
+        <value>Kopiera CD/DVD</value>
+    </string>
+    <string>
+        <id>2102</id>
+        <value>Skapa Audio-CD</value>
+    </string>
+    <string>
+        <id>2103</id>
+        <value>Skapa Video-CD</value>
+    </string>
+    <string>
+        <id>2104</id>
+        <value>Skapa Video-DVD</value>
+    </string>
+    <string>
+        <id>2105</id>
+        <value>Skapa Data-CD</value>
+    </string>
+    <string>
+        <id>2106</id>
+        <value>Skapa Data-DVD</value>
+    </string>
+    <string>
+        <id>2107</id>
+        <value>Starta kopiering</value>
+    </string>
+    <string>
+        <id>2108</id>
+        <value>Sätt i en tom CD/DVD</value>
+    </string>
+    <string>
+        <id>2109</id>
+        <value>tryck sen på OK</value>
+    </string>
+    <string>
+        <id>2110</id>
+        <value>Sätt i original CD/DVD</value>
+    </string>
+    <string>
+        <id>2111</id>
+        <value>Klar!</value>
+    </string>
+    <string>
+        <id>2112</id>
+        <value>Väntar på CD/DVD</value>
+    </string>
+    <string>
+        <id>2113</id>
+        <value>Kopiera allt</value>
+    </string>
+    <string>
+        <id>2114</id>
+        <value>Radera skiva</value>
+    </string>
+    <string>
+        <id>2115</id>
+        <value>Sätt i CD/DVD RW</value>
+    </string>
+    <!-- My Explorer Strings -->
+    <string>
+        <id>2200</id>
+        <value>Explorer</value>
+    </string>
+    <string>
+        <id>2201</id>
+        <value>Välj källa</value>
+    </string>
+    <string>
+        <id>2202</id>
+        <value>Välj mål</value>
+    </string>
+    <string>
+        <id>2203</id>
+        <value>Kopiera data</value>
+    </string>
+    <string>
+        <id>2204</id>
+        <value>Skapa mapp</value>
+    </string>
+    <string>
+        <id>2205</id>
+        <value>Återställ markerat</value>
+    </string>
+    <string>
+        <id>2206</id>
+        <value>Välj alla</value>
+    </string>
+    <string>
+        <id>2207</id>
+        <value>Vill du</value>
+    </string>
+    <string>
+        <id>2208</id>
+        <value>skapa mappen?</value>
+    </string>
+    <string>
+        <id>2209</id>
+        <value>Vill du kopiera filerna?</value>
+    </string>
+    <string>
+        <id>2210</id>
+        <value>Filer kopierade!</value>
+    </string>
+    <string>
+        <id>2211</id>
+        <value>Vänta, filer kopieras.</value>
+    </string>
+    <string>
+        <id>2212</id>
+        <value>Ta bort</value>
+    </string>
+    <string>
+        <id>2213</id>
+        <value>Flytta</value>
+    </string>
+    <string>
+        <id>2214</id>
+        <value>Vill du flytta de markerade filerna?</value>
+    </string>
+    <string>
+        <id>2215</id>
+        <value>Vänta, flyttar filer.</value>
+    </string>
+    <string>
+        <id>2216</id>
+        <value>Filer flyttade!</value>
+    </string>
     <string>
         <id>8000</id>
         <value>Min Epost</value>
@@ -2490,6 +3089,58 @@
     <string>
         <id>8033</id>
         <value>Hämtar</value>
+    </string>
+    <string>
+        <id>8034</id>
+        <value>Visa HTML</value>
+    </string>
+    <string>
+        <id>9000</id>
+        <value>Bildstorlek:</value>
+    </string>
+    <string>
+        <id>9001</id>
+        <value>Upplösning:</value>
+    </string>
+    <string>
+        <id>9002</id>
+        <value>Blixt:</value>
+    </string>
+    <string>
+        <id>9003</id>
+        <value>Avståndsläge:</value>
+    </string>
+    <string>
+        <id>9004</id>
+        <value>Exponeringskompensation:</value>
+    </string>
+    <string>
+        <id>9005</id>
+        <value>Slutarhastighet:</value>
+    </string>
+    <string>
+        <id>9006</id>
+        <value>Datum när bilden togs:</value>
+    </string>
+    <string>
+        <id>9007</id>
+        <value>Fstop:</value>
+    </string>
+    <string>
+        <id>9008</id>
+        <value>Exponeringstid:</value>
+    </string>
+    <string>
+        <id>9009</id>
+        <value>Kameramodell:</value>
+    </string>
+    <string>
+        <id>9010</id>
+        <value>Equipment make:</value>
+    </string>
+    <string>
+        <id>9011</id>
+        <value>Visa kommentarer:</value>
     </string>
     <string>
         <id>10000</id>
@@ -2612,6 +3263,18 @@
         <value>Inställningar->Skärm->scroll hastighet</value>
     </string>
     <string>
+        <id>10032</id>
+        <value>MSN Messenger</value>
+    </string>
+    <string>
+        <id>10033</id>
+        <value>MSN Messenger chat</value>
+    </string>
+    <string>
+        <id>10034</id>
+        <value>Mina Plugins</value>
+    </string>
+    <string>
         <id>10100</id>
         <value>ja/nej dialog</value>
     </string>
@@ -2644,6 +3307,10 @@
         <value>Min Musik/top100</value>
     </string>
     <string>
+        <id>10506</id>
+        <value>Min Musik/Favoriter</value>
+    </string>
+    <string>
         <id>10600</id>
         <value>Min TV/Guide</value>
     </string>
@@ -2658,6 +3325,38 @@
     <string>
         <id>10603</id>
         <value>Min TV/Inspelad TV</value>
+    </string>
+    <string>
+        <id>10604</id>
+        <value>Min TV/Sök</value>
+    </string>
+    <string>
+        <id>10605</id>
+        <value>Min TV/Inpelad Tv/Genre</value>
+    </string>
+    <string>
+        <id>10606</id>
+        <value>Min TV/Inspelad Tv/kanaler</value>
+    </string>
+    <string>
+        <id>10750</id>
+        <value>Mina Recept</value>
+    </string>
+    <string>
+        <id>10755</id>
+        <value>Min Status</value>
+    </string>
+    <string>
+        <id>10756</id>
+        <value>Min Status detaljer</value>
+    </string>
+    <string>
+        <id>10757</id>
+        <value>Min Status inställningar</value>
+    </string>
+    <string>
+        <id>10770</id>
+        <value>Explorer</value>
     </string>
     <string>
         <id>11000</id>
@@ -2700,8 +3399,32 @@
         <value>Filgrupperings dialog</value>
     </string>
     <string>
+        <id>12010</id>
+        <value>Datum/Tid</value>
+    </string>
+    <string>
+        <id>12011</id>
+        <value>Artist info</value>
+    </string>
+    <string>
+        <id>12012</id>
+        <value>Context meny</value>
+    </string>
+    <string>
+        <id>12013</id>
+        <value>Sätt betyg</value>
+    </string>
+    <string>
+        <id>12014</id>
+        <value>Bildinfo</value>
+    </string>
+    <string>
         <id>12600</id>
         <value>Mitt Väder</value>
+    </string>
+    <string>
+        <id>12700</id>
+        <value>Mina Nyheter</value>
     </string>
     <string>
         <id>12900</id>
@@ -2710,6 +3433,10 @@
     <string>
         <id>12901</id>
         <value>Fullskärm OSD</value>
+    </string>
+    <string>
+        <id>12902</id>
+        <value>MSN Messenger OSD</value>
     </string>
     <string>
         <id>13000</id>
@@ -2736,17 +3463,31 @@
         <value>Senast Importerad fil:</value>
     </string>
     <string>
-	<id>13006</id>
-	<value>Liten Bild</value>
-</string>
-<string>
-	<id>13007</id>
-	<value>Stor Bild</value>
-</string>
-
+        <id>13006</id>
+        <value>Liten Bild</value>
+    </string>
     <string>
-	<id>16001</id>
-	<value>Partyblanda</value>
-</string>
-
+        <id>13007</id>
+        <value>Stor Bild</value>
+    </string>
+    <string>
+        <id>13008</id>
+        <value>Ken Burns effekt</value>
+    </string>
+    <string>
+        <id>13009</id>
+        <value>Slumpmässig övergångar</value>
+    </string>
+    <string>
+        <id>13010</id>
+        <value>Tonad övergångar</value>
+    </string>
+    <string>
+        <id>13011</id>
+        <value>Ken Burns hastighet</value>
+    </string>
+    <string>
+        <id>16001</id>
+        <value>Partyblanda</value>
+    </string>
 </strings>
