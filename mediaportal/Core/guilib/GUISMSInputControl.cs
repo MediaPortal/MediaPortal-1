@@ -74,11 +74,13 @@ namespace MediaPortal.GUI.Library
       base.FreeResources ();
     }
     
+    //TODO: add implementation
     public override bool OnMessage(GUIMessage message)
     {
       return base.OnMessage (message);
     }
     
+    //TODO: add implementation
     public override void OnAction(Action action)
     {
       base.OnAction (action);

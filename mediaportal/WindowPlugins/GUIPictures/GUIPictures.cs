@@ -1040,7 +1040,7 @@ namespace MediaPortal.GUI.Pictures
     void WorkerThreadFunction()
     {
       string path=m_strDirectory;
-      ArrayList itemlist=m_directory.GetDirectory(path);
+      ArrayList itemlist=m_directory.GetDirectoryUnProtected(path);
       foreach (GUIListItem item in itemlist)
       {
         if (!item.IsFolder)

@@ -332,6 +332,158 @@ namespace MediaPortal.Util
       return items;
     }
 
+
+    public ArrayList GetDirectoryUnProtected(string strDir)
+    {
+      if (strDir == "") 
+      {
+        return GetRoot();
+      }
+      
+      if (strDir.Substring(1) == @"\") strDir = strDir.Substring(0, strDir.Length - 1);
+      ArrayList items = new ArrayList();
+      
+      string strParent = "";
+      int ipos = strDir.LastIndexOf(@"\");
+      if (ipos > 0)
+      {
+        strParent = strDir.Substring(0, ipos);
+      }
+
+
+      bool VirtualShare=false;
+      if (DaemonTools.IsEnabled)
+      {
+        string strExtension=System.IO.Path.GetExtension(strDir);
+        if ( IsImageFile(strExtension) )
+        {
+          if (!DaemonTools.IsMounted(strDir))
+          {
+            string virtualPath;
+            if (DaemonTools.Mount(strDir,out virtualPath))
+            {
+              strDir=virtualPath;
+              VirtualShare=true;
+            }
+          }
+          else
+          {
+            strDir=DaemonTools.GetVirtualDrive();
+            VirtualShare=true;
+          }
+        }
+      }
+      
+      string[] strDirs = null;
+      string[] strFiles = null;
+      try
+      {
+        strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
+        strFiles = System.IO.Directory.GetFiles(strDir + @"\");
+      }
+      catch (Exception)
+      {
+      }
+      
+
+      GUIListItem item = null;
+      if (!IsRootShare(strDir) || VirtualShare)
+      { 
+        item = new GUIListItem();
+        item.IsFolder = true;
+        item.Label = "..";
+        item.Label2 = "";
+        Utils.SetDefaultIcons(item);
+        Utils.SetThumbnails(ref item);
+      
+        if (strParent == strDir)
+        {
+          item.Path = "";
+        }
+        else
+          item.Path = strParent;
+        items.Add(item);
+      }
+      else
+      {
+        item = new GUIListItem();
+        item.IsFolder = true;
+        item.Label = "..";
+        item.Label2 = "";
+        item.Path = "";
+        Utils.SetDefaultIcons(item);
+        Utils.SetThumbnails(ref item);
+        items.Add(item);
+      }
+      if (strDirs != null)
+      {
+        for (int i = 0; i < strDirs.Length; ++i)
+        {
+          string strPath = strDirs[i].Substring(strDir.Length + 1);
+
+          // Skip hidden folders
+          if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
+          {
+            continue;
+          }
+
+          item = new GUIListItem();
+          item.IsFolder = true;
+          item.Label = strPath;
+          item.Label2 = "";
+          item.Path = strDirs[i];
+          Utils.SetDefaultIcons(item);
+          Utils.SetThumbnails(ref item);
+
+          items.Add(item);
+        }
+      }
+
+      if (strFiles != null)
+      {
+        for (int i = 0; i < strFiles.Length; ++i)
+        {
+          string strExtension=System.IO.Path.GetExtension(strFiles[i]);
+          if (IsImageFile(strExtension))
+          {
+            if (DaemonTools.IsEnabled)
+            {
+
+              item = new GUIListItem();
+              item.IsFolder = true;
+              item.Label = Utils.GetFilename(strFiles[i]);
+              item.Label2 = "";
+              item.Path = strFiles[i];
+              item.FileInfo = null;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+              continue;
+            }
+          }
+          if (IsValidExtension(strFiles[i]))
+          {
+            // Skip hidden files
+            if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
+              continue;
+            }
+
+            item = new GUIListItem();
+            item.IsFolder = false;
+            item.Label = Utils.GetFilename(strFiles[i]);
+            item.Label2 = "";
+            item.Path = strFiles[i];
+            item.FileInfo = new System.IO.FileInfo(strFiles[i]);
+            Utils.SetDefaultIcons(item);
+            Utils.SetThumbnails(ref item);
+            items.Add(item);
+          }
+        }
+      }
+      return items;
+    }
+
     bool IsValidExtension(string strPath)
     {
       if (!System.IO.Path.HasExtension(strPath)) return false;
