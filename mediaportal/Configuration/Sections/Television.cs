@@ -384,7 +384,7 @@ namespace MediaPortal.Configuration.Sections
 				alwaysTimeShiftCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "alwaystimeshift", false);
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
 				textBoxTimeShiftBuffer.Text= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
-				int DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+				int DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
 				if (DeInterlaceMode<0 || DeInterlaceMode>3)
 					DeInterlaceMode=3;
 				cbDeinterlace.SelectedIndex=DeInterlaceMode;

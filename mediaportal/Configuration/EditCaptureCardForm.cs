@@ -193,15 +193,14 @@ namespace MediaPortal.Configuration
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
 
 			/* below is used for testing only
-			
-   	
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&1");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&2");
-			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&3");
-		*/
+			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&3");		
+			*/
+			
       FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
 			for (int i=0; i < availableVideoDevices.Count;++i)
@@ -333,6 +332,14 @@ namespace MediaPortal.Configuration
 							if (cb.CaptureDevice.CommercialName==cbcc.CaptureDevice.CommercialName) nr++;
 						}
 						cbcc.Number=nr;
+						cbcc.MaxCards=nr;
+						foreach (ComboBoxCaptureCard cb in cardComboBox.Items)
+						{
+							if (cb.CaptureDevice.CommercialName==cbcc.CaptureDevice.CommercialName) 
+							{
+								cb.MaxCards=nr;
+							}
+						}
 						cardComboBox.Items.Add(cbcc); 
 					}
 				}
@@ -2895,6 +2902,7 @@ public class ComboBoxCaptureCard
 {
 	private TVCaptureDevice _mCaptureDevice;
 	private int m_iNumber=1;
+	private int m_iMax=1;
 
 	public ComboBoxCaptureCard(TVCaptureDevice pCaptureDevice)
 	{
@@ -2920,11 +2928,19 @@ public class ComboBoxCaptureCard
 		get {return m_iNumber;}
 		set {m_iNumber=value;}
 	}
+	public int MaxCards
+	{
+		get {return m_iMax;}
+		set {m_iMax=value;}
+	}
 
 	// Display a more readable name by adding the commercial name of the card to the capture device
 	public override string ToString()
 	{
-		return String.Format("#{0} {1} ({2})",m_iNumber,CaptureName,_mCaptureDevice.CommercialName );
+		if (m_iMax>1)
+			return String.Format("#{0} {1} ({2})",m_iNumber,CaptureName,_mCaptureDevice.CommercialName );
+		else
+			return String.Format("{1} ({2})",m_iNumber,CaptureName,_mCaptureDevice.CommercialName );
 	}
 
 	public override bool Equals(object obj)
