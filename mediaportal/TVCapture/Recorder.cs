@@ -158,7 +158,11 @@ namespace MediaPortal.TV.Recording
         {
 
           if (m_tvcards.Count!=0) HandlePreview();
-          else m_bPreviewChanged=false;
+          else 
+          {
+            m_bPreviewing=false;
+            m_bPreviewChanged=false;
+          }
 
           HandleRecordings(DateTime.Now,channels,recordings,iPreRecordInterval,iPostRecordInterval);
 
