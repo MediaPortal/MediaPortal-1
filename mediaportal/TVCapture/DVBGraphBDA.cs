@@ -28,10 +28,11 @@ namespace MediaPortal.TV.Recording
 	/// -tv timeshifting
 	/// 
 	/// todo:
-	///   -finish support for DVB-S and DVB-C  (things left todo: parsing of IGuiData in Process() )
+	///   -finish support for DVB-S and DVB-C  (things left todo: parsing of IGuideData in Process() )
 	///   -when scanning for channels we need to parse IGuideData to see if the channel 
 	///    found is a radio or tv channel and if its encrypted or free-2-air
-	///   -get EPG data from stream
+	///   -get EPG data from transport stream
+	///   -get PMT table from transport stream and send it to the FireDTv CI module so we can see encrypted channels
 	///   
 	/// for dvb-t scanning we need : frequency
 	/// for dvb-s scanning we need : frequency, polarisation, symbolrate, innerFec, SID

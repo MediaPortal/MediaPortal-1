@@ -7,10 +7,24 @@ using MediaPortal.GUI.Library;
 namespace DShowNET
 {
 	/// <summary>
-	/// Summary description for VideoCaptureProperties.
+	/// This class implements methods for vendor specific actions on tv capture cards.
+	/// Currently we support
+	/// - Hauppauge PVR cards
+	/// - FireDTV digital cards
 	/// </summary>
 	public class VideoCaptureProperties
 	{
+		static readonly Guid KSPROPSETID_Firesat = new Guid( 0xab132414, 0xd060, 0x11d0,  0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba,0xf3  );
+		[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
+		struct FIRESAT_CA_DATA
+		{								
+			public Byte			uSlot;								
+			public Byte			uTag;									
+			public Byte			bMore;								
+			public ushort		uLength;								
+			public byte[]		uData;				
+		}
+
 		[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
 		struct KSPROPERTY
 		{
@@ -139,6 +153,12 @@ namespace DShowNET
 		}
 
 
+		/// <summary>
+		/// Fuction to set/get the video bitrate for Hauppauge PVR cards
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public videoBitRate VideoBitRate 
     {
       get
@@ -159,6 +179,12 @@ namespace DShowNET
     }
 
 
+		/// <summary>
+		/// Fuction to get the driver & firmware version for Hauppauge PVR cards
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public versionInfo VersionInfo
     {
       get
@@ -174,6 +200,12 @@ namespace DShowNET
       }
     }
 
+		/// <summary>
+		/// Fuction to get/set the GOPsize for Hauppauge PVR cards
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public byte GopSize
     {
       get 
@@ -185,6 +217,13 @@ namespace DShowNET
         SetByteValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_GOP_SIZE, value);
       }
     }
+		
+		/// <summary>
+		/// Fuction to enable/disable GOP
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public bool ClosedGop
     {
       get 
@@ -199,6 +238,12 @@ namespace DShowNET
       }
     }
     
+		/// <summary>
+		/// Fuction to enable/disable Inverse Telecine
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public bool InverseTelecine
     {
       get 
@@ -213,6 +258,12 @@ namespace DShowNET
       }
     }
     
+		/// <summary>
+		/// Fuction to get/set the current video format (pal,ntsc,..)
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public eVideoFormat VideoFormat
     {
       get 
@@ -226,6 +277,13 @@ namespace DShowNET
       }
     }
 
+		
+		/// <summary>
+		/// Fuction to get/set the current video resolution
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public Size VideoResolution
     {
       get 
@@ -279,6 +337,13 @@ namespace DShowNET
       }
     }
     
+		
+		/// <summary>
+		/// Fuction to get/set the current stream output (vhs, svhs, dvd)
+		/// </summary>
+		/// <remarks>
+		/// This is a vendor specific. It will only work for hauppage PVR cards
+		/// </remarks>
     public eStreamOutput StreamOutput
     {
       get 
@@ -544,6 +609,13 @@ namespace DShowNET
 		}
 
 
+		/// <summary>
+		/// Checks if the card specified supports getting/setting properties using the IKsPropertySet interface
+		/// </summary>
+		/// <returns>
+		/// true:		IKsPropertySet is supported
+		/// false:	IKsPropertySet is not supported
+		/// </returns>
     public bool SupportsProperties
     {
       get 
@@ -553,5 +625,39 @@ namespace DShowNET
         return true;
       }
     }
-	}
-}
+		/// <summary>
+		/// This function sends the PMT (Program Map Table) to the FireDTV DVB-T/DVB-C/DVB-S card
+		/// This allows the integrated CI & CAM module inside the FireDTv device to decrypt the current TV channel
+		/// (provided that offcourse a smartcard with the correct subscription and its inserted in the CAM)
+		/// </summary>
+		/// <param name="PMT">Program Map Table received from digital transport stream</param>
+		/// <remarks>
+		/// 1. first byte in PMT is 0x02=tableId for PMT
+		/// 2. This function is vender specific. It will only work on the FireDTV devices
+		/// </remarks>
+		/// <preconditions>
+		/// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel 
+		/// 2. PMT should have been received 
+		/// </preconditions>
+		public void SendPMTToFireDTV(byte[] PMT)
+		{
+			if (PMT==null) return;
+			if (PMT.Length==0) return;
+			if (PMT[0] != 0x2) return; // this is not the PMT 
+
+			FIRESAT_CA_DATA caData = new FIRESAT_CA_DATA();
+			caData.uSlot    = 0;
+			caData.uTag     = 2;	
+			caData.uData    = new byte[1024];
+			caData.uData[0] = 3;	// List Management = ONLY		
+			caData.uData[1] = 1;	// pmt_cmd = OK DESCRAMBLING		
+			caData.uLength  = (ushort)(2 + PMT.Length);
+			for (int i=0; i < PMT.Length;++i)
+				caData.uData[2+i]=PMT[i];
+
+			Guid propertyGuid=KSPROPSETID_Firesat;
+			SetStructure(KSPROPSETID_Firesat, 22, typeof(FIRESAT_CA_DATA), caData);
+		}//public void SendPMTToFireDTV(byte[] PMT)
+
+	}//public class VideoCaptureProperties
+}//namespace DShowNET
