@@ -41,7 +41,13 @@ namespace MediaPortal.Util
 		/// <param name="iWidth">width of the returned texture</param>
 		/// <param name="iHeight">height of the returned texture</param>
 		/// <returns>Texture with image or null if image could not be loaded</returns>
+		/// 
     static public Texture Load(string strPic, int iRotate,int iMaxWidth,int iMaxHeight, bool bRGB, bool bZoom, out int iWidth, out int iHeight)
+    {
+      return Load(strPic, iRotate, iMaxWidth, iMaxHeight, bRGB, bZoom, false, out iWidth, out iHeight);
+    }
+
+    static public Texture Load(string strPic, int iRotate,int iMaxWidth,int iMaxHeight, bool bRGB, bool bZoom, bool bOversized, out int iWidth, out int iHeight)   
     {
       GC.Collect();
       iWidth=0;
@@ -123,7 +129,7 @@ namespace MediaPortal.Util
           iWidth  = (int)(  fOutputFrameAR * ( (float)iHeight) );
         }
         
-        if (!bZoom)
+        if (!bOversized)
         {
           iBitmapWidth=iWidth;
           iBitmapHeight=iHeight;
@@ -133,12 +139,12 @@ namespace MediaPortal.Util
           // Adjust width/height 2 pixcels for smoother zoom actions at the edges
           iBitmapWidth=iWidth+2;
           iBitmapHeight=iHeight+2;
+          bResize=true;
         }
 
 
         if (bResize)
-        {
-          
+        {          
           using (Bitmap result= new Bitmap(iBitmapWidth,iBitmapHeight))
           {
             using (Graphics g = Graphics.FromImage(result))
@@ -146,7 +152,7 @@ namespace MediaPortal.Util
               g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
               g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
               g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-              if (bZoom)
+              if (bOversized)
               {
                 // Set picture at center position
                 int xpos=1;// (iMaxWidth-iWidth)/2;
