@@ -379,7 +379,7 @@ namespace MediaPortal
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
             break;
           case 0x46://My TV
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+            key='x';//GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
             break;
           case 0x4A://My Video
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
