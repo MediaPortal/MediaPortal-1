@@ -5,12 +5,12 @@ General:
         F5          = fast backward
         F6          = fast forward
         space       = pause
-        stop        = backspace
         F7          = play previous song/movie
         F8          = play next song/movie
           
         A           = select item
-        B           = parent directory (..)
+        B           = Stop
+        U           = parent directory (..)
         X           = switch between GUI & fullscreen 
         esc         = go back to previous window
         enter       = select item
@@ -70,7 +70,7 @@ Fullscreen video:
         B         = stop
         right     = step forward (+1%)
         left      = step backward (-1%)
-        backspace = small step back
+        U	  = small step back
         up        = big step forward (+10%)
         down      = big step backward (-10%)
         Y         = show OSD
@@ -99,5 +99,3 @@ Movie calibration:
 UI calibration:
         F1        = reset
         use cursor keys to calibrate 
-  
-  iecz241

@@ -117,7 +117,7 @@
     <action>
       <description>Parent Directory</description>
       <id>9</id>
-      <key>B</key>
+      <key>u</key>
     </action>
     <action>
       <description>Previous Menu</description>
@@ -137,7 +137,7 @@
     <action>
       <description>Stop</description>
       <id>13</id>
-      <key>BACKSPACE</key>
+      <key>B</key>
     </action>
     <action>
       <description>Skip Next</description>
@@ -322,7 +322,7 @@
     <action>
      <description>Small step back</description>
      <id>76</id>
-     <key>BACKSPACE</key>
+     <key>u</key>
     </action>
     <action>
       <description>Big Step Forward</description>

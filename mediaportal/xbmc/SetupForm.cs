@@ -2215,7 +2215,7 @@ namespace MediaPortal
         movieFile.Text=xmlreader.GetValueAsString("movieplayer","path",@"zplayer\zplayer.exe");
         movieParameters.Text=xmlreader.GetValueAsString("movieplayer","arguments", @"/PLAY /F /Q");
         checkBoxMovieInternalPlayer.Checked=xmlreader.GetValueAsBool("movieplayer","internal",true);
-        checkBoxMovieInternalPlayer.Checked=true;
+
         
 
         string strAudioPlayer=xmlreader.GetValueAsString("audioplayer","player", "Windows Media Player 9");
@@ -2541,6 +2541,7 @@ namespace MediaPortal
       ListViewItem newItem;
       newItem=view.Items.Add(dlg.ShareName);
       newItem.SubItems.Add(dlg.SelectedPath);
+      newItem.SubItems.Add("");
 
     }
 
