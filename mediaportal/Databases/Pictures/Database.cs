@@ -9,16 +9,14 @@ namespace MediaPortal.Picture.Database
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class PictureDatabase
+	public class PictureDatabase : IDisposable
 	{
-		static SQLiteClient m_db=null;
+    bool disposed=false;
+		SQLiteClient m_db=null;
 
-    // singleton. Dont allow any instance of this class
-    private PictureDatabase()
-    {
-    }
+    
 
-    static PictureDatabase()
+    public PictureDatabase()
 		{
       Log.Write("opening picture database");
 			try 
@@ -37,7 +35,7 @@ namespace MediaPortal.Picture.Database
 		}
 
 		
-		static void AddTable( string strTable, string strSQL)
+		void AddTable( string strTable, string strSQL)
 		{
 			if (m_db==null) return;
 			SQLiteResultSet results;
@@ -68,14 +66,14 @@ namespace MediaPortal.Picture.Database
 			}
 			return ;
 		}
-		static bool CreateTables()
+		bool CreateTables()
 		{
 			if (m_db==null) return false;
 			AddTable("picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer)\n");
 			return true;
 		}
 
-		static public string Get(SQLiteResultSet results,int iRecord,string strColum)
+		public string Get(SQLiteResultSet results,int iRecord,string strColum)
 		{
 			if (null==results) return "";
 			if (results.Rows.Count<iRecord) return "";
@@ -93,7 +91,7 @@ namespace MediaPortal.Picture.Database
 		}
 
 		
-    static public void RemoveInvalidChars(ref string strTxt)
+    public void RemoveInvalidChars(ref string strTxt)
     {
       string strReturn="";
       for (int i=0; i < (int)strTxt.Length; ++i)
@@ -111,7 +109,7 @@ namespace MediaPortal.Picture.Database
     }
 
 
-		static public int AddPicture(string strPicture, int iRotation)
+		public int AddPicture(string strPicture, int iRotation)
 		{
 			if (m_db==null) return -1;
 			string strSQL="";
@@ -142,7 +140,7 @@ namespace MediaPortal.Picture.Database
 		}
 
 
-		static public int GetRotation(string strPicture)
+		public int GetRotation(string strPicture)
 		{
 			if (m_db==null) return -1;
 			string strSQL="";
@@ -169,7 +167,7 @@ namespace MediaPortal.Picture.Database
 			return 0;
 		}
 
-		static public void SetRotation(string strPicture, int iRotation)
+		public void SetRotation(string strPicture, int iRotation)
 		{
 			if (m_db==null) return ;
 			string strSQL="";
@@ -190,6 +188,26 @@ namespace MediaPortal.Picture.Database
 			{
 				Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 			}
-		}
-	}
+    }
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      if (!disposed)
+      {
+        disposed=true;
+        if (m_db!=null)
+        {
+          try
+          {
+            m_db.Close();
+          }
+          catch (Exception){}
+          m_db=null;
+        }
+      }
+    }
+
+    #endregion
+  }
 }

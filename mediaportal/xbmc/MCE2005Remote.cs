@@ -471,7 +471,7 @@ namespace MediaPortal
             action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
             break;
           case 0xea: //volume-
-            action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+            action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
             break;
           case 0x9c: //channel+
             action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);

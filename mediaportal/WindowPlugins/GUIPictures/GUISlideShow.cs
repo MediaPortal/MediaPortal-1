@@ -122,8 +122,10 @@ namespace MediaPortal.GUI.Pictures
 
 	    strSlide=(string)m_slides[m_iCurrentSlide];
       Log.Write("Next Slide: {0}/{1} : {2}", m_iCurrentSlide+1,m_slides.Count, strSlide);
-
-			m_iRotate=PictureDatabase.GetRotation(strSlide);
+      using (PictureDatabase dbs = new PictureDatabase())
+      {
+        m_iRotate=dbs.GetRotation(strSlide);
+      }
       CreateThumb(strSlide);
       int iMaxWidth=MAX_PICTURE_WIDTH;
       int iMaxHeight=MAX_PICTURE_HEIGHT;
@@ -158,7 +160,10 @@ namespace MediaPortal.GUI.Pictures
 	    strSlide=(string)m_slides[m_iCurrentSlide];
 
       Log.Write("Prev Slide: {0}/{1} : {2}", m_iCurrentSlide+1,m_slides.Count, strSlide);
-			m_iRotate=PictureDatabase.GetRotation(strSlide);
+      using (PictureDatabase dbs = new PictureDatabase())
+      {
+        m_iRotate=dbs.GetRotation(strSlide);
+      }
       CreateThumb(strSlide);
       int iMaxWidth=MAX_PICTURE_WIDTH;
       int iMaxHeight=MAX_PICTURE_HEIGHT;
@@ -241,14 +246,17 @@ namespace MediaPortal.GUI.Pictures
 
     public void Select(string strFile)
     {
-      for (int i=0; i < m_slides.Count; ++i)
+      using (PictureDatabase dbs = new PictureDatabase())
       {
-        string strSlide=(string)m_slides[i];
-        if (strSlide==strFile)
+        for (int i=0; i < m_slides.Count; ++i)
         {
-					m_iCurrentSlide=i-1;
-					m_iRotate=PictureDatabase.GetRotation(strSlide);
-          return;
+          string strSlide=(string)m_slides[i];
+          if (strSlide==strFile)
+          {
+            m_iCurrentSlide=i-1;
+            m_iRotate=dbs.GetRotation(strSlide);
+            return;
+          }
         }
       }
     }
@@ -754,7 +762,11 @@ namespace MediaPortal.GUI.Pictures
           {
             m_iRotate=0;
           }
-          PictureDatabase.SetRotation(m_strBackgroundSlide,m_iRotate);
+
+          using (PictureDatabase dbs = new PictureDatabase())
+          {
+            dbs.SetRotation(m_strBackgroundSlide,m_iRotate);
+          }
           DoRotate();
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         break;

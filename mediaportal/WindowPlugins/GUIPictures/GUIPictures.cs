@@ -746,27 +746,30 @@ namespace MediaPortal.GUI.Pictures
       }
 
 
-      for (int i=0; i < GetItemCount(); ++i)
+      using (PictureDatabase dbs = new PictureDatabase())
       {
-        GUIListItem item = GetItem(i);
-        if (!item.IsFolder)
+        for (int i=0; i < GetItemCount(); ++i)
         {
-          if (Utils.IsPicture(item.Path))
+          GUIListItem item = GetItem(i);
+          if (!item.IsFolder)
           {
-            string strProgress=String.Format("progress:{0}/{1}", i+1, GetItemCount() );
-            string strFile=String.Format("picture:{0}", item.Label);
-            if (dlgProgress!=null)
+            if (Utils.IsPicture(item.Path))
             {
-              dlgProgress.SetLine(1, strFile);
-              dlgProgress.SetLine(2, strProgress);
-              dlgProgress.Progress();
-              if ( dlgProgress.IsCanceled ) break;
+              string strProgress=String.Format("progress:{0}/{1}", i+1, GetItemCount() );
+              string strFile=String.Format("picture:{0}", item.Label);
+              if (dlgProgress!=null)
+              {
+                dlgProgress.SetLine(1, strFile);
+                dlgProgress.SetLine(2, strProgress);
+                dlgProgress.Progress();
+                if ( dlgProgress.IsCanceled ) break;
+              }
+
+
+              string strThumb=GetThumbnail(item.Path );
+              int iRotate=dbs.GetRotation(item.Path);
+              Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
             }
-
-
-            string strThumb=GetThumbnail(item.Path );
-            int iRotate=PictureDatabase.GetRotation(item.Path);
-            Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
           }
         }
       }
@@ -890,30 +893,34 @@ namespace MediaPortal.GUI.Pictures
 
     Image LoadPicture(string strFileName)
     {
-      int iRotate=PictureDatabase.GetRotation(strFileName);
-      Image img = Image.FromFile(strFileName);
-      if (img!=null)
+      Image img = null;
+      using (PictureDatabase dbs= new PictureDatabase())
       {
-        if (iRotate>0)
+        int iRotate=dbs.GetRotation(strFileName);
+        img = Image.FromFile(strFileName);
+        if (img!=null)
         {
-          RotateFlipType fliptype;
-          switch (iRotate)
+          if (iRotate>0)
           {
-            case 1:
-              fliptype=RotateFlipType.Rotate90FlipNone;
-              img.RotateFlip(fliptype);
-              break;
-            case 2:
-              fliptype=RotateFlipType.Rotate180FlipNone;
-              img.RotateFlip(fliptype);
-              break;
-            case 3:
-              fliptype=RotateFlipType.Rotate270FlipNone;
-              img.RotateFlip(fliptype);
-              break;
-            default:
-              fliptype=RotateFlipType.RotateNoneFlipNone;
-              break;
+            RotateFlipType fliptype;
+            switch (iRotate)
+            {
+              case 1:
+                fliptype=RotateFlipType.Rotate90FlipNone;
+                img.RotateFlip(fliptype);
+                break;
+              case 2:
+                fliptype=RotateFlipType.Rotate180FlipNone;
+                img.RotateFlip(fliptype);
+                break;
+              case 3:
+                fliptype=RotateFlipType.Rotate270FlipNone;
+                img.RotateFlip(fliptype);
+                break;
+              default:
+                fliptype=RotateFlipType.RotateNoneFlipNone;
+                break;
+            }
           }
         }
       }
@@ -1020,13 +1027,17 @@ namespace MediaPortal.GUI.Pictures
       GUIListItem item=GetSelectedItem();
       if (item==null) return;
       if (item.IsFolder) return;
-      int rotate=PictureDatabase.GetRotation(item.Path);
-      rotate++;
-      if (rotate>=4)
+      int rotate=0;
+      using (PictureDatabase dbs = new PictureDatabase())
       {
-        rotate=0;
+        rotate=dbs.GetRotation(item.Path);
+        rotate++;
+        if (rotate>=4)
+        {
+          rotate=0;
+        }
+        dbs.SetRotation(item.Path,rotate);
       }
-      PictureDatabase.SetRotation(item.Path,rotate);
       string strThumb=GetThumbnail(item.Path );
       Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,rotate);
       GUIControl.RefreshControl(GetID, (int)Controls.CONTROL_VIEW);      
@@ -1043,41 +1054,44 @@ namespace MediaPortal.GUI.Pictures
     {
       string path=m_strDirectory;
       ArrayList itemlist=m_directory.GetDirectoryUnProtected(path);
-      foreach (GUIListItem item in itemlist)
+      using (PictureDatabase dbs = new PictureDatabase())
       {
-        if (!item.IsFolder)
+        foreach (GUIListItem item in itemlist)
         {
-          if (Utils.IsPicture(item.Path) )
+          if (!item.IsFolder)
           {
-            string strThumb=GetThumbnail(item.Path) ;
-            if (!System.IO.File.Exists(strThumb))
+            if (Utils.IsPicture(item.Path) )
             {
-              int iRotate=PictureDatabase.GetRotation(item.Path);
-              Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
-              System.Threading.Thread.Sleep(100);
-            }
+              string strThumb=GetThumbnail(item.Path) ;
+              if (!System.IO.File.Exists(strThumb))
+              {
+                int iRotate=dbs.GetRotation(item.Path);
+                Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
+                System.Threading.Thread.Sleep(100);
+              }
 
-            strThumb=GetLargeThumbnail(item.Path) ;
-            if (!System.IO.File.Exists(strThumb))
-            {
-              int iRotate=PictureDatabase.GetRotation(item.Path);
-              Util.Picture.CreateThumbnail(item.Path,strThumb,512,512,iRotate);
-              System.Threading.Thread.Sleep(100);
+              strThumb=GetLargeThumbnail(item.Path) ;
+              if (!System.IO.File.Exists(strThumb))
+              {
+                int iRotate=dbs.GetRotation(item.Path);
+                Util.Picture.CreateThumbnail(item.Path,strThumb,512,512,iRotate);
+                System.Threading.Thread.Sleep(100);
+              }
             }
           }
-        }
-        else
-        {
-          if (item.Label!="..")
+          else
           {
-            string strThumb=item.Path+@"\folder.jpg" ;
-            if (!System.IO.File.Exists(strThumb))
+            if (item.Label!="..")
             {
-              CreateFolderThumb(item.Path);
-              System.Threading.Thread.Sleep(100);
+              string strThumb=item.Path+@"\folder.jpg" ;
+              if (!System.IO.File.Exists(strThumb))
+              {
+                CreateFolderThumb(item.Path);
+                System.Threading.Thread.Sleep(100);
+              }
             }
-          }
-        }      
+          }      
+        }
       }
     }
   }
