@@ -1728,6 +1728,26 @@
 		<id>512</id>
 		<value>Never</value>
 	</string>
+	<string>
+		<id>513</id>
+		<value>Item is protected, action not completed</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Error creating folder, action not completed</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Error deleting folder, action not completed</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Unable to delete destination file, action not completed</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Fatal error, action not completed</value>
+	</string>
 	
 	<string>
 		<id>530</id>
@@ -1744,6 +1764,10 @@
 	
 	
 		
+	<string>
+		<id>550</id>
+		<value>Crop</value>
+	</string>		
 	<string>
 		<id>600</id>
 		<value>TVGuide</value>
