@@ -84,10 +84,8 @@ namespace MediaPortal.GUI.Pictures
           base.OnMessage(message);
           GUIGraphicsContext.Overlay=false;
           m_bUpdate=false;
-          
           LoadSettings();
-					
-          return true;
+					return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 					Reset();

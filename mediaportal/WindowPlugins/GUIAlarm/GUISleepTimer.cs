@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Alarm
             base.OnMessage(message);
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
             return true;
-          break;
+          //break;
 					case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					{
 						//get sender control

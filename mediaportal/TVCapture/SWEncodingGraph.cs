@@ -90,6 +90,7 @@ namespace MediaPortal.TV.Recording
     IStreamBufferConfigure     m_pConfig=null;
     StreamBufferSink           m_StreamBufferSink=null;
     StreamBufferConfig         m_StreamBufferConfig=null;
+    bool                       m_bOverlayVisible=false;
 
 
 		public SWEncodingGraph(int ID,int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
@@ -310,6 +311,7 @@ namespace MediaPortal.TV.Recording
       
       if (m_videoWindow != null)
       {
+        m_bOverlayVisible=false;
         m_videoWindow.put_Visible(DsHlp.OAFALSE);
         m_videoWindow.put_Owner(IntPtr.Zero);
         m_videoWindow = null;
@@ -744,6 +746,8 @@ namespace MediaPortal.TV.Recording
       if (hr != 0) 
         DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}",hr);
 
+      
+      m_bOverlayVisible=true;
       hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
       if (hr != 0) 
         DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible:0x{0:X}",hr);
@@ -774,10 +778,37 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
       m_videoWindow.put_Visible(DsHlp.OAFALSE);
+      m_bOverlayVisible=false;
       m_mediaControl.Stop();
       m_graphState = State.Created;
       DeleteGraph();
       return true;
+    }
+
+    
+    public bool Overlay
+    {
+      get 
+      {
+        return m_bOverlayVisible;
+      }
+      set 
+      {
+        if (value==m_bOverlayVisible) return;
+        m_bOverlayVisible=value;
+        if (!m_bOverlayVisible)
+        {
+          if (m_videoWindow!=null)
+            m_videoWindow.put_Visible( DsHlp.OAFALSE );
+
+        }
+        else
+        {
+          if (m_videoWindow!=null)
+            m_videoWindow.put_Visible( DsHlp.OATRUE );
+
+        }
+      }
     }
 
     /// <summary>
@@ -788,6 +819,15 @@ namespace MediaPortal.TV.Recording
       if (m_graphState != State.Viewing) return;
       int iVideoWidth, iVideoHeight;
       m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
+      if (GUIGraphicsContext.Overlay==false)
+      {
+        Overlay=false;
+        return;
+      }
+      else
+      {
+        Overlay=true;
+      }
       
       if (GUIGraphicsContext.IsFullScreenVideo)
       {

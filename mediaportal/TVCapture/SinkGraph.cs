@@ -592,6 +592,15 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.Viewing) return ;
       if (m_mpeg2Demux==null) return ;
+      if (GUIGraphicsContext.Overlay==false)
+      {
+        m_mpeg2Demux.Overlay=false;
+        return;
+      }
+      else
+      {
+        m_mpeg2Demux.Overlay=true;
+      }
       int iVideoWidth,iVideoHeight;
       m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
       if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
