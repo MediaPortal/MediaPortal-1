@@ -32,7 +32,14 @@ public class MediaPortalApp : D3DApp
         {
           app.PreRun();
           Log.Write("Start MediaPortal");
-          Application.Run(app);
+          try
+          {
+            Application.Run(app);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
+          }
           app.OnExit();
           Log.Write("MediaPortal done");
         }
@@ -172,6 +179,7 @@ public class MediaPortalApp : D3DApp
     
     protected override void OnExit() 
     {
+      g_Player.Stop();
       Clock.Stop();
       GUIWindowManager.OnAppClosing();
     }

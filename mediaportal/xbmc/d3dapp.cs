@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal;
 using MediaPortal.Util;
+using MediaPortal.Player;
 
 namespace D3D
 {
@@ -268,6 +269,11 @@ namespace D3D
       base.OnKeyPress(e);
     }
 
+    private void D3DApp_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      g_Player.Stop();
+    }
+
 
 
 
@@ -426,6 +432,7 @@ namespace D3D
       this.Name = "D3DApp";
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
       this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
+      this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
