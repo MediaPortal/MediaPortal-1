@@ -425,32 +425,35 @@ namespace MediaPortal.TV.Recording
 						// to make sure that we found the right filter...
 						if (fd.CheckDevice)
 						{	
-							if (Instance>=0)
+							// Check all filters with same name for capture card device...
+							for (int i=0; i < al.Count; i++)
 							{
-								if (Instance >= al.Count)
+								filter = al[i] as Filter;
+								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     {0} {1}",filter.Name,filter.MonikerString);
+								if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
 								{
-									filter = al[al.Count-1] as Filter;
+									// Filter found matching the capture card device!!!!!!!!!!!!!!!
 									filterFound = true;
-								}
-								else
-								{
-									filter = al[Instance] as Filter;
-									filterFound = true;
+									break;
 								}
 							}
-							else
+						
+							// no filter found? then find & use the # Instance of the available filters
+							if (!filterFound)
 							{
-								// Check all filters with same name for capture card device...
-								for (int i=0; i < al.Count; i++)
+								if (Instance>=0)
 								{
-									filter = al[i] as Filter;
-									if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
+									if (Instance >= al.Count)
 									{
-										// Filter found matching the capture card device!!!!!!!!!!!!!!!
+										filter = al[al.Count-1] as Filter;
 										filterFound = true;
-										break;
 									}
-								} 
+									else
+									{
+										filter = al[Instance] as Filter;
+										filterFound = true;
+									}
+								}
 							}
 
 							if (!filterFound)
@@ -459,7 +462,7 @@ namespace MediaPortal.TV.Recording
 							}
 							else
 							{
-								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: found unique filter for filter:{0}", filter.Name);
+								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: found unique filter for filter:{0} {1}", filter.Name, filter.MonikerString);
 							}
 						}
 						else filterFound = true;
