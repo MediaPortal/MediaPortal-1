@@ -12,7 +12,7 @@ copy ..\..\..\GUIPrograms\bin\Debug\GUIPrograms.dll plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.dll plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.dll plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.dll plugins\windows
-copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.dll plugins\windows
+copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.dll .
 copy ..\..\..\Dialogs\bin\Debug\Dialogs.dll .
 copy ..\..\..\GUIPictures\bin\Debug\GUIPictures.dll plugins\windows
 copy ..\..\..\GUITV\bin\Debug\GUITV.dll plugins\windows
@@ -60,7 +60,7 @@ copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.pdb plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.pdb plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.pdb plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.pdb plugins\windows
-copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.pdb plugins\windows
+copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.pdb .
 copy ..\..\..\Dialogs\bin\Debug\Dialogs.pdb  .
 copy ..\..\..\GUIPictures\bin\Debug\GUIPictures.pdb plugins\windows
 copy ..\..\..\GUITV\bin\Debug\GUITV.pdb plugins\windows
