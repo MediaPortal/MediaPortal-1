@@ -21,8 +21,7 @@ public class MediaPortalApp : D3DApp
     
     int       m_iLastMousePositionX=0;
     int       m_iLastMousePositionY=0;
-
-		public static void Main()
+    public static void Main()
     {
       try
       {
@@ -119,15 +118,15 @@ public class MediaPortalApp : D3DApp
       SetStyle(ControlStyles.AllPaintingInWmPaint, true);
       SetStyle(ControlStyles.DoubleBuffer, true);
 
-
       m_MouseTimeOut=DateTime.Now;
       System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
       GUIWindowManager.OnAppStarting();
       Clock = new Timer();
-      Clock.Interval=100;
+      Clock.Interval=50;
       Clock.Start();
       Clock.Tick+=new EventHandler(Timer_Tick);
       m_bResized=false;
+
     }
 
     public void Timer_Tick(object sender,EventArgs eArgs)
@@ -136,6 +135,7 @@ public class MediaPortalApp : D3DApp
       {
         GUIWindowManager.DispatchThreadMessages();
         g_Player.Process();
+
         bool bPlayVideo=false;
         // update video window when playing video
         if (g_Player.Playing && g_Player.HasVideo)
@@ -149,22 +149,20 @@ public class MediaPortalApp : D3DApp
         if (GUIGraphicsContext.IsFullScreenVideo==false || !bPlayVideo)
         {
           bool bNeedRefresh=GUIWindowManager.NeedRefresh();
-          //
-          // DISABLED: this lets the musicoverlay etc scroll
-          // but it takes a LOT of CPU%. Need to find a better way todo this
-
-          if (GUIGraphicsContext.Overlay)
-          {
-            GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
-            if (null!=windowOverlay)
-            {
-              if (windowOverlay.NeedRefresh() ) bNeedRefresh=true;
-            }
-          }
+          
           if (bNeedRefresh) 
           {
             // yes, then invalidate the screen
             Invalidate();
+          }
+          else
+          {
+            Graphics g=GUIGraphicsContext.graphics ;
+            using (GUIGraphicsContext.graphics = this.CreateGraphics())
+            {
+              RenderMusicOverlay();
+            }
+            GUIGraphicsContext.graphics =g;
           }
         }
         
@@ -201,6 +199,7 @@ public class MediaPortalApp : D3DApp
       if (GUIGraphicsContext.IsFullScreenVideo) return;
       if (GUIGraphicsContext.Calibrating) return;
       if (!GUIGraphicsContext.Overlay) return;
+      if (!Utils.IsVideo(g_Player.CurrentFile)) return;
       GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
       if (null!=windowOverlay)
       {
@@ -211,14 +210,14 @@ public class MediaPortalApp : D3DApp
     public void RenderMusicOverlay()
     {
       if (!g_Player.Playing) return;
-      if (g_Player.HasVideo) return;
+      if (GUIGraphicsContext.IsFullScreenVideo) return;
+      if (!GUIGraphicsContext.Overlay) return;
+      if (!Utils.IsAudio(g_Player.CurrentFile)) return;
+
       GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
       if (null!=windowOverlay)
       {
-        if (GUIGraphicsContext.Overlay)
-        {
-          windowOverlay.Render();
-        }
+        windowOverlay.Render();
       }
     }
 
@@ -256,7 +255,6 @@ public class MediaPortalApp : D3DApp
       }
       
       GUIWindowManager.Render(); 
-      RenderMusicOverlay();
       RenderVideoOverlay();
     }
 
