@@ -1759,6 +1759,94 @@
 		<id>632</id>
 		<value>Objekten</value>
 	</string>
+	<string>
+		<id>633</id>
+		<value>Start Datum/Tijd</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Eind Datum/Tijd</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Tijd</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Datum</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Wijzig Opname</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Nieuwe Opname</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Albums van</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Saturatie</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Scherpte</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Laden TV kanalen</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Laden TV programmas</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Sorteren TV programmas</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Laden XML bestand</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Geplande opnames</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Een X</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Dagelijks</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Iedere</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Iedere keer op dit kanaal</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Iedere keer op willekeurig kanaal</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Opgenomen TV</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Deze opname verwijderen?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Uitwerpen</value>
+	</string>
 
 <string><id>10000</id><value>Thuis</value></string>
 <string><id>10001</id><value>Mijn Programmas</value></string>
