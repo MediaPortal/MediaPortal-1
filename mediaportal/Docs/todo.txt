@@ -18,7 +18,7 @@ My TV:
   TVGuide:
      - in the tv guide, when you select a program, it would be nice to have an option 
      - which directly switches to the channel. Of course only if the program currently runs. 
-  
+     - make colors optional  
   Scheduled:
      -
   
