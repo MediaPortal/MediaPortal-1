@@ -387,6 +387,20 @@ namespace MediaPortal.TV.Recording
 			return m_iChannelNr;
 		}
 
+    public bool ShouldRebuildGraph(int iChannel)
+    {
+      bool bFixCrossbar=true;
+      if (m_iPrevChannel>=0)
+      {
+        if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;
+        if (m_iPrevChannel==1002 && iChannel ==1002) bFixCrossbar=false;
+      }
+      else bFixCrossbar=false;
+      return bFixCrossbar;
+    }
+
     /// <summary>
     /// Switches / tunes to another TV channel
     /// </summary>

@@ -842,5 +842,11 @@ namespace MediaPortal.TV.Recording
       {
       }
     }
+
+    
+    public bool ShouldRebuildGraph(int iChannel)
+    {
+      return false;
+    }
 	}
 }

@@ -322,6 +322,11 @@ namespace MediaPortal.TV.Recording
           {
             AnalogVideoStandard standard;
             int ichannel=GetChannelNr(m_strTVChannel, out standard);
+            if (m_graph.ShouldRebuildGraph(ichannel))
+            {
+              RebuildGraph();
+              return;
+            }
             m_graph.TuneChannel(standard, ichannel);
             if (IsTimeShifting && !View)
             {
@@ -335,6 +340,32 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+    }
+
+    void RebuildGraph()
+    {
+      Log.Write("Card:{0} rebuild graph",ID);
+      State state=m_eState;
+      if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
+      {
+        g_Player.Stop();
+      }
+              
+      StopTimeShifting();
+      View=false;
+      DeleteGraph();
+      CreateGraph();
+      if (state==State.Timeshifting) 
+      {
+        StartTimeShifting();
+                
+        g_Player.Play(Recorder.GetTimeShiftFileName(ID-1));
+      }
+      else 
+      {
+        View=true;
+      }
+      Log.Write("Card:{0} rebuild graph done",ID);
     }
 
     /// <summary>
@@ -524,10 +555,14 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_graph.GetChannelNumber() != iChannelNr)
 				{
-          m_dtTimeShiftingStarted = DateTime.Now;
-					m_graph.TuneChannel(standard, iChannelNr);
+          if (!m_graph.ShouldRebuildGraph(iChannelNr))
+          {
+            m_dtTimeShiftingStarted = DateTime.Now;
+            m_graph.TuneChannel(standard, iChannelNr);
+            return true;
+          }
 				}
-				return true;
+        else return true;
 			}
 
       if (m_eState != State.Initialized) 

@@ -122,5 +122,7 @@ namespace MediaPortal.TV.Recording
     /// Graph must be viewing first with StartViewing()
     /// </remarks>
     bool StopViewing();
+
+    bool ShouldRebuildGraph(int iChannel);
 	}
 }
