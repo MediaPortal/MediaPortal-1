@@ -373,11 +373,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Sections\DVB_SECTIONS.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Sections\DVBSSS2.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using SQLite.NET;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
+using MediaPortal.TV.Recording;
 using System.Xml;
 
 
@@ -46,11 +47,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.CheckBox checkBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox feedback;
-		// globals
-		private DVBSections					m_dvbSec=null;
-		private DVBSections.Transponder[]	transpList=null;
-		private bool						m_bIsDirty=false;
-		//
 		private System.Windows.Forms.ComboBox lnbconfig1;
 		private System.Windows.Forms.ComboBox lnbconfig2;
 		private System.Windows.Forms.ComboBox lnbconfig3;
@@ -62,6 +58,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button button6;
 		private System.Windows.Forms.TreeView treeView2;
 		private System.Windows.Forms.CheckBox checkBox2;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.CheckBox checkBox3;
+		private System.Windows.Forms.NumericUpDown numericUpDown1;
+		private System.Windows.Forms.Label label4;
+		
 		/// <summary> 
 		/// Erforderliche Designervariable.
 		/// </summary>
@@ -87,6 +88,14 @@ namespace MediaPortal.Configuration.Sections
 		{
 			Lof=5150
 		}
+
+		// globals
+		private DVBSections					m_dvbSec=null;
+		private DVBSections.Transponder[]	transpList=null;
+		private bool						m_bIsDirty=false;
+		//
+
+		
 		public DVBSSS2(string name): base(name)
 		{
 			// Dieser Aufruf ist für den Windows Form-Designer erforderlich.
@@ -150,6 +159,10 @@ namespace MediaPortal.Configuration.Sections
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label4 = new System.Windows.Forms.Label();
+			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+			this.checkBox3 = new System.Windows.Forms.CheckBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.feedback = new System.Windows.Forms.TextBox();
@@ -165,6 +178,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.SuspendLayout();
@@ -172,9 +186,9 @@ namespace MediaPortal.Configuration.Sections
 			// groupBox1
 			// 
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 200);
+			this.groupBox1.Location = new System.Drawing.Point(8, 256);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(424, 184);
+			this.groupBox1.Size = new System.Drawing.Size(424, 128);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "PlugIns:";
@@ -487,6 +501,10 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.label4);
+			this.tabPage1.Controls.Add(this.numericUpDown1);
+			this.tabPage1.Controls.Add(this.checkBox3);
+			this.tabPage1.Controls.Add(this.label3);
 			this.tabPage1.Controls.Add(this.groupBox1);
 			this.tabPage1.Controls.Add(this.groupBox2);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -495,6 +513,58 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Card config";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(232, 216);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(72, 16);
+			this.label4.TabIndex = 7;
+			this.label4.Text = "milliseconds";
+			// 
+			// numericUpDown1
+			// 
+			this.numericUpDown1.Increment = new System.Decimal(new int[] {
+																			 10,
+																			 0,
+																			 0,
+																			 0});
+			this.numericUpDown1.Location = new System.Drawing.Point(168, 214);
+			this.numericUpDown1.Maximum = new System.Decimal(new int[] {
+																		   2000,
+																		   0,
+																		   0,
+																		   0});
+			this.numericUpDown1.Minimum = new System.Decimal(new int[] {
+																		   100,
+																		   0,
+																		   0,
+																		   0});
+			this.numericUpDown1.Name = "numericUpDown1";
+			this.numericUpDown1.Size = new System.Drawing.Size(56, 20);
+			this.numericUpDown1.TabIndex = 6;
+			this.numericUpDown1.Value = new System.Decimal(new int[] {
+																		 750,
+																		 0,
+																		 0,
+																		 0});
+			// 
+			// checkBox3
+			// 
+			this.checkBox3.Location = new System.Drawing.Point(24, 192);
+			this.checkBox3.Name = "checkBox3";
+			this.checkBox3.Size = new System.Drawing.Size(104, 16);
+			this.checkBox3.TabIndex = 5;
+			this.checkBox3.Text = "Grab EPG-Data";
+			this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(40, 216);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(128, 16);
+			this.label3.TabIndex = 4;
+			this.label3.Text = "EPG-Grabbing Interval:";
 			// 
 			// tabPage2
 			// 
@@ -634,6 +704,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -696,6 +767,8 @@ namespace MediaPortal.Configuration.Sections
 					xmlwriter.SetValue("DVBSS2","satb",b);
 					xmlwriter.SetValue("DVBSS2","satc",c);
 					xmlwriter.SetValue("DVBSS2","satd",d);
+					xmlwriter.SetValueAsBool("DVBSS2","grabEPG",checkBox3.Checked);
+					xmlwriter.SetValue("DVBSS2","grabInterval",numericUpDown1.Value);
 				}
 			}
 			catch (Exception ex)
@@ -715,6 +788,9 @@ namespace MediaPortal.Configuration.Sections
 					diseqca.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","diseqca",0);
 					lnbconfig1.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbconfig1",0);
 					sat1.Text=xmlreader.GetValueAsString("DVBSS2","sata","");
+					checkBox3.Checked=xmlreader.GetValueAsBool("DVBSS2","grabEPG",false);
+					numericUpDown1.Value=xmlreader.GetValueAsInt("DVBSS2","grabInterval",750);
+
 					if(checkBox1.Checked==false)
 						DisableSatConfig();
 					else
@@ -729,6 +805,7 @@ namespace MediaPortal.Configuration.Sections
 						sat2.Text=xmlreader.GetValueAsString("DVBSS2","satb","");
 						sat3.Text=xmlreader.GetValueAsString("DVBSS2","satc","");
 						sat4.Text=xmlreader.GetValueAsString("DVBSS2","satd","");
+
 					}
 				}
 			}
@@ -1083,7 +1160,7 @@ namespace MediaPortal.Configuration.Sections
 			
 			foreach(DVBSections.Transponder transponder in list)
 			{
-				foreach(DVBSections.ChannelInfo ch in transponder.channels)
+				foreach(MediaPortal.TV.Recording.DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					if(ch.scrambled==true && checkBox2.Checked==true)
 						continue;
@@ -1127,7 +1204,7 @@ namespace MediaPortal.Configuration.Sections
 						rc.Name=channelText;
 						
 						rc.URL="";
-						rc.Genre="DVB-Radio Service";
+						rc.Genre=ch.service_provider_name;
 						rc.Frequency=(radioCounter<< 16);
 						
 						int dbID=RadioDatabase.AddStation(ref rc);
@@ -1200,7 +1277,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if(pids.isAudio && pids.elementary_PID!=audio)
 				{
-					if(n<2)
+					if(n<3)
 					pidArray[n]=pids.elementary_PID;n++;
 				}
 			}
@@ -1323,6 +1400,11 @@ namespace MediaPortal.Configuration.Sections
 				sat2.Text=ofd.FileName;
 			}
 
+		}
+
+		private void checkBox3_CheckedChanged(object sender, System.EventArgs e)
+		{
+			numericUpDown1.Enabled=checkBox3.Checked;
 		}
 
 
