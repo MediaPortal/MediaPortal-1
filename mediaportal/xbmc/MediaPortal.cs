@@ -665,6 +665,11 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 				switch (action.wID)
 				{
+          case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN:
+            ToggleFullWindowed(); 
+            return;
+          break;
+
 					case Action.ActionType.ACTION_VOLUME_DOWN : 
             iCurrent = AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
             iStep = (iMax - iMin) / 10;

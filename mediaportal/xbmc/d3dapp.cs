@@ -1524,6 +1524,66 @@ namespace MediaPortal
 
     
 
+    protected void ToggleFullWindowed()
+    {
+      if (g_Player.Playing)
+      {
+        m_bRestore=true;
+        m_bWasPlaying =g_Player.Playing;
+        m_strCurrentFile=g_Player.CurrentFile;
+        m_iActiveWindow=GUIWindowManager.ActiveWindow;
+        m_dCurrentPos=g_Player.CurrentPosition;
+        g_Player.Stop();
+      }
+        
+        
+      isMaximized=!isMaximized;
+      GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
+      if (isMaximized)
+      {
+        Log.Write("windowed->fullscreen");
+        Win32API.EnableStartBar(false);
+        Win32API.ShowStartBar(false);
+        this.FormBorderStyle=FormBorderStyle.None;
+        this.MaximizeBox=false;
+        this.MinimizeBox=false;
+        this.Menu=null;
+        this.Location= new System.Drawing.Point(0,0);
+        this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+        this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+        this.Update();
+        GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
+        GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
+        Log.Write("windowed->fullscreen done {0}", isMaximized);
+        Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+          this.ClientSize.Width,this.ClientSize .Height,
+          Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+        SwitchFullScreenOrWindowed(windowed,false);
+      }
+      else
+      {
+        Log.Write("fullscreen->windowed");
+        Win32API.EnableStartBar(true);
+        Win32API.ShowStartBar(true);
+
+        this.WindowState = FormWindowState.Normal;
+        this.FormBorderStyle=FormBorderStyle.Sizable;
+        this.MaximizeBox=true;
+        this.MinimizeBox=true;          
+        this.Menu=mnuMain;
+        this.Location = storedLocation;
+        Bounds=new Rectangle(oldBounds.X,oldBounds.Y,oldBounds.Width,oldBounds.Height);
+        this.ClientSize = storedSize;
+        Log.Write("fullscreen->windowed done {0}", isMaximized);
+        Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+          this.ClientSize.Width,this.ClientSize .Height,
+          Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+        SwitchFullScreenOrWindowed(windowed,false);
+      }
+      GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+      OnDeviceReset(null,null);
+    }
+
     /// <summary>
     /// Handle system keystrokes (ie, alt-enter)
     /// </summary>
@@ -1537,64 +1597,10 @@ namespace MediaPortal
 
       if (e.Control==false && e.Alt==true && (e.KeyCode == System.Windows.Forms.Keys.Return))
       {
-        if (g_Player.Playing)
-        {
-          m_bRestore=true;
-          m_bWasPlaying =g_Player.Playing;
-          m_strCurrentFile=g_Player.CurrentFile;
-          m_iActiveWindow=GUIWindowManager.ActiveWindow;
-          m_dCurrentPos=g_Player.CurrentPosition;
-          g_Player.Stop();
-        }
-        
-        
-        isMaximized=!isMaximized;
-        GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
-        if (isMaximized)
-        {
-          Log.Write("windowed->fullscreen");
-          Win32API.EnableStartBar(false);
-          Win32API.ShowStartBar(false);
-          this.FormBorderStyle=FormBorderStyle.None;
-          this.MaximizeBox=false;
-          this.MinimizeBox=false;
-          this.Menu=null;
-          this.Location= new System.Drawing.Point(0,0);
-          this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-          this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-          this.Update();
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
-          Log.Write("windowed->fullscreen done {0}", isMaximized);
-          Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
-                      this.ClientSize.Width,this.ClientSize .Height,
-                      Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-          SwitchFullScreenOrWindowed(windowed,false);
-        }
-        else
-        {
-          Log.Write("fullscreen->windowed");
-          Win32API.EnableStartBar(true);
-          Win32API.ShowStartBar(true);
-
-          this.WindowState = FormWindowState.Normal;
-          this.FormBorderStyle=FormBorderStyle.Sizable;
-          this.MaximizeBox=true;
-          this.MinimizeBox=true;          
-          this.Menu=mnuMain;
-          this.Location = storedLocation;
-          Bounds=new Rectangle(oldBounds.X,oldBounds.Y,oldBounds.Width,oldBounds.Height);
-          this.ClientSize = storedSize;
-          Log.Write("fullscreen->windowed done {0}", isMaximized);
-          Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
-                      this.ClientSize.Width,this.ClientSize .Height,
-                      Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-          SwitchFullScreenOrWindowed(windowed,false);
-        }
-        GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
-        OnDeviceReset(null,null);
+        ToggleFullWindowed();
         e.Handled=true;
         return;
+        
         /*
         // Toggle the fullscreen/window mode
         if (active && ready)
