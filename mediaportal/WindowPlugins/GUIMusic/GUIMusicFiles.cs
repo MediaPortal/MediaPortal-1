@@ -1379,8 +1379,9 @@ namespace MediaPortal.GUI.Music
       // get all information for all files in current directory from database 
       m_database.GetSongsByPath2(m_strDirectory, ref songsMap);
 
-      //int_20h. musicCD is the information about the cd...
-      //GUIMusicFiles.MusicCD = null;
+      //musicCD is the information about the cd...
+			//delete old CD info
+      GUIMusicFiles.MusicCD = null;
 
       bool bCDDAFailed=false;
       // for every file found, but skip folder
