@@ -414,21 +414,21 @@ namespace MediaPortal.TV.Recording
 			ArrayList	tab46=new ArrayList();
 
 			// check tables
-			AddTSPid(17);
+			//AddTSPid(17);
 			//
 			GetStreamData(filter,17, 0x42,0,5000);
 			tab42=(ArrayList)m_sectionsList.Clone();
 			GetStreamData(filter,17, 0x46,0,5000);
 			tab46=(ArrayList)m_sectionsList.Clone();
 
-			bool flag;
+			//bool flag=false;
 			ChannelInfo pat;
 			ArrayList pmtList = transponder.PMTTable;
 			int pmtScans;
 			pmtScans = (pmtList.Count / 20) + 1;
 			for (t = 1; t <= pmtScans; t++)
 			{
-				flag = DeleteAllPIDsI();
+				//flag = DeleteAllPIDsI();
 				for (n = 0; n <= 19; n++)
 				{
 					if (((t - 1) * 20) + n > pmtList.Count - 1)
@@ -482,21 +482,21 @@ namespace MediaPortal.TV.Recording
 			ArrayList	tab46=new ArrayList();
 
 			// check tables
-			AddTSPid(17);
+			//AddTSPid(17);
 			//
 			GetStreamData(filter,17, 0x42,0,5000);
 			tab42=(ArrayList)m_sectionsList.Clone();
 			GetStreamData(filter,17, 0x46,0,5000);
 			tab46=(ArrayList)m_sectionsList.Clone();
 
-			bool flag;
+			//bool flag;
 			ChannelInfo pat;
 			ArrayList pmtList = tp.PMTTable;
 			int pmtScans;
 			pmtScans = (pmtList.Count / 20) + 1;
 			for (t = 1; t <= pmtScans; t++)
 			{
-				flag = DeleteAllPIDsI();
+				//flag = DeleteAllPIDsI();
 				for (n = 0; n <= 19; n++)
 				{
 					if (((t - 1) * 20) + n > pmtList.Count - 1)
