@@ -1,4 +1,5 @@
 Bugs left:
+  30-06-2004 my programs: return to home when stopping a game
   29-06-2004 home       : scroll speed 9 / 10 are the same
   29-06-2004 home       : cpu% is too high
   29-06-2004 home       : The selection bar on Home is transparent on plugins like My News so stand on  
