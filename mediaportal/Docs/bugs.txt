@@ -9,11 +9,10 @@ Cosmetic bugs:
 
 crash/things not working Bugs:
   18-08-2004 my tv      : duration of recordings is wrong
-  18-08-2004 GUI		: textboxscrollup shows the first line briefly on the last line when using cursorkeys. Easy to see in the TVhome when you have a program description on screen.
-  18-08-2004 GUI		: when recording albumart is not shown in the music overlay.
+  18-08-2004 GUI        : textboxscrollup shows the first line briefly on the last line when using cursorkeys. Easy to see in the TVhome when you have a program description on screen.
+  18-08-2004 GUI        : when recording albumart is not shown in the music overlay.
   18-08-2004 GUI        : GUI not rendered when starting MP maximised (set this in the shortcut)
   18-08-2004 TVOSD      : when using a software tv card, the OSD only updates when you move your cursor from button to button on the OSD
-  18-08-2004 music      : F3 on music artists hangs
   15-08-2004 music      : albumart in overlay is not being AR corrected.
   13-07-2004 vmr9       : cannot switch between windowed/fullscreen mode after playing a movie with vmr9  
   
