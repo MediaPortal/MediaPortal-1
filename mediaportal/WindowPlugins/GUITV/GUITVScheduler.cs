@@ -631,6 +631,10 @@ namespace MediaPortal.GUI.TV
 					GUITVHome.ViewChannel(rec.Channel);
 					if (Recorder.IsViewing())
 					{
+						if (g_Player.Playing)
+						{
+							g_Player.SeekAsolutePercentage(99);
+						}
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 						return;
 					}

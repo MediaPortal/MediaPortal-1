@@ -2057,9 +2057,10 @@ namespace MediaPortal.GUI.TV
 						if (Recorder.IsViewing())
 						{
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							return;
 						}
-						return;
 						break;
+						
 
 					case 939: // switch mode
 						m_bSingleChannel=!m_bSingleChannel;							
