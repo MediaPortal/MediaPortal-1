@@ -398,16 +398,29 @@ namespace MediaPortal.GUI.TV
           }
         
         case SortMethod.SORT_STATUS:
+					// sort by: 0=Recording->1=Finished->2=Waiting->3=Canceled
+					int type1=2,type2=2;
+					if (item1.Label3==GUILocalizeStrings.Get(682)) type1=0;
+					else if (item1.Label3==GUILocalizeStrings.Get(683)) type1=1;
+					else if (item1.Label3==GUILocalizeStrings.Get(681)) type1=2;
+					else if (item1.Label3==GUILocalizeStrings.Get(684)) type1=3;
+
+					
+					if (item2.Label3==GUILocalizeStrings.Get(682)) type2=0;
+					else if (item2.Label3==GUILocalizeStrings.Get(683)) type2=1;
+					else if (item2.Label3==GUILocalizeStrings.Get(681)) type2=2;
+					else if (item2.Label3==GUILocalizeStrings.Get(684)) type2=3;
           if (m_bSortAscending)
           {
-            iComp=String.Compare(item1.Label3,item2.Label3,true);
+						if (type1 < type2) return -1;
+						if (type1 > type2) return 1;
           }
           else
-          {
-            iComp=String.Compare(item2.Label3,item1.Label3,true);
+					{
+						if (type1 < type2) return 1;
+						if (type1 > type2) return -1;
           }
-          if (iComp==0) goto case SortMethod.SORT_CHANNEL;
-          else return iComp;
+          goto case SortMethod.SORT_CHANNEL;
 
         case SortMethod.SORT_CHANNEL:
           if (m_bSortAscending)
