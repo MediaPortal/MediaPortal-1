@@ -1,3 +1,4 @@
+
 using System;
 using System.Xml.Serialization;
 using System.Drawing;
@@ -175,6 +176,7 @@ namespace MediaPortal.Games.Tetris
 					GUIPropertyManager.SetProperty("#tetris_lines", nLines.ToString());
 					GUIPropertyManager.SetProperty("#tetris_level", nLevel.ToString());
 					GUIPropertyManager.SetProperty("#tetris_highscore", (_Settings.Highscore == 0) ? "-" : _Settings.Highscore.ToString());
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(19001));
 
 					return true;
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
