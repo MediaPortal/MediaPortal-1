@@ -482,7 +482,7 @@ namespace MediaPortal.TV.Recording
           }
           try
           {
-            capture.Tuner.SetTuningSpace(66);
+            capture.Tuner.SetTuningSpace(iTunerCountry);
           }
           catch (Exception)
           {

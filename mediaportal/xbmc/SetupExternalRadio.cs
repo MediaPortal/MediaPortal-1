@@ -64,6 +64,7 @@ namespace MediaPortal
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label3 = new System.Windows.Forms.Label();
@@ -72,10 +73,9 @@ namespace MediaPortal
 			this.buttonBrowse = new System.Windows.Forms.Button();
 			this.textBoxPlayer = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.btnOK = new System.Windows.Forms.Button();
-			this.label5 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
+			this.btnOK = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -98,6 +98,14 @@ namespace MediaPortal
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "External Radio player:";
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(32, 184);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(320, 16);
+			this.label5.TabIndex = 8;
+			this.label5.Text = "%MHZ will be replaced by frequency in form: 104.5";
 			// 
 			// label4
 			// 
@@ -130,7 +138,7 @@ namespace MediaPortal
 			this.textBoxArgs.Name = "textBoxArgs";
 			this.textBoxArgs.Size = new System.Drawing.Size(304, 20);
 			this.textBoxArgs.TabIndex = 4;
-			this.textBoxArgs.Text = "f %MHz%";
+			this.textBoxArgs.Text = "";
 			// 
 			// label2
 			// 
@@ -165,23 +173,6 @@ namespace MediaPortal
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Radio player:";
 			// 
-			// btnOK
-			// 
-			this.btnOK.Location = new System.Drawing.Point(392, 256);
-			this.btnOK.Name = "btnOK";
-			this.btnOK.Size = new System.Drawing.Size(40, 23);
-			this.btnOK.TabIndex = 1;
-			this.btnOK.Text = "OK";
-			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(32, 184);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(320, 16);
-			this.label5.TabIndex = 8;
-			this.label5.Text = "%MHZ will be replaced by frequency in form: 104.5";
-			// 
 			// label7
 			// 
 			this.label7.Location = new System.Drawing.Point(32, 200);
@@ -197,6 +188,15 @@ namespace MediaPortal
 			this.label8.Size = new System.Drawing.Size(320, 16);
 			this.label8.TabIndex = 8;
 			this.label8.Text = "%HZ will be replaced by frequency in form: 104500000";
+			// 
+			// btnOK
+			// 
+			this.btnOK.Location = new System.Drawing.Point(392, 256);
+			this.btnOK.Name = "btnOK";
+			this.btnOK.Size = new System.Drawing.Size(40, 23);
+			this.btnOK.TabIndex = 1;
+			this.btnOK.Text = "OK";
+			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
 			// 
 			// SetupExternalRadio
 			// 
@@ -234,7 +234,7 @@ namespace MediaPortal
 			using (AMS.Profile.Xml   xmlReader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				textBoxPlayer.Text=xmlReader.GetValueAsString("radio","player","");
-				textBoxArgs.Text  =xmlReader.GetValueAsString("radio","args","f %MHZ%");
+				textBoxArgs.Text  =xmlReader.GetValueAsString("radio","args","f %MHZ% v 100 u");
 			}
 		}
 

@@ -25,6 +25,17 @@ namespace MediaPortal
 	/// </summary>
 	public class SetupForm : System.Windows.Forms.Form
 	{
+		class TunerCountry
+		{
+			public int	  m_iChannel;
+			public string m_strCountryName;
+
+			public TunerCountry(int iChannel, string strCountry)
+			{
+				m_iChannel=iChannel;
+				m_strCountryName=strCountry;
+			}
+		}
     private System.Windows.Forms.TabPage tabPlayers;
     private System.Windows.Forms.GroupBox MoviePlayerBox;
     private System.Windows.Forms.Label label3;
@@ -124,7 +135,6 @@ namespace MediaPortal
     private System.Windows.Forms.RadioButton btnradioCable;
     private System.Windows.Forms.CheckBox checkBoxAutoHideMouse;
     private System.Windows.Forms.Label label24;
-    private System.Windows.Forms.NumericUpDown upDownCountry;
     private System.Windows.Forms.Label label25;
     private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.Label label26;
@@ -241,13 +251,262 @@ namespace MediaPortal
 		private System.Windows.Forms.Button buttonStreamListFolder;
 		private System.Windows.Forms.TextBox textBoxStreamListFolder;
     ArrayList m_tvcards = new ArrayList();
+		private System.Windows.Forms.ComboBox comboBoxCountries;
 
+		TunerCountry[] m_countries = new TunerCountry[] {
+
+			new TunerCountry(1,    "USA"),
+			new TunerCountry(1,    "Anguilla"),
+			new TunerCountry(1,    "Antigua"),
+			new TunerCountry(1,    "Bahamas"),
+			new TunerCountry(1,    "Barbados"),
+			new TunerCountry(1,    "Bermuda"),
+			new TunerCountry(1,    "British Virgin Islands"),
+			new TunerCountry(1,    "Canada"),
+			new TunerCountry(1,    "Cayman Islands"),
+			new TunerCountry(1,    "Dominica"),
+			new TunerCountry(1,    "Dominican Republic"),
+			new TunerCountry(1,    "Grenada"),
+			new TunerCountry(1,    "Jamaica"),
+			new TunerCountry(1,    "Montserrat"),
+			new TunerCountry(1,    "Nevis"),
+			new TunerCountry(1,    "St. Kitts"),
+			new TunerCountry(1,    "St. Vincent and the Grenadines"),
+			new TunerCountry(1,    "Trinidad and Tobago"),
+			new TunerCountry(1,    "Turks and Caicos Islands"),
+			new TunerCountry(1,    "Barbuda"),
+			new TunerCountry(1,    "Puerto Rico"),
+			new TunerCountry(1,    "Saint Lucia"),
+			new TunerCountry(1,    "United States Virgin Islands"),
+			new TunerCountry(2,    "Canada"),
+			new TunerCountry(20,   "Egypt"),
+			new TunerCountry(212,  "Morocco"),
+			new TunerCountry(213,  "Algeria"),
+			new TunerCountry(216,  "Tunisia"),
+			new TunerCountry(218,  "Libya"),
+			new TunerCountry(220,  "Gambia"),
+			new TunerCountry(221,  "Senegal Republic"),
+			new TunerCountry(222,  "Mauritania"),
+			new TunerCountry(223,  "Mali"),
+			new TunerCountry(224,  "Guinea"),
+			new TunerCountry(225,  "Cote D'Ivoire"),
+			new TunerCountry(226,  "Burkina Faso"),
+			new TunerCountry(227,  "Niger"),
+			new TunerCountry(228,  "Togo"),
+			new TunerCountry(229,  "Benin"),
+			new TunerCountry(230,  "Mauritius"),
+			new TunerCountry(231,  "Liberia"),
+			new TunerCountry(232,  "Sierra Leone"),
+			new TunerCountry(233,  "Ghana"),
+			new TunerCountry(234,  "Nigeria"),
+			new TunerCountry(235,  "Chad"),
+			new TunerCountry(236,  "Central African Republic"),
+			new TunerCountry(237,  "Cameroon"),
+			new TunerCountry(238,  "Cape Verde Islands"),
+			new TunerCountry(239,  "Sao Tome and Principe"),
+			new TunerCountry(240,  "Equatorial Guinea"),
+			new TunerCountry(241,  "Gabon"),
+			new TunerCountry(242,  "Congo"),
+			new TunerCountry(243,  "Congo(DRC)"),
+			new TunerCountry(244,  "Angola"),
+			new TunerCountry(245,  "Guinea-Bissau"),
+			new TunerCountry(246,  "Diego Garcia"),
+			new TunerCountry(247,  "Ascension Island"),
+			new TunerCountry(248,  "Seychelle Islands"),
+			new TunerCountry(249,  "Sudan"),
+			new TunerCountry(250,  "Rwanda"),
+			new TunerCountry(251,  "Ethiopia"),
+			new TunerCountry(252,  "Somalia"),
+			new TunerCountry(253,  "Djibouti"),
+			new TunerCountry(254,  "Kenya"),
+			new TunerCountry(255,  "Tanzania"),
+			new TunerCountry(256,  "Uganda"),
+			new TunerCountry(257,  "Burundi"),
+			new TunerCountry(258,  "Mozambique"),
+			new TunerCountry(260,  "Zambia"),
+			new TunerCountry(261,  "Madagascar"),
+			new TunerCountry(262,  "Reunion Island"),
+			new TunerCountry(263,  "Zimbabwe"),
+			new TunerCountry(264,  "Namibia"),
+			new TunerCountry(265,  "Malawi"),
+			new TunerCountry(266,  "Lesotho"),
+			new TunerCountry(267,  "Botswana"),
+			new TunerCountry(268,  "Swaziland"),
+			new TunerCountry(269,  "Mayotte Island"),
+			new TunerCountry(269,  "Comoros"),
+			new TunerCountry(27,   "South Africa"),
+			new TunerCountry(290,  "St. Helena"),
+			new TunerCountry(291,  "Eritrea"),
+			new TunerCountry(297,  "Aruba"),
+			new TunerCountry(298,  "Faroe Islands"),
+			new TunerCountry(299,  "Greenland"),
+			new TunerCountry(30,   "Greece"),
+			new TunerCountry(31,   "Netherlands"),
+			new TunerCountry(32,   "Belgium"),
+			new TunerCountry(33,   "France"),
+			new TunerCountry(34,   "Spain"),
+			new TunerCountry(350,  "Gibraltar"),
+			new TunerCountry(351,  "Portugal"),
+			new TunerCountry(352,  "Luxembourg"),
+			new TunerCountry(353,  "Ireland"),
+			new TunerCountry(354,  "Iceland"),
+			new TunerCountry(355,  "Albania"),
+			new TunerCountry(356,  "Malta"),
+			new TunerCountry(357,  "Cyprus"),
+			new TunerCountry(358,  "Finland"),
+			new TunerCountry(359,  "Bulgaria"),
+			new TunerCountry(36,   "Hungary"),
+			new TunerCountry(370,  "Lithuania"),
+			new TunerCountry(371,  "Latvia"),
+			new TunerCountry(372,  "Estonia"),
+			new TunerCountry(373,  "Moldova"),
+			new TunerCountry(374,  "Armenia"),
+			new TunerCountry(375,  "Belarus"),
+			new TunerCountry(376,  "Andorra"),
+			new TunerCountry(377,  "Monaco"),
+			new TunerCountry(378,  "San Marino"),
+			new TunerCountry(380,  "Ukraine"),
+			new TunerCountry(381,  "Serbia and Montenegro"),
+			new TunerCountry(385,  "Croatia"),
+			new TunerCountry(386,  "Slovenia"),
+			new TunerCountry(387,  "Bosnia and Herzegovina"),
+			new TunerCountry(389,  "F.Y.R.O.M. (Former Yugoslav Republic of Macedonia)"),
+			new TunerCountry(39,   "Italy"),
+			new TunerCountry(39,   "Vatican City"),
+			new TunerCountry(40,   "Romania"),
+			new TunerCountry(41,   "Switzerland"),
+			new TunerCountry(41,   "Liechtenstein"),
+			new TunerCountry(420,  "Czech Republic"),
+			new TunerCountry(421,  "Slovak Republic"),
+			new TunerCountry(43,   "Austria"),
+			new TunerCountry(44,   "United Kingdom"),
+			new TunerCountry(45,   "Denmark"),
+			new TunerCountry(46,   "Sweden"),
+			new TunerCountry(47,   "Norway"),
+			new TunerCountry(48,   "Poland"),
+			new TunerCountry(49,   "Germany"),
+			new TunerCountry(500,  "Falkland Islands (Islas Malvinas)"),
+			new TunerCountry(501,  "Belize"),
+			new TunerCountry(502,  "Guatemala"),
+			new TunerCountry(503,  "El Salvador"),
+			new TunerCountry(504,  "Honduras"),
+			new TunerCountry(505,  "Nicaragua"),
+			new TunerCountry(506,  "Costa Rica"),
+			new TunerCountry(507,  "Panama"),
+			new TunerCountry(508,  "St. Pierre and Miquelon"),
+			new TunerCountry(509,  "Haiti"),
+			new TunerCountry(51,   "Peru"),
+			new TunerCountry(52,   "Mexico"),
+			new TunerCountry(53,   "Cuba"),
+			new TunerCountry(53,   "Guantanamo Bay"),
+			new TunerCountry(54,   "Argentina"),
+			new TunerCountry(55,   "Brazil"),
+			new TunerCountry(56,   "Chile"),
+			new TunerCountry(57,   "Colombia"),
+			new TunerCountry(58,   "Bolivarian Republic of Venezuela"),
+			new TunerCountry(590,  "Guadeloupe"),
+			new TunerCountry(590,  "French Antilles"),
+			new TunerCountry(591,  "Bolivia"),
+			new TunerCountry(592,  "Guyana"),
+			new TunerCountry(593,  "Ecuador"),
+			new TunerCountry(594,  "French Guiana"),
+			new TunerCountry(595,  "Paraguay"),
+			new TunerCountry(596,  "Martinique"),
+			new TunerCountry(597,  "Suriname"),
+			new TunerCountry(598,  "Uruguay"),
+			new TunerCountry(599,  "Netherlands Antilles"),
+			new TunerCountry(60,   "Malaysia"),
+			new TunerCountry(61,   "Australia"),
+			new TunerCountry(61,   "Cocos-Keeling Islands"),
+			new TunerCountry(62,   "Indonesia"),
+			new TunerCountry(63,   "Philippines"),
+			new TunerCountry(64,   "New Zealand"),
+			new TunerCountry(65,   "Singapore"),
+			new TunerCountry(66,   "Thailand"),
+			new TunerCountry(670,  "Saipan Island"),
+			new TunerCountry(670,  "Rota Island"),
+			new TunerCountry(670,  "Tinian Island"),
+			new TunerCountry(671,  "Guam"),
+			new TunerCountry(672,  "Christmas Island"),
+			new TunerCountry(672,  "Australian Antarctic Territory"),
+			new TunerCountry(672,  "Norfolk Island"),
+			new TunerCountry(673,  "Brunei"),
+			new TunerCountry(674,  "Nauru"),
+			new TunerCountry(675,  "Papua New Guinea"),
+			new TunerCountry(676,  "Tonga"),
+			new TunerCountry(677,  "Solomon Islands"),
+			new TunerCountry(678,  "Vanuatu"),
+			new TunerCountry(679,  "Fiji Islands"),
+			new TunerCountry(680,  "Palau"),
+			new TunerCountry(681,  "Wallis and Futuna Islands"),
+			new TunerCountry(682,  "Cook Islands"),
+			new TunerCountry(683,  "Niue"),
+			new TunerCountry(684,  "Territory of American Samoa"),
+			new TunerCountry(685,  "Samoa"),
+			new TunerCountry(686,  "Kiribati Republic"),
+			new TunerCountry(687,  "New Caledonia"),
+			new TunerCountry(688,  "Tuvalu"),
+			new TunerCountry(689,  "French Polynesia"),
+			new TunerCountry(690,  "Tokelau"),
+			new TunerCountry(691,  "Micronesia"),
+			new TunerCountry(692,  "Marshall Islands"),
+			new TunerCountry(7,    "Russia"),
+			new TunerCountry(7,    "Kazakhstan"),
+			new TunerCountry(7,    "Kyrgyzstan"),
+			new TunerCountry(7,    "Tajikistan"),
+			new TunerCountry(7,    "Turkmenistan"),
+			new TunerCountry(7,    "Uzbekistan"),
+			new TunerCountry(81,  "Japan"),
+		new TunerCountry(82,   "Korea (South)"),
+		new TunerCountry(84,   "Vietnam"),
+		new TunerCountry(850,  "Korea (North)"),
+		new TunerCountry(852,  "Hong Kong SAR"),
+		new TunerCountry(853,  "Macao SAR"),
+		new TunerCountry(855,  "Cambodia"),
+		new TunerCountry(856,  "Laos"),
+		new TunerCountry(86,   "China"),
+		new TunerCountry(871,  "INMARSAT (Atlantic-East)"),
+		new TunerCountry(872,  "INMARSAT (Pacific)"),
+		new TunerCountry(873,  "INMARSAT (Indian)"),
+		new TunerCountry(874,  "INMARSAT (Atlantic-West)"),
+		new TunerCountry(880,  "Bangladesh"),
+		new TunerCountry(886,  "Taiwan"),
+		new TunerCountry(90,   "Turkey"),
+		new TunerCountry(91,   "India"),
+		new TunerCountry(92,   "Pakistan"),
+		new TunerCountry(93,   "Afghanistan"),
+		new TunerCountry(94,   "Sri Lanka"),
+		new TunerCountry(95,   "Myanmar"),
+		new TunerCountry(960,  "Maldives"),
+		new TunerCountry(961,  "Lebanon"),
+		new TunerCountry(962,  "Jordan"),
+		new TunerCountry(963,  "Syria"),
+		new TunerCountry(964,  "Iraq"),
+		new TunerCountry(965,  "Kuwait"),
+		new TunerCountry(966,  "Saudi Arabia"),
+		new TunerCountry(967,  "Yemen"),
+		new TunerCountry(968,  "Oman"),
+		new TunerCountry(971,  "United Arab Emirates"),
+		new TunerCountry(972,  "Israel"),
+		new TunerCountry(973,  "Bahrain"),
+		new TunerCountry(974,  "Qatar"),
+		new TunerCountry(975,  "Bhutan"),
+		new TunerCountry(976,  "Mongolia"),
+		new TunerCountry(977,  "Nepal"),
+		new TunerCountry(98,   "Iran"),
+		new TunerCountry(994,  "Azerbaijan"),
+		new TunerCountry(995,  "Georgia")
+		};
 		public SetupForm()
 		{
       Log.Write("------------enter setup--------");
       Recorder.Stop();
       InitializeComponent();
 
+			foreach (TunerCountry country in m_countries)
+			{
+				comboBoxCountries.Items.Add(country.m_strCountryName);
+			}
 			LoadSettings();
       SetupCapture();
 			listTVChannels.SubItemClicked += new ListViewEx.SubItemClickEventHandler(listTVChannels_SubItemClicked);
@@ -314,7 +573,26 @@ namespace MediaPortal
       //MY TV
       toolTip1.SetToolTip(checkBoxAlwaysTimeShift   ,"Enable this option if you want MediaPortal to timeshift\rlive video in the background.When this option is disabled\rtimeshifting live TV will only be running when you are in the My TV section");
 
-      UpdateCaptureCardList();
+			toolTip1.SetToolTip(btnradioAntenna           ,"Setup how your tv capture card is connected.\rIs it connected to an antenna?\r, or is it connected to a tv-cable ?\rNOTE: try both settings to see which works best");
+			toolTip1.SetToolTip(btnradioCable             ,"Setup how your tv capture card is connected.\rIs it connected to an antenna?\r, or is it connected to a tv-cable ?\rNOTE: try both settings to see which works best");
+			toolTip1.SetToolTip(buttonAutoTune            ,"Autotuning is experimental,dont use it!");
+			toolTip1.SetToolTip(listCaptureCards          ,"This list shows all your configured tv capture cards");
+			toolTip1.SetToolTip(textBoxRecPath            ,"Select the folder where your tv recordings should be saved");
+			toolTip1.SetToolTip(btnRecPath								,"Select the folder where your tv recordings should be saved");
+			toolTip1.SetToolTip(UpDownPreRecording        ,"Start recording your tv program x minutes before it starts");
+			toolTip1.SetToolTip(UpDownPostRecording       ,"Stop recording your tv program x minutes after it stops");
+			
+			toolTip1.SetToolTip(btnAddCaptureDevice       ,"Add new tv capture card to the list");
+			toolTip1.SetToolTip(btnDelCaptureDevice       ,"Remove selected tv capture card from the list");
+			toolTip1.SetToolTip(btnEditCaptureDevice      ,"Setup the selected tv capture card");
+			toolTip1.SetToolTip(comboBoxCountries         ,"Select your country. This way MediaPortal\rknows which TV standard you are using");
+
+
+
+			//MY TVGUIDE
+			toolTip1.SetToolTip(listTVChannels            ,"This list shows all your tvchannels");           
+
+			UpdateCaptureCardList();
 
     
     }
@@ -397,15 +675,15 @@ namespace MediaPortal
 			this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
 			this.UpDownPostRecording = new System.Windows.Forms.NumericUpDown();
 			this.groupBox13 = new System.Windows.Forms.GroupBox();
+			this.comboBoxCountries = new System.Windows.Forms.ComboBox();
 			this.buttonAutoTune = new System.Windows.Forms.Button();
-			this.upDownCountry = new System.Windows.Forms.NumericUpDown();
 			this.label24 = new System.Windows.Forms.Label();
 			this.label23 = new System.Windows.Forms.Label();
 			this.btnradioCable = new System.Windows.Forms.RadioButton();
 			this.btnradioAntenna = new System.Windows.Forms.RadioButton();
-			this.btnRecPath = new System.Windows.Forms.Button();
 			this.textBoxRecPath = new System.Windows.Forms.TextBox();
 			this.groupBox16 = new System.Windows.Forms.GroupBox();
+			this.btnRecPath = new System.Windows.Forms.Button();
 			this.groupBox17 = new System.Windows.Forms.GroupBox();
 			this.label35 = new System.Windows.Forms.Label();
 			this.label34 = new System.Windows.Forms.Label();
@@ -510,6 +788,9 @@ namespace MediaPortal
 			this.comboAudioPlayer = new System.Windows.Forms.ComboBox();
 			this.tabPageRadio = new System.Windows.Forms.TabPage();
 			this.groupBox21 = new System.Windows.Forms.GroupBox();
+			this.buttonStreamListFolder = new System.Windows.Forms.Button();
+			this.textBoxStreamListFolder = new System.Windows.Forms.TextBox();
+			this.label22 = new System.Windows.Forms.Label();
 			this.groupBox23 = new System.Windows.Forms.GroupBox();
 			this.btnRadioSetup = new System.Windows.Forms.Button();
 			this.btnRadioExternal = new System.Windows.Forms.RadioButton();
@@ -551,9 +832,6 @@ namespace MediaPortal
 			this.label2 = new System.Windows.Forms.Label();
 			this.dvdParams = new System.Windows.Forms.TextBox();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.label22 = new System.Windows.Forms.Label();
-			this.textBoxStreamListFolder = new System.Windows.Forms.TextBox();
-			this.buttonStreamListFolder = new System.Windows.Forms.Button();
 			this.tabControl.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
 			this.Skin.SuspendLayout();
@@ -566,7 +844,7 @@ namespace MediaPortal
 			this.groupbox22.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).BeginInit();
 			this.groupBox13.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).BeginInit();
+			this.groupBox16.SuspendLayout();
 			this.groupBox17.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).BeginInit();
 			this.tabAudioShares.SuspendLayout();
@@ -814,14 +1092,14 @@ namespace MediaPortal
 			this.groupBox20.Controls.Add(this.textBoxXMLTVFolder);
 			this.groupBox20.Location = new System.Drawing.Point(8, 304);
 			this.groupBox20.Name = "groupBox20";
-			this.groupBox20.Size = new System.Drawing.Size(432, 56);
+			this.groupBox20.Size = new System.Drawing.Size(432, 48);
 			this.groupBox20.TabIndex = 21;
 			this.groupBox20.TabStop = false;
 			this.groupBox20.Text = "XMLTV Folder";
 			// 
 			// btnXMLTVFolder
 			// 
-			this.btnXMLTVFolder.Location = new System.Drawing.Point(376, 24);
+			this.btnXMLTVFolder.Location = new System.Drawing.Point(376, 16);
 			this.btnXMLTVFolder.Name = "btnXMLTVFolder";
 			this.btnXMLTVFolder.Size = new System.Drawing.Size(32, 23);
 			this.btnXMLTVFolder.TabIndex = 1;
@@ -830,7 +1108,7 @@ namespace MediaPortal
 			// 
 			// textBoxXMLTVFolder
 			// 
-			this.textBoxXMLTVFolder.Location = new System.Drawing.Point(16, 24);
+			this.textBoxXMLTVFolder.Location = new System.Drawing.Point(16, 16);
 			this.textBoxXMLTVFolder.Name = "textBoxXMLTVFolder";
 			this.textBoxXMLTVFolder.Size = new System.Drawing.Size(352, 20);
 			this.textBoxXMLTVFolder.TabIndex = 0;
@@ -845,7 +1123,7 @@ namespace MediaPortal
 			this.groupBox19.Controls.Add(this.xmltvTimeZoneCheck);
 			this.groupBox19.Location = new System.Drawing.Point(448, 8);
 			this.groupBox19.Name = "groupBox19";
-			this.groupBox19.Size = new System.Drawing.Size(160, 352);
+			this.groupBox19.Size = new System.Drawing.Size(160, 344);
 			this.groupBox19.TabIndex = 20;
 			this.groupBox19.TabStop = false;
 			this.groupBox19.Text = "TVGuide";
@@ -1015,7 +1293,6 @@ namespace MediaPortal
 			this.tabPageCapture.Controls.Add(this.listCaptureCards);
 			this.tabPageCapture.Controls.Add(this.UpDownPostRecording);
 			this.tabPageCapture.Controls.Add(this.groupBox13);
-			this.tabPageCapture.Controls.Add(this.btnRecPath);
 			this.tabPageCapture.Controls.Add(this.textBoxRecPath);
 			this.tabPageCapture.Controls.Add(this.groupBox16);
 			this.tabPageCapture.Controls.Add(this.groupBox17);
@@ -1028,9 +1305,9 @@ namespace MediaPortal
 			// groupbox22
 			// 
 			this.groupbox22.Controls.Add(this.checkBoxAlwaysTimeShift);
-			this.groupbox22.Location = new System.Drawing.Point(432, 16);
+			this.groupbox22.Location = new System.Drawing.Point(376, 8);
 			this.groupbox22.Name = "groupbox22";
-			this.groupbox22.Size = new System.Drawing.Size(168, 64);
+			this.groupbox22.Size = new System.Drawing.Size(232, 56);
 			this.groupbox22.TabIndex = 10;
 			this.groupbox22.TabStop = false;
 			this.groupbox22.Text = "Timeshifting";
@@ -1081,20 +1358,20 @@ namespace MediaPortal
 			this.listCaptureCards.FullRowSelect = true;
 			this.listCaptureCards.Location = new System.Drawing.Point(16, 16);
 			this.listCaptureCards.Name = "listCaptureCards";
-			this.listCaptureCards.Size = new System.Drawing.Size(392, 208);
+			this.listCaptureCards.Size = new System.Drawing.Size(352, 208);
 			this.listCaptureCards.TabIndex = 0;
 			this.listCaptureCards.View = System.Windows.Forms.View.Details;
 			this.listCaptureCards.DoubleClick += new System.EventHandler(this.listCaptureCards_DoubleClick);
 			// 
 			// columnHeader7
 			// 
-			this.columnHeader7.Text = "Capture Device";
-			this.columnHeader7.Width = 174;
+			this.columnHeader7.Text = "TV Capture Card";
+			this.columnHeader7.Width = 172;
 			// 
 			// columnHeader8
 			// 
 			this.columnHeader8.Text = "use for TV";
-			this.columnHeader8.Width = 96;
+			this.columnHeader8.Width = 61;
 			// 
 			// columnHeader9
 			// 
@@ -1103,55 +1380,46 @@ namespace MediaPortal
 			// 
 			// UpDownPostRecording
 			// 
-			this.UpDownPostRecording.Location = new System.Drawing.Point(464, 312);
+			this.UpDownPostRecording.Location = new System.Drawing.Point(416, 296);
 			this.UpDownPostRecording.Name = "UpDownPostRecording";
 			this.UpDownPostRecording.Size = new System.Drawing.Size(48, 20);
 			this.UpDownPostRecording.TabIndex = 9;
 			// 
 			// groupBox13
 			// 
+			this.groupBox13.Controls.Add(this.comboBoxCountries);
 			this.groupBox13.Controls.Add(this.buttonAutoTune);
-			this.groupBox13.Controls.Add(this.upDownCountry);
 			this.groupBox13.Controls.Add(this.label24);
 			this.groupBox13.Controls.Add(this.label23);
 			this.groupBox13.Controls.Add(this.btnradioCable);
 			this.groupBox13.Controls.Add(this.btnradioAntenna);
-			this.groupBox13.Location = new System.Drawing.Point(424, 88);
+			this.groupBox13.Location = new System.Drawing.Point(376, 64);
 			this.groupBox13.Name = "groupBox13";
-			this.groupBox13.Size = new System.Drawing.Size(176, 120);
+			this.groupBox13.Size = new System.Drawing.Size(232, 128);
 			this.groupBox13.TabIndex = 7;
 			this.groupBox13.TabStop = false;
 			this.groupBox13.Text = "Tuner";
 			// 
+			// comboBoxCountries
+			// 
+			this.comboBoxCountries.Location = new System.Drawing.Point(72, 64);
+			this.comboBoxCountries.Name = "comboBoxCountries";
+			this.comboBoxCountries.Size = new System.Drawing.Size(152, 21);
+			this.comboBoxCountries.Sorted = true;
+			this.comboBoxCountries.TabIndex = 5;
+			// 
 			// buttonAutoTune
 			// 
-			this.buttonAutoTune.Location = new System.Drawing.Point(32, 88);
+			this.buttonAutoTune.Location = new System.Drawing.Point(16, 96);
 			this.buttonAutoTune.Name = "buttonAutoTune";
 			this.buttonAutoTune.Size = new System.Drawing.Size(75, 24);
 			this.buttonAutoTune.TabIndex = 4;
 			this.buttonAutoTune.Text = "Auto Tune";
 			this.buttonAutoTune.Click += new System.EventHandler(this.buttonAutoTune_Click);
 			// 
-			// upDownCountry
-			// 
-			this.upDownCountry.Location = new System.Drawing.Point(64, 56);
-			this.upDownCountry.Maximum = new System.Decimal(new int[] {
-																																	999,
-																																	0,
-																																	0,
-																																	0});
-			this.upDownCountry.Name = "upDownCountry";
-			this.upDownCountry.Size = new System.Drawing.Size(56, 20);
-			this.upDownCountry.TabIndex = 2;
-			this.upDownCountry.Value = new System.Decimal(new int[] {
-																																31,
-																																0,
-																																0,
-																																0});
-			// 
 			// label24
 			// 
-			this.label24.Location = new System.Drawing.Point(8, 16);
+			this.label24.Location = new System.Drawing.Point(16, 32);
 			this.label24.Name = "label24";
 			this.label24.Size = new System.Drawing.Size(40, 16);
 			this.label24.TabIndex = 3;
@@ -1159,7 +1427,7 @@ namespace MediaPortal
 			// 
 			// label23
 			// 
-			this.label23.Location = new System.Drawing.Point(8, 56);
+			this.label23.Location = new System.Drawing.Point(16, 64);
 			this.label23.Name = "label23";
 			this.label23.Size = new System.Drawing.Size(48, 16);
 			this.label23.TabIndex = 2;
@@ -1167,7 +1435,7 @@ namespace MediaPortal
 			// 
 			// btnradioCable
 			// 
-			this.btnradioCable.Location = new System.Drawing.Point(56, 40);
+			this.btnradioCable.Location = new System.Drawing.Point(72, 40);
 			this.btnradioCable.Name = "btnradioCable";
 			this.btnradioCable.Size = new System.Drawing.Size(72, 16);
 			this.btnradioCable.TabIndex = 1;
@@ -1175,37 +1443,38 @@ namespace MediaPortal
 			// 
 			// btnradioAntenna
 			// 
-			this.btnradioAntenna.Location = new System.Drawing.Point(56, 16);
+			this.btnradioAntenna.Location = new System.Drawing.Point(72, 24);
 			this.btnradioAntenna.Name = "btnradioAntenna";
-			this.btnradioAntenna.Size = new System.Drawing.Size(72, 24);
+			this.btnradioAntenna.Size = new System.Drawing.Size(72, 16);
 			this.btnradioAntenna.TabIndex = 0;
 			this.btnradioAntenna.Text = "Antenna";
-			// 
-			// btnRecPath
-			// 
-			this.btnRecPath.Location = new System.Drawing.Point(368, 320);
-			this.btnRecPath.Name = "btnRecPath";
-			this.btnRecPath.Size = new System.Drawing.Size(24, 23);
-			this.btnRecPath.TabIndex = 6;
-			this.btnRecPath.Text = "...";
-			this.btnRecPath.Click += new System.EventHandler(this.btnRecPath_Click);
 			// 
 			// textBoxRecPath
 			// 
 			this.textBoxRecPath.Location = new System.Drawing.Point(40, 320);
 			this.textBoxRecPath.Name = "textBoxRecPath";
-			this.textBoxRecPath.Size = new System.Drawing.Size(312, 20);
+			this.textBoxRecPath.Size = new System.Drawing.Size(280, 20);
 			this.textBoxRecPath.TabIndex = 5;
 			this.textBoxRecPath.Text = "";
 			// 
 			// groupBox16
 			// 
-			this.groupBox16.Location = new System.Drawing.Point(24, 288);
+			this.groupBox16.Controls.Add(this.btnRecPath);
+			this.groupBox16.Location = new System.Drawing.Point(24, 280);
 			this.groupBox16.Name = "groupBox16";
-			this.groupBox16.Size = new System.Drawing.Size(384, 72);
+			this.groupBox16.Size = new System.Drawing.Size(336, 72);
 			this.groupBox16.TabIndex = 4;
 			this.groupBox16.TabStop = false;
 			this.groupBox16.Text = "Recording path";
+			// 
+			// btnRecPath
+			// 
+			this.btnRecPath.Location = new System.Drawing.Point(304, 40);
+			this.btnRecPath.Name = "btnRecPath";
+			this.btnRecPath.Size = new System.Drawing.Size(24, 23);
+			this.btnRecPath.TabIndex = 6;
+			this.btnRecPath.Text = "...";
+			this.btnRecPath.Click += new System.EventHandler(this.btnRecPath_Click);
 			// 
 			// groupBox17
 			// 
@@ -1216,9 +1485,9 @@ namespace MediaPortal
 			this.groupBox17.Controls.Add(this.label31);
 			this.groupBox17.Controls.Add(this.label21);
 			this.groupBox17.Controls.Add(this.UpDownPreRecording);
-			this.groupBox17.Location = new System.Drawing.Point(424, 216);
+			this.groupBox17.Location = new System.Drawing.Point(376, 200);
 			this.groupBox17.Name = "groupBox17";
-			this.groupBox17.Size = new System.Drawing.Size(176, 144);
+			this.groupBox17.Size = new System.Drawing.Size(232, 152);
 			this.groupBox17.TabIndex = 8;
 			this.groupBox17.TabStop = false;
 			this.groupBox17.Text = "Pre/Post recording";
@@ -2200,6 +2469,31 @@ namespace MediaPortal
 			this.groupBox21.TabStop = false;
 			this.groupBox21.Text = "Radio Stations";
 			// 
+			// buttonStreamListFolder
+			// 
+			this.buttonStreamListFolder.Location = new System.Drawing.Point(464, 288);
+			this.buttonStreamListFolder.Name = "buttonStreamListFolder";
+			this.buttonStreamListFolder.Size = new System.Drawing.Size(32, 23);
+			this.buttonStreamListFolder.TabIndex = 10;
+			this.buttonStreamListFolder.Text = "...";
+			this.buttonStreamListFolder.Click += new System.EventHandler(this.buttonStreamListFolder_Click);
+			// 
+			// textBoxStreamListFolder
+			// 
+			this.textBoxStreamListFolder.Location = new System.Drawing.Point(112, 288);
+			this.textBoxStreamListFolder.Name = "textBoxStreamListFolder";
+			this.textBoxStreamListFolder.Size = new System.Drawing.Size(336, 20);
+			this.textBoxStreamListFolder.TabIndex = 9;
+			this.textBoxStreamListFolder.Text = "textBox1";
+			// 
+			// label22
+			// 
+			this.label22.Location = new System.Drawing.Point(16, 288);
+			this.label22.Name = "label22";
+			this.label22.Size = new System.Drawing.Size(96, 16);
+			this.label22.TabIndex = 8;
+			this.label22.Text = "Streamlist folder:";
+			// 
 			// groupBox23
 			// 
 			this.groupBox23.Controls.Add(this.btnRadioSetup);
@@ -2557,31 +2851,6 @@ namespace MediaPortal
 			this.dvdParams.TabIndex = 2;
 			this.dvdParams.Text = "";
 			// 
-			// label22
-			// 
-			this.label22.Location = new System.Drawing.Point(16, 288);
-			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(96, 16);
-			this.label22.TabIndex = 8;
-			this.label22.Text = "Streamlist folder:";
-			// 
-			// textBoxStreamListFolder
-			// 
-			this.textBoxStreamListFolder.Location = new System.Drawing.Point(112, 288);
-			this.textBoxStreamListFolder.Name = "textBoxStreamListFolder";
-			this.textBoxStreamListFolder.Size = new System.Drawing.Size(336, 20);
-			this.textBoxStreamListFolder.TabIndex = 9;
-			this.textBoxStreamListFolder.Text = "textBox1";
-			// 
-			// buttonStreamListFolder
-			// 
-			this.buttonStreamListFolder.Location = new System.Drawing.Point(464, 288);
-			this.buttonStreamListFolder.Name = "buttonStreamListFolder";
-			this.buttonStreamListFolder.Size = new System.Drawing.Size(32, 23);
-			this.buttonStreamListFolder.TabIndex = 10;
-			this.buttonStreamListFolder.Text = "...";
-			this.buttonStreamListFolder.Click += new System.EventHandler(this.buttonStreamListFolder_Click);
-			// 
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -2604,7 +2873,7 @@ namespace MediaPortal
 			this.groupbox22.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).EndInit();
 			this.groupBox13.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).EndInit();
+			this.groupBox16.ResumeLayout(false);
 			this.groupBox17.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).EndInit();
 			this.tabAudioShares.ResumeLayout(false);
@@ -3126,7 +3395,6 @@ namespace MediaPortal
   			
         xmlWriter.SetValue("skin","language",comboBoxLanguage.SelectedItem);
         xmlWriter.SetValue("skin","name",comboBoxSkins.SelectedItem);
-        SaveFrequencies();
         
         //xmltv
         xmlWriter.SetValueAsBool("xmltv", "colors",checkBoxTVGuideColors.Checked);
@@ -3137,6 +3405,7 @@ namespace MediaPortal
 
         SaveRadioStations(xmlWriter);
       }
+			SaveFrequencies();
 		}
 
 
@@ -3426,7 +3695,16 @@ namespace MediaPortal
       else
         xmlWriter.SetValue("capture","tuner", "Cable");
       
-      xmlWriter.SetValue("capture","country",upDownCountry.Value.ToString());
+			string strCountry = (string)comboBoxCountries.SelectedItem;
+			xmlWriter.SetValue("capture","countryname",strCountry);
+			foreach (TunerCountry country in m_countries)
+			{
+				if (country.m_strCountryName.Equals(strCountry))
+				{	
+					xmlWriter.SetValue("capture","country",country.m_iChannel.ToString());
+					break;
+				}
+			}
 
       
       for (int i=0; i < listTVChannels.Items.Count;++i)
@@ -3500,7 +3778,18 @@ namespace MediaPortal
         UpDownPreRecording.Value =xmlreader.GetValueAsInt("capture","prerecord", 5);
         UpDownPostRecording.Value=xmlreader.GetValueAsInt("capture","postrecord", 5);
 
-        upDownCountry.Value=xmlreader.GetValueAsInt("capture","country",31);
+				
+				comboBoxCountries.SelectedIndex=0;
+				string strCountryName=xmlreader.GetValueAsString("capture","countryname","");
+				for (int i=0; i < comboBoxCountries.Items.Count;++i)
+				{
+					if ( comboBoxCountries.Items[i].ToString().Equals(strCountryName))
+					{
+						comboBoxCountries.SelectedIndex=i;
+						break;
+					}
+				}
+
         if (strRecPath=="") 
         {
           strRecPath=String.Format(@"{0}\My Videos",Environment.GetFolderPath( Environment.SpecialFolder.Personal).ToString());
@@ -3524,6 +3813,7 @@ namespace MediaPortal
           double dFreq=(double)chan.Frequency;
           if (chan.Number>=254) dFreq=0;
           dFreq /=1000000d;
+					dFreq =Math.Round(dFreq,3);
           string strFreq=dFreq.ToString();
           newItem.SubItems.Add(strFreq);
         }
@@ -3682,10 +3972,15 @@ namespace MediaPortal
 			catch(Exception)
 			{
 			}
+			int iTunerCountry=31;
+			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				iTunerCountry=xmlreader.GetValueAsInt("capture","country",31);
+			}
 			RegistryKey hklm =Registry.LocalMachine;
 			RegistryKey hklm2 =Registry.LocalMachine;
-			hklm=hklm.CreateSubKey(@"Software\Microsoft\TV System Services\TVAutoTune\TS66-1");//cable
-			hklm2=hklm2.CreateSubKey(@"Software\Microsoft\TV System Services\TVAutoTune\TS66-0");//broadcast
+			hklm=hklm.CreateSubKey(String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1",iTunerCountry));//cable
+			hklm2=hklm2.CreateSubKey(String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0",iTunerCountry));//broadcast
       
 
 			for (int i=0; i < 200; ++i)
