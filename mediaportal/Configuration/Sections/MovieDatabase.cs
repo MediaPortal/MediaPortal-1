@@ -1835,6 +1835,7 @@ namespace MediaPortal.Configuration.Sections
 				//movie.SearchString=
 				unchecked
 				{
+					movie.Title=tbTitle.Text;
 					movie.Director=tbDirector.Text;
 					movie.Plot=tbDescription.Text;
 					movie.Rating=(float)Double.Parse(tbRating.Text);
