@@ -67,7 +67,6 @@ General:
      - scrollbar
      - my weather: <> arrows
         
-  - specify default share. 
   - OSD keyboard : add mouse control & keyboard control
   - my files  
   - my programs

@@ -26,7 +26,7 @@ namespace MediaPortal
     private System.Windows.Forms.TextBox movieParameters;
     private System.Windows.Forms.Button bntSelectMovieFile;
     private System.Windows.Forms.GroupBox audioGroupBox;
-    private System.Windows.Forms.ListView listAudioShares;
+    private ListViewEx listAudioShares;
     private System.Windows.Forms.ColumnHeader HdrAudioFolder;
     private System.Windows.Forms.ColumnHeader HdrAudioName;
     private System.Windows.Forms.TabPage tabAudioShares;
@@ -34,7 +34,7 @@ namespace MediaPortal
     private System.Windows.Forms.Button btnDelAudioShare;
 
     private System.Windows.Forms.GroupBox VideoGroupBox;
-    private System.Windows.Forms.ListView listVideoShares;
+    private ListViewEx listVideoShares;
     private System.Windows.Forms.ColumnHeader HdrVideoName;
     private System.Windows.Forms.ColumnHeader HdrVideoFolder;
     private System.Windows.Forms.TabPage tabVideoShares;
@@ -42,7 +42,7 @@ namespace MediaPortal
     private System.Windows.Forms.Button btnDelVideoShare;
 
     private System.Windows.Forms.GroupBox PictureGroupBox;
-    private System.Windows.Forms.ListView listPictureShares;
+    private ListViewEx listPictureShares;
     private System.Windows.Forms.ColumnHeader HdrPictureFolder;
     private System.Windows.Forms.ColumnHeader HdrPictureName;
     private System.Windows.Forms.TabPage tabPictureShares;
@@ -184,6 +184,9 @@ namespace MediaPortal
     private System.Windows.Forms.Label label36;
     private System.Windows.Forms.Label label37;
     private System.Windows.Forms.NumericUpDown timeZoneCorrection;
+    private System.Windows.Forms.ColumnHeader HdrDefault;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ColumnHeader columnHeader6;
  
     /// <summary>
 		/// Required designer variable.
@@ -199,6 +202,9 @@ namespace MediaPortal
 			LoadSettings();
       SetupCapture();
 			listTVChannels.SubItemClicked += new ListViewEx.SubItemClickEventHandler(listTVChannels_SubItemClicked);
+      listAudioShares.SubItemClicked += new ListViewEx.SubItemClickEventHandler(listAudioShares_SubItemClicked);
+      listVideoShares.SubItemClicked += new ListViewEx.SubItemClickEventHandler(listVideoShares_SubItemClicked);
+      listPictureShares.SubItemClicked += new ListViewEx.SubItemClickEventHandler(listPictureShares_SubItemClicked);
 		}
 
 
@@ -286,9 +292,10 @@ namespace MediaPortal
       this.btnEditMusicShare = new System.Windows.Forms.Button();
       this.btnDelAudioShare = new System.Windows.Forms.Button();
       this.btnAddAudioShare = new System.Windows.Forms.Button();
-      this.listAudioShares = new System.Windows.Forms.ListView();
+      this.listAudioShares = new MediaPortal.WinControls.ListViewEx();
       this.HdrAudioName = new System.Windows.Forms.ColumnHeader();
       this.HdrAudioFolder = new System.Windows.Forms.ColumnHeader();
+      this.HdrDefault = new System.Windows.Forms.ColumnHeader();
       this.tabVideoShares = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.chkBoxVideoRepeat = new System.Windows.Forms.CheckBox();
@@ -298,9 +305,10 @@ namespace MediaPortal
       this.btnEditMovieShare = new System.Windows.Forms.Button();
       this.btnDelVideoShare = new System.Windows.Forms.Button();
       this.btnAddVideoShare = new System.Windows.Forms.Button();
-      this.listVideoShares = new System.Windows.Forms.ListView();
+      this.listVideoShares = new MediaPortal.WinControls.ListViewEx();
       this.HdrVideoName = new System.Windows.Forms.ColumnHeader();
       this.HdrVideoFolder = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.tabPictureShares = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.txtBoxPictureFiles = new System.Windows.Forms.TextBox();
@@ -315,9 +323,10 @@ namespace MediaPortal
       this.btnEditPictureShare = new System.Windows.Forms.Button();
       this.btnDelPictureShare = new System.Windows.Forms.Button();
       this.btnAddPictureShare = new System.Windows.Forms.Button();
-      this.listPictureShares = new System.Windows.Forms.ListView();
+      this.listPictureShares = new MediaPortal.WinControls.ListViewEx();
       this.HdrPictureName = new System.Windows.Forms.ColumnHeader();
       this.HdrPictureFolder = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.tabWeather = new System.Windows.Forms.TabPage();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -1014,9 +1023,12 @@ namespace MediaPortal
       // 
       // listAudioShares
       // 
+      this.listAudioShares.AllowDrop = true;
+      this.listAudioShares.AllowRowReorder = true;
       this.listAudioShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                       this.HdrAudioName,
-                                                                                      this.HdrAudioFolder});
+                                                                                      this.HdrAudioFolder,
+                                                                                      this.HdrDefault});
       this.listAudioShares.FullRowSelect = true;
       this.listAudioShares.HideSelection = false;
       this.listAudioShares.Location = new System.Drawing.Point(8, 24);
@@ -1035,7 +1047,12 @@ namespace MediaPortal
       // HdrAudioFolder
       // 
       this.HdrAudioFolder.Text = "Folder";
-      this.HdrAudioFolder.Width = 277;
+      this.HdrAudioFolder.Width = 254;
+      // 
+      // HdrDefault
+      // 
+      this.HdrDefault.Text = "Default";
+      this.HdrDefault.Width = 89;
       // 
       // tabVideoShares
       // 
@@ -1124,9 +1141,12 @@ namespace MediaPortal
       // 
       // listVideoShares
       // 
+      this.listVideoShares.AllowDrop = true;
+      this.listVideoShares.AllowRowReorder = true;
       this.listVideoShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                       this.HdrVideoName,
-                                                                                      this.HdrVideoFolder});
+                                                                                      this.HdrVideoFolder,
+                                                                                      this.columnHeader5});
       this.listVideoShares.FullRowSelect = true;
       this.listVideoShares.HideSelection = false;
       this.listVideoShares.Location = new System.Drawing.Point(8, 24);
@@ -1145,7 +1165,11 @@ namespace MediaPortal
       // HdrVideoFolder
       // 
       this.HdrVideoFolder.Text = "Folder";
-      this.HdrVideoFolder.Width = 277;
+      this.HdrVideoFolder.Width = 284;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Default";
       // 
       // tabPictureShares
       // 
@@ -1303,9 +1327,12 @@ namespace MediaPortal
       // 
       // listPictureShares
       // 
+      this.listPictureShares.AllowDrop = true;
+      this.listPictureShares.AllowRowReorder = true;
       this.listPictureShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                         this.HdrPictureName,
-                                                                                        this.HdrPictureFolder});
+                                                                                        this.HdrPictureFolder,
+                                                                                        this.columnHeader6});
       this.listPictureShares.FullRowSelect = true;
       this.listPictureShares.HideSelection = false;
       this.listPictureShares.Location = new System.Drawing.Point(0, 24);
@@ -1323,7 +1350,11 @@ namespace MediaPortal
       // HdrPictureFolder
       // 
       this.HdrPictureFolder.Text = "Folder";
-      this.HdrPictureFolder.Width = 277;
+      this.HdrPictureFolder.Width = 323;
+      // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "Default";
       // 
       // tabWeather
       // 
@@ -2080,7 +2111,8 @@ namespace MediaPortal
 			string strPath;
 			for (int i=0; i < 20; i++)
 			{
-				string strShareName=String.Format("sharename{0}",i);
+        string strDefault=xmlreader.GetValueAsString("movies", "default","");
+        string strShareName=String.Format("sharename{0}",i);
 				string strSharePath=String.Format("sharepath{0}",i);
 				string strName=xmlreader.GetValueAsString("movies", strShareName,"");
 				strPath=xmlreader.GetValueAsString("movies", strSharePath,"");
@@ -2088,23 +2120,43 @@ namespace MediaPortal
 				{
 					newItem=listVideoShares.Items.Add(strName);
 					newItem.SubItems.Add(strPath);
+          if (strName==strDefault)
+          {
+            newItem.SubItems.Add("X");
+          }
+          else 
+            newItem.SubItems.Add("");
 				}
-        else break;
 
+        
+        strDefault=xmlreader.GetValueAsString("music", "default","");
 				strName=xmlreader.GetValueAsString("music", strShareName,"");
 				strPath=xmlreader.GetValueAsString("music", strSharePath,"");
 				if (strName.Length>0 && strPath.Length>0)
 				{
 					newItem=listAudioShares.Items.Add(strName);
-					newItem.SubItems.Add(strPath);
+          newItem.SubItems.Add(strPath);
+          if (strName==strDefault)
+          {
+            newItem.SubItems.Add("X");
+          }
+          else 
+            newItem.SubItems.Add("");
 				}
 
-				strName=xmlreader.GetValueAsString("pictures", strShareName,"");
+        strDefault=xmlreader.GetValueAsString("pictures", "default","");
+        strName=xmlreader.GetValueAsString("pictures", strShareName,"");
 				strPath=xmlreader.GetValueAsString("pictures", strSharePath,"");
 				if (strName.Length>0 && strPath.Length>0)
 				{
 					newItem=listPictureShares.Items.Add(strName);
-					newItem.SubItems.Add(strPath);
+          newItem.SubItems.Add(strPath);
+          if (strName==strDefault)
+          {
+            newItem.SubItems.Add("X");
+          }
+          else 
+            newItem.SubItems.Add("");
 				}
 			}
 			if (listVideoShares.Items.Count==0)
@@ -2366,6 +2418,10 @@ namespace MediaPortal
           ListViewItem item=view.Items[i];
           strName=item.Text;
           strPath=item.SubItems[1].Text;
+          if (item.SubItems[2].Text=="X")
+          {
+            xmlWriter.SetValue(strTag, "default",strName);
+          }
         }
         xmlWriter.SetValue(strTag,strShareName,strName);
         xmlWriter.SetValue(strTag,strSharePath,strPath);
@@ -3203,6 +3259,34 @@ namespace MediaPortal
 
     }
 
+
+    private void listAudioShares_SubItemClicked(object sender, ListViewEx.SubItemClickEventArgs e)
+    {
+      if (e.SubItem!=2) return;
+      foreach (ListViewItem item in listAudioShares.Items)
+      {
+        item.SubItems[2].Text="";
+      }
+      e.Item.SubItems[2].Text="X";
+    }
+    private void listVideoShares_SubItemClicked(object sender, ListViewEx.SubItemClickEventArgs e)
+    {
+      if (e.SubItem!=2) return;
+      foreach (ListViewItem item in listVideoShares.Items)
+      {
+        item.SubItems[2].Text="";
+      }
+      e.Item.SubItems[2].Text="X";
+    }
+    private void listPictureShares_SubItemClicked(object sender, ListViewEx.SubItemClickEventArgs e)
+    {
+      if (e.SubItem!=2) return;
+      foreach (ListViewItem item in listPictureShares.Items)
+      {
+        item.SubItems[2].Text="";
+      }
+      e.Item.SubItems[2].Text="X";
+    }
 	}
   // Implements the manual sorting of items by columns.
   class ListViewItemComparer : IComparer
