@@ -404,6 +404,7 @@ public class MediaPortalApp : D3DApp
 
 	protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
   {
+    if (!m_bShowCursor) return;
     base.mousemove(e);
     if (m_iLastMousePositionX !=e.X || m_iLastMousePositionY!=e.Y)
     {
@@ -431,6 +432,7 @@ public class MediaPortalApp : D3DApp
 
 	protected override void mouseclick(MouseEventArgs e)
 	{
+    if (!m_bShowCursor) return;
     base.mouseclick(e);
     Action action;
     // right mouse button=back

@@ -65,7 +65,8 @@ General:
      - mouse wheel for scrolling
      - in GUI: slide in OSD when mouse touches bottom of screen
      - scrollbar
-     
+     - my weather: <> arrows
+        
   - specify default share. 
   - OSD keyboard : add mouse control & keyboard control
   - my files  
