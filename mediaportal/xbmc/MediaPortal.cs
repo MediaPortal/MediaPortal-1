@@ -708,10 +708,13 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     public void Process()
     {
+			g_Player.Process();
       HandleMessage();
       FrameMove();
-			if (!GUIGraphicsContext.Vmr9Active)
+			if (!GUIGraphicsContext.Vmr9Active )
+			{
 				FullRender();
+			}
     }
 
     public void RenderFrame(float timePassed)
