@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.Library
 		//private Sampler samplerState0;
     private FontStyle m_FontStyle=FontStyle.Regular;
     bool m_bSupportsAlphaBlend ;
-    StateBlock savedStateBlock;
+//    StateBlock savedStateBlock;
 
     // Fill vertex buffer
     int iv = 0;
@@ -240,10 +240,10 @@ namespace MediaPortal.GUI.Library
       if (dwNumTriangles > 0)
       {
 				if (vertexBuffer==null) return;
-				if (savedStateBlock==null) return;
+				//if (savedStateBlock==null) return;
 				if (GUIGraphicsContext.DX9Device==null) return;
 				if (vertexBuffer.Disposed) return;
-				if (savedStateBlock.Disposed) return;
+				//if (savedStateBlock.Disposed) return;
 				if (GUIGraphicsContext.DX9Device.Disposed) return;
 				if (fontVertices==null) return;
 //        savedStateBlock.Apply();
@@ -338,8 +338,8 @@ namespace MediaPortal.GUI.Library
 			if (fontTexture==null) return;
 			if (textureCoords==null) return;
 			if (fontTexture.Disposed) return;
-			if (savedStateBlock==null) return;
-			if (savedStateBlock.Disposed) return;
+			//if (savedStateBlock==null) return;
+			//if (savedStateBlock.Disposed) return;
 			if (vertexBuffer==null) return;
 			if (vertexBuffer.Disposed) return;
 			if (GUIGraphicsContext.DX9Device==null) return;
@@ -726,7 +726,7 @@ namespace MediaPortal.GUI.Library
 				GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format, 
 				Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface, 
 				surf.Description.Format );
-
+/*
 			// Create the state blocks for rendering text
 			{
 				GUIGraphicsContext.DX9Device.BeginStateBlock();
@@ -771,7 +771,7 @@ namespace MediaPortal.GUI.Library
 				GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
 
 				  savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
-			}
+			}*/
 
 		}
 

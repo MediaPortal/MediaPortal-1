@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
     string                          m_strTxt;
     DateTime                        m_AnimationTime=DateTime.MinValue;
     bool                            ContainsProperty=false;
-    StateBlock                      savedStateBlock;
+//    StateBlock                      savedStateBlock;
 		Rectangle                       sourceRect;
     Rectangle                       destinationRect;
     Vector3                         pntPosition;
@@ -340,7 +340,7 @@ namespace MediaPortal.GUI.Library
       Update();
 
       //create a directx9 stateblock
-      CreateStateBlock();
+      //CreateStateBlock();
 		}
 
 		/// <summary>
@@ -370,8 +370,8 @@ namespace MediaPortal.GUI.Library
         m_iImageHeight=0;
         m_iTextureWidth=0;
         m_iTextureHeight=0;
-        if (savedStateBlock!=null) savedStateBlock.Dispose();
-        savedStateBlock=null;
+        //if (savedStateBlock!=null) savedStateBlock.Dispose();
+        //savedStateBlock=null;
       }
 		}
 
@@ -692,14 +692,14 @@ namespace MediaPortal.GUI.Library
       }
         
       // check if the stateblock is valid, if not allocate one
-      if (savedStateBlock!=null)
+      /*if (savedStateBlock!=null)
       {
         if (savedStateBlock.Disposed) savedStateBlock=null;
       }
       if (savedStateBlock==null)
       {
         CreateStateBlock();
-      }
+      }*/
       return true;
     }
 
@@ -735,7 +735,7 @@ namespace MediaPortal.GUI.Library
         Direct3D.Texture texture=frame.Image;
 
         // if we have a stateblock
-        if (savedStateBlock!=null)
+        //if (savedStateBlock!=null)
         {
           //then finally render the texture
           //savedStateBlock.Apply();
@@ -782,7 +782,7 @@ namespace MediaPortal.GUI.Library
 		public bool Filtering
 		{
 			get { return m_bFiltering;}
-			set {m_bFiltering=value;CreateStateBlock();}
+			set {m_bFiltering=value;/*CreateStateBlock();*/}
     }
 
     /// <summary>
@@ -817,6 +817,8 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Create a Direct3d stateblock
     /// </summary>
+    /// 
+		/*
     void CreateStateBlock()
     {
       
@@ -908,6 +910,6 @@ namespace MediaPortal.GUI.Library
         }
         savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
       }
-    }
+    }*/
 	}
 }
