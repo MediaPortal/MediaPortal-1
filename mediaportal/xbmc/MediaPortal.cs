@@ -272,7 +272,7 @@ public class MediaPortalApp : D3DApp
         {
           // yes, then just handle the outstanding messages
           GUIWindowManager.DispatchThreadMessages();
-          g_Player.Process();
+          //g_Player.Process();
           GUIGraphicsContext.IsPlaying=true;
           
           // and return
@@ -286,7 +286,7 @@ public class MediaPortalApp : D3DApp
 
       // handle any outstanding messages
       GUIWindowManager.DispatchThreadMessages();
-      g_Player.Process();
+      //g_Player.Process();
 
       // update playing status
       if (g_Player.Playing)

@@ -156,6 +156,7 @@ namespace MediaPortal
             clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
+      this.timer1.Interval=300;
       this.timer1.Start();
 
     }
