@@ -134,7 +134,6 @@ namespace MediaPortal.Topbar
         else if (m_bTopBarHidden != m_bTopBarHide)
         {
           m_bTopBarEffect = true;
-          //GUIGraphicsContext.TopBarHidden = m_bTopBarHide;
         }
 
 
@@ -164,7 +163,7 @@ namespace MediaPortal.Topbar
         }
       }
 
-      if (m_bTopBarHidden && m_bTopBarEffect) return;     
+      if (m_bTopBarHidden) return;           
 
 			GUIFontManager.Present();
       base.Render();
