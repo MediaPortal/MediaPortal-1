@@ -8,9 +8,12 @@ My Radio:
 
 My TV:
   - A way to browse and resolve recording conflicts. 
+  - support of external tuners (http://www.usbuirt.com/)
+  - picture in picture
+  - TV-out through PVR 350
   
   Recorded tv:
-	 -     
+     -
 	 
   TVGuide:
      - in the tv guide, when you select a program, it would be nice to have an option 
@@ -32,25 +35,26 @@ My Music:
   - crossfading ?
   - repeat none, once, always
   - tag readers for formats like ogg,flac,wma,...
-  - CDDA playback with CDDB text
   - query info about artists from www.allmusic.com
   - refresh/lookup album art
-  -In XBMC, when I scan to make database for MP3s, it creates a thumbnail from the folder.jpg in each album sub-folder. This thumbnail displays in albums view.     
-Video:
+  - use folder.jpg for my music/albums album art
+
+My Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - 1st time it takes a long time b4 OSD appears
   - OSD: when submenu is opened, dont use the osd timeout
   - query info about actors from www.imdb.com
   
-Pictures:
-  - delete picture
+My Pictures:
+  - exif/picture tag information
   
 Settings:
   - all :-)
 
 General:
-  - global actions (shutdown,reboot,...)
-  - setup:Auto Tune 
+  - Option to auto switch between list and thumb based on availability of thumbs
+  - disable screensaver during playback of movie/tv
+  - setup:Auto Tune needs some work
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder

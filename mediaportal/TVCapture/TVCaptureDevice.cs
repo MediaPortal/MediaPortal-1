@@ -580,7 +580,7 @@ namespace MediaPortal.TV.Recording
                 {
                   strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
                 }
-                string strFileName=String.Format(@"{0}\record{1}.sbe",strRecPath, ID);
+                string strFileName=String.Format(@"{0}\record{1}.dvr-ms",strRecPath, ID);
                 Utils.FileDelete(strFileName);
                 if (StartCapture(strFileName,m_iPreviewChannel))
                 {
@@ -831,17 +831,25 @@ namespace MediaPortal.TV.Recording
           if (capture!=null)
           {
             Log.Write("OnVideoWindowChanged()");
-            if (GUIGraphicsContext.IsFullScreenVideo)
+            if (capture.IsTimeShifting)
             {
-              Log.Write("  fullscreenmode");
-              capture.SetVideoPosition( new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
+              g_Player.SetVideoWindow();
             }
             else
             {
-              Log.Write("  windowed mode");
-              capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+              if (GUIGraphicsContext.IsFullScreenVideo)
+              {
+                Log.Write("  fullscreenmode");
+                capture.SetVideoPosition( new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
+              }
+              else
+              {
+                Log.Write("  windowed mode");
+                capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+              }
             }
             Log.Write("OnVideoWindowChanged() done");
+
           }
         }
       }

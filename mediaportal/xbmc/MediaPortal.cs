@@ -31,12 +31,15 @@ public class MediaPortalApp : D3DApp
     [STAThread]
     public static void Main()
     {
-      try
-      {
+      
         bool bDirectXInstalled=false;
         bool bWindowsMediaPlayer9=false;
         string strVersion="";
+        RegistryKey hkcu =Registry.CurrentUser;
+        hkcu.CreateSubKey(@"Software\MediaPortal");
         RegistryKey hklm =Registry.LocalMachine;
+        
+        hklm.CreateSubKey(@"Software\MediaPortal");
         RegistryKey subkey=hklm.OpenSubKey(@"Software\Microsoft\DirectX");
         if (subkey!=null)
         {
@@ -94,6 +97,9 @@ public class MediaPortalApp : D3DApp
           {
             //app.PreRun();
             Log.Write("Start MediaPortal");
+#if DEBUG
+						app.Run();
+#else
             try
             {
               app.Run();
@@ -102,18 +108,13 @@ public class MediaPortalApp : D3DApp
             {
               Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
             }
+#endif
             app.OnExit();
             Log.Write("MediaPortal done");
             Win32API.EnableStartBar(true);
             Win32API.ShowStartBar(true);
           }
         }
-      }
-      catch(Exception ex)
-      {
-        Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
-        return;
-      }
     }
 
     public MediaPortalApp()
@@ -236,7 +237,10 @@ public class MediaPortalApp : D3DApp
       // disable TV preview when playing a movie
       if ( g_Player.Playing && g_Player.HasVideo )
       {
-        Recorder.Previewing=false;
+        if (!g_Player.IsTV)
+        {
+          Recorder.Previewing=false;
+        }
       }
 
       // sleep 10msec so we dont use 100% cpu time
@@ -439,52 +443,60 @@ public class MediaPortalApp : D3DApp
           break;
           
           case Action.ActionType.ACTION_PREV_ITEM:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               PlayListPlayer.PlayPrevious();
             }
             break;
 
           case Action.ActionType.ACTION_NEXT_ITEM:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               PlayListPlayer.PlayNext(true);
             }
           break;
 
           case Action.ActionType.ACTION_STOP:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Stop();
             }
             break;
+
+					case Action.ActionType.ACTION_MUSIC_PLAY:
+						if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+						{
+							if (g_Player.Paused) g_Player.Pause();
+						}
+					break;
           
           case Action.ActionType.ACTION_PAUSE:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Pause();
             }
           break;
 
           case Action.ActionType.ACTION_PLAY:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               if (g_Player.Speed!=1)
               {
                 g_Player.Speed=1;
               }
+							if (g_Player.Paused) g_Player.Pause();
             }
           break;
 
           
           case Action.ActionType.ACTION_MUSIC_FORWARD:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Speed++;
             }
             break;
           case Action.ActionType.ACTION_MUSIC_REWIND:
-            if (Utils.IsAudio(g_Player.CurrentFile) )
+            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Speed--;
             }
@@ -497,6 +509,10 @@ public class MediaPortalApp : D3DApp
 		{
 			char keyc=e.KeyChar;
 			Key key = new Key(e.KeyChar,0);
+      if (key.KeyChar=='l')
+      {
+        Log.Write("log cur:{0} duration:{1} speed:{2}", g_Player.CurrentPosition,g_Player.Duration, g_Player.Speed);
+      }
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
 			{

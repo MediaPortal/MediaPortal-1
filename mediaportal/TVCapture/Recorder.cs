@@ -190,10 +190,9 @@ namespace MediaPortal.TV.Recording
         m_bRecordingsChanged=false;
       }
 
-      ArrayList runningPrograms = new ArrayList();
       
-
       // for each tv-channel
+			TVUtil tvutil = new TVUtil();
       foreach (TVChannel chan in channels)
       {
         if (m_eState !=State.Running) break;
@@ -210,12 +209,7 @@ namespace MediaPortal.TV.Recording
         long iStartTime=Utils.datetolong(dtStart);
         long iEndTime=Utils.datetolong(dtEnd);
             
-        // get list of current running programs
-        runningPrograms.Clear();
-        TVDatabase.GetPrograms(chan.Name,iStartTime,iEndTime,ref runningPrograms);
-
         // for each TV recording scheduled
-
         foreach (TVRecording rec in recordings)
         {
           if (m_eState !=State.Running) break;
@@ -223,20 +217,17 @@ namespace MediaPortal.TV.Recording
           if (m_bRecordingsChanged) break;
           if (m_bStopRecording) break;
           if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
-              
-          // if not, then check each recording for each tv program
-          foreach (TVProgram currentProgram in runningPrograms)
-          {
-            if (m_eState !=State.Running) break;
+      
+					// check which program is running 
+					TVProgram prog=tvutil.GetProgramAt(chan.Name,dtCurrentTime.AddMinutes(iPreRecordInterval) );
 
-            // if the recording should record the tv program
-            if ( rec.ShouldRecord(dtCurrentTime,currentProgram,iPreRecordInterval, iPostRecordInterval) )
+          // if the recording should record the tv program
+          if ( rec.ShouldRecord(dtCurrentTime,prog,iPreRecordInterval, iPostRecordInterval) )
+          {
+            // yes, then record it
+            if (Record(dtCurrentTime,rec,prog, iPreRecordInterval, iPostRecordInterval))
             {
-              // yes, then record it
-              if (Record(dtCurrentTime,rec,currentProgram, iPreRecordInterval, iPostRecordInterval))
-              {
-                break;
-              }
+              break;
             }
           }
         }
@@ -443,7 +434,15 @@ namespace MediaPortal.TV.Recording
             Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
             dev.PreviewChannel=m_strPreviewChannel;
             dev.Previewing=true;
-            if (!dev.Previewing) m_bPreviewing=false;
+            if (!dev.Previewing) 
+            {
+              Log.Write("Recorder: preview failed");
+              m_bPreviewing=false;
+            }
+            else
+            {
+              Log.Write("Recorder: previewing...");
+            }
             return;
           }
         }
@@ -459,7 +458,6 @@ namespace MediaPortal.TV.Recording
             dev.Previewing=false;
           }
         }
-        m_strPreviewChannel="";
       }
     }
 
@@ -476,6 +474,7 @@ namespace MediaPortal.TV.Recording
       {
         if (m_bPreviewing!=value)
         {
+          if (false==value) Log.Write("Recorder:previewing stop requested");
           m_bPreviewing=value;
           m_bPreviewChanged=true;
         }
@@ -492,6 +491,7 @@ namespace MediaPortal.TV.Recording
       {
         if (m_strPreviewChannel!=value) 
         {
+          Log.Write("Recorder:switch to channel:{0} requested", value);
           m_strPreviewChannel=value;
           m_bPreviewChanged=true;
         }

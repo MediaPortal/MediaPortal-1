@@ -397,8 +397,23 @@
   </window>
   
   <window>
+    <description>My Picture View specific actions</description>
+    <id>2</id>
+    <action>
+      <description>delete Picture</description>
+      <id>80</id>
+      <key>0</key>
+    </action>
+  </window>
+  
+  <window>
     <description>Slideshow/Picture View specific actions</description>
     <id>2007</id>
+    <action>
+      <description>delete Picture</description>
+      <id>80</id>
+      <key>0</key>
+    </action>
     <action>
       <description>Show Picture Info</description>
       <id>27</id>
@@ -432,52 +447,47 @@
     <action>
       <description>Zoom Level 1 (normal)</description>
       <id>37</id>
-      <key>0</key>
+      <key>1</key>
       
     </action>
     <action>
       <description>Zoom Level 2</description>
       <id>38</id>
-      <key>1</key>
+      <key>2</key>
     </action>
     <action>
       <description>Zoom Level 3</description>
       <id>39</id>
-      <key>2</key>
+      <key>3</key>
     </action>
     <action>
       <description>Zoom Level 4</description>
       <id>40</id>
-      <key>3</key>
+      <key>4</key>
     </action>
     <action>
       <description>Zoom Level 5</description>
       <id>41</id>
-      <key>4</key>
+      <key>5</key>
     </action>
     <action>
       <description>Zoom Level 6</description>
       <id>42</id>
-      <key>5</key>
+      <key>6</key>
     </action>
     <action>
       <description>Zoom Level 7</description>
       <id>43</id>
-      <key>6</key>
+      <key>7</key>
     </action>
     <action>
       <description>Zoom Level 8</description>
       <id>44</id>
-      <key>7</key>
+      <key>8</key>
     </action>
     <action>
       <description>Zoom Level 9</description>
       <id>45</id>
-      <key>8</key>
-    </action>
-    <action>
-      <description>Zoom Level 10</description>
-      <id>46</id>
       <key>9</key>
     </action>
     <action>
@@ -597,7 +607,7 @@
     <action>
       <description>delete item</description>
       <id>80</id>
-      <key>F1</key>
+      <key>0</key>
     </action>
   </window>  
 

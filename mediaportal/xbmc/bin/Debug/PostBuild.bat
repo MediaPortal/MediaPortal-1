@@ -22,7 +22,7 @@ copy ..\..\..\TVCapture\bin\Debug\TVCapture.dll .
 copy ..\..\..\TagReader\bin\Debug\TagReader.dll .
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
-copy ..\..\..\SQLiteProxy.dll .
+
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .

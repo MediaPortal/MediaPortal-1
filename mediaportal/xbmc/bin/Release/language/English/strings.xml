@@ -1881,7 +1881,11 @@
 	</string>
 	<string>
 		<id>663</id>
-		<value>Sunday</value>
+		<value>Sun</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Delete this picture?</value>
 	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
