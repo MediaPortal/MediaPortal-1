@@ -32,7 +32,7 @@ namespace MediaPortal.Configuration.Sections
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				durationTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "speed" ,3));
-				transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transisition", 20));
+				transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 20));
 			}			
 		}
 		
