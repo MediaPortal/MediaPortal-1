@@ -291,6 +291,7 @@ namespace home
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.TopBar = new System.Windows.Forms.TabPage();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.useMenuShortcuts = new System.Windows.Forms.CheckBox();
 			this.useTopBarSub = new System.Windows.Forms.CheckBox();
 			this.BackButtons = new System.Windows.Forms.CheckBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -326,7 +327,6 @@ namespace home
 			this.Plugin = new System.Windows.Forms.ColumnHeader();
 			this.Key = new System.Windows.Forms.ColumnHeader();
 			this.Fullscreen = new System.Windows.Forms.ColumnHeader();
-			this.useMenuShortcuts = new System.Windows.Forms.CheckBox();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -717,9 +717,17 @@ namespace home
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Home Settings";
 			// 
+			// useMenuShortcuts
+			// 
+			this.useMenuShortcuts.Enabled = false;
+			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 144);
+			this.useMenuShortcuts.Name = "useMenuShortcuts";
+			this.useMenuShortcuts.Size = new System.Drawing.Size(168, 24);
+			this.useMenuShortcuts.TabIndex = 9;
+			this.useMenuShortcuts.Text = "Use Menu Shortcuts";
+			// 
 			// useTopBarSub
 			// 
-			this.useTopBarSub.Enabled = false;
 			this.useTopBarSub.Location = new System.Drawing.Point(24, 120);
 			this.useTopBarSub.Name = "useTopBarSub";
 			this.useTopBarSub.Size = new System.Drawing.Size(168, 24);
@@ -1043,14 +1051,6 @@ namespace home
 			// 
 			this.Fullscreen.Text = "Full Screen";
 			this.Fullscreen.Width = 72;
-			// 
-			// useMenuShortcuts
-			// 
-			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 144);
-			this.useMenuShortcuts.Name = "useMenuShortcuts";
-			this.useMenuShortcuts.Size = new System.Drawing.Size(168, 24);
-			this.useMenuShortcuts.TabIndex = 9;
-			this.useMenuShortcuts.Text = "Use Menu Shortcuts";
 			// 
 			// SetupForm
 			// 
