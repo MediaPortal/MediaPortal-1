@@ -689,6 +689,7 @@ namespace MediaPortal.GUI.Alarm
 			/// <returns>alarm object</returns>
 			public static DateTime GetNextAlarmDateTime(DateTime earliestStartTime)
 			{	
+				if (_Alarms==null) return new DateTime(2100,1,1,1,0,0,0);
 				//timespan to search.
 				DateTime NextStartTime = new DateTime();//=  DateTime.Now.AddMonths(1);
 				DateTime tmpNextStartTime = new DateTime();
