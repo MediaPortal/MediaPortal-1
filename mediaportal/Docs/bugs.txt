@@ -7,14 +7,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
-  15-07-2004 setup      : control must send its message to the parent window!
-  
-  15-07-2004 setup      : cannot change radio type to stream in setup
-  15-07-2004 my music   : OSD is niet transparant tijdens fullscreenviz
-  15-07-2004 my music   : alt+enter while playing music->crash
-  15-07-2004 my music   : no albumart, no musicdatabse????
   15-07-2004 my music   : playing a song from the playlist has a very long song seek time
-  15-07-2004 my videos  : allowoverlay tag is not respected in dialogvideoinfo 
 
   13-07-2004 my tv      : duration of recorded programs is not correct. 
                           I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 

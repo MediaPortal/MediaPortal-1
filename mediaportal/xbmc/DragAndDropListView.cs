@@ -16,6 +16,10 @@ namespace MediaPortal.WinControls
 	/// </summary>
 	public delegate void SubItemClickEventHandler(object sender, SubItemClickEventArgs e);
 
+  public delegate void OnEditEndedHandler(ListViewItem item, int iSubItem);
+  public event OnEditEndedHandler onEditEnded;
+  ListViewItem m_ListItem;
+  int m_iSubItem;
 	/// <summary>
 	/// Event Args for SubItemClicked event
 	/// </summary>
@@ -394,6 +398,8 @@ namespace MediaPortal.WinControls
 		/// <param name="SubItem">SubItem index to edit</param>
 		public void StartEditing(Control c, ListViewItem Item, int SubItem)
 		{
+      m_ListItem=Item;
+      m_iSubItem=SubItem;
 			Rectangle rcSubItem = GetSubItemBounds(Item, SubItem);
 
 			if (rcSubItem.X < 0)
@@ -472,6 +478,7 @@ namespace MediaPortal.WinControls
 			_editingControl = null;
 			_editItem = null;
 			_editSubItem = -1;
+      if (onEditEnded!=null) onEditEnded(m_ListItem, m_iSubItem);
 		}
 		#endregion
 	}

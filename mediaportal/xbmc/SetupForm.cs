@@ -4608,6 +4608,18 @@ namespace MediaPortal
       if (e.SubItem==0) return;
       Control[] Editors = new Control[] { null,textBoxRadio, textBoxRadio, textBoxRadio , textBoxRadio , textBoxRadio };
       listViewRadio.StartEditing(Editors[e.SubItem], e.Item, e.SubItem);
+      listViewRadio.onEditEnded +=new MediaPortal.WinControls.ListViewEx.OnEditEndedHandler(listViewRadio_onEditEnded);
+    }
+    void listViewRadio_onEditEnded(ListViewItem item, int iSubItem)
+    {
+      listViewRadio.onEditEnded -=  new MediaPortal.WinControls.ListViewEx.OnEditEndedHandler(listViewRadio_onEditEnded);;
+      if (item.SubItems.Count ==6)
+      {
+        if (item.SubItems[5].Text.Length>0)
+          item.SubItems[0].Text="Stream";
+        else
+          item.SubItems[0].Text="Radio";
+      }
     }
 
 
