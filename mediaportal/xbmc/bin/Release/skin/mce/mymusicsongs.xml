@@ -166,26 +166,38 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromTop</animation>
-		    <control>
-			    <description>listcontrol</description>
-			    <type>listcontrol</type>
-			    <id>50</id>
-			    <onleft>51</onleft>
-			    <onright>51</onright>
-			    <onup>2</onup>
-			    <ondown>2</ondown>
-			    <textcolor>FFFFFFFF</textcolor>
-		    </control>
-		    <control>
-			    <description>Thumbnail Panel</description>
-			    <type>thumbnailpanel</type>
-			    <id>51</id>
-			    <onleft>2</onleft>
-			    <onright>2</onright>
-			    <onup>2</onup>
-			    <ondown>2</ondown>
-			    <textcolor>FFFFFFFF</textcolor>
-		    </control>
+			<control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+			    <type>facadeview</type>
+			    <id>50</id>			
+			        <control>
+				        <description>listcontrol</description>
+				        <type>listcontrol</type>
+				        <id>50</id>
+				        <onleft>11</onleft>
+				        <onright>11</onright>
+				        <onup>2</onup>
+				        <ondown>2</ondown>
+			        </control>
+			        <control>
+				        <description>Thumbnail Panel</description>
+				        <type>thumbnailpanel</type>
+				        <id>50</id>
+				        <onleft>2</onleft>
+				        <onright>2</onright>
+				        <onup>2</onup>
+				        <ondown>2</ondown>
+			        </control>
+			        <control>
+				        <description>Filmstrip view</description>
+				        <type>filmstrip</type>
+				        <id>50</id>
+				        <onleft>2</onleft>
+				        <onright>2</onright>
+				        <onup>2</onup>
+				        <ondown>2</ondown>
+			        </control>
+		    </control>	
 		</control>
 	</controls>
 </window>
