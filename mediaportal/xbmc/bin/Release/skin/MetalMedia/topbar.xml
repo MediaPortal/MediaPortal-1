@@ -8,6 +8,8 @@
 		<id>1</id>
 		<posX>0</posX>
 		<posY>0</posY>
+		<width>720</width>
+		<height>94</height>
 		<texture>topbar.png</texture>
 	</control>
 	<control>
@@ -20,7 +22,7 @@
 		<height>37</height>
 		<textureFocus>homefocus.png</textureFocus>
 		<textureNoFocus>homenofocus.png</textureNoFocus>
-		<action>10</action>
+		<hyperlink>0</hyperlink>
 		<label>-</label>
 		<onleft>29</onleft>
 		<onright>21</onright>
@@ -46,12 +48,14 @@
 		<ondown>2</ondown>
 	</control>
 	<control>
-		<description>lcd display</description> 
-		<type>image</type> 
-		<id>1</id> 
-		<posX>125</posX> 
-		<posY>29</posY> 
-		<texture>lcd_display.png</texture> 
+		<description>lcd display</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>125</posX>
+		<posY>29</posY>
+  	<width>263</width>
+  	<height>46</height>
+		<texture>lcd_display.png</texture>
 	</control>
 	<control>
 		<description>back button</description>
@@ -59,8 +63,8 @@
 		<id>22</id>
 		<posX>388</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_back_focus.png</textureFocus>
 		<textureNoFocus>osd_back_nofocus.png</textureNoFocus>
 		<action>15</action>
@@ -76,8 +80,8 @@
 		<id>23</id>
 		<posX>423</posX>
 		<posY>30</posY>
-		<width>35</width>
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_rewind_focus.png</textureFocus>
 		<textureNoFocus>osd_rewind_nofocus.png</textureNoFocus>
 		<action>78</action>
@@ -93,8 +97,8 @@
 		<id>24</id>
 		<posX>458</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_play_focus.png</textureFocus>
 		<textureNoFocus>osd_play_nofocus.png</textureNoFocus>
 		<action>79</action>
@@ -110,8 +114,8 @@
 		<id>25</id>
 		<posX>493</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_pause_focus.png</textureFocus>
 		<textureNoFocus>osd_pause_nofocus.png</textureNoFocus>
 		<action>12</action>
@@ -127,8 +131,8 @@
 		<id>26</id>
 		<posX>528</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_record_focus.png</textureFocus>
 		<textureNoFocus>osd_record_nofocus.png</textureNoFocus>
 		<label>-</label>
@@ -144,8 +148,8 @@
 		<id>27</id>
 		<posX>563</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_stop_focus.png</textureFocus>
 		<textureNoFocus>osd_stop_nofocus.png</textureNoFocus>
 		<action>13</action>
@@ -161,8 +165,8 @@
 		<id>28</id>
 		<posX>598</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_fastforward_focus.png</textureFocus>
 		<textureNoFocus>osd_fastforward_nofocus.png</textureNoFocus>
 		<action>77</action>
@@ -178,8 +182,8 @@
 		<id>29</id>
 		<posX>633</posX>
 		<posY>30</posY>
-		<width>35</width> 
-		<height>37</height> 
+		<width>37</width>
+		<height>37</height>
 		<textureFocus>osd_next_focus.png</textureFocus>
 		<textureNoFocus>osd_next_nofocus.png</textureNoFocus>
 		<action>14</action>

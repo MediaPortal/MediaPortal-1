@@ -77,6 +77,8 @@
 		<id>1</id>
 		<posX>55</posX>
 		<posY>180</posY>
+		<width>180</width>
+		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
 	<control>

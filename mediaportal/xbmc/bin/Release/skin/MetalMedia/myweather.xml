@@ -101,6 +101,8 @@
 		<id>1</id>
 		<posX>55</posX>
 		<posY>230</posY>
+		<width>180</width>
+		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
 
@@ -139,6 +141,8 @@
 		<id>21</id>
 		<posX>250</posX>
 		<posY>130</posY>
+		<width>128</width>
+		<height>128</height>
 		<texture>-</texture>
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
@@ -287,6 +291,8 @@
 		<id>35</id>
 		<posX>200</posX>
 		<posY>405</posY>
+		<width>64</width>
+		<height>64</height>
 		<texture>-</texture>
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
@@ -329,6 +335,8 @@
 		<id>45</id>
 		<posX>325</posX>
 		<posY>405</posY>
+		<width>64</width>
+		<height>64</height>
 		<texture>-</texture>
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
@@ -371,6 +379,8 @@
 		<id>55</id>
 		<posX>450</posX>
 		<posY>405</posY>
+		<width>64</width>
+		<height>64</height>
 		<texture>-</texture>
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
@@ -413,6 +423,8 @@
 		<id>65</id>
 		<posX>575</posX>
 		<posY>405</posY>
+		<width>64</width>
+		<height>64</height>
 		<texture>-</texture>
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>

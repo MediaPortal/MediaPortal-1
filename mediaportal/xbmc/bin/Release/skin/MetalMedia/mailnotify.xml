@@ -2,27 +2,18 @@
   <id>8002</id>
   <allowoverlay>yes</allowoverlay>
   <defaultcontrol>2</defaultcontrol>
-  <controls>
+<controls>
 	<control>
-		<description>info label</description> 
-		<type>fadelabel</type> 
-		<id>2</id> 
-		<posX>80</posX> 
-		<posY>80</posY> 
+		<description>info label</description>
+		<type>fadelabel</type>
+		<id>2</id>
+		<posX>80</posX>
+		<posY>80</posY>
 		<width>120</width>
-		<label>8004</label> 
-		<align>left</align> 
-		<font>font16</font> 
+		<label>8004</label>
+		<align>left</align>
+		<font>font16</font>
 		<textcolor>A0ff1010</textcolor>
 	</control>
-
-	<control>
-		<description>new mail icon</description>
-		<type>image</type> 
-		<id>1</id>
-		<posX>352</posX>
-		<posY>53</posY>
-		<texture>new_mail.gif</texture>
-	</control>
-    </controls>
+</controls>
 </window>

@@ -35,16 +35,6 @@
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>Number of Files Label</description>
-		<type>label</type>
-		<id>12</id>
-		<posX>370</posX>
-		<posY>50</posY>
-		<label>-</label>
-		<font>font10</font>
-		<align>right</align>
-	</control>
-	<control>
 		<description>My Movies/Title text label</description>
 		<type>label</type>
 		<id>1</id>
@@ -107,6 +97,8 @@
 		<id>1</id>
 		<posX>55</posX>
 		<posY>180</posY>
+		<width>180</width>
+		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
 	<control>
@@ -128,7 +120,7 @@
 			<subitem>369</subitem>
 		</subitems>
 
-	</control>		
+	</control>
 	<control>
 		<description>Play DVD</description>
 		<type>button</type>
@@ -185,5 +177,16 @@
       <ondown>2</ondown>
     </control>
   </control>
+
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>250</posX>
+		<posY>530</posY>
+		<label>-</label>
+		<font>font14</font>
+	</control>
+
 </controls>
 </window>

@@ -35,16 +35,6 @@
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>Number of Files Label</description>
-		<type>label</type>
-		<id>12</id>
-		<posX>370</posX>
-		<posY>50</posY>
-		<label>-</label>
-		<font>font10</font>
-		<align>right</align>
-	</control>
-	<control>
 		<description>Stations text label</description>
 		<type>label</type>
 		<id>14</id>
@@ -108,6 +98,8 @@
 		<id>1</id>
 		<posX>55</posX>
 		<posY>180</posY>
+		<width>180</width>
+		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
 	<control>
@@ -149,11 +141,21 @@
 		<description>Thumbnail Panel</description>
 		<type>thumbnailpanel</type>
 		<id>51</id>
-		<thumbZoom>no</thumbZoom>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
 	</control>
+
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>250</posX>
+		<posY>530</posY>
+		<label>-</label>
+		<font>font14</font>
+	</control>
+
 </controls>
 </window>

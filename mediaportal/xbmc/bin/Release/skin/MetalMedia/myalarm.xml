@@ -23,7 +23,7 @@
   		<width>350</width>
   		<height>350</height>
   		<colordiffuse>20ffffff</colordiffuse>
-  		<texture>alarm_clock.png</texture>
+  		<texture>myalarm.png</texture>
   	</control>
   	<control>
   		<description>Panel</description>

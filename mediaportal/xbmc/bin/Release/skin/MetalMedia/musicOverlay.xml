@@ -20,7 +20,7 @@
 		<posY>425</posY>
 		<width>120</width>
 		<height>100</height>
-		<keepaspectratio>yes</keepaspectratio> 
+		<keepaspectratio>yes</keepaspectratio>
 		<centered>yes</centered>
 		<texture>#thumb</texture>
 	</control>
@@ -30,6 +30,8 @@
 		<id>19</id>
 		<posX>125</posX>
 		<posY>29</posY>
+		<width>263</width>
+		<height>23</height>
 		<texture>lcdtopnoshine.png</texture>
 	</control>
 	<control>
@@ -38,6 +40,8 @@
 		<id>3</id>
 		<posX>330</posX>
 		<posY>35</posY>
+		<width>7</width>
+		<height>12</height>
 		<texture>logo_play.png</texture>
 	</control>
 	<control>
@@ -46,6 +50,8 @@
 		<id>4</id>
 		<posX>330</posX>
 		<posY>35</posY>
+		<width>9</width>
+		<height>12</height>
 		<texture>logo_pause.png</texture>
 	</control>
 	<control>
@@ -54,6 +60,8 @@
 		<id>7</id>
 		<posX>330</posX>
 		<posY>35</posY>
+		<width>12</width>
+		<height>12</height>
 		<texture>logo_fastforward.png</texture>
 	</control>
 	<control>
@@ -62,6 +70,8 @@
 		<id>8</id>
 		<posX>330</posX>
 		<posY>35</posY>
+		<width>12</width>
+		<height>12</height>
 		<texture>logo_rewind.png</texture>
 	</control>
 	<control>
@@ -94,6 +104,8 @@
 		<id>10</id>
 		<posX>126</posX>
 		<posY>29</posY>
+		<width>70</width>
+		<height>23</height>
 		<texture>lcdtopshine.png</texture>
 	</control>
     </controls>

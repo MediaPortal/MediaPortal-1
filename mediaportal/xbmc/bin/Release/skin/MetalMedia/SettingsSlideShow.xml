@@ -116,7 +116,7 @@
     <onleft>4</onleft>
     <onright>4</onright>
     <align>right</align>
-    <textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF484848</textcolor>
     <buddycontrolid>102</buddycontrolid>
   </control>
 
@@ -127,6 +127,7 @@
 		<posX>280</posX>
 		<posY>306</posY>
 		<width>264</width>
+		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
 

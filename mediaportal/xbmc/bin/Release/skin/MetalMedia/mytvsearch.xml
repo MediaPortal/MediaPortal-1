@@ -29,12 +29,10 @@
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>12</id>
-			<posX>260</posX>
+			<posX>250</posX>
 			<posY>530</posY>
 			<label>#itemcount</label>
 			<font>font14</font>
-			<align>left</align>
-			<textcolor>FFFFFFFF</textcolor>
 		</control>
 
 		<control>

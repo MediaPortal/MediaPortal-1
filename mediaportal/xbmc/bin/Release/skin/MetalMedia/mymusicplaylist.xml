@@ -35,16 +35,6 @@
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>Number of Files</description>
-		<type>label</type>
-		<id>12</id>
-		<posX>370</posX>
-		<posY>50</posY>
-		<label>-</label>
-		<font>font10</font>
-		<align>right</align>
-	</control>
-	<control>
 		<description>Playlist Text</description>
 		<type>label</type>
 		<id>14</id>
@@ -183,5 +173,16 @@
 		<onup>2</onup>
 		<ondown>2</ondown>
 	</control>
+
+	<control>
+		<description>Number of Files</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>250</posX>
+		<posY>530</posY>
+		<label>-</label>
+		<font>font14</font>
+	</control>
+
 </controls>
 </window>

@@ -377,5 +377,13 @@
 		<textureNoFocusRight>tvguide_button_light_right.png</textureNoFocusRight>
 	</control>
 
+	<control>
+		<description>template for Slider control</description>
+		<type>slider</type>
+		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
+		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+	</control>
+
 </controls>
 

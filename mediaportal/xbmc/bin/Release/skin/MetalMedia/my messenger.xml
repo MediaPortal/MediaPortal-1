@@ -13,7 +13,6 @@
 			<height>576</height>
 			<texture>background.png</texture>
 		</control>
-
 		<control>
 			<description>Messenger BG</description>
 			<type>image</type>
@@ -25,6 +24,7 @@
 			<colordiffuse>20ffffff</colordiffuse>
 			<texture>messenger_buddies.png</texture>
 		</control>
+
 		<control>
 			<description>Panel</description>
 			<type>image</type>
@@ -35,7 +35,6 @@
 			<height>272</height>
 			<texture>panel.png</texture>
 		</control>
-
 		<control>
 			<description>View-As button</description>
 			<type>button</type>
@@ -87,6 +86,8 @@
 			<id>1</id>
 			<posX>55</posX>
 			<posY>180</posY>
+  		<width>180</width>
+  		<height>2</height>
 			<texture>panel_split.png</texture>
 		</control>
 		<control>
@@ -124,17 +125,6 @@
 		</control>
 
 		<control>
-			<description>Number of Files Label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>370</posX>
-			<posY>50</posY>
-			<label>#itemcount</label>
-			<font>font10</font>
-			<align>right</align>
-		</control>
-
-		<control>
 			<description>listcontrol</description>
 			<type>listcontrol</type>
 			<id>50</id>
@@ -152,5 +142,16 @@
 			<onup>2</onup>
 			<ondown>2</ondown>
 		</control>
+
+		<control>
+			<description>Number of Files Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>250</posX>
+			<posY>530</posY>
+			<label>#itemcount</label>
+			<font>font14</font>
+		</control>
+
 	</controls>
 </window>

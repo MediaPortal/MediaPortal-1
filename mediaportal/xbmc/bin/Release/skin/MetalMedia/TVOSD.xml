@@ -9,6 +9,8 @@
 		<id>30</id>
 		<posX>0</posX>
 		<posY>421</posY>
+  	<width>720</width>
+  	<height>148</height>
 		<texture>osd_panel2.png</texture>
 		<visible>yes</visible>
 	</control>
@@ -18,14 +20,18 @@
 		<id>1</id>
 		<posX>398</posX>
 		<posY>513</posY>
+  	<width>263</width>
+  	<height>46</height>
 		<texture>lcd_display.png</texture>
 	</control>
 	<control>
 		<description>LCD</description>
-		<type>image</type> scr
+		<type>image</type>
 		<id>1</id>
 		<posX>60</posX>
 		<posY>434</posY>
+  	<width>600</width>
+  	<height>75</height>
 		<texture>lcd_display_2.png</texture>
 	</control>
 	<control>
@@ -376,10 +382,10 @@
 		<type>image</type>
 		<id>300</id>
 		<height>180</height>
-		<posX>172</posX>
-		<posY>130</posY>
-		<width>376</width>
-		<height>160</height>
+		<posX>200</posX>
+		<posY>351</posY>
+		<width>206</width>
+		<height>60</height>
 		<texture>panel.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -389,8 +395,8 @@
 		<description>Volume Slider</description>
 		<type>slider</type>
 		<id>400</id>
-		<posX>294</posX>
-		<posY>145</posY>
+		<posX>222</posX>
+		<posY>366</posY>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>

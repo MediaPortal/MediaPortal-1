@@ -97,6 +97,8 @@
 		<id>100</id>
 		<posX>345</posX>
 		<posY>295</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
 	</control>
 	<control>
@@ -104,6 +106,8 @@
 		<id>101</id>
 		<posX>385</posX>
 		<posY>295</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
 	</control>
 	<control>
@@ -111,6 +115,8 @@
 		<id>102</id>
 		<posX>425</posX>
 		<posY>295</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
 	</control>
 	<control>
@@ -118,6 +124,8 @@
 		<id>103</id>
 		<posX>465</posX>
 		<posY>295</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
 	</control>
 	<control>
@@ -125,6 +133,8 @@
 		<id>104</id>
 		<posX>505</posX>
 		<posY>295</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
 	</control>
 	<control>

@@ -14,6 +14,17 @@
 			<texture>background.png</texture>
 		</control>
 		<control>
+			<description>Messenger BG</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>150</posY>
+			<width>350</width>
+			<height>350</height>
+			<colordiffuse>20ffffff</colordiffuse>
+			<texture>Tetris/hover.png</texture>
+		</control>
+		<control>
 			<description>My Tetris</description>
 			<type>label</type>
 			<id>1</id>
@@ -76,7 +87,9 @@
   		<id>1</id>
   		<posX>55</posX>
   		<posY>180</posY>
-  		<texture>panel_split.png</texture>
+  		<width>180</width>
+		<height>2</height>
+		<texture>panel_split.png</texture>
   	</control>
 
 		<control>

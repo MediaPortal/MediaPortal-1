@@ -1983,7 +1983,7 @@
 	</string>
 	<string>
 		<id>684</id>
-		<value>Afgebroken</value>
+		<value>Gestopt</value>
 	</string>
 	<string>
 		<id>685</id>
@@ -2605,6 +2605,18 @@
   <string>
   	<id>973</id>
   	<value>Maximum FPS</value>
+  </string>
+  <string>
+    <id>974</id>
+    <value>DVD Menu</value>
+  </string>
+  <string>
+    <id>975</id>
+    <value>Vorig hoofdstuk</value>
+  </string>
+  <string>
+    <id>976</id>
+    <value>Volgend hoofdstuk</value>
   </string>
   <string>
   	<id>1440</id>
@@ -3727,6 +3739,56 @@
   <string>
   	<id>16001</id>
   	<value>Feest mix</value>
+  </string>
+
+  <!-- My Tetris -->
+  <string>
+    <id>19001</id>
+    <value>Mijn Tetris</value>
+  </string>
+  <string>
+    <id>19002</id>
+    <value>Nieuw spel</value>
+  </string>
+  <string>
+    <id>19003</id>
+    <value>Muziek</value>
+  </string>
+  <string>
+    <id>19004</id>
+    <value>Geluid</value>
+  </string>
+  <string>
+    <id>19005</id>
+    <value>Score</value>
+  </string>
+  <string>
+    <id>19006</id>
+    <value>Niveau</value>
+  </string>
+  <string>
+    <id>19007</id>
+    <value>Lijnen</value>
+  </string>
+  <string>
+    <id>19008</id>
+    <value>Hoogste score</value>
+  </string>
+  <string>
+    <id>19009</id>
+    <value>Volgende</value>
+  </string>
+  <string>
+    <id>19010</id>
+    <value>Druk OK of klik om te starten</value>
+  </string>
+  <string>
+    <id>19011</id>
+    <value>Gepauzeerd</value>
+  </string>
+  <string>
+    <id>19012</id>
+    <value>Spel voorbij</value>
   </string>
 </strings>
 

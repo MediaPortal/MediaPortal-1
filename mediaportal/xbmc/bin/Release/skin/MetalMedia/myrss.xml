@@ -35,16 +35,6 @@
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>Number of Files Label</description>
-		<type>label</type>
-		<id>1</id>
-		<posX>370</posX>
-		<posY>50</posY>
-		<label>#itemcount</label>
-		<align>right</align>
-		<font>font10</font>
-	</control>
-	<control>
 		<description>My news text label</description>
 		<type>label</type>
 		<id>1</id>
@@ -93,6 +83,8 @@
 		<id>1</id>
 		<posX>55</posX>
 		<posY>180</posY>
+		<width>180</width>
+		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
 	<control>
@@ -129,6 +121,16 @@
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>250</posX>
+		<posY>306</posY>
+		<label>#itemcount</label>
+		<font>font14</font>
 	</control>
 </controls>
 </window>

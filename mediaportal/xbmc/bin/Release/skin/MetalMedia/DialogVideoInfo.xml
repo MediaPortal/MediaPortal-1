@@ -158,64 +158,82 @@
 		<id>100</id>
 		<posX>280</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>101</id>
 		<posX>320</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>102</id>
 		<posX>360</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>103</id>
 		<posX>400</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>104</id>
 		<posX>440</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>106</id>
 		<posX>480</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>107</id>
 		<posX>520</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>108</id>
 		<posX>560</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<type>image</type>
 		<id>109</id>
 		<posX>600</posX>
 		<posY>223</posY>
+		<width>32</width>
+		<height>32</height>
 		<texture>star.png</texture>
-	</control>	
+	</control>
 	<control>
 		<description>Movie logo</description>
 		<type>image</type>

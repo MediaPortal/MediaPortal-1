@@ -10,6 +10,7 @@
 			<posX>0</posX>
 			<posY>54</posY>
 			<width>720</width>
+     	<height>40</height>
 			<texture>bar.png</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>ffffffff</colordiffuse>

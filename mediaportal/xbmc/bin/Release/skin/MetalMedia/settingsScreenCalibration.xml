@@ -18,6 +18,8 @@
 		<id>12</id>
 		<posX>200</posX>
 		<posY>500</posY>
+  	<width>384</width>
+  	<height>128</height>
 		<texture>calibrate_subtitles.png</texture>
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>FFFFFFFF</colordiffuse>
@@ -58,24 +60,32 @@
 		<id>8</id>
 		<posX>0</posX>
 		<posY>0</posY>
+  	<width>128</width>
+  	<height>128</height>
 		<texture>calibrate_topleft.png</texture>
 	</control>
 	<control>
 		<description>right bottom logo</description>
 		<type>image</type>
 		<id>9</id>
+  	<width>128</width>
+  	<height>128</height>
 		<texture>calibrate_bottomright.png</texture>
 	</control>
 	<control>
 		<description>subtitle position logo</description>
 		<type>image</type>
 		<id>10</id>
+  	<width>384</width>
+  	<height>128</height>
 		<texture>calibrate_subtitles.png</texture>
 	</control>
 	<control>
 		<description>pixel aspect ratio box</description>
 		<type>image</type>
 		<id>11</id>
+  	<width>256</width>
+  	<height>256</height>
 		<texture>calibrate_pixelratio.png</texture>
 	</control>
     </controls>
