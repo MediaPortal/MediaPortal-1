@@ -195,6 +195,7 @@ namespace MediaPortal
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private System.Windows.Forms.ColumnHeader columnHeader9;
     private System.ComponentModel.IContainer components;
+    private System.Windows.Forms.CheckBox checkBoxARDVD;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -451,6 +452,7 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.checkBoxARDVD = new System.Windows.Forms.CheckBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.tabPlayers.SuspendLayout();
@@ -881,6 +883,7 @@ namespace MediaPortal
       // 
       // DVDPlayerBox
       // 
+      this.DVDPlayerBox.Controls.Add(this.checkBoxARDVD);
       this.DVDPlayerBox.Controls.Add(this.comboDVDNavigator);
       this.DVDPlayerBox.Controls.Add(this.label40);
       this.DVDPlayerBox.Controls.Add(this.comboDVDAudioRenderer);
@@ -898,7 +901,7 @@ namespace MediaPortal
       this.DVDPlayerBox.Controls.Add(this.dvdParams);
       this.DVDPlayerBox.Location = new System.Drawing.Point(8, 16);
       this.DVDPlayerBox.Name = "DVDPlayerBox";
-      this.DVDPlayerBox.Size = new System.Drawing.Size(592, 296);
+      this.DVDPlayerBox.Size = new System.Drawing.Size(592, 344);
       this.DVDPlayerBox.TabIndex = 6;
       this.DVDPlayerBox.TabStop = false;
       this.DVDPlayerBox.Text = "DVD Player";
@@ -2067,6 +2070,14 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
+      // checkBoxARDVD
+      // 
+      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 288);
+      this.checkBoxARDVD.Name = "checkBoxARDVD";
+      this.checkBoxARDVD.Size = new System.Drawing.Size(224, 24);
+      this.checkBoxARDVD.TabIndex = 14;
+      this.checkBoxARDVD.Text = "Use PixelRatio correction for DVD\'s";
+      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -2259,6 +2270,7 @@ namespace MediaPortal
         dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
         dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
+        checkBoxARDVD.Checked=xmlreader.GetValueAsBool("dvdplayer","pixelratiocorrection",false);
         string strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
         SetupAudioRenderer(comboDVDAudioRenderer,strDVDAudioRenderer);
         
@@ -2272,7 +2284,7 @@ namespace MediaPortal
         SetupDVDNavigator(comboDVDNavigator,strDVDNavigator);
 
         movieFile.Text=xmlreader.GetValueAsString("movieplayer","path",@"zplayer\zplayer.exe");
-        movieParameters.Text=xmlreader.GetValueAsString("movieplayer","arguments", @"/PLAY /F /Q");
+        movieParameters.Text=xmlreader.GetValueAsString("movieplayer","arguments", @"%filename% /PLAY /F /Q");
         checkBoxMovieInternalPlayer.Checked=xmlreader.GetValueAsBool("movieplayer","internal",true);
 
         string strMovieAudioRenderer=xmlreader.GetValueAsString("movieplayer","audiorenderer","");
@@ -2505,7 +2517,7 @@ namespace MediaPortal
         xmlWriter.SetValue("dvdplayer","path",dvdFile.Text);
         xmlWriter.SetValue("dvdplayer","arguments",dvdParams.Text);
         xmlWriter.SetValueAsBool("dvdplayer","internal",checkBoxInternalDVDPlayer.Checked);
-        
+        xmlWriter.SetValueAsBool("dvdplayer","pixelratiocorrection",checkBoxARDVD.Checked);
         xmlWriter.SetValue("dvdplayer","audiolanguage",(string)comboBoxAudioLanguage.SelectedItem);
         xmlWriter.SetValue("dvdplayer","subtitlelanguage",(string)comboBoxSubtitleLanguage.SelectedItem);
         xmlWriter.SetValue("dvdplayer","audiorenderer",(string)comboDVDAudioRenderer.SelectedItem);

@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  09-05-2004  DVD         : added : option to enable/disable AR PixelRatio correction for DVD's
+  09-05-2004  general     : added : default startup resolution is now 720x576 instead of 768x576
   09-05-2004  my movies   : fixed : IMDB tagline was not shown
   09-05-2004  setup       : fixed : file->setup: tab order was messed up
   09-05-2004  general     : fixed : numerous skin changes to remove wasted empty space
