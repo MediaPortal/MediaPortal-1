@@ -1827,7 +1827,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			hr=SetupDemuxer(pinVideoOut,pinAudioOut,audioPid,videoPid);
-			int a=0;
+			//int //=0;
 		}
 		/// <summary>
 		/// Returns the current tv channel
@@ -1916,7 +1916,7 @@ namespace MediaPortal.TV.Recording
 				demuxInPin=null;
 				m2dIn=null;
 
-				int n=0;// 
+				//int n=0;// 
 			}
 			else
 			{

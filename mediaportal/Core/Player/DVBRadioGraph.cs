@@ -732,9 +732,8 @@ namespace MediaPortal.Player
 
 					}
 				}
-				catch(Exception ex)
+				catch(Exception)
 				{
-					int a=0;
 					return;
 				}
 			}

@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.MSN
     static private MyMSNStatus currentStatus = MyMSNStatus.STATUS_ONLINE;
     GUIDialogProgress dlgProgress ;
     bool m_bDialogVisible=false;    
-    bool m_bConnected=false;
+    // bool m_bConnected=false;
 		
     #region Base variabeles
     enum SortMethod

@@ -316,7 +316,7 @@ namespace MediaPortal.TV.Recording
 				DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() OUT");
 				return true;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
 				Log.Write("SinkGraphEx: Unable to create graph");
 				return false;
