@@ -11,7 +11,7 @@
 			<posY>0</posY>
 			<width>720</width>
 			<height>576</height>
-			<texture>hp_background.png</texture>
+			<texture>background.png</texture>
 		</control>
 		<control>
 			<type>image</type>

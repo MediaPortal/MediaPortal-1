@@ -11,7 +11,7 @@
 		<posY>0</posY>
 		<width>720</width>
 		<height>576</height>
-		<texture>hp_background.png</texture>
+		<texture>background.png</texture>
 	</control>
 	<control>
 		<type>image</type>
@@ -57,7 +57,7 @@
 		<posY>250</posY>
 		<width>32</width>
 		<height>28</height>
-		<texture>-</texture>
+		<texture>button_small_settings_nofocus.png</texture>
 	</control>
 	<control>
 		<description>time header label template</description>
