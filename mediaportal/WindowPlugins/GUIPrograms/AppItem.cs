@@ -47,6 +47,10 @@ namespace ProgramsDatabase
 		int mPincode;
 		string mLaunchErrorMsg;
 
+		// two magic image-slideshow counters
+		int mThumbIndex = 0;
+		int mThumbFolderIndex = -1;
+
 		string mLastFilepath = ""; // cached path
 		
 		protected bool bFilesLoaded = false; // load on demand....
@@ -288,8 +292,16 @@ namespace ProgramsDatabase
 		private void OnItemSelected(GUIListItem item, GUIControl parent)
 		{
 			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
-			if (filmstrip==null) return;
-			filmstrip.InfoImageFileName=item.ThumbnailImage;
+			if (filmstrip == null) return;
+			if (item == null) return;
+			if ((item.MusicTag != null) && (item.MusicTag is FileItem) && (!item.IsFolder))
+			{
+				filmstrip.InfoImageFileName=item.ThumbnailImage;
+			}
+			else
+			{
+				filmstrip.InfoImageFileName="";
+			}
 		}
 
 		
@@ -792,7 +804,83 @@ namespace ProgramsDatabase
 			}
 			return res;
 		}
-			 
+
+		// imagedirectory stuff
+		// get next imagedirectory that holds at least one image for a fileitem
+		// * m_pFile:       the file we're looking images for
+		private void GetNextThumbFolderIndex(FileItem m_pFile)
+		{
+			if (m_pFile == null) return;
+			bool bFound = false;
+			while (!bFound)
+			{
+				mThumbFolderIndex++;
+				if (mThumbFolderIndex >= ImageDirs.Length)
+				{
+					mThumbFolderIndex = -1;
+					bFound = true;
+				}
+				else
+				{
+					string strCandFolder = ImageDirs[mThumbFolderIndex];
+					string strCand = strCandFolder + "\\" + m_pFile.ExtractImageFileNoPath();
+					if (strCand.ToLower() != m_pFile.Imagefile.ToLower())
+					{
+						bFound = (System.IO.File.Exists(strCand));
+					}
+					else
+					{
+						// skip the initial directory, in case it's reentered as a search directory!
+						bFound = false;
+					}
+				}
+			}
+		}
+
+		public string GetCurThumb(FileItem m_pFile)
+		{
+			string strThumb = "";
+			if (mThumbFolderIndex == -1)
+			{
+				strThumb = m_pFile.Imagefile; 
+			}
+			else
+			{
+				string strFolder = ImageDirs[mThumbFolderIndex];
+				strThumb = strFolder + "\\" + m_pFile.ExtractImageFileNoPath();
+			}
+			if (mThumbIndex > 0)
+			{
+				// try to find another thumb....
+				// use the myGames convention:
+				// every thumb has the postfix "_1", "_2", etc with the same file extension
+				string strExtension = m_pFile.ExtractImageExtension();
+				string strCand = strThumb.Replace(strExtension, "_" + mThumbIndex.ToString() + strExtension);
+				if (System.IO.File.Exists(strCand))
+				{
+					// found another thumb => override the filename!
+					strThumb = strCand;
+				}
+				else 
+				{
+					mThumbIndex = 0; // restart at the first thumb!
+					GetNextThumbFolderIndex(m_pFile); 
+				}
+			}
+			return strThumb;
+		}
+
+		public void ResetThumbs()
+		{
+			mThumbIndex = 0;
+			mThumbFolderIndex = -1;
+		}
+
+		public void NextThumb()
+		{
+			mThumbIndex++; 
+		}
+
 
 		public void LoadFromXmlProfile(XmlNode node)
 		{
@@ -843,7 +931,6 @@ namespace ProgramsDatabase
 			{
 				this.ValidExtensions = fileExtensioneNode.InnerText;
 			}
-
 		}
 
 	}

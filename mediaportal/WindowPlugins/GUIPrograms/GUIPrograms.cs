@@ -101,6 +101,11 @@ namespace WindowPlugins.GUIPrograms
 		string lastFilepath = "";
 		MapSettings       _MapSettings = new MapSettings();
 		int m_iItemSelected=-1;   
+		
+		// filmstrip slideshow timer stuff
+		int m_iSpeed=3; // speed in seconds between two slides
+		int m_lSlideTime=0;
+
 
 
 		/// <summary>
@@ -185,9 +190,53 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
+		public override void Render()
+		{
+			RenderFilmStrip();
+			base.Render();
+		}
+
+		private void RenderFilmStrip()
+		{
+			// in filmstrip mode, start a slideshow if more than one
+			// pic is available for the selected item
+			GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+			if (pControl == null) return;
+			if (pControl.FilmstripView == null) return;
+			if (pControl.FilmstripView.InfoImageFileName == "") return;
+				if (_MapSettings == null) return;
+			if (_MapSettings.ViewAs == (int)View.VIEW_AS_FILMSTRIP)
+			{
+				// does the thumb needs replacing??
+				int dwTimeElapsed = ((int)(DateTime.Now.Ticks/10000)) - m_lSlideTime;
+				if (dwTimeElapsed >= (m_iSpeed*1000))
+				{
+					RefreshFilmstripThumb(pControl.FilmstripView); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
+				}
+			}
+		}
+
+		private void RefreshFilmstripThumb(GUIFilmstripControl pControl)
+		{
+			GUIListItem item = GetSelectedItem();
+			// some preconditions...
+			if (lastApp == null) return;
+			if (item.MusicTag == null) return;
+			if (!(item.MusicTag is FileItem)) return;
+			FileItem curFile = item.MusicTag as FileItem;
+			// ok... let's get a filename
+			string strThumb = lastApp.GetCurThumb(curFile); 
+			if (System.IO.File.Exists(strThumb) )
+			{
+				pControl.InfoImageFileName = strThumb;
+			}
+			lastApp.NextThumb(); // try to find a next thumbnail
+			m_lSlideTime=(int)(DateTime.Now.Ticks/10000); // reset timer!
+		}
+
+
 		public override void OnAction(Action action)
 		{
-			//			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
 				// <ESC> keypress in some myProgram Menu => jump to main menu

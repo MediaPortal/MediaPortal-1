@@ -48,10 +48,8 @@ namespace WindowPlugins.GUIPrograms
 	int m_iTextureHeight=0;
 	bool m_bOverlay=false;
 	bool m_bOverviewVisible=true;
-	int m_iThumbIndex = 0;
-	int m_iThumbFolderIndex = -1;
 	int m_iSpeed=3;
-    int m_lSlideTime=0;
+  int m_lSlideTime=0;
 
 
     public GUIFileInfo()
@@ -144,8 +142,12 @@ namespace WindowPlugins.GUIPrograms
 					m_bOverlay=GUIGraphicsContext.Overlay;
 					base.OnMessage(message);
 					m_pTexture=null;
-					m_iThumbIndex = 0;
-					m_iThumbFolderIndex = -1;
+
+
+					if (m_pApp != null)
+					{
+						m_pApp.ResetThumbs();
+					}
 					// if there is no overview text, default to bigger pictures
 					if (m_pFile != null)
 					{
@@ -169,16 +171,14 @@ namespace WindowPlugins.GUIPrograms
 					else if (iControl==(int)Controls.CONTROL_BTN_PREV)
 					{
 						m_pFile = m_pApp.PrevFile(m_pFile);
-						m_iThumbIndex = 0;
-						m_iThumbFolderIndex = -1;
+						m_pApp.ResetThumbs();
 						Refresh();
 						return true;
 					}
 					else if (iControl==(int)Controls.CONTROL_BTN_NEXT)
 					{
 						m_pFile = m_pApp.NextFile(m_pFile);
-						m_iThumbIndex = 0;
-						m_iThumbFolderIndex = -1;
+						m_pApp.ResetThumbs();
 						Refresh();
 						return true;
 					}
@@ -214,69 +214,11 @@ namespace WindowPlugins.GUIPrograms
 
 		public AppItem App
 		{
-			set {m_pApp=value; }
-		}
-
-		private void GetNextThumbFolder()
-		{
-			bool bFound = false;
-			while (!bFound)
-			{
-				m_iThumbFolderIndex++;
-				if (m_iThumbFolderIndex >= m_pApp.ImageDirs.Length)
-				{
-					m_iThumbFolderIndex = -1;
-					bFound = true;
-				}
-				else
-				{
-					string strCandFolder = m_pApp.ImageDirs[m_iThumbFolderIndex];
-					string strCand = strCandFolder + "\\" + m_pFile.ExtractImageFileNoPath();
-					if (strCand.ToLower() != m_pFile.Imagefile.ToLower())
-					{
-						bFound = (System.IO.File.Exists(strCand));
-					}
-					else
-					{
-						// skip the initial directory, in case it's reentered as a search directory!
-						bFound = false;
-					}
-				}
+			set {
+				m_pApp=value; 
+				if (m_pApp != null)
+					m_pApp.ResetThumbs();
 			}
-
-		}
-
-		private string GetNextPicture()
-		{
-			string strThumb = "";
-			if (m_iThumbFolderIndex == -1)
-			{
-				strThumb = m_pFile.Imagefile; 
-			}
-			else
-			{
-				string strFolder = m_pApp.ImageDirs[m_iThumbFolderIndex];
-				strThumb = strFolder + "\\" + m_pFile.ExtractImageFileNoPath();
-			}
-			if (m_iThumbIndex > 0)
-			{
-				// try to find another thumb....
-				// use the myGames convention:
-				// every thumb has the postfix "_1", "_2", etc with the same file extension
-				string strExtension = m_pFile.ExtractImageExtension();
-				string strCand = strThumb.Replace(strExtension, "_" + m_iThumbIndex.ToString() + strExtension);
-				if (System.IO.File.Exists(strCand))
-				{
-					// found another thumb => override the filename!
-					strThumb = strCand;
-				}
-				else 
-				{
-					m_iThumbIndex = 0; // restart at the first thumb!
-					GetNextThumbFolder();
-				}
-			}
-			return strThumb;
 		}
 
 		void RefreshPicture()
@@ -289,13 +231,13 @@ namespace WindowPlugins.GUIPrograms
 
 			if (m_pFile != null)
 			{
-				string strThumb = GetNextPicture();
+ 				string strThumb = m_pApp.GetCurThumb(m_pFile); 
 				// load the found thumbnail picture
 				if (System.IO.File.Exists(strThumb) )
 				{
 					m_pTexture=Picture.Load(strThumb,0,512,512,true,false,out m_iTextureWidth,out m_iTextureHeight);
 				}
-				m_iThumbIndex++; // next refresh call will try to get the next thumb
+				m_pApp.NextThumb(); // try to find a next thumbnail
 			}
 			m_lSlideTime=(int)(DateTime.Now.Ticks/10000); // reset timer!
 		}
@@ -403,9 +345,7 @@ namespace WindowPlugins.GUIPrograms
     	
 			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET,GetID,0,iControl,0,0,null);
 			msg.Label=(strLabel1);
-			OnMessage(msg);
-
+ 			OnMessage(msg);
 		}
-
 	}
 }
