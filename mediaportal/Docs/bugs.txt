@@ -17,8 +17,6 @@ crash/things not working Bugs:
                           you return from the "guide". For me it's not working, becuse it's forwarding 
                           (>> very fast). and when it has reached the end of the "live" buffer the 
                           pictures freezes and is not comming back
-  02-08-2004 my music   : The display of the cover art in the OSD is distorted.
-                          I is in form of a rectangle like a DVD Cover and not a square like a CD. 
   02-08-2004 my tv      : with timeshifting off in fullscreen you will not get an OSD by pressing y. 
                           After doing this you will not be able to go back to windowed mode by pressing x or Esc. 
                           Reacts after pressing it a couple of times. Won´t happen with timeshifting on.
@@ -33,6 +31,11 @@ crash/things not working Bugs:
                           However, there r albums withds? (MrMario64 )
   02-05-2004 my music   : reorganise datab the same name from different artists. (big change needed in database engine) 
   
+
+Bugs which wont be fixed before 0.1
+  02-08-2004 my music   : The display of the cover art in the OSD is distorted.
+                          I is in form of a rectangle like a DVD Cover and not a square like a CD. 
+
 
   
 Bugs i cannot fix (at the moment)
