@@ -43,6 +43,10 @@ namespace MediaPortal.TV.Recording
 	  {
 		return new AIWGraph(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
 	  }
+		if (card.ToString() == "B2C2 MPEG-2 Source")
+		{
+			return new DVBGraphSS2(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+		}
       return new SWEncodingGraph(card.ID,iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
       
     }

@@ -186,11 +186,151 @@ namespace MediaPortal.TV.Database
         AddTable("recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer)\n");
 
         AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
+		AddTable("satchannels","CREATE TABLE satchannels ( idChannel integer primary key,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer)\n");
 
         return true;
       }
     }
+	  //b2c2
+	  static public int AddSatChannel(int idChannel,int freq,int symrate,int fec,int lnbkhz,int diseqc,
+		  int prognum,int servicetype,string provider,string channel,int eitsched,
+		  int eitprefol,int audpid,int vidpid,int ac3pid,int apid1,int apid2,int apid3,
+		  int teltxtpid,int scrambled,int pol,int lnbfreq,int networkid,int tsid,int pcrpid)
+	  {
+		  lock (typeof(TVDatabase))
+		  {
+			  string strSQL;
+			  try
+			  {
+				  string strChannel=channel;
+				  SQLiteResultSet results=null;
 
+				  strSQL=String.Format( "select * from satchannels ");
+				  results=m_db.Execute(strSQL);
+				  int totalchannels=results.Rows.Count;
+
+				  strSQL=String.Format( "select * from satchannels where idChannel = {0}", idChannel);
+				  results=m_db.Execute(strSQL);
+				  if (results.Rows.Count==0) 
+				  {
+					  //
+
+					  // fields in satchannels
+					  // idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID
+					  // parameter (8)(9)
+					  //idChannel,freq,symrate, fec,lnbkhz,diseqc,
+					  //prognum,servicetype,provider,channel, eitsched,
+					  //eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
+					  // teltxtpid,scrambled, pol,lnbfreq,networkid
+
+					  strSQL=String.Format("insert into satchannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24})", 
+						  idChannel,freq,symrate, fec,lnbkhz,diseqc,
+						  prognum,servicetype,provider,channel, eitsched,
+						  eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
+						  teltxtpid,scrambled, pol,lnbfreq,networkid,tsid,pcrpid);
+					  
+					  m_db.Execute(strSQL);
+					  return 0;
+				  }
+				  else
+				  {
+					  return -1;
+				  }
+			  } 
+			  catch (SQLiteException ex) 
+			  {
+				  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			  }
+
+			  return -1;
+		  }
+	  }
+	  //b2c2
+	  static public string GetSatChannelName(int program_number,int network_id,int ts_id)
+	  {
+		  lock (typeof(TVDatabase))
+		  {
+			  string strSQL;
+			  string channelName="";
+			  try
+			  {
+				  if (null==m_db) return "";
+
+				  SQLiteResultSet results;
+				  strSQL=String.Format( "select * from satchannels where sProgramNumber={0} and sNetworkID={1} and sTSID={2}", program_number,network_id,ts_id);
+				  results=m_db.Execute(strSQL);
+				  if (results.Rows.Count==0) return "";
+				  channelName=Get(results,0,"sChannelName");
+				  return channelName;
+			  } 
+			  catch (SQLiteException ex) 
+			  {
+				  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			  }
+
+			  return "";
+		  }
+	  }
+	  //b2c2
+	  static public bool GetSatChannel(int idChannel,ref int freq,ref int symrate,ref int fec,ref int lnbkhz,ref int diseqc,
+		  ref int prognum,ref int servicetype,ref string provider,ref string channel,ref int eitsched,
+		  ref int eitprefol,ref int audpid,ref int vidpid,ref int ac3pid,ref int apid1,ref int apid2,ref int apid3,
+		  ref int teltxtpid,ref int scrambled,ref int pol,ref int lnbfreq,ref int networkid,ref int tsid,ref int pcrpid)
+	  {
+		  if (m_db==null) return false;
+		  lock (typeof(TVDatabase))
+		  {
+			  try
+			  {
+				  if (null==m_db) return false;
+				  string strSQL;
+				  strSQL=String.Format("select * from satchannels where idChannel={0}",idChannel);
+				  SQLiteResultSet results;
+				  results=m_db.Execute(strSQL);
+				  if (results.Rows.Count!=1) return false;
+				  else
+				  {
+					  //chan.ID=Int32.Parse(Get(results,i,"idChannel"));
+					  //chan.Number = Int32.Parse(Get(results,i,"iChannelNr"));
+					  // sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName
+					  //sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,
+					  //sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID
+					  int i=0;
+					  freq=Int32.Parse(Get(results,i,"sFreq"));
+					  symrate=Int32.Parse(Get(results,i,"sSymbrate"));
+					  fec=Int32.Parse(Get(results,i,"sFEC"));
+					  lnbkhz=Int32.Parse(Get(results,i,"sLNBKhz"));
+					  diseqc=Int32.Parse(Get(results,i,"sDiseqc"));
+					  prognum=Int32.Parse(Get(results,i,"sProgramNumber"));
+					  servicetype=Int32.Parse(Get(results,i,"sServiceType"));
+					  provider=Get(results,i,"sProviderName");
+					  channel=Get(results,i,"sChannelName");
+					  eitsched=Int32.Parse(Get(results,i,"sEitSched"));
+					  eitprefol= Int32.Parse(Get(results,i,"sEitPreFol"));
+					  audpid=Int32.Parse(Get(results,i,"sAudioPid"));
+					  vidpid=Int32.Parse(Get(results,i,"sVideoPid"));
+					  ac3pid=Int32.Parse(Get(results,i,"sAC3Pid"));
+					  apid1= Int32.Parse(Get(results,i,"sAudio1Pid"));
+					  apid2= Int32.Parse(Get(results,i,"sAudio2Pid"));
+					  apid3=Int32.Parse(Get(results,i,"sAudio3Pid"));
+					  teltxtpid=Int32.Parse(Get(results,i,"sTeletextPid"));
+					  scrambled= Int32.Parse(Get(results,i,"sScrambled"));
+					  pol=Int32.Parse(Get(results,i,"sPol"));
+					  lnbfreq=Int32.Parse(Get(results,i,"sLNBFreq"));
+					  networkid=Int32.Parse(Get(results,i,"sNetworkID"));
+					  tsid=Int32.Parse(Get(results,i,"sTSID"));
+					  pcrpid=Int32.Parse(Get(results,i,"sPCRPid"));
+				  }
+
+				  return true;
+			  }
+			  catch(SQLiteException ex)
+			  {
+				  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			  }
+			  return false;
+		  }
+	  }
     static string Get(SQLiteResultSet results,int iRecord,string strColum)
     {
       lock (typeof(TVDatabase))

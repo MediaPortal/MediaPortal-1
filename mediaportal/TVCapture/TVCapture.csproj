@@ -119,6 +119,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DVBGraphSS2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GraphFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

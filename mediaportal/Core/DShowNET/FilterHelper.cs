@@ -62,7 +62,12 @@ namespace DShowNET
 			{
 				devices.Add(device.Name);
 			}
-
+			//b2c2
+			foreach(Filter device in filters.LegacyFilters)
+			{
+				if(device.Name=="B2C2 MPEG-2 Source")
+					devices.Add(device.Name);
+			}
 			return devices;
 		}
 

@@ -751,7 +751,12 @@ namespace MediaPortal.Configuration
       else
       {
         trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=false;
-      }
+		  if(cardComboBox.SelectedIndex!=-1) 
+			  if(cardComboBox.SelectedItem.ToString()=="B2C2 MPEG-2 Source")
+			  {
+				  frameSizeComboBox.Enabled =true;
+			  }
+	  }
 
       useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
 

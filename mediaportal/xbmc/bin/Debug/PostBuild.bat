@@ -23,6 +23,7 @@ copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.pdb .
 copy ..\..\..\mbm5.dll .
 copy ..\..\..\edtftpnet-1.1.3.dll .
+copy ..\..\..\dvblib.dll .
 
 copy ..\..\..\core\bin\debug\Core.dll .
 copy ..\..\..\core\bin\debug\Core.pdb .
