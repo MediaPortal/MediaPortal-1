@@ -196,7 +196,7 @@
 				    <description>Thumbnail Panel</description>
 				    <type>thumbnailpanel</type>
 				    <id>51</id>
-				    <onleft>50</onleft>
+				    <onleft>2</onleft>
 				    <onright>52</onright>
 				    <onup>2</onup>
 				    <ondown>2</ondown>
@@ -222,7 +222,7 @@
 					<itemHeight>81</itemHeight>
 					<spaceBetweenItems>14</spaceBetweenItems>
 					<textureHeight>90</textureHeight>
-					<onleft>51</onleft>
+					<onleft>2</onleft>
 					<onright>52</onright>
 					<onup>2</onup>
 					<ondown>2</ondown>
