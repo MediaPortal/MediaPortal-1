@@ -496,7 +496,8 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void WndProc(ref Message msg)
     {
       Action action;
-      if ( MCE2005Remote.WndProc(ref msg, out action) ) 
+      char key=(char)0;
+      if ( MCE2005Remote.WndProc(ref msg, out action, out  key) ) 
       {
         msg.Result = new IntPtr(0);
         if (action!=null && action.wID!=Action.ActionType.ACTION_INVALID)
@@ -505,6 +506,13 @@ public class MediaPortalApp : D3DApp, IRender
         }
         return;
       }
+      if (key !=0)
+      {
+        System.Windows.Forms.KeyPressEventArgs e= new KeyPressEventArgs(key);
+        keypressed(e);
+        return;
+      }
+
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
       {
         // windows wants to activate the screensaver

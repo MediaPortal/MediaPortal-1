@@ -240,8 +240,9 @@ namespace MediaPortal
     }
     
 
-    public bool WndProc(ref Message msg, out Action action)
+    public bool WndProc(ref Message msg, out Action action,out char key)
     {
+      key=(char)0;
       action=null;
       if (!RemoteFound) return false;
       int wparam=0;
@@ -264,10 +265,7 @@ namespace MediaPortal
         switch (lparam)
         {
           case 0x1032: //back
-            if (GUIGraphicsContext.IsFullScreenVideo)
-              action.wID=Action.ActionType.ACTION_SHOW_GUI;
-            else
-              action.wID=Action.ActionType.ACTION_PREVIOUS_MENU;
+            key=(char)27;
             break;
           case 0x102E: //play
             action.wID=Action.ActionType.ACTION_PLAY;
@@ -366,10 +364,7 @@ namespace MediaPortal
               action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
             else
             {
-              if (GUIGraphicsContext.IsFullScreenVideo)
-                action.wID=Action.ActionType.ACTION_SHOW_GUI;
-              else
-                GUIWindowManager.PreviousWindow();
+              key=(char)27;
             }
             break;
           case 0x4D://DVD subtitle
