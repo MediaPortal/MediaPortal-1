@@ -699,7 +699,7 @@ namespace DShowNET
 			byData[offs]= 0; offs++;//slot
 			byData[offs]= 2; offs++;//utag
 
-			byData[offs]= 10; offs++;//padding
+			byData[offs]= 0; offs++;//padding
 			byData[offs]= 0; offs++;//padding
 
 			byData[offs]= 0; offs++;//bmore
