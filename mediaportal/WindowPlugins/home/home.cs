@@ -57,6 +57,7 @@ namespace MediaPortal.GUI.Home
 		const int			MAX_FRAMES=9;
 		bool          m_bTopBar=false;
 		bool					fixedScroll=false;
+		bool					backButtons=false;
 		int[]         m_iButtonIds = new int[60];  
 		DateTime      m_updateTimer=DateTime.MinValue;
 		DateTime      m_updateOwnTimer=DateTime.MinValue;
@@ -131,6 +132,7 @@ namespace MediaPortal.GUI.Home
 				useMenus=xmlreader.GetValueAsBool("home","usemenus",false);						// use new menu handling
 				useMyPlugins=xmlreader.GetValueAsBool("home","usemyplugins",true);		// use previous menu handling
 				noScrollSubs=xmlreader.GetValueAsBool("home","noScrollsubs",false);	
+				backButtons=xmlreader.GetValueAsBool("home","backbuttons",false);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				ownDate=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
 			}
@@ -287,60 +289,7 @@ namespace MediaPortal.GUI.Home
 
 				if(useMenus==true && inSubMenu==true) // if gucky´s menu style handling load sub menu tree
 				{	
-					if(inSecondMenu==true) 
-					{
-						inSecondMenu=false;
-						selectedButton=subButton;
-					} 
-					else 
-					{
-						inSubMenu=false;
-						inMyPlugins=false;
-					}
-					for (int i=102; i < 160; i++)
-					{
-						GUIControl.HideControl(GetID, i);
-					}
-					m_iButtons=0;
-					for (int iButt=2; iButt < 60; iButt++)
-					{
-						m_iButtonIds[iButt]=0;
-						GUIControl bCntl = GetControl(iButt) as GUIControl;
-						if (bCntl!=null) 
-						{
-							Remove(iButt);
-						}
-					}
-					for (int iButt=102; iButt < 160; iButt++)
-					{
-						GUIControl bCntl = GetControl(iButt) as GUIControl;
-						if (bCntl!=null) 
-						{
-							Remove(iButt);
-						}
-					}
-					ResetButtons();
-					ArrayList plugins=PluginManager.SetupForms;
-					ProcessPlugins(ref plugins);
-					if (m_iButtons>0)
-					{
-						while (m_iButtons<10)
-							ProcessPlugins(ref plugins);
-					}
-					plugins=null;
-					m_iCurrentButton=m_iButtons/2;
-					VerifyButtonIndex(ref m_iCurrentButton);
-					LayoutButtons(0);
-					if (m_iOffset!=0)
-					{
-						FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
-					}
-					else
-					{
-						int buttonIndex = m_iCurrentButton;
-						VerifyButtonIndex(ref buttonIndex);
-						FocusControl(GetID, buttonIndex + 2);
-					}
+					GoBackMenu();
 					return;
 				}
 				GUIWindowManager.PreviousWindow();
@@ -638,6 +587,11 @@ namespace MediaPortal.GUI.Home
 								{
 									break;
 								}
+								if (button.HyperLink==-3)
+								{
+									GoBackMenu();
+									break;
+								}
 								if (inSecondMenu==true) 
 								{
 									break;
@@ -750,6 +704,64 @@ namespace MediaPortal.GUI.Home
 		#endregion
 
 		#region Private Methods
+
+		private void GoBackMenu()
+		{
+			if(inSecondMenu==true) 
+			{
+				inSecondMenu=false;
+				selectedButton=subButton;
+			} 
+			else 
+			{
+				inSubMenu=false;
+				inMyPlugins=false;
+			}
+			for (int i=102; i < 160; i++)
+			{
+				GUIControl.HideControl(GetID, i);
+			}
+			m_iButtons=0;
+			for (int iButt=2; iButt < 60; iButt++)
+			{
+				m_iButtonIds[iButt]=0;
+				GUIControl bCntl = GetControl(iButt) as GUIControl;
+				if (bCntl!=null) 
+				{
+					Remove(iButt);
+				}
+			}
+			for (int iButt=102; iButt < 160; iButt++)
+			{
+				GUIControl bCntl = GetControl(iButt) as GUIControl;
+				if (bCntl!=null) 
+				{
+					Remove(iButt);
+				}
+			}
+			ResetButtons();
+			ArrayList plugins=PluginManager.SetupForms;
+			ProcessPlugins(ref plugins);
+			if (m_iButtons>0)
+			{
+				while (m_iButtons<10)
+					ProcessPlugins(ref plugins);
+			}
+			plugins=null;
+			m_iCurrentButton=m_iButtons/2;
+			VerifyButtonIndex(ref m_iCurrentButton);
+			LayoutButtons(0);
+			if (m_iOffset!=0)
+			{
+				FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+			}
+			else
+			{
+				int buttonIndex = m_iCurrentButton;
+				VerifyButtonIndex(ref buttonIndex);
+				FocusControl(GetID, buttonIndex + 2);
+			}
+		}
 
 		/// <summary>
 		/// Makes sure that the button index lies within acceptable values.
@@ -1051,6 +1063,13 @@ namespace MediaPortal.GUI.Home
 							AddPluginButton(iHyperLink,strButtonText, strButtonImageFocus,  strButtonImage,strPictureImage);
 						}
 					}
+				}
+			}
+			if (backButtons==true)
+			{
+				if (inSubMenu==true || inSecondMenu==true) 
+				{
+					AddPluginButton(-3,GUILocalizeStrings.Get(712), "",  "", "");	
 				}
 			}
 		}

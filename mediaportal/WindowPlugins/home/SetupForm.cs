@@ -113,6 +113,7 @@ namespace home
 		private System.Windows.Forms.Button AddSpecial;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.ListBox SpecialFunctions;
+		private System.Windows.Forms.CheckBox BackButtons;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -203,6 +204,7 @@ namespace home
 			textBox6.Text="";
 
 			SpecialFunctions.Items.Add("CD EJECT");
+			SpecialFunctions.Items.Add("BACK BUTTON");
 			
 			this.treeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseDown);
 			this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
@@ -293,12 +295,13 @@ namespace home
 			this.radioButton3 = new System.Windows.Forms.RadioButton();
 			this.button1 = new System.Windows.Forms.Button();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.AddSpecial = new System.Windows.Forms.Button();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.useMyPlugins = new System.Windows.Forms.RadioButton();
 			this.useMenus = new System.Windows.Forms.RadioButton();
-			this.AddSpecial = new System.Windows.Forms.Button();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.SpecialFunctions = new System.Windows.Forms.ListBox();
+			this.BackButtons = new System.Windows.Forms.CheckBox();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -674,6 +677,7 @@ namespace home
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.BackButtons);
 			this.groupBox5.Controls.Add(this.NoScrollSubs);
 			this.groupBox5.Controls.Add(this.chkBoxFixed);
 			this.groupBox5.Controls.Add(this.chkBoxScrolling);
@@ -855,6 +859,14 @@ namespace home
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Menu Structure";
 			// 
+			// AddSpecial
+			// 
+			this.AddSpecial.Location = new System.Drawing.Point(368, 416);
+			this.AddSpecial.Name = "AddSpecial";
+			this.AddSpecial.Size = new System.Drawing.Size(88, 32);
+			this.AddSpecial.TabIndex = 36;
+			this.AddSpecial.Text = "Add Special Function";
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.useMyPlugins);
@@ -889,14 +901,6 @@ namespace home
 			this.useMenus.TabIndex = 0;
 			this.useMenus.Text = "Use Menus (Gucky62)";
 			// 
-			// AddSpecial
-			// 
-			this.AddSpecial.Location = new System.Drawing.Point(368, 416);
-			this.AddSpecial.Name = "AddSpecial";
-			this.AddSpecial.Size = new System.Drawing.Size(88, 32);
-			this.AddSpecial.TabIndex = 36;
-			this.AddSpecial.Text = "Add Special Function";
-			// 
 			// tabPage3
 			// 
 			this.tabPage3.Controls.Add(this.SpecialFunctions);
@@ -912,6 +916,14 @@ namespace home
 			this.SpecialFunctions.Name = "SpecialFunctions";
 			this.SpecialFunctions.Size = new System.Drawing.Size(328, 342);
 			this.SpecialFunctions.TabIndex = 0;
+			// 
+			// BackButtons
+			// 
+			this.BackButtons.Location = new System.Drawing.Point(24, 96);
+			this.BackButtons.Name = "BackButtons";
+			this.BackButtons.Size = new System.Drawing.Size(168, 24);
+			this.BackButtons.TabIndex = 7;
+			this.BackButtons.Text = "Back Button in Submenus";
 			// 
 			// SetupForm
 			// 
@@ -1029,6 +1041,7 @@ namespace home
 				xmlWriter.SetValueAsBool("home","usemenus",useMenus.Checked);
 				xmlWriter.SetValueAsBool("home","usemyplugins",useMyPlugins.Checked);
 				xmlWriter.SetValueAsBool("home","noScrollsubs",NoScrollSubs.Checked);		
+				xmlWriter.SetValueAsBool("home","backbuttons",BackButtons.Checked);		
 				xmlWriter.SetValue("home","ownDate",OwnDate.Text);		
 		}
 			this.Close();
@@ -1046,7 +1059,8 @@ namespace home
 				chkBoxFixed.Checked=xmlreader.GetValueAsBool("home","scrollfixed",false);
 				useMenus.Checked=xmlreader.GetValueAsBool("home","usemenus",false);
 				useMyPlugins.Checked=xmlreader.GetValueAsBool("home","usemyplugins",true);
-				NoScrollSubs.Checked=xmlreader.GetValueAsBool("home","noScrollsubs",true);
+				NoScrollSubs.Checked=xmlreader.GetValueAsBool("home","noScrollsubs",false);
+				BackButtons.Checked=xmlreader.GetValueAsBool("home","backbuttons",false);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				OwnDate.Text=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
 			}
