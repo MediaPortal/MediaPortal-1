@@ -1357,6 +1357,7 @@ public class MediaPortalApp : D3DApp, IRender
         (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD ||
          GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) ||
 				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_TVMSNOSD ||
+				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_MSN_CHAT ||
 				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_MSNOSD)
       {
         action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
