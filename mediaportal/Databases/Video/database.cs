@@ -1346,7 +1346,8 @@ namespace MediaPortal.Video.Database
 				SQLiteResultSet results;
 				results=m_db.Execute(sql);
 
-				string resumeString = ToHexString(resumeData);
+				string resumeString = "-";
+				if (resumeData!=null) resumeString = ToHexString(resumeData);
 				if (results.Rows.Count == 0) 
 				{
 					sql=String.Format("insert into resume ( idResume,idFile,stoptime,resumeData) values(NULL,{0},{1},'{2}')",
