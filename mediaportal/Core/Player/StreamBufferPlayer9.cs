@@ -15,7 +15,7 @@ namespace MediaPortal.Player
   public class StreamBufferPlayer9 : BaseStreamBufferPlayer
   {
 		VMR9Util Vmr9 = null;
-
+		bool		 inFullscreenMode=false;
     public StreamBufferPlayer9()
     {
     }
@@ -30,6 +30,7 @@ namespace MediaPortal.Player
       //switch back to directx fullscreen mode
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
+			inFullscreenMode=true;
 
       try 
       {
@@ -204,8 +205,9 @@ namespace MediaPortal.Player
         }
 
         //switch back to directx windowed mode
-				if (switchToWindowedMode)
+				if (switchToWindowedMode && inFullscreenMode)
 				{
+					inFullscreenMode=false;
 					GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
 					GUIWindowManager.SendMessage(msg);
 				}
