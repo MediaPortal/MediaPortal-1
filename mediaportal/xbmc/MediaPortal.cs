@@ -1413,6 +1413,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
           return;
         }
+        if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 
 
         if (fullscreen)

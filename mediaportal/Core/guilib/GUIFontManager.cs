@@ -145,6 +145,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void RestoreDeviceObjects()
 		{
+      if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
+
 			foreach (GUIFont font in m_fonts)
 			{
 				font.RestoreDeviceObjects();
