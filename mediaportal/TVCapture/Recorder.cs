@@ -652,6 +652,20 @@ namespace MediaPortal.TV.Recording
 			}
 			return string.Empty;
 		}
+		
+		static public void StopRadio()
+		{
+			Log.Write("Recorder:StopRadio()");
+			
+			foreach (TVCaptureDevice dev in m_tvcards)
+			{
+				if (dev.IsRadio)
+				{
+					Log.Write("Recorder:StopRadio() stop radio on card:{0}", dev.ID);
+					dev.DeleteGraph();
+				}
+			}
+		}
 
 		static public void StartRadio(string radioStationName)
 		{
@@ -684,10 +698,21 @@ namespace MediaPortal.TV.Recording
 				{
 					if (RadioDatabase.CanCardTuneToStation(radioStationName, tvcard.ID))
 					{
+						for (int x=0; x < m_tvcards.Count;++i)
+						{
+							TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[x];
+							if (i!=x)
+							{
+								if (dev.IsRadio)
+								{
+									dev.DeleteGraph();
+								}
+							}
+						}
 						Log.Write("Recorder:Start radio on card:{0} {1} station:{2}",
 											tvcard.ID,tvcard.FriendlyName,radioStationName);
 						tvcard.StartRadio(radiostation);
-						return;
+						break;
 					}
 				}
 			}
@@ -1368,6 +1393,9 @@ namespace MediaPortal.TV.Recording
 			if (message==null) return;
 			switch(message.Message)
 			{
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO:
+					StopRadio();
+				break;
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
 					StartRadio(message.Label);
 				break;

@@ -205,6 +205,8 @@ namespace MediaPortal.Player
 
     public static bool PlayDVD(string strPath)
 		{
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msg);
 			Log.Write("g_Player.PlayDVD()");
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
@@ -259,7 +261,9 @@ namespace MediaPortal.Player
     }
 
     public static bool PlayAudioStream(string strURL)
-    {
+		{
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msg);
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
       m_bInit=true;
@@ -294,7 +298,9 @@ namespace MediaPortal.Player
     }
 
     public static bool Play(string strFile)
-    {
+		{
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msg);
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
       if (strFile==null) return false;
