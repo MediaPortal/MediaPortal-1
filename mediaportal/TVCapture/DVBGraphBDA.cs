@@ -162,7 +162,8 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				System.IO.Directory.CreateDirectory("temp");
+				System.IO.Directory.CreateDirectory("database");
+				System.IO.Directory.CreateDirectory(@"database\pmt");
 			}
 			catch(Exception){}
 			//create registry keys needed by the streambuffer engine for timeshifting/recording
@@ -1088,7 +1089,7 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				string pmtName=String.Format(@"temp\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
+				string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
 				if (System.IO.File.Exists(pmtName))
 				{
 					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
@@ -2293,7 +2294,7 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
-						string pmtName=String.Format(@"temp\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
+						string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
 						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 						stream.Write(pmt,0,pmt.Length);
 						stream.Close();
