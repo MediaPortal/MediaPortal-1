@@ -193,6 +193,8 @@ namespace MediaPortal.TV.Recording
 		protected IBaseFilter			m_b2c2Adapter=null;
 		protected IPin					m_videoPin=null;
 		protected IPin					m_audioPin=null;
+		protected IPin					m_demuxVideoPin=null;
+		protected IPin					m_demuxAudioPin=null;
 		protected IPin					m_data0=null;
 		protected IPin					m_data1=null;
 		protected IPin					m_data2=null;
@@ -230,7 +232,6 @@ namespace MediaPortal.TV.Recording
 //		byte[]							m_teleTextBuffer=new byte[188];
 //		ArrayList						m_teleTextStream=new ArrayList();
 		DVBTeletext						m_ttxt=new DVBTeletext();
-		int								m_counterTxT=0;
 //
 		
 		//
@@ -244,12 +245,12 @@ namespace MediaPortal.TV.Recording
 			}
 			
 
-			if(m_pluginsEnabled==true)
-			{
+//			if(m_pluginsEnabled==true)
+//			{
 				GUIWindow win=GUIWindowManager.GetWindow(7700);
 				if(win!=null)
 					win.SetObject(m_ttxt);
-			}
+//			}
 
 			try
 			{
@@ -338,8 +339,12 @@ namespace MediaPortal.TV.Recording
 		
 			int add=(int)data;
 			int end=(add+len);
-			for(int pointer=add;pointer<end;pointer+=188)
-				PidCallback((IntPtr)pointer);
+			
+			if(m_pluginsEnabled==true)
+			{
+				for(int pointer=add;pointer<end;pointer+=188)
+					PidCallback((IntPtr)pointer);
+			}
 		
 			//
 			// here write code to record raw ts or mp3 etc.
@@ -349,26 +354,25 @@ namespace MediaPortal.TV.Recording
 			// the following check should takes care of scrambled video-data
 			// and redraw the vmr9 not to hang
 
-			int pid=m_currentChannel.VideoPid;
-			int teleTextPid=m_currentChannel.TeletextPid;
-			TSHelperTools tools=new TSHelperTools();
-			for(int pointer=add;pointer<end;pointer+=188)
-			{
-					
-				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-				if(header.Pid==pid)
+				int pid=m_currentChannel.VideoPid;
+				int teleTextPid=m_currentChannel.TeletextPid;
+				TSHelperTools tools=new TSHelperTools();
+				for(int pointer=add;pointer<end;pointer+=188)
 				{
 					
-					if(header.TransportScrambling!=0) // data is scrambled?
-						m_videoDataFound=false;
-					else
-						m_videoDataFound=true;
+					TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
+					if(header.Pid==pid)
+					{
+					
+						if(header.TransportScrambling!=0) // data is scrambled?
+							m_videoDataFound=false;
+						else
+							m_videoDataFound=true;
 						
-					break;// stop loop if we got or video-packet
+						break;// stop loop if we got a non-scrambled video-packet 
+					}
 				}
-			}
-
-			//			}
+			//
 			if(m_vmr9Running==true && m_videoDataFound==false)
 				Vmr9.Repaint();// repaint vmr9
 			
@@ -427,21 +431,31 @@ namespace MediaPortal.TV.Recording
 			catch(Exception ex)
 			{
 				Log.Write("DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
-				System.Windows.Forms.MessageBox.Show(ex.Message);
+				//System.Windows.Forms.MessageBox.Show(ex.Message);
 			}
 			if(m_b2c2Adapter==null)
 				return false;
 			try
 			{
 				n=m_sourceGraph.AddFilter(m_b2c2Adapter,"B2C2-Source");
-				if(m_pluginsEnabled==true)
-				{
-					m_sourceGraph.AddFilter(m_sampleGrabber,"GrabberFilter");
-					m_sourceGraph.AddFilter(m_demux,"Demuxer");
-					//m_sourceGraph.AddFilter(m_csc,"InfinityTEE");
-				}
 				if(n!=0)
+				{
+					Log.Write("DVBGraphSS2: FAILED to add B2C2-Adapter");
 					return false;
+				}
+				n=m_sourceGraph.AddFilter(m_sampleGrabber,"GrabberFilter");
+				if(n!=0)
+				{
+					Log.Write("DVBGraphSS2: FAILED to add SampleGrabber");
+					return false;
+				}
+
+				n=m_sourceGraph.AddFilter(m_demux,"Demuxer");
+				if(n!=0)
+				{
+					Log.Write("DVBGraphSS2: FAILED to add Demultiplexer");
+					return false;
+				}
 				// get interfaces
 				m_dataCtrl=(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3) m_b2c2Adapter;
 				if(m_dataCtrl==null)
@@ -479,16 +493,20 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
-				if(m_pluginsEnabled==true)
+
+				if(m_sampleInterface!=null)
 				{
 					AMMediaType mt=new AMMediaType();
 					mt.majorType=DShowNET.MediaType.Stream;
-					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
+					//mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
 					//m_sampleInterface.SetOneShot(true);
 					m_sampleInterface.SetCallback(this,1);
 					m_sampleInterface.SetMediaType(ref mt);
 					m_sampleInterface.SetBufferSamples(false);
 				}
+				else
+					Log.Write("DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
+					
 
 			}
 			catch(Exception ex)
@@ -506,7 +524,6 @@ namespace MediaPortal.TV.Recording
 		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText)
 		{
 			int hr=0; // the result
-			int tuneTryCount=0;
 
 			if(Frequency>13000)
 				Frequency/=1000;
@@ -514,66 +531,83 @@ namespace MediaPortal.TV.Recording
 			hr = m_tunerCtrl.SetFrequency(Frequency);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetFrequency");
 				return false;	// *** FUNCTION EXIT POINT
 			}
         
 			hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetSymbolRate");
 				return false;	// *** FUNCTION EXIT POINT
 			}
         
 			hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetLnbFrequency");
 				return false;	// *** FUNCTION EXIT POINT
 			}
         
 			hr = m_tunerCtrl.SetFec(FEC);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetFec");
 				return false;	// *** FUNCTION EXIT POINT
 			}
         
 			hr = m_tunerCtrl.SetPolarity(POL);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetPolarity");
 				return false;	// *** FUNCTION EXIT POINT
 			}
         
 			hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetLnbKHz");
 				return false;	// *** FUNCTION EXIT POINT
 			}
         
 			hr = m_tunerCtrl.SetDiseqc(Diseq);
 			if (hr!=0)
 			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetDiseqc");
 				return false;	// *** FUNCTION EXIT POINT
 			}
 			
 			hr = m_tunerCtrl.SetTunerStatus();
 			if (hr!=0)	
+			{
+				Log.Write("Tune for SkyStar2 FAILED: on SetTunerStatus");
 				return false;	// *** FUNCTION EXIT POINT
+			}
 
 			hr=m_tunerCtrl.CheckLock();
 			if(hr!=0)
+			{
+				Log.Write("Tune for SkyStar2 FAILED: on CheckLock");
 				return false;
+			}
 
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
 				if(m_pluginsEnabled==false)
 				{
 					DeleteAllPIDs(m_dataCtrl,0);
-					SetPidToPin(m_dataCtrl,0,18);
 					SetPidToPin(m_dataCtrl,0,0);
 					SetPidToPin(m_dataCtrl,0,1);
-					hr = m_avCtrl.SetAudioVideoPIDs (AudioPID, VideoPID);
-					if (hr!=0)
-					{
-						return false;	// *** FUNCTION EXIT POINT
-					}
+					SetPidToPin(m_dataCtrl,0,16);
+					SetPidToPin(m_dataCtrl,0,17);
+					SetPidToPin(m_dataCtrl,0,18);
+					SetPidToPin(m_dataCtrl,0,ttxtPID);
+					SetPidToPin(m_dataCtrl,0,AudioPID);
+					SetPidToPin(m_dataCtrl,0,VideoPID);
+					SetPidToPin(m_dataCtrl,0,pmtPID);
+					if(pcrPID!=VideoPID)
+						SetPidToPin(m_dataCtrl,0,pcrPID);
+
 				}
 				else
 				{
@@ -990,13 +1024,10 @@ namespace MediaPortal.TV.Recording
 			IPin		pinObj1=null;
 			IPin		outPin=null;
 
-			if(m_pluginsEnabled==true)
-			{
 
 				hr=m_sourceGraph.AddFilter(m_sinkFilter,"StreamBufferSink");
 				hr=m_sourceGraph.AddFilter(m_mpeg2Analyzer,"Stream-Analyzer");
 
-				//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
 				// setup sampleGrabber and demuxer
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
@@ -1017,105 +1048,42 @@ namespace MediaPortal.TV.Recording
 					return false;
 
 				pinObj0=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Input,0);
-				if(pinObj0!=null)
-				{
-				
-					hr=m_sourceGraph.Connect(dmOutVid,pinObj0);
-					if(hr==0)
-					{
-						// render all out pins
-						pinObj1=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Output,0);	
-						hr=m_sourceGraph.Render(pinObj1);
-						if(hr!=0)
-							return false;
-						hr=m_sourceGraph.Render(dmOutAud);
-						if(hr!=0)
-							return false;
-					
-						if(demuxInPin!=null)
-							Marshal.ReleaseComObject(demuxInPin);
-						if(samplePin!=null)
-							Marshal.ReleaseComObject(samplePin);
-						if(dmOutVid!=null)
-							Marshal.ReleaseComObject(dmOutVid);
-						if(dmOutAud!=null)
-							Marshal.ReleaseComObject(dmOutAud);
-						if(pinObj1!=null)
-							Marshal.ReleaseComObject(pinObj1);
-						if(pinObj0!=null)
-							Marshal.ReleaseComObject(pinObj0);
-	
-						demuxInPin=null;
-						samplePin=null;
-						dmOutVid=null;
-						dmOutAud=null;
-						pinObj1=null;
-						pinObj0=null;
-					}
-				} // render of sink is ready
-			}
-			if(m_pluginsEnabled==false)
+			if(pinObj0!=null)
 			{
-				hr=m_sourceGraph.AddFilter(m_sinkFilter,"StreamBufferSink");
-				hr=m_sourceGraph.AddFilter(m_mpeg2Analyzer,"Stream-Analyzer");
-				hr=m_sourceGraph.AddFilter(m_mpeg2Data,"Sections-Filter");
-				hr=m_sourceGraph.AddFilter(m_demux,"Demuxer-Filter");
-
-				pinObj0=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Input,0);
-				if(pinObj0!=null)
-				{
 				
-					hr=m_sourceGraph.Connect(m_videoPin,pinObj0);
-					if(hr==0)
-					{
-						// render all out pins
-						hr=-1;
-						pinObj1=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Output,0);	
-						hr=m_sourceGraph.Render(pinObj1);
-						if(hr!=0)
-							return false;
-						hr=m_sourceGraph.Render(m_audioPin);
-						if(hr!=0)
-							return false;
-
+				hr=m_sourceGraph.Connect(dmOutVid,pinObj0);
+				if(hr==0)
+				{
+					// render all out pins
+					pinObj1=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Output,0);	
+					hr=m_sourceGraph.Render(pinObj1);
+					if(hr!=0)
+						return false;
+					hr=m_sourceGraph.Render(dmOutAud);
+					if(hr!=0)
+						return false;
 					
-						// setup data / ts stream
-						// set output pin on demux
-					
-						m_demuxInterface=(IMpeg2Demultiplexer)m_demux;
-						if(m_demuxInterface==null)
-							return false;
-						IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);
-						IPin demuxOutPin=null;
-						IPin m2dIn=DirectShowUtil.FindPinNr(m_mpeg2Data,PinDirection.Input,0);
-						AMMediaType mt=new AMMediaType();
-						mt.majorType=DVBSkyStar2Helper.MEDIATYPE_MPEG2_SECTIONS;
-						mt.subType=DVBSkyStar2Helper.MEDIASUBTYPE_MPEG2_DATA;
-						hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2DATA",out demuxOutPin);
-						if(hr!=0)
-							return false;
-						hr=m_sourceGraph.Connect(m_data0,demuxInPin);
-						if(hr!=0)
-							return false;
-						hr=m_sourceGraph.Connect(demuxOutPin,m2dIn);
-						if(hr!=0)
-							return false;
-						//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
-						if(demuxOutPin!=null)
-							Marshal.ReleaseComObject(demuxOutPin);
-						if(m2dIn!=null)
-							Marshal.ReleaseComObject(m2dIn);
-						if(demuxInPin!=null)
-							Marshal.ReleaseComObject(demuxInPin);
-						demuxOutPin=null;
-						demuxInPin=null;
-						m2dIn=null;
-					
-
-										
-					}
-				} // render of sink is ready
-			}
+					if(demuxInPin!=null)
+						Marshal.ReleaseComObject(demuxInPin);
+					if(samplePin!=null)
+						Marshal.ReleaseComObject(samplePin);
+					if(dmOutVid!=null)
+						Marshal.ReleaseComObject(dmOutVid);
+					if(dmOutAud!=null)
+						Marshal.ReleaseComObject(dmOutAud);
+					if(pinObj1!=null)
+						Marshal.ReleaseComObject(pinObj1);
+					if(pinObj0!=null)
+						Marshal.ReleaseComObject(pinObj0);
+	
+					demuxInPin=null;
+					samplePin=null;
+					dmOutVid=null;
+					dmOutAud=null;
+					pinObj1=null;
+					pinObj0=null;
+				}
+			} // render of sink is ready
 
 			int ipos=fileName.LastIndexOf(@"\");
 			string strDir=fileName.Substring(0,ipos);
@@ -1374,9 +1342,13 @@ namespace MediaPortal.TV.Recording
 			{
 				
 
+				if(m_mediaControl!=null)
+					m_mediaControl.Pause();
+
 				DVBChannel ch=new DVBChannel();
 				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
 				{
+					Log.Write("DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
 					m_channelFound=false;
 					return;
 				}
@@ -1386,9 +1358,6 @@ namespace MediaPortal.TV.Recording
 					m_channelFound=false;
 					return;
 				}
-				if(m_mediaControl!=null)
-					m_mediaControl.Stop();
-
 				m_channelFound=true;
 				
 				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3)==false)
@@ -1398,6 +1367,16 @@ namespace MediaPortal.TV.Recording
 				}
 				m_currentChannel=ch;
 
+				if(m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
+				{
+				
+					SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,ch.AudioPid,ch.VideoPid);
+					// some time to pause
+					System.Threading.Thread.Sleep(750);
+					if(m_mediaControl!=null)
+						m_mediaControl.Run();
+				}
+
 				m_videoDataFound=false;
 
 				
@@ -1406,11 +1385,20 @@ namespace MediaPortal.TV.Recording
 				
 				m_StartTime=DateTime.Now;
 
+
 			}
 			
 		}
 		void SetDemux(int audioPid,int videoPid)
 		{
+			
+			if(m_demuxInterface==null)
+			{
+				Log.Write("DVBGraphSS2: SetDemux FAILED: no Demux-Interface");
+				return;
+			}
+			int hr=0;
+
 			Log.Write("DVBGraphSS2:SetDemux() audio pid:0x{0X} video pid:0x{1:X}",audioPid,videoPid);
 			AMMediaType mpegVideoOut = new AMMediaType();
 			mpegVideoOut.majorType = MediaType.Video;
@@ -1440,23 +1428,27 @@ namespace MediaPortal.TV.Recording
 			mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
 			System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mpegAudioOut.formatPtr,mpegAudioOut.formatSize) ;
 			
-			IPin pinVideoOut,pinAudioOut;
+			//IPin pinVideoOut,pinAudioOut;
 
-			int hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out pinVideoOut);
+			hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_demuxVideoPin);
 			if (hr!=0)
 			{
 				Log.Write("DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
 				return;
 			}
-
-			hr=m_demuxInterface.CreateOutputPin(ref mpegAudioOut, "audio", out pinAudioOut);
+			hr=m_demuxInterface.CreateOutputPin(ref mpegAudioOut, "audio", out m_demuxAudioPin);
 			if (hr!=0)
 			{
 				Log.Write("DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
 				return;
 			}
+			hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,audioPid,videoPid);
+			if(hr!=0)
+			{
+				Log.Write("DVBGraphSS2: FAILED to config Demuxer");
+				return;
+			}
 
-			hr=SetupDemuxer(pinVideoOut,pinAudioOut,audioPid,videoPid);
 			Log.Write("DVBGraphSS2:SetDemux() done:{0}", hr);
 			//int //=0;
 		}
@@ -1507,81 +1499,7 @@ namespace MediaPortal.TV.Recording
 				Vmr9.AddVMR9(m_sourceGraph);
 			}
 
-			if(m_pluginsEnabled==false)
-			{
-				Log.Write("DVBGraphSS2:StartViewing() plugins not enabled");
-				Log.Write("DVBGraphSS2:StartViewing() render video pin");
-				// render vid & aud
-				hr=m_sourceGraph.Render(m_videoPin);
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED to render video pin");
-					return false;
-				}
-				Log.Write("DVBGraphSS2:StartViewing() render audio pin");
-				hr=m_sourceGraph.Render(m_audioPin);
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED to render audio pin");
-					return false;
-				}
-				hr=m_sourceGraph.AddFilter(m_mpeg2Data,"Sections-Filter");
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() unable to add Sections-Filter filter to graph");
-					return false;
-				}
-				hr=m_sourceGraph.AddFilter(m_demux,"Demuxer-Filter");
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() unable to add Demuxer-Filter filter to graph");
-					return false;
-				}
-				m_demuxInterface=m_demux as IMpeg2Demultiplexer;
-				if(m_demuxInterface==null)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() unable get IMpeg2Demultiplexer");
-					return false;
-				}
-				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);
-				IPin demuxOutPin=null;
-				IPin m2dIn=DirectShowUtil.FindPinNr(m_mpeg2Data,PinDirection.Input,0);
-				AMMediaType mt=new AMMediaType();
-				mt.majorType=DVBSkyStar2Helper.MEDIATYPE_MPEG2_SECTIONS;
-				mt.subType=DVBSkyStar2Helper.MEDIASUBTYPE_MPEG2_DATA;
-				hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2DATA",out demuxOutPin);
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() unable create MPEG2DATA outputpin");
-					return false;
-				}
-				hr=m_sourceGraph.Connect(m_data0,demuxInPin);
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() unable connect Data0->DemuxIn");
-					return false;
-				}
-				hr=m_sourceGraph.Connect(demuxOutPin,m2dIn);
-				if(hr!=0)
-				{
-					Log.Write("DVBGraphSS2:StartViewing() unable demuxOut->m2dIn");
-					return false;
-				}
-				//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
-				if(demuxOutPin!=null)
-					Marshal.ReleaseComObject(demuxOutPin);
-				if(m2dIn!=null)
-					Marshal.ReleaseComObject(m2dIn);
-				if(demuxInPin!=null)
-					Marshal.ReleaseComObject(demuxInPin);
-				demuxOutPin=null;
-				demuxInPin=null;
-				m2dIn=null;
 
-				//int n=0;// 
-			}
-			else
-			{
 				Log.Write("DVBGraphSS2:StartViewing() Using plugins");
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
@@ -1655,8 +1573,6 @@ namespace MediaPortal.TV.Recording
 				if(dmOutAud!=null)
 					Marshal.ReleaseComObject(dmOutAud);
 				//
-			}
-
 			//
 
 			
@@ -1811,7 +1727,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool ShouldRebuildGraph(int iChannel)
 		{
-			return true;
+			return false;
 		}
 
 		/// <summary>
