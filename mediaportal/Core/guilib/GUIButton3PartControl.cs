@@ -147,7 +147,7 @@ namespace MediaPortal.GUI.Library
         cntlLabel1.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
         cntlLabel1.FontName=fontName1;
         cntlLabel1.Label=m_strText1;
-        cntlLabel1.Width=iWidth;
+        cntlLabel1.Width=iWidth-5;
         cntlLabel1.Render();
 			}
      
@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Library
         cntlLabel2.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
         cntlLabel2.FontName=fontName1;
         cntlLabel2.Label=m_strText2;
-        cntlLabel2.Width=iWidth;
+        cntlLabel2.Width=iWidth-5;
         cntlLabel2.Render();
       }
 		}
