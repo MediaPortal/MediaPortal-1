@@ -208,7 +208,9 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
-			Log.Write("tune dvbcChannel:{0}",currentIndex);
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
+												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate);
+			Log.Write("tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
 			DVBGraphBDA.DVBChannel newchan = new DVBGraphBDA.DVBChannel();
 			newchan.ONID=-1;
 			newchan.TSID=-1;
@@ -219,9 +221,6 @@ namespace MediaPortal.TV.Recording
 			newchan.innerFec=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.carrierFrequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan);
-			timer1.Enabled=false;
-			System.Threading.Thread.Sleep(100);
-			timer1.Enabled=true;
 		}
 
 		#endregion

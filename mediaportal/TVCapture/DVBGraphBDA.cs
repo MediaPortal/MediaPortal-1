@@ -138,7 +138,7 @@ namespace MediaPortal.TV.Recording
 		GCHandle										myHandle;
 		int                         adviseCookie;
 		bool												graphRunning=false;
-		int													currentFrequency;
+		DVBChannel									currentTuningObject=null;
 		bool												shouldDecryptChannel=false;
 
 		/// <summary>
@@ -871,7 +871,15 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.TSID	= TSID;					//transport stream id
 					myTuneRequest.SID		= SID;					//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-					currentFrequency=(int)frequency;
+					currentTuningObject=new DVBChannel();
+					currentTuningObject.carrierFrequency=frequency;
+					currentTuningObject.symbolRate=symbolrate;
+					currentTuningObject.innerFec=innerFec;
+					currentTuningObject.modulation=modulation;
+					currentTuningObject.ONID=ONID;
+					currentTuningObject.TSID=TSID;
+					currentTuningObject.SID=SID;
+
 				} break;
 
 				case NetworkType.DVBS: 
@@ -912,7 +920,14 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.TSID	= TSID;		//transport stream id
 					myTuneRequest.SID		= SID;		//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-					currentFrequency=(int)frequency;
+					currentTuningObject=new DVBChannel();
+					currentTuningObject.carrierFrequency=frequency;
+					currentTuningObject.symbolRate=symbolrate;
+					currentTuningObject.innerFec=innerFec;
+					currentTuningObject.polarisation=polarisation;
+					currentTuningObject.ONID=ONID;
+					currentTuningObject.TSID=TSID;
+					currentTuningObject.SID=SID;
 				} break;
 
 				case NetworkType.DVBT: 
@@ -949,7 +964,11 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.SID		= SID;					//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 
-					currentFrequency=(int)frequency;
+					currentTuningObject=new DVBChannel();
+					currentTuningObject.carrierFrequency=frequency;
+					currentTuningObject.ONID=ONID;
+					currentTuningObject.TSID=TSID;
+					currentTuningObject.SID=SID;
 				} break;
 			}	//switch (m_NetworkType)
 			//submit tune request to the tuner
@@ -1351,7 +1370,8 @@ namespace MediaPortal.TV.Recording
 		/// <returns>-1</returns>
 		public long VideoFrequency()
 		{
-			return currentFrequency*1000;
+			if (currentTuningObject!=null) return currentTuningObject.carrierFrequency*1000;
+			return -1;
 		}
 		
 		private bool CreateSinkSource(string fileName)
@@ -2091,7 +2111,7 @@ namespace MediaPortal.TV.Recording
 			if (pmt!=null && pmt.Length>0 )
 			{
 				//got all details. Log them
-				channelInfo.freq=currentFrequency;
+				channelInfo.freq=currentTuningObject.carrierFrequency;
 				Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6}", 
 					channelInfo.service_provider_name,
 					channelInfo.service_name,
@@ -2237,7 +2257,12 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.TSID						= -1;					//transport stream id
 				myTuneRequest.SID							= -1;					//service id
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentFrequency=frequency;
+				currentTuningObject = new DVBChannel();
+				currentTuningObject.carrierFrequency=frequency;
+				currentTuningObject.ONID=-1;
+				currentTuningObject.TSID=-1;
+				currentTuningObject.SID=-1;
+
 			}//if (Network() == NetworkType.DVBT)
 			else if (Network() == NetworkType.DVBC)
 			{
@@ -2263,7 +2288,7 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.SID							= chan.SID;		//service id
 				
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentFrequency=(int)chan.carrierFrequency;
+				currentTuningObject = chan;
 			}
 			else if (Network() == NetworkType.DVBS)
 			{
@@ -2287,7 +2312,8 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.TSID						= chan.TSID;	//transport stream id
 				myTuneRequest.SID							= chan.SID;		//service id
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentFrequency=(int)chan.carrierFrequency;
+				
+				currentTuningObject = chan;
 			}
 			else if (Network() == NetworkType.ATSC)
 			{
@@ -2335,7 +2361,7 @@ namespace MediaPortal.TV.Recording
 
 				bool hasAudio=false;
 				bool hasVideo=false;
-				info.freq=currentFrequency;
+				info.freq=currentTuningObject.carrierFrequency;
 
 				//check if this channel has audio/video streams
 				for (int pids =0; pids < info.pid_list.Count;pids++)
@@ -2367,8 +2393,9 @@ namespace MediaPortal.TV.Recording
 				newchannel.TSID         = info.transportStreamID;
 				newchannel.SID          = info.serviceID;
 				newchannel.innerFec     = info.fec;
-				newchannel.polarisation = info.pol;
-				//newchannel.modulation  = info. ??
+				newchannel.polarisation = currentTuningObject.polarisation;
+				newchannel.modulation = currentTuningObject.modulation;
+				newchannel.symbolRate = currentTuningObject.symbolRate;
 				
 				if (newchannel.IsTv && tv)
 				{
