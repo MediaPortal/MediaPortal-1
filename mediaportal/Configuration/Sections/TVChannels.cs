@@ -515,6 +515,8 @@ namespace MediaPortal.Configuration.Sections
 				listItem.Tag = editedChannel;
 
 				channelsListView.Items.Add(listItem);
+				SaveSettings();
+				UpdateGroupChannels(null,true);
 			}		
 		}
 
@@ -546,6 +548,8 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[2].Text = editedChannel.Frequency.ToString(Frequency.Format.MegaHerz);
           listItem.SubItems[3].Text = GetStandardName(editedChannel.standard);
           listItem.SubItems[4].Text = editedChannel.External ? "External" : "Internal";
+					SaveSettings();
+					UpdateGroupChannels(null,true);
 				}
 			}		
 		}
@@ -560,6 +564,8 @@ namespace MediaPortal.Configuration.Sections
 			{
 				channelsListView.Items.RemoveAt(channelsListView.SelectedIndices[0]);
 			}
+			SaveSettings();
+			UpdateGroupChannels(null,true);
 		}
 
 		public override object GetSetting(string name)
@@ -870,12 +876,16 @@ namespace MediaPortal.Configuration.Sections
 
     private void upButton_Click(object sender, System.EventArgs e)
     {
-      MoveSelectionUp();
+			MoveSelectionUp();
+			SaveSettings();
+			UpdateGroupChannels(null,true);
     }
 
     private void downButton_Click(object sender, System.EventArgs e)
     {
-      MoveSelectionDown();
+			MoveSelectionDown();
+			SaveSettings();
+			UpdateGroupChannels(null,true);
     }
 
     private void channelsListView_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -947,9 +957,8 @@ namespace MediaPortal.Configuration.Sections
       DialogResult result=MessageBox.Show(this,"Are you sure you want to delete all channels?","Delete channels",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
       if (result!=DialogResult.Yes) return;
       channelsListView.Items.Clear();
-      isDirty =true;
-      SaveTVChannels();
-      
+			SaveSettings();
+			UpdateGroupChannels(null,true);
     }
 
     private void buttonAutoTune_Click(object sender, System.EventArgs e)
