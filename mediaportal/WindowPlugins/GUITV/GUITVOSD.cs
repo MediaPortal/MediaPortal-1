@@ -107,12 +107,12 @@ namespace MediaPortal.GUI.TV
       get { return false;}
     }    
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       UpdateProgressBar();
       SetVideoProgress();	  // get the percentage of playback complete so far
       Get_TimeInfo();       // show the time elapsed/total playing time
-      base.Render();        // render our controls to the screen
+      base.Render(timePassed);        // render our controls to the screen
     }
     void HideControl (int dwSenderId, int dwControlID) 
     {

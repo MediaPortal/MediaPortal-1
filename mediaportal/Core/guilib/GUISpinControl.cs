@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Library
       m_label.CacheFont=true;
 	  }
 
-    public override void 	Render()
+    public override void 	Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -247,22 +247,22 @@ namespace MediaPortal.GUI.Library
               bShow = CanMoveDown();
 
           if (m_iSelect==SpinSelect.SPIN_BUTTON_UP && bShow )
-              m_imgspinUpFocus.Render();
+              m_imgspinUpFocus.Render(timePassed);
           else
-              m_imgspinUp.Render();
+              m_imgspinUp.Render(timePassed);
 
           bShow=CanMoveDown();
           if (m_bReverse)
               bShow = CanMoveUp();
           if (m_iSelect==SpinSelect.SPIN_BUTTON_DOWN && bShow)
-              m_imgspinDownFocus.Render();
+              m_imgspinDownFocus.Render(timePassed);
           else
-              m_imgspinDown.Render();
+              m_imgspinDown.Render(timePassed);
       }
       else
       {
-          m_imgspinUp.Render();
-          m_imgspinDown.Render();
+          m_imgspinUp.Render(timePassed);
+          m_imgspinDown.Render(timePassed);
       }
 
 			if (m_pFont!=null)
@@ -291,7 +291,7 @@ namespace MediaPortal.GUI.Library
           m_label.SetPosition(iTextXPos,iTextYPos);
           m_label.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
 				}
-        m_label.Render();
+        m_label.Render(timePassed);
       }
     }
 

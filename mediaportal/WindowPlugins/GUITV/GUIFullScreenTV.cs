@@ -913,18 +913,18 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			if (GUIGraphicsContext.Vmr9Active)
 			{
-				base.Render();
+				base.Render(timePassed);
 
 
 				// do we need 2 render the OSD?
 				if (m_bOSDVisible)
 				{
 					//yes
-					m_osdWindow.Render();          
+					m_osdWindow.Render(timePassed);          
         
 					//times up?
 					if (m_iMaxTimeOSDOnscreen>0)
@@ -942,7 +942,7 @@ namespace MediaPortal.GUI.TV
 				}
 				if (m_bZapOSDVisible)
 				{
-					m_zapWindow.Render();
+					m_zapWindow.Render(timePassed);
 
 					if (m_iZapTimeOut>0)
 					{
@@ -1152,7 +1152,7 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public void RenderForm()
+		public void RenderForm(long timePassed)
 		{
 			bool bClear=false;
 
@@ -1233,17 +1233,17 @@ namespace MediaPortal.GUI.TV
       
 			SetFFRWLogos();
 			ShowStatus();
-			base.Render();
+			base.Render(timePassed);
 			if (GUIGraphicsContext.graphics!=null)
 			{
 				if (m_bDialogVisible)
 				{
-					dlg.Render();
+					dlg.Render(timePassed);
 				}
 
 				if (m_bMSNChatVisible)
 				{
-					m_msnWindow.Render();
+					m_msnWindow.Render(timePassed);
 				}
 			}
 			// do we need 2 render the OSD?
@@ -1251,7 +1251,7 @@ namespace MediaPortal.GUI.TV
 			{
 				//yes
 				m_bLastStatusOSD=true;
-				m_osdWindow.Render();
+				m_osdWindow.Render(timePassed);
         
 				//times up?
 				if (m_iMaxTimeOSDOnscreen>0)
@@ -1269,7 +1269,7 @@ namespace MediaPortal.GUI.TV
 			}
 			else  if (m_bZapOSDVisible)
 			{
-				m_zapWindow.Render();
+				m_zapWindow.Render(timePassed);
 
 				if (m_iZapTimeOut>0)
 				{

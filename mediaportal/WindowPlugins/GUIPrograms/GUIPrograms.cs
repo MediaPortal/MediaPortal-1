@@ -201,10 +201,10 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			RenderFilmStrip();
-			base.Render();
+			base.Render(timePassed);
 		}
 
 		private void RenderFilmStrip()

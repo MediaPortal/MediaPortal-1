@@ -851,7 +851,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
 		/// Renders the Image
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
     {
 			//return;
       //lock (this)

@@ -1986,12 +1986,12 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			GUIImage vertLine=GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
-			base.Render ();
+			base.Render (timePassed);
 			if (vertLine!=null)
-				vertLine.Render();
+				vertLine.Render(timePassed);
 		}
 
 		void ShowContextMenu()

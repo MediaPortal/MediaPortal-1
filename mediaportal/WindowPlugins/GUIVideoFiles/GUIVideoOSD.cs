@@ -89,9 +89,9 @@ namespace MediaPortal.GUI.Video
     get { return false;}
   }    
 
-  public override void Render()
+  public override void Render(long timePassed)
   {
-    base.Render();		// render our controls to the screen
+    base.Render(timePassed);		// render our controls to the screen
   }
   void HideControl (int dwSenderId, int dwControlID) 
   {

@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.TV
       Trace.WriteLine("osd:OnPaint "+DateTime.Now.ToLongTimeString() );
       GUIGraphicsContext.graphics=e.Graphics;
       GUIFullScreenTV win=(GUIFullScreenTV)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-      win.RenderForm();
+      win.RenderForm(0);
       GUIGraphicsContext.graphics=null;
     }
 

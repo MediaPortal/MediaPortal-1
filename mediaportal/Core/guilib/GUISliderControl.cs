@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-    public override void 	Render()
+    public override void 	Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Library
       }
 
       //int iHeight=25;
-      m_guiBackground.Render();
+      m_guiBackground.Render(timePassed);
       //m_guiBackground.SetHeight(iHeight);
       m_dwHeight = m_guiBackground.Height;
       m_dwWidth = m_guiBackground.Width + 60;
@@ -151,12 +151,12 @@ namespace MediaPortal.GUI.Library
         if (m_bHasFocus)
         {
           m_guiMidFocus.SetPosition((int)fPos, m_guiBackground.YPosition );
-          m_guiMidFocus.Render();
+          m_guiMidFocus.Render(timePassed);
         }
         else
         {
           m_guiMid.SetPosition((int)fPos, m_guiBackground.YPosition );
-          m_guiMid.Render();
+          m_guiMid.Render(timePassed);
         }
       }
     }

@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Library
     /// The default render method. This needs to be overwritten when inherited to give every control 
     /// its specific look and feel.
     /// </summary>
-    public abstract void Render();
+    public abstract void Render(long timePassed);
 
 		/// <summary>
 		/// Property to get/set the id of the window 

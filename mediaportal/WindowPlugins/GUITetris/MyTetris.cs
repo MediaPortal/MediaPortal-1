@@ -144,7 +144,7 @@ namespace MediaPortal.Games.Tetris
 			return base.OnMessage(message);
 		}
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			if(m_wndTetris != null)
 			{
@@ -161,7 +161,7 @@ namespace MediaPortal.Games.Tetris
 				}
 			}
 
-			base.Render();
+			base.Render(timePassed);
 		}
 
 		#endregion
@@ -361,7 +361,7 @@ namespace MediaPortal.Games.Tetris
 
 		#region IHostTetris implementation
 
-		public void OnRenderBlock(float x, float y, Color color, int nHint)
+		public void OnRenderBlock(long timePassed,float x, float y, Color color, int nHint)
 		{
 			if(nHint != 2)
 			{
@@ -375,7 +375,7 @@ namespace MediaPortal.Games.Tetris
 					if(m_imgBlocksGlow != null && m_imgBlocksGlow[nImage] != null)
 					{
 						m_imgBlocksGlow[nImage].SetPosition(nX, nY);
-						m_imgBlocksGlow[nImage].Render();
+						m_imgBlocksGlow[nImage].Render(timePassed);
 					}
 				}
 				else
@@ -383,7 +383,7 @@ namespace MediaPortal.Games.Tetris
 					if(m_imgBlocks != null && m_imgBlocks[nImage] != null)
 					{
 						m_imgBlocks[nImage].SetPosition(nX, nY);
-						m_imgBlocks[nImage].Render();
+						m_imgBlocks[nImage].Render(timePassed);
 					}
 				}
 			}
@@ -401,15 +401,15 @@ namespace MediaPortal.Games.Tetris
 
 		#region Implementation
 
-		void RenderTexture()
+		void RenderTexture(long timePassed)
 		{
 			if(m_bHasFocus)
 			{
-				m_imgTextureFocused.Render();
+				m_imgTextureFocused.Render(timePassed);
 			}
 			else
 			{
-				m_imgTexture.Render();
+				m_imgTexture.Render(timePassed);
 			}
 
 			// render the guides also
@@ -417,12 +417,12 @@ namespace MediaPortal.Games.Tetris
 			{
 				if(m_imgGuide[0] != null)
 				{
-					m_imgGuide[0].Render();
+					m_imgGuide[0].Render(timePassed);
 				}
 
 				if(m_imgGuide[1] != null)
 				{
-					m_imgGuide[1].Render();
+					m_imgGuide[1].Render(timePassed);
 				}
 			}
 		}
@@ -738,7 +738,7 @@ namespace MediaPortal.Games.Tetris
 			}
 		}
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			if(GUIGraphicsContext.EditMode == false && m_bVisible == false)
 			{
@@ -756,7 +756,7 @@ namespace MediaPortal.Games.Tetris
 			if(m_theGame == null || m_theGame != null && m_theGame.State == State.Running)
 			{
 				// draw the texture first so that it appears behind the blocks
-				RenderTexture();
+				RenderTexture(timePassed);
 
 				bRenderTexture = false;
 			}
@@ -764,7 +764,7 @@ namespace MediaPortal.Games.Tetris
 			if(m_theGame != null)
 			{
 				m_theGame.Tick();
-				m_theGame.Render();
+				m_theGame.Render(timePassed);
 			}
 
 			RenderText();
@@ -772,13 +772,13 @@ namespace MediaPortal.Games.Tetris
 			if(bRenderTexture)
 			{
 				// draw the now so that the blocks appear faded
-				RenderTexture();
+				RenderTexture(timePassed);
 			}
 
-			RenderNext();
+			RenderNext(timePassed);
 		}
 
-		public void RenderNext()
+		public void RenderNext(long timePassed)
 		{
 			int nBlock = m_theGame != null ? (m_theGame.NextBlock - 1) : -1;
 
@@ -790,7 +790,7 @@ namespace MediaPortal.Games.Tetris
 
 			if(m_imgBlocksNext != null && m_imgBlocksNext[nBlock] != null)
 			{
-				m_imgBlocksNext[nBlock].Render();
+				m_imgBlocksNext[nBlock].Render(timePassed);
 			}
 		}
 

@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the GUIButton3PartControl.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			// Do not render if not visible.
       if (GUIGraphicsContext.EditMode==false)
@@ -112,23 +112,23 @@ namespace MediaPortal.GUI.Library
 			{
 				//render the focused images
 				if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
-				m_imgFocusLeft.Render();
-				m_imgFocusMid.Render();
-				m_imgFocusRight.Render();
+				m_imgFocusLeft.Render(timePassed);
+				m_imgFocusMid.Render(timePassed);
+				m_imgFocusRight.Render(timePassed);
 			}
 			else 
 			{
 				//else render the non-focus images
 				if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
-				m_imgNoFocusLeft.Render();  		
-				m_imgNoFocusMid.Render();  		
-				m_imgNoFocusRight.Render();
+				m_imgNoFocusLeft.Render(timePassed);  		
+				m_imgNoFocusMid.Render(timePassed);  		
+				m_imgNoFocusRight.Render(timePassed);
       }
 
 			//render the icon
       if (m_imgIcon!=null) 
       {
-        m_imgIcon.Render();
+        m_imgIcon.Render(timePassed);
       }
 //      sprite.End();
 
@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Library
         cntlLabel1.FontName=fontName1;
         cntlLabel1.Label=m_strText1;
         cntlLabel1.Width=iWidth;
-        cntlLabel1.Render();
+        cntlLabel1.Render(timePassed);
 			}
      
 			// render the 2nd line of text on the button
@@ -167,7 +167,7 @@ namespace MediaPortal.GUI.Library
         cntlLabel2.FontName=fontName1;
         cntlLabel2.Label=m_strText2;
         cntlLabel2.Width=iWidth-10;
-        cntlLabel2.Render();
+        cntlLabel2.Render(timePassed);
       }
 		}
 

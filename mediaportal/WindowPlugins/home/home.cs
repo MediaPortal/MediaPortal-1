@@ -792,7 +792,7 @@ namespace MediaPortal.GUI.Home
 		/// <summary>
 		/// Renders the home window.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{			
 			if (m_eState!=State.Idle)
 			{
@@ -830,7 +830,7 @@ namespace MediaPortal.GUI.Home
 			IEnumerator enumControls = m_aryPreControlList.GetEnumerator();
 			while (enumControls.MoveNext())
 			{
-				((GUIControl)enumControls.Current).Render();  
+				((GUIControl)enumControls.Current).Render(timePassed);  
 			}
 			int x1=m_iStartXoff+GUIGraphicsContext.OffsetX;
 			int y1=m_iStartYoff+GUIGraphicsContext.OffsetY;
@@ -860,7 +860,7 @@ namespace MediaPortal.GUI.Home
 				GUIControl cntl=((GUIControl)enumControls.Current);
 				if (cntl.YPosition>=y1 && cntl.YPosition <y1+m_iMaxHeight)
 				{
-					cntl.Render();
+					cntl.Render(timePassed);
 				}
 			}
 			GUIGraphicsContext.DX9Device.Viewport=m_oldviewport;

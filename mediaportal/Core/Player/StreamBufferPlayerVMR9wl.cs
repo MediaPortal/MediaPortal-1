@@ -383,7 +383,7 @@ namespace MediaPortal.Player
 			memDC.FillRectangle(Brushes.Black, 0 , 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 			GUIGraphicsContext.graphics=memDC;
 			
-			GUIGraphicsContext.RenderGUI.RenderFrame();
+			GUIGraphicsContext.RenderGUI.RenderFrame(0);
 			GUIGraphicsContext.graphics=null;
 
 			bitmap.HDC = memdc ;  

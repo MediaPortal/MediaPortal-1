@@ -21,7 +21,7 @@ namespace Tetris
 
 	public interface IHostTetris
 	{
-		void OnRenderBlock(float x, float y, Color color, int nHint);
+		void OnRenderBlock(long timePassed,float x, float y, Color color, int nHint);
 		void OnRenderSound(string strFilePath);
 	}
 
@@ -85,22 +85,22 @@ namespace Tetris
 
 		#region Rendering
 
-		public void Render()
+		public void Render(long timePassed)
 		{
 			if(m_pHost != null)
 			{
-				RenderBoard();
+				RenderBoard(timePassed);
 
 				if(m_nState == State.Running || m_nState == State.Paused)
 				{
-					RenderBlock(m_blockCurrent, 1);
+					RenderBlock(timePassed,m_blockCurrent, 1);
 				}
 				
-				RenderBlock(m_blockNext, 2);
+				RenderBlock(timePassed,m_blockNext, 2);
 			}
 		}
 
-		void RenderBoard()
+		void RenderBoard(long timePassed)
 		{
 			for(int y = 0; y < Game.Height; y++) 
 			{
@@ -122,17 +122,17 @@ namespace Tetris
 							} 
 							else 
 							{
-								m_pHost.OnRenderBlock(x, Game.Height - (y - ((Environment.TickCount - m_nFallingTime) * Game.FallingSpeed)), _Colors[m_nBlock[x, y]], 0);
+								m_pHost.OnRenderBlock(timePassed,x, Game.Height - (y - ((Environment.TickCount - m_nFallingTime) * Game.FallingSpeed)), _Colors[m_nBlock[x, y]], 0);
 							}
 						}
 
 						if(y < m_nFallingRow) 
 						{
-							m_pHost.OnRenderBlock(x, Game.Height - y, _Colors[m_nBlock[x, y]], 0);
+							m_pHost.OnRenderBlock(timePassed,x, Game.Height - y, _Colors[m_nBlock[x, y]], 0);
 						} 
 						else if(y > m_nFallingRow) 
 						{
-							m_pHost.OnRenderBlock(x, Game.Height - y, _Colors[m_nBlock[x, y]], 0);
+							m_pHost.OnRenderBlock(timePassed,x, Game.Height - y, _Colors[m_nBlock[x, y]], 0);
 						}
 					}
 				}
@@ -144,7 +144,7 @@ namespace Tetris
 			}
 		}
 
-		void RenderBlock(Block block, int nHint)
+		void RenderBlock(long timePassed,Block block, int nHint)
 		{
 			if(block != null)
 			{
@@ -161,7 +161,7 @@ namespace Tetris
 
 				for(int nBlock = 0; nBlock < 4; nBlock++)
 				{
-					m_pHost.OnRenderBlock(x[nBlock], Game.Height - y[nBlock], block.Color, nHint);
+					m_pHost.OnRenderBlock(timePassed,x[nBlock], Game.Height - y[nBlock], block.Color, nHint);
 				}
 			}
 		}

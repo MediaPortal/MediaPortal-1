@@ -713,12 +713,12 @@ public class MediaPortalApp : D3DApp, IRender
 				FullRender();
     }
 
-    public void RenderFrame()
+    public void RenderFrame(long timePassed)
     {
       try
       {
 				CreateStateBlock();
-        GUIWindowManager.Render();
+        GUIWindowManager.Render(timePassed);
         RenderStats();
       }
       catch (Exception ex)
@@ -823,7 +823,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   static int prevwindow=0;
   static bool reentrant=false;
-  protected override void Render() 
+  protected override void Render(long timePassed) 
   { 
     if (reentrant) return;
     try
@@ -842,7 +842,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.DX9Device.BeginScene();
 
       // ask the window manager to render the current active window
-      GUIWindowManager.Render();
+      GUIWindowManager.Render(timePassed);
       RenderStats();
          
       GUIFontManager.Present();

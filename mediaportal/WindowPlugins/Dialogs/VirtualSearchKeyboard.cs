@@ -754,15 +754,15 @@ namespace MediaPortal.Dialogs
 		}
   
     #region Base Dialog Members
-    public void RenderDlg()
+    public void RenderDlg(long timePassed)
     {
       // render the parent window
       if (null!=m_pParentWindow) 
-        m_pParentWindow.Render();
+        m_pParentWindow.Render(timePassed);
 
       GUIFontManager.Present();
       // render this dialog box
-      base.Render();
+      base.Render(timePassed);
     }
 
     public void StartModal(int dwParentId)
@@ -794,14 +794,14 @@ namespace MediaPortal.Dialogs
     }
 #endregion
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			// render the parent window
 			if (null!=m_pParentWindow) 
-        m_pParentWindow.Render();
+        m_pParentWindow.Render(timePassed);
 
 			GUIFontManager.Present();
-			RenderKeyboardLatin();    
+			RenderKeyboardLatin(timePassed);    
 		}
 
 		void InitBoard()
@@ -1562,7 +1562,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void DrawTextBox(int x1,int y1, int x2, int y2) 
+    void DrawTextBox(long timePassed,int x1,int y1, int x2, int y2) 
     {
       //long lColor=0xaaffffff;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
@@ -1584,7 +1584,7 @@ namespace MediaPortal.Dialogs
 			image.SetPosition(x1,y1);
 			image.Width=(x2-x1);
 			image.Height=(y2-y1);
-			image.Render();
+			image.Render(timePassed);
 
 
     }
@@ -1614,10 +1614,10 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void RenderKeyboardLatin() 
+    void RenderKeyboardLatin(long timePassed) 
     {
       // Show text and caret
-      DrawTextBox(64,208,576,248);
+      DrawTextBox(timePassed,64,208,576,248);
       DrawText( 68,208);
 
       

@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the GUICheckMarkControl.
 		/// </summary>
-    public override void Render()
+    public override void Render(long timePassed)
     {
 			// Do not render if not visible.
       if (GUIGraphicsContext.EditMode==false)
@@ -132,13 +132,13 @@ namespace MediaPortal.GUI.Library
       if (m_bSelected)
       {
         m_imgCheckMark.SetPosition(dwCheckMarkPosX, m_dwPosY); 
-        m_imgCheckMark.Render();
+        m_imgCheckMark.Render(timePassed);
       }
       else
       {
 				// Render the non-selected checkmark image
 				m_imgCheckMarkNoFocus.SetPosition(dwCheckMarkPosX, m_dwPosY); 
-        m_imgCheckMarkNoFocus.Render();
+        m_imgCheckMarkNoFocus.Render(timePassed);
       }
     }
 

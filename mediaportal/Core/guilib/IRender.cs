@@ -7,6 +7,6 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public interface IRender
 	{
-		void RenderFrame();
+		void RenderFrame(long timePassed);
 	}
 }

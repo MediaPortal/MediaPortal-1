@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX, ref m_iTextOffsetY);
 		}
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -79,18 +79,18 @@ namespace MediaPortal.GUI.Library
         dwAlphaChannel += 192;
         SetAlpha(dwAlphaChannel );
         if (m_bSelected)
-          m_imgFocus.Render();
+          m_imgFocus.Render(timePassed);
         else
-          m_imgAltFocus.Render();
+          m_imgAltFocus.Render(timePassed);
         m_dwFrameCounter++;
       }
       else 
       {
         SetAlpha(0xff);
         if (m_bSelected)
-          m_imgNoFocus.Render();
+          m_imgNoFocus.Render(timePassed);
         else
-          m_imgAltNoFocus.Render();  
+          m_imgAltNoFocus.Render(timePassed);  
       }
 
       if (m_strLabel.Length > 0 && m_pFont!=null)

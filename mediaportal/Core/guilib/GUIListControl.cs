@@ -210,7 +210,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			// If there is no font do not render.
 			if (null == m_pFont) return;
@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.Library
 									btn.Focus = false;
 								}
 								btn.SetPosition(m_dwPosX, dwPosY);
-								btn.Render();
+								btn.Render(timePassed);
 							}
 						}
 					}
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.Library
 						pImage.Width = m_iImageWidth;
 						pImage.Height = m_iImageHeight;
 						pImage.SetPosition(dwPosX + m_iIconOffsetX, dwPosY + m_iIconOffsetY);
-						pImage.Render();
+						pImage.Render(timePassed);
 					}
 					dwPosX += (m_iImageWidth + 10);
 
@@ -425,7 +425,7 @@ namespace MediaPortal.GUI.Library
               dwColor=m_dwRemoteColor;
               if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
             }
-            RenderText(i,(float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY, (float)dMaxWidth, dwColor, m_wszText, bSelected);
+            RenderText(timePassed,i,(float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY, (float)dMaxWidth, dwColor, m_wszText, bSelected);
           }//if (m_bTextVisible1)
 
 					if (pItem.Label2.Length > 0)
@@ -462,7 +462,7 @@ namespace MediaPortal.GUI.Library
                     label2.Label=m_wszText;
                     label2.TextAlignment=GUIControl.Alignment.ALIGN_RIGHT;
                     label2.FontName=m_strFont2Name;
-                    label2.Render();
+                    label2.Render(timePassed);
                     //m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
                   }//if (label2!=null)
                 }//if (i>=0 && i < m_labels2.Count)
@@ -506,7 +506,7 @@ namespace MediaPortal.GUI.Library
                     label3.Label=pItem.Label3;
                     label3.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
                     label3.FontName=m_strFont2Name;
-                    label3.Render();
+                    label3.Render(timePassed);
                     //m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
                   }//if (label3!=null)
                 }//if (i>=0 && i < m_labels3.Count)
@@ -538,7 +538,7 @@ namespace MediaPortal.GUI.Library
             {
               pinImage.SetPosition(m_dwPosX+PinIconOffsetX,dwPosY+PinIconOffsetY );
             }
-            pinImage.Render();
+            pinImage.Render(timePassed);
           }//if (pItem.HasPinIcon)
 					dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
 				}//if (i + m_iOffset < m_vecItems.Count)
@@ -551,10 +551,10 @@ namespace MediaPortal.GUI.Library
 				{
 					dwPosY = m_dwPosY + m_iItemsPerPage * (m_iItemHeight + m_iSpaceBetweenItems) - m_iSpaceBetweenItems - 5;
 					//m_upDown.SetPosition(m_upDown.XPosition,dwPosY+10);
-					m_upDown.Render();
+					m_upDown.Render(timePassed);
 				}
 				// Render the vertical scrollbar
-        m_vertScrollbar.Render();
+        m_vertScrollbar.Render(timePassed);
       }
 		}//public override void Render()
 
@@ -567,7 +567,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwTextColor">The color of the text.</param>
 		/// <param name="strTextToRender">The actual text.</param>
 		/// <param name="bScroll">A bool indication if there is scrolling or not.</param>
-		protected void RenderText(int Item,float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
+		protected void RenderText(long timePassed,int Item,float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
 		{
 			// TODO Unify render text methods into one general rendertext method.
       if (m_labels1==null) return;
@@ -583,13 +583,13 @@ namespace MediaPortal.GUI.Library
       label1.FontName=m_strFontName;
       if (false == bScroll )
 			{
-        label1.Render();
+        label1.Render(timePassed);
 				return;
 			}
         
       if (label1.TextWidth <= fMaxWidth)
       {
-        label1.Render();
+        label1.Render(timePassed);
         return;
       }
       

@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Library
 				}
     }
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.Animations)
       {
@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Library
 
       for (int i=0; i < m_Controls.Count;++i)
       {
-        ((GUIControl)m_Controls[i]).Render();
+        ((GUIControl)m_Controls[i]).Render(timePassed);
       }
     }
 

@@ -115,10 +115,6 @@ namespace MediaPortal.GUI.Alarm
 				return base.OnMessage(message);
 
 			}
-			public override void Render()
-			{
-				base.Render();
-			}
 		#endregion
 
 		#region Private Methods

@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
 
       int iHeight=m_dwHeight; //25;
       m_guiBackground.Height=iHeight;
-      m_guiBackground.Render();
+      m_guiBackground.Render(timePassed);
 
       //iHeight=20;
       float fPercent= (float)m_fPercent;
@@ -91,13 +91,13 @@ namespace MediaPortal.GUI.Library
       m_guiTop.SetPosition(iXPos,iYPos);
       m_guiTop.Height=m_guiTop.TextureHeight;
       m_guiTop.Width=m_guiTop.TextureWidth;
-      m_guiTop.Render();
+      m_guiTop.Render(timePassed);
 
       iXPos += m_guiTop.TextureWidth;
       m_guiBottom.SetPosition(iXPos,iYPos);
       m_guiBottom.Height=m_guiBottom.TextureHeight;
       m_guiBottom.Width=m_guiTop.TextureWidth;
-      m_guiBottom.Render();
+      m_guiBottom.Render(timePassed);
 
     }
 

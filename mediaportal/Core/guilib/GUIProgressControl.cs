@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the progress control.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			if (GUIGraphicsContext.EditMode==false)
 			{
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
 			int iBkgHeight=m_dwHeight;
 			m_guiBackground.Height=iBkgHeight;
 			m_guiBackground.SetPosition(m_guiBackground.XPosition,m_guiBackground.YPosition);
-			m_guiBackground.Render();
+			m_guiBackground.Render(timePassed);
 
       GUIFontManager.Present();
 
@@ -142,7 +142,7 @@ namespace MediaPortal.GUI.Library
 			m_guiLeft.Height=iHeightLeft;
 			m_guiLeft.Width=iWidthLeft;
       m_guiLeft.SetPosition(iXPos,iYPos);
-			m_guiLeft.Render();
+			m_guiLeft.Render(timePassed);
 
 			iXPos += iWidthLeft;
 			if (m_iPercent>0 && (int)fWidth > 1)
@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Library
 				m_guiMid.Height=iHeightLeft;//m_guiMid.TextureHeight;
 				m_guiMid.Width=(int)fWidth;
 				m_guiMid.SetPosition(iXPos,iYPos);
-				m_guiMid.Render();
+				m_guiMid.Render(timePassed);
 				iXPos += (int)fWidth;
 			}
 			//m_guiRight.SetHeight(iHeight);
@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.Library
 			m_guiRight.Height=iHeightRight;
 			m_guiRight.Width=iWidthRight;
       m_guiRight.SetPosition(iXPos,iYPos);
-			m_guiRight.Render();
+			m_guiRight.Render(timePassed);
 		}
 
 		/// <summary>

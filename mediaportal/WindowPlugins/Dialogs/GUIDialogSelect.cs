@@ -65,14 +65,14 @@ namespace MediaPortal.Dialogs
     }
 
     #region Base Dialog Members
-    public void RenderDlg()
+    public void RenderDlg(long timePassed)
     {
       // render the parent window
 //      if (null!=m_pParentWindow) 
 //        m_pParentWindow.Render();
 
       // render this dialog box
-      base.Render();
+      base.Render(timePassed);
     }
 
     void Close()
@@ -306,7 +306,7 @@ namespace MediaPortal.Dialogs
       return msg.Param1;
     }
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
 			GUIControl cntlBtn=GetControl( (int)Controls.CONTROL_BUTTON);
 			if (m_bButtonEnabled)
@@ -317,7 +317,7 @@ namespace MediaPortal.Dialogs
 			{
 				cntlBtn.IsVisible=false;
 			}
-			RenderDlg();
+			RenderDlg(timePassed);
     }
 
     void ClearControl(int iWindowId, int iControlId)

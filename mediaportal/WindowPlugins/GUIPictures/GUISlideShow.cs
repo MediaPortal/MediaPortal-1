@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.Pictures
       m_bSlideShow=true;
     }
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       m_dwFrameCounter++;
       int iSlides= m_slides.Count;
@@ -525,7 +525,7 @@ namespace MediaPortal.GUI.Pictures
           GUIControl.SetControlLabel(GetID, LABEL_ROW2_EXTRA,"");
         }
       }
-      base.Render();
+      base.Render(timePassed);
     }
 
     //pan from left->right

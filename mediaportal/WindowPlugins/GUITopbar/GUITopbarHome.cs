@@ -64,7 +64,7 @@ namespace MediaPortal.Topbar
     {
       AllocResources();
     }
-    public override void Render()
+    public override void Render(long timePassed)
     {
     }
     public override bool DoesPostRender()
@@ -74,7 +74,7 @@ namespace MediaPortal.Topbar
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       return true;
     }
-    public override void PostRender(int iLayer)
+    public override void PostRender(long timePassed,int iLayer)
     {
       if (!m_bEnabled) return;
       if (iLayer !=1) return;
@@ -147,7 +147,7 @@ namespace MediaPortal.Topbar
       if (GUIGraphicsContext.TopBarHidden) return;           
      
 			GUIFontManager.Present();
-      base.Render();
+      base.Render(timePassed);
     }
 
     public void CheckFocus()

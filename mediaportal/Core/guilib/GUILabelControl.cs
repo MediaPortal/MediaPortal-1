@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the text onscreen.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			// Do not render if not visible
       if (GUIGraphicsContext.EditMode==false)

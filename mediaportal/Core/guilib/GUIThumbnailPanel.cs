@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.Library
     }
 
 
-		void RenderItem(int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem, bool buttonOnly)
+		void RenderItem(long timePassed,int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem, bool buttonOnly)
 		{
       if (m_button==null) return;
       if (iButton<0||iButton>=m_button.Count) return;
@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.Library
 				{
 					btn.Focus=true;
 					btn.SetPosition(dwPosX, dwPosY);
-					if (true == m_bShowTexture) btn.Render();
+					if (true == m_bShowTexture) btn.Render(timePassed);
 					return;
 				}
 				if (fTextPosY >= m_dwPosY) RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, true);
@@ -237,7 +237,7 @@ namespace MediaPortal.GUI.Library
 				{
 					btn.Focus=false;
 					btn.SetPosition(dwPosX, dwPosY);
-					if (true == m_bShowTexture) btn.Render();
+					if (true == m_bShowTexture) btn.Render(timePassed);
 					return;
 				}
 				if (fTextPosY >= m_dwPosY) RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, false);
@@ -264,7 +264,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
           int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
           pImage.SetPosition(m_iThumbXPos - iOverSized + dwPosX + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
-          pImage.Render();
+          pImage.Render(timePassed);
           m_iSleeper+=SLEEP_FRAME_COUNT;
         }
         if (null != pImage)
@@ -280,7 +280,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
           int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
           pImage.SetPosition(m_iThumbXPos + dwPosX - iOverSized + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
-          pImage.Render();
+          pImage.Render(timePassed);
         }
       }
       else
@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
             int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(m_iThumbXPos + dwPosX - iOverSized + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
-            pImage.Render();
+            pImage.Render(timePassed);
             m_iSleeper+=SLEEP_FRAME_COUNT;
           }
           if (null != pImage)
@@ -315,13 +315,13 @@ namespace MediaPortal.GUI.Library
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
             int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(m_iThumbXPos - iOverSized + dwPosX + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
-            pImage.Render();
+            pImage.Render(timePassed);
           }
         }
       }
 		}
 
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			if (null == m_pFont) return;
       if (GUIGraphicsContext.EditMode==false)
@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Library
 						if (iItem > 0 && iItem < (int)m_vecItems.Count)
 						{
 							GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-							RenderItem(0,false, dwPosX, dwPosY, pItem, i==0);
+							RenderItem(timePassed,0,false, dwPosX, dwPosY, pItem, i==0);
 							if (iItem < iStartItem) iStartItem = iItem;
 							if (iItem > iEndItem) iEndItem = iItem;
 						}
@@ -437,7 +437,7 @@ namespace MediaPortal.GUI.Library
 						{
 							GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
 							bool bFocus = (m_iCursorX == iCol && m_iCursorY == iRow);
-							RenderItem(iRow*m_iRows+iCol,bFocus, dwPosX, dwPosY, pItem, i==0);
+							RenderItem(timePassed,iRow*m_iRows+iCol,bFocus, dwPosX, dwPosY, pItem, i==0);
 							if (iItem < iStartItem) iStartItem = iItem;
 							if (iItem > iEndItem) iEndItem = iItem;
 						}
@@ -455,7 +455,7 @@ namespace MediaPortal.GUI.Library
 						if (iItem < m_vecItems.Count)
 						{
 							GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-							RenderItem(0,false, dwPosX, dwPosY, pItem, i==0);
+							RenderItem(timePassed,0,false, dwPosX, dwPosY, pItem, i==0);
 							if (iItem < iStartItem) iStartItem = iItem;
 							if (iItem > iEndItem) iEndItem = iItem;
 						}
@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.Library
       
       dwPosY = m_dwPosY + m_iRows * (m_iItemHeight);
       //m_upDown.SetPosition(m_upDown.XPosition,dwPosY);
-			m_upDown.Render();
+			m_upDown.Render(timePassed);
       if (m_bScrollDown || m_bScrollUp)
       {
         m_bRefresh = true;
@@ -510,7 +510,7 @@ namespace MediaPortal.GUI.Library
       int iItemsPerPage = m_iRows * m_iColumns;
       if (m_vecItems.Count > iItemsPerPage)
       {
-        m_vertScrollbar.Render();
+        m_vertScrollbar.Render(timePassed);
       }
 		}
 

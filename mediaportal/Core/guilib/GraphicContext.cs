@@ -92,6 +92,7 @@ namespace MediaPortal.GUI.Library
 		static int											m_iMaxFPS=20;
 		static float                    m_fCurrentFPS=0;
 		static float                    m_fVMR9FPS=0;
+		static float                    lasttime=0f;
 
 		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -782,6 +783,16 @@ namespace MediaPortal.GUI.Library
 			set 
 			{
 				vmr9Active=value;
+			}
+		}
+		static public long TimePassed
+		{
+			get 
+			{
+				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+				float difftime=lasttime-time;
+				lasttime=time;
+				return ( (long)(time*1000.0f) );
 			}
 		}
   }

@@ -189,10 +189,10 @@ namespace MediaPortal.GUI.Alarm
 		#endregion
 
 		#region Base Dialog Members
-		public void RenderDlg()
+		public void RenderDlg(long timePassed)
 		{
 			// render this dialog box
-			base.Render();
+			base.Render(timePassed);
 		}
 	
 		#endregion

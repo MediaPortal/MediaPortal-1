@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -162,7 +162,7 @@ namespace MediaPortal.GUI.Library
 
         //	render background, left and right arrow
 
-        m_imgBackground.Render();
+        m_imgBackground.Render(timePassed);
 
         long dwTextColor=m_dwTextColor;
 
@@ -179,7 +179,7 @@ namespace MediaPortal.GUI.Library
 						GUIWindowManager.SendThreadMessage(message);
 						m_bUpdateNeeded=true;
 					}
-          m_imgLeftFocus.Render();
+          m_imgLeftFocus.Render(timePassed);
 
           //	If we are moving left
           //	render item text as disabled
@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Library
         else
         {
           //	Render none focused arrow
-          m_imgLeft.Render();
+          m_imgLeft.Render(timePassed);
         }
 
 
@@ -205,7 +205,7 @@ namespace MediaPortal.GUI.Library
 						GUIWindowManager.SendThreadMessage(message);
 						m_bUpdateNeeded=true;
 					}
-          m_imgRightFocus.Render();
+          m_imgRightFocus.Render(timePassed);
 
           //	If we are moving right
           //	render item text as disabled
@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.Library
         else
         {
           //	Render none focused arrow
-          m_imgRight.Render();
+          m_imgRight.Render(timePassed);
         }
 
 
@@ -225,7 +225,7 @@ namespace MediaPortal.GUI.Library
           m_label.SetPosition(m_dwPosX+m_imgLeft.Width+m_iTextOffsetX,m_iTextOffsetY+m_dwPosY);
           m_label.TextColor=dwTextColor;
           m_label.Label=(string)m_SubItems[SelectedItem];
-          m_label.Render();
+          m_label.Render(timePassed);
         }
 /*
         //	Select current item, if user doesn't 
@@ -267,12 +267,12 @@ namespace MediaPortal.GUI.Library
           m_imgFocus.IsVisible=true;
           m_imgNoFocus.IsVisible=false;
           m_dwFrameCounter++;*/
-          m_imgFocus.Render();
+          m_imgFocus.Render(timePassed);
         }
         else 
         {
           //SetAlpha(0xff);
-          m_imgNoFocus.Render(); 
+          m_imgNoFocus.Render(timePassed); 
         }
 
         if (m_strLabel!=null&&m_strLabel.Length > 0 && m_pFont!=null)
@@ -284,7 +284,7 @@ namespace MediaPortal.GUI.Library
           else
               m_label.TextColor=m_dwTextColor;
           m_label.Label=m_strLabel;
-          m_label.Render();
+          m_label.Render(timePassed);
         }
       }
     }

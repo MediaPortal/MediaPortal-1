@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the GUIButtonControl.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			// Do not render if not visible.
       if (GUIGraphicsContext.EditMode==false)
@@ -96,12 +96,12 @@ namespace MediaPortal.GUI.Library
 			if (Focus)
 			{
 				//render the focused image
-				m_imgFocus.Render();
+				m_imgFocus.Render(timePassed);
       }
 			else 
 			{
 				//render the non-focused image
-        m_imgNoFocus.Render();  		
+        m_imgNoFocus.Render(timePassed);  		
       }
 
 			// render the text on the button
@@ -110,14 +110,14 @@ namespace MediaPortal.GUI.Library
         m_label.Label=m_strLabel;
         m_label.TextColor=m_dwDisabledColor;
         m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
-        m_label.Render();
+        m_label.Render(timePassed);
       }
       else
       {
         m_label.Label=m_strLabel;
         m_label.TextColor=m_dwTextColor;
         m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
-        m_label.Render();
+        m_label.Render(timePassed);
       }
 		}
 

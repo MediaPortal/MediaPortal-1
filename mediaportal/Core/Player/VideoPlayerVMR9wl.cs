@@ -386,7 +386,7 @@ namespace MediaPortal.Player
 			}
 
 
-			GUIGraphicsContext.RenderGUI.RenderFrame();
+			GUIGraphicsContext.RenderGUI.RenderFrame(0);
 			GUIGraphicsContext.graphics=null;
 			bitmap.HDC = memdc ;  
 			bitmap.pDDS=IntPtr.Zero;

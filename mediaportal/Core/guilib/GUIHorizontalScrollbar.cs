@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-		public override void Render()
+		public override void Render(long timePassed)
 		{
 			if (!IsVisible) return;
 			if (Disabled) return;
@@ -69,7 +69,7 @@ namespace MediaPortal.GUI.Library
 			}
 
 			int iHeight=m_guiBackground.Height; //25;
-			m_guiBackground.Render();
+			m_guiBackground.Render(timePassed);
 			m_guiBackground.Height=iHeight;
 
 			//iHeight=20;
@@ -92,13 +92,13 @@ namespace MediaPortal.GUI.Library
 			m_guiLeft.SetPosition(iXPos,iYPos);
 			m_guiLeft.Height=m_guiLeft.TextureHeight;
 			m_guiLeft.Width=m_guiLeft.TextureWidth;
-      m_guiLeft.Render();
+      m_guiLeft.Render(timePassed);
 
 			iXPos += m_guiLeft.TextureWidth;
 			m_guiRight.SetPosition(iXPos,iYPos);
 			m_guiRight.Height=m_guiRight.TextureHeight;
 			m_guiRight.Width=m_guiLeft.TextureWidth;
-      m_guiRight.Render();
+      m_guiRight.Render(timePassed);
 
 		}
 

@@ -304,7 +304,7 @@ namespace MediaPortal.GUI.Settings
       return base.OnMessage(message);
     }
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
 	    // hide all our controls
 	    GUIImage pControl=(GUIImage)GetControl((int)Controls.CONTROL_BOTTOM_RIGHT);
@@ -443,7 +443,7 @@ namespace MediaPortal.GUI.Settings
       strText=String.Format("{0}x{1} | {2}", GUIGraphicsContext.Width, GUIGraphicsContext.Height,strStatus);
 	    GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW1,  strText);
 
-	    base.Render();
+	    base.Render(timePassed);
 
       /*
       GUIFont font1=GUIFontManager.GetFont("font13");
@@ -465,7 +465,7 @@ namespace MediaPortal.GUI.Settings
       if (m_iControl==(int)Controls.CONTROL_OSD)
       {
         GUIWindow window=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD);
-        window.Render();
+        window.Render(timePassed);
       }
     }
 	}

@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -141,7 +141,7 @@ namespace MediaPortal.GUI.Library
       else m_label.CacheFont=false;
       if (GUIGraphicsContext.graphics!=null)
       {
-        m_label.Render();
+        m_label.Render(timePassed);
         return;
       }
 
@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.Library
       {
         if (m_label.TextWidth< m_dwWidth)
         {
-          m_label.Render();
+          m_label.Render(timePassed);
           return;
         }
       }
@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Library
           dwAlpha += ( m_dwTextColor &0x00ffffff);
           m_label.TextColor=dwAlpha;
           m_label.Label=GetShortenedText(strLabel,m_dwWidth);
-          m_label.Render();
+          m_label.Render(timePassed);
           if (m_iCurrentFrame >=12)
           {
             m_bFadeIn=false;
@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.Library
             m_iCurrentFrame =0; 
           }
           // render the text
-          bool bDone=RenderText(bAdd, (float)m_dwPosX, (float)m_dwPosY, (float) m_dwWidth,m_dwTextColor, strLabel, true );
+          bool bDone=RenderText(timePassed,bAdd, (float)m_dwPosX, (float)m_dwPosY, (float) m_dwWidth,m_dwTextColor, strLabel, true );
             
           if ( bDone)
           {
@@ -291,7 +291,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="wszText">The actual text.</param>
 		/// <param name="bScroll">A bool indication if there is scrolling or not.</param>
 		/// <returns>true if the render was successful</returns>
-    bool RenderText(bool bAdvance, float fPosX, float fPosY, float fMaxWidth,long dwTextColor, string wszText,bool bScroll )
+    bool RenderText(long timePassed,bool bAdvance, float fPosX, float fPosY, float fMaxWidth,long dwTextColor, string wszText,bool bScroll )
     {
 	    bool	bResult=false;
       float fTextHeight=0,fTextWidth=0;
@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.Library
             m_label.TextColor=m_dwTextColor;
             m_label.SetPosition((int)xpos-iScrollX,(int)fPosY);
             m_label.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
-            m_label.Render();
+            m_label.Render(timePassed);
           }
           else
           {
@@ -439,7 +439,7 @@ namespace MediaPortal.GUI.Library
             m_label.Width=(int)fMaxWidth-50;
             m_label.TextColor=m_dwTextColor;
             m_label.SetPosition((int)fPosX-iScrollX,(int)fPosY);
-            m_label.Render();
+            m_label.Render(timePassed);
           }
         }
       	
@@ -452,7 +452,7 @@ namespace MediaPortal.GUI.Library
           m_label.Width=(int)fMaxWidth-50;
           m_label.TextColor=m_dwTextColor;
           m_label.SetPosition((int)fPosX,(int)fPosY);
-          m_label.Render();
+          m_label.Render(timePassed);
         }
 			}
   

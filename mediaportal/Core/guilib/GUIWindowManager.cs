@@ -505,7 +505,7 @@ namespace MediaPortal.GUI.Library
     /// - topbar
     /// 
     /// </summary>
-    static void PostRender()
+    static void PostRender(long timePassed)
     {
       if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
 			//GUIFontManager.Present();
@@ -517,7 +517,7 @@ namespace MediaPortal.GUI.Library
 					for (int x=0; x < windowCount;++x)
 					{
 						if ( m_vecWindows[x].DoesPostRender() )
-							m_vecWindows[x].PostRender(iLayer);
+							m_vecWindows[x].PostRender(timePassed,iLayer);
 					}
 				}
 			}
@@ -554,14 +554,14 @@ namespace MediaPortal.GUI.Library
     /// Render()
     /// ask the current active window to render itself
     /// </summary>
-    static public void Render()
+    static public void Render(long timePassed)
     {
       // if there's a dialog, then render that
 			if (null!=m_pRouteWindow)
 			{
-        m_pRouteWindow.Render();
+        m_pRouteWindow.Render(timePassed);
         // and call postrender
-        PostRender();
+        PostRender(timePassed);
 				return;
 			}
 
@@ -569,11 +569,11 @@ namespace MediaPortal.GUI.Library
       if (m_iActiveWindow >=0 && m_iActiveWindow < windowCount) 
       {
         GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
-        if (null!=pWindow) pWindow.Render();
+        if (null!=pWindow) pWindow.Render(timePassed);
       }
 
       // and call postrender
-      PostRender();
+      PostRender(timePassed);
     }
 
     /// <summary>

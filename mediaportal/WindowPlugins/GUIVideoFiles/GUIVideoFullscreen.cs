@@ -949,7 +949,7 @@ namespace MediaPortal.GUI.Video
     }
 
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (!g_Player.Playing)
       {
@@ -973,13 +973,13 @@ namespace MediaPortal.GUI.Video
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        RenderFullScreen();  
+        RenderFullScreen(timePassed);  
         // do we need 2 render the OSD?
 				if (m_bOSDVisible)
 				{
-					m_osdWindow.Render();
+					m_osdWindow.Render(timePassed);
 				}
-        //base.Render();
+        //base.Render(timePassed);
       }
 
 			// OSD Timeout?
@@ -997,7 +997,7 @@ namespace MediaPortal.GUI.Video
 			}
     }
 
-    void RenderFullScreen()
+    void RenderFullScreen(long timePassed)
     {
 
       if (g_Player.Speed != 1) 
@@ -1207,14 +1207,14 @@ namespace MediaPortal.GUI.Video
           for (int i=(int)Control.PANEL1; i < (int)Control.PANEL2;++i)
             HideControl(GetID,i);
         }
-	      base.Render();
+	      base.Render(timePassed);
 
 				if (GUIGraphicsContext.graphics!=null)
 				{
 					if (m_bMSNChatVisible)
-						m_msnWindow.Render();
+						m_msnWindow.Render(timePassed);
 					if (m_bDialogVisible)
-						dlg.Render();
+						dlg.Render(timePassed);
 
 				}
       }
@@ -1275,7 +1275,7 @@ namespace MediaPortal.GUI.Video
 	    }
     }
     
-    public void RenderForm()
+    public void RenderForm(long timePassed)
     {
       if (!g_Player.Playing) return;
 
@@ -1354,7 +1354,7 @@ namespace MediaPortal.GUI.Video
       {
         // yes
         m_bLastStatusFullScreen=true;
-        RenderFullScreen();
+        RenderFullScreen(timePassed);
       }
       else m_bLastStatusFullScreen=false;
 
@@ -1363,7 +1363,7 @@ namespace MediaPortal.GUI.Video
       {
         //yes
         m_bLastStatusOSD=true;
-        m_osdWindow.Render();
+        m_osdWindow.Render(timePassed);
         
         //times up?
         if (m_iMaxTimeOSDOnscreen>0)

@@ -95,11 +95,11 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Render. This will render the current selected view 
 		/// </summary>
-    public override void Render()
+    public override void Render(long timePassed)
     {
-      if (m_ListView!=null) m_ListView.Render();
-      if (m_ThumbnailView!=null) m_ThumbnailView.Render();
-      if (m_FilmStripView!=null) m_FilmStripView.Render();
+      if (m_ListView!=null) m_ListView.Render(timePassed);
+      if (m_ThumbnailView!=null) m_ThumbnailView.Render(timePassed);
+      if (m_FilmStripView!=null) m_FilmStripView.Render(timePassed);
     }
 
 		/// <summary>

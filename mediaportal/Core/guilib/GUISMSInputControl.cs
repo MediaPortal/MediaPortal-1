@@ -373,10 +373,10 @@ namespace MediaPortal.GUI.Library
 			m_bNeedRefresh=true;
     }
     
-    public override void Render()
+    public override void Render(long timePassed)
     {
       DrawInput();
-      DrawTextBox();
+      DrawTextBox(timePassed);
       DrawText();
       CheckTimer();
     }
@@ -398,7 +398,7 @@ namespace MediaPortal.GUI.Library
       m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2,"pqrs tuv wxyz",GUIControl.Alignment.ALIGN_LEFT,-1);posY+=step;
     }
 
-		void DrawTextBox() 
+		void DrawTextBox(long timePassed) 
 		{
 			int x1=m_dwTextBoxXpos;
 			int y1=m_dwTextBoxYpos;
@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Library
 			image.SetPosition(x1,y1);
 			image.Width=(x2-x1);
 			image.Height=(y2-y1);
-			image.Render();
+			image.Render(timePassed);
 		}
 
     void DrawText()

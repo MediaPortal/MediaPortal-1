@@ -303,6 +303,7 @@ namespace MediaPortal.Player
 		public void Render(Size nativeSize) 
 		{
 			//if we're stopping then just return
+			long timePassed=GUIGraphicsContext.TimePassed;
       if (m_bStop) return;
       lock(this) 
       {
@@ -367,7 +368,7 @@ namespace MediaPortal.Player
           {
 						if (m_renderer != null) 
 						{
-							m_renderer.RenderFrame();
+							m_renderer.RenderFrame(timePassed);
 						}
           }
     
@@ -382,7 +383,7 @@ namespace MediaPortal.Player
           {
 						if (m_renderer != null) 
 						{
-							m_renderer.RenderFrame();
+							m_renderer.RenderFrame(timePassed);
 						}
           }
 

@@ -742,10 +742,10 @@ namespace MediaPortal.GUI.Weather
 			}
 		}
     		
-		public override void Render()
+		public override void Render(long timePassed)
 		{
       
-			base.Render();
+			base.Render(timePassed);
 		}
 
 

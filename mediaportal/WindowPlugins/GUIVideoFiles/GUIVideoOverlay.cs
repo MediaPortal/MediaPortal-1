@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Video
       AllocResources();
     
     }
-    public override void Render()
+    public override void Render(long timePassed)
     {
     }
     
@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Video
       return true;
     }
     
-    public override void PostRender(int iLayer)
+    public override void PostRender(long timePassed,int iLayer)
     {
       if (iLayer != 2) return;
       int iSpeed = g_Player.Speed;
@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.Video
 			{
 				HideControl((int)Controls.CONTROL_VIDEO_RECTANGLE);
 			}
-      base.Render();
+      base.Render(timePassed);
     }
 
     

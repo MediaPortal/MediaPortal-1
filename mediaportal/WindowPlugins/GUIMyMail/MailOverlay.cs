@@ -57,7 +57,7 @@ namespace MyMail
 		{
 			AllocResources();
 		}
-		public override void PostRender(int iLayer)
+		public override void PostRender(long timePassed, int iLayer)
 		{
 			if (iLayer!=3) return;
 			GUIFadeLabel fader =(GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
@@ -69,7 +69,7 @@ namespace MyMail
 			{
 				return;
 			}
-			base.Render();
+			base.Render(timePassed);
 		}
 	}
 }

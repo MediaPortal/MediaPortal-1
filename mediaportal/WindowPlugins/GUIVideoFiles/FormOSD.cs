@@ -264,7 +264,7 @@ namespace MediaPortal.GUI.Video
 			//Trace.WriteLine("osd:OnPaint "+DateTime.Now.ToLongTimeString() );
 			GUIGraphicsContext.graphics=e.Graphics;
 			GUIVideoFullscreen win=(GUIVideoFullscreen)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-			win.RenderForm();
+			win.RenderForm(0);
 			GUIGraphicsContext.graphics=null;
 		}
 

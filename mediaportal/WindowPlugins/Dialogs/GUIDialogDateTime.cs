@@ -72,15 +72,15 @@ namespace MediaPortal.Dialogs
     }
 
     #region Base Dialog Members
-    public void RenderDlg()
+    public void RenderDlg(long timePassed)
     {
       // render the parent window
       if (null!=m_pParentWindow) 
-        m_pParentWindow.Render();
+        m_pParentWindow.Render(timePassed);
 
       GUIFontManager.Present();
       // render this dialog box
-      base.Render();
+      base.Render(timePassed);
     }
 
     void Close()
@@ -336,9 +336,9 @@ namespace MediaPortal.Dialogs
     }
 
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
-      RenderDlg();
+      RenderDlg(timePassed);
     }
     void ClearControl(int iWindowId, int iControlId)
     {

@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Library
     }
 
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -92,7 +92,7 @@ namespace MediaPortal.GUI.Library
             FocusImage.SetPosition((int)x-xoff,(int)y-yoff);
             FocusImage.Width=base.Width+w;
             FocusImage.Height=base.Height+h;
-            FocusImage.Render();
+            FocusImage.Render(timePassed);
           }
 
 					if (GUIGraphicsContext.graphics!=null)
@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.Library
 						//image.SetPosition(m_vidWindow[0].X,m_vidWindow[0].Y);
 						//image.Width=m_vidWindow[0].Width;
 						//image.Height=m_vidWindow[0].Height;
-						image.Render();
+						image.Render(timePassed);
 						//GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,m_vidWindow);
 					}
 				}

@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScaleVertical(ref m_iTopTextureYOffset);
 		}
 
-    public override void Render()
+    public override void Render(long timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -201,9 +201,9 @@ namespace MediaPortal.GUI.Library
 			xPos=iWidth+m_dwPosX+m_guiLeft.TextureWidth;
 			m_guiRight.SetPosition(xPos,m_dwPosY);
 
-			m_guiLeft.Render();
-			m_guiRight.Render();
-			m_guiMid.Render();
+			m_guiLeft.Render(timePassed);
+			m_guiRight.Render(timePassed);
+			m_guiMid.Render(timePassed);
 
       int iWidth1=0,iWidth2=0,iWidth3=0;
 
@@ -216,7 +216,7 @@ namespace MediaPortal.GUI.Library
       m_guiFillBackground.Width=iWidth;
       m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
       m_guiFillBackground.SetPosition(xPos,m_dwPosY+m_iFillY);
-      m_guiFillBackground.Render();
+      m_guiFillBackground.Render(timePassed);
 
       // render first color
       int xoff=5;
@@ -233,7 +233,7 @@ namespace MediaPortal.GUI.Library
         m_guiFill1.Height=m_iFillHeight;
         m_guiFill1.Width=iWidth1;
         m_guiFill1.SetPosition(xPos,yPos);
-        m_guiFill1.Render();// red
+        m_guiFill1.Render(timePassed);// red
       }
       iCurPos=iWidth1+xPos;
 
@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.Library
         m_guiFill2.Width=iWidth2;
         m_guiFill2.Height=m_guiFill1.Height;
         m_guiFill2.SetPosition(iCurPos,m_guiFill1.YPosition);
-        m_guiFill2.Render();
+        m_guiFill2.Render(timePassed);
       }
       iCurPos=iWidth1+iWidth2+xPos;
 
@@ -272,7 +272,7 @@ namespace MediaPortal.GUI.Library
         m_guiFill3.Width=iWidth3;
         m_guiFill3.Height=m_guiFill2.Height;
         m_guiFill3.SetPosition(iCurPos,m_guiFill2.YPosition);
-        m_guiFill3.Render();
+        m_guiFill3.Render(timePassed);
       }
 
 			// render ticks
@@ -291,24 +291,24 @@ namespace MediaPortal.GUI.Library
         fWidth/=100.0f;
         fWidth*= (float)i;
         m_guiTick.SetPosition( (int)(fpos+fWidth),(int)m_dwPosY+posy1);
-        m_guiTick.Render();
+        m_guiTick.Render(timePassed);
       }
 
 			// render top
       xPos=iCurPos - (m_guiTop.TextureWidth/2);
       m_guiTop.SetPosition(xPos, m_dwPosY - m_guiTop.TextureHeight+m_iTopTextureYOffset);
-      m_guiTop.Render();
+      m_guiTop.Render(timePassed);
 
       //render tick @ current position
       m_guiTick.Height=m_guiFillBackground.TextureHeight;
       m_guiTick.Width=m_guiTick.TextureWidth*2;
       m_guiTick.SetPosition( (int)(m_guiTop.XPosition+(m_guiTop.TextureWidth/2)-(m_guiTick.Width/2)),(int)m_guiFillBackground.YPosition);
-      m_guiTick.Render();
+      m_guiTick.Render(timePassed);
       
       // render bottom
       xPos=m_guiTop.XPosition + (m_guiTop.TextureWidth/2) - (m_guiBottom.TextureWidth/2);
       m_guiBottom.SetPosition(xPos, m_dwPosY+m_guiMid.TextureHeight);
-      m_guiBottom.Render();
+      m_guiBottom.Render(timePassed);
 
 
       //render logo
@@ -320,7 +320,7 @@ namespace MediaPortal.GUI.Library
       fy += ( ( (float)m_guiBottom.TextureHeight)/2f);
       fy -= ( ( (float)m_guiLogo.TextureHeight)/2f);
       m_guiLogo.SetPosition((int)fx, (int)fy);
-      m_guiLogo.Render();
+      m_guiLogo.Render(timePassed);
       
 			if (m_pFont!=null)
 			{
