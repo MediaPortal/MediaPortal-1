@@ -107,8 +107,8 @@ namespace MediaPortal
     protected virtual void OnDeviceReset(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
     protected virtual void FrameMove() { /* Do Nothing */ }
     protected virtual void Render() { /* Do Nothing */ }
-    protected virtual void OnDeviceLost(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
-    protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
+    //protected virtual void OnDeviceLost(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
+    //protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
 
     protected virtual void OnStartup() {}
     protected virtual void OnExit() {}
@@ -199,6 +199,41 @@ namespace MediaPortal
         DXUtil.Timer(DirectXTimer.Start);
 
         // Initialize the application timer
+        //@@@fullscreen
+        storedSize=this.ClientSize;
+        storedLocation=this.Location ;
+        oldBounds=new Rectangle(Bounds.X,Bounds.Y,Bounds.Width,Bounds.Height);
+
+
+        using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        {
+          string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
+          if (strStartFull!=null && strStartFull=="yes")
+          {
+            Win32API.EnableStartBar(false);
+            Win32API.ShowStartBar(false);
+
+            Log.Write("start fullscreen");
+            this.FormBorderStyle=FormBorderStyle.None;
+            this.MaximizeBox=false;
+            this.MinimizeBox=false;
+            this.Menu=null;
+            this.Location= new System.Drawing.Point(0,0);
+            this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+            this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+            //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
+            //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
+            Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+              this.ClientSize.Width,this.ClientSize .Height,
+              Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+
+            //m_bNeedReset=true;
+            //deviceLost=true;
+            isMaximized=true;
+          }
+        }
+ 
+        //@@@fullscreen
 
 					  
         // Initialize the 3D environment for the app
@@ -498,9 +533,10 @@ namespace MediaPortal
       }
     }
 
-    public bool SwitchFullScreenOrWindowed(bool bWindowed)
+    public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
     {
-      GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
+      if (bRemoveHandler)
+        GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
       if (bWindowed) 
         Log.Write("Switch to windowed mode ");
       else 
@@ -511,7 +547,9 @@ namespace MediaPortal
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
         
-        GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+        if (bRemoveHandler)
+          GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+        this.Activate();
         return true;
       }
       catch(Exception ex)
@@ -528,7 +566,9 @@ namespace MediaPortal
         }
         catch(Exception ){}
 
-        GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+        if (bRemoveHandler)
+          GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+        this.Activate();
         return false;
       }
     }
@@ -673,10 +713,10 @@ namespace MediaPortal
         }
 
         // Setup the event handlers for our device
-        GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
+        //GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
         GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
-        GUIGraphicsContext.DX9Device.Disposing += new System.EventHandler(this.OnDeviceDisposing);
-        GUIGraphicsContext.DX9Device.DeviceResizing += new System.ComponentModel.CancelEventHandler(this.EnvironmentResized);
+        //GUIGraphicsContext.DX9Device.Disposing += new System.EventHandler(this.OnDeviceDisposing);
+        //GUIGraphicsContext.DX9Device.DeviceResizing += new System.ComponentModel.CancelEventHandler(this.EnvironmentResized);
 
         // Initialize the app's device-dependent objects
         try
@@ -692,8 +732,8 @@ namespace MediaPortal
         catch (Exception ex)
         {
           // Cleanup before we try again
-          OnDeviceLost(null, null);
-          OnDeviceDisposing(null, null);
+          //OnDeviceLost(null, null);
+          //OnDeviceDisposing(null, null);
           GUIGraphicsContext.DX9Device.Dispose();
           GUIGraphicsContext.DX9Device = null;
           if (this.Disposing)
@@ -1015,41 +1055,6 @@ namespace MediaPortal
       mainWindow.Show();	
       Initialize() ;
 
-      storedSize=this.ClientSize;
-      storedLocation=this.Location ;
-      oldBounds=new Rectangle(Bounds.X,Bounds.Y,Bounds.Width,Bounds.Height);
-
-//@@@fullscreen
-
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
-        if (strStartFull!=null && strStartFull=="yes")
-        {
-          Win32API.EnableStartBar(false);
-          Win32API.ShowStartBar(false);
-
-          Log.Write("start fullscreen");
-          this.FormBorderStyle=FormBorderStyle.None;
-          this.MaximizeBox=false;
-          this.MinimizeBox=false;
-          this.Menu=null;
-          this.Location= new System.Drawing.Point(0,0);
-          this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-          this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
-          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
-          Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
-                    this.ClientSize.Width,this.ClientSize .Height,
-                    Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-
-          m_bNeedReset=true;
-          deviceLost=true;
-          isMaximized=true;
-        }
-      }
- 
-//@@@fullscreen
       OnStartup();
 
       
@@ -1526,14 +1531,19 @@ namespace MediaPortal
 
       if (e.Control==false && e.Alt==true && (e.KeyCode == System.Windows.Forms.Keys.Return))
       {
-				m_bRestore=true;
-        m_bWasPlaying =g_Player.Playing;
-        m_strCurrentFile=g_Player.CurrentFile;
-        m_iActiveWindow=GUIWindowManager.ActiveWindow;
-        m_dCurrentPos=g_Player.CurrentPosition;
-        g_Player.Stop();
-
+        if (g_Player.Playing)
+        {
+          m_bRestore=true;
+          m_bWasPlaying =g_Player.Playing;
+          m_strCurrentFile=g_Player.CurrentFile;
+          m_iActiveWindow=GUIWindowManager.ActiveWindow;
+          m_dCurrentPos=g_Player.CurrentPosition;
+          g_Player.Stop();
+        }
+        
+        
         isMaximized=!isMaximized;
+        GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
         if (isMaximized)
         {
           Log.Write("windowed->fullscreen");
@@ -1546,18 +1556,14 @@ namespace MediaPortal
           this.Location= new System.Drawing.Point(0,0);
           this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
           this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-
-          deviceLost=true;
-          isMaximized=true;
-          m_bNeedReset=true;
+          this.Update();
           GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
           GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
           Log.Write("windowed->fullscreen done {0}", isMaximized);
           Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
                       this.ClientSize.Width,this.ClientSize .Height,
                       Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-
-                                  
+          SwitchFullScreenOrWindowed(windowed,false);
         }
         else
         {
@@ -1573,13 +1579,14 @@ namespace MediaPortal
           this.Location = storedLocation;
           Bounds=new Rectangle(oldBounds.X,oldBounds.Y,oldBounds.Width,oldBounds.Height);
           this.ClientSize = storedSize;
-          deviceLost=true;
-          m_bNeedReset=true;
           Log.Write("fullscreen->windowed done {0}", isMaximized);
           Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
                       this.ClientSize.Width,this.ClientSize .Height,
                       Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+          SwitchFullScreenOrWindowed(windowed,false);
         }
+        GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+        OnDeviceReset(null,null);
         e.Handled=true;
         return;
         /*
@@ -1759,12 +1766,12 @@ namespace MediaPortal
       if (isHandlingSizeChanges)
       {
         // Are we maximized?
-        isMaximized = (this.WindowState == System.Windows.Forms.FormWindowState.Maximized);
-        if (!isMaximized)
-        {
+        //isMaximized = (this.WindowState == System.Windows.Forms.FormWindowState.Maximized);
+        //if (!isMaximized)
+        //{
           //storedSize = this.ClientSize;
           // storedLocation = this.Location;
-        }
+        //}
       }
       active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized || this.Visible == false);
       base.OnResize(e);

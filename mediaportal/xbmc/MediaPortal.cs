@@ -885,7 +885,7 @@ public class MediaPortalApp : D3DApp, IRender
 			if (key.KeyChar == '?')
 			{
         bool bWindowed=!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed;
-        SwitchFullScreenOrWindowed(bWindowed);        
+        SwitchFullScreenOrWindowed(bWindowed,true);        
 			}
 			Action action = new Action();
       if (GUIWindowManager.IsRouted && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD)
@@ -1171,20 +1171,20 @@ public class MediaPortalApp : D3DApp, IRender
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED : 
         if (isMaximized == false) return;
-/*
+
         if (message.Param1 != 0)
         {
           //switch to fullscreen mode
           if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
-          SwitchFullScreenOrWindowed(false);
+          //SwitchFullScreenOrWindowed(false,true);
         }
         else
         {
           //switch to windowed mode
           if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
-          SwitchFullScreenOrWindowed(true);
+          //SwitchFullScreenOrWindowed(true,true);
         }
-*/
+
       break;
     }
   }
