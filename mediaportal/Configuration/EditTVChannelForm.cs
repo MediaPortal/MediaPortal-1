@@ -57,8 +57,9 @@ namespace MediaPortal.Configuration
       // Set size of window
       //
       typeComboBox.Text = "Internal";
+      comboTvStandard.Text = "Default";
       advancedGroupBox.Visible = false;
-      this.Height = 200;
+      this.Height = 208;
 		}
 
 		/// <summary>
@@ -121,13 +122,14 @@ namespace MediaPortal.Configuration
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(360, 128);
+      this.groupBox1.Size = new System.Drawing.Size(360, 136);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Channel Settings";
       // 
       // comboTvStandard
       // 
+      this.comboTvStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboTvStandard.Items.AddRange(new object[] {
                                                          "Default",
                                                          "NTSC M",
@@ -150,11 +152,10 @@ namespace MediaPortal.Configuration
                                                          "SECAM L",
                                                          "SECAM L1",
                                                          "PAL N COMBO"});
-      this.comboTvStandard.Location = new System.Drawing.Point(120, 96);
+      this.comboTvStandard.Location = new System.Drawing.Point(120, 93);
       this.comboTvStandard.Name = "comboTvStandard";
       this.comboTvStandard.Size = new System.Drawing.Size(224, 21);
       this.comboTvStandard.TabIndex = 12;
-      this.comboTvStandard.Text = "Default";
       this.comboTvStandard.SelectedIndexChanged += new System.EventHandler(this.comboTvStandard_SelectedIndexChanged);
       // 
       // label7
@@ -169,7 +170,7 @@ namespace MediaPortal.Configuration
       // 
       this.frequencyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.frequencyTextBox.Location = new System.Drawing.Point(120, 72);
+      this.frequencyTextBox.Location = new System.Drawing.Point(120, 69);
       this.frequencyTextBox.MaxLength = 10;
       this.frequencyTextBox.Name = "frequencyTextBox";
       this.frequencyTextBox.Size = new System.Drawing.Size(224, 20);
@@ -186,7 +187,7 @@ namespace MediaPortal.Configuration
       // 
       // channelTextBox
       // 
-      this.channelTextBox.Location = new System.Drawing.Point(120, 40);
+      this.channelTextBox.Location = new System.Drawing.Point(120, 45);
       this.channelTextBox.MaxLength = 4;
       this.channelTextBox.Name = "channelTextBox";
       this.channelTextBox.Size = new System.Drawing.Size(40, 20);
@@ -206,7 +207,7 @@ namespace MediaPortal.Configuration
       // 
       this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.nameTextBox.Location = new System.Drawing.Point(120, 16);
+      this.nameTextBox.Location = new System.Drawing.Point(120, 21);
       this.nameTextBox.Name = "nameTextBox";
       this.nameTextBox.Size = new System.Drawing.Size(224, 20);
       this.nameTextBox.TabIndex = 5;
@@ -224,7 +225,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(293, 279);
+      this.cancelButton.Location = new System.Drawing.Point(293, 287);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "Cancel";
@@ -234,7 +235,7 @@ namespace MediaPortal.Configuration
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.okButton.Location = new System.Drawing.Point(213, 279);
+      this.okButton.Location = new System.Drawing.Point(213, 287);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 2;
       this.okButton.Text = "OK";
@@ -244,7 +245,7 @@ namespace MediaPortal.Configuration
       // 
       this.advancedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.advancedButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.advancedButton.Location = new System.Drawing.Point(8, 280);
+      this.advancedButton.Location = new System.Drawing.Point(8, 288);
       this.advancedButton.Name = "advancedButton";
       this.advancedButton.TabIndex = 3;
       this.advancedButton.Text = "Advanced >>";
@@ -262,7 +263,7 @@ namespace MediaPortal.Configuration
       this.advancedGroupBox.Controls.Add(this.externalChannelTextBox);
       this.advancedGroupBox.Controls.Add(this.label4);
       this.advancedGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.advancedGroupBox.Location = new System.Drawing.Point(8, 144);
+      this.advancedGroupBox.Location = new System.Drawing.Point(8, 152);
       this.advancedGroupBox.Name = "advancedGroupBox";
       this.advancedGroupBox.Size = new System.Drawing.Size(360, 128);
       this.advancedGroupBox.TabIndex = 4;
@@ -333,14 +334,14 @@ namespace MediaPortal.Configuration
       this.AcceptButton = this.okButton;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(376, 310);
+      this.ClientSize = new System.Drawing.Size(376, 318);
       this.Controls.Add(this.advancedGroupBox);
       this.Controls.Add(this.advancedButton);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.groupBox1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-      this.MinimumSize = new System.Drawing.Size(384, 200);
+      this.MinimumSize = new System.Drawing.Size(384, 208);
       this.Name = "EditTVChannelForm";
       this.ShowInTaskbar = false;
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -425,7 +426,7 @@ namespace MediaPortal.Configuration
         advancedButton.Text = "Advanced >>";
         advancedGroupBox.Visible = false;
 
-        this.Height = 200;
+        this.Height = 208;
       }
 
       //
@@ -536,7 +537,7 @@ namespace MediaPortal.Configuration
           channel.Frequency = 0;
         }
 
-        string standard=(string)comboTvStandard.SelectedItem;
+        string standard=comboTvStandard.Text;
         if (standard=="Default") channel.standard = AnalogVideoStandard.None;
         if (standard=="NTSC M") channel.standard = AnalogVideoStandard.NTSC_M;
         if (standard=="NTSC M J") channel.standard = AnalogVideoStandard.NTSC_M_J;
