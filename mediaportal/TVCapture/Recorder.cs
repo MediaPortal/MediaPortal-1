@@ -874,7 +874,7 @@ namespace MediaPortal.TV.Recording
 									dev.StartTimeShifting();
 								}
 
-								Log.WriteFile(Log.LogType.Recorder,"Recorder:    start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
+								Log.WriteFile(Log.LogType.Recorder,"Recorder:  start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
 								//yes, check if we're already playing/watching it
 								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 								if (g_Player.CurrentFile!=strTimeShiftFileName)
@@ -956,7 +956,7 @@ namespace MediaPortal.TV.Recording
 			m_strTVChannel=channel;
 			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			
-			Log.WriteFile(Log.LogType.Recorder,"Recorder:found card {0} {1}",dev.ID,dev.FriendlyName);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:  found card {0} {1}",dev.ID,dev.FriendlyName);
 
 			//do we want to use timeshifting ?
 			if (timeshift)
