@@ -316,6 +316,11 @@ namespace MyMail
 					}
 				count++;
 			}
+
+      string applicationPath=Application.ExecutablePath;
+      applicationPath=System.IO.Path.GetFullPath(applicationPath);
+      applicationPath=System.IO.Path.GetDirectoryName(applicationPath);
+
 			if(textBox1.Text.Equals(textBox2.Text))	
 				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 				{
@@ -331,7 +336,14 @@ namespace MyMail
 						if(tmpBox.MailboxFolder=="") // this must set
 							tmpBox.MailboxFolder=tmpBox.BoxLabel+"__Folder";
 						if(tmpBox.AttachmentFolder=="") // this must set
-							tmpBox.AttachmentFolder="Attachments";
+							tmpBox.AttachmentFolder=tmpBox.MailboxFolder+@"\Attachments";
+            
+            // check full pathnames
+            if (!System.IO.Path.IsPathRooted(tmpBox.AttachmentFolder)) 
+              tmpBox.AttachmentFolder= applicationPath+@"\email\"+tmpBox.AttachmentFolder;
+            if (!System.IO.Path.IsPathRooted(tmpBox.MailboxFolder)) 
+              tmpBox.MailboxFolder = applicationPath+@"\email\"+tmpBox.MailboxFolder;
+
 						if(tmpBox.BoxLabel=="")
 						{
 							MessageBox.Show("The BoxLabel property cant be empty!");
