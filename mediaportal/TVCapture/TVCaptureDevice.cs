@@ -204,6 +204,7 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsRecording) return;
 
+      Log.Write("Card:{0} stop recording",ID);
       // todo : stop recorder
       m_graph.StopRecording();
 
@@ -239,7 +240,8 @@ namespace MediaPortal.TV.Recording
       m_iPreRecordInterval      = iPreRecordInterval;
       m_iPostRecordInterval     = iPostRecordInterval;
       m_strTVChannel            = recording.Channel;
-		
+
+      Log.Write("Card:{0} record new program on {1}",ID,m_strTVChannel);		
       // create sink graph
       if (CreateGraph())
       {
@@ -292,6 +294,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
+      Log.Write("Card:{0} stop",ID);		
       StopRecording();
       StopTimeShifting();
       DeleteGraph();
@@ -301,6 +304,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graph==null)
       {
+        Log.Write("Card:{0} CreateGraph",ID);		
         int iTunerCountry=31;
         string strTunerType="Antenna";
         using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -321,6 +325,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graph!=null)
       {
+        Log.Write("Card:{0} DeleteGraph",ID);		
         m_graph.DeleteGraph();
         m_graph=null;
 				GC.Collect();
@@ -333,6 +338,7 @@ namespace MediaPortal.TV.Recording
 
     public bool StartTimeShifting()
     {
+      Log.Write("Card:{0} start timeshifting :{1}",ID, m_strTVChannel);
 			int iChannelNr=GetChannelNr(m_strTVChannel);
 
 			if (m_eState==State.Timeshifting) 
@@ -353,7 +359,15 @@ namespace MediaPortal.TV.Recording
         strRecPath=Utils.RemoveTrailingSlash(strRecPath);
       }
       string strFileName=String.Format(@"{0}\live.tv",strRecPath);
-    
+
+      // it could be that another card is already timeshifting and therefore has
+      // created a live.tv file. ifso, then we create a new one called live[id].tv 
+      if (System.IO.File.Exists(strFileName))
+      {
+        strFileName=String.Format(@"{0}\live{1}.tv",strRecPath,ID);
+      }
+      
+      Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
       bool bResult=m_graph.StartTimeShifting(iChannelNr, strFileName);
       m_eState=State.Timeshifting;
       return bResult;
@@ -362,6 +376,9 @@ namespace MediaPortal.TV.Recording
     public bool StopTimeShifting()
     {
       if (!IsTimeShifting) return false;
+
+      //stopping timeshifting will also remove the live.tv file 
+      Log.Write("Card:{0} stop timeshifting",ID);
       m_graph.StopTimeShifting();
       m_eState=State.Initialized;
       return true;
@@ -369,6 +386,7 @@ namespace MediaPortal.TV.Recording
 
      bool StartRecording(bool bContentRecording)
      {
+      Log.Write("Card:{0} start recording content:{1}",ID, bContentRecording);
       string strRecPath;
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
@@ -407,6 +425,7 @@ namespace MediaPortal.TV.Recording
       
 
       string strFileName=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
+      Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
       bool bResult=m_graph.StartRecording(strFileName, bContentRecording,timeProgStart);
 
 			m_newRecordedTV = new TVRecorded();        
