@@ -650,6 +650,11 @@ namespace MediaPortal.Dialogs
 
 		public override void OnAction(Action action)
 		{
+			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+			{
+				Close();
+				return;
+			}
       
 			Event ev;
 			switch (action.wID)
@@ -785,7 +790,6 @@ namespace MediaPortal.Dialogs
 			// render the parent window
 			if (null!=m_pParentWindow) 
         m_pParentWindow.Render();
-      GUIFontManager.Present();
 
 			RenderKeyboardLatin();    
 		}
@@ -1657,7 +1661,7 @@ namespace MediaPortal.Dialogs
 
 					// Highlight the current key
 					if( row == m_iCurrRow && dwIndex == m_iCurrKey )
-						selKeyColor |= COLOR_HIGHLIGHT;
+              selKeyColor =COLOR_HIGHLIGHT;
 
 					RenderKey( fX + fWidthSum, fY, key, selKeyColor, selTextColor );
 
