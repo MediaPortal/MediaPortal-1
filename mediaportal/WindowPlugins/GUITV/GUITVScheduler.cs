@@ -223,7 +223,10 @@ namespace MediaPortal.GUI.TV
         int card;
         if (Recorder.IsRecordingSchedule(rec,out card))
         {
-          item.PinImage="tvguide_record_button.png";
+					if (rec.RecType !=TVRecording.RecordingType.Once)
+						item.PinImage="tvguide_recordserie_button.png";
+					else
+						item.PinImage="tvguide_record_button.png";
         }
         item.ThumbnailImage=strLogo;
         item.IconImageBig=strLogo;
@@ -443,10 +446,21 @@ namespace MediaPortal.GUI.TV
 
         // check with recorder.
         int card;
-        if (Recorder.IsRecordingSchedule(rec, out card))
-        {
-          item.Label3=GUILocalizeStrings.Get(682);//Recording
-        }
+				if (Recorder.IsRecordingSchedule(rec, out card))
+				{
+					item.Label3=GUILocalizeStrings.Get(682);//Recording
+					if (Recorder.IsRecordingSchedule(rec,out card))
+					{
+						if (rec.RecType !=TVRecording.RecordingType.Once)
+							item.PinImage="tvguide_recordserie_button.png";
+						else
+							item.PinImage="tvguide_record_button.png";
+					}
+				}
+				else 
+				{
+					item.PinImage="";
+				}
         
         switch (currentSortMethod)
         {
@@ -538,14 +552,19 @@ namespace MediaPortal.GUI.TV
       {
         dlg.Add( GUILocalizeStrings.Get(i));
       }
-      dlg.Add( GUILocalizeStrings.Get(626));
+      dlg.Add( GUILocalizeStrings.Get(626));//Change type
+
+			int card;
+			if (Recorder.IsRecordingSchedule(rec,out card))
+			{
+				dlg.Add( GUILocalizeStrings.Get(655)); //play recorded tv
+			}
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
       switch (dlg.SelectedLabel)
       {
         case 0: // delete
         {
-          int card;
           if (Recorder.IsRecordingSchedule(rec, out card))
           {
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
@@ -571,7 +590,12 @@ namespace MediaPortal.GUI.TV
 
         case 2: // edit Type
           ChangeType(rec);
-        break;
+					break;
+
+				case 3: // Play
+					GUITVHome.ViewChannel(rec.Channel);
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					break;
       }
     }
     
@@ -755,7 +779,7 @@ namespace MediaPortal.GUI.TV
           TVDatabase.RemoveRecording(rec);
         }
       }
-      GUIDialogOK pDlgOK			 = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       LoadDirectory();
       if (pDlgOK!=null)
       {

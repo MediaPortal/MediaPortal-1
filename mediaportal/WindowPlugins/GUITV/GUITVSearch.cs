@@ -264,9 +264,13 @@ namespace MediaPortal.GUI.TV
               item.Label2=strTime;
               item.Path=program.Title;
               item.MusicTag=program;
-              if (IsRecording(program))
+							bool isSerie;
+              if (IsRecording(program, out isSerie))
               {
-                item.PinImage="tvguide_record_button.png";
+								if (isSerie)
+									item.PinImage="tvguide_recordserie_button.png";
+								else
+									item.PinImage="tvguide_record_button.png";
               }
               Utils.SetDefaultIcons(item);
               SetChannelLogo(program.Channel,ref item);
@@ -295,9 +299,13 @@ namespace MediaPortal.GUI.TV
               item.Label2=strTime;
               item.Path=program.Title;
               item.MusicTag=program;
-              if (IsRecording(program))
+							bool isSerie;
+              if (IsRecording(program, out isSerie))
               {
-                item.PinImage="tvguide_record_button.png";
+                if (isSerie)
+									item.PinImage="tvguide_recordserie_button.png";
+								else
+									item.PinImage="tvguide_record_button.png";
               }
               Utils.SetDefaultIcons(item);
               SetChannelLogo(program.Channel,ref item);
@@ -328,9 +336,13 @@ namespace MediaPortal.GUI.TV
 						item.Label2=strTime;
 						item.Path=program.Title;
 						item.MusicTag=program;
-						if (IsRecording(program))
+						bool isSerie;
+						if (IsRecording(program,out isSerie))
 						{
-							item.PinImage="tvguide_record_button.png";
+							if (isSerie)
+								item.PinImage="tvguide_recordserie_button.png";
+							else
+								item.PinImage="tvguide_record_button.png";
 						}
 						Utils.SetDefaultIcons(item);
 						SetChannelLogo(program.Channel,ref item);
@@ -575,13 +587,16 @@ namespace MediaPortal.GUI.TV
       }
     }
 
-    bool IsRecording(TVProgram program)
+    bool IsRecording(TVProgram program, out bool isSerie)
     {
       bool bRecording=false;
+			isSerie=false;
       foreach (TVRecording record in _recordings)
       {
         if (record.IsRecordingProgram(program) ) 
         {
+					if (record.RecType !=TVRecording.RecordingType.Once)
+						isSerie=true;
           bRecording=true;
           break;
         }

@@ -914,19 +914,29 @@ namespace MediaPortal.GUI.TV
 				m_strCurrentChannel=m_currentProgram.Channel;
 
 				bool bRecording=false;
+				bool bSeries=false;
 				foreach (TVRecording record in m_recordings)
 				{
-					if (record.IsRecordingProgram(m_currentProgram) ) 
+					if (record.Canceled==0)
 					{
-						if (record.Canceled==0)
+						if (record.IsRecordingProgram(m_currentProgram) ) 
 						{
+							if (record.RecType !=TVRecording.RecordingType.Once)
+								bSeries=true;
 							bRecording=true;
 							break;
 						}
 					}
 				}
 				if (bRecording)
+				{
+					GUIImage img=(GUIImage)GetControl((int)Controls.IMG_REC_PIN);
+					if (bSeries)
+						img.SetFileName("tvguide_recordserie_button.png");
+					else
+						img.SetFileName("tvguide_record_button.png");
 					GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_PIN);
+				}
 				else
 					GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
 			}
@@ -1037,12 +1047,15 @@ namespace MediaPortal.GUI.TV
 					img.DoUpdate();
 				}
 				bool bRecording=false;
+				bool bSeries=false;
 				foreach (TVRecording record in m_recordings)
 				{
 					if (record.IsRecordingProgram(program) ) 
 					{
 						if (record.Canceled==0)
 						{
+							if (record.RecType !=TVRecording.RecordingType.Once)
+								bSeries=true;
 							bRecording=true;
 							break;
 						}
@@ -1050,9 +1063,16 @@ namespace MediaPortal.GUI.TV
 				}
 
 				if (bRecording)
-					img.TexutureIcon="tvguide_record_button.png";
+				{
+					if (bSeries)
+						img.TexutureIcon="tvguide_recordserie_button.png";
+					else
+						img.TexutureIcon="tvguide_record_button.png";
+				}
 				else
+				{
 					img.TexutureIcon="";
+				}
 				img.Data=program.Clone();
 				img.ColourDiffuse=GetColorForGenre(program.Genre);
 				height=height-10;
@@ -1186,7 +1206,7 @@ namespace MediaPortal.GUI.TV
 					dtBlokStart=dtBlokStart.AddMilliseconds(-dtBlokStart.Millisecond);
 					dtBlokStart=dtBlokStart.AddSeconds(-dtBlokStart.Second);
 
-
+					bool bSeries=false;
 					bool bRecording=false;
 					foreach (TVRecording record in m_recordings)
 					{
@@ -1194,6 +1214,8 @@ namespace MediaPortal.GUI.TV
 						{
 							if (record.Canceled==0)
 							{
+								if (record.RecType !=TVRecording.RecordingType.Once)
+									bSeries=true;
 								bRecording=true;
 								break;
 							}
@@ -1276,7 +1298,12 @@ namespace MediaPortal.GUI.TV
 							img.DoUpdate();
 						}
 						if (bRecording)
-							img.TexutureIcon="tvguide_record_button.png";
+						{
+							if (bSeries)
+								img.TexutureIcon="tvguide_recordserie_button.png";
+							else
+								img.TexutureIcon="tvguide_record_button.png";
+						}
 						else
 							img.TexutureIcon="";
 

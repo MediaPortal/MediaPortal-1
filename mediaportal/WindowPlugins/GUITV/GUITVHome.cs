@@ -570,30 +570,29 @@ namespace MediaPortal.GUI.TV
 					UpdateProgressPercentageBar();
 					UpdateChannelButton();
 				}
+				TVRecording rec=Recorder.GetTVRecording();
+				if (rec!= null)
+				{
+					GUIImage img = (GUIImage) GetControl((int)Controls.IMG_REC_PIN);
+					if (rec.RecType != TVRecording.RecordingType.Once)
+						img.SetFileName("tvguide_recordserie_button.png");
+					else
+						img.SetFileName("tvguide_record_button.png");
+				}				
 				GUIControl.ShowControl(GetID,(int)Controls.IMG_REC_PIN);
 			}
 			else
 			{
 				GUIControl.HideControl(GetID,(int)Controls.IMG_REC_PIN);
 			}
-
 			TimeSpan ts = DateTime.Now-m_updateTimer;
 			if (ts.TotalMilliseconds>500)
 			{
 				m_updateTimer=DateTime.Now;
-				if (Recorder.IsRecording())
-				{  
-					GUIControl.ShowControl(GetID, (int)Controls.LABEL_REC_INFO);
-					GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
-					GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-				}
-				else 
-				{
-					GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
-					GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
-					GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-				}
 
+				GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
+				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
+				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
 				UpdateProgressPercentageBar();
         
 				UpdateStateOfButtons();
