@@ -35,7 +35,7 @@ namespace MediaPortal.Configuration
       Text=String.Format("Radio tuning");
 		}
 
-		private void InitializeComponent()
+		private new void InitializeComponent()
 		{
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).BeginInit();
 			// 
@@ -65,12 +65,10 @@ namespace MediaPortal.Configuration
 			// startButton
 			// 
 			this.startButton.Name = "startButton";
-			this.startButton.TabIndex = 0;
 			// 
 			// stopButton
 			// 
 			this.stopButton.Name = "stopButton";
-			this.stopButton.TabIndex = 1;
 			// 
 			// tunerTimer
 			// 
@@ -81,6 +79,7 @@ namespace MediaPortal.Configuration
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(440, 222);
 			this.Name = "RadioAutoTuningForm";
+			this.Text = "Scan for radio channels";
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).EndInit();
 
 		}

@@ -483,6 +483,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\KeyboardControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\KeyboardControl.resx"
+                    DependentUpon = "KeyboardControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Keys.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -277,7 +277,7 @@ namespace MediaPortal.Configuration.Sections
 																																 "Zoom",
 																																 "4:3 Letterbox",
 																																 "4:3 Pan and scan"});
-			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 83);
+			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(128, 83);
 			this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
 			this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
 			this.defaultZoomModeComboBox.TabIndex = 3;
@@ -286,7 +286,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.label1.Location = new System.Drawing.Point(16, 87);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(150, 23);
+			this.label1.Size = new System.Drawing.Size(104, 23);
 			this.label1.TabIndex = 33;
 			this.label1.Text = "Default zoom mode";
 			// 
@@ -305,9 +305,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderNameTextBox.Location = new System.Drawing.Point(96, 53);
+			this.folderNameTextBox.Location = new System.Drawing.Point(128, 53);
 			this.folderNameTextBox.Name = "folderNameTextBox";
-			this.folderNameTextBox.Size = new System.Drawing.Size(264, 20);
+			this.folderNameTextBox.Size = new System.Drawing.Size(232, 20);
 			this.folderNameTextBox.TabIndex = 1;
 			this.folderNameTextBox.Text = "";
 			// 
@@ -318,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
 			this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
 			this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(264, 24);
 			this.repeatPlaylistCheckBox.TabIndex = 0;
-			this.repeatPlaylistCheckBox.Text = "Repeat playlists";
+			this.repeatPlaylistCheckBox.Text = "Repeat/loop video playlists";
 			// 
 			// folderNameLabel
 			// 
@@ -367,7 +367,7 @@ namespace MediaPortal.Configuration.Sections
 			this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.showSubtitlesCheckBox.Location = new System.Drawing.Point(16, 24);
 			this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-			this.showSubtitlesCheckBox.Size = new System.Drawing.Size(264, 24);
+			this.showSubtitlesCheckBox.Size = new System.Drawing.Size(112, 24);
 			this.showSubtitlesCheckBox.TabIndex = 0;
 			this.showSubtitlesCheckBox.Text = "Show subtitles";
 			// 

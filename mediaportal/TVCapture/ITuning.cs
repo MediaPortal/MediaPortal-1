@@ -39,7 +39,7 @@ namespace MediaPortal.TV.Recording
 
 		
 		/// <summary>
-		/// called when the listview should be refreshed
+		/// called when the listview containing the tvchannels should be refreshed
 		/// </summary>
 		void UpdateList();
 	}

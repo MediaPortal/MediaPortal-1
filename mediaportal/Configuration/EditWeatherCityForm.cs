@@ -113,7 +113,7 @@ namespace MediaPortal.Configuration
 			this.locationTextBox.Name = "locationTextBox";
 			this.locationTextBox.Size = new System.Drawing.Size(336, 20);
 			this.locationTextBox.TabIndex = 0;
-			this.locationTextBox.Text = "";
+			this.locationTextBox.Text = "http://";
 			// 
 			// label1
 			// 
@@ -143,7 +143,7 @@ namespace MediaPortal.Configuration
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			this.Name = "EditWeatherCityForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "EditWeatherCityForm";
+			this.Text = "Specify location of sattelite image";
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 

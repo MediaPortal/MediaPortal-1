@@ -146,7 +146,7 @@ namespace MediaPortal.Configuration
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(168, 23);
 			this.label3.TabIndex = 23;
-			this.label3.Text = "remote folder";
+			this.label3.Text = "folder on the remote ftp server";
 			// 
 			// label8
 			// 
@@ -154,7 +154,7 @@ namespace MediaPortal.Configuration
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(100, 16);
 			this.label8.TabIndex = 22;
-			this.label8.Text = "Port:";
+			this.label8.Text = "TCP/IP Port:";
 			// 
 			// textBoxPort
 			// 
@@ -165,7 +165,7 @@ namespace MediaPortal.Configuration
 			// 
 			// textBoxPassword
 			// 
-			this.textBoxPassword.Location = new System.Drawing.Point(224, 232);
+			this.textBoxPassword.Location = new System.Drawing.Point(136, 232);
 			this.textBoxPassword.Name = "textBoxPassword";
 			this.textBoxPassword.PasswordChar = '*';
 			this.textBoxPassword.TabIndex = 6;
@@ -173,7 +173,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(224, 216);
+			this.label7.Location = new System.Drawing.Point(136, 216);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(100, 16);
 			this.label7.TabIndex = 19;
@@ -198,7 +198,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.textBoxServer.Location = new System.Drawing.Point(16, 192);
 			this.textBoxServer.Name = "textBoxServer";
-			this.textBoxServer.Size = new System.Drawing.Size(344, 20);
+			this.textBoxServer.Size = new System.Drawing.Size(224, 20);
 			this.textBoxServer.TabIndex = 4;
 			this.textBoxServer.Text = "127.0.0.1";
 			// 
@@ -214,9 +214,9 @@ namespace MediaPortal.Configuration
 			// 
 			this.checkBoxRemote.Location = new System.Drawing.Point(16, 152);
 			this.checkBoxRemote.Name = "checkBoxRemote";
-			this.checkBoxRemote.Size = new System.Drawing.Size(136, 16);
+			this.checkBoxRemote.Size = new System.Drawing.Size(176, 16);
 			this.checkBoxRemote.TabIndex = 3;
-			this.checkBoxRemote.Text = "Remote FTP Folder";
+			this.checkBoxRemote.Text = "This is a remote FTP Folder";
 			this.checkBoxRemote.CheckedChanged += new System.EventHandler(this.checkBoxRemote_CheckedChanged);
 			// 
 			// pinCodeTextBox
@@ -360,7 +360,34 @@ namespace MediaPortal.Configuration
 			{
 				MessageBox.Show("No local folder specified.Please choose a local folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;					
-
+			}
+			if (checkBoxRemote.Checked)
+			{
+				if (textBoxRemoteFolder.Text==String.Empty)
+				{	
+					MessageBox.Show("No remote ftp folder specified.Please choose a remote folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+				if (textBoxServer.Text==String.Empty)
+				{	
+					MessageBox.Show("No remote ftp server specified.Please choose a remote ftp server", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+				if (textBoxLogin.Text==String.Empty)
+				{	
+					MessageBox.Show("No login for the remote ftp server specified.Please choose a loginname", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+				if (textBoxPassword.Text==String.Empty)
+				{	
+					MessageBox.Show("No password for the remote ftp server specified.Please choose a password", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
+				if (textBoxPort.Text==String.Empty)
+				{	
+					MessageBox.Show("No TCP/IP port for the remote ftp server specified.Please specify a TCP/IP port", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return;					
+				}
 			}
 			this.DialogResult = DialogResult.OK;
 			this.Hide();

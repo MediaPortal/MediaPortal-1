@@ -175,6 +175,7 @@ namespace MediaPortal.TV.Recording
 			m_bIsUsingMPEG				= true;
 			m_graphState					= State.None;
 
+			//create registry keys needed by the streambuffer engine for timeshifting/recording
 			try
 			{
 				RegistryKey hkcu = Registry.CurrentUser;
@@ -642,6 +643,7 @@ namespace MediaPortal.TV.Recording
 
 		/// <summary>
 		/// Deletes the current DirectShow graph created with CreateGraph()
+		/// Frees any (unmanaged) resources
 		/// </summary>
 		/// <remarks>
 		/// Graph must be created first with CreateGraph()
@@ -658,7 +660,8 @@ namespace MediaPortal.TV.Recording
 
 			if (m_TunerStatistics!=null)
 			{
-				Marshal.ReleaseComObject(m_TunerStatistics); m_TunerStatistics=null;
+				Marshal.ReleaseComObject(m_TunerStatistics); 
+				m_TunerStatistics=null;
 			}
 
 			if (Vmr9!=null)
@@ -1383,7 +1386,7 @@ namespace MediaPortal.TV.Recording
 		/// <returns>-1</returns>
 		public long VideoFrequency()
 		{
-			return -1;
+			return currentFrequency;
 		}
 		
 		private bool CreateSinkSource(string fileName)

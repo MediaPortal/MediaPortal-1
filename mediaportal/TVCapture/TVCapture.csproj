@@ -194,11 +194,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "CaptureEx.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "DVB_SECTIONS.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -275,11 +270,6 @@
                 />
                 <File
                     RelPath = "SWEncodingGraph.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TVCaptureDevice.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

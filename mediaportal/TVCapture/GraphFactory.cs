@@ -15,15 +15,11 @@ namespace MediaPortal.TV.Recording
 		
 		static public ITuning CreateTuning(TVCaptureDevice card)
 		{
-#if (!UseCaptureCardDefinitions)
-			return new AnalogTVTuning();
-#else
 			if (!card.CreateGraph()) return null;
 			if (card.Network == NetworkType.ATSC) return new AnalogTVTuning();
 			if (card.Network == NetworkType.DVBT) return new DVBTTuning();
 			if (card.Network == NetworkType.DVBS) return new DVBSTuning();
 			if (card.Network == NetworkType.DVBC) return new DVBCTuning();
-#endif
 			return null;
 		}
 
@@ -36,35 +32,6 @@ namespace MediaPortal.TV.Recording
     /// <seealso>MediaPortal.TV.Recording.TVCaptureDevice</seealso>
     static public IGraph CreateGraph(TVCaptureDevice card)
     {
-#if (!UseCaptureCardDefinitions)
-      int iTunerCountry=31;
-      string strTunerType="Antenna";
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        strTunerType=xmlreader.GetValueAsString("capture","tuner","Antenna");
-        iTunerCountry=xmlreader.GetValueAsInt("capture","country",31);
-      }
-      bool bCable=false;
-      if (!strTunerType.Equals("Antenna")) bCable=true;
-
-
-      if (card.SupportsMPEG2)
-      {
-        if (card.IsMCECard)
-          return new MCESinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
-        return new SinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
-      }
-	    if (card.ToString() == "ATI Rage Theater Video Capture")
-	    {
-		  return new AIWGraph(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
-	    }
-		  if (card.ToString() == "B2C2 MPEG-2 Source")
-		  {
-			  return new DVBGraphSS2(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
-		  }
-      return new SWEncodingGraph(card.ID,iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
-    }
-#else
       int    countryCode = 31;
       string tunerInput  = "Antenna";
       using (AMS.Profile.Xml xmlReader = new AMS.Profile.Xml("MediaPortal.xml"))
@@ -76,17 +43,10 @@ namespace MediaPortal.TV.Recording
       bool isCableInput = false;
       if (!tunerInput.Equals("Antenna")) isCableInput = true;
 
-      // #MW#
-      // Added properties to card...
-      // Could be read using serialization...
       card.IsCableInput = isCableInput;
       card.CountryCode  = countryCode;
 
-      // There are a few types of cards:
-      //	-	Software based cards, ie no hardware MPEG2 encoder
-      //	- Hardware MPEG2 encoders
-      //	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
-			if(card.IsBDACard)
+      if(card.IsBDACard)
 				return new DVBGraphBDA(card);
 
 			if (card.ToString() == "B2C2 MPEG-2 Source")
@@ -106,6 +66,7 @@ namespace MediaPortal.TV.Recording
 				if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate,card.FriendlyName);
 				if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
 			}
+
 			if (card.SupportsMPEG2)
       {
         return new SinkGraphEx(card);
@@ -114,7 +75,6 @@ namespace MediaPortal.TV.Recording
       // Standard call for all other software based cards.
       return new SWEncodingGraph(card.ID,countryCode,isCableInput, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel,card.FriendlyName);
     }
-#endif
 	}
 }
 

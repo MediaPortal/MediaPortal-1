@@ -26,7 +26,6 @@ namespace MediaPortal
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Button buttonMap;
     private System.Windows.Forms.Label label1;
-    private System.ComponentModel.IContainer components;
     ArrayList     m_tvcards    = new ArrayList();
     private System.Windows.Forms.Button buttonSkip;
     private System.Windows.Forms.ListView listView1;
@@ -49,20 +48,6 @@ namespace MediaPortal
       
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
 
 		#region Windows Form Designer generated code
 		/// <summary>

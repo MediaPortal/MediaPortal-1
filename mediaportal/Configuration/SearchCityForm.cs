@@ -147,7 +147,7 @@ namespace MediaPortal.Configuration
 			this.Name = "SearchCityForm";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "SearchCityForm";
+			this.Text = "Add new cities to my weather";
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 

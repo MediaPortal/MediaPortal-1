@@ -22,6 +22,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.ComboBox comboBox2Audio;
 		private System.Windows.Forms.ComboBox comboBox3Video;
 		private System.Windows.Forms.ComboBox comboBox3Audio;
+		private System.Windows.Forms.Label label4;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -71,11 +72,12 @@ namespace MediaPortal.Configuration
 			this.comboBox3Video = new System.Windows.Forms.ComboBox();
 			this.comboBox3Audio = new System.Windows.Forms.ComboBox();
 			this.buttonOK = new System.Windows.Forms.Button();
+			this.label4 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 32);
+			this.label1.Location = new System.Drawing.Point(16, 80);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(56, 16);
 			this.label1.TabIndex = 0;
@@ -83,7 +85,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 88);
+			this.label2.Location = new System.Drawing.Point(16, 136);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(48, 16);
 			this.label2.TabIndex = 1;
@@ -91,7 +93,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(24, 152);
+			this.label3.Location = new System.Drawing.Point(24, 200);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(40, 23);
 			this.label3.TabIndex = 2;
@@ -99,59 +101,68 @@ namespace MediaPortal.Configuration
 			// 
 			// comboBox1Video
 			// 
-			this.comboBox1Video.Location = new System.Drawing.Point(80, 16);
+			this.comboBox1Video.Location = new System.Drawing.Point(80, 64);
 			this.comboBox1Video.Name = "comboBox1Video";
 			this.comboBox1Video.Size = new System.Drawing.Size(121, 21);
 			this.comboBox1Video.TabIndex = 0;
 			// 
 			// comboBox1Audio
 			// 
-			this.comboBox1Audio.Location = new System.Drawing.Point(80, 40);
+			this.comboBox1Audio.Location = new System.Drawing.Point(80, 88);
 			this.comboBox1Audio.Name = "comboBox1Audio";
 			this.comboBox1Audio.Size = new System.Drawing.Size(121, 21);
 			this.comboBox1Audio.TabIndex = 1;
 			// 
 			// comboBox2Video
 			// 
-			this.comboBox2Video.Location = new System.Drawing.Point(80, 72);
+			this.comboBox2Video.Location = new System.Drawing.Point(80, 120);
 			this.comboBox2Video.Name = "comboBox2Video";
 			this.comboBox2Video.Size = new System.Drawing.Size(121, 21);
 			this.comboBox2Video.TabIndex = 2;
 			// 
 			// comboBox2Audio
 			// 
-			this.comboBox2Audio.Location = new System.Drawing.Point(80, 96);
+			this.comboBox2Audio.Location = new System.Drawing.Point(80, 144);
 			this.comboBox2Audio.Name = "comboBox2Audio";
 			this.comboBox2Audio.Size = new System.Drawing.Size(121, 21);
 			this.comboBox2Audio.TabIndex = 3;
 			// 
 			// comboBox3Video
 			// 
-			this.comboBox3Video.Location = new System.Drawing.Point(80, 136);
+			this.comboBox3Video.Location = new System.Drawing.Point(80, 184);
 			this.comboBox3Video.Name = "comboBox3Video";
 			this.comboBox3Video.Size = new System.Drawing.Size(121, 21);
 			this.comboBox3Video.TabIndex = 4;
 			// 
 			// comboBox3Audio
 			// 
-			this.comboBox3Audio.Location = new System.Drawing.Point(80, 160);
+			this.comboBox3Audio.Location = new System.Drawing.Point(80, 208);
 			this.comboBox3Audio.Name = "comboBox3Audio";
 			this.comboBox3Audio.Size = new System.Drawing.Size(121, 21);
 			this.comboBox3Audio.TabIndex = 5;
 			// 
 			// buttonOK
 			// 
-			this.buttonOK.Location = new System.Drawing.Point(184, 192);
+			this.buttonOK.Location = new System.Drawing.Point(168, 240);
 			this.buttonOK.Name = "buttonOK";
 			this.buttonOK.Size = new System.Drawing.Size(32, 23);
 			this.buttonOK.TabIndex = 6;
-			this.buttonOK.Text = "OK";
+			this.buttonOK.Text = "Ok";
 			this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(24, 16);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(192, 40);
+			this.label4.TabIndex = 7;
+			this.label4.Text = "Map the video/audio inputs of your TV card to the CVBS1, CVBS2 and SVHS channels";
 			// 
 			// FormAudioMapping
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(240, 230);
+			this.ClientSize = new System.Drawing.Size(224, 278);
+			this.Controls.Add(this.label4);
 			this.Controls.Add(this.buttonOK);
 			this.Controls.Add(this.comboBox3Audio);
 			this.Controls.Add(this.comboBox3Video);
@@ -163,7 +174,7 @@ namespace MediaPortal.Configuration
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Name = "FormAudioMapping";
-			this.Text = "FormAudioMapping";
+			this.Text = "Map video/audio inputs";
 			this.Load += new System.EventHandler(this.FormAudioMapping_Load);
 			this.ResumeLayout(false);
 

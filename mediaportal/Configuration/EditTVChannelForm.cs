@@ -172,9 +172,9 @@ namespace MediaPortal.Configuration
 			// 
 			this.label7.Location = new System.Drawing.Point(16, 96);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(64, 16);
+			this.label7.Size = new System.Drawing.Size(88, 16);
 			this.label7.TabIndex = 11;
-			this.label7.Text = "Standard:";
+			this.label7.Text = "TV Standard:";
 			// 
 			// frequencyTextBox
 			// 
@@ -210,6 +210,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.label3.Location = new System.Drawing.Point(16, 48);
 			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(88, 16);
 			this.label3.TabIndex = 8;
 			this.label3.Text = "Channel";
 			// 
@@ -287,7 +288,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.countryComboBox.Location = new System.Drawing.Point(120, 112);
+			this.countryComboBox.Location = new System.Drawing.Point(120, 104);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
 			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
@@ -296,9 +297,9 @@ namespace MediaPortal.Configuration
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(16, 112);
+			this.label8.Location = new System.Drawing.Point(16, 106);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(56, 23);
+			this.label8.Size = new System.Drawing.Size(56, 16);
 			this.label8.TabIndex = 14;
 			this.label8.Text = "Country";
 			// 
@@ -378,7 +379,7 @@ namespace MediaPortal.Configuration
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "EditTVChannelForm";
+			this.Text = "Edit properties of TV channel";
 			this.Load += new System.EventHandler(this.EditTVChannelForm_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.advancedGroupBox.ResumeLayout(false);

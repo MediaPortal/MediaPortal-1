@@ -632,7 +632,7 @@ namespace MediaPortal.Configuration
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "EditCaptureCardForm";
+			this.Text = "Edit properties of your TV card";
 			this.Load += new System.EventHandler(this.EditCaptureCardForm_Load);
 			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).EndInit();

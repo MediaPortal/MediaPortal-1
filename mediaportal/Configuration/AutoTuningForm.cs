@@ -202,7 +202,7 @@ namespace MediaPortal.Configuration
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "AutoTuningForm";
+			this.Text = "Find all radio channels";
 			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).EndInit();
 			this.ResumeLayout(false);

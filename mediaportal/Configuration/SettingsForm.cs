@@ -58,7 +58,9 @@ namespace MediaPortal.Configuration
 			//
       
 			Log.Write("add project section");
-			AddSection(new Sections.Project());
+			Sections.Project project= new Sections.Project();
+			AddSection(project);
+			AddChildSection(project, new Sections.KeyboardControl());
 
       Log.Write("add general section");
 			Sections.General general = new Sections.General();

@@ -5,39 +5,143 @@ using DShowNET;
 
 namespace DShowNET.BDA
 {
-	/*
+////////////////////////////////////////////////////////////////////////////////
+	public enum MPEG_CONTEXT_TYPE
+	{
+		MPEG_CONTEXT_BCS_DEMUX,
+		MPEG_CONTEXT_WINSOCK
+	};
+////////////////////////////////////////////////////////////////////////////////
+	public struct HeaderUnion
+	{
+		public MPEG_HEADER_BITS_MIDL S;
+		public ushort                W;
+	}
+	public struct UUnion
+	{
+		public MPEG_BCS_DEMUX      Demux;
+		public MPEG_WINSOCK        Winsock;
+	}
+	public struct MPEG_BCS_DEMUX
+	{
+		public uint AVMGraphId;
+	}
+
+	public struct MPEG_WINSOCK
+	{
+		public uint AVMGraphId;
+	}
+	public struct MPEG_HEADER_BITS_MIDL
+	{
+		public ushort Bits;
+	}
+	public struct SECTION
+	{
+		public Byte				TableId;
+		public HeaderUnion	Header;
+		public Byte[]			SectionData;
+	}
+	public struct MPEG_PACKET_LIST
+	{
+		public ushort							wPacketCount;
+		public MPEG_RQST_PACKET[]	PacketList;    // Array size is wPacketCount;
+	}
+	public struct MPEG_RQST_PACKET
+	{
+		public uint    dwLength;
+		public SECTION pSection;
+	}
+	public struct MPEG_CONTEXT
+	{
+		public MPEG_CONTEXT_TYPE	Type;
+		public UUnion							U;
+	}
+	public struct MPEG2_FILTER
+	{
+		public Byte									bVersionNumber;           // Must be set to 1 or more to match filter definition
+		public ushort								wFilterSize;              // Size of total filter structure. Version 1 filter is 73 bytes.
+		public bool									fUseRawFilteringBits;     // If true, Filter and Mask fields should be set to desired value, all other fields with be ignored.
+		public Byte[]								Filter;										// Bits with values to compare against for a match.
+		public Byte[]								Mask;											// Bits set to 0 are bits that are compared to those in the filter, those bits set to 1 are ignored.
+		public bool									fSpecifyTableIdExtension; // If true, TableIdExtension should be set to desired value (false = don't care)
+		public ushort								TableIdExtension;
+		public bool									fSpecifyVersion;          // If true, Version should be set to desired value (false = don't care)
+		public Byte									Version;
+		public bool									fSpecifySectionNumber;    // If true, SectionNumber should be set to desired value (false = don't care)
+		public Byte									SectionNumber;
+		public bool									fSpecifyCurrentNext;      // If true, fNext should be set to desired value (false = don't care)
+		public bool									fNext;                    // If true, next table is queried. Else, current
+		public bool									fSpecifyDsmccOptions;     // If true, Dsmcc should be set with desired filter options
+		public DSMCC_FILTER_OPTIONS	Dsmcc;
+		public bool									fSpecifyAtscOptions;      // If true, Atsc should be set with desired filter options
+		public ATSC_FILTER_OPTIONS		Atsc;
+	}
+//	public struct DSMCC_FILTER_OPTIONS
+//	{
+//		public bool		fSpecifyProtocol;       // If true, Protocol should be set to desired value
+//		public Byte		Protocol;
+//		public bool		fSpecifyType;           // If true, Type should be set to desired value
+//		public Byte		Type;
+//		public bool		fSpecifyMessageId;      // If true, MessageId should be set to desired value
+//		public ushort	MessageId;
+//		public bool		fSpecifyTransactionId;  // If true, TransactionId (or DownloadId for DDB msgs) should be set to desired value
+//		public bool		fUseTrxIdMessageIdMask; // If false, TransactionId is filtered as is.
+//		// If true, TransactionId is masked to look
+//		// for any version of message with associated
+//		// message identifier. See DVB - Data
+//		// Broadcasting Guidlines 4.6.5. (Assignment
+//		// and use of transactionId values).
+//		public uint		TransactionId;
+//		public bool		fSpecifyModuleVersion;  // If true, ModuleVersion should be set to the desired value
+//		public Byte		ModuleVersion;
+//		public bool		fSpecifyBlockNumber;    // If true, BlockNumber should be set to desired value
+//		public ushort	BlockNumber;
+//		public bool		fGetModuleCall;         // If true, NumberOfBlocksInModule should be set
+//		public ushort	NumberOfBlocksInModule; 
+//	}
+//	public struct ATSC_FILTER_OPTIONS
+//	{
+//		public bool fSpecifyEtmId;          // If true, EtmId should be set to desired value
+//		public uint EtmId;
+//	}
+//	public struct MPEG_PACKET_LIST
+//	{
+//		ushort							wPacketCount;
+//		MPEG_RQST_PACKET[]	PacketList;    // Array size is wPacketCount;
+//	}
+//////////////////////////////////////////////////////////////////////////////
+
 	[ComImport,
 	Guid("AFEC1EB5-2A64-46c6-BF4B-AE3CCB6AFDB0"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
 	public interface ISectionList 
 	{
-		HRESULT Initialize([In]  MPEG_REQUEST_TYPE requestType,
-											[In]  IMpeg2Data *      pMpeg2Data,
-											[In]  PMPEG_CONTEXT     pContext,
-											[In]  PID               pid,
-											[In]  TID               tid,
-											[In]  PMPEG2_FILTER     pFilter,                   // OPTIONAL
-											[In]  DWORD             timeout,
-											[In]  HANDLE            hDoneEvent);               // OPTIONAL
+		int Initialize([In]  MPEG_REQUEST_TYPE	requestType,
+											[In]  IMpeg2Data			pMpeg2Data,
+											[In]  MPEG_CONTEXT		pContext,
+											[In]  ushort					pid,
+											[In]  Byte						tid,
+											[In]  MPEG2_FILTER		pFilter,                   // OPTIONAL
+											[In]  uint						timeout,
+											[In]  IntPtr          hDoneEvent);               // OPTIONAL
 
-		HRESULT InitializeWithRawSections([In]  PMPEG_PACKET_LIST pmplSections);
+		int InitializeWithRawSections([In]  MPEG_PACKET_LIST pmplSections);
 
-		HRESULT CancelPendingRequest();
+		int CancelPendingRequest();
 
-		HRESULT GetNumberOfSections([Out] WORD * pCount);
+		int GetNumberOfSections([Out] out ushort pCount);
 
-		HRESULT GetSectionData([In]  WORD          sectionNumber,
-													 [Out] DWORD *       pdwRawPacketLength,
-													 [Out] PSECTION *    ppSection);
+		int GetSectionData([In]  ushort      sectionNumber,
+												[Out] out uint       pdwRawPacketLength,
+												[Out] out SECTION    ppSection);
 
-		HRESULT GetProgramIdentifier(PID * pPid);
+		int GetProgramIdentifier(ushort pPid);
 
-		HRESULT GetTableIdentifier(TID * pTableId);
+		int GetTableIdentifier(Byte pTableId);
 	};
 
-
 	[ComImport,
-	Guid("CC286-32A0-4ce4-9041-39571125A635"),
+	Guid("400CC286-32A0-4ce4-9041-39571125A635"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
 	public interface IMpeg2Stream 
 	{
@@ -80,7 +184,6 @@ namespace DShowNET.BDA
 														[In]  int								 hDataReadyEvent,
 														[Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] IMpeg2Stream[]  ppMpegStream);
 	};
-	*/
 
 	[ComImport,
 	Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
