@@ -2583,7 +2583,7 @@ namespace MediaPortal
           string strChannel=listTVChannels.Items[i].Text;
           string strNumber=listTVChannels.Items[i].SubItems[1].Text;
           string strFreq=listTVChannels.Items[i].SubItems[2].Text;
-          int iNumber=Int32.Parse(strNumber);
+          int iNumber=GetInt(strNumber);
           if (iNumber <254)
           {
             TVDatabase.SetChannelNumber(strChannel,iNumber);
