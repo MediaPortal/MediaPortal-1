@@ -146,7 +146,7 @@
 		<textcolor>FF000000</textcolor> 
 	</control>
 	<control>
-		<description>start logo</description> 
+		<description>Album Art</description> 
 		<type>image</type> 
 		<id>3</id> 
 		<posX>100</posX> 
@@ -155,7 +155,8 @@
 		<height>100</height> 
 		<texture>-</texture> 
 		<colorkey>FFFF00FF</colorkey> 
-		<colordiffuse>20FFFFFF</colordiffuse> 
+		<colordiffuse>20FFFFFF</colordiffuse>
+		<keepaspectratio>yes</keepaspectratio>
 	</control>
 	<control>
 		<description>textarea</description> 

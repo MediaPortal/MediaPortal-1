@@ -203,7 +203,8 @@
 		<height>140</height> 
 		<texture>-</texture> 
 		<colorkey>FFFF00FF</colorkey> 
-		<colordiffuse>FFFFFFFF</colordiffuse> 
+		<colordiffuse>FFFFFFFF</colordiffuse>
+		<keepaspectratio>yes</keepaspectratio>
 	</control>
 	<control>
 		<description>textarea</description> 

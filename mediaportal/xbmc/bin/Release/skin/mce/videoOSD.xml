@@ -81,6 +81,7 @@
 		<height>130</height>
 		<width>80</width>
 		<visible>yes</visible>
+		<keepaspectratio>yes</keepaspectratio>
 	</control>
 	<control>
 		<description>Plot</description> 

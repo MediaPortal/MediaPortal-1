@@ -174,7 +174,7 @@
 		<posX>175</posX>
 		<posY>445</posY>
 		<width>450</width> 
-		<height>80</height> 
+		<height>65</height> 
 		<label>#TV.RecordedTV.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>

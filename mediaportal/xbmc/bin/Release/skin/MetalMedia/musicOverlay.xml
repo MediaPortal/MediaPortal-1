@@ -8,9 +8,20 @@
 		<id>0</id> 
 		<posX>65</posX> 
 		<posY>420</posY> 
-		<width>100</width> 
+		<width>130</width> 
 		<height>110</height> 
 		<texture>panel.png</texture> 
+	</control>
+	<control>
+		<description>music logo</description> 
+		<type>image</type> 
+		<id>1</id> 
+		<posX>70</posX> 
+		<posY>425</posY> 
+		<width>120</width> 
+		<height>100</height> 
+		<texture>#thumb</texture>
+		<keepaspectratio>yes</keepaspectratio> 
 	</control>
 	<control>
 		<description>lcd display shine</description> 
@@ -19,16 +30,6 @@
 		<posX>125</posX> 
 		<posY>29</posY> 
 		<texture>lcdtopnoshine.png</texture> 
-	</control>
-	<control>
-		<description>music logo</description> 
-		<type>image</type> 
-		<id>1</id> 
-		<posX>70</posX> 
-		<posY>425</posY> 
-		<width>90</width> 
-		<height>100</height> 
-		<texture>#thumb</texture> 
 	</control>
 	<control>
 		<description>play logo</description> 

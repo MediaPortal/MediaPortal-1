@@ -183,7 +183,7 @@
 		<posX>150</posX>
 		<posY>130</posY>
 		<width>400</width> 
-		<height>85</height> 
+		<height>65</height> 
 		<label>#TV.Guide.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
