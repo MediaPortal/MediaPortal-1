@@ -428,6 +428,7 @@ namespace MediaPortal.TV.Recording
           if (dev.Previewing) 
           {
             dev.PreviewChannel=m_strPreviewChannel;
+            if (!dev.Previewing) m_bPreviewing=false;
             return;
           }
         }
@@ -439,6 +440,7 @@ namespace MediaPortal.TV.Recording
             Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
             dev.PreviewChannel=m_strPreviewChannel;
             dev.Previewing=true;
+            if (!dev.Previewing) m_bPreviewing=false;
             return;
           }
         }

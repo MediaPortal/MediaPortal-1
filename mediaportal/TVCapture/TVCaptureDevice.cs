@@ -457,7 +457,7 @@ namespace MediaPortal.TV.Recording
             {
               capture.Tuner.Channel=iChannelNr;
 							
-              Log.Write("  CaptureCard:{0}   TV tuner set to channel:{1} freq:{2} Hz",ID, capture.Tuner.Channel, capture.Tuner.GetVideoFrequency);
+              Log.Write("  CaptureCard:{0}   TV tuner set to channel:{1} freq:{2} Hz type:{3} signal found:{4}",ID, capture.Tuner.Channel, capture.Tuner.GetVideoFrequency,strTunerType,capture.Tuner.SignalPresent);
             }
             catch(Exception)
             {
@@ -469,7 +469,7 @@ namespace MediaPortal.TV.Recording
       }
       try
       {
-        capture.FixCrossbarRouting();
+        capture.FixCrossbarRouting( (iChannelNr<254) );
       }
       catch (Exception ex)
       {
@@ -528,7 +528,13 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
-        else Log.Write("  CaptureCard:{0} Unknown channel:{1}",ID, m_strPreviewChannel);
+        else 
+        {
+          Log.Write("  CaptureCard:{0} Unknown channel:{1}",ID, m_strPreviewChannel);
+          Previewing=false;
+          m_strPreviewChannel="";
+          m_iPreviewChannel=0;
+        }
       }
     }
 
@@ -560,19 +566,22 @@ namespace MediaPortal.TV.Recording
         {
           // preview should b turned on
           // check if we're not recording
-          if (!IsRecording)
+          if (m_iPreviewChannel>0)
           {
-            // check if preview isnt running already
-            if (!m_bPreview || capture==null)
+            if (!IsRecording)
             {
-              // start preview
-              if (StartCapture("",m_iPreviewChannel))
+              // check if preview isnt running already
+              if (!m_bPreview || capture==null)
               {
-                // and set video window position
-                m_bVideoWindowChanged=false;
-                capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
-                capture.PreviewWindow=GUIGraphicsContext.form;
-                m_bPreview=value;
+                // start preview
+                if (StartCapture("",m_iPreviewChannel))
+                {
+                  // and set video window position
+                  m_bVideoWindowChanged=false;
+                  capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+                  capture.PreviewWindow=GUIGraphicsContext.form;
+                  m_bPreview=value;
+                }
               }
             }
           }
