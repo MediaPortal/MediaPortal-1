@@ -254,13 +254,28 @@ namespace MediaPortal.TV.Recording
       if (strChannel==null) return;
       if (strChannel==String.Empty) return;
       if (m_eState!= State.Initialized) return;
-      Log.Write("Recorder: record now:"+strChannel);
+      
       // create a new recording which records the next 2 hours...
       TVRecording tmpRec = new TVRecording();
-      tmpRec.Start=Utils.datetolong(DateTime.Now);
-      tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(2*60) );
+      TVUtil util = new TVUtil();
+      TVProgram program=util.GetCurrentProgram(strChannel);
+      if (program!=null)
+      {
+        //record current playing program
+        tmpRec.Start=program.Start;
+        tmpRec.End=program.End;
+        tmpRec.Title=program.Title;
+        Log.Write("Recorder: record now:{0} program:{1}",strChannel,program.Title);
+      }
+      else
+      {
+        //no tvguide data, just record the next 2 hours
+        Log.Write("Recorder: record now:{0} for next 2 hours",strChannel);
+        tmpRec.Start=Utils.datetolong(DateTime.Now);
+        tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(2*60) );
+        tmpRec.Title=GUILocalizeStrings.Get(413);
+      }
       tmpRec.Channel=strChannel;
-      tmpRec.Title=GUILocalizeStrings.Get(413);
       tmpRec.RecType=TVRecording.RecordingType.Once;
       tmpRec.IsContentRecording=false;//make a reference recording!
       TVDatabase.AddRecording(ref tmpRec);

@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.TV
 					Update();
 					break;
 
-				case Action.ActionType.ACTION_RECORD:
+				case Action.ActionType.ACTION_SELECT_ITEM:
 				{
 					if (m_iCursorX>=0&& m_iCursorY>=0)
 					{

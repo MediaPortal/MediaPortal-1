@@ -97,6 +97,18 @@ namespace MediaPortal.GUI.TV
 		{
 			switch (action.wID)
       {
+        case Action.ActionType.ACTION_RECORD:
+          int card=GetCurrentCard();
+          if (Recorder.IsCardViewing(card) || Recorder.IsCardTimeShifting(card))
+          {
+            if (!Recorder.IsCardRecording(card))
+            {
+              string channel=Recorder.GetTVChannelName(card);
+              Recorder.RecordNow(channel);
+            }
+          }
+        break;
+
         case Action.ActionType.ACTION_PREV_CHANNEL:
           GUITVHome.OnPreviousChannel();
         break;

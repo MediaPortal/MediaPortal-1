@@ -759,12 +759,6 @@
       <sound />
       <description>goto current time</description>
     </action>
-    <action>
-      <id>89</id>
-      <key>enter</key>
-      <sound />
-      <description>record</description>
-    </action>
   </window>
   <window>
     <id>3001</id>

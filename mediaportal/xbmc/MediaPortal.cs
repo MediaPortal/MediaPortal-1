@@ -880,6 +880,18 @@ public class MediaPortalApp : D3DApp, IRender
         GUIWindow window;
 				switch (action.wID)
         {
+          case Action.ActionType.ACTION_RECORD:
+            // record current program
+            GUIWindow tvHome = GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_TV);
+            if (tvHome!=null)
+            {
+              if (tvHome.GetID!=GUIWindowManager.ActiveWindow)
+              {
+                tvHome.OnAction(action); 
+                return;
+              }
+            }
+          break;
           case Action.ActionType.ACTION_DVD_MENU:
             if (g_Player.IsDVD && g_Player.Playing)
             {
