@@ -196,6 +196,7 @@ namespace MediaPortal.GUI.Library
 
 		void LoadPackedGraphics()
 		{
+			return;
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{
