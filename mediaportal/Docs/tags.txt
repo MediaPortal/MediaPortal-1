@@ -51,7 +51,7 @@ Metadata of the currently playing movie / song
 	#comment                    comment 
 	#director                   Director
 	#genre                      genre/movie
-	#cast                       cast
+	#cast                       cast  
 	#dvdlabel                   dvd#
 	#imdbnumber                 imdbnumber
 	#file                       filename
