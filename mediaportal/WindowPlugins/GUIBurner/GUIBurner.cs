@@ -123,7 +123,7 @@ namespace MediaPortal.GUI.GUIBurner
 
 		private string recordpath1="";  // for TV card 1
 		private string recordpath2="";	// for TV card 2
-		private int recordCards=0;
+		//private int recordCards=0;
 		private int recorder;
 		private ArrayList files = new ArrayList();
 		private string tmpFolder;
@@ -544,14 +544,14 @@ namespace MediaPortal.GUI.GUIBurner
 							if (i==0) 
 							{
 								recordpath1=card.RecordingPath;
-								recordCards=1;
+//								recordCards=1;
 							}
 							if (i==1) 
 							{
 								recordpath2=card.RecordingPath;
 								if (recordpath1!=recordpath2)
 								{
-									recordCards=2;
+//									recordCards=2;
 								}
 							}
 						}
