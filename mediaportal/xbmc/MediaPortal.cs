@@ -1102,7 +1102,10 @@ public class MediaPortalApp : D3DApp, IRender
         OnAction(action);
       }
     }
-    action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
+    if (e.Clicks==1)
+      action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
+    else
+      action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y);
     action.MouseButton = e.Button;
     action.SoundFileName = "click.wav";
     if (action.SoundFileName.Length > 0)
