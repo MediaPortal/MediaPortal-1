@@ -829,6 +829,7 @@ public class MediaPortalApp : D3DApp, IRender
       // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device == null) return;
 
+			++frames;
       // clear the surface
       //if (prevwindow!=GUIWindowManager.ActiveWindow)
       {

@@ -306,17 +306,14 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Paused || menuMode!=MenuMode.No )
-      {
-				if (GUIGraphicsContext.Vmr9Active && Vmr9!=null)
+			if (GUIGraphicsContext.Vmr9Active && Vmr9!=null)
+			{
+				Vmr9.Process();
+				if (GUIGraphicsContext.Vmr9FPS < 1f)
 				{
-					Vmr9.Process();
-					if (GUIGraphicsContext.Vmr9FPS < 1f)
-					{
-						Vmr9.Repaint();// repaint vmr9
-					}
+					Vmr9.Repaint();// repaint vmr9
 				}
-      }
+			}
       //m_SourceRect=m_scene.SourceRect;
       //m_VideoRect=m_scene.DestRect;
     }

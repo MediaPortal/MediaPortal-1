@@ -47,7 +47,7 @@ namespace MediaPortal
     // Should we use the default windows
     protected bool isUsingMenus = true;
     private float lastTime = 0.0f; // The last time
-    private int frames = 0; // Number of frames since our last update
+    protected int frames = 0; // Number of frames since our last update
 
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
@@ -1311,7 +1311,6 @@ namespace MediaPortal
     {
       // Keep track of the frame count
       float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-      ++frames;
 
       // Update the scene stats once per second
       if (time - lastTime >= 0.01f)
