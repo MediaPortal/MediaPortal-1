@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
 							try
 							{
 			
-								transp[count].TPfreq = Int32.Parse(tpdata[0]) * 1000;
+								transp[count].TPfreq = Int32.Parse(tpdata[0]) ;
 								switch (tpdata[1].ToLower())
 								{
 									case "v":
@@ -141,13 +141,15 @@ namespace MediaPortal.TV.Recording
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			TPList transponder=transp[currentIndex];
-			string description=String.Format("Transponder:{0}/{1}", currentIndex,count);
+			string chanDesc=String.Format("freq:{0} Khz, Pol:{1} SR:{2}",
+						transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
+			string description=String.Format("Transponder:{0}/{1} {2}", currentIndex,count,chanDesc);
 
 			if (currentState==State.ScanTransponders)
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.Write("Found signal for transponder:{0}",currentIndex);
+					Log.Write("Found signal for transponder:{0} {1}",currentIndex,chanDesc);
 					currentState=State.ScanChannels;
 				}
 			}
@@ -161,7 +163,7 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanChannels)
 			{
-				description=String.Format("Found signal for transponder:{0}, Scanning channels", currentIndex);
+				description=String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex,chanDesc);
 				callback.OnStatus(description);
 				ScanChannels();
 			}
@@ -193,8 +195,6 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
-
-			Log.Write("tune transponder:{0}",currentIndex);
 			DVBGraphBDA.DVBChannel newchan = new DVBGraphBDA.DVBChannel();
 			newchan.ONID=-1;
 			newchan.TSID=-1;
@@ -209,6 +209,11 @@ namespace MediaPortal.TV.Recording
 			newchan.symbolRate=transp[currentIndex].TPsymb;
 			newchan.innerFec=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.carrierFrequency=transp[currentIndex].TPfreq;
+
+			
+
+			Log.Write("tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
+									newchan.carrierFrequency,newchan.symbolRate,newchan.polarisation);
 			captureCard.Tune(newchan);
 		}
 
