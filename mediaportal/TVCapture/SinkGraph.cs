@@ -111,6 +111,17 @@ namespace MediaPortal.TV.Recording
         m_videoStreamConfig = o as IAMStreamConfig;
       }
 */
+      // Retrieve Tuner if available
+      IAMTuner amTuner=null;
+      DirectShowUtil.DebugWrite("SinkGraph:Find Tuner");
+      o = null;
+      cat = FindDirection.UpstreamOnly;
+      iid = typeof(IAMTuner).GUID;
+      hr = m_captureGraphBuilder.FindInterface( new Guid[1]{ cat}, null, m_captureFilter, ref iid, out o );
+      if (hr==0) 
+      {
+        amTuner = o as IAMTuner;
+      }
 
       // Retrieve TV Tuner if available
       DirectShowUtil.DebugWrite("SinkGraph:Find TV Tuner");
@@ -123,6 +134,14 @@ namespace MediaPortal.TV.Recording
         m_TVTuner = o as IAMTVTuner;
       }
 
+      if (amTuner!=null)
+      {
+        DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)amTuner);
+      }
+      if (m_TVTuner!=null)
+      {
+        DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
+      }
 			if (m_TVTuner==null)
 			{
 				DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found");
@@ -215,8 +234,27 @@ namespace MediaPortal.TV.Recording
 			if (!m_mpeg2Demux.IsRendered) 
 			{
 				// connect video capture pin->mpeg2 demux input
-				Guid cat = PinCategory.Capture;
-				m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
+        if (m_videoCaptureDevice.IsMCEDevice)
+        {
+          DirectShowUtil.DebugWrite("SinkGraph:find mpeg2 demux input pin");
+          IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
+          if (pinIn!=null) 
+          {
+            DirectShowUtil.DebugWrite("SinkGraph:found mpeg2 demux input pin");
+            int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
+            if (hr==0)
+              DirectShowUtil.DebugWrite("SinkGraph:connected Encoder->mpeg2 demuxer");
+            else
+              DirectShowUtil.DebugWrite("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
+          }
+          else
+            DirectShowUtil.DebugWrite("SinkGraph:FAILED could not find mpeg2 demux input pin");
+        }
+        else
+        {
+          Guid cat = PinCategory.Capture;
+          m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
+        }
 			}
       m_mpeg2Demux.StartTimeshifting(strFileName);
       
