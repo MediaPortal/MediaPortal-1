@@ -28,16 +28,22 @@ namespace MediaPortal.GUI.TV
     bool        m_bShowStep=false;
     bool        m_bShowStatus=false;
     DateTime    m_dwTimeStatusShowTime=DateTime.Now;
+		GUITVZAPOSD m_zapWindow=null;
 		GUITVOSD    m_osdWindow=null;
     GUITVMSNOSD m_msnWindow=null;
 		DateTime    m_dwOSDTimeOut;
+		DateTime	m_dwZapTimer;
+		string		m_sZapChannel;
+		long			m_iZapDelay;
 		bool        m_bOSDVisible=false;
+		bool		m_bZapOSDVisible=false;
     bool        m_bMSNChatVisible=false;
 		bool        m_bUpdate=false;
 		bool        m_bShowInput=false;
 		bool        m_bLastStatus=false;
 		FormOSD     m_form=null;        
-		long m_iMaxTimeOSDOnscreen;    
+		long m_iMaxTimeOSDOnscreen;
+		long		m_iZapTimeOut;
 		DateTime    m_UpdateTimer=DateTime.Now;
 		bool        m_bLastPause=false;
 		int         m_iLastSpeed=1;
@@ -89,6 +95,8 @@ namespace MediaPortal.GUI.TV
 			{
 				m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
 				m_iMaxTimeOSDOnscreen=1000*xmlreader.GetValueAsInt("movieplayer","osdtimeout",5);
+				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
+				m_iZapTimeOut = 1000*xmlreader.GetValueAsInt("movieplayer","zaptimeout",5);
         string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
         if (strValue.Equals("stretch")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
@@ -99,6 +107,17 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
+		public string ZapChannel
+		{
+			set
+			{
+				m_sZapChannel = value;
+			}
+			get
+			{
+				return m_sZapChannel;
+			}
+		}
     void SaveSettings()
     {
       using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
@@ -172,6 +191,10 @@ namespace MediaPortal.GUI.TV
 							if ( m_osdWindow.InWindow(x,y))
 							{
 								m_osdWindow.OnAction(action);	// route keys to OSD window
+
+								GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+								m_zapWindow.OnMessage(msg);
+								m_bZapOSDVisible=false;
 								m_bUpdate=true;
 								return;
 							}
@@ -235,9 +258,29 @@ namespace MediaPortal.GUI.TV
 					m_bUpdate=true;
 				}
 			}
-
+			else if (m_bZapOSDVisible)
+			{
+				if ((action.wID==Action.ActionType.ACTION_SHOW_GUI) || (action.wID==Action.ActionType.ACTION_SHOW_OSD))
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+					m_zapWindow.OnMessage(msg);
+					m_bZapOSDVisible=false;
+					m_bUpdate=true;
+				}
+			}
 			switch (action.wID)
 			{
+				case Action.ActionType.ACTION_SHOW_INFO:
+				{
+					m_dwOSDTimeOut=DateTime.Now;
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_zapWindow.GetID,0,0,0,0,null);
+					m_zapWindow.OnMessage(msg);
+					Log.Write("ZAP OSD:ON");
+					m_bUpdate=true;
+					m_bZapOSDVisible=true;
+
+				}
+					break;
 				case Action.ActionType.ACTION_SHOW_MSN_OSD:
 					if (m_bMSNChatPopup)
 					{
@@ -491,6 +534,7 @@ namespace MediaPortal.GUI.TV
 					TVDatabase.GetChannels(ref m_channels);
 					GUIGraphicsContext.VideoWindow = new Rectangle(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop, GUIGraphicsContext.OverScanWidth, GUIGraphicsContext.OverScanHeight);
 					m_osdWindow=(GUITVOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVOSD);
+					m_zapWindow=(GUITVZAPOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVZAPOSD);
           m_msnWindow=(GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);
 
 					HideControl(GetID,(int)Control.LABEL_ROW1);
@@ -507,12 +551,14 @@ namespace MediaPortal.GUI.TV
 					m_bShowInput=false;
 					m_timeKeyPressed=DateTime.Now;
 					m_strChannel="";
+					m_sZapChannel="";
 
           m_bLastStatusOSD=false;
           m_bOSDVisible=false;
           m_bUpdate=false;
           m_bLastStatus=false;
           m_UpdateTimer=DateTime.Now;
+		  m_dwZapTimer=DateTime.Now;
           m_bClear=false;
           m_bShowInfo=false;
           m_bShowStep=false;
@@ -810,7 +856,16 @@ namespace MediaPortal.GUI.TV
     {
       base.Process ();
       OnKeyTimeout();
-    
+		
+			TimeSpan tsZap = DateTime.Now-m_dwZapTimer;
+			if ((tsZap.TotalMilliseconds>m_iZapDelay) && (m_sZapChannel!=""))
+			{
+				m_dwZapTimer=DateTime.Now;
+				int card=GUITVHome.GetCurrentCard();
+				Recorder.StartViewing(card, m_sZapChannel, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+				m_sZapChannel="";
+			}
+
       if (GUIGraphicsContext.Vmr9Active)
       {
 
@@ -855,6 +910,23 @@ namespace MediaPortal.GUI.TV
 							Log.Write("timeout->OSD:Off");
 							m_bOSDVisible=false;
 						}
+					}
+				}
+			}
+			if (m_bZapOSDVisible)
+			{
+				m_zapWindow.Render();
+
+				if (m_iZapTimeOut>0)
+				{
+					TimeSpan ts =DateTime.Now - m_dwZapTimer;
+					if ( ts.TotalMilliseconds > m_iZapTimeOut)
+					{
+						//yes, then remove osd offscreen
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+						Log.Write("timeout->ZAP OSD:Off");
+						m_bZapOSDVisible=false;
 					}
 				}
 			}
@@ -950,15 +1022,16 @@ namespace MediaPortal.GUI.TV
 			{
 				m_osdWindow.UpdateChannelInfo();
 				m_dwOSDTimeOut=DateTime.Now;
+				m_dwZapTimer=DateTime.Now;
 				m_bUpdate = true;
 			}
 			else
 			{
-				m_osdWindow.UpdateChannelInfo();
-				// disalbe until a good channel changing osd is made
-				//Action myaction=new Action();
-				//myaction.wID = Action.ActionType.ACTION_SHOW_OSD;
-				//OnAction(myaction);
+				m_zapWindow.UpdateChannelInfo();
+				Action myaction=new Action();
+				myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
+				OnAction(myaction);
+				m_dwZapTimer=DateTime.Now;
 			} 
 		}
 
@@ -1224,9 +1297,118 @@ namespace MediaPortal.GUI.TV
 			if (iChannelNr>=0 && iChannelNr< channels.Count)
 			{
 				TVChannel chan=(TVChannel) channels[iChannelNr];
-        int card=GUITVHome.GetCurrentCard();
-        Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
 
+				m_sZapChannel = chan.Name;
+				UpdateOSD();
+
+			}
+		}
+
+		public void ZapPreviousChannel()
+		{
+			string strChannel;
+
+			if (m_sZapChannel=="")
+			{
+				strChannel=Recorder.TVChannelName;
+			}
+			else
+			{
+				strChannel=m_sZapChannel;
+			}
+			if(GUITVHome.CurrentGroup!=null)
+			{
+
+				// get current channel name
+				for (int i=0; i < GUITVHome.CurrentGroup.tvChannels.Count;++i)
+				{
+					TVChannel chan=(TVChannel)GUITVHome.CurrentGroup.tvChannels[i];
+					if (String.Compare(chan.Name,strChannel,true)==0 )
+					{
+						//select previous channel
+						int iPrev=i-1;
+						if (iPrev<0)iPrev=GUITVHome.CurrentGroup.tvChannels.Count-1;
+						chan=(TVChannel)GUITVHome.CurrentGroup.tvChannels[iPrev];
+						m_sZapChannel = chan.Name;
+						UpdateOSD();
+						return;
+					}
+					
+				}
+				return;
+			}
+			ArrayList m_channels=new ArrayList();
+			TVDatabase.GetChannels(ref m_channels);
+			
+			// get current channel name
+			for (int i=0; i < m_channels.Count;++i)
+			{
+				TVChannel chan=(TVChannel)m_channels[i];
+				if (String.Compare(chan.Name,strChannel,true)==0 )
+				{
+					//select previous channel
+					int iPrev=i-1;
+					if (iPrev<0) iPrev=m_channels.Count-1;
+					chan=(TVChannel)m_channels[iPrev];
+					m_sZapChannel = chan.Name;
+					UpdateOSD();
+					return;
+				}
+				
+			}
+			
+
+		}
+
+		public void ZapNextChannel()
+		{
+			string strChannel;
+
+			if (m_sZapChannel=="")
+			{
+				strChannel=Recorder.TVChannelName;
+			}
+			else
+			{
+				strChannel=m_sZapChannel;
+			}
+			if(GUITVHome.CurrentGroup!=null)
+			{
+				// get current channel name
+				for (int i=0; i < GUITVHome.CurrentGroup.tvChannels.Count;++i)
+				{
+					TVChannel chan=(TVChannel)GUITVHome.CurrentGroup.tvChannels[i];
+					if (String.Compare(chan.Name,strChannel,true)==0 )
+					{
+						//select next channel
+						int iNext=i+1;
+						if (iNext>GUITVHome.CurrentGroup.tvChannels.Count-1) iNext=0;
+						chan=(TVChannel)GUITVHome.CurrentGroup.tvChannels[iNext];
+						m_sZapChannel = chan.Name;
+						UpdateOSD();
+						return;
+					}
+
+				}
+				return;
+			}
+			ArrayList m_channels=new ArrayList();
+			TVDatabase.GetChannels(ref m_channels);
+			
+			// get current channel name
+			for (int i=0; i < m_channels.Count;++i)
+			{
+				TVChannel chan=(TVChannel)m_channels[i];
+				if (String.Compare(chan.Name,strChannel,true)==0 )
+				{
+					//select next channel
+					int iNext=i+1;
+					if (iNext>m_channels.Count-1) iNext=0;
+					chan=(TVChannel)m_channels[iNext];
+					m_sZapChannel = chan.Name;
+					UpdateOSD();
+					return;
+				}
 			}
 		}
 

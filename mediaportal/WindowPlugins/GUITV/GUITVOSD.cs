@@ -1201,13 +1201,21 @@ namespace MediaPortal.GUI.TV
       ShowPrograms();
     }
 
-    string GetChannelName()
-    {
-      string strChannel=Recorder.TVChannelName;
-      if (!Recorder.View && Recorder.IsRecording)
-        strChannel=Recorder.CurrentTVRecording.Channel;
-      return strChannel;
-    }
+	  string GetChannelName()
+	  {
+		  string strChannel=Recorder.TVChannelName;
+		  GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+		  
+		  if (!Recorder.View && Recorder.IsRecording)
+		  {
+			  strChannel=Recorder.CurrentTVRecording.Channel;
+		  }
+		  if (!(TVWindow.ZapChannel==""))
+		  {
+			  strChannel=TVWindow.ZapChannel;
+		  }
+		  return strChannel;
+	  }
     void ShowPrograms()
     {
       GUITextControl cntlNow=GetControl((int)Controls.LABEL_ONTV_NOW) as GUITextControl;
@@ -1264,6 +1272,7 @@ namespace MediaPortal.GUI.TV
           msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNow.GetID,0,0,null); 
           msg.Label=strTime+prog.Title;
           cntlNow.OnMessage(msg);
+		  GUIPropertyManager.SetProperty("#TV.View.start", strTime);
         }
 
         // next program
@@ -1278,6 +1287,7 @@ namespace MediaPortal.GUI.TV
             msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNext.GetID,0,0,null); 
             msg.Label=strTime+prog.Title;
             cntlNext.OnMessage(msg);
+			GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
           }
         }
       }
@@ -1290,35 +1300,31 @@ namespace MediaPortal.GUI.TV
       UpdateProgressBar();
     }
 
-    void UpdateProgressBar()
-    {
-      double fPercent;
-      if (g_Player.Playing==false)
-      {
-        if (m_util==null)
-        {
-          m_util=new TVUtil();
-        }
-        TVProgram prog=m_util.GetCurrentProgram(GetChannelName());
-        if (prog==null) return;
-        string strTime=String.Format("{0}-{1}", 
-          prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-          prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+	  void UpdateProgressBar()
+	  {
+		  double fPercent;
+		  if (g_Player.Playing==false)
+		  {
+			  if (m_util==null)
+			  {
+				  m_util=new TVUtil();
+			  }
+			  TVProgram prog=m_util.GetCurrentProgram(GetChannelName());
+			  if (prog==null) return;
+			  string strTime=String.Format("{0}-{1}", 
+				  prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+				  prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
-        TimeSpan ts=prog.EndTime-prog.StartTime;
-        double iTotalSecs=ts.TotalSeconds;
-        ts=DateTime.Now-prog.StartTime; 
-        double iCurSecs=ts.TotalSeconds;
-        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-      }
-      fPercent=g_Player.CurrentPosition / g_Player.Duration;
-      fPercent *=100.0d;
-      GUIProgressControl cntl=GetControl( (int)Controls.PROGRESS_BAR) as GUIProgressControl;
-      if (cntl!=null)
-      {
-        cntl.Percentage=(int)fPercent;
-      }
-    }
+			  TimeSpan ts=prog.EndTime-prog.StartTime;
+			  double iTotalSecs=ts.TotalSeconds;
+			  ts=DateTime.Now-prog.StartTime; 
+			  double iCurSecs=ts.TotalSeconds;
+			  fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+			  fPercent *=100.0d;
+			  GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+			  Get_TimeInfo();
+		  }
+	  }
     public bool InWindow(int x,int y)
     {
       for (int i=0; i < m_vecControls.Count;++i)

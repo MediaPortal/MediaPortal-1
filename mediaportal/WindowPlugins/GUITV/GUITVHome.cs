@@ -54,6 +54,13 @@ namespace MediaPortal.GUI.TV
 		static TVGroup	currentGroup=null;
 		ArrayList       m_recordings=new ArrayList();
 
+		public TVGroup CurrentGroupSelected
+		{
+			get 
+			{
+				return currentGroup;
+			}
+		}
 		public  GUITVHome()
 		{	
 			GetID=(int)GUIWindow.Window.WINDOW_TV;
@@ -648,6 +655,7 @@ namespace MediaPortal.GUI.TV
         
 				UpdateStateOfButtons();
 			}
+
 		}
 
 
@@ -700,57 +708,64 @@ namespace MediaPortal.GUI.TV
 		/// When called this method will switch to the previous TV channel
 		/// </summary>
 		static public void OnPreviousChannel()
-		{	
-			string strChannel=Recorder.TVChannelName;
-			if (currentGroup!=null)
+		{
+
+			string strChannel;
+			strChannel=Recorder.TVChannelName;
+
+			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
+				// where in fullscreen so delayzap channel instead of immediatly tune..
+				GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				if (TVWindow != null) TVWindow.ZapPreviousChannel();
+				return;
+			}
+			if(currentGroup!=null)
+			{
+
+				// get current channel name
 				for (int i=0; i < currentGroup.tvChannels.Count;++i)
 				{
 					TVChannel chan=(TVChannel)currentGroup.tvChannels[i];
 					if (String.Compare(chan.Name,strChannel,true)==0 )
 					{
+						//select previous channel
 						int iPrev=i-1;
-						if (iPrev<0) iPrev=currentGroup.tvChannels.Count-1;
+						if (iPrev<0)iPrev=currentGroup.tvChannels.Count-1;
 						chan=(TVChannel)currentGroup.tvChannels[iPrev];
-					
+
+						// where in TVHome screen, so switch immediatly
 						int card=GUITVHome.GetCurrentCard();
 						Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-					  						
-
-						if (GUIGraphicsContext.IsFullScreenVideo)
-						{
-							GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-							if (TVWindow != null) TVWindow.UpdateOSD();
-						}
 						return;
 					}
-				}
-			}
 
-			ArrayList m_channels=new ArrayList();
-			TVDatabase.GetChannels(ref m_channels);
-			for (int i=0; i < m_channels.Count;++i)
-			{
-				TVChannel chan=(TVChannel)m_channels[i];
-				if (String.Compare(chan.Name,strChannel,true)==0 )
-				{
-					int iPrev=i-1;
-					if (iPrev<0) iPrev=m_channels.Count-1;
-					chan=(TVChannel)m_channels[iPrev];
-					
-					int card=GUITVHome.GetCurrentCard();
-					Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-
-					if (GUIGraphicsContext.IsFullScreenVideo)
-					{
-						GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-						if (TVWindow != null) TVWindow.UpdateOSD();
-					}
+				
 					return;
+				}
+
+				ArrayList m_channels=new ArrayList();
+				TVDatabase.GetChannels(ref m_channels);
+			
+				// get current channel name
+				for (int i=0; i < m_channels.Count;++i)
+				{
+					TVChannel chan=(TVChannel)m_channels[i];
+					if (String.Compare(chan.Name,strChannel,true)==0 )
+					{
+						//select previous channel
+						int iPrev=i-1;
+						if (iPrev<0) iPrev=m_channels.Count-1;
+						chan=(TVChannel)m_channels[iPrev];
+						// where in TVHome screen, so switch immediatly
+						int card=GUITVHome.GetCurrentCard();
+						Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+					return;					
+					}
 				}
 			}
 		}
-    
+
 		static public void ViewChannel(string channel)
 		{
 			//and view that
@@ -769,10 +784,23 @@ namespace MediaPortal.GUI.TV
 		/// </summary>
 		static public void OnNextChannel()
 		{
-			// get list of all channels
-			string strChannel=Recorder.TVChannelName;
-			if (currentGroup!=null)
+
+			string strChannel;
+			strChannel=Recorder.TVChannelName;
+
+			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
+				// where in fullscreen so delayzap channel instead of immediatly tune..
+				GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				if (TVWindow != null) 
+				{
+					TVWindow.ZapNextChannel();
+				}
+				return;
+			}
+			if(currentGroup!=null)
+			{
+
 				// get current channel name
 				for (int i=0; i < currentGroup.tvChannels.Count;++i)
 				{
@@ -784,23 +812,18 @@ namespace MediaPortal.GUI.TV
 						if (iNext>currentGroup.tvChannels.Count-1) iNext=0;
 						chan=(TVChannel)currentGroup.tvChannels[iNext];
 
-						//and view that
+						// where in TVHome screen, so switch immediatly
 						int card=GUITVHome.GetCurrentCard();
 						Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-					
-						if (GUIGraphicsContext.IsFullScreenVideo)
-						{
-							GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-							if (TVWindow != null) TVWindow.UpdateOSD();
-						}
 						return;
 					}
+
 				}
 				return;
 			}
 			ArrayList m_channels=new ArrayList();
 			TVDatabase.GetChannels(ref m_channels);
-
+			
 			// get current channel name
 			for (int i=0; i < m_channels.Count;++i)
 			{
@@ -811,16 +834,9 @@ namespace MediaPortal.GUI.TV
 					int iNext=i+1;
 					if (iNext>m_channels.Count-1) iNext=0;
 					chan=(TVChannel)m_channels[iNext];
-
-					//and view that
+					// where in TVHome screen, so switch immediatly
 					int card=GUITVHome.GetCurrentCard();
 					Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-					
-					if (GUIGraphicsContext.IsFullScreenVideo)
-					{
-						GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-						if (TVWindow != null) TVWindow.UpdateOSD();
-					}
 					return;
 				}
 			}

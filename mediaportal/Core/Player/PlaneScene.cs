@@ -366,7 +366,7 @@ namespace MediaPortal.Player
     
 					//Render video texture
           if (renderTexture && _textureNo>=0)
-          {
+					{
 						FontEngineDrawTexture(_textureNo,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, (int)m_lColorDiffuse);
           }
 

@@ -47,7 +47,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.GroupBox mpGroupBox3;
+		private System.Windows.Forms.TextBox zapDelayTextBox;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TextBox ZapTimeOutTextBox;
 
 		string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -72,6 +76,8 @@ namespace MediaPortal.Configuration.Sections
 
 				dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
 				displayTimoutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0));
+				zapDelayTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2));
+				ZapTimeOutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5));
 
 				//
 				// Get font settings
@@ -179,6 +185,8 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("subtitles", "shadow", dropShadowTextBox.Text);
 				
 				xmlwriter.SetValue("movieplayer", "osdtimeout", displayTimoutTextBox.Text);
+				xmlwriter.SetValue("movieplayer", "zapdelay", zapDelayTextBox.Text);
+				xmlwriter.SetValue("movieplayer", "zaptimeout", ZapTimeOutTextBox.Text);
 
 				xmlwriter.SetValue("subtitles", "fontface", fontName);
 				xmlwriter.SetValue("subtitles", "color", fontColor);
@@ -252,7 +260,11 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.mpGroupBox3 = new System.Windows.Forms.GroupBox();
+			this.zapDelayTextBox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.ZapTimeOutTextBox = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.mpGroupBox1.SuspendLayout();
 			this.mpGroupBox2.SuspendLayout();
@@ -262,6 +274,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tabPage4.SuspendLayout();
+			this.mpGroupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -288,12 +301,12 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-																																 "Normal",
-																																 "Original Source Format",
-																																 "Stretch",
-																																 "Zoom",
-																																 "4:3 Letterbox",
-																																 "4:3 Pan and scan"});
+																		 "Normal",
+																		 "Original Source Format",
+																		 "Stretch",
+																		 "Zoom",
+																		 "4:3 Letterbox",
+																		 "4:3 Pan and scan"});
 			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(24, 128);
 			this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
 			this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
@@ -301,11 +314,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 112);
+			this.label1.Location = new System.Drawing.Point(16, 104);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(104, 16);
 			this.label1.TabIndex = 33;
-			this.label1.Text = "Default zoom mode:";
+			this.label1.Text = "Default zoom mode";
 			// 
 			// fileNameButton
 			// 
@@ -341,9 +354,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameLabel.Location = new System.Drawing.Point(16, 56);
 			this.folderNameLabel.Name = "folderNameLabel";
-			this.folderNameLabel.Size = new System.Drawing.Size(240, 16);
+			this.folderNameLabel.Size = new System.Drawing.Size(80, 23);
 			this.folderNameLabel.TabIndex = 0;
-			this.folderNameLabel.Text = "Folder where video playlists are stored:";
+			this.folderNameLabel.Text = "Playlist folder";
 			// 
 			// mpGroupBox1
 			// 
@@ -422,20 +435,19 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.mpGroupBox2.Controls.Add(this.label2);
 			this.mpGroupBox2.Controls.Add(this.displayTimoutTextBox);
 			this.mpGroupBox2.Controls.Add(this.label5);
 			this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
 			this.mpGroupBox2.Name = "mpGroupBox2";
-			this.mpGroupBox2.Size = new System.Drawing.Size(344, 136);
+			this.mpGroupBox2.Size = new System.Drawing.Size(344, 88);
 			this.mpGroupBox2.TabIndex = 4;
 			this.mpGroupBox2.TabStop = false;
 			this.mpGroupBox2.Text = "OnScreen Display (OSD)";
 			// 
 			// displayTimoutTextBox
 			// 
-			this.displayTimoutTextBox.Location = new System.Drawing.Point(112, 24);
+			this.displayTimoutTextBox.Location = new System.Drawing.Point(160, 27);
 			this.displayTimoutTextBox.Name = "displayTimoutTextBox";
 			this.displayTimoutTextBox.Size = new System.Drawing.Size(40, 20);
 			this.displayTimoutTextBox.TabIndex = 16;
@@ -443,11 +455,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 24);
+			this.label5.Location = new System.Drawing.Point(16, 30);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(88, 23);
+			this.label5.Size = new System.Drawing.Size(150, 23);
 			this.label5.TabIndex = 0;
-			this.label5.Text = "Hide OSD after";
+			this.label5.Text = "Display timeout (seconds)";
 			// 
 			// groupBox2
 			// 
@@ -461,17 +473,17 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Size = new System.Drawing.Size(352, 200);
 			this.groupBox2.TabIndex = 5;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Internet Movie Database (IMDB) settings";
+			this.groupBox2.Text = "IMDB Database search results";
 			// 
 			// cbDatabaseLimit
 			// 
 			this.cbDatabaseLimit.Items.AddRange(new object[] {
-																												 "0",
-																												 "5",
-																												 "10",
-																												 "15",
-																												 "20",
-																												 "25"});
+																 "0",
+																 "5",
+																 "10",
+																 "15",
+																 "20",
+																 "25"});
 			this.cbDatabaseLimit.Location = new System.Drawing.Point(88, 160);
 			this.cbDatabaseLimit.Name = "cbDatabaseLimit";
 			this.cbDatabaseLimit.Size = new System.Drawing.Size(48, 21);
@@ -502,9 +514,9 @@ namespace MediaPortal.Configuration.Sections
 			// lvDatabase
 			// 
 			this.lvDatabase.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																								 this.chDatabaseDB,
-																																								 this.chDatabaseLanguage,
-																																								 this.chDatabaseLimit});
+																						 this.chDatabaseDB,
+																						 this.chDatabaseLanguage,
+																						 this.chDatabaseLimit});
 			this.lvDatabase.FullRowSelect = true;
 			this.lvDatabase.GridLines = true;
 			this.lvDatabase.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -535,8 +547,8 @@ namespace MediaPortal.Configuration.Sections
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
@@ -573,6 +585,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage4
 			// 
+			this.tabPage4.Controls.Add(this.mpGroupBox3);
 			this.tabPage4.Controls.Add(this.mpGroupBox2);
 			this.tabPage4.Location = new System.Drawing.Point(4, 22);
 			this.tabPage4.Name = "tabPage4";
@@ -580,12 +593,50 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "OSD";
 			// 
+			// mpGroupBox3
+			// 
+			this.mpGroupBox3.Controls.Add(this.ZapTimeOutTextBox);
+			this.mpGroupBox3.Controls.Add(this.label3);
+			this.mpGroupBox3.Controls.Add(this.zapDelayTextBox);
+			this.mpGroupBox3.Controls.Add(this.label2);
+			this.mpGroupBox3.Location = new System.Drawing.Point(16, 120);
+			this.mpGroupBox3.Name = "mpGroupBox3";
+			this.mpGroupBox3.Size = new System.Drawing.Size(344, 112);
+			this.mpGroupBox3.TabIndex = 5;
+			this.mpGroupBox3.TabStop = false;
+			this.mpGroupBox3.Text = "Zap OnScreen Display(OSD)";
+			// 
+			// zapDelayTextBox
+			// 
+			this.zapDelayTextBox.Location = new System.Drawing.Point(160, 32);
+			this.zapDelayTextBox.Name = "zapDelayTextBox";
+			this.zapDelayTextBox.Size = new System.Drawing.Size(40, 20);
+			this.zapDelayTextBox.TabIndex = 20;
+			this.zapDelayTextBox.Text = "";
+			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(160, 24);
+			this.label2.Location = new System.Drawing.Point(16, 32);
 			this.label2.Name = "label2";
-			this.label2.TabIndex = 17;
-			this.label2.Text = "seconds";
+			this.label2.Size = new System.Drawing.Size(128, 16);
+			this.label2.TabIndex = 19;
+			this.label2.Text = "Zap Delay (seconds)";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(16, 64);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(128, 16);
+			this.label3.TabIndex = 21;
+			this.label3.Text = "Zap TimeOut (seconds)";
+			// 
+			// ZapTimeOutTextBox
+			// 
+			this.ZapTimeOutTextBox.Location = new System.Drawing.Point(160, 64);
+			this.ZapTimeOutTextBox.Name = "ZapTimeOutTextBox";
+			this.ZapTimeOutTextBox.Size = new System.Drawing.Size(40, 20);
+			this.ZapTimeOutTextBox.TabIndex = 22;
+			this.ZapTimeOutTextBox.Text = "";
 			// 
 			// Movies
 			// 
@@ -601,6 +652,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
+			this.mpGroupBox3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -762,6 +814,8 @@ namespace MediaPortal.Configuration.Sections
 				this.cbDatabaseLimit.Text = this.lvDatabase.Items[index].SubItems[2].Text;
 			}
 		}
+
+
 	}
 }
 
