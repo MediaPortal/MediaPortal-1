@@ -116,6 +116,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TextBox tbDVBTPmtPid;
 		private System.Windows.Forms.Label label48;
 		private System.Windows.Forms.TextBox tbDVBSPmtPid;
+		private System.Windows.Forms.CheckBox checkBoxScrambled;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -190,6 +191,8 @@ namespace MediaPortal.Configuration
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.tbDVBCPmtPid = new System.Windows.Forms.TextBox();
+			this.label46 = new System.Windows.Forms.Label();
 			this.label41 = new System.Windows.Forms.Label();
 			this.tbDVBCTeletextPid = new System.Windows.Forms.TextBox();
 			this.tbDVBCVideoPid = new System.Windows.Forms.TextBox();
@@ -214,6 +217,8 @@ namespace MediaPortal.Configuration
 			this.tbDVBCONID = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tbDVBTPmtPid = new System.Windows.Forms.TextBox();
+			this.label47 = new System.Windows.Forms.Label();
 			this.label42 = new System.Windows.Forms.Label();
 			this.tbDVBTTeletextPid = new System.Windows.Forms.TextBox();
 			this.tbDVBTVideoPid = new System.Windows.Forms.TextBox();
@@ -232,6 +237,8 @@ namespace MediaPortal.Configuration
 			this.tbDVBTONID = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.tbDVBSPmtPid = new System.Windows.Forms.TextBox();
+			this.label48 = new System.Windows.Forms.Label();
 			this.label40 = new System.Windows.Forms.Label();
 			this.tbDVBSECMpid = new System.Windows.Forms.TextBox();
 			this.label39 = new System.Windows.Forms.Label();
@@ -258,12 +265,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.tbDVBCPmtPid = new System.Windows.Forms.TextBox();
-			this.label46 = new System.Windows.Forms.Label();
-			this.tbDVBTPmtPid = new System.Windows.Forms.TextBox();
-			this.label47 = new System.Windows.Forms.Label();
-			this.tbDVBSPmtPid = new System.Windows.Forms.TextBox();
-			this.label48 = new System.Windows.Forms.Label();
+			this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -455,6 +457,7 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.checkBoxScrambled);
 			this.tabPage1.Controls.Add(this.label45);
 			this.tabPage1.Controls.Add(this.label44);
 			this.tabPage1.Controls.Add(this.label3);
@@ -463,14 +466,14 @@ namespace MediaPortal.Configuration
 			this.tabPage1.Controls.Add(this.nameTextBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(392, 342);
+			this.tabPage1.Size = new System.Drawing.Size(392, 358);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
 			// 
 			// label45
 			// 
-			this.label45.Location = new System.Drawing.Point(16, 128);
+			this.label45.Location = new System.Drawing.Point(16, 160);
 			this.label45.Name = "label45";
 			this.label45.Size = new System.Drawing.Size(344, 56);
 			this.label45.TabIndex = 12;
@@ -480,7 +483,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label44
 			// 
-			this.label44.Location = new System.Drawing.Point(16, 88);
+			this.label44.Location = new System.Drawing.Point(16, 120);
 			this.label44.Name = "label44";
 			this.label44.Size = new System.Drawing.Size(344, 32);
 			this.label44.TabIndex = 11;
@@ -517,7 +520,7 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Controls.Add(this.comboTvStandard);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(392, 342);
+			this.tabPage2.Size = new System.Drawing.Size(392, 358);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Analog";
 			this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
@@ -581,10 +584,25 @@ namespace MediaPortal.Configuration
 			this.tabPage4.Controls.Add(this.label16);
 			this.tabPage4.Location = new System.Drawing.Point(4, 22);
 			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(392, 342);
+			this.tabPage4.Size = new System.Drawing.Size(392, 358);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-C";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
+			// 
+			// tbDVBCPmtPid
+			// 
+			this.tbDVBCPmtPid.Location = new System.Drawing.Point(160, 312);
+			this.tbDVBCPmtPid.Name = "tbDVBCPmtPid";
+			this.tbDVBCPmtPid.TabIndex = 32;
+			this.tbDVBCPmtPid.Text = "";
+			// 
+			// label46
+			// 
+			this.label46.Location = new System.Drawing.Point(24, 312);
+			this.label46.Name = "label46";
+			this.label46.Size = new System.Drawing.Size(72, 16);
+			this.label46.TabIndex = 31;
+			this.label46.Text = "PMT pid:";
 			// 
 			// label41
 			// 
@@ -829,10 +847,25 @@ namespace MediaPortal.Configuration
 			this.tabPage3.Controls.Add(this.label9);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(392, 342);
+			this.tabPage3.Size = new System.Drawing.Size(392, 358);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "DVB-T";
 			this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
+			// 
+			// tbDVBTPmtPid
+			// 
+			this.tbDVBTPmtPid.Location = new System.Drawing.Point(152, 264);
+			this.tbDVBTPmtPid.Name = "tbDVBTPmtPid";
+			this.tbDVBTPmtPid.TabIndex = 34;
+			this.tbDVBTPmtPid.Text = "";
+			// 
+			// label47
+			// 
+			this.label47.Location = new System.Drawing.Point(16, 264);
+			this.label47.Name = "label47";
+			this.label47.Size = new System.Drawing.Size(72, 16);
+			this.label47.TabIndex = 33;
+			this.label47.Text = "PMT pid:";
 			// 
 			// label42
 			// 
@@ -1005,6 +1038,21 @@ namespace MediaPortal.Configuration
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "DVB-S";
 			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
+			// 
+			// tbDVBSPmtPid
+			// 
+			this.tbDVBSPmtPid.Location = new System.Drawing.Point(160, 320);
+			this.tbDVBSPmtPid.Name = "tbDVBSPmtPid";
+			this.tbDVBSPmtPid.TabIndex = 48;
+			this.tbDVBSPmtPid.Text = "";
+			// 
+			// label48
+			// 
+			this.label48.Location = new System.Drawing.Point(24, 320);
+			this.label48.Name = "label48";
+			this.label48.Size = new System.Drawing.Size(72, 16);
+			this.label48.TabIndex = 47;
+			this.label48.Text = "PMT pid:";
 			// 
 			// label40
 			// 
@@ -1227,55 +1275,17 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Controls.Add(this.inputComboBox);
 			this.tabPage6.Location = new System.Drawing.Point(4, 22);
 			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.Size = new System.Drawing.Size(392, 342);
+			this.tabPage6.Size = new System.Drawing.Size(392, 358);
 			this.tabPage6.TabIndex = 5;
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// tbDVBCPmtPid
+			// checkBoxScrambled
 			// 
-			this.tbDVBCPmtPid.Location = new System.Drawing.Point(160, 312);
-			this.tbDVBCPmtPid.Name = "tbDVBCPmtPid";
-			this.tbDVBCPmtPid.TabIndex = 32;
-			this.tbDVBCPmtPid.Text = "";
-			// 
-			// label46
-			// 
-			this.label46.Location = new System.Drawing.Point(24, 312);
-			this.label46.Name = "label46";
-			this.label46.Size = new System.Drawing.Size(72, 16);
-			this.label46.TabIndex = 31;
-			this.label46.Text = "PMT pid:";
-			// 
-			// tbDVBTPmtPid
-			// 
-			this.tbDVBTPmtPid.Location = new System.Drawing.Point(152, 264);
-			this.tbDVBTPmtPid.Name = "tbDVBTPmtPid";
-			this.tbDVBTPmtPid.TabIndex = 34;
-			this.tbDVBTPmtPid.Text = "";
-			// 
-			// label47
-			// 
-			this.label47.Location = new System.Drawing.Point(16, 264);
-			this.label47.Name = "label47";
-			this.label47.Size = new System.Drawing.Size(72, 16);
-			this.label47.TabIndex = 33;
-			this.label47.Text = "PMT pid:";
-			// 
-			// tbDVBSPmtPid
-			// 
-			this.tbDVBSPmtPid.Location = new System.Drawing.Point(160, 320);
-			this.tbDVBSPmtPid.Name = "tbDVBSPmtPid";
-			this.tbDVBSPmtPid.TabIndex = 48;
-			this.tbDVBSPmtPid.Text = "";
-			// 
-			// label48
-			// 
-			this.label48.Location = new System.Drawing.Point(24, 320);
-			this.label48.Name = "label48";
-			this.label48.Size = new System.Drawing.Size(72, 16);
-			this.label48.TabIndex = 47;
-			this.label48.Text = "PMT pid:";
+			this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
+			this.checkBoxScrambled.Name = "checkBoxScrambled";
+			this.checkBoxScrambled.TabIndex = 13;
+			this.checkBoxScrambled.Text = "Scrambled";
 			// 
 			// EditTVChannelForm
 			// 
@@ -1404,7 +1414,8 @@ namespace MediaPortal.Configuration
 				channel.ID=channelId;
 				channel.Name = nameTextBox.Text;
 				channel.Channel = Convert.ToInt32(channelTextBox.Text.Length > 0 ? channelTextBox.Text : "0");
-
+				
+				channel.Scrambled=checkBoxScrambled.Checked;
 				try
 				{
 
@@ -1512,6 +1523,7 @@ namespace MediaPortal.Configuration
 							break;
 						}
 					}
+					checkBoxScrambled.Checked=channel.Scrambled;
 					nameTextBox.Text = channel.Name;
 					channelTextBox.Text = channel.Channel.ToString();
 					frequencyTextBox.Text = channel.Frequency.ToString();

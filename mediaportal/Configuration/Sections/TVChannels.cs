@@ -1817,6 +1817,7 @@ namespace MediaPortal.Configuration.Sections
 						channels.SetValue(listItem.Index.ToString(),"INDEX",listItem.Index.ToString());
 				
 						//Channel data
+						channels.SetValueAsBool(listItem.Index.ToString(),"Scrambled",Selected_Chan.Scrambled);
 						channels.SetValue(listItem.Index.ToString(),"ID",Selected_Chan.ID.ToString());
 						channels.SetValue(listItem.Index.ToString(),"Number",Selected_Chan.Channel.ToString());
 						channels.SetValue(listItem.Index.ToString(),"Name",Selected_Chan.Name.ToString());
@@ -2122,6 +2123,7 @@ namespace MediaPortal.Configuration.Sections
 					Import_Chan.Frequency=Convert.ToDouble(channels.GetValueAsInt(i.ToString(),"Frequency",0));
 					Import_Chan.standard=Convert_AVS(channels.GetValueAsString(i.ToString(),"Analog Standard Index","None"));
 					Import_Chan.VisibleInGuide=channels.GetValueAsBool(i.ToString(),"Visible in Guide",false);	
+					Import_Chan.Scrambled=channels.GetValueAsBool(i.ToString(),"Scrambled",false);
 					
 					//Check to see if this channel exists prompt to overwrite
 					foreach(ListViewItem listItem in channelsListView.Items)
