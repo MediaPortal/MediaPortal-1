@@ -1179,6 +1179,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView5.Name = "treeView5";
 			this.treeView5.SelectedImageIndex = -1;
 			this.treeView5.Size = new System.Drawing.Size(328, 160);
+			this.treeView5.Sorted = true;
 			this.treeView5.TabIndex = 7;
 			this.treeView5.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView5_BeforeCheck);
 			// 
