@@ -30,7 +30,7 @@
 				<label>8020</label>
 				<onleft>25</onleft>
 				<onright>24</onright>
-				<onup>26</onup>
+				<onup>27</onup>
 				<ondown>26</ondown>
 			</control>
 			<control>
@@ -44,7 +44,7 @@
 				<onleft>26</onleft>
 				<onright>24</onright>
 				<onup>25</onup>
-				<ondown>25</ondown>
+				<ondown>27</ondown>
 			</control>
 			<control>
 				<description>Attachments</description>
@@ -57,7 +57,7 @@
 				<onleft>27</onleft>
 				<onright>24</onright>
 				<onup>26</onup>
-				<ondown>26</ondown>
+				<ondown>51</ondown>
 			</control>
 			<control>
 				<description>Message label</description>
@@ -154,9 +154,7 @@
 				<posY>225</posY>
 				<width>640</width>
 				<height>350</height>
-				<onleft>26</onleft>
-				<onright>51</onright>
+				<onup>27</onup>
 			</control>
-
 		</controls>
 </window>
