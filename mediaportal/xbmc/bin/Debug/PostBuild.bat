@@ -18,7 +18,7 @@ copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll 
 regsvr32 /s directshowhelper.dll
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
-copy ..\..\..\Core\bin\Debug\Interop.DirectShowHelperLib.dll .
+copy ..\..\..\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .

@@ -16,7 +16,7 @@ del *.dll
 copy ..\..\..\core\directshowhelper\directshowhelper\release\directshowhelper.dll .
 regsvr32 /s directshowhelper.dll
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
-copy ..\..\..\Core\bin\Release\Interop.DirectShowHelperLib.dll .
+copy ..\..\..\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .
