@@ -284,6 +284,12 @@ namespace ProgramsDatabase
 			int iStartOfOV = -1;
 			int iEndOfOV = -1;
 			iStartOfOV = strHTMLLow.IndexOf("<img src=\"http://image.allmusic.com/00/agg/cov200");
+			if (iStartOfOV == -1)
+			{
+				// no covershot found: maybe there's still a review there....
+				iStartOfOV = strHTMLLow.IndexOf("<table border=0 bgcolor=\"#d8d8d8\"");
+			//	Log.Write("dw scraper: {0}", iStartOfOV);
+			}
 			if (iStartOfOV != -1)
 			{
 				iEndOfOV = strHTMLLow.IndexOf("</tr>", iStartOfOV);
@@ -403,6 +409,7 @@ namespace ProgramsDatabase
 			{
 //				Log.Write("AllGameInfoScraper exception: {0}", ex.ToString());
 			}
+
 			return "";
 		}
 	}
