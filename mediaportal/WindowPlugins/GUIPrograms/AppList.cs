@@ -54,6 +54,9 @@ namespace ProgramsDatabase
 			newApp.ImportValidImagesOnly = ProgramUtils.GetBool(results, iRecord, "importvalidimagesonly");
 			newApp.Position = ProgramUtils.GetIntDef(results, iRecord, "position", 0);
 			newApp.EnableGUIRefresh = ProgramUtils.GetBool(results, iRecord, "enableGUIRefresh");
+			newApp.ContentID = ProgramUtils.GetIntDef(results, iRecord, "contentID", 100);
+			newApp.SystemDefault = ProgramUtils.Get(results, iRecord, "systemdefault");
+			newApp.WaitForExit = ProgramUtils.GetBool(results, iRecord, "waitforexit");
 			newApp.Pincode = ProgramUtils.GetIntDef(results, iRecord, "pincode", -1);
 			return newApp;
 		}

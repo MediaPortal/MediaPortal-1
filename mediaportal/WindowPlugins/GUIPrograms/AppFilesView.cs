@@ -81,6 +81,7 @@ namespace WindowPlugins.GUIPrograms
 			this.btnDelete = new System.Windows.Forms.Button();
 			this.btnNew = new System.Windows.Forms.Button();
 			this.btnAddToFavourites = new System.Windows.Forms.Button();
+			this.startScraperButton = new System.Windows.Forms.Button();
 			this.TopPanel = new System.Windows.Forms.Panel();
 			this.BackButton = new System.Windows.Forms.Button();
 			this.FilePathLabel = new System.Windows.Forms.Label();
@@ -90,7 +91,6 @@ namespace WindowPlugins.GUIPrograms
 			this.popupFavourites = new System.Windows.Forms.ContextMenu();
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
-			this.startScraperButton = new System.Windows.Forms.Button();
 			this.TopPanel.SuspendLayout();
 			this.bottomPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -103,9 +103,9 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnLaunch
 			// 
-			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnLaunch.Enabled = false;
-			this.btnLaunch.Location = new System.Drawing.Point(296, 128);
+			this.btnLaunch.Location = new System.Drawing.Point(296, 88);
 			this.btnLaunch.Name = "btnLaunch";
 			this.btnLaunch.Size = new System.Drawing.Size(88, 23);
 			this.btnLaunch.TabIndex = 18;
@@ -116,7 +116,7 @@ namespace WindowPlugins.GUIPrograms
 			// UpdateDatabaseButton
 			// 
 			this.UpdateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.UpdateDatabaseButton.Location = new System.Drawing.Point(296, 216);
+			this.UpdateDatabaseButton.Location = new System.Drawing.Point(296, 328);
 			this.UpdateDatabaseButton.Name = "UpdateDatabaseButton";
 			this.UpdateDatabaseButton.Size = new System.Drawing.Size(88, 40);
 			this.UpdateDatabaseButton.TabIndex = 17;
@@ -161,15 +161,26 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnAddToFavourites
 			// 
-			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnAddToFavourites.Enabled = false;
-			this.btnAddToFavourites.Location = new System.Drawing.Point(296, 88);
+			this.btnAddToFavourites.Location = new System.Drawing.Point(296, 248);
 			this.btnAddToFavourites.Name = "btnAddToFavourites";
 			this.btnAddToFavourites.Size = new System.Drawing.Size(88, 40);
 			this.btnAddToFavourites.TabIndex = 19;
 			this.btnAddToFavourites.Text = "Add to Favourites...";
 			this.ToolTip.SetToolTip(this.btnAddToFavourites, "Adds the selected files to a grouper item");
 			this.btnAddToFavourites.Click += new System.EventHandler(this.btnAddToFavourites_Click);
+			// 
+			// startScraperButton
+			// 
+			this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.startScraperButton.Location = new System.Drawing.Point(296, 288);
+			this.startScraperButton.Name = "startScraperButton";
+			this.startScraperButton.Size = new System.Drawing.Size(88, 40);
+			this.startScraperButton.TabIndex = 20;
+			this.startScraperButton.Text = "Internet Search...";
+			this.ToolTip.SetToolTip(this.startScraperButton, "removes a file / filelink from the database");
+			this.startScraperButton.Click += new System.EventHandler(this.startScraperButton_Click);
 			// 
 			// TopPanel
 			// 
@@ -217,7 +228,7 @@ namespace WindowPlugins.GUIPrograms
 			this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.bottomPanel.Location = new System.Drawing.Point(0, 32);
 			this.bottomPanel.Name = "bottomPanel";
-			this.bottomPanel.Size = new System.Drawing.Size(392, 264);
+			this.bottomPanel.Size = new System.Drawing.Size(392, 376);
 			this.bottomPanel.TabIndex = 15;
 			// 
 			// FileList
@@ -231,7 +242,7 @@ namespace WindowPlugins.GUIPrograms
 			this.FileList.HideSelection = false;
 			this.FileList.Location = new System.Drawing.Point(0, 0);
 			this.FileList.Name = "FileList";
-			this.FileList.Size = new System.Drawing.Size(288, 264);
+			this.FileList.Size = new System.Drawing.Size(288, 376);
 			this.FileList.SmallImageList = this.smallListImages;
 			this.FileList.TabIndex = 12;
 			this.FileList.View = System.Windows.Forms.View.Details;
@@ -260,23 +271,12 @@ namespace WindowPlugins.GUIPrograms
 			this.menuItem2.Index = 1;
 			this.menuItem2.Text = "Grouper B";
 			// 
-			// startScraperButton
-			// 
-			this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.startScraperButton.Location = new System.Drawing.Point(296, 176);
-			this.startScraperButton.Name = "startScraperButton";
-			this.startScraperButton.Size = new System.Drawing.Size(88, 40);
-			this.startScraperButton.TabIndex = 20;
-			this.startScraperButton.Text = "Internet Search...";
-			this.ToolTip.SetToolTip(this.startScraperButton, "removes a file / filelink from the database");
-			this.startScraperButton.Click += new System.EventHandler(this.startScraperButton_Click);
-			// 
 			// AppFilesView
 			// 
 			this.Controls.Add(this.bottomPanel);
 			this.Controls.Add(this.TopPanel);
 			this.Name = "AppFilesView";
-			this.Size = new System.Drawing.Size(392, 296);
+			this.Size = new System.Drawing.Size(392, 408);
 			this.TopPanel.ResumeLayout(false);
 			this.bottomPanel.ResumeLayout(false);
 			this.ResumeLayout(false);

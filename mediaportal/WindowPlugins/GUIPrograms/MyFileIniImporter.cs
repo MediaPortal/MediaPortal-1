@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections;
 using SQLite.NET;
 
 using MediaPortal.GUI.Library;		
@@ -71,11 +72,17 @@ namespace ProgramsDatabase
 
 			// constants: important: ONLY USE LOWERCASE CHARS!
 			const string cTITLE = "title=";
+			const string cCATEGORY = "category=";
 			const string cSYSTEM = "category=\"system\"";
+			const string cSYSTEMnoQ = "category=system";
 			const string cGENRE = "category=\"genre\"";
+			const string cGENREnoQ = "category=genre";
 			const string cCOUNTRY = "category=\"country\"";
+			const string cCOUNTRYnoQ = "category=country";
 			const string cMANUFACTURER = "category=\"company\"";
+			const string cMANUFACTURERnoQ = "category=company";
 			const string cYEAR = "category=\"year\"";
+			const string cYEARnoQ = "category=year";
 
 			const string cRATING = "review=";
 			const string cOVERVIEW = "overview=";
@@ -84,7 +91,10 @@ namespace ProgramsDatabase
 			const string cIMAGEFILE = "images=";
 			if (strLowerLine.StartsWith(cTITLE))
 			{
-				curFile.Title = strLine.Remove(0, cTITLE.Length);
+				strTemp = strLine.Remove(0, cTITLE.Length);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
+				curFile.Title = strTemp;
 			}
 			else if (strLowerLine.StartsWith(cSYSTEM))
 			{
@@ -93,9 +103,25 @@ namespace ProgramsDatabase
 				strTemp = strTemp.TrimEnd('"');
 				curFile.System_ = strTemp;
 			}
+			else if (strLowerLine.StartsWith(cSYSTEMnoQ))
+			{
+				strTemp = strLine.Remove(0, cSYSTEMnoQ.Length+1);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
+				curFile.System_ = strTemp;
+			}
 			else if (strLowerLine.StartsWith(cGENRE))
 			{
 				strTemp = strLine.Remove(0, cGENRE.Length+1);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
+				curFile.Genre = strTemp;
+			}
+			else if (strLowerLine.StartsWith(cGENREnoQ))
+			{
+				strTemp = strLine.Remove(0, cGENREnoQ.Length+1);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
 				curFile.Genre = strTemp;
 			}
 			else if (strLowerLine.StartsWith(cCOUNTRY))
@@ -105,7 +131,21 @@ namespace ProgramsDatabase
 				strTemp = strTemp.TrimEnd('"');
 				curFile.Country = strTemp;
 			}
+			else if (strLowerLine.StartsWith(cCOUNTRYnoQ))
+			{
+				strTemp = strLine.Remove(0, cCOUNTRYnoQ.Length+1);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
+				curFile.Country = strTemp;
+			}
 			else if (strLowerLine.StartsWith(cMANUFACTURER))
+			{
+				strTemp = strLine.Remove(0, cMANUFACTURER.Length+1);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
+				curFile.Manufacturer = strTemp;
+			}
+			else if (strLowerLine.StartsWith(cMANUFACTURERnoQ))
 			{
 				strTemp = strLine.Remove(0, cMANUFACTURER.Length+1);
 				strTemp = strTemp.TrimStart('"');
@@ -119,14 +159,25 @@ namespace ProgramsDatabase
 				strTemp = strTemp.TrimEnd('"');
 				curFile.Year = ProgramUtils.StrToIntDef(strTemp, -1);
 			}
+			else if (strLowerLine.StartsWith(cYEARnoQ))
+			{
+				strTemp = strLine.Remove(0, cYEARnoQ.Length+1);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
+				curFile.Year = ProgramUtils.StrToIntDef(strTemp, -1);
+			}
 			else if (strLowerLine.StartsWith(cRATING))
 			{
 				strTemp = strLine.Remove(0, cRATING.Length);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
 				curFile.Rating = ProgramUtils.StrToIntDef(strTemp, 5);
 			}
 			else if (strLowerLine.StartsWith(cOVERVIEW))
 			{
 				strTemp = strLine.Remove(0, cOVERVIEW.Length);
+				strTemp = strTemp.TrimStart('"');
+				strTemp = strTemp.TrimEnd('"');
 				curFile.Overview = strTemp;
 				m_bOverviewReading = true;
 			}
@@ -158,6 +209,61 @@ namespace ProgramsDatabase
 				strTemp = strTemp.TrimEnd('"');
 				curFile.Imagefile = strTemp;
 			}
+			else 
+			{
+				if (!strLowerLine.StartsWith(cCATEGORY))
+				{
+					// other line: add it to TagData
+					// don't reformat 
+					if (curFile.TagData != "")
+					{
+						curFile.TagData = curFile.TagData + "\r\n";
+					}
+					curFile.TagData = curFile.TagData + strLine;
+				}
+			}
+
+			if (strLowerLine.StartsWith(cCATEGORY))
+			{
+				// remove "category=" part 
+				string strName = "";
+				string strValue = "";
+				strTemp = strLine.Remove(0, cCATEGORY.Length);
+				ArrayList mItems = new ArrayList( strTemp.Split( ',' ) );
+				if (mItems.Count >= 2)
+				{
+					bool bNameComplete = false;
+					bool bFirst = true;
+					string strSep = "";
+					foreach(string strItem in mItems)
+					{
+						if (bNameComplete)
+						{
+							strValue = strValue + strSep + strItem;
+							strSep = ",";
+						}
+						else
+						{
+							strName = strName + strSep + strItem;
+							bNameComplete = (strItem.EndsWith("\"") || ((bFirst)&&(!strItem.StartsWith("\""))));
+							if (!bNameComplete)
+							{
+								strSep = ",";
+							}
+						}
+						bFirst = false;
+					}
+					strName = strName.TrimStart('\"');
+					strName = strName.TrimEnd('\"');
+					string strEntry = String.Format("\"{0}\"={1}", strName, strValue);
+					if (curFile.CategoryData != "")
+					{
+						curFile.CategoryData = curFile.CategoryData + "\r\n";
+					}
+					curFile.CategoryData = curFile.CategoryData + strEntry;
+				}
+			}
+
 		}
 
 		private void ReadAddLine(string strLine)

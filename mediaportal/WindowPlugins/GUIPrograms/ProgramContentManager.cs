@@ -1,0 +1,379 @@
+using System;
+using System.Xml;
+using MediaPortal.GUI.Library;
+using ProgramsDatabase;
+using Programs.Utils;
+
+
+namespace WindowPlugins.GUIPrograms
+{
+	/// <summary>
+	/// Summary description for ProgramContentManager.
+	/// </summary>
+	public class ProgramContentManager
+	{
+
+		static XmlNodeList NodeList = null;
+		static XmlElement rootElement = null;
+
+		static public int NodeCount
+		{
+			get{return NodeList.Count;}
+		}
+
+		static public int NodeID(int Index)
+		{
+			int result = -1;
+			XmlNode node = NodeList.Item(Index);
+			if (node != null)
+			{
+				//				string strVal = node.Attributes["id"].Value;
+				//				result = Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
+				result = ExtractNodeID(node);
+			}
+			return result;
+		}
+
+		static int ExtractNodeID(XmlNode node)
+		{
+			string strVal = node.Attributes["id"].Value;
+			return Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
+		}
+
+		static public string NodeTitle(int Index)
+		{
+			string result = "";
+			XmlNode node = NodeList.Item(Index);
+			if (node != null)
+			{
+				XmlNode titleNode = node.SelectSingleNode("title");
+				if (titleNode != null)
+				{
+					result = titleNode.InnerText;
+				}
+			}
+			return result;
+		}
+
+		static public int GetIndexOfID(int ContentID)
+		{
+			int result = 0;
+			XmlNode node = null;
+			for (int i=0; i < NodeCount; i++)
+			{
+				node = NodeList.Item(i);
+				if (ExtractNodeID(node) == ContentID)
+				{
+					result = i;
+					break;
+				}
+			}
+			return result;
+		}
+		
+		private ProgramContentManager()
+		{
+			//
+			// TODO: Add constructor logic here
+			//
+		}
+
+		static ProgramContentManager()
+		{
+			try
+			{
+				XmlDocument document = new XmlDocument();
+				document.Load("FileDetailContents.xml");
+				rootElement = document.DocumentElement;
+				if((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
+				{
+					NodeList = rootElement.SelectNodes("/contentprofiles/profile");
+					foreach(XmlNode node in NodeList)
+					{
+						XmlNode titleNode = node.SelectSingleNode("title");
+
+						//					taggedMenuItem newMenu = new taggedMenuItem(titleNode.InnerText);
+						//					newMenu.Tag = Convert.ToInt32(idNode.InnerText.Length > 0 ? idNode.InnerText : "0");
+						//					newMenu.XmlTag = node;
+						//					newMenu.Click += new System.EventHandler(this.ProfileItem_Click);
+						//					menuItemReadFromProfile.MenuItems.Add(newMenu);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Write("exception in ProgramContentManager err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			}
+		}
+
+		static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName)
+		{
+			string result = "";
+			XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
+			if (node != null)
+			{
+				XmlNode fieldnode = node.SelectSingleNode(String.Format("fields/field[@id=\"{0}\"]", strFieldName));
+				if (fieldnode != null)
+				{
+					result = ParseExpressions(fieldnode.InnerText, curApp, curFile);
+				}
+				else
+				{
+					Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}\n{2}", curApp.Title, curFile.Title, node.InnerXml);
+				}
+			}
+			else
+			{
+				Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}", curApp.Title, curFile.Title);
+			}
+			return result;
+		}
+
+		static string ParseExpressions(string strExpression, AppItem curApp, FileItem curFile)
+		{
+			string result = strExpression;
+			if (curApp == null) return result;
+			if (curFile == null) return result;
+			if (result.Length == 0) return result;
+
+			int iNextValueTagStart = result.IndexOf("[");
+			int iNextValueTagEnd = -1;
+			string Head = "";
+			string Expression = "";
+			string Tail = "";
+			while (iNextValueTagStart >= 0)
+			{
+				iNextValueTagEnd = result.IndexOf("]", iNextValueTagStart);
+				if (iNextValueTagEnd > iNextValueTagStart)
+				{
+					iNextValueTagEnd = iNextValueTagEnd + 1;
+					if (iNextValueTagStart > 0)
+					{
+						Head = result.Substring(0, iNextValueTagStart);
+					}
+					else
+					{
+						Head = "";
+					}
+					Expression = result.Substring(iNextValueTagStart, iNextValueTagEnd - iNextValueTagStart);
+					if (result.Length - iNextValueTagEnd > 0)
+					{
+						Tail = result.Substring(iNextValueTagEnd, result.Length - iNextValueTagEnd);
+					}
+					else
+					{
+						Tail = "";
+					}
+					result = Head + ParseOneExpression(Expression, curApp, curFile) + Tail;
+				}
+				iNextValueTagStart = result.IndexOf("[");
+			}
+
+			
+//			// not really a parser.... this can be optimized!
+//			// replace the "old-style tags"
+//			result = result.Replace("[VALUEOFTAG(\"system\")]", curFile.System_);
+//			result = result.Replace("[VALUEOFTAG(\"yearmanu\")]", curFile.YearManu);
+//			result = result.Replace("[VALUEOFTAG(\"rating\")]", curFile.Rating.ToString());
+//			result = result.Replace("[VALUEOFTAG(\"genre\")]", curFile.Genre);
+//			result = result.Replace("[VALUEOFTAG(\"overview\")]", curFile.Overview);
+//
+//			// finished?
+//			result = ParseVALUEOFTAGs(result, curApp, curFile);
+
+
+
+			return result;
+		}
+
+
+		static string ParseVALUEOFTAGs(string strExpression, AppItem curApp, FileItem curFile)
+		{
+			string result = strExpression;
+			// Look for VALUEOFTAGs
+			int iNextValueTagStart = result.IndexOf("[VALUEOFTAG(\"");
+			int iNextValueTagEnd = -1;
+			string Head = "";
+			string Expression = "";
+			string Tail = "";
+			while (iNextValueTagStart >= 0)
+			{
+				iNextValueTagEnd = result.IndexOf("\")]");
+				if (iNextValueTagEnd > iNextValueTagStart)
+				{
+					iNextValueTagEnd = iNextValueTagEnd + 3; // legth of "\")]"
+					if (iNextValueTagStart > 0)
+					{
+						Head = result.Substring(0, iNextValueTagStart);
+					}
+					else
+					{
+						Head = "";
+					}
+					Expression = result.Substring(iNextValueTagStart, iNextValueTagEnd - iNextValueTagStart);
+					if (result.Length - iNextValueTagEnd > 0)
+					{
+						Tail = result.Substring(iNextValueTagEnd, result.Length - iNextValueTagEnd);
+					}
+					else
+					{
+						Tail = "";
+					}
+					result = Head + ParseTag(Expression, curApp, curFile) + Tail;
+				}
+				else
+				{
+					Log.Write("Warning: ProgramContentManager.ParseExpressions: invalid tag-expression! \n{0}", result);
+					result = result.Substring(0, iNextValueTagStart - 1); // cut the rest of the string!
+					break;
+				}
+				iNextValueTagStart = result.IndexOf("[VALUEOFTAG(\"");
+			}
+			return result;
+		}
+
+		static string ParseTag(string strTagExpression, AppItem curApp, FileItem curFile)
+		{
+			return ""; // todo:
+		}
+
+		static string ParseOneExpression(string strTagExpression, AppItem curApp, FileItem curFile)
+		{
+			string result = "";
+			if (strTagExpression.StartsWith("[VALUEOFTAG("))
+			{
+				result = ParseVALUEOFTAG(strTagExpression, curApp, curFile);
+			}
+			else if (strTagExpression.StartsWith("[NAMEOFCATEGORY("))
+			{
+				result = ParseNAMEOFCATEGORY(strTagExpression, curApp, curFile);
+			}
+			else if (strTagExpression.StartsWith("[VALUEOFCATEGORY("))
+			{
+				result = ParseVALUEOFCATEGORY(strTagExpression, curApp, curFile);
+			}
+			return result; 
+		}
+
+		static string ParseVALUEOFTAG(string strTagExpression, AppItem curApp, FileItem curFile)
+		{
+			string result = "";
+			string TagName = "";
+			int Start = strTagExpression.IndexOf("\"");
+			int End = strTagExpression.IndexOf("\"", Start + 1);
+			if ((Start >= 0) && (End > Start))
+			{
+				TagName = strTagExpression.Substring(Start, End - Start + 1);
+				TagName = TagName.TrimStart('"');
+				TagName = TagName.TrimEnd('"');
+				TagName = TagName.ToLower();
+
+				switch (TagName)
+				{
+					case "system" : 
+					{
+						result = curFile.System_;
+						break;
+					}
+					case "yearmanu" : 
+					{
+						result = curFile.YearManu;
+						break;
+					}
+					case "rating" : 
+					{
+						if (curFile.Rating >= 0)
+						{
+							result = String.Format("{0}/10", curFile.Rating);
+						}
+						break;
+					}
+					case "genre" : 
+					{
+						result = curFile.Genre;
+						break;
+					}
+					case "overview" : 
+					{
+						result = curFile.Overview;
+						break;
+					}
+					case "year" : 
+					{
+						if (curFile.Year >= 1900)
+						{
+							result = String.Format("{0}", curFile.Year);
+						}
+						break;
+					}
+					case "manufacturer" : 
+					{
+						result = curFile.Manufacturer;
+						break;
+					}
+					default:
+					{
+						result = curFile.GetValueOfTag(TagName);
+						break;
+					}
+				}
+			}
+			return result; // todo:
+		}
+		static string ParseNAMEOFCATEGORY(string strTagExpression, AppItem curApp, FileItem curFile)
+		{
+			string result = "";
+			string TagName = "";
+			int TagNumber = -1;
+			int Start = strTagExpression.IndexOf("(");
+			int End = strTagExpression.IndexOf(")", Start + 1);
+			if ((Start >= 0) && (End > Start))
+			{
+				TagName = strTagExpression.Substring(Start, End - Start + 1);
+				TagName = TagName.TrimStart('(');
+				TagName = TagName.TrimEnd(')');
+				TagName = TagName.ToLower();
+				TagNumber = ProgramUtils.StrToIntDef(TagName, -1);
+				if (TagNumber >= 0)
+				{
+					result = curFile.GetNameOfCategory(TagNumber);
+				}
+				else
+				{
+					Log.Write("Warning: ProgramContentManager: Invalid number {0}", TagName);
+				}
+			}
+			return result;
+		}
+		static string ParseVALUEOFCATEGORY(string strTagExpression, AppItem curApp, FileItem curFile)
+		{
+			string result = "";
+			string TagName = "";
+			int TagNumber = -1;
+			int Start = strTagExpression.IndexOf("(");
+			int End = strTagExpression.IndexOf(")", Start + 1);
+			if ((Start >= 0) && (End > Start))
+			{
+				TagName = strTagExpression.Substring(Start, End - Start + 1);
+				TagName = TagName.TrimStart('(');
+				TagName = TagName.TrimEnd(')');
+				TagName = TagName.ToLower();
+				TagNumber = ProgramUtils.StrToIntDef(TagName, -1);
+				if (TagNumber >= 0)
+				{
+					result = curFile.GetValueOfCategory(TagNumber);
+				}
+				else
+				{
+					Log.Write("Warning: ProgramContentManager: Invalid number {0}", TagName);
+				}
+
+			}
+			return result;
+		}
+
+
+
+
+	}
+}

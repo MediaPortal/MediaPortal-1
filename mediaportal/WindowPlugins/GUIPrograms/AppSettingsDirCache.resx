@@ -154,21 +154,18 @@
   <data name="buttonFileDirectory.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcAAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAABcAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAABcAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAABcAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAABcAAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAABcAAICA////////////////////////////////////////////gP//QMDAAAAAABcAAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////ABcA////AICA////////////gP//
-        gP//AICAAAAA////////////////////////ABcA////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////ABcA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
-  </data>
-  <data name="txtExtensions.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Private</value>
   </data>
   <data name="txtExtensions.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
@@ -176,23 +173,26 @@
   <data name="txtExtensions.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
+  <data name="txtExtensions.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
   <data name="txtImageDirs.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="txtImageDirs.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="txtImageDirs.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="txtImageDirs.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="txtFiles.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="txtFiles.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="txtFiles.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="txtFiles.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
-  <data name="txtFiles.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Private</value>
   </data>
   <data name="label4.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -224,17 +224,17 @@
   <data name="btnImageDirs.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcAAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAABcAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAABcAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAABcAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAABcAAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAABcAAICA////////////////////////////////////////////gP//QMDAAAAAABcAAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////ABcA////AICA////////////gP//
-        gP//AICAAAAA////////////////////////ABcA////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////ABcA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
   </data>
   <data name="chkbUseShellExecute.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -267,17 +267,17 @@
   <data name="buttonStartup.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcAAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAABcAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAABcAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAABcAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAABcAAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAABcAAICA////////////////////////////////////////////gP//QMDAAAAAABcAAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////ABcA////AICA////////////gP//
-        gP//AICAAAAA////////////////////////ABcA////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////ABcA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
   </data>
   <data name="txtStartupDir.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -346,26 +346,26 @@
   <data name="buttonImageFile.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
-  <data name="buttonImageFile.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="buttonImageFile.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
-  <data name="buttonImageFile.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="buttonImageFile.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
   <data name="buttonImageFile.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcAAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAABcAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAABcAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAABcAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAABcAAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAABcAAICA////////////////////////////////////////////gP//QMDAAAAAABcAAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////ABcA////AICA////////////gP//
-        gP//AICAAAAA////////////////////////ABcA////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////ABcA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
   </data>
   <data name="txtImageFile.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -434,17 +434,17 @@
   <data name="buttonLaunchingApp.Image" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcAAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAABcAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAABcAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAABcAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAABcAAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAABcAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAABcAAICA////////////////////////////////////////////gP//QMDAAAAAABcAAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////ABcA////AICA////////////gP//
-        gP//AICAAAAA////////////////////////ABcA////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////ABcA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
   </data>
   <data name="chkbEnableGUIRefresh.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -483,6 +483,18 @@
   <data name="buttonGetExtensions.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
   </data>
+  <data name="chkbWaitForExit.Locked" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </data>
+  <data name="chkbWaitForExit.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="chkbWaitForExit.Modifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Private</value>
+  </data>
+  <data name="$this.Name">
+    <value>AppSettingsDirCache</value>
+  </data>
   <data name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </data>
@@ -506,9 +518,6 @@
   </data>
   <data name="$this.DefaultModifiers" type="System.CodeDom.MemberAttributes, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>Private</value>
-  </data>
-  <data name="$this.Name">
-    <value>AppSettingsDirCache</value>
   </data>
   <data name="$this.GridSize" type="System.Drawing.Size, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>8, 8</value>

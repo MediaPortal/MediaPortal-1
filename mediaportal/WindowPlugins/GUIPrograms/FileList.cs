@@ -64,6 +64,8 @@ namespace ProgramsDatabase
 			newFile.LastTimeLaunched = ProgramUtils.GetDateDef(results,iRecord, "lastTimeLaunched", DateTime.MinValue);
 			newFile.LaunchCount = ProgramUtils.GetIntDef(results, iRecord, "launchcount", 0);
 			newFile.IsFolder = ProgramUtils.GetBool(results, iRecord, "isfolder");
+			newFile.TagData =  ProgramUtils.Get(results,iRecord,"tagdata");
+			newFile.CategoryData =  ProgramUtils.Get(results,iRecord,"categorydata");
 			return newFile;
 		}
 

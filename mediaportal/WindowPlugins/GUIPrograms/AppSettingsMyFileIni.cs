@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using MediaPortal.GUI.Library;
 using ProgramsDatabase;
 using Programs.Utils;
 
@@ -41,6 +42,9 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.CheckBox chkbEnableGUIRefresh;
 		private System.Windows.Forms.Label LblPinCode;
 		private System.Windows.Forms.TextBox txtPinCode;
+		private System.Windows.Forms.Label lblContent;
+		private System.Windows.Forms.ComboBox cbContentProfile;
+		private System.Windows.Forms.CheckBox chkbWaitForExit;
 		private System.ComponentModel.IContainer components = null;
 
 		public AppSettingsMyFileIni()
@@ -48,6 +52,16 @@ namespace WindowPlugins.GUIPrograms
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			this.txtPinCode.PasswordChar = (char)0x25CF;
+			FillCombo();
+		}
+
+		void FillCombo()
+		{
+			cbContentProfile.Items.Clear();
+			for (int i=0; i < ProgramContentManager.NodeCount; i++)
+			{
+				cbContentProfile.Items.Add(ProgramContentManager.NodeTitle(i));
+			}
 		}
 
 		/// <summary>
@@ -102,6 +116,9 @@ namespace WindowPlugins.GUIPrograms
 			this.chkbEnableGUIRefresh = new System.Windows.Forms.CheckBox();
 			this.LblPinCode = new System.Windows.Forms.Label();
 			this.txtPinCode = new System.Windows.Forms.TextBox();
+			this.chkbWaitForExit = new System.Windows.Forms.CheckBox();
+			this.lblContent = new System.Windows.Forms.Label();
+			this.cbContentProfile = new System.Windows.Forms.ComboBox();
 			this.SuspendLayout();
 			// 
 			// label3
@@ -353,8 +370,37 @@ namespace WindowPlugins.GUIPrograms
 			this.txtPinCode.Text = "";
 			this.txtPinCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPinCode_KeyPress);
 			// 
+			// chkbWaitForExit
+			// 
+			this.chkbWaitForExit.Checked = true;
+			this.chkbWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkbWaitForExit.Location = new System.Drawing.Point(280, 88);
+			this.chkbWaitForExit.Name = "chkbWaitForExit";
+			this.chkbWaitForExit.Size = new System.Drawing.Size(88, 24);
+			this.chkbWaitForExit.TabIndex = 33;
+			this.chkbWaitForExit.Text = "Wait for exit";
+			// 
+			// lblContent
+			// 
+			this.lblContent.Location = new System.Drawing.Point(0, 411);
+			this.lblContent.Name = "lblContent";
+			this.lblContent.Size = new System.Drawing.Size(100, 16);
+			this.lblContent.TabIndex = 34;
+			this.lblContent.Text = "Content-Profile:";
+			// 
+			// cbContentProfile
+			// 
+			this.cbContentProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbContentProfile.Location = new System.Drawing.Point(120, 408);
+			this.cbContentProfile.Name = "cbContentProfile";
+			this.cbContentProfile.Size = new System.Drawing.Size(248, 21);
+			this.cbContentProfile.TabIndex = 35;
+			// 
 			// AppSettingsMyFileIni
 			// 
+			this.Controls.Add(this.cbContentProfile);
+			this.Controls.Add(this.lblContent);
+			this.Controls.Add(this.chkbWaitForExit);
 			this.Controls.Add(this.LblPinCode);
 			this.Controls.Add(this.txtPinCode);
 			this.Controls.Add(this.chkbEnableGUIRefresh);
@@ -385,7 +431,7 @@ namespace WindowPlugins.GUIPrograms
 			this.Controls.Add(this.buttonLaunchingApp);
 			this.Controls.Add(this.label3);
 			this.Name = "AppSettingsMyFileIni";
-			this.Size = new System.Drawing.Size(408, 408);
+			this.Size = new System.Drawing.Size(408, 448);
 			this.Load += new System.EventHandler(this.AppSettingsMyFileIni_Load);
 			this.ResumeLayout(false);
 
@@ -457,7 +503,6 @@ namespace WindowPlugins.GUIPrograms
 			toolTip.SetToolTip(txtSource, "(*.my) file to import with the complete path.");
 			toolTip.SetToolTip(chkbValidImagesOnly, "Check this if you want to display only items where at least one matching image was found.");
 			toolTip.SetToolTip(chkbEnableGUIRefresh, "Check this if users can run the import through the REFRESH button in MediaPortal.");
-		
 		}
 
 		public override bool AppObj2Form(AppItem curApp)
@@ -470,6 +515,7 @@ namespace WindowPlugins.GUIPrograms
 			this.txtStartupDir.Text = curApp.Startupdir;
 			this.chkbUseShellExecute.Checked = (curApp.UseShellExecute);
 			this.chkbUseQuotes.Checked = (curApp.UseQuotes);
+			this.chkbWaitForExit.Checked = (curApp.WaitForExit);
 			this.txtImageFile.Text = curApp.Imagefile;
 			this.txtSource.Text = curApp.Source;
 			this.txtImageDirs.Text = curApp.ImageDirectory;
@@ -483,6 +529,8 @@ namespace WindowPlugins.GUIPrograms
 			{
 				this.txtPinCode.Text = "";
 			}
+			Log.Write("dw: getindexofid {0}", curApp.ContentID);
+			this.cbContentProfile.SelectedIndex = ProgramContentManager.GetIndexOfID(curApp.ContentID);
 			return true;
 		}
 
@@ -497,6 +545,7 @@ namespace WindowPlugins.GUIPrograms
 			curApp.Startupdir = this.txtStartupDir.Text;
 			curApp.UseShellExecute = (this.chkbUseShellExecute.Checked);
 			curApp.UseQuotes = (this.chkbUseQuotes.Checked);
+			curApp.WaitForExit = (this.chkbWaitForExit.Checked);
 			curApp.SourceType = myProgSourceType.MYFILEINI;
 			curApp.Imagefile = this.txtImageFile.Text;
 			curApp.Source = this.txtSource.Text;
@@ -504,6 +553,8 @@ namespace WindowPlugins.GUIPrograms
 			curApp.ImportValidImagesOnly = this.chkbValidImagesOnly.Checked;
 			curApp.EnableGUIRefresh = this.chkbEnableGUIRefresh.Checked;
 			curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
+			curApp.ContentID = ProgramContentManager.NodeID(cbContentProfile.SelectedIndex);
+			Log.Write(" dw: wrote contentID {0}", curApp.ContentID);
 		}
 
 		public override bool EntriesOK(AppItem curApp)
@@ -610,6 +661,8 @@ namespace WindowPlugins.GUIPrograms
 			}
 			this.chkbUseShellExecute.Checked = (tempApp.UseShellExecute);
 			this.chkbUseQuotes.Checked = (tempApp.UseQuotes);
+			this.chkbWaitForExit.Checked = (tempApp.WaitForExit);
+			this.cbContentProfile.SelectedIndex = ProgramContentManager.GetIndexOfID(tempApp.ContentID);
 		}
 
 	}

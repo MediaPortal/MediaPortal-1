@@ -33,6 +33,8 @@ namespace ProgramsDatabase
 		DateTime mLastTimeLaunched;
 		int mLaunchCount;
 		int mExtFileID;
+		string mTagData;
+		string mCategoryData;
 		bool mIsFolder;
 		ArrayList mFileInfoList = null;
 		FileInfo mFileInfoFavourite = null;
@@ -67,6 +69,8 @@ namespace ProgramsDatabase
 			mLastTimeLaunched = DateTime.MinValue;
 			mLaunchCount = 0;
 			mExtFileID = -1;
+			mTagData = "";
+			mCategoryData = "";
 		}
 
 		private string GetYearManu()
@@ -175,6 +179,18 @@ namespace ProgramsDatabase
 		{
 			get{ return mLaunchCount; }
 			set{ mLaunchCount = value; }
+		}
+
+		public string TagData
+		{
+			get{ return mTagData; }
+			set{ mTagData = value; }
+		}
+
+		public string CategoryData
+		{
+			get{ return mCategoryData; }
+			set{ mCategoryData = value; }
 		}
 
 		public bool IsFolder
@@ -347,9 +363,9 @@ namespace ProgramsDatabase
 
 			try
 			{
-				string strSQL = String.Format("insert into file (fileid, appid, title, filename, filepath, imagefile, genre, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}')", 
+				string strSQL = String.Format("insert into file (fileid, appid, title, filename, filepath, imagefile, genre, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle, tagdata, categorydata) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}')", 
 					AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), 
-					ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()));
+					ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
 				m_db.Execute(strSQL);
 			}
 			catch (SQLiteException ex) 
@@ -380,7 +396,7 @@ namespace ProgramsDatabase
 			try
 			{
 				string strSQL = String.Format(
-					"update file set title = '{1}', filename = '{2}', filepath = '{3}', imagefile = '{4}', genre = '{5}', country = '{6}', manufacturer = '{7}', year = '{8}', rating = '{9}', overview = '{10}', system = '{11}', uppertitle = '{12}' where  fileid = {0}",					
+					"update file set title = '{1}', filename = '{2}', filepath = '{3}', imagefile = '{4}', genre = '{5}', country = '{6}', manufacturer = '{7}', year = '{8}', rating = '{9}', overview = '{10}', system = '{11}', uppertitle = '{12}', tagdata = '{13}', categorydata = '{14}' where  fileid = {0}",					
 					FileID, 
 					ProgramUtils.Encode(Title),
 					ProgramUtils.Encode(Filename),
@@ -393,7 +409,9 @@ namespace ProgramsDatabase
 					Rating,
 					ProgramUtils.Encode(Overview),
 					ProgramUtils.Encode(System_),
-					ProgramUtils.Encode(Title.ToUpper())
+					ProgramUtils.Encode(Title.ToUpper()),
+					ProgramUtils.Encode(TagData),
+					ProgramUtils.Encode(CategoryData)
 					);
 				m_db.Execute(strSQL);
 			}
@@ -598,7 +616,104 @@ namespace ProgramsDatabase
 					File.Delete(file2Delete);
 				}
 			}
+		}
 
+		public string GetValueOfTag(string TagName)
+		{
+			string strLowerTag = TagName.ToLower() + "=";
+			string strLowerItem = "";
+			string result = "";
+			foreach(string strItem in this.mTagData.Split('\r'))
+			{
+				strLowerItem = strItem.ToLower();
+				if (strLowerItem.StartsWith(strLowerTag))
+				{
+					result = strItem.Remove(0, strLowerTag.Length);
+				}
+				else if (strLowerItem.StartsWith("\n" + strLowerTag))
+				{
+					result = strItem.Remove(0, strLowerTag.Length+1);
+				}
+			}
+			result = result.Replace("\n", "");
+			result = result.Replace("\r", "");
+			result = result.TrimStart('\"');
+			result = result.TrimEnd('\"');
+			return result;
+		}
+
+		public string GetValueOfCategory(int CatIndex)
+		{
+			string result = "";
+			ArrayList Categories = new ArrayList(mCategoryData.Split('\r'));
+			if ((CatIndex >= 0) && (CatIndex <= Categories.Count - 1))
+			{
+				string strLine = (string)Categories[CatIndex];
+				strLine = strLine.TrimStart('\r');
+				bool bValueLine = false;
+				bool bFirst = true;
+				string strSep = "";
+				foreach(string strToken in strLine.Split('='))
+				{
+					//Log.Write("getvalueofcategory dw token {0}", strToken);
+					if (!bFirst)
+					{
+						bValueLine = true;
+//						bValueLine = strToken.EndsWith("\"");
+					}
+					if (bValueLine)
+					{
+						result = result + strSep + strToken;
+						strSep = "=";
+					}
+					bFirst = false;
+				}
+			}
+			result = result.Replace("\n", "");
+			result = result.Replace("\r", "");
+			result = result.TrimStart('\"');
+			result = result.TrimEnd('\"');
+			return result;
+		}
+
+		public string GetNameOfCategory(int CatIndex)
+		{
+			string result = "";
+			ArrayList Categories = new ArrayList(mCategoryData.Split('\r'));
+			if ((CatIndex >= 0) && (CatIndex <= Categories.Count - 1))
+			{
+				string strLine = (string)Categories[CatIndex];
+				strLine = strLine.TrimStart('\r');
+				bool bValueLine = false;
+				bool bFirst = true;
+				string strSep = "";
+				foreach(string strToken in strLine.Split('='))
+				{
+					strToken.Replace("\n", "");
+					strToken.Replace("\r", "");
+					//Log.Write("getnameofcategory dw token {0}", strToken);
+					if (!bFirst)
+					{
+//doesn't work			bValueLine = strToken.EndsWith("\"");
+						bValueLine = true;
+					}
+					if (!bValueLine)
+					{
+						result = result + strSep + strToken;
+						strSep = "=";
+					}
+					else
+					{
+						break;
+					}
+					bFirst = false;
+				}
+			}
+			result = result.Replace("\n", "");
+			result = result.Replace("\r", "");
+			result = result.TrimStart('\"');
+			result = result.TrimEnd('\"');
+			return result;
 		}
 
 	}

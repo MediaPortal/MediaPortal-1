@@ -276,7 +276,9 @@ namespace WindowPlugins.GUIPrograms
 		{
 			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
 			{
+				// <U> keypress
 				BackItemClicked();
+				UpdateButtons();
 				return;
 			}
 

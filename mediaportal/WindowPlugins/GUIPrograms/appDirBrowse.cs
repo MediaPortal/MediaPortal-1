@@ -197,7 +197,10 @@ namespace ProgramsDatabase
 			{
 				AutoPlay.StopListening();
 				proc.Start(); // start the app
-				proc.WaitForExit(); // stop MP
+				if (WaitForExit)
+				{
+					proc.WaitForExit(); // stop MP
+				}
 				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
 				AutoPlay.StartListening();
 
@@ -231,7 +234,6 @@ namespace ProgramsDatabase
 			{
 				pc.updateState();
 			}
-			Log.Write("dw sorting with: {0}", pc.currentSortMethodAsText );
 			view.Sort(pc);
 		}
 

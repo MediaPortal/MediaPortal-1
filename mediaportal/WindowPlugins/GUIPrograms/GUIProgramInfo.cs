@@ -14,25 +14,27 @@ namespace WindowPlugins.GUIPrograms
 	/// </summary>
 	public class GUIFileInfo : GUIWindow
 	{
-    enum Controls
-    {
-	  CONTROL_TITLE		=20
-      ,	CONTROL_SYSTEM	=21
-      ,	CONTROL_YEARMANU 		=22
-      ,	CONTROL_RATING	=23
-      ,	CONTROL_GENRE		=24
-
-      , CONTROL_IMAGE		 =3
-      , CONTROL_TEXTAREA =4
-
-      , CONTROL_BTN_BACK	=5
-	  , CONTROL_LAUNCHSTAT = 6
-	  , CONTROL_BTN_PREV = 7
-	  , CONTROL_BTN_NEXT = 9
-	  , CONTROL_BTN_LAUNCH = 8
-	  , CONTROL_IMAGE_BIG = 10
-	  , CONTROL_OVERVIEW_TOGGLE = 11
-    }
+		enum Controls
+		{
+			CONTROL_TITLE		= 20,
+			CONTROL_SYSTEM_DATA	= 21,
+			CONTROL_YEARMANU_DATA = 22,
+			CONTROL_RATING_DATA	= 23,
+			CONTROL_GENRE_DATA	= 24,
+			CONTROL_SYSTEM_TITLE	= 31,
+			CONTROL_YEARMANU_TITLE = 32,
+			CONTROL_RATING_TITLE	= 33,
+			CONTROL_GENRE_TITLE	= 34,
+			CONTROL_IMAGE		 =3,
+			CONTROL_TEXTAREA =4,
+			CONTROL_BTN_BACK	=5,
+			CONTROL_LAUNCHSTAT = 6,
+			CONTROL_BTN_PREV = 7,
+			CONTROL_BTN_NEXT = 9,
+			CONTROL_BTN_LAUNCH = 8,
+			CONTROL_IMAGE_BIG = 10,
+			CONTROL_OVERVIEW_TOGGLE = 11
+		}
 
     #region Base Dialog Variables
     bool m_bRunning=false;
@@ -42,14 +44,28 @@ namespace WindowPlugins.GUIPrograms
     #endregion
 
     FileItem m_pFile=null;
-	AppItem m_pApp=null;
-	Texture m_pTexture=null;
-	int m_iTextureWidth=0;
-	int m_iTextureHeight=0;
-	bool m_bOverlay=false;
-	bool m_bOverviewVisible=true;
-	int m_iSpeed=3;
-  int m_lSlideTime=0;
+		AppItem m_pApp=null;
+		Texture m_pTexture=null;
+		int m_iTextureWidth=0;
+		int m_iTextureHeight=0;
+		bool m_bOverlay=false;
+		bool m_bOverviewVisible=true;
+	  int m_iSpeed=3;
+		int m_lSlideTime=0;
+
+
+		// content variables
+		string strSystemLabel = "";
+		string strManufacturerLabel = "";
+		string strRatingLabel = "";
+		string strGenreLabel = "";
+
+		string strSystemText = "";
+		string strManufacturerText = "";
+		string strRatingText = "";
+		string strGenreText = "";
+
+		string strOverviewText = "";
 
 
     public GUIFileInfo()
@@ -66,11 +82,12 @@ namespace WindowPlugins.GUIPrograms
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) || (action.wID == Action.ActionType.ACTION_PARENT_DIR))
       {
         Close();
         return;
       }
+
       base.OnAction(action);
     }
     #region Base Dialog Members
@@ -248,10 +265,12 @@ namespace WindowPlugins.GUIPrograms
 			Update();
 		}
 
-		
+
 		void Update()
-	    {
+		{
 			if (null==m_pFile) return;
+
+			ReadContent();
 
 			if (m_bOverviewVisible)
 			{
@@ -260,7 +279,7 @@ namespace WindowPlugins.GUIPrograms
 				// do not remove the ""-setting line!
 				//force a change otherwise subsequent calls of the same fileitem won't display the overview text!
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,""); 
-				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,m_pFile.Overview);
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA, strOverviewText);
 				SetLabel((int)Controls.CONTROL_OVERVIEW_TOGGLE, GUILocalizeStrings.Get(13006));
 			}
 			else 
@@ -271,31 +290,81 @@ namespace WindowPlugins.GUIPrograms
 				SetLabel((int)Controls.CONTROL_OVERVIEW_TOGGLE, GUILocalizeStrings.Get(13007));
 			}
 
-
 			SetLabel((int)Controls.CONTROL_TITLE, m_pFile.Title);
-			SetLabel((int)Controls.CONTROL_SYSTEM, m_pFile.System_);
-			SetLabel((int)Controls.CONTROL_YEARMANU, m_pFile.YearManu);
-		    string strRating="";
-			if (m_pFile.Rating > 0)
-			    strRating=String.Format("{0}/10", m_pFile.Rating);
-			SetLabel((int)Controls.CONTROL_RATING, strRating );
-			SetLabel((int)Controls.CONTROL_GENRE, m_pFile.Genre);
 
-			
-
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_BACK,GUILocalizeStrings.Get(8008));
-
-			if (m_pFile.LaunchCount > 0)
+			// if any title is overwritten, re-set the fresh text
+			if (strSystemLabel != "")
 			{
-				string strLaunchStat=String.Format("Number of launches: {0} / Last launch: {1}", m_pFile.LaunchCount, m_pFile.LastTimeLaunched);
-				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LAUNCHSTAT, strLaunchStat);
+				SetLabel((int)Controls.CONTROL_SYSTEM_TITLE, strSystemLabel);
 			}
 			else
 			{
-				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LAUNCHSTAT, "");
+				SetLabel((int)Controls.CONTROL_SYSTEM_TITLE, GUILocalizeStrings.Get(13000));
+			}
+			if (strManufacturerLabel != "")
+			{
+				SetLabel((int)Controls.CONTROL_YEARMANU_TITLE, strManufacturerLabel);
+			}
+			else
+			{
+				SetLabel((int)Controls.CONTROL_YEARMANU_TITLE, GUILocalizeStrings.Get(13001));
+			}
+		
+			if (strRatingLabel != "")
+			{
+				SetLabel((int)Controls.CONTROL_RATING_TITLE, strRatingLabel);
+			}
+			else
+			{
+				SetLabel((int)Controls.CONTROL_RATING_TITLE, GUILocalizeStrings.Get(173));
+			}
+			if (strGenreLabel != "")
+			{
+				SetLabel((int)Controls.CONTROL_GENRE_TITLE, strGenreLabel);
+			}
+			else
+			{
+				SetLabel((int)Controls.CONTROL_GENRE_TITLE, GUILocalizeStrings.Get(174));
 			}
 
+
+			SetLabel((int)Controls.CONTROL_SYSTEM_DATA, strSystemText);
+			SetLabel((int)Controls.CONTROL_YEARMANU_DATA, strManufacturerText);
+			SetLabel((int)Controls.CONTROL_RATING_DATA, strRatingText);
+			SetLabel((int)Controls.CONTROL_GENRE_DATA, strGenreText);
+
+			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_BACK,GUILocalizeStrings.Get(8008));
+
+//			if (m_pFile.LaunchCount > 0)
+//			{
+//				string strLaunchStat=String.Format("Number of launches: {0} / Last launch: {1}", m_pFile.LaunchCount, m_pFile.LastTimeLaunched);
+//				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LAUNCHSTAT, strLaunchStat);
+//			}
+//			else
+//			{
+//				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LAUNCHSTAT, "");
+//			}
+			// dw: disable launch-stats......
+			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LAUNCHSTAT, "");
+
 		}
+
+		void ReadContent()
+		{
+			// read fields out of the content profile
+			// fields can contain texts and / or references to fields
+			strSystemLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line1Label");
+			strManufacturerLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line2Label");
+			strRatingLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line3Label");
+			strGenreLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line4Label");
+
+			strSystemText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line1Data");
+			strManufacturerText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line2Data");
+			strRatingText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line3Data");
+			strGenreText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line4Data");
+			strOverviewText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "OverviewData");
+		}
+
 
 		public override void Render(float timePassed)
 		{

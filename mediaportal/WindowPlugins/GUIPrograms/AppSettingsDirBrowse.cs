@@ -42,6 +42,7 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.TextBox txtPinCode;
 		private System.Windows.Forms.Label LblPinCode;
 		private System.Windows.Forms.Button buttonGetExtensions;
+		private System.Windows.Forms.CheckBox chkbWaitForExit;
 		private System.ComponentModel.IContainer components = null;
 
 		public AppSettingsDirBrowse()
@@ -104,13 +105,14 @@ namespace WindowPlugins.GUIPrograms
 			this.txtPinCode = new System.Windows.Forms.TextBox();
 			this.LblPinCode = new System.Windows.Forms.Label();
 			this.buttonGetExtensions = new System.Windows.Forms.Button();
+			this.chkbWaitForExit = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// chkbUseShellExecute
 			// 
 			this.chkbUseShellExecute.Location = new System.Drawing.Point(120, 88);
 			this.chkbUseShellExecute.Name = "chkbUseShellExecute";
-			this.chkbUseShellExecute.Size = new System.Drawing.Size(176, 24);
+			this.chkbUseShellExecute.Size = new System.Drawing.Size(168, 24);
 			this.chkbUseShellExecute.TabIndex = 9;
 			this.chkbUseShellExecute.Text = "Startup using ShellExecute";
 			// 
@@ -363,8 +365,19 @@ namespace WindowPlugins.GUIPrograms
 			this.toolTip.SetToolTip(this.buttonGetExtensions, "Read all available file extensions from the file directory");
 			this.buttonGetExtensions.Click += new System.EventHandler(this.buttonGetExtensions_Click);
 			// 
+			// chkbWaitForExit
+			// 
+			this.chkbWaitForExit.Checked = true;
+			this.chkbWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkbWaitForExit.Location = new System.Drawing.Point(280, 88);
+			this.chkbWaitForExit.Name = "chkbWaitForExit";
+			this.chkbWaitForExit.Size = new System.Drawing.Size(88, 24);
+			this.chkbWaitForExit.TabIndex = 32;
+			this.chkbWaitForExit.Text = "Wait for exit";
+			// 
 			// AppSettingsDirBrowse
 			// 
+			this.Controls.Add(this.chkbWaitForExit);
 			this.Controls.Add(this.buttonGetExtensions);
 			this.Controls.Add(this.LblPinCode);
 			this.Controls.Add(this.txtPinCode);
@@ -413,6 +426,7 @@ namespace WindowPlugins.GUIPrograms
 			this.txtStartupDir.Text = curApp.Startupdir;
 			this.chkbUseShellExecute.Checked = (curApp.UseShellExecute);
 			this.chkbUseQuotes.Checked = (curApp.UseQuotes);
+			this.chkbWaitForExit.Checked = (curApp.WaitForExit);
 			this.txtImageFile.Text = curApp.Imagefile;
 			this.txtFiles.Text = curApp.FileDirectory;
 			this.txtImageDirs.Text = curApp.ImageDirectory;
@@ -440,6 +454,7 @@ namespace WindowPlugins.GUIPrograms
 			curApp.Startupdir = this.txtStartupDir.Text;
 			curApp.UseShellExecute = (this.chkbUseShellExecute.Checked);
 			curApp.UseQuotes = (this.chkbUseQuotes.Checked);
+			curApp.WaitForExit = (this.chkbWaitForExit.Checked);
 			curApp.SourceType = myProgSourceType.DIRBROWSE;
 			curApp.Imagefile = this.txtImageFile.Text;
 			curApp.FileDirectory = this.txtFiles.Text;
@@ -624,6 +639,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 			this.chkbUseShellExecute.Checked = (tempApp.UseShellExecute);
 			this.chkbUseQuotes.Checked = (tempApp.UseQuotes);
+			this.chkbWaitForExit.Checked = (tempApp.WaitForExit);
 			if (this.txtExtensions.Text == "")
 			{
 				this.txtExtensions.Text = tempApp.ValidExtensions;

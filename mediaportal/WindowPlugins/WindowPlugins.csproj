@@ -634,6 +634,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "GUIPrograms\FileDetailContents.xml"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "GUIPrograms\FileDetailsForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -710,6 +714,11 @@
                 />
                 <File
                     RelPath = "GUIPrograms\ProgramConditionChecker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\ProgramContentManager.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

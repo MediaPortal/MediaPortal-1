@@ -31,7 +31,7 @@ namespace ProgramsDatabase
 					System.IO.Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
-				m_db = new SQLiteClient(@"database\ProgramDatabaseV2.db");
+				m_db = new SQLiteClient(@"database\ProgramDatabaseV3.db");
 				// make sure the DB-structure is complete
 				CreateObjects();
 				// dirty hack: propagate the m_db to the singleton objects...
@@ -97,25 +97,24 @@ namespace ProgramsDatabase
 		}
 
 
-		static void DoV1_V2Migration()
+		static void DoV2_V3Migration()
 		{
 			try 
 			{
 				Log.Write("programdatabase migration: started");
-				m_db.Execute("attach database \"database\\ProgramDatabase.db\" as progV1;\n");
-				Log.Write("programdatabase migration: attached v1 database");
-				m_db.Execute("insert into application (appid, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled) select appid, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled from progV1.application;\n");
+				m_db.Execute("attach database \"database\\ProgramDatabaseV2.db\" as progV2;\n");
+				Log.Write("programdatabase migration: attached v2 database");
+				m_db.Execute("insert into application (appid, fatherid, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled) select appid, fatherid,title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled from progV2.application;\n");
 				Log.Write("programdatabase migration: table APPLICATION migrated");
-				m_db.Execute("insert into file (fileid, appid, title, filename, imagefile, genre, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id) select fileid, appid, title, filename, imagefile, genre, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id from progV1.file;");
+				m_db.Execute("insert into file (fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle) select fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle from progV2.file;");
 				Log.Write("programdatabase migration: table FILE migrated");
-				m_db.Execute("detach database progV1;\n");
-				Log.Write("programdatabase migration: detached v1 database.");
-				m_db.Execute("update application set fatherID = -1 where fatherID is null;\n");
-				m_db.Execute("update application set enableGUIRefresh = 'T' where source_type in ('DIR_CACHE', 'MY_FILE_INI', 'MY_FILE_MEEDIO');\n");
-				m_db.Execute("update application set enableGUIRefresh = 'F' where enableGUIRefresh is null;\n");
-				m_db.Execute("update application set GUIRefreshPossible = 'T' where enableGUIRefresh = 'T';\n");
-				m_db.Execute("update application set GUIRefreshPossible = 'F' where GUIRefreshPossible is null;\n");
-				m_db.Execute("update file set uppertitle = upper(title) where uppertitle is null;\n");
+				m_db.Execute("insert into filteritem (appid, grouperAppID, fileID, filename, tag) select appid, grouperAppID, fileID, filename, tag from progV2.filteritem;");
+				Log.Write("programdatabase migration: table FILTERITEM migrated");
+				m_db.Execute("insert into setting (settingid, key, value) select settingid, key, value from progV2.setting;");
+				Log.Write("programdatabase migration: table SETTING migrated");
+				m_db.Execute("detach database progV2;\n");
+				Log.Write("programdatabase migration: detached v2 database.");
+				m_db.Execute("update application set waitforexit = 'T' where waitforexit IS NULL;");
 				Log.Write("programdatabase migration: complete");
 			}
 			catch (SQLiteException ex) 
@@ -128,8 +127,8 @@ namespace ProgramsDatabase
 		{
 			bool bTryMigration = false;
 			if (m_db==null) return false;
-			bTryMigration = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, pincode integer);\n");
-			AddObject("file", "table", "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text);\n");
+			bTryMigration = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer);\n");
+			AddObject("file", "table", "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text);\n");
 			AddObject("filterItem", "table", "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer);\n");
 			AddObject("setting", "table", "CREATE TABLE setting (settingid integer primary key, key text, value text);\n");
 			AddObject("idxFile1", "index", "CREATE INDEX idxFile1 ON file(appid);\n");
@@ -139,7 +138,7 @@ namespace ProgramsDatabase
 			AddObject("td_application", "trigger", "CREATE TRIGGER td_application BEFORE DELETE ON application \n  BEGIN\n    DELETE FROM filterItem WHERE appID = old.appID OR grouperAppID = old.appID;\n    DELETE FROM file WHERE appID = old.appID;\n  END;\n");
 			if (bTryMigration)
 			{
-				DoV1_V2Migration();
+				DoV2_V3Migration();
 			}
 			return true;
 		}

@@ -63,7 +63,16 @@ namespace WindowPlugins.GUIPrograms
 		public AppItem CurApp
 		{
 			get{ return m_CurApp; }
-			set{ m_CurApp = value; }
+			set{ SetCurApp(value);}
+		}
+
+		void SetCurApp(AppItem value)
+		{
+				m_CurApp = value; 
+				if(m_CurApp != null)
+				{
+					filterComboBox.Text = m_CurApp.SystemDefault;
+				}
 		}
 
 		public FileInfoScraperForm()
@@ -589,6 +598,11 @@ namespace WindowPlugins.GUIPrograms
 
 		private void button3_Click(object sender, System.EventArgs e)
 		{
+			if ((m_CurApp != null) && (filterComboBox.Text != ""))
+			{
+				m_CurApp.SystemDefault = filterComboBox.Text;
+				m_CurApp.Write();
+			}
 			this.Close();
 		}
 

@@ -7,6 +7,7 @@ using SQLite.NET;
 
 using MediaPortal.Ripper;
 using MediaPortal.GUI.Library;		
+using MediaPortal.Util;
 using WindowPlugins.GUIPrograms;
 using Programs.Utils;
 
@@ -46,6 +47,10 @@ namespace ProgramsDatabase
 		bool mEnabled;
 		bool mEnableGUIRefresh;
 		int mPincode;
+		int mContentID; 
+	  string mSystemDefault;
+    bool mWaitForExit;
+
 		string mLaunchErrorMsg;
 
 		// two magic image-slideshow counters
@@ -100,7 +105,9 @@ namespace ProgramsDatabase
 			mImportValidImagesOnly = false;
 			mEnableGUIRefresh = false;
 			mPincode = -1;
-			
+			mContentID = -1;
+			mSystemDefault = "";
+			mWaitForExit = true;
 			bFilesLoaded = false;
 		}
 
@@ -231,7 +238,10 @@ namespace ProgramsDatabase
 				proc.Start();
 				if (MPGUIMode) 
 				{
-					proc.WaitForExit();
+					if (WaitForExit)
+					{
+						proc.WaitForExit();
+					}
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 					AutoPlay.StartListening();
 				}
@@ -563,6 +573,26 @@ namespace ProgramsDatabase
 			set{ mPosition = value; }
 		}
 
+		public int ContentID
+		{
+			get{ return mContentID; }
+			set{ mContentID = value; }
+		}
+
+		public string SystemDefault
+		{
+			get{ return mSystemDefault; }
+			set{ mSystemDefault = value; }
+		}
+
+		public bool WaitForExit
+		{
+			get{ return mWaitForExit; }
+			set{ mWaitForExit = value; }
+		}
+
+
+
 		public bool GUIRefreshPossible
 		{
 			get{ return RefreshButtonVisible();}
@@ -641,12 +671,14 @@ namespace ProgramsDatabase
 				try
 				{
 					this.AppID = GetNewAppID(); // important to avoid subsequent inserts!
-					string strSQL = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}')", 
+					string strSQL = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode, contentID, systemDefault, WaitForExit) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}')", 
 						AppID, FatherID, ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments), 
 						ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute), 
 						ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile), 
 						ProgramUtils.Encode(FileDirectory), ProgramUtils.Encode(ImageDirectory), ProgramUtils.Encode(ValidExtensions), ProgramUtils.BooleanToStr(mImportValidImagesOnly), Position, 
-						ProgramUtils.BooleanToStr(Enabled), ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible), Pincode);
+						ProgramUtils.BooleanToStr(Enabled), ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible), Pincode,
+						ContentID, ProgramUtils.Encode(SystemDefault), ProgramUtils.BooleanToStr(WaitForExit)
+						);
 					m_db.Execute(strSQL);
 				}
 				catch (SQLiteException ex) 
@@ -658,22 +690,25 @@ namespace ProgramsDatabase
 
 		private void Update()
 		{
+			string strSQL = "";
 			if ((this.AppID >= 0) && (m_db != null))
 			{
 				try
 				{
-					string strSQL = String.Format("update application set title = '{0}', shorttitle = '{1}', filename = '{2}', arguments = '{3}', windowstyle = '{4}', startupdir = '{5}', useshellexecute = '{6}', usequotes = '{7}', source_type = '{8}', source = '{9}', imagefile = '{10}',filedirectory = '{11}',imagedirectory = '{12}',validextensions = '{13}',importvalidimagesonly = '{14}',position = {15}, enabled = '{16}', fatherID = '{17}', enableGUIRefresh = '{18}', GUIRefreshPossible = '{19}', pincode = '{20}' where appID = {21}", 
+					strSQL = String.Format("update application set title = '{0}', shorttitle = '{1}', filename = '{2}', arguments = '{3}', windowstyle = '{4}', startupdir = '{5}', useshellexecute = '{6}', usequotes = '{7}', source_type = '{8}', source = '{9}', imagefile = '{10}',filedirectory = '{11}',imagedirectory = '{12}',validextensions = '{13}',importvalidimagesonly = '{14}',position = {15}, enabled = '{16}', fatherID = '{17}', enableGUIRefresh = '{18}', GUIRefreshPossible = '{19}', pincode = '{20}', contentID = '{21}', systemDefault = '{22}', WaitForExit = '{23}' where appID = {24}", 
 						ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments), 
 						ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute), 
 						ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile), 
 						ProgramUtils.Encode(FileDirectory), ProgramUtils.Encode(ImageDirectory), ProgramUtils.Encode(ValidExtensions), ProgramUtils.BooleanToStr(mImportValidImagesOnly), Position, 
 						ProgramUtils.BooleanToStr(Enabled), FatherID, ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible),
-						Pincode, AppID);
+						Pincode, ContentID, ProgramUtils.Encode(SystemDefault), ProgramUtils.BooleanToStr(WaitForExit),
+						AppID);
 					m_db.Execute(strSQL);
 				}
 				catch (SQLiteException ex) 
 				{	
 					Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("sql \n{0}", strSQL);
 				}
 			}	
 		}
@@ -840,6 +875,9 @@ namespace ProgramsDatabase
 			this.Position = sourceApp.Position;
 			this.EnableGUIRefresh = sourceApp.EnableGUIRefresh;
 			this.Pincode = sourceApp.Pincode;
+			this.WaitForExit = sourceApp.WaitForExit;
+			this.SystemDefault = sourceApp.SystemDefault;
+			this.ContentID = sourceApp.ContentID;
 		}
 
 		public bool CheckPincode()

@@ -209,7 +209,7 @@ namespace WindowPlugins.GUIPrograms
 																																				new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
 																																																																															 new System.Windows.Forms.TreeNode("whazzz up")})});
 			this.appTree.SelectedImageIndex = -1;
-			this.appTree.Size = new System.Drawing.Size(224, 448);
+			this.appTree.Size = new System.Drawing.Size(224, 468);
 			this.appTree.TabIndex = 8;
 			this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
 			this.appTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
@@ -407,7 +407,7 @@ namespace WindowPlugins.GUIPrograms
 			this.DetailsTabControl.Location = new System.Drawing.Point(240, 40);
 			this.DetailsTabControl.Name = "DetailsTabControl";
 			this.DetailsTabControl.SelectedIndex = 0;
-			this.DetailsTabControl.Size = new System.Drawing.Size(416, 448);
+			this.DetailsTabControl.Size = new System.Drawing.Size(416, 468);
 			this.DetailsTabControl.TabIndex = 14;
 			this.DetailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
 			// 
@@ -416,7 +416,7 @@ namespace WindowPlugins.GUIPrograms
 			this.DetailsPage.Controls.Add(this.holderPanel);
 			this.DetailsPage.Location = new System.Drawing.Point(4, 22);
 			this.DetailsPage.Name = "DetailsPage";
-			this.DetailsPage.Size = new System.Drawing.Size(408, 422);
+			this.DetailsPage.Size = new System.Drawing.Size(408, 442);
 			this.DetailsPage.TabIndex = 0;
 			this.DetailsPage.Text = "Details";
 			// 
@@ -427,7 +427,7 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.holderPanel.Location = new System.Drawing.Point(3, 3);
 			this.holderPanel.Name = "holderPanel";
-			this.holderPanel.Size = new System.Drawing.Size(397, 416);
+			this.holderPanel.Size = new System.Drawing.Size(397, 436);
 			this.holderPanel.TabIndex = 12;
 			// 
 			// FilesPage
@@ -452,7 +452,7 @@ namespace WindowPlugins.GUIPrograms
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(666, 494);
+			this.ClientSize = new System.Drawing.Size(666, 514);
 			this.Controls.Add(this.DetailsTabControl);
 			this.Controls.Add(this.toolBarMenu);
 			this.Controls.Add(this.appTree);
