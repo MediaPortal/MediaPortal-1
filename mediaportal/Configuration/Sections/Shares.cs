@@ -250,6 +250,55 @@ namespace MediaPortal.Configuration.Sections
 				return currentlyCheckedItem;
 			}
 		}
+
+    public enum DriveType
+    {
+      Removable = 2,
+      Fixed = 3,
+      RemoteDisk = 4,
+      CD = 5,
+      DVD = 5,
+      RamDisk = 6
+    }
+
+    public void AddStaticShares(DriveType driveType, string defaultName)
+    {
+      string[] drives = Environment.GetLogicalDrives();
+
+      foreach(string drive in drives)
+      {
+        if(Util.Utils.getDriveType(drive) == (int)driveType)
+        {
+          bool driveFound = false;
+          string driveName = Util.Utils.GetDriveName(drive);
+
+          if(driveName.Length == 0)
+          {
+            driveName = defaultName;
+          }
+
+          //
+          // Check if the share already exists
+          //
+          foreach(ListViewItem listItem in CurrentShares)
+          {
+            if(listItem.SubItems[1].Text == drive)
+            {
+              driveFound = true;
+              break;
+            }
+          }
+
+          if(driveFound == false)
+          {
+            //
+            // Add share
+            //
+            AddShare(driveName, drive, false);
+          }
+        }
+      }
+    }
 	}
 }
 

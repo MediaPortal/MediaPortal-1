@@ -40,6 +40,11 @@ namespace MediaPortal.Configuration.Sections
 						AddShare(shareNameData, sharePathData, shareNameData.Equals(defaultShare));
 				}
 			}				
+
+      //
+      // Add static shares
+      //
+      AddStaticShares(DriveType.CD, "CD");
 		}
 
 		public override void SaveSettings()
