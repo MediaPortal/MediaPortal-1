@@ -316,12 +316,9 @@ namespace MediaPortal.GUI.Pictures
               m_iLastShownSlide=m_iCurrentSlide;
 
               // Get selected picture (zoomed to full screen)
-              if (!m_bKenBurns)
-                m_pTextureCurrent=GetSlide(true, out m_fWidthCurrent,out m_fHeightCurrent, out m_strCurrentSlide);
-              else
+              m_pTextureCurrent=GetSlide(true, out m_fWidthCurrent,out m_fHeightCurrent, out m_strCurrentSlide);
+              if (m_bKenBurns)
               {
-                m_pTextureCurrent=GetSlide(false, out m_fWidthCurrent,out m_fHeightCurrent, out m_strCurrentSlide);
-
                 //Select transition based upon picture width/height
                 m_fBestZoomFactorCurrent = CalculateBestZoom(m_fWidthCurrent, m_fHeightCurrent);
                 m_iKenBurnsEffect = InitKenBurnsTransition();                
@@ -797,17 +794,22 @@ namespace MediaPortal.GUI.Pictures
     {
       float fZoom;
       // Default picutes is zoom best fit (max width or max height)
+      float fPixelRatio = GUIGraphicsContext.PixelRatio;
       float ZoomFactorX = (float)GUIGraphicsContext.OverScanWidth/fWidth;
       float ZoomFactorY = (float)GUIGraphicsContext.OverScanHeight/fHeight;
 
+      m_bLandscape = false;
+      if ((fWidth/fPixelRatio)>(fHeight*fPixelRatio))
+      {
+        m_bLandscape=true;
+      }
 
       // Get minimal zoom level (1.0==100%)
-      m_bLandscape = false;
+      
       fZoom = ZoomFactorX-ZoomFactorY+1.0f;
       if (ZoomFactorY > ZoomFactorX)
       {
         fZoom = ZoomFactorY-ZoomFactorX+1.0f;
-        m_bLandscape=true;
       }
 
       // Zoom 100%..150%
@@ -965,10 +967,23 @@ namespace MediaPortal.GUI.Pictures
       if (bReset)
       {
         // find start and end points (8 possible points around the rectangle)
-        iRandom = randomizer.Next(8);
+        iRandom = randomizer.Next(2);
         if (m_bLandscape)
         {
           switch(iRandom)
+          {
+            default:
+            case 0:
+              iStartPoint = 8;
+              iEndPoint = 4;
+              break;
+            case 1:
+              iStartPoint = 4;
+              iEndPoint = 8;
+              break;
+          }
+
+/*          switch(iRandom)
           {
             default:
             case 0:
@@ -1003,7 +1018,7 @@ namespace MediaPortal.GUI.Pictures
               iStartPoint = 3;
               iEndPoint = 8;
               break;
-          }
+          }*/
         }
         else
         {
@@ -1012,6 +1027,18 @@ namespace MediaPortal.GUI.Pictures
           {
             default:
             case 0:
+              iStartPoint = 2;
+              iEndPoint = 6;
+              break;
+            case 1:
+              iStartPoint = 6;
+              iEndPoint = 2;
+              break;
+          }
+/*          switch(iRandom)
+          {
+            default:
+            case 0:
               iStartPoint = 1;
               iEndPoint = 6;
               break;
@@ -1043,7 +1070,7 @@ namespace MediaPortal.GUI.Pictures
               iStartPoint = 7;
               iEndPoint = 2;
               break;
-          }        
+          }        */
         }
 
         Log.Write("Start point: {0}", iStartPoint);
