@@ -388,6 +388,7 @@ namespace MediaPortal.GUI.TV
 								// and re-start viewing.... 
 								LoadSettings();
 								ViewChannel(Navigator.CurrentChannel);
+								Navigator.UpdateCurrentChannel();
 							}
 						}
 						UpdateStateOfButtons();
@@ -404,11 +405,13 @@ namespace MediaPortal.GUI.TV
 					break;
 					case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
 						ViewChannel(message.Label);
+						Navigator.UpdateCurrentChannel();
 						break;
 
 					case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
 						m_bTVON=false;
 						ViewChannel(message.Label);
+						Navigator.UpdateCurrentChannel();
 						break;
 			}
 			return base.OnMessage(message);

@@ -1537,15 +1537,18 @@ namespace MediaPortal.TV.Recording
 			// add preferred video & audio codecs
 			string strVideoCodec="";
 			string strAudioCodec="";
+			string strAudioRenderer="";
 			bool   bAddFFDshow=false;
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
 				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
 				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
+				strAudioRenderer=xmlreader.GetValueAsString("mytv","audiorenderer","");
 			}
 			if (video && strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
 			if (audio && strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
+			if (audio && strAudioRenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(m_graphBuilder,strAudioRenderer);
 			if (video && bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
 		}//void AddPreferredCodecs()
 
