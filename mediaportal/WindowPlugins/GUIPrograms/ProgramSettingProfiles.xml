@@ -30,6 +30,7 @@
 		<useShellExecute>T</useShellExecute>
 		<arguments>-nogui -loadbin</arguments>
 		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourpathhere...</startupDir>
 		<useQuotes>T</useQuotes>
 		<fileextensions>.bin,.iso</fileextensions>
 	</profile>
