@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using Microsoft.Win32;
 
 using DirectX.Capture;
+using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.WinControls;
 using MediaPortal.TV.Recording;
@@ -213,8 +214,8 @@ namespace MediaPortal
 
 		public SetupForm()
 		{
+      Log.Write("------------enter setup--------");
       Recorder.Stop();
-      Recorder.Previewing=false;
       InitializeComponent();
 
 			LoadSettings();
@@ -277,6 +278,7 @@ namespace MediaPortal
       toolTip1.SetToolTip(comboBoxDVDDisplayMode     ,"Specify the preffered display mode");
 
       UpdateCaptureCardList();
+      
     }
 
 
@@ -2400,7 +2402,8 @@ namespace MediaPortal
 
 				strPath=String.Format(@"{0}\My Videos",Environment.GetFolderPath( Environment.SpecialFolder.Personal).ToString());
 				System.IO.Directory.CreateDirectory(strPath);
-				newItemVideo=listVideoShares.Items.Add("Movies");
+        newItemVideo=listVideoShares.Items.Add("Movies");
+        newItemVideo.SubItems.Add(strPath);
 				newItemVideo.SubItems.Add( "");
 
 			}
@@ -2773,7 +2776,8 @@ namespace MediaPortal
     private void SetupForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       SaveSettings();
-      Recorder.Start();
+      Recorder.Start();      
+      Log.Write("------------leave setup--------");
     }
 
     private void btnAddAudioShare_Click(object sender, System.EventArgs e)
@@ -3118,6 +3122,7 @@ namespace MediaPortal
       }
       try
       {
+        m_tvcards.Clear();
         using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
         {
           SoapFormatter c = new SoapFormatter();

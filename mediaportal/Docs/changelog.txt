@@ -1,5 +1,6 @@
 History: (dd-mm-yyyy)
-  13-05-2004  my tv       : added : fixed recording problems
+  13-05-2004  general     : fixed : default movies path in setup was empty
+  13-05-2004  my tv       : added : fixed preview/recording problems
   13-05-2004  my movies   : added : deinterlace filter for DVD playback
   13-05-2004  my pictures : added : folder thumbs are not correctly generated for non-rectangler folder icons
 

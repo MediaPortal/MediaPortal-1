@@ -263,10 +263,22 @@ namespace MediaPortal.TV.Recording
         GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoWindowChanged);
         m_iPreviewChannel=0;
         m_strPreviewChannel="";
-        capture.PreviewWindow=null;
-        if (capture.Running)
-          capture.Stop();
-        capture.Dispose();
+        try
+        {
+          capture.PreviewWindow=null;
+          if (capture.Running)
+            capture.Stop();
+        }
+        catch (Exception)
+        {
+        }
+        try
+        {
+          capture.Dispose();
+        }
+        catch (Exception)
+        {
+        }
         capture=null;
       }
     }
