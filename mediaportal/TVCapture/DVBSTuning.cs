@@ -212,6 +212,7 @@ namespace MediaPortal.TV.Recording
 			newchan.Frequency=transp[currentIndex].TPfreq;
 
 			
+			
 
 			Log.Write("tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
 									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);

@@ -262,16 +262,37 @@ namespace MediaPortal.TV.Recording
 				if (props.SupportsHauppaugePVRProperties)
 				{
 					bool hiquality=false;
+					int  profile=1;
 					using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 					{
 						hiquality=xmlreader.GetValueAsBool("tv", "hiquality", false);
+						profile=xmlreader.GetValueAsInt("tv", "profile", 1);
 					}
 					if (hiquality)
 					{
 						VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
 						newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
-						newBitRate.wBitrate     =6*400;  //6 mbps
-						newBitRate.dwPeak       =12*400; //12 mbps
+						switch (profile)
+						{
+							case 0://low
+								newBitRate.wBitrate     =2*400;  //2 mbps
+								newBitRate.dwPeak       =2200;   //4.5 mbps
+								break;
+							case 1://medium
+								newBitRate.wBitrate     =4*400;  //6 mbps
+								newBitRate.dwPeak       =6*400; //12 mbps
+								break;
+								
+							case 2://hi
+								newBitRate.wBitrate     =8*400;  //8 mbps
+								newBitRate.dwPeak       =12*400; //12 mbps
+								break;
+								
+							default://medium
+								newBitRate.wBitrate     =4*400;  //6 mbps
+								newBitRate.dwPeak       =6*400; //12 mbps
+								break;
+						}
 						props.VideoBitRate=newBitRate;
 					}
 					

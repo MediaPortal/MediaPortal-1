@@ -113,6 +113,8 @@ namespace MediaPortal.Configuration
 		bool m_stopEPGGrab;
 		private System.Windows.Forms.NumericUpDown updownPrio;
 		private System.Windows.Forms.Label label24;
+		private System.Windows.Forms.Label label25;
+		private System.Windows.Forms.ComboBox comboBoxQuality;
 		int  CardId;
 		
 		/// <summary>
@@ -368,6 +370,8 @@ namespace MediaPortal.Configuration
 			this.okButton = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label24 = new System.Windows.Forms.Label();
+			this.updownPrio = new System.Windows.Forms.NumericUpDown();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.label13 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -414,11 +418,12 @@ namespace MediaPortal.Configuration
 			this.label29 = new System.Windows.Forms.Label();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.button1 = new System.Windows.Forms.Button();
-			this.updownPrio = new System.Windows.Forms.NumericUpDown();
-			this.label24 = new System.Windows.Forms.Label();
+			this.comboBoxQuality = new System.Windows.Forms.ComboBox();
+			this.label25 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.tabPage5.SuspendLayout();
 			this.tabPage3.SuspendLayout();
@@ -427,7 +432,6 @@ namespace MediaPortal.Configuration
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.tabPage6.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -436,7 +440,7 @@ namespace MediaPortal.Configuration
 			this.checkBoxHiQuality.Name = "checkBoxHiQuality";
 			this.checkBoxHiQuality.Size = new System.Drawing.Size(368, 16);
 			this.checkBoxHiQuality.TabIndex = 7;
-			this.checkBoxHiQuality.Text = "Use Hi-quality settings for Hauppauge PVR cards (VBR 6-12 MBPs)";
+			this.checkBoxHiQuality.Text = "Use quality profile for Hauppauge PVR cards";
 			// 
 			// lblRecordingLevel
 			// 
@@ -746,6 +750,36 @@ namespace MediaPortal.Configuration
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Capture card";
 			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(16, 240);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(136, 16);
+			this.label24.TabIndex = 52;
+			this.label24.Text = "Priority (1=low,10=high)";
+			// 
+			// updownPrio
+			// 
+			this.updownPrio.Location = new System.Drawing.Point(32, 256);
+			this.updownPrio.Maximum = new System.Decimal(new int[] {
+																															 10,
+																															 0,
+																															 0,
+																															 0});
+			this.updownPrio.Minimum = new System.Decimal(new int[] {
+																															 1,
+																															 0,
+																															 0,
+																															 0});
+			this.updownPrio.Name = "updownPrio";
+			this.updownPrio.Size = new System.Drawing.Size(56, 20);
+			this.updownPrio.TabIndex = 51;
+			this.updownPrio.Value = new System.Decimal(new int[] {
+																														 1,
+																														 0,
+																														 0,
+																														 0});
+			// 
 			// tabPage2
 			// 
 			this.tabPage2.Controls.Add(this.label13);
@@ -770,6 +804,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.label25);
+			this.tabPage5.Controls.Add(this.comboBoxQuality);
 			this.tabPage5.Controls.Add(this.checkBoxHiQuality);
 			this.tabPage5.Location = new System.Drawing.Point(4, 22);
 			this.tabPage5.Name = "tabPage5";
@@ -1181,35 +1217,24 @@ namespace MediaPortal.Configuration
 			this.button1.Text = "Autotune";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// updownPrio
+			// comboBoxQuality
 			// 
-			this.updownPrio.Location = new System.Drawing.Point(32, 256);
-			this.updownPrio.Maximum = new System.Decimal(new int[] {
-																															 10,
-																															 0,
-																															 0,
-																															 0});
-			this.updownPrio.Minimum = new System.Decimal(new int[] {
-																															 1,
-																															 0,
-																															 0,
-																															 0});
-			this.updownPrio.Name = "updownPrio";
-			this.updownPrio.Size = new System.Drawing.Size(56, 20);
-			this.updownPrio.TabIndex = 51;
-			this.updownPrio.Value = new System.Decimal(new int[] {
-																														 1,
-																														 0,
-																														 0,
-																														 0});
+			this.comboBoxQuality.Items.AddRange(new object[] {
+																												 "Low",
+																												 "Medium",
+																												 "High"});
+			this.comboBoxQuality.Location = new System.Drawing.Point(96, 48);
+			this.comboBoxQuality.Name = "comboBoxQuality";
+			this.comboBoxQuality.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxQuality.TabIndex = 8;
 			// 
-			// label24
+			// label25
 			// 
-			this.label24.Location = new System.Drawing.Point(16, 240);
-			this.label24.Name = "label24";
-			this.label24.Size = new System.Drawing.Size(136, 16);
-			this.label24.TabIndex = 52;
-			this.label24.Text = "Priority (1=low,10=high)";
+			this.label25.Location = new System.Drawing.Point(40, 48);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(48, 16);
+			this.label25.TabIndex = 9;
+			this.label25.Text = "Quality:";
 			// 
 			// EditCaptureCardForm
 			// 
@@ -1230,6 +1255,7 @@ namespace MediaPortal.Configuration
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).EndInit();
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
@@ -1238,7 +1264,6 @@ namespace MediaPortal.Configuration
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.tabPage6.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -1254,6 +1279,7 @@ namespace MediaPortal.Configuration
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("tv", "hiquality", checkBoxHiQuality.Checked);
+				xmlwriter.SetValue("tv", "profile", comboBoxQuality.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
@@ -1604,6 +1630,8 @@ namespace MediaPortal.Configuration
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				checkBoxHiQuality.Checked=xmlreader.GetValueAsBool("tv", "hiquality", false);
+				comboBoxQuality.SelectedIndex=xmlreader.GetValueAsInt("tv", "profile", 1);
+				
 				comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
 				comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
 				comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
