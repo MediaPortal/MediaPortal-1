@@ -287,6 +287,7 @@
 			<description>YYYY</description>
 			<type>spincontrol</type>
 			<subtype>int</subtype>
+			<digits>4</digits>
 			<orientation>vertical</orientation>
 			<id>11</id>
 			<posX>480</posX>
