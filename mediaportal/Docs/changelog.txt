@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  23-04-2004: setup       : added : AudioPlayer tab added, choose between WMP9 or DirectShow player
   23-04-2004: my pictures : fixed : music stopped when viewing a slideshow
   23-04-2004: my video    : fixed : OSD didnt move when you moved the mediaportal window
   22-04-2004: my music    : added : visualisations when playing music

@@ -12,6 +12,7 @@ My TV:
   - support multiple tuners/capture cards
  
   TVGuide:
+     - 
 
   Scheduler:
      - New button     doesnt do anything. Should allow user to create a new recording manually
@@ -20,6 +21,7 @@ My TV:
   Capture:
     - in case of video-in/SVHS-in then use also that audio input (now uses tuner audio input)    
     - time shifting. This allows you to pause/ FF/RW live tv      
+    - add BDA support
 
 My Music:
   - search songs by genre,artist,album (based on music database)
@@ -42,7 +44,6 @@ Settings:
 
 General:
   - seperate module/database for TV-series
-
   - remember 'view as' setting per folder
   - better mouse control
   - specify default share. 
@@ -51,14 +52,4 @@ General:
   - my programs
   - autoplay anything thats in the cd/dvd
     
-Bugs:
-  - 14-04-2004 my video   : internal video player: mpeg2 files stop doesnt work
-  - 14-04-2004 general    : xbmc doesnt start from D: 
-  - 16-04-2004 OSD        : someone also had a problem with the OSD not wanting to go away again with Y
-  - 18-04-2004 my video   : view by title: not all movies are shown
-  - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
-  - 20-04-2005 my tv      : record a program via tvguide which is already running records the next program!
-  - 22-04-2005 my video   : dvd player flickers, especiall when OSD is drawn
-  - 22-04-2004 setup      : fix frequency overrides
-  - 22-04-2004 general    : scrolling items (like musicoverlay) take too much cpu% (disabled for now)
   
