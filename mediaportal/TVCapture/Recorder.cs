@@ -1789,6 +1789,7 @@ namespace MediaPortal.TV.Recording
 										{
 											try { if (item.Name=="channel") newRec.Channel=(string)item.Value.ToString();} catch(Exception){}
 											try{ if (item.Name=="title") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
+											try{ if (item.Name=="programtitle") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
 											try{ if (item.Name=="genre") newRec.Genre=(string)item.Value.ToString();} catch(Exception){}
 											try{ if (item.Name=="details") newRec.Description=(string)item.Value.ToString();} catch(Exception){}
 											try{ if (item.Name=="start") newRec.Start=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
