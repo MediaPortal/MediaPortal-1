@@ -15,7 +15,6 @@ using Direct3D=Microsoft.DirectX.Direct3D;
 namespace MediaPortal.GUI.Pictures
 {
 	/// <summary>
-	/// todo : adding 'ken burns' effects
 	/// todo : adding OSD (stripped if for KenBurns)
 	/// </summary>
 	public class GUISlideShow: GUIWindow
@@ -40,6 +39,8 @@ namespace MediaPortal.GUI.Pictures
     float KENBURNS_MAXZOOM = 1.30f;
 
     int m_iSlideShowTransistionFrames=60;
+    int m_iKenBurnTransistionSpeed=40;
+
     ArrayList m_slides = new ArrayList();
     int 										m_lSlideTime=0;
     int dwCounter=0;
@@ -224,22 +225,7 @@ namespace MediaPortal.GUI.Pictures
       {
         m_iCurrentSlide=0;
       }
-
-      // Change image
-      if (null!=m_pTextureBackGround)
-      {
-        m_pTextureBackGround.Dispose();
-        m_pTextureBackGround=null;
-      }
-      m_fZoomLeftBackGround=0;
-      m_fZoomTopBackGround=0;
-      m_fZoomFactorBackGround=1.0f;
-      m_iKenBurnsEffect=0;
-      m_pTextureBackGround=GetSlide(true, out m_fWidthBackGround,out m_fHeightBackGround, out m_strCurrentSlide);
-      m_iLastShownSlide=m_iCurrentSlide;
-      m_strBackgroundSlide=m_strCurrentSlide;
-      m_dwFrameCounter=0;
-		}
+    }
 
     void  ShowPrevious()
     {
@@ -259,21 +245,6 @@ namespace MediaPortal.GUI.Pictures
       {
         m_iCurrentSlide=m_slides.Count-1;
       }
-
-      // Change image
-      if (null!=m_pTextureBackGround)
-      {
-        m_pTextureBackGround.Dispose();
-        m_pTextureBackGround=null;
-      }
-      m_fZoomLeftBackGround=0;
-      m_fZoomTopBackGround=0;
-      m_fZoomFactorBackGround=1.0f;
-      m_iKenBurnsEffect=0;
-      m_pTextureBackGround=GetSlide(true, out m_fWidthBackGround,out m_fHeightBackGround, out m_strCurrentSlide);
-      m_iLastShownSlide=m_iCurrentSlide;
-      m_strBackgroundSlide=m_strCurrentSlide;
-      m_dwFrameCounter=0;
     }
 
     public void Add(string strPicture)
@@ -358,18 +329,6 @@ namespace MediaPortal.GUI.Pictures
                 ZoomCurrent(m_fZoomFactorCurrent);
 
                 Log.Write("Start zoom factor: {0}", m_fZoomFactorCurrent);
-
-                // When using KenBurns skip picture 2 picture transition
-                
-                
-                if (null!=m_pTextureBackGround)
-                {
-                  // Clear background
-                  m_pTextureBackGround.Dispose();
-                  m_pTextureBackGround=null;
-                }
-                
-                
               }
               
               int iNewMethod;
@@ -406,7 +365,6 @@ namespace MediaPortal.GUI.Pictures
           m_strBackgroundSlide=m_strCurrentSlide;
           m_pTextureCurrent=null;          
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
-          //if (m_bKenBurns) ZoomBackGround(m_fZoomFactorBackGround);
         }
       }
 
@@ -831,7 +789,7 @@ namespace MediaPortal.GUI.Pictures
       lColorDiffuse<<=24;
       lColorDiffuse |= 0xffffff;
 
-      MediaPortal.Util.Picture.RenderImage(ref m_pTextureCurrent, x, y, width, height, m_fWidthCurrent, m_fHeightCurrent, m_fZoomLeftBackGround, m_fZoomTopBackGround,lColorDiffuse);
+      MediaPortal.Util.Picture.RenderImage(ref m_pTextureCurrent, x, y, width, height, m_iZoomWidth, m_iZoomHeight, m_fZoomLeftCurrent, m_fZoomTopCurrent,lColorDiffuse);
       return bResult;
     }
 
@@ -858,7 +816,8 @@ namespace MediaPortal.GUI.Pictures
       if (fZoom > KENBURNS_MAXZOOM)
         fZoom = KENBURNS_MAXZOOM;
 
-      return fZoom;
+      //return fZoom;
+      return 1.0f;
     }
 
     /// <summary>
@@ -869,7 +828,7 @@ namespace MediaPortal.GUI.Pictures
     bool KenBurns(int iEffect, bool bReset)
     {
       bool bEnd=false;
-      int iNrOfFramesPerEffect = m_iSlideShowTransistionFrames*10;
+      int iNrOfFramesPerEffect = m_iKenBurnTransistionSpeed*20;
     
       // Init methode
       if (bReset)
@@ -911,21 +870,9 @@ namespace MediaPortal.GUI.Pictures
       if (m_fZoomLeftBackGround < 0) m_fZoomLeftBackGround = 0;
 
 
-      if (iEffect != 0)
+      if ((iEffect != 0) && !bEnd && !bReset)
       {
-        if (!bEnd)
-        {
-          if (!bReset)
-          {
-            m_iFrameNr++;
-          }
-          m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
-        }
-        else
-        {
-          // end
-          m_lSlideTime=(int)(DateTime.Now.Ticks/10000) - (m_iSpeed*1000);
-        }
+        m_iFrameNr++;
       }
       return bEnd;
     }
@@ -1443,8 +1390,9 @@ namespace MediaPortal.GUI.Pictures
 
 	    float fSourceFrameAR = ((float)iSourceWidth)/((float)iSourceHeight);
 	    float fOutputFrameAR = fSourceFrameAR / fPixelRatio;
-            fOutputFrameAR = ((float)iSourceWidth)/((float)iSourceHeight);
-      
+                 
+      fOutputFrameAR = iSourceWidth/iSourceHeight;
+
 	    width = iScreenWidth;
 	    height = width / fOutputFrameAR;
 	    if (height > iScreenHeight)
@@ -1664,6 +1612,7 @@ namespace MediaPortal.GUI.Pictures
       {
         m_iSpeed=xmlreader.GetValueAsInt("pictures","speed",3);
         m_iSlideShowTransistionFrames=xmlreader.GetValueAsInt("pictures","transition",20);
+        m_iKenBurnTransistionSpeed=xmlreader.GetValueAsInt("pictures","kenburnsspeed",20);
         m_bKenBurns=xmlreader.GetValueAsBool("pictures","kenburns", false);
         m_bUseRandomTransistions=xmlreader.GetValueAsBool("pictures","random", true);
       }
