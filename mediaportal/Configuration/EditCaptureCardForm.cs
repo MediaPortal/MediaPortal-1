@@ -1954,11 +1954,6 @@ namespace MediaPortal.Configuration
 
 				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
 
-				//
-				// Setup line input combo box
-				//
-				comboBoxLineInput.Items.Clear();
-
 				if(capture != null)
 				{
 					if (capture.CreateGraph())
@@ -1972,6 +1967,7 @@ namespace MediaPortal.Configuration
 						//
 						// Clear combo box
 						//
+						comboBoxLineInput.Items.Clear();
 						frameSizeComboBox.Items.Clear();
 
 						//
@@ -2027,6 +2023,20 @@ namespace MediaPortal.Configuration
 						capture.DeleteGraph();
 					}
 					else result=false;
+				}
+
+				//select correct audio line input
+				if (comboBoxLineInput.Items.Count>0)
+					comboBoxLineInput.SelectedIndex=0;
+
+				for (int i=0; i < comboBoxLineInput.Items.Count;++i)
+				{
+					string input = (string)comboBoxLineInput.Items[i];
+					if (capture.AudioInputPin==input)
+					{
+						comboBoxLineInput.SelectedIndex = i;
+						break;
+					}
 				}
 
 				// select the correct framesize
