@@ -1,32 +1,14 @@
-todo for 0.1:
- - A way to solve the OSD look on vmr7 when it is based on transparent graphics.
- - dialog saying database is empty when you wanna change the view
- - my tv: show fullscreen or windowed tv option
- - remember view by icon/list preference based per folder
- - make album art position configurable 
- - OSD mouse support
---------------------------------------------------------------------------------------------------------------     
-	- remember 'fullscreen tv' state when entering/leaving my tv
-	- new preview.png for both skins
-	- scrolling : base on time instead of frame
-	- duration of .sbe??? 39:57 
-fix:				
-vmr9:
-	- windowless vmr9 / renderless vmr9
-
 My Radio:
-    - add support for more cards
     - Timeshifting & recording
     - Use RDS signals in myRadio
          
 My TV:
   general
-    - show now & later in TV osd
+    - recoding recordings to divx, mpeg,...
     - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
     - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
     - watch Live TV on two TVs if user has two Tuners
 	- option:fade in/out when switching between fullscreen video/tv<->gui
-	- option:turn timeshifting on/off
 	- option:show fullscreen TV when going to my tv (instead of windowed)
 	- option:show live tv in 'tv gfx' on home
 	- A way to browse and resolve recording conflicts. 
@@ -38,16 +20,18 @@ My TV:
   TV OSD:
      - record this program now option
      - Some sort of a TV OSD system. Most TV OSDs can be browsed with the standard keys (0-9, play, pause, etc. up, down, left, right, enter) and the four special color keys (red, green, yellow and blue)
+     - show now & later in TV osd
+     - show 'red dot' if program is being recorded
      
   Recorded tv:
      
   TVGuide:
      - Search function in EPG 
-     - special background/color for currently playing program(s)
      - add to program favorites (will b highlighted next time)
      - allow user to specify which channels should b displayed and which not (hide channels)
-     - View by : movies, news, Whats playing now... 
-     
+     - different views like View by : movies, news, Whats playing now... 
+     - show multiple red dots when recording series
+
   Scheduled:
      - remove all schedules button
   
@@ -55,6 +39,7 @@ My TV:
      - add screenshot option    
      
 My Music: (int_20h)
+  - auto-resume 
   - show which songs are 'queued'
   - highlight currently playing file somehow
   - favorite system to add an album, song, artists to your favorites
@@ -67,6 +52,7 @@ My Music: (int_20h)
   - cd ripper
 
 My Video:
+  - auto-resume 
   - Make video streams possible (.asx)
   - Queue stacked files in Zoomplayer using command line like:
     zplayer.exe /Queue:movie-cd1.mpg /Queue:movie-cd2.mpg /F /PLAY /Q
@@ -84,8 +70,8 @@ My Pictures:
   - exif/picture tag information (excentric is looking at this)
   
 Topbar:
-
-    
+  - auto hide
+      
 Settings:
   - all :-)
 
@@ -93,9 +79,15 @@ new plugins:
   - my files  
   - my TV-series
   - my DVD's
+  - caller ID
+  - my alarm
+  - my webbrowser
+  - my email
+  - system info / free HD space , memory usedd, temperature,...plugin
   
 DVD player:
-  - Diasable the progressbar during non skippable parts of a dvd (loading of the menu, special parts etc)
+  - bookmarks
+  - auto-resume 
 
 Skin engine:
   - the possibility for the skinner to change the position of the album art
@@ -109,7 +101,6 @@ Skin engine:
   
 setup:
   - custom zoommode, let people enter a zoom number (+ or -) and make this accessable using S
-  - set a default zoommode for TV and Video seperately.
   - advanced filter manager, let people make custom graphs for certain filetypes. See ZoomPlayer.
   - Update paths of the setup project in CVS to point to the new location of the girder files.
   - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
@@ -121,17 +112,16 @@ setup:
   - setup deinterlace method (vmr9)
   
 my programs:
-  - program arguments  
+  - application/program arguments  
 
 General:
+  - plugin structure for non-gui plugins
   - Support for right to left languages
   - Use Y to play a folder, this for video, music and pictures
   - keymap.xml : add support for support ctrl, shift , alt keys
   - ? button which shows tooltips & keyboard shortcuts
   - Gui renderspeed slider in setup. COntrol how fast the GUI is rendered. Can save CPU, thus Temperature, thus noise.
   - option to stop rendering the GUI and go blank. This to have MP use little CPU when playing music. Keeps CPU cool
-  - option to autohide topbar
-  - transitions between GUI screens
   - better cd/dvd handling like
     - remove eject and "play DVD" buttons from myVideos
     - remove eject button from myMusic
@@ -147,7 +137,7 @@ General:
   - support for VFD/LCD displays
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
-  - caller ID
+
   - better mouse control 
      - my tv: 
          tvguide   : current time/day, scroll up/down, scroll left/right
