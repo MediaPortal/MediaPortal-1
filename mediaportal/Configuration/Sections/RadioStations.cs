@@ -380,7 +380,11 @@ namespace MediaPortal.Configuration.Sections
 		{
 //			isDirty = true;
 
+			RadioStation newStation = new RadioStation();
+			newStation.Type="Radio";
+			newStation.Frequency = new Frequency(0);
 			EditRadioStationForm editStation = new EditRadioStationForm();
+			editStation.Station =newStation ;
 
 			DialogResult dialogResult = editStation.ShowDialog(this);
 
