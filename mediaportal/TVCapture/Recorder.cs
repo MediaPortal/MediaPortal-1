@@ -569,6 +569,17 @@ namespace MediaPortal.TV.Recording
 		static public void StopViewing()
 		{
 			Log.Write("Recorder: StopViewing()");
+			TVCaptureDevice dev ;
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				dev=(TVCaptureDevice)m_tvcards[i];
+				Log.Write("Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+					dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
+			}
+			if (g_Player.Playing)
+			{
+				Log.Write("Recorder:currently playing:{0}", g_Player.CurrentFile);
+			}
 			// stop any playing..
 			if (g_Player.Playing && g_Player.IsTV) 
 			{
@@ -578,18 +589,20 @@ namespace MediaPortal.TV.Recording
 			// stop any card viewing..
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
-				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
+				dev =(TVCaptureDevice)m_tvcards[i];
 				if (!dev.IsRecording)
 				{
+					if (dev.IsTimeShifting)
+					{
+						Log.Write("Recorder: stop timeshifting {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
+						dev.StopTimeShifting();
+					}
 					if (dev.View) 
 					{
 						Log.Write("Recorder: stop viewing {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
 						dev.View=false;
 					}
-					if (dev.IsTimeShifting)
-					{
-						dev.StopTimeShifting();
-					}
+					dev.DeleteGraph();
 				}
 			}
 			m_iCurrentCard=-1;
@@ -645,6 +658,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("Recorder:currently playing:{0}", g_Player.CurrentFile);
 			}
 	
+			string strTimeShiftFileName;
 			if (TVOnOff==false)
 			{
 				Log.Write("Recorder:turn TV off");
@@ -665,19 +679,23 @@ namespace MediaPortal.TV.Recording
 							//yes, are playing the timeshifting file?
 							if (g_Player.CurrentFile==GetTimeShiftFileName(m_iCurrentCard))
 							{
-								// yep, then stop playing the file, but continue recording
-								if (g_Player.Playing && g_Player.IsTV) 
-								{
 									g_Player.Stop();
-								}
 							}//if (g_Player.CurrentFile==GetTimeShiftFileName(m_iCurrentCard))
 							m_iCurrentCard=-1;
 						}//if (dev.SupportsTimeShifting)
 					}//if (dev.IsRecording) 
 					else
 					{
-						g_Player.Stop();
-						dev.View=false;
+						//card is not recording, just stop tv
+						strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+						if (g_Player.CurrentFile==strTimeShiftFileName)
+							g_Player.Stop();
+						if (dev.IsTimeShifting)
+							dev.StopTimeShifting();
+						
+						if (dev.View)
+							dev.View=false;
+						dev.DeleteGraph();
 						m_iCurrentCard=-1;
 					}
 				}//if (m_iCurrentCard>=0 && m_iCurrentCard<m_tvcards.Count)
@@ -687,52 +705,82 @@ namespace MediaPortal.TV.Recording
 			Log.Write("Recorder:Turn tv on channel:{0}", channel);
 
 			// tv should be turned on
-			// check if any card is already timeshifting / recording the channel we want
+			// check if any card is already viewing...
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				dev=(TVCaptureDevice)m_tvcards[i];
-				//is card timeshifting on the channel we want?
-				if (dev.IsTimeShifting && dev.TVChannel == channel)
+				//is card already viewing ?
+				if ( dev.IsTimeShifting || dev.View )
 				{
-					m_iCurrentCard=i;
-					m_strTVChannel=channel;
-					Log.Write("Recorder:card:{0} {1} is already watching {2}", dev.ID, dev.FriendlyName,channel);
-					// do we want timeshifting?
-					if  (timeshift || dev.IsRecording)
+					//can card view the new channel we want?
+					if (TVDatabase.CanCardViewTVChannel(channel,dev.ID) )
 					{
-						Log.Write("Recorder:StartViewing():start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
-						//yes, check if we're already playing/watching it
-						string strFileName=GetTimeShiftFileName(m_iCurrentCard);
-						if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
+						// is it not recording ? or recording on the channel we want?
+						if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
 						{
-							// we're not watching it,
-							// does the timeshift file exists?
-							if (System.IO.File.Exists(strFileName))
+							//yes, we found our card
+							m_iCurrentCard=i;
+							m_strTVChannel=channel;
+							Log.Write("Recorder:card:{0} {1} is watching {2}", dev.ID, dev.FriendlyName,channel);
+							// do we want timeshifting?
+							if  (timeshift || dev.IsRecording)
 							{
-								// yes,then play it
-								Log.Write("Recorder.StartViewing() play:({0})",strFileName);
-								g_Player.Play(strFileName);
-							}
-						}
-						return;
-					}//if  (timeshift || dev.IsRecording)
-					else
-					{
-						//we dont want timeshifting
-						Log.Write("Recorder.StartViewing() stop timeshifting on card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, dev.TVChannel);
-						g_Player.Stop();
-						dev.View=false;
+								dev.TVChannel=channel;
+								if (!dev.IsRecording  && !dev.IsTimeShifting && dev.SupportsTimeShifting)
+								{
+									dev.StartTimeShifting();
+								}
 
-						//now start viewing without timeshifting
-						Log.Write("Recorder:Start viewing on card:{0} {1} view {2}", dev.ID, dev.FriendlyName,channel);
-						dev.TVChannel=channel;
-						dev.View=true;
-						return;
-					}
-				}//if (dev.IsTimeShifting && dev.TVChannel == channel)
+								Log.Write("Recorder:StartViewing():start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
+								//yes, check if we're already playing/watching it
+								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+								g_Player.Play(strTimeShiftFileName);
+								return;
+							}//if  (timeshift || dev.IsRecording)
+							else
+							{
+								//we dont want timeshifting
+								Log.Write("Recorder:StartViewing() view card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, dev.TVChannel);
+								
+								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+								if (g_Player.CurrentFile==strTimeShiftFileName)
+									g_Player.Stop();
+								if (dev.IsTimeShifting)
+									dev.StopTimeShifting();
+								
+								dev.TVChannel=channel;
+								dev.View=true;
+								return;
+							}
+						}//if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
+					}//if (TVDatabase.CanCardViewTVChannel(channel,dev.ID) )
+				}//if ( (dev.IsTimeShifting||dev.View) && dev.TVChannel == channel)
 			}//for (int i=0; i < m_tvcards.Count;++i)
 
 			Log.Write("Recorder:find free card");
+			//stop any other cards which are only viewing
+			g_Player.Stop();
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
+				if (!tvcard.IsRecording)
+				{
+					//stop watching on this card
+					Log.Write("Recorder: stop watching on card:{0} {1} channel:{2}", tvcard.ID,tvcard.FriendlyName,tvcard.TVChannel);
+					
+
+					if (tvcard.IsTimeShifting)
+					{
+						tvcard.StopTimeShifting();
+					}
+					if (tvcard.View)
+					{
+						tvcard.View=false;
+					}
+					tvcard.DeleteGraph();
+				}
+			}
+
 			// no cards are timeshifting the channel we want.
 			// Find a card which can view the channel
 			int card=-1;
@@ -762,33 +810,6 @@ namespace MediaPortal.TV.Recording
 			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			
 			Log.Write("Recorder:found card {0} {1}",dev.ID,dev.FriendlyName);
-			
-			//but first disable the tv view of any other card
-			g_Player.Stop();
-      
-			//stop any other cards which are only viewing
-			for (int i=0; i < m_tvcards.Count;++i)
-			{
-				if (i!=m_iCurrentCard)
-				{
-					TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
-					if (!tvcard.IsRecording)
-					{
-						//stop watching on this card
-						Log.Write("Recorder: stop watching on card:{0} {1} channel:{2}", tvcard.ID,tvcard.FriendlyName,tvcard.TVChannel);
-						if (tvcard.IsTimeShifting)
-						{
-							tvcard.StopTimeShifting();
-						}
-						if (tvcard.View)
-						{
-							tvcard.View=false;
-						}
-						tvcard.DeleteGraph();
-					}
-				}
-			}
-
 
 			//do we want to use timeshifting ?
 			if (timeshift)
@@ -804,14 +825,8 @@ namespace MediaPortal.TV.Recording
 					m_strTVChannel=channel;
 
 					// and play the timeshift file (if its not already playing it)
-					string strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
-					if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strTimeShiftFileName)
-					{
-						if (System.IO.File.Exists(strTimeShiftFileName))
-						{
-							g_Player.Play(strTimeShiftFileName);
-						}
-					}
+					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+					g_Player.Play(strTimeShiftFileName);
 					return;
 				}//if (dev.SupportsTimeShifting)
 			}//if (timeshift)
