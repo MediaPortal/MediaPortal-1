@@ -573,7 +573,9 @@ namespace MediaPortal.Configuration.Sections
 				useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
 				compensateTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("xmltv", "timezonecorrection", 0));
 
-				folderNameTextBox.Text = xmlreader.GetValueAsString("xmltv", "folder", "");
+        string strDir=System.IO.Directory.GetCurrentDirectory();
+        strDir+=@"\xmltv";
+				folderNameTextBox.Text = xmlreader.GetValueAsString("xmltv", "folder", strDir);
 
 				GrabbercomboBox.SelectedItem = xmlreader.GetValueAsString("xmltv","grabber","");
 				AdvancedDaystextBox.Text=xmlreader.GetValueAsString("xmltv","days","1,2,3,5");
