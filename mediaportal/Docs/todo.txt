@@ -98,7 +98,7 @@ Skin engine:
   - fade in for controls
   - position text for buttons
   - transitions between windows
-  
+  - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
 setup:
   - setup : add tooltips 
   - setup:Auto Tune needs some work
