@@ -4,12 +4,14 @@ mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
+mkdir plugins\process
 mkdir Wizards
 
 del /F /Q plugins\windows\*.*
 del /F /Q plugins\tagreaders\*.*
 del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
+del /F /Q plugins\process\*.*
 del *.dll
 copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
