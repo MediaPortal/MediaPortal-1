@@ -6,6 +6,13 @@ using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
+	public enum NetworkType 
+	{
+		ATSC,	// analog TV tuning
+		DVBC,	// DVB-cable
+		DVBS, // DVB-Sattelite
+		DVBT  // DVB-Terrestial
+	}
 	/// <summary>
 	/// Interface definition for graphbuilder objects
 	/// A graphbuilder object supports one or more TVCapture cards and
@@ -208,5 +215,6 @@ namespace MediaPortal.TV.Recording
 
 		IBaseFilter AudiodeviceFilter();
 		NetworkType Network();
+		void Tune(object tuningObject);
 	}
 }

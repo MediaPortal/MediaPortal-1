@@ -17,13 +17,7 @@ using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
-	public enum NetworkType 
-	{
-		ATSC,	// analog TV tuning
-		DVBC,	// DVB-cable
-		DVBS, // DVB-Sattelite
-		DVBT  // DVB-Terrestial
-	}
+
 
 	/// <summary>
 	/// Implementation of IGraph for digital TV capture cards using the BDA driver architecture
@@ -1809,6 +1803,9 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
+		public void TuneFrequency(int frequency)
+		{
+		}
 
 		
 		public PropertyPageCollection PropertyPages()
@@ -1828,6 +1825,11 @@ namespace MediaPortal.TV.Recording
 		public NetworkType Network()
 		{
 				return m_NetworkType;
+		}
+		
+		
+		public void Tune(object tuningObject)
+		{
 		}
 	}
 }

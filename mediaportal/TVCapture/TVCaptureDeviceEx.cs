@@ -1226,6 +1226,11 @@ namespace MediaPortal.TV.Recording
 				return _mGraph.Network();
 			}
 		}
+		public void Tune(object tuningObject)
+		{
+			if (_mGraph==null) return ;
+			_mGraph.Tune(tuningObject);
+		}
   }
 }  
 #endif

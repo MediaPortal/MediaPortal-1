@@ -1096,5 +1096,12 @@ namespace MediaPortal.TV.Recording
 		{
 				return NetworkType.ATSC;
 		}
+		public void TuneFrequency(int frequency)
+		{
+		}
+		
+		public void Tune(object tuningObject)
+		{
+		}
 	}
 }

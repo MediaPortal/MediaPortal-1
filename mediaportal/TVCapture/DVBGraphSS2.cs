@@ -1689,5 +1689,8 @@ namespace MediaPortal.TV.Recording
 		{
 				return NetworkType.DVBS;
 		}
+		public void Tune(object tuningObject)
+		{
+		}
 	}
 }

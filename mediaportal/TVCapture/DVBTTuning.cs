@@ -69,7 +69,7 @@ namespace MediaPortal.TV.Recording
 			callback.OnProgress((int)percent);
 			float frequency=(float)frequencies[currentFrequencyIndex];
 			frequency /=1000;
-			string description=String.Format("frequency:{1:###.##} MHz.", frequency);
+			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
 			callback.OnStatus(description);
 
 			if (captureCard.SignalPresent())
@@ -94,14 +94,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
-			/*if (!captureCard.ViewChannel(currentChannel,captureCard.CountryCode,AnalogVideoStandard.None) )
-			{
-				timer1.Enabled=false;
-				callback.OnProgress(100);
-				callback.OnEnded();
-				captureCard.DeleteGraph();
-				return;
-			}*/
+			captureCard.Tune(frequencies[currentFrequencyIndex]);
 		}
 
 		#endregion
