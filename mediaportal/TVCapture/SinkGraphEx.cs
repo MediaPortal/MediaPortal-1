@@ -54,10 +54,25 @@ namespace MediaPortal.TV.Recording
       Vmr9 =new VMR9Util("mytv");
       DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() IN");
 			if (m_graphState != State.None) return false;		// If doing something already, return...
+			if (m_Card==null) 
+			{
+				Log.Write("SinkGraphEx:card is not defined");
+				return false;
+			}
 
 			if (!mCard.LoadDefinitions())											// Load configuration for this card
 			{
 				DirectShowUtil.DebugWrite("SinkGraphEx: Loading card definitions for card {0} failed", mCard.CaptureName);
+				return false;
+			}
+			if (mCard.TvFilterDefinitions==null)
+			{
+				Log.Write("SinkGraphEx:card does not contain filters?");
+				return false;
+			}
+			if (mCard.TvConnectionDefinitions==null)
+			{
+				Log.Write("SinkGraphEx:card does not contain connections for tv?");
 				return false;
 			}
 
@@ -152,7 +167,17 @@ namespace MediaPortal.TV.Recording
 			{
 				sourceFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
 				sinkFilter   = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
-
+				if (sourceFilter==null)
+				{
+					Log.Write("Cannot find source filter for connection:{0}",i);
+					continue;
+				}
+				sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
+				if (sinkFilter==null)
+				{
+					Log.Write("Cannot find sink filter for connection:{0}",i);
+					continue;
+				}
 				DirectShowUtil.DebugWrite("SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
 									sourceFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName,
 									sinkFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);

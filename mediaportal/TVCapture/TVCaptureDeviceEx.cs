@@ -126,6 +126,7 @@ namespace MediaPortal.TV.Recording
 		public Hashtable TvFilterDefinitions
 		{
 			get {
+				if (_mCaptureCardDefinition==null) return null;
 				if (_mCaptureCardDefinition.Tv==null) return null;
 				return _mCaptureCardDefinition.Tv.FilterDefinitions; 
 			}
@@ -138,6 +139,7 @@ namespace MediaPortal.TV.Recording
 		{
 			get 
 			{
+				if (_mCaptureCardDefinition==null) return null;
 				if (_mCaptureCardDefinition.Tv==null) return null;
 				return _mCaptureCardDefinition.Tv.ConnectionDefinitions; 
 			}
@@ -197,6 +199,7 @@ namespace MediaPortal.TV.Recording
 			if (_mDefinitionLoaded) return (true);
 			_mDefinitionLoaded = true;
 			
+			Log.Write("LoadDefinitions()");
 			CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
 			if (CaptureCardDefinitions.CaptureCards.Count == 0)
 			{
@@ -362,7 +365,8 @@ namespace MediaPortal.TV.Recording
 					Log.Write("TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
 					return (false);
 				}
-			}
+			
+			Log.Write("LoadDefinitions() done");}
 
 			return (true);
 		}

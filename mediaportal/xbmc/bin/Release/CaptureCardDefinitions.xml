@@ -302,8 +302,8 @@
         <filter cat="capture"		  name="Firesat BDA Receiver DVBT"       checkdevice="false"></filter>
       </filters>
       <connections>
-		<connection sourcefilter="networkProvider" sourcepin="0" sinkfilter="tunerDevice" sinkpin="0"></connection>
-		<connection sourcefilter="tunerDevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>  

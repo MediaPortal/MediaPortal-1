@@ -134,34 +134,61 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.None) 
 				return false;
 	      
-			DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph()");
+			Log.Write("DVBGraphBDA:CreateGraph(). ");
+
+			if (m_Card==null) 
+			{
+				Log.Write("DVBGraphBDA:card is not defined");
+				return false;
+			}
+			if (!m_Card.LoadDefinitions())											// Load configuration for this card
+			{
+				DirectShowUtil.DebugWrite("DVBGraphBDA: Loading card definitions for card {0} failed", m_Card.CaptureName);
+				return false;
+			}
+			
+			Log.Write("2");
+			if (m_Card.TvFilterDefinitions==null)
+			{
+				Log.Write("DVBGraphBDA:card does not contain filters?");
+				return false;
+			}
+			Log.Write("3");
+			if (m_Card.TvConnectionDefinitions==null)
+			{
+				Log.Write("DVBGraphBDA:card does not contain connections for tv?");
+				return false;
+			}
 
 			Vmr9 =new VMR9Util("mytv");
 
+			Log.Write("3");
 			// Make a new filter graph
-			DirectShowUtil.DebugWrite("DVBGraphBDA:create new filter graph (IGraphBuilder)");
+			Log.Write("DVBGraphBDA:create new filter graph (IGraphBuilder)");
 			m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
 
 			// Get the Capture Graph Builder
-			DirectShowUtil.DebugWrite("DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+			Log.Write("DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
 			Guid clsid = Clsid.CaptureGraphBuilder2;
 			Guid riid = typeof(ICaptureGraphBuilder2).GUID;
 			m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance(ref clsid, ref riid);
 
-			DirectShowUtil.DebugWrite("DVBGraphBDA:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+			Log.Write("DVBGraphBDA:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
 			int hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
 			if (hr < 0) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:link FAILED:0x{0:X}",hr);
+				Log.Write("DVBGraphBDA:link FAILED:0x{0:X}",hr);
 				return false;
 			}
-			DirectShowUtil.DebugWrite("DVBGraphBDA:Add graph to ROT table");
+			Log.Write("DVBGraphBDA:Add graph to ROT table");
 			DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
+			
+			Log.Write("4");
 
 			// Loop through configured filters for this card, bind them and add them to the graph
 			// Note that while adding filters to a graph, some connections may already be created...
-			DirectShowUtil.DebugWrite("DVBGraphBDA: Adding configured filters...");
+			Log.Write("DVBGraphBDA: Adding configured filters...");
 			foreach (string catName in m_Card.TvFilterDefinitions.Keys)
 			{
 				FilterDefinition dsFilter = m_Card.TvFilterDefinitions[catName] as FilterDefinition;
@@ -169,12 +196,12 @@ namespace MediaPortal.TV.Recording
 				hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 				if (hr == 0)
 				{
-					DirectShowUtil.DebugWrite("DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+					Log.Write("DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 				}
 				else
 				{
-					DirectShowUtil.DebugWrite("DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-					DirectShowUtil.DebugWrite("DVBGraphBDA:  Error! Result code = {0}", hr);
+					Log.Write("DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+					Log.Write("DVBGraphBDA:  Error! Result code = {0}", hr);
 				}
 
 				// Support the "legacy" member variables. This could be done different using properties
@@ -183,18 +210,21 @@ namespace MediaPortal.TV.Recording
 				if (dsFilter.Category == "tunerdevice") m_TunerDevice	 							= dsFilter.DSFilter;
 				if (dsFilter.Category == "capture")			m_CaptureDevice							= dsFilter.DSFilter;
 			}
-			DirectShowUtil.DebugWrite("DVBGraphBDA: Adding configured filters...DONE");
+			Log.Write("DVBGraphBDA: Adding configured filters...DONE");
 
+			
+			Log.Write("5");
 			if(m_NetworkProvider == null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
 				return false;
 			}
 			if(m_CaptureDevice == null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED capture filter not found");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED capture filter not found");
 			}
 
+			Log.Write("6");
 
 			FilterDefinition sourceFilter;
 			FilterDefinition sinkFilter;
@@ -214,13 +244,24 @@ namespace MediaPortal.TV.Recording
 			//
 			// The code assumes method 1 is used. If that fails, method 2 is tried...
 
-			DirectShowUtil.DebugWrite("DVBGraphBDA: Adding configured pin connections...");
+			Log.Write("DVBGraphBDA: Adding configured pin connections...");
 			for (int i = 0; i < m_Card.TvConnectionDefinitions.Count; i++)
 			{
+				Log.Write(" {0}", i);
 				sourceFilter = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
+				if (sourceFilter==null)
+				{
+					Log.Write("Cannot find source filter for connection:{0}",i);
+					continue;
+				}
 				sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
+				if (sinkFilter==null)
+				{
+					Log.Write("Cannot find sink filter for connection:{0}",i);
+					continue;
+				}
 
-				DirectShowUtil.DebugWrite("DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}", 
+				Log.Write("DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}", 
 					sourceFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName,
 					sinkFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
 				//sourceFilter.DSFilter.FindPin(((ConnectionDefinition)m_Card.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
@@ -232,13 +273,13 @@ namespace MediaPortal.TV.Recording
 					{
 						sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
 						if (sourcePin==null)
-							DirectShowUtil.DebugWrite("DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
+							Log.Write("DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
 						else
-							DirectShowUtil.DebugWrite("DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+							Log.Write("DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
 					}
 				}
 				else
-					DirectShowUtil.DebugWrite("DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
+					Log.Write("DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
 
 				//sinkFilter.DSFilter.FindPin(((ConnectionDefinition)m_Card.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
 				sinkPin      = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
@@ -249,13 +290,13 @@ namespace MediaPortal.TV.Recording
 					{
 						sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
 						if (sinkPin==null)
-							DirectShowUtil.DebugWrite("DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
+							Log.Write("DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
 						else
-							DirectShowUtil.DebugWrite("DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+							Log.Write("DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
 					}
 				}
 				else
-					DirectShowUtil.DebugWrite("DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
+					Log.Write("DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
 
 				if (sourcePin!=null && sinkPin!=null)
 				{
@@ -264,12 +305,12 @@ namespace MediaPortal.TV.Recording
 					if (hr != 0)
 						hr = m_graphBuilder.Connect(sourcePin, sinkPin);
 					if (hr == 0)
-						DirectShowUtil.DebugWrite("DVBGraphBDA:   Pins connected...");
+						Log.Write("DVBGraphBDA:   Pins connected...");
 
 					// Give warning and release pin...
 					if (conPin != null)
 					{
-						DirectShowUtil.DebugWrite("DVBGraphBDA:   (Pin was already connected...)");
+						Log.Write("DVBGraphBDA:   (Pin was already connected...)");
 						Marshal.ReleaseComObject(conPin as Object);
 						conPin = null;
 						hr     = 0;
@@ -278,15 +319,16 @@ namespace MediaPortal.TV.Recording
 
 				if (hr != 0)
 				{
-					DirectShowUtil.DebugWrite("DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
+					Log.Write("DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
 					if (hr == -2147220969)
 					{
-						DirectShowUtil.DebugWrite("DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+						Log.Write("DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
 					}
 				}
 			}
-			DirectShowUtil.DebugWrite("DVBGraphBDA: Adding configured pin connections...DONE");
+			Log.Write("DVBGraphBDA: Adding configured pin connections...DONE");
 
+			Log.Write("7");
 			// Find out which filter & pin is used as the interface to the rest of the graph.
 			// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
 			// We only use the filter, as the software will find the correct pin for now...
@@ -298,15 +340,17 @@ namespace MediaPortal.TV.Recording
 			
 			if(lastFilter == null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED interface filter not found");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 			}
+			Log.Write("8");
 			// Initialise Tuning Space (using the setupTuningSpace function)
 			if(!setupTuningSpace()) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
 				return false;
 			}
 
+			Log.Write("9");
 			//=========================================================================================================
 			// add the MPEG-2 Demultiplexer 
 			//=========================================================================================================
@@ -314,7 +358,7 @@ namespace MediaPortal.TV.Recording
 			m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
 			if(m_MPEG2Demultiplexer== null) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
+				Log.Write("DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
 				return false;
 			}
 
@@ -324,7 +368,7 @@ namespace MediaPortal.TV.Recording
 			// The preview pin must be connected first so it can be registed with the network provider
 			if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
+				Log.Write("DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
 				return false;
 			}
 
@@ -334,20 +378,20 @@ namespace MediaPortal.TV.Recording
 			object tmpObject;
 			if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "BDA MPEG2 Transport Information Filter", out tmpObject)) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
 				return false;
 			}
 			m_TIF = (IBaseFilter) tmpObject;
 			tmpObject = null;
 			if(m_TIF == null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
 				return false;
 			}
 			m_graphBuilder.AddFilter(m_TIF, "BDA MPEG2 Transport Information Filter");
 			if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_TIF)) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer->BDA MPEG2 Transport Information Filter");
+				Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer->BDA MPEG2 Transport Information Filter");
 				return false;
 			}
 
@@ -356,19 +400,19 @@ namespace MediaPortal.TV.Recording
 			//=========================================================================================================
 			if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "MPEG-2 Sections and Tables", out tmpObject)) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED Failed to find MPEG-2 Sections and Tables Filter");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED Failed to find MPEG-2 Sections and Tables Filter");
 				return false;
 			}
 			m_SectionsTables = (IBaseFilter) tmpObject;
 			tmpObject = null;
 			if(m_SectionsTables == null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
+				Log.Write("DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
 			}
 			m_graphBuilder.AddFilter(m_SectionsTables, "MPEG-2 Sections & Tables");
 			if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_SectionsTables)) 
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
+				Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
 				return false;
 			}
 			
@@ -382,12 +426,12 @@ namespace MediaPortal.TV.Recording
 			m_MPEG2Demultiplexer.FindPin("4", out m_DemuxAudioPin);
 			if (m_DemuxVideoPin==null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:Failed to get pin '3' (video out) from MPEG-2 Demultiplexer");
+				Log.Write("DVBGraphBDA:Failed to get pin '3' (video out) from MPEG-2 Demultiplexer");
 				return false;
 			}
 			if (m_DemuxAudioPin==null)
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:Failed to get pin '4' (audio out)  from MPEG-2 Demultiplexer");
+				Log.Write("DVBGraphBDA:Failed to get pin '4' (audio out)  from MPEG-2 Demultiplexer");
 				return false;
 			}
 
@@ -416,7 +460,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			m_iPrevChannel = -1;
 	
-			DirectShowUtil.DebugWrite("DVBGraphBDA:DeleteGraph()");
+			Log.Write("DVBGraphBDA:DeleteGraph()");
 			StopRecording();
 			StopViewing();
 
@@ -522,14 +566,14 @@ namespace MediaPortal.TV.Recording
 		public void StopRecording()
 		{
 			if (m_graphState != State.Recording) return;
-			DirectShowUtil.DebugWrite("DVBGraphBDA:stop recording...");
+			Log.Write("DVBGraphBDA:stop recording...");
 
 			if (m_recControl!=null) 
 			{
 				int hr=m_recControl.Stop(0);
 				if (hr!=0) 
 				{
-					DirectShowUtil.DebugWrite("DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
+					Log.Write("DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
 					return;
 				}
 				if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
@@ -540,7 +584,7 @@ namespace MediaPortal.TV.Recording
 			m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();
-			DirectShowUtil.DebugWrite("DVBGraphBDA:stopped recording...");
+			Log.Write("DVBGraphBDA:stopped recording...");
 		}
 
 
@@ -554,7 +598,7 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 		{
-			DirectShowUtil.DebugWrite("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
+			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
 			TunerLib.TuneRequest newTuneRequest = null;
 			switch (m_NetworkType)
 			{
@@ -593,7 +637,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if(newTuneRequest == null)
 				{
-					DirectShowUtil.DebugWrite("DVBGraphBDA:TuneChannel() FAILED tv database does not contain tuning information for channel:{0}", iChannel);
+					Log.Write("DVBGraphBDA:TuneChannel() FAILED tv database does not contain tuning information for channel:{0}", iChannel);
 					return;
 				}
 				// Submit the Tune Request to the Tuner (put_TuneRequest)
@@ -601,7 +645,7 @@ namespace MediaPortal.TV.Recording
 			} 
 			else
 			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA:CreateTuneRequest() FAILED interfacing ITuner with Network Provider");
+				Log.Write("DVBGraphBDA:CreateTuneRequest() FAILED interfacing ITuner with Network Provider");
 				return;
 			}
 			// Release the Tune Request & Locator
@@ -707,16 +751,16 @@ namespace MediaPortal.TV.Recording
 				// and set it up
 				hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
 				if (hr != 0) 
-					DirectShowUtil.DebugWrite("DVBGraphBDA: FAILED:set Video window:0x{0:X}",hr);
+					Log.Write("DVBGraphBDA: FAILED:set Video window:0x{0:X}",hr);
 
 				hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 				if (hr != 0) 
-					DirectShowUtil.DebugWrite("DVBGraphBDA: FAILED:set Video window style:0x{0:X}",hr);
+					Log.Write("DVBGraphBDA: FAILED:set Video window style:0x{0:X}",hr);
 
 	      //show overlay window
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
-					DirectShowUtil.DebugWrite("DVBGraphBDA: FAILED:put_Visible:0x{0:X}",hr);
+					Log.Write("DVBGraphBDA: FAILED:put_Visible:0x{0:X}",hr);
 			}
 
 			//start the graph
@@ -743,7 +787,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.Viewing) return false;
 	       
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-			DirectShowUtil.DebugWrite("DVBGraphBDA: StopViewing()");
+			Log.Write("DVBGraphBDA: StopViewing()");
 			m_videoWindow.put_Visible(DsHlp.OAFALSE);
 
 			Log.Write("DVBGraphBDA: stop graph");
@@ -813,9 +857,9 @@ namespace MediaPortal.TV.Recording
 					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
 					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-					DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-					DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
+					Log.Write("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+					Log.Write("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
+					Log.Write("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
 				}
 			}
 			else
@@ -825,9 +869,9 @@ namespace MediaPortal.TV.Recording
 					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-					DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
-					DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
+					Log.Write("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+					Log.Write("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
+					Log.Write("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
 				}
 
 			}
@@ -1001,13 +1045,13 @@ namespace MediaPortal.TV.Recording
 				if (timeProgStart.Year > 2000)
 				{
 					TimeSpan ts = DateTime.Now - timeProgStart;
-					DirectShowUtil.DebugWrite("DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+					Log.Write("DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
 						timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
 						ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
 															
 					lStartTime = (long)ts.TotalSeconds;
 				}
-				else DirectShowUtil.DebugWrite("DVBGraphBDA: record entire timeshift buffer");
+				else Log.Write("DVBGraphBDA: record entire timeshift buffer");
       
 				TimeSpan tsMaxTimeBack = DateTime.Now - m_StartTime;
 				if (lStartTime > tsMaxTimeBack.TotalSeconds)
@@ -1081,7 +1125,7 @@ namespace MediaPortal.TV.Recording
 		public bool StopTimeShifting()
 		{
 			if (m_graphState != State.TimeShifting) return false;
-			DirectShowUtil.DebugWrite("DVBGraphBDA: StopTimeShifting()");
+			Log.Write("DVBGraphBDA: StopTimeShifting()");
 			m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();
