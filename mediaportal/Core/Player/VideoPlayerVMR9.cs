@@ -51,7 +51,7 @@ namespace MediaPortal.Player
 				if( comtype == null )
 				{
           Error.SetError("Unable to play movie","Directx9 is not installed");
-					Log.Write("VideoPlayer9:DirectX 9 not installed");
+					Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:DirectX 9 not installed");
 					return false;
 				}
 				comobj = Activator.CreateInstance( comtype );
@@ -82,7 +82,7 @@ namespace MediaPortal.Player
         if (hr!=0) 
         {
           Error.SetError("Unable to play movie","Unable to render file. Missing codecs?");
-          Log.Write("VideoPlayer9:Failed to render file -> vmr9");
+          Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:Failed to render file -> vmr9");
           return false;
         }
         
@@ -154,7 +154,7 @@ namespace MediaPortal.Player
 			catch( Exception  ex)
 			{
         Error.SetError("Unable to play movie","Unable build graph for VMR9");
-				Log.Write("VideoPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
 				return false;
 			}
 		}
@@ -229,7 +229,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.Write("VideoPlayer9:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
 
       //switch back to directx windowed mode

@@ -14,7 +14,8 @@ namespace MediaPortal.GUI.Library
 		{
 			Log,
 			Capture,
-			Recorder
+			Recorder,
+			Error
 		}
 		/// <summary>
 		/// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
@@ -32,6 +33,7 @@ namespace MediaPortal.GUI.Library
 			Initialize(LogType.Capture);
 			Initialize(LogType.Log);
 			Initialize(LogType.Recorder);
+			Initialize(LogType.Error);
 		}
 
 		static void Initialize(LogType type)
@@ -68,8 +70,18 @@ namespace MediaPortal.GUI.Library
 				case LogType.Recorder:
 					fname=@"log\recorder.log";
 					break;
+				case LogType.Error:
+					fname=@"log\error.log";
+					break;
 			}
 			return fname;
+		}
+
+		static public void WriteFile(LogType type, bool isError, string strFormat, params object[] arg)
+		{
+			WriteFile(type, strFormat, arg);
+			if (isError)
+				WriteFile(LogType.Error, strFormat, arg);
 		}
 
 		static public void WriteFile(LogType type, string strFormat, params object[] arg)
@@ -94,7 +106,7 @@ namespace MediaPortal.GUI.Library
 			}
 
 			//
-			if (type != LogType.Log)
+			if (type != LogType.Log && type != LogType.Error)
 				WriteFile(LogType.Log,strFormat,arg);
 		}//static public void WriteFile(LogType type, string strFormat, params object[] arg)
 	}

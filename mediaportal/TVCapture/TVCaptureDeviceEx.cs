@@ -317,7 +317,7 @@ namespace MediaPortal.TV.Recording
 				_mCaptureCardDefinition											 = new CaptureCardDefinition();
 			if (ccd == null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinitions: CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
+				Log.WriteFile(Log.LogType.Capture,true,"TVCaptureDevice.LoadDefinitions: CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
 				return (false);
 			}
 			_mCaptureCardDefinition.CaptureName          = ccd.CaptureName;
@@ -393,7 +393,7 @@ namespace MediaPortal.TV.Recording
 
 							if (!filterFound)
 							{
-								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: ERROR Cannot find unique filter for filter:{0}", filter.Name);
+								Log.WriteFile(Log.LogType.Capture,true,"TVCaptureDevice.LoadDefinition: ERROR Cannot find unique filter for filter:{0}", filter.Name);
 							}
 							else
 							{
@@ -415,7 +415,7 @@ namespace MediaPortal.TV.Recording
 				// Log the error and return false...
 				if (!filterFound)
 				{
-					Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
+					Log.WriteFile(Log.LogType.Capture,true,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
 					return (false);
 				}
 			}
@@ -480,7 +480,7 @@ namespace MediaPortal.TV.Recording
 				// Log the error and return false...
 				if (!filterFound)
 				{
-					Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
+					Log.WriteFile(Log.LogType.Capture,true,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
 					return (false);
 				}
 			
@@ -1225,7 +1225,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (chan.Number <= 0)
 					{
-						Log.WriteFile(Log.LogType.Capture,"error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
+						Log.WriteFile(Log.LogType.Capture,true,"error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
 							strChannelName, chan.Number, chan.Frequency);
 					}
 					if (chan.Country<=0) chan.Country=CountryCode;

@@ -195,7 +195,7 @@ namespace MediaPortal.TV.Recording
 
 			if (videoCaptureDeviceFilter==null) 
 			{
-				Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
 				return false;
 			}
 
@@ -213,7 +213,7 @@ namespace MediaPortal.TV.Recording
       hr = m_captureGraphBuilder.SetFiltergraph( m_graphBuilder );
       if( hr != 0 ) 
       {
-        Log.WriteFile(Log.LogType.Capture,"SinkGraph:link FAILED");
+        Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:link FAILED");
         return false;
       }
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:Add graph to ROT table");
@@ -229,19 +229,19 @@ namespace MediaPortal.TV.Recording
 					hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
 					if( hr != 0 ) 
 					{
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
+						Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
 						return false;
 					}
 				}
 				else
 				{
-					Log.WriteFile(Log.LogType.Capture,"SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
+					Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
 					return false;
 				}
 			}
 			catch(Exception)
 			{
-				Log.WriteFile(Log.LogType.Capture,"SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
 				return false;
 			}
 
@@ -266,7 +266,7 @@ namespace MediaPortal.TV.Recording
       }
       if (hr!=0||m_TVTuner==null)
       {
-        Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() FAILED:no tuner found :0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:CreateGraph() FAILED:no tuner found :0x{0:X}",hr);
       }
 			else
 				Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() TV tuner found");
@@ -454,12 +454,12 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
 			if (m_captureFilter==null || m_graphBuilder==null) 
 			{
-				Log.WriteFile(Log.LogType.Capture,"SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
 				return;
 			}
 			if (m_videoCaptureDevice==null) 
 			{
-				Log.WriteFile(Log.LogType.Capture,"SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
 				return;
 			}
 			if (m_mpeg2Demux!=null) 
@@ -489,10 +489,10 @@ namespace MediaPortal.TV.Recording
 					if (hr==0)
 						Log.WriteFile(Log.LogType.Capture,"SinkGraph:connected video capture out->MPEG2 demuxer input");
 					else
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
+						Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
 				}
 				else
-					Log.WriteFile(Log.LogType.Capture,"SinkGraph:FAILED could not find mpeg2 demux input pin");
+					Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED could not find mpeg2 demux input pin");
 			}
     }
 
@@ -993,7 +993,8 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:Select tvformat:{0}", standard.ToString());
       if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
       hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-      if (hr!=0) Log.WriteFile(Log.LogType.Capture,"SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+      if (hr!=0) 
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }
 
 		/// <summary>
@@ -1068,7 +1069,10 @@ namespace MediaPortal.TV.Recording
 						VideoSources, null, null );
 
 				}
-				catch ( Exception ex ) { Log.Write( "PropertyPages: FAILED to get property pages." + ex.ToString() ); }
+				catch ( Exception ex ) 
+				{ 
+					Log.WriteFile(Log.LogType.Capture,true, "PropertyPages: FAILED to get property pages." + ex.ToString() ); 
+				}
 
 				return( propertyPages );
 			}

@@ -657,7 +657,7 @@ namespace MediaPortal.Player
         comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
         if( comtype == null )
         {
-          Log.Write("VideoPlayer:DirectX 9 not installed");
+          Log.WriteFile(Log.LogType.Log,true,"VideoPlayer:DirectX 9 not installed");
             return false;
         }
         comobj = Activator.CreateInstance( comtype );
@@ -758,7 +758,7 @@ namespace MediaPortal.Player
       }
       catch( Exception  ex)
       {
-        Log.Write("VideoPlayer:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"VideoPlayer:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
         return false;
       }
       finally
@@ -842,7 +842,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.Write("VideoPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"VideoPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
     }
 

@@ -827,7 +827,7 @@ namespace MediaPortal.TV.Recording
 			DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
 			*/
 
-			Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:render video preview");
+			Log.WriteFile(Log.LogType.Capture,true,"SWGraph:FAILED:render video preview");
       m_videoCaptureDevice.RenderPreview();
 			m_mediaControl = (IMediaControl)m_graphBuilder;
 
@@ -839,14 +839,14 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:Unable to get IVideoWindow");
+					Log.WriteFile(Log.LogType.Capture,true,"SWGraph:FAILED:Unable to get IVideoWindow");
 					return false;
 				}
 
 				m_basicVideo = m_graphBuilder as IBasicVideo2;
 				if (m_basicVideo==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:Unable to get IBasicVideo2");
+					Log.WriteFile(Log.LogType.Capture,true,"SWGraph:FAILED:Unable to get IBasicVideo2");
 					return false;
 				}
 				int hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
@@ -1844,13 +1844,13 @@ namespace MediaPortal.TV.Recording
 			{
 				hr=m_graphBuilder.Connect(crossbarOut1, videoCaptureIn1);
 				if (hr==0) Log.WriteFile(Log.LogType.Capture,"SWGraph: connected crossbar:0->capture:0");
-				else Log.WriteFile(Log.LogType.Capture,"SWGraph: FAILED connected crossbar:0->capture:0 0x{0:X}",hr);
+				else Log.WriteFile(Log.LogType.Capture,true,"SWGraph: FAILED connected crossbar:0->capture:0 0x{0:X}",hr);
 			}
 			if (crossbarOut2!=null && videoCaptureIn2!=null)
 			{
 				hr=m_graphBuilder.Connect(crossbarOut2, videoCaptureIn2);
 				if (hr==0) Log.WriteFile(Log.LogType.Capture,"SWGraph: connected crossbar:1->capture:1");
-				else Log.WriteFile(Log.LogType.Capture,"SWGraph: FAILED connected crossbar:1->capture:1 0x{0:X}",hr);
+				else Log.WriteFile(Log.LogType.Capture,true,"SWGraph: FAILED connected crossbar:1->capture:1 0x{0:X}",hr);
 			}
 
 			if (crossbarOut1!=null) 
@@ -1946,7 +1946,10 @@ namespace MediaPortal.TV.Recording
 						VideoSources, AudioSources, (IBaseFilter)m_TVTuner );
 
 				}
-				catch ( Exception ex ) { Log.Write( "PropertyPages: FAILED to get property pages." + ex.ToString() ); }
+				catch ( Exception ex ) 
+				{ 
+					Log.WriteFile(Log.LogType.Capture,true, "PropertyPages: FAILED to get property pages." + ex.ToString() ); 
+				}
 
 				return( propertyPages );
 			}

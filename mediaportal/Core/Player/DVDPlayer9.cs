@@ -127,7 +127,7 @@ namespace MediaPortal.Player
 					if (dvdCtrl!=null)
 						Log.Write("Dvdplayer9: get IDvdControl2");
 					else
-						Log.Write("Dvdplayer9: FAILED TO get get IDvdControl2");
+						Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9: FAILED TO get get IDvdControl2");
         }
 
 
@@ -208,7 +208,7 @@ namespace MediaPortal.Player
       IBaseFilter vmr9Filter = objFound as IBaseFilter;
       if (vmr9Filter==null) 
       {
-        Log.Write("Dvdplayer9:Failed to get IVMRFilterConfig9 ");
+        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to get IVMRFilterConfig9 ");
         return  null;
       }
       graphBuilder.RemoveFilter(vmr9Filter);
@@ -218,7 +218,7 @@ namespace MediaPortal.Player
       vmr9Filter=(IBaseFilter)comobj; comobj=null;
       if (vmr9Filter==null) 
       {
-        Log.Write("Dvdplayer9:Failed to get instance of VMR9 ");
+        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to get instance of VMR9 ");
         return null;
       }				
 
@@ -226,21 +226,21 @@ namespace MediaPortal.Player
       IVMRFilterConfig9 FilterConfig9 = vmr9Filter as IVMRFilterConfig9;
       if (FilterConfig9==null) 
       {
-        Log.Write("Dvdplayer9:Failed to get IVMRFilterConfig9");
+        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to get IVMRFilterConfig9");
         return null;
       }				
 
       hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
       if (hr!=0) 
       {
-        Log.Write("Dvdplayer9:Failed to SetRenderingMode()");
+        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to SetRenderingMode()");
         return null;
       }				
 
       hr = FilterConfig9.SetNumberOfStreams(1);
       if (hr!=0) 
       {
-        Log.Write("Dvdplayer9:Failed to SetNumberOfStreams()");
+        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to SetNumberOfStreams()");
         return null;
       }				
 
@@ -336,7 +336,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.Write("DVDPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
     }
 

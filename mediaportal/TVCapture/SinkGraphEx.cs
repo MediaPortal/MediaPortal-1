@@ -58,7 +58,7 @@ namespace MediaPortal.TV.Recording
 				if (m_graphState != State.None) return false;		// If doing something already, return...
 				if (mCard==null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:card is not defined");
+					Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx:card is not defined");
 					return false;
 				}
 
@@ -69,12 +69,12 @@ namespace MediaPortal.TV.Recording
 				}
 				if (mCard.TvFilterDefinitions==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:card does not contain filters?");
+					Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx:card does not contain filters?");
 					return false;
 				}
 				if (mCard.TvConnectionDefinitions==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:card does not contain connections for tv?");
+					Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx:card does not contain connections for tv?");
 					return false;
 				}
 
@@ -172,12 +172,12 @@ namespace MediaPortal.TV.Recording
 					sinkFilter   = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 					if (sourceFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"Cannot find source filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"Cannot find source filter for connection:{0}",i);
 						continue;
 					}
 					if (sinkFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"Cannot find sink filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"Cannot find sink filter for connection:{0}",i);
 						continue;
 					}
 					DirectShowUtil.DebugWrite("SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
@@ -299,7 +299,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Unable to create graph:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: Unable to create graph:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 				return false;
 			}
 		}

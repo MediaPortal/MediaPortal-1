@@ -241,7 +241,7 @@ namespace MediaPortal.Player
       bool bResult=m_player.Play(strPath);
       if (!bResult)
       {
-        Log.Write("g_Player.PlayDVD():failed to play");
+        Log.WriteFile(Log.LogType.Log,true,"g_Player.PlayDVD():failed to play");
         m_player.Release();
         m_player=null;
         m_subs=null;

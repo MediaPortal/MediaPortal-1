@@ -303,7 +303,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,"dvbsections:Scan() exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:Scan() exception:{0}", ex.ToString());
 			}
 			return transponder;
 		}//public Transponder Scan(DShowNET.IBaseFilter filter)
@@ -457,7 +457,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,"dvbsections:GetRAWPMT() exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetRAWPMT() exception:{0}", ex.ToString());
 			}
 
 			if (sectionTable.Count>3)
@@ -598,7 +598,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,"dvbsections:GetDVBChannel() exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetDVBChannel() exception:{0}", ex.ToString());
 			}
 			return chan;
 
@@ -1187,7 +1187,7 @@ namespace MediaPortal.TV.Recording
 					}
 					catch(Exception ex)
 					{
-						Log.Write("dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
+						Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
 					}
 
 					eit.section=section_number;
@@ -1277,7 +1277,7 @@ namespace MediaPortal.TV.Recording
 				}
 				catch(Exception ex)
 				{
-					Log.Write("dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+					Log.WriteFile(Log.LogType.Capture,true,"dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
 					eit.event_text="";
 					eit.event_name="";
 				}
@@ -1554,7 +1554,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-					Log.WriteFile(Log.LogType.Capture,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+					Log.WriteFile(Log.LogType.Capture,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
 			}
 			if(eit.event_item==null)
 				eit.event_item="";
@@ -2060,7 +2060,7 @@ namespace MediaPortal.TV.Recording
 						}
 						catch
 						{
-							Log.WriteFile(Log.LogType.Capture,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
 							m_sectionsList.Clear();
 							break;
 						}
@@ -2085,7 +2085,7 @@ namespace MediaPortal.TV.Recording
 						}
 						catch
 						{
-							Log.WriteFile(Log.LogType.Capture,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
 							m_sectionsList.Clear();
 							break;
 						}

@@ -154,7 +154,7 @@ namespace MediaPortal.Player
 			catch(Exception ex)
 			{
 
-				Log.Write("DVDPlayer:WndProc() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);			
+				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:WndProc() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);			
 			}
     }
 
@@ -332,7 +332,7 @@ namespace MediaPortal.Player
         }
         if( ! GetInterfaces(strPath) )
         {
-          Log.Write("DVDPlayer:Unable getinterfaces()");
+          Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable getinterfaces()");
           CloseInterfaces();
           return false;
         }
@@ -361,7 +361,7 @@ namespace MediaPortal.Player
         }
         if( hr != 0 )
         {
-          Log.Write("DVDPlayer:Unable to set options()");
+          Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to set options()");
           CloseInterfaces();
           return false;
         }
@@ -375,7 +375,7 @@ namespace MediaPortal.Player
         hr = mediaCtrl.Run();
         if (hr<0 || hr >1)
         {
-          Log.Write("DVDPlayer:Unable to start playing()");
+          Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to start playing()");
           CloseInterfaces();
           return false;
         }
@@ -385,14 +385,14 @@ namespace MediaPortal.Player
         hr=dvdInfo.GetDVDVolumeInfo(out iNumOfVolumes, out iVolume, out side, out iTitles);
 				if (hr < 0) 
 				{
-					Log.Write("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}",hr);
 					//return false;
 				}
 				else
 				{
 					if (iTitles<=0) 
 					{
-						Log.Write("DVDPlayer:DVD does not contain any titles? {0}",iTitles);
+						Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:DVD does not contain any titles? {0}",iTitles);
 						//return false;
 					}
 				}
@@ -427,7 +427,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.Write("DVDPlayer:Could not start DVD:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Could not start DVD:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
         CloseInterfaces();
         return false;
       }
@@ -515,7 +515,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.Write("DVDPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
     }
 
@@ -868,7 +868,7 @@ namespace MediaPortal.Player
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DVDPlayer:OnDvdEvent() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:OnDvdEvent() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
 //      Log.Write("DVDEvent done");
     }
@@ -888,7 +888,7 @@ namespace MediaPortal.Player
 				int hr = dvdInfo.GetCmdFromEvent( p1, out cmd );
 				if( (hr != 0) || (cmd == null) )
 				{
-					Log.Write( "!!!DVD OnCmdComplete GetCmdFromEvent failed!!!" );
+					Log.WriteFile(Log.LogType.Log,true, "!!!DVD OnCmdComplete GetCmdFromEvent failed!!!" );
 					return;
 				}
 
@@ -908,7 +908,7 @@ namespace MediaPortal.Player
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DVDPlayer:OnCmdComplete() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:OnCmdComplete() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
     }
 
@@ -1301,7 +1301,7 @@ namespace MediaPortal.Player
 			catch(Exception ex)
 			{
 
-				Log.Write("DVDPlayer:HandleMouseMessages() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);			
+				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:HandleMouseMessages() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);			
 			}
 			mouseMsg.Clear();
 		}
@@ -1523,7 +1523,7 @@ namespace MediaPortal.Player
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DVDPlayer:OnAction() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:OnAction() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
       return false;
     }

@@ -797,7 +797,7 @@ namespace MediaPortal
         }
         catch (Exception ex)
         {
-					Log.Write("InitializeDeviceObjects() exception:{0}",ex.ToString());
+					Log.WriteFile(Log.LogType.Log,true,"InitializeDeviceObjects() exception:{0}",ex.ToString());
           // Cleanup before we try again
           //OnDeviceLost(null, null);
           //OnDeviceDisposing(null, null);
@@ -862,7 +862,7 @@ namespace MediaPortal
         strSource=e.Source;
         strStack=e.StackTrace;
       }
-      Log.Write("  exception: {0} {1} {2}", strMsg,strSource,strStack);
+      Log.WriteFile(Log.LogType.Log,true,"  exception: {0} {1} {2}", strMsg,strSource,strStack);
       if (ApplicationMessage.ApplicationMustExit == Type)
       {
         strMsg  += "\n\nThis sample will now exit.";
@@ -2174,7 +2174,7 @@ namespace MediaPortal
         }
         catch(Exception ex)
         {
-          Log.Write("exception:{0}",ex.ToString());
+          Log.WriteFile(Log.LogType.Log,true,"exception:{0}",ex.ToString());
 #if DEBUG
           throw ex;
 #endif

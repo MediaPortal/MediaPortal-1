@@ -154,7 +154,7 @@ namespace MediaPortal.Player
 				Int32 numbuff = Marshal.ReadInt32(numBuffers);
         if (numbuff > 1)
         {
-          Log.Write("AllocatorWrapper:multiple surfaces not supported yet");
+          Log.WriteFile(Log.LogType.Log,true,"AllocatorWrapper:multiple surfaces not supported yet");
           throw new Exception("multiple surfaces not supported yet");
         }
         m_nativeSize = new Size(allocInfo.szNativeSize.Width,allocInfo.szNativeSize.Height);
@@ -176,7 +176,7 @@ namespace MediaPortal.Player
 				int hr = allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface1);
         if (hr!=0 || m_surface1==IntPtr.Zero)
         {
-          Log.Write("AllocatorWrapper:AllocateSurface failed: no surface:0x{0:X}",hr);
+          Log.WriteFile(Log.LogType.Log,true,"AllocatorWrapper:AllocateSurface failed: no surface:0x{0:X}",hr);
         }
         else
         {

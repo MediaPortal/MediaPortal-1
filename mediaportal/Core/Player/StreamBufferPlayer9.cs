@@ -39,7 +39,7 @@ namespace MediaPortal.Player
         comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
         if( comtype == null )
         {
-          Log.Write("StreamBufferPlayer9:DirectX 9 not installed");
+          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:DirectX 9 not installed");
           return false;
         }
         comobj = Activator.CreateInstance( comtype );
@@ -54,7 +54,7 @@ namespace MediaPortal.Player
         bufferSource = (IStreamBufferSource) comObj; comObj = null;
         if (bufferSource==null) 
         {
-          Log.Write("StreamBufferPlayer9:Failed to create instance of SBE (do you have WinXp SP1?)");
+          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to create instance of SBE (do you have WinXp SP1?)");
           return false;
         }	
 
@@ -63,20 +63,20 @@ namespace MediaPortal.Player
         int hr=graphBuilder.AddFilter(filter, "SBE SOURCE");
         if (hr!=0) 
         {
-          Log.Write("StreamBufferPlayer9:Failed to add SBE to graph");
+          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }	
 		
         IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
         if (fileSource==null) 
         {
-          Log.Write("StreamBufferPlayer9:Failed to get IFileSourceFilter");
+          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
         }	
         hr = fileSource.Load(filename, IntPtr.Zero);
         if (hr!=0) 
         {
-          Log.Write("StreamBufferPlayer9:Failed to open file:{0} :0x{1:x}",filename,hr);
+          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to open file:{0} :0x{1:x}",filename,hr);
           return false;
         }	
 
@@ -103,7 +103,7 @@ namespace MediaPortal.Player
         m_mediaSeeking = bufferSource as IStreamBufferMediaSeeking ;
         if (m_mediaSeeking==null)
         {
-          Log.Write("StreamBufferPlayer9:Unable to get IMediaSeeking interface#1");
+          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Unable to get IMediaSeeking interface#1");
           return false;
         }
         
@@ -126,7 +126,7 @@ namespace MediaPortal.Player
       }
       catch( Exception  ex)
       {
-        Log.Write("StreamBufferPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
         return false;
       }
       finally
@@ -197,7 +197,7 @@ namespace MediaPortal.Player
       }
       catch( Exception ex)
       {
-        Log.Write("StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
 
       //switch back to directx windowed mode

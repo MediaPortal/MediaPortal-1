@@ -129,7 +129,7 @@ namespace MediaPortal.Player
 			m_bStarted=false;
 			if( ! GetInterfaces(strFile ))
 			{
-				Log.Write("StreamBufferPlayer:GetInterfaces() failed");
+				Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:GetInterfaces() failed");
 				m_strCurrentFile="";
 				return false;
 			}
@@ -138,7 +138,7 @@ namespace MediaPortal.Player
 			int hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
 			if (hr < 0)
 			{
-				Log.Write("StreamBufferPlayer:SetNotifyWindow() failed");
+				Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:SetNotifyWindow() failed");
 				m_strCurrentFile="";
 				CloseInterfaces();
 				return false;
@@ -155,7 +155,7 @@ namespace MediaPortal.Player
 				hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
 				if (hr < 0)
 				{
-					Log.Write("StreamBufferPlayer:GetVideoSize() failed");
+					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:GetVideoSize() failed");
 					m_strCurrentFile="";
 					CloseInterfaces();
 					return false;
@@ -165,7 +165,7 @@ namespace MediaPortal.Player
         
 			if (mediaCtrl==null)
 			{
-        Log.Write("StreamBufferPlayer:mediaCtrl==null");
+        Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:mediaCtrl==null");
         m_strCurrentFile="";
 				CloseInterfaces();
 				return false;
@@ -184,7 +184,7 @@ namespace MediaPortal.Player
 			hr = mediaCtrl.Run();
 			if (hr < 0)
 			{
-				Log.Write("StreamBufferPlayer:Rungraph failed");
+				Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:Rungraph failed");
 				m_strCurrentFile="";
 				CloseInterfaces();
 				return false;
@@ -699,7 +699,7 @@ namespace MediaPortal.Player
 					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
           if (hr !=0)
           {
-            Log.Write("seek failed->seek to 0 0x:{0:X}",hr);
+            Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
           }
 				}
         UpdateCurrentPosition();
@@ -808,7 +808,7 @@ namespace MediaPortal.Player
 				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
 				if( comtype == null )
 				{
-					Log.Write("StreamBufferPlayer:DirectX 9 not installed");
+					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:DirectX 9 not installed");
 					return false;
 				}
 				comobj = Activator.CreateInstance( comtype );
@@ -848,7 +848,7 @@ namespace MediaPortal.Player
 				m_mediaSeeking = bufferSource as IStreamBufferMediaSeeking ;
 				if (m_mediaSeeking==null)
 				{
-					Log.Write("Unable to get IMediaSeeking interface#1");
+					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#1");
 					//m_mediaSeeking= graphBuilder as IMediaSeeking;
 					//if (m_mediaSeeking==null)
 					//Log.Write("Unable to get IMediaSeeking interface#2");
@@ -868,7 +868,7 @@ namespace MediaPortal.Player
 			}
 			catch( Exception  ex)
 			{
-				Log.Write("StreamBufferPlayer:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
 				return false;
 			}
 			finally
@@ -942,7 +942,7 @@ namespace MediaPortal.Player
 			}
 			catch( Exception ex)
 			{
-				Log.Write("StreamBufferPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
 			}
 			Log.Write("StreamBufferPlayer:cleanup done");
 		}

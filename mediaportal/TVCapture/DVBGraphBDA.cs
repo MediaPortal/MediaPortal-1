@@ -210,7 +210,7 @@ namespace MediaPortal.TV.Recording
 				//no card defined? then we cannot build a graph
 				if (m_Card==null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:card is not defined");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:card is not defined");
 					return false;
 				}
 
@@ -224,14 +224,14 @@ namespace MediaPortal.TV.Recording
 				//check if definition contains a tv filter graph
 				if (m_Card.TvFilterDefinitions==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:card does not contain filters?");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:card does not contain filters?");
 					return false;
 				}
 
 				//check if definition contains <connections> for the tv filter graph
 				if (m_Card.TvConnectionDefinitions==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:card does not contain connections for tv?");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:card does not contain connections for tv?");
 					return false;
 				}
 
@@ -252,7 +252,7 @@ namespace MediaPortal.TV.Recording
 				int hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
 				if (hr < 0) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:link FAILED:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:link FAILED:0x{0:X}",hr);
 					return false;
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add graph to ROT table");
@@ -279,8 +279,8 @@ namespace MediaPortal.TV.Recording
 					}
 					else
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Error! Result code = {0}", hr);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:  Error! Result code = {0}", hr);
 					}
 
 					// Support the "legacy" member variables. This could be done different using properties
@@ -291,7 +291,7 @@ namespace MediaPortal.TV.Recording
 						// Initialise Tuning Space (using the setupTuningSpace function)
 						if(!setupTuningSpace()) 
 						{
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
 							return false;
 						}
 					}
@@ -303,14 +303,14 @@ namespace MediaPortal.TV.Recording
 				//no network provider specified? then we cannot build the graph
 				if(m_NetworkProvider == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
 					return false;
 				}
 
 				//no capture device specified? then we cannot build the graph
 				if(m_CaptureDevice == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED capture filter not found");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED capture filter not found");
 				}
 
 
@@ -340,7 +340,7 @@ namespace MediaPortal.TV.Recording
 					sourceFilter = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
 					if (sourceFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"Cannot find source filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"Cannot find source filter for connection:{0}",i);
 						continue;
 					}
 
@@ -348,7 +348,7 @@ namespace MediaPortal.TV.Recording
 					sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 					if (sinkFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"Cannot find sink filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"Cannot find sink filter for connection:{0}",i);
 						continue;
 					}
 
@@ -365,7 +365,7 @@ namespace MediaPortal.TV.Recording
 						{
 							sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
 							if (sourcePin==null)
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
+								Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
 							else
 								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
 						}
@@ -382,7 +382,7 @@ namespace MediaPortal.TV.Recording
 						{
 							sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
 							if (sinkPin==null)
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
+								Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
 							else
 								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
 						}
@@ -414,10 +414,10 @@ namespace MediaPortal.TV.Recording
 					//log if connection failed
 					if (hr != 0)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
 						if (hr == -2147220969)
 						{
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
 						}
 					}
 				}
@@ -434,14 +434,14 @@ namespace MediaPortal.TV.Recording
 				// no interface defined or interface not found? then return
 				if(lastFilter == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED interface filter not found");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 					return false;
 				}
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
 				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
 					return false;
 				}
 				
@@ -452,7 +452,7 @@ namespace MediaPortal.TV.Recording
 				m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
 				if(m_MPEG2Demultiplexer== null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
 					return false;
 				}
 
@@ -462,14 +462,14 @@ namespace MediaPortal.TV.Recording
 				
 				if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
 					return false;
 				}
 /*
 				// connect the interface filter->mpeg2 demultiplexer
 				if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
 					return false;
 				}
 */
@@ -522,14 +522,14 @@ namespace MediaPortal.TV.Recording
 				object tmpObject;
 				if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "BDA MPEG2 Transport Information Filter", out tmpObject)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
 					return false;
 				}
 				m_TIF = (IBaseFilter) tmpObject;
 				tmpObject = null;
 				if(m_TIF == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
 					return false;
 				}
 				m_graphBuilder.AddFilter(m_TIF, "BDA MPEG2 Transport Information Filter");
@@ -537,7 +537,7 @@ namespace MediaPortal.TV.Recording
 				//connect mpeg2 demultiplexer->BDA MPEG2 Transport Information Filter
 				if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_TIF)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer->BDA MPEG2 Transport Information Filter");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer->BDA MPEG2 Transport Information Filter");
 					return false;
 				}
 
@@ -546,14 +546,14 @@ namespace MediaPortal.TV.Recording
 				//=========================================================================================================
 				if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "MPEG-2 Sections and Tables", out tmpObject)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED Failed to find MPEG-2 Sections and Tables Filter");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED Failed to find MPEG-2 Sections and Tables Filter");
 					return false;
 				}
 				m_SectionsTables = (IBaseFilter) tmpObject;
 				tmpObject = null;
 				if(m_SectionsTables == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
 				}
 
 				m_graphBuilder.AddFilter(m_SectionsTables, "MPEG-2 Sections & Tables");
@@ -570,7 +570,7 @@ namespace MediaPortal.TV.Recording
 				//and connect
 				if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_SectionsTables, iPreferredOutputPin)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
 					return false;
 				}
 
@@ -580,13 +580,13 @@ namespace MediaPortal.TV.Recording
 				if (m_DemuxVideoPin==null)
 				{
 					//video pin not found
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer",m_DemuxVideoPin);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer",m_DemuxVideoPin);
 					return false;
 				}
 				if (m_DemuxAudioPin==null)
 				{
 					//audio pin not found
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer",m_DemuxAudioPin);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer",m_DemuxAudioPin);
 					return false;
 				}
 
@@ -611,7 +611,7 @@ namespace MediaPortal.TV.Recording
 					m_sampleInterface.SetBufferSamples(true);
 				}
 				else
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
 
 				m_TunerStatistics=GetTunerSignalStatistics();
 				//AdviseProgramInfo();
@@ -619,7 +619,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Unable to create graph");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: Unable to create graph");
 				return false;
 			}
 		}//public bool CreateGraph()
@@ -648,7 +648,7 @@ namespace MediaPortal.TV.Recording
 			if (container==null)
 			{
 				//no IConnectionPointContainer ? then return
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
 				return ;
 			}
 			//Find connection point of the IGuideDataEvent interface
@@ -658,7 +658,7 @@ namespace MediaPortal.TV.Recording
 			if (connectPoint==null)
 			{
 				// IGuideDataEvent connection point not found? then return
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
 				return ;
 			}
 
@@ -667,7 +667,7 @@ namespace MediaPortal.TV.Recording
 			if (hr!=0)
 			{
 				// error
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
 				return ;
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:AdivseProgramInfo() done");
@@ -693,7 +693,7 @@ namespace MediaPortal.TV.Recording
 			IConnectionPointContainer container = m_TIF as IConnectionPointContainer;
 			if (container==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
 				return ;
 			}
 
@@ -703,7 +703,7 @@ namespace MediaPortal.TV.Recording
 			container.FindConnectionPoint( ref iid, out connectPoint);
 			if (connectPoint==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
 				return ;
 			}
 
@@ -711,7 +711,7 @@ namespace MediaPortal.TV.Recording
 			int hr=connectPoint.Unadvise(adviseCookie);
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
 			}
 			adviseCookie=0;
 			
@@ -876,7 +876,7 @@ namespace MediaPortal.TV.Recording
 				int hr=m_recControl.Stop(0);
 				if (hr!=0) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
 					return;
 				}
 				if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
@@ -917,7 +917,7 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 			if (myTuningSpace==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
 				return ;
 			}
 
@@ -926,7 +926,7 @@ namespace MediaPortal.TV.Recording
 			newTuneRequest = myTuningSpace.CreateTuneRequest();
 			if (newTuneRequest ==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
 				return ;
 			}
 
@@ -935,7 +935,7 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 			if (myTuneRequest ==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
 				return ;
 			}
 
@@ -958,7 +958,7 @@ namespace MediaPortal.TV.Recording
 					TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid);
 					if (frequency<=0) 
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
 						return;
 					}
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
@@ -974,7 +974,7 @@ namespace MediaPortal.TV.Recording
 					
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
 						return ;
 					}
 					//set the properties on the new tuning request
@@ -1012,7 +1012,7 @@ namespace MediaPortal.TV.Recording
 					DVBChannel ch=new DVBChannel();
 					if(TVDatabase.GetSatChannel(channel.ID,1,ref ch)==false)//only television
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
 						return;
 					}
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
@@ -1028,7 +1028,7 @@ namespace MediaPortal.TV.Recording
 					
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
 						return ;
 					}
 					//set the properties on the new tuning request
@@ -1069,7 +1069,7 @@ namespace MediaPortal.TV.Recording
 					TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid);
 					if (frequency<=0) 
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+						Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
 						return;
 					}
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
@@ -1084,7 +1084,7 @@ namespace MediaPortal.TV.Recording
 					
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", frequency,ONID,TSID,SID);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", frequency,ONID,TSID,SID);
 						return ;
 					}
 					//set the properties on the new tuning request
@@ -1209,13 +1209,13 @@ namespace MediaPortal.TV.Recording
 			// render the video/audio pins of the mpeg2 demultiplexer so they get connected to the video/audio codecs
 			if(m_graphBuilder.Render(m_DemuxVideoPin) != 0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to render video out pin MPEG-2 Demultiplexer");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render video out pin MPEG-2 Demultiplexer");
 				return false;
 			}
 
 			if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
 				return false;
 			}
 
@@ -1231,14 +1231,14 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED:Unable to get IVideoWindow");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED:Unable to get IVideoWindow");
 					return false;
 				}
 
 				m_basicVideo = m_graphBuilder as IBasicVideo2;
 				if (m_basicVideo == null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED:Unable to get IBasicVideo2");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED:Unable to get IBasicVideo2");
 					return false;
 				}
 
@@ -1249,12 +1249,12 @@ namespace MediaPortal.TV.Recording
 
 				hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 				if (hr != 0) 
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED:set Video window style:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:set Video window style:0x{0:X}",hr);
 
 	      //show overlay window
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED:put_Visible:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:put_Visible:0x{0:X}",hr);
 			}
 
 			//start the graph
@@ -1262,7 +1262,7 @@ namespace MediaPortal.TV.Recording
 			hr=m_mediaControl.Run();
 			if (hr<0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 			}
 
 			graphRunning=true;
@@ -1439,7 +1439,7 @@ namespace MediaPortal.TV.Recording
 			int hr=topology.GetNodeTypes(ref nodeTypeCount, 32, nodeTypes);
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED could not get node types from tuner");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not get node types from tuner");
 				return null;
 			}
 			IBDA_SignalStatistics[] signal = new IBDA_SignalStatistics[nodeTypeCount];
@@ -1451,7 +1451,7 @@ namespace MediaPortal.TV.Recording
 				hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
 					return null;
 				}
 				//and get the final IBDA_SignalStatistics
@@ -1479,7 +1479,7 @@ namespace MediaPortal.TV.Recording
 			IBDA_Topology topology = m_TunerDevice as IBDA_Topology;
 			if (topology==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: could not get IBDA_Topology from tuner");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: could not get IBDA_Topology from tuner");
 				return null;
 			}
 
@@ -1492,7 +1492,7 @@ namespace MediaPortal.TV.Recording
 			int hr=topology.GetNodeTypes(ref nodeTypeCount, 32, nodeTypes);
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED could not get node types from tuner");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not get node types from tuner");
 				return null;
 			}
 			IBDA_LNBInfo[] signal = new IBDA_LNBInfo[nodeTypeCount];
@@ -1504,7 +1504,7 @@ namespace MediaPortal.TV.Recording
 				hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
 					return null;
 				}
 				//and get the final IBDA_LNBInfo
@@ -1612,14 +1612,14 @@ namespace MediaPortal.TV.Recording
 			hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
 			if(hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED cannot add StreamBufferSink");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add StreamBufferSink");
 				return false;
 			}			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
 			hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
 			if(hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph");
 				return false;
 			}
 
@@ -1627,14 +1627,14 @@ namespace MediaPortal.TV.Recording
 			pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
 			if(pinObj0 == null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
 				return false;
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
 			hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer");
 				return false;
 			}
 
@@ -1642,31 +1642,31 @@ namespace MediaPortal.TV.Recording
 			pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin");
 				return false;
 			}
 			IPin pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED cannot find SBE input pin");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin");
 				return false;
 			}
 			hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink");
 				return false;
 			}
 			pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
 				return false;
 			}
 			hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj2) ;
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
 				return false;
 			}
 
@@ -1688,7 +1688,7 @@ namespace MediaPortal.TV.Recording
 			hr = m_IStreamBufferConfig.SetDirectory(strDir);	
 			if(hr != 0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to set timeshift folder to:{0}", strDir);
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift folder to:{0}", strDir);
 				return false;
 			}
 			hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
@@ -1711,7 +1711,7 @@ namespace MediaPortal.TV.Recording
 			// lock on the 'filename' file
 			if(m_IStreamBufferSink.LockProfile(fileName) != 0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to set timeshift file to:{0}", fileName);
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift file to:{0}", fileName);
 				return false;
 			}
 			if(pinObj0 != null)
@@ -1766,7 +1766,7 @@ namespace MediaPortal.TV.Recording
 			if (objRecord == null) 
 				if (m_recControl == null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to get IRecorder");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
 					return false;
 				}
       
@@ -1775,7 +1775,7 @@ namespace MediaPortal.TV.Recording
 			m_recControl = objRecord as IStreamBufferRecordControl;
 			if (m_recControl == null) 
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
 				return false;
 			}
 			long lStartTime = 0;
@@ -1860,14 +1860,14 @@ namespace MediaPortal.TV.Recording
 				int hr=m_mediaControl.Run();
 				if (hr<0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 				}
 				graphRunning=true;
 				m_graphState = State.TimeShifting;
 			}
 			else 
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Unable to create sinksource()");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Unable to create sinksource()");
 				return false;
 			}
 			TuneChannel(channel);
@@ -2021,14 +2021,14 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: setupTuningSpace()");
 			if(m_NetworkProvider == null) 
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED:network provider is null ");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:network provider is null ");
 				return false;
 			}
 			System.Guid classID;
 			int hr=m_NetworkProvider.GetClassID(out classID);
 //			if (hr <=0)
 //			{
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED:cannot get classid of network provider");
+//				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:cannot get classid of network provider");
 //				return false;
 //			}
 
@@ -2053,14 +2053,14 @@ namespace MediaPortal.TV.Recording
 					m_NetworkType = NetworkType.DVBT;
 					break;
 				default:
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED:unknown network type:{0} ",classID);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:unknown network type:{0} ",classID);
 					return false;
 			}//switch (strClassID) 
 
 			TunerLib.ITuningSpaceContainer TuningSpaceContainer = (TunerLib.ITuningSpaceContainer) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_SystemTuningSpaces, true));
 			if(TuningSpaceContainer == null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Failed to get ITuningSpaceContainer");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: Failed to get ITuningSpaceContainer");
 				return false;
 			}
 
@@ -2495,7 +2495,7 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
 			if (space==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
 				return;
 			}
 
@@ -2555,7 +2555,7 @@ namespace MediaPortal.TV.Recording
 					IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
 					if (info==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to get IBDA_LNBInfo");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to get IBDA_LNBInfo");
 					}
 					else
 					{
@@ -2571,7 +2571,7 @@ namespace MediaPortal.TV.Recording
 								int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
 								if (hr!=0) 
 								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
+									Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
 									ok=false;
 								}
 								else 
@@ -2581,7 +2581,7 @@ namespace MediaPortal.TV.Recording
 								hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
 								if (hr!=0) 
 								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
+									Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
 									ok=false;
 								}
 								else
@@ -2591,7 +2591,7 @@ namespace MediaPortal.TV.Recording
 								hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
 								if (hr!=0) 
 								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
+									Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
 									ok=false;
 								}
 								else
@@ -2644,7 +2644,7 @@ namespace MediaPortal.TV.Recording
 				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 				if (myTuner ==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() tuner=null");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuner=null");
 					return;
 				}
 
@@ -2652,7 +2652,7 @@ namespace MediaPortal.TV.Recording
 				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 				if (myTuningSpace ==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() tuningspace=null");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuningspace=null");
 					return;
 				}
 
@@ -2660,14 +2660,14 @@ namespace MediaPortal.TV.Recording
 				newTuneRequest = myTuningSpace.CreateTuneRequest();
 				if (newTuneRequest ==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
 					return;
 				}
 					
 				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
 				if (myTuneRequest ==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
 					return;
 				}
 
@@ -2690,7 +2690,7 @@ namespace MediaPortal.TV.Recording
 						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBTLocator;
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() could not get IDVBTLocator");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IDVBTLocator");
 						return;
 					}
 					//set the properties for the new tuning request. For DVB-T we only set the frequency
@@ -2716,7 +2716,7 @@ namespace MediaPortal.TV.Recording
 						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() could not get IDVBCLocator");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IDVBCLocator");
 						return;
 					}
 
@@ -2745,7 +2745,7 @@ namespace MediaPortal.TV.Recording
 						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: failed Tune() could not get IDVBSLocator");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IDVBSLocator");
 						return;
 					}
 
@@ -2784,7 +2784,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() exception {0} {1} {2}",
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Tune() exception {0} {1} {2}",
 										ex.Message,ex.Source,ex.StackTrace);
 			}
 		}//public void Tune(object tuningObject)
@@ -3108,7 +3108,7 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 			if (myTuningSpace==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
 				return ;
 			}
 
@@ -3117,7 +3117,7 @@ namespace MediaPortal.TV.Recording
 			newTuneRequest = myTuningSpace.CreateTuneRequest();
 			if (newTuneRequest ==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
 				return ;
 			}
 
@@ -3126,7 +3126,7 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 			if (myTuneRequest ==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
 				return ;
 			}
 
@@ -3149,7 +3149,7 @@ namespace MediaPortal.TV.Recording
 					RadioDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid);
 					if (frequency<=0) 
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
 						return;
 					}
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
@@ -3165,7 +3165,7 @@ namespace MediaPortal.TV.Recording
 					
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
 						return ;
 					}
 					//set the properties on the new tuning request
@@ -3203,7 +3203,7 @@ namespace MediaPortal.TV.Recording
 					DVBChannel ch=new DVBChannel();
 					if(RadioDatabase.GetDVBSTuneRequest(channel.ID,0,ref ch)==false)//only radio
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
 						return;
 					}
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
@@ -3260,7 +3260,7 @@ namespace MediaPortal.TV.Recording
 					RadioDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid);
 					if (frequency<=0) 
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
 						return;
 					}
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
@@ -3275,7 +3275,7 @@ namespace MediaPortal.TV.Recording
 					
 					if (myLocator ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", frequency,ONID,TSID,SID);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", frequency,ONID,TSID,SID);
 						return ;
 					}
 					//set the properties on the new tuning request
@@ -3355,7 +3355,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio() render demux output pin");
 				if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
 					return;
 				}
 
@@ -3371,12 +3371,12 @@ namespace MediaPortal.TV.Recording
 					int hr=m_mediaControl.Run();
 					if (hr<0)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 					}
 				}
 				else
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED cannot get IMediaControl");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED cannot get IMediaControl");
 				}
 
 				graphRunning=true;

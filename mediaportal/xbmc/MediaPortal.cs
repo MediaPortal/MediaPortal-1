@@ -301,7 +301,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           catch (Exception ex)
           {
-            Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
+            Log.WriteFile(Log.LogType.Log,true,"MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
           }
           app.OnExit();
           Log.Write("MediaPortal done");
@@ -311,7 +311,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       catch (Exception ex)
       {
-        Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
       }
 #if DEBUG
 #else
@@ -704,7 +704,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       catch (Exception ex)
       {
-        Log.Write("RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
     }
 
@@ -1341,7 +1341,7 @@ public class MediaPortalApp : D3DApp, IRender
 		}
 		catch (Exception ex)
 		{
-			Log.Write("  exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+			Log.WriteFile(Log.LogType.Log,true,"  exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
 			throw new Exception("exception occured",ex);
 		}
     }
