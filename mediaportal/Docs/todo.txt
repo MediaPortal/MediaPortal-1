@@ -39,7 +39,7 @@ My TV:
     - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
     - support for timeshifting with SW encoding cards
     - support for recording to mpeg with SW encoding cards
-    - recoding recordings to divx, mpeg,...
+    - recoding recordings to divx, mpeg,... or .dvr-ms -> .mpeg
      
 My Music: (int_20h)
   - auto-resume 
@@ -87,6 +87,10 @@ new plugins:
   - my webbrowser
   - my email
   - system info / free HD space , memory usedd, temperature,...plugin
+  - teletext plugin
+  - winlirc
+  - web scheduler 
+  - comic viewer
   
 DVD player:
   - bookmarks
