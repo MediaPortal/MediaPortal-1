@@ -37,6 +37,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ComboBox comboBoxAudioDevice;
     private System.Windows.Forms.ComboBox comboBoxLineInput;
 		protected System.ComponentModel.IContainer components = null;
+    bool m_bEvents=false;
 
 		public Radio() : this("Radio")
 		{
@@ -554,11 +555,14 @@ namespace MediaPortal.Configuration.Sections
 
     private void comboBoxAudioDevice_SelectedIndexChanged(object sender, System.EventArgs e)
     {
+      if (m_bEvents) return;
+      m_bEvents=false;
       FillLineInputs();
       if (comboBoxLineInput.Items.Count>0)
       {
         comboBoxLineInput.SelectedIndex=0;
       }
+      m_bEvents=true;
     }
 
     void FillLineInputs()
@@ -571,35 +575,41 @@ namespace MediaPortal.Configuration.Sections
       {
         if (filter.Name.Equals(Device))
         {
-          IBaseFilter audioDevice = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
-          int hr=0;
-          IEnumPins pinEnum;
-          hr=audioDevice.EnumPins(out pinEnum);
-          if( (hr == 0) && (pinEnum != null) )
+          try
           {
-            pinEnum.Reset();
-            IPin[] pins = new IPin[1];
-            int f;
-            do
+            IBaseFilter audioDevice = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
+            int hr=0;
+            IEnumPins pinEnum;
+            hr=audioDevice.EnumPins(out pinEnum);
+            if( (hr == 0) && (pinEnum != null) )
             {
-              // Get the next pin
-              hr = pinEnum.Next( 1, pins, out f );
-              if( (hr == 0) && (pins[0] != null) )
+              pinEnum.Reset();
+              IPin[] pins = new IPin[1];
+              int f;
+              do
               {
-                PinDirection pinDir;
-                pins[0].QueryDirection(out pinDir);
-                if (pinDir==PinDirection.Input)
+                // Get the next pin
+                hr = pinEnum.Next( 1, pins, out f );
+                if( (hr == 0) && (pins[0] != null) )
                 {
-                  PinInfo info;
-                  pins[0].QueryPinInfo(out info);
-                  comboBoxLineInput.Items.Add(info.name);
+                  PinDirection pinDir;
+                  pins[0].QueryDirection(out pinDir);
+                  if (pinDir==PinDirection.Input)
+                  {
+                    PinInfo info;
+                    pins[0].QueryPinInfo(out info);
+                    comboBoxLineInput.Items.Add(info.name);
+                  }
+                  Marshal.ReleaseComObject( pins[0] );
                 }
-                Marshal.ReleaseComObject( pins[0] );
               }
+              while( hr == 0 );
             }
-            while( hr == 0 );
+            Marshal.ReleaseComObject(audioDevice);
           }
-          Marshal.ReleaseComObject(audioDevice);
+          catch(Exception)
+          {
+          }
           return;
         }
       }
