@@ -10,6 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  10-08-2004 My Video   : Playlist only accessable in My video main, not on a different view (using F1)
   10-08-2004 My Video   : Pressing esc in video playlist takes you back to HOME instead of previous screen
   10-08-2004 GUI        : icons in listview do not listen to x and y offsets. Best way is to have the icon have it's own x and y offsets.
   09-08-2004 my video   : vmr9 quality of video turns bad after a GUI element (like pause,ff,rw icon) has been shown
