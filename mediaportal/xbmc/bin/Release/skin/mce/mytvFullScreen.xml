@@ -196,7 +196,7 @@
 	<control>
 		<description>TV Progress Bar</description> 
 		<type>tvprogress</type> 
-		<id>1</id> 
+		<id>100</id> 
 		<posX>158</posX> 
 		<posY>402</posY> 
 		<width>400</width>
@@ -229,7 +229,7 @@
 	<control>
 		<description>Current time</description> 
 		<type>label</type> 
-		<id>100</id> 
+		<id>105</id> 
 		<posX>70</posX> 
 		<posY>415</posY> 
 		<label>#TV.Record.current</label> 
@@ -240,7 +240,7 @@
 	<control>
 		<description>Start Time Info</description> 
 		<type>label</type> 
-		<id>101</id> 
+		<id>106</id> 
 		<posX>165</posX> 
 		<posY>392</posY> 
 		<label>#TV.Record.start</label> 
@@ -251,7 +251,7 @@
 	<control>
 		<description>End Time Info</description> 
 		<type>label</type> 
-		<id>102</id> 
+		<id>107</id> 
 		<posX>550</posX> 
 		<posY>392</posY> 
 		<label>#TV.Record.duration</label> 
