@@ -77,6 +77,11 @@ namespace MediaPortal.TV.Recording
 				tv.Genre=data.genere_text;
 				tv.Title=data.event_name;
 				tv.Description=data.event_item_text;
+				if(tv.Description.Length<2)
+				{
+					tv.Description=data.event_text;
+					Log.Write("epg-grab: used short description");
+				}
 
 				Log.Write("epg-grab: language-code={0}",data.languageCode);
 				if(tv.Title=="" || tv.Title=="n.a.") 
