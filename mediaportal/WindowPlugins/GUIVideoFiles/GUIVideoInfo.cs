@@ -474,7 +474,8 @@ namespace MediaPortal.GUI.Video
     
     void Refresh()
     {
-      try
+			string strThumb = "";
+			try
       {
         if (m_pTexture != null)
         {
@@ -482,7 +483,6 @@ namespace MediaPortal.GUI.Video
           m_pTexture = null;
         }
 
-        string strThumb = "";
         string strImage = m_movie.ThumbURL;
         if (strImage.Length > 0)
         {
@@ -528,6 +528,22 @@ namespace MediaPortal.GUI.Video
       catch (Exception)
       {
       }
+			strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,m_movie.Title);
+			GUIPropertyManager.SetProperty("#director",m_movie.Director);
+			GUIPropertyManager.SetProperty("#genre",m_movie.Genre);
+			GUIPropertyManager.SetProperty("#cast",m_movie.Cast);
+			GUIPropertyManager.SetProperty("#dvdlabel",m_movie.DVDLabel);
+			GUIPropertyManager.SetProperty("#imdbnumber",m_movie.IMDBNumber);
+			GUIPropertyManager.SetProperty("#file",m_movie.File);
+			GUIPropertyManager.SetProperty("#plot",m_movie.Plot);
+			GUIPropertyManager.SetProperty("#plotoutline",m_movie.PlotOutline);
+			GUIPropertyManager.SetProperty("#rating",m_movie.Rating.ToString());
+			GUIPropertyManager.SetProperty("#tagline",m_movie.TagLine);
+			GUIPropertyManager.SetProperty("#votes",m_movie.Votes);
+			GUIPropertyManager.SetProperty("#credits",m_movie.WritingCredits);
+			GUIPropertyManager.SetProperty("#thumb",strThumb);
+			GUIPropertyManager.SetProperty("#title",m_movie.Title);
+			GUIPropertyManager.SetProperty("#year",m_movie.Year.ToString());
     }
     
     public bool NeedsRefresh
