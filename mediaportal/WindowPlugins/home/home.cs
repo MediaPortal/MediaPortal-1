@@ -186,6 +186,12 @@ namespace MediaPortal.GUI.Home
     }
 		public override void OnAction(Action action)
 		{
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				GUIWindowManager.PreviousWindow();
+				return;
+			}
+
       // mouse moved, check which control has the focus
       if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE )
       {
