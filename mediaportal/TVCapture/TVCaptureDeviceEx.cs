@@ -7,6 +7,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
+using MediaPortal.Video.Database;
 using MediaPortal.Player;
 using DShowNET;
 using TVCapture;
@@ -786,6 +787,17 @@ namespace MediaPortal.TV.Recording
 
       // back to timeshifting state
       _mState = State.Timeshifting;
+
+			int movieid=VideoDatabase.AddMovieFile(_mNewRecordedTV.FileName);
+			IMDBMovie movieDetails = new IMDBMovie();
+			if (movieid>=0)
+			{
+				movieDetails.Title=_mNewRecordedTV.Title;
+				movieDetails.Genre=_mNewRecordedTV.Genre;
+				movieDetails.Plot=_mNewRecordedTV.Description;
+				movieDetails.Year=_mNewRecordedTV.StartTime.Year;
+				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
+			}
     }
 
     /// <summary>

@@ -264,7 +264,6 @@ namespace MediaPortal.GUI.TV
         {
           strLogo="defaultVideoBig.png";
         }
-        AddRecordingToDatabase(rec);
         item.ThumbnailImage=strLogo;
         item.IconImageBig=strLogo;
         item.IconImage=strLogo;
@@ -276,21 +275,7 @@ namespace MediaPortal.GUI.TV
 
       OnSort();
       UpdateButtons();
-      Update();
-    }
-
-    void AddRecordingToDatabase(TVRecorded rec)
-    {
-      int movieid=VideoDatabase.AddMovieFile(rec.FileName);
-      IMDBMovie movieDetails = new IMDBMovie();
-			if (movieid>=0)
-			{
-				movieDetails.Title=rec.Title;
-				movieDetails.Genre=rec.Genre;
-				movieDetails.Plot=rec.Description;
-				movieDetails.Year=rec.StartTime.Year;
-				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
-			}
+      Update();	
     }
 
     void UpdateButtons()
