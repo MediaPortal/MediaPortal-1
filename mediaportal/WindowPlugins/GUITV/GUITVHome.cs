@@ -367,7 +367,7 @@ namespace MediaPortal.GUI.TV
 					}
 					if (iControl == (int)Controls.BTN_TELETEXT)
 					{
-						GUIWindowManager.ActivateWindow(7700);
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
 					}
 					if (iControl == (int)Controls.BTN_RECORD)
 					{
