@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
 
           foreach(ListViewItem listItem in CurrentShares)
           {
-            shares.Add(listItem.SubItems[1].Text);
+            shares.Add(listItem.SubItems[2].Text);
           }
           return shares;
       }
