@@ -473,6 +473,7 @@ namespace MediaPortal.TV.Recording
 			catch(Exception ex)
 			{
 				Log.Write("DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
+				return false;
 				//System.Windows.Forms.MessageBox.Show(ex.Message);
 			}
 			if(m_b2c2Adapter==null)
