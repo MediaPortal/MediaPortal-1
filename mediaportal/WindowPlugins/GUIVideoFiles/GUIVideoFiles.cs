@@ -1404,7 +1404,8 @@ namespace MediaPortal.GUI.Video
       for (int i = 0; i < items.Count; ++i)
 	    {
         GUIListItem pItem = (GUIListItem)items[i];
-        if (!pItem.IsFolder)
+		  if (!pItem.IsFolder 
+			  || ( pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
         {
           if (Utils.IsVideo(pItem.Path) && /*!Utils.IsNFO(pItem.Path) && */!PlayListFactory.IsPlayList(pItem.Path))
           {
@@ -1446,8 +1447,17 @@ namespace MediaPortal.GUI.Video
         strFolder = pItem.Path;
         bFolder = true;
 
-        ArrayList vecitems = m_directory.GetDirectory(pItem.Path);
-        bool bFoundFile = false;
+		  bool bFoundFile = false;
+
+		  string strExtension=System.IO.Path.GetExtension(pItem.Path).ToLower();
+		  if (VirtualDirectory.IsImageFile(strExtension))
+		  {
+			  strFile = pItem.Path;
+			  bFoundFile = true;
+		  } 
+		  else
+		  {
+			  ArrayList vecitems = m_directory.GetDirectory(pItem.Path);
         for (int i = 0; i < vecitems.Count; ++i)
         {
           pItem = (GUIListItem)vecitems[i];
@@ -1469,15 +1479,9 @@ namespace MediaPortal.GUI.Video
               break;
             }
 						
-						string strExtension=System.IO.Path.GetExtension(pItem.Path).ToLower();
-						if (VirtualDirectory.IsImageFile(strExtension))
-						{
-							strFile = pItem.Path;
-							bFoundFile = true;
-							break;
-						} 
-          }
-        }
+				  }
+			  }
+		  }
         if (!bFoundFile) 
         {
           // no Video file in this folder?
@@ -1782,7 +1786,8 @@ namespace MediaPortal.GUI.Video
       for (int x = 0; x < items.Count; ++x)
       {
         pItem = (GUIListItem)items[x];
-        if (!pItem.IsFolder)
+        if (!pItem.IsFolder 
+        || ( pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
         {
 					if (pItem.ThumbnailImage!=String.Empty) continue;
           for (int i = 0; i < movies.Count; ++i)

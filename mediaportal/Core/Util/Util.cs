@@ -236,6 +236,7 @@ namespace MediaPortal.Util
 				if (strExtFile.ToLower().Equals(".tv") ) return true;
 				if (strExtFile.ToLower().Equals(".sbe") ) return true;
 				if (strExtFile.ToLower().Equals(".dvr-ms") ) return true;
+				if (VirtualDirectory.IsImageFile(strExtFile.ToLower())) return true;
 				foreach (string strExt in m_VideoExtensions)
 				{
 					if (strExt == strExtFile) return true;
@@ -418,6 +419,7 @@ namespace MediaPortal.Util
 			try
 			{
 				if (!item.IsFolder)
+				|| ( item.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path).ToLower())))
 				{
 					if (IsPicture(item.Path)) return;
 
