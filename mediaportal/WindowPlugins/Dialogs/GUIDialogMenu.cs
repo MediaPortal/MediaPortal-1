@@ -25,7 +25,8 @@ namespace MediaPortal.Dialogs
     GUIWindow m_pParentWindow=null;
     #endregion
     
-    int  m_iSelected      = -1;
+    int m_iSelected      = -1;
+    int m_iItemId = -1;
 
 		string m_strSelected="";
     ArrayList m_vecList   = new ArrayList();
@@ -53,11 +54,41 @@ namespace MediaPortal.Dialogs
 
     public override void OnAction(Action action)
     {
+      int iSelection;
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
         Close();
         return;
       }
+
+      if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+      {
+        if (action.m_key!=null)
+        {
+          if (action.m_key.KeyChar >'0' && action.m_key.KeyChar <='9')         
+          {
+            // Get offset to item
+            iSelection = action.m_key.KeyChar-'1';
+            if (iSelection < m_vecList.Count)
+            {
+              // Select dialog item
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)Controls.CONTROL_LIST, 0, 0, null);
+              OnMessage(msg);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, (int)Controls.CONTROL_LIST, iSelection ,0 ,null);
+              OnMessage(msg);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.CONTROL_LIST, 0, 0, 0, null);
+              OnMessage(msg);
+            }
+            else
+            {
+              // Exit dialog box
+              Close();
+            }
+            return;
+          }
+        }
+      }
+
       base.OnAction(action);
     }
 
@@ -85,6 +116,9 @@ namespace MediaPortal.Dialogs
 
     public void DoModal(int dwParentId)
     {
+      if (m_vecList.Count == 0)
+        Close();
+
       m_dwParentWindowID=dwParentId;
       m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
       if (null==m_pParentWindow)
@@ -142,6 +176,7 @@ namespace MediaPortal.Dialogs
             OnMessage(msg);
           }
           m_iSelected=-1;
+          m_iItemId=-1;
           string wszText=String.Format("{0} {1}", m_vecList.Count,GUILocalizeStrings.Get(127) );
 
         }
@@ -155,6 +190,7 @@ namespace MediaPortal.Dialogs
           {
 						m_iSelected=GetSelectedItemNo();
 						m_strSelected=GetSelectedItem().Label;
+            m_iItemId=GetSelectedItem().ItemId;
 						Close();
           }
           if ((int)Controls.CONTROL_CLOSEBTN==iControl)
@@ -179,11 +215,27 @@ namespace MediaPortal.Dialogs
       GUIListItem pItem = new GUIListItem(strLabel);
       m_vecList.Add(pItem);
     }
+
+    public void AddLocalizedString(int iLocalizedString)
+    {
+      int iItemIndex = m_vecList.Count+1;
+      GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+GUILocalizeStrings.Get(iLocalizedString));     
+      pItem.ItemId = iLocalizedString;
+      m_vecList.Add(pItem);      
+    }
+
     public int SelectedLabel 
     {
       get { return m_iSelected;}
       set { m_iSelected=value;}
     }
+    
+    public int SelectedId 
+    {
+      get { return m_iItemId;}
+      set { m_iItemId=value;}
+    }
+
     public string SelectedLabelText
     {
       get { return m_strSelected;}
