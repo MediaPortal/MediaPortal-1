@@ -422,17 +422,13 @@ namespace MediaPortal.TV.Database
                         {
                           int p=0;
                           int t=0;
-                          if (Convert.ToInt32(strEpisodePart.Substring(0,1))==0)
-                          {
-                            p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
-                          }
-                          else
-                          {
-                            p = Convert.ToInt32(strEpisodePart.Substring(0,1));
-                          }
-                          t = Convert.ToInt32(strEpisodePart.Substring(2,1));
-                          strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
-                        }
+
+                            if (Convert.ToInt32(strEpisodePart.Substring(0,1))==0)
+                            {
+                              p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
+                              t = Convert.ToInt32(strEpisodePart.Substring(2,1));
+                              strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);                        }
+                            }
                       }
                     }
                     else if (pos>0)
