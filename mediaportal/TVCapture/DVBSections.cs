@@ -1711,6 +1711,20 @@ namespace MediaPortal.TV.Recording
 			return eit.eitList;
 		}
 		//
+		// get current/next info
+		//
+		public ArrayList GetEITPresentFollowing(DShowNET.IBaseFilter filter)
+		{
+			EIT_Program_Info eit=new EIT_Program_Info();
+			eit.eitList=new ArrayList();
+			GetStreamData(filter,18,0x4E,0,200);
+
+			foreach(byte[] arr in m_sectionsList)
+				decodeEITTable(arr,ref eit,0,false);
+			return eit.eitList;
+		}
+
+		//
 		// returns events found in tables >=0x50 && <=0x6f 
 		// lastTab holds the last table
 		//

@@ -42,11 +42,10 @@ namespace MediaPortal.TV.Recording
 				TVProgram tv=new TVProgram();
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 				date=date.ToLocalTime();
-				System.DateTime dur=new DateTime();
-				dur=date;
-				dur=dur.AddHours((double)data.duration_hh);
-				dur=dur.AddMinutes((double)data.duration_mm);
+				System.DateTime dur=new DateTime(date.Ticks);
 				dur=dur.AddSeconds((double)data.duration_ss);
+				dur=dur.AddMinutes((double)data.duration_mm);
+				dur=dur.AddHours((double)data.duration_hh);
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
 				tv.Title=data.event_name;
@@ -58,17 +57,26 @@ namespace MediaPortal.TV.Recording
 					Log.Write("epg: entrie without title found");
 					return 0;
 				}
-				long checkStart=0;
-				long checkEnd=0;
+
 				// for check
-				checkStart=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute+2,date.Second);
-				checkEnd=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute-2,dur.Second);
 				//
+				long chStart=0;
+				long chEnd=0;
+				System.DateTime chStartDate=new DateTime((long)date.Ticks);
+				chStartDate=chStartDate.AddMinutes(1);
+				System.DateTime chEndDate=new DateTime((long)dur.Ticks-60000);
+				chStart=GetLongFromDate(chStartDate.Year,chStartDate.Month,chStartDate.Day,chStartDate.Hour,chStartDate.Minute,chStartDate.Second);
+				chEnd=GetLongFromDate(chEndDate.Year,chEndDate.Month,chEndDate.Day,chEndDate.Hour,chEndDate.Minute,chEndDate.Second);
 				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				ArrayList programsInDatabase = new ArrayList();
-				TVDatabase.GetProgramsPerChannel(tv.Channel,checkStart,checkEnd,ref programsInDatabase);
-				if(programsInDatabase.Count==0 && channelName!="")
+				TVDatabase.GetProgramsPerChannel(tv.Channel,chStart,chEnd,ref programsInDatabase);
+				if(channelName=="")
+				{
+					Log.Write("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
+					return 0;
+				}
+				if(programsInDatabase.Count==0)
 				{
 					int programID=TVDatabase.AddProgram(tv);
 					//TVDatabase.RemoveOverlappingPrograms();
@@ -76,14 +84,17 @@ namespace MediaPortal.TV.Recording
 					{
 						retVal= 1;
 					}
+					else
+						Log.Write("epg-grab: FAILED (program id==-1): {0} : {1}",tv.Start,tv.End);
+
 				}
 				else
-					Log.Write("epg-grab: FAILED to add to database: {0} : {1}",tv.Start,tv.End);
+					Log.Write("epg-grab: SKIPPED already exists in database: {0} : {1}",tv.Start,tv.End);
 				return retVal;
 			}
 			catch(Exception ex)
 			{
-				Log.Write("epg-grab: FAILED to add to database. message:{0}",ex.Message);
+				Log.Write("epg-grab: FAILED to add to database. message:{0} stack:{1} source:{2}",ex.Message,ex.StackTrace,ex.Source);
 				return 0;
 			}
 		}
@@ -97,29 +108,16 @@ namespace MediaPortal.TV.Recording
 		//
 		private long GetLongFromDate(int year,int mon,int day,int hour,int min,int sec)
 		{
-			string longVal="";
-			string yr=year.ToString();
-			string mo=mon.ToString();
-			string da=day.ToString();
-			string h=hour.ToString();
-			string m=min.ToString();
-			string s=sec.ToString();
-			if(mo.Length==1)
-				mo="0"+mo;
-			if(da.Length==1)
-				da="0"+da;
-			if(h.Length==1)
-				h="0"+h;
-			if(m.Length==1)
-				m="0"+m;
-			if(s.Length==1)
-				s="0"+s;
-			longVal=yr+mo+da+h+m+s;
-			return (long)Convert.ToUInt64(longVal);
+			
+			string longStringA=String.Format("{0:0000}{1:00}{2:00}",year,mon,day);
+			string longStringB=String.Format("{0:00}{1:00}{2:00}",hour,min,sec);
+			Log.Write("epg-grab: string-value={0}",longStringA+longStringB);
+			return (long)Convert.ToUInt64(longStringA+longStringB);
 		}
 		//
 		//
 		//
+
 		public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
 		{
 			// there must be an ts (card tuned) to get eit
