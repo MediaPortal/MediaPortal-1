@@ -611,21 +611,22 @@ namespace MediaPortal.GUI.Library
       if (strFileName==String.Empty) return;
       try
       {
-        ArrayList newCache=new ArrayList();
-        foreach (CachedTexture cached in m_cache)
-        {
-          if ( cached.Name.Equals(strFileName) )
-          {
-            Log.Write("texturemanager:dispose:"+ cached.Name+ " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
-            cached.Dispose();
-          }
-          else
-          {
-            newCache.Add(cached);
-          }
-        }
-        m_cache.Clear();
-        m_cache=newCache;
+				bool continueRemoving=false;
+				do
+				{
+					continueRemoving=false;
+					foreach (CachedTexture cached in m_cache)
+					{
+						if ( cached.Name.Equals(strFileName) )
+						{
+							Log.Write("texturemanager:dispose:"+ cached.Name+ " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
+							m_cache.Remove(cached);
+							cached.Dispose();
+							continueRemoving=true;
+							break;
+						}
+					}
+				} while (continueRemoving);
       }
       catch(Exception ex)
       {
