@@ -2298,11 +2298,11 @@
 </string>
 <string>
 	<id>903</id>
-	<value>Connect</value>
+	<value>Sign in</value>
 </string>
 <string>
 	<id>904</id>
-	<value>Disconnect</value>
+	<value>Sign out</value>
 </string>
 <string>
 	<id>905</id>
@@ -2317,8 +2317,12 @@
 	<value>Could not connect to MSN</value>
 </string>
 <string>
-	<id>906</id>
+	<id>908</id>
 	<value>is typing a message...</value>
+</string>
+<string>
+	<id>909</id>
+	<value>Connecting...</value>
 </string>
 
 	<!-- My Recipie Strings -->

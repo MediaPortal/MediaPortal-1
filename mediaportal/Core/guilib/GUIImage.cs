@@ -604,6 +604,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
       
 			// Render the image
+      if (savedStateBlock!=null && savedStateBlock.Disposed) savedStateBlock=null;
       if (savedStateBlock.Disposed) savedStateBlock=null;
       if (savedStateBlock==null)
       {

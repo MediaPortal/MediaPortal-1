@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.MSN
 
       if (GUIMSNPlugin.IsTyping)
       {
-        string text=String.Format("{0} {1}", GUIMSNPlugin.ContactName, GUILocalizeStrings.Get(906) );
+        string text=String.Format("{0} {1}", GUIMSNPlugin.ContactName, GUILocalizeStrings.Get(908) );
         GUIControl.SetControlLabel(GetID,(int)Controls.Status,text);
       }
       else 

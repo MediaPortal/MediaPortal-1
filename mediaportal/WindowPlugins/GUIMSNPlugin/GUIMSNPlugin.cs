@@ -32,6 +32,8 @@ namespace MediaPortal.GUI.MSN
     // this object will be the interface to the dotMSN library
     static private DotMSN.Messenger messenger = null;
     static private Conversation currentconversation = null;
+    GUIDialogProgress dlgProgress ;
+    bool           m_bDialogVisible=false;
     #region Base variabeles
     enum SortMethod
     {
@@ -114,7 +116,9 @@ namespace MediaPortal.GUI.MSN
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT :
+          m_bDialogVisible=false;
+          dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
           base.OnMessage(message);
           if (messenger==null)
           {
@@ -128,12 +132,21 @@ namespace MediaPortal.GUI.MSN
               return true;
             }
           }
+          else
+          {
+            ReFillContactList=true;
+          }
           ShowThumbPanel();
           UpdateButtons();
           Update();
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
+          if (m_bDialogVisible)
+          {
+            m_bDialogVisible=false;
+            dlgProgress.Close();
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
@@ -322,11 +335,25 @@ namespace MediaPortal.GUI.MSN
 
     void OnClick(int iItem)
     {
+      if (m_bDialogVisible) return;
+      if (CurrentConversation!=null) return;
       if (messenger==null) return;
       if (!messenger.Connected) return;
       GUIListItem item = GetSelectedItem();
       if (item==null) return;
       Contact contact= (Contact)item.AlbumInfoTag;
+
+      if (dlgProgress != null)
+      {
+        dlgProgress.SetHeading(901);
+        dlgProgress.SetLine(1, GUILocalizeStrings.Get(909) );
+        dlgProgress.SetLine(2, contact.Name);
+        dlgProgress.SetLine(3, "");
+        dlgProgress.StartModal(GetID);
+        dlgProgress.Progress();
+      }
+
+      m_bDialogVisible=true;
       messenger.RequestConversation(contact.Mail);
 
     }
@@ -586,7 +613,12 @@ namespace MediaPortal.GUI.MSN
       // only talking to 1 other person. Log this event.
       //Log.Write += e.Contact.Name + " joined the conversation.\r\n";
 
-      
+
+      if (m_bDialogVisible)
+      {
+        m_bDialogVisible=false;
+        dlgProgress.Close();
+      }      
       currentconversation = sender;
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
     }
