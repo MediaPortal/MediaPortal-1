@@ -279,8 +279,8 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.inputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.inputComboBox.Items.AddRange(new object[] {
-															   "Antenna",
-															   "Cable"});
+																											 "Antenna",
+																											 "Cable"});
 			this.inputComboBox.Location = new System.Drawing.Point(168, 78);
 			this.inputComboBox.Name = "inputComboBox";
 			this.inputComboBox.Size = new System.Drawing.Size(256, 21);
@@ -372,6 +372,7 @@ namespace MediaPortal.Configuration.Sections
 			this.Controls.Add(this.groupBox1);
 			this.Name = "Radio";
 			this.Size = new System.Drawing.Size(456, 448);
+			this.Load += new System.EventHandler(this.Radio_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -624,10 +625,15 @@ namespace MediaPortal.Configuration.Sections
 			else 
 			{
 				if (comboBoxAudioDevice.Items.Count >0)
-					comboBoxAudioDevice.SelectedIndex=1;
+					comboBoxAudioDevice.SelectedIndex=0;
 				comboBoxAudioDevice.Enabled = true;
 				comboBoxLineInput.Enabled = true;
 			}
+		}
+
+		private void Radio_Load(object sender, System.EventArgs e)
+		{
+		
 		}
 	}
 }
