@@ -848,7 +848,8 @@ namespace MediaPortal.Configuration
                 Size frameSize = new Size(fmt.Width, fmt.Height);
                 capture.FrameSize = frameSize;
 
-                frameSizeComboBox.SelectedIndex=i;
+                if (  frameSizeComboBox.Items.Count > i)
+                  frameSizeComboBox.SelectedIndex = i;
                 break;
               }
               ++i;
