@@ -7,7 +7,7 @@
 		<type>label</type>
 		<id>2</id>
 		<posX>71</posX>
-		<posY>300</posY>
+		<posY>373</posY>
 		<label>#currentplaytime</label>
 		<align>left</align>
 		<font>font72</font>

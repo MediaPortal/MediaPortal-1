@@ -70,13 +70,13 @@
 		<align>left</align>
 		<font>font16</font>
 		<textcolor>FFFFFFFF</textcolor>
-	</control>
+	</control>yxxy
 	<control>
 		<description>Movie thumb</description>
 		<type>image</type>
 		<id>102</id>
 		<posX>600</posX>
-		<posY>430</posY>
+		<posY>440</posY>
 		<texture>#thumb</texture>
 		<height>130</height>
 		<width>80</width>
@@ -88,7 +88,7 @@
 		<id>1</id>
 		<type>textboxscrollup</type>
 		<posX>210</posX>
-		<posY>430</posY>
+		<posY>440</posY>
 		<width>340</width>
 		<height>90</height>
 		<align>left</align>

@@ -14,6 +14,18 @@
 			<texture>background.png</texture>
 		</control>
 		<control>
+			<description>Background TV</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>70</posX>
+			<posY>278</posY>
+			<width>-</width>
+			<height>-</height>
+			<colordiffuse>ffffffff</colordiffuse>
+			<texture>Background_TV.png</texture>
+			<colorkey>0</colorkey>
+		</control>
+		<control>
 			<type>image</type>
 			<id>1</id>
 			<posX>60</posX>
@@ -36,7 +48,7 @@
 			<type>label</type>
 			<id>200</id>
 			<posX>65</posX>
-			<posY>230</posY>
+			<posY>250</posY>
 			<label>#date</label>
 			<align>left</align>
 			<font>font13</font>
@@ -47,7 +59,7 @@
 			<type>label</type>
 			<id>201</id>
 			<posX>65</posX>
-			<posY>250</posY>
+			<posY>270</posY>
 			<label>#time</label>
 			<align>left</align>
 			<font>font13</font>
@@ -155,11 +167,11 @@
 				<id>10</id>
 				<width>425</width>
 				<height>370</height>
-				<textXOff>50</textXOff>
+				<textXOff>58</textXOff>
 				<textYOff>2</textYOff>
 				<textXOff2>420</textXOff2>
 				<textYOff2>29</textYOff2>
-				<textXOff3>100</textXOff3>
+				<textXOff3>103</textXOff3>
 				<textYOff3>29</textYOff3>
 				<IconXOff>12</IconXOff>
 				<IconYOff>8</IconYOff>

@@ -176,11 +176,11 @@
 		<type>label</type>
 		<id>100</id>
 		<posX>70</posX>
-		<posY>415</posY>
+		<posY>435</posY>
 		<label>#currentplaytime</label>
 		<align>left</align>
-		<font>font72</font>
-		<textcolor>30ffffff</textcolor>
+		<font>font50</font>
+		<textcolor>22ffffff</textcolor>
 	</control>
 	<control>
 		<description>Start Time Info</description>

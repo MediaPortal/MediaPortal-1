@@ -76,7 +76,7 @@
 		<type>image</type>
 		<id>39</id>
 		<posX>60</posX>
-		<posY>420</posY>
+		<posY>400</posY>
 		<texture>rec.png</texture>
 		<colordiffuse>50ffffff</colordiffuse>
 		<visible>yes</visible>
