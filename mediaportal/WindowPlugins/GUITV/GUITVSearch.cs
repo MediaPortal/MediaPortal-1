@@ -258,18 +258,33 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-        GUIControl.HideControl(GetID,(int)Controls.ListControl);
-        GUIControl.ShowControl(GetID,(int)Controls.TitleControl);
-        GUIControl.FocusControl(GetID,(int)Controls.TitleControl);
+				if ( _FilterShow!="")
+				{
+					GUIControl.HideControl(GetID,(int)Controls.ListControl);
+					GUIControl.ShowControl(GetID,(int)Controls.TitleControl);
+					GUIControl.FocusControl(GetID,(int)Controls.TitleControl);
+					GUIControl.ShowControl(GetID,(int)Controls.LabelProgramDescription);
+					GUIControl.ShowControl(GetID,(int)Controls.LabelProgramGenre);
+					GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTime);
+					GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTitle);
+					cntlList = (GUIListControl)GetControl((int)Controls.TitleControl);
+				}
+				else
+				{
+					GUIControl.ShowControl(GetID,(int)Controls.ListControl);
+					GUIControl.HideControl(GetID,(int)Controls.TitleControl);
+					GUIControl.FocusControl(GetID,(int)Controls.ListControl);
+					
+					GUIControl.HideControl(GetID,(int)Controls.LabelProgramDescription);
+					GUIControl.HideControl(GetID,(int)Controls.LabelProgramGenre);
+					GUIControl.HideControl(GetID,(int)Controls.LabelProgramTime);
+					GUIControl.HideControl(GetID,(int)Controls.LabelProgramTitle);
+					cntlList = (GUIListControl)GetControl((int)Controls.ListControl);
+				}
 				GUIControl.EnableControl(GetID,(int)Controls.btnEpisode);
 				GUIControl.EnableControl(GetID,(int)Controls.btnLetter);
 				GUIControl.EnableControl(GetID,(int)Controls.btnShow);
 				
-				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramDescription);
-				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramGenre);
-				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTime);
-				GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTitle);
-				cntlList = (GUIListControl)GetControl((int)Controls.TitleControl);
       }
 			GUIControl cntlLabel = GetControl((int)Controls.labelNumberOfItems);
 			cntlLabel.YPosition = cntlList.SpinY;
