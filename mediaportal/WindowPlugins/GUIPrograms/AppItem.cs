@@ -163,7 +163,7 @@ namespace ProgramsDatabase
 				else
 				{
 					// placeholder found => replace the placeholder by the correct filename
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFile.Filename);
+					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFilename);
 				}
 				proc.StartInfo.WorkingDirectory  = Startupdir;
 				if (proc.StartInfo.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
