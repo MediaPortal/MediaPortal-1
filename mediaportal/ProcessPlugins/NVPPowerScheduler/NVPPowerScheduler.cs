@@ -410,7 +410,7 @@ namespace MediaPortal.PowerScheduler
 				m_bForceShutdown = xmlreader.GetValueAsBool("powerscheduler","forcedshutdown",false);
 				m_bDisableTV = xmlreader.GetValueAsBool("powerscheduler","disabletv",false);
 				
-				m_bDisabled = xmlreader.GetValueAsString("plugins","Power Scheduler","yes") == "no";
+				m_bDisabled = xmlreader.GetValueAsString("plugins","Power Scheduler","no") == "no";
 				
 				if (m_bDisabled)
 				{
