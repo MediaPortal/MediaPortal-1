@@ -1,8 +1,6 @@
 /*
- * Created by SharpDevelop.
- * Date: 7/7/2004
- * Time: 8:22 AM
- * 
+ * UIR/IRMan serial support
+ * 2004-12-12
  */
 using System;
 using System.Diagnostics;
@@ -10,9 +8,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text;
 using System.Collections;
-//using MediaPortal.GUI.Library;
 using JH.CommBase;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.SerialIR
 {
@@ -31,7 +29,18 @@ namespace MediaPortal.SerialIR
 		}
 	}
 
+	public class ListeningEventArgs : System.EventArgs
+	{
+		public string Code;
+		public ListeningEventArgs(string Code)
+		{
+			this.Code = Code;
+		}
+	}
+
 	public delegate void StartLearningEventHandler(object sender, LearningEventArgs e);
+
+	public delegate void StartListeningEventHandler(object sender, ListeningEventArgs e);
 
 	public class SerialUIR : CommBase
 	{
@@ -45,11 +54,10 @@ namespace MediaPortal.SerialIR
 
 		public delegate void OnRemoteCommand(object command);
 
-		private int timeout = 5000; // time out in milliseconds
-		private int timespan = 300; // time between 2 commands
+		public int LearningTimeOut = 4000; // time out in milliseconds
+		public int CommandDelay = 300; // time between 2 commands
 
 		private bool loaded = false;
-
 		private OnRemoteCommand remoteCommandCallback = null;
 
 		private bool recInternalCommands = false;
@@ -62,6 +70,11 @@ namespace MediaPortal.SerialIR
 		/// </summary>
 		public event StartLearningEventHandler StartLearning;
 
+		/// <summary>
+		/// Event fired when we receive a code in config mode
+		/// </summary>
+		public event StartListeningEventHandler StartListening;
+
 		public OnRemoteCommand RemoteCommandCallback
 		{
 			set 
@@ -70,15 +83,78 @@ namespace MediaPortal.SerialIR
 			}
 		}
 
-		public string commport = "";
+		public new bool DTR 
+		{
+			set 
+			{
+				base.DTR = value;
+			}
+			get 
+			{
+				return base.DTR;
+			}
+		}
+
+		public new bool RTS
+		{
+			set 
+			{
+				base.RTS = value;
+			}
+			get 
+			{
+				return base.RTS;
+			}
+		}
+
+		private string commport     = "COM1:";
+		private int    baudrate     = 9600;
+		private string handshake    = "None";
+		private string parity       = "None";
+		private int    irbytes      = 6;
+		private bool   uirirmaninit = true;
 
 		protected override CommBaseSettings CommSettings() 
 		{
 			CommBaseSettings cs = new CommBaseSettings();
-			cs.SetStandard(commport,9600,Handshake.none);
+			Handshake hs;
+			switch(handshake)
+			{
+				case "CtsRts":
+					hs = Handshake.CtsRts;
+					break;
+				case "DsrDtr":
+					hs = Handshake.DsrDtr;
+					break;
+				case "XonXoff":
+					hs = Handshake.XonXoff;
+					break;
+				default:
+					hs = Handshake.none;
+					break;
+			}
+			cs.SetStandard(commport,baudrate,hs);
+			switch(parity)
+			{
+				case "Odd":
+					cs.parity = Parity.odd;
+					break;
+				case "Even":
+					cs.parity = Parity.even;
+					break;
+				case "Mark":
+					cs.parity = Parity.mark;
+					break;
+				case "Space":
+					cs.parity = Parity.space;
+					break;
+				default:
+					cs.parity = Parity.none;
+					break;
+			}
+
 			return cs;
 		}
-
 
 		Hashtable commandsLearned = new Hashtable();
 
@@ -116,14 +192,49 @@ namespace MediaPortal.SerialIR
 			}
 		}
 
-		public bool SetPort(string CommPort)
+		public bool ReOpen()
 		{
-			commport = CommPort;
 			base.Close();
 			if (base.IsPortAvailable(commport) == PortStatus.available)
 				return base.Open();
 			else
 				return false;
+		}
+
+		public bool SetPort(string CommPort)
+		{
+			commport = CommPort;
+			return ReOpen();
+		}
+
+		public bool SetBaudRate(int BaudRate)
+		{
+			baudrate = BaudRate;
+			return ReOpen();
+		}
+
+		public bool SetHandShake(string Handshake)
+		{
+			handshake = Handshake;
+			return ReOpen();
+		}
+
+		public bool SetParity(string pr)
+		{
+			parity = pr;
+			return ReOpen();
+		}
+
+		public bool SetIRBytes(int IRBytes)
+		{
+			irbytes = IRBytes;
+			return ReOpen();
+		}
+
+		public bool SetUIRIRmanInit(bool UIRIRManInit)
+		{
+			uirirmaninit = UIRIRManInit;
+			return ReOpen();
 		}
 
 		private SerialUIR(OnRemoteCommand remoteCommandCallback)
@@ -133,7 +244,13 @@ namespace MediaPortal.SerialIR
 				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 				{
 					recInternalCommands = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
-					commport = xmlreader.GetValueAsString("SerialUIR", "commport", "COM1:");
+					commport        = xmlreader.GetValueAsString("SerialUIR", "commport",     "COM1:");
+					baudrate        = xmlreader.GetValueAsInt(   "SerialUIR", "baudrate",     9600);
+					handshake       = xmlreader.GetValueAsString("SerialUIR", "handshake",    "None");
+					irbytes         = xmlreader.GetValueAsInt(   "SerialUIR", "irbytes",      6);
+					uirirmaninit    = xmlreader.GetValueAsString("SerialUIR", "uirirmaninit", "true") == "true";
+					LearningTimeOut = 1000 * xmlreader.GetValueAsInt(   "SerialUIR", "timeout",      4);
+					CommandDelay    = xmlreader.GetValueAsInt(   "SerialUIR", "delay",        300);
 				}
 				this.remoteCommandCallback = remoteCommandCallback;
 				commandsLearned = new Hashtable();
@@ -231,6 +348,19 @@ namespace MediaPortal.SerialIR
 			}
 		}
 
+		/// <summary>
+		/// Method used to fire the "StartListening" event.
+		/// Any subscribers will be notified with the Code received
+		/// </summary>
+		/// <param name="button"></param>
+		protected void OnStartListening(string Code)
+		{
+			if(StartListening != null)
+			{
+				StartListening(this, new ListeningEventArgs(Code));
+			}
+		}
+
 		object commandToLearn = null;
 		bool   internalLearnDone = false;
 		
@@ -248,7 +378,7 @@ namespace MediaPortal.SerialIR
 				while (! internalLearnDone )
 				{
 					base.Sleep(10);
-					if ((DateTime.Now - timestamp) > new TimeSpan(0,0,0,0,timeout)) 
+					if ((DateTime.Now - timestamp) > new TimeSpan(0,0,0,0,LearningTimeOut)) 
 						return false;
 				}
 				return true;
@@ -274,19 +404,19 @@ namespace MediaPortal.SerialIR
 					switch(MessageBox.Show("Learn failed (timeout). Try again ?","IR Learn failed",MessageBoxButtons.AbortRetryIgnore,MessageBoxIcon.Exclamation,MessageBoxDefaultButton.Button1))
 					{
 						case DialogResult.Abort:
-							return;
+							i = commands.Length;
+							break;
 						case DialogResult.Retry:
 							i--;
 							continue;
 					}
 				}
 			}
+			learning = false;
 		}
 
 		bool ignore = true;
-		bool initok = false;
-		byte lastbyte = 0x00;
-		public int charcount=0;
+		int charcount=0;
 		string lastcommand;
 		string lastcommand2;
 		string lastbuff;
@@ -294,31 +424,33 @@ namespace MediaPortal.SerialIR
 		//string lastCommand = null;
 		DateTime timestamp = DateTime.Now;
 
+		DateTime bytetimestamp = DateTime.Now;
+
 		protected override void OnRxChar(byte ch) 
 		{
 			if (ignore)
 				return;
-			if (! initok)
+
+			if ((DateTime.Now - bytetimestamp) > new TimeSpan(0,0,0,0, 5 * CommandDelay)) 
 			{
-				if (ch == (byte)'O')
-					lastbyte = ch;
-				if (ch == (byte)'K' && lastbyte == (byte)'O')
-				{
-					initok = true;
-				}
-				return;
+				Trace.WriteLine("IR byte train timeout");
+				charcount = 0;
+				lastbuff = "";
 			}
-			charcount = (charcount+1) % 6;
+			bytetimestamp = DateTime.Now;
+
+			charcount = (charcount+1) % irbytes;
+
 			if(charcount == 0)
 			{
 				lastcommand2 = lastcommand;
-				lastcommand = lastbuff + ch.ToString();
+				lastcommand = lastbuff + (ch<16?"0":"") + ch.ToString("X");
 				lastbuff = "";
-//				Debug.WriteLine(lastcommand);
 
-				if(lastcommand.Equals(lastcommand2))
+				Trace.WriteLine("received IR command " + lastcommand + " "+DateTime.Now.ToString());
+				if (learning)
 				{
-					if (learning)
+					if(lastcommand.Equals(lastcommand2))
 					{
 						if (commandsLearned[lastcommand] == null)
 						{
@@ -327,39 +459,45 @@ namespace MediaPortal.SerialIR
 							commandsLearned[lastcommand] = commandToLearn;
 						}
 					}
-					else
+				}
+				else
+				{
+					internalLearnDone = true;
+					if (recInternalCommands)
 					{
-						internalLearnDone = true;
-						Trace.WriteLine("received IR command " + lastcommand + " "+DateTime.Now.ToString());
-						if (recInternalCommands)
+						object command = commandsLearned[lastcommand];
+						if (((DateTime.Now - timestamp) > new TimeSpan(0,0,0,0,CommandDelay))) 
 						{
-							object command = commandsLearned[lastcommand];
-							if ((DateTime.Now - timestamp) > new TimeSpan(0,0,0,0,timespan)) 
+							if(command != null)
 							{
-								Trace.WriteLine("invoking callback");
+								OnStartListening(lastcommand + " => " + ((Action.ActionType)command).ToString());
 								this.remoteCommandCallback(command);
 								timestamp = DateTime.Now;
 							}
+							else
+								OnStartListening(lastcommand + " => No Action");
 						}
 					}
 				}
 			}
 			else
-				lastbuff += ch.ToString() + " ";
+			{
+				lastbuff += (ch<16?"0":"") + ch.ToString("X");
+			}
 		}
 
 		protected override bool AfterOpen() 
 		{
-			base.RTS = true;
-			base.DTR = true;
 			Sleep(50);
 			ignore = false;
-			base.SendImmediate((byte)'I');
-			Sleep(5);
-			base.SendImmediate((byte)'R');
+			if (uirirmaninit)
+			{
+				base.SendImmediate((byte)'I');
+				Sleep(10);
+				base.SendImmediate((byte)'R');
+			}
 			return true;
 		}
-
 		
 	}
 }

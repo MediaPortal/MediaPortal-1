@@ -634,7 +634,7 @@ namespace JH.CommBase
 				}
 				else
 				{
-					throw new CommPortException(rxException);
+	//				throw new CommPortException(rxException);
 				}
 			}
 		}

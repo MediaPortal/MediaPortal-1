@@ -122,6 +122,8 @@ namespace MediaPortal.Configuration.Sections
 			{
         ds.Tables[0].Rows.Add( new object[] {true,true,false,tag.SetupForm.PluginName(),tag.SetupForm.Author(), tag.SetupForm.Description(),tag} );
       }
+		ds.Tables[0].DefaultView.AllowNew = false;
+		ds.Tables[0].DefaultView.AllowDelete = false; 
       dataGrid1.DataSource=ds.Tables[0];
     }
 

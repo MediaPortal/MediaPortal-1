@@ -154,6 +154,10 @@ namespace MediaPortal.WinampPlayer
 
         public override void Pause()
         {
+            if (m_winampController != null)
+            {
+                m_winampController.Pause();
+            }
         }
 
         public override bool Paused
@@ -175,7 +179,8 @@ namespace MediaPortal.WinampPlayer
             { 
                 if(m_winampController != null)
                 {
-                    return (m_winampController.Status() == WinampController.PLAYING);
+                    return (m_winampController.Status() == WinampController.PLAYING)
+                             || (m_winampController.Status() == WinampController.PAUSED);
                 }
                 return false;
             }
