@@ -564,15 +564,18 @@ namespace MediaPortal.TV.Recording
       m_mediaControl=(IMediaControl)m_graphBuilder;
       int hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window");
 
       hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window style");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style");
 
       hr = m_videoWindow.put_Visible( DsHlp.OATRUE );
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible");
+
+      DirectShowUtil.DebugWrite("SWGraph:enrable deinterlace");
+      DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 
       m_mediaControl.Run();
       
