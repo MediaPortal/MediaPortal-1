@@ -24,16 +24,7 @@
 		<colordiffuse>20ffffff</colordiffuse>
 		<texture>myvideos.png</texture>
 	</control>
-	<control>
-		<description>Panel</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>50</posX>
-		<posY>100</posY>
-		<width>190</width>
-		<height>272</height>
-		<texture>panel.png</texture>
-	</control>
+
 	<control>
 		<description>My Movies/Actors text label</description>
 		<type>label</type>
@@ -45,15 +36,25 @@
 		<align>right</align>
 	</control>
 	<control>
-		<description>genre text label</description>
+		<description>Actor text label</description>
 		<type>label</type>
 		<id>100</id>
-		<posX>675</posX>
-		<posY>65</posY>
-		<label>3</label>
+		<posX>670</posX>
+		<posY>85</posY>
+		<label>344</label>
 		<font>font14</font>
 		<align>right</align>
-		<textcolor>FFB2D4F5</textcolor>
+	</control>
+
+	<control>
+		<description>Panel</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>50</posX>
+		<posY>100</posY>
+		<width>190</width>
+		<height>272</height>
+		<texture>panel.png</texture>
 	</control>
 	<control>
 		<description>View-As button</description>
@@ -153,6 +154,7 @@
    		<description>listcontrol</description>
    		<type>listcontrol</type>
    		<id>10</id>
+     	<posY>110</posY>
    		<onleft>2</onleft>
    		<onright>2</onright>
    		<onup>2</onup>
@@ -162,6 +164,7 @@
    		<description>Thumbnail Panel</description>
    		<type>thumbnailpanel</type>
    		<id>11</id>
+     	<posY>97</posY>
    		<onleft>2</onleft>
    		<onright>2</onright>
    		<onup>2</onup>

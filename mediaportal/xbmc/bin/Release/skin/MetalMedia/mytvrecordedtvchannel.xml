@@ -224,13 +224,25 @@
 	</control>
 
 	<control>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>60</posX>
+		<posY>450</posY>
+		<width>130</width>
+		<height>110</height>
+		<texture>panel.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
+	</control>
+	<control>
 		<description>TV preview window</description>
 		<type>videowindow</type>
 		<id>1</id>
-		<posX>10</posX>
-		<posY>10</posY>
-		<width>1</width>
-		<height>1</height>
+    <posX>65</posX>
+    <posY>455</posY>
+    <width>120</width>
+    <height>100</height>
 	</control>
 
 </controls>

@@ -43,7 +43,7 @@
 		<posY>100</posY>
 		<width>190</width>
 <!--		<height>272</height> -->
-		<height>356</height>
+		<height>328</height>
 		<texture>panel.png</texture>
 	</control>
 	<control>

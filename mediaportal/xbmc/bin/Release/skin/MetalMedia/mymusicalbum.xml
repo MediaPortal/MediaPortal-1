@@ -48,10 +48,11 @@
 			<description>album name text label</description>
 			<type>label</type>
 			<id>15</id>
-			<posX>475</posX>
-			<posY>50</posY>
-			<label>-</label>
+			<posX>670</posX>
+			<posY>85</posY>
+			<label>132</label>
 			<font>font14</font>
+			<align>right</align>
 		</control>
 		<control>
 			<description>View-As button</description>
@@ -173,6 +174,7 @@
 			<description>listcontrol</description>
 			<type>listcontrol</type>
 			<id>50</id>
+   		<posY>110</posY>
 			<onleft>51</onleft>
 			<onright>51</onright>
 			<onup>2</onup>
@@ -182,6 +184,7 @@
 			<description>album listcontrol</description>
 			<type>listcontrol</type>
 			<id>51</id>
+   		<posY>110</posY>
 			<textXOff>10</textXOff>
 			<textYOff>4</textYOff>
 			<textXOff2>425</textXOff2>
@@ -201,6 +204,7 @@
 			<description>Thumbnail Panel</description>
 			<type>thumbnailpanel</type>
 			<id>52</id>
+   		<posY>93</posY>
 			<onleft>2</onleft>
 			<onright>2</onright>
 			<onup>2</onup>

@@ -113,12 +113,11 @@
 		<onright>10</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
-
 		<textXOff>10</textXOff>
 		<textYOff>4</textYOff>
 		<textXOff2>425</textXOff2>
 		<textYOff2>30</textYOff2>
-		<textXOff3>68</textXOff3>
+		<textXOff3>93</textXOff3>
 		<textYOff3>30</textYOff3>
 		<itemWidth>48</itemWidth>
 		<itemHeight>48</itemHeight>
@@ -127,6 +126,8 @@
 		<textureFocus>list_big_focus.png</textureFocus>
 		<textureNoFocus>list_big_nofocus.png</textureNoFocus>
 		<keepaspectratio>no</keepaspectratio>
+		<PinIconXOff>64</PinIconXOff>
+		<PinIconYOff>28</PinIconYOff>
 	</control>
 	<control>
 		<description>Number of Files Label</description>
@@ -139,13 +140,25 @@
 	</control>
 
 	<control>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>60</posX>
+		<posY>450</posY>
+		<width>130</width>
+		<height>110</height>
+		<texture>panel.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
+	</control>
+	<control>
 		<description>TV preview window</description>
 		<type>videowindow</type>
 		<id>1</id>
-		<posX>10</posX>
-		<posY>10</posY>
-		<width>1</width>
-		<height>1</height>
+    <posX>65</posX>
+    <posY>455</posY>
+    <width>120</width>
+    <height>100</height>
 	</control>
 
 </controls>

@@ -911,7 +911,7 @@
 	</string>
 	<string>
 		<id>298</id>
-		<value>Schuifbalk</value>
+		<value>Voortgang</value>
 	</string>
 	<string>
 		<id>300</id>
@@ -1807,19 +1807,19 @@
 	</string>
 	<string>
 		<id>633</id>
-		<value>starttijd/datum</value>
+		<value>startdatum/tijd</value>
 	</string>
 	<string>
 		<id>634</id>
-		<value>eindtijd/datum</value>
+		<value>einddatum/tijd</value>
 	</string>
 	<string>
 		<id>635</id>
-		<value>tijd</value>
+		<value>Tijd:</value>
 	</string>
 	<string>
 		<id>636</id>
-		<value>datum</value>
+		<value>Datum:</value>
 	</string>
 	<string>
 		<id>637</id>
@@ -2364,9 +2364,18 @@
   	<value>Reset</value>
   </string>
   <string>
-	<id>869</id>
-	<value>NieuwAlarm</value>
+  	<id>869</id>
+  	<value>NieuwAlarm</value>
   </string>
+  <string>
+  	<id>870</id>
+  	<value>Herhalen</value>
+  </string>
+  <string>
+  	<id>871</id>
+  	<value>Computer aanzetten</value>
+  </string>
+
   <!-- End My Alarm Strings -->
   
   <string>
@@ -2539,7 +2548,7 @@
   </string>
   <string>
   	<id>941</id>
-  	<value>Change aspect ratio</value>    <!-- Todo: translate -->
+  	<value>Hoogte/breedte verhouding</value>
   </string>
   <string>
   	<id>942</id>
@@ -2649,6 +2658,14 @@
   <string>
     <id>976</id>
     <value>Volgend hoofdstuk</value>
+  </string>
+  <string>
+  	<id>977</id>
+  	<value>Er is geen TV kaart vrij om</value>
+  </string>
+  <string>
+  	<id>978</id>
+  	<value>dit kanaal te bekijken</value>
   </string>
   <string>
   	<id>1440</id>
@@ -3077,7 +3094,7 @@
   </string>
   <string>
 		<id>2124</id>
-		<value>Cannot Erase: Media is not writable</value>
+		<value>Kan schijf niet leegmaken, medium is niet beschrijfbaar</value>
   </string>
   <string>
 		<id>2125</id>
@@ -3093,11 +3110,12 @@
   </string>
   <string>
 		<id>2128</id>
-		<value>Voorbereiden: estimated time:</value>
+		<value>Voorbereiden: geschatte tijd:</value>
   </string>
   <string>
 		<id>2129</id>
-		<value>Preparing to Burn</value>
+		<value>Voorbereiden voor schrijven</value>
+<!--		<value>Preparing to Burn</value> -->
   </string>
   <string>
 		<id>2130</id>
@@ -3109,8 +3127,52 @@
   </string>
   <string>
 		<id>2132</id>
-		<value>Closing disc: estimated time:</value>
+		<value>Schijf wordt afgesloten: geschatte tijd:</value>
   </string>
+  <string>
+    <id>2133</id>
+    <value>TV Opnamen</value></string>
+  <string>
+    <id>2134</id>
+    <value>Video</value>
+    </string>
+  <string>
+    <id>2135</id>
+    <value>Audio</value>
+    </string>
+  <string>
+    <id>2136</id>
+    <value>Data</value>
+    </string>
+  <string>
+    <id>2137</id>
+    <value>Omzetten</value>
+    </string>
+  <string>
+    <id>2138</id>
+    <value>Monteren</value>
+    </string>
+  <string>
+    <id>2139</id>
+    <value>MP3-CD maken</value>
+    </string>
+  <string>
+    <id>2140</id>
+    <value>MP3-DVD maken</value>
+    </string>
+  <string>
+    <id>2141</id>
+    <value>MPEG2 >> DivX</value>
+    </string>
+  <string>
+    <id>2142</id>
+    <value>MPEG2 >> MPEG4</value>
+    </string>
+  <string>
+    <id>2143</id>
+    <value>Home</value>
+    </string>
+<!--
   <string>
 		<id>2133</id>
 		<value>Kan niet converteren van DVR-MS naar MPG</value>
@@ -3122,7 +3184,7 @@
   <string>
 		<id>2135</id>
 		<value>geïnstalleed</value>
-  </string>
+  </string> -->
 
 	<!-- My Explorer Strings -->
 	<string>
@@ -3750,7 +3812,7 @@
 	</string>
   <string>
     <id>12010</id>
-    <value>Datum/Tiijd</value>
+    <value>Datum/Tijd</value>
   </string>
   <string>
     <id>12011</id>
@@ -3839,7 +3901,11 @@
   <string>
     <id>13011</id>
     <value>Ken Burns snelheid</value>
-  </string>  
+  </string>
+  <string>
+  	<id>13012</id>
+  	<value>Plaatje wordt geladen, even geduld...</value>
+  </string>
   <string>
   	<id>16001</id>
   	<value>Feest mix</value>

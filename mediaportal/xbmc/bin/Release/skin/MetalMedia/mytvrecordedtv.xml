@@ -1,6 +1,6 @@
 <window>
 	<id>603</id>
-	<defaultcontrol>6</defaultcontrol>
+	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 <controls>
 	<control>
@@ -46,42 +46,35 @@
 		<height>272</height>
 		<texture>panel.png</texture>
 	</control>
-	<control>
-		<description>cleanup button</description>
-		<type>button</type>
-		<id>6</id>
-		<posX>55</posX>
+  <control>
+    <description>View-As button</description>
+    <type>button</type>
+    <id>2</id>
+    <posX>55</posX>
     <posY>115</posY>
-		<label>624</label>
-		<onleft>6</onleft>
-		<onright>10</onright>
+    <label>100</label>
 		<onup>1234</onup> <!-- Goto topbar -->
-		<ondown>2</ondown>
-	</control>
-	<control>
-		<description>Sort-by button</description>
-		<type>button</type>
-		<id>2</id>
-		<posX>55</posX>
-		<posY>143</posY>
-		<label>620</label>
-		<onleft>2</onleft>
-		<onright>4</onright>
-		<onup>6</onup>
 		<ondown>5</ondown>
-	</control>
-	<control>
-		<description>Sort Asc</description>
-		<type>togglebutton</type>
-		<id>4</id>
-		<posX>200</posX>
-		<posY>149</posY>
-		<label>-</label>
-		<onleft>2</onleft>
-		<onright>10</onright>
-		<onup>4</onup>
-		<ondown>4</ondown>
-	</control>
+    <onleft>2</onleft>
+    <onright>10</onright>
+  </control>
+  <control>
+    <description>All,Genre,Channel button</description>
+    <type>selectbutton</type>
+    <id>5</id>
+    <posX>55</posX>
+		<posY>143</posY>
+    <label>457</label>
+    <onup>2</onup>
+    <ondown>3</ondown>
+    <onleft>5</onleft>
+    <onright>10</onright>
+    <subitems>
+      <subitem>914</subitem>
+      <subitem>135</subitem>
+      <subitem>915</subitem>
+    </subitems>
+  </control>
 	<control>
 		<description>Panel Split</description>
 		<type>image</type>
@@ -92,31 +85,50 @@
 		<height>2</height>
 		<texture>panel_split.png</texture>
 	</control>
-  <control>
-    <description>All,Genre,Channel button</description>
-    <type>selectbutton</type>
-    <id>5</id>
-    <posX>55</posX>
+	<control>
+		<description>Sort-by button</description>
+		<type>button</type>
+		<id>3</id>
+		<posX>55</posX>
 		<posY>189</posY>
-    <label>457</label>
-    <onleft>5</onleft>
-    <onright>10</onright>
-    <onup>2</onup>
-    <ondown>6</ondown>
-    <subitems>
-      <subitem>914</subitem>
-      <subitem>135</subitem>
-      <subitem>915</subitem>
-    </subitems>
-  </control>
+		<label>620</label>
+		<onup>5</onup>
+		<ondown>6</ondown>
+		<onleft>3</onleft>
+		<onright>4</onright>
+	</control>
+	<control>
+		<description>Sort Asc</description>
+		<type>togglebutton</type>
+		<id>4</id>
+		<posX>200</posX>
+		<posY>195</posY>
+		<label>-</label>
+		<onleft>2</onleft>
+		<onright>10</onright>
+		<onup>4</onup>
+		<ondown>4</ondown>
+	</control>
+	<control>
+		<description>cleanup button</description>
+		<type>button</type>
+		<id>6</id>
+		<posX>55</posX>
+    <posY>217</posY>
+		<label>624</label>
+		<onup>3</onup>
+		<ondown>99</ondown>
+		<onleft>6</onleft>
+		<onright>10</onright>
+	</control>
 
 	<control>
 		<description>scheduler recordings listcontrol</description>
 		<type>listcontrol</type>
 		<id>10</id>
 		<height>350</height>
-		<onleft>6</onleft>
-		<onright>10</onright>
+		<onleft>2</onleft>
+		<onright>11</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
 		<textXOff>10</textXOff>
@@ -145,6 +157,18 @@
 	</control>
 
 	<control>
+		<description>listcontrol</description>
+		<type>listcontrol</type>
+		<id>11</id>
+		<onleft>10</onleft>
+		<onright>11</onright>
+		<onup>2</onup>
+		<ondown>2</ondown>
+<!--		<spinColor>FFFFFFFF</spinColor>
+		<textcolor>FFFFFFFF</textcolor> -->
+	</control>
+
+<!--	<control>
 		<description>Selected recording background</description>
 		<type>image</type>
 		<id>1</id>
@@ -154,8 +178,8 @@
 		<height>100</height>
 		<colordiffuse>ffffffff</colordiffuse>
 		<texture>panel.png</texture>
-	</control>
-	<control>
+	</control> -->
+<!--	<control>
 		<description>Channel Logo</description>
 		<type>image</type>
 		<id>16</id>
@@ -164,30 +188,30 @@
 		<width>90</width>
 		<height>90</height>
 		<texture>#TV.RecordedTV.thumb</texture>
-	</control>
+	</control> -->
 	<control>
 		<description>Program title</description>
 		<type>fadelabel</type>
 		<id>13</id>
-		<posX>350</posX>
-		<posY>445</posY>
+		<posX>250</posX>
+		<posY>440</posY>
 		<width>255</width>
 		<label>#TV.RecordedTV.Title</label>
-		<font>font14</font>
-    <textcolor>ff484848</textcolor>
+		<font>font16</font>
+<!--    <textcolor>ff484848</textcolor> -->
 	</control>
 	<control>
 		<description>Program time</description>
 		<type>label</type>
 		<id>14</id>
 		<posX>655</posX>
-		<posY>445</posY>
+		<posY>414</posY>
 		<label>#TV.RecordedTV.Time</label>
 		<align>right</align>
 		<font>font14</font>
-    <textcolor>ff484848</textcolor>
+<!--    <textcolor>ff484848</textcolor> -->
 	</control>
-	<control>
+<!--	<control>
 		<description>genre</description>
 		<visible>no</visible>
 		<type>label</type>
@@ -198,29 +222,46 @@
 		<align>right</align>
 		<font>font14</font>
     <textcolor>ff484848</textcolor>
-	</control>
+	</control> -->
 	<control>
 		<description>Description1</description>
 		<type>textboxscrollup</type>
 		<id>15</id>
-		<posX>350</posX>
+		<posX>250</posX>
 		<posY>465</posY>
-		<width>295</width>
-		<height>65</height>
+		<width>395</width>
+		<height>70</height>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.RecordedTV.Description</label>
-		<font>font14</font>
-    <textcolor>ff484848</textcolor>
+		<font>font13</font>
+    <textcolor>ffDDDDDD</textcolor>
 	</control>
 
+<!--	<control>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>60</posX>
+		<posY>450</posY>
+		<width>130</width>
+		<height>110</height>
+		<texture>panel.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
+	</control> -->
 	<control>
 		<description>TV preview window</description>
 		<type>videowindow</type>
-		<id>1</id>
-		<posX>10</posX>
-		<posY>10</posY>
-		<width>1</width>
-		<height>1</height>
+		<id>99</id>
+    <posX>65</posX>
+    <posY>455</posY>
+    <width>120</width>
+    <height>100</height>
+		<onup>6</onup>
+		<ondown>2</ondown>
+		<onleft>99</onleft>
+		<onright>10</onright>
+		<action>18</action>
 	</control>
 
 </controls>

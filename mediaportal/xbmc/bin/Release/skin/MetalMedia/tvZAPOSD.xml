@@ -77,7 +77,7 @@
 		<description>End Time Info</description>
 		<type>label</type>
 		<id>102</id>
-		<posX>335</posX>
+		<posX>341</posX>
 		<posY>533</posY>
 		<label>#TV.View.stop</label>
 		<align>right</align>
@@ -90,11 +90,22 @@
 		<type>textbox</type>
 		<width>300</width>
 		<height>60</height>
-		<posX>340</posX>
+		<posX>341</posX>
 		<posY>531</posY>
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FF000000</textcolor>
+	</control>
+
+ 	<control>
+		<description>rec logo</description>
+		<type>image</type>
+		<id>39</id>
+		<posX>664</posX>
+		<posY>519</posY>
+		<texture>tvguide_record_button.png</texture>
+		<colordiffuse>50ffffff</colordiffuse>
+		<visible>yes</visible>
 	</control>
 
 </controls>

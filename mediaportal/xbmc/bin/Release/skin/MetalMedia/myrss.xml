@@ -91,11 +91,11 @@
 		<description>Site Logo</description>
 		<type>image</type>
 		<id>101</id>
-		<posX>72</posX>
+		<posX>81</posX>
 		<posY>225</posY>
 		<width>128</width>
 		<height>128</height>
-		<texture>thumbs\ars_article.png</texture>
+		<texture>-</texture>
 		<keepaspectratio>yes</keepaspectratio>		
 	</control>
 	<control>

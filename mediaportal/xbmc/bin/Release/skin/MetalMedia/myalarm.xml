@@ -60,6 +60,16 @@
 			<onup>3</onup>
 			<ondown>3</ondown>
 		</control>
+  	<control>
+  		<description>Panel Split</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>55</posX>
+  		<posY>180</posY>
+  		<width>180</width>
+  		<height>2</height>
+  		<texture>panel_split.png</texture>
+  	</control>
 
     <control>
     	<description>alarms listcontrol</description>

@@ -787,5 +787,16 @@
 		<texture>-</texture>
 		<visible>yes</visible>
 	</control>
+
+	<control>
+		<description>rec logo</description>
+		<type>image</type>
+		<id>39</id>
+		<posX>663</posX>
+		<posY>484</posY>
+		<texture>tvguide_record_button.png</texture>
+		<colordiffuse>ffffffff</colordiffuse>
+		<visible>yes</visible>
+	</control>
 </controls>
 </window>
