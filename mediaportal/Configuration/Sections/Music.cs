@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 			// autoShuffleCheckBox
 			// 
 			this.autoShuffleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.autoShuffleCheckBox.Location = new System.Drawing.Point(16, 48);
+			this.autoShuffleCheckBox.Location = new System.Drawing.Point(16, 32);
 			this.autoShuffleCheckBox.Name = "autoShuffleCheckBox";
 			this.autoShuffleCheckBox.Size = new System.Drawing.Size(224, 24);
 			this.autoShuffleCheckBox.TabIndex = 1;
@@ -144,11 +144,11 @@ namespace MediaPortal.Configuration.Sections
 			// repeatPlaylistCheckBox
 			// 
 			this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 24);
+			this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 16);
 			this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
 			this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(224, 24);
 			this.repeatPlaylistCheckBox.TabIndex = 0;
-			this.repeatPlaylistCheckBox.Text = "Repeat playlists";
+			this.repeatPlaylistCheckBox.Text = "Repeat/loop music playlists";
 			// 
 			// playlistButton
 			// 
@@ -165,19 +165,19 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.playlistFolderTextBox.Location = new System.Drawing.Point(96, 78);
+			this.playlistFolderTextBox.Location = new System.Drawing.Point(24, 78);
 			this.playlistFolderTextBox.Name = "playlistFolderTextBox";
-			this.playlistFolderTextBox.Size = new System.Drawing.Size(264, 20);
+			this.playlistFolderTextBox.Size = new System.Drawing.Size(336, 20);
 			this.playlistFolderTextBox.TabIndex = 2;
 			this.playlistFolderTextBox.Text = "";
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(15, 81);
+			this.label1.Location = new System.Drawing.Point(15, 64);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(80, 23);
+			this.label1.Size = new System.Drawing.Size(305, 16);
 			this.label1.TabIndex = 10;
-			this.label1.Text = "Playlist folder";
+			this.label1.Text = "Folder where music playlists (.m3u, .b4, .pls) are stored:";
 			// 
 			// mpGroupBox1
 			// 
@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(150, 23);
 			this.label2.TabIndex = 11;
-			this.label2.Text = "Audio renderer";
+			this.label2.Text = "Audio device:";
 			// 
 			// showID3CheckBox
 			// 
@@ -209,7 +209,7 @@ namespace MediaPortal.Configuration.Sections
 			this.showID3CheckBox.Name = "showID3CheckBox";
 			this.showID3CheckBox.Size = new System.Drawing.Size(352, 24);
 			this.showID3CheckBox.TabIndex = 0;
-			this.showID3CheckBox.Text = "Load ID3 from file instead of database (slow but no database needed)";
+			this.showID3CheckBox.Text = "Load ID3 tags from music file every time";
 			this.showID3CheckBox.CheckedChanged += new System.EventHandler(this.showID3CheckBox_CheckedChanged);
 			// 
 			// audioPlayerComboBox
@@ -249,7 +249,7 @@ namespace MediaPortal.Configuration.Sections
 			this.autoPlayCheckBox.Name = "autoPlayCheckBox";
 			this.autoPlayCheckBox.Size = new System.Drawing.Size(264, 24);
 			this.autoPlayCheckBox.TabIndex = 0;
-			this.autoPlayCheckBox.Text = "Autoplay audio CDs";
+			this.autoPlayCheckBox.Text = "Autoplay audio CDs when audio-cd is inserted";
 			// 
 			// Music
 			// 

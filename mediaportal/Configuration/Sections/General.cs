@@ -278,16 +278,16 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.settingsCheckedListBox.Items.AddRange(new object[] {
-																		"Start Media Portal in fullscreen mode",
-																		"Auto hide mouse cursor",
-																		"Show special mouse controls (scrollbars, etc)",
-																		"Hide file extensions for known file types",
-																		"Enable animations",
-																		"Autostart Mediaportal when windows starts",
-																		"Disable Windows XP balloon tips",
-																		"Use mouse left double click as right click",
-																		"Hide taskbar in fullscreen mode",
-																		"MediaPortal always on top"});
+																																"Start Media Portal in fullscreen mode",
+																																"Auto hide mouse cursor when inactive",
+																																"Show special mouse controls (scrollbars, etc)",
+																																"Hide file extensions for known file types",
+																																"Enable animations",
+																																"Autostart Mediaportal when windows starts",
+																																"Disable Windows XP balloon tips",
+																																"Use mouse left double click as right click",
+																																"Hide taskbar in fullscreen mode",
+																																"MediaPortal always on top"});
 			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
 			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
 			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 154);
@@ -316,10 +316,10 @@ namespace MediaPortal.Configuration.Sections
 			// comboDriveNo
 			// 
 			this.comboDriveNo.Items.AddRange(new object[] {
-															  "0",
-															  "1",
-															  "2",
-															  "3"});
+																											"0",
+																											"1",
+																											"2",
+																											"3"});
 			this.comboDriveNo.Location = new System.Drawing.Point(128, 104);
 			this.comboDriveNo.Name = "comboDriveNo";
 			this.comboDriveNo.Size = new System.Drawing.Size(121, 21);
@@ -345,29 +345,29 @@ namespace MediaPortal.Configuration.Sections
 			// comboBoxDrive
 			// 
 			this.comboBoxDrive.Items.AddRange(new object[] {
-															   "D:",
-															   "E:",
-															   "F:",
-															   "G",
-															   "H:",
-															   "I:",
-															   "J:",
-															   "K:",
-															   "L:",
-															   "M:",
-															   "N:",
-															   "O:",
-															   "P:",
-															   "Q:",
-															   "R:",
-															   "S:",
-															   "T:",
-															   "U:",
-															   "V:",
-															   "W:",
-															   "X:",
-															   "Y:",
-															   "Z:"});
+																											 "D:",
+																											 "E:",
+																											 "F:",
+																											 "G",
+																											 "H:",
+																											 "I:",
+																											 "J:",
+																											 "K:",
+																											 "L:",
+																											 "M:",
+																											 "N:",
+																											 "O:",
+																											 "P:",
+																											 "Q:",
+																											 "R:",
+																											 "S:",
+																											 "T:",
+																											 "U:",
+																											 "V:",
+																											 "W:",
+																											 "X:",
+																											 "Y:",
+																											 "Z:"});
 			this.comboBoxDrive.Location = new System.Drawing.Point(128, 80);
 			this.comboBoxDrive.Name = "comboBoxDrive";
 			this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);

@@ -47,6 +47,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.Label label2;
 
 		string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -251,6 +252,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.mpGroupBox1.SuspendLayout();
 			this.mpGroupBox2.SuspendLayout();
@@ -299,11 +301,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 104);
+			this.label1.Location = new System.Drawing.Point(16, 112);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(104, 16);
 			this.label1.TabIndex = 33;
-			this.label1.Text = "Default zoom mode";
+			this.label1.Text = "Default zoom mode:";
 			// 
 			// fileNameButton
 			// 
@@ -339,9 +341,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameLabel.Location = new System.Drawing.Point(16, 56);
 			this.folderNameLabel.Name = "folderNameLabel";
-			this.folderNameLabel.Size = new System.Drawing.Size(80, 23);
+			this.folderNameLabel.Size = new System.Drawing.Size(240, 16);
 			this.folderNameLabel.TabIndex = 0;
-			this.folderNameLabel.Text = "Playlist folder";
+			this.folderNameLabel.Text = "Folder where video playlists are stored:";
 			// 
 			// mpGroupBox1
 			// 
@@ -420,6 +422,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.mpGroupBox2.Controls.Add(this.label2);
 			this.mpGroupBox2.Controls.Add(this.displayTimoutTextBox);
 			this.mpGroupBox2.Controls.Add(this.label5);
 			this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -432,7 +435,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// displayTimoutTextBox
 			// 
-			this.displayTimoutTextBox.Location = new System.Drawing.Point(160, 27);
+			this.displayTimoutTextBox.Location = new System.Drawing.Point(112, 24);
 			this.displayTimoutTextBox.Name = "displayTimoutTextBox";
 			this.displayTimoutTextBox.Size = new System.Drawing.Size(40, 20);
 			this.displayTimoutTextBox.TabIndex = 16;
@@ -440,11 +443,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 30);
+			this.label5.Location = new System.Drawing.Point(16, 24);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(150, 23);
+			this.label5.Size = new System.Drawing.Size(88, 23);
 			this.label5.TabIndex = 0;
-			this.label5.Text = "Display timeout (seconds)";
+			this.label5.Text = "Hide OSD after";
 			// 
 			// groupBox2
 			// 
@@ -458,7 +461,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Size = new System.Drawing.Size(352, 200);
 			this.groupBox2.TabIndex = 5;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "IMDB Database search results";
+			this.groupBox2.Text = "Internet Movie Database (IMDB) settings";
 			// 
 			// cbDatabaseLimit
 			// 
@@ -576,6 +579,13 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage4.Size = new System.Drawing.Size(448, 422);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "OSD";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(160, 24);
+			this.label2.Name = "label2";
+			this.label2.TabIndex = 17;
+			this.label2.Text = "seconds";
 			// 
 			// Movies
 			// 

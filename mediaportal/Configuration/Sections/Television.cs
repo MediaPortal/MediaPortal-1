@@ -245,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Size = new System.Drawing.Size(440, 96);
 			this.groupBox2.TabIndex = 2;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Tuner Settings";
+			this.groupBox2.Text = "TV Tuner Settings";
 			// 
 			// countryComboBox
 			// 

@@ -186,11 +186,11 @@ namespace MediaPortal.Configuration.Sections
 			// externalPlayerCheckBox
 			// 
 			this.externalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 24);
+			this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 16);
 			this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
 			this.externalPlayerCheckBox.Size = new System.Drawing.Size(264, 24);
 			this.externalPlayerCheckBox.TabIndex = 22;
-			this.externalPlayerCheckBox.Text = "Use external player";
+			this.externalPlayerCheckBox.Text = "Use external movie player instead of Mediaportals own internal movie player";
 			this.externalPlayerCheckBox.CheckedChanged += new System.EventHandler(this.externalPlayerCheckBox_CheckedChanged);
 			// 
 			// parametersButton
@@ -248,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(80, 23);
 			this.label1.TabIndex = 16;
-			this.label1.Text = "Filename";
+			this.label1.Text = "Application:";
 			// 
 			// mpGroupBox1
 			// 
@@ -264,7 +264,7 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox1.Size = new System.Drawing.Size(440, 96);
 			this.mpGroupBox1.TabIndex = 1;
 			this.mpGroupBox1.TabStop = false;
-			this.mpGroupBox1.Text = "Renderer Settings";
+			this.mpGroupBox1.Text = "Video/Audio Renderer Settings";
 			// 
 			// videoRendererComboBox
 			// 
@@ -316,7 +316,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.Size = new System.Drawing.Size(440, 96);
 			this.groupBox3.TabIndex = 3;
 			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "MPEG2 Codec Settings";
+			this.groupBox3.Text = "MPEG2 Codec Settings for MPEG-2 playback";
 			// 
 			// audioCodecComboBox
 			// 

@@ -85,14 +85,14 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 128);
+			this.groupBox1.Size = new System.Drawing.Size(440, 200);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Recording Settings";
+			this.groupBox1.Text = "TV Recording Settings";
 			// 
 			// endTextBox
 			// 
-			this.endTextBox.Location = new System.Drawing.Point(168, 84);
+			this.endTextBox.Location = new System.Drawing.Point(104, 120);
 			this.endTextBox.MaxLength = 3;
 			this.endTextBox.Name = "endTextBox";
 			this.endTextBox.Size = new System.Drawing.Size(40, 20);
@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// startTextBox
 			// 
-			this.startTextBox.Location = new System.Drawing.Point(168, 59);
+			this.startTextBox.Location = new System.Drawing.Point(104, 88);
 			this.startTextBox.MaxLength = 3;
 			this.startTextBox.Name = "startTextBox";
 			this.startTextBox.Size = new System.Drawing.Size(40, 20);
@@ -114,7 +114,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.browseButton.Location = new System.Drawing.Point(367, 27);
+			this.browseButton.Location = new System.Drawing.Point(304, 48);
 			this.browseButton.Name = "browseButton";
 			this.browseButton.Size = new System.Drawing.Size(56, 20);
 			this.browseButton.TabIndex = 1;
@@ -125,7 +125,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderNameTextBox.Location = new System.Drawing.Point(97, 27);
+			this.folderNameTextBox.Location = new System.Drawing.Point(24, 48);
 			this.folderNameTextBox.Name = "folderNameTextBox";
 			this.folderNameTextBox.Size = new System.Drawing.Size(264, 20);
 			this.folderNameTextBox.TabIndex = 0;
@@ -135,21 +135,21 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameLabel.Location = new System.Drawing.Point(16, 30);
 			this.folderNameLabel.Name = "folderNameLabel";
-			this.folderNameLabel.Size = new System.Drawing.Size(80, 23);
+			this.folderNameLabel.Size = new System.Drawing.Size(232, 18);
 			this.folderNameLabel.TabIndex = 14;
-			this.folderNameLabel.Text = "Storage path";
+			this.folderNameLabel.Text = "Folder where tv recordings will be saved:";
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(16, 87);
+			this.label4.Location = new System.Drawing.Point(16, 120);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(150, 23);
+			this.label4.Size = new System.Drawing.Size(88, 23);
 			this.label4.TabIndex = 8;
 			this.label4.Text = "Stop recording";
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(211, 87);
+			this.label3.Location = new System.Drawing.Point(144, 120);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(208, 23);
 			this.label3.TabIndex = 11;
@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(212, 62);
+			this.label2.Location = new System.Drawing.Point(144, 88);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(207, 23);
 			this.label2.TabIndex = 10;
@@ -165,9 +165,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 62);
+			this.label1.Location = new System.Drawing.Point(16, 88);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(150, 23);
+			this.label1.Size = new System.Drawing.Size(88, 16);
 			this.label1.TabIndex = 9;
 			this.label1.Text = "Start recording";
 			// 

@@ -269,8 +269,9 @@ namespace MediaPortal.Configuration.Sections
 			this.externalRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.externalRadioButton.Location = new System.Drawing.Point(16, 192);
 			this.externalRadioButton.Name = "externalRadioButton";
+			this.externalRadioButton.Size = new System.Drawing.Size(144, 24);
 			this.externalRadioButton.TabIndex = 6;
-			this.externalRadioButton.Text = "External radio";
+			this.externalRadioButton.Text = "Use External radio tuner";
 			this.externalRadioButton.CheckedChanged += new System.EventHandler(this.externalRadioButton_CheckedChanged);
 			// 
 			// inputComboBox
@@ -310,8 +311,9 @@ namespace MediaPortal.Configuration.Sections
 			this.internalRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.internalRadioButton.Location = new System.Drawing.Point(16, 24);
 			this.internalRadioButton.Name = "internalRadioButton";
+			this.internalRadioButton.Size = new System.Drawing.Size(144, 24);
 			this.internalRadioButton.TabIndex = 0;
-			this.internalRadioButton.Text = "Internal radio";
+			this.internalRadioButton.Text = "Use Internal radio tuner";
 			this.internalRadioButton.CheckedChanged += new System.EventHandler(this.internalRadioButton_CheckedChanged);
 			// 
 			// label2
@@ -320,7 +322,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(150, 23);
 			this.label2.TabIndex = 1;
-			this.label2.Text = "Radio device";
+			this.label2.Text = "Radio tuner card";
 			// 
 			// groupBox2
 			// 
@@ -341,7 +343,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.browseFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.browseFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.browseFolderButton.Location = new System.Drawing.Point(369, 27);
+			this.browseFolderButton.Location = new System.Drawing.Point(360, 40);
 			this.browseFolderButton.Name = "browseFolderButton";
 			this.browseFolderButton.Size = new System.Drawing.Size(56, 20);
 			this.browseFolderButton.TabIndex = 1;
@@ -352,19 +354,19 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderNameTextBox.Location = new System.Drawing.Point(96, 27);
+			this.folderNameTextBox.Location = new System.Drawing.Point(40, 40);
 			this.folderNameTextBox.Name = "folderNameTextBox";
-			this.folderNameTextBox.Size = new System.Drawing.Size(265, 20);
+			this.folderNameTextBox.Size = new System.Drawing.Size(304, 20);
 			this.folderNameTextBox.TabIndex = 0;
 			this.folderNameTextBox.Text = "";
 			// 
 			// folderNameLabel
 			// 
-			this.folderNameLabel.Location = new System.Drawing.Point(16, 30);
+			this.folderNameLabel.Location = new System.Drawing.Point(16, 16);
 			this.folderNameLabel.Name = "folderNameLabel";
-			this.folderNameLabel.Size = new System.Drawing.Size(80, 23);
+			this.folderNameLabel.Size = new System.Drawing.Size(240, 16);
 			this.folderNameLabel.TabIndex = 11;
-			this.folderNameLabel.Text = "Playlist folder";
+			this.folderNameLabel.Text = "Folder where internet streams are stored:";
 			// 
 			// Radio
 			// 
