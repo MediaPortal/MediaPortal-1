@@ -1,3 +1,5 @@
+10-08-2004  general     : fixed : VMR9 tearing solved in fullscreen mode
+10-08-2004  my video    : fixed : FF/RW/PAUSE icons not visible when OSD is visible
 10-08-2004  setup       : fixed : Added pin code support to shares.
 10-08-2004  setup       : fixed : Updated Program Guide with patch from ashtree.
 
