@@ -437,6 +437,7 @@ namespace MediaPortal.GUI.Library
 				Format fmt=Format.A8R8G8B8;
 				if (IsTemporary(strFileName))
 				{
+					fmt=Format.Dxt3;
 					iMaxWidth=MAX_THUMB_WIDTH;
 					iMaxHeight=MAX_THUMB_HEIGHT;
 					imgSrc=Image.FromFile(strFileName);   
@@ -468,25 +469,50 @@ namespace MediaPortal.GUI.Library
 							ref info2);
 						iWidth=info2.Width;
 						iHeight=info2.Height;
+					
+						Log.Write("Texturemanager loaded temporay:{0} {1}x{2} format:{3}",
+							strFileName,iWidth,iHeight,info2.Format);
 					}
 				}
 				else
 				{
-					fmt=GetCompression(strFileName);
+					//fmt=GetCompression(strFileName);
+					fmt=Direct3D.Format.Dxt3;
 					ImageInformation info2 = new ImageInformation();
 					texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-						strFileName,
-						0,0,//width/height
-						1,//mipslevels
-						0,//Usage.Dynamic,
-						fmt,
-						Pool.Managed,
-						Filter.None,
-						Filter.None,
-						(int)lColorKey,
-						ref info2);
+																					strFileName,
+																					0,0,//width/height
+																					1,//mipslevels
+																					0,//Usage.Dynamic,
+																					fmt,
+																					Pool.Managed,
+																					Filter.None,
+																					Filter.None,
+																					(int)lColorKey,
+																					ref info2);
 					iWidth=info2.Width;
 					iHeight=info2.Height;
+					if (iWidth > (GUIGraphicsContext.Width/2) ||
+						iHeight> (GUIGraphicsContext.Height/2) )
+					{
+						texture.Dispose();
+						fmt=Direct3D.Format.A8R8G8B8;
+						texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+							strFileName,
+							0,0,//width/height
+							1,//mipslevels
+							0,//Usage.Dynamic,
+							fmt,
+							Pool.Managed,
+							Filter.None,
+							Filter.None,
+							(int)lColorKey,
+							ref info2);
+						iWidth=info2.Width;
+						iHeight=info2.Height;
+					}
+					Log.Write("Texturemanager loaded:{0} {1}x{2} format:{3}",
+												strFileName,iWidth,iHeight,info2.Format);
 					
 				}
       }
