@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  24-06-2004  general     : added : skin engine:added option to specify text (x,y) position in button
   24-06-2004  general     : fixed : skin engine:fixed some scaling bugs for large displays (1280x1024 and higher)
   24-06-2004  home        : fixed : home now stretches back panel so the auto-added plugins buttons show nicely
   24-06-2004  my video    : fixed : hangups when VMR9 was enabled and entering my TV or stopping the movie

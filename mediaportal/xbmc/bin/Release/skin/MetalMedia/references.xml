@@ -32,6 +32,8 @@
 		<posY>200</posY>
 		<width>180</width>
 		<height>28</height>
+		<textXOff>10</textXOff>
+		<textYOff>2</textYOff>
 		<textureFocus>button_focus.png</textureFocus>
 		<textureNoFocus>button_nofocus.png</textureNoFocus>
 		<font>font14</font>
@@ -282,6 +284,8 @@
 		<height>28</height>
 		<label>457</label>
 		<font>font14</font>
+		<textXOff>15</textXOff>
+		<textYOff>2</textYOff>
 		<textureFocus>button_focus.png</textureFocus>
 		<textureNoFocus>button_nofocus.png</textureNoFocus>
 		<texturebg>button_background.png</texturebg>
