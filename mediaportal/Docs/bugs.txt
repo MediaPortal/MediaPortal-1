@@ -4,9 +4,7 @@ Cosmetic bugs:
   05-08-2004 GUI        : mousescrollbars are too long (should be as long as the list/icon view WITHOUT page controls, and in iconview way too far to the left letting it go offscreen
   13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
   13-07-2004 general    : The cancel buttons dont work
-  13-07-2004 general    : scrolling : base on time instead of frame
   12-07-2004 my tv      : home : current program title goes out of box if its 2 long (zipperzip)
-  29-06-2004 general    : scroll speed 9 / 10 are the same
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:

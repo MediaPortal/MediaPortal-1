@@ -1,14 +1,10 @@
 todo for 0.1:
- - tvprogressbar
- - bonkalord's setup
  - A way to solve the OSD look on vmr7 when it is based on transparent graphics.
- - auto launch movie,dvd,audiocd (add an option for non dialog version)
  - dialog saying database is empty when you wanna change the view
  - my tv: show fullscreen or windowed tv option
  - remember view by icon/list preference based per folder
  - make album art position configurable 
  - OSD mouse support
- - foobar integration (depends on int20h)
 --------------------------------------------------------------------------------------------------------------     
 	- remember 'fullscreen tv' state when entering/leaving my tv
 	- new preview.png for both skins

@@ -1,3 +1,6 @@
+17-08-2004  my tv       : added : tvprogressbar
+17-08-2004  general     : fixed : scrolling : base on time instead of frame
+17-08-2004  general     : fixed : scroll speed 9 / 10 are the same
 17-08-2004  autoplay    : fixed : MP refused to start because of double loading of the Ripper dll.
 
 16-08-2004  skinengine  : added : listcontrol added properties <textvisible1>yes|no</textvisible1> (and same for textvisible2 and textvisible3)
