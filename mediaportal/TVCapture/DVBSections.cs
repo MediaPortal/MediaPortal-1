@@ -2352,8 +2352,15 @@ namespace MediaPortal.TV.Recording
 			m_sectionsList=new ArrayList();
 			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
 			if(flag==false)
+			{
+				
+				Log.Write("DVBSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
 				return false;
-
+			}
+			if (sectLast<=0)
+			{
+				Log.Write("DVBSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+			}
 			for(int n=0;n<sectLast;n++)
 			{
 				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);

@@ -45,7 +45,7 @@ namespace MediaPortal.TV.Recording
 
 			currentState=State.ScanFrequencies;
 			frequencies.Clear();
-			currentFrequencyIndex=0;
+			currentFrequencyIndex=-1;
 			String countryCode = String.Empty;
 
 			Log.Write("Opening dvbt.xml");
@@ -133,10 +133,12 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 			
-			float percent = ((float)currentFrequencyIndex) / ((float)frequencies.Count);
+			int currentFreq=currentFrequencyIndex;
+			if (currentFrequencyIndex<0) currentFreq=0;
+			float percent = ((float)currentFreq) / ((float)frequencies.Count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			int[] tmp = frequencies[currentFrequencyIndex] as int[];
+			int[] tmp = frequencies[currentFreq] as int[];
 			//Log.Write("FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
 			float frequency = tunedFrequency;
 			frequency /=1000;

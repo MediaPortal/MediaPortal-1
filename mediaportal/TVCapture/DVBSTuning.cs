@@ -31,7 +31,7 @@ namespace MediaPortal.TV.Recording
 		}
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
-		int                                 currentIndex=0;
+		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
 		TPList[]														transp=new TPList[200];
@@ -48,7 +48,7 @@ namespace MediaPortal.TV.Recording
 			callback=statusCallback;
 
 			currentState=State.ScanStart;
-			currentIndex=0;
+			currentIndex=-1;
 
 			OpenFileDialog ofd =new OpenFileDialog();
 			ofd.Filter = "Transponder-Listings (*.tpl)|*.tpl";
@@ -141,14 +141,16 @@ namespace MediaPortal.TV.Recording
 				callback.OnEnded();
 				return;
 			}
+			int index=currentIndex;
+			if (index<0) index=0;
 			
-			float percent = ((float)currentIndex) / ((float)count);
+			float percent = ((float)index) / ((float)count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			TPList transponder=transp[currentIndex];
+			TPList transponder=transp[index];
 			string chanDesc=String.Format("freq:{0} Khz, Pol:{1} SR:{2}",
 						transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
-			string description=String.Format("Transponder:{0}/{1} {2}", currentIndex,count,chanDesc);
+			string description=String.Format("Transponder:{0}/{1} {2}", index,count,chanDesc);
 
 			if (currentState==State.ScanTransponders)
 			{

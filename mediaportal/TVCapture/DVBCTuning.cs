@@ -32,7 +32,7 @@ namespace MediaPortal.TV.Recording
 		}
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
-		int                                 currentIndex=0;
+		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
 		DVBCList[]													dvbcChannels=new DVBCList[200];
@@ -49,7 +49,7 @@ namespace MediaPortal.TV.Recording
 			callback=statusCallback;
 
 			currentState=State.ScanStart;
-			currentIndex=0;
+			currentIndex=-1;
 
 			OpenFileDialog ofd =new OpenFileDialog();
 			ofd.Filter = "DVBC-Listings (*.dvbc)|*.dvbc";
@@ -154,12 +154,15 @@ namespace MediaPortal.TV.Recording
 				callback.OnEnded();
 				return;
 			}
-			float percent = ((float)currentIndex) / ((float)count);
+
+			int index=currentIndex;
+			if (index<0) index=0;
+			float percent = ((float)index) / ((float)count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			DVBCList dvbcChan=dvbcChannels[currentIndex];
+			DVBCList dvbcChan=dvbcChannels[index];
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
-			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,count,chanDesc);
+			string description=String.Format("Channel:{0}/{1} {2}", index,count,chanDesc);
 
 			if (currentState==State.ScanFrequencies)
 			{
