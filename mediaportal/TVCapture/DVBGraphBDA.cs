@@ -2357,9 +2357,9 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA: StoreChannels()");
 			DVBSections sections = new DVBSections();
 			DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
+			Log.Write("DVBGraphBDA: found {0} channels", transp.channels.Count);
 			for (int i=0; i < transp.channels.Count;++i)
 			{
-				Log.Write("DVBGraphBDA: found {0} channels", transp.channels.Count);
 				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
 				if (info.service_name == null || info.service_provider_name == null ) 
 				{
@@ -2368,8 +2368,7 @@ namespace MediaPortal.TV.Recording
 				}
 				info.service_name=info.service_name.Trim();
 				info.service_provider_name=info.service_provider_name.Trim();
-				if (info.service_name==String.Empty ||
-					info.service_provider_name==String.Empty) 
+				if (info.service_name==String.Empty || info.service_provider_name==String.Empty) 
 				{
 					Log.Write("DVBGraphBDA: skip channel:#{0} because it has not details", i);
 					continue;
@@ -2380,13 +2379,16 @@ namespace MediaPortal.TV.Recording
 				info.freq=currentTuningObject.carrierFrequency;
 
 				//check if this channel has audio/video streams
-				for (int pids =0; pids < info.pid_list.Count;pids++)
+				if (info.pid_list!=null)
 				{
-					DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
-					if (data.isVideo)
-						hasVideo=true;
-					if (data.isAudio)
-						hasAudio=true;
+					for (int pids =0; pids < info.pid_list.Count;pids++)
+					{
+						DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
+						if (data.isVideo)
+							hasVideo=true;
+						if (data.isAudio)
+							hasAudio=true;
+					}
 				}
 				Log.Write("DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8}", 
 										info.service_provider_name,
