@@ -535,8 +535,8 @@ namespace MediaPortal.GUI.TV
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             if (null == dlgYesNo) return false;
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-            dlgYesNo.SetLine(1, title);
-            dlgYesNo.SetLine(2, "");
+						dlgYesNo.SetLine(1, title);
+						dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936)+Utils.SecondsToHMSString(stoptime) );
             dlgYesNo.SetDefaultToYes(true);
             dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
             

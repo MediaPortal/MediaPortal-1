@@ -310,7 +310,7 @@ namespace MediaPortal.GUI.TV
 						}
 						else
 						{
-							OnRecord();
+							ShowContextMenu();
 						}
 					}
 					else
@@ -377,7 +377,7 @@ namespace MediaPortal.GUI.TV
 					//break;
 				case Action.ActionType.ACTION_SHOW_INFO:
 				{
-					Import();
+					ShowContextMenu();
 				}
 					break;
 				case Action.ActionType.ACTION_INCREASE_TIMEBLOCK:
@@ -792,13 +792,16 @@ namespace MediaPortal.GUI.TV
 			}
 			else
 			{
+				int chan=m_iChannelOffset ;
 				for (int iChannel=0; iChannel <m_iChannels; iChannel++)
 				{
-					if (iChannel+m_iChannelOffset < m_channels.Count)
+					if (chan < m_channels.Count)
 					{
-						TVChannel channel=(TVChannel)m_channels[iChannel+m_iChannelOffset];
+						TVChannel channel=(TVChannel)m_channels[chan];
 						RenderChannel(iChannel,channel,iStart,iEnd);
 					}
+					chan++;
+					if (chan >= m_channels.Count) chan=0;
 				}
 			}
 			UpdateVerticalScrollbar();
@@ -809,7 +812,9 @@ namespace MediaPortal.GUI.TV
 			if (m_channels.Count==0) return;
 			if (m_iCursorX==0)
 			{
-				TVChannel chan=(TVChannel)m_channels[m_iCursorY+m_iChannelOffset];
+				int channel=m_iCursorY+m_iChannelOffset;
+				while (channel >= m_channels.Count) channel -=m_channels.Count;
+				TVChannel chan=(TVChannel)m_channels[channel];
 				string strChannel=chan.Name;
 				string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,strChannel);
 				GUIPropertyManager.SetProperty("#TV.Guide.Title","");
@@ -1334,17 +1339,15 @@ namespace MediaPortal.GUI.TV
 
 			if (m_iCursorX==0)
 			{
-				if (m_iCursorY+1 < m_iChannels && m_iCursorY+1+m_iChannelOffset < m_channels.Count )
+				if (m_iCursorY+1 < m_iChannels)
 				{
 					m_iCursorY++;
 				}
 				else
 				{
-          if (m_iChannelOffset+5 < m_channels.Count) 
-          {
-            m_iChannelOffset++;
-            Update();
-          }
+					m_iChannelOffset++;
+					if ( m_iChannelOffset>0 && m_iChannelOffset >= m_channels.Count)  m_iChannelOffset-=m_channels.Count;
+          Update();
 				}
 				SetFocus();
 				SetProperties();
@@ -1363,18 +1366,15 @@ namespace MediaPortal.GUI.TV
 			bool bOK=false;
 			while (!bOK)
 			{
-				if (m_iCursorY+1 < m_iChannels && m_iCursorY+1+m_iChannelOffset < m_channels.Count )
+				if (m_iCursorY+1 < m_iChannels )
 				{
 					m_iCursorY++;
 				}
 				else
 				{
-					if (m_iChannelOffset+5 < m_channels.Count) 
-					{
-						m_iChannelOffset++;
-						Update();
-					}
-					else break;
+					m_iChannelOffset++;
+					if (m_iChannelOffset>0 && m_iChannelOffset>=m_channels.Count)  m_iChannelOffset -=m_channels.Count;
+					Update();
 				}
 
 				for (int x=1; x < 10; x++)
@@ -1855,6 +1855,56 @@ namespace MediaPortal.GUI.TV
 				vertLine.Render();
 		}
 
+		void ShowContextMenu()
+		{
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				
+				dlg.AddLocalizedString( 937);// Reload tvguide
+				if (m_strCurrentChannel.Length>0 && Recorder.View)
+					dlg.AddLocalizedString( 938);// View this channel
+
+				dlg.AddLocalizedString( 939);// Switch mode
+				if (m_currentProgram!=null && m_strCurrentChannel.Length>0 && m_strCurrentTitle.Length>0)
+				{
+					dlg.AddLocalizedString( 264);// Record
+				}
+				dlg.DoModal( GetID);
+				if (dlg.SelectedLabel==-1) return;
+				switch (dlg.SelectedId)
+				{
+					case 937: //import tvguide
+						Import();
+						Update();
+						SetFocus();
+					break;
+					
+					case 938: // view channel
+						int card=GUITVHome.GetCurrentCard();
+						if (Recorder.View)
+						{  
+							Recorder.StartViewing(card,m_strCurrentChannel,Recorder.IsCardViewing(card),Recorder.IsCardTimeShifting(card) );
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							return;
+						}
+						break;
+
+					case 939: // switch mode
+						m_bSingleChannel=!m_bSingleChannel;							
+						m_iSingleChannelOffset=0;                            
+						Update();
+						SetFocus();
+						break;
+					
+					case 264: // record
+						OnRecord();
+						break;
+				}
+			}
+		}
 		void OnRecord()
 		{
 			if (m_currentProgram==null) return;
@@ -1865,7 +1915,6 @@ namespace MediaPortal.GUI.TV
 			{
 				dlg.Reset();
 				dlg.SetHeading(GUILocalizeStrings.Get(616));//616=Select Recording type
-				
 				//610=None
 				//611=Record once
 				//612=Record everytime on this channel
@@ -2073,6 +2122,8 @@ namespace MediaPortal.GUI.TV
 		}
 		private void UpdateVerticalScrollbar()
 		{
+			int channel=m_iCursorY+m_iChannelOffset;
+			while (channel>0 && channel >= m_channels.Count) channel -=m_channels.Count;
 			float current=(float)(m_iCursorY+m_iChannelOffset);
 			float total=(float)m_channels.Count;
 

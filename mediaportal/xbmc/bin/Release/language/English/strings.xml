@@ -2443,6 +2443,22 @@
 	<id>935</id>
 	<value>Show: Rating</value>
 </string>
+<string>
+	<id>936</id>
+	<value>Resume from:</value>
+</string>
+<string>
+	<id>937</id>
+	<value>Import TV Guide</value>
+</string>
+<string>
+	<id>938</id>
+	<value>View this channel</value>
+</string>
+<string>
+	<id>939</id>
+	<value>Switch mode</value>
+</string>
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>
