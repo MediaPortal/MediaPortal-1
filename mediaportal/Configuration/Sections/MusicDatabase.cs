@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(176, 23);
       this.label1.TabIndex = 1;
-      this.label1.Text = "Music shares";
+      this.label1.Text = "Music Folders";
       // 
       // groupBox2
       // 
@@ -324,7 +324,7 @@ namespace MediaPortal.Configuration.Sections
 
           case RebuildState.Counting:
           {
-            SetStatus("Counting files in selected shares");
+            SetStatus("Counting files in selected folders");
 
             //
             // Count files

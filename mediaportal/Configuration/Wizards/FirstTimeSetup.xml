@@ -30,31 +30,31 @@
          <information>Please check desired plugins you would like to be loaded automatically when MediaPortal starts.</information>
       </section>
       <section>
-         <description>Picture Shares</description>
+         <description>Picture Folders</description>
          <name>PictureShares</name>
-         <topic>Picture Shares</topic>
-         <information>Add Picture shares here. By checking one of the shares you will make that share the default share, which will be automatically shown when you enter My Pictures.</information>
+         <topic>Picture Folders</topic>
+         <information>Add Picture folders here. By checking one of the folders you will make that folder the default folder, which will be automatically shown when you enter My Pictures.</information>
          <dependency>Wizard_SelectPlugins.Plugin.MyPictures</dependency>
       </section>
       <section>
-         <description>Movie Shares</description>
+         <description>Movie Folders</description>
          <name>MovieShares</name>
-         <topic>Movie Shares</topic>
-         <information>Add Movie shares here. By checking one of the shares you will make that share the default share, which will be automatically shown when you enter My Movies.</information>
+         <topic>Movie Folders</topic>
+         <information>Add Movie folders here. By checking one of the folders you will make that folder the default folder, which will be automatically shown when you enter My Movies.</information>
          <dependency>Wizard_SelectPlugins.Plugin.MyMovies</dependency>
       </section>
       <section>
-         <description>Music Shares</description>
+         <description>Music Folders</description>
          <name>MusicShares</name>
-         <topic>Music Shares</topic>
-         <information>Add Music shares here. By checking one of the shares you will make that share the default share, which will be automatically shown when you enter My Music.</information>
+         <topic>Music Folders</topic>
+         <information>Add Music folders here. By checking one of the folders you will make that folder the default folder, which will be automatically shown when you enter My Music.</information>
          <dependency>Wizard_SelectPlugins.Plugin.MyMusic</dependency>
       </section>
       <section>
          <description/>
          <name>MusicDatabase</name>
          <topic>Music Database</topic>
-         <information>By pressing the Update-button below, the wizard will scan for and extract music tag information from music files found in the marked shares. The tag information will be stored in MediaPortals music database, this will greatly speed up the usage of the plugin.</information>
+         <information>By pressing the Update-button below, the wizard will scan for and extract music tag information from music files found in the marked folders. The tag information will be stored in MediaPortals music database, this will greatly speed up the usage of the plugin.</information>
          <dependency>MusicShares.Shares.Available</dependency>
       </section>
       <section>

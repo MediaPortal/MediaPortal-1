@@ -10,7 +10,7 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private System.ComponentModel.IContainer components = null;
 
-		public PictureShares() : this("Picture Shares")
+		public PictureShares() : this("Picture Folders")
 		{
 		}
 

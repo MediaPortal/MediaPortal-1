@@ -11,7 +11,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private System.ComponentModel.IContainer components = null;
 
-		public MovieShares() : this("Movie Shares")
+		public MovieShares() : this("Movie Folders")
 		{
 		}
 

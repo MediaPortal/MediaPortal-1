@@ -481,7 +481,84 @@ namespace MediaPortal.Configuration
 		{
 			applyButton_Click(sender, e);
 
+			if ( !AllFilledIn() ) return;
 			this.Close();
+		}
+		bool AllFilledIn()
+		{
+			int MaximumShares = 20;
+			//Do we have 1 or more music,picture,video shares?
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
+				if (playlistFolder==String.Empty)
+				{
+					MessageBox.Show("No music playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return false;
+				}
+				playlistFolder = xmlreader.GetValueAsString("movies", "playlists", "");
+				if (playlistFolder==String.Empty)
+				{
+					MessageBox.Show("No movie playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return false;
+				}
+				playlistFolder = xmlreader.GetValueAsString("capture", "recordingpath", "");
+				if (playlistFolder==String.Empty)
+				{
+					MessageBox.Show("No TV recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return false;
+				}
+				bool added=false;
+				for(int index = 0; index < MaximumShares; index++)
+				{
+					string sharePath = String.Format("sharepath{0}", index);
+					string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
+					if (!Util.Utils.IsDVD(sharePathData) && sharePathData!=String.Empty)
+					{
+						added=true;
+					}
+				}
+				if (!added)
+				{
+					MessageBox.Show("No music folders specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return false;
+				}
+
+				added=false;
+				for(int index = 0; index < MaximumShares; index++)
+				{
+					string sharePath = String.Format("sharepath{0}", index);
+					string shareNameData = xmlreader.GetValueAsString("movies", sharePath, "");
+					if (!Util.Utils.IsDVD(shareNameData) && shareNameData!=String.Empty)
+					{
+						added=true;
+					}
+				}
+				if (!added)
+				{
+					MessageBox.Show("No movie folders specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return false;
+				}
+
+				added=false;
+				for(int index = 0; index < MaximumShares; index++)
+				{
+					string sharePath = String.Format("sharepath{0}", index);
+					string shareNameData = xmlreader.GetValueAsString("pictures", sharePath, "");
+					if (!Util.Utils.IsDVD(shareNameData) && shareNameData!=String.Empty)
+					{
+						added=true;
+					}
+				}
+				if (!added)
+				{
+					MessageBox.Show("No pictures folders specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					return false;
+				}
+
+
+			}
+			return true;
 		}
 
 		private void applyButton_Click(object sender, System.EventArgs e)

@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Size = new System.Drawing.Size(384, 352);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Shares";
+      this.groupBox1.Text = "Folders";
       // 
       // deleteButton
       // 

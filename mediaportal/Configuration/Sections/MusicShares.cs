@@ -10,7 +10,7 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private System.ComponentModel.IContainer components = null;
 
-		public MusicShares() : this("Music Shares")
+		public MusicShares() : this("Music Folders")
 		{
 		}
 
