@@ -80,6 +80,7 @@ namespace MediaPortal.GUI.Music
       if (null!=m_pParentWindow) 
         m_pParentWindow.Render();
 
+			GUIFontManager.Present();
       // render this dialog box
       base.Render();
     }
