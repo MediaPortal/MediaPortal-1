@@ -257,6 +257,10 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+      {
+        ShowContextMenu();
+      }
       base.OnAction(action);
     }
 
@@ -948,6 +952,39 @@ namespace MediaPortal.GUI.Music
       }
     }
     
+    void ShowContextMenu()
+    {
+      GUIListItem item=GetSelectedItem();
+      int itemNo=GetSelectedItemNo();
+      if (item==null) return;
+
+      GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+      if (dlg==null) return;
+      dlg.Reset();
+      dlg.SetHeading(924); // menu
+
+      dlg.Add( GUILocalizeStrings.Get(208)); //play
+      dlg.Add( GUILocalizeStrings.Get(926)); //Queue
+      dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
+
+      dlg.DoModal( GetID);
+      if (dlg.SelectedLabel==-1) return;
+      switch (dlg.SelectedLabel)
+      {
+        case 0: // play
+          OnClick(itemNo);	
+          break;
+					
+        case 1: // add to playlist
+          OnQueueItem(itemNo);	
+          break;
+					
+        case 2: // show playlist
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+          break;
+      }
+    }
+
     void OnQueueGenre(string strGenre)
     {
       if (strGenre==null) return;
