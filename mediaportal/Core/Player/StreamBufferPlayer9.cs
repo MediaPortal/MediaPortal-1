@@ -293,5 +293,6 @@ namespace MediaPortal.Player
         m_allocator.Repaint();
       }
     }
+
   }
 }

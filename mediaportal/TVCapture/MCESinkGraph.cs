@@ -32,6 +32,8 @@ namespace MediaPortal.TV.Recording
     public override bool CreateGraph()
     {
         if (m_graphState!=State.None) return false;
+        GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+
         m_iPrevChannel=-1;
         m_bFirstTune=true;
         DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph()");

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
@@ -74,6 +75,8 @@ namespace MediaPortal.TV.Recording
     int                     m_iPrevChannel=-1;
     bool                    m_bRecordWMV = false;
     bool                    m_bIsUsingMPEG = false;
+    protected IAMVideoProcAmp         m_videoprocamp=null;
+    protected VideoProcAmp            m_videoAmp=null;
 
     //streambuffer interfaces
     IPin                      m_pinAudioOut=null;
@@ -254,6 +257,11 @@ namespace MediaPortal.TV.Recording
       m_IAMAnalogVideoDecoder = m_filterCaptureVideo as IAMAnalogVideoDecoder;
 
       m_graphState = State.Created;
+      m_videoprocamp=m_filterCaptureVideo as IAMVideoProcAmp;
+      if (m_videoprocamp!=null)
+      {
+        m_videoAmp=new VideoProcAmp(m_videoprocamp);
+      }
 
       return true;
     }
@@ -272,6 +280,14 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:DeleteGraph()");
       StopRecording();
       StopViewing();
+
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+
+      if (m_videoprocamp!=null)
+      {
+        m_videoAmp=null;
+        m_videoprocamp=null;
+      }
 
       if (m_recControl!=null) 
       {
@@ -1469,5 +1485,26 @@ namespace MediaPortal.TV.Recording
       return (VideoIsMPEG==true && AudioIsMPEG==true);
     }
 
+    protected void OnGammaContrastBrightnessChanged()
+    {
+      if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return ;
+      if (m_videoprocamp==null) return;
+      if (m_videoAmp==null) return;
+
+      
+      //set the changed values
+      m_videoAmp.Brightness = GUIGraphicsContext.Brightness;
+      m_videoAmp.Contrast = GUIGraphicsContext.Contrast;
+      m_videoAmp.Gamma = GUIGraphicsContext.Gamma;
+      m_videoAmp.Saturation=GUIGraphicsContext.Saturation;
+      m_videoAmp.Sharpness=GUIGraphicsContext.Sharpness;
+
+      //get back the changed values
+      GUIGraphicsContext.Brightness= m_videoAmp.Brightness  ;
+      GUIGraphicsContext.Contrast  = m_videoAmp.Contrast ;
+      GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
+      GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
+      GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
+    }
   }
 }

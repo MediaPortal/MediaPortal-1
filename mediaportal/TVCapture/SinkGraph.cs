@@ -5,6 +5,7 @@ using DShowNET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
+using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
@@ -46,6 +47,8 @@ namespace MediaPortal.TV.Recording
     protected bool                    m_bFirstTune=true;
     protected Size                    m_FrameSize;
     protected double                  m_FrameRate;
+    protected IAMVideoProcAmp         m_videoprocamp=null;
+    protected VideoProcAmp            m_videoAmp=null;
 
     /// <summary>
     /// Constructor
@@ -86,6 +89,7 @@ namespace MediaPortal.TV.Recording
     public virtual bool CreateGraph()
     {
       if (m_graphState!=State.None) return false;
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
       m_bFirstTune=true;
       DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
@@ -183,6 +187,11 @@ namespace MediaPortal.TV.Recording
       // Retreive the media control interface (for starting/stopping graph)
       ConnectVideoCaptureToMPEG2Demuxer();
       m_mpeg2Demux.CreateMappings();
+      m_videoprocamp=m_captureFilter as IAMVideoProcAmp;
+      if (m_videoprocamp!=null)
+      {
+        m_videoAmp=new VideoProcAmp(m_videoprocamp);
+      }
       m_graphState=State.Created;
       return true;
     }
@@ -203,7 +212,13 @@ namespace MediaPortal.TV.Recording
       StopTimeShifting();
       StopViewing();
 
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
 
+      if (m_videoprocamp!=null)
+      {
+        m_videoAmp=null;
+        m_videoprocamp=null;
+      }
       if (m_mpeg2Demux!=null)
       {
         m_mpeg2Demux.CloseInterfaces();
@@ -652,6 +667,28 @@ namespace MediaPortal.TV.Recording
       int lFreq;
       m_TVTuner.get_VideoFrequency(out lFreq);
       return lFreq;
+    }
+
+    protected void OnGammaContrastBrightnessChanged()
+    {
+      if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return ;
+      if (m_videoprocamp==null) return;
+      if (m_videoAmp==null) return;
+
+      
+      //set the changed values
+      m_videoAmp.Brightness = GUIGraphicsContext.Brightness;
+      m_videoAmp.Contrast = GUIGraphicsContext.Contrast;
+      m_videoAmp.Gamma = GUIGraphicsContext.Gamma;
+      m_videoAmp.Saturation=GUIGraphicsContext.Saturation;
+      m_videoAmp.Sharpness=GUIGraphicsContext.Sharpness;
+
+      //get back the changed values
+      GUIGraphicsContext.Brightness= m_videoAmp.Brightness  ;
+      GUIGraphicsContext.Contrast  = m_videoAmp.Contrast ;
+      GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
+      GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
+      GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
     }
   }
 }
