@@ -970,22 +970,27 @@ namespace MediaPortal.TV.Recording
 
 			_mNewRecordedTV.End = Utils.datetolong(DateTime.Now);
 			TVDatabase.AddRecordedTV(_mNewRecordedTV);
-			//add new recorded show to video database
-			int movieid=VideoDatabase.AddMovieFile(_mNewRecordedTV.FileName);
-			IMDBMovie movieDetails = new IMDBMovie();
-			if (movieid>=0)
+
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				movieDetails.Title=_mNewRecordedTV.Title;
-				movieDetails.Genre=_mNewRecordedTV.Genre;
-				movieDetails.Plot=_mNewRecordedTV.Description;
-				movieDetails.Year=_mNewRecordedTV.StartTime.Year;
-				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
+				bool addMovieToDatabase= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
+				if (addMovieToDatabase)
+				{
+					//add new recorded show to video database
+					int movieid=VideoDatabase.AddMovieFile(_mNewRecordedTV.FileName);
+					IMDBMovie movieDetails = new IMDBMovie();
+					if (movieid>=0)
+					{
+						movieDetails.Title=_mNewRecordedTV.Title;
+						movieDetails.Genre=_mNewRecordedTV.Genre;
+						movieDetails.Plot=_mNewRecordedTV.Description;
+						movieDetails.Year=_mNewRecordedTV.StartTime.Year;
+						VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
+					}
+				}
 			}
 			// back to timeshifting state
 			_mState = State.Timeshifting;
-
-
-			
 
 			_mNewRecordedTV = null;
 
