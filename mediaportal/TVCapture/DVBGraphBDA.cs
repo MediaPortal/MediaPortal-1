@@ -1443,11 +1443,11 @@ namespace MediaPortal.TV.Recording
 			}
 			System.Guid classID;
 			int hr=m_NetworkProvider.GetClassID(out classID);
-			if (hr <=0)
-			{
-				Log.Write("DVBGraphBDA: FAILED:cannot get classid of network provider");
-				return false;
-			}
+//			if (hr <=0)
+//			{
+//				Log.Write("DVBGraphBDA: FAILED:cannot get classid of network provider");
+//				return false;
+//			}
 
 			string strClassID = classID.ToString();
 			strClassID = strClassID.ToLower();
