@@ -8,9 +8,9 @@ namespace MediaPortal.TV.Database
 {
 	public enum ExternalInputs:int
 	{
-		svhs =10000,
-		cvbs1=10001,
-		cvbs2=10002,
+		svhs =50000,
+		cvbs1=50001,
+		cvbs2=50002,
 	}
 
 	public class TVGroup

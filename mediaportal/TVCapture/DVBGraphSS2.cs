@@ -2168,6 +2168,8 @@ namespace MediaPortal.TV.Recording
 						bool isNewChannel=true;
 						int channelId=-1;
 						ArrayList radioStations = new ArrayList();
+						
+						RadioDatabase.GetStations(ref radioStations);
 						foreach (RadioStation station in radioStations)
 						{
 							if (station.Name.Equals(newchannel.ServiceName))
