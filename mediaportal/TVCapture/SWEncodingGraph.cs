@@ -449,6 +449,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState!=State.Viewing) return ;
       int iVideoWidth,iVideoHeight;
       m_basicVideo.GetVideoSize( out iVideoWidth, out iVideoHeight );
+      
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
         float x=GUIGraphicsContext.OverScanLeft;
@@ -473,13 +474,21 @@ namespace MediaPortal.TV.Recording
         m_basicVideo.SetSourcePosition(rSource.Left,rSource.Top,rSource.Width,rSource.Height);
         m_basicVideo.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
         m_videoWindow.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
+        DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight );
+        DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left,rSource.Top,rSource.Right,rSource.Bottom);
+        DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left,rDest.Top,rDest.Right,rDest.Bottom);
       }
       else
       {
         m_basicVideo.SetSourcePosition( 0,0,iVideoWidth,iVideoHeight);
         m_basicVideo.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
         m_videoWindow.SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+        DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight );
+        DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0,0,iVideoWidth, iVideoHeight );
+        DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Right,GUIGraphicsContext.VideoWindow.Bottom);
+
       }
+
     }
 	}
 }

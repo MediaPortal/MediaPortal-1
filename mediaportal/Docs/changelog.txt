@@ -1,3 +1,4 @@
+15-08-2004  my tv       : fixed : set framerate/framesize to all video output pins (preview/capture/videoport)
 15-08-2004  keybaord    : fixed : keyboard was not scaled correctly
 15-08-2004  setup       : added : Autoplay functionality for CDs.
 15-08-2004  setup       : added : Codec selection for movie player.
