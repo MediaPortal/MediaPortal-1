@@ -16,9 +16,9 @@ namespace MediaPortal.Configuration.Sections
 	public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label5;
+		//private System.Windows.Forms.Label label1;
+		//private System.Windows.Forms.Label label3;
+		//private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ComboBox cbDeinterlace;
 		private System.Windows.Forms.CheckBox cbForcedSubtitles;

@@ -52,8 +52,8 @@ namespace MediaPortal.TV.Recording
 	{
 		class RecordingFinished
 		{
-			public string    fileName;
-			public Hashtable Properties;
+			public string    fileName=String.Empty;
+			public Hashtable Properties=null;
 		}
 		string  m_strVideoDevice        = "";
 		string  m_strVideoDeviceMoniker = "";//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";

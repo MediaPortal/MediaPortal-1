@@ -79,7 +79,7 @@ public class MediaPortalApp : D3DApp, IRender
     bool m_bNewVersionAvailable = false;
     bool m_bCancelVersion = false;
 #endif
-	string m_strCurrentVersion = "";
+	//string m_strCurrentVersion = "";
     MCE2005Remote MCE2005Remote = new MCE2005Remote();
 		MouseEventArgs eLastMouseClickEvent = null;
 		private System.Timers.Timer tMouseClickTimer = null;

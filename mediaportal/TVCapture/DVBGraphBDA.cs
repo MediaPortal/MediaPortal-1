@@ -133,9 +133,9 @@ namespace MediaPortal.TV.Recording
 		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		StreamBufferConfig					m_StreamBufferConfig	= null;
 		VMR9Util									  Vmr9								  = null; 
-		GuideDataEvent							m_Event               = null;
-		GCHandle										myHandle;
-		int                         adviseCookie;
+		//GuideDataEvent							m_Event               = null;
+		//GCHandle										myHandle;
+		//int                         adviseCookie;
 		bool												graphRunning=false;
 		DVBChannel									currentTuningObject=null;
 		DVBTeletext									m_teleText=new DVBTeletext();

@@ -16,7 +16,7 @@ namespace MediaPortal.Configuration.Sections
 	public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Label label1;
+		//private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.RadioButton radioPCM16Bit;
 		private System.Windows.Forms.RadioButton radioButtonPCM24Bit;
 		private System.Windows.Forms.RadioButton radioButtonPCM32Bit;
@@ -24,8 +24,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.CheckBox checkBoxNormalize;
 		private System.Windows.Forms.TrackBar trackBarBoost;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label5;
+		//private System.Windows.Forms.Label label3;
+		//private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.RadioButton radioButtonAC3Speakers;
 		private System.Windows.Forms.RadioButton radioButtonAC3SPDIF;
 		private System.Windows.Forms.CheckBox checkBoxAC3DynamicRange;
