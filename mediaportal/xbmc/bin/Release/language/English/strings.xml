@@ -2059,4 +2059,7 @@
 <string><id>706</id><value>Select Feed</value></string>
 <string><id>707</id><value>TV On/Off</value></string>
 <string><id>708</id><value>Timeshifting</value></string>
+<string><id>709</id><value>Auto update</value></string>
+<string><id>710</id><value>A new version is available</value></string>
+<string><id>711</id><value>Upgrade from v#old ->v#new ?</value></string>
 </strings>
