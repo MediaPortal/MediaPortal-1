@@ -147,7 +147,7 @@ namespace MediaPortal.Player
         float fVideoWidth=(float)videoSize.Width;
         fVideoWidth *= m_fU;
         float fVideoHeight=(float)videoSize.Height;
-        fVideoWidth *= m_fV;
+        fVideoHeight *= m_fV;
         m_geometry.ImageWidth = (int) fVideoWidth;//videoSize.Width;
         m_geometry.ImageHeight = (int)fVideoHeight;//videoSize.Height;
         m_geometry.ScreenWidth = (int)nw;

@@ -63,7 +63,8 @@ namespace MediaPortal.Player
 			public int InitializeDevice(Int32 dwUserId, VMR9AllocationInfo allocInfo, IntPtr numBuffers)
       {
         Log.Write("AllocatorWrapper:InitializeDevice({0:x})",dwUserId);
-        if (m_surface1!=IntPtr.Zero)
+				scene.SetSrcRect( 1.0f, 1.0f);
+				if (m_surface1!=IntPtr.Zero)
         {
           Marshal.Release(m_surface1);
           m_surface1=IntPtr.Zero;
@@ -77,8 +78,8 @@ namespace MediaPortal.Player
 						m_surface1=m_surface2;
 						m_surface2=IntPtr.Zero;
 						m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
-						float fTU = (float)(allocInfo.dwWidth ) / (float)(768);
-						float fTV = (float)(allocInfo.dwHeight) / (float)(576);
+						float fTU = (float)(allocInfo.dwWidth ) / 768.0f;
+						float fTV = (float)(allocInfo.dwHeight) / 576.0f;
 						scene.SetSrcRect( fTU, fTV );
 						return 0;
 					}
@@ -103,7 +104,7 @@ namespace MediaPortal.Player
         }
         m_nativeSize = new Size(allocInfo.szNativeSize.Width,allocInfo.szNativeSize.Height);
         
-        if (!d3dcaps.TextureCaps.SupportsPower2) 
+        if (!d3dcaps.TextureCaps.SupportsNonPower2Conditional) 
 				{
 					Int32 width = 1;
 					Int32 height = 1;
@@ -122,12 +123,13 @@ namespace MediaPortal.Player
 
 				}
 				allocInfo.dwFlags = allocInfo.dwFlags | VMR9.VMR9AllocFlag_TextureSurface; 
-        Log.Write("AllocatorWrapper:{0}x{1} fmt:{2} minbuffers:{3} pool:{4} ar:{5} size:{6} flags:{7} supportspow2:{8} max:{9}x{10}", 
+        Log.Write("AllocatorWrapper:{0}x{1} fmt:{2} minbuffers:{3} pool:{4} ar:{5} size:{6} flags:{7} supportsPow2:{8} supportsNonPow2:{9} max:{10}x{11}", 
                         allocInfo.dwWidth, allocInfo.dwHeight, 
                         allocInfo.format,allocInfo.MinBuffers,allocInfo.pool,
                         allocInfo.szAspectRation, allocInfo.szNativeSize,
                         allocInfo.dwFlags,
                         d3dcaps.TextureCaps.SupportsPower2,
+												d3dcaps.TextureCaps.SupportsNonPower2Conditional,
                         d3dcaps.MaxTextureWidth,d3dcaps.MaxTextureHeight);
 				int hr = allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface1);
         if (hr!=0 || m_surface1==IntPtr.Zero)
