@@ -167,7 +167,13 @@ namespace MediaPortal.GUI.Library
 			for (int i=0; i < files5.Length;++i)
 				files[off++] = files5[i];
 
+			//Determine maximum texture dimensions
+			//We limit the max resolution to 2048x2048
 			Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
+			int iMaxWidth =d3dcaps.MaxTextureWidth;
+			int iMaxHeight=d3dcaps.MaxTextureHeight;
+			if (iMaxWidth >2048) iMaxWidth =2048;
+			if (iMaxHeight>2048) iMaxHeight=2048;
 			while (true)
 			{
 				bool ImagesLeft=false;
@@ -176,8 +182,8 @@ namespace MediaPortal.GUI.Library
 				bigOne.root =new PackedTextureNode();
 				bigOne.texture=null;
 				bigOne.textureNo=-1;
-				Bitmap rootImage = new Bitmap(d3dcaps.MaxTextureWidth,d3dcaps.MaxTextureHeight);
-				bigOne.root.Rect = new Rectangle(0,0,d3dcaps.MaxTextureWidth,d3dcaps.MaxTextureHeight);
+				Bitmap rootImage = new Bitmap(iMaxWidth, iMaxHeight);
+				bigOne.root.Rect = new Rectangle(0,0,iMaxWidth, iMaxHeight);
 				for (int i=0; i < files.Length;++i)
 				{
 					if (files[i]!="") 
