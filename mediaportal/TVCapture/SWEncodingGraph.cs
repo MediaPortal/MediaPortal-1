@@ -1765,5 +1765,8 @@ namespace MediaPortal.TV.Recording
 		public void Tune(object tuningObject)
 		{
 		}
+		public void StoreChannels()
+		{
+		}
   }
 }

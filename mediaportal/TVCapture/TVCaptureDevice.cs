@@ -524,6 +524,10 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+			if (_mGraph!=null)
+			{
+				_mGraph.Process();
+			}
     }
 
     /// <summary>
@@ -914,6 +918,12 @@ namespace MediaPortal.TV.Recording
 		{
 			if (_mGraph==null) return ;
 			_mGraph.Tune(tuningObject);
+		}
+
+		public void StoreTunedChannels()
+		{
+			if (_mGraph==null) return ;
+			_mGraph.StoreChannels();
 		}
   }
 }  

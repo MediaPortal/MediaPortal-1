@@ -31,6 +31,16 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
+		class DVBTChannel
+		{
+			public int ONID;
+			public int TSID;
+			public int SID;
+			public string ChannelName;
+			public string NetworkName;
+			public int    NetworkType;
+		}
+
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
 			class VideoAnalyzer {};
 
@@ -109,6 +119,8 @@ namespace MediaPortal.TV.Recording
 		GCHandle										myHandle;
 		int                         adviseCookie;
 		bool												graphRunning=false;
+		ArrayList										channelList = new ArrayList();
+		int													currentFrequency;
 
 		/// <summary>
 		/// Constructor
@@ -676,8 +688,11 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 		{
-			TestTune();
-			return;
+
+			m_iPrevChannel		= m_iCurrentChannel;
+			m_iCurrentChannel = iChannel;
+			m_StartTime				= DateTime.Now;
+
 			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
 			TunerLib.TuneRequest newTuneRequest = null;
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
@@ -686,55 +701,33 @@ namespace MediaPortal.TV.Recording
 			{
 				case NetworkType.ATSC: 
 				{
-					//TunerLib.IATSCTuningSpace myTuningSpace = (TunerLib.IATSCTuningSpace) m_TuningSpace;
-					//newTuneRequest = myTuningSpace.CreateTuneRequest();
-					//newTuneRequest = TVDatabase.GetTuneRequest(iChannel, "dvbt", newTuneRequest);
 				} break;
 				case NetworkType.DVBC: 
 				{
-					TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
-					newTuneRequest = myTuningSpace.CreateTuneRequest();
-					newTuneRequest = TVDatabase.GetTuneRequest(iChannel, "dvbc", newTuneRequest);
 				} break;
 				case NetworkType.DVBS: 
 				{
-					TunerLib.IDVBSTuningSpace myTuningSpace = (TunerLib.IDVBSTuningSpace) myTuner.TuningSpace;
-					newTuneRequest = myTuningSpace.CreateTuneRequest();
-					newTuneRequest = TVDatabase.GetTuneRequest(iChannel, "dvbs", newTuneRequest);
 				} break;
 				case NetworkType.DVBT: 
 				{
+					int frequency,ONID,TSID,SID;
+					TVDatabase.GetDVBTTuneRequest(iChannel,out frequency, out ONID, out TSID, out SID);
 					TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
 					newTuneRequest = myTuningSpace.CreateTuneRequest();
-					newTuneRequest = TVDatabase.GetTuneRequest(iChannel, "dvbt", newTuneRequest);
+					TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
+					TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+
+					myLocator.CarrierFrequency		= frequency;
+					myTuneRequest.ONID	= ONID;					//original network id
+					myTuneRequest.TSID	= TSID;					//transport stream id
+					myTuneRequest.SID		= SID;					//service id
+					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+					myTuner.TuneRequest = newTuneRequest;
+					Marshal.ReleaseComObject(myTuneRequest);
+					currentFrequency=(int)frequency;
 				} break;
 			}
 
-			// Submit the Tune Request
-			if(m_NetworkProvider == null)
-				return;
-
-			if(myTuner != null) 
-			{
-				if(newTuneRequest == null)
-				{
-					Log.Write("DVBGraphBDA:TuneChannel() FAILED tv database does not contain tuning information for channel:{0}", iChannel);
-					return;
-				}
-				// Submit the Tune Request to the Tuner (put_TuneRequest)
-				myTuner.TuneRequest = newTuneRequest;
-			} 
-			else
-			{
-				Log.Write("DVBGraphBDA:CreateTuneRequest() FAILED interfacing ITuner with Network Provider");
-				return;
-			}
-			// Release the Tune Request & Locator
-			Marshal.ReleaseComObject(newTuneRequest);
-
-			m_iPrevChannel		= m_iCurrentChannel;
-			m_iCurrentChannel = iChannel;
-			m_StartTime				= DateTime.Now;
 		}
 
 		/// <summary>
@@ -1764,8 +1757,7 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
-			if(m_graphState==State.Created || m_graphState==State.None)
-				return ;
+			if (m_Event==null) return;
 
 			/*
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
@@ -1821,15 +1813,14 @@ namespace MediaPortal.TV.Recording
 
 			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
 			{
-				Log.Write("DVBGraphBDA: serviced changed");
 				IGuideData data= m_TIF as IGuideData;
 				int iFetched;
 				IEnumTuneRequests varRequests;
-				Log.Write("DVBGraphBDA: GetServices");
 				data.GetServices(out varRequests);
 				if (varRequests!=null)
 				{
-					Log.Write("DVBGraphBDA: variant enum");
+					DVBTChannel channel = new DVBTChannel();
+					int         gotAll=0;
 					TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
 					while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
 					{
@@ -1840,21 +1831,74 @@ namespace MediaPortal.TV.Recording
 							IGuideDataProperty[] properties = new IGuideDataProperty[1];
 							while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
 							{
-								Log.Write("DVBGraphBDA: got property");
 								object chanValue;
 								int chanLanguage;
 								string chanName;
 								properties[0].Name( out chanName);
 								properties[0].Value(out chanValue);
 								properties[0].Language(out chanLanguage);
-								Log.Write("service name:{0} value:{1} language:{2}",chanName, chanValue, chanLanguage);
+								if (Network()==NetworkType.DVBT)
+								{
+									//service name							value				language
+									//Description.ID						8720:1:11			0
+									//Description.Name					Nederland 1		0
+									//Provider.Name							Digitenne			0
+									//Description.ServiceType		1							0
+
+									if (chanName=="Description.ID")
+									{
+										string[] parts = new string[11];
+										string id=(string)chanValue;
+										parts=id.Split(new char[]{':'},10);
+										channel.ONID = Int32.Parse(parts[0]);
+										channel.TSID = Int32.Parse(parts[1]);
+										channel.SID  = Int32.Parse(parts[2]);
+										gotAll++;
+									}
+									if (chanName=="Description.Name")
+									{
+										channel.ChannelName=(string)chanValue;
+										gotAll++;
+									}
+									if (chanName=="Provider.Name")
+									{
+										channel.NetworkName=(string)chanValue;
+										gotAll++;
+									}
+									if (chanName=="Description.ServiceType")
+									{
+										channel.NetworkType=Int32.Parse( chanValue.ToString());
+										gotAll++;
+									}
+									if (gotAll==4)
+									{
+										bool add=true;
+										for (int x=0; x < channelList.Count;++x)
+										{
+											DVBTChannel chan=(DVBTChannel)channelList[x];
+											if (chan.ONID==channel.ONID && chan.TSID==channel.TSID && chan.SID==channel.SID)
+											{	
+												add=false;
+												break;
+											}
+										}
+		
+										if (add)
+										{
+											Log.Write("Network:{0} channel:{1} ONID:{2} TSID:{3} SID:{4}",channel.NetworkName,channel.ChannelName,channel.ONID,channel.TSID,channel.SID);
+											channelList.Add(channel);
+										}
+										gotAll=0;
+										channel=new DVBTChannel();
+									}
+								}
 							}
 						}
 					}
 				}
 			}
-
 		}
+
 		public void TuneFrequency(int frequency)
 		{
 		}
@@ -1883,28 +1927,67 @@ namespace MediaPortal.TV.Recording
 		public void Tune(object tuningObject)
 		{
 			if (m_NetworkProvider==null) return;
+			channelList = new ArrayList();
 			if (!graphRunning)
 			{
 				StartViewing(AnalogVideoStandard.None,1,1);
 			}
 
-			TunerLib.TuneRequest newTuneRequest = null;
-			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-			TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
+			if (Network() == NetworkType.DVBT)
+			{
+				TunerLib.TuneRequest newTuneRequest = null;
+				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+				TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
 
-			newTuneRequest = myTuningSpace.CreateTuneRequest();
+				newTuneRequest = myTuningSpace.CreateTuneRequest();
 
-			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
+				TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
 
-			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+				TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
 
-			myLocator.CarrierFrequency		= (int)tuningObject;
-			myTuneRequest.ONID	= -1;					//original network id
-			myTuneRequest.TSID	= -1;					//transport stream id
-			myTuneRequest.SID		= -1;					//service id
-			myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-			myTuner.TuneRequest = newTuneRequest;
-			Marshal.ReleaseComObject(myTuneRequest);
+				myLocator.CarrierFrequency		= (int)tuningObject;
+				myTuneRequest.ONID	= -1;					//original network id
+				myTuneRequest.TSID	= -1;					//transport stream id
+				myTuneRequest.SID		= -1;					//service id
+				myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+				myTuner.TuneRequest = newTuneRequest;
+				Marshal.ReleaseComObject(myTuneRequest);
+				currentFrequency=(int)tuningObject;
+			}
+		}
+		
+		public void StoreChannels()
+		{
+			ArrayList tvChannels = new ArrayList();
+			TVDatabase.GetChannels(ref tvChannels);
+			for (int x=0; x < channelList.Count;++x)
+			{
+				if (Network() == NetworkType.DVBT)
+				{
+					DVBTChannel channel=(DVBTChannel)channelList[x];
+					bool newChannel=true;
+					int iChannelNumber=0;
+					foreach (TVChannel tvchan in tvChannels)
+					{
+						if (tvchan.Name.Equals(channel.ChannelName))
+						{
+							iChannelNumber=tvchan.Number;
+							newChannel=false;
+							break;
+						}
+					}
+					if (newChannel)
+					{
+						TVChannel tvChan = new TVChannel();
+						tvChan.Name=channel.ChannelName;
+						tvChan.Number=channel.SID;
+						tvChan.VisibleInGuide=true;
+						iChannelNumber=tvChan.Number;
+						TVDatabase.AddChannel(tvChan);
+					}
+					TVDatabase.MapDVBTChannel(channel.ChannelName,iChannelNumber, currentFrequency, channel.ONID,channel.TSID,channel.SID);
+				}
+			}
 		}
 	}
 }

@@ -831,12 +831,10 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-			if (_mState == State.Timeshifting || _mState == State.PreRecording || _mState == State.Recording || _mState == State.PostRecording || _mState == State.Viewing)
+			
+			if (_mGraph!=null)
 			{
-				if (_mGraph!=null)
-				{
-					_mGraph.Process();
-				}
+				_mGraph.Process();
 			}
     }
 
@@ -1230,6 +1228,11 @@ namespace MediaPortal.TV.Recording
 		{
 			if (_mGraph==null) return ;
 			_mGraph.Tune(tuningObject);
+		}
+		public void StoreTunedChannels()
+		{
+			if (_mGraph==null) return ;
+			_mGraph.StoreChannels();
 		}
   }
 }  
