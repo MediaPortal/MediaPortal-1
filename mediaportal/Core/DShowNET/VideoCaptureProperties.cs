@@ -666,10 +666,10 @@ namespace DShowNET
 		/// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel 
 		/// 2. PMT should have been received 
 		/// </preconditions>
-		public void SendPMTToFireDTV(byte[] PMT, int pmtLength)
+		public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
 		{
-			if (PMT==null) return;
-			if (pmtLength==0) return;
+			if (PMT==null) return false;
+			if (pmtLength==0) return false;
 
 			Log.Write("SendPMTToFireDTV pmt:{0}", pmtLength);
 			Guid propertyGuid=KSPROPSETID_Firesat;
@@ -679,14 +679,14 @@ namespace DShowNET
 			if (propertySet==null) 
 			{
 				Log.Write("SendPMTToFireDTV() properySet=null");
-				return ;
+				return true;
 			}
 
 			int hr=propertySet.QuerySupported( ref propertyGuid, (uint)propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
 			{
 				Log.Write("SendPMTToFireDTV() GetStructure is not supported");
-				return ;
+				return true;
 			}
 
 			int iSize=12+2+pmtLength;
@@ -732,14 +732,14 @@ namespace DShowNET
 
 			Log.Write(log);
 			hr=propertySet.RemoteSet(ref propertyGuid,(uint)propId,pDataInstance,(uint)1036, pDataReturned,(uint)1036 );
+			Marshal.FreeCoTaskMem(pDataReturned);
+			Marshal.FreeCoTaskMem(pDataInstance);
 			if (hr!=0)
 			{
 				Log.Write("SetStructure() failed 0x{0:X} offs:{1}",hr, offs);
+				return false;
 			}
-			Marshal.FreeCoTaskMem(pDataReturned);
-			Marshal.FreeCoTaskMem(pDataInstance);
-
-		}//public void SendPMTToFireDTV(byte[] PMT)
-
+			return true;
+		}//public bool SendPMTToFireDTV(byte[] PMT)
 	}//public class VideoCaptureProperties
 }//namespace DShowNET

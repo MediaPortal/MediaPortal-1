@@ -2412,10 +2412,10 @@ namespace MediaPortal.TV.Recording
 				try
 				{
 					string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-						currentTuningObject.NetworkID,
-						currentTuningObject.TransportStreamID,
-						currentTuningObject.ProgramNumber,
-						(int)Network());
+																							currentTuningObject.NetworkID,
+																							currentTuningObject.TransportStreamID,
+																							currentTuningObject.ProgramNumber,
+																							(int)Network());
 					if (System.IO.File.Exists(pmtName))
 					{
 						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
@@ -2428,8 +2428,15 @@ namespace MediaPortal.TV.Recording
 						{
 							//yes, then send the PMT table to the device
 							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
-							props.SendPMTToFireDTV(pmt, (int)len);
+							if (!props.SendPMTToFireDTV(pmt, (int)len))
+							{
+								pmtVersionNumber=-1;//lets try again
+							}
 						}//if (props.SupportsFireDTVProperties)
+					}
+					else
+					{
+						pmtVersionNumber=-1;//lets try again
 					}
 				}
 				catch(Exception){}
@@ -3078,8 +3085,7 @@ namespace MediaPortal.TV.Recording
 							int version_number = ((pmtTable[5]>>1)&0x1F);
 							if (version_number != pmtVersionNumber)
 							{
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}", pmtVersionNumber);
-								pmtVersionNumber=version_number;
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}->{1}", pmtVersionNumber,version_number);
 								try
 								{
 									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
@@ -3090,9 +3096,12 @@ namespace MediaPortal.TV.Recording
 									System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 									stream.Write(pmtTable,0,section_length);
 									stream.Close();
+									pmtVersionNumber=version_number;
+									refreshPmtTable=true;
 								}
-								catch(Exception){}
-								refreshPmtTable=true;
+								catch(Exception)
+								{
+								}
 							}
 						}
 						break;
