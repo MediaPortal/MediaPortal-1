@@ -1119,9 +1119,15 @@ namespace MediaPortal
         m_bNeedUpdate=true;
       }
       // Render the scene as normal
-      bool bDoRender=true;
-      if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
-      if (bDoRender) 
+      
+      if (g_Player.Playing&& g_Player.DoesOwnRendering) 
+      {
+        AllocatorWrapper.Allocator.RenderVideo();
+        System.Windows.Forms.Application.DoEvents();
+        //System.Threading.Thread.Sleep(50);
+        //System.Windows.Forms.Application.DoEvents();
+      }
+      else
       {
         System.Windows.Forms.Application.DoEvents();
         if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
@@ -1143,12 +1149,6 @@ namespace MediaPortal
           throw new Exception("exception occured",ex);
 #endif
         }
-      }
-      else 
-      {
-        System.Windows.Forms.Application.DoEvents();
-        System.Threading.Thread.Sleep(50);
-        System.Windows.Forms.Application.DoEvents();
       }
 
       if (!deviceLost &&!m_bNeedReset)
