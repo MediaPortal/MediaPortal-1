@@ -1875,13 +1875,20 @@ namespace MediaPortal.TV.Recording
 		}
 		public void Tune(object tuningObject)
 		{
+			if (tuningObject==null) return;
+			DVBChannel chan=tuningObject as DVBChannel;
+			if (chan==null) return;
+			
+			//now tune to the channel provided
 		}
 		public void StoreChannels(int ID,bool radio, bool tv)
 		{
+			//parse tables and store all channels found in the database
 		}
 
 		public IBaseFilter Mpeg2DataFilter()
 		{
+			//return the IBaseFilter interface of the mpeg2 sections & tables filter
 			return null;
 		}
 	}
