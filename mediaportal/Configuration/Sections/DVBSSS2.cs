@@ -254,6 +254,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label12 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.groupBox8 = new System.Windows.Forms.GroupBox();
+			this.button22 = new System.Windows.Forms.Button();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.button17 = new System.Windows.Forms.Button();
 			this.button18 = new System.Windows.Forms.Button();
@@ -268,7 +269,6 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar2 = new System.Windows.Forms.ProgressBar();
 			this.ofd = new System.Windows.Forms.OpenFileDialog();
 			this.sfd = new System.Windows.Forms.SaveFileDialog();
-			this.button22 = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -1185,6 +1185,16 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox8.TabStop = false;
 			this.groupBox8.Text = "TV-Channels";
 			// 
+			// button22
+			// 
+			this.button22.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button22.Location = new System.Drawing.Point(352, 112);
+			this.button22.Name = "button22";
+			this.button22.Size = new System.Drawing.Size(48, 21);
+			this.button22.TabIndex = 16;
+			this.button22.Text = "Load";
+			this.button22.Click += new System.EventHandler(this.button22_Click);
+			// 
 			// treeView5
 			// 
 			this.treeView5.CheckBoxes = true;
@@ -1243,7 +1253,7 @@ namespace MediaPortal.Configuration.Sections
 			this.checkBox6.Name = "checkBox6";
 			this.checkBox6.Size = new System.Drawing.Size(200, 16);
 			this.checkBox6.TabIndex = 24;
-			this.checkBox6.Text = "endless Running";
+			this.checkBox6.Text = "Endless running";
 			// 
 			// totalDBcount
 			// 
@@ -1312,16 +1322,6 @@ namespace MediaPortal.Configuration.Sections
 			// sfd
 			// 
 			this.sfd.Filter = "Transponder-Files|*.tpl";
-			// 
-			// button22
-			// 
-			this.button22.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button22.Location = new System.Drawing.Point(352, 112);
-			this.button22.Name = "button22";
-			this.button22.Size = new System.Drawing.Size(48, 21);
-			this.button22.TabIndex = 16;
-			this.button22.Text = "Load";
-			this.button22.Click += new System.EventHandler(this.button22_Click);
 			// 
 			// DVBSSS2
 			// 
@@ -2785,15 +2785,14 @@ namespace MediaPortal.Configuration.Sections
 				foreach(TreeNode parentNode in treeView5.Nodes)
 				{
 					
-					if(parentNode.Checked==true)
-						foreach(TreeNode tn in parentNode.Nodes)
+					foreach(TreeNode tn in parentNode.Nodes)
+					{
+						if(tn.Checked==true)
 						{
-							if(tn.Checked==true)
-							{
-								xmlwriter.SetValue("DVBEPGGrabber",String.Format("channel{0:0000}",count),((DVBChannel)tn.Tag).ProgramNumber.ToString()+"/"+((DVBChannel)tn.Tag).NetworkID.ToString());
-								count++;
-							}
+							xmlwriter.SetValue("DVBEPGGrabber",String.Format("channel{0:0000}",count),((DVBChannel)tn.Tag).ProgramNumber.ToString()+"/"+((DVBChannel)tn.Tag).NetworkID.ToString());
+							count++;
 						}
+					}
 				}
 				if(count>0)
 					xmlwriter.SetValue("DVBEPGGrabber","entries",count.ToString());
