@@ -683,7 +683,24 @@ namespace MediaPortal.GUI.Library
         m_bWasVisible = false;
         return false;
       }
-			if (_packedTexture!=null && GUIGraphicsContext.graphics==null) return true;
+			if (_packedTexture!=null && GUIGraphicsContext.graphics==null) 
+			{
+				// if we are not rendering the GUI background
+				if (!GUIGraphicsContext.ShowBackground)
+				{
+					// then check if this image is the background
+					if (m_iRenderWidth==GUIGraphicsContext.Width && m_iRenderHeight==GUIGraphicsContext.Height)
+					{
+						// and we're playing video or tv
+						if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
+						{
+							//if all true then don't render this image
+							return false;
+						}
+					}
+				}
+				return true;
+			}
 
       // if filename contains a property, then get the value of the property
       if (ContainsProperty)
