@@ -612,6 +612,7 @@ namespace MediaPortal.Configuration.Sections
 			if (reloadList)
 			{
 				LoadTVChannels();
+				LoadGroups();
 				reloadList=false;
 				isDirty=true;
 			}
@@ -975,7 +976,7 @@ namespace MediaPortal.Configuration.Sections
     }
 		static public void UpdateList()
 		{
-			reloadList=false;
+			reloadList=true;
 		}
 		protected override void OnPaint(PaintEventArgs e)
 		{
@@ -983,6 +984,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				reloadList=false;
 				LoadTVChannels();
+				LoadGroups();
 			}
 			base.OnPaint (e);
 		}
