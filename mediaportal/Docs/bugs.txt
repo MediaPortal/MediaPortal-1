@@ -1,5 +1,6 @@
 
 Cosmetic bugs:
+  05-08-2004 GUI        : mousescrollbars are too long (should be as long as the list/icon view WITHOUT page controls, and in iconview way too far to the left letting it go offscreen
   13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
   13-07-2004 general    : The cancel buttons dont work
   13-07-2004 general    : scrolling : base on time instead of frame
