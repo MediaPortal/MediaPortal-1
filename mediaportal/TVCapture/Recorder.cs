@@ -316,6 +316,15 @@ namespace MediaPortal.TV.Recording
 			// not recording this yet
 			Log.Write("Recorder: time to record a {0} on channel:{1} from {2}-{3}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString());
 			Log.Write("Recorder: find free capture card");
+			foreach (TVCaptureDevice dev in m_tvcards)
+			{
+				Log.Write("Recorder: Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+					dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
+			}
+			if (g_Player.Playing)
+			{
+				Log.Write("Recorder: currently playing:{0}", g_Player.CurrentFile);
+			}
 
 			// find free device for recording
 			int cardNo=0;
@@ -344,7 +353,7 @@ namespace MediaPortal.TV.Recording
 							//then we use this card
 							if (dev.Priority==highestPrio)
 							{
-								if (dev.View==true && dev.TVChannel==rec.Channel)
+								if ( (dev.IsTimeShifting||dev.View==true) && dev.TVChannel==rec.Channel)
 								{
 									highestPrio=dev.Priority;
 									highestCard=cardNo;
@@ -398,6 +407,17 @@ namespace MediaPortal.TV.Recording
 									//yes then we use this card
 									highestPrio=dev.Priority;
 									highestCard=cardNo;
+								}
+
+								//if this card has the same priority and is already watching this channel
+								//then we use this card
+								if (dev.Priority==highestPrio)
+								{
+									if ( (dev.IsTimeShifting||dev.View==true) && dev.TVChannel==rec.Channel)
+									{
+										highestPrio=dev.Priority;
+										highestCard=cardNo;
+									}
 								}
 							}
 						}
