@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  14-06-2004  my tv       : fixed : 100% cpu usage in my tv module when no capture cards where installed
+  
   13-06-2004  my video    : added : progressbar to video osd
   13-06-2004  my tv       : added : record program on weekdays only (Mon-Fri)
   13-06-2004  my music    : fixed : when scanning rename artist with name 'VA' to 'Various Artists'
