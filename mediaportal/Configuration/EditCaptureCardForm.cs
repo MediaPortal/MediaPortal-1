@@ -147,6 +147,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.CheckBox checkBoxDeleteLow;
 		private System.Windows.Forms.Label labelPercent;
 		private System.Windows.Forms.Label label33;
+		private System.Windows.Forms.Button btnRadio;
 		int  CardId;
 		
 		/// <summary>
@@ -417,8 +418,6 @@ namespace MediaPortal.Configuration
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.label24 = new System.Windows.Forms.Label();
 			this.updownPrio = new System.Windows.Forms.NumericUpDown();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.label13 = new System.Windows.Forms.Label();
 			this.tabPage7 = new System.Windows.Forms.TabPage();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
 			this.trackBar1 = new System.Windows.Forms.TrackBar();
@@ -428,6 +427,8 @@ namespace MediaPortal.Configuration
 			this.buttonBrowse = new System.Windows.Forms.Button();
 			this.tbRecordingFolder = new System.Windows.Forms.TextBox();
 			this.label19 = new System.Windows.Forms.Label();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.label13 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.label14 = new System.Windows.Forms.Label();
 			this.comboBox3Audio = new System.Windows.Forms.ComboBox();
@@ -496,14 +497,15 @@ namespace MediaPortal.Configuration
 			this.label29 = new System.Windows.Forms.Label();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.button1 = new System.Windows.Forms.Button();
+			this.btnRadio = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
-			this.tabPage2.SuspendLayout();
 			this.tabPage7.SuspendLayout();
 			this.groupBox6.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
 			this.tabPage4.SuspendLayout();
@@ -862,28 +864,6 @@ namespace MediaPortal.Configuration
 																														 0,
 																														 0});
 			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.label13);
-			this.tabPage2.Controls.Add(this.audioCompressorComboBox);
-			this.tabPage2.Controls.Add(this.label5);
-			this.tabPage2.Controls.Add(this.videoCompressorComboBox);
-			this.tabPage2.Controls.Add(this.label3);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(448, 406);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Codecs";
-			// 
-			// label13
-			// 
-			this.label13.Location = new System.Drawing.Point(16, 16);
-			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(408, 40);
-			this.label13.TabIndex = 39;
-			this.label13.Text = "Specify which codecs should be used when recording.  You only need to specify cod" +
-				"ecs if your card is a s/w encoding card";
-			// 
 			// tabPage7
 			// 
 			this.tabPage7.Controls.Add(this.groupBox6);
@@ -968,6 +948,28 @@ namespace MediaPortal.Configuration
 			this.label19.Size = new System.Drawing.Size(100, 16);
 			this.label19.TabIndex = 56;
 			this.label19.Text = "Recording folder:";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.label13);
+			this.tabPage2.Controls.Add(this.audioCompressorComboBox);
+			this.tabPage2.Controls.Add(this.label5);
+			this.tabPage2.Controls.Add(this.videoCompressorComboBox);
+			this.tabPage2.Controls.Add(this.label3);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(448, 406);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "Codecs";
+			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(16, 16);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(408, 40);
+			this.label13.TabIndex = 39;
+			this.label13.Text = "Specify which codecs should be used when recording.  You only need to specify cod" +
+				"ecs if your card is a s/w encoding card";
 			// 
 			// tabPage3
 			// 
@@ -1680,10 +1682,20 @@ namespace MediaPortal.Configuration
 			this.button1.Text = "Autotune";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
+			// btnRadio
+			// 
+			this.btnRadio.Location = new System.Drawing.Point(104, 448);
+			this.btnRadio.Name = "btnRadio";
+			this.btnRadio.Size = new System.Drawing.Size(96, 23);
+			this.btnRadio.TabIndex = 7;
+			this.btnRadio.Text = "Autotune Radio";
+			this.btnRadio.Click += new System.EventHandler(this.btnRadio_Click);
+			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(474, 482);
+			this.Controls.Add(this.btnRadio);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.okButton);
@@ -1700,10 +1712,10 @@ namespace MediaPortal.Configuration
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
-			this.tabPage2.ResumeLayout(false);
 			this.tabPage7.ResumeLayout(false);
 			this.groupBox6.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
@@ -1917,6 +1929,7 @@ namespace MediaPortal.Configuration
 			bool result=true;
 			try
 			{
+				btnRadio.Visible=false;
 				//
 				// Setup frame sizes
 				//
@@ -1950,6 +1963,12 @@ namespace MediaPortal.Configuration
 				{
 					if (capture.CreateGraph())
 					{
+						if (capture.Network!=NetworkType.DVBC &&
+								capture.Network!=NetworkType.DVBS &&
+								capture.Network!=NetworkType.DVBT)
+						{
+							btnRadio.Visible=true;
+						}
 						//
 						// Clear combo box
 						//
@@ -2892,6 +2911,22 @@ namespace MediaPortal.Configuration
 					UpdatePercentageLabel();
 				}
 			}
+		}
+
+		private void btnRadio_Click(object sender, System.EventArgs e)
+		{
+			TVCaptureDevice dev=CaptureCard;
+			if (dev==null) return;
+			if (dev.CreateGraph())
+			{
+				if (dev.Network==NetworkType.DVBC ||
+						dev.Network==NetworkType.DVBS ||
+						dev.Network==NetworkType.DVBT) return;
+				dev.DeleteGraph();
+			}
+
+			RadioAutoTuningForm dialog = new RadioAutoTuningForm(dev);
+			dialog.ShowDialog(this);
 		}
 	}
 
