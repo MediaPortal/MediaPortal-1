@@ -46,6 +46,8 @@ copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.dll plugins\ExternalPlayers
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.pdb plugins\ExternalPlayers
 
+copy ..\..\..\FoobarExternalPlayer\bin\Debug\FoobarExternalPlayer.dll plugins\ExternalPlayers
+copy ..\..\..\FoobarExternalPlayer\bin\Debug\FoobarExternalPlayer.pdb plugins\ExternalPlayers
 
 copy ..\..\..\USBUIRT\bin\Debug\USBUIRT.pdb .
 copy ..\..\..\Configuration\bin\Debug\Configuration.pdb .
