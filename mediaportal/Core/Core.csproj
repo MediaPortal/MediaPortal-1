@@ -195,12 +195,9 @@
                     HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
                 />
                 <Reference
-                    Name = "DirectShowHelperLib"
-                    Guid = "{935FCAC9-6668-49FB-9706-43B51861F491}"
-                    VersionMajor = "1"
-                    VersionMinor = "0"
-                    Lcid = "0"
-                    WrapperTool = "tlbimp"
+                    Name = "Interop.DirectShowHelperLib"
+                    AssemblyName = "Interop.DirectShowHelperLib"
+                    HintPath = "..\Interop.DirectShowHelperLib.dll"
                 />
             </References>
         </Build>
