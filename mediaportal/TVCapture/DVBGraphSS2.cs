@@ -507,10 +507,11 @@ namespace MediaPortal.TV.Recording
 		protected int					m_myCookie=0; // for the rot
 		protected DateTime              m_StartTime=DateTime.Now;
 		protected int					m_iChannelNr=-1;
+		protected bool					m_channelFound=false;
 		
 		StreamBufferConfig				m_streamBufferConfig=null;
 		protected VMR9Util				Vmr9=null; 
-
+		protected string				m_filename="";
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
@@ -659,6 +660,9 @@ namespace MediaPortal.TV.Recording
 				return false;	// *** FUNCTION EXIT POINT
 
 			hr=m_tunerCtrl.CheckLock();
+			if(hr!=0)
+				return false;
+
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
 				hr = m_avCtrl.SetAudioVideoPIDs (AudioPID, VideoPID);
@@ -726,16 +730,16 @@ namespace MediaPortal.TV.Recording
 			}
 			int iVideoWidth=0;
 			int iVideoHeight=0;
-			if (!Vmr9.UseVMR9inMYTV)
+			if (m_basicVideo!=null)
 			{
 				m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);	
 			}
-			else
+			if (Vmr9.IsVMR9Connected)
 			{
 				iVideoWidth=Vmr9.VideoWidth;
 				iVideoHeight=Vmr9.VideoHeight;
 			}
-
+			
 			if (GUIGraphicsContext.IsFullScreenVideo || GUIGraphicsContext.ShowBackground==false)
 			{
 				float x = GUIGraphicsContext.OverScanLeft;
@@ -795,6 +799,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
+			
+			m_iChannelNr=-1;
 
 			StopRecording();
 			StopTimeShifting();
@@ -938,6 +944,8 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_sourceGraph); 
 				m_sourceGraph = null;
 			}
+			GUIGraphicsContext.form.Invalidate(true);
+			GC.Collect();
 
 			m_graphState = State.None;
 			return;		
@@ -1111,6 +1119,7 @@ namespace MediaPortal.TV.Recording
 			hr=pConfig.SetHKEY(subKey);
 			// lock on the 'filename' file
 			hr=m_sinkInterface.LockProfile(fileName);
+			m_filename=fileName;
 			if(hr!=0)
 				return false;
 
@@ -1148,13 +1157,18 @@ namespace MediaPortal.TV.Recording
 				return false;
 			int hr=0;
 			TuneChannel(standard,channel);
+
+			if(m_channelFound==false)
+				return false;
+			
+
 			if(CreateSinkSource(fileName)==true)
 			{
 				m_mediaControl=(IMediaControl)m_sourceGraph;
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
 			}
-			else return false;
+			else {m_graphState=State.Created;return false;}
 
 			return true;
 		}
@@ -1169,11 +1183,10 @@ namespace MediaPortal.TV.Recording
 		public bool StopTimeShifting()
 		{
 			if (m_graphState != State.TimeShifting) return false;
-			DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
+			DirectShowUtil.DebugWrite("DVBGraphSS2:StopTimeShifting()");
 			m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();
-			
 			return true;
 		}
 
@@ -1321,22 +1334,43 @@ namespace MediaPortal.TV.Recording
 		{
 			if(m_graphState==State.Recording)
 				return;
+
 			int channelID=TVDatabase.GetChannelId(channel);
 			m_iChannelNr=channel;
 			if(channelID!=-1)
 			{
-				DVBChannel ch=new DVBChannel();
-				TVDatabase.GetSatChannel(channelID,1,ref ch);//only television
-				if(ch.IsScrambled==true)
-					return;
-				if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
-					m_mediaControl.Stop();
 				
-				m_currentChannel=ch;
-				Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency);
+				DVBChannel ch=new DVBChannel();
 
-				if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
+				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
+				{
+					m_channelFound=false;
+					return;
+				}
+
+				if(ch.IsScrambled==true)
+				{
+					m_channelFound=false;
+					return;
+				}
+
+				if(m_mediaControl!=null && m_graphState!=State.TimeShifting )
+					m_mediaControl.Stop();
+
+				
+				m_channelFound=true;
+				
+				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency)==false)
+				{
+					m_channelFound=false;
+					return;
+				}
+				m_currentChannel=ch;
+				
+				if(m_mediaControl!=null && m_graphState!=State.TimeShifting )
 					m_mediaControl.Run();
+
+
 				m_StartTime=DateTime.Now;
 			}
 			
@@ -1375,62 +1409,78 @@ namespace MediaPortal.TV.Recording
 			TuneChannel(standard,channel);
 			int hr=0;
 			
-			Vmr9.AddVMR9(m_sourceGraph);
-
+			if(m_channelFound==false)
+				return false;
+			
 			AddPreferredCodecs();
-
+			
+			if(Vmr9.UseVMR9inMYTV)
+			{
+				Vmr9.AddVMR9(m_sourceGraph);
+			}
+			
 			
 			// render here for viewing
-			hr=m_sourceGraph.Render(m_videoPin);
-			if(hr!=0)
-				return false;
+				hr=m_sourceGraph.Render(m_videoPin);
+				if(hr!=0)
+					return false;
 
-			hr=m_sourceGraph.Render(m_audioPin);
-			if(hr!=0)
-				return false;
+				hr=m_sourceGraph.Render(m_audioPin);
+				if(hr!=0)
+					return false;
 			int n=0;// 
 			
+			if(Vmr9.IsVMR9Connected==false && Vmr9.UseVMR9inMYTV==true)// fallback
+			{
+				if(Vmr9.VMR9Filter!=null)
+					m_sourceGraph.RemoveFilter(Vmr9.VMR9Filter);
+				Vmr9.RemoveVMR9();
+				Vmr9.UseVMR9inMYTV=false;
+
+			}
 
 			m_mediaControl = (IMediaControl)m_sourceGraph;
-			
-			if (!Vmr9.UseVMR9inMYTV)
+			if (!Vmr9.UseVMR9inMYTV )
 			{
 
 				m_videoWindow = (IVideoWindow) m_sourceGraph as IVideoWindow;
 				if (m_videoWindow==null)
 				{
 					Log.Write("DVBGraphSS2:FAILED:Unable to get IVideoWindow");
-					return false;
 				}
 
-
-				m_basicVideo = m_sourceGraph as IBasicVideo2;
+				m_basicVideo = (IBasicVideo2)m_sourceGraph as IBasicVideo2;
 				if (m_basicVideo==null)
 				{
 					Log.Write("DVBGraphSS2:FAILED:Unable to get IBasicVideo2");
-					return false;
 				}
 				hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
 				if (hr != 0) 
+				{
 					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window:0x{0:X}",hr);
-
+				}
 				hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 				if (hr != 0) 
+				{
 					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}",hr);
-
+				}
       
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
+				{
 					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}",hr);
+				}
 			}
-            //
-			n=m_mediaControl.Run();
+
 			m_bOverlayVisible=true;
-
-
 			GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			m_graphState = State.Viewing;
 			GUIGraphicsContext_OnVideoWindowChanged();
+			//
+			
+
+			n=m_mediaControl.Run();
+
 			return true;
 		}
 
@@ -1446,14 +1496,14 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Viewing) 
 				return false;
+			m_mediaControl.Stop();
+			m_mediaControl=null;
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
 			if(m_videoWindow!=null)
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_bOverlayVisible=false;
 			
-			m_mediaControl.Stop();
-			m_mediaControl=null;
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
@@ -1462,10 +1512,10 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool ShouldRebuildGraph(int iChannel)
 		{
-			if(m_graphState==State.Viewing)
-				return false;
-			else
+			if(m_graphState==State.TimeShifting)
 				return true;
+
+			return false;
 		}
 
 		/// <summary>
