@@ -481,16 +481,36 @@ namespace MediaPortal.PowerScheduler
 						case (TVRecording.RecordingType.WeekDays):
 						{
 							tmpNextStarttime = recording.StartTime.AddMinutes(- m_iPreRecordInterval);
-							double days = - tmpNextStarttime.Subtract(earliestStarttime).TotalDays ;	
-							tmpNextStarttime = tmpNextStarttime.AddDays(Math.Round(days,0) + 1);
 
+							// In how many days do we have to record
+							double days = - tmpNextStarttime.Subtract(earliestStarttime).TotalDays ;
+							days = Math.Round(days,0);
+
+							// Adjust Day of Starttime
+							if(days < 0)
+							{
+								// Startime is in the future
+								tmpNextStarttime = tmpNextStarttime.AddDays(days + 1);
+							}
+							else
+							{
+								// Starttime is in the past
+								tmpNextStarttime = tmpNextStarttime.AddDays(days);
+								if(tmpNextStarttime < earliestStarttime)
+									tmpNextStarttime = tmpNextStarttime.AddDays(1); // Startime was earlier today so record next day
+
+							}
+
+							if (m_bExtensiveLog) Log.Write(" PowerScheduler: Days: {0} Next Start Time: {1}", days, tmpNextStarttime);
+
+							// Skip Weekend
 							while (tmpNextStarttime.DayOfWeek == System.DayOfWeek.Saturday || tmpNextStarttime.DayOfWeek == System.DayOfWeek.Sunday)
 							{
 								tmpNextStarttime = tmpNextStarttime.AddDays(1);
 							}
-							if (m_bExtensiveLog) Log.Write(" PowerScheduler:  WeekDays next starttime {0} ", tmpNextStarttime);
+							if (m_bExtensiveLog) Log.Write(" PowerScheduler: WeekDays next starttime {0} ", tmpNextStarttime);
 							break;
-						}
+						} 
 						case (TVRecording.RecordingType.Weekly):
 						{
 							tmpNextStarttime = recording.StartTime.AddMinutes(- m_iPreRecordInterval);
