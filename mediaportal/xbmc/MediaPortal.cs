@@ -1842,10 +1842,10 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
 		GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
 		GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-		//GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
-		//GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
-		//GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
-
+		GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
+		GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
+		GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
+/*
 		if (supportsFiltering)
 		{
 			GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;
@@ -1868,11 +1868,11 @@ public class MediaPortalApp : D3DApp, IRender
 			GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Point;
 			GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Point;
 		}
-
+*/
 		if (bSupportsAlphaBlend)
 		{
 			GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-			GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
+			GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
 			GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
 		}
 		

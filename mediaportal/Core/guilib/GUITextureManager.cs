@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.Library
                                                                   0,0,//width/height
                                                                   1,//mipslevels
                                                                   0,//Usage.Dynamic,
-                                                                  Format.Dxt3,
+                                                                  Direct3D.Format.A8R8G8B8,
                                                                   Pool.Managed,
                                                                   Filter.None,
                                                                   Filter.None,
@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.Library
 							0,0,//width/height
 							1,//mipslevels
 							0,//Usage.Dynamic,
-							fmt,
+							Direct3D.Format.A8R8G8B8,
 							Pool.Managed,
 							Filter.None,
 							Filter.None,
@@ -361,7 +361,7 @@ namespace MediaPortal.GUI.Library
 																					0,0,//width/height
 																					1,//mipslevels
 																					0,//Usage.Dynamic,
-																					fmt,
+																					Direct3D.Format.A8R8G8B8,
 																					Pool.Managed,
 																					Filter.None,
 																					Filter.None,

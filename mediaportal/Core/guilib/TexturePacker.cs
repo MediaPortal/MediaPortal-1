@@ -90,6 +90,10 @@ namespace MediaPortal.GUI.Library
 						using (Graphics g = Graphics.FromImage(rootImage))
 						{
 							FileName=fileName;
+							g.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+							g.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceOver;
+							g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+							g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 							g.DrawImage(img,Rect.Left,Rect.Top,Rect.Width,Rect.Height);
 						}
 						return this;
