@@ -1036,6 +1036,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITV\GUITVTeletext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIVideoFiles\FormOSD.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
