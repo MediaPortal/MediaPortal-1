@@ -28,6 +28,15 @@ namespace MediaPortal.TV.Recording
 	/// -tv viewing
 	/// -tv recording
 	/// -tv timeshifting
+	/// 
+	/// todo:
+	///   -add support for DVB-S and DVB-C  (just the tuning/scanning needs to be added)
+	///   -when scanning for channels we need to parse IGuideData to see if the channel found is radio,tv,encrypted or not etc
+	///   -get TVGuide data from stream
+	///   
+	/// for dvb-t scanning we need : frequency
+	/// for dvb-s scanning we need : frequency, polarisation, symbolrate,lnb-config, diseqc-config
+	/// for dvb-c scanning we need : ?
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
