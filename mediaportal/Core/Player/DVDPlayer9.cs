@@ -61,7 +61,7 @@ namespace MediaPortal.Player
         if (strDisplayMode=="4:3 letterbox") m_iVideoPref=3;
       }
 			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-			//GUIWindowManager.SendMessage(msg);
+			GUIWindowManager.SendMessage(msg);
 
       try 
       {
@@ -338,7 +338,7 @@ namespace MediaPortal.Player
         m_state = PlayState.Init;
 
 				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-				//GUIWindowManager.SendMessage(msg);
+				GUIWindowManager.SendMessage(msg);
 
         GUIGraphicsContext.form.Invalidate(true);          
         GUIGraphicsContext.form.Activate();
