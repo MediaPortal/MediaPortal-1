@@ -214,6 +214,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DVBSkyStar2Helper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DVBSTuning.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

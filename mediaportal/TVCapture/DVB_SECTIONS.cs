@@ -12,59 +12,32 @@ namespace MediaPortal.TV.Recording
 	public class DVBSections
 	{
 		
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool ConvertJulianDate(long MJD, out int year, out int month, out int day);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool ClearAllUp();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool PauseSITable();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool RunSITable();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool IsTunerLocked();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool AddPidToTS(int pid);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool Tune(int fre, int symrate, int fec, int pol, int lnbkhz, int Diseq, int LNBfreq);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool DVBInit(string adapter);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern void ClearAllTsPids();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool StopSITable();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool DeleteAllPIDsI();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool SetupB2C2Graph();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool GetSectionDataI(int pid, int tid, ref int secCount,int tableSection,int timeout);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool AddTSPid(int pid);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern void ResetDevice();
+
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionPtr(int section,ref IntPtr dataPointer,ref int len,ref int header,ref int tableExtId,ref int version,ref int secNum,ref int lastSecNum);
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool ReleaseSectionsBuffer();
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid,int tid,ref int sectionCount,int tableSection,int timeout);
+		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		private static extern bool GetSectionDataI(int pid,int tid,ref int sectionCount,int tableSection,int timeout);
 		// globals
-		TPList[]							transp=new TPList[200];
-		ArrayList							m_eitList;
-		ArrayList							m_transponderList;
+		TPList[]							transp;
+		ArrayList							m_sectionsList;	
 		int									m_diseqc=0;
 		int									m_lnb0=0;
 		int									m_lnb1=0;
 		int									m_lnbsw=0;
 		int									m_lnbkhz=0;
-		System.Windows.Forms.ProgressBar	m_progress=null;
-		System.Windows.Forms.TextBox		m_textBox=null;
 		int									m_lnbfreq=0;
 		int									m_selKhz=0;
-		ArrayList							m_sectionsList=new ArrayList();	
-		bool								m_breakScan=false;
-		System.Windows.Forms.TreeView		m_transponderTV=null;
 
+		//
+		public DVBSections()
+		{
+			m_sectionsList=new ArrayList();	
+			transp=new TPList[200];
+		}
 		// tables
 		public struct EITDescr
 		{
@@ -172,69 +145,18 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 
-		
-		public void OpenTPLFile (ref Transponder[] list,int diseqc,int lnbkhz,int lnb0,int lnb1,int lnbsw,System.Windows.Forms.ProgressBar progBar,System.Windows.Forms.TextBox feedbackText,System.Windows.Forms.TreeView transponderTreeView)
+		public void SetLNBParams(int diseqc,int lnb0,int lnb1,int lnbsw,int lnbkhz,int selKhz,int lnbfreq)
 		{
-			string[] tpdata;
-			string line="";
-			int count = 0;
-			// set diseq & lnb
 			m_diseqc=diseqc;
 			m_lnb0=lnb0;
 			m_lnb1=lnb1;
 			m_lnbsw=lnbsw;
 			m_lnbkhz=lnbkhz;
-			// set dialog feedback
-			m_progress=progBar;
-			m_textBox=feedbackText;
-			m_transponderTV=transponderTreeView;
-            // load transponder list and start scan
-			foreach(System.Windows.Forms.TreeNode tn in transponderTreeView.Nodes)
-			{
-				line = null;
-				line =(string) tn.Tag;
-				if(line!=null)
-					if (line.Length > 0 && tn.Checked==true)
-					{
-						if(line.StartsWith(";"))
-							continue;
-						tpdata = line.Split(new char[]{','});
-						if(tpdata.Length!=3)
-							tpdata = line.Split(new char[]{';'});
-						if (tpdata.Length == 3)
-						{
-							try
-							{
-						
-								transp[count].TPfreq = Convert.ToInt16(tpdata[0]) * 1000;
-								switch (tpdata[1].ToLower())
-								{
-									case "v":
-									
-										transp[count].TPpol = 1;
-										break;
-									case "h":
-									
-										transp[count].TPpol = 0;
-										break;
-									default:
-									
-										transp[count].TPpol = 0;
-										break;
-								}
-								transp[count].TPsymb = Convert.ToInt16(tpdata[2]);
-								count += 1;
-							}
-							catch
-							{}
-						}
-					}
-			}
-			
-			count -= 1;
-			StartScan(count,ref list);
+			m_lnbfreq=lnbfreq;
+			m_selKhz=selKhz;
+		
 		}
-
+		
 		private int decodePATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
 		{
 			int a;
@@ -273,92 +195,9 @@ namespace MediaPortal.TV.Recording
 			}
 			return 0;
 		}
-		public void InterruptScan()
-		{
-			m_breakScan=true;
-			m_textBox.Text="(Stopping scan...please wait a moment!)";
-
-		}
 		//
 		//
-		private void StartScan (int count, ref Transponder[] transplist)
-		{
 
-			// to handle you own scan, you must write an loop
-			// in which you 1. tune to your channel and 2. parse the
-			// data you get back from stream.
-			//
-
-			int t;
-			int lnbFreq;
-			int servCount=0;
-			int lnbkhz=0;
-
-			m_transponderList = new ArrayList();
-			transplist = new Transponder[count + 1];
-			for (t = 0; t <= count; t++)
-			{
-				if(m_breakScan==true)
-					break;
-				DeleteAllPIDsI();
-				AddTSPid(0x10);
-				AddTSPid(17);
-				AddTSPid(0);
-				// feedback
-				if(m_progress!=null)
-				{
-					m_progress.Minimum = 0;
-					m_progress.Maximum = count;
-					m_progress.Value = t;
-				}
-				// set the tranponder data
-				transplist[t].channels = new ArrayList();
-				transplist[t].PMTTable = new ArrayList();
-				// first get pmt
-				if(m_lnb1!=-1 && m_lnbsw!=-1)
-				{
-					if (transp[t].TPfreq >= m_lnbsw*1000)
-					{
-						lnbFreq = m_lnb1;
-						lnbkhz=m_lnbkhz;
-					}
-					else
-					{
-						lnbFreq = m_lnb0;
-						lnbkhz=0;
-					}
-				}
-				else
-				{
-					lnbFreq = m_lnb0;
-					lnbkhz=0;
-				}
-				m_lnbfreq=lnbFreq;
-				m_selKhz=lnbkhz;
-				// feedback
-				if(m_textBox!=null)
-				{
-					m_textBox.Text=Convert.ToString(transp[t].TPfreq/1000)+" MHz...("+Convert.ToString(servCount)+" services found yet)";
-				}
-				Tune(transp[t].TPfreq, transp[t].TPsymb, 6, transp[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
-				//System.Threading.Thread.Sleep(500);
-					
-				if (IsTunerLocked())
-				{
-					GetStreamData(0, 0,0,5000);
-					// jump to parser
-					foreach(byte[] arr in m_sectionsList)
-						decodePATTable(arr, transp[t], ref transplist[t]);
-
-					LoadPMTTables(transp[t],ref transplist[t]);
-					if(m_textBox!=null)
-					{
-						servCount+=transplist[t].channels.Count;
-					}
-				}
-
-			}
-		}
 		/// <summary>
 		/// Get all information about channels & services 
 		/// </summary>
@@ -474,7 +313,7 @@ namespace MediaPortal.TV.Recording
 			return byData;
 		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
 		
-		private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
+		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		{
 			int t;
 			int n;
@@ -530,68 +369,7 @@ namespace MediaPortal.TV.Recording
 			}
 		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		
-		private void LoadPMTTables (TPList tpInfo, ref Transponder tp)
-		{
-			int t;
-			int n;
-			ArrayList	tab42=new ArrayList();
-			ArrayList	tab46=new ArrayList();
-			ArrayList	tab01=new ArrayList();
 
-			// check tables
-			AddTSPid(17);
-			//
-			GetStreamData(17, 0x42,1,4500);
-			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(17, 0x46,1,4500);
-			tab46=(ArrayList)m_sectionsList.Clone();
-
-			bool flag;
-			ChannelInfo pat;
-			ArrayList pmtList = tp.PMTTable;
-			int pmtScans;
-			pmtScans = (pmtList.Count / 20) + 1;
-			for (t = 1; t <= pmtScans; t++)
-			{
-				flag = DeleteAllPIDsI();
-				for (n = 0; n <= 19; n++)
-				{
-					if (((t - 1) * 20) + n > pmtList.Count - 1)
-					{
-						break;
-					}
-					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-					flag = AddTSPid(pat.network_pmt_PID);
-					if (flag == false)
-					{
-						break;
-					}
-					
-					// parse pmt
-					int res=0;
-					GetStreamData(pat.network_pmt_PID, 2,1,4500); // get here the pmt
-					foreach(byte[] wdata in m_sectionsList)
-						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
-
-					if(res>0)
-					{
-
-						foreach(byte[] wdata in tab42)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-
-						foreach(byte[] wdata in tab46)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-
-						//GetStreamData(0x258, 2,0,4500); // get here the pmt
-
-					}
-					tp.channels.Add(pat);
-				
-				}
-			}
-
-
-		}
 		//
 		//
 		//
@@ -1768,60 +1546,47 @@ namespace MediaPortal.TV.Recording
 
 			return eit.eitList;
 		}
-		public ArrayList GetEITSchedule(int tab)
-		{
-			EIT_Program_Info eit=new EIT_Program_Info();
-			eit.eitList=new ArrayList();
-			GetStreamData(18,tab,1,200);
-			foreach(byte[] arr in m_sectionsList)
-				decodeEITTable(arr,ref eit);
 
-			return eit.eitList;
-		}
-
-		public int GrabEIT(DVBChannel ch)
+		public int GrabEIT(DVBChannel ch,DShowNET.IBaseFilter filter)
 		{
+			// there must be an ts (card tuned) to get eit
+			
 			int eventsCount=0;
-			bool tuned=Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
-			System.Threading.Thread.Sleep(200);
-			if(tuned==false)
-				return 0;
+
 			ArrayList eitList=new ArrayList();
-			if(tuned==true)
+			if(ch.HasEITPresentFollow==true)
 			{
-				if(ch.HasEITPresentFollow==true)
-				{
-					eitList=GetEITSchedule(0x4e);
-					eventsCount+=eitList.Count;
-					foreach(EITDescr eit in eitList)
-						SetEITToDatabase(eit);
-					eitList=GetEITSchedule(0x4f);
-					eventsCount+=eitList.Count;
-					foreach(EITDescr eit in eitList)
-						SetEITToDatabase(eit);
-				}
-				if(ch.HasEITSchedule==true)
-				{
-					int lastTable=0x50;
-					eitList=GetEITSchedule(0x50);
-
-					eventsCount+=eitList.Count;
-					foreach(EITDescr eit in eitList)
-					{
-						if(eit.lastTable>lastTable)
-							lastTable=eit.lastTable;
-						SetEITToDatabase(eit);
-					}
-					for(int table=0x51;table<lastTable;table++)
-					{
-						eitList=GetEITSchedule(table);
-						foreach(EITDescr eit in eitList)
-							SetEITToDatabase(eit);
-
-					}
-
-				}
+				eitList=GetEITSchedule(0x4e,filter);
+				eventsCount+=eitList.Count;
+				foreach(EITDescr eit in eitList)
+					SetEITToDatabase(eit);
+				eitList=GetEITSchedule(0x4f,filter);
+				eventsCount+=eitList.Count;
+				foreach(EITDescr eit in eitList)
+					SetEITToDatabase(eit);
 			}
+			if(ch.HasEITSchedule==true)
+			{
+				int lastTable=0x50;
+				eitList=GetEITSchedule(0x50,filter);
+
+				eventsCount+=eitList.Count;
+				foreach(EITDescr eit in eitList)
+				{
+					if(eit.lastTable>lastTable)
+						lastTable=eit.lastTable;
+					SetEITToDatabase(eit);
+				}
+				for(int table=0x51;table<lastTable;table++)
+				{
+					eitList=GetEITSchedule(table,filter);
+					foreach(EITDescr eit in eitList)
+						SetEITToDatabase(eit);
+
+				}
+
+			}
+			
 			GC.Collect();
 			return 	eventsCount;
 
@@ -1996,87 +1761,74 @@ namespace MediaPortal.TV.Recording
 		}
 
 
-		public void CleanUp ()
-		{
-			ClearAllUp();
-			m_breakScan=false;
-		}
-		public bool Run()
-		{
-			bool flag;
-			flag = SetupB2C2Graph();
-			if (flag == true)
-			{
-				flag = RunSITable();
-			}
-			if (flag == false)
-			{
-				return false;
-			}
-			DeleteAllPIDsI();
-			AddTSPid(18);
-			AddTSPid(16);
-			m_eitList = new ArrayList();
-			
-			return true;
-		}
+
 		
-		private bool GetStreamData(int pid, int tid,int tableSection,int timeout)
+//		private bool GetStreamData(int pid, int tid,int tableSection,int timeout)
+//		{
+//			bool flag;
+//			int dataLen=0;
+//			int header=0;
+//			int tableExt=0;
+//			int sectNum=0;
+//			int sectLast=0;
+//			int version=0;
+//			byte[] arr = new byte[1];
+//			IntPtr sectionBuffer=IntPtr.Zero;
+//
+//			m_sectionsList=new ArrayList();
+//			DeleteAllPIDsI();
+//			AddTSPid(pid);
+//			flag = GetSectionDataI(pid, tid,ref sectLast,tableSection,timeout);
+//
+//			for(int n=0;n<sectLast;n++)
+//			{
+//				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
+//				if((int)sectionBuffer==0)
+//					break;
+//				if(flag)
+//				{
+//					if (tableExt != - 1)
+//					{
+//						arr = new byte[dataLen+8 + 1];
+//						Marshal.Copy(sectionBuffer, arr, 8, dataLen);
+//						arr[0] = (byte)tid;
+//						arr[1] = (byte)((header >> 8) & 255);
+//						arr[2] =(byte) (header & 255);
+//						arr[3] = (byte)((tableExt >> 8) & 255);
+//						arr[4] = (byte)(tableExt & 255);
+//						arr[5] =(byte) version;
+//						arr[6] = (byte)sectNum;
+//						arr[7] = (byte)sectLast;
+//						m_sectionsList.Add(arr);
+//						if(tableSection!=0)
+//							break;
+//					}
+//					else
+//					{
+//						arr = new byte[dataLen+3 + 1];
+//						Marshal.Copy(sectionBuffer, arr, 3, dataLen);
+//						arr[0] = System.Convert.ToByte(tid);
+//						arr[1] = System.Convert.ToByte((header >> 8) & 255);
+//						arr[2] = System.Convert.ToByte(header & 255);
+//						m_sectionsList.Add(arr);
+//					}// else
+//
+//				}// if(flag)
+//			}//for
+//			if((int)sectionBuffer!=0)
+//				ReleaseSectionsBuffer();
+//			return true;
+//		}
+		public bool ProcessPATSections(DShowNET.IBaseFilter filter,int pid,int tid,int tableSections,int timeout,TPList tp,ref Transponder transponder)
 		{
-			bool flag;
-			int dataLen=0;
-			int header=0;
-			int tableExt=0;
-			int sectNum=0;
-			int sectLast=0;
-			int version=0;
-			byte[] arr = new byte[1];
-			IntPtr sectionBuffer=IntPtr.Zero;
-
-			m_sectionsList=new ArrayList();
-			DeleteAllPIDsI();
-			AddTSPid(pid);
-			flag = GetSectionDataI(pid, tid,ref sectLast,tableSection,timeout);
-
-			for(int n=0;n<sectLast;n++)
-			{
-				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
-				if((int)sectionBuffer==0)
-					break;
-				if(flag)
-				{
-					if (tableExt != - 1)
-					{
-						arr = new byte[dataLen+8 + 1];
-						Marshal.Copy(sectionBuffer, arr, 8, dataLen);
-						arr[0] = (byte)tid;
-						arr[1] = (byte)((header >> 8) & 255);
-						arr[2] =(byte) (header & 255);
-						arr[3] = (byte)((tableExt >> 8) & 255);
-						arr[4] = (byte)(tableExt & 255);
-						arr[5] =(byte) version;
-						arr[6] = (byte)sectNum;
-						arr[7] = (byte)sectLast;
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
-							break;
-					}
-					else
-					{
-						arr = new byte[dataLen+3 + 1];
-						Marshal.Copy(sectionBuffer, arr, 3, dataLen);
-						arr[0] = System.Convert.ToByte(tid);
-						arr[1] = System.Convert.ToByte((header >> 8) & 255);
-						arr[2] = System.Convert.ToByte(header & 255);
-						m_sectionsList.Add(arr);
-					}// else
-
-				}// if(flag)
-			}//for
-			if((int)sectionBuffer!=0)
-				ReleaseSectionsBuffer();
+			GetStreamData(filter,pid, tid,tableSections,timeout);
+			foreach(byte[] arr in m_sectionsList)
+				decodePATTable(arr, tp, ref transponder);
+			LoadPMTTables(filter,tp,ref transponder);
 			return true;
 		}
+		//
+		//
 		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
 			bool flag;
@@ -2090,7 +1842,16 @@ namespace MediaPortal.TV.Recording
 			IntPtr sectionBuffer=IntPtr.Zero;
 
 			m_sectionsList=new ArrayList();
-			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
+			if(filter!=null)
+				flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
+			else
+			{
+				DVBSkyStar2Helper.AddTSPid(pid);
+				System.Threading.Thread.Sleep(150);
+				flag = GetSectionDataI(pid, tid,ref sectLast,tableSection,timeout);
+			}
+			if(flag==false)
+				return false;
 
 			for(int n=0;n<sectLast;n++)
 			{
