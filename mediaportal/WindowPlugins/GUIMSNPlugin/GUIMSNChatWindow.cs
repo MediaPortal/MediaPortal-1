@@ -32,13 +32,12 @@ namespace MediaPortal.GUI.MSN
         Conversation conversation=GUIMSNPlugin.CurrentConversation;
         if (conversation!=null) 
         {
-          if (conversation.Connected) 
-          {
-            GUIMSNPlugin.CloseConversation();
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-            return;
-          }
-        }
+            GUIMSNPlugin.CurrentConversation.MessageReceived -=new DotMSN.Conversation.MessageReceivedHandler(MessageReceived);
+        }            
+        GUIMSNPlugin.CloseConversation();
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+        return;
+
       }
 
       base.OnAction(action);
