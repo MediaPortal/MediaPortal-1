@@ -162,7 +162,7 @@
 		<description>default filmstrip</description>
 		<type>filmstrip</type>
 		<id>11</id>
-		<posX>220</posX>
+		<posX>260</posX>
 		<posY>420</posY>
 		<width>500</width>
 		<height>100</height>

@@ -130,7 +130,7 @@
 				<ondown>9</ondown>
 			</control>
 			<control>
-				<description>ROtate</description>
+				<description>Rotate</description>
 				<type>button</type>
 				<id>9</id>
 				<posX>60</posX>
