@@ -577,7 +577,6 @@ namespace MediaPortal.TV.Database
 
 		  lock (typeof(TVDatabase))
 		  {
-			  string strSQL;
 			  try
 			  {
 				  string strChannel=ch.ServiceName;

@@ -269,6 +269,8 @@ namespace MediaPortal.TV.Recording
       // check if all tvtuner outputs are connected
       if ( m_TVTuner!=null)
       {
+				int connected=0;
+				int notConnected=0;
         for (int ipin=0; ipin < 10; ipin++)
         {
           IPin pin=DirectShowUtil.FindPinNr( (IBaseFilter)m_TVTuner,PinDirection.Output,ipin);
@@ -276,15 +278,23 @@ namespace MediaPortal.TV.Recording
           {
             IPin pConnectPin=null;
             hr=pin.ConnectedTo(out pConnectPin);  
-            if (hr!= 0 || pConnectPin==null)
-            {
-              //no? then connect all tvtuner outputs
-              ConnectTVTunerOutputs();
-              break;
-            }
+						if (pConnectPin==null)
+						{
+							notConnected++;
+						}
+						else
+						{
+							connected++;
+						}
           }
           else break;
         }
+
+				if (notConnected>0 && connected<2)
+				{
+					Log.Write("SWGraph: tuner got {0} pins connected and {1} pins unconnected", connected,notConnected);
+					ConnectTVTunerOutputs();
+				}
       }
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
@@ -310,6 +320,7 @@ namespace MediaPortal.TV.Recording
 				m_videoAmp.Saturation=m_videoAmp.SaturationDefault;
 				m_videoAmp.Sharpness=m_videoAmp.SharpnessDefault;
 
+				
       }
 
       return true;
@@ -779,6 +790,11 @@ namespace MediaPortal.TV.Recording
 
 			Vmr9.AddVMR9(m_graphBuilder);
 
+
+			Log.Write("SWGraph:FAILED:render audio preview");
+			DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
+
+			Log.Write("SWGraph:FAILED:render video preview");
       m_videoCaptureDevice.RenderPreview();
 			m_mediaControl = (IMediaControl)m_graphBuilder;
 
@@ -1718,23 +1734,101 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:disconnect crossbar outputs");
       DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
 
+
+			IPin crossBarAudioTunerIn=null;
+			IPin crossBarVideoTunerIn=null;
+			int iOutputPinCount, iInputPinCount;
+			crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
+			for (int i=0; i < iInputPinCount; ++i)
+			{
+				int iPinIndexRelatedIn;
+				PhysicalConnectorType PhysicalTypeIn;			// type of input pin
+				crossbar.get_CrossbarPinInfo(true,i,out iPinIndexRelatedIn, out PhysicalTypeIn);
+				if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner)
+				{
+					Log.Write("SWGraph:got crossbar audio tuner input");
+					crossBarAudioTunerIn=DirectShowUtil.FindPinNr( (IBaseFilter)crossbar, PinDirection.Input,i);
+				}
+				if (PhysicalTypeIn == PhysicalConnectorType.Video_Tuner)
+				{
+					Log.Write("SWGraph:got crossbar video tuner input");
+					crossBarVideoTunerIn=DirectShowUtil.FindPinNr( (IBaseFilter)crossbar, PinDirection.Input,i);
+				}
+			}
+
+
       //connect the output pins of the tvtuner
-      DirectShowUtil.DebugWrite("SWGraph:connect tvtuner outputs");
-      bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
-      if (bAllConnected)
-        DirectShowUtil.DebugWrite("SWGraph:all connected");
-      else
-        DirectShowUtil.DebugWrite("SWGraph:FAILED, not all pins connected");
+			for (int iPinTuner=0; iPinTuner < 10; iPinTuner++)
+			{
+				IPin pin=DirectShowUtil.FindPinNr( (IBaseFilter)m_TVTuner,PinDirection.Output,iPinTuner);
+				if (pin!=null)
+				{
+					IPin pConnectPin=null;
+					hr=pin.ConnectedTo(out pConnectPin);  
+					if (pConnectPin==null)
+					{
+						//this pin is not connected.
+						//try to connect it to the crossbar audio/video tuner input 
+						hr=-1;
+						if (crossBarAudioTunerIn!=null)
+							hr=m_graphBuilder.Connect(pin, crossBarAudioTunerIn);
+						if (hr!=0)
+						{
+							if (crossBarVideoTunerIn!=null)
+								hr=m_graphBuilder.Connect(pin, crossBarVideoTunerIn);
+							if (hr==0)
+							{
+								Log.Write("SWGraph:connected tuner->crossbar video tuner input");
+							}
+						}
+						else
+						{	
+							Log.Write("SWGraph:connected tuner->crossbar audio tuner input");
+						}
+					}
+				}
+				else break;
+			}
+			if (crossBarAudioTunerIn!=null)
+				Marshal.ReleaseComObject(crossBarAudioTunerIn);
+			crossBarAudioTunerIn=null;
+
+			if (crossBarVideoTunerIn!=null)
+				Marshal.ReleaseComObject(crossBarVideoTunerIn);
+			crossBarVideoTunerIn=null;
 
       //reconnect the output pins of the crossbar
-      DirectShowUtil.DebugWrite("SWGraph:reconnect crossbar output pins");
+			IPin crossbarOut1 = DirectShowUtil.FindPinNr( (IBaseFilter)crossbar,PinDirection.Output,0);
+			IPin crossbarOut2 = DirectShowUtil.FindPinNr( (IBaseFilter)crossbar,PinDirection.Output,1);
 
-      bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
-      if (bAllConnected)
-        DirectShowUtil.DebugWrite("SWGraph:all connected");
-      else
-        DirectShowUtil.DebugWrite("SWGraph:FAILED, not all pins connected");
-    }
+			IPin videoCaptureIn1 = DirectShowUtil.FindPinNr( (IBaseFilter)m_filterCaptureVideo,PinDirection.Input,0);
+			IPin videoCaptureIn2 = DirectShowUtil.FindPinNr( (IBaseFilter)m_filterCaptureVideo,PinDirection.Input,1);
+			if (crossbarOut1!=null && videoCaptureIn1!=null)
+			{
+				hr=m_graphBuilder.Connect(crossbarOut1, videoCaptureIn1);
+				if (hr==0) Log.Write("SWGraph: connected crossbar:0->capture:0");
+				else Log.Write("SWGraph: FAILED connected crossbar:0->capture:0 0x{0:X}",hr);
+			}
+			if (crossbarOut2!=null && videoCaptureIn2!=null)
+			{
+				hr=m_graphBuilder.Connect(crossbarOut2, videoCaptureIn2);
+				if (hr==0) Log.Write("SWGraph: connected crossbar:1->capture:1");
+				else Log.Write("SWGraph: FAILED connected crossbar:1->capture:1 0x{0:X}",hr);
+			}
+
+			if (crossbarOut1!=null) 
+				Marshal.ReleaseComObject(crossbarOut1);
+			if (crossbarOut2!=null) 
+				Marshal.ReleaseComObject(crossbarOut2);
+			if (videoCaptureIn1!=null) 
+				Marshal.ReleaseComObject(videoCaptureIn1);
+			if (videoCaptureIn2!=null) 
+				Marshal.ReleaseComObject(videoCaptureIn2);
+			crossbarOut1=null;
+			crossbarOut2=null;
+			videoCaptureIn1=null;
+			videoCaptureIn2=null;
+		}
     
 
     protected void SetVideoStandard(AnalogVideoStandard standard)
@@ -1745,8 +1839,8 @@ namespace MediaPortal.TV.Recording
       int hr=m_IAMAnalogVideoDecoder.get_TVFormat(out currentStandard);
       if (currentStandard==standard) return;
 
-      DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
-      if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
+			if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
+			DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
       hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
       if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }

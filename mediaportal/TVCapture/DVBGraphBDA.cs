@@ -486,7 +486,7 @@ namespace MediaPortal.TV.Recording
 				AdviseProgramInfo();
 				return true;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
 				Log.Write("DVBGraphBDA: Unable to create graph");
 				return false;
