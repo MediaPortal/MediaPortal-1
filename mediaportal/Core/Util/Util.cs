@@ -545,12 +545,27 @@ namespace MediaPortal.Util
 			if (strFileName==null) return;
 			if (strFileName.Length<=2) return;
 			if (strFileName[1]==':') return;
-			string strTmp=strBasePath;
-			if (strTmp[strTmp.Length-1] !='\\') 
-				strTmp += "\\";
-			strTmp += strFileName;
-
-			strFileName=strTmp;
+			strBasePath=Utils.RemoveTrailingSlash(strBasePath);
+			while (strFileName.StartsWith(@"..\") || strFileName.StartsWith("../"))
+			{
+				strFileName=strFileName.Substring(3);
+				int pos=strBasePath.LastIndexOf(@"\");
+				if (pos > 0)
+				{
+					strBasePath=strBasePath.Substring(0,pos);
+				}
+				else
+				{
+					pos=strBasePath.LastIndexOf(@"/");
+					if (pos>0)
+					{
+						strBasePath=strBasePath.Substring(0,pos);
+					}
+				}
+			}
+			if (strBasePath.Length==2 && strBasePath[1]==':')
+				strBasePath+=@"\";
+			strFileName=System.IO.Path.Combine(strBasePath,strFileName);
 		}
 
 		static public string stripHTMLtags(string strHTML)
