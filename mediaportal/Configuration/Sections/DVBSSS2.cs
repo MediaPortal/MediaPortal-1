@@ -84,7 +84,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button button7;
 		private System.Windows.Forms.TreeView treeView3;
 		private System.Windows.Forms.Label label15;
-		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.TreeView treeView4;
 		private System.Windows.Forms.ComboBox comboBox1;
 		private System.Windows.Forms.Label label18;
@@ -172,7 +171,6 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.label16 = new System.Windows.Forms.Label();
 			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.lnbkind4 = new System.Windows.Forms.ComboBox();
@@ -281,31 +279,21 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Controls.Add(this.label16);
 			this.groupBox1.Controls.Add(this.checkBox4);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 256);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(360, 80);
+			this.groupBox1.Size = new System.Drawing.Size(424, 80);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Plugins:";
-			// 
-			// label16
-			// 
-			this.label16.ForeColor = System.Drawing.Color.Red;
-			this.label16.Location = new System.Drawing.Point(24, 64);
-			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(376, 32);
-			this.label16.TabIndex = 1;
-			this.label16.Visible = false;
 			// 
 			// checkBox4
 			// 
 			this.checkBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkBox4.Location = new System.Drawing.Point(24, 24);
 			this.checkBox4.Name = "checkBox4";
-			this.checkBox4.Size = new System.Drawing.Size(384, 32);
+			this.checkBox4.Size = new System.Drawing.Size(328, 32);
 			this.checkBox4.TabIndex = 0;
 			this.checkBox4.Text = "Load and use MDAPI-Plugins (needs SoftCSA.dll as wrapper in MediaPortal-Folder!)";
 			this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
@@ -1347,7 +1335,7 @@ namespace MediaPortal.Configuration.Sections
 				comboBox3.Text="";
 				button5.Enabled=false;
 			}
-			label16.Visible=checkBox4.Checked;
+			//label16.Visible=checkBox4.Checked;
 
 			if(tabControl1.SelectedIndex==2)
 			{
@@ -2244,7 +2232,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void checkBox4_CheckedChanged(object sender, System.EventArgs e)
 		{
-			label16.Visible=checkBox4.Checked;
+			//label16.Visible=checkBox4.Checked;
 		}
 
 		void DeselectScrambledChannels()
