@@ -2,6 +2,10 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Direct3D = Microsoft.DirectX.Direct3D;
+using MediaPortal.Picture.Database;
 
 namespace MediaPortal.Dialogs
 {
@@ -33,9 +37,11 @@ namespace MediaPortal.Dialogs
 		int m_dwParentWindowID=0;
 		GUIWindow m_pParentWindow=null;
 		#endregion
-    
+
+    int m_iTextureWidth, m_iTextureHeight;
 		bool m_bPrevOverlay=true;
 		string fileName;
+		Texture m_pTexture = null;
 
 		public GUIDialogExif()
 		{
@@ -122,6 +128,9 @@ namespace MediaPortal.Dialogs
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;		
 					FreeResources();
 					DeInitControls();
+					if (m_pTexture !=null)
+						m_pTexture.Dispose();
+					m_pTexture =null;
 
 					return true;
 				}
@@ -177,13 +186,18 @@ namespace MediaPortal.Dialogs
 			set { fileName=value;}
 		}
 
-		public override void Render()
-		{
-			RenderDlg();
-		}
 
 		void Update()
 		{
+			if (m_pTexture !=null) 
+				m_pTexture.Dispose();
+
+
+			PictureDatabase dbs = new PictureDatabase();
+			int iRotate=dbs.GetRotation(FileName);
+
+			m_pTexture = MediaPortal.Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
+
 			SetLabel((int)Controls.CameraModel         , String.Empty);
 			SetLabel((int)Controls.DateTakenLabel      , String.Empty);
 			SetLabel((int)Controls.EquipmentMake       , String.Empty);
@@ -218,9 +232,7 @@ namespace MediaPortal.Dialogs
 
 				GUIImage image = GetControl((int)Controls.Picture) as GUIImage;
 				if (image!=null)
-				{
-					image.SetFileName(FileName);
-				}
+					image.IsVisible=false;
 			}
 		}
 
@@ -231,5 +243,23 @@ namespace MediaPortal.Dialogs
 			OnMessage(msg);
 		}
 
+		public override void Render()
+		{
+			RenderDlg();
+			if (null == m_pTexture) return;
+			GUIControl pControl = (GUIControl)GetControl((int)Controls.Picture);
+			if (null != pControl)
+			{
+				float x = (float)pControl.XPosition;
+				float y = (float)pControl.YPosition;
+				int width;
+				int height;
+				GUIGraphicsContext.Correct(ref x, ref y);
+
+				GUIFontManager.Present();
+				GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, pControl.Width, pControl.Height, out width, out height);
+				MediaPortal.Util.Picture.RenderImage(ref m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
+			}
+		}
 	}
 }
