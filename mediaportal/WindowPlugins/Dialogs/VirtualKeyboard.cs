@@ -684,12 +684,16 @@ namespace MediaPortal.Dialogs
     }
     void Close()
     {
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
-      OnMessage(msg);
+			
+			lock (this)
+			{
+				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
+				OnMessage(msg);
 
-      GUIWindowManager.UnRoute();
-      m_pParentWindow=null;
-      m_bRunning=false;
+				GUIWindowManager.UnRoute();
+				m_pParentWindow=null;
+				m_bRunning=false;
+			}
     }
 
     public void DoModal(int dwParentId)
@@ -718,12 +722,16 @@ namespace MediaPortal.Dialogs
 
     public override void Render(float timePassed)
     {
-			if (null!=m_pParentWindow) 
-				m_pParentWindow.Render(timePassed);
+			
+			lock (this)
+			{
+				if (null!=m_pParentWindow) 
+					m_pParentWindow.Render(timePassed);
 		
-			GUIFontManager.Present();
-      // render the parent window
-      RenderKeyboardLatin(timePassed);    
+				GUIFontManager.Present();
+				// render the parent window
+				RenderKeyboardLatin(timePassed);    
+			}
     }
 
     void InitBoard()

@@ -58,8 +58,6 @@ namespace MediaPortal.GUI.Video
     ViewMode viewmode= ViewMode.Image;
     bool m_bRefresh = false;
     IMDBMovie m_movie = null;
-    int m_iTextureWidth = 0;
-    int m_iTextureHeight = 0;
     bool m_bPrevOverlay = false;
     GoogleImageSearch m_search = new GoogleImageSearch();
     string m_sIMDBThumbURL = "";
@@ -91,22 +89,28 @@ namespace MediaPortal.GUI.Video
     public void RenderDlg(float timePassed)
     {
       // render the parent window
-      if (null != m_pParentWindow) 
-        m_pParentWindow.Render(timePassed);
+			lock (this)
+			{
+				if (null != m_pParentWindow) 
+					m_pParentWindow.Render(timePassed);
 
-			GUIFontManager.Present();
-      // render this dialog box
-      base.Render(timePassed);
+				GUIFontManager.Present();
+				// render this dialog box
+				base.Render(timePassed);
+			}
     }
 
     void Close()
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
+		{
+			lock (this)
+			{
+				m_bRunning = false;
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
+				OnMessage(msg);
 
-      GUIWindowManager.UnRoute();
-      m_pParentWindow = null;
-      m_bRunning = false;
+				GUIWindowManager.UnRoute();
+				m_pParentWindow = null;
+			}
     }
 
     public void DoModal(int dwParentId)
@@ -389,6 +393,7 @@ namespace MediaPortal.GUI.Video
     
     public override void Render(float timePassed)
     {
+			if (!m_bRunning) return;
       RenderDlg(timePassed);
     }
 

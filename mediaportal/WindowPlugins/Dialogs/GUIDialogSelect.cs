@@ -67,22 +67,29 @@ namespace MediaPortal.Dialogs
     #region Base Dialog Members
     public void RenderDlg(float timePassed)
     {
-      // render the parent window
-//      if (null!=m_pParentWindow) 
-//        m_pParentWindow.Render();
+			
+			lock (this)
+			{
+				// render the parent window
+				//      if (null!=m_pParentWindow) 
+				//        m_pParentWindow.Render();
 
-      // render this dialog box
-      base.Render(timePassed);
+				// render this dialog box
+				base.Render(timePassed);
+			}
     }
 
     void Close()
-    {
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
-      OnMessage(msg);
+		{
+			lock (this)
+			{
+				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
+				OnMessage(msg);
 
-      GUIWindowManager.UnRoute();
-      m_pParentWindow=null;
-      m_bRunning=false;
+				GUIWindowManager.UnRoute();
+				m_pParentWindow=null;
+				m_bRunning=false;
+			}
     }
 
     public void DoModal(int dwParentId)
