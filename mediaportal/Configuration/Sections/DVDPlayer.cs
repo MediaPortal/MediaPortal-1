@@ -54,7 +54,7 @@ namespace MediaPortal.Configuration.Sections
 				parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer","arguments", "");
 
         int videoRenderer = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
-				videoRenderer=0;
+
         if(videoRenderer >= 0 && videoRenderer <= VideoRenderersShort.List.Length)				
           videoRendererComboBox.SelectedItem = VideoRenderersShort.List[videoRenderer];        
 
@@ -98,8 +98,7 @@ namespace MediaPortal.Configuration.Sections
         {
           if(VideoRenderersShort.List[index].Equals(videoRendererComboBox.Text))
           {
-           // xmlwriter.SetValue("dvdplayer", "vmr9", index);
-						 xmlwriter.SetValue("dvdplayer", "vmr9", 0);
+						xmlwriter.SetValue("dvdplayer", "vmr9", index);
           }
         }
       }
@@ -303,7 +302,6 @@ namespace MediaPortal.Configuration.Sections
 			this.videoRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.videoRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.videoRendererComboBox.Enabled = false;
 			this.videoRendererComboBox.Location = new System.Drawing.Point(168, 27);
 			this.videoRendererComboBox.Name = "videoRendererComboBox";
 			this.videoRendererComboBox.Size = new System.Drawing.Size(256, 21);

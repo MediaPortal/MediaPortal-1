@@ -30,6 +30,7 @@ namespace MediaPortal.Player
 		//this in reality should be an array, but doesn't work. In the common case
 		// only a surface will be requested.
 		static IntPtr m_surface1 = IntPtr.Zero;
+		static IntPtr m_surface2 = IntPtr.Zero;
     
 		[StructLayout(LayoutKind.Sequential)]
 	  public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
@@ -67,6 +68,21 @@ namespace MediaPortal.Player
           Marshal.Release(m_surface1);
           m_surface1=IntPtr.Zero;
         }
+				if (m_surface2!=IntPtr.Zero)
+				{
+					Log.Write("alloc 2nd:{0}x{1}", allocInfo.dwWidth,allocInfo.dwHeight);
+					if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=768)
+					{
+						Log.Write("return surface2");
+						m_surface1=m_surface2;
+						m_surface2=IntPtr.Zero;
+						m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
+						float fTU = (float)(allocInfo.dwWidth ) / (float)(768);
+						float fTV = (float)(allocInfo.dwHeight) / (float)(576);
+						scene.SetSrcRect( fTU, fTV );
+						return 0;
+					}
+				}
 
 				Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
 				Int32 numbuff = Marshal.ReadInt32(numBuffers);
@@ -121,6 +137,17 @@ namespace MediaPortal.Player
         else
         {
           Log.Write("AllocatorWrapper:AllocateSurface succeeded");
+					allocInfo.dwWidth=768;
+					allocInfo.dwHeight=576;
+					if (m_surface2!=IntPtr.Zero)
+					{
+						Marshal.Release(m_surface2);
+						m_surface2=IntPtr.Zero;
+					}
+					hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface2);
+					if (hr==0) Log.Write("allocted 768x576");
+					else Log.Write("failed:allocted 768x576");
+					hr=0;
         }
         return hr;
 			}
