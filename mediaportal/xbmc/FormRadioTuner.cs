@@ -202,7 +202,7 @@ namespace MediaPortal
     {
       foreach (RadioStation station in radioChannels)
       {
-        if (station.Channel==Frequency) return;
+        if (station.Channel==Channel) return;
       }
       RadioStation NewStation = new RadioStation();
       NewStation.Name = String.Format("Channel{0}", radioChannels.Count+1);
