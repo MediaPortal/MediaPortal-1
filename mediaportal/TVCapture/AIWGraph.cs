@@ -51,13 +51,15 @@ namespace MediaPortal.TV.Recording
 		double                  m_FrameRate;
 		int                     _RecordingLevel=100;
 		bool                    m_bFirstTune = true;
+		protected string                     cardName;
 
 		const int WS_CHILD = 0x40000000;
 		const int WS_CLIPCHILDREN = 0x02000000;
 		const int WS_CLIPSIBLINGS = 0x04000000;
 
-		public AIWGraph(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
+		public AIWGraph(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel, string friendlyName)
 		{
+			cardName=friendlyName;
 			m_bFirstTune = true;
 			m_bUseCable = bCable;
 			m_iCountryCode = iCountryCode;
@@ -761,7 +763,7 @@ namespace MediaPortal.TV.Recording
 				m_iCountryCode,standard.ToString(),
 				m_bUseCable);
 
-			DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 1000, (iChannel == 1001),(iChannel == 1002),(iChannel == 1000),true);
+			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 1000, (iChannel == 1001),(iChannel == 1002),(iChannel == 1000),cardName);
 		}
 
 		/// <summary>

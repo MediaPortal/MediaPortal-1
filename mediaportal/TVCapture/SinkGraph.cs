@@ -55,6 +55,7 @@ namespace MediaPortal.TV.Recording
     protected IAMVideoProcAmp         m_videoprocamp=null;
     protected VideoProcAmp            m_videoAmp=null;
 		protected VMR9Util							  Vmr9=null; 
+		protected string                     cardName;
 
 
 
@@ -64,8 +65,9 @@ namespace MediaPortal.TV.Recording
     /// <param name="iCountryCode">country code</param>
     /// <param name="bCable">use Cable or antenna</param>
     /// <param name="strVideoCaptureFilter">Filter name of the capture device</param>
-		public SinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate)
+		public SinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate, string friendlyName)
 		{
+			cardName=friendlyName;
       m_cardID=ID;
       m_bFirstTune=true;
       m_bUseCable=bCable;
@@ -104,6 +106,7 @@ namespace MediaPortal.TV.Recording
 			mCard                    = pCard;
 
 			// Add legacy code to be compliant to other call, ie fill in membervariables...
+			cardName=pCard.FriendlyName;
 			m_bFirstTune             = true;
 			m_graphState             = State.None;
 			m_cardID                 = mCard.ID;
@@ -634,7 +637,7 @@ namespace MediaPortal.TV.Recording
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) ,true);
+        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) ,cardName);
       }
       m_iPrevChannel=iChannel;
       m_StartTime=DateTime.Now;

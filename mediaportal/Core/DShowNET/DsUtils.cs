@@ -317,6 +317,187 @@ namespace DShowNET
 			}
 		}
 
+			/// <summary>
+			/// FixCrossbarRouting() will search and configure all crossbar filters in the graph
+			/// It will
+			/// </summary>
+			/// <param name="graphbuilder">IGraphBuilder</param>
+			/// <param name="m_captureGraphBuilder">ICaptureGraphBuilder2</param>
+			/// <param name="captureFilter">IBaseFilter containing the capture device filter</param>
+			/// <param name="bTunerIn">configure the crossbars to use the tuner input as source</param>
+			/// <param name="useCVBS1">configure the crossbars to use the 1st CVBS input as source</param>
+			/// <param name="useCVBS2">configure the crossbars to use the 2nd CVBS input as source</param>
+			/// <param name="useSVHS">configure the crossbars to use the SVHS input as source</param>
+			/// <param name="logActions">true : log all actions in the logfile
+			///                          false: dont log
+			/// </param>
+			static public void FixCrossbarRoutingEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, string cardName)
+			{
+				if (graphbuilder==null) return;
+				if (m_captureGraphBuilder==null) return;
+				if (captureFilter==null) return;
+				bool CvbsWanted= (useCVBS1 || useCVBS2);
+				int iCVBSVideo=0;
+				int iCVBSAudio=0;
+				int iSVHSVideo=0;
+			
+				int audioCVBS1=1;
+				int audioCVBS2=2;
+				int audioSVHS=1;
+				int videoCVBS1=1;
+				int videoCVBS2=2;
+				int videoSVHS=1;
+
+				string filename=String.Format(@"database\card_{0}.xml", cardName);
+				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(filename))
+				{
+					audioCVBS1 = 1+xmlreader.GetValueAsInt("mapping", "audio1", 0);
+					audioCVBS2 = 1+xmlreader.GetValueAsInt("mapping", "audio2", 1);
+					audioSVHS  = 1+xmlreader.GetValueAsInt("mapping", "audio3", 0);
+
+				
+					videoCVBS1 = 1+xmlreader.GetValueAsInt("mapping", "video1", 0);
+					videoCVBS2 = 1+xmlreader.GetValueAsInt("mapping", "video2", 1);
+					videoSVHS  = 1+xmlreader.GetValueAsInt("mapping", "Video3", 0);
+				}
+
+				DirectShowUtil.DebugWrite("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3}",useTuner, useCVBS1, useCVBS2, useSVHS);
+				try
+				{
+					int icurrentCrossbar=0;
+				
+					//start search upward from the video capture filter
+					IBaseFilter searchfilter=captureFilter ;
+					while (true)
+					{
+						// Find next crossbar
+						int  hr=0;
+						Guid cat;
+						Guid iid;
+						object o=null;
+						cat = FindDirection.UpstreamOnly;
+						iid = typeof(IAMCrossbar).GUID;
+						DirectShowUtil.DebugWrite(" Find crossbar:#{0}", 1+icurrentCrossbar);
+						hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,searchfilter, ref iid, out o);
+						if (hr ==0 && o != null)
+						{
+							// we found something, check if it is a crossbar
+							IAMCrossbar crossbar = o as IAMCrossbar;
+
+							// next loop, use this filter as start for searching for next crossbar
+							searchfilter=o as IBaseFilter;
+							if (crossbar!=null)
+							{
+								// new crossbar found
+								icurrentCrossbar++;
+								DirectShowUtil.DebugWrite("  crossbar found:{0}",icurrentCrossbar);
+
+								// get the number of input & output pins of the crossbar
+								int iOutputPinCount, iInputPinCount;
+								crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
+								DirectShowUtil.DebugWrite("    crossbar has {0} inputs and {1} outputs",iInputPinCount,iOutputPinCount);
+            
+								int                   iPinIndexRelated;		// pin related (routed) with this output pin
+								int                   iPinIndexRelatedIn; // pin related (routed) with this input pin
+								PhysicalConnectorType PhysicalTypeOut;		// type of output pin
+								PhysicalConnectorType PhysicalTypeIn;			// type of input pin
+								iCVBSVideo=0;
+								iCVBSAudio=0;
+
+								//for all output pins of the crossbar
+								for (int iOut=0; iOut < iOutputPinCount; ++iOut)
+								{
+									// get the information about this output pin
+									crossbar.get_CrossbarPinInfo(false,iOut,out iPinIndexRelated, out PhysicalTypeOut);
+              
+									// for all input pins of the crossbar
+									for (int iIn=0; iIn < iInputPinCount; iIn++)
+									{
+										// check if we can make a connection between the input pin -> output pin
+										hr=crossbar.CanRoute(iOut, iIn);
+										if (hr==0)
+										{
+											// yes thats possible, now get the information of the input pin
+											crossbar.get_CrossbarPinInfo(true,iIn,out iPinIndexRelatedIn, out PhysicalTypeIn);
+											DirectShowUtil.DebugWrite("     check:in#{0}->out#{1} / {2} -> {3}",iIn,iOut,PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
+										
+										
+											// boolean indicating if current input pin should be connected to the current output pin
+											bool bRoute=false; 
+
+											// Check video input options
+											// if the input pin is a Tuner Input and we want to use the tuner, then connect this
+											if (useTuner && PhysicalTypeIn==PhysicalConnectorType.Video_Tuner )  bRoute=true;
+
+											// if the input pin is a CVBS input and we want to use CVBS then
+											if (CvbsWanted && PhysicalTypeIn==PhysicalConnectorType.Video_Composite)  
+											{
+												iCVBSVideo++;
+												if (useCVBS1 && iCVBSVideo == videoCVBS1) bRoute=true;
+												if (useCVBS2 && iCVBSVideo == videoCVBS2) bRoute=true;
+											}
+
+											// if the input pin is a SVHS input and we want to use SVHS then connect
+											if (useSVHS && PhysicalTypeIn==PhysicalConnectorType.Video_SVideo)
+											{
+												iSVHSVideo++;
+												if (iSVHSVideo==videoSVHS) bRoute=true;
+											}
+                    
+											// Check audio input options
+											// if this is the audio tuner input and we want to use the tuner, then connect
+											if (useTuner)
+											{
+												if (PhysicalTypeIn==PhysicalConnectorType.Audio_Tuner )  bRoute=true;
+											}
+											else
+											{
+												// if this is the audio line input
+												if ( /*PhysicalTypeIn==PhysicalConnectorType.Audio_AUX||*/
+													PhysicalTypeIn==PhysicalConnectorType.Audio_Line ||
+													PhysicalTypeIn==PhysicalConnectorType.Audio_AudioDecoder) 
+												{
+													// if this is the first audio input then connect
+													iCVBSAudio++;
+													if (useCVBS1 && iCVBSAudio==audioCVBS1) bRoute=true;
+													if (useCVBS2 && iCVBSAudio==audioCVBS2) bRoute=true;
+													if (useSVHS  && iCVBSAudio==audioSVHS) bRoute=true;
+												}
+											}
+
+											//should current input pin be connected to current output pin?
+											if ( bRoute )
+											{
+												//yes, then connect
+												DirectShowUtil.DebugWrite("     connect");
+												hr=crossbar.Route(iOut,iIn);
+												if (hr!=0) DirectShowUtil.DebugWrite("    connect FAILED");
+												else DirectShowUtil.DebugWrite("    connect success");
+											}
+										}//if (hr==0)
+									}//for (int iIn=0; iIn < iInputPinCount; iIn++)
+								}//for (int iOut=0; iOut < iOutputPinCount; ++iOut)
+							}//if (crossbar!=null)
+							else
+							{
+								DirectShowUtil.DebugWrite("  no more crossbars");
+								break;
+							}
+						}//if (hr ==0 && o != null)
+						else
+						{
+							DirectShowUtil.DebugWrite("  no more crossbars.:0x{0:X}",hr);
+							break;
+						}
+					}//while (true)
+					DirectShowUtil.DebugWrite("crossbar routing done");
+				}
+				catch (Exception ex)
+				{
+					DirectShowUtil.DebugWrite("crossbar routing exception:{0}",ex.ToString());
+				}
+			}
+
 
 
 		public static bool IsCorrectDirectXVersion()

@@ -23,8 +23,8 @@ namespace MediaPortal.TV.Recording
   /// </summary>	
   public class MCESinkGraph : MediaPortal.TV.Recording.SinkGraph
 	{
-    public MCESinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate)
-      :base(ID,iCountryCode,bCable,strVideoCaptureFilter, frameSize, frameRate)
+    public MCESinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate,string friendlyName)
+      :base(ID,iCountryCode,bCable,strVideoCaptureFilter, frameSize, frameRate,friendlyName)
     {
 		}
     /// <summary>

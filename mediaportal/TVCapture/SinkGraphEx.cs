@@ -146,7 +146,7 @@ namespace MediaPortal.TV.Recording
 				// even (again, pretentions...) the Sigma Designs XCard could be "coupled" to the capture card...
 
 				// Set crossbar routing, default to Tv Tuner + Audio Tuner...
-				//	DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, m_captureFilter, true, false, false, false,false);
+				//	DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, m_captureFilter, true, false, false, false,cardName);
 
 				FilterDefinition sourceFilter;
 				FilterDefinition sinkFilter;

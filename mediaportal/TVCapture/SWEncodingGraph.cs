@@ -93,10 +93,12 @@ namespace MediaPortal.TV.Recording
     StreamBufferConfig         m_StreamBufferConfig=null;
     bool                       m_bOverlayVisible=false;
 		protected VMR9Util							  Vmr9=null; 
+		string                     cardName;
 
-		public SWEncodingGraph(int ID,int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
+		public SWEncodingGraph(int ID,int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel,string friendlyName)
     {
-      m_cardID=ID;
+			cardName=friendlyName;
+			m_cardID=ID;
       m_bFirstTune = true;
       m_bUseCable = bCable;
       m_iCountryCode = iCountryCode;
@@ -742,7 +744,7 @@ namespace MediaPortal.TV.Recording
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) ,true);
+        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) ,cardName);
       }
       m_iPrevChannel=iChannel;
     }
