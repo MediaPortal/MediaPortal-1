@@ -308,5 +308,27 @@ namespace Programs.Utils
 			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gliBack);
 		}
 
+		static public string GetAvailableExtensions(string curDirectory)
+		{
+			string Result = "";
+			string Checker = "#";
+			string sep = "";
+			if (System.IO.Directory.Exists(curDirectory))
+			{
+				string [] fileEntries = System.IO.Directory.GetFiles(curDirectory);
+				foreach(string fileName in fileEntries)
+				{
+					string curExtension = System.IO.Path.GetExtension(fileName).ToLower();
+					if (Checker.IndexOf("#" + curExtension + "#") == -1)
+					{
+						Result = Result + sep + curExtension;
+						Checker = Checker + curExtension + "#";
+						sep = ",";
+					}
+				}
+			}
+			return Result;
+		}
+
 	}
 }

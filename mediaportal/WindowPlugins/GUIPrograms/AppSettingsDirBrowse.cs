@@ -41,6 +41,7 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.Button buttonImageDirs;
 		private System.Windows.Forms.TextBox txtPinCode;
 		private System.Windows.Forms.Label LblPinCode;
+		private System.Windows.Forms.Button buttonGetExtensions;
 		private System.ComponentModel.IContainer components = null;
 
 		public AppSettingsDirBrowse()
@@ -101,6 +102,7 @@ namespace WindowPlugins.GUIPrograms
 			this.label3 = new System.Windows.Forms.Label();
 			this.txtPinCode = new System.Windows.Forms.TextBox();
 			this.LblPinCode = new System.Windows.Forms.Label();
+			this.buttonGetExtensions = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// chkbUseShellExecute
@@ -349,8 +351,20 @@ namespace WindowPlugins.GUIPrograms
 			this.LblPinCode.TabIndex = 8;
 			this.LblPinCode.Text = "Pin-Code";
 			// 
+			// buttonGetExtensions
+			// 
+			this.buttonGetExtensions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.buttonGetExtensions.Location = new System.Drawing.Point(376, 288);
+			this.buttonGetExtensions.Name = "buttonGetExtensions";
+			this.buttonGetExtensions.Size = new System.Drawing.Size(20, 20);
+			this.buttonGetExtensions.TabIndex = 31;
+			this.buttonGetExtensions.Text = "?";
+			this.toolTip.SetToolTip(this.buttonGetExtensions, "Read all available file extensions from the file directory");
+			this.buttonGetExtensions.Click += new System.EventHandler(this.buttonGetExtensions_Click);
+			// 
 			// AppSettingsDirBrowse
 			// 
+			this.Controls.Add(this.buttonGetExtensions);
 			this.Controls.Add(this.LblPinCode);
 			this.Controls.Add(this.txtPinCode);
 			this.Controls.Add(this.label3);
@@ -581,6 +595,11 @@ namespace WindowPlugins.GUIPrograms
 			{
 				e.Handled = true;
 			}
+		}
+
+		private void buttonGetExtensions_Click(object sender, System.EventArgs e)
+		{
+			txtExtensions.Text = ProgramUtils.GetAvailableExtensions(txtFiles.Text);
 		}
 
 

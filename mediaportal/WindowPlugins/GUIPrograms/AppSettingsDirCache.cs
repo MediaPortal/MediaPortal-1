@@ -42,6 +42,7 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.CheckBox chkbEnableGUIRefresh;
 		private System.Windows.Forms.Label LblPinCode;
 		private System.Windows.Forms.TextBox txtPinCode;
+		private System.Windows.Forms.Button buttonGetExtensions;
 		private System.ComponentModel.IContainer components = null;
 
 
@@ -104,6 +105,7 @@ namespace WindowPlugins.GUIPrograms
 			this.chkbEnableGUIRefresh = new System.Windows.Forms.CheckBox();
 			this.LblPinCode = new System.Windows.Forms.Label();
 			this.txtPinCode = new System.Windows.Forms.TextBox();
+			this.buttonGetExtensions = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// label3
@@ -362,8 +364,20 @@ namespace WindowPlugins.GUIPrograms
 			this.txtPinCode.Text = "";
 			this.txtPinCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPinCode_KeyPress);
 			// 
+			// buttonGetExtensions
+			// 
+			this.buttonGetExtensions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.buttonGetExtensions.Location = new System.Drawing.Point(376, 288);
+			this.buttonGetExtensions.Name = "buttonGetExtensions";
+			this.buttonGetExtensions.Size = new System.Drawing.Size(20, 20);
+			this.buttonGetExtensions.TabIndex = 30;
+			this.buttonGetExtensions.Text = "?";
+			this.toolTip.SetToolTip(this.buttonGetExtensions, "Read all available file extensions from the file directory");
+			this.buttonGetExtensions.Click += new System.EventHandler(this.buttonGetExtensions_Click);
+			// 
 			// AppSettingsDirCache
 			// 
+			this.Controls.Add(this.buttonGetExtensions);
 			this.Controls.Add(this.LblPinCode);
 			this.Controls.Add(this.txtPinCode);
 			this.Controls.Add(this.chkbEnableGUIRefresh);
@@ -598,6 +612,11 @@ namespace WindowPlugins.GUIPrograms
 				e.Handled = true;
 			}
 		
+		}
+
+		private void buttonGetExtensions_Click(object sender, System.EventArgs e)
+		{
+			txtExtensions.Text = ProgramUtils.GetAvailableExtensions(txtFiles.Text);
 		}
 
 	}
