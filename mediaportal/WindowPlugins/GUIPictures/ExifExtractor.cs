@@ -3,7 +3,7 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
-
+using System.Diagnostics;
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -125,14 +125,19 @@ namespace MediaPortal.GUI.Pictures
 
     private void setStuff(ref MetadataItem item, PropertyItem propItem, string tag, string caption)
     {
-      item.Caption = caption;
-      item.Hex	 = tag;
-      string proptext = propItem.Id.ToString("x");
-      if (proptext == tag) 
-      {
-        System.Text.ASCIIEncoding Value = new System.Text.ASCIIEncoding();
-        item.DisplayValue = Value.GetString(propItem.Value);
-      }
+			try
+			{
+				item.Caption = caption;
+				item.Hex	 = tag;
+				string proptext = propItem.Id.ToString("x");
+				if (proptext == tag) 
+				{
+					System.Text.ASCIIEncoding Value = new System.Text.ASCIIEncoding();
+					item.DisplayValue = Value.GetString(propItem.Value);
+				}
+			}
+			catch(Exception)
+			{}
     }
 
 
@@ -178,6 +183,8 @@ namespace MediaPortal.GUI.Pictures
           try
           {
             PropertyItem propItem = MyImage.GetPropertyItem(MyPropertyId);
+						string proptext = propItem.Id.ToString("x");
+						Trace.WriteLine("proptext:"+ proptext);
 
             setStuff(ref MyMetadata.ViewerComments,		propItem, "10e",  "Viewer Comments");
             setStuff(ref MyMetadata.EquipmentMake,		propItem, "10f",  "Equipment Make");
@@ -186,13 +193,16 @@ namespace MediaPortal.GUI.Pictures
             string dtstr = MyMetadata.DatePictureTaken.DisplayValue;
             if ( dtstr != null )
             {
-              dtstr = dtstr.Substring(0, dtstr.Length-1);
-              DateTime dat = DateTime.ParseExact(dtstr, "d", m_dateTimeFormat);
-              MyMetadata.DatePictureTaken.DisplayValue = Convert.ToString(dat, System.Threading.Thread.CurrentThread.CurrentCulture);
+							try
+							{
+								dtstr = dtstr.Substring(0, dtstr.Length-1);
+								DateTime dat = DateTime.ParseExact(dtstr, "d", m_dateTimeFormat);
+								MyMetadata.DatePictureTaken.DisplayValue = Convert.ToString(dat, System.Threading.Thread.CurrentThread.CurrentCulture);
+							}
+							catch(Exception){}
             }
 
-            string proptext = propItem.Id.ToString("x");
-
+    
             MyMetadata.MeteringMode.Caption = "Metering Mode";
             if (proptext == "9207") 
             {
@@ -260,12 +270,12 @@ namespace MediaPortal.GUI.Pictures
 
         MyMetadata.Resolution.DisplayValue = 
           MyImage.HorizontalResolution.ToString() 
-          +  ":" +  MyImage.VerticalResolution.ToString();
+          +  "x" +  MyImage.VerticalResolution.ToString();
         MyMetadata.Resolution.Caption = "Resolution ";
 		
         MyMetadata.ImageDimensions.DisplayValue = 
-          MyImage.Height.ToString()
-          + ":" + MyImage.Width.ToString();
+          MyImage.Width.ToString()
+          + "x" + MyImage.Height.ToString();
         MyMetadata.ImageDimensions.Caption = "Dimensions";
       }
       return MyMetadata;

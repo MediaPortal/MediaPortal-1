@@ -181,6 +181,20 @@ namespace MediaPortal.Dialogs
 
 		void Update()
 		{
+			SetLabel((int)Controls.CameraModel         , String.Empty);
+			SetLabel((int)Controls.DateTakenLabel      , String.Empty);
+			SetLabel((int)Controls.EquipmentMake       , String.Empty);
+			SetLabel((int)Controls.ExposureCompensation, String.Empty);
+			SetLabel((int)Controls.ExposureTime        , String.Empty);
+			SetLabel((int)Controls.Flash               , String.Empty);
+			SetLabel((int)Controls.Fstop               , String.Empty);
+			SetLabel((int)Controls.ImageDimensions     , String.Empty);
+			SetLabel((int)Controls.ImageTitleLabel     , String.Empty);
+			SetLabel((int)Controls.MeteringMode        , String.Empty);
+			SetLabel((int)Controls.Resolutions			   , String.Empty);
+			SetLabel((int)Controls.ShutterSpeed				 , String.Empty);
+			SetLabel((int)Controls.ViewComments				 , String.Empty);
+
 			using (ExifMetadata extractor = new ExifMetadata())
 			{
 				ExifMetadata.Metadata metaData=extractor.GetExifMetadata(FileName);

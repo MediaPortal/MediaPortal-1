@@ -297,7 +297,10 @@ namespace MediaPortal.GUI.Library
 				// Set the text of the label.
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
-					Label = (string)(message.Label.Clone());
+					if (message.Label!=null)
+						Label = (string)(message.Label.Clone());
+					else
+						Label="";
 					return true;
 				}
 			}

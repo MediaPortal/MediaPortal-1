@@ -231,7 +231,26 @@ namespace MediaPortal.GUI.Library
     public override bool OnMessage(GUIMessage message)
     {
       if ( message.TargetControlId==GetID )
-      {
+			{
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
+				{
+					m_dtTime=DateTime.Now;
+					m_strPrevTxt="";
+					m_vecLabels.Clear();
+					m_iCurrentLabel=0;
+					scroll_pos = 0;
+					iScrollX=0;
+					m_bFadeIn=true;
+					m_iCurrentFrame =0;
+					if (message.Label!=null)
+					{
+						string strLabel = message.Label;
+						if (strLabel.Length>0)
+						{
+							m_vecLabels.Add(strLabel);
+						}
+					}
+				}
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
           if (message.Label!=null)
