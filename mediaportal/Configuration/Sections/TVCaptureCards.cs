@@ -23,6 +23,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.ComponentModel.IContainer components = null;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
 
 		//
 		// Privare members
@@ -60,6 +61,7 @@ namespace MediaPortal.Configuration.Sections
 		private void AddCaptureCard(TVCaptureDevice card)
 		{
 			ListViewItem listItem = new ListViewItem(new string[] { card.VideoDevice, 
+                                  card.FriendlyName,                                                                
 																	card.UseForTV.ToString(),
 																	card.UseForRecording.ToString()
 																  } );
@@ -99,6 +101,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -158,6 +161,7 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cardsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                     this.columnHeader1,
+                                                                                    this.columnHeader4,
                                                                                     this.columnHeader2,
                                                                                     this.columnHeader3});
       this.cardsListView.FullRowSelect = true;
@@ -172,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Capture card";
-      this.columnHeader1.Width = 222;
+      this.columnHeader1.Width = 144;
       // 
       // columnHeader2
       // 
@@ -182,7 +186,12 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader3
       // 
       this.columnHeader3.Text = "Recording";
-      this.columnHeader3.Width = 63;
+      this.columnHeader3.Width = 64;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Friendly name";
+      this.columnHeader4.Width = 77;
       // 
       // TVCaptureCards
       // 
@@ -225,8 +234,9 @@ namespace MediaPortal.Configuration.Sections
 					listItem.Tag = captureCard;
 
 					listItem.SubItems[0].Text = captureCard.VideoDevice;
-					listItem.SubItems[1].Text = captureCard.UseForTV.ToString();
-					listItem.SubItems[2].Text = captureCard.UseForRecording.ToString();
+          listItem.SubItems[1].Text = captureCard.FriendlyName;
+					listItem.SubItems[2].Text = captureCard.UseForTV.ToString();
+					listItem.SubItems[3].Text = captureCard.UseForRecording.ToString();
         }
 			}		
 		}

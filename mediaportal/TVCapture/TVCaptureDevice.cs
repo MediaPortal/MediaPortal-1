@@ -25,7 +25,8 @@ namespace MediaPortal.TV.Recording
     Size    m_FrameSize;
     double  m_FrameRate;
     string  m_strAudioInputPin = "";
-    int    _RecordingLevel=100;
+    int     _RecordingLevel=100;
+    string  m_strFriendlyName="";
 
     [NonSerialized]
     int m_iID;
@@ -96,6 +97,12 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_bSupportsMPEG2; }
       set { m_bSupportsMPEG2 = value; }
+    }
+
+    public string FriendlyName
+    {
+      get { return m_strFriendlyName;}
+      set { m_strFriendlyName=value;}
     }
 
     /// <summary>

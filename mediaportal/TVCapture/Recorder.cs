@@ -93,7 +93,7 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
         card.ID=(i+1);
         Log.Write(" card:{0} video device:{1} TV:{2}  record:{3}",
-                    card.ID,card.VideoDevice,card.UseForTV,card.UseForRecording);
+          card.ID,card.VideoDevice,card.UseForTV,card.UseForRecording);
       }
 
       m_iPreRecordInterval =0;
@@ -259,7 +259,7 @@ namespace MediaPortal.TV.Recording
       tmpRec.Channel=strChannel;
       tmpRec.Title=GUILocalizeStrings.Get(413);
       tmpRec.RecType=TVRecording.RecordingType.Once;
-			tmpRec.IsContentRecording=false;//make a reference recording!
+      tmpRec.IsContentRecording=false;//make a reference recording!
       TVDatabase.AddRecording(ref tmpRec);
     }
 
@@ -344,18 +344,18 @@ namespace MediaPortal.TV.Recording
       {
         Log.Write("Recorder: Stop recording on channel:{0} capture card:{1}", dev.TVChannel,dev.ID);
         int ID=dev.CurrentTVRecording.ID;
-				for (int i=0; i < m_Recordings.Count;++i)
-				{
-					TVRecording rec =(TVRecording )m_Recordings[i];
-					if (rec.ID==ID)
-					{
+        for (int i=0; i < m_Recordings.Count;++i)
+        {
+          TVRecording rec =(TVRecording )m_Recordings[i];
+          if (rec.ID==ID)
+          {
 						
-						rec.Canceled=Utils.datetolong(DateTime.Now);
-						TVDatabase.ChangeRecording(ref rec);
-						break;
-					}
-				}
-				dev.StopRecording();
+            rec.Canceled=Utils.datetolong(DateTime.Now);
+            TVDatabase.ChangeRecording(ref rec);
+            break;
+          }
+        }
+        dev.StopRecording();
       }
     }
 
@@ -390,6 +390,13 @@ namespace MediaPortal.TV.Recording
       TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
       if (dev.IsRecording) return true;
       return false;
+    }
+    static public string GetFriendlyNameForCard(int card)
+    {
+      if (m_eState!= State.Initialized) return String.Empty;
+      if (card <0 || card >=m_tvcards.Count) return String.Empty;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      return dev.FriendlyName;
     }
 
     static public string GetTVChannelName(int card)
