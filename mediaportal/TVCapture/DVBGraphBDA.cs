@@ -2406,7 +2406,7 @@ namespace MediaPortal.TV.Recording
 						if (props.SupportsFireDTVProperties)
 						{
 							//yes, then send the PMT table to the device
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() send PMT to fireDTV device");	
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
 							props.SendPMTToFireDTV(pmt, (int)len);
 						}//if (props.SupportsFireDTVProperties)
 					}
