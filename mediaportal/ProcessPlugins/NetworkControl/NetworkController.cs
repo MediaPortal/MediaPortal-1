@@ -46,7 +46,7 @@ namespace NetworkControl
 
 		public bool CanEnable()
 		{
-			return false;
+			return true;
 		}
 
 		public string Description()
