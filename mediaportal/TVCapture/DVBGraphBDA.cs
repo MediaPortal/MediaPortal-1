@@ -11,7 +11,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using TVCapture;
-
+using System.Xml;
 namespace MediaPortal.TV.Recording
 {
 	public enum NetworkType 
@@ -903,7 +903,11 @@ namespace MediaPortal.TV.Recording
 
 		public bool SignalPresent()
 		{
-			return true;
+
+			if(m_graphState==State.Created || m_graphState==State.None)
+				return false;
+			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+			return (myTuner.SignalStrength>0);
 		}
 
 		public long VideoFrequency()
@@ -1571,6 +1575,7 @@ namespace MediaPortal.TV.Recording
 
 		void TestTune()
 		{
+			Scan();
 			Log.Write("tune to nl 2");
 
 			TunerLib.TuneRequest newTuneRequest = null;
@@ -1584,7 +1589,7 @@ namespace MediaPortal.TV.Recording
 
 			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
 
-			myLocator.CarrierFrequency		= 698000;
+			myLocator.CarrierFrequency		= 778000;
 	/*
 			myLocator.Bandwidth						= 8;// in megahertz (7 or 8)
 			myLocator.SymbolRate					= -1;
@@ -1626,6 +1631,51 @@ namespace MediaPortal.TV.Recording
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
 			Log.Write("ONID:{0} TSID:{1} SID:{2} signal:{3}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID, myTuner.SignalStrength);
+			for (int i=0; i < myTuneRequest.Components.Count;++i)
+			{
+				TunerLib.Component comp=myTuneRequest.Components[i];
+				Log.Write("component:{0} lang:{1} desc:{2} status:{3} type:{4}",
+					          i,comp.DescLangID,comp.Description,comp.Status.ToString(),comp.Type.Category.ToString());
+			}
+		}
+
+		public void Scan()
+		{
+			Log.Write("Scanning...");
+			XmlDocument doc= new XmlDocument();
+			doc.Load("dvbt.xml");
+			XmlNodeList frequencyList= doc.DocumentElement.SelectNodes("/dvbt/frequencies/frequency");
+			foreach (XmlNode node in frequencyList)
+			{
+				int carrierFrequency= XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"carrier").InnerText);
+
+				TunerLib.TuneRequest newTuneRequest = null;
+				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+				TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
+				newTuneRequest = myTuningSpace.CreateTuneRequest();
+				TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
+				TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+
+				myLocator.CarrierFrequency		= carrierFrequency;
+				myTuneRequest.ONID	= -1;					//original network id
+				myTuneRequest.TSID	= 1;						//transport stream id
+				myTuneRequest.SID		= 12;						//service id
+				myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+				myTuner.TuneRequest = newTuneRequest;
+				int x=0;
+				while (myTuner.SignalStrength<=0 && x<10)
+				{
+					System.Threading.Thread.Sleep(100);
+					x++;
+				}
+				if (myTuner.SignalStrength>0)
+				{
+					myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
+					Log.Write("found signal on carrier:{0} signal strength:{1} ONID:{2} TSID:{3} {4}", 
+							carrierFrequency,myTuner.SignalStrength,myTuneRequest.ONID, myTuneRequest.TSID,x);
+				}
+			}
+			Log.Write("Scanning done...");
 		}
 	}
 }
