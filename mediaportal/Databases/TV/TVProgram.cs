@@ -8,7 +8,7 @@ namespace MediaPortal.TV.Database
   /// <summary>
   /// Class which holds all details about a TV program
   /// </summary>
-  public class TVProgram
+  public class TVProgram : IComparable
 	{
 		string m_strChannel="";
     string m_strGenre="";
@@ -427,6 +427,15 @@ namespace MediaPortal.TV.Database
       if ((m_strEpisodeNum !="-")&(m_strEpisodeNum !="")) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+m_strEpisodeNum);
       if ((m_strEpisodePart !="-")&(m_strEpisodePart !="")) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+m_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+m_strEpisodePart.Substring(2,1));
       m_strEpisodeFullDetails = epDetail.ToString();
-    }
+		}
+		#region IComparable Members
+
+		public int CompareTo(object obj)
+		{
+			TVProgram prog = (TVProgram)obj;
+			return (Title.CompareTo(prog.Title) );
+		}
+
+		#endregion
 	}
 }

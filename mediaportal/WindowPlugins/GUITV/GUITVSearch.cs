@@ -525,6 +525,7 @@ namespace MediaPortal.GUI.TV
       GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
 			GUIControl.ClearControl(GetID, (int)Controls.btnShow);
+			programs.Sort();
 			int selItem=0;
 			int count=0;
 			foreach (TVProgram prog in programs)
