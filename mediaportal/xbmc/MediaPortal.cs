@@ -620,6 +620,7 @@ public class MediaPortalApp : D3DApp, IRender
       
       PluginManager.Stop();
 
+      GUIFontManager.Dispose();
       GUIWindowManager.Clear();
       GUILocalizeStrings.Dispose();
     }
