@@ -1032,6 +1032,7 @@ namespace MediaPortal
           throw new Exception("exception occured",ex);
 #endif
         }
+        System.Windows.Forms.Application.DoEvents();
         FullRender();
         System.Windows.Forms.Application.DoEvents();
         
@@ -1122,21 +1123,33 @@ namespace MediaPortal
       if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
       if (bDoRender) 
       {
-        System.Threading.Thread.Sleep(50);  
+        System.Windows.Forms.Application.DoEvents();
+        if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
+        {
+          System.Threading.Thread.Sleep(25);  
+        }
+        System.Windows.Forms.Application.DoEvents();
 
-				try
-				{
-					Render();
-				}
-				catch (Exception ex)
-				{
-					Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        try
+        {
+          System.Windows.Forms.Application.DoEvents();
+          Render();
+          System.Windows.Forms.Application.DoEvents();
+        }
+        catch (Exception ex)
+        {
+          Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
 #if DEBUG
-					throw new Exception("exception occured",ex);
+          throw new Exception("exception occured",ex);
 #endif
-				}
+        }
       }
-      else System.Threading.Thread.Sleep(50);
+      else 
+      {
+        System.Windows.Forms.Application.DoEvents();
+        System.Threading.Thread.Sleep(50);
+        System.Windows.Forms.Application.DoEvents();
+      }
 
       if (!deviceLost &&!m_bNeedReset)
       {
@@ -1155,6 +1168,7 @@ namespace MediaPortal
 					GUIWindowManager.ActivateWindow(m_iActiveWindow);
 				}
       }
+      System.Windows.Forms.Application.DoEvents();
       
     }
 

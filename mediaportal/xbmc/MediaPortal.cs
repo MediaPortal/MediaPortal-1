@@ -392,10 +392,15 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void FrameMove()
   {
+    System.Windows.Forms.Application.DoEvents();
     Recorder.Process();
+    System.Windows.Forms.Application.DoEvents();
     g_Player.Process();
+    System.Windows.Forms.Application.DoEvents();
     GUIWindowManager.DispatchThreadMessages(); 
+    System.Windows.Forms.Application.DoEvents();
     GUIWindowManager.ProcessWindows();
+    System.Windows.Forms.Application.DoEvents();
 
     // update playing status
     if (g_Player.Playing)
