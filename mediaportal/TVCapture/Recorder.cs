@@ -251,6 +251,8 @@ namespace MediaPortal.TV.Recording
     /// <param name="strChannel">TVchannel to record</param>
     static public void RecordNow(string strChannel)
     {
+      if (strChannel==null) return;
+      if (strChannel==String.Empty) return;
       if (m_eState!= State.Initialized) return;
       Log.Write("Recorder: record now:"+strChannel);
       // create a new recording which records the next 2 hours...
@@ -275,7 +277,11 @@ namespace MediaPortal.TV.Recording
     /// <returns>true if recording has been started</returns>
     static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
     {
+      if (rec==null) return false;
       if (m_eState!= State.Initialized) return false;
+      if (iPreRecordInterval<0) iPreRecordInterval=0;
+      if (iPostRecordInterval<0) iPostRecordInterval=0;
+
       // check if we're already recording this...
       foreach (TVCaptureDevice dev in m_tvcards)
       {
@@ -451,6 +457,8 @@ namespace MediaPortal.TV.Recording
 
     static public void StartViewing(int card,string channel, bool TVOnOff, bool timeshift)
     {
+      if (channel==null) return ;
+      if (channel==String.Empty) return ;
       if (m_eState!= State.Initialized) return ;
       if (card <0 || card >=m_tvcards.Count) return ;
       TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
@@ -569,6 +577,7 @@ namespace MediaPortal.TV.Recording
     static public bool IsRecordingSchedule(TVRecording rec, out int card)
     {
       card=-1;
+      if (rec==null) return false;
       if (m_eState!= State.Initialized) return false;
       for (int i=0; i < m_tvcards.Count;++i)
       {
@@ -1022,7 +1031,8 @@ namespace MediaPortal.TV.Recording
     ///  When received the scheduler will stop timeshifting.
     /// </remarks>
 		static public void OnMessage(GUIMessage message)
-		{
+    {
+      if (message==null) return;
 			switch(message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD:
@@ -1073,6 +1083,8 @@ namespace MediaPortal.TV.Recording
 
     static void TuneExternalChannel(string strChannelName)
     {
+      if (strChannelName==null) return;
+      if (strChannelName==String.Empty) return;
       foreach (TVChannel chan in m_TVChannels)
       {
         if (chan.Name.Equals(strChannelName))
@@ -1099,6 +1111,8 @@ namespace MediaPortal.TV.Recording
 
     static void DeleteOldTimeShiftFiles(string strPath)
     {
+      if (strPath==null) return;
+      if (strPath==String.Empty) return;
       // Remove any trailing slashes
       strPath=Utils.RemoveTrailingSlash(strPath);
 
