@@ -172,12 +172,18 @@ namespace MediaPortal.TV.Recording
         m_mpeg2Demux=null;
       }
       //m_mediaControl=null;
-			if (m_videoCaptureDevice!=null)
+
+      if (m_videoCaptureDevice!=null)
 			{
 				m_videoCaptureDevice.CloseInterfaces();
 				m_videoCaptureDevice=null;
-			}
-			DsUtils.RemoveFilters(m_graphBuilder);
+      }
+
+
+      if( m_TVTuner != null )
+        Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
+			
+      DsUtils.RemoveFilters(m_graphBuilder);
 
 			//if( m_videoStreamConfig != null )
 			//	Marshal.ReleaseComObject( m_videoStreamConfig ); m_videoStreamConfig = null;
@@ -185,9 +191,6 @@ namespace MediaPortal.TV.Recording
 			//if( m_videoprocamp != null )
 			//	Marshal.ReleaseComObject( m_videoprocamp ); m_videoprocamp = null;
 
-
-			if( m_TVTuner != null )
-				Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
 
       if( m_captureFilter != null )
         Marshal.ReleaseComObject( m_captureFilter ); m_captureFilter = null;
