@@ -422,7 +422,7 @@ namespace MediaPortal.Util
           }
           catch(Exception ex)
           {
-            Log.Write("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1}",subitems[4], ex.Message);
+            Log.Write("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}",subitems[4], ex.Message,ex.StackTrace);
             return items;
           }
           try
@@ -431,7 +431,7 @@ namespace MediaPortal.Util
           }
           catch(Exception ex)
           {
-            Log.Write("VirtualDirectory:unable to get remote folder:{0} reason:{1}",subitems[4], ex.Message);
+            Log.Write("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}",subitems[4], ex.Message,ex.StackTrace);
             return items;
           }
         }
