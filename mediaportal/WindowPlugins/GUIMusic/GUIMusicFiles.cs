@@ -1008,6 +1008,7 @@ namespace MediaPortal.GUI.Music
         }
         //play and add current directory to temporary playlist
         int nFolderCount = 0;
+        int nRemoteCount =0;
         PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
         PlayListPlayer.Reset();
         for (int i = 0; i < (int) GetItemCount(); i++) 
@@ -1016,6 +1017,11 @@ namespace MediaPortal.GUI.Music
           if (pItem.IsFolder) 
           {
             nFolderCount++;
+            continue;
+          }
+          if (pItem.IsRemote)
+          {
+            nRemoteCount++;
             continue;
           }
           if (!PlayListFactory.IsPlayList(pItem.Path))
@@ -1040,7 +1046,7 @@ namespace MediaPortal.GUI.Music
         MusicState.TempPlaylistDirectory = m_strDirectory;
 
         PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
-        PlayListPlayer.Play(iItem - nFolderCount);
+        PlayListPlayer.Play(item.Path);
       }
     }
     
