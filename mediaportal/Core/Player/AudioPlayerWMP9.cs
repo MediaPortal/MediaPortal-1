@@ -344,7 +344,6 @@ namespace MediaPortal.Player
         m_player.Visible=false;
         SongEnded(true);       
       }
-      Release();
     }
 
     public override int Volume

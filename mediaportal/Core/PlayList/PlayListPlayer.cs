@@ -52,7 +52,10 @@ namespace MediaPortal.Playlists
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
         {
           PlayNext(true);
-          if (!g_Player.Playing) g_Player.Stop();
+          if (!g_Player.Playing) 
+          {
+            g_Player.Release();
+          }
         }
           break;
 

@@ -103,6 +103,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsFullScreenVideo=false;
         GUIGraphicsContext.IsPlaying=false;
         GUIGraphicsContext.IsPlayingVideo=false;
+        m_player.Release();
         m_player=null;
       }
     }
@@ -142,6 +143,15 @@ namespace MediaPortal.Player
       }
     }
 
+    public static void Release()
+    {
+      if (m_player!=null)
+      {
+        m_player.Stop();
+        m_player.Release();
+        m_player=null;
+      }
+    }
     public static bool PlayDVD()
     {
       m_currentStep=Steps.Sec0;
