@@ -12,6 +12,11 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class Plugins : MediaPortal.Configuration.SectionSettings
 	{
+    class ItemTag
+    {
+      public string      DLLName;
+      public ISetupForm  SetupForm;
+    };
 		private System.Windows.Forms.GroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPListView pluginsListView;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -53,10 +58,10 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void PopulateListView()
 		{
-			foreach(ISetupForm setupForm in loadedPlugins)
+			foreach(ItemTag tag in loadedPlugins)
 			{
-				ListViewItem listItem = new ListViewItem(new string[] { setupForm.PluginName(), setupForm.Description(), setupForm.Author() } );
-				listItem.Tag = setupForm;
+				ListViewItem listItem = new ListViewItem(new string[] { tag.SetupForm.PluginName(), tag.SetupForm.Description(), tag.SetupForm.Author() } );
+				listItem.Tag = tag;
 
 				pluginsListView.Items.Add(listItem);
 			}
@@ -121,7 +126,10 @@ namespace MediaPortal.Configuration.Sections
 
 								if(pluginForm != null)
 								{
-									loadedPlugins.Add(pluginForm);
+                  ItemTag tag = new ItemTag();
+                  tag.SetupForm=pluginForm;
+                  tag.DLLName=pluginFile.Substring(pluginFile.LastIndexOf(@"\")+1);
+									loadedPlugins.Add(tag);
 								}
 							}
 						}
@@ -139,12 +147,19 @@ namespace MediaPortal.Configuration.Sections
 			{
 				foreach(ListViewItem listItem in pluginsListView.Items)
 				{
-					ISetupForm setupForm = listItem.Tag as ISetupForm;
+          ItemTag itemTag = listItem.Tag as ItemTag;
           
-					if(setupForm != null && setupForm.CanEnable())
-					{
-						listItem.Checked = xmlreader.GetValueAsBool("plugins", setupForm.PluginName(), setupForm.DefaultEnabled());
-					}
+          if(itemTag.SetupForm != null)
+          {
+            if (itemTag.SetupForm.CanEnable())
+            {
+              listItem.Checked = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+            }
+            else
+            {
+              listItem.Checked =itemTag.SetupForm.DefaultEnabled();
+            }
+          }
 				}
 			}			
 		}
@@ -156,13 +171,18 @@ namespace MediaPortal.Configuration.Sections
 			{
 				foreach(ListViewItem listItem in pluginsListView.Items)
 				{
-					ISetupForm setupForm = listItem.Tag as ISetupForm;
+					ItemTag itemTag = listItem.Tag as ItemTag;
 
-					if(setupForm != null && setupForm.CanEnable())
-					{
-						xmlwriter.SetValueAsBool("plugins", setupForm.PluginName(), listItem.Checked);
-					}
-				}
+          bool bEnabled=listItem.Checked;
+          if(itemTag.SetupForm != null)
+          {
+            if (itemTag.SetupForm.DefaultEnabled() && !itemTag.SetupForm.CanEnable())
+              bEnabled=true;
+          }
+          else bEnabled=true;
+          xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), listItem.Checked);
+					xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, listItem.Checked);
+        }
 			}			
 		}
 
