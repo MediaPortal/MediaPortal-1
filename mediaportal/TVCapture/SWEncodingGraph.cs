@@ -306,11 +306,11 @@ namespace MediaPortal.TV.Recording
     public void TuneChannel(int iChannel)
     {
       m_iCurrentChannel=iChannel;
-      if (m_TVTuner==null) return;
 
       DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tune to channel:{0}", iChannel);
       if (iChannel<1000)
       {
+        if (m_TVTuner==null) return;
         m_TVTuner.put_TuningSpace(0);
         m_TVTuner.put_CountryCode(m_iCountryCode);
         m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
