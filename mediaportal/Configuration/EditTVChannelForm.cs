@@ -108,6 +108,8 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label41;
 		private System.Windows.Forms.Label label42;
 		private System.Windows.Forms.Label label43;
+		private System.Windows.Forms.Label label44;
+		private System.Windows.Forms.Label label45;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -248,6 +250,8 @@ namespace MediaPortal.Configuration
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
 			this.label43 = new System.Windows.Forms.Label();
+			this.label44 = new System.Windows.Forms.Label();
+			this.label45 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -282,7 +286,7 @@ namespace MediaPortal.Configuration
 																												 "SECAM L",
 																												 "SECAM L1",
 																												 "PAL N COMBO"});
-			this.comboTvStandard.Location = new System.Drawing.Point(128, 40);
+			this.comboTvStandard.Location = new System.Drawing.Point(128, 48);
 			this.comboTvStandard.Name = "comboTvStandard";
 			this.comboTvStandard.Size = new System.Drawing.Size(224, 21);
 			this.comboTvStandard.TabIndex = 3;
@@ -312,7 +316,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(24, 8);
+			this.label1.Location = new System.Drawing.Point(24, 16);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(104, 32);
 			this.label1.TabIndex = 10;
@@ -439,6 +443,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.label45);
+			this.tabPage1.Controls.Add(this.label44);
 			this.tabPage1.Controls.Add(this.label3);
 			this.tabPage1.Controls.Add(this.channelTextBox);
 			this.tabPage1.Controls.Add(this.label2);
@@ -490,7 +496,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.countryComboBox.Location = new System.Drawing.Point(128, 72);
+			this.countryComboBox.Location = new System.Drawing.Point(128, 80);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
 			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
@@ -500,7 +506,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(24, 72);
+			this.label8.Location = new System.Drawing.Point(24, 80);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(56, 16);
 			this.label8.TabIndex = 16;
@@ -1185,9 +1191,28 @@ namespace MediaPortal.Configuration
 			// 
 			this.label43.Location = new System.Drawing.Point(24, 120);
 			this.label43.Name = "label43";
-			this.label43.Size = new System.Drawing.Size(344, 120);
+			this.label43.Size = new System.Drawing.Size(344, 72);
 			this.label43.TabIndex = 17;
 			this.label43.Text = @"You can leave the frequency to 0. In this case Mediaportal will use the default frequency for this channel. However if you have channels like 24-- or 63+ then you might need to fill in the correct frequency which you can normally find on the website of you analog cable tv provider";
+			// 
+			// label44
+			// 
+			this.label44.Location = new System.Drawing.Point(16, 88);
+			this.label44.Name = "label44";
+			this.label44.Size = new System.Drawing.Size(344, 32);
+			this.label44.TabIndex = 11;
+			this.label44.Text = "Enter the name of this TV Channel. If you\'re using the TVGuide then make sure it " +
+				"matches the channel name from the TVGuide";
+			// 
+			// label45
+			// 
+			this.label45.Location = new System.Drawing.Point(16, 128);
+			this.label45.Name = "label45";
+			this.label45.Size = new System.Drawing.Size(344, 56);
+			this.label45.TabIndex = 12;
+			this.label45.Text = "The channel number tells MediaPortal on which channel this tv channel is transmit" +
+				"ed. This is not the logical channel number you use to zap to this channel!! Norm" +
+				"ally you can find this information on the website of your cable tv provider.  ";
 			// 
 			// EditTVChannelForm
 			// 
