@@ -1714,6 +1714,7 @@ namespace MediaPortal.GUI.Library
       if (m_iCursorY >= m_iItemsPerPage)
         m_iCursorY = m_iItemsPerPage - 1;
       OnSelectionChanged();
+			m_bRefresh = true;
 
 			return true;
 		}
