@@ -686,10 +686,10 @@ namespace MediaPortal.Ripper
       TocValid = false;
       switch ( ea.ChangeType )
       {
-        case DeviceChangeEventType.DeviceInserted :
+        case DeviceChangeEventType.MediaInserted :
           OnCDInserted(ea.Drive);
           break;
-        case DeviceChangeEventType.DeviceRemoved :
+        case DeviceChangeEventType.MediaRemoved :
           OnCDRemoved(ea.Drive);
           break;
       }

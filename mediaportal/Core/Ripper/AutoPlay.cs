@@ -17,6 +17,7 @@ namespace MediaPortal.Ripper
     
     static ArrayList m_vecList   = null;
     static Ripper.CDDrive [] m_drives=null;
+		static RemovableDrive m_removables=null;
     static bool m_dvd=false;
     static bool m_audiocd=false;
 
@@ -28,8 +29,8 @@ namespace MediaPortal.Ripper
       PHOTOS       = 3,
       VIDEOS       = 4,
       AUDIO        = 5
-    }
-
+		}	
+		
     #endregion
 		
 		/// <summary>
@@ -47,6 +48,19 @@ namespace MediaPortal.Ripper
 			m_vecList   = new ArrayList();
 			m_dvd=false;
 			m_audiocd=false;
+
+			// Start removable drive event handlers
+			m_removables = new Ripper.RemovableDrive();
+			m_removables.VolumeInserted += new RemovableDrive.NotificationHandler(VolumeInserted);
+			m_removables.VolumeRemoved += new RemovableDrive.NotificationHandler(VolumeRemoved);
+		}
+
+		~AutoPlay()
+		{
+			if (m_removables != null)
+			{
+				m_removables.Dispose();
+			}
 		}
 
     /// <summary>
@@ -55,9 +69,7 @@ namespace MediaPortal.Ripper
     public static void StartListening()
     {
       LoadSettings();
-      StartListeningForEvents();
-
-      
+      StartListeningForEvents();      
     }
 
     /// <summary>
@@ -143,7 +155,7 @@ namespace MediaPortal.Ripper
 
     private static void StartListeningForEvents()
     {
-      int nrOfDrives=m_vecList.Count;
+      int nrOfDrives=m_vecList.Count;      
       if (nrOfDrives<=0) return;
       try
       {
@@ -233,15 +245,57 @@ namespace MediaPortal.Ripper
                                             GUIWindowManager.ActiveWindow,0,0,0,0);
       msg.Label=String.Format("{0}:", DriveLetter);
       GUIWindowManager.SendThreadMessage(msg);
-
     }
 
-    static bool ShouldWeAutoPlay()
+		/// <summary>
+		/// The event that gets triggered whenever a new volume is removed.
+		/// </summary>	
+		private static void VolumeRemoved(char DriveLetter)
+		{
+			Log.Write("volume removed drive {0}",DriveLetter);  
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED,
+				(int)0,
+				GUIWindowManager.ActiveWindow,0,0,0,0);
+			msg.Label=String.Format("{0}:", DriveLetter);
+			GUIWindowManager.SendThreadMessage(msg);
+		}
+
+		/// <summary>
+		/// The event that gets triggered whenever a new volume is inserted.
+		/// </summary>	
+		private static void VolumeInserted(char DriveLetter)
+		{
+			Log.Write("volume inserted drive {0}",DriveLetter);  
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED,
+				(int)0,
+				GUIWindowManager.ActiveWindow,0,0,0,0);
+			msg.Label=String.Format("{0}:", DriveLetter);
+			GUIWindowManager.SendThreadMessage(msg);
+		}
+
+    static bool ShouldWeAutoPlay(MediaType iMedia)
     {
       if (GUIWindowManager.IsRouted) return false;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,null);
-      msg.Param1=713;
-      msg.Param2=714;
+      msg.Param1=713;      
+			switch (iMedia)
+			{
+				case MediaType.PHOTOS: // Photo
+					msg.Param2=530;
+					break;
+				case MediaType.VIDEOS: // Movie
+					msg.Param2=531;
+					break;
+				case MediaType.AUDIO: // Audio
+					msg.Param2=532;
+					break;
+				case MediaType.AUDIO_CD: // Audio cd
+					msg.Param2=532;
+					break;
+				default:
+					msg.Param2=714;
+					break;
+			}
       msg.Param3=0;
       GUIWindowManager.SendMessage(msg);
       if (msg.Param1!=0) return true;
@@ -262,18 +316,19 @@ namespace MediaPortal.Ripper
           {
             // dont interrupt if we're already playing
             if (g_Player.Playing && g_Player.IsDVD) return;
-            if (ShouldWeAutoPlay()) 
+            if (ShouldWeAutoPlay(MediaType.DVD)) 
             {
 							Log.Write("Autoplay:start DVD in {0}",strDrive);
               g_Player.PlayDVD(strDrive+@"\VIDEO_TS\VIDEO_TS.IFO");
             }
           }
           break;                  
+
         case MediaType.AUDIO_CD:
           Log.Write("Audio CD inserted into drive {0}",strDrive);
           if (m_audiocd)
           {
-            if (ShouldWeAutoPlay()) 
+            if (ShouldWeAutoPlay(MediaType.AUDIO_CD)) 
             {
               if (g_Player.Playing) g_Player.Stop();
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
@@ -287,11 +342,11 @@ namespace MediaPortal.Ripper
           break;                 
 
         case MediaType.PHOTOS:
-          if (ShouldWeAutoPlay()) 
+          if (ShouldWeAutoPlay(MediaType.PHOTOS)) 
           {
             Log.Write("CD/DVD with photo's inserted into drive {0}",strDrive);
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_INSERTED,
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME,
               (int)GUIWindow.Window.WINDOW_PICTURES,
               GUIWindowManager.ActiveWindow,0,0,0,0);
             msg.Label=strDrive;
@@ -314,6 +369,75 @@ namespace MediaPortal.Ripper
       }
       StartListening();
     }
+
+		public static void ExamineVolume(string strDrive)
+		{
+			if (strDrive==null) return;
+			if (strDrive.Length==0) return;
+			GUIMessage msg;
+			switch(DetectMediaType(strDrive))       
+			{         
+				case MediaType.DVD:
+					Log.Write("DVD volume inserted {0}",strDrive);
+					if (m_dvd)
+					{
+						// dont interrupt if we're already playing
+						if (g_Player.Playing && g_Player.IsDVD) return;
+						if (ShouldWeAutoPlay(MediaType.DVD)) 
+						{
+							Log.Write("Autoplay:start DVD in {0}",strDrive);
+							g_Player.PlayDVD(strDrive+@"\VIDEO_TS\VIDEO_TS.IFO");
+						}
+					}
+					break; 
+                 
+				case MediaType.PHOTOS:
+					Log.Write("Photo volume inserted {0}",strDrive);
+					if (ShouldWeAutoPlay(MediaType.PHOTOS)) 
+					{						
+						GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
+						msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
+							(int)GUIWindow.Window.WINDOW_PICTURES,
+							GUIWindowManager.ActiveWindow,0,0,0,0);
+						msg.Label=strDrive;
+						msg.SendToTargetWindow=true;
+						GUIWindowManager.SendThreadMessage(msg);
+					}
+					break;
+
+				case MediaType.VIDEOS:
+					Log.Write("Video volume inserted {0}",strDrive);
+					if (ShouldWeAutoPlay(MediaType.VIDEOS)) 
+					{
+						GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
+						msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
+							(int)GUIWindow.Window.WINDOW_VIDEOS,
+							GUIWindowManager.ActiveWindow,0,0,0,0);
+						msg.Label=strDrive;
+						msg.SendToTargetWindow=true;
+						GUIWindowManager.SendThreadMessage(msg);
+					}
+					break;
+
+				case MediaType.AUDIO:
+					Log.Write("Audio volume inserted {0}",strDrive);
+					if (ShouldWeAutoPlay(MediaType.AUDIO)) 
+					{
+						GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+						msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
+							(int)GUIWindow.Window.WINDOW_MUSIC_FILES,
+							GUIWindowManager.ActiveWindow,0,0,0,0);
+						msg.Label=strDrive;
+						msg.SendToTargetWindow=true;
+						GUIWindowManager.SendThreadMessage(msg);
+					}
+					break;                 
+
+				default:
+					Log.Write("Unknown media type inserted into drive {0}",strDrive);  
+					break;      
+			}
+		}
     
     private static void GetAllFiles(string strFolder, ref ArrayList allfiles)
     {

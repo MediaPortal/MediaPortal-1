@@ -79,7 +79,7 @@ namespace MediaPortal.Ripper
     }
   }
 
-  internal enum DeviceChangeEventType {DeviceInserted, DeviceRemoved};
+  internal enum DeviceChangeEventType {MediaInserted, MediaRemoved, VolumeInserted, VolumeRemoved};
   internal class DeviceChangeEventArgs : EventArgs
   {
     private DeviceChangeEventType m_Type;
@@ -231,10 +231,19 @@ namespace MediaPortal.Ripper
             if ( head.dbch_devicetype == DeviceType.DBT_DEVTYP_VOLUME )
             {
               DEV_BROADCAST_VOLUME DevDesc = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(m.LParam, typeof(DEV_BROADCAST_VOLUME));
-              if ( DevDesc.dbcv_flags == VolumeChangeFlags.DBTF_MEDIA )
-              {
-                OnDeviceChange(DevDesc, DeviceChangeEventType.DeviceInserted);
-              }
+							switch ( DevDesc.dbcv_flags )
+							{
+								case VolumeChangeFlags.DBTF_MEDIA:
+									OnDeviceChange(DevDesc, DeviceChangeEventType.MediaInserted);
+									break;
+
+								case VolumeChangeFlags.DBTF_NET:
+									break;
+
+								default:
+									OnDeviceChange(DevDesc, DeviceChangeEventType.VolumeInserted);
+									break;
+							}
             }
             break;
           /*case DBT_DEVICEQUERYREMOVE :
@@ -248,10 +257,19 @@ namespace MediaPortal.Ripper
             if ( head.dbch_devicetype == DeviceType.DBT_DEVTYP_VOLUME )
             {
               DEV_BROADCAST_VOLUME DevDesc = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(m.LParam, typeof(DEV_BROADCAST_VOLUME));
-              if ( DevDesc.dbcv_flags == VolumeChangeFlags.DBTF_MEDIA )
-              {
-                OnDeviceChange(DevDesc, DeviceChangeEventType.DeviceRemoved);
-              }
+              switch ( DevDesc.dbcv_flags )
+							{
+								case VolumeChangeFlags.DBTF_MEDIA:
+									OnDeviceChange(DevDesc, DeviceChangeEventType.MediaRemoved);
+									break;
+
+								case VolumeChangeFlags.DBTF_NET:
+									break;
+
+								default:
+									OnDeviceChange(DevDesc, DeviceChangeEventType.VolumeRemoved);
+									break;
+							}
             }
             break;
           /*case DBT_DEVICETYPESPECIFIC :
