@@ -464,7 +464,10 @@ namespace MediaPortal.GUI.Pictures
             KenBurns(m_iKenBurnsEffect, false);
         }
       }
-      
+      MediaPortal.Util.Picture.DrawLine(10,10,300,300,0xffffffff);
+			MediaPortal.Util.Picture.DrawRectangle( new Rectangle(100,100,30,30),0xaaff0000,true);
+			MediaPortal.Util.Picture.DrawRectangle( new Rectangle(200,100,30,30),0xffffffff,false);
+
       if (m_bSlideShow)
       {
         if (RenderPause()) return;     

@@ -901,6 +901,63 @@ namespace MediaPortal.Util
           theImage.Dispose();
         }
       }
-    }
-	}
+    }//static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+
+		static public void DrawLine(int x1,int y1,int x2, int y2, long color)
+		{
+			Vector2[] vec = new Vector2[2];
+			vec[0].X=x1;
+			vec[0].Y=y1;
+			vec[1].X=x2;
+			vec[1].Y=y2;
+			using (Line line = new Line(GUIGraphicsContext.DX9Device))
+			{
+				line.Begin();
+				line.Draw(vec,(int)color);
+				line.End();
+			}
+		}
+		static public void DrawRectangle(Rectangle rect, long color, bool fill)
+		{
+			if (fill)
+			{
+				Rectangle[] rects = new Rectangle[1];
+				rects[0]=rect;
+				GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target,(int)color,1.0f,0, rects);
+			}
+			else
+			{
+				Vector2[] vec = new Vector2[2];
+				vec[0].X=rect.Left;
+				vec[0].Y=rect.Top;
+				vec[1].X=rect.Left+rect.Width;
+				vec[1].Y=rect.Top;
+				using (Line line = new Line(GUIGraphicsContext.DX9Device))
+				{
+					line.Begin();
+					line.Draw(vec,(int)color);
+
+					vec[0].X=rect.Left+rect.Width;
+					vec[0].Y=rect.Top;
+					vec[1].X=rect.Left+rect.Width;
+					vec[1].Y=rect.Top+rect.Height;
+					line.Draw(vec,(int)color);
+
+					vec[0].X=rect.Left+rect.Width;
+					vec[0].Y=rect.Top+rect.Width;
+					vec[1].X=rect.Left;
+					vec[1].Y=rect.Top+rect.Height;
+					line.Draw(vec,(int)color);
+
+
+					vec[0].X=rect.Left;
+					vec[0].Y=rect.Top+rect.Height;
+					vec[1].X=rect.Left;
+					vec[1].Y=rect.Top;
+					line.Draw(vec,(int)color);
+					line.End();
+				}
+			}
+		}
+	}//public class Picture
 }
