@@ -2362,7 +2362,7 @@ namespace MediaPortal.TV.Recording
 						if (outPin!=null)
 						{
 							GetPidMap(outPin,ref pid, ref sampletype);
-							Log.Write("DVBGraphBDA:  Pin:{0} is mapped to pid:{1}", pin,pid);
+							Log.Write("DVBGraphBDA:  Pin:{0} is mapped to pid:{1}", (pin+1),pid);
 						}
 					}
 				}
