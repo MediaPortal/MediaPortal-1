@@ -9,6 +9,7 @@ Cosmetic bugs:
 
 crash/things not working Bugs:
   18-08-2004 my tv      : duration of recordings is wrong
+  18-08-2004 my tv      : unable to view/record SECAM?
   18-08-2004 GUI        : textboxscrollup shows the first line briefly on the last line when using cursorkeys. Easy to see in the TVhome when you have a program description on screen.
   18-08-2004 GUI        : when recording albumart is not shown in the music overlay.
   18-08-2004 GUI        : GUI not rendered when starting MP maximised (set this in the shortcut)
