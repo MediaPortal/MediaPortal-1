@@ -273,12 +273,12 @@ namespace MediaPortal.GUI.Library
 				PackedTextureNode foundNode=bigOne.root.Get(fileName.ToLower());
 				if (foundNode!=null)
 				{
-					uoffs  = ((float)foundNode.Rect.Left)   / ((float)bigOne.root.Rect.Width);
-					voffs  = ((float)foundNode.Rect.Top)    / ((float)bigOne.root.Rect.Height);
-					umax   = ((float)foundNode.Rect.Width)  / ((float)bigOne.root.Rect.Width);
-					vmax   = ((float)foundNode.Rect.Height) / ((float)bigOne.root.Rect.Height);
-					iWidth = foundNode.Rect.Width;
-					iHeight= foundNode.Rect.Height;
+					uoffs  = ((float)foundNode.Rect.Left+1)   / ((float)bigOne.root.Rect.Width-2);
+					voffs  = ((float)foundNode.Rect.Top+1)    / ((float)bigOne.root.Rect.Height-2);
+					umax   = ((float)foundNode.Rect.Width-2)  / ((float)bigOne.root.Rect.Width-2);
+					vmax   = ((float)foundNode.Rect.Height-2) / ((float)bigOne.root.Rect.Height-2);
+					iWidth = foundNode.Rect.Width-2;
+					iHeight= foundNode.Rect.Height-2;
 					if (bigOne.texture==null)
 					{
 						LoadPackedGraphics();
