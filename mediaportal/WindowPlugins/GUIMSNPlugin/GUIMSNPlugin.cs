@@ -64,6 +64,16 @@ namespace MediaPortal.GUI.MSN
       return Load(GUIGraphicsContext.Skin + @"\my messenger.xml");
     }
 
+    public override void PreInit()
+    {
+      bool autosignin = false;
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        autosignin = xmlreader.GetValueAsInt("MSNmessenger", "autosignin", 0) != 0;
+      }
+      if (autosignin)
+        StartMSN(false);
+    }
 
     static public DotMSN.Messenger Messenger
     {
@@ -166,7 +176,7 @@ namespace MediaPortal.GUI.MSN
               }
               m_bDialogVisible=true;
 
-              StartMSN();
+              StartMSN(true);
             }
             else
             {
@@ -479,7 +489,7 @@ namespace MediaPortal.GUI.MSN
     }
 
     // Called when the button 'Connected' is clicked
-    private void StartMSN()
+    private void StartMSN(bool showDialog)
     {
       ReFillContactList=true;
       string emailadres="";
@@ -494,6 +504,7 @@ namespace MediaPortal.GUI.MSN
         // make sure we don't use the default settings, since they're invalid
         if(emailadres == "")
         {
+          if (!showDialog) return;
           m_bDialogVisible=false;
           dlgProgress.Close();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,GUIWindowManager.ActiveWindow,0,0,0,0,null);
@@ -533,6 +544,8 @@ namespace MediaPortal.GUI.MSN
         m_bDialogVisible=false;
         dlgProgress.Close();
 
+        
+        if (!showDialog) return;
         // in case of an error, report this to the user (or developer)
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
         pDlgOK.SetHeading(GUILocalizeStrings.Get(901));

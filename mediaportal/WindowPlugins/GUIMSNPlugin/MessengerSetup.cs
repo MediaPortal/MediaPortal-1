@@ -16,6 +16,7 @@ namespace MediaPortal.GUI.MSN
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button buttonOK;
     private System.Windows.Forms.TextBox textBoxPassword;
+    private System.Windows.Forms.CheckBox chkSignIn;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -60,6 +61,7 @@ namespace MediaPortal.GUI.MSN
       this.label2 = new System.Windows.Forms.Label();
       this.textBoxPassword = new System.Windows.Forms.TextBox();
       this.buttonOK = new System.Windows.Forms.Button();
+      this.chkSignIn = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // label1
@@ -104,10 +106,19 @@ namespace MediaPortal.GUI.MSN
       this.buttonOK.Text = "Ok";
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
+      // chkSignIn
+      // 
+      this.chkSignIn.Location = new System.Drawing.Point(24, 144);
+      this.chkSignIn.Name = "chkSignIn";
+      this.chkSignIn.Size = new System.Drawing.Size(168, 24);
+      this.chkSignIn.TabIndex = 6;
+      this.chkSignIn.Text = "Auto signin";
+      // 
       // MessengerSetup
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(292, 273);
+      this.Controls.Add(this.chkSignIn);
       this.Controls.Add(this.buttonOK);
       this.Controls.Add(this.textBoxPassword);
       this.Controls.Add(this.textBoxEMail);
@@ -127,6 +138,13 @@ namespace MediaPortal.GUI.MSN
       {
         xmlWriter.SetValue("MSNmessenger","email",textBoxEMail.Text);
         xmlWriter.SetValue("MSNmessenger","password",textBoxPassword.Text);
+
+        int iSignIn=0;
+        if (chkSignIn.Checked)
+        {
+          iSignIn=1;
+        }
+        xmlWriter.SetValue("MSNmessenger","autosignin",iSignIn.ToString());
       }
       this.Close();
     }
@@ -138,7 +156,18 @@ namespace MediaPortal.GUI.MSN
       {
         textBoxEMail.Text = xmlreader.GetValueAsString("MSNmessenger","email","");
         textBoxPassword.Text = xmlreader.GetValueAsString("MSNmessenger","password","");
+
+        chkSignIn.Checked = false;
+        if (xmlreader.GetValueAsInt("MSNmessenger", "autosignin", 0) == 1)
+        {
+          chkSignIn.Checked = true;
+        }
       }
+    }
+
+    private void label3_Click(object sender, System.EventArgs e)
+    {
+    
     }
 	}
 }
