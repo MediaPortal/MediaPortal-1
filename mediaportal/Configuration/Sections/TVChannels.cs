@@ -1617,12 +1617,12 @@ namespace MediaPortal.Configuration.Sections
 		
 		void FillInChannelCardMappings()
 		{
-			int card=0;
+			int card=1;
 			int index =comboBoxCard.SelectedIndex;
 			if (index >=0)
 			{
 				ComboCard combo=(ComboCard )comboBoxCard.Items[index];
-				card=combo.ID-1;
+				card=combo.ID;
 			}
 
 			listViewTVChannelsCard.Items.Clear();
@@ -1667,12 +1667,12 @@ namespace MediaPortal.Configuration.Sections
 		private void btnMapChannelToCard_Click(object sender, System.EventArgs e)
 		{
 			if (listViewTVChannelsCard.SelectedItems==null) return;
-			int card=0;
+			int card=1;
 			int index =comboBoxCard.SelectedIndex;
 			if (index >=0)
 			{
 				ComboCard combo=(ComboCard )comboBoxCard.Items[index];
-				card=combo.ID-1;
+				card=combo.ID;
 			}
 			
 			for(int i=0; i < listViewTVChannelsCard.SelectedItems.Count;++i)
@@ -1697,12 +1697,12 @@ namespace MediaPortal.Configuration.Sections
 
 		private void btnUnmapChannelFromCard_Click(object sender, System.EventArgs e)
 		{
-			int card=0;
+			int card=1;
 			int index =comboBoxCard.SelectedIndex;
 			if (index >=0)
 			{
 				ComboCard combo=(ComboCard )comboBoxCard.Items[index];
-				card=combo.ID-1;
+				card=combo.ID;
 			}
 			if (listViewTVChannelsForCard.SelectedItems==null) return;
 			for(int i=0; i < listViewTVChannelsForCard.SelectedItems.Count;++i)

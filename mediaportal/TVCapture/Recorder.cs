@@ -510,7 +510,7 @@ namespace MediaPortal.TV.Recording
       TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
 
       // can card view this channel
-			if ( !TVDatabase.CanCardViewTVChannel(channel,card) )
+			if ( !TVDatabase.CanCardViewTVChannel(channel,dev.ID) )
 				return;	 //no
 
 			string strFileName=GetTimeShiftFileName(card);

@@ -2127,7 +2127,7 @@ namespace MediaPortal.Configuration.Sections
 				card.ID=(i+1);
 				if(card.VideoDevice=="B2C2 MPEG-2 Source")
 				{
-					cardID=i;
+					cardID=card.ID;
 					break;
 				}
 			}
