@@ -1876,6 +1876,7 @@ namespace MediaPortal.GUI.TV
     {
       m_channels.Clear();
       TVDatabase.GetChannels(ref m_channels); 
+
       bool bRemoved;
       do
       {
@@ -1891,6 +1892,13 @@ namespace MediaPortal.GUI.TV
           }
         }
       } while (bRemoved==true);
+      if (m_channels.Count==0)
+      {
+        TVChannel newChannel = new TVChannel();
+        newChannel.Name=GUILocalizeStrings.Get(911);
+        for (int i=0; i < 10;++i)
+          m_channels.Add(newChannel);
+      }
     }
 
 
