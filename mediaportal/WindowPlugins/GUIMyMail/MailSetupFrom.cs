@@ -484,6 +484,9 @@ namespace MyMail
 				if(textBox2.Text.Length>0)
 				{
 					MessageBox.Show("The Password given dont match. Please try again");
+          textBox1.Text="";
+          textBox2.Text="";
+          textBox1.Focus();
 				}
 				else
 				textBox2.Focus();
