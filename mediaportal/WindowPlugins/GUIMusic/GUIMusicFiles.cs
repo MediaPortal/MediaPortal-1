@@ -1874,7 +1874,7 @@ namespace MediaPortal.GUI.Music
           {
             dlgProgress.SetHeading(185);
             dlgProgress.SetLine(1, album.Title2);
-            dlgProgress.SetLine(2, "");
+            dlgProgress.SetLine(2, album.Artist);
             dlgProgress.StartModal(GetID);
             dlgProgress.Progress();
           }
