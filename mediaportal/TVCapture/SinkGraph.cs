@@ -29,7 +29,8 @@ namespace MediaPortal.TV.Recording
       Created,
       TimeShifting,
       Recording,
-      Viewing
+      Viewing,
+			Radio
     };
     protected int                     m_cardID=-1;
     protected string                  m_strVideoCaptureFilter="";
@@ -1090,10 +1091,38 @@ namespace MediaPortal.TV.Recording
 		
 		public void TuneRadioChannel(RadioStation station)
 		{
+			m_TVTuner.put_TuningSpace(0);
+			m_TVTuner.put_CountryCode(m_iCountryCode);
+			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+			if (m_bUseCable)
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+			}
+			else
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+			}
+			m_TVTuner.put_Channel(station.Channel, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
 		}
 		
 		public void StartRadio(RadioStation station)
 		{
+			if (m_graphState!=State.Radio) 
+			{
+				if (m_mpeg2Demux==null) return ;
+				if (m_videoCaptureDevice==null) return ;
+				if (Vmr9!=null)
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9=null;
+				}
+				AddPreferredCodecs();
+				m_mpeg2Demux.StartListening();
+
+				Log.Write("SinkGraph:StartRadio() started");
+				m_graphState=State.Radio;
+			}
+			TuneRadioChannel(station);
 		}
   }
 }

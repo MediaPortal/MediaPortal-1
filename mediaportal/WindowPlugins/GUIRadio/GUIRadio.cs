@@ -829,7 +829,14 @@ namespace MediaPortal.GUI.Radio
 
 				if (station!=null)
         {
-          PlayListPlayer.Play ( GetPlayPath(station));
+					if (station.URL.Length>5)
+						PlayListPlayer.Play ( GetPlayPath(station));
+					else
+					{
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,0,0,0,0,0,null);
+						msg.Label=station.Name;
+						GUIGraphicsContext.SendMessage(msg);
+					}
         }
 				else
 				{

@@ -195,6 +195,33 @@ namespace DShowNET
       }
     }
     
+		public void StartListening()
+		{
+			DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
+			if (m_bRendered)  
+			{
+				if (m_mediaControl!=null && !m_bRunning)
+				{
+					DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
+					m_mediaControl.Run(); 
+					m_bRunning=true;
+				}
+				return;
+			}
+			int hr=m_graphBuilder.Render(m_pinAudioOut);
+			if (hr==0) 
+				DirectShowUtil.DebugWrite("mpeg2:demux audio out connected ");
+			else
+				DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
+			m_bRendered=true;
+			if (m_mediaControl != null && !m_bRunning)
+			{
+				SetVideoWindow();
+				DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
+				hr=m_mediaControl.Run();
+				m_bRunning=true;
+			}
+		}
 		/// <summary>
 		/// StartViewing()
 		/// Will start the graph and create a new overlay window to show the live-tv in

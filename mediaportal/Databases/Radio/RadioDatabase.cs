@@ -738,7 +738,7 @@ namespace MediaPortal.Radio.Database
 					if (null==m_db) return false;
 					SQLiteResultSet results;
 
-					strSQL=String.Format( "select * from tblChannelCard,station where channel.idChannel=tblChannelCard.idChannel and channel.strName like '{0}' and tblChannelCard.card={1}", stationName,card);
+					strSQL=String.Format( "select * from tblChannelCard,station where station.idChannel=tblChannelCard.idChannel and station.strName like '{0}' and tblChannelCard.card={1}", stationName,card);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count!=0) 
 					{

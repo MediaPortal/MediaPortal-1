@@ -646,6 +646,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("Recorder:StartRadio but recorder is not initalised");
 				return ;
 			}
+			Log.Write("Recorder:StartRadio:{0}",radioStationName);
 			RadioStation radiostation;
 			if (!RadioDatabase.GetStation( radioStationName,out radiostation) )
 			{

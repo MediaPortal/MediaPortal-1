@@ -3178,7 +3178,7 @@ namespace MediaPortal.TV.Recording
 
 		public void StartRadio(RadioStation station)
 		{
-			if (m_graphState != State.Created) return ;
+			if (m_graphState != State.Radio) return ;
 			if (Vmr9!=null)
 			{
 				Vmr9.RemoveVMR9();
