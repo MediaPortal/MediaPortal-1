@@ -832,6 +832,7 @@ namespace MediaPortal.Configuration
 					useRecordingCheckBox.Checked = card.UseForRecording;
 					useWatchingCheckBox.Checked = card.UseForTV;
           trackRecording.Value=card.RecordingLevel  ;
+          trackRecording_ValueChanged(null,null);
           Capture capture = CreateCaptureDevice();
 
           if(capture != null)
