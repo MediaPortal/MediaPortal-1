@@ -77,6 +77,7 @@ namespace MediaPortal.TV.Recording
 				tv.Genre=data.genere_text;
 				tv.Title=data.event_name;
 				tv.Description=data.event_item_text;
+				//
 				if(tv.Description==null)
 					tv.Description="";
 
@@ -85,7 +86,7 @@ namespace MediaPortal.TV.Recording
 					tv.Description=data.event_text;
 					Log.Write("epg-grab: used short description");
 				}
-
+				//
 				if(data.eeLanguageCode!=null)
 					Log.Write("epg-grab: language-code={0}",data.eeLanguageCode);
 				
@@ -294,8 +295,14 @@ namespace MediaPortal.TV.Recording
 
 							if(lenShort!=3 && lenExtended!=3)
 								continue;
+							
+							if(lang.ToLower().Equals(codeSE))
+							{
+								ignoreFlag=false;
+								break;
+							}
 
-							if(lang.ToLower().Equals(codeEE) || lang.ToLower().Equals(codeSE))
+							if(lang.ToLower().Equals(codeEE))
 							{
 								ignoreFlag=false;
 								break;
