@@ -633,6 +633,8 @@ namespace MediaPortal.TV.Recording
 					hr=m_tunerCtrl.SetTunerStatus();
 					if(hr!=0)
 						retryCount++;
+					else
+						break;
 
 					if(retryCount>=20)
 					{
