@@ -27,6 +27,7 @@ My TV:
   - picture in picture
   - TV-out through PVR 350
   - Mix Direct3D & video (xbmc-er is working on this)
+  - turn timeshifting on/off
   
   TV OSD:
      - timeshifting info:
