@@ -8,6 +8,8 @@ using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using System.Xml;
+using System.Runtime.Serialization;
+
 
 
 namespace MediaPortal.Configuration.Sections
@@ -22,7 +24,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.TreeView treeView1;
-		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button3;
@@ -30,11 +31,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ComboBox comboBox3;
 		private System.Windows.Forms.Button button5;
-		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.RadioButton radioButton1;
-		private System.Windows.Forms.RadioButton radioButton2;
 		private System.Windows.Forms.TextBox sat4;
 		private System.Windows.Forms.TextBox sat3;
 		private System.Windows.Forms.TextBox sat2;
@@ -87,6 +85,33 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TreeView treeView3;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.TreeView treeView4;
+		private System.Windows.Forms.ComboBox comboBox1;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.GroupBox groupBox5;
+		private System.Windows.Forms.Button button8;
+		private System.Windows.Forms.Button button9;
+		private System.Windows.Forms.Button button10;
+		private System.Windows.Forms.Button button11;
+		private System.Windows.Forms.Button button12;
+		private System.Windows.Forms.Button button13;
+		private System.Windows.Forms.GroupBox groupBox6;
+		private System.Windows.Forms.Button button14;
+		private System.Windows.Forms.SaveFileDialog sfd;
+		private System.Windows.Forms.TabPage tabPage5;
+		private System.Windows.Forms.TreeView treeView5;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.Button button15;
+		private System.Windows.Forms.Button button16;
+		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.Label chName;
+		private System.Windows.Forms.ProgressBar progressBar2;
+		private System.Windows.Forms.Button button17;
+		private System.Windows.Forms.Button button18;
+		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.Label label21;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -97,6 +122,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			LoadConfig();
 			TVChannel	tv=new TVChannel();
+
+			
 			
 		}
 
@@ -104,6 +131,7 @@ namespace MediaPortal.Configuration.Sections
 		private DVBSections					m_dvbSec=null;
 		private DVBSections.Transponder[]	transpList=null;
 		private bool						m_bIsDirty=false;
+		private bool						m_stopEPGGrab=false;
 		//
 
 		
@@ -172,11 +200,9 @@ namespace MediaPortal.Configuration.Sections
 			this.diseqca = new System.Windows.Forms.ComboBox();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.treeView1 = new System.Windows.Forms.TreeView();
-			this.label6 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.comboBox3 = new System.Windows.Forms.ComboBox();
 			this.button5 = new System.Windows.Forms.Button();
-			this.label9 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.label4 = new System.Windows.Forms.Label();
@@ -184,12 +210,22 @@ namespace MediaPortal.Configuration.Sections
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.button7 = new System.Windows.Forms.Button();
+			this.groupBox6 = new System.Windows.Forms.GroupBox();
+			this.button14 = new System.Windows.Forms.Button();
+			this.button10 = new System.Windows.Forms.Button();
+			this.button13 = new System.Windows.Forms.Button();
+			this.button11 = new System.Windows.Forms.Button();
+			this.treeView4 = new System.Windows.Forms.TreeView();
+			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.button12 = new System.Windows.Forms.Button();
+			this.button9 = new System.Windows.Forms.Button();
+			this.button8 = new System.Windows.Forms.Button();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.label18 = new System.Windows.Forms.Label();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
+			this.button7 = new System.Windows.Forms.Button();
 			this.feedback = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.radioButton2 = new System.Windows.Forms.RadioButton();
-			this.radioButton1 = new System.Windows.Forms.RadioButton();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.label15 = new System.Windows.Forms.Label();
 			this.treeView3 = new System.Windows.Forms.TreeView();
@@ -210,17 +246,35 @@ namespace MediaPortal.Configuration.Sections
 			this.switchMHZ = new System.Windows.Forms.Label();
 			this.lnb0MHZ = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
+			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.label21 = new System.Windows.Forms.Label();
+			this.label20 = new System.Windows.Forms.Label();
+			this.label19 = new System.Windows.Forms.Label();
+			this.label17 = new System.Windows.Forms.Label();
+			this.button18 = new System.Windows.Forms.Button();
+			this.button17 = new System.Windows.Forms.Button();
+			this.progressBar2 = new System.Windows.Forms.ProgressBar();
+			this.chName = new System.Windows.Forms.Label();
+			this.label9 = new System.Windows.Forms.Label();
+			this.button16 = new System.Windows.Forms.Button();
+			this.button15 = new System.Windows.Forms.Button();
+			this.label6 = new System.Windows.Forms.Label();
+			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.ofd = new System.Windows.Forms.OpenFileDialog();
+			this.sfd = new System.Windows.Forms.SaveFileDialog();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
+			this.groupBox6.SuspendLayout();
+			this.groupBox5.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tabPage4.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
+			this.tabPage5.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -569,61 +623,48 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// progressBar1
 			// 
-			this.progressBar1.Location = new System.Drawing.Point(72, 366);
+			this.progressBar1.Location = new System.Drawing.Point(8, 380);
 			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(352, 16);
+			this.progressBar1.Size = new System.Drawing.Size(424, 14);
 			this.progressBar1.TabIndex = 4;
 			// 
 			// treeView1
 			// 
+			this.treeView1.CheckBoxes = true;
 			this.treeView1.ImageIndex = -1;
-			this.treeView1.Location = new System.Drawing.Point(16, 32);
+			this.treeView1.Location = new System.Drawing.Point(8, 48);
 			this.treeView1.Name = "treeView1";
 			this.treeView1.SelectedImageIndex = -1;
-			this.treeView1.Size = new System.Drawing.Size(408, 232);
+			this.treeView1.Size = new System.Drawing.Size(232, 200);
 			this.treeView1.TabIndex = 5;
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(16, 8);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(56, 16);
-			this.label6.TabIndex = 6;
-			this.label6.Text = "Channels:";
+			this.treeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeSelect);
+			this.treeView1.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeCheck);
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(8, 307);
+			this.label8.Location = new System.Drawing.Point(8, 331);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(40, 16);
+			this.label8.Size = new System.Drawing.Size(56, 16);
 			this.label8.TabIndex = 7;
-			this.label8.Text = "Scan:";
+			this.label8.Text = "TPL-File:";
 			// 
 			// comboBox3
 			// 
-			this.comboBox3.Location = new System.Drawing.Point(72, 304);
+			this.comboBox3.Location = new System.Drawing.Point(72, 325);
 			this.comboBox3.Name = "comboBox3";
-			this.comboBox3.Size = new System.Drawing.Size(192, 21);
+			this.comboBox3.Size = new System.Drawing.Size(288, 21);
 			this.comboBox3.TabIndex = 8;
 			this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
 			// 
 			// button5
 			// 
 			this.button5.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button5.Location = new System.Drawing.Point(272, 304);
+			this.button5.Location = new System.Drawing.Point(368, 325);
 			this.button5.Name = "button5";
-			this.button5.Size = new System.Drawing.Size(80, 21);
+			this.button5.Size = new System.Drawing.Size(64, 21);
 			this.button5.TabIndex = 9;
 			this.button5.Text = "Start scan";
 			this.button5.Click += new System.EventHandler(this.button5_Click);
-			// 
-			// label9
-			// 
-			this.label9.Location = new System.Drawing.Point(8, 366);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(56, 16);
-			this.label9.TabIndex = 10;
-			this.label9.Text = "Progress:";
 			// 
 			// tabControl1
 			// 
@@ -631,6 +672,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage4);
+			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -708,84 +750,190 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage2
 			// 
+			this.tabPage2.Controls.Add(this.groupBox6);
+			this.tabPage2.Controls.Add(this.groupBox5);
 			this.tabPage2.Controls.Add(this.button7);
-			this.tabPage2.Controls.Add(this.checkBox2);
 			this.tabPage2.Controls.Add(this.feedback);
 			this.tabPage2.Controls.Add(this.label1);
-			this.tabPage2.Controls.Add(this.radioButton2);
-			this.tabPage2.Controls.Add(this.radioButton1);
 			this.tabPage2.Controls.Add(this.button5);
 			this.tabPage2.Controls.Add(this.comboBox3);
 			this.tabPage2.Controls.Add(this.label8);
-			this.tabPage2.Controls.Add(this.treeView1);
-			this.tabPage2.Controls.Add(this.label6);
 			this.tabPage2.Controls.Add(this.progressBar1);
-			this.tabPage2.Controls.Add(this.label9);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Size = new System.Drawing.Size(440, 397);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Channels";
 			// 
-			// button7
+			// groupBox6
 			// 
-			this.button7.Enabled = false;
-			this.button7.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button7.Location = new System.Drawing.Point(360, 304);
-			this.button7.Name = "button7";
-			this.button7.Size = new System.Drawing.Size(64, 21);
-			this.button7.TabIndex = 17;
-			this.button7.Text = "Stop scan";
-			this.button7.Click += new System.EventHandler(this.button7_Click);
+			this.groupBox6.Controls.Add(this.button14);
+			this.groupBox6.Controls.Add(this.button10);
+			this.groupBox6.Controls.Add(this.button13);
+			this.groupBox6.Controls.Add(this.button11);
+			this.groupBox6.Controls.Add(this.treeView4);
+			this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox6.Location = new System.Drawing.Point(256, 8);
+			this.groupBox6.Name = "groupBox6";
+			this.groupBox6.Size = new System.Drawing.Size(176, 312);
+			this.groupBox6.TabIndex = 26;
+			this.groupBox6.TabStop = false;
+			this.groupBox6.Text = "Transponder to Scan";
+			// 
+			// button14
+			// 
+			this.button14.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button14.Location = new System.Drawing.Point(96, 24);
+			this.button14.Name = "button14";
+			this.button14.Size = new System.Drawing.Size(72, 21);
+			this.button14.TabIndex = 26;
+			this.button14.Text = "Save TPL...";
+			this.button14.Click += new System.EventHandler(this.button14_Click_1);
+			// 
+			// button10
+			// 
+			this.button10.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button10.Location = new System.Drawing.Point(64, 280);
+			this.button10.Name = "button10";
+			this.button10.Size = new System.Drawing.Size(48, 21);
+			this.button10.TabIndex = 23;
+			this.button10.Text = "All";
+			this.button10.Click += new System.EventHandler(this.button10_Click);
+			// 
+			// button13
+			// 
+			this.button13.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button13.Location = new System.Drawing.Point(40, 24);
+			this.button13.Name = "button13";
+			this.button13.Size = new System.Drawing.Size(48, 21);
+			this.button13.TabIndex = 25;
+			this.button13.Text = "Add";
+			this.button13.Click += new System.EventHandler(this.button13_Click);
+			// 
+			// button11
+			// 
+			this.button11.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button11.Location = new System.Drawing.Point(120, 280);
+			this.button11.Name = "button11";
+			this.button11.Size = new System.Drawing.Size(48, 21);
+			this.button11.TabIndex = 24;
+			this.button11.Text = "None";
+			this.button11.Click += new System.EventHandler(this.button11_Click);
+			// 
+			// treeView4
+			// 
+			this.treeView4.CheckBoxes = true;
+			this.treeView4.ImageIndex = -1;
+			this.treeView4.LabelEdit = true;
+			this.treeView4.Location = new System.Drawing.Point(8, 48);
+			this.treeView4.Name = "treeView4";
+			this.treeView4.SelectedImageIndex = -1;
+			this.treeView4.Size = new System.Drawing.Size(160, 224);
+			this.treeView4.Sorted = true;
+			this.treeView4.TabIndex = 18;
+			this.treeView4.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView4_AfterLabelEdit);
+			// 
+			// groupBox5
+			// 
+			this.groupBox5.Controls.Add(this.button12);
+			this.groupBox5.Controls.Add(this.button9);
+			this.groupBox5.Controls.Add(this.button8);
+			this.groupBox5.Controls.Add(this.treeView1);
+			this.groupBox5.Controls.Add(this.comboBox1);
+			this.groupBox5.Controls.Add(this.label18);
+			this.groupBox5.Controls.Add(this.checkBox2);
+			this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox5.Location = new System.Drawing.Point(5, 8);
+			this.groupBox5.Name = "groupBox5";
+			this.groupBox5.Size = new System.Drawing.Size(248, 312);
+			this.groupBox5.TabIndex = 22;
+			this.groupBox5.TabStop = false;
+			this.groupBox5.Text = "Select Channels";
+			// 
+			// button12
+			// 
+			this.button12.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button12.Location = new System.Drawing.Point(152, 24);
+			this.button12.Name = "button12";
+			this.button12.Size = new System.Drawing.Size(88, 21);
+			this.button12.TabIndex = 24;
+			this.button12.Text = "Clear Channels";
+			this.button12.Click += new System.EventHandler(this.button12_Click);
+			// 
+			// button9
+			// 
+			this.button9.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button9.Location = new System.Drawing.Point(192, 284);
+			this.button9.Name = "button9";
+			this.button9.Size = new System.Drawing.Size(48, 21);
+			this.button9.TabIndex = 23;
+			this.button9.Text = "None";
+			this.button9.Click += new System.EventHandler(this.button9_Click_1);
+			// 
+			// button8
+			// 
+			this.button8.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button8.Location = new System.Drawing.Point(136, 284);
+			this.button8.Name = "button8";
+			this.button8.Size = new System.Drawing.Size(48, 21);
+			this.button8.TabIndex = 22;
+			this.button8.Text = "All";
+			this.button8.Click += new System.EventHandler(this.button8_Click);
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.Location = new System.Drawing.Point(128, 253);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.Size = new System.Drawing.Size(112, 21);
+			this.comboBox1.TabIndex = 20;
+			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
+			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(8, 256);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(112, 16);
+			this.label18.TabIndex = 21;
+			this.label18.Text = "Select Language:";
 			// 
 			// checkBox2
 			// 
 			this.checkBox2.Checked = true;
 			this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox2.Location = new System.Drawing.Point(16, 272);
+			this.checkBox2.Location = new System.Drawing.Point(8, 286);
 			this.checkBox2.Name = "checkBox2";
-			this.checkBox2.Size = new System.Drawing.Size(184, 16);
+			this.checkBox2.Size = new System.Drawing.Size(88, 16);
 			this.checkBox2.TabIndex = 16;
-			this.checkBox2.Text = "Skip scrambled Services";
+			this.checkBox2.Text = "No scrambled";
+			this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+			// 
+			// button7
+			// 
+			this.button7.Enabled = false;
+			this.button7.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button7.Location = new System.Drawing.Point(368, 351);
+			this.button7.Name = "button7";
+			this.button7.Size = new System.Drawing.Size(64, 21);
+			this.button7.TabIndex = 17;
+			this.button7.Text = "Stop scan";
+			this.button7.Click += new System.EventHandler(this.button7_Click);
 			// 
 			// feedback
 			// 
-			this.feedback.Location = new System.Drawing.Point(72, 336);
+			this.feedback.Location = new System.Drawing.Point(72, 351);
 			this.feedback.Name = "feedback";
-			this.feedback.Size = new System.Drawing.Size(352, 20);
+			this.feedback.Size = new System.Drawing.Size(288, 20);
 			this.feedback.TabIndex = 15;
 			this.feedback.Text = "";
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(8, 339);
+			this.label1.Location = new System.Drawing.Point(8, 354);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(64, 16);
 			this.label1.TabIndex = 14;
 			this.label1.Text = "Scanning:";
-			// 
-			// radioButton2
-			// 
-			this.radioButton2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.radioButton2.Location = new System.Drawing.Point(184, 8);
-			this.radioButton2.Name = "radioButton2";
-			this.radioButton2.Size = new System.Drawing.Size(56, 16);
-			this.radioButton2.TabIndex = 12;
-			this.radioButton2.Text = "Radio";
-			this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
-			// 
-			// radioButton1
-			// 
-			this.radioButton1.Checked = true;
-			this.radioButton1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.radioButton1.Location = new System.Drawing.Point(88, 8);
-			this.radioButton1.Name = "radioButton1";
-			this.radioButton1.Size = new System.Drawing.Size(80, 16);
-			this.radioButton1.TabIndex = 11;
-			this.radioButton1.TabStop = true;
-			this.radioButton1.Text = "Television";
-			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
 			// 
 			// tabPage3
 			// 
@@ -983,10 +1131,152 @@ namespace MediaPortal.Configuration.Sections
 			this.label12.TabIndex = 0;
 			this.label12.Text = "LNB0 (Mhz)";
 			// 
+			// tabPage5
+			// 
+			this.tabPage5.Controls.Add(this.label21);
+			this.tabPage5.Controls.Add(this.label20);
+			this.tabPage5.Controls.Add(this.label19);
+			this.tabPage5.Controls.Add(this.label17);
+			this.tabPage5.Controls.Add(this.button18);
+			this.tabPage5.Controls.Add(this.button17);
+			this.tabPage5.Controls.Add(this.progressBar2);
+			this.tabPage5.Controls.Add(this.chName);
+			this.tabPage5.Controls.Add(this.label9);
+			this.tabPage5.Controls.Add(this.button16);
+			this.tabPage5.Controls.Add(this.button15);
+			this.tabPage5.Controls.Add(this.label6);
+			this.tabPage5.Controls.Add(this.treeView5);
+			this.tabPage5.Location = new System.Drawing.Point(4, 22);
+			this.tabPage5.Name = "tabPage5";
+			this.tabPage5.Size = new System.Drawing.Size(440, 397);
+			this.tabPage5.TabIndex = 4;
+			this.tabPage5.Text = "EPG-Grabber";
+			// 
+			// label21
+			// 
+			this.label21.Location = new System.Drawing.Point(64, 352);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(216, 16);
+			this.label21.TabIndex = 19;
+			this.label21.Text = "Events are in Database...";
+			// 
+			// label20
+			// 
+			this.label20.Location = new System.Drawing.Point(24, 352);
+			this.label20.Name = "label20";
+			this.label20.Size = new System.Drawing.Size(32, 16);
+			this.label20.TabIndex = 18;
+			this.label20.Text = "0";
+			this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(64, 336);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(120, 16);
+			this.label19.TabIndex = 17;
+			this.label19.Text = "Events found...";
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(24, 336);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(32, 16);
+			this.label17.TabIndex = 16;
+			this.label17.Text = "0";
+			this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// button18
+			// 
+			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button18.Location = new System.Drawing.Point(224, 224);
+			this.button18.Name = "button18";
+			this.button18.Size = new System.Drawing.Size(48, 21);
+			this.button18.TabIndex = 15;
+			this.button18.Text = "None";
+			this.button18.Click += new System.EventHandler(this.button18_Click);
+			// 
+			// button17
+			// 
+			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button17.Location = new System.Drawing.Point(168, 224);
+			this.button17.Name = "button17";
+			this.button17.Size = new System.Drawing.Size(48, 21);
+			this.button17.TabIndex = 14;
+			this.button17.Text = "All";
+			this.button17.Click += new System.EventHandler(this.button17_Click);
+			// 
+			// progressBar2
+			// 
+			this.progressBar2.Location = new System.Drawing.Point(24, 312);
+			this.progressBar2.Name = "progressBar2";
+			this.progressBar2.Size = new System.Drawing.Size(400, 16);
+			this.progressBar2.TabIndex = 13;
+			// 
+			// chName
+			// 
+			this.chName.Location = new System.Drawing.Point(112, 288);
+			this.chName.Name = "chName";
+			this.chName.Size = new System.Drawing.Size(312, 16);
+			this.chName.TabIndex = 12;
+			this.chName.Text = "Stopped.";
+			// 
+			// label9
+			// 
+			this.label9.Location = new System.Drawing.Point(24, 288);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(96, 16);
+			this.label9.TabIndex = 11;
+			this.label9.Text = "Current Channel:";
+			// 
+			// button16
+			// 
+			this.button16.Enabled = false;
+			this.button16.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button16.Location = new System.Drawing.Point(368, 360);
+			this.button16.Name = "button16";
+			this.button16.Size = new System.Drawing.Size(56, 24);
+			this.button16.TabIndex = 10;
+			this.button16.Text = "Stop";
+			this.button16.Click += new System.EventHandler(this.button16_Click);
+			// 
+			// button15
+			// 
+			this.button15.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button15.Location = new System.Drawing.Point(304, 360);
+			this.button15.Name = "button15";
+			this.button15.Size = new System.Drawing.Size(56, 24);
+			this.button15.TabIndex = 9;
+			this.button15.Text = "Start";
+			this.button15.Click += new System.EventHandler(this.button15_Click);
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(24, 32);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(128, 16);
+			this.label6.TabIndex = 8;
+			this.label6.Text = "TV-Channels:";
+			// 
+			// treeView5
+			// 
+			this.treeView5.CheckBoxes = true;
+			this.treeView5.HideSelection = false;
+			this.treeView5.ImageIndex = -1;
+			this.treeView5.Location = new System.Drawing.Point(24, 48);
+			this.treeView5.Name = "treeView5";
+			this.treeView5.SelectedImageIndex = -1;
+			this.treeView5.Size = new System.Drawing.Size(248, 168);
+			this.treeView5.TabIndex = 7;
+			// 
 			// ofd
 			// 
 			this.ofd.Filter = "Transponder-Listings (*.tpl)|*.tpl";
 			this.ofd.Title = "Choose Transponder-Listing Files";
+			// 
+			// sfd
+			// 
+			this.sfd.Filter = "Transponder-Files|*.tpl";
 			// 
 			// DVBSSS2
 			// 
@@ -999,10 +1289,13 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.tabPage2.ResumeLayout(false);
+			this.groupBox6.ResumeLayout(false);
+			this.groupBox5.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.tabPage5.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1057,7 +1350,10 @@ namespace MediaPortal.Configuration.Sections
 			if(tabControl1.SelectedIndex==2)
 			{
 				GetChannels();
-				//BuildUpTreeView(tvList);
+			}
+			if(tabControl1.SelectedIndex==4)
+			{
+				GetChannels(true,treeView5);
 			}
 
 		}
@@ -1235,6 +1531,7 @@ namespace MediaPortal.Configuration.Sections
 				sat4.Enabled=false;
 
 		}
+
 		private void EnableSatConfig()
 		{
 				diseqcb.Enabled=
@@ -1254,12 +1551,62 @@ namespace MediaPortal.Configuration.Sections
 				sat4.Enabled=true;
 
 		}
+		//
+		void ExportTreeView()
+		{
+			
+			IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
+			System.IO.Stream stream = new System.IO.FileStream(Application.StartupPath+@"dvb-ss2-channelTree.xml", System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+			TreeNode root = new TreeNode();
+			foreach(TreeNode node in treeView1.Nodes)
+				root.Nodes.Add((TreeNode)node.Clone());
 
+			formatter.Serialize(stream, root);
+			stream.Close();
+		}
+		//
+		public void ReadTPList (string fileName)
+		{
+			string[] tpdata;
+			string line;
+			System.IO.TextReader tin;
+			int count = 0;
+			// set diseq & lnb
+			tin = System.IO.File.OpenText(fileName);
+			treeView4.Nodes.Clear();
+			do
+			{
+				line = null;
+				line = tin.ReadLine();
+				if(line!=null)
+					if (line.Length > 0)
+					{
+						if(line.StartsWith(";"))
+							continue;
+						tpdata = line.Split(new char[]{','});
+						if(tpdata.Length!=3)
+							tpdata = line.Split(new char[]{';'});
+						if (tpdata.Length == 3)
+						{
+							TreeNode node=new TreeNode(line);
+							node.Tag=line;
+							node.Checked=true;
+							count+=1;
+							treeView4.Nodes.Add(node);
+						}
+					}
+			} while (!(line == null));
+			
+			count -= 1;
+		}
 
 		private void comboBox3_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboBox3.Text!="")
+			{
+				ReadTPList(comboBox3.Text);
 				button5.Enabled=true;
+			}
 			else
 				button5.Enabled=false;
 		}
@@ -1280,7 +1627,7 @@ namespace MediaPortal.Configuration.Sections
 			int						circ=0;
 			int						cband=0;
 			int						lnbKinds=0;
-			
+            			
 			if(comboBox3.SelectedItem!=null)
 				fileName=comboBox3.SelectedItem.ToString();
 			else
@@ -1372,7 +1719,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					if(m_dvbSec.Run()==true)
 					{
-						m_dvbSec.OpenTPLFile(comboBox3.SelectedItem.ToString(),ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback);
+						m_dvbSec.OpenTPLFile(ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback,treeView4);
 						m_bIsDirty=true;
 						// setting up list
 						transpList=(DVBSections.Transponder[])list.Clone();
@@ -1380,6 +1727,7 @@ namespace MediaPortal.Configuration.Sections
 						feedback.Text="Ready.";
 						progressBar1.Value=progressBar1.Minimum;
 						BuildUpTreeView(treeView1);
+						FindUsedLangs();
 
 					}// dvbsec.run
 
@@ -1390,11 +1738,40 @@ namespace MediaPortal.Configuration.Sections
 
 		}
 
+		void FindUsedLangs()
+		{
+			comboBox1.Items.Clear();
+			Hashtable langTab=new Hashtable();
+
+			foreach(TreeNode tn in treeView1.Nodes)
+			{
+				foreach(TreeNode tnChild in tn.Nodes)
+				{
+					if(tnChild.Tag==null)
+						continue;
+					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+					ArrayList	pids=ch.pid_list;
+					foreach(DVBSections.PMTData pid in pids)
+					{
+						if(pid.data!=null)
+						{
+							
+							if(langTab.Contains(pid.data)==false && pid.data!="")
+							{
+								langTab.Add(pid.data,pid.data);
+								comboBox1.Items.Add(pid.data);
+							}
+						}
+					}
+				}
+			}
+
+		}
+
 		private void BuildUpTreeView(TreeView tvObj)
 		{
 			ArrayList					provider=new ArrayList();
 			ArrayList					channels=new ArrayList();
-			int							reqService=0;
 			string						path=@Application.StartupPath+@"\";
 			DVBSections.Transponder[]	list=transpList;
 			//using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(path+"dvbss_channels.xml"))
@@ -1405,20 +1782,10 @@ namespace MediaPortal.Configuration.Sections
 			if(list.Length==0)
 				return;
 
-			tvObj.Nodes.Clear();
+			//tvObj.Nodes.Clear();
 			
 			// radio television
 			
-			if(radioButton1.Checked==true)
-				reqService=1;
-			else
-				reqService=2;
-
-			if(tvObj.Name=="tvList")
-				reqService=1;
-
-			if(tvObj.Name=="radioList")
-				reqService=2;
 			// ckeck providers
 			foreach(DVBSections.Transponder transponder in list)
 			{
@@ -1426,10 +1793,10 @@ namespace MediaPortal.Configuration.Sections
 				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					string provName=ch.service_provider_name;
-					int service=ch.serviceType;
-					if(service==reqService)
-					{
-						if(provName.Length>0)
+
+					if(provName==null)
+						continue;
+					if(provName.Length>0)
 						{
 							bool flag=false;
 							foreach(TreeNode tn in tvObj.Nodes)
@@ -1451,56 +1818,47 @@ namespace MediaPortal.Configuration.Sections
 								provider.Add(node);
 							}
 						}
-					}
+					
 
 				}
 			}
 
 			// add the cannels
+		
+		
 			foreach(DVBSections.Transponder transponder in list)
 			{
 				if(transponder.channels!=null)
-				foreach(DVBSections.ChannelInfo ch in transponder.channels)
-				{
-					string provName=ch.service_provider_name;
-					string servName=ch.service_name;
-					int		service=ch.serviceType;
-					if(ch.scrambled==true && checkBox2.Checked==true)
-						continue;
+					foreach(DVBSections.ChannelInfo ch in transponder.channels)
+					{
+						string provName=ch.service_provider_name;
+						string servName=ch.service_name;
+						string service=(ch.serviceType==1?" (TV)":" (Radio)");
 
-					if(service==reqService)
-					{				
+						if(provName==null || servName==null)
+							continue;
+
 						if(provName.Length>0 && servName.Length>0)
 						{
 							TreeNode tn=GetNodeByTag(provName,provider);
 							if(tn!=null)
 							{// add channel nodes
-								TreeNode node=new TreeNode(servName);
-								node.Tag="channel";
-								foreach(DVBSections.PMTData pids in ch.pid_list)
-								{
-									string descrStream="unknown stream (type "+pids.stream_type.ToString()+")";
-									if(pids.isVideo==true)
-										descrStream="Video";
-									if(pids.isAudio==true)
-										descrStream="Audio";
-									if(pids.isAC3Audio==true)
-										descrStream="AC3";
-									if(pids.isTeletext==true)
-										descrStream="Teletext ("+pids.teletextLANG+")";
-									node.Nodes.Add(new TreeNode("Pid :"+pids.elementary_PID.ToString()+" (Stream-Type: "+descrStream+"// Data: "+pids.data+" )"));
-								}
-								
-															
+								TreeNode node=new TreeNode(servName+service);								
+								node.Tag=ch;
 								//node.Nodes.Add(new TreeNode("Service-ID:"+ch.program_number.ToString()));
 								//							node.Nodes.Add(new TreeNode("PCR-Pid:"+ch.pcr_pid.ToString()));
 								//							node.Nodes.Add(new TreeNode("Video-Pid:"+GetVideoPid(ch.pid_list)));
+								if(ch.scrambled== true && checkBox2.Checked==true)
+									node.Checked=false;
+								else
+									node.Checked=true;
+
 								tn.Nodes.Add(node);
 								//treeView1.
 							}
 						}
+					
 					}
-				}
 				
 			}
 	
@@ -1558,79 +1916,78 @@ namespace MediaPortal.Configuration.Sections
 			if(m_bIsDirty==true)
 				TVDatabase.RemoveAllSatChannels();
 
-			if(list==null)
+			foreach(TreeNode tn in treeView1.Nodes)
 			{
-				//System.Windows.Forms.MessageBox.Show("Do a Channelsearch first!");
-				return;
-			}
-			
-			foreach(DVBSections.Transponder transponder in list)
-			{
-				foreach(MediaPortal.TV.Recording.DVBSections.ChannelInfo ch in transponder.channels)
+				foreach(TreeNode tnChild in tn.Nodes)
 				{
-					if(ch.scrambled==true && checkBox2.Checked==true)
+					if(tnChild.Tag==null)
 						continue;
-					if(ch.serviceType==1) // television
+
+					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+					if(tnChild.Checked==true)
 					{
-						int ret=-1;
-						DShowNET.AnalogVideoStandard standard=new DShowNET.AnalogVideoStandard();
-						standard=DShowNET.AnalogVideoStandard.None;
-						string channelText=ch.service_name;
-						if(channelText==null)
-							channelText="unnamed service "+televisionCounter.ToString();
-						TVChannel tv=new TVChannel();
-						tv.VisibleInGuide=true;
-						tv.Name=channelText;//+" ("+n.ToString()+")";
-						tv.Frequency=0;
-						tv.Number=televisionCounter;
-						tv.XMLId="";
-						int dbID=TVDatabase.AddChannel(tv);
-						if(dbID==-1)
-							continue;
-						tv.ID=dbID;
-						string langString="";
-						int audioPid=GetAudioPid(ch.pid_list,out langString);
-						int videoPid=GetVideoPid(ch.pid_list);
-						int teleTextPid=GetTeletextPid(ch.pid_list);
-						int ac3Pid=GetAC3Pid(ch.pid_list);
-						int[] otherAudio;
-						string[] otherAudioLang;
-						GetOtherAudioPids(ch.pid_list,audioPid,out otherAudio,out otherAudioLang);
+						if(ch.serviceType==1) // television
+						{
+							int ret=-1;
+							DShowNET.AnalogVideoStandard standard=new DShowNET.AnalogVideoStandard();
+							standard=DShowNET.AnalogVideoStandard.None;
+							string channelText=ch.service_name;
+							if(channelText==null)
+								channelText="unnamed service "+televisionCounter.ToString();
+							TVChannel tv=new TVChannel();
+							tv.VisibleInGuide=true;
+							tv.Name=channelText;//+" ("+n.ToString()+")";
+							tv.Frequency=0;
+							tv.Number=televisionCounter;
+							tv.XMLId="";
+							int dbID=TVDatabase.AddChannel(tv);
+							if(dbID==-1)
+								continue;
+							tv.ID=dbID;
+							string langString="";
+							int audioPid=GetAudioPid(ch.pid_list,out langString);
+							int videoPid=GetVideoPid(ch.pid_list);
+							int teleTextPid=GetTeletextPid(ch.pid_list);
+							int ac3Pid=GetAC3Pid(ch.pid_list);
+							int[] otherAudio;
+							string[] otherAudioLang;
+							GetOtherAudioPids(ch.pid_list,audioPid,out otherAudio,out otherAudioLang);
 
-						if (otherAudio==null)
-							otherAudio=new int[3]{0,0,0};
+							if (otherAudio==null)
+								otherAudio=new int[3]{0,0,0};
 
-						if (otherAudioLang==null)
-							otherAudioLang=new string[3]{"","",""};
+							if (otherAudioLang==null)
+								otherAudioLang=new string[3]{"","",""};
 
-						ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-							ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],otherAudioLang[2],0,ch.network_pmt_PID);
-						televisionCounter++;
-					}
-					if(ch.serviceType==2) // for radio
-					{
-						MediaPortal.Radio.Database.RadioStation rc=new MediaPortal.Radio.Database.RadioStation();
-						string channelText=ch.service_name;
-						if(channelText==null)
-							channelText="unnamed service "+radioCounter.ToString();
-						rc.Name=channelText;
+							ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+								ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+								audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],ch.pidCache,0,ch.network_pmt_PID);
+							televisionCounter++;
+						}
+
+						if(ch.serviceType==2) // for radio
+						{
+							MediaPortal.Radio.Database.RadioStation rc=new MediaPortal.Radio.Database.RadioStation();
+							string channelText=ch.service_name;
+							if(channelText==null)
+								channelText="unnamed service "+radioCounter.ToString();
+							rc.Name=channelText;
 						
-						rc.URL="";
-						rc.Genre=ch.service_provider_name;
-						rc.Frequency=(radioCounter<< 16);
-						string lang="";
-						int dbID=RadioDatabase.AddStation(ref rc);
-						if(dbID==-1)
-							continue;
-						int audioPid=GetAudioPid(ch.pid_list,out lang);
-						int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-							ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,lang,"","","",0,ch.network_pmt_PID);
-						radioCounter++;
+							rc.URL="";
+							rc.Genre=ch.service_provider_name;
+							rc.Frequency=(radioCounter<< 16);
+							string lang="";
+							int dbID=RadioDatabase.AddStation(ref rc);
+							if(dbID==-1)
+								continue;
+							int audioPid=GetAudioPid(ch.pid_list,out lang);
+							int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+								ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+								audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,lang,"","",ch.pidCache,0,ch.network_pmt_PID);
+							radioCounter++;
 
-					}
-						
+						}
+					}	
 
 				}
 
@@ -1799,7 +2156,37 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 		}
+		private void GetChannels(bool radioTV,TreeView tv)
+		{
+			ArrayList chList=new ArrayList();
+			TVDatabase.GetSatChannels(ref chList);
+			if(chList==null)
+				return;
+			if(tv==null)
+				return;
 
+			tv.Nodes.Clear();
+
+			int serviceType=0;
+
+			if(radioTV==false)
+				serviceType=2; // radio on false
+			else
+				serviceType=1; // tv on true
+
+			foreach(DVBChannel channel in chList)
+			{
+				if(channel.ToString()!="")
+				{
+					
+					TreeNode node=new TreeNode(channel.ServiceName+" ("+channel.ServiceProvider+")");
+					node.Tag=channel;
+					node.Checked=true;
+					if(channel.ServiceType==serviceType)
+						tv.Nodes.Add(node);
+				}
+			}
+		}
 		private void button6_Click_2(object sender, System.EventArgs e)
 		{
 			if(propertyGrid1.SelectedObject !=null)
@@ -1847,8 +2234,307 @@ namespace MediaPortal.Configuration.Sections
 			label16.Visible=checkBox4.Checked;
 		}
 
+		void DeselectScrambledChannels()
+		{
+			foreach(TreeNode tn in treeView1.Nodes)
+			{
+				foreach(TreeNode tnChild in tn.Nodes)
+				{
+					if(tnChild.Tag==null)
+						continue;
+					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+                    if(ch.scrambled==true)
+						tnChild.Checked=false;
+				}
+			}
+
+		}
+		void SelectScrambledChannels()
+		{
+			foreach(TreeNode tn in treeView1.Nodes)
+			{
+				foreach(TreeNode tnChild in tn.Nodes)
+				{
+					if(tnChild.Tag==null)
+						continue;
+					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+					if(ch.scrambled==true)
+						tnChild.Checked=true;
+				}
+			}
+
+		}
+		private void button10_Click(object sender, System.EventArgs e)
+		{
+			foreach(TreeNode tn in treeView4.Nodes)
+			{
+				tn.Checked=true;
+			}
+		}
+
+		private void button11_Click(object sender, System.EventArgs e)
+		{
+			foreach(TreeNode tn in treeView4.Nodes)
+			{
+				tn.Checked=false;
+			}
+		
+		}
+
+		private void button8_Click(object sender, System.EventArgs e)
+		{
+			foreach(TreeNode tn in treeView1.Nodes)
+			{
+				foreach(TreeNode tnChild in tn.Nodes)
+				{
+					tnChild.Checked=true;
+				}
+			}
+		
+		}
+
+		private void button9_Click_1(object sender, System.EventArgs e)
+		{
+			foreach(TreeNode tn in treeView1.Nodes)
+			{
+				foreach(TreeNode tnChild in tn.Nodes)
+				{
+					tnChild.Checked=false;
+				}
+			}
+		
+		}
 
 
+		private void treeView1_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+		{
+			object obj=e.Node.Tag;
+			if(e.Node.Tag!=null)
+			{
+				if(obj.GetType()!=typeof(DVBSections.ChannelInfo))
+				{
+					e.Cancel=true;
+				}
+			}	
+		}
 
+		private void treeView1_BeforeCheck(object sender, TreeViewCancelEventArgs e)
+		{
+			object obj=e.Node.Tag;
+			if(e.Node.Tag!=null)
+			{
+				if(obj.GetType()!=typeof(DVBSections.ChannelInfo))
+				{
+					e.Cancel=true;
+				}
+			}	
+
+		}
+
+		private void checkBox2_CheckedChanged(object sender, System.EventArgs e)
+		{
+			if(checkBox2.Checked==true)
+				DeselectScrambledChannels();
+			else
+				SelectScrambledChannels();
+
+		}
+
+		private void button12_Click(object sender, System.EventArgs e)
+		{
+			treeView1.Nodes.Clear();
+		}
+
+		private void comboBox1_SelectedIndexChanged_1(object sender, System.EventArgs e)
+		{
+			//button9.PerformClick();
+
+			if(comboBox1.Text.Length>0)
+			{
+				string searchLang=comboBox1.Text;
+				foreach(TreeNode tn in treeView1.Nodes)
+				{
+					foreach(TreeNode tnChild in tn.Nodes)
+					{
+						if(tnChild.Tag==null)
+							continue;
+						DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+						ArrayList	pids=ch.pid_list;
+						foreach(DVBSections.PMTData pid in pids)
+						{
+							string langCode=(string)pid.data;
+
+							if(langCode==null)
+								continue;
+							
+							if(langCode==searchLang)
+								tnChild.Checked=true;
+
+						}
+					}
+				}
+			}
+			
+		}
+
+		private void button14_Click(object sender, System.EventArgs e)
+		{
+			ExportTreeView();
+		}
+
+		private void treeView4_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+		{
+			string newLabel=e.Label;
+			TreeNode node=e.Node;
+			
+			if(newLabel==null)
+				return;
+
+			string[] tpdata = newLabel.Split(new char[]{','});
+			if(tpdata.Length!=3)
+				tpdata = newLabel.Split(new char[]{';'});
+			if (tpdata.Length == 3)
+			{
+				if(tpdata[1].ToLower()!="v" && tpdata[1].ToLower()!="h")
+				{
+					e.CancelEdit=true;
+					return;
+				}
+				try
+				{
+					int val=(int)Convert.ToInt32(tpdata[0]);
+					if(val==0)
+					{
+						e.CancelEdit=true;
+						return;
+					}
+					val=(int)Convert.ToInt32(tpdata[2]);
+					if(val==0)
+					{
+						e.CancelEdit=true;
+						return;
+					}
+				}
+				catch
+				{
+					e.CancelEdit=true;
+					return;
+				}
+				node.Tag=newLabel;
+			}
+			else
+				e.CancelEdit=true;
+
+		}
+
+		private void button13_Click(object sender, System.EventArgs e)
+		{
+			TreeNode node=new TreeNode("1,H,1");
+			node.Tag="1,H,1";
+			node.Checked=true;
+			treeView4.Nodes.Add(node);
+			node.BeginEdit();
+		}
+
+		private void button14_Click_1(object sender, System.EventArgs e)
+		{
+
+			System.Windows.Forms.DialogResult res=sfd.ShowDialog();
+
+			if(res!=DialogResult.OK)
+				return;
+
+			string fileName=sfd.FileName;
+			if(System.IO.File.Exists(fileName)==true)
+				System.IO.File.Delete(fileName);
+
+			System.IO.TextWriter tout;
+			tout=System.IO.File.CreateText(fileName);
+			foreach(TreeNode node in treeView4.Nodes)
+			{
+				tout.WriteLine((string)node.Tag);
+			}
+			tout.Close();
+		}
+
+		private void button17_Click(object sender, System.EventArgs e)
+		{
+			foreach(TreeNode tn in treeView5.Nodes)
+			{
+				tn.Checked=true;
+			}
+			
+		}
+
+		private void button18_Click(object sender, System.EventArgs e)
+		{
+			foreach(TreeNode tn in treeView5.Nodes)
+			{
+				tn.Checked=false;
+			}
+
+		}
+
+		private void button15_Click(object sender, System.EventArgs e)
+		{
+			progressBar2.Maximum=CountSelectedNodes();
+			progressBar2.Minimum=0;
+			progressBar2.Value=0;
+			m_stopEPGGrab=false;
+			button16.Enabled=true;
+			button15.Enabled=false;
+			int counter=0;
+			if(m_dvbSec.Run()==false)
+				return;
+			do
+			{
+				GC.Collect();
+				foreach(TreeNode tn in treeView5.Nodes)
+				{
+					if(m_stopEPGGrab==true)
+						break;
+					if(tn.Checked==true)
+					{
+						DVBChannel ch=(DVBChannel)tn.Tag;
+						chName.Text=ch.ServiceName;
+						counter=m_dvbSec.GrabEIT(ch);
+						label17.Text=counter.ToString();
+						try
+						{
+							progressBar2.Value=progressBar2.Value+1;
+						}
+						catch
+						{
+							progressBar2.Value=0;
+						}		
+					}
+					Application.DoEvents();
+				}
+			}while(m_stopEPGGrab==false);
+			chName.Text="Stopped.";
+			button15.Enabled=true;
+			button16.Enabled=false;
+			label17.Text="0";
+			m_dvbSec.CleanUp();
+			GC.Collect();
+		}
+		int CountSelectedNodes()
+		{
+			int retCount=0;
+			foreach(TreeNode tn in treeView5.Nodes)
+			{
+				if(tn.Checked==true)
+					retCount++;
+			}
+
+			return retCount;
+
+		}
+
+		private void button16_Click(object sender, System.EventArgs e)
+		{
+			m_stopEPGGrab=true;
+			button16.Enabled=false;
+		}
 	}// class
 }// namespace
