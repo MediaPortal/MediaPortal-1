@@ -15,7 +15,6 @@ crash/things not working Bugs:
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   19-06-2004 my video   : vmr9: lines/stripes?
 
-  15-07-2004 my music   : press Y to add folder to playlist, id3 tags will be loaded even if id3tags are turned off
   13-07-2004 my music   : press F3 on an artist (a-ha) in artist view and it crashes
   11-07-2004 my music   : cddb doesnt work for some case does not update tags. Meaning an album it finds wich had various 
                           artists first, now only 1 still shows as various artists. 
