@@ -963,23 +963,8 @@ namespace MediaPortal.TV.Recording
 			propsToSet.Add("id",new MetadataItem("id",  _mNewRecordedTV.ID, MetadataItemType.Dword));
 			propsToSet.Add("cardno",new MetadataItem("cardno", this.ID, MetadataItemType.Dword));
 			propsToSet.Add("duration",new MetadataItem("duration", ts.TotalSeconds, MetadataItemType.Dword));
-			string startTime=String.Format("{0}-{1}-{2} {3}:{4}:{5}",
-																			_mNewRecordedTV.StartTime.Day,
-																			_mNewRecordedTV.StartTime.Month,
-																			_mNewRecordedTV.StartTime.Year,
-																			_mNewRecordedTV.StartTime.Hour,
-																			_mNewRecordedTV.StartTime.Minute,
-																			_mNewRecordedTV.StartTime.Second);
-
-			string endTime=String.Format("{0}-{1}-{2} {3}:{4}:{5}",
-																			_mNewRecordedTV.EndTime.Day,
-																			_mNewRecordedTV.EndTime.Month,
-																			_mNewRecordedTV.EndTime.Year,
-																			_mNewRecordedTV.EndTime.Hour,
-																			_mNewRecordedTV.EndTime.Minute,
-																			_mNewRecordedTV.EndTime.Second);
-			propsToSet.Add("start",new MetadataItem("start", startTime, MetadataItemType.String));
-			propsToSet.Add("end",new MetadataItem("end", endTime, MetadataItemType.String));
+			propsToSet.Add("start",new MetadataItem("start", _mNewRecordedTV.Start, MetadataItemType.Dword));
+			propsToSet.Add("end",new MetadataItem("end", _mNewRecordedTV.End, MetadataItemType.Dword));
 			
 			if (m_finishedRecordings==null) 
 				m_finishedRecordings=new ArrayList();

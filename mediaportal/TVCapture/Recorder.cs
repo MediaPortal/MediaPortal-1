@@ -1749,14 +1749,8 @@ namespace MediaPortal.TV.Recording
 									if (item.Name=="title") newRec.Title=(string)item.Value;
 									if (item.Name=="genre") newRec.Genre=(string)item.Value;
 									if (item.Name=="description") newRec.Description=(string)item.Value;
-									if (item.Name=="start") 
-									{
-										newRec.Start=Utils.datetolong(Utils.ParseDateTimeString((string)item.Value));
-									}
-									if (item.Name=="end") 
-									{
-										newRec.End=Utils.datetolong(Utils.ParseDateTimeString((string)item.Value));
-									}
+									if (item.Name=="start") newRec.Start=(long)item.Value;
+									if (item.Name=="end") newRec.End=(long)item.Value;
 								}
 								if (newRec.Channel!=null)
 								{
