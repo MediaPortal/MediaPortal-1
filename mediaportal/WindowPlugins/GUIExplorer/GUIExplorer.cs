@@ -311,16 +311,18 @@ namespace MediaPortal.GUI.GUIExplorer
 									file fl = new file();
 									fl.name=item.Label;
 									fl.fullpath=currentFolder+"\\"+item.Label;
-									fl.path=currentFolder;
-									selected.Add(fl);
+									fl.path=currentFolder;								
 
 									foreach(file f in files) 
 									{
 										if (f.name==item.Label) 
 										{
 											actSize=actSize+f.size;
+											fl.size=f.size;
+											break;
 										}
 									}
+									selected.Add(fl);
 									fileCount++;
 									tmpStr=fileCount.ToString()+ " Files "+CalcExt(actSize)+" ";
 									GUIPropertyManager.SetProperty("#explorer_size",tmpStr);
@@ -474,15 +476,17 @@ namespace MediaPortal.GUI.GUIExplorer
 										fl.name=item.Label;
 										fl.fullpath=currentFolder+"\\"+item.Label;
 										fl.path=currentFolder;
-										selected.Add(fl);
 
 										foreach(file f in files) 
 										{
 											if (f.name==item.Label) 
 											{
 												actSize=actSize+f.size;
+												fl.size=f.size;
+												break;
 											}
 										}
+										selected.Add(fl);
 										fileCount++;
 									}
 									tmpStr=fileCount.ToString()+ " Files "+CalcExt(actSize)+" ";
