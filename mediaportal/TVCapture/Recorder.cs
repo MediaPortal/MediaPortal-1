@@ -114,8 +114,8 @@ namespace MediaPortal.TV.Recording
 			{
 				TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
 				card.ID=(i+1);
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:    card:{0} {1} video device:{2} TV:{3}  record:{4} priority:{5}",
-															card.ID,card.CommercialName,card.VideoDevice,card.UseForTV,card.UseForRecording,card.Priority);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:    card:{0} video device:{1} TV:{2}  record:{3} priority:{4}",
+															card.ID,card.VideoDevice,card.UseForTV,card.UseForRecording,card.Priority);
 			}
 
 			m_iPreRecordInterval =0;

@@ -2576,7 +2576,7 @@ namespace MediaPortal.Configuration
 		{
 			try
 			{
-				if(tabControl1.SelectedIndex==4)
+				if(tabControl1.SelectedTab==tabPage4)
 				{	
 					
 					TVCaptureDevice capture = CaptureCard;
@@ -2603,7 +2603,7 @@ namespace MediaPortal.Configuration
 					capture.DeleteGraph();
 				}
 
-				if(tabControl1.SelectedIndex==5)
+				if(tabControl1.SelectedTab==tabPage6)
 				{	
 					TVCaptureDevice capture = CaptureCard;
 					if (capture==null)
