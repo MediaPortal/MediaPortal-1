@@ -24,13 +24,13 @@ namespace MediaPortal.TV.Recording
 	/// It handles any DVB-T, DVB-C, DVB-S TV Capture card with BDA drivers
 	///
 	/// A graphbuilder object supports one or more TVCapture cards and
-	/// contains all the code/logic necessary todo
+	/// contains all the code/logic necessary for
 	/// -tv viewing
 	/// -tv recording
 	/// -tv timeshifting
 	/// 
 	/// todo:
-	///   -add support for DVB-S and DVB-C  (just the scanning & parsing needs to be added)
+	///   -add support for DVB-S and DVB-C  (just the parsing needs to be added)
 	///   -when scanning for channels we need to parse IGuideData to see if the channel found is radio,tv,encrypted or not etc
 	///   -get TVGuide data from stream
 	///   
@@ -815,7 +815,7 @@ namespace MediaPortal.TV.Recording
 			{
 				case NetworkType.ATSC: 
 				{
-					//todo
+					//todo: add tuning for analog tv cards
 				} break;
 				
 				case NetworkType.DVBC: 
@@ -2271,6 +2271,11 @@ namespace MediaPortal.TV.Recording
 								//todo: parse guide data for DVB-S
 								Log.Write("DVBS:name:{0} value:{1} language:{2}", chanName,chanValue,chanLanguage);
 							}						
+							else if (Network()==NetworkType.ATSC)
+							{
+								//todo: parse guide data for ATSC
+								Log.Write("ATSC:name:{0} value:{1} language:{2}", chanName,chanValue,chanLanguage);
+							}						
 						}//while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
 					}//if (enumProgramProperties!=null)
 				}//while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
@@ -2455,7 +2460,6 @@ namespace MediaPortal.TV.Recording
 			}
 			else if (Network() == NetworkType.DVBS)
 			{
-				//todo: add tuning for DVB-S
 				//get the ITuner from the network provider
 				TunerLib.TuneRequest newTuneRequest = null;
 				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
@@ -2513,6 +2517,10 @@ namespace MediaPortal.TV.Recording
 				myTuner.TuneRequest  = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
 				currentFrequency=(int)tuningObject;
+			}
+			else if (Network() == NetworkType.ATSC)
+			{
+				//todo: add tuning for ATSC
 			}
 		}//public void Tune(object tuningObject)
 		
@@ -2582,6 +2590,10 @@ namespace MediaPortal.TV.Recording
 				else if (Network() == NetworkType.DVBS)
 				{
 					//todo: store DVB-S channels found in tvdatabase
+				}
+				else if (Network() == NetworkType.ATSC)
+				{
+					//todo: store ATSC channels found in tvdatabase
 				}
 			}//for (int x=0; x < channelList.Count;++x)
 		}//public void StoreChannels(bool radio, bool tv)
