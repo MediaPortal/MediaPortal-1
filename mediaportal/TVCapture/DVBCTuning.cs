@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
 						{
 							try
 							{
-								dvbcChannels[count].frequency = Int32.Parse(tpdata[0]) * 1000;
+								dvbcChannels[count].frequency = Int32.Parse(tpdata[0]) ;
 								string mod=tpdata[1].ToUpper();
 								dvbcChannels[count].modulation=(int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
 								if (mod=="1024QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
@@ -154,13 +154,14 @@ namespace MediaPortal.TV.Recording
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			DVBCList dvbcChan=dvbcChannels[currentIndex];
-			string description=String.Format("dvbcChan:{0}/{1}", currentIndex,count);
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
+			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,count,chanDesc);
 
 			if (currentState==State.ScanFrequencies)
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.Write("Found signal for dvbcChan:{0}",currentIndex);
+					Log.Write("Found signal for Channel:{0} {1}",currentIndex,chanDesc);
 					currentState=State.ScanChannels;
 				}
 			}
@@ -174,7 +175,7 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanChannels)
 			{
-				description=String.Format("Found signal for channel:{0}, Scanning channels", currentIndex);
+				description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 				callback.OnStatus(description);
 				ScanChannels();
 			}
@@ -214,10 +215,13 @@ namespace MediaPortal.TV.Recording
 			newchan.SID=-1;
 
 			newchan.modulation=dvbcChannels[currentIndex].modulation;
-			newchan.symbolRate=dvbcChannels[currentIndex].symbolrate;
+			newchan.symbolRate=(dvbcChannels[currentIndex].symbolrate)/1000;
 			newchan.innerFec=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.carrierFrequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan);
+			timer1.Enabled=false;
+			System.Threading.Thread.Sleep(100);
+			timer1.Enabled=true;
 		}
 
 		#endregion

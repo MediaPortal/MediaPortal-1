@@ -2257,10 +2257,11 @@ namespace MediaPortal.TV.Recording
 				myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
 				myLocator.SymbolRate					= chan.symbolRate;
 				myLocator.Modulation					= (TunerLib.ModulationType)chan.modulation;
-
+				
 				myTuneRequest.ONID						= chan.ONID;	//original network id
 				myTuneRequest.TSID						= chan.TSID;	//transport stream id
 				myTuneRequest.SID							= chan.SID;		//service id
+				
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
 				currentFrequency=(int)chan.carrierFrequency;
 			}
