@@ -998,11 +998,12 @@ GUISpinControl m_upDown = null;
 				{
 					m_iScrollCounter = m_iItemHeight;
 					m_bScrollUp = true;
-					// m_iOffset-=m_iColumns;
 				}
 				else
 				{
-					base.OnAction(action);
+          // move to the last item
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, m_vecItems.Count - 1, 0, null);
+          OnMessage(msg);
 				}
         OnSelectionChanged();
 			}
@@ -1040,10 +1041,9 @@ GUISpinControl m_upDown = null;
             m_iCursorX=0;
             if (!ValidItem(m_iCursorX, m_iCursorY)) 
             {
-              m_iCursorX=x;
-              m_iOffset -= m_iColumns;
-              m_upDown.Focus = true;
-              m_iSelect = GUIListControl.ListType.CONTROL_UPDOWN;
+              // move to the first item
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+              OnMessage(msg);
             }
 					}
 					else
@@ -1071,8 +1071,9 @@ GUISpinControl m_upDown = null;
             }
             else
             {
-              m_upDown.Focus = true;
-              m_iSelect = GUIListControl.ListType.CONTROL_UPDOWN;
+              // move to the first item
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+              OnMessage(msg);
             }
           }
           OnSelectionChanged();
@@ -1083,7 +1084,7 @@ GUISpinControl m_upDown = null;
 				m_upDown.OnAction(action);
 				if (!m_upDown.Focus) 
 				{
-					base.OnAction(action);
+          m_iSelect = GUIListControl.ListType.CONTROL_LIST;
 				}  
 			}
 		}
