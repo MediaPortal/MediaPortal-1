@@ -60,6 +60,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void AddCaptureCard(TVCaptureDevice card)
 		{
+			cardsListView.Items.Clear();
 			ListViewItem listItem = new ListViewItem(new string[] { card.VideoDevice, 
                                   card.FriendlyName,                                                                
 																	card.UseForTV.ToString(),
@@ -263,7 +264,8 @@ namespace MediaPortal.Configuration.Sections
 				// Remove from the list view
 				//
 				cardsListView.Items.RemoveAt(cardsListView.SelectedIndices[0]);
-			}		
+			}
+			SaveSettings();
 
 			LoadCaptureCards();
 			PopulateListView();
@@ -307,6 +309,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
+
 			using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				//
