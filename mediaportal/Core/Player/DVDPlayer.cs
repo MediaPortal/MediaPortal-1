@@ -120,17 +120,39 @@ namespace MediaPortal.Player
     protected const int WS_CHILD			= 0x40000000;	// attributes for video window
     protected const int WS_CLIPCHILDREN	= 0x02000000;
     protected const int WS_CLIPSIBLINGS	= 0x04000000;
+    protected const int WM_MOUSEMOVE    =0x0200;
+    protected const int WM_LBUTTONUP    =0x0202;
+
     public DVDPlayer()
     {
     }
     public override void WndProc( ref Message m )
     {
+      DsPOINT pt;
+      long lParam=m.LParam.ToInt32();
       if( m.Msg == WM_DVD_EVENT )
       {
         if( mediaEvt != null )
           OnDvdEvent();
         return;
       }
+      if( m.Msg==WM_MOUSEMOVE)
+        {
+            pt.X = (int)(lParam  & 0xffff); 
+            pt.Y = (int)((lParam>>16)  & 0xffff); 
+
+            // Select the button at the current position, if it exists
+            dvdCtrl.SelectAtPosition(pt);
+        }
+
+       if( m.Msg==WM_LBUTTONUP)
+       {
+            pt.X = (int)(lParam  & 0xffff); 
+            pt.Y = (int)((lParam>>16)  & 0xffff); 
+
+            // Highlight the button at the current position, if it exists
+            dvdCtrl.ActivateAtPosition(pt);
+        }
 
     }
 
