@@ -90,7 +90,8 @@ namespace MediaPortal.Configuration.Sections
 			EnumeratePluginDirectory(@"plugins\windows");
 			EnumeratePluginDirectory(@"plugins\subtitle");
 			EnumeratePluginDirectory(@"plugins\tagreaders");
-		}
+      EnumeratePluginDirectory(@"plugins\externalplayers");
+    }
 
 		private void LoadPlugins()
 		{
@@ -138,10 +139,10 @@ namespace MediaPortal.Configuration.Sections
 				foreach(ListViewItem listItem in pluginsListView.Items)
 				{
 					ISetupForm setupForm = listItem.Tag as ISetupForm;
-
+          
 					if(setupForm != null && setupForm.CanEnable())
 					{
-						listItem.Checked = xmlreader.GetValueAsBool("plugins", setupForm.PluginName(), true);
+						listItem.Checked = xmlreader.GetValueAsBool("plugins", setupForm.PluginName(), setupForm.DefaultEnabled());
 					}
 				}
 			}			
