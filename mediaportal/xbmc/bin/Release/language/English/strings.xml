@@ -2033,18 +2033,20 @@
 <string><id>12007</id><value>My Picture/slideshow</value></string>
 <string><id>12008</id><value>Filestacking dialog</value></string>
 <string><id>12600</id><value>My Weather</value></string>
+<string><id>12700</id><value>My News</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>Fullscreen OSD</value></string>
-<string><id>12902</id><value>Born</value></string>
-<string><id>12903</id><value>Years Active</value></string>
-<string><id>12904</id><value>Instruments</value></string>
-<string><id>12905</id><value>Bio.</value></string>
-<string><id>12906</id><value>Discography (Albums)</value></string>
-<string><id>12907</id><value>Discography (compilations, boxes)</value></string>
-<string><id>12908</id><value>Discography (eps, singles)</value></string>
-<string><id>12909</id><value>Discography (bootlegs, videos, interviews)</value></string>
-<string><id>12910</id><value>No artists found!</value></string>
-<string><id>12911</id><value>Not connected to the Internet!</value></string>
-<string><id>13000</id><value>Feed Retrieval</value></string>
-<string><id>13001</id><value>Getting RSS Feed for </value></string>
+
+<string><id>686</id><value>Born</value></string>
+<string><id>687</id><value>Years Active</value></string>
+<string><id>688</id><value>Instruments</value></string>
+<string><id>689</id><value>Bio.</value></string>
+<string><id>690</id><value>Discography (Albums)</value></string>
+<string><id>691</id><value>Discography (compilations, boxes)</value></string>
+<string><id>700</id><value>Discography (eps, singles)</value></string>
+<string><id>701</id><value>Discography (bootlegs, videos, interviews)</value></string>
+<string><id>702</id><value>No artists found!</value></string>
+<string><id>703</id><value>Not connected to the Internet!</value></string>
+<string><id>704</id><value>Feed Retrieval</value></string>
+<string><id>705</id><value>Getting RSS Feed for </value></string>
 </strings>

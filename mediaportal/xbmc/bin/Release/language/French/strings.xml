@@ -1999,14 +1999,14 @@
 <string><id>12600</id><value>Ma météo</value></string>
 <string><id>12900</id><value>Economiseur d'écran</value></string>
 <string><id>12901</id><value>OSD plein écran</value></string>
-<string><id>12902</id><value>Né le</value></string>
-<string><id>12903</id><value>Années d'activité</value></string>
-<string><id>12904</id><value>Instruments</value></string>
-<string><id>12905</id><value>Bio.</value></string>
-<string><id>12906</id><value>Discographie (Albums)</value></string>
-<string><id>12907</id><value>Discographie (compilations, coffrets)</value></string>
-<string><id>12908</id><value>Discographie (eps, singles)</value></string>
-<string><id>12909</id><value>Discographie (bootlegs, videos, interviews)</value></string>
-<string><id>12910</id><value>Aucun artiste trouvé!</value></string>
-<string><id>12911</id><value>Déconnecté d'Internet!</value></string>
+<string><id>686</id><value>Né le</value></string>
+<string><id>687</id><value>Années d'activité</value></string>
+<string><id>688</id><value>Instruments</value></string>
+<string><id>689</id><value>Bio.</value></string>
+<string><id>690</id><value>Discographie (Albums)</value></string>
+<string><id>691</id><value>Discographie (compilations, coffrets)</value></string>
+<string><id>700</id><value>Discographie (eps, singles)</value></string>
+<string><id>701</id><value>Discographie (bootlegs, videos, interviews)</value></string>
+<string><id>702</id><value>Aucun artiste trouvé!</value></string>
+<string><id>703</id><value>Déconnecté d'Internet!</value></string>
 </strings>

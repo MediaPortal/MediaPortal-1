@@ -1984,12 +1984,12 @@
 <string><id>12600</id><value>Mi Clima</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>OSD de toda la pantalla</value></string>
-<string><id>12902</id><value>Nacido(a)</value></string>
-<string><id>12903</id><value>Años Activos</value></string>
-<string><id>12904</id><value>Instrumentos</value></string>
-<string><id>12905</id><value>Biografía</value></string>
-<string><id>12906</id><value>Discografía (albunes)</value></string>
-<string><id>12907</id><value>Discografía (compilationes, cajas)</value></string>
-<string><id>12908</id><value>Discografía (singles)</value></string>
-<string><id>12909</id><value>Discografía (videos, entrevistas)</value></string>
+<string><id>686</id><value>Nacido(a)</value></string>
+<string><id>687</id><value>Años Activos</value></string>
+<string><id>688</id><value>Instrumentos</value></string>
+<string><id>689</id><value>Biografía</value></string>
+<string><id>690</id><value>Discografía (albunes)</value></string>
+<string><id>691</id><value>Discografía (compilationes, cajas)</value></string>
+<string><id>700</id><value>Discografía (singles)</value></string>
+<string><id>701</id><value>Discografía (videos, entrevistas)</value></string>
 </strings>
