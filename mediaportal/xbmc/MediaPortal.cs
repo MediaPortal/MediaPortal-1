@@ -20,7 +20,6 @@ using Microsoft.ApplicationBlocks.ApplicationUpdater;
 
 using MediaPortal.GUI.Library;
 using MediaPortal;
-using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
@@ -886,9 +885,11 @@ public class MediaPortalApp : D3DApp, IRender
                 }
                 if (!ok)
                 {
-                  ShowInfo(GUILocalizeStrings.Get(727),
-                           GUILocalizeStrings.Get(728),
-                           GUILocalizeStrings.Get(729));
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+                  msg.Param1=727;
+                  msg.Param2=728;
+                  msg.Param3=729;
+                  GUIWindowManager.SendMessage(msg);
                   return;
                 }
                 GUIGraphicsContext.ShowBackground = false;
@@ -917,20 +918,15 @@ public class MediaPortalApp : D3DApp, IRender
 					case Action.ActionType.ACTION_REBOOT : 
 					{
 						//reboot
-						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-						if (null != dlgYesNo)
-						{
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(630));
-							dlgYesNo.SetLine(0, "");
-							dlgYesNo.SetLine(1, "");
-							dlgYesNo.SetLine(2, "");
-							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,0);
+            msg.Param1=630;
+            msg.Param2=0;
+            msg.Param3=0;
 
-							if (dlgYesNo.IsConfirmed)
-							{
-								WindowsController.ExitWindows(RestartOptions.Reboot, true);
-								GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-							}
+						if (msg.Param1==1)
+						{
+							WindowsController.ExitWindows(RestartOptions.Reboot, true);
+							GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 						}
 					}
 						break;
@@ -941,20 +937,16 @@ public class MediaPortalApp : D3DApp, IRender
 
 					case Action.ActionType.ACTION_SHUTDOWN : 
 					{
-						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-						if (null != dlgYesNo)
-						{
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(631));
-							dlgYesNo.SetLine(0, "");
-							dlgYesNo.SetLine(1, "");
-							dlgYesNo.SetLine(2, "");
-							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,0);
+            msg.Param1=631;
+            msg.Param2=0;
+            msg.Param3=0;
+            GUIWindowManager.SendMessage(msg);
 
-							if (dlgYesNo.IsConfirmed)
-							{
-								WindowsController.ExitWindows(RestartOptions.PowerOff, true);
-								GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-							}
+						if (msg.Param1==0)
+						{
+							WindowsController.ExitWindows(RestartOptions.PowerOff, true);
+							GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 						}
 						break;
 					}
@@ -1230,18 +1222,14 @@ public class MediaPortalApp : D3DApp, IRender
     if (!m_bNewVersionAvailable) return;
     if (GUIWindowManager.IsRouted) return;
     g_Player.Stop();
-    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-    if (null == dlgYesNo) return;
-    dlgYesNo.SetHeading(GUILocalizeStrings.Get(709)); //Auto update
-    dlgYesNo.SetLine(0, GUILocalizeStrings.Get(710)); //A new version is available
-    string strFmt = GUILocalizeStrings.Get(711);
-    strFmt = strFmt.Replace("#old", m_strCurrentVersion);
-    strFmt = strFmt.Replace("#new", m_strNewVersion);
-    dlgYesNo.SetLine(1, strFmt);
-    dlgYesNo.SetLine(2, "");
-    dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-    if (!dlgYesNo.IsConfirmed) 
+    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,0);
+    msg.Param1=709;
+    msg.Param2=710;
+    msg.Param3=0;
+    GUIWindowManager.SendMessage(msg);
+    
+    if (msg.Param1==0) 
     {
       Log.Write("update:User canceled download");
       m_bCancelVersion = true;
@@ -1346,25 +1334,6 @@ public class MediaPortalApp : D3DApp, IRender
         AutoPlay.ExamineCD(message.Label);
       break;
 
-      case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-        
-        string Head=GUILocalizeStrings.Get(message.Param1);
-        string Line1=GUILocalizeStrings.Get(message.Param2);
-        string Line2=GUILocalizeStrings.Get(message.Param3);
-        if ( AskYesNo(Head,Line1,Line2))
-          message.Param1=1;
-        else
-          message.Param1=0;
-      break;
-
-      case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
-      {
-        string strHead=GUILocalizeStrings.Get(message.Param1);
-        string strLine1=GUILocalizeStrings.Get(message.Param2);
-        string strLine2=GUILocalizeStrings.Get(message.Param3);
-        ShowInfo(strHead,strLine1,strLine2);
-      }
-      break;
       case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL : 
         try
         {
@@ -1373,32 +1342,6 @@ public class MediaPortalApp : D3DApp, IRender
         catch (Exception) {}
       break;
 
-      case GUIMessage.MessageType.GUI_MSG_GET_STRING : 
-        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-        if (null == keyboard) return;
-        keyboard.Reset();
-        keyboard.Text = message.Label;
-        keyboard.DoModal(GUIWindowManager.ActiveWindow);
-        if (keyboard.IsConfirmed)
-        {
-          message.Label = keyboard.Text;
-        }
-        else message.Label = "";
-      break;
-
-      case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD: 
-        VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-        if (null == keyboard2) return;
-        keyboard2.Reset();
-        keyboard2.Password=true;
-        keyboard2.Text = message.Label;
-        keyboard2.DoModal(GUIWindowManager.ActiveWindow);
-        if (keyboard2.IsConfirmed)
-        {
-          message.Label = keyboard2.Text;
-        }
-        else message.Label = "";
-        break;
 
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED : 
@@ -1440,24 +1383,5 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
-  void ShowInfo(string strHeading, string strLine1, string strLine2)
-  {
-    GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
-    pDlgOK.SetHeading(strHeading);
-    pDlgOK.SetLine(1,strLine1);
-    pDlgOK.SetLine(2,strLine2);
-    pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
-
-  }
-
-  bool AskYesNo(string strHeading, string strLine1, string strLine2)
-  {
-    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-    dlgYesNo.SetHeading(strHeading);
-    dlgYesNo.SetLine(1,strLine1);
-    dlgYesNo.SetLine(2,strLine2);
-    dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
-    return dlgYesNo.IsConfirmed;
-
-  }
+ 
 }

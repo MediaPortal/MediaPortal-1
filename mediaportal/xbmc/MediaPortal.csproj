@@ -153,11 +153,6 @@
                     AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater"
                     HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
                 />
-                <Reference
-                    Name = "WindowPlugins"
-                    Project = "{B282C55B-A37B-4CEC-A4FC-00791069BF00}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
             </References>
         </Build>
         <Files>

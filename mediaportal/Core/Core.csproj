@@ -1038,6 +1038,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Util\MapSettingsBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Util\Picture.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

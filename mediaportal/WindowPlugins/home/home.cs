@@ -97,8 +97,82 @@ namespace MediaPortal.GUI.Home
 			LayoutButtons(0);
 			GUIControl.SetControlLabel(GetID, 200,GetDate());
 			GUIControl.SetControlLabel(GetID, 201,GetTime());
+
+      GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 		}
 		
+    private void OnGlobalMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
+          
+          string Head=GUILocalizeStrings.Get(message.Param1);
+          string Line1=GUILocalizeStrings.Get(message.Param2);
+          string Line2=GUILocalizeStrings.Get(message.Param3);
+          if ( AskYesNo(Head,Line1,Line2))
+            message.Param1=1;
+          else
+            message.Param1=0;
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
+        {
+          string strHead=GUILocalizeStrings.Get(message.Param1);
+          string strLine1=GUILocalizeStrings.Get(message.Param2);
+          string strLine2=GUILocalizeStrings.Get(message.Param3);
+          ShowInfo(strHead,strLine1,strLine2);
+        }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_GET_STRING : 
+          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard) return;
+          keyboard.Reset();
+          keyboard.Text = message.Label;
+          keyboard.DoModal(GUIWindowManager.ActiveWindow);
+          if (keyboard.IsConfirmed)
+          {
+            message.Label = keyboard.Text;
+          }
+          else message.Label = "";
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD: 
+          VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard2) return;
+          keyboard2.Reset();
+          keyboard2.Password=true;
+          keyboard2.Text = message.Label;
+          keyboard2.DoModal(GUIWindowManager.ActiveWindow);
+          if (keyboard2.IsConfirmed)
+          {
+            message.Label = keyboard2.Text;
+          }
+          else message.Label = "";
+          break;
+      }
+    }
+    void ShowInfo(string strHeading, string strLine1, string strLine2)
+    {
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
+      pDlgOK.SetHeading(strHeading);
+      pDlgOK.SetLine(1,strLine1);
+      pDlgOK.SetLine(2,strLine2);
+      pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
+
+    }
+
+    bool AskYesNo(string strHeading, string strLine1, string strLine2)
+    {
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      dlgYesNo.SetHeading(strHeading);
+      dlgYesNo.SetLine(1,strLine1);
+      dlgYesNo.SetLine(2,strLine2);
+      dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
+      return dlgYesNo.IsConfirmed;
+
+    }
 		public override void OnAction(Action action)
 		{
       // mouse moved, check which control has the focus
