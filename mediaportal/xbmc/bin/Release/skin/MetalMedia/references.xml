@@ -98,8 +98,8 @@
 		<font>font14</font>
 		<shadedColor>20484848</shadedColor>
 		<selectedColor>FF000000</selectedColor>
-		<textcolor>FF555555</textcolor>
-		<textcolor2>FF555555</textcolor2>
+		<textcolor>FF484848</textcolor>
+		<textcolor2>FF484848</textcolor2>
 		<colordiffuse>ff000000</colordiffuse>
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>

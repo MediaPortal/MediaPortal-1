@@ -328,15 +328,15 @@
 	<control>
 		<type>image</type>
 		<id>1</id>
-		<posX>300</posX>
-		<posY>178</posY>
+		<posX>301</posX>
+		<posY>181</posY>
 		<texture>mytvsmall.png</texture>
 	</control>
 	<control>
 		<type>image</type>
 		<id>1</id>
-		<posX>297</posX>
-		<posY>219</posY>
+		<posX>301</posX>
+		<posY>218</posY>
 		<texture>myradiosmall.png</texture>
 	</control>
 	<control>
