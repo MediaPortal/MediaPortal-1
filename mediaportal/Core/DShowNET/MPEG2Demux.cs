@@ -901,6 +901,10 @@ namespace DShowNET
         m_MPEG2Demuxer=null;
       }
       
+			if (m_videoWindow!=null)
+			{
+				m_videoWindow.put_Visible( DsHlp.OAFALSE );
+			}
       m_videoWindow = null;
 
       if (m_pConfig!=null) Marshal.ReleaseComObject(m_pConfig); m_pConfig=null;
