@@ -612,6 +612,7 @@ namespace MediaPortal.Video.Database
 				if (iStartOfMovieList<0) iStartOfMovieList=strBody.IndexOf("Partial Matches");
 				if (iStartOfMovieList<0) iStartOfMovieList=strBody.IndexOf("Approx Matches");
 
+				int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
 				if (iStartOfMovieList<0)
 				{
 					int iMovieTitle	 = strBody.IndexOf("\"title\">");
@@ -638,9 +639,14 @@ namespace MediaPortal.Video.Database
 
 				iStartOfMovieList+="<table>".Length;
 				int iEndOfMovieList=strBody.IndexOf("</table>",iStartOfMovieList);
+
 				if (iEndOfMovieList<0)
 				{
 					iEndOfMovieList=strBody.Length;
+				}
+				if (endOfTitleList < iEndOfMovieList && endOfTitleList>iStartOfMovieList)
+				{
+					iEndOfMovieList=endOfTitleList;
 				}
 				strBody=strBody.Substring(iStartOfMovieList,iEndOfMovieList-iStartOfMovieList);
 				while ((true) && (iCount<iLimit))
