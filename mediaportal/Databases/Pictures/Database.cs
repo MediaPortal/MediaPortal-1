@@ -18,7 +18,7 @@ namespace MediaPortal.Picture.Database
 
     public PictureDatabase()
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         Log.Write("opening picture database");
         try 
@@ -40,7 +40,7 @@ namespace MediaPortal.Picture.Database
 		
 		void AddTable( string strTable, string strSQL)
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         if (m_db==null) return;
         SQLiteResultSet results;
@@ -74,7 +74,7 @@ namespace MediaPortal.Picture.Database
 		}
 		bool CreateTables()
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         if (m_db==null) return false;
         AddTable("picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer)\n");
@@ -84,7 +84,7 @@ namespace MediaPortal.Picture.Database
 
 		public string Get(SQLiteResultSet results,int iRecord,string strColum)
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         if (null==results) return "";
         if (results.Rows.Count<iRecord) return "";
@@ -123,7 +123,7 @@ namespace MediaPortal.Picture.Database
 
 		public int AddPicture(string strPicture, int iRotation)
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         if (m_db==null) return -1;
         string strSQL="";
@@ -157,7 +157,7 @@ namespace MediaPortal.Picture.Database
 
 		public int GetRotation(string strPicture)
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         if (m_db==null) return -1;
         string strSQL="";
@@ -187,7 +187,7 @@ namespace MediaPortal.Picture.Database
 
 		public void SetRotation(string strPicture, int iRotation)
 		{
-      lock (this)
+      lock (typeof(PictureDatabase))
       {
         if (m_db==null) return ;
         string strSQL="";
