@@ -784,6 +784,12 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
+		static public int GetMovieId( string strFilenameAndPath)
+		{
+			int lMovieId=GetMovie(strFilenameAndPath,true);
+			return lMovieId;
+		}
+
     static public int GetMovieInfo( string strFilenameAndPath, ref IMDBMovie details)
     {
       int lMovieId=GetMovie(strFilenameAndPath,false);

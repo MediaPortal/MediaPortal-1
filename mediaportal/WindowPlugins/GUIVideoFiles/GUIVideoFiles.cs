@@ -885,9 +885,10 @@ namespace MediaPortal.GUI.Video
               if (Utils.ShouldStack(pItemTmp.Path, item.Path))
               {
                 IMDBMovie movieDetails = new IMDBMovie();
-                int movieid=VideoDatabase.GetMovieInfo(item.Path, ref movieDetails);
+                int movieid=VideoDatabase.GetMovieId(item.Path);
                 if (movieid >=0)
                 {
+									VideoDatabase.GetMovieInfo(item.Path, ref movieDetails);
                   string title=System.IO.Path.GetFileName(item.Path);
                   if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
                   stoptime=VideoDatabase.GetMovieStopTime(movieid);
@@ -1915,7 +1916,8 @@ namespace MediaPortal.GUI.Video
     {
       string filename=PlayListPlayer.GetNext();
       IMDBMovie movieDetails = new IMDBMovie();
-      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+			VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+      int movieid=VideoDatabase.GetMovieId(filename);
       int stoptime=0;
       if (movieid >=0)
       {
@@ -1951,8 +1953,7 @@ namespace MediaPortal.GUI.Video
     private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
       if (type!=g_Player.MediaType.Video) return;
-      IMDBMovie movieDetails = new IMDBMovie();
-      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+      int movieid=VideoDatabase.GetMovieId(filename);
       if (movieid<0) return;
       if (stoptime>0)
         VideoDatabase.SetMovieStopTime(movieid,stoptime);
@@ -1962,9 +1963,8 @@ namespace MediaPortal.GUI.Video
 
     private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
-      if (type!=g_Player.MediaType.Video) return;
-      IMDBMovie movieDetails = new IMDBMovie();
-      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+			if (type!=g_Player.MediaType.Video) return;
+			int movieid=VideoDatabase.GetMovieId(filename);
       if (movieid<0) return;
       VideoDatabase.DeleteMovieStopTime(movieid);
     }

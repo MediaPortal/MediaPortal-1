@@ -534,7 +534,8 @@ namespace MediaPortal.GUI.TV
         rec.Played++;
         TVDatabase.PlayedRecordedTV(rec);
         IMDBMovie movieDetails = new IMDBMovie();
-        int movieid=VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
+        VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
+				int movieid=VideoDatabase.GetMovieId(rec.FileName);
         int stoptime=0;
         if (movieid >=0)
         {
@@ -672,8 +673,7 @@ namespace MediaPortal.GUI.TV
     private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
       if (type!=g_Player.MediaType.Recording) return;
-      IMDBMovie movieDetails = new IMDBMovie();
-      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+      int movieid=VideoDatabase.GetMovieId(filename);
       if (movieid<0) return;
       if (stoptime>0)
         VideoDatabase.SetMovieStopTime(movieid,stoptime);
@@ -683,9 +683,8 @@ namespace MediaPortal.GUI.TV
 
     private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
-      if (type!=g_Player.MediaType.Recording) return;
-      IMDBMovie movieDetails = new IMDBMovie();
-      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+			if (type!=g_Player.MediaType.Recording) return;
+			int movieid=VideoDatabase.GetMovieId(filename);
       if (movieid<0) return;
       VideoDatabase.DeleteMovieStopTime(movieid);
     }
