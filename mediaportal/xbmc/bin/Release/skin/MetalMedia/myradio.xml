@@ -67,6 +67,11 @@
 		<onright>50</onright>
 		<onup>21</onup>
 		<ondown>3</ondown>
+		<subitems>
+			<subitem>101</subitem>
+			<subitem>100</subitem>
+			<subitem>417</subitem>
+		</subitems>
 	</control>	
 	<control>
 		<description>Sort-by button</description>
@@ -79,6 +84,13 @@
 		<onright>4</onright>
 		<onup>2</onup>
 		<ondown>6</ondown>
+		<subitems>
+			<subitem>103</subitem>
+			<subitem>668</subitem>
+			<subitem>669</subitem>
+			<subitem>670</subitem>
+			<subitem>620</subitem>
+		</subitems>
 	</control>
 	<control>
 		<description>Sort Asc</description>
@@ -111,6 +123,7 @@
 		<onright>50</onright>
 		<onup>3</onup>
 		<ondown>7</ondown>
+		<action>15</action>
 	</control>
 	<control>
 		<description>Next</description>
@@ -123,6 +136,7 @@
 		<onright>50</onright>
 		<onup>6</onup>
 		<ondown>2</ondown>
+		<action>14</action>
 	</control>
 	<control>
 		<description>listcontrol</description>

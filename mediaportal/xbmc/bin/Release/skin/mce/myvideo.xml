@@ -100,6 +100,13 @@
 		<onright>10</onright>
 		<onup>3</onup>
 		<ondown>20</ondown>
+		<subitems>
+			<subitem>342</subitem>
+			<subitem>135</subitem>
+			<subitem>344</subitem>
+			<subitem>345</subitem>
+			<subitem>369</subitem>
+		</subitems>
 	</control>
 	<control>
 		<description>Playlist button</description>

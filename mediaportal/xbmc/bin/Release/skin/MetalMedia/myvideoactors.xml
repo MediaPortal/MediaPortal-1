@@ -112,7 +112,7 @@
 		<texture>panel_split.png</texture>
 	</control>	
 	<control>
-		<description>Year</description>
+		<description>Switch View</description>
 		<type>selectbutton</type>
 		<id>5</id>
 		<posX>55</posX>
@@ -122,6 +122,14 @@
 		<onright>10</onright>
 		<onup>3</onup>
 		<ondown>6</ondown>
+		<subitems>
+			<subitem>342</subitem>
+			<subitem>135</subitem>
+			<subitem>344</subitem>
+			<subitem>345</subitem>
+			<subitem>369</subitem>
+		</subitems>
+
 	</control>
 	<control>
 		<description>Play DVD</description>

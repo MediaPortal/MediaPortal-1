@@ -98,6 +98,13 @@
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>6</onup>
+		<subitems>
+			<subitem>134</subitem>
+			<subitem>132</subitem>
+			<subitem>133</subitem>
+			<subitem>135</subitem>
+			<subitem>271</subitem>
+		</subitems>
 		<ondown>9</ondown>
 	</control>
 	<control>
