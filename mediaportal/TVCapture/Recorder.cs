@@ -1665,11 +1665,18 @@ namespace MediaPortal.TV.Recording
 
 				long lMaxRecordingSize=0;
 				long diskSize=0;
-				string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , drive[0]);
-				using (ManagementObject disk = new ManagementObject(cmd))
+				try
 				{
-					disk.Get();
-					diskSize=Int64.Parse(disk["Size"].ToString());
+					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , drive[0]);
+					using (ManagementObject disk = new ManagementObject(cmd))
+					{
+						disk.Get();
+						diskSize=Int64.Parse(disk["Size"].ToString());
+					}
+				}
+				catch(Exception)
+				{
+					continue;
 				}
 
 				foreach (TVCaptureDevice dev in m_tvcards)
