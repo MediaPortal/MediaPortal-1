@@ -375,7 +375,7 @@ namespace MediaPortal.TV.Recording
       m_videoCaptureDevice.RenderPreview();
 
       m_videoWindow = (IVideoWindow) m_graphBuilder;
-      m_basicVideo = (IBasicVideo2) m_basicVideo;
+      m_basicVideo = (IBasicVideo2) m_graphBuilder;
       int hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
       if( hr != 0 ) 
         DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window");
