@@ -107,7 +107,7 @@ namespace MediaPortal.TV.Recording
 		GuideDataEvent							m_Event               = null;
 		GCHandle										myHandle;
 		int                         adviseCookie;
-
+		bool												graphRunning=false;
 
 		/// <summary>
 		/// Constructor
@@ -139,6 +139,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.None) 
 				return false;
 	      
+			graphRunning=false;
 			Log.Write("DVBGraphBDA:CreateGraph(). ");
 
 			if (m_Card==null) 
@@ -555,6 +556,8 @@ namespace MediaPortal.TV.Recording
 			if (m_mediaControl != null)
 				m_mediaControl.Stop();
      
+			graphRunning=false;
+
 			if (m_videoWindow != null)
 			{
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
@@ -650,6 +653,7 @@ namespace MediaPortal.TV.Recording
 
 			Log.Write("DVBGraphBDA: stop graph");
 			m_mediaControl.Stop();
+			graphRunning=false;
 			m_graphState = State.Created;
 			DeleteGraph();
 			Log.Write("DVBGraphBDA:stopped recording...");
@@ -838,6 +842,7 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 			}
+			graphRunning=true;
 			
 			GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			m_graphState = State.Viewing;
@@ -1246,6 +1251,7 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 				}
+				graphRunning=true;
 				m_graphState = State.TimeShifting;
 			}
 			else 
@@ -1830,6 +1836,29 @@ namespace MediaPortal.TV.Recording
 		
 		public void Tune(object tuningObject)
 		{
+			if (m_NetworkProvider==null) return;
+			if (!graphRunning)
+			{
+				StartViewing(AnalogVideoStandard.None,1,1);
+			}
+
+			TunerLib.TuneRequest newTuneRequest = null;
+			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+			TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
+
+			newTuneRequest = myTuningSpace.CreateTuneRequest();
+
+			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
+
+			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+
+			myLocator.CarrierFrequency		= (int)tuningObject;
+			myTuneRequest.ONID	= -1;					//original network id
+			myTuneRequest.TSID	= -1;					//transport stream id
+			myTuneRequest.SID		= -1;					//service id
+			myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+			myTuner.TuneRequest = newTuneRequest;
+			Marshal.ReleaseComObject(myTuneRequest);
 		}
 	}
 }

@@ -48,6 +48,8 @@ namespace MediaPortal.Player
 
 				m_renderFrame=GUIGraphicsContext.RenderGUI;
 			}
+			if (GUIGraphicsContext.DX9Device==null) UseVMR9inMYTV=false;
+			if (m_renderFrame==null) UseVMR9inMYTV=false;
 		}
 
 		/// <summary>

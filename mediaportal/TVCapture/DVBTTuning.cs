@@ -13,11 +13,18 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBTTuning : ITuning
 	{
+		enum State
+		{
+			ScanFrequencies,
+			ScanChannels
+		}
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
 		ArrayList                           frequencies=new ArrayList();
 		int                                 currentFrequencyIndex=0;
 		private System.Windows.Forms.Timer  timer1;
+		State                               currentState;
+
 		public DVBTTuning()
 		{
 		}
@@ -28,6 +35,7 @@ namespace MediaPortal.TV.Recording
 			captureCard=card;
 			callback=statusCallback;
 
+			currentState=State.ScanFrequencies;
 			frequencies.Clear();
 			currentFrequencyIndex=0;
 			XmlDocument doc= new XmlDocument();
@@ -70,15 +78,28 @@ namespace MediaPortal.TV.Recording
 			float frequency=(float)frequencies[currentFrequencyIndex];
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
-			callback.OnStatus(description);
 
 			if (captureCard.SignalPresent())
 			{
-				timer1.Enabled=false;
-				callback.OnNewChannel();
-				return;
+				description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
+				currentState=State.ScanChannels;
 			}
-			ScanNextFrequency();
+
+			if (currentState==State.ScanFrequencies)
+			{
+				callback.OnStatus(description);
+				ScanNextFrequency();
+			}
+
+			if (currentState==State.ScanChannels)
+			{
+				callback.OnStatus(description);
+				ScanChannels();
+			}
+		}
+
+		void ScanChannels()
+		{
 		}
 
 		void ScanNextFrequency()
