@@ -72,6 +72,9 @@ public class MediaPortalApp : D3DApp, IRender
     bool m_bNewVersionAvailable = false;
     bool m_bCancelVersion = false;
     MCE2005Remote MCE2005Remote = new MCE2005Remote();
+		MouseEventArgs eLastMouseClickEvent = null;
+		private System.Timers.Timer tMouseClickTimer = null;
+		private bool bMouseClickFired = false;
 
     const int WM_KEYDOWN = 0x0100;
     const int WM_SYSCOMMAND = 0x0112;
@@ -81,7 +84,6 @@ public class MediaPortalApp : D3DApp, IRender
 		int g_nAnisotropy;
 		DateTime      m_updateTimer=DateTime.MinValue;
 		int						m_iDateLayout;
-
 
     static SplashScreen splashScreen;
 
@@ -675,6 +677,11 @@ public class MediaPortalApp : D3DApp, IRender
         splashScreen.Dispose();
         splashScreen = null;
       }
+
+			tMouseClickTimer = new System.Timers.Timer(SystemInformation.DoubleClickTime);
+			tMouseClickTimer.Enabled = false;
+			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(_clickTimer_Elapsed);
+			tMouseClickTimer.SynchronizingObject = this;
     } 
 
     /// <summary>
@@ -682,8 +689,8 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     protected override void OnExit() 
     {
-	  if(serialuirdevice != null)
-		serialuirdevice.Close();
+			if(serialuirdevice != null)
+				serialuirdevice.Close();
       StopUpdater();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
       // stop any file playback
@@ -696,6 +703,13 @@ public class MediaPortalApp : D3DApp, IRender
       AutoPlay.StopListening();
       
       PluginManager.Stop();
+
+			if(tMouseClickTimer != null)
+			{
+				tMouseClickTimer.Stop();
+				tMouseClickTimer.Dispose();
+				tMouseClickTimer = null;
+			}
 
       GUIFontManager.Dispose();
       GUIWindowManager.Clear();
@@ -1293,8 +1307,12 @@ public class MediaPortalApp : D3DApp, IRender
   {
     base.mousemove(e);
     if (!m_bShowCursor) return;
+
     if (m_iLastMousePositionX != e.X || m_iLastMousePositionY != e.Y)
     {
+			// check any still waiting single click events
+			CheckSingleClick();
+
       //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,m_iLastMousePositionX,m_iLastMousePositionY);
       m_iLastMousePositionX = e.X;
       m_iLastMousePositionY = e.Y;
@@ -1313,7 +1331,6 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 	}
-
 
 	protected override void mouseclick(MouseEventArgs e)
 	{
@@ -1368,18 +1385,63 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.OnAction(action);
       }
     }
-    if (e.Clicks==1)
-      action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
-    else
-      action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y);
+	
+		if (e.Button == MouseButtons.Left)
+		{			
+			if(tMouseClickTimer != null)
+			{
+				bMouseClickFired = false;
+
+				if(e.Clicks < 2)
+				{
+					eLastMouseClickEvent = e;
+					bMouseClickFired = true;
+					tMouseClickTimer.Start();
+				}
+				else
+				{
+					eLastMouseClickEvent = null;
+					tMouseClickTimer.Stop();
+					//action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y);
+					action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, x, y);
+				}
+			}
+		}
+
     action.MouseButton = e.Button;
     action.SoundFileName = "click.wav";
     if (action.SoundFileName.Length > 0)
       Utils.PlaySound(action.SoundFileName, false, true);
-    GUIGraphicsContext.OnAction(action);
 
+		GUIGraphicsContext.OnAction(action);
 	}
 	
+	private void _clickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+	{
+		CheckSingleClick();
+	}
+
+	void CheckSingleClick()
+	{
+		Action action;
+
+		if(tMouseClickTimer != null)
+		{
+			tMouseClickTimer.Stop();
+			if(bMouseClickFired)
+			{
+				bMouseClickFired = false;
+				action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, eLastMouseClickEvent.X, eLastMouseClickEvent.Y);
+				action.MouseButton = eLastMouseClickEvent.Button;
+				action.SoundFileName = "click.wav";
+				if (action.SoundFileName.Length > 0)
+					Utils.PlaySound(action.SoundFileName, false, true);
+
+				GUIGraphicsContext.OnAction(action);
+			}
+		}
+	}
+
   private void MediaPortal_Closed(object sender, EventArgs e)
   {
     StopUpdater();
