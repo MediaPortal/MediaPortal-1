@@ -129,7 +129,7 @@ namespace MediaPortal.Util
 			string[] drives = Environment.GetLogicalDrives();
 			foreach(string drive in drives)
 			{
-				if(Util.Utils.getDriveType(drive) == Removable)
+				if(drive[0]>'B' && Util.Utils.getDriveType(drive) == Removable)
 				{
 					bool driveFound = false;
 					string driveName = Util.Utils.GetDriveName(drive);
