@@ -243,7 +243,7 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
-			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{2}",
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",
 												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate, tryAgain);
 			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2} {3}",currentIndex ,count,chanDesc, tryAgain);
 			DVBChannel newchan = new DVBChannel();

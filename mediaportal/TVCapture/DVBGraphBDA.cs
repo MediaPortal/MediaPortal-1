@@ -2847,7 +2847,7 @@ namespace MediaPortal.TV.Recording
 
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels()");
 			DVBSections sections = new DVBSections();
-			sections.Timeout=5000;
+			sections.Timeout=1000;
 			DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
 			if (transp.channels==null)
 			{
