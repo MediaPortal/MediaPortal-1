@@ -117,6 +117,7 @@ namespace AMS.Profile
 			catch(Exception)
 			{
 			}
+			m_doc=null;
     }
 
 		public void SetValue(string section, string entry, object value)
