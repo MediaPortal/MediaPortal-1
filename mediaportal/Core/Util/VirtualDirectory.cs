@@ -822,10 +822,7 @@ namespace MediaPortal.Util
       if (!IsRemote(file)) return true;
 
       //check if we're still downloading
-      string remoteFilename;
-      string remotePath;
-      GetRemoteFileNameAndPath(file, out remoteFilename, out remotePath);
-      if (FtpConnectionCache.IsDownloading(remoteFilename))
+      if (FtpConnectionCache.IsDownloading(file))
       {
         return false;
       }
@@ -851,11 +848,8 @@ namespace MediaPortal.Util
     public bool ShouldWeDownloadFile(string file)
     {
 
-      string remoteFilename;
-      string remotePath;
-      GetRemoteFileNameAndPath(file, out remoteFilename, out remotePath);
       GUIMessage msg ;
-      if (FtpConnectionCache.IsDownloading(remoteFilename))
+      if (FtpConnectionCache.IsDownloading(file))
       {
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
         msg.Param1=916;

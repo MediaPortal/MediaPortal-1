@@ -152,7 +152,7 @@ namespace Core.Util
     {
       foreach (FtpConnection client in ftpConnections)
       {
-        if (client.Busy && client.remoteFile==remotefile)
+        if (client.Busy && client.originalRemoteFile==remotefile)
         {
           return true;
         }
