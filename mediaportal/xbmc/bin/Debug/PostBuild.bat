@@ -4,6 +4,7 @@ mkdir plugins\TagReaders
 mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 
+copy ..\..\..\USBUIRT\bin\Debug\USBUIRT.dll .
 copy ..\..\..\Configuration\bin\Debug\Configuration.exe .
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.dll plugins\windows
 copy ..\..\..\GUIRecipies\bin\Debug\GUIRecipies.dll plugins\windows
@@ -46,6 +47,8 @@ copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.dll plugins\Ex
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.pdb plugins\ExternalPlayers
 
 
+copy ..\..\..\USBUIRT\bin\Debug\USBUIRT.pdb .
+copy ..\..\..\Configuration\bin\Debug\Configuration.pdb .
 copy ..\..\..\GUIPrograms\bin\Debug\GUIPrograms.pdb plugins\windows
 copy ..\..\..\GUIRecipies\bin\Debug\GUIRecipies.pdb plugins\windows
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.pdb plugins\windows

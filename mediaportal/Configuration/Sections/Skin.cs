@@ -86,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				string currentSkin = xmlreader.GetValueAsString("skin", "name", "MetalMedia");
+				string currentSkin = xmlreader.GetValueAsString("skin", "name", "CrystalCenter");
 
 				//
 				// Make sure the skin actually exists before setting it as the current skin

@@ -5,6 +5,7 @@ mkdir plugins\TagReaders
 mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 
+copy ..\..\..\USBUIRT\bin\Release\USBUIRT.dll .
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
 copy ..\..\..\GUIRecipies\bin\Release\GUIRecipies.dll plugins\windows
