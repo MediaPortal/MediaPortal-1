@@ -412,20 +412,15 @@ namespace MediaPortal.GUI.Video
             if (m_bSubMenuOn)						// is sub menu on?
             {
               // set the controls values
-              float fBrightNess=(float)GUIGraphicsContext.Brightness;
-              float fContrast=(float)GUIGraphicsContext.Contrast;
-              float fGamma=(float)GUIGraphicsContext.Gamma;
               float fPercent=(float)(100*(g_Player.CurrentPosition/g_Player.Duration));
               SetSliderValue(0.0f, 100.0f, (float) fPercent, (int)Controls.OSD_VIDEOPOS);
               
-              SetSliderValue(0.0f, 100.0f, (float) fBrightNess, (int)Controls.OSD_BRIGHTNESS);
-              SetSliderValue(0.0f, 100.0f, (float) fContrast, (int)Controls.OSD_CONTRAST);
-              SetSliderValue(0.0f, 100.0f, (float) fGamma, (int)Controls.OSD_GAMMA);
 
              // SetCheckmarkValue(g_stSettings.m_bNonInterleaved, Controls.OSD_NONINTERLEAVED);
               //SetCheckmarkValue(g_stSettings.m_bNoCache, Controls.OSD_NOCACHE);
               //SetCheckmarkValue(g_stSettings.m_bFrameRateConversions, Controls.OSD_ADJFRAMERATE);
 
+							UpdateGammaContrastBrightness();
               // show the controls on this sub menu
               ShowControl(GetID, (int)Controls.OSD_VIDEOPOS);
               ShowControl(GetID, (int)Controls.OSD_NONINTERLEAVED);
@@ -466,6 +461,20 @@ namespace MediaPortal.GUI.Video
     }
     return base.OnMessage(message);
   }
+		
+
+		void UpdateGammaContrastBrightness()
+		{
+			float fBrightNess=(float)GUIGraphicsContext.Brightness;
+			float fContrast=(float)GUIGraphicsContext.Contrast;
+			float fGamma=(float)GUIGraphicsContext.Gamma;
+			float fSaturation=(float)GUIGraphicsContext.Saturation;
+			float fSharpness=(float)GUIGraphicsContext.Sharpness;
+              
+			SetSliderValue(0.0f, 100.0f, (float) fBrightNess, (int)Controls.OSD_BRIGHTNESS);
+			SetSliderValue(0.0f, 100.0f, (float) fContrast, (int)Controls.OSD_CONTRAST);
+			SetSliderValue(0.0f, 100.0f, (float) fGamma, (int)Controls.OSD_GAMMA);
+		}
 
 
   void SetVideoProgress()
@@ -669,6 +678,7 @@ namespace MediaPortal.GUI.Video
           {
             // Set mplayer's seek position to the percentage requested by the user
             GUIGraphicsContext.Brightness=pControl.Percentage;
+						UpdateGammaContrastBrightness();
           }
         }
         break;
@@ -679,6 +689,7 @@ namespace MediaPortal.GUI.Video
           {
             // Set mplayer's seek position to the percentage requested by the user
             GUIGraphicsContext.Contrast=pControl.Percentage;
+						UpdateGammaContrastBrightness();
           }
         }
         break;
@@ -689,6 +700,7 @@ namespace MediaPortal.GUI.Video
           {
             // Set mplayer's seek position to the percentage requested by the user
             GUIGraphicsContext.Gamma=pControl.Percentage;
+						UpdateGammaContrastBrightness();
           }
         }
         break;

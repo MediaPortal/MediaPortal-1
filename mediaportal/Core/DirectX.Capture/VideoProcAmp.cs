@@ -76,7 +76,8 @@ namespace DirectX.Capture
         VideoProcAmpFlags flags;
         try 
         {
-          m_amp.Get(VideoProcAmpProperty.Contrast,out uiValue,out flags);
+          int hr=m_amp.Get(VideoProcAmpProperty.Contrast,out uiValue,out flags);
+					if (hr<0) return 62;
         }
         catch (Exception){}
 
@@ -245,7 +246,7 @@ namespace DirectX.Capture
         m_amp.GetRange(proc,out iMin,out iMax,out iDelta, out iDefault,out flags);
         float fWidth=iMax-iMin;
         float fpos=(ivalue-iMin);
-        return (int)((fpos/fWidth)*100.0);
+        return (int)Math.Floor(0.5f+(fpos/fWidth)*100.0f);
       }
       catch (Exception)
       {
@@ -264,7 +265,7 @@ namespace DirectX.Capture
         float fPos =((float)ivalue) / 100.0f;
         fPos *= fWidth;
         fPos += iMin;
-        return (int)fPos;
+        return (int)Math.Floor(0.5f+fPos);
       }
       catch(Exception)
       {

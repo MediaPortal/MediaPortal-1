@@ -69,11 +69,11 @@ namespace MediaPortal.GUI.Library
     static bool                     m_bPlaying;										// boolean indicating if we are playing any media or not
     static Graphics                 m_graphics=null;							// GDI+ Graphics object
     static Form                     m_form=null;									// Current GDI form
-    static int                      m_iBrightness=0;							// brightness value
-    static int                      m_iGamma=0;										// gamma value
-    static int                      m_iContrast=0;								// contrast value
-    static int                      m_iSaturation=0;							// saturation value
-    static int                      m_Sharpness=0;								// sharpness value
+    static int                      m_iBrightness=-1;							// brightness value
+    static int                      m_iGamma=-1;										// gamma value
+    static int                      m_iContrast=-1;								// contrast value
+    static int                      m_iSaturation=-1;							// saturation value
+    static int                      m_Sharpness=-1;								// sharpness value
     static bool                     m_bMouseSupport=true;					// boolean indicating if we should present mouse controls like scrollbars
 		static bool                     m_bDBLClickAsRightclick=false;	// boolean indicating that we want to use double click to open a context menu
     static Size                     m_skinSize = new Size(720,576);// original width/height for which the skin was designed
@@ -130,13 +130,6 @@ namespace MediaPortal.GUI.Library
         xmlWriter.SetValue("screen","subtitles",m_iSubtitles.ToString());
       }
 
-      using (AMS.Profile.Xml xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        xmlWriter.SetValue("screen","brightness",m_iBrightness.ToString());
-        xmlWriter.SetValue("screen","contrast",m_iContrast.ToString());
-        xmlWriter.SetValue("screen","gamma",m_iGamma.ToString());
-        xmlWriter.SetValue("screen","saturation",m_iSaturation.ToString());
-      }
     }
 
     /// <summary>
@@ -170,10 +163,6 @@ namespace MediaPortal.GUI.Library
 
       using (AMS.Profile.Xml xmlReader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        m_iBrightness=xmlReader.GetValueAsInt("screen","brightness",0);
-        m_iContrast=xmlReader.GetValueAsInt("screen","contrast",0);
-        m_iGamma=xmlReader.GetValueAsInt("screen","gamma",0);
-        m_iSaturation=xmlReader.GetValueAsInt("screen","saturation",0);
         m_iScrollSpeed=xmlReader.GetValueAsInt("general","scrollspeed",5);
         m_bAnimations=xmlReader.GetValueAsBool("general","animations",true);
       }

@@ -594,25 +594,26 @@
 		<visible>no</visible> 
 	</control>
 	<control>
-		<description>Non-Interleaved Checkbox</description> 
-		<type>checkmark</type> 
-		<id>701</id> 
+		<description>Sharpness label</description> 
+		<type>label</type> 
+		<id>710</id> 
 		<posX>185</posX> 
 		<posY>370</posY> 
-		<label>306</label> 
-		<onup>700</onup> 
-		<ondown>703</ondown> 
-		<onleft>701</onleft> 
-		<onright>701</onright> 
+		<label>641</label> 
+		<font>font13</font> 
+		<textcolor>FFFFFFFF</textcolor> 
 		<visible>no</visible> 
 	</control>
 	<control>
-		<description>No Cache Checkbox</description> 
-		<type>checkmark</type> 
-		<id>702</id> 
-		<posX>359</posX> 
+		<description>Sharpness</description> 
+		<type>slider</type> 
+		<id>701</id> 
+		<posX>300</posX> 
 		<posY>370</posY> 
-		<label>431</label> 
+		<subtype>int</subtype> 
+		<textureSliderBar>osd_slider_bg.png</textureSliderBar> 
+		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib> 
+		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus> 
 		<onup>700</onup> 
 		<ondown>703</ondown> 
 		<onleft>701</onleft> 
@@ -620,12 +621,26 @@
 		<visible>no</visible> 
 	</control>
 	<control>
-		<description>Adjust Framerate Checkbox</description> 
-		<type>checkmark</type> 
-		<id>703</id> 
+		<description>Saturation label</description> 
+		<type>label</type> 
+		<id>702</id> 
 		<posX>185</posX> 
 		<posY>395</posY> 
-		<label>343</label> 
+		<label>640</label> 
+		<font>font13</font> 
+		<textcolor>FFFFFFFF</textcolor> 
+		<visible>no</visible> 
+	</control>
+	<control>
+		<description>Saturation</description> 
+		<type>slider</type> 
+		<id>703</id> 
+		<posX>300</posX> 
+		<posY>395</posY> 
+		<subtype>int</subtype> 
+		<textureSliderBar>osd_slider_bg.png</textureSliderBar> 
+		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib> 
+		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>  
 		<onup>701</onup> 
 		<ondown>704</ondown> 
 		<onleft>703</onleft> 

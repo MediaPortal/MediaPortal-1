@@ -78,6 +78,7 @@ namespace MediaPortal.TV.Recording
 
 			GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
 
+
 			// Initialize settings. No channel tuned yet...
 			m_iPrevChannel = -1;
 			m_bFirstTune   = true;
@@ -300,6 +301,11 @@ namespace MediaPortal.TV.Recording
 				if (m_videoprocamp != null)
 				{
 					m_videoAmp = new VideoProcAmp(m_videoprocamp);
+					m_videoAmp.Contrast=m_videoAmp.ContrastDefault;
+					m_videoAmp.Brightness=m_videoAmp.BrightnessDefault;
+					m_videoAmp.Gamma=m_videoAmp.GammaDefault;
+					m_videoAmp.Saturation=m_videoAmp.SaturationDefault;
+					m_videoAmp.Sharpness=m_videoAmp.SharpnessDefault;
 				}
 			}
 
@@ -311,6 +317,7 @@ namespace MediaPortal.TV.Recording
 		public override void DeleteGraph()
 		{
 			if (m_graphState < State.Created) return;
+
 
 			m_iPrevChannel=-1;
 			DirectShowUtil.DebugWrite("SinkGraph:DeleteGraph()");
@@ -435,8 +442,7 @@ namespace MediaPortal.TV.Recording
 			else
 				DirectShowUtil.DebugWrite("SinkGraphEx:FAILED, not all pins connected");
 		}
-		
-
+	
 	#endregion
 	}
 }

@@ -859,7 +859,8 @@ namespace MediaPortal.TV.Recording
     {
       if (Allocated) return false;
       if (_mGraph == null)
-      {
+			{
+				LoadContrastGammaBrightnessSettings();
         Log.Write("Card:{0} CreateGraph",ID);
         _mGraph = GraphFactory.CreateGraph(this);
         if (_mGraph == null) return false;
@@ -878,6 +879,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_mGraph != null)
       {
+				SaveContrastGammaBrightnessSettings();
         Log.Write("Card:{0} DeleteGraph",ID);
         _mGraph.DeleteGraph();
         _mGraph = null;
@@ -945,6 +947,7 @@ namespace MediaPortal.TV.Recording
         _mTimeshiftingStartedTime = DateTime.Now;
         _mState = State.Timeshifting;
       }
+			SetTvSettings();
       return bResult;
     }
 
@@ -1059,6 +1062,7 @@ namespace MediaPortal.TV.Recording
 
       _mRecordingStartTime = DateTime.Now;
       _mState = State.Recording;
+			 SetTvSettings();
       return bResult;
     }
 
@@ -1163,6 +1167,7 @@ namespace MediaPortal.TV.Recording
             AnalogVideoStandard standard;
             int iChannelNr = GetChannelNr(_mTvChannelName, out standard, out country);
             _mGraph.StartViewing(standard, iChannelNr,country);
+						SetTvSettings();
             _mState = State.Viewing;
           }
         }
@@ -1188,6 +1193,7 @@ namespace MediaPortal.TV.Recording
 				if (!CreateGraph()) return false;
 			}
 			_mGraph.StartViewing(standard, channelNumber,country);
+			SetTvSettings();
 
 			return true;
 		}
@@ -1234,6 +1240,51 @@ namespace MediaPortal.TV.Recording
 			if (_mGraph==null) return ;
 			_mGraph.StoreChannels(radio,tv);
 		}
+		
+		void SetTvSettings()
+		{
+			int gamma=GUIGraphicsContext.Gamma;
+			GUIGraphicsContext.Gamma=-2;
+			GUIGraphicsContext.Gamma=-1;
+			if (gamma>=0)
+				GUIGraphicsContext.Gamma=gamma;
+		}
+
+		void LoadContrastGammaBrightnessSettings()
+		{
+			try
+			{
+				string filename=String.Format(@"database\card_{0}.xml",m_strFriendlyName);
+				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+				{
+					int contrast=xmlreader.GetValueAsInt("tv","contrast",-1);
+					int brightness=xmlreader.GetValueAsInt("tv","brightness",-1);
+					int gamma=xmlreader.GetValueAsInt("tv","gamma",-1);
+					int saturation=xmlreader.GetValueAsInt("tv","saturation",-1);
+					int sharpness=xmlreader.GetValueAsInt("tv","sharpness",-1);
+					GUIGraphicsContext.Contrast		= contrast;
+					GUIGraphicsContext.Brightness = brightness;
+					GUIGraphicsContext.Gamma			= gamma;
+					GUIGraphicsContext.Saturation = saturation;
+					GUIGraphicsContext.Sharpness = sharpness;
+				}
+			}
+			catch(Exception)
+			{}
+		}
+		void SaveContrastGammaBrightnessSettings()
+		{
+			string filename=String.Format(@"database\card_{0}.xml",m_strFriendlyName);
+			using(AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml(filename))
+			{
+				xmlWriter.SetValue("tv","contrast",GUIGraphicsContext.Contrast);
+				xmlWriter.SetValue("tv","brightness",GUIGraphicsContext.Brightness);
+				xmlWriter.SetValue("tv","gamma",GUIGraphicsContext.Gamma);
+				xmlWriter.SetValue("tv","saturation",GUIGraphicsContext.Saturation);
+				xmlWriter.SetValue("tv","sharpness",GUIGraphicsContext.Sharpness);
+			}
+		}
+
   }
 }  
 #endif

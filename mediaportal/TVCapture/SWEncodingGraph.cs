@@ -303,12 +303,12 @@ namespace MediaPortal.TV.Recording
       m_videoprocamp=m_filterCaptureVideo as IAMVideoProcAmp;
       if (m_videoprocamp!=null)
       {
-        m_videoAmp=new VideoProcAmp(m_videoprocamp);
-        GUIGraphicsContext.Brightness= m_videoAmp.Brightness  ;
-        GUIGraphicsContext.Contrast  = m_videoAmp.Contrast ;
-        GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
-        GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
-        GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
+				m_videoAmp=new VideoProcAmp(m_videoprocamp);
+				m_videoAmp.Contrast=m_videoAmp.ContrastDefault;
+				m_videoAmp.Brightness=m_videoAmp.BrightnessDefault;
+				m_videoAmp.Gamma=m_videoAmp.GammaDefault;
+				m_videoAmp.Saturation=m_videoAmp.SaturationDefault;
+				m_videoAmp.Sharpness=m_videoAmp.SharpnessDefault;
 
       }
 
@@ -1601,27 +1601,71 @@ namespace MediaPortal.TV.Recording
       return (VideoIsMPEG==true && AudioIsMPEG==true);
     }
 
+		static bool reentrant=false;
     protected void OnGammaContrastBrightnessChanged()
     {
       if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return ;
       if (m_videoprocamp==null) return;
       if (m_videoAmp==null) return;
+			if (reentrant) return;
+			reentrant=true;
 
-      
-      //set the changed values
-      m_videoAmp.Brightness = GUIGraphicsContext.Brightness;
-      m_videoAmp.Contrast = GUIGraphicsContext.Contrast;
-      m_videoAmp.Gamma = GUIGraphicsContext.Gamma;
-      m_videoAmp.Saturation=GUIGraphicsContext.Saturation;
-      m_videoAmp.Sharpness=GUIGraphicsContext.Sharpness;
+			//set the changed values
+			if (GUIGraphicsContext.Brightness>-1)
+			{
+				m_videoAmp.Brightness = GUIGraphicsContext.Brightness;
+			}
+			else
+			{
+				GUIGraphicsContext.Brightness=m_videoAmp.Brightness ;
+			}
 
-      //get back the changed values
-      GUIGraphicsContext.Brightness= m_videoAmp.Brightness  ;
-      GUIGraphicsContext.Contrast  = m_videoAmp.Contrast ;
-      GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
-      GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
-      GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
-    }
+			if (GUIGraphicsContext.Contrast>-1)
+			{
+				m_videoAmp.Contrast = GUIGraphicsContext.Contrast;
+			}
+			else
+			{
+				GUIGraphicsContext.Contrast=m_videoAmp.Contrast;
+			}
+
+			if (GUIGraphicsContext.Gamma>-1)
+			{
+				m_videoAmp.Gamma = GUIGraphicsContext.Gamma;
+			}
+			else
+			{
+				GUIGraphicsContext.Gamma=m_videoAmp.Gamma;
+			}
+
+			if (GUIGraphicsContext.Saturation>-1)
+			{
+				m_videoAmp.Saturation = GUIGraphicsContext.Saturation;
+			}
+			else
+			{
+				GUIGraphicsContext.Saturation=m_videoAmp.Saturation;
+			}
+
+
+			if (GUIGraphicsContext.Sharpness>-1)
+			{
+				m_videoAmp.Saturation = GUIGraphicsContext.Sharpness;
+			}
+			else
+			{
+				GUIGraphicsContext.Sharpness=m_videoAmp.Sharpness;
+			}
+
+
+			//get back the changed values
+			GUIGraphicsContext.Brightness= m_videoAmp.Brightness  ;
+			GUIGraphicsContext.Contrast  = m_videoAmp.Contrast ;
+			GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
+			GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
+			GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
+			reentrant=false;
+		}
 
     void ConnectTVTunerOutputs()
     {
