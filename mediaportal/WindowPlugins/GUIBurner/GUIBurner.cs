@@ -237,6 +237,10 @@ namespace MediaPortal.GUI.GUIBurner
 								currentState=States.STATE_MAIN;		
 								UpdateButtons();
 								break;
+							case States.STATE_MAKE_BACKUP :					// If MP Backup change Folder to Main
+								currentState=States.STATE_MAIN;		
+								UpdateButtons();
+								break;
 						}
 						return true;
 					}
@@ -1219,6 +1223,7 @@ namespace MediaPortal.GUI.GUIBurner
 			XPBurn.XPBurnCD burnClass = new XPBurn.XPBurnCD(); 
 		}
 		#endregion
+
 		#region Backup Functions
 		private void GetBackup() 
 		{
