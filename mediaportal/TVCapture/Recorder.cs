@@ -448,8 +448,9 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_eState!= State.Initialized) return ;
 			if (rec==null) return;
-			foreach (TVCaptureDevice dev in m_tvcards)
+			for (int card=0; card < m_tvcards.Count;++card)
 			{
+				TVCaptureDevice dev =(TVCaptureDevice )m_tvcards[card];
 				if (dev.IsRecording)
 				{
 					if (dev.CurrentTVRecording.ID==rec.ID) 
@@ -460,7 +461,7 @@ namespace MediaPortal.TV.Recording
 						dev.StopRecording();
 
 						//if we're not viewing this card
-						if (m_iCurrentCard!=dev.ID)
+						if (m_iCurrentCard!=card)
 						{
 							//then stop card
 							dev.Stop();
@@ -493,12 +494,6 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				dev.StopRecording();
-				//if we're not viewing this card
-				if (m_iCurrentCard!=dev.ID)
-				{
-					//then stop card
-					dev.Stop();
-				}
 			}
 		}//static public void StopRecording()
 
