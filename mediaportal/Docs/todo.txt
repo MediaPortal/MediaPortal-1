@@ -1,9 +1,11 @@
 Skin:
-  - we need another version of music-play.png which will be shown when we're recording so
+  - We need another version of music-play.png which will be shown when we're recording tv 
     instead of the play symbol it should show the recording symbol (red filled circle)
   - Home  : need special gfx for my tv
-  - My Tv : need special gfx for my tv
-
+  - My Tv : need special gfx for my tv panel
+  - when watching fullscreen live-tv we need a background to show info about  current & next running program
+    something like mythv : http://mythtv.sourceforge.net/mc/blueosdone.png
+  - 
 
 My Radio:
   - AM/FM
@@ -12,16 +14,20 @@ My Radio:
   - listen to channel
 
 My TV:
-  - recordings button doesnt do anything. Should show all recorded 
-    programs and allow the user to pick/play one
   - A way to browse and resolve recording conflicts. 
   - full screen TV OSD
-     - show current program running
+     - show info about current & next program
+  
+  Recorded tv:
+     - show all recorded tv programs
+     - allow user to play one
+     - allow user to delete one
+     - sort : date/time , channel, program
      
   TVGuide:
      - 
   
-  Scheduler:
+  Scheduled:
      -
   
   Capture:
@@ -60,7 +66,7 @@ General:
   - remember 'view as' setting per folder
   - better mouse control 
      - OSD has no mouse support yet
-     - tvguide has no mouse support yet
+     - tvguide has only basic mouse support 
      - mouse wheel for scrolling
      - in GUI: slide in OSD when mouse touches bottom of screen
      - scrollbar

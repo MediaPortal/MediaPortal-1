@@ -65,7 +65,6 @@ public class MediaPortalApp : D3DApp
         string strMsg="Mediaportal is already running!";
         System.Windows.Forms.MessageBox.Show(strMsg, this.Text, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         throw new Exception(strMsg);
-        return;
       }
       Utils.FileDelete("capture.log");
       if (Screen.PrimaryScreen.Bounds.Width>720)
