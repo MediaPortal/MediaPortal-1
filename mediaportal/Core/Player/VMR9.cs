@@ -15,7 +15,7 @@ namespace MediaPortal.Player
 	/// , set it to renderless mode and provide it our own allocator/presentor
 	/// This will allow us to render the video to a direct3d texture
 	/// which we can use to draw the transparent OSD on top of it
-	/// Some classes:
+	/// Some classes which work together:
 	///  VMR9Util								: general helper class
 	///  AllocatorWrapper.cs		: implements our own allocator/presentor for vmr9 by implementing
 	///                           IVMRSurfaceAllocator9 and IVMRImagePresenter9
@@ -236,31 +236,43 @@ namespace MediaPortal.Player
 			allocator.Repaint();
 		}
 
+		/// <summary>
+		/// This method returns true if VMR9 is enabled AND WORKING!
+		/// this allows players to check if if VMR9 is working after setting up the playing graph
+		/// by checking if VMR9 is possible they can for example fallback to the overlay device
+		/// </summary>
 		public bool IsVMR9Connected
 		{
 			get
 			{
+				// check if vmr9 is enabled and if initialized
 				if (allocator==null ||VMR9Filter==null ||!UseVMR9inMYTV) 
 				{
 					GUIGraphicsContext.Vmr9Active=false;
 					return false;
 				}
 
+				//get the VMR9 input pin#0 is connected
 				IPin pinIn,pinConnected;
 				DsUtils.GetPin(VMR9Filter, PinDirection.Input,0,out pinIn);
 				if (pinIn==null) 
 				{
+					//no input pin found, vmr9 is not possible
 					GUIGraphicsContext.Vmr9Active=false;
 					return false;
 				}
+
+				//check if the input is connected to a video decoder
 				pinIn.ConnectedTo(out pinConnected);
 				if (pinConnected==null) 
 				{
+					//no pin is not connected so vmr9 is not possible
 					GUIGraphicsContext.Vmr9Active=false;
 					return false;
 				}
+				//all is ok, vmr9 is working
 				return true;
-			}
-		}
-	}
-}
+			}//get {
+		}//public bool IsVMR9Connected
+	}//public class VMR9Util
+}//namespace MediaPortal.Player 

@@ -17,8 +17,13 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.Player 
 {
 	/// <summary>
-	/// Summary description for AllocatorWrapper.
+	/// This class implements our custom allocator/presenter for VMR9 renderless
 	/// 
+	/// Some classes which work together:
+	///  VMR9Util								: general helper class
+	///  AllocatorWrapper.cs		: implements our own allocator/presentor for vmr9 by implementing
+	///                           IVMRSurfaceAllocator9 and IVMRImagePresenter9
+	///  PlaneScene.cs          : class which draws the video texture onscreen and mixes it with the GUI, OSD,...                          
 	/// </summary>
 	public class AllocatorWrapper
 	{
@@ -26,7 +31,6 @@ namespace MediaPortal.Player
 		static PlaneScene scene;
 		static IVMRSurfaceAllocatorNotify9 allocNotify;
     static Size m_nativeSize = new Size(0,0);
-    static Size m_TextureSize = new Size(0,0);
 		//this in reality should be an array, but doesn't work. In the common case
 		// only a surface will be requested.
 		static IntPtr m_surface1 = IntPtr.Zero;
@@ -39,27 +43,42 @@ namespace MediaPortal.Player
 			{
 			}
 
+			/// <summary>
+			/// Property to get the Direct3d device
+			/// </summary>
 			public Device Device {
 				get {
 					return GUIGraphicsContext.DX9Device;
 					}
 			}
 
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="window">Window control to use</param>
+			/// <param name="renderScene">instance of Planescene to use for presenting the video frames</param>
 			public Allocator (Control window, PlaneScene renderScene)
 			{
   			scene = renderScene;
 				scene.Init(GUIGraphicsContext.DX9Device);
 			}
 
+			/// <summary>
+			/// Property which returns the size of the video
+			/// </summary>
       public Size NativeSize
       {
         get{return m_nativeSize;}
       }
-      public void SetTextureSize(Size size)
-      {
-        m_TextureSize=size;
-      }
 
+
+			/// <summary>
+			/// Callback from VMR9 when it needs a new direct3d texture
+			/// </summary>
+			/// <param name="dwUserId">user id</param>
+			/// <param name="allocInfo">structure which describes what kind of surface VMR9 needs</param>
+			/// <param name="numBuffers">number of surfaces wanted</param>
+			/// <returns></returns>
 			public int InitializeDevice(Int32 dwUserId, VMR9AllocationInfo allocInfo, IntPtr numBuffers)
       {
         Log.Write("AllocatorWrapper:InitializeDevice({0:x})",dwUserId);
@@ -91,16 +110,6 @@ namespace MediaPortal.Player
         {
           Log.Write("AllocatorWrapper:multiple surfaces not supported yet");
           throw new Exception("multiple surfaces not supported yet");
-        }
-        if  (m_TextureSize.Width > allocInfo.szNativeSize.Width)
-        {
-          allocInfo.dwWidth=m_TextureSize.Width ;
-          allocInfo.szNativeSize.Width=m_TextureSize.Width ;
-        }
-        if  (m_TextureSize.Height > allocInfo.szNativeSize.Height)
-        {
-          allocInfo.dwHeight=m_TextureSize.Height ;
-          allocInfo.szNativeSize.Height=m_TextureSize.Height ;
         }
         m_nativeSize = new Size(allocInfo.szNativeSize.Width,allocInfo.szNativeSize.Height);
         
@@ -182,6 +191,14 @@ namespace MediaPortal.Player
         return hr;
 			}
 
+			/// <summary>
+			/// Callback from VMR9. Called when it needs a texture
+			/// </summary>
+			/// <param name="dwUserId">used id</param>
+			/// <param name="surfaceIndex">out surface index</param>
+			/// <param name="SurfaceFlags">flags (not used)</param>
+			/// <param name="surfacePtr">out pointer which receives the texture</param>
+			/// <returns></returns>
 			public int GetSurface(int dwUserId, int surfaceIndex, int SurfaceFlags, out IntPtr surfacePtr)
 			{
         if (surfaceIndex!=0 || m_surface1==IntPtr.Zero) 
@@ -198,6 +215,11 @@ namespace MediaPortal.Player
 				return 0;
 			}
 
+			/// <summary>
+			/// Callback from VMR9. Called when all directx surfaces should be released
+			/// </summary>
+			/// <param name="dwUserId">user id</param>
+			/// <returns></returns>
 			public int TerminateDevice(int dwUserId)
 			{
         Log.Write("AllocatorWrapper:TerminateDevice({0:x})",dwUserId);
@@ -209,6 +231,11 @@ namespace MediaPortal.Player
         return 0;
 			}
 
+			/// <summary>
+			/// method to specify the IVMRSurfaceAllocatorNotify9 interface
+			/// </summary>
+			/// <param name="allocNotifyP">IVMRSurfaceAllocatorNotify9 interface</param>
+			/// <returns></returns>
 			public int AdviseNotify(IVMRSurfaceAllocatorNotify9 allocNotifyP)
       {
         Log.Write("AllocatorWrapper:AdviseNotify()");
@@ -216,6 +243,11 @@ namespace MediaPortal.Player
 				return 0;
 			}
 
+			/// <summary>
+			/// method to specify the IVMRSurfaceAllocatorNotify9 interface
+			/// </summary>
+			/// <param name="allocNotifyP">IVMRSurfaceAllocatorNotify9 interface</param>
+			/// <returns></returns>
       public int UnAdviseNotify()
       {
         Log.Write("AllocatorWrapper:UnAdviseNotify()");
@@ -228,18 +260,34 @@ namespace MediaPortal.Player
 				return 0;
       }
 
+			/// <summary>
+			/// callback from VMR9 when its ready to present video
+			/// </summary>
+			/// <param name="uid"></param>
+			/// <returns></returns>
 			public int StartPresenting(uint uid)
       {
         Log.Write("AllocatorWrapper:StartPresenting({0:x})",uid);
 				return 0;
 			}
 
+			/// <summary>
+			/// callback from VMR9 when its about to stop presenting video
+			/// </summary>
+			/// <param name="uid"></param>
+			/// <returns></returns>
 			public int StopPresenting(uint uid)
       {
         Log.Write("AllocatorWrapper:StopPresenting({0:x})",uid);
 				return 0;
 			}
 
+			/// <summary>
+			/// Callback from VMR9 when it has a new video frame which should be shown onscreen
+			/// </summary>
+			/// <param name="uid">user id</param>
+			/// <param name="presInfo">structure holding the video frame</param>
+			/// <returns></returns>
       public int PresentImage(uint uid, VMR9PresentationInfo presInfo)
       {
         unchecked
@@ -273,7 +321,13 @@ namespace MediaPortal.Player
         }
         return 0;
       }
-      public void Repaint()
+      
+			/// <summary>
+			/// Method to redraw the last video frame
+			/// This is used in pause mode. In pause mode VMR9 will not redraw the screen by itself
+			/// MP then calls this repaint() method periodaly to redraw the video frame
+			/// </summary>
+			public void Repaint()
       {
         if (m_surface1==IntPtr.Zero) return;
 
@@ -292,7 +346,7 @@ namespace MediaPortal.Player
           Marshal.Release(m_surface1);
           Marshal.Release(m_surface1);
         }
-      }
-		}
-	}
-}
+      }//Repaint()
+		}//public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
+	}//public class AllocatorWrapper
+}//namespace MediaPortal.Player 
