@@ -871,7 +871,17 @@ namespace MediaPortal.TV.Recording
 
 			_mNewRecordedTV.End = Utils.datetolong(DateTime.Now);
 			TVDatabase.AddRecordedTV(_mNewRecordedTV);
-
+			//add new recorded show to video database
+			int movieid=VideoDatabase.AddMovieFile(_mNewRecordedTV.FileName);
+			IMDBMovie movieDetails = new IMDBMovie();
+			if (movieid>=0)
+			{
+				movieDetails.Title=_mNewRecordedTV.Title;
+				movieDetails.Genre=_mNewRecordedTV.Genre;
+				movieDetails.Plot=_mNewRecordedTV.Description;
+				movieDetails.Year=_mNewRecordedTV.StartTime.Year;
+				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
+			}
 			// back to timeshifting state
 			_mState = State.Timeshifting;
 
@@ -915,8 +925,8 @@ namespace MediaPortal.TV.Recording
 					}
 					catch(Exception ex)
 					{
-						Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() Exception:{0} {1} {2}",
-									ex.Message,ex.Source,ex.StackTrace);
+						Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
+									_mNewRecordedTV.FileName,ex.Message,ex.Source,ex.StackTrace);
 					}
 				}
 			}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
@@ -929,17 +939,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}//if (_mNewRecordedTV.FileName.IndexOf(".wmv")>=0)
 
-			//add new recorded show to video database
-			int movieid=VideoDatabase.AddMovieFile(_mNewRecordedTV.FileName);
-			IMDBMovie movieDetails = new IMDBMovie();
-			if (movieid>=0)
-			{
-				movieDetails.Title=_mNewRecordedTV.Title;
-				movieDetails.Genre=_mNewRecordedTV.Genre;
-				movieDetails.Plot=_mNewRecordedTV.Description;
-				movieDetails.Year=_mNewRecordedTV.StartTime.Year;
-				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
-			}
+
 			_mNewRecordedTV = null;
 
 			// cleanup...
