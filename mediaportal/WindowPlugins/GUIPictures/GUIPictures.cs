@@ -127,10 +127,24 @@ namespace MediaPortal.GUI.Pictures
           string strShareName=String.Format("sharename{0}",i);
           string strSharePath=String.Format("sharepath{0}",i);
           string strPincode = String.Format("pincode{0}",i);
+
+          string shareType = String.Format("sharetype{0}", i);
+          string shareServer = String.Format("shareserver{0}", i);
+          string shareLogin = String.Format("sharelogin{0}", i);
+          string sharePwd  = String.Format("sharepassword{0}", i);
+          string sharePort = String.Format("shareport{0}", i);
+
           Share share=new Share();
           share.Name=xmlreader.GetValueAsString("pictures", strShareName,"");
           share.Path=xmlreader.GetValueAsString("pictures", strSharePath,"");
           share.Pincode = xmlreader.GetValueAsInt("pictures", strPincode, - 1);
+          
+          share.IsFtpShare= xmlreader.GetValueAsBool("pictures", shareType, false);
+          share.FtpServer= xmlreader.GetValueAsString("pictures", shareServer,"");
+          share.FtpLoginName= xmlreader.GetValueAsString("pictures", shareLogin,"");
+          share.FtpPassword= xmlreader.GetValueAsString("pictures", sharePwd,"");
+          share.FtpPort= xmlreader.GetValueAsInt("pictures", sharePort,21);
+
           if (share.Name.Length>0 && share.Path.Length>0)
           {
             if (m_strDirectory.Length==0&&strDefault==share.Name)

@@ -17,7 +17,11 @@ namespace MediaPortal.Util
     private string m_strName=String.Empty;
     private bool   m_bDefault=false;		
     private int    m_iPincode=-1;
-
+    private bool   isRemote=false;
+    private string remoteServer=String.Empty;
+    private string remoteLogin=String.Empty;
+    private string remotePassword=String.Empty;
+    private int    remotePort=21;
 		/// <summary>
 		/// empty constructor
 		/// </summary>
@@ -88,6 +92,65 @@ namespace MediaPortal.Util
 				if (value==null) return;
         m_strPath=Utils.RemoveTrailingSlash(value);
         
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set whether this is a local or ftp share
+    /// </summary>
+    public bool IsFtpShare
+    {
+      get { return isRemote;}
+      set {isRemote=value;}
+    }
+
+    /// <summary>
+    /// Property to get/set the ftp server
+    /// </summary>
+    public string FtpServer
+    {
+      get { return remoteServer;}
+      set 
+      { 
+        if (value==null) return;
+        remoteServer=value;
+      }
+    }
+    /// <summary>
+    /// Property to get/set the ftp login name
+    /// </summary>
+    public string FtpLoginName
+    {
+      get { return remoteLogin;}
+      set 
+      { 
+        if (value==null) return;
+        remoteLogin=value;
+      }
+    }
+    /// <summary>
+    /// Property to get/set the ftp password
+    /// </summary>
+    public string FtpPassword
+    {
+      get { return remotePassword;}
+      set 
+      { 
+        if (value==null) return;
+        remotePassword=value;
+      }
+    }
+    
+    /// <summary>
+    /// Property to get/set the ftp port
+    /// </summary>
+    public int FtpPort
+    {
+      get { return remotePort;}
+      set 
+      { 
+        if (value<=0) return;
+        remotePort=value;
       }
     }
 

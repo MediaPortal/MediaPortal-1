@@ -61,6 +61,7 @@ namespace MediaPortal.Util
     public void Add(Share share)
     {
 			if (share==null) return;
+      if (share.IsFtpShare) return;//TODO: add support for ftp shares
       m_shares.Add(share);
 		}
 

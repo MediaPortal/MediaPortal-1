@@ -163,11 +163,25 @@ namespace MediaPortal.GUI.Music
         {
           string strShareName = String.Format("sharename{0}",i);
           string strSharePath = String.Format("sharepath{0}",i);
-          string strPincode = String.Format("pincode{0}",i);
+          string strPincode = String.Format("pincode{0}",i);;
+
+          string shareType = String.Format("sharetype{0}", i);
+          string shareServer = String.Format("shareserver{0}", i);
+          string shareLogin = String.Format("sharelogin{0}", i);
+          string sharePwd  = String.Format("sharepassword{0}", i);
+          string sharePort = String.Format("shareport{0}", i);
+
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("music", strShareName, "");
           share.Path = xmlreader.GetValueAsString("music", strSharePath, "");
           share.Pincode = xmlreader.GetValueAsInt("music", strPincode, - 1);
+          
+          share.IsFtpShare= xmlreader.GetValueAsBool("music", shareType, false);
+          share.FtpServer= xmlreader.GetValueAsString("music", shareServer,"");
+          share.FtpLoginName= xmlreader.GetValueAsString("music", shareLogin,"");
+          share.FtpPassword= xmlreader.GetValueAsString("music", sharePwd,"");
+          share.FtpPort= xmlreader.GetValueAsInt("music", sharePort,21);
+
           if (share.Name.Length > 0 && share.Path.Length > 0)
           {
             if (m_strDirectory.Length == 0 && strDefault == share.Name)

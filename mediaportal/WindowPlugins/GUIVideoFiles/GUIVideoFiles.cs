@@ -142,10 +142,24 @@ namespace MediaPortal.GUI.Video
           string strShareName = String.Format("sharename{0}",i);
           string strSharePath = String.Format("sharepath{0}",i);
           string strPincode = String.Format("pincode{0}",i);
+
+          string shareType = String.Format("sharetype{0}", i);
+          string shareServer = String.Format("shareserver{0}", i);
+          string shareLogin = String.Format("sharelogin{0}", i);
+          string sharePwd  = String.Format("sharepassword{0}", i);
+          string sharePort = String.Format("shareport{0}", i);
+
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("movies", strShareName, "");
           share.Path = xmlreader.GetValueAsString("movies", strSharePath, "");
           share.Pincode = xmlreader.GetValueAsInt("movies", strPincode, - 1);
+          
+          share.IsFtpShare= xmlreader.GetValueAsBool("movies", shareType, false);
+          share.FtpServer= xmlreader.GetValueAsString("movies", shareServer,"");
+          share.FtpLoginName= xmlreader.GetValueAsString("movies", shareLogin,"");
+          share.FtpPassword= xmlreader.GetValueAsString("movies", sharePwd,"");
+          share.FtpPort= xmlreader.GetValueAsInt("movies", sharePort,21);
+
           if (share.Name.Length > 0 && share.Path.Length > 0)
           {
             if (m_strDirectory.Length == 0 && strDefault == share.Name)
