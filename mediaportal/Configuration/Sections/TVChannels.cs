@@ -1150,6 +1150,8 @@ namespace MediaPortal.Configuration.Sections
 		private void buttonMap_Click(object sender, System.EventArgs e)
 		{
 			if (listViewTVChannels.SelectedItems==null) return;
+			
+			TVGroup group = comboBox1.SelectedItem as TVGroup;
 			for(int i=0; i < listViewTVChannels.SelectedItems.Count;++i)
 			{
 				ListViewItem listItem=listViewTVChannels.SelectedItems[i];
@@ -1158,15 +1160,13 @@ namespace MediaPortal.Configuration.Sections
 				listItem = new ListViewItem(new string[] { chan.Name} );
 				listItem.Tag=chan;
 				listViewTVGroupChannels.Items.Add(listItem);
+				if (group!=null && chan != null)
+					TVDatabase.MapChannelToGroup(group, chan);
 			}
 			
-			TVGroup group = comboBox1.SelectedItem as TVGroup;
 			for(int i=listViewTVChannels.SelectedItems.Count-1; i >=0 ;i--)
 			{
 				ListViewItem listItem=listViewTVChannels.SelectedItems[i];
-				TVChannel channel=listItem.Tag as TVChannel;
-				if (group!=null && channel != null)
-					TVDatabase.MapChannelToGroup(group, channel);
 
 				listViewTVChannels.Items.Remove(listItem);
 			}
