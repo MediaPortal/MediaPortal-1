@@ -398,6 +398,11 @@ namespace MediaPortal.Util
 							item.IconImage="defaultNetwork.png";
 							item.IconImageBig="defaultNetworkBig.png";
 						}
+						else if ( IsRemovable(item.Path))
+						{
+							item.IconImage="defaultRemovable.png";
+							item.IconImageBig="defaultRemovableBig.png";
+						}
 						else
 						{
 							item.IconImage="defaultFolder.png";

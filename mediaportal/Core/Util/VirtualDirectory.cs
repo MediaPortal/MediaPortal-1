@@ -94,6 +94,12 @@ namespace MediaPortal.Util
         GUIListItem item = new GUIListItem();
         item.Label = share.Name;
         item.Path = share.Path;
+				if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
+				{
+					string strDriveName = Utils.GetDriveName(item.Path);
+					if (strDriveName == "") strDriveName = "Removable";
+					item.Label = String.Format( "{1} {0}",  item.Path, strDriveName);
+				}
         if (Utils.IsDVD(item.Path))
         {
           item.DVDLabel = Utils.GetDriveName(item.Path);
@@ -102,10 +108,9 @@ namespace MediaPortal.Util
 
         if (item.DVDLabel != "")
         {
-          item.Label = String.Format( "({0}) {1}",  item.Path, item.DVDLabel);        
+					item.Label = String.Format( "{1} {0}",  item.Path, item.DVDLabel);        
         }
-        else
-          item.Label = share.Name;
+				
 				item.IsFolder = true;
 
         if (share.IsFtpShare)
@@ -115,7 +120,50 @@ namespace MediaPortal.Util
         }
 				Utils.SetDefaultIcons(item);
         items.Add(item);
-      }
+			}
+
+			// add removable drives with media
+			string[] drives = Environment.GetLogicalDrives();
+			foreach(string drive in drives)
+			{
+				if(Util.Utils.getDriveType(drive) == Removable)
+				{
+					bool driveFound = false;
+					string driveName = Util.Utils.GetDriveName(drive);
+					string driveLetter = drive.Substring(0, 1).ToUpper()+":";			
+					if (driveName == "") driveName = "Removable";
+
+					//
+					// Check if the share already exists
+					//
+					foreach (Share share in m_shares)
+					{
+						if(share.Path == driveLetter)
+						{
+							driveFound = true;
+							break;
+						}
+					}
+
+					if(driveFound == false)
+					{
+						GUIListItem item = new GUIListItem();
+						item.Path = driveLetter;						
+						item.Label = String.Format("{0} {1}", driveName, driveLetter);
+						item.IsFolder = true;
+
+						Utils.SetDefaultIcons(item);
+
+						// dont add removable shares without media
+						// virtual cd/dvd drive (daemontools) without mounted image
+						if (!Directory.Exists(item.Path)) 
+							break;				
+
+						items.Add(item);					
+					}
+				}
+			}
+		          
       return items;
     }
 
