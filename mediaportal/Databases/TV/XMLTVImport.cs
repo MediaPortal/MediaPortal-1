@@ -347,18 +347,18 @@ namespace MediaPortal.TV.Database
 
 							  int iChannelId=-1;
 							  string strChannelName="";
-                if ( nodeChannel.InnerText.Length > 0)
-                {
-                  foreach (TVChannel chan in tvchannels)
-                  {
-                    if (chan.XMLId==nodeChannel.InnerText) 
-                    {
-                      strChannelName=chan.Name;
-                      iChannelId=chan.ID;
-                      break;
-                    }
-                  }
-                }
+							  if ( nodeChannel.InnerText.Length > 0)
+							  {
+								  foreach (TVChannel chan in tvchannels)
+								  {
+									  if (chan.XMLId==nodeChannel.InnerText) 
+									  {
+										  strChannelName=chan.Name;
+										  iChannelId=chan.ID;
+										  break;
+									  }
+								  }
+							  }
 							  if (iChannelId<0)
 							  {
 								  Log.Write("Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
@@ -383,17 +383,26 @@ namespace MediaPortal.TV.Database
 									int pos=0;
 									int Epos=0;
 									pos = strSerEpNum.IndexOf(".",pos);
-									strSeriesNum= strSerEpNum.Substring(0,pos);
-									Epos=pos;
-									pos = strSerEpNum.IndexOf(".",pos+1);
-									strEpisodeNum=strSerEpNum.Substring(Epos+1,(pos-1)-Epos);
-									strEpisodePart=strSerEpNum.Substring(pos+1,strSerEpNum.Length-(pos+1));
-									if (strEpisodePart.Substring(2,1)=="1") strEpisodePart = "";
+									if (pos>0)
+									{
+										strSeriesNum= strSerEpNum.Substring(0,pos);
+										Epos=pos;
+										pos = strSerEpNum.IndexOf(".",pos+1);
+										strEpisodeNum=strSerEpNum.Substring(Epos+1,(pos-1)-Epos);
+										strEpisodePart=strSerEpNum.Substring(pos+1,strSerEpNum.Length-(pos+1));
+										if (strEpisodePart.Substring(2,1)=="1") strEpisodePart = "";
+										else
+										{
+											int p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
+											int t = Convert.ToInt32(strEpisodePart.Substring(2,1));
+											strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
+										}
+									}
 									else
 									{
-										int p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
-										int t = Convert.ToInt32(strEpisodePart.Substring(2,1));
-										strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
+										strSeriesNum = strSerEpNum;
+										strEpisodeNum = "0";
+										strEpisodePart = "0";
 									}
 								}
 								if (nodeDate!=null && nodeDate.InnerText!=null)
@@ -431,6 +440,7 @@ namespace MediaPortal.TV.Database
 								  {
 									  progChan.programs.Add(prog);
 								  }
+								  
 							  }
 						  }
 					  }
