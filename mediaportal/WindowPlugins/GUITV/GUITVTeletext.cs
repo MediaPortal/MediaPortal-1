@@ -115,7 +115,6 @@ namespace MediaPortal.GUI.TV
 					if(m_pictureBox!=null)
 						m_pictureBox.Visible=false;
 					base.OnMessage(message);
-					SaveSettings();
 					return true;
 				}
 
@@ -123,10 +122,11 @@ namespace MediaPortal.GUI.TV
 				{
 					m_teleText.GetPage(0x100,0);
 					m_grabPageTimer.Start();
+					if(m_teleText==null)
+						return false;
 					if(m_pictureBox!=null)
 						m_pictureBox.Visible=true;
 					base.OnMessage(message);
-					LoadSettings();
 					GUIImage gImg=(GUIImage)this.GetControl(500);
 					if(gImg!=null)
 					{	// setting the coordinates from the image-control
