@@ -8,7 +8,7 @@ using System.Net;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
+using System.Threading;
 namespace MediaPortal.GUI.Video
 {
 	/// <summary>
@@ -157,50 +157,6 @@ namespace MediaPortal.GUI.Video
           // Default picture					
           m_sIMDBThumbURL = m_movie.ThumbURL;
 
-          // Search for more pictures
-          m_search.Search(m_movie.Title);
-
-          // Set number of picture URL's (x from Search + 1 from movie database)					
-          int m_iPictureCount = m_search.Count+1;
-          int m_iPictureIndex = 1;
-
-          // Search selected picture in m_search list					
-          int iLoop=0;
-          while (iLoop < m_search.Count)
-          {
-            string url=m_search[iLoop].ToLower();
-            if (url.Equals(m_movie.ThumbURL.ToLower() ) )
-            {
-              // Duplicate URL found in search list
-              m_sIMDBThumbURL = "";
-              m_iPictureCount--;
-              m_iPictureIndex--;
-              break;
-            }
-            iLoop++;
-          }
-
-          GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPIN);
-          GUISpinControl spin = GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
-          if (spin!=null)
-          {
-            spin.SetReverse(true);
-            spin.SetRange(1,m_iPictureCount);
-            spin.Value = 1;
-
-            spin.ShowRange=true;
-            spin.UpDownType =GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-            for (int i=0; i < m_search.Count;++i)
-            {
-              string url=m_search[i].ToLower();
-              if (url.Equals(m_movie.ThumbURL.ToLower() ) )
-              {
-                spin.Value=m_iPictureIndex+1;								
-                break;
-              }
-              m_iPictureIndex++;
-            }
-          }
         
           viewmode=ViewMode.Image;			    
           GUIControl.ClearControl(GetID, (int)Controls.CONTROL_DISC);
@@ -257,6 +213,8 @@ namespace MediaPortal.GUI.Video
             GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_DISC, iItem);
           }
           Refresh();Update();
+					Thread workerThread = new Thread(new ThreadStart(AmazonLookupThread));
+					workerThread.Start();
           return true;
         }
 
@@ -462,5 +420,54 @@ namespace MediaPortal.GUI.Video
     {
       get { return m_bRefresh; }
     }
+		void AmazonLookupThread()
+		{
+			// Search for more pictures
+			IMDBMovie movie=m_movie;
+			m_search.Search(movie.Title);
+
+			// Set number of picture URL's (x from Search + 1 from movie database)					
+			int m_iPictureCount = m_search.Count+1;
+			int m_iPictureIndex = 1;
+
+			// Search selected picture in m_search list					
+			int iLoop=0;
+			while (iLoop < m_search.Count)
+			{
+				string url=m_search[iLoop].ToLower();
+				if (url.Equals(movie.ThumbURL.ToLower() ) )
+				{
+					// Duplicate URL found in search list
+					m_sIMDBThumbURL = "";
+					m_iPictureCount--;
+					m_iPictureIndex--;
+					break;
+				}
+				iLoop++;
+			}
+
+			if (m_movie==null) return;
+			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPIN);
+			GUISpinControl spin = GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
+			if (spin!=null)
+			{
+				spin.SetReverse(true);
+				spin.SetRange(1,m_iPictureCount);
+				spin.Value = 1;
+
+				spin.ShowRange=true;
+				spin.UpDownType =GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+				for (int i=0; i < m_search.Count;++i)
+				{
+					string url=m_search[i].ToLower();
+					if (url.Equals(movie.ThumbURL.ToLower() ) )
+					{
+						spin.Value=m_iPictureIndex+1;								
+						break;
+					}
+					m_iPictureIndex++;
+				}
+			}
+		}
   }
 }
