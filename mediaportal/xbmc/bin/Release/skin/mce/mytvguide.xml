@@ -24,7 +24,7 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>51</posX>
-		<posY>135</posY>
+		<posY>125</posY>
 		<texture>tvguide_title_bg.png</texture>
 	</control>	
 		<control>
@@ -43,10 +43,20 @@
 		<type>image</type>
 		<id>2</id>
 		<posX>60</posX>
-		<posY>100</posY>
+		<posY>90</posY>
 		<width>605</width>
 		<height>315</height>
 		<colordiffuse>60ffffff</colordiffuse>
+		<texture>-</texture>
+	</control>
+	<control>
+		<description>time header background image template</description>
+		<type>image</type>
+		<id>4</id>
+		<posX>60</posX>
+		<posY>250</posY>
+		<width>32</width>
+		<height>28</height>
 		<texture>-</texture>
 	</control>
 	<control>
@@ -54,26 +64,16 @@
 		<type>label</type>
 		<id>40</id>
 		<posX>186</posX>
-		<posY>100</posY>
+		<posY>90</posY>
 		<font>font13</font>
 		<textcolor>FFB2D4F5</textcolor>
-	</control>
-	<control>
-		<description>time header background image template</description>
-		<type>image</type>
-		<id>4</id>
-		<posX>60</posX>
-		<posY>135</posY>
-		<width>32</width>
-		<height>28</height>
-		<texture>bluebar.png</texture>
 	</control>
 	<control>
 		<description>day spin control</description>
 		<type>spincontrol</type>
 		<id>6</id>
 		<posX>60</posX>
-		<posY>102</posY>
+		<posY>92</posY>
 		<showrange>no</showrange>
 		<orientation>horizontal</orientation>
 		<align>center</align>
@@ -90,7 +90,7 @@
 		<type>spincontrol</type>
 		<id>8</id>
 		<posX>165</posX>
-		<posY>110</posY>
+		<posY>100</posY>
 		<showrange>no</showrange>
 		<orientation>vertical</orientation>
 		<align>center</align>
@@ -107,19 +107,18 @@
 		<type>image</type>
 		<id>7</id>
 		<posX>60</posX>
-		<posY>135</posY>
+		<posY>125</posY>
 		<width>32</width>
 		<height>32</height>
 		<texture>defaultVideoBig.png</texture>
 	</control>
-
 	<control>
 		<description>channel Label template</description>
 		<type>label</type>
 		<id>18</id>
 		<posX>60</posX>
-		<posY>175</posY>
-		<width>100</width>
+		<posY>165</posY>
+		<width>95</width>
 		<height>15</height>
 		<font>font13</font>
 		<textcolor>FFB2D4F5</textcolor>
@@ -192,7 +191,7 @@
 		<type>image</type>
 		<id>25</id>
 		<posX>30</posX>
-		<posY>135</posY>
+		<posY>125</posY>
 		<height>273</height>
 		<colordiffuse>c0ffffff</colordiffuse>
 		<texture>tvguide_slider.png</texture>
@@ -240,8 +239,8 @@
 		<type>hscrollbar</type>
 		<id>28</id>
 		<posX>50</posX>
-		<posY>420</posY>
-		<width>605</width>
+		<posY>399</posY>
+		<width>607</width>
 		<height>20</height>
 		<visible>yes</visible>
 	</control>	
@@ -249,10 +248,10 @@
 		<description>Vertical scrollbar</description>
 		<type>vscrollbar</type>
 		<id>29</id>
-		<posX>663</posX>
-		<posY>100</posY>
+		<posX>658</posX>
+		<posY>125</posY>
 		<width>20</width>
-		<height>315</height>
+		<height>294</height>
 		<visible>yes</visible>
 	</control>	
 </controls>
