@@ -718,6 +718,7 @@ namespace MediaPortal.TV.Recording
 				{
 					int frequency,ONID,TSID,SID;
 					TVDatabase.GetDVBTTuneRequest(iChannel,out frequency, out ONID, out TSID, out SID);
+					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}", frequency,ONID,TSID,SID);
 					TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
 					newTuneRequest = myTuningSpace.CreateTuneRequest();
 					TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
@@ -732,7 +733,7 @@ namespace MediaPortal.TV.Recording
 					Marshal.ReleaseComObject(myTuneRequest);
 					currentFrequency=(int)frequency;
 				} break;
-			}
+			}	
 
 		}
 
@@ -875,10 +876,12 @@ namespace MediaPortal.TV.Recording
 	       
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			Log.Write("DVBGraphBDA: StopViewing()");
-			m_videoWindow.put_Visible(DsHlp.OAFALSE);
+			if (m_videoWindow!=null)
+				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 
 			Log.Write("DVBGraphBDA: stop graph");
-			m_mediaControl.Stop();
+			if (m_mediaControl!=null)
+				m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
