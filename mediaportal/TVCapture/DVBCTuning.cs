@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
 						{
 							try
 							{
-								dvbcChannels[count].frequency = Convert.ToInt16(tpdata[0]) * 1000;
+								dvbcChannels[count].frequency = Int32.Parse(tpdata[0]) * 1000;
 								string mod=tpdata[1].ToUpper();
 								dvbcChannels[count].modulation=(int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
 								if (mod=="1024QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
@@ -109,7 +109,7 @@ namespace MediaPortal.TV.Recording
 								if (mod=="OQPSK")		dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
 								if (mod=="QPSK")		dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_QPSK;
 								
-								dvbcChannels[count].symbolrate = Convert.ToInt16(tpdata[2]);
+								dvbcChannels[count].symbolrate = Int32.Parse(tpdata[2]);
 								count += 1;
 							}
 							catch
@@ -147,7 +147,7 @@ namespace MediaPortal.TV.Recording
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			if (currentIndex > count)
+			if (currentIndex >= count)
 				return;
 			
 			float percent = ((float)currentIndex) / ((float)count);
