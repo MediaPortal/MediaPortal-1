@@ -228,8 +228,5 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("MCESinkGraph:FAILED, not all pins connected");
     }
 		
-		public void Process()
-		{
-		}
   }
 }

@@ -455,6 +455,19 @@ namespace MediaPortal.GUI.TV
 					base.OnMessage(message);
 					SaveSettings();
 					m_recordings.Clear();
+					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					{
+						if (! g_Player.Playing)
+						{
+							if (GUIGraphicsContext.ShowBackground)
+							{
+								// stop timeshifting & viewing... 
+	              
+								Recorder.StopViewing();
+							}
+						}
+					}
+
 					return true;
 				}
 

@@ -138,6 +138,19 @@ namespace MediaPortal.GUI.TV
         {
           
           SaveSettings();
+					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					{
+						if (! g_Player.Playing)
+						{
+							if (GUIGraphicsContext.ShowBackground)
+							{
+								// stop timeshifting & viewing... 
+	              
+								Recorder.StopViewing();
+							}
+						}
+					}
+
         }
           break;
 

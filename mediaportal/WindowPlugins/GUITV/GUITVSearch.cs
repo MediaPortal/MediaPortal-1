@@ -6,6 +6,7 @@ using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Player;
 
 namespace MediaPortal.GUI.TV
 {
@@ -89,6 +90,19 @@ namespace MediaPortal.GUI.TV
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
           _recordings.Clear();
+					
+					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					{
+						if (! g_Player.Playing)
+						{
+							if (GUIGraphicsContext.ShowBackground)
+							{
+								// stop timeshifting & viewing... 
+	              
+								Recorder.StopViewing();
+							}
+						}
+					}
         }
         break;
 

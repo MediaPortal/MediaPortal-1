@@ -234,6 +234,18 @@ namespace MediaPortal.GUI.TV
           m_util=null;
           
           SaveSettings();
+					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					{
+						if (! g_Player.Playing)
+						{
+							if (GUIGraphicsContext.ShowBackground)
+							{
+								// stop timeshifting & viewing... 
+	              
+								Recorder.StopViewing();
+							}
+						}
+					}
 
           return true;
 				}
@@ -611,6 +623,18 @@ namespace MediaPortal.GUI.TV
         }
       }
     }
+		static public bool IsTVWindow(int windowId)
+		{
+			if (windowId== (int)GUIWindow.Window.WINDOW_TV) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_TVGUIDE) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTV) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
+			return false;
+		}
       
 		#region ISetupForm Members
 

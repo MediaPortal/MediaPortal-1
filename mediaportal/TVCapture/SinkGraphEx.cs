@@ -415,9 +415,6 @@ namespace MediaPortal.TV.Recording
 				DirectShowUtil.DebugWrite("SinkGraphEx:FAILED, not all pins connected");
 		}
 		
-		public void Process()
-		{
-		}
 
 	#endregion
 	}

@@ -142,6 +142,7 @@ namespace MediaPortal.GUI.TV
 						m_bOSDVisible=false;
 						m_bUpdate=true;
 					}
+
 				}
 				else
 				{
@@ -392,6 +393,19 @@ namespace MediaPortal.GUI.TV
 					m_form=null;
 					base.OnMessage(message);
 					GUIGraphicsContext.IsFullScreenVideo=false;
+					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					{
+						if (! g_Player.Playing)
+						{
+							if (GUIGraphicsContext.ShowBackground)
+							{
+								// stop timeshifting & viewing... 
+	              
+								Recorder.StopViewing();
+							}
+						}
+					}
+
 					return true;
 				}
 
