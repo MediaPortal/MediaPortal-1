@@ -1,8 +1,10 @@
+14-08-2004  my news     : fixed : several my news bugs (thx 2 MrMitchel)
+14-08-2004  my radio    : fixed : frequencies where not used
 14-08-2004  setup       : fixed : Exception when capture device couldn't be created.
 14-08-2004  setup       : fixed : Sorting of languages in the DVD section.
 14-08-2004  my tv       : fixed : generating thumb for "ketnet/canvas"  wont work
-14-08-2004  setup	: fixed : Fixed problem with Pin codes disappearing.
-14-08-2004  setup	: fixed : Default for Aspect Correction was not set correctly.
+14-08-2004  setup		: fixed : Fixed problem with Pin codes disappearing.
+14-08-2004  setup		: fixed : Default for Aspect Correction was not set correctly.
 
 13-08-2004  My Music    : fixed : Cds with extreme long track titles cause MP to hang.
 13-08-2004  settings    : fixed : change AR correction acted weird
