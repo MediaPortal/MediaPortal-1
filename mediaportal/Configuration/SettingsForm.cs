@@ -512,12 +512,7 @@ namespace MediaPortal.Configuration
 					MessageBox.Show("No movie playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return false;
 				}
-				playlistFolder = xmlreader.GetValueAsString("capture", "recordingpath", "");
-				if (playlistFolder==String.Empty)
-				{
-					MessageBox.Show("No TV recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					return false;
-				}
+
 				bool added=false;
 				for(int index = 0; index < MaximumShares; index++)
 				{
