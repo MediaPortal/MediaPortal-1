@@ -130,7 +130,7 @@ namespace MediaPortal.WinampPlayer
 
 							string strDrive = strFile.Substring(0,1);
 							strDrive += ":";
-							strFile=String.Format("{0}{1}.cda",strDrive,strTrack);
+							strFile=String.Format("{0}Track{1}.cda",strDrive,strTrack);
 						}
 
             m_winampController = new WinampController();

@@ -182,14 +182,14 @@ namespace MediaPortal.Configuration
       ArrayList availableVideoCompressors = FilterHelper.GetVideoCompressors();
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
 
-			/* below is used for testing only*/
-			/*
+			/* below is used for testing only
+			
 			availableVideoDevices.Add("713x BDA Analog Capture");
-			availableVideoDevices.Add("713x BDA Digital Capture");
-			availableVideoDevices.Add("my device");
-			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0");
-			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0");
-			availableVideoDeviceMonikers.Add("ven_1234&dev_1234&subsys_03325168&rev_f3");
+			availableVideoDevices.Add("713x BDA Analog Capture");
+			availableVideoDevices.Add("713x BDA Analog Capture");
+			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&1");
+			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&2");
+			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&3");
 			*/
    
       FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
@@ -317,6 +317,12 @@ namespace MediaPortal.Configuration
 												cd.DeviceId,
 												cd.IsBDACard,cd.IsMCECard,cd.SupportsMPEG2);
 						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
+						int nr=1;
+						foreach (ComboBoxCaptureCard cb in cardComboBox.Items)
+						{
+							if (cb.CaptureDevice.CommercialName==cbcc.CaptureDevice.CommercialName) nr++;
+						}
+						cbcc.Number=nr;
 						cardComboBox.Items.Add(cbcc); 
 					}
 				}
@@ -2696,6 +2702,7 @@ namespace MediaPortal.Configuration
 public class ComboBoxCaptureCard
 {
 	private TVCaptureDevice _mCaptureDevice;
+	private int m_iNumber=1;
 
 	public ComboBoxCaptureCard(TVCaptureDevice pCaptureDevice)
 	{
@@ -2716,11 +2723,16 @@ public class ComboBoxCaptureCard
 	{
 		get {return _mCaptureDevice.CaptureName;}
 	}
+	public int Number
+	{
+		get {return m_iNumber;}
+		set {m_iNumber=value;}
+	}
 
 	// Display a more readable name by adding the commercial name of the card to the capture device
 	public override string ToString()
 	{
-		return (this.CaptureName + " (" + this._mCaptureDevice.CommercialName + ")");
+		return String.Format("#{0} {1} ({2})",m_iNumber,CaptureName,_mCaptureDevice.CommercialName );
 	}
 
 	public override bool Equals(object obj)
