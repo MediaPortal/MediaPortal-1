@@ -15,6 +15,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox transitionTextBox;
     private System.Windows.Forms.RadioButton radioButtonRandom;
     private System.Windows.Forms.RadioButton radioButtonXFade;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.RadioButton radioButtonKenBurns;
+    private System.Windows.Forms.TextBox kenburnsTextBox;
 		private System.ComponentModel.IContainer components = null;
 
 		public Pictures() : this("Pictures")
@@ -33,8 +36,10 @@ namespace MediaPortal.Configuration.Sections
 			{
 				durationTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "speed" ,3));
         transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 20));
+        kenburnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "kenburnsspeed", 20));
         radioButtonRandom.Checked = xmlreader.GetValueAsBool("pictures", "random", true);
-        radioButtonXFade.Checked = !radioButtonRandom.Checked;
+        radioButtonKenBurns.Checked = xmlreader.GetValueAsBool("pictures", "kenburns", false);
+        radioButtonXFade.Checked = !radioButtonRandom.Checked && !radioButtonKenBurns.Checked;
 
 			}			
 		}
@@ -45,7 +50,9 @@ namespace MediaPortal.Configuration.Sections
 			{
 				xmlwriter.SetValue("pictures", "speed", durationTextBox.Text);
         xmlwriter.SetValue("pictures", "transition", transitionTextBox.Text);
+        xmlwriter.SetValue("pictures", "kenburnsspeed", kenburnsTextBox.Text);
         xmlwriter.SetValueAsBool("pictures", "random", radioButtonRandom.Checked);
+        xmlwriter.SetValueAsBool("pictures", "kenburns", radioButtonKenBurns.Checked);
 			}
 		}
 
@@ -72,12 +79,15 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.radioButtonRandom = new System.Windows.Forms.RadioButton();
       this.transitionTextBox = new System.Windows.Forms.TextBox();
       this.durationTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.radioButtonRandom = new System.Windows.Forms.RadioButton();
       this.radioButtonXFade = new System.Windows.Forms.RadioButton();
+      this.kenburnsTextBox = new System.Windows.Forms.TextBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.radioButtonKenBurns = new System.Windows.Forms.RadioButton();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -85,6 +95,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.radioButtonKenBurns);
+      this.groupBox1.Controls.Add(this.kenburnsTextBox);
+      this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.radioButtonRandom);
       this.groupBox1.Controls.Add(this.transitionTextBox);
       this.groupBox1.Controls.Add(this.durationTextBox);
@@ -94,10 +107,18 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(376, 152);
+      this.groupBox1.Size = new System.Drawing.Size(376, 216);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Slideshow Settings";
+      // 
+      // radioButtonRandom
+      // 
+      this.radioButtonRandom.Location = new System.Drawing.Point(24, 144);
+      this.radioButtonRandom.Name = "radioButtonRandom";
+      this.radioButtonRandom.Size = new System.Drawing.Size(256, 24);
+      this.radioButtonRandom.TabIndex = 19;
+      this.radioButtonRandom.Text = "Use random transitions between pictures";
       // 
       // transitionTextBox
       // 
@@ -131,21 +152,37 @@ namespace MediaPortal.Configuration.Sections
       this.label1.TabIndex = 0;
       this.label1.Text = "Picture visible (seconds)";
       // 
-      // radioButtonRandom
-      // 
-      this.radioButtonRandom.Location = new System.Drawing.Point(24, 80);
-      this.radioButtonRandom.Name = "radioButtonRandom";
-      this.radioButtonRandom.Size = new System.Drawing.Size(256, 24);
-      this.radioButtonRandom.TabIndex = 19;
-      this.radioButtonRandom.Text = "Use random transitions between pictures";
-      // 
       // radioButtonXFade
       // 
-      this.radioButtonXFade.Location = new System.Drawing.Point(24, 112);
+      this.radioButtonXFade.Location = new System.Drawing.Point(24, 176);
       this.radioButtonXFade.Name = "radioButtonXFade";
       this.radioButtonXFade.Size = new System.Drawing.Size(224, 24);
       this.radioButtonXFade.TabIndex = 19;
       this.radioButtonXFade.Text = "Use x-fade transition between pictures";
+      // 
+      // kenburnsTextBox
+      // 
+      this.kenburnsTextBox.Location = new System.Drawing.Point(168, 76);
+      this.kenburnsTextBox.Name = "kenburnsTextBox";
+      this.kenburnsTextBox.Size = new System.Drawing.Size(40, 20);
+      this.kenburnsTextBox.TabIndex = 21;
+      this.kenburnsTextBox.Text = "";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(16, 80);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(150, 23);
+      this.label3.TabIndex = 20;
+      this.label3.Text = "Ken Burns speed";
+      // 
+      // radioButtonKenBurns
+      // 
+      this.radioButtonKenBurns.Location = new System.Drawing.Point(24, 112);
+      this.radioButtonKenBurns.Name = "radioButtonKenBurns";
+      this.radioButtonKenBurns.Size = new System.Drawing.Size(256, 24);
+      this.radioButtonKenBurns.TabIndex = 22;
+      this.radioButtonKenBurns.Text = "Use Ken Burns effect on pictures";
       // 
       // Pictures
       // 
