@@ -138,7 +138,6 @@ General:
       "Eject Drive"
       "(Exit)" 
   - Pincode for xxx-shares :)
-  - volume control via remote
   - integrated support for remote controls instead of using girder
   - The ability to search for and download new skins from within MP
   - The ability to search for and download new plugins from within MP
