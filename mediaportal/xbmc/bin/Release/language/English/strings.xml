@@ -2585,9 +2585,10 @@
 	<string><id>1970</id><value>Alarm interval (in seconds)</value></string>
 	<string><id>1971</id><value>Shutdown on alert</value></string>
 	<string><id>1972</id><value>Status details</value></string>
-	<string><id>1973</id><value>von</value>	</string>
+	<string><id>1973</id><value>of</value></string>
 	<string><id>1974</id><value>Memory</value></string>
 	<string><id>1975</id><value>Next Page</value></string>
+	<string><id>1976</id><value>rpm</value></string>	
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Delete</value></string>
 	<string><id>2006</id><value>Title</value></string>
