@@ -214,14 +214,14 @@
 	</control>
 	<control>
 		<type>image</type>
-		<id>106</id>
+		<id>103</id>
 		<posX>155</posX>
 		<posY>165</posY>
 		<texture>myradio.png</texture>
 	</control>
 	<control>
 		<type>image</type>
-		<id>103</id>
+		<id>104</id>
 		<posX>155</posX>
 		<posY>165</posY>
 		<texture>mymusic.png</texture>
@@ -235,7 +235,7 @@
 	</control>
 	<control>
 		<type>image</type>
-		<id>104</id>
+		<id>106</id>
 		<posX>155</posX>
 		<posY>165</posY>
 		<texture>mypictures.png</texture>
