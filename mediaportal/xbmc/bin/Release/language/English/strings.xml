@@ -2220,7 +2220,7 @@
 </string>
 <string>
 	<id>853</id>
-	<value>Select Playlist</value>
+	<value>Name:</value>
 </string>
 <string>
 	<id>854</id>
@@ -2244,11 +2244,11 @@
 </string>
 <string>
 	<id>859</id>
-	<value>Sleep Time</value>
+	<value>Sleep Timer</value>
 </string>
 <string>
 	<id>860</id>
-	<value>Volume fade in/out</value>
+	<value>Increase volume over time</value>
 </string>
 <string>
 	<id>861</id>
@@ -2269,6 +2269,23 @@
 
 <string>
 	<id>865</id>
+	<value>Number of minutes until sleep:</value>
+</string>
+<string>
+	<id>866</id>
+	<value>Decrease volume over time</value>
+</string>
+<string>
+	<id>867</id>
+	<value>Shutdown computer</value>
+</string>
+<string>
+	<id>868</id>
+	<value>Reset</value>
+</string>
+<!-- End My Alarm Strings -->
+<string>
+	<id>900</id>
 	<value>Resume movie from last time ?</value>
 </string>
 
@@ -2341,7 +2358,7 @@
 </string>
 <string>
 	<id>8004</id>
-	<value>new messages</value>
+	<value>You have new Mail!</value>
 </string>
 <string>
 	<id>8005</id>
@@ -2349,7 +2366,7 @@
 </string>
 <string>
 	<id>8007</id>
-	<value>Autocheck On</value>
+	<value>Autocheck On/Off</value>
 </string>
 <string>
 	<id>8008</id>
@@ -2401,11 +2418,11 @@
 </string>
 <string>
 	<id>8020</id>
-	<value>Show HTML-Body</value>
+	<value>Delete Mail</value>
 </string>
 <string>
 	<id>8021</id>
-	<value>Mark as Read</value>
+	<value>Set as read</value>
 </string>
 <string>
 	<id>8022</id>

@@ -32,6 +32,16 @@
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
+			<description>Number of Files Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>270</posX>
+			<posY>530</posY>
+			<label>#itemcount</label>
+			<align>left</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
 			<description>Selected item Label</description>
 			<type>label</type>
 			<id>1</id>
@@ -52,6 +62,17 @@
 			<onup>5</onup>
 			<ondown>5</ondown>
 			<onright>5</onright> 
+		</control>
+		<control>
+			<description>Sleep timer Button</description> 
+			<type>button</type> 
+			<id>4</id> 
+			<posX>60</posX> 
+			<posY>131</posY> 
+			<label>859</label> 
+			<onright>7</onright> 
+			<onup>4</onup> 
+			<ondown>6</ondown> 
 		</control>
 		<control>
 			<description>alarms listcontrol</description> 
