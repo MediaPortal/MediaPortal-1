@@ -764,28 +764,27 @@ namespace MediaPortal.GUI.TV
 						ViewChannel(chan.Name) ;
 						return;
 					}
-
-				
-					return;
 				}
+				
+				return;
+			}
 
-				ArrayList m_channels=new ArrayList();
-				TVDatabase.GetChannels(ref m_channels);
-			
-				// get current channel name
-				for (int i=0; i < m_channels.Count;++i)
+			ArrayList m_channels=new ArrayList();
+			TVDatabase.GetChannels(ref m_channels);
+		
+			// get current channel name
+			for (int i=0; i < m_channels.Count;++i)
+			{
+				TVChannel chan=(TVChannel)m_channels[i];
+				if (String.Compare(chan.Name,strChannel,true)==0 )
 				{
-					TVChannel chan=(TVChannel)m_channels[i];
-					if (String.Compare(chan.Name,strChannel,true)==0 )
-					{
-						//select previous channel
-						int iPrev=i-1;
-						if (iPrev<0) iPrev=m_channels.Count-1;
-						chan=(TVChannel)m_channels[iPrev];
-						// where in TVHome screen, so switch immediatly
-						ViewChannel(chan.Name) ;
-						return;					
-					}
+					//select previous channel
+					int iPrev=i-1;
+					if (iPrev<0) iPrev=m_channels.Count-1;
+					chan=(TVChannel)m_channels[iPrev];
+					// where in TVHome screen, so switch immediatly
+					ViewChannel(chan.Name) ;
+					return;					
 				}
 			}
 		}
