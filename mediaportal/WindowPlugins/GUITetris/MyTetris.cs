@@ -134,8 +134,6 @@ namespace MediaPortal.Games.Tetris
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					base.OnMessage(message);
-					GUIGraphicsContext.Overlay=false;
-
 					_Settings.Load();
 
 					if(_Settings.Music)
