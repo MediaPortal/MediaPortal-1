@@ -59,7 +59,7 @@ namespace MediaPortal.TV.Recording
 			formCountry.ShowDialog();
 			string countryName=formCountry.countryName;
 			if (countryName==String.Empty) return;
-
+			Log.Write("auto tune for {0}", countryName);
 			frequencies.Clear();
 
 			countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
@@ -67,14 +67,16 @@ namespace MediaPortal.TV.Recording
 			{
 				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
 				if (name!=countryName) continue;
-				
+				Log.Write("found country {0} in dvbt.xml", countryName);
 				try
 				{
 					scanOffset =  XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+					Log.Write("scanoffset: {0} ", scanOffset);
 				}
 				catch(Exception){}
 
 				XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+				Log.Write("number of carriers:{0}", frequencyList.Count);
 				int[] carrier;
 				foreach (XmlNode node in frequencyList)
 				{
@@ -90,6 +92,7 @@ namespace MediaPortal.TV.Recording
 					Log.Write("added:{0}", carrier[0]);
 				}
 			}
+			if (frequencies.Count==0) return;
 
 			Log.Write("loaded:{0} frequencies", frequencies.Count);
 			Log.Write("{0} has a scan offset of {1}KHz", countryCode, scanOffset);

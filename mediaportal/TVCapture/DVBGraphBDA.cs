@@ -2326,6 +2326,7 @@ namespace MediaPortal.TV.Recording
 		{
 			//if no network provider then return;
 			if (m_NetworkProvider==null) return;
+			if (tuningObject==null) return;
 			channelList = new ArrayList();
 
 			//start viewing if we're not yet viewing

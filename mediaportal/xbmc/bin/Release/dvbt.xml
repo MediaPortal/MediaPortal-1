@@ -3,174 +3,171 @@
 <!-- added all european and australian frequencies                                   -->
 <dvbt>
 	<country name="Australia" offset="125">
-		<carrier frequency="177500" bandwidth="7"/>
-		<carrier frequency="184500" bandwidth="7"/>
-		<carrier frequency="191500" bandwidth="7"/>
-		<carrier frequency="198500" bandwidth="7"/>
-		<carrier frequency="205500" bandwidth="7"/>
-		<carrier frequency="212500" bandwidth="7"/>
-		<carrier frequency="219500" bandwidth="7"/>
-		<carrier frequency="226500" bandwidth="7"/>
-		<carrier frequency="529500" bandwidth="7"/>
-		<carrier frequency="536500" bandwidth="7"/>
-		<carrier frequency="543500" bandwidth="7"/>
-		<carrier frequency="550500" bandwidth="7"/>
-		<carrier frequency="557500" bandwidth="7"/>
-		<carrier frequency="564500" bandwidth="7"/>
-		<carrier frequency="571500" bandwidth="7"/>
-		<carrier frequency="578500" bandwidth="7"/>
-		<carrier frequency="585500" bandwidth="7"/>
-		<carrier frequency="592500" bandwidth="7"/>
-		<carrier frequency="599500" bandwidth="7"/>
-		<carrier frequency="606500" bandwidth="7"/>
-		<carrier frequency="613500" bandwidth="7"/>
-		<carrier frequency="620500" bandwidth="7"/>
-		<carrier frequency="627500" bandwidth="7"/>
-		<carrier frequency="634500" bandwidth="7"/>
-		<carrier frequency="641500" bandwidth="7"/>
-		<carrier frequency="648500" bandwidth="7"/>
-		<carrier frequency="655500" bandwidth="7"/>
-		<carrier frequency="662500" bandwidth="7"/>
-		<carrier frequency="669500" bandwidth="7"/>
-		<carrier frequency="676500" bandwidth="7"/>
-		<carrier frequency="683500" bandwidth="7"/>
-		<carrier frequency="690500" bandwidth="7"/>
-		<carrier frequency="697500" bandwidth="7"/>
-		<carrier frequency="704500" bandwidth="7"/>
-		<carrier frequency="711500" bandwidth="7"/>
-		<carrier frequency="718500" bandwidth="7"/>
-		<carrier frequency="725500" bandwidth="7"/>
-		<carrier frequency="732500" bandwidth="7"/>
-		<carrier frequency="739500" bandwidth="7"/>
-		<carrier frequency="746500" bandwidth="7"/>
-		<carrier frequency="753500" bandwidth="7"/>
-		<carrier frequency="760500" bandwidth="7"/>
-		<carrier frequency="767500" bandwidth="7"/>
-		<carrier frequency="774500" bandwidth="7"/>
-		<carrier frequency="781500" bandwidth="7"/>
-		<carrier frequency="788500" bandwidth="7"/>
-		<carrier frequency="795500" bandwidth="7"/>
-		<carrier frequency="802500" bandwidth="7"/>
-		<carrier frequency="809500" bandwidth="7"/>
-		<carrier frequency="816500" bandwidth="7"/>
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="184500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="198500" bandwidth="7" />
+		<carrier frequency="205500" bandwidth="7" />
+		<carrier frequency="212500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="529500" bandwidth="7" />
+		<carrier frequency="536500" bandwidth="7" />
+		<carrier frequency="543500" bandwidth="7" />
+		<carrier frequency="550500" bandwidth="7" />
+		<carrier frequency="557500" bandwidth="7" />
+		<carrier frequency="564500" bandwidth="7" />
+		<carrier frequency="571500" bandwidth="7" />
+		<carrier frequency="578500" bandwidth="7" />
+		<carrier frequency="585500" bandwidth="7" />
+		<carrier frequency="592500" bandwidth="7" />
+		<carrier frequency="599500" bandwidth="7" />
+		<carrier frequency="606500" bandwidth="7" />
+		<carrier frequency="613500" bandwidth="7" />
+		<carrier frequency="620500" bandwidth="7" />
+		<carrier frequency="627500" bandwidth="7" />
+		<carrier frequency="634500" bandwidth="7" />
+		<carrier frequency="641500" bandwidth="7" />
+		<carrier frequency="648500" bandwidth="7" />
+		<carrier frequency="655500" bandwidth="7" />
+		<carrier frequency="662500" bandwidth="7" />
+		<carrier frequency="669500" bandwidth="7" />
+		<carrier frequency="676500" bandwidth="7" />
+		<carrier frequency="683500" bandwidth="7" />
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="697500" bandwidth="7" />
+		<carrier frequency="704500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="718500" bandwidth="7" />
+		<carrier frequency="725500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="739500" bandwidth="7" />
+		<carrier frequency="746500" bandwidth="7" />
+		<carrier frequency="753500" bandwidth="7" />
+		<carrier frequency="760500" bandwidth="7" />
+		<carrier frequency="767500" bandwidth="7" />
+		<carrier frequency="774500" bandwidth="7" />
+		<carrier frequency="781500" bandwidth="7" />
+		<carrier frequency="788500" bandwidth="7" />
+		<carrier frequency="795500" bandwidth="7" />
+		<carrier frequency="802500" bandwidth="7" />
+		<carrier frequency="809500" bandwidth="7" />
+		<carrier frequency="816500" bandwidth="7" />
 	</country>
-	
 	<country name="All">
-		<frequencies>
-			<frequency carrier="84500"/>
-			<frequency carrier="56000"/>
-			<frequency carrier="64500"/>
-			<frequency carrier="177500"/>
-			<frequency carrier="184500"/>
-			<frequency carrier="186000"/>
-			<frequency carrier="194500"/>
-			<frequency carrier="191500"/>
-			<frequency carrier="191625"/>
-			<frequency carrier="198500"/>
-			<frequency carrier="203500"/>
-			<frequency carrier="205500"/>
-			<frequency carrier="212500"/>
-			<frequency carrier="219500"/>
-			<frequency carrier="226500"/>
-			<frequency carrier="474000"/>
-			<frequency carrier="481833"/>
-			<frequency carrier="482000"/>
-			<frequency carrier="490000"/>
-			<frequency carrier="498000"/>
-			<frequency carrier="505833"/>
-			<frequency carrier="506000"/>
-			<frequency carrier="514000"/>
-			<frequency carrier="522000"/>
-			<frequency carrier="529500"/>
-			<frequency carrier="529833"/>
-			<frequency carrier="530000"/>
-			<frequency carrier="536500"/>
-			<frequency carrier="537833"/>
-			<frequency carrier="538000"/>
-			<frequency carrier="543500"/>
-			<frequency carrier="546000"/>
-			<frequency carrier="550500"/>
-			<frequency carrier="554000"/>
-			<frequency carrier="561833"/>
-			<frequency carrier="564500"/>
-			<frequency carrier="557500"/>
-			<frequency carrier="562000"/>
-			<frequency carrier="570000"/>
-			<frequency carrier="571500"/>
-			<frequency carrier="578000"/>
-			<frequency carrier="578500"/>
-			<frequency carrier="578833"/>
-			<frequency carrier="585500"/>
-			<frequency carrier="585625"/>
-			<frequency carrier="586000"/>
-			<frequency carrier="592500"/>
-			<frequency carrier="594000"/>
-			<frequency carrier="599500"/>
-			<frequency carrier="602000"/>
-			<frequency carrier="606500"/>
-			<frequency carrier="610000"/>
-			<frequency carrier="613500"/>
-			<frequency carrier="618000"/>
-			<frequency carrier="620500"/>
-			<frequency carrier="626000"/>
-			<frequency carrier="627500"/>
-			<frequency carrier="634000"/>
-			<frequency carrier="634500"/>
-			<frequency carrier="641500"/>
-			<frequency carrier="642000"/>
-			<frequency carrier="648500"/>
-			<frequency carrier="650000"/>
-			<frequency carrier="655500"/>
-			<frequency carrier="658000"/>
-			<frequency carrier="662500"/>
-			<frequency carrier="666000"/>
-			<frequency carrier="669500"/>
-			<frequency carrier="674000"/>
-			<frequency carrier="676500"/>
-			<frequency carrier="682000"/>
-			<frequency carrier="683500"/>
-			<frequency carrier="690000"/>
-			<frequency carrier="690500"/>
-			<frequency carrier="697500"/>
-			<frequency carrier="698000"/>
-			<frequency carrier="704500"/>
-			<frequency carrier="706000"/>
-			<frequency carrier="711500"/>
-			<frequency carrier="714000"/>
-			<frequency carrier="718500"/>
-			<frequency carrier="722000"/>
-			<frequency carrier="725500"/>
-			<frequency carrier="730000"/>
-			<frequency carrier="732500"/>
-			<frequency carrier="738000"/>
-			<frequency carrier="739500"/>
-			<frequency carrier="746000"/>
-			<frequency carrier="753500"/>
-			<frequency carrier="754000"/>
-			<frequency carrier="760500"/>
-			<frequency carrier="762000"/>
-			<frequency carrier="770000"/>
-			<frequency carrier="767500"/>
-			<frequency carrier="774500"/>
-			<frequency carrier="778000"/>
-			<frequency carrier="781500"/>
-			<frequency carrier="788500"/>
-			<frequency carrier="786000"/>
-			<frequency carrier="795500"/>
-			<frequency carrier="794000"/>
-			<frequency carrier="802000"/>
-			<frequency carrier="802500"/>
-			<frequency carrier="809500"/>
-			<frequency carrier="810000"/>
-			<frequency carrier="816500"/>
-			<frequency carrier="818000"/>
-			<frequency carrier="826000"/>
-			<frequency carrier="834000"/>
-			<frequency carrier="842000"/>
-			<frequency carrier="850000"/>
-			<frequency carrier="858000"/>
-			<frequency carrier="816500"/>
-			<frequency carrier="866000"/>
-		</frequencies>
+		<carrier frequency="84500" />
+		<carrier frequency="56000" />
+		<carrier frequency="64500" />
+		<carrier frequency="177500" />
+		<carrier frequency="184500" />
+		<carrier frequency="186000" />
+		<carrier frequency="194500" />
+		<carrier frequency="191500" />
+		<carrier frequency="191625" />
+		<carrier frequency="198500" />
+		<carrier frequency="203500" />
+		<carrier frequency="205500" />
+		<carrier frequency="212500" />
+		<carrier frequency="219500" />
+		<carrier frequency="226500" />
+		<carrier frequency="474000" />
+		<carrier frequency="481833" />
+		<carrier frequency="482000" />
+		<carrier frequency="490000" />
+		<carrier frequency="498000" />
+		<carrier frequency="505833" />
+		<carrier frequency="506000" />
+		<carrier frequency="514000" />
+		<carrier frequency="522000" />
+		<carrier frequency="529500" />
+		<carrier frequency="529833" />
+		<carrier frequency="530000" />
+		<carrier frequency="536500" />
+		<carrier frequency="537833" />
+		<carrier frequency="538000" />
+		<carrier frequency="543500" />
+		<carrier frequency="546000" />
+		<carrier frequency="550500" />
+		<carrier frequency="554000" />
+		<carrier frequency="561833" />
+		<carrier frequency="564500" />
+		<carrier frequency="557500" />
+		<carrier frequency="562000" />
+		<carrier frequency="570000" />
+		<carrier frequency="571500" />
+		<carrier frequency="578000" />
+		<carrier frequency="578500" />
+		<carrier frequency="578833" />
+		<carrier frequency="585500" />
+		<carrier frequency="585625" />
+		<carrier frequency="586000" />
+		<carrier frequency="592500" />
+		<carrier frequency="594000" />
+		<carrier frequency="599500" />
+		<carrier frequency="602000" />
+		<carrier frequency="606500" />
+		<carrier frequency="610000" />
+		<carrier frequency="613500" />
+		<carrier frequency="618000" />
+		<carrier frequency="620500" />
+		<carrier frequency="626000" />
+		<carrier frequency="627500" />
+		<carrier frequency="634000" />
+		<carrier frequency="634500" />
+		<carrier frequency="641500" />
+		<carrier frequency="642000" />
+		<carrier frequency="648500" />
+		<carrier frequency="650000" />
+		<carrier frequency="655500" />
+		<carrier frequency="658000" />
+		<carrier frequency="662500" />
+		<carrier frequency="666000" />
+		<carrier frequency="669500" />
+		<carrier frequency="674000" />
+		<carrier frequency="676500" />
+		<carrier frequency="682000" />
+		<carrier frequency="683500" />
+		<carrier frequency="690000" />
+		<carrier frequency="690500" />
+		<carrier frequency="697500" />
+		<carrier frequency="698000" />
+		<carrier frequency="704500" />
+		<carrier frequency="706000" />
+		<carrier frequency="711500" />
+		<carrier frequency="714000" />
+		<carrier frequency="718500" />
+		<carrier frequency="722000" />
+		<carrier frequency="725500" />
+		<carrier frequency="730000" />
+		<carrier frequency="732500" />
+		<carrier frequency="738000" />
+		<carrier frequency="739500" />
+		<carrier frequency="746000" />
+		<carrier frequency="753500" />
+		<carrier frequency="754000" />
+		<carrier frequency="760500" />
+		<carrier frequency="762000" />
+		<carrier frequency="770000" />
+		<carrier frequency="767500" />
+		<carrier frequency="774500" />
+		<carrier frequency="778000" />
+		<carrier frequency="781500" />
+		<carrier frequency="788500" />
+		<carrier frequency="786000" />
+		<carrier frequency="795500" />
+		<carrier frequency="794000" />
+		<carrier frequency="802000" />
+		<carrier frequency="802500" />
+		<carrier frequency="809500" />
+		<carrier frequency="810000" />
+		<carrier frequency="816500" />
+		<carrier frequency="818000" />
+		<carrier frequency="826000" />
+		<carrier frequency="834000" />
+		<carrier frequency="842000" />
+		<carrier frequency="850000" />
+		<carrier frequency="858000" />
+		<carrier frequency="816500" />
+		<carrier frequency="866000" />
 	</country>
 </dvbt>
