@@ -446,10 +446,10 @@ namespace MediaPortal.GUI.Library
 
 			if (m_CurrentKey!=(char)0)
       {
-        line=line.Insert(m_iPos,m_CurrentKey.ToString());
+				line=line.Insert(m_iPos,m_CurrentKey.ToString());
+				line=line.Insert(m_iPos+1, "_");			
       }
-
-			line=line.Insert(m_iPos, "_");			
+			else line=line.Insert(m_iPos, "_");			
 
       float fCaretWidth = 0.0f;
       float fCaretHeight=0.0f;

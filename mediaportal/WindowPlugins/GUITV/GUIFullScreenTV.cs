@@ -619,6 +619,7 @@ namespace MediaPortal.GUI.TV
 			dlg.AddLocalizedString(941); // Change aspect ratio
 			if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
 			{
+
 				dlg.AddLocalizedString(12902); // MSN Messenger
 				dlg.AddLocalizedString(902); // MSN Online contacts
 			}
