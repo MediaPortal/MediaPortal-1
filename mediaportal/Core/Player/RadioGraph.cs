@@ -338,7 +338,7 @@ namespace MediaPortal.Player
         if (m_TVTuner == null) return 0;
         int iFreq=0;
         m_TVTuner.get_AudioFrequency(out iFreq);
-        return iFreq;
+        return iFreq; 
 
       }
     }
