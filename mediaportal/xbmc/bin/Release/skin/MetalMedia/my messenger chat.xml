@@ -1,6 +1,6 @@
 <window>
-	<id>32</id>
-	<defaultcontrol>2</defaultcontrol>
+	<id>33</id>
+	<defaultcontrol>51</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<controls>
 		<control>
