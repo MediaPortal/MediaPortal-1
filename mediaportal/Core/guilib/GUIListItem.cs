@@ -411,8 +411,8 @@ namespace MediaPortal.GUI.Library
     void RetrieveArt()
     {
       if (m_bArtRetrieved) return;
-      if (OnRetrieveArt!=null) OnRetrieveArt(this);
       m_bArtRetrieved=true;
+      if (OnRetrieveArt!=null) OnRetrieveArt(this);
     }
     
     

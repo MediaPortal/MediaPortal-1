@@ -130,13 +130,16 @@ namespace MediaPortal.GUI.Library
                   
                   //Log.Write("  load plugin:{0} in {1}",t.ToString(), strFile);
                 }
-                
                 foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
                 if (foundInterfaces.Length>0)
                 {
                   object newObj=(object)Activator.CreateInstance(t);
                   ISetupForm  setup=(ISetupForm)newObj;
-                  _SetupForms.Add(setup);
+                  
+                  if (IsPluginNameEnabled(setup.PluginName()))
+                  {
+                    _SetupForms.Add(setup);
+                  }
                 }
               }
             }
@@ -174,8 +177,11 @@ namespace MediaPortal.GUI.Library
                 {
                   object newObj=(object)Activator.CreateInstance(t);
                   GUIWindow win=(GUIWindow)newObj;
-                  win.Init();
-                  GUIWindowManager.Add(ref win);
+                  if (IsWindowPlugInEnabled(win.GetType().ToString()))
+                  {
+                    win.Init();
+                    GUIWindowManager.Add(ref win);
+                  }
                   //Log.Write("  load plugin:{0} in {1}",t.ToString(), strFile);
                 }
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
@@ -184,7 +190,10 @@ namespace MediaPortal.GUI.Library
                 {
                   object newObj=(object)Activator.CreateInstance(t);
                   ISetupForm  setup=(ISetupForm)newObj;
-                  _SetupForms.Add(setup);
+                  if (IsPluginNameEnabled(setup.PluginName()))
+                  {
+                    _SetupForms.Add(setup);
+                  }
                 }
               }
             }
@@ -214,6 +223,26 @@ namespace MediaPortal.GUI.Library
         
         strDllname=strDllname.Substring(strDllname.LastIndexOf(@"\")+1);
         bool bEnabled=xmlreader.GetValueAsBool("pluginsdlls",strDllname,true);
+        return bEnabled;
+        
+      } 
+    }
+    static public bool IsWindowPlugInEnabled(string strType)
+    {
+
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        bool bEnabled=xmlreader.GetValueAsBool("pluginswindows",strType,true);
+        return bEnabled;
+        
+      } 
+    }
+    static public bool IsPluginNameEnabled(string strType)
+    {
+
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        bool bEnabled=xmlreader.GetValueAsBool("plugins",strType,true);
         return bEnabled;
         
       } 

@@ -16,6 +16,8 @@ namespace MediaPortal.Configuration.Sections
     {
       public string      DLLName;
       public ISetupForm  SetupForm;
+      public string      strType;
+      public int         windowId=-1;
     };
 		private System.Windows.Forms.GroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPListView pluginsListView;
@@ -105,36 +107,61 @@ namespace MediaPortal.Configuration.Sections
 		{
 			foreach(string pluginFile in availablePlugins)
 			{
-				try
-				{
-					Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+        try
+        {
+          Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
 
-					if(pluginAssembly != null)
-					{
-						Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+          if(pluginAssembly != null)
+          {
+            Type[] exportedTypes = pluginAssembly.GetExportedTypes();
 
-						foreach(Type type in exportedTypes)
-						{
-							//
-							// Try to locate the interface we're interested in
-							//
-							if(type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
-							{
-								//
-								// Create instance of the current type
-								//
-								object pluginObject = (object)Activator.CreateInstance(type);
-								ISetupForm pluginForm = pluginObject as ISetupForm;
+            foreach(Type type in exportedTypes)
+            {
+              //
+              // Try to locate the interface we're interested in
+              //
+              if(type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+              {
+                //
+                // Create instance of the current type
+                //
+                object pluginObject = (object)Activator.CreateInstance(type);
+                ISetupForm pluginForm = pluginObject as ISetupForm;
 
-								if(pluginForm != null)
-								{
+                if(pluginForm != null)
+                {
                   ItemTag tag = new ItemTag();
                   tag.SetupForm=pluginForm;
                   tag.DLLName=pluginFile.Substring(pluginFile.LastIndexOf(@"\")+1);
-									loadedPlugins.Add(tag);
-								}
-							}
-						}
+                  tag.windowId=pluginForm.GetWindowId();
+                  loadedPlugins.Add(tag);
+                }
+              }
+            }
+            foreach (Type t in exportedTypes)
+            {
+              try
+              {
+                if (t.IsClass)
+                {
+                  if (t.IsSubclassOf (typeof(GUIWindow)))
+                  {
+                    object newObj=(object)Activator.CreateInstance(t);
+                    GUIWindow win=(GUIWindow)newObj;
+
+                    foreach (ItemTag tag in loadedPlugins)
+                    {
+                      if (tag.windowId==win.GetID)
+                      {
+                        tag.strType=win.GetType().ToString();
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+              catch{}
+            }
 					}
 				}
 				catch
@@ -184,6 +211,10 @@ namespace MediaPortal.Configuration.Sections
           else bEnabled=true;
           xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
 					xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, bEnabled);
+          if (itemTag.strType!=String.Empty)
+          {
+            xmlwriter.SetValueAsBool("pluginswindows", itemTag.strType, bEnabled);
+          }
         }
 			}			
 		}

@@ -416,6 +416,8 @@ namespace MediaPortal.GUI.Library
       
       m_imgFocus.SetPosition(m_dwPosX, m_dwPosY);
       m_imgNoFocus.SetPosition(m_dwPosX, m_dwPosY);
+      m_imgFocus.DoUpdate();
+      m_imgNoFocus.DoUpdate();
 		}
 
 		public void Refresh()

@@ -165,11 +165,13 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-      SetHeading (GUILocalizeStrings.Get(iString) );
+      if (iString==0) SetHeading ("");
+      else SetHeading (GUILocalizeStrings.Get(iString) );
     }
 
     public void SetLine(int iLine, string strLine)
     {
+      if (iLine<=0) return;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2+iLine,0,0,null);
       msg.Label=strLine; 
       OnMessage(msg);
@@ -177,6 +179,8 @@ namespace MediaPortal.Dialogs
 
     public void SetLine(int iLine,int iString)
     {
+      if (iLine<=0) return;
+      if (iString==0) SetLine (iLine, "");
       SetLine (iLine, GUILocalizeStrings.Get(iString) );
     }
 

@@ -1190,7 +1190,7 @@ GUISpinControl m_upDown = null;
         {
           btn.Height = m_iTextureHeight;
           btn.Width = m_iTextureWidth;
-          btn.Refresh();
+          btn.DoUpdate();
         }
       }
 		}
