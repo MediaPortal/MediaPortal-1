@@ -34,6 +34,9 @@ public class MediaPortalApp : D3DApp
           Log.Write("Start MediaPortal");
           try
           {
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
             app.Run();
           }
           catch (Exception ex)
@@ -155,7 +158,6 @@ public class MediaPortalApp : D3DApp
       {
         if(GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing)
         {
-          System.Threading.Thread.Sleep(100);
           GUIWindowManager.DispatchThreadMessages();
           SetVideoRect();
           g_Player.Process();
