@@ -15,8 +15,9 @@ My TV:
   - recordings button doesnt do anything. Should show all recorded 
     programs and allow the user to pick/play one
   - A way to browse and resolve recording conflicts. 
-  - OSD for full screen TV
-   
+  - full screen TV OSD
+     - show current program running
+     
   TVGuide:
      - 
 
@@ -27,7 +28,7 @@ My TV:
     - add BDA support
     - support multiple tuners/capture cards
     - brightness/contrast etc. control
-    - stutter ?
+    - stutter /avsync ?
     
 My Music:
   - faster start of 1st song played
@@ -58,10 +59,12 @@ General:
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
   - better mouse control 
+     - OSD has no mouse support yet
+     - tvguide has no mouse support yet
      - mouse wheel for scrolling
-     - OSD onscreen for mouse control
+     - in GUI: slide in OSD when mouse touches bottom of screen
      - scrollbar
-     - tvguide
+     
   - specify default share. 
   - OSD keyboard : add mouse control & keyboard control
   - my files  

@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  31-04-2004: my tv       : fixed : timezone correction corrected minutes instead of hours
   31-04-2004: my music    : fixed : in fullscreen mode WMP9 got all keyboard presses and thus prev/next song etc where not working
   31-04-2004: my video    : fixed : dvd player didnt play commercial discs
   31-04-2004: setup       : fixed : crash if entering setup during recording/previewing
