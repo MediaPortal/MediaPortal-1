@@ -1001,18 +1001,13 @@ namespace MediaPortal.GUI.Pictures
 
     static public string GetThumbnail(string strPhoto)
     {
-      if (strPhoto==String.Empty) return String.Empty;
-      string thumb= String.Format(@"{0}\{1}.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
-			if (System.IO.File.Exists(thumb)) return thumb;
-			return String.Empty;
+      if (strPhoto==String.Empty) return String.Empty;		
+      return String.Format(@"{0}\{1}.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
     }
     static public string GetLargeThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;
-			string thumb= String.Format(@"{0}\{1}L.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
-			if (System.IO.File.Exists(thumb)) return thumb;
-			
-			return String.Empty;
+      return String.Format(@"{0}\{1}L.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
     }
 
 		#region ISetupForm Members
