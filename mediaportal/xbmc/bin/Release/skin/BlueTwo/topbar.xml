@@ -1,6 +1,6 @@
 <window>
-	<id>3004</id>
-	<defaultcontrol>10</defaultcontrol>
+	<id>3005</id>
+	<defaultcontrol>21</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<autohide>yes</autohide>
 <controls>
@@ -14,7 +14,7 @@
 	<control>
 		<description>Back button</description>
 		<type>button</type>
-		<id>20</id>
+		<id>21</id>
 		<posX>45</posX>
 		<posY>5</posY>
 		<width>42</width>
@@ -26,7 +26,7 @@
 		<action>10</action>
 		<onleft>31</onleft>
 		<onright>22</onright>
-		<onup>20</onup>
+		<onup>21</onup>
 		<ondown>2</ondown>
 	</control>
 	<control>
@@ -41,7 +41,7 @@
 		<textureNoFocus>skipback_disabled.png</textureNoFocus>
 		<action>15</action>
 		<label>-</label>
-		<onleft>20</onleft>
+		<onleft>21</onleft>
 		<onright>23</onright>
 		<onup>22</onup>
 		<ondown>2</ondown>
@@ -93,7 +93,7 @@
 		<action>12</action>
 		<label>-</label>
 		<onleft>24</onleft>
-		<onright>26</onright>
+		<onright>27</onright>
 		<onup>25</onup>
 		<ondown>2</ondown>
 	</control>
@@ -109,7 +109,7 @@
 		<textureNoFocus>stop_disabled.png</textureNoFocus>
 		<action>13</action>
 		<label>-</label>
-		<onleft>26</onleft>
+		<onleft>25</onleft>
 		<onright>28</onright>
 		<onup>27</onup>
 		<ondown>2</ondown>
@@ -180,7 +180,7 @@
 		<label>-</label>
 		<action>97</action>
 		<onleft>30</onleft>
-		<onright>20</onright>
+		<onright>21</onright>
 		<onup>31</onup>
 		<ondown>2</ondown>
 	</control>		
