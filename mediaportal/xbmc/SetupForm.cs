@@ -229,6 +229,10 @@ namespace MediaPortal
     private System.Windows.Forms.Button btnTuneRadio;
     private System.Windows.Forms.TextBox textBoxRadio;
     private System.Windows.Forms.GroupBox groupBox21;
+    private System.Windows.Forms.GroupBox groupBox22;
+    private System.Windows.Forms.RadioButton radioButtonCable;
+    private System.Windows.Forms.RadioButton radioButtonAntenna;
+    private System.Windows.Forms.ComboBox comboBoxRadioDevice;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -299,7 +303,6 @@ namespace MediaPortal
 
       UpdateCaptureCardList();
     
-      LoadRadioStations();
     }
 
 
@@ -345,28 +348,6 @@ namespace MediaPortal
       this.checkBoxMouseSupport = new System.Windows.Forms.CheckBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.groupBox14 = new System.Windows.Forms.GroupBox();
-      this.tabTVChannels = new System.Windows.Forms.TabPage();
-      this.groupBox20 = new System.Windows.Forms.GroupBox();
-      this.btnXMLTVFolder = new System.Windows.Forms.Button();
-      this.textBoxXMLTVFolder = new System.Windows.Forms.TextBox();
-      this.groupBox19 = new System.Windows.Forms.GroupBox();
-      this.checkBoxTVGuideColors = new System.Windows.Forms.CheckBox();
-      this.label37 = new System.Windows.Forms.Label();
-      this.label36 = new System.Windows.Forms.Label();
-      this.timeZoneCorrection = new System.Windows.Forms.NumericUpDown();
-      this.xmltvTimeZoneCheck = new System.Windows.Forms.CheckBox();
-      this.btnEditChannel = new System.Windows.Forms.Button();
-      this.btnDelChannel = new System.Windows.Forms.Button();
-      this.btnNewChannel = new System.Windows.Forms.Button();
-      this.btnTvChannelDown = new System.Windows.Forms.Button();
-      this.btnTvChannelUp = new System.Windows.Forms.Button();
-      this.listTVChannels = new MediaPortal.WinControls.ListViewEx();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.groupBox18 = new System.Windows.Forms.GroupBox();
-      this.buttonAutoTune2 = new System.Windows.Forms.Button();
-      this.textEditBox = new System.Windows.Forms.TextBox();
       this.tabPageCapture = new System.Windows.Forms.TabPage();
       this.btnEditCaptureDevice = new System.Windows.Forms.Button();
       this.btnDelCaptureDevice = new System.Windows.Forms.Button();
@@ -394,6 +375,28 @@ namespace MediaPortal
       this.label31 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.UpDownPreRecording = new System.Windows.Forms.NumericUpDown();
+      this.tabTVChannels = new System.Windows.Forms.TabPage();
+      this.groupBox20 = new System.Windows.Forms.GroupBox();
+      this.btnXMLTVFolder = new System.Windows.Forms.Button();
+      this.textBoxXMLTVFolder = new System.Windows.Forms.TextBox();
+      this.groupBox19 = new System.Windows.Forms.GroupBox();
+      this.checkBoxTVGuideColors = new System.Windows.Forms.CheckBox();
+      this.label37 = new System.Windows.Forms.Label();
+      this.label36 = new System.Windows.Forms.Label();
+      this.timeZoneCorrection = new System.Windows.Forms.NumericUpDown();
+      this.xmltvTimeZoneCheck = new System.Windows.Forms.CheckBox();
+      this.btnEditChannel = new System.Windows.Forms.Button();
+      this.btnDelChannel = new System.Windows.Forms.Button();
+      this.btnNewChannel = new System.Windows.Forms.Button();
+      this.btnTvChannelDown = new System.Windows.Forms.Button();
+      this.btnTvChannelUp = new System.Windows.Forms.Button();
+      this.listTVChannels = new MediaPortal.WinControls.ListViewEx();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox18 = new System.Windows.Forms.GroupBox();
+      this.buttonAutoTune2 = new System.Windows.Forms.Button();
+      this.textEditBox = new System.Windows.Forms.TextBox();
       this.tabAudioShares = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.btnPlayListFolder = new System.Windows.Forms.Button();
@@ -490,6 +493,9 @@ namespace MediaPortal
       this.comboAudioPlayer = new System.Windows.Forms.ComboBox();
       this.tabPageRadio = new System.Windows.Forms.TabPage();
       this.groupBox21 = new System.Windows.Forms.GroupBox();
+      this.groupBox22 = new System.Windows.Forms.GroupBox();
+      this.radioButtonAntenna = new System.Windows.Forms.RadioButton();
+      this.radioButtonCable = new System.Windows.Forms.RadioButton();
       this.listViewRadio = new MediaPortal.WinControls.ListViewEx();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
@@ -526,20 +532,21 @@ namespace MediaPortal
       this.label2 = new System.Windows.Forms.Label();
       this.dvdParams = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.comboBoxRadioDevice = new System.Windows.Forms.ComboBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.Skin.SuspendLayout();
-      this.tabTVChannels.SuspendLayout();
-      this.groupBox20.SuspendLayout();
-      this.groupBox19.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
-      this.groupBox18.SuspendLayout();
       this.tabPageCapture.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).BeginInit();
       this.groupBox13.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).BeginInit();
       this.groupBox17.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).BeginInit();
+      this.tabTVChannels.SuspendLayout();
+      this.groupBox20.SuspendLayout();
+      this.groupBox19.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
+      this.groupBox18.SuspendLayout();
       this.tabAudioShares.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.audioGroupBox.SuspendLayout();
@@ -567,6 +574,7 @@ namespace MediaPortal
       this.groupBox15.SuspendLayout();
       this.tabPageRadio.SuspendLayout();
       this.groupBox21.SuspendLayout();
+      this.groupBox22.SuspendLayout();
       this.TabDVDPlayer.SuspendLayout();
       this.groupBox12.SuspendLayout();
       this.groupBox11.SuspendLayout();
@@ -577,8 +585,8 @@ namespace MediaPortal
       // tabControl
       // 
       this.tabControl.Controls.Add(this.tabGeneral);
-      this.tabControl.Controls.Add(this.tabTVChannels);
       this.tabControl.Controls.Add(this.tabPageCapture);
+      this.tabControl.Controls.Add(this.tabTVChannels);
       this.tabControl.Controls.Add(this.tabAudioShares);
       this.tabControl.Controls.Add(this.tabVideoShares);
       this.tabControl.Controls.Add(this.tabPictureShares);
@@ -749,221 +757,6 @@ namespace MediaPortal
       this.groupBox14.TabIndex = 5;
       this.groupBox14.TabStop = false;
       this.groupBox14.Text = "Project info";
-      // 
-      // tabTVChannels
-      // 
-      this.tabTVChannels.Controls.Add(this.groupBox20);
-      this.tabTVChannels.Controls.Add(this.groupBox19);
-      this.tabTVChannels.Controls.Add(this.btnEditChannel);
-      this.tabTVChannels.Controls.Add(this.btnDelChannel);
-      this.tabTVChannels.Controls.Add(this.btnNewChannel);
-      this.tabTVChannels.Controls.Add(this.btnTvChannelDown);
-      this.tabTVChannels.Controls.Add(this.btnTvChannelUp);
-      this.tabTVChannels.Controls.Add(this.listTVChannels);
-      this.tabTVChannels.Controls.Add(this.groupBox18);
-      this.tabTVChannels.Location = new System.Drawing.Point(4, 40);
-      this.tabTVChannels.Name = "tabTVChannels";
-      this.tabTVChannels.Size = new System.Drawing.Size(616, 356);
-      this.tabTVChannels.TabIndex = 9;
-      this.tabTVChannels.Text = "My TVGuide";
-      // 
-      // groupBox20
-      // 
-      this.groupBox20.Controls.Add(this.btnXMLTVFolder);
-      this.groupBox20.Controls.Add(this.textBoxXMLTVFolder);
-      this.groupBox20.Location = new System.Drawing.Point(8, 304);
-      this.groupBox20.Name = "groupBox20";
-      this.groupBox20.Size = new System.Drawing.Size(432, 56);
-      this.groupBox20.TabIndex = 21;
-      this.groupBox20.TabStop = false;
-      this.groupBox20.Text = "XMLTV Folder";
-      // 
-      // btnXMLTVFolder
-      // 
-      this.btnXMLTVFolder.Location = new System.Drawing.Point(376, 24);
-      this.btnXMLTVFolder.Name = "btnXMLTVFolder";
-      this.btnXMLTVFolder.Size = new System.Drawing.Size(32, 23);
-      this.btnXMLTVFolder.TabIndex = 1;
-      this.btnXMLTVFolder.Text = "...";
-      this.btnXMLTVFolder.Click += new System.EventHandler(this.btnXMLTVFolder_Click);
-      // 
-      // textBoxXMLTVFolder
-      // 
-      this.textBoxXMLTVFolder.Location = new System.Drawing.Point(16, 24);
-      this.textBoxXMLTVFolder.Name = "textBoxXMLTVFolder";
-      this.textBoxXMLTVFolder.Size = new System.Drawing.Size(352, 20);
-      this.textBoxXMLTVFolder.TabIndex = 0;
-      this.textBoxXMLTVFolder.Text = "";
-      // 
-      // groupBox19
-      // 
-      this.groupBox19.Controls.Add(this.checkBoxTVGuideColors);
-      this.groupBox19.Controls.Add(this.label37);
-      this.groupBox19.Controls.Add(this.label36);
-      this.groupBox19.Controls.Add(this.timeZoneCorrection);
-      this.groupBox19.Controls.Add(this.xmltvTimeZoneCheck);
-      this.groupBox19.Location = new System.Drawing.Point(448, 8);
-      this.groupBox19.Name = "groupBox19";
-      this.groupBox19.Size = new System.Drawing.Size(160, 352);
-      this.groupBox19.TabIndex = 20;
-      this.groupBox19.TabStop = false;
-      this.groupBox19.Text = "TVGuide";
-      // 
-      // checkBoxTVGuideColors
-      // 
-      this.checkBoxTVGuideColors.Location = new System.Drawing.Point(16, 56);
-      this.checkBoxTVGuideColors.Name = "checkBoxTVGuideColors";
-      this.checkBoxTVGuideColors.Size = new System.Drawing.Size(120, 32);
-      this.checkBoxTVGuideColors.TabIndex = 4;
-      this.checkBoxTVGuideColors.Text = "Use colors in TVGuide";
-      // 
-      // label37
-      // 
-      this.label37.Location = new System.Drawing.Point(96, 112);
-      this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(40, 16);
-      this.label37.TabIndex = 3;
-      this.label37.Text = "Hours";
-      // 
-      // label36
-      // 
-      this.label36.Location = new System.Drawing.Point(16, 96);
-      this.label36.Name = "label36";
-      this.label36.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.label36.Size = new System.Drawing.Size(128, 16);
-      this.label36.TabIndex = 1;
-      this.label36.Text = "Timezone compensation";
-      // 
-      // timeZoneCorrection
-      // 
-      this.timeZoneCorrection.Location = new System.Drawing.Point(32, 112);
-      this.timeZoneCorrection.Maximum = new System.Decimal(new int[] {
-                                                                       23,
-                                                                       0,
-                                                                       0,
-                                                                       0});
-      this.timeZoneCorrection.Minimum = new System.Decimal(new int[] {
-                                                                       23,
-                                                                       0,
-                                                                       0,
-                                                                       -2147483648});
-      this.timeZoneCorrection.Name = "timeZoneCorrection";
-      this.timeZoneCorrection.Size = new System.Drawing.Size(56, 20);
-      this.timeZoneCorrection.TabIndex = 2;
-      // 
-      // xmltvTimeZoneCheck
-      // 
-      this.xmltvTimeZoneCheck.Location = new System.Drawing.Point(16, 24);
-      this.xmltvTimeZoneCheck.Name = "xmltvTimeZoneCheck";
-      this.xmltvTimeZoneCheck.Size = new System.Drawing.Size(120, 32);
-      this.xmltvTimeZoneCheck.TabIndex = 0;
-      this.xmltvTimeZoneCheck.Text = "Use Timezone info from XMLTV";
-      // 
-      // btnEditChannel
-      // 
-      this.btnEditChannel.Location = new System.Drawing.Point(120, 256);
-      this.btnEditChannel.Name = "btnEditChannel";
-      this.btnEditChannel.Size = new System.Drawing.Size(48, 23);
-      this.btnEditChannel.TabIndex = 3;
-      this.btnEditChannel.Text = "Edit";
-      this.btnEditChannel.Click += new System.EventHandler(this.btnEditChannel_Click);
-      // 
-      // btnDelChannel
-      // 
-      this.btnDelChannel.Location = new System.Drawing.Point(64, 256);
-      this.btnDelChannel.Name = "btnDelChannel";
-      this.btnDelChannel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.btnDelChannel.Size = new System.Drawing.Size(48, 23);
-      this.btnDelChannel.TabIndex = 2;
-      this.btnDelChannel.Text = "Delete";
-      this.btnDelChannel.Click += new System.EventHandler(this.btnDelChannel_Click);
-      // 
-      // btnNewChannel
-      // 
-      this.btnNewChannel.Location = new System.Drawing.Point(24, 256);
-      this.btnNewChannel.Name = "btnNewChannel";
-      this.btnNewChannel.Size = new System.Drawing.Size(32, 24);
-      this.btnNewChannel.TabIndex = 1;
-      this.btnNewChannel.Text = "Add";
-      this.btnNewChannel.Click += new System.EventHandler(this.btnNewChannel_Click);
-      // 
-      // btnTvChannelDown
-      // 
-      this.btnTvChannelDown.Location = new System.Drawing.Point(416, 224);
-      this.btnTvChannelDown.Name = "btnTvChannelDown";
-      this.btnTvChannelDown.Size = new System.Drawing.Size(16, 23);
-      this.btnTvChannelDown.TabIndex = 5;
-      this.btnTvChannelDown.Text = "v";
-      this.btnTvChannelDown.Click += new System.EventHandler(this.btnTvChannelDown_Click);
-      // 
-      // btnTvChannelUp
-      // 
-      this.btnTvChannelUp.Location = new System.Drawing.Point(416, 200);
-      this.btnTvChannelUp.Name = "btnTvChannelUp";
-      this.btnTvChannelUp.Size = new System.Drawing.Size(16, 24);
-      this.btnTvChannelUp.TabIndex = 4;
-      this.btnTvChannelUp.Text = "^";
-      this.btnTvChannelUp.Click += new System.EventHandler(this.btnTvChannelUp_Click);
-      // 
-      // listTVChannels
-      // 
-      this.listTVChannels.AllowDrop = true;
-      this.listTVChannels.AllowRowReorder = true;
-      this.listTVChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                     this.columnHeader1,
-                                                                                     this.columnHeader2,
-                                                                                     this.columnHeader3});
-      this.listTVChannels.FullRowSelect = true;
-      this.listTVChannels.HideSelection = false;
-      this.listTVChannels.Location = new System.Drawing.Point(24, 32);
-      this.listTVChannels.Name = "listTVChannels";
-      this.listTVChannels.Size = new System.Drawing.Size(384, 216);
-      this.listTVChannels.TabIndex = 0;
-      this.listTVChannels.View = System.Windows.Forms.View.Details;
-      this.listTVChannels.DoubleClick += new System.EventHandler(this.listTVChannels_DoubleClick);
-      this.listTVChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listTVChannels_ColumnClick);
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "TV Channel name";
-      this.columnHeader1.Width = 108;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Channel";
-      this.columnHeader2.Width = 118;
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Frequency (MHz)";
-      this.columnHeader3.Width = 118;
-      // 
-      // groupBox18
-      // 
-      this.groupBox18.Controls.Add(this.buttonAutoTune2);
-      this.groupBox18.Controls.Add(this.textEditBox);
-      this.groupBox18.Location = new System.Drawing.Point(8, 8);
-      this.groupBox18.Name = "groupBox18";
-      this.groupBox18.Size = new System.Drawing.Size(432, 288);
-      this.groupBox18.TabIndex = 19;
-      this.groupBox18.TabStop = false;
-      this.groupBox18.Text = "TV Channels";
-      // 
-      // buttonAutoTune2
-      // 
-      this.buttonAutoTune2.Location = new System.Drawing.Point(176, 248);
-      this.buttonAutoTune2.Name = "buttonAutoTune2";
-      this.buttonAutoTune2.TabIndex = 19;
-      this.buttonAutoTune2.Text = "Auto Tune";
-      this.buttonAutoTune2.Click += new System.EventHandler(this.buttonAutoTune2_Click);
-      // 
-      // textEditBox
-      // 
-      this.textEditBox.Location = new System.Drawing.Point(312, 248);
-      this.textEditBox.Name = "textEditBox";
-      this.textEditBox.TabIndex = 18;
-      this.textEditBox.Text = "textBox1";
-      this.textEditBox.Visible = false;
       // 
       // tabPageCapture
       // 
@@ -1217,6 +1010,221 @@ namespace MediaPortal
       this.UpDownPreRecording.Name = "UpDownPreRecording";
       this.UpDownPreRecording.Size = new System.Drawing.Size(48, 20);
       this.UpDownPreRecording.TabIndex = 0;
+      // 
+      // tabTVChannels
+      // 
+      this.tabTVChannels.Controls.Add(this.groupBox20);
+      this.tabTVChannels.Controls.Add(this.groupBox19);
+      this.tabTVChannels.Controls.Add(this.btnEditChannel);
+      this.tabTVChannels.Controls.Add(this.btnDelChannel);
+      this.tabTVChannels.Controls.Add(this.btnNewChannel);
+      this.tabTVChannels.Controls.Add(this.btnTvChannelDown);
+      this.tabTVChannels.Controls.Add(this.btnTvChannelUp);
+      this.tabTVChannels.Controls.Add(this.listTVChannels);
+      this.tabTVChannels.Controls.Add(this.groupBox18);
+      this.tabTVChannels.Location = new System.Drawing.Point(4, 40);
+      this.tabTVChannels.Name = "tabTVChannels";
+      this.tabTVChannels.Size = new System.Drawing.Size(616, 356);
+      this.tabTVChannels.TabIndex = 9;
+      this.tabTVChannels.Text = "My TVGuide";
+      // 
+      // groupBox20
+      // 
+      this.groupBox20.Controls.Add(this.btnXMLTVFolder);
+      this.groupBox20.Controls.Add(this.textBoxXMLTVFolder);
+      this.groupBox20.Location = new System.Drawing.Point(8, 304);
+      this.groupBox20.Name = "groupBox20";
+      this.groupBox20.Size = new System.Drawing.Size(432, 56);
+      this.groupBox20.TabIndex = 21;
+      this.groupBox20.TabStop = false;
+      this.groupBox20.Text = "XMLTV Folder";
+      // 
+      // btnXMLTVFolder
+      // 
+      this.btnXMLTVFolder.Location = new System.Drawing.Point(376, 24);
+      this.btnXMLTVFolder.Name = "btnXMLTVFolder";
+      this.btnXMLTVFolder.Size = new System.Drawing.Size(32, 23);
+      this.btnXMLTVFolder.TabIndex = 1;
+      this.btnXMLTVFolder.Text = "...";
+      this.btnXMLTVFolder.Click += new System.EventHandler(this.btnXMLTVFolder_Click);
+      // 
+      // textBoxXMLTVFolder
+      // 
+      this.textBoxXMLTVFolder.Location = new System.Drawing.Point(16, 24);
+      this.textBoxXMLTVFolder.Name = "textBoxXMLTVFolder";
+      this.textBoxXMLTVFolder.Size = new System.Drawing.Size(352, 20);
+      this.textBoxXMLTVFolder.TabIndex = 0;
+      this.textBoxXMLTVFolder.Text = "";
+      // 
+      // groupBox19
+      // 
+      this.groupBox19.Controls.Add(this.checkBoxTVGuideColors);
+      this.groupBox19.Controls.Add(this.label37);
+      this.groupBox19.Controls.Add(this.label36);
+      this.groupBox19.Controls.Add(this.timeZoneCorrection);
+      this.groupBox19.Controls.Add(this.xmltvTimeZoneCheck);
+      this.groupBox19.Location = new System.Drawing.Point(448, 8);
+      this.groupBox19.Name = "groupBox19";
+      this.groupBox19.Size = new System.Drawing.Size(160, 352);
+      this.groupBox19.TabIndex = 20;
+      this.groupBox19.TabStop = false;
+      this.groupBox19.Text = "TVGuide";
+      // 
+      // checkBoxTVGuideColors
+      // 
+      this.checkBoxTVGuideColors.Location = new System.Drawing.Point(16, 56);
+      this.checkBoxTVGuideColors.Name = "checkBoxTVGuideColors";
+      this.checkBoxTVGuideColors.Size = new System.Drawing.Size(120, 32);
+      this.checkBoxTVGuideColors.TabIndex = 4;
+      this.checkBoxTVGuideColors.Text = "Use colors in TVGuide";
+      // 
+      // label37
+      // 
+      this.label37.Location = new System.Drawing.Point(96, 112);
+      this.label37.Name = "label37";
+      this.label37.Size = new System.Drawing.Size(40, 16);
+      this.label37.TabIndex = 3;
+      this.label37.Text = "Hours";
+      // 
+      // label36
+      // 
+      this.label36.Location = new System.Drawing.Point(16, 96);
+      this.label36.Name = "label36";
+      this.label36.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.label36.Size = new System.Drawing.Size(128, 16);
+      this.label36.TabIndex = 1;
+      this.label36.Text = "Timezone compensation";
+      // 
+      // timeZoneCorrection
+      // 
+      this.timeZoneCorrection.Location = new System.Drawing.Point(32, 112);
+      this.timeZoneCorrection.Maximum = new System.Decimal(new int[] {
+                                                                       23,
+                                                                       0,
+                                                                       0,
+                                                                       0});
+      this.timeZoneCorrection.Minimum = new System.Decimal(new int[] {
+                                                                       23,
+                                                                       0,
+                                                                       0,
+                                                                       -2147483648});
+      this.timeZoneCorrection.Name = "timeZoneCorrection";
+      this.timeZoneCorrection.Size = new System.Drawing.Size(56, 20);
+      this.timeZoneCorrection.TabIndex = 2;
+      // 
+      // xmltvTimeZoneCheck
+      // 
+      this.xmltvTimeZoneCheck.Location = new System.Drawing.Point(16, 24);
+      this.xmltvTimeZoneCheck.Name = "xmltvTimeZoneCheck";
+      this.xmltvTimeZoneCheck.Size = new System.Drawing.Size(120, 32);
+      this.xmltvTimeZoneCheck.TabIndex = 0;
+      this.xmltvTimeZoneCheck.Text = "Use Timezone info from XMLTV";
+      // 
+      // btnEditChannel
+      // 
+      this.btnEditChannel.Location = new System.Drawing.Point(120, 256);
+      this.btnEditChannel.Name = "btnEditChannel";
+      this.btnEditChannel.Size = new System.Drawing.Size(48, 23);
+      this.btnEditChannel.TabIndex = 3;
+      this.btnEditChannel.Text = "Edit";
+      this.btnEditChannel.Click += new System.EventHandler(this.btnEditChannel_Click);
+      // 
+      // btnDelChannel
+      // 
+      this.btnDelChannel.Location = new System.Drawing.Point(64, 256);
+      this.btnDelChannel.Name = "btnDelChannel";
+      this.btnDelChannel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.btnDelChannel.Size = new System.Drawing.Size(48, 23);
+      this.btnDelChannel.TabIndex = 2;
+      this.btnDelChannel.Text = "Delete";
+      this.btnDelChannel.Click += new System.EventHandler(this.btnDelChannel_Click);
+      // 
+      // btnNewChannel
+      // 
+      this.btnNewChannel.Location = new System.Drawing.Point(24, 256);
+      this.btnNewChannel.Name = "btnNewChannel";
+      this.btnNewChannel.Size = new System.Drawing.Size(32, 24);
+      this.btnNewChannel.TabIndex = 1;
+      this.btnNewChannel.Text = "Add";
+      this.btnNewChannel.Click += new System.EventHandler(this.btnNewChannel_Click);
+      // 
+      // btnTvChannelDown
+      // 
+      this.btnTvChannelDown.Location = new System.Drawing.Point(416, 224);
+      this.btnTvChannelDown.Name = "btnTvChannelDown";
+      this.btnTvChannelDown.Size = new System.Drawing.Size(16, 23);
+      this.btnTvChannelDown.TabIndex = 5;
+      this.btnTvChannelDown.Text = "v";
+      this.btnTvChannelDown.Click += new System.EventHandler(this.btnTvChannelDown_Click);
+      // 
+      // btnTvChannelUp
+      // 
+      this.btnTvChannelUp.Location = new System.Drawing.Point(416, 200);
+      this.btnTvChannelUp.Name = "btnTvChannelUp";
+      this.btnTvChannelUp.Size = new System.Drawing.Size(16, 24);
+      this.btnTvChannelUp.TabIndex = 4;
+      this.btnTvChannelUp.Text = "^";
+      this.btnTvChannelUp.Click += new System.EventHandler(this.btnTvChannelUp_Click);
+      // 
+      // listTVChannels
+      // 
+      this.listTVChannels.AllowDrop = true;
+      this.listTVChannels.AllowRowReorder = true;
+      this.listTVChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                     this.columnHeader1,
+                                                                                     this.columnHeader2,
+                                                                                     this.columnHeader3});
+      this.listTVChannels.FullRowSelect = true;
+      this.listTVChannels.HideSelection = false;
+      this.listTVChannels.Location = new System.Drawing.Point(24, 32);
+      this.listTVChannels.Name = "listTVChannels";
+      this.listTVChannels.Size = new System.Drawing.Size(384, 216);
+      this.listTVChannels.TabIndex = 0;
+      this.listTVChannels.View = System.Windows.Forms.View.Details;
+      this.listTVChannels.DoubleClick += new System.EventHandler(this.listTVChannels_DoubleClick);
+      this.listTVChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listTVChannels_ColumnClick);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "TV Channel name";
+      this.columnHeader1.Width = 108;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Channel";
+      this.columnHeader2.Width = 118;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Frequency (MHz)";
+      this.columnHeader3.Width = 118;
+      // 
+      // groupBox18
+      // 
+      this.groupBox18.Controls.Add(this.buttonAutoTune2);
+      this.groupBox18.Controls.Add(this.textEditBox);
+      this.groupBox18.Location = new System.Drawing.Point(8, 8);
+      this.groupBox18.Name = "groupBox18";
+      this.groupBox18.Size = new System.Drawing.Size(432, 288);
+      this.groupBox18.TabIndex = 19;
+      this.groupBox18.TabStop = false;
+      this.groupBox18.Text = "TV Channels";
+      // 
+      // buttonAutoTune2
+      // 
+      this.buttonAutoTune2.Location = new System.Drawing.Point(176, 248);
+      this.buttonAutoTune2.Name = "buttonAutoTune2";
+      this.buttonAutoTune2.TabIndex = 19;
+      this.buttonAutoTune2.Text = "Auto Tune";
+      this.buttonAutoTune2.Click += new System.EventHandler(this.buttonAutoTune2_Click);
+      // 
+      // textEditBox
+      // 
+      this.textEditBox.Location = new System.Drawing.Point(312, 248);
+      this.textEditBox.Name = "textEditBox";
+      this.textEditBox.TabIndex = 18;
+      this.textEditBox.Text = "textBox1";
+      this.textEditBox.Visible = false;
       // 
       // tabAudioShares
       // 
@@ -2124,6 +2132,7 @@ namespace MediaPortal
       // 
       // groupBox21
       // 
+      this.groupBox21.Controls.Add(this.groupBox22);
       this.groupBox21.Controls.Add(this.listViewRadio);
       this.groupBox21.Controls.Add(this.btnDelRadio);
       this.groupBox21.Controls.Add(this.btnAddRadio);
@@ -2135,6 +2144,33 @@ namespace MediaPortal
       this.groupBox21.TabIndex = 6;
       this.groupBox21.TabStop = false;
       this.groupBox21.Text = "Radio Stations";
+      // 
+      // groupBox22
+      // 
+      this.groupBox22.Controls.Add(this.comboBoxRadioDevice);
+      this.groupBox22.Controls.Add(this.radioButtonAntenna);
+      this.groupBox22.Controls.Add(this.radioButtonCable);
+      this.groupBox22.Location = new System.Drawing.Point(440, 16);
+      this.groupBox22.Name = "groupBox22";
+      this.groupBox22.Size = new System.Drawing.Size(136, 136);
+      this.groupBox22.TabIndex = 6;
+      this.groupBox22.TabStop = false;
+      this.groupBox22.Text = "Radio Tuner";
+      // 
+      // radioButtonAntenna
+      // 
+      this.radioButtonAntenna.Location = new System.Drawing.Point(16, 24);
+      this.radioButtonAntenna.Name = "radioButtonAntenna";
+      this.radioButtonAntenna.TabIndex = 1;
+      this.radioButtonAntenna.Text = "Antenna";
+      // 
+      // radioButtonCable
+      // 
+      this.radioButtonCable.Location = new System.Drawing.Point(16, 48);
+      this.radioButtonCable.Name = "radioButtonCable";
+      this.radioButtonCable.Size = new System.Drawing.Size(104, 16);
+      this.radioButtonCable.TabIndex = 0;
+      this.radioButtonCable.Text = "Cable";
       // 
       // listViewRadio
       // 
@@ -2151,7 +2187,7 @@ namespace MediaPortal
       this.listViewRadio.Location = new System.Drawing.Point(16, 24);
       this.listViewRadio.MultiSelect = false;
       this.listViewRadio.Name = "listViewRadio";
-      this.listViewRadio.Size = new System.Drawing.Size(552, 256);
+      this.listViewRadio.Size = new System.Drawing.Size(408, 256);
       this.listViewRadio.TabIndex = 0;
       this.listViewRadio.View = System.Windows.Forms.View.Details;
       this.listViewRadio.DoubleClick += new System.EventHandler(this.listViewRadio_DoubleClick);
@@ -2453,6 +2489,14 @@ namespace MediaPortal
       this.dvdParams.TabIndex = 2;
       this.dvdParams.Text = "";
       // 
+      // comboBoxRadioDevice
+      // 
+      this.comboBoxRadioDevice.Location = new System.Drawing.Point(16, 88);
+      this.comboBoxRadioDevice.Name = "comboBoxRadioDevice";
+      this.comboBoxRadioDevice.Size = new System.Drawing.Size(112, 21);
+      this.comboBoxRadioDevice.TabIndex = 2;
+      this.comboBoxRadioDevice.Text = "comboBox1";
+      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -2465,17 +2509,17 @@ namespace MediaPortal
       this.tabControl.ResumeLayout(false);
       this.tabGeneral.ResumeLayout(false);
       this.Skin.ResumeLayout(false);
-      this.tabTVChannels.ResumeLayout(false);
-      this.groupBox20.ResumeLayout(false);
-      this.groupBox19.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
-      this.groupBox18.ResumeLayout(false);
       this.tabPageCapture.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).EndInit();
       this.groupBox13.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).EndInit();
       this.groupBox17.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).EndInit();
+      this.tabTVChannels.ResumeLayout(false);
+      this.groupBox20.ResumeLayout(false);
+      this.groupBox19.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
+      this.groupBox18.ResumeLayout(false);
       this.tabAudioShares.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.audioGroupBox.ResumeLayout(false);
@@ -2503,6 +2547,7 @@ namespace MediaPortal
       this.groupBox15.ResumeLayout(false);
       this.tabPageRadio.ResumeLayout(false);
       this.groupBox21.ResumeLayout(false);
+      this.groupBox22.ResumeLayout(false);
       this.TabDVDPlayer.ResumeLayout(false);
       this.groupBox12.ResumeLayout(false);
       this.groupBox11.ResumeLayout(false);
@@ -2785,6 +2830,8 @@ namespace MediaPortal
         timeZoneCorrection.Value=xmlreader.GetValueAsInt("xmltv", "timezonecorrection",0);
 
         checkBoxTVGuideColors.Checked=xmlreader.GetValueAsBool("xmltv", "colors",true);
+        
+        LoadRadioStations(xmlreader);
       }
 		}
 
@@ -2994,8 +3041,8 @@ namespace MediaPortal
         xmlWriter.SetValueAsBool("xmltv","usetimezone",xmltvTimeZoneCheck.Checked);
         xmlWriter.SetValue("xmltv","timezonecorrection",timeZoneCorrection.Value.ToString() );
         xmlWriter.SetValue("xmltv","folder",textBoxXMLTVFolder.Text);
+        SaveRadioStations(xmlWriter);
       }
-      SaveRadioStations();
 		}
 
 
@@ -3882,8 +3929,14 @@ namespace MediaPortal
     }
 
 
-    void LoadRadioStations()
+    void LoadRadioStations(AMS.Profile.Xml xmlReader)
     {
+      string strRadioDevice=xmlReader.GetValueAsString("radio","device","");
+      string strTunerType=xmlReader.GetValueAsString("radio","tuner","Antenna");
+      if (strTunerType=="Antenna") radioButtonAntenna.Checked=true;
+      else radioButtonCable.Checked=true;
+
+
       listViewRadio.Items.Clear();
       ArrayList stations = new ArrayList();
       RadioDatabase.GetStations(ref stations);
@@ -3895,9 +3948,32 @@ namespace MediaPortal
         newItem.SubItems.Add(station.BitRate.ToString());
         newItem.SubItems.Add(station.URL);
       }
+
+      comboBoxRadioDevice.Items.Clear();
+      Filters filters = new Filters();
+      int iSelect=0;
+      for (int i=0; i < filters.VideoInputDevices.Count;++i)
+      {
+        comboBoxRadioDevice.Items.Add( filters.VideoInputDevices[i].Name);
+        if (strRadioDevice.Equals(filters.VideoInputDevices[i].Name))
+        {
+          iSelect=i;
+        }
+      }
+      comboBoxRadioDevice.SelectedIndex=iSelect;
     }
-    void SaveRadioStations()
+
+    void SaveRadioStations(AMS.Profile.Xml xmlWriter)
     {
+      if (radioButtonAntenna.Checked)
+        xmlWriter.SetValue("radio","tuner", "Antenna");
+      else
+        xmlWriter.SetValue("radio","tuner", "Cable");
+      
+      xmlWriter.SetValue("radio","device",comboBoxRadioDevice.SelectedItem);
+
+
+
       RadioDatabase.RemoveStations();
       for (int i=0; i < listViewRadio.Items.Count;++i)
       {
@@ -3908,8 +3984,10 @@ namespace MediaPortal
         station.Genre=item.SubItems[2].Text;
         station.BitRate=GetInt(item.SubItems[3].Text);
         station.URL=item.SubItems[4].Text;
-
-        RadioDatabase.AddStation(ref station);
+        if (station.Channel!=0 || station.URL.Length>0)
+        {
+          RadioDatabase.AddStation(ref station);
+        }
       }
     }
 
@@ -3923,9 +4001,9 @@ namespace MediaPortal
     private void btnAddRadio_Click(object sender, System.EventArgs e)
     {
       ListViewItem newItem=listViewRadio.Items.Add("new station");
-      newItem.SubItems.Add("0");
+      newItem.SubItems.Add("");
       newItem.SubItems.Add("general");
-      newItem.SubItems.Add("0");
+      newItem.SubItems.Add("");
       newItem.SubItems.Add("");  
     }
 
@@ -3947,7 +4025,19 @@ namespace MediaPortal
 
     private void btnTuneRadio_Click(object sender, System.EventArgs e)
     {
-    
+      FormRadioTuner form=new FormRadioTuner();
+      form.ShowDialog(this.Parent);
+      listViewRadio.Items.Clear();
+      ArrayList stations = new ArrayList();
+      RadioDatabase.GetStations(ref stations);
+      foreach (RadioStation station in stations)
+      {
+        ListViewItem newItem=listViewRadio.Items.Add(station.Name);
+        newItem.SubItems.Add(station.Channel.ToString());
+        newItem.SubItems.Add(station.Genre);
+        newItem.SubItems.Add(station.BitRate.ToString());
+        newItem.SubItems.Add(station.URL);
+      }
     }
 
     private void listViewRadio_DoubleClick(object sender, System.EventArgs e)

@@ -228,6 +228,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "FormRadioTuner.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FormRadioTuner.resx"
+                    DependentUpon = "FormRadioTuner.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "MediaPortal.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
