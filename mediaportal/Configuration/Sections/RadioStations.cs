@@ -16,7 +16,6 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Button autoTuneButton;
 		private System.Windows.Forms.Button deleteButton;
 		private System.Windows.Forms.Button editButton;
 		private System.Windows.Forms.Button addButton;
@@ -70,7 +69,6 @@ namespace MediaPortal.Configuration.Sections
 
 			bool internalRadioEnabled = (bool)radioSection.GetSetting("radio.internal");
 
-			autoTuneButton.Enabled = internalRadioEnabled;
 		}
 
 
@@ -85,7 +83,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.upButton = new System.Windows.Forms.Button();
 			this.downButton = new System.Windows.Forms.Button();
-			this.autoTuneButton = new System.Windows.Forms.Button();
 			this.deleteButton = new System.Windows.Forms.Button();
 			this.editButton = new System.Windows.Forms.Button();
 			this.addButton = new System.Windows.Forms.Button();
@@ -110,7 +107,6 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.upButton);
 			this.groupBox1.Controls.Add(this.downButton);
-			this.groupBox1.Controls.Add(this.autoTuneButton);
 			this.groupBox1.Controls.Add(this.deleteButton);
 			this.groupBox1.Controls.Add(this.editButton);
 			this.groupBox1.Controls.Add(this.addButton);
@@ -146,16 +142,6 @@ namespace MediaPortal.Configuration.Sections
 			this.downButton.TabIndex = 6;
 			this.downButton.Text = "Down";
 			this.downButton.Click += new System.EventHandler(this.downButton_Click);
-			// 
-			// autoTuneButton
-			// 
-			this.autoTuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.autoTuneButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.autoTuneButton.Location = new System.Drawing.Point(256, 376);
-			this.autoTuneButton.Name = "autoTuneButton";
-			this.autoTuneButton.TabIndex = 4;
-			this.autoTuneButton.Text = "Auto Tune";
-			this.autoTuneButton.Click += new System.EventHandler(this.autoTuneButton_Click);
 			// 
 			// deleteButton
 			// 
@@ -316,104 +302,6 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-		private void autoTuneButton_Click(object sender, System.EventArgs e)
-		{
-			if(stationsListView.Items.Count > 0)
-			{
-				DialogResult dialogResult = MessageBox.Show("Do you want to remove all current radio stations before you continue with the auto tuning?", "MediaPortal Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-
-				switch(dialogResult)
-				{
-					case DialogResult.Yes:
-						//
-						// Remove previously created stations
-						//
-						RadioDatabase.RemoveLocalRadioStations();
-						AutoTuneStations();
-						break;
-
-					case DialogResult.No:
-						//
-						// Perform the auto tuning
-						//
-						AutoTuneStations();
-						break;
-
-					case DialogResult.Cancel:
-						//
-						// Don't do anything
-						//
-						break;
-				}
-			}
-			else
-			{
-				//
-				// We have no previous stations, perform auto tuning
-				//
-				AutoTuneStations();
-			}
-		}
-
-		private void AutoTuneStations()
-		{
-			isDirty = true;
-
-              
-      int iTunerCountry=31;
-      string strTunerType="Antenna";
-      string strRadioDevice="";
-      string strAudioDevice="";
-      string strLineInput="";
-
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        strTunerType  =xmlreader.GetValueAsString("radio","tuner","Antenna");
-        iTunerCountry =xmlreader.GetValueAsInt("capture","country",31);
-        strRadioDevice=xmlreader.GetValueAsString("radio","device","");
-        strAudioDevice=xmlreader.GetValueAsString("radio","audiodevice","");
-        strLineInput=xmlreader.GetValueAsString("radio","lineinput","");
-      }
-      bool bAntenna=false;
-      if (strTunerType.Equals("Antenna"))
-        bAntenna=true;
-        
-      RadioGraph m_capture = new RadioGraph(strRadioDevice,strAudioDevice,strLineInput);
-      if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
-      {
-          m_capture.DeleteGraph();
-          m_capture=null;
-          MessageBox.Show("No internal tuner was found, please check your tuner settings.", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);				
-          return;
-      }
-
-		  RadioAutoTuningForm radioTuning = new RadioAutoTuningForm(m_capture);
-		  DialogResult dialogResult = radioTuning.ShowDialog(this);
-
-			if(dialogResult == DialogResult.OK)
-			{
-				ArrayList tunedItems = radioTuning.TunedItems;
-
-				//
-				// Add the tuned items to the list
-				//
-				foreach(RadioStation radioStation in tunedItems)
-				{
-					ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
-																				radioStation.Name,
-																				radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
-																				radioStation.Genre,
-																				radioStation.Bitrate.ToString(),
-																				radioStation.URL
-																			} );
-					listItem.Tag = radioStation;
-
-					stationsListView.Items.Add(listItem);
-				}
-			}
-      m_capture.DeleteGraph();
-      m_capture=null;
-		}
 
 		private Capture SetupCaptureDevice()
 		{

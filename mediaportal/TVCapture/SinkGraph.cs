@@ -710,7 +710,7 @@ namespace MediaPortal.TV.Recording
 
 			Vmr9.AddVMR9(m_graphBuilder);
 
-			AddPreferredCodecs();
+			AddPreferredCodecs(true,true);
       
 #if (!UseCaptureCardDefinitions)
 			// #MW# Next call is already done while creating graph, so obsolete?!?!
@@ -847,7 +847,7 @@ namespace MediaPortal.TV.Recording
 		/// Add preferred mpeg2 audio/video codecs to the graph
 		/// and if wanted add ffdshow postprocessing to the graph
 		/// </summary>
-    void AddPreferredCodecs()
+    void AddPreferredCodecs(bool audio, bool video)
     {				
       // add preferred video & audio codecs
       string strVideoCodec="";
@@ -859,9 +859,9 @@ namespace MediaPortal.TV.Recording
         strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
         strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
       }
-      if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
-      if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
-      if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
+      if (video&&strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
+      if (audio&&strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
+      if (video&&bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
     }
     
 
@@ -1117,7 +1117,7 @@ namespace MediaPortal.TV.Recording
 					Vmr9.RemoveVMR9();
 					Vmr9=null;
 				}
-				AddPreferredCodecs();
+				AddPreferredCodecs(true,false);
 				m_mpeg2Demux.StartListening();
 
 				Log.Write("SinkGraph:StartRadio() started");

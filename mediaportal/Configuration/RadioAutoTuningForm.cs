@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
-
 using DShowNET;
 using MediaPortal.Player;
+using MediaPortal.TV.Recording;
+using MediaPortal.Radio.Database;
+
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -12,9 +14,10 @@ namespace MediaPortal.Configuration
 	public class RadioAutoTuningForm : AutoTuningForm
 	{
 		int		currentChannel = 0;
-		RadioGraph m_graph=null;
+		int   channelNo=1;
+		TVCaptureDevice m_graph=null;
 
-		public RadioAutoTuningForm(RadioGraph graph)
+		public RadioAutoTuningForm(TVCaptureDevice graph)
 		{
 			this.m_graph = graph;
 
@@ -27,7 +30,9 @@ namespace MediaPortal.Configuration
 
 		public override void OnStartTuning(int startValue)
 		{
-			m_graph.Tune(startValue);
+			m_graph.TuneRadioFrequency(startValue);
+			currentChannel=startValue;
+			channelNo=1;
 		}
 
 		public override void OnStopTuning()
@@ -88,16 +93,22 @@ namespace MediaPortal.Configuration
 		{
       try
       {
-        if(m_graph.SignalPresent == true)
+        if(m_graph.SignalPresent() == true)
         {
           //
           // We have found a channel!
           //
-          RadioStation newStation =new RadioStation(currentChannel, m_graph.Channel);
-          newStation.Name=String.Format("Station{0}", currentChannel++);
-          newStation.Type="Radio";
-          newStation.Frequency=m_graph.Channel;
-          AddItem(newStation);
+					MediaPortal.Radio.Database.RadioStation newStation =new MediaPortal.Radio.Database.RadioStation();
+          newStation.Name=String.Format("Station{0}", channelNo);
+          newStation.Channel=channelNo;
+					newStation.Frequency=currentChannel;
+          int id=RadioDatabase.AddStation(ref newStation);
+					RadioDatabase.MapChannelToCard(id,m_graph.ID);
+					RadioStation stat = new RadioStation(channelNo,currentChannel);
+					stat.Name=newStation.Name;
+					stat.Type="Radio";
+					AddItem(stat);
+					channelNo++;
         }
       }
       catch(NotSupportedException)
@@ -110,8 +121,9 @@ namespace MediaPortal.Configuration
 			//
       try
       {
-        m_graph.Tune(m_graph.Channel + stepSize);
-        Text=String.Format("Radio tuning:{0:} Hz", (int)m_graph.Channel );
+				currentChannel+=stepSize;
+        m_graph.TuneRadioFrequency(currentChannel );
+        Text=String.Format("Radio tuning:{0:} Hz", (int)currentChannel);
       }
       catch(Exception)
       {
