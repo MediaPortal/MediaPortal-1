@@ -513,7 +513,7 @@ namespace MediaPortal.TV.Recording
       {
         DeleteGraph();
       }
-      CreateGraph();
+      if (!CreateGraph()) return false;
       string strRecPath;
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
@@ -536,8 +536,11 @@ namespace MediaPortal.TV.Recording
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
       bool bResult = m_graph.StartTimeShifting(iChannelNr, strFileName);
-      m_dtTimeShiftingStarted = DateTime.Now;
-      m_eState = State.Timeshifting;
+      if ( bResult ==true)
+      {
+        m_dtTimeShiftingStarted = DateTime.Now;
+        m_eState = State.Timeshifting;
+      }
       return bResult;
     }
 
