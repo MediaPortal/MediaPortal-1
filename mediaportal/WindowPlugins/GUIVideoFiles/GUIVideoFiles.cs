@@ -1577,13 +1577,19 @@ namespace MediaPortal.GUI.Video
       if (null == pDlgInfo) return false;
       string strMovieName = System.IO.Path.GetFileNameWithoutExtension(strMovie);
 
-      if (VideoDatabase.HasMovieInfo(strFile))
+			IMDBMovie movieDetails = new IMDBMovie();
+			if (iMovieId>=0)
+				VideoDatabase.GetMovieInfoById(iMovieId, ref movieDetails);
+			else 
+			{
+				if (VideoDatabase.HasMovieInfo(strFile))
+				{
+					VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
+				}
+			}
+
+			if (movieDetails.ID>=0)
       {
-        IMDBMovie movieDetails = new IMDBMovie();
-        if (iMovieId>=0)
-          VideoDatabase.GetMovieInfoById(iMovieId, ref movieDetails);
-        else
-          VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
         pDlgInfo.Movie = movieDetails;
         pDlgInfo.DoModal(GUIWindowManager.ActiveWindow);
         if (!pDlgInfo.NeedsRefresh)
@@ -1680,7 +1686,7 @@ namespace MediaPortal.GUI.Video
           
               if (iSelectedMovie >= 0)
               {
-                IMDBMovie movieDetails = new IMDBMovie();
+                movieDetails = new IMDBMovie();
                 movieDetails.SearchString = strFile;
                 IMDB.IMDBUrl url = imdb[iSelectedMovie];
     				

@@ -1240,7 +1240,7 @@ namespace MediaPortal.Video.Database
 				results=m_db.Execute(strSQL);
 				if (results.Rows.Count == 0) 
 				{
-					strSQL=String.Format("insert into movieinfo ( idMovie,idDirector,strPlotOutline,strPlot,strTagLine,strVotes,fRating,strCast,strCredits , iYear  ,strGenre, strPictureURL, strTitle,IMDBID,mpaa,runtime) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',15)",
+					strSQL=String.Format("insert into movieinfo ( idMovie,idDirector,strPlotOutline,strPlot,strTagLine,strVotes,fRating,strCast,strCredits , iYear  ,strGenre, strPictureURL, strTitle,IMDBID,mpaa,runtime) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15})",
 															lMovieId,lDirector, details1.PlotOutline,
 															details1.Plot,details1.TagLine,
 															details1.Votes,strRating,
