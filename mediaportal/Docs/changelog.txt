@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  05-07-2004  my music    : fixed : remove album info does not delete the thumbnail. 
+  05-07-2004  my music    : fixed : F3 under my music/artist/album should retrieve album info.
+  
   04-07-2004  home        : added : skinners can now skin the plugin buttons. home will use the following graphics for each plugin
                                     button_pluginname.png, buttonNF_pluginname.png, hover_pluginname.png
                                     where pluginname is the name of the plugin like My News or My Recipies
