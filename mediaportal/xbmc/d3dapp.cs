@@ -164,11 +164,7 @@ namespace MediaPortal
       // from accidentally clicking outside the app window on a multimon system.
       // This flag is turned off by default for debug builds, since it makes 
       // multimon debugging difficult.
-#if (DEBUG)
       clipCursorWhenFullscreen = false;
-#else
-            clipCursorWhenFullscreen = true;
-#endif
       InitializeComponent();
       this.timer1.Interval=300;
       this.timer1.Start();
@@ -1126,7 +1122,7 @@ namespace MediaPortal
       if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
       if (bDoRender) 
       {
-        System.Threading.Thread.Sleep(20);
+        System.Threading.Thread.Sleep(50);
         
 
 				try

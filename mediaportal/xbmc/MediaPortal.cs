@@ -245,7 +245,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     public override bool PreProcessMessage(ref Message msg)
     {
-      if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
+      //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
 
       return base.PreProcessMessage (ref msg);
     }
@@ -263,7 +263,7 @@ public class MediaPortalApp : D3DApp, IRender
           return;
         }
       }
-      if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
+      //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
       g_Player.WndProc(ref msg);
       base.WndProc( ref msg );
     }
