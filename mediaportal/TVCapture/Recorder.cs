@@ -1581,7 +1581,8 @@ namespace MediaPortal.TV.Recording
 
 		static public TVCaptureDevice Get(int index)
 		{
-				return (TVCaptureDevice )m_tvcards[index];
+			if (index < 0 || index >= m_tvcards.Count) return null;
+			return m_tvcards[index] as TVCaptureDevice;
 		}
     
 		/// <summary>
@@ -1753,9 +1754,10 @@ namespace MediaPortal.TV.Recording
 			{
 				ArrayList recordings = new ArrayList();
 				TVDatabase.GetRecordedTV(ref recordings);
-				for (int i=0; i < Recorder.Count;++i)
+				for (int i=0; i < Recorder.Count;i++)
 				{
 					TVCaptureDevice dev = Recorder.Get(i);
+					if (dev==null) continue;
 					try
 					{
 						string[] files=System.IO.Directory.GetFiles(dev.RecordingPath,"*.dvr-ms");
