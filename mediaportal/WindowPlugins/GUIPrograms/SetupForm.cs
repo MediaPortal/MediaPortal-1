@@ -967,16 +967,24 @@ namespace WindowPlugins.GUIPrograms
 			if (NodeAcceptsChildren(appTree.SelectedNode))
 			{
 				buttonAddChild.Enabled = true;
-				buttonDelete.Enabled = (appTree.SelectedNode != appTree.Nodes[0]); // root is UNDELETABLE!
+				buttonDelete.Enabled = false;
+				if (appTree.SelectedNode != appTree.Nodes[0])
+				{
+					AppItem curApp = GetSelectedAppItem();
+					if (curApp != null)
+					{
+						buttonDelete.Enabled = (apps.appsOfFatherID(curApp.AppID).Count == 0); // groupitems are only deletable if no children exist
+					}
+				}
 				buttonUp.Enabled = (appTree.SelectedNode != appTree.Nodes[0]) && (GetPrevAppItem() != null);
 				buttonDown.Enabled = (appTree.SelectedNode != appTree.Nodes[0]) && (GetNextAppItem() != null);
 			}
 			else 
 			{
 				buttonAddChild.Enabled = false;
-				buttonDelete.Enabled = true;
 				buttonUp.Enabled = (GetPrevAppItem() != null);
 				buttonDown.Enabled = (GetNextAppItem() != null);
+				buttonDelete.Enabled = true;
 			}
 
 		}
