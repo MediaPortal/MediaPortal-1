@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  20-06-2004  topbar      : fixed : the topbar buttons keep focus even when cursor is in the rest of the GUI
   20-06-2004  My Radio    : added : support for more tvcapture cards
   20-06-2004  My Radio    : added : when autotuning my radio in setup you can specify the sensitivity 
   
