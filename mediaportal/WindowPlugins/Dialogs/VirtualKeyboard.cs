@@ -44,7 +44,7 @@ namespace MediaPortal.Dialogs
 	// Font sizes
 	const int FONTSIZE_BUTTONCHARS		= 24;
 	const int FONTSIZE_BUTTONSTRINGS	= 18;
-	const int FONTSIZE_SEARCHTEXT		= 32;
+	const int FONTSIZE_SEARCHTEXT		= 20;
 	
 
     // Controller repeat values
@@ -473,14 +473,14 @@ namespace MediaPortal.Dialogs
 
     void Initialize()
     {
-      m_Font12=new GUIFont("font12", "Arial",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
-      m_Font18=new GUIFont("font18", "Arial",FONTSIZE_BUTTONCHARS,FontStyle.Bold);
-			m_FontButtons=new GUIFont("font24", "dingbats",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
-			m_FontSearchText=new GUIFont("font18", "Arial",FONTSIZE_SEARCHTEXT,FontStyle.Bold);
-      m_Font12.Load();m_Font12.InitializeDeviceObjects();m_Font12.RestoreDeviceObjects();
-      m_Font18.Load();m_Font18.InitializeDeviceObjects();m_Font18.RestoreDeviceObjects();
-      m_FontButtons.Load();m_FontButtons.InitializeDeviceObjects();m_FontButtons.RestoreDeviceObjects();
-			m_FontSearchText.Load();m_FontSearchText.InitializeDeviceObjects();m_FontSearchText.RestoreDeviceObjects();
+		m_Font12=new GUIFont("font12", "Arial",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
+		m_Font18=new GUIFont("font18", "Arial",FONTSIZE_BUTTONCHARS,FontStyle.Bold);
+		m_FontButtons=new GUIFont("font24", "dingbats",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
+		m_FontSearchText=new GUIFont("font14", "Arial",FONTSIZE_SEARCHTEXT,FontStyle.Bold);
+		m_Font12.Load();m_Font12.InitializeDeviceObjects();m_Font12.RestoreDeviceObjects();
+		m_Font18.Load();m_Font18.InitializeDeviceObjects();m_Font18.RestoreDeviceObjects();
+		m_FontButtons.Load();m_FontButtons.InitializeDeviceObjects();m_FontButtons.RestoreDeviceObjects();
+		m_FontSearchText.Load();m_FontSearchText.InitializeDeviceObjects();m_FontSearchText.RestoreDeviceObjects();
 
       int iTextureWidth,iTextureHeight;
       int iImages=GUITextureManager.Load("keyNF.bmp",0,0,0);

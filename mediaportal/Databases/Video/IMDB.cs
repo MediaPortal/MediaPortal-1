@@ -459,7 +459,7 @@ namespace MediaPortal.Video.Database
 				// Mars Warrior @ 03-sep-2004.
 				// First try to find an Exact Match. If no exact match found, just look
 				// for any match and add all those to the list. This narrows it down more easily...
-				int iStartOfMovieList = strBody.IndexOf("Exact Matches");
+				int iStartOfMovieList = strBody.IndexOf("Popular Titles");
 				if (iStartOfMovieList<0) iStartOfMovieList=strBody.IndexOf("Partial Matches");
 
 				if (iStartOfMovieList<0)
@@ -523,6 +523,15 @@ namespace MediaPortal.Video.Database
 								HTMLUtil htmlUtil= new HTMLUtil();
 								htmlUtil.ConvertHTMLToAnsi(strTitle,out strTitle);
 
+
+								int endTagLength="</a>".Length;
+								int posNextTag=strBody.IndexOf("<",iEndAHREF+endTagLength);
+								if (posNextTag>0)
+								{
+									string strSub=strBody.Substring(iEndAHREF+endTagLength, posNextTag- (iEndAHREF+endTagLength));
+									strTitle+=strSub;
+								}
+
 								IMDBUrl url =new IMDBUrl(strURL,strTitle+" (imdb)","IMDB");
 								elements.Add(url);
 								iCount++;
@@ -573,8 +582,9 @@ namespace MediaPortal.Video.Database
 				{
 					iPos+="/title/".Length;
 					movieDetails.IMDBNumber=strAbsURL.Substring(iPos);
-					if (movieDetails.IMDBNumber[movieDetails.IMDBNumber.Length-1]=='/')
-						movieDetails.IMDBNumber=movieDetails.IMDBNumber.Substring(0,movieDetails.IMDBNumber.Length-1);
+					int pos=movieDetails.IMDBNumber.IndexOf("/");
+					if (pos>0)
+						movieDetails.IMDBNumber=movieDetails.IMDBNumber.Substring(0,pos);
 				}
 
 				url.Title = url.Title.Trim();

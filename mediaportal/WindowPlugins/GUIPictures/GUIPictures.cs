@@ -1161,7 +1161,6 @@ namespace MediaPortal.GUI.Pictures
 			dlg.Add( GUILocalizeStrings.Get(117)); //delete
 			dlg.Add( GUILocalizeStrings.Get(735)); //rotate
 			dlg.Add( GUILocalizeStrings.Get(923)); //show
-			dlg.Add( GUILocalizeStrings.Get(929)); //close window
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;

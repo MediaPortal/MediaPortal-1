@@ -1692,11 +1692,13 @@ namespace MediaPortal.GUI.Video
     {
       GUIListItem pItem ;
       ArrayList movies = new ArrayList();
+			
       for (int x = 0; x < items.Count; ++x)
       {
         pItem = (GUIListItem)items[x];
         if (pItem.IsFolder)
-        {
+				{
+					if (pItem.ThumbnailImage!=String.Empty) continue;
           if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
           {
             movies.Clear();
@@ -1726,10 +1728,10 @@ namespace MediaPortal.GUI.Video
                   break;
                 }
               }
-            }
-          }
-        }
-      }
+            } // of for (int i = 0; i < movies.Count; ++i)
+          } // of if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+        } // of if (pItem.IsFolder)
+      } // of for (int x = 0; x < items.Count; ++x)
 
       movies.Clear();
       VideoDatabase.GetMoviesByPath(m_strDirectory, ref movies);
@@ -1738,6 +1740,7 @@ namespace MediaPortal.GUI.Video
         pItem = (GUIListItem)items[x];
         if (!pItem.IsFolder)
         {
+					if (pItem.ThumbnailImage!=String.Empty) continue;
           for (int i = 0; i < movies.Count; ++i)
           {
             IMDBMovie info = (IMDBMovie)movies[i];
@@ -1760,9 +1763,9 @@ namespace MediaPortal.GUI.Video
                 break;
               }
             }
-          }
-        }
-      }
+          } // of for (int i = 0; i < movies.Count; ++i)
+        } // of if (!pItem.IsFolder)
+      } // of for (int x = 0; x < items.Count; ++x)
     }
 
     public bool CheckMovie(string strFileName)
@@ -1976,8 +1979,6 @@ namespace MediaPortal.GUI.Video
 			dlg.Add( GUILocalizeStrings.Get(368)); //IMDB
 			dlg.Add( GUILocalizeStrings.Get(208)); //play
 			dlg.Add( GUILocalizeStrings.Get(926)); //Queue
-			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
-			dlg.Add( GUILocalizeStrings.Get(929)); //close window
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;

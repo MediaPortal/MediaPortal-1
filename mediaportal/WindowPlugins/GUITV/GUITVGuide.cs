@@ -1873,8 +1873,7 @@ namespace MediaPortal.GUI.TV
 					dlg.Add( GUILocalizeStrings.Get(i));
 				}
 				dlg.Add( GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
-				dlg.Add( GUILocalizeStrings.Get(929)); //close window
-
+				
 				dlg.DoModal( GetID);
 				if (dlg.SelectedLabel==-1) return;
 				TVRecording rec=new TVRecording();

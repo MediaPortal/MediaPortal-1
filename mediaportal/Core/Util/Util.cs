@@ -409,17 +409,39 @@ namespace MediaPortal.Util
           {
             // yep got it
             item.ThumbnailImage=strThumb;
+						item.IconImage=strThumb;
+						item.IconImageBig=strThumb;
+						return;
           }
-          else
+					strThumb=System.IO.Path.ChangeExtension(item.Path,".jpg");
+					if (System.IO.File.Exists(strThumb))
+					{
+						// yep got it
+						item.ThumbnailImage=strThumb;
+						item.IconImage=strThumb;
+						item.IconImageBig=strThumb;
+						return;
+					}
+					strThumb=System.IO.Path.ChangeExtension(item.Path,".png");
+					if (System.IO.File.Exists(strThumb))
+					{
+						// yep got it
+						item.ThumbnailImage=strThumb;
+						item.IconImage=strThumb;
+						item.IconImageBig=strThumb;
+						return;
+					}
+          
+          // check for thumbs\filename.tbn
+          
+          strThumb=GetThumb(item.Path);
+          if (System.IO.File.Exists(strThumb))
           {
-            // check for thumbs\filename.tbn
-            
-            strThumb=GetThumb(item.Path);
-            if (System.IO.File.Exists(strThumb))
-            {
-              // yep got it
-              item.ThumbnailImage=strThumb;
-            }
+            // yep got it
+						item.ThumbnailImage=strThumb;
+						item.IconImage=strThumb;
+						item.IconImageBig=strThumb;
+						return;
           }
         }
         else
@@ -1274,13 +1296,19 @@ namespace MediaPortal.Util
       
       if (strFileName==null) return String.Empty;
       if (strFileName.Length==0) return String.Empty;
-      if (strFileName==String.Empty) return String.Empty;
+      if (strFileName==String.Empty) return String.Empty;/*
 			try
 			{
 				string tbnImage = System.IO.Path.ChangeExtension(strFileName,".tbn");
 				if (System.IO.File.Exists(tbnImage)) return tbnImage;
+				tbnImage = System.IO.Path.ChangeExtension(strFileName,".png");
+				if (System.IO.File.Exists(tbnImage)) return tbnImage;
+				tbnImage = System.IO.Path.ChangeExtension(strFileName,".gif");
+				if (System.IO.File.Exists(tbnImage)) return tbnImage;
+				tbnImage = System.IO.Path.ChangeExtension(strFileName,".jpg");
+				if (System.IO.File.Exists(tbnImage)) return tbnImage;
 			}
-			catch(Exception){}
+			catch(Exception){}*/
 
       string strThumb=String.Format(@"{0}\{1}",strFolder,Utils.FilterFileName(strFileName));
       if (System.IO.File.Exists(strThumb+".jpg")) return strThumb+".jpg";

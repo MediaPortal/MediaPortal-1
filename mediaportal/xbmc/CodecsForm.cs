@@ -280,10 +280,11 @@ namespace MediaPortal
         {
           FFDShowInstalled=true;
           subkey.Close();
-		}
+				}
+				hklm.Close();
 		
-		hklm = Registry.CurrentUser;
-        subkey = hklm.OpenSubKey(@"Software\Gabest\DVobSub");
+				hklm = Registry.ClassesRoot;
+        subkey = hklm.OpenSubKey(@"CLSID\{0180E49C-13BF-46DB-9AFD-9F52292E1C22}\InprocServer32");
         if (subkey!=null)
         {
           VobSubInstalled=true;
