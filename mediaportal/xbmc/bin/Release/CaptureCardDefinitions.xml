@@ -371,7 +371,7 @@
   <capturecard commercialname="FireDTV" capturename="Firesat BDA Receiver DVBT" devid="digital_everywhere&amp;firedtv_t">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBT"          checkdevice="false"></filter>
@@ -387,7 +387,7 @@
    <capturecard commercialname="Twinhan VisionDTV Ter" capturename="THDTV DVB-t BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
@@ -403,7 +403,7 @@
   <capturecard commercialname="Lifeview DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03015168&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="false"></filter>
@@ -419,7 +419,7 @@
   <capturecard commercialname="Hauppage Nova-T" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101113c2&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="false"></filter>
@@ -435,7 +435,7 @@
    <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_90020070&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="false"></filter>
@@ -451,7 +451,7 @@
   <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db1018ac&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Fusion HDTV, BDA DVB-T Tuner/Demod"		checkdevice="false"></filter>
@@ -467,7 +467,7 @@
    <capturecard commercialname="Meedion SAA1734" capturename="MEEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="MEEDION BDA DVBT Tuner"				checkdevice="false"></filter>
@@ -554,7 +554,7 @@
   <capturecard commercialname="Dvico Fusion HDTV Lite" capturename="FusionHDTV, Transport Stream Capture" devid="ven_109e&amp;dev_0878&amp;subsys_db1018ac&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="false"></filter>
@@ -571,7 +571,7 @@
   <capturecard commercialname="AVerTV DVB-T 771" capturename="AVerMedia Transport Stream Capture" devid="ven_109e&amp;dev_0878&amp;subsys_07711461&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="AVerMedia AVerEIT"						checkdevice="false"></filter>
