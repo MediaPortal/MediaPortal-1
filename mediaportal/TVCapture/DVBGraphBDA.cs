@@ -2430,7 +2430,7 @@ namespace MediaPortal.TV.Recording
 				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 				if (mpeg2Demuxer!=null)
 				{
-				//	SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
+					SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
 					for (int pin=0; pin < 5; pin++)
 					{	
