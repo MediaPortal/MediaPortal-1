@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  19-06-2004  settings    : added : setup of scrolling speed
   19-06-2004  My TV       : fixed : record1.mpg didnt always get renamed to final filename
   19-06-2004  My TV       : fixed : losts of crashes/exceptions/hangups 
   19-06-2004  My TV       : added : pause (space) didnt work when watching fullscreen tv

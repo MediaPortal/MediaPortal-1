@@ -89,7 +89,6 @@ Skin engine:
   - transitions between windows
   
 General:
-  - let user specify scrolling speed
   - setup : add tooltips 
      
   - setup:Auto Tune needs some work

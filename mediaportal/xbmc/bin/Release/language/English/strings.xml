@@ -1935,6 +1935,18 @@
 		<id>672</id>
 		<value>Record Mon-Fri</value>
 	</string>	
+	<string>
+		<id>673</id>
+		<value>Scroll speed</value>
+	</string>	
+	<string>
+		<id>674</id>
+		<value>GUI Settings</value>
+	</string>	
+	<string>
+		<id>675</id>
+		<value>Example:</value>
+	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My TV</value></string>
 <string><id>10002</id><value>My Pictures</value></string>
@@ -1964,6 +1976,7 @@
 <string><id>10028</id><value>My Videos/playlist</value></string>
 <string><id>10029</id><value>Settings->General->LCD</value></string>
 <string><id>10030</id><value>My Radio</value></string>
+<string><id>10031</id><value>Settings->Screen->scroll speed</value></string>
 <string><id>10100</id><value>Yes/no dialog</value></string>
 <string><id>10101</id><value>Progress dialog</value></string>
 <string><id>10500</id><value>My Music/playlist</value></string>
