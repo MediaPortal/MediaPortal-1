@@ -1031,6 +1031,9 @@ namespace MediaPortal.Configuration.Sections
 			for(int index = 0; index < itemCount; index++)
 			{
 				isDirty = true;
+				ListViewItem item=listViewGroups.SelectedItems[0];
+				TVGroup group=item.Tag as TVGroup;
+				if(group!=null) TVDatabase.DeleteGroup(group);
 				listViewGroups.Items.RemoveAt(listViewGroups.SelectedIndices[0]);
 			}		
 
