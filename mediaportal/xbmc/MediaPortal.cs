@@ -1,4 +1,4 @@
-#define AUTOUPDATE
+//#define AUTOUPDATE
 using System;
 using System.Drawing;
 using System.Collections;
@@ -147,7 +147,6 @@ public class MediaPortalApp : D3DApp, IRender
         form.ShowDialog();
       }
 
-#if AUTOUPDATE
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 	#if DEBUG
 	#else
@@ -156,14 +155,6 @@ public class MediaPortalApp : D3DApp, IRender
 				splashScreen.Show();
 				splashScreen.Update();
 	#endif
-#else
-	#if DEBUG
-	#else
-				splashScreen = new SplashScreen();
-				splashScreen.Show();
-				splashScreen.Update();
-	#endif
-#endif
       Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
       // Set Intervideo registry keys 
       try
