@@ -2423,11 +2423,11 @@
   </string>
   <string>
   	<id>935</id>
-  	<value>Toon: Waardering</value> <!-- TODO: Check if it fits -->
+  	<value>Toon: Waardering</value>
   </string>
   <string>
     <id>936</id>
-    <value>Doorgaan vanaf:</value> <!-- TODO: Check if it fits -->
+    <value>Doorgaan vanaf: </value>
   </string>
   <string>
     <id>937</id>
@@ -2438,13 +2438,109 @@
     <value>Bekijk dit kanaal</value>
   </string>
   <string>
+    <id>939</id>
+    <value>Verander weergave</value>
+  </string>
+  <string>
     <id>940</id>
     <value>Eigenschappen</value>
+  </string>
+  <string>
+  	<id>941</id>
+  	<value>Change aspect ratio</value>    <!-- Todo: translate -->
+  </string>
+  <string>
+  	<id>942</id>
+  	<value>Stretch</value>
+  </string>
+  <string>
+  	<id>943</id>
+  	<value>Normaal</value>
+  </string>
+  <string>
+  	<id>944</id>
+  	<value>Origineel</value>
+  </string>
+  <string>
+  	<id>945</id>
+  	<value>Letterbox</value>
+  </string>
+  <string>
+  	<id>946</id>
+  	<value>Pan and Scan</value>
+  </string>
+  <string>
+  	<id>947</id>
+  	<value>Zoom</value>
+  </string>
+  <string>
+  	<id>948</id>
+  	<value>Online</value>
+  </string>
+  <string>
+  	<id>949</id>
+  	<value>Bezet</value>
+  </string>
+  <string>
+  	<id>950</id>
+  	<value>Zo terug</value>
+  </string>
+  <string>
+  	<id>951</id>
+  	<value>Afwezig</value>
+  </string>
+  <string>
+  	<id>952</id>
+  	<value>Aan de telefoon</value>
+  </string>
+  <string>
+  	<id>953</id>
+  	<value>Lunchpauze</value>
+  </string>
+  <string>
+  	<id>954</id>
+  	<value>Verborgen</value>
+  </string>
+  <string>
+  	<id>955</id>
+  	<value>Offline weergeven</value>  <!-- idle -->
+  </string>
+  <string>
+  	<id>956</id>
+  	<value>Online</value>
+  </string>
+  <string>
+  	<id>957</id>
+  	<value>MSN Messenger</value>
+  </string>
+  <string>
+  	<id>958</id>
+  	<value>Aantal personen</value>
+  </string>
+  <string>
+  	<id>959</id>
+  	<value>has joined the conversation</value>
+  </string>
+  <string>
+  	<id>960</id>
+  	<value>has left the conversation</value>
+  </string>
+  <string>
+  	<id>961</id>
+  	<value>MSN Status</value>
+  </string>
+
+  <string>
+  	<id>970</id>
+  	<value>Vorig venster</value>
   </string>
   <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
   </string>
+  
+  <!-- My Status strings -->
+
 	<string>
     <id>1950</id>
     <value>Mijn Status</value>
@@ -2548,6 +2644,8 @@
     <id>1975</id>
     <value>Volgende pagina</value>
   </string>
+  
+  <!-- My Recipies strings -->
   <string>
     <id>2005</id>
     <value>Verwijderen</value>
@@ -2748,6 +2846,145 @@
     <id>2054</id>
     <value>Geen recepten!</value>
   </string>
+
+	<!-- My Burner strings -->
+	<string>
+		<id>2100</id>
+		<value>CD/DVD Branden</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Kopieer CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Maak Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Maak Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Maak Video-DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Maak Data-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Maak Data-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Start kopiëren</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Voer lege CD/DVD</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>en druk op OK</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Voer originele CD/DVD in.</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Klaar !</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Wacht op CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Kopieer alles</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Wis CD/DVD</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Voer CD/DVD RW in</value>
+	</string>
+
+
+	<!-- My Explorer Strings -->
+	<string>
+		<id>2200</id>
+		<value>Mijn Verkenner</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Selecteer bron</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Selecteer doel</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Bestanden kopiëren</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Map aanmaken</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Selectie opheffen</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Alles selecteren</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Wilt U de map</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>aanmaken?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Wilt U de geselecteerde bestanden kopiëren?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>bestanden zijn gekopieerd.</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>De bestanden worden gekopieerd.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Verwijderen</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Verplaatsen</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Wilt u de geselecteerde bestanden verplaatsen?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>bestanden worden verplaatst.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>De bestanden zijn verplaatst.</value>
+	</string>
+
+  <!-- My Mail strings -->
   <string>
   	<id>8000</id>
   	<value>Mijn Mail</value>
@@ -2860,6 +3097,8 @@
   	<id>8033</id>
   	<value>Voortgang</value>
   </string>
+
+  <!-- My Pictures (properties) strings -->
   <string>
   	<id>9000</id>
   	<value>Afmetingen:</value>
@@ -2872,13 +3111,13 @@
   	<id>9002</id>
   	<value>Flits:</value>
   </string>
-  <string>                             <!-- TODO: Translate photo stuff to dutch (don't know the correct terms) -->
+  <string>
   	<id>9003</id>
-  	<value>Metering Mode:</value>
+  	<value>Meetmodus:</value>
   </string>
   <string>
   	<id>9004</id>
-  	<value>Exposure Comp.:</value>
+  	<value>Belichtingscomp.:</value>
   </string>
   <string>
   	<id>9005</id>
@@ -2890,11 +3129,11 @@
   </string>
   <string>
   	<id>9007</id>
-  	<value>Fstop:</value>
+  	<value>F-nummer:</value>
   </string>
   <string>
   	<id>9008</id>
-  	<value>Exposure time:</value>
+  	<value>Belichtingstijd:</value>
   </string>
   <string>
   	<id>9009</id>
@@ -2908,6 +3147,7 @@
   	<id>9011</id>
   	<value>Opmerkingen:</value>
   </string>
+
 	<string>
 		<id>10000</id>
 		<value>Startscherm</value>
@@ -3120,6 +3360,10 @@
     <id>10757</id>
     <value>Mijn Status/Instellingen</value>
   </string>
+  <string>
+    <id>10770</id>
+    <value>Mijn Verkenner</value>
+  </string>
 	<string>
 		<id>11000</id>
 		<value>Toetsenbord</value>
@@ -3200,6 +3444,10 @@
 		<id>12901</id>
 		<value>Beeldvullend OSD</value>
 	</string>
+  <string>
+    <id>12902</id>
+    <value>MSN Messenger OSD</value>
+  </string>
   <string>
   	<id>13000</id>
   	<value>Systeem:</value>

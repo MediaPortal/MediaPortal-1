@@ -2,6 +2,7 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
+		<version>0.1.0.0</version>
 	</skin>
 
 	<control>
@@ -373,5 +374,6 @@
 		<textureNoFocusMid>tvguide_button_light_middle.png</textureNoFocusMid>
 		<textureNoFocusRight>tvguide_button_light_right.png</textureNoFocusRight>
 	</control>
+
 </controls>
 

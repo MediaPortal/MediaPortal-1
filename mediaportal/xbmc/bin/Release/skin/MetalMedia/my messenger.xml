@@ -63,7 +63,7 @@
 			<onleft>3</onleft>
 			<onright>4</onright>
 			<onup>2</onup>
-			<ondown>6</ondown>
+			<ondown>5</ondown>
 			<subitems>
 				<subitem>103</subitem>
 				<subitem>126</subitem>
@@ -90,15 +90,36 @@
 			<texture>panel_split.png</texture>
 		</control>
 		<control>
+			<description>Status button</description>
+			<type>selectbutton</type>
+			<id>5</id>
+			<posX>55</posX>
+			<posY>189</posY>
+			<label>936</label>
+			<onleft>3</onleft>
+			<onright>50</onright>
+			<onup>3</onup>
+			<ondown>6</ondown>
+			<subitems>
+				<subitem>948</subitem>
+				<subitem>949</subitem>
+				<subitem>950</subitem>
+				<subitem>951</subitem>
+				<subitem>952</subitem>
+				<subitem>953</subitem>
+				<subitem>954</subitem>
+			</subitems>
+		</control>
+		<control>
 			<description>Connect button</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>55</posX>
-			<posY>189</posY>
+			<posY>217</posY>
 			<label>903</label>
 			<onleft>6</onleft>
 			<onright>50</onright>
-			<onup>3</onup>
+			<onup>5</onup>
 			<ondown>2</ondown>
 		</control>
 

@@ -30,7 +30,7 @@
 		<height>20</height>
 		<texturebg>osd_progress_back.png</texturebg> 
 		<lefttexture>osd_progress_left.png</lefttexture> 
-		<midtexture>osd_progress_mid.png</midtexture> 
+		<midtexture>osd_progress_mid.png</midtexture>
 		<righttexture>osd_progress_right.png</righttexture> 
 		<visible>yes</visible> 
 		<label>#percentage</label>
@@ -68,50 +68,50 @@
 		<textureNoFocus>osd_rewind_focus.png</textureNoFocus> 
 		<label>-</label> 
 		<font>-</font> 
-		<onleft>210</onleft> 
-		<onright>212</onright> 
-		<onup>211</onup> 
-		<ondown>211</ondown> 
+		<onleft>210</onleft>
+		<onright>212</onright>
+		<onup>211</onup>
+		<ondown>211</ondown>
 	</control>
 	<control>
-		<description>Stop</description> 
-		<type>button</type> 
-		<id>212</id> 
-		<posX>122</posX> 
-		<posY>515</posY> 
+		<description>Stop</description>
+		<type>button</type>
+		<id>212</id>
+		<posX>122</posX>
+		<posY>515</posY>
 		<width>35</width>
-		<height>37</height> 
-		<textureFocus>osd_stop_focus.png</textureFocus> 
-		<textureNoFocus>osd_stop_nofocus.png</textureNoFocus> 
-		<label>-</label> 
-		<font>-</font> 
-		<onleft>211</onleft> 
-		<onright>213</onright> 
-		<onup>212</onup> 
-		<ondown>212</ondown> 
+		<height>37</height>
+		<textureFocus>osd_stop_focus.png</textureFocus>
+		<textureNoFocus>osd_stop_nofocus.png</textureNoFocus>
+		<label>-</label>
+		<font>-</font>
+		<onleft>211</onleft>
+		<onright>213</onright>
+		<onup>212</onup>
+		<ondown>212</ondown>
 	</control>
 	<control>
-		<description>Play</description> 
-		<type>togglebutton</type> 
-		<id>213</id> 
-		<posX>159</posX> 
-		<posY>515</posY> 
+		<description>Play</description>
+		<type>togglebutton</type>
+		<id>213</id>
+		<posX>159</posX>
+		<posY>515</posY>
 		<width>35</width>
-		<height>37</height> 
-		<AltTextureFocus>osd_play_focus.png</AltTextureFocus> 
-		<AltTextureNoFocus>osd_play_nofocus.png</AltTextureNoFocus> 
-		<textureFocus>osd_pause_focus.png</textureFocus> 
-		<textureNoFocus>osd_pause_focus.png</textureNoFocus> 
-		<label>-</label> 
-		<font>-</font> 
-		<onleft>212</onleft> 
-		<onright>214</onright> 
-		<onup>213</onup> 
-		<ondown>213</ondown> 
+		<height>37</height>
+		<AltTextureFocus>osd_pause_focus.png</AltTextureFocus>
+		<AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus>
+		<textureFocus>osd_play_focus.png</textureFocus>
+		<textureNoFocus>osd_play_focus.png</textureNoFocus>
+		<label>-</label>
+		<font>-</font>
+		<onleft>212</onleft>
+		<onright>214</onright>
+		<onup>213</onup>
+		<ondown>213</ondown>
 	</control>
 	<control>
-		<description>Fast Forward</description> 
-		<type>togglebutton</type> 
+		<description>Fast Forward</description>
+		<type>togglebutton</type>
 		<id>214</id> 
 		<posX>196</posX> 
 		<posY>515</posY> 
