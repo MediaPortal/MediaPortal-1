@@ -179,6 +179,7 @@ namespace MediaPortal.TV.Recording
           TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           if (dev.IsTimeShifting)
           {
+            TuneExternalChannel(m_strTVChannel);
             dev.TVChannel=m_strTVChannel;
             // yep, then we're done
             return ;
@@ -193,6 +194,7 @@ namespace MediaPortal.TV.Recording
           if (dev.UseForTV && !dev.IsRecording && dev.SupportsTimeShifting)
           {
             // yep. then start timeshifting
+            TuneExternalChannel(m_strTVChannel);
             dev.TVChannel=m_strTVChannel;
             dev.StartTimeShifting();
             return;
@@ -326,6 +328,7 @@ namespace MediaPortal.TV.Recording
           if (!dev.IsRecording)
           {
             Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
+            TuneExternalChannel(currentProgram.Channel);
             dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
             return true;
           }
@@ -346,6 +349,7 @@ namespace MediaPortal.TV.Recording
             {
               Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
               dev.StopRecording();
+              TuneExternalChannel(currentProgram.Channel);
               dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
               return true;
             }
@@ -594,6 +598,7 @@ namespace MediaPortal.TV.Recording
                 g_Player.Stop();
               }
               dev.TVChannel = m_strTVChannel;
+              TuneExternalChannel(m_strTVChannel);
               dev.View=true;
               m_bViewing=true;
               return;
@@ -621,6 +626,7 @@ namespace MediaPortal.TV.Recording
         {
           if (!dev.IsRecording)
           {
+            TuneExternalChannel(m_strTVChannel);
             dev.TVChannel=m_strTVChannel;
           }
         }
@@ -858,5 +864,22 @@ namespace MediaPortal.TV.Recording
           break;
 			}
 		}
+
+    static void TuneExternalChannel(string strChannelName)
+    {
+      foreach (TVChannel chan in m_TVChannels)
+      {
+        if (chan.Name.Equals(strChannelName))
+        {
+          if (chan.External)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL,0,0,0,0,0,null);
+            msg.Label=chan.ExternalTunerChannel;
+            GUIWindowManager.SendThreadMessage(msg);
+          }
+          return;
+        }
+      }
+    }
   }
 }

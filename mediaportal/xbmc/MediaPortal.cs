@@ -243,6 +243,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
      
 
+      GUIWindowManager.Receivers+= new SendMessageHandler(OnMessage);
       GUIWindowManager.Callbacks+=new GUIWindowManager.OnCallBackHandler(this.Process);
       GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STARTING;
 
@@ -1132,4 +1133,17 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+  private void OnMessage(GUIMessage message)
+  {
+    switch (message.Message)
+    {
+      case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
+        try
+        {
+          usbuirtdevice.ChangeTunerChannel(message.Label);
+        }
+        catch(Exception){}
+      break;
+    }
+  }
 }
