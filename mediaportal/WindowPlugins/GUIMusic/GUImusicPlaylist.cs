@@ -46,14 +46,14 @@ namespace MediaPortal.GUI.Music
 			m_directory.SetExtensions(Utils.AudioExtensions);
     }
 
+		#region overrides
 		public override bool Init()
 		{
 			m_strDirectory = System.IO.Directory.GetCurrentDirectory();
 			//added by Sam
-			 GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
+			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
 		}
-		#region overrides
 		protected override string SerializeName
 		{
 			get
@@ -174,37 +174,6 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 
-		#endregion
-
-		void OnThreadMessage(GUIMessage message)
-		{
-			switch (message.Message)
-			{
-				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED: 
-					if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC && PShuffleOn==true)
-					{
-						PlayList pl = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
-						pl.Remove(pl[0].FileName );
-						UpdatePartyShuffle();
-						PlayListPlayer.CurrentSong = 0;
-					}
-					break;
-
-				//special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
-				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-					if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC && PShuffleOn==true && PlayListPlayer.CurrentSong!=0)
-					{
-						PlayList pl = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
-						pl.Remove(pl[0].FileName );
-						UpdatePartyShuffle();
-						PlayListPlayer.CurrentSong = 0;
-						LoadDirectory("");
-					}
-					break;
-			}
-		}
-
-		
 		
 		public override bool OnMessage(GUIMessage message)
 		{
@@ -293,6 +262,106 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 
+
+		protected override void OnClick(int iItem)
+		{
+			GUIListItem item = GetSelectedItem();
+			if (item == null) return;
+			if (item.IsFolder) return;
+      
+			//added/changed by Sam
+			//check if party shuffle is on
+			if (PShuffleOn==true) 
+			{
+				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC ) 
+				{
+					for (int i=1; i<GetSelectedItemNo(); i++)
+					{
+						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
+					}
+					//LoadDirectory("");
+					UpdatePartyShuffle();
+					LoadDirectory("");
+				}
+				else
+				{
+					for (int i=0; i<GetSelectedItemNo(); i++)
+					{
+						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
+					}
+					//LoadDirectory("");
+					UpdatePartyShuffle();
+					//LoadDirectory("");
+					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+					PlayListPlayer.Reset();
+					PlayListPlayer.Play(0);
+				}
+			}
+				//otherwise if party shuffle is not on, do this...
+			else
+			{
+				string strPath = item.Path;
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.Reset();
+				PlayListPlayer.Play(iItem);
+				SelectCurrentPlayingSong();
+			}
+			//ended changes
+		}
+    
+		protected override  void OnQueueItem(int iItem)
+		{
+			RemovePlayListItem(iItem);
+		}
+		public override void Process()
+		{
+			if (!m_strCurrentFile.Equals(g_Player.CurrentFile))
+			{
+				m_strCurrentFile = g_Player.CurrentFile;
+				GUIMessage msg;
+				if (g_Player.Playing)
+				{
+					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYLIST_CHANGED, GetID, 0, 0, 0, 0, null);
+					OnMessage(msg);
+				}
+				else
+				{
+					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED, GetID, 0, 0, 0, 0, null);
+					OnMessage(msg);
+				}
+			}
+		}
+
+		#endregion
+		void OnThreadMessage(GUIMessage message)
+		{
+			switch (message.Message)
+			{
+				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED: 
+					if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC && PShuffleOn==true)
+					{
+						PlayList pl = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
+						pl.Remove(pl[0].FileName );
+						UpdatePartyShuffle();
+						PlayListPlayer.CurrentSong = 0;
+					}
+					break;
+
+				//special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
+				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
+					if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC && PShuffleOn==true && PlayListPlayer.CurrentSong!=0)
+					{
+						PlayList pl = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
+						pl.Remove(pl[0].FileName );
+						UpdatePartyShuffle();
+						PlayListPlayer.CurrentSong = 0;
+						LoadDirectory("");
+					}
+					break;
+			}
+		}
+
+		
     void OnRetrieveMusicInfo(ref ArrayList items)
     {
       if (items.Count <= 0) return;
@@ -508,57 +577,6 @@ namespace MediaPortal.GUI.Music
 		}
 
 
-		protected override void OnClick(int iItem)
-		{
-			GUIListItem item = GetSelectedItem();
-			if (item == null) return;
-			if (item.IsFolder) return;
-      
-			//added/changed by Sam
-			//check if party shuffle is on
-			if (PShuffleOn==true) 
-			{
-				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC ) 
-				{
-					for (int i=1; i<GetSelectedItemNo(); i++)
-					{
-						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
-					}
-					//LoadDirectory("");
-					UpdatePartyShuffle();
-					LoadDirectory("");
-				}
-				else
-				{
-					for (int i=0; i<GetSelectedItemNo(); i++)
-					{
-						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
-					}
-					//LoadDirectory("");
-					UpdatePartyShuffle();
-					//LoadDirectory("");
-					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-					PlayListPlayer.Reset();
-					PlayListPlayer.Play(0);
-				}
-			}
-				//otherwise if party shuffle is not on, do this...
-			else
-			{
-				string strPath = item.Path;
-				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-				PlayListPlayer.Reset();
-				PlayListPlayer.Play(iItem);
-				SelectCurrentPlayingSong();
-			}
-			//ended changes
-		}
-    
-		protected override  void OnQueueItem(int iItem)
-		{
-			RemovePlayListItem(iItem);
-		}
-
 		void RemovePlayListItem(int iItem)
 		{
 			//added by Sam
@@ -667,24 +685,6 @@ namespace MediaPortal.GUI.Music
 				playlist.Save(strPath);
 			}
 		}
-    public override void Process()
-    {
-      if (!m_strCurrentFile.Equals(g_Player.CurrentFile))
-      {
-        m_strCurrentFile = g_Player.CurrentFile;
-        GUIMessage msg;
-        if (g_Player.Playing)
-        {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYLIST_CHANGED, GetID, 0, 0, 0, 0, null);
-          OnMessage(msg);
-        }
-        else
-        {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED, GetID, 0, 0, 0, 0, null);
-          OnMessage(msg);
-        }
-      }
-    }
     void SelectCurrentPlayingSong()
     {
       if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC)
