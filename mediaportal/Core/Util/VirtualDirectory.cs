@@ -885,6 +885,16 @@ namespace MediaPortal.Util
       try
       {
         client.ChDir(remotePath);
+      }
+      catch(Exception)
+      {
+        FtpConnectionCache.Remove(client);
+        client = GetFtpClient(file);
+        if (client==null) return false;
+      }
+      try
+      {
+        client.ChDir(remotePath);
         string localFile=String.Format(@"{0}\{1}", GetDefaultPath(),remoteFilename);
         return FtpConnectionCache.Download(client,remoteFilename,localFile);
       }
