@@ -547,7 +547,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern bool Execute([In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.Struct)] ref TunerData tunerdata,[Out,MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray)] out Int16[] pids);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool SetAppHandle([In] IntPtr hnd,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback);
+		public static extern int SetAppHandle([In] IntPtr hnd,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern void PidCallback([In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
@@ -628,20 +628,20 @@ namespace MediaPortal.TV.Recording
 		protected DateTime              m_StartTime=DateTime.Now;
 		protected int					m_iChannelNr=-1;
 		protected bool					m_channelFound=false;
-		
 		StreamBufferConfig				m_streamBufferConfig=null;
 		protected VMR9Util				Vmr9=null; 
 		protected string				m_filename="";
 		protected DVBSections			m_sections=new DVBSections();
 		protected bool					m_pluginsEnabled=false;
 		public RebuildFunc				m_rebuildCB=null;
-		//System.IO.FileStream			m_fileWriter;
+		bool							m_checkVMR9=false;
+		int	[]							m_ecmPids=new int[3]{0,0,0};
+		
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
 			m_rebuildCB=new RebuildFunc(RebuildTuner);
 
-			//m_fileWriter=new System.IO.FileStream(@"H:\test.mpg",System.IO.FileMode.CreateNew);
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				m_pluginsEnabled=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
@@ -669,7 +669,7 @@ namespace MediaPortal.TV.Recording
 				TVDatabase.UpdateSatChannel(m_currentChannel);
 			}
 			catch{}
-			
+		
 		}
 		
 		//
@@ -696,8 +696,8 @@ namespace MediaPortal.TV.Recording
 			tu.TransportStreamID=(Int16)m_currentChannel.TransportStreamID;
 			tu.VideoPID=(Int16)m_currentChannel.VideoPid;
 			tu.Reserved1=0;
-			tu.ECM_1=0;
-			tu.ECM_2=0;
+			tu.ECM_1=(Int16)0;
+			tu.ECM_2=(Int16)0;
 			tu.CAID_0=0;
 			tu.CAID_1=0;
 			tu.CAID_2=0;
@@ -727,13 +727,38 @@ namespace MediaPortal.TV.Recording
 			for(int pointer=add;pointer<end;pointer+=188)
 				PidCallback((IntPtr)pointer);
 		
+			//
 			// here write code to record raw ts or mp3 etc.
-//			byte[] b=new byte[len];
-//			Marshal.Copy(data,b,0,len);
-//			m_fileWriter.Write(b,0,len);
-			//m_buffStream.Write(b,0,len);
-			//Log.Write("Written to file: {0} byte",len);
-			
+			// the callback needs to return as soon as possible!!
+			//
+
+			// the following check should takes care of scrambled video-data
+			// and redraw the vmr9 not to hang
+
+			if(m_checkVMR9==true)
+			{
+				int pid=m_currentChannel.VideoPid;
+				TSHelperTools tools=new TSHelperTools();
+				for(int pointer=add;pointer<end;pointer+=188)
+				{
+					
+					TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
+					if(header.Pid==pid)
+					{
+					
+						if(header.TransportScrambling!=0) // data is scrambled?
+						{
+							// if syncbyte is 255 the header is not valid
+							Vmr9.Repaint();// repaint vmr9
+						}
+						else
+							m_checkVMR9=false;// if we here its un-scrambled and we need
+											  // no checks anymore
+
+						break;// stop loop if we got or video-packet
+					}
+				}
+			}
 
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
@@ -744,6 +769,8 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		
 		}
+		
+
 		/// <summary>
 		/// Callback from Card. Sets an information struct with video settings
 		/// </summary>
@@ -759,10 +786,6 @@ namespace MediaPortal.TV.Recording
 			if(m_pluginsEnabled)
 				GetGraph(m_sourceGraph,false,IntPtr.Zero);
 			
-		
-			if(m_pluginsEnabled==true)
-				SetAppHandle(GUIGraphicsContext.form.Handle,m_rebuildCB);
-
 			int n=0;
 			m_b2c2Adapter=null;
 			// create filters & interfaces
@@ -918,12 +941,19 @@ namespace MediaPortal.TV.Recording
 					int epid=0;
 					DeleteAllPIDs(m_dataCtrl,0);
 
-					
+					int count=0;
 					for(int t=1;t<11;t++)
 					{
 						epid=GetPidNumber(pidText,t);
 						if(epid>0)
+						{
+							if(count<3)
+							{
+								m_ecmPids[count]=epid;
+								count++;
+							}
 							SetPidToPin(m_dataCtrl,0,epid);
+						}
 					}
 
 					SetPidToPin(m_dataCtrl,0,18);
@@ -1518,11 +1548,14 @@ namespace MediaPortal.TV.Recording
 				return false;
 			
 
+			m_checkVMR9=true;
+
 			if(CreateSinkSource(fileName)==true)
 			{
 				m_mediaControl=(IMediaControl)m_sourceGraph;
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
+
 			}
 			else {m_graphState=State.Created;return false;}
 
@@ -1709,10 +1742,6 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 
-				//if(m_mediaControl!=null && m_graphState!=State.TimeShifting )
-				//	m_mediaControl.Stop();
-
-				
 				m_channelFound=true;
 				
 				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3)==false)
@@ -1721,17 +1750,10 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 				m_currentChannel=ch;
-				ExecTuner();
-				//
-				//
 				
-				//if(m_mediaControl!=null && m_graphState!=State.TimeShifting )
-				//	m_mediaControl.Run();
-
-
-				//if(m_pluginsEnabled==true)
-				//	ExecTuner();
-
+				if(m_pluginsEnabled==true)
+					ExecTuner();
+				
 				m_StartTime=DateTime.Now;
 			}
 			
@@ -1919,8 +1941,16 @@ namespace MediaPortal.TV.Recording
 					m_sourceGraph.RemoveFilter(Vmr9.VMR9Filter);
 				Vmr9.RemoveVMR9();
 				Vmr9.UseVMR9inMYTV=false;
+				m_checkVMR9=false;
 			}
-
+			//
+			//
+			if(Vmr9.IsVMR9Connected==true && Vmr9.UseVMR9inMYTV==true)// fallback
+			{
+				m_checkVMR9=true;
+			}
+			//
+			//
 			m_mediaControl = (IMediaControl)m_sourceGraph;
 			if (!Vmr9.UseVMR9inMYTV )
 			{
@@ -1957,8 +1987,12 @@ namespace MediaPortal.TV.Recording
 			//
 			
 			m_mediaControl.Run();
+			
+
+
 			//ExecTuner();
 
+			
 			if(setVisFlag)
 			{
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
@@ -1968,6 +2002,8 @@ namespace MediaPortal.TV.Recording
 				}
 
 			}
+
+
 
 			// show the vid window
 			return true;
@@ -2039,7 +2075,7 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
 		public bool SignalPresent()
 		{
-				return true;
+				return false;
 		}
 
 		/// <summary>

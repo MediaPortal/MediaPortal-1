@@ -1026,6 +1026,7 @@ namespace MediaPortal.TV.Recording
 						if (service[0] == 0x48)
 						{
 							ServiceData serviceData;
+							
 							serviceData = DVB_GetService(service);
 							if (serviceData.serviceName.Length < 1)
 							{
@@ -1926,7 +1927,6 @@ namespace MediaPortal.TV.Recording
 			int service_name_length;
 			int pointer = 0;
 			ServiceData serviceData=new ServiceData();
-			
 			descriptor_tag = b[0];
 			descriptor_length = b[1];
 			serviceData.serviceType = b[2];
