@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
-
+using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 
 namespace MediaPortal.Configuration.Sections
@@ -214,6 +214,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				AddCaptureCard(editCard.CaptureCard);
 
+				editCard.CaptureCard.ID = cardsListView.Items.Count;
 				captureCards.Add(editCard.CaptureCard);
 			}
 		}
@@ -252,6 +253,7 @@ namespace MediaPortal.Configuration.Sections
 				//
 				TVCaptureDevice card = cardsListView.Items[cardsListView.SelectedIndices[0]].Tag as TVCaptureDevice;
 
+				TVDatabase.DeleteCard(card.ID);
 				//
 				// Remove it from the internal list
 				//
@@ -262,6 +264,9 @@ namespace MediaPortal.Configuration.Sections
 				//
 				cardsListView.Items.RemoveAt(cardsListView.SelectedIndices[0]);
 			}		
+
+			LoadCaptureCards();
+			PopulateListView();
 		}
 
 		public void LoadCaptureCards()
@@ -280,9 +285,11 @@ namespace MediaPortal.Configuration.Sections
             //
             // Serialize
             //
+						captureCards = new ArrayList();
             captureCards = (ArrayList)formatter.Deserialize(fileStream);
 						for (int i=0; i < captureCards.Count; i++)
 						{
+							((TVCaptureDevice)captureCards[i]).ID=(i+1);
 							((TVCaptureDevice)captureCards[i]).LoadDefinitions();
 						}
             //

@@ -551,7 +551,7 @@ namespace MediaPortal.Configuration.Sections
 					SaveSettings();
 					UpdateGroupChannels(null,true);
 				}
-			}		
+			}
 		}
 
 		private void deleteButton_Click(object sender, System.EventArgs e)
