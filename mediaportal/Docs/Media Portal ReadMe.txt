@@ -25,10 +25,10 @@ Requirements:
     - PC running Windows 2000 or Windows  XP
     - .NET Framework 1.1   ( www.windowsupdate.com )
     - DirectX 9c or higher ( www.windowsupdate.com )
-    - Windows MediaPlayer 9
+    - Windows MediaPlayer 9/10
   
 Optional:
-    - A TV-Capture card ( I suggest one with hardware mpeg2 encoding to free the CPU)
+    - A TV-Capture card ( We suggest one with hardware mpeg2 encoding to free the CPU)
     - Python 2.3 if you're gonna use the xml/tvguide.bat for the dutch tvguide.
     (see http://www.python.org/ )
     - XMLTV scripts/apps 
@@ -54,7 +54,7 @@ About the TVGuide:
     Offcourse you can run your own xmltv script/util for your own country. 
     Just make sure it outputs an tvguide.xml file. (setup the correct folder in MediaPortals setup)
 
-    XBMC will detect any new versions automaticly and load/import it into its own tv database.
+    MediaPortal will detect any new versions automaticly and load/import it into its own tv database.
     But, you can always manually reload the tvguide.xml file :
         1. Goto my tv->tvguide
         2. Hit F3 to reload the tvguide. 
@@ -69,12 +69,12 @@ Fullscreen/windowed
 Audio/Video/DVD Players:
     Mediaportal can use its internal players for playing DVD/movies/audio or it 
     can use any external player. The internal players are fully integrated in MediaPortal and
-    will give you the best user satisfaction. I suggest you try these first (they are enabled by default) 
+    will give you the best user experience. I suggest you try these first (they are enabled by default) 
     If you really want to use an external player, then you can specify which ones to use in file->setup
     Please note. For (internal) DVD playback you still need to have a DVD player installed 
     like WinDVD or PowerDVD!!
   
 Setup
     Use File->Setup to set things up like shares/folders etc. 
-    selecting Settings in XBMC isnt working yet
+    In Mediaportal home>Settings r GUI/movie specific settings. Not all are here yet.
   

@@ -8,7 +8,7 @@ General:
         F7          = play previous song/movie
         F8          = play next song/movie
           
-        A           = select item
+        Enter       = select item
         B           = Stop
         U           = parent directory (..)
         X           = switch between GUI & fullscreen 
@@ -22,15 +22,14 @@ General:
 My TV:
   TVGuide
         left/right = go left/right
-        y          = increase time interval
-        x          = decrease time interval
+        F8         = increase time interval
+        F7         = decrease time interval
         F1         = default time interval
         home       = goto current time
-        A          = record
-        enter      = record
+        Enter       = record
         pageup     = goto next day
         pagedown   = goto previous day
-        F3         = load new tvguide.xml
+        F3         = (re)load tvguide.xml
   
   Recorded TV
         0          = delete recording
@@ -46,15 +45,16 @@ My Music:
         Y         = add selected item to playlist       
     
 My Pictures:
+	0	  = delete picture
+
   During View picture/slideshow:
         F1        = show picture info
         right     = show next picture
         left      = show previous picture
-        x         = zoom out
-        a         = zoom in
-        0-9       = zoom level 0-9
+        0	  = delete picture
+	1-9       = zoom level 0-9
         R         = rotate
-		space     = pause/continue slideshow
+	space     = pause/continue slideshow
         in zoommode you can move around in the picture using the cursor keys
 		
 My Movies:		
@@ -62,25 +62,23 @@ My Movies:
         Y         = remove selected item from playlist       
         F1        = show video window
   Files/Actors/Genre/Year/Title      
-        F1        = delete item (only in title mode)
+        0         = delete item (only in title mode)
         F1        = goto video playlist (in all other modes)
         Y         = add item to playlist
 		
 Fullscreen video:
    General:
-        S         = Switch aspect ratio between Zoom/Streched/Normal
-        A         = play
-        B         = stop
-        right     = step forward (+1%)
-        left      = step backward (-1%)
+        S         = Change Zoom-Mode
+        right     = Jump+
+        left      = Jump-
         U	  = small step back
         up        = big step forward (+10%)
         down      = big step backward (-10%)
-        Y         = show OSD
-   OSD:
-        pageup    = value +
-        pagedown  = value -
-        x         = close submenu
+        Y         = show/hide OSD
+	x	  = Switch fullscreen/GUI
+   OSD submenu:
+        left      = value +
+        right     = value -
         y         = close OSD
         esc       = close submenu
    DVD playback:
@@ -89,13 +87,12 @@ Fullscreen video:
         F7        = previous chapter
         
    Watching TV:
-        right     = next channel
-        left      = previous channel
+        F8        = next channel
+        F7        = previous channel
         
                        
 Movie calibration:
-        A         = next arrow
-        enter     = next arrow
+        enter     = next step
         F1        = reset
         use cursor keys to calibrate the arrow
 
