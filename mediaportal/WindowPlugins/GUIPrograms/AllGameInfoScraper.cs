@@ -276,6 +276,7 @@ namespace ProgramsDatabase
 				}
 			}
 
+			curGame.ImageURLs = ""; // clear all imageurls
 
 			// 2) get OVERVIEW / COVERSHOT
 			string strOverview = "";

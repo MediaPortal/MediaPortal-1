@@ -460,7 +460,7 @@ namespace ProgramsDatabase
 					string strTitle = NormalizedTitle;
 					while ((!bSuccess) && (iRetries < 5))
 					{
-						// brute force! Try three times.... sometimes I get
+						// brute force! Try five times.... sometimes I get
 						// a PostHTTP false result... don't know why!
 						bSuccess = scraper.FindGameinfo(strTitle);
 						if (!bSuccess)
