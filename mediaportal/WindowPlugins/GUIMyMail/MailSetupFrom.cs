@@ -405,9 +405,9 @@ namespace MyMail
 					mb=(MailBox)e.ChangedItem.Parent.Value;
 					if(ServerExists(mb)==false)
 					{
+						MessageBox.Show("The Host '"+e.ChangedItem.Value.ToString()+"' can not be resolved."+((Char)13)+"The previous entry will be restored.");
 						mb.ServerAddress=e.OldValue.ToString();
 						grid.SelectedObject=mb;
-						MessageBox.Show("The Host '"+e.ChangedItem.Value.ToString()+"' cant resolved."+((Char)13)+"Using the old entry.");
 					}
 					break;
 				case "Username":
