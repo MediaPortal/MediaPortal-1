@@ -63,7 +63,7 @@ namespace MediaPortal.Video.Database
       return true;
 		}
 
-		static int AddFile(int lMovieId, int lPathId,  string strFileName)
+		static public int AddFile(int lMovieId, int lPathId,  string strFileName)
 		{
 			if (m_db==null) return -1;
 			string strSQL="";
@@ -277,7 +277,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static int AddGenre( string strGenre1)
+		static public int AddGenre( string strGenre1)
 		{
 			try
 			{
@@ -414,7 +414,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static int AddActor( string strActor1)
+		static public int AddActor( string strActor1)
 		{
 			try
 			{
@@ -1406,5 +1406,54 @@ namespace MediaPortal.Video.Database
       }
     }
 
+		static public void DeleteGenre(string genre)
+		{
+      try
+      {
+				string genreFiltered=genre;
+				DatabaseUtility.RemoveInvalidChars(ref genreFiltered);
+        string sql = String.Format("select * from genre where strGenre like '{0}'", genreFiltered);
+        SQLiteResultSet results;
+        results=m_db.Execute(sql);
+        if (results.Rows.Count == 0) return;
+
+				int idGenre=Int32.Parse(DatabaseUtility.Get(results,0,"idGenre")) ;
+				m_db.Execute(sql);
+
+				m_db.Execute( String.Format("delete from genrelinkmovie where idGenre={0}",idGenre) );
+				m_db.Execute( String.Format("delete from genre where idGenre={0}",idGenre) );
+
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
+
+		static public void DeleteActor(string actor)
+		{		
+			try
+			{
+				string actorFiltered=actor;
+				DatabaseUtility.RemoveInvalidChars(ref actorFiltered);
+				string sql = String.Format("select * from actors where strActor like '{0}'", actorFiltered);
+				SQLiteResultSet results;
+				results=m_db.Execute(sql);
+				if (results.Rows.Count == 0) return;
+
+				int idactor=Int32.Parse(DatabaseUtility.Get(results,0,"idActor")) ;
+				m_db.Execute(sql);
+
+				m_db.Execute( String.Format("delete from actorlinkmovie where idActor={0}",idactor) );
+				m_db.Execute( String.Format("delete from actor where idActor={0}",idactor) );
+
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
 	}
 }

@@ -106,6 +106,15 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader4;
 		private System.Windows.Forms.Button buttonAddFile;
 		private System.Windows.Forms.Button buttonRemoveFile;
+		private System.Windows.Forms.Button buttonNewMovie;
+		private System.Windows.Forms.Button btnSave;
+		private System.Windows.Forms.Button buttonLookupMovie;
+		private System.Windows.Forms.TextBox textBoxNewGenre;
+		private System.Windows.Forms.TextBox textBoxNewActor;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.TextBox tbVotes;
+		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.TextBox tbPlotOutline;
     ArrayList availableFiles;
 
     public MovieDatabase() :  this("Movie Database")
@@ -209,6 +218,13 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tbPlotOutline = new System.Windows.Forms.TextBox();
+			this.label17 = new System.Windows.Forms.Label();
+			this.tbVotes = new System.Windows.Forms.TextBox();
+			this.label16 = new System.Windows.Forms.Label();
+			this.buttonLookupMovie = new System.Windows.Forms.Button();
+			this.btnSave = new System.Windows.Forms.Button();
+			this.buttonNewMovie = new System.Windows.Forms.Button();
 			this.tbTagline = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.cbWatched = new System.Windows.Forms.CheckBox();
@@ -229,6 +245,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tbRating = new System.Windows.Forms.TextBox();
 			this.tbTitle = new System.Windows.Forms.TextBox();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.textBoxNewGenre = new System.Windows.Forms.TextBox();
 			this.btnDeleteGenre = new System.Windows.Forms.Button();
 			this.buttonNewGenre = new System.Windows.Forms.Button();
 			this.buttonUnmapGenre = new System.Windows.Forms.Button();
@@ -240,6 +257,7 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewAllGenres = new System.Windows.Forms.ListView();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.textBoxNewActor = new System.Windows.Forms.TextBox();
 			this.buttonDeleteActor = new System.Windows.Forms.Button();
 			this.buttonNewActor = new System.Windows.Forms.Button();
 			this.buttonUnmapActors = new System.Windows.Forms.Button();
@@ -251,16 +269,16 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewAllActors = new System.Windows.Forms.ListView();
 			this.chName = new System.Windows.Forms.ColumnHeader();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.buttonRemoveFile = new System.Windows.Forms.Button();
+			this.buttonAddFile = new System.Windows.Forms.Button();
+			this.listViewFiles = new System.Windows.Forms.ListView();
+			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage7 = new System.Windows.Forms.TabPage();
 			this.btnLookupImage = new System.Windows.Forms.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.listViewFiles = new System.Windows.Forms.ListView();
-			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-			this.buttonAddFile = new System.Windows.Forms.Button();
-			this.buttonRemoveFile = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -425,6 +443,13 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.tbPlotOutline);
+			this.tabPage3.Controls.Add(this.label17);
+			this.tabPage3.Controls.Add(this.tbVotes);
+			this.tabPage3.Controls.Add(this.label16);
+			this.tabPage3.Controls.Add(this.buttonLookupMovie);
+			this.tabPage3.Controls.Add(this.btnSave);
+			this.tabPage3.Controls.Add(this.buttonNewMovie);
 			this.tabPage3.Controls.Add(this.tbTagline);
 			this.tabPage3.Controls.Add(this.label4);
 			this.tabPage3.Controls.Add(this.cbWatched);
@@ -450,9 +475,68 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.TabIndex = 0;
 			this.tabPage3.Text = "Title";
 			// 
+			// tbPlotOutline
+			// 
+			this.tbPlotOutline.Location = new System.Drawing.Point(96, 64);
+			this.tbPlotOutline.Name = "tbPlotOutline";
+			this.tbPlotOutline.Size = new System.Drawing.Size(296, 20);
+			this.tbPlotOutline.TabIndex = 37;
+			this.tbPlotOutline.Text = "";
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(16, 64);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(62, 16);
+			this.label17.TabIndex = 36;
+			this.label17.Text = "Plot outline";
+			// 
+			// tbVotes
+			// 
+			this.tbVotes.Location = new System.Drawing.Point(208, 160);
+			this.tbVotes.Name = "tbVotes";
+			this.tbVotes.Size = new System.Drawing.Size(56, 20);
+			this.tbVotes.TabIndex = 35;
+			this.tbVotes.Text = "";
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(168, 160);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(40, 16);
+			this.label16.TabIndex = 34;
+			this.label16.Text = "Votes";
+			// 
+			// buttonLookupMovie
+			// 
+			this.buttonLookupMovie.Location = new System.Drawing.Point(368, 40);
+			this.buttonLookupMovie.Name = "buttonLookupMovie";
+			this.buttonLookupMovie.Size = new System.Drawing.Size(24, 23);
+			this.buttonLookupMovie.TabIndex = 33;
+			this.buttonLookupMovie.Text = "...";
+			this.buttonLookupMovie.Click += new System.EventHandler(this.buttonLookupMovie_Click);
+			// 
+			// btnSave
+			// 
+			this.btnSave.Location = new System.Drawing.Point(240, 328);
+			this.btnSave.Name = "btnSave";
+			this.btnSave.Size = new System.Drawing.Size(56, 23);
+			this.btnSave.TabIndex = 32;
+			this.btnSave.Text = "Save";
+			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			// 
+			// buttonNewMovie
+			// 
+			this.buttonNewMovie.Location = new System.Drawing.Point(328, 328);
+			this.buttonNewMovie.Name = "buttonNewMovie";
+			this.buttonNewMovie.Size = new System.Drawing.Size(64, 24);
+			this.buttonNewMovie.TabIndex = 31;
+			this.buttonNewMovie.Text = "New";
+			this.buttonNewMovie.Click += new System.EventHandler(this.buttonNewMovie_Click);
+			// 
 			// tbTagline
 			// 
-			this.tbTagline.Location = new System.Drawing.Point(96, 64);
+			this.tbTagline.Location = new System.Drawing.Point(96, 88);
 			this.tbTagline.Name = "tbTagline";
 			this.tbTagline.Size = new System.Drawing.Size(296, 20);
 			this.tbTagline.TabIndex = 30;
@@ -460,7 +544,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(16, 112);
+			this.label4.Location = new System.Drawing.Point(16, 136);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(40, 16);
 			this.label4.TabIndex = 4;
@@ -468,7 +552,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// cbWatched
 			// 
-			this.cbWatched.Location = new System.Drawing.Point(96, 208);
+			this.cbWatched.Location = new System.Drawing.Point(96, 232);
 			this.cbWatched.Name = "cbWatched";
 			this.cbWatched.Size = new System.Drawing.Size(104, 16);
 			this.cbWatched.TabIndex = 24;
@@ -476,10 +560,10 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tbDescription
 			// 
-			this.tbDescription.Location = new System.Drawing.Point(88, 232);
+			this.tbDescription.Location = new System.Drawing.Point(88, 256);
 			this.tbDescription.Multiline = true;
 			this.tbDescription.Name = "tbDescription";
-			this.tbDescription.Size = new System.Drawing.Size(304, 80);
+			this.tbDescription.Size = new System.Drawing.Size(304, 64);
 			this.tbDescription.TabIndex = 23;
 			this.tbDescription.Text = "";
 			// 
@@ -493,7 +577,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label13
 			// 
-			this.label13.Location = new System.Drawing.Point(16, 240);
+			this.label13.Location = new System.Drawing.Point(16, 264);
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(64, 16);
 			this.label13.TabIndex = 22;
@@ -510,7 +594,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tbMPAARating
 			// 
-			this.tbMPAARating.Location = new System.Drawing.Point(96, 184);
+			this.tbMPAARating.Location = new System.Drawing.Point(96, 208);
 			this.tbMPAARating.Name = "tbMPAARating";
 			this.tbMPAARating.Size = new System.Drawing.Size(56, 20);
 			this.tbMPAARating.TabIndex = 19;
@@ -518,7 +602,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(16, 184);
+			this.label11.Location = new System.Drawing.Point(16, 208);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(80, 16);
 			this.label11.TabIndex = 18;
@@ -526,7 +610,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(16, 136);
+			this.label6.Location = new System.Drawing.Point(16, 160);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(40, 16);
 			this.label6.TabIndex = 7;
@@ -534,7 +618,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tbYear
 			// 
-			this.tbYear.Location = new System.Drawing.Point(96, 112);
+			this.tbYear.Location = new System.Drawing.Point(96, 136);
 			this.tbYear.Name = "tbYear";
 			this.tbYear.Size = new System.Drawing.Size(56, 20);
 			this.tbYear.TabIndex = 5;
@@ -542,7 +626,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(16, 64);
+			this.label10.Location = new System.Drawing.Point(16, 88);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(52, 16);
 			this.label10.TabIndex = 16;
@@ -550,7 +634,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tbDirector
 			// 
-			this.tbDirector.Location = new System.Drawing.Point(96, 88);
+			this.tbDirector.Location = new System.Drawing.Point(96, 112);
 			this.tbDirector.Name = "tbDirector";
 			this.tbDirector.Size = new System.Drawing.Size(112, 20);
 			this.tbDirector.TabIndex = 15;
@@ -558,7 +642,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(16, 88);
+			this.label9.Location = new System.Drawing.Point(16, 112);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(52, 16);
 			this.label9.TabIndex = 14;
@@ -566,7 +650,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tbDuration
 			// 
-			this.tbDuration.Location = new System.Drawing.Point(96, 160);
+			this.tbDuration.Location = new System.Drawing.Point(96, 184);
 			this.tbDuration.Name = "tbDuration";
 			this.tbDuration.Size = new System.Drawing.Size(56, 20);
 			this.tbDuration.TabIndex = 13;
@@ -582,7 +666,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(16, 160);
+			this.label8.Location = new System.Drawing.Point(16, 184);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(52, 16);
 			this.label8.TabIndex = 12;
@@ -590,7 +674,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tbRating
 			// 
-			this.tbRating.Location = new System.Drawing.Point(96, 136);
+			this.tbRating.Location = new System.Drawing.Point(96, 160);
 			this.tbRating.Name = "tbRating";
 			this.tbRating.Size = new System.Drawing.Size(56, 20);
 			this.tbRating.TabIndex = 9;
@@ -600,12 +684,13 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.tbTitle.Location = new System.Drawing.Point(96, 40);
 			this.tbTitle.Name = "tbTitle";
-			this.tbTitle.Size = new System.Drawing.Size(296, 20);
+			this.tbTitle.Size = new System.Drawing.Size(264, 20);
 			this.tbTitle.TabIndex = 3;
 			this.tbTitle.Text = "";
 			// 
 			// tabPage4
 			// 
+			this.tabPage4.Controls.Add(this.textBoxNewGenre);
 			this.tabPage4.Controls.Add(this.btnDeleteGenre);
 			this.tabPage4.Controls.Add(this.buttonNewGenre);
 			this.tabPage4.Controls.Add(this.buttonUnmapGenre);
@@ -620,25 +705,34 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage4.TabIndex = 1;
 			this.tabPage4.Text = "Genres";
 			// 
+			// textBoxNewGenre
+			// 
+			this.textBoxNewGenre.Location = new System.Drawing.Point(16, 280);
+			this.textBoxNewGenre.Name = "textBoxNewGenre";
+			this.textBoxNewGenre.TabIndex = 8;
+			this.textBoxNewGenre.Text = "";
+			// 
 			// btnDeleteGenre
 			// 
-			this.btnDeleteGenre.Location = new System.Drawing.Point(104, 280);
+			this.btnDeleteGenre.Location = new System.Drawing.Point(112, 312);
 			this.btnDeleteGenre.Name = "btnDeleteGenre";
+			this.btnDeleteGenre.Size = new System.Drawing.Size(56, 23);
 			this.btnDeleteGenre.TabIndex = 7;
 			this.btnDeleteGenre.Text = "Delete";
 			this.btnDeleteGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
 			// 
 			// buttonNewGenre
 			// 
-			this.buttonNewGenre.Location = new System.Drawing.Point(16, 280);
+			this.buttonNewGenre.Location = new System.Drawing.Point(120, 280);
 			this.buttonNewGenre.Name = "buttonNewGenre";
+			this.buttonNewGenre.Size = new System.Drawing.Size(48, 23);
 			this.buttonNewGenre.TabIndex = 6;
-			this.buttonNewGenre.Text = "New Genre";
+			this.buttonNewGenre.Text = "Add";
 			this.buttonNewGenre.Click += new System.EventHandler(this.buttonNewGenre_Click);
 			// 
 			// buttonUnmapGenre
 			// 
-			this.buttonUnmapGenre.Location = new System.Drawing.Point(176, 136);
+			this.buttonUnmapGenre.Location = new System.Drawing.Point(184, 136);
 			this.buttonUnmapGenre.Name = "buttonUnmapGenre";
 			this.buttonUnmapGenre.Size = new System.Drawing.Size(40, 23);
 			this.buttonUnmapGenre.TabIndex = 5;
@@ -655,7 +749,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// buttonMapGenre
 			// 
-			this.buttonMapGenre.Location = new System.Drawing.Point(176, 104);
+			this.buttonMapGenre.Location = new System.Drawing.Point(184, 104);
 			this.buttonMapGenre.Name = "buttonMapGenre";
 			this.buttonMapGenre.Size = new System.Drawing.Size(40, 23);
 			this.buttonMapGenre.TabIndex = 3;
@@ -692,7 +786,7 @@ namespace MediaPortal.Configuration.Sections
 																																												this.columnHeader2});
 			this.listViewAllGenres.Location = new System.Drawing.Point(16, 48);
 			this.listViewAllGenres.Name = "listViewAllGenres";
-			this.listViewAllGenres.Size = new System.Drawing.Size(144, 224);
+			this.listViewAllGenres.Size = new System.Drawing.Size(152, 224);
 			this.listViewAllGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.listViewAllGenres.TabIndex = 0;
 			this.listViewAllGenres.View = System.Windows.Forms.View.Details;
@@ -700,10 +794,11 @@ namespace MediaPortal.Configuration.Sections
 			// columnHeader2
 			// 
 			this.columnHeader2.Text = "Name";
-			this.columnHeader2.Width = 138;
+			this.columnHeader2.Width = 146;
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.textBoxNewActor);
 			this.tabPage5.Controls.Add(this.buttonDeleteActor);
 			this.tabPage5.Controls.Add(this.buttonNewActor);
 			this.tabPage5.Controls.Add(this.buttonUnmapActors);
@@ -718,20 +813,30 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage5.TabIndex = 2;
 			this.tabPage5.Text = "Actors";
 			// 
+			// textBoxNewActor
+			// 
+			this.textBoxNewActor.Location = new System.Drawing.Point(24, 272);
+			this.textBoxNewActor.Name = "textBoxNewActor";
+			this.textBoxNewActor.Size = new System.Drawing.Size(112, 20);
+			this.textBoxNewActor.TabIndex = 16;
+			this.textBoxNewActor.Text = "";
+			// 
 			// buttonDeleteActor
 			// 
-			this.buttonDeleteActor.Location = new System.Drawing.Point(112, 272);
+			this.buttonDeleteActor.Location = new System.Drawing.Point(136, 304);
 			this.buttonDeleteActor.Name = "buttonDeleteActor";
+			this.buttonDeleteActor.Size = new System.Drawing.Size(48, 23);
 			this.buttonDeleteActor.TabIndex = 15;
 			this.buttonDeleteActor.Text = "Delete";
 			this.buttonDeleteActor.Click += new System.EventHandler(this.buttonDeleteActor_Click);
 			// 
 			// buttonNewActor
 			// 
-			this.buttonNewActor.Location = new System.Drawing.Point(24, 272);
+			this.buttonNewActor.Location = new System.Drawing.Point(144, 272);
 			this.buttonNewActor.Name = "buttonNewActor";
+			this.buttonNewActor.Size = new System.Drawing.Size(40, 23);
 			this.buttonNewActor.TabIndex = 14;
-			this.buttonNewActor.Text = "New Actor";
+			this.buttonNewActor.Text = "Add";
 			this.buttonNewActor.Click += new System.EventHandler(this.buttonNewActor_Click);
 			// 
 			// buttonUnmapActors
@@ -790,7 +895,7 @@ namespace MediaPortal.Configuration.Sections
 																																												this.chName});
 			this.listViewAllActors.Location = new System.Drawing.Point(24, 40);
 			this.listViewAllActors.Name = "listViewAllActors";
-			this.listViewAllActors.Size = new System.Drawing.Size(144, 224);
+			this.listViewAllActors.Size = new System.Drawing.Size(152, 224);
 			this.listViewAllActors.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.listViewAllActors.TabIndex = 8;
 			this.listViewAllActors.View = System.Windows.Forms.View.Details;
@@ -798,7 +903,7 @@ namespace MediaPortal.Configuration.Sections
 			// chName
 			// 
 			this.chName.Text = "Name";
-			this.chName.Width = 136;
+			this.chName.Width = 144;
 			// 
 			// tabPage6
 			// 
@@ -810,6 +915,37 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage6.Size = new System.Drawing.Size(408, 358);
 			this.tabPage6.TabIndex = 3;
 			this.tabPage6.Text = "Files";
+			// 
+			// buttonRemoveFile
+			// 
+			this.buttonRemoveFile.Location = new System.Drawing.Point(104, 184);
+			this.buttonRemoveFile.Name = "buttonRemoveFile";
+			this.buttonRemoveFile.TabIndex = 2;
+			this.buttonRemoveFile.Text = "Remove";
+			this.buttonRemoveFile.Click += new System.EventHandler(this.buttonRemoveFile_Click);
+			// 
+			// buttonAddFile
+			// 
+			this.buttonAddFile.Location = new System.Drawing.Point(16, 184);
+			this.buttonAddFile.Name = "buttonAddFile";
+			this.buttonAddFile.TabIndex = 1;
+			this.buttonAddFile.Text = "Add";
+			this.buttonAddFile.Click += new System.EventHandler(this.buttonAddFile_Click);
+			// 
+			// listViewFiles
+			// 
+			this.listViewFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																										this.columnHeader4});
+			this.listViewFiles.Location = new System.Drawing.Point(16, 8);
+			this.listViewFiles.Name = "listViewFiles";
+			this.listViewFiles.Size = new System.Drawing.Size(376, 168);
+			this.listViewFiles.TabIndex = 0;
+			this.listViewFiles.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader4
+			// 
+			this.columnHeader4.Text = "Filename";
+			this.columnHeader4.Width = 363;
 			// 
 			// tabPage7
 			// 
@@ -830,6 +966,7 @@ namespace MediaPortal.Configuration.Sections
 			this.btnLookupImage.Size = new System.Drawing.Size(56, 23);
 			this.btnLookupImage.TabIndex = 30;
 			this.btnLookupImage.Text = "Lookup";
+			this.btnLookupImage.Click += new System.EventHandler(this.btnLookupImage_Click);
 			// 
 			// label15
 			// 
@@ -866,37 +1003,6 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.Size = new System.Drawing.Size(432, 398);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scan";
-			// 
-			// listViewFiles
-			// 
-			this.listViewFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																										this.columnHeader4});
-			this.listViewFiles.Location = new System.Drawing.Point(16, 8);
-			this.listViewFiles.Name = "listViewFiles";
-			this.listViewFiles.Size = new System.Drawing.Size(376, 168);
-			this.listViewFiles.TabIndex = 0;
-			this.listViewFiles.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader4
-			// 
-			this.columnHeader4.Text = "Filename";
-			this.columnHeader4.Width = 363;
-			// 
-			// buttonAddFile
-			// 
-			this.buttonAddFile.Location = new System.Drawing.Point(16, 184);
-			this.buttonAddFile.Name = "buttonAddFile";
-			this.buttonAddFile.TabIndex = 1;
-			this.buttonAddFile.Text = "Add";
-			this.buttonAddFile.Click += new System.EventHandler(this.buttonAddFile_Click);
-			// 
-			// buttonRemoveFile
-			// 
-			this.buttonRemoveFile.Location = new System.Drawing.Point(104, 184);
-			this.buttonRemoveFile.Name = "buttonRemoveFile";
-			this.buttonRemoveFile.TabIndex = 2;
-			this.buttonRemoveFile.Text = "Remove";
-			this.buttonRemoveFile.Click += new System.EventHandler(this.buttonRemoveFile_Click);
 			// 
 			// MovieDatabase
 			// 
@@ -1173,13 +1279,13 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     /// <param name="file"></param>
-    private void ScanFile(string file)
+    private IMDBMovie ScanFile(string file)
 		{
-			if(stopRebuild)  return;
+			if(stopRebuild)  return null;
 
 			string ext=System.IO.Path.GetExtension(file.ToLower());
-			if (ext==".ifo") return;
-			if (ext==".vob") return;
+			if (ext==".ifo") return null;
+			if (ext==".vob") return null;
 			IMDBMovie movieDetails=new IMDBMovie();
 			IMDB imdb = new IMDB(this);
 			int selectedItem=0;
@@ -1189,31 +1295,31 @@ namespace MediaPortal.Configuration.Sections
 				Application.DoEvents();
 				imdb.Find( Utils.GetFilename(file));
 				Application.DoEvents();
-				if(stopRebuild)  return;
-				if (imdb.Count<=0) return;
+				if(stopRebuild)  return null;
+				if (imdb.Count<=0) return null;
 				if (imdb.Count>0)
 				{
 					DlgMovieList dlg = new DlgMovieList();
 					dlg.Filename=file;
 					for (int i=0; i < imdb.Count;++i)
 						dlg.AddMovie(imdb[i].Title);
-					if (dlg.ShowDialog() == DialogResult.Cancel) return;
+					if (dlg.ShowDialog() == DialogResult.Cancel) return null;
 					selectedItem=dlg.SelectedItem;
 				}
 
-				if (stopRebuild) return;
+				if (stopRebuild) return null;
 				if ( imdb.GetDetails(imdb[selectedItem],ref movieDetails))
 				{
-					if(stopRebuild)  return;
+					if(stopRebuild)  return null;
 					Application.DoEvents();
 					id=VideoDatabase.AddMovie(file,false);
 					VideoDatabase.SetMovieInfo(file,ref movieDetails);
 
-					if (stopRebuild) return;
+					if (stopRebuild) return null;
 					//download thumbnail
 					DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);
 					
-					if (stopRebuild) return;
+					if (stopRebuild) return null;
 					Application.DoEvents();
 				}
 			}
@@ -1223,7 +1329,9 @@ namespace MediaPortal.Configuration.Sections
 				DownloadActors(movieDetails);
 				DownloadDirector(movieDetails);
 			}
+			return movieDetails;
     }
+
 		void DownloadThumnail(string folder,string url, string name)
 		{
 			if(stopRebuild)  return;
@@ -1359,11 +1467,12 @@ namespace MediaPortal.Configuration.Sections
 			tbTitle.Text=movie.Title;
 			tbTagline.Text=movie.TagLine;
 			tbYear.Text=movie.Year.ToString();
-//			tbGenre.Text=movie.Genre;
+			tbVotes.Text=movie.Votes;
 			tbRating.Text=movie.Rating.ToString();
 			tbDirector.Text=movie.Director;
 			tbDescription.Text=movie.Plot;
 			textBoxPictureURL.Text=movie.ThumbURL;
+			tbPlotOutline.Text=movie.PlotOutline;
 			if (pictureBox1.Image!=null)
 			{
 				pictureBox1.Image.Dispose();
@@ -1460,6 +1569,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbTitle_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
+			if (cbTitle.SelectedItem==null) return;
 			ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
 			UpdateEdit(item.Movie);
 		}
@@ -1552,6 +1662,7 @@ namespace MediaPortal.Configuration.Sections
 			if(find_file.ShowDialog(this)==DialogResult.OK)
 			{
 				listViewFiles.Items.Add(find_file.FileName);
+
 			}
 		}
 
@@ -1567,22 +1678,160 @@ namespace MediaPortal.Configuration.Sections
 
 		private void buttonDeleteActor_Click(object sender, System.EventArgs e)
 		{
-		
+			if (listViewAllActors.SelectedItems==null) return;
+			if(MessageBox.Show("Are you sure you want to delete the selected actors?","Are you sure?",MessageBoxButtons.YesNo)==DialogResult.Yes)
+			{
+				for(int i=listViewAllActors.SelectedItems.Count-1; i>=0;--i)
+				{
+					ListViewItem listItem=listViewAllActors.SelectedItems[i];
+					VideoDatabase.DeleteActor(listItem.Text);
+					listViewAllActors.Items.Remove(listItem);
+				}
+			}
 		}
 
 		private void buttonNewActor_Click(object sender, System.EventArgs e)
 		{
+			if (textBoxNewActor.Text.Length==0) return;
+			VideoDatabase.AddActor(textBoxNewActor.Text);
+			listViewAllActors.Items.Add(textBoxNewActor.Text);
 		
 		}
 
 		private void btnDeleteGenre_Click(object sender, System.EventArgs e)
 		{
-					
+			if (listViewAllGenres.SelectedItems==null) return;
+			if(MessageBox.Show("Are you sure you want to delete the selected genres?","Are you sure?",MessageBoxButtons.YesNo)==DialogResult.Yes)
+			{
+				for(int i=listViewAllGenres.SelectedItems.Count-1; i>=0;--i)
+				{
+					ListViewItem listItem=listViewAllGenres.SelectedItems[i];
+					VideoDatabase.DeleteGenre(listItem.Text);
+					listViewAllGenres.Items.Remove(listItem);
+				}					
+			}
 		}
 
 		private void buttonNewGenre_Click(object sender, System.EventArgs e)
 		{
-		
+			if (textBoxNewGenre.Text.Length==0) return;
+			VideoDatabase.AddGenre(textBoxNewGenre.Text);
+			listViewAllGenres.Items.Add(textBoxNewGenre.Text);
+		}
+
+		private void buttonNewMovie_Click(object sender, System.EventArgs e)
+		{
+			cbTitle.SelectedItem=null;
+			IMDBMovie details = new IMDBMovie();
+			UpdateEdit(details);
+		}
+
+		private void buttonLookupMovie_Click(object sender, System.EventArgs e)
+		{
+			if (tbTitle.Text==String.Empty)
+			{
+				MessageBox.Show("Please enter a movie title", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);;
+			}
+			buttonLookupMovie.Enabled=false;
+			btnSave.Enabled=false;
+			buttonNewMovie.Enabled=false;
+			tabControl2.Enabled=false;
+			tabControl1.Enabled=false;
+			IMDBMovie movie=ScanFile(tbTitle.Text);
+			if (movie!=null) 
+			{
+				LoadMovies();
+				foreach (ComboBoxItemMovie item in cbTitle.Items)
+				{
+					if (item.Title==movie.Title)
+					{
+						cbTitle.SelectedItem=item;
+						break;
+					}
+				}
+			}
+			else
+			{
+				MessageBox.Show("Movie details could not be found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);;
+			}
+			buttonLookupMovie.Enabled=true;
+			btnSave.Enabled=true;
+			buttonNewMovie.Enabled=true;
+			tabControl2.Enabled=true;
+			tabControl1.Enabled=true;
+		}
+
+		private void btnSave_Click(object sender, System.EventArgs e)
+		{
+			IMDBMovie details = CurrentMovie;
+			VideoDatabase.SetMovieInfoById(details.ID,ref details);
+			//add genres to movie
+
+			//add actors to movie
+
+			//add files to movie
+		}
+
+		private void btnLookupImage_Click(object sender, System.EventArgs e)
+		{
+			if (textBoxPictureURL.Text==String.Empty) return;
+			DownloadThumnail(TitleThumbsFolder,textBoxPictureURL.Text, tbTitle.Text);
+			if (pictureBox1.Image!=null)
+			{
+				pictureBox1.Image.Dispose();
+				pictureBox1.Image=null;
+			}
+			string file=Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
+			if (System.IO.File.Exists(file))
+			{
+				pictureBox1.Image=Image.FromFile(file);
+			}
+		}
+
+		IMDBMovie CurrentMovie
+		{
+			get
+			{
+				if (cbTitle.SelectedItem!=null)
+				{
+					ComboBoxItemMovie cbMovie= (ComboBoxItemMovie)cbTitle.SelectedItem;
+					return cbMovie.Movie;
+				}
+				IMDBMovie movie = new IMDBMovie();
+				//movie.File=
+				//movie.Path=
+				//movie.Top250=
+				//movie.WritingCredits=
+				//movie.CDLabel=
+				//movie.Database=
+				//movie.DVDLabel=
+				//movie.IMDBNumber=
+				//movie.SearchString=
+				unchecked
+				{
+					movie.Director=tbDirector.Text;
+					movie.ID=-1;
+					movie.Plot=tbDescription.Text;
+					movie.Rating=(float)Double.Parse(tbRating.Text);
+					movie.TagLine=tbTagline.Text;
+					movie.Year=Int32.Parse(tbYear.Text);
+					movie.ThumbURL=textBoxPictureURL.Text;
+					movie.Votes=tbVotes.Text;
+					movie.PlotOutline=tbPlotOutline.Text;
+				}
+				foreach (ListViewItem item in listViewGenres.Items)
+				{
+					if (movie.Genre==String.Empty) movie.Genre=item.Text;
+					else movie.Genre += " / " + item.Text;
+				}
+
+				foreach (ListViewItem item in listViewMovieActors.Items)
+				{
+					if (movie.Cast==String.Empty) movie.Cast=item.Text;
+					else movie.Cast += " as ? " + item.Text;
+				}
+				return movie;
+			}
 		}
 	}
 }

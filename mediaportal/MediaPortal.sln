@@ -1,35 +1,4 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3333B71D-6304-452C-BEA5-D037E7B3AA6B} = {3333B71D-6304-452C-BEA5-D037E7B3AA6B}
-		{02FFFC1F-2555-4B99-8B01-3432D0673855} = {02FFFC1F-2555-4B99-8B01-3432D0673855}
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109} = {96B7452E-8D2B-4EAE-8300-153CCB6C5109}
-		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB} = {C1BCEC3E-6074-4328-B5D9-391A457C8FFB}
-		{B282C55B-A37B-4CEC-A4FC-00791069BF00} = {B282C55B-A37B-4CEC-A4FC-00791069BF00}
-		{809F8C77-0EC1-44F9-9536-707A646F43EB} = {809F8C77-0EC1-44F9-9536-707A646F43EB}
-		{5B8BC37B-44EB-4736-8B27-0960F3E03822} = {5B8BC37B-44EB-4736-8B27-0960F3E03822}
-		{68168FAA-A363-4F64-981C-32629A537900} = {68168FAA-A363-4F64-981C-32629A537900}
-		{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D} = {DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}
-	EndProjectSection
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCapture.csproj", "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3333B71D-6304-452C-BEA5-D037E7B3AA6B} = {3333B71D-6304-452C-BEA5-D037E7B3AA6B}
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109} = {96B7452E-8D2B-4EAE-8300-153CCB6C5109}
-		{B282C55B-A37B-4CEC-A4FC-00791069BF00} = {B282C55B-A37B-4CEC-A4FC-00791069BF00}
-		{809F8C77-0EC1-44F9-9536-707A646F43EB} = {809F8C77-0EC1-44F9-9536-707A646F43EB}
-		{5B8BC37B-44EB-4736-8B27-0960F3E03822} = {5B8BC37B-44EB-4736-8B27-0960F3E03822}
-		{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D} = {DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -66,6 +35,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostSetup", "PostSetup\Post
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCapture.csproj", "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -74,34 +55,6 @@ Global
 		UseCaptureDefintionsRelease = UseCaptureDefintionsRelease
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Debug.ActiveCfg = Debug|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Debug.Build.0 = Debug|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Release.ActiveCfg = Release|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Release.Build.0 = Release|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
-		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
-		{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}.Debug.ActiveCfg = Debug
-		{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}.Release.ActiveCfg = Release
-		{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions
-		{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.ActiveCfg = Debug|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.Build.0 = Debug|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.ActiveCfg = Release|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.Build.0 = Release|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
-		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.Debug.ActiveCfg = Debug|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.Debug.Build.0 = Debug|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.Release.ActiveCfg = Release|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.Release.Build.0 = Release|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
-		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug.ActiveCfg = Debug|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug.Build.0 = Debug|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release.ActiveCfg = Release|.NET
@@ -173,6 +126,30 @@ Global
 		{57137A99-FD0A-4A3C-9B51-0DA10DCDE7A6}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
 		{57137A99-FD0A-4A3C-9B51-0DA10DCDE7A6}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
 		{57137A99-FD0A-4A3C-9B51-0DA10DCDE7A6}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Debug.ActiveCfg = Debug|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Debug.Build.0 = Debug|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Release.ActiveCfg = Release|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Release.Build.0 = Release|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.ActiveCfg = Debug|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.Build.0 = Debug|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.ActiveCfg = Release|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.Build.0 = Release|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Debug.ActiveCfg = Debug|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Debug.Build.0 = Debug|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Release.ActiveCfg = Release|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.Release.Build.0 = Release|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
+		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
