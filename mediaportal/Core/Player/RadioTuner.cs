@@ -89,34 +89,35 @@ namespace MediaPortal.Player
         bool bAntenna=false;
         if (strTunerType.Equals("Antenna"))
           bAntenna=true;
-				if(m_strRadioDevice=="B2C2 MPEG-2 Source")
-				{
-					m_dvbCapture=new DVBRadioGraph(m_strRadioDevice,m_strAudioDevice,m_strLineInput);
-					if (!m_dvbCapture.Create())
-					{
-						Log.Write("RadioTuner:failed to Tune to channel:{0}",iChannel);
-						m_dvbCapture.DeleteGraph();
-						m_dvbCapture=null;
-						FreeCard(m_strRadioDevice);
-						return false;
-					}
-					m_dvbCapture.Tune(iChannel);
-					Log.Write("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz",  m_dvbCapture.Channel);
-				}
-				else
-				{
-        m_capture = new RadioGraph(m_strRadioDevice,m_strAudioDevice,m_strLineInput);
-        if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
+        if(m_strRadioDevice=="B2C2 MPEG-2 Source")
         {
-          Log.Write("RadioTuner:failed to Tune to channel:{0}",iChannel);
-          m_capture.DeleteGraph();
-          m_capture=null;
-          FreeCard(m_strRadioDevice);
-          return false;
+          m_dvbCapture=new DVBRadioGraph(m_strRadioDevice,m_strAudioDevice,m_strLineInput);
+          if (!m_dvbCapture.Create())
+          {
+            Log.Write("RadioTuner:failed to Tune to channel:{0}",iChannel);
+            m_dvbCapture.DeleteGraph();
+            m_dvbCapture=null;
+            FreeCard(m_strRadioDevice);
+            return false;
+          }
+          m_dvbCapture.Tune(iChannel);
+          Log.Write("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz",  m_dvbCapture.Channel);
         }
-        m_capture.Tune(iChannel);
+        else
+        {
+          m_capture = new RadioGraph(m_strRadioDevice,m_strAudioDevice,m_strLineInput);
+          if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
+          {
+            Log.Write("RadioTuner:failed to Tune to channel:{0}",iChannel);
+            m_capture.DeleteGraph();
+            m_capture=null;
+            FreeCard(m_strRadioDevice);
+            return false;
+          }
+          m_capture.Tune(iChannel);
 
-        Log.Write("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz",  m_capture.Channel, m_capture.AudioFrequency);
+          Log.Write("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz",  m_capture.Channel, m_capture.AudioFrequency);
+        }
       }
       catch(Exception ex)
       {

@@ -138,8 +138,6 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.Show();
       splashScreen.Update();
 #endif
-			bool bDirectXInstalled = false;
-			bool bWindowsMediaPlayer9 = false;
 
       Log.Write("Set registry keys for intervideo codecs");
       // Set Intervideo registry keys 
@@ -166,21 +164,14 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
 
-      /*
 			try 
 			{
 				// CHECK if DirectX 9.0c if installed
-				string strVersion = "";
-				//string strVersionMng = "";
-				RegistryKey hkcu = Registry.CurrentUser;
-				hkcu.CreateSubKey(@"Software\MediaPortal");
 				RegistryKey hklm = Registry.LocalMachine;
-	      
-				hklm.CreateSubKey(@"Software\MediaPortal");
 				RegistryKey subkey = hklm.OpenSubKey(@"Software\Microsoft\DirectX");
 				if (subkey != null)
 				{
-					strVersion = (string)subkey.GetValue("Version");
+					string strVersion = (string)subkey.GetValue("Version");
 					if (strVersion != null)
 					{
 						if (strVersion.Length > 0)
@@ -191,16 +182,19 @@ public class MediaPortalApp : D3DApp, IRender
 								if (Char.IsDigit(strVersion[i])) strTmp += strVersion[i];
 							}
 							long lVersion = System.Convert.ToInt64(strTmp);
-							if (lVersion >= 409000904)
-							{
-								bDirectXInstalled = true;
-							}
+              if (lVersion < 409000904)
+              {
+                string strLine = "Please install DirectX 9.0c!\r\n";
+                strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
+                strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
+                strLine = strLine + "http://www.microsoft.com/directx";
+                System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                return;
+              }
 						}
-						else strVersion = "?";
 					}
-					else strVersion = "?";
 					
-					strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
+					string strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
 					if (strVersionMng != null)
 					{
 						if (strVersionMng.Length > 0)
@@ -211,95 +205,71 @@ public class MediaPortalApp : D3DApp, IRender
 								if (Char.IsDigit(strVersionMng[i])) strTmp += strVersionMng[i];
 							}
 							long lVersion = System.Convert.ToInt64(strTmp);
-							if (lVersion >= 409001126)
+							if (lVersion < 409001126)
 							{
-								bManagedDirectXInstalled = true;
+                string strLine="Please install Managed DirectX 9.0c!\r\n";
+                strLine=strLine+ "Current version installed:"+strVersionMng+"\r\n\r\n";
+                strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
+                strLine=strLine+ "http://www.microsoft.com/directx";
+                System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                return;
 							}
 						}
-						else strVersionMng = "?";
 					}
-					else strVersionMng = "?";
-					
 					subkey.Close();
 					subkey = null;
 				}
 
 				// CHECK if Windows MediaPlayer 9 is installed
 				subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\9.0");
-				if (subkey != null)
-				{
-					bWindowsMediaPlayer9 = true;
-					subkey.Close();
-					subkey = null;
-				}
+        if (subkey == null)
+          subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\10.0");
+        if (subkey != null)
+        {
+          subkey.Close();
+          subkey = null;
+        }
+        else
+        {
+          string strLine = "Please install Windows Mediaplayer 9\r\n";
+          strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9";
+          System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+          return;
+        }
 				hklm.Close();
 				hklm = null;
-
-				if (!bDirectXInstalled)
-				{
-					string strLine = "Please install DirectX 9.0c!\r\n";
-					strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
-					strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
-					strLine = strLine + "http://www.microsoft.com/directx";
-					System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-				}
-				
-				if (!bManagedDirectXInstalled)
-				{
-					string strLine="Please install Managed DirectX 9.0c!\r\n";
-					strLine=strLine+ "Current version installed:"+strVersion+"\r\n\r\n";
-					strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
-					strLine=strLine+ "http://www.microsoft.com/directx";
-					System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-				}
-
-				if (!bWindowsMediaPlayer9)
-				{
-					string strLine = "Please install Windows Mediaplayer 9\r\n";
-					strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9";
-					System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-				}
 			}
 			catch(Exception)
 			{
-				bDirectXInstalled =true;
-				bWindowsMediaPlayer9=true;
 			}
-*/
-      
-      bDirectXInstalled =true;
-      bWindowsMediaPlayer9=true;
-      if (bDirectXInstalled && bWindowsMediaPlayer9)
+
+      try
       {
-
-        try
+				if (splashScreen!=null) splashScreen.SetInformation("Initializing DirectX...");
+        MediaPortalApp app = new MediaPortalApp();
+        if (app.CreateGraphicsSample())
         {
-					if (splashScreen!=null) splashScreen.SetInformation("Initializing DirectX...");
-          MediaPortalApp app = new MediaPortalApp();
-          if (app.CreateGraphicsSample())
+          //app.PreRun();
+          Log.Write("Start MediaPortal");
+          try
           {
-            //app.PreRun();
-            Log.Write("Start MediaPortal");
-            try
-            {
-              app.Run();
+            app.Run();
 
-              //Application.Run(app);
-            }
-            catch (Exception ex)
-            {
-              Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
-            }
-            app.OnExit();
-            Log.Write("MediaPortal done");
-            Win32API.EnableStartBar(true);
-            Win32API.ShowStartBar(true);
+            //Application.Run(app);
           }
+          catch (Exception ex)
+          {
+            Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
+          }
+          app.OnExit();
+          Log.Write("MediaPortal done");
+          Win32API.EnableStartBar(true);
+          Win32API.ShowStartBar(true);
         }
-        catch (Exception ex)
-        {
-          Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
-        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
       }
 #if DEBUG
 #else
@@ -307,6 +277,7 @@ public class MediaPortalApp : D3DApp, IRender
         splashScreen.Close();
 #endif
     }
+
     public static void SetDWORDRegKey(RegistryKey hklm,string Key,string Value,Int32 iValue)
     {      
       RegistryKey subkey = hklm.CreateSubKey(Key);
