@@ -126,7 +126,12 @@ namespace MediaPortal.TV.Recording
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
 			if (currentFrequencyIndex >= frequencies.Count)
+			{
+				timer1.Enabled=false;
+				callback.OnProgress(100);
+				callback.OnEnded();
 				return;
+			}
 			
 			float percent = ((float)currentFrequencyIndex) / ((float)frequencies.Count);
 			percent *= 100.0f;

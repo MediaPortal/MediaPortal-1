@@ -207,6 +207,8 @@ namespace MediaPortal
 
     private void AnalogTVTuningForm_Load(object sender, System.EventArgs e)
     {
+			
+			btnOk.Enabled=false;
 			UpdateList();
 			GUIGraphicsContext.form=this;
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
@@ -250,7 +252,7 @@ namespace MediaPortal
 
 		public void OnEnded()
 		{
-			// TODO:  Add AnalogTVTuningForm.OnEnded implementation
+			btnOk.Enabled=true;
 		}
 		public void OnNewChannel()
 		{
