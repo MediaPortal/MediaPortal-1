@@ -560,7 +560,7 @@ namespace MediaPortal.GUI.Library
 			_packer.PackSkinGraphics(GUIGraphicsContext.Skin);
 		}
 
-		static public bool GetPackedTexture(string strFileName,out float uoff, out float voff, out float umax, out float vmax, out int textureWidth, out int textureHeight, out Texture tex, out int _packedTextureNo)
+		static public bool GetPackedTexture(string strFileName,out double uoff, out double voff, out double umax, out double vmax, out int textureWidth, out int textureHeight, out Texture tex, out int _packedTextureNo)
 		{
 			return _packer.Get(strFileName,out uoff,out voff,out umax,out vmax,out textureWidth, out textureHeight,out tex,out _packedTextureNo);
 		}

@@ -72,9 +72,10 @@ namespace MediaPortal.GUI.Library
     Vector3                         pntPosition;
     float                           scaleX=1;
     float                           scaleY=1;
-		float														_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
+		float														_fx,_fy,_nw,_nh;
+		float														_uoff,_voff,_umax,_vmax;
 		int															_color;
-		float														_texUoff,_texVoff,_texUmax,_texVmax;
+		double													_texUoff,_texVoff,_texUmax,_texVmax;
 		Texture													_packedTexture=null;
 		int															_packedTextureNo;
 
@@ -648,10 +649,10 @@ namespace MediaPortal.GUI.Library
 
 			if ( _packedTexture!=null )
 			{
-				_uoff = _texUoff + (uoffs * _texUmax);
-				_voff = _texVoff + (voffs * _texVmax);
-				_umax = _umax * _texUmax;
-				_vmax = _vmax * _texVmax;
+				_uoff = (float)Math.Round( ((double)_texUoff) + ( ((double)uoffs) * _texUmax ),6);
+				_voff = (float)Math.Round( ((double)_texVoff) + ( ((double)voffs) * _texVmax ),6);
+				_umax = (float)Math.Round( ((double)_umax) * _texUmax,6);
+				_vmax = (float)Math.Round( ((double)_vmax) * _texVmax,6);
 			}
 
 			pntPosition=new Vector3(x,y,0);
@@ -659,7 +660,7 @@ namespace MediaPortal.GUI.Library
       destinationRect=new Rectangle(0,0,(int)nw,(int)nh);
       m_destRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
 
-      scaleX = (float)destinationRect.Width / (float)iSourceWidth;
+      scaleX = (float)destinationRect.Width  / (float)iSourceWidth;
       scaleY = (float)destinationRect.Height / (float)iSourceHeight;
       pntPosition.X /= scaleX;
       pntPosition.Y /= scaleY;

@@ -255,9 +255,9 @@ namespace MediaPortal.GUI.Library
 			return result;
 		}
 		
-		public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax, out int iWidth, out int iHeight, out Texture tex, out int TextureNo)
+		public bool Get(string fileName, out double uoffs, out double voffs, out double umax, out double vmax, out int iWidth, out int iHeight, out Texture tex, out int TextureNo)
 		{
-			uoffs=voffs=umax=vmax=0.0f;
+			uoffs=voffs=umax=vmax=0.0d;
 			iWidth=iHeight=0;
 			TextureNo=-1;
 			tex=null;
@@ -273,12 +273,12 @@ namespace MediaPortal.GUI.Library
 				PackedTextureNode foundNode=bigOne.root.Get(fileName.ToLower());
 				if (foundNode!=null)
 				{
-					uoffs  = ((float)foundNode.Rect.Left+1)   / ((float)bigOne.root.Rect.Width-2);
-					voffs  = ((float)foundNode.Rect.Top+1)    / ((float)bigOne.root.Rect.Height-2);
-					umax   = ((float)foundNode.Rect.Width-2)  / ((float)bigOne.root.Rect.Width-2);
-					vmax   = ((float)foundNode.Rect.Height-2) / ((float)bigOne.root.Rect.Height-2);
-					iWidth = foundNode.Rect.Width-2;
-					iHeight= foundNode.Rect.Height-2;
+					uoffs  = ((double)foundNode.Rect.Left)   / ((double)bigOne.root.Rect.Width);
+					voffs  = ((double)foundNode.Rect.Top)    / ((double)bigOne.root.Rect.Height);
+					umax   = ((double)foundNode.Rect.Width)  / ((double)bigOne.root.Rect.Width);
+					vmax   = ((double)foundNode.Rect.Height) / ((double)bigOne.root.Rect.Height);
+					iWidth = foundNode.Rect.Width;
+					iHeight= foundNode.Rect.Height;
 					if (bigOne.texture==null)
 					{
 						LoadPackedGraphics();
