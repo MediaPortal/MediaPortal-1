@@ -14,8 +14,6 @@ todo for 1.0:
 	- new preview.png for both skins
 	- scrolling : base on time instead of frame
 	- duration of .sbe??? 39:57 
-	185257989999			(2400 sec)
-	240000000000
 fix:				
 vmr9:
 	- windowless vmr9 / renderless vmr9

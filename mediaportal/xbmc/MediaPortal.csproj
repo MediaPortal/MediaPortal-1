@@ -208,6 +208,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "DXUtil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FormAutoTune.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

@@ -34,6 +34,8 @@ namespace MediaPortal
     private System.Windows.Forms.Control ourRenderTarget;
     // Should we use the default windows
     protected bool isUsingMenus = true;
+    private float lastTime = 0.0f; // The last time
+    private int frames = 0; // Number of frames since our last update
 
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
@@ -145,8 +147,10 @@ namespace MediaPortal
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
 //@@@fullscreen
-//       string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
-//        if (strStartFull!=null && strStartFull=="yes") startFullscreen=true;
+/*
+       string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
+        if (strStartFull!=null && strStartFull=="yes") startFullscreen=true;
+*/        
 //@@@fullscreen
       }
       //      startFullscreen=true;
@@ -191,6 +195,7 @@ namespace MediaPortal
       try
       {
         ChooseInitialSettings();
+        DXUtil.Timer(DirectXTimer.Start);
 
         // Initialize the application timer
 
@@ -457,16 +462,17 @@ namespace MediaPortal
       presentParams.MultiSampleQuality = graphicsSettings.MultisampleQuality;
       presentParams.EnableAutoDepthStencil = enumerationSettings.AppUsesDepthBuffer;
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
-      presentParams.PresentFlag = PresentFlag.None;
+      
 
         if (windowed)
         {
             presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
             presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-            presentParams.FullScreenRefreshRateInHz = 0;
-            presentParams.PresentationInterval = PresentInterval.Default;
-            presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
+            //presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
+            presentParams.PresentationInterval = PresentInterval.One;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Copy;
+            presentParams.PresentFlag = PresentFlag.Video;
             presentParams.DeviceWindow = ourRenderTarget;
         }
         else
@@ -477,6 +483,7 @@ namespace MediaPortal
             presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
             presentParams.PresentationInterval = Direct3D.PresentInterval.Default;
             presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
+            presentParams.PresentFlag = PresentFlag.Video;
             presentParams.DeviceWindow = this;
       }
     }
@@ -512,15 +519,14 @@ namespace MediaPortal
         createFlags = CreateFlags.HardwareVertexProcessing;
       else if (graphicsSettings.VertexProcessingType == VertexProcessingType.PureHardware)
       {
-        createFlags = CreateFlags.HardwareVertexProcessing | CreateFlags.PureDevice;
+        createFlags = CreateFlags.HardwareVertexProcessing;// | CreateFlags.PureDevice;
       }
       else
         throw new ApplicationException();
-#if (DX9)
-#else
+
       // Make sure to allow multithreaded apps if we need them
-      //presentParams.ForceNoMultiThreadedFlag = !isMultiThreaded;
-#endif
+      presentParams.ForceNoMultiThreadedFlag = !isMultiThreaded;
+
       try
       {
         // Create the device
@@ -967,6 +973,7 @@ namespace MediaPortal
       oldBounds=new Rectangle(Bounds.X,Bounds.Y,Bounds.Width,Bounds.Height);
 
 //@@@fullscreen
+
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
@@ -994,6 +1001,7 @@ namespace MediaPortal
           isMaximized=true;
         }
       }
+ 
 //@@@fullscreen
       OnStartup();
 
@@ -1135,8 +1143,6 @@ namespace MediaPortal
 					GUIWindowManager.ActivateWindow(m_iActiveWindow);
 				}
       }
-      UpdateStats();
-
     }
 
 
@@ -1147,9 +1153,68 @@ namespace MediaPortal
     /// </summary>
     public void UpdateStats()
     {
-        
-    }
+      // Keep track of the frame count
+      float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+      ++frames;
 
+      // Update the scene stats once per second
+      if (time - lastTime >= 1.0f)
+      {
+        framePerSecond    = frames / (time - lastTime);
+        lastTime = time;
+        frames  = 0;
+
+        string strFmt;
+        Format fmtAdapter = graphicsSettings.DisplayMode.Format;
+        if (fmtAdapter == GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat)
+        {
+          strFmt = fmtAdapter.ToString();
+        }
+        else
+        {
+          strFmt = String.Format("backbuf {0}, adapter {1}", 
+            GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat.ToString(), fmtAdapter.ToString());
+        }
+
+        string strDepthFmt;
+        if (enumerationSettings.AppUsesDepthBuffer)
+        {
+          strDepthFmt = String.Format(" ({0})", 
+            graphicsSettings.DepthStencilBufferFormat.ToString());
+        }
+        else
+        {
+          // No depth buffer
+          strDepthFmt = "";
+        }
+
+        string strMultiSample;
+        switch (graphicsSettings.MultisampleType)
+        {
+          case Direct3D.MultiSampleType.NonMaskable: strMultiSample = " (NonMaskable Multisample)"; break;
+          case Direct3D.MultiSampleType.TwoSamples: strMultiSample = " (2x Multisample)"; break;
+          case Direct3D.MultiSampleType.ThreeSamples: strMultiSample = " (3x Multisample)"; break;
+          case Direct3D.MultiSampleType.FourSamples: strMultiSample = " (4x Multisample)"; break;
+          case Direct3D.MultiSampleType.FiveSamples: strMultiSample = " (5x Multisample)"; break;
+          case Direct3D.MultiSampleType.SixSamples: strMultiSample = " (6x Multisample)"; break;
+          case Direct3D.MultiSampleType.SevenSamples: strMultiSample = " (7x Multisample)"; break;
+          case Direct3D.MultiSampleType.EightSamples: strMultiSample = " (8x Multisample)"; break;
+          case Direct3D.MultiSampleType.NineSamples: strMultiSample = " (9x Multisample)"; break;
+          case Direct3D.MultiSampleType.TenSamples: strMultiSample = " (10x Multisample)"; break;
+          case Direct3D.MultiSampleType.ElevenSamples: strMultiSample = " (11x Multisample)"; break;
+          case Direct3D.MultiSampleType.TwelveSamples: strMultiSample = " (12x Multisample)"; break;
+          case Direct3D.MultiSampleType.ThirteenSamples: strMultiSample = " (13x Multisample)"; break;
+          case Direct3D.MultiSampleType.FourteenSamples: strMultiSample = " (14x Multisample)"; break;
+          case Direct3D.MultiSampleType.FifteenSamples: strMultiSample = " (15x Multisample)"; break;
+          case Direct3D.MultiSampleType.SixteenSamples: strMultiSample = " (16x Multisample)"; break;
+          default: strMultiSample = string.Empty; break;
+        }
+        frameStats = String.Format("{0} fps ({1}x{2}), {3}{4}{5}", framePerSecond.ToString("f2"),
+                                    GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, 
+                                    GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight, 
+                                    strFmt, strDepthFmt, strMultiSample);
+      }
+    }
 
 
 

@@ -26,6 +26,10 @@ public class MediaPortalApp : D3DApp, IRender
     private System.Threading.Mutex  m_Mutex;
     private string                  m_UniqueIdentifier;
     bool                            m_bPlayingState=false;
+    bool                            m_bShowStats=false;
+    Rectangle[]                     region= new Rectangle[1];
+    int                             m_ixpos=50;
+    int                             m_iFrameCount=0;
 	  private USBUIRT                 usbuirtdevice;
 
     const int WM_KEYDOWN    =0x0100;
@@ -195,12 +199,43 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("done");
     }
 
-  public override bool PreProcessMessage(ref Message msg)
-  {
-    if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
+    void RenderStats()
+    {
+      UpdateStats();
+      if (m_bShowStats)
+      {
+        GUIFont font = GUIFontManager.GetFont(0);
+        if (font!=null)
+        {
+          font.DrawText(80,80,0xffffffff,frameStats,GUIControl.Alignment.ALIGN_LEFT);
+          
+          region[0].X=m_ixpos;
+          region[0].Y=0;
+          region[0].Width=4;
+          region[0].Height=GUIGraphicsContext.Height;
+          GUIGraphicsContext.DX9Device.Clear( ClearFlags.ZBuffer|ClearFlags.Target, Color.FromArgb(255,255,255,255), 1.0f, 0,region);
+         
+          float fStep=(GUIGraphicsContext.Width-100);
+          fStep/=(2f*16f);
 
-    return base.PreProcessMessage (ref msg);
-  }
+          fStep/=framePerSecond;
+          m_iFrameCount++;
+          if (m_iFrameCount>=(int)fStep)
+          {
+            m_iFrameCount=0;
+            m_ixpos+=12;
+            if (m_ixpos>GUIGraphicsContext.Width-50) m_ixpos=50;
+          }
+        }
+      }
+    }
+
+    public override bool PreProcessMessage(ref Message msg)
+    {
+      if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
+
+      return base.PreProcessMessage (ref msg);
+    }
 
     protected override void WndProc( ref Message msg )
     {
@@ -236,6 +271,7 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         GUIWindowManager.Render();
+        RenderStats();
       }
       catch(Exception ex)
       {
@@ -320,11 +356,13 @@ public class MediaPortalApp : D3DApp, IRender
       }
  
       // clear the surface
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+      GUIGraphicsContext.DX9Device.Clear( ClearFlags.ZBuffer|ClearFlags.Target, Color.Black, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
 
       // ask the window manager to render the current active window
       GUIWindowManager.Render(); 
+      RenderStats();
+     
  
       GUIGraphicsContext.DX9Device.EndScene();
       try
@@ -679,6 +717,7 @@ public class MediaPortalApp : D3DApp, IRender
 				g_Player.SeekAsolutePercentage(99);
       }
 #endif
+      if (key.KeyChar=='!') m_bShowStats=!m_bShowStats;
 			if (key.KeyChar=='?')
 			{
         Log.Write("Memory used before GC:{0}", GC.GetTotalMemory(false));
