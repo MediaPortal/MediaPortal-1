@@ -224,6 +224,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Dialogs\GUIDialogFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Dialogs\GUIDialogFileStacking.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

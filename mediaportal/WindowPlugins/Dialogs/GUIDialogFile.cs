@@ -1,0 +1,536 @@
+using System;
+using System.IO;
+using System.Drawing;
+using System.Collections;
+using System.Windows.Forms;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
+namespace MediaPortal.Dialogs
+{
+	/// <summary>
+	/// 
+	/// </summary>
+	public class GUIDialogFile : GUIWindow
+	{
+		enum Controls
+		{
+			ID_BUTTON_NO = 10,
+			ID_BUTTON_YES = 11,
+			ID_BUTTON_ALWAYS = 12,
+			ID_BUTTON_NEVER = 13,
+			ID_BUTTON_CANCEL = 14,
+			ID_BUTTON_OK = 15,
+			PROGRESS_BG = 100
+		};
+
+		const int CONTROL_PROGRESS_BAR =20;
+
+		#region Base Dialog Variables
+		bool m_bRunning=false;
+		int m_dwParentWindowID=0;
+		GUIWindow m_pParentWindow=null;
+		#endregion
+    
+		bool m_bCanceled=false;
+		bool m_bOverlay=false;
+		int m_iFileMode=-1;
+		GUIListItem m_itemSourceItem=null;
+		int								m_iNrOfItems=0;
+		long							m_dwTotalSize=0;
+		int								m_iFileNr=0;
+		DirectoryHistory  m_history = new DirectoryHistory();
+		string            m_strDirectory="";
+		string						m_strDestination="";
+		VirtualDirectory  m_directory = new VirtualDirectory();
+		bool							m_bButtonYes = false;
+		bool							m_bButtonNo = false;
+		bool							m_bAlways = false;
+		bool							m_bNever = false;
+		bool							m_bBusy = false;
+    
+		public GUIDialogFile()
+		{
+			GetID=(int)GUIWindow.Window.WINDOW_DIALOG_FILE;
+		}
+
+		public override bool Init()
+		{
+			return Load (GUIGraphicsContext.Skin+@"\DialogFile.xml");
+		}
+
+		public override bool SupportsDelayedLoad
+		{
+			get { return true;}
+		}    
+		public override void PreInit()
+		{
+		}
+
+
+		public override void OnAction(Action action)
+		{
+			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				Close();
+				return;
+			}
+			base.OnAction(action);
+		}
+
+		#region Base Dialog Members
+		public void RenderDlg(float timePassed)
+		{
+			// render the parent window
+			if (null!=m_pParentWindow) 
+				m_pParentWindow.Render(timePassed);
+
+			GUIFontManager.Present();
+			// render this dialog box
+			base.Render(timePassed);
+		}
+
+		public void Close()
+		{
+			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
+			OnMessage(msg);
+
+			GUIWindowManager.UnRoute();
+			m_pParentWindow=null;
+			m_bRunning=false;
+			GUIGraphicsContext.Overlay=m_bOverlay;
+		}
+    
+		public void Progress()
+		{
+			if  (m_bRunning)
+			{
+				GUIWindowManager.Process();
+			}
+		}
+
+		public void ProgressKeys()
+		{
+			if  (m_bRunning)
+			{
+				//TODO
+				//g_application.FrameMove();
+			}
+		}
+
+
+		public void DoModal(int dwParentId)
+		{
+			m_dwParentWindowID=dwParentId;
+			m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
+			if (null==m_pParentWindow)
+			{
+				m_dwParentWindowID=0;
+				return;
+			}
+
+			GUIWindowManager.RouteToWindow( GetID );
+
+			// active this window...
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
+			OnMessage(msg);
+			
+			string strFileOperation="";
+			if (m_iFileMode==1) strFileOperation = GUILocalizeStrings.Get(116);
+			else strFileOperation = GUILocalizeStrings.Get(115);
+
+			SetHeading( strFileOperation );
+			SetLine(1, 505);
+			SetButtonsHidden(true);
+			ShowProgressBar(true);
+			SetPercentage(0);
+			GUIWindowManager.Process();
+
+
+			// calc nr of files
+			m_dwTotalSize=0;
+			m_iNrOfItems=0;			
+			FileItemGetNrOfFiles(m_itemSourceItem);
+			
+			// set number of objects
+			strFileOperation += " "+m_iNrOfItems.ToString()+" "+GUILocalizeStrings.Get(507)+" (";
+			if (m_dwTotalSize > 1024*1024) strFileOperation += (m_dwTotalSize/(1024*1024)).ToString()+" MB)";
+			else if (m_dwTotalSize > 1024) strFileOperation += (m_dwTotalSize/1024).ToString()+" KB)";
+			else strFileOperation += m_dwTotalSize.ToString()+" Bytes)";
+			SetNewHeading( strFileOperation );
+			SetLine(1, GUILocalizeStrings.Get(508)+" \""+m_strDestination+"\" ?");
+
+			m_bButtonYes = false;
+			m_bButtonNo = false;
+			m_bAlways = false;
+			m_bNever = false;			
+			m_iFileNr = 1;
+			m_strDirectory = System.IO.Path.GetDirectoryName(m_itemSourceItem.Path);
+
+			m_bRunning=true;
+			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+			{
+				GUIWindowManager.Process();
+			}
+		}
+		#endregion
+	
+		public override bool OnMessage(GUIMessage message)
+		{
+			switch ( message.Message )
+			{
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+				{
+					m_pParentWindow=null;
+					GUIGraphicsContext.Overlay=m_bOverlay;
+					base.OnMessage(message);
+					FreeResources();
+					DeInitControls();
+
+					return true;
+				}
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+				{
+					m_bOverlay=GUIGraphicsContext.Overlay;
+					m_bCanceled = false;
+					m_bBusy = false;
+					base.OnMessage(message);
+					GUIGraphicsContext.Overlay=false;
+					m_pParentWindow=GUIWindowManager.GetWindow(m_dwParentWindowID);
+				}
+					return true;
+
+				case GUIMessage.MessageType.GUI_MSG_CLICKED:
+				{
+					int iAction=message.Param1;
+					int iControl=message.SenderControlId;
+					switch (iControl)
+					{
+						case (int)Controls.ID_BUTTON_CANCEL:
+						{
+							m_bCanceled=true;
+							if (!m_bBusy) Close();
+						}
+							break;
+
+						case (int)Controls.ID_BUTTON_YES:
+						{
+							if (!m_bBusy)
+							{
+								m_bBusy=true;								
+								FileItemMC(m_itemSourceItem);
+								m_bBusy=false;
+								Close();
+							}
+							else
+								m_bButtonYes = true;
+						}
+							break;
+
+						case (int)Controls.ID_BUTTON_NO:
+						{
+							m_bButtonNo = true;
+						}
+							break;
+
+						case (int)Controls.ID_BUTTON_ALWAYS:
+						{
+							m_bAlways = true;
+						}
+							break;
+
+						case (int)Controls.ID_BUTTON_NEVER:
+						{
+							m_bNever = true;
+						}
+							break;
+					}
+
+				}
+					break;
+			}
+
+			if (m_pParentWindow!=null)
+			{
+				if (message.TargetWindowId==m_pParentWindow.GetID)
+				{
+					return m_pParentWindow.OnMessage(message);
+				}
+			}
+			return base.OnMessage(message);
+		}
+
+
+		public bool IsCanceled
+		{
+			get { return m_bCanceled;}
+		}
+
+		public void SetMode(int iMode)
+		{
+			m_iFileMode = iMode;
+		}
+
+		public void SetSourceItem(GUIListItem item)
+		{
+			m_itemSourceItem = item;
+		}
+
+		public void SetDestinationDir(string strDestination)
+		{
+			m_strDestination = strDestination;
+		}
+
+		public void SetNewHeading( string strLine )
+		{
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2,0,0,null);
+			msg.Label=strLine; 
+			OnMessage(msg);
+		}
+
+		public void SetHeading( string strLine)
+		{
+			LoadSkin();
+			AllocResources();
+			InitControls();
+
+			SetLine(1,"");
+			SetLine(2,"");
+			SetLine(3,"");
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2,0,0,null);
+			msg.Label=strLine; 
+			OnMessage(msg);
+		}
+
+		public void SetHeading(int iString)
+		{
+			SetHeading (GUILocalizeStrings.Get(iString) );
+		}
+
+		public void SetLine(int iLine, string strLine)
+		{
+			if (iLine<1) return;
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2+iLine,0,0,null);
+			msg.Label=strLine; 
+			OnMessage(msg);
+		}
+
+		public void SetLine(int iLine,int iString)
+		{
+			SetLine (iLine, GUILocalizeStrings.Get(iString) );
+		}
+
+		public override void Render(float timePassed)
+		{
+			RenderDlg(timePassed);
+		}
+    
+		public void SetPercentage(int iPercentage)
+		{
+			//TODO
+			GUIProgressControl pControl = (GUIProgressControl)GetControl(CONTROL_PROGRESS_BAR);
+			if (pControl!=null) pControl.Percentage=iPercentage;
+		}
+
+		public void ShowProgressBar(bool bOnOff)
+		{
+			if (bOnOff)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE,GetID,0, CONTROL_PROGRESS_BAR,0,0,null); 
+				OnMessage(msg);
+    
+			}
+			else
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN,GetID,0, CONTROL_PROGRESS_BAR,0,0,null); 
+				OnMessage(msg);
+			}
+		}
+
+		void FileItemMC(GUIListItem item) 
+		{
+			if (m_bCanceled) return;			
+      
+			// source file name
+			string strItemFileName = item.Path.Replace(m_strDirectory, "");
+			if (strItemFileName.StartsWith("\\") == true)
+			{
+				strItemFileName = strItemFileName.Remove(0, 1);
+			}
+						
+			// update dialog information			
+			SetPercentage((m_iFileNr*100)/m_iNrOfItems);
+			string strFileOperation="";
+			if (m_iFileMode==1) strFileOperation = GUILocalizeStrings.Get(116);
+			else strFileOperation = GUILocalizeStrings.Get(115);
+			strFileOperation += " "+m_iFileNr.ToString()+"/"+m_iNrOfItems.ToString()+" "+GUILocalizeStrings.Get(507);
+			SetNewHeading( strFileOperation );
+			SetLine(1, strItemFileName);				
+
+			// Handle messages
+			GUIWindowManager.Process();
+
+			if (item.IsFolder)
+			{
+				if (item.Label != "..")
+				{
+					string path = m_strDestination+strItemFileName;
+					try
+					{
+						DirectoryInfo di = Directory.CreateDirectory(path);
+					}
+					catch (Exception)
+					{
+						ShowError(119, path);
+						m_bCanceled=true;
+						return;
+					}					
+						
+					ArrayList items = new ArrayList();
+					items=m_directory.GetDirectoryUnProtected(item.Path,false);
+					foreach(GUIListItem subItem in items)
+					{
+						FileItemMC(subItem);
+						if (m_bCanceled) return;
+					}
+					
+					// Move?
+					if (m_iFileMode==1 && strItemFileName!="")
+					{
+						try
+						{
+							Directory.Delete(item.Path);
+						}
+						catch (Exception)
+						{
+							ShowError(503, item.Path);
+							m_bCanceled=true;
+							return;
+						}
+					}
+				}
+			}
+			else if (!item.IsRemote)
+			{			
+				// Move,Copy
+				m_iFileNr++;
+				bool doNot=false;
+				try 
+				{
+					if (File.Exists(m_strDestination+strItemFileName))
+					{
+						m_bButtonYes = false;
+						m_bButtonNo = false;
+
+						if (!m_bAlways && !m_bNever && !m_bCanceled)
+						{
+							// ask user what to do
+							SetLine(2, 509);						
+							SetButtonsHidden(false);
+						
+							// wait for input
+							while (!m_bButtonYes && !m_bButtonNo && !m_bAlways && !m_bNever && !m_bCanceled)
+							{
+								GUIWindowManager.Process();
+							}
+							SetLine(2, "");
+							SetButtonsHidden(true);
+						}					
+
+						if (m_bButtonYes || m_bAlways) 
+						{
+							doNot=false;
+							try
+							{
+								File.Delete(m_strDestination+strItemFileName);
+							}
+							catch (Exception) 
+							{
+								ShowError(117, m_strDestination+strItemFileName);
+								doNot=true;
+							}
+						}
+						else 
+						{
+							doNot=true;
+						}
+					}
+
+					if (doNot==false) 
+					{
+						FileInfo fi = new FileInfo(item.Path);
+						if (m_iFileMode==1)
+						{
+							fi.MoveTo(m_strDestination+strItemFileName);
+						} 
+						else 
+						{
+							fi.CopyTo(m_strDestination+strItemFileName,false);
+						}
+					}
+				}
+				catch (Exception) 
+				{
+					if (m_iFileMode==1) ShowError(116, item.Path);
+					else ShowError(115, item.Path);
+					m_bCanceled=true;
+
+					Log.Write("FileMenu Error: from {0} to {1} MC:{2}",item.Path, m_strDestination+strItemFileName, m_iFileMode);
+				}
+			}		
+		}
+
+		void FileItemGetNrOfFiles(GUIListItem item) 
+		{			
+			if (item.IsFolder)
+			{
+				if (item.Label != "..")
+				{
+					ArrayList items = new ArrayList();
+					items=m_directory.GetDirectoryUnProtected(item.Path,false);
+					foreach(GUIListItem subItem in items) FileItemGetNrOfFiles(subItem);
+				}
+			}
+			else if (!item.IsRemote) 
+			{
+				m_iNrOfItems++;
+				m_dwTotalSize += item.FileInfo.Length;
+			}
+		}
+
+		void ShowError(int iAction, string SourceOfError)
+		{
+			GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+			if(dlgOK !=null)
+			{
+				dlgOK.SetHeading(iAction);
+				dlgOK.SetLine(1,SourceOfError);
+				dlgOK.SetLine(2,502);
+				dlgOK.DoModal(GetID);
+			}
+		}
+
+		void SetButtonsHidden(bool bHide)
+		{
+			if (bHide)
+			{
+				GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_ALWAYS);
+				GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_NEVER);
+				GUIControl.ShowControl(GetID, (int)Controls.PROGRESS_BG);
+				ShowProgressBar(true);
+			}
+			else
+			{
+				GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_ALWAYS);
+				GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_NEVER);
+				GUIControl.HideControl(GetID, (int)Controls.PROGRESS_BG);
+				ShowProgressBar(false);
+			}
+
+			// Handle messages
+			GUIWindowManager.Process();
+		}
+
+	}
+}
+
+
