@@ -142,6 +142,7 @@ namespace MediaPortal.GUI.Library
 		
 		public void PackSkinGraphics(string skinName)
 		{
+			return ;
 			packedTextures=new ArrayList();
 			string[] files1 =System.IO.Directory.GetFiles( String.Format(@"{0}\media",skinName),"*.png" );
 			string[] files2 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
@@ -196,6 +197,7 @@ namespace MediaPortal.GUI.Library
 
 		void LoadPackedGraphics()
 		{
+			return ;
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{
