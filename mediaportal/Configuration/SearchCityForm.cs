@@ -166,24 +166,31 @@ namespace MediaPortal.Configuration
 			//
 			addButton.Enabled = false;
 
-			//
-			// Perform actual search
-			//
-			WeatherChannel weather = new WeatherChannel();
-			ArrayList cities = weather.SearchCity(searchTextBox.Text);
+      try
+      {
+        //
+        // Perform actual search
+        //
+        WeatherChannel weather = new WeatherChannel();
+        ArrayList cities = weather.SearchCity(searchTextBox.Text);
 
-			//
-			// Clear previous results
-			//
-			resultListBox.Items.Clear();
+        //
+        // Clear previous results
+        //
+        resultListBox.Items.Clear();
 
-			foreach(WeatherChannel.City city in cities)
-			{
-				resultListBox.Items.Add(city);
+        foreach(WeatherChannel.City city in cities)
+        {
+          resultListBox.Items.Add(city);
 
-				if(resultListBox.Items.Count == 1)
-					resultListBox.SelectedItem = resultListBox.Items[0];
-			}
+          if(resultListBox.Items.Count == 1)
+            resultListBox.SelectedItem = resultListBox.Items[0];
+        }
+      }
+      catch(Exception ex)
+      {
+        MessageBox.Show(ex.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
 		}
 
 		/// <summary>
