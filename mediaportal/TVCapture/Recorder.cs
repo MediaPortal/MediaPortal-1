@@ -290,6 +290,7 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:   end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
 
 			TVDatabase.AddRecording(ref tmpRec);
+			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void RecordNow(string strChannel)
 
 		/// <summary>
@@ -381,6 +382,7 @@ namespace MediaPortal.TV.Recording
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
 				
 				if (viewing) m_strTVChannel=rec.Channel;
+				m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 				return true;
 			}
 
@@ -443,6 +445,7 @@ namespace MediaPortal.TV.Recording
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
 									
 				if (viewing) m_strTVChannel=rec.Channel;
+				m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 				return true;
 			}
 
@@ -486,6 +489,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}
 		/// <summary>
 		/// Stops all recording on the current channel. 
@@ -522,6 +526,7 @@ namespace MediaPortal.TV.Recording
 				}
 				dev.StopRecording();
 			}
+			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void StopRecording()
 
 		/// <summary>
@@ -668,6 +673,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			m_iCurrentCard=-1;
+			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void StopViewing()
 
 		/// <summary>
@@ -726,6 +732,7 @@ namespace MediaPortal.TV.Recording
 					dev.Stop();
 				}
 			}
+			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}
 
 		static public void StartRadio(string radioStationName)
@@ -775,7 +782,8 @@ namespace MediaPortal.TV.Recording
 						}
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio()  start on card:{0} station:{1}",
 															tvcard.ID,radioStationName);
-						tvcard.StartRadio(radiostation);
+						tvcard.StartRadio(radiostation)	;
+						m_dtStart=new DateTime(1971,6,11,0,0,0,0);;
 						return;
 					}
 				}
@@ -855,6 +863,7 @@ namespace MediaPortal.TV.Recording
 						m_iCurrentCard=-1;
 					}
 				}//if (m_iCurrentCard>=0 && m_iCurrentCard<m_tvcards.Count)
+				m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 				return;
 			}//if (TVOnOff==false)
 			
@@ -910,6 +919,7 @@ namespace MediaPortal.TV.Recording
 									Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 									g_Player.Play(strTimeShiftFileName);
 								}
+								m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 								return;
 							}//if  (timeshift || dev.IsRecording)
 							else
@@ -926,6 +936,7 @@ namespace MediaPortal.TV.Recording
 								TuneExternalChannel(channel);
 								dev.TVChannel=channel;
 								dev.View=true;
+								m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 								return;
 							}
 						}//if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
@@ -1004,6 +1015,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 						g_Player.Play(strTimeShiftFileName);
 					}
+					m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 					return;
 				}//if (dev.SupportsTimeShifting)
 			}//if (timeshift)
@@ -1016,6 +1028,7 @@ namespace MediaPortal.TV.Recording
 			dev.TVChannel=channel;
 			dev.View=true;
 			m_strTVChannel=channel;
+			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
 
 		/// <summary>
@@ -1173,7 +1186,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			TimeSpan ts=DateTime.Now-m_dtStart;
-			if (ts.TotalMilliseconds<1000) return;
+			if (ts.TotalMilliseconds<30000) return;
 			Recorder.HandleRecordings();
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
@@ -1417,6 +1430,7 @@ namespace MediaPortal.TV.Recording
 		{ 
 			if (m_eState!=State.Initialized) return;
 			m_bRecordingsChanged=true;
+			m_dtStart=new DateTime(1971,11,6,20,0,0,0);
 		}
 		
 		/// <summary>
