@@ -28,6 +28,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.TextBox compensateTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox useTimeZoneCheckBox;
     private System.Windows.Forms.Label label1;
+		protected System.Windows.Forms.RadioButton advancedRadioButton;
+		protected System.Windows.Forms.RadioButton basicRadioButton;
 		private System.ComponentModel.IContainer components = null;
 
 		public TVProgramGuide() : this("Program Guide")
@@ -70,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.useColorCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.advancedRadioButton = new System.Windows.Forms.RadioButton();
       this.label2 = new System.Windows.Forms.Label();
       this.compensateTextBox = new System.Windows.Forms.TextBox();
       this.useTimeZoneCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -86,6 +89,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.GrabbercomboBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
+      this.basicRadioButton = new System.Windows.Forms.RadioButton();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -117,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.advancedRadioButton);
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.compensateTextBox);
       this.groupBox2.Controls.Add(this.useTimeZoneCheckBox);
@@ -133,13 +138,24 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label4);
       this.groupBox2.Controls.Add(this.GrabbercomboBox);
       this.groupBox2.Controls.Add(this.label3);
+      this.groupBox2.Controls.Add(this.basicRadioButton);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(8, 80);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 232);
+      this.groupBox2.Size = new System.Drawing.Size(440, 288);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "XMLTV Settings";
+      // 
+      // advancedRadioButton
+      // 
+      this.advancedRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.advancedRadioButton.Location = new System.Drawing.Point(16, 219);
+      this.advancedRadioButton.Name = "advancedRadioButton";
+      this.advancedRadioButton.Size = new System.Drawing.Size(184, 24);
+      this.advancedRadioButton.TabIndex = 55;
+      this.advancedRadioButton.Text = "Advanced Single Day Grab";
+      this.advancedRadioButton.CheckedChanged += new System.EventHandler(this.advancedRadioButton_CheckedChanged);
       // 
       // label2
       // 
@@ -206,16 +222,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 190);
+      this.label6.Location = new System.Drawing.Point(32, 247);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(152, 16);
+      this.label6.Size = new System.Drawing.Size(136, 16);
       this.label6.TabIndex = 44;
       this.label6.Text = "Advanced days";
       // 
       // daysToKeepTextBox
       // 
       this.daysToKeepTextBox.Enabled = false;
-      this.daysToKeepTextBox.Location = new System.Drawing.Point(168, 161);
+      this.daysToKeepTextBox.Location = new System.Drawing.Point(168, 194);
       this.daysToKeepTextBox.MaxLength = 3;
       this.daysToKeepTextBox.Name = "daysToKeepTextBox";
       this.daysToKeepTextBox.Size = new System.Drawing.Size(40, 20);
@@ -259,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
       this.AdvancedDaystextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.AdvancedDaystextBox.Enabled = false;
-      this.AdvancedDaystextBox.Location = new System.Drawing.Point(168, 186);
+      this.AdvancedDaystextBox.Location = new System.Drawing.Point(168, 245);
       this.AdvancedDaystextBox.Name = "AdvancedDaystextBox";
       this.AdvancedDaystextBox.Size = new System.Drawing.Size(192, 20);
       this.AdvancedDaystextBox.TabIndex = 36;
@@ -268,11 +284,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(16, 165);
+      this.label4.Location = new System.Drawing.Point(32, 198);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(160, 16);
+      this.label4.Size = new System.Drawing.Size(144, 16);
       this.label4.TabIndex = 30;
-      this.label4.Text = "Days to keep in program guide";
+      this.label4.Text = "Days to keep in guide";
       // 
       // GrabbercomboBox
       // 
@@ -293,6 +309,16 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Size = new System.Drawing.Size(144, 23);
       this.label3.TabIndex = 28;
       this.label3.Text = "Grabber";
+      // 
+      // basicRadioButton
+      // 
+      this.basicRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.basicRadioButton.Location = new System.Drawing.Point(16, 170);
+      this.basicRadioButton.Name = "basicRadioButton";
+      this.basicRadioButton.Size = new System.Drawing.Size(192, 24);
+      this.basicRadioButton.TabIndex = 54;
+      this.basicRadioButton.Text = "Basic Multiday Grab";
+      this.basicRadioButton.CheckedChanged += new System.EventHandler(this.basicRadioButton_CheckedChanged);
       // 
       // TVProgramGuide
       // 
@@ -337,8 +363,11 @@ namespace MediaPortal.Configuration.Sections
 
 				GrabbercomboBox.SelectedItem = xmlreader.GetValueAsString("xmltv","grabber","");
 				AdvancedDaystextBox.Text=xmlreader.GetValueAsString("xmltv","days","1,2,3,5");
-				parametersTextBox.Text=xmlreader.GetValueAsString("xmltv","args","--quiet");
+				parametersTextBox.Text=xmlreader.GetValueAsString("xmltv","args","");
 				daysToKeepTextBox.Text = xmlreader.GetValueAsString("xmltv","daystokeep", "7");
+				advancedRadioButton.Checked = xmlreader.GetValueAsBool("xmltv", "advanced", false);
+				basicRadioButton.Checked = !advancedRadioButton.Checked;
+
 			}						
 		}
 
@@ -354,7 +383,7 @@ namespace MediaPortal.Configuration.Sections
 
 				xmlwriter.SetValue("xmltv", "grabber",GrabbercomboBox.Text);
 				xmlwriter.SetValue("xmltv", "daystokeep",daysToKeepTextBox.Text);
-				xmlwriter.SetValueAsBool("xmltv", "advanced",AdvancedDaystextBox.Text.Length > 0);
+				xmlwriter.SetValueAsBool("xmltv", "advanced", advancedRadioButton.Checked);
 				xmlwriter.SetValue("xmltv", "days",AdvancedDaystextBox.Text);
 				xmlwriter.SetValue("xmltv", "args",parametersTextBox.Text);
 			}
@@ -400,7 +429,16 @@ namespace MediaPortal.Configuration.Sections
 
     private void GrabbercomboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      parametersButton.Enabled = parametersTextBox.Enabled = AdvancedDaystextBox.Enabled = daysToKeepTextBox.Enabled = (GrabbercomboBox.SelectedItem != null);
+      parametersButton.Enabled = parametersTextBox.Enabled = (GrabbercomboBox.SelectedItem != null);
+      parametersTextBox.Text="";
+      if(GrabbercomboBox.Text=="tv_grab_fi") daysToKeepTextBox.Text="10";
+      else if(GrabbercomboBox.Text=="tv_grab_huro") daysToKeepTextBox.Text="8";
+      else if((GrabbercomboBox.Text=="tv_grab_es")|(GrabbercomboBox.Text=="tv_grab_es_digital")|(GrabbercomboBox.Text=="tv_grab_pt")) daysToKeepTextBox.Text="3";
+      else if(GrabbercomboBox.Text=="tv_grab_se") daysToKeepTextBox.Text="5";
+      else daysToKeepTextBox.Text="7";
+
+      AdvancedDaystextBox.Enabled = advancedRadioButton.Checked;
+      daysToKeepTextBox.Enabled = basicRadioButton.Checked;
     }
 
     private void GrabbercomboBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -414,14 +452,35 @@ namespace MediaPortal.Configuration.Sections
 
     private void parametersButton_Click(object sender, System.EventArgs e)
     {
-      ParameterForm parameters = new ParameterForm();
+		  parametersTextBox.Text="";
+		  ParameterForm parameters = new ParameterForm();
 			
-      parameters.AddParameter("--quiet", "Run the grabber in quiet mode");
+      if(GrabbercomboBox.Text==("tv_grab_dk") | GrabbercomboBox.Text==("tv_grab_es") | GrabbercomboBox.Text==("tv_grab_es_digital")
+        | GrabbercomboBox.Text==("tv_grab_fi") | GrabbercomboBox.Text==("tv_grab_huro") | GrabbercomboBox.Text==("tv_grab_no")
+        | GrabbercomboBox.Text==("tv_grab_pt") | GrabbercomboBox.Text==("tv_grab_se"))
+      {
+        parameters.AddParameter("", "No options available for this grabber");
+      }
+      else if(GrabbercomboBox.Text==("tv_grab_fr") | GrabbercomboBox.Text==("tv_grab_it") | GrabbercomboBox.Text==("tv_grab_nl"))
+      {
+        parameters.AddParameter("--slow", "Fetch full program details (but takes longer)");
+      }
+      else if(GrabbercomboBox.Text=="tv_grab_de_tvtoday")
+      {
+        parameters.AddParameter("--slow", "Fetch full program details (but takes longer)");
+        parameters.AddParameter("--nosqueezeout", "Don't parse program descriptions for adiitional information (actors,director,etc");
+        parameters.AddParameter("--slow --nosqueezeout", "Fetch full program details and don't parse descriptions");
+      }
+      else if(GrabbercomboBox.Text=="tv_grab_uk_rt")
+      {
+        parameters.AddParameter("--slow", "Fetch full program details (but takes longer)");
+        parameters.AddParameter("--slow --get-categories", "Fetch full program details and categories (but takes even longer)");
+      }
 
       if(parameters.ShowDialog(parametersButton) == DialogResult.OK)
       {
         parametersTextBox.Text += parameters.SelectedParameter;
-      }		    
+      }
     }
 
     private void AdvancedDaystextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -439,6 +498,18 @@ namespace MediaPortal.Configuration.Sections
       {
         e.Handled = true;
       }        
+    }
+
+    protected void basicRadioButton_CheckedChanged(object sender, System.EventArgs e)
+    {
+      AdvancedDaystextBox.Enabled = false;
+      daysToKeepTextBox.Enabled = true;
+    }
+
+    protected void advancedRadioButton_CheckedChanged(object sender, System.EventArgs e)
+    {
+      AdvancedDaystextBox.Enabled = true;
+      daysToKeepTextBox.Enabled = false;
     }
 	}
 }
