@@ -2227,7 +2227,7 @@
   </string>
   <string>
   	<id>855</id>
-  	<value>Alarm Time</value>
+  	<value>Alarm Tijd</value>
   </string>
   <string>
   	<id>856</id>
@@ -2281,6 +2281,15 @@
   	<id>868</id>
   	<value>Reset</value>
   </string>
+  
+  <!-- Default name for new alarm -->
+  <string>
+	<id>869</id>
+	<value>NieuwAlarm</value>
+  </string>
+
+<!-- End My Alarm Strings -->
+  
   <string>
 	<id>900</id>
   	<value>Afspelen hervatten vanaf laatste punt?</value>
@@ -2638,13 +2647,25 @@
   </string>
 	<string>
    <id>1974</id>
-    <value>Geheugen</value>
+    <value>Geheugen:           </value>
   </string>
 	<string>
     <id>1975</id>
     <value>Volgende pagina</value>
   </string>
-  
+  	<string>
+  	<id>1976</id>
+	<value>tpm</value>
+  </string>	
+	<string>
+	<id>1977</id>
+	<value>Bestandssysteem</value>
+  </string>	
+	<string>
+	<id>1978</id>
+	<value>Virtueel Geheugen</value>
+  </string> 
+	
   <!-- My Recipies strings -->
   <string>
     <id>2005</id>
@@ -3096,6 +3117,10 @@
   <string>
   	<id>8033</id>
   	<value>Voortgang</value>
+  </string>
+  <string>
+	<id>8034</id>
+	<value>Bekijk HTML</value>
   </string>
 
   <!-- My Pictures (properties) strings -->

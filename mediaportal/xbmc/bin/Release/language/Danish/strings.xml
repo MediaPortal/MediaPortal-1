@@ -155,11 +155,11 @@
 	</string>
 	<string>
 		<id>108</id>
-		<value>Billedserier</value>
+		<value>Billedserie</value>
 	</string>
 	<string>
 		<id>109</id>
-		<value>Lav miniature</value>
+		<value>Lav miniaturer</value>
 	</string>
 	<string>
 		<id>110</id>
@@ -1259,11 +1259,39 @@
 	</string>
 	<string>
 		<id>386</id>
-		<value>Klar</value>
+		<value>Klart</value>
 	</string>
 	<string>
 		<id>387</id>
 		<value>Tidlig</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>og</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Tåge</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Dis</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Blæsende</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Støvregn</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Frysende</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>ukendt</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1287,7 +1315,7 @@
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temp</value>
+		<value>Temperatur</value>
 	</string>
 	<string>
 		<id>402</id>
@@ -2463,7 +2491,7 @@
 	</string>
 	<string>
 		<id>940</id>
-		<value>Indstillinger</value>
+		<value>Billedoplysninger</value>
 	</string>
 	<string>
 		<id>941</id>
@@ -2551,7 +2579,7 @@
 	</string>
 	<string>
 		<id>970</id>
-		<value>tilbage</value>
+		<value>Tilbage</value>
 	</string>
 
 	<string>
@@ -2945,6 +2973,18 @@
 		<id>2115</id>
 		<value>Indsæt CD/DVD RW</value>
 	</string>
+	<string>
+		<id>2116</id>
+		<value>Drev ikke parat</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>en fatal fejl er opstået!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Konverter DVR-MS</value>
+	</string>
 <!-- End My Burner Strings -->
 
 
@@ -3017,6 +3057,43 @@
 	<string>
 		<id>2216</id>
 		<value>Filer flyttet!</value>
+	</string>
+
+	<string>
+		<id>2217</id>
+		<value>Destination File exists!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>File overwrite?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>From selected drive cant move!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Copy the selected file?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Do you want to delete the selected files?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Files deleted!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Papirkurv</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Folder eksisterer!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Folder oprettet</value>
 	</string>
 
 <!-- End My Explorer Strings -->
@@ -3147,7 +3224,7 @@
 	</string>
 	<string>
 		<id>9002</id>
-		<value>Flash:</value>
+		<value>Blitz:</value>
 	</string>
 	<string>
 		<id>9003</id>
@@ -3183,7 +3260,7 @@
 	</string>
 	<string>
 		<id>9011</id>
-		<value>Vis kommentarer:</value>
+		<value>Kommentar:</value>
 	</string>
 	<string>
 		<id>10000</id>
@@ -3537,5 +3614,67 @@
 		<id>12700</id>
 		<value>Nyheder</value>
 	</string>
+
+<!-- My Tetris Strings -->
+	<string> 
+		<id>19001</id> 
+		<value>My Tetris</value> 
+	</string> 
+	<string> 
+		<id>19002</id> 
+		<value>New Game</value> 
+	</string> 
+	<string> 
+		<id>19003</id> 
+		<value>Music</value> 
+	</string> 
+	<string> 
+		<id>19004</id> 
+		<value>Sounds</value> 
+	</string> 
+	<string> 
+		<id>19005</id> 
+		<value>Score:</value> 
+	</string> 
+	<string> 
+		<id>19006</id> 
+		<value>Lines:</value> 
+	</string> 
+	<string> 
+		<id>19007</id> 
+		<value>Level:</value> 
+	</string> 
+	<string> 
+		<id>19008</id> 
+		<value>Hiscore:</value> 
+	</string>
+	<string>
+		<id>19009</id>
+		<value>Next</value>
+	</string> 
+	<string>
+		<id>19010</id>
+		<value>Press or click to start...</value>
+	</string> 
+	<string>
+		<id>19011</id>
+		<value>Paused</value>
+	</string> 
+	<string>
+		<id>19012</id>
+		<value>Game Over</value>
+	</string> 
+
+<!-- End My Tetris Strings -->
+
+<!-- My Splatt Strings -->
+
+	<string> 
+		<id>19401</id> 
+		<value>My Splatt</value> 
+	</string> 
+
+<!-- End My Splatt Strings -->
+
 
 </strings>
