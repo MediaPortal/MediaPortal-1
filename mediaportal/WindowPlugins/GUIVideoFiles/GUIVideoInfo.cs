@@ -157,7 +157,11 @@ namespace MediaPortal.GUI.Video
           // Default picture					
           m_sIMDBThumbURL = m_movie.ThumbURL;
 					GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPIN);
-
+					GUISpinControl spin = GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
+					if (spin!=null)
+					{
+						spin.SetRange(0,0);
+					}
         
           viewmode=ViewMode.Image;			    
           GUIControl.ClearControl(GetID, (int)Controls.CONTROL_DISC);

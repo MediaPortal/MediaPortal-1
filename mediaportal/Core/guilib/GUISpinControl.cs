@@ -486,6 +486,7 @@ namespace MediaPortal.GUI.Library
 
               case GUIMessage.MessageType.GUI_MSG_LABEL_RESET:
               {
+									
                   m_vecLabels.Clear();
                   m_vecValues.Clear();
                   Value=0;
