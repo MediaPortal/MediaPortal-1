@@ -11,7 +11,7 @@
 		<posY>346</posY>
 		<width>550</width>
 		<height>128</height>
-		<texture>messenger_osd_background.png</texture>		
+		<texture>osd_dialog.png</texture>		
 		<visible>yes</visible> 
 	</control>
 		<control>
