@@ -197,7 +197,6 @@ namespace MediaPortal.TV.Recording
 
 		void ScanChannels()
 		{
-			captureCard.Process();
 
 			timer1.Enabled=false;
 			captureCard.StoreTunedChannels(false,true);
