@@ -4,26 +4,10 @@ LIBRARY      "dvblib"
 
 EXPORTS
     ; Explizite Exporte können hier eingefügt werden
-ResetDevice				@1
-DVBInit					@2
-Tune					@3
-ClearAllTsPids			@5
-AddPidToTS				@6
-StopSITable				@7
-AddTSPid				@9
-DeleteAllPIDs			@10
-IsTunerLocked			@11
-PauseSITable			@12
-RunSITable				@13
-ClearAllUp				@14
-SetCallBack				@15
-SetupB2C2Graph			@16
-GetSectionData			@17
-GetSectionCount			@18
-SetPidToPin				@19
-DeleteAllPIDsI			@20
-GetSectionDataI			@21
-GetSectionPtr			@22
-ReleaseSectionsBuffer	@23
-LoadGraphFile			@24
-SetupDemuxer			@25
+DeleteAllPIDs			@1
+GetSectionData			@2
+GetSectionCount			@3
+SetPidToPin				@4
+GetSectionPtr			@5
+ReleaseSectionsBuffer	@6
+SetupDemuxer			@7
