@@ -317,10 +317,13 @@ namespace home
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.AddSpecial = new System.Windows.Forms.Button();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label25 = new System.Windows.Forms.Label();
+			this.pictureBox4 = new System.Windows.Forms.PictureBox();
 			this.label23 = new System.Windows.Forms.Label();
 			this.label22 = new System.Windows.Forms.Label();
 			this.useMyPlugins = new System.Windows.Forms.RadioButton();
 			this.useMenus = new System.Windows.Forms.RadioButton();
+			this.label2 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.ActivateSpecial = new System.Windows.Forms.CheckBox();
 			this.button2 = new System.Windows.Forms.Button();
@@ -332,9 +335,6 @@ namespace home
 			this.Plugin = new System.Windows.Forms.ColumnHeader();
 			this.Key = new System.Windows.Forms.ColumnHeader();
 			this.Fullscreen = new System.Windows.Forms.ColumnHeader();
-			this.label25 = new System.Windows.Forms.Label();
-			this.pictureBox4 = new System.Windows.Forms.PictureBox();
-			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -586,7 +586,7 @@ namespace home
 			this.radioButton2.Location = new System.Drawing.Point(16, 56);
 			this.radioButton2.Name = "radioButton2";
 			this.radioButton2.TabIndex = 1;
-			this.radioButton2.Text = "MM-DD-YYYY";
+			this.radioButton2.Text = "MM DD YYYY";
 			this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
 			// 
 			// radioButton1
@@ -595,7 +595,7 @@ namespace home
 			this.radioButton1.Name = "radioButton1";
 			this.radioButton1.Size = new System.Drawing.Size(112, 24);
 			this.radioButton1.TabIndex = 0;
-			this.radioButton1.Text = "DD-MM-YYYY";
+			this.radioButton1.Text = "DD.MM YYYY";
 			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
 			// 
 			// treeView
@@ -962,6 +962,23 @@ namespace home
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Menu settings";
 			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(32, 144);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(88, 16);
+			this.label25.TabIndex = 38;
+			this.label25.Text = "is a Script Item";
+			// 
+			// pictureBox4
+			// 
+			this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
+			this.pictureBox4.Location = new System.Drawing.Point(8, 144);
+			this.pictureBox4.Name = "pictureBox4";
+			this.pictureBox4.Size = new System.Drawing.Size(16, 24);
+			this.pictureBox4.TabIndex = 37;
+			this.pictureBox4.TabStop = false;
+			// 
 			// label23
 			// 
 			this.label23.Location = new System.Drawing.Point(8, 168);
@@ -995,6 +1012,14 @@ namespace home
 			this.useMenus.Size = new System.Drawing.Size(168, 16);
 			this.useMenus.TabIndex = 0;
 			this.useMenus.Text = "Use Menus (custom menus)";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(472, 200);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(104, 16);
+			this.label2.TabIndex = 37;
+			this.label2.Text = "Available Plugins";
 			// 
 			// tabPage3
 			// 
@@ -1085,31 +1110,6 @@ namespace home
 			// 
 			this.Fullscreen.Text = "Full Screen";
 			this.Fullscreen.Width = 72;
-			// 
-			// label25
-			// 
-			this.label25.Location = new System.Drawing.Point(32, 144);
-			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(88, 16);
-			this.label25.TabIndex = 38;
-			this.label25.Text = "is a Script Item";
-			// 
-			// pictureBox4
-			// 
-			this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
-			this.pictureBox4.Location = new System.Drawing.Point(8, 144);
-			this.pictureBox4.Name = "pictureBox4";
-			this.pictureBox4.Size = new System.Drawing.Size(16, 24);
-			this.pictureBox4.TabIndex = 37;
-			this.pictureBox4.TabStop = false;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(472, 200);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(104, 16);
-			this.label2.TabIndex = 37;
-			this.label2.Text = "Available Plugins";
 			// 
 			// SetupForm
 			// 
@@ -1222,6 +1222,7 @@ namespace home
 				int iLayout=0;
 				if (radioButton2.Checked) iLayout=1;
 				if (radioButton3.Checked) iLayout=2;
+
 				xmlWriter.SetValue("home","datelayout",iLayout.ToString());
 				xmlWriter.SetValueAsBool("home","scroll",chkBoxScrolling.Checked);
 				xmlWriter.SetValueAsBool("home","scrollfixed",chkBoxFixed.Checked);
@@ -2183,11 +2184,11 @@ namespace home
 
 			if (radioButton1.Checked==true) 
 			{
-				strDate=String.Format("{0} {1}. {2}",day, cur.Day, month);
+				strDate=String.Format("{0}. {1} {2}",cur.Day, month, cur.Year);
 			}
 			if (radioButton2.Checked==true)
 			{
-				strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
+				strDate=String.Format("{0} {1} {2}",month, cur.Day, cur.Year);
 			}
 			if (radioButton3.Checked==true)
 			{
@@ -2226,9 +2227,6 @@ namespace home
 					SpecialFunctions.Enabled=true;		
 					ActivateSpecial.Checked=false;
 				}
-//				SpecialFunctions.Items.Add("CD EJECT");
-//				SpecialFunctions.Items.Add("BACK BUTTON");
-//				SpecialFunctions.Items.Add("SHUT DOWN");
 			} 
 			else 
 			{

@@ -1676,11 +1676,11 @@ namespace MediaPortal.GUI.Home
 
 				if (m_iDateLayout==0) 
 				{
-					strDate=String.Format("{0} {1}. {2}",day, cur.Day, month);
+					strDate=String.Format("{0}. {1} {2}",cur.Day, month, cur.Year);
 				}
 				if (m_iDateLayout==1)
 				{
-					strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
+					strDate=String.Format("{0} {1} {2}",month, cur.Day, cur.Year);
 				}
 				if (m_iDateLayout==2)
 				{
