@@ -18,7 +18,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox endTextBox;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.CheckBox cbDeleteWatchedShows;
-		private System.Windows.Forms.CheckBox cbAddToMovieDatabase;
+		private System.Windows.Forms.CheckBox cbAddRecordingsToMovie;
 		private System.ComponentModel.IContainer components = null;
 
 		public TVRecording() : this("Recording")
@@ -64,7 +64,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label1 = new System.Windows.Forms.Label();
 			this.cbDeleteWatchedShows = new System.Windows.Forms.CheckBox();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-			this.cbAddToMovieDatabase = new System.Windows.Forms.CheckBox();
+			this.cbAddRecordingsToMovie = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -72,7 +72,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.cbAddToMovieDatabase);
+			this.groupBox1.Controls.Add(this.cbAddRecordingsToMovie);
 			this.groupBox1.Controls.Add(this.endTextBox);
 			this.groupBox1.Controls.Add(this.startTextBox);
 			this.groupBox1.Controls.Add(this.label4);
@@ -148,13 +148,13 @@ namespace MediaPortal.Configuration.Sections
 			this.cbDeleteWatchedShows.TabIndex = 3;
 			this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after you watched them";
 			// 
-			// cbAddToMovieDatabase
+			// cbAddRecordingsToMovie
 			// 
-			this.cbAddToMovieDatabase.Location = new System.Drawing.Point(24, 112);
-			this.cbAddToMovieDatabase.Name = "cbAddToMovieDatabase";
-			this.cbAddToMovieDatabase.Size = new System.Drawing.Size(328, 24);
-			this.cbAddToMovieDatabase.TabIndex = 12;
-			this.cbAddToMovieDatabase.Text = "Add recordings to movie database";
+			this.cbAddRecordingsToMovie.Location = new System.Drawing.Point(24, 112);
+			this.cbAddRecordingsToMovie.Name = "cbAddRecordingsToMovie";
+			this.cbAddRecordingsToMovie.Size = new System.Drawing.Size(304, 24);
+			this.cbAddRecordingsToMovie.TabIndex = 12;
+			this.cbAddRecordingsToMovie.Text = "Add recordings to movie database";
 			// 
 			// TVRecording
 			// 
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
 				startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 1));
 				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 1));				
 				cbDeleteWatchedShows.Checked= xmlreader.GetValueAsBool("capture", "deletewatchedshows", true);
-				cbAddToMovieDatabase.Checked= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
+				cbAddRecordingsToMovie.Checked= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
 
 			}		
 		}
@@ -187,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
 
 				xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbDeleteWatchedShows.Checked);
-				xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddToMovieDatabase.Checked);
+				xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddRecordingsToMovie.Checked);
 			}
 		}
 
