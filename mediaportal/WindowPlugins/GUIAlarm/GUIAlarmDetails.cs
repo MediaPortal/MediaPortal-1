@@ -100,9 +100,12 @@ namespace MediaPortal.GUI.Alarm
 						{
 							string strName= string.Empty;
 							GetStringFromKeyboard(ref strName);
-							GUIControl.SetControlLabel(GetID,(int)Controls.NameLabel,strName);
-							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) + @"/" + strName);
-							GUIControl.FocusControl(GetID, iControl);
+							if (strName != "")
+							{
+								GUIControl.SetControlLabel(GetID,(int)Controls.NameLabel,strName);
+								GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) + @"/" + strName);
+								GUIControl.FocusControl(GetID, iControl);
+							}
 							return true;
 						}
 						if(iControl ==(int)Controls.VolumeFadeButton)

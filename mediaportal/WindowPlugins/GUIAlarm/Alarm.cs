@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Alarm
 			public Alarm(int id)
 			{
 				_Id = id;
-				_Name = "NewAlarm" + _Id.ToString();
+				_Name = GUILocalizeStrings.Get(869) + _Id.ToString();
 			}
 		#endregion
 
@@ -496,7 +496,7 @@ namespace MediaPortal.GUI.Alarm
 			public static int GetNextId()
 			{
 				string tempText;
-				for (int i=0; i<20; i++)
+				for (int i=1; i<20; i++)
 				{
 					using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 					{
