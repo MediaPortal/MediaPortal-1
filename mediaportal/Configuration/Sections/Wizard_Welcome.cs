@@ -158,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.bodyLabel.Location = new System.Drawing.Point(192, 48);
+      this.bodyLabel.Location = new System.Drawing.Point(196, 48);
       this.bodyLabel.Name = "bodyLabel";
       this.bodyLabel.Size = new System.Drawing.Size(360, 264);
       this.bodyLabel.TabIndex = 5;
