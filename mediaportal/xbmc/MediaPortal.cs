@@ -397,7 +397,6 @@ public class MediaPortalApp : D3DApp, IRender
 			catch(Exception )
 			{
 			}
-      MCE2005Remote.Init();
 
     }
 
@@ -443,7 +442,11 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void WndProc(ref Message msg)
     {
-      if ( MCE2005Remote.WndProc(ref msg) ) return;
+      if ( MCE2005Remote.WndProc(ref msg) ) 
+      {
+        msg.Result = new IntPtr(0);
+        return;
+      }
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
       {
         // windows wants to activate the screensaver
@@ -700,6 +703,8 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Write("DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
         Log.Write("video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
       }
+
+      MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
     }
 
     /// <summary>

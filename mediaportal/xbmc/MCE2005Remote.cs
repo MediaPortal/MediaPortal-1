@@ -6,10 +6,78 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal
 {
 	/// <summary>
-	/// 
+  ///
+  //  terug 
+  //  appcommand:3013C 10320000
+  //
+  //  play 
+  //  appcommand:3013C 102E0000
+  //
+  //  vooruit 
+  //  appcommand:3013C 10310000
+  //
+  //  pause 
+  //  appcommand:3013C 102F0000
+  //
+  //  stoppen
+  //  appcommand:3013C D0000
+  //  wm_keydown:B2 1000001
+  //
+  //  herhalen
+  //  appcommand:3013C C0000
+  //  wm_keydown:B1 1000001
+  //
+  //  overslaan
+  //  appcommand:3013C B0000
+  //  wm_keydown:B0 1000001
+  //
+  //  vorige
+  //  appcommand:3013C 10000
+  //  wm_keydown:A6 1000001
+  //
+  //  meer info ??
+  //
+  //  OK:
+  //  wm_keydown:D 1C0001
+  //
+  //  kanaal +
+  //  appcommand:3013C 10330000
+  //
+  //  kanaal -
+  //  appcommand:3013C 10340000
+  //
+  //  dempen:
+  //  appcommand:3013C 80000
+  //  wm_keydown:AD 1000001
+  //
+  //  wis:
+  //  wm_keydown:1B 10001
+  //
+  //  enter:
+  //  wm_keydown:D 1C0001
+  //
+  //
+  //  *
+  //  wm_keydown:10 2A0001
+  //  wm_keydown:38 90001
+  //
+  //  #
+  //  wm_keydown:10 2A0001
+  //  wm_keydown:33 40001
+  //
+  //
+  //  dempen:
+  //  appcommand:3013C 80000
+  //  wm_keydown:AD 1000001
+  //
+  //  opnemen:
+  //  appcommand:3013C 10300000
+   
 	/// </summary>
 	public class MCE2005Remote
 	{
+    const int WM_INPUT                       = 0x00FF;
+    const int WM_KEYDOWN                     =0x0100;
     const int WM_APPCOMMAND                   =0x0319;
     const int APPCOMMAND_BROWSER_BACKWARD       =1;
     const int APPCOMMAND_BROWSER_FORWARD        =2;
@@ -64,6 +132,13 @@ namespace MediaPortal
     const int APPCOMMAND_MEDIA_CHANNEL_UP       =51;
     const int APPCOMMAND_MEDIA_CHANNEL_DOWN     =52;
 
+    const int RIM_TYPEMOUSE       =0;
+    const int RIM_TYPEKEYBOARD    =1;
+    const int RIM_TYPEHID         =2;
+ 
+    const int RID_INPUT               =0x10000003;
+    const int RID_HEADER              =0x10000005;
+    
     public struct RAWINPUTDEVICE 
     {
       public ushort usUsagePage;
@@ -71,7 +146,30 @@ namespace MediaPortal
       public uint dwFlags;
       public IntPtr hwndTarget;
     } ;
-
+     
+    public struct RAWINPUTHEADER 
+    {
+      public uint dwType;
+      public uint dwSize;
+      public IntPtr hDevice;
+      public ushort wParam;
+    } 
+    public struct RAWHID 
+    {
+      public uint dwSizeHid;
+      public uint dwCount;
+      public byte RawData1;
+      public byte RawData2;
+      public byte RawData3;
+    } 
+    public struct RAWINPUTHID 
+    { 
+      public RAWINPUTHEADER    header; 
+      public RAWHID      hid; 
+    } 
+    [DllImport("user32.dll", SetLastError=true)]
+    extern static int GetRawInputData(IntPtr rawInput, int uiCmd, IntPtr pData, ref int dwSize, int dwHdrSize);
+    
     [DllImport("User32.dll",EntryPoint="RegisterRawInputDevices",SetLastError=true)]
     public extern static bool RegisterRawInputDevices(
                                                       [In] RAWINPUTDEVICE[] pRawInputDevices,
@@ -83,7 +181,7 @@ namespace MediaPortal
 		{
 		}
     
-    public void Init()
+    public void Init(IntPtr hwnd)
     {
 
       try
@@ -94,16 +192,28 @@ namespace MediaPortal
         rid1[0].usUsagePage = 0xFFBC;
         rid1[0].usUsage = 0x88;
         rid1[0].dwFlags = 0;
+        rid1[0].hwndTarget=hwnd;
 
-
-        Log.Write("Register for MCE2005 remote");
+        Log.Write("Register for MCE2005 remote#1");
         bool Success=RegisterRawInputDevices(rid1, (uint)rid1.Length,(uint)Marshal.SizeOf(rid1[0]));
         if (Success) 
         {
-          Log.Write("Registered");
+          Log.Write("Registered#1");
           RemoteFound=true;
-          return;
         }
+
+        Log.Write("Register for MCE2005 remote#2");
+        rid1[0].usUsagePage = 0x0C;
+        rid1[0].usUsage = 0x01;
+        rid1[0].dwFlags = 0;
+        rid1[0].hwndTarget=hwnd;
+        Success=RegisterRawInputDevices(rid1, (uint)rid1.Length,(uint)Marshal.SizeOf(rid1[0]));
+        if (Success) 
+        {
+          Log.Write("Registered#2");
+          RemoteFound=true;
+        }
+        if (RemoteFound) return;
       }
       catch (Exception)
       {
@@ -115,146 +225,149 @@ namespace MediaPortal
     public bool WndProc(ref Message msg)
     {
       if (!RemoteFound) return false;
+      int wparam=0;
+      int lparam=0;
+      try
+      {
+        if (msg.WParam!=IntPtr.Zero) wparam=msg.WParam.ToInt32();
+      }
+      catch(Exception){}
+      try
+      {
+        if (msg.LParam!=IntPtr.Zero) lparam=msg.LParam.ToInt32();
+      }
+      catch(Exception){}
       if (msg.Msg==WM_APPCOMMAND)
       {
-        int wparam=0;
-        int lparam=0;
-        try
+        Action action=new Action(Action.ActionType.ACTION_INVALID,0,0);
+        lparam>>=32;
+        switch (lparam)
         {
-          if (msg.WParam!=IntPtr.Zero) wparam=msg.WParam.ToInt32();
-        }
-        catch(Exception){}
-        try
-        {
-          if (msg.LParam!=IntPtr.Zero) lparam=msg.LParam.ToInt32();
-        }
-        catch(Exception){}
-
-        Log.Write("appcommand:{0} {1}",wparam,lparam);
-        Action action = new Action(Action.ActionType.ACTION_INVALID,0,0);
-        switch(wparam)
-        {
-          case APPCOMMAND_BROWSER_BACKWARD:
+          case 0x1032: //back
             action.wID=Action.ActionType.ACTION_PREVIOUS_MENU;
-          break;
-
-          case  APPCOMMAND_BROWSER_FORWARD        :
             break;
-          case  APPCOMMAND_BROWSER_REFRESH        :
-            break;
-          case  APPCOMMAND_BROWSER_STOP           :
-            break;
-          case  APPCOMMAND_BROWSER_SEARCH         :
-            break;
-          case  APPCOMMAND_BROWSER_FAVORITES      :
-            break;
-          case  APPCOMMAND_BROWSER_HOME           :
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-            break;
-          case  APPCOMMAND_VOLUME_MUTE            :
-            break;
-          case  APPCOMMAND_VOLUME_DOWN            :
-            action.wID=Action.ActionType.ACTION_VOLUME_DOWN;
-            break;
-          case  APPCOMMAND_VOLUME_UP              :
-            action.wID=Action.ActionType.ACTION_VOLUME_UP;
-            break;
-          case  APPCOMMAND_MEDIA_NEXTTRACK        :
-            action.wID=Action.ActionType.ACTION_NEXT_ITEM;
-            break;
-          case  APPCOMMAND_MEDIA_PREVIOUSTRACK    :
-            action.wID=Action.ActionType.ACTION_PREV_ITEM;
-            break;
-          case  APPCOMMAND_MEDIA_STOP             :
-            action.wID=Action.ActionType.ACTION_STOP;
-            break;
-          case  APPCOMMAND_MEDIA_PLAY_PAUSE       :
-            break;
-          case  APPCOMMAND_LAUNCH_MAIL            :
-            break;
-          case  APPCOMMAND_LAUNCH_MEDIA_SELECT    :
-            break;
-          case  APPCOMMAND_LAUNCH_APP1            :
-            break;
-          case  APPCOMMAND_LAUNCH_APP2            :
-            break;
-          case  APPCOMMAND_BASS_DOWN              :
-            break;
-          case  APPCOMMAND_BASS_BOOST             :
-            break;
-          case  APPCOMMAND_BASS_UP                :
-            break;
-          case  APPCOMMAND_TREBLE_DOWN            :
-            break;
-          case  APPCOMMAND_TREBLE_UP              :
-            break;
-          case  APPCOMMAND_MICROPHONE_VOLUME_MUTE :
-            break;
-          case  APPCOMMAND_MICROPHONE_VOLUME_DOWN :
-            break;
-          case  APPCOMMAND_MICROPHONE_VOLUME_UP   :
-            break;
-          case  APPCOMMAND_HELP                   :
-            break;
-          case  APPCOMMAND_FIND                   :
-            break;
-          case  APPCOMMAND_NEW                    :
-            break;
-          case  APPCOMMAND_OPEN                   :
-            break;
-          case  APPCOMMAND_CLOSE                  :
-            break;
-          case  APPCOMMAND_SAVE                   :
-            break;
-          case  APPCOMMAND_PRINT                  :
-            break;
-          case  APPCOMMAND_UNDO                   :
-            break;
-          case  APPCOMMAND_REDO                   :
-            break;
-          case  APPCOMMAND_COPY                   :
-            break;
-          case  APPCOMMAND_CUT                    :
-            break;
-          case  APPCOMMAND_PASTE                  :
-            break;
-          case  APPCOMMAND_REPLY_TO_MAIL          :
-            break;
-          case  APPCOMMAND_FORWARD_MAIL           :
-            break;
-          case  APPCOMMAND_SEND_MAIL              :
-            break;
-          case  APPCOMMAND_SPELL_CHECK            :
-            break;
-          case  APPCOMMAND_DICTATE_OR_COMMAND_CONTROL_TOGGLE :
-            break;
-          case  APPCOMMAND_MIC_ON_OFF_TOGGLE      :
-            break;
-          case  APPCOMMAND_CORRECTION_LIST        :
-            break;
-          case  APPCOMMAND_MEDIA_PLAY             :
+          case 0x102E: //play
             action.wID=Action.ActionType.ACTION_PLAY;
             break;
-          case  APPCOMMAND_MEDIA_PAUSE            :
+          case 0x1031: //forward
+            action.wID=Action.ActionType.ACTION_FORWARD;
+            break;
+          case 0x102F: //pause
             action.wID=Action.ActionType.ACTION_PAUSE;
             break;
-          case  APPCOMMAND_MEDIA_RECORD           :
+          case 0xD: //stop
+            action.wID=Action.ActionType.ACTION_STOP;
             break;
-          case  APPCOMMAND_MEDIA_FAST_FORWARD     :
-            action.wID=Action.ActionType.ACTION_MUSIC_FORWARD;
+          case 0xC: //repeat
+            //action.wID=Action.ActionType.;
             break;
-          case  APPCOMMAND_MEDIA_REWIND           :
-            action.wID=Action.ActionType.ACTION_MUSIC_REWIND;
+          case 0xB: //next
+            action.wID=Action.ActionType.ACTION_NEXT_ITEM;
             break;
-          case  APPCOMMAND_MEDIA_CHANNEL_UP       :
+          case 0x1: //previous
+            action.wID=Action.ActionType.ACTION_PREV_ITEM;
+            break;
+          case 0x1033://channel +
             action.wID=Action.ActionType.ACTION_NEXT_CHANNEL;
             break;
-          case  APPCOMMAND_MEDIA_CHANNEL_DOWN     :
+          case 0x1034://channel -
             action.wID=Action.ActionType.ACTION_PREV_CHANNEL;
             break;
+          case 0x8://mute
+            break;
+          case 0x1030://record
+            action.wID=Action.ActionType.ACTION_RECORD;
+            break;
+          default:
+            Log.Write("unknown wm_appcommand:{0:X}",lparam);
+          break;
         }
-        if (action.wID==Action.ActionType.ACTION_INVALID) return false;
-        GUIWindowManager.OnAction(action);
+        if (action.wID!=Action.ActionType.ACTION_INVALID)
+        {
+          GUIWindowManager.OnAction(action);
+          return true;
+        }
+      }
+
+      if (msg.Msg==WM_KEYDOWN)
+      {
+        Log.Write("wm_keydown:{0:X} {1:X}",wparam,lparam); 
+        switch (wparam)
+        {
+          case 0xd://OK/enter
+            break;
+          case 0x1B://erase/delete
+            break;
+          case 0x38://*
+            break;
+          case 0x33://#
+            break;
+        }
+      }
+
+      if (msg.Msg==WM_INPUT)
+      {
+        RAWINPUTHID header = new RAWINPUTHID ();
+        int uiSize=0;
+        int err=GetRawInputData( msg.LParam,RID_INPUT,IntPtr.Zero,ref uiSize,Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+        
+        IntPtr ptrStruct=Marshal.AllocCoTaskMem(uiSize);
+        Marshal.StructureToPtr(header,ptrStruct,false);
+        err=GetRawInputData( msg.LParam,RID_INPUT,ptrStruct,ref uiSize,Marshal.SizeOf(typeof(RAWINPUTHEADER)));
+        header=(RAWINPUTHID)Marshal.PtrToStructure(ptrStruct,typeof(RAWINPUTHID));
+        /*
+        Log.Write("header.dwsize:{0}",header.header.dwSize);
+        Log.Write("header.dwType:{0}",header.header.dwType);
+        Log.Write("header.hDevice:{0:X}",header.header.hDevice);
+        Log.Write("header.wParam:{0:X}",header.header.wParam);
+        Log.Write("hid.dwCount:{0:X}",header.hid.dwCount);
+        Log.Write("hid.dwSizeHid:{0:X}",header.hid.dwSizeHid);
+        Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+        */
+        switch(header.hid.RawData2)
+        {
+          //case 0x209://details
+          //  break;
+          case 0x4B://DVD angle
+            break;
+          case 0x4C://DVD audio
+            break;
+          case 0x24://DVD menu
+            Action action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);            
+            GUIWindowManager.OnAction(action);
+            break;
+          case 0x4D://DVD subtitle
+            break;
+          case 0x8D://TV guide
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TVGUIDE);
+            break;
+          case 0x47://My Music
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+            break;
+          case 0x49://My Pictures
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
+            break;
+          case 0x46://My TV
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+            break;
+          case 0x4A://My Video
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
+            break;
+          case 0x80://OEM1
+            break;
+          case 0x81://OEM2
+            break;
+          case 0x48://Recorded TV
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_RECORDEDTV);
+            break;
+          case 0x82://Standbye
+            break;
+          case 0x25://TV/jump
+            break;
+          default:
+            Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+          break;
+        }
         return true;
       }
       return false;
