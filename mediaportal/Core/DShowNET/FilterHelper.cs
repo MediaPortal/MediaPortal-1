@@ -51,6 +51,29 @@ namespace DShowNET
 
       return devices;
     }
+#if (UseCaptureCardDefinitions)
+
+		/// <summary>
+		/// #MW#.
+		/// Dirty, but simple hack to get the monikernames of the videoinput devices
+		/// The other call already gets me the friendly names, but I DO need the
+		/// monikers also, as many cards have the same friendly name (PVR150/250/350 etc.)
+		/// </summary>
+		/// <returns></returns>
+		public static ArrayList GetVideoInputDeviceMonikers()
+		{
+			ArrayList devices = new ArrayList();
+
+			Filters filters = new Filters();
+			
+			foreach(Filter device in filters.VideoInputDevices)
+			{
+				devices.Add(device.MonikerString);
+			}
+
+			return devices;
+		}
+#endif
 
 		public static ArrayList GetVideoInputDevices()
 		{

@@ -139,6 +139,15 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "CaptureCardDefinitions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CaptureEx.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DVBGraphSS2.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -169,6 +178,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SinkGraphEx.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SWEncodingGraph.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -176,6 +189,10 @@
                 <File
                     RelPath = "TVCaptureDevice.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TVCaptureDeviceEx.cs"
                     BuildAction = "Compile"
                 />
             </Include>

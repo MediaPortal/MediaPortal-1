@@ -50,7 +50,7 @@ namespace DirectX.Capture
 		// ----------------- Constructor ---------------------
 
 		/// <summary> Retrieve capabilities of a video device </summary>
-		internal VideoCapabilities(IAMStreamConfig videoStreamConfig)
+		public VideoCapabilities(IAMStreamConfig videoStreamConfig)
 		{
 			if ( videoStreamConfig == null ) 
 				throw new ArgumentNullException( "videoStreamConfig" );

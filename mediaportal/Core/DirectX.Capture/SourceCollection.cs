@@ -30,13 +30,13 @@ namespace DirectX.Capture
 		// ------------------ Constructors/Destructors -----------------------
 
 		/// <summary> Initialize collection with no sources. </summary>
-		internal SourceCollection()
+		public SourceCollection()
 		{
 			InnerList.Capacity = 1;
 		}
 
 		/// <summary> Initialize collection with sources from graph. </summary>
-		internal SourceCollection(ICaptureGraphBuilder2 graphBuilder, IBaseFilter deviceFilter, bool isVideoDevice)
+		public SourceCollection(ICaptureGraphBuilder2 graphBuilder, IBaseFilter deviceFilter, bool isVideoDevice)
 		{
 			addFromGraph( graphBuilder, deviceFilter, isVideoDevice );
 		}
@@ -62,7 +62,7 @@ namespace DirectX.Capture
 		///  This is marked internal so that the Capture class can control
 		///  how and when the source is changed.
 		/// </summary>
-		internal Source CurrentSource
+		public Source CurrentSource
 		{
 			get 
 			{

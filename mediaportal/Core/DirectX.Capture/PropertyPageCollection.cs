@@ -27,13 +27,13 @@ namespace DirectX.Capture
 		// --------------- Constructors / Destructor ----------------
 
 		/// <summary> Initialize collection with no property pages. </summary>
-		internal PropertyPageCollection()
+		public PropertyPageCollection()
 		{
 			InnerList.Capacity = 1;
 		}
 
 		/// <summary> Initialize collection with property pages from existing graph. </summary>
-		internal PropertyPageCollection(
+		public PropertyPageCollection(
 			ICaptureGraphBuilder2 graphBuilder, 
 			IBaseFilter videoDeviceFilter, IBaseFilter audioDeviceFilter,
 			IBaseFilter videoCompressorFilter, IBaseFilter audioCompressorFilter, 
@@ -44,7 +44,7 @@ namespace DirectX.Capture
 				videoCompressorFilter, audioCompressorFilter,
 				videoSources, audioSources,tuner );
 		}
-    internal PropertyPageCollection(
+		public PropertyPageCollection(
       ICaptureGraphBuilder2 graphBuilder, 
       IBaseFilter videoCompressorFilter, IBaseFilter audioCompressorFilter)
     {

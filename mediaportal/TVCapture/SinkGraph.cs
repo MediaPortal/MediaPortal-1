@@ -32,6 +32,10 @@ namespace MediaPortal.TV.Recording
     };
     protected int                     m_cardID=-1;
     protected string                  m_strVideoCaptureFilter="";
+#if (UseCaptureCardDefinitions)
+		protected TVCaptureDevice         mCard;
+		protected string									m_strVideoCaptureMoniker="";
+#endif
     protected IGraphBuilder           m_graphBuilder=null;
     protected ICaptureGraphBuilder2   m_captureGraphBuilder=null;
     protected IBaseFilter             m_captureFilter=null;
@@ -68,7 +72,9 @@ namespace MediaPortal.TV.Recording
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
+#if (UseCaptureCardDefinitions)
       m_strVideoCaptureFilter=strVideoCaptureFilter;
+#endif
       m_FrameSize = frameSize;
       m_FrameRate = frameRate;
 
@@ -85,11 +91,82 @@ namespace MediaPortal.TV.Recording
 
       }
       catch(Exception){}
-
-
-
 		}
 
+#if (UseCaptureCardDefinitions)
+		/// <summary>
+		/// #MW# Added simple call while passing card object
+		/// Easier to handle and to extent...
+		/// </summary>
+		/// <param name="pCard"></param>
+		public SinkGraph(TVCaptureDevice pCard)
+		{
+			mCard                    = pCard;
+
+			// Add legacy code to be compliant to other call, ie fill in membervariables...
+			m_bFirstTune             = true;
+			m_graphState             = State.None;
+			m_cardID                 = mCard.ID;
+			m_bUseCable              = mCard.IsCableInput;
+			m_iCountryCode           = mCard.CountryCode;
+			m_strVideoCaptureFilter  = mCard.VideoDevice;
+			m_strVideoCaptureMoniker = mCard.VideoDeviceMoniker;
+			m_FrameSize              = mCard.FrameSize;
+			m_FrameRate							 = mCard.FrameRate;
+
+			if (m_FrameSize.Width==0 || m_FrameSize.Height==0)
+				m_FrameSize = new Size(720,576);
+
+			try
+			{
+				RegistryKey hkcu = Registry.CurrentUser;
+				hkcu.CreateSubKey(@"Software\MediaPortal");
+				RegistryKey hklm = Registry.LocalMachine;
+				hklm.CreateSubKey(@"Software\MediaPortal");
+			}
+			catch(Exception){}
+		}
+#endif
+
+#if (UseCaptureCardDefinitions)
+		/// <summary>
+		/// #MW#, Added moniker name... ie the REAL device!!!
+		/// </summary>
+		/// <param name="ID"></param>
+		/// <param name="iCountryCode"></param>
+		/// <param name="bCable"></param>
+		/// <param name="strVideoCaptureFilter"></param>
+		/// <param name="strVideoCaptureMoniker"></param>
+		/// <param name="frameSize"></param>
+		/// <param name="frameRate"></param>
+		public SinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, string strVideoCaptureMoniker, Size frameSize, double frameRate)
+		{
+			m_cardID=ID;
+			m_bFirstTune=true;
+			m_bUseCable=bCable;
+			m_iCountryCode=iCountryCode;
+			m_graphState=State.None;
+			m_strVideoCaptureFilter=strVideoCaptureFilter;
+			// #MW#
+			m_strVideoCaptureMoniker=strVideoCaptureMoniker;
+			m_FrameSize = frameSize;
+			m_FrameRate = frameRate;
+
+			if (m_FrameSize.Width==0 || m_FrameSize.Height==0)
+				m_FrameSize=new Size(720,576);
+
+      
+			try
+			{
+				RegistryKey hkcu = Registry.CurrentUser;
+				hkcu.CreateSubKey(@"Software\MediaPortal");
+				RegistryKey hklm = Registry.LocalMachine;
+				hklm.CreateSubKey(@"Software\MediaPortal");
+
+			}
+			catch(Exception){}
+		}
+#endif
     /// <summary>
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
@@ -254,7 +331,11 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public void DeleteGraph()
+#if (UseCaptureCardDefinitions)
+		public virtual void DeleteGraph()
+#else
+		public void DeleteGraph()
+#endif
     {
       if (m_graphState < State.Created) return;
 
@@ -595,8 +676,10 @@ namespace MediaPortal.TV.Recording
 
 			AddPreferredCodecs();
       
+#if (!UseCaptureCardDefinitions)
+			// #MW# Next call is already done while creating graph, so obsolete?!?!
 			ConnectVideoCaptureToMPEG2Demuxer();
-      
+#endif
 			m_graphState=State.Viewing;
 			TuneChannel(standard, iChannelNr);
 				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9.UseVMR9inMYTV);

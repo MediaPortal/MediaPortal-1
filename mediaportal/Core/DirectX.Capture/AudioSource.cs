@@ -31,7 +31,7 @@ namespace DirectX.Capture
 		// -------------------- Constructors/Destructors ----------------------
 
 		/// <summary> Constructor. This class cannot be created directly. </summary>
-		internal AudioSource( IPin pin )
+		public AudioSource( IPin pin )
 		{
 			if ( (pin as IAMAudioInputMixer) == null )
 				throw new NotSupportedException( "The input pin does not support the IAMAudioInputMixer interface" );

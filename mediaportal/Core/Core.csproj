@@ -343,6 +343,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\VideoCaptureDeviceEx.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DShowNET\VideoCaptureProperties.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

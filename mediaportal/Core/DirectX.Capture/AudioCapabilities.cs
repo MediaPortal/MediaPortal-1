@@ -56,7 +56,7 @@ namespace DirectX.Capture
 		// ----------------- Constructor ---------------------
 
 		/// <summary> Retrieve capabilities of an audio device </summary>
-		internal AudioCapabilities(IAMStreamConfig audioStreamConfig)
+		public AudioCapabilities(IAMStreamConfig audioStreamConfig)
 		{
 			if ( audioStreamConfig == null ) 
 				throw new ArgumentNullException( "audioStreamConfig" );
