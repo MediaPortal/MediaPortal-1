@@ -15,7 +15,7 @@ using DShowNET;
 using TVCapture;
 using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;
-
+using System.Threading;
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -50,6 +50,11 @@ namespace MediaPortal.TV.Recording
 	[Serializable]
 	public class TVCaptureDevice
 	{
+		class RecordingFinished
+		{
+			public string    fileName;
+			public Hashtable Properties;
+		}
 		string  m_strVideoDevice        = "";
 		string  m_strVideoDeviceMoniker = "";//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
 		string  m_strAudioDevice			  = "";
@@ -99,6 +104,7 @@ namespace MediaPortal.TV.Recording
 		[NonSerialized]	private DateTime		_mRecordingStartTime;
 		[NonSerialized]	private DateTime		_mTimeshiftingStartedTime;
 		[NonSerialized] private string      radioStationName="";
+		[NonSerialized] private ArrayList m_finishedRecordings=new ArrayList();
 
 		/// <summary>
 		/// #MW#
@@ -857,6 +863,53 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} rebuild graph done",ID);
 		}
 
+		void OnSetRecordingAttributes()
+		{
+			System.Threading.Thread.Sleep(1000);
+			lock (m_finishedRecordings)
+			{
+				while (m_finishedRecordings.Count>0)
+				{
+					RecordingFinished rec =(RecordingFinished) m_finishedRecordings[0];
+					m_finishedRecordings.RemoveAt(0);
+
+					Log.WriteFile(Log.LogType.Capture,"Card:{0} set attributes on {1}",ID,rec.fileName);
+
+					if (_mNewRecordedTV.FileName.ToLower().IndexOf(".dvr-ms")>=0)
+					{
+						using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(rec.fileName))
+						{
+							try
+							{
+								editor.SetAttributes(rec.Properties);
+							}
+							catch(Exception ex)
+							{
+								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
+									rec.fileName,ex.Message,ex.Source,ex.StackTrace);
+							}
+						}
+					}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
+
+					if (_mNewRecordedTV.FileName.ToLower().IndexOf(".wmv")>=0)
+					{
+						using (AsfMetadataEditor editor = new AsfMetadataEditor(rec.fileName))
+						{
+							try
+							{
+								editor.SetAttributes(rec.Properties);
+							}
+							catch(Exception ex)
+							{
+								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
+									rec.fileName,ex.Message,ex.Source,ex.StackTrace);
+							}
+						}
+					}//if (_mNewRecordedTV.FileName.IndexOf(".wmv")>=0)
+				}//while (m_finishedRecordings.Count>0)
+			}//lock (m_finishedRecordings)
+		}//void OnSetRecordingAttributes()
+
 		/// <summary>
 		/// This method can be used to stop the current recording.
 		/// After recording is stopped the card will return to timeshifting mode
@@ -914,31 +967,20 @@ namespace MediaPortal.TV.Recording
 			propsToSet.Add("start",new MetadataItem("start", startTime, MetadataItemType.String));
 			propsToSet.Add("end",new MetadataItem("end", endTime, MetadataItemType.String));
 			
+			if (m_finishedRecordings==null) 
+				m_finishedRecordings=new ArrayList();
+			lock (m_finishedRecordings)
+			{
+				RecordingFinished finishedRec = new RecordingFinished();
+				finishedRec.Properties=propsToSet;
+				finishedRec.fileName=_mNewRecordedTV.FileName;
+				m_finishedRecordings.Add(finishedRec);
+			}
+
+			Thread WorkerThread = new Thread(new ThreadStart(OnSetRecordingAttributes));
+			WorkerThread.Start();
+
 			
-			if (_mNewRecordedTV.FileName.ToLower().IndexOf(".dvr-ms")>=0)
-			{
-				using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(_mNewRecordedTV.FileName))
-				{
-					try
-					{
-						editor.SetAttributes(propsToSet);
-					}
-					catch(Exception ex)
-					{
-						Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
-									_mNewRecordedTV.FileName,ex.Message,ex.Source,ex.StackTrace);
-					}
-				}
-			}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
-
-			if (_mNewRecordedTV.FileName.ToLower().IndexOf(".wmv")>=0)
-			{
-				using (AsfMetadataEditor editor = new AsfMetadataEditor(_mNewRecordedTV.FileName))
-				{
-					editor.SetAttributes(propsToSet);
-				}
-			}//if (_mNewRecordedTV.FileName.IndexOf(".wmv")>=0)
-
 
 			_mNewRecordedTV = null;
 
