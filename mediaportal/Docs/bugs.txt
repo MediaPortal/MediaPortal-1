@@ -51,16 +51,3 @@ Bugs i cannot fix (at the moment)
   18-06-2004 my video   : page counter goes wrong when > 9 pages
                           reason : unable to reproduce this bug
 -------------------------------------------------------------------------------------------
-myTV 
-I enter my TV and watch channel 1. 
-I hit the "record now" button. 
-I stop recording, say, after 10 minutes. 
-I am zapping to channel 3. 
-I leave my TV. 
-I enter my TV expecting to see channel 3, but i see the recorded program from channel 1. 
-EPG shows the info of channel 3. 
-
-Same with programmed recording: 
-I enter my TV Guide and select a program for record. 
-I leave my TV and wait until recording is done. 
-I enter my TV and i see the recorded show. Not the normal TV program. 
