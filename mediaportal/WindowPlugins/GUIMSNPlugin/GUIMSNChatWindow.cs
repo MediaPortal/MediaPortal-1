@@ -15,7 +15,8 @@ namespace MediaPortal.GUI.MSN
     enum Controls:int
     {
       Status=2,
-      List=50
+      List=50,
+			Input=51
     }
 
     static int MessageIndex=0;
@@ -44,7 +45,17 @@ namespace MediaPortal.GUI.MSN
 
 				GUIWindowManager.PreviousWindow();
         return;
+      }
 
+			if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+			{
+				// Check focus on sms input control
+				if (GetFocusControlId() != (int)Controls.Input)
+				{
+					// set focus to the default control then
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)Controls.Input, 0, 0, null);
+					OnMessage(msg);
+				}
       }
 
       base.OnAction(action);
@@ -78,6 +89,9 @@ namespace MediaPortal.GUI.MSN
             if (g_Player.IsVideo || g_Player.IsDVD) g_Player.Pause();
           }
 */          
+					          
+					// route keys
+					GUIWindowManager.RouteToWindow( GetID );
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
@@ -86,6 +100,7 @@ namespace MediaPortal.GUI.MSN
             if (g_Player.IsVideo || g_Player.IsDVD) g_Player.Pause();
           }
 */          
+					GUIWindowManager.UnRoute();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
