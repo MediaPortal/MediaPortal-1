@@ -233,7 +233,10 @@ namespace MediaPortal.GUI.Pictures
 
     public void Add(string strPicture)
     {
-      m_slides.Add(strPicture);
+      if (Utils.IsPicture(strPicture))
+      {
+        m_slides.Add(strPicture);
+      }
     }
 
     public void Select(string strFile)

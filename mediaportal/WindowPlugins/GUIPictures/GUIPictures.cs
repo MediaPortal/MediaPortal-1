@@ -751,21 +751,23 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (!item.IsFolder)
         {
-          
-          string strProgress=String.Format("progress:{0}/{1}", i+1, GetItemCount() );
-          string strFile=String.Format("picture:{0}", item.Label);
-          if (dlgProgress!=null)
+          if (Utils.IsPicture(item.Path))
           {
-            dlgProgress.SetLine(1, strFile);
-            dlgProgress.SetLine(2, strProgress);
-            dlgProgress.Progress();
-            if ( dlgProgress.IsCanceled ) break;
+            string strProgress=String.Format("progress:{0}/{1}", i+1, GetItemCount() );
+            string strFile=String.Format("picture:{0}", item.Label);
+            if (dlgProgress!=null)
+            {
+              dlgProgress.SetLine(1, strFile);
+              dlgProgress.SetLine(2, strProgress);
+              dlgProgress.Progress();
+              if ( dlgProgress.IsCanceled ) break;
+            }
+
+
+            string strThumb=GetThumbnail(item.Path );
+            int iRotate=PictureDatabase.GetRotation(item.Path);
+            Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
           }
-
-
-          string strThumb=GetThumbnail(item.Path );
-          int iRotate=PictureDatabase.GetRotation(item.Path);
-          Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
         }
       }
       if (dlgProgress!=null) dlgProgress.Close();
@@ -1045,20 +1047,23 @@ namespace MediaPortal.GUI.Pictures
       {
         if (!item.IsFolder)
         {
-          string strThumb=GetThumbnail(item.Path) ;
-          if (!System.IO.File.Exists(strThumb))
+          if (Utils.IsPicture(item.Path) )
           {
-            int iRotate=PictureDatabase.GetRotation(item.Path);
-            Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
-            System.Threading.Thread.Sleep(100);
-          }
+            string strThumb=GetThumbnail(item.Path) ;
+            if (!System.IO.File.Exists(strThumb))
+            {
+              int iRotate=PictureDatabase.GetRotation(item.Path);
+              Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,iRotate);
+              System.Threading.Thread.Sleep(100);
+            }
 
-          strThumb=GetLargeThumbnail(item.Path) ;
-          if (!System.IO.File.Exists(strThumb))
-          {
-            int iRotate=PictureDatabase.GetRotation(item.Path);
-            Util.Picture.CreateThumbnail(item.Path,strThumb,512,512,iRotate);
-            System.Threading.Thread.Sleep(100);
+            strThumb=GetLargeThumbnail(item.Path) ;
+            if (!System.IO.File.Exists(strThumb))
+            {
+              int iRotate=PictureDatabase.GetRotation(item.Path);
+              Util.Picture.CreateThumbnail(item.Path,strThumb,512,512,iRotate);
+              System.Threading.Thread.Sleep(100);
+            }
           }
         }
         else
