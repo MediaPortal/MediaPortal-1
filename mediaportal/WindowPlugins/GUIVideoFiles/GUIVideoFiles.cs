@@ -979,7 +979,6 @@ namespace MediaPortal.GUI.Video
         if (dlgOK != null)
         {
 				  dlgOK.SetHeading(6);
-				  dlgOK.SetLine(0, "");
 				  dlgOK.SetLine(1, 477);
 				  dlgOK.SetLine(2, "");
 				  dlgOK.DoModal(GetID);
@@ -1049,7 +1048,6 @@ namespace MediaPortal.GUI.Video
       if (dlgProgress != null)
       {
         dlgProgress.SetHeading(189);
-        dlgProgress.SetLine(0, "");
         dlgProgress.SetLine(1, "");
         dlgProgress.SetLine(2, m_strDirectory);
         dlgProgress.StartModal(GetID);
@@ -1163,9 +1161,9 @@ namespace MediaPortal.GUI.Video
         if (dlgProgress != null)
         {
           dlgProgress.SetHeading(197);
-          dlgProgress.SetLine(0, strMovieName);
-          dlgProgress.SetLine(1, "");
+          dlgProgress.SetLine(1, strMovieName);
           dlgProgress.SetLine(2, "");
+          dlgProgress.SetLine(3, "");
           dlgProgress.Progress();
           if (dlgProgress.IsCanceled) return;
         }
@@ -1262,8 +1260,8 @@ namespace MediaPortal.GUI.Video
             string strItem = String.Format("{0}/{1}", i + 1, items.Count);
             if (dlgProgress != null)
             {
-              dlgProgress.SetLine(0, strItem);
-              dlgProgress.SetLine(1, System.IO.Path.GetFileName(pItem.Path));
+              dlgProgress.SetLine(1, strItem);
+              dlgProgress.SetLine(2, System.IO.Path.GetFileName(pItem.Path));
               dlgProgress.Progress();
               if (dlgProgress.IsCanceled) return;
             }
@@ -1552,7 +1550,7 @@ namespace MediaPortal.GUI.Video
           {
             // show dialog...
             pDlgOK.SetHeading(195);
-            pDlgOK.SetLine(0, strMovieName);
+            pDlgOK.SetLine(1, strMovieName);
             pDlgOK.SetLine(2, "");
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
@@ -1668,9 +1666,9 @@ namespace MediaPortal.GUI.Video
       while (true)
       {
  	      dlg.SetHeading(428);
-	      dlg.SetLine(0, 429);
-        dlg.SetLine(1, movieDetails.DVDLabel);
-	      dlg.SetLine(2, movieDetails.Title);
+	      dlg.SetLine(1, 429);
+        dlg.SetLine(2, movieDetails.DVDLabel);
+	      dlg.SetLine(3, movieDetails.Title);
 	      dlg.DoModal(GUIWindowManager.ActiveWindow);
         if (dlg.IsConfirmed) 
         {

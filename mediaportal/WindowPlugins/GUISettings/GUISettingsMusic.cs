@@ -148,9 +148,9 @@ namespace MediaPortal.GUI.Settings
 										if (null!=dlgOK)
 										{
 											dlgOK.SetHeading(313);
-											dlgOK.SetLine(0, iReturnString);
-											dlgOK.SetLine(1, "");
+											dlgOK.SetLine(1, iReturnString);
 											dlgOK.SetLine(2, "");
+											dlgOK.SetLine(3, "");
 											dlgOK.DoModal(GetID);
 										}
 									}

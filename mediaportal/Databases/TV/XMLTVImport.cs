@@ -464,7 +464,9 @@ namespace MediaPortal.TV.Database
 		  }
 		  else
 		  {
-			  Log.Write("xmltv data file was not found");
+        m_strErrorMessage="No xmltv file found";
+        m_stats.Status=m_strErrorMessage;
+        Log.Write("xmltv data file was not found");
 		  }
       }
       catch(Exception ex)

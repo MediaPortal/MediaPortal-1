@@ -42,9 +42,8 @@ namespace ProgramsDatabase
 		{
 			pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			pDlgProgress.SetHeading("scanning directory");
-			pDlgProgress.SetLine(0, "scanning directory");		//todo: localize! 13004...
-			pDlgProgress.SetLine(1, "");
 			pDlgProgress.SetLine(2, "");
+			pDlgProgress.SetLine(3, "");
 			pDlgProgress.StartModal(GetID);
 			pDlgProgress.Progress();
 		}

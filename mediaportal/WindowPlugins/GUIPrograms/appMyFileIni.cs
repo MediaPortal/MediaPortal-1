@@ -30,7 +30,6 @@ namespace ProgramsDatabase
 		{
 			pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			pDlgProgress.SetHeading(13004);
-			pDlgProgress.SetLine(0, 13004);							//"importing *.my file
 			pDlgProgress.SetLine(1, "");
 			pDlgProgress.SetLine(2, "");
 			pDlgProgress.StartModal(GetID);

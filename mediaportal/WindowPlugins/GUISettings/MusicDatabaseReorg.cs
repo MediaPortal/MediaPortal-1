@@ -103,9 +103,9 @@ namespace MediaPortal.GUI.Settings
 			if (null==pDlgProgress) return (int)Errors.ERROR_REORG_SONGS;
 
 			pDlgProgress.SetHeading(313);
-			pDlgProgress.SetLine(0, 314);
-			pDlgProgress.SetLine(1, "");
+			pDlgProgress.SetLine(1, 314);
 			pDlgProgress.SetLine(2, "");
+			pDlgProgress.SetLine(3, "");
 			pDlgProgress.SetPercentage(0);
 			pDlgProgress.Progress();
 
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Settings
 				Database.DBHandle.Execute("rollback");
 				return (int)Errors.ERROR_OK;
 			}
-			pDlgProgress.SetLine(0, 316);
+			pDlgProgress.SetLine(1, 316);
 			pDlgProgress.ShowProgressBar(true);
 			if (IsCanceled())
 				return (int)Errors.ERROR_CANCEL;
@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Settings
 			// nothing to do for song cleanup?
 			if (m_songids.Count>0)
 			{
-				pDlgProgress.SetLine(0, 318);
+				pDlgProgress.SetLine(1, 318);
 				pDlgProgress.SetLine(2, "");
 				pDlgProgress.Progress();
 
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Settings
 			// artist cleanup
 			if (m_artistids.Count>0)
 			{
-				pDlgProgress.SetLine(0, 320);
+				pDlgProgress.SetLine(1, 320);
 				pDlgProgress.SetLine(2, "");
 				pDlgProgress.SetPercentage(0);
 				pDlgProgress.Progress();
@@ -201,7 +201,7 @@ namespace MediaPortal.GUI.Settings
 			// genres cleanup
 			if (m_genreids.Count>0)
 			{
-				pDlgProgress.SetLine(0, 322);
+				pDlgProgress.SetLine(1, 322);
 				pDlgProgress.SetLine(2, "");
 				pDlgProgress.SetPercentage(0);
 				pDlgProgress.Progress();
@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.Settings
 			// path cleanup
 			if (m_pathids.Count>0)
 			{
-				pDlgProgress.SetLine(0, 324);
+				pDlgProgress.SetLine(1, 324);
 				pDlgProgress.SetLine(2, "");
 				pDlgProgress.SetPercentage(0);
 				pDlgProgress.Progress();
@@ -229,7 +229,7 @@ namespace MediaPortal.GUI.Settings
 			// album cleanup
 			if (m_albumids.Count>0)
 			{
-				pDlgProgress.SetLine(0, 326);
+				pDlgProgress.SetLine(1, 326);
 				pDlgProgress.SetLine(2, "");
 				pDlgProgress.SetPercentage(0);
 				pDlgProgress.Progress();
@@ -240,9 +240,9 @@ namespace MediaPortal.GUI.Settings
 				if (nRet!=(int)Errors.ERROR_OK)
 					return nRet;
 			}
-      pDlgProgress.SetLine(0, 328);
-			pDlgProgress.SetLine(1, "");
-			pDlgProgress.SetLine(2, 330);
+      pDlgProgress.SetLine(1, 328);
+			pDlgProgress.SetLine(2, "");
+			pDlgProgress.SetLine(3, 330);
 			pDlgProgress.ShowProgressBar(false);
 			pDlgProgress.Progress();
 			// commit changes of our transaction
@@ -256,9 +256,9 @@ namespace MediaPortal.GUI.Settings
 			}
 
 
-      pDlgProgress.SetLine(0, 331);
-			pDlgProgress.SetLine(1, "");
-			pDlgProgress.SetLine(2, 330);
+      pDlgProgress.SetLine(1, 331);
+			pDlgProgress.SetLine(2, "");
+			pDlgProgress.SetLine(3, 330);
 			pDlgProgress.Progress();
 
 			m_dbs.EmptyCache();
@@ -554,9 +554,9 @@ namespace MediaPortal.GUI.Settings
 				if (pDlg!=null)
 				{
 					pDlg.SetHeading(313);
-					pDlg.SetLine(0, 425);
-					pDlg.SetLine(1, "");
+					pDlg.SetLine(1, 425);
 					pDlg.SetLine(2, "");
+					pDlg.SetLine(3, "");
 					pDlg.DoModal(GUIWindowManager.ActiveWindow);
 				}
 				return;
@@ -620,9 +620,9 @@ namespace MediaPortal.GUI.Settings
 				if (null!=pDlg)
 				{
 					pDlg.SetHeading(313);
-					pDlg.SetLine(0, 425);
-					pDlg.SetLine(1, "");
+					pDlg.SetLine(1, 425);
 					pDlg.SetLine(2, "");
+					pDlg.SetLine(3, "");
 					pDlg.DoModal(GUIWindowManager.ActiveWindow);
 				}
 				return;

@@ -529,12 +529,12 @@ namespace MediaPortal.GUI.Weather
 			if(pDlgProgress!=null && !autoUpdate) //dont display progress dialog on autoupdate or it crashes! :|
 			{
 				pDlgProgress.SetHeading(410);							//"Accessing Weather.com"
-				pDlgProgress.SetLine(0, 411);							//"Getting Weather For:"
-				pDlgProgress.SetLine(1, m_strLocation);	//Area code
+				pDlgProgress.SetLine(1, 411);							//"Getting Weather For:"
+				pDlgProgress.SetLine(2, m_strLocation);	//Area code
 				if(m_szLocation.Length > 1)							//got the location string yet?
-					pDlgProgress.SetLine(2, m_szLocation);
+					pDlgProgress.SetLine(3, m_szLocation);
 				else
-					pDlgProgress.SetLine(2, "");
+					pDlgProgress.SetLine(3, "");
 				pDlgProgress.StartModal(GetID);
 				pDlgProgress.Progress();
 			}	
@@ -553,9 +553,9 @@ namespace MediaPortal.GUI.Weather
 			{
 				// show failed dialog...
 				pDlgOK.SetHeading(412);	//"Unable to get weather data"
-				pDlgOK.SetLine(0, "");
 				pDlgOK.SetLine(1, "");
 				pDlgOK.SetLine(2, "");
+				pDlgOK.SetLine(3, "");
 				pDlgOK.DoModal(GetID);
 			} 
 			else if(dlRes && ldRes)	//download and load went ok so update
@@ -594,9 +594,9 @@ namespace MediaPortal.GUI.Weather
 
 				// show error dialog...
 				pDlgOK.SetHeading(412);	//"Unable to get weather data"
-				pDlgOK.SetLine(0, szCheckError);
-				pDlgOK.SetLine(1, "");
+				pDlgOK.SetLine(1, szCheckError);
 				pDlgOK.SetLine(2, "");
+				pDlgOK.SetLine(3, "");
 				pDlgOK.DoModal(GetID);
 				return true;	//we got a message so do display a second in refreshme()
 			}

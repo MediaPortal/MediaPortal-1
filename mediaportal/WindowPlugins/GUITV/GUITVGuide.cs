@@ -1558,7 +1558,6 @@ namespace MediaPortal.GUI.TV
       if (dlgProgress!=null)
       {
         dlgProgress.SetHeading(606);
-        dlgProgress.SetLine(0,606);
         dlgProgress.SetLine(1,"");
         dlgProgress.SetLine(2,"");
         dlgProgress.StartModal(GetID);

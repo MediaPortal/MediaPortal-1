@@ -1436,7 +1436,7 @@ namespace MediaPortal.GUI.Music
       {
         string strPath = System.IO.Path.GetFileName(m_strDirectory);
         dlg.SetHeading(189);
-        dlg.SetLine(0, 330);
+        dlg.SetLine(1, 330);
         //dlg.SetLine(1, "");
         dlg.SetLine(2, strPath);
         dlg.StartModal(GetID);
@@ -1445,9 +1445,9 @@ namespace MediaPortal.GUI.Music
       m_database.BeginTransaction();
       if (DoScan(m_strDirectory, ref items))
       {
-        dlg.SetLine(0, 328);
-        dlg.SetLine(1, "");
-        dlg.SetLine(2, 330);
+        dlg.SetLine(1, 328);
+        dlg.SetLine(2, "");
+        dlg.SetLine(3, 330);
         dlg.Progress();
         m_database.CommitTransaction();
       }

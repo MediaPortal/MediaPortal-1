@@ -373,7 +373,6 @@ namespace MediaPortal.GUI.Alarm
 			if(dlgOK !=null)
 			{
 				dlgOK.SetHeading(6);
-				dlgOK.SetLine(0,"");
 				dlgOK.SetLine(1,477);
 				dlgOK.SetLine(2,"");
 				dlgOK.DoModal(GUIAlarm.WINDOW_ALARM);

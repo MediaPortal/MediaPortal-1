@@ -274,11 +274,11 @@ namespace GUIRecipies
 						if (null==dlgYesNo) break;
 						if( currentState == States.STATE_RECIPIE || currentState == States.STATE_CATEGORY ) { 
 							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2049)); 
-							dlgYesNo.SetLine(0,titstr);
+							dlgYesNo.SetLine(1,titstr);
 						} 
 						if( currentState == States.STATE_MAIN ) {
 							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2050)); 
-							dlgYesNo.SetLine(0,catstr);
+							dlgYesNo.SetLine(1,catstr);
 						}
 						dlgYesNo.SetLine(1, "");
 						dlgYesNo.SetLine(2, "");
