@@ -9,4 +9,9 @@ namespace MediaPortal.Configuration
 	{
 		public static string[] List = new string[] { "Overlay", "Video Mixing Renderer 9 - Windowless", "Video Mixing Renderer 9 - Renderless" };
 	}
+
+  public class VideoRenderersShort
+  {
+    public static string[] List = new string[] { "Overlay", "Video Mixing Renderer 9 - Renderless" };
+  }
 }
