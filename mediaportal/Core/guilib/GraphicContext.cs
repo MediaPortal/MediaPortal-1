@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.Library
     static int                      m_iSaturation=0;							// saturation value
     static int                      m_Sharpness=0;								// sharpness value
     static bool                     m_bMouseSupport=true;					// boolean indicating if we should present mouse controls like scrollbars
+		static bool                     m_bDBLClickAsRightclick=false;	// boolean indicating that we want to use double click to open a context menu
     static Size                     m_skinSize = new Size(720,576);// original width/height for which the skin was designed
     static bool											m_bShowBackGround=true;				//boolean indicating if we should show the GUI background or if we should show live tv in the background
     static bool											m_bPlayingVideo=false;				//boolean indicating if we are playing a movie
@@ -679,6 +680,15 @@ namespace MediaPortal.GUI.Library
       get { return m_bMouseSupport;}
       set { m_bMouseSupport=value;}
     }
+		
+		/// <summary>
+		/// Get/Set  if we want to use double click to be used as right click
+		/// </summary>
+		static public bool DBLClickAsRightClick
+		{
+			get { return m_bDBLClickAsRightclick;}
+			set { m_bDBLClickAsRightclick=value;}
+		}
     
 		/// <summary>
 		/// Get/Set the size of the skin.

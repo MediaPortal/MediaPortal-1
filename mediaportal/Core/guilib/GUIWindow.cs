@@ -250,6 +250,11 @@ namespace MediaPortal.GUI.Library
 								control.OnAction(action);
 								return;
 							}
+							else
+							{
+								// no control selected
+								LooseFocus();
+							}
 						}
 						return;
 					}
