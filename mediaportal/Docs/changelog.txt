@@ -1,3 +1,5 @@
+21-07-2004  my tv       : fixed : SW encoding cards: Recording to WMV 7,8 or 9 format didnt not work
+21-07-2004  my tv       : fixed : SW encoding cards: disabled tvcard AUDIO AUX inputs in favor of the AUDIO Line In inputs
 21-07-2004  vmr9        : fixed : cannot switch between windowed/fullscreen mode after playing a movie with vmr9  
 21-07-2004  vmr9        : fixed : tearing/stripes etc (only fixed in fullscreen mode)
 

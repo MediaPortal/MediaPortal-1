@@ -125,7 +125,7 @@ namespace MediaPortal.TV.Recording
       int hr = m_captureGraphBuilder.SetFiltergraph( m_graphBuilder );
       if( hr < 0 ) 
       {
-        DirectShowUtil.DebugWrite("SWGraph:link FAILED");
+        DirectShowUtil.DebugWrite("SWGraph:link FAILED:0x{0:X}",hr);
         return false;
       }
       DirectShowUtil.DebugWrite("SWGraph:Add graph to ROT table");
@@ -139,7 +139,7 @@ namespace MediaPortal.TV.Recording
         hr = m_graphBuilder.AddFilter( m_filterCaptureVideo, filterVideoCaptureDevice.Name );
         if( hr < 0 ) 
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add Videodevice to filtergraph");
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}",hr);
           return false;
         }
       }
@@ -155,7 +155,7 @@ namespace MediaPortal.TV.Recording
           hr = m_graphBuilder.AddFilter( m_filterCaptureAudio, filterAudioCaptureDevice.Name );
           if( hr < 0 ) 
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audiodevice to filtergraph");
+            DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}",hr);
             return false;
           }
         }
@@ -318,6 +318,9 @@ namespace MediaPortal.TV.Recording
       Filters  filters = new Filters();
       Filter   filterVideoCompressor=null;
       Filter   filterAudioCompressor=null;
+
+      bool bRecordWMV=false;
+      strFileName=System.IO.Path.ChangeExtension(strFileName,".avi");
       
       DirectShowUtil.DebugWrite("SWGraph:find video compressor filter...");
       foreach (Filter filter in filters.VideoCompressors)
@@ -325,6 +328,14 @@ namespace MediaPortal.TV.Recording
         if (filter.Name.Equals(m_strVideoCompressor))
         {
           filterVideoCompressor=filter;
+          // check for wmv 7,8,9
+          if (filter.MonikerString.Equals("@device:dmo:{3181343B-94A2-4FEB-ADEF-30A1DDE617B4}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") ||
+              filter.MonikerString.Equals("@device:dmo:{BA2F0162-CAA4-48FC-89EA-DB0D1DFF40CA}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") ||
+              filter.MonikerString.Equals("@device:dmo:{96B57CDD-8966-410C-BB1F-C97EEA765C04}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") )
+          {
+            bRecordWMV=true;
+            strFileName=System.IO.Path.ChangeExtension(strFileName,".wmv");
+          }
           break;
         }
       }
@@ -344,6 +355,7 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find video compressor:{0}",m_strVideoCompressor);
         return false;
       }
+
       if (filterAudioCompressor==null) 
       {
         DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find audio compressor:{0}",m_strAudioCompressor);
@@ -358,7 +370,7 @@ namespace MediaPortal.TV.Recording
         hr = m_graphBuilder.AddFilter( m_filterCompressorVideo, filterVideoCompressor.Name );
         if( hr < 0 ) 
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add video compressor to filtergraph");
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add video compressor to filtergraph:0x{0:X}",hr);
           return false;
         }
       }
@@ -381,33 +393,63 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph:0x{0:X}",hr);
         return false;
       }
     
       // set filename
-      strFileName=System.IO.Path.ChangeExtension(strFileName,".avi");
       DirectShowUtil.DebugWrite("SWGraph:record to :{0} ", strFileName);
 
       Guid cat,med;
       Guid mediaSubTypeAvi = MediaSubType.Avi;
+      if (bRecordWMV)
+        mediaSubTypeAvi = MediaSubType.Asf;
+
       hr = m_captureGraphBuilder.SetOutputFileName( ref mediaSubTypeAvi, strFileName, out m_muxFilter, out m_fileWriterFilter );
       if (hr!=0)
       {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:to set output filename to :{0} ", strFileName);
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:to set output filename to :{0} :0x{1:X}", strFileName,hr);
         return false;
+      }
+
+      if (bRecordWMV)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:get IConfigAsfWriter" );
+        IConfigAsfWriter asfwriter = m_fileWriterFilter as IConfigAsfWriter;
+        if (asfwriter!=null)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:IConfigAsfWriter.SetProfile(BestVBRVideo)" );
+          //Guid WMProfile_V80_HIGHVBRVideo = new Guid( 0xf10d9d3,0x3b04,0x4fb0,0xa3, 0xd3, 0x88, 0xd4, 0xac, 0x85, 0x4a, 0xcc);
+          Guid WMProfile_V80_BESTVBRVideo = new Guid( 0x48439ba,0x309c,0x440e,0x9c, 0xb4, 0x3d, 0xcc, 0xa3, 0x75, 0x64, 0x23 );
+          hr=asfwriter.ConfigureFilterUsingProfileGuid(WMProfile_V80_BESTVBRVideo);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED IConfigAsfWriter.SetProfile() :0x{0:X}", hr);
+          }
+        }
+        else DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAsfWriter" );
       }
 
       if (m_videoCaptureDevice.CapturePin!=null)
       {
+        // NOTE that we try to render the interleaved pin before the video pin, because
+        // if BOTH exist, it's a DV filter and the only way to get the audio is to use
+        // the interleaved pin.  Using the Video pin on a DV filter is only useful if
+        // you don't want the audio.
         DirectShowUtil.DebugWrite("SWGraph:connect video capture->compressor ");
         cat = PinCategory.Capture;
-        med = MediaType.Video;
+        med = MediaType.Interleaved;
         hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
         if (hr!=0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect video capture->compressor ");
-          return false;
+          cat = PinCategory.Capture;
+          med = MediaType.Video;
+          hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect video capture->compressor :0x{0:X}",hr);
+            return false;
+          }
         }
       }
 
@@ -420,42 +462,47 @@ namespace MediaPortal.TV.Recording
         hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureAudio, m_filterCompressorAudio, m_muxFilter ); 
         if (hr!=0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect audio capture->compressor ");
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect audio capture->compressor :0x{0:X}",hr);
           return false;
         }
       } 
 
       // Set the audio as the masterstream
-      IConfigAviMux ConfigMux = m_muxFilter as IConfigAviMux;
-      if (ConfigMux!=null)
+      if (!bRecordWMV)
       {
-        DirectShowUtil.DebugWrite("SWGraph:set audio as masterstream");
-        hr=ConfigMux.SetMasterStream(1);
-        if (hr!=0)
+        // set avi muxing parameters
+        IConfigAviMux ConfigMux = m_muxFilter as IConfigAviMux;
+        if (ConfigMux!=null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:to set audio as masterstream");
+          DirectShowUtil.DebugWrite("SWGraph:set audio as masterstream");
+          hr=ConfigMux.SetMasterStream(1);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED:to set audio as masterstream:0x{0:X}",hr);
+          }
         }
-      }
-      else
-      {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAviMux");
-      }
+        else
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAviMux");
+        }
 
-      // Set the avi interleaving mode
-      IConfigInterleaving InterleaveMode = m_muxFilter as IConfigInterleaving;
-      if (InterleaveMode!=null)
-      {
-        DirectShowUtil.DebugWrite("SWGraph:set avi interleave mode");
-        hr=InterleaveMode.put_Mode(AviInterleaveMode.INTERLEAVE_CAPTURE);
-        if (hr!=0)
+        // Set the avi interleaving mode
+        IConfigInterleaving InterleaveMode = m_muxFilter as IConfigInterleaving;
+        if (InterleaveMode!=null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:to set avi interleave mode");
+          DirectShowUtil.DebugWrite("SWGraph:set avi interleave mode");
+          hr=InterleaveMode.put_Mode(AviInterleaveMode.INTERLEAVE_CAPTURE);
+          if (hr!=0)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED:to set avi interleave mode:0x{0:X}",hr);
+          }
         }
-      }
-      else
-      {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigInterleaving");
-      }
+        else
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigInterleaving");
+        }
+      }//if (!bRecordWMV)
+
       if (m_mediaControl==null)
         m_mediaControl=(IMediaControl)m_graphBuilder;
 
@@ -567,15 +614,15 @@ namespace MediaPortal.TV.Recording
       m_mediaControl=(IMediaControl)m_graphBuilder;
       int hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window:0x{0:X}",hr);
 
       hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}",hr);
 
       hr = m_videoWindow.put_Visible( DsHlp.OATRUE );
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible");
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible:0x{0:X}",hr);
 
       DirectShowUtil.DebugWrite("SWGraph:enable deinterlace");
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
