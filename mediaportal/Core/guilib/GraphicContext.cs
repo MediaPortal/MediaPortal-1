@@ -91,6 +91,7 @@ namespace MediaPortal.GUI.Library
 		static bool                     vmr9Active=false;
 		static int											m_iMaxFPS=20;
 		static float                    m_fCurrentFPS=0;
+		static float                    m_fVMR9FPS=0;
 
 		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -765,6 +766,13 @@ namespace MediaPortal.GUI.Library
 			get { return m_renderFrame;}
 			set { m_renderFrame=value;}
 		}
+		
+		static public float Vmr9FPS
+		{
+			get { return m_fVMR9FPS;}
+			set { m_fVMR9FPS=value;}
+		}
+
 		static public bool Vmr9Active
 		{
 			get 

@@ -208,7 +208,7 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Paused)
+      if (Paused || GUIGraphicsContext.Vmr9FPS < 1f)
       {
         //repaint
         if (Vmr9!=null) Vmr9.Repaint();

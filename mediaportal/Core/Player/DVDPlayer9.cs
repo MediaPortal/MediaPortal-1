@@ -352,7 +352,7 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Paused || menuMode!=MenuMode.No )
+      if (Paused || menuMode!=MenuMode.No || GUIGraphicsContext.Vmr9FPS<1f)
       {
         //repaint
         if (Vmr9!=null) Vmr9.Repaint();

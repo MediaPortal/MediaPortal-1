@@ -36,12 +36,17 @@ namespace MediaPortal.Player
 		static int													textureCount  = 1;
 		static int												  MaxTextureWidth=1900;
 		static int												  MaxTextureHeight=1200;
+		static uint													frameCounter=0;
+		static float                        lastTime;
     
 		[StructLayout(LayoutKind.Sequential)]
 	  public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
 		{
 			public Allocator()
 			{
+				GUIGraphicsContext.Vmr9FPS=0;
+				lastTime=0f;
+				frameCounter=0;
 				MaxTextureWidth=1900;
 				MaxTextureHeight=1200;
 				
@@ -314,13 +319,20 @@ namespace MediaPortal.Player
       public int PresentImage(uint uid, VMR9PresentationInfo presInfo)
       {
 				scene.Render(m_nativeSize);
+				frameCounter++;
+				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+				if (time - lastTime >= 0.01f)
+				{
+					GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
+					lastTime=time;
+				}
         return 0;
       }
       
 			/// <summary>
 			/// Method to redraw the last video frame
 			/// This is used in pause mode. In pause mode VMR9 will not redraw the screen by itself
-			/// MP then calls this repaint() method periodaly to redraw the video frame
+			/// MP then calls this repaint() method per2iodaly to redraw the video frame
 			/// </summary>
 			public void Repaint()
       {

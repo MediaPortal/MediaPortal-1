@@ -146,7 +146,6 @@ namespace MediaPortal.TV.Recording
 		bool												graphRunning=false;
 		DVBChannel									currentTuningObject=null;
 		bool												shouldDecryptChannel=false;
-		bool                        m_videoDataFound=false;
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
 		int                         m_iRetyCount=0;
@@ -894,7 +893,6 @@ namespace MediaPortal.TV.Recording
 			m_iPrevChannel		= m_iCurrentChannel;
 			m_iCurrentChannel = iChannel;
 			m_StartTime				= DateTime.Now;
-			m_videoDataFound=false;
 			m_iRetyCount=0;
 
 			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
@@ -2238,7 +2236,7 @@ namespace MediaPortal.TV.Recording
 		public void Process()
 		{
 			if (m_SectionsTables==null) return;
-			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false )
+			if(GUIGraphicsContext.Vmr9Active  && GUIGraphicsContext.Vmr9FPS < 1f)
 			{
 				Vmr9.Repaint();// repaint vmr9
 			}
@@ -2384,7 +2382,6 @@ namespace MediaPortal.TV.Recording
 			if (m_NetworkProvider==null) return;
 			if (tuningObject		 ==null) return;
 
-			m_videoDataFound=false;
 			m_iRetyCount=0;
 			//start viewing if we're not yet viewing
 			if (!graphRunning)
@@ -2772,32 +2769,6 @@ namespace MediaPortal.TV.Recording
 			// here write code to record raw ts or mp3 etc.
 			// the callback needs to return as soon as possible!!
 			//
-
-			if (currentTuningObject.videoPid==0) 
-			{
-				m_videoDataFound=false;
-			}
-			else
-			{
-				if (!m_videoDataFound)
-				{
-					// the following check should takes care of scrambled video-data
-					// and redraw the vmr9 not to hang
-					for(int pointer=add;pointer<end;pointer+=188)
-					{		
-						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-						if(header.Pid==currentTuningObject.videoPid)
-						{
-							Log.Write("TransportScrambling:{0:X} {1:X} {2}",header.Pid,currentTuningObject.videoPid,header.TransportScrambling);
-							if(header.TransportScrambling==0) 
-								m_videoDataFound=true;
-								
-							break;// stop loop if we got a non-scrambled video-packet 
-						}
-					}
-				}
-			}
-
 			if (currentTuningObject.teletextPid!=0)
 			{
 				for(int pointer=add;pointer<end;pointer+=188)

@@ -483,6 +483,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\DXUtil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\Error.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

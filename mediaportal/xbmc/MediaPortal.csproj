@@ -247,11 +247,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DXUtil.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "MCE2005Remote.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

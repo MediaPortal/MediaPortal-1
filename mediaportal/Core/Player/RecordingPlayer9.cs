@@ -169,7 +169,7 @@ namespace MediaPortal.Player
         m_bVisible=true;
       }
       
-      if (Paused)
+      if (Paused )
       {
         //repaint
         allocator.Repaint();
