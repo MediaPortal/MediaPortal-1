@@ -938,7 +938,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
 						return;
 					}
-					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6}", 
+					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6}", 
 										frequency,symbolrate, innerFec, modulation, ONID, TSID, SID);
 
 					//get the IDVBCLocator interface from the new tuning request
@@ -951,7 +951,7 @@ namespace MediaPortal.TV.Recording
 					
 					if (myLocator ==null)
 					{
-						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0}. cannot get locator", frequency);
+						Log.Write("DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
 						return ;
 					}
 					//set the properties on the new tuning request
@@ -988,7 +988,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
 						return;
 					}
-					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6}", 
+					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6}", 
 						frequency,polarisation, innerFec, symbolrate, ONID, TSID, SID);
 
 					//get the IDVBSLocator interface from the new tuning request
@@ -1042,7 +1042,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA:database invalid tuning details for channel:{0}", iChannel);
 						return;
 					}
-					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} ONID:{1} TSID:{2} SID:{3}", frequency, ONID, TSID, SID);
+					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3}", frequency, ONID, TSID, SID);
 					//get the IDVBTLocator interface from the new tuning request
 
 					Log.Write("DVBGraphBDA:TuneChannel() get IDVBTLocator");
@@ -2226,7 +2226,7 @@ namespace MediaPortal.TV.Recording
 			{
 				//got all details. Log them
 				channelInfo.freq=currentTuningObject.carrierFrequency;
-				Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6}", 
+				Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6}", 
 					channelInfo.service_provider_name,
 					channelInfo.service_name,
 					channelInfo.scrambled,
@@ -2523,7 +2523,7 @@ namespace MediaPortal.TV.Recording
 							hasAudio=true;
 					}
 				}
-				Log.Write("DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8}", 
+				Log.Write("DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8}", 
 										info.service_provider_name,
 										info.service_name,
 										info.scrambled,
