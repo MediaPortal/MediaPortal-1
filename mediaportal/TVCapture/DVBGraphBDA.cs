@@ -1468,6 +1468,59 @@ namespace MediaPortal.TV.Recording
 			return signal;
 		}//IBDA_SignalStatistics GetTunerSignalStatistics()
 
+		IBDA_LNBInfo[] GetBDALNBInfoInterface()
+		{
+			//no tuner filter? then return;
+			if (m_TunerDevice==null) 
+				return null;
+			
+			//get the IBDA_Topology from the tuner device
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: get IBDA_Topology");
+			IBDA_Topology topology = m_TunerDevice as IBDA_Topology;
+			if (topology==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: could not get IBDA_Topology from tuner");
+				return null;
+			}
+
+			//get the NodeTypes from the topology
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: GetNodeTypes");
+			int nodeTypeCount=0;
+			int[] nodeTypes = new int[33];
+			Guid[] guidInterfaces = new Guid[33];
+			
+			int hr=topology.GetNodeTypes(ref nodeTypeCount, 32, nodeTypes);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED could not get node types from tuner");
+				return null;
+			}
+			IBDA_LNBInfo[] signal = new IBDA_LNBInfo[nodeTypeCount];
+			//for each node type
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got {0} node types", nodeTypeCount);
+			for (int i=0; i < nodeTypeCount;++i)
+			{
+				object objectNode;
+				hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
+					return null;
+				}
+				//and get the final IBDA_LNBInfo
+				try
+				{
+					signal[i] = (IBDA_LNBInfo)objectNode ;
+				}
+				catch 
+				{
+					Log.WriteFile(Log.LogType.Capture,"No interface on node {0}", i); 
+				}
+			}//for (int i=0; i < nodeTypeCount;++i)
+			Marshal.ReleaseComObject(topology);
+			return signal;
+		}//IBDA_LNBInfo[] GetBDALNBInfoInterface()
+
 
 		/// <summary>
 		/// returns true if tuner is locked to a frequency and signalstrength/quality is > 0
@@ -2499,21 +2552,28 @@ namespace MediaPortal.TV.Recording
 
 				if (m_TunerDevice!=null)
 				{
-					IBDA_LNBInfo info = m_TunerDevice as IBDA_LNBInfo;
-					if (info !=null)
+					IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
+					if (info==null)
 					{
-						int hr=info.put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
-						if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_HighLowSwitchFrequency  hr:0x{0:X}",hr);
-						
-						hr=info.put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
-						if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand  hr:0x{0:X}",hr);
-						
-						hr=info.put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
-						if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand hr:0x{0:X}",hr);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to get IBDA_LNBInfo");
 					}
 					else
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to get IBDA_LNBInfo interface");
+						for (int i=0; i < info.Length;++i)
+						{
+							if (info[i] !=null)
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
+								int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
+								if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_HighLowSwitchFrequency  hr:0x{0:X}",hr);
+								
+								hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
+								if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand  hr:0x{0:X}",hr);
+								
+								hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
+								if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand hr:0x{0:X}",hr);
+							}
+						}
 					}
 				}
 			}
