@@ -640,6 +640,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void WndProc(ref Message msg)
     {
+      PluginManager.ReceiveMsg(msg);	// Send received messages to PluginManager / added by mPod
       Action action;
       char key;
       Keys keyCode;
