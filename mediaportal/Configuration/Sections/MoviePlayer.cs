@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
 				externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
 				externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
 
-				audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "");
+				audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
 				
 				int videoRenderer = xmlreader.GetValueAsInt("movieplayer", "vmr9", 0);
 				if(videoRenderer >= 0 && videoRenderer <= VideoRenderers.List.Length)				

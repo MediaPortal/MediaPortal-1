@@ -108,6 +108,7 @@ namespace MediaPortal.Configuration.Sections
       // deleteButton
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.Enabled = false;
       this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.deleteButton.Location = new System.Drawing.Point(176, 312);
       this.deleteButton.Name = "deleteButton";
@@ -118,6 +119,7 @@ namespace MediaPortal.Configuration.Sections
       // editButton
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.Enabled = false;
       this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.editButton.Location = new System.Drawing.Point(96, 312);
       this.editButton.Name = "editButton";
@@ -151,6 +153,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListView.Size = new System.Drawing.Size(352, 280);
       this.sharesListView.TabIndex = 4;
       this.sharesListView.View = System.Windows.Forms.View.Details;
+      this.sharesListView.SelectedIndexChanged += new System.EventHandler(this.sharesListView_SelectedIndexChanged);
       this.sharesListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListView_ItemCheck);
       // 
       // columnHeader1
@@ -340,6 +343,11 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
+    }
+
+    private void sharesListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      editButton.Enabled  = addButton.Enabled = (sharesListView.SelectedItems.Count > 0);
     }
 	}
 }

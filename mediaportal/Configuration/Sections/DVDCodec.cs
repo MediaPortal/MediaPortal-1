@@ -72,10 +72,10 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "");
+				string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
 				string videoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
 				string audioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
-				string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "");
+				string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
 				audioCodecComboBox.SelectedItem = audioCodec;
 				audioRendererComboBox.SelectedItem = audioRenderer;

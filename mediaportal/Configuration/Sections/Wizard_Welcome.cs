@@ -117,11 +117,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBox
       // 
+      this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
       this.pictureBox.Dock = System.Windows.Forms.DockStyle.Left;
       this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
       this.pictureBox.Location = new System.Drawing.Point(0, 0);
       this.pictureBox.Name = "pictureBox";
-      this.pictureBox.Size = new System.Drawing.Size(184, 326);
+      this.pictureBox.Size = new System.Drawing.Size(184, 342);
       this.pictureBox.TabIndex = 1;
       this.pictureBox.TabStop = false;
       // 
@@ -131,7 +132,7 @@ namespace MediaPortal.Configuration.Sections
       this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
       this.panel1.Location = new System.Drawing.Point(184, 0);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(1, 326);
+      this.panel1.Size = new System.Drawing.Size(1, 342);
       this.panel1.TabIndex = 2;
       // 
       // panel2
@@ -140,13 +141,13 @@ namespace MediaPortal.Configuration.Sections
       this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
       this.panel2.Location = new System.Drawing.Point(185, 0);
       this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(1, 326);
+      this.panel2.Size = new System.Drawing.Size(1, 342);
       this.panel2.TabIndex = 3;
       // 
       // itemPictureBox
       // 
       this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
-      this.itemPictureBox.Location = new System.Drawing.Point(30, 192);
+      this.itemPictureBox.Location = new System.Drawing.Point(30, 208);
       this.itemPictureBox.Name = "itemPictureBox";
       this.itemPictureBox.Size = new System.Drawing.Size(128, 128);
       this.itemPictureBox.TabIndex = 4;
@@ -160,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
       this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.bodyLabel.Location = new System.Drawing.Point(196, 48);
       this.bodyLabel.Name = "bodyLabel";
-      this.bodyLabel.Size = new System.Drawing.Size(360, 264);
+      this.bodyLabel.Size = new System.Drawing.Size(360, 280);
       this.bodyLabel.TabIndex = 5;
       this.bodyLabel.Text = "Body";
       // 
@@ -173,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.pictureBox);
       this.Controls.Add(this.headerLabel);
       this.Name = "Wizard_Welcome";
-      this.Size = new System.Drawing.Size(560, 326);
+      this.Size = new System.Drawing.Size(560, 342);
       this.ResumeLayout(false);
 
     }

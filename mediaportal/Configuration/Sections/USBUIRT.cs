@@ -92,134 +92,135 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.tunerCommandsButton = new System.Windows.Forms.Button();
-			this.internalCommandsButton = new System.Windows.Forms.Button();
-			this.enterCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.digitCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.outputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.statusLabel = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.tunerCommandsButton);
-			this.groupBox1.Controls.Add(this.internalCommandsButton);
-			this.groupBox1.Controls.Add(this.enterCheckBox);
-			this.groupBox1.Controls.Add(this.digitCheckBox);
-			this.groupBox1.Controls.Add(this.outputCheckBox);
-			this.groupBox1.Controls.Add(this.inputCheckBox);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 224);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General settings";
-			// 
-			// tunerCommandsButton
-			// 
-			this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.tunerCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.tunerCommandsButton.Location = new System.Drawing.Point(16, 176);
-			this.tunerCommandsButton.Name = "tunerCommandsButton";
-			this.tunerCommandsButton.Size = new System.Drawing.Size(408, 23);
-			this.tunerCommandsButton.TabIndex = 12;
-			this.tunerCommandsButton.Text = "Learn tuner commands";
-			this.tunerCommandsButton.Click += new System.EventHandler(this.tunerCommandsButton_Click);
-			// 
-			// internalCommandsButton
-			// 
-			this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.internalCommandsButton.Location = new System.Drawing.Point(16, 144);
-			this.internalCommandsButton.Name = "internalCommandsButton";
-			this.internalCommandsButton.Size = new System.Drawing.Size(408, 23);
-			this.internalCommandsButton.TabIndex = 11;
-			this.internalCommandsButton.Text = "Learn internal commands";
-			this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
-			// 
-			// enterCheckBox
-			// 
-			this.enterCheckBox.Enabled = false;
-			this.enterCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.enterCheckBox.Location = new System.Drawing.Point(32, 96);
-			this.enterCheckBox.Name = "enterCheckBox";
-			this.enterCheckBox.Size = new System.Drawing.Size(312, 24);
-			this.enterCheckBox.TabIndex = 10;
-			this.enterCheckBox.Text = "Tuner needs \"Enter\" to be sent when changing channel";
-			// 
-			// digitCheckBox
-			// 
-			this.digitCheckBox.Enabled = false;
-			this.digitCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.digitCheckBox.Location = new System.Drawing.Point(32, 72);
-			this.digitCheckBox.Name = "digitCheckBox";
-			this.digitCheckBox.Size = new System.Drawing.Size(264, 24);
-			this.digitCheckBox.TabIndex = 9;
-			this.digitCheckBox.Text = "Tuner has three (3) digits";
-			// 
-			// outputCheckBox
-			// 
-			this.outputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.outputCheckBox.Location = new System.Drawing.Point(16, 48);
-			this.outputCheckBox.Name = "outputCheckBox";
-			this.outputCheckBox.Size = new System.Drawing.Size(264, 24);
-			this.outputCheckBox.TabIndex = 8;
-			this.outputCheckBox.Text = "Enable USBUIRT for output to external tuner";
-			this.outputCheckBox.CheckedChanged += new System.EventHandler(this.outputCheckBox_CheckedChanged);
-			// 
-			// inputCheckBox
-			// 
-			this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
-			this.inputCheckBox.Name = "inputCheckBox";
-			this.inputCheckBox.Size = new System.Drawing.Size(264, 24);
-			this.inputCheckBox.TabIndex = 7;
-			this.inputCheckBox.Text = "Enable USBUIRT for input from remote controls";
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox2.Controls.Add(this.statusLabel);
-			this.groupBox2.Location = new System.Drawing.Point(8, 240);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(440, 56);
-			this.groupBox2.TabIndex = 2;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Status Display";
-			// 
-			// statusLabel
-			// 
-			this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.statusLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.statusLabel.Location = new System.Drawing.Point(16, 24);
-			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(408, 23);
-			this.statusLabel.TabIndex = 1;
-			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			// 
-			// USBUIRT
-			// 
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
-			this.Name = "USBUIRT";
-			this.Size = new System.Drawing.Size(456, 440);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.tunerCommandsButton = new System.Windows.Forms.Button();
+      this.internalCommandsButton = new System.Windows.Forms.Button();
+      this.enterCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.digitCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.outputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.statusLabel = new System.Windows.Forms.Label();
+      this.groupBox1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.tunerCommandsButton);
+      this.groupBox1.Controls.Add(this.internalCommandsButton);
+      this.groupBox1.Controls.Add(this.enterCheckBox);
+      this.groupBox1.Controls.Add(this.digitCheckBox);
+      this.groupBox1.Controls.Add(this.outputCheckBox);
+      this.groupBox1.Controls.Add(this.inputCheckBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(440, 224);
+      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "General settings";
+      // 
+      // tunerCommandsButton
+      // 
+      this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tunerCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.tunerCommandsButton.Location = new System.Drawing.Point(16, 176);
+      this.tunerCommandsButton.Name = "tunerCommandsButton";
+      this.tunerCommandsButton.Size = new System.Drawing.Size(408, 23);
+      this.tunerCommandsButton.TabIndex = 12;
+      this.tunerCommandsButton.Text = "Learn tuner commands";
+      this.tunerCommandsButton.Click += new System.EventHandler(this.tunerCommandsButton_Click);
+      // 
+      // internalCommandsButton
+      // 
+      this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.internalCommandsButton.Location = new System.Drawing.Point(16, 144);
+      this.internalCommandsButton.Name = "internalCommandsButton";
+      this.internalCommandsButton.Size = new System.Drawing.Size(408, 23);
+      this.internalCommandsButton.TabIndex = 11;
+      this.internalCommandsButton.Text = "Learn internal commands";
+      this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
+      // 
+      // enterCheckBox
+      // 
+      this.enterCheckBox.Enabled = false;
+      this.enterCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.enterCheckBox.Location = new System.Drawing.Point(32, 96);
+      this.enterCheckBox.Name = "enterCheckBox";
+      this.enterCheckBox.Size = new System.Drawing.Size(312, 24);
+      this.enterCheckBox.TabIndex = 10;
+      this.enterCheckBox.Text = "Tuner needs \"Enter\" to be sent when changing channel";
+      // 
+      // digitCheckBox
+      // 
+      this.digitCheckBox.Enabled = false;
+      this.digitCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.digitCheckBox.Location = new System.Drawing.Point(32, 72);
+      this.digitCheckBox.Name = "digitCheckBox";
+      this.digitCheckBox.Size = new System.Drawing.Size(264, 24);
+      this.digitCheckBox.TabIndex = 9;
+      this.digitCheckBox.Text = "Tuner has three (3) digits";
+      // 
+      // outputCheckBox
+      // 
+      this.outputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.outputCheckBox.Location = new System.Drawing.Point(16, 48);
+      this.outputCheckBox.Name = "outputCheckBox";
+      this.outputCheckBox.Size = new System.Drawing.Size(264, 24);
+      this.outputCheckBox.TabIndex = 8;
+      this.outputCheckBox.Text = "Enable USBUIRT for output to external tuner";
+      this.outputCheckBox.CheckedChanged += new System.EventHandler(this.outputCheckBox_CheckedChanged);
+      // 
+      // inputCheckBox
+      // 
+      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.inputCheckBox.Name = "inputCheckBox";
+      this.inputCheckBox.Size = new System.Drawing.Size(264, 24);
+      this.inputCheckBox.TabIndex = 7;
+      this.inputCheckBox.Text = "Enable USBUIRT for input from remote controls";
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.statusLabel);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(8, 240);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(440, 56);
+      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Status Display";
+      // 
+      // statusLabel
+      // 
+      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.statusLabel.Location = new System.Drawing.Point(16, 24);
+      this.statusLabel.Name = "statusLabel";
+      this.statusLabel.Size = new System.Drawing.Size(408, 23);
+      this.statusLabel.TabIndex = 1;
+      this.statusLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      // 
+      // USBUIRT
+      // 
+      this.Controls.Add(this.groupBox2);
+      this.Controls.Add(this.groupBox1);
+      this.Name = "USBUIRT";
+      this.Size = new System.Drawing.Size(456, 440);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void internalCommandsButton_Click(object sender, System.EventArgs e)

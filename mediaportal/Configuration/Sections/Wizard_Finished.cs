@@ -12,6 +12,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label headerLabel;
     private System.Windows.Forms.Label bodyLabel;
     private System.Windows.Forms.PictureBox pictureBox;
+    private System.Windows.Forms.PictureBox itemPictureBox;
 		private System.ComponentModel.IContainer components = null;
 
 		public Wizard_Finished() : this("Wizard Done")
@@ -25,6 +26,15 @@ namespace MediaPortal.Configuration.Sections
 
 			// TODO: Add any initialization after the InitializeComponent call
 		}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="image"></param>
+    public void SetImage(Image image)
+    {
+      itemPictureBox.Image = image;
+    }
 
     public void SetHeader(string header)
     {
@@ -43,6 +53,7 @@ namespace MediaPortal.Configuration.Sections
       //
       XmlNode headerNode = node.SelectSingleNode("header");
       XmlNode bodyNode = node.SelectSingleNode("body");
+      XmlNode imageNode = node.SelectSingleNode("image");
       
       if(headerNode != null && headerNode.InnerText.Length > 0)
       {
@@ -52,6 +63,11 @@ namespace MediaPortal.Configuration.Sections
       if(bodyNode != null && bodyNode.InnerText.Length > 0)
       {
         SetBody(bodyNode.InnerText);
+      }
+
+      if(imageNode != null && imageNode.InnerText.Length > 0)
+      {
+        SetImage(Image.FromFile(imageNode.InnerText));
       }
     }
 
@@ -81,6 +97,7 @@ namespace MediaPortal.Configuration.Sections
       this.headerLabel = new System.Windows.Forms.Label();
       this.bodyLabel = new System.Windows.Forms.Label();
       this.pictureBox = new System.Windows.Forms.PictureBox();
+      this.itemPictureBox = new System.Windows.Forms.PictureBox();
       this.SuspendLayout();
       // 
       // headerLabel
@@ -102,27 +119,38 @@ namespace MediaPortal.Configuration.Sections
       this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.bodyLabel.Location = new System.Drawing.Point(196, 48);
       this.bodyLabel.Name = "bodyLabel";
-      this.bodyLabel.Size = new System.Drawing.Size(360, 264);
+      this.bodyLabel.Size = new System.Drawing.Size(360, 280);
       this.bodyLabel.TabIndex = 8;
       this.bodyLabel.Text = "Body";
       // 
       // pictureBox
       // 
+      this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
       this.pictureBox.Dock = System.Windows.Forms.DockStyle.Left;
       this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
       this.pictureBox.Location = new System.Drawing.Point(0, 0);
       this.pictureBox.Name = "pictureBox";
-      this.pictureBox.Size = new System.Drawing.Size(184, 326);
+      this.pictureBox.Size = new System.Drawing.Size(184, 342);
       this.pictureBox.TabIndex = 7;
       this.pictureBox.TabStop = false;
       // 
+      // itemPictureBox
+      // 
+      this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
+      this.itemPictureBox.Location = new System.Drawing.Point(30, 208);
+      this.itemPictureBox.Name = "itemPictureBox";
+      this.itemPictureBox.Size = new System.Drawing.Size(128, 128);
+      this.itemPictureBox.TabIndex = 9;
+      this.itemPictureBox.TabStop = false;
+      // 
       // Wizard_Finished
       // 
+      this.Controls.Add(this.itemPictureBox);
       this.Controls.Add(this.bodyLabel);
       this.Controls.Add(this.pictureBox);
       this.Controls.Add(this.headerLabel);
       this.Name = "Wizard_Finished";
-      this.Size = new System.Drawing.Size(560, 326);
+      this.Size = new System.Drawing.Size(560, 342);
       this.ResumeLayout(false);
 
     }

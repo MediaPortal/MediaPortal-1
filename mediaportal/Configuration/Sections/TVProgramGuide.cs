@@ -149,6 +149,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // advancedRadioButton
       // 
+      this.advancedRadioButton.Enabled = false;
       this.advancedRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.advancedRadioButton.Location = new System.Drawing.Point(16, 219);
       this.advancedRadioButton.Name = "advancedRadioButton";
@@ -312,6 +313,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // basicRadioButton
       // 
+      this.basicRadioButton.Enabled = false;
       this.basicRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.basicRadioButton.Location = new System.Drawing.Point(16, 170);
       this.basicRadioButton.Name = "basicRadioButton";
@@ -429,16 +431,25 @@ namespace MediaPortal.Configuration.Sections
 
     private void GrabbercomboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      parametersButton.Enabled = parametersTextBox.Enabled = (GrabbercomboBox.SelectedItem != null);
+      basicRadioButton.Enabled = advancedRadioButton.Enabled = AdvancedDaystextBox.Enabled = daysToKeepTextBox.Enabled = parametersButton.Enabled = parametersTextBox.Enabled = (GrabbercomboBox.SelectedItem != null); 
       parametersTextBox.Text="";
-      if(GrabbercomboBox.Text=="tv_grab_fi") daysToKeepTextBox.Text="10";
-      else if(GrabbercomboBox.Text=="tv_grab_huro") daysToKeepTextBox.Text="8";
-      else if((GrabbercomboBox.Text=="tv_grab_es")|(GrabbercomboBox.Text=="tv_grab_es_digital")|(GrabbercomboBox.Text=="tv_grab_pt")) daysToKeepTextBox.Text="3";
-      else if(GrabbercomboBox.Text=="tv_grab_se") daysToKeepTextBox.Text="5";
-      else daysToKeepTextBox.Text="7";
 
-      AdvancedDaystextBox.Enabled = advancedRadioButton.Checked;
-      daysToKeepTextBox.Enabled = basicRadioButton.Checked;
+      if(GrabbercomboBox.Text=="tv_grab_fi") 
+        daysToKeepTextBox.Text="10";
+      else if(GrabbercomboBox.Text=="tv_grab_huro") 
+        daysToKeepTextBox.Text="8";
+      else if((GrabbercomboBox.Text=="tv_grab_es")|(GrabbercomboBox.Text=="tv_grab_es_digital")|(GrabbercomboBox.Text=="tv_grab_pt")) 
+        daysToKeepTextBox.Text="3";
+      else if(GrabbercomboBox.Text=="tv_grab_se") 
+        daysToKeepTextBox.Text="5";
+      else 
+        daysToKeepTextBox.Text="7";
+
+      if(advancedRadioButton.Enabled == true || basicRadioButton.Enabled == true)
+      {
+        AdvancedDaystextBox.Enabled = advancedRadioButton.Checked;
+        daysToKeepTextBox.Enabled = basicRadioButton.Checked;
+      }
     }
 
     private void GrabbercomboBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -502,14 +513,20 @@ namespace MediaPortal.Configuration.Sections
 
     protected void basicRadioButton_CheckedChanged(object sender, System.EventArgs e)
     {
-      AdvancedDaystextBox.Enabled = false;
-      daysToKeepTextBox.Enabled = true;
+      if(basicRadioButton.Enabled == true)
+      {
+        AdvancedDaystextBox.Enabled = false;
+        daysToKeepTextBox.Enabled = true;
+      }
     }
 
     protected void advancedRadioButton_CheckedChanged(object sender, System.EventArgs e)
     {
-      AdvancedDaystextBox.Enabled = true;
-      daysToKeepTextBox.Enabled = false;
+      if(advancedRadioButton.Enabled == true)
+      {
+        AdvancedDaystextBox.Enabled = true;
+        daysToKeepTextBox.Enabled = false;
+      }
     }
 	}
 }

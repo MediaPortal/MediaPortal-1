@@ -18,12 +18,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ComboBox aspectRatioComboBox;
 		private System.Windows.Forms.Label aspectRatioLabel;
 		private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label defaultAudioLanguagelabel;
 		private System.Windows.Forms.Label displayModeLabel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
 		private System.ComponentModel.IContainer components = null;
 
 		public DVD() : this("DVD")
@@ -69,7 +66,6 @@ namespace MediaPortal.Configuration.Sections
 
 				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
 				pixelRatioCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
-        autoPlayCheckBox.Checked=xmlreader.GetValueAsBool("dvdplayer", "autoplay", true);
 
 				aspectRatioComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "armode", "Stretch");
 				displayModeComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "displaymode", "Default");
@@ -88,7 +84,6 @@ namespace MediaPortal.Configuration.Sections
 
 				xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", showSubtitlesCheckBox.Checked);
 				xmlwriter.SetValueAsBool("dvdplayer", "pixelratiocorrection", pixelRatioCheckBox.Checked);
-        xmlwriter.SetValueAsBool("dvdplayer", "autoplay", autoPlayCheckBox.Checked);
 
 				xmlwriter.SetValue("dvdplayer", "armode", aspectRatioComboBox.Text);
 				xmlwriter.SetValue("dvdplayer", "displaymode", displayModeComboBox.Text);
@@ -124,7 +119,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultAudioLanguagelabel = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.defaultAudioLanguageComboBox = new System.Windows.Forms.ComboBox();
       this.defaultSubtitleLanguageComboBox = new System.Windows.Forms.ComboBox();
       this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -134,11 +128,8 @@ namespace MediaPortal.Configuration.Sections
       this.aspectRatioComboBox = new System.Windows.Forms.ComboBox();
       this.aspectRatioLabel = new System.Windows.Forms.Label();
       this.pixelRatioCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.autoPlayCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -147,46 +138,39 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.defaultAudioLanguagelabel);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.defaultAudioLanguageComboBox);
       this.groupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.groupBox1.Controls.Add(this.showSubtitlesCheckBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 144);
+      this.groupBox1.Size = new System.Drawing.Size(440, 120);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Languages";
       // 
       // defaultAudioLanguagelabel
       // 
-      this.defaultAudioLanguagelabel.Location = new System.Drawing.Point(32, 105);
+      this.defaultAudioLanguagelabel.Location = new System.Drawing.Point(16, 81);
       this.defaultAudioLanguagelabel.Name = "defaultAudioLanguagelabel";
+      this.defaultAudioLanguagelabel.Size = new System.Drawing.Size(144, 23);
       this.defaultAudioLanguagelabel.TabIndex = 15;
-      this.defaultAudioLanguagelabel.Text = "Audio";
+      this.defaultAudioLanguagelabel.Text = "Audio language";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(32, 80);
+      this.label1.Location = new System.Drawing.Point(16, 56);
       this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(144, 23);
       this.label1.TabIndex = 14;
-      this.label1.Text = "Subtitles";
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 56);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(150, 23);
-      this.label2.TabIndex = 13;
-      this.label2.Text = "Default language for:";
+      this.label1.Text = "Subtitle language";
       // 
       // defaultAudioLanguageComboBox
       // 
       this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 102);
+      this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 78);
       this.defaultAudioLanguageComboBox.Name = "defaultAudioLanguageComboBox";
       this.defaultAudioLanguageComboBox.Size = new System.Drawing.Size(256, 21);
       this.defaultAudioLanguageComboBox.Sorted = true;
@@ -197,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 77);
+      this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 53);
       this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
       this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(256, 21);
       this.defaultSubtitleLanguageComboBox.Sorted = true;
@@ -222,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.aspectRatioLabel);
       this.mpGroupBox1.Controls.Add(this.pixelRatioCheckBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox1.Location = new System.Drawing.Point(8, 160);
+      this.mpGroupBox1.Location = new System.Drawing.Point(8, 136);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(440, 120);
       this.mpGroupBox1.TabIndex = 1;
@@ -284,38 +268,14 @@ namespace MediaPortal.Configuration.Sections
       this.pixelRatioCheckBox.TabIndex = 8;
       this.pixelRatioCheckBox.Text = "Use pixel ratio correction";
       // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.autoPlayCheckBox);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox2.Location = new System.Drawing.Point(8, 288);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(440, 64);
-      this.mpGroupBox2.TabIndex = 2;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Autoplay";
-      // 
-      // autoPlayCheckBox
-      // 
-      this.autoPlayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.autoPlayCheckBox.Location = new System.Drawing.Point(16, 24);
-      this.autoPlayCheckBox.Name = "autoPlayCheckBox";
-      this.autoPlayCheckBox.Size = new System.Drawing.Size(264, 24);
-      this.autoPlayCheckBox.TabIndex = 8;
-      this.autoPlayCheckBox.Text = "Autoplay DVDs";
-      // 
       // DVD
       // 
-      this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
       this.Name = "DVD";
       this.Size = new System.Drawing.Size(456, 448);
       this.groupBox1.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
