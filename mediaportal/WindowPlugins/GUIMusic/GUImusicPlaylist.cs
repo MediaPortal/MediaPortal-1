@@ -201,10 +201,6 @@ namespace MediaPortal.GUI.Music
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 					m_iItemSelected = GetSelectedItemNo();
-					if (GUIMusicFiles.IsMusicWindow(message.Param1))
-					{
-						MusicState.StartWindow=message.Param1;
-					}
 					SaveSettings();
           break;
 
