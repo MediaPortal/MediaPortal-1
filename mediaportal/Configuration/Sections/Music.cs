@@ -46,7 +46,7 @@ namespace MediaPortal.Configuration.Sections
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
-				showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
+				showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
 				autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
 
 				playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", "");
