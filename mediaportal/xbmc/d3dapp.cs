@@ -492,7 +492,7 @@ namespace MediaPortal
             presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
             presentParams.PresentationInterval = Direct3D.PresentInterval.Default;
             presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
-            presentParams.PresentFlag = PresentFlag.Video;
+            presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = this;
       }
     }
