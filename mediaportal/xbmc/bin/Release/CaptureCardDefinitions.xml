@@ -66,8 +66,8 @@
 <!--    Pinnacle Deluxe USB2		      -->
 <!--    Pinnacle 300i DVBT		      -->
 <!--    Pinnacle 300i Analog		      -->
-<!--    SMRT TV Card 			      -->
 <!--    Snazzi III USB2                       -->
+<!--    Sony MPEG RealTime Encoder            -->
 <!--    Twinhan VisionDTV Ter                 -->
 <!--    Twinhan VisionDTV Sat                 -->
 <!--    Typhoon TV PVR (USB)                  -->
@@ -1259,7 +1259,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="SMRT TV Card" capturename="SMRT Capture" devid="ven_4444&amp;dev_0016&amp;subsys_813d104d&amp;rev_01">
+  <capturecard commercialname="Sony MPEG RealTime Encoder" capturename="SMRT Capture" devid="ven_4444&amp;dev_0016&amp;subsys_813d104d&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -1278,6 +1278,34 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
         <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!--    Below is a TEST - needs MARS WARRIOR Confirmation   -->  
+
+  <capturecard commercialname="ATI AIW 9800 Pro" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="ATI TV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="ATI TV Audio"			checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
+        <filter cat="encodervideo"  	name="ATI MPEG Video Encoder"  		checkdevice="true"></filter>
+        <filter cat="encoderaudio"  	name="ATI MPEG Audio Encoder"  		checkdevice="true"></filter>
+        <filter cat="mux"      		name="ATI MPEG Multiplexer"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="capture"	 	sinkpin="1"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encodervideo"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoderaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
