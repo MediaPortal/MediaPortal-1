@@ -354,21 +354,21 @@ namespace MediaPortal.TV.Recording
 
     static void SelectChannel(int iChannelNr, bool bCheckSame)
     {
-      Log.Write(" select channel:{0}",iChannelNr);
+      Log.Write("  select channel:{0}",iChannelNr);
       bool bNeedStop=false;
       bool bWasRunning=capture.Running; 
       bool bPreviewing=Previewing;
       string strFileName=capture.Filename;
       if (iChannelNr==m_iPreviewChannel && bCheckSame) 
       {
-        Log.Write(" same channel,ignore");
+        Log.Write("  same channel,ignore");
         return;
       }
       if (m_iPreviewChannel>=254 && iChannelNr <254) bNeedStop=true;
       if (m_iPreviewChannel<254 && iChannelNr >=254) bNeedStop=true;
       if (bNeedStop && bWasRunning) 
       {
-        Log.Write("Switch channels. Need stop");
+        Log.Write("  Switch channels. Need stop");
         StopCapture();
         StartCapture(strFileName,iChannelNr);
         if (bPreviewing)
@@ -378,9 +378,9 @@ namespace MediaPortal.TV.Recording
         return;
       }
       if (bWasRunning)
-        Log.Write("Switch channel {0}->{1}", m_iPreviewChannel,iChannelNr);
+        Log.Write("  Switch channel {0}->{1}", m_iPreviewChannel,iChannelNr);
       else
-        Log.Write("Select channel {0}", iChannelNr);
+        Log.Write("  Select channel {0}", iChannelNr);
       m_iPreviewChannel=iChannelNr;
 
       int iTunerCountry=31;
@@ -395,7 +395,7 @@ namespace MediaPortal.TV.Recording
         // now select the video source
         if (iChannelNr==254) // composite in
         {
-          Log.Write("select composite in");
+          Log.Write("  select composite in");
           // find composite in
           foreach (DirectX.Capture.CrossbarSource source in capture.VideoSources)
           {
@@ -403,7 +403,7 @@ namespace MediaPortal.TV.Recording
             if ( source.IsComposite)
             {
               // set it as the video source
-              Log.Write(" source=composite in");
+              Log.Write("  source=composite in");
               try
               {
                 capture.VideoSource=source;
@@ -418,14 +418,14 @@ namespace MediaPortal.TV.Recording
         else if (iChannelNr==255) // SVHS-in
         {
           // find SVHS-Input
-          Log.Write("select SVHS in");
+          Log.Write("  select SVHS in");
           foreach (DirectX.Capture.CrossbarSource  source in capture.VideoSources)
           {
             // and if found
             if ( source.IsSVHS)
             {
               //set it as the video source
-              Log.Write(" source=SVHS in");
+              Log.Write("  source=SVHS in");
               try
               {
                 capture.VideoSource=source;
@@ -439,7 +439,7 @@ namespace MediaPortal.TV.Recording
         }
         else // tuner-in
         {
-          Log.Write(" source=Tuner country:{0} channel:{1}",iTunerCountry,iChannelNr);
+          Log.Write("  source=Tuner country:{0} channel:{1}",iTunerCountry,iChannelNr);
           // find TV Tuner
           foreach (DirectX.Capture.CrossbarSource  source in capture.VideoSources)
           {
@@ -472,7 +472,7 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception)
           {
-            Log.Write("Failed to set tuner to country:{0}", iTunerCountry);
+            Log.Write("  Failed to set tuner to country:{0}", iTunerCountry);
           }
           try
           {
@@ -480,7 +480,7 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception)
           {
-            Log.Write("Failed to set tuner tuning mode to tv");
+            Log.Write("  Failed to set tuner tuning mode to tv");
           }
           try
           {
@@ -488,7 +488,7 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception)
           {
-            Log.Write("Failed to set tuner tuningspace");
+            Log.Write("  Failed to set tuner tuningspace");
           }
           if (iChannelNr>0)
           {
@@ -506,22 +506,22 @@ namespace MediaPortal.TV.Recording
             }
             catch (Exception)
             {
-              Log.Write("Failed to set tuner input type to :{0}", strTunerType);
+              Log.Write("  Failed to set tuner input type to :{0}", strTunerType);
             }
 
             try
             {
               capture.Tuner.Channel=iChannelNr;
 							
-							Log.Write("TV tuner set to channel:{0} freq:{1} Hz", capture.Tuner.Channel, capture.Tuner.GetVideoFrequency);
+							Log.Write("  TV tuner set to channel:{0} freq:{1} Hz", capture.Tuner.Channel, capture.Tuner.GetVideoFrequency);
             }
             catch(Exception)
             {
-              Log.Write("failed to set tuner channel to:{0}",iChannelNr);
+              Log.Write("  failed to set tuner channel to:{0}",iChannelNr);
             }
           }
         }
-        else Log.Write("No tuner?");
+        else Log.Write("  No tuner?");
       }
       try
       {
@@ -542,7 +542,7 @@ namespace MediaPortal.TV.Recording
     static bool StartCapture(string strFileName, int iChannelNr)
     {
       StopCapture();
-      Log.Write("start capture channel:{0}", iChannelNr);
+      Log.Write("start capture");
       // get profile from MediaPortal.xml
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
@@ -559,25 +559,25 @@ namespace MediaPortal.TV.Recording
         DirectX.Capture.Filter audioDevice=null;
         Filters filters=new Filters();
 
-        Log.Write(" find video capture device");
+        Log.Write("  find video capture device:{0}",strVideoDevice);
         // find Video capture device
         foreach (Filter filter in filters.VideoInputDevices)
         {
           if (String.Compare(filter.Name,strVideoDevice)==0)
           {
-            Log.Write(" found Video capture device:{0}", strVideoDevice);
+            Log.Write("    add Video capture device:{0}", strVideoDevice);
             VideoDevice=filter;
             break;
           }
         }
 
-        Log.Write(" find audio capture device");
+        Log.Write("  find audio capture device:{0}",strAudioDevice);
         // find audio capture device
         foreach (Filter filter in filters.AudioInputDevices)
         {
           if (String.Compare(filter.Name,strAudioDevice)==0)
           {
-            Log.Write(" found audio capture device:{0}", strAudioDevice);
+            Log.Write("    add audio capture device:{0}", strAudioDevice);
             audioDevice=filter;
             break;
           }
@@ -590,36 +590,39 @@ namespace MediaPortal.TV.Recording
         }
 
         // create new capture!
-        Log.Write("create directshow graph");
+        Log.Write("  create directshow graph");
         capture = new Capture(VideoDevice,audioDevice);
 
         // add audio compressor
-        Log.Write(" add audio compressor");
+        Log.Write("  find audio compressor:{0}",strCompressorAudio);
         foreach (Filter filter in filters.AudioCompressors)
         {
           if (String.Compare(filter.Name,strCompressorAudio)==0)
           {
-            Log.Write(" found audio compressor:{0}", strCompressorAudio);
+            Log.Write("    add audio compressor:{0}", strCompressorAudio);
             capture.AudioCompressor=filter;
             break;
           }
         }
 
         //add Video compressor
-        Log.Write(" add video compressor");
+        Log.Write("  find video compressor:{0}",strCompressorVideo);
         foreach (Filter filter in filters.VideoCompressors)
         {
           if (String.Compare(filter.Name,strCompressorVideo)==0)
           {
-            Log.Write(" found Video compressor:{0}", strCompressorVideo);
+            Log.Write("    add Video compressor:{0}", strCompressorVideo);
             capture.VideoCompressor=filter;
             break;
           }
         }
 
+        
+        Log.Write("  select correct channel");
         SelectChannel(iChannelNr,false);
 
         // set brightness, contrast, gamma etc...
+        Log.Write("  Setup brightness, contrast, gamma settings");
         SetBrightnessContrastGamma();
 
         capture.LoadSettings();
