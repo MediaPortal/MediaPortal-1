@@ -822,6 +822,7 @@ namespace MediaPortal.TV.Recording
 					//get the DVB-C tuning details from the tv database
 					int frequency=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1,modulation=0;
 					TVDatabase.GetDVBCTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID);
+					if (frequency<=0) return;
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ", frequency);
 
 					//get the IDVBTuningSpace2 from the tuner
@@ -881,6 +882,7 @@ namespace MediaPortal.TV.Recording
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
 					int frequency=0,polarisation=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1;
 					TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out polarisation, out symbolrate, out innerFec, out ONID, out TSID, out SID);
+					if (frequency<=0) return;
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} ", frequency);
 
 					//get the IDVBTuningSpace2 from the tuner
@@ -940,6 +942,7 @@ namespace MediaPortal.TV.Recording
 					//for DVB-T this is the frequency, ONID , TSID and SID
 					int frequency,ONID,TSID,SID;
 					TVDatabase.GetDVBTTuneRequest(iChannel,out frequency, out ONID, out TSID, out SID);
+					if (frequency<=0) return;
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}", frequency,ONID,TSID,SID);
 
 					//get the IDVBTuningSpace2 from the tuner
@@ -1121,7 +1124,8 @@ namespace MediaPortal.TV.Recording
 
 
 			// tune to the correct channel
-			TuneChannel(standard,iChannel,country);
+			if (iChannel>=0)
+				TuneChannel(standard,iChannel,country);
 
 			Log.Write("DVBGraphBDA:Viewing..");
 			return true;
@@ -2332,12 +2336,21 @@ namespace MediaPortal.TV.Recording
 			//start viewing if we're not yet viewing
 			if (!graphRunning)
 			{
-				StartViewing(AnalogVideoStandard.None,1,1);
+				StartViewing(AnalogVideoStandard.None,-1,-1);
 			}
 
 			//for DVB-T
 			if (Network() == NetworkType.DVBT)
 			{
+				int frequency=0;
+				try
+				{
+					frequency=(int)tuningObject;
+				}
+				catch( Exception )
+				{
+					return;
+				}
 				//get the ITuner from the network provider
 				TunerLib.TuneRequest newTuneRequest = null;
 				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
@@ -2363,6 +2376,7 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 				
+				Log.Write("4");
 				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
 				if (myTuneRequest ==null)
 				{
@@ -2380,8 +2394,9 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 
+
 				//set the properties for the new tuning request. For DVB-T we only set the frequency
-				myLocator.CarrierFrequency		= (int)tuningObject;
+				myLocator.CarrierFrequency		= frequency;
 				myTuneRequest.ONID						= -1;					//original network id
 				myTuneRequest.TSID						= -1;					//transport stream id
 				myTuneRequest.SID							= -1;					//service id
@@ -2391,7 +2406,7 @@ namespace MediaPortal.TV.Recording
 				myTuner.TuneRequest  = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
 
-				currentFrequency=(int)tuningObject;
+				currentFrequency=frequency;
 			}//if (Network() == NetworkType.DVBT)
 			else if (Network() == NetworkType.DVBC)
 			{
@@ -2518,6 +2533,7 @@ namespace MediaPortal.TV.Recording
 			{
 				//todo: add tuning for ATSC
 			}
+Log.Write("8");
 		}//public void Tune(object tuningObject)
 		
 		/// <summary>
