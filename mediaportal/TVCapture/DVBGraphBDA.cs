@@ -2318,6 +2318,11 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("DVBGraphBDA: found {0} channels", transp.channels.Count);
 				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
+				if (info.service_name == null || info.service_provider_name == null ) 
+				{
+					Log.Write("DVBGraphBDA: skip channel:#{0} because it has not details", i);
+					continue;
+				}
 				info.service_name=info.service_name.Trim();
 				info.service_provider_name=info.service_provider_name.Trim();
 				if (info.service_name==String.Empty ||
