@@ -1,5 +1,10 @@
 History: (dd-mm-yyyy)
-  03-05-2004  tvguide     : added : tv channel icons which where not .png but .gif or others didnt work
+  04-05-2004  tvguide     : added : no default logo was shown for channels without an logo
+  04-05-2004  my music    : fixed : problems occured with songs&albums which contained the ' char
+  04-05-2004  my music    : added : album art refresh now works
+
+  03-05-2004  general     : fixed : scaling problems
+  03-05-2004  tvguide     : added : tv channel icons which where not .png but .gif or other format didnt work
   03-05-2004  setup       : added : movieplayer was always set to internal
   03-05-2004  my video    : added : no covert art was shown for shares with trailing slash like C:\
   03-05-2004  my video    : added : fullscreen video: you can now enter time (hhmm) to jump to that part of the movie

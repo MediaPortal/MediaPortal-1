@@ -70,7 +70,7 @@ public class MediaPortalApp : D3DApp
       Utils.FileDelete("capture.log");
       if (Screen.PrimaryScreen.Bounds.Width>720)
       {
-        this.MinimumSize = new Size(720+8,556+27);
+        this.MinimumSize = new Size(720+8,576+27);
       }
       else
       {
@@ -264,21 +264,6 @@ public class MediaPortalApp : D3DApp
       {
         Log.Write("DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
       }
-    }
-
-    protected override void OnDeviceLost(System.Object sender, System.EventArgs e)
-    {
-      Log.Write("OnDeviceLost() ");
-      GUIWindowManager.Dispose();
-      GUITextureManager.Dispose();
-      GUIWindowManager.OnDeviceLost();
-    }
-    protected override void OnDeviceDisposing(System.Object sender, System.EventArgs e)
-    {
-      Log.Write("OnDeviceDisposing()");
-			GUIWindowManager.Dispose();
-      GUITextureManager.Dispose();
-      Log.Write("  done");
     }
 
     /// <summary>
