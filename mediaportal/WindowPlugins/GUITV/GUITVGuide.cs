@@ -64,12 +64,13 @@ namespace MediaPortal.GUI.TV
 		static System.IO.FileSystemWatcher  m_watcher; 
 		bool                                m_bNeedUpdate=false;
 		DateTime                            m_dtStartTime=DateTime.Now;
-		bool                                m_bUseColors=true;
+		bool                                m_bUseColors=false;
 		ArrayList                           colors = new ArrayList();
 		bool                                m_bSingleChannel=false;
-		int                                 m_iSingleChannelOffset=0;
+		int                                 m_iProgramOffset=0;
 		int                                 m_iTotalPrograms=0;
     int                                 m_iGuideDayRange=10;
+    int                                 m_iSingleChannel=0;
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
 		string    m_strInput="";
@@ -217,7 +218,16 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_SELECT_ITEM:
           if (GetFocusControlId() == 1)
           {
-            ShowContextMenu();
+            if (m_iCursorX == 0)
+            {
+              m_bSingleChannel=!m_bSingleChannel;
+              Update();
+              SetFocus();
+            }
+            else
+            {
+              ShowContextMenu();
+            }
           }
 					break;
 
@@ -236,6 +246,8 @@ namespace MediaPortal.GUI.TV
 									UnFocus();
 									m_iCursorY=control.GetID-(int)Controls.IMG_CHAN1;
 									m_iCursorX=0;
+
+                  if (m_iSingleChannel != m_iCursorY + m_iChannelOffset) Update();
 									UpdateCurrentProgram();
 									UpdateHorizontalScrollbar();
 									UpdateVerticalScrollbar();
@@ -296,13 +308,9 @@ namespace MediaPortal.GUI.TV
 						if (m_iCursorX==0)
 						{
 							m_bSingleChannel=!m_bSingleChannel;
-							m_iSingleChannelOffset=0;                            
-							//m_iCursorY=0;
-							//m_iCursorX=1;
-							//m_iChannelOffset=0;
 							Update();
 							SetFocus();
-							return;
+							return;              
 						}
 						else
 						{
@@ -426,12 +434,12 @@ namespace MediaPortal.GUI.TV
 						{
 							fPercentage *= (float)m_iTotalPrograms;
 							int iChan=(int)fPercentage;
-							m_iSingleChannelOffset=0;
+							m_iChannelOffset=0;
 							m_iCursorY=0;
 							while (iChan >=m_iChannels) 
 							{
 								iChan -=m_iChannels;
-								m_iSingleChannelOffset+=m_iChannels;
+								m_iChannelOffset+=m_iChannels;
 							}
 							m_iCursorY=iChan;
 						}
@@ -475,10 +483,8 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
-					LoadSettings();
+          LoadSettings();
 
-					m_bSingleChannel=false;
-					m_iSingleChannelOffset=0;
 					GUIControl cntlPanel   = GetControl((int)Controls.PANEL_BACKGROUND);
 					GUIImage cntlChannelImg = (GUIImage)GetControl((int)Controls.CHANNEL_IMAGE_TEMPLATE);
 					GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
@@ -493,6 +499,7 @@ namespace MediaPortal.GUI.TV
 					m_iCursorX=0;
 					m_iCursorY=0;
 					m_iChannelOffset=0;
+          m_bSingleChannel=false;
 					if (Recorder.IsCardViewing( GUITVHome.GetCurrentCard() ) )
 					{
 						m_strCurrentChannel= Recorder.GetTVChannelName(  GUITVHome.GetCurrentCard() );
@@ -587,12 +594,7 @@ namespace MediaPortal.GUI.TV
 					}
 					else if (m_iCursorX==0)
 					{
-						m_bSingleChannel=!m_bSingleChannel;
-						m_iSingleChannelOffset=0;
-                          
-						//m_iCursorY=0;
-						//m_iCursorX=1;
-						//m_iChannelOffset=0;
+						m_bSingleChannel=!m_bSingleChannel;						
 						Update();
 						SetFocus();
 					}
@@ -791,15 +793,15 @@ namespace MediaPortal.GUI.TV
 
 			if (m_bSingleChannel)
 			{
-				for (int iChannel=0; iChannel <m_channels.Count; iChannel++)
-				{
-					TVChannel channel=(TVChannel)m_channels[iChannel];
-					if (channel.Name==m_strCurrentChannel)
-					{
-						RenderSingleChannel(channel);
-						return;
-					}
-				}
+        if (m_iCursorX==0)
+        {
+          m_iSingleChannel=m_iCursorY + m_iChannelOffset;
+          if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
+          GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
+          if (null!=img) m_strCurrentChannel=img.Label1;
+        }
+        TVChannel channel=(TVChannel)m_channels[m_iSingleChannel];
+				RenderSingleChannel(channel);
 			}
 			else
 			{
@@ -814,6 +816,12 @@ namespace MediaPortal.GUI.TV
 					chan++;
 					if (chan >= m_channels.Count) chan=0;
 				}
+
+        // update selected channel 
+        m_iSingleChannel=m_iCursorY + m_iChannelOffset;
+        if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
+        GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
+        if (null!=img) m_strCurrentChannel=img.Label1;
 			}
 			UpdateVerticalScrollbar();
 		}
@@ -887,13 +895,14 @@ namespace MediaPortal.GUI.TV
 
 		void RenderSingleChannel(TVChannel channel)
 		{
-			for (int iChannel=0; iChannel <m_iChannels; iChannel++)
+      int chan=m_iChannelOffset ;
+      for (int iChannel=0; iChannel <m_iChannels; iChannel++)
 			{
-				if (iChannel+m_iChannelOffset < m_channels.Count)
+        if (chan < m_channels.Count)    
 				{
-					TVChannel tvChan=(TVChannel)m_channels[iChannel+m_iChannelOffset];
-            
-					string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,tvChan.Name);
+					TVChannel tvChan=(TVChannel)m_channels[chan];
+          
+					string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,tvChan.Name);                   
 					if (System.IO.File.Exists(strLogo))
 					{
 						GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -915,6 +924,8 @@ namespace MediaPortal.GUI.TV
 						}
 					}
 				}
+        chan++;
+        if (chan >= m_channels.Count) chan=0;
 			}
 
 			ArrayList programs=new ArrayList();
@@ -926,6 +937,7 @@ namespace MediaPortal.GUI.TV
 			m_iTotalPrograms=programs.Count;
 			if (m_iTotalPrograms==0) m_iTotalPrograms=m_iChannels;
 
+      // ichan = number of rows
 			for (int ichan=0; ichan < m_iChannels;++ichan)
 			{
 
@@ -938,7 +950,7 @@ namespace MediaPortal.GUI.TV
 				int iTotalWidth=width*m_iBlocks;
 
 				TVProgram program;
-				int offset=m_iSingleChannelOffset;
+				int offset=m_iProgramOffset;
 				if (offset+ichan < programs.Count)
 					program=(TVProgram)programs[offset+ichan];
 				else
@@ -1187,7 +1199,6 @@ namespace MediaPortal.GUI.TV
 
 					if (iStartXPos>=0)
 					{
-
 						int ypos=GetControl(iChannel+(int)Controls.IMG_CHAN1).YPosition;
 						int iControlId=100+iChannel*100+iProgram*10;
 						GUIButton3PartControl img =(GUIButton3PartControl)GetControl(iControlId);
@@ -1203,7 +1214,7 @@ namespace MediaPortal.GUI.TV
 								"tvguide_button_light_left.png",
 								"tvguide_button_light_middle.png",
 								"tvguide_button_light_right.png",
-								"");
+								"");        
 							img.AllocResources();
 							GUIControl cntl=(GUIControl)img;
 							Add(ref cntl);
@@ -1332,15 +1343,30 @@ namespace MediaPortal.GUI.TV
 
 			if (m_bSingleChannel)
 			{
-				if (m_iCursorY+1 < m_iChannels)
-				{
-					m_iCursorY++;
-				}
-				else if (m_iCursorY + m_iSingleChannelOffset+1 < m_iTotalPrograms)
-				{
-					m_iSingleChannelOffset++;
-					Update();
-				}
+        if (m_iCursorY+1 < m_iChannels)
+        {
+          if (m_iCursorX==0) m_iProgramOffset=0;
+          m_iCursorY++;
+          Update();
+        }
+        else 
+        {
+          if (m_iCursorX==0)
+          {
+            m_iProgramOffset=0;
+            m_iChannelOffset++;
+            if ( m_iChannelOffset>0 && m_iChannelOffset >= m_channels.Count)  m_iChannelOffset-=m_channels.Count;
+            Update();
+          }
+          else 
+          {
+            if (m_iCursorY + m_iProgramOffset+1 < m_iTotalPrograms)
+            {
+              m_iProgramOffset++;
+              Update();
+            }
+          }
+        }
 				SetFocus();
         
 				UpdateCurrentProgram();
@@ -1353,6 +1379,7 @@ namespace MediaPortal.GUI.TV
 				if (m_iCursorY+1 < m_iChannels)
 				{
 					m_iCursorY++;
+          Update();
 				}
 				else
 				{
@@ -1375,8 +1402,10 @@ namespace MediaPortal.GUI.TV
 			iX2=control.XPosition+control.Width;
 
 			bool bOK=false;
-			while (!bOK)
+      int iMaxSearch=m_channels.Count;
+			while (!bOK && (iMaxSearch>0))
 			{
+        iMaxSearch--;
 				if (m_iCursorY+1 < m_iChannels )
 				{
 					m_iCursorY++;
@@ -1441,15 +1470,29 @@ namespace MediaPortal.GUI.TV
 			{
 				if (m_iCursorY==0)
 				{
-					if (m_iSingleChannelOffset>0) 
-					{
-						m_iSingleChannelOffset--;
-						Update();
-					}
+          if (m_iCursorX==0)
+          {
+            if (m_iChannelOffset>0) 
+            {
+              m_iProgramOffset=0;
+              m_iChannelOffset--;
+              Update();            
+            }
+          }
+          else
+          {
+            if (m_iProgramOffset>0) 
+            {
+              m_iProgramOffset--;
+              Update();
+            }
+          }
 				}
 				else 
 				{
+          if (m_iCursorX==0) m_iProgramOffset=0;
 					m_iCursorY--;
+          Update();
 				}
 				SetFocus();
 				UpdateCurrentProgram();
@@ -1470,6 +1513,7 @@ namespace MediaPortal.GUI.TV
 				else 
 				{
 					m_iCursorY--;
+          Update();
 				}
 				SetFocus();
 				SetProperties();
@@ -1477,7 +1521,6 @@ namespace MediaPortal.GUI.TV
 			}
 			int iCurY=m_iCursorY;
 			int iCurOff=m_iChannelOffset;
-			bool bOK=false;
       
 			int iX1,iX2;
 			int iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
@@ -1486,9 +1529,11 @@ namespace MediaPortal.GUI.TV
 			iX1=control.XPosition;
 			iX2=control.XPosition+control.Width;
 
-			//      int iNewWidth=0;
-			while (!bOK)
-			{
+			bool bOK=false;
+      int iMaxSearch=m_channels.Count;
+      while (!bOK && (iMaxSearch>0))
+      {
+        iMaxSearch--;
 				if (m_iCursorY==0)
 				{
 					if (m_iChannelOffset>0) 
@@ -1565,6 +1610,11 @@ namespace MediaPortal.GUI.TV
 				if (m_iCursorX==1)
 				{
 					m_iCursorX=0;
+          if (m_bSingleChannel) 
+          {
+            m_iProgramOffset=0;
+            Update();
+          }
 					SetFocus();
 					return;
 				}
@@ -1738,7 +1788,7 @@ namespace MediaPortal.GUI.TV
 				}
 				pDlgOK.DoModal(GetID);
 			}
-			m_iSingleChannelOffset=0;
+			m_iChannelOffset=0;
 			m_bSingleChannel=false;
 			m_iChannelOffset=0;
 			m_iCursorX=0;
@@ -1874,7 +1924,6 @@ namespace MediaPortal.GUI.TV
 				dlg.Reset();
 				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
 				
-				dlg.AddLocalizedString( 937);// Reload tvguide
 				if (m_strCurrentChannel.Length>0 && Recorder.View)
 					dlg.AddLocalizedString( 938);// View this channel
 
@@ -1883,6 +1932,8 @@ namespace MediaPortal.GUI.TV
 				{
 					dlg.AddLocalizedString( 264);// Record
 				}
+        dlg.AddLocalizedString( 937);// Reload tvguide
+
 				dlg.DoModal( GetID);
 				if (dlg.SelectedLabel==-1) return;
 				switch (dlg.SelectedId)
@@ -1905,7 +1956,6 @@ namespace MediaPortal.GUI.TV
 
 					case 939: // switch mode
 						m_bSingleChannel=!m_bSingleChannel;							
-						m_iSingleChannelOffset=0;                            
 						Update();
 						SetFocus();
 						break;
@@ -2140,7 +2190,7 @@ namespace MediaPortal.GUI.TV
 
 			if (m_bSingleChannel)
 			{
-				current=(float)(m_iCursorY+m_iSingleChannelOffset);
+				current=(float)(m_iCursorY+m_iChannelOffset);
 				total=(float)m_iTotalPrograms;
 			}
 			if (total==0) total=m_iChannels;
