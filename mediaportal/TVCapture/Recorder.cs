@@ -879,6 +879,8 @@ namespace MediaPortal.TV.Recording
       TimeSpan tsDuration = (EndTime-StartTime);
       float fDuration=(float)tsDuration.TotalSeconds;
 
+      GUIPropertyManager.Properties["#TV.Record.duration"]=Utils.SecondsToShortHMSString((int)fDuration);
+      
       // get start recording point
       TimeSpan tsRecStart= (RecordingStarted-StartTime);
       float fRecStartSec=(float)tsRecStart.TotalSeconds;
@@ -893,11 +895,12 @@ namespace MediaPortal.TV.Recording
         float fPercentViewPoint = (fViewPointSec/fDuration)*100.00f;
         int iPercentViewPoint=(int)Math.Floor(fPercentViewPoint);
         GUIPropertyManager.Properties["#TV.Record.percent2"]=iPercentViewPoint.ToString();
-
+        GUIPropertyManager.Properties["#TV.Record.current"]=Utils.SecondsToShortHMSString((int)fViewPointSec);
       } 
       else
       {
         GUIPropertyManager.Properties["#TV.Record.percent2"]=iPercentRecStart.ToString();
+        GUIPropertyManager.Properties["#TV.Record.current"]=Utils.SecondsToShortHMSString((int)fRecStartSec);
       }
 
       // get live point
@@ -945,6 +948,8 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.Properties["#TV.Record.percent1"]="";
       GUIPropertyManager.Properties["#TV.Record.percent2"]="";
       GUIPropertyManager.Properties["#TV.Record.percent3"]="";
+      GUIPropertyManager.Properties["#TV.Record.duration"]="";
+      GUIPropertyManager.Properties["#TV.Record.current"]="";
     }
 		
     /// <summary>

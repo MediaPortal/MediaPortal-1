@@ -177,5 +177,38 @@
   <colordiffuse>ffffffff</colordiffuse> 
   </control>
  
+	<control>
+		<description>TV Progress Bar</description> 
+		<type>tvprogress</type> 
+		<id>100</id> 
+		<posX>65</posX> 
+		<posY>400</posY> 
+		<width>600</width>
+		<toptexture>ProgressBar-Top.png</toptexture> 
+		<bottomtexture>Overlay-Info.png</bottomtexture>
+		<texturetick>ProgressBar-Tick.png</texturetick>
+		<lefttexture>ProgressBar-Left.png</lefttexture> 
+		<midtexture>ProgressBar-Base.png</midtexture> 
+		<righttexture>ProgressBar-Right.png</righttexture> 
+		<logotexture>#playlogo</logotexture>
+		<fillbackgroundtexture>ProgressBar-inner.png</fillbackgroundtexture>
+		<fillbgxoff>10</fillbgxoff>
+		<fillbgyoff>10</fillbgyoff>
+		
+		<filltexture1>ProgressBar-NORecorded.png</filltexture1>
+		<filltexture2>ProgressBar-Recorded.png</filltexture2>
+		<filltexture3>ProgressBar-NORecorded.png</filltexture3>
+		<fillheight>30</fillheight>
+		<visible>yes</visible> 
+		<label>#TV.Record.percent1</label>
+		<label2>#TV.Record.percent2</label2>
+		<label3>#TV.Record.percent3</label3>
+		<startlabel>   0:00</startlabel>
+		<endlabel>#TV.Record.duration</endlabel>
+		<toplabel>#TV.Record.current</toplabel>
+		<font>font13</font> 
+		<textcolor>FF000000</textcolor> 
+	</control> 
+
   </controls>
   </window>
