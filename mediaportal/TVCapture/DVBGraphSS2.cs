@@ -1023,7 +1023,16 @@ namespace MediaPortal.TV.Recording
 		void CommitDataToEPG()
 		{
 			foreach(DVBSections.EITDescr eit in m_eitScheduleTable.Keys)
+			{
+				long start=m_sections.GetStartDateFromEIT(eit);
+				long end=m_sections.GetEndDateFromEIT(eit);
+				ArrayList entrys=new ArrayList();
+				TVDatabase.GetPrograms(start,end,ref entrys);
+				if(entrys.Count==0)
+				{
 					m_sections.SetEITToDatabase(eit);
+				}
+			}
 			
 			m_eitScheduleTable.Clear();
 
@@ -1231,6 +1240,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool StartTimeShifting(AnalogVideoStandard standard,int channel,string fileName)
 		{
+
 			if(m_graphState!=State.Created)
 				return false;
 			int hr=0;
@@ -1630,7 +1640,7 @@ namespace MediaPortal.TV.Recording
 		public bool ShouldRebuildGraph(int iChannel)
 		{
 			//if(m_graphState==State.TimeShifting)
-				return true;
+			return true;
 
 			//return false;
 		}
