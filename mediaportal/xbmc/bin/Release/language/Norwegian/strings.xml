@@ -1194,7 +1194,7 @@
 	</string>
 	<string>
 		<id>370</id>
-		<value>Torden</value>
+		<value>T-Storm</value>
 	</string>
 	<string>
 		<id>371</id>
@@ -1222,7 +1222,7 @@
 	</string>
 	<string>
 		<id>377</id>
-		<value>Lyst</value>
+		<value>Lys</value>
 	</string>
 	<string>
 		<id>378</id>
@@ -1254,7 +1254,7 @@
 	</string>
 	<string>
 		<id>385</id>
-		<value>Klarner</value>
+		<value>Klarne</value>
 	</string>
 	<string>
 		<id>386</id>
@@ -2075,15 +2075,63 @@
 <string><id>721</id> <value>Vis: Antall spilt</value> </string>
 <string>
 	<id>722</id>
-	<value>Kan ikke spille disk</value>
+	<value>Kan ikke spille DVD</value>
 </string>
 <string>
 	<id>723</id>
-	<value>Satte du inn en disk?</value>
+	<value>Vennligst sett inn en DVD.</value>
+</string>
+<string>
+	<id>724</id>
+	<value>S&#248;k i TVGuide</value>
+</string>
+<string>
+	<id>725</id>
+	<value>Sjanger</value>
+</string>
+<string>
+	<id>726</id>
+	<value>Tittel</value>
+</string>
+<string>
+	<id>727</id>
+	<value>"Live" tv i bakgrunnen</value>
+</string>
+<string>
+	<id>728</id>
+	<value>Kan ikke starte</value>
+</string>
+<string>
+	<id>729</id>
+	<value>Bekreft at du bruker VMR9 og at noe spiller</value>
+</string>
+<string>
+	<id>730</id>
+	<value>Denne skeduleringen tar opp n&#248;. Hvis du sletter</value>
+</string>
+<string>
+	<id>731</id>
+	<value>denne skeduleringen opptaket vil stoppe.</value>
+</string>
+<string>
+	<id>732</id>
+	<value>Er du sikker?</value>
+</string>
+<string>
+	<id>733</id>
+	<value>Vis: Filmstripe</value>
+</string>
+<string>
+	<id>734</id>
+	<value>Bilde:</value>
+</string>
+<string>
+	<id>735</id>
+	<value>Roter</value>
 </string>
 <string>
 	<id>800</id>
-	<value>Starter med</value>
+	<value>Start med</value>
 </string>
 <string>
 	<id>801</id>
@@ -2111,7 +2159,7 @@
 </string>
 <string>
 	<id>807</id>
-	<value>Gi etter</value>
+	<value>Resultat</value>
 </string>
 <string>
 	<id>808</id>
@@ -2119,7 +2167,7 @@
 </string>
 <string>
 	<id>809</id>
-	<value>Rettledning</value>
+	<value>Forskrift</value>
 </string>
 <string>
 	<id>810</id>
@@ -2136,7 +2184,7 @@
 </string>
 <string>
 	<id>852</id>
-	<value>Alarm p&#229;</value>
+	<value>Alarm P&#229;</value>
 </string>
 <string>
 	<id>853</id>
@@ -2152,7 +2200,7 @@
 </string>
 <string>
 	<id>856</id>
-	<value>Sovne inn tid p&#229;</value>
+	<value>Innsovningsur p&#229;</value>
 </string>
 <string>
 	<id>857</id>
@@ -2168,7 +2216,7 @@
 </string>
 <string>
 	<id>860</id>
-	<value>Ut/Inn toning av volum</value>
+	<value>Volum tone inn/ut</value>
 </string>
 <string>
 	<id>8000</id>
@@ -2188,7 +2236,7 @@
 </string>
 <string>
 	<id>8004</id>
-	<value>Du har ny epost!</value>
+	<value>nye meldinger</value>
 </string>
 <string>
 	<id>8005</id>
@@ -2204,7 +2252,7 @@
 </string>
 <string>
 	<id>8009</id>
-	<value>Marker alle som ulest</value>
+	<value>Marker alle ulest</value>
 </string>
 <string>
 	<id>8010</id>
@@ -2216,11 +2264,11 @@
 </string>
 <string>
 	<id>8012</id>
-	<value>minst 1 postboks som bruker epost programtilleg.</value>
+	<value>minst 1 postboks for &#229; bruke Epost-plugin.</value>
 </string>
 <string>
 	<id>8013</id>
-	<value>Ingen respons fra servere</value>
+	<value>Ingen svar fra Server</value>
 </string>
 <string>
 	<id>8014</id>
@@ -2228,7 +2276,7 @@
 </string>
 <string>
 	<id>8015</id>
-	<value>Sjekk din konfigurasjon for postboksen '{0}'</value>
+	<value>Sjekk oppsettet for postboksen '{0}'</value>
 </string>
 <string>
 	<id>8016</id>
@@ -2240,7 +2288,7 @@
 </string>
 <string>
 	<id>8018</id>
-	<value>Tema</value>
+	<value>Emne</value>
 </string>
 <string>
 	<id>8019</id>
@@ -2248,15 +2296,31 @@
 </string>
 <string>
 	<id>8020</id>
-	<value>slett epost</value>
+	<value>Vis HTML-Body</value>
 </string>
 <string>
 	<id>8021</id>
 	<value>Marker som lest</value>
 </string>
 <string>
+	<id>8022</id>
+	<value>Vis vedlegg</value>
+</string>
+<string>
+	<id>8023</id>
+	<value>Nye meldinger ankommet</value>
+</string>
+<string>
+	<id>8024</id>
+	<value>Vis melding</value>
+</string>
+<string>
+	<id>8025</id>
+	<value>Parsing melding</value>
+</string>
+<string>
 	<id>8030</id>
-	<value>Tilkoblet server</value>
+	<value>Tilkoblet til server</value>
 </string>
 <string>
 	<id>8031</id>
@@ -2265,5 +2329,29 @@
 <string>
 	<id>8033</id>
 	<value>Fremdrift</value>
+</string>
+<string>
+	<id>13000</id>
+	<value>System:</value>
+</string>
+<string>
+	<id>13001</id>
+	<value>Fabrikant:</value>
+</string>
+<string>
+	<id>13002</id>
+	<value>Begynne</value>
+</string>
+<string>
+	<id>13003</id>
+	<value>Importer *.mlf fil</value>
+</string>
+<string>
+	<id>13004</id>
+	<value>Importer *.my fil</value>
+</string>
+<string>
+	<id>13005</id>
+	<value>Sist importert fil:</value>
 </string>
 </strings>
