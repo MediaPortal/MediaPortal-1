@@ -90,7 +90,8 @@ namespace MediaPortal.Configuration.Sections
                         new string[] { "general", "hideextensions", "true" },
                         new string[] { "general", "animations", "true" },
 												new string[] { "general", "autostart", "false" },
-												new string[] { "general", "baloontips", "false" }
+												new string[] { "general", "baloontips", "false" },
+												new string[] { "general", "dblclickasrightclick", "false" }
 												};
 
 		/// <summary>
@@ -281,7 +282,8 @@ namespace MediaPortal.Configuration.Sections
 																																"Hide file extensions for known file types",
 																																"Enable animations",
 																																"Autostart Mediaportal when windows starts",
-																																"Disable Windows XP balloon tips"});
+																																"Disable Windows XP balloon tips",
+																																"Use mouse left double click as right click"});
 			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
 			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
 			this.settingsCheckedListBox.Size = new System.Drawing.Size(408, 109);
