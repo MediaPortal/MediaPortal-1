@@ -321,7 +321,10 @@ namespace MediaPortal.Configuration.Sections
 
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("radio", "tuner", "Antenna");
 				deviceComboBox.SelectedItem = xmlreader.GetValueAsString("radio", "device", "");
-			}
+
+        fileNameTextBox.Text = xmlreader.GetValueAsString("radio", "player", "");
+        parametersTextBox.Text = xmlreader.GetValueAsString("radio", "args", "");
+      }
 		}
 
 		public override void SaveSettings()
@@ -332,7 +335,9 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValueAsBool("radio", "internal", internalRadioButton.Checked);
 				xmlwriter.SetValue("radio", "tuner", inputComboBox.Text);
 				xmlwriter.SetValue("radio", "device", deviceComboBox.Text);
-			}
+        xmlwriter.SetValue("radio", "player", fileNameTextBox.Text);
+        xmlwriter.SetValue("radio", "args", parametersTextBox.Text);
+      }
 		}
 
 		public override object GetSetting(string name)
@@ -372,9 +377,9 @@ namespace MediaPortal.Configuration.Sections
 		{
 			ParameterForm parameters = new ParameterForm();
 			
-			parameters.AddParameter("%MHZ", "Will be replaced by frequency in form: 104.5");
-			parameters.AddParameter("%mhz", "Will be replaced by frequency in form: 104,5");
-			parameters.AddParameter("%HZ", "Will be replaced by frequency in form: 104500000");
+			parameters.AddParameter("%MHZ%", "Will be replaced by frequency in form: 104.5");
+			parameters.AddParameter("%mhz%", "Will be replaced by frequency in form: 104,5");
+			parameters.AddParameter("%HZ%", "Will be replaced by frequency in form: 104500000");
 
 			if(parameters.ShowDialog(parametersButton) == DialogResult.OK)
 			{

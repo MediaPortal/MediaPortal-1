@@ -1,3 +1,5 @@
+05-08-2004  setup       : fixed : External radio settings were not being saved
+
 04-08-2004  my music    : fixed : Exception when WMA file uses DRM.  Now it skips this file.
 04-08-2004  my music    : fixed : fixes problem where track or year has other characters in it (ogg/flac files).... 
                                   Now, it extracts first numeric value on those tags 
