@@ -186,69 +186,106 @@ namespace MediaPortal.Util
 
     static public bool IsVideo(string strPath)
     {
-      if (!System.IO.Path.HasExtension(strPath)) return false;
-      if (IsPlayList(strPath)) return false;
-      string strExtFile=System.IO.Path.GetExtension(strPath);
-      if (strExtFile.ToLower().Equals(".tv") ) return true;
-      if (strExtFile.ToLower().Equals(".sbe") ) return true;
-      if (strExtFile.ToLower().Equals(".dvr-ms") ) return true;
-      foreach (string strExt in m_VideoExtensions)
+      try
       {
-        if (strExt.ToLower() == strExtFile.ToLower()) return true;
+        if (!System.IO.Path.HasExtension(strPath)) return false;
+        if (IsPlayList(strPath)) return false;
+        string strExtFile=System.IO.Path.GetExtension(strPath);
+        if (strExtFile.ToLower().Equals(".tv") ) return true;
+        if (strExtFile.ToLower().Equals(".sbe") ) return true;
+        if (strExtFile.ToLower().Equals(".dvr-ms") ) return true;
+        foreach (string strExt in m_VideoExtensions)
+        {
+          if (strExt.ToLower() == strExtFile.ToLower()) return true;
+        }
+      }
+      catch(Exception)
+      {
       }
       return false;
     }
 
     static public bool IsAudio(string strPath)
     {
-      if (!System.IO.Path.HasExtension(strPath)) return false;
-      if (IsPlayList(strPath)) return false;
-      string strExtFile=System.IO.Path.GetExtension(strPath);
-      foreach (string strExt in m_AudioExtensions)
+      try
       {
-        if (strExt.ToLower() == strExtFile.ToLower()) return true;
+        if (!System.IO.Path.HasExtension(strPath)) return false;
+        if (IsPlayList(strPath)) return false;
+        string strExtFile=System.IO.Path.GetExtension(strPath);
+        foreach (string strExt in m_AudioExtensions)
+        {
+          if (strExt.ToLower() == strExtFile.ToLower()) return true;
+        }
+      }
+      catch(Exception)
+      {
       }
       return false;
     }
 
     static public bool IsPicture(string strPath)
     {
-      if (!System.IO.Path.HasExtension(strPath)) return false;
-      if (IsPlayList(strPath)) return false;
-      string strExtFile=System.IO.Path.GetExtension(strPath);
-      foreach (string strExt in m_PictureExtensions)
+      try
       {
-        if (strExt.ToLower() == strExtFile.ToLower()) return true;
+        if (!System.IO.Path.HasExtension(strPath)) return false;
+        if (IsPlayList(strPath)) return false;
+        string strExtFile=System.IO.Path.GetExtension(strPath);
+        foreach (string strExt in m_PictureExtensions)
+        {
+          if (strExt.ToLower() == strExtFile.ToLower()) return true;
+        }
+      }
+      catch(Exception)
+      {
       }
       return false;
     }
 
     static public bool IsPlayList(string strPath)
     {
-      if (!System.IO.Path.HasExtension(strPath)) return false;
-      string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
-      if (strExtFile==".m3u") return true;
-      if (strExtFile==".pls") return true;
-      if (strExtFile==".b4s") return true;
+      try
+      {
+        if (!System.IO.Path.HasExtension(strPath)) return false;
+        string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
+        if (strExtFile==".m3u") return true;
+        if (strExtFile==".pls") return true;
+        if (strExtFile==".b4s") return true;
+      }
+      catch(Exception)
+      {
+      }
       return false;
     }
     static public bool IsProgram(string strPath)
     {
-      if (!System.IO.Path.HasExtension(strPath)) return false;
-      string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
-      if (strExtFile==".exe") return true;
+      try
+      {
+        if (!System.IO.Path.HasExtension(strPath)) return false;
+        string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
+        if (strExtFile==".exe") return true;
+      }
+      catch(Exception)
+      {
+      }
       return false;
     }
     static public bool IsShortcut(string strPath)
     {
-      if (!System.IO.Path.HasExtension(strPath)) return false;
-      string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
-      if (strExtFile==".lnk") return true;
+      try
+      {
+        if (!System.IO.Path.HasExtension(strPath)) return false;
+        string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
+        if (strExtFile==".lnk") return true;
+      }
+      catch(Exception)
+      {
+      }
       return false;
     }
     
     public static void SetDefaultIcons(GUIListItem item)
     {
+
       if (!item.IsFolder)
       {
         if (IsPlayList(item.Path))
@@ -330,39 +367,45 @@ namespace MediaPortal.Util
 
     public static void SetThumbnails(ref GUIListItem item)
     {
-      if (!item.IsFolder)
+      try
       {
-        // check for filename.tbn
-        string strThumb=System.IO.Path.ChangeExtension(item.Path,".tbn");
-        if (System.IO.File.Exists(strThumb))
+        if (!item.IsFolder)
         {
-          // yep got it
-          item.ThumbnailImage=strThumb;
-        }
-        else
-        {
-          // check for thumbs\filename.tbn
-          
-          strThumb=GetThumb(item.Path);
+          // check for filename.tbn
+          string strThumb=System.IO.Path.ChangeExtension(item.Path,".tbn");
           if (System.IO.File.Exists(strThumb))
           {
             // yep got it
             item.ThumbnailImage=strThumb;
           }
-        }
-      }
-      else
-      {
-        if (item.Label!="..")
-        {
-          // check for folder.jpg
-          string strThumb=item.Path+@"\folder.jpg";
-          if (System.IO.File.Exists(strThumb))
+          else
           {
-            // got it
-            item.ThumbnailImage=strThumb;
+            // check for thumbs\filename.tbn
+            
+            strThumb=GetThumb(item.Path);
+            if (System.IO.File.Exists(strThumb))
+            {
+              // yep got it
+              item.ThumbnailImage=strThumb;
+            }
           }
         }
+        else
+        {
+          if (item.Label!="..")
+          {
+            // check for folder.jpg
+            string strThumb=item.Path+@"\folder.jpg";
+            if (System.IO.File.Exists(strThumb))
+            {
+              // got it
+              item.ThumbnailImage=strThumb;
+            }
+          }
+        }
+      }
+      catch(Exception)
+      {
       }
     }
     
@@ -483,32 +526,38 @@ namespace MediaPortal.Util
     }
     static public bool ShouldStack(string strFile1, string strFile2)
     {
-      // Patterns that are used for matching
-      // 1st pattern matches [x-y] for example [1-2] which is disc 1 of 2 total
-      // 2nd pattern matches ?cd?## and ?disc?## for example -cd2 which is cd 2.
-      //     ? is -_ or space (second ? is optional), ## is 1 or 2 digits
-      string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-                           "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
-
-      // Strip the extensions and make everything lowercase
-      string strFileName1=System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLower();
-      string strFileName2=System.IO.Path.GetFileNameWithoutExtension(strFile2).ToLower();
-
-      // Check all the patterns
-      for (int i=0; i<pattern.Length; i++)
+      try
       {
-        // See if we can find the special patterns in both filenames
-        if (Regex.IsMatch(strFileName1, pattern[i]) && Regex.IsMatch(strFileName2, pattern[i]))
+        // Patterns that are used for matching
+        // 1st pattern matches [x-y] for example [1-2] which is disc 1 of 2 total
+        // 2nd pattern matches ?cd?## and ?disc?## for example -cd2 which is cd 2.
+        //     ? is -_ or space (second ? is optional), ## is 1 or 2 digits
+        string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
+                             "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
+
+        // Strip the extensions and make everything lowercase
+        string strFileName1=System.IO.Path.GetFileNameWithoutExtension(strFile1).ToLower();
+        string strFileName2=System.IO.Path.GetFileNameWithoutExtension(strFile2).ToLower();
+
+        // Check all the patterns
+        for (int i=0; i<pattern.Length; i++)
         {
-          // Both strings had the special pattern. Now see if the filenames are the same.
-          // Do this by removing the special pattern and compare the remains.
-          if (Regex.Replace(strFileName1, pattern[i], "")
-            == Regex.Replace(strFileName2, pattern[i], "") )
+          // See if we can find the special patterns in both filenames
+          if (Regex.IsMatch(strFileName1, pattern[i]) && Regex.IsMatch(strFileName2, pattern[i]))
           {
-            // It was a match so stack it
-            return true;
+            // Both strings had the special pattern. Now see if the filenames are the same.
+            // Do this by removing the special pattern and compare the remains.
+            if (Regex.Replace(strFileName1, pattern[i], "")
+              == Regex.Replace(strFileName2, pattern[i], "") )
+            {
+              // It was a match so stack it
+              return true;
+            }
           }
         }
+      }
+      catch(Exception)
+      {
       }
 
       // No matches were found, so no stacking
@@ -531,29 +580,44 @@ namespace MediaPortal.Util
 
     static public string GetThumb(string strLine)
     {
-      if (String.Compare("unknown",strLine,true)==0) return "";
-      CRCTool crc=new CRCTool();
-      crc.Init(CRCTool.CRCCode.CRC32);
-      ulong dwcrc=crc.calc(strLine);
-      string strRet=System.IO.Path.GetFullPath(String.Format("thumbs\\{0}.jpg",dwcrc));
-      return strRet;
+      try
+      {
+        if (String.Compare("unknown",strLine,true)==0) return "";
+        CRCTool crc=new CRCTool();
+        crc.Init(CRCTool.CRCCode.CRC32);
+        ulong dwcrc=crc.calc(strLine);
+        string strRet=System.IO.Path.GetFullPath(String.Format("thumbs\\{0}.jpg",dwcrc));
+        return strRet;
+      }
+      catch(Exception)
+      {
+      }
+      return "000";
     }
 		
     static public void Split( string strFileNameAndPath, out string strPath, out string strFileName)
     {
-      strFileNameAndPath=strFileNameAndPath.Trim();
-      strFileName="";
-      strPath="";
-      if (strFileNameAndPath.Length==0) return;
-      int i=strFileNameAndPath.Length-1;
-      while (i > 0)
+      try
       {
-        char ch=strFileNameAndPath[i];
-        if (ch==':' || ch=='/' || ch=='\\') break;
-        else i--;
+        strFileNameAndPath=strFileNameAndPath.Trim();
+        strFileName="";
+        strPath="";
+        if (strFileNameAndPath.Length==0) return;
+        int i=strFileNameAndPath.Length-1;
+        while (i > 0)
+        {
+          char ch=strFileNameAndPath[i];
+          if (ch==':' || ch=='/' || ch=='\\') break;
+          else i--;
+        }
+        strPath     = strFileNameAndPath.Substring(0,i).Trim();
+        strFileName = strFileNameAndPath.Substring(i,strFileNameAndPath.Length - i).Trim();
       }
-      strPath     = strFileNameAndPath.Substring(0,i).Trim();
-      strFileName = strFileNameAndPath.Substring(i,strFileNameAndPath.Length - i).Trim();
+      catch(Exception)
+      {
+        strPath="";
+        strFileName=strFileNameAndPath;
+      }
     }
 
     static public string GetFolderThumb(string strFile)
@@ -886,10 +950,17 @@ namespace MediaPortal.Util
     }
     static public string GetFilename(string strPath)
     {
-      if ( m_bHideExtensions)
-        return  System.IO.Path.GetFileNameWithoutExtension(strPath);
-      else
-        return  System.IO.Path.GetFileName(strPath);     
+      try
+      {
+        if ( m_bHideExtensions)
+          return  System.IO.Path.GetFileNameWithoutExtension(strPath);
+        else
+          return  System.IO.Path.GetFileName(strPath);     
+      }
+      catch(Exception)
+      {
+      }
+      return strPath;
     }
 
 
