@@ -1,11 +1,15 @@
-Bugs left:
+Cosmetic bugs:
+  13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
+  13-07-2004 general    : The cancel buttons dont work
   13-07-2004 general    : scrolling : base on time instead of frame
-  13-07-2004 my tv      : duration of recorded programs is not correct. 
-                          I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
   12-07-2004 my tv      : home : current program title goes out of box if its 2 long (zipperzip)
   29-06-2004 general    : scroll speed 9 / 10 are the same
-  11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
+
+crash/things not working Bugs:
+  13-07-2004 my tv      : duration of recorded programs is not correct. 
+                          I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
+  11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   19-06-2004 my video   : vmr9: lines/stripes?
   
