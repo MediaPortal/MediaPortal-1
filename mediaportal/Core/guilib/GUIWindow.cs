@@ -886,6 +886,10 @@ namespace MediaPortal.GUI.Library
     public virtual void Process()
     {
     }
+
+		public virtual void SetObject(object obj)
+		{
+		}
 	}
 }
 
