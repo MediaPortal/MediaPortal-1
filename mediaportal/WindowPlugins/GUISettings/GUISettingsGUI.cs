@@ -98,7 +98,12 @@ namespace MediaPortal.GUI.Settings
 					if (iControl==(int)Controls.CONTROL_FPS)
 					{
 						string strLabel=message.Label;
-						GUIGraphicsContext.MaxFPS=Int32.Parse(strLabel);
+						int fps=Int32.Parse(strLabel);
+						GUIGraphicsContext.MaxFPS=fps;
+						using (AMS.Profile.Xml xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
+						{
+							xmlWriter.SetValue("screen","maxfps",fps.ToString());
+						}
 					}
 
         }
