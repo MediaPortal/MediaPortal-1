@@ -865,7 +865,7 @@ namespace MediaPortal.TV.Recording
 
 		void OnSetRecordingAttributes()
 		{
-			System.Threading.Thread.Sleep(1000);
+			System.Threading.Thread.Sleep(10000);
 			lock (m_finishedRecordings)
 			{
 				while (m_finishedRecordings.Count>0)
@@ -873,14 +873,15 @@ namespace MediaPortal.TV.Recording
 					RecordingFinished rec =(RecordingFinished) m_finishedRecordings[0];
 					m_finishedRecordings.RemoveAt(0);
 
-					Log.WriteFile(Log.LogType.Capture,"Card:{0} set attributes on {1}",ID,rec.fileName);
+					Log.WriteFile(Log.LogType.Capture,"Card:{0} set {1} attributes on {2}",ID,rec.Properties.Count,rec.fileName);
 
-					if (_mNewRecordedTV.FileName.ToLower().IndexOf(".dvr-ms")>=0)
+					if (rec.fileName.ToLower().IndexOf(".dvr-ms")>=0)
 					{
 						using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(rec.fileName))
 						{
 							try
 							{
+								Log.WriteFile(Log.LogType.Recorder,false,"editor.SetAttributes() on {0}", rec.fileName);
 								editor.SetAttributes(rec.Properties);
 							}
 							catch(Exception ex)
@@ -891,12 +892,13 @@ namespace MediaPortal.TV.Recording
 						}
 					}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
 
-					if (_mNewRecordedTV.FileName.ToLower().IndexOf(".wmv")>=0)
+					if (rec.fileName.ToLower().IndexOf(".wmv")>=0)
 					{
 						using (AsfMetadataEditor editor = new AsfMetadataEditor(rec.fileName))
 						{
 							try
 							{
+								Log.WriteFile(Log.LogType.Recorder,false,"editor.SetAttributes() on {0}", rec.fileName);
 								editor.SetAttributes(rec.Properties);
 							}
 							catch(Exception ex)

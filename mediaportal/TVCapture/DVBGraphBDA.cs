@@ -875,12 +875,12 @@ namespace MediaPortal.TV.Recording
 			if (m_recControl!=null) 
 			{
 				int hr=m_recControl.Stop(0);
+				if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
 				if (hr!=0) 
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
 					return;
 				}
-				if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
 			}
 
 
@@ -1763,18 +1763,23 @@ namespace MediaPortal.TV.Recording
 			IntPtr recorderObj;
 			if (m_IStreamBufferSink.CreateRecorder(strFileName, iRecordingType, out recorderObj) !=0 ) 
 				return false;
+			if (recorderObj == IntPtr.Zero) 
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create recorder");
+				return false;
+			}
 
 			object objRecord = Marshal.GetObjectForIUnknown(recorderObj);
 			if (objRecord == null) 
-				if (m_recControl == null) 
-				{
+			{
+					Marshal.Release(recorderObj);
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
 					return false;
-				}
+			}
       
+			m_recControl = objRecord as IStreamBufferRecordControl;			
 			Marshal.Release(recorderObj);
 
-			m_recControl = objRecord as IStreamBufferRecordControl;
 			if (m_recControl == null) 
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");

@@ -8,6 +8,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Player;
 using MediaPortal.Video.Database;
+using Toub.MediaCenter.Dvrms.Metadata;
 namespace MediaPortal.GUI.TV
 {
   /// <summary>
@@ -828,5 +829,7 @@ namespace MediaPortal.GUI.TV
       if (type!=g_Player.MediaType.Recording) return;
       VideoDatabase.AddMovieFile(filename);
     }
+		
+
   }
 }

@@ -1435,6 +1435,31 @@ namespace MediaPortal.Util
 				}
 			}
 		}
+		static public DateTime ParseDateTimeString(string dateTime)
+		{
+			try
+			{
+				if (dateTime==null) return DateTime.Now;
+				if (dateTime.Length==0) return DateTime.Now;
+				//format is d-m-y h:m:s
+				dateTime=dateTime.Replace(":","-");
+				string[] parts = dateTime.Split('-');
+				if (parts.Length<6) return DateTime.Now;
+				int hour,min,sec,year,day,month;
+				day=Int32.Parse(parts[0]);
+				month=Int32.Parse(parts[1]);
+				year=Int32.Parse(parts[2]);
+				
+				hour=Int32.Parse(parts[3]);
+				min=Int32.Parse(parts[4]);
+				sec=Int32.Parse(parts[5]);
+				return new DateTime(year,month,day,hour,min,sec,0);
+			}
+			catch(Exception)
+			{
+			}
+			return DateTime.Now;
+		}
 	}
 
 }

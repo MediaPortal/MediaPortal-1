@@ -122,6 +122,8 @@ namespace MediaPortal.TV.Recording
 				catch(Exception){}
 			}
 
+			ImportDvrMsFiles();
+
 			m_TVChannels.Clear();
 			TVDatabase.GetChannels(ref m_TVChannels);
 
@@ -1713,6 +1715,62 @@ namespace MediaPortal.TV.Recording
 				}//if (totalSize >= lMaxRecordingSize && lMaxRecordingSize >0) 
 			}//foreach (string drive in drives)
 		}//static void CheckRecordingDiskSpace()
-
+		
+		static void ImportDvrMsFiles()
+		{
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordedTV(ref recordings);
+			for (int i=0; i < Recorder.Count;++i)
+			{
+				TVCaptureDevice dev = Recorder.Get(i);
+				try
+				{
+					string[] files=System.IO.Directory.GetFiles(dev.RecordingPath,"*.dvr-ms");
+					foreach (string file in files)
+					{
+						bool add=true;
+						foreach (TVRecorded rec in recordings)
+						{
+							if (rec.FileName.ToLower()==file.ToLower())
+							{
+								add=false;
+								break;
+							}
+						}
+						if (add)
+						{
+							using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+							{
+								TVRecorded newRec = new TVRecorded();
+								IDictionary dict=editor.GetAttributes();
+								foreach (MetadataItem item in dict.Values)
+								{
+									if (item.Name=="channel") newRec.Channel=(string)item.Value;
+									if (item.Name=="title") newRec.Title=(string)item.Value;
+									if (item.Name=="genre") newRec.Genre=(string)item.Value;
+									if (item.Name=="description") newRec.Description=(string)item.Value;
+									if (item.Name=="start") 
+									{
+										newRec.Start=Utils.datetolong(Utils.ParseDateTimeString((string)item.Value));
+									}
+									if (item.Name=="end") 
+									{
+										newRec.End=Utils.datetolong(Utils.ParseDateTimeString((string)item.Value));
+									}
+								}
+								if (newRec.Channel!=null)
+								{
+									TVDatabase.AddRecordedTV(newRec);
+									recordings.Add(newRec);
+								}
+							}//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+						}//if (add)
+					}//foreach (string file in files)
+				}
+				catch(Exception)
+				{
+				}
+			}//for (int i=0; i < Recorder.Count;++i)
+		}
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording
