@@ -138,11 +138,16 @@ namespace MediaPortal.TV.Recording
       if (m_captureFilter!=null)
       {
         hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
-        if( hr < 0 ) 
+        if( hr != 0 ) 
         {
-          DirectShowUtil.DebugWrite("SinkGraph:FAILED:Add Videodevice to filtergraph");
+          DirectShowUtil.DebugWrite("SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
           return false;
         }
+      }
+      else
+      {
+        DirectShowUtil.DebugWrite("SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
+        return false;
       }
 
       // Retrieve the stream control interface for the video device
@@ -164,9 +169,9 @@ namespace MediaPortal.TV.Recording
       {
         m_TVTuner = o as IAMTVTuner;
       }
-      if (m_TVTuner==null)
+      if (hr!=0||m_TVTuner==null)
       {
-        DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found");
+        DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found :0x{0:X}",hr);
       }
 			else
 				DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() TV tuner found");
