@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  04-07-2004  home        : added : skinners can now skin the plugin buttons. home will use the following graphics for each plugin
+                                    button_pluginname.png, buttonNF_pluginname.png, hover_pluginname.png
+                                    where pluginname is the name of the plugin like My News or My Recipies
   04-07-2004  skin engine : added : <seperator> tag for the textscrollup control
   04-07-2004  my tv       : added : option for vmr9 windowless
   04-07-2004  my videos   : added : option for vmr9 windowless
