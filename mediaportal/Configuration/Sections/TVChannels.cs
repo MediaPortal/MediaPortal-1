@@ -381,6 +381,14 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+    private void AddChannel(ref ArrayList channels, string strName, int iNumber)
+    {
+      TVChannel channel = new TVChannel();
+      channel.Number=iNumber;
+      channel.Name  =strName;
+      channels.Add(channel);
+    }
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -388,6 +396,22 @@ namespace MediaPortal.Configuration.Sections
 		{
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
+      bool bCVBS1=false;
+      bool bCVBS2=false;
+      bool bSVHS=false;
+      foreach(TVChannel channel in channels)
+      {
+        if (channel.Number==1000) bSVHS=true;
+        if (channel.Number==1001) bCVBS1=true;
+        if (channel.Number==1002) bCVBS2=true;
+      }
+      if (!bSVHS)
+        AddChannel(ref channels,"SVHS",1000);
+      if (!bCVBS1)
+        AddChannel(ref channels,"Composite #1",1001);
+      if (!bCVBS2)
+        AddChannel(ref channels,"Composite #2",1002);
+
 
 			foreach(TVChannel channel in channels)
 			{
