@@ -580,6 +580,11 @@ namespace MediaPortal.TV.Recording
             {
               strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
               strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+              if (strRecPath==null||strRecPath.Length==0) 
+              {
+                strRecPath=System.IO.Directory.GetCurrentDirectory();
+                strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+              }
             }
             string strFileName=String.Format(@"{0}\live.tv",strRecPath);
             g_Player.Play(strFileName);
