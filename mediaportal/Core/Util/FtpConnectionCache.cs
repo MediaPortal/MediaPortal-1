@@ -37,6 +37,7 @@ namespace Core.Util
         Connection.BytesTransferred -=new BytesTransferredHandler(OnBytesTransferred);
         BytesTransferred=0;
         Busy=false;
+        Log.Write("ftp download finished {0}->{1}", remoteFile, localFile);
       }
       
       void StartDownLoad(FtpConnection ftp)
@@ -52,6 +53,7 @@ namespace Core.Util
         GUIGraphicsContext.SendMessage(msg);
 
 
+        Log.Write("ftp download{0}->{1}", ftp.remoteFile, ftp.localFile);
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
       }
 
@@ -97,6 +99,7 @@ namespace Core.Util
     {
       try
       {
+        Log.Write("ftp connect to ftp://{0}:{1}", hostname,port);
         FtpConnection newConnection = new FtpConnection();
         newConnection.HostName=hostname;
         newConnection.LoginName=login;
@@ -112,8 +115,9 @@ namespace Core.Util
 #endif
         return newConnection.Connection;
       }
-      catch(Exception)
+      catch(Exception ex)
       {
+        Log.Write("ftp unable to connect to ftp://{0}:{1} reason:{2}", hostname,port,ex.Message);
         return null;
       }
     }
