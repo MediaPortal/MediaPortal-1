@@ -26,6 +26,7 @@
 <!--    ATI HDTV							  -->
 <!--    AVerTV DVB-T 771                      -->
 <!--    AverMedia 1500MCE                     -->
+<!--    Chaintech DTT-1000                    -->
 <!--    Conexant DVB-T                        -->
 <!--    DNTV Live DVB-T                       -->
 <!--    Dvico Fusion HDTV                     -->
@@ -67,8 +68,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.27                                                               -->
-<!-- changed : 10-feb-2005 by Frodo                                                   -->
+<!-- version : 1.0.0.28                                                               -->
+<!-- changed : 12-feb-2005 by Frodo                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -500,6 +501,22 @@
   </capturecard>
   
   <capturecard commercialname="Twinhan VisionDTV Ter" capturename="THDTV DVB-t BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+       <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
+        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+ 
+  <capturecard commercialname="Chaintech DTT-1000" capturename="THDTV DVB-t BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_fc00270&amp;rev_11">
        <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
