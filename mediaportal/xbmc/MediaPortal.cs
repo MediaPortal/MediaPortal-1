@@ -92,8 +92,8 @@ public class MediaPortalApp : D3DApp, IRender
         {
           Int32 iValue=1;
           subkey.SetValue("DsContinuousRate",iValue);
-          iValue=6;
-          subkey.SetValue("AUDIO",iValue);
+          //iValue=6;
+          //subkey.SetValue("AUDIO",iValue);
         }
         subkey = hklm.CreateSubKey(@"SOFTWARE\InterVideo\MediaPortal\VideoDec");
         if (subkey != null)
@@ -107,6 +107,8 @@ public class MediaPortalApp : D3DApp, IRender
       catch(Exception)
       {
       }
+
+
       /*
 			try 
 			{
