@@ -66,11 +66,17 @@ namespace MediaPortal.GUI.Alarm
 				switch ( message.Message )
 				{
 
+          case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+            base.OnMessage(message);
+            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
+            return true;
+          break;
 					case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					{
 						//get sender control
 						base.OnMessage(message);
-						int iControl=message.SenderControlId;
+            int iControl=message.SenderControlId;
+            
 							
 						if (iControl==(int)Controls.EnableButton)
 						{

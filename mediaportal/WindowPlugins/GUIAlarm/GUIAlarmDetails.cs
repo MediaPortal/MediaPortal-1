@@ -85,7 +85,8 @@ namespace MediaPortal.GUI.Alarm
 
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					{
-						base.OnMessage(message);
+            base.OnMessage(message);
+            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) );
 						GetAlarmId();
 						LoadListControl(_CurrentAlarm.AlarmMediaType);
 						return true;

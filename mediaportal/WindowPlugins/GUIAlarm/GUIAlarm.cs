@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Alarm
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
-					
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
 					AddAlarmsToList();
 					return true;
 				}
@@ -167,7 +167,6 @@ namespace MediaPortal.GUI.Alarm
 		private void LoadSettings()
 		{ 
 			InitializeSnoozeTimer();
-			  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
 			_SnoozeTime = this.SnoozeTime;
 			//Load all the alarms 
 			_Alarms = Alarm.LoadAll();
