@@ -54,10 +54,10 @@ namespace MediaPortal.GUI.TV
 		{
 			// adding the page box
 			m_pictureBox=new PictureBox();
-			m_pictureBox.Top=100;
-			m_pictureBox.Left=250;
-			m_pictureBox.Width=440;
-			m_pictureBox.Height=455;
+			m_pictureBox.Top=0;
+			m_pictureBox.Left=0;
+			m_pictureBox.Width=1;
+			m_pictureBox.Height=1;
 			m_pictureBox.Visible=false;
 			m_pictureBox.Image=new Bitmap(440,460);
 			GUIGraphicsContext.form.Controls.Add(m_pictureBox);
@@ -124,6 +124,7 @@ namespace MediaPortal.GUI.TV
 					GUIImage gImg=(GUIImage)this.GetControl(500);
 					if(m_teleText==null)
 					{
+						Log.Write("dvb-teletext: no teletext object");
 						GUIWindowManager.PreviousWindow();
 						return false;
 					}
@@ -135,7 +136,7 @@ namespace MediaPortal.GUI.TV
 						m_pictureBox.Left=gImg.rect.X;
 						m_pictureBox.Width=gImg.rect.Width;
 						m_pictureBox.Height=gImg.rect.Height;
-						m_teleText.SetPageDimensions(gImg.rect.Width,gImg.rect.Height);
+						m_teleText.SetPageSize(gImg.rect.Width,gImg.rect.Height);
 						m_pictureBox.Image.Dispose();
 						m_pictureBox.Image=new Bitmap(gImg.rect.Width,gImg.rect.Height);
 						Graphics g=Graphics.FromImage(m_pictureBox.Image);
@@ -143,7 +144,18 @@ namespace MediaPortal.GUI.TV
 						g.Dispose();
 						if(m_pictureBox!=null)
 							m_pictureBox.Visible=true;
+						else
+							Log.Write("dvb-teletext: getting PictureBox-Object failed.");
 					}
+					GUIToggleButtonControl hiddenButton=(GUIToggleButtonControl)GetControl((int)Controls.BTN_HIDDEN);
+					if(hiddenButton!=null && m_teleText!=null)
+					{
+						m_teleText.HiddenMode=true;
+						hiddenButton.Selected=true;
+						GetNewPage();
+					}
+					
+
 
 
 					return true;
@@ -222,8 +234,8 @@ namespace MediaPortal.GUI.TV
 				m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
 				Redraw();
 				m_grabPageTimer.Start();
+				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage,16),Convert.ToString(m_actualSubPage,16));
 			}
-			Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage,16),Convert.ToString(m_actualSubPage,16));
 		}
 
 
@@ -301,6 +313,10 @@ namespace MediaPortal.GUI.TV
 		}
 		private void m_teleText_PageUpdatedEvent()
 		{
+			// make sure the callback returns as soon as possible!!
+			// here is only a flag set to true, the bitmap is getting
+			// in a timer-elapsed event!
+
 			if(GUIWindowManager.ActiveWindow==7700)
 			{
 				m_pageDirty=true;
