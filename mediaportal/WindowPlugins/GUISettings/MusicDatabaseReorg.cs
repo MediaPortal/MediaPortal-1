@@ -5,6 +5,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TagReader;
+using MediaPortal.Database;
 using MediaPortal.Music.Database;
 
 namespace MediaPortal.GUI.Settings
@@ -31,7 +32,7 @@ namespace MediaPortal.GUI.Settings
 			, ERROR_COMPRESSING		=	332
 		}
 
-		Database m_dbs=new Database();
+		MusicDatabase m_dbs=new MusicDatabase();
 		ArrayList m_songids = new ArrayList();
 		ArrayList m_albumids = new ArrayList();
 		ArrayList m_artistids = new ArrayList();
@@ -41,7 +42,6 @@ namespace MediaPortal.GUI.Settings
 
 		public MusicDatabaseReorg()
 		{
-			m_dbs.Open();
 		}
 
 		void SetPercentDone(int nPercent)
@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.Settings
 			{
 				try
 				{
-					Database.DBHandle.Execute("rollback"); 
+					MusicDatabase.DBHandle.Execute("rollback"); 
 				}
 				catch (Exception)
 				{
@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Settings
 
 			try
 			{
-				Database.DBHandle.Execute("begin"); 
+				MusicDatabase.DBHandle.Execute("begin"); 
 			}
 			catch (Exception )
 			{
@@ -89,12 +89,12 @@ namespace MediaPortal.GUI.Settings
 			strSQL=String.Format("select * from song, path where song.idPath=path.idPath");
 			try
 			{
-				results = Database.DBHandle.Execute(strSQL);
+				results = MusicDatabase.DBHandle.Execute(strSQL);
 				if (results==null) return (int)Errors.ERROR_REORG_SONGS;
 			}
 			catch (Exception)
 			{
-				Database.DBHandle.Execute("rollback");
+				MusicDatabase.DBHandle.Execute("rollback");
 				return (int)Errors.ERROR_REORG_SONGS;
 			}
 
@@ -112,7 +112,7 @@ namespace MediaPortal.GUI.Settings
 
 			if (results.Rows.Count==0)
 			{
-				Database.DBHandle.Execute("rollback");
+				MusicDatabase.DBHandle.Execute("rollback");
 				return (int)Errors.ERROR_OK;
 			}
 			pDlgProgress.SetLine(1, 316);
@@ -122,8 +122,8 @@ namespace MediaPortal.GUI.Settings
 			//	test every song in database, if its file still exists
 			for (int i=0; i < results.Rows.Count;++i)
 			{
-				string strFileName = m_dbs.Get(results,i,"path.strPath") ;
-				strFileName += m_dbs.Get(results,i,"song.strFileName") ;
+				string strFileName = DatabaseUtility.Get(results,i,"path.strPath") ;
+				strFileName += DatabaseUtility.Get(results,i,"song.strFileName") ;
 				pDlgProgress.SetLine(2, System.IO.Path.GetFileName(strFileName) );
 	
 				if (! System.IO.File.Exists(strFileName))
@@ -131,25 +131,25 @@ namespace MediaPortal.GUI.Settings
 					// song doesn't exist anymore, we have cleanup 
 					// candidates, remember foreign keys to remove 
 					// entries later if no relation exists
-					m_songids.Add( Int32.Parse( m_dbs.Get(results,i,"song.idSong") ) );
-					m_albumids.Add( Int32.Parse( m_dbs.Get(results,i,"song.idAlbum") ) );
-          m_albumnames.Add(m_dbs.Get(results,i,"album.strAlbum"));
-					m_artistids.Add( Int32.Parse( m_dbs.Get(results,i,"song.idArtist") ) );
-					m_pathids.Add( Int32.Parse( m_dbs.Get(results,i,"song.idPath") ) );
-					m_genreids.Add( Int32.Parse( m_dbs.Get(results,i,"song.idGenre") ) );
+					m_songids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idSong") ) );
+					m_albumids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idAlbum") ) );
+          m_albumnames.Add(DatabaseUtility.Get(results,i,"album.strAlbum"));
+					m_artistids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idArtist") ) );
+					m_pathids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idPath") ) );
+					m_genreids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idGenre") ) );
 				}
 				else
 				{
 					int idAlbumNew=0, idArtistNew=0, idPathNew=0, idGenreNew=0;
-					int idSong=Int32.Parse( m_dbs.Get(results,i,"song.idSong"));
-					int idAlbum=idAlbumNew=Int32.Parse( m_dbs.Get(results,i,"song.idAlbum"));
-					int idArtist=idArtistNew=Int32.Parse( m_dbs.Get(results,i,"song.idArtist"));
-					int idPath=idPathNew=Int32.Parse( m_dbs.Get(results,i,"song.idPath"));
-					int idGenre=idGenreNew=Int32.Parse( m_dbs.Get(results,i,"song.idGenre"));
+					int idSong=Int32.Parse( DatabaseUtility.Get(results,i,"song.idSong"));
+					int idAlbum=idAlbumNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idAlbum"));
+					int idArtist=idArtistNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idArtist"));
+					int idPath=idPathNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idPath"));
+					int idGenre=idGenreNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idGenre"));
 
 					if (!UpdateSong(strFileName, idSong, ref idAlbumNew, ref idArtistNew, ref idGenreNew, ref idPathNew))
 					{
-						Database.DBHandle.Execute("rollback"); 
+						MusicDatabase.DBHandle.Execute("rollback"); 
 						return (int)Errors.ERROR_REORG_SONGS;
 					}
 
@@ -248,7 +248,7 @@ namespace MediaPortal.GUI.Settings
 			// commit changes of our transaction
 			try
 			{
-				Database.DBHandle.Execute("end");
+				MusicDatabase.DBHandle.Execute("end");
 			}
 			catch (Exception)
 			{
@@ -286,11 +286,11 @@ namespace MediaPortal.GUI.Settings
 			strSql = "delete from song where " + strWhere;
 			try 
 			{
-				Database.DBHandle.Execute(strSql); 
+				MusicDatabase.DBHandle.Execute(strSql); 
 			}
 			catch (Exception)
 			{
-				Database.DBHandle.Execute("rollback"); 
+				MusicDatabase.DBHandle.Execute("rollback"); 
 				return (int)Errors.ERROR_REORG_SONGS;
 			}
 			return (int)Errors.ERROR_OK;
@@ -308,11 +308,11 @@ namespace MediaPortal.GUI.Settings
 				strSql=String.Format("select * from song where song.idArtist={0}", iArtistId );
 				try
 				{
-					results = Database.DBHandle.Execute(strSql);
+					results = MusicDatabase.DBHandle.Execute(strSql);
 				}
 				catch (Exception)
 				{
-					Database.DBHandle.Execute("rollback"); 
+					MusicDatabase.DBHandle.Execute("rollback"); 
 					return (int)Errors.ERROR_REORG_ARTIST;
 				}
 				int iRowsFound = results.Rows.Count;
@@ -322,11 +322,11 @@ namespace MediaPortal.GUI.Settings
 					strSql=String.Format("delete from artist where artist.idArtist={0}", iArtistId  );
 					try
 					{
-						Database.DBHandle.Execute(strSql); 
+						MusicDatabase.DBHandle.Execute(strSql); 
 					}
 					catch (Exception)
 					{
-						Database.DBHandle.Execute("rollback");
+						MusicDatabase.DBHandle.Execute("rollback");
 						return (int)Errors.ERROR_REORG_ARTIST;
 					}
 				}
@@ -350,11 +350,11 @@ namespace MediaPortal.GUI.Settings
 				strSql=String.Format("select * from song where song.idGenre={0}", iGenreId );
 				try
 				{
-					results = Database.DBHandle.Execute(strSql);
+					results = MusicDatabase.DBHandle.Execute(strSql);
 				}
 				catch (Exception)
 				{
-					Database.DBHandle.Execute("rollback"); 
+					MusicDatabase.DBHandle.Execute("rollback"); 
 					return (int)Errors.ERROR_REORG_GENRE;
 				}
 				int iRowsFound = results.Rows.Count;
@@ -364,11 +364,11 @@ namespace MediaPortal.GUI.Settings
 					strSql=String.Format("delete from genre where genre.idGenre={0}", iGenreId  );
 					try
 					{
-						Database.DBHandle.Execute(strSql); 
+						MusicDatabase.DBHandle.Execute(strSql); 
 					}
 					catch (Exception)
 					{
-						Database.DBHandle.Execute("rollback");
+						MusicDatabase.DBHandle.Execute("rollback");
 						return (int)Errors.ERROR_REORG_GENRE;
 					}
 				}
@@ -392,11 +392,11 @@ namespace MediaPortal.GUI.Settings
 				strSql=String.Format("select * from song where song.idPath={0}", iPathId );
 				try
 				{
-					results = Database.DBHandle.Execute(strSql);
+					results = MusicDatabase.DBHandle.Execute(strSql);
 				}
 				catch (Exception)
 				{
-					Database.DBHandle.Execute("rollback"); 
+					MusicDatabase.DBHandle.Execute("rollback"); 
 					return (int)Errors.ERROR_REORG_PATH;
 				}
 				int iRowsFound = results.Rows.Count;
@@ -406,11 +406,11 @@ namespace MediaPortal.GUI.Settings
 					strSql=String.Format("delete from path where path.idPath={0}", iPathId  );
 					try
 					{
-						Database.DBHandle.Execute(strSql); 
+						MusicDatabase.DBHandle.Execute(strSql); 
 					}
 					catch (Exception)
 					{
-						Database.DBHandle.Execute("rollback");
+						MusicDatabase.DBHandle.Execute("rollback");
 						return (int)Errors.ERROR_REORG_PATH;
 					}
 				}
@@ -434,11 +434,11 @@ namespace MediaPortal.GUI.Settings
 				strSql=String.Format("select * from song where song.idAlbum={0}", iAlbumId );
 				try
 				{
-					results = Database.DBHandle.Execute(strSql);
+					results = MusicDatabase.DBHandle.Execute(strSql);
 				}
 				catch (Exception)
 				{
-					Database.DBHandle.Execute("rollback"); 
+					MusicDatabase.DBHandle.Execute("rollback"); 
 					return (int)Errors.ERROR_REORG_ALBUM;
 				}
 				int iRowsFound = results.Rows.Count;
@@ -448,11 +448,11 @@ namespace MediaPortal.GUI.Settings
 					strSql=String.Format("delete from album where album.idAlbum={0}", iAlbumId  );
 					try
 					{
-						Database.DBHandle.Execute(strSql); 
+						MusicDatabase.DBHandle.Execute(strSql); 
 					}
 					catch (Exception)
 					{
-						Database.DBHandle.Execute("rollback");
+						MusicDatabase.DBHandle.Execute("rollback");
 						return (int)Errors.ERROR_REORG_ALBUM;
 					}
 				}
@@ -470,7 +470,7 @@ namespace MediaPortal.GUI.Settings
 			//	compress database
 			try
 			{
-				Database.DBHandle.Execute("vacuum");
+				MusicDatabase.DBHandle.Execute("vacuum");
 			}
 			catch(Exception)
 			{
@@ -496,15 +496,15 @@ namespace MediaPortal.GUI.Settings
 				song.Duration	= tag.Duration;
 
 				string strPath, strFileName;
-				m_dbs.Split(song.FileName, out strPath, out strFileName); 
+				DatabaseUtility.Split(song.FileName, out strPath, out strFileName); 
 
 				string strTmp;
-				strTmp=song.Album;m_dbs.RemoveInvalidChars(ref strTmp);song.Album=strTmp;
-				strTmp=song.Genre;m_dbs.RemoveInvalidChars(ref strTmp);song.Genre=strTmp;
-				strTmp=song.Artist;m_dbs.RemoveInvalidChars(ref strTmp);song.Artist=strTmp;
-				strTmp=song.Title;m_dbs.RemoveInvalidChars(ref strTmp);song.Title=strTmp;
+				strTmp=song.Album;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Album=strTmp;
+				strTmp=song.Genre;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Genre=strTmp;
+				strTmp=song.Artist;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Artist=strTmp;
+				strTmp=song.Title;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Title=strTmp;
 
-				m_dbs.RemoveInvalidChars(ref strFileName);
+				DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
 				idGenre  = m_dbs.AddGenre(tag.Genre);
 				idArtist = m_dbs.AddArtist(tag.Artist);
@@ -525,7 +525,7 @@ namespace MediaPortal.GUI.Settings
 															strFileName, idSong);
 				try
 				{
-					Database.DBHandle.Execute(strSQL);
+					MusicDatabase.DBHandle.Execute(strSQL);
 				}
 				catch(Exception)
 				{
@@ -546,7 +546,7 @@ namespace MediaPortal.GUI.Settings
 			SQLiteResultSet results;
 			string strSQL;
 			strSQL=String.Format("select * from albuminfo,album,genre,artist where albuminfo.idAlbum=album.idAlbum and albuminfo.idGenre=genre.idGenre and albuminfo.idArtist=artist.idArtist order by album.strAlbum");
-			results = Database.DBHandle.Execute(strSQL);
+			results = MusicDatabase.DBHandle.Execute(strSQL);
 			int iRowsFound = results.Rows.Count;
 			if (iRowsFound== 0) 
 			{
@@ -564,10 +564,10 @@ namespace MediaPortal.GUI.Settings
 			ArrayList vecAlbums = new ArrayList();
 			for (int i=0; i < results.Rows.Count;++i)
 			{
-				Database.AlbumInfoCache album = new Database.AlbumInfoCache();
-				album.idAlbum   = Int32.Parse(m_dbs.Get(results,i,"album.idAlbum") ) ;
-				album.Album	= m_dbs.Get(results,i,"album.strAlbum") ;
-				album.Artist	= m_dbs.Get(results,i,"artist.strArtist") ;
+				MusicDatabase.AlbumInfoCache album = new MusicDatabase.AlbumInfoCache();
+				album.idAlbum   = Int32.Parse(DatabaseUtility.Get(results,i,"album.idAlbum") ) ;
+				album.Album	= DatabaseUtility.Get(results,i,"album.strAlbum") ;
+				album.Artist	= DatabaseUtility.Get(results,i,"artist.strArtist") ;
 				vecAlbums.Add(album);
 			}
 
@@ -578,7 +578,7 @@ namespace MediaPortal.GUI.Settings
 			{
 				pDlgSelect.SetHeading(szText);
 				pDlgSelect.Reset();
-				foreach (Database.AlbumInfoCache album in vecAlbums)
+				foreach (MusicDatabase.AlbumInfoCache album in vecAlbums)
 				{
 					pDlgSelect.Add(album.Album + " - " + album.Artist);
 				}
@@ -592,9 +592,9 @@ namespace MediaPortal.GUI.Settings
 					return;	
 				}
 
-				Database.AlbumInfoCache albumDel = (Database.AlbumInfoCache)vecAlbums[iSelectedAlbum];
+				MusicDatabase.AlbumInfoCache albumDel = (MusicDatabase.AlbumInfoCache)vecAlbums[iSelectedAlbum];
 				strSQL=String.Format("delete from albuminfo where albuminfo.idAlbum={0}", albumDel.idAlbum);
-				Database.DBHandle.Execute(strSQL);
+				MusicDatabase.DBHandle.Execute(strSQL);
 
         
 				vecAlbums.Clear();
@@ -612,7 +612,7 @@ namespace MediaPortal.GUI.Settings
 			string strSQL;
 			SQLiteResultSet results;
 			strSQL=String.Format("select * from album,artist where album.idArtist=artist.idArtist order by album.strAlbum");
-			results = Database.DBHandle.Execute(strSQL);
+			results = MusicDatabase.DBHandle.Execute(strSQL);
 			int iRowsFound = results.Rows.Count;
 			if (iRowsFound== 0) 
 			{
@@ -630,10 +630,10 @@ namespace MediaPortal.GUI.Settings
 			ArrayList vecAlbums = new ArrayList();
 			for (int i=0; i < results.Rows.Count;++i)
 			{
-				Database.AlbumInfoCache album = new Database.AlbumInfoCache();
-				album.idAlbum   = Int32.Parse(m_dbs.Get(results,i,"album.idAlbum") ) ;
-				album.Album	= m_dbs.Get(results,i,"album.strAlbum") ;
-				album.Artist	= m_dbs.Get(results,i,"artist.strArtist") ;
+				MusicDatabase.AlbumInfoCache album = new MusicDatabase.AlbumInfoCache();
+				album.idAlbum   = Int32.Parse(DatabaseUtility.Get(results,i,"album.idAlbum") ) ;
+				album.Album	= DatabaseUtility.Get(results,i,"album.strAlbum") ;
+				album.Artist	= DatabaseUtility.Get(results,i,"artist.strArtist") ;
 				vecAlbums.Add(album);
 			}
 
@@ -644,7 +644,7 @@ namespace MediaPortal.GUI.Settings
 			{
 				pDlgSelect.SetHeading(szText);
 				pDlgSelect.Reset();
-				foreach (Database.AlbumInfoCache album in vecAlbums)
+				foreach (MusicDatabase.AlbumInfoCache album in vecAlbums)
 				{
 					pDlgSelect.Add(album.Album + " - " + album.Artist);
 				}
@@ -658,18 +658,18 @@ namespace MediaPortal.GUI.Settings
 					return;	
 				}
 
-				Database.AlbumInfoCache albumDel = (Database.AlbumInfoCache)vecAlbums[iSelectedAlbum];
+				MusicDatabase.AlbumInfoCache albumDel = (MusicDatabase.AlbumInfoCache)vecAlbums[iSelectedAlbum];
 				//	Delete album
 				strSQL=String.Format("delete from album where idAlbum={0}", albumDel.idAlbum);
-				Database.DBHandle.Execute(strSQL);
+				MusicDatabase.DBHandle.Execute(strSQL);
 
 				//	Delete album info
 				strSQL=String.Format("delete from albuminfo where idAlbum={0}", albumDel.idAlbum);
-				Database.DBHandle.Execute(strSQL);
+				MusicDatabase.DBHandle.Execute(strSQL);
 
 				//	Get the songs of the album
 				strSQL=String.Format("select * from song where idAlbum={0}", albumDel.idAlbum);
-				results = Database.DBHandle.Execute(strSQL);
+				results = MusicDatabase.DBHandle.Execute(strSQL);
 				 iRowsFound = results.Rows.Count;
 				if (iRowsFound!= 0) 
 				{
@@ -677,20 +677,20 @@ namespace MediaPortal.GUI.Settings
 					m_artistids.Clear();
 					for (int i=0; i < results.Rows.Count;++i)
 					{	
-						m_artistids.Add( Int32.Parse(m_dbs.Get(results,i,"idArtist") ) );
+						m_artistids.Add( Int32.Parse(DatabaseUtility.Get(results,i,"idArtist") ) );
 					}
 
 					//	Do we have another song of this artist?
 					foreach (int iID in m_artistids)
 					{
 						strSQL=String.Format("select * from song where idArtist={0} and idAlbum<>{1}", iID, albumDel.idAlbum);
-						results = Database.DBHandle.Execute(strSQL);
+						results = MusicDatabase.DBHandle.Execute(strSQL);
 						 iRowsFound = results.Rows.Count;
 						if (iRowsFound==0) 
 						{
 							//	No, delete the artist
 							strSQL=String.Format("delete from artist where idArtist={0}", iID);
-							Database.DBHandle.Execute(strSQL);
+							MusicDatabase.DBHandle.Execute(strSQL);
 						}
 					}
 					m_artistids.Clear();
@@ -698,7 +698,7 @@ namespace MediaPortal.GUI.Settings
 
 				//	Delete the albums songs
 				strSQL=String.Format("delete from song where idAlbum={0}", albumDel.idAlbum);
-				Database.DBHandle.Execute(strSQL);
+				MusicDatabase.DBHandle.Execute(strSQL);
 
         // Delete album thumb
         

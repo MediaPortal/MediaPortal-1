@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.Music
 		VirtualDirectory m_directory = new VirtualDirectory();
 		#endregion
     
-    Database	m_database = new Database();
+    MusicDatabase	m_database = new MusicDatabase();
 
 		//added by Sam
   const int MaxNumPShuffleSongPredict = 12;
@@ -177,7 +177,6 @@ namespace MediaPortal.GUI.Music
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
 					base.OnMessage(message);
-					m_database.Open();
 					LoadSettings();
 					ShowThumbPanel();
           
@@ -203,7 +202,6 @@ namespace MediaPortal.GUI.Music
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 					m_iItemSelected = GetSelectedItemNo();
 					SaveSettings();
-          m_database.Close();
           break;
 
 				case GUIMessage.MessageType.GUI_MSG_CLICKED : 
@@ -516,8 +514,7 @@ namespace MediaPortal.GUI.Music
     void OnRetrieveMusicInfo(ref ArrayList items)
     {
       if (items.Count <= 0) return;
-      Database dbs = new Database();
-      dbs.Open();
+      MusicDatabase dbs = new MusicDatabase();
       Song song = new Song();
       foreach (GUIListItem item in items)
       {
@@ -562,7 +559,6 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-      dbs.Close();
     }
     void OnRetrieveCoverArt(GUIListItem item)
     {
@@ -990,8 +986,7 @@ namespace MediaPortal.GUI.Music
 		//added by Sam
 		void UpdatePartyShuffle()
 		{
-			Database dbs = new Database();
-			dbs.Open();
+			MusicDatabase dbs = new MusicDatabase();
 			
 			PlayList list=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
 			if (list.Count>=MaxNumPShuffleSongPredict) return;
@@ -1023,7 +1018,6 @@ namespace MediaPortal.GUI.Music
 				}
 			}
 				//LoadDirectory(""); - will cause errors when playlist screen is not active
-				dbs.Close();
 		}
 	}
 }

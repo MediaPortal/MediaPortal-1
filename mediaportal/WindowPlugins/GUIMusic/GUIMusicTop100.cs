@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Music
     int m_iItemSelected = -1;
     VirtualDirectory m_directory = new VirtualDirectory();
     #endregion
-    Database		      m_database = new Database();
+    MusicDatabase		      m_database = new MusicDatabase();
     Mode              _CurrentMode =Mode.Duration;
 
     public GUIMusicTop100()
@@ -131,9 +131,7 @@ namespace MediaPortal.GUI.Music
           {
             if (GUIWindowManager.ActiveWindow != GetID)
             {
-              m_database.Open();
               m_database.IncrTop100CounterByFileName(strFile);
-              m_database.Close();
             }
           }
           break;
@@ -174,7 +172,6 @@ namespace MediaPortal.GUI.Music
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
           base.OnMessage(message);
-					m_database.Open();
 					LoadSettings();
           
           ShowThumbPanel();
@@ -184,7 +181,6 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
           m_iItemSelected = GetSelectedItemNo();
           SaveSettings();
-          m_database.Close();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED : 

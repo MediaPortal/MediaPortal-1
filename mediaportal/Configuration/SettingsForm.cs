@@ -60,14 +60,13 @@ namespace MediaPortal.Configuration
 			Log.Write("add project section");
 			Sections.Project project= new Sections.Project();
 			AddSection(project);
-			AddChildSection(project, new Sections.KeyboardControl());
 
       Log.Write("add general section");
 			Sections.General general = new Sections.General();
 			AddSection(general);
 
-      Log.Write("add keys section");
-      AddChildSection(general, new Sections.Keys());
+			AddChildSection(general, new Sections.KeyboardControl());
+      //AddChildSection(general, new Sections.Keys());
 
       Log.Write("add skins section");
       AddChildSection(general, new Sections.Skin());

@@ -139,10 +139,20 @@
                     AssemblyName = "Interop.TunerLib"
                     HintPath = "..\Interop.TunerLib.dll"
                 />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "DatabaseUtility.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Music\AlbumInfo.cs"
                     SubType = "Code"

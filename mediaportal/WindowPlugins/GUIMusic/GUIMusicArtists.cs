@@ -6,6 +6,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
@@ -73,7 +74,7 @@ namespace MediaPortal.GUI.Music
     int               m_iItemSelected=-1;   
     VirtualDirectory  m_directory = new VirtualDirectory();
     #endregion
-    Database          m_database = new Database();
+    MusicDatabase          m_database = new MusicDatabase();
     Mode              m_Mode=Mode.ShowArtists;
     string            m_strArtist="";
     string            m_strAlbum="";
@@ -303,7 +304,6 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					base.OnMessage(message);
 					LoadSettings();
-          m_database.Open();
           
           ShowThumbPanel();
           LoadDirectory(m_strDirectory,m_Mode);
@@ -312,7 +312,6 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           m_iItemSelected=GetSelectedItemNo();
           SaveSettings();
-          m_database.Close();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
@@ -1653,7 +1652,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         string strFileName;
-        m_database.Split(pItem.Path, out strPath, out strFileName);
+        DatabaseUtility.Split(pItem.Path, out strPath, out strFileName);
       }
 
       //	Try to find an album name for this item.
@@ -1902,7 +1901,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         string strFileName;
-        m_database.Split(pItem.Path, out strPath, out strFileName);
+        DatabaseUtility.Split(pItem.Path, out strPath, out strFileName);
       }
 
       //	Try to find an album name for this item.

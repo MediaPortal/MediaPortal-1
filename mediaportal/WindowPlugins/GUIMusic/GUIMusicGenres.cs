@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.Music
     int               m_iItemSelected=-1;   
     VirtualDirectory  m_directory = new VirtualDirectory();
     #endregion
-    Database		      m_database = new Database();
+    MusicDatabase		      m_database = new MusicDatabase();
     public GUIMusicGenres()
     {
       GetID=(int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
@@ -280,7 +280,6 @@ namespace MediaPortal.GUI.Music
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           base.OnMessage(message);
-					m_database.Open();
 					LoadSettings();
           
           ShowThumbPanel();
@@ -289,7 +288,6 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           m_iItemSelected=GetSelectedItemNo();
-          m_database.Close();
           SaveSettings();
           break;
 

@@ -527,10 +527,8 @@ namespace MediaPortal.GUI.Music
       MusicTag tag=null;
 			Song song=new Song();
 			bool bFound=false;
-			Database dbs=new Database();
-			dbs.Open();
+			MusicDatabase dbs=new MusicDatabase();
 			bFound=dbs.GetSongByFileName(strFile, ref song);
-			dbs.Close();
       
       bool UseID3=false;
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))

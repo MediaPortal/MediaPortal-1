@@ -552,16 +552,14 @@ namespace MediaPortal.Configuration.Sections
       //
       // Setup database
       //
-      Database database = null;
+      MediaPortal.Music.Database.MusicDatabase database = null;
       
       try
       {
         //
         // Allocate and open database
         //
-        database = new Database();
-        database.Open();
-
+        database = new MediaPortal.Music.Database.MusicDatabase();
         database.BeginTransaction();
 
         foreach(MusicData data in extractedTags)
@@ -604,8 +602,6 @@ namespace MediaPortal.Configuration.Sections
       }
       finally
       {
-        if(database != null)
-          database.Close();
       }
     }
 

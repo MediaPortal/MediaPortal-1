@@ -7,6 +7,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
@@ -64,7 +65,7 @@ namespace MediaPortal.GUI.Music
     int               m_iItemSelected=-1;   
     VirtualDirectory  m_directory = new VirtualDirectory();
     #endregion
-    Database		m_database = new Database();
+    MusicDatabase		m_database = new MusicDatabase();
 		bool				m_bMyMusicAlbumShowRecent=false;
 		string			m_strAlbum="";
 
@@ -243,7 +244,7 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           base.OnMessage(message);
 					LoadSettings();
-					m_database.Open();
+					
         
           LoadDirectory(m_strDirectory);
           ShowThumbPanel();
@@ -254,7 +255,6 @@ namespace MediaPortal.GUI.Music
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           SaveSettings();
           m_iItemSelected=GetSelectedItemNo();
-          m_database.Close();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
@@ -1426,7 +1426,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         string strFileName;
-        m_database.Split(pItem.Path, out strPath, out strFileName);
+        DatabaseUtility.Split(pItem.Path, out strPath, out strFileName);
       }
 
       //	Try to find an album name for this item.

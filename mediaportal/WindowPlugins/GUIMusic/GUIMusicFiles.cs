@@ -8,6 +8,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
+using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 
@@ -104,7 +105,7 @@ namespace MediaPortal.GUI.Music
     string            m_strDirectory = "";
     int               m_iItemSelected = -1;
     VirtualDirectory  m_directory = new VirtualDirectory();
-    Database	        m_database = new Database();
+    MusicDatabase	        m_database = new MusicDatabase();
     bool			        m_bScan = false;
     bool              m_bUseID3 = true;
     bool              m_bAutoShuffle = true;
@@ -258,7 +259,6 @@ namespace MediaPortal.GUI.Music
             GUIWindowManager.ActivateWindow(MusicState.StartWindow);
             return false;
           }
-          m_database.Open();
           LoadSettings();
           LoadFolderSettings(m_strDirectory);
 
@@ -270,7 +270,6 @@ namespace MediaPortal.GUI.Music
           m_iItemSelected = GetSelectedItemNo();
           SaveSettings();
           SaveFolderSettings(m_strDirectory);
-          m_database.Close();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED : 
@@ -1399,7 +1398,7 @@ namespace MediaPortal.GUI.Music
                 // try finding it in the database
                 string strPathName;
                 string strFileName;
-                m_database.Split(pItem.Path, out strPathName, out strFileName);
+                DatabaseUtility.Split(pItem.Path, out strPathName, out strFileName);
                 if (strPathName != m_strDirectory)
                 {
                   if (m_database.GetSongByFileName(pItem.Path, ref song))
@@ -1705,7 +1704,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         string strFileName;
-        m_database.Split(pItem.Path, out strPath, out strFileName);
+        DatabaseUtility.Split(pItem.Path, out strPath, out strFileName);
       }
 
       //	Try to find an album name for this item.
@@ -2026,8 +2025,8 @@ namespace MediaPortal.GUI.Music
       // no album art? then use folder.jpg
       string strPathName;
       string strFileName;
-      Database	        m_database = new Database();
-      m_database.Split(filename, out strPathName, out strFileName);
+      MusicDatabase	        m_database = new MusicDatabase();
+      DatabaseUtility.Split(filename, out strPathName, out strFileName);
       strFolderThumb = strPathName + @"\folder.jpg";
       if (System.IO.File.Exists(strFolderThumb))
       {
