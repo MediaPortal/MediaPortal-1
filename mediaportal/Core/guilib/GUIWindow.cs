@@ -9,10 +9,19 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
-	/// base class for every window
+	/// base class for every window. It contains all methods needed for basic window management like
+	/// - initialization
+	/// - deitialization
+	/// - render itself onscreen
+	/// - processing actions like keypresses, mouse clicks/movements
+	/// - processing messages
+	/// 
+	/// Each window plugin should derive from this base class
+	/// Pluginwindows should be copied in the plugins/windows folder
 	/// </summary>
 	public class GUIWindow 
 	{
+		//enum of all standard windows in MP
 		public enum Window
 		{
 			WINDOW_INVALID = -1
@@ -104,8 +113,14 @@ namespace MediaPortal.GUI.Library
 		public GUIWindow()
 		{
     }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="strXMLFile">filename of xml skin file which belongs to this window</param>
     public GUIWindow(string strXMLFile)
     {
+			if (strXMLFile==null) return;
       m_dwPreviousWindowId=-1;
       m_strWindowXmlFile=strXMLFile;
 
@@ -119,7 +134,6 @@ namespace MediaPortal.GUI.Library
     {
     	GUIControlFactory.ClearReferences();
     }
-
     public virtual bool Focused
     {
       get { return false; }
@@ -197,6 +211,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="action">action : contains the action</param>
 		public virtual void OnAction(Action action)
 		{
+			if (action==null) return ;
       //lock (this)
       {
 				try
@@ -235,7 +250,7 @@ namespace MediaPortal.GUI.Library
 							if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
 							{	
 								GUIControl cntl=GetControl(controlID);
-								cntl.OnAction(action);
+								if (cntl!=null) cntl.OnAction(action);
 								return;
 							}
 						}
@@ -264,7 +279,10 @@ namespace MediaPortal.GUI.Library
       }
 		}
 
-
+		/// <summary>
+		/// Property which returns an arraylist containing all controls 
+		/// of this window
+		/// </summary>
     public ArrayList GUIControls
     {
       get { return m_vecControls;}
@@ -279,6 +297,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>true if the message was handled, false if it wasnt</returns>
 		public virtual bool OnMessage(GUIMessage message)
 		{
+			if (message==null) return true;
       //lock (this)
       {
 				try
@@ -358,7 +377,7 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// add new control to this window
+		/// add a new control to this window
 		/// </summary>
 		/// <param name="control">new control to add</param>
 		public void Add(ref GUIControl control)
@@ -395,6 +414,10 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
+		/// <summary>
+		/// This method will call the PreInit() on each control belonging to this window
+		/// this gives the control a way to do some pre-initalisation stuff
+		/// </summary>
     void InitControls()
     {
 			try
@@ -409,7 +432,9 @@ namespace MediaPortal.GUI.Library
 				Log.Write("InitControls exception:{0}", ex.ToString());
 			}
     }
-    
+
+		/// This method will call the OnDeInit() on each control belonging to this window
+		/// this gives the control a way to do some de-initalisation stuff
     protected void DeInitControls()
     {
 			try
@@ -447,11 +472,15 @@ namespace MediaPortal.GUI.Library
 			return - 1;
 		}
 		
+		/// <summary>
+		/// This method will remove the focus from the currently focused control
+		/// </summary>
     public virtual void LooseFocus()
     {
       GUIControl cntl= GetControl ( GetFocusControlId() );
       if (cntl!=null) cntl.Focus=false;
     }
+
 		/// <summary>
 		/// Return the id of this window
 		/// </summary>
@@ -494,6 +523,7 @@ namespace MediaPortal.GUI.Library
 			FreeResources();
 			m_vecControls = new ArrayList();
 		}
+
 		/// <summary>
 		/// Gets called by the runtime just before the window gets shown. It
 		/// will ask every control of the window to allocate its (directx) resources 
@@ -543,7 +573,7 @@ namespace MediaPortal.GUI.Library
 		}
 		
 		/// <summary>
-		/// Resets all the controls
+		/// Resets all the controls to their original positions, width&height
 		/// </summary>
 		public virtual void	ResetAllControls()
 		{
@@ -582,11 +612,18 @@ namespace MediaPortal.GUI.Library
 		/// Every window window should override this method and load itself by calling
 		/// the Load() method
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>true if initialisation was succesfull 
+		/// else false</returns>
 		public virtual bool Init()
 		{
 			return false;
 		}
+
+		/// <summary>
+		/// Gets called by the runtime when a  window will be destroyed
+		/// Every window window should override this method and cleanup any resources
+		/// </summary>
+		/// <returns></returns>
     public virtual void DeInit()
     {
     }
@@ -611,6 +648,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns></returns>
 		public virtual bool Load(string strFileName)
 		{
+			if (strFileName==null) return true;
 			m_bSkinLoaded = false;
 			if (strFileName == "") return true;
 			m_strWindowXmlFile = strFileName;
@@ -710,11 +748,25 @@ namespace MediaPortal.GUI.Library
 			}
 		}
     
+		/// <summary>
+		/// This method will load a single control from the xml node
+		/// </summary>
+		/// <param name="node">XmlNode describing the control</param>
+		/// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
     protected void LoadControl(XmlNode node, ArrayList controls)
     {
-			GUIControl newControl = GUIControlFactory.Create(m_dwWindowId, node);
-			newControl.WindowId = GetID;
-			controls.Add(newControl);
+			if (node==null) return;
+			if (controls==null) return;
+			try
+			{
+				GUIControl newControl = GUIControlFactory.Create(m_dwWindowId, node);
+				newControl.WindowId = GetID;
+				controls.Add(newControl);
+			}
+			catch(Exception ex)
+			{
+				Log.Write("Unable to load control. exception:{0}",ex.ToString());
+			}
     }
 
 		/// <summary>
@@ -775,7 +827,7 @@ namespace MediaPortal.GUI.Library
 
     
 		/// <summary>
-		/// Return whether music/video/tv overlay should b shown or not
+		/// Returns whether the music/video/tv overlay is allowed on this screen
 		/// </summary>
 		public virtual bool OverlayAllowed
 		{
@@ -783,7 +835,7 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Return whether the user can goto full screen video,tv,visualisation in this window
+		/// Returns whether the user can goto full screen video,tv,visualisation from this window
 		/// </summary>
 		public virtual bool FullScreenVideoAllowed
 		{

@@ -72,6 +72,8 @@ namespace MediaPortal.Ripper
    
     static void AddDrive (string Drive)
     {
+			if (Drive==null) return;
+			if (Drive.Length<2) return;
       string DriveLetter=Drive.Substring(0,2).ToLower();
       foreach (string share in m_vecList)
       {
@@ -248,6 +250,8 @@ namespace MediaPortal.Ripper
     
     public static void ExamineCD(string strDrive)
     {
+			if (strDrive==null) return;
+			if (strDrive.Length==0) return;
       StopListening();
       GUIMessage msg;
       switch(DetectMediaType(strDrive))       
@@ -311,16 +315,25 @@ namespace MediaPortal.Ripper
     
     private static void GetAllFiles(string strFolder, ref ArrayList allfiles)
     {
-      string [] files=System.IO.Directory.GetFiles(strFolder);
-      if (files != null && files.Length>0)
-      {
-        for (int i=0; i < files.Length; ++i) allfiles.Add( files[i] );
-      }
-      string [] folders = System.IO.Directory.GetDirectories(strFolder);
-      if (folders != null && folders.Length>0)
-      {
-        for (int i=0; i < folders.Length; ++i) GetAllFiles(folders[i], ref allfiles );
-      }
+			if (strFolder==null) return;
+			if (strFolder.Length==0) return;
+			if (allfiles==null) return;
+			try
+			{
+				string [] files=System.IO.Directory.GetFiles(strFolder);
+				if (files != null && files.Length>0)
+				{
+					for (int i=0; i < files.Length; ++i) allfiles.Add( files[i] );
+				}
+				string [] folders = System.IO.Directory.GetDirectories(strFolder);
+				if (folders != null && folders.Length>0)
+				{
+					for (int i=0; i < folders.Length; ++i) GetAllFiles(folders[i], ref allfiles );
+				}
+			}
+			catch(Exception)
+			{
+			}
     }
     /// <summary>
     /// Detects the media type of the CD/DVD inserted into a drive.
@@ -329,12 +342,15 @@ namespace MediaPortal.Ripper
     /// <returns>The media type of the drive.</returns>
     private static MediaType DetectMediaType(string strDrive)
     {
-      if (Directory.Exists(strDrive+"\\VIDEO_TS"))
-      {
-        return MediaType.DVD;
-      }
+			if (strDrive==null) return MediaType.UNKNOWN;
+			if (strDrive==String.Empty) return MediaType.UNKNOWN;
       try
-      {
+			{
+				if (Directory.Exists(strDrive+"\\VIDEO_TS"))
+				{
+					return MediaType.DVD;
+				}
+
         string[]  files=Directory.GetFiles(strDrive+"\\","*.cda");
         if (files!=null && files.Length!=0)
         {

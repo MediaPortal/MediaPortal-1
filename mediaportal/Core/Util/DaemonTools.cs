@@ -31,14 +31,18 @@ namespace MediaPortal.Util
 
     static public bool IsMounted(string IsoFile)
     {
+			if (IsoFile==null) return false;
+			if (IsoFile==String.Empty) return false;
       IsoFile=Utils.RemoveTrailingSlash(IsoFile);
       if (_MountedIsoFile.Equals(IsoFile)) return true;
       return false;
     }
 
     static public bool Mount(string IsoFile, out string VirtualDrive)
-    {
-      VirtualDrive=String.Empty;
+		{
+			VirtualDrive=String.Empty;
+			if (IsoFile==null) return false;
+			if (IsoFile==String.Empty) return false;
       if (!_Enabled) return false;
       if (!System.IO.File.Exists(_Path)) return false;
 

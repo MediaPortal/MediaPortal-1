@@ -10,9 +10,16 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text;
 using System.Collections;
-
+using MediaPortal.GUI.Library;
 namespace MediaPortal.IR
 {
+	/// <summary>
+	/// This class will handle all communication with an external USBUIRT device
+	/// The USB-UIRT, allows your PC to both Receive and Transmit infrared signals -- 
+	/// exactly like those used by the collection of remote controls you've acquired for your TV, 
+	/// VCR, Audio System, etc. 
+	/// See www.usbuirt.com for more details on USBUIRT
+	/// </summary>
 	public class LearningEventArgs : System.EventArgs
 	{
 		public string Button;
@@ -137,8 +144,14 @@ namespace MediaPortal.IR
 
 		public static USBUIRT Create(OnRemoteCommand remoteCommandCallback)
 		{
-			if (instance == null)
-				instance = new USBUIRT(remoteCommandCallback);
+			try
+			{
+				if (instance == null)
+					instance = new USBUIRT(remoteCommandCallback);
+			}
+			catch (Exception)
+			{
+			}
 			return instance;
 		}
 
@@ -269,11 +282,18 @@ namespace MediaPortal.IR
 			while(!reader.EOF) 
 			{
 				Debug.Assert(reader.LocalName == "entry");
-				int actionInt = Int32.Parse(reader.GetAttribute("actionInt"));
-				reader.Read();
-				string remoteCode = reader.ReadString();
-				reader.ReadEndElement();
-				commandsLearned[remoteCode] = actionInt;
+				try
+				{
+					int actionInt = Int32.Parse(reader.GetAttribute("actionInt"));
+					reader.Read();
+					string remoteCode = reader.ReadString();
+					reader.ReadEndElement();
+					commandsLearned[remoteCode] = actionInt;
+				}
+				catch(Exception)
+				{
+					break;
+				}
 				if(reader.LocalName != "entry")
 					break;
 			}
@@ -283,57 +303,75 @@ namespace MediaPortal.IR
 
 		private void LoadTunerValues()
 		{
-			System.Xml.XmlTextReader reader = new System.Xml.XmlTextReader(tunerfile);
-			reader.MoveToContent();
-			// skip the document element
-			reader.Read();
-
-			while(!reader.EOF) 
+			try
 			{
-				Debug.Assert(reader.LocalName == "entry");
-				int index = Int32.Parse(reader.GetAttribute("index"));
+				System.Xml.XmlTextReader reader = new System.Xml.XmlTextReader(tunerfile);
+				reader.MoveToContent();
+				// skip the document element
 				reader.Read();
-				string remoteCode = reader.ReadString();
-				reader.ReadEndElement();
-				externalTunerCodes[index] = remoteCode;
-				if(reader.LocalName != "entry")
-					break;
+
+				while(!reader.EOF) 
+				{
+					Debug.Assert(reader.LocalName == "entry");
+					int index = Int32.Parse(reader.GetAttribute("index"));
+					reader.Read();
+					string remoteCode = reader.ReadString();
+					reader.ReadEndElement();
+					externalTunerCodes[index] = remoteCode;
+					if(reader.LocalName != "entry")
+						break;
+				}
+				reader.Close();
 			}
-			reader.Close();
+			catch(Exception)
+			{
+			}
 			
 		}
 
 		public void SaveInternalValues()
 		{
-			System.Xml.XmlTextWriter writer = new System.Xml.XmlTextWriter(remotefile, System.Text.Encoding.Unicode);
-
-			writer.WriteStartElement("docElement");
-			foreach(string key in commandsLearned.Keys) 
+			try
 			{
-				writer.WriteStartElement("entry");
-				writer.WriteAttributeString("actionInt", ((int)commandsLearned[key]).ToString());
-				writer.WriteAttributeString("actionDescription", (commandsLearned[key]).ToString());
-				writer.WriteString(key);
+				System.Xml.XmlTextWriter writer = new System.Xml.XmlTextWriter(remotefile, System.Text.Encoding.Unicode);
+
+				writer.WriteStartElement("docElement");
+				foreach(string key in commandsLearned.Keys) 
+				{
+					writer.WriteStartElement("entry");
+					writer.WriteAttributeString("actionInt", ((int)commandsLearned[key]).ToString());
+					writer.WriteAttributeString("actionDescription", (commandsLearned[key]).ToString());
+					writer.WriteString(key);
+					writer.WriteEndElement();
+				}
 				writer.WriteEndElement();
+				writer.Close();
 			}
-			writer.WriteEndElement();
-			writer.Close();
+			catch(Exception)
+			{
+			}
 		}
 
 		public void SaveTunerValues()
 		{
-			System.Xml.XmlTextWriter writer = new System.Xml.XmlTextWriter(tunerfile, System.Text.Encoding.Unicode);
-
-			writer.WriteStartElement("docElement");
-			for(int i=0; i<11; i++)
+			try
 			{
-				writer.WriteStartElement("entry");
-				writer.WriteAttributeString("index", i.ToString());
-				writer.WriteString(externalTunerCodes[i]);
+				System.Xml.XmlTextWriter writer = new System.Xml.XmlTextWriter(tunerfile, System.Text.Encoding.Unicode);
+
+				writer.WriteStartElement("docElement");
+				for(int i=0; i<11; i++)
+				{
+					writer.WriteStartElement("entry");
+					writer.WriteAttributeString("index", i.ToString());
+					writer.WriteString(externalTunerCodes[i]);
+					writer.WriteEndElement();
+				}
 				writer.WriteEndElement();
+				writer.Close();
 			}
-			writer.WriteEndElement();
-			writer.Close();
+			catch(Exception)
+			{
+			}
 		}
 
 		public string GetVersions()
@@ -449,25 +487,32 @@ namespace MediaPortal.IR
 		
 		private void InternalLearn(object command, string buttonName) 
 		{
-			this.commandToLearn = command;
-			internalLearnDone = false;
-
-			OnStartLearning(buttonName);
-			
-//			form.label1.Text = "Press the " + buttonName + " button on your remote";
-//			form.Show();
-//
-//			form.Refresh();
-			
-
-			UUIRTReceiveCallbackDelegate urcblearn = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallbackLearn);		
-			UUIRTSetReceiveCallback(handle,urcblearn,0);
-			while (! internalLearnDone )
+			try
 			{
-				Thread.Sleep(100);
+				this.commandToLearn = command;
+				internalLearnDone = false;
+
+				OnStartLearning(buttonName);
+				
+				//			form.label1.Text = "Press the " + buttonName + " button on your remote";
+				//			form.Show();
+				//
+				//			form.Refresh();
+				
+
+				UUIRTReceiveCallbackDelegate urcblearn = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallbackLearn);		
+				UUIRTSetReceiveCallback(handle,urcblearn,0);
+				while (! internalLearnDone )
+				{
+					Thread.Sleep(100);
+				}
+				UUIRTSetReceiveCallback(handle,urcb,0);
+				//			form.Hide();
 			}
-			UUIRTSetReceiveCallback(handle,urcb,0);
-//			form.Hide();
+			catch(Exception ex)
+			{
+				Log.Write("exception while initializing USBUIRT:{0}",ex.ToString());
+			}
 		}
 
 		public void BulkLearn(object[] commands, string[] buttonNames)

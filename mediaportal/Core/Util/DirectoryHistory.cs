@@ -10,25 +10,33 @@ namespace MediaPortal.Util
 	{
     class DirectoryItem
     {
-      string m_strItem;
-      string m_strDir;
+      string m_strItem=String.Empty;
+      string m_strDir=String.Empty;
       public DirectoryItem()
       {
       }
       public DirectoryItem(string strItem, string strDir)
       {
+				if (strItem==null || strDir==null) return;
         m_strItem=strItem;
         m_strDir=strDir;
       }
       public string Item
       {
         get { return m_strItem;}
-        set { m_strItem=value;}
+        set {
+					if (value==null) return;
+					m_strItem=value;
+				}
       }
       public string Dir
       {
         get { return m_strDir;}
-        set { m_strDir=value;}
+				set 
+				{ 
+					if (value==null) return;
+					m_strDir=value;
+				}
       }
     }
 
@@ -39,6 +47,7 @@ namespace MediaPortal.Util
     
     public string Get(string strDir)
     {
+			if (strDir==null) return String.Empty;
       foreach (DirectoryItem item in m_history)
       {
         if (item.Dir==strDir)
@@ -46,11 +55,13 @@ namespace MediaPortal.Util
           return item.Item;
         }
       }
-      return "";
+      return String.Empty;
     }
 
     public void Set(string strItem, string strDir)
-    {
+		{
+			if (strItem==null) return ;
+			if (strDir==null) return ;
       foreach (DirectoryItem item in m_history)
       {
         if (item.Dir==strDir)

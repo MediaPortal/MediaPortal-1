@@ -11,17 +11,17 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public interface ISetupForm
   {
-    string PluginName();  // Return the name which should b shown in the plugin menu
-    string Description(); // Return the description which should b shown in the plugin menu
-    string Author();      // Return the author which should b shown in the plugin menu
+    string PluginName();  // Returns the name of the plugin which is shown in the plugin menu
+    string Description(); // Returns the description of the plugin is shown in the plugin menu
+    string Author();      // Returns the author of the plugin which is shown in the plugin menu
     void   ShowPlugin();  // show the setup dialog
     bool   CanEnable();   // Indicates whether plugin can be enabled/disabled
-    int    GetWindowId(); // get ID of plugin window
+    int    GetWindowId(); // get ID of windowplugin belonging to this setup
 		bool   DefaultEnabled(); // Indicates if plugin is enabled by default;
-    bool   HasSetup();    // indicates if a plugin has a setup
+    bool   HasSetup();    // indicates if a plugin has its own setup screen
     
     /// <summary>
-    /// If the plugin should have its own button on the home screen then it
+    /// If the plugin should have its own button on the home menu of Mediaportal then it
     /// should return true to this method, otherwise if it should not be on home
     /// it should return false
     /// </summary>

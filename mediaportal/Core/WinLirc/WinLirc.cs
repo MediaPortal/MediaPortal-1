@@ -67,7 +67,7 @@ namespace MediaPortal.WINLIRC
 		//protected bool m_bMultipleRemotes = true;
 		//protected bool m_bNeedsEnter = false;
 		protected bool m_bInitRetry = true;
-		protected string m_IRdelay = "300";
+		protected int m_IRdelay = 300;
 		
 
 		public WinLirc()
@@ -85,7 +85,17 @@ namespace MediaPortal.WINLIRC
 				if(m_bEnabled == false)
 					return true;
 				m_pathtowinlirc = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
-				m_IRdelay = xmlreader.GetValueAsString("WINLIRC", "delay", "300") ;
+				string delay = xmlreader.GetValueAsString("WINLIRC", "delay", "300") ;
+				try
+				{
+					m_IRdelay=Int32.Parse(delay);
+					if (m_IRdelay< 0 || m_IRdelay >=1000) m_IRdelay=300;
+				}
+				catch(Exception)
+				{
+					m_IRdelay=300;
+				}
+
 				//m_bMultipleRemotes = xmlreader.GetValueAsString("WINLIRC", "use_multiple_remotes", "true") == "true";
 				//m_remote = xmlreader.GetValueAsString("WINLIRC", "remote", "") ;
 				//m_repeat = xmlreader.GetValueAsString("WINLIRC", "repeat", "0");
@@ -117,6 +127,8 @@ namespace MediaPortal.WINLIRC
 
 		public bool StartWinLirc(string exeName)
 		{
+			if (exeName==null) return false;
+			if (exeName==String.Empty) return false;
 			ProcessStartInfo psI = new ProcessStartInfo(exeName, "");
 			Process newProcess = new Process();
 
@@ -140,6 +152,7 @@ namespace MediaPortal.WINLIRC
 			}
 			catch(Exception)
 			{
+				Log.Write("Unable to start WinLIRC from {0}", exeName);
 				return false;
 			}
 			return true;
@@ -151,55 +164,63 @@ namespace MediaPortal.WINLIRC
 			if(m_bEnabled == false)
 				return;
 
-			if(m_hwnd.ToInt32() == 0)
+			try
 			{
-				Log.Write("WinLirc HWND is invalid. Check WinLirc is running");
-				return;
-			}
+				if (channel_data==null) return;
+				if (channel_data==String.Empty) return;
+				if(m_hwnd.ToInt32() == 0)
+				{
+					Log.Write("WinLirc HWND is invalid. Check WinLirc is running");
+					return;
+				}
 
-			//by default, use the remote set on config page
-			string IRData;
+				//by default, use the remote set on config page
+				string IRData;
 
-			//our copy struct
-			COPYDATASTRUCT cds;
-			
-			string[] sets = channel_data.Split("|".ToCharArray()); 
-			foreach(string command in sets)
-			{
-				//make up the Channel Change parts...
-				//channelparts[0] will be name of remote
-				//channelparts[1] will be repeat count
-				//channelparts[2] will be code(s)
-				string[] channelparts = {m_remote,m_repeat,command}; //default to using m_remote:m_repeat:command
+				//our copy struct
+				COPYDATASTRUCT cds;
 				
-				//now if channel_data has a ':', split that & use it instead!
-				//NOTE: channel_data should be Remote:Repeat:Codes
-				channelparts = command.Split(":".ToCharArray(),3);
-
-				if(channelparts.Length != 3)
+				string[] sets = channel_data.Split("|".ToCharArray()); 
+				foreach(string command in sets)
 				{
-					Log.Write("WinLirc: '" + command + "' is invalid.  Check External Channel follows the correct format (Remote:Repeat:Code 1,Code 2,Code n)");
-					continue;
-				}
+					//make up the Channel Change parts...
+					//channelparts[0] will be name of remote
+					//channelparts[1] will be repeat count
+					//channelparts[2] will be code(s)
+					string[] channelparts = {m_remote,m_repeat,command}; //default to using m_remote:m_repeat:command
+					
+					//now if channel_data has a ':', split that & use it instead!
+					//NOTE: channel_data should be Remote:Repeat:Codes
+					channelparts = command.Split(":".ToCharArray(),3);
 
-				Log.Write("WinLirc ChangeTunerChannel: Remote; " + channelparts[0] + " Channel; " + channelparts[2]);
-
-				//go thru chan numbers / commands & output to winLIRC
-				string[] Ops = channelparts[2].Split(",".ToCharArray());
-				foreach(string s in Ops)
-				{
-					if(s == "") 
+					if(channelparts.Length != 3)
+					{
+						Log.Write("WinLirc: '" + command + "' is invalid.  Check External Channel follows the correct format (Remote:Repeat:Code 1,Code 2,Code n)");
 						continue;
-					//IRData must be "remote+TAB+code+TAB+repeatcount"
-					IRData = channelparts[0] + TAB + s + TAB + m_repeat;
-					cds.dwData = (IntPtr) 0;
-					cds.lpData = IRData;
-					cds.cbData = IRData.Length + 1;
-					SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
-					Thread.Sleep(int.Parse(m_IRdelay));
+					}
+
+					Log.Write("WinLirc ChangeTunerChannel: Remote; " + channelparts[0] + " Channel; " + channelparts[2]);
+
+					//go thru chan numbers / commands & output to winLIRC
+					string[] Ops = channelparts[2].Split(",".ToCharArray());
+					foreach(string s in Ops)
+					{
+						if(s == "") 
+							continue;
+						//IRData must be "remote+TAB+code+TAB+repeatcount"
+						IRData = channelparts[0] + TAB + s + TAB + m_repeat;
+						cds.dwData = (IntPtr) 0;
+						cds.lpData = IRData;
+						cds.cbData = IRData.Length + 1;
+						SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
+						Thread.Sleep(m_IRdelay);
+					}
 				}
 			}
-
+			catch(Exception ex)
+			{
+				Log.Write("Exception occured in winlirc plugin:{0}", ex.ToString());
+			}
 		}
 
 

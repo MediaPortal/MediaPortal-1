@@ -495,6 +495,30 @@ namespace MediaPortal.GUI.Library
 			// height copied from texture
       float v = ((float)m_iTextureHeight) / ((float)m_iImageHeight);
 
+			
+			if (uoffs<0 || uoffs >1) uoffs=0;
+			if (u<0 || u >1) u=1;
+			if (v<0 || v >1) v=1;
+			if (u+uoffs > 1)
+			{
+				uoffs=0;
+				u=1;
+			}
+			if (x <0) x=0;
+			if (x > GUIGraphicsContext.Width) x=GUIGraphicsContext.Width;
+			if (y <0) y=0;
+			if (y > GUIGraphicsContext.Height) y=GUIGraphicsContext.Height;
+			if (nw <0) nw=0;
+			if (nh <0) nh=0;
+			if (x+nw >GUIGraphicsContext.Width) 
+			{
+				nw=GUIGraphicsContext.Width-x;
+			}
+			if (y+nh >GUIGraphicsContext.Height) 
+			{
+				nh=GUIGraphicsContext.Height-y;
+			}
+
       CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0);
       verts[0].X= x- 0.5f; verts[0].Y=y+nh- 0.5f; verts[0].Z= 0.0f; verts[0].Rhw=1.0f ;
       verts[0].Color = (int)m_colDiffuse;

@@ -6,6 +6,13 @@ namespace MediaPortal.GUI.Library
 {
 	/// <summary>
 	/// static class which takes care of window management
+	/// Things done are:
+	///   - loading & initizling all windows
+	///   - routing messages, keypresses, mouse clicks etc to the currently active window
+	///   - rendering the currently active window
+	///   - methods for switching to the previous window
+	///   - methods to switch to another window
+	///   
 	/// </summary>
   public class GUIWindowManager
   {
@@ -27,15 +34,16 @@ namespace MediaPortal.GUI.Library
     private GUIWindowManager()
     {
     }
+
     /// <summary>
-    /// Send message to window/control
+    /// Send message to a window/control
     /// </summary>
     /// <param name="message">message to send</param>
     static public void SendMessage(GUIMessage message)
     {
-
+			if (message==null) return;
       if (message.Message==GUIMessage.MessageType.GUI_MSG_LOSTFOCUS||
-        message.Message==GUIMessage.MessageType.GUI_MSG_SETFOCUS)
+          message.Message==GUIMessage.MessageType.GUI_MSG_SETFOCUS)
       {
         for (int x=0; x < m_vecWindows.Count;++x)
         {
@@ -65,7 +73,7 @@ namespace MediaPortal.GUI.Library
 
       GUIWindow pWindow=null;
       GUIWindow activewindow=null;
-      if (m_iActiveWindow >= 0) 
+      if (m_iActiveWindow >= 0 && m_iActiveWindow < m_vecWindows.Count) 
       {
         activewindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
         if (message.SendToTargetWindow==true)
@@ -127,6 +135,8 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// call ResetallControls() for every window
+    /// This will cause each control to use the default
+    /// position, width & size as mentioned in the skin files
     /// </summary>
     static public void ResetAllControls()
     {
@@ -138,7 +148,7 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// called by the runtime when DirectX device has been restored
-    /// Just let current active window know about this
+    /// Just let current active window know about this so they can re-allocate their directx resources
     /// </summary>
     static public void OnDeviceRestored()
     {
@@ -150,7 +160,7 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// Called by the runtime when the DirectX device has been lost
-    /// just let the current active window know about this
+    /// just let all windoww know about this so they can free their directx resources
     /// </summary>
     static public void OnDeviceLost()
     {
@@ -181,7 +191,7 @@ namespace MediaPortal.GUI.Library
         GUIMessage msg;
         GUIWindow pWindow;
         int iPrevActiveWindow=m_iActiveWindow;
-        if (m_iActiveWindow >=0)
+        if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count)
         {
           pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
           msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iWindowID,0,null);
@@ -200,7 +210,7 @@ namespace MediaPortal.GUI.Library
             m_iActiveWindowID=iWindowID;
 
             // Check to see that this window is not our previous window
-            if (iPrevActiveWindow>=0)
+            if (iPrevActiveWindow>=0 && iPrevActiveWindow < m_vecWindows.Count)
             {
               GUIWindow prevWindow=(GUIWindow)m_vecWindows[iPrevActiveWindow];
               if (prevWindow.PreviousWindowID == iWindowID)
@@ -235,7 +245,7 @@ namespace MediaPortal.GUI.Library
         // new window doesnt exists. (maybe .xml file is invalid or doesnt exists)
         // so we go back to the previous window
         m_iActiveWindow=iPrevActiveWindow;
-        if (m_iActiveWindow<0 || m_iActiveWindow>m_vecWindows.Count)
+        if (m_iActiveWindow<0 || m_iActiveWindow>=m_vecWindows.Count)
           m_iActiveWindow=0;
         pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
         m_iActiveWindowID=pWindow.GetID;
@@ -270,18 +280,14 @@ namespace MediaPortal.GUI.Library
         GUIWindow pWindow;
         int iPrevActiveWindow=m_iActiveWindow;
         int iPrevActiveWindowID=0;
-        if (m_iActiveWindow >=0)
+        if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count)
         {
-      
-          if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count)
-          {
-            pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
-            iPrevActiveWindowID = pWindow.PreviousWindowID;
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iPrevActiveWindowID,0,null);
-            pWindow.OnMessage(msg);
-            m_iActiveWindow=-1;
-            m_iActiveWindowID=-1;
-          }
+          pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+          iPrevActiveWindowID = pWindow.PreviousWindowID;
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iPrevActiveWindowID,0,null);
+          pWindow.OnMessage(msg);
+          m_iActiveWindow=-1;
+          m_iActiveWindowID=-1;
         }
 
         // activate the new window
@@ -312,6 +318,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+		/// <summary>
+		/// event handler which is called by GUIGraphicsContext when a new action has occured
+		/// The method will add the action to a list which is processed later on in the process () function
+		/// The reason for this is that multiple threads can add new action and they should only be
+		/// processed by the main thread
+		/// </summary>
+		/// <param name="action">new action</param>
 		static void OnActionReceived(Action action)
 		{
 			if (action!=null)
@@ -319,12 +332,14 @@ namespace MediaPortal.GUI.Library
 		}
 
     /// <summary>
-    /// Called when a new action has been arrived for the window
+    /// This method will handle a given action. Its called by the process() function
     /// The window manager will give the action to the current active window 2 handle
     /// </summary>
     /// <param name="action">new action for current active window</param>
     static public void OnAction(Action action)
     {
+			if (action==null) return;
+			if (action.wID==Action.ActionType.ACTION_INVALID) return;
       if( action.wID == Action.ActionType.ACTION_MOVE_LEFT ||
           action.wID == Action.ActionType.ACTION_MOVE_RIGHT ||
           action.wID == Action.ActionType.ACTION_MOVE_UP ||
@@ -399,6 +414,11 @@ namespace MediaPortal.GUI.Library
     /// It gets called at the end of every rendering cycle 
     /// 
     /// this function will call the PostRender() of every window
+    /// Example of windows using it:
+    /// - music overlay
+    /// - video overlay
+    /// - topbar
+    /// 
     /// </summary>
     static void PostRender()
     {
@@ -421,6 +441,11 @@ namespace MediaPortal.GUI.Library
       GUIPropertyManager.Changed=false;
     }
 
+		/// <summary>
+		/// This method will call the process() method on the currently active window
+		/// This method gets calle on a regular basis and allows the window todo some stuff
+		/// without any user action necessary
+		/// </summary>
     static public void ProcessWindows()
     {
 			try
@@ -504,6 +529,7 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// Restore() will restore all the positions of all controls of all windows
+    /// to their original values as specified in the skin files
     /// </summary>
     static public void Restore()
     {
@@ -600,7 +626,9 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// process the thread messages
+    /// process the thread messages and actions
+    /// This method gets called by the main thread only and ensures that
+    /// all messages & actions are handled by 1 thread only
     /// </summary>
     static public void DispatchThreadMessages()
     {
@@ -637,7 +665,8 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// return whether GUIWindowManager is routing all messages/actions to a dialog or not
+    /// Property which returns true when there is a dialog on screen
+    /// else false
     /// </summary>
     static public bool IsRouted
     {
@@ -648,7 +677,9 @@ namespace MediaPortal.GUI.Library
 			}
     }
     /// <summary>
-    /// return whether ID of the window which is routed to
+    /// return the ID of the window which is routed to
+		/// <returns>-1 when there is no dialog on screen</returns>
+		/// <returns>ID of dialog when there is a dialog on screen</returns>
     /// </summary>
     static public int RoutedWindow
     {
@@ -660,7 +691,8 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// return true if initialized else false
+    /// return true if window managed has been initialized 
+    /// else false
     /// </summary>
     static public bool Initalized
     {
@@ -678,6 +710,13 @@ namespace MediaPortal.GUI.Library
     }
 
 
+		/// <summary>
+		/// This method will show a warning dialog onscreen
+		/// and returns when the user has clicked the dialog away
+		/// </summary>
+		/// <param name="iHeading">label id for the dialog header</param>
+		/// <param name="iLine1">label id for the 1st line in the dialog</param>
+		/// <param name="iLine2">label id for the 2nd line in the dialog</param>
     static public void ShowWarning(int iHeading, int iLine1, int iLine2)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,GUIWindowManager.ActiveWindow,0,0,iHeading,iLine1,null);

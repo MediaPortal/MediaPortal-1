@@ -121,6 +121,8 @@ namespace MediaPortal.Util
 
         public ulong calc(string strline)
         {
+					if (strline==null) return 0;
+					if (strline==String.Empty) return 0;
           using(MemoryStream stream=new MemoryStream())
           {
             using (StreamWriter writer = new StreamWriter(stream))
@@ -138,7 +140,7 @@ namespace MediaPortal.Util
         /// you should use the table functions. Since they use precalculated values, which 
         /// saves some calculating.
         /// </summary>.
-        public ulong crctablefast (byte[] p) 
+        ulong crctablefast (byte[] p) 
         {
             // fast lookup table algorithm without augmented zero bytes, e.g. used in pkzip.
             // only usable with polynom orders of 8, 16, 24 or 32.
@@ -170,7 +172,7 @@ namespace MediaPortal.Util
             return(crc);
         }
 
-        public ulong crctable (byte[] p) 
+        ulong crctable (byte[] p) 
         {
             // normal lookup table algorithm with augmented zero bytes.
             // only usable with polynom orders of 8, 16, 24 or 32.
@@ -218,7 +220,7 @@ namespace MediaPortal.Util
             return(crc);
         }
 
-        public ulong crcbitbybit(byte[] p) 
+        ulong crcbitbybit(byte[] p) 
         {
             // bit by bit algorithm with augmented zero bytes.
             // does not use lookup table, suited for polynom orders between 1...32.
@@ -267,7 +269,7 @@ namespace MediaPortal.Util
             return(crc);
         }
 
-        public ulong crcbitbybitfast(byte[] p) 
+        ulong crcbitbybitfast(byte[] p) 
         {
             // fast bit by bit algorithm without augmented zero bytes.
             // does not use lookup table, suited for polynom orders between 1...32.
@@ -308,7 +310,7 @@ namespace MediaPortal.Util
         /// It is included to demonstrate that although it looks different it is the same 
         /// routine as the crcbitbybit* functions. But it is optimized and preconfigured for CRCITT.
         /// </summary>
-        public ushort CalcCRCITT(byte[] p)
+        ushort CalcCRCITT(byte[] p)
         {
             uint uiCRCITTSum = 0xFFFF;
             uint uiByteValue;

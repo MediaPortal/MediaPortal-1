@@ -10,7 +10,10 @@ using Direct3D=Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Library
 {
-
+	/// <summary>
+	/// This class will draw a placeholder for the current video window
+	/// if no video is playing it will present an empty rectangle
+	/// </summary>
 	public class GUIVideoControl : GUIControl
 	{
 		[XMLSkinElement("textureFocus")]	protected string	m_strImgFocusTexture="";

@@ -3,17 +3,25 @@ using System;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
-	/// Summary description for Class1.
+	/// Class which hold information about a key press
 	/// </summary>
 	public class Key
 	{
 
-    private int      m_iChar=0;
-    private int      m_iCode=0;
+    private int      m_iChar=0;	// character 
+    private int      m_iCode=0;	// character code 
+
+		/// <summary>
+		/// empty constructor
+		/// </summary>
 		public Key()
 		{
 		}
 
+		/// <summary>
+		/// copy constructor
+		/// </summary>
+		/// <param name="key"></param>
     public Key(Key key)
     {
       m_iChar=key.KeyChar;

@@ -36,7 +36,7 @@ namespace MediaPortal.Util
         }
 
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
@@ -100,7 +100,7 @@ namespace MediaPortal.Util
         m_db.Execute(strSQL);
         //Log.Write("table created");
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
@@ -142,6 +142,7 @@ namespace MediaPortal.Util
 
     static void RemoveInvalidChars(ref string strTxt)
     {
+			if (strTxt==null) return;
       string strReturn = "";
       for (int i = 0; i < (int)strTxt.Length; ++i)
       {
@@ -159,6 +160,8 @@ namespace MediaPortal.Util
 
     static int AddPath(string FilteredPath)
     {
+			if (FilteredPath==null) return -1;
+			if (FilteredPath==String.Empty) return -1;
       if (null == m_db) return -1;
       try
       {
@@ -177,7 +180,7 @@ namespace MediaPortal.Util
           return Int32.Parse(Get(results, 0, "idPath"));
         }
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
@@ -185,9 +188,11 @@ namespace MediaPortal.Util
     }
 
     static public void DeleteFolderSetting(string strPath, string Key)
-    {
-      if (strPath == null) return ;
-      if (strPath.Length == 0) return ;
+		{
+			if (strPath==null) return;
+			if (strPath==String.Empty) return;
+			if (Key==null) return;
+			if (Key==String.Empty) return;
       if (null == m_db) return ;
       try
       {
@@ -201,16 +206,19 @@ namespace MediaPortal.Util
         string strSQL = String.Format("delete from setting where idPath={0} and key ='{1}'", PathId, KeyFiltered);
         m_db.Execute(strSQL);
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
     static public void AddFolderSetting(string strPath, string Key, Type type, object Value)
-    {
-      if (strPath == null) return ;
-      if (strPath.Length == 0) return ;
+		{
+			if (strPath==null) return;
+			if (strPath==String.Empty) return;
+			if (Key==null) return;
+			if (Key==String.Empty) return;
+
       if (null == m_db) return ;
       try
       {
@@ -257,8 +265,11 @@ namespace MediaPortal.Util
     static public void GetFolderSetting(string strPath, string Key, Type type, out object Value)
     {
       Value=null;
-      if (strPath == null) return ;
-      if (strPath.Length == 0) return ;
+			if (strPath==null) return;
+			if (strPath==String.Empty) return;
+			if (Key==null) return;
+			if (Key==String.Empty) return;
+
       if (null == m_db) return ;
       try
       {
@@ -300,7 +311,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }

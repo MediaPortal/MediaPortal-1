@@ -3,7 +3,7 @@ using System;
 namespace MediaPortal.TagReader
 {
 	/// <summary>
-	/// 
+	/// Class holding all information about a music file (like an .mp3)
 	/// </summary>
 	public class MusicTag
 	{
@@ -17,11 +17,20 @@ namespace MediaPortal.TagReader
     int    m_iTrack=0;
     int    _TimesPlayed=0;
 		
+		/// <summary>
+		/// empty constructor
+		/// </summary>
     public MusicTag()
 		{
     }
+
+		/// <summary>
+		/// copy constructor
+		/// </summary>
+		/// <param name="tag"></param>
     public MusicTag(MusicTag tag)
     {
+			if (tag==null) return;
       _TimesPlayed=tag._TimesPlayed;
       Artist=tag.Artist;
       Album=tag.Album;
@@ -32,51 +41,100 @@ namespace MediaPortal.TagReader
       Duration=tag.Duration;
       Track=tag.Track;
     }
+		/// <summary>
+		/// Property to get/set the comment field of the music file
+		/// </summary>
     public string Comment
     {
       get { return m_strComment;}
-      set {m_strComment=value.Trim();}
-    }
+      set {
+				if (value==null) return;
+				m_strComment=value.Trim();
+			}
+		}
+		/// <summary>
+		/// Property to get/set the Title field of the music file
+		/// </summary>
     public string Title
     {
       get { return m_strTitle;}
-      set {m_strTitle=value.Trim();}
-    }
+			set 
+			{
+				if (value==null) return;
+				m_strTitle=value.Trim();
+			}
+		}
+		/// <summary>
+		/// Property to get/set the Artist field of the music file
+		/// </summary>
     public string Artist
     {
       get { return m_strArtist;}
-      set {m_strArtist=value.Trim();}
-    }
+			set 
+			{
+				if (value==null) return;
+				m_strArtist=value.Trim();
+			}
+		}
+		/// <summary>
+		/// Property to get/set the comment Album name of the music file
+		/// </summary>
     public string Album
     {
       get { return m_strAlbum;}
-      set {m_strAlbum=value.Trim();}
-    }
+			set 
+			{
+				if (value==null) return;
+				m_strAlbum=value.Trim();
+			}
+		}
+		/// <summary>
+		/// Property to get/set the Genre field of the music file
+		/// </summary>
     public string Genre
     {
       get { return m_strGenre;}
-      set {m_strGenre=value.Trim();}
-    }
+			set 
+			{
+				if (value==null) return;
+				m_strGenre=value.Trim();
+			}
+		}
+		/// <summary>
+		/// Property to get/set the Year field of the music file
+		/// </summary>
     public int Year
     {
       get { return m_iYear;}
       set {m_iYear=value;}
-    }
+		}
+		/// <summary>
+		/// Property to get/set the duration in seconds of the music file
+		/// </summary>
     public int Duration
     {
       get { return m_iDuration;}
       set {m_iDuration=value;}
-    }
+		}
+		/// <summary>
+		/// Property to get/set the Track number field of the music file
+		/// </summary>
     public int Track
     {
       get { return m_iTrack;}
       set {m_iTrack=value;}
-    }
+		}
+		/// <summary>
+		/// Property to get/set the number of times this file has been played
+		/// </summary>
     public int TimesPlayed
     {
       get { return _TimesPlayed;}
       set {_TimesPlayed=value;}
-    }
+		}
+		/// <summary>
+		/// Method to clear the current item
+		/// </summary>
     public void Clear()
     {
       _TimesPlayed=0;

@@ -4,7 +4,9 @@ using System.Collections;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
-	/// Implments a property manager for the GUI lib. Keeps track of the properties of the currently playing item.
+	/// Implments a property manager for the GUI lib. Keeps track of the properties 
+	/// of the currently playing item.
+	/// like playtime, current position, artist,title of the song/video,...
 	/// </summary>
 	public class GUIPropertyManager
 	{
@@ -94,23 +96,32 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Get the Hashtable containting the properties.
+		/// This method will set the value for a given property
 		/// </summary>
+		/// <param name="tag">property name</param>
+		/// <param name="tagvalue">property value</param>
     static public void SetProperty(string tag, string tagvalue)
     {
-      if (tag==null) throw new ArgumentNullException("tag is null");
-      if (tagvalue==null) throw new ArgumentNullException("tagvalue is null");
-      if (tag==String.Empty) throw new ArgumentException("tag is empty");
-      if (tag[0]!='#') throw new ArgumentException("invalid tag ");
+      if (tag==null) return;
+      if (tagvalue==null) return;
+      if (tag==String.Empty) return;
+      if (tag[0]!='#') return;
 
       m_properties[tag] = tagvalue;
     }
+		/// <summary>
+		/// This method returns the value for a given property
+		/// </summary>
+		/// <param name="tag">property name</param>
+		/// <returns>property value</returns>
     static public string GetProperty(string tag)
     {
-      if (tag==null) throw new ArgumentNullException("tag is null");
-      if (tag==String.Empty) throw new ArgumentException("tag is empty");
-      if (tag[0]!='#') throw new ArgumentException("invalid tag ");
-      return (string)m_properties[tag] ;
+      if (tag==null) return String.Empty;
+      if (tag==String.Empty) return String.Empty;
+      if (tag[0]!='#') return String.Empty;
+			if (m_properties.ContainsKey(tag))
+				return (string)m_properties[tag];
+			return String.Empty;
     }
 
 		/// <summary>
