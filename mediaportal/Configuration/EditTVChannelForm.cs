@@ -110,6 +110,12 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label43;
 		private System.Windows.Forms.Label label44;
 		private System.Windows.Forms.Label label45;
+		private System.Windows.Forms.Label label46;
+		private System.Windows.Forms.TextBox tbDVBCPmtPid;
+		private System.Windows.Forms.Label label47;
+		private System.Windows.Forms.TextBox tbDVBTPmtPid;
+		private System.Windows.Forms.Label label48;
+		private System.Windows.Forms.TextBox tbDVBSPmtPid;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -175,9 +181,12 @@ namespace MediaPortal.Configuration
 			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label45 = new System.Windows.Forms.Label();
+			this.label44 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.channelTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.label43 = new System.Windows.Forms.Label();
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -249,9 +258,12 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.label43 = new System.Windows.Forms.Label();
-			this.label44 = new System.Windows.Forms.Label();
-			this.label45 = new System.Windows.Forms.Label();
+			this.tbDVBCPmtPid = new System.Windows.Forms.TextBox();
+			this.label46 = new System.Windows.Forms.Label();
+			this.tbDVBTPmtPid = new System.Windows.Forms.TextBox();
+			this.label47 = new System.Windows.Forms.Label();
+			this.tbDVBSPmtPid = new System.Windows.Forms.TextBox();
+			this.label48 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -347,7 +359,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cancelButton.Location = new System.Drawing.Point(333, 391);
+			this.cancelButton.Location = new System.Drawing.Point(333, 407);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.TabIndex = 3;
 			this.cancelButton.Text = "Cancel";
@@ -357,7 +369,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.okButton.Location = new System.Drawing.Point(253, 391);
+			this.okButton.Location = new System.Drawing.Point(253, 407);
 			this.okButton.Name = "okButton";
 			this.okButton.TabIndex = 2;
 			this.okButton.Text = "OK";
@@ -437,7 +449,7 @@ namespace MediaPortal.Configuration
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(400, 368);
+			this.tabControl1.Size = new System.Drawing.Size(400, 384);
 			this.tabControl1.TabIndex = 4;
 			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
@@ -455,6 +467,25 @@ namespace MediaPortal.Configuration
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+			// 
+			// label45
+			// 
+			this.label45.Location = new System.Drawing.Point(16, 128);
+			this.label45.Name = "label45";
+			this.label45.Size = new System.Drawing.Size(344, 56);
+			this.label45.TabIndex = 12;
+			this.label45.Text = "The channel number tells MediaPortal on which channel this tv channel is transmit" +
+				"ed. This is not the logical channel number you use to zap to this channel!! Norm" +
+				"ally you can find this information on the website of your cable tv provider.  ";
+			// 
+			// label44
+			// 
+			this.label44.Location = new System.Drawing.Point(16, 88);
+			this.label44.Name = "label44";
+			this.label44.Size = new System.Drawing.Size(344, 32);
+			this.label44.TabIndex = 11;
+			this.label44.Text = "Enter the name of this TV Channel. If you\'re using the TVGuide then make sure it " +
+				"matches the channel name from the TVGuide";
 			// 
 			// label3
 			// 
@@ -491,6 +522,14 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Text = "Analog";
 			this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
 			// 
+			// label43
+			// 
+			this.label43.Location = new System.Drawing.Point(24, 120);
+			this.label43.Name = "label43";
+			this.label43.Size = new System.Drawing.Size(344, 72);
+			this.label43.TabIndex = 17;
+			this.label43.Text = @"You can leave the frequency to 0. In this case Mediaportal will use the default frequency for this channel. However if you have channels like 24-- or 63+ then you might need to fill in the correct frequency which you can normally find on the website of you analog cable tv provider";
+			// 
 			// countryComboBox
 			// 
 			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -499,7 +538,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Location = new System.Drawing.Point(128, 80);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
+			this.countryComboBox.Size = new System.Drawing.Size(224, 20);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
 			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
@@ -515,6 +554,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage4
 			// 
+			this.tabPage4.Controls.Add(this.tbDVBCPmtPid);
+			this.tabPage4.Controls.Add(this.label46);
 			this.tabPage4.Controls.Add(this.label41);
 			this.tabPage4.Controls.Add(this.tbDVBCTeletextPid);
 			this.tabPage4.Controls.Add(this.tbDVBCVideoPid);
@@ -767,6 +808,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.tbDVBTPmtPid);
+			this.tabPage3.Controls.Add(this.label47);
 			this.tabPage3.Controls.Add(this.label42);
 			this.tabPage3.Controls.Add(this.tbDVBTTeletextPid);
 			this.tabPage3.Controls.Add(this.tbDVBTVideoPid);
@@ -929,6 +972,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.tbDVBSPmtPid);
+			this.tabPage5.Controls.Add(this.label48);
 			this.tabPage5.Controls.Add(this.label40);
 			this.tabPage5.Controls.Add(this.tbDVBSECMpid);
 			this.tabPage5.Controls.Add(this.label39);
@@ -956,7 +1001,7 @@ namespace MediaPortal.Configuration
 			this.tabPage5.Controls.Add(this.label26);
 			this.tabPage5.Location = new System.Drawing.Point(4, 22);
 			this.tabPage5.Name = "tabPage5";
-			this.tabPage5.Size = new System.Drawing.Size(392, 342);
+			this.tabPage5.Size = new System.Drawing.Size(392, 358);
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "DVB-S";
 			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
@@ -1187,39 +1232,57 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// label43
+			// tbDVBCPmtPid
 			// 
-			this.label43.Location = new System.Drawing.Point(24, 120);
-			this.label43.Name = "label43";
-			this.label43.Size = new System.Drawing.Size(344, 72);
-			this.label43.TabIndex = 17;
-			this.label43.Text = @"You can leave the frequency to 0. In this case Mediaportal will use the default frequency for this channel. However if you have channels like 24-- or 63+ then you might need to fill in the correct frequency which you can normally find on the website of you analog cable tv provider";
+			this.tbDVBCPmtPid.Location = new System.Drawing.Point(160, 312);
+			this.tbDVBCPmtPid.Name = "tbDVBCPmtPid";
+			this.tbDVBCPmtPid.TabIndex = 32;
+			this.tbDVBCPmtPid.Text = "";
 			// 
-			// label44
+			// label46
 			// 
-			this.label44.Location = new System.Drawing.Point(16, 88);
-			this.label44.Name = "label44";
-			this.label44.Size = new System.Drawing.Size(344, 32);
-			this.label44.TabIndex = 11;
-			this.label44.Text = "Enter the name of this TV Channel. If you\'re using the TVGuide then make sure it " +
-				"matches the channel name from the TVGuide";
+			this.label46.Location = new System.Drawing.Point(24, 312);
+			this.label46.Name = "label46";
+			this.label46.Size = new System.Drawing.Size(72, 16);
+			this.label46.TabIndex = 31;
+			this.label46.Text = "PMT pid:";
 			// 
-			// label45
+			// tbDVBTPmtPid
 			// 
-			this.label45.Location = new System.Drawing.Point(16, 128);
-			this.label45.Name = "label45";
-			this.label45.Size = new System.Drawing.Size(344, 56);
-			this.label45.TabIndex = 12;
-			this.label45.Text = "The channel number tells MediaPortal on which channel this tv channel is transmit" +
-				"ed. This is not the logical channel number you use to zap to this channel!! Norm" +
-				"ally you can find this information on the website of your cable tv provider.  ";
+			this.tbDVBTPmtPid.Location = new System.Drawing.Point(152, 264);
+			this.tbDVBTPmtPid.Name = "tbDVBTPmtPid";
+			this.tbDVBTPmtPid.TabIndex = 34;
+			this.tbDVBTPmtPid.Text = "";
+			// 
+			// label47
+			// 
+			this.label47.Location = new System.Drawing.Point(16, 264);
+			this.label47.Name = "label47";
+			this.label47.Size = new System.Drawing.Size(72, 16);
+			this.label47.TabIndex = 33;
+			this.label47.Text = "PMT pid:";
+			// 
+			// tbDVBSPmtPid
+			// 
+			this.tbDVBSPmtPid.Location = new System.Drawing.Point(160, 320);
+			this.tbDVBSPmtPid.Name = "tbDVBSPmtPid";
+			this.tbDVBSPmtPid.TabIndex = 48;
+			this.tbDVBSPmtPid.Text = "";
+			// 
+			// label48
+			// 
+			this.label48.Location = new System.Drawing.Point(24, 320);
+			this.label48.Name = "label48";
+			this.label48.Size = new System.Drawing.Size(72, 16);
+			this.label48.TabIndex = 47;
+			this.label48.Text = "PMT pid:";
 			// 
 			// EditTVChannelForm
 			// 
 			this.AcceptButton = this.okButton;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(416, 422);
+			this.ClientSize = new System.Drawing.Size(416, 438);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
@@ -1507,12 +1570,12 @@ namespace MediaPortal.Configuration
 
 					if (channel.Channel>=0)
 					{
-						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid;
+						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid;
 						string provider;
 						MediaPortal.TV.Recording.DVBSections dvbSections=new MediaPortal.TV.Recording.DVBSections();
 						
 						//DVB-T
-						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid);
+						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
 						label42.Text=dvbSections.GetNetworkProvider(ONID);
 						tbDVBTFreq.Text=freq.ToString();;
 						tbDVBTONID.Text=ONID.ToString();;
@@ -1522,9 +1585,10 @@ namespace MediaPortal.Configuration
 						tbDVBTAudioPid.Text=audioPid.ToString();
 						tbDVBTVideoPid.Text=videoPid.ToString();
 						tbDVBTTeletextPid.Text=teletextPid.ToString();
+						tbDVBTPmtPid.Text=pmtPid.ToString();
 
 						//DVB-C
-						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid);
+						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
 						label41.Text=dvbSections.GetNetworkProvider(ONID);
 						tbDVBCFreq.Text=freq.ToString();;
 						tbDVBCONID.Text=ONID.ToString();;
@@ -1537,6 +1601,7 @@ namespace MediaPortal.Configuration
 						tbDVBCAudioPid.Text=audioPid.ToString();
 						tbDVBCVideoPid.Text=videoPid.ToString();
 						tbDVBCTeletextPid.Text=teletextPid.ToString();
+						tbDVBCPmtPid.Text=pmtPid.ToString();
 
 
 						//DVB-S
@@ -1556,6 +1621,7 @@ namespace MediaPortal.Configuration
 						tbDVBSVideoPid.Text=ch.VideoPid.ToString();
 						tbDVBSTeletextPid.Text=ch.TeletextPid.ToString();
 						tbDVBSECMpid.Text = ch.ECMPid.ToString();
+						tbDVBCPmtPid.Text=ch.PMTPid.ToString();
 
 					}
 				}//if(channel != null)
@@ -1714,7 +1780,7 @@ namespace MediaPortal.Configuration
 			}
 
 			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
-			int audioPid,videoPid,teletextPid;
+			int pmtPid,audioPid,videoPid,teletextPid;
 			string provider;
 			//dvb-T
 			try
@@ -1726,10 +1792,11 @@ namespace MediaPortal.Configuration
 				audioPid=Int32.Parse(tbDVBTAudioPid.Text);
 				videoPid=Int32.Parse(tbDVBTVideoPid.Text);
 				teletextPid=Int32.Parse(tbDVBTTeletextPid.Text);
+				pmtPid=Int32.Parse(tbDVBTPmtPid.Text);
 				provider=tbDVBTProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid);
+					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid);
 				}
 			}
 			catch(Exception){}
@@ -1749,9 +1816,10 @@ namespace MediaPortal.Configuration
 				audioPid=Int32.Parse(tbDVBCAudioPid.Text);
 				videoPid=Int32.Parse(tbDVBCVideoPid.Text);
 				teletextPid=Int32.Parse(tbDVBCTeletextPid.Text);
+				pmtPid=Int32.Parse(tbDVBCPmtPid.Text);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid);
+					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid,pmtPid);
 				}
 			}
 			catch(Exception){}
@@ -1773,6 +1841,7 @@ namespace MediaPortal.Configuration
 				audioPid=Int32.Parse(tbDVBSAudioPid.Text);
 				videoPid=Int32.Parse(tbDVBSVideoPid.Text);
 				teletextPid=Int32.Parse(tbDVBSTeletextPid.Text);
+				pmtPid=Int32.Parse(tbDVBSPmtPid.Text);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
 					ch.ServiceType=1;
@@ -1790,6 +1859,7 @@ namespace MediaPortal.Configuration
 					ch.VideoPid=videoPid;
 					ch.TeletextPid=teletextPid;
 					ch.ECMPid = Int32.Parse(tbDVBSECMpid.Text);
+					ch.PMTPid=pmtPid;
 					TVDatabase.UpdateSatChannel(ch);
 				}
 			}
