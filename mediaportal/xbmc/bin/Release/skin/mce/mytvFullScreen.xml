@@ -212,9 +212,9 @@
 		<fillbgxoff>10</fillbgxoff>
 		<fillbgyoff>10</fillbgyoff>
 		
-		<filltexture1>osd_progress_mid.png</filltexture1>
-		<filltexture2>osd_progress_mid_recorded.png</filltexture2>
-		<filltexture3>osd_progress_mid.png</filltexture3>
+		<filltexture1>osd_progress_mid_red.png</filltexture1>
+		<filltexture2>osd_progress_mid.png</filltexture2>
+		<filltexture3>osd_progress_mid_orange.png</filltexture3>
 		<fillheight>20</fillheight>
 		<visible>yes</visible> 
 		<label>#TV.Record.percent1</label>
