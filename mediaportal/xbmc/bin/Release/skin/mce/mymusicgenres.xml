@@ -56,6 +56,17 @@
 		<control>
 			<description>genre name text label</description>
 			<type>label</type>
+			<id>1</id>
+			<posX>250</posX>
+			<posY>70</posY>
+			<label>135</label>
+			<font>font16</font>
+			<align>right</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>genre name text label</description>
+			<type>label</type>
 			<id>15</id>
 			<posX>260</posX>
 			<posY>50</posY>
