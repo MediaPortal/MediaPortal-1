@@ -196,7 +196,6 @@ namespace MediaPortal.GUI.Library
 
 		void LoadPackedGraphics()
 		{
-			return;
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{
@@ -228,6 +227,17 @@ namespace MediaPortal.GUI.Library
 			bool result=false;
 			using (Image bmp = Image.FromFile(file))
 			{
+				int pos;
+				string skinName=String.Format(@"{0}\media", GUIGraphicsContext.Skin);
+				pos=file.IndexOf(skinName);
+				if (pos>=0)
+				{
+					file=file.Remove(pos,skinName.Length);
+				}
+				if (file.StartsWith(@"\"))
+				{
+					file=file.Remove(0,1);
+				}
 				result=Add(root,bmp,rootImage,file);
 			}
 			return result;
@@ -240,6 +250,11 @@ namespace MediaPortal.GUI.Library
 			TextureNo=-1;
 			tex=null;
 			if (packedTextures==null) return false;
+			
+			if (fileName.StartsWith(@"\"))
+			{
+				fileName=fileName.Remove(0,1);
+			}
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{
