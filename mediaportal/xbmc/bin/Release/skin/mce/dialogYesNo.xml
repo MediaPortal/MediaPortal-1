@@ -56,7 +56,7 @@
 		<description>No button</description> 
 		<type>button</type> 
 		<id>10</id> 
-		<posX>260</posX> 
+		<posX>400</posX> 
 		<posY>350</posY> 
 		<textXOff>38</textXOff>
 		<textYOff>7</textYOff>  
@@ -74,7 +74,7 @@
 		<description>Yes button</description> 
 		<type>button</type> 
 		<id>11</id> 
-		<posX>400</posX> 
+		<posX>260</posX> 
 		<posY>350</posY>
 		<textXOff>34</textXOff>
 		<textYOff>7</textYOff>     
