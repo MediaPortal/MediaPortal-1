@@ -34,6 +34,7 @@ namespace MediaPortal
     private System.Windows.Forms.Control ourRenderTarget;
     // Should we use the default windows
     protected bool isUsingMenus = true;
+    protected Surface rTarget = null;
 
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
@@ -513,7 +514,7 @@ namespace MediaPortal
       {
         // Create the device
         GUIGraphicsContext.DX9Device = new Device(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType, 
-          windowed ? ourRenderTarget : this , createFlags, presentParams);
+          windowed ? ourRenderTarget : this , createFlags| CreateFlags.MultiThreaded, presentParams);
 
         // Cache our local objects
         renderState = GUIGraphicsContext.DX9Device.RenderState;
@@ -773,6 +774,7 @@ namespace MediaPortal
       RETRY:
         try
         {
+          rTarget=null;
           GUIGraphicsContext.DX9Device.Reset(presentParams);
         }
         catch 
@@ -1073,7 +1075,19 @@ namespace MediaPortal
       if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
       if (bDoRender) 
       {
+        if (GUIGraphicsContext.DX9Device!=null && rTarget!=null)
+        {
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0,rTarget);
+        }
+
         Render();
+        if (rTarget==null)
+        {
+          if (GUIGraphicsContext.DX9Device!=null)
+          {
+            rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+          }
+        }
       }
       else System.Threading.Thread.Sleep(10);
 

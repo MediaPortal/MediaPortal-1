@@ -23,6 +23,7 @@ My TV:
   - TV-out through PVR 350
   - Mix Direct3D & video (xbmc-er is working on this)
   - turn timeshifting on/off
+  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
   
   TV OSD:
      - timeshifting info:
@@ -66,6 +67,7 @@ My Music: (int_20h)
   - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
 
 My Video:
+  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - 1st time it takes a long time b4 OSD appears
   - OSD: when submenu is opened, dont use the osd timeout
@@ -81,13 +83,16 @@ Settings:
   - all :-)
 
 new plugins:
+  - topbar plugin
   - RSS feed reader
   - my files  
   - my programs/emulators/games (domifan is working on this)
   - my TV-series
   
+DVD player:
+  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
+  
 General:
-
   - show properties in skin: 
      - tv/recording properties
      
