@@ -1075,6 +1075,7 @@ namespace MediaPortal
       if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
       if (bDoRender) 
       {
+        System.Threading.Thread.Sleep(50);
         if (GUIGraphicsContext.DX9Device!=null && rTarget!=null)
         {
           try
@@ -1103,7 +1104,7 @@ namespace MediaPortal
           }
         }
       }
-      else System.Threading.Thread.Sleep(10);
+      else System.Threading.Thread.Sleep(50);
 
       UpdateStats();
 

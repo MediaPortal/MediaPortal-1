@@ -32,6 +32,7 @@ namespace MediaPortal.TV.Recording
     static bool          m_bPreviewing=false;
     static bool          m_bPreviewChanged=false;
     static bool          m_bStopRecording=false;
+    static bool          m_bAlwaysTimeshift=false;
 
     // singleton. Dont allow any instance of this class
     private Recorder()
@@ -93,7 +94,7 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.Properties["#TV.Record.description"]="";
       GUIPropertyManager.Properties["#TV.Record.thumb"]  ="";
 
-      System.Threading.Thread.Sleep(3000);
+      //System.Threading.Thread.Sleep(3000);
       m_tvcards.Clear();
       
       try
@@ -140,10 +141,12 @@ namespace MediaPortal.TV.Recording
 
       int iPreRecordInterval =0;
       int iPostRecordInterval=0;
+      m_bAlwaysTimeshift=false;
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         iPreRecordInterval =xmlreader.GetValueAsInt("capture","prerecord", 5);
         iPostRecordInterval=xmlreader.GetValueAsInt("capture","postrecord", 5);
+        m_bAlwaysTimeshift =xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
       }
 
       while (m_eState ==State.Running && GUIGraphicsContext.CurrentState!=GUIGraphicsContext.State.STOPPING)
@@ -161,6 +164,7 @@ namespace MediaPortal.TV.Recording
           TimeSpan ts=DateTime.Now-dtTime;
           while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute)
           {
+            PreStartPreview();
             if (m_eState !=State.Running) break;
             if (m_bPreviewChanged) break;
             if (m_bRecordingsChanged) break;
@@ -183,6 +187,7 @@ namespace MediaPortal.TV.Recording
         if (cap.Previewing)
         {
           cap.Previewing=false;
+          cap.StopCapture();
         }
         if (cap.IsRecording)
         {
@@ -213,6 +218,7 @@ namespace MediaPortal.TV.Recording
 			TVUtil tvutil = new TVUtil();
       foreach (TVChannel chan in channels)
       {
+        if (m_bPreviewChanged) return;
         if (chan.Name.Equals(m_strPreviewChannel))
         {
           TVProgram prog=tvutil.GetCurrentProgram(chan.Name);
@@ -248,7 +254,7 @@ namespace MediaPortal.TV.Recording
       foreach (TVChannel chan in channels)
       {
         if (m_eState !=State.Running) break;
-        if (m_bPreviewChanged) break;
+        if (m_bPreviewChanged) return;
         if (m_bRecordingsChanged) break;
         if (m_bStopRecording) break;
         if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
@@ -265,7 +271,7 @@ namespace MediaPortal.TV.Recording
         foreach (TVRecording rec in recordings)
         {
           if (m_eState !=State.Running) break;
-          if (m_bPreviewChanged) break;
+          if (m_bPreviewChanged) return;
           if (m_bRecordingsChanged) break;
           if (m_bStopRecording) break;
           if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
@@ -288,7 +294,7 @@ namespace MediaPortal.TV.Recording
 
       foreach (TVRecording rec in recordings)
       {
-        if (m_bPreviewChanged) break;
+        if (m_bPreviewChanged) return;
         if (m_bRecordingsChanged) break;
         if (m_bStopRecording) break;
         if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
@@ -432,6 +438,7 @@ namespace MediaPortal.TV.Recording
           {
             Log.Write("Recorder: capture card:{0} {1} was previewing. Now use it for recording", dev.ID,dev.VideoDevice);
             dev.Previewing=false;
+            dev.StopCapture();
             
             m_bPreviewing=false;
             
@@ -553,8 +560,40 @@ namespace MediaPortal.TV.Recording
       OnPreviewChannelChanged();
     }
 
+    static void PreStartPreview()
+    {
+      if (!m_bAlwaysTimeshift) return;
+
+      //check if a preview graph is already started
+      bool bGraphStarted=false;
+      foreach (TVCaptureDevice card in m_tvcards)
+      {
+        if (card.PreviewGraph) 
+        {
+          //yes
+          bGraphStarted=true;
+          break;
+        }
+      }
+
+      //no, try 2 start one
+      if (!bGraphStarted)
+      {
+        foreach (TVCaptureDevice card in m_tvcards)
+        {
+          if (card.UseForTV && !card.IsRecording) 
+          {
+            card.StartPreview();
+            break;
+          }
+        }
+      }
+    }
+
     static void HandlePreview()
     {
+      PreStartPreview();
+
       //check if we are already previewing
       if (!m_bPreviewChanged) return;
       m_bPreviewChanged=false;
@@ -564,9 +603,10 @@ namespace MediaPortal.TV.Recording
         // check if we're already previewing
         foreach (TVCaptureDevice dev in m_tvcards)
         {
-          if (dev.Previewing) 
+          if (dev.Previewing || dev.PreviewGraph) 
           {
             //yes then just change channels
+            dev.Previewing=true;
             dev.PreviewChannel=m_strPreviewChannel;
 
             // if that failed
@@ -583,28 +623,25 @@ namespace MediaPortal.TV.Recording
           }
         }
 
-        // find free tuner for previewing
-        Log.Write("Recorder: Start preview, find free tuner");
+        // find a free tuner
         foreach (TVCaptureDevice dev in m_tvcards)
         {
           if (!dev.IsRecording && dev.UseForTV) 
           {
-            // found one. Set it to previewing
-            Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
-            dev.PreviewChannel=m_strPreviewChannel;
+            //yes then just change channels
             dev.Previewing=true;
+            dev.PreviewChannel=m_strPreviewChannel;
+
+            // if that failed
             if (!dev.Previewing) 
             {
-              // failed...still not previewing
-              Log.Write("Recorder: preview failed");
+              //we're not previewing anymore!
               m_bPreviewing=false;
+              OnPreviewStopped();
             }
-            else
-            {
-              // succeeded. We're now previewing
-              Log.Write("Recorder: previewing...");
-              OnPreviewStarted();
-            }
+
+            // else we continue previewing on the new channel
+            OnPreviewChannelChanged();
             return;
           }
         }
@@ -625,6 +662,7 @@ namespace MediaPortal.TV.Recording
           {
             // stop previewing
             dev.Previewing=false;
+            if (!m_bAlwaysTimeshift) dev.StopCapture();
             OnPreviewStopped();
           }
         }
@@ -642,6 +680,7 @@ namespace MediaPortal.TV.Recording
         if (m_bPreviewing!=value)
         {
           if (false==value) Log.Write("Recorder:previewing stop requested");
+          else Log.Write("Recorder:previewing start requested");
           m_bPreviewing=value;
           m_bPreviewChanged=true;
         }
@@ -658,9 +697,12 @@ namespace MediaPortal.TV.Recording
       {
         if (m_strPreviewChannel!=value) 
         {
-          Log.Write("Recorder:switch to channel:{0} requested", value);
           m_strPreviewChannel=value;
-          m_bPreviewChanged=true;
+          if (m_bPreviewing) 
+          {
+            m_bPreviewChanged=true;
+            Log.Write("Recorder:switch to channel:{0} requested", value);
+          }
         }
       }
     }

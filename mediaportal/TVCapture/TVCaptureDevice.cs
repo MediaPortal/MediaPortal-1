@@ -70,6 +70,11 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     int           m_iID=0;
 
+    [NonSerialized]
+    Filters m_filters;
+
+    [NonSerialized]
+    bool m_bPreviewGraph=false;//indicates if the tv preview graph is already build
 
     public Size FrameSize
     {
@@ -83,9 +88,15 @@ namespace MediaPortal.TV.Recording
       set {m_FrameRate=value;}
     }
 
+    public bool PreviewGraph
+    {
+      get { return m_bPreviewGraph;}
+    }
+
 		public TVCaptureDevice()
 		{
 		}
+
 
     public string AudioCompressor
     {
@@ -131,7 +142,10 @@ namespace MediaPortal.TV.Recording
     public int ID
     {
       get { return m_iID;}
-      set {m_iID=value;}
+      set {
+        m_iID=value;
+        m_filters = new Filters();
+      }
     }
 
     void SetBrightnessContrastGamma()
@@ -174,11 +188,11 @@ namespace MediaPortal.TV.Recording
       Log.Write("  CaptureCard:{0} start capture",ID);
       DirectX.Capture.Filter filterVideoDevice=null;
       DirectX.Capture.Filter filterAudioDevice=null;
-      Filters filters=new Filters();
+      
 
       Log.Write("  CaptureCard:{0}   find video capture device:{1}",ID,VideoDevice);
       // find Video capture device
-      foreach (Filter filter in filters.VideoInputDevices)
+      foreach (Filter filter in m_filters.VideoInputDevices)
       {
         if (String.Compare(filter.Name,VideoDevice)==0)
         {
@@ -190,7 +204,7 @@ namespace MediaPortal.TV.Recording
 
       Log.Write("  CaptureCard:{0}   find audio capture device:{1}",ID,AudioDevice);
       // find audio capture device
-      foreach (Filter filter in filters.AudioInputDevices)
+      foreach (Filter filter in m_filters.AudioInputDevices)
       {
         if (String.Compare(filter.Name,AudioDevice)==0)
         {
@@ -214,7 +228,7 @@ namespace MediaPortal.TV.Recording
       {
         // add audio compressor
         Log.Write("  CaptureCard:{0}   find audio compressor:{1}",ID,AudioCompressor);
-        foreach (Filter filter in filters.AudioCompressors)
+        foreach (Filter filter in m_filters.AudioCompressors)
         {
           if (String.Compare(filter.Name,AudioCompressor)==0)
           {
@@ -226,7 +240,7 @@ namespace MediaPortal.TV.Recording
 
         //add Video compressor
         Log.Write("  CaptureCard:{0}   find video compressor:{1}",ID,VideoCompressor);
-        foreach (Filter filter in filters.VideoCompressors)
+        foreach (Filter filter in m_filters.VideoCompressors)
         {
           if (String.Compare(filter.Name,VideoCompressor)==0)
           {
@@ -271,19 +285,9 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void StopCapture()
     {
-      // If we're timeshifting & previewing this capture device, then stop the previewing
-      if (g_Player.Playing && g_Player.IsTV)
-      {
-        string strTmp=String.Format("record{0}.",ID);
-        if ( g_Player.CurrentFile.IndexOf(strTmp)>=0) 
-        {
-          Log.Write("Stop previewing...");
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE,0,0,0,0,null);
-          GUIWindowManager.SendThreadMessage(msg);
-          while (g_Player.Playing && g_Player.IsTV) System.Threading.Thread.Sleep(100);
-          Log.Write("previewing stopped...");
-        }
-      }
+      
+      m_bPreviewGraph=false;
+      StopPreview();
 
       if (capture!=null)
       {
@@ -352,6 +356,8 @@ namespace MediaPortal.TV.Recording
         strTunerType=xmlreader.GetValueAsString("capture","tuner","Antenna");
         iTunerCountry=xmlreader.GetValueAsInt("capture","country",31);
       }
+
+      Log.Write("Set source");
       if (capture.VideoSources!=null)
       {
         // now select the video source
@@ -413,6 +419,7 @@ namespace MediaPortal.TV.Recording
               try
               {
                 capture.VideoSource=source;
+                break;
               }
               catch(Exception)
               {
@@ -485,6 +492,7 @@ namespace MediaPortal.TV.Recording
         }
         else Log.Write("  CaptureCard:{0}   No tuner?",ID);
       }
+      
       try
       {
         capture.FixCrossbarRouting( (iChannelNr<254) );
@@ -494,6 +502,7 @@ namespace MediaPortal.TV.Recording
         Log.Write("  CaptureCard:{0} Failed to set crossbar routing",ID);
         Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
       }
+      Log.Write("done");
     }
 
 
@@ -531,11 +540,13 @@ namespace MediaPortal.TV.Recording
             Log.Write("  CaptureCard:{0} preview channel:{1}={2}",ID, m_strPreviewChannel,iChannel);
             if (Previewing && capture!=null)
             {
+              Log.Write("  CaptureCard:{0} change channel",ID);  
               try
               {
                 SelectChannel(iChannel,true);
                 if (g_Player.IsTV && g_Player.Playing && capture.IsTimeShifting)
                 {
+                  Log.Write("  CaptureCard:{0} seek to 99%",ID);
                   GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE,0,0,0,0,null);
                   msg.Param1=99;
                   GUIWindowManager.SendThreadMessage(msg);
@@ -580,62 +591,129 @@ namespace MediaPortal.TV.Recording
             // and we're not recording
             if (!IsRecording)
             {
-              // then stop capture & thus preview
-              StopCapture();
+              // then stop preview
+              StopPreview();
             }
             return;
           }
         }
         else
         {
+          if (m_bPreview==true) return;// already previewing
+
           // preview should b turned on
           // check if we're not recording
-          if (m_iPreviewChannel>0)
+          if (!IsRecording)
           {
-            if (!IsRecording)
+            if (capture==null) 
             {
-              // check if preview isnt running already
-              if (!m_bPreview || capture==null)
-              {
-                // start preview
-                string strRecPath="";
-                using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-                {
-                  strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-                }
-                string strFileName=String.Format(@"{0}\record{1}.tv",strRecPath, ID);
-                Utils.FileDelete(strFileName);
-                if (StartCapture(strFileName,m_iPreviewChannel))
-                {
-                  // and set video window position
-                  m_bVideoWindowChanged=false;
-                  capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
-                  capture.PreviewWindow=GUIGraphicsContext.form;
-                  m_bPreview=value;
-                  if (capture.IsTimeShifting)
-                  {
-                    Log.Write("Is timeshifting, file:{0}", strFileName);
-                    try
-                    {
-                      // Start the streambuffer player to play the preview
-                      // however since this is another thread, we cannot do that here
-                      // so we send a message to the playlist player 
-                      // which will start playing the file for us
-                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE,0,0,0,0,null);
-                      msg.Label=capture.Filename;
-                      GUIWindowManager.SendThreadMessage(msg);
-
-                    }
-                    catch (Exception) {}
-
-                  }
-                }
-              }
+              StartPreview();
             }
-          }
+
+            if (capture!=null)
+            {
+              string strRecPath="";
+              using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+              {
+                strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+              }
+
+              m_bPreview=value;
+              if (capture.IsTimeShifting)
+              {
+                string strFileName=String.Format(@"{0}\record{1}.tv",strRecPath, ID);
+                try
+                {
+                  // Start the streambuffer player to play the preview
+                  // however since this is another thread, we cannot do that here
+                  // so we send a message to the playlist player 
+                  // which will start playing the file for us
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE,0,0,0,0,null);
+                  msg.Label=capture.Filename;
+                  GUIWindowManager.SendThreadMessage(msg);
+                  
+                  msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE,0,0,0,0,null);
+                  msg.Param1=99;
+                  GUIWindowManager.SendThreadMessage(msg);
+
+                }
+                catch (Exception) {}
+              }
+              else
+              {
+                capture.SetVideoPosition( GUIGraphicsContext.VideoWindow );
+                capture.PreviewWindow=GUIGraphicsContext.form;
+              }
+            }          
+          } // if (m_iPreviewChannel>0)
+        }//end of else
+      }
+    }
+
+    public void StopPreview()
+    {
+      // If we're timeshifting & previewing this capture device, then stop the previewing
+      Log.Write("  CaptureCard:{0} Stop preview",ID);
+      if (g_Player.Playing && g_Player.IsTV)
+      {
+        string strTmp=String.Format("record{0}.",ID);
+        if ( g_Player.CurrentFile.IndexOf(strTmp)>=0) 
+        {
+          Log.Write("  CaptureCard:{0} Stop previewing...",ID);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE,0,0,0,0,null);
+          GUIWindowManager.SendThreadMessage(msg);
+          while (g_Player.Playing && g_Player.IsTV) System.Threading.Thread.Sleep(100);
+          Log.Write("  CaptureCard:{0} previewing stopped...",ID);
+        }
+      }
+
+      if (capture!=null) 
+      {
+        if (!capture.IsTimeShifting)
+        {
+          capture.PreviewWindow=null;
         }
       }
     }
+
+    public void StartPreview()
+    {
+      if (IsRecording) return;
+
+      // check if preview isnt running already
+      if (capture==null)
+      {
+        Log.Write("  CaptureCard:{0} Start preview graph",ID);
+        // start preview
+        string strRecPath="";
+        string m_strChannel;
+        using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        {
+          strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+          m_strChannel=xmlreader.GetValueAsString("mytv","channel","");
+        }
+
+        string strFileName=String.Format(@"{0}\record{1}.tv",strRecPath, ID);
+        Utils.FileDelete(strFileName);
+        if (m_iPreviewChannel==0) 
+        {
+          m_iPreviewChannel=GetChannelNr(m_strChannel);
+          if (m_iPreviewChannel==0) m_iPreviewChannel=28;
+        }
+        if (StartCapture(strFileName,m_iPreviewChannel))
+        {
+          // and set video window position
+          m_bVideoWindowChanged=false;
+          if (capture.IsTimeShifting)
+          {
+            capture.SetVideoPosition( new Rectangle(0,0,1,1) );
+            capture.PreviewWindow=GUIGraphicsContext.form;
+          }
+          m_bPreviewGraph=true;   
+        }
+      }
+    }
+
 
 
     /// <summary>
@@ -882,7 +960,7 @@ namespace MediaPortal.TV.Recording
                 capture.SetVideoPosition( new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
               }
               else
-              {
+              { 
                 Log.Write("  windowed mode");
                 capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
               }

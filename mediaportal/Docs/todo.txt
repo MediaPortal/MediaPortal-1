@@ -14,13 +14,17 @@ Skin, gfx & media:
     artists (for audio) or actors (for video)
 --------------------------------------------------------------------------------------------------------------     
 My Radio:
-  - AM/FM
+  - add folder (containing .pls files)
+  - .pls file support
 
 My TV:
-  - start timeshifting when MP starts and leave it running 
-  - add option to directly show fullscreen TV when going to my tv
+  - option:show live tv in 'tv gfx' on home
+  - option:fade in/out when switching between fullscreen video/tv<->gui
+  - option:start timeshifting when MP starts and leave it running 
+  - option:show live TV as background
+  - option:show fullscreen TV when going to my tv (instead of windowed)
   - speed up my tv (takes 2 long b4 picture is shown)
-  - turn timeshifting on/off
+  - option:turn timeshifting on/off
   - A way to browse and resolve recording conflicts. 
   - support of external tuners (http://www.usbuirt.com/) (xbmc-er is looking at this)
   - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
@@ -88,6 +92,7 @@ new plugins:
   
 DVD player:
   - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
+  - VMR9
   
 General:
   - show properties in skin: 

@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  18-06-2004  my TV       : added : start timeshifting tv when MP starts 
+  18-06-2004  my TV       : fixed : 100%CPU usage
+  
   17-06-2004  my radio    : added : support for external audio players (like http://www.axife.com/)
   17-06-2004  my video    : fixed : movie & dvd player now check if audio renderer specified in setup actually exists
   17-06-2004  topbar      : fixed : topbar was not shown when dialog is presented
