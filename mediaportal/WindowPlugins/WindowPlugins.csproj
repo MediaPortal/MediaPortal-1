@@ -1191,11 +1191,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "home\MyPlugins.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "home\SetupForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -1203,6 +1198,14 @@
                 <File
                     RelPath = "home\SetupForm.resx"
                     DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "home\resources\folder.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "home\resources\node.png"
                     BuildAction = "EmbeddedResource"
                 />
             </Include>

@@ -1,6 +1,10 @@
+#region Usings
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.Diagnostics;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
@@ -9,6 +13,7 @@ using System.Reflection;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
+#endregion
 
 namespace MediaPortal.GUI.Home
 {
@@ -17,6 +22,7 @@ namespace MediaPortal.GUI.Home
 	/// </summary>
 	public class HomeWindow : GUIWindow
 	{
+		#region Private Enumerations
 		enum State
 		{
 			Idle,
@@ -30,6 +36,10 @@ namespace MediaPortal.GUI.Home
 			TemplatePanel=1002,
 			TemplateFontLabel=1003
 		}
+		#endregion
+
+		#region Private Variables
+
 		private int		m_iDateLayout=0; //0=dd-mm-yyyy, 1=mm-dd-yyyy
 		private int		m_iButtons=0;
 		private int		m_iCurrentButton=0;
@@ -37,30 +47,45 @@ namespace MediaPortal.GUI.Home
 		private int   m_iFrame=0;
 		private int   m_iStep=1;
 		private int   m_iTimes=1;
-    private State m_keepState=State.Idle;
+		private State m_keepState=State.Idle;
 		private int   m_iVisibleItems=0;
 		private int   m_iOffset=0;
 		private int   m_iOffset1=0;
 		private int   m_iOffset2=0;
 		private int   m_iMiddle=0;
 		const int			MAX_FRAMES=9;
-    bool          m_bTopBar=false;
-		int[]         m_iButtonIds = new int[50];
-    DateTime      m_updateTimer=DateTime.MinValue;
-    int           m_iMaxHeight;    
-    int           m_iMaxWidth ;    
-    int           m_iStartXoff;    
-    int           m_iStartYoff;    
-    int           m_iButtonHeight; 
-    bool          m_bAllowScroll=true;
-    Viewport      m_newviewport = new Viewport();
-    Viewport      m_oldviewport;
-    bool          m_bSkipFirstMouseMove=true;
+		bool          m_bTopBar=false;
+		bool					fixedScroll=false;
+		int[]         m_iButtonIds = new int[60];  
+		DateTime      m_updateTimer=DateTime.MinValue;
+		int           m_iMaxHeight;    
+		int           m_iMaxWidth ;    
+		int           m_iStartXoff;    
+		int           m_iStartYoff;    
+		int           m_iButtonHeight; 
+		int[]					myPlugins = {0,0,0,0,0,0,0,0,0,0};
+		int						myPluginsCount;
+		int						subMenu=0;
+		bool          m_bAllowScroll=true;
+		bool					useMyPlugins=true;
+		bool					useMenus=false;
+		bool					inMyPlugins=false;
+		bool					inSubMenu=false;
+		bool					inSecondMenu=false;
+		bool					noScrollSubs=false;
+		Viewport      m_newviewport = new Viewport();
+		Viewport      m_oldviewport;
+		bool          m_bSkipFirstMouseMove=true;
+		TreeView			treeView = new TreeView();
+		string				selectedButton="";
+		string				subButton="";
+	
+		//Tracking controls by id
+		System.Collections.ArrayList m_aryPreControlList = new ArrayList();
+		System.Collections.ArrayList m_aryPostControlList = new ArrayList();	
+		#endregion
 
-	//Tracking controls by id
-	System.Collections.ArrayList m_aryPreControlList = new ArrayList();
-	System.Collections.ArrayList m_aryPostControlList = new ArrayList();	
-		
+		#region Constructor
 		/// <summary>
 		/// Constructs the home window and set its ID.
 		/// </summary>
@@ -68,7 +93,9 @@ namespace MediaPortal.GUI.Home
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_HOME;
 		}
+		#endregion
 
+		#region Overrides		
 		/// <summary>
 		/// Initialization of the home window based on the home.xml skin.
 		/// </summary>
@@ -84,29 +111,45 @@ namespace MediaPortal.GUI.Home
 		/// </summary>
 		protected override void OnWindowLoaded()
 		{
-
 			base.OnWindowLoaded();
+
+			using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				m_iDateLayout = xmlreader.GetValueAsInt("home","datelayout",0);   
+				m_bAllowScroll= xmlreader.GetValueAsBool("home","scroll",true);
+				fixedScroll= xmlreader.GetValueAsBool("home","scrollfixed",false);		// fix scrollbar in the middle of menu
+				useMenus=xmlreader.GetValueAsBool("home","usemenus",false);						// use new menu handling
+				useMyPlugins=xmlreader.GetValueAsBool("home","usemyplugins",true);		// use previous menu handling
+				noScrollSubs=xmlreader.GetValueAsBool("home","noScrollsubs",true);	
+			}
+			if (useMenus==true) 
+			{
+				loadTree(treeView, Application.StartupPath + @"\menu.bin");						// if new menu handling load menutree
+			}
+			
 			m_iButtons=0;
 			// add buttons for dynamic plugins
-      ArrayList plugins=PluginManager.SetupForms;
-      ProcessPlugins(ref plugins);
+			ArrayList plugins=PluginManager.SetupForms;
 			ProcessPlugins(ref plugins);
-			ProcessPlugins(ref plugins);
-      plugins=null;
+			if (m_iButtons>0)																											
+			{
+				while (m_iButtons<10)
+					ProcessPlugins(ref plugins);
+			}
+			plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			LayoutButtons(0);
 			GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
 			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
-
-      GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 		}
 		
-    private void OnGlobalMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head="",Line1="",Line2="",Line3="";;
+		private void OnGlobalMessage(GUIMessage message)
+		{
+			switch (message.Message)
+			{
+				case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
+					string Head="",Line1="",Line2="",Line3="";;
 					if (message.Param1!=0) Head=GUILocalizeStrings.Get(message.Param1);
 					else if (message.Label!=String.Empty) Head=message.Label;
 					if (message.Param2!=0) Line1=GUILocalizeStrings.Get(message.Param2);
@@ -115,190 +158,290 @@ namespace MediaPortal.GUI.Home
 					else if (message.Label3!=String.Empty) Line2=message.Label3;
 					if (message.Param4!=0) Line3=GUILocalizeStrings.Get(message.Param4);
 					else if (message.Label4!=String.Empty) Line3=message.Label4;
-          if ( AskYesNo(Head,Line1,Line2,Line3))
-            message.Param1=1;
-          else
-            message.Param1=0;
-          break;
+					if ( AskYesNo(Head,Line1,Line2,Line3))
+						message.Param1=1;
+					else
+						message.Param1=0;
+					break;
 
-        case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
-        {
-          string strHead="",strLine1="",strLine2="";
-          if (message.Param1!=0) strHead=GUILocalizeStrings.Get(message.Param1);
+				case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
+				{
+					string strHead="",strLine1="",strLine2="";
+					if (message.Param1!=0) strHead=GUILocalizeStrings.Get(message.Param1);
 					else if (message.Label!=String.Empty) strHead=message.Label;
 					if (message.Param2!=0) strLine1=GUILocalizeStrings.Get(message.Param2);
 					else if (message.Label2!=String.Empty) strLine2=message.Label2;
-          if (message.Param3!=0) strLine2=GUILocalizeStrings.Get(message.Param3);
+					if (message.Param3!=0) strLine2=GUILocalizeStrings.Get(message.Param3);
 					else if (message.Label3!=String.Empty) strLine2=message.Label3;
-          ShowInfo(strHead,strLine1,strLine2);
-        }
-          break;
+					ShowInfo(strHead,strLine1,strLine2);
+				}
+					break;
 
-        case GUIMessage.MessageType.GUI_MSG_GET_STRING : 
-          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-          if (null == keyboard) return;
-          keyboard.Reset();
-          keyboard.Text = message.Label;
-          keyboard.DoModal(GUIWindowManager.ActiveWindow);
-          if (keyboard.IsConfirmed)
-          {
-            message.Label = keyboard.Text;
-          }
-          else message.Label = "";
-          break;
+				case GUIMessage.MessageType.GUI_MSG_GET_STRING : 
+					VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+					if (null == keyboard) return;
+					keyboard.Reset();
+					keyboard.Text = message.Label;
+					keyboard.DoModal(GUIWindowManager.ActiveWindow);
+					if (keyboard.IsConfirmed)
+					{
+						message.Label = keyboard.Text;
+					}
+					else message.Label = "";
+					break;
 
-        case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD: 
-          VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-          if (null == keyboard2) return;
-          keyboard2.Reset();
-          keyboard2.Password=true;
-          keyboard2.Text = message.Label;
-          keyboard2.DoModal(GUIWindowManager.ActiveWindow);
-          if (keyboard2.IsConfirmed)
-          {
-            message.Label = keyboard2.Text;
-          }
-          else message.Label = "";
-          break;
-      }
-    }
-    void ShowInfo(string strHeading, string strLine1, string strLine2)
-    {
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
-      pDlgOK.SetHeading(strHeading);
-      pDlgOK.SetLine(1,strLine1);
-      pDlgOK.SetLine(2,strLine2);
-      pDlgOK.SetLine(3,"");
-      pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
+				case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD: 
+					VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+					if (null == keyboard2) return;
+					keyboard2.Reset();
+					keyboard2.Password=true;
+					keyboard2.Text = message.Label;
+					keyboard2.DoModal(GUIWindowManager.ActiveWindow);
+					if (keyboard2.IsConfirmed)
+					{
+						message.Label = keyboard2.Text;
+					}
+					else message.Label = "";
+					break;
+			}
+		}
+		void ShowInfo(string strHeading, string strLine1, string strLine2)
+		{
+			GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
+			pDlgOK.SetHeading(strHeading);
+			pDlgOK.SetLine(1,strLine1);
+			pDlgOK.SetLine(2,strLine2);
+			pDlgOK.SetLine(3,"");
+			pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
+		}
 
-    }
+		bool AskYesNo(string strHeading, string strLine1, string strLine2,string strLine3)
+		{
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			dlgYesNo.SetHeading(strHeading);
+			dlgYesNo.SetLine(1,strLine1);
+			dlgYesNo.SetLine(2,strLine2);
+			dlgYesNo.SetLine(3,strLine3);
+			dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
+			return dlgYesNo.IsConfirmed;
+		}
 
-    bool AskYesNo(string strHeading, string strLine1, string strLine2,string strLine3)
-    {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      dlgYesNo.SetHeading(strHeading);
-      dlgYesNo.SetLine(1,strLine1);
-      dlgYesNo.SetLine(2,strLine2);
-      dlgYesNo.SetLine(3,strLine3);
-      dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
-      return dlgYesNo.IsConfirmed;
-
-    }
 		public override void OnAction(Action action)
 		{
-			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
+			{
+				if(useMyPlugins==true && inMyPlugins==true)   // if frodo´s menu style used set menu to MyPlugins entrys
+				{	
+					for (int i=102; i < 160; i++)
+					{
+						GUIControl.HideControl(GetID, i);
+					}
+					m_iButtons=0;
+					inMyPlugins=false;
+					for (int iButt=2; iButt < 60; iButt++)
+					{
+						m_iButtonIds[iButt]=0;
+						GUIControl bCntl = GetControl(iButt) as GUIControl;
+						if (bCntl!=null) 
+						{
+							Remove(iButt);
+						}
+					}
+					for (int iButt=102; iButt < 160; iButt++)
+					{
+						GUIControl bCntl = GetControl(iButt) as GUIControl;
+						if (bCntl!=null) 
+						{
+							Remove(iButt);
+						}
+					}
+					ResetButtons();
+					ArrayList plugins=PluginManager.SetupForms;
+					ProcessPlugins(ref plugins);
+					if (m_iButtons>0)
+					{
+						while (m_iButtons<10)
+							ProcessPlugins(ref plugins);
+					}
+					plugins=null;
+					m_iCurrentButton=m_iButtons/2;
+					LayoutButtons(0);
+				}
+
+				if(useMenus==true && inSubMenu==true) // if gucky´s menu style handling load sub menu tree
+				{	
+					if(inSecondMenu==true) 
+					{
+						inSecondMenu=false;
+						selectedButton=subButton;
+					} 
+					else 
+					{
+						inSubMenu=false;
+						inMyPlugins=false;
+					}
+					for (int i=102; i < 160; i++)
+					{
+						GUIControl.HideControl(GetID, i);
+					}
+					m_iButtons=0;
+					for (int iButt=2; iButt < 60; iButt++)
+					{
+						m_iButtonIds[iButt]=0;
+						GUIControl bCntl = GetControl(iButt) as GUIControl;
+						if (bCntl!=null) 
+						{
+							Remove(iButt);
+						}
+					}
+					for (int iButt=102; iButt < 160; iButt++)
+					{
+						GUIControl bCntl = GetControl(iButt) as GUIControl;
+						if (bCntl!=null) 
+						{
+							Remove(iButt);
+						}
+					}
+					ResetButtons();
+					ArrayList plugins=PluginManager.SetupForms;
+					ProcessPlugins(ref plugins);
+					if (m_iButtons>0)
+					{
+						while (m_iButtons<10)
+							ProcessPlugins(ref plugins);
+					}
+					plugins=null;
+					m_iCurrentButton=m_iButtons/2;
+					VerifyButtonIndex(ref m_iCurrentButton);
+					LayoutButtons(0);
+					if (m_iOffset!=0)
+					{
+						FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+					}
+					else
+					{
+						int buttonIndex = m_iCurrentButton;
+						VerifyButtonIndex(ref buttonIndex);
+						FocusControl(GetID, buttonIndex + 2);
+					}
+				}
+				return;
+			}
+			/*	// mouse moved, check which control has the focus
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
 			{
 				GUIWindowManager.PreviousWindow();
 				return;
+			}*/
+			if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE )
+			{
+				if (m_bSkipFirstMouseMove) 
+				{
+					m_bSkipFirstMouseMove=false;
+					return;
+				}
+				int x=(int)action.fAmount1;
+				int y=(int)action.fAmount2;
+				if (x < m_iStartXoff  || x > m_iStartXoff+m_iMaxWidth)
+				{
+					m_bTopBar=true;
+					return;
+				}
+				if (y < m_iStartYoff  || y > m_iStartYoff+m_iMaxHeight)
+				{
+					GUIControl cntl=GetControl(base.GetFocusControlId());
+					if (cntl!=null) cntl.Focus=false;
+					m_bTopBar=true;
+					return;
+				}
+				if (m_bTopBar)
+				{
+					GUIControl cntl=GetControl(base.GetFocusControlId());
+					if (cntl!=null) cntl.Focus=false;
+					m_bTopBar=false;
+				}
+
+				if (m_bAllowScroll)
+				{
+					int iMid=(m_iMaxHeight/2) - ((m_iButtonHeight)/2);
+					iMid += m_iStartYoff;
+
+					if (x >=m_iStartXoff && x <= m_iStartXoff+m_iMaxWidth)
+					{
+						bool bOK=false;
+						if (y >= m_iStartYoff && y <= m_iStartYoff+m_iButtonHeight) bOK=true;
+						if (y >= m_iStartYoff+m_iMaxHeight-m_iButtonHeight && y <= m_iStartYoff+m_iMaxHeight) bOK=true;
+						if (bOK)
+						{
+							int iOff=y-iMid;
+							if (iOff<0) 
+							{
+								m_keepState=State.ScrollUp;
+								m_eState=m_keepState;
+							}
+							else 
+							{
+								m_keepState=State.ScrollDown;
+								m_eState=m_keepState;
+							}
+							return;
+						}
+						else 
+						{
+							m_keepState=State.Idle;
+							if (fixedScroll==false) 
+							{
+								if (y >= m_iStartYoff && y <= m_iStartYoff+m_iMaxHeight) 
+								{
+									for (int i=0; i < m_iVisibleItems;++i)
+									{
+										GUIButtonControl button = GetControl( m_iButtonIds[i]) as GUIButtonControl;
+										if (y >=button.YPosition && y <= button.YPosition+button.Height)
+										{
+											m_iOffset=i-m_iMiddle;
+											//Trace.WriteLine(String.Format("offset:{0}", m_iOffset));
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+					else 
+					{
+						// calculate offset
+						m_keepState=State.Idle;
+					}
+				}
 			}
 
-      // mouse moved, check which control has the focus
-      if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE )
-      {
-        if (m_bSkipFirstMouseMove) 
-        {
-          m_bSkipFirstMouseMove=false;
-          return;
-        }
-        int x=(int)action.fAmount1;
-        int y=(int)action.fAmount2;
-        if (x < m_iStartXoff  || x > m_iStartXoff+m_iMaxWidth)
-        {
-          m_bTopBar=true;
-          return;
-        }
-        if (y < m_iStartYoff  || y > m_iStartYoff+m_iMaxHeight)
-        {
-          GUIControl cntl=GetControl(base.GetFocusControlId());
-          if (cntl!=null) cntl.Focus=false;
-          m_bTopBar=true;
-          return;
-        }
-        if (m_bTopBar)
-        {
-          GUIControl cntl=GetControl(base.GetFocusControlId());
-          if (cntl!=null) cntl.Focus=false;
-          m_bTopBar=false;
-        }
-
-        if (m_bAllowScroll)
-        {
-          int iMid=(m_iMaxHeight/2) - ((m_iButtonHeight)/2);
-          iMid += m_iStartYoff;
-
-          if (x >=m_iStartXoff && x <= m_iStartXoff+m_iMaxWidth)
-          {
-            bool bOK=false;
-            if (y >= m_iStartYoff && y <= m_iStartYoff+m_iButtonHeight) bOK=true;
-            if (y >= m_iStartYoff+m_iMaxHeight-m_iButtonHeight && y <= m_iStartYoff+m_iMaxHeight) bOK=true;
-            if (bOK)
-            {
-              int iOff=y-iMid;
-              if (iOff<0) 
-              {
-                m_keepState=State.ScrollUp;
-                m_eState=m_keepState;
-              }
-              else 
-              {
-                m_keepState=State.ScrollDown;
-                m_eState=m_keepState;
-              }
-              return;
-            }
-            else 
-            {
-              m_keepState=State.Idle;
-              if (y >= m_iStartYoff && y <= m_iStartYoff+m_iMaxHeight) 
-              {
-                for (int i=0; i < m_iVisibleItems;++i)
-                {
-                  GUIButtonControl button = GetControl( m_iButtonIds[i]) as GUIButtonControl;
-                  if (y >=button.YPosition && y <= button.YPosition+button.Height)
-                  {
-                    m_iOffset=i-m_iMiddle;
-                    //Trace.WriteLine(String.Format("offset:{0}", m_iOffset));
-                    break;
-                  }
-                }
-              }
-            }
-          }
-          else 
-          {
-            // calculate offset
-            m_keepState=State.Idle;
-  					
-          }
-        }
-      }
-
-      if (action.wID==Action.ActionType.ACTION_MOVE_LEFT||action.wID==Action.ActionType.ACTION_MOVE_RIGHT)
-      {
-        //FOCUS TOPBAR
-        action.wID=Action.ActionType.ACTION_MOVE_UP;
-        m_bTopBar=true;
-        GUIControl cntl=GetControl(base.GetFocusControlId());
-        if (cntl!=null) cntl.Focus=false;
-        return;
-      }
+			if (action.wID==Action.ActionType.ACTION_MOVE_LEFT||action.wID==Action.ActionType.ACTION_MOVE_RIGHT)
+			{
+				//FOCUS TOPBAR
+				action.wID=Action.ActionType.ACTION_MOVE_UP;
+				m_bTopBar=true;
+				GUIControl cntl=GetControl(base.GetFocusControlId());
+				if (cntl!=null) cntl.Focus=false;
+				return;
+			}
 
 			if (action.wID==Action.ActionType.ACTION_MOVE_DOWN)
 			{	
-        if (m_bTopBar)
-        {
-          m_bTopBar=false;
-          FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
-          return;
-        }
+				if (m_bTopBar)
+				{
+					m_bTopBar=false;
+					FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+					return;
+				}
 				if (m_eState!=State.Idle)
 				{
 					if (m_iStep+1 <MAX_FRAMES) m_iStep++;
 					if (m_iTimes<4) m_iTimes++;
 					return;
 				}
-				
-				if (m_iOffset+m_iMiddle+3< m_iVisibleItems)
+				int off=3;
+				if (fixedScroll) off=5;
+				if (m_iOffset+m_iMiddle+off< m_iVisibleItems)
 				{
 					m_iOffset++;
 					
@@ -307,31 +450,33 @@ namespace MediaPortal.GUI.Home
 					FocusControl(GetID, iID);
 					return;
 				}
-        if (m_bAllowScroll)
-        {
-          m_iTimes=1;
-          m_iStep=1;
-          m_iFrame=0;
-          m_eState=State.ScrollDown;
-        }
+				if (m_bAllowScroll)
+				{
+					m_iTimes=1;
+					m_iStep=1;
+					m_iFrame=0;
+					m_eState=State.ScrollDown;
+				}
 				return;
 			}
 
 			if (action.wID==Action.ActionType.ACTION_MOVE_UP)
-      {
-        if (m_bTopBar)
-        {
-          m_bTopBar=false;
-          FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
-          return;
-        }
+			{
+				if (m_bTopBar)
+				{
+					m_bTopBar=false;
+					FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+					return;
+				}
 				if (m_eState!=State.Idle)
 				{
 					if (m_iStep+1 <MAX_FRAMES) m_iStep++;
 					if (m_iTimes<4) m_iTimes++;
 					return;
 				}
-				if (m_iOffset+m_iMiddle-1>1)
+				int off=1;
+				if (fixedScroll) off=3;
+				if (m_iOffset+m_iMiddle-off>1)
 				{
 					m_iOffset--;
 					int iID=GetFocusControlId()-1;
@@ -340,13 +485,13 @@ namespace MediaPortal.GUI.Home
 					return;
 				}
         
-        if (m_bAllowScroll)
-        {
-          m_iTimes=1;
-          m_iStep=1;
-          m_iFrame=0;
-          m_eState=State.ScrollUp;
-        } 
+				if (m_bAllowScroll)
+				{
+					m_iTimes=1;
+					m_iStep=1;
+					m_iFrame=0;
+					m_eState=State.ScrollUp;
+				} 
 				return;
 			}
 			base.OnAction (action);
@@ -361,30 +506,13 @@ namespace MediaPortal.GUI.Home
 		{
 			switch ( message.Message )
 			{
-				// Initialization of the window
+					// Initialization of the window
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
-
-          m_aryPreControlList.Clear();
-          m_aryPostControlList.Clear();
-					m_iMaxHeight    = GetControl( (int)Controls.TemplatePanel).Height;
-					m_iMaxWidth     = GetControl( (int)Controls.TemplatePanel).Width;
-					m_iStartXoff    = GetControl( (int)Controls.TemplatePanel).XPosition;
-					m_iStartYoff    = GetControl( (int)Controls.TemplatePanel).YPosition;
-					m_iButtonHeight = GetControl( (int)Controls.TemplateButton).Height;
-
-					m_bTopBar=false;
-					// make controls 101-120 invisible... (these are the subpictures shown for each button)
-					for (int iControl=102; iControl < 160; iControl++)
-					{
-						GUIControl.HideControl(GetID, iControl);
-					}
-
+					ResetButtons();
 					VerifyButtonIndex(ref m_iCurrentButton);
-					
 					LayoutButtons(0);
-
 					if (m_iOffset!=0)
 					{
 						FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
@@ -404,17 +532,12 @@ namespace MediaPortal.GUI.Home
 						FocusControl(GetID, buttonIndex + 2);
 					}
 
-					using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						m_iDateLayout = xmlreader.GetValueAsInt("home","datelayout",0);
-            m_bAllowScroll= xmlreader.GetValueAsBool("home","scroll",true);
-					}
-          m_bSkipFirstMouseMove=true;
+					m_bSkipFirstMouseMove=true;
 					return true;
 				}
 				
-				// Sets the focus for the controls that are on the window.
-				// if the focus changed, then show the correct sub-picture
+					// Sets the focus for the controls that are on the window.
+					// if the focus changed, then show the correct sub-picture
 				case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
 				{
 					int iControl=message.TargetControlId;
@@ -426,15 +549,149 @@ namespace MediaPortal.GUI.Home
 							GUIControl.HideControl(GetID, i);
 						}
 
-			            // and only show the picture belonging to the button which has the focus
+						// and only show the picture belonging to the button which has the focus
 						GUIControl.ShowControl(GetID, iControl+100);
 					}
 				}
-				break;
+					break;
+				case GUIMessage.MessageType.GUI_MSG_CLICKED:  // Handle Menu tags
+					//get sender control
+					base.OnMessage(message);
+					int bControl=message.SenderControlId;
+					if (bControl>1 && bControl<60)
+					{
+						GUIControl cntl = GetControl(bControl) as GUIControl;
+						if (cntl!=null) 
+						{ // Call SubMenu		
+							if(useMyPlugins==true) 
+							{	
+								bool isplugin=false;
+								for(int i=0;i<myPluginsCount;i++) {
+									if(bControl==myPlugins[i])
+									{ 
+										isplugin=true;
+									}
+								}
+								if(isplugin==true)
+								{
+									for (int i=102; i < 160; i++)
+									{
+										GUIControl.HideControl(GetID, i);
+									}
+									m_iButtons=0;
+									inMyPlugins=true;
+									for (int iButt=2; iButt < 60; iButt++)
+									{
+										m_iButtonIds[iButt]=0;
+										GUIControl bCntl = GetControl(iButt) as GUIControl;
+										if (bCntl!=null) 
+										{
+											Remove(iButt);
+										}
+									}
+									for (int iButt=102; iButt < 160; iButt++)
+									{
+										GUIControl bCntl = GetControl(iButt) as GUIControl;
+										if (bCntl!=null) 
+										{
+											Remove(iButt);
+										}
+									}
+									ResetButtons();
+									ArrayList plugins=PluginManager.SetupForms;
+									ProcessPlugins(ref plugins);
+									if (m_iButtons>0)
+									{
+										while (m_iButtons<10)
+											ProcessPlugins(ref plugins);
+									}
+									plugins=null;
+									m_iCurrentButton=m_iButtons/2;
+									LayoutButtons(0);
+								}
+							}
+							if (useMenus==true) // Call submenu new gucky style
+							{
+								if (inSecondMenu==true) 
+								{
+									break;
+								}
+								if (inSubMenu==true) 
+								{
+									inSecondMenu=true;
+								} 
+								else 
+								{
+									inSubMenu=true;
+								}
+								GUIButtonControl cButt = GetControl(bControl) as GUIButtonControl;
+								selectedButton=cButt.Label;
+								for (int i=102; i < 160; i++)
+								{
+									GUIControl.HideControl(GetID, i);
+								}
+								m_iButtons=0;
+								for (int iButt=2; iButt < 60; iButt++)
+								{
+									m_iButtonIds[iButt]=0;
+									GUIControl bCntl = GetControl(iButt) as GUIControl;
+									if (bCntl!=null) 
+									{
+										Remove(iButt);
+									}
+								}
+								for (int iButt=102; iButt < 160; iButt++)
+								{
+									GUIControl bCntl = GetControl(iButt) as GUIControl;
+									if (bCntl!=null) 
+									{
+										Remove(iButt);
+									}
+								}
+								ResetButtons();
+								ArrayList plugins=PluginManager.SetupForms;
+								ProcessPlugins(ref plugins);
+								if (m_iButtons>0)
+								{
+									while (m_iButtons<10)
+										ProcessPlugins(ref plugins);
+								}
+								plugins=null;
+								m_iCurrentButton=m_iButtons/2;
+								for (int i=102; i < 160; i++)
+								{
+									GUIControl.HideControl(GetID, i);
+								}
+								VerifyButtonIndex(ref m_iCurrentButton);
+								LayoutButtons(0);
+								if (m_iOffset!=0)
+								{
+									FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+								}
+								else
+								{
+									int buttonIndex = m_iCurrentButton;
 
+									//
+									// Verify the button index
+									//
+									VerifyButtonIndex(ref buttonIndex);
+						
+									//
+									// Focus the currently selected control
+									//
+									FocusControl(GetID, buttonIndex + 2);
+								}
+							}
+						}
+					}
+					break;
 			}
 			return base.OnMessage(message);
 		}
+		#endregion
+
+		#region Private Methods
 
 		/// <summary>
 		/// Makes sure that the button index lies within acceptable values.
@@ -506,10 +763,12 @@ namespace MediaPortal.GUI.Home
       {
         ((GUIControl)enumControls.Current).Render();  
       }
+			int x1=m_iStartXoff+GUIGraphicsContext.OffsetX;
+			int y1=m_iStartYoff+GUIGraphicsContext.OffsetY;
 
 			m_oldviewport=GUIGraphicsContext.DX9Device.Viewport;
-			m_newviewport.X      = m_iStartXoff+GUIGraphicsContext.OffsetX;
-			m_newviewport.Y      = m_iStartYoff+GUIGraphicsContext.OffsetY;
+			m_newviewport.X      = (int)x1;
+			m_newviewport.Y			 = (int)y1;
 			m_newviewport.Width  = (int)(m_iMaxWidth);
 			m_newviewport.Height = (int)(m_iMaxHeight);
 			m_newviewport.MinZ   = 0.0f;
@@ -530,73 +789,216 @@ namespace MediaPortal.GUI.Home
       while (enumControls.MoveNext())
       {
         GUIControl cntl=((GUIControl)enumControls.Current);
-        if (cntl.YPosition >= m_iStartYoff && cntl.YPosition < (m_iStartYoff+m_iMaxHeight))
-        {
+				if (cntl.YPosition>=y1 && cntl.YPosition <y1+m_iMaxHeight)
+				{
           cntl.Render();
         }
       }
 			GUIGraphicsContext.DX9Device.Viewport=m_oldviewport;
-
 		}
 
-
+		//-----------------------------------------------------------------------------------------------
     void ProcessPlugins(ref ArrayList plugins)
     {
-      foreach (ISetupForm setup in plugins)
-      {
-        using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-        {
-          bool bHomeDefault=setup.DefaultEnabled();
-          bool inhome=xmlreader.GetValueAsBool("home", setup.PluginName(), bHomeDefault);
-          if (!inhome) continue;
-        }
-        Trace.WriteLine(String.Format("plugin:{0}",setup.PluginName()) );
-        string strButtonText;
-        string strButtonImage;
-        string strButtonImageFocus;
-        string strPictureImage;
-        if (setup.GetHome(out strButtonText,out strButtonImage,out strButtonImageFocus, out strPictureImage))
-        {
-          string strPluginName=setup.PluginName();
-          string strBtnFile;
-          if (strButtonImage=="")
-          {
-            strButtonImage=String.Format("buttonnf_{0}.png", strPluginName);
-            strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strButtonImage);
-            if (!System.IO.File.Exists(strBtnFile))
-            {
-              strButtonImage="";
-            }
-          }
-													
-          if (strButtonImageFocus=="")
-          {
-            strButtonImageFocus=String.Format("button_{0}.png", strPluginName);
-            strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strButtonImageFocus);
-            if (!System.IO.File.Exists(strBtnFile))
-            {
-              strButtonImageFocus="";
-            }
-          }
+			string tnText="";
+			int mainnodes=treeView.Nodes.Count;
 
-          if (strPictureImage=="")
-          {
-            strPictureImage=String.Format("hover_{0}.png", strPluginName);
-            strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strPictureImage);
-            if (!System.IO.File.Exists(strBtnFile))
-            {
-              strPictureImage="";
-            }
-          }
-          int iHyperLink = setup.GetWindowId();
-          AddPluginButton(iHyperLink,strButtonText, strButtonImageFocus,  strButtonImage,strPictureImage);
-        }
-      }
+			if (useMenus==true) 
+			{
+				if (inSubMenu==true)  // search submenu tree
+				{
+					if (inSecondMenu==true) // second Menulevel
+					{
+						for (int i=0;i<treeView.Nodes[subMenu].Nodes.Count;i++) 
+						{
+							int l=treeView.Nodes[subMenu].Nodes[i].Text.IndexOf(" {",0);
+							if (l>0) 
+							{
+								tnText=treeView.Nodes[subMenu].Nodes[i].Text.Substring(0,l);
+							} 
+							else 
+							{
+								tnText=treeView.Nodes[subMenu].Nodes[i].Text;
+							}
+							if (tnText=="("+selectedButton+")") 
+							{
+								addMenu(treeView.Nodes[subMenu].Nodes[i],plugins);
+								break;
+							}
+						}						
+					} 
+					else 
+					{
+						for (int i=0;i<mainnodes;i++) 
+						{
+							int l=treeView.Nodes[i].Text.IndexOf(" {",0);
+							if (l>0) 
+							{
+								tnText=treeView.Nodes[i].Text.Substring(0,l);
+							} 
+							else 
+							{
+								tnText=treeView.Nodes[i].Text;
+							}
+							if (tnText=="("+selectedButton+")") 
+							{
+								addMenu(treeView.Nodes[i],plugins);	
+								subMenu=i;
+								subButton=selectedButton;
+								break;
+							}
+						}
+					}
+				} 
+				else 
+				{ 
+					TreeNode tnMain=new TreeNode();
+					for (int i=0;i<mainnodes;i++) 
+					{
+						tnMain.Nodes.Add(treeView.Nodes[i]);
+					}
+					addMenu(tnMain,plugins);	
+				}
+			} 
+			else 
+			{
+				foreach (ISetupForm setup in plugins) 
+				{
+					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					{
+						bool bHomeDefault=setup.DefaultEnabled();
+						bool inhome;
+						if(inMyPlugins==true)
+						{
+							inhome=xmlreader.GetValueAsBool("myplugins", setup.PluginName(), bHomeDefault);
+						} 
+						else
+						{
+							inhome=xmlreader.GetValueAsBool("home", setup.PluginName(), bHomeDefault);  
+						}
+						if (!inhome) continue;
+					}
+					string strButtonText;
+					string strButtonImage;
+					string strButtonImageFocus;
+					string strPictureImage;
+					if (setup.GetHome(out strButtonText,out strButtonImage,out strButtonImageFocus, out strPictureImage))
+					{
+						string strPluginName=setup.PluginName();
+						string strBtnFile;
+						if (strButtonImage=="")
+						{
+							strButtonImage=String.Format("buttonnf_{0}.png", strPluginName);
+							strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strButtonImage);
+							if (!System.IO.File.Exists(strBtnFile))
+							{
+								strButtonImage="";
+							}
+						}
+													
+						if (strButtonImageFocus=="")
+						{
+							strButtonImageFocus=String.Format("button_{0}.png", strPluginName);
+							strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strButtonImageFocus);
+							if (!System.IO.File.Exists(strBtnFile))
+							{
+								strButtonImageFocus="";
+							}
+						}
+
+						if (strPictureImage=="")
+						{
+							strPictureImage=String.Format("hover_{0}.png", strPluginName);
+							strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strPictureImage);
+							if (!System.IO.File.Exists(strBtnFile))
+							{
+								strPictureImage="";
+							}
+						}
+						int iHyperLink = setup.GetWindowId();
+						AddPluginButton(iHyperLink,strButtonText, strButtonImageFocus,  strButtonImage,strPictureImage);
+					}
+				}
+				if (useMyPlugins==true && inMyPlugins==false) // if My Plugin Call make MyPlugin Button
+				{
+					string strBtnPic=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"hover_my plugins.png");
+					AddPluginButton(34,GUILocalizeStrings.Get(913), "",  "", strBtnPic);	
+				}
+			}
     }
+
+		void addMenu(TreeNode tnMain,ArrayList plugins) 
+		{
+			foreach (TreeNode tn in tnMain.Nodes) // make buttons for each menu entry 
+			{
+				if (tn.Text.StartsWith("(")) 
+				{
+					string strBtnFile="";
+					int l1=tn.Text.IndexOf("{",0);
+					int l2=tn.Text.IndexOf("}",0);
+					string strBtnText=tn.Text.Substring(1,tn.Text.IndexOf(")",0)-1);
+					if(l1>0) 
+					{
+						strBtnFile=tn.Text.Substring(l1+1,(l2-l1)-1);
+						strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strBtnFile);
+						if (!System.IO.File.Exists(strBtnFile))
+						{
+							strBtnFile="";
+						}
+					}
+					AddPluginButton(-1,strBtnText, "",  "", strBtnFile);	
+					continue;
+				}
+				foreach (ISetupForm setup in plugins)
+				{
+					if(tn.Text==setup.PluginName()) 
+					{
+						string strButtonText;
+						string strButtonImage;
+						string strButtonImageFocus;
+						string strPictureImage;
+						if (setup.GetHome(out strButtonText,out strButtonImage,out strButtonImageFocus, out strPictureImage))
+						{
+							string strBtnFile;
+							if (strButtonImage=="")
+							{
+								strButtonImage=String.Format("buttonnf_{0}.png", setup.PluginName());
+								strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strButtonImage);
+								if (!System.IO.File.Exists(strBtnFile))
+								{
+									strButtonImage="";
+								}
+							}
+													
+							if (strButtonImageFocus=="")
+							{
+								strButtonImageFocus=String.Format("button_{0}.png", setup.PluginName());
+								strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strButtonImageFocus);
+								if (!System.IO.File.Exists(strBtnFile))
+								{
+									strButtonImageFocus="";
+								}
+							}
+							if (strPictureImage=="")
+							{
+								strPictureImage=String.Format("hover_{0}.png", setup.PluginName());
+								strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strPictureImage);
+								if (!System.IO.File.Exists(strBtnFile))
+								{
+									strPictureImage="";
+								}
+							}
+							int iHyperLink = setup.GetWindowId();
+							AddPluginButton(iHyperLink,strButtonText, strButtonImageFocus,  strButtonImage,strPictureImage);
+						}
+					}
+				}
+			}
+		}
+
 		
 		public void AddPluginButton(int iHyperLink,string strButtonText, string strButtonImageFocus, string strButtonImage,  string strPictureImage)
 		{
-
 			if (strButtonImage.Length==0)
 				strButtonImage= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureNoFocusName;
 			if (strButtonImageFocus.Length==0)
@@ -620,10 +1022,17 @@ namespace MediaPortal.GUI.Home
 						GetControl(iButtonId-1).NavigateDown=iButtonId;
 					ypos+=( (iButtonId-2 )*(iSpaceBetween+height) ) ;
 					GUIImage img;
-
+					
 					GUIButtonControl button= new GUIButtonControl(GetID,iButtonId,xpos,ypos,width,height,strButtonImageFocus,strButtonImage);
 					button.Label=strButtonText;
-					button.HyperLink=iHyperLink;
+					if (useMyPlugins==true && iHyperLink==34) // if My Plugin Call set ID in Array
+					{
+						myPlugins[myPluginsCount++]=iButtonId;
+					} 
+					else 
+					{
+						button.HyperLink=iHyperLink;
+					}
 					button.FontName=strFontName;
 					button.DisabledColor=lDisabledColor;
 					button.TextColor=lFontColor;
@@ -641,7 +1050,6 @@ namespace MediaPortal.GUI.Home
 					xpos = GetControl((int)Controls.TemplateHoverImage).XPosition;
 					ypos = GetControl((int)Controls.TemplateHoverImage).YPosition;
           GUIImage hoverimg=GetControl((int)Controls.TemplateHoverImage) as GUIImage;
-
 
 					img = new GUIImage(GetID,iButtonId+100,xpos,ypos,width,height,strPictureImage,0);
 					img.AllocResources();
@@ -697,7 +1105,6 @@ namespace MediaPortal.GUI.Home
 				iStartYoff -= (int)(fYOff);
 			}
 
-
 			lTextColor		= lTextColor & 0x00FFFFFF;
 			lDiffuseColor = lDiffuseColor& 0x00FFFFFF;
 			int iMaxItems = (m_iMaxHeight+iSpaceBetween)/(m_iButtonHeight+iSpaceBetween);
@@ -739,9 +1146,8 @@ namespace MediaPortal.GUI.Home
 					}
 					float fPercent = 1f - ((fPos) / ((float)(iMaxItems+1)));
 					if (fPercent >=1.0f) fPercent=(2.0f-fPercent);
-					button.SetAlpha( (int)(fPercent * 255f));
-
 					
+					button.SetAlpha( (int)(fPercent * 255f));
 					long lAlpha=(long)(fPercent * 255f);
 					lAlpha<<=24;
 					button.TextColor		= (lTextColor+lAlpha);
@@ -759,7 +1165,6 @@ namespace MediaPortal.GUI.Home
 					if (iButton<0) iButton=m_iButtons-1;
 					m_iVisibleItems++;
 				}
-
 				iTel++;
 			}
 
@@ -791,9 +1196,9 @@ namespace MediaPortal.GUI.Home
 					float fPercent = 1f - ((fPos) / ((float)(iMaxItems+1)));
 
 
-					//				button.Height = (int) (fPercent * ((float)m_iButtonHeight));
+					//			button.Height = (int) (fPercent * ((float)m_iButtonHeight));
 					button.SetAlpha( (int)(fPercent * 255f) );
-					
+
 					long lAlpha=(long)(fPercent * 255f);
 					lAlpha<<=24;
 					button.TextColor		= (lTextColor+lAlpha);
@@ -815,20 +1220,10 @@ namespace MediaPortal.GUI.Home
 
 				iTel++;
 			}
-/*
-			for (int i=0; i < m_iVisibleItems;++i)
-			{
-				Trace.WriteLine( String.Format("{0} but:{1}",i, m_iButtonIds[i]));
-			}
-			Trace.WriteLine( String.Format("off   :{0}",m_iOffset));
-			Trace.WriteLine( String.Format("off1  :{0}",m_iOffset1));
-			Trace.WriteLine( String.Format("middle:{0}",m_iMiddle));
-			Trace.WriteLine( String.Format("off2  :{0}",m_iOffset2));*/
 		}
 
 		State Scroll()
 		{
-			//System.Threading.Thread.Sleep(1000);
 			State newState=m_eState;
 			float fPercent = ((float)m_iFrame)  / ((float)MAX_FRAMES);
 			fPercent*=100f;
@@ -843,12 +1238,10 @@ namespace MediaPortal.GUI.Home
 				EndScroll();
 				if (m_iTimes<=0)
 				{
-					newState=State.Idle;
-					
+					newState=State.Idle;			
 					LayoutButtons( 0);
 				}
 			}
-
 			return newState;
 		}
 
@@ -902,14 +1295,15 @@ namespace MediaPortal.GUI.Home
 		{
 			if (!m_bTopBar) 
 				return base.GetFocusControlId();
-
 			return -1;
 		}
+
     protected void FocusControl(int iWindowID, int iControlId)
     {
       if (m_bTopBar) return;
       GUIControl.FocusControl(iWindowID,iControlId);
     }
+
 		public override void Process()
 		{
 			// Set the date & time
@@ -920,6 +1314,84 @@ namespace MediaPortal.GUI.Home
         GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 			}
 		}
+
+		void ResetButtons()
+		{
+			m_aryPreControlList.Clear();
+			m_aryPostControlList.Clear();
+			m_iMaxHeight    = GetControl( (int)Controls.TemplatePanel).Height;
+			m_iMaxWidth     = GetControl( (int)Controls.TemplatePanel).Width;
+			m_iStartXoff    = GetControl( (int)Controls.TemplatePanel).XPosition;
+			m_iStartYoff    = GetControl( (int)Controls.TemplatePanel).YPosition;
+			m_iButtonHeight = GetControl( (int)Controls.TemplateButton).Height;
+
+			m_bTopBar=false;
+			// make controls 101-120 invisible... (these are the subpictures shown for each button)
+			for (int iControl=102; iControl < 160; iControl++)
+			{
+				GUIControl.HideControl(GetID, iControl);
+			}
+		}
+
+		public static int loadTree(TreeView tree, string filename)
+		{
+			if (File.Exists(filename))
+			{
+				Stream file = File.Open(filename, FileMode.Open);
+				BinaryFormatter bf = new BinaryFormatter();
+				object obj = null;
+				try
+				{
+					obj = bf.Deserialize(file);
+				}
+				catch (System.Runtime.Serialization.SerializationException e)
+				{
+					MessageBox.Show("De-Serialization failed : {0}", e.Message);
+					return -1;
+				}
+				file.Close();
+				ArrayList alist = obj as ArrayList;
+				foreach (object item in alist)
+				{
+					Hashtable ht = item as Hashtable;
+					TreeNode tn = new TreeNode(ht["Text"].ToString());
+					tn.Tag = ht["Tag"];
+					tn.ImageIndex = Convert.ToInt32(ht["SelectedImageIndex"].ToString());
+					tn.SelectedImageIndex = Convert.ToInt32(ht["SelectedImageIndex"].ToString());
+
+					string fPath = ht["FullPath"].ToString();
+					string[] parts = fPath.Split(tree.PathSeparator.ToCharArray());
+					if (parts.Length > 1)
+					{
+						TreeNode parentNode = null;
+						TreeNodeCollection nodes = tree.Nodes;
+						searchNode(parts, ref parentNode, nodes);
+
+						if (parentNode != null)
+						{
+							parentNode.Nodes.Add(tn);
+						}
+					}
+					else tree.Nodes.Add(tn);
+				}
+				return 0;
+			}
+			else return -2; 
+		}
+		
+		private static void searchNode(string[] parts, ref TreeNode parentNode, TreeNodeCollection nodes)
+		{
+			foreach (TreeNode n in nodes)
+			{
+				if (n.Text.Equals(parts[parts.Length - 2].ToString()))
+				{
+					parentNode = n;
+					return;
+				}
+				else searchNode(parts, ref parentNode, n.Nodes);
+			}
+		}
+		#endregion
 
 	}
 }
