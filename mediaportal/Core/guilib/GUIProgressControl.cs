@@ -17,7 +17,8 @@ namespace MediaPortal.GUI.Library
 											GUIImage m_guiLeft=null;
 											GUIImage m_guiMid=null;
 											GUIImage m_guiRight=null;
-											int      m_iPercent=0;
+    int      m_iPercent=0;
+    bool                          ContainsProperty=false;
 		
 		
 		public GUIProgressControl (int dwParentID) : base(dwParentID)
@@ -89,10 +90,10 @@ namespace MediaPortal.GUI.Library
 				if (Disabled) return;
 			}
 			
-			if (m_strProperty.Length>0)
+			if (ContainsProperty)
 			{
 				string m_strText=GUIPropertyManager.Parse(m_strProperty);
-				if(m_strText.Length>0)
+				if(m_strText!=String.Empty)
 				{
 					try
 					{
@@ -251,12 +252,21 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Get/set the text of the label.
+		/// Get/set the property.
+		/// The property contains text which is shown in the progress control
+		/// normally this is a percentage (0%-100%)
 		/// </summary>
 		public string Property
 		{
 			get { return m_strProperty; }
-			set {m_strProperty=value;}
+			set {
+        if (value!=null)
+        {
+          m_strProperty=value;
+          if (m_strProperty.IndexOf("#")>=0) ContainsProperty=true;
+          else ContainsProperty=false;
+        }
+      }
 		}
 	}
 }
