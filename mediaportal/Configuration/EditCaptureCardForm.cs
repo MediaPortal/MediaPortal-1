@@ -113,12 +113,14 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TreeView treeView5;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
 		bool m_stopEPGGrab;
+		int  CardId;
 		
 		/// <summary>
 		/// 
 		/// </summary>
 		public EditCaptureCardForm(int cardId)
 		{
+			CardId=cardId;
 			//
 			// Required for Windows Form Designer support
 			//
@@ -1632,6 +1634,7 @@ namespace MediaPortal.Configuration
 
 				card.UseForRecording = useRecordingCheckBox.Checked;
 				card.UseForTV	= useWatchingCheckBox.Checked;
+				card.ID=CardId;
 				
         if(frameSizeComboBox.SelectedItem != null)
         {

@@ -2661,17 +2661,17 @@ namespace MediaPortal.TV.Recording
 				
 					if (Network() == NetworkType.DVBT)
 					{
-						Log.Write("DVBGraphBDA: map channel {0} to DVBT",newchannel.ChannelName);
+						Log.Write("DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ChannelName,channelId,ID);
 						TVDatabase.MapDVBTChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBC)
 					{
-						Log.Write("DVBGraphBDA: map channel {0} to DVBC",newchannel.ChannelName);
+						Log.Write("DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ChannelName,channelId,ID);
 						TVDatabase.MapDVBCChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.modulation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
-						Log.Write("DVBGraphBDA: map channel {0} to DVBS",newchannel.ChannelName);
+						Log.Write("DVBGraphBDA: map channel {0} id:{1} to DVBS card:{2}",newchannel.ChannelName,channelId,ID);
 						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					TVDatabase.MapChannelToCard(channelId,ID);

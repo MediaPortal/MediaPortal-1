@@ -211,7 +211,6 @@ namespace MediaPortal.Configuration.Sections
 			EditCaptureCardForm editCard = new EditCaptureCardForm(cardsListView.Items.Count+1);
 
 			DialogResult dialogResult = editCard.ShowDialog(this);
-
 			if(dialogResult == DialogResult.OK)
 			{
 				AddCaptureCard(editCard.CaptureCard);
@@ -226,8 +225,9 @@ namespace MediaPortal.Configuration.Sections
 		{
 			foreach(ListViewItem listItem in cardsListView.SelectedItems)
 			{
-				EditCaptureCardForm editCard = new EditCaptureCardForm(listItem.Index+1);
-        editCard.CaptureCard = listItem.Tag as TVCaptureDevice;
+				TVCaptureDevice device=listItem.Tag as TVCaptureDevice;
+				EditCaptureCardForm editCard = new EditCaptureCardForm(device.ID);
+        editCard.CaptureCard = device;
 
         DialogResult dialogResult = editCard.ShowDialog(this);
 
