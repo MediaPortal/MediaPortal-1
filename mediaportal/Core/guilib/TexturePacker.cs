@@ -17,8 +17,8 @@ namespace MediaPortal.GUI.Library
 			
 			public PackedTextureNode Insert(string fileName,Image img, Image rootImage)
 			{
-					Log.Write("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
-									Rect.Left,Rect.Top,Rect.Width,Rect.Height,img.Width,img.Height,FileName, ChildLeft,ChildRight);
+					//Log.Write("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
+					//				Rect.Left,Rect.Top,Rect.Width,Rect.Height,img.Width,img.Height,FileName, ChildLeft,ChildRight);
 					if (ChildLeft!=null && ChildRight!=null)
 					{
 						PackedTextureNode node=ChildLeft.Insert(fileName, img, rootImage);
@@ -75,36 +75,38 @@ namespace MediaPortal.GUI.Library
 		public TexturePacker()
 		{
 			root = new PackedTextureNode();
-			rootImage = new Bitmap(1024,1024);
-			root.Rect=new Rectangle(0,0,1024,1024);
+			rootImage = new Bitmap(2048,2048);
+			root.Rect=new Rectangle(0,0,2048,2048);
 		}
 		public bool Add(Image img, string fileName)
 		{
 			PackedTextureNode node=root.Insert(fileName,img,rootImage);
 			if (node!=null)
 			{
+				Log.Write("added {0} at ({1},{2}) {3}x{4}",fileName,node.Rect.X,node.Rect.Y,node.Rect.Width,node.Rect.Height);
 				node.FileName = fileName;
 				return true;
 			}
+			Log.Write("no room anymore to add:{0}", fileName);
 			return false;
 		}
 		public void test()
 		{
-			AddBitmap(512,512,Brushes.Red);
-			AddBitmap(256,256,Brushes.Yellow);
-			AddBitmap(300,32,Brushes.Blue);
-			rootImage.Save("test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-		}
-		public void AddBitmap(int w, int h,Brush brush)
-		{
-			Log.Write("---------------------");
-			Bitmap bmp = new Bitmap(w,h);
-			using (Graphics g = Graphics.FromImage(bmp))
+			string[] files =System.IO.Directory.GetFiles(@"skin\mce\media","*.png");
+			foreach (string file in files)
 			{
-				g.FillRectangle(brush,0,0,w,h);
+				AddBitmap(file);
 			}
-			Add(bmp,"bla");
+			rootImage.Save("test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+			rootImage.Dispose();
+		}
+		public bool AddBitmap(string file)
+		{
+			//Log.Write("---------------------");
+			Image bmp = Image.FromFile(file);
+			bool result=Add(bmp,file);
 			bmp.Dispose();
+			return result;
 		}
 	}
 }
