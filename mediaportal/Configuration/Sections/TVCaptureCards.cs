@@ -208,7 +208,24 @@ namespace MediaPortal.Configuration.Sections
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-			EditCaptureCardForm editCard = new EditCaptureCardForm(cardsListView.Items.Count+1);
+			int cardid=1;
+			bool found=false;
+			do
+			{
+				found=false;
+				foreach (ListViewItem item in cardsListView.Items)
+				{
+					TVCaptureDevice dev = item.Tag as TVCaptureDevice;
+					if (dev.ID==cardid)
+					{
+						found=true;
+						cardid++;
+						break;
+					}
+				}
+			} while (found);
+
+			EditCaptureCardForm editCard = new EditCaptureCardForm(cardid);
 
 			DialogResult dialogResult = editCard.ShowDialog(this);
 			if(dialogResult == DialogResult.OK)
