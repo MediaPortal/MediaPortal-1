@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Library
 				if (fileName.Length==0) return null;
 				if (FileName!=null)
 				{
-					if (FileName.ToLower().IndexOf(fileName)>=0) 
+					if (FileName.ToLower()==fileName) 
 					{
 						return this;
 					}
