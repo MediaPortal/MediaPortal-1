@@ -2297,22 +2297,22 @@ namespace MediaPortal.TV.Recording
 					DVBSections.PMTData data=(DVBSections.PMTData) channelInfo.pid_list[pids];
 					if (data.isVideo)
 					{
-						Log.Write("DVBGraphBDA: video pid: 0x{0:X}",data.elementary_PID);
+						Log.Write("DVBGraphBDA: video pid: {0}",data.elementary_PID);
 						currentTuningObject.videoPid=data.elementary_PID;
 					}
 					if (data.isAC3Audio)
 					{
-						Log.Write("DVBGraphBDA: AC3 pid: 0x{0:X}",data.elementary_PID);
+						Log.Write("DVBGraphBDA: AC3 pid: {0}",data.elementary_PID);
 						currentTuningObject.AC3Pid=data.elementary_PID;
 					}
 					if (data.isTeletext)
 					{
-						Log.Write("DVBGraphBDA: teletext pid: 0x{0:X}",data.elementary_PID);
+						Log.Write("DVBGraphBDA: teletext pid: {0}",data.elementary_PID);
 						currentTuningObject.teletextPid=data.elementary_PID;
 					}
 					if (data.isAudio)
 					{
-						Log.Write("DVBGraphBDA: audio pid: 0x{0:X}",data.elementary_PID);
+						Log.Write("DVBGraphBDA: audio pid: {0}",data.elementary_PID);
 						currentTuningObject.audioPid=data.elementary_PID;
 					}
 				}
