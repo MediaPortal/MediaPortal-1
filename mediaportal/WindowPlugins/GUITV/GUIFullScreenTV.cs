@@ -887,9 +887,9 @@ namespace MediaPortal.GUI.TV
 
 		public override void Render()
 		{
-      if (GUIGraphicsContext.Vmr9Active)
-      {
-        base.Render();
+			if (GUIGraphicsContext.Vmr9Active)
+			{
+				base.Render();
 
 
 				// do we need 2 render the OSD?
@@ -912,21 +912,21 @@ namespace MediaPortal.GUI.TV
 						}
 					}
 				}
-			}
-			if (m_bZapOSDVisible)
-			{
-				m_zapWindow.Render();
-
-				if (m_iZapTimeOut>0)
+				if (m_bZapOSDVisible)
 				{
-					TimeSpan ts =DateTime.Now - m_dwZapTimer;
-					if ( ts.TotalMilliseconds > m_iZapTimeOut)
+					m_zapWindow.Render();
+
+					if (m_iZapTimeOut>0)
 					{
-						//yes, then remove osd offscreen
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
-						m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-						Log.Write("timeout->ZAP OSD:Off");
-						m_bZapOSDVisible=false;
+						TimeSpan ts =DateTime.Now - m_dwZapTimer;
+						if ( ts.TotalMilliseconds > m_iZapTimeOut)
+						{
+							//yes, then remove osd offscreen
+							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+							m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+							Log.Write("timeout->ZAP OSD:Off");
+							m_bZapOSDVisible=false;
+						}
 					}
 				}
 			}
@@ -1164,7 +1164,7 @@ namespace MediaPortal.GUI.TV
 				else 
 				{
 					// osd still onscreen, check if it needs a refresh
-					if (m_osdWindow.NeedRefresh())
+					if (m_osdWindow.NeedRefresh() || m_zapWindow.NeedRefresh())
 					{
 						// yes, then clear screen
 						bClear=true;
@@ -1215,6 +1215,23 @@ namespace MediaPortal.GUI.TV
 						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 
 						m_bOSDVisible=false;
+					}
+				}
+			}
+			else  if (m_bZapOSDVisible)
+			{
+				m_zapWindow.Render();
+
+				if (m_iZapTimeOut>0)
+				{
+					TimeSpan ts =DateTime.Now - m_dwZapTimer;
+					if ( ts.TotalMilliseconds > m_iZapTimeOut)
+					{
+						//yes, then remove osd offscreen
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+						Log.Write("timeout->ZAP OSD:Off");
+						m_bZapOSDVisible=false;
 					}
 				}
 			}
