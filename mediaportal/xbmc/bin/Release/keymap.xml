@@ -406,6 +406,12 @@
       <description>Toggle the OSD</description>
     </action>
     <action>
+      <id>108</id>
+      <key>C</key>
+      <sound />
+      <description>Toggle the MSN OSD</description>
+    </action>   
+    <action>
       <id>58</id>
       <key>0</key>
       <sound />
