@@ -226,6 +226,7 @@ namespace MediaPortal.TV.Recording
 
 			_mCaptureCardDefinition.Capabilities				 = ccd.Capabilities;
 			this.IsMCECard     = _mCaptureCardDefinition.Capabilities.IsMceDevice;
+			this.IsBDACard     = _mCaptureCardDefinition.Capabilities.IsBDADevice;
 			this.SupportsMPEG2 = _mCaptureCardDefinition.Capabilities.IsMpeg2Device;
 			_mCaptureCardDefinition.Capabilities				 = ccd.Capabilities;
 

@@ -22,6 +22,7 @@ namespace MediaPortal.Configuration
 	{
     bool    m_bMPEG2=false;
     bool    m_bISMCE=false;
+		bool		m_bIsBDA=false;
 #if (UseCaptureCardDefinitions)
 		static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
 #endif
@@ -93,7 +94,7 @@ namespace MediaPortal.Configuration
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
 			for (int i=0; i < availableVideoDevices.Count;++i)
 			{
-				Log.Write("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
+			//	Log.Write("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
 			}
 
 
@@ -137,10 +138,11 @@ namespace MediaPortal.Configuration
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
 						((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addEmpty=false;
 
-					Log.Write("{0}:{1}", (string)(availableVideoDevices[i]), (availableVideoDeviceMonikers[i]).ToString() );
+					//Log.Write("{0}:{1}", (string)(availableVideoDevices[i]), (availableVideoDeviceMonikers[i]).ToString() );
 				}
 			}
 
+			Log.Write("compare");
 			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
 			{
 				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
@@ -165,6 +167,9 @@ namespace MediaPortal.Configuration
 						{
 							cd.VideoDevice				= ccd.CaptureName;
 							cd.LoadDefinitions();
+							cd.IsBDACard					= ccd.Capabilities.IsBDADevice;
+							cd.IsMCECard					= ccd.Capabilities.IsMceDevice;
+							cd.SupportsMPEG2			= ccd.Capabilities.IsMpeg2Device;
 						}
 						else
 						{
@@ -173,6 +178,7 @@ namespace MediaPortal.Configuration
 							cd.CaptureName			  = cd.VideoDevice;
 							cd.DeviceId						= ccd.DeviceId;
 						}
+						Log.Write("adding {0} id:{1} bda:{2} mce:{3} mpeg2:{4}", cd.CaptureName,cd.IsBDACard,cd.IsMCECard,cd.SupportsMPEG2);
 						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
 						cardComboBox.Items.Add(cbcc); //availableVideoDevices[i]);
 					}
@@ -757,6 +763,8 @@ namespace MediaPortal.Configuration
 								if (cd.CaptureDevice.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
 								if (cd.CaptureDevice.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
 								if (cd.CaptureDevice.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
+								m_bIsBDA=cd.CaptureDevice.IsBDACard;
+								m_bISMCE=cd.CaptureDevice.IsMCECard;
 							}
 						}
 #endif
@@ -1111,6 +1119,7 @@ namespace MediaPortal.Configuration
 #endif
 					card.SupportsMPEG2 = m_bMPEG2;
 				card.IsMCECard     = m_bISMCE;
+				card.IsBDACard=m_bIsBDA;
         card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;
 				return card;

@@ -310,6 +310,10 @@ namespace TVCapture
 							cardConfig.Capabilities.IsMceDevice			 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
 							cardConfig.Capabilities.IsMpeg2Device    = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
 							cardConfig.Capabilities.IsSoftwareDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"sw").InnerText);
+							DirectShowUtil.DebugWrite("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
+												cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
+												cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
+
 						}
 						else
 						{
