@@ -25,10 +25,11 @@ My TV:
 
   Capture:
     - time shifting. This allows you to pause/ FF/RW live tv      
-    - add BDA support
+    - add support for digital capture cards (BDA tuners)
     - support multiple tuners/capture cards
     - brightness/contrast etc. control
     - stutter /avsync ?
+    - store property page settings...
     
 My Music:
   - faster start of 1st song played
