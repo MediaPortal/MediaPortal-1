@@ -264,6 +264,7 @@ namespace MediaPortal.Ripper
             if (g_Player.Playing && g_Player.IsDVD) return;
             if (ShouldWeAutoPlay()) 
             {
+							Log.Write("Autoplay:start DVD in {0}",strDrive);
               g_Player.PlayDVD(strDrive+@"\VIDEO_TS\VIDEO_TS.IFO");
             }
           }

@@ -741,7 +741,8 @@ namespace MediaPortal.GUI.Video
 		}
 
 		void OnPlayDVD()
-    {
+		{
+			Log.Write("GUIVideoYear playDVD");
       g_Player.PlayDVD();
 		}
 

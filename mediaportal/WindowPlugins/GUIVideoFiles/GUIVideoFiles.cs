@@ -378,6 +378,7 @@ namespace MediaPortal.GUI.Video
           case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
             if (g_Player.Playing && g_Player.IsDVD)
             {
+							Log.Write("GUIVideo:stop dvd since DVD is ejected");
               g_Player.Stop();
             }
 
@@ -1086,6 +1087,7 @@ namespace MediaPortal.GUI.Video
 			if (playlist.Count == 1)
 			{
 				//TODO
+				Log.Write("GUIVideoFiles play:{0}",playlist[0].FileName);
         if (g_Player.Play(playlist[0].FileName))
         {
           if (Utils.IsVideo(playlist[0].FileName))
@@ -1848,6 +1850,7 @@ namespace MediaPortal.GUI.Video
 	
 		void OnPlayDVD()
 		{
+			Log.Write("GUIVideoFiles playDVD");
       g_Player.PlayDVD();
 		}
 		#region ISetupForm Members

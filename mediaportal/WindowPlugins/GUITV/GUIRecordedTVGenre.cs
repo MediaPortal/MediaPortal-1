@@ -635,7 +635,8 @@ namespace MediaPortal.GUI.TV
 
       TVRecorded rec=(TVRecorded)pItem.TVTag;
       if (System.IO.File.Exists(rec.FileName))
-      {
+			{
+				Log.Write("TVRecording:play:{0}",rec.FileName);
         g_Player.Stop();
         
         rec.Played++;

@@ -71,7 +71,7 @@ namespace MediaPortal.Player
       if (g_Player.Playing && PlayBackStopped!=null)
       {
         //yes, then raise event 
-        
+				Log.Write("g_Player.OnStopped()");   
         PlayBackStopped(currentMedia,(int)g_Player.CurrentPosition, g_Player.CurrentFile);
       }
     }
@@ -82,7 +82,8 @@ namespace MediaPortal.Player
       //check if we're playing
       if (PlayBackEnded!=null)
       {
-        //yes, then raise event 
+				//yes, then raise event 
+				Log.Write("g_Player.OnEnded()");
         
         PlayBackEnded(currentMedia, CurrentFilePlaying);
       }
@@ -113,15 +114,16 @@ namespace MediaPortal.Player
 						currentMedia=MediaType.Video;
 					}
 				}
+				Log.Write("g_Player.OnStarted() {0} media:{1}", CurrentFilePlaying, currentMedia);
         if (PlayBackStarted!=null)        
           PlayBackStarted(currentMedia, CurrentFilePlaying);
-				Log.Write("Started:{0} media:{1}", CurrentFilePlaying, currentMedia);
       }
     }
     public static void Stop()
     {
       if (m_player!=null)
       {
+				Log.Write("g_Player.Stop()");
         OnStopped();
         GUIGraphicsContext.ShowBackground=true;
         m_player.Stop();
@@ -202,7 +204,8 @@ namespace MediaPortal.Player
     }
 
     public static bool PlayDVD(string strPath)
-    {
+		{
+			Log.Write("g_Player.PlayDVD()");
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
       m_subs=null;
@@ -230,7 +233,7 @@ namespace MediaPortal.Player
       bool bResult=m_player.Play(strPath);
       if (!bResult)
       {
-        Log.Write("dvdplayer:failed to play");
+        Log.Write("g_Player.PlayDVD():failed to play");
         m_player.Release();
         m_player=null;
         m_subs=null;
@@ -261,7 +264,7 @@ namespace MediaPortal.Player
       m_SeekTimer=DateTime.MinValue;
       m_bInit=true;
       m_subs=null;
-      Log.Write("Player.Play({0})",strURL);
+      Log.Write("g_Player.PlayAudioStream({0})",strURL);
       if (m_player!=null)
       {
         GUIGraphicsContext.ShowBackground=true;
@@ -298,7 +301,7 @@ namespace MediaPortal.Player
       if (strFile.Length==0) return false;
       m_bInit=true;
       m_subs=null;
-      Log.Write("Player.Play({0})",strFile);
+      Log.Write("g_Player.Play({0})",strFile);
       if (m_player!=null)
       {
         GUIGraphicsContext.ShowBackground=true;
@@ -832,6 +835,7 @@ namespace MediaPortal.Player
       m_player.Process();
       if (!m_player.Playing)
       {
+				Log.Write("g_Player.Process() player stopped...");
         if (m_player.Ended)
         {
           GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED,0,0,0,0,0,null);

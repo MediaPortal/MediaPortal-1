@@ -458,6 +458,7 @@ namespace MediaPortal.TV.Recording
 
     static public void StopViewing()
     {
+			Log.Write("Recorder.StopViewing()");
       // stop any playing..
       if (g_Player.Playing && g_Player.IsTV) 
       {
@@ -522,6 +523,7 @@ namespace MediaPortal.TV.Recording
             if (System.IO.File.Exists(strFileName))
             {
               // then play it
+							Log.Write("Recorder.StartViewing() play:({0})",strFileName);
               g_Player.Play(strFileName);
             }
           }
@@ -536,7 +538,8 @@ namespace MediaPortal.TV.Recording
       {
         // then stop playing any tv files
         if (g_Player.Playing && g_Player.IsTV) 
-        {
+        {	
+					Log.Write("Recorder.StartViewing() stop media");
           g_Player.Stop();
         }
 
@@ -579,7 +582,8 @@ namespace MediaPortal.TV.Recording
 
       //card does not support timeshifting
       //just present the overlay tv view
-      //but first disable the tv view of any other card
+			//but first disable the tv view of any other card
+			Log.Write("Recorder.StartViewing() stop media");
       g_Player.Stop();
       
       for (int i=0; i < m_tvcards.Count;++i)

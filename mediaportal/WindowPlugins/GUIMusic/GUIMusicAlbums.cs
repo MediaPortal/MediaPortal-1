@@ -1377,6 +1377,8 @@ namespace MediaPortal.GUI.Music
 
       if (playlist.Count==1)
       {
+				
+				Log.Write("GUIMusicAlbums:Play:{0}",playlist[0].FileName);
         g_Player.Play(playlist[0].FileName);
         return;
       }

@@ -1221,6 +1221,7 @@ namespace MediaPortal
 					m_bRestore=false;
 					if (m_bWasPlaying)
 					{
+						Log.Write("App.Render3dEnvironment() play:{0}",m_strCurrentFile);
 						m_bWasPlaying=false;
 						g_Player.Play(m_strCurrentFile);
 						if (g_Player.Playing)
@@ -1380,6 +1381,7 @@ namespace MediaPortal
         if(process.ProcessName.Equals(processName)) return;
       }
 
+			Log.Write("App.OnSetup():stop");
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
@@ -1598,8 +1600,11 @@ namespace MediaPortal
 
     protected void ToggleFullWindowed()
     {
+			Log.Write("App.ToggleFullWindowed()");
       if (g_Player.Playing)
       {
+				
+				Log.Write("App.ToggleFullWindowed() stop media");
         m_bRestore=true;
         m_bWasPlaying =g_Player.Playing;
         m_strCurrentFile=g_Player.CurrentFile;

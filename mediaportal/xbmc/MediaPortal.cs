@@ -1233,6 +1233,7 @@ public class MediaPortalApp : D3DApp, IRender
 					case Action.ActionType.ACTION_STOP : 
 						if (!GUIGraphicsContext.IsFullScreenVideo)
 						{
+							Log.Write("App.Onaction() stop media");
 							g_Player.Stop();
 							return;
 						}

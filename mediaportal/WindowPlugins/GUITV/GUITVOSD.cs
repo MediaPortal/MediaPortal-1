@@ -360,7 +360,8 @@ namespace MediaPortal.GUI.TV
               FocusControl(GetID, m_iActiveMenuButtonID, 0);	// set focus to last menu button
               ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
             }
-            //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
+						//g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
+						Log.Write("TVOSD:stop");
             g_Player.Stop();						// close our media
             //GUIWindowManager.PreviousWindow();							// go back to the previous window
           }

@@ -717,7 +717,8 @@ namespace MediaPortal.TV.Recording
       Log.Write("Card:{0} rebuild graph",ID);
       State state=_mState;
       if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
-      {
+			{
+				Log.Write("TVCaptureDevice.Rebuildgraph() stop media");
         g_Player.Stop();
       }
               
@@ -728,7 +729,8 @@ namespace MediaPortal.TV.Recording
       if (state==State.Timeshifting) 
       {
         StartTimeShifting();
-                
+        
+				Log.Write("TVCaptureDevice.Rebuildgraph() play:{0}",Recorder.GetTimeShiftFileName(ID-1));        
         g_Player.Play(Recorder.GetTimeShiftFileName(ID-1));
       }
       else 

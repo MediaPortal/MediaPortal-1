@@ -393,7 +393,8 @@ namespace MediaPortal.GUI.Video
           break;
 
         case Action.ActionType.ACTION_STOP:
-        {
+				{
+					Log.Write("GUIVideoFullscreen:stop");
           g_Player.Stop();
           GUIWindowManager.PreviousWindow();
         }

@@ -750,7 +750,8 @@ namespace MediaPortal.GUI.Video
 
 
 		void OnPlayDVD()
-    {
+		{
+			Log.Write("GUIVideoTitle playDVD");
       g_Player.PlayDVD();
 		}
 

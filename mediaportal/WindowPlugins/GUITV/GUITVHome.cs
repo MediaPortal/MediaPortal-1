@@ -175,6 +175,7 @@ namespace MediaPortal.GUI.TV
 					TVDatabase.GetRecordings(ref m_recordings);
 					if (g_Player.Playing && !g_Player.IsTV)
 					{
+						Log.Write("TVHome:stop music/video:{0}",g_Player.CurrentFile);
 						g_Player.Stop();
 					}
 					m_util= new TVUtil();
@@ -266,6 +267,7 @@ namespace MediaPortal.GUI.TV
 						if (message.Param1==0) 
 						{
 							//tv off
+							Log.Write("TVHome:turn tv off");
 							m_bTVON=false;
 							SaveSettings();
 							g_Player.Stop();
@@ -273,6 +275,7 @@ namespace MediaPortal.GUI.TV
 						else
 						{
 							// tv on
+							Log.Write("TVHome:turn tv on");
 							m_bTVON=true;
 							SaveSettings();
 						}
@@ -667,6 +670,7 @@ namespace MediaPortal.GUI.TV
 				if (System.IO.File.Exists(strFileName))
 				{
 					//then play it
+					Log.Write("GUITVHome.StartPlaying() Play:{0}",strFileName);
 					g_Player.Play(strFileName);
 				}
 				else 

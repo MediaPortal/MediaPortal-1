@@ -61,7 +61,7 @@ namespace MediaPortal.Playlists
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_FILE:
         {
-          Log.Write("Playlistplayer.StartFile({0}",message.Label);
+          Log.Write("Playlistplayer.StartFile({0})",message.Label);
           g_Player.Play(message.Label);
           if (!g_Player.Playing) g_Player.Stop();
         }
@@ -215,6 +215,7 @@ namespace MediaPortal.Playlists
         playlist.ResetStatus();
       }
 
+			Log.Write("PlaylistPlayer.Play({0})",item.FileName);
       if(!g_Player.Play(item.FileName))
       {
         //	Count entries in current playlist
