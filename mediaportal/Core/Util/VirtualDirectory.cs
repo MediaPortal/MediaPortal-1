@@ -441,7 +441,7 @@ namespace MediaPortal.Util
           //Log.Write("VirtualDirectory: {0} {1}",file.Name,file.Dir);
           if (file.Dir)
           {
-            if (file.Name !="." && !file.Name !="..")
+            if (file.Name !="." && file.Name !="..")
             {
               item = new GUIListItem();
               item.IsFolder = true;
