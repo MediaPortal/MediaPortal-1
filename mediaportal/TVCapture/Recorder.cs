@@ -1787,13 +1787,16 @@ namespace MediaPortal.TV.Recording
 										IDictionary dict=editor.GetAttributes();
 										foreach (MetadataItem item in dict.Values)
 										{
-											try { if (item.Name=="channel") newRec.Channel=(string)item.Value.ToString();} catch(Exception){}
-											try{ if (item.Name=="title") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
-											try{ if (item.Name=="programtitle") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
-											try{ if (item.Name=="genre") newRec.Genre=(string)item.Value.ToString();} catch(Exception){}
-											try{ if (item.Name=="details") newRec.Description=(string)item.Value.ToString();} catch(Exception){}
-											try{ if (item.Name=="start") newRec.Start=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
-											try{ if (item.Name=="end") newRec.End=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
+											if (item==null) continue;
+											if (item.Name==null) continue;
+											Log.Write("attribute:{0} value:{1}", item.Name,item.Value.ToString());
+											try { if (item.Name.ToLower()=="channel") newRec.Channel=(string)item.Value.ToString();} catch(Exception){}
+											try{ if (item.Name.ToLower()=="title") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
+											try{ if (item.Name.ToLower()=="programtitle") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
+											try{ if (item.Name.ToLower()=="genre") newRec.Genre=(string)item.Value.ToString();} catch(Exception){}
+											try{ if (item.Name.ToLower()=="details") newRec.Description=(string)item.Value.ToString();} catch(Exception){}
+											try{ if (item.Name.ToLower()=="start") newRec.Start=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
+											try{ if (item.Name.ToLower()=="end") newRec.End=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
 										}
 										if (newRec.Channel==null)
 										{
