@@ -13,6 +13,9 @@ del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
+
+copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll .
+regsvr32 /s directshowhelper.dll
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
 copy ..\..\..\Core\bin\Debug\Interop.DirectShowHelperLib.dll .
