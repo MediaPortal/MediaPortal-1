@@ -60,7 +60,10 @@ public class MediaPortalApp : D3DApp, IRender
       //
       // Display splash screen
       //
+
+      ClientApplicationInfo clientInfo =ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
       splashScreen = new SplashScreen();
+      splashScreen.SetVersion(clientInfo .InstalledVersion);
       splashScreen.Show();
       splashScreen.Update();
 
