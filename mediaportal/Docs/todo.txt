@@ -72,7 +72,6 @@ My TV:
      
 My Music: (int_20h)
   - highlight currently playing file somehow
-  - foobar plugin (int20h is working on this)
   - search songs by genre,artist,album (based on music database)
   - favorite system to add an album, song, artists to your favorites
   - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
