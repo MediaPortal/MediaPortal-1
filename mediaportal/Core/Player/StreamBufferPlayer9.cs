@@ -218,5 +218,17 @@ namespace MediaPortal.Player
 			}
     }
 
+		public override void Reset()
+		{
+			if (Vmr9==null || !GUIGraphicsContext.Vmr9Active || mediaCtrl==null) return;
+
+			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+			double pos=CurrentPosition;
+			mediaCtrl.Stop();
+			mediaCtrl.Run();
+			SeekAbsolute(pos);
+			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
+		}
+
   }
 }

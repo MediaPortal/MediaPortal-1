@@ -119,6 +119,15 @@ namespace MediaPortal.Player
           PlayBackStarted(currentMedia, CurrentFilePlaying);
       }
     }
+		
+		public static void Reset()
+		{
+			if (m_player!=null)
+			{
+				m_player.Reset();
+			}
+		}
+
     public static void Stop()
     {
       if (m_player!=null)

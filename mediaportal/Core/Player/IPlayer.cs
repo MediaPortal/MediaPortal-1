@@ -475,6 +475,9 @@ namespace MediaPortal.Player
     {
       get { return false;}
     }
+		public virtual void Reset()
+		{
+		}
 
     #region IDisposable Members
 
