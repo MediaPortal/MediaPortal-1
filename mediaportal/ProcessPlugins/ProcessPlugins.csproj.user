@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "" >
+            <Settings ReferencePath = "C:\erwin\IControl\IControl\bin\Release\;C:\erwin\mediaportal\xbmc\bin\Debug\;C:\erwin\IControl\IControl\bin\Debug\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"
