@@ -1,7 +1,7 @@
 //enable to following line for profiling
 //this will cause Mediaportal to draw the maxium number of FPS. It will use 100% cpu time 
 //because it wont do any Sleeps(). This is usefull for the profile so it can see which methods/classes take up the most CPU %
-#define PROFILING 
+//#define PROFILING 
 
 using System;
 using System.Diagnostics;

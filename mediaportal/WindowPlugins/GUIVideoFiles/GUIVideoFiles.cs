@@ -626,10 +626,11 @@ namespace MediaPortal.GUI.Video
       SetIMDBThumbs(itemlist);
 			string strSelectedItem = m_history.Get(m_strDirectory);
 			int iItem = 0;
+			GUIFacadeControl list = (GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
 			foreach (GUIListItem item in itemlist)
       {
         item.OnItemSelected+=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-				GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_VIEW, item);
+				list.Add(item);
 			}
 			OnSort();
 			for (int i = 0; i < GetItemCount(); ++i)

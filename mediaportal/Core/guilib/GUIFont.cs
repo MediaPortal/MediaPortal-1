@@ -17,7 +17,7 @@ namespace MediaPortal.GUI.Library
 	{
 		private string m_strFontName;
 		private string m_strFileName;
-		public const int MaxNumfontVertices = 200*6;
+		public const int MaxNumfontVertices = 100*6;
     
     private int       _StartCharacter=32;
     private int       _EndCharacter=255;
