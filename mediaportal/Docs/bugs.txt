@@ -1,15 +1,12 @@
 Bugs left:
-  16-06-2004 my tv      : tv is jerky/choppy
-  16-06-2004 my tv      : changing channels 
-  16-06-2004 general    : scrolling is now depended on FPS
+  18-06-2004 my video   : F3 when no inet connection
+  18-06-2004 my music   : F3 when no inet connection
+  18-06-2004 my weather : problems when no inet connection
   16-06-2004 general    : have autotune enter the channels from low to high instead of high to low ?   
   
-  31-05-2004 my tv      : PVR350 does not give any image and sound on latest version. (weird huh Frodo? I can't get it to work either while it did at first) we all have the same error log. 
   31-05-2004 my music   : remove album info does not delete the thumbnail. 
   02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
   02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
-  01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
-  28-04-2004 my tv      : tuner not found 
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
 
   

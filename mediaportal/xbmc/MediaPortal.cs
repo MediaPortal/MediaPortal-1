@@ -344,12 +344,14 @@ public class MediaPortalApp : D3DApp, IRender
     if (g_Player.Playing)
     {
       GUIGraphicsContext.IsPlaying=true;
+			GUIGraphicsContext.IsPlayingVideo=(g_Player.IsVideo || g_Player.IsTV) ;
     }
     else
     {
       if (!Recorder.Previewing)
         GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying=false;
+				
     }
   }
 
@@ -425,6 +427,27 @@ public class MediaPortalApp : D3DApp, IRender
     {
       switch (action.wID)
       {
+				case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
+					//show livetv or video as background instead of the static GUI background
+					using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+					{
+						// only works when VMR9 is enabled, so check that
+						bool bUseVMR9=xmlreader.GetValueAsBool("general","vmr9",true);
+						if (bUseVMR9)
+						{
+							// toggle livetv/video in background on/pff
+							GUIGraphicsContext.ShowBackground = !GUIGraphicsContext.ShowBackground;
+
+							// if on, but we're not playing any video or watching tv
+							if (GUIGraphicsContext.ShowBackground && !GUIGraphicsContext.IsPlaying)
+							{
+								//then start watching live tv in background
+								Recorder.Previewing=true;
+							}
+						}
+					}
+				break;
+
         case Action.ActionType.ACTION_EXIT:
           GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
           break;

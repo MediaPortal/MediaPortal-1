@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Windows.Forms;
 using DirectX.Capture;
 using MediaPortal.GUI.Library;
 namespace MediaPortal

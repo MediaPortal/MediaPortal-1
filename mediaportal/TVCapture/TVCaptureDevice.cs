@@ -74,7 +74,8 @@ namespace MediaPortal.TV.Recording
     Filters m_filters;
 
     [NonSerialized]
-    bool m_bPreviewGraph=false;//indicates if the tv preview graph is already build
+    bool m_bTimeShifting=false;//indicates if the tv preview graph is already build
+		bool m_bAllocated=false;
 
     public Size FrameSize
     {
@@ -88,10 +89,21 @@ namespace MediaPortal.TV.Recording
       set {m_FrameRate=value;}
     }
 
-    public bool PreviewGraph
+    public bool IsTimeShifting
     {
-      get { return m_bPreviewGraph;}
+      get { return m_bTimeShifting;}
     }
+
+		/// <summary>
+		/// Allocated property
+		/// Returns true when this card has been allocated for something else then live tv/recording
+		/// for example when the radio player is using it
+		/// </summary>
+		public bool Allocated
+		{
+			get { return m_bAllocated;}
+			set { m_bAllocated=value;}
+		}
 
 		public TVCaptureDevice()
 		{
@@ -175,8 +187,9 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Start a new capture/preview graph
+    /// This function builds and starts new capture graph
     /// </summary>
-    /// <param name="strFileName">Filename where capture should be stored. If empty no capture is started</param>
+    /// <param name="strFileName">Filename where preview or recording. If empty no capture is started</param>
     /// <param name="iChannelNr">TV Channel number to capture/preview</param>
     /// <returns></returns>
     public bool StartCapture(string strFileName, int iChannelNr)
@@ -282,11 +295,14 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Stop the current preview/capture graph
+    /// This functions stops the current capture or preview graph
+    /// The capture card will be idle and all resources are cleaned up
+    /// We're not timeshifting,recording or watching tv anymore when this method is done
     /// </summary>
     public void StopCapture()
     {
       
-      m_bPreviewGraph=false;
+      m_bTimeShifting=false;
       StopPreview();
 
       if (capture!=null)
@@ -318,6 +334,13 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+		/// <summary>
+		/// SwitchChannel() 
+		/// This function will switch to another TV channel, provided that a
+		/// preview or recording is already running
+		/// </summary>
+		/// <param name="iChannelNr">New Channel number</param>
+		/// <param name="bCheckSame">if true, dont do anything if new channel number is same as old channel number</param>
     void SelectChannel(int iChannelNr, bool bCheckSame)
     {
       Log.Write("  CaptureCard:{0}   select channel:{1}",ID,iChannelNr);
@@ -517,8 +540,7 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// select which TV channel should be visible in the tv-preview window
-    /// Previewing only works when nothing is recording. 
+    /// select which TV channel we should be watching/recording
     /// </summary>
     public string PreviewChannel
     {
@@ -574,7 +596,11 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// Turn on/off previewing. You can only turn on previewing when we're not recording
+    /// Turn on/off previewing. 
+    /// You can only turn on previewing when we're not recording
+    /// When previewing is on, the user will see & hear live tv
+    /// when previewing is off, the user wont see & hear live tv, but if possible
+    /// the card will do timeshifting in the background
     /// </summary>
     public bool Previewing
     {
@@ -607,7 +633,7 @@ namespace MediaPortal.TV.Recording
           {
             if (capture==null) 
             {
-              StartPreview();
+              StartTimeShifting();
             }
 
             if (capture!=null)
@@ -650,6 +676,12 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+		/// <summary>
+		/// This function stops previewing.
+		/// it will only stop the previewing, if possible it will remain timeshifting 
+		/// live tv in the background. At the end of this function the card will still be timeshifting
+		/// but no live tv is visible for the user
+		/// </summary>
     public void StopPreview()
     {
       // If we're timeshifting & previewing this capture device, then stop the previewing
@@ -676,14 +708,20 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public void StartPreview()
+		/// <summary>
+		/// StartTimeShifting()
+		/// This function will start timeshifting in the background
+		/// At the end of this function the card is capturing & timeshifting live tv
+		/// but the user is not previewing any live tv yet
+		/// </summary>
+    public void StartTimeShifting()
     {
       if (IsRecording) return;
 
       // check if preview isnt running already
       if (capture==null)
       {
-        Log.Write("  CaptureCard:{0} Start preview graph",ID);
+        Log.Write("  CaptureCard:{0} Start timeshifting",ID);
         // start preview
         string strRecPath="";
         string m_strChannel;
@@ -709,7 +747,7 @@ namespace MediaPortal.TV.Recording
             capture.SetVideoPosition( new Rectangle(0,0,1,1) );
             capture.PreviewWindow=GUIGraphicsContext.form;
           }
-          m_bPreviewGraph=true;   
+          m_bTimeShifting=true;   
         }
       }
     }
@@ -718,6 +756,8 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Start recording a tv program / recording schedule
+    /// This function will start recording a tv program and save it to disk
+    /// After this function the card is busy recording...
     /// </summary>
     /// <param name="rec">The recording schedule for this recording</param>
     /// <param name="currentProgram">the tv program to record (may be null)</param>
@@ -862,7 +902,7 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// Returns whether the record is currently recording or not
+    /// Returns whether the card is currently recording or not
     /// </summary>
     public bool IsRecording
     {
@@ -871,6 +911,8 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// This function will stop the current recording
+    /// It just sets a flag. The recording will be stopped the next time Process() is called
+    /// When recording is stopped the card will be idle again
     /// </summary>
     public void StopRecording()
     {
@@ -899,6 +941,18 @@ namespace MediaPortal.TV.Recording
     }
 
 
+		/// <summary>
+		/// You can setup MP so that its starts recording x minutes before a program starts
+		/// This in case that in real life the program started earlier. This function returns
+		/// true if we are in this prerecording interval. see below:
+		/// 
+		///  ----time->---------------------|----------------|---------------------------------
+		///                                 |                |TVProgram starts
+		///                                 |                |
+		///                                 +----------------+
+		///                                 precording interval
+		///                                 (we return true)
+		/// </summary>
     public bool IsPreRecording
     {
       get
@@ -916,7 +970,19 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public bool IsPostRecording
+		/// <summary>
+		/// You can setup MP so that its stops recording x minutes after a program stops
+		/// This in case that in real life the program stops later then the tvguide says. This function returns
+		/// true if we are in this postrecording interval. see below:
+		/// 
+		///  ----time->---------------------|-----------------|---------------------------------
+		///   tvprogram running             |                 |
+		///                                 |                 |
+		///                                 +-----------------+
+		///                                 postcording interval
+		///                                 (we return true)
+		/// </summary>
+		public bool IsPostRecording
     {
       get
       {
@@ -934,6 +1000,17 @@ namespace MediaPortal.TV.Recording
     }
 
 
+		/// <summary>
+		/// the Process() method is called by the Recorder() 10x each second
+		/// The process method checks 2 things:
+		/// when watching tv (preview mode):
+		///   if the preview window size/position has changed, it will adjust the live tv output for it
+		///   if the brighness/contrast/... has changed, it will adjust this in the graph
+		///   
+		/// when recording (record mode):
+		///   if recording has reached the end. It will stop the recording, free up any resources
+		///   and give the recorded file its final name
+		/// </summary>
     public void Process()
     {
       // are we recording?

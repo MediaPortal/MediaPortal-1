@@ -48,6 +48,7 @@ namespace MediaPortal.TV.Recording
       TVDatabase.OnRecordingsChanged += new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
       workerThread =new Thread( new ThreadStart(ThreadFunctionRecord)); 
       workerThread.Start();
+      GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
     }
 
     /// <summary>
@@ -60,7 +61,8 @@ namespace MediaPortal.TV.Recording
       m_eState =State.Stopping;
       while(m_eState ==State.Stopping) System.Threading.Thread.Sleep(100);
       m_eState =State.Idle;
-    }
+			GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
+		}
     
     /// <summary>
     /// This function gets called by the TVDatabase when a recording has been
@@ -164,7 +166,7 @@ namespace MediaPortal.TV.Recording
           TimeSpan ts=DateTime.Now-dtTime;
           while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute)
           {
-            PreStartPreview();
+            StartTimeShifting();
             if (m_eState !=State.Running) break;
             if (m_bPreviewChanged) break;
             if (m_bRecordingsChanged) break;
@@ -560,30 +562,33 @@ namespace MediaPortal.TV.Recording
       OnPreviewChannelChanged();
     }
 
-    static void PreStartPreview()
+    static void StartTimeShifting()
     {
       if (!m_bAlwaysTimeshift) return;
 
-      //check if a preview graph is already started
-      bool bGraphStarted=false;
+      //check if a card is already timeshifting
+      bool bAlreadyTimeShifting=false;
       foreach (TVCaptureDevice card in m_tvcards)
       {
-        if (card.PreviewGraph) 
+        if (card.IsTimeShifting) 
         {
           //yes
-          bGraphStarted=true;
+          bAlreadyTimeShifting=true;
           break;
         }
       }
 
       //no, try 2 start one
-      if (!bGraphStarted)
+      if (!bAlreadyTimeShifting)
       {
         foreach (TVCaptureDevice card in m_tvcards)
         {
           if (card.UseForTV && !card.IsRecording) 
           {
-            card.StartPreview();
+						if (!card.Allocated)
+						{
+							card.StartTimeShifting();
+						}
             break;
           }
         }
@@ -592,7 +597,7 @@ namespace MediaPortal.TV.Recording
 
     static void HandlePreview()
     {
-      PreStartPreview();
+      StartTimeShifting();
 
       //check if we are already previewing
       if (!m_bPreviewChanged) return;
@@ -603,7 +608,7 @@ namespace MediaPortal.TV.Recording
         // check if we're already previewing
         foreach (TVCaptureDevice dev in m_tvcards)
         {
-          if (dev.Previewing || dev.PreviewGraph) 
+          if (dev.Previewing || dev.IsTimeShifting) 
           {
             //yes then just change channels
             dev.Previewing=true;
@@ -706,6 +711,42 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+		static public void OnMessage(GUIMessage message)
+		{
+			switch(message.Message)
+			{
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD:
+					// somebody wants to allocate a capture card
+					// if possible, lets release it
+					foreach (TVCaptureDevice card in m_tvcards)
+					{
+						if (card.VideoDevice.Equals(message.Label))
+						{
+							if (!card.IsRecording)
+							{
+								card.StopCapture();
+								card.Allocated=true;
+							}
+						}
+					}
+				break;
 
+					
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_FREE_CARD:
+					// somebody wants to allocate a capture card
+					// if possible, lets release it
+					foreach (TVCaptureDevice card in m_tvcards)
+					{
+						if (card.VideoDevice.Equals(message.Label))
+						{
+							if (card.Allocated)
+							{
+								card.Allocated=false;
+							}
+						}
+					}
+				break;
+			}
+		}
   }
 }

@@ -136,6 +136,7 @@
 		<onright>27</onright>
 		<onup>26</onup>
 		<ondown>2</ondown>
+		<action>101</action>
 	</control>
 	<control>
 		<description>stop button</description>
