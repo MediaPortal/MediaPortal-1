@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "WinExe"
                 PreBuildEvent = ""
-                PostBuildEvent = "$(ProjectDir)$(OutDir)PostBuild.bat"
+                PostBuildEvent = '"$(ProjectDir)$(OutDir)PostBuild.bat"'
                 RootNamespace = "MediaPortal"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""

@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  25-05-2004  my pictures : fixed : play a song, view a picture, press X->visualisation shows and picture disappears!
+  25-05-2004  my tv       : fixed : click in empty 'recorded tv'->crash
   25-05-2004  my music    : fixed : play song, press F5->crash
   25-05-2004  my videos   : fixed : remove HTML entities from IMDB info
   25-05-2004  general     : added : dont show hidden files/folders
