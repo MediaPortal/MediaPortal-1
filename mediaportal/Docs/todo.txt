@@ -8,13 +8,10 @@ Skin, gfx, .xml & media:
   - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
-	- my tv->fullscreen ->crash?
 	- metal & crystal : toggle button graphics
 	- remeber 'fullscreen tv' state when entering/leaving my tv
 fix:
-	-home:nothing selected when returning from a window
 	-home:dont load plugins 3 times
-	-I think it will feel more natural and look better when you can go up and down the list and scroll 1 option when you go to the top
 
 vmr9:
 	- windowless vmr9 / renderless vmr9
@@ -27,7 +24,6 @@ My Radio:
          
 My TV:
   general
-    - check the EPG without showing the TV
     - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
     - support for SW encoding capture cards for watching and recording
     - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
@@ -42,7 +38,6 @@ My TV:
 	- TV-out through PVR 350
   
   Fullscreen TV:
-    - use 0-9 on remote to select a TV channel
 	- show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
 	- when in FF mode, auto stop when live-point is reached
   
