@@ -14,6 +14,13 @@
 			<texture>background.png</texture> 
 		</control>
 		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>20</posY>
+			<texture>status_logo.png</texture>
+		</control>
+		<control>
 			<description>mystatus text label</description>
 			<type>label</type>
 			<id>1</id>

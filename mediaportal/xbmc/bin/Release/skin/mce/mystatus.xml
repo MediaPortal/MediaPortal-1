@@ -16,6 +16,13 @@
 			<colordiffuse>ffffffff</colordiffuse>
 		</control>
 		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>20</posY>
+			<texture>status_logo.png</texture>
+		</control>
+		<control>
 			<description>My status text label</description>
 			<type>label</type>
 			<id>1</id>
@@ -35,7 +42,7 @@
 			<posX>260</posX>
 			<height>400</height>
 			<width>410</width>
-			<onleft>3</onleft> 
+			<onleft>2</onleft> 
 			<onright>3</onright> 
 			<onup>3</onup> 
 			<ondown>3</ondown> 
@@ -96,7 +103,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>2</onright>
+				<onright>9</onright>
 				<onup>21</onup>
 				<ondown>11</ondown>
 			</control>
