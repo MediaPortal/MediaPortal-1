@@ -1754,11 +1754,9 @@ namespace MediaPortal.GUI.Video
         if (stoptime>0)
         {
           string title=System.IO.Path.GetFileName(filename);
-          if (VideoDatabase.HasMovieInfo(filename))
-          {
-            VideoDatabase.GetMovieInfoById( movieid, ref movieDetails);
-            title=movieDetails.Title;
-          }
+          VideoDatabase.GetMovieInfoById( movieid, ref movieDetails);
+          if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
+          
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
           if (null == dlgYesNo) return;
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?

@@ -121,7 +121,8 @@ namespace MediaPortal.GUI.Library
 			m_guiLeft.SetPosition(iXPos,iYPos);
 			m_guiLeft.Height=iHeightLeft;
 			m_guiLeft.Width=iWidthLeft;
-			m_guiLeft.SetPosition(iXPos,iYPos);
+      m_guiLeft.SetPosition(iXPos,iYPos);
+      m_guiLeft.DoUpdate();
 			m_guiLeft.Render();
 
 			iXPos += iWidthLeft;
@@ -131,6 +132,7 @@ namespace MediaPortal.GUI.Library
 				m_guiMid.Height=iHeightLeft;//m_guiMid.TextureHeight;
 				m_guiMid.Width=(int)fWidth;
 				m_guiMid.SetPosition(iXPos,iYPos);
+        m_guiMid.DoUpdate();
 				m_guiMid.Render();
 				iXPos += (int)fWidth;
 			}
@@ -138,7 +140,8 @@ namespace MediaPortal.GUI.Library
 			m_guiRight.SetPosition(iXPos,iYPos);
 			m_guiRight.Height=iHeightRight;
 			m_guiRight.Width=iWidthRight;
-			m_guiRight.SetPosition(iXPos,iYPos);
+      m_guiRight.SetPosition(iXPos,iYPos);
+      m_guiRight.DoUpdate();
 			m_guiRight.Render();
 		}
 

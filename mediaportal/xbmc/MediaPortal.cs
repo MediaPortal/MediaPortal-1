@@ -457,13 +457,6 @@ public class MediaPortalApp : D3DApp, IRender
         if (font != null)
         {
           font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT);
-#if DEBUG
-          if (cpuPerformance!=null)
-          {
-            string tmp=String.Format("cpu:{0:000}%",(int)iPerformance);
-            font.DrawText(80, 55, 0xffffffff, tmp, GUIControl.Alignment.ALIGN_LEFT);
-          }
-#endif          
           region[0].X = m_ixpos;
           region[0].Y = 0;
           region[0].Width = 4;
