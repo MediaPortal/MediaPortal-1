@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  27-04-2004: my tv       : added : better navigation in tvguide
+  27-04-2004: general     : added : show time in am/pm format depending on current regional setting
   27-04-2004: setup       : added : tv channels->click on header colum->sorts tvchannels by selected column
   27-04-2004: general     : fixed : thumbnails where messed up if file with same filename was present in different folders
   27-04-2004: general     : fixed : after switching skins all files / folders where added twice and could not browse anymore
