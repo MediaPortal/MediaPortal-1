@@ -191,7 +191,19 @@ namespace MediaPortal.GUI.Library
         if (m_CurrentKey==' ') m_CurrentKey='!';
         if (m_CurrentKey=='!') m_CurrentKey='?';
         if (m_CurrentKey=='?') m_CurrentKey='.';
-        if (m_CurrentKey=='.') m_CurrentKey=' ';
+        if (m_CurrentKey=='.') m_CurrentKey='0';
+        if (m_CurrentKey=='0') m_CurrentKey='1';
+        if (m_CurrentKey=='1') m_CurrentKey='2';
+        if (m_CurrentKey=='2') m_CurrentKey='3';
+        if (m_CurrentKey=='3') m_CurrentKey='4';
+        if (m_CurrentKey=='4') m_CurrentKey='5';
+        if (m_CurrentKey=='5') m_CurrentKey='6';
+        if (m_CurrentKey=='6') m_CurrentKey='7';
+        if (m_CurrentKey=='7') m_CurrentKey='8';
+        if (m_CurrentKey=='8') m_CurrentKey='9';
+        if (m_CurrentKey=='9') m_CurrentKey='-';
+        if (m_CurrentKey=='-') m_CurrentKey='+';
+        if (m_CurrentKey=='+') m_CurrentKey=' ';
       }
 
       if (Key=='2')
