@@ -128,6 +128,13 @@ namespace MediaPortal.Util
           iBitmapWidth=iWidth;
           iBitmapHeight=iHeight;
         }
+        else
+        {
+          // Adjust width/height 2 pixcels for smoother zoom actions at the edges
+          iBitmapWidth=iWidth+2;
+          iBitmapHeight=iHeight+2;
+        }
+
 
         if (bResize)
         {
@@ -141,8 +148,9 @@ namespace MediaPortal.Util
               g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
               if (bZoom)
               {
-                int xpos=(iMaxWidth-iWidth)/2;
-                int ypos= (iMaxHeight-iHeight)/2;
+                // Set picture at center position
+                int xpos=1;// (iMaxWidth-iWidth)/2;
+                int ypos=1;// (iMaxHeight-iHeight)/2;
                 g.DrawImage(theImage, new Rectangle(xpos,ypos,iWidth,iHeight) );
               }
               else
