@@ -115,18 +115,6 @@
 				<onleft>6</onleft>
 				<onright>10</onright>
 				<onup>5</onup>
-				<ondown>6</ondown>
-			</control>		
-			<control>
-				<description>Search by Description</description>
-				<type>button</type>
-				<id>7</id>
-				<posX>60</posX>
-				<posY>233</posY>
-				<label>922</label>
-				<onleft>6</onleft>
-				<onright>10</onright>
-				<onup>6</onup>
 				<ondown>7</ondown>
 			</control>		
 	    <control>
