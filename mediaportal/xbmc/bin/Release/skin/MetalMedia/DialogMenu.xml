@@ -22,6 +22,22 @@
 		<font>font13</font> 
 		<textcolor>FF000000</textcolor> 
 	</control>
+  <control>
+		<description>Exit button</description>
+		<type>button</type>
+		<id>2</id>
+		<posX>189</posX>
+		<posY>232</posY>
+		<width>30</width>
+		<height>30</height>
+		<textureFocus>dialog_exit.png</textureFocus>
+		<textureNoFocus>dialog_exit_nofocus.png</textureNoFocus>
+		<label>-</label>
+		<onleft>3</onleft>
+		<onright>3</onright>
+		<onup>3</onup>
+		<ondown>3</ondown>
+	</control>	
 	<control>
 		<description>options listcontrol</description> 
 		<type>listcontrol</type> 
@@ -30,7 +46,7 @@
 		<posY>280</posY> 
 		<width>350</width> 
 		<height>260</height> 
-		<onleft>5</onleft> 
+		<onleft>2</onleft> 
 		<onright>5</onright> 
 		<onup>5</onup> 
 		<ondown>5</ondown> 
