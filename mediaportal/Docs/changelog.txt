@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  03-07-2004  my recipies : added : added new plugin: my recipies (thx to domi-fan)
+  03-07-2004  skin engine : fixed : focus things
+  03-07-2004  my tv       : fixed : my tv recorded wrong channel
   03-07-2004  general     : fixed : update of the metalmedia skin
   03-07-2004  skin engine : fixed : crash in textscrollup control if width/height was not large enough to hold the text
   03-07-2004  skin engine : fixed : On a selectbutton you cannot control the text position of the initial button text. Only the text after you select it.
