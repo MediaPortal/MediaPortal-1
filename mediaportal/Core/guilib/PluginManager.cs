@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Library
       {
         LoadWindowPlugin(strFile);
       }
-      LoadWindowPlugin("Dialogs.dll");
+      //LoadWindowPlugin("Dialogs.dll");
     }
 
     static public void Start()
