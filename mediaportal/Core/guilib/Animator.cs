@@ -145,6 +145,13 @@ namespace MediaPortal.GUI.Library
 		public void Advance(long timePassed)
 		{
 			lTime+=timePassed;
+			if (lTime >= FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES)
+			{
+				//yes, then end the animation
+				m_Animating=false;
+				return;
+			}
+
 		}
 	}
 	

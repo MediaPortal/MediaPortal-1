@@ -71,20 +71,17 @@ namespace MediaPortal.GUI.Library
             StorePosition();
           }
 
-          if (m_animator.IsDone())
+          for (int i=0; i < m_Controls.Count;++i)
           {
-            ReStorePosition();
-            m_animator=null;
+            GUIControl cntl=m_Controls[i] as GUIControl;
+            if (cntl!=null) cntl.Animate(timePassed,m_animator);
           }
-          else
-          {
-            for (int i=0; i < m_Controls.Count;++i)
-            {
-              GUIControl cntl=m_Controls[i] as GUIControl;
-              if (cntl!=null) cntl.Animate(timePassed,m_animator);
-            }
-          }
-					m_animator.Advance(timePassed);
+          m_animator.Advance(timePassed);
+					if (m_animator.IsDone())
+					{
+						ReStorePosition();
+						m_animator=null;
+					}
         }
       }
 
