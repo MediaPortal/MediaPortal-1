@@ -2388,9 +2388,15 @@
 	<id>869</id>
 	<value>NewAlarm</value>
 </string>
-
+<string>
+	<id>870</id>
+	<value>Recurring</value>
+</string>
+<string>
+	<id>871</id>
+	<value>Wake up pc</value>
+</string>
 <!-- End My Alarm Strings -->
-
 <string>
 	<id>890</id>
 	<value>Play CD</value>

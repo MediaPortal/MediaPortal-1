@@ -16,6 +16,7 @@ namespace MediaPortal.GUI.Alarm
 	public class Alarm
 	{
 		#region Private Variables
+			private static AlarmCollection _Alarms;
 			private System.Windows.Forms.Timer _AlarmTimer = new System.Windows.Forms.Timer();
 			private System.Windows.Forms.Timer _VolumeFadeTimer = new  System.Windows.Forms.Timer();
 			private int _Id;
@@ -34,46 +35,66 @@ namespace MediaPortal.GUI.Alarm
 			private MediaType _MediaType;
 			private bool _VolumeFade;
 			private GUIListItem _SelectedItem;
+			private bool _WakeUpPC;
+			private AlarmType _AlarmType;
+
+			//constants
+			private const int MAX_ALARMS = 20;
 		#endregion
 
 		#region Public Enumerations
-//			public enum AlarmType
-//			{
-//				Alarm = 1,
-//				SleepTimer = 2
-//			}
-			public enum MediaType
-			{
-				PlayList =0,
-				Radio = 1,
-				File = 2	
-			}
+		public enum AlarmType
+		{
+			Once = 0,
+			Recurring = 1
+		}
+		public enum MediaType
+		{
+			PlayList =0,
+			Radio = 1,
+			File = 2	
+		}
 		#endregion
 
 		#region Constructor
-			public Alarm(int id,string name,int mediaType, bool enabled,DateTime time,bool mon,bool tue,bool wed,bool thu,bool fri,bool sat,bool sun,string sound,bool volumeFade)
+		public Alarm(int id,string name,int mediaType, bool enabled,DateTime time,bool mon,bool tue,bool wed,bool thu,bool fri,bool sat,bool sun,string sound,bool volumeFade,bool wakeUpPC,int alarmType)
+		{
+			_Id = id;
+			_Name = name;
+			_MediaType = (MediaType)mediaType;
+			_Enabled = enabled;
+			_Time = time;
+			_Mon = mon;
+			_Tue = tue;
+			_Wed = wed;
+			_Thu = thu;
+			_Fri = fri;
+			_Sat = sat;
+			_Sun = sun;
+			_Sound = sound;
+			_VolumeFade = volumeFade;
+			_WakeUpPC = wakeUpPC;
+			_AlarmType = (AlarmType)alarmType;
+
+			InitializeTimer();
+
+		}
+
+		#endregion
+
+		#region Properties	
+			public AlarmType AlarmOccurrenceType
 			{
-				_Id = id;
-				_Name = name;
-				_MediaType = (MediaType)mediaType;
-				_Enabled = enabled;
-				_Time = time;
-				//_Type = type;
-				_Mon = mon;
-				_Tue = tue;
-				_Wed = wed;
-				_Thu = thu;
-				_Fri = fri;
-				_Sat = sat;
-				_Sun = sun;
-				_Sound = sound;
-				_VolumeFade = volumeFade;
-
-
-				InitializeTimer();
-
+				get{return _AlarmType;}
+				set{_AlarmType = value;}
 			}
-
+			
+			public bool WakeUpPC
+			{
+				get{return _WakeUpPC;}
+				set{_WakeUpPC = value;}
+			}
+			
 			public Alarm(int id)
 			{
 				_Id = id;
@@ -87,6 +108,9 @@ namespace MediaPortal.GUI.Alarm
 				get{return _Name;}
 				set{_Name = value;}
 			}
+			/// <summary>
+			/// Returns a string to display the days the alarm is enabled
+			/// </summary>
 			public string DaysEnabled
 			{
 				get
@@ -282,7 +306,35 @@ namespace MediaPortal.GUI.Alarm
 		}
 
 		/// <summary>
-		/// Plays the selected play type
+		/// Returns if the day parameter is enabled for this alarm
+		/// </summary>
+		/// <param name="day">day to check</param>
+		/// <returns>True if day passed in is enabled</returns>
+		private bool IsDayEnabled(DayOfWeek day)
+		{
+			switch(day)
+			{
+				case DayOfWeek.Monday:
+					return _Mon;
+				case DayOfWeek.Tuesday:
+					return _Tue;
+				case DayOfWeek.Wednesday:
+					return _Wed;
+				case DayOfWeek.Thursday:
+					return _Thu;
+				case DayOfWeek.Friday:
+					return _Fri;
+				case DayOfWeek.Saturday:
+					return _Sat;
+				case DayOfWeek.Sunday:
+					return _Sun;
+			}
+			return false;
+
+		}
+
+		/// <summary>
+		/// Plays the selected media type
 		/// </summary>
 		private void Play()
 		{
@@ -291,9 +343,9 @@ namespace MediaPortal.GUI.Alarm
 				case MediaType.PlayList:
 					if(PlayListFactory.IsPlayList(_Sound))
 					{
-						PlayList playlist = PlayListFactory.Create(GUIAlarm.PlayListPath + "\\" + _Sound);
+						PlayList playlist = PlayListFactory.Create(Alarm.PlayListPath + "\\" + _Sound);
 						if(playlist==null) return;
-						if(!playlist.Load(GUIAlarm.PlayListPath + "\\" +  _Sound))
+						if(!playlist.Load(Alarm.PlayListPath + "\\" +  _Sound))
 						{
 							ShowErrorDialog();
 							return;
@@ -339,7 +391,7 @@ namespace MediaPortal.GUI.Alarm
 				case MediaType.File:
 					try
 					{
-						g_Player.Play(GUIAlarm.AlarmSoundPath + "\\" +  _Sound);
+						g_Player.Play(Alarm.AlarmSoundPath + "\\" +  _Sound);
 						g_Player.Volume=99;
 					}
 					catch
@@ -352,6 +404,11 @@ namespace MediaPortal.GUI.Alarm
 
 		}
 
+		/// <summary>
+		/// Gets the playpath for a radio station
+		/// </summary>
+		/// <param name="station"></param>
+		/// <returns></returns>
 		string GetPlayPath(RadioStation station)
 		{
 			if (station.URL.Length>5)
@@ -392,13 +449,13 @@ namespace MediaPortal.GUI.Alarm
 			/// Loads all of the alarms from the profile xml
 			/// </summary>
 			/// <returns>ArrayList of Alarm Objects</returns>
-			public static ArrayList LoadAll()
+			public static void LoadAll()
 			{
-				ArrayList Alarms = new ArrayList();
+				AlarmCollection Alarms = new AlarmCollection();
 
 				using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 				{
-					for (int i=0; i < 20; i++)
+					for (int i=0; i < MAX_ALARMS; i++)
 					{
 						string NameTag=String.Format("alarmName{0}",i);
 						string MediaTypeTag=String.Format("alarmMediaType{0}",i);
@@ -413,6 +470,8 @@ namespace MediaPortal.GUI.Alarm
 						string SunTag =  String.Format("alarmSun{0}",i);
 						string SoundTag =  String.Format("alarmSound{0}",i);
 						string VolumeFadeTag = String.Format("alarmVolumeFade{0}",i);
+						string WakeUpPCTag = String.Format("alarmWakeUpPC{0}",i);
+						string AlarmTypeTag = String.Format("alarmType{0}",i);
 
 						string AlarmName=xmlreader.GetValueAsString("alarm",NameTag,"");
 
@@ -420,7 +479,7 @@ namespace MediaPortal.GUI.Alarm
 						{
 							bool AlarmEnabled=xmlreader.GetValueAsBool("alarm",EnabledTag,false);
 							int AlarmMediaType =xmlreader.GetValueAsInt("alarm",MediaTypeTag,1);
-							DateTime AlarmTime =DateTime.Parse(xmlreader.GetValueAsString("alarm",TimeTag,string.Empty));
+							DateTime AlarmTime = DateTime.Parse(xmlreader.GetValueAsString("alarm",TimeTag,string.Empty));
 							bool AlarmMon = xmlreader.GetValueAsBool("alarm",MonTag,false);
 							bool AlarmTue = xmlreader.GetValueAsBool("alarm",TueTag,false);
 							bool AlarmWed = xmlreader.GetValueAsBool("alarm",WedTag,false);
@@ -430,49 +489,60 @@ namespace MediaPortal.GUI.Alarm
 							bool AlarmSun = xmlreader.GetValueAsBool("alarm",SunTag,false);
 							string AlarmSound = xmlreader.GetValueAsString("alarm",SoundTag,string.Empty);
 							bool AlarmVolumeFade = xmlreader.GetValueAsBool("alarm",VolumeFadeTag,false);
+							bool WakeUpPC = xmlreader.GetValueAsBool("alarm",WakeUpPCTag,false);
+							int AlarmType = xmlreader.GetValueAsInt("alarm",AlarmTypeTag,1);
 
 								
 							Alarm objAlarm = new Alarm(i,AlarmName,AlarmMediaType,AlarmEnabled,AlarmTime,
 								AlarmMon,AlarmTue,AlarmWed,AlarmThu,
-								AlarmFri,AlarmSat,AlarmSun,AlarmSound,AlarmVolumeFade);
+								AlarmFri,AlarmSat,AlarmSun,AlarmSound,AlarmVolumeFade,WakeUpPC,AlarmType);
 
 							Alarms.Add(objAlarm);
 						}
 					}	
 				}
-				return Alarms;
+				_Alarms = Alarms;
 
 			}
+			/// <summary>
+			/// Saves an alarm to the configuration file
+			/// </summary>
+			/// <param name="alarmToSave">Alarm object to save</param>
+			/// <returns></returns>
 			public static bool SaveAlarm(Alarm alarmToSave)
 			{
 				int id = alarmToSave.Id;
-				try
+				
+				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 				{
-					using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						
-						xmlwriter.SetValue("alarm","alarmName"+id,alarmToSave.Name);
-						xmlwriter.SetValue("alarm","alarmMediaType"+id,(int)alarmToSave.AlarmMediaType);
-						xmlwriter.SetValueAsBool("alarm","alarmEnabled"+id,alarmToSave.Enabled);
-						xmlwriter.SetValue("alarm","alarmTime"+id,alarmToSave.Time);
-						xmlwriter.SetValueAsBool("alarm","alarmMon"+id,alarmToSave.Mon);   
-						xmlwriter.SetValueAsBool("alarm","alarmTue"+id,alarmToSave.Tue);   
-						xmlwriter.SetValueAsBool("alarm","alarmWed"+id,alarmToSave.Wed);   
-						xmlwriter.SetValueAsBool("alarm","alarmThu"+id,alarmToSave.Thu);   
-						xmlwriter.SetValueAsBool("alarm","alarmFri"+id,alarmToSave.Fri);   
-						xmlwriter.SetValueAsBool("alarm","alarmSat"+id,alarmToSave.Sat); 
-						xmlwriter.SetValueAsBool("alarm","alarmSun"+id,alarmToSave.Sun); 
-						xmlwriter.SetValue("alarm","alarmSound"+id,alarmToSave.Sound);
-						xmlwriter.SetValueAsBool("alarm","alarmVolumeFade"+id,alarmToSave.VolumeFade); 
-					}
-					return true;
+					
+					xmlwriter.SetValue("alarm","alarmName"+id,alarmToSave.Name);
+					xmlwriter.SetValue("alarm","alarmMediaType"+id,(int)alarmToSave.AlarmMediaType);
+					xmlwriter.SetValueAsBool("alarm","alarmEnabled"+id,alarmToSave.Enabled);
+					xmlwriter.SetValue("alarm","alarmTime"+id,alarmToSave.Time);
+					xmlwriter.SetValueAsBool("alarm","alarmMon"+id,alarmToSave.Mon);   
+					xmlwriter.SetValueAsBool("alarm","alarmTue"+id,alarmToSave.Tue);   
+					xmlwriter.SetValueAsBool("alarm","alarmWed"+id,alarmToSave.Wed);   
+					xmlwriter.SetValueAsBool("alarm","alarmThu"+id,alarmToSave.Thu);   
+					xmlwriter.SetValueAsBool("alarm","alarmFri"+id,alarmToSave.Fri);   
+					xmlwriter.SetValueAsBool("alarm","alarmSat"+id,alarmToSave.Sat); 
+					xmlwriter.SetValueAsBool("alarm","alarmSun"+id,alarmToSave.Sun); 
+					xmlwriter.SetValue("alarm","alarmSound"+id,alarmToSave.Sound);
+					xmlwriter.SetValueAsBool("alarm","alarmVolumeFade"+id,alarmToSave.VolumeFade); 
+					xmlwriter.SetValueAsBool("alarm","alarmWakeUpPC"+id,alarmToSave.WakeUpPC); 
+					xmlwriter.SetValue("alarm","alarmType"+id,(int)alarmToSave.AlarmOccurrenceType);
 				}
-				catch
-				{
-					return false;
-				}
+				return true;
+		
+				
 			
 			}
+
+			/// <summary>
+			/// Deletes an alarm from the configuration file
+			/// </summary>
+			/// <param name="id">Id of alarm to be deleted</param>
+			/// <returns>true if suceeded</returns>
 			public static bool DeleteAlarm(int id)
 			{
 				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
@@ -490,18 +560,25 @@ namespace MediaPortal.GUI.Alarm
 					xmlwriter.RemoveEntry("alarm","alarmSound"+id);
 					xmlwriter.RemoveEntry("alarm","alarmMediaType"+id);
 					xmlwriter.RemoveEntry("alarm","alarmVolumeFade"+id);
+					xmlwriter.RemoveEntry("alarm","alarmWakeUpPC"+id);
+					xmlwriter.RemoveEntry("alarm","alarmType"+id);
 				}
 				return true;
 			} 
+
+			/// <summary>
+			/// Gets the next black Id for a new alarm
+			/// </summary>
+			/// <returns>Integer Id</returns>
 			public static int GetNextId()
 			{
 				string tempText;
-				for (int i=0; i<20; i++)
+				for (int i=0; i < MAX_ALARMS; i++)
 				{
 					using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 					{
 						tempText = xmlreader.GetValueAsString("alarm","alarmName"+i,"");
-						if (tempText == "")
+						if (tempText.Length == 0)
 						{
 							return i;
 						}
@@ -509,6 +586,161 @@ namespace MediaPortal.GUI.Alarm
 				}
 				return -1;
 			}
+
+			
+
+			/// <summary>
+			/// Refreshes the loaded alarms from the config file
+			/// </summary>
+			public static void RefreshAlarms()
+			{
+
+				if(_Alarms != null)
+				{
+					foreach(Alarm a in _Alarms)
+					{
+						a.Dispose();
+					}
+					_Alarms.Clear();
+			
+					//Load all the alarms 
+					Alarm.LoadAll();
+
+
+				}
+			}
+			
+		#endregion
+
+		#region Static Properties
+			/// <summary>
+			/// Gets / Sets the loaded alarms
+			/// </summary>
+			public static AlarmCollection LoadedAlarms  
+			{
+				get{return _Alarms;}
+			}
+			/// <summary>
+			/// Gets the alarms sound path from the configuration file
+			/// </summary>
+			public static string AlarmSoundPath
+			{
+				get
+				{ 
+					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					{
+						return  Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm","alarmSoundsFolder",""));
+					}
+				}
+			}
+			/// <summary>
+			/// Gets the playlist path from the configuration file
+			/// </summary>
+			public static string PlayListPath
+			{
+
+				get
+				{ 
+					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					{
+						return  Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music","playlists",""));
+					}
+				}
+			}
+			/// <summary>
+			/// Gets the snooze time from the configuration file
+			/// </summary>
+			public static int SnoozeTime
+			{
+				get
+				{ 
+					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					{
+						return xmlreader.GetValueAsInt("alarm","alarmSnoozeTime",5);
+					}
+				}
+			}
+		#endregion
+
+		#region PowerScheduler Interface Implementation
+			/// <summary>
+			/// Powersheduler implimentation, returns true if the plugin can allow hibernation
+			/// </summary>
+			public bool CanHibernate
+			{
+				get
+				{
+					if(!GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.IsPlaying)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}		
+			}
+
+
+			/// <summary>
+			/// Gets the DateTime for the next active alarm to wake up the pc.
+			/// </summary>
+			/// <param name="alarms">ArrayList of loaded alarms</param>
+			/// <returns>alarm object</returns>
+			public static DateTime GetNextAlarmDateTime(DateTime earliestStartTime)
+			{	
+				//timespan to search.
+				DateTime NextStartTime = new DateTime();//=  DateTime.Now.AddMonths(1);
+				DateTime tmpNextStartTime = new DateTime();
+								
+				foreach(Alarm a in _Alarms)
+				{
+					//alarm must be enabled and set to wake up the pc.
+					if(a.Enabled && a.WakeUpPC)
+					{	
+						switch(a.AlarmOccurrenceType)
+						{
+							case AlarmType.Once:
+								tmpNextStartTime = a.Time;
+								break;
+							case AlarmType.Recurring:
+								//check if alarm has passed
+								if(a.Time.Ticks < DateTime.Now.Ticks)
+								{
+									//alarm has passed, loop through the next 7 days to 
+									//find the next enabled day for the alarm
+									for(int i=1; i < 8; i++)
+									{
+										DateTime DateToCheck = DateTime.Now.AddDays(i);
+
+										if(a.IsDayEnabled(DateToCheck.DayOfWeek))
+										{
+											//found next enabled day
+											tmpNextStartTime = DateToCheck;	
+											break;
+										}
+									}
+								}
+								else
+								{
+									//alarm has not passed
+									tmpNextStartTime = a.Time;
+								}
+								break;
+						}
+
+						if (tmpNextStartTime.Ticks > earliestStartTime.Ticks)
+						{
+							NextStartTime = new DateTime(tmpNextStartTime.Ticks);
+						}
+					}
+						
+				}
+					
+				return NextStartTime;
+			}
+
+			
 		#endregion
 
 	}

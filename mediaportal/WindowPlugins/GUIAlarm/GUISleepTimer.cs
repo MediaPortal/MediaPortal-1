@@ -6,14 +6,14 @@ using MediaPortal.Player;
 
 namespace MediaPortal.GUI.Alarm
 {
-	public delegate void SleepTimerElapsedEvent(object sender, EventArgs e);
+	public delegate void SleepTimerElapsedEventHandler(object sender, EventArgs e);
 	/// <summary>
 	/// Summary description for GUISleepTimer.
 	/// </summary>
 	public class GUISleepTimer : GUIWindow
 	{
-		public event SleepTimerElapsedEvent SleepTimerElapsed;
-		public static int WINDOW_SLEEP_TIMER = 5002;
+		public event SleepTimerElapsedEventHandler SleepTimerElapsed;
+		public const int WINDOW_SLEEP_TIMER = 5002;
 
 		#region Private Variables	
 			private System.Windows.Forms.Timer _SleepTimer = new System.Windows.Forms.Timer();
@@ -26,7 +26,7 @@ namespace MediaPortal.GUI.Alarm
 				EnableButton = 3,
 				Minutes = 4,
 				VolumeFade = 5,	
-				ShutdownButton = 6,
+				ReturnHomeButton = 6,
 				ResetButton = 7
 			}
 		#endregion
@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				_SleepTimer.Tick += new EventHandler(OnTimer);
 				_SleepTimer.Interval = 1000; //second	
-				this.SleepTimerElapsed +=new SleepTimerElapsedEvent(GUISleepTimer_SleepTimerElapsed);
+				this.SleepTimerElapsed +=new SleepTimerElapsedEventHandler(GUISleepTimer_SleepTimerElapsed);
 				GetID=(int)GUISleepTimer.WINDOW_SLEEP_TIMER;
 			}
 		#endregion
@@ -179,9 +179,10 @@ namespace MediaPortal.GUI.Alarm
 					g_Player.Stop();
 					((GUIToggleButtonControl)GetControl((int)Controls.EnableButton)).Selected = false;
 						
-					//hibernates the computer if option is selected
-					if(((GUICheckMarkControl)GetControl((int)Controls.ShutdownButton)).Selected)
-						Util.WindowsController.ExitWindows(Util.RestartOptions.Hibernate,true);
+					//returns to the home screen so powerscheduler plugin can suspend the pc
+					if(((GUICheckMarkControl)GetControl((int)Controls.ReturnHomeButton)).Selected)
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+						//Util.WindowsController.ExitWindows(Util.RestartOptions.Hibernate,true);
 				}
 			#endregion
 	}

@@ -4,18 +4,18 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 
-namespace MediaPortal.GUI.Alarm
+namespace MediaPortal.GUI.Alarm 
 {
 
 	/// <summary>
 	/// An Alarm Plugin for Media Portal
 	/// </summary>
-	public class GUIAlarm : GUIWindow
+	public class GUIAlarm : GUIWindow, IWakeable
 	{
-		public static int WINDOW_ALARM = 5000;
+		public const int WINDOW_ALARM = 5000;
 
 		#region Private Variables	
-			private static ArrayList _Alarms;
+			
 			private static int _SelectedItemNumber;
 			private System.Windows.Forms.Timer _SnoozeTimer = new System.Windows.Forms.Timer();
 			private int	_SnoozeCount;
@@ -167,26 +167,38 @@ namespace MediaPortal.GUI.Alarm
 		private void LoadSettings()
 		{ 
 			InitializeSnoozeTimer();
-			_SnoozeTime = this.SnoozeTime;
+			_SnoozeTime = Alarm.SnoozeTime;
 			//Load all the alarms 
-			_Alarms = Alarm.LoadAll();
+			Alarm.LoadAll();
 
+			//DateTime earliestStarttime = DateTime.Now.AddMinutes(3);	
+			//Alarm.GetNextAlarmDateTime(earliestStarttime);
 		}
 
 		private void AddAlarmsToList()
 		{
-			foreach (Alarm objAlarm in _Alarms)
+			foreach (Alarm objAlarm in Alarm.LoadedAlarms)
 			{
 					
 				GUIListItem item = new GUIListItem();
 				item.Label = objAlarm.Name;
-				item.Label2 = objAlarm.DaysEnabled + "   " + objAlarm.Time.ToString("HH:mm");
+				
+				//set proper label
+				if(objAlarm.AlarmOccurrenceType == Alarm.AlarmType.Recurring)
+				{
+					item.Label2 = objAlarm.DaysEnabled + "   " + objAlarm.Time.ToString("HH:mm");
+				}
+				else
+				{
+					item.Label2 = objAlarm.Time.ToShortDateString() +  "   " + objAlarm.Time.ToString("HH:mm");
+				}
+			
 				item.IsFolder=false;
 				item.MusicTag = true;
 
 				//shade inactive alarms
 				if (!objAlarm.Enabled)
-					item.Shaded= true;
+					item.Shaded = true;
 
 				item.IconImage = GetIcon((Alarm.MediaType)objAlarm.AlarmMediaType);
 				
@@ -217,70 +229,33 @@ namespace MediaPortal.GUI.Alarm
 		}
 
 		#endregion
-
-		#region Private Properties
-			private int SnoozeTime
-			{
-
-				get
-				{ 
-					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						return xmlreader.GetValueAsInt("alarm","alarmSnoozeTime",5);
-					}
-				}
-			}
-		#endregion
 	
 		#region Public Properties
+			/// <summary>
+			/// Gets the selected Item number from the alarm list
+			/// </summary>
 			public static int SelectedItemNo
 			{
 				get{return _SelectedItemNumber;}
 			}
+		#endregion
 
-			public static string PlayListPath
-			{
+		#region IWakeable Members
 
-				get
-				{ 
-					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						return  Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music","playlists",""));
-					}
-				}
-			}
-			public static string AlarmSoundPath
-			{
-				get
-				{ 
-					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						return  Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm","alarmSoundsFolder",""));
-					}
-				}
-			}
-		
-	
-			public static ArrayList Alarms  
-			{
-				get{return _Alarms;}
-				set{_Alarms = value;}
-			}
-			public static void RefreshAlarms()
-			{
+		public bool DisallowShutdown()
+		{
+			return false;// !PreShutdownCheck();
+		}
 
-				if(_Alarms != null)
-				{
-					foreach(Alarm a in _Alarms)
-					{
-						a.Dispose();
-					}
-					_Alarms.Clear();
-		
-					//Load all the alarms 
-					_Alarms = Alarm.LoadAll();
-				}
-			}
+		public DateTime GetNextEvent(DateTime earliestWakeuptime)
+		{	
+			return Alarm.GetNextAlarmDateTime(DateTime.Now);
+		}
+		public string PluginName()
+		{
+			return GUILocalizeStrings.Get(850);
+		}
+
 		#endregion
 		
 	}
