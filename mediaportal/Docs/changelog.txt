@@ -1,4 +1,4 @@
-15-08-2004  My Movies   : fixed : pincode was requestes too often
+15-08-2004  My Movies   : fixed : pincode was requested too often
 15-08-2004  My Movies   : added : Autoplay functionality for DVDs.
 15-08-2004  general     : fixed : On screen keyboard not working. (E.g.,when hitting search in my music nothing happens.)
 
