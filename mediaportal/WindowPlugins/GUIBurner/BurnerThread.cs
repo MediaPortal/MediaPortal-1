@@ -4,6 +4,7 @@ using System.Collections;
 using System.Threading;
 using System.IO;
 using System.Management;
+using SQLite.NET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -22,6 +23,7 @@ namespace MediaPortal.GUI.GUIBurner
 	{
 		protected bool									converting = false;
 		protected bool									deleteDvrSrc = false;
+		protected bool									changeTVDatabase = false;
 		protected int										rotCookie = 0;
 		protected IGraphBuilder			  	graphBuilder =null;
 		protected IStreamBufferSource 	bufferSource=null ;
@@ -53,6 +55,16 @@ namespace MediaPortal.GUI.GUIBurner
 			get{ return deleteDvrSrc; }
 			set{ deleteDvrSrc = value; }
 		}
+
+		/// <summary>
+		/// Update TV Databes after converting?
+		/// </summary>
+		public bool changeDatabase
+		{
+			get{ return changeTVDatabase; }
+			set{ changeTVDatabase = value; }
+		}
+		
 		/// <summary>
 		/// clear converter file list.
 		/// </summary>
@@ -171,6 +183,15 @@ namespace MediaPortal.GUI.GUIBurner
 							GUIPropertyManager.SetProperty("#convert_info",c4+text);
 							eff=0;
 							break;
+					}
+				}
+				if (changeDatabase==true) //Update TV Database
+				{
+					FileInfo f1 = new FileInfo(f.path+"\\"+f.name);
+					if (f1.Exists)				
+					{
+						string oName=System.IO.Path.ChangeExtension(f.path+"\\"+f.name,".mpg");
+						UpdateTVDatabase(f.path+"\\"+f.name,oName);
 					}
 				}
 				if (deleteDvrSrc==true) //Delete DVR-MS Source File
@@ -314,5 +335,36 @@ namespace MediaPortal.GUI.GUIBurner
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 		}
 
+
+		private SQLiteClient m_db;
+		private bool dbExists;
+
+		private void UpdateTVDatabase(string fileName,string oName) 
+		{
+			string rSQL;
+			try 
+			{
+				// Open database
+				try
+				{
+					System.IO.Directory.CreateDirectory("database");
+				}
+				catch(Exception){}
+				dbExists = System.IO.File.Exists( @"database\TVDatabaseV15.db" );
+				m_db = new SQLiteClient(@"database\TVDatabaseV15.db");
+				if( dbExists )
+				{
+ 					rSQL = String.Format("SELECT * FROM recorded WHERE strFileName LIKE '{0}'",fileName);
+					m_db.Execute(rSQL);
+					rSQL = String.Format("update recorded set strFileName='{0}' where strFileName like '{1}'",oName,fileName);
+					m_db.Execute(rSQL);
+				}
+
+			} 
+			catch (SQLiteException ex)
+			{
+				Log.Write("TVdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			}
+		}
 	}
 }

@@ -126,6 +126,7 @@ namespace MediaPortal.GUI.GUIBurner
 		private bool isBurner=true;
 		private	bool convertDVR;
 		private	bool deleteDVRSrc;
+		private bool changeTVDatabase;
 		//private string soundFolder="";
 		//private string videoFolder="";
 		private	BurnerThread bt = new BurnerThread();
@@ -492,6 +493,7 @@ namespace MediaPortal.GUI.GUIBurner
 				int fCount=0;
 				bt.ClearFiles();
 				bt.deleteDvrMsSrc=deleteDVRSrc;
+				bt.changeDatabase=changeTVDatabase;
 				int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
 				for (int i=0; i<count; i++) 
 				{
@@ -891,6 +893,8 @@ namespace MediaPortal.GUI.GUIBurner
 				recorder=xmlreader.GetValueAsInt("burner","recorder",0);
 				convertDVR=xmlreader.GetValueAsBool("burner","convertdvr",true);
 				deleteDVRSrc=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
+				changeTVDatabase=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
+
 				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
 				dvrMsFolder=xmlreader.GetValueAsString("burner","dvrms_folder","");
 				if (isBurner==true) 
