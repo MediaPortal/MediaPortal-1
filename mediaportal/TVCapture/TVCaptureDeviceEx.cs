@@ -67,7 +67,7 @@ namespace MediaPortal.TV.Recording
 		string  deviceType              ="";
 		int     priority=1;
 		string  m_strRecordingPath="";
-		int     m_iMaxSizeLimit=0;
+		int     m_iMaxSizeLimit=50;
 		bool    m_bDeleteOnLowDiskspace=false;
 		int     m_iQuality=-1;
 

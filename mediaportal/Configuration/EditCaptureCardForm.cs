@@ -145,7 +145,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.GroupBox groupBox6;
 		private System.Windows.Forms.TrackBar trackBar1;
 		private System.Windows.Forms.CheckBox checkBoxDeleteLow;
-		private System.Windows.Forms.CheckBox cbDeleteWatchedShows;
 		private System.Windows.Forms.Label labelPercent;
 		private System.Windows.Forms.Label label33;
 		int  CardId;
@@ -195,14 +194,14 @@ namespace MediaPortal.Configuration
 
 			/* below is used for testing only
 			
+   	
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&1");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&2");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&3");
-			*/
-   
+		*/
       FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
 			for (int i=0; i < availableVideoDevices.Count;++i)
@@ -413,6 +412,15 @@ namespace MediaPortal.Configuration
 			this.updownPrio = new System.Windows.Forms.NumericUpDown();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.label13 = new System.Windows.Forms.Label();
+			this.tabPage7 = new System.Windows.Forms.TabPage();
+			this.groupBox6 = new System.Windows.Forms.GroupBox();
+			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.checkBoxDeleteLow = new System.Windows.Forms.CheckBox();
+			this.labelPercent = new System.Windows.Forms.Label();
+			this.label33 = new System.Windows.Forms.Label();
+			this.buttonBrowse = new System.Windows.Forms.Button();
+			this.tbRecordingFolder = new System.Windows.Forms.TextBox();
+			this.label19 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.label14 = new System.Windows.Forms.Label();
 			this.comboBox3Audio = new System.Windows.Forms.ComboBox();
@@ -481,21 +489,14 @@ namespace MediaPortal.Configuration
 			this.label29 = new System.Windows.Forms.Label();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.button1 = new System.Windows.Forms.Button();
-			this.tabPage7 = new System.Windows.Forms.TabPage();
-			this.buttonBrowse = new System.Windows.Forms.Button();
-			this.tbRecordingFolder = new System.Windows.Forms.TextBox();
-			this.label19 = new System.Windows.Forms.Label();
-			this.groupBox6 = new System.Windows.Forms.GroupBox();
-			this.trackBar1 = new System.Windows.Forms.TrackBar();
-			this.checkBoxDeleteLow = new System.Windows.Forms.CheckBox();
-			this.cbDeleteWatchedShows = new System.Windows.Forms.CheckBox();
-			this.labelPercent = new System.Windows.Forms.Label();
-			this.label33 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
 			this.tabPage2.SuspendLayout();
+			this.tabPage7.SuspendLayout();
+			this.groupBox6.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			this.tabPage3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
 			this.tabPage4.SuspendLayout();
@@ -505,9 +506,6 @@ namespace MediaPortal.Configuration
 			this.groupBox3.SuspendLayout();
 			this.tabPage6.SuspendLayout();
 			this.groupBox5.SuspendLayout();
-			this.tabPage7.SuspendLayout();
-			this.groupBox6.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -620,7 +618,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.ItemHeight = 13;
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(128, 88);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 21);
+			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 20);
 			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
@@ -640,7 +638,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.ItemHeight = 13;
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(128, 56);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 21);
+			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 20);
 			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
@@ -784,8 +782,8 @@ namespace MediaPortal.Configuration
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage7);
+			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage4);
@@ -878,6 +876,91 @@ namespace MediaPortal.Configuration
 			this.label13.TabIndex = 39;
 			this.label13.Text = "Specify which codecs should be used when recording.  You only need to specify cod" +
 				"ecs if your card is a s/w encoding card";
+			// 
+			// tabPage7
+			// 
+			this.tabPage7.Controls.Add(this.groupBox6);
+			this.tabPage7.Controls.Add(this.buttonBrowse);
+			this.tabPage7.Controls.Add(this.tbRecordingFolder);
+			this.tabPage7.Controls.Add(this.label19);
+			this.tabPage7.Location = new System.Drawing.Point(4, 22);
+			this.tabPage7.Name = "tabPage7";
+			this.tabPage7.Size = new System.Drawing.Size(448, 406);
+			this.tabPage7.TabIndex = 6;
+			this.tabPage7.Text = "Recordings";
+			// 
+			// groupBox6
+			// 
+			this.groupBox6.Controls.Add(this.trackBar1);
+			this.groupBox6.Controls.Add(this.checkBoxDeleteLow);
+			this.groupBox6.Controls.Add(this.labelPercent);
+			this.groupBox6.Controls.Add(this.label33);
+			this.groupBox6.Location = new System.Drawing.Point(8, 72);
+			this.groupBox6.Name = "groupBox6";
+			this.groupBox6.Size = new System.Drawing.Size(428, 120);
+			this.groupBox6.TabIndex = 59;
+			this.groupBox6.TabStop = false;
+			this.groupBox6.Text = "Diskspace management";
+			// 
+			// trackBar1
+			// 
+			this.trackBar1.Location = new System.Drawing.Point(144, 24);
+			this.trackBar1.Maximum = 100;
+			this.trackBar1.Name = "trackBar1";
+			this.trackBar1.Size = new System.Drawing.Size(104, 45);
+			this.trackBar1.TabIndex = 5;
+			this.trackBar1.TickFrequency = 10;
+			this.trackBar1.Value = 50;
+			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+			// 
+			// checkBoxDeleteLow
+			// 
+			this.checkBoxDeleteLow.Location = new System.Drawing.Point(32, 80);
+			this.checkBoxDeleteLow.Name = "checkBoxDeleteLow";
+			this.checkBoxDeleteLow.Size = new System.Drawing.Size(360, 16);
+			this.checkBoxDeleteLow.TabIndex = 4;
+			this.checkBoxDeleteLow.Text = "Automaticly delete oldest recordings when low on free diskspace";
+			// 
+			// labelPercent
+			// 
+			this.labelPercent.Location = new System.Drawing.Point(272, 32);
+			this.labelPercent.Name = "labelPercent";
+			this.labelPercent.Size = new System.Drawing.Size(128, 23);
+			this.labelPercent.TabIndex = 2;
+			this.labelPercent.Text = "%";
+			// 
+			// label33
+			// 
+			this.label33.Location = new System.Drawing.Point(24, 24);
+			this.label33.Name = "label33";
+			this.label33.Size = new System.Drawing.Size(112, 32);
+			this.label33.TabIndex = 0;
+			this.label33.Text = "Limit diskspace used for recordings to:";
+			// 
+			// buttonBrowse
+			// 
+			this.buttonBrowse.Location = new System.Drawing.Point(368, 24);
+			this.buttonBrowse.Name = "buttonBrowse";
+			this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
+			this.buttonBrowse.TabIndex = 58;
+			this.buttonBrowse.Text = "Browse";
+			this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
+			// 
+			// tbRecordingFolder
+			// 
+			this.tbRecordingFolder.Location = new System.Drawing.Point(112, 24);
+			this.tbRecordingFolder.Name = "tbRecordingFolder";
+			this.tbRecordingFolder.Size = new System.Drawing.Size(248, 20);
+			this.tbRecordingFolder.TabIndex = 57;
+			this.tbRecordingFolder.Text = "";
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(8, 32);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(100, 16);
+			this.label19.TabIndex = 56;
+			this.label19.Text = "Recording folder:";
 			// 
 			// tabPage3
 			// 
@@ -1590,98 +1673,6 @@ namespace MediaPortal.Configuration
 			this.button1.Text = "Autotune";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// tabPage7
-			// 
-			this.tabPage7.Controls.Add(this.groupBox6);
-			this.tabPage7.Controls.Add(this.buttonBrowse);
-			this.tabPage7.Controls.Add(this.tbRecordingFolder);
-			this.tabPage7.Controls.Add(this.label19);
-			this.tabPage7.Location = new System.Drawing.Point(4, 22);
-			this.tabPage7.Name = "tabPage7";
-			this.tabPage7.Size = new System.Drawing.Size(448, 406);
-			this.tabPage7.TabIndex = 6;
-			this.tabPage7.Text = "Recordings";
-			// 
-			// buttonBrowse
-			// 
-			this.buttonBrowse.Location = new System.Drawing.Point(368, 24);
-			this.buttonBrowse.Name = "buttonBrowse";
-			this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
-			this.buttonBrowse.TabIndex = 58;
-			this.buttonBrowse.Text = "Browse";
-			// 
-			// tbRecordingFolder
-			// 
-			this.tbRecordingFolder.Location = new System.Drawing.Point(112, 24);
-			this.tbRecordingFolder.Name = "tbRecordingFolder";
-			this.tbRecordingFolder.Size = new System.Drawing.Size(248, 20);
-			this.tbRecordingFolder.TabIndex = 57;
-			this.tbRecordingFolder.Text = "";
-			// 
-			// label19
-			// 
-			this.label19.Location = new System.Drawing.Point(8, 32);
-			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(100, 16);
-			this.label19.TabIndex = 56;
-			this.label19.Text = "Recording folder:";
-			// 
-			// groupBox6
-			// 
-			this.groupBox6.Controls.Add(this.trackBar1);
-			this.groupBox6.Controls.Add(this.checkBoxDeleteLow);
-			this.groupBox6.Controls.Add(this.cbDeleteWatchedShows);
-			this.groupBox6.Controls.Add(this.labelPercent);
-			this.groupBox6.Controls.Add(this.label33);
-			this.groupBox6.Location = new System.Drawing.Point(8, 72);
-			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(428, 144);
-			this.groupBox6.TabIndex = 59;
-			this.groupBox6.TabStop = false;
-			this.groupBox6.Text = "Diskspace management";
-			// 
-			// trackBar1
-			// 
-			this.trackBar1.Location = new System.Drawing.Point(144, 24);
-			this.trackBar1.Maximum = 100;
-			this.trackBar1.Name = "trackBar1";
-			this.trackBar1.Size = new System.Drawing.Size(104, 45);
-			this.trackBar1.TabIndex = 5;
-			this.trackBar1.TickFrequency = 10;
-			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
-			// 
-			// checkBoxDeleteLow
-			// 
-			this.checkBoxDeleteLow.Location = new System.Drawing.Point(32, 104);
-			this.checkBoxDeleteLow.Name = "checkBoxDeleteLow";
-			this.checkBoxDeleteLow.Size = new System.Drawing.Size(360, 16);
-			this.checkBoxDeleteLow.TabIndex = 4;
-			this.checkBoxDeleteLow.Text = "Automaticly delete oldest recordings when low on free diskspace";
-			// 
-			// cbDeleteWatchedShows
-			// 
-			this.cbDeleteWatchedShows.Location = new System.Drawing.Point(32, 80);
-			this.cbDeleteWatchedShows.Name = "cbDeleteWatchedShows";
-			this.cbDeleteWatchedShows.Size = new System.Drawing.Size(304, 24);
-			this.cbDeleteWatchedShows.TabIndex = 3;
-			this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after you watched them";
-			// 
-			// labelPercent
-			// 
-			this.labelPercent.Location = new System.Drawing.Point(272, 32);
-			this.labelPercent.Name = "labelPercent";
-			this.labelPercent.Size = new System.Drawing.Size(128, 23);
-			this.labelPercent.TabIndex = 2;
-			this.labelPercent.Text = "%";
-			// 
-			// label33
-			// 
-			this.label33.Location = new System.Drawing.Point(24, 24);
-			this.label33.Name = "label33";
-			this.label33.Size = new System.Drawing.Size(112, 32);
-			this.label33.TabIndex = 0;
-			this.label33.Text = "Limit diskspace used for recordings to:";
-			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1703,6 +1694,9 @@ namespace MediaPortal.Configuration
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
 			this.tabPage2.ResumeLayout(false);
+			this.tabPage7.ResumeLayout(false);
+			this.groupBox6.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
@@ -1712,9 +1706,6 @@ namespace MediaPortal.Configuration
 			this.groupBox3.ResumeLayout(false);
 			this.tabPage6.ResumeLayout(false);
 			this.groupBox5.ResumeLayout(false);
-			this.tabPage7.ResumeLayout(false);
-			this.groupBox6.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -2840,21 +2831,6 @@ namespace MediaPortal.Configuration
 				tn.Checked=false;
 		}
 
-		private void buttonBrowse_Click(object sender, System.EventArgs e)
-		{
-			using(FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-			{
-				folderBrowserDialog.Description = "Select the folder where recordings should be stored";
-				folderBrowserDialog.ShowNewFolderButton = true;
-				folderBrowserDialog.SelectedPath = tbRecordingFolder.Text;
-				DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
-
-				if(dialogResult == DialogResult.OK)
-				{
-					tbRecordingFolder.Text = folderBrowserDialog.SelectedPath;
-				}
-			}
-		}
 
 		private void trackBar1_ValueChanged(object sender, System.EventArgs e)
 		{
@@ -2877,6 +2853,23 @@ namespace MediaPortal.Configuration
 				}
 			}
 			catch(Exception){}
+		}
+
+		private void buttonBrowse_Click_1(object sender, System.EventArgs e)
+		{
+		
+			using(FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+			{
+				folderBrowserDialog.Description = "Select the folder where recordings should be stored";
+				folderBrowserDialog.ShowNewFolderButton = true;
+				folderBrowserDialog.SelectedPath = tbRecordingFolder.Text;
+				DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
+
+				if(dialogResult == DialogResult.OK)
+				{
+					tbRecordingFolder.Text = folderBrowserDialog.SelectedPath;
+				}
+			}
 		}
 	}
 
