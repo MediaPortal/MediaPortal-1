@@ -33,6 +33,7 @@ namespace MediaPortal.GUI.Music
     int                 m_iPosXRect=0;
     int                 m_iPosYRect=0;
     int                 m_iFrame=0;
+		string							m_strThumb="";
     enum Controls
     {
       CONTROL_LOGO_RECT    =0
@@ -125,7 +126,13 @@ namespace MediaPortal.GUI.Music
 
         return;
       }
-      if (g_Player.Playing && g_Player.CurrentFile != m_strFile)
+			
+			if (GUIPropertyManager.GetProperty("#thumb") != m_strThumb)
+			{
+				m_strFile=g_Player.CurrentFile ;
+				SetCurrentFile(m_strFile);
+			}
+			if (g_Player.Playing && g_Player.CurrentFile != m_strFile)
       {
         m_iFrames=0;
         m_strFile=g_Player.CurrentFile ;
@@ -524,6 +531,7 @@ namespace MediaPortal.GUI.Music
         OnMessage(msg1);
         GUIPropertyManager.SetProperty("#titleNext",msg1.Label);
       }
+			m_strThumb=(string )GUIPropertyManager.GetProperty("#thumb");
     }
 
     MusicTag GetInfo(string strFile , out string thumb)
