@@ -92,7 +92,7 @@ new plugins:
   
 General:
   - option to turn plugins on/off
-  - auto add plugin to home.xml?
+  - Auto add & Show plugin on mainscreen / home.xml?
   
   - support for VFD/LCD displays
   - show properties in skin: 
