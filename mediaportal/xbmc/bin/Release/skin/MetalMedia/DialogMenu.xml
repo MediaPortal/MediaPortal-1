@@ -30,8 +30,8 @@
 		<posY>232</posY>
 		<width>30</width>
 		<height>30</height>
-		<textureFocus>dialog_exit.png</textureFocus>
-		<textureNoFocus>dialog_exit_nofocus.png</textureNoFocus>
+		<textureFocus>exitfocus.png</textureFocus>
+		<textureNoFocus>exitnofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>3</onleft>
 		<onright>3</onright>
