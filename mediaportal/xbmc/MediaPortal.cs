@@ -159,7 +159,7 @@ bWindowsMediaPlayer9=true;
       }
       catch(Exception)
       {
-        m_strSkin="MetalMedia";
+        m_strSkin="CrystalCenter";
         m_strLanguage="english";
       }
      

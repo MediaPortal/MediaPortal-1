@@ -3313,7 +3313,7 @@ namespace MediaPortal
         }
   			
 
-        string strSkin=xmlreader.GetValueAsString("skin","name","MetalMedia");
+        string strSkin=xmlreader.GetValueAsString("skin","name","CrystalCenter");
         comboBoxSkins.Items.Clear();
         iItem=0;
         Folders=System.IO.Directory.GetDirectories(@"skin\","*.*");

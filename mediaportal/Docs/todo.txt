@@ -111,6 +111,7 @@ DVD player:
   - VMR9
 
 Skin engine:
+  - the possibility for the skinner to change the position of the album art
   - add text of the 'next movie/song' to play
   - fade in for controls
   - transitions between windows
