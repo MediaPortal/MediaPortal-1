@@ -752,7 +752,7 @@ namespace MediaPortal.GUI.Library
           if (action.m_key!=null)
           {
             // Check key
-            if ( ( (action.m_key.KeyChar >= 97) && (action.m_key.KeyChar <= 122) ) || 
+            if ( ( (action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90) ) || 
                  ( (action.m_key.KeyChar >= 48) && (action.m_key.KeyChar <= 57) ) )
             {
               // Get selected item
@@ -765,7 +765,7 @@ namespace MediaPortal.GUI.Library
                 if (iItem >= m_vecItems.Count) iItem=0;
 
                 GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-                if (action.m_key.KeyChar == pItem.Label.ToLower()[0])
+                if (action.m_key.KeyChar == pItem.Label.ToUpper()[0])
                 {
                   bItemFound = true;
                   break;

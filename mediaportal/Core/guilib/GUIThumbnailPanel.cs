@@ -558,6 +558,63 @@ namespace MediaPortal.GUI.Library
 				}
 				break;
         case Action.ActionType.ACTION_KEY_PRESSED : 
+        {
+          if (action.m_key!=null)
+          {
+            // Check key
+            if ( ( (action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90) ) || 
+              ( (action.m_key.KeyChar >= 48) && (action.m_key.KeyChar <= 57) ) )
+            {
+              // Get selected item
+              bool bItemFound = false;
+              int iCurrentItem = m_iOffset + m_iCursorY * m_iColumns + m_iCursorX;
+              int iChan = iCurrentItem;
+              do
+              {
+                iChan++;
+                if (iChan >= m_vecItems.Count) iChan=0;
+
+                GUIListItem pItem = (GUIListItem)m_vecItems[iChan];
+                if (action.m_key.KeyChar == pItem.Label.ToUpper()[0])
+                {
+                  bItemFound = true;
+                  break;
+                }
+              }
+              while (iChan != iCurrentItem);
+
+              if ( (bItemFound) && (iChan >= 0 && iChan < m_vecItems.Count) )
+              {
+                // update spin controls
+                int iItemsPerPage = m_iRows * m_iColumns;
+                int iPage = 1;
+                int iSel = iChan;
+                while (iSel >= iItemsPerPage)
+                {
+                  iPage++;
+                  iSel -= iItemsPerPage;
+                }
+                m_upDown.Value = iPage;
+
+                // find item
+                m_iOffset = 0;
+                m_iCursorY = 0;
+                while (iChan >= iItemsPerPage) 
+                {
+                  iChan -= iItemsPerPage;
+                  m_iOffset += iItemsPerPage;
+                }
+                while (iChan >= m_iColumns) 
+                {
+                  iChan -= m_iColumns;
+                  m_iCursorY++;
+                }
+                m_iCursorX = iChan;
+                OnSelectionChanged();
+              }
+            }
+          }
+        }
           break;
 
         case Action.ActionType.ACTION_MOUSE_MOVE : 
