@@ -308,6 +308,11 @@ namespace MediaPortal.TV.Recording
       get { return m_strTVChannel; }
       set
       {
+        if (value==null) 
+          value=GetFirstChannel();
+        else if (value!=null && value.Length==0)
+          value=GetFirstChannel();
+        
         if (value.Equals(m_strTVChannel)) return;
 
         if (!IsRecording)
@@ -668,6 +673,20 @@ namespace MediaPortal.TV.Recording
       return bResult;
     }
 
+    string GetFirstChannel()
+    {
+      ArrayList channels = new ArrayList();
+      TVDatabase.GetChannels(ref channels);
+      foreach (TVChannel chan in channels)
+      {
+        if (chan.Number<1000) return chan.Name;
+      }
+      foreach (TVChannel chan in channels)
+      {
+        return chan.Name;
+      }
+      return "";
+    }
     /// <summary>
     /// Returns the channel number for a channel name
     /// </summary>

@@ -427,6 +427,7 @@ namespace MediaPortal.TV.Recording
       TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
       string strFileName=GetTimeShiftFileName(card);
       
+      Log.Write("Recorder.StartViewing:{0} channel:{1} tvon:{2} timeshift:{3}",card,channel,TVOnOff,timeshift);
       // is card recording?
       if (dev.IsRecording) 
       {
