@@ -7,12 +7,11 @@
 		<type>group</type>
 		<description>group element</description>
 		<animation>FlyInFromBottom</animation>
- 
 		<control>
 			<type>image</type> 
 			<id>0</id> 
-			<posX>500</posX> 
-			<posY>450</posY> 
+			<posX>480</posX> 
+			<posY>420</posY> 
 			<width>200</width> 
 			<height>126</height> 
 			<texture>context_background.png</texture> 
@@ -21,8 +20,8 @@
 				<description>Heading text label</description> 
 				<type>label</type> 
 				<id>4</id> 
-				<posX>502</posX> 
-				<posY>452</posY> 
+				<posX>485</posX> 
+				<posY>418</posY> 
 				<label>181</label> 
 				<font>font10</font> 
 				<textcolor>FFFFFFFF</textcolor> 
@@ -31,8 +30,8 @@
 				<description>Exit button</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>662</posX>
-				<posY>452</posY>
+				<posX>635</posX>
+				<posY>510</posY>
 				<width>32</width>
 				<height>32</height>
 				<textureFocus>button_close_focus.png</textureFocus>
@@ -47,16 +46,16 @@
 				<description>options listcontrol</description> 
 				<type>listcontrol</type> 
 				<id>3</id> 
-				<posX>505</posX> 
-				<posY>470</posY> 
+				<posX>485</posX> 
+				<posY>440</posY> 
 				<width>180</width> 
 				<height>120</height> 
 				<onleft>2</onleft> 
 				<onright>2</onright>
 				<onup>2</onup> 
 				<ondown>2</ondown>
-				<spinPosX>662</spinPosX>
-				<spinPosY>575</spinPosY>
+				<spinPosX>642</spinPosX>
+				<spinPosY>545</spinPosY>
 				<spinWidth>16</spinWidth>
 				<spinHeight>16</spinHeight>
 				<textureHeight>22</textureHeight>
