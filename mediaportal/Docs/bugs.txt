@@ -11,7 +11,6 @@ Cosmetic bugs:
 
 crash/things not working Bugs:
   11-09-2004 playlist   : pressing Y in a playlist will cause a crash
-  11-09-2004 setup      : the names for the music shares to scan for ID3 is now 'yes' or 'no' depending on the pincode setting 
   10-09-2004 GUI	: when aligning a fadelabel 'right' you will not see the beginning of the string.
   10-08-2004 viz	: after a new songs start to play while being in full screen viz, you can't exit the viz anymore with X or ESC
   10-08-2004 pictures   : slideshow should halt when zooning and resume when original size is selected again
