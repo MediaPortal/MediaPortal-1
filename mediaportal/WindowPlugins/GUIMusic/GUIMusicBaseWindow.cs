@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Net;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
@@ -14,8 +15,22 @@ namespace MediaPortal.GUI.Music
 	/// <summary>
 	/// Summary description for GUIMusicBaseWindow.
 	/// </summary>
-	public class GUIMusicBaseWindow: GUIWindow
+	public class GUIMusicBaseWindow: GUIWindow, IComparer
 	{
+		protected enum SortMethod
+		{
+			Name=0,
+			Date=1,
+			Size=2,
+			Track=3,
+			Duration=4,
+			Title=5,
+			Artist=6,
+			Album=7,
+			Filename=8,
+			Rating=9
+		}
+
 		protected enum Level
 		{
 			Root,
@@ -29,18 +44,46 @@ namespace MediaPortal.GUI.Music
 			Albums= 3
 		}
 
-		protected bool useAlbumView   = true;
-		protected bool useLargeIconView   = true;
-		protected bool useSmallIconView   = true;
-		protected bool useListView   = true;
-		protected View currentView		 = View.List;
+		protected   View currentView		    = View.List;
+		protected   View currentViewRoot    = View.List;
+		protected   SortMethod currentSortMethod = SortMethod.Name;
+		protected   SortMethod currentSortMethodRoot = SortMethod.Name;
+		protected   bool       m_bSortAscending;
+		protected   bool       m_bSortAscendingRoot;
 		protected MusicDatabase		      m_database = new MusicDatabase();
-		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView;
-		[SkinControlAttribute(7)]			protected GUISelectButtonControl btnType;
-		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs;
+		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView=null;
+		[SkinControlAttribute(7)]			protected GUISelectButtonControl btnType=null;
+		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs=null;
+		[SkinControlAttribute(3)]			protected GUIButtonControl btnSortBy=null;
+		[SkinControlAttribute(4)]			protected GUIToggleButtonControl btnSortAsc=null;
 
 		public GUIMusicBaseWindow()
 		{
+		}
+
+		protected virtual bool AllowView(View view)
+		{
+			return true;
+		}
+		protected virtual bool AllowSortMethod(SortMethod method)
+		{
+			return true;
+		}
+		protected virtual View CurrentView
+		{
+			get { return currentView;}
+			set { currentView=value;}
+		}
+
+		protected virtual SortMethod CurrentSortMethod
+		{
+			get { return currentSortMethod;}
+			set { currentSortMethod=value;}
+		}
+		protected virtual bool CurrentSortAsc
+		{
+			get { return m_bSortAscending;}
+			set { m_bSortAscending=value;}
 		}
 
 		protected virtual string SerializeName
@@ -56,23 +99,15 @@ namespace MediaPortal.GUI.Music
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				currentView=(View)xmlreader.GetValueAsInt(SerializeName,"view", (int)View.List);
-			}
-			switch (currentView)
-			{
-				case View.List : 
-					facadeView.View=GUIFacadeControl.ViewMode.List;
-					break;
-				case View.Icons : 
-					facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
-					break;
-				case View.LargeIcons: 
-					facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
-					break;
-				case View.Albums: 
-					facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
-					break;
+				currentViewRoot=(View)xmlreader.GetValueAsInt(SerializeName,"viewroot", (int)View.List);
+
+				currentSortMethod=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)SortMethod.Name);
+				currentSortMethodRoot=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)SortMethod.Name);
+				m_bSortAscending=xmlreader.GetValueAsBool(SerializeName,"sortasc", true);
+				m_bSortAscendingRoot=xmlreader.GetValueAsBool(SerializeName,"sortascroot", true);
 			}
 
+			SwitchView();
 		}
 
 		void SaveSettings()
@@ -80,6 +115,11 @@ namespace MediaPortal.GUI.Music
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue(SerializeName,"view",(int)currentView);
+				xmlwriter.SetValue(SerializeName,"viewroot",(int)currentViewRoot);
+				xmlwriter.SetValue(SerializeName,"sortmethod",(int)currentSortMethod);
+				xmlwriter.SetValue(SerializeName,"sortmethodroot",(int)currentSortMethodRoot);
+				xmlwriter.SetValueAsBool(SerializeName,"sortasc",m_bSortAscending);
+				xmlwriter.SetValueAsBool(SerializeName,"sortascroot",m_bSortAscendingRoot);
 			}
 		}
 		#endregion
@@ -108,8 +148,7 @@ namespace MediaPortal.GUI.Music
 		{
 			get 
 			{
-				
-				if (currentView != View.List) return true;
+				if (CurrentView != View.List) return true;
 				return false;
 			}
 		}
@@ -118,11 +157,19 @@ namespace MediaPortal.GUI.Music
 		{
 			get
 			{
-				if (currentView == View.LargeIcons) return true;
+				if (CurrentView == View.LargeIcons) return true;
 				return false;
 			}
 		}
-
+		public override void OnAction(Action action)
+		{
+			if (action.wID==Action.ActionType.ACTION_SHOW_PLAYLIST)
+			{
+				GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+				return;
+			}
+			base.OnAction(action);
+		}
 		
 		protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
 		{
@@ -132,32 +179,32 @@ namespace MediaPortal.GUI.Music
 				do 
 				{
 					shouldContinue=false;
-					switch (currentView)
+					switch (CurrentView)
 					{
 						case View.List : 
-							currentView = View.Icons;
-							if (!useSmallIconView || facadeView.ThumbnailView==null)
+							CurrentView = View.Icons;
+							if (!AllowView(CurrentView) || facadeView.ThumbnailView==null)
 								shouldContinue=true;
 							else
 								facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
 							break;
 						case View.Icons : 
-							currentView = View.LargeIcons;
-							if (!useLargeIconView || facadeView.ThumbnailView==null)
+							CurrentView = View.LargeIcons;
+							if (!AllowView(CurrentView) || facadeView.ThumbnailView==null)
 								shouldContinue=true;
 							else 
 								facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
 							break;
 						case View.LargeIcons: 
-							currentView = View.Albums;
-							if (!useAlbumView || facadeView.AlbumListView==null)
+							CurrentView = View.Albums;
+							if (!AllowView(CurrentView) || facadeView.AlbumListView==null)
 								shouldContinue=true;
 							else 
 								facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
 							break;
 						case View.Albums: 
-							currentView = View.List;
-							if (!useListView || facadeView.ListView==null)
+							CurrentView = View.List;
+							if (!AllowView(CurrentView) || facadeView.ListView==null)
 								shouldContinue=true;
 							else 
 								facadeView.View=GUIFacadeControl.ViewMode.List;
@@ -167,7 +214,58 @@ namespace MediaPortal.GUI.Music
 				SelectCurrentItem();
 				GUIControl.FocusControl(GetID, controlId);
 				return;
-			}
+			}//if (control == btnViewAs)
+
+			if (control==btnSortAsc)
+			{
+				CurrentSortAsc=!CurrentSortAsc;
+				OnSort();
+				UpdateButtonStates();
+				GUIControl.FocusControl(GetID,control.GetID);
+			}//if (iControl==btnSortAsc)
+
+			if (control==btnSortBy)
+			{
+				bool shouldContinue=false;
+				do
+				{
+					shouldContinue=false;
+					switch (CurrentSortMethod)
+					{
+						case SortMethod.Name:
+							CurrentSortMethod=SortMethod.Date;
+							break;
+						case SortMethod.Date:
+							CurrentSortMethod=SortMethod.Size;
+							break;
+						case SortMethod.Size:
+							CurrentSortMethod=SortMethod.Track;
+							break;
+						case SortMethod.Track:
+							CurrentSortMethod=SortMethod.Duration;
+							break;
+						case SortMethod.Duration:
+							CurrentSortMethod=SortMethod.Title;
+							break;
+						case SortMethod.Title:
+							CurrentSortMethod=SortMethod.Album;
+							break;
+						case SortMethod.Album:
+							CurrentSortMethod=SortMethod.Filename;
+							break;
+						case SortMethod.Filename:
+							CurrentSortMethod=SortMethod.Rating;
+							break;
+						case SortMethod.Rating:
+							CurrentSortMethod=SortMethod.Name;
+							break;
+					}
+					if (!AllowSortMethod(CurrentSortMethod)) 
+						shouldContinue=true;
+				} while (shouldContinue);
+				OnSort();
+				GUIControl.FocusControl(GetID,control.GetID);
+			}//if (control==btnSortBy)
 			
 			if (control==btnType)
 			{
@@ -250,7 +348,7 @@ namespace MediaPortal.GUI.Music
       
 
 			string strLine = "";
-			View view = currentView;
+			View view = CurrentView;
 			switch (view)
 			{
 				case View.List : 
@@ -267,6 +365,50 @@ namespace MediaPortal.GUI.Music
 					break;
 			}
 			GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
+
+			switch (CurrentSortMethod)
+			{
+				case SortMethod.Name:
+					strLine=GUILocalizeStrings.Get(103);
+					break;
+				case SortMethod.Date:
+					strLine=GUILocalizeStrings.Get(104);
+					break;
+				case SortMethod.Size:
+					strLine=GUILocalizeStrings.Get(105);
+					break;
+				case SortMethod.Track:
+					strLine=GUILocalizeStrings.Get(266);
+					break;
+				case SortMethod.Duration:
+					strLine=GUILocalizeStrings.Get(267);
+					break;
+				case SortMethod.Title:
+					strLine=GUILocalizeStrings.Get(268);
+					break;
+				case SortMethod.Artist:
+					strLine=GUILocalizeStrings.Get(269);
+					break;
+				case SortMethod.Album:
+					strLine=GUILocalizeStrings.Get(270);
+					break;
+				case SortMethod.Filename:
+					strLine=GUILocalizeStrings.Get(363);
+					break;
+				case SortMethod.Rating:
+					strLine=GUILocalizeStrings.Get(367);
+					break;
+			}
+			if (btnSortBy!=null)
+				GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
+		
+			if (btnSortAsc!=null)
+			{
+				if (CurrentSortAsc)
+					GUIControl.DeSelectControl(GetID,btnSortAsc.GetID);
+				else
+					GUIControl.SelectControl(GetID,btnSortAsc.GetID);
+			}
 		}
 
 		protected virtual void OnInfo(int item)
@@ -334,5 +476,327 @@ namespace MediaPortal.GUI.Music
 		{
 			SaveSettings();
 		}
+		
+		protected void LoadPlayList(string strPlayList)
+		{
+			PlayList playlist=PlayListFactory.Create(strPlayList);
+			if (playlist==null) return;
+			if (!playlist.Load(strPlayList))
+			{
+				GUIDialogOK dlgOK=(GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+				if (dlgOK!=null)
+				{
+					dlgOK.SetHeading(6);
+					dlgOK.SetLine(1,477);
+					dlgOK.SetLine(2,"");
+					dlgOK.DoModal(GetID);
+				}
+				return;
+			}
+
+			if (playlist.Count==1)
+			{
+				Log.Write("GUIMusicYears:Play:{0}",playlist[0].FileName);
+				g_Player.Play(playlist[0].FileName);
+				return;
+			}
+
+			// clear current playlist
+			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Clear();
+
+			// add each item of the playlist to the playlistplayer
+			for (int i=0; i < playlist.Count; ++i)
+			{
+				PlayList.PlayListItem playListItem =playlist[i];
+				PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Add(playListItem);
+			}
+
+      
+			// if we got a playlist
+			if (PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Count >0)
+			{
+				// then get 1st song
+				playlist=PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC );
+				PlayList.PlayListItem item=playlist[0];
+
+				// and start playing it
+				PlayListPlayer.CurrentPlaylist=PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.Reset();
+				PlayListPlayer.Play(0);
+
+				// and activate the playlist window if its not activated yet
+				if (GetID == GUIWindowManager.ActiveWindow)
+				{
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+				}
+			}
+		}
+
+		#region Sort Members
+		protected virtual void OnSort()
+		{
+			SetLabels();
+			facadeView.Sort(this);
+			UpdateButtonStates();
+		}
+
+		public int Compare(object x, object y)
+		{
+			if (x==y) return 0;
+			GUIListItem item1=(GUIListItem)x;
+			GUIListItem item2=(GUIListItem)y;
+			if (item1==null) return -1;
+			if (item2==null) return -1;
+			if (item1.IsFolder && item1.Label=="..") return -1;
+			if (item2.IsFolder && item2.Label=="..") return -1;
+			if (item1.IsFolder && !item2.IsFolder) return -1;
+			else if (!item1.IsFolder && item2.IsFolder) return 1; 
+
+			string strSize1="";
+			string strSize2="";
+			if (item1.FileInfo!=null) strSize1=Utils.GetSize(item1.FileInfo.Length);
+			if (item2.FileInfo!=null) strSize2=Utils.GetSize(item2.FileInfo.Length);
+
+			SortMethod method=CurrentSortMethod;
+			bool bAscending=CurrentSortAsc;
+
+			switch (method)
+			{
+				case SortMethod.Name:
+					if (bAscending)
+					{
+						return String.Compare(item1.Label ,item2.Label,true);
+					}
+					else
+					{
+						return String.Compare(item2.Label ,item1.Label,true);
+					}
+        
+
+				case SortMethod.Date:
+					if (item1.FileInfo==null) return -1;
+					if (item2.FileInfo==null) return -1;
+          
+					item1.Label2 =item1.FileInfo.CreationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					item2.Label2 =item2.FileInfo.CreationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					if (bAscending)
+					{
+						return DateTime.Compare(item1.FileInfo.CreationTime,item2.FileInfo.CreationTime);
+					}
+					else
+					{
+						return DateTime.Compare(item2.FileInfo.CreationTime,item1.FileInfo.CreationTime);
+					}
+
+				case SortMethod.Rating:
+					int iRating1 = 0;
+					int iRating2 = 0;
+					if (item1.MusicTag != null) iRating1 = ((MusicTag)item1.MusicTag).Rating;
+					if (item2.MusicTag != null) iRating2 = ((MusicTag)item2.MusicTag).Rating;
+					if (bAscending)
+					{
+						return (int)(iRating1 - iRating2);
+					}
+					else
+					{
+						return (int)(iRating2 - iRating1);
+					}
+
+				case SortMethod.Size:
+					if (item1.FileInfo==null) return -1;
+					if (item2.FileInfo==null) return -1;
+					if (bAscending)
+					{
+						return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+					}
+					else
+					{
+						return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+					}
+
+				case SortMethod.Track:
+					int iTrack1=0;
+					int iTrack2=0;
+					if (item1.MusicTag!=null) iTrack1=((MusicTag)item1.MusicTag).Track;
+					if (item2.MusicTag!=null) iTrack2=((MusicTag)item2.MusicTag).Track;
+					if (bAscending)
+					{
+						return (int)(iTrack1 - iTrack2);
+					}
+					else
+					{
+						return (int)(iTrack2 - iTrack1);
+					}
+          
+				case SortMethod.Duration:
+					int iDuration1=0;
+					int iDuration2=0;
+					if (item1.MusicTag!=null) iDuration1=((MusicTag)item1.MusicTag).Duration;
+					if (item2.MusicTag!=null) iDuration2=((MusicTag)item2.MusicTag).Duration;
+					if (bAscending)
+					{
+						return (int)(iDuration1 - iDuration2);
+					}
+					else
+					{
+						return (int)(iDuration2 - iDuration1);
+					}
+          
+				case SortMethod.Title:
+					string strTitle1=item1.Label;
+					string strTitle2=item2.Label;
+					if (item1.MusicTag!=null) strTitle1=((MusicTag)item1.MusicTag).Title;
+					if (item2.MusicTag!=null) strTitle2=((MusicTag)item2.MusicTag).Title;
+					if (bAscending)
+					{
+						return String.Compare(strTitle1 ,strTitle2,true);
+					}
+					else
+					{
+						return String.Compare(strTitle2 ,strTitle1,true);
+					}
+        
+				case SortMethod.Artist:
+					string strArtist1="";
+					string strArtist2="";
+					if (item1.MusicTag!=null) strArtist1=((MusicTag)item1.MusicTag).Artist;
+					if (item2.MusicTag!=null) strArtist2=((MusicTag)item2.MusicTag).Artist;
+					if (bAscending)
+					{
+						return String.Compare(strArtist1 ,strArtist2,true);
+					}
+					else
+					{
+						return String.Compare(strArtist2 ,strArtist1,true);
+					}
+        
+				case SortMethod.Album:
+					string strAlbum1="";
+					string strAlbum2="";
+					if (item1.MusicTag!=null) strAlbum1=((MusicTag)item1.MusicTag).Album;
+					if (item2.MusicTag!=null) strAlbum2=((MusicTag)item2.MusicTag).Album;
+					if (bAscending)
+					{
+						return String.Compare(strAlbum1 ,strAlbum2,true);
+					}
+					else
+					{
+						return String.Compare(strAlbum2 ,strAlbum1,true);
+					}
+          
+
+				case SortMethod.Filename:
+					string strFile1=System.IO.Path.GetFileName(item1.Path);
+					string strFile2=System.IO.Path.GetFileName(item2.Path);
+					if (bAscending)
+					{
+						return String.Compare(strFile1 ,strFile2,true);
+					}
+					else
+					{
+						return String.Compare(strFile2 ,strFile1,true);
+					}
+          
+			} 
+			return 0;
+		}
+		#endregion
+
+
+		protected virtual void SetLabels()
+		{
+			SortMethod method=CurrentSortMethod;
+
+			for (int i=0; i < GetItemCount();++i)
+			{
+				GUIListItem item=GetItem(i);
+				MusicTag tag=(MusicTag)item.MusicTag;
+				if (tag!=null)
+				{
+					if (tag.Title.Length>0)
+					{
+						if (tag.Artist.Length>0)
+						{
+							if (tag.Track>0)
+								item.Label=String.Format("{0:00}. {1} - {2}",tag.Track, tag.Artist, tag.Title);
+							else
+								item.Label=String.Format("{0} - {1}",tag.Artist, tag.Title);
+						}
+						else
+						{
+							if (tag.Track>0)
+								item.Label=String.Format("{0:00}. {1} ",tag.Track, tag.Title);
+							else
+								item.Label=String.Format("{0}",tag.Title);
+						}
+						if (method==SortMethod.Album)
+						{
+							if (tag.Album.Length>0 && tag.Title.Length>0)
+							{
+								item.Label=String.Format("{0} - {1}", tag.Album,tag.Title);
+							}
+						}
+						if (method==SortMethod.Rating)
+						{
+							item.Label2=String.Format("{0}", tag.Rating);
+						}
+					}
+				}
+        
+        
+				if (method==SortMethod.Size||method==SortMethod.Filename)
+				{
+					if (item.IsFolder) item.Label2="";
+					else
+					{
+						if (item.Size>0)
+						{
+							item.Label2=Utils.GetSize( item.Size);
+						}
+						if (method==SortMethod.Filename)
+						{
+							item.Label=Utils.GetFilename(item.Path);
+						}
+					}
+				}
+				else if (method==SortMethod.Date)
+				{
+					if (item.FileInfo!=null)
+					{
+						item.Label2 =item.FileInfo.CreationTime.ToShortDateString() + " "+item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					}
+				}
+				else if (method != SortMethod.Rating)
+				{
+					if (tag!=null)
+					{
+						int nDuration=tag.Duration;
+						if (nDuration>0)
+						{
+							item.Label2=Utils.SecondsToHMSString(nDuration);
+						}
+					}
+				}
+			}
+		}
+		protected void SwitchView()
+		{
+			switch (CurrentView)
+			{
+				case View.List : 
+					facadeView.View=GUIFacadeControl.ViewMode.List;
+					break;
+				case View.Icons : 
+					facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
+					break;
+				case View.LargeIcons: 
+					facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
+					break;
+				case View.Albums: 
+					facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
+					break;
+			}
+		}
+
 	}
 }

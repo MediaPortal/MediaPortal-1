@@ -57,10 +57,15 @@ namespace MediaPortal.GUI.Music
 				return "musictop100";
 			}
 		}
+		
+		protected override bool AllowView(View view)
+		{
+			if (view==View.Albums) return false;
+			return true;
+		}
 
 		protected override void OnPageLoad()
 		{
-			useAlbumView=false;
 			base.OnPageLoad ();
           
 			SelectCurrentItem();
@@ -96,17 +101,6 @@ namespace MediaPortal.GUI.Music
     }
 
     #region BaseWindow Members
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
-      {
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
-        return;
-      }
-
-      base.OnAction(action);
-    }
-
 		protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
 		{
 			// search-button handling
@@ -200,58 +194,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-		void SetLabels()
-		{
-      for (int i = 0; i < GetItemCount(); ++i)
-      {
-        GUIListItem item = GetItem(i);
-        MusicTag tag = (MusicTag)item.MusicTag;
-        if (tag != null)
-        {
-          if (tag.Title.Length > 0)
-          {
-            if (tag.Artist.Length > 0)
-            {
-              if (tag.Track > 0)
-                item.Label = String.Format("{0:00}. {1} - {2}",i + 1, tag.Artist, tag.Title);
-              else
-                item.Label = String.Format("{0:00}. {1} - {2}",i + 1, tag.Artist, tag.Title);
-            }
-            else
-            {
-              if (tag.Track > 0)
-                item.Label = String.Format("{0:00}. {1} ",i + 1, tag.Title);
-              else
-                item.Label = String.Format("{0:00}. {1}",i + 1, tag.Title);
-            }
-          }
-        }
-        
-        item.Label2="";
-        switch (_CurrentMode)
-        {
-          case Mode.Duration:
-            if (tag != null)
-            {
-              int nDuration = tag.Duration;
-              if (nDuration > 0)
-              {
-                item.Label2 = Utils.SecondsToHMSString(nDuration);
-              }
-              
-            }
-          break;
-          case Mode.TimesPlayed:
-            if (tag!=null)
-            {
-              item.Label2 = String.Format("{0}x",tag.TimesPlayed);
-            }
-          break;
-        }
-      }
-    }
-
-    
     protected override void UpdateButtonStates()
     {
 			base.UpdateButtonStates();

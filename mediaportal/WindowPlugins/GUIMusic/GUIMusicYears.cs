@@ -16,66 +16,23 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// My music / years.
   /// </summary>
-  public class GUIMusicYears: GUIWindow, IComparer
+  public class GUIMusicYears: GUIMusicBaseWindow
   { 
-    enum Controls
-    {
-      CONTROL_BTNVIEWASICONS=   2,
-      CONTROL_BTNSORTBY   =     3,
-      CONTROL_BTNSORTASC  =     4,
-      CONTROL_BTNTYPE    =      6,
-      CONTROL_BTNPLAYLISTS=     7,
-      CONTROL_BTNSCAN     =     9,
-      CONTROL_BTNREC      =     10,
-      CONTROL_LIST        =     50,
-      CONTROL_THUMBS      =     51,
-      CONTROL_ALBUMS      =     52,
-      CONTROL_LABELFILES  =       12,
-      CONTROL_LABEL=       15,
-		CONTROL_SEARCH = 8
-
-    };
     #region Base variabeles
-    enum SortMethod
-    {
-      SORT_NAME=0,
-      SORT_DATE=1,
-      SORT_SIZE=2,
-      SORT_TRACK=3,
-      SORT_DURATION=4,
-      SORT_TITLE=5,
-      SORT_ARTIST=6,
-      SORT_ALBUM=7,
-      SORT_FILENAME=8,
-			SORT_RATING=9
-    }
-
-    enum View
-    {
-      VIEW_AS_LIST    =       0,
-      VIEW_AS_ICONS    =      1,
-      VIEW_AS_LARGEICONS  =   2,
-    }
     enum Mode
     {
       ShowYears,
       ShowSongs
     }
-    View              currentView=View.VIEW_AS_LIST;
-    SortMethod        currentSortMethod=SortMethod.SORT_TITLE;
-    View              currentViewRoot=View.VIEW_AS_LIST;
-    SortMethod        currentSortMethodRoot=SortMethod.SORT_NAME;
-    bool              m_bSortAscending=true;
-    bool              m_bSortAscendingRoot=true;
-
     DirectoryHistory  m_history = new DirectoryHistory();
     string            m_strDirectory="";
     int               m_iItemSelected=-1;   
     VirtualDirectory  m_directory = new VirtualDirectory();
     #endregion
-    MusicDatabase          m_database = new MusicDatabase();
     Mode              m_Mode=Mode.ShowYears;
     int								m_Year=-1;
+
+		[SkinControlAttribute(9)]			protected GUIButtonControl btnSearch;
 
     public GUIMusicYears()
     {
@@ -83,176 +40,82 @@ namespace MediaPortal.GUI.Music
       
       m_directory.AddDrives();
       m_directory.SetExtensions (Utils.AudioExtensions);
-      LoadSettings();
     }
     ~GUIMusicYears()
     {
     }
 
+		#region overrides
     public override bool Init()
     {
       m_strDirectory="";
       return Load (GUIGraphicsContext.Skin+@"\mymusicyears.xml");
     }
+		protected override string SerializeName
+		{
+			get
+			{
+				return "musicyears";
+			}
+		}
+		protected override bool AllowView(MediaPortal.GUI.Music.GUIMusicBaseWindow.View view)
+		{
+			if (view==View.Albums) return false;
+			return true;
+		}
 
-    #region Serialisation
-    void LoadSettings()
-    {
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        string strTmp="";
-        strTmp=(string)xmlreader.GetValue("musicyears","viewby");
-        if (strTmp!=null)
-        {
-          if (strTmp=="list") currentView=View.VIEW_AS_LIST;
-          else if (strTmp=="icons") currentView=View.VIEW_AS_ICONS;
-          else if (strTmp=="largeicons") currentView=View.VIEW_AS_LARGEICONS;
-        }
-        strTmp=(string)xmlreader.GetValue("musicyears","viewbyroot");
-        if (strTmp!=null)
-        {
-          if (strTmp=="list") currentViewRoot=View.VIEW_AS_LIST;
-          else if (strTmp=="icons") currentViewRoot=View.VIEW_AS_ICONS;
-          else if (strTmp=="largeicons") currentViewRoot=View.VIEW_AS_LARGEICONS;
-        }
+		protected override bool CurrentSortAsc
+		{
+			get
+			{
+				if (m_Mode==Mode.ShowYears) 
+					return m_bSortAscendingRoot;
+				return m_bSortAscending;
+			}
+			set
+			{
+				if (m_Mode==Mode.ShowYears) 
+					m_bSortAscendingRoot=value;
+				else
+					m_bSortAscending=value;
+			}
+		}
+		protected override SortMethod CurrentSortMethod
+		{
+			get
+			{
+				if (m_Mode==Mode.ShowYears) 
+					return currentSortMethodRoot;
+				return currentSortMethod;
+			}
+			set
+			{
+				if (m_Mode==Mode.ShowYears) 
+					currentSortMethodRoot=value;
+				else
+					currentSortMethod=value;
+			}
+		}
 
-        strTmp=(string)xmlreader.GetValue("musicyears","sort");
-        if (strTmp!=null)
-        {
-          if (strTmp=="album") currentSortMethod=SortMethod.SORT_ALBUM;
-          else if (strTmp=="artist") currentSortMethod=SortMethod.SORT_ARTIST;
-          else if (strTmp=="name") currentSortMethod=SortMethod.SORT_NAME;
-          else if (strTmp=="date") currentSortMethod=SortMethod.SORT_DATE;
-          else if (strTmp=="size") currentSortMethod=SortMethod.SORT_SIZE;
-          else if (strTmp=="track") currentSortMethod=SortMethod.SORT_TRACK;
-          else if (strTmp=="duration") currentSortMethod=SortMethod.SORT_DURATION;
-          else if (strTmp=="filename") currentSortMethod=SortMethod.SORT_FILENAME;
-					else if (strTmp=="title") currentSortMethod=SortMethod.SORT_TITLE;
-					else if (strTmp=="rating") currentSortMethod=SortMethod.SORT_RATING;
-        }
-        strTmp=(string)xmlreader.GetValue("musicyears","sortroot");
-        if (strTmp!=null)
-        {
-          if (strTmp=="album") currentSortMethodRoot=SortMethod.SORT_ALBUM;
-          else if (strTmp=="artist") currentSortMethodRoot=SortMethod.SORT_ARTIST;
-          else if (strTmp=="name") currentSortMethodRoot=SortMethod.SORT_NAME;
-          else if (strTmp=="date") currentSortMethodRoot=SortMethod.SORT_DATE;
-          else if (strTmp=="size") currentSortMethodRoot=SortMethod.SORT_SIZE;
-          else if (strTmp=="track") currentSortMethodRoot=SortMethod.SORT_TRACK;
-          else if (strTmp=="duration") currentSortMethodRoot=SortMethod.SORT_DURATION;
-          else if (strTmp=="filename") currentSortMethodRoot=SortMethod.SORT_FILENAME;
-					else if (strTmp=="title") currentSortMethodRoot=SortMethod.SORT_TITLE;
-					else if (strTmp=="rating") currentSortMethodRoot=SortMethod.SORT_RATING;
-        }
+		protected override View CurrentView
+		{
+			get
+			{
+				if (m_Mode==Mode.ShowYears) 
+					return currentViewRoot;
+				return currentView;
+			}
+			set
+			{
+				if (m_Mode==Mode.ShowYears) 
+					currentViewRoot=value;
+				else
+					currentView=value;
+			}
+		}
 
-        m_bSortAscending=xmlreader.GetValueAsBool("musicyears","sortascending",true);
-        m_bSortAscendingRoot=xmlreader.GetValueAsBool("musicyears","sortascendingroot",true);
-      }
 
-    }
-    
-    void SaveSettings()
-    {
-      using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        switch (currentView)
-        {
-          case View.VIEW_AS_LIST: 
-            xmlwriter.SetValue("musicyears","viewby","list");
-            break;
-          case View.VIEW_AS_ICONS: 
-            xmlwriter.SetValue("musicyears","viewby","icons");
-            break;
-          case View.VIEW_AS_LARGEICONS: 
-            xmlwriter.SetValue("musicyears","viewby","largeicons");
-            break;
-        }
-        switch (currentViewRoot)
-        {
-          case View.VIEW_AS_LIST: 
-            xmlwriter.SetValue("musicyears","viewbyroot","list");
-            break;
-          case View.VIEW_AS_ICONS: 
-            xmlwriter.SetValue("musicyears","viewbyroot","icons");
-            break;
-          case View.VIEW_AS_LARGEICONS: 
-            xmlwriter.SetValue("musicyears","viewbyroot","largeicons");
-            break;
-        }
-        switch (currentSortMethod)
-        {
-          case SortMethod.SORT_NAME:
-            xmlwriter.SetValue("musicyears","sort","name");
-            break;
-          case SortMethod.SORT_DATE:
-            xmlwriter.SetValue("musicyears","sort","date");
-            break;
-          case SortMethod.SORT_SIZE:
-            xmlwriter.SetValue("musicyears","sort","size");
-            break;
-          case SortMethod.SORT_TRACK:
-            xmlwriter.SetValue("musicyears","sort","track");
-            break;
-          case SortMethod.SORT_DURATION:
-            xmlwriter.SetValue("musicyears","sort","duration");
-            break;
-          case SortMethod.SORT_TITLE:
-            xmlwriter.SetValue("musicyears","sort","title");
-            break;
-          case SortMethod.SORT_ALBUM:
-            xmlwriter.SetValue("musicyears","sort","album");
-            break;
-          case SortMethod.SORT_ARTIST:
-            xmlwriter.SetValue("musicyears","sort","artist");
-            break;
-          case SortMethod.SORT_FILENAME:
-            xmlwriter.SetValue("musicyears","sort","filename");
-						break;
-					case SortMethod.SORT_RATING:
-						xmlwriter.SetValue("musicyears","sort","rating");
-						break;
-        }
-        switch (currentSortMethodRoot)
-        {
-          case SortMethod.SORT_NAME:
-            xmlwriter.SetValue("musicyears","sortroot","name");
-            break;
-          case SortMethod.SORT_DATE:
-            xmlwriter.SetValue("musicyears","sortroot","date");
-            break;
-          case SortMethod.SORT_SIZE:
-            xmlwriter.SetValue("musicyears","sortroot","size");
-            break;
-          case SortMethod.SORT_TRACK:
-            xmlwriter.SetValue("musicyears","sortroot","track");
-            break;
-          case SortMethod.SORT_DURATION:
-            xmlwriter.SetValue("musicyears","sortroot","duration");
-            break;
-          case SortMethod.SORT_TITLE:
-            xmlwriter.SetValue("musicyears","sortroot","title");
-            break;
-          case SortMethod.SORT_ALBUM:
-            xmlwriter.SetValue("musicyears","sortroot","album");
-            break;
-          case SortMethod.SORT_ARTIST:
-            xmlwriter.SetValue("musicyears","sortroot","artist");
-            break;
-          case SortMethod.SORT_FILENAME:
-            xmlwriter.SetValue("musicyears","sortroot","filename");
-						break;
-					case SortMethod.SORT_RATING:
-						xmlwriter.SetValue("musicyears","sortroot","rating");
-						break;
-        }
 
-        xmlwriter.SetValueAsBool("musicyears","sortascending",m_bSortAscending);
-        xmlwriter.SetValueAsBool("musicyears","sortascendingroot",m_bSortAscendingRoot);
-      }
-    }
-    #endregion
-
-    #region BaseWindow Members
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
@@ -267,31 +130,12 @@ namespace MediaPortal.GUI.Music
         }
         return;
       }
-
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-			{
-				GUIWindowManager.PreviousWindow();
-        return;
-      }
-      if (action.wID==Action.ActionType.ACTION_SHOW_PLAYLIST)
-      {
-        GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
-        return;
-      }
-
-      if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        ShowContextMenu();
-      }
       base.OnAction(action);
     }
 
 		protected override void OnPageLoad()
 		{
-			base.OnPageLoad ();
-			LoadSettings();
-          
-			ShowThumbPanel();
+			base.OnPageLoad ();          
 			LoadDirectory(m_strDirectory,m_Mode);
 		}
 		protected override void OnPageDestroy(int newWindowId)
@@ -301,220 +145,11 @@ namespace MediaPortal.GUI.Music
 				MusicState.StartWindow=newWindowId;
 			}
 			m_iItemSelected=GetSelectedItemNo();
-			SaveSettings();
 			base.OnPageDestroy (newWindowId);
 		}
 
-		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		protected override void OnShowContextMenu()
 		{
-			base.OnClicked (controlId, control, actionType);
-		}
-
-
-    
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch ( message.Message )
-      {
-
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          int iControl=message.SenderControlId;
-          if (iControl==(int)Controls.CONTROL_BTNVIEWASICONS)
-          {
-            if (m_Mode==Mode.ShowYears)
-            {
-              switch (currentViewRoot)
-              {
-                case View.VIEW_AS_LIST:
-                  currentViewRoot=View.VIEW_AS_ICONS;
-                  break;
-                case View.VIEW_AS_ICONS:
-                  currentViewRoot=View.VIEW_AS_LARGEICONS;
-                  break;
-                case View.VIEW_AS_LARGEICONS:
-                  currentViewRoot=View.VIEW_AS_LIST;
-                  break;
-              }
-            }
-            else
-            {
-              switch (currentView)
-              {
-                case View.VIEW_AS_LIST:
-                  currentView=View.VIEW_AS_ICONS;
-                  break;
-                case View.VIEW_AS_ICONS:
-                  if (m_Mode==Mode.ShowYears)
-                     currentView=View.VIEW_AS_LIST;
-                  else
-                     currentView=View.VIEW_AS_LARGEICONS;
-                  break;
-                case View.VIEW_AS_LARGEICONS:
-                  currentView=View.VIEW_AS_LIST;
-                  break;
-              }
-            }
-            //LoadDirectory(m_strDirectory,m_Mode);
-            ShowThumbPanel();
-            GUIControl.FocusControl(GetID,iControl);
-          }
-			  // search-button handling
-			  //
-          if (iControl==(int)Controls.CONTROL_BTNSORTASC)
-          {
-            if (m_Mode==Mode.ShowYears)
-              m_bSortAscendingRoot=!m_bSortAscendingRoot;
-            else
-              m_bSortAscending=!m_bSortAscending;
-            OnSort();
-            UpdateButtons();
-            GUIControl.FocusControl(GetID,iControl);
-          }
-
-
-          if (iControl==(int)Controls.CONTROL_BTNSORTBY) // sort by
-          {
-            if (m_Mode==Mode.ShowYears)
-            {
-                  currentSortMethodRoot=SortMethod.SORT_NAME;
-            }
-            else
-            {
-              switch (currentSortMethod)
-              {
-                case SortMethod.SORT_NAME:
-                  currentSortMethod=SortMethod.SORT_DATE;
-                  break;
-                case SortMethod.SORT_DATE:
-                  currentSortMethod=SortMethod.SORT_SIZE;
-                  break;
-                case SortMethod.SORT_SIZE:
-                  currentSortMethod=SortMethod.SORT_TRACK;
-                  break;
-                case SortMethod.SORT_TRACK:
-                  currentSortMethod=SortMethod.SORT_DURATION;
-                  break;
-                case SortMethod.SORT_DURATION:
-                  currentSortMethod=SortMethod.SORT_TITLE;
-                  break;
-                case SortMethod.SORT_TITLE:
-                  currentSortMethod=SortMethod.SORT_ALBUM;
-                  break;
-                case SortMethod.SORT_ALBUM:
-                  currentSortMethod=SortMethod.SORT_FILENAME;
-                  break;
-                case SortMethod.SORT_FILENAME:
-                  currentSortMethod=SortMethod.SORT_RATING;
-									break;
-								case SortMethod.SORT_RATING:
-									currentSortMethod=SortMethod.SORT_NAME;
-									break;
-              }
-            }
-            OnSort();
-            GUIControl.FocusControl(GetID,iControl);
-          }
-          
-          if (iControl==(int)Controls.CONTROL_BTNTYPE)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            OnMessage(msg);         
-            int nSelected=(int)msg.Param1;
-            int nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_ARTIST;
-            switch (nSelected)
-            {
-              case 0: //  files
-                nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_FILES;
-                break;
-              case 1: //  albums
-                nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_ALBUM;
-                break;
-              case 2: //  artist
-                nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_ARTIST;
-                break;
-              case 3: //  genres
-                nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
-                break;
-              case 4: //  top100
-                nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
-								break;
-							case 5 : //	favorites
-								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
-								break;
-							case 6 : //	years
-								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_YEARS;
-								break;
-            }
-
-            if (nNewWindow!=GetID)
-            {
-              MusicState.StartWindow=nNewWindow;
-              GUIWindowManager.ReplaceWindow(nNewWindow);
-            }
-
-            return true;
-          }
-          if (iControl==(int)Controls.CONTROL_THUMBS||iControl==(int)Controls.CONTROL_LIST || iControl==(int)Controls.CONTROL_ALBUMS)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            OnMessage(msg);         
-            int iItem=(int)msg.Param1;
-            int iAction=(int)message.Param1;
-            if (iAction == (int)Action.ActionType.ACTION_SHOW_INFO) 
-            {
-              OnInfo(iItem);
-              LoadDirectory(m_strDirectory,m_Mode);
-            }
-            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-            {
-              OnClick(iItem);
-            }
-            if (iAction == (int)Action.ActionType.ACTION_QUEUE_ITEM)
-            {
-              OnQueueItem(iItem);
-            }
-
-          }
-          break;
-      }
-      return base.OnMessage(message);
-    }
-
-
-    bool ViewByIcon
-    {
-      get 
-      {
-        if (m_Mode==Mode.ShowYears)
-        {
-          if (currentViewRoot != View.VIEW_AS_LIST) return true;
-        }
-        else
-        {
-          if (currentView != View.VIEW_AS_LIST) return true;
-        }
-        return false;
-      }
-    }
-
-    bool ViewByLargeIcon
-    {
-      get
-      {
-        if (m_Mode==Mode.ShowYears)
-        {
-          if (currentViewRoot == View.VIEW_AS_LARGEICONS) return true;
-        }
-        else
-        {
-          if (currentView == View.VIEW_AS_LARGEICONS) return true;
-        }
-        return false;
-      }
-    }
-
-    void ShowContextMenu()
-    {
 			if (m_Mode==Mode.ShowYears) return;
       GUIListItem item=GetSelectedItem();
       int itemNo=GetSelectedItemNo();
@@ -562,229 +197,7 @@ namespace MediaPortal.GUI.Music
 					break;
       }
     }
-
-		void OnSetRating(int itemNumber)
-		{
-			if (m_Mode==Mode.ShowYears) return;
-			GUIListItem item = GetItem(itemNumber);
-			if (item ==null) return;
-			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
-			if (item.MusicTag!=null) 
-			{
-				dialog.Rating=((MusicTag)item.MusicTag).Rating;
-				dialog.SetTitle(String.Format("{0}-{1}", ((MusicTag)item.MusicTag).Artist, ((MusicTag)item.MusicTag).Title) );
-			}
-			dialog.FileName=item.Path;
-			dialog.DoModal(GetID);
-			if (item.MusicTag!=null) 
-			{
-				((MusicTag)item.MusicTag).Rating=dialog.Rating;
-			}
-			m_database.SetRating(item.Path,dialog.Rating);
-			if (dialog.Result == GUIDialogSetRating.ResultCode.Previous)
-			{
-				while (itemNumber >0)
-				{
-					itemNumber--;
-					item = GetItem(itemNumber);
-					if (!item.IsFolder && !item.IsRemote)
-					{
-						OnSetRating(itemNumber);
-						return;
-					}
-				}
-			}
-
-			if (dialog.Result == GUIDialogSetRating.ResultCode.Next)
-			{
-				while (itemNumber+1 < GetItemCount() )
-				{
-					itemNumber++;
-					item = GetItem(itemNumber);
-					if (!item.IsFolder && !item.IsRemote)
-					{
-						OnSetRating(itemNumber);
-						return;
-					}
-				}
-			}
-		}
-    GUIListItem GetSelectedItem()
-    {
-      int iControl;
-      if (ViewByIcon)
-      {
-        if (m_Mode==Mode.ShowYears)
-          iControl=(int)Controls.CONTROL_ALBUMS;
-        else 
-          iControl=(int)Controls.CONTROL_THUMBS;
-      }
-      else
-        iControl=(int)Controls.CONTROL_LIST;
-      GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
-      return item;
-    }
-
-    GUIListItem GetItem(int iItem)
-    {
-      int iControl;
-      if (ViewByIcon)
-      {
-        if (m_Mode==Mode.ShowYears)
-          iControl=(int)Controls.CONTROL_ALBUMS;
-        else 
-          iControl=(int)Controls.CONTROL_THUMBS;
-      }
-      else
-        iControl=(int)Controls.CONTROL_LIST;
-      GUIListItem item = GUIControl.GetListItem(GetID,iControl,iItem);
-      return item;
-    }
-
-    int GetSelectedItemNo()
-    {
-      int iControl;
-      if (ViewByIcon)
-      {
-        if (m_Mode==Mode.ShowYears)
-          iControl=(int)Controls.CONTROL_ALBUMS;
-        else 
-          iControl=(int)Controls.CONTROL_THUMBS;
-      }
-      else
-        iControl=(int)Controls.CONTROL_LIST;
-
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-      OnMessage(msg);         
-      int iItem=(int)msg.Param1;
-      return iItem;
-    }
-    int GetItemCount()
-    {
-      int iControl;
-      if (ViewByIcon)
-      {
-        if (m_Mode==Mode.ShowYears)
-          iControl=(int)Controls.CONTROL_ALBUMS;
-        else 
-          iControl=(int)Controls.CONTROL_THUMBS;
-      }
-      else
-        iControl=(int)Controls.CONTROL_LIST;
-
-      return GUIControl.GetItemCount(GetID,iControl);
-    }
-
-    void UpdateButtons()
-    {
-      GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_BTNTYPE,MusicState.StartWindow-(int)GUIWindow.Window.WINDOW_MUSIC_FILES);
-
-      GUIControl.HideControl(GetID,(int)Controls.CONTROL_LIST);
-      GUIControl.HideControl(GetID,(int)Controls.CONTROL_THUMBS);
-      GUIControl.HideControl(GetID,(int)Controls.CONTROL_ALBUMS);
-      
-      int iControl=(int)Controls.CONTROL_LIST;
-      if (ViewByIcon)
-      {
-        if (m_Mode==Mode.ShowYears)
-          iControl=(int)Controls.CONTROL_ALBUMS;
-        else
-          iControl=(int)Controls.CONTROL_THUMBS;
-      }
-      GUIControl.ShowControl(GetID,iControl);
-      GUIControl.FocusControl(GetID,iControl);
-
-      string strLine="";
-      View view=currentView;
-      if (m_Mode==Mode.ShowYears) view=currentViewRoot;
-      switch (view)
-      {
-        case View.VIEW_AS_LIST:
-          strLine=GUILocalizeStrings.Get(101);
-          break;
-        case View.VIEW_AS_ICONS:
-          strLine=GUILocalizeStrings.Get(100);
-          break;
-        case View.VIEW_AS_LARGEICONS:
-          strLine=GUILocalizeStrings.Get(417);
-          break;
-      }
-      GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNVIEWASICONS,strLine);
-
-      SortMethod sortmethod=currentSortMethod;
-      if (m_Mode==Mode.ShowYears)
-        sortmethod=currentSortMethodRoot;
-      switch (sortmethod)
-      {
-        case SortMethod.SORT_NAME:
-          strLine=GUILocalizeStrings.Get(103);
-          break;
-        case SortMethod.SORT_DATE:
-          strLine=GUILocalizeStrings.Get(104);
-          break;
-        case SortMethod.SORT_SIZE:
-          strLine=GUILocalizeStrings.Get(105);
-          break;
-        case SortMethod.SORT_TRACK:
-          strLine=GUILocalizeStrings.Get(266);
-          break;
-        case SortMethod.SORT_DURATION:
-          strLine=GUILocalizeStrings.Get(267);
-          break;
-        case SortMethod.SORT_TITLE:
-          strLine=GUILocalizeStrings.Get(268);
-          break;
-        case SortMethod.SORT_ARTIST:
-          strLine=GUILocalizeStrings.Get(269);
-          break;
-        case SortMethod.SORT_ALBUM:
-          strLine=GUILocalizeStrings.Get(270);
-          break;
-        case SortMethod.SORT_FILENAME:
-          strLine=GUILocalizeStrings.Get(363);
-					break;
-				case SortMethod.SORT_RATING:
-					strLine=GUILocalizeStrings.Get(367);
-					break;
-      }
-      GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSORTBY,strLine);
-
-      bool bAsc=m_bSortAscending;
-      if (m_Mode==Mode.ShowYears)
-        bAsc=m_bSortAscendingRoot;
-      if (bAsc)
-        GUIControl.DeSelectControl(GetID,(int)Controls.CONTROL_BTNSORTASC);
-      else
-        GUIControl.SelectControl(GetID,(int)Controls.CONTROL_BTNSORTASC);
-
-      GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BTNSORTBY);
-      GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BTNSORTASC);
-    }
-
-    void ShowThumbPanel()
-    {
-      int iItem=GetSelectedItemNo(); 
-      if (m_Mode!=Mode.ShowYears)
-      {
-        if ( ViewByLargeIcon )
-        {
-          GUIThumbnailPanel pControl=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-          pControl.ShowBigIcons(true);
-        }
-        else
-        {
-          GUIThumbnailPanel pControl=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-          pControl.ShowBigIcons(false);
-        }
-      }
-      if (iItem>-1)
-      {
-        GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST,iItem);
-        GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS,iItem);
-        GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_ALBUMS,iItem);
-      }
-      UpdateButtons();
-    }
+#endregion
 
     void OnRetrieveCoverArt(GUIListItem item)
     {
@@ -822,10 +235,8 @@ namespace MediaPortal.GUI.Music
         }
       }
       m_Mode=newMode;
-      m_strDirectory=m_Year.ToString();
-      GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST);
-      GUIControl.ClearControl(GetID,(int)Controls.CONTROL_THUMBS);
-      GUIControl.ClearControl(GetID,(int)Controls.CONTROL_ALBUMS);
+			m_strDirectory=m_Year.ToString();
+			GUIControl.ClearControl(GetID, facadeView.GetID);;
             
       string strObjects="";
       string strNavigation="";
@@ -890,9 +301,7 @@ namespace MediaPortal.GUI.Music
       int iItem=0;
       foreach (GUIListItem item in itemlist)
       {
-        GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
-        GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,item);
-        GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_ALBUMS,item);
+				facadeView.Add(item);
       }
       OnSort();
       int iTotalItems=itemlist.Count;
@@ -904,117 +313,28 @@ namespace MediaPortal.GUI.Music
       strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
-      GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_LABELFILES,strObjects);
-      GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_LABEL,strNavigation);
       
       SetLabels();
-      ShowThumbPanel();
       OnSort();
       for (int i=0; i< GetItemCount();++i)
       {
         GUIListItem item =GetItem(i);
         if (item.Label==strSelectedItem)
         {
-          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,iItem);
-          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_THUMBS,iItem);
-          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_ALBUMS,iItem);
+          GUIControl.SelectItemControl(GetID,facadeView.GetID,iItem);
           break;
         }
         iItem++;
       }
       if (m_iItemSelected>=0)
-      {
-        GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iItemSelected);
-        GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_THUMBS,m_iItemSelected);
-        GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_ALBUMS,m_iItemSelected);
+			{
+				GUIControl.SelectItemControl(GetID,facadeView.GetID,iItem);
 		  }
 	  }
-	  #endregion
 
-    void SetLabels()
-    {
-      SortMethod method=currentSortMethod;
-      bool bAscending=m_bSortAscending;
-      if (m_Mode==Mode.ShowYears)
-      {
-        method=currentSortMethodRoot;
-        bAscending=m_bSortAscendingRoot;
-      }
 
-      for (int i=0; i < GetItemCount();++i)
-      {
-        GUIListItem item=GetItem(i);
-        MusicTag tag=(MusicTag)item.MusicTag;
-        if (tag!=null)
-        {
-          if (tag.Title.Length>0)
-          {
-            if (tag.Artist.Length>0)
-            {
-              if (tag.Track>0)
-                item.Label=String.Format("{0:00}. {1} - {2}",tag.Track, tag.Artist, tag.Title);
-              else
-                item.Label=String.Format("{0} - {1}",tag.Artist, tag.Title);
-            }
-            else
-            {
-              if (tag.Track>0)
-                item.Label=String.Format("{0:00}. {1} ",tag.Track, tag.Title);
-              else
-                item.Label=String.Format("{0}",tag.Title);
-            }
-            if (method==SortMethod.SORT_ALBUM)
-            {
-              if (tag.Album.Length>0 && tag.Title.Length>0)
-              {
-                item.Label=String.Format("{0} - {1}", tag.Album,tag.Title);
-              }
-						}
-						if (method==SortMethod.SORT_RATING)
-						{
-							item.Label2=String.Format("{0}", tag.Rating);
-						}
-          }
-        }
-        
-        
-        if (method==SortMethod.SORT_SIZE||method==SortMethod.SORT_FILENAME)
-        {
-          if (item.IsFolder) item.Label2="";
-          else
-          {
-            if (item.Size>0)
-            {
-              item.Label2=Utils.GetSize( item.Size);
-            }
-            if (method==SortMethod.SORT_FILENAME)
-            {
-              item.Label=Utils.GetFilename(item.Path);
-            }
-          }
-        }
-        else if (method==SortMethod.SORT_DATE)
-        {
-          if (item.FileInfo!=null)
-          {
-            item.Label2 =item.FileInfo.CreationTime.ToShortDateString() + " "+item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-          }
-        }
-        else if (method != SortMethod.SORT_RATING)
-        {
-          if (tag!=null)
-          {
-            int nDuration=tag.Duration;
-            if (nDuration>0)
-            {
-              item.Label2=Utils.SecondsToHMSString(nDuration);
-            }
-          }
-        }
-      }
-    }
 
-    void OnClick(int iItem)
+    protected override void OnClick(int iItem)
     {
       GUIListItem item = GetSelectedItem();
       if (item==null) return;
@@ -1023,6 +343,7 @@ namespace MediaPortal.GUI.Music
       {
         m_Year=Int32.Parse(item.Path);
         LoadDirectory(m_strDirectory,Mode.ShowSongs);
+				SwitchView();
       }
       else
       {
@@ -1030,6 +351,7 @@ namespace MediaPortal.GUI.Music
         {
           m_Year=-1;
           LoadDirectory(m_strDirectory,Mode.ShowYears);
+					SwitchView();
           return;
         }
 
@@ -1090,7 +412,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    void OnQueueItem(int iItem)
+    protected override void OnQueueItem(int iItem)
     {
       // add item 2 playlist
       GUIListItem pItem=GetItem(iItem);
@@ -1104,9 +426,7 @@ namespace MediaPortal.GUI.Music
         AddItemToPlayList(pItem);
       }
       //move to next item
-      GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST,iItem+1);
-      GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS,iItem+1);
-      GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_ALBUMS,iItem+1);
+      GUIControl.SelectItemControl(GetID, facadeView.GetID,iItem+1);
     }
 
     void AddItemToPlayList(GUIListItem pItem) 
@@ -1138,246 +458,6 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
-
-    void LoadPlayList(string strPlayList)
-    {
-      PlayList playlist=PlayListFactory.Create(strPlayList);
-      if (playlist==null) return;
-      if (!playlist.Load(strPlayList))
-      {
-        GUIDialogOK dlgOK=(GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-        if (dlgOK!=null)
-        {
-          dlgOK.SetHeading(6);
-          dlgOK.SetLine(1,477);
-          dlgOK.SetLine(2,"");
-          dlgOK.DoModal(GetID);
-        }
-        return;
-      }
-
-      if (playlist.Count==1)
-			{
-				Log.Write("GUIMusicYears:Play:{0}",playlist[0].FileName);
-        g_Player.Play(playlist[0].FileName);
-        return;
-      }
-
-      // clear current playlist
-      PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Clear();
-
-      // add each item of the playlist to the playlistplayer
-      for (int i=0; i < playlist.Count; ++i)
-      {
-        PlayList.PlayListItem playListItem =playlist[i];
-        PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Add(playListItem);
-      }
-
-      
-      // if we got a playlist
-      if (PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Count >0)
-      {
-        // then get 1st song
-        playlist=PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC );
-        PlayList.PlayListItem item=playlist[0];
-
-        // and start playing it
-        PlayListPlayer.CurrentPlaylist=PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.Reset();
-        PlayListPlayer.Play(0);
-
-        // and activate the playlist window if its not activated yet
-        if (GetID == GUIWindowManager.ActiveWindow)
-        {
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
-        }
-      }
-    }
-
-
-    #region Sort Members
-    void OnSort()
-    {
-      SortMethod method=currentSortMethod;
-      SetLabels();
-      GUIListControl list=(GUIListControl)GetControl((int)Controls.CONTROL_LIST);
-      list.Sort(this);
-      GUIThumbnailPanel panel=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-      panel.Sort(this);
-      list=(GUIListControl)GetControl((int)Controls.CONTROL_ALBUMS);
-      list.Sort(this);
-
-      UpdateButtons();
-    }
-
-    public int Compare(object x, object y)
-    {
-      if (x==y) return 0;
-      GUIListItem item1=(GUIListItem)x;
-      GUIListItem item2=(GUIListItem)y;
-      if (item1==null) return -1;
-      if (item2==null) return -1;
-      if (item1.IsFolder && item1.Label=="..") return -1;
-      if (item2.IsFolder && item2.Label=="..") return -1;
-      if (item1.IsFolder && !item2.IsFolder) return -1;
-      else if (!item1.IsFolder && item2.IsFolder) return 1; 
-
-      string strSize1="";
-      string strSize2="";
-      if (item1.FileInfo!=null) strSize1=Utils.GetSize(item1.FileInfo.Length);
-      if (item2.FileInfo!=null) strSize2=Utils.GetSize(item2.FileInfo.Length);
-
-      SortMethod method=currentSortMethod;
-      bool bAscending=m_bSortAscending;
-      if (m_Mode==Mode.ShowYears)
-      {
-        method=currentSortMethodRoot;
-        bAscending=m_bSortAscendingRoot;
-      }
-      switch (method)
-      {
-        case SortMethod.SORT_NAME:
-          if (bAscending)
-          {
-            return String.Compare(item1.Label ,item2.Label,true);
-          }
-          else
-          {
-            return String.Compare(item2.Label ,item1.Label,true);
-          }
-        
-
-        case SortMethod.SORT_DATE:
-          if (item1.FileInfo==null) return -1;
-          if (item2.FileInfo==null) return -1;
-          
-          item1.Label2 =item1.FileInfo.CreationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-          item2.Label2 =item2.FileInfo.CreationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-          if (bAscending)
-          {
-            return DateTime.Compare(item1.FileInfo.CreationTime,item2.FileInfo.CreationTime);
-          }
-          else
-          {
-            return DateTime.Compare(item2.FileInfo.CreationTime,item1.FileInfo.CreationTime);
-          }
-
-				case SortMethod.SORT_RATING:
-					int iRating1 = 0;
-					int iRating2 = 0;
-					if (item1.MusicTag != null) iRating1 = ((MusicTag)item1.MusicTag).Rating;
-					if (item2.MusicTag != null) iRating2 = ((MusicTag)item2.MusicTag).Rating;
-					if (bAscending)
-					{
-						return (int)(iRating1 - iRating2);
-					}
-					else
-					{
-						return (int)(iRating2 - iRating1);
-					}
-
-        case SortMethod.SORT_SIZE:
-          if (item1.FileInfo==null) return -1;
-          if (item2.FileInfo==null) return -1;
-          if (bAscending)
-          {
-            return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
-          }
-          else
-          {
-            return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
-          }
-
-        case SortMethod.SORT_TRACK:
-          int iTrack1=0;
-          int iTrack2=0;
-          if (item1.MusicTag!=null) iTrack1=((MusicTag)item1.MusicTag).Track;
-          if (item2.MusicTag!=null) iTrack2=((MusicTag)item2.MusicTag).Track;
-          if (bAscending)
-          {
-            return (int)(iTrack1 - iTrack2);
-          }
-          else
-          {
-            return (int)(iTrack2 - iTrack1);
-          }
-          
-        case SortMethod.SORT_DURATION:
-          int iDuration1=0;
-          int iDuration2=0;
-          if (item1.MusicTag!=null) iDuration1=((MusicTag)item1.MusicTag).Duration;
-          if (item2.MusicTag!=null) iDuration2=((MusicTag)item2.MusicTag).Duration;
-          if (bAscending)
-          {
-            return (int)(iDuration1 - iDuration2);
-          }
-          else
-          {
-            return (int)(iDuration2 - iDuration1);
-          }
-          
-        case SortMethod.SORT_TITLE:
-          string strTitle1=item1.Label;
-          string strTitle2=item2.Label;
-          if (item1.MusicTag!=null) strTitle1=((MusicTag)item1.MusicTag).Title;
-          if (item2.MusicTag!=null) strTitle2=((MusicTag)item2.MusicTag).Title;
-          if (bAscending)
-          {
-            return String.Compare(strTitle1 ,strTitle2,true);
-          }
-          else
-          {
-            return String.Compare(strTitle2 ,strTitle1,true);
-          }
-        
-        case SortMethod.SORT_ARTIST:
-          string strArtist1="";
-          string strArtist2="";
-          if (item1.MusicTag!=null) strArtist1=((MusicTag)item1.MusicTag).Artist;
-          if (item2.MusicTag!=null) strArtist2=((MusicTag)item2.MusicTag).Artist;
-          if (bAscending)
-          {
-            return String.Compare(strArtist1 ,strArtist2,true);
-          }
-          else
-          {
-            return String.Compare(strArtist2 ,strArtist1,true);
-          }
-        
-        case SortMethod.SORT_ALBUM:
-          string strAlbum1="";
-          string strAlbum2="";
-          if (item1.MusicTag!=null) strAlbum1=((MusicTag)item1.MusicTag).Album;
-          if (item2.MusicTag!=null) strAlbum2=((MusicTag)item2.MusicTag).Album;
-          if (bAscending)
-          {
-            return String.Compare(strAlbum1 ,strAlbum2,true);
-          }
-          else
-          {
-            return String.Compare(strAlbum2 ,strAlbum1,true);
-          }
-          
-
-        case SortMethod.SORT_FILENAME:
-          string strFile1=System.IO.Path.GetFileName(item1.Path);
-          string strFile2=System.IO.Path.GetFileName(item2.Path);
-          if (bAscending)
-          {
-            return String.Compare(strFile1 ,strFile2,true);
-          }
-          else
-          {
-            return String.Compare(strFile2 ,strFile1,true);
-          }
-          
-      } 
-      return 0;
-    }
-    #endregion
-
-		void OnInfo(int iItem)
-		{
-		}    
+		
   }
 }
