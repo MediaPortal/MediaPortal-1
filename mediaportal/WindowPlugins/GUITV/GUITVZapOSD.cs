@@ -379,16 +379,13 @@ namespace MediaPortal.GUI.TV
           cntlTime.OnMessage(msg);
         }
         
-        strTime=String.Format("{0} ", 
-          prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-          prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-        
+        strTime=String.Format("{0}", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
         if (cntlNow!=null)
         {
           msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNow.GetID,0,0,null); 
           msg.Label=prog.Title;
           cntlNow.OnMessage(msg);
-		  GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+          GUIPropertyManager.SetProperty("#TV.View.start", strTime);
         }
 
         // next program
