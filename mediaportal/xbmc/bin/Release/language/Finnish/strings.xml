@@ -19,7 +19,7 @@
 	</string>
 	<string>
 		<id>4</id>
-		<value>TV opas</value>
+		<value>Ohjelmaopas</value>
 	</string>
 	<string>
 		<id>5</id>
@@ -1203,7 +1203,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>P‰‰asiassa</value>
+		<value>enimm‰kseen</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -1264,6 +1264,34 @@
 	<string>
 		<id>387</id>
 		<value>Aikainen</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>ja</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Sumua</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Usvaa</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Tuulista</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Tihkusadetta</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>J‰‰t‰v‰‰</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>N/A</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1647,11 +1675,11 @@
 	</string>
 	<string>
 		<id>600</id>
-		<value>Ohjelma-opas</value>
+		<value>Ohjelmaopas</value>
 	</string>
 	<string>
 		<id>601</id>
-		<value>Tallenna nyt</value>
+		<value>Tallenna</value>
 	</string>
 	<string>
 		<id>602</id>
@@ -2340,15 +2368,39 @@
         	<id>869</id>
          	<value>Uusi h‰lytys</value>
         </string>
+        <string>
+	        <id>870</id>
+	        <value>Toistuva</value>
+        </string>
+        <string>
+	        <id>871</id>
+	        <value>Her‰t‰ pc</value>
+        </string>
+        <string>
+	        <id>872</id>
+	        <value>Alkaa</value>
+        </string>
+        <string>
+	        <id>873</id>
+	        <value>TV sarja</value>
+        </string>
+        <string>
+	        <id>874</id>
+	        <value>Jakso</value>
+        </string>
 
         <!-- End My Alarm Strings -->
+        <string>
+	        <id>890</id>
+	        <value>Soita CD</value>
+        </string>
         <string>
         	<id>900</id>
          	<value>Jatketaanko elokuvan katselua?</value>
         </string>
         <string>
         	<id>901</id>
-         	<value>MSN Messenger</value>
+         	<value>MSN Pikaviestin</value>
         </string>
         <string>
         	<id>902</id>
@@ -2572,7 +2624,7 @@
         </string>
         <string>
 	        <id>957</id>
-	        <value>MSN Messenger</value>
+	        <value>MSN Pikaviestin</value>
         </string>
         <string>
 	        <id>958</id>
@@ -2628,7 +2680,7 @@
         </string>
         <string>
 	        <id>979</id>
-	        <value>Play recording from beginning</value>
+	        <value>Toista tallennus alusta</value>
         </string>
         <string>
         	<id>980</id>
@@ -2684,7 +2736,7 @@
         </string>
 	<string>
                 <id>1957</id>
-                <value>Preferences</value>
+                <value>Asetukset</value>
         </string>
 	<string>
                 <id>1958</id>
@@ -2748,7 +2800,7 @@
         </string>
 	<string>
                 <id>1973</id>
-                <value>von</value>
+                <value> </value>
         </string>
 	<string>
                 <id>1974</id>
@@ -2850,7 +2902,7 @@
         </string>
 	<string>
                 <id>2024</id>
-                <value>pinch</value>
+                <value>hyppysellinen</value>
         </string>
 	<string>
                 <id>2025</id>
@@ -2858,11 +2910,11 @@
         </string>
 	<string>
                 <id>2026</id>
-                <value>dash</value>
+                <value>vadillinen</value>
         </string>
 	<string>
                 <id>2027</id>
-                <value>carton</value>
+                <value>tˆlkki</value>
         </string>
 	<string>
                 <id>2028</id>
@@ -2874,7 +2926,7 @@
         </string>
 	<string>
                 <id>2030</id>
-                <value>each</value>
+                <value>kutakin</value>
         </string>
 	<string>
                 <id>2031</id>
@@ -2902,7 +2954,7 @@
         </string>
 	<string>
                 <id>2037</id>
-                <value>ounce</value>
+                <value>unssi</value>
         </string>
 	<string>
                 <id>2038</id>
@@ -2914,19 +2966,19 @@
         </string>
 	<string>
                 <id>2040</id>
-                <value>mililiter</value>
+                <value>millilitra</value>
         </string>
 	<string>
                 <id>2041</id>
-                <value>centiliter</value>
+                <value>senttilitra</value>
         </string>
 	<string>
                 <id>2042</id>
-                <value>deciliter</value>
+                <value>desilitra</value>
         </string>
 	<string>
                 <id>2043</id>
-                <value>liter</value>
+                <value>litra</value>
         </string>
 	<string>
                 <id>2044</id>
@@ -2938,7 +2990,7 @@
         </string>
 	<string>
                 <id>2046</id>
-                <value>desigram ???</value>
+                <value>desigrammaa</value>
         </string>
 	<string>
                 <id>2047</id>
@@ -3100,7 +3152,7 @@
         </string>
 	<string>
                 <id>2131</id>
-                <value>???of</value>
+                <value> </value>
         </string>
 	<string>
                 <id>2132</id>
@@ -3118,48 +3170,39 @@
                 <id>2135</id>
                 <value>Audio</value>
         </string>
-        <string>
-		<id>2216</id>
-		<value>Tiedostot siirretty!</value>
-	</string>
-
 	<string>
-		<id>2217</id>
-		<value>Kohde tiedosto olemassa!</value>
-	</string>
+                <id>2136</id>
+                <value>Data</value>
+        </string>
 	<string>
-		<id>2218</id>
-		<value>Ylikirjoita tiedosto?</value>
-	</string>
+                <id>2137</id>
+                <value>Muunna</value>
+        </string>
 	<string>
-		<id>2219</id>
-		<value>Valitusta asemasta ei voi siirt‰‰!</value>
-	</string>
+                <id>2138</id>
+                <value>Leikkaa</value>
+        </string>
 	<string>
-		<id>2220</id>
-		<value>Kopioidaanko valittu tiedosto?</value>
-	</string>
+                <id>2139</id>
+                <value>Luo MP3-CD</value>
+        </string>
 	<string>
-		<id>2221</id>
-		<value>Poistetaanko valitut tiedostot?</value>
-	</string>
+                <id>2140</id>
+                <value>Luo MP3-DVD</value>
+        </string>
 	<string>
-		<id>2222</id>
-		<value>Tiedostot poistettu!</value>
-	</string>
+                <id>2141</id>
+                <value>MPEG2 -> DivX</value>
+        </string>
 	<string>
-		<id>2223</id>
-		<value>Roskakori</value>
-	</string>
+                <id>2142</id>
+                <value>MPEG2 -> MPEG4</value>
+        </string>
 	<string>
-		<id>2224</id>
-		<value>Kansio on olemassa!</value>
-	</string>
-	<string>
-		<id>2225</id>
-		<value>Kansio luotu</value>
-	</string>
-
+                <id>2143</id>
+                <value>Etusivu</value>
+        </string>
+        <!-- End of My Burner Strings -->
 
 	<!-- My Explorer Strings -->
 	<string>
@@ -3230,6 +3273,44 @@
 		<id>2216</id>
 		<value>Tiedostot siirretty</value>
 	</string>
+	<string>
+		<id>2217</id>
+		<value>Kohde tiedosto olemassa!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Ylikirjoita tiedosto?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>Valitusta asemasta ei voi siirt‰‰!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Kopioidaanko valittu tiedosto?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Poistetaanko valitut tiedostot?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Tiedostot poistettu!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Roskakori</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Kansio on olemassa!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Kansio luotu</value>
+	</string>
+	<!-- End of My Explorer Strings -->
+
         <string>
                 <id>3000</id>
                 <value>Ohjelma valinnat</value>
@@ -3608,11 +3689,11 @@
         </string>
         <string>
                 <id>10032</id>
-                <value>MSN Messenger</value>
+                <value>MSN Pikaviestin</value>
         </string>
         <string>
                 <id>10033</id>
-                <value>MSN Messenger chat</value>
+                <value>MSN chat</value>
         </string>
         <string>
                 <id>10034</id>
@@ -3780,7 +3861,7 @@
         </string>
         <string>
                 <id>12902</id>
-                <value>MSN Messenger OSD</value>
+                <value>MSN osd</value>
         </string>
         <string>
 	        <id>13000</id>
@@ -3831,6 +3912,11 @@
 	        <id>13011</id>
 	        <value>Ken Burns nopeus</value>
         </string>
+        <string>
+	        <id>13012</id>
+	        <value>Avataan kuvaa, odota hetkinen</value>
+        </string>
+
         <string>
         	<id>16001</id>
          	<value>Jukeboxi</value>
