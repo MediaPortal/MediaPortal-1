@@ -1,4 +1,5 @@
 15-08-2004  My Movies   : added : Autoplay functionality for DVDs.
+15-08-2004  general     : fixed : On screen keyboard not working. (E.g.,when hitting search in my music nothing happens.)
 
 14-08-2004  my news     : fixed : several my news bugs (thx 2 MrMitchel)
 14-08-2004  my radio    : fixed : frequencies where not used
