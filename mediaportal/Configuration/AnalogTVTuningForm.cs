@@ -254,14 +254,14 @@ namespace MediaPortal
       GUIGraphicsContext.form=this;
       GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
       card.View=true;
-      Tune(card, m_iChannel);
+      Tune(card, m_iChannel, card.CountryCode);
     }
 
-    void Tune(TVCaptureDevice card, int channel)
+    void Tune(TVCaptureDevice card, int channel, int countryCode)
     {
       buttonMap.Enabled=false;
       buttonSkip.Enabled=false;
-      card.Tune(channel);
+      card.Tune(channel,countryCode);
       labelStatus.Text=String.Format("Channel:{0} frequency:{1} locked:{2}", channel, card.VideoFrequency(), card.SignalPresent());
     }
 
@@ -291,7 +291,7 @@ namespace MediaPortal
       if (m_iChannel>127) return;
       TVCaptureDevice card=(TVCaptureDevice)m_tvcards[0];
       m_iChannel++;
-      Tune(card,m_iChannel);
+      Tune(card,m_iChannel, card.CountryCode);
       
     }
 	}

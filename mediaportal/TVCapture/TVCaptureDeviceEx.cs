@@ -615,7 +615,8 @@ namespace MediaPortal.TV.Recording
 					if (_mGraph != null)
 					{
 						AnalogVideoStandard standard;
-						int ichannel=GetChannelNr(_mTvChannelName, out standard);
+						int country;
+						int ichannel=GetChannelNr(_mTvChannelName, out standard, out country);
 						if (_mGraph.ShouldRebuildGraph(ichannel))
 						{
 							RebuildGraph();
@@ -629,7 +630,7 @@ namespace MediaPortal.TV.Recording
               GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
               return;
             }*/
-						_mGraph.TuneChannel(standard, ichannel);
+						_mGraph.TuneChannel(standard, ichannel,country);
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
@@ -851,7 +852,8 @@ namespace MediaPortal.TV.Recording
 
       Log.Write("Card:{0} start timeshifting :{1}",ID, _mTvChannelName);
       AnalogVideoStandard standard;
-      int iChannelNr = GetChannelNr(_mTvChannelName, out standard);
+			int country;
+      int iChannelNr = GetChannelNr(_mTvChannelName, out standard, out country);
 
 			if (_mState == State.Timeshifting) 
 			{
@@ -860,7 +862,7 @@ namespace MediaPortal.TV.Recording
           if (!_mGraph.ShouldRebuildGraph(iChannelNr))
           {
             _mTimeshiftingStartedTime = DateTime.Now;
-            _mGraph.TuneChannel(standard, iChannelNr);
+            _mGraph.TuneChannel(standard, iChannelNr,country);
             return true;
           }
 				}
@@ -888,7 +890,7 @@ namespace MediaPortal.TV.Recording
   
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
-      bool bResult = _mGraph.StartTimeShifting(standard, iChannelNr, strFileName);
+      bool bResult = _mGraph.StartTimeShifting(country,standard, iChannelNr, strFileName);
       if ( bResult ==true)
       {
         _mTimeshiftingStartedTime = DateTime.Now;
@@ -984,9 +986,10 @@ namespace MediaPortal.TV.Recording
       Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
 
       AnalogVideoStandard standard;
-      int iChannelNr=GetChannelNr(_mTvChannelName, out standard);
+			int country;
+      int iChannelNr=GetChannelNr(_mTvChannelName, out standard, out country);
 
-      bool bResult = _mGraph.StartRecording(standard,iChannelNr, ref strFileName, bContentRecording, timeProgStart);
+      bool bResult = _mGraph.StartRecording(country,standard,iChannelNr, ref strFileName, bContentRecording, timeProgStart);
 
 			_mNewRecordedTV = new TVRecorded();
 			_mNewRecordedTV.Start = Utils.datetolong(DateTime.Now);
@@ -1032,9 +1035,10 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Channel names and numbers are stored in the TVDatabase
     /// </remarks>
-    int GetChannelNr(string strChannelName, out AnalogVideoStandard standard)
+    int GetChannelNr(string strChannelName, out AnalogVideoStandard standard, out int Country)
     { 
       standard=AnalogVideoStandard.None;
+			Country=CountryCode;
       ArrayList channels = new ArrayList();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
@@ -1047,6 +1051,7 @@ namespace MediaPortal.TV.Recording
               strChannelName, chan.Number, chan.Frequency);
           }
           standard=chan.TVStandard;
+					if (chan.Country>=0) Country=chan.Country;
           return chan.Number;
         }
       }
@@ -1070,11 +1075,11 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public void Tune(int channel)
+    public void Tune(int channel, int CountryCode)
     {
       AnalogVideoStandard standard=AnalogVideoStandard.None;
       if (_mState != State.Viewing) return;
-      _mGraph.TuneChannel( standard, channel);
+      _mGraph.TuneChannel( standard, channel, CountryCode);
     }
 
     /// <summary>
@@ -1104,10 +1109,11 @@ namespace MediaPortal.TV.Recording
           DeleteGraph();
           if (CreateGraph())
           {
+						int country;
             Log.Write("Card:{0} start viewing :{1}",ID, _mTvChannelName);
             AnalogVideoStandard standard;
-            int iChannelNr = GetChannelNr(_mTvChannelName, out standard);
-            _mGraph.StartViewing(standard, iChannelNr);
+            int iChannelNr = GetChannelNr(_mTvChannelName, out standard, out country);
+            _mGraph.StartViewing(standard, iChannelNr,country);
             _mState = State.Viewing;
           }
         }

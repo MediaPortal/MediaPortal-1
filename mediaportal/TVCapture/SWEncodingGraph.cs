@@ -667,9 +667,10 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    public void TuneChannel(AnalogVideoStandard standard,int iChannel)
+    public void TuneChannel(AnalogVideoStandard standard,int iChannel, int country)
     {
       m_iCurrentChannel = iChannel;
+			m_iCountryCode=country;
 
       DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tune to channel:{0}", iChannel);
       if (iChannel < 1000)
@@ -752,12 +753,13 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartViewing(AnalogVideoStandard standard, int iChannelNr)
+    public bool StartViewing(AnalogVideoStandard standard, int iChannelNr, int country)
     {
       ///@@@todo
       if (m_graphState != State.Created) return false;
       Log.Write("SWGraph:Start viewing");
-      TuneChannel(standard, iChannelNr);
+			m_iCountryCode=country;
+      TuneChannel(standard, iChannelNr,country);
 
 			Vmr9.AddVMR9(m_graphBuilder);
 
@@ -1172,11 +1174,11 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(int country, AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState == State.Recording) return true;
       if (m_graphState != State.Created) return false;
-      
+      m_iCountryCode=country;
 
       SetRegistryThings();
       int hr;
@@ -1191,7 +1193,7 @@ namespace MediaPortal.TV.Recording
         if (m_graphState!=State.TimeShifting)
         {
           strFileName=System.IO.Path.ChangeExtension(strFileName, ".tv");
-          if (!StartTimeShifting(standard,iChannelNr,strFileName)) return false;
+          if (!StartTimeShifting(m_iCountryCode,standard,iChannelNr,strFileName)) return false;
           strFileName=System.IO.Path.ChangeExtension(strFileName, ".dvr-ms");
         }
         Record(strFileName,true,timeProgStart,DateTime.Now);
@@ -1283,7 +1285,7 @@ namespace MediaPortal.TV.Recording
       if (m_mediaControl == null)
         m_mediaControl = (IMediaControl)m_graphBuilder;
 
-      TuneChannel(standard, iChannelNr);
+      TuneChannel(standard, iChannelNr, m_iCountryCode);
 
       m_mediaControl.Run();
       m_graphState = State.Recording;
@@ -1304,10 +1306,11 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartTimeShifting(AnalogVideoStandard standard,int iChannelNr, string strFileName)
+    public bool StartTimeShifting(int country,AnalogVideoStandard standard,int iChannelNr, string strFileName)
     {
       if (m_graphState!=State.Created) return false;;
 
+			m_iCountryCode=country;
       if (!AddCompressors()) return false;
 
       ConnectCompressors(null);
@@ -1401,7 +1404,7 @@ namespace MediaPortal.TV.Recording
       hr=m_bSink.LockProfile(strFileName);
       if (hr !=0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set streambuffer filename:0x{0:X}",hr);
 
-      TuneChannel(standard, iChannelNr);
+      TuneChannel(standard, iChannelNr, m_iCountryCode);
 
       m_mediaControl = (IMediaControl)m_graphBuilder;
       if (m_mediaControl!=null)

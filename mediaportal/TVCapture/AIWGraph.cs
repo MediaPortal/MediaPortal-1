@@ -385,7 +385,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartTimeShifting(AnalogVideoStandard standard,int iChannelNr, string strFileName)
+    public bool StartTimeShifting(int country,AnalogVideoStandard standard,int iChannelNr, string strFileName)
     {
       return true;
     }
@@ -421,11 +421,11 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState == State.Recording) return true;
       if (m_graphState != State.Created) return false;
-      
+      m_iCountryCode=country;
 
       SetRegistryThings();
       int hr;
@@ -684,7 +684,7 @@ namespace MediaPortal.TV.Recording
         m_mediaControl = (IMediaControl)m_graphBuilder;
 
       //TuneChannel(standard, iChannelNr);
-		StartViewing(standard,iChannelNr);
+		StartViewing(standard,iChannelNr, m_iCountryCode);
       //m_mediaControl.Run();
       m_graphState = State.Recording;
 
@@ -719,8 +719,9 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    public void TuneChannel(AnalogVideoStandard standard,int iChannel)
+    public void TuneChannel(AnalogVideoStandard standard,int iChannel, int country)
     {
+			m_iCountryCode=country;
       m_iCurrentChannel = iChannel;
 
       DirectShowUtil.DebugWrite("AIWGraph:TuneChannel() tune to channel:{0}", iChannel);
@@ -789,11 +790,12 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartViewing(AnalogVideoStandard standard, int iChannelNr)
+    public bool StartViewing(AnalogVideoStandard standard, int iChannelNr, int country)
     {
       ///@@@todo
       if (m_graphState != State.Created) return false;
-      TuneChannel(standard, iChannelNr);
+			m_iCountryCode=country;
+      TuneChannel(standard, iChannelNr,country);
 
       m_videoCaptureDevice.RenderPreview();
 

@@ -439,6 +439,7 @@ namespace MediaPortal.Configuration.Sections
 							channel.Name = tvChannel.Name;
 							channel.Number = tvChannel.Channel;
               channel.VisibleInGuide = tvChannel.VisibleInGuide;
+							channel.Country=tvChannel.Country;
 							
 							//
 							// Calculate frequency
@@ -558,6 +559,7 @@ namespace MediaPortal.Configuration.Sections
         tvChannel.External = channel.External;
         tvChannel.ExternalTunerChannel = channel.ExternalTunerChannel;
         tvChannel.VisibleInGuide = channel.VisibleInGuide;
+				tvChannel.Country=channel.Country;
         tvChannel.standard = channel.TVStandard;
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),

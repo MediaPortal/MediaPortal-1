@@ -76,7 +76,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    bool StartTimeShifting(AnalogVideoStandard standard,int iChannelNr, string strFileName);
+    bool StartTimeShifting(int country,AnalogVideoStandard standard,int iChannelNr, string strFileName);
     
     /// <summary>
     /// Stops timeshifting and cleans up the timeshifting files
@@ -107,7 +107,7 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    bool StartRecording(AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
+    bool StartRecording(int country, AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
     
     
     /// <summary>
@@ -127,7 +127,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    void TuneChannel(AnalogVideoStandard standard,  int iChannel);
+    void TuneChannel(AnalogVideoStandard standard,  int iChannel, int country);
 
     /// <summary>
     /// Returns the current tv channel
@@ -150,7 +150,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    bool StartViewing(AnalogVideoStandard standard,int iChannelNr);
+    bool StartViewing(AnalogVideoStandard standard,int iChannelNr, int country);
 
 
     /// <summary>

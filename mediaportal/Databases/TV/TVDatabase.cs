@@ -60,7 +60,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-          m_db = new SQLiteClient(@"database\TVDatabaseV9.db");
+          m_db = new SQLiteClient(@"database\TVDatabaseV10.db");
           CreateTables();
 
           if (m_db!=null)
@@ -171,7 +171,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         if (m_db==null) return false;
-        if ( AddTable("channel","CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer)\n"))
+        if ( AddTable("channel","CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer, Country integer)\n"))
         {
           m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr)");
         }
@@ -566,9 +566,9 @@ namespace MediaPortal.TV.Database
 					if (channel.VisibleInGuide) iVisible=1;
 
 
-					strSQL=String.Format( "update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6} where strChannel like '{7}'", 
+					strSQL=String.Format( "update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6}, Country={7} where strChannel like '{8}'", 
 																	channel.Number,channel.Frequency.ToString(),
-																	sort,iExternal, strExternal, (int)channel.TVStandard, iVisible,
+																	sort,iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country,
 																	strChannel);
 					m_db.Execute(strSQL);
 				} 
@@ -611,9 +611,9 @@ namespace MediaPortal.TV.Database
             if (channel.External) iExternal=1;
             int iVisible=0;
             if (channel.VisibleInGuide) iVisible=1;
-            strSQL=String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7} )", 
+            strSQL=String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8} )", 
                                     strChannel,channel.Number,channel.Frequency.ToString(),
-                                    totalchannels+1,iExternal, strExternal, (int)channel.TVStandard, iVisible);
+                                    totalchannels+1,iExternal, strExternal, (int)channel.TVStandard, iVisible,channel.Country);
             m_db.Execute(strSQL);
             int iNewID=m_db.LastInsertID();
             CChannelCache chan=new CChannelCache();
@@ -911,6 +911,7 @@ namespace MediaPortal.TV.Database
 
             chan.ExternalTunerChannel= Get(results,i,"ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)Int32.Parse(Get(results,i,"standard"));
+						chan.Country=Int32.Parse(Get(results,i,"Country"));
             channels.Add(chan);
           }
 

@@ -19,7 +19,8 @@ namespace MediaPortal.TV.Database
     bool   m_bExternal=false;
     string m_strExternalTunerChannel="";
     bool   m_bVisibleInGuide=true;
-    
+    int    m_iCountry=-1;
+
     AnalogVideoStandard _TVStandard;
 
     /// <summary> 
@@ -96,6 +97,16 @@ namespace MediaPortal.TV.Database
       get { return m_iNumber;}
       set {m_iNumber=value;}
     }
+
+		
+		/// <summary>
+		/// Property to get/set the the tvchannel country
+		/// </summary>
+		public int Country
+		{
+			get { return m_iCountry;}
+			set {m_iCountry=value;}
+		}
 
     /// <summary>
     /// Property to get/set the the frequency of the tvchannel (0=use default)
