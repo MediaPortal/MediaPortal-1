@@ -1048,7 +1048,7 @@
 	</string>
 	<string>
 		<id>333</id>
-		<value>Wollen sie die Musik-Datenbank reorganisieren?</value>
+		<value>Wollen Sie die Musik-Datenbank reorganisieren?</value>
 	</string>
 	<string>
 		<id>334</id>
@@ -1393,7 +1393,7 @@
 	</string> 
 	<string>
 		<id>428</id>
-		<value>Legen sie die korrekte CD/DVD ein</value>
+		<value>Legen Sie die korrekte CD/DVD ein</value>
 	</string> 
 	<string>
 		<id>429</id>
@@ -1413,7 +1413,7 @@
 	</string>  
 	<string>
 		<id>433</id>
-		<value>Löschen! Sind sie sicher?</value>
+		<value>Löschen! Sind Sie sicher?</value>
 	</string>  
 	<string>
 		<id>434</id>
@@ -2236,7 +2236,7 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleeptimer Ein/Aus</value>
+		<value>Sleeptimer</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2291,6 +2291,42 @@
 	<string>
 		<id>900</id>
 		<value>Den letzten Film fortsetzen?</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Online Kontakte</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Anmelden</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Abmelden</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Sie müssen dieses Plugin zuerst konfigurieren</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Ergänzen Sie Ihre Email-Adresse im Setup</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>Kann nicht zu MSN verbinden</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>Schreibt eine Nachricht...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Verbinde...</value>
 	</string>
 
 	<string>
@@ -2445,11 +2481,11 @@
 	</string>
 	<string>
 		<id>2041</id>
-		<value>10 ml</value>
+		<value>Zentiliter</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>100 ml</value>
+		<value>Deziliter</value>
 	</string>
 	<string>
 		<id>2043</id>
@@ -2461,11 +2497,11 @@
 	</string>
 	<string>
 		<id>2045</id>
-		<value>1/100 Gramm</value>
+		<value>Zentigramm</value>
 	</string>
 	<string>
 		<id>2046</id>
-		<value>1/10 Gramm</value>
+		<value>Dezigramm</value>
 	</string>
 	<string>
 		<id>2047</id>
@@ -2526,7 +2562,7 @@
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autocheck Ein/Aus</value>
+		<value>Autocheck</value>
 	</string>
 	<string>
 		<id>8008</id>
@@ -2865,7 +2901,7 @@
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Grosse Bilder</value>
+		<value>Große Bilder</value>
 	</string>
 
 	<string>
