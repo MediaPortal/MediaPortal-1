@@ -2620,6 +2620,17 @@ namespace MediaPortal.TV.Recording
 					tvTmp.Number=iChannelNumber;
 					tvTmp.ID=channelId;
 					TVDatabase.MapChannelToGroup(group,tvTmp);
+
+					group = new TVGroup();
+					group.GroupName=newchannel.NetworkName;
+					groupid=TVDatabase.AddGroup(group);
+					group.ID=groupid;
+					tvTmp=new TVChannel();
+					tvTmp.Name=newchannel.ChannelName;
+					tvTmp.Number=iChannelNumber;
+					tvTmp.ID=channelId;
+					TVDatabase.MapChannelToGroup(group,tvTmp);
+
 				}
 				else
 				{
