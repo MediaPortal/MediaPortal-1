@@ -104,6 +104,7 @@ namespace MediaPortal.GUI.Pictures
     float                   m_fPanYChange;
     float                   m_fPanXChange;
     float                   m_fZoomChange;
+    bool                    m_bLoadingRawPicture=false;
     
 
     public GUISlideShow()
@@ -297,7 +298,6 @@ namespace MediaPortal.GUI.Pictures
       m_bSlideShow=true;
     }
 
-
     public override void Render()
     {
       m_dwFrameCounter++;
@@ -465,14 +465,17 @@ namespace MediaPortal.GUI.Pictures
         }
       }
       
-      RenderPause();
+      if (m_bSlideShow)
+      {
+        if (RenderPause()) return;     
+      }
 
       if (!m_bShowInfo && !m_bShowZoomInfo)
       {
         m_bOSDAutoHide = true;
         return;
-      }
-     
+      }    
+
       // Auto hide OSD
       if (m_bOSDAutoHide && (m_bShowInfo||m_bShowZoomInfo))
       {
@@ -484,7 +487,7 @@ namespace MediaPortal.GUI.Pictures
         }                  
       }
 
-      if (m_bPictureZoomed) m_bShowZoomInfo=true;
+      
       if (m_bShowZoomInfo || m_bShowInfo)
       {
         GUIControl.SetControlLabel(GetID, LABEL_ROW1,"");
@@ -497,7 +500,7 @@ namespace MediaPortal.GUI.Pictures
         GUIControl.SetControlLabel(GetID, LABEL_ROW2_EXTRA,strZoomInfo);
       }
 
-      if ( m_bShowInfo )
+      if ( m_bShowInfo || m_bLoadingRawPicture)
       {
         string strFileInfo, strSlideInfo;
         string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
@@ -505,6 +508,13 @@ namespace MediaPortal.GUI.Pictures
           strFileInfo=String.Format("{0} ({1}x{2}) ", strFileName, m_fWidthBackGround-2, m_fHeightBackGround-2);
         else
           strFileInfo=String.Format("{0}", strFileName);
+        
+        if (m_bLoadingRawPicture)
+        {
+          strFileInfo=String.Format("{0}", GUILocalizeStrings.Get(13012));
+          m_bShowZoomInfo=false;
+        }
+
 
         GUIControl.SetControlLabel(GetID, LABEL_ROW1,strFileInfo);
 				strSlideInfo=String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count);
@@ -1296,7 +1306,7 @@ namespace MediaPortal.GUI.Pictures
           if (m_bShowInfo)
           { 
             m_bOSDAutoHide = !m_bOSDAutoHide;
-            m_bShowZoomInfo = true;
+            if (m_bPictureZoomed) m_bShowZoomInfo=true;
             if (m_bOSDAutoHide)
             {
               m_bShowInfo = false;
@@ -1329,17 +1339,14 @@ namespace MediaPortal.GUI.Pictures
         case Action.ActionType.ACTION_ZOOM_OUT:
           m_fUserZoomLevel -= 0.25f;
           if (m_fUserZoomLevel<1) m_fUserZoomLevel=1.0f;
-          m_fZoomFactorBackGround = m_fDefaultZoomFactor*m_fUserZoomLevel;         
-          if (m_fZoomFactorBackGround < m_fDefaultZoomFactor) m_fZoomFactorBackGround = m_fDefaultZoomFactor;          
-          ZoomBackGround(m_fZoomFactorBackGround);
+          ZoomBackGround(m_fDefaultZoomFactor*m_fUserZoomLevel);
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         break;
 
         case Action.ActionType.ACTION_ZOOM_IN:
           m_fUserZoomLevel += 0.25f;
           if (m_fUserZoomLevel>20.0f) m_fUserZoomLevel=20.0f;
-          m_fZoomFactorBackGround = m_fDefaultZoomFactor*m_fUserZoomLevel;         
-          ZoomBackGround(m_fZoomFactorBackGround);
+          ZoomBackGround(m_fDefaultZoomFactor*m_fUserZoomLevel);
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         break;
 
@@ -1491,22 +1498,23 @@ namespace MediaPortal.GUI.Pictures
 		}
 
 
-    void RenderPause()
+    bool RenderPause()
     {
 	    dwCounter++;
 	    if (dwCounter > 25)
 	    {
 		    dwCounter=0;
 	    }
-      if ((!m_bPause && !m_bShowInfo && !m_bShowZoomInfo && !m_bPictureZoomed) || m_bShowZoomInfo || m_bShowInfo) return;
+      if ((!m_bPause && !m_bShowInfo && !m_bShowZoomInfo && !m_bPictureZoomed) || m_bShowZoomInfo || m_bShowInfo) return false;
 
-	    if (dwCounter <13) return;
+	    if (dwCounter <13) return false;
 	    GUIFont pFont=GUIFontManager.GetFont("font13");
       if (pFont!=null)
       {
         string szText=GUILocalizeStrings.Get(112);
         pFont.DrawShadowText(500.0f,60.0f,0xffffffff,szText,GUIControl.Alignment.ALIGN_LEFT,2,2,0xff000000);
       }
+      return true;
     }
 
     void DoRotate()
@@ -1673,8 +1681,16 @@ namespace MediaPortal.GUI.Pictures
       m_bPictureZoomed = (m_fUserZoomLevel!=1.0f);
       // Load raw picture when zooming
       if (!m_bTrueSizeTexture && m_bPictureZoomed)
-      {
+      {        
+        m_bShowZoomInfo=true;
+        m_bLoadingRawPicture=true;
+
+        // Update window
+        GUIWindowManager.Process();
+
+        // load picture
         m_pTextureBackGround=GetSlide(true, out m_fWidthBackGround,out m_fHeightBackGround, out m_strCurrentSlide);              
+        m_bLoadingRawPicture=false;
         fZoom = m_fDefaultZoomFactor * m_fUserZoomLevel;
       }
 
@@ -1691,12 +1707,7 @@ namespace MediaPortal.GUI.Pictures
       float x,y,width,height;
       GetOutputRect(m_fWidthBackGround, m_fHeightBackGround, m_fZoomFactorBackGround,out x,out y,out width,out height);
 
-      if (m_bPictureZoomed) 
-      {
-        m_iZoomTypeBackGround = 0;
-        m_bShowZoomInfo=true;
-      }
-
+      if (m_bPictureZoomed) m_iZoomTypeBackGround = 0;
       switch(m_iZoomTypeBackGround)
       {
           /* 0: // centered, centered
