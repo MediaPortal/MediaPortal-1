@@ -44,6 +44,8 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.Panel bottomPanel;
 		private System.ComponentModel.IContainer components;
 
+		bool bSkipEvents = false; // flag to speedup multiple selection 
+
 
 		public AppItem CurApp
 		{
@@ -593,7 +595,10 @@ namespace WindowPlugins.GUIPrograms
 
 		private void FileList_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			ChangeFileSelection();
+			if (!bSkipEvents)
+			{
+				ChangeFileSelection();
+			}
 		}
 
 		private void allGameLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
@@ -622,17 +627,33 @@ namespace WindowPlugins.GUIPrograms
 
 		private void checkAllButton_Click(object sender, System.EventArgs e)
 		{
-			foreach (ListViewItem curItem in FileList.Items)
+			bSkipEvents = true;
+			try
 			{
-				curItem.Checked = true;
+				foreach (ListViewItem curItem in FileList.Items)
+				{
+					curItem.Checked = true;
+				}
+			}
+			finally
+			{
+				bSkipEvents = false;
 			}
 		}
 
 		private void uncheckAllButton_Click(object sender, System.EventArgs e)
 		{
-			foreach (ListViewItem curItem in FileList.Items)
+			bSkipEvents = true;
+			try
 			{
-				curItem.Checked = false;
+				foreach (ListViewItem curItem in FileList.Items)
+				{
+					curItem.Checked = false;
+				}
+			}
+			finally
+			{
+				bSkipEvents = false;
 			}
 		}
 
@@ -750,11 +771,14 @@ namespace WindowPlugins.GUIPrograms
 
 		private void FileList_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
 		{
-			btnStartSearch.Enabled = ((FileList.CheckedItems.Count > 0)||(e.NewValue == CheckState.Checked));
-			if (!btnStartSearch.Enabled)
+			if (!bSkipEvents)
 			{
-				buttonSelectBestMatch.Enabled = false;
-				btnSaveSearch.Enabled = false;
+				btnStartSearch.Enabled = ((FileList.CheckedItems.Count > 0)||(e.NewValue == CheckState.Checked));
+				if (!btnStartSearch.Enabled)
+				{
+					buttonSelectBestMatch.Enabled = false;
+					btnSaveSearch.Enabled = false;
+				}
 			}
 		}
 
