@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwPosX">x-coordinate of the item</param>
 		/// <param name="dwPosY">y-coordinate of the item</param>
 		/// <param name="pItem">item itself</param>
-    void RenderItem(long timePassed,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
+    void RenderItem(float timePassed,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
     {
 			if (m_pFont==null) return;
 			if (pItem==null) return;
@@ -352,7 +352,7 @@ namespace MediaPortal.GUI.Library
 		/// The render method. 
 		/// This method will draw the entire filmstrip
 		/// </summary>
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (null == m_pFont) return;
       if (GUIGraphicsContext.EditMode==false)
@@ -2153,7 +2153,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Method to get animate the current control
 		/// </summary>
-    public override void Animate(long timePassed,Animator animator)
+    public override void Animate(float timePassed,Animator animator)
     {
       if (animator==null) return;
       if (m_infoImage!=null) m_infoImage.Animate(timePassed,animator);

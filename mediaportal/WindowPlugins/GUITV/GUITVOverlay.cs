@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.TV
     
     }
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
     }
     public override bool DoesPostRender()
@@ -95,7 +95,7 @@ namespace MediaPortal.GUI.TV
       return true;
 */    }
 
-    public override void PostRender(long timePassed,int iLayer)
+    public override void PostRender(float timePassed,int iLayer)
     {
       if (iLayer!=2) return;
       HideControl((int)Controls.CONTROL_PLAYTIME); 

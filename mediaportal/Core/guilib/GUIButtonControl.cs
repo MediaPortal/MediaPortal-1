@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the GUIButtonControl.
 		/// </summary>
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			// Do not render if not visible.
       if (GUIGraphicsContext.EditMode==false)

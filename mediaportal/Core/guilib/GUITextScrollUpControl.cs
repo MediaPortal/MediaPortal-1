@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScaleVertical(ref m_iSpaceBetweenItems);
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			m_bInvalidate=false;
 			if (null==m_pFont) return;

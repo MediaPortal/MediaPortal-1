@@ -72,7 +72,7 @@ namespace MediaPortal.Topbar
     {
       AllocResources();
     }
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
     }
     public override bool DoesPostRender()
@@ -84,7 +84,7 @@ namespace MediaPortal.Topbar
       return true;
     }
 
-    public override void PostRender(long timePassed,int iLayer)
+    public override void PostRender(float timePassed,int iLayer)
     {
       if (!m_bEnabled) return;
       if (iLayer !=1) return;

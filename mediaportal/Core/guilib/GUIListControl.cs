@@ -238,7 +238,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			// If there is no font do not render.
 			if (null == m_pFont) return;
@@ -595,7 +595,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwTextColor">The color of the text.</param>
 		/// <param name="strTextToRender">The actual text.</param>
 		/// <param name="bScroll">A bool indication if there is scrolling or not.</param>
-		protected void RenderText(long timePassed,int Item,float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
+		protected void RenderText(float timePassed,int Item,float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
 		{
 			// TODO Unify render text methods into one general rendertext method.
       if (m_labels1==null) return;

@@ -824,7 +824,7 @@ namespace MediaPortal.GUI.Home
 		/// <summary>
 		/// Renders the home window.
 		/// </summary>
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{			
 			if (m_eState!=State.Idle)
 			{

@@ -7,8 +7,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class Animator
   {
-    const int NUMBEROFFRAMES        = 25; // total 25 frames
-    const int FRAME_DURATION_IN_MSEC= 20; // 20 msec / frame
+    const float NUMBEROFFRAMES        = 25f; // total 25 frames
+    const float FRAME_DURATION_IN_MSEC= 0.020f; // 20 msec / frame
 
 		// type of animations
     public enum AnimationType
@@ -24,12 +24,12 @@ namespace MediaPortal.GUI.Library
 
     protected AnimationType animType=AnimationType.None;						//current animation type
     protected bool          m_Animating=false;											//boolean indicating if we're animating
-		protected long          lTime;
+		protected float         fTime;
 
 		public Animator(AnimationType type)
 		{
       animType=type;
-      lTime=0;
+      fTime=0f;
       m_Animating=true;
 		}
 
@@ -53,8 +53,7 @@ namespace MediaPortal.GUI.Library
       
 			//check if animation should end
 			float fTotalTime=FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES;
-			float fTime=(float)lTime;
-			if (lTime >= fTotalTime)
+			if (fTime >= fTotalTime)
 			{
 				//yes, then end the animation
 				m_Animating=false;
@@ -78,15 +77,14 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">y-coordinate of control</param>
 		/// <param name="width">width of control</param>
 		/// <param name="height">height of control</param>
-    public void Animate(long timePassed,ref int x, ref int y, ref int width, ref int height, ref long colorDiffuse)
+    public void Animate(float timePassed,ref int x, ref int y, ref int width, ref int height, ref long colorDiffuse)
     {
 			//if animation has ended, then just return
       if ( IsDone() ) return;
       
 			//check if animation should end
 			float fTotalTime=FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES;
-			float fTime=(float)lTime;
-			if (lTime >= fTotalTime)
+			if (fTime >= fTotalTime)
 			{
 				//yes, then end the animation
         m_Animating=false;
@@ -174,10 +172,10 @@ namespace MediaPortal.GUI.Library
 			height=(int)h;
 			
     }
-		public void Advance(long timePassed)
+		public void Advance(float timePassed)
 		{
-			lTime+=timePassed;
-			if (lTime >= FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES)
+			fTime+=timePassed;
+			if (fTime >= FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES)
 			{
 				//yes, then end the animation
 				m_Animating=false;

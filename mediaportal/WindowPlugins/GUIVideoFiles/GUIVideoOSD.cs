@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Video
     get { return false;}
   }    
 
-  public override void Render(long timePassed)
+  public override void Render(float timePassed)
   {
     base.Render(timePassed);		// render our controls to the screen
   }

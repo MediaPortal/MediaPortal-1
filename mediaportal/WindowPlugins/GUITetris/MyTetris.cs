@@ -144,7 +144,7 @@ namespace MediaPortal.Games.Tetris
 			return base.OnMessage(message);
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			if(m_wndTetris != null)
 			{
@@ -361,7 +361,7 @@ namespace MediaPortal.Games.Tetris
 
 		#region IHostTetris implementation
 
-		public void OnRenderBlock(long timePassed,float x, float y, Color color, int nHint)
+		public void OnRenderBlock(float timePassed,float x, float y, Color color, int nHint)
 		{
 			if(nHint != 2)
 			{
@@ -401,7 +401,7 @@ namespace MediaPortal.Games.Tetris
 
 		#region Implementation
 
-		void RenderTexture(long timePassed)
+		void RenderTexture(float timePassed)
 		{
 			if(m_bHasFocus)
 			{
@@ -738,7 +738,7 @@ namespace MediaPortal.Games.Tetris
 			}
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			if(GUIGraphicsContext.EditMode == false && m_bVisible == false)
 			{
@@ -778,7 +778,7 @@ namespace MediaPortal.Games.Tetris
 			RenderNext(timePassed);
 		}
 
-		public void RenderNext(long timePassed)
+		public void RenderNext(float timePassed)
 		{
 			int nBlock = m_theGame != null ? (m_theGame.NextBlock - 1) : -1;
 

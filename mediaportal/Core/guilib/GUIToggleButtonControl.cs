@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX, ref m_iTextOffsetY);
 		}
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {

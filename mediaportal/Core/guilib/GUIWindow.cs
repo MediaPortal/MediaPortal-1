@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Library
 		/// Render() method. This method draws the window by asking every control
 		/// of the window to render itself
 		/// </summary>
-		public virtual void Render(long timePassed)
+		public virtual void Render(float timePassed)
 		{
       //lock (this)
       {
@@ -891,7 +891,7 @@ namespace MediaPortal.GUI.Library
     /// For example the topbar is rendered on layer #1
     /// while the music overlay is rendered on layer #2 (and thus on top of the topbar)</param>
 		/// </summary>
-		public virtual void PostRender(long timePassed,int iLayer)
+		public virtual void PostRender(float timePassed,int iLayer)
 		{
 		}
 

@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScaleVertical(ref m_iTopTextureYOffset);
 		}
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {

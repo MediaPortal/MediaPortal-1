@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Library
 				}
     }
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.Animations)
       {
@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.Library
       base.ReStorePosition();
     }
 
-    public override void Animate(long timePassed,Animator animator)
+    public override void Animate(float timePassed,Animator animator)
     {
       for (int x = 0; x < m_Controls.Count; ++x)
       {

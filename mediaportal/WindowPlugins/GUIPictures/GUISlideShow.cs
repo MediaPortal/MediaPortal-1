@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.Pictures
       m_bSlideShow=true;
     }
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       m_dwFrameCounter++;
       int iSlides= m_slides.Count;

@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Library
     /// The default render method. This needs to be overwritten when inherited to give every control 
     /// its specific look and feel.
     /// </summary>
-    public abstract void Render(long timePassed);
+    public abstract void Render(float timePassed);
 
 		/// <summary>
 		/// Property to get/set the id of the window 
@@ -975,7 +975,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Method to get animate the current control
 		/// </summary>
-    public virtual void Animate(long timePassed,Animator animator)
+    public virtual void Animate(float timePassed,Animator animator)
     {
       m_bAnimating=true;
       int x=m_originalRect.X;

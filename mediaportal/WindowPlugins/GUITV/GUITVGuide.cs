@@ -1986,7 +1986,7 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			GUIImage vertLine=GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
 			base.Render (timePassed);

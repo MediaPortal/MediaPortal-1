@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Settings
       }
       base.OnAction(action);
     }
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			string fps=String.Format("{0} fps",GUIGraphicsContext.CurrentFPS.ToString("f2"));
 			GUIPropertyManager.SetProperty("#fps", fps);

@@ -304,7 +304,7 @@ namespace MediaPortal.GUI.Settings
       return base.OnMessage(message);
     }
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
 	    // hide all our controls
 	    GUIImage pControl=(GUIImage)GetControl((int)Controls.CONTROL_BOTTOM_RIGHT);

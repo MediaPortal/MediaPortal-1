@@ -713,7 +713,7 @@ public class MediaPortalApp : D3DApp, IRender
 				FullRender();
     }
 
-    public void RenderFrame(long timePassed)
+    public void RenderFrame(float timePassed)
     {
       try
       {
@@ -823,7 +823,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   static int prevwindow=0;
   static bool reentrant=false;
-  protected override void Render(long timePassed) 
+  protected override void Render(float timePassed) 
   { 
     if (reentrant) return;
     try

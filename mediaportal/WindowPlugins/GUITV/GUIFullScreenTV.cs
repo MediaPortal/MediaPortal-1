@@ -913,7 +913,7 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			if (GUIGraphicsContext.Vmr9Active)
 			{
@@ -1152,7 +1152,7 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public void RenderForm(long timePassed)
+		public void RenderForm(float timePassed)
 		{
 			bool bClear=false;
 

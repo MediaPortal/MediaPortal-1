@@ -505,7 +505,7 @@ namespace MediaPortal.GUI.Library
     /// - topbar
     /// 
     /// </summary>
-    static void PostRender(long timePassed)
+    static void PostRender(float timePassed)
     {
       if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
 			//GUIFontManager.Present();
@@ -554,7 +554,7 @@ namespace MediaPortal.GUI.Library
     /// Render()
     /// ask the current active window to render itself
     /// </summary>
-    static public void Render(long timePassed)
+    static public void Render(float timePassed)
     {
       // if there's a dialog, then render that
 			if (null!=m_pRouteWindow)

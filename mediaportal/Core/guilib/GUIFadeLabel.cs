@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {
@@ -291,7 +291,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="wszText">The actual text.</param>
 		/// <param name="bScroll">A bool indication if there is scrolling or not.</param>
 		/// <returns>true if the render was successful</returns>
-    bool RenderText(long timePassed,bool bAdvance, float fPosX, float fPosY, float fMaxWidth,long dwTextColor, string wszText,bool bScroll )
+    bool RenderText(float timePassed,bool bAdvance, float fPosX, float fPosY, float fMaxWidth,long dwTextColor, string wszText,bool bScroll )
     {
 	    bool	bResult=false;
       float fTextHeight=0,fTextWidth=0;

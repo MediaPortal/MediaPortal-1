@@ -303,7 +303,7 @@ namespace MediaPortal.Player
 		public void Render(Size nativeSize) 
 		{
 			//if we're stopping then just return
-			long timePassed=GUIGraphicsContext.TimePassed;
+			float timePassed=GUIGraphicsContext.TimePassed;
       if (m_bStop) return;
       lock(this) 
       {

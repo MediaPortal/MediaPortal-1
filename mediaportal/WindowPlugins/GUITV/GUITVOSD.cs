@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.TV
       get { return false;}
     }    
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       UpdateProgressBar();
       SetVideoProgress();	  // get the percentage of playback complete so far

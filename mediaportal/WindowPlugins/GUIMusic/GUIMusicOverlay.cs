@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Music
     }
 
     
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
     }
     
@@ -112,7 +112,7 @@ namespace MediaPortal.GUI.Music
       return true;
     }
 
-    public override void PostRender(long timePassed, int iLayer)
+    public override void PostRender(float timePassed, int iLayer)
     {
       if (iLayer!=2) return;
       GUIFadeLabel fader =(GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);

@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			if (!IsVisible) return;
 			if (Disabled) return;

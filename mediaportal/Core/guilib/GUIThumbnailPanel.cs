@@ -227,7 +227,7 @@ namespace MediaPortal.GUI.Library
     }
 
 
-		void RenderItem(long timePassed,int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem, bool buttonOnly)
+		void RenderItem(float timePassed,int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem, bool buttonOnly)
 		{
       if (m_button==null) return;
       if (iButton<0||iButton>=m_button.Count) return;
@@ -345,7 +345,7 @@ namespace MediaPortal.GUI.Library
       }
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			if (null == m_pFont) return;
       if (GUIGraphicsContext.EditMode==false)

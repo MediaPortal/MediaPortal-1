@@ -129,7 +129,7 @@ namespace MediaPortal
     protected virtual void OnDeviceReset(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
     protected virtual void FrameMove() { /* Do Nothing */ }
 		protected virtual void OnProcess() {/* Do Nothing */ }
-    protected virtual void Render(long timePassed) { /* Do Nothing */ }
+    protected virtual void Render(float timePassed) { /* Do Nothing */ }
     //protected virtual void OnDeviceLost(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
     //protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
 

@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Video
       get { return false;}
     }    
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
 			RenderDlg(timePassed);
     }
@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Video
     }
 
 		#region Base Dialog Members
-		public void RenderDlg(long timePassed)
+		public void RenderDlg(float timePassed)
 		{
 			// render the parent window
 			if (null!=m_pParentWindow) 

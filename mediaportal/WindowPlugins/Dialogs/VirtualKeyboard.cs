@@ -716,7 +716,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
 			if (null!=m_pParentWindow) 
 				m_pParentWindow.Render(timePassed);
@@ -1438,7 +1438,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void DrawTextBox(long timePassed,int x1,int y1, int x2, int y2) 
+    void DrawTextBox(float timePassed,int x1,int y1, int x2, int y2) 
     {
       //long lColor=0xaaffffff;
 			
@@ -1494,7 +1494,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void RenderKeyboardLatin(long timePassed) 
+    void RenderKeyboardLatin(float timePassed) 
     {
       // Show text and caret
       DrawTextBox(timePassed,64,208,576,248);

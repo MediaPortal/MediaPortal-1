@@ -754,7 +754,7 @@ namespace MediaPortal.Dialogs
 		}
   
     #region Base Dialog Members
-    public void RenderDlg(long timePassed)
+    public void RenderDlg(float timePassed)
     {
       // render the parent window
       if (null!=m_pParentWindow) 
@@ -794,7 +794,7 @@ namespace MediaPortal.Dialogs
     }
 #endregion
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			// render the parent window
 			if (null!=m_pParentWindow) 
@@ -1562,7 +1562,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void DrawTextBox(long timePassed,int x1,int y1, int x2, int y2) 
+    void DrawTextBox(float timePassed,int x1,int y1, int x2, int y2) 
     {
       //long lColor=0xaaffffff;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
@@ -1614,7 +1614,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void RenderKeyboardLatin(long timePassed) 
+    void RenderKeyboardLatin(float timePassed) 
     {
       // Show text and caret
       DrawTextBox(timePassed,64,208,576,248);

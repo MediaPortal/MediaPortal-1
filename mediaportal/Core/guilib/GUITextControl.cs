@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwSpinX, ref m_dwSpinY,ref m_dwSpinWidth, ref m_dwSpinHeight);
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			if (null==m_pFont) return;
       if (GUIGraphicsContext.EditMode==false)

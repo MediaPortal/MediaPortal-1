@@ -95,7 +95,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Render. This will render the current selected view 
 		/// </summary>
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (m_ListView!=null) m_ListView.Render(timePassed);
       if (m_ThumbnailView!=null) m_ThumbnailView.Render(timePassed);
@@ -370,7 +370,7 @@ namespace MediaPortal.GUI.Library
       base.ReStorePosition();
     }
 
-    public override void Animate(long timePassed, Animator animator)
+    public override void Animate(float timePassed, Animator animator)
     {
       if (m_ListView!=null) m_ListView.Animate(timePassed, animator);
       if (m_ThumbnailView!=null) m_ThumbnailView.Animate(timePassed,animator);

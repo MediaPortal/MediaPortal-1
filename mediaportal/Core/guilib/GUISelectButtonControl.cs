@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Renders the control.
 		/// </summary>
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {

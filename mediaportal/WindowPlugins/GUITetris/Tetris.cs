@@ -21,7 +21,7 @@ namespace Tetris
 
 	public interface IHostTetris
 	{
-		void OnRenderBlock(long timePassed,float x, float y, Color color, int nHint);
+		void OnRenderBlock(float timePassed,float x, float y, Color color, int nHint);
 		void OnRenderSound(string strFilePath);
 	}
 
@@ -85,7 +85,7 @@ namespace Tetris
 
 		#region Rendering
 
-		public void Render(long timePassed)
+		public void Render(float timePassed)
 		{
 			if(m_pHost != null)
 			{
@@ -100,7 +100,7 @@ namespace Tetris
 			}
 		}
 
-		void RenderBoard(long timePassed)
+		void RenderBoard(float timePassed)
 		{
 			for(int y = 0; y < Game.Height; y++) 
 			{
@@ -144,7 +144,7 @@ namespace Tetris
 			}
 		}
 
-		void RenderBlock(long timePassed,Block block, int nHint)
+		void RenderBlock(float timePassed,Block block, int nHint)
 		{
 			if(block != null)
 			{

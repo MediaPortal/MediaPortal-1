@@ -75,7 +75,7 @@ namespace WindowPlugins.GUIPrograms
     }
     #region Base Dialog Members
 
-	public void RenderDlg(long timePassed)
+	public void RenderDlg(float timePassed)
 	{
 		// render the parent window
 		if (null!=m_pParentWindow) 
@@ -297,7 +297,7 @@ namespace WindowPlugins.GUIPrograms
 
 		}
 
-		public override void Render(long timePassed)
+		public override void Render(float timePassed)
 		{
 			RenderDlg(timePassed);
 

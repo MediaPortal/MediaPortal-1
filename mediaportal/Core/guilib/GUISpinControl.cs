@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Library
       m_label.CacheFont=true;
 	  }
 
-    public override void 	Render(long timePassed)
+    public override void 	Render(float timePassed)
     {
       if (GUIGraphicsContext.EditMode==false)
       {

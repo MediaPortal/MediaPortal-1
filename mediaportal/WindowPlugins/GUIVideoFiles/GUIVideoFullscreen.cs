@@ -949,7 +949,7 @@ namespace MediaPortal.GUI.Video
     }
 
 
-    public override void Render(long timePassed)
+    public override void Render(float timePassed)
     {
       if (!g_Player.Playing)
       {
@@ -997,7 +997,7 @@ namespace MediaPortal.GUI.Video
 			}
     }
 
-    void RenderFullScreen(long timePassed)
+    void RenderFullScreen(float timePassed)
     {
 
       if (g_Player.Speed != 1) 
@@ -1275,7 +1275,7 @@ namespace MediaPortal.GUI.Video
 	    }
     }
     
-    public void RenderForm(long timePassed)
+    public void RenderForm(float timePassed)
     {
       if (!g_Player.Playing) return;
 

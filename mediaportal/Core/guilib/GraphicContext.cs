@@ -785,14 +785,14 @@ namespace MediaPortal.GUI.Library
 				vmr9Active=value;
 			}
 		}
-		static public long TimePassed
+		static public float TimePassed
 		{
 			get 
 			{
 				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
 				float difftime=time-lasttime;
 				lasttime=time;
-				return ( (long)(difftime*1000f) );
+				return ( difftime );
 			}
 		}
   }
