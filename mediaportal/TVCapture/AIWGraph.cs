@@ -183,6 +183,20 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED:no tuner found");
       }
 
+      if (m_TVTuner!=null )
+      {
+        InitializeTuner();
+
+        m_IAMAnalogVideoDecoder = m_filterCaptureVideo as IAMAnalogVideoDecoder;
+        if (m_IAMAnalogVideoDecoder!=null)
+        {
+          AnalogVideoStandard videoStandard;
+          m_TVTuner.get_TVFormat(out videoStandard);
+          if (videoStandard==AnalogVideoStandard.None) videoStandard=AnalogVideoStandard.PAL_B;
+          SetVideoStandard(videoStandard);
+        }
+      }
+
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
 
 	  // AIW Support starts here
