@@ -99,6 +99,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Controls.Add(this.label3);
 			this.groupBox2.Controls.Add(this.linkLabel1);
 			this.groupBox2.Controls.Add(this.label2);
+			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox2.Location = new System.Drawing.Point(8, 136);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(440, 160);

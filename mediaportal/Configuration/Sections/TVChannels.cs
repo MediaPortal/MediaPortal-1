@@ -179,6 +179,7 @@ namespace MediaPortal.Configuration.Sections
 		}
 		#endregion
 
+
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
 			isDirty = true;
@@ -189,12 +190,13 @@ namespace MediaPortal.Configuration.Sections
 
 			if(dialogResult == DialogResult.OK)
 			{
-				ListViewItem listItem = new ListViewItem(new string[] { editChannel.Channel.Name, 
-																		  editChannel.Channel.Channel.ToString(),
-																		  editChannel.Channel.Frequency.ToString() 
-																	  } );
+				TelevisionChannel editedChannel = editChannel.Channel;
 
-				listItem.Tag = editChannel.Channel;
+				ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
+																		editedChannel.Channel.ToString(),
+																		editedChannel.Frequency.ToString(Frequency.Format.MegaHerz) 
+																	  } );
+				listItem.Tag = editedChannel;
 
 				channelsListView.Items.Add(listItem);
 			}		
@@ -213,11 +215,12 @@ namespace MediaPortal.Configuration.Sections
 
 				if(dialogResult == DialogResult.OK)
 				{
-					listItem.Tag = editChannel.Channel;
+					TelevisionChannel editedChannel = editChannel.Channel;
+					listItem.Tag = editedChannel;
 
-					listItem.SubItems[0].Text = editChannel.Channel.Name;
-					listItem.SubItems[1].Text = editChannel.Channel.Channel.ToString();
-					listItem.SubItems[2].Text = editChannel.Channel.Frequency.ToString();
+					listItem.SubItems[0].Text = editedChannel.Name;
+					listItem.SubItems[1].Text = editedChannel.Channel.ToString();
+					listItem.SubItems[2].Text = editedChannel.Frequency.ToString(Frequency.Format.MegaHerz);
 				}
 			}		
 		}
@@ -342,10 +345,10 @@ namespace MediaPortal.Configuration.Sections
 							//
 							// Calculate frequency
 							//
-							if(tvChannel.Frequency < 1000)
-								tvChannel.Frequency *= 1000000L;
+							if(tvChannel.Frequency.Herz < 1000)
+								tvChannel.Frequency.Herz *= 1000000L;
 
-							channel.Frequency = tvChannel.Frequency;
+							channel.Frequency = tvChannel.Frequency.Herz;
 
 							//
 							// Finally add the channel
@@ -355,7 +358,7 @@ namespace MediaPortal.Configuration.Sections
 					}
 
 					//
-					// Add frquencies to the registry
+					// Add frequencies to the registry
 					//
 					for(int index = 0; index < registryLocations.Length; index++)
 					{
@@ -368,7 +371,7 @@ namespace MediaPortal.Configuration.Sections
 
 							if(tvChannel != null)
 							{
-								registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency);
+								registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
 							}
 						}
 
@@ -378,6 +381,9 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		private void LoadTVChannels()
 		{
 			ArrayList channels = new ArrayList();
@@ -393,7 +399,7 @@ namespace MediaPortal.Configuration.Sections
 
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.Channel.ToString(),
-																		tvChannel.Frequency.ToString() 
+																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz) 
 																	  } );
 
 				listItem.Tag = tvChannel;
@@ -402,6 +408,11 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void channelsListView_DoubleClick(object sender, System.EventArgs e)
 		{
 			editButton_Click(sender, e);		

@@ -304,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				xmlwriter.SetValue("mytv", "alwaystimeshift", alwaysTimeShiftCheckBox.Checked);
+				xmlwriter.SetValueAsBool("mytv", "alwaystimeshift", alwaysTimeShiftCheckBox.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
 
 				for(int index = 0; index < VideoRenderers.List.Length; index++)
@@ -331,7 +331,17 @@ namespace MediaPortal.Configuration.Sections
 			switch(name)
 			{
 				case "television.country" :
-					return (countryComboBox.SelectedItem as TunerCountry).Id;
+				{
+					int countryId = 0;
+
+					if(countryComboBox.SelectedItem != null)
+					{
+						TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
+						countryId = tunerCountry.Id;
+					}
+
+					return countryId;
+				}
 			}
 
 			return null;

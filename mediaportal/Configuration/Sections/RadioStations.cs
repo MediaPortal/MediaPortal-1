@@ -332,6 +332,23 @@ namespace MediaPortal.Configuration.Sections
 				if(dialogResult == DialogResult.OK)
 				{
 					ArrayList tunedItems = radioTuning.TunedItems;
+
+					//
+					// Add the tuned items to the list
+					//
+					foreach(RadioStation radioStation in tunedItems)
+					{
+						ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
+																				  radioStation.Name,
+																				  radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
+																				  radioStation.Genre,
+																				  radioStation.Bitrate.ToString(),
+																				  radioStation.URL
+																			  } );
+						listItem.Tag = radioStation;
+
+						stationsListView.Items.Add(listItem);
+					}
 				}
 
 				//
@@ -444,10 +461,10 @@ namespace MediaPortal.Configuration.Sections
 					//
 					// Calculate the frequency for this station
 					//
-					if(radioStation.Frequency < 1000)
-						radioStation.Frequency *= 1000000L;
+					if(radioStation.Frequency.Herz < 1000)
+						radioStation.Frequency.Herz *= 1000000L;
 
-					station.Channel = (int)radioStation.Frequency;
+					station.Channel = (int)radioStation.Frequency.Herz;
 
 					//
 					// Save station
@@ -471,14 +488,15 @@ namespace MediaPortal.Configuration.Sections
 
 				radioStation.Type = station.URL.Length == 0 ? "Radio" : "Stream";
 				radioStation.Name = station.Name;
-				radioStation.Channel = station.Channel;
+				radioStation.Frequency = radioStation.Channel = station.Channel;
 				radioStation.Genre = station.Genre;
 				radioStation.Bitrate = station.BitRate;
 				radioStation.URL = station.URL;
 
+
 				ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
 																		radioStation.Name,
-																		radioStation.Channel.ToString(),
+																		radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
 																		radioStation.Genre,
 																		radioStation.Bitrate.ToString(),
 																		radioStation.URL

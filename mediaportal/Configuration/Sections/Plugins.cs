@@ -141,7 +141,7 @@ namespace MediaPortal.Configuration.Sections
 
 					if(setupForm != null && setupForm.CanEnable())
 					{
-						listItem.Checked = xmlreader.GetValueAsBool("plugins", setupForm.PluginName(), false);
+						listItem.Checked = xmlreader.GetValueAsBool("plugins", setupForm.PluginName(), true);
 					}
 				}
 			}			

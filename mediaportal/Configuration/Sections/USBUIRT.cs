@@ -73,7 +73,7 @@ namespace MediaPortal.Configuration.Sections
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("USBUIRT", "internal", inputCheckBox.Checked ? "true" : "false");
-				xmlwriter.SetValue("USBUIRT", "externak", outputCheckBox.Checked ? "true" : "false");
+				xmlwriter.SetValue("USBUIRT", "external", outputCheckBox.Checked ? "true" : "false");
 				xmlwriter.SetValue("USBUIRT", "is3digit", digitCheckBox.Checked ? "true" : "false");
 				xmlwriter.SetValue("USBUIRT", "needsenter", inputCheckBox.Checked ? "true" : "false");			
 
