@@ -80,24 +80,30 @@ namespace MediaPortal.Dialogs
 		#region Base Dialog Members
 		public void RenderDlg(float timePassed)
 		{
-			// render the parent window
-			if (null!=m_pParentWindow) 
-				m_pParentWindow.Render(timePassed);
+			lock (this)
+			{
+				// render the parent window
+				if (null!=m_pParentWindow) 
+					m_pParentWindow.Render(timePassed);
 
-			GUIFontManager.Present();
-			// render this dialog box
-			base.Render(timePassed);
+				GUIFontManager.Present();
+				// render this dialog box
+				base.Render(timePassed);
+			}
 		}
 
 		public void Close()
 		{
-			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
-			OnMessage(msg);
+			lock (this)
+			{
+				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
+				OnMessage(msg);
 
-			GUIWindowManager.UnRoute();
-			m_pParentWindow=null;
-			m_bRunning=false;
-			GUIGraphicsContext.Overlay=m_bOverlay;
+				GUIWindowManager.UnRoute();
+				m_pParentWindow=null;
+				m_bRunning=false;
+				GUIGraphicsContext.Overlay=m_bOverlay;
+			}
 		}
     
 		public void Progress()
