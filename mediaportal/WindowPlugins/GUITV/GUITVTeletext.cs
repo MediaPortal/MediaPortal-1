@@ -275,7 +275,7 @@ namespace MediaPortal.GUI.TV
 		void ShowMessage(int page,int subpage)
 		{
 
-			string msg="waiting for Page "+Convert.ToString(page,16)+"/"+subpage.ToString()+"...";
+			string msg=String.Format("Waiting for Page {0:X}/{1}...",page,subpage);
 			GUIControl.SetControlLabel(GetID,(int)Controls.LBL_MESSAGE,msg);
 			GUIControl.ShowControl(GetID,(int)Controls.LBL_MESSAGE);
 		}
@@ -297,7 +297,8 @@ namespace MediaPortal.GUI.TV
 		{
 			if(m_pageDirty==true)
 			{
-				m_pageBitmap=m_teleText.PageBitmap;
+				Log.Write("dvb-teletext page updated. {0:X}/{1}",m_actualPage,m_actualSubPage);
+				m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
 				Redraw();
 				m_pageDirty=false;
 			}
@@ -305,22 +306,36 @@ namespace MediaPortal.GUI.TV
 
 		void Redraw()
 		{
+			Log.Write("dvb-teletext redraw()");
 			try
 			{
+
+				GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
 				if(m_pageBitmap==null)
 				{
 					ShowMessage(m_actualPage,m_actualSubPage);
+					pictureBox.FreeResources();
+					pictureBox.SetFileName("button_small_settings_nofocus.png");
+					pictureBox.AllocResources();
 					return;
 				}
 				GUIControl.HideControl(GetID,(int)Controls.LBL_MESSAGE);
-				GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
+
 				
+				pictureBox.FileName="";
 				pictureBox.FreeResources();
-				GUITextureManager.ReleaseTexture(@"temp\teletext.jpg");
+				pictureBox.IsVisible=false;
 				Utils.FileDelete(@"temp\teletext.jpg");
-				m_pageBitmap.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
-				pictureBox.SetFileName(@"-");
-				pictureBox.SetFileName(@"temp\teletext.jpg");
+				GUITextureManager.ReleaseTexture(@"temp\teletext.jpg");
+				using (Bitmap img = new Bitmap (500,500))
+				{
+					using (Graphics g = Graphics.FromImage(img))
+					{
+						g.DrawImage(m_pageBitmap,0,0);
+					}
+					img.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+				}
+				pictureBox.FileName=@"temp\teletext.jpg";
 				pictureBox.AllocResources();
 				pictureBox.IsVisible=true;
 			}
