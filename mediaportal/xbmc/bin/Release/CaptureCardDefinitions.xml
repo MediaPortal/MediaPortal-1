@@ -1406,7 +1406,7 @@
 
 <!--    Not confirmed working yet   -->
 
-  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="ven_093b&amp;pid_a104&amp">
+  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="ven_093b&amp;pid_a104&amp;">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="2" mpeg2=""></interface>
