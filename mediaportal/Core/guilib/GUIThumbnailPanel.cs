@@ -517,18 +517,65 @@ namespace MediaPortal.GUI.Library
 
 		public override void OnAction(Action action)
 		{
-			switch (action.wID)
-			{
-				case Action.ActionType.ACTION_PAGE_UP : 
-					OnPageUp();
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_PAGE_UP : 
+          OnPageUp();
           m_bRefresh = true;
-				break;
+          break;
 
-				case Action.ActionType.ACTION_PAGE_DOWN : 
-					OnPageDown();
+        case Action.ActionType.ACTION_PAGE_DOWN : 
+          OnPageDown();
           m_bRefresh = true;
-				break;
+          break;
 
+        case Action.ActionType.ACTION_HOME :
+        {
+          m_iOffset = 0;
+          m_iCursorY = 0;
+          m_iCursorX = 0;
+          m_upDown.Value = 1;
+          OnSelectionChanged();
+          
+          m_bRefresh = true;
+        }      
+          break;
+
+        case Action.ActionType.ACTION_END :
+        {
+          int iChan = m_vecItems.Count-1;
+          if (iChan >= 0)
+          {
+            // update spin controls
+            int iItemsPerPage = m_iRows * m_iColumns;
+            int iPage = 1;
+            int iSel = iChan;
+            while (iSel >= iItemsPerPage)
+            {
+              iPage++;
+              iSel -= iItemsPerPage;
+            }
+            m_upDown.Value = iPage;
+
+            // find item
+            m_iOffset = 0;
+            m_iCursorY = 0;
+            while (iChan >= iItemsPerPage) 
+            {
+              iChan -= iItemsPerPage;
+              m_iOffset += iItemsPerPage;
+            }
+            while (iChan >= m_iColumns) 
+            {
+              iChan -= m_iColumns;
+              m_iCursorY++;
+            }
+            m_iCursorX = iChan;
+            OnSelectionChanged();
+          }
+          m_bRefresh = true;
+        }      
+          break;
 
 				case Action.ActionType.ACTION_MOVE_DOWN : 
 				{

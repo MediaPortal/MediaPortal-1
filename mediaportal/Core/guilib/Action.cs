@@ -102,8 +102,8 @@ namespace MediaPortal.GUI.Library
 			, ACTION_COPY_ITEM            =81  // copy current selected item. Can be used in myfiles.xml window id=3 
 			, ACTION_MOVE_ITEM            =82  // move current selected item. Can be used in myfiles.xml window id=3
 			, ACTION_SHOW_MPLAYER_OSD     =83  // toggles mplayers OSD. Can be used in Videofullscreen.xml window id=2005
-			, ACTION_OSD_HIDESUBMENU		=84  // removes an OSD sub menu. Can be used in VideoOSD.xml window id=2901
-			, ACTION_TAKE_SCREENSHOT		=85  // take a screenshot
+			, ACTION_OSD_HIDESUBMENU      =84  // removes an OSD sub menu. Can be used in VideoOSD.xml window id=2901
+			, ACTION_TAKE_SCREENSHOT      =85  // take a screenshot
       , ACTION_INCREASE_TIMEBLOCK=86
       , ACTION_DECREASE_TIMEBLOCK=87
       , ACTION_DEFAULT_TIMEBLOCK=88
@@ -127,9 +127,11 @@ namespace MediaPortal.GUI.Library
       ,ACTION_CONTEXT_MENU=106
       ,ACTION_SHOW_MSN_WINDOW=107
 			,ACTION_SHOW_MSN_OSD=108
-      ,ACTION_MOUSE_MOVE=2000
-      ,ACTION_MOUSE_CLICK=2001
-      ,ACTION_MOUSE_DOUBLECLICK=2002
+      , ACTION_HOME                 =109  // home
+      , ACTION_END                  =110  // end
+      , ACTION_MOUSE_MOVE=2000
+      , ACTION_MOUSE_CLICK=2001
+      , ACTION_MOUSE_DOUBLECLICK=2002
 			
 
 		};
