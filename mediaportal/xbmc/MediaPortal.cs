@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 
 
@@ -129,21 +130,27 @@ public class MediaPortalApp : D3DApp
         GUIWindowManager.DispatchThreadMessages();
         g_Player.Process();
         bool bPlayVideo=false;
+        // update video window when playing video
         if (g_Player.Playing && g_Player.HasVideo)
         {
           bPlayVideo=true;
           SetVideoRect();
         }
+
+        // if not playing video, or we're playing a video but not fullscreen
+        // then check if GUI should b updated
         if (GUIGraphicsContext.IsFullScreenVideo==false || !bPlayVideo)
         {
           bool bNeedRefresh=GUIWindowManager.NeedRefresh();
-          if (bPlayVideo && GUIGraphicsContext.Overlay)
-            bNeedRefresh=true;
+          //if (bPlayVideo && GUIGraphicsContext.Overlay)
+          //  bNeedRefresh=true;
           if (bNeedRefresh) 
           {
+            // yes, then invalidate the screen
             Invalidate();
           }
         }
+        
         if (m_bAutoHideMouse) 
         {
           TimeSpan ts = DateTime.Now - m_MouseTimeOut;
@@ -218,6 +225,8 @@ public class MediaPortalApp : D3DApp
         return;
       }
       SetVideoRect();
+      GUIWindowManager.DispatchThreadMessages();
+      g_Player.Process();
 
       if (g_Player.Playing)
       {

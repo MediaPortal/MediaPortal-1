@@ -24,7 +24,6 @@ My TV:
 My Music:
   - search songs by genre,artist,album (based on music database)
   - support for external audio players based on file extension
-  - wmp9 visualisations   
   - FF/RW/pause/volume control
   - crossfading ?
   - repeat none, once, always
@@ -59,5 +58,7 @@ Bugs:
   - 18-04-2004 my video   : view by title: not all movies are shown
   - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
   - 20-04-2005 my tv      : record a program via tvguide which is already running records the next program!
-
- i start mediaportal, goto tv then tvguide, then click on the first selected programme, then click none, then press right mouse button to return to tv section
+  - 22-04-2005 my video   : dvd player flickers, especiall when OSD is drawn
+  - 22-04-2004 setup      : fix frequency overrides
+  - 22-04-2004 general    : scrolling items (like musicoverlay) take too much cpu% (disabled for now)
+  
