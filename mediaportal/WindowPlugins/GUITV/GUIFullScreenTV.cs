@@ -565,7 +565,8 @@ namespace MediaPortal.GUI.TV
 
       dlg.AddLocalizedString(941); // Change aspect ratio
       dlg.AddLocalizedString(12902); // MSN Messenger
-      dlg.AddLocalizedString(902); // MSN Online contacts
+			dlg.AddLocalizedString(902); // MSN Online contacts
+			dlg.AddLocalizedString(971); // Group
 			dlg.AddLocalizedString(970); // Previous window
 
 			m_bDialogVisible=true;
@@ -576,6 +577,28 @@ namespace MediaPortal.GUI.TV
       if (dlg.SelectedId==-1) return;
       switch (dlg.SelectedId)
       {
+
+				case 971: //group
+					dlg.Reset();
+					dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
+					ArrayList groups=new ArrayList();
+					TVDatabase.GetGroups(ref groups);
+					foreach (TVGroup group in groups)
+					{
+						dlg.Add(group.GroupName);
+					}
+					dlg.DoModal( GetID);
+					if (dlg.SelectedLabel==-1) return;
+					foreach (TVGroup group in groups)
+					{
+						if (group.GroupName==dlg.SelectedLabelText)
+						{
+							GUITVHome.CurrentGroup=group;
+							break;
+						}
+					}
+					break;
+
         case 941: // Change aspect ratio
           ShowAspectRatioMenu();
           break;

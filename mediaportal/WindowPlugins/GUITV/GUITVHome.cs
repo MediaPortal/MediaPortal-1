@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.TV
 		};
     static public string TVChannelCovertArt=@"thumbs\tv\logos";
 		static public string m_strChannel="Nederland 1";
-		string          m_strGroup="";
+		static public string m_strGroup="";
 		bool            m_bTVON=true;
     bool            m_bTimeShifting=true;
     ArrayList       m_channels=new ArrayList();
@@ -814,6 +814,19 @@ namespace MediaPortal.GUI.TV
 			if (windowId== (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
 			return false;
+		}
+		static public TVGroup CurrentGroup
+		{
+			get
+			{
+				return currentGroup;
+			}
+			set
+			{
+				currentGroup=value;
+				if (currentGroup!=null)
+					m_strGroup=currentGroup.GroupName;
+			}
 		}
       
 		#region ISetupForm Members

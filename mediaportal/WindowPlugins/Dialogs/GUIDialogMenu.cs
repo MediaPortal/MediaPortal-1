@@ -188,6 +188,8 @@ namespace MediaPortal.Dialogs
           {
 						m_iSelected=GetSelectedItemNo();
 						m_strSelected=GetSelectedItem().Label;
+						int pos=m_strSelected.IndexOf(" ");
+						if (pos>0) m_strSelected=m_strSelected.Substring(pos+1);
             m_iItemId=GetSelectedItem().ItemId;
 						Close();
           }

@@ -1932,12 +1932,37 @@ namespace MediaPortal.GUI.TV
 				{
 					dlg.AddLocalizedString( 264);// Record
 				}
-        dlg.AddLocalizedString( 937);// Reload tvguide
+				dlg.AddLocalizedString( 937);// Reload tvguide
+				dlg.AddLocalizedString( 971);// Group
 
 				dlg.DoModal( GetID);
 				if (dlg.SelectedLabel==-1) return;
 				switch (dlg.SelectedId)
 				{
+					case 971: //group
+						dlg.Reset();
+						dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
+						ArrayList groups=new ArrayList();
+						TVDatabase.GetGroups(ref groups);
+						foreach (TVGroup group in groups)
+						{
+							dlg.Add(group.GroupName);
+						}
+						dlg.DoModal( GetID);
+						if (dlg.SelectedLabel==-1) return;
+						foreach (TVGroup group in groups)
+						{
+							if (group.GroupName==dlg.SelectedLabelText)
+							{
+								GUITVHome.CurrentGroup=group;
+								break;
+							}
+						}
+						GetChannels();
+						Update();
+						SetFocus();
+					break;
+
 					case 937: //import tvguide
 						Import();
 						Update();
@@ -2140,7 +2165,16 @@ namespace MediaPortal.GUI.TV
 		void GetChannels()
 		{
 			m_channels.Clear();
-			TVDatabase.GetChannels(ref m_channels); 
+			TVGroup group=GUITVHome.CurrentGroup;
+			if (group!=null)
+			{
+				foreach (TVChannel channel in group.tvChannels)
+					m_channels.Add(channel );
+			}
+			else
+			{
+				TVDatabase.GetChannels(ref m_channels); 
+			}
 
 			bool bRemoved;
 			do
