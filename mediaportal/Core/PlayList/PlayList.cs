@@ -35,6 +35,8 @@ namespace MediaPortal.Playlists
       
       public PlayListItem(string strDescription, string strFileName)
       {
+        if (strDescription==null) return;
+        if (strFileName==null) return;
         m_strDescription=strDescription;
         m_strFilename=strFileName;
         m_iDuration=0;
@@ -42,6 +44,8 @@ namespace MediaPortal.Playlists
 
       public PlayListItem(string strDescription, string strFileName, int iDuration)
       {
+        if (strDescription==null) return;
+        if (strFileName==null) return;
         m_strDescription=strDescription;
         m_strFilename=strFileName;
         m_iDuration=iDuration;
@@ -56,12 +60,19 @@ namespace MediaPortal.Playlists
       public string FileName
       {
         get { return m_strFilename;}
-        set { m_strFilename=value;}
+        set 
+        {  
+          if (value==null) return;
+          m_strFilename=value;
+        }
       }
       public string Description
       {
         get { return m_strDescription;}
-        set { m_strDescription=value;}
+        set { 
+          if (value==null) return;
+          m_strDescription=value;
+        }
       }
       public int Duration
       {
@@ -101,6 +112,7 @@ namespace MediaPortal.Playlists
 
     public void Add( PlayListItem item)
     {
+      if (item==null) return;
       string strFile=item.FileName.ToLower();
       if (strFile.StartsWith("cdda:") ||  
           strFile.StartsWith("http:") ||  
@@ -134,11 +146,15 @@ namespace MediaPortal.Playlists
     public string Name
     {
       get { return m_strPlayListName;}
-      set { m_strPlayListName=value;}
+      set { 
+        if (value==null) return ;
+        m_strPlayListName=value;
+      }
     }
 
     public int Remove( string strFileName)
     {
+      if (strFileName==null) return -1;
       for (int i=0; i < m_items.Count;++i)
       {
         PlayListItem item=(PlayListItem)m_items[i];

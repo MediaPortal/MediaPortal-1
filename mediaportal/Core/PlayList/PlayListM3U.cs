@@ -25,120 +25,134 @@ namespace MediaPortal.Playlists
 		
 		public override bool 	Load(string  strFileName)
 		{
+      if (strFileName==null) return false;
 			string strBasePath;
 			Clear();
-			m_strPlayListName=System.IO.Path.GetFileName(strFileName);
-			strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
-			StreamReader file = File.OpenText(strFileName);
-			if (file==null) 
-			{
-				return false;
-			}
+      try
+      {
+        m_strPlayListName=System.IO.Path.GetFileName(strFileName);
+        strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
+        StreamReader file = File.OpenText(strFileName);
+        if (file==null) 
+        {
+          return false;
+        }
 
-			string szLine;
-			szLine=file.ReadLine();
-			if (szLine==null || szLine.Length==0)
-			{
-				file.Close();
-				return false;
-			}
-			string strLine=szLine;
-			//CUtil::RemoveCRLF(strLine);
-			if (strLine != M3U_START_MARKER)
-			{
-				strFileName=szLine;
-				//CUtil::RemoveCRLF(strFileName);
-				if (strFileName.Length>1)
-				{
-					Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-					PlayList.PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
-          newItem.Type = PlayListItem.PlayListItemType.Audio;
-					string strDescription;
-					strDescription=System.IO.Path.GetFileName(strFileName);
-					newItem.Description=strDescription;
-					Add(newItem);
-				}
-			}
-
-			szLine=file.ReadLine();
-			while (szLine!=null  )
-			{
-				strLine=szLine;
-				//CUtil::RemoveCRLF(strLine);
-				if (strLine.StartsWith( M3U_INFO_MARKER) )
-				{
-					// start of info 
-					int iColon=(int)strLine.IndexOf(":");
-					int iComma=(int)strLine.IndexOf(",");
-					if (iColon >=0 && iComma >= 0 && iComma > iColon)
-					{
-						iColon++;
-						string strLength=strLine.Substring(iColon, iComma-iColon);
-						iComma++;
-						string strInfo=strLine.Substring(iComma);
-						int lDuration=System.Int32.Parse(strLength);
-						//lDuration*=1000;
-
-						szLine=file.ReadLine();
-						if (szLine!=null && szLine.Length>0 )
-						{
-							strFileName=szLine;
-							//CUtil::RemoveCRLF(strFileName);
-							if (strFileName.Length>1)
-							{
-								Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-								PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
-                newItem.Type = PlayListItem.PlayListItemType.Audio;
-								if (strInfo.Length==0)
-								{
-									strInfo=System.IO.Path.GetFileName(strFileName);
-									newItem.Description=strInfo;
-								}
-								Add(newItem);
-							}
-						}
-						else
-						{
-							// eof
-							break;
-						}
-					}
-				}
-				else
-				{
-					strFileName=szLine;
-					//CUtil::RemoveCRLF(strFileName);
-					if (strFileName.Length>1)
-					{
-						Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-						PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+        string szLine;
+        szLine=file.ReadLine();
+        if (szLine==null || szLine.Length==0)
+        {
+          file.Close();
+          return false;
+        }
+        string strLine=szLine;
+        //CUtil::RemoveCRLF(strLine);
+        if (strLine != M3U_START_MARKER)
+        {
+          strFileName=szLine;
+          //CUtil::RemoveCRLF(strFileName);
+          if (strFileName.Length>1)
+          {
+            Utils.GetQualifiedFilename(strBasePath,ref strFileName);
+            PlayList.PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
             newItem.Type = PlayListItem.PlayListItemType.Audio;
-						string strDescription;
-						strDescription=System.IO.Path.GetFileName(strFileName);
-						newItem.Description=strDescription;
-						Add(newItem);
-					}
-				}
-				szLine=file.ReadLine();
-			}
+            string strDescription;
+            strDescription=System.IO.Path.GetFileName(strFileName);
+            newItem.Description=strDescription;
+            Add(newItem);
+          }
+        }
 
-			file.Close();
+        szLine=file.ReadLine();
+        while (szLine!=null  )
+        {
+          strLine=szLine;
+          //CUtil::RemoveCRLF(strLine);
+          if (strLine.StartsWith( M3U_INFO_MARKER) )
+          {
+            // start of info 
+            int iColon=(int)strLine.IndexOf(":");
+            int iComma=(int)strLine.IndexOf(",");
+            if (iColon >=0 && iComma >= 0 && iComma > iColon)
+            {
+              iColon++;
+              string strLength=strLine.Substring(iColon, iComma-iColon);
+              iComma++;
+              string strInfo=strLine.Substring(iComma);
+              int lDuration=System.Int32.Parse(strLength);
+              //lDuration*=1000;
+
+              szLine=file.ReadLine();
+              if (szLine!=null && szLine.Length>0 )
+              {
+                strFileName=szLine;
+                //CUtil::RemoveCRLF(strFileName);
+                if (strFileName.Length>1)
+                {
+                  Utils.GetQualifiedFilename(strBasePath,ref strFileName);
+                  PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
+                  newItem.Type = PlayListItem.PlayListItemType.Audio;
+                  if (strInfo.Length==0)
+                  {
+                    strInfo=System.IO.Path.GetFileName(strFileName);
+                    newItem.Description=strInfo;
+                  }
+                  Add(newItem);
+                }
+              }
+              else
+              {
+                // eof
+                break;
+              }
+            }
+          }
+          else
+          {
+            strFileName=szLine;
+            //CUtil::RemoveCRLF(strFileName);
+            if (strFileName.Length>1)
+            {
+              Utils.GetQualifiedFilename(strBasePath,ref strFileName);
+              PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+              newItem.Type = PlayListItem.PlayListItemType.Audio;
+              string strDescription;
+              strDescription=System.IO.Path.GetFileName(strFileName);
+              newItem.Description=strDescription;
+              Add(newItem);
+            }
+          }
+          szLine=file.ReadLine();
+        }
+
+        file.Close();
+      }
+      catch(Exception)
+      {
+        return false;
+      }
 			return true;
 		}
 
 		public override void 	Save(string strFileName)  
 		{
-			using (StreamWriter writer = new StreamWriter(strFileName,true))
-			{
-				writer.WriteLine(M3U_START_MARKER);
-				for (int i=0; i < m_items.Count;++i)
-				{
-					PlayListItem item=(PlayListItem)m_items[i];
-					writer.WriteLine("{0}:{1},{2}",M3U_INFO_MARKER, item.Duration/1000, item.Description);
-					writer.WriteLine("{0}",item.FileName);
-				}
-				writer.Close();
-			}
+      try
+      {
+        using (StreamWriter writer = new StreamWriter(strFileName,true))
+        {
+          writer.WriteLine(M3U_START_MARKER);
+          for (int i=0; i < m_items.Count;++i)
+          {
+            PlayListItem item=(PlayListItem)m_items[i];
+            writer.WriteLine("{0}:{1},{2}",M3U_INFO_MARKER, item.Duration/1000, item.Description);
+            writer.WriteLine("{0}",item.FileName);
+          }
+          writer.Close();
+        }
+      }
+      catch (Exception)
+      {
+      }
 		}
 
 	}

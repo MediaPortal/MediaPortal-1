@@ -704,7 +704,10 @@ namespace MediaPortal.GUI.Library
     static public int ScrollSpeed
     {
       get { return m_iScrollSpeed;}
-      set { m_iScrollSpeed=value;}
+      set { 
+        if (m_iScrollSpeed<0) return;
+        m_iScrollSpeed=value;
+      }
     }
 
 		/// <summary>
@@ -713,7 +716,10 @@ namespace MediaPortal.GUI.Library
     static public int CharsInCharacterSet
     {
       get { return m_iCharsInCharacterSet;}
-      set {m_iCharsInCharacterSet=value;}
+      set {
+        if (m_iCharsInCharacterSet<128) return;
+        m_iCharsInCharacterSet=value;
+      }
     }
   }
 }

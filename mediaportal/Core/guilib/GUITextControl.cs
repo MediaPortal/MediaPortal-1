@@ -224,9 +224,12 @@ namespace MediaPortal.GUI.Library
         }
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
 				{
-					GUIListItem pItem=(GUIListItem)message.Object;
-					m_vecItems.Add( pItem);
-          Calculate();
+					GUIListItem pItem=message.Object as GUIListItem;
+          if (pItem!=null)
+          {
+            m_vecItems.Add( pItem);
+            Calculate();
+          }
 				}
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
@@ -358,7 +361,10 @@ namespace MediaPortal.GUI.Library
 		public String ScrollySuffix
 		{
 			get { return m_strSuffix;}
-			set {m_strSuffix=value;}
+			set {
+        if (value==null) return;
+        m_strSuffix=value;
+      }
 		}
 
 		
@@ -402,6 +408,8 @@ namespace MediaPortal.GUI.Library
 		
 		public void SetTextOffsets(int iXoffset, int iYOffset,int iXoffset2, int iYOffset2)
 		{
+      if (iXoffset< 0 ||iYOffset<0) return;
+      if (iXoffset2< 0 ||iYOffset2<0) return;
 			m_iTextOffsetX = iXoffset;
 			m_iTextOffsetY = iYOffset;
 			m_iTextOffsetX2 = iXoffset2;
@@ -410,6 +418,7 @@ namespace MediaPortal.GUI.Library
 		
 		public void SetImageDimensions(int iWidth, int iHeight)
 		{
+      if (iWidth<0 || iHeight<0) return;
 			m_iImageWidth  = iWidth;
 			m_iImageHeight = iHeight;
 		}
@@ -417,12 +426,19 @@ namespace MediaPortal.GUI.Library
 		public int ItemHeight
 		{
 			get { return m_iItemHeight;}
-			set {m_iItemHeight=value;}
+      set 
+      {
+        if (value<0) return;
+        m_iItemHeight=value;
+      }
 		}
 		public int Space
 		{
 			get { return m_iSpaceBetweenItems;}
-			set {m_iSpaceBetweenItems=value;}
+			set {
+        if (value<0) return;
+        m_iSpaceBetweenItems=value;
+      }
 		}
 
 		public long	TextColor
@@ -542,6 +558,7 @@ namespace MediaPortal.GUI.Library
 
     void SetText(string strText)
     {
+      if (text==null) return;
 	    m_vecItems.Clear();
 	    // start wordwrapping
       // Set a flag so we can determine initial justification effects
