@@ -1254,7 +1254,7 @@
 	</string>
 	<string>
 		<id>385</id>
-		<value>Klarne</value>
+		<value>Klarner</value>
 	</string>
 	<string>
 		<id>386</id>
@@ -1264,6 +1264,35 @@
 		<id>387</id>
 		<value>Tidlig</value>
 	</string>
+		<string>
+		<id>388</id>
+		<value>og</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>T&#229;ke</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Dis</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Vindfull</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Duskregn</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Frysing</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>Ukjent</value>
+	</string>
+
 	<string>
 		<id>396</id>
 		<value>Velg Sted</value>
@@ -2152,6 +2181,58 @@
 	<value>Ingen TVGuide data tilgjengelig</value>
 </string>
 <string>
+	<id>737</id>
+	<value>Vis: Satellitt</value>
+</string>
+<string>
+	<id>738</id>
+	<value>Vis: Temperatur</value>
+</string>
+<string>
+	<id>739</id>
+	<value>Vis: UV Indeks</value>
+</string>
+<string>
+	<id>740</id>
+	<value>Vis: Vind</value>
+</string>
+<string>
+	<id>741</id>
+	<value>Vis: Fuktighet</value>
+</string>
+<string>
+	<id>742</id>
+	<value>Vis: Nedb&#248;r</value>
+</string>
+<string>
+	<id>743</id>
+	<value>4 Dagers varsel</value>
+</string>
+<string>
+	<id>744</id>
+	<value>Soloppgang</value>
+</string>
+<string>
+	<id>745</id>
+	<value>Solnedgang</value>
+</string>
+<string>
+	<id>746</id>
+	<value>H&#248;y</value>
+</string>
+<string>
+	<id>747</id>
+	<value>Lav</value>
+</string>
+<string>
+	<id>748</id>
+	<value>Nedb&#248;r</value>
+</string>
+<string>
+	<id>750</id>
+	<value>Bilder</value>
+</string>
+<string>
 	<id>800</id>
 	<value>Start med</value>
 </string>
@@ -2533,6 +2614,31 @@
 	<id>970</id>
 	<value>Forrige vindu</value>
 </string>
+<string>
+	<id>971</id>
+	<value>Gruppe</value>
+</string>
+<string>
+	<id>972</id>
+	<value>Alle Kanaler</value>
+</string>
+<string>
+	<id>973</id>
+	<value>Maks FPS</value>
+</string>
+<string>
+	<id>974</id>
+	<value>Topp Meny</value>
+</string>
+<string>
+	<id>975</id>
+	<value>Forrige kapittel</value>
+</string>
+<string>
+	<id>976</id>
+	<value>Neste kapittel</value>
+</string>
+
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>Min status</value></string>
@@ -2681,6 +2787,19 @@
 		<id>2115</id>
 		<value>Sett inn CD/DVD RW</value>
 	</string>
+	<string>
+		<id>2116</id>
+		<value>Stasjonen er ikke klar</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>en kritisk feil har skjedd!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Konvertere DVR-MS</value>
+	</string>
+
 
 
 	<!-- My Explorer Strings -->
@@ -2751,6 +2870,42 @@
 	<string>
 		<id>2216</id>
 		<value>Flyttet filer!</value>
+	</string>
+		<string>
+		<id>2217</id>
+		<value>M&#229;lfilen eksisterer!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Overskrive filen?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>Kan ikke flytte fra valgte stasjon!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Kopiere valgte fil?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Vil du slette de valgte filene?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Filer slettet!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>S&#248;ppelb&#248;tte</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Katalogen eksisterer!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Opprettet katalog</value>
 	</string>
 <string>
 	<id>8000</id>
@@ -2972,4 +3127,41 @@
 	<id>16001</id>
 	<value>Fest mikse</value>
 </string>
+<!-- My Tetris --> 
+<string><id>19001</id><value>Min Tetris</value></string> 
+<string><id>19002</id><value>Nytt Spill</value></string> 
+<string><id>19003</id><value>Musikk</value></string> 
+<string><id>19004</id><value>Lyder</value></string> 
+<string><id>19005</id><value>Poengsum</value></string> 
+<string><id>19006</id><value>Niv&#229;</value></string> 
+<string><id>19007</id><value>Linjer</value></string> 
+<string><id>19008</id><value>H&#248;yest poengsum</value></string> 
+<string><id>19009</id><value>Neste</value></string> 
+<string><id>19010</id><value>Press eller klikk for &#229; starte...</value></string> 
+<string><id>19011</id><value>Pause</value></string> 
+<string><id>19012</id><value>Spill ferdig</value></string> 
+
+<string><id>3000</id><value>Program Valg</value></string>
+<string><id>3001</id><value>Time</value></string>
+<string><id>3002</id><value>Timer</value></string>
+<string><id>3003</id><value>Minutt</value></string>
+<string><id>3004</id><value>Minutter</value></string>
+<string><id>3005</id><value>Time siden</value></string>
+<string><id>3006</id><value>Timer siden</value></string>
+<string><id>3007</id><value>Minutt siden</value></string>
+<string><id>3008</id><value>Minutter siden</value></string>
+<string><id>3009</id><value>Starter om</value></string>
+<string><id>3010</id><value>Minutter gjenst&#229;r</value></string>
+<string><id>3011</id><value>Time gjenst&#229;r</value></string>
+<string><id>3012</id><value>Timer gjenst&#229;r</value></string>
+<string><id>3013</id><value>Starter N&#229;</value></string>
+<string><id>3014</id><value>Dag</value></string>
+<string><id>3015</id><value>Dager</value></string>
+<string><id>3016</id><value>Allerede ferdig</value></string>
+<string><id>3017</id><value>Startet </value></string>
+<string><id>3018</id><value>Minutt gjenst&#229;r</value></string>
+<string><id>3019</id><value>Serier</value></string>
+<string><id>3020</id><value>Episod</value></string>
+<string><id>3021</id><value>Del</value></string>
+<string><id>3022</id><value>av</value></string>
 </strings>
