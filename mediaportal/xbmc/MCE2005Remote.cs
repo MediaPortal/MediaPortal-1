@@ -411,7 +411,7 @@ namespace MediaPortal
 							GUIGraphicsContext.SendMessage(msgtv);
             break;
 
-					case 0x46://My tv (yellow on USA model)
+					case 0x46://(yellow/My tv on USA model)
 						//show context menu
 						action = new Action(Action.ActionType.ACTION_CONTEXT_MENU,0,0); 
 					break;
