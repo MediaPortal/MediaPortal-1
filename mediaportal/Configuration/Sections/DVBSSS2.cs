@@ -2794,8 +2794,8 @@ namespace MediaPortal.Configuration.Sections
 			treeView5.Enabled=false;
 			m_scanRunning=true;
 			SaveList();
-			m_b2c2Helper.TuneChannel(12515,22000,6,0,1,1,10600);
-			ssEPG.GetMHWEPG(m_b2c2Helper.Mpeg2DataFilter);
+//			m_b2c2Helper.TuneChannel(12515,22000,6,0,1,1,10600);
+//			ssEPG.GetMHWEPG(m_b2c2Helper.Mpeg2DataFilter);
 			int counter=0;
 			bool tuned=false;
 			int channelCount=0;
