@@ -29,7 +29,7 @@
 		<type>label</type>
 		<id>12</id>
 		<posX>242</posX>
-		<posY>65</posY>
+		<posY>77</posY>
 <!--		<label>Channel name</label> -->
 		<font>font14</font>
 		<textcolor>FFB2D4F5</textcolor>
@@ -105,7 +105,7 @@
 		<type>textboxscrollup</type>
 		<id>506</id>
 		<posX>242</posX>
-		<posY>330</posY>
+		<posY>335</posY>
 		<width>430</width>
 		<height>270</height>
 		<label>-</label>
