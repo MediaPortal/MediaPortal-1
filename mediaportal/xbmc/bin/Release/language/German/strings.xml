@@ -2689,7 +2689,7 @@
 	<!-- My Burner Strings -->
 	<string>
 		<id>2100</id>
-		<value>brennen</value>
+		<value>Brennen</value>
 	</string>
 	<string>
 		<id>2101</id>
@@ -2714,6 +2714,113 @@
 	<string>
 		<id>2106</id>
 		<value>Daten-DVD erstellen</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Kopieren starten</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Leere CD/DVD einlegen</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>anschließend OK betätigen</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Zu kopierende CD/DVD einlegen</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Fertig !</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Warte auf CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Alles kopieren</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>RW Löschen</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>CD/DVD RW einlegen</value>
+	</string>
+
+
+	<!-- My Explorer Strings -->
+	<string>
+		<id>2200</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Quelle wählen</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Ziel wählen</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Daten kopieren</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Verzeichnis erstellen</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Auswahl zurücksetzen</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Alles markieren</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Möchten Sie das Verzeichnis</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>anlegen?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Möchten Sie die ausgewählten Daten kopieren?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Dateien kopiert!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Bitte warten! Daten werden kopiert.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Dateien löschen</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Daten verschieben</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Möchten Sie die ausgewählten Daten verschieben?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Bitte warten! Daten werden verschoben.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Dateien verschoben!</value>
 	</string>
 
 	<string>

@@ -16,9 +16,6 @@ namespace MediaPortal.TV.Recording
 		AutoTuneCallback										callback = null;
 		public BDATVTuning()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 		#region ITuning Members
 
