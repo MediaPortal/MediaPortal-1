@@ -734,6 +734,19 @@ namespace MediaPortal.GUI.TV
       }
     }
     
+		static public void ViewChannel(string channel)
+		{
+			//and view that
+			int card=GUITVHome.GetCurrentCard();
+			Recorder.StartViewing(card, channel, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+					
+			if (GUIGraphicsContext.IsFullScreenVideo)
+			{
+				GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				if (TVWindow != null) TVWindow.UpdateOSD();
+			}
+		}
+
 		/// <summary>
 		/// When called this method will switch to the next TV channel
 		/// </summary>

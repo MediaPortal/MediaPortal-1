@@ -563,10 +563,11 @@ namespace MediaPortal.GUI.TV
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
+			dlg.AddLocalizedString(915); // TV Channels
+			dlg.AddLocalizedString(971); // Group
       dlg.AddLocalizedString(941); // Change aspect ratio
       dlg.AddLocalizedString(12902); // MSN Messenger
 			dlg.AddLocalizedString(902); // MSN Online contacts
-			dlg.AddLocalizedString(971); // Group
 			dlg.AddLocalizedString(970); // Previous window
 
 			m_bDialogVisible=true;
@@ -576,9 +577,37 @@ namespace MediaPortal.GUI.TV
 			m_bUpdate=true;
       if (dlg.SelectedId==-1) return;
       switch (dlg.SelectedId)
-      {
+			{
+				case 915: //TVChannels
+				{
+					dlg.Reset();
+					dlg.SetHeading(GUILocalizeStrings.Get(915));//TV Channels
+					TVGroup group=GUITVHome.CurrentGroup;
+					if (group != null)
+					{
+						foreach (TVChannel channel in group.tvChannels)
+						{
+							dlg.Add(channel.Name);
+						}
+					}
+					else
+					{
+						m_channels.Clear();
+						TVDatabase.GetChannels(ref m_channels);
+						foreach (TVChannel channel in m_channels)
+						{
+							dlg.Add(channel.Name);
+						}
+					}
+					dlg.DoModal( GetID);
+					if (dlg.SelectedLabel==-1) return;
+					string tvChannel=dlg.SelectedLabelText;
+					GUITVHome.ViewChannel(tvChannel);
+				}
+				break;
 
 				case 971: //group
+				{
 					dlg.Reset();
 					dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
 					ArrayList groups=new ArrayList();
@@ -597,6 +626,7 @@ namespace MediaPortal.GUI.TV
 							break;
 						}
 					}
+				}
 					break;
 
         case 941: // Change aspect ratio
