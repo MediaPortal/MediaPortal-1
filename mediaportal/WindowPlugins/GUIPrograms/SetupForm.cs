@@ -451,21 +451,24 @@ namespace WindowPlugins.GUIPrograms
 
 		private void DoAddChild(myProgSourceType newSourceType)
 		{
-			AppItem newApp = new AppItem(ProgramDatabase.m_db);
-			apps.Add(newApp);
-			newApp.FatherID = GetSelectedAppID();
-			newApp.Position = apps.GetMaxPosition(newApp.FatherID) + 10;
-			newApp.Title = "New item";
-			newApp.SourceType = newSourceType;
-			newApp.Write();
-			apps.LoadAll();
-			updateTree();
-			// the selected node has a new child => change selection to last child added
-			if (appTree.SelectedNode != null)
-				if (appTree.SelectedNode.Nodes.Count > 0)
-				{
-					appTree.SelectedNode = appTree.SelectedNode.Nodes[appTree.SelectedNode.Nodes.Count - 1];
-				}
+			if (SaveAppItem())
+			{
+				AppItem newApp = new AppItem(ProgramDatabase.m_db);
+				apps.Add(newApp);
+				newApp.FatherID = GetSelectedAppID();
+				newApp.Position = apps.GetMaxPosition(newApp.FatherID) + 10;
+				newApp.Title = "New item";
+				newApp.SourceType = newSourceType;
+				newApp.Write();
+				apps.LoadAll();
+				updateTree();
+				// the selected node has a new child => change selection to last child added
+				if (appTree.SelectedNode != null)
+					if (appTree.SelectedNode.Nodes.Count > 0)
+					{
+						appTree.SelectedNode = appTree.SelectedNode.Nodes[appTree.SelectedNode.Nodes.Count - 1];
+					}
+			}
 		}
 
 		private void DoModifySourceType(myProgSourceType newSourceType)
@@ -911,25 +914,28 @@ namespace WindowPlugins.GUIPrograms
 		{
 			bool res = true;
 			AppItem curApp = this.GetSelectedAppItem();
-			pageCurrentSettings = GetCurrentSettingsPage();
-			if (pageCurrentSettings != null)
+			if (curApp != null)
 			{
-				if (pageCurrentSettings.EntriesOK(curApp))
+				pageCurrentSettings = GetCurrentSettingsPage();
+				if (pageCurrentSettings != null)
 				{
-					pageCurrentSettings.OnUpClick -= new System.EventHandler(this.UpClick);
-					pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
-					pageCurrentSettings.Form2AppObj(curApp);
-					if (curApp != null)
+					if (pageCurrentSettings.EntriesOK(curApp))
 					{
-						curApp.Write();
-						appTree.SelectedNode.Text = curApp.Title;
-						res = true;
+						pageCurrentSettings.OnUpClick -= new System.EventHandler(this.UpClick);
+						pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
+						pageCurrentSettings.Form2AppObj(curApp);
+						if (curApp != null)
+						{
+							curApp.Write();
+							appTree.SelectedNode.Text = curApp.Title;
+							res = true;
+						}
 					}
-				}
-				else
-				{
-					// some of the entries are invalid
-					res = false;
+					else
+					{
+						// some of the entries are invalid
+						res = false;
+					}
 				}
 			}
 			return res;
