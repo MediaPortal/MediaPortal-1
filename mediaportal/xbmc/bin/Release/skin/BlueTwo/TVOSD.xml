@@ -73,6 +73,16 @@
 		<keepaspectratio>yes</keepaspectratio> 
 	</control>
 	<control>
+		<description>rec logo</description> 
+		<type>image</type> 
+		<id>39</id> 
+		<posX>620</posX> 
+		<posY>420</posY> 
+		<texture>rec.png</texture> 
+		<colordiffuse>50ffffff</colordiffuse>
+		<visible>yes</visible> 
+	</control>	
+	<control>
 		<description>Plot</description>
 		<type>textboxscrollup</type>
 		<id>0</id>

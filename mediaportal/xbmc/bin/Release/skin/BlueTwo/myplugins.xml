@@ -12,24 +12,34 @@
 		<width>720</width>
 		<height>576</height>
 		<texture>background.png</texture>
-	</control>
+	</control>		
 	<control>
-		<description>background image</description>
+		<description>menu background image</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>5</posX>
-		<posY>3</posY>
-		<width>706</width>
-		<height>568</height>
-		<texture>background_start.png</texture>
+		<posX>370</posX>
+		<posY>130</posY>
+		<width>310</width>
+		<height>375</height>
+		<texture>background_glass_menu_area.png</texture>
 	</control>
+	<control>
+		<description>menu background image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>120</posY>
+		<width>310</width>
+		<height>375</height>
+		<texture>background_glass_hoover_area.png</texture>
+	</control>		
 	<control>
 		<type>image</type>
 		<id>1</id>
 		<posX>130</posX>
 		<posY>40</posY>
 		<texture>hp_start.png</texture>
-	</control>
+	</control>					
 	<control>
 		<description>template for panel in which all buttons should b fitted</description>
 		<type>image</type>
@@ -45,7 +55,7 @@
 		<type>image</type>
 		<id>1000</id>
 		<posX>85</posX>
-		<posY>210</posY>
+		<posY>200</posY>
 		<align>center</align>
 		<texture>-</texture>
 		<visible>no</visible>
@@ -54,11 +64,11 @@
 		<description>template for button</description>
 		<type>button</type>
 		<id>1001</id>
-		<posX>375</posX>
+		<posX>400</posX>
 		<posY>160</posY>
 		<width>225</width>
 		<textXOff>10</textXOff>
-		<textYOff>5</textYOff>
+		<textYOff>8</textYOff>
 		<height>49</height>
 		<label>605</label>
 		<font>font16</font>
@@ -84,8 +94,8 @@
 		<description>Date</description>
 		<type>label</type>
 		<id>200</id>
-		<posX>220</posX>
-		<posY>175</posY>
+		<posX>230</posX>
+		<posY>170</posY>
 		<label>#date</label>
 		<align>right</align>
 		<font>font13</font>
@@ -95,8 +105,8 @@
 		<description>Time</description>
 		<type>label</type>
 		<id>201</id>
-		<posX>230</posX>
-		<posY>175</posY>
+		<posX>240</posX>
+		<posY>170</posY>
 		<label>#time</label>
 		<align>left</align>
 		<font>font13</font>

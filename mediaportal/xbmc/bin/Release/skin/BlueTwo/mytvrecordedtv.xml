@@ -20,7 +20,14 @@
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
 		</control>	
-			<control>
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>75</posX>
+			<posY>370</posY>
+			<texture>hover_my tv.png</texture>
+		</control>		
+		<control>
 			<description>My Recorded TV Text Label</description>
 			<type>label</type>
 			<id>1</id>

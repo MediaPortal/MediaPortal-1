@@ -51,6 +51,16 @@
 		<font>font14</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
+		<control>
+		<description>rec logo</description> 
+		<type>image</type> 
+		<id>39</id> 
+		<posX>370</posX> 
+		<posY>445</posY> 
+		<texture>rec.png</texture> 
+		<colordiffuse>50ffffff</colordiffuse>
+		<visible>yes</visible> 
+	</control>
 	<control>
 		<description>On tv NOW</description> 
 		<id>36</id> 
