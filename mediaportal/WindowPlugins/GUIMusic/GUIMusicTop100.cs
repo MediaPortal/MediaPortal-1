@@ -370,6 +370,10 @@ namespace MediaPortal.GUI.Music
 		void OnSetRating(GUIListItem item)
 		{
 			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+			if (item.MusicTag!=null) 
+			{
+				dialog.Rating=((MusicTag)item.MusicTag).Rating;
+			}
 			dialog.DoModal(GetID);
 			m_database.SetRating(item.Path,dialog.Rating);
 		}

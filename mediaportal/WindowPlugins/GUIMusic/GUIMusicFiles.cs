@@ -964,7 +964,6 @@ namespace MediaPortal.GUI.Music
 					{
 						return (int)(iRating2 - iRating1);
 					}
-					break;
         case SortMethod.SORT_DATE : 
           if (item1.FileInfo == null) return - 1;
           if (item2.FileInfo == null) return - 1;
@@ -1165,6 +1164,10 @@ namespace MediaPortal.GUI.Music
 		void OnSetRating(GUIListItem item)
 		{
 			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+			if (item.MusicTag!=null) 
+			{
+				dialog.Rating=((MusicTag)item.MusicTag).Rating;
+			}
 			dialog.DoModal(GetID);
 			m_database.SetRating(item.Path,dialog.Rating);
 		}

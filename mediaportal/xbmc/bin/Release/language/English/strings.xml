@@ -2439,6 +2439,10 @@
 	<id>934</id>
 	<value>Set rating</value>
 </string>
+<string>
+	<id>935</id>
+	<value>Show: Rating</value>
+</string>
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>

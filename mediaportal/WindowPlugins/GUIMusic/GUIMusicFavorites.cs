@@ -19,7 +19,8 @@ namespace MediaPortal.GUI.Music
     enum Mode
     {
       Duration,
-      TimesPlayed
+      TimesPlayed,
+			Rating
     }
     enum Controls
     {
@@ -308,8 +309,11 @@ namespace MediaPortal.GUI.Music
                   _CurrentMode=Mode.TimesPlayed;
               break;
               case Mode.TimesPlayed:
-                  _CurrentMode=Mode.Duration;
-              break;
+                  _CurrentMode=Mode.Rating;
+								break;
+							case Mode.Rating:
+								_CurrentMode=Mode.Duration;
+								break;
             }
             LoadDirectory(m_strDirectory);
             GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO);
@@ -365,7 +369,13 @@ namespace MediaPortal.GUI.Music
     }
 		void OnSetRating(GUIListItem item)
 		{
-			int x=1;
+			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+			if (item.MusicTag!=null) 
+			{
+				dialog.Rating=((MusicTag)item.MusicTag).Rating;
+			}
+			dialog.DoModal(GetID);
+			m_database.SetRating(item.Path,dialog.Rating);
 		}
 
     bool ViewByIcon
@@ -446,7 +456,13 @@ namespace MediaPortal.GUI.Music
             {
               item.Label2 = String.Format("{0}x",tag.TimesPlayed);
             }
-          break;
+						break;
+					case Mode.Rating:
+						if (tag!=null)
+						{
+							item.Label2 = String.Format("{0}",tag.Rating);
+						}
+						break;
         }
 
       }
@@ -544,7 +560,10 @@ namespace MediaPortal.GUI.Music
           break;
         case Mode.TimesPlayed:
           GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO, GUILocalizeStrings.Get(721));
-          break;
+					break;
+				case Mode.Rating:
+					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO, GUILocalizeStrings.Get(935));
+					break;
       }
     }
 	  void keyboard_TextChanged(int kindOfSearch,string data)
@@ -612,6 +631,7 @@ namespace MediaPortal.GUI.Music
 				tag.Track = song.Track;
 				tag.Year = song.Year;
         tag.TimesPlayed=song.TimesPlayed;
+				tag.Rating=song.Rating;
         item.MusicTag = tag;
         item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
 		

@@ -247,7 +247,8 @@ namespace MediaPortal.TagReader.ID3
             //Log.Write (" read id3tagv1");
             ID3v1 id3v1 = new ID3v1();
             try
-            {
+						{
+							ParseFileName(filename);
               id3v1.Deserialize(s);
               idtag = id3v1.Tags;
               m_containsID3Information=true;
@@ -275,6 +276,16 @@ namespace MediaPortal.TagReader.ID3
             {
               //Log.Write (" error reading id3tagv1");
             }
+						try
+						{
+							m_tag.Duration=ReadDuration(s);
+              m_containsID3Information=true;
+
+						}
+						catch(Exception )
+						{
+							//Log.Write (" error reading id3tagv1");
+						}
           }
           finally
           {
@@ -600,5 +611,60 @@ namespace MediaPortal.TagReader.ID3
       catch(Exception){}
       return iNumber;
     }
+		void ParseFileName(string path)
+		{
+			string filename=System.IO.Path.GetFileName(path);
+			
+			//find track number
+			int posTrack=10000;
+			int posSong=10000;
+			for (int i=0; i < filename.Length-4;++i)
+			{
+				char nrTens=filename[i];
+				char nrUnits=filename[i+1];
+				if (nrTens>='0'&& nrTens <='9' && nrUnits >='0'&& nrUnits <='9')
+				{
+					posTrack=i;
+					m_tag.Track = Int32.Parse( String.Format("{0}{1}", nrTens, nrUnits) );
+					break;
+				}
+			}
+			// find song name
+			int posMinus=filename.LastIndexOf("-");
+			if (posMinus>=0)
+			{
+				posSong=posMinus+1;
+				m_tag.Title = filename.Substring(posSong, filename.Length-(4+posSong) ).Trim();
+			}
+			else
+			{
+				m_tag.Title=System.IO.Path.GetFileNameWithoutExtension(filename);
+			}
+
+			//find artist
+			int posArtist=filename.IndexOf("-");
+			if (posArtist>=0 && posArtist < posTrack && posArtist < posSong )
+			{
+				m_tag.Artist=filename.Substring(0,posArtist-1).Trim();
+			}
+
+
+			string[] parts=path.Split( new char[]{'\\'});
+			if (parts.Length>=2)
+			{
+				string folder=parts[parts.Length-2];
+				posMinus=folder.IndexOf("-");
+				if (posMinus>0)
+				{
+					m_tag.Artist=folder.Substring(0,posMinus-1).Trim();
+					posMinus++;
+					m_tag.Album=folder.Substring(posMinus).Trim();
+				}
+				else
+				{
+					m_tag.Album=folder;
+				}
+			}
+		}
 	}
 }
