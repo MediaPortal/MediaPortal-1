@@ -54,48 +54,19 @@ namespace MediaPortal.GUI.Music
 
     #region Serialisation
     void LoadSettings()
-    {/*
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        string strTmp = "";
-        strTmp = (string)xmlreader.GetValue("musictop100","viewby");
-        if (strTmp != null)
-        {
-          if (strTmp == "list") currentView = View.List;
-          else if (strTmp == "icons") currentView = View.Icons;
-        }
-        strTmp = (string)xmlreader.GetValue("musictop100","viewbyroot");
-        if (strTmp != null)
-        {
-          if (strTmp == "list") currentView = View.List;
-          else if (strTmp == "icons") currentView = View.Icons;
-        }
-      }*/
+    {
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				currentView=(View)xmlreader.GetValueAsInt("musictop100","view", (int)View.List);
+			}
     }
 
     void SaveSettings()
-    {/*
+    {
       using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        switch (currentView)
-        {
-          case View.List : 
-            xmlwriter.SetValue("musictop100","viewby","list");
-            break;
-          case View.Icons : 
-            xmlwriter.SetValue("musictop100","viewby","icons");
-            break;
-        }
-        switch (currentViewRoot)
-        {
-          case View.List : 
-            xmlwriter.SetValue("musictop100","viewbyroot","list");
-            break;
-          case View.Icons : 
-            xmlwriter.SetValue("musictop100","viewbyroot","icons");
-            break;
-        }
-      }*/
+			{
+				xmlwriter.SetValue("musictop100","view",(int)currentView);
+      }
     }
     #endregion
 
