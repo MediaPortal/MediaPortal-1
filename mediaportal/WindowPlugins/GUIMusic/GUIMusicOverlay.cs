@@ -291,6 +291,7 @@ namespace MediaPortal.GUI.Music
             // and position the video/visualisation in middle of the rectangle
             fx=AlbumArtPicture.XPosition;
             fy=AlbumArtPicture.YPosition;
+            GUIGraphicsContext.Correct(ref fx, ref fy);
             GUIGraphicsContext.VideoWindow = new Rectangle((int)fx,(int)fy,AlbumArtPicture.Width,AlbumArtPicture.Height);
           }
         }

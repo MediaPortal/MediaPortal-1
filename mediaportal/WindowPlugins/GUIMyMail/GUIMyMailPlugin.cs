@@ -17,7 +17,7 @@ namespace MyMail
 	/// </summary>
 	public class MyMailPlugin : GUIWindow,  ISetupForm
 	{
-		
+
 		public MyMailPlugin()
 		{
 			GetID = 8000;
@@ -136,17 +136,20 @@ namespace MyMail
 			}
 			else
 			{
-				DisplayOverlayNotify(false,"");	
+				DisplayOverlayNotify(false,"");
 			}
-			bool bResult = Load(GUIGraphicsContext.Skin + @"\mymail.xml"); 
+			bool bResult = Load(GUIGraphicsContext.Skin + @"\mymail.xml");
+
 			return bResult;
 		}
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch (message.Message)
 			{
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT :
 					base.OnMessage(message);
+     		  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(8000));
+
 					if(m_mailBox.Count==0) // when at least 1 mailbox is given,
 					{
 						GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -171,16 +174,16 @@ namespace MyMail
 					}
 					System.GC.Collect();
 					return true;
-					
-					
 
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
+
+
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT :
 					System.GC.Collect();
 					SaveSettings();
 					m_checkMailTimer.Start();
 					break;
 
-				case GUIMessage.MessageType.GUI_MSG_CLICKED : 
+				case GUIMessage.MessageType.GUI_MSG_CLICKED :
 					int iControl = message.SenderControlId;
 					if(iControl==(int)Controls.CONTROL_SET_ALL_UNREAD)
 					{
@@ -231,7 +234,7 @@ namespace MyMail
 
 			return base.OnMessage(message);
 		}
-		
+
 		public override void OnAction(Action action)
 		{
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -323,7 +326,7 @@ namespace MyMail
 					newMailsCount+=m_mc.CountNewMail(mb);
 					data+=" in Mailbox '"+mb.BoxLabel+"': "+Convert.ToString(m_mc.CountNewMail(mb))+" "+GUILocalizeStrings.Get(8004)+" ";
 				}
-				if(newMailsCount>0)	
+				if(newMailsCount>0)
 				{
 					Utils.PlaySound("notify.wav", false, true);
 					DisplayOverlayNotify(true,data);
@@ -366,7 +369,7 @@ namespace MyMail
 				GUIPropertyManager.SetProperty("#itemcount", strObjects);
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
 			}
-      
+
 		}
 		//
 		void ClearItemList()
@@ -396,7 +399,7 @@ namespace MyMail
 			if((int)GUIWindowManager.ActiveWindow==GetID && m_currMailBox.MailCount>0)
 			{
 				m_currentView=(int)Views.VIEW_MAILS;
-				ArrayList itemlist=new ArrayList(); 
+				ArrayList itemlist=new ArrayList();
 				GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
 				System.IO.FileInfo[] theMails=null;
 				m_mc.SetMailboxPath(m_currMailBox.MailboxFolder,m_currMailBox.AttachmentFolder);
@@ -433,7 +436,7 @@ namespace MyMail
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
 				DisplayOverlayNotify(false,""); // remove the notify
 			}
-			  
+
 		}
 		void SaveSettings()
 		{
@@ -463,7 +466,7 @@ namespace MyMail
 						string mailBoxString=xmlreader.GetValueAsString("mymail","mailBox"+Convert.ToString(i),"");
 						if(mailBoxString.Length>0)
 						{
-							
+
 							boxData=mailBoxString.Split(new char[]{';'});
 							if(boxData.Length==7)
 							{
@@ -471,7 +474,7 @@ namespace MyMail
 								tmpBox.MailCount=m_mc.GetEMailList(tmpBox.MailboxFolder,ref theMails);
 								if(tmpBox!=null)
 									m_mailBox.Add(tmpBox);
-								
+
 							}
 						}
 					}
@@ -479,7 +482,7 @@ namespace MyMail
 
 			}
 		}
-			
+
 		// set mail box
 		void OnClick(int iItem)
 		{
@@ -518,11 +521,11 @@ namespace MyMail
 								m_mc.SetMailboxPath(m_currMailBox.MailboxFolder,m_currMailBox.AttachmentFolder);
 								m_mc.SetMailToKnownState(mailText);
 								ShowMail(theMail);
-								if (m_currMailBox.MailCount==0)						
+								if (m_currMailBox.MailCount==0)
 									SetMailBoxList();
 
 							}
-						} 
+						}
 
 					}
 					break;
@@ -535,9 +538,9 @@ namespace MyMail
 			{
 				if (mbNumber<=m_mailBox.Count-1)
 				{
-					
+
           GUIControl.DisableControl(GetID,(int)Controls.CONTROL_REFRESH_ALL);
-					
+
 					m_currMailBox=(MailBox)m_mailBox[mbNumber];
 					if((int)GUIWindowManager.ActiveWindow==GetID)
 					{
@@ -548,9 +551,9 @@ namespace MyMail
 							GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
 					}
 					m_currMailAction=(int)MailActions.ACTION_REFRESH_MAILBOX;
-					
+
 					m_mc.ReadMailBox(ref m_currMailBox);
-				}			
+				}
 				else
 				{
           GUIControl.EnableControl(GetID,(int)Controls.CONTROL_REFRESH_ALL);
@@ -559,7 +562,7 @@ namespace MyMail
 					{
 						SetMailBoxList();
 					}
-					
+
 					if(m_currentView==(int)Views.VIEW_MAILS)
 					{
 						if(m_prevMailBox!=null)

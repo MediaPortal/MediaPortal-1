@@ -91,7 +91,7 @@ namespace GUIRecipies
 			}
 			if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM) // add recipie to favorites
 			{
-				if( currentState == States.STATE_RECIPIE  )	
+				if( currentState == States.STATE_RECIPIE  )
 				{
 					RecipieDatabase.GetInstance().AddFavorite(titstr);
 				}
@@ -103,13 +103,14 @@ namespace GUIRecipies
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch ( message.Message )
-			{  
+			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					base.OnMessage(message);
+     		  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10));
 					GUISpinControl cntlYieldInterval=GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
 					if (cntlYieldInterval!=null)
 					{
-						for (int i=1; i <= 24; i++) cntlYieldInterval.AddLabel("",i);	
+						for (int i=1; i <= 24; i++) cntlYieldInterval.AddLabel("",i);
 						cntlYieldInterval.Value=1;
 					}
 					LoadAllCategories();
@@ -120,8 +121,8 @@ namespace GUIRecipies
 					int iControl=message.SenderControlId;
 					if (iControl==(int)Controls.CONTROL_SPIN)				// Yield Calculator
 					{
-						if( currentState == States.STATE_RECIPIE ) 
-						{	
+						if( currentState == States.STATE_RECIPIE )
+						{
 							GUISpinControl cntlYieldInt=GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
 							int iInterval=(cntlYieldInt.Value)+1;
 							rec.CYield=iInterval;

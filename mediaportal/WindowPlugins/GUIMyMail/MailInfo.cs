@@ -90,7 +90,7 @@ namespace MyMail
 		public override bool Init()
 		{
 
-			bool bResult = Load(GUIGraphicsContext.Skin + @"\mailInfo.xml"); 
+			bool bResult = Load(GUIGraphicsContext.Skin + @"\mailInfo.xml");
 			return bResult;
 
 		}
@@ -98,8 +98,9 @@ namespace MyMail
 		{
 			switch (message.Message)
 			{
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT :
 					base.OnMessage(message);
+     		  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(8000));
 					m_viewText=true; // show always the body text first
 					GUIButtonControl htmlButton=(GUIButtonControl)GetControl((int)Controls.CONTROL_SHOW_HTML);
 					if(htmlButton!=null)
