@@ -149,6 +149,7 @@ namespace MediaPortal.TV.Recording
 		bool                        m_videoDataFound=false;
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
+		int                         m_iRetyCount=0;
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -894,6 +895,7 @@ namespace MediaPortal.TV.Recording
 			m_iCurrentChannel = iChannel;
 			m_StartTime				= DateTime.Now;
 			m_videoDataFound=false;
+			m_iRetyCount=0;
 
 			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
 
@@ -2245,11 +2247,16 @@ namespace MediaPortal.TV.Recording
 
 			//check if tuner is locked to a tv channel
 			if (!SignalPresent()) return;
-			
+			if (m_iRetyCount>=10) 
+			{
+				shouldDecryptChannel=false;
+				return;
+			}
+			m_iRetyCount++;
+
 			Log.Write("DVBGraphBDA:Process() Tuner locked to signal");	
 			shouldDecryptChannel=false;
 			//yes, lets get all details for the current channel
-			
 			
 			Log.Write("DVBGraphBDA:Process() Get PMT and channel info");	
 			DVBSections sections = new DVBSections();
@@ -2378,6 +2385,7 @@ namespace MediaPortal.TV.Recording
 			if (tuningObject		 ==null) return;
 
 			m_videoDataFound=false;
+			m_iRetyCount=0;
 			//start viewing if we're not yet viewing
 			if (!graphRunning)
 			{
