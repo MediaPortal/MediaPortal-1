@@ -49,10 +49,12 @@ namespace MediaPortal.Configuration
 			// Fetch highest channel number
 			//
 			SectionSettings channelSection = SectionSettings.GetSection("Channels");
-			int highestChannelNumber = (int)channelSection.GetSetting("channel.highest");
-
-			channelTextBox.Text = String.Format("{0}", highestChannelNumber + 1);
-
+      if(channelSection!=null)
+      {
+        int highestChannelNumber = (int)channelSection.GetSetting("channel.highest");
+        channelTextBox.Text = String.Format("{0}", highestChannelNumber + 1);
+      }
+      else channelTextBox.Text="23";
       //
       // Set size of window
       //
