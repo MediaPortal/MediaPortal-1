@@ -332,6 +332,25 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
+		public void SetRecordingLevel(bool enable, int level)
+		{
+			if (m_mixer!=null)
+			{
+				try
+				{
+					double fLevel=((double)level);
+					fLevel /= 100.0d;
+					m_mixer.put_MixLevel(fLevel);
+				}
+				catch(Exception){}
+				
+				try
+				{
+					m_mixer.put_Enable(enable);
+				}
+				catch(Exception){}
+			}
+		}
     /// <summary>
     /// Deletes the current DirectShow graph created with CreateGraph()
     /// </summary>
@@ -356,22 +375,9 @@ namespace MediaPortal.TV.Recording
         Vmr9=null;
       }
 
-			if (m_mixer!=null)
-			{
-				try
-				{
-					m_mixer.put_MixLevel(0d);
-				}
-				catch(Exception){}
-				
-				try
-				{
-					m_mixer.put_Enable(false);
-				}
-				catch(Exception){}
-				m_mixer=null;
-			}
-
+			SetRecordingLevel(false,0);
+			m_mixer=null;
+			
       if (m_videoprocamp!=null)
       {
         m_videoAmp=null;
@@ -628,37 +634,7 @@ namespace MediaPortal.TV.Recording
             m_mixer = pinInput as IAMAudioInputMixer;
             if (m_mixer != null)
             {
-							try
-							{
-								hr = m_mixer.put_Enable(true);
-								if (hr != 0)
-								{
-									DirectShowUtil.DebugWrite("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
-								}
-								else
-								{
-									DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
-								}
-							}
-							catch(Exception){}
-
-              double fLevel=((double)_RecordingLevel);
-              fLevel /= 100.0d;
-							try
-							{
-								hr = m_mixer.put_MixLevel(fLevel);
-								if (hr != 0)
-								{
-									DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
-								}
-								else
-								{
-									DirectShowUtil.DebugWrite("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
-								}
-								
-							}
-							catch(Exception){}
-
+							SetRecordingLevel(true,_RecordingLevel);
             }
             else
             {
@@ -713,6 +689,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public void TuneChannel(TVChannel channel)
     {
+			SetRecordingLevel(true,0);
       m_iCurrentChannel = channel.Number;
 			m_iCountryCode=channel.Country;
 			AnalogVideoStandard standard=channel.TVStandard;
@@ -775,7 +752,8 @@ namespace MediaPortal.TV.Recording
 																			(channel.Number==(int)ExternalInputs.svhs) ,
 																			cardName);
       }
-      m_iPrevChannel=channel.Number;
+			m_iPrevChannel=channel.Number;
+			SetRecordingLevel(true,_RecordingLevel);
     }
 
     /// <summary>
@@ -1986,6 +1964,7 @@ namespace MediaPortal.TV.Recording
 		public void TuneRadioChannel(RadioStation station)
 		{
 			if (m_TVTuner==null) return;
+			SetRecordingLevel(true,0);
 			Log.WriteFile(Log.LogType.Capture,"SWGraph:tune to {0} {1} hz", station.Name,station.Frequency);
 			
 			m_TVTuner.put_TuningSpace(0);
@@ -2002,6 +1981,7 @@ namespace MediaPortal.TV.Recording
 			m_TVTuner.put_Channel((int)station.Frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
 			int frequency;
 			m_TVTuner.get_AudioFrequency(out frequency);
+			SetRecordingLevel(true,_RecordingLevel);
 			Log.WriteFile(Log.LogType.Capture,"SWGraph:  tuned to {0} hz", frequency);
 		}
 		
@@ -2045,6 +2025,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_TVTuner==null) return;
 			Log.WriteFile(Log.LogType.Capture,"SWGraph:tune to {0} hz", frequency);
+			SetRecordingLevel(true,0);
 			m_TVTuner.put_TuningSpace(0);
 			m_TVTuner.put_CountryCode(m_iCountryCode);
 			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
@@ -2059,6 +2040,7 @@ namespace MediaPortal.TV.Recording
 			m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
 			m_TVTuner.get_AudioFrequency(out frequency);
 			Log.WriteFile(Log.LogType.Capture,"SWGraph:  tuned to {0} hz", frequency);
+			SetRecordingLevel(true,_RecordingLevel);
 		}
   }
 }
