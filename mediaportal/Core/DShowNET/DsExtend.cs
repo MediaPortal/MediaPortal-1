@@ -1032,7 +1032,7 @@ namespace DShowNET
     int GetNumberOfDeinterlaceModes(
       [In] ref VMR9VideoDesc desc,
       [In, Out] ref uint lpdwNumDeinterlaceModes,
-      [In, Out ] ref Guid[] lpDeinterlaceModes
+      [In, Out ] IntPtr guids
       );
 
     [PreserveSig]

@@ -204,6 +204,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(440, 416);
 			this.tabControl1.TabIndex = 8;
+			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
@@ -1047,15 +1048,11 @@ namespace MediaPortal.Configuration.Sections
     private void upButton_Click(object sender, System.EventArgs e)
     {
 			MoveSelectionUp();
-			SaveSettings();
-			UpdateGroupChannels(null,true);
     }
 
     private void downButton_Click(object sender, System.EventArgs e)
     {
 			MoveSelectionDown();
-			SaveSettings();
-			UpdateGroupChannels(null,true);
     }
 
     private void channelsListView_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -1272,8 +1269,6 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 			}    
-			SaveTVChannels();
-			SaveGroups();
 		}
 
 		private void btnGroupDown_Click(object sender, System.EventArgs e)
@@ -1303,8 +1298,6 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 			}
-			SaveTVChannels();
-			SaveGroups();
 		}
 
 		private void SaveGroups()
@@ -1510,8 +1503,6 @@ namespace MediaPortal.Configuration.Sections
 				group.tvChannels.Add (listItem.Tag);
 				TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
 			}
-			SaveTVChannels();
-			SaveGroups();
 		}
 
 		private void btnGrpChnDown_Click(object sender, System.EventArgs e)
@@ -1551,8 +1542,6 @@ namespace MediaPortal.Configuration.Sections
 				group.tvChannels.Add (listItem.Tag);
 				TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
 			}
-			SaveTVChannels();
-			SaveGroups();
 		
 		}
 
@@ -1715,6 +1704,12 @@ namespace MediaPortal.Configuration.Sections
 					TVDatabase.UnmapChannelFromCard(channel,card);
 				listViewTVChannelsForCard.Items.Remove(listItem);
 			}
+		}
+
+		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			SaveSettings();
+			LoadSettings();			
 		}
 	}
 }
