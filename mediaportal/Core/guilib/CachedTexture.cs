@@ -1,4 +1,4 @@
-#define USE_NEW_TEXTURE_ENGINE
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -37,19 +37,14 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public class Frame 
     {
-      Texture _Image;			//texture of current frame
-      int     _Duration;	//duration of current frame
-#if USE_NEW_TEXTURE_ENGINE
-			int     _TextureNo;
+      Texture								 _Image;			//texture of current frame
+      int										 _Duration;	//duration of current frame
+			int										 _TextureNo;
 			public readonly bool    UseNewTextureEngine=true;
-#else
-			public readonly bool    UseNewTextureEngine=false;
-#endif      
       public Frame(Texture image, int duration)
       {
         _Image = image;
         _Duration = duration;
-#if USE_NEW_TEXTURE_ENGINE
 				if (image!=null)
 				{
 					unsafe
@@ -59,7 +54,6 @@ namespace MediaPortal.GUI.Library
 						Trace.WriteLine("fontengine: added texture:"+_TextureNo.ToString());
 					}
 				}
-#endif
       }
 
 			/// <summary>
@@ -71,16 +65,13 @@ namespace MediaPortal.GUI.Library
         set {
           if (_Image!=null) 
           {
-#if USE_NEW_TEXTURE_ENGINE
 						Trace.WriteLine("fontengine: remove texture:"+_TextureNo.ToString());
 						FontEngineRemoveTexture(_TextureNo);
-#endif
             if (!_Image.Disposed) 
               _Image.Dispose();
           }
           _Image=value;
 					
-#if USE_NEW_TEXTURE_ENGINE
 					if (_Image!=null)
 					{
 						unsafe
@@ -90,7 +81,6 @@ namespace MediaPortal.GUI.Library
 							Trace.WriteLine("fontengine: added texture:"+_TextureNo.ToString());
 						}
 					}
-#endif
         }
       }
 
@@ -109,10 +99,8 @@ namespace MediaPortal.GUI.Library
       {
         if (_Image!=null)
         {
-#if USE_NEW_TEXTURE_ENGINE
 					Trace.WriteLine("fontengine: remove texture:"+_TextureNo.ToString());
 					FontEngineRemoveTexture(_TextureNo);
-#endif
 					if (!_Image.Disposed)
           {
             _Image.Dispose();
@@ -125,7 +113,6 @@ namespace MediaPortal.GUI.Library
 
 			public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
 			{
-#if USE_NEW_TEXTURE_ENGINE
 				//string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_TextureNo,x,y,nw,nh);
 				//Trace.WriteLine(logline);
 				if (_TextureNo>=0)
@@ -136,7 +123,6 @@ namespace MediaPortal.GUI.Library
 				{
 					Trace.WriteLine("fontengine: ERROR. Texture is disposed:"+_TextureNo.ToString());
 				}
-#endif
 			}
     }
 

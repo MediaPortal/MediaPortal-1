@@ -59,7 +59,7 @@ namespace MediaPortal.Player
     MediaPortal.GUI.Library.Geometry.Type arType;
     System.Drawing.Rectangle							rSource, rDest;    
     MediaPortal.GUI.Library.Geometry			m_geometry = new MediaPortal.GUI.Library.Geometry();
-		int							m_iFrameCounter;
+		//int							m_iFrameCounter;
 		
 		float _fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
 		int   _textureNo=-1;
@@ -149,7 +149,7 @@ namespace MediaPortal.Player
 		{
       if (rTarget == null)
 			  rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-			m_iFrameCounter=0;
+			//m_iFrameCounter=0;
 		}
 
     

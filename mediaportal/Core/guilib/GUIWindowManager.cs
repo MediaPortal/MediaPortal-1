@@ -434,7 +434,7 @@ namespace MediaPortal.GUI.Library
     static void PostRender()
     {
       if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
-			GUIFontManager.Present();
+			//GUIFontManager.Present();
 			try
 			{
 				//render overlay layer 1-10

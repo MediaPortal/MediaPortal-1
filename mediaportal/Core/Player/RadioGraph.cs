@@ -34,7 +34,7 @@ namespace MediaPortal.Player
     string                  m_strAudioDevice=String.Empty;
     string                  m_strAudioInputPin=String.Empty;
     IBaseFilter             m_filterCaptureAudio = null;
-    int                     _RecordingLevel=80;
+    //int                     _RecordingLevel=80;
 
 		public RadioGraph(string strDevice,string strAudioDevice,string strLineInput)
 		{

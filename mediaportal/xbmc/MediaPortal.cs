@@ -40,9 +40,7 @@ using MediaPortal.Core.Transcoding;
 ///   - Application.DoEvents() is slow
 /// 
 /// Options for better performance:
-///    - use of compressed textures
-///    - resample textures to 2x2,4x4,8x8,16x16,32x32,...
-///    - use meshes?
+///    - pack font/thumbnail textures
 ///    
 /// Performance enhancements already done:
 ///    - Fonts are now rendered by the C++ fontengine. 
@@ -50,6 +48,7 @@ using MediaPortal.Core.Transcoding;
 ///    - GUIWindowManager.PostRender() is optimized
 ///    - FPS Speed selection in settings->gui->speed
 ///    - removed most locks on vertexbuffers
+///    - packed all skin textures
 ///    
 ///  Current issues:
 /// </summary>

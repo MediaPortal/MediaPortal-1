@@ -16,14 +16,6 @@ namespace DShowNET
 	{
 		static readonly Guid KSPROPSETID_Firesat = new Guid( 0xab132414, 0xd060, 0x11d0,  0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba,0xf3  );
 		
-		
-		struct FIRESAT_CA_DATA
-		{								
-			public Byte			uSlot;								
-			public Byte			uTag;									
-			public Byte			bMore;								
-			public ushort		uLength;					
-		}
 
 		[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
 		struct KSPROPERTY

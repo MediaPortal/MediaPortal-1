@@ -1,4 +1,4 @@
-#define NEWFONTENGINE
+
 using System;
 using System.Text;
 using System.Diagnostics;
@@ -19,9 +19,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIFont
 	{
-#if NEWFONTENGINE
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEngineInitialize();
+		unsafe private static extern void FontEngineInitialize(int iScreenWidth, int iScreenHeight);
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);
@@ -38,14 +37,6 @@ namespace MediaPortal.GUI.Library
 		
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresent3D(int fontNumber);
-		bool FontAdded=false;
-#endif		
-		private string m_strFontName;
-		private string m_strFileName;
-		public const int MaxNumfontVertices = 100*6;
-    
-    private int       _StartCharacter=32;
-    private int       _EndCharacter=255;
 
 		// Font rendering flags
 		[System.Flags]
@@ -57,35 +48,22 @@ namespace MediaPortal.GUI.Library
       DontDiscard=0x0008
 		}
 		private System.Drawing.Font systemFont;
+		int													m_iFontHeight;
+		private float[,]						textureCoords = null;
+		private int									spacingPerChar=0;
+		private Direct3D.Texture		fontTexture;
+		private int									textureWidth; // Texture dimensions
+		private int									textureHeight;
+		private float								textureScale;
+    private FontStyle						m_FontStyle=FontStyle.Regular;
+		int													m_ID;
+		bool												FontAdded=false;
+		private string							m_strFontName;
+		private string							m_strFileName;
+		public const int						MaxNumfontVertices = 100*6;
+		private int									_StartCharacter=32;
+		private int									_EndCharacter=255;
 
-		
-		int m_iFontHeight;
-
-		private CustomVertex.TransformedColoredTextured[] fontVertices = null;
-
-		private float[,] textureCoords = null;
-
-		// Stateblocks for setting and restoring render states
-		//private StateBlock savedStateBlock;
-		//private StateBlock drawTextStateBlock;
-		private int spacingPerChar=0;
-		private Direct3D.Texture fontTexture;
-		private int textureWidth; // Texture dimensions
-		private int textureHeight;
-		private float textureScale;
-		private Direct3D.VertexBuffer vertexBuffer;
-		//private RenderStates renderState;
-		//private TextureState textureState0;
-		//private TextureState textureState1;
-		//private Sampler samplerState0;
-    private FontStyle m_FontStyle=FontStyle.Regular;
-    bool m_bSupportsAlphaBlend ;
-//    StateBlock savedStateBlock;
-
-    // Fill vertex buffer
-    int iv = 0;
-    int dwNumTriangles = 0;
-		int m_ID;
 		/// <summary>
 		/// Constructor of the GUIFont class.
 		/// </summary>
@@ -94,10 +72,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iHeight">The height of the font.</param>
 		public GUIFont(string strName, string strFileName, int iHeight)
 		{
-#if NEWFONTENGINE
 			Trace.WriteLine("fontengine: Initialize()");
-			FontEngineInitialize();
-#endif
+			FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 			m_strFontName=strName;
 			m_strFileName=strFileName;
 			m_iFontHeight=iHeight;
@@ -118,10 +94,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="style">The style of the font (E.g., Bold)</param>
     public GUIFont(string strName, string strFileName, int iHeight, FontStyle style)
     {
-#if NEWFONTENGINE
 			Trace.WriteLine("fontengine: Initialize()");
-			FontEngineInitialize();
-#endif
+			FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
       m_strFontName=strName;
       m_strFileName=strFileName;
       m_FontStyle=style;
@@ -276,7 +250,6 @@ namespace MediaPortal.GUI.Library
 	
     public void Present()
     {
-#if NEWFONTENGINE			
 			if (!FontAdded)
 			{
 				Trace.WriteLine("Fontengine Present(): ERROR font not added:"+ ID.ToString());
@@ -285,33 +258,6 @@ namespace MediaPortal.GUI.Library
 			{
 				FontEnginePresent3D(ID);
 			}
-#else
-      // Set the data for the vertex buffer
-      if (dwNumTriangles > 0)
-      {
-				if (vertexBuffer==null) return;
-				//if (savedStateBlock==null) return;
-				if (GUIGraphicsContext.DX9Device==null) return;
-				if (vertexBuffer.Disposed) return;
-				//if (savedStateBlock.Disposed) return;
-				if (GUIGraphicsContext.DX9Device.Disposed) return;
-				if (fontVertices==null) return;
-//        savedStateBlock.Apply();
-        vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
-        GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
-        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-///        GUIGraphicsContext.DX9Device.PixelShader = null;
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
-
-//        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-//        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, dwNumTriangles);
-				GUIGraphicsContext.DX9Device.SetTexture(0, null);
-
-			}
-      dwNumTriangles=0;
-      iv=0;
-#endif
     }
 		/// <summary>
 		/// Draw some text on the screen.
@@ -339,7 +285,7 @@ namespace MediaPortal.GUI.Library
       }
 
 			int intColor = color.ToArgb();
-#if NEWFONTENGINE
+
 			if (!FontAdded)
 			{
 				Trace.WriteLine("Fontengine Draw(): ERROR font not added:"+ ID.ToString());
@@ -355,102 +301,7 @@ namespace MediaPortal.GUI.Library
 					return;
 				}
 			}
-#else
-			if (fontVertices==null) return;
-			if (fontTexture==null) return;
-			if (textureCoords==null) return;
-			if (fontTexture.Disposed) return;
-			if (vertexBuffer==null) return;
-			if (vertexBuffer.Disposed) return;
-			if (GUIGraphicsContext.DX9Device==null) return;
-			if (GUIGraphicsContext.DX9Device.Disposed) return;
 
-			//if (savedStateBlock==null) return;
-			//if (savedStateBlock.Disposed) return;
-			// Setup renderstate
-			//savedStateBlock.Capture();
-			//drawTextStateBlock.Apply();
-			// Adjust for character spacing
-			xpos -= spacingPerChar;
-			xpos-=0.5f;
-			float fStartX = xpos;
-			ypos -=0.5f;
-
-      float yoff=(textureCoords[0,3]-textureCoords[0,1])*textureHeight;
-      float fScaleX=textureWidth / textureScale;
-      float fScaleY=textureHeight / textureScale;
-			float fSpacing=2 * spacingPerChar;
-			for (int i=0; i < text.Length;++i)
-			{
-        char c=text[i];
-				if (c == '\n')
-				{
-					xpos = fStartX;
-					ypos += yoff;
-				}
-
-				if (c < _StartCharacter || c >= _EndCharacter )
-					continue;
-
-        int index=c-_StartCharacter;
-				float tx1 = textureCoords[index,0];
-				float ty1 = textureCoords[index,1];
-				float tx2 = textureCoords[index,2];
-				float ty2 = textureCoords[index,3];
-
-				float w = (tx2-tx1) * fScaleX;
-				float h = (ty2-ty1) * fScaleY;
-
-				if (xpos<0 || xpos+2 > GUIGraphicsContext.Width ||
-					  ypos<0 || ypos+h > GUIGraphicsContext.Height+100)
-				{
-					c=' ';
-				}
-
-				if (c != ' ')
-				{
-					float xpos2=xpos+w;
-					float ypos2=ypos+h;
-          fontVertices[iv].X=xpos ;  fontVertices[iv].Y=ypos2 ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
-          fontVertices[iv].X=xpos2;  fontVertices[iv].Y=ypos2 ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos2;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty1;iv++;
-          fontVertices[iv].X=xpos2;  fontVertices[iv].Y=ypos2 ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
-
-					dwNumTriangles += 2;
-
-          if (flags!=RenderFlags.DontDiscard)
-          {
-            if (iv > (MaxNumfontVertices-12))
-            {
-              // Set the data for the vertexbuffer
-              if (vertexBuffer!=null)
-              {
-                vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
-                //savedStateBlock.Apply();
-                GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
-                GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-                //GUIGraphicsContext.DX9Device.PixelShader = null;
-                GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
-                GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, dwNumTriangles);
-								GUIGraphicsContext.DX9Device.SetTexture(0, null);
-							}
-              dwNumTriangles = 0;
-              iv = 0;
-            }
-          }
-				}
-
-				xpos += w - fSpacing;
-			}
-
-
-      if (flags!=RenderFlags.DontDiscard)
-        Present();
-			// Restore the modified renderstates
-			//savedStateBlock.Apply();
-#endif
 		}
     
 		/// <summary>
@@ -537,17 +388,11 @@ namespace MediaPortal.GUI.Library
       if (fontTexture!=null)
         fontTexture.Dispose();
 
-      if (vertexBuffer!=null)
-        vertexBuffer.Dispose();
-      vertexBuffer=null;
       fontTexture=null;
 			systemFont = null;
-      fontVertices=null;
-#if NEWFONTENGINE
 			Trace.WriteLine("fontengine: Remove font:"+ID.ToString());
 			FontEngineRemoveFont(ID);	
 			FontAdded=false;
-#endif
 		}
 
 		/// <summary>
@@ -565,20 +410,9 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public void InitializeDeviceObjects()
 		{
-      
-      //textureState0 = GUIGraphicsContext.DX9Device.TextureState[0];
-      //textureState1 = GUIGraphicsContext.DX9Device.TextureState[1];
-      //samplerState0 = GUIGraphicsContext.DX9Device.SamplerState[0];
-      //renderState = GUIGraphicsContext.DX9Device.RenderState;
       textureScale  = 1.0f; // Draw fonts into texture without scaling
 
-      fontVertices = new CustomVertex.TransformedColoredTextured[MaxNumfontVertices];
-			for (int i=0; i < fontVertices.Length; ++i) 
-			{
-				fontVertices[i].Rhw=1.0f;
-				fontVertices[i].Z=0.0f;
-			}
-
+     
 			// Create a directory to cache the font bitmaps
       string strCache=String.Format(@"{0}\fonts\",GUIGraphicsContext.Skin);
 			try{
@@ -759,16 +593,9 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public void RestoreDeviceObjects()
 		{
-			vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured), MaxNumfontVertices,
-				GUIGraphicsContext.DX9Device, Usage.WriteOnly, 0, Pool.Managed);
 
 			Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget( 0 );
-			m_bSupportsAlphaBlend = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
-				GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format, 
-				Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface, 
-				surf.Description.Format );
-
-#if NEWFONTENGINE
+			
 			Trace.WriteLine("fontengine: add font:"+ID.ToString());
 			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 			IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
@@ -786,53 +613,6 @@ namespace MediaPortal.GUI.Library
 				FontEngineSetCoordinate(ID, i, 3, textureCoords[i,3]);
 			}
 			FontAdded=true;
-#endif
-/*
-			// Create the state blocks for rendering text
-			{
-				GUIGraphicsContext.DX9Device.BeginStateBlock();
-				GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
-
-        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
-
-				if( m_bSupportsAlphaBlend )
-				{
-					GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
-					GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
-					GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
-				}
-				else
-				{
-					GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = false;
-				}
-				//GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-				//GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
-				//GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
-				GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-				GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
-				GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
-				//GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
-				GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
-				GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
-				GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
-				GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
-				//GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
-				GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
-				GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
-				GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
-				GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
-				GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
-				GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
-				GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
-				GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
-				GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
-				GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-				GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
-				GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
-				GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
-
-				  savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
-			}*/
 
 		}
 

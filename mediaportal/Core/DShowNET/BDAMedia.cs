@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace DShowNET.BDA
 {
-	
+	/*
 	public struct MPEG_STREAM_BUFFER
 	{
 		int hr;
@@ -11,7 +11,7 @@ namespace DShowNET.BDA
 		uint   dwSizeOfDataRead;
 		byte[]  pDataBuffer;
 	} ;
-
+*/
 
 	public enum MPEG_REQUEST_TYPE:int
 	{

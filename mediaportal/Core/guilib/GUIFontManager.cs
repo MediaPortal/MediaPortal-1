@@ -1,4 +1,3 @@
-#define USE_NEW_TEXTURE_ENGINE
 using System;
 using System.Collections;
 using System.Xml;
@@ -11,10 +10,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIFontManager
 	{
-#if USE_NEW_TEXTURE_ENGINE
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresentTextures();
-#endif		
 		static protected ArrayList m_fonts = new ArrayList();
 
     // singleton. Dont allow any instance of this class
@@ -125,9 +122,7 @@ namespace MediaPortal.GUI.Library
     static public void Present()
     {
 
-#if USE_NEW_TEXTURE_ENGINE
 		FontEnginePresentTextures();
-#endif		
       for (int i=0; i < m_fonts.Count;++i)
       {
         GUIFont font=(GUIFont)m_fonts[i];

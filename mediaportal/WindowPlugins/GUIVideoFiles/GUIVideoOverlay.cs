@@ -83,7 +83,6 @@ namespace MediaPortal.GUI.Video
     public override void PostRender(int iLayer)
     {
       if (iLayer != 2) return;
-
       int iSpeed = g_Player.Speed;
 			double dPos = g_Player.CurrentPosition;
       if (dPos < 5d)

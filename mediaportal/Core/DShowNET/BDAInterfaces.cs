@@ -154,8 +154,8 @@ namespace DShowNET.BDA
 											 [In]  ref MPEG2_FILTER          pFilter,           // OPTIONAL
 											 [In]  int                    hDataReadyEvent);
 
-		[PreserveSig]
-		int  SupplyDataBuffer([In]  ref  MPEG_STREAM_BUFFER pStreamBuffer);
+		//[PreserveSig]
+		//int  SupplyDataBuffer([In]  ref  MPEG_STREAM_BUFFER pStreamBuffer);
 	};
 
 	[ComImport,

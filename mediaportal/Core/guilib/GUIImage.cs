@@ -683,7 +683,7 @@ namespace MediaPortal.GUI.Library
         m_bWasVisible = false;
         return false;
       }
-			if (_packedTexture!=null) return true;
+			if (_packedTexture!=null && GUIGraphicsContext.graphics==null) return true;
 
       // if filename contains a property, then get the value of the property
       if (ContainsProperty)

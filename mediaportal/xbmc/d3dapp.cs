@@ -547,7 +547,7 @@ namespace MediaPortal
     public void BuildPresentParamsFromSettings()
     {
       presentParams.Windowed = graphicsSettings.IsWindowed;
-      presentParams.BackBufferCount = 3;
+      presentParams.BackBufferCount = 1;
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag=false;
       
@@ -566,9 +566,7 @@ namespace MediaPortal
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = ourRenderTarget;
             presentParams.Windowed=true;
-#if PROFILING
-            presentParams.PresentationInterval = PresentInterval.Immediate;
-#endif
+            //presentParams.PresentationInterval = PresentInterval.Immediate;
         }
         else
         {
@@ -1119,26 +1117,7 @@ namespace MediaPortal
     {
 			if (sleepTime<=0) return;
 #if !PROFILING
-      if (!UseMillisecondTiming) 
-      {
-        System.Threading.Thread.Sleep(sleepTime);
-        return;
-      }
-
-      try
-      {
-        int times=sleepTime/MILLI_SECONDS_TIMER;
-        for (int counter=0; counter < times; counter++)
-        {
-          System.Threading.Thread.Sleep(MILLI_SECONDS_TIMER);
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-            return;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write("exception:{0}",ex.ToString());
-      }
+      System.Threading.Thread.Sleep(sleepTime);
 #endif
     }
 
@@ -1209,7 +1188,7 @@ namespace MediaPortal
 					Render();
 				}
       }
-      catch (Exception ex)
+      catch (Exception )
       {
 				//int x=1;
       }

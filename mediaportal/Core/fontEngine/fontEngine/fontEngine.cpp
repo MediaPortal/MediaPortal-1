@@ -22,9 +22,9 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 #define MAX_TEXTURES			200
 #define MAX_TEXTURE_COORDS		300
-#define MaxNumfontVertices		2400
+#define MaxNumfontVertices		5000
 #define MAX_FONTS				20
-#define MaxNumTextureVertices	600
+#define MaxNumTextureVertices	3000
 
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
@@ -77,6 +77,8 @@ int                         textureCount;
 int							m_iTexturesInUse=0;
 int							m_iVertexBuffersUpdated=0;
 int							m_iFontVertexBuffersUpdated=0;
+int							m_iScreenWidth=0;
+int							m_iScreenHeight=0;
 
 void Log(char* txt)
 {
@@ -87,8 +89,10 @@ void Log(char* txt)
 
 }
 //*******************************************************************************************************************
-void FontEngineInitialize()
+void FontEngineInitialize(int screenWidth, int screenHeight)
 {
+	m_iScreenWidth=screenWidth;
+	m_iScreenHeight=screenHeight;
 	//Log("FontEngineInitialize()\n");
 	textureCount=0;
 	static bool initialized=false;
@@ -425,9 +429,8 @@ void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int first
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (fontTexture==NULL) return;
 	if (firstChar<0 || firstChar>endChar) return;
-	m_pDevice=(LPDIRECT3DDEVICE9)device;
 
-
+	m_pDevice = (LPDIRECT3DDEVICE9)device;
 	fontData[fontNumber].vertices      = new CUSTOMVERTEX[MaxNumfontVertices];
 	for (int i=0; i < MaxNumfontVertices;++i)
 	{
@@ -488,8 +491,9 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	float fScaleY = font->fTextureHeight / font->fTextureScale;
 	float fSpacing= 2 * font->fSpacingPerChar;
 
-	D3DVIEWPORT9 viewport;
+	D3DVIEWPORT9 viewport,orgViewPort;
 	m_pDevice->GetViewport(&viewport);
+	memcpy(&orgViewPort,&viewport, sizeof(orgViewPort));
 	int off=(int)(fontData[fontNumber].fSpacingPerChar+1);
 	if (viewport.X>=off)
 	{
@@ -559,10 +563,20 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 				font->dwNumTriangles += 2;
 				if (font->iv > (MaxNumfontVertices-12))
 				{
+					//reset viewport
+					D3DVIEWPORT9 viewportWholeScreen;
+					viewportWholeScreen.X=0;
+					viewportWholeScreen.Y=0;
+					viewportWholeScreen.Width =m_iScreenWidth;
+					viewportWholeScreen.Height=m_iScreenHeight;
+					m_pDevice->SetViewport(&viewportWholeScreen);
+
 					FontEnginePresentTextures();
 					FontEnginePresent3D(fontNumber);
 					font->dwNumTriangles = 0;
 					font->iv = 0;
+					//restore viewport
+					m_pDevice->SetViewport(&orgViewPort);
 				}
 			}
 		}
