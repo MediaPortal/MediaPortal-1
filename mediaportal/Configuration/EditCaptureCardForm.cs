@@ -95,6 +95,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label22;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label23;
+		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
 		
 		/// <summary>
@@ -140,13 +141,14 @@ namespace MediaPortal.Configuration
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
 
 			/* below is used for testing only*/
+			/*
 			availableVideoDevices.Add("713x BDA Analog Capture");
 			availableVideoDevices.Add("713x BDA Digital Capture");
 			availableVideoDevices.Add("my device");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0");
 			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0");
 			availableVideoDeviceMonikers.Add("ven_1234&dev_1234&subsys_03325168&rev_f3");
-			
+			*/
    
       FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
@@ -363,6 +365,7 @@ namespace MediaPortal.Configuration
 			this.label17 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.label23 = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label19 = new System.Windows.Forms.Label();
 			this.lnbconfig1 = new System.Windows.Forms.ComboBox();
@@ -380,7 +383,7 @@ namespace MediaPortal.Configuration
 			this.switchMHZ = new System.Windows.Forms.Label();
 			this.lnb0MHZ = new System.Windows.Forms.TextBox();
 			this.label22 = new System.Windows.Forms.Label();
-			this.label23 = new System.Windows.Forms.Label();
+			this.button1 = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -503,7 +506,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.ItemHeight = 13;
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(128, 88);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 21);
+			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 20);
 			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
@@ -523,7 +526,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.ItemHeight = 13;
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(128, 56);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 21);
+			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 20);
 			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
@@ -841,6 +844,15 @@ namespace MediaPortal.Configuration
 			this.tabPage4.Text = "DVB-S LNB";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
 			// 
+			// label23
+			// 
+			this.label23.Location = new System.Drawing.Point(24, 16);
+			this.label23.Name = "label23";
+			this.label23.Size = new System.Drawing.Size(352, 32);
+			this.label23.TabIndex = 31;
+			this.label23.Text = "Specify your LNB settings. Please note this is only necessary for DVB-S (sattelit" +
+				"e) tv capture cards!";
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.label19);
@@ -1003,19 +1015,19 @@ namespace MediaPortal.Configuration
 			this.label22.TabIndex = 0;
 			this.label22.Text = "LNB0 (Mhz)";
 			// 
-			// label23
+			// button1
 			// 
-			this.label23.Location = new System.Drawing.Point(24, 16);
-			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(352, 32);
-			this.label23.TabIndex = 31;
-			this.label23.Text = "Specify your LNB settings. Please note this is only necessary for DVB-S (sattelit" +
-				"e) tv capture cards!";
+			this.button1.Location = new System.Drawing.Point(200, 448);
+			this.button1.Name = "button1";
+			this.button1.TabIndex = 6;
+			this.button1.Text = "Autotune";
+			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(474, 482);
+			this.Controls.Add(this.button1);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
@@ -1403,21 +1415,6 @@ namespace MediaPortal.Configuration
       lblRecordingLevel.Text = String.Format("{0}%", trackRecording.Value);
     }
 
-		private void buttonAutotune_Click(object sender, System.EventArgs e)
-		{
-			AnalogTVTuningForm dialog = new AnalogTVTuningForm();
-			ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
-			if (tuning!=null)
-			{
-				dialog.Tuning=tuning;
-				dialog.Card=CaptureCard;
-				dialog.ShowDialog(this);
-			}
-			else
-			{
-				MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-		}
 
 
 
@@ -1629,6 +1626,23 @@ namespace MediaPortal.Configuration
 		private void tabPage4_Click(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void button1_Click(object sender, System.EventArgs e)
+		{
+			
+			AnalogTVTuningForm dialog = new AnalogTVTuningForm();
+			ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
+			if (tuning!=null)
+			{
+				dialog.Tuning=tuning;
+				dialog.Card=CaptureCard;
+				dialog.ShowDialog(this);
+			}
+			else
+			{
+				MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 		}
 	}
 

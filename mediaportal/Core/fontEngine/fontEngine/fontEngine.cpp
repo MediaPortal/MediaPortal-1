@@ -103,6 +103,7 @@ void FontEngineInitialize()
 //*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
+	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	textureData[textureNo].hashCode=-1;
 	textureData[textureNo].dwNumTriangles=0;
 	textureData[textureNo].iv=0;
@@ -119,7 +120,7 @@ void FontEngineRemoveTexture(int textureNo)
 //*******************************************************************************************************************
 int FontEngineAddTexture(int hashCode, void* texture)
 {
-	int selected=0;
+	int selected=-1;
 	for (int i=0; i < MAX_TEXTURES;++i)
 	{
 		if (textureData[i].hashCode==hashCode)
@@ -131,6 +132,11 @@ int FontEngineAddTexture(int hashCode, void* texture)
 		{
 			selected=i;
 		}
+	}
+	if (selected==-1)
+	{
+		OutputDebugString("Ran out of textures!");
+		return -1;
 	}
 	textureData[selected].hashCode=hashCode;
 	textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
@@ -160,6 +166,7 @@ int FontEngineAddTexture(int hashCode, void* texture)
 //*******************************************************************************************************************
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
 {
+	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	TEXTURE_DATA_T* texture=&textureData[textureNo];
 	if (texture->iv==0)
 	{
