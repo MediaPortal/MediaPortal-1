@@ -942,7 +942,7 @@ namespace MediaPortal.TV.Recording
 										frequency,symbolrate, innerFec, modulation, ONID, TSID, SID);
 
 					//get the IDVBCLocator interface from the new tuning request
-					Log.Write("DVBGraphBDA:TuneChannel() get IDVBCLocator");
+					Log.Write("DVBGraphBDA:TuneChannel() get IDVBCLocator interface");
 					TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
 					if (myLocator==null)
 					{
