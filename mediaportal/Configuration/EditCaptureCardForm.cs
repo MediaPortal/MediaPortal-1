@@ -2150,21 +2150,24 @@ namespace MediaPortal.Configuration
 
 		private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
 		{
-
 			bool result=FillInAll();    
-			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(filename))
+			
+			if (CaptureCard!=null)
 			{
-				
-				
-				comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
-				comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
-				comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
+				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
+				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(filename))
+				{
+					
+					
+					comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
+					comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
+					comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
 
-				
-				comboBox1Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video1", 0);
-				comboBox2Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video2", 1);
-				comboBox3Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "Video3", 0);
+					
+					comboBox1Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video1", 0);
+					comboBox2Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video2", 1);
+					comboBox3Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "Video3", 0);
+				}
 			}
 			LoadDVBSSettings();
 			if (!result) 

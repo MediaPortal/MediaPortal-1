@@ -263,6 +263,10 @@ namespace MediaPortal.GUI.TV
 					for (int x=0; x < recs.Count;++x)
 					{
 						TVRecording recSeries=(TVRecording )recs[x];
+						if (DateTime.Now > recSeries.EndTime) continue;
+						if (recSeries.Canceled!=0) continue;
+						
+						
 						GUIListItem item=new GUIListItem();
 						item.Label=recSeries.Title;
 						item.TVTag=recSeries;
