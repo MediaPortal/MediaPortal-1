@@ -40,7 +40,7 @@
 		<id>1</id> 
 		<posX>100</posX> 
 		<posY>120</posY> 
-		<label>12902</label> 
+		<label>686</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
@@ -50,7 +50,7 @@
 		<id>1</id> 
 		<posX>100</posX> 
 		<posY>140</posY> 
-		<label>12903</label> 
+		<label>687</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
@@ -90,7 +90,7 @@
 		<id>1</id> 
 		<posX>100</posX> 
 		<posY>220</posY> 
-		<label>12904</label> 
+		<label>688</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
@@ -201,7 +201,7 @@
 		<height>32</height> 
 		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>list_nofocus.png</textureNoFocus>
-		<label>12905</label> 
+		<label>689</label> 
 		<onleft>4</onleft> 
 		<onright>4</onright> 
 		<onup>21</onup> 

@@ -1446,7 +1446,7 @@ namespace MediaPortal
         //DoSelectNewDevice();
         OnSetup(null,null);
 			}
-			else if (e.KeyCode == System.Windows.Forms.Keys.F3)
+			else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.F2)
 			{
 				menuItem3_Click(null,null);
 			}
@@ -1527,7 +1527,7 @@ namespace MediaPortal
 			// menuItem3
 			// 
 			this.menuItem3.Index = 1;
-			this.menuItem3.Shortcut = System.Windows.Forms.Shortcut.F3;
+			this.menuItem3.Shortcut = System.Windows.Forms.Shortcut.CtrlF2;
 			this.menuItem3.Text = "Plugins...";
 			this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
 			// 
