@@ -83,6 +83,17 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
+      if (m_strTextureTop==null) m_strTextureTop=String.Empty;
+      if (m_strTextureBottom==null) m_strTextureBottom=String.Empty;
+      if (m_strLeft==null) m_strLeft=String.Empty;
+      if (m_strMid==null) m_strMid=String.Empty;
+      if (m_strRight==null) m_strRight=String.Empty;
+      if (m_strTickTexture==null) m_strTickTexture=String.Empty;
+      if (m_strTickFill1==null) m_strTickFill1=String.Empty;
+      if (m_strTickFill2==null) m_strTickFill2=String.Empty;
+      if (m_strTickFill3==null) m_strTickFill3=String.Empty;
+      if (m_strFillBG==null) m_strFillBG=String.Empty;
+      if (m_strLogo==null) m_strLogo=String.Empty;
 			m_guiTop	= new GUIImage(m_dwParentID, m_dwControlID, 0, 0,0, 0,m_strTextureTop,0);
 			m_guiBottom	= new GUIImage(m_dwParentID, m_dwControlID, 0, 0,0, 0,m_strTextureBottom,0);
 			m_guiLeft	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strLeft,0);
@@ -186,6 +197,7 @@ namespace MediaPortal.GUI.Library
 			
 			int iWidth=m_dwWidth-(m_guiLeft.TextureWidth+m_guiRight.TextureWidth);
 			m_guiMid.Width=iWidth;
+      m_guiMid.DoUpdate();
 
 			xPos=iWidth+m_dwPosX+m_guiLeft.TextureWidth;
 			m_guiRight.SetPosition(xPos,m_dwPosY);
@@ -205,6 +217,7 @@ namespace MediaPortal.GUI.Library
         m_guiFillBackground.Width=iWidth;
         m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
         m_guiFillBackground.SetPosition(xPos,m_dwPosY+m_iFillY);
+        m_guiFillBackground.DoUpdate();
         m_guiFillBackground.Render();
 
         // render first color
@@ -219,6 +232,7 @@ namespace MediaPortal.GUI.Library
         fWidth*=(float)Percentage1;
         m_guiFill1.Width=(int)Math.Floor(fWidth);
         iCurPos=m_guiFill1.Width+m_guiFill1.XPosition;
+        m_guiFill1.DoUpdate();
         m_guiFill1.Render();
       }
 
@@ -235,6 +249,7 @@ namespace MediaPortal.GUI.Library
           m_guiFill2.Width=(int)Math.Floor(fWidth);
           m_guiFill2.Height=m_guiFill1.Height;
           m_guiFill2.SetPosition(m_guiFill1.XPosition+m_guiFill1.Width,m_guiFill1.YPosition);
+          m_guiFill2.DoUpdate();
           m_guiFill2.Render();
           iCurPos=m_guiFill2.Width+m_guiFill2.XPosition;
         }
@@ -252,6 +267,7 @@ namespace MediaPortal.GUI.Library
           m_guiFill3.Width=(int)Math.Floor(fWidth);
           m_guiFill3.Height=m_guiFill2.Height;
           m_guiFill3.SetPosition(m_guiFill2.XPosition+m_guiFill2.Width,m_guiFill2.YPosition);
+          m_guiFill3.DoUpdate();
           m_guiFill3.Render();
         }
       }
@@ -274,6 +290,7 @@ namespace MediaPortal.GUI.Library
           fWidth/=100.0f;
           fWidth*= (float)i;
           m_guiTick.SetPosition( (int)(fpos+fWidth),(int)m_dwPosY+posy1);
+          m_guiTick.DoUpdate();
           m_guiTick.Render();
         }
       }
@@ -293,6 +310,7 @@ namespace MediaPortal.GUI.Library
         m_guiTick.Height=m_guiFillBackground.TextureHeight;
         m_guiTick.Width=m_guiTick.TextureWidth*2;
         m_guiTick.SetPosition( (int)(m_guiTop.XPosition+(m_guiTop.TextureWidth/2)-(m_guiTick.Width/2)),(int)m_guiFillBackground.YPosition);
+        m_guiTick.DoUpdate();
         m_guiTick.Render();
       }
       
@@ -312,6 +330,7 @@ namespace MediaPortal.GUI.Library
         fy += ( ( (float)m_guiBottom.TextureHeight)/2f);
         fy -= ( ( (float)m_guiLogo.TextureHeight)/2f);
         m_guiLogo.SetPosition((int)fx, (int)fy);
+        m_guiLogo.DoUpdate();
         m_guiLogo.Render();
       }
 
