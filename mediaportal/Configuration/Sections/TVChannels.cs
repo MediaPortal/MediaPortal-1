@@ -334,7 +334,7 @@ namespace MediaPortal.Configuration.Sections
 
 					if(channel != null)
 					{
-						if(channel.Channel < 1000 && channel.Channel > highestChannelNumber)
+						if(channel.Channel < 10000 && channel.Channel > highestChannelNumber)
 							highestChannelNumber = channel.Channel;
 					}
 				}
@@ -487,9 +487,9 @@ namespace MediaPortal.Configuration.Sections
                 // channels for Composite and SVIDEO
                 //
                 if(tvChannel.Frequency.Herz > 0 && 
-                  tvChannel.Channel != 1000 && 
-                  tvChannel.Channel != 1001 &&
-                  tvChannel.Channel != 1002)
+                  tvChannel.Channel != 10000 && 
+                  tvChannel.Channel != 10001 &&
+                  tvChannel.Channel != 10002)
                 {
                   registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
                 }
@@ -525,16 +525,16 @@ namespace MediaPortal.Configuration.Sections
       bool bSVHS=false;
       foreach(TVChannel channel in channels)
       {
-        if (channel.Number==1000) bSVHS=true;
-        if (channel.Number==1001) bCVBS1=true;
-        if (channel.Number==1002) bCVBS2=true;
+        if (channel.Number==10000) bSVHS=true;
+        if (channel.Number==10001) bCVBS1=true;
+        if (channel.Number==10002) bCVBS2=true;
       }
       if (!bSVHS)
-        AddChannel(ref channels,"SVHS",1000);
+        AddChannel(ref channels,"SVHS",10000);
       if (!bCVBS1)
-        AddChannel(ref channels,"Composite #1",1001);
+        AddChannel(ref channels,"Composite #1",10001);
       if (!bCVBS2)
-        AddChannel(ref channels,"Composite #2",1002);
+        AddChannel(ref channels,"Composite #2",10002);
 
 
 			foreach(TVChannel channel in channels)

@@ -760,7 +760,7 @@ namespace MediaPortal.TV.Recording
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
-        if (chan.Number<1000) return chan.Name;
+        if (chan.Number<10000) return chan.Name;
       }
       foreach (TVChannel chan in channels)
       {

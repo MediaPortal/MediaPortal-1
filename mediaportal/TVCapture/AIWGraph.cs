@@ -763,7 +763,7 @@ namespace MediaPortal.TV.Recording
 				m_iCountryCode,standard.ToString(),
 				m_bUseCable);
 
-			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 1000, (iChannel == 1001),(iChannel == 1002),(iChannel == 1000),cardName);
+			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 10000, (iChannel == 10001),(iChannel == 10002),(iChannel == 10000),cardName);
 		}
 
 		/// <summary>

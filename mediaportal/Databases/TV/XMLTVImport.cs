@@ -147,19 +147,19 @@ namespace MediaPortal.TV.Database
 			  TVDatabase.RemoveChannel("SVHS");
 
 			  TVChannel chanComposite=new TVChannel();
-			  chanComposite.Number=1001;
+			  chanComposite.Number=10001;
 			  chanComposite.Name="Composite #1";
 			  chanComposite.Frequency=0;
 			  TVDatabase.AddChannel(chanComposite);
 
 			  TVChannel chanComposite2=new TVChannel();
-			  chanComposite2.Number=1002;
+			  chanComposite2.Number=10002;
 			  chanComposite2.Name="Composite #2";
 			  chanComposite2.Frequency=0;
 			  TVDatabase.AddChannel(chanComposite2);
 	        
 			  TVChannel chanSVHS=new TVChannel();
-			  chanSVHS.Number=1000;
+			  chanSVHS.Number=10000;
 			  chanSVHS.Name="SVHS";
 			  chanSVHS.Frequency=0;
 			  TVDatabase.AddChannel(chanSVHS);

@@ -291,7 +291,7 @@ namespace MediaPortal
 			TVDatabase.GetChannels(ref channels);
 			foreach (TVChannel channel in channels)
 			{
-				if (channel.Number<1000)
+				if (channel.Number<10000)
 				{
 					ListViewItem item = new ListViewItem();
 					item.Text=channel.Name;

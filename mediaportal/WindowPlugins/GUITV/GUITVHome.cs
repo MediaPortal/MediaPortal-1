@@ -217,7 +217,7 @@ namespace MediaPortal.GUI.TV
           {
             foreach (TVChannel channel in m_channels)
             {
-              if (channel.Number<1000)
+              if (channel.Number<10000)
               {
                 m_strChannel=channel.Name;
                 break;

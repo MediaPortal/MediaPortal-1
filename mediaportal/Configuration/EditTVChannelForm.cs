@@ -431,7 +431,7 @@ namespace MediaPortal.Configuration
       if(channelTextBox.Text.Length > 0)
       {
         int channel = Int32.Parse(channelTextBox.Text);
-        frequencyTextBox.Enabled = (channel > 0 && channel < 1000);
+        frequencyTextBox.Enabled = (channel > 0 && channel < 10000);
       }
     }    
 
@@ -477,15 +477,15 @@ namespace MediaPortal.Configuration
       switch(inputComboBox.Text)
       {
         case "SVHS":
-          channelTextBox.Text = "1000";
+          channelTextBox.Text = "10000";
           break;
 
         case "Composite #1":
-          channelTextBox.Text = "1001";
+          channelTextBox.Text = "10001";
           break;
 
         case "Composite #2":
-          channelTextBox.Text = "1002";
+          channelTextBox.Text = "10002";
           break;
       }
     }
@@ -625,15 +625,15 @@ namespace MediaPortal.Configuration
           {
             switch(channel.Channel)
             {
-              case 1000:
+              case 10000:
                 inputComboBox.Text = "SVHS";
                 break;
 
-              case 1001:
+              case 10001:
                 inputComboBox.Text = "Composite #1";
                 break;
 
-              case 1002:
+              case 10002:
                 inputComboBox.Text = "Composite #2";
                 break;
             }

@@ -696,7 +696,7 @@ namespace MediaPortal.TV.Recording
 			m_iCountryCode=country;
 
       DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tune to channel:{0}", iChannel);
-      if (iChannel < 1000)
+      if (iChannel < 10000)
       {
         if (m_TVTuner == null) return;
         if (m_bFirstTune)
@@ -737,14 +737,14 @@ namespace MediaPortal.TV.Recording
       bool bFixCrossbar=true;
       if (m_iPrevChannel>=0)
       {
-        if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
-        if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
-        if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;
-        if (m_iPrevChannel==1002 && iChannel ==1002) bFixCrossbar=false;
+        if (m_iPrevChannel< 10000 && iChannel < 10000) bFixCrossbar=false;
+        if (m_iPrevChannel==10000 && iChannel ==10000) bFixCrossbar=false;
+        if (m_iPrevChannel==10001 && iChannel ==10001) bFixCrossbar=false;
+        if (m_iPrevChannel==10002 && iChannel ==10002) bFixCrossbar=false;
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) ,cardName);
+        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder,m_filterCaptureVideo, iChannel<10000, (iChannel==10001), (iChannel==10002), (iChannel==10000) ,cardName);
       }
       m_iPrevChannel=iChannel;
     }
@@ -1015,12 +1015,12 @@ namespace MediaPortal.TV.Recording
       bool bFixCrossbar=true;
       if (m_iPrevChannel>=0)
       {
-        // tuner : channel < 1000
-        // SVHS/composite : channel >=1000
-        if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
-        if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
-        if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;
-        if (m_iPrevChannel==1002 && iChannel ==1002) bFixCrossbar=false;
+        // tuner : channel < 10000
+        // SVHS/composite : channel >=10000
+        if (m_iPrevChannel< 10000 && iChannel < 10000) bFixCrossbar=false;
+        if (m_iPrevChannel==10000 && iChannel ==10000) bFixCrossbar=false;
+        if (m_iPrevChannel==10001 && iChannel ==10001) bFixCrossbar=false;
+        if (m_iPrevChannel==10002 && iChannel ==10002) bFixCrossbar=false;
       }
       else bFixCrossbar=false;
       return bFixCrossbar;
