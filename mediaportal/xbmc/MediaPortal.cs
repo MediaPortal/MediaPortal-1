@@ -16,7 +16,6 @@ using System.Globalization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
 using Microsoft.ApplicationBlocks.ApplicationUpdater;
 
 using MediaPortal.GUI.Library;
@@ -56,9 +55,11 @@ using MediaPortal.Core.Transcoding;
 /// </summary>
 public class MediaPortalApp : D3DApp, IRender
 { 
+#if AUTOUPDATE
     private ApplicationUpdateManager _updater = null;
     private Thread _updaterThread = null;
     private const int UPDATERTHREAD_JOIN_TIMEOUT = 3 * 1000;
+#endif
     int m_iLastMousePositionX = 0;
     int m_iLastMousePositionY = 0;
     private System.Threading.Mutex m_Mutex;
@@ -72,10 +73,12 @@ public class MediaPortalApp : D3DApp, IRender
     private USBUIRT usbuirtdevice;
 	  private WinLirc winlircdevice;//sd00//
 	private RedEye redeyedevice;//PB00//
+#if AUTOUPDATE
     string m_strNewVersion = "";
-    string m_strCurrentVersion = "";
     bool m_bNewVersionAvailable = false;
     bool m_bCancelVersion = false;
+#endif
+	string m_strCurrentVersion = "";
     MCE2005Remote MCE2005Remote = new MCE2005Remote();
 		MouseEventArgs eLastMouseClickEvent = null;
 		private System.Timers.Timer tMouseClickTimer = null;
@@ -143,16 +146,23 @@ public class MediaPortalApp : D3DApp, IRender
         form.ShowDialog();
       }
 
-
+#if AUTOUPDATE
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
-#if DEBUG
+	#if DEBUG
+	#else
+				splashScreen = new SplashScreen();
+				splashScreen.SetVersion(clientInfo.InstalledVersion);
+				splashScreen.Show();
+				splashScreen.Update();
+	#endif
 #else
-      splashScreen = new SplashScreen();
-      splashScreen.SetVersion(clientInfo .InstalledVersion);
-      splashScreen.Show();
-      splashScreen.Update();
+	#if DEBUG
+	#else
+				splashScreen = new SplashScreen();
+				splashScreen.Show();
+				splashScreen.Update();
+	#endif
 #endif
-
       Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
       // Set Intervideo registry keys 
       try
@@ -490,11 +500,13 @@ public class MediaPortalApp : D3DApp, IRender
 
 
       //  hook ProcessExit for a chance to clean up when closed peremptorily
+
+#if AUTOUPDATE
       AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
       //  hook form close to stop updater too
       this.Closed += new EventHandler(MediaPortal_Closed);
-
+#endif
       XmlDocument doc = new XmlDocument();
       try
       {
@@ -539,6 +551,7 @@ public class MediaPortalApp : D3DApp, IRender
 				m_strCurrentVersion = clientInfo.InstalledVersion;
 				Text += (" - [v" + m_strCurrentVersion + "]");
 
+#if AUTOUPDATE
 				//  make an Updater for use in-process with us
 				_updater = new ApplicationUpdateManager();
 
@@ -550,6 +563,7 @@ public class MediaPortalApp : D3DApp, IRender
 				//  start the updater on a separate thread so that our UI remains responsive
 				_updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
 				_updaterThread.Start();
+#endif
 #endif
 			}
 			catch(Exception )
@@ -747,7 +761,10 @@ public class MediaPortalApp : D3DApp, IRender
 				serialuirdevice.Close();
 			if(redeyedevice != null)
 				redeyedevice.Close();
+
+#if AUTOUPDATE
       StopUpdater();
+#endif
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
       // stop any file playback
       g_Player.Stop();
@@ -828,7 +845,9 @@ public class MediaPortalApp : D3DApp, IRender
 				GUIPropertyManager.SetProperty("#time",GetTime()); 	 
 			}
 
+#if AUTOUPDATE
 			CheckForNewUpdate();
+#endif
 			Recorder.Process();
 			g_Player.Process();
 			GUIWindowManager.DispatchThreadMessages();
@@ -1587,6 +1606,7 @@ public class MediaPortalApp : D3DApp, IRender
 		}
 	}
 
+#if AUTOUPDATE
   private void MediaPortal_Closed(object sender, EventArgs e)
   {
     StopUpdater();
@@ -1598,7 +1618,6 @@ public class MediaPortalApp : D3DApp, IRender
     StopUpdater();
   }
   private delegate void MarshalEventDelegate(object sender, UpdaterActionEventArgs e);
-
 	//---------------------------------------------------
   private void OnUpdaterDownloadStartedHandler(object sender, UpdaterActionEventArgs e) 
   {		
@@ -1720,6 +1739,7 @@ public class MediaPortalApp : D3DApp, IRender
       _updaterThread = null;
     }
   }
+#endif
 
   private void OnMessage(GUIMessage message)
   {

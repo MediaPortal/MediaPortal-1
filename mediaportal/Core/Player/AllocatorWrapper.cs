@@ -76,7 +76,7 @@ namespace MediaPortal.Player
 					extraTextures[i]=IntPtr.Zero;
 
   			scene = renderScene;
-				scene.Init(GUIGraphicsContext.DX9Device);
+				scene.Init();
 			}
 
 			/// <summary>
@@ -101,6 +101,7 @@ namespace MediaPortal.Player
 				scene.SetSrcRect( 1.0f, 1.0f);
 				if (m_surface1!=IntPtr.Zero)
         {
+					scene.ReleaseSurface(m_surface1);
           Marshal.Release(m_surface1);
           m_surface1=IntPtr.Zero;
         }
@@ -122,6 +123,7 @@ namespace MediaPortal.Player
 							float fTU = (float)(allocInfo.dwWidth ) / ((float)MaxTextureWidth);
 							float fTV = (float)(allocInfo.dwHeight) / ((float)MaxTextureHeight);
 							scene.SetSrcRect( fTU, fTV );
+							scene.SetSurface(m_surface1);
 							return 0;
 						}
 					}
@@ -218,6 +220,7 @@ namespace MediaPortal.Player
 						else Log.Write("AllocatorWrapper:failed:  allocated extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
 					}
 					hr=0;
+					scene.SetSurface(m_surface1);
         }
         return hr;
 			}
@@ -255,7 +258,8 @@ namespace MediaPortal.Player
 			{
         Log.Write("AllocatorWrapper:TerminateDevice({0:x})",dwUserId);
         if (m_surface1!=IntPtr.Zero)
-        {
+				{
+					scene.ReleaseSurface(m_surface1);
           Marshal.Release(m_surface1);
           m_surface1=IntPtr.Zero;
         }
@@ -283,15 +287,22 @@ namespace MediaPortal.Player
       {
         Log.Write("AllocatorWrapper:UnAdviseNotify()");
         if (allocNotify !=null)
-          Marshal.ReleaseComObject( allocNotify ); allocNotify = null;
+          Marshal.ReleaseComObject( allocNotify );
+				allocNotify = null;
 				if (m_surface1 !=IntPtr.Zero)
-					Marshal.Release(m_surface1); m_surface1= IntPtr.Zero;
+				{
+					scene.ReleaseSurface(m_surface1);
+					Marshal.Release(m_surface1); 
+					m_surface1= IntPtr.Zero;
+				}
 
 				//release the extra video textures
 				for (int i=0; i < textureCount;++i)
 				{
 					if (extraTextures[i] !=IntPtr.Zero)
+					{
 						Marshal.Release(extraTextures[i]); 
+					}
 					extraTextures[i]= IntPtr.Zero;				
 				}
 				return 0;
@@ -327,35 +338,7 @@ namespace MediaPortal.Player
 			/// <returns></returns>
       public int PresentImage(uint uid, VMR9PresentationInfo presInfo)
       {
-        unchecked
-        {
-          if (presInfo==null) return (int)0x80004003L;// E_POINTER
-          if (presInfo.lpSurf==IntPtr.Zero) return (int)0x80004003L; // E_POINTER
-
-          Surface orig = new Surface(presInfo.lpSurf);
-          if (orig!=null)
-          {
-            Marshal.AddRef(presInfo.lpSurf);
-          
-            Texture tex=orig.GetContainer(D3DGuids.Texture) as Texture;
-            if (tex!=null)
-            {
-              scene.Render(GUIGraphicsContext.DX9Device, tex, m_nativeSize);
-              tex.Dispose();
-            }
-            else 
-            {
-              orig.Dispose();
-              Marshal.Release(presInfo.lpSurf);
-              Marshal.Release(presInfo.lpSurf);
-              return (int)0x80004003L; // E_POINTER
-            }
-            orig.Dispose();
-            Marshal.Release(presInfo.lpSurf);
-            Marshal.Release(presInfo.lpSurf);
-          }
-          else return (int)0x80004003L; // E_POINTER
-        }
+				scene.Render(m_nativeSize);
         return 0;
       }
       
@@ -367,22 +350,7 @@ namespace MediaPortal.Player
 			public void Repaint()
       {
         if (m_surface1==IntPtr.Zero) return;
-
-        Surface orig = new Surface(m_surface1);
-        if (orig!=null)
-        {
-          Marshal.AddRef(m_surface1);
-        
-          Texture tex=orig.GetContainer(D3DGuids.Texture) as Texture;
-          if (tex!=null)
-          {
-            scene.Render(GUIGraphicsContext.DX9Device, tex, m_nativeSize);
-            tex.Dispose();
-          }
-          orig.Dispose();
-          Marshal.Release(m_surface1);
-          Marshal.Release(m_surface1);
-        }
+				scene.Render(m_nativeSize);
       }//Repaint()
 		}//public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
 	}//public class AllocatorWrapper

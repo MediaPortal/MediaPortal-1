@@ -31,7 +31,7 @@ struct CUSTOMVERTEX
 {
     FLOAT x, y, z, rhw; // The transformed position for the vertex
     DWORD color;        // The vertex color
-    FLOAT       tu, tv;   // The texture coordinates
+    FLOAT tu, tv;   // The texture coordinates
 };
 
 // Our custom FVF, which describes our custom vertex structure
@@ -65,6 +65,7 @@ struct TEXTURE_DATA_T
 	int                     dwNumTriangles;
 	D3DSURFACE_DESC			desc;
 	bool                    updateVertexBuffer;
+	bool					useAlphaBlend;
 };
 
 static FONT_DATA_T*			fontData    = new FONT_DATA_T[MAX_FONTS];
@@ -100,6 +101,7 @@ void FontEngineInitialize()
 			textureData[i].pTexture=NULL;
 			textureData[i].vertices = NULL;
 			textureData[i].updateVertexBuffer=false;
+			textureData[i].useAlphaBlend=true;
 			textureZ[i]=-1;
 		}
 		initialized=true;
@@ -114,17 +116,25 @@ void FontEngineRemoveTexture(int textureNo)
 	textureData[textureNo].dwNumTriangles=0;
 	textureData[textureNo].iv=0;
 	if (textureData[textureNo].pVertexBuffer!=NULL)
+	{
 		textureData[textureNo].pVertexBuffer->Release();
+	}
 	textureData[textureNo].pVertexBuffer=NULL;
 	
 	if (textureData[textureNo].vertices!=NULL)
+	{
 		delete[] textureData[textureNo].vertices;
+	}
 	textureData[textureNo].vertices=NULL;
+	if ( textureData[textureNo].pTexture!=NULL)
+	{
+		textureData[textureNo].pTexture->Release();
+	}
 	textureData[textureNo].pTexture=NULL;
 }
 
 //*******************************************************************************************************************
-int FontEngineAddTexture(int hashCode, void* texture)
+int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 {
 	int selected=-1;
 	for (int i=0; i < MAX_TEXTURES;++i)
@@ -141,16 +151,17 @@ int FontEngineAddTexture(int hashCode, void* texture)
 	}
 	if (selected==-1)
 	{
-		OutputDebugString("Ran out of textures!");
+		OutputDebugString("ERROR FontEngine:Ran out of textures!");
 		return -1;
 	}
+	textureData[selected].useAlphaBlend=useAlphaBlend;
 	textureData[selected].hashCode=hashCode;
 	textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
 	
 	if (textureData[selected].pVertexBuffer==NULL)
 	{
 		m_pDevice->CreateVertexBuffer(		MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
-											0, 
+											D3DUSAGE_WRITEONLY, 
 											D3DFVF_CUSTOMVERTEX,
 											D3DPOOL_MANAGED, 
 											&textureData[selected].pVertexBuffer, 
@@ -159,10 +170,62 @@ int FontEngineAddTexture(int hashCode, void* texture)
 	if (textureData[selected].vertices==NULL)
 	{
 		textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
-		for (int iv=0; iv < MaxNumTextureVertices;++iv)
+		for (int i=0; i < MaxNumTextureVertices;++i)
 		{
-			textureData[selected].vertices[iv].rhw=1.0f;  
-			textureData[selected].vertices[iv].z=0.0f;
+			textureData[selected].vertices[i].z=0;
+			textureData[selected].vertices[i].rhw=1;
+		}
+
+	}
+	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
+	return selected;
+}
+
+//*******************************************************************************************************************
+int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
+{
+	int selected=-1;
+	for (int i=0; i < MAX_TEXTURES;++i)
+	{
+		if (textureData[i].hashCode==hashCode)
+		{
+			selected=i;
+			break;
+		}
+		if (textureData[i].hashCode==-1)
+		{
+			selected=i;
+		}
+	}
+	if (selected==-1)
+	{
+		OutputDebugString("ERROR Fontengine:Ran out of textures!");
+		return -1;
+	}
+	LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
+	void *pContainer = NULL;
+	int hr=pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
+	
+	textureData[selected].useAlphaBlend=useAlphaBlend;
+	textureData[selected].hashCode=hashCode;
+	textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)pContainer;
+	
+	if (textureData[selected].pVertexBuffer==NULL)
+	{
+		m_pDevice->CreateVertexBuffer(		MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
+											D3DUSAGE_WRITEONLY, 
+											D3DFVF_CUSTOMVERTEX,
+											D3DPOOL_MANAGED, 
+											&textureData[selected].pVertexBuffer, 
+											NULL) ;  
+	}
+	if (textureData[selected].vertices==NULL)
+	{
+		textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
+		for (int i=0; i < MaxNumTextureVertices;++i)
+		{
+			textureData[selected].vertices[i].z=0;
+			textureData[selected].vertices[i].rhw=1;
 		}
 	}
 	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
@@ -182,7 +245,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	int iv=texture->iv;
 	if (iv+6 >=MaxNumTextureVertices)
 	{
-		OutputDebugString("Ran out of texture vertices\n");
+		OutputDebugString("ERROR Fontengine:Ran out of texture vertices\n");
 		return;
 	}
 	
@@ -264,34 +327,58 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 //*******************************************************************************************************************
 void FontEnginePresentTextures()
 {
-	
+
+	DWORD dwValueAlphaBlend=0;
 	for (int i=0; i < textureCount; ++i)
 	{
 		int index=textureZ[i];
+		if (index < 0 || index >= MAX_TEXTURES) continue;
 		TEXTURE_DATA_T* texture = &(textureData[index]);
-		if (texture->dwNumTriangles!=0)
+		try
 		{
-			m_iTexturesInUse++;
-			if (texture->updateVertexBuffer)
+			if (texture->dwNumTriangles!=0)
 			{
-				m_iVertexBuffersUpdated++;
-				CUSTOMVERTEX* pVertices;
-				texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
-				memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
-				texture->pVertexBuffer->Unlock();
-			}
+				m_iTexturesInUse++;
+				if (texture->updateVertexBuffer)
+				{
+					m_iVertexBuffersUpdated++;
+					CUSTOMVERTEX* pVertices;
+					texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
+					memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
+					texture->pVertexBuffer->Unlock();
+				}
 
-			m_pDevice->SetTexture(0, texture->pTexture);
-			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-			m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, texture->dwNumTriangles);
-			m_pDevice->SetTexture(0, NULL);
+				DWORD dwValue=1;
+				if (!texture->useAlphaBlend) dwValue=0;
+				if (dwValueAlphaBlend!=dwValue)				
+				{
+					m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,dwValue);
+					/*
+					m_pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+					m_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+					m_pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+					m_pDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+					m_pDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+					m_pDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);*/
+					dwValueAlphaBlend!=dwValue;
+				}
+				m_pDevice->SetTexture(0, texture->pTexture);
+				m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+				m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
+				m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, texture->dwNumTriangles);
+				m_pDevice->SetTexture(0, NULL);
+			}
+		}
+		catch(...)
+		{
+			char log[128];
+			sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() exception drawing texture:%d\n", index);
+			OutputDebugString(log);
 		}
 		texture->dwNumTriangles = 0;
 		texture->iv = 0;
 		texture->updateVertexBuffer=false;
 		textureZ[i]=0;
-		
 	}
 	textureCount=0;
 
@@ -318,11 +405,12 @@ void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int first
 
 
 	fontData[fontNumber].vertices      = new CUSTOMVERTEX[MaxNumfontVertices];
-	for (int iv=0; iv < MaxNumfontVertices;++iv)
+	for (int i=0; i < MaxNumfontVertices;++i)
 	{
-		fontData[fontNumber].vertices[iv].rhw=1.0f;  
-		fontData[fontNumber].vertices[iv].z=0.0f; 
+		fontData[fontNumber].vertices[i].z=0;
+		fontData[fontNumber].vertices[i].rhw=1;
 	}
+	
 
 	fontData[fontNumber].iFirstChar    = firstChar;
 	fontData[fontNumber].iEndChar      = endChar;
@@ -336,7 +424,7 @@ void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int first
 
 	LPDIRECT3DVERTEXBUFFER9 g_pVB        = NULL;
 	int hr=m_pDevice->CreateVertexBuffer(	MaxNumfontVertices*sizeof(CUSTOMVERTEX),
-											0, D3DFVF_CUSTOMVERTEX,
+											D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,
 											D3DPOOL_MANAGED, 
 											&g_pVB, 
 											NULL) ;
@@ -355,11 +443,13 @@ void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fVal
 
 
 //*******************************************************************************************************************
-void FontEngineDrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD intColor, int maxWidth)
+void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth)
 {
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (m_pDevice==NULL) return;
 	if (fontData[fontNumber].pVertexBuffer==NULL) return;
+	if (textVoid==NULL) return;
+	WCHAR* text = (WCHAR*)textVoid;
 
 	FONT_DATA_T* font = &(fontData[fontNumber]);
 	float xpos = (float)xposStart;
@@ -391,9 +481,9 @@ void FontEngineDrawText3D(int fontNumber, char* text, int xposStart, int yposSta
 	float totalWidth=0;
 	if (maxWidth <=0) maxWidth=2000;
 	
-	for (int i=0; i < (int)strlen(text);++i)
+	for (int i=0; i < (int)wcslen(text);++i)
 	{
-        char c=text[i];
+        WCHAR c=text[i];
 		if (c == '\n')
 		{
 			totalWidth=0;
@@ -462,26 +552,38 @@ void FontEnginePresent3D(int fontNumber)
 {
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (fontData[fontNumber].dwNumTriangles==0) return;
-
-	FONT_DATA_T* font = &(fontData[fontNumber]);
 	
-	if (font->updateVertexBuffer)
+	FONT_DATA_T* font = &(fontData[fontNumber]);
+	try
 	{
-		m_iFontVertexBuffersUpdated++;
-		CUSTOMVERTEX* pVertices;
-		font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
-		memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
-		font->pVertexBuffer->Unlock();
-	}
+		
+		if (font->updateVertexBuffer)
+		{
+			m_iFontVertexBuffersUpdated++;
+			CUSTOMVERTEX* pVertices;
+			font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
+			memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
+			font->pVertexBuffer->Unlock();
+		}
 
-	m_pDevice->SetTexture(0, font->pTexture);
-	m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-	m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-	m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, font->dwNumTriangles);
-	m_pDevice->SetTexture(0, NULL);
-	font->dwNumTriangles = 0;
-	font->iv = 0;
-	font->updateVertexBuffer=false;
+		m_pDevice->SetTexture(0, font->pTexture);
+		m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+		m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
+		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, font->dwNumTriangles);
+		m_pDevice->SetTexture(0, NULL);
+		font->dwNumTriangles = 0;
+		font->iv = 0;
+		font->updateVertexBuffer=false;
+	}
+	catch(...)
+	{	
+		char log[128];
+		sprintf(log,"ERROR Fontengine:FontEnginePresent3D(%i) exception \n", fontNumber);
+		OutputDebugString(log);
+		font->dwNumTriangles = 0;
+		font->iv = 0;
+		font->updateVertexBuffer=false;
+	}
 }
 
 

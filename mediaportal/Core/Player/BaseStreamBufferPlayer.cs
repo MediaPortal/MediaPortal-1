@@ -43,7 +43,8 @@ namespace MediaPortal.Player
     protected bool          										m_bStarted=false;
     protected bool          										m_bLive=false;
     protected double                            m_dLastPosition=0;
-    protected bool                              m_bWindowVisible=false;
+		protected bool                              m_bWindowVisible=false;
+		protected long                      m_speedRate = 10000;
 		protected int												rotCookie = 0;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
@@ -76,6 +77,7 @@ namespace MediaPortal.Player
 		public override bool Play(string strFile)
 		{
       if (!System.IO.File.Exists(strFile)) return false;
+			m_speedRate=10000;
       long lDuration;
       m_bLive=false;
       m_dDuration=-1d;
@@ -344,23 +346,22 @@ namespace MediaPortal.Player
 			if ( !Playing) return;
 			if ( !m_bStarted) return;
 			//lock(this)
-		{
+			{
 
-			long lDuration;
+				long lDuration;
 
-			UpdateCurrentPosition();
+				UpdateCurrentPosition();
 
 
-      if (IsTimeShifting)
-      {
-        //GetDuration(): Returns (content start – content stop). 
-        //content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
-        //content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
-        m_mediaSeeking.GetDuration(out lDuration); 
-        m_dDuration=lDuration;
-        m_dDuration/=10000000d;
+				
+				//GetDuration(): Returns (content start – content stop). 
+				//content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
+				//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
+				m_mediaSeeking.GetDuration(out lDuration); 
+				m_dDuration=lDuration;
+				m_dDuration/=10000000d;
 
-        double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
+				double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
 				double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
 
 
@@ -376,39 +377,40 @@ namespace MediaPortal.Player
 				}
 				if (Speed>1 && CurrentPosition+5d >=Duration) 
 				{
-          Speed=1;
-          SeekAsolutePercentage(99);
+					Speed=1;
+					SeekAsolutePercentage(99);
 				}
-        if (Speed<0 && CurrentPosition<5d)
-        {
-          Speed=1;
-          SeekAsolutePercentage(0);
-        }
-        if (Speed<0 && CurrentPosition > m_dLastPosition)
-        {
-          Speed=1;
-          SeekAsolutePercentage(0);
-        }
-        m_dLastPosition=CurrentPosition;
-			}
+				if (Speed<0 && CurrentPosition<5d)
+				{
+					Speed=1;
+					SeekAsolutePercentage(0);
+				}
+				if (Speed<0 && CurrentPosition > m_dLastPosition)
+				{
+					Speed=1;
+					SeekAsolutePercentage(0);
+				}
+				m_dLastPosition=CurrentPosition;
+				
 
-      if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
-      {
-        m_bIsVisible=false;
-      }
-			if (m_bWindowVisible && !m_bIsVisible)
-			{
-        m_bWindowVisible=false;
-				Log.Write("StreamBufferPlayer:hide window");
-				if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
+				if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
+				{
+					m_bIsVisible=false;
+				}
+				if (m_bWindowVisible && !m_bIsVisible)
+				{
+					m_bWindowVisible=false;
+					Log.Write("StreamBufferPlayer:hide window");
+					if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
+				}
+				else if (!m_bWindowVisible && m_bIsVisible)
+				{
+					m_bWindowVisible=true;
+					Log.Write("StreamBufferPlayer:show window");
+					if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
+				}      
 			}
-			else if (!m_bWindowVisible && m_bIsVisible)
-			{
-        m_bWindowVisible=true;
-				Log.Write("StreamBufferPlayer:show window");
-				if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
-			}      
-		}
+			DoFFRW();
 			OnProcess();
 		}
 
@@ -527,6 +529,7 @@ namespace MediaPortal.Player
 		{
 			if (m_state==PlayState.Paused) 
 			{
+				m_speedRate = 10000;
 				mediaCtrl.Run();
 				m_state=PlayState.Playing;
 			}
@@ -570,15 +573,16 @@ namespace MediaPortal.Player
 		public override void Stop()
 		{
 			//lock (this)
-		{
-			if (m_state!=PlayState.Init)
 			{
-				Log.Write("StreamBufferPlayer:stop");
+				if (m_state!=PlayState.Init)
+				{
+					Log.Write("StreamBufferPlayer:stop");
 
-				CloseInterfaces();
+					CloseInterfaces();
+				}
 			}
 		}
-		}
+/*
 		public override int Speed
 		{
 			get
@@ -605,7 +609,7 @@ namespace MediaPortal.Player
 			}
 			}
 		}
-
+*/
 
 		public override int Volume
 		{
@@ -989,6 +993,115 @@ namespace MediaPortal.Player
         m_bUpdateNeeded=true;
       }
     }
+
+		protected void DoFFRW()
+		{
+			if (!Playing) 
+				return;
+      
+			if ((m_speedRate == 10000) || (m_mediaSeeking == null))
+				return;
+
+			double newPosition;
+
+			// new time = current time + 2*timerinterval* (speed)
+			double timerInterval=300d;
+			newPosition = (2.0d *timerInterval) * ((double)m_speedRate);
+			newPosition /= 10000000d;
+			newPosition+=CurrentPosition ;
+		
+			// if we end up before the first moment of time then just
+			// start @ the beginning
+			if ((newPosition < 0) && (m_speedRate<0))
+			{
+				m_speedRate = 10000;
+				newPosition = 0;
+				SeekAbsolute(newPosition);
+				mediaCtrl.Run();
+				return;
+			}
+
+			// if we end up at the end of time then just
+			// start @ the end-100msec
+			if ((newPosition > (m_dDuration-1.0f)) &&(m_speedRate>0))
+			{
+				m_speedRate = 10000;
+				newPosition = m_dDuration;
+				SeekAbsolute(newPosition);
+				mediaCtrl.Run();
+				return;
+			}
+
+			//seek to new moment in time
+			SeekAbsolute(newPosition);
+			mediaCtrl.Pause();
+		}
+
+		public override int Speed
+		{
+			get 
+			{ 
+				if (m_state==PlayState.Init) return 1;
+				if (m_mediaSeeking==null) return 1;
+				switch ( m_speedRate)
+				{
+					case -10000:
+						return -1;
+					case -15000:
+						return -2;
+					case -30000:
+						return -4;
+					case -45000:
+						return -8;
+					case -60000:
+						return -16;
+					case -75000:
+						return -32;
+
+					case 10000:
+						return 1;
+					case 15000:
+						return 2;
+					case 30000:
+						return 4;
+					case 45000:
+						return 8;
+					case 60000:
+						return 16;
+					default: 
+						return 32;
+				}
+			}
+			set 
+			{
+				if (m_state!=PlayState.Init)
+				{
+					if (m_mediaSeeking!=null)
+					{
+						switch ( (int)value)
+						{
+							case -1:  m_speedRate=-10000;break;
+							case -2:  m_speedRate=-15000;break;
+							case -4:  m_speedRate=-30000;break;
+							case -8:  m_speedRate=-45000;break;
+							case -16: m_speedRate=-60000;break;
+							case -32: m_speedRate=-75000;break;
+
+							case 1:  
+								m_speedRate=10000;
+								mediaCtrl.Run();
+								break;
+							case 2:  m_speedRate=15000;break;
+							case 4:  m_speedRate=30000;break;
+							case 8:  m_speedRate=45000;break;
+							case 16: m_speedRate=60000;break;
+							default: m_speedRate=75000;break;
+						}
+					}
+				}
+				Log.Write("StreamBufferPlayer:SetRate to:{0}", m_speedRate);
+			}
+		}
 
 		#region IDisposable Members
 

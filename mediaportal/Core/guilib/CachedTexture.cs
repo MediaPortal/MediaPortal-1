@@ -21,7 +21,10 @@ namespace MediaPortal.GUI.Library
 		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern int  FontEngineAddTexture(int hasCode,void* fontTexture);
+		unsafe private static extern int  FontEngineAddTexture(int hasCode,bool useAlphaBlend,void* fontTexture);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern int  FontEngineAddSurface(int hasCode,bool useAlphaBlend,void* fontTexture);
 		
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
@@ -54,7 +57,8 @@ namespace MediaPortal.GUI.Library
 					unsafe
 					{
 						IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
-						_TextureNo=FontEngineAddTexture(ptr.ToInt32(),(void*) ptr.ToPointer());
+						_TextureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
+						Trace.WriteLine("fontengine: added texture:"+_TextureNo.ToString());
 					}
 				}
 #endif
@@ -70,6 +74,7 @@ namespace MediaPortal.GUI.Library
           if (_Image!=null) 
           {
 #if USE_NEW_TEXTURE_ENGINE
+						Trace.WriteLine("fontengine: remove texture:"+_TextureNo.ToString());
 						FontEngineRemoveTexture(_TextureNo);
 #endif
             if (!_Image.Disposed) 
@@ -83,7 +88,8 @@ namespace MediaPortal.GUI.Library
 						unsafe
 						{
 							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
-							_TextureNo=FontEngineAddTexture(ptr.ToInt32(),(void*) ptr.ToPointer());
+							_TextureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
+							Trace.WriteLine("fontengine: added texture:"+_TextureNo.ToString());
 						}
 					}
 #endif
@@ -106,6 +112,7 @@ namespace MediaPortal.GUI.Library
         if (_Image!=null)
         {
 #if USE_NEW_TEXTURE_ENGINE
+					Trace.WriteLine("fontengine: remove texture:"+_TextureNo.ToString());
 					FontEngineRemoveTexture(_TextureNo);
 #endif
 					if (!_Image.Disposed)
@@ -123,7 +130,14 @@ namespace MediaPortal.GUI.Library
 #if USE_NEW_TEXTURE_ENGINE
 				//string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_TextureNo,x,y,nw,nh);
 				//Trace.WriteLine(logline);
-				FontEngineDrawTexture(_TextureNo,x, y, nw, nh, uoff, voff, umax, vmax, color);
+				if (_TextureNo>=0)
+				{
+					FontEngineDrawTexture(_TextureNo,x, y, nw, nh, uoff, voff, umax, vmax, color);
+				}
+				else
+				{
+					Trace.WriteLine("fontengine: ERROR. Texture is disposed:"+_TextureNo.ToString());
+				}
 #endif
 			}
     }

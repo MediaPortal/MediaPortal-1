@@ -14,3 +14,4 @@ FontEngineAddTexture			@7
 FontEngineRemoveTexture			@8
 FontEngineDrawTexture			@9
 FontEnginePresentTextures		@10
+FontEngineAddSurface            @11

@@ -966,6 +966,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "GUITetris\MyTetris.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITetris\Tetris.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUITopbar\GUITopbar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

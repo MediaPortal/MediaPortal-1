@@ -3,7 +3,9 @@ using System.Drawing;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+using Direct3D=Microsoft.DirectX.Direct3D;
+using System.Runtime.InteropServices;
+using DShowNET;
 
 namespace MediaPortal.Player 
 {
@@ -12,21 +14,39 @@ namespace MediaPortal.Player
 	/// Its controlled by the allocator wrapper 
 	/// Example on how to use:
 	/// PlaneScene scene = new PlaneScene(GUIGraphicsContext.RenderGUI)
-	/// scene.Init(GUIGraphicsContext.DX9Device)
+	/// scene.Init()
 	/// ... allocate direct3d texture
 	/// scene.SetSrcRect(1.0f,1.0f); //change this depending on the texture dimensions
+	/// scene.SetSurface(texture); //change this depending on the texture dimensions
 	/// while (playingMovie)
 	/// {
 	///   scene.Render(GUIGraphicsContext.DX9Device, videoTextre, videoSize) 
 	/// }
+	/// scene.ReleaseSurface(texture)
 	/// scene.Stop();
 	/// scene.DeInit();
 	/// </summary>
   public class PlaneScene 
   {
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern int  FontEngineAddTexture(int hasCode,bool useAlphaBlend,void* fontTexture);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern int  FontEngineAddSurface(int hasCode,bool useAlphaBlend,void* fontTexture);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEnginePresentTextures();
+
+
     bool					  m_bStop = false;
     static Surface	rTarget = null;
-    VertexBuffer		vertexBuffer = null;
+    //VertexBuffer		vertexBuffer = null;
     IRender				  m_renderer;
     long					  m_lColorDiffuse = 0xFFFFFFFF;
     int						  m_iFrame = 0;
@@ -40,6 +60,9 @@ namespace MediaPortal.Player
     System.Drawing.Rectangle							rSource, rDest;    
     MediaPortal.GUI.Library.Geometry			m_geometry = new MediaPortal.GUI.Library.Geometry();
 		int							m_iFrameCounter;
+		
+		float _fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
+		int   _textureNo=-1;
 		/// <summary>
 		/// constructor
 		/// </summary>
@@ -105,8 +128,8 @@ namespace MediaPortal.Player
     {
       lock(this) 
       {
-        if (vertexBuffer != null) vertexBuffer.Dispose();
-        vertexBuffer = null;
+        //if (vertexBuffer != null) vertexBuffer.Dispose();
+        //vertexBuffer = null;
 
         if (rTarget!=null)
         {
@@ -122,18 +145,10 @@ namespace MediaPortal.Player
 		/// It allocates resources needed
 		/// </summary>
 		/// <param name="device">Direct3d devices</param>
-		public void Init(Device device) 
+		public void Init() 
 		{
-      vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
-                                      4, device, 
-                                      0, CustomVertex.TransformedTextured.Format, 
-                                      Pool.Managed);
-			//device.RenderState.CullMode = Cull.None;
-			//device.RenderState.Lighting = false;
-			//device.RenderState.ZBufferEnable = true;
-
       if (rTarget == null)
-			  rTarget = device.GetRenderTarget(0);
+			  rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 			m_iFrameCounter=0;
 		}
 
@@ -255,27 +270,15 @@ namespace MediaPortal.Player
         nw = (float)rDest.Width;
         nh = (float)rDest.Height;
 
-				//and update the vertex buffer with the new coordinates
-        CustomVertex.TransformedTextured[] verts = (CustomVertex.TransformedTextured[])vertexBuffer.Lock(0, 0);
-        
-        verts[0].X  = x - 0.5f;      verts[0].Y = y + nh - 0.5f; verts[0].Z = 0.0f; verts[0].Rhw = 1.0f;
-        verts[0].Tu = uoffs;
-        verts[0].Tv = voffs + v;
-
-        verts[1].X  = x - 0.5f;      verts[1].Y = y - 0.5f;      verts[1].Z = 0.0f; verts[1].Rhw = 1.0f;
-        verts[1].Tu = uoffs;
-        verts[1].Tv = voffs;
-
-        verts[2].X  = x + nw - 0.5f; verts[2].Y = y + nh - 0.5f; verts[2].Z = 0.0f; verts[2].Rhw = 1.0f;
-        verts[2].Tu = uoffs + u;
-        verts[2].Tv = voffs + v;
-
-        verts[3].X  = x + nw - 0.5f; verts[3].Y = y - 0.5f;      verts[3].Z = 0.0f; verts[3].Rhw = 1.0f;
-        verts[3].Tu = uoffs + u;
-        verts[3].Tv = voffs;
-  			
-        vertexBuffer.Unlock();
-        return true;
+				_fx=x;
+				_fy=y;
+				_nw=nw;
+				_nh=nh;
+				_uoff=uoffs;
+				_voff=voffs;
+				_umax=u;
+				_vmax=v;
+				return true;
       }
       catch (Exception ex)
       {
@@ -288,34 +291,19 @@ namespace MediaPortal.Player
 		/// <summary>
 		/// This method is been called by the allocatorwrapper when we need to draw a new video frame onscreen
 		/// </summary>
-		/// <param name="device">Direct3d device</param>
-		/// <param name="tex">Direct3d texture containing the Video frame</param>
 		/// <param name="nativeSize">Size of video</param>
-		public void Render(Device device, Texture tex, Size nativeSize) 
+		public void Render(Size nativeSize) 
 		{
 			//if we're stopping then just return
       if (m_bStop) return;
-/*
-			int speed=g_Player.Speed;
-			if (speed < 0) speed=-speed;
-			if (speed >= 4)
-			{
-				m_iFrameCounter++;
-				if (speed ==4 && m_iFrameCounter<1) return;
-				if (speed ==8 && m_iFrameCounter<2) return;
-				if (speed ==16 && m_iFrameCounter<6) return;
-				if (speed ==32 && m_iFrameCounter<10) return;
-				m_iFrameCounter=0;
-			}
-*/
       lock(this) 
       {
         try
         {
 					//sanity checks
-          if (device==null) return;
-          if (device.Disposed) return;
-          if (rTarget!=null) device.SetRenderTarget(0, rTarget);
+          if (GUIGraphicsContext.DX9Device==null) return;
+          if (GUIGraphicsContext.DX9Device.Disposed) return;
+          if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
           if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
   				//first time, fade in the video in 12 steps
@@ -348,8 +336,8 @@ namespace MediaPortal.Player
           renderTexture= SetVideoWindow(nativeSize);
 
 					//clear screen
-          device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-          device.BeginScene();
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+          GUIGraphicsContext.DX9Device.BeginScene();
 
   				//check if we should render the GUI first and then the video or
 					//first the video and then the GUI
@@ -372,27 +360,13 @@ namespace MediaPortal.Player
 						if (m_renderer != null) 
 						{
 							m_renderer.RenderFrame();
-							GUIFontManager.Present();
 						}
           }
     
 					//Render video texture
-          if (renderTexture)
+          if (renderTexture && _textureNo>=0)
           {
-            device.SetTexture(0, tex);
-            int g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-            device.SamplerState[0].MinFilter=TextureFilter.Linear;
-            device.SamplerState[0].MagFilter=TextureFilter.Linear;
-            device.SamplerState[0].MipFilter=TextureFilter.Linear;
-            device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
-            device.SamplerState[1].MinFilter=TextureFilter.Linear;
-            device.SamplerState[1].MagFilter=TextureFilter.Linear;
-            device.SamplerState[1].MipFilter=TextureFilter.Linear;
-            device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
-            device.SetStreamSource(0, vertexBuffer, 0);
-            device.VertexFormat = CustomVertex.TransformedTextured.Format;
-            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-            device.SetTexture(0, null);
+						FontEngineDrawTexture(_textureNo,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, (int)m_lColorDiffuse);
           }
 
 					//render GUI if needed
@@ -401,18 +375,34 @@ namespace MediaPortal.Player
 						if (m_renderer != null) 
 						{
 							m_renderer.RenderFrame();
-							GUIFontManager.Present();
 						}
           }
 
+					GUIFontManager.Present();
 					//and present it onscreen
-          device.EndScene();
-          device.Present();
+          GUIGraphicsContext.DX9Device.EndScene();
+          GUIGraphicsContext.DX9Device.Present();
         }
         catch (Exception)
         {
         }
       }//lock(this) 
 		}//public void Render(Device device, Texture tex, Size nativeSize) 
+
+		public void SetSurface(IntPtr ptrSurface)
+		{
+			unsafe
+			{
+				_textureNo=FontEngineAddSurface(ptrSurface.ToInt32(),false,(void*) ptrSurface.ToPointer());
+			}
+		}
+		public void ReleaseSurface(IntPtr tex)
+		{	
+			if (_textureNo>=0)
+			{
+				FontEngineRemoveTexture(_textureNo);
+				_textureNo=-1;
+			}
+		}
 	}//public class PlaneScene 
 }//namespace MediaPortal.Player 

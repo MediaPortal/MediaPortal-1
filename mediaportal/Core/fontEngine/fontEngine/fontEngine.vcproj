@@ -31,6 +31,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/fontEngine.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\fontEngine.def"
@@ -81,6 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/fontEngine.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="fontEngine.def"

@@ -2,7 +2,10 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
-		<version>0.1.0.3</version>
+		<version>0.1.0.4</version>
+		<changelog>
+		  <change date="28-1-2005">Added my tetris gfx,sounds and xml</change>
+		</changelog>
 	</skin>
 	<control>
 		<description>default image</description>

@@ -76,6 +76,7 @@ namespace MediaPortal.Player
 
     public override bool Play(string strFile)
     {
+			m_speedRate = 10000;
       m_bVisible=false;
       m_iVolume=100;
       m_state=PlayState.Init;
@@ -159,7 +160,7 @@ namespace MediaPortal.Player
         m_bUpdateNeeded=true;
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
-        Log.Write("Duration:{0}",m_dDuration);
+        Log.Write("VideoPlayer:Duration:{0}",m_dDuration);
         
       }
       return true;
@@ -267,8 +268,11 @@ namespace MediaPortal.Player
     {
       if ( !Playing) return;
       if ( !m_bStarted) return;
-			mediaPos.get_Duration(out m_dDuration);
-			mediaPos.get_CurrentPosition(out m_dCurrentPos);
+			if (mediaPos!=null)
+			{
+				//mediaPos.get_Duration(out m_dDuration);
+				mediaPos.get_CurrentPosition(out m_dCurrentPos);
+			}
 
       if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)
       {
@@ -518,7 +522,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        Log.Write("StreamBufferPlayer:SetRate to:{0}", m_speedRate);
+        Log.Write("VideoPlayer:SetRate to:{0}", m_speedRate);
       }
     }
 

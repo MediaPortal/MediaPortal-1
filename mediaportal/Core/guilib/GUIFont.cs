@@ -33,11 +33,12 @@ namespace MediaPortal.GUI.Library
 		unsafe private static extern void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue);
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEngineDrawText3D(int fontNumber, char* text, int xposStart, int yposStart, uint intColor, int maxWidth);
+		unsafe private static extern void FontEngineDrawText3D(int fontNumber, void* text, int xposStart, int yposStart, uint intColor, int maxWidth);
 
 		
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresent3D(int fontNumber);
+		bool FontAdded=false;
 #endif		
 		private string m_strFontName;
 		private string m_strFileName;
@@ -94,6 +95,7 @@ namespace MediaPortal.GUI.Library
 		public GUIFont(string strName, string strFileName, int iHeight)
 		{
 #if NEWFONTENGINE
+			Trace.WriteLine("fontengine: Initialize()");
 			FontEngineInitialize();
 #endif
 			m_strFontName=strName;
@@ -117,6 +119,7 @@ namespace MediaPortal.GUI.Library
     public GUIFont(string strName, string strFileName, int iHeight, FontStyle style)
     {
 #if NEWFONTENGINE
+			Trace.WriteLine("fontengine: Initialize()");
 			FontEngineInitialize();
 #endif
       m_strFontName=strName;
@@ -274,7 +277,14 @@ namespace MediaPortal.GUI.Library
     public void Present()
     {
 #if NEWFONTENGINE			
-			FontEnginePresent3D(ID);
+			if (!FontAdded)
+			{
+				Trace.WriteLine("Fontengine Present(): ERROR font not added:"+ ID.ToString());
+			}
+			else
+			{
+				FontEnginePresent3D(ID);
+			}
 #else
       // Set the data for the vertex buffer
       if (dwNumTriangles > 0)
@@ -330,12 +340,20 @@ namespace MediaPortal.GUI.Library
 
 			int intColor = color.ToArgb();
 #if NEWFONTENGINE
-			unsafe
+			if (!FontAdded)
 			{
-				IntPtr ptrStr=Marshal.StringToCoTaskMemAnsi(text); //SLOW
-				FontEngineDrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor, maxWidth);
-				Marshal.FreeCoTaskMem(ptrStr);
+				Trace.WriteLine("Fontengine Draw(): ERROR font not added:"+ ID.ToString());
 				return;
+			}
+			else
+			{
+				unsafe
+				{
+					IntPtr ptrStr=Marshal.StringToCoTaskMemUni(text); //SLOW
+					FontEngineDrawText3D(ID, (void*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor, maxWidth);
+					Marshal.FreeCoTaskMem(ptrStr);
+					return;
+				}
 			}
 #else
 			if (fontVertices==null) return;
@@ -526,7 +544,9 @@ namespace MediaPortal.GUI.Library
 			systemFont = null;
       fontVertices=null;
 #if NEWFONTENGINE
+			Trace.WriteLine("fontengine: Remove font:"+ID.ToString());
 			FontEngineRemoveFont(ID);	
+			FontAdded=false;
 #endif
 		}
 
@@ -749,6 +769,7 @@ namespace MediaPortal.GUI.Library
 				surf.Description.Format );
 
 #if NEWFONTENGINE
+			Trace.WriteLine("fontengine: add font:"+ID.ToString());
 			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 			IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
 			unsafe
@@ -764,6 +785,7 @@ namespace MediaPortal.GUI.Library
 				FontEngineSetCoordinate(ID, i, 2, textureCoords[i,2]);
 				FontEngineSetCoordinate(ID, i, 3, textureCoords[i,3]);
 			}
+			FontAdded=true;
 #endif
 /*
 			// Create the state blocks for rendering text

@@ -3137,6 +3137,20 @@
 	<id>16001</id>
 	<value>Party Shuffle</value>
 </string>
+<!-- My Tetris --> 
+<string><id>19001</id><value>My Tetris</value></string> 
+<string><id>19002</id><value>New Game</value></string> 
+<string><id>19003</id><value>Music</value></string> 
+<string><id>19004</id><value>Sounds</value></string> 
+<string><id>19005</id><value>Score</value></string> 
+<string><id>19006</id><value>Level</value></string> 
+<string><id>19007</id><value>Lines</value></string> 
+<string><id>19008</id><value>Highscore</value></string> 
+<string><id>19009</id><value>Next</value></string> 
+<string><id>19010</id><value>Press or click to start...</value></string> 
+<string><id>19011</id><value>Paused</value></string> 
+<string><id>19012</id><value>Game Over</value></string> 
+
 <string><id>3000</id><value>Program Options</value></string>
 <string><id>3001</id><value>Hour</value></string>
 <string><id>3002</id><value>Hours</value></string>
