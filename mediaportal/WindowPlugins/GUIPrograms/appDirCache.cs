@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Diagnostics;
 using SQLite.NET;
@@ -42,14 +43,15 @@ namespace ProgramsDatabase
 			if (ImageDirs.Length > 0)
 			{
 				string strMainImgDir = ImageDirs[0];
-				strFolderThumb= strMainImgDir + "\\" + guiFile.Label + ".jpg";
+				strFolderThumb= strMainImgDir + "\\" + guiFile.Label;
+				strFolderThumb = Path.ChangeExtension(strFolderThumb, ".jpg");
 				if (!System.IO.File.Exists(strFolderThumb))
 				{
-					strFolderThumb = strMainImgDir+ "\\" + guiFile.Label + ".gif";
+					strFolderThumb = Path.ChangeExtension(strFolderThumb, ".gif");
 				}
 				if( !System.IO.File.Exists(strFolderThumb) )
 				{
-					strFolderThumb = strMainImgDir + "\\" + guiFile.Label + ".png";
+					strFolderThumb = Path.ChangeExtension(strFolderThumb, ".png");
 				}
 			}
 			return strFolderThumb;
