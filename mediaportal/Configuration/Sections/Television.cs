@@ -541,26 +541,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
-      //
-      // Check if the radio section has changed the country selection
-      //
-      SectionSettings section = SectionSettings.GetSection("Radio");
-
-      if(section != null)
-      {
-        //
-        // The television section has been loaded
-        //
-        string selectedCountry = (string)section.GetSetting("radio.countryname");
-
-        if(selectedCountry.Length > 0 && countryComboBox.Text.Equals(selectedCountry) == false)
-        {
-          //
-          // We have other country selection, change our country
-          //
-          countryComboBox.Text = selectedCountry;
-        }
-      }
+     
     }
 	}
 }

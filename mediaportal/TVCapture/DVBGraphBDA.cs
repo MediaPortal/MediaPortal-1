@@ -2750,7 +2750,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.VideoPid=currentTuningObject.VideoPid;
 				newchannel.TeletextPid=currentTuningObject.TeletextPid;
 				
-				if (IsTv && tv)
+				if (info.serviceType==1)//tv
 				{
 					Log.Write("DVBGraphBDA: channel {0} is a tv channel",newchannel.ServiceName);
 					//check if this channel already exists in the tv database
@@ -2836,7 +2836,7 @@ namespace MediaPortal.TV.Recording
 					TVDatabase.MapChannelToGroup(group,tvTmp);
 
 				}
-				else if (IsRadio) //if (IsTv && tv)
+				else if (info.serviceType==2) //radio
 				{
 					Log.Write("DVBGraphBDA: channel {0} is a radio channel",newchannel.ServiceName);
 					//check if this channel already exists in the radio database
