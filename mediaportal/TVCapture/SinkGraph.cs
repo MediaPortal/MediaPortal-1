@@ -1021,6 +1021,8 @@ namespace MediaPortal.TV.Recording
 			
 			PropertyPageCollection propertyPages=null;
 			{
+				if (m_captureGraphBuilder==null) return null;
+				if (m_captureFilter==null) return null;
 				try 
 				{ 
 					SourceCollection VideoSources = new SourceCollection( m_captureGraphBuilder, m_captureFilter, true );

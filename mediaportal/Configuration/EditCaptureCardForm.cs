@@ -18,9 +18,7 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class EditCaptureCardForm : System.Windows.Forms.Form
 	{
-#if (UseCaptureCardDefinitions)
 		static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
-#endif
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox cardComboBox;
@@ -85,7 +83,16 @@ namespace MediaPortal.Configuration
       ArrayList availableAudioDevices = FilterHelper.GetAudioInputDevices();
       ArrayList availableVideoCompressors = FilterHelper.GetVideoCompressors();
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
-        
+
+			/* below is used for testing only
+			availableVideoDevices.Add("713x BDA Analog Capture");
+			availableVideoDevices.Add("713x BDA Digital Capture");
+			availableVideoDevices.Add("my device");
+			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0");
+			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0");
+			availableVideoDeviceMonikers.Add("ven_1234&dev_1234&subsys_03325168&rev_f3");
+			*/
+   
       FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
 			for (int i=0; i < availableVideoDevices.Count;++i)
@@ -94,9 +101,6 @@ namespace MediaPortal.Configuration
 			}
 
 
-#if (!UseCaptureCardDefinitions)
-			cardComboBox.Items.AddRange(availableVideoDevices.ToArray());
-#endif
       audioDeviceComboBox.Items.AddRange(availableAudioDevices.ToArray());
       videoCompressorComboBox.Items.AddRange(availableVideoCompressors.ToArray());
       audioCompressorComboBox.Items.AddRange(availableAudioCompressors.ToArray());
@@ -114,12 +118,6 @@ namespace MediaPortal.Configuration
       else
         acceptuserinput=true;
 
-#if (UseCaptureCardDefinitions)
-			Log.Write("UseCaptureCardDefinitions");
-#else
-			Log.Write("not using UseCaptureCardDefinitions");
-#endif
-#if (UseCaptureCardDefinitions)
 			// #MW#
 			// Load capture card definitions, and only display those cards that are supported by MP
 			// This might mean that altough capture cards are present, they're not supported, and thus
@@ -136,12 +134,12 @@ namespace MediaPortal.Configuration
 			for (int i=0; i < addGeneral.Length;++i)
 				addGeneral[i]=true;
 
+
 			//if capturecardsdefinition.xml contains a definition for 1 or more cards on this system
 			//then we wont add the general s/w card, general h/w card and general MCE card choices
 			//for this device. Instead we only present the definition from the .xml file
-			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
+			foreach (CaptureCardDefinition ccd in CaptureCardDefinitions.CaptureCards)
 			{
-				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
@@ -150,10 +148,8 @@ namespace MediaPortal.Configuration
 			}
 
 			//enum all cards known in capturedefinitions.xml
-			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
+			foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
 			{
-				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
-
 				//enum all video capture devices on this system
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
@@ -182,10 +178,13 @@ namespace MediaPortal.Configuration
 						if (ccd.CaptureName!=String.Empty) 
 						{
 							cd.VideoDevice				= ccd.CaptureName;
+							cd.CommercialName			= ccd.CommercialName;
 							cd.LoadDefinitions();
 							cd.IsBDACard					= ccd.Capabilities.IsBDADevice;
 							cd.IsMCECard					= ccd.Capabilities.IsMceDevice;
 							cd.SupportsMPEG2			= ccd.Capabilities.IsMpeg2Device;
+							cd.DeviceId						= ccd.DeviceId;
+							cd.DeviceType					= ccd.DeviceId;
 						}
 						else
 						{
@@ -225,7 +224,7 @@ namespace MediaPortal.Configuration
 			}
 			else
 				acceptuserinput						= true;
-#endif
+
 			SetupCaptureFormats();
 			frameSizeComboBox.Items.AddRange(captureFormats.ToArray());
 
@@ -795,14 +794,6 @@ namespace MediaPortal.Configuration
 		/// </summary>
     void FillInAll()
     {
-			// #MW#
-			// Load card and set properties (double work again) to make the creation of the capture device
-			// work, ie that one can load the definitions held in the TVCaptureDevice to create the graph, ie
-			// load the filters and connect the pins...
-			//
-			//_mTvCaptureDevice.FriendlyName = "";
-			// card should be set already by caller...
-
       //
       // Setup frame sizes
       //
@@ -818,12 +809,12 @@ namespace MediaPortal.Configuration
       else
       {
         trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=false;
-		  if(cardComboBox.SelectedIndex!=-1) 
-			  if(cardComboBox.SelectedItem.ToString()=="B2C2 MPEG-2 Source")
-			  {
-				  frameSizeComboBox.Enabled =true;
-			  }
-	  }
+				if(cardComboBox.SelectedIndex!=-1) 
+					if(cardComboBox.SelectedItem.ToString()=="B2C2 MPEG-2 Source")
+					{
+						frameSizeComboBox.Enabled =true;
+					}
+			}
 
       useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
 
@@ -846,19 +837,16 @@ namespace MediaPortal.Configuration
 					// know the card supports the size.
 					//
 				
-					if (capture.CreateGraph())
+					SetupPropertyPages(capture);
+					foreach(CaptureFormat format in captureFormats)
 					{
-						SetupPropertyPages(capture);
-						foreach(CaptureFormat format in captureFormats)
-						{
-							Size frameSize = new Size(format.Width, format.Height);
-							if (capture.SupportsFrameSize(frameSize))
-							{	
-								//
-								// Card supports the current frame size
-								//
-								frameSizeComboBox.Items.Add(format);
-							}
+						Size frameSize = new Size(format.Width, format.Height);
+						if (capture.SupportsFrameSize(frameSize))
+						{	
+							//
+							// Card supports the current frame size
+							//
+							frameSizeComboBox.Items.Add(format);
 						}
 					}
 
@@ -1028,18 +1016,13 @@ namespace MediaPortal.Configuration
 			get 
 			{
 				if (cardComboBox.SelectedItem==null) return null;
-#if (UseCaptureCardDefinitions)
+
 				ComboBoxCaptureCard combo = cardComboBox.SelectedItem as ComboBoxCaptureCard;
 				TVCaptureDevice card = (combo).CaptureDevice;
 
 				Log.Write("selected {0} bda:{1} mce:{2} mpeg2:{3}", 
 										card.CommercialName,card.IsBDACard,card.IsMCECard,card.SupportsMPEG2);
 
-#else
-				TVCaptureDevice card = new TVCaptureDevice();
-
-				card.VideoDevice = cardComboBox.Text;
-#endif
 
 				card.UseForRecording = useRecordingCheckBox.Checked;
 				card.UseForTV	= useWatchingCheckBox.Checked;
@@ -1060,15 +1043,7 @@ namespace MediaPortal.Configuration
         card.AudioDevice = audioDeviceComboBox.Text;
         card.AudioInputPin = comboBoxLineInput.Text;
 
-				// #MW. Why was this in #if/#endif???
-				// Now failed to copy the mpeg2/mce settings...
-				// And mpeg2/mce cards always set to false, ie software cards!!!
-				//#if (UseCaptureCardDefinitions)
-#if (UseCaptureCardDefinitions)
-#else
-				card.SupportsMPEG2 = m_bMPEG2;
-				card.IsMCECard     = m_bISMCE;
-#endif
+
 				card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;
 				return card;
@@ -1082,22 +1057,15 @@ namespace MediaPortal.Configuration
 				if(card != null)
 				{
           textBoxName.Text=card.FriendlyName;
-#if (UseCaptureCardDefinitions)
-					if (card.DeviceId!=null)
+					for (int i=0; i < cardComboBox.Items.Count;++i)
 					{
-						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(card);
-						card.DeviceType=card.DeviceId;
-						cardComboBox.SelectedItem					= cbcc;
-					}
-					else
-					{
-						card.DeviceType=card.DeviceType;
-						for (int i=0; i < cardComboBox.Items.Count;++i)
+						ComboBoxCaptureCard cd= (ComboBoxCaptureCard)cardComboBox.Items[i];
+						if (card.DeviceType!=null)
 						{
-							ComboBoxCaptureCard cd= (ComboBoxCaptureCard)cardComboBox.Items[i];
 							if (cd.CaptureDevice.DeviceId==card.DeviceType)
 							{
-								if (card.VideoDeviceMoniker==cd.VideoDeviceMoniker)
+								if (card.VideoDeviceMoniker==cd.VideoDeviceMoniker &&
+									card.VideoDevice    ==cd.CaptureDevice.CaptureName)
 								{
 									cardComboBox.SelectedIndex=i;
 									break;
@@ -1105,9 +1073,7 @@ namespace MediaPortal.Configuration
 							}
 						}
 					}
-#else
-          cardComboBox.SelectedItem = card.VideoDevice;
-#endif
+
           audioDeviceComboBox.SelectedItem  = card.AudioDevice          ;
 					useRecordingCheckBox.Checked = card.UseForRecording;
           useWatchingCheckBox.Checked = card.UseForTV;
@@ -1180,7 +1146,7 @@ public class ComboBoxCaptureCard
 	{
 		get {return _mCaptureDevice;}
 	}
-#if (UseCaptureCardDefinitions)
+
 	public string VideoDeviceMoniker
 	{
 		get {return _mCaptureDevice.VideoDeviceMoniker;}
@@ -1207,5 +1173,4 @@ public class ComboBoxCaptureCard
 	{
 		return base.GetHashCode();
 	}
-#endif
 }

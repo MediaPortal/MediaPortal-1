@@ -164,7 +164,7 @@ namespace TVCapture
 		private static					object 								 _mSyncRoot = new Object();
 
 		// Next list holds CaptureCardDefinition for all supported capture cards
-		private static Hashtable _mCaptureCardDefinitions = new Hashtable();
+		private static ArrayList _mCaptureCardDefinitions = new ArrayList();
 		#endregion
 
 		#region Constructors
@@ -297,7 +297,7 @@ namespace TVCapture
 						cardConfig.DeviceId				= cc.Attributes.GetNamedItem(@"devid").InnerText.ToLower();
 						cardConfig.CommercialName = cc.Attributes.GetNamedItem(@"commercialname").InnerText;
 						cardConfig.CaptureName    = cc.Attributes.GetNamedItem(@"capturename").InnerText;
-						_mCaptureCardDefinitions.Add(cardConfig.DeviceId, cardConfig);
+						_mCaptureCardDefinitions.Add(cardConfig);
 						DirectShowUtil.DebugWrite("device:{0}", cardConfig.CommercialName);
 
 						// Get the cards capabilities...
@@ -450,7 +450,7 @@ namespace TVCapture
 		#endregion Constructors
 
 		#region Properties
-		public static Hashtable CaptureCards
+		public static ArrayList CaptureCards
 		{
 			get 
 			{

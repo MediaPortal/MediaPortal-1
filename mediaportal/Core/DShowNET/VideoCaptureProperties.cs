@@ -625,6 +625,40 @@ namespace DShowNET
         return true;
       }
     }
+		
+		public bool SupportsHauppaugePVRProperties
+		{
+			get 
+			{
+				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+				if (propertySet==null) return false;
+				Guid propertyGuid=IVac.IvacGuid;
+				uint IsTypeSupported=0;
+				int hr=propertySet.QuerySupported( ref propertyGuid, (uint)IVac.PropertyId.IVAC_VERSION_INFO, out IsTypeSupported);
+				if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
+				{
+					return false;
+				}
+				return true;
+			}
+		}
+
+		public bool SupportsFireDTVProperties
+		{
+			get 
+			{
+				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+				if (propertySet==null) return false;
+				Guid propertyGuid=KSPROPSETID_Firesat;
+				uint IsTypeSupported=0;
+				int hr=propertySet.QuerySupported( ref propertyGuid, 22, out IsTypeSupported);
+				if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
+				{
+					return false;
+				}
+				return true;
+			}
+		}
 		/// <summary>
 		/// This function sends the PMT (Program Map Table) to the FireDTV DVB-T/DVB-C/DVB-S card
 		/// This allows the integrated CI & CAM module inside the FireDTv device to decrypt the current TV channel
@@ -643,7 +677,6 @@ namespace DShowNET
 		{
 			if (PMT==null) return;
 			if (PMT.Length==0) return;
-			if (PMT[0] != 0x2) return; // this is not the PMT 
 
 			FIRESAT_CA_DATA caData = new FIRESAT_CA_DATA();
 			caData.uSlot    = 0;

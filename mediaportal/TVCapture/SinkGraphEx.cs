@@ -259,9 +259,8 @@ namespace MediaPortal.TV.Recording
 
 
 				VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
-				if (props.SupportsProperties)
+				if (props.SupportsHauppaugePVRProperties)
 				{
-
 					bool hiquality=false;
 					using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 					{

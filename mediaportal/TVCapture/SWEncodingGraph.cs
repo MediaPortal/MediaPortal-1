@@ -1890,6 +1890,8 @@ namespace MediaPortal.TV.Recording
 		
 		public PropertyPageCollection PropertyPages()
 		{
+			if (m_filterCaptureVideo==null) return null;;
+			if (m_filterCaptureAudio==null) return null;; 
 			PropertyPageCollection propertyPages=null;
 			{
 				try 
@@ -1918,6 +1920,7 @@ namespace MediaPortal.TV.Recording
 
 		public bool SupportsFrameSize(Size framesize)
 		{	
+			if (m_videoCaptureDevice==null) return false;
 			m_videoCaptureDevice.SetFrameSize(framesize);
 			Size newSize=m_videoCaptureDevice.GetFrameSize();
 			return (newSize==framesize);

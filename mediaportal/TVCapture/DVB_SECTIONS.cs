@@ -366,6 +366,7 @@ namespace MediaPortal.TV.Recording
 		/// <returns>Transponder object containg all channels/services found</returns>
 		public Transponder Scan(DShowNET.IBaseFilter filter)
 		{
+			m_sectionsList=new ArrayList();	
 			Transponder transponder = new Transponder();
 			transponder.channels = new ArrayList();
 			transponder.PMTTable = new ArrayList();
@@ -377,6 +378,68 @@ namespace MediaPortal.TV.Recording
 			LoadPMTTables(filter,transp[0],ref transponder);
 			return transponder;
 		}//public Transponder Scan(DShowNET.IBaseFilter filter)
+		
+		/// <summary>
+		/// Get all information about channels & services 
+		/// </summary>
+		/// <param name="filter">[in] IBase filter implementing IMpeg2Data</param>
+		/// <param name="serviceId">[in] The service id for which the raw PMT should be returned</param>
+		/// <param name="info">[Out] The channel info for the service id</param>
+		/// <returns>byte array containing the raw PMT or null if no PMT is found</returns>
+		public byte[] GetRAWPMT(DShowNET.IBaseFilter filter, int serviceId, out ChannelInfo info)
+		{
+			info=new ChannelInfo();
+			m_sectionsList=new ArrayList();	
+			Transponder transponder = new Transponder();
+			transponder.channels = new ArrayList();
+			transponder.PMTTable = new ArrayList();
+			GetStreamData(filter,0, 0,0,5000);
+			
+			// jump to parser
+			foreach(byte[] arr in m_sectionsList)
+				decodePATTable(arr, transp[0], ref transponder);
+
+			int t;
+			int n;
+			ArrayList	tab42=new ArrayList();
+			ArrayList	tab46=new ArrayList();
+
+			GetStreamData(filter,17, 0x42,0,5000);
+			tab42=(ArrayList)m_sectionsList.Clone();
+			GetStreamData(filter,17, 0x46,0,5000);
+			tab46=(ArrayList)m_sectionsList.Clone();
+
+			ChannelInfo pat;
+			ArrayList pmtList = transponder.PMTTable;
+			int pmtScans;
+			pmtScans = (pmtList.Count / 20) + 1;
+			for (t = 1; t <= pmtScans; t++)
+			{
+				for (n = 0; n <= 19; n++)
+				{
+					if (((t - 1) * 20) + n > pmtList.Count - 1)
+					{
+						break;
+					}
+					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+					if (pat.serviceID==serviceId)
+					{
+						info=pat;
+						// get pmt
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+						foreach(byte[] wdata in m_sectionsList)
+						{
+							if (wdata.Length>=67)
+							{
+								//return pmt
+								return wdata;
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
 		
 		private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		{

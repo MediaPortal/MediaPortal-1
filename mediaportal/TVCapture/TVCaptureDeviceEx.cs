@@ -220,11 +220,20 @@ namespace MediaPortal.TV.Recording
 
 			// Determine the deviceid "hidden" in the moniker of the capture device and use that to load
 			// the definitions of the card... The id is between the first and second "#" character
+			string 	 deviceId =m_strVideoDeviceMoniker;
 			string[] tmp1			= m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
-			if (tmp1.Length<2) return true;
-			string 	 deviceId = tmp1[1].ToLower();
+			if (tmp1.Length>=2) 
+				deviceId = tmp1[1].ToLower();
 
-			CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[deviceId] as CaptureCardDefinition;
+			CaptureCardDefinition ccd =null;
+			foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
+			{
+				if (cd.DeviceId==deviceId && cd.CaptureName == VideoDevice)
+				{
+					ccd = cd;
+					break;
+				}
+			}
 			//
 			// If card is unsupported, simply return
 			if (_mCaptureCardDefinition==null)

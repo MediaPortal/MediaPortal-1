@@ -818,6 +818,8 @@ namespace MediaPortal.TV.Recording
 				return ;
 			}
 
+			
+			int frequency=-1,ONID=-1,TSID=-1,SID=-1;
 			switch (m_NetworkType)
 			{
 				case NetworkType.ATSC: 
@@ -828,7 +830,7 @@ namespace MediaPortal.TV.Recording
 				case NetworkType.DVBC: 
 				{
 					//get the DVB-C tuning details from the tv database
-					int frequency=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1,modulation=0;
+					int symbolrate=0,innerFec=0,modulation=0;
 					TVDatabase.GetDVBCTuneRequest(iChannel,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID);
 					if (frequency<=0) return;
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ", frequency);
@@ -860,7 +862,7 @@ namespace MediaPortal.TV.Recording
 				{					
 					//get the DVB-S tuning details from the tv database
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
-					int frequency=0,polarisation=0,symbolrate=0,innerFec=0, ONID=-1,TSID=-1,SID=-1;
+					int polarisation=0,symbolrate=0,innerFec=0;
 					TVDatabase.GetDVBSTuneRequest(iChannel,out frequency, out polarisation, out symbolrate, out innerFec, out ONID, out TSID, out SID);
 					if (frequency<=0) return;
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} ", frequency);
@@ -892,7 +894,6 @@ namespace MediaPortal.TV.Recording
 				{
 					//get the DVB-T tuning details from the tv database
 					//for DVB-T this is the frequency, ONID , TSID and SID
-					int frequency,ONID,TSID,SID;
 					TVDatabase.GetDVBTTuneRequest(iChannel,out frequency, out ONID, out TSID, out SID);
 					if (frequency<=0) return;
 					Log.Write("DVBGraphBDA:tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}", frequency,ONID,TSID,SID);
@@ -921,6 +922,45 @@ namespace MediaPortal.TV.Recording
 			//submit tune request to the tuner
 			myTuner.TuneRequest = newTuneRequest;
 			Marshal.ReleaseComObject(myTuneRequest);
+
+			//check if tuner is locked to a tv channel
+			if (SignalPresent())
+			{	
+				//yes, lets get all details for the current channel
+				if (m_SectionsTables!=null)
+				{
+					DVBSections sections = new DVBSections();
+					DVBSections.ChannelInfo channelInfo;
+					byte[] pmt= sections.GetRAWPMT(m_SectionsTables, SID, out channelInfo);
+					if (pmt!=null && pmt.Length>0)
+					{
+						//got all details. Log them
+						Log.Write("DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6}", 
+											channelInfo.service_provider_name,
+											channelInfo.service_name,
+											channelInfo.scrambled,
+											channelInfo.freq,
+											channelInfo.networkID,
+											channelInfo.transportStreamID,
+											channelInfo.serviceID);
+
+						//First check if channel is scrambled
+						if (channelInfo.scrambled)
+						{
+							//Tv channels is scrambled. To view them
+							//we need to send the raw PMT table to the FireDTV device
+							//Note this only works for FireDTV devices, so 
+							//first check if this device supports the FireDTV properties
+							VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+							if (props.SupportsFireDTVProperties)
+							{
+								//yes, then send the PMT table to the device
+								props.SendPMTToFireDTV(pmt);
+							}//if (props.SupportsFireDTVProperties)
+						}//if (channelInfo.scrambled)
+					}//if (pmt!=null && pmt.Length>0 && channelInfo!=null)
+				}//if (m_SectionsTables!=null)
+			}//if (SignalPresent())
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		/// <summary>
@@ -2229,6 +2269,15 @@ namespace MediaPortal.TV.Recording
 					if (data.isAudio)
 						hasAudio=true;
 				}
+				Log.Write("DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8}", 
+										info.service_provider_name,
+										info.service_name,
+										info.scrambled,
+										info.freq,
+										info.networkID,
+										info.transportStreamID,
+										info.serviceID,
+										hasVideo, !hasVideo);
 		
 				DVBChannel newchannel   = new DVBChannel();
 				newchannel.carrierFrequency = info.freq;
@@ -2274,15 +2323,15 @@ namespace MediaPortal.TV.Recording
 				
 					if (Network() == NetworkType.DVBT)
 					{
-						TVDatabase.MapDVBTChannel(newchannel.ChannelName,iChannelNumber, currentFrequency, newchannel.ONID,newchannel.TSID,newchannel.SID);
+						TVDatabase.MapDVBTChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBC)
 					{
-						TVDatabase.MapDVBCChannel(newchannel.ChannelName,iChannelNumber, currentFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.modulation,newchannel.ONID,newchannel.TSID,newchannel.SID);
+						TVDatabase.MapDVBCChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.modulation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
-						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, currentFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
+						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 				}
 				else

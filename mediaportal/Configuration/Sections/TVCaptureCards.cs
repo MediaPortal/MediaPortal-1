@@ -281,12 +281,10 @@ namespace MediaPortal.Configuration.Sections
             // Serialize
             //
             captureCards = (ArrayList)formatter.Deserialize(fileStream);
-#if (UseCaptureCardDefinitions)
 						for (int i=0; i < captureCards.Count; i++)
 						{
 							((TVCaptureDevice)captureCards[i]).LoadDefinitions();
 						}
-#endif
             //
             // Finally close our file stream
             //
