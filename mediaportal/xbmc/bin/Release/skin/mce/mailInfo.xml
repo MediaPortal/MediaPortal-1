@@ -14,37 +14,43 @@
 				<texture>background.png</texture>
 			</control>
 			<control>
+				<type>image</type>
+				<id>1</id>
+				<posX>60</posX>
+				<posY>20</posY>
+				<texture>mail_logo.png</texture>
+			</control>
+			<control>
 				<description>Delete Button</description>
 				<type>button</type>
 				<id>25</id>
-				<posX>40</posX>
-				<posY>230</posY>
+				<posX>60</posX>
+				<posY>97</posY>
 				<width>135</width>
 				<label>8020</label>
 				<onleft>25</onleft>
-				<onright>25</onright>
+				<onright>24</onright>
 				<onup>26</onup>
 				<ondown>26</ondown>
 			</control>
 			<control>
-				<description>Set mail readed Button</description>
+				<description>Mail Read Button</description>
 				<type>button</type>
 				<id>26</id>
-				<posX>40</posX>
-				<posY>266</posY>
+				<posX>60</posX>
+				<posY>131</posY>
 				<width>135</width>
 				<label>8021</label>
 				<onleft>26</onleft>
-				<onright>26</onright>
+				<onright>24</onright>
 				<onup>25</onup>
 				<ondown>25</ondown>
 			</control>
-
 			<control>
-				<description>Body</description>
+				<description>Message label</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>100</posX>
+				<posX>220</posX>
 				<posY>180</posY>
 				<label>8019</label>
 				<font>font13</font>
@@ -54,8 +60,9 @@
 				<description>From value</description>
 				<type>label</type>
 				<id>20</id>
-				<posX>220</posX>
+				<posX>300</posX>
 				<posY>100</posY>
+				<width>340</width>
 				<label>-</label>
 				<font>font13</font>
 				<align>left</align>
@@ -65,7 +72,7 @@
 				<description>From</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>100</posX>
+				<posX>220</posX>
 				<posY>100</posY>
 				<label>8016</label>
 				<font>font13</font>
@@ -75,7 +82,7 @@
 				<description>To</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>100</posX>
+				<posX>220</posX>
 				<posY>120</posY>
 				<label>8017</label>
 				<font>font13</font>
@@ -85,7 +92,7 @@
 				<description>Subject</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>100</posX>
+				<posX>220</posX>
 				<posY>140</posY>
 				<label>8018</label>
 				<font>font13</font>
@@ -95,18 +102,20 @@
 				<description>To value</description>
 				<type>label</type>
 				<id>21</id>
-				<posX>220</posX>
+				<posX>300</posX>
 				<posY>120</posY>
+				<width>340</width>
 				<label>-</label>
 				<font>font13</font>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>
 			<control>
 				<description>Subject value</description>
-				<type>label</type>
+				<type>fadelabel</type>
 				<id>22</id>
-				<posX>220</posX>
+				<posX>300</posX>
 				<posY>140</posY>
+				<width>340</width>
 				<label>-</label>
 				<font>font13</font>
 				<textcolor>FFFFFFFF</textcolor>
@@ -115,10 +124,10 @@
 				<description>textarea</description>
 				<type>textbox</type>
 				<id>24</id>
-				<posX>220</posX>
+				<posX>300</posX>
 				<posY>180</posY>
-				<width>410</width>
-				<height>300</height>
+				<width>340</width>
+				<height>350</height>
 				<onleft>25</onleft>
 				<onright>25</onright>
 				<onup>25</onup>
