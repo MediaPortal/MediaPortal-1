@@ -42,8 +42,6 @@ namespace MediaPortal.Player
 		{
 			public Allocator()
 			{
-				MaxTextureWidth=1600;
-				MaxTextureHeight=1200;
 
 			}
 
