@@ -99,6 +99,15 @@ namespace MediaPortal.TVGuideScheduler
           {
             if ((!File.Exists(grab.Output + "\\" + grab.GrabberName + ".conf"))||(RunConfig)) 
               XMLTVgrab.GrabberConfigure(grab.GrabberName,grab.Output);
+            else
+            { //check its size to see if its valid
+              FileInfo conf = new FileInfo(grab.Output+ "\\" + grab.GrabberName + ".conf");
+              if (conf.Length <10) //to indicate that it contains some data
+              {
+                File.Delete(grab.Output+ "\\" + grab.GrabberName + ".conf");
+                XMLTVgrab.GrabberConfigure(grab.GrabberName,grab.Output);
+              }
+            }
           }
             if (multiGrab == "yes")
             {
@@ -169,7 +178,6 @@ namespace MediaPortal.TVGuideScheduler
                 Log.Write("TVGuideScheduler: XML file is empty - "+file);
               }
           } 
-            TVDatabase.RemoveOldPrograms();
         }
 			}
 		}

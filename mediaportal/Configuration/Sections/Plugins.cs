@@ -27,7 +27,6 @@ namespace MediaPortal.Configuration.Sections
 
 		ArrayList availablePlugins = new ArrayList();
 		ArrayList loadedPlugins = new ArrayList();
-    bool      m_bLoaded=false;
 		
 		public Plugins() : this("Plugins")
 		{
@@ -35,7 +34,6 @@ namespace MediaPortal.Configuration.Sections
 
 		public Plugins(string name) : base(name)
 		{
-      m_bLoaded=false;
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
@@ -55,7 +53,6 @@ namespace MediaPortal.Configuration.Sections
 			PopulateListView();
       LoadSettings();
       
-      m_bLoaded=true;
 		}
 
 		/// <summary>

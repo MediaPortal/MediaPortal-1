@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -868,7 +869,15 @@ namespace MediaPortal.Configuration.Sections
     private void RunGrabberButton_Click(object sender, System.EventArgs e)
     {
       SaveSettings();
-			SetupGrabber.LaunchGuideScheduler();				
+      if(File.Exists(folderNameTextBox.Text + @"\xmltv.exe"))
+      {
+        SetupGrabber.LaunchGuideScheduler();
+      }
+      else
+      {
+        MessageBox.Show("XMLTV.exe cannot be found in the directory you have setup as the XMLTV folder."+ "\n\n" +"Ensure that you have installed the XMLTV application, and that the XMLTV folder" + "\n" + "setting points to the directory where XMLTV.exe is installed",
+"MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
     }
 
     private void groupBox2_Enter(object sender, System.EventArgs e)
