@@ -503,6 +503,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUISMSInputControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUISpinControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -398,6 +398,8 @@ namespace MediaPortal.GUI.MSN
           item.Label2=contact.Status.ToString();
           item.IsFolder=false;
           item.AlbumInfoTag=contact;
+          item.IconImage="Messenger_Buddies.png";
+          item.IconImageBig="Messenger_Buddies.png";
 
           GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
           GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,item);

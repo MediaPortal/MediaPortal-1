@@ -339,7 +339,9 @@ namespace MediaPortal.GUI.Library
 				case ("facadeview"):
 					return typeof (GUIFacadeControl);
 				case ("filmstrip"):
-					return typeof (GUIFilmstripControl);
+          return typeof (GUIFilmstripControl);
+        case ("smsinput"):
+          return typeof (GUISMSInputControl);
 				default:
 					Log.Write("ERROR: unknown control:<{0}>",xmlTypeName);
 					return null;
