@@ -52,6 +52,7 @@ namespace MediaPortal.Player
 				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
 				if( comtype == null )
 				{
+          Error.SetError("Unable to play movie","Directx9 is not installed");
 					Log.Write("VideoPlayer9:DirectX 9 not installed");
 					return false;
 				}
@@ -64,6 +65,7 @@ namespace MediaPortal.Player
         IBaseFilter VMR9Filter=(IBaseFilter)comobj; comobj=null;
         if (VMR9Filter==null) 
         {
+          Error.SetError("Unable to play movie","VMR9 is not installed");
           Log.Write("VideoPlayer9:Failed to get instance of VMR9 ");
           return false;
         }
@@ -73,12 +75,14 @@ namespace MediaPortal.Player
         IVMRFilterConfig9 FilterConfig9 = VMR9Filter as IVMRFilterConfig9;
         if (FilterConfig9==null) 
         {
+          Error.SetError("Unable to play movie","Unable to initialize VMR9");
           Log.Write("VideoPlayer9:Failed to get IVMRFilterConfig9 ");
           return false;
         }
 				int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
         if (hr!=0) 
         {
+          Error.SetError("Unable to play movie","Unable to initialize VMR9");
           Log.Write("VideoPlayer9:Failed to set VMR9 to renderless mode");
           return false;
         }
@@ -88,6 +92,7 @@ namespace MediaPortal.Player
         hr = FilterConfig9.SetNumberOfStreams(1);
         if (hr!=0) 
         {
+          Error.SetError("Unable to play movie","Unable to initialize VMR9");
           Log.Write("VideoPlayer9:Failed to set VMR9 streams to 1");
           return false;
         }
@@ -96,6 +101,7 @@ namespace MediaPortal.Player
         hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
         if (hr!=0) 
         {
+          Error.SetError("Unable to play movie","Unable to initialize VMR9");
           Log.Write("VideoPlayer9:Failed to set VMR9 allocator/presentor");
           return false;
         }
@@ -103,6 +109,7 @@ namespace MediaPortal.Player
         hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
         if (hr!=0) 
         {
+          Error.SetError("Unable to play movie","Unable to initialize VMR9");
           Log.Write("VideoPlayer9:Failed to add vmr9 to filtergraph");
           return false;
         }
@@ -129,6 +136,7 @@ namespace MediaPortal.Player
 				hr = DsUtils.RenderFileToVMR9(graphBuilder, m_strCurrentFile, VMR9Filter, false);
         if (hr!=0) 
         {
+          Error.SetError("Unable to play movie","Unable to render file. Missing codecs?");
           Log.Write("VideoPlayer9:Failed to render file -> vmr9");
           return false;
         }
@@ -196,6 +204,7 @@ namespace MediaPortal.Player
 			}
 			catch( Exception  ex)
 			{
+        Error.SetError("Unable to play movie","Unable build graph for VMR9");
 				Log.Write("VideoPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
 				return false;
 			}

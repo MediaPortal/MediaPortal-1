@@ -99,6 +99,7 @@ namespace MediaPortal.Player
         int hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
         if (hr < 0)
         {
+          Error.SetError("Unable to play movie", "Can not set notifications");
           m_strCurrentFile="";
           CloseInterfaces();
           return false;
@@ -114,6 +115,7 @@ namespace MediaPortal.Player
 					hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
 					if (hr < 0)
 					{
+            Error.SetError("Unable to play movie", "Can not find movie width/height");
 						m_strCurrentFile="";
 						CloseInterfaces();
 						return false;
@@ -139,6 +141,7 @@ namespace MediaPortal.Player
         hr = mediaCtrl.Run();
         if (hr < 0)
         {
+          Error.SetError("Unable to play movie", "Unable to start movie");
           m_strCurrentFile="";
           CloseInterfaces();
           return false;

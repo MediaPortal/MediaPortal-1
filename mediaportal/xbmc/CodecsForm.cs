@@ -225,7 +225,7 @@ namespace MediaPortal
     {
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        xmlreader.SetValueAsBool("general","checkcodecs",checkBox1.Checked);
+        xmlreader.SetValueAsBool("general","checkcodecs",!checkBox1.Checked);
       }
       this.Close();
     }

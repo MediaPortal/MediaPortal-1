@@ -318,17 +318,22 @@ namespace MediaPortal.Player
       {
         iStage=2;
         comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-        if( comtype == null )
-          throw new NotSupportedException( "DirectX (9 or higher) not installed?" );
+        if (comtype==null)
+        {
+          Error.SetError("Unable to play file","DirectX 9.0c is not installed");
+          return false;
+        }
         iStage=3;
         comobj = Activator.CreateInstance( comtype );
         iStage=4;
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
 			  iStage=5;
         int hr = graphBuilder.RenderFile( m_strCurrentFile, null );
-        if( hr < 0 )
-          Marshal.ThrowExceptionForHR( hr );
-
+        if( hr != 0 )
+        {
+            Error.SetError("Unable to play file","Missing codecs to play this file");
+            return false;
+        }
         iStage=6;
         mediaCtrl	= (IMediaControl)  graphBuilder;
         
