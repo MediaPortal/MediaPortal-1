@@ -1839,6 +1839,7 @@ namespace MediaPortal
       // notifyIcon1
       // 
       this.notifyIcon1.ContextMenu = this.contextMenu1;
+      this.notifyIcon1.DoubleClick += new System.EventHandler(this.Restore_OnClick);
       this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
       this.notifyIcon1.Text = "MediaPortal";
       // 
