@@ -973,6 +973,7 @@ namespace MediaPortal.GUI.Music
           if (!PlayListFactory.IsPlayList(pItem.Path))
           {
             PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+            playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
             playlistItem.FileName = pItem.Path;
             playlistItem.Description = pItem.Label;
             playlistItem.Duration = pItem.Duration;
@@ -1035,6 +1036,7 @@ namespace MediaPortal.GUI.Music
         if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;

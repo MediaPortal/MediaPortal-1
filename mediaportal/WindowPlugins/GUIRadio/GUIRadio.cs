@@ -262,6 +262,10 @@ namespace MediaPortal.GUI.Radio
             foreach (RadioStation station in stations)
             {
               PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+              if (station.URL==String.Empty)
+                playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Radio;
+              else
+                playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.AudioStream;
               playlistItem.FileName = GetPlayPath(station);
               playlistItem.Description = station.Name;
               playlistItem.Duration = 0;
@@ -718,6 +722,7 @@ namespace MediaPortal.GUI.Radio
         for (int i=0; i < m_Playlist.Count;++i)
         {
           PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+          playlistItem.Type = m_Playlist[i].Type;
           playlistItem.FileName = m_Playlist[i].FileName;
           playlistItem.Description = m_Playlist[i].Description;
           playlistItem.Duration = m_Playlist[i].Duration;
@@ -748,6 +753,7 @@ namespace MediaPortal.GUI.Radio
                 playlistItem.FileName = playlist[0].FileName;
                 playlistItem.Description = playlist[0].Description;
                 playlistItem.Duration = playlist[0].Duration;
+                playlistItem.Type = playlist[0].Type;
                 PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
               }
             }
@@ -759,9 +765,16 @@ namespace MediaPortal.GUI.Radio
             RadioStation station = item.MusicTag as RadioStation;
             PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
             if (station!=null)
+            {
               playlistItem.FileName = GetPlayPath(station);
+              if (station.URL==String.Empty) playlistItem.Type=Playlists.PlayList.PlayListItem.PlayListItemType.Radio;
+              else playlistItem.Type=Playlists.PlayList.PlayListItem.PlayListItemType.AudioStream;
+            }
             else
+            {
+              playlistItem.Type=Playlists.PlayList.PlayListItem.PlayListItemType.AudioStream;
               playlistItem.FileName = item.Path;
+            }
             playlistItem.Description = item.Label;
             playlistItem.Duration = 0;
             PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);

@@ -14,6 +14,7 @@ namespace MediaPortal.Playlists
       public enum PlayListItemType
       {
         Unknown,
+        Audio,
         Radio,
         AudioStream,
         VideoStream,

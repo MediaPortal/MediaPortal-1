@@ -678,6 +678,7 @@ namespace MediaPortal.GUI.Video
           string strFileName = (string)movies[i];
           PlayList.PlayListItem newitem = new PlayList.PlayListItem();
           newitem.FileName = strFileName;
+          newitem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
           playlist.Add(newitem);
         }
 

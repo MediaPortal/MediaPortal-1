@@ -859,6 +859,7 @@ namespace MediaPortal.GUI.Video
 						strFileName = (string)movies[i];
 						PlayList.PlayListItem itemNew = new PlayList.PlayListItem();
 						itemNew.FileName = strFileName;
+            itemNew.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
 						playlist.Add(itemNew);
 					}
 
@@ -876,6 +877,7 @@ namespace MediaPortal.GUI.Video
         newPlayList.Clear();
         PlayList.PlayListItem NewItem = new PlayList.PlayListItem();
         NewItem.FileName = strFileName;
+        NewItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
         newPlayList.Add(NewItem);
         PlayMovieFromPlayList();
 /*
@@ -926,6 +928,7 @@ namespace MediaPortal.GUI.Video
 					playlistItem.FileName = pItem.Path;
 					playlistItem.Description = pItem.Label;
 					playlistItem.Duration = pItem.Duration;
+          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
 					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
 				}
 			}

@@ -707,6 +707,7 @@ namespace MediaPortal.GUI.Music
 						continue;
 					}
 					PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
 					playlistItem.FileName = pItem.Path;
 					playlistItem.Description = pItem.Label;
 					int iDuration = 0;
@@ -758,6 +759,7 @@ namespace MediaPortal.GUI.Music
         if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;

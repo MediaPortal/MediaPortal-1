@@ -1154,6 +1154,7 @@ namespace MediaPortal.GUI.Music
             continue;
           }
           PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName=pItem.Path;
           playlistItem.Description=pItem.Label;
           int iDuration=0;
@@ -1182,6 +1183,7 @@ namespace MediaPortal.GUI.Music
         if ( String.Compare(song.Album,strAlbum,true)==0)
         {
           PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
+          playlistItem.Type=PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName=song.FileName;
           playlistItem.Description=song.Title;
           playlistItem.Duration=song.Duration;
@@ -1205,6 +1207,7 @@ namespace MediaPortal.GUI.Music
       foreach (Song song in albums)
       {
         PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
+        playlistItem.Type=PlayList.PlayListItem.PlayListItemType.Audio;
         playlistItem.FileName=song.FileName;
         playlistItem.Description=song.Title;
         playlistItem.Duration=song.Duration;
@@ -1263,6 +1266,7 @@ namespace MediaPortal.GUI.Music
         if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
+          playlistItem.Type=PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName=pItem.Path;
           playlistItem.Description=pItem.Label;
           playlistItem.Duration=pItem.Duration;

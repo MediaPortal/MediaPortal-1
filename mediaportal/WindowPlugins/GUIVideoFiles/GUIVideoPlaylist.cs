@@ -663,7 +663,8 @@ namespace MediaPortal.GUI.Video
 					PlayList.PlayListItem newItem = new PlayList.PlayListItem();
 					newItem.FileName = pItem.Path;
 					newItem.Description = pItem.Label;
-					newItem.Duration = pItem.Duration;
+          newItem.Duration = pItem.Duration;
+          newItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
 					playlist.Add(newItem);
 				}
 				playlist.Save(strPath);

@@ -52,6 +52,7 @@ namespace MediaPortal.Playlists
 				{
 					Utils.GetQualifiedFilename(strBasePath,ref strFileName);
 					PlayList.PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+          newItem.Type = PlayListItem.PlayListItemType.Audio;
 					string strDescription;
 					strDescription=System.IO.Path.GetFileName(strFileName);
 					newItem.Description=strDescription;
@@ -87,6 +88,7 @@ namespace MediaPortal.Playlists
 							{
 								Utils.GetQualifiedFilename(strBasePath,ref strFileName);
 								PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
+                newItem.Type = PlayListItem.PlayListItemType.Audio;
 								if (strInfo.Length==0)
 								{
 									strInfo=System.IO.Path.GetFileName(strFileName);
@@ -110,6 +112,7 @@ namespace MediaPortal.Playlists
 					{
 						Utils.GetQualifiedFilename(strBasePath,ref strFileName);
 						PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+            newItem.Type = PlayListItem.PlayListItemType.Audio;
 						string strDescription;
 						strDescription=System.IO.Path.GetFileName(strFileName);
 						newItem.Description=strDescription;

@@ -875,6 +875,7 @@ namespace MediaPortal.GUI.Music
 					newItem.FileName = pItem.Path;
 					newItem.Description = pItem.Label;
 					newItem.Duration = pItem.Duration;
+          newItem.Type=PlayList.PlayListItem.PlayListItemType.Audio;
 					playlist.Add(newItem);
 				}
 				playlist.Save(strPath);
@@ -926,10 +927,12 @@ namespace MediaPortal.GUI.Music
 			}
 			
 			//add to playlist
-			PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+      PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+      playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
 			playlistItem.FileName = song.FileName ;
 			playlistItem.Description = song.Track + ". " + song.Artist + " - " + song.Title ;
 			playlistItem.Duration = song.Duration ;
+
 			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
 
 		}

@@ -1159,7 +1159,8 @@ namespace MediaPortal.GUI.Music
 						nFolderCount++;
 						continue;
 					}
-					PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+          PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
 					playlistItem.FileName=pItem.Path;
 					playlistItem.Description=pItem.Label;
 					int iDuration=0;
@@ -1212,6 +1213,7 @@ namespace MediaPortal.GUI.Music
         if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
+          playlistItem.Type=PlayList.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName=pItem.Path;
           playlistItem.Description=pItem.Label;
           playlistItem.Duration=pItem.Duration;
@@ -1524,6 +1526,7 @@ namespace MediaPortal.GUI.Music
         playlistItem.FileName=song.FileName;
         playlistItem.Description=song.Title;
         playlistItem.Duration=song.Duration;
+        playlistItem.Type=PlayList.PlayListItem.PlayListItemType.Audio;
         PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Add(playlistItem);
       }
       

@@ -62,6 +62,7 @@ namespace MediaPortal.Playlists
 					  strLine.StartsWith("rtp") || strLine.StartsWith("RTP")  )
 				{
 					PlayListItem newItem=new PlayListItem(strLine,strLine,0);
+          newItem.Type = PlayListItem.PlayListItemType.AudioStream;
 					Add(newItem);
 					file.Close();
 					return true;
@@ -119,12 +120,13 @@ namespace MediaPortal.Playlists
 					{
 						int lDuration=System.Int32.Parse(strDuration);
 						lDuration*=1000;
-						string strTmp=strFileName.ToLower();
+            string strTmp=strFileName.ToLower();
+            PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
 						if (strTmp.IndexOf("http:")<0 && strTmp.IndexOf("mms:")<0 && strTmp.IndexOf("rtp:")<0)
 						{
 							Utils.GetQualifiedFilename(strBasePath,ref strFileName);
+              newItem.Type = PlayListItem.PlayListItemType.AudioStream;
 						}
-						PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
 						Add(newItem);
 						strFileName="";
 						strInfo="";
