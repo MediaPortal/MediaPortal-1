@@ -923,7 +923,10 @@ public class MediaPortalApp : D3DApp, IRender
 						case Action.ActionType.ACTION_MUSIC_PLAY : 
 							if (!GUIGraphicsContext.IsFullScreenVideo)
 							{
-								if (g_Player.Paused) g_Player.Pause();
+                g_Player.StepNow();
+                g_Player.Speed=1;
+                if (g_Player.Paused) g_Player.Pause();
+
 								return;
 							}
 							break;
