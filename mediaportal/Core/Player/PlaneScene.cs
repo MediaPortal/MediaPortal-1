@@ -574,12 +574,18 @@ namespace MediaPortal.Player
 			m_vertexBuffer.Unlock();
 			unsafe
 			{
-				GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable,false);
-				GUIGraphicsContext.DX9Device.SetSamplerState(0,SamplerStageStates.AddressU,3);//clamp
-				GUIGraphicsContext.DX9Device.SetSamplerState(0,SamplerStageStates.AddressV,3);//clamp
 
 				IntPtr ptr = new IntPtr( texAddr);
 				FontEngineSetTexture(ptr.ToPointer());
+				GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable,false);
+				GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable,false);
+
+				GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;
+				GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Linear;
+				GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Linear;
+				GUIGraphicsContext.DX9Device.SamplerState[0].AddressU=TextureAddress.Clamp;
+				GUIGraphicsContext.DX9Device.SamplerState[0].AddressV=TextureAddress.Clamp;
+
 				GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vertexBuffer, 0);
 				GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 				GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
