@@ -1,3 +1,4 @@
+
 using System;
 using System.IO;
 using System.Drawing;
@@ -16,6 +17,7 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIImage :  GUIControl
 	{
+
 		[XMLSkinElement("colorkey")] private long                    m_dwColorKey=0;
 		private VertexBuffer						m_vbBuffer=null;
 		[XMLSkinElement("texture")] private string m_strFileName="";
@@ -33,7 +35,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("zoom")] private bool    m_bZoom=false;
     [XMLSkinElement("zoomfromtop")] private bool    m_bZoomFromTop=false;
     [XMLSkinElement("fixedheight")] private bool    m_bFixedHeight=false;    
-		private ArrayList								m_vecTextures = new ArrayList();
+		private CachedTexture.Frame[]  m_vecTextures = null;
 
     //TODO GIF PALLETTE
     //private PaletteEntry						m_pPalette=null;
@@ -56,7 +58,8 @@ namespace MediaPortal.GUI.Library
     Vector3                         pntPosition;
     float                           scaleX=1;
     float                           scaleY=1;
-
+		float _fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
+		int   _color;
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
 		}
@@ -243,8 +246,9 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		protected void Process()
 		{
+			if (m_vecTextures==null) return;
 			// If the number of textures that correspond to this control is lower than or equal to 1 do not change the texture.
-			if (m_vecTextures.Count <= 1)
+			if (m_vecTextures.Length <= 1)
 				return;
 			
 			// If the GUIImage has not been visible before start at the first texture in the m_vecTextures.
@@ -256,10 +260,10 @@ namespace MediaPortal.GUI.Library
 				return;
 			}
 			
-      if (m_iCurrentImage >= m_vecTextures.Count) 
+      if (m_iCurrentImage >= m_vecTextures.Length) 
         m_iCurrentImage =0;
 
-      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
       string strFile=m_strFileName;
       if (ContainsProperty)
         strFile=GUIPropertyManager.Parse(m_strFileName);
@@ -277,7 +281,7 @@ namespace MediaPortal.GUI.Library
         m_AnimationTime=DateTime.Now;
 
         // Reset the current image
-				if (m_iCurrentImage+1 >= m_vecTextures.Count )
+				if (m_iCurrentImage+1 >= m_vecTextures.Length)
 				{
 					// Check if another loop is required
 					if (iMaxLoops > 0)
@@ -327,11 +331,10 @@ namespace MediaPortal.GUI.Library
 			if (0==iImages) return;// unable to load texture
 
       //get each frame of the texture
+			m_vecTextures = new CachedTexture.Frame [iImages];
 			for (int i=0; i < iImages; i++)
 			{
-				CachedTexture.Frame frame;
-				frame=GUITextureManager.GetTexture(strFile,i, out m_iTextureWidth,out m_iTextureHeight);//,m_pPalette);
-				if (frame!=null) m_vecTextures.Add(frame);
+				m_vecTextures[i]=GUITextureManager.GetTexture(strFile,i, out m_iTextureWidth,out m_iTextureHeight);//,m_pPalette);
 			}
 
   		
@@ -368,7 +371,7 @@ namespace MediaPortal.GUI.Library
         }
 
         m_image=null;
-        m_vecTextures.Clear();
+        m_vecTextures=null;
         m_iCurrentImage=0;
         m_iCurrentLoop=0;
         m_iImageWidth=0;
@@ -386,11 +389,11 @@ namespace MediaPortal.GUI.Library
     protected override void Update()
     {
       if (m_vbBuffer==null) return;
-      if (m_vecTextures.Count==0) return;
+      if (m_vecTextures==null) return;
       float x=(float)m_dwPosX;
       float y=(float)m_dwPosY;
 
-      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
       Direct3D.Texture texture=frame.Image;
       if (texture==null)
       {
@@ -575,7 +578,16 @@ namespace MediaPortal.GUI.Library
 				nh=GUIGraphicsContext.Height-y;
 			}
 
-      CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0);
+			_fx=x;
+			_fy=y;
+			_nw=nw;
+			_nh=nh;
+			_uoff=uoffs;
+			_voff=voffs;
+			_umax=u;
+			_vmax=v;
+			_color=(int)m_colDiffuse;
+      CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,LockFlags.Discard);
       verts[0].X= x- 0.5f; verts[0].Y=y+nh- 0.5f; verts[0].Z= 0.0f; verts[0].Rhw=1.0f ;
       verts[0].Color = (int)m_colDiffuse;
       verts[0].Tu = uoffs;
@@ -609,18 +621,24 @@ namespace MediaPortal.GUI.Library
       pntPosition.Y /= scaleY;
 		}
 
+		/// <summary>
+		/// Check 
+		///  -IsVisible
+		///  -Filename
+		///  -Filename changed cause it contains a property
+		///  -m_vecTextures
+		///  -m_vbBuffer
+		///  -GUIGraphicsContext.DX9Device
+		/// </summary>
+		/// <returns></returns>
     public bool PreRender()
     {
       // Do not render if not visible
-      if (false==IsVisible)
+      if (false==m_bVisible)
       {
         m_bWasVisible = false;
         return false;
       }
-
-      // if no filename present then return
-      if (m_strFileName==null) return false;
-      if (m_strFileName==String.Empty) return false;
 
       // if filename contains a property, then get the value of the property
       if (ContainsProperty)
@@ -628,7 +646,7 @@ namespace MediaPortal.GUI.Library
         m_strTxt=GUIPropertyManager.Parse(m_strFileName);
           
         // if value changed or if we dont got any textures yet
-        if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Count)
+        if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Length)
         {
           // then free our resources, and reload the (new) image
           FreeResources();
@@ -646,18 +664,6 @@ namespace MediaPortal.GUI.Library
       }
 
         
-  			
-      // Do not render if there are not textures
-      if (m_vecTextures==null) 
-        return false;
-      if (0==m_vecTextures.Count)
-        return false ;
-
-      // Do not render if there is no vertex buffer
-      if (null==m_vbBuffer)
-        return  false;
-  			
-  			
       // if we are not rendering the GUI background
       if (!GUIGraphicsContext.ShowBackground)
       {
@@ -711,20 +717,17 @@ namespace MediaPortal.GUI.Library
           return false;        
         }
       }
-      //we need to draw the image using direct3d
-      //check if direct3d device is still valid
-      if (GUIGraphicsContext.DX9Device==null) return false;
-      if (GUIGraphicsContext.DX9Device.Disposed) return false;
 
       // if image is an animation then present the next frame
-      if (m_vecTextures.Count != 1)
+			if (m_vecTextures==null) return false;
+      if (m_vecTextures.Length != 1)
         Process();
 
       // if the current frame is invalid then return
-      if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return false;
+      if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Length) return false;
 
       //get the current frame
-      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
       if (frame==null) return false; // no frame? then return
 
       //get the texture of the frame
@@ -743,15 +746,6 @@ namespace MediaPortal.GUI.Library
         return false;
       }
         
-      // check if the stateblock is valid, if not allocate one
-      /*if (savedStateBlock!=null)
-      {
-        if (savedStateBlock.Disposed) savedStateBlock=null;
-      }
-      if (savedStateBlock==null)
-      {
-        CreateStateBlock();
-      }*/
       return true;
     }
 
@@ -763,7 +757,7 @@ namespace MediaPortal.GUI.Library
       if (!PreRender()) return; // SLOW
 
       //get the current frame
-      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
       if (frame==null) return ; // no frame? then return
 
       //get the texture of the frame
@@ -779,13 +773,19 @@ namespace MediaPortal.GUI.Library
 		public override void Render()
     {
 			//return;
-      lock (this)
+      //lock (this)
       {
         if (!PreRender()) return;
+				
         //get the current frame
-        CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+        CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
         if (frame==null) return ; // no frame? then return
 
+				if (frame.UseNewTextureEngine)
+				{
+					frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
+					return;
+				}
         //get the texture of the frame
         Direct3D.Texture texture=frame.Image;
 

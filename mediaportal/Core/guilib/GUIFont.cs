@@ -1,4 +1,4 @@
-//#define NEWFONTENGINE
+#define NEWFONTENGINE
 using System;
 using System.Text;
 using System.Diagnostics;
@@ -21,13 +21,23 @@ namespace MediaPortal.GUI.Library
 	{
 #if NEWFONTENGINE
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void AddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);
-		
-		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void SetCoordinate(int fontNumber, int index, int subindex, float fValue);
+		unsafe private static extern void FontEngineInitialize();
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, uint intColor);
+		unsafe private static extern void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineRemoveFont(int fontNumber);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineDrawText3D(int fontNumber, char* text, int xposStart, int yposStart, uint intColor);
+
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEnginePresent3D(int fontNumber);
 #endif		
 		private string m_strFontName;
 		private string m_strFileName;
@@ -83,6 +93,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iHeight">The height of the font.</param>
 		public GUIFont(string strName, string strFileName, int iHeight)
 		{
+			FontEngineInitialize();
 			m_strFontName=strName;
 			m_strFileName=strFileName;
 			m_iFontHeight=iHeight;
@@ -103,6 +114,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="style">The style of the font (E.g., Bold)</param>
     public GUIFont(string strName, string strFileName, int iHeight, FontStyle style)
     {
+			FontEngineInitialize();
       m_strFontName=strName;
       m_strFileName=strFileName;
       m_FontStyle=style;
@@ -257,7 +269,9 @@ namespace MediaPortal.GUI.Library
 	
     public void Present()
     {
-#if !NEWFONTENGINE			
+#if NEWFONTENGINE			
+			FontEnginePresent3D(ID);
+#else
       // Set the data for the vertex buffer
       if (dwNumTriangles > 0)
       {
@@ -284,56 +298,6 @@ namespace MediaPortal.GUI.Library
       dwNumTriangles=0;
       iv=0;
 #endif
-    }
-
-    public bool GetFontCache(float xpos, float ypos, long color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
-    {
-      int alpha=(int)((color>>24)&0xff);
-      int red=(int)((color>>16)&0xff);
-      int green=(int)((color>>8) &0xff);
-      int blue=(int)(color&0xff);
-      return GetFontCache(xpos, ypos, Color.FromArgb(alpha,red,green,blue), text, out cachedVertexBuffer, out triangles);
-    }
-    public bool GetFontCache(float xpos, float ypos, Color color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
-		{
-			triangles=0;
-			cachedVertexBuffer=null;
-
-			if (text==null) return false;
-			if (text==String.Empty) return false;
-			if (xpos <=0) return false;
-			if (ypos <=0) return false;
-      if (GUIGraphicsContext.graphics!=null) 
-      {
-        return false;
-      }
-      VertexBuffer tmp=vertexBuffer;
-      vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured), MaxNumfontVertices,
-				                                    GUIGraphicsContext.DX9Device, Usage.WriteOnly, 0, Pool.Managed);
-      DrawText(xpos, ypos, color, text, RenderFlags.DontDiscard);
-      vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
-      triangles=dwNumTriangles;     
-      cachedVertexBuffer=vertexBuffer;
-
-      Present();
-      vertexBuffer=tmp;
-
-      dwNumTriangles=0;
-      iv=0;
-      return true;
-    }
-    public void DrawFontCache(ref VertexBuffer cachedVertexBuffer, int triangles)
-    {
-      //return;
-      // Set the data for the vertexbuffer
-      if (cachedVertexBuffer!=null && triangles>0)
-      {
-        //savedStateBlock.Apply();
-        GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
-        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, cachedVertexBuffer, 0);
-        GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, triangles);
-      }
     }
 		/// <summary>
 		/// Draw some text on the screen.
@@ -365,7 +329,7 @@ namespace MediaPortal.GUI.Library
 			unsafe
 			{
 				IntPtr ptrStr=Marshal.StringToCoTaskMemAnsi(text); //SLOW
-				DrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor);
+				FontEngineDrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor);
 				Marshal.FreeCoTaskMem(ptrStr);
 				return;
 			}
@@ -557,6 +521,9 @@ namespace MediaPortal.GUI.Library
       fontTexture=null;
 			systemFont = null;
       fontVertices=null;
+#if NEWFONTENGINE
+			FontEngineRemoveFont(ID);	
+#endif
 		}
 
 		/// <summary>
@@ -778,21 +745,20 @@ namespace MediaPortal.GUI.Library
 				surf.Description.Format );
 
 #if NEWFONTENGINE
+			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+			IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
 			unsafe
 			{
-				
-				IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
-				IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
-				AddFont(upDevice.ToPointer(), ID,upTexture.ToPointer(), _StartCharacter, _EndCharacter, textureScale, textureWidth, textureHeight, spacingPerChar,MaxNumfontVertices);
-				
-				int length=textureCoords.GetLength(0);
-				for (int i=0; i < length;++i)
-				{
-					SetCoordinate(ID, i, 0, textureCoords[i,0]);
-					SetCoordinate(ID, i, 1, textureCoords[i,1]);
-					SetCoordinate(ID, i, 2, textureCoords[i,2]);
-					SetCoordinate(ID, i, 3, textureCoords[i,3]);
-				}
+				FontEngineAddFont(upDevice.ToPointer(), ID,upTexture.ToPointer(), _StartCharacter, _EndCharacter, textureScale, textureWidth, textureHeight, spacingPerChar,MaxNumfontVertices);
+			}
+			
+			int length=textureCoords.GetLength(0);
+			for (int i=0; i < length;++i)
+			{
+				FontEngineSetCoordinate(ID, i, 0, textureCoords[i,0]);
+				FontEngineSetCoordinate(ID, i, 1, textureCoords[i,1]);
+				FontEngineSetCoordinate(ID, i, 2, textureCoords[i,2]);
+				FontEngineSetCoordinate(ID, i, 3, textureCoords[i,3]);
 			}
 #endif
 /*

@@ -4,6 +4,13 @@ LIBRARY      "fontEngine"
 
 EXPORTS
     ; Explizite Exporte können hier eingefügt werden
-AddFont					@1
-SetCoordinate			@2
-DrawText3D				@3
+FontEngineInitialize			@1
+FontEngineAddFont				@2
+FontEngineRemoveFont			@3
+FontEngineSetCoordinate			@4
+FontEngineDrawText3D			@5
+FontEnginePresent3D				@6
+FontEngineAddTexture			@7
+FontEngineRemoveTexture			@8
+FontEngineDrawTexture			@9
+FontEnginePresentTextures		@10

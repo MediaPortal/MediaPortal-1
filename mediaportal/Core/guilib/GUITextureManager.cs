@@ -1,3 +1,4 @@
+//#define DO_RESAMPLE
 using System;
 using System.Net;
 using System.Diagnostics;
@@ -392,6 +393,44 @@ namespace MediaPortal.GUI.Library
       {
         imgSrc=Image.FromFile(strFileName);   
         if (imgSrc==null) return null;
+#if DO_RESAMPLE
+				//Direct3D prefers textures which height/width are a power of 2
+				//doing this will increases performance
+				//So the following core resamples all textures to
+				//make sure all are 2x2, 4x4, 8x8, 16x16, 32x32, 64x64, 128x128, 256x256, 512x512
+				int w=-1,h=-1;
+				if (imgSrc.Width >2   && imgSrc.Width < 4)  w=2;
+				if (imgSrc.Width >4   && imgSrc.Width < 8)  w=4;
+				if (imgSrc.Width >8   && imgSrc.Width < 16) w=8;
+				if (imgSrc.Width >16  && imgSrc.Width < 32) w=16;
+				if (imgSrc.Width >32  && imgSrc.Width < 64) w=32;
+				if (imgSrc.Width >64  && imgSrc.Width <128) w=64;
+				if (imgSrc.Width >128 && imgSrc.Width <256) w=128;
+				if (imgSrc.Width >256 && imgSrc.Width <512) w=256;
+				if (imgSrc.Width >512 && imgSrc.Width <1024) w=512;
+
+
+				if (imgSrc.Height >2   && imgSrc.Height < 4)  h=2;
+				if (imgSrc.Height >4   && imgSrc.Height < 8)  h=4;
+				if (imgSrc.Height >8   && imgSrc.Height < 16) h=8;				
+				if (imgSrc.Height >16  && imgSrc.Height < 32) h=16;
+				if (imgSrc.Height >32  && imgSrc.Height < 64) h=32;
+				if (imgSrc.Height >64  && imgSrc.Height <128) h=64;
+				if (imgSrc.Height >128 && imgSrc.Height <256) h=128;
+				if (imgSrc.Height >256 && imgSrc.Height <512) h=256;
+				if (imgSrc.Height >512 && imgSrc.Height <1024) h=512;
+				if (w>0 || h>0)
+				{
+					if (h > w) w=h;
+					Log.Write("TextureManager: resample {0}x{1} -> {2}x{3} {4}",
+												imgSrc.Width,imgSrc.Height, w,w,strFileName);
+
+					Image imgResampled=Resample(imgSrc,w, w);
+					imgSrc.Dispose();
+					imgSrc=imgResampled;
+					imgResampled=null;
+				}
+#endif
         if (IsTemporary(strFileName))
         {
           iMaxWidth=MAX_THUMB_WIDTH;
@@ -408,6 +447,13 @@ namespace MediaPortal.GUI.Library
         //load jpg or png into texture
         using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
         {
+					Format fmt=Format.A8R8G8B8;
+					if (imgSrc.Width < (GUIGraphicsContext.Width/4)) 
+						fmt=Format.Dxt3;
+					if (imgSrc.Height < (GUIGraphicsContext.Height/4)) 
+						fmt=Format.Dxt3;
+
+
           imgSrc.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
           ImageInformation info2 = new ImageInformation();
           stream.Flush();
@@ -417,7 +463,7 @@ namespace MediaPortal.GUI.Library
                                               0,0,//width/height
                                               1,//mipslevels
                                               0,//Usage.Dynamic,
-                                              Format.A8R8G8B8,
+                                              fmt,
                                               Pool.Managed,
                                               Filter.None,
                                               Filter.None,

@@ -11,10 +11,3 @@
 #define FONTENGINE_API __declspec(dllimport)
 #pragma message("use dllimport")
 #endif
-
-
-void AddFont(IDirect3DDevice9* device, int fontNumber,IDirect3DTexture9* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float scaleX, float scaleY, float fSpacingPerChar,int maxVertices);
-void SetCoordinate(int fontNumber, int index, int subindex, float fValue);
-void DrawText(int fontNumber, char* text, int xposStart, int yposStart, DWORD intColor);
-
-

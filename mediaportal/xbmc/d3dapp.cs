@@ -547,7 +547,7 @@ namespace MediaPortal
     public void BuildPresentParamsFromSettings()
     {
       presentParams.Windowed = graphicsSettings.IsWindowed;
-      presentParams.BackBufferCount = 1;
+      presentParams.BackBufferCount = 3;
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag=false;
       
@@ -1204,16 +1204,14 @@ namespace MediaPortal
 
       try
       {
-				if (GUIGraphicsContext.Vmr9Active) 
-				{
-				}
-				else
+				if (!GUIGraphicsContext.Vmr9Active) 
 				{
 					Render();
 				}
       }
-      catch (Exception )
+      catch (Exception ex)
       {
+				int x=1;
       }
 
       if (!deviceLost &&!m_bNeedReset)
@@ -2092,7 +2090,7 @@ namespace MediaPortal
     {
       try
       {
-        System.Windows.Forms.Application.DoEvents();
+        System.Windows.Forms.Application.DoEvents();//SLOW
       }
 #if DEBUG
       catch (Exception ex)
@@ -2134,9 +2132,7 @@ namespace MediaPortal
           break;
         try
         {
-          HandleMessage();
           FrameMove();
-          HandleMessage();
           FullRender();
           int SleepingTime=GetSleepingTime();
           DoSleep(SleepingTime);

@@ -22,8 +22,6 @@ namespace MediaPortal.GUI.Library
     bool                          m_bUseFontCache=false;
     
     GUIFont								        m_pFont=null;
-    Direct3D.VertexBuffer         fontVertexBuffer=null;
-    int                           cachedTriangles=0;
 		bool													useViewport=true;
 		/// <summary>
 		/// The constructor of the GUILabelControl class.
@@ -133,20 +131,10 @@ namespace MediaPortal.GUI.Library
 
         if (m_dwTextAlign==GUIControl.Alignment.ALIGN_CENTER)
         {
-          if (fontVertexBuffer!=null)
-          {
-            m_pFont.DrawFontCache(ref fontVertexBuffer,cachedTriangles);
-            return;
-          }          
          
           int xoff= (int)((m_dwWidth-textwidth)/2);
           int yoff= (int)((m_dwHeight-textheight)/2);
-          if (m_bUseFontCache)
-          {
-            m_pFont.GetFontCache((float)m_dwPosX+xoff, (float)m_dwPosY+yoff, m_dwTextColor, renderText, out fontVertexBuffer, out cachedTriangles);
-            
-          }
-          else m_pFont.DrawText((float)m_dwPosX+xoff, (float)m_dwPosY+yoff,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
+          m_pFont.DrawText((float)m_dwPosX+xoff, (float)m_dwPosY+yoff,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
         }
         else
         {
@@ -155,16 +143,7 @@ namespace MediaPortal.GUI.Library
           {
             if (m_dwWidth==0 || textwidth < m_dwWidth)
             {
-              if (fontVertexBuffer!=null)
-              {
-                m_pFont.DrawFontCache(ref fontVertexBuffer,cachedTriangles);
-                return;
-              }
-              if (m_bUseFontCache)
-              {
-                m_pFont.GetFontCache((float)m_dwPosX-textwidth, (float)m_dwPosY, m_dwTextColor, renderText, out fontVertexBuffer, out cachedTriangles);
-              }
-              else m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
+							m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
             }
             else
             {
@@ -200,19 +179,8 @@ namespace MediaPortal.GUI.Library
 								GUIGraphicsContext.DX9Device.Viewport = newviewport;
 							}
 
-              if (fontVertexBuffer!=null)
-              {
-                m_pFont.DrawFontCache(ref fontVertexBuffer,cachedTriangles);
-              }
-              else
-              {
-                if (m_bUseFontCache)
-                {
-                  m_pFont.GetFontCache((float)m_dwPosX-textwidth, (float)m_dwPosY, m_dwTextColor, renderText, out fontVertexBuffer, out cachedTriangles);
-                }
-                else m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
-              }
-							if (useViewport)
+              m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
+              if (useViewport)
 	              GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
             return;
@@ -220,16 +188,7 @@ namespace MediaPortal.GUI.Library
 
           if (m_dwWidth==0 || textwidth < m_dwWidth)
           {
-            if (fontVertexBuffer!=null)
-            {
-              m_pFont.DrawFontCache(ref fontVertexBuffer,cachedTriangles);
-              return;
-            }
-            if (m_bUseFontCache)
-            {
-              m_pFont.GetFontCache((float)m_dwPosX, (float)m_dwPosY, m_dwTextColor, renderText, out fontVertexBuffer, out cachedTriangles);
-            }
-            else m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign); 
+            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign); 
           }
           else
           {
@@ -264,19 +223,8 @@ namespace MediaPortal.GUI.Library
 							GUIGraphicsContext.DX9Device.Viewport = newviewport;
 						}
 
-            if (fontVertexBuffer!=null)
-            {
-              m_pFont.DrawFontCache(ref fontVertexBuffer,cachedTriangles);
-            }
-            else
-            {
-              if (m_bUseFontCache)
-              {
-                m_pFont.GetFontCache((float)m_dwPosX, (float)m_dwPosY, m_dwTextColor, renderText, out fontVertexBuffer, out cachedTriangles);
-              }
-              else m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign); 
-            }
-						if (useViewport)
+            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign); 
+            if (useViewport)
 							GUIGraphicsContext.DX9Device.Viewport = oldviewport;
           }
         }		
@@ -487,12 +435,6 @@ namespace MediaPortal.GUI.Library
     }
     void ClearFontCache()
     {
-      if (fontVertexBuffer!=null)
-      {
-        if (!fontVertexBuffer.Disposed) fontVertexBuffer.Dispose();
-        fontVertexBuffer=null;
-        cachedTriangles=0;
-      }
       Update();
     }
 	}

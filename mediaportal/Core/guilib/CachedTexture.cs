@@ -1,9 +1,11 @@
+#define USE_NEW_TEXTURE_ENGINE
 using System;
 using System.Drawing;
 using System.Collections;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.GUI.Library
 {
@@ -13,6 +15,20 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class CachedTexture 
   {
+#if USE_NEW_TEXTURE_ENGINE
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern int  FontEngineAddTexture(int hasCode,void* fontTexture);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEnginePresentTextures();
+#endif
+
 		/// <summary>
 		/// Class which contains a single frame
 		/// A cached texture can contain more then 1 frames for example when its an animated gif
@@ -21,11 +37,26 @@ namespace MediaPortal.GUI.Library
     {
       Texture _Image;			//texture of current frame
       int     _Duration;	//duration of current frame
-      
+#if USE_NEW_TEXTURE_ENGINE
+			int     _TextureNo;
+			public readonly bool    UseNewTextureEngine=true;
+#else
+			public readonly bool    UseNewTextureEngine=false;
+#endif      
       public Frame(Texture image, int duration)
       {
         _Image = image;
         _Duration = duration;
+#if USE_NEW_TEXTURE_ENGINE
+				if (image!=null)
+				{
+					unsafe
+					{
+						IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
+						_TextureNo=FontEngineAddTexture(ptr.ToInt32(),(void*) ptr.ToPointer());
+					}
+				}
+#endif
       }
 
 			/// <summary>
@@ -37,10 +68,24 @@ namespace MediaPortal.GUI.Library
         set {
           if (_Image!=null) 
           {
+#if USE_NEW_TEXTURE_ENGINE
+						FontEngineRemoveTexture(_TextureNo);
+#endif
             if (!_Image.Disposed) 
               _Image.Dispose();
           }
           _Image=value;
+					
+#if USE_NEW_TEXTURE_ENGINE
+					if (_Image!=null)
+					{
+						unsafe
+						{
+							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
+							_TextureNo=FontEngineAddTexture(ptr.ToInt32(),(void*) ptr.ToPointer());
+						}
+					}
+#endif
         }
       }
 
@@ -59,7 +104,10 @@ namespace MediaPortal.GUI.Library
       {
         if (_Image!=null)
         {
-          if (!_Image.Disposed)
+#if USE_NEW_TEXTURE_ENGINE
+					FontEngineRemoveTexture(_TextureNo);
+#endif
+					if (!_Image.Disposed)
           {
             _Image.Dispose();
           }
@@ -68,6 +116,13 @@ namespace MediaPortal.GUI.Library
       }
 
       #endregion
+
+			public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
+			{
+#if USE_NEW_TEXTURE_ENGINE
+				FontEngineDrawTexture(_TextureNo,x, y, nw, nh, uoff, voff, umax, vmax, color);
+#endif
+			}
     }
 
     string    m_strName="";								// filename of the texture

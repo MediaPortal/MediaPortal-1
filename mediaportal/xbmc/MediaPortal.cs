@@ -30,25 +30,16 @@ using MediaPortal.IR;
 using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.Ripper;
 using MediaPortal.Core.Transcoding;
-/// <summary>
-/// - fixed issues in tvguide
-/// - fixed possible hangups when 2 threads where accessing onmessage() or onaction()
-/// -
-/// performance issues:
-/// guilib
-///   thumbpanel     : better to use an array of GUILabelControls
-///   autoplay&dialogs subproject is gone.
-///   batch DX9      : sprite class?
-/// 
-/// performance enhancements made:
-///   - re-packaged all subprojects into 10 assemblies
-///   - added font caching to guilabelcontrol
-///   - Tuned the following controls:button, selectbutton, spin, label 
-///   - WMP9 now gets cleaned-up when playing music has ended
-///   - don't clear DX9 device anymore
-///   - use of DX9 compressed textures for fonts
-///   - use of DX9 saved renderstate state blocks
-///   - debug build now shows cpu performance after pressing the character ! 
+
+/// performance issues: 
+/// (max fps in home:70 fps, without textures:160 fps, without textures&fonts: 190fps
+/// - guiimage prerender/render() is slow
+/// - Application.DoEvents is slow
+/// - guiwindow replace controls arraylist with []
+/// - direct3d.present is slow
+///    - compressed textures?
+///    - resample textures to 2x2,4x4,8x8,16x16,32x32,...
+///   
 /// </summary>
 public class MediaPortalApp : D3DApp, IRender
 { 
@@ -81,6 +72,7 @@ public class MediaPortalApp : D3DApp, IRender
     const int SC_SCREENSAVE = 0xF140;
     const int SW_RESTORE = 9;
 		bool supportsFiltering=false;
+		bool bSupportsAlphaBlend=false;
 		int g_nAnisotropy;
 		DateTime      m_updateTimer=DateTime.MinValue;
 		int						m_iDateLayout;
@@ -784,8 +776,8 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         // Show the frame on the primary surface.
-        GUIGraphicsContext.DX9Device.Present();//SLOW
-      }
+				GUIGraphicsContext.DX9Device.Present();//SLOW
+			}
       catch (DeviceLostException)
       {
         g_Player.Stop();
@@ -945,6 +937,11 @@ public class MediaPortalApp : D3DApp, IRender
 				GUIGraphicsContext.DX9Device.DisplayMode.Format, 
 				Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures, 
 				Format.A8R8G8B8);
+			
+			bSupportsAlphaBlend = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
+																											GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format, 
+																											Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface, 
+																											Format.A8R8G8B8 );
     }
 
     /// <summary>
@@ -1771,7 +1768,6 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
 		GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
 		GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
-		//GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
 		GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
 		GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
 		GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
@@ -1817,6 +1813,14 @@ public class MediaPortalApp : D3DApp, IRender
 			GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Point;
 			GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Point;
 		}
+
+		if (bSupportsAlphaBlend)
+		{
+			GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
+			GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
+			GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
+		}
+		
 
 	}
 
