@@ -515,7 +515,7 @@
 	</string>
 	<string>
 		<id>198</id>
-		<value>Film details worden geladen</value>
+		<value>Film details worden opgehaald</value>
 	</string>
 	<string>
 		<id>199</id>
@@ -2195,7 +2195,7 @@
   </string>
   <string>
   	<id>808</id>
-  	<value>IngrediÃ«nten</value>
+  	<value>Ingrediënten</value>
   </string>
   <string>
   	<id>809</id>
@@ -2283,7 +2283,39 @@
   </string>
   <string>
 	<id>900</id>
-  	<value>Afspelen hervatten?</value>
+  	<value>Afspelen hervatten vanaf laatste punt?</value>
+  </string>
+  <string>
+  	<id>901</id>
+  	<value>MSN Messenger</value>
+  </string>
+  <string>
+  	<id>902</id>
+  	<value>Contactpersonen</value>
+  </string>
+  <string>
+  	<id>903</id>
+  	<value>Aanmelden</value>
+  </string>
+  <string>
+  	<id>904</id>
+  	<value>Afmelden</value>
+  </string>
+  <string>
+  	<id>905</id>
+  	<value>Je moet deze plugin eerst configureren</value>
+  </string>
+  <string>
+  	<id>906</id>
+  	<value>Stel een e-mail adres in</value>
+  </string>
+  <string>
+  	<id>907</id>
+  	<value>Kan geen verbinding maken met MSN</value>
+  </string>
+  <string>
+  	<id>906</id>
+  	<value>is een bericht aan het typen...</value>
   </string>
   <string>
   	<id>1440</id>
@@ -2291,7 +2323,7 @@
   </string>
 	<string>
     <id>2005</id>
-    <value>Delete</value>
+    <value>Verwijderen</value>
   </string>
 	<string>
     <id>2006</id>
@@ -2303,7 +2335,7 @@
   </string>
 	<string>
     <id>2008</id>
-    <value>IngrediÃ«nten</value>
+    <value>Ingrediënten</value>
   </string>
 	<string>
     <id>2009</id>
@@ -2315,7 +2347,7 @@
   </string>
 	<string>
     <id>2011</id>
-    <value>Print</value>
+    <value>Afdrukken</value>
   </string>
 	<string>
     <id>2012</id>
@@ -2843,20 +2875,27 @@
   </string>
   <string>
   	<id>13003</id>
-  	<value>MLF bestand wordt geÃ¯mporteerd</value>
+  	<value>MLF bestand wordt geïmporteerd</value>
   </string>
   <string>
   	<id>13004</id>
-  	<value>MY bestand wordt geÃ¯mporteerd</value>
+  	<value>MY bestand wordt geïmporteerd</value>
   </string>
   <string>
   	<id>13005</id>
-  	<value>Laatst geÃ¯mporteerde bestand:</value>
+  	<value>Laatst geïmporteerde bestand:</value>
+  </string>
+  <string>
+  	<id>13006</id>
+  	<value>Klein plaatje</value>
+  </string>
+  <string>
+  	<id>13007</id>
+  	<value>Groot plaatje</value>
   </string>
   <string>
   	<id>16001</id>
-  	<value>Party shuffle</value>
+  	<value>Feest mix</value>
   </string>
 </strings>
-
 
