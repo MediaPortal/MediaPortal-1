@@ -622,6 +622,8 @@ namespace MediaPortal.Configuration
 
 
       comboBoxLineInput.Items.Clear();
+      capture.FixCrossbarRouting(false);
+
       IBaseFilter audioDevice=capture.AudiodeviceFilter;
       if (audioDevice!=null)
       {
