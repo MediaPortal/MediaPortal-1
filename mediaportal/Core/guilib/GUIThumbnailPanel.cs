@@ -13,7 +13,8 @@ namespace MediaPortal.GUI.Library
 	public class GUIThumbnailPanel : GUIControl
   {
     const int SLEEP_FRAME_COUNT=1;
-    
+		const int THUMBNAIL_OVERSIZED_DIVIDER=16;
+		    
     [XMLSkinElement("remoteColor")] protected long	m_dwRemoteColor = 0xffff0000;
     [XMLSkinElement("downloadColor")] protected long	m_dwDownloadColor = 0xff00ff00;
 
@@ -237,18 +238,23 @@ GUISpinControl m_upDown = null;
 				RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, false);
 
 			}
+
+			// Set oversized value
+			int iOverSized=0;
+			if (bFocus && Focus) iOverSized = ((m_iThumbWidth+m_iThumbHeight)/2)/THUMBNAIL_OVERSIZED_DIVIDER;
+
       if (pItem.HasThumbnail)
       {
         GUIImage pImage = pItem.Thumbnail;
         if (null == pImage /*&& m_iSleeper==0 */&& !IsAnimating)
         {
-          pImage = new GUIImage(0, 0, m_iThumbXPos + dwPosX, m_iThumbYPos + dwPosY, m_iThumbWidth, m_iThumbHeight, pItem.ThumbnailImage, 0x0);
+          pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.ThumbnailImage, 0x0);
           pImage.KeepAspectRatio = true;
           pImage.AllocResources();
           pItem.Thumbnail = pImage;
-          int xOff = (m_iThumbWidth - pImage.RenderWidth) / 2;
-          int yOff = (m_iThumbHeight - pImage.RenderHeight) / 2;
-          pImage.SetPosition(m_iThumbXPos + dwPosX + xOff, m_iThumbYPos + dwPosY + yOff);
+          int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
+          int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
+          pImage.SetPosition(m_iThumbXPos - iOverSized + dwPosX + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
           pImage.Render();
           m_iSleeper+=SLEEP_FRAME_COUNT;
         }
@@ -259,11 +265,11 @@ GUISpinControl m_upDown = null;
             pImage.FreeResources();
             pImage.AllocResources();
           }
-          pImage.Width = m_iThumbWidth;
-          pImage.Height = m_iThumbHeight;
-          int xOff = (m_iThumbWidth - pImage.RenderWidth) / 2;
-          int yOff = (m_iThumbHeight - pImage.RenderHeight) / 2;
-          pImage.SetPosition(m_iThumbXPos + dwPosX + xOff, m_iThumbYPos + dwPosY + yOff);
+          pImage.Width = m_iThumbWidth+2*iOverSized;
+          pImage.Height = m_iThumbHeight+2*iOverSized;
+          int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
+          int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
+          pImage.SetPosition(m_iThumbXPos + dwPosX - iOverSized + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
           pImage.Render();
         }
       }
@@ -274,13 +280,13 @@ GUISpinControl m_upDown = null;
           GUIImage pImage = pItem.IconBig;
           if (null == pImage /*&& m_iSleeper==0 */&& !IsAnimating)
           {
-            pImage = new GUIImage(0, 0, m_iThumbXPos + dwPosX, m_iThumbYPos + dwPosY, m_iThumbWidth, m_iThumbHeight, pItem.IconImageBig, 0x0);
+            pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.IconImageBig, 0x0);
             pImage.KeepAspectRatio = true;
             pImage.AllocResources();
             pItem.IconBig = pImage;
-            int xOff = (m_iThumbWidth - pImage.RenderWidth) / 2;
-            int yOff = (m_iThumbHeight - pImage.RenderHeight) / 2;
-            pImage.SetPosition(m_iThumbXPos + dwPosX + xOff, m_iThumbYPos + dwPosY + yOff);
+            int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
+            int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
+            pImage.SetPosition(m_iThumbXPos + dwPosX - iOverSized + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
             pImage.Render();
             m_iSleeper+=SLEEP_FRAME_COUNT;
           }
@@ -291,11 +297,11 @@ GUISpinControl m_upDown = null;
               pImage.FreeResources();
               pImage.AllocResources();
             }
-            pImage.Width = m_iThumbWidth;
-            pImage.Height = m_iThumbHeight;
-            int xOff = (m_iThumbWidth - pImage.RenderWidth) / 2;
-            int yOff = (m_iThumbHeight - pImage.RenderHeight) / 2;
-            pImage.SetPosition(m_iThumbXPos + dwPosX + xOff, m_iThumbYPos + dwPosY + yOff);
+            pImage.Width = m_iThumbWidth+2*iOverSized;
+            pImage.Height = m_iThumbHeight+2*iOverSized;
+            int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
+            int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
+            pImage.SetPosition(m_iThumbXPos - iOverSized + dwPosX + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
             pImage.Render();
           }
         }
