@@ -29,9 +29,9 @@ namespace MediaPortal.TV.Recording
     }
     static string TVChannelCovertArt=@"thumbs\tv\logos";
     static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
-    static bool          m_bTimeshifting =false;       //todo
-    static bool          m_bAlwaysTimeshift=false;  //todo
-    static bool          m_bViewing=false;  //todo
+    //static bool          m_bTimeshifting =false;       //todo
+    //static bool          m_bAlwaysTimeshift=false;  //todo
+    //static bool          m_bViewing=false;  //todo
     static int           m_iPreRecordInterval =0;
     static int           m_iPostRecordInterval=0;
     static TVUtil        m_TVUtil=null;
@@ -43,6 +43,7 @@ namespace MediaPortal.TV.Recording
     static TVProgram     m_PrevProg=null;
     static bool          m_bWasRecording=false;
     static int           m_RecPrevRecordingId=-1;
+    static string        m_strRecPath="";
 
     /// <summary>
     /// singleton. Dont allow any instance of this class so make the constructor private
@@ -50,6 +51,7 @@ namespace MediaPortal.TV.Recording
     private Recorder()
     {
     }
+
     static Recorder()
     {
     }
@@ -95,13 +97,20 @@ namespace MediaPortal.TV.Recording
 
       m_iPreRecordInterval =0;
       m_iPostRecordInterval=0;
-      m_bAlwaysTimeshift=false;
+      //m_bAlwaysTimeshift=false;
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         m_iPreRecordInterval = xmlreader.GetValueAsInt("capture","prerecord", 5);
         m_iPostRecordInterval= xmlreader.GetValueAsInt("capture","postrecord", 5);
-        m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
+        //m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
         m_strTVChannel  = xmlreader.GetValueAsString("mytv","channel","");
+        m_strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+        m_strRecPath=Utils.RemoveTrailingSlash(m_strRecPath);
+        if (m_strRecPath==null||m_strRecPath.Length==0) 
+        {
+          m_strRecPath=System.IO.Directory.GetCurrentDirectory();
+          m_strRecPath=Utils.RemoveTrailingSlash(m_strRecPath);
+        }
       }
 
       m_TVChannels.Clear();
@@ -140,80 +149,6 @@ namespace MediaPortal.TV.Recording
       m_eState=State.None;
     }
 
-    /// <summary>
-    /// Checks for each tv capture card whether it should start or stop timeshifting
-    /// and if needed stops/or starts the timeshifting.
-    /// Timeshifting should be started when
-    ///   - no card is timeshifting and Timeshifting=true
-    ///   - no card is timeshifting and Allways Timeshifting is turned on in the setup
-    /// </summary>
-    /// <remarks>
-    /// This function gets called on a regular basis by the scheduler and 
-    /// it makes sure that just 1 capture card is timeshifting. Since we
-    /// only need timeshifting for watching live tv. 
-    /// </remarks>
-    static void HandleTimeShifting()
-    {
-      bool bShouldTimeshift=(m_bAlwaysTimeshift || m_bTimeshifting );
-      if (!bShouldTimeshift)
-      {
-        if (g_Player.Playing && g_Player.IsTV)
-        {
-          string strExt=System.IO.Path.GetExtension(g_Player.CurrentFile).ToLower();
-          if (strExt.Equals(".tv"))
-          {
-            g_Player.Stop();
-          }
-        }
-        // stop timeshifting
-        // check each card to see if it is timeshifting
-        for (int i=0; i < m_tvcards.Count;++i)
-        {
-          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-          if (dev.IsTimeShifting)
-          {
-            // yes it is, but make sure its not recording
-            if (!dev.IsRecording)
-            {
-              // not recording. then just stop timeshifting
-              dev.StopTimeShifting();
-            }
-          }
-        }
-        return;
-      }
-      else
-      {
-        // start timeshifting
-        // check if a card is already timeshifting
-        for (int i=0; i < m_tvcards.Count;++i)
-        {
-          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-          if (dev.IsTimeShifting)
-          {
-            TuneExternalChannel(m_strTVChannel);
-            dev.TVChannel=m_strTVChannel;
-            // yep, then we're done
-            return ;
-          }
-        }
-
-        // no cards timeshifting? then check if we can start one
-        for (int i=0; i < m_tvcards.Count;++i)
-        {
-          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-          // can we use this card?
-          if (dev.UseForTV && !dev.IsRecording && dev.SupportsTimeShifting)
-          {
-            // yep. then start timeshifting
-            TuneExternalChannel(m_strTVChannel);
-            dev.TVChannel=m_strTVChannel;
-            dev.StartTimeShifting();
-            return;
-          }
-        }
-      }
-    }
 
     /// <summary>
     /// Checks if a recording should be started and ifso starts the recording
@@ -378,29 +313,28 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// Stops all current recordings. 
     /// </summary>
-    static public void StopRecording()
+    static public void StopRecording(int card)
     {
-      if (m_eState!= State.Initialized) return;
-      foreach (TVCaptureDevice dev in m_tvcards)
+      if (m_eState!= State.Initialized) return ;
+      if (card <0 || card >=m_tvcards.Count) return ;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      
+      if (dev.IsRecording) 
       {
-        if (dev.IsRecording) 
-        {
-          Log.Write("Recorder: Stop recording on channel:{0} capture card:{1}", dev.TVChannel,dev.ID);
-          int ID=dev.CurrentTVRecording.ID;
-					for (int i=0; i < m_Recordings.Count;++i)
+        Log.Write("Recorder: Stop recording on channel:{0} capture card:{1}", dev.TVChannel,dev.ID);
+        int ID=dev.CurrentTVRecording.ID;
+				for (int i=0; i < m_Recordings.Count;++i)
+				{
+					TVRecording rec =(TVRecording )m_Recordings[i];
+					if (rec.ID==ID)
 					{
-						TVRecording rec =(TVRecording )m_Recordings[i];
-						if (rec.ID==ID)
-						{
-							
-							rec.Canceled=Utils.datetolong(DateTime.Now);
-							TVDatabase.ChangeRecording(ref rec);
-							break;
-						}
+						
+						rec.Canceled=Utils.datetolong(DateTime.Now);
+						TVDatabase.ChangeRecording(ref rec);
+						break;
 					}
-					dev.StopRecording();
-					
-        }
+				}
+				dev.StopRecording();
       }
     }
 
@@ -419,6 +353,180 @@ namespace MediaPortal.TV.Recording
         }
         return false;
       }
+    }
+    static public bool DoesCardSupportTimeshifting(int card)
+    {
+      if (m_eState!= State.Initialized) return false;
+      if (card <0 || card >=m_tvcards.Count) return false;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      if (dev.SupportsTimeShifting) return true;
+      return false;
+    }
+    static public bool IsCardRecording(int card)
+    {
+      if (m_eState!= State.Initialized) return false;
+      if (card <0 || card >=m_tvcards.Count) return false;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      if (dev.IsRecording) return true;
+      return false;
+    }
+
+    static public string GetTVChannelName(int card)
+    {
+      if (m_eState!= State.Initialized) return String.Empty;
+      if (card <0 || card >=m_tvcards.Count) return String.Empty;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      return dev.TVChannel;
+    }
+    
+    static public TVRecording GetTVRecording(int card)
+    {
+      if (m_eState!= State.Initialized) return null;
+      if (card <0 || card >=m_tvcards.Count) return null;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      if (dev.IsRecording) return dev.CurrentTVRecording;
+      return null;
+    }
+
+    static public void StopViewing()
+    {
+      // stop any playing..
+      if (g_Player.Playing && g_Player.IsTV) 
+      {
+        g_Player.Stop();
+      }
+
+      // stop any card viewing..
+      for (int i=0; i < m_tvcards.Count;++i)
+      {
+        TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
+        if (!dev.IsRecording)
+        {
+          if (dev.View) 
+          {
+            dev.View=false;
+          }
+          if (dev.IsTimeShifting)
+          {
+            dev.StopTimeShifting();
+          }
+        }
+      }
+    }
+
+    static public string GetTimeShiftFileName(int card)
+    {
+      string FileName=String.Format(@"{0}\live{1}.tv",m_strRecPath, card);
+      return FileName;
+    }
+
+    static public void StartViewing(int card,string channel, bool TVOnOff, bool timeshift)
+    {
+      if (m_eState!= State.Initialized) return ;
+      if (card <0 || card >=m_tvcards.Count) return ;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      string strFileName=GetTimeShiftFileName(card);
+      
+      // is card recording?
+      if (dev.IsRecording) 
+      {
+        // yes, does it support timeshifting?
+        if (dev.SupportsTimeShifting)
+        {
+          // yep, should tv turned off?
+          if (!TVOnOff)
+          {
+            // yep, then stop playing the file
+            if (g_Player.Playing && g_Player.IsTV) 
+            {
+              g_Player.Stop();
+            }
+            return;
+          }
+
+          // tv should be turned on, if we're not watching tv
+          if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
+          {
+            // and timeshift file exists
+            if (System.IO.File.Exists(strFileName))
+            {
+              // then play it
+              g_Player.Play(strFileName);
+            }
+          }
+        }
+        return;
+      }
+
+      //not recording. Should TV be turned off?
+      if (!TVOnOff)
+      {
+        // then stop playing any tv files
+        if (g_Player.Playing && g_Player.IsTV) 
+        {
+          g_Player.Stop();
+        }
+
+        // stop timeshifting
+        if (dev.IsTimeShifting) dev.StopTimeShifting();
+
+        // stop viewing.
+        dev.View=false;
+        return;
+      }
+
+      //tv should be turned on
+
+      //timeshifting is wanted
+      if (timeshift)
+      {
+        // if card supports it
+        if (dev.SupportsTimeShifting)
+        {
+          // then turn timeshifting ong
+          TuneExternalChannel(channel);
+          dev.TVChannel=channel;
+          if (!dev.IsTimeShifting)
+          {
+            dev.StartTimeShifting();
+          }
+          m_strTVChannel=channel;
+
+          // and play the timeshift file (if its not already playing it)
+          if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
+          {
+            if (System.IO.File.Exists(strFileName))
+            {
+              g_Player.Play(strFileName);
+            }
+          }
+          return;
+        }
+      }
+
+      //card does not support timeshifting
+      //just present the overlay tv view
+      //but first disable the tv view of any other card
+      g_Player.Stop();
+      
+      for (int i=0; i < m_tvcards.Count;++i)
+      {
+        if (i!=card)
+        {
+          TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
+          if (!tvcard.IsRecording && !tvcard.IsTimeShifting && tvcard.View==true)
+          {
+            //stop watching on this card
+            tvcard.View=false;
+          }
+        }
+      }
+
+      // now start watching on our card
+      TuneExternalChannel(channel);
+      dev.TVChannel=channel;
+      dev.View=true;
+      m_strTVChannel=channel;
     }
 
     /// <summary>
@@ -494,164 +602,48 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.SetProperty("#TV.View.channel",m_strTVChannel);
       GUIPropertyManager.SetProperty("#TV.View.thumb",strLogo);
     }
-
-    /// <summary>
-    /// Property which get/set Timeshifting mode.
-    /// if Timeshifting mode is turned on then timeshifting will be started
-    /// if Timeshifting mode is turned off then timeshifting will be stopped
-    /// </summary>
-    static public bool Timeshifting
+    static public bool IsCardTimeShifting(int card)
     {
-      get
-      {
-        if (m_eState!=State.Initialized) return false;
-        return m_bTimeshifting ;
-      }
-      set
-      {
-        if (m_eState!=State.Initialized) return ;
-        if (m_bTimeshifting !=value)
-        {
-          if (false==value) 
-          {
-            Log.Write("Recorder:Timeshifting stop requested");
-            m_bTimeshifting =value;
-            Recorder.Process();
-            return;
-          }
-          else 
-          {
-            //check if timeshifting is supported
-            for (int i=0; i < m_tvcards.Count;++i)
-            {
-              TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-              if (dev.SupportsTimeShifting) 
-              {
-                // yes, then turn timeshifting on
-                Log.Write("Recorder:Timeshifting start requested");
-                m_bTimeshifting =value;
-                Recorder.Process();
-                return;
-              }
-            }
-            // no card supports timeshifting
-            m_bTimeshifting =false;
-          }
-        }
-      }
+      if (m_eState!= State.Initialized) return false;
+      if (card <0 || card >=m_tvcards.Count) return false;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      if (dev.IsTimeShifting) return true;
+      return false;
     }
 
+    static public bool IsCardViewing(int card)
+    {
+      if (m_eState!= State.Initialized) return false;
+      if (card <0 || card >=m_tvcards.Count) return false;
+      TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
+      if (dev.View) return true;
+      if (dev.IsTimeShifting)
+      {
+        if (g_Player.Playing && g_Player.CurrentFile == GetTimeShiftFileName(card))
+          return true;
+      }
+      return false;
+    }
+    
     /// <summary>
-    /// Property which get/set TV Viewing mode.
+    /// Property which get TV Viewing mode.
     /// if TV Viewing  mode is turned on then live tv will be shown
-    /// if TV Viewing  mode is turned off thenlive tv will be hidden
     /// </summary>
     static public bool View
     {
       get 
       {
-        if (Timeshifting)
+        if (g_Player.Playing && g_Player.IsTV) return true;
+        for (int i=0; i < m_tvcards.Count;++i)
         {
-          if (g_Player.Playing && g_Player.IsTV) return true;
-          m_bViewing=false;
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
+          if (dev.View) return true;
         }
-        return m_bViewing;
-      }
-      set
-      {
-        if (View==value) return;//nothing changed
-
-        if (value==false)
-        {
-          //turn off tv viewing
-          m_bViewing=false;
-
-          // stop any playing..
-          if (g_Player.Playing && g_Player.IsTV) 
-          {
-            g_Player.Stop();
-          }
-
-          // stop any card viewing..
-          for (int i=0; i < m_tvcards.Count;++i)
-          {
-            TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-            if (dev.View) 
-            {
-              dev.View=false;
-            }
-          }
-          m_bViewing=false;
-        }
-        else
-        {
-          //turn on TV
-          if (Timeshifting)
-          {
-            //if we're timeshifting, then just play live.tv
-            string strRecPath;
-            using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-            {
-              strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-              strRecPath=Utils.RemoveTrailingSlash(strRecPath);
-              if (strRecPath==null||strRecPath.Length==0) 
-              {
-                strRecPath=System.IO.Directory.GetCurrentDirectory();
-                strRecPath=Utils.RemoveTrailingSlash(strRecPath);
-              }
-            }
-            string strFileName=String.Format(@"{0}\live.tv",strRecPath);
-            g_Player.Play(strFileName);
-            m_bViewing=true;
-            return;
-          }
-
-          //not timeshifting, then ask card to start viewing
-          for (int i=0; i < m_tvcards.Count;++i)
-          {
-            TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-            if (!dev.IsRecording) 
-            {
-              if (g_Player.Playing && g_Player.IsTV)
-              {
-                g_Player.Stop();
-              }
-              dev.TVChannel = m_strTVChannel;
-              TuneExternalChannel(m_strTVChannel);
-              dev.View=true;
-              m_bViewing=true;
-              return;
-            }
-          }
-        }
+        return false;
       }
     }
 
-    /// <summary>
-    /// Property to get/set the current TV channel. If the current tv channel gets changed
-    /// then the scheduler will tune to the new tv channel
-    /// </summary>
-    static public string TVChannelName
-    {
-      get 
-      {
-        return m_strTVChannel;
-      }
-      set
-      {
-        if (value==m_strTVChannel) return;
-        m_strTVChannel=value;
-        foreach (TVCaptureDevice dev in m_tvcards)
-        {
-          if (!dev.IsRecording)
-          {
-            TuneExternalChannel(m_strTVChannel);
-            dev.TVChannel=m_strTVChannel;
-          }
-        }
-      }
-    }
-    
+
 
     /// <summary>
     /// Scheduler main loop. This function needs to get called on a regular basis.
@@ -660,7 +652,7 @@ namespace MediaPortal.TV.Recording
     static public void Process()
     {
       if (m_eState!=State.Initialized) return;
-      Recorder.HandleTimeShifting();
+      //Recorder.HandleTimeShifting();
       Recorder.HandleRecordings();
       for (int i=0; i < m_tvcards.Count;++i)
       {
@@ -805,9 +797,9 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      else if (Recorder.IsTimeShifting)
+      else if (Recorder.View)
       {
-        TVProgram prog=m_TVUtil.GetCurrentProgram(Recorder.TVChannelName);
+        TVProgram prog=m_TVUtil.GetCurrentProgram(m_strTVChannel);
         if (prog!=null)
         {
           DateTime dtStart,dtEnd,dtStarted;
@@ -1051,6 +1043,14 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
+    }
+    static public int Count
+    {
+      get { return m_tvcards.Count;}
+    }
+    static public string TVChannelName
+    {
+      get { return m_strTVChannel;}
     }
   }
 }

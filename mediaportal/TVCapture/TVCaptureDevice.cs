@@ -320,9 +320,12 @@ namespace MediaPortal.TV.Recording
             m_graph.TuneChannel(standard, ichannel);
             if (IsTimeShifting && !View)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END, 0, 0, 0, 0, 0, null);
-              msg.Param1 = 99;
-              GUIWindowManager.SendThreadMessage(msg);
+              if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
+              {
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END, 0, 0, 0, 0, 0, null);
+                msg.Param1 = 99;
+                GUIWindowManager.SendThreadMessage(msg);
+              }
             }
           }
         }
@@ -538,14 +541,9 @@ namespace MediaPortal.TV.Recording
           strRecPath = Utils.RemoveTrailingSlash(strRecPath);
         }
       }
-      string strFileName = String.Format(@"{0}\live.tv",strRecPath);
+      string strFileName = Recorder.GetTimeShiftFileName(ID-1);
 
-      // it could be that another card is already timeshifting and therefore has
-      // created a live.tv file. ifso, then we create a new one called live[id].tv 
-      if (System.IO.File.Exists(strFileName))
-      {
-        strFileName = String.Format(@"{0}\live{1}.tv",strRecPath, ID);
-      }
+  
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
       bool bResult = m_graph.StartTimeShifting(standard, iChannelNr, strFileName);

@@ -598,7 +598,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       m_bPlayingState = true;
     }
-
+/*
     // disable TV preview when playing a movie
     if (g_Player.Playing && g_Player.HasVideo)
     {
@@ -606,7 +606,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Recorder.View = false;
       }
-    }
+    }*/
   }
 
 
@@ -713,74 +713,26 @@ public class MediaPortalApp : D3DApp, IRender
             
 					case Action.ActionType.ACTION_BACKGROUND_TOGGLE : 
 						//show livetv or video as background instead of the static GUI background
-						using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-						{
-							// only works when VMR9 is enabled, so check that
-              bool bAlwaysTimeShift=xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
-              int iUseVMR9 = xmlreader.GetValueAsInt("mytv","vmr9",0);
-              if (!bAlwaysTimeShift)
+            // toggle livetv/video in background on/pff
+            if (GUIGraphicsContext.ShowBackground)
+            {
+              Log.Write("Use live TV as background");
+              // if on, but we're not playing any video or watching tv
+              if (g_Player.Playing && g_Player.DoesOwnRendering)
               {
-                ShowInfo("Live tv in background","To use this function you need to turn on","'Always use timeshifting' in the setup/television");
-                return;
-              }
-              if (iUseVMR9!=2)
-              {
-                ShowInfo("Live tv in background","To use this function you need to","enable VMR9 renderless in setup/television");
-                return;
-              }
-              // toggle livetv/video in background on/pff
-              if (GUIGraphicsContext.ShowBackground)
-              {
-                Log.Write("Use live TV as background");
-                // if on, but we're not playing any video or watching tv
-                if (!GUIGraphicsContext.IsPlaying)
-                {
-                  //then start watching live tv in background
-                  Log.Write("start livetv");
-                  Recorder.Timeshifting = true;
-                  Recorder.View = true;
-									
-                  string strRecPath;
-                  strRecPath = xmlreader.GetValueAsString("capture","recordingpath","");
-                  strRecPath = Utils.RemoveTrailingSlash(strRecPath);
-                  string strFileName = String.Format(@"{0}\live.tv",strRecPath);
-                  g_Player.Play(strFileName);
-                  if (g_Player.Playing && Recorder.View && Recorder.Timeshifting)
-                  {
-                    GUIGraphicsContext.ShowBackground = false;
-                  }
-                  else
-                  {
-                    if (!Recorder.Timeshifting)
-                      ShowInfo("Live tv in background","Could not start timeshifting tv","make sure timeshifting works in my tv");
-                    else if (!g_Player.Playing)
-                      ShowInfo("Live tv in background","Unable to start","make sure VMR9 works in my tv");
-                    return;
-                  }
-                }
+                  GUIGraphicsContext.ShowBackground = false;
               }
               else
               {
-                Log.Write("Use GUI as background");
-                if (g_Player.Playing && g_Player.IsTV)
-                {
-                  Log.Write("stop livetv");
-                  int iWindow = GUIWindowManager.ActiveWindow;
-                  if (iWindow != (int)GUIWindow.Window.WINDOW_TVGUIDE && 
-                    iWindow != (int)GUIWindow.Window.WINDOW_TV && 
-                    iWindow != (int)GUIWindow.Window.WINDOW_SCHEDULER && 
-                    iWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && 
-                    iWindow != (int)GUIWindow.Window.WINDOW_RECORDEDTV)
-                  {
-	                  
-                    GUIGraphicsContext.ShowBackground = true;
-                    if (g_Player.Playing && g_Player.IsTV) g_Player.Stop();
-                    Recorder.View = false;
-                  }
-                }
-                GUIGraphicsContext.ShowBackground = true;
-              };
-						}
+                  ShowInfo("Live tv in background","Unable to start","Make sure you use VMR9 and that something is playing");
+                  return;
+              }
+            }
+            else
+            {
+              Log.Write("Use GUI as background");
+              GUIGraphicsContext.ShowBackground = true;
+            }
 						break;
 
 					case Action.ActionType.ACTION_EXIT : 
