@@ -43,7 +43,6 @@
 		<label>-</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>My Videos Label</description>
@@ -54,7 +53,6 @@
 		<label>3</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>View-As button</description>

@@ -44,7 +44,6 @@
 		<label>4</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>TVGuide</description>
@@ -83,6 +82,7 @@
 		<id>4</id>
 		<posX>55</posX>
 		<posY>189</posY>
+		<disabledcolor>60ffffff</disabledcolor>
 		<label>810</label>
 		<onup>3</onup>
 		<ondown>6</ondown>
@@ -205,7 +205,7 @@
 		<posY>105</posY>
 		<width>420</width>
 		<height>100</height>
-		<colordiffuse>60ffffff</colordiffuse>
+		<colordiffuse>FFffffff</colordiffuse>
 		<texture>panel.png</texture>
 	</control>
 			

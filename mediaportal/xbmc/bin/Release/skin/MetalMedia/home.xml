@@ -73,7 +73,6 @@
 		<label>date</label>
 		<align>right</align>
 		<font>font13</font>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Time</description>
@@ -84,7 +83,6 @@
 		<label>time</label>
 		<align>left</align>
 		<font>font13</font>
-		<textcolor>FF000000</textcolor>
 	</control>
 </controls>
 </window>

@@ -33,7 +33,6 @@
 		<label>4</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Current program background</description>
@@ -43,10 +42,10 @@
 		<posY>99</posY>
 		<width>655</width>
 		<height>100</height>
-		<colordiffuse>60ffffff</colordiffuse>
+		<colordiffuse>ffffffff</colordiffuse>
 		<texture>panel.png</texture>
 	</control>
-		
+
 	<control>
 		<description>TVGUIDE Panel</description>
 		<type>image</type>
@@ -55,7 +54,7 @@
 		<posY>220</posY>
 		<width>605</width>
 		<height>315</height>
-		<colordiffuse>60ffffff</colordiffuse>
+		<colordiffuse>ffffffff</colordiffuse>
 		<texture>panel2.png</texture>
 	</control>
 	<control>
@@ -65,7 +64,7 @@
 		<posX>186</posX>
 		<posY>220</posY>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>time header background image template</description>
@@ -89,10 +88,6 @@
 		<reverse>yes</reverse>
 		<onleft>6</onleft>
 		<onright>8</onright>
-		<textureUp>arrow_round_right_nofocus.png</textureUp>
-		<textureDown>arrow_round_left_nofocus.png</textureDown>
-		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
-		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 	</control>
 	<control>
 		<description>time interval spin control</description>
@@ -102,12 +97,12 @@
 		<posY>230</posY>
 		<showrange>no</showrange>
 		<orientation>vertical</orientation>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
 		<align>center</align>
 		<reverse>yes</reverse>
-		<textureUp>arrow_round_up_nofocus.png</textureUp>
-		<textureDown>arrow_round_down_nofocus.png</textureDown>
-		<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
-		<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
 		<onleft>6</onleft>
 		<onright>8</onright>
 	</control>
@@ -133,7 +128,7 @@
 		<font>font13</font>
 		<textcolor>FF000000</textcolor>
 	</control>
-	
+
 	<control>
 		<description>Current Channel</description>
 		<type>image</type>
@@ -244,8 +239,8 @@
 		<id>1</id> 
 		<posX>610</posX> 
 		<posY>20</posY> 
-		<width>1</width> 
-		<height>1</height> 
+		<width>1</width>
+		<height>1</height>
 	</control>
 	<control>
 		<description>Horizontal scrollbar</description>
@@ -257,7 +252,7 @@
 		<height>12</height>
 		<scrollbarbg>bar.png</scrollbarbg>
 		<visible>yes</visible>
-	</control>	
+	</control>
 	<control>
 		<description>Vertical scrollbar</description>
 		<type>vscrollbar</type>
@@ -268,6 +263,6 @@
 		<height>315</height>
 		<scrollbarbg>bar_vert.png</scrollbarbg>
 		<visible>yes</visible>
-	</control>	
+	</control>
 </controls>
 </window>

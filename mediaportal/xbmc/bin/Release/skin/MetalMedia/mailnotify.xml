@@ -1,5 +1,5 @@
 <window>
-  <id>8002</id> 
+  <id>8002</id>
   <allowoverlay>yes</allowoverlay>
   <defaultcontrol>2</defaultcontrol>
   <controls>
@@ -14,6 +14,15 @@
 		<align>left</align> 
 		<font>font16</font> 
 		<textcolor>A0ff1010</textcolor>
+	</control>
+
+	<control>
+		<description>new mail icon</description>
+		<type>image</type> 
+		<id>1</id>
+		<posX>352</posX>
+		<posY>53</posY>
+		<texture>new_mail.gif</texture>
 	</control>
     </controls>
 </window>

@@ -43,7 +43,6 @@
 		<label>#itemcount</label>
 		<align>right</align>
 		<font>font10</font>
-		<textcolor>ff000000</textcolor>
 	</control>
 	<control>
 		<description>My news text label</description>
@@ -54,7 +53,6 @@
 		<label>9</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>ff000000</textcolor>
 	</control>
 	<control>
 		<description>Channel name label</description>
@@ -63,7 +61,6 @@
 		<posX>260</posX>
 		<posY>50</posY>
 		<font>font16</font>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Refresh Button</description>

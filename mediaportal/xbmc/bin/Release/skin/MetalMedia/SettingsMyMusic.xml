@@ -35,7 +35,7 @@
 		<label>2</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
 	<control>
@@ -82,7 +82,7 @@
 		<posX>520</posX>
 		<posY>286</posY>
 		<width>140</width>
-		<height>24</height>
+		<height>28</height>
  		<textureFocus>list_focus.png</textureFocus>
  		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<onleft>8</onleft>
@@ -108,7 +108,7 @@
 		<posX>520</posX>
 		<posY>320</posY>
 		<width>140</width>
-		<height>24</height>
+		<height>28</height>
  		<textureFocus>list_focus.png</textureFocus>
  		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<onup>8</onup>
@@ -134,7 +134,7 @@
 		<posX>520</posX>
 		<posY>354</posY>
 		<width>140</width>
-		<height>24</height>
+		<height>28</height>
  		<textureFocus>list_focus.png</textureFocus>
  		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<onleft>10</onleft>

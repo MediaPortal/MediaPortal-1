@@ -42,7 +42,6 @@
 		<posY>50</posY>
 		<label>#itemcount</label>
 		<font>font10</font>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>My Programs text label</description>
@@ -52,7 +51,6 @@
 		<posY>50</posY>
 		<label>0</label>
 		<font>font10</font>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Title label</description>
@@ -62,7 +60,6 @@
 		<posY>50</posY>
 		<label>-</label>
 		<font>font10</font>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>View-As button</description>

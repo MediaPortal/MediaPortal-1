@@ -44,7 +44,6 @@
 		<label>-</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>recipies text label</description>
@@ -55,9 +54,8 @@
 		<label>10</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
-	
+
 	<control>
 		<description>back button</description>
 		<type>button</type>

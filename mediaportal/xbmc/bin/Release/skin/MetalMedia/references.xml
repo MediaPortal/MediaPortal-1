@@ -24,7 +24,7 @@
 		<posY>60</posY>
 		<label>6</label>
 		<font>font13</font>
-		<textcolor>FFdddddd</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 	</control>
 	<control>
@@ -89,15 +89,15 @@
 		<posY>97</posY>
 		<width>433</width>
 		<height>459</height>
-		<spinWidth>25</spinWidth>
-		<spinHeight>25</spinHeight>
+		<spinWidth>20</spinWidth>
+		<spinHeight>20</spinHeight>
 		<spinPosX>590</spinPosX>
 		<spinPosY>530</spinPosY>
-		<spinColor>FF000000</spinColor>
-		<textureUp>arrow_round_up_nofocus.png</textureUp>
-		<textureDown>arrow_round_down_nofocus.png</textureDown>
-		<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
-		<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+		<spinColor>FFFFFFFF</spinColor>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
 		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<textureHeight>30</textureHeight>
@@ -125,15 +125,15 @@
 		<posY>80</posY>
 		<width>460</width>
 		<height>471</height>
-		<spinWidth>25</spinWidth>
-		<spinHeight>25</spinHeight>
+		<spinWidth>20</spinWidth>
+		<spinHeight>20</spinHeight>
 		<spinPosX>590</spinPosX>
 		<spinPosY>530</spinPosY>
 		<spinColor>FFffffff</spinColor>
-		<textureUp>arrow_round_up_nofocus.png</textureUp>
-		<textureDown>arrow_round_down_nofocus.png</textureDown>
-		<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
-		<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
 		<itemWidth>115</itemWidth>
 		<itemHeight>115</itemHeight>
 		<textureWidth>80</textureWidth>
@@ -146,7 +146,7 @@
 		<imageFolderFocus>folder_focus.png</imageFolderFocus>
 		<font>font14</font>
 		<selectedColor>FFF8BC70</selectedColor>
-		<textcolor>FFdddddd</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 		<colordiffuse>ff000000</colordiffuse>
 		<suffix>|</suffix>
 		<textureWidthBig>128</textureWidthBig>
@@ -169,8 +169,8 @@
 		<posY>420</posY>
 		<width>500</width>
 		<height>100</height>
-		<spinWidth>26</spinWidth>
-		<spinHeight>27</spinHeight>
+		<spinWidth>20</spinWidth>
+		<spinHeight>20</spinHeight>
 		<spinPosX>590</spinPosX>
 		<spinPosY>530</spinPosY>
 		<spinColor>ffffffff</spinColor>
@@ -213,7 +213,7 @@
 		<InfoImagewidth>360</InfoImagewidth>
 		<InfoImageheight>302</InfoImageheight>
 		<InfoImagediffuse>ffffffff</InfoImagediffuse>
-		
+
 	</control>
 	<control>
 		<description>default fadelabel</description>
@@ -224,7 +224,7 @@
 		<width>180</width>
 		<align>left</align>
 		<font>font13</font>
-		<textcolor>FFdddddd</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>default textarea</description>
@@ -234,18 +234,18 @@
 		<posY>220</posY>
 		<width>410</width>
 		<height>300</height>
-		<spinWidth>16</spinWidth>
-		<spinHeight>16</spinHeight>
-		<spinPosX>610</spinPosX>
+		<spinWidth>20</spinWidth>
+		<spinHeight>20</spinHeight>
+		<spinPosX>590</spinPosX>
 		<spinPosY>530</spinPosY>
-		<spinColor>ff000000</spinColor>
+		<spinColor>ffffffff</spinColor>
 		<textureUp>arrow_up_nofocus.png</textureUp>
 		<textureDown>arrow_down_nofocus.png</textureDown>
 		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
 		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
 		<image>icon-folder.png</image>
 		<font>font13</font>
-		<textcolor>FFdddddd</textcolor>
+		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
 	<control>
@@ -297,7 +297,7 @@
 		<height>16</height>
 		<font>font13</font>
 		<reverse>yes</reverse>
-		<textcolor>FF484848</textcolor>
+		<textcolor>ffffffff</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 		<subtype>text</subtype>
 	</control>
@@ -307,7 +307,7 @@
 		<id>4</id>
 		<posX>208</posX>
 		<posY>166</posY>
-		<textcolor>FF484848</textcolor>
+		<textcolor>ffffffff</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 		<font>font13</font>
 		<label>167</label>
@@ -317,7 +317,7 @@
 		<MarkHeight>16</MarkHeight>
 		<align>left</align>
 		<shadow>no</shadow>
-	</control>	
+	</control>
 	<control>
 		<description>default radio button</description>
 		<type>radiobutton</type>
@@ -360,13 +360,13 @@
 		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
-		<disabledcolor>60ffffff</disabledcolor>
+		<disabledcolor>ff484848</disabledcolor>
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>3</onup>
 		<ondown>7</ondown>
 	</control>
-	
+
 	<control>
 		<description>template for 3part button</description>
 		<type>button3part</type>

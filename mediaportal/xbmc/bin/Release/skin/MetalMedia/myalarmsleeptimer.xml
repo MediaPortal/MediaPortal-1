@@ -82,7 +82,7 @@
 			<description>Time until sleep</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>100</posY>
 			<label>865</label>
 			<align>left</align>
@@ -94,24 +94,24 @@
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>4</id>
-			<posX>510</posX>
+			<posX>482</posX>
 			<posY>103</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
+  		<textureUp>arrow_up_nofocus.png</textureUp>
+  		<textureDown>arrow_down_nofocus.png</textureDown>
+  		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+  		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
 			<onup>4</onup>
 			<ondown>5</ondown>
 			<onleft>3</onleft>
 			<onright>4</onright>
-			<textureUp>arrow_round_up_nofocus.png</textureUp>
-			<textureDown>arrow_round_down_nofocus.png</textureDown>
-			<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
-			<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
 		</control>
 		<control>
 			<description>fade out volume</description>
 			<type>checkmark</type>
 			<id>5</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>131</posY>
 			<width>200</width>
 			<height>20</height>
@@ -125,7 +125,7 @@
 			<description>shutdown pc</description>
 			<type>checkmark</type>
 			<id>6</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>165</posY>
 			<width>200</width>
 			<height>20</height>

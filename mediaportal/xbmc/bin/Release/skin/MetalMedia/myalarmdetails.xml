@@ -100,7 +100,7 @@
 			<description>Name</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>100</posY>
 			<label>Name:</label>
 			<font>font13</font>
@@ -111,7 +111,7 @@
 			<description>Name label</description>
 			<type>label</type>
 			<id>9</id>
-			<posX>350</posX>
+			<posX>322</posX>
 			<posY>100</posY>
 			<label></label>
 			<font>font13</font>
@@ -123,7 +123,7 @@
   		<description>Time</description>
   		<type>label</type>
   		<id>0</id>
-  		<posX>270</posX>
+  		<posX>242</posX>
   		<posY>135</posY>
   		<label>142</label>
   		<align>left</align>
@@ -135,7 +135,7 @@
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>7</id>
-			<posX>350</posX>
+			<posX>322</posX>
 			<posY>135</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
@@ -155,7 +155,7 @@
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>8</id>
-			<posX>400</posX>
+			<posX>372</posX>
 			<posY>135</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
@@ -173,7 +173,7 @@
   		<description>Enabled Days</description>
 			<type>label</type>
 			<id>0</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>180</posY>
 			<label>854</label>
 			<font>font13</font>
@@ -183,7 +183,7 @@
 			<description>day 1 checkbox</description>
 			<type>checkmark</type>
 			<id>10</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>70</height>
@@ -199,7 +199,7 @@
 			<description>day 2 checkbox</description>
 			<type>checkmark</type>
 			<id>11</id>
-			<posX>335</posX>
+			<posX>307</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>70</height>
@@ -215,7 +215,7 @@
 			<description>day 3 checkbox</description>
 			<type>checkmark</type>
 			<id>12</id>
-			<posX>400</posX>
+			<posX>372</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>50</height>
@@ -231,7 +231,7 @@
 			<description>day 4 checkbox</description>
 			<type>checkmark</type>
 			<id>13</id>
-			<posX>465</posX>
+			<posX>437</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>50</height>
@@ -247,7 +247,7 @@
 			<description>day 5 checkbox</description>
 			<type>checkmark</type>
 			<id>14</id>
-			<posX>530</posX>
+			<posX>502</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>50</height>
@@ -263,7 +263,7 @@
 			<description>day 6 checkbox</description>
 			<type>checkmark</type>
 			<id>15</id>
-			<posX>585</posX>
+			<posX>557</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>50</height>
@@ -279,7 +279,7 @@
 			<description>day 7 checkbox</description>
 			<type>checkmark</type>
 			<id>16</id>
-			<posX>645</posX>
+			<posX>623</posX>
 			<posY>210</posY>
 			<width>50</width>
 			<height>50</height>
@@ -296,7 +296,7 @@
 			<description>fade in volume</description>
 			<type>checkmark</type>
 			<id>20</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>255</posY>
 			<width>200</width>
 			<height>50</height>
@@ -311,7 +311,7 @@
 			<description>play type label</description>
 			<type>label</type>
 			<id>21</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>290</posY>
 			<label>-</label>
 			<font>font13</font>
@@ -319,10 +319,10 @@
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
-  		<description>playlist selection</description>
+  		<description>file/playlist selection</description>
 			<type>listcontrol</type>
 			<id>3</id>
-			<posX>270</posX>
+			<posX>242</posX>
 			<posY>320</posY>
 			<height>240</height>
 			<onleft>2</onleft>

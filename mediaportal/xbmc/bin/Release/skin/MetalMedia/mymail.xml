@@ -43,7 +43,6 @@
 			<posY>530</posY>
 			<label>#itemcount</label>
 			<align>left</align>
-			<textcolor>FF000000</textcolor>
 		</control>
 
 		<control>

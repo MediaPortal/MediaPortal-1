@@ -111,7 +111,6 @@
 			<label>#itemcount</label>
 			<font>font10</font>
 			<align>right</align>
-			<textcolor>FF000000</textcolor>
 		</control>
 
 		<control>

@@ -43,7 +43,6 @@
 			<label>-</label>
 			<font>font10</font>
 			<align>right</align>
-			<textcolor>FF000000</textcolor>
 		</control>
 		<control>
 			<description>Songs text label</description>
@@ -54,7 +53,6 @@
 			<label>134</label>
 			<font>font10</font>
 			<align>right</align>
-			<textcolor>FF000000</textcolor>
 		</control>
 		<control>
 			<description>View-As button</description>

@@ -43,7 +43,6 @@
 		<label>-</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>My Movies/Actors text label</description>
@@ -54,7 +53,6 @@
 		<label>419</label>
 		<font>font10</font>
 		<align>right</align>
-		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>genre text label</description>

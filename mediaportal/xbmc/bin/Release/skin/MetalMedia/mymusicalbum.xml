@@ -12,7 +12,7 @@
 			<width>720</width>
 			<height>576</height>
 			<texture>background.png</texture>
-		</control> 
+		</control>
 		<control>
 			<description>Music BG</description>
 			<type>image</type>
@@ -43,7 +43,6 @@
 			<label>-</label>
 			<font>font10</font>
 			<align>right</align>
-			<textcolor>FF000000</textcolor>
 		</control>
 		<control>
 			<description>albums text label</description>
@@ -54,17 +53,15 @@
 			<label>132</label>
 			<font>font10</font>
 			<align>right</align>
-			<textcolor>FF000000</textcolor>
 		</control>
 		<control>
 			<description>album name text label</description>
 			<type>label</type>
 			<id>15</id>
-			<posX>675</posX>
-			<posY>65</posY>
+			<posX>475</posX>
+			<posY>50</posY>
 			<label>-</label>
 			<font>font14</font>
-			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>View-As button</description>
@@ -198,9 +195,9 @@
 			<textYOff2>50</textYOff2>
 			<itemWidth>65</itemWidth>
 			<itemHeight>65</itemHeight>
-			<textureFocus>list_focus.png</textureFocus>
-			<textureNoFocus>blue-rectangleNF.png</textureNoFocus>
 			<spaceBetweenItems>14</spaceBetweenItems>
+   		<textureFocus>list_big_focus.png</textureFocus>
+	   	<textureNoFocus>list_big_nofocus.png</textureNoFocus>
 			<textureHeight>90</textureHeight>
 			<onleft>52</onleft>
 			<onright>52</onright>
