@@ -924,6 +924,9 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.TSID	= TSID;		//transport stream id
 					myTuneRequest.SID		= SID;		//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+					SetLNBSettings(myTuneRequest);
+					
+
 					currentTuningObject=new DVBChannel();
 					currentTuningObject.carrierFrequency=frequency;
 					currentTuningObject.symbolRate=symbolrate;
@@ -2190,10 +2193,7 @@ namespace MediaPortal.TV.Recording
 		/// Tune to a specific channel
 		/// </summary>
 		/// <param name="tuningObject">
-		/// tuning object. Differs for dvb-c/dvb-s/dvb-t.
-		/// For DVB-T this is simply an int which contains the desired frequency in KHz
-		/// For DVB-C this is simply an int which contains the desired frequency in KHz
-		/// For DVB-S this is a DVBSChannel object
+		/// DVBChannel object containing the tuning parameter.
 		/// </param>
 		/// <remarks>
 		/// Graph should be created 
@@ -2327,8 +2327,8 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.TSID						= chan.TSID;	//transport stream id
 				myTuneRequest.SID							= chan.SID;		//service id
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+				SetLNBSettings(myTuneRequest);
 				
-				Log.Write("  dvbs freq:{0} Khz  SR:{1} Pol:{2}", myLocator.CarrierFrequency,myLocator.SymbolRate,myLocator.SignalPolarisation);
 				currentTuningObject = chan;
 			}
 			else if (Network() == NetworkType.ATSC)
@@ -2493,6 +2493,69 @@ namespace MediaPortal.TV.Recording
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
 		}//public void StoreChannels(bool radio, bool tv)
+
+		/// <summary>
+		/// Set the LNB settings for a DVB-S tune request
+		/// </summary>
+		/// <remarks>Only needed for DVB-S</remarks>
+		/// <param name="tuneRequest">IDVBTuneRequest tunerequest for a DVB-S channel</param>
+		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
+		{
+			if (tuneRequest==null) return;
+			Log.Write("DVBGraphBDA: SetLNBSettings()");
+			TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
+			if (space==null)
+			{
+				Log.Write("DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
+				return;
+			}
+
+			string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
+			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+			{
+				int lnb_0=0;
+				int lnb_1=0;
+				int lnb_switch=0;
+				int lnb0		 = xmlreader.GetValueAsInt("dvbs","LNB0"    ,9750);
+				int lnb1		 = xmlreader.GetValueAsInt("dvbs","LNB1"    ,10600);
+				int lnbSwitch= xmlreader.GetValueAsInt("dvbs","Switch"  ,11700);
+				int CBand		 = xmlreader.GetValueAsInt("dvbs","CBand"   ,5150);
+				int Circular = xmlreader.GetValueAsInt("dvbs","Circular",10750);
+				int lnbKhz	 = xmlreader.GetValueAsInt("dvbs","lnb"     ,44);
+				int lnbKind  = xmlreader.GetValueAsInt("dvbs","lnbKind" ,0);
+				switch (lnbKind)
+				{
+					case 0:	// ku			
+						lnb_0=lnb0;
+						lnb_1=lnb1;
+						lnb_switch=lnbSwitch;
+						Log.Write("DVBGraphBDA: using KU-band LNB:{0}-{1} MHz, Switch:{2} MHz", lnb_0,lnb_1,lnb_switch);
+						break;
+					case 1: // circular
+						lnb_0=Circular;
+						lnb_1=-1;
+						lnb_switch=-1;
+						Log.Write("DVBGraphBDA: using Circular-band LNB:{0} MHz", Circular);
+						break;
+					case 2: // c-band
+						lnb_0=CBand;
+						lnb_1=-1;
+						lnb_switch=-1;
+						Log.Write("DVBGraphBDA: using C-Band LNB:{0} MHz", CBand);
+						break;
+				}
+				if (lnb_switch>0)
+					space.LNBSwitch     = lnb_switch*1000;
+				
+				if (lnb_0>0)
+					space.LowOscillator = lnb_0*1000;
+				
+				if (lnb_1>0)
+					space.HighOscillator= lnb_1*1000;
+				//space.SpectralInversion=??
+				//space.InputRange=??;
+			}
+		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file

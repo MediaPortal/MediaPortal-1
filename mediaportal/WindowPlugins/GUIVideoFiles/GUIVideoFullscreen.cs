@@ -656,6 +656,12 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(12902); // MSN Messenger
       dlg.AddLocalizedString(902); // MSN Online contacts
 			dlg.AddLocalizedString(970); // Previous window
+			if (g_Player.IsDVD)
+			{
+				dlg.AddLocalizedString(974); // Root menu
+				dlg.AddLocalizedString(975); // Previous chapter
+				dlg.AddLocalizedString(976); // Next chapter
+			}
 
 			m_bDialogVisible=true;
 			m_bUpdate=true;
@@ -665,6 +671,18 @@ namespace MediaPortal.GUI.Video
 			if (dlg.SelectedId==-1) return;
 			switch (dlg.SelectedId)
 			{
+				case 974: // DVD root menu
+					Action actionMenu = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);
+					GUIGraphicsContext.OnAction(actionMenu);
+					break;
+				case 975: // DVD previous chapter
+					Action actionMenu = new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+					GUIGraphicsContext.OnAction(actionMenu);
+					break;
+				case 976: // DVD next chapter
+					Action actionMenu = new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+					GUIGraphicsContext.OnAction(actionMenu);
+					break;
 				case 941: // Change aspect ratio
 					ShowAspectRatioMenu();
 					break;

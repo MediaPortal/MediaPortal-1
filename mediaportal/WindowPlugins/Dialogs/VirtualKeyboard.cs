@@ -1440,7 +1440,7 @@ namespace MediaPortal.Dialogs
 
     void DrawTextBox(int x1,int y1, int x2, int y2) 
     {
-      long lColor=0xaaffffff;
+      //long lColor=0xaaffffff;
 			
 						GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x2,ref y2);

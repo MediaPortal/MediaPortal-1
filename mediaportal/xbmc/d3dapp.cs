@@ -1211,7 +1211,7 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-				int x=1;
+				//int x=1;
       }
 
       if (!deviceLost &&!m_bNeedReset)
@@ -1288,7 +1288,7 @@ namespace MediaPortal
       ++frames;
 
       // Update the scene stats once per second
-      if (time - lastTime >= 1.0f)
+      if (time - lastTime >= 0.5f)
       {
         framePerSecond    = frames / (time - lastTime);
 				GUIGraphicsContext.CurrentFPS=framePerSecond;

@@ -1564,15 +1564,15 @@ namespace MediaPortal.Dialogs
 
     void DrawTextBox(int x1,int y1, int x2, int y2) 
     {
-      long lColor=0xaaffffff;
-/*      GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
+      //long lColor=0xaaffffff;
+      GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x2,ref y2);
 
       x1+=GUIGraphicsContext.OffsetX;
       x2+=GUIGraphicsContext.OffsetX;
       y1+=GUIGraphicsContext.OffsetY;
       y2+=GUIGraphicsContext.OffsetY;
-
+/*
 			Rectangle[] rect = new Rectangle[1];
 			rect[0].X=x1;
 			rect[0].Y=y1;

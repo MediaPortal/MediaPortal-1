@@ -2629,6 +2629,18 @@
 	<id>973</id>
 	<value>Maximum FPS</value>
 </string>
+<string>
+	<id>974</id>
+	<value>Root Menu</value>
+</string>
+<string>
+	<id>975</id>
+	<value>Previous chapter</value>
+</string>
+<string>
+	<id>976</id>
+	<value>Next chapter</value>
+</string>
 
 
 

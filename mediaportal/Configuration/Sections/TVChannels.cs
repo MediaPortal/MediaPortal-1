@@ -116,16 +116,16 @@ namespace MediaPortal.Configuration.Sections
 			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.listViewTVChannels = new System.Windows.Forms.ListView();
-			this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+			this.buttonMap = new System.Windows.Forms.Button();
+			this.btnUnmap = new System.Windows.Forms.Button();
 			this.listViewTVGroupChannels = new System.Windows.Forms.ListView();
 			this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
-			this.btnUnmap = new System.Windows.Forms.Button();
-			this.buttonMap = new System.Windows.Forms.Button();
+			this.listViewTVChannels = new System.Windows.Forms.ListView();
+			this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -205,6 +205,7 @@ namespace MediaPortal.Configuration.Sections
 			this.channelsListView.View = System.Windows.Forms.View.Details;
 			this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
 			this.channelsListView.SelectedIndexChanged += new System.EventHandler(this.channelsListView_SelectedIndexChanged);
+			this.channelsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.channelsListView_ColumnClick);
 			this.channelsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.channelsListView_ItemCheck);
 			// 
 			// columnHeader1
@@ -398,67 +399,14 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Map channels";
 			// 
-			// comboBox1
+			// buttonMap
 			// 
-			this.comboBox1.Location = new System.Drawing.Point(40, 32);
-			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.Size = new System.Drawing.Size(280, 21);
-			this.comboBox1.TabIndex = 0;
-			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 8);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(100, 16);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "Group:";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(16, 88);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(100, 16);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "TVChannels";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(240, 88);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(120, 16);
-			this.label3.TabIndex = 3;
-			this.label3.Text = "TV channels in group";
-			// 
-			// listViewTVChannels
-			// 
-			this.listViewTVChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																												 this.columnHeader8});
-			this.listViewTVChannels.Location = new System.Drawing.Point(16, 112);
-			this.listViewTVChannels.Name = "listViewTVChannels";
-			this.listViewTVChannels.Size = new System.Drawing.Size(168, 240);
-			this.listViewTVChannels.TabIndex = 4;
-			this.listViewTVChannels.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader8
-			// 
-			this.columnHeader8.Text = "TV Channel";
-			this.columnHeader8.Width = 159;
-			// 
-			// listViewTVGroupChannels
-			// 
-			this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																															this.columnHeader9});
-			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 112);
-			this.listViewTVGroupChannels.Name = "listViewTVGroupChannels";
-			this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
-			this.listViewTVGroupChannels.TabIndex = 5;
-			this.listViewTVGroupChannels.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader9
-			// 
-			this.columnHeader9.Text = "TV Channel";
-			this.columnHeader9.Width = 161;
+			this.buttonMap.Location = new System.Drawing.Point(192, 184);
+			this.buttonMap.Name = "buttonMap";
+			this.buttonMap.Size = new System.Drawing.Size(32, 23);
+			this.buttonMap.TabIndex = 7;
+			this.buttonMap.Text = ">>";
+			this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
 			// 
 			// btnUnmap
 			// 
@@ -469,14 +417,69 @@ namespace MediaPortal.Configuration.Sections
 			this.btnUnmap.Text = "<<";
 			this.btnUnmap.Click += new System.EventHandler(this.btnUnmap_Click);
 			// 
-			// buttonMap
+			// listViewTVGroupChannels
 			// 
-			this.buttonMap.Location = new System.Drawing.Point(192, 184);
-			this.buttonMap.Name = "buttonMap";
-			this.buttonMap.Size = new System.Drawing.Size(32, 23);
-			this.buttonMap.TabIndex = 7;
-			this.buttonMap.Text = ">>";
-			this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
+			this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																															this.columnHeader9});
+			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 112);
+			this.listViewTVGroupChannels.Name = "listViewTVGroupChannels";
+			this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
+			this.listViewTVGroupChannels.TabIndex = 5;
+			this.listViewTVGroupChannels.View = System.Windows.Forms.View.Details;
+			this.listViewTVGroupChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVGroupChannels_ColumnClick);
+			// 
+			// columnHeader9
+			// 
+			this.columnHeader9.Text = "TV Channel";
+			this.columnHeader9.Width = 161;
+			// 
+			// listViewTVChannels
+			// 
+			this.listViewTVChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																												 this.columnHeader8});
+			this.listViewTVChannels.Location = new System.Drawing.Point(16, 112);
+			this.listViewTVChannels.Name = "listViewTVChannels";
+			this.listViewTVChannels.Size = new System.Drawing.Size(168, 240);
+			this.listViewTVChannels.TabIndex = 4;
+			this.listViewTVChannels.View = System.Windows.Forms.View.Details;
+			this.listViewTVChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVChannels_ColumnClick);
+			// 
+			// columnHeader8
+			// 
+			this.columnHeader8.Text = "TV Channel";
+			this.columnHeader8.Width = 159;
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(240, 88);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(120, 16);
+			this.label3.TabIndex = 3;
+			this.label3.Text = "TV channels in group";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(16, 88);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(100, 16);
+			this.label2.TabIndex = 2;
+			this.label2.Text = "TVChannels";
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(16, 8);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(100, 16);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Group:";
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.Location = new System.Drawing.Point(40, 32);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.Size = new System.Drawing.Size(280, 21);
+			this.comboBox1.TabIndex = 0;
+			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
 			// TVChannels
 			// 
@@ -1257,6 +1260,44 @@ namespace MediaPortal.Configuration.Sections
 					listViewTVChannels.Items.Add(listItem);
 				}
 			}
+		}
+
+		private void listViewTVChannels_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+		{
+			switch (listViewTVChannels.Sorting)
+			{
+				case SortOrder.Ascending: listViewTVChannels.Sorting = SortOrder.Descending; break;
+				case SortOrder.Descending: listViewTVChannels.Sorting = SortOrder.Ascending; break;
+				case SortOrder.None: listViewTVChannels.Sorting = SortOrder.Ascending; break;
+			}	
+			listViewTVChannels.Sort();
+			listViewTVChannels.Update();
+		
+		}
+
+		private void listViewTVGroupChannels_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+		{
+			switch (listViewTVGroupChannels.Sorting)
+			{
+				case SortOrder.Ascending: listViewTVGroupChannels.Sorting = SortOrder.Descending; break;
+				case SortOrder.Descending: listViewTVGroupChannels.Sorting = SortOrder.Ascending; break;
+				case SortOrder.None: listViewTVGroupChannels.Sorting = SortOrder.Ascending; break;
+			}	
+			listViewTVGroupChannels.Sort();
+			listViewTVGroupChannels.Update();
+		
+		}
+
+		private void channelsListView_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+		{
+			switch (channelsListView.Sorting)
+			{
+				case SortOrder.Ascending: channelsListView.Sorting = SortOrder.Descending; break;
+				case SortOrder.Descending: channelsListView.Sorting = SortOrder.Ascending; break;
+				case SortOrder.None: channelsListView.Sorting = SortOrder.Ascending; break;
+			}	
+			channelsListView.Sort();
+			channelsListView.Update();
 		}
 	}
 }
