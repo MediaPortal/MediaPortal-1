@@ -1,0 +1,640 @@
+<VisualStudioProject>
+    <CSHARP
+        ProjectType = "Local"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
+        ProjectGuid = "{68168FAA-A363-4F64-981C-32629A537900}"
+    >
+        <Build>
+            <Settings
+                ApplicationIcon = ""
+                AssemblyKeyContainerName = ""
+                AssemblyName = "Configuration"
+                AssemblyOriginatorKeyFile = ""
+                DefaultClientScript = "JScript"
+                DefaultHTMLPageLayout = "Grid"
+                DefaultTargetSchema = "IE50"
+                DelaySign = "false"
+                OutputType = "WinExe"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
+                RootNamespace = "MediaPortal.Configuration"
+                RunPostBuildEvent = "OnBuildSuccess"
+                StartupObject = ""
+            >
+                <Config
+                    Name = "Debug"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+                <Config
+                    Name = "Release"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "false"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "true"
+                    OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+            </Settings>
+            <References>
+                <Reference
+                    Name = "System"
+                    AssemblyName = "System"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
+                    Name = "System.Drawing"
+                    AssemblyName = "System.Drawing"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
+                />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.Xml"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "guilib"
+                    AssemblyName = "guilib"
+                    HintPath = "..\..\MediaPortal\mediaportal\guilib\bin\Release\guilib.dll"
+                />
+                <Reference
+                    Name = "DShowNET"
+                    AssemblyName = "DShowNET"
+                    HintPath = "..\..\MediaPortal\mediaportal\DShowNET\bin\Release\DShowNET.dll"
+                />
+                <Reference
+                    Name = "DirectX.Capture"
+                    AssemblyName = "DirectX.Capture"
+                    HintPath = "..\..\MediaPortal\mediaportal\DirectX.Capture\bin\Release\DirectX.Capture.dll"
+                />
+                <Reference
+                    Name = "SQLiteClient"
+                    AssemblyName = "SQLiteClient"
+                    HintPath = "..\..\MediaPortal\mediaportal\SQLiteClient.dll"
+                />
+                <Reference
+                    Name = "TVDatabase"
+                    AssemblyName = "TVDatabase"
+                    HintPath = "..\..\MediaPortal\mediaportal\TVDatabase\bin\Release\TVDatabase.dll"
+                />
+                <Reference
+                    Name = "RadioDatabase"
+                    AssemblyName = "RadioDatabase"
+                    HintPath = "..\..\MediaPortal\mediaportal\RadioDatabase\bin\Release\RadioDatabase.dll"
+                />
+                <Reference
+                    Name = "System.Runtime.Serialization.Formatters.Soap"
+                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
+                />
+                <Reference
+                    Name = "TVCapture"
+                    AssemblyName = "TVCapture"
+                    HintPath = "..\..\MediaPortal\mediaportal\TVCapture\bin\Release\TVCapture.dll"
+                />
+            </References>
+        </Build>
+        <Files>
+            <Include>
+                <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AutoTuningForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AutoTuningForm.resx"
+                    DependentUpon = "AutoTuningForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "EditCaptureCardForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditCaptureCardForm.resx"
+                    DependentUpon = "EditCaptureCardForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "EditRadioStationForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditRadioStationForm.resx"
+                    DependentUpon = "EditRadioStationForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "EditShareForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditShareForm.resx"
+                    DependentUpon = "EditShareForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "EditTVChannelForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditTVChannelForm.resx"
+                    DependentUpon = "EditTVChannelForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "FilterHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ParameterForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ParameterForm.resx"
+                    DependentUpon = "ParameterForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "RadioAutoTuningForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "RadioAutoTuningForm.resx"
+                    DependentUpon = "RadioAutoTuningForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "RadioStation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SearchCityForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SearchCityForm.resx"
+                    DependentUpon = "SearchCityForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "SectionSettings.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SectionSettings.resx"
+                    DependentUpon = "SectionSettings.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "SectionTreeNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SettingsForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SettingsForm.resx"
+                    DependentUpon = "SettingsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Startup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TunerCountry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WeatherChannel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "VideoRenderers.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WizardForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WizardForm.resx"
+                    DependentUpon = "WizardForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Controls\MPBeveledLine.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MPBeveledLine.resx"
+                    DependentUpon = "MPBeveledLine.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Controls\MPCheckBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MPGradientLabel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MPGradientLabel.resx"
+                    DependentUpon = "MPGradientLabel.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Controls\MPGroupBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MPListView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DVD.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DVD.resx"
+                    DependentUpon = "DVD.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\DVDCodec.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DVDCodec.resx"
+                    DependentUpon = "DVDCodec.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\DVDPlayer.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DVDPlayer.resx"
+                    DependentUpon = "DVDPlayer.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\FileExtensions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\FileExtensions.resx"
+                    DependentUpon = "FileExtensions.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\General.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\General.resx"
+                    DependentUpon = "General.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Keys.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Keys.resx"
+                    DependentUpon = "Keys.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MovieExtensions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MovieExtensions.resx"
+                    DependentUpon = "MovieExtensions.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MoviePlayer.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MoviePlayer.resx"
+                    DependentUpon = "MoviePlayer.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Movies.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Movies.resx"
+                    DependentUpon = "Movies.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MovieShares.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MovieShares.resx"
+                    DependentUpon = "MovieShares.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Music.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Music.resx"
+                    DependentUpon = "Music.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MusicExtensions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MusicExtensions.resx"
+                    DependentUpon = "MusicExtensions.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MusicShares.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\PictureExtensions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\PictureExtensions.resx"
+                    DependentUpon = "PictureExtensions.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Pictures.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Pictures.resx"
+                    DependentUpon = "Pictures.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\PictureShares.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\PictureShares.resx"
+                    DependentUpon = "PictureShares.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Plugins.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Plugins.resx"
+                    DependentUpon = "Plugins.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Project.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Project.resx"
+                    DependentUpon = "Project.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Radio.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Radio.resx"
+                    DependentUpon = "Radio.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\RadioStations.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\RadioStations.resx"
+                    DependentUpon = "RadioStations.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Shares.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Shares.resx"
+                    DependentUpon = "Shares.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Skin.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Skin.resx"
+                    DependentUpon = "Skin.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Television.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Television.resx"
+                    DependentUpon = "Television.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\TVCaptureCards.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TVCaptureCards.resx"
+                    DependentUpon = "TVCaptureCards.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\TVChannels.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TVChannels.resx"
+                    DependentUpon = "TVChannels.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\TVProgramGuide.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TVProgramGuide.resx"
+                    DependentUpon = "TVProgramGuide.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\TVRecording.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TVRecording.resx"
+                    DependentUpon = "TVRecording.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\USBUIRT.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\USBUIRT.resx"
+                    DependentUpon = "USBUIRT.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Weather.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Weather.resx"
+                    DependentUpon = "Weather.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Wizard_Finished.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Wizard_Finished.resx"
+                    DependentUpon = "Wizard_Finished.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Wizard_SelectPlugins.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Wizard_SelectPlugins.resx"
+                    DependentUpon = "Wizard_SelectPlugins.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Wizard_Welcome.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Wizard_Welcome.resx"
+                    DependentUpon = "Wizard_Welcome.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+            </Include>
+        </Files>
+    </CSHARP>
+</VisualStudioProject>
+
