@@ -249,6 +249,7 @@ namespace DShowNET
 
     static public IPin FindPinNr (IBaseFilter filter, PinDirection dir,int iPinNr)
     {
+      if (filter==null ) return null;
       int iCurrentPinNr=0;
       int hr=0;
       IEnumPins pinEnum;
