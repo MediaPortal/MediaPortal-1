@@ -937,6 +937,7 @@ namespace MediaPortal.TV.Recording
 
 		void Pause()
 		{	
+			return;
 			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
 			{
 				g_Player.Pause();
@@ -949,6 +950,7 @@ namespace MediaPortal.TV.Recording
 
 		void Continue()
 		{
+			return;
 			if (m_mediaControl!=null && graphRunning)
 			{
 				m_mediaControl.Run();

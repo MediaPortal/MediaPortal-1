@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.TV
 		bool            			m_bAlwaysTimeshift=false;
 		static TVGroup				currentGroup=null;
 		ArrayList       			m_recordings=new ArrayList();
-
+		DateTime						  dtlastTime=DateTime.Now;
 		public TVGroup CurrentGroupSelected
 		{
 			get 
@@ -574,10 +574,16 @@ namespace MediaPortal.GUI.TV
 		public override void Process()
 		{ 
 			//if we're not playing the timeshifting file
+			TimeSpan ts;
 			if (!g_Player.Playing)
 			{
 				//then try to start it
-				StartPlaying(true);
+				ts=DateTime.Now-dtlastTime;
+				if (ts.TotalMilliseconds>=1000)
+				{
+					dtlastTime=DateTime.Now;
+					StartPlaying(true);
+				}
 			}
 
 			// if we're watching tv, then set current channel to tv channel we're watching
@@ -622,7 +628,7 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIControl.HideControl(GetID,(int)Controls.IMG_REC_PIN);
 			}
-			TimeSpan ts = DateTime.Now-m_updateTimer;
+			ts = DateTime.Now-m_updateTimer;
 			if (ts.TotalMilliseconds>500)
 			{
 				m_updateTimer=DateTime.Now;
