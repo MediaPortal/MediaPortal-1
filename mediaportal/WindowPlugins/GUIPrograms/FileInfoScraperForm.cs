@@ -42,9 +42,11 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button LaunchURLButton;
 		private System.Windows.Forms.Panel bottomPanel;
+		private System.Windows.Forms.ContextMenu menuFileList;
+		private System.Windows.Forms.MenuItem mnuCheckWithoutImages;
+		private System.Windows.Forms.MenuItem mnuCheckWithoutOverview;
 		private System.ComponentModel.IContainer components;
 
-		bool bSkipEvents = false; // flag to speedup multiple selection 
 
 
 		public AppItem CurApp
@@ -115,6 +117,9 @@ namespace WindowPlugins.GUIPrograms
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.menuFileList = new System.Windows.Forms.ContextMenu();
+			this.mnuCheckWithoutImages = new System.Windows.Forms.MenuItem();
+			this.mnuCheckWithoutOverview = new System.Windows.Forms.MenuItem();
 			this.bottomPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).BeginInit();
 			this.leftPanel.SuspendLayout();
@@ -151,20 +156,20 @@ namespace WindowPlugins.GUIPrograms
 			// MinRelevanceNum
 			// 
 			this.MinRelevanceNum.Increment = new System.Decimal(new int[] {
-																			  10,
-																			  0,
-																			  0,
-																			  0});
+																																			10,
+																																			0,
+																																			0,
+																																			0});
 			this.MinRelevanceNum.Location = new System.Drawing.Point(431, 14);
 			this.MinRelevanceNum.Name = "MinRelevanceNum";
 			this.MinRelevanceNum.Size = new System.Drawing.Size(56, 20);
 			this.MinRelevanceNum.TabIndex = 24;
 			this.toolTip1.SetToolTip(this.MinRelevanceNum, "This is the minimal RELEVANCE value to autoselect a match");
 			this.MinRelevanceNum.Value = new System.Decimal(new int[] {
-																		  70,
-																		  0,
-																		  0,
-																		  0});
+																																	70,
+																																	0,
+																																	0,
+																																	0});
 			this.MinRelevanceNum.ValueChanged += new System.EventHandler(this.MinRelevanceNum_ValueChanged);
 			// 
 			// ResetFilterButton
@@ -182,27 +187,27 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.filterComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.filterComboBox.Items.AddRange(new object[] {
-																"Arcade",
-																"Atari 5200",
-																"Atari 7800",
-																"Atari Lynx",
-																"Atari ST",
-																"Atari Video Computer System",
-																"Commodore 64/128",
-																"Commodore Amiga",
-																"Game Boy",
-																"Game Boy Advance",
-																"Game Boy Color",
-																"Neo Geo",
-																"Nintendo 64",
-																"Nintendo Entertainment System",
-																"PlayStation",
-																"Sega Dreamcast",
-																"Sega Game Gear",
-																"Sega Genesis",
-																"Sega Master System",
-																"Super NES",
-																"TurboGrafx-16"});
+																												"Arcade",
+																												"Atari 5200",
+																												"Atari 7800",
+																												"Atari Lynx",
+																												"Atari ST",
+																												"Atari Video Computer System",
+																												"Commodore 64/128",
+																												"Commodore Amiga",
+																												"Game Boy",
+																												"Game Boy Advance",
+																												"Game Boy Color",
+																												"Neo Geo",
+																												"Nintendo 64",
+																												"Nintendo Entertainment System",
+																												"PlayStation",
+																												"Sega Dreamcast",
+																												"Sega Game Gear",
+																												"Sega Genesis",
+																												"Sega Master System",
+																												"Super NES",
+																												"TurboGrafx-16"});
 			this.filterComboBox.Location = new System.Drawing.Point(72, 13);
 			this.filterComboBox.Name = "filterComboBox";
 			this.filterComboBox.Size = new System.Drawing.Size(208, 21);
@@ -328,8 +333,9 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.FileList.CheckBoxes = true;
 			this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																					   this.FileTitle,
-																					   this.status});
+																																							 this.FileTitle,
+																																							 this.status});
+			this.FileList.ContextMenu = this.menuFileList;
 			this.FileList.FullRowSelect = true;
 			this.FileList.HideSelection = false;
 			this.FileList.Location = new System.Drawing.Point(8, 40);
@@ -337,8 +343,8 @@ namespace WindowPlugins.GUIPrograms
 			this.FileList.Size = new System.Drawing.Size(344, 375);
 			this.FileList.TabIndex = 13;
 			this.FileList.View = System.Windows.Forms.View.Details;
+			this.FileList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FileList_MouseUp);
 			this.FileList.SelectedIndexChanged += new System.EventHandler(this.FileList_SelectedIndexChanged);
-			this.FileList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.FileList_ItemCheck);
 			// 
 			// FileTitle
 			// 
@@ -397,8 +403,8 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.MatchList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																						this.columnHeader1,
-																						this.columnHeader2});
+																																								this.columnHeader1,
+																																								this.columnHeader2});
 			this.MatchList.FullRowSelect = true;
 			this.MatchList.HideSelection = false;
 			this.MatchList.Location = new System.Drawing.Point(16, 40);
@@ -419,6 +425,24 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.columnHeader2.Text = "Relevance";
 			this.columnHeader2.Width = 80;
+			// 
+			// menuFileList
+			// 
+			this.menuFileList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																								 this.mnuCheckWithoutImages,
+																																								 this.mnuCheckWithoutOverview});
+			// 
+			// mnuCheckWithoutImages
+			// 
+			this.mnuCheckWithoutImages.Index = 0;
+			this.mnuCheckWithoutImages.Text = "Check all files without images";
+			this.mnuCheckWithoutImages.Click += new System.EventHandler(this.mnuCheckWithoutImages_Click);
+			// 
+			// mnuCheckWithoutOverview
+			// 
+			this.mnuCheckWithoutOverview.Index = 1;
+			this.mnuCheckWithoutOverview.Text = "Check all files without an overview";
+			this.mnuCheckWithoutOverview.Click += new System.EventHandler(this.mnuCheckWithoutOverview_Click);
 			// 
 			// FileInfoScraperForm
 			// 
@@ -444,6 +468,7 @@ namespace WindowPlugins.GUIPrograms
 		public void Setup()
 		{
 			SyncListView();
+			SyncFileLabel();
 		}
 
 		private void SyncListView()
@@ -496,10 +521,11 @@ namespace WindowPlugins.GUIPrograms
 					}
 					nextItem.EnsureVisible();
 					curItem.SubItems[1].Text = String.Format("searching...");
+					curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
 					Application.DoEvents();
 					file.FindFileInfo(myProgScraperType.ALLGAME);
 					curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
-					curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
+//					curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
 					Application.DoEvents();
 				}
 			}
@@ -595,10 +621,7 @@ namespace WindowPlugins.GUIPrograms
 
 		private void FileList_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if (!bSkipEvents)
-			{
 				ChangeFileSelection();
-			}
 		}
 
 		private void allGameLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
@@ -627,34 +650,24 @@ namespace WindowPlugins.GUIPrograms
 
 		private void checkAllButton_Click(object sender, System.EventArgs e)
 		{
-			bSkipEvents = true;
-			try
+			foreach (ListViewItem curItem in FileList.Items)
 			{
-				foreach (ListViewItem curItem in FileList.Items)
-				{
-					curItem.Checked = true;
-				}
+				curItem.Checked = true;
 			}
-			finally
-			{
-				bSkipEvents = false;
-			}
+			btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
+			SyncFileLabel();
 		}
 
 		private void uncheckAllButton_Click(object sender, System.EventArgs e)
 		{
-			bSkipEvents = true;
-			try
+			foreach (ListViewItem curItem in FileList.Items)
 			{
-				foreach (ListViewItem curItem in FileList.Items)
-				{
-					curItem.Checked = false;
-				}
+				curItem.Checked = false;
 			}
-			finally
-			{
-				bSkipEvents = false;
-			}
+			btnStartSearch.Enabled = false;
+			buttonSelectBestMatch.Enabled = false;
+			btnSaveSearch.Enabled = false;
+			SyncFileLabel();
 		}
 
 		private void MatchList_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -769,19 +782,60 @@ namespace WindowPlugins.GUIPrograms
 			LaunchSelectedMatchURL();
 		}
 
-		private void FileList_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+		private void FileList_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			if (!bSkipEvents)
+			btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
+			if (!btnStartSearch.Enabled)
 			{
-				btnStartSearch.Enabled = ((FileList.CheckedItems.Count > 0)||(e.NewValue == CheckState.Checked));
-				if (!btnStartSearch.Enabled)
-				{
-					buttonSelectBestMatch.Enabled = false;
-					btnSaveSearch.Enabled = false;
-				}
+				buttonSelectBestMatch.Enabled = false;
+				btnSaveSearch.Enabled = false;
 			}
+			SyncFileLabel();
 		}
 
-	
+		private void mnuCheckWithoutImages_Click(object sender, System.EventArgs e)
+		{
+			FileItem curFile;
+			foreach (ListViewItem curItem in FileList.Items)
+			{
+				curFile = (FileItem)curItem.Tag;
+				if (curFile != null)
+				{
+					curItem.Checked = (curFile.Imagefile == "");
+				}
+				else
+				{
+					curItem.Checked = false;
+				}
+			}
+			btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
+			SyncFileLabel();
+		}
+
+		private void mnuCheckWithoutOverview_Click(object sender, System.EventArgs e)
+		{
+			FileItem curFile;
+			foreach (ListViewItem curItem in FileList.Items)
+			{
+				curFile = (FileItem)curItem.Tag;
+				if (curFile != null)
+				{
+					curItem.Checked = (curFile.Overview == "");
+				}
+				else
+				{
+					curItem.Checked = false;
+				}
+			}
+			btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
+			SyncFileLabel();
+		}
+
+		private void SyncFileLabel()
+		{
+			lblFiles.Text = String.Format("Files: ({0} of {1} selected)", FileList.CheckedItems.Count, FileList.Items.Count);
+		}
+
+
 	}
 }
