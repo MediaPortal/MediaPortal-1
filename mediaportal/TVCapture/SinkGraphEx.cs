@@ -252,6 +252,43 @@ namespace MediaPortal.TV.Recording
 			// This might be needed by the ATI AIW cards (waiting for ob2 to release...)
 			FilterDefinition lastFilter = mCard.TvFilterDefinitions[mCard.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
 
+
+
+      VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
+      if (props.SupportsProperties)
+      {
+					//2-1-2005 17:41:46  driver version:1.18.021   fw version:02.05.000 
+					//-1-2005 17:41:46  encoding:Cbr bitrate:4 peak:67108864
+					//2-1-2005 17:41:46  gopsize:0 closedgop:False invtelecine:False format:PAL size:720x576 output:14
+/*
+				VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
+				newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
+				newBitRate.wBitrate     =6*400;  //6 mbps
+				newBitRate.dwPeak       =12*400; //12 mbps
+
+				Log.Write("Set bitrate");
+				props.VideoBitRate=newBitRate;
+				
+				Log.Write("Set closed gop");
+				props.ClosedGop=false;
+				
+				Log.Write("Set inverse telecine");
+				props.InverseTelecine=false;
+				
+				Log.Write("Set gopsize");
+				props.GopSize=15;
+
+				Log.Write("Set video width/height");
+				Size size=  new Size(720,576);
+				props.VideoResolution = size;
+*/
+        VideoCaptureProperties.versionInfo info = props.VersionInfo;
+        VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
+        Log.Write(" driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
+        Log.Write(" encoding:{0} bitrate:{1} MBps peak:{2} MBps", bitrate.bEncodingMode.ToString(),((float)bitrate.wBitrate)/400.0f,((float)bitrate.dwPeak)/400.0f );
+        Log.Write(" gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
+      }
+
 			// All filters and connections have been made.
 			// Now fix the rest of the graph, add MUX etc.
 			m_videoCaptureDevice = new VideoCaptureDevice(

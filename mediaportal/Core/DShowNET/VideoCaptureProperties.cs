@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices; 
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
@@ -35,6 +36,7 @@ namespace DShowNET
       Vbr    = 0x01
     };
     
+		[StructLayout(LayoutKind.Sequential), ComVisible(true)]
     public struct videoBitRate
     {
       public eBitRateMode    bEncodingMode;  // Variable or Constant bit rate
@@ -61,6 +63,7 @@ namespace DShowNET
       Digitizer_CS5330_MSP3438      = 0x27  // Used for Hauppauge 
     };
 
+		[StructLayout(LayoutKind.Sequential), ComVisible(true)]
     public struct versionInfo
     {
       public string DriverVersion; //xx.yy.zzz
@@ -120,6 +123,10 @@ namespace DShowNET
         catch (Exception){}
         return bitrate;
       }
+			set
+			{
+				SetStructure(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_BITRATE, typeof(videoBitRate), (object)value) ;
+			}
     }
 
 
@@ -262,9 +269,17 @@ namespace DShowNET
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
       uint IsTypeSupported=0;
       uint uiSize;
-      if (propertySet==null) return 0;
+			if (propertySet==null) 
+			{
+				Log.Write("GetByteValue() properySet=null");
+				return 0;
+			}
       int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      if (hr!=0 || IsTypeSupported==0) return 0;
+			if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("GetByteValue() property is not supported");
+				return 0;
+			}
 
       byte returnValue=0;
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
@@ -274,6 +289,11 @@ namespace DShowNET
         returnValue=Marshal.ReadByte(pDataReturned);
       }
       Marshal.FreeCoTaskMem(pDataReturned);
+			
+			if (hr!=0)
+			{
+				Log.Write("GetByteValue() failed 0x{0:X}",hr);
+			}
       return returnValue;
     }
 
@@ -281,16 +301,29 @@ namespace DShowNET
     {
       Guid propertyGuid=guidPropSet;
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-      if (propertySet==null) return ;
+      if (propertySet==null) 
+			{
+				Log.Write("GetByteValue() properySet=null");
+				return ;
+			}
       uint IsTypeSupported=0;
 
       int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      if (hr!=0 || IsTypeSupported==0) return ;
+			if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("SetByteValue() property is not supported");
+				return ;
+			}
 
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
       Marshal.WriteByte(pDataReturned, byteValue);
-      hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,1);
+      hr=propertySet.RemoteSet(ref propertyGuid,propId,pDataReturned,1, IntPtr.Zero,0);
       Marshal.FreeCoTaskMem(pDataReturned);
+			
+			if (hr!=0)
+			{
+				Log.Write("SetByteValue() failed 0x{0:X}",hr);
+			}
     }
 
     int GetIntValue(Guid guidPropSet, uint propId)
@@ -299,10 +332,17 @@ namespace DShowNET
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
       uint IsTypeSupported=0;
       uint uiSize;
-      if (propertySet==null) return 0;
+			if (propertySet==null) 
+			{
+				Log.Write("GetIntValue() properySet=null");
+				return 0;
+			}
       int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      if (hr!=0 || IsTypeSupported==0) return 0;
-
+			if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("GetIntValue() property is not supported");
+				return 0;
+			}
       int returnValue=0;
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
       hr=propertySet.RemoteGet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,100,out uiSize);
@@ -310,6 +350,10 @@ namespace DShowNET
       {
         returnValue=Marshal.ReadInt32(pDataReturned);
       }
+			if (hr!=0)
+			{
+				Log.Write("GetIntValue() failed 0x{0:X}",hr);
+			}
       Marshal.FreeCoTaskMem(pDataReturned);
       return returnValue;
     }
@@ -318,15 +362,26 @@ namespace DShowNET
     {
       Guid propertyGuid=guidPropSet;
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-      if (propertySet==null) return ;
+			if (propertySet==null) 
+			{
+				Log.Write("SetIntValue() properySet=null");
+				return ;
+			}
       uint IsTypeSupported=0;
 
       int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      if (hr!=0 || IsTypeSupported==0) return ;
-
+			if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("SetIntValue() property is not supported");
+				return ;
+			}
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
       Marshal.WriteInt32(pDataReturned, intValue);
       hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,1);
+			if (hr!=0)
+			{
+				Log.Write("SetIntValue() failed 0x{0:X}",hr);
+			}
       Marshal.FreeCoTaskMem(pDataReturned);
     }
 
@@ -336,9 +391,17 @@ namespace DShowNET
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
       uint IsTypeSupported=0;
       uint uiSize;
-      if (propertySet==null) return null;
+			if (propertySet==null) 
+			{
+				Log.Write("GetString() properySet=null");
+				return String.Empty;
+			}
       int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      if (hr!=0 || IsTypeSupported==0) return null;
+      if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("GetString() property is not supported");
+				return String.Empty;
+			}
 
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
       string returnedText=String.Empty;
@@ -358,20 +421,61 @@ namespace DShowNET
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
       uint IsTypeSupported=0;
       uint uiSize;
-      if (propertySet==null) return null;
+			if (propertySet==null) 
+			{
+				Log.Write("GetStructure() properySet=null");
+				return null;
+			}
       int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-      if (hr!=0 || IsTypeSupported==0) return null;
+			if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("GetString() GetStructure is not supported");
+				return null;
+			}
 
       object objReturned=null;
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(1000);
       hr=propertySet.RemoteGet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,1000,out uiSize);
-      if (hr==0)
-      {
-        objReturned=Marshal.PtrToStructure(pDataReturned, structureType);
-      }
+			if (hr==0)
+			{
+				objReturned=Marshal.PtrToStructure(pDataReturned, structureType);
+			}
+			else
+			{
+					Log.Write("GetStructure() failed 0x{0:X}",hr);
+			}
       Marshal.FreeCoTaskMem(pDataReturned);
       return objReturned;
     }
+
+		void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
+		{
+			Guid propertyGuid=guidPropSet;
+			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+			uint IsTypeSupported=0;
+			if (propertySet==null) 
+			{
+				Log.Write("SetStructure() properySet=null");
+				return ;
+			}
+
+			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
+			if (hr!=0 || IsTypeSupported==0) 
+			{
+				Log.Write("GetString() GetStructure is not supported");
+				return ;
+			}
+
+			IntPtr pDataReturned = Marshal.AllocCoTaskMem(Marshal.SizeOf(structureType));
+			Marshal.StructureToPtr(structValue,pDataReturned,true);
+			hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,(uint)Marshal.SizeOf(structureType) );
+			if (hr!=0)
+			{
+				Log.Write("SetStructure() failed 0x{0:X}",hr);
+			}
+			Marshal.FreeCoTaskMem(pDataReturned);
+		}
+
 
     public bool SupportsProperties
     {
