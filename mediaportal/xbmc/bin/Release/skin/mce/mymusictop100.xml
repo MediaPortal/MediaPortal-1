@@ -63,69 +63,56 @@
 		<onleft>2</onleft>
 		<onright>50</onright>
 		<onup>9</onup>
-		<ondown>10</ondown>
-	</control>
-	<control>
-		<description>Switch Info button</description>
-		<type>button</type>
-		<id>10</id>
-		<posX>60</posX>
-		<posY>131</posY>
-		<label>720</label>
-		<onleft>2</onleft>
-		<onright>50</onright>
-		<onup>2</onup>
 		<ondown>6</ondown>
 	</control>	
 	<control>
-		<description>Albums/Artists/Songs/Genres button</description>
-		<type>selectbutton</type>
+		<description>change info</description>
+		<type>button</type>
 		<id>6</id>
 		<posX>60</posX>
-		<posY>165</posY>
-		<label>457</label>
+		<posY>131</posY>
+		<label>720</label>
 		<onleft>6</onleft>
 		<onright>50</onright>
-		<onup>10</onup>
+		<onup>2</onup>
 		<ondown>7</ondown>
 	</control>
 	<control>
-		<description>Playlist button</description>
-		<type>button</type>
+		<description>Albums/Artists/Songs/Genres button</description>
+		<type>selectbutton</type>
 		<id>7</id>
 		<posX>60</posX>
-		<posY>199</posY>
-		<label>136</label>
-		<action>33</action>
+		<posY>165</posY>
+		<label>457</label>
 		<onleft>7</onleft>
 		<onright>50</onright>
 		<onup>6</onup>
 		<ondown>8</ondown>
 	</control>
 	<control>
-		<description>Clear top100 button</description>
+		<description>Playlist button</description>
 		<type>button</type>
 		<id>8</id>
 		<posX>60</posX>
-		<posY>233</posY>
-		<label>718</label>
+		<posY>199</posY>
+		<label>136</label>
 		<onleft>8</onleft>
 		<onright>50</onright>
 		<onup>7</onup>
 		<ondown>9</ondown>
+		<action>33</action>
 	</control>
 	<control>
-		<description>Eject Disc</description>
+		<description>Clear top100 button</description>
 		<type>button</type>
 		<id>9</id>
 		<posX>60</posX>
-		<posY>267</posY>
-		<label>654</label>
+		<posY>233</posY>
+		<label>718</label>
 		<onleft>9</onleft>
 		<onright>50</onright>
 		<onup>8</onup>
 		<ondown>2</ondown>
-		<action>100</action>
 	</control>
 	<control>
 		<description>listcontrol</description>
