@@ -7,7 +7,7 @@
     >
         <Build>
             <Settings
-                ApplicationIcon = ""
+                ApplicationIcon = "mp.ico"
                 AssemblyKeyContainerName = ""
                 AssemblyName = "MediaPortal"
                 AssemblyOriginatorKeyFile = ""
@@ -240,6 +240,10 @@
                     RelPath = "MediaPortal.resx"
                     DependentUpon = "MediaPortal.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "mp.ico"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "PluginForm.cs"
