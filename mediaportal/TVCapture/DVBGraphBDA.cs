@@ -145,8 +145,7 @@ namespace MediaPortal.TV.Recording
 		bool												shouldDecryptChannel=false;
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
-		int                         m_iRetyCount=0;
-		DateTime                    lastTime=DateTime.Now;
+		bool												refreshPmtTable=false;
 #if DUMP
 		System.IO.FileStream fileout;
 #endif
@@ -923,8 +922,8 @@ namespace MediaPortal.TV.Recording
 			m_iPrevChannel		= m_iCurrentChannel;
 			m_iCurrentChannel = channel.Number;
 			m_StartTime				= DateTime.Now;
-			m_iRetyCount=0;
-
+			refreshPmtTable=true;
+			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.Number);
 
 			//get the ITuner interface from the network provider filter
@@ -1159,12 +1158,11 @@ namespace MediaPortal.TV.Recording
 					{
 						//yes, then send the PMT table to the device
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() send PMT to fireDTV device");	
-						props.SendPMTToFireDTV(pmt);
+						props.SendPMTToFireDTV(pmt,(int)len);
 					}//if (props.SupportsFireDTVProperties)
 				}
 			}
 			catch(Exception){}
-			lastTime=DateTime.Now;
 
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -2357,131 +2355,34 @@ namespace MediaPortal.TV.Recording
 					Vmr9.Repaint();// repaint vmr9
 				}
 			}
-			if (!shouldDecryptChannel) return;
-/*
-
-			TimeSpan ts=DateTime.Now-lastTime;
-			if (ts.Milliseconds<500) return;
-			lastTime=DateTime.Now;
-			//check if tuner is locked to a tv channel
-			if (!SignalPresent()) return;
-			if (m_iRetyCount>=10) 
+			if (refreshPmtTable)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: timeout getting PMT");
-				shouldDecryptChannel=false;
-				return;
-			}
-			m_iRetyCount++;
-
-			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() Tuner locked to signal");	
-			//yes, lets get all details for the current channel
-			
-			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() Get PMT and channel info");	
-			DVBSections sections = new DVBSections();
-			DVBSections.ChannelInfo channelInfo;
-			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, currentTuningObject.ProgramNumber, out channelInfo);
-			lastTime=DateTime.Now;
-			if (pmt==null)
-			{	
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() PMT not found");	
-				return;
-			}
-			if (pmt!=null && pmt.Length>0 )
-			{
-				if (channelInfo.pid_list==null) return;
-				if (channelInfo.pid_list.Count==0) return;
-				
-				//got all details. Log them
-				shouldDecryptChannel=false;
-				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-				channelInfo.freq=currentTuningObject.Frequency;
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tuned to provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6}", 
-														channelInfo.service_provider_name,
-														channelInfo.service_name,
-														channelInfo.scrambled,
-														channelInfo.freq,
-														channelInfo.networkID,
-														channelInfo.transportStreamID,
-														channelInfo.serviceID);
-				for (int pids =0; pids < channelInfo.pid_list.Count;pids++)
+				refreshPmtTable=false;
+				try
 				{
-					DVBSections.PMTData data=(DVBSections.PMTData) channelInfo.pid_list[pids];
-					if (data.isVideo)
+					string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+						currentTuningObject.NetworkID,
+						currentTuningObject.TransportStreamID,
+						currentTuningObject.ProgramNumber,
+						(int)Network());
+					if (System.IO.File.Exists(pmtName))
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: video pid: {0}",data.elementary_PID);
-						currentTuningObject.VideoPid=data.elementary_PID;
-					}
-					if (data.isDVBSubtitle)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: DVB subtitle pid: {0}",data.elementary_PID);
-						//currentTuningObject.s=data.elementary_PID;
-					}
-					if (data.isAC3Audio)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: audio AC3 pid: {0}",data.elementary_PID);
-						currentTuningObject.AC3Pid=data.elementary_PID;
-					}
-					if (data.isTeletext)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: teletext pid: {0}",data.elementary_PID);
-						currentTuningObject.TeletextPid=data.elementary_PID;
-					}
-					if (data.isAudio)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: audio pid: {0}",data.elementary_PID);
-						currentTuningObject.AudioPid=data.elementary_PID;
-					}
-				}
-
-				//First check if channel is scrambled
-				if (true)//channelInfo.scrambled)
-				{
-					try
-					{
-						string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-							  currentTuningObject.NetworkID,
-								currentTuningObject.TransportStreamID,
-								currentTuningObject.ProgramNumber,
-							(int)Network());
-						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-						stream.Write(pmt,0,pmt.Length);
+						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
+						long len=stream.Length;
+						byte[] pmt = new byte[len];
+						stream.Read(pmt,0,(int)len);
 						stream.Close();
-					}
-					catch(Exception){}
-					
-					//Tv channels is scrambled. To view them
-					//we need to send the raw PMT table to the FireDTV device
-					//Note this only works for FireDTV devices, so 
-					//first check if this device supports the FireDTV properties
-					VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-					if (props.SupportsFireDTVProperties)
-					{
-						//yes, then send the PMT table to the device
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
-						props.SendPMTToFireDTV(pmt);
-					}//if (props.SupportsFireDTVProperties)
-				}//if (channelInfo.scrambled)
-				
-				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
-				if (mpeg2Demuxer!=null)
-				{
-					SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
-					for (int pin=0; pin < 5; pin++)
-					{	
-						IPin outPin;
-						uint pid=0,  sampletype=0;
-						DsUtils.GetPin(m_MPEG2Demultiplexer ,PinDirection.Output,pin,out outPin);
-						if (outPin!=null)
+						VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+						if (props.SupportsFireDTVProperties)
 						{
-							GetPidMap(outPin,ref pid, ref sampletype);
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Pin:{0} is mapped to pid:{1}", (pin+1),pid);
-						}
+							//yes, then send the PMT table to the device
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() send PMT to fireDTV device");	
+							props.SendPMTToFireDTV(pmt, (int)len);
+						}//if (props.SupportsFireDTVProperties)
 					}
 				}
-			}//if (pmt!=null && pmt.Length>0 && channelInfo!=null)
-			
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() done");	*/
+				catch(Exception){}
+			}
 		}//public void Process()
 
 		//not used
@@ -2667,7 +2568,6 @@ namespace MediaPortal.TV.Recording
 				if (m_NetworkProvider==null) return;
 				if (tuningObject		 ==null) return;
 
-				m_iRetyCount=0;
 				//start viewing if we're not yet viewing
 				if (!graphRunning)
 				{
@@ -3111,33 +3011,25 @@ namespace MediaPortal.TV.Recording
 					if (header.Pid==currentTuningObject.PMTPid)
 					{
 						//copy pmt pid...
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}");
 						shouldDecryptChannel=false;
+						refreshPmtTable=true;
 						byte[] pmtTable=new byte[188];
-						Marshal.Copy((IntPtr)((pointer+4)),pmtTable,0,184);
+						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
+						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
 						try
 						{
 							string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-								currentTuningObject.NetworkID,
-								currentTuningObject.TransportStreamID,
-								currentTuningObject.ProgramNumber,
-								(int)Network());
+																						currentTuningObject.NetworkID,
+																						currentTuningObject.TransportStreamID,
+																						currentTuningObject.ProgramNumber,
+																						(int)Network());
 							System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-							stream.Write(pmtTable,0,pmtTable.Length);
+							stream.Write(pmtTable,0,section_length);
 							stream.Close();
 						}
 						catch(Exception){}
-					
-						//Tv channels is scrambled. To view them
-						//we need to send the raw PMT table to the FireDTV device
-						//Note this only works for FireDTV devices, so 
-						//first check if this device supports the FireDTV properties
-						VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-						if (props.SupportsFireDTVProperties)
-						{
-							//yes, then send the PMT table to the device
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
-							props.SendPMTToFireDTV(pmtTable);
-						}//if (props.SupportsFireDTVProperties)
+						break;
 					}
 				}
 			}
@@ -3170,8 +3062,7 @@ namespace MediaPortal.TV.Recording
 			m_iPrevChannel		= m_iCurrentChannel;
 			m_iCurrentChannel = channel.Channel;
 			m_StartTime				= DateTime.Now;
-			m_iRetyCount=0;
-
+			refreshPmtTable=true;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() tune to radio station:{0}", channel.Name);
 
 			//get the ITuner interface from the network provider filter
@@ -3384,30 +3275,6 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
 
 			SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
-			try
-			{
-				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-					currentTuningObject.NetworkID,
-					currentTuningObject.TransportStreamID,
-					currentTuningObject.ProgramNumber,
-					(int)Network());
-				if (System.IO.File.Exists(pmtName))
-				{
-					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
-					long len=stream.Length;
-					byte[] pmt = new byte[len];
-					stream.Read(pmt,0,(int)len);
-					stream.Close();
-					VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-					if (props.SupportsFireDTVProperties)
-					{
-						//yes, then send the PMT table to the device
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() send PMT to fireDTV device");	
-						props.SendPMTToFireDTV(pmt);
-					}//if (props.SupportsFireDTVProperties)
-				}
-			}
-			catch(Exception){}
 
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 

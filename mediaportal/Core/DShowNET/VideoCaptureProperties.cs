@@ -666,12 +666,12 @@ namespace DShowNET
 		/// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel 
 		/// 2. PMT should have been received 
 		/// </preconditions>
-		public void SendPMTToFireDTV(byte[] PMT)
+		public void SendPMTToFireDTV(byte[] PMT, int pmtLength)
 		{
 			if (PMT==null) return;
-			if (PMT.Length==0) return;
+			if (pmtLength==0) return;
 
-			Log.Write("SendPMTToFireDTV pmt:{0}", PMT.Length);
+			Log.Write("SendPMTToFireDTV pmt:{0}", pmtLength);
 			Guid propertyGuid=KSPROPSETID_Firesat;
 			int propId=22;
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
@@ -689,13 +689,14 @@ namespace DShowNET
 				return ;
 			}
 
-			int iSize=12+2+PMT.Length;
+			int iSize=12+2+pmtLength;
 			IntPtr pDataInstance = Marshal.AllocCoTaskMem(1036);
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(1036);
 			int offs=0;
 
+			//example data:0x0 0x2 0x0 0x0 0x0 0x0 0x0 0x0 0x14 0x0 0x3 0x1 | 0x2 0xB0 0x12 0x1 0x3D 0xC1 0x0 0x0 0xFF 0xFF 0xF0 0x0 0x3 0xEC 0x8C 0xF0 0x0 0xD3 
 			byte[] byData = new byte[1036];
-			uint uLength=(uint)(2+PMT.Length);
+			uint uLength=(uint)(2+pmtLength);
 			byData[offs]= 0; offs++;//slot
 			byData[offs]= 2; offs++;//utag
 
@@ -716,7 +717,7 @@ namespace DShowNET
 			
 			byData[offs]= 3; offs++;// List Management = ONLY
 			byData[offs]= 1; offs++;// pmt_cmd = OK DESCRAMBLING		
-			for (int i=0; i < PMT.Length;++i)
+			for (int i=0; i < pmtLength;++i)
 			{
 				byData[offs]=PMT[i];
 				offs++;
