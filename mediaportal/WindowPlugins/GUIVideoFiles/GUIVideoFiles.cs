@@ -18,7 +18,7 @@ namespace MediaPortal.GUI.Video
   /// Summary description for Class1.
   /// 
   /// </summary>
-	public class GUIVideoFiles : GUIWindow, IComparer, ISetupForm
+	public class GUIVideoFiles : GUIWindow, IComparer, ISetupForm,IMDB.IProgress
 	{
     
     [Serializable]
@@ -96,7 +96,8 @@ namespace MediaPortal.GUI.Video
       VIEW_AS_FILMSTRIP   =   3,
 		}
 
-    const string ThumbsFolder=@"thumbs\Videos\Title";
+		static IMDB								  imdb ;
+		const string ThumbsFolder=@"thumbs\Videos\Title";
 		DirectoryHistory m_history = new DirectoryHistory();
 		string            m_strDirectory = "";
 		int               m_iItemSelected = -1;
@@ -127,6 +128,7 @@ namespace MediaPortal.GUI.Video
 
 		public override bool Init()
 		{
+			imdb = new IMDB(this);
       g_Player.PlayBackStopped +=new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded +=new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted +=new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
@@ -1368,7 +1370,6 @@ namespace MediaPortal.GUI.Video
         }
 
 
-        IMDB imdb = new IMDB();
         imdb.Find(strMovieName);
               
         int iMoviesFound = imdb.Count;
@@ -1576,7 +1577,6 @@ namespace MediaPortal.GUI.Video
       GUIDialogSelect 		pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
       GUIVideoInfo pDlgInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
  
-      IMDB								  imdb = new IMDB();
       bool									bUpdate = false;
       bool									bFound = false;
  
@@ -2303,5 +2303,18 @@ namespace MediaPortal.GUI.Video
 			if (m_directory.IsProtectedShare(folder,out pinCode)) return true;
 			return false;
 		}
-  }
+		#region IProgress Members
+
+		public void OnProgress(string line1, string line2, string line3, int percent)
+		{
+			if (!GUIWindowManager.IsRouted) return;
+			GUIDialogProgress 	pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			pDlgProgress.SetLine(1, line1);
+			pDlgProgress.SetLine(2, line2);
+			pDlgProgress.SetPercentage(percent);
+			pDlgProgress.Progress();
+		}
+
+		#endregion
+	}
 }

@@ -1672,64 +1672,6 @@
 		<id>491</id>
 		<value>Use big icons</value>
 	</string>
-
-
-	<string>
-		<id>500</id>
-		<value>File menu</value>
-	</string>
-	<string>
-		<id>501</id>
-		<value>Set as destination</value>
-	</string>
-	<string>
-		<id>502</id>
-		<value>Unable to complete action</value>
-	</string>
-	<string>
-		<id>503</id>
-		<value>Delete this folder</value>
-	</string>
-	<string>
-		<id>504</id>
-		<value>Goto destination</value>
-	</string>
-	<string>
-		<id>505</id>
-		<value>Calculating</value>
-	</string>
-	<string>
-		<id>506</id>
-		<value>Are you sure?</value>
-	</string>
-	<string>
-		<id>507</id>
-		<value>items</value>
-	</string>	
-	<string>
-		<id>508</id>
-		<value>To</value>
-	</string>
-	<string>
-		<id>509</id>
-		<value>Destination File exists. Overwrite File ?</value>
-	</string>
-	
-	<string>
-		<id>530</id>
-		<value>Photo disc inserted, do you want to open it?</value>
-	</string>
-	<string>
-		<id>531</id>
-		<value>Movie disc inserted, do you want to open it?</value>
-	</string>
-	<string>
-		<id>532</id>
-		<value>Audio disc inserted, do you want to open it?</value>
-	</string>
-	
-	
-		
 	<string>
 		<id>600</id>
 		<value>TVGuide</value>
@@ -2788,6 +2730,14 @@
 	<id>983</id>
 	<value>My Playlists</value>
 </string>
+<string>
+	<id>984</id>
+	<value>Retrieving movies</value>
+</string>
+<string>
+	<id>985</id>
+	<value>Retrieving movies details</value>
+</string>
 
 
 	<!-- My Status Strings -->
@@ -2920,7 +2870,6 @@
 	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
 	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
 	<string><id>2143</id><value>Home</value></string>
-	<string><id>2144</id><value>MP Backup</value></string>
 
 	<!-- End of My Burner Strings -->
 

@@ -36,6 +36,10 @@ namespace MediaPortal.Video.Database
 	/// </summary>
 	public class IMDB: IEnumerable
 	{
+		public interface IProgress
+		{
+			void OnProgress(string line1, string line2, string line3, int percent);
+		}
 		// class that represents URL and Title of a search result
 		public class IMDBUrl
 		{
@@ -126,9 +130,11 @@ namespace MediaPortal.Video.Database
 		int[]		aLimits;		// contains the limit for searchresults
 		string[]	aDatabases;		// contains the name of the database, e.g. IMDB
 
+		IProgress m_progress;
 		// constructor
-		public IMDB()
+		public IMDB(IProgress progress)
 		{
+			m_progress=progress;
 			// load the settings
 			LoadSettings();
 		} // END constructor
@@ -376,6 +382,12 @@ namespace MediaPortal.Video.Database
 
 			elements.Clear();			
 
+			string line1,line2,line3;
+			line1=GUILocalizeStrings.Get(984);
+			line2=strSearch;
+			line3="";
+			int percent=0;
+			m_progress.OnProgress(line1,line2,line3,percent);
 			// search the desired databases
 			for (int i = 0; i < aDatabases.Length; i++)
 			{
@@ -387,21 +399,37 @@ namespace MediaPortal.Video.Database
 
 						case "IMDB":
 							// IMDB support
+							
+							line1=GUILocalizeStrings.Get(984) +":IMDB";
+							percent=0;
+							m_progress.OnProgress(line1,line2,line3,percent);
 							strURL = "http://us.imdb.com/Tsearch?title="+strSearch;
 							FindIMDB(strURL,aLimits[i]);
+							percent=33;
+							m_progress.OnProgress(line1,line2,line3,percent);
 							// END IMDB support
 							break;
 						case "OFDB":
 							// OFDB support
+							line1=GUILocalizeStrings.Get(984) +":OFDB";
+							percent=33;
+							m_progress.OnProgress(line1,line2,line3,percent);
 							strURL = "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText="+strSearch;
 							FindOFDB(strURL,aLimits[i]);
+							percent=66;
+							m_progress.OnProgress(line1,line2,line3,percent);
 							// END OFDB support
 							break;
 
 						case "FRDB":
 							// FRDB support
+							percent=66;
+							m_progress.OnProgress(line1,line2,line3,percent);
+							line1=GUILocalizeStrings.Get(984) +":FRDB";
 							strURL = "http://www.dvdfr.com/search/search.php?multiname="+strSearch;
 							FindFRDB(strURL,aLimits[i]);
+							percent=100;
+							m_progress.OnProgress(line1,line2,line3,percent);
 							// END FRDB support
 							break;
 
