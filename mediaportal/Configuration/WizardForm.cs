@@ -639,6 +639,16 @@ namespace MediaPortal.Configuration
 			{
 				holder.Section.SaveSettings();
 			}
+
+			//
+			// Init general (not visual) settings
+			//
+			MediaPortal.Configuration.SectionSettings DVDClass;
+			DVDClass = new Sections.DVD("DVD");
+			DVDClass.LoadSettings();
+			DVDClass.SaveSettings();
+			DVDClass.Dispose();
+
 		}
 	}
 }
