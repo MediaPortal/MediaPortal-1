@@ -182,14 +182,26 @@ namespace MediaPortal.GUI.TV
 					}
 					m_util= new TVUtil();
 
-					//if we're already watching tv or recording, then get the current tv channel
+					//if current card is watching tv then use that channel
 					if (Recorder.IsViewing() || Recorder.IsTimeShifting() )
 					{
 						m_strChannel=Recorder.GetTVChannelName();
 					}
-					else if (Recorder.IsRecording() )
+					else if (Recorder.IsRecording() ) // else if current card is recording, then use that channel
 					{
 						m_strChannel=Recorder.GetTVRecording().Channel;
+					}
+					else if (Recorder.IsAnyCardRecording() ) // else if any card is recording
+					{
+						//then get & use that channel
+						for (int i=0; i < Recorder.Count;++i)
+						{
+							if (Recorder.Get(i).IsRecording)
+							{
+								m_strChannel=Recorder.GetTVRecording().Channel;
+								break;
+							}
+						}
 					}
 
 

@@ -127,7 +127,7 @@ namespace MediaPortal.Player
 
             FontStyle fontStyle=FontStyle.Regular;
             if (bBold) fontStyle=FontStyle.Bold;
-            System.Drawing.Font Subfont = new System.Drawing.Font(strFont,iFontSize,fontStyle);
+						System.Drawing.Font Subfont = new System.Drawing.Font(strFont,iFontSize,fontStyle,System.Drawing.GraphicsUnit.Point, 1);
             Subfont.ToLogFont(logFont);
             int R=(int)((iColor>>16)&0xff);
             int G=(int)((iColor>>8)&0xff);
