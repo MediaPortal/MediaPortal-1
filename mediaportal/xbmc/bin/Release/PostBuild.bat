@@ -4,7 +4,9 @@ mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
+mkdir Wizards
 
+copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\USBUIRT\bin\Release\USBUIRT.dll .
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .

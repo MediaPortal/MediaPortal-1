@@ -3,7 +3,9 @@ mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
+mkdir Wizards
 
+copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\USBUIRT\bin\Debug\USBUIRT.dll .
 copy ..\..\..\Configuration\bin\Debug\Configuration.exe .
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.dll plugins\windows
