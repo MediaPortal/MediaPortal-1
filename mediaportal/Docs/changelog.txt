@@ -1,3 +1,4 @@
+15-07-2004  my pics     : fixed : show pic->zoom in->0=delete photo->dialog yes/no doesnt have yes/no->esc->dialogs pops up again
 15-07-2004  my videos   : fixed : DVD player->blue bars when switching to GUI and back
 15-07-2004  my videos   : fixed : DVD player->video stayed onscreen after stopping DVD
 

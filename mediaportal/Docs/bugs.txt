@@ -7,7 +7,6 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
-  15-07-2004 my pics    : show pic->zoom in->0=delete foto->dialog yes/no heeft geen yes->esc->weer die dialog
   13-07-2004 my tv      : duration of recorded programs is not correct. 
                           I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
