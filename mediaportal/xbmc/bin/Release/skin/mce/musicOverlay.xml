@@ -19,8 +19,8 @@
 		<id>0</id> 
 		<posX>85</posX> 
 		<posY>420</posY> 
-		<width>90</width> 
-		<height>90</height> 
+		<width>110</width> 
+		<height>110</height> 
 		<texture>previewbackground.png</texture> 
 	</control>
 	<control>
@@ -29,8 +29,8 @@
 		<id>1</id> 
 		<posX>90</posX> 
 		<posY>425</posY> 
-		<width>80</width> 
-		<height>80</height> 
+		<width>100</width> 
+		<height>100</height> 
 		<texture>#thumb</texture> 
 	</control>
 	<control>
