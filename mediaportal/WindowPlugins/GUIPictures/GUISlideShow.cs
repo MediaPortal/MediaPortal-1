@@ -841,7 +841,7 @@ namespace MediaPortal.GUI.Pictures
 	    {
 		    dwCounter=0;
 	    }
-	    if (!m_bPause) return;
+	    if (!m_bPause || (m_iZoomFactor != 1)) return;
 	    if (dwCounter <13) return;
 	    GUIFont pFont=GUIFontManager.GetFont("font13");
       if (pFont!=null)
