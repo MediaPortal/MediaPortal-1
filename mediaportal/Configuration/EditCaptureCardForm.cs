@@ -11,6 +11,7 @@ using DirectX.Capture;
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using TVCapture;
+using MediaPortal.TV.Database;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -96,7 +97,22 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.TabPage tabPage6;
+		private System.Windows.Forms.Label label24;
+		private System.Windows.Forms.Label label25;
+		private System.Windows.Forms.Label label26;
+		private System.Windows.Forms.Label label27;
+		private System.Windows.Forms.Button button18;
+		private System.Windows.Forms.Button button17;
+		private System.Windows.Forms.ProgressBar progressBar2;
+		private System.Windows.Forms.Label chName;
+		private System.Windows.Forms.Label label28;
+		private System.Windows.Forms.Button button16;
+		private System.Windows.Forms.Button button15;
+		private System.Windows.Forms.Label label29;
+		private System.Windows.Forms.TreeView treeView5;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
+		bool m_stopEPGGrab;
 		
 		/// <summary>
 		/// 
@@ -352,17 +368,6 @@ namespace MediaPortal.Configuration
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.label13 = new System.Windows.Forms.Label();
-			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.label14 = new System.Windows.Forms.Label();
-			this.comboBox3Audio = new System.Windows.Forms.ComboBox();
-			this.comboBox3Video = new System.Windows.Forms.ComboBox();
-			this.comboBox2Audio = new System.Windows.Forms.ComboBox();
-			this.comboBox2Video = new System.Windows.Forms.ComboBox();
-			this.comboBox1Audio = new System.Windows.Forms.ComboBox();
-			this.comboBox1Video = new System.Windows.Forms.ComboBox();
-			this.label15 = new System.Windows.Forms.Label();
-			this.label16 = new System.Windows.Forms.Label();
-			this.label17 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.label23 = new System.Windows.Forms.Label();
@@ -383,17 +388,43 @@ namespace MediaPortal.Configuration
 			this.switchMHZ = new System.Windows.Forms.Label();
 			this.lnb0MHZ = new System.Windows.Forms.TextBox();
 			this.label22 = new System.Windows.Forms.Label();
+			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.label24 = new System.Windows.Forms.Label();
+			this.label25 = new System.Windows.Forms.Label();
+			this.label26 = new System.Windows.Forms.Label();
+			this.label27 = new System.Windows.Forms.Label();
+			this.button18 = new System.Windows.Forms.Button();
+			this.button17 = new System.Windows.Forms.Button();
+			this.progressBar2 = new System.Windows.Forms.ProgressBar();
+			this.chName = new System.Windows.Forms.Label();
+			this.label28 = new System.Windows.Forms.Label();
+			this.button16 = new System.Windows.Forms.Button();
+			this.button15 = new System.Windows.Forms.Button();
+			this.label29 = new System.Windows.Forms.Label();
+			this.treeView5 = new System.Windows.Forms.TreeView();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.label14 = new System.Windows.Forms.Label();
+			this.comboBox3Audio = new System.Windows.Forms.ComboBox();
+			this.comboBox3Video = new System.Windows.Forms.ComboBox();
+			this.comboBox2Audio = new System.Windows.Forms.ComboBox();
+			this.comboBox2Video = new System.Windows.Forms.ComboBox();
+			this.comboBox1Audio = new System.Windows.Forms.ComboBox();
+			this.comboBox1Video = new System.Windows.Forms.ComboBox();
+			this.label15 = new System.Windows.Forms.Label();
+			this.label16 = new System.Windows.Forms.Label();
+			this.label17 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
-			this.tabPage3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
 			this.tabPage4.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.tabPage6.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -506,7 +537,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.ItemHeight = 13;
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(128, 88);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 20);
+			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 21);
 			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
@@ -526,7 +557,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.ItemHeight = 13;
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(128, 56);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 20);
+			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 21);
 			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
@@ -671,14 +702,16 @@ namespace MediaPortal.Configuration
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage5);
+			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage4);
+			this.tabControl1.Controls.Add(this.tabPage6);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(456, 432);
 			this.tabControl1.TabIndex = 5;
+			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
@@ -729,98 +762,6 @@ namespace MediaPortal.Configuration
 			this.label13.TabIndex = 39;
 			this.label13.Text = "Specify which codecs should be used when recording.  You only need to specify cod" +
 				"ecs if your card is a s/w encoding card";
-			// 
-			// tabPage3
-			// 
-			this.tabPage3.Controls.Add(this.label14);
-			this.tabPage3.Controls.Add(this.comboBox3Audio);
-			this.tabPage3.Controls.Add(this.comboBox3Video);
-			this.tabPage3.Controls.Add(this.comboBox2Audio);
-			this.tabPage3.Controls.Add(this.comboBox2Video);
-			this.tabPage3.Controls.Add(this.comboBox1Audio);
-			this.tabPage3.Controls.Add(this.comboBox1Video);
-			this.tabPage3.Controls.Add(this.label15);
-			this.tabPage3.Controls.Add(this.label16);
-			this.tabPage3.Controls.Add(this.label17);
-			this.tabPage3.Location = new System.Drawing.Point(4, 22);
-			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(448, 406);
-			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "Audio mapping";
-			// 
-			// label14
-			// 
-			this.label14.Location = new System.Drawing.Point(16, 16);
-			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(328, 40);
-			this.label14.TabIndex = 18;
-			this.label14.Text = "Map the video/audio inputs of your TV card to the CVBS1, CVBS2 and SVHS channels";
-			// 
-			// comboBox3Audio
-			// 
-			this.comboBox3Audio.Location = new System.Drawing.Point(72, 208);
-			this.comboBox3Audio.Name = "comboBox3Audio";
-			this.comboBox3Audio.Size = new System.Drawing.Size(121, 21);
-			this.comboBox3Audio.TabIndex = 16;
-			// 
-			// comboBox3Video
-			// 
-			this.comboBox3Video.Location = new System.Drawing.Point(72, 184);
-			this.comboBox3Video.Name = "comboBox3Video";
-			this.comboBox3Video.Size = new System.Drawing.Size(121, 21);
-			this.comboBox3Video.TabIndex = 15;
-			// 
-			// comboBox2Audio
-			// 
-			this.comboBox2Audio.Location = new System.Drawing.Point(72, 144);
-			this.comboBox2Audio.Name = "comboBox2Audio";
-			this.comboBox2Audio.Size = new System.Drawing.Size(121, 21);
-			this.comboBox2Audio.TabIndex = 14;
-			// 
-			// comboBox2Video
-			// 
-			this.comboBox2Video.Location = new System.Drawing.Point(72, 120);
-			this.comboBox2Video.Name = "comboBox2Video";
-			this.comboBox2Video.Size = new System.Drawing.Size(121, 21);
-			this.comboBox2Video.TabIndex = 13;
-			// 
-			// comboBox1Audio
-			// 
-			this.comboBox1Audio.Location = new System.Drawing.Point(72, 88);
-			this.comboBox1Audio.Name = "comboBox1Audio";
-			this.comboBox1Audio.Size = new System.Drawing.Size(121, 21);
-			this.comboBox1Audio.TabIndex = 10;
-			// 
-			// comboBox1Video
-			// 
-			this.comboBox1Video.Location = new System.Drawing.Point(72, 64);
-			this.comboBox1Video.Name = "comboBox1Video";
-			this.comboBox1Video.Size = new System.Drawing.Size(121, 21);
-			this.comboBox1Video.TabIndex = 8;
-			// 
-			// label15
-			// 
-			this.label15.Location = new System.Drawing.Point(16, 200);
-			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(40, 23);
-			this.label15.TabIndex = 12;
-			this.label15.Text = "SVHS";
-			// 
-			// label16
-			// 
-			this.label16.Location = new System.Drawing.Point(8, 136);
-			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(48, 16);
-			this.label16.TabIndex = 11;
-			this.label16.Text = "CVBS#2";
-			// 
-			// label17
-			// 
-			this.label17.Location = new System.Drawing.Point(8, 80);
-			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(56, 16);
-			this.label17.TabIndex = 9;
-			this.label17.Text = "CVBS #1";
 			// 
 			// tabPage5
 			// 
@@ -1015,6 +956,237 @@ namespace MediaPortal.Configuration
 			this.label22.TabIndex = 0;
 			this.label22.Text = "LNB0 (Mhz)";
 			// 
+			// tabPage6
+			// 
+			this.tabPage6.Controls.Add(this.label24);
+			this.tabPage6.Controls.Add(this.label25);
+			this.tabPage6.Controls.Add(this.label26);
+			this.tabPage6.Controls.Add(this.label27);
+			this.tabPage6.Controls.Add(this.button18);
+			this.tabPage6.Controls.Add(this.button17);
+			this.tabPage6.Controls.Add(this.progressBar2);
+			this.tabPage6.Controls.Add(this.chName);
+			this.tabPage6.Controls.Add(this.label28);
+			this.tabPage6.Controls.Add(this.button16);
+			this.tabPage6.Controls.Add(this.button15);
+			this.tabPage6.Controls.Add(this.label29);
+			this.tabPage6.Controls.Add(this.treeView5);
+			this.tabPage6.Location = new System.Drawing.Point(4, 22);
+			this.tabPage6.Name = "tabPage6";
+			this.tabPage6.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.tabPage6.Size = new System.Drawing.Size(448, 406);
+			this.tabPage6.TabIndex = 5;
+			this.tabPage6.Text = "EPG-Grabber";
+			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(64, 347);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(216, 16);
+			this.label24.TabIndex = 32;
+			this.label24.Text = "Events are in Database...";
+			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(24, 347);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(32, 16);
+			this.label25.TabIndex = 31;
+			this.label25.Text = "0";
+			this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label26
+			// 
+			this.label26.Location = new System.Drawing.Point(64, 331);
+			this.label26.Name = "label26";
+			this.label26.Size = new System.Drawing.Size(120, 16);
+			this.label26.TabIndex = 30;
+			this.label26.Text = "Events found...";
+			// 
+			// label27
+			// 
+			this.label27.Location = new System.Drawing.Point(24, 331);
+			this.label27.Name = "label27";
+			this.label27.Size = new System.Drawing.Size(32, 16);
+			this.label27.TabIndex = 29;
+			this.label27.Text = "0";
+			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// button18
+			// 
+			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button18.Location = new System.Drawing.Point(224, 219);
+			this.button18.Name = "button18";
+			this.button18.Size = new System.Drawing.Size(48, 21);
+			this.button18.TabIndex = 28;
+			this.button18.Text = "None";
+			this.button18.Click += new System.EventHandler(this.button18_Click);
+			// 
+			// button17
+			// 
+			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button17.Location = new System.Drawing.Point(168, 219);
+			this.button17.Name = "button17";
+			this.button17.Size = new System.Drawing.Size(48, 21);
+			this.button17.TabIndex = 27;
+			this.button17.Text = "All";
+			this.button17.Click += new System.EventHandler(this.button17_Click);
+			// 
+			// progressBar2
+			// 
+			this.progressBar2.Location = new System.Drawing.Point(24, 307);
+			this.progressBar2.Name = "progressBar2";
+			this.progressBar2.Size = new System.Drawing.Size(400, 16);
+			this.progressBar2.TabIndex = 26;
+			// 
+			// chName
+			// 
+			this.chName.Location = new System.Drawing.Point(112, 283);
+			this.chName.Name = "chName";
+			this.chName.Size = new System.Drawing.Size(312, 16);
+			this.chName.TabIndex = 25;
+			this.chName.Text = "Stopped.";
+			// 
+			// label28
+			// 
+			this.label28.Location = new System.Drawing.Point(24, 283);
+			this.label28.Name = "label28";
+			this.label28.Size = new System.Drawing.Size(96, 16);
+			this.label28.TabIndex = 24;
+			this.label28.Text = "Current Channel:";
+			// 
+			// button16
+			// 
+			this.button16.Enabled = false;
+			this.button16.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button16.Location = new System.Drawing.Point(368, 355);
+			this.button16.Name = "button16";
+			this.button16.Size = new System.Drawing.Size(56, 24);
+			this.button16.TabIndex = 23;
+			this.button16.Text = "Stop";
+			this.button16.Click += new System.EventHandler(this.button16_Click);
+			// 
+			// button15
+			// 
+			this.button15.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button15.Location = new System.Drawing.Point(304, 355);
+			this.button15.Name = "button15";
+			this.button15.Size = new System.Drawing.Size(56, 24);
+			this.button15.TabIndex = 22;
+			this.button15.Text = "Start";
+			this.button15.Click += new System.EventHandler(this.button15_Click);
+			// 
+			// label29
+			// 
+			this.label29.Location = new System.Drawing.Point(24, 27);
+			this.label29.Name = "label29";
+			this.label29.Size = new System.Drawing.Size(128, 16);
+			this.label29.TabIndex = 21;
+			this.label29.Text = "TV-Channels:";
+			// 
+			// treeView5
+			// 
+			this.treeView5.CheckBoxes = true;
+			this.treeView5.HideSelection = false;
+			this.treeView5.ImageIndex = -1;
+			this.treeView5.Location = new System.Drawing.Point(24, 43);
+			this.treeView5.Name = "treeView5";
+			this.treeView5.SelectedImageIndex = -1;
+			this.treeView5.Size = new System.Drawing.Size(248, 168);
+			this.treeView5.TabIndex = 20;
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.label14);
+			this.tabPage3.Controls.Add(this.comboBox3Audio);
+			this.tabPage3.Controls.Add(this.comboBox3Video);
+			this.tabPage3.Controls.Add(this.comboBox2Audio);
+			this.tabPage3.Controls.Add(this.comboBox2Video);
+			this.tabPage3.Controls.Add(this.comboBox1Audio);
+			this.tabPage3.Controls.Add(this.comboBox1Video);
+			this.tabPage3.Controls.Add(this.label15);
+			this.tabPage3.Controls.Add(this.label16);
+			this.tabPage3.Controls.Add(this.label17);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Size = new System.Drawing.Size(448, 406);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "Audio mapping";
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(16, 16);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(328, 40);
+			this.label14.TabIndex = 18;
+			this.label14.Text = "Map the video/audio inputs of your TV card to the CVBS1, CVBS2 and SVHS channels";
+			// 
+			// comboBox3Audio
+			// 
+			this.comboBox3Audio.Location = new System.Drawing.Point(72, 208);
+			this.comboBox3Audio.Name = "comboBox3Audio";
+			this.comboBox3Audio.Size = new System.Drawing.Size(121, 21);
+			this.comboBox3Audio.TabIndex = 16;
+			// 
+			// comboBox3Video
+			// 
+			this.comboBox3Video.Location = new System.Drawing.Point(72, 184);
+			this.comboBox3Video.Name = "comboBox3Video";
+			this.comboBox3Video.Size = new System.Drawing.Size(121, 21);
+			this.comboBox3Video.TabIndex = 15;
+			// 
+			// comboBox2Audio
+			// 
+			this.comboBox2Audio.Location = new System.Drawing.Point(72, 144);
+			this.comboBox2Audio.Name = "comboBox2Audio";
+			this.comboBox2Audio.Size = new System.Drawing.Size(121, 21);
+			this.comboBox2Audio.TabIndex = 14;
+			// 
+			// comboBox2Video
+			// 
+			this.comboBox2Video.Location = new System.Drawing.Point(72, 120);
+			this.comboBox2Video.Name = "comboBox2Video";
+			this.comboBox2Video.Size = new System.Drawing.Size(121, 21);
+			this.comboBox2Video.TabIndex = 13;
+			// 
+			// comboBox1Audio
+			// 
+			this.comboBox1Audio.Location = new System.Drawing.Point(72, 88);
+			this.comboBox1Audio.Name = "comboBox1Audio";
+			this.comboBox1Audio.Size = new System.Drawing.Size(121, 21);
+			this.comboBox1Audio.TabIndex = 10;
+			// 
+			// comboBox1Video
+			// 
+			this.comboBox1Video.Location = new System.Drawing.Point(72, 64);
+			this.comboBox1Video.Name = "comboBox1Video";
+			this.comboBox1Video.Size = new System.Drawing.Size(121, 21);
+			this.comboBox1Video.TabIndex = 8;
+			// 
+			// label15
+			// 
+			this.label15.Location = new System.Drawing.Point(16, 200);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(40, 23);
+			this.label15.TabIndex = 12;
+			this.label15.Text = "SVHS";
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(8, 136);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(48, 16);
+			this.label16.TabIndex = 11;
+			this.label16.Text = "CVBS#2";
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(8, 80);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(56, 16);
+			this.label17.TabIndex = 9;
+			this.label17.Text = "CVBS #1";
+			// 
 			// button1
 			// 
 			this.button1.Location = new System.Drawing.Point(200, 448);
@@ -1043,12 +1215,13 @@ namespace MediaPortal.Configuration
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
-			this.tabPage3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.tabPage6.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1644,6 +1817,178 @@ namespace MediaPortal.Configuration
 				MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
+
+		private void button17_Click(object sender, System.EventArgs e)
+		{
+			
+			foreach(TreeNode tn in treeView5.Nodes)
+			{
+				tn.Checked=true;
+			}
+		}
+
+		private void button18_Click(object sender, System.EventArgs e)
+		{
+		
+			foreach(TreeNode tn in treeView5.Nodes)
+			{
+				tn.Checked=false;
+			}
+		}
+		int CountSelectedNodes()
+		{
+			int retCount=0;
+			foreach(TreeNode tn in treeView5.Nodes)
+			{
+				if(tn.Checked==true)
+					retCount++;
+			}
+
+			return retCount;
+
+		}
+
+		private void button15_Click(object sender, System.EventArgs e)
+		{
+			progressBar2.Maximum=CountSelectedNodes();
+			progressBar2.Minimum=0;
+			progressBar2.Value=0;
+			m_stopEPGGrab=false;
+			button16.Enabled=true;
+			button15.Enabled=false;
+			int counter=0;
+			TVCaptureDevice capture = CaptureCard;
+			if(capture == null)
+			{
+				MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+			if (!capture.CreateGraph())
+			{
+				MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+
+			DVBSections dvbSec =new DVBSections();
+
+			GUIGraphicsContext.VideoWindow = new Rectangle(280,43,90,90);
+			IntPtr prevForm=GUIGraphicsContext.ActiveForm;
+			GUIGraphicsContext.ActiveForm = this.Handle;
+			
+			do
+			{
+				GC.Collect();
+				foreach(TreeNode tn in treeView5.Nodes)
+				{
+					if(m_stopEPGGrab==true)
+						break;
+					if(tn.Checked==true)
+					{
+						TVChannel ch=(TVChannel)tn.Tag;
+						chName.Text=ch.Name;
+						capture.TVChannel=ch.Name;
+						capture.View=true;
+						if (!capture.SignalPresent()) continue;
+
+						DVBChannel dvbChannel =  dvbSec.GetDVBChannel(capture.Mpeg2DataFilter,ch.Number);
+						counter=dvbSec.GrabEIT(dvbChannel,capture.Mpeg2DataFilter);
+						label17.Text=counter.ToString();
+						try
+						{
+							progressBar2.Value=progressBar2.Value+1;
+						}
+						catch
+						{
+							progressBar2.Value=0;
+						}		
+					}
+					Application.DoEvents();
+				}
+			}while(m_stopEPGGrab==false);
+			chName.Text="Stopped.";
+			button15.Enabled=true;
+			button16.Enabled=false;
+			label17.Text="0";
+			capture.View=false;
+			capture.DeleteGraph();
+			capture=null;
+			GC.Collect();
+			GUIGraphicsContext.ActiveForm=prevForm;
+		}
+
+		private void button16_Click(object sender, System.EventArgs e)
+		{
+			m_stopEPGGrab=true;
+			button16.Enabled=false;
+		
+		}
+
+		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if(tabControl1.SelectedIndex==4)
+			{	
+				
+				TVCaptureDevice capture = CaptureCard;
+				if (capture==null)
+				{
+					MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					tabControl1.SelectedIndex=0;
+					return;
+				}
+				
+				if (!capture.CreateGraph())
+				{
+					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					tabControl1.SelectedIndex=0;
+					return;
+				}
+				if (capture.Network != NetworkType.DVBS)
+				{
+					capture.DeleteGraph();
+					MessageBox.Show("This section is only for DVB-S cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					tabControl1.SelectedIndex=0;
+					return;
+				}
+				capture.DeleteGraph();
+			}
+
+			if(tabControl1.SelectedIndex==5)
+			{	
+				TVCaptureDevice capture = CaptureCard;
+				if (capture==null)
+				{
+					MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					tabControl1.SelectedIndex=0;
+					return;
+				}
+				if (!capture.CreateGraph())
+				{
+					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					tabControl1.SelectedIndex=0;
+					return;
+				}
+				if (capture.Network != NetworkType.DVBC &&
+					capture.Network != NetworkType.DVBS &&
+					capture.Network != NetworkType.DVBC)
+				{
+					capture.DeleteGraph();
+					MessageBox.Show("EPG grabber only supports DVB-T / DVB-S / DVB-T cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					tabControl1.SelectedIndex=0;
+					return;
+				}
+				capture.DeleteGraph();
+				ArrayList channelList=new ArrayList();
+				TVDatabase.GetChannels(ref channelList);
+				treeView5.Nodes.Clear();
+				foreach (TVChannel chan in channelList)
+				{
+					TreeNode node=new TreeNode(chan.Name);
+					node.Tag=chan;
+					node.Checked=true;
+					treeView5.Nodes.Add(node);
+				}
+			}
+		}
 	}
 
 	public class CaptureFormat
@@ -1698,5 +2043,4 @@ public class ComboBoxCaptureCard
 	{
 		return base.GetHashCode();
 	}
-	
 }

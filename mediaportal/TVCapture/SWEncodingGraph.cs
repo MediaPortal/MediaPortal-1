@@ -1944,5 +1944,9 @@ namespace MediaPortal.TV.Recording
 		public void StoreChannels(int ID,bool radio, bool tv)
 		{
 		}
+		public IBaseFilter Mpeg2DataFilter()
+		{
+			return null;
+		}
   }
 }

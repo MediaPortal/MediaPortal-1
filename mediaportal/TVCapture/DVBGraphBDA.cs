@@ -2700,6 +2700,10 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		
 		}
+		public IBaseFilter Mpeg2DataFilter()
+		{
+			return m_SectionsTables;
+		}
 
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording

@@ -892,7 +892,8 @@ public enum SeekingFlags	:int	// AM_SEEKING_SeekingFlags AM_SEEKING_SEEKING_FLAG
 	SeekToKeyFrame			= 0x04,		// Just seek to key frame (performance gain)
 	ReturnTime				= 0x08,		// Plug the media time equivalents back into the supplied LONGLONGs
 	Segment					= 0x10,		// At end just do EC_ENDOFSEGMENT, don't do EndOfStream
-	NoFlush					= 0x20		// Don't flush
+	NoFlush					= 0x20,		// Don't flush
+	SeekAbsolutePositionKey=0x05 // absolute position + keyframe
 }
 
 

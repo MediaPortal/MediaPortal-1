@@ -1077,5 +1077,9 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 
+		public IBaseFilter Mpeg2DataFilter()
+		{
+			return null;
+		}
   }
 }

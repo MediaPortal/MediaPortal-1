@@ -373,7 +373,138 @@ namespace MediaPortal.TV.Recording
 			Log.Write("dvbsections:GetRAWPMT done");
 			return byData;
 		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
-		
+
+		public DVBChannel GetDVBChannel(DShowNET.IBaseFilter filter, int serviceId)
+		{
+			Log.Write("DVBSections.GetDVBChannel for service:{0}", serviceId);
+			DVBChannel chan = new DVBChannel();
+
+			ArrayList pmtTable=new ArrayList();
+			try
+			{
+				m_sectionsList=new ArrayList();	
+				Transponder transponder = new Transponder();
+				transponder.channels = new ArrayList();
+				transponder.PMTTable = new ArrayList();
+				GetStreamData(filter,0, 0,0,5000);
+				if (m_sectionsList.Count==0)
+				{
+					Log.Write("DVBSections.GetDVBChannel no sections found");
+					return null;
+				}
+				// jump to parser
+				foreach(byte[] arr in m_sectionsList)
+					decodePATTable(arr, transp[0], ref transponder);
+
+				LoadPMTTables(filter,transp[0],ref transponder);
+				int t;
+				int n;
+				ArrayList	tab42=new ArrayList();
+				ArrayList	tab46=new ArrayList();
+
+				// check tables
+				//AddTSPid(17);
+				//
+				
+				Debug.WriteLine("GET tab42");
+				GetStreamData(filter,17, 0x42,0,5000);
+				tab42=(ArrayList)m_sectionsList.Clone();
+				
+				Debug.WriteLine("GET tab46");
+				GetStreamData(filter,17, 0x46,0,5000);
+				tab46=(ArrayList)m_sectionsList.Clone();
+
+				
+				//bool flag=false;
+				ChannelInfo pat;
+				ArrayList pmtList = transponder.PMTTable;
+				int pmtScans;
+				pmtScans = (pmtList.Count / 20) + 1;
+				
+				for (t = 1; t <= pmtScans; t++)
+				{
+					//flag = DeleteAllPIDsI();
+					for (n = 0; n <= 19; n++)
+					{
+						if (((t - 1) * 20) + n > pmtList.Count - 1)
+						{
+							break;
+						}
+						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+						
+						// parse pmt
+						int res=0;
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+						foreach(byte[] wdata in m_sectionsList)
+						{
+							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
+						}
+
+						if(res>0)
+						{
+
+							foreach(byte[] wdata in tab42)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+
+							foreach(byte[] wdata in tab46)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+						}
+						transponder.channels.Add(pat);
+					}
+				}
+
+				foreach (ChannelInfo chanInfo in transponder.channels)
+				{
+					if (chanInfo.serviceID==serviceId)
+					{
+						Log.Write("DVBSections.GetDVBChannel found channel details");
+						for (int pids =0; pids < chanInfo.pid_list.Count;pids++)
+						{
+							DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[pids];
+							if (data.isVideo)
+								chan.VideoPid=data.elementary_PID;
+							if (data.isAC3Audio)
+								chan.AC3Pid=data.elementary_PID;
+							if (data.isTeletext)
+								chan.TeletextPid=data.elementary_PID;
+							if (data.isAudio)
+								chan.AudioPid=data.elementary_PID;
+						}
+						
+						chan.TransportStreamID=chanInfo.transportStreamID;
+						chan.Symbolrate=chanInfo.symb;
+						chan.ServiceType=chanInfo.serviceType;
+						chan.ServiceProvider=chanInfo.service_provider_name;
+						chan.ServiceName=chanInfo.service_name;
+						chan.ProgramNumber=chanInfo.program_number;
+						chan.Polarity=chanInfo.pol;
+						chan.PMTPid=chanInfo.network_pmt_PID;
+						chan.PCRPid=chanInfo.pcr_pid;
+						chan.NetworkID=chanInfo.networkID;
+						chan.LNBKHz=chanInfo.lnb01;
+						chan.LNBFrequency=chanInfo.lnbkhz;
+						chan.IsScrambled=chanInfo.scrambled;
+						chan.ID=1;
+						chan.HasEITSchedule=chanInfo.eitSchedule;
+						chan.HasEITPresentFollow=chanInfo.eitPreFollow;
+						chan.Frequency=chanInfo.freq;
+						chan.FEC=chanInfo.fec;
+						chan.ECMPid=0;
+						chan.DiSEqC=0;
+						Log.Write("name:{0} audio:{1:X} video:{2:X} txt:{3:X} EIT:{4} EITPF:{5}",
+										chan.ServiceName,chan.AudioPid,chan.VideoPid,chan.TeletextPid,chan.HasEITSchedule,chan.HasEITPresentFollow);
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("dvbsections:GetDVBChannel() exception:{0}", ex.ToString());
+			}
+			return chan;
+
+
+		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
+	
 		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		{
 			int t;
@@ -1607,7 +1738,7 @@ namespace MediaPortal.TV.Recording
 		{
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
-			GetStreamData(filter,18,tab,1,100);
+			GetStreamData(filter,18,tab,1,200);
 			foreach(byte[] arr in m_sectionsList)
 				decodeEITTable(arr,ref eit);
 

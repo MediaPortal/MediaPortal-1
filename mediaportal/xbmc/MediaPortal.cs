@@ -952,14 +952,15 @@ public class MediaPortalApp : D3DApp, IRender
       
       if (splashScreen!=null) splashScreen.SetInformation("Loading window plugins...");
       PluginManager.LoadWindowPlugins();
-      
+
+     
+			Log.Write("  WindowManager.Load");
+			GUIGraphicsContext.Load();
+ 
       if (splashScreen!=null) splashScreen.SetInformation("Initializing skin...");
       Log.Write("  WindowManager.Preinitialize");
       GUIWindowManager.PreInit();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-
-			Log.Write("  WindowManager.Load");
-			GUIGraphicsContext.Load();
 
 			Log.Write("  WindowManager.ActivateWindow");
 			GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);

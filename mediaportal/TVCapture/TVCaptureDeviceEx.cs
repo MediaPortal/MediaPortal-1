@@ -1309,7 +1309,14 @@ namespace MediaPortal.TV.Recording
 				xmlWriter.SetValue("tv","sharpness",GUIGraphicsContext.Sharpness);
 			}
 		}
-
+		public IBaseFilter Mpeg2DataFilter
+		{
+			get
+			{
+				if (_mGraph==null) return null;
+				return _mGraph.Mpeg2DataFilter();
+			}
+		}
   }
 }  
 #endif
