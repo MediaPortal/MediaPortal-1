@@ -43,7 +43,7 @@ namespace MediaPortal.TV.Recording{
 			header.TransportPriority=(data[1] & 0x20)>0?true:false;
 			header.Pid=((data[1] & 0x1F) <<8)+data[2];
 			header.TransportScrambling=data[3] & 0xC0;
-			header.AdaptionFieldControl=data[3] & 0x30;
+			header.AdaptionFieldControl=(data[3]>>4) & 0x3;
 			header.ContinuityCounter=data[3] & 0x0F;
 			header.AdaptionField=data[4];
 

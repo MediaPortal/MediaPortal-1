@@ -229,9 +229,7 @@ namespace MediaPortal.TV.Recording
 		int[]							m_ecmIDs=new int[3]{0,0,0};
 		bool							m_videoDataFound=false;
 		bool							m_vmr9Running=false;
-//		byte[]							m_teleTextBuffer=new byte[188];
-//		ArrayList						m_teleTextStream=new ArrayList();
-		DVBTeletext						m_ttxt=new DVBTeletext();
+		DVBTeletext						m_teleText=new DVBTeletext();
 //
 		
 		//
@@ -245,12 +243,9 @@ namespace MediaPortal.TV.Recording
 			}
 			
 
-//			if(m_pluginsEnabled==true)
-//			{
 				GUIWindow win=GUIWindowManager.GetWindow(7700);
 				if(win!=null)
-					win.SetObject(m_ttxt);
-//			}
+					win.SetObject(m_teleText);
 
 			try
 			{
@@ -261,13 +256,6 @@ namespace MediaPortal.TV.Recording
 
 			}
 			catch(Exception){}
-		}
-		public DVBTeletext GetTeletextObject
-		{
-			get
-			{
-				return m_ttxt;
-			}
 		}
 		//
 		public void RebuildTuner(IntPtr data)
@@ -339,7 +327,7 @@ namespace MediaPortal.TV.Recording
 		
 			int add=(int)data;
 			int end=(add+len);
-			
+
 			if(m_pluginsEnabled==true)
 			{
 				for(int pointer=add;pointer<end;pointer+=188)
@@ -373,16 +361,17 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			//
-			if(m_vmr9Running==true && m_videoDataFound==false)
+
+			if(m_vmr9Running==true  && m_videoDataFound==false)
 				Vmr9.Repaint();// repaint vmr9
 			
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
 					
 				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-				if(header.Pid==teleTextPid && m_ttxt!=null)
+				if(header.Pid==teleTextPid && m_teleText!=null)
 				{
-					m_ttxt.SaveData((IntPtr)pointer);
+					m_teleText.SaveData((IntPtr)pointer);
 				}
 			}
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
@@ -498,11 +487,11 @@ namespace MediaPortal.TV.Recording
 				{
 					AMMediaType mt=new AMMediaType();
 					mt.majorType=DShowNET.MediaType.Stream;
-					//mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
+					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
 					//m_sampleInterface.SetOneShot(true);
 					m_sampleInterface.SetCallback(this,1);
 					m_sampleInterface.SetMediaType(ref mt);
-					m_sampleInterface.SetBufferSamples(false);
+					m_sampleInterface.SetBufferSamples(true);
 				}
 				else
 					Log.Write("DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
@@ -527,6 +516,10 @@ namespace MediaPortal.TV.Recording
 
 			if(Frequency>13000)
 				Frequency/=1000;
+
+			if(m_tunerCtrl==null || m_dataCtrl==null || m_b2c2Adapter==null || m_avCtrl==null)
+				return false;
+
 
 			hr = m_tunerCtrl.SetFrequency(Frequency);
 			if (hr!=0)
@@ -584,12 +577,12 @@ namespace MediaPortal.TV.Recording
 				return false;	// *** FUNCTION EXIT POINT
 			}
 
-			hr=m_tunerCtrl.CheckLock();
-			if(hr!=0)
-			{
-				Log.Write("Tune for SkyStar2 FAILED: on CheckLock");
-				return false;
-			}
+//			hr=m_tunerCtrl.CheckLock();
+//			if(hr!=0)
+//			{
+//				Log.Write("Tune for SkyStar2 FAILED: on CheckLock");
+//				return false;
+//			}
 
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
@@ -1342,9 +1335,6 @@ namespace MediaPortal.TV.Recording
 			{
 				
 
-				if(m_mediaControl!=null)
-					m_mediaControl.Pause();
-
 				DVBChannel ch=new DVBChannel();
 				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
 				{
@@ -1367,22 +1357,21 @@ namespace MediaPortal.TV.Recording
 				}
 				m_currentChannel=ch;
 
-				if(m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
+				if(m_pluginsEnabled==true)
+					ExecTuner();
+
+				if(m_mediaControl!=null && m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
 				{
 				
-					SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,ch.AudioPid,ch.VideoPid);
-					// some time to pause
-					System.Threading.Thread.Sleep(750);
-					if(m_mediaControl!=null)
-						m_mediaControl.Run();
+					int hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,ch.AudioPid,ch.VideoPid);
+					if(hr!=0)
+					{
+						Log.Write("DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
+						return;
+					}
 				}
 
 				m_videoDataFound=false;
-
-				
-				if(m_pluginsEnabled==true)
-					ExecTuner();
-				
 				m_StartTime=DateTime.Now;
 
 
@@ -1406,7 +1395,7 @@ namespace MediaPortal.TV.Recording
 
 			Size FrameSize=new Size(720,576);
 			mpegVideoOut.unkPtr = IntPtr.Zero;
-			mpegVideoOut.sampleSize = 1536;
+			mpegVideoOut.sampleSize = 0;
 			mpegVideoOut.temporalCompression = false;
 			mpegVideoOut.fixedSizeSamples = true;
 

@@ -600,27 +600,60 @@ BOOL AddPidToTS(long pid)
 
 HRESULT SetupDemuxer(IPin *pVideo,IPin *pAudio,int audioPID,int videoPID)
 {
-	IMPEG2PIDMap *pMap;
-	ULONG pid;
-
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
 	HRESULT hr=0;
 
+	// video
 	hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
-	if(FAILED(hr))
+    if(FAILED(hr))
 		return 1;
+	// 
+	hr=pMap->EnumPIDMap(&pPidEnum);
+	if(FAILED(hr))
+		return 5;
+	// enum and unmap the pids
+	while(pPidEnum->Next(1,&pm,&count)== S_OK)
+	{
+		umPid=pm.ulPID;
+		hr=pMap->UnmapPID(1,&umPid);
+		if(FAILED(hr))
+			return 6;
+	}
+	pPidEnum->Release();
+	// map new pid
 	pid = (ULONG)videoPID;
 	hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
 	if(FAILED(hr))
 		return 2;
-	
+	pMap->Release();
+	// audio 
 	hr=pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 	if(FAILED(hr))
 		return 3;
+	// 
+	hr=pMap->EnumPIDMap(&pPidEnum);
+	if(FAILED(hr))
+		return 7;
+	// enum and unmap the pids
+	while(pPidEnum->Next(1,&pm,&count)== S_OK)
+	{
+		umPid=pm.ulPID;
+		hr=pMap->UnmapPID(1,&umPid);
+		if(FAILED(hr))
+			return 8;
+	}
+	pPidEnum->Release();
 	pid = (ULONG)audioPID;
 	hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
 	if(FAILED(hr))
 		return 4;
 
+	pMap->Release();
 	
 	
 	return S_OK;
