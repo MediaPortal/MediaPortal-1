@@ -96,7 +96,7 @@
         <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
         <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
         <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
-        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="false"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -118,7 +118,7 @@
         <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
         <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
         <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
-        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="false"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
