@@ -92,12 +92,15 @@ namespace MediaPortal.Configuration
       comboBoxLineInput.Items.Clear();
 
 			if(availableVideoDevices.Count == 0)
-			{acceptuserinput=false;
+			{
+        acceptuserinput=false;
 				MessageBox.Show("No video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = cardComboBox.Enabled = okButton.Enabled = setupButton.Enabled = audioCompressorComboBox.Enabled = audioDeviceComboBox.Enabled = videoCompressorComboBox.Enabled = false;
         comboBoxLineInput.Enabled=false;
         trackRecording.Enabled=false;
 			}
+      else
+        acceptuserinput=true;
 
 			SetupCaptureFormats();
 			frameSizeComboBox.Items.AddRange(captureFormats.ToArray());
