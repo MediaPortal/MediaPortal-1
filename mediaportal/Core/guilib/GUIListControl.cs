@@ -697,6 +697,17 @@ namespace MediaPortal.GUI.Library
             int iChan = (int)fPercentage;
             if (iChan != m_iOffset + m_iCursorY)
             {
+							// update spin controls
+							int iPage = 1;
+							int iSel = iChan;
+							while (iSel >= m_iItemsPerPage)
+							{
+								iPage++;
+								iSel -= m_iItemsPerPage;
+							}
+							m_upDown.Value = iPage;
+
+							// find item
               m_iOffset = 0;
               m_iCursorY = 0;
               while (iChan >= m_iItemsPerPage) 
@@ -726,7 +737,18 @@ namespace MediaPortal.GUI.Library
             int iChan = (int)fPercentage;
             if (iChan != m_iOffset + m_iCursorY)
             {
-              m_iOffset = 0;
+							// update spin controls
+							int iPage = 1;
+							int iSel = iChan;
+							while (iSel >= m_iItemsPerPage)
+							{
+								iPage++;
+								iSel -= m_iItemsPerPage;
+							}
+							m_upDown.Value = iPage;
+
+							// find item
+							m_iOffset = 0;
               m_iCursorY = 0;
               while (iChan >= m_iItemsPerPage) 
               {

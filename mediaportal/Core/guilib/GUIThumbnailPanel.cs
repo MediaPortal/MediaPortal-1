@@ -548,6 +548,17 @@ GUISpinControl m_upDown = null;
             int iChan = (int)fPercentage;
             if (iChan != m_iOffset + m_iCursorY * m_iColumns + m_iCursorX)
             {
+							// update spin controls
+							int iPage = 1;
+							int iSel = iChan;
+							while (iSel >= iItemsPerPage)
+							{
+								iPage++;
+								iSel -= iItemsPerPage;
+							}
+							m_upDown.Value = iPage;
+
+							// find item
               m_iOffset = 0;
               m_iCursorY = 0;
               while (iChan >= iItemsPerPage) 
@@ -583,6 +594,17 @@ GUISpinControl m_upDown = null;
             int iChan = (int)fPercentage;
             if (iChan != m_iOffset + m_iCursorY * m_iColumns + m_iCursorX)
             {
+							// update spin controls
+							int iPage = 1;
+							int iSel = iChan;
+							while (iSel >= iItemsPerPage)
+							{
+								iPage++;
+								iSel -= iItemsPerPage;
+							}
+							m_upDown.Value = iPage;
+
+							// find item
               m_iOffset = 0;
               m_iCursorY = 0;
               while (iChan >= iItemsPerPage) 
