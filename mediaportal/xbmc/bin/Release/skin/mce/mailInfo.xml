@@ -24,9 +24,9 @@
 				<description>Delete Button</description>
 				<type>button</type>
 				<id>25</id>
-				<posX>60</posX>
+				<posX>20</posX>
 				<posY>97</posY>
-				<width>135</width>
+				<width>175</width>
 				<label>8020</label>
 				<onleft>25</onleft>
 				<onright>24</onright>
@@ -37,10 +37,23 @@
 				<description>Mail Read Button</description>
 				<type>button</type>
 				<id>26</id>
-				<posX>60</posX>
+				<posX>20</posX>
 				<posY>131</posY>
-				<width>135</width>
+				<width>175</width>
 				<label>8021</label>
+				<onleft>26</onleft>
+				<onright>24</onright>
+				<onup>25</onup>
+				<ondown>25</ondown>
+			</control>
+			<control>
+				<description>Attachments</description>
+				<type>button</type>
+				<id>27</id>
+				<posX>20</posX>
+				<posY>165</posY>
+				<width>175</width>
+				<label>8022</label>
 				<onleft>26</onleft>
 				<onright>24</onright>
 				<onup>25</onup>
@@ -50,8 +63,8 @@
 				<description>Message label</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>220</posX>
-				<posY>180</posY>
+				<posX>20</posX>
+				<posY>205</posY>
 				<label>8019</label>
 				<font>font13</font>
 				<textcolor>FFB2D4F5</textcolor>
@@ -124,14 +137,26 @@
 				<description>textarea</description>
 				<type>textbox</type>
 				<id>24</id>
-				<posX>300</posX>
-				<posY>180</posY>
-				<width>340</width>
+				<posX>20</posX>
+				<posY>225</posY>
+				<width>640</width>
 				<height>350</height>
 				<onleft>25</onleft>
 				<onright>25</onright>
 				<onup>25</onup>
 				<ondown>25</ondown>
 			</control>
+			<control> 
+				<description>pic tumbview</description>
+				<type>thumbnailpanel</type>
+				<id>51</id>
+				<posX>20</posX>
+				<posY>225</posY>
+				<width>640</width>
+				<height>350</height>
+				<onleft>26</onleft>
+				<onright>51</onright>
+			</control>
+
 		</controls>
 </window>

@@ -2229,7 +2229,7 @@
 </string>
 <string>
 	<id>8004</id>
-	<value>You have new Mail!</value>
+	<value>new messages</value>
 </string>
 <string>
 	<id>8005</id>
@@ -2289,11 +2289,27 @@
 </string>
 <string>
 	<id>8020</id>
-	<value>Delete Mail</value>
+	<value>Show HTML-Body</value>
 </string>
 <string>
 	<id>8021</id>
 	<value>Mark as Read</value>
+</string>
+<string>
+	<id>8022</id>
+	<value>Show Attachments</value>
+</string>
+<string>
+	<id>8023</id>
+	<value>New Messages arrived</value>
+</string>
+<string>
+	<id>8024</id>
+	<value>Show Message</value>
+</string>
+<string>
+	<id>8025</id>
+	<value>Parsing Message</value>
 </string>
 <string>
 	<id>8030</id>
