@@ -52,7 +52,7 @@
 		<label>605</label>
 		<font>font16</font>
 		<texture>hp_selectionbar.png</texture>
-                <textureNoFocus>-</textureNoFocus>
+    <textureNoFocus>-</textureNoFocus>
 		<visible>no</visible>
 		<textcolor>ffffffff</textcolor>
 	</control>

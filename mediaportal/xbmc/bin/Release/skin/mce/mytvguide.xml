@@ -164,7 +164,8 @@
 		<posX>250</posX>
 		<posY>450</posY>
 		<width>400</width> 
-		<height>65</height> 
+		<height>65</height>
+<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.Guide.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>

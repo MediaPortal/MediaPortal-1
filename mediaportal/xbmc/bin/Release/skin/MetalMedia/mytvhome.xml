@@ -194,10 +194,11 @@
 	</control>
 	<control>
 		<description>Current program title</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>13</id>
 		<posX>350</posX>
 		<posY>110</posY>
+		<width>295</width>
 		<label>#TV.View.title</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -221,7 +222,8 @@
 		<posX>350</posX>
 		<posY>132</posY>
 		<width>295</width> 
-		<height>65</height> 
+		<height>65</height>
+		<seperator>----------------------------------------------------------------------------------------------</seperator> 
 		<label>#TV.View.description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
