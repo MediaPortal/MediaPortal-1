@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Sat Mar 12 23:03:24 2005
+/* at Sun Mar 13 09:13:12 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -250,8 +250,10 @@ EXTERN_C const IID IID_IVMR9Helper;
             /* [in] */ IBaseFilter *vmr9Filter,
             /* [in] */ DWORD monitor) = 0;
         
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlace( 
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlacePrefs( 
             /* [in] */ DWORD dwInterlace) = 0;
+        
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlaceMode( void) = 0;
         
     };
     
@@ -279,9 +281,12 @@ EXTERN_C const IID IID_IVMR9Helper;
             /* [in] */ IBaseFilter *vmr9Filter,
             /* [in] */ DWORD monitor);
         
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *SetDeinterlace )( 
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *SetDeinterlacePrefs )( 
             IVMR9Helper * This,
             /* [in] */ DWORD dwInterlace);
+        
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *SetDeinterlaceMode )( 
+            IVMR9Helper * This);
         
         END_INTERFACE
     } IVMR9HelperVtbl;
@@ -309,8 +314,11 @@ EXTERN_C const IID IID_IVMR9Helper;
 #define IVMR9Helper_Init(This,callback,dwD3DDevice,vmr9Filter,monitor)	\
     (This)->lpVtbl -> Init(This,callback,dwD3DDevice,vmr9Filter,monitor)
 
-#define IVMR9Helper_SetDeinterlace(This,dwInterlace)	\
-    (This)->lpVtbl -> SetDeinterlace(This,dwInterlace)
+#define IVMR9Helper_SetDeinterlacePrefs(This,dwInterlace)	\
+    (This)->lpVtbl -> SetDeinterlacePrefs(This,dwInterlace)
+
+#define IVMR9Helper_SetDeinterlaceMode(This)	\
+    (This)->lpVtbl -> SetDeinterlaceMode(This)
 
 #endif /* COBJMACROS */
 
@@ -334,12 +342,23 @@ void __RPC_STUB IVMR9Helper_Init_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_SetDeinterlace_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_SetDeinterlacePrefs_Proxy( 
     IVMR9Helper * This,
     /* [in] */ DWORD dwInterlace);
 
 
-void __RPC_STUB IVMR9Helper_SetDeinterlace_Stub(
+void __RPC_STUB IVMR9Helper_SetDeinterlacePrefs_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_SetDeinterlaceMode_Proxy( 
+    IVMR9Helper * This);
+
+
+void __RPC_STUB IVMR9Helper_SetDeinterlaceMode_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,

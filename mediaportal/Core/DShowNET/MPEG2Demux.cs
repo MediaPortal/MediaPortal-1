@@ -309,7 +309,7 @@ namespace DShowNET
 			else
 			{
 				if (vmr9!=null)
-					vmr9.SetDeinterlace();
+					vmr9.SetDeinterlaceMode();
 			}
 
 			Overlay=false;

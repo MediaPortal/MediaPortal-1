@@ -1775,7 +1775,7 @@ namespace MediaPortal.TV.Recording
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() start graph");
 
-			if (Vmr9!=null) Vmr9.SetDeinterlace();
+			if (Vmr9!=null) Vmr9.SetDeinterlaceMode();
 			m_mediaControl.Run();
 				
 			if(setVisFlag)

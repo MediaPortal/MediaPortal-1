@@ -121,7 +121,7 @@ namespace MediaPortal.Player
 					return base.GetInterfaces(filename);
 				}
 
-				Vmr9.SetDeinterlace();
+				Vmr9.SetDeinterlaceMode();
         return true;
       }
       catch( Exception  ex)

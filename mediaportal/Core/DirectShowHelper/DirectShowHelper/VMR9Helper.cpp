@@ -102,7 +102,7 @@ STDMETHODIMP CVMR9Helper::Deinit(void)
 	m_pDevice=NULL;
 	return S_OK;
 }
-STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
+STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
 {
 	int hr;
 	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
@@ -121,7 +121,12 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
 		break;
 	}
+	return S_OK;
+}
 
+STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
+{
+	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
 	VMR9VideoDesc VideoDesc; 
 	DWORD dwNumModes = 0;
 
@@ -129,7 +134,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 	ULONG fetched;
 	IPin* pins[10];
 	CComPtr<IEnumPins> pinEnum;
-	hr=m_pVMR9Filter->EnumPins(&pinEnum);
+	int hr=m_pVMR9Filter->EnumPins(&pinEnum);
 	pinEnum->Reset();
 	pinEnum->Next(1,&pins[0],&fetched);
 	hr=pins[0]->ConnectionMediaType(&pmt);
@@ -177,7 +182,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 				// Loop through each item and get the capabilities.
 				for (int i = 0; i < dwNumModes; i++)
 				{
-					hr=pDeint->SetDeinterlaceMode(0,&pModes[0]);
+					hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,&pModes[0]);
 					if (SUCCEEDED(hr)) 
 					{
 						Log("vmr9:SetDeinterlace() set deinterlace mode:%d",i);

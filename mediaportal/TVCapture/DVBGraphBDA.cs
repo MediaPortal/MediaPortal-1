@@ -1009,7 +1009,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-				if (Vmr9!=null) Vmr9.SetDeinterlace();
+				if (Vmr9!=null) Vmr9.SetDeinterlaceMode();
 			}
 
 			//start the graph

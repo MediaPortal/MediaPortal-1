@@ -40,12 +40,14 @@ public:
 
 	STDMETHOD(Init)(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor);
 	STDMETHOD(Deinit)(void);
+	STDMETHOD(SetDeinterlaceMode)(void);
+	STDMETHOD(SetDeinterlacePrefs)(DWORD dwMethod);
 protected:
 	CComPtr<IVMRSurfaceAllocator9>  g_allocator;
 	CComPtr<IBaseFilter>			m_pVMR9Filter;
 	LPDIRECT3DDEVICE9				m_pDevice;
 public:
-	STDMETHOD(SetDeinterlace)( DWORD dwInterlace);
+
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(VMR9Helper), CVMR9Helper)

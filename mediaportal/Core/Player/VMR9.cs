@@ -101,6 +101,7 @@ namespace MediaPortal.Player
 				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to add vmr9 to filtergraph");
 				return ;
 			}
+			SetDeinterlacePrefs();
 			GUIGraphicsContext.Vmr9Active=true;
 		}
 		public void Release()
@@ -228,7 +229,7 @@ namespace MediaPortal.Player
 				return true;
 			}//get {
 		}//public bool IsVMR9Connected
-		public void SetDeinterlace()
+		public void SetDeinterlacePrefs()
 		{
 			
 			int DeInterlaceMode=3;
@@ -240,7 +241,11 @@ namespace MediaPortal.Player
 				//Best
 				DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
 			}
-			vmr9Helper.SetDeinterlace((uint)DeInterlaceMode);
+			vmr9Helper.SetDeinterlacePrefs((uint)DeInterlaceMode);
+		}
+		public void SetDeinterlaceMode()
+		{
+			vmr9Helper.SetDeinterlaceMode();
 		}
 	}//public class VMR9Util
 }//namespace MediaPortal.Player 

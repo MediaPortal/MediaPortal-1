@@ -30,7 +30,8 @@ interface IVMR9Callback : IUnknown{
 ]
 interface IVMR9Helper : IUnknown{
 	[helpstring("method Init")] HRESULT Init([in] IVMR9Callback* callback, [in] DWORD dwD3DDevice, [in] IBaseFilter* vmr9Filter, [in] DWORD monitor);
-	[helpstring("method SetDeinterlace")] HRESULT SetDeinterlace([in] DWORD dwInterlace);
+	[helpstring("method SetDeinterlacePrefs")] HRESULT SetDeinterlacePrefs([in] DWORD dwInterlace);
+	[helpstring("method SetDeinterlaceMode")] HRESULT SetDeinterlaceMode();
 };
 [
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),
