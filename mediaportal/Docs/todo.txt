@@ -57,6 +57,7 @@ My TV:
  TVSetup
     - Have a manual finetune 
     - Manual tune ala autotune but let user enter channel and then allow finetune
+    - Make it possible to enter a name manualy for an autotuned found channel
 
 My Music: (int_20h)
   - auto-resume 
