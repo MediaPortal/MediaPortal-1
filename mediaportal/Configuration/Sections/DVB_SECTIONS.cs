@@ -409,6 +409,7 @@ namespace MediaPortal.Configuration.Sections
 					m_textBox.Text=Convert.ToString(transp[t].TPfreq/1000)+" MHz...("+Convert.ToString(servCount)+" services found yet)";
 				}
 				Tune(transp[t].TPfreq, transp[t].TPsymb, 6, transp[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
+				//System.Threading.Thread.Sleep(500);
 				if (IsTunerLocked())
 				{
 					GetStreamData(0, 0,0,5000);
@@ -559,8 +560,6 @@ namespace MediaPortal.Configuration.Sections
 						m_thePMTList.isAudio=true;
 						break;
 				}
-				pat.pid_list.Add(m_thePMTList);
-				// save value here	store_PidToMem (p2.elementary_PID);			// $$$ TODO maybe PES-Spider too?
 				pointer += 5;
 				len1 -= 5;
 				len2 = m_thePMTList.ES_info_length;
@@ -577,15 +576,23 @@ namespace MediaPortal.Configuration.Sections
 							{
 								byte[] data=new byte[x];
 								System.Array.Copy(buf,pointer,data,0,x);
-								if(indicator==0xA)
-									m_thePMTList.data=DVB_GetMPEGISO639Lang(data);
-								if(indicator==0x6A)
-									m_thePMTList.isAC3Audio=true;
-								if(indicator==0x56)
+								switch(indicator)
 								{
-									m_thePMTList.isTeletext=true;
-									m_thePMTList.teletextLANG=DVB_GetTeletextDescriptor(data);
+									case 0x0A:
+										m_thePMTList.data=DVB_GetMPEGISO639Lang(data);
+										break;
+									case 0x6A:
+										m_thePMTList.isAC3Audio=true;
+										break;
+									case 0x56:
+										m_thePMTList.isTeletext=true;
+										m_thePMTList.teletextLANG=DVB_GetTeletextDescriptor(data);
+										break;
+									default:
+										m_thePMTList.data="";
+										break;
 								}
+
 							}
 						}
 						else
@@ -597,7 +604,8 @@ namespace MediaPortal.Configuration.Sections
 						pointer += x;
 					}
 				}
-				
+				pat.pid_list.Add(m_thePMTList);
+
 			} // kill
 			//tp.channels.Add(ch);
 			return 1;
@@ -650,7 +658,7 @@ namespace MediaPortal.Configuration.Sections
 			int     len;
 			// so we need some more info
 			// we return
-			return "";
+			//return "";
 			descriptor_tag= b[0];
 			descriptor_length= b[1];
 			if(descriptor_length<b.Length)
@@ -664,16 +672,79 @@ namespace MediaPortal.Configuration.Sections
 				while ( len > 0) 
 				{
 					System.Array.Copy(b,pointer,bytes,0,len);
-					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes)+";;";
-					audio_type = BitsFromBArray (bytes,0,24,8);
+					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
+					if(bytes.Length>=4)
+						audio_type = bytes[3];
 					pointer += 4;
 					len -= 4;
 				}
 			}
-			if(ISO_639_language_code.Length>=3)
-				return ISO_639_language_code.Substring(0,3);
 			
-			return "";
+			return ISO_639_language_code;
+		}
+		private bool DVB_GetAC3Audio(byte[] b)
+
+		{
+
+			int      descriptor_tag;
+			int      descriptor_length;
+			int      component_type_flag;
+			int      bsid_flag;
+			int      mainid_flag;
+			int      asvc_flag;
+			int      reserved_1;
+			int      component_type=0;
+//			int      bsid_type=0;
+//			int      mainid_type=0;
+//			int      asvc_type=0;
+			int      len;
+
+
+
+			descriptor_tag		= b[0];
+			descriptor_length	= b[1];
+
+			component_type_flag= BitsFromBArray(b, 0, 16, 1);
+			bsid_flag			= BitsFromBArray (b, 0, 17, 1);
+			mainid_flag		= BitsFromBArray (b, 0, 18, 1);
+			asvc_flag			= BitsFromBArray (b, 0, 19, 1);
+			reserved_1			= BitsFromBArray (b, 0, 20, 4);
+
+			int pointer=3 ;
+			len  = descriptor_length - 2;
+
+			if (component_type_flag!=0) 
+			{
+				component_type	= b[pointer];
+				pointer++;
+				len--;
+			}
+
+			if (bsid_flag!=0) 
+			{
+				pointer++;
+//				bsid_flag	= b[pointer];
+//				len--;
+			}
+
+			if (mainid_flag!=0) 
+			{
+				pointer++;
+//				mainid_flag	= b[pointer];
+//				len--;
+			}
+
+			if (asvc_flag!=0) 
+			{
+				pointer++;
+//				asvc_flag	= b[pointer];
+//				len--;
+			}
+			if((component_type & 0x4)!=0)// multichannel
+				return true;
+
+			return false;
+
 		}
 		//
 		//
@@ -1015,7 +1086,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			int descriptor_tag;
 			int descriptor_length;
-			string ISO639_2_language_code="";
+			//string ISO639_2_language_code="";
 			int event_name_length;
 			int text_length;
 			byte[] b = new byte[4097];
@@ -1204,13 +1275,13 @@ namespace MediaPortal.Configuration.Sections
 		{
 			int descriptor_tag;
 			int descriptor_length;
-			string ISO639_2_language_code;
+			//string ISO639_2_language_code;
 			int descriptor_number;
 			int last_descriptor_number;
-			int event_name_length;
+			//int event_name_length;
 			int text_length;
 			int length_of_items;
-			string event_Name;
+			//string event_Name;
 			byte[] b = new byte[4097];
 			byte[] data = new byte[8];
 			string text = "not avail.";
@@ -1610,18 +1681,18 @@ namespace MediaPortal.Configuration.Sections
 		public bool Run()
 		{
 			bool flag;
-			int t;
 			flag = SetupB2C2Graph();
 			if (flag == true)
 			{
-				for (t = 0; t <= 10; t++)
-				{
+//				for (t = 0; t <= 10; t++)
+//				{
+//					//flag=Tune(0,0,0,0,0,0,0);//dummy tune
 					flag = RunSITable();
-					if (flag)
-					{
-						break;
-					}
-				}
+//					if (flag)
+//					{
+//						break;
+//					}
+//				}
 			}
 			if (flag == false)
 			{
@@ -1646,7 +1717,8 @@ namespace MediaPortal.Configuration.Sections
 			IntPtr sectionBuffer=IntPtr.Zero;
 
 			m_sectionsList=new ArrayList();
-			 
+			DeleteAllPIDsI();
+			AddTSPid(pid);
 			flag = GetSectionDataI(pid, tid,ref sectLast,tableSection,timeout);
 
 			for(int n=0;n<sectLast;n++)
