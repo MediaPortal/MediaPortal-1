@@ -435,22 +435,18 @@ namespace MediaPortal.Util
               VirtualShare=true;
             }
 
-            if (!askBeforePlayingDVDImage && VirtualShare)
-            {
-              // dont interrupt if we're already playing
-              if (!g_Player.Playing)
-              {
-                // Check if the mounted image is actually a DVD. If so, bypass
-                // autoplay to play the DVD without user intervention
-                if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-                {
-                  Log.Write("\"Autoplaying\" DVD image mounted on {0}",strDir);
-                  g_Player.PlayDVD(strDir+@"\VIDEO_TS\VIDEO_TS.IFO");
-                  return items;
-                }
-              }
-            }
-
+						if (VirtualShare && !g_Player.Playing) // dont interrupt if we're already playing
+						{
+							if (!askBeforePlayingDVDImage)
+							{
+								// If it looks like a DVD directory structure then return so
+								// that the playing of the DVD is handled by the caller.
+								if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+								{
+									return items;
+								}
+							}
+						}
           }
         }
       }
