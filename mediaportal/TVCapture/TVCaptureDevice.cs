@@ -5,9 +5,10 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
-//using DirectX.Capture;
+using DirectX.Capture;
 using MediaPortal.Player;
 using DShowNET;
+
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -63,7 +64,7 @@ namespace MediaPortal.TV.Recording
     int m_iPostRecordInterval = 0;
     
     [NonSerialized]
-    IGraph m_graph = null;
+    IGraph _mGraph = null;
 
     [NonSerialized]
     TVRecorded m_newRecordedTV = null;
@@ -348,12 +349,12 @@ namespace MediaPortal.TV.Recording
         if (!IsRecording)
         {
           m_strTVChannel = value;
-          if (m_graph != null)
+          if (_mGraph != null)
           {
             AnalogVideoStandard standard;
 						int country;
             int ichannel=GetChannelNr(m_strTVChannel, out standard, out country);
-            if (m_graph.ShouldRebuildGraph(ichannel))
+            if (_mGraph.ShouldRebuildGraph(ichannel))
             {
               RebuildGraph();
               return;
@@ -366,7 +367,7 @@ namespace MediaPortal.TV.Recording
               GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
               return;
             }*/
-            m_graph.TuneChannel(standard, ichannel,country);
+            _mGraph.TuneChannel(standard, ichannel,country);
             if (IsTimeShifting && !View)
             {
               if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
@@ -417,7 +418,7 @@ namespace MediaPortal.TV.Recording
 
       Log.Write("Card:{0} stop recording",ID);
       // todo : stop recorder
-      m_graph.StopRecording();
+      _mGraph.StopRecording();
 
 			m_newRecordedTV.End = Utils.datetolong(DateTime.Now);
 			TVDatabase.AddRecordedTV(m_newRecordedTV);
@@ -468,7 +469,7 @@ namespace MediaPortal.TV.Recording
       if (CreateGraph())
       {
         bool bContinue = false;
-        if (m_graph.SupportsTimeshifting())
+        if (_mGraph.SupportsTimeshifting())
         {
           if (StartTimeShifting())
           {
@@ -542,15 +543,15 @@ namespace MediaPortal.TV.Recording
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    bool CreateGraph()
+    public bool CreateGraph()
     {
       if (Allocated) return false;
-      if (m_graph == null)
+      if (_mGraph == null)
       {
         Log.Write("Card:{0} CreateGraph",ID);
-        m_graph = GraphFactory.CreateGraph(this);
-        if (m_graph == null) return false;
-        return m_graph.CreateGraph();
+        _mGraph = GraphFactory.CreateGraph(this);
+        if (_mGraph == null) return false;
+        return _mGraph.CreateGraph();
       }
       return true;
     }
@@ -561,13 +562,13 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    bool DeleteGraph()
+    public bool DeleteGraph()
     {
-      if (m_graph != null)
+      if (_mGraph != null)
       {
         Log.Write("Card:{0} DeleteGraph",ID);
-        m_graph.DeleteGraph();
-        m_graph = null;
+        _mGraph.DeleteGraph();
+        _mGraph = null;
 				GC.Collect();
 				GC.Collect();
 				GC.Collect();
@@ -593,12 +594,12 @@ namespace MediaPortal.TV.Recording
 
 			if (m_eState == State.Timeshifting) 
 			{
-				if (m_graph.GetChannelNumber() != iChannelNr)
+				if (_mGraph.GetChannelNumber() != iChannelNr)
 				{
-          if (!m_graph.ShouldRebuildGraph(iChannelNr))
+          if (!_mGraph.ShouldRebuildGraph(iChannelNr))
           {
             m_dtTimeShiftingStarted = DateTime.Now;
-            m_graph.TuneChannel(standard, iChannelNr,country);
+            _mGraph.TuneChannel(standard, iChannelNr,country);
             return true;
           }
 				}
@@ -626,7 +627,7 @@ namespace MediaPortal.TV.Recording
   
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
-      bool bResult = m_graph.StartTimeShifting(country,standard, iChannelNr, strFileName);
+      bool bResult = _mGraph.StartTimeShifting(country,standard, iChannelNr, strFileName);
       if ( bResult ==true)
       {
         m_dtTimeShiftingStarted = DateTime.Now;
@@ -648,7 +649,7 @@ namespace MediaPortal.TV.Recording
 
       //stopping timeshifting will also remove the live.tv file 
       Log.Write("Card:{0} stop timeshifting",ID);
-      m_graph.StopTimeShifting();
+      _mGraph.StopTimeShifting();
       m_eState = State.Initialized;
       return true;
     }
@@ -725,7 +726,7 @@ namespace MediaPortal.TV.Recording
 			 int country;
       int iChannelNr=GetChannelNr(m_strTVChannel, out standard, out country);
 
-      bool bResult = m_graph.StartRecording(country,standard,iChannelNr, ref strFileName, bContentRecording, timeProgStart);
+      bool bResult = _mGraph.StartRecording(country,standard,iChannelNr, ref strFileName, bContentRecording, timeProgStart);
 
 			m_newRecordedTV = new TVRecorded();
 			m_newRecordedTV.Start = Utils.datetolong(DateTime.Now);
@@ -805,7 +806,7 @@ namespace MediaPortal.TV.Recording
       {
         if (CreateGraph())
         {
-          return (m_graph.SupportsTimeshifting());
+          return (_mGraph.SupportsTimeshifting());
         }
         return false;
       }
@@ -815,7 +816,7 @@ namespace MediaPortal.TV.Recording
     {
       AnalogVideoStandard standard=AnalogVideoStandard.None;
       if (m_eState != State.Viewing) return;
-      m_graph.TuneChannel( standard, channel,CountryCode);
+      _mGraph.TuneChannel( standard, channel,CountryCode);
     }
 
     /// <summary>
@@ -834,7 +835,7 @@ namespace MediaPortal.TV.Recording
           if (View)
           {
             Log.Write("Card:{0} stop viewing :{1}",ID, m_strTVChannel);
-            m_graph.StopViewing();
+            _mGraph.StopViewing();
             DeleteGraph();
           }
         }
@@ -849,7 +850,7 @@ namespace MediaPortal.TV.Recording
             Log.Write("Card:{0} start viewing :{1}",ID, m_strTVChannel);
             AnalogVideoStandard standard;
             int iChannelNr = GetChannelNr(m_strTVChannel, out standard, out country);
-            m_graph.StartViewing(standard, iChannelNr, country);
+            _mGraph.StartViewing(standard, iChannelNr, country);
             m_eState = State.Viewing;
           }
         }
@@ -857,14 +858,49 @@ namespace MediaPortal.TV.Recording
     }
     public long VideoFrequency()
     {
-      if (m_eState!=State.Viewing && m_eState!=State.Timeshifting && m_eState!=State.Recording) return 0;
-      return m_graph.VideoFrequency();
+      if (_mGraph==null) return 0;
+      return _mGraph.VideoFrequency();
     }
     public bool SignalPresent()
     {
-      if (m_eState!=State.Viewing && m_eState!=State.Timeshifting && m_eState!=State.Recording) return false;
-      return m_graph.SignalPresent();
+      if (_mGraph==null) return false;
+      return _mGraph.SignalPresent();
     }
+
+		public bool ViewChannel(int channelNumber, int country, AnalogVideoStandard standard)
+		{
+			if (_mGraph==null)
+			{
+				if (!CreateGraph()) return false;
+				_mGraph.StartViewing(standard, channelNumber,country);
+			}
+			return true;
+		}
+		public PropertyPageCollection PropertyPages 
+		{
+			get
+			{
+				if (_mGraph==null) return null;
+				return _mGraph.PropertyPages();
+			}
+		}
+
+		public bool SupportsFrameSize(Size framesize)
+		{
+			if (_mGraph==null) return false;
+			return _mGraph.SupportsFrameSize(framesize);
+		}
+
+		public IBaseFilter AudiodeviceFilter
+		{
+			get 
+			{ 
+				if (_mGraph==null) return null;
+				return _mGraph.AudiodeviceFilter();
+			}
+		}
+
+
   }
 }  
 #endif

@@ -9,6 +9,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using DShowNET;
 using TVCapture;
+using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
@@ -856,7 +857,7 @@ namespace MediaPortal.TV.Recording
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    bool CreateGraph()
+    public bool CreateGraph()
     {
       if (Allocated) return false;
       if (_mGraph == null)
@@ -875,7 +876,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    bool DeleteGraph()
+    public bool DeleteGraph()
     {
       if (_mGraph != null)
       {
@@ -1169,16 +1170,54 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+
     public long VideoFrequency()
-    {
-      if (_mState!=State.Viewing && _mState!=State.Timeshifting && _mState!=State.Recording) return 0;
+		{
+			if (_mGraph==null) return 0;
       return _mGraph.VideoFrequency();
     }
+
     public bool SignalPresent()
-    {
-      if (_mState!=State.Viewing && _mState!=State.Timeshifting && _mState!=State.Recording) return false;
+		{
+			if (_mGraph==null) return false;
       return _mGraph.SignalPresent();
     }
+
+		public bool ViewChannel(int channelNumber, int country, AnalogVideoStandard standard)
+		{
+			if (_mGraph==null)
+			{
+				if (!CreateGraph()) return false;
+				_mGraph.StartViewing(standard, channelNumber,country);
+			}
+			return true;
+		}
+
+		public PropertyPageCollection PropertyPages 
+		{
+			get
+			{
+				if (_mGraph==null) return null;
+				return _mGraph.PropertyPages();
+			}
+		}
+
+		public bool SupportsFrameSize(Size framesize)
+		{
+			if (_mGraph==null) return false;
+			return _mGraph.SupportsFrameSize(framesize);
+		}
+
+		public IBaseFilter AudiodeviceFilter
+		{
+			get 
+			{ 
+				if (_mGraph==null) return null;
+				return _mGraph.AudiodeviceFilter();
+			}
+		}
+
+
   }
 }  
 #endif

@@ -1,5 +1,8 @@
 using System;
+using System.Drawing;
+using System.Windows.Forms;
 using DShowNET;
+using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
 {
@@ -194,5 +197,15 @@ namespace MediaPortal.TV.Recording
 		/// getting/updating the EPG, channel information etc (for DVB cards)
 		/// </summary>
 		void Process();
+
+		/// <summary>
+		/// returns a collection of property pages for tvcapture card
+		/// </summary>
+		/// <returns></returns>
+		PropertyPageCollection PropertyPages();
+
+		bool SupportsFrameSize(Size framesize);
+
+		IBaseFilter AudiodeviceFilter();
 	}
 }

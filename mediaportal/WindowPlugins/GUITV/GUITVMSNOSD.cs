@@ -297,7 +297,6 @@ namespace MediaPortal.GUI.TV
 
 		void SetNrOfPersons()
 		{
-			string Names="";
 
 			// Update nr of users
 			if (GUIMSNPlugin.CurrentConversation != null)

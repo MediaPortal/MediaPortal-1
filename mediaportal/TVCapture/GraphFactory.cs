@@ -12,6 +12,22 @@ namespace MediaPortal.TV.Recording
 		private GraphFactory()
 		{
 		}
+		
+		static public ITuning CreateTuning(TVCaptureDevice card)
+		{
+#if (!UseCaptureCardDefinitions)
+			return new AnalogTVTuning();
+#else
+			if (card.IsBDACard)
+			{
+			}
+			else
+			{
+				return new AnalogTVTuning();
+			}
+#endif
+			return null;
+		}
 
     /// <summary>
     /// Creates a new object which supports the specified TVCapture card and implements

@@ -179,6 +179,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AnalogTVTuning.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -215,6 +220,11 @@
                 />
                 <File
                     RelPath = "IGraph.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ITuning.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

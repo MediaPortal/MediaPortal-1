@@ -13,6 +13,8 @@ using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using TVCapture;
 using System.Xml;
+using DirectX.Capture;
+
 namespace MediaPortal.TV.Recording
 {
 	public enum NetworkType 
@@ -1806,6 +1808,22 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+		}
+
+		
+		public PropertyPageCollection PropertyPages()
+		{
+			return null;
+		}
+		
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
+		}
+
+		public bool SupportsFrameSize(Size framesize)
+		{	
+			return false;
 		}
 	}
 }

@@ -10,7 +10,6 @@ using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 
-
 namespace MediaPortal.TV.Recording
 {
 	/// <summary>
@@ -1670,6 +1669,21 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+		}
+		
+		public PropertyPageCollection PropertyPages()
+		{
+			return null;
+		}
+		
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
+		}
+
+		public bool SupportsFrameSize(Size framesize)
+		{	
+			return false;
 		}
 	}
 }

@@ -407,6 +407,7 @@ namespace MediaPortal.Configuration
 				LoadSectionSettings(treeNode);
 			}
       Log.Write("Load settings done");
+			GUIGraphicsContext.form=this;
     }
 
 		/// <summary>

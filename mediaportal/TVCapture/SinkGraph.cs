@@ -8,7 +8,6 @@ using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using DirectX.Capture;
 
-
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -942,6 +941,39 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+		}
+		
+		public PropertyPageCollection PropertyPages()
+		{
+			
+			PropertyPageCollection propertyPages=null;
+			{
+				try 
+				{ 
+					SourceCollection VideoSources = new SourceCollection( m_captureGraphBuilder, m_captureFilter, true );
+
+					// #MW#, difficult to say if this must be changed, as it depends on the loaded
+					// filters. The list below is fixed list however... So???
+					propertyPages = new PropertyPageCollection( m_captureGraphBuilder, 
+						m_captureFilter, null, 
+						null, null, 
+						VideoSources, null, (IBaseFilter)m_TVTuner );
+
+				}
+				catch ( Exception ex ) { Log.Write( "PropertyPages: FAILED to get property pages." + ex.ToString() ); }
+
+				return( propertyPages );
+			}
+		}
+		
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
+		}
+
+		public bool SupportsFrameSize(Size framesize)
+		{	
+			return false;
 		}
   }
 }

@@ -1158,7 +1158,7 @@ namespace MediaPortal.TV.Recording
 		protected IAMVideoProcAmp m_videoprocamp=null;
 		VideoCaptureDevice        m_videoCaptureDevice=null;
 		MPEG2Demux                m_mpeg2Demux=null;
-    IAMAnalogVideoDecoder m_IAMAnalogVideoDecoder;
+//    IAMAnalogVideoDecoder m_IAMAnalogVideoDecoder;
       
 		//#MW#
 		protected TVCaptureDevice mCard = null;

@@ -7,9 +7,7 @@ using System.Runtime.InteropServices;
 
 using DShowNET;
 using DShowNET.Device;
-
 using DirectX.Capture;
-
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using TVCapture;
@@ -66,11 +64,10 @@ namespace MediaPortal.Configuration
     private Size m_size = new Size(0,0);
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.TextBox textBoxName;
-		int cardId = 0;
+		
     bool acceptuserinput=false;
-#if (UseCaptureCardDefinitions)
-		private TVCaptureDevice _mTvCaptureDevice = null;
-#endif
+		private System.Windows.Forms.Button buttonAutotune;
+		
 		/// <summary>
 		/// 
 		/// </summary>
@@ -225,8 +222,6 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.textBoxName = new System.Windows.Forms.TextBox();
-			this.label12 = new System.Windows.Forms.Label();
 			this.lblRecordingLevel = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.trackRecording = new System.Windows.Forms.TrackBar();
@@ -251,8 +246,11 @@ namespace MediaPortal.Configuration
 			this.cardComboBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
+			this.textBoxName = new System.Windows.Forms.TextBox();
+			this.label12 = new System.Windows.Forms.Label();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
+			this.buttonAutotune = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.SuspendLayout();
@@ -294,19 +292,6 @@ namespace MediaPortal.Configuration
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Capture Card Settings";
 			// 
-			// textBoxName
-			// 
-			this.textBoxName.Location = new System.Drawing.Point(0, 0);
-			this.textBoxName.Name = "textBoxName";
-			this.textBoxName.TabIndex = 0;
-			this.textBoxName.Text = "";
-			// 
-			// label12
-			// 
-			this.label12.Location = new System.Drawing.Point(0, 0);
-			this.label12.Name = "label12";
-			this.label12.TabIndex = 0;
-			// 
 			// lblRecordingLevel
 			// 
 			this.lblRecordingLevel.Location = new System.Drawing.Point(272, 392);
@@ -327,7 +312,7 @@ namespace MediaPortal.Configuration
 			this.trackRecording.Location = new System.Drawing.Point(120, 384);
 			this.trackRecording.Maximum = 100;
 			this.trackRecording.Name = "trackRecording";
-			this.trackRecording.Size = new System.Drawing.Size(136, 45);
+			this.trackRecording.Size = new System.Drawing.Size(136, 42);
 			this.trackRecording.TabIndex = 48;
 			this.trackRecording.TickFrequency = 10;
 			this.trackRecording.Value = 80;
@@ -537,6 +522,19 @@ namespace MediaPortal.Configuration
 				"perty in the dropdown list below and press the \'Setup\' button. [Note: it depends" +
 				" on your TV-card if these settings are saved!!]";
 			// 
+			// textBoxName
+			// 
+			this.textBoxName.Location = new System.Drawing.Point(0, 0);
+			this.textBoxName.Name = "textBoxName";
+			this.textBoxName.TabIndex = 0;
+			this.textBoxName.Text = "";
+			// 
+			// label12
+			// 
+			this.label12.Location = new System.Drawing.Point(0, 0);
+			this.label12.Name = "label12";
+			this.label12.TabIndex = 0;
+			// 
 			// cancelButton
 			// 
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -557,10 +555,19 @@ namespace MediaPortal.Configuration
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
+			// buttonAutotune
+			// 
+			this.buttonAutotune.Location = new System.Drawing.Point(192, 448);
+			this.buttonAutotune.Name = "buttonAutotune";
+			this.buttonAutotune.TabIndex = 3;
+			this.buttonAutotune.Text = "Autotune";
+			this.buttonAutotune.Click += new System.EventHandler(this.buttonAutotune_Click);
+			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(474, 482);
+			this.Controls.Add(this.buttonAutotune);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
 			this.Controls.Add(this.groupBox1);
@@ -601,200 +608,9 @@ namespace MediaPortal.Configuration
 			this.Hide();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-#if (UseCaptureCardDefinitions)
-    private CaptureEx CreateCaptureDevice()
-    {
-			try
-			{
-				CaptureEx capture = null;
-#else
-		private Capture CreateCaptureDevice()
+
+		private void SetupPropertyPages(TVCaptureDevice capture )
 		{
-			try
-			{
-				Capture capture = null;
-#endif
-				DShowNET.Filter videoDevice = null;
-				DShowNET.Filter audioDevice = null;
-				DShowNET.Filter videoCompressor = null;
-				DShowNET.Filter audioCompressor = null;
-
-#if (UseCaptureCardDefinitions)
-				string selectedVideoDeviceName = "";
-				if (cardComboBox.SelectedItem != null)
-				{
-					_mTvCaptureDevice = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
-					if (_mTvCaptureDevice != null)
-					{
-						videoDevice = new Filter(_mTvCaptureDevice.VideoDeviceMoniker);
-						videoDevice.Name					= _mTvCaptureDevice.VideoDevice;
-						videoDevice.MonikerString = _mTvCaptureDevice.VideoDeviceMoniker;
-						selectedVideoDeviceName		= videoDevice.Name;
-					}
-					else return null;
-				}
-#else
-			string selectedVideoDeviceName = (string)cardComboBox.SelectedItem;
-#endif
-				string selectedAudioDeviceName = audioDeviceComboBox.SelectedItem as string;
-
-				string selectedVideoCompressor = videoCompressorComboBox.SelectedItem as string;
-				string selectedAudioCompressor = audioCompressorComboBox.SelectedItem as string;
-				if(selectedVideoDeviceName != null)
-				{
-					//
-					// Find the selected video capture device
-					//
-					Filters filters = new Filters();
-#if (UseCaptureCardDefinitions)
-#else
-        foreach(Filter filter in filters.VideoInputDevices)
-        {
-          if(selectedVideoDeviceName.Equals(filter.Name))
-          {
-            //
-            // The device was found
-            //
-            videoDevice = filter;
-            break;
-          }
-        }
-#endif
-					if (selectedAudioDeviceName!=null)
-					{
-						foreach(Filter filter in filters.AudioInputDevices)
-						{
-							if(selectedAudioDeviceName.Equals(filter.Name))
-							{
-								//
-								// The device was found
-								//
-								audioDevice = filter;
-								break;
-							}
-						}
-					}
-        
-					if (selectedAudioCompressor!=null)
-					{
-						foreach(Filter filter in filters.AudioCompressors)
-						{
-							if(selectedAudioCompressor.Equals(filter.Name))
-							{
-								//
-								// The device was found
-								//
-								audioCompressor = filter;
-								break;
-							}
-						}
-						if (audioCompressor==null)
-						{
-							foreach(Filter filter in filters.LegacyFilters)
-							{
-								if(selectedAudioCompressor.Equals(filter.Name))
-								{
-									//
-									// The device was found
-									//
-									audioCompressor = filter;
-									break;
-								}
-							}
-						}
-					}
-        
-					if (selectedVideoCompressor!=null)
-					{
-						foreach(Filter filter in filters.VideoCompressors)
-						{
-							if(selectedVideoCompressor.Equals(filter.Name))
-							{
-								//
-								// The device was found
-								//
-								videoCompressor = filter;
-								break;
-							}
-						}
-						if (videoCompressor==null)
-						{
-							foreach(Filter filter in filters.LegacyFilters)
-							{
-								if(selectedVideoCompressor.Equals(filter.Name))
-								{
-									//
-									// The device was found
-									//
-									videoCompressor = filter;
-									break;
-								}
-							}
-						}
-					}
-
-					//
-					// Create new capture
-					//
-					try
-					{
-#if (UseCaptureCardDefinitions)
-						capture = new CaptureEx(this._mTvCaptureDevice, videoDevice, audioDevice);
-#else
-          capture = new Capture(videoDevice, audioDevice);
-#endif	
-
-						capture.VideoCompressor = videoCompressor;
-
-						capture.AudioCompressor = audioCompressor;
-
-						capture.LoadSettings(cardId);        
-
-						m_bMPEG2=capture.SupportsTimeShifting;
-						m_bISMCE=capture.IsMCECard;
-#if (UseCaptureCardDefinitions)
-						ComboBoxCaptureCard cd = (cardComboBox.SelectedItem as ComboBoxCaptureCard);
-						if (cd!=null)
-						{
-							if (cd.CaptureDevice!=null)
-							{
-								if (cd.CaptureDevice.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
-								if (cd.CaptureDevice.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
-								if (cd.CaptureDevice.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
-								m_bIsBDA=cd.CaptureDevice.IsBDACard;
-								m_bISMCE=cd.CaptureDevice.IsMCECard;
-							}
-						}
-#endif
-					}
-					catch (Exception ex)
-					{
-						Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-						return null;
-					}        
-				}
-
-				return capture;
-			}
-			catch(Exception)
-			{
-				Log.Write("Cannot create capture device ");
-			}
-			return null;
-		}
-
-#if (UseCaptureCardDefinitions)
-		private void SetupPropertyPages(CaptureEx capture )
-		{
-#else
-
-		private void SetupPropertyPages(Capture capture )
-		{
-#endif
 			//
 			// Clear any previous items
 			//
@@ -880,40 +696,8 @@ namespace MediaPortal.Configuration
       //
       // Setup frame sizes
       //
-#if (UseCaptureCardDefinitions)
-      CaptureEx capture = CreateCaptureDevice();
-#else
-      Capture capture = CreateCaptureDevice();
-#endif
-			SetupPropertyPages(capture);
+      TVCaptureDevice capture = CaptureCard;
 
-
-
-      if(capture != null && capture.SupportsTimeShifting == false)
-      {
-        //
-        // Clear combo box
-        //
-        frameSizeComboBox.Items.Clear();
-
-        //
-        // Loop through available frame sizes and try to assign them to the card, if we succeed we
-        // know the card supports the size.
-        //
-        foreach(CaptureFormat format in captureFormats)
-        {
-          Size frameSize = new Size(format.Width, format.Height);
-          capture.FrameSize = frameSize;
-
-          if(capture.FrameSize == frameSize)
-          {
-            //
-            // Card supports the current frame size
-            //
-            frameSizeComboBox.Items.Add(format);
-          }
-        }
-      }
       //
       // Update controls
       //
@@ -940,48 +724,68 @@ namespace MediaPortal.Configuration
 
       if(capture != null)
       {
-        capture.FixCrossbarRouting(false);
+				if (capture.CreateGraph())
+				{
+					//
+					// Clear combo box
+					//
+					frameSizeComboBox.Items.Clear();
 
-        IBaseFilter audioDevice=capture.AudiodeviceFilter;
-        if (audioDevice!=null)
-        {
-          int hr=0;
-          IEnumPins pinEnum;
-          hr=audioDevice.EnumPins(out pinEnum);
-          if( (hr == 0) && (pinEnum != null) )
-          {
-            pinEnum.Reset();
-            IPin[] pins = new IPin[1];
-            int f;
-            do
-            {
-              // Get the next pin
-              hr = pinEnum.Next( 1, pins, out f );
-              if( (hr == 0) && (pins[0] != null) )
-              {
-                PinDirection pinDir;
-                pins[0].QueryDirection(out pinDir);
-                if (pinDir==PinDirection.Input)
-                {
-                  PinInfo info;
-                  pins[0].QueryPinInfo(out info);
-                  comboBoxLineInput.Items.Add(info.name);
-                }
-                Marshal.ReleaseComObject( pins[0] );
-              }
-            }
-            while( hr == 0 );
-          }
-        }
-      }
+					//
+					// Loop through available frame sizes and try to assign them to the card, if we succeed we
+					// know the card supports the size.
+					//
+				
+					if (capture.CreateGraph())
+					{
+						SetupPropertyPages(capture);
+						foreach(CaptureFormat format in captureFormats)
+						{
+							Size frameSize = new Size(format.Width, format.Height);
+							if (capture.SupportsFrameSize(frameSize))
+							{	
+								//
+								// Card supports the current frame size
+								//
+								frameSizeComboBox.Items.Add(format);
+							}
+						}
+					}
 
-      //
-      // Dispose objects
-      //
-      if(capture != null)
-      {
-        capture.Stop();
-        capture.Dispose();
+					IBaseFilter audioDevice=capture.AudiodeviceFilter;
+					if (audioDevice!=null)
+					{
+						int hr=0;
+						IEnumPins pinEnum;
+						hr=audioDevice.EnumPins(out pinEnum);
+						if( (hr == 0) && (pinEnum != null) )
+						{
+							pinEnum.Reset();
+							IPin[] pins = new IPin[1];
+							int f;
+							do
+							{
+								// Get the next pin
+								hr = pinEnum.Next( 1, pins, out f );
+								if( (hr == 0) && (pins[0] != null) )
+								{
+									PinDirection pinDir;
+									pins[0].QueryDirection(out pinDir);
+									if (pinDir==PinDirection.Input)
+									{
+										PinInfo info;
+										pins[0].QueryPinInfo(out info);
+										comboBoxLineInput.Items.Add(info.name);
+									}
+									Marshal.ReleaseComObject( pins[0] );
+								}
+							}
+							while( hr == 0 );
+						}
+					}
+					
+					capture.DeleteGraph();
+				}
       }
 
       // select the correct framesize
@@ -1004,36 +808,33 @@ namespace MediaPortal.Configuration
 			if(filterComboBox.SelectedItem != null)
 			{
 				string propertyPageName = (string)filterComboBox.SelectedItem;
-#if (UseCaptureCardDefinitions)
-				CaptureEx capture = CreateCaptureDevice();
-#else
-				Capture capture = CreateCaptureDevice();
-#endif
-
+				TVCaptureDevice capture = CaptureCard;
 				if(capture != null)
 				{
-					if(capture.PropertyPages != null)
+					if (capture.CreateGraph())
 					{
-						foreach(PropertyPage page in capture.PropertyPages)
+						if(capture.PropertyPages != null)
 						{
-							if(propertyPageName.Equals(page.Name))
+							foreach(PropertyPage page in capture.PropertyPages)
 							{
-								//
-								// Display property page
-								//
-								page.Show(this);
+								if(propertyPageName.Equals(page.Name))
+								{
+									//
+									// Display property page
+									//
+									page.Show(this);
 
-								//
-								// Save settings
-								//
-								capture.SaveSettings(cardId);
-								break;
+									//
+									// Save settings
+									//
+									//capture.SaveSettings(cardId);
+									break;
+								}
 							}
 						}
-					}
 
-					capture.Stop();
-					capture.Dispose();
+						capture.DeleteGraph();
+					}
 				}
 			}
 		}
@@ -1077,14 +878,24 @@ namespace MediaPortal.Configuration
       lblRecordingLevel.Text = String.Format("{0}%", trackRecording.Value);
     }
 
+		private void buttonAutotune_Click(object sender, System.EventArgs e)
+		{
+			AnalogTVTuningForm dialog = new AnalogTVTuningForm();
+			dialog.ShowDialog(this);
+		}
+
 
 		public TVCaptureDevice CaptureCard
 		{
 			get 
 			{
+				if (cardComboBox.SelectedItem==null) return null;
 #if (UseCaptureCardDefinitions)
 				TVCaptureDevice card = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
 				card.DeviceType=card.DeviceId;
+				m_bMPEG2=card.SupportsMPEG2;
+				m_bIsBDA=card.IsBDACard;
+				m_bISMCE=card.IsMCECard;
 #else
 				TVCaptureDevice card = new TVCaptureDevice();
 
