@@ -388,6 +388,7 @@ namespace MediaPortal.TV.Recording
 		/// <returns>byte array containing the raw PMT or null if no PMT is found</returns>
 		public byte[] GetRAWPMT(DShowNET.IBaseFilter filter, int serviceId, out ChannelInfo info)
 		{
+			byte[] byData=null;
 			info=new ChannelInfo();
 			m_sectionsList=new ArrayList();	
 			Transponder transponder = new Transponder();
@@ -399,37 +400,78 @@ namespace MediaPortal.TV.Recording
 			foreach(byte[] arr in m_sectionsList)
 				decodePATTable(arr, transp[0], ref transponder);
 
+			foreach (ChannelInfo chanInfo in transponder.channels)
+			{
+				if (chanInfo.serviceID==serviceId)
+				{
+					info=chanInfo;
+					break;
+				}
+			}
 			int t;
 			int n;
 			ArrayList	tab42=new ArrayList();
 			ArrayList	tab46=new ArrayList();
 
-			//GetStreamData(filter,17, 0x42,0,5000);
-			//tab42=(ArrayList)m_sectionsList.Clone();
-			//GetStreamData(filter,17, 0x46,0,5000);
-			//tab46=(ArrayList)m_sectionsList.Clone();
+			// check tables
+			AddTSPid(17);
+			//
+			GetStreamData(filter,17, 0x42,0,5000);
+			tab42=(ArrayList)m_sectionsList.Clone();
+			GetStreamData(filter,17, 0x46,0,5000);
+			tab46=(ArrayList)m_sectionsList.Clone();
 
+			bool flag;
 			ChannelInfo pat;
 			ArrayList pmtList = transponder.PMTTable;
-			for (t = 0; t < pmtList.Count; t++)
+			int pmtScans;
+			pmtScans = (pmtList.Count / 20) + 1;
+			for (t = 1; t <= pmtScans; t++)
 			{
-				pat = (ChannelInfo) pmtList[t];
-				if (pat.program_number==serviceId)
+				flag = DeleteAllPIDsI();
+				for (n = 0; n <= 19; n++)
 				{
-					info=pat;
-					// get pmt
+					if (((t - 1) * 20) + n > pmtList.Count - 1)
+					{
+						break;
+					}
+					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+					
+					// parse pmt
+					int res=0;
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
 					{
-						if (wdata.Length> 0)
+						if (pat.program_number==serviceId)
 						{
-							//return pmt
-							return wdata;
+							byData=(byte[])wdata.Clone();
 						}
+						res=decodePMTTable(wdata, transp[0], transponder,ref pat);
 					}
+
+					if(res>0)
+					{
+
+						foreach(byte[] wdata in tab42)
+							decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+
+						foreach(byte[] wdata in tab46)
+							decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+					}
+					transponder.channels.Add(pat);
 				}
 			}
-			return null;
+
+			foreach (ChannelInfo chanInfo in transponder.channels)
+			{
+				if (chanInfo.serviceID==serviceId)
+				{
+					info=chanInfo;
+					break;
+				}
+			}
+
+			return byData;
 		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
 		
 		private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
