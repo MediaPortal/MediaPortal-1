@@ -26,6 +26,9 @@ namespace MediaPortal.Player
   /// </summary>
   public class DVDPlayer9 : DVDPlayer 
   {
+    const uint  VFW_E_DVD_DECNOTENOUGH    =0x8004027B;
+    const uint  VFW_E_DVD_RENDERFAIL      =0x8004027A;
+
     GCHandle                  myHandle;
     AllocatorWrapper.Allocator allocator;
     PlaneScene                 m_scene=null;
@@ -72,36 +75,45 @@ namespace MediaPortal.Player
         hr = dvdGraph.GetFiltergraph( out graphBuilder );
         if( hr != 0 )
           Marshal.ThrowExceptionForHR( hr );
+
+        
+        DvdRenderStatus status;
+        if (strPath.Length==0) strPath=null;
+        hr=dvdGraph.RenderDvdVideoVolume(strPath,DvdGraphFlags.SwDecPrefer|DvdGraphFlags.VMR9Only,out status);
+        if( hr != 0 )
+        {
+          if (((uint)hr)==VFW_E_DVD_DECNOTENOUGH)
+            Log.Write("FAILED:Unable to DVD. Missing codecs which support VMR9");
+          else if (((uint)hr)==VFW_E_DVD_RENDERFAIL)
+            Log.Write("FAILED:Unable to DVD. Some basic error occurred in building the graph");
+          else
+            Log.Write("FAILED:Unable to render volume:{0} error:0x{1:X}", strPath,hr);
+          if (status.vpeStatus!=0) Log.Write("  overlay error :{0:x}", status.vpeStatus);
+          if (status.volInvalid) Log.Write("  invalid volume:{0}", strPath);
+          if (status.volUnknown) Log.Write("  NO DVD found at :{0}", strPath);
+          if (status.noLine21In) Log.Write("  The video decoder doesn't produce line21 data");
+          if (status.noLine21Out) Log.Write("  the video decoder can't be shown as closed captioning on video due to a problem with graph building");
+          if (status.numStreamsFailed>0) Log.Write("  streams failed:{0} of {1}",status.numStreamsFailed,status.numStreams);
+          if ((status.failedStreams & DvdStreamFlags.Audio)!=0) Log.Write("  audio stream failed");
+          if ((status.failedStreams & DvdStreamFlags.Video)!=0) Log.Write("  video stream failed");
+          if ((status.failedStreams & DvdStreamFlags.SubPic)!=0) Log.Write("  subpic stream failed");
+          //  Marshal.ThrowExceptionForHR( hr );
+        }
+
         DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+        AddVMR9(dvdGraph);
 
         try
         {
-          IBaseFilter dvdbasefilter;
-          dvdbasefilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strDVDNavigator);
-          if (dvdbasefilter!=null)
-          {
-            IDvdControl2 cntl=(IDvdControl2)dvdbasefilter;
-            if (cntl!=null)
+            hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
+            if (hr!=0) 
             {
-              AddPreferedCodecs(graphBuilder);
-              VMR9Filter=AddVMR9();
-              if (strPath!=null) cntl.SetDVDDirectory(strPath);
-              dvdInfo = (IDvdInfo2) cntl;
-              dvdCtrl = (IDvdControl2)cntl;
-
-
-              hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
-              if (hr!=0) 
-              {
-                Log.Write("VideoPlayer9:Failed to set VMR9 allocator/presentor");
-                return false;
-              }
-
-              DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
-              m_bFreeNavigator=false;
+              Log.Write("VideoPlayer9:Failed to set VMR9 allocator/presentor");
+              return false;
             }
+
+            m_bFreeNavigator=false;
             //Marshal.ReleaseComObject( dvdbasefilter); dvdbasefilter = null;              
-          }
         }
         catch(Exception ex)
         {
@@ -109,11 +121,6 @@ namespace MediaPortal.Player
         }
         Guid riid ;
 
-        
-        if (strDVDAudioRenderer!="")
-        {
-          audioRenderer=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strDVDAudioRenderer);
-        }
 			
         if (dvdInfo==null)
         {
@@ -175,6 +182,9 @@ namespace MediaPortal.Player
         m_iVideoWidth=allocator.NativeSize.Width;
         m_iVideoHeight=allocator.NativeSize.Height;
 
+        if( VMR9Filter != null )
+          Marshal.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
+
         m_bStarted=true;
         return true;
       }
@@ -191,34 +201,22 @@ namespace MediaPortal.Player
       }
     }
 
-    IBaseFilter AddVMR9()
+    void AddVMR9(IDvdGraphBuilder dvdBuilder)
     {
       //IVideoMixingRenderer9
-      Type comtype = null;
-      object comobj = null;
-
-      comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
-      comobj = Activator.CreateInstance( comtype );
-      IBaseFilter VMR9Filter=(IBaseFilter)comobj; comobj=null;
-      if (VMR9Filter==null) 
-      {
-        Log.Write("VideoPlayer9:Failed to get instance of VMR9 ");
-        return  null;
-      }
-				
 
       //IVMRFilterConfig9
-      IVMRFilterConfig9 FilterConfig9 = VMR9Filter as IVMRFilterConfig9;
+      IVMRFilterConfig9 FilterConfig9 = dvdBuilder as IVMRFilterConfig9;
       if (FilterConfig9==null) 
       {
         Log.Write("VideoPlayer9:Failed to get IVMRFilterConfig9 ");
-        return  null;
+        return;
       }
       int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
       if (hr!=0) 
       {
         Log.Write("VideoPlayer9:Failed to set VMR9 to renderless mode");
-        return  null;
+        return;
       }
 
       // needed to put VMR9 in mixing mode instead of pass-through mode
@@ -227,16 +225,8 @@ namespace MediaPortal.Player
       if (hr!=0) 
       {
         Log.Write("VideoPlayer9:Failed to set VMR9 streams to 1");
-        return  null;
+        return;
       }
-
-      hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
-      if (hr!=0) 
-      {
-        Log.Write("VideoPlayer9:Failed to add vmr9 to filtergraph");
-        return  null;
-      }
-      return  VMR9Filter;
     }
     
     /// <summary> do cleanup and release DirectShow. </summary>

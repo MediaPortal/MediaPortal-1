@@ -377,7 +377,7 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
-        DsUtils.DumpFilters(graphBuilder);
+        //DsUtils.DumpFilters(graphBuilder);
         DvdDiscSide side;
         int iTitles,iNumOfVolumes,iVolume;
         hr=dvdInfo.GetDVDVolumeInfo(out iNumOfVolumes, out iVolume, out side, out iTitles);

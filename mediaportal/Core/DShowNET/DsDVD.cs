@@ -17,14 +17,15 @@ namespace DShowNET.Dvd
 // =================================================================================================
 
 [Flags]
-public enum DvdGraphFlags		// AM_DVD_GRAPH_FLAGS
+public enum DvdGraphFlags		:int // AM_DVD_GRAPH_FLAGS
 {
 	Default			= 0x00000000,
 	HwDecPrefer		= 0x00000001,		// AM_DVD_HWDEC_PREFER
 	HwDecOnly		= 0x00000002,		// AM_DVD_HWDEC_ONLY
 	SwDecPrefer		= 0x00000004,		// AM_DVD_SWDEC_PREFER
 	SwDecOnly		= 0x00000008,		// AM_DVD_SWDEC_ONLY
-	NoVpe			= 0x00000100		// AM_DVD_NOVPE
+	NoVpe			= 0x00000100,		// AM_DVD_NOVPE
+  VMR9Only= 0x800
 }
 
 [Flags]
@@ -68,10 +69,14 @@ public interface IDvdGraphBuilder
 		[Out, MarshalAs(UnmanagedType.IUnknown) ]	out	object	ppvIF );
 
 		[PreserveSig]
-	int RenderDvdVideoVolume(
-		[In, MarshalAs(UnmanagedType.LPWStr)]			string			lpcwszPathName,
-														DvdGraphFlags	dwFlags,
-		[Out]										out DvdRenderStatus	pStatus );
+    int RenderDvdVideoVolume(
+      string			lpcwszPathName,
+      DvdGraphFlags	dwFlags,
+      out DvdRenderStatus	pStatus );
+    //int RenderDvdVideoVolume(
+		//[In, MarshalAs(UnmanagedType.LPWStr)]			string			lpcwszPathName,
+		//												DvdGraphFlags	dwFlags,
+		//[Out]										out DvdRenderStatus	pStatus );
 }
 
 
