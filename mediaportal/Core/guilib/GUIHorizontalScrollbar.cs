@@ -86,13 +86,15 @@ namespace MediaPortal.GUI.Library
 			m_guiLeft.SetPosition(iXPos,iYPos);
 			m_guiLeft.Height=m_guiLeft.TextureHeight;
 			m_guiLeft.Width=m_guiLeft.TextureWidth;
-			m_guiLeft.Render();
+      m_guiLeft.DoUpdate();
+      m_guiLeft.Render();
 
 			iXPos += m_guiLeft.TextureWidth;
 			m_guiRight.SetPosition(iXPos,iYPos);
 			m_guiRight.Height=m_guiRight.TextureHeight;
 			m_guiRight.Width=m_guiLeft.TextureWidth;
-			m_guiRight.Render();
+      m_guiRight.DoUpdate();
+      m_guiRight.Render();
 
 		}
 

@@ -91,12 +91,14 @@ namespace MediaPortal.GUI.Library
       m_guiTop.SetPosition(iXPos,iYPos);
       m_guiTop.Height=m_guiTop.TextureHeight;
       m_guiTop.Width=m_guiTop.TextureWidth;
+      m_guiTop.DoUpdate();
       m_guiTop.Render();
 
       iXPos += m_guiTop.TextureWidth;
       m_guiBottom.SetPosition(iXPos,iYPos);
       m_guiBottom.Height=m_guiBottom.TextureHeight;
       m_guiBottom.Width=m_guiTop.TextureWidth;
+      m_guiBottom.DoUpdate();
       m_guiBottom.Render();
 
     }
