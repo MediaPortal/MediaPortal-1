@@ -131,9 +131,12 @@ int FontEngineAddTexture(int hashCode, void* texture)
 
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
 {
-	textureZ[textureCount]=textureNo;
-	textureCount++;
 	TEXTURE_DATA_T* texture=&textureData[textureNo];
+	if (texture->iv==0)
+	{
+		textureZ[textureCount]=textureNo;
+		textureCount++;
+	}
 	CUSTOMVERTEX*	pVertices=NULL;
 	texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
 	int iv=texture->iv;
