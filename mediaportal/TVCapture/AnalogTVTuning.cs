@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Recording
 			}
 			NextChannel();
 			float freq=captureCard.VideoFrequency();
-			if (freq == lastFrequency) 
+			if ((int)freq == (int)lastFrequency && freq >100f) 
 			{
 				timer1.Enabled=false;
 				callback.OnProgress(100);

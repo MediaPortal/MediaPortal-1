@@ -709,8 +709,10 @@ namespace MediaPortal.GUI.TV
 			dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
-      if (!dlgYesNo.IsConfirmed) return;
-      TVDatabase.RemoveRecordedTV(rec);
+			if (!dlgYesNo.IsConfirmed) return;
+			TVDatabase.RemoveRecordedTV(rec);
+			VideoDatabase.DeleteMovieInfo(rec.FileName);
+			VideoDatabase.DeleteMovie(rec.FileName);
       DeleteRecording(rec.FileName);
       LoadDirectory();
     }
@@ -733,8 +735,10 @@ namespace MediaPortal.GUI.TV
       {
         if (rec.Played>0)
         {
-          DeleteRecording(rec.FileName);
-          TVDatabase.RemoveRecordedTV(rec);
+					DeleteRecording(rec.FileName);
+					TVDatabase.RemoveRecordedTV(rec);
+					VideoDatabase.DeleteMovieInfo(rec.FileName);
+					VideoDatabase.DeleteMovie(rec.FileName);
         }
       }
 

@@ -698,7 +698,9 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
-      TVDatabase.RemoveRecordedTV(rec);
+			TVDatabase.RemoveRecordedTV(rec);
+			VideoDatabase.DeleteMovieInfo(rec.FileName);
+			VideoDatabase.DeleteMovie(rec.FileName);
       DeleteRecording(rec.FileName);
       LoadDirectory();
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
@@ -725,8 +727,10 @@ namespace MediaPortal.GUI.TV
       {
         if (rec.Played>0)
         {
-          DeleteRecording(rec.FileName);
-          TVDatabase.RemoveRecordedTV(rec);
+					DeleteRecording(rec.FileName);
+					TVDatabase.RemoveRecordedTV(rec);
+					VideoDatabase.DeleteMovieInfo(rec.FileName);
+					VideoDatabase.DeleteMovie(rec.FileName);
         }
       }
 
