@@ -4222,6 +4222,7 @@ namespace MediaPortal
       foreach (Filter filter in filters.LegacyFilters) 
       {
         if ( String.Compare(filter.Name,"DVD Navigator",true)==0 ||
+             String.Compare(filter.Name,"InterVideo Navigator",true)==0 ||
              String.Compare(filter.Name,"CyberLink DVD Navigator",true)==0)
         {
           box.Items.Add(filter.Name);
