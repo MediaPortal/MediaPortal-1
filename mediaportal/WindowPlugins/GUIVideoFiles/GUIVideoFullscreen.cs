@@ -1117,7 +1117,7 @@ namespace MediaPortal.GUI.Video
         if (m_iTimeCodePosition==3) strTmp+="??";
         if (m_iTimeCodePosition==4) strTmp+="?";
 		    GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Control.LABEL_ROW1,0,0,null); 
-		    
+		    /*
         int ihour=0;
         int imin=0; 
         int isec=0; 
@@ -1147,7 +1147,9 @@ namespace MediaPortal.GUI.Video
           strTmp=" [??:??:??]";
         }
 		    msg.Label=displaytime+strTmp; 
-        OnMessage(msg);
+        OnMessage(msg);*/
+				msg.Label=strTmp; 
+				OnMessage(msg);
       }	
       
 	    SetFFRWLogos();
