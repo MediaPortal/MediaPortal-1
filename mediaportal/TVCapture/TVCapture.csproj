@@ -169,6 +169,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DVB_SECTIONS.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DVBGraphSS2.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
