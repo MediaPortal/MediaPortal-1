@@ -1698,22 +1698,8 @@ namespace MediaPortal.TV.Recording
 		}		//
 		//
 		//
-		private int SetBit(int InByte, byte Bit)
-		{
-			int returnValue;
-			
-			returnValue = InByte |(int)Math.Pow(2, Bit); //Set het n'de Bit
-			
-			return returnValue;
-		}
 
-
-		private byte ToggleBit(long InByte, byte Bit)
-		{
-			byte returnValue;
-			returnValue = System.Convert.ToByte(Math.Pow(InByte,(Math.Pow(2, Bit))));
-			return returnValue;
-		}
+		// dont use anymore
 		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter)
 		{
 			EIT_Program_Info eit=new EIT_Program_Info();
@@ -1725,8 +1711,13 @@ namespace MediaPortal.TV.Recording
 			return eit.eitList;
 		}
 		//
+		// returns events found in tables >=0x50 && <=0x6f 
+		// lastTab holds the last table
+		//
 		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter,ref int lastTab)
 		{
+			if(tab<0x50 || tab>0x6f)
+				return null;
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
 			EITDescr descr=new EITDescr();
@@ -1784,6 +1775,9 @@ namespace MediaPortal.TV.Recording
 			return eit.eitList;
 		}
 
+		//
+		// dont use anymore
+		//
 		public int GrabEIT(DVBChannel ch,DShowNET.IBaseFilter filter)
 		{
 			// there must be an ts (card tuned) to get eit
@@ -1830,144 +1824,33 @@ namespace MediaPortal.TV.Recording
 
 		}
 		//
-		public long GetStartDateFromEIT(EITDescr data)
-		{
-			
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.ts_id);
-			try
-			{
-				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
-				date=date.ToLocalTime();
-				return GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
-		
-			}
-			catch
-			{}
-			return 0;
-		}
 		//
-		public long GetEndDateFromEIT(EITDescr data)
-		{
-			
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.ts_id);
-			try
-			{
-				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
-				System.DateTime dur=new DateTime();
-				date=date.ToLocalTime();
-				dur=date;
-				dur=dur.AddHours((double)data.duration_hh);
-				dur=dur.AddMinutes((double)data.duration_mm);
-				dur=dur.AddSeconds((double)data.duration_ss);
-				return GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
-			}
-			catch
-			{}
-			return 0;
-		}
-
 		//
-		public int GrabEIT(DShowNET.IBaseFilter filter,int serviceID)
-		{
-			// there must be an ts (card tuned) to get eit
-			
-			int eventsCount=0;
-
-			ArrayList eitList=new ArrayList();
-
-			int lastTab=0;
-			eitList=GetEITSchedule(0x50,filter,ref lastTab);
-			Log.Write("epg-grabber: got {0} events for this grab",eitList.Count);
-			int n=0;
-			foreach(EITDescr eit in eitList)
-			{
-				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
-				Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
-				if(progName==null)
-				{
-					Log.Write("epg-grab: FAILED name is NULL");
-					continue;
-				}
-				if(progName=="")
-					Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
-
-				eventsCount+=SetEITToDatabase(eit,progName,0x50);
-				n++;
-			}
-			if(lastTab>0x50)
-			{
-				for(int tab=0x51;tab<lastTab;tab++)
-				{
-					eitList=GetEITSchedule(0x50,filter,ref lastTab);
-					Log.Write("epg-grabber: got {0} events for this grab",eitList.Count);
-					foreach(EITDescr eit in eitList)
-					{
-						string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
-						eventsCount+=SetEITToDatabase(eit,progName,0x50);
-					}
-
-				}
-			}
-		
-			GC.Collect();
-			return 	eventsCount;
-
-		}
 		//
-		public int SetEITToDatabase(EITDescr data,string channelName,int eventKind)
+
+		// dont use this anymore
+		private long GetLongFromDate(int year,int mon,int day,int hour,int min,int sec)
 		{
-			try
-			{
-				int retVal=0;
-				TVProgram tv=new TVProgram();
-				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
-				date=date.ToLocalTime();
-				System.DateTime dur=new DateTime();
-				dur=date;
-				dur=dur.AddHours((double)data.duration_hh);
-				dur=dur.AddMinutes((double)data.duration_mm);
-				dur=dur.AddSeconds((double)data.duration_ss);
-				tv.Channel=channelName;
-				tv.Genre=data.genere_text;
-				tv.Title=data.event_name;
-				tv.Description=data.event_item_text;
-
-
-				if(tv.Title=="" || tv.Title=="n.a.") 
-				{
-					Log.Write("epg: entrie without title found");
-					return 0;
-				}
-				long checkStart=0;
-				long checkEnd=0;
-				// for check
-				checkStart=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute+2,date.Second);
-				checkEnd=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute-2,dur.Second);
-				//
-				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
-				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
-				ArrayList programsInDatabase = new ArrayList();
-				TVDatabase.GetProgramsPerChannel(tv.Channel,checkStart,checkEnd,ref programsInDatabase);
-				if(programsInDatabase.Count==0 && channelName!="")
-				{
-					int programID=TVDatabase.AddProgram(tv);
-					//TVDatabase.RemoveOverlappingPrograms();
-					if(programID!=-1)
-					{
-						retVal= 1;
-					}
-				}
-				else
-					Log.Write("epg-grab: FAILED to add to database: {0} : {1}",tv.Start,tv.End);
-				return retVal;
-			}
-			catch(Exception ex)
-			{
-				Log.Write("epg-grab: FAILED to add to database. message:{0}",ex.Message);
-				return 0;
-			}
+			string longVal="";
+			string yr=year.ToString();
+			string mo=mon.ToString();
+			string da=day.ToString();
+			string h=hour.ToString();
+			string m=min.ToString();
+			string s=sec.ToString();
+			if(mo.Length==1)
+				mo="0"+mo;
+			if(da.Length==1)
+				da="0"+da;
+			if(h.Length==1)
+				h="0"+h;
+			if(m.Length==1)
+				m="0"+m;
+			if(s.Length==1)
+				s="0"+s;
+			longVal=yr+mo+da+h+m+s;
+			return (long)Convert.ToUInt64(longVal);
 		}
-		//
 		public void SetEITToDatabase(EITDescr data, string channelName)
 		{
 			try
@@ -1998,28 +1881,7 @@ namespace MediaPortal.TV.Recording
 			catch{}
 
 		}
-		private long GetLongFromDate(int year,int mon,int day,int hour,int min,int sec)
-		{
-			string longVal="";
-			string yr=year.ToString();
-			string mo=mon.ToString();
-			string da=day.ToString();
-			string h=hour.ToString();
-			string m=min.ToString();
-			string s=sec.ToString();
-			if(mo.Length==1)
-				mo="0"+mo;
-			if(da.Length==1)
-				da="0"+da;
-			if(h.Length==1)
-				h="0"+h;
-			if(m.Length==1)
-				m="0"+m;
-			if(s.Length==1)
-				s="0"+s;
-			longVal=yr+mo+da+h+m+s;
-			return (long)Convert.ToUInt64(longVal);
-		}
+
 		int getUTC(int val)
 		{
 			if ((val&0xF0)>=0xA0)
