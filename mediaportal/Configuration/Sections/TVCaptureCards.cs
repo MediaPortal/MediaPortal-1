@@ -206,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-			EditCaptureCardForm editCard = new EditCaptureCardForm(cardsListView.Items.Count);
+			EditCaptureCardForm editCard = new EditCaptureCardForm(cardsListView.Items.Count+1);
 
 			DialogResult dialogResult = editCard.ShowDialog(this);
 
