@@ -761,8 +761,9 @@ namespace MediaPortal.Player
 					
 						case DsEvCode.DvdSubPicStChange:
 						{
-							Log.Write("EVT:DvdSubPicture Changed to:{0}",p1);
+							Log.Write("EVT:DvdSubPicture Changed to:{0} Enabled:{1}",p1,p2);
 							m_strSubtitleLanguage = p1.ToString();
+							m_bSubtitlesEnabled=(p2!=0);											
 						}
 							break;
 
