@@ -1,5 +1,6 @@
 History: (dd-mm-yyyy)
-  26-04-2004: my tv       : fixed : tvguide failed for tvguide.xml which contains programs without a stop time
+  27-04-2004: my tv       : fixed : recording: filter invalid characters for final recording filename
+  27-04-2004: my tv       : fixed : tvguide failed for tvguide.xml which contains programs without a stop time
   26-04-2004: setup       : fixed : tvcapture: country code was always 31
   26-04-2004: general     : fixed : several sorting bugs
   26-04-2004: general     : added : B=goto to parent directory/folder
