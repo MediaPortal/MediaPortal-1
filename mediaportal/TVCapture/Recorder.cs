@@ -479,7 +479,7 @@ namespace MediaPortal.TV.Recording
     static public bool IsRecording()
     {
 			if (m_eState!= State.Initialized) return false;
-			if (m_iCurrentCard<0 && m_iCurrentCard >= m_tvcards.Count) return false;
+			if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return false;
 			
 			TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			return dev.IsRecording;
@@ -491,7 +491,7 @@ namespace MediaPortal.TV.Recording
 		static public bool DoesSupportTimeshifting()
     {
       if (m_eState!= State.Initialized) return false;
-			if (m_iCurrentCard<0 && m_iCurrentCard >= m_tvcards.Count) return false;
+			if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return false;
 			
 			TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			return dev.SupportsTimeShifting;
