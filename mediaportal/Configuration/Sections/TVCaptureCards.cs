@@ -60,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void AddCaptureCard(TVCaptureDevice card)
 		{
-			cardsListView.Items.Clear();
+			//cardsListView.Items.Clear();
 			ListViewItem listItem = new ListViewItem(new string[] { card.VideoDevice, 
                                   card.FriendlyName,                                                                
 																	card.UseForTV.ToString(),
