@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -34,20 +36,26 @@ namespace MediaPortal.TV.Recording
 			timer1.Enabled=true;
 			callback.OnProgress(0);
 		}
+		public void Continue()
+		{
+			timer1.Enabled=true;
+		}
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
 			float percent = ((float)currentChannel) / 256.0f;
 			percent *= 100.0f;
-
 			callback.OnProgress((int)percent);
-			
+			float frequency=(float)captureCard.VideoFrequency();
+			frequency/=1000000f;
+			string description=String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
+			callback.OnStatus(description);
+
 			if (captureCard.SignalPresent())
 			{
-				float frequency=(float)captureCard.VideoFrequency();
-				frequency/=1000000f;
-				string description=String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
-				callback.OnNewChannel(description);
+				timer1.Enabled=false;
+				callback.OnNewChannel();
+				return;
 			}
 			
 			currentChannel++;
@@ -68,6 +76,22 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
+		}
+		
+		public int MapToChannel(string channelName)
+		{
+			ArrayList channels=new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			for (int i=0; i < channels.Count;++i)
+			{
+				TVChannel chan = (TVChannel)channels[i];
+				if (chan.Name == channelName)
+				{
+					TVDatabase.SetChannelNumber(chan.Name,currentChannel);
+					TVDatabase.SetChannelFrequency(chan.Name,captureCard.VideoFrequency().ToString());
+				}
+			}
+			return currentChannel;
 		}
 
 		#endregion

@@ -881,7 +881,13 @@ namespace MediaPortal.Configuration
 		private void buttonAutotune_Click(object sender, System.EventArgs e)
 		{
 			AnalogTVTuningForm dialog = new AnalogTVTuningForm();
-			dialog.ShowDialog(this);
+			ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
+			if (tuning!=null)
+			{
+				dialog.Tuning=tuning;
+				dialog.Card=CaptureCard;
+				dialog.ShowDialog(this);
+			}
 		}
 
 

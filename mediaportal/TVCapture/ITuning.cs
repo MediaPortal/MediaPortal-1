@@ -15,7 +15,8 @@ namespace MediaPortal.TV.Recording
 	/// 
 	public interface AutoTuneCallback
 	{
-		void OnNewChannel(string description);
+		void OnNewChannel();
+		void OnStatus(string description);
 		void OnProgress(int percentDone);
 		void OnEnded();
 	}
@@ -30,5 +31,7 @@ namespace MediaPortal.TV.Recording
 		/// <param name="callback">specifies a callback interface to indicate status updates</param>
 		void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback);
 		void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback);
+		void Continue();
+		int  MapToChannel(string channel);
 	}
 }

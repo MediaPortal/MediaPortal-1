@@ -1188,8 +1188,9 @@ namespace MediaPortal.TV.Recording
 			if (_mGraph==null)
 			{
 				if (!CreateGraph()) return false;
-				_mGraph.StartViewing(standard, channelNumber,country);
 			}
+			_mGraph.StartViewing(standard, channelNumber,country);
+
 			return true;
 		}
 
