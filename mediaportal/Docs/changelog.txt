@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  13-06-2004  my music    : fixed : when scanning rename artist 'VA' to 'Various Artists'
+  13-06-2004  my music    : fixed : accept tags with track numbers like 10/12
+  13-06-2004  my music    : fixed : convert genres like (12) to correct genres
+  
   12-06-2004  general     : fixed : left mouse button didnt play a sound
   12-06-2004  MY TV       : fixed : FF/RW now works while timeshifting
   
