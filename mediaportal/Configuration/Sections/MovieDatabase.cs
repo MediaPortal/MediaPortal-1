@@ -1348,9 +1348,10 @@ namespace MediaPortal.Configuration.Sections
 					}
 					else
 					{
+						id=ID;
 						movieDetails.ID=ID;
 					}
-					VideoDatabase.SetMovieInfo(file,ref movieDetails);
+					VideoDatabase.SetMovieInfoById(movieDetails.ID,ref movieDetails);
 
 					if (stopRebuild) return null;
 					//download thumbnail
@@ -1793,7 +1794,8 @@ namespace MediaPortal.Configuration.Sections
 			btnSave.Enabled=false;
 			tabControl2.Enabled=false;
 			tabControl1.Enabled=false;
-			IMDBMovie movie=ScanFile(tbTitle.Text, CurrentMovie.ID);
+			int id=CurrentMovie.ID;
+			IMDBMovie movie=ScanFile(tbTitle.Text, id);
 			if (movie!=null) 
 			{
 				LoadMovies();
@@ -1805,10 +1807,26 @@ namespace MediaPortal.Configuration.Sections
 						break;
 					}
 				}
+				if (cbTitle.SelectedItem==null)
+				{
+					foreach (ComboBoxItemMovie item in cbTitle.Items)
+					{
+						if (item.Movie.ID==id)
+						{
+							cbTitle.SelectedItem=item;
+							break;
+						}
+					}
+				}
 			}
 			else
 			{
 				MessageBox.Show("Movie details could not be found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);;
+			}
+			if (cbTitle.SelectedItem!=null)
+			{
+				ComboBoxItemMovie item=(ComboBoxItemMovie )cbTitle.SelectedItem;
+				UpdateEdit(item.Movie);
 			}
 			buttonLookupMovie.Enabled=true;
 			btnSave.Enabled=true;
