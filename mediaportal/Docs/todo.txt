@@ -11,14 +11,14 @@ My TV:
 	- option:show live tv in 'tv gfx' on home
 	- picture in picture
 	- TV-out through PVR 350
-  
+    - Have a multichannel preview page (looks slyck!)
+
   Fullscreen TV:
   
   TV OSD:
      - record this program now option
      - Some sort of a TV OSD system. Most TV OSDs can be browsed with the standard keys (0-9, play, pause, etc. up, down, left, right, enter) and the four special color keys (red, green, yellow and blue)
      - show now & later in TV osd
-     - show 'red dot' if program is being recorded
      
   Recorded tv:
      -
@@ -38,7 +38,15 @@ My TV:
     - support for timeshifting with SW encoding cards
     - support for recording to mpeg with SW encoding cards
     - recoding recordings to divx, mpeg,... or .dvr-ms -> .mpeg
-     
+
+ TVSearch
+    - Make IMDB search possible on a movie title
+    - NOW button to get a list of all available programs currently on TV
+
+ TVSetup
+    - Have a manual finetune 
+    - Manual tune ala autotune but let user enter channel and then allow finetune
+
 My Music: (int_20h)
   - auto-resume 
   - show which songs are 'queued'
@@ -48,9 +56,10 @@ My Music: (int_20h)
   - faster start of 1st song played
   - gapless playback
   - FF/RW control
-  - crossfading ?
+  - crossfading 
   - repeat none, once, always
   - cd ripper
+  - show time played/current playtime
 
 My Video:
   - auto-resume 
@@ -64,7 +73,7 @@ My Video:
   - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
   
 My Pictures:
-  - Autohide info bar during zooming so it won't bloack the picture
+  - Autohide info bar during zooming so it won't block the picture
   - make custom slideshows including background music
     - add pictures to a playlist and the first items on it r all music files for background music
     - all this can be saved and loaded ofcourse
@@ -82,9 +91,7 @@ new plugins:
   - my TV-series
   - my DVD's
   - caller ID
-  - my alarm
   - my webbrowser
-  - my email
   - system info / free HD space , memory usedd, temperature,...plugin
   - teletext plugin
   - winlirc
@@ -103,7 +110,6 @@ Skin engine:
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
   - specify seperate topbar for each window
   - make onscreen keyboard skinnable (at least x,y position)
-  - add extra font properties to indicate which characters to cache (like 0-9 : for a big time font)
   
 setup:
   - custom zoommode, let people enter a zoom number (+ or -) and make this accessable using S
@@ -116,6 +122,7 @@ setup:
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
   - setup deinterlace method (vmr9)
+  - Make it possible to use mixed antenna / cable tuning
   
 my programs:
   - application/program arguments  
