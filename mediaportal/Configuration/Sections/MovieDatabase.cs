@@ -230,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
 			this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.fileLabel.Location = new System.Drawing.Point(16, 72);
 			this.fileLabel.Name = "fileLabel";
-			this.fileLabel.Size = new System.Drawing.Size(408, 8);
+			this.fileLabel.Size = new System.Drawing.Size(408, 16);
 			this.fileLabel.TabIndex = 3;
 			// 
 			// countLabel

@@ -60,7 +60,14 @@ namespace MediaPortal.Configuration
 			//
 			// Build options tree
 			//
-      
+
+			string strLanguage ;
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				strLanguage = xmlreader.GetValueAsString("skin","language","English");
+			}
+			GUILocalizeStrings.Load(@"language\" + strLanguage + @"\strings.xml");
+
 			Log.Write("add project section");
 			Sections.Project project= new Sections.Project();
 			AddSection(project);
