@@ -1,3 +1,5 @@
+10-08-2004  My Video    : fixed : Playlist only accessable in My video main, not on a different view (using F1)
+10-08-2004  My Video    : fixed : Pressing esc in video playlist takes you back to HOME instead of previous screen
 10-08-2004  general     : fixed : VMR9 tearing solved in fullscreen mode
 10-08-2004  my video    : fixed : FF/RW/PAUSE icons not visible when OSD is visible
 10-08-2004  setup       : fixed : Added pin code support to shares.

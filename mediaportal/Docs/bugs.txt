@@ -18,8 +18,6 @@ crash/things not working Bugs:
 							- now play a song with mediaportal internal player
 							- no more background for viz.
   10-08-2004 Music      : When using winamp or foobar no default audio icon is displayed when no album art is available
-  10-08-2004 My Video   : Playlist only accessable in My video main, not on a different view (using F1)
-  10-08-2004 My Video   : Pressing esc in video playlist takes you back to HOME instead of previous screen
   10-08-2004 GUI        : icons in listview do not listen to x and y offsets. Best way is to have the icon have it's own x and y offsets.
   09-08-2004 my video   : vmr9 quality of video turns bad after a GUI element (like pause,ff,rw icon) has been shown
   09-08-2004 music      : "Now playing song" not updated after skipping to next song (previous song stays red).
