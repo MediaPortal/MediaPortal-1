@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  14-06-2004  general     : added : album art disappeared when leaving my music
   14-06-2004  general     : added : file setup->skin selection shows a preview of the skin (if available)
   14-06-2004  general     : added : dynamic home (plugins can specify if they want a button on home)
   14-06-2004  general     : added : enable/disable plugins
