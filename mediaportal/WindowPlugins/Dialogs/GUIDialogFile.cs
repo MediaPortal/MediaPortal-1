@@ -41,12 +41,14 @@ namespace MediaPortal.Dialogs
 		DirectoryHistory  m_history = new DirectoryHistory();
 		string            m_strDirectory="";
 		string						m_strDestination="";
-		VirtualDirectory  m_directory = new VirtualDirectory();
+		VirtualDirectory  m_directory = null;
 		bool							m_bButtonYes = false;
 		bool							m_bButtonNo = false;
 		bool							m_bAlways = false;
 		bool							m_bNever = false;
 		bool							m_bBusy = false;
+		bool							m_bDialogActive = false;
+		bool							m_bReload = false;
     
 		public GUIDialogFile()
 		{
@@ -97,8 +99,11 @@ namespace MediaPortal.Dialogs
 			GUIWindowManager.IsSwitchingToNewWindow=true;
 			lock (this)
 			{
-				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
-				OnMessage(msg);
+				if (m_bDialogActive)
+				{
+					GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
+					OnMessage(msg);
+				}
 
 				GUIWindowManager.UnRoute();
 				m_pParentWindow=null;
@@ -127,7 +132,8 @@ namespace MediaPortal.Dialogs
 
 
 		public void DoModal(int dwParentId)
-		{
+		{			
+			m_bOverlay=GUIGraphicsContext.Overlay;
 			m_dwParentWindowID=dwParentId;
 			m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
 			if (null==m_pParentWindow)
@@ -136,51 +142,10 @@ namespace MediaPortal.Dialogs
 				return;
 			}
 
-			GUIWindowManager.IsSwitchingToNewWindow=true;
-			GUIWindowManager.RouteToWindow( GetID );
+			if (m_directory==null) m_directory = new VirtualDirectory();
 
-			// active this window...
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
-			OnMessage(msg);
-			
-			string strFileOperation="";
-			if (m_iFileMode==1) strFileOperation = GUILocalizeStrings.Get(116);
-			else strFileOperation = GUILocalizeStrings.Get(115);
-
-			SetHeading( strFileOperation );
-			SetLine(1, 505);
-			SetButtonsHidden(true);
-			ShowProgressBar(true);
-			SetPercentage(0);
-			GUIWindowManager.Process();
-
-
-			// calc nr of files
-			m_dwTotalSize=0;
-			m_iNrOfItems=0;			
-			FileItemGetNrOfFiles(m_itemSourceItem);
-			
-			// set number of objects
-			strFileOperation += " "+m_iNrOfItems.ToString()+" "+GUILocalizeStrings.Get(507)+" (";
-			if (m_dwTotalSize > 1024*1024) strFileOperation += (m_dwTotalSize/(1024*1024)).ToString()+" MB)";
-			else if (m_dwTotalSize > 1024) strFileOperation += (m_dwTotalSize/1024).ToString()+" KB)";
-			else strFileOperation += m_dwTotalSize.ToString()+" Bytes)";
-			SetNewHeading( strFileOperation );
-			SetLine(1, GUILocalizeStrings.Get(508)+" \""+m_strDestination+"\" ?");
-
-			m_bButtonYes = false;
-			m_bButtonNo = false;
-			m_bAlways = false;
-			m_bNever = false;			
-			m_iFileNr = 1;
-			m_strDirectory = System.IO.Path.GetDirectoryName(m_itemSourceItem.Path);
-
-			GUIWindowManager.IsSwitchingToNewWindow=false;
-			m_bRunning=true;
-			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-			{
-				GUIWindowManager.Process();
-			}
+			// show menu
+			ShowFileMenu(m_itemSourceItem);		
 		}
 		#endregion
 	
@@ -192,17 +157,15 @@ namespace MediaPortal.Dialogs
 				{
 					m_pParentWindow=null;
 					GUIGraphicsContext.Overlay=m_bOverlay;
-					base.OnMessage(message);
+					//base.OnMessage(message);
 					FreeResources();
 					DeInitControls();
-
+					GC.Collect();
 					return true;
 				}
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
-					m_bOverlay=GUIGraphicsContext.Overlay;
-					m_bCanceled = false;
-					m_bBusy = false;
+					m_bDialogActive = true;
 					base.OnMessage(message);
 					GUIGraphicsContext.Overlay=false;
 					m_pParentWindow=GUIWindowManager.GetWindow(m_dwParentWindowID);
@@ -285,9 +248,24 @@ namespace MediaPortal.Dialogs
 			m_itemSourceItem = item;
 		}
 
-		public void SetDestinationDir(string strDestination)
+		public void SetSourceDir(string value)
 		{
-			m_strDestination = strDestination;
+			m_strDirectory = value;
+		}
+
+		public void SetDestinationDir(string value)
+		{
+			m_strDestination = value;
+		}
+
+		public void SetDirectoryStructure(VirtualDirectory value)
+		{
+			m_directory = value;
+		}
+
+		public string GetDestinationDir()
+		{
+			return m_strDestination;			
 		}
 
 		public void SetNewHeading( string strLine )
@@ -366,6 +344,14 @@ namespace MediaPortal.Dialogs
 			{
 				strItemFileName = strItemFileName.Remove(0, 1);
 			}
+
+			// Check protected share
+			int iPincodeCorrect;
+			if (m_directory.IsProtectedShare(item.Path, out iPincodeCorrect))
+			{
+				ShowError(513, item.Path);
+				return;
+			}
 						
 			// update dialog information			
 			SetPercentage((m_iFileNr*100)/m_iNrOfItems);
@@ -390,7 +376,7 @@ namespace MediaPortal.Dialogs
 					}
 					catch (Exception)
 					{
-						ShowError(119, path);
+						ShowError(514, path);
 						m_bCanceled=true;
 						return;
 					}					
@@ -412,7 +398,7 @@ namespace MediaPortal.Dialogs
 						}
 						catch (Exception)
 						{
-							ShowError(503, item.Path);
+							ShowError(515, item.Path);
 							m_bCanceled=true;
 							return;
 						}
@@ -455,7 +441,7 @@ namespace MediaPortal.Dialogs
 							}
 							catch (Exception) 
 							{
-								ShowError(117, m_strDestination+strItemFileName);
+								ShowError(516, m_strDestination+strItemFileName);
 								doNot=true;
 							}
 						}
@@ -480,8 +466,8 @@ namespace MediaPortal.Dialogs
 				}
 				catch (Exception) 
 				{
-					if (m_iFileMode==1) ShowError(116, item.Path);
-					else ShowError(115, item.Path);
+					// fatal error
+					ShowError(517, item.Path);
 					m_bCanceled=true;
 
 					Log.Write("FileMenu Error: from {0} to {1} MC:{2}",item.Path, m_strDestination+strItemFileName, m_iFileMode);
@@ -507,15 +493,39 @@ namespace MediaPortal.Dialogs
 			}
 		}
 
-		void ShowError(int iAction, string SourceOfError)
+		void ShowError(int iError, string SourceOfError)
+		{
+			// ask user what to do
+			SetLine(1, SourceOfError);				
+			SetLine(2, iError);						
+			SetButtonsHidden(false);
+			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_ALWAYS);
+			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_NEVER);
+			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_CANCEL);
+			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_NO);
+									
+			// wait for input
+			while (!m_bButtonYes)
+			{
+				GUIWindowManager.Process();
+			}
+
+			SetLine(1, "");
+			SetLine(2, "");
+			SetButtonsHidden(true);
+			GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_CANCEL);
+			GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_NO);
+		}
+
+		void ShowErrorDialog(int iError, string SourceOfError)
 		{
 			GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 			if(dlgOK !=null)
 			{
-				dlgOK.SetHeading(iAction);
+				dlgOK.SetHeading(iError);
 				dlgOK.SetLine(1,SourceOfError);
 				dlgOK.SetLine(2,502);
-				dlgOK.DoModal(GetID);
+				dlgOK.DoModal(m_dwParentWindowID);
 			}
 		}
 
@@ -538,6 +548,270 @@ namespace MediaPortal.Dialogs
 
 			// Handle messages
 			GUIWindowManager.Process();
+		}
+
+		public void ShowFileMenu(GUIListItem item)
+		{
+			m_bReload = false;
+			int iPincodeCorrect;
+
+			if (item==null) return;
+			if (item.IsFolder && item.Label=="..") return;
+			if (m_directory.IsProtectedShare(item.Path, out iPincodeCorrect))
+			{
+				ShowErrorDialog(513, item.Path);
+				Close();
+				return;
+			}
+      
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(500); // File menu
+	
+			if (m_strDestination != "")
+			{
+				dlg.AddLocalizedString(115); //copy
+				if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(116); //move					
+			}
+			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(118); //rename				
+			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(117); //delete
+			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(119); //new folder
+
+			if (item.IsFolder && !Utils.IsDVD(item.Path))
+			{
+				dlg.AddLocalizedString(501); // Set as destination
+			}
+			if (m_strDestination != "") dlg.AddLocalizedString(504); // Goto destination
+			     
+			dlg.DoModal(m_dwParentWindowID);
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 117: // delete
+					OnDeleteItem(item);
+					m_bReload = true;
+					break;
+
+				case 118: // rename
+				{
+					string strSourceName = "";
+					if (item.IsFolder)
+						strSourceName = System.IO.Path.GetFileName(item.Path);
+					else
+						strSourceName = System.IO.Path.GetFileNameWithoutExtension(item.Path);
+
+					string strExtension = System.IO.Path.GetExtension(item.Path);
+					string strDestinationName = strSourceName;
+					if (GetUserInputString(ref strDestinationName) == true)
+					{
+						if (item.IsFolder)
+						{
+							// directory rename
+							if (Directory.Exists(m_strDirectory+"\\"+strSourceName))
+							{
+								try
+								{
+									Directory.Move(m_strDirectory+"\\"+strSourceName, m_strDirectory+"\\"+strDestinationName);
+								}
+								catch(Exception) 
+								{
+									ShowErrorDialog(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
+								}
+								m_bReload = true;
+							}
+						}
+						else
+						{
+							// file rename
+							if (File.Exists(item.Path))
+							{
+								string strDestinationFile = m_strDirectory+"\\"+strDestinationName+strExtension;
+								try
+								{									
+									File.Move(item.Path, strDestinationFile);
+								}
+								catch(Exception) 
+								{
+									ShowErrorDialog(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
+								}
+								m_bReload = true;
+							}
+						}						
+					}
+				}
+					break;
+
+				case 115: // copy				
+				{
+					SetMode(0); // copy
+					FileItemDialog();
+				}
+					break;
+
+				case 116: // move
+				{
+					SetMode(1); // move
+					FileItemDialog();
+					m_bReload = true;
+				}
+					break;
+				
+				case 119: // make dir
+				{
+					MakeDir();
+					m_bReload = true;
+				}
+					break;
+
+				case 501: // set as destiantion
+					m_strDestination = System.IO.Path.GetFullPath(item.Path)+"\\";					
+					break;
+
+				case 504: // goto destination
+				{
+					m_strDirectory = m_strDestination;
+					m_bReload = true;
+				}
+					break;
+			}
+		}
+
+		void FileItemDialog()
+		{
+			// active this window...
+			GUIWindowManager.IsSwitchingToNewWindow=true;
+			GUIWindowManager.RouteToWindow( GetID );
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
+			OnMessage(msg);
+			
+			string strFileOperation="";
+			if (m_iFileMode==1) strFileOperation = GUILocalizeStrings.Get(116);
+			else strFileOperation = GUILocalizeStrings.Get(115);
+
+			SetHeading( strFileOperation );
+			SetLine(1, 505);
+			SetButtonsHidden(true);
+			ShowProgressBar(true);
+			SetPercentage(0);
+			GUIWindowManager.Process();
+
+			// calc nr of files
+			m_dwTotalSize=0;
+			m_iNrOfItems=0;			
+			FileItemGetNrOfFiles(m_itemSourceItem);
+			
+			// set number of objects
+			strFileOperation += " "+m_iNrOfItems.ToString()+" "+GUILocalizeStrings.Get(507)+" (";
+			if (m_dwTotalSize > 1024*1024) strFileOperation += (m_dwTotalSize/(1024*1024)).ToString()+" MB)";
+			else if (m_dwTotalSize > 1024) strFileOperation += (m_dwTotalSize/1024).ToString()+" KB)";
+			else strFileOperation += m_dwTotalSize.ToString()+" Bytes)";
+			SetNewHeading( strFileOperation );
+			SetLine(1, GUILocalizeStrings.Get(508)+" \""+m_strDestination+"\" ?");
+
+			m_bButtonYes = false;
+			m_bCanceled = false;
+			m_bBusy = false;
+			m_bButtonNo = false;
+			m_bAlways = false;
+			m_bNever = false;			
+			m_bReload = false;
+			m_iFileNr = 1;
+			m_strDirectory = System.IO.Path.GetDirectoryName(m_itemSourceItem.Path);
+
+			GUIWindowManager.IsSwitchingToNewWindow=false;
+
+			m_bRunning=true;
+			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+			{
+				GUIWindowManager.Process();
+			}
+		}
+
+		bool GetUserInputString(ref string sString)
+		{			
+			VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);			
+			keyBoard.Reset();
+			keyBoard.Text = sString;
+			keyBoard.DoModal(m_dwParentWindowID); // show it...
+			System.GC.Collect(); // collect some garbage
+			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
+			return keyBoard.IsConfirmed;
+		}
+
+		void OnDeleteItem(GUIListItem item)
+		{
+			if (item.IsRemote) return;
+
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null==dlgYesNo) return;
+			string strFileName=System.IO.Path.GetFileName(item.Path);
+			if (!item.IsFolder) dlgYesNo.SetHeading(664);
+			else dlgYesNo.SetHeading(503);
+			dlgYesNo.SetLine(1,strFileName);
+			dlgYesNo.SetLine(2, "");
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.DoModal(GetID);
+
+			if (!dlgYesNo.IsConfirmed) return;
+			DoDeleteItem(item);
+		}
+
+		void DoDeleteItem(GUIListItem item)
+		{
+			if (item.IsFolder)
+			{
+				if (item.Label != "..")
+				{
+					ArrayList items = new ArrayList();
+					items=m_directory.GetDirectoryUnProtected(item.Path,false);
+					foreach(GUIListItem subItem in items)
+					{
+						DoDeleteItem(subItem);
+					}
+					Utils.DirectoryDelete(item.Path);
+				}
+			}
+			else if (!item.IsRemote)
+			{  			
+				Utils.FileDelete(item.Path);
+			}
+		}
+
+		void MakeDir() 
+		{
+			// Get input string
+			string verStr = "";
+			GetUserInputString(ref verStr);
+
+			// Ask user confirmation
+			string path = m_strDirectory+"\\"+verStr;
+			try 
+			{
+				// Determine whether the directory exists.
+				if (Directory.Exists(path)) 
+				{
+					GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+					dlgOk.SetHeading(119); 
+					dlgOk.SetLine(1, 2224);
+					dlgOk.SetLine(2, "");
+					dlgOk.DoModal(m_dwParentWindowID);
+				} 
+				else 
+				{
+					DirectoryInfo di = Directory.CreateDirectory(path);
+				}
+			}
+			catch (Exception )
+			{
+				ShowErrorDialog(119, path);
+			}
+		}
+
+		public bool Reload()
+		{
+			return m_bReload;
 		}
 
 	}
