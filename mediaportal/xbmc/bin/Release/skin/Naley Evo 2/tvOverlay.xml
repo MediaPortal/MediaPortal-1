@@ -1,0 +1,85 @@
+ <window>
+  <id>3002</id>
+  <defaultcontrol>2</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+ <controls>
+ <control>
+  <description>play logo</description>
+  <type>image</type>
+  <id>3</id>
+  <posX>514</posX>
+      <posY>25</posY>
+  <texture>music-play.png</texture>
+  </control>
+ <control>
+  <description>rec logo</description>
+  <type>image</type>
+  <id>4</id>
+   <posX>639</posX>
+  <posY>25</posY>
+  <texture>music_rec.png</texture>
+  </control>
+ <control>
+  <description>FF logo</description>
+  <type>image</type>
+  <id>7</id>
+  <posX>609</posX>
+      <posY>25</posY>
+  <texture>music-forward.png</texture>
+  </control>
+ <control>
+  <description>RW logo</description>
+  <type>image</type>
+  <id>8</id>
+  <posX>575</posX>
+      <posY>25</posY>
+  <texture>music-rewind.png</texture>
+  </control>
+ <control>
+  <description>play time label</description>
+  <type>label</type>
+  <id>2</id>
+  <posX>575</posX>
+  <posY>45</posY>
+  <width>80</width>
+  <label>#TV.current</label>
+  <align>left</align>
+  <font>font13</font>
+  <textcolor>FFB2D4F5</textcolor>
+  </control>
+<control>
+  <description>channel/title/time label</description>
+  <type>fadelabel</type>
+  <width>220</width>
+  <height>30</height>
+  <posX>520</posX>
+  <posY>45</posY>
+  <align>right</align>
+  <font>font13</font>
+  <textcolor>FFB2D4F5</textcolor>
+  <label>#channel\r#title\r#TV.start-#TV.stop</label>
+  <id>5</id>
+  </control>
+ <control>
+  <description>video rectangle</description>
+  <type>image</type>
+  <id>0</id>
+  <posX>60</posX>
+  <posY>450</posY>
+  <width>130</width>
+  <height>110</height>
+  <texture>#thumb</texture>
+  <colorkey>0</colorkey>
+  <colordiffuse>ffffffff</colordiffuse>
+  </control>
+ <control>
+  <description>video preview window</description>
+  <type>videowindow</type>
+  <id>1</id>
+  <posX>65</posX>
+  <posY>455</posY>
+  <width>120</width>
+  <height>100</height>
+  </control>
+  </controls>
+  </window>

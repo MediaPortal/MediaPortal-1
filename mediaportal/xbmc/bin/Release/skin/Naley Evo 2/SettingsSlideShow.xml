@@ -1,0 +1,88 @@
+<window>
+	<id>12</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+<controls>
+	<control>
+		<description>background image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>720</width>
+		<height>576</height>
+		<texture>background.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
+	</control>
+	<control>
+		<description>Settings BG</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>215</posX>
+		<posY>65</posY>
+		<width>450</width>
+		<height>450</height>
+		<colordiffuse>20ffffff</colordiffuse>
+		<texture>background_settings.png</texture>
+	</control>
+	<control>
+		<description>Settings text label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>300</posX>
+		<posY>80</posY>
+		<label>108</label>
+		<font>font14</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
+		<description>Speed label</description>
+		<type>label</type>
+		<id>100</id>
+		<posX>288</posX>
+		<posY>218</posY>
+		<label>224</label>
+		<font>font14</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Speedselect</description>
+		<type>spincontrol</type>
+		<id>2</id>
+		<posX>420</posX>
+		<posY>222</posY>
+		<reverse>yes</reverse>
+		<onup>17</onup>
+		<ondown>3</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<buddycontrolid>100</buddycontrolid>
+	</control>
+	<control>
+		<description>Transition time label</description>
+		<type>label</type>
+		<id>101</id>
+		<posX>288</posX>
+		<posY>252</posY>
+		<label>225</label>
+		<font>font14</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>transition select </description>
+		<type>spincontrol</type>
+		<id>3</id>
+		<posX>430</posX>
+		<posY>256</posY>
+		<reverse>yes</reverse>
+		<onup>2</onup>
+		<ondown>2</ondown>
+		<onleft>3</onleft>
+		<onright>3</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<buddycontrolid>101</buddycontrolid>
+	</control>	
+</controls>
+</window>

@@ -1,0 +1,22 @@
+<fonts>
+  <font>
+    <name>font10</name>
+    <filename>Trebuchet MS</filename>
+    <height>12</height>
+  </font>
+  <font>
+    <name>font13</name>
+    <filename>Trebuchet MS</filename>
+    <height>15</height>
+  </font>
+  <font>
+    <name>font14</name>
+    <filename>Trebuchet MS</filename>
+    <height>16</height>
+  </font>
+  <font>
+    <name>font16</name>
+    <filename>Trebuchet MS</filename>
+    <height>18</height>
+  </font>
+</fonts>

@@ -121,6 +121,7 @@ setup:
   - setup deinterlace method (vmr9)
 
 General:
+  - keymap.xml : add support for support ctrl, shift , alt keys
   - Gui renderspeed slider in setup. COntrol how fast the GUI is rendered. Can save CPU, thus Temperature, thus noise.
   - option to stop rendering the GUI and go blank. This to have MP use little CPU when playing music. Keeps CPU cool
   - option to autohide topbar

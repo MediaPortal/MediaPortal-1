@@ -1,0 +1,136 @@
+<window>
+	<id>2700</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+<controls>
+	<control>
+		<description>background image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>720</width>
+		<height>576</height>
+		<texture>background.png</texture>
+	</control>
+	<control>
+		<description>RSS BG</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>215</posX>
+		<posY>65</posY>
+		<width>450</width>
+		<height>450</height>
+		<colordiffuse>20ffffff</colordiffuse>
+		<texture>background_mynews.png</texture>
+	</control>
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>238</posX>
+		<posY>306</posY>
+		<label>#itemcount</label>
+		<font>font14</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
+		<description>My News text label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>242</posX>
+		<posY>65</posY>
+		<label>9</label>
+		<font>font14</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
+		<description>Channel name label</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>242</posX>
+		<posY>65</posY>
+<!--		<label>Channel name</label> -->
+		<font>font14</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
+		<description>Panel</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>48</posX>
+		<posY>95</posY>
+		<width>180</width>
+		<height>350</height>
+		<texture>panel.png</texture>
+	</control>
+	<control>
+		<description>Refresh Button</description>
+		<type>button</type>
+		<id>2</id>
+		<posX>64</posX>
+		<posY>128</posY>
+ 		<label>184</label>
+		<onleft>2</onleft>
+		<onright>50</onright>
+		<onup>17</onup>
+		<ondown>4</ondown>
+	</control>
+	<control>
+		<description>RSS feed select</description>
+		<type>selectbutton</type>
+		<id>4</id>
+		<posX>64</posX>
+		<posY>160</posY>
+		<label>706</label>
+		<onleft>50</onleft>
+		<onright>50</onright>
+		<onup>2</onup>
+		<ondown>4</ondown>
+	</control>
+	<control>
+		<description>Middle Bar</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>64</posX>
+		<posY>200</posY>
+		<width>145</width>
+		<texture>middle-bar.png</texture>
+	</control>
+	<control>
+		<description>Site Logo</description>
+		<type>image</type>
+		<id>101</id>
+		<posX>72</posX>
+		<posY>225</posY>
+		<width>128</width>
+		<height>128</height>
+		<texture>thumbs\ars_article.png</texture>
+	</control>
+	<control>
+		<description>listcontrol</description>
+		<type>listcontrol</type>
+		<id>50</id>
+		<height>229</height>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<onup>50</onup>
+		<ondown>50</ondown>
+		<spinPosY>306</spinPosY>
+		<spinColor>FFFFFFFF</spinColor>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Chosen Story description</description>
+		<type>textboxscrollup</type>
+		<id>506</id>
+		<posX>242</posX>
+		<posY>330</posY>
+		<width>430</width>
+		<height>270</height>
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+</controls>
+</window>
