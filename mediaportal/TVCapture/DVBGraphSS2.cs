@@ -405,6 +405,7 @@ namespace MediaPortal.TV.Recording
 		public bool CreateGraph()
 		{
 			if (m_graphState != State.None) return false;
+			Log.Write("DVBGraphSS2:creategraph()");
 			// create graphs
 			Vmr9 =new VMR9Util("mytv");
 
@@ -431,6 +432,7 @@ namespace MediaPortal.TV.Recording
 			
 			catch(Exception ex)
 			{
+				Log.Write("DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
 				System.Windows.Forms.MessageBox.Show(ex.Message);
 			}
 			if(m_b2c2Adapter==null)
@@ -449,24 +451,39 @@ namespace MediaPortal.TV.Recording
 				// get interfaces
 				m_dataCtrl=(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3) m_b2c2Adapter;
 				if(m_dataCtrl==null)
+				{
+					Log.Write("DVBGraphSS2: cannot get IB2C2MPEG2DataCtrl3");
 					return false;
+				}
 				m_tunerCtrl=(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2) m_b2c2Adapter;
 				if(m_tunerCtrl==null)
+				{
+					Log.Write("DVBGraphSS2: cannot get IB2C2MPEG2TunerCtrl2");
 					return false;
+				}
 				m_avCtrl=(DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2) m_b2c2Adapter;
 				if(m_avCtrl==null)
+				{
+					Log.Write("DVBGraphSS2: cannot get IB2C2MPEG2AVCtrl2");
 					return false;
+				}
 				// init for tuner
 				n=m_tunerCtrl.Initialize();
 				if(n!=0)
+				{
+					Log.Write("DVBGraphSS2: Tuner initialize failed");
 					return false;
+				}
 				// call checklock once, the return value dont matter
 	
 				n=m_tunerCtrl.CheckLock();
 				bool b=false;
 				b=SetVideoAudioPins();
 				if(b==false)
+				{
+					Log.Write("DVBGraphSS2: SetVideoAudioPins() failed");
 					return false;
+				}
 
 				if(m_pluginsEnabled==true)
 				{
@@ -482,6 +499,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
+				Log.Write("DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
 				System.Windows.Forms.MessageBox.Show(ex.Message);
 				return false;
 			}
