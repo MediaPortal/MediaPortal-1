@@ -20,8 +20,9 @@
 		<posY>425</posY>
 		<width>120</width>
 		<height>100</height>
+		<keepaspectratio>yes</keepaspectratio> 
+		<centered>yes</centered>
 		<texture>#thumb</texture>
-<!--		<keepaspectratio>yes</keepaspectratio> -->
 	</control>
 	<control>
 		<description>lcd display shine</description>

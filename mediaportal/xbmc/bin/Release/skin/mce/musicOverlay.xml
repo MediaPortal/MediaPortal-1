@@ -31,6 +31,8 @@
 		<posY>425</posY> 
 		<width>100</width> 
 		<height>100</height> 
+		<keepaspectratio>yes</keepaspectratio> 
+		<centered>yes</centered>
 		<texture>#thumb</texture> 
 	</control>
 	<control>
