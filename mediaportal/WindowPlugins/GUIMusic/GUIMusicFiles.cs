@@ -1000,6 +1000,12 @@ namespace MediaPortal.GUI.Music
     {
       // add item 2 playlist
       GUIListItem pItem = GetItem(iItem);
+      if (pItem==null) return;
+      if (PlayListFactory.IsPlayList(pItem.Path))
+      {
+        LoadPlayList(pItem.Path);
+        return;
+      }
       AddItemToPlayList(pItem);
 	
       //move to next item
