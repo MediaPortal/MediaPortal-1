@@ -834,6 +834,7 @@ namespace MediaPortal.Util
 			{
 				if (!System.IO.Path.HasExtension(strPath)) return false;
 				string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
+				if ((m_extensions[0]as string)=="*") return true;   // added for explorer modul by gucky
 				for (int i=0; i < m_extensions.Count;++i)
 				{
 					if ( (m_extensions[i] as string)==strExtFile) return true;
