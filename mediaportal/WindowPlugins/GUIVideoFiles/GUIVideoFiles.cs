@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.Video
 
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+				GUIWindowManager.PreviousWindow();
 				return;
 			}
 			if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
@@ -2006,8 +2006,12 @@ namespace MediaPortal.GUI.Video
 
 			if (!cntl.Focus)
 			{
-				// control view has no focus
-				dlg.AddLocalizedString(136); //PlayList
+				// Menu button context menuu
+				dlg.AddLocalizedString(368); //IMDB
+				if (!m_directory.IsRemote(m_strDirectory)) dlg.AddLocalizedString(102); //Scan
+				if (!_MapSettings.Stack) dlg.AddLocalizedString(346); //Stack
+				else dlg.AddLocalizedString(347); //Unstack
+				dlg.AddLocalizedString(654); //Eject
 			}
 			else
 			{
@@ -2018,11 +2022,7 @@ namespace MediaPortal.GUI.Video
 					dlg.AddLocalizedString(208); //play
 					dlg.AddLocalizedString(926); //Queue
 				}
-				dlg.AddLocalizedString(136); //Playlist
-				if (Utils.getDriveType(item.Path) == 5)
-				{
-					dlg.AddLocalizedString(654); //Eject
-				}				
+				if (Utils.getDriveType(item.Path) == 5) dlg.AddLocalizedString(654); //Eject
 			}
 
 			dlg.DoModal( GetID);
@@ -2050,9 +2050,32 @@ namespace MediaPortal.GUI.Video
 					break;
 
         case 654: // Eject
-          Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+					if (Utils.getDriveType(item.Path) != 5) Utils.EjectCDROM();
+					else Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
           LoadDirectory("");
           break;
+
+				case 341: //Play dvd
+					OnPlayDVD();
+					break;
+
+				case 346: //Stack
+					_MapSettings.Stack = true;
+					LoadDirectory(m_strDirectory);
+					UpdateButtons();
+					break;
+
+				case 347: //Unstack
+					_MapSettings.Stack = false;
+					LoadDirectory(m_strDirectory);
+					UpdateButtons();
+					break;
+
+				case 102: //Scan
+					ArrayList itemlist = m_directory.GetDirectory(m_strDirectory);
+					OnScan(itemlist);
+					LoadDirectory(m_strDirectory);
+					break;
 			}
 		}
 

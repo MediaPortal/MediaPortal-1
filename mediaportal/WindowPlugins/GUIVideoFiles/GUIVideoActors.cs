@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Video
 
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+				GUIWindowManager.PreviousWindow();
 				return;
 			}
 
