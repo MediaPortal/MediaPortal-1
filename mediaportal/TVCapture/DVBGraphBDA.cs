@@ -2238,6 +2238,11 @@ namespace MediaPortal.TV.Recording
 			if (!shouldDecryptChannel) return;
 			if (m_SectionsTables==null) return;
 
+			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false)
+			{
+				Vmr9.Repaint();// repaint vmr9
+			}
+
 			//check if tuner is locked to a tv channel
 			if (!SignalPresent()) return;
 			
@@ -2778,8 +2783,6 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				
-				if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false)
-					Vmr9.Repaint();// repaint vmr9
 			}
 
 			if (currentTuningObject.teletextPid!=0)
