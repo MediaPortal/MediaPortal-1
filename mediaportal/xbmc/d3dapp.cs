@@ -593,9 +593,9 @@ namespace MediaPortal
       if (bRemoveHandler)
         GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
       if (bWindowed) 
-        Log.Write("Switch to windowed mode ");
+        Log.Write("app:Switch to windowed mode ");
       else 
-        Log.Write("Switch to fullscreen mode ");
+        Log.Write("app:Switch to fullscreen mode ");
       windowed=bWindowed;
       BuildPresentParamsFromSettings();
       try
@@ -606,14 +606,13 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
         if (windowed) TopMost=false;
         this.Activate();
-        return true;
       }
       catch(Exception ex)
       {
         if (windowed) 
-          Log.Write("Switch to windowed mode failed:{0}", ex.ToString());
+          Log.Write("app:Switch to windowed mode failed:{0}", ex.ToString());
         else 
-          Log.Write("Switch to fullscreen mode failed:{0}", ex.ToString());
+          Log.Write("app:Switch to fullscreen mode failed:{0}", ex.ToString());
         windowed=!bWindowed;
         BuildPresentParamsFromSettings();
         try
@@ -628,6 +627,11 @@ namespace MediaPortal
         this.Activate();
         return false;
       }
+			if (windowed) 
+				Log.Write("app:Switched to windowed mode");
+			else 
+				Log.Write("app:Switched to fullscreen mode");
+			return true;
     }
 
 

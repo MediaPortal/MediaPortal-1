@@ -238,8 +238,5 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msg);
       }
 		}
-
-
-
 	}
 }

@@ -193,7 +193,11 @@ namespace MediaPortal.Player
         Log.Write("AllocatorWrapper:UnAdviseNotify()");
         if (allocNotify !=null)
           Marshal.ReleaseComObject( allocNotify ); allocNotify = null;
-        return 0;
+				if (m_surface1 !=IntPtr.Zero)
+					Marshal.Release(m_surface1); m_surface1= IntPtr.Zero;
+				if (m_surface2 !=IntPtr.Zero)
+					Marshal.Release(m_surface2); m_surface2= IntPtr.Zero;				
+				return 0;
       }
 
 			public int StartPresenting(uint uid)

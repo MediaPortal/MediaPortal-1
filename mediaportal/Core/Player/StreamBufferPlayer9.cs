@@ -23,11 +23,15 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {
+			
+			Log.Write("StreamBufferPlayer9: GetInterfaces()");
 			Vmr9= new VMR9Util("mytv");
       Type comtype = null;
       object comobj = null;
       
       //switch back to directx fullscreen mode
+			
+			Log.Write("StreamBufferPlayer9: switch to fullscreen mode");
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
 			inFullscreenMode=true;
@@ -114,6 +118,7 @@ namespace MediaPortal.Player
 				if ( !Vmr9.IsVMR9Connected )
 				{
 					//VMR9 is not supported, switch to overlay
+					Log.Write("StreamBufferPlayer9: switch to overlay");
 					Cleanup(false);
 					return base.GetInterfaces(filename);
 				}
@@ -207,6 +212,7 @@ namespace MediaPortal.Player
         //switch back to directx windowed mode
 				if (switchToWindowedMode && inFullscreenMode)
 				{
+					Log.Write("StreamBufferPlayer9: switch to windowed mode");
 					inFullscreenMode=false;
 					GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
 					GUIWindowManager.SendMessage(msg);

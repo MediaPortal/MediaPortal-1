@@ -1252,6 +1252,16 @@ public class MediaPortalApp : D3DApp, IRender
         GC.WaitForPendingFinalizers();
         GC.Collect();GC.Collect();GC.Collect();
       }
+			if (key.KeyChar=='f')
+			{
+				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+				GUIWindowManager.SendMessage(msg);
+			}
+			if (key.KeyChar=='w')
+			{
+				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msg);
+			}
 			Action action = new Action();
       if (GUIWindowManager.IsRouted && 
         (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD ||
@@ -1647,7 +1657,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (fullscreen)
         {
           //switch to fullscreen mode
-
+					Log.Write("goto fullscreen:{0}",GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
           if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) 
           {
             message.Param1=1;
@@ -1664,6 +1674,7 @@ public class MediaPortalApp : D3DApp, IRender
         else
         {
           //switch to windowed mode
+					Log.Write("goto windowed:{0}",GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
           if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
           SwitchFullScreenOrWindowed(true,true);
           GUIFontManager.RestoreDeviceObjects();
