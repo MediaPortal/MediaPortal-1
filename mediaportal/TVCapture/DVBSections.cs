@@ -242,7 +242,7 @@ namespace MediaPortal.TV.Recording
 			transponder.channels = new ArrayList();
 			transponder.PMTTable = new ArrayList();
 			Debug.WriteLine("GetRAWPMT");
-			GetStreamData(filter,0, 0,0,5000);
+			GetStreamData(filter,0, 0,0,100);
 		
 			Debug.WriteLine("Decode PAT");
 			// jump to parser
@@ -267,11 +267,11 @@ namespace MediaPortal.TV.Recording
 			//
 			
 			Debug.WriteLine("GET tab42");
-			GetStreamData(filter,17, 0x42,0,5000);
+			GetStreamData(filter,17, 0x42,0,100);
 			tab42=(ArrayList)m_sectionsList.Clone();
 			
 			Debug.WriteLine("GET tab46");
-			GetStreamData(filter,17, 0x46,0,5000);
+			GetStreamData(filter,17, 0x46,0,100);
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			
@@ -295,7 +295,7 @@ namespace MediaPortal.TV.Recording
 					// parse pmt
 					Debug.WriteLine("Get PMT:"+n.ToString());
 					int res=0;
-					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,100); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
 					{
 						if (pat.program_number==serviceId)

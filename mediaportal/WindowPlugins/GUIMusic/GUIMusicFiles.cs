@@ -1695,6 +1695,8 @@ namespace MediaPortal.GUI.Music
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       GUIListItem pItem = GetItem(iItem);
 
+			string artistName="";
+			string year="";
       if (pItem.IsRemote) return;
       string strPath = "";
       if (pItem.IsFolder)
@@ -1714,6 +1716,8 @@ namespace MediaPortal.GUI.Music
       MusicTag tag = (MusicTag)(pItem.MusicTag);
       if (tag != null)
       {
+				if (tag.Artist!=String.Empty) artistName=tag.Artist;
+				if (tag.Year>=1900) year=tag.Year.ToString();
         if (tag.Album.Length > 0) 
         {
           strAlbumName = tag.Album;
@@ -1822,9 +1826,9 @@ namespace MediaPortal.GUI.Music
       if (dlgProgress != null)
       {
         dlgProgress.SetHeading(185);
-        dlgProgress.SetLine(1, strAlbumName);
-        //dlgProgress.SetLine(1, "");
-        dlgProgress.SetLine(2, "");
+        dlgProgress.SetLine(1, strAlbumName );
+        dlgProgress.SetLine(2, artistName);
+        dlgProgress.SetLine(3, year);
         dlgProgress.StartModal(GetID);
         dlgProgress.Progress();
       }
