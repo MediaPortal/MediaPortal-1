@@ -2156,6 +2156,10 @@
 <string>
 	<id>735</id>
 	<value>Rotate</value>
+</string>	
+<string>
+	<id>736</id>
+	<value>No TVGuide data available</value>
 </string>
 <string>
 	<id>800</id>
