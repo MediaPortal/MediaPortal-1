@@ -194,13 +194,14 @@ namespace MediaPortal.Player
           nw=m_iWidth=GUIGraphicsContext.OverScanWidth;
           nh=m_iHeight=GUIGraphicsContext.OverScanHeight;
 				}
-				Log.Write("{0},{1}-{2},{3}  vidwin:{4},{5}-{6},{7} fs:{8}", x,y,nw,nh, 
+				if (x  < 0 || y  < 0) return;
+				if (nw <=0 || nh <=0) return;
+				Log.Write("VideoPlayer: ({0},{1})-({2},{3} ) vidwin:({4},{5})-({6},{7}) fs:{8}", x,y,nw,nh, 
 					GUIGraphicsContext.VideoWindow.Left,
 					GUIGraphicsContext.VideoWindow.Top,
 					GUIGraphicsContext.VideoWindow.Right,
 					GUIGraphicsContext.VideoWindow.Bottom,
 					GUIGraphicsContext.IsFullScreenVideo);
-        if (nw <=0 || nh <=0) return;
 
         System.Drawing.Rectangle rSource,rDest;
         MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
@@ -232,6 +233,7 @@ namespace MediaPortal.Player
 		{
 			if (videoWin!=null)
 			{
+				if (rDest.Left< 0 || rDest.Top<0 || rDest.Width<=0 || rDest.Height<=0) return;
 				videoWin.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
 			}
 		}
@@ -240,6 +242,8 @@ namespace MediaPortal.Player
 		{
 			if (basicVideo!=null)
 			{
+				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+				if (rDest.Width<=0 || rDest.Height<=0) return;
 				basicVideo.SetSourcePosition(rSource.Left,rSource.Top,rSource.Width,rSource.Height);
 				basicVideo.SetDestinationPosition(0,0,rDest.Width,rDest.Height);
 			}

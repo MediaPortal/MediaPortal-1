@@ -968,6 +968,9 @@ namespace MediaPortal.TV.Recording
 
 				if (!Vmr9.IsVMR9Connected)
 				{
+					
+					if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+					if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
 					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
 					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
@@ -980,6 +983,9 @@ namespace MediaPortal.TV.Recording
       {
 				if (!Vmr9.IsVMR9Connected)
 				{
+					if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
+						GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
+					if (iVideoHeight<=0 || iVideoWidth<=0) return;
 					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);

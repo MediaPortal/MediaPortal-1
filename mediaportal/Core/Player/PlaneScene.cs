@@ -295,6 +295,7 @@ namespace MediaPortal.Player
 		{
 			//if we're stopping then just return
       if (m_bStop) return;
+/*
 			int speed=g_Player.Speed;
 			if (speed < 0) speed=-speed;
 			if (speed >= 4)
@@ -306,7 +307,7 @@ namespace MediaPortal.Player
 				if (speed ==32 && m_iFrameCounter<10) return;
 				m_iFrameCounter=0;
 			}
-
+*/
       lock(this) 
       {
         try

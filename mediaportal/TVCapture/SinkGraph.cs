@@ -814,14 +814,20 @@ namespace MediaPortal.TV.Recording
         rDest.X += (int)x;
         rDest.Y += (int)y;
 
+				
+				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+				if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
         m_mpeg2Demux.SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
         m_mpeg2Demux.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
         m_mpeg2Demux.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
       }
       else
       {
-        if (iVideoWidth>0 && iVideoHeight>0)
-          m_mpeg2Demux.SetSourcePosition(0,0,iVideoWidth,iVideoHeight);
+				if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
+					   GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
+        if (iVideoHeight<=0 || iVideoWidth<=0) return;
+        
+				m_mpeg2Demux.SetSourcePosition(0,0,iVideoWidth,iVideoHeight);
         
         if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
           m_mpeg2Demux.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);

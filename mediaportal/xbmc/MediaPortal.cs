@@ -619,7 +619,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         if (((int)key) !=0)
         {
-          Log.Write("key:{0} ", key);
+          Log.Write("key:{0} {1}", key, (char)key);
           System.Windows.Forms.KeyPressEventArgs e= new KeyPressEventArgs(key);
           keypressed(e);
           return;
@@ -1293,7 +1293,7 @@ public class MediaPortalApp : D3DApp, IRender
 		{
 			char keyc = e.KeyChar;
 
-      Log.Write("key:{0} 0x{1:X}", (int)keyc,(int)keyc);
+      Log.Write("key:{0} 0x{1:X} (2)", (int)keyc,(int)keyc, keyc);
 			Key key = new Key(e.KeyChar, 0);
       if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 			if (key.KeyChar == '?')

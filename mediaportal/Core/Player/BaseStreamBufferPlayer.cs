@@ -271,6 +271,7 @@ namespace MediaPortal.Player
 				GUIGraphicsContext.VideoWindow.Bottom,
 				GUIGraphicsContext.IsFullScreenVideo);*/
 			if (nw <=0 || nh <=0) return;
+			if (x  < 0 || y  < 0) return;
 
 			System.Drawing.Rectangle rSource,rDest;
 			MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
@@ -299,6 +300,7 @@ namespace MediaPortal.Player
 		{
 			if (videoWin!=null)
 			{
+				if (rDest.Left< 0 || rDest.Top<0 || rDest.Width<=0 || rDest.Height<=0) return;
 				videoWin.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
 			}
 		}
@@ -307,6 +309,8 @@ namespace MediaPortal.Player
 		{
 			if (basicVideo!=null)
 			{
+				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+				if (rDest.Width<=0 || rDest.Height<=0) return;
 				basicVideo.SetSourcePosition(rSource.Left,rSource.Top,rSource.Width,rSource.Height);
 				basicVideo.SetDestinationPosition(0,0,rDest.Width,rDest.Height);
 			}
@@ -863,6 +867,7 @@ namespace MediaPortal.Player
 		protected virtual void CloseInterfaces()
 		{
 			int hr;
+			if (graphBuilder==null) return;
 			Log.Write("StreamBufferPlayer:cleanup DShow graph");
 			try 
 			{
@@ -922,6 +927,7 @@ namespace MediaPortal.Player
 			{
 				Log.Write("StreamBufferPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
 			}
+			Log.Write("StreamBufferPlayer:cleanup done");
 		}
 
 		public override void WndProc( ref Message m )
