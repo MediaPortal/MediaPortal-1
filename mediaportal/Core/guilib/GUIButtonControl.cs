@@ -107,12 +107,14 @@ namespace MediaPortal.GUI.Library
 			// render the text on the button
       if (Disabled )
       {
+        m_label.Label=m_strLabel;
         m_label.TextColor=m_dwDisabledColor;
         m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
         m_label.Render();
       }
       else
       {
+        m_label.Label=m_strLabel;
         m_label.TextColor=m_dwTextColor;
         m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
         m_label.Render();

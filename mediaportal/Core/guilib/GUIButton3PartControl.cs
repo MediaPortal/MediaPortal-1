@@ -1,6 +1,9 @@
 using System;
 using System.Drawing;
 using System.Diagnostics;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Direct3D=Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Library
 {
@@ -50,6 +53,7 @@ namespace MediaPortal.GUI.Library
     GUILabelControl                  cntlLabel2=null;
     bool                             containsProperty1=false;
     bool                             containsProperty2=false;
+    Sprite                           sprite=null;
     
 		/// <summary>
 		/// The constructor of the GUIButton3PartControl class.
@@ -99,24 +103,29 @@ namespace MediaPortal.GUI.Library
       if (containsProperty1) m_strText1=GUIPropertyManager.Parse(m_strLabel1);
       if (containsProperty2) m_strText2=GUIPropertyManager.Parse(m_strLabel2);
 
+      sprite.Begin(SpriteFlags.None);
 			// if the GUIButton3PartControl has the focus
 			if (Focus)
 			{
 				//render the focused images
-				m_imgFocusLeft.Render();
-				m_imgFocusMid.Render();
-				m_imgFocusRight.Render();
+				m_imgFocusLeft.RenderToSprite(sprite);
+				m_imgFocusMid.RenderToSprite(sprite);
+				m_imgFocusRight.RenderToSprite(sprite);
 			}
 			else 
 			{
 				//else render the non-focus images
-				m_imgNoFocusLeft.Render();  		
-				m_imgNoFocusMid.Render();  		
-				m_imgNoFocusRight.Render();
+				m_imgNoFocusLeft.RenderToSprite(sprite);  		
+				m_imgNoFocusMid.RenderToSprite(sprite);  		
+				m_imgNoFocusRight.RenderToSprite(sprite);
       }
 
 			//render the icon
-      if (m_imgIcon!=null) m_imgIcon.Render();
+      if (m_imgIcon!=null) 
+      {
+        m_imgIcon.RenderToSprite(sprite);
+      }
+      sprite.End();
 
 			// render the 1st line of text on the button
       int iWidth=m_imgNoFocusMid.Width;
@@ -269,6 +278,7 @@ namespace MediaPortal.GUI.Library
 
       cntlLabel1.AllocResources();
       cntlLabel2.AllocResources();
+      sprite=new Sprite(GUIGraphicsContext.DX9Device);
 		}
 
 		/// <summary>
@@ -288,6 +298,11 @@ namespace MediaPortal.GUI.Library
       
       cntlLabel1.FreeResources();
       cntlLabel2.FreeResources();
+      if (sprite!=null)
+      {
+        if (!sprite.Disposed) sprite.Dispose();
+        sprite=null;
+      }
     }
 
 		/// <summary>

@@ -261,18 +261,18 @@ namespace MediaPortal.GUI.Library
       iv=0;
     }
 
-    public bool GetFontCache(float xpos, float ypos, long color, string text, out CustomVertex.TransformedColoredTextured[] cachedVertices, out int triangles)
+    public bool GetFontCache(float xpos, float ypos, long color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
     {
       int alpha=(int)((color>>24)&0xff);
       int red=(int)((color>>16)&0xff);
       int green=(int)((color>>8) &0xff);
       int blue=(int)(color&0xff);
-      return GetFontCache(xpos, ypos, Color.FromArgb(alpha,red,green,blue), text, out cachedVertices, out triangles);
+      return GetFontCache(xpos, ypos, Color.FromArgb(alpha,red,green,blue), text, out cachedVertexBuffer, out triangles);
     }
-    public bool GetFontCache(float xpos, float ypos, Color color, string text, out CustomVertex.TransformedColoredTextured[] cachedVertices, out int triangles)
+    public bool GetFontCache(float xpos, float ypos, Color color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
 		{
 			triangles=0;
-			cachedVertices=null;
+			cachedVertexBuffer=null;
 
 			if (text==null) return false;
 			if (text==String.Empty) return false;
@@ -282,25 +282,31 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
+      VertexBuffer tmp=vertexBuffer;
+      vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured), MaxNumfontVertices,
+				                                    GUIGraphicsContext.DX9Device, Usage.WriteOnly, 0, Pool.Managed);
       DrawText(xpos, ypos, color, text, RenderFlags.DontDiscard);
+      vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
       triangles=dwNumTriangles;     
-      cachedVertices=(CustomVertex.TransformedColoredTextured[])fontVertices.Clone();
+      cachedVertexBuffer=vertexBuffer;
+
+      Present();
+      vertexBuffer=tmp;
+
       dwNumTriangles=0;
       iv=0;
       return true;
     }
-    public void DrawFontCache(ref CustomVertex.TransformedColoredTextured[] cachedVertices, int triangles)
+    public void DrawFontCache(ref VertexBuffer cachedVertexBuffer, int triangles)
     {
       //return;
       // Set the data for the vertexbuffer
-      if (vertexBuffer!=null && triangles>0)
+      if (cachedVertexBuffer!=null && triangles>0)
       {
-        vertexBuffer.SetData(cachedVertices, 0, LockFlags.Discard);
-        savedStateBlock.Apply();
-        //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
+        //savedStateBlock.Apply();
+        GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-        //GUIGraphicsContext.DX9Device.PixelShader = null;
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
+        GUIGraphicsContext.DX9Device.SetStreamSource(0, cachedVertexBuffer, 0);
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, triangles);
       }
     }

@@ -48,7 +48,11 @@ namespace MediaPortal.GUI.Library
     DateTime                        m_AnimationTime=DateTime.MinValue;
     bool                            ContainsProperty=false;
     StateBlock                      savedStateBlock;
-		//Sprite													imageSprite=null;
+		Rectangle                       sourceRect;
+    Rectangle                       destinationRect;
+    Vector3                         pntPosition;
+    float                           scaleX=1;
+    float                           scaleY=1;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
@@ -542,157 +546,193 @@ namespace MediaPortal.GUI.Library
       m_vbBuffer.Unlock();
        
 
+      pntPosition=new Vector3(x,y,0);
+      sourceRect=new Rectangle(m_iBitmap * m_dwWidth,0, m_iTextureWidth,m_iTextureHeight);
+      destinationRect=new Rectangle(0,0,(int)nw,(int)nh);
       m_destRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
+
+      scaleX = (float)destinationRect.Width / (float)m_iTextureWidth;
+      scaleY = (float)destinationRect.Height / (float)m_iTextureHeight;
+      pntPosition.X /= scaleX;
+      pntPosition.Y /= scaleY;
 		}
 
-		/// <summary>
+    public bool PreRender()
+    {
+      // Do not render if not visible
+      if (false==IsVisible)
+      {
+        m_bWasVisible = false;
+        return false;
+      }
+
+      // if no filename present then return
+      if (m_strFileName==null) return false;
+      if (m_strFileName==String.Empty) return false;
+
+      // if filename contains a property, then get the value of the property
+      if (ContainsProperty)
+      {
+        m_strTxt=GUIPropertyManager.Parse(m_strFileName);
+          
+        // if value changed or if we dont got any textures yet
+        if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Count)
+        {
+          // then free our resources, and reload the (new) image
+          FreeResources();
+          m_strTextureFileName =m_strTxt;
+          if (m_strTxt.Length==0)
+          {
+            // filename for new image is empty
+            // no need to load it
+            return false;
+          }
+          IsVisible=true;
+          AllocResources();
+          Update();
+        }
+      }
+
+        
+  			
+      // Do not render if there are not textures
+      if (m_vecTextures==null) 
+        return false;
+      if (0==m_vecTextures.Count)
+        return false ;
+
+      // Do not render if there is no vertex buffer
+      if (null==m_vbBuffer)
+        return  false;
+  			
+  			
+      // if we are not rendering the GUI background
+      if (!GUIGraphicsContext.ShowBackground)
+      {
+        // then check if this image is the background
+        if (m_iRenderWidth==GUIGraphicsContext.Width && m_iRenderHeight==GUIGraphicsContext.Height)
+        {
+          // and we're playing video or tv
+          if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
+          {
+            //if all true then don't render this image
+            return false;
+          }
+        }
+      }
+
+      //check if we should use GDI to draw the image
+      if (GUIGraphicsContext.graphics!=null)
+      {
+        // yes, If the GDI Image is not loaded, load the Image
+        if (m_image==null)
+        {
+          string strFileName=m_strFileName;
+          if (ContainsProperty)
+            strFileName=GUIPropertyManager.Parse(m_strFileName);
+          if (strFileName != "-")
+          {
+            if (!System.IO.File.Exists(strFileName))
+            {
+              if (strFileName[1]!=':')
+                strFileName=GUIGraphicsContext.Skin+@"\media\"+strFileName;
+            }
+            m_image= GUITextureManager.GetImage(strFileName);
+          }
+        }
+
+        // Draw the GDI image
+        if (m_image!=null)
+        {
+          GUIGraphicsContext.graphics.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+          GUIGraphicsContext.graphics.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceOver;
+          GUIGraphicsContext.graphics.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+          GUIGraphicsContext.graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+          try
+          {
+            GUIGraphicsContext.graphics.DrawImage(m_image,m_destRect);
+          }
+          catch(Exception)
+          {
+          }
+          return false;        
+        }
+      }
+      //we need to draw the image using direct3d
+      //check if direct3d device is still valid
+      if (GUIGraphicsContext.DX9Device==null) return false;
+      if (GUIGraphicsContext.DX9Device.Disposed) return false;
+
+      // if image is an animation then present the next frame
+      if (m_vecTextures.Count != 1)
+        Process();
+
+      // if the current frame is invalid then return
+      if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return false;
+
+      //get the current frame
+      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      if (frame==null) return false; // no frame? then return
+
+      //get the texture of the frame
+      Direct3D.Texture texture=frame.Image;
+      if (texture==null)
+      {
+        // no texture? then return
+        FreeResources();
+        return false;
+      }
+      // is texture still valid?
+      if (texture.Disposed)
+      {
+        //no? then return
+        FreeResources();
+        return false;
+      }
+        
+      // check if the stateblock is valid, if not allocate one
+      if (savedStateBlock!=null)
+      {
+        if (savedStateBlock.Disposed) savedStateBlock=null;
+      }
+      if (savedStateBlock==null)
+      {
+        CreateStateBlock();
+      }
+      return true;
+    }
+
+    public void RenderToSprite(Sprite sprite)
+    {
+      if (sprite==null) return;
+      if (sprite.Disposed) return;
+      if (!PreRender()) return;
+      //get the current frame
+      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+      if (frame==null) return ; // no frame? then return
+
+      //get the texture of the frame
+      Direct3D.Texture texture=frame.Image;
+      // Set the scaling transform
+      sprite.Transform = Matrix.Scaling(scaleX, scaleY, 1.0f);
+      sprite.Draw(texture, sourceRect, new Vector3(), pntPosition, unchecked((int)m_colDiffuse) );
+    }
+		
+    /// <summary>
 		/// Renders the Image
 		/// </summary>
 		public override void Render()
     {
       lock (this)
       {
-        // Do not render if not visible
-        if (false==IsVisible)
-        {
-          m_bWasVisible = false;
-          return;
-        }
-
-        // if no filename present then return
-        if (m_strFileName==null) return;
-        if (m_strFileName==String.Empty) return;
-
-        // if filename contains a property, then get the value of the property
-        if (ContainsProperty)
-        {
-          m_strTxt=GUIPropertyManager.Parse(m_strFileName);
-          
-          // if value changed or if we dont got any textures yet
-          if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Count)
-          {
-            // then free our resources, and reload the (new) image
-            FreeResources();
-            m_strTextureFileName =m_strTxt;
-            if (m_strTxt.Length==0)
-            {
-              // filename for new image is empty
-              // no need to load it
-              return;
-            }
-            IsVisible=true;
-            AllocResources();
-            Update();
-          }
-        }
-
-        
-  			
-        // Do not render if there are not textures
-        if (m_vecTextures==null) 
-          return;
-        if (0==m_vecTextures.Count)
-          return ;
-
-        // Do not render if there is no vertex buffer
-        if (null==m_vbBuffer)
-          return ;
-  			
-  			
-        // if we are not rendering the GUI background
-        if (!GUIGraphicsContext.ShowBackground)
-        {
-          // then check if this image is the background
-          if (m_iRenderWidth==GUIGraphicsContext.Width && m_iRenderHeight==GUIGraphicsContext.Height)
-          {
-            // and we're playing video or tv
-            if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
-            {
-              //if all true then don't render this image
-              return;
-            }
-          }
-        }
-
-        //check if we should use GDI to draw the image
-        if (GUIGraphicsContext.graphics!=null)
-        {
-          // yes, If the GDI Image is not loaded, load the Image
-          if (m_image==null)
-          {
-            string strFileName=m_strFileName;
-            if (ContainsProperty)
-              strFileName=GUIPropertyManager.Parse(m_strFileName);
-            if (strFileName != "-")
-            {
-              if (!System.IO.File.Exists(strFileName))
-              {
-                if (strFileName[1]!=':')
-                  strFileName=GUIGraphicsContext.Skin+@"\media\"+strFileName;
-              }
-              m_image= GUITextureManager.GetImage(strFileName);
-            }
-          }
-
-          // Draw the GDI image
-          if (m_image!=null)
-          {
-            GUIGraphicsContext.graphics.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            GUIGraphicsContext.graphics.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceOver;
-            GUIGraphicsContext.graphics.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            GUIGraphicsContext.graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-            try
-            {
-              GUIGraphicsContext.graphics.DrawImage(m_image,m_destRect);
-            }
-            catch(Exception)
-            {
-            }
-            return;        
-          }
-        }
-        //we need to draw the image using direct3d
-        //check if direct3d device is still valid
-        if (GUIGraphicsContext.DX9Device==null) return;
-        if (GUIGraphicsContext.DX9Device.Disposed) return;
-
-        // if image is an animation then present the next frame
-        if (m_vecTextures.Count != 1)
-          Process();
-
-        // if the current frame is invalid then return
-        if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return;
-
+        if (!PreRender()) return;
         //get the current frame
         CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
-        if (frame==null) return; // no frame? then return
+        if (frame==null) return ; // no frame? then return
 
         //get the texture of the frame
         Direct3D.Texture texture=frame.Image;
-        if (texture==null)
-        {
-          // no texture? then return
-          FreeResources();
-          return;
-        }
-        // is texture still valid?
-        if (texture.Disposed)
-        {
-          //no? then return
-          FreeResources();
-          return;
-        }
-        
-        // check if the stateblock is valid, if not allocate one
-        if (savedStateBlock!=null)
-        {
-          if (savedStateBlock.Disposed) savedStateBlock=null;
-        }
-        if (savedStateBlock==null)
-        {
-          CreateStateBlock();
-        }
 
         // if we have a stateblock
         if (savedStateBlock!=null)
