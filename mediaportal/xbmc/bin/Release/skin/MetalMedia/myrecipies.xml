@@ -12,8 +12,17 @@
 		<width>720</width>
 		<height>576</height>
 		<texture>background.png</texture>
-		<colorkey>0</colorkey>
-		<colordiffuse>ffffffff</colordiffuse>
+	</control>
+	<control>
+		<description>Recipies BG</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>300</posX>
+		<posY>150</posY>
+		<width>350</width>
+		<height>350</height>
+		<colordiffuse>20ffffff</colordiffuse>
+		<texture>myrecipies.png</texture>
 	</control>
 	<control>
 		<description>Panel</description>
@@ -22,32 +31,51 @@
 		<posX>50</posX>
 		<posY>100</posY>
 		<width>190</width>
-		<height>350</height>
+		<height>272</height>
 		<texture>panel.png</texture>
 	</control>	
 	<control>
-		<description>Recipies BG</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>215</posX>
-		<posY>65</posY>
-		<width>450</width>
-		<height>450</height>
-		<colordiffuse>20ffffff</colordiffuse>
-		<texture>home-myrecipies.png</texture>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>370</posX>
+		<posY>50</posY>
+		<label>-</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
+	</control>
+	<control>
+		<description>recipies text label</description>
+		<type>label</type>
+		<id>14</id>
+		<posX>280</posX>
+		<posY>50</posY>
+		<label>10</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>back button</description>
 		<type>button</type>
 		<id>4</id>
-		<posX>65</posX>
-		<posY>143</posY>
-		<label>Back</label>
+		<posX>55</posX>
+		<posY>115</posY>
+		<label>712</label>
 		<onleft>4</onleft>
 		<onright>7</onright>
 		<onup>17</onup>
 		<ondown>7</ondown>
 	</control>
+		<control>
+			<description>Panel Split</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>55</posX>
+			<posY>180</posY>
+			<texture>panel_split.png</texture>
+		</control>
 	<control>
 		<description>listcontrol</description>
 		<type>listcontrol</type>
@@ -56,7 +84,6 @@
 		<onright>8</onright>
 		<onup>8</onup>
 		<ondown>8</ondown>
-		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Recipie Detail Panel</description>

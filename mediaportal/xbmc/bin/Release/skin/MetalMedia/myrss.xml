@@ -17,22 +17,12 @@
 		<description>RSS BG</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>215</posX>
-		<posY>65</posY>
-		<width>450</width>
-		<height>450</height>
+		<posX>300</posX>
+		<posY>150</posY>
+		<width>350</width>
+		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
-		<texture>home-mynews.png</texture>
-	</control>
-	<control>
-		<description>Channel name label</description>
-		<type>label</type>
-		<id>12</id>
-		<posX>242</posX>
-		<posY>77</posY>
-<!--		<label>Channel name</label> -->
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<texture>mynews.png</texture>
 	</control>
 	<control>
 		<description>Panel</description>
@@ -41,15 +31,46 @@
 		<posX>50</posX>
 		<posY>100</posY>
 		<width>190</width>
-		<height>350</height>
+		<height>272</height>
 		<texture>panel.png</texture>
+	</control>
+	<control>
+		<description>Number of Files Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>370</posX>
+		<posY>50</posY>
+		<label>#itemcount</label>
+		<align>right</align>
+		<font>font10</font>
+		<textcolor>ff000000</textcolor>
+	</control>
+	<control>
+		<description>My news text label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>280</posX>
+		<posY>50</posY>
+		<label>9</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>ff000000</textcolor>
+	</control>
+	<control>
+		<description>Channel name label</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>260</posX>
+		<posY>50</posY>
+		<font>font16</font>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Refresh Button</description>
 		<type>button</type>
 		<id>2</id>
 		<posX>55</posX>
-		<posY>128</posY>
+		<posY>115</posY>
  		<label>184</label>
 		<onleft>2</onleft>
 		<onright>50</onright>
@@ -61,7 +82,7 @@
 		<type>selectbutton</type>
 		<id>4</id>
 		<posX>55</posX>
-		<posY>160</posY>
+		<posY>143</posY>
 		<label>706</label>
 		<onleft>50</onleft>
 		<onright>50</onright>
@@ -69,13 +90,12 @@
 		<ondown>4</ondown>
 	</control>
 	<control>
-		<description>Middle Bar</description>
+		<description>Panel Split</description>
 		<type>image</type>
 		<id>1</id>
 		<posX>55</posX>
-		<posY>200</posY>
-		<width>145</width>
-		<texture>middle-bar.png</texture>
+		<posY>180</posY>
+		<texture>panel_split.png</texture>
 	</control>
 	<control>
 		<description>Site Logo</description>
@@ -97,8 +117,6 @@
 		<onup>50</onup>
 		<ondown>50</ondown>
 		<spinPosY>306</spinPosY>
-		<spinColor>FFFFFFFF</spinColor>
-		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Chosen Story description</description>

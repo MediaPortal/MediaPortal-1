@@ -39,11 +39,13 @@
 		<posX>190</posX> 
 		<posY>260</posY> 
 		<width>350</width> 
-		<height>190</height> 
+		<height>158</height> 
 		<onleft>5</onleft> 
 		<onright>5</onright> 
 		<onup>5</onup> 
-		<ondown>5</ondown> 
+		<ondown>5</ondown>
+		<spinPosX>450</spinPosX>
+		<spinPosY>370</spinPosY>
 	</control>
     </controls>
 </window>

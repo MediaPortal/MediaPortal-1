@@ -65,10 +65,10 @@
 				<id>4</id>
 				<posX>60</posX>
 				<posY>97</posY>
-				<label>Back</label>
+				<label>712</label>
 				<onleft>4</onleft>
 				<onright>7</onright>
-				<onup>17</onup>
+				<onup>7</onup>
 				<ondown>7</ondown>
 			</control>
 		</control>

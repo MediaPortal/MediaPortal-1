@@ -64,9 +64,9 @@
 				<posX>60</posX>
 				<posY>97</posY>
 				<label>620</label>
-				<onleft>10</onleft>
+				<onleft>2</onleft>
 				<onright>4</onright>
-				<onup>4</onup>
+				<onup>5</onup>
 				<ondown>5</ondown>
 			</control>
 			<control>
@@ -88,10 +88,10 @@
 				<posX>60</posX>
 				<posY>131</posY>
 				<label>624</label>
-				<onleft>5</onleft>
+				<onleft>2</onleft>
 				<onright>10</onright>
 				<onup>2</onup>
-				<ondown>10</ondown>
+				<ondown>2</ondown>
 			</control>	
 		</control>
 		<control>
@@ -156,7 +156,7 @@
 				<posX>260</posX>
 				<posY>485</posY>
 				<width>430</width> 
-				<height>90</height> 
+				<height>65</height> 
 				<label>#TV.RecordedTV.Description</label>
 				<font>font14</font>
 				<textcolor>FFFFFFFF</textcolor>

@@ -63,7 +63,7 @@
 		<posX>55</posX>
 		<posY>143</posY>
 		<label>620</label>
-		<onleft>10</onleft>
+		<onleft>2</onleft>
 		<onright>4</onright>
 		<onup>19</onup>
 		<ondown>5</ondown>
@@ -98,7 +98,7 @@
 		<onleft>5</onleft>
 		<onright>10</onright>
 		<onup>2</onup>
-		<ondown>10</ondown>
+		<ondown>2</ondown>
 	</control>	
 	<control>
 		<description>scheduler recordings listcontrol</description>

@@ -40,9 +40,9 @@
 		<description>Screen</description>
 		<type>button</type>
 		<id>3</id>
-		<posX>418</posX>
+		<posX>405</posX>
 		<posY>165</posY>
-		<width>197</width>
+		<width>228</width>
 		<height>32</height>
 		<label>214</label>
 		<hyperlink>9</hyperlink>
@@ -55,9 +55,9 @@
 		<description>My Music</description>
 		<type>button</type>
 		<id>4</id>
-		<posX>418</posX>
+		<posX>405</posX>
 		<posY>199</posY>
-		<width>197</width>
+		<width>228</width>
 		<height>32</height>
 		<label>2</label>
 		<hyperlink>14</hyperlink>
@@ -70,9 +70,9 @@
 		<description>Slideshow</description>
 		<type>button</type>
 		<id>5</id>
-		<posX>418</posX>
+		<posX>405</posX>
 		<posY>233</posY>
-		<width>197</width>
+		<width>228</width>
 		<height>32</height>
 		<label>108</label>
 		<hyperlink>12</hyperlink>

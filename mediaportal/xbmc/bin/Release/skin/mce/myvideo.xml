@@ -120,8 +120,8 @@
 				<posY>199</posY>
 				<label>136</label>
 				<action>33</action>
-				<onleft>50</onleft>
-				<onright>50</onright>
+				<onleft>20</onleft>
+				<onright>10</onright>
 				<onup>5</onup>
 				<ondown>6</ondown>
 			</control>

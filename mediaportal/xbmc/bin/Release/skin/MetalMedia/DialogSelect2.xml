@@ -27,13 +27,15 @@
 		<type>listcontrol</type> 
 		<id>3</id> 
 		<posX>210</posX> 
-		<posY>270</posY> 
+		<posY>280</posY> 
 		<width>350</width> 
-		<height>220</height> 
+		<height>185</height> 
 		<onleft>5</onleft> 
 		<onright>5</onright> 
 		<onup>5</onup> 
 		<ondown>5</ondown> 
+		<spinPosX>520</spinPosX>
+		<spinPosY>410</spinPosY>
 	</control>
-    </controls>
+ </controls>
 </window>

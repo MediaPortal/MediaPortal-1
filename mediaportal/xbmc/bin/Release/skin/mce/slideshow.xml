@@ -29,7 +29,7 @@
 		<description>row 2 label</description>
 		<type>label</type>
 		<id>11</id>
-		<posX>100</posX>
+		<posX>600</posX>
 		<posY>40</posY>
 		<label>-</label>
 		<align>left</align>
@@ -40,7 +40,7 @@
 		<description>row 2 extra label</description>
 		<type>label</type>
 		<id>12</id>
-		<posX>250</posX>
+		<posX>450</posX>
 		<posY>40</posY>
 		<label>-</label>
 		<align>left</align>

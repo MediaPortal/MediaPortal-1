@@ -286,7 +286,7 @@
 		<posX>80</posX> 
 		<posY>273</posY>
 		<width>370</width> 
-		<height>150</height>		 
+		<height>180</height>		 
 		<texture>osd_menu_bg.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -635,12 +635,14 @@
 		<posX>118</posX> 
 		<posY>330</posY> 
 		<width>300</width> 
-		<height>120</height> 
+		<height>130</height> 
 		<onleft>602</onleft> 
 		<onright>600</onright> 
 		<onup>600</onup> 
-		<ondown>601</ondown> 
-		<visible>no</visible> 
+		<ondown>601</ondown>
+		<spinPosX>330</spinPosX>
+		<spinPosY>425</spinPosY>
+ 		<visible>no</visible> 
 	</control>
 </controls>
 </window>

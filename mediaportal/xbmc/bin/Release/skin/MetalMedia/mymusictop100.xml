@@ -76,7 +76,7 @@
 			<posY>143</posY>
 			<label>103</label>
 			<onleft>50</onleft>
-			<onright>4</onright>
+			<onright>50</onright>
 			<onup>2</onup>
 			<ondown>7</ondown>
 		</control>

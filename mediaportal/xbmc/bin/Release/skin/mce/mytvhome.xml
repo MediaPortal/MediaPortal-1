@@ -206,7 +206,7 @@
 			<posX>290</posX>
 			<posY>455</posY>
 			<width>350</width> 
-			<height>90</height> 
+			<height>65</height> 
 			<label>#TV.View.description</label>
 			<font>font14</font>
 			<textcolor>FFFFFFFF</textcolor>
