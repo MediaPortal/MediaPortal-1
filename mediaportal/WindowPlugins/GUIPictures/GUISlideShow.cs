@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Pictures
     int LABEL_ROW2			=11;
     int LABEL_ROW2_EXTRA	=12;
 
-    float KENBURNS_ZOOM_FACTOR = 1.15f;
+    float KENBURNS_ZOOM_FACTOR = 1.20f;
     float KENBURNS_MAXZOOM = 1.30f;
 
     int m_iSlideShowTransistionFrames=60;
@@ -324,8 +324,6 @@ namespace MediaPortal.GUI.Pictures
                 m_iKenBurnsEffect = InitKenBurnsTransition();                
                 KenBurns(m_iKenBurnsEffect, true);        
                 ZoomCurrent(m_fZoomFactorCurrent);
-
-                Log.Write("Start zoom factor: {0}", m_fZoomFactorCurrent);
               }
               
               int iNewMethod;
@@ -525,7 +523,6 @@ namespace MediaPortal.GUI.Pictures
       int iEffect=0;
       int iRandom=0;
 
-      // Landscape picture
       iRandom = randomizer.Next(2);
       switch (iRandom)
       {
@@ -536,10 +533,7 @@ namespace MediaPortal.GUI.Pictures
         case 1: 
           iEffect = 2; // Pan
           break;
-      }
-
-      Log.Write("KenBurns effect nr: {0}", iEffect);
-      
+      }     
       return iEffect;
     }
 
@@ -940,8 +934,6 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
 
-        Log.Write("Zoom type: {0}", m_iZoomTypeCurrent);       
-
         // Init zoom
         m_fEndZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)
         m_fStartZoomFactor = m_fBestZoomFactorCurrent;
@@ -1105,9 +1097,6 @@ namespace MediaPortal.GUI.Pictures
           }        
         }
 
-        Log.Write("Start point: {0}", iStartPoint);
-        Log.Write("End Point : {0}", iEndPoint);
-
         // Init 120% top center fixed
         m_fZoomFactorCurrent = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)        
         m_iZoomTypeCurrent = iStartPoint;
@@ -1200,6 +1189,28 @@ namespace MediaPortal.GUI.Pictures
     {
 			switch (action.wID)
       {
+				case Action.ActionType.ACTION_MOUSE_CLICK:
+					int x=(int)action.fAmount1;
+
+					if (!m_bPictureZoomed)
+					{
+						// Divide screen into three sections (previous / pause / next)
+						if (x < (GUIGraphicsContext.OverScanWidth/3))
+							ShowPrevious();
+						else if (x > (GUIGraphicsContext.OverScanWidth/3)*2)
+							ShowNext();
+						else					
+							if (m_bSlideShow) m_bPause=!m_bPause;
+					}
+					else
+					{
+						ZoomBackGround(1.0f);
+						m_bPictureZoomed=false;
+						m_bPause = false;
+					}
+					m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+					break;
+
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           GUIWindowManager.PreviousWindow();
           break;
@@ -1361,7 +1372,6 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
 
-				case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
 				case Action.ActionType.ACTION_CONTEXT_MENU:
 					ShowContextMenu();
 					break;
