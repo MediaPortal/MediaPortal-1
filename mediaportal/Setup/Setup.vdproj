@@ -2967,6 +2967,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3EEFA6DCBDB7487DA72B8708B04AD3B0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3F08F66E070D44609CD2756AD13D3BD4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8536,6 +8542,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B5D67528F7CB4C928495DA18BF7B04B3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B60AD0BDB1A44C78A4CAC3D4AAA61F45"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -20855,6 +20867,26 @@
             "TargetName" = "8:block_orange.png"
             "Tag" = "8:"
             "Folder" = "8:_FE42AC7619494DC3A8E39DE3CD0033E3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3EEFA6DCBDB7487DA72B8708B04AD3B0"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\white.bmp"
+            "TargetName" = "8:white.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_36716BB99E0A479DA4F30DA702F6C737"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -37158,6 +37190,26 @@
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\tvguide_button_right.png"
             "TargetName" = "8:tvguide_button_right.png"
+            "Tag" = "8:"
+            "Folder" = "8:_36716BB99E0A479DA4F30DA702F6C737"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B60AD0BDB1A44C78A4CAC3D4AAA61F45"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\black.bmp"
+            "TargetName" = "8:black.bmp"
             "Tag" = "8:"
             "Folder" = "8:_36716BB99E0A479DA4F30DA702F6C737"
             "Condition" = "8:"
