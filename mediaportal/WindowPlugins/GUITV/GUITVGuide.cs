@@ -2130,7 +2130,9 @@ namespace MediaPortal.GUI.TV
 						break;
 				}
 				TVDatabase.AddRecording(ref rec);
+#if DEBUG
 				CheckRecordingConflicts();
+#endif
 				Update();
 				SetFocus();
 			}

@@ -798,7 +798,6 @@ namespace MediaPortal.GUI.Library
       if (texture==null)
       {
         // no texture? then return
-        FreeResources();
         return false;
       }
       // is texture still valid?

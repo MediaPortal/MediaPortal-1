@@ -277,7 +277,19 @@ namespace MediaPortal.GUI.Library
           GUIListItem pItem = (GUIListItem)m_vecItems[i];
           if (null != pItem)
           {
-            pItem.FreeMemory();
+						bool dispose=true;
+						for (int x=m_iOffset; x < m_iOffset+m_iItemsPerPage && x < m_vecItems.Count; x++)
+						{
+							GUIListItem pItem2 = (GUIListItem)m_vecItems[x];
+							if ( (pItem.IconImage!="" && pItem.IconImage==pItem2.IconImage) ||
+								   (pItem.IconImageBig!="" && pItem.IconImageBig==pItem2.IconImageBig) )
+							{
+								dispose=false;
+								break;
+							}
+						}
+						if (dispose)
+							pItem.FreeMemory();
           }
         }
         for (int i = m_iOffset+m_iItemsPerPage+1 ; i < m_vecItems.Count; ++i) 
@@ -285,7 +297,19 @@ namespace MediaPortal.GUI.Library
           GUIListItem pItem = (GUIListItem)m_vecItems[i];
           if (null != pItem)
           {
-            pItem.FreeMemory();
+						bool dispose=true;
+						for (int x=m_iOffset; x < m_iOffset+m_iItemsPerPage && x < m_vecItems.Count; x++)
+						{
+							GUIListItem pItem2 = (GUIListItem)m_vecItems[x];
+							if ( (pItem.IconImageBig!="" && pItem.IconImage==pItem2.IconImageBig) ||
+									 (pItem.IconImageBig!="" && pItem.IconImageBig==pItem2.IconImageBig ) )
+							{
+								dispose=false;
+								break;
+							}
+						}
+						if (dispose)
+							pItem.FreeMemory();
           }
         }
       }
