@@ -1453,21 +1453,29 @@ namespace MediaPortal.GUI.Video
           pItem = (GUIListItem)vecitems[i];
           if (!pItem.IsFolder)
           {
-            if (Utils.IsVideo(pItem.Path) && /*!Utils.IsNFO(pItem.Path) && */!PlayListFactory.IsPlayList(pItem.Path))
-            {
-              strFile = pItem.Path;
-              bFoundFile = true;
-              break;
-            }
+						if (Utils.IsVideo(pItem.Path) && /*!Utils.IsNFO(pItem.Path) && */!PlayListFactory.IsPlayList(pItem.Path))
+						{
+							strFile = pItem.Path;
+							bFoundFile = true;
+							break;
+						}
           }
           else
           {
-            if (pItem.Path.ToLower().IndexOf("video_ts") >=0)
+						if (pItem.Path.ToLower().IndexOf("video_ts") >=0)
             {
               strFile = String.Format(@"{0}\VIDEO_TS.IFO",pItem.Path);
               bFoundFile = true;
               break;
             }
+						
+						string strExtension=System.IO.Path.GetExtension(pItem.Path).ToLower();
+						if (VirtualDirectory.IsImageFile(strExtension))
+						{
+							strFile = pItem.Path;
+							bFoundFile = true;
+							break;
+						} 
           }
         }
         if (!bFoundFile) 
