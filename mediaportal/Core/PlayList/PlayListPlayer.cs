@@ -89,6 +89,35 @@ namespace MediaPortal.Playlists
       }
     }
 
+    static public string Get(int iSong)
+    {
+      if (m_iCurrentPlayList==PlayListType.PLAYLIST_NONE) return String.Empty;
+
+      PlayList playlist = GetPlaylist(m_iCurrentPlayList);
+      if (playlist.Count <= 0) return String.Empty;
+      
+      if (iSong >= playlist.Count )
+      {
+        //	Is last element of video stacking playlist?
+        if (m_iCurrentPlayList==PlayListType.PLAYLIST_VIDEO_TEMP)
+        {
+          return String.Empty;
+        }
+
+        if (m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC||m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC_TEMP)
+        {
+          if (!m_bRepeat)
+          {
+            return  String.Empty;;
+          }
+        }
+        iSong=0;
+      }
+
+      PlayList.PlayListItem item = playlist[iSong];
+      return item.FileName;
+    }
+
     static public string GetNext()
     {
       if (m_iCurrentPlayList==PlayListType.PLAYLIST_NONE) return String.Empty;
