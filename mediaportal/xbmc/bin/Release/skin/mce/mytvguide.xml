@@ -16,7 +16,7 @@
 	<control>
 		<type>image</type>
 		<id>1</id>
-		<posX>30</posX>
+		<posX>60</posX>
 		<posY>20</posY>
 		<texture>television_logo.png</texture>
 	</control>	
