@@ -736,8 +736,38 @@ public class MediaPortalApp : D3DApp, IRender
               }
               else
               {
+                bool ok=false;
+                for (int i=0; i < Recorder.Count;++i)
+                {
+                  if (Recorder.DoesCardSupportTimeshifting(i))
+                  {
+                    if (Recorder.IsCardRecording(i)) 
+                    {
+                      ok=true;
+                      break;
+                    }
+                    else
+                    {
+                      string channel=Recorder.GetTVChannelName(i);
+                      Recorder.StartViewing(i,channel,true,true);
+                      if (g_Player.Playing && g_Player.DoesOwnRendering)
+                      {
+                        ok=true;
+                        break;
+                      }
+                      else
+                      {
+                        Recorder.StartViewing(i,channel,false,false);
+                      }
+                    }
+                  }
+                }
+                if (!ok)
+                {
                   ShowInfo("Live tv in background","Unable to start","Make sure you use VMR9 and that something is playing");
                   return;
+                }
+                GUIGraphicsContext.ShowBackground = false;
               }
             }
             else

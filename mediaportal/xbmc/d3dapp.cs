@@ -1328,6 +1328,7 @@ namespace MediaPortal
       if (active && ready)
       {
         DoSelectNewDevice();
+
       }
     }
 
