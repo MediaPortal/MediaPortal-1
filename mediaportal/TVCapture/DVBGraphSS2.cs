@@ -1399,6 +1399,7 @@ namespace MediaPortal.TV.Recording
 		}
 		void SetDemux(int audioPid,int videoPid)
 		{
+			Log.Write("DVBGraphSS2:SetDemux() audio pid:0x{0X} video pid:0x{1:X}",audioPid,videoPid);
 			AMMediaType mpegVideoOut = new AMMediaType();
 			mpegVideoOut.majorType = MediaType.Video;
 			mpegVideoOut.subType = MediaSubType.MPEG2_Video;
@@ -1432,16 +1433,19 @@ namespace MediaPortal.TV.Recording
 			int hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out pinVideoOut);
 			if (hr!=0)
 			{
+				Log.Write("DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
 				return;
 			}
 
 			hr=m_demuxInterface.CreateOutputPin(ref mpegAudioOut, "audio", out pinAudioOut);
 			if (hr!=0)
 			{
+				Log.Write("DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
 				return;
 			}
 
 			hr=SetupDemuxer(pinVideoOut,pinAudioOut,audioPid,videoPid);
+			Log.Write("DVBGraphSS2:SetDemux() done:{0}", hr);
 			//int //=0;
 		}
 		/// <summary>
@@ -1474,13 +1478,16 @@ namespace MediaPortal.TV.Recording
 		public bool StartViewing(AnalogVideoStandard standard,int channel, int country)
 		{
 			if (m_graphState != State.Created) return false;
+			Log.Write("DVBGraphSS2:StartViewing()");
 			TuneChannel(standard,channel,country);
 			int hr=0;
 			bool setVisFlag=false;
 			
 			if(m_channelFound==false)
+			{
+				Log.Write("DVBGraphSS2:StartViewing() channel not found");
 				return false;
-			
+			}
 			AddPreferredCodecs();
 			
 			if(Vmr9.UseVMR9inMYTV)
@@ -1490,19 +1497,40 @@ namespace MediaPortal.TV.Recording
 
 			if(m_pluginsEnabled==false)
 			{
+				Log.Write("DVBGraphSS2:StartViewing() plugins not enabled");
+				Log.Write("DVBGraphSS2:StartViewing() render video pin");
 				// render vid & aud
 				hr=m_sourceGraph.Render(m_videoPin);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED to render video pin");
 					return false;
-
+				}
+				Log.Write("DVBGraphSS2:StartViewing() render audio pin");
 				hr=m_sourceGraph.Render(m_audioPin);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED to render audio pin");
 					return false;
+				}
 				hr=m_sourceGraph.AddFilter(m_mpeg2Data,"Sections-Filter");
-				hr=m_sourceGraph.AddFilter(m_demux,"Demuxer-Filter");
-				m_demuxInterface=(IMpeg2Demultiplexer)m_demux;
-				if(m_demuxInterface==null)
+				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() unable to add Sections-Filter filter to graph");
 					return false;
+				}
+				hr=m_sourceGraph.AddFilter(m_demux,"Demuxer-Filter");
+				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() unable to add Demuxer-Filter filter to graph");
+					return false;
+				}
+				m_demuxInterface=m_demux as IMpeg2Demultiplexer;
+				if(m_demuxInterface==null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() unable get IMpeg2Demultiplexer");
+					return false;
+				}
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);
 				IPin demuxOutPin=null;
 				IPin m2dIn=DirectShowUtil.FindPinNr(m_mpeg2Data,PinDirection.Input,0);
@@ -1511,13 +1539,22 @@ namespace MediaPortal.TV.Recording
 				mt.subType=DVBSkyStar2Helper.MEDIASUBTYPE_MPEG2_DATA;
 				hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2DATA",out demuxOutPin);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() unable create MPEG2DATA outputpin");
 					return false;
+				}
 				hr=m_sourceGraph.Connect(m_data0,demuxInPin);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() unable connect Data0->DemuxIn");
 					return false;
+				}
 				hr=m_sourceGraph.Connect(demuxOutPin,m2dIn);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() unable demuxOut->m2dIn");
 					return false;
+				}
 				//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
 				if(demuxOutPin!=null)
 					Marshal.ReleaseComObject(demuxOutPin);
@@ -1533,31 +1570,68 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
+				Log.Write("DVBGraphSS2:StartViewing() Using plugins");
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
+
+				if (samplePin!=null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
+					return false;
+				}
+				if (demuxInPin!=null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+					return false;
+				}
+
 				hr=m_sourceGraph.Connect(m_data0,samplePin);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
 					return false;
+				}
 				samplePin=null;
 				samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Output,0);			
 				if(samplePin==null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find sampleGrabber output pin");
 					return false;
+				}
 				hr=m_sourceGraph.Connect(samplePin,demuxInPin);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: connect sample->demux");
 					return false;
+				}
 
 				SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
 			
 				IPin dmOutVid=DirectShowUtil.FindPinNr(m_demux,PinDirection.Output,1);
 				IPin dmOutAud=DirectShowUtil.FindPinNr(m_demux,PinDirection.Output,0);
-				if(dmOutVid==null || dmOutAud==null)
+				if(dmOutVid==null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demux video output pin");
 					return false;
+				}
+				if(dmOutAud==null)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demux audio output pin");
+					return false;
+				}
+
 				hr=m_sourceGraph.Render(dmOutVid);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot render demux video output pin");
 					return false;
+				}
 				hr=m_sourceGraph.Render(dmOutAud);
 				if(hr!=0)
+				{
+					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot render demux audio output pin");
 					return false;
+				}
 				//
 				//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
 				if(demuxInPin!=null)
@@ -1624,6 +1698,8 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext_OnVideoWindowChanged();
 			//
 			
+			Log.Write("DVBGraphSS2:StartViewing() start graph");
+
 			m_mediaControl.Run();
 			
 
@@ -1633,6 +1709,7 @@ namespace MediaPortal.TV.Recording
 			
 			if(setVisFlag)
 			{
+				Log.Write("DVBGraphSS2:StartViewing() show video window");
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
 				{
@@ -1643,6 +1720,7 @@ namespace MediaPortal.TV.Recording
 
 
 
+			Log.Write("DVBGraphSS2:StartViewing() startviewing done");
 			// show the vid window
 			return true;
 		}
