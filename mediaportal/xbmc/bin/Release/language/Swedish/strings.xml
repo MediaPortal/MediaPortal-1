@@ -2606,4 +2606,8 @@
         <id>13005</id>
         <value>Senast Importerad fil:</value>
     </string>
+        <string>
+	    <id>1440</id>
+	    <value>Min Text-TV</value>
+</string>
 </strings>

@@ -2268,6 +2268,11 @@
 </string>
 
 <string>
+	<id>865</id>
+	<value>Resume movie from last time ?</value>
+</string>
+
+<string>
 	<id>8000</id>
 	<value>My Mail</value>
 </string>
@@ -2402,5 +2407,9 @@
 <string>
 	<id>13005</id>
 	<value>Last imported file:</value>
+</string>
+<string>
+	<id>1440</id>
+	<value>My TeleText</value>
 </string>
 </strings>

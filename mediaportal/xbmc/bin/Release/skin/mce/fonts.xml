@@ -26,4 +26,9 @@
     <filename>Arial</filename>
     <height>72</height>
   </font>
+  <font>
+  	  <name>fontSVT</name>
+  	  <filename>Courier New</filename>
+  	  <height>13</height>
+  </font>
 </fonts>
