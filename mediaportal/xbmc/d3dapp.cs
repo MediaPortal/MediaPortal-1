@@ -58,7 +58,7 @@ namespace MediaPortal
     private bool isWindowActive = true; // Are we waiting for got focus?
     protected bool m_bShowCursor=true;
     protected bool m_bLastShowCursor=true;
-    bool UseMillisecondTiming=false;
+    bool UseMillisecondTiming=true;
 
     static int lastx=0;
     static int lasty=0;
