@@ -1,3 +1,4 @@
+17-07-2004  home        : fixed : home showed no background graphics if language was not english
 17-07-2004  general     : added : support for USBUIRT (input)
 
 16-07-2004  my music    : fixed : press Y to add folder to playlist, id3 tags will be loaded even if id3tags are turned off
