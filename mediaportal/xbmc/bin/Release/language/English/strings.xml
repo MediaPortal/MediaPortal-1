@@ -822,7 +822,7 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>Move the arrow to change the amount of overscan</value>
+		<value>-WARNING!- Leave at 0,0 for best quality,change for shrinking video to fit.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -830,7 +830,7 @@
 	</string>
 	<string>
 		<id>278</id>
-		<value>Change the rectangle so that it is perfectly square</value>
+		<value>-Important!- for best quality, change rectangle so it's perfectly square</value>
 	</string>
 	<string>
 		<id>279</id>
