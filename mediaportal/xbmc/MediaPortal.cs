@@ -21,6 +21,9 @@ public class MediaPortalApp : D3DApp
 
     int       m_iLastMousePositionX=0;
     int       m_iLastMousePositionY=0;
+    private System.Threading.Mutex m_Mutex;
+    private string m_UniqueIdentifier;
+
     [STAThread]
     public static void Main()
     {
@@ -53,6 +56,15 @@ public class MediaPortalApp : D3DApp
 
     public MediaPortalApp()
 		{
+      m_UniqueIdentifier = Application.ExecutablePath.Replace("\\","_");
+      m_Mutex = new System.Threading.Mutex(false, m_UniqueIdentifier);
+      if(!m_Mutex.WaitOne(1,true))
+      {
+        string strMsg="Mediaportal is already running!";
+        System.Windows.Forms.MessageBox.Show(strMsg, this.Text, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+        throw new Exception(strMsg);
+        return;
+      }
       Utils.FileDelete("capture.log");
       if (Screen.PrimaryScreen.Bounds.Width>720)
       {

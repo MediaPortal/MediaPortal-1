@@ -2,6 +2,7 @@ History: (dd-mm-yyyy)
   02-05-2004  general     : fixed : you could start 2 instances of mediaportal
   02-05-2004  my music    : fixed : play song with album art, switch from windowed<->fullscreen:crash
   02-05-2004  my tv       : fixed : scheduler->edit recording: dialog showed 'albums of'
+  
   01-05-2004  my pictures : fixed : left/right didnt work anymore in zoom mode
   01-05-2004  my pictures : fixed : pic >3.2 megs where tiled 
   01-05-2004: general     : fixed : page number didnt show total pages
