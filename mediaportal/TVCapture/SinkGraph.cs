@@ -387,11 +387,23 @@ namespace MediaPortal.TV.Recording
 			return m_iChannelNr;
 		}
 
+    /// <summary>
+    /// This method can be used to ask the graph if it should be rebuild when
+    /// we want to tune to the new channel:ichannel
+    /// </summary>
+    /// <param name="iChannel">new channel to tune to</param>
+    /// <returns>true : graph needs to be rebuild for this channel
+    ///          false: graph does not need to be rebuild for this channel
+    /// </returns>
     public bool ShouldRebuildGraph(int iChannel)
     {
+      // if we switch from tuner <-> SVHS/Composite then 
+      // we need to rebuild the capture graph
       bool bFixCrossbar=true;
       if (m_iPrevChannel>=0)
       {
+        // tuner : channel < 1000
+        // SVHS/composite : channel >=1000
         if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
         if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
         if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;

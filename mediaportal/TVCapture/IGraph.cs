@@ -123,6 +123,14 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool StopViewing();
 
+    /// <summary>
+    /// This method can be used to ask the graph if it should be rebuild when
+    /// we want to tune to the new channel:ichannel
+    /// </summary>
+    /// <param name="iChannel">new channel to tune to</param>
+    /// <returns>true : graph needs to be rebuild for this channel
+    ///          false: graph does not need to be rebuild for this channel
+    /// </returns>
     bool ShouldRebuildGraph(int iChannel);
 	}
 }
