@@ -8,185 +8,11 @@ using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
-
-
 using MediaPortal.GUI.Library;
 using DShowNET;
+
 namespace MediaPortal.Player 
 {
-	public class FormOverlay : System.Windows.Forms.Form
-	{
-		int m_iLastMousePositionX = 0;
-		int m_iLastMousePositionY = 0;
-		public Rectangle rVideoWindow = new Rectangle(0,0,0,0);
-		MouseEventArgs eLastMouseClickEvent = null;
-		private System.Timers.Timer tMouseClickTimer = null;
-		private bool bMouseClickFired = false;
-
-		public FormOverlay()
-		{
-			tMouseClickTimer = new System.Timers.Timer(SystemInformation.DoubleClickTime);
-			tMouseClickTimer.Enabled = false;
-			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(tMouseClickTimer_Elapsed);
-			tMouseClickTimer.SynchronizingObject = this;
-
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
-		}
-
-		private void OnMouseDown(object sender, MouseEventArgs  e)
-		{
-			Action action;
-			bool MouseButtonRightClick = false;
-
-			// first move mouse
-			int x = e.X - GUIGraphicsContext.OffsetX + rVideoWindow.X;
-			int y = e.Y - GUIGraphicsContext.OffsetY + rVideoWindow.Y;
-			action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
-			GUIGraphicsContext.OnAction(action);
-
-			// save mouse position
-			m_iLastMousePositionX = x;
-			m_iLastMousePositionY = y;
-
-			if (e.Button == MouseButtons.Left)
-			{		
-				if (GUIGraphicsContext.DBLClickAsRightClick)
-				{
-					if(tMouseClickTimer != null)
-					{
-						bMouseClickFired = false;
-
-						if(e.Clicks < 2)
-						{
-							eLastMouseClickEvent = e;
-							bMouseClickFired = true;
-							tMouseClickTimer.Start();
-							return;
-						}
-						else
-						{
-							// Double click used as right click
-							eLastMouseClickEvent = null;
-							tMouseClickTimer.Stop();
-							MouseButtonRightClick = true;
-						}
-					}
-				}
-				else
-				{
-					action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
-					action.MouseButton = e.Button;
-					action.SoundFileName = "click.wav";
-					if (action.SoundFileName.Length > 0)
-						Utils.PlaySound(action.SoundFileName, false, true);
-
-					GUIGraphicsContext.OnAction(action);
-					return;
-				}
-			}   
-
-			// right mouse button=back
-			if ((e.Button == MouseButtons.Right) || (MouseButtonRightClick))
-			{
-				GUIWindow window = (GUIWindow) GUIWindowManager.GetWindow( GUIWindowManager.ActiveWindow );
-				if (GUIGraphicsContext.IsFullScreenVideo ||
-					(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_SLIDESHOW))
-				{
-					// Get context menu
-					action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, x, y);
-					action.MouseButton = e.Button;
-					action.SoundFileName = "click.wav";
-					if (action.SoundFileName.Length > 0)
-						Utils.PlaySound(action.SoundFileName, false, true);
-
-					GUIGraphicsContext.OnAction(action);
-				}
-				else
-				{
-					Key key = new Key(0, (int)Keys.Escape);
-					action = new Action();
-					if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
-					{
-						if (action.SoundFileName.Length > 0)
-							Utils.PlaySound(action.SoundFileName, false, true);
-						GUIGraphicsContext.OnAction(action);
-						return;
-					}      
-				}
-			}
-
-			//middle mouse button=Y
-			if (e.Button == MouseButtons.Middle)
-			{
-				Key key = new Key('y',0);
-				action = new Action();
-				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
-				{
-					if (action.SoundFileName.Length > 0)
-						Utils.PlaySound(action.SoundFileName, false, true);
-					GUIGraphicsContext.OnAction(action);
-					return;
-				}
-			}	
-		}
-
-		private void tMouseClickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			CheckSingleClick();
-		}
-
-		void CheckSingleClick()
-		{
-			Action action;
-
-			if(tMouseClickTimer != null)
-			{
-				tMouseClickTimer.Stop();
-				if(bMouseClickFired)
-				{
-					bMouseClickFired = false;
-					action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, m_iLastMousePositionX, m_iLastMousePositionY);
-					action.MouseButton = eLastMouseClickEvent.Button;
-					action.SoundFileName = "click.wav";
-					if (action.SoundFileName.Length > 0)
-						Utils.PlaySound(action.SoundFileName, false, true);
-
-					GUIGraphicsContext.OnAction(action);
-				}
-			}
-		}
-
-		private void OnMouseMove(object sender, MouseEventArgs  e)
-		{
-			int x = e.X - GUIGraphicsContext.OffsetX + rVideoWindow.X;
-			int y = e.Y - GUIGraphicsContext.OffsetY + rVideoWindow.Y;
-
-			if (m_iLastMousePositionX != x || m_iLastMousePositionY != y)
-			{
-				// check any still waiting single click events
-				if (GUIGraphicsContext.DBLClickAsRightClick)
-				{
-					if ((Math.Abs(m_iLastMousePositionX - x) > 10) || (Math.Abs(m_iLastMousePositionY - y) > 10))
-						CheckSingleClick();
-				}
-
-				// save mouse position
-				m_iLastMousePositionX = x;
-				m_iLastMousePositionY = y;
-
-				GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-				if (window != null)
-				{
-					Action action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
-					action.MouseButton = e.Button;
-					GUIGraphicsContext.OnAction(action);       
-				}
-			}
-		}
-	}
-
 	public class BaseStreamBufferPlayer : IPlayer
 	{
 		public enum PlayState
@@ -228,7 +54,6 @@ namespace MediaPortal.Player
     
 		/// <summary> video preview window interface. </summary>
 		protected IVideoWindow							videoWin =null;
-		protected FormOverlay								overlayWin =null;
 
 		/// <summary> interface to get information and control video. </summary>
 		protected IBasicVideo2							basicVideo =null;
@@ -318,13 +143,10 @@ namespace MediaPortal.Player
 			}
 			if (videoWin!=null)
 			{
-				if ((overlayWin==null) && (!GUIGraphicsContext.Vmr9Active))
-				{
-					overlayWin=new FormOverlay();
-				}
 				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-				if (overlayWin!=null) videoWin.put_MessageDrain(overlayWin.Handle);
+        videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+
 			}
 			if (basicVideo!=null)
 			{
@@ -478,9 +300,6 @@ namespace MediaPortal.Player
 			if (videoWin!=null)
 			{
 				videoWin.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
-				
-				// update video window
-				if (overlayWin != null) overlayWin.rVideoWindow = rDest;
 			}
 		}
 

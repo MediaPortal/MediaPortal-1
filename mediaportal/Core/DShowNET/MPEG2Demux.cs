@@ -61,7 +61,6 @@ namespace DShowNET
     StreamBufferConfig    m_StreamBufferConfig=null;
     MPEG2Demultiplexer    m_MPEG2Demuxer=null;
     IVideoWindow          m_videoWindow=null;
-		FormOverlay						m_overlayWindow=null;
     IBasicVideo2          m_basicVideo=null;
     Size                  m_FrameSize;
     bool                  m_bOverlayVisible=false;
@@ -253,17 +252,11 @@ namespace DShowNET
         m_basicVideo  = m_graphBuilder as IBasicVideo2;
         if (m_videoWindow!=null)
         {
-					if ((m_overlayWindow==null) && (!GUIGraphicsContext.Vmr9Active))
-					{
-						m_overlayWindow=new FormOverlay();
-					}
-
 					// set window message handler
-					if (m_overlayWindow != null)
-						m_videoWindow.put_MessageDrain(m_overlayWindow.Handle);
+					m_videoWindow.put_MessageDrain(GUIGraphicsContext.form.Handle);
 
           // set the properties of the overlay window
-          hr = m_videoWindow.put_Owner( windowHandle );
+          hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
           if( hr != 0 ) 
             DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window:0x{0:X}",hr);
 
@@ -385,11 +378,6 @@ namespace DShowNET
       int hr=m_videoWindow.SetWindowPosition(x,y, width, height);
       if( hr != 0 ) 
         DirectShowUtil.DebugWrite("mpeg2:FAILED:SetWindowPosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
-			
-			// update video window
-			System.Drawing.Rectangle rDest;
-			rDest = new Rectangle(x,y,width,height);
-			if (m_overlayWindow != null) m_overlayWindow.rVideoWindow = rDest;
     }
 
 
@@ -914,13 +902,6 @@ namespace DShowNET
       }
       
       m_videoWindow = null;
-
-			// Destroy overlay window
-			if (m_overlayWindow != null) 
-			{
-				m_overlayWindow.Close();		
-				m_overlayWindow=null;
-			}
 
       if (m_pConfig!=null) Marshal.ReleaseComObject(m_pConfig); m_pConfig=null;
       if (m_mpeg2Multiplexer!=null) Marshal.ReleaseComObject(m_mpeg2Multiplexer); m_mpeg2Multiplexer=null;
