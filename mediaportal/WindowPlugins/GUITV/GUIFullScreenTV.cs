@@ -831,17 +831,6 @@ namespace MediaPortal.GUI.TV
       {
         base.Render();
 
-				// do we need 2 render the dialog window
-				if (m_bDialogVisible)
-				{
-					//dlg.Render();
-				}
-
-				// do we need 2 render the msn chat window
-        if (m_bMSNChatVisible)
-        {
-          //m_msnWindow.Render();
-        }
 
 				// do we need 2 render the OSD?
 				if (m_bOSDVisible)
@@ -1108,17 +1097,18 @@ namespace MediaPortal.GUI.TV
 			SetFFRWLogos();
 			ShowStatus();
 			base.Render();
-
-			if (m_bDialogVisible)
+			if (GUIGraphicsContext.graphics!=null)
 			{
-				dlg.Render();
+				if (m_bDialogVisible)
+				{
+					dlg.Render();
+				}
+
+				if (m_bMSNChatVisible)
+				{
+					m_msnWindow.Render();
+				}
 			}
-
-      if (m_bMSNChatVisible)
-      {
-        m_msnWindow.Render();
-      }
-
 			// do we need 2 render the OSD?
 			if (m_bOSDVisible)
 			{
