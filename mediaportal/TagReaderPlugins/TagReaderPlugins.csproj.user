@@ -50,6 +50,22 @@
                     StartWorkingDirectory = ""
                     StartWithIE = "false"
                 />
+                <Config
+                    Name = "UseCaptureDefintionsRelease"
+                    EnableASPDebugging = "false"
+                    EnableASPXDebugging = "false"
+                    EnableUnmanagedDebugging = "false"
+                    EnableSQLServerDebugging = "false"
+                    RemoteDebugEnabled = "false"
+                    RemoteDebugMachine = ""
+                    StartAction = "Project"
+                    StartArguments = ""
+                    StartPage = ""
+                    StartProgram = ""
+                    StartURL = ""
+                    StartWorkingDirectory = ""
+                    StartWithIE = "true"
+                />
             </Settings>
         </Build>
         <OtherProjectSettings

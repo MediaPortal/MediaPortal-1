@@ -82,6 +82,26 @@
                     TreatWarningsAsErrors = "false"
                     WarningLevel = "4"
                 />
+                <Config
+                    Name = "UseCaptureDefintionsRelease"
+                    AllowUnsafeBlocks = "true"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "TRACE;UseCaptureCardDefinitions"
+                    DocumentationFile = ""
+                    DebugSymbols = "false"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "true"
+                    OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
             </Settings>
             <References>
                 <Reference
@@ -172,6 +192,16 @@
                     Name = "Microsoft.ApplicationBlocks.ApplicationUpdater"
                     AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater"
                     HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
+                />
+                <Reference
+                    Name = "System.Management"
+                    AssemblyName = "System.Management"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
+                />
+                <Reference
+                    Name = "System.Configuration.Install"
+                    AssemblyName = "System.Configuration.Install"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Configuration.Install.dll"
                 />
             </References>
         </Build>

@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 using Microsoft.Win32;
+using System.Globalization;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -78,6 +79,9 @@ public class MediaPortalApp : D3DApp, IRender
     const int SW_RESTORE = 9;
 		bool supportsFiltering=false;
 		int g_nAnisotropy;
+		DateTime      m_updateTimer=DateTime.MinValue;
+		int						m_iDateLayout;
+
 
     static SplashScreen splashScreen;
 
@@ -146,6 +150,7 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         RegistryKey hklm = Registry.LocalMachine;
+
         // windvd6 mpeg2 codec settings
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\AudioDec","DsContinuousRate",1);
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","DsContinuousRate",1);
@@ -160,6 +165,17 @@ public class MediaPortalApp : D3DApp, IRender
         SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Dxva",1);
 
         hklm.Close();
+
+				// windvd6 mpeg2 codec settings
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\AudioDec","DsContinuousRate",1);
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","DsContinuousRate",1);
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","Dxva",1);
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","DxvaFetchSample",0);
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","ResendOnFamine",0);
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","VgaQuery",1);
+				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","VMR",2);
+				hklm.Close();
+
       }
       catch(Exception)
       {
@@ -298,6 +314,7 @@ public class MediaPortalApp : D3DApp, IRender
     public MediaPortalApp()
 		{
       // check if MediaPortal is already running...
+
       Log.Write("Check if mediaportal is already started");
       m_UniqueIdentifier = Application.ExecutablePath.Replace("\\","_");
       m_Mutex = new System.Threading.Mutex(false, m_UniqueIdentifier);
@@ -495,7 +512,10 @@ public class MediaPortalApp : D3DApp, IRender
 			catch(Exception )
 			{
 			}
-
+			using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				m_iDateLayout = xmlreader.GetValueAsInt("home","datelayout",0);
+			}
     }
 
     void RenderStats()
@@ -597,6 +617,7 @@ public class MediaPortalApp : D3DApp, IRender
       Application.DoEvents();
       FrameMove();
       FullRender();
+
     }
 
     public void RenderFrame()
@@ -729,6 +750,14 @@ public class MediaPortalApp : D3DApp, IRender
   {
 		try
 		{
+			// Set the date & time
+			if (DateTime.Now.Minute != m_updateTimer.Minute)
+			{
+				m_updateTimer=DateTime.Now;
+				GUIPropertyManager.SetProperty("#date",GetDate()); 	 
+				GUIPropertyManager.SetProperty("#time",GetTime()); 	 
+			}
+
 			CheckForNewUpdate();
 			Recorder.Process();
 			g_Player.Process();
@@ -1605,6 +1634,63 @@ public class MediaPortalApp : D3DApp, IRender
 		}
 
 	}
+
+	/// <summary>
+	/// Get the current date from the system and localize it based on the user preferences.
+	/// </summary>
+	/// <returns>A string containing the localized version of the date.</returns>
+	protected string GetDate()
+	{
+		DateTime cur=DateTime.Now;
+		string day;
+		switch (cur.DayOfWeek)
+		{
+			case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(11);	break;
+			case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(12);	break;
+			case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(13);	break;
+			case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(14);	break;
+			case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(15);	break;
+			case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(16);	break;
+			default:	day = GUILocalizeStrings.Get(17);	break;
+		}
+
+		string month;
+		switch (cur.Month)
+		{
+			case 1 :	month= GUILocalizeStrings.Get(21);	break;
+			case 2 :	month= GUILocalizeStrings.Get(22);	break;
+			case 3 :	month= GUILocalizeStrings.Get(23);	break;
+			case 4 :	month= GUILocalizeStrings.Get(24);	break;
+			case 5 :	month= GUILocalizeStrings.Get(25);	break;
+			case 6 :	month= GUILocalizeStrings.Get(26);	break;
+			case 7 :	month= GUILocalizeStrings.Get(27);	break;
+			case 8 :	month= GUILocalizeStrings.Get(28);	break;
+			case 9 :	month= GUILocalizeStrings.Get(29);	break;
+			case 10:	month= GUILocalizeStrings.Get(30);	break;
+			case 11:	month= GUILocalizeStrings.Get(31);	break;
+			default:	month= GUILocalizeStrings.Get(32);	break;
+		}
+
+		string strDate=String.Format("{0} {1} {2}",day, cur.Day, month);
+		if (m_iDateLayout==1)
+		{
+			strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
+		}
+		return strDate;
+	}
+		
+	/// <summary>
+	/// Get the current time from the system.
+	/// </summary>
+	/// <returns>A string containing the current time.</returns>
+	// TODO: Localize the time settings based on the user preferences
+	protected string GetTime()
+	{
+		DateTime cur=DateTime.Now;
+		string strTime=cur.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+		return strTime;
+	}
+
 
  
 }

@@ -498,6 +498,7 @@ namespace MediaPortal.TV.Database
 
     static public void SetChannelSort(string strChannel,int iPlace)
     {
+			if (m_db==null) return;
       lock (typeof(TVDatabase))
       {
         string strSQL;

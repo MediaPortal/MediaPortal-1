@@ -1,7 +1,6 @@
 Frodo's priority list:
   -). fix    : any (new) bugs
-  -). enhance: ken burns effect for my picture slideshow
-  -). new    : add support for DVB-T/S/C
+  -). new    : add support for DVB-T/C
   -). click on overlay preview to goto fullscreen
   -). batch DX9 commands for more speed
   -). find a clean way for multiple threads to access MP's core
@@ -10,7 +9,6 @@ Frodo's priority list:
   -). better volume control
     
 MSN Messenger:
-    - add support for wireless keyboards
       
 My Radio:
     - Timeshifting & recording
@@ -52,7 +50,7 @@ My TV:
      
   Recorder:
     - A way to browse and resolve recording conflicts. 
-    - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
+    - support for DVB-T/DVB-C digital capture cards (BDA tuners)
     - support for timeshifting with SW encoding cards
     - support for recording to mpeg with SW encoding cards
     - recoding recordings to divx, mpeg,... or .dvr-ms -> .mpeg
@@ -75,8 +73,6 @@ My Music: (int_20h)
   - auto-resume 
   - show which songs are 'queued'
   - highlight currently playing file somehow
-  - favorite system to add an album, song, artists to your favorites
-  - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
   - faster start of 1st song played
   - gapless playback
   - FF/RW control
@@ -103,8 +99,6 @@ My Pictures:
     - add pictures to a playlist and the first items on it r all music files for background music
     - all this can be saved and loaded ofcourse
   - custom text wich will be shown during slideshows. This can be saved in the database
-  - exif/picture tag information (excentric is looking at this)
-  - ken burns effect
     
 Topbar:
   - auto hide
