@@ -175,7 +175,11 @@ namespace MediaPortal
         LoadPlugin(strFile);
       }
       
-
+      strFiles=System.IO.Directory.GetFiles(@"plugins\ExternalPlayers", "*.dll");
+      foreach (string strFile in strFiles)
+      {
+        LoadPlugin(strFile);
+      }
       
       for (int i=0; i < m_plugins.Count;++i)
       {
