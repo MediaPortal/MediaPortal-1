@@ -2193,6 +2193,14 @@
 		<value>Mijn Weer</value>
 	</string>
 	<string>
+		<id>12700</id>
+		<value>Mijn Nieuws</value>
+	</string>
+	<string>
+		<id>12701</id>
+		<value>Kies kanaal</value>
+	</string>
+	<string>
 		<id>12900</id>
 		<value>Schermbeveiliging</value>
 	</string>
@@ -2239,13 +2247,5 @@
 	<string>
 		<id>703</id>
 		<value>Niet verbonden met het Internet!</value>
-	</string>
-	<string>
-		<id>703</id>
-		<value>Nieuws ophalen</value>
-	</string>
-	<string>
-		<id>13001</id>
-		<value>Nieuws ophalen van </value>
 	</string>
 </strings>

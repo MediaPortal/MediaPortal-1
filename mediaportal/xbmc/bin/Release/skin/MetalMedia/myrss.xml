@@ -3,7 +3,7 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 <controls>
-	<control>			
+	<control>
 		<description>background image</description>
 		<type>image</type>
 		<id>1</id>
@@ -13,110 +13,92 @@
 		<height>576</height>
 		<texture>background.png</texture>
 	</control>
-<!--	<control>
-		<description>RSS BG</description>
+	<control>
+		<description>News BG</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>215</posX>
-		<posY>65</posY>
-		<width>450</width>
-		<height>450</height>
+		<posX>300</posX>
+		<posY>150</posY>
+		<width>350</width>
+		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
-		<texture>home-myweather.png</texture>
+		<texture>home-mynews-big.png</texture>
 	</control>
--->
 	<control>
 		<description>Panel</description>
 		<type>image</type>
 		<id>1</id>
 		<posX>50</posX>
-		<posY>95</posY>
-		<width>180</width>
-		<height>350</height>
+		<posY>100</posY>
+		<width>190</width>
+		<height>272</height>
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>My News Feeds Text</description>
-		<type>label</type>
-		<id>0</id>
-		<posX>242</posX>
-		<posY>65</posY>
-		<label>9</label>
-		<font>font14</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<description>Refresh Button</description>
+		<type>button</type>
+		<id>2</id>
+		<posX>55</posX>
+		<posY>115</posY>
+ 		<label>184</label>
+		<onleft>50</onleft>
+		<onright>50</onright>
+		<onup>17</onup>
+		<ondown>4</ondown>
+	</control>
+	<control>
+		<description>Feed select</description>
+		<type>selectbutton</type>
+		<id>4</id>
+		<posX>55</posX>
+		<posY>143</posY>
+		<label>12701</label>
+		<onleft>50</onleft>
+		<onright>50</onright>
+		<onup>2</onup>
+		<ondown>4</ondown>
+	</control>
+	<control>
+		<description>Panel split</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>55</posX>
+		<posY>180</posY>
+		<texture>panel_split.png</texture>
 	</control>
 	<control>
 		<description>Site Logo</description>
 		<type>image</type>
 		<id>101</id>
-		<posX>95</posX>
-		<posY>200</posY>
-		<width>75</width>
-		<height>75</height>
+		<posX>81</posX>
+		<posY>195</posY>
+		<width>128</width>
+		<height>128</height>
 		<texture>thumbs\ars_article.png</texture>
 	</control>
-	<control>
-		<description>Middle Bar</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>64</posX>
-		<posY>188</posY>
-		<width>145</width>
-		<texture>middle-bar.png</texture>
-	</control>		
-	<control>
-		<description>Refresh Button</description>
-		<type>button</type>
-		<id>2</id>
-		<posX>64</posX>
-		<posY>128</posY>
- 		<label>184</label>
- 		<width>145</width>
-		<onleft>2</onleft>
-		<onright>501</onright>
-		<onup>17</onup>
-		<ondown>3</ondown>
-	</control>
-	<control>
-		<description>RSS feed select</description>
-		<type>spincontrol</type>
-		<id>3</id>
-		<posX>80</posX>
-		<posY>168</posY>
-		<reverse>yes</reverse>
-		<showrange>no</showrange>
-		<onup>2</onup>
-		<ondown>2</ondown>
-		<onleft>3</onleft>
-		<onright>3</onright>
-	</control>
-
 	<control>
 		<description>listcontrol</description>
 		<type>listcontrol</type>
 		<id>50</id>
-		<height>275</height>
-		<onleft>51</onleft>
-		<onright>51</onright>
+		<height>225</height>
+		<onleft>2</onleft>
+		<onright>2</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
-		<textcolor>FFFFFFFF</textcolor>
+		<spinPosY>296</spinPosY>
 	</control>
-	
 	<control>
 		<description>Chosen Story description</description>
 		<type>textboxscrollup</type>
 		<id>506</id>
-		<posX>242</posX>
-		<posY>375</posY>
-		<width>430</width> 
-		<height>175</height>
+		<posX>246</posX>
+		<posY>336</posY>
+		<width>430</width>
+		<height>240</height>
 		<label>-</label>
 		<font>font13</font>
-		<seperator>-------------------------------------------------------------------------------</seperator>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FFdddddd</textcolor>
+		<colordiffuse>ffffffff</colordiffuse>
 	</control>
-
-	
 </controls>
 </window>
