@@ -328,7 +328,7 @@ namespace MediaPortal.Player
 					//sanity checks
 					if (GUIGraphicsContext.DX9Device==null) return;
 					if (GUIGraphicsContext.DX9Device.Disposed) return;
-//					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 					if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
 					//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
@@ -446,7 +446,7 @@ namespace MediaPortal.Player
 					//sanity checks
 					if (GUIGraphicsContext.DX9Device==null) return;
 					if (GUIGraphicsContext.DX9Device.Disposed) return;
-					//					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 					if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
 					//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);

@@ -111,7 +111,6 @@ namespace MediaPortal.Player
 //        DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
         Log.Write("StreamBufferPlayer9: set Deinterlace");
-        DirectShowUtil.EnableDeInterlace(graphBuilder);
 
 				if ( !Vmr9.IsVMR9Connected )
 				{
@@ -122,6 +121,7 @@ namespace MediaPortal.Player
 					return base.GetInterfaces(filename);
 				}
 
+				Vmr9.SetDeinterlace();
         return true;
       }
       catch( Exception  ex)

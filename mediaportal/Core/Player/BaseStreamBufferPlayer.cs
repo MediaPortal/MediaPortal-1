@@ -154,6 +154,7 @@ namespace MediaPortal.Player
       m_bUpdateNeeded=true;
       SetVideoWindow();
 
+			DirectShowUtil.EnableDeInterlace(graphBuilder);
 			hr = mediaCtrl.Run();
 			if (hr < 0)
 			{
@@ -509,7 +510,6 @@ namespace MediaPortal.Player
 			{
 				m_speedRate = 10000;
 				mediaCtrl.Run();
-				DirectShowUtil.EnableDeInterlace(graphBuilder);
 				m_state=PlayState.Playing;
 			}
 			else if (m_state==PlayState.Playing) 
@@ -674,10 +674,7 @@ namespace MediaPortal.Player
 				}
         UpdateCurrentPosition();
         Log.Write("seek->current pos:{0}", CurrentPosition);
-				if (Speed==1)
-				{
-					DirectShowUtil.EnableDeInterlace(graphBuilder);
-				}
+
 			}
 		}
 #if DEBUG
@@ -831,7 +828,6 @@ namespace MediaPortal.Player
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
 				Log.Write("StreamBufferPlayer: set Deinterlace");
-				DirectShowUtil.EnableDeInterlace(graphBuilder);
 
 				Log.Write("StreamBufferPlayer: done");
 				return true;
@@ -1000,7 +996,6 @@ namespace MediaPortal.Player
 				m_speedRate = 10000;
 				newPosition = 0;
 				SeekAbsolute(newPosition);
-				DirectShowUtil.EnableDeInterlace(graphBuilder);
 				//mediaCtrl.Run();
 				Reset();
 				return;
@@ -1013,7 +1008,6 @@ namespace MediaPortal.Player
 				m_speedRate = 10000;
 				newPosition = m_dDuration;
 				SeekAbsolute(newPosition);
-				DirectShowUtil.EnableDeInterlace(graphBuilder);
 				//mediaCtrl.Run();
 				Reset();
 				return;
@@ -1079,7 +1073,6 @@ namespace MediaPortal.Player
 
 								m_speedRate=10000;
 								//mediaCtrl.Run();
-								DirectShowUtil.EnableDeInterlace(graphBuilder);
 								Reset();
 								break;
 							case 2:  m_speedRate=15000;break;

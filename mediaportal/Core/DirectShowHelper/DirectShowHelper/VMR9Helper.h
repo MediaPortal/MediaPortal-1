@@ -45,8 +45,7 @@ protected:
 	CComPtr<IBaseFilter>			m_pVMR9Filter;
 	LPDIRECT3DDEVICE9				m_pDevice;
 public:
-	STDMETHOD(Version)(void);
-	STDMETHOD(GetVideoSize)(ULONG* Width, ULONG* Height);
+	STDMETHOD(SetDeinterlace)( DWORD dwInterlace);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(VMR9Helper), CVMR9Helper)

@@ -591,6 +591,7 @@ namespace DShowNET
     /// <param name="graphBuilder"></param>
     static public void EnableDeInterlace(IGraphBuilder graphBuilder)
     {
+			return;
 			int DeInterlaceMode=3;
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{

@@ -66,4 +66,5 @@ protected:
 	bool m_fVMRSyncFix;
 	double m_fps ;
 	D3DTEXTUREFILTERTYPE m_Filter;
+	bool m_bfirstFrame;
 };

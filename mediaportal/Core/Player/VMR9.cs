@@ -88,6 +88,7 @@ namespace MediaPortal.Player
 			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
 			m_scene = new PlaneScene(m_renderFrame,this);
+			m_scene.Init();
 			vmr9Helper = new DirectShowHelperLib.VMR9HelperClass();
 			DirectShowHelperLib.IBaseFilter baseFilter = VMR9Filter as DirectShowHelperLib.IBaseFilter;
 
@@ -116,7 +117,6 @@ namespace MediaPortal.Player
 			GUIGraphicsContext.Vmr9Active=false;
 			if (vmr9Helper!=null)
 			{
-				vmr9Helper.Deinit();
 				vmr9Helper=null;
 			}
 			
@@ -228,5 +228,19 @@ namespace MediaPortal.Player
 				return true;
 			}//get {
 		}//public bool IsVMR9Connected
+		public void SetDeinterlace()
+		{
+			
+			int DeInterlaceMode=3;
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				//None
+				//Bob
+				//Weave
+				//Best
+				DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+			}
+			vmr9Helper.SetDeinterlace((uint)DeInterlaceMode);
+		}
 	}//public class VMR9Util
 }//namespace MediaPortal.Player 

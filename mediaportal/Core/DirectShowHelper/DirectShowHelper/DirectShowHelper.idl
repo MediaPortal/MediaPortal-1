@@ -30,9 +30,7 @@ interface IVMR9Callback : IUnknown{
 ]
 interface IVMR9Helper : IUnknown{
 	[helpstring("method Init")] HRESULT Init([in] IVMR9Callback* callback, [in] DWORD dwD3DDevice, [in] IBaseFilter* vmr9Filter, [in] DWORD monitor);
-	[helpstring("method Deinit")] HRESULT Deinit(void);
-	[helpstring("method Version")] HRESULT Version(void);
-	[helpstring("method GetVideoSize")] HRESULT GetVideoSize([in,out] ULONG* Width, [in,out] ULONG* Height);
+	[helpstring("method SetDeinterlace")] HRESULT SetDeinterlace([in] DWORD dwInterlace);
 };
 [
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),

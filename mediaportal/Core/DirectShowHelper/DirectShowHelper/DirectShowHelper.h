@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Fri Mar 11 22:10:11 2005
+/* at Sat Mar 12 23:03:24 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -250,13 +250,8 @@ EXTERN_C const IID IID_IVMR9Helper;
             /* [in] */ IBaseFilter *vmr9Filter,
             /* [in] */ DWORD monitor) = 0;
         
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE Deinit( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE Version( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetVideoSize( 
-            /* [out][in] */ ULONG *Width,
-            /* [out][in] */ ULONG *Height) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlace( 
+            /* [in] */ DWORD dwInterlace) = 0;
         
     };
     
@@ -284,16 +279,9 @@ EXTERN_C const IID IID_IVMR9Helper;
             /* [in] */ IBaseFilter *vmr9Filter,
             /* [in] */ DWORD monitor);
         
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *Deinit )( 
-            IVMR9Helper * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *Version )( 
-            IVMR9Helper * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *GetVideoSize )( 
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *SetDeinterlace )( 
             IVMR9Helper * This,
-            /* [out][in] */ ULONG *Width,
-            /* [out][in] */ ULONG *Height);
+            /* [in] */ DWORD dwInterlace);
         
         END_INTERFACE
     } IVMR9HelperVtbl;
@@ -321,14 +309,8 @@ EXTERN_C const IID IID_IVMR9Helper;
 #define IVMR9Helper_Init(This,callback,dwD3DDevice,vmr9Filter,monitor)	\
     (This)->lpVtbl -> Init(This,callback,dwD3DDevice,vmr9Filter,monitor)
 
-#define IVMR9Helper_Deinit(This)	\
-    (This)->lpVtbl -> Deinit(This)
-
-#define IVMR9Helper_Version(This)	\
-    (This)->lpVtbl -> Version(This)
-
-#define IVMR9Helper_GetVideoSize(This,Width,Height)	\
-    (This)->lpVtbl -> GetVideoSize(This,Width,Height)
+#define IVMR9Helper_SetDeinterlace(This,dwInterlace)	\
+    (This)->lpVtbl -> SetDeinterlace(This,dwInterlace)
 
 #endif /* COBJMACROS */
 
@@ -352,35 +334,12 @@ void __RPC_STUB IVMR9Helper_Init_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_Deinit_Proxy( 
-    IVMR9Helper * This);
-
-
-void __RPC_STUB IVMR9Helper_Deinit_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
-
-
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_Version_Proxy( 
-    IVMR9Helper * This);
-
-
-void __RPC_STUB IVMR9Helper_Version_Stub(
-    IRpcStubBuffer *This,
-    IRpcChannelBuffer *_pRpcChannelBuffer,
-    PRPC_MESSAGE _pRpcMessage,
-    DWORD *_pdwStubPhase);
-
-
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_GetVideoSize_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_SetDeinterlace_Proxy( 
     IVMR9Helper * This,
-    /* [out][in] */ ULONG *Width,
-    /* [out][in] */ ULONG *Height);
+    /* [in] */ DWORD dwInterlace);
 
 
-void __RPC_STUB IVMR9Helper_GetVideoSize_Stub(
+void __RPC_STUB IVMR9Helper_SetDeinterlace_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,
