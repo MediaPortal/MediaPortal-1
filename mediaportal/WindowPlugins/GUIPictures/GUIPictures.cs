@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -87,11 +88,20 @@ namespace MediaPortal.GUI.Pictures
 
     const string      ThumbsFolder=@"Thumbs\Pictures";
     int               m_iItemSelected=-1;
+		GUIListItem				m_itemItemSelected=null;
     DirectoryHistory  m_history = new DirectoryHistory();
     string            m_strDirectory="";
+		string						m_strDestination="";
     VirtualDirectory  m_directory = new VirtualDirectory();
     MapSettings       _MapSettings = new MapSettings();
-    
+		bool							m_bFileMenuEnabled=false;
+		string						m_strFileMenuPinCode="";
+		bool							m_bFileRecurrentAbourt=false;
+		bool							m_bRootPathChanged=false;
+		GUIDialogProgress	m_dlgProgress=null;
+		int								m_iNrOfFile=0;
+		int								m_iFileNr=0;
+		    
     #endregion
     
 
@@ -110,6 +120,7 @@ namespace MediaPortal.GUI.Pictures
     public override bool Init()
     {
       m_strDirectory="";
+			m_strDestination="";
 			try
 			{
       System.IO.Directory.CreateDirectory(ThumbsFolder);
@@ -125,6 +136,8 @@ namespace MediaPortal.GUI.Pictures
     {
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
+				m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+				m_strFileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", "");
         string strDefault=xmlreader.GetValueAsString("pictures", "default","");
         m_directory.Clear();
         for (int i=0; i < 20; i++)
@@ -404,9 +417,6 @@ namespace MediaPortal.GUI.Pictures
     }
     void UpdateButtons()
     {
-
-      
-
       string strLine="";
       View view=(View)_MapSettings.ViewAs;
       SortMethod method=(SortMethod )_MapSettings.SortBy;
@@ -545,7 +555,6 @@ namespace MediaPortal.GUI.Pictures
       {
         LoadFolderSettings(strNewDirectory);
       }
-
 
       m_strDirectory=strNewDirectory;
       GUIControl.ClearControl(GetID,(int)Controls.CONTROL_VIEW);
@@ -1171,25 +1180,31 @@ namespace MediaPortal.GUI.Pictures
 		void ShowContextMenu()
 		{
 			GUIListItem item=GetSelectedItem();
+			m_itemItemSelected=item;
 			int itemNo=GetSelectedItemNo();
+			m_iItemSelected=itemNo;
+
 			if (item==null) return;
       if (item.IsFolder && item.Label=="..") return;
 
       GUIControl cntl=GetControl((int)Controls.CONTROL_VIEW);
       if (cntl==null) return; // Control not found
 
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			GUIDialogMenu	dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg==null) return;
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
-			if (!item.IsRemote) dlg.AddLocalizedString(117); //delete
-      if (!item.IsFolder)
-      {
-        dlg.AddLocalizedString(735); //rotate
-        dlg.AddLocalizedString(923); //show
-        dlg.AddLocalizedString(108); //start slideshow
-        dlg.AddLocalizedString(940); //properties
-      }
+			if (!item.IsFolder)
+			{
+				dlg.AddLocalizedString(735); //rotate
+				dlg.AddLocalizedString(923); //show
+				dlg.AddLocalizedString(108); //start slideshow
+				dlg.AddLocalizedString(940); //properties
+			}
+			if (!item.IsRemote && m_bFileMenuEnabled)
+			{
+				dlg.AddLocalizedString(500); // FileMenu
+			}
 
 			dlg.DoModal(GetID);
 			if (dlg.SelectedId==-1) return;
@@ -1214,9 +1229,404 @@ namespace MediaPortal.GUI.Pictures
 				case 940: // properties
 					OnInfo(itemNo);	
 					break;
+
+				case 500: // File menu
+				{
+					// get pincode
+					if (m_strFileMenuPinCode != "")
+					{
+						string strUserCode="";
+						if (GetUserInputString(ref strUserCode) && strUserCode==m_strFileMenuPinCode)
+						{
+							ShowFileMenu();
+						}
+					}
+					else 
+						ShowFileMenu();
+				}
+					break;
 			}
 		}
 		
+		void ShowFileMenu()
+		{
+			bool bReload = false;
+
+			GUIListItem item=m_itemItemSelected;
+			if (item==null) return;
+			if (item.IsFolder && item.Label=="..") return;
+
+			GUIControl cntl=GetControl((int)Controls.CONTROL_VIEW);
+			if (cntl==null) return; // Control not found
+
+			GUIDialogMenu	dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(500); // File menu
+	
+			if (m_strDestination != "")
+			{
+				dlg.AddLocalizedString(115); //copy
+				if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(116); //move					
+			}
+			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(118); //rename				
+			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(117); //delete
+			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(119); //new folder
+
+			if (item.IsFolder && !Utils.IsDVD(item.Path))
+			{
+				dlg.AddLocalizedString(501); // Set as destination
+			}
+			if (m_strDestination != "") dlg.AddLocalizedString(504); // Goto destination
+			     
+			dlg.DoModal(GetID);
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 117: // delete
+					OnDeleteItem(item);
+					break;
+
+				case 118: // rename
+				{
+					string strSourceName = "";
+					if (item.IsFolder)
+						strSourceName = System.IO.Path.GetFileName(item.Path);
+					else
+						strSourceName = System.IO.Path.GetFileNameWithoutExtension(item.Path);
+
+					string strExtension = System.IO.Path.GetExtension(item.Path);
+					string strDestinationName = strSourceName;
+					if (GetUserInputString(ref strDestinationName) == true)
+					{
+						if (item.IsFolder)
+						{
+							// directory rename
+							if (Directory.Exists(m_strDirectory+"\\"+strSourceName))
+							{
+								try
+								{
+									Directory.Move(m_strDirectory+"\\"+strSourceName, m_strDirectory+"\\"+strDestinationName);
+								}
+								catch(Exception) 
+								{
+									ShowError(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
+								}
+								bReload = true;
+							}
+						}
+						else
+						{
+							// file rename
+							if (File.Exists(m_strDirectory+"\\"+strSourceName+"."+strExtension))
+							{
+								try
+								{
+									File.Move(m_strDirectory+"\\"+strSourceName+"."+strExtension, m_strDirectory+"\\"+strDestinationName+"."+strExtension);
+								}
+								catch(Exception) 
+								{
+									ShowError(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
+								}
+								bReload = true;
+							}
+						}						
+					}
+				}
+					break;
+
+				case 115: // copy				
+					{
+						m_bFileRecurrentAbourt=false;
+						m_bRootPathChanged = false;
+						FileItemMove(false, item);
+						if (m_bRootPathChanged == true)
+						{
+							m_bRootPathChanged = false;
+							m_strDirectory = "";
+						}
+					}
+					break;
+
+				case 116: // move
+					{
+						m_bFileRecurrentAbourt=false;
+						m_bRootPathChanged = false;
+						FileItemMove(true, item);
+						if (m_bRootPathChanged == true)
+						{
+							m_bRootPathChanged = false;
+							m_strDirectory = "";
+						}
+						bReload = true;
+					}
+					break;
+				
+				case 119: // make dir
+				{
+					MakeDir();
+					bReload = true;
+				}
+					break;
+
+				case 501: // set as destiantion
+					m_strDestination = System.IO.Path.GetFullPath(item.Path)+"\\";					
+					break;
+
+				case 504: // goto destination
+				{
+					m_strDirectory = m_strDestination;
+					m_iItemSelected = -1;
+					bReload = true;
+				}
+					break;
+			}
+
+			if (bReload)
+			{
+				LoadDirectory(m_strDirectory);
+				if (m_iItemSelected>=0)
+				{
+					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
+				}
+			}
+		}
+
+		bool GetUserInputString(ref string sString)
+		{			
+			VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);			
+			keyBoard.Reset();
+			keyBoard.Text = sString;
+			keyBoard.DoModal(GetID); // show it...
+			System.GC.Collect(); // collect some garbage
+			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
+			return keyBoard.IsConfirmed;
+		}
+
+		void ShowError(int iAction, string SourceOfError)
+		{
+			GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+			if(dlgOK !=null)
+			{
+				dlgOK.SetHeading(iAction);
+				dlgOK.SetLine(1,SourceOfError);
+				dlgOK.SetLine(2,502);
+				dlgOK.DoModal(GetID);
+			}
+		}
+
+		void MakeDir() 
+		{
+			// Get input string
+			string verStr = "";
+			GetUserInputString(ref verStr);
+
+			// Ask user confirmation
+				string path = m_strDirectory+"\\"+verStr;
+			try 
+			{
+				// Determine whether the directory exists.
+				if (Directory.Exists(path)) 
+				{
+					GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+					dlgOk.SetHeading(119); 
+					dlgOk.SetLine(1, 2224);
+					dlgOk.SetLine(2, "");
+					dlgOk.DoModal(GetID);
+				} 
+				else 
+				{
+					DirectoryInfo di = Directory.CreateDirectory(path);
+				}
+			}
+			catch (Exception )
+			{
+				ShowError(119, path);
+			}
+		}
+
+		/// <summary>
+		/// Moves or Copy a file
+		/// </summary>
+		/// <param name="bMove">Move or Copy (Move=true)</param>
+		/// <param name="item">Item to be move or copied</param>
+		void FileItemMove(bool bMove, GUIListItem item) 
+		{
+			// init
+			m_bFileRecurrentAbourt = false;
+			m_bRootPathChanged = false;
+			if (m_dlgProgress == null) 
+				m_dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			if (null!=m_dlgProgress)
+			{
+				m_dlgProgress.StartModal(GetID);
+				m_dlgProgress.ShowProgressBar(true);
+				if (bMove) m_dlgProgress.SetHeading(116);
+				else m_dlgProgress.SetHeading(115);
+				GUIWindowManager.Process();
+			}	
+
+			// calc nr of files
+			m_iNrOfFile=0;
+			m_iFileNr=0;
+			FileItemGetNrOfFiles(item);
+
+			// set number of objects
+			m_dlgProgress.SetLine(1, m_iNrOfFile.ToString()+" "+GUILocalizeStrings.Get(632));										
+			GUIWindowManager.Process();
+
+			// move
+			FileItemMC(bMove, item);
+
+			//final
+			if (null!=m_dlgProgress) m_dlgProgress.Close();
+		}
+		void FileItemMC(bool bMove, GUIListItem item) 
+		{
+			// Handle messages
+			GUIWindowManager.Process();
+
+			if (m_dlgProgress.IsCanceled) m_bFileRecurrentAbourt=true;
+			if (m_bFileRecurrentAbourt) return;			
+      
+			string strItemFileName = item.Path;
+			if (m_strDirectory == "") 
+			{
+				m_bRootPathChanged = true;
+				m_strDirectory = item.Path;
+			}
+
+			if (m_strDirectory != "")
+			{
+				strItemFileName = item.Path.Replace(m_strDirectory, "");
+				if (strItemFileName.StartsWith("\\") == true)
+				{
+					strItemFileName = strItemFileName.Remove(0, 1);
+				}
+			}
+
+			if (item.IsFolder)
+			{
+				if (item.Label != "..")
+				{
+					string path = m_strDestination+strItemFileName;
+					try
+					{
+						DirectoryInfo di = Directory.CreateDirectory(path);
+					}
+					catch (Exception)
+					{
+					  ShowError(119, path);
+						m_bFileRecurrentAbourt=true;
+						return;
+					}					
+						
+					ArrayList items = new ArrayList();
+					items=m_directory.GetDirectoryUnProtected(item.Path,false);
+					foreach(GUIListItem subItem in items)
+					{
+						FileItemMC(bMove, subItem);
+						if (m_bFileRecurrentAbourt) return;
+					}
+					
+					// Move?
+					if (bMove && strItemFileName!="")
+					{
+						try
+						{
+							Directory.Delete(item.Path);
+						}
+						catch (Exception)
+						{
+							ShowError(503, item.Path);
+							m_bFileRecurrentAbourt=true;
+							return;
+						}
+					}
+				}
+			}
+			else if (!item.IsRemote)
+			{			
+				// update progress bar
+				m_iFileNr++;
+				m_dlgProgress.SetPercentage((m_iFileNr*100)/m_iNrOfFile);
+				m_dlgProgress.SetLine(2, strItemFileName);				
+				GUIWindowManager.Process();
+
+				// Move/Copy
+				string soucre=item.Path;
+				bool doNot=false;
+				try 
+				{
+					if (File.Exists(m_strDestination+strItemFileName))
+					{
+						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+						dlgYesNo.SetHeading(GetID); 
+						dlgYesNo.SetLine(1, m_strDestination+strItemFileName);
+						dlgYesNo.SetLine(2, 2217);
+						dlgYesNo.SetLine(3, 2218);
+						dlgYesNo.DoModal(GetID);
+						
+						// restore progress dialog
+						m_dlgProgress.ContinueModal();
+						GUIWindowManager.Process();
+
+						if (dlgYesNo.IsConfirmed) 
+						{
+							doNot=false;
+							try
+							{
+								File.Delete(m_strDestination+strItemFileName);
+							}
+							catch (Exception) 
+							{
+								ShowError(117, m_strDestination+strItemFileName);
+								doNot=true;
+							}
+						}
+						else 
+						{
+							doNot=true;
+						}
+					}
+					if (doNot==false) 
+					{
+						FileInfo fi = new FileInfo(item.Path);
+						if (bMove)
+						{
+							fi.MoveTo(m_strDestination+strItemFileName);
+						} 
+						else 
+						{
+							fi.CopyTo(m_strDestination+strItemFileName,false);
+						}
+					}
+				}
+				catch (Exception) 
+				{
+					if (bMove) ShowError(116, item.Path);
+					else ShowError(115, item.Path);
+					m_bFileRecurrentAbourt=true;
+
+					Log.Write("FileMenu Error: from {0} to {1} MC:{2}",item.Path, m_strDestination+strItemFileName, bMove);
+				}
+			}		
+		}
+
+		void FileItemGetNrOfFiles(GUIListItem item) 
+		{
+			if (item.IsFolder)
+			{
+				if (item.Label != "..")
+				{
+					ArrayList items = new ArrayList();
+					items=m_directory.GetDirectoryUnProtected(item.Path,false);
+					foreach(GUIListItem subItem in items) FileItemGetNrOfFiles(subItem);
+				}
+			}
+			else if (!item.IsRemote) m_iNrOfFile++;
+		}
+
 		void OnDeleteItem(GUIListItem item)
 		{
 			if (item.IsRemote) return;
@@ -1224,7 +1634,8 @@ namespace MediaPortal.GUI.Pictures
 			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 			if (null==dlgYesNo) return;
 			string strFileName=System.IO.Path.GetFileName(item.Path);
-			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+			if (!item.IsFolder) dlgYesNo.SetHeading(664);
+			else dlgYesNo.SetHeading(503);
 			dlgYesNo.SetLine(1,strFileName);
 			dlgYesNo.SetLine(2, "");
 			dlgYesNo.SetLine(3, "");
