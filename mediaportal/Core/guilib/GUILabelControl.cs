@@ -20,7 +20,7 @@ namespace MediaPortal.GUI.Library
     bool                          ContainsProperty=false;
     int                           textwidth=0;
     int                           textheight=0;
-    bool                                      m_bUseFontCache=true;
+    bool                                      m_bUseFontCache=false;
     CustomVertex.TransformedColoredTextured[] m_cachedFontVertices=null;
     int                                       m_iFontTriangles=0;
 
@@ -377,17 +377,14 @@ namespace MediaPortal.GUI.Library
 
     public override void FreeResources()
     {
-      if (m_cachedFontVertices!=null)
-      {
-        m_cachedFontVertices=null;
-      }
+      m_cachedFontVertices=null;
       m_iFontTriangles=0;
     }
 
     public bool CacheFont
     {
       get { return m_bUseFontCache;}
-      set { m_bUseFontCache=value;}
+      set { m_bUseFontCache=false;}
     }
 
     protected override void Update()

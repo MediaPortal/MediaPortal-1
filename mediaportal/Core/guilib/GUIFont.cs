@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Library
 		
 		int m_iFontHeight;
 
-		private CustomVertex.TransformedColoredTextured[] fontVertices = new CustomVertex.TransformedColoredTextured[MaxNumfontVertices];
+		private CustomVertex.TransformedColoredTextured[] fontVertices = null;
 
 		private float[,] textureCoords = null;
 
@@ -483,6 +483,7 @@ namespace MediaPortal.GUI.Library
       vertexBuffer=null;
       fontTexture=null;
 			systemFont = null;
+      fontVertices=null;
 		}
 
 		/// <summary>
@@ -507,6 +508,7 @@ namespace MediaPortal.GUI.Library
       //renderState = GUIGraphicsContext.DX9Device.RenderState;
       textureScale  = 1.0f; // Draw fonts into texture without scaling
 
+      fontVertices = new CustomVertex.TransformedColoredTextured[MaxNumfontVertices];
 			// Create a directory to cache the font bitmaps
       string strCache=String.Format(@"{0}\fonts\",GUIGraphicsContext.Skin);
       System.IO.Directory.CreateDirectory(strCache);
