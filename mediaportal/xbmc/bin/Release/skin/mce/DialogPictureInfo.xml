@@ -24,30 +24,20 @@
 		<description>Image Title value</description> 
 		<type>label</type> 
 		<id>20</id> 
-		<posX>130</posX>
+		<posX>660</posX>
 		<posY>70</posY>
 		<label>-</label> 
 		<font>font16</font>
-		<align>left</align> 
+		<align>right</align> 
 		<textcolor>FFFFFFFF</textcolor> 
-	</control>
-	<control>
-		<description>Date taken txt</description> 
-		<type>label</type> 
-		<id>1</id> 
-		<posX>80</posX> 
-		<posY>100</posY> 
-		<label>9000</label> 
-		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
 		<description>Dimensions txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
-		<posY>120</posY> 
-		<label>9001</label> 
+		<posX>60</posX> 
+		<posY>100</posY> 
+		<label>9000</label> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
@@ -55,17 +45,27 @@
 		<description>Resolution txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
+		<posX>60</posX> 
+		<posY>120</posY> 
+		<label>9001</label> 
+		<font>font13</font> 
+		<textcolor>FFB2D4F5</textcolor> 
+	</control>
+	<control>
+		<description>Flash txt</description> 
+		<type>label</type> 
+		<id>1</id> 
+		<posX>60</posX> 
 		<posY>140</posY> 
 		<label>9002</label> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
-		<description>Flash mode txt</description> 
+		<description>Metering mode txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
+		<posX>60</posX> 
 		<posY>160</posY> 
 		<label>9003</label> 
 		<font>font13</font> 
@@ -75,7 +75,7 @@
 		<description>Exposure Compensation txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
+		<posX>60</posX> 
 		<posY>180</posY> 
 		<label>9004</label> 
 		<font>font13</font> 
@@ -85,18 +85,18 @@
 		<description>Shutterspeed txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
+		<posX>60</posX> 
 		<posY>200</posY> 
 		<label>9005</label> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
-		<description>Meteringmode txt</description> 
+		<description>Date Taken txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
-		<posY>220</posY> 
+		<posX>300</posX> 
+		<posY>180</posY> 
 		<label>9006</label> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor> 
@@ -105,8 +105,8 @@
 		<description>Fstop txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>80</posX> 
-		<posY>240</posY> 
+		<posX>300</posX> 
+		<posY>200</posY> 
 		<label>9007</label> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor> 
@@ -115,7 +115,7 @@
 		<description>Exposure Time value</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>360</posX>
+		<posX>300</posX>
 		<posY>100</posY>
 		<label>9008</label> 
 		<font>font13</font>
@@ -126,8 +126,8 @@
 		<description>Camera Model txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>360</posX> 
-		<posY>120</posY> 
+		<posX>300</posX> 
+		<posY>120</posY>
 		<label>9009</label> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor> 
@@ -136,7 +136,7 @@
 		<description>Equipment make txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>360</posX> 
+		<posX>300</posX> 
 		<posY>140</posY> 
 		<label>9010</label> 
 		<font>font13</font> 
@@ -146,7 +146,7 @@
 		<description>View Comment txt</description> 
 		<type>label</type> 
 		<id>1</id> 
-		<posX>360</posX> 
+		<posX>300</posX> 
 		<posY>160</posY> 
 		<label>9011</label> 
 		<font>font13</font> 
@@ -156,7 +156,7 @@
 		<description>Image Dimensions value</description> 
 		<type>label</type> 
 		<id>21</id> 
-		<posX>220</posX> 
+		<posX>200</posX> 
 		<posY>100</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -166,7 +166,7 @@
 		<description>Resolutions value</description> 
 		<type>label</type> 
 		<id>22</id> 
-		<posX>220</posX> 
+		<posX>200</posX> 
 		<posY>120</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -176,7 +176,7 @@
 		<description>Flash value</description> 
 		<type>label</type> 
 		<id>23</id> 
-		<posX>220</posX> 
+		<posX>200</posX> 
 		<posY>140</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -186,7 +186,7 @@
 		<description>Metering Mode value</description> 
 		<type>label</type> 
 		<id>24</id> 
-		<posX>220</posX> 
+		<posX>200</posX> 
 		<posY>160</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -196,7 +196,7 @@
 		<description>Exposure Compensation value</description> 
 		<type>fadelabel</type> 
 		<id>25</id> 
-		<posX>220</posX> 
+		<posX>200</posX> 
 		<posY>180</posY> 
 		<width>400</width> 
 		<label>-</label> 
@@ -207,7 +207,7 @@
 		<description>Shutter Speed value</description> 
 		<type>fadelabel</type> 
 		<id>26</id> 
-		<posX>220</posX> 
+		<posX>200</posX> 
 		<posY>200</posY> 
 		<width>400</width> 
 		<label>-</label> 
@@ -218,8 +218,8 @@
 		<description>Date Taken value</description> 
 		<type>label</type> 
 		<id>27</id> 
-		<posX>220</posX> 
-		<posY>220</posY> 
+		<posX>440</posX> 
+		<posY>180</posY> 
 		<label>-</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
@@ -228,8 +228,8 @@
 		<description>Fstop value</description> 
 		<type>label</type> 
 		<id>28</id> 
-		<posX>220</posX> 
-		<posY>240</posY> 
+		<posX>440</posX> 
+		<posY>200</posY> 
 		<label>-</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
@@ -238,7 +238,7 @@
 		<description>Exposure Time value</description> 
 		<type>label</type> 
 		<id>29</id> 
-		<posX>490</posX>
+		<posX>440</posX>
 		<posY>100</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -246,11 +246,12 @@
 	</control>
 	<control>
 		<description>Camera Model value</description> 
-		<type>label</type> 
+		<type>fadelabel</type> 
 		<id>30</id> 
-		<posX>490</posX>
-		<posY>120</posY> 
-		<label>-</label> 
+		<posX>440</posX>
+		<posY>120</posY>
+		<width>150</width>
+		<label>-</label>   
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
@@ -258,7 +259,7 @@
 		<description>Equipment Make value</description> 
 		<type>label</type> 
 		<id>31</id> 
-		<posX>490</posX>
+		<posX>440</posX>
 		<posY>140</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -268,7 +269,7 @@
 		<description>View Comments value</description> 
 		<type>label</type> 
 		<id>32</id> 
-		<posX>490</posX>
+		<posX>440</posX>
 		<posY>160</posY> 
 		<label>-</label> 
 		<font>font13</font> 
@@ -278,9 +279,9 @@
 		<description>Image</description> 
 		<type>image</type> 
 		<id>3</id> 
-		<posX>220</posX> 
-		<posY>265</posY> 
-		<width>410</width> 
+		<posX>160</posX> 
+		<posY>240</posY> 
+		<width>400</width> 
 		<height>300</height> 
 		<texture>-</texture> 
 		<colorkey>FFFF00FF</colorkey> 
