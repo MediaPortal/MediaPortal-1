@@ -629,18 +629,7 @@ namespace MediaPortal.GUI.Video
       // is happening.
       if (!m_askBeforePlayingDVDImage && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(m_strDirectory)))
       {
-        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        if (dlgProgress != null)
-        {
-          dlgProgress.SetHeading(13013);
-          dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(m_strDirectory));
-          dlgProgress.StartModal(GetID);
-          dlgProgress.Progress();
-        }
-
-        itemlist = m_directory.GetDirectory(m_strDirectory);
-        
-        if (dlgProgress!=null) dlgProgress.Close();
+				itemlist = PlayMountedImageFile(GetID, m_strDirectory);
 
         // Remember the directory that the image file is in rather than the
         // image file itself.  This prevents repeated playing of the image file.
@@ -2019,10 +2008,12 @@ namespace MediaPortal.GUI.Video
       int fileid=VideoDatabase.GetFileId(filename);
       int movieid=VideoDatabase.GetMovieId(filename);
       int stoptime=0;
-      if ( (movieid >= 0) && (fileid >= 0) )
-      {        
-        stoptime=VideoDatabase.GetMovieStopTime(fileid);
-        if (stoptime>0)
+			byte[] resumeData = null;
+			if ( (movieid >= 0) && (fileid >= 0) )
+      {
+        stoptime=VideoDatabase.GetMovieStopTimeAndResumeData(fileid, out resumeData);
+				Log.Write("GUIVideoFiles::OnPlayBackStopped fileid={0} stoptime={1} resumeData={2}", fileid, stoptime, resumeData);
+				if (stoptime>0)
         {
           string title=System.IO.Path.GetFileName(filename);
           VideoDatabase.GetMovieInfoById( movieid, ref movieDetails);
@@ -2054,10 +2045,57 @@ namespace MediaPortal.GUI.Video
 
       if (g_Player.Playing && stoptime > 0)
       {
-        g_Player.SeekAbsolute(stoptime);
+				if (g_Player.IsDVD)
+				{
+					g_Player.Player.SetResumeState(resumeData);
+				}
+				else
+				{
+					g_Player.SeekAbsolute(stoptime);
+				}
       }
     }
 
+		static public ArrayList PlayMountedImageFile(int WindowID, string file)
+		{
+			GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			if (dlgProgress != null)
+			{
+				dlgProgress.SetHeading(13013);
+				dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(file));
+				dlgProgress.StartModal(WindowID);
+				dlgProgress.Progress();
+			}
+
+			ArrayList itemlist = m_directory.GetDirectory(file);
+			if (DaemonTools.IsMounted(file) && !g_Player.Playing)
+			{
+				string strDir = DaemonTools.GetVirtualDrive();
+
+				// Check if the mounted image is actually a DVD. If so, bypass
+				// autoplay to play the DVD without user intervention
+				if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+				{
+					PlayListPlayer.Reset();
+					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;
+					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP);
+					playlist.Clear();
+
+					PlayList.PlayListItem newitem = new PlayList.PlayListItem();
+					newitem.FileName = strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
+					newitem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+					playlist.Add(newitem);
+
+					Log.Write("\"Autoplaying\" DVD image mounted on {0}",strDir);
+					PlayMovieFromPlayList(true);
+				}
+			}
+        
+			if (dlgProgress!=null) dlgProgress.Close();
+
+			return itemlist;
+		}
+		
     private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
     {
       if (type!=g_Player.MediaType.Video) return;
@@ -2072,10 +2110,15 @@ namespace MediaPortal.GUI.Video
         string strFilePath = (string)movies[i];
         int fileid=VideoDatabase.GetFileId(strFilePath);
         if (fileid<0) break;
-        if ( (filename == strFilePath) && (stoptime > 0) )
-          VideoDatabase.SetMovieStopTime(fileid,stoptime);
-        else
-          VideoDatabase.DeleteMovieStopTime(fileid);
+				if ( (filename == strFilePath) && (stoptime > 0) )
+				{
+					byte[] resumeData = null;
+					g_Player.Player.GetResumeState(out resumeData);
+					Log.Write("GUIVideoFiles::OnPlayBackStopped fileid={0} stoptime={1} resumeData={2}", fileid, stoptime, resumeData);
+					VideoDatabase.SetMovieStopTimeAndResumeData(fileid,stoptime,resumeData);
+				}
+				else
+					VideoDatabase.DeleteMovieStopTime(fileid);
       }
     }
 

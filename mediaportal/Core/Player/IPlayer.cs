@@ -299,6 +299,29 @@ namespace MediaPortal.Player
     public virtual void SeekAsolutePercentage(int iPercentage)
     {
     }
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="resumeData">resumeData</param>
+		public virtual bool GetResumeState(out byte[] resumeData)
+		{
+			resumeData = null;
+			return false;
+		}
+
+    
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="resumeData">resumeData</param>
+		public virtual bool SetResumeState(byte[] resumeData)
+		{
+			return false;
+		}
+
+
 		/// <summary>
 		/// Property which should return true if the player wants to show a video window
 		/// </summary>

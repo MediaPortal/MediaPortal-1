@@ -1291,6 +1291,102 @@ namespace MediaPortal.Player
     }
 
     
+		public override bool GetResumeState(out byte[] resumeData)
+		{
+			Log.Write("DVDPlayer::GetResumeState() begin");
+			resumeData = null;
+			IDvdState dvdState;
+
+			int hr = dvdInfo.GetState(out dvdState);
+			if (hr < 0)
+			{
+				Log.Write("DVDPlayer::GetResumeState() dvdInfo.GetState failed");
+				return false;
+			}
+
+			Log.Write("DVDPlayer::GetResumeState() getting IPersistMemory");
+			IPersistMemory dvdStatePersistMemory = (IPersistMemory)dvdState;
+			if (dvdStatePersistMemory != null)
+			{
+				ulong resumeSize = 0;
+				dvdStatePersistMemory.GetSizeMax(out resumeSize);
+				Log.Write("DVDPlayer::GetResumeState() resumeSize={0}", resumeSize);
+				if (resumeSize > 0)
+				{
+					IntPtr stateData = Marshal.AllocHGlobal((int)resumeSize); 
+
+					try
+					{
+						dvdStatePersistMemory.Save(stateData, true, resumeSize);
+						resumeData = new byte[resumeSize];
+						Marshal.Copy(stateData, resumeData, 0, (int)resumeSize);
+					}
+					catch (Exception e)
+					{
+						throw e;
+					}
+					finally
+					{
+						Marshal.FreeHGlobal(stateData);
+					}
+
+					Log.Write("DVDPlayer::GetResumeState() end true");
+					return true;
+				}
+			}
+
+			Marshal.ReleaseComObject(dvdState);
+
+			Log.Write("DVDPlayer::GetResumeState() end false");
+			return false;
+		}
+
+    
+		public override bool SetResumeState(byte[] resumeData)
+		{
+			if (resumeData.Length > 0)
+			{
+				Log.Write("DVDPlayer::SetResumeState() begin");
+				IDvdState dvdState;
+
+				int hr = dvdInfo.GetState(out dvdState);
+				if (hr < 0)
+				{
+					Log.Write("DVDPlayer::GetResumeState() dvdInfo.GetState failed");
+					return false;
+				}
+				IPersistMemory dvdStatePersistMemory = (IPersistMemory)dvdState;
+				IntPtr stateData = Marshal.AllocHGlobal(resumeData.Length); 
+				Marshal.Copy(resumeData, 0, stateData, resumeData.Length);
+
+				try
+				{
+					dvdStatePersistMemory.Load(stateData, (ulong)resumeData.Length);
+				}
+				catch (Exception e)
+				{
+					throw e;
+				}
+				finally
+				{
+					Marshal.FreeHGlobal(stateData);
+				}
+
+				Log.Write("DVDPlayer::SetResumeState() SetState");
+				OptIDvdCmd dvdCmd = null;
+				hr = dvdCtrl.SetState(dvdState, DShowNET.Dvd.DvdCmdFlags.Block, dvdCmd);
+				if (hr == 0)
+				{
+					Log.Write("DVDPlayer::SetResumeState() end true");
+					return true;
+				}
+
+				Marshal.ReleaseComObject(dvdState);
+			}
+
+			Log.Write("DVDPlayer::SetResumeState() end false");
+			return false;
+		}
     public override bool HasVideo
     {
       get { return true;}

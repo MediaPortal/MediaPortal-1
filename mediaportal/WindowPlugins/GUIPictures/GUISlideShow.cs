@@ -84,6 +84,8 @@ namespace MediaPortal.GUI.Pictures
     bool                    m_bPictureZoomed=false;
     float                   m_fUserZoomLevel=1.0f;
     bool                    m_bTrueSizeTexture=false;
+    bool                    m_bAutoShuffle=false;
+    bool                    m_bAutoRepeat=false;
     
     Random                  randomizer = new Random(DateTime.Now.Second);     
 
@@ -239,7 +241,11 @@ namespace MediaPortal.GUI.Pictures
       m_iCurrentSlide++;
       if ( m_iCurrentSlide >= m_slides.Count ) 
       {
-        m_iCurrentSlide=0;
+        if ( m_bAutoRepeat )
+          m_iCurrentSlide=0;
+        else
+          // How to exit back to GUIPictures?
+          GUIWindowManager.PreviousWindow();
       }
     }
 
@@ -293,8 +299,30 @@ namespace MediaPortal.GUI.Pictures
       get { return m_bSlideShow;}
     }
 
+    public void Shuffle()
+    {
+      Random r = new System.Random( DateTime.Now.Millisecond );
+      int nItemCount = m_slides.Count;
+
+      // iterate through each catalogue item performing arbitrary swaps
+      for ( int nItem=0; nItem < nItemCount; nItem++ )
+      {
+        int nArbitrary = r.Next( nItemCount );
+
+        if ( nArbitrary != nItem )
+        {
+          string anItem = (string)m_slides[ nArbitrary ];
+          m_slides[ nArbitrary ] = m_slides[ nItem ];
+          m_slides[ nItem ] = anItem;
+        }
+      }
+    }
+
     public void StartSlideShow()
     {
+      if ( m_bAutoShuffle )
+        Shuffle();
+
       m_bSlideShow=true;
     }
 
@@ -319,7 +347,11 @@ namespace MediaPortal.GUI.Pictures
                 m_iCurrentSlide++;
                 if (m_iCurrentSlide >= m_slides.Count) 
                 {
-                  m_iCurrentSlide=0;
+                  if ( m_bAutoRepeat )
+                    m_iCurrentSlide=0;
+                  else
+                    // How to exit back to GUIPictures?
+                    GUIWindowManager.PreviousWindow();
                 }
               }
             }
@@ -1782,6 +1814,8 @@ namespace MediaPortal.GUI.Pictures
         m_iKenBurnTransistionSpeed=xmlreader.GetValueAsInt("pictures","kenburnsspeed",20);
         m_bKenBurns=xmlreader.GetValueAsBool("pictures","kenburns", false);
         m_bUseRandomTransistions=xmlreader.GetValueAsBool("pictures","random", true);
+        m_bAutoShuffle=xmlreader.GetValueAsBool("pictures","autoShuffle", false);
+        m_bAutoRepeat=xmlreader.GetValueAsBool("pictures","autoRepeat", false);
       }
     }
     

@@ -670,23 +670,8 @@ namespace MediaPortal.GUI.Video
 
           if (!askBeforePlayingDVDImage)
           {
-            // Mounting and loading a DVD image file takes a long time,
-            // so display a message letting the user know that something 
-            // is happening.
-            GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-            if (dlgProgress != null)
-            {
-              dlgProgress.SetHeading(13013);
-              dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension((string)movies[0]));
-              dlgProgress.StartModal(GetID);
-              dlgProgress.Progress();
-            }
-
-            // GetDirectory mounts the image file
-            ArrayList itemlist = m_directory.GetDirectory((string)movies[0]);
-
-            if (dlgProgress != null) dlgProgress.Close();
-          }
+						GUIVideoFiles.PlayMountedImageFile(GetID, (string)movies[0]);
+					}
           else
           {
             // GetDirectory mounts the image file

@@ -35,7 +35,7 @@ namespace MediaPortal.Video.Database
         System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-				m_db = new SQLiteClient(strPath+@"\database\VideoDatabaseV3.db");
+				m_db = new SQLiteClient(strPath+@"\database\VideoDatabaseV4.db");
         CreateTables();
 
       } 
@@ -58,7 +58,7 @@ namespace MediaPortal.Video.Database
 			DatabaseUtility.AddTable(m_db,"actors","CREATE TABLE actors ( idActor integer primary key, strActor text )\n");
 			DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text)\n");
 			DatabaseUtility.AddTable(m_db,"files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text)\n");
-      DatabaseUtility.AddTable(m_db,"resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer)\n");
+      DatabaseUtility.AddTable(m_db,"resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob)\n");
       DatabaseUtility.AddTable(m_db,"duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)\n");
       return true;
 		}
@@ -1288,6 +1288,83 @@ namespace MediaPortal.Video.Database
 				Open();
       }
     }
+
+
+		static byte[] FromHexString(string s) 
+		{
+			byte[] bytes = new byte[s.Length / 2];
+			for (int i = 0; i < bytes.Length; i++) 
+			{
+				bytes[i] = byte.Parse(s.Substring(i * 2, 2), System.Globalization.NumberStyles.HexNumber);
+			}
+			return bytes;
+		}
+ 
+		static string ToHexString(byte[] bytes) 
+		{
+			char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+			char[] chars = new char[bytes.Length * 2];
+			for (int i = 0; i < bytes.Length; i++) 
+			{
+				int b = bytes[i];
+				chars[i * 2] = hexDigits[b >> 4];
+				chars[i * 2 + 1] = hexDigits[b & 0xF];
+			}
+			return new string(chars);
+		}
+
+		static public int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
+		{
+			resumeData = null;
+
+			try
+			{
+				string sql = string.Format("select * from resume where idFile={0}", iFileId);
+				SQLiteResultSet results;
+				results=m_db.Execute(sql);
+				if (results.Rows.Count == 0) return 0;
+				int stoptime=Int32.Parse(DatabaseUtility.Get(results,0,"stoptime"));
+				string resumeString = DatabaseUtility.Get(results,0,"resumeData");
+				resumeData = new byte[resumeString.Length / 2];
+				FromHexString(resumeString).CopyTo(resumeData, 0);
+				return stoptime;
+
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+			return 0;
+		}
+
+		static public void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
+		{
+			try
+			{
+				string sql = String.Format("select * from resume where idFile={0}", iFileId);
+				SQLiteResultSet results;
+				results=m_db.Execute(sql);
+
+				string resumeString = ToHexString(resumeData);
+				if (results.Rows.Count == 0) 
+				{
+					sql=String.Format("insert into resume ( idResume,idFile,stoptime,resumeData) values(NULL,{0},{1},'{2}')",
+						iFileId,stoptime,resumeString);
+				}
+				else
+				{
+					sql=String.Format("update resume set stoptime={0},resumeData='{1}' where idFile={2}",
+						stoptime,resumeString,iFileId);
+				}
+				m_db.Execute(sql);
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
 
     static public int GetMovieDuration(int iFileId)
     {
