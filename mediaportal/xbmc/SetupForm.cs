@@ -233,6 +233,8 @@ namespace MediaPortal
     private System.Windows.Forms.RadioButton radioButtonCable;
     private System.Windows.Forms.RadioButton radioButtonAntenna;
     private System.Windows.Forms.ComboBox comboBoxRadioDevice;
+    private System.Windows.Forms.Label label22;
+    private System.Windows.Forms.Label label41;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -494,6 +496,7 @@ namespace MediaPortal
       this.tabPageRadio = new System.Windows.Forms.TabPage();
       this.groupBox21 = new System.Windows.Forms.GroupBox();
       this.groupBox22 = new System.Windows.Forms.GroupBox();
+      this.comboBoxRadioDevice = new System.Windows.Forms.ComboBox();
       this.radioButtonAntenna = new System.Windows.Forms.RadioButton();
       this.radioButtonCable = new System.Windows.Forms.RadioButton();
       this.listViewRadio = new MediaPortal.WinControls.ListViewEx();
@@ -532,7 +535,8 @@ namespace MediaPortal
       this.label2 = new System.Windows.Forms.Label();
       this.dvdParams = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.comboBoxRadioDevice = new System.Windows.Forms.ComboBox();
+      this.label22 = new System.Windows.Forms.Label();
+      this.label41 = new System.Windows.Forms.Label();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.Skin.SuspendLayout();
@@ -2147,28 +2151,39 @@ namespace MediaPortal
       // 
       // groupBox22
       // 
+      this.groupBox22.Controls.Add(this.label41);
+      this.groupBox22.Controls.Add(this.label22);
       this.groupBox22.Controls.Add(this.comboBoxRadioDevice);
       this.groupBox22.Controls.Add(this.radioButtonAntenna);
       this.groupBox22.Controls.Add(this.radioButtonCable);
       this.groupBox22.Location = new System.Drawing.Point(440, 16);
       this.groupBox22.Name = "groupBox22";
-      this.groupBox22.Size = new System.Drawing.Size(136, 136);
+      this.groupBox22.Size = new System.Drawing.Size(136, 160);
       this.groupBox22.TabIndex = 6;
       this.groupBox22.TabStop = false;
       this.groupBox22.Text = "Radio Tuner";
       // 
+      // comboBoxRadioDevice
+      // 
+      this.comboBoxRadioDevice.Location = new System.Drawing.Point(16, 128);
+      this.comboBoxRadioDevice.Name = "comboBoxRadioDevice";
+      this.comboBoxRadioDevice.Size = new System.Drawing.Size(112, 21);
+      this.comboBoxRadioDevice.TabIndex = 2;
+      this.comboBoxRadioDevice.Text = "comboBox1";
+      // 
       // radioButtonAntenna
       // 
-      this.radioButtonAntenna.Location = new System.Drawing.Point(16, 24);
+      this.radioButtonAntenna.Location = new System.Drawing.Point(40, 48);
       this.radioButtonAntenna.Name = "radioButtonAntenna";
+      this.radioButtonAntenna.Size = new System.Drawing.Size(72, 24);
       this.radioButtonAntenna.TabIndex = 1;
       this.radioButtonAntenna.Text = "Antenna";
       // 
       // radioButtonCable
       // 
-      this.radioButtonCable.Location = new System.Drawing.Point(16, 48);
+      this.radioButtonCable.Location = new System.Drawing.Point(40, 72);
       this.radioButtonCable.Name = "radioButtonCable";
-      this.radioButtonCable.Size = new System.Drawing.Size(104, 16);
+      this.radioButtonCable.Size = new System.Drawing.Size(72, 16);
       this.radioButtonCable.TabIndex = 0;
       this.radioButtonCable.Text = "Cable";
       // 
@@ -2489,13 +2504,21 @@ namespace MediaPortal
       this.dvdParams.TabIndex = 2;
       this.dvdParams.Text = "";
       // 
-      // comboBoxRadioDevice
+      // label22
       // 
-      this.comboBoxRadioDevice.Location = new System.Drawing.Point(16, 88);
-      this.comboBoxRadioDevice.Name = "comboBoxRadioDevice";
-      this.comboBoxRadioDevice.Size = new System.Drawing.Size(112, 21);
-      this.comboBoxRadioDevice.TabIndex = 2;
-      this.comboBoxRadioDevice.Text = "comboBox1";
+      this.label22.Location = new System.Drawing.Point(16, 104);
+      this.label22.Name = "label22";
+      this.label22.Size = new System.Drawing.Size(48, 16);
+      this.label22.TabIndex = 3;
+      this.label22.Text = "Device:";
+      // 
+      // label41
+      // 
+      this.label41.Location = new System.Drawing.Point(16, 24);
+      this.label41.Name = "label41";
+      this.label41.Size = new System.Drawing.Size(40, 23);
+      this.label41.TabIndex = 4;
+      this.label41.Text = "Source:";
       // 
       // SetupForm
       // 
@@ -2767,7 +2790,7 @@ namespace MediaPortal
         checkBoxShufflePlaylists.Checked=xmlreader.GetValueAsBool("musicfiles","autoshuffle",true);
         chkBoxVideoRepeat.Checked=xmlreader.GetValueAsBool("movies","repeat",true);
 
-        txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav");
+        txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav,.cda");
         txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
         txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
         string strDefault="";
@@ -3960,7 +3983,8 @@ namespace MediaPortal
           iSelect=i;
         }
       }
-      comboBoxRadioDevice.SelectedIndex=iSelect;
+      if (comboBoxRadioDevice.Items.Count>0)
+        comboBoxRadioDevice.SelectedIndex=iSelect;
     }
 
     void SaveRadioStations(AMS.Profile.Xml xmlWriter)
