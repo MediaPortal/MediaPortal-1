@@ -107,6 +107,10 @@ namespace MediaPortal
     private System.Windows.Forms.MenuItem musicMenuItem;
     private System.Windows.Forms.MenuItem picturesMenuItem;
     private System.Windows.Forms.MenuItem televisionMenuItem;
+    private System.Windows.Forms.NotifyIcon notifyIcon1;
+    private System.Windows.Forms.ContextMenu contextMenu1;
+    private System.Windows.Forms.MenuItem menuItem3;
+    private System.Windows.Forms.MenuItem menuItem5;
     protected Rectangle   oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -1457,6 +1461,8 @@ namespace MediaPortal
     protected override void Dispose(bool disposing)
     {
       CleanupEnvironment();
+      if (notifyIcon1!=null)
+        this.notifyIcon1.Dispose(); //we dispose our tray icon here
       base.Dispose(disposing);
 
       Win32API.EnableStartBar(true);
@@ -1682,13 +1688,17 @@ namespace MediaPortal
       this.mnuExit = new System.Windows.Forms.MenuItem();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
-      this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.menuItem4 = new System.Windows.Forms.MenuItem();
       this.dvdMenuItem = new System.Windows.Forms.MenuItem();
       this.moviesMenuItem = new System.Windows.Forms.MenuItem();
       this.musicMenuItem = new System.Windows.Forms.MenuItem();
       this.picturesMenuItem = new System.Windows.Forms.MenuItem();
       this.televisionMenuItem = new System.Windows.Forms.MenuItem();
+      this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+      this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+      this.menuItem3 = new System.Windows.Forms.MenuItem();
+      this.menuItem5 = new System.Windows.Forms.MenuItem();
       // 
       // mnuMain
       // 
@@ -1737,11 +1747,6 @@ namespace MediaPortal
       this.menuItem2.Text = "&Options...";
       this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
       // 
-      // timer1
-      // 
-      this.timer1.Enabled = true;
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
       // menuItem4
       // 
       this.menuItem4.Index = 2;
@@ -1782,6 +1787,35 @@ namespace MediaPortal
       this.televisionMenuItem.Index = 4;
       this.televisionMenuItem.Text = "Television";
       this.televisionMenuItem.Click += new System.EventHandler(this.televisionMenuItem_Click);
+      // 
+      // timer1
+      // 
+      this.timer1.Enabled = true;
+      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+      // 
+      // notifyIcon1
+      // 
+      this.notifyIcon1.ContextMenu = this.contextMenu1;
+      this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+      this.notifyIcon1.Text = "MediaPortal";
+      // 
+      // contextMenu1
+      // 
+      this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                 this.menuItem3});
+      this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
+      // 
+      // menuItem3
+      // 
+      this.menuItem3.Index = 0;
+      this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                              this.menuItem5});
+      this.menuItem3.Text = "";
+      // 
+      // menuItem5
+      // 
+      this.menuItem5.Index = 0;
+      this.menuItem5.Text = "";
       // 
       // D3DApp
       // 
@@ -1842,6 +1876,16 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(System.EventArgs e)
     {
+      if (notifyIcon1!=null)
+      {
+        if (notifyIcon1.Visible==false && this.WindowState == FormWindowState.Minimized)
+        {
+          notifyIcon1.Visible=true;
+          this.Hide();
+          return;
+        }
+      }
+
       if (isHandlingSizeChanges)
       {
         // Are we maximized?
@@ -2041,6 +2085,8 @@ namespace MediaPortal
 
       // Get the first message
 			
+      storedSize=this.ClientSize;
+      storedLocation=this.Location ;
 
       while(true)
       {
@@ -2074,6 +2120,28 @@ namespace MediaPortal
       {
       }
       UseMillisecondTiming=false;
+    }
+
+    private void contextMenu1_Popup(object sender, System.EventArgs e)
+    {
+      
+      contextMenu1.MenuItems.Clear();
+
+      // Add a menu item 
+      contextMenu1.MenuItems.Add("Restore",new System.EventHandler(this.Restore_OnClick));
+      contextMenu1.MenuItems.Add("Exit",new System.EventHandler(this.Exit_OnClick));
+    }
+    
+    protected void Restore_OnClick(System.Object sender, System.EventArgs e)
+    {
+      Show();
+      this.WindowState=FormWindowState.Normal;
+      notifyIcon1.Visible=false;
+      active=true;
+    }
+    protected void Exit_OnClick(System.Object sender, System.EventArgs e)
+    {
+      GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
     }
   }
 
