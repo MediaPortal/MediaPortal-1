@@ -575,10 +575,10 @@ public interface IFilterGraph
 		int GetBackgroundColor(int streamID,[Out] RGB color);
 	
 		[PreserveSig]
-		int SetMixingPrefs([In] VMR9MixerPrefs dwMixerPrefs  );
+		int SetMixingPrefs([In] uint dwMixerPrefs  );
 
 		[PreserveSig]
-		int GetMixingPrefs([Out] VMR9MixerPrefs pdwMixerPrefs);
+		int GetMixingPrefs([Out] out uint pdwMixerPrefs);
 
 		[PreserveSig]
 		int SetProcAmpControl([In] uint dwStreamID,[In] ref VMR9ProcAmpControl lpClrControl);

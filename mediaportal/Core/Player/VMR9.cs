@@ -104,6 +104,30 @@ namespace MediaPortal.Player
 				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to set VMR9 streams to 1");
 				return ;
 			}
+			IVMRMixerControl9 mixer = VMR9Filter as IVMRMixerControl9;
+			if (mixer!=null)
+			{
+				uint dwPrefs;
+				mixer.GetMixingPrefs(out dwPrefs);
+				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:mixer preferences :0x{0:X}",dwPrefs);
+				
+				dwPrefs= (uint)VMR9MixerPrefs.NoDecimation;
+				dwPrefs|= (uint)VMR9MixerPrefs.ARAdjustXorY;
+				dwPrefs|= (uint)VMR9MixerPrefs.AnisotropicFiltering;
+				dwPrefs|= (uint)VMR9MixerPrefs.RenderTargetYUV;
+				hr=mixer.SetMixingPrefs(dwPrefs);
+				if (hr !=0)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:unable to set vmr9 mixer preference to YUV :0x{0:X}",hr);
+					dwPrefs= (uint)VMR9MixerPrefs.NoDecimation;
+					dwPrefs|= (uint)VMR9MixerPrefs.ARAdjustXorY;
+					dwPrefs|= (uint)VMR9MixerPrefs.AnisotropicFiltering;
+					dwPrefs|= (uint)VMR9MixerPrefs.RenderTargetRGB;
+					hr=mixer.SetMixingPrefs(dwPrefs);
+					if (hr!=0)
+						Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:unable to set vmr9 dynamic switch to bob :0x{0:X}",hr);
+				}
+			}
 
 
 			hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
