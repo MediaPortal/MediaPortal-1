@@ -17,6 +17,12 @@ namespace MediaPortal
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
+		public void SetMessage(string message)
+		{
+			label1.Text = message;
+			Application.DoEvents();
+		}
+
 		public IRLearnFORM()
 		{
 			//
