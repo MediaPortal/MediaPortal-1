@@ -239,29 +239,30 @@ public class MediaPortalApp : D3DApp
   /// </summary>
     protected override void InitializeDeviceObjects()
 		{
-      if (!GUIWindowManager.Initalized)
+      GUIWindowManager.Clear();
+      GUITextureManager.Dispose();
+      GUIFontManager.Dispose();
+
+      GUIGraphicsContext.Skin=@"skin\"+m_strSkin;
+      GUIGraphicsContext.ActiveForm = this.Handle;
+      
+      GUIFontManager.LoadFonts(@"skin\"+m_strSkin+@"\fonts.xml");
+      GUIFontManager.InitializeDeviceObjects();
+      
+      GUILocalizeStrings.Load(@"language\"+m_strLanguage+ @"\strings.xml");
+      
+      Log.Write("Load skin {0}", m_strSkin);
+      GUIWindowManager.Initialize();
+      GUIWindowManager.Load();
+      Log.Write("initialize skin");
+      GUIWindowManager.PreInit();
+      GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.RUNNING;
+			GUIGraphicsContext.Load();
+			GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
+			Log.Write("skin initalized");
+      if (GUIGraphicsContext.DX9Device!=null)
       {
-        GUIGraphicsContext.Skin=@"skin\"+m_strSkin;
-        GUIGraphicsContext.ActiveForm = this.Handle;
-        
-        GUIFontManager.LoadFonts(@"skin\"+m_strSkin+@"\fonts.xml");
-        GUIFontManager.InitializeDeviceObjects();
-        
-        GUILocalizeStrings.Load(@"language\"+m_strLanguage+ @"\strings.xml");
-        
-        Log.Write("Load skin {0}", m_strSkin);
-        GUIWindowManager.Initialize();
-        GUIWindowManager.Load();
-        Log.Write("initialize skin");
-        GUIWindowManager.PreInit();
-        GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.RUNNING;
-				GUIGraphicsContext.Load();
-				GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
-				Log.Write("skin initalized");
-      }
-      else
-      {
-        GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
+        Log.Write("DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
       }
     }
 

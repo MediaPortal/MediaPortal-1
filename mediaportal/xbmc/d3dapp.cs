@@ -84,7 +84,7 @@ namespace MediaPortal
     protected string frameStats; // String to hold frame stats
 
     protected bool deviceLost = false;
-
+    protected bool m_bNeedReset=false;
     // Overridable variables for the app
     private int minDepthBits;    // Minimum number of bits needed in depth buffer
     protected int MinDepthBits { get { return minDepthBits; } set { minDepthBits = value;  enumerationSettings.AppMinDepthBits = value;} }
@@ -956,8 +956,8 @@ namespace MediaPortal
         string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
         if (strStartFull!=null && strStartFull=="yes")
         {
-          Win32API.EnableStartBar(false);
-          Win32API.ShowStartBar(false);
+          //Win32API.EnableStartBar(false);
+          //Win32API.ShowStartBar(false);
 
           Log.Write("start fullscreen");
           this.FormBorderStyle=FormBorderStyle.None;
@@ -967,7 +967,13 @@ namespace MediaPortal
           this.Location= new System.Drawing.Point(0,0);
           this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
           this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
+          Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+                    this.ClientSize.Width,this.ClientSize .Height,
+                    Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
 
+          m_bNeedReset=true;
           deviceLost=true;
           isMaximized=true;
         }
@@ -1015,7 +1021,6 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
           //Log.Write("app.TestCooperativeLevel() succeeded");
           //Log.Write("app.InitializeDeviceObjects()");
-          InitializeDeviceObjects();
         }
         catch (DeviceLostException)
         {
@@ -1028,6 +1033,11 @@ namespace MediaPortal
         }
         catch (DeviceNotResetException)
         {
+          m_bNeedReset=true;
+        }
+        if (m_bNeedReset)
+        {
+          m_bNeedReset=false;
           // Check if the device needs to be resized.
 
           // If we are windowed, read the desktop mode and use the same format for
@@ -1042,12 +1052,13 @@ namespace MediaPortal
 
           // Reset the device and resize it
           
-          //Log.Write("app.Reset()");
+          Log.Write("app.Reset()");
 
           GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
             
           //Log.Write("app.EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new System.ComponentModel.CancelEventArgs());
+          InitializeDeviceObjects();
         }
         deviceLost = false;
         m_bNeedUpdate=true;
@@ -1222,8 +1233,8 @@ namespace MediaPortal
       mnuMain.Dispose();
       base.Dispose(disposing);
 
-      Win32API.EnableStartBar(true);
-      Win32API.ShowStartBar(true);
+      //Win32API.EnableStartBar(true);
+      //Win32API.ShowStartBar(true);
     }
 
 
@@ -1296,8 +1307,8 @@ namespace MediaPortal
         if (isMaximized)
         {
           Log.Write("windowed->fullscreen");
-          Win32API.EnableStartBar(false);
-          Win32API.ShowStartBar(false);
+          //Win32API.EnableStartBar(false);
+          //Win32API.ShowStartBar(false);
           this.FormBorderStyle=FormBorderStyle.None;
           this.MaximizeBox=false;
           this.MinimizeBox=false;
@@ -1308,13 +1319,21 @@ namespace MediaPortal
 
           deviceLost=true;
           isMaximized=true;
+          m_bNeedReset=true;
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
+          GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
           Log.Write("windowed->fullscreen done {0}", isMaximized);
+          Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+                      this.ClientSize.Width,this.ClientSize .Height,
+                      Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+
+                                  
         }
         else
         {
           Log.Write("fullscreen->windowed");
-          Win32API.EnableStartBar(true);
-          Win32API.ShowStartBar(true);
+          //Win32API.EnableStartBar(true);
+          //Win32API.ShowStartBar(true);
 
           this.WindowState = FormWindowState.Normal;
           this.FormBorderStyle=FormBorderStyle.Sizable;
@@ -1325,7 +1344,11 @@ namespace MediaPortal
           Bounds=new Rectangle(oldBounds.X,oldBounds.Y,oldBounds.Width,oldBounds.Height);
           this.ClientSize = storedSize;
           deviceLost=true;
+          m_bNeedReset=true;
           Log.Write("fullscreen->windowed done {0}", isMaximized);
+          Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+                      this.ClientSize.Width,this.ClientSize .Height,
+                      Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
         }
         e.Handled=true;
         return;
@@ -1531,8 +1554,8 @@ namespace MediaPortal
     /// </summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-      Win32API.EnableStartBar(true);
-      Win32API.ShowStartBar(true);
+      //Win32API.EnableStartBar(true);
+      //Win32API.ShowStartBar(true);
       isClosing = true;
       base.OnClosing(e);
     }
