@@ -274,7 +274,8 @@ namespace MediaPortal.Configuration.Sections
 
           if(driveName.Length == 0)
           {
-            driveName = defaultName;
+            string driveLetter = drive.Substring(0, 1).ToUpper();
+            driveName = String.Format("{0} ({1}:)", defaultName, driveLetter);            
           }
 
           //
