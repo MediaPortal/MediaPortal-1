@@ -1107,12 +1107,18 @@ namespace MediaPortal.Configuration.Sections
 					if(dbID==-1)
 						continue;
 					tv.ID=dbID;
-						int audioPid=GetAudioPid(ch.pid_list);
-						int videoPid=GetVideoPid(ch.pid_list);
-						ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-							ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,videoPid,0,0,0,0,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
-						n++;
+					int audioPid=GetAudioPid(ch.pid_list);
+					int videoPid=GetVideoPid(ch.pid_list);
+					int teleTextPid=GetTeletextPid(ch.pid_list);
+					int ac3Pid=GetAC3Pid(ch.pid_list);
+					int[] otherAudio=GetOtherAudioPids(ch.pid_list,audioPid);
+					if(otherAudio==null)
+						otherAudio=new int[]{0,0,0};
+
+					ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+						ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+						audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+					n++;
 						
 
 				}
@@ -1144,7 +1150,38 @@ namespace MediaPortal.Configuration.Sections
 					return pids.elementary_PID;
 			return 0;
 		}
+		private int GetTeletextPid(ArrayList ch)
+		{
+			if(ch==null)
+				return -1;
+			foreach(DVBSections.PMT_LIST2 pids in ch)
+				if(pids.isTeletext)
+					return pids.elementary_PID;
+			return 0;
+		}
+		private int GetAC3Pid(ArrayList ch)
+		{
+			if(ch==null)
+				return -1;
+			foreach(DVBSections.PMT_LIST2 pids in ch)
+				if(pids.isAC3Audio)
+					return pids.elementary_PID;
+			return 0;
+		}
+		private int[] GetOtherAudioPids(ArrayList ch,int audio)
+		{
+			int[] pidArray=new int[3]{0,0,0};
 
+			int n=0;
+			if(ch==null)
+				return null;
+			foreach(DVBSections.PMT_LIST2 pids in ch)
+			{
+				if(pids.isAudio && pids.elementary_PID!=audio)
+				{pidArray[n]=pids.elementary_PID;n++;}
+			}
+			return null;
+		}
 
 		private void button9_Click(object sender, System.EventArgs e)
 		{
