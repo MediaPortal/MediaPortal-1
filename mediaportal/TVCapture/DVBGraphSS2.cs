@@ -401,7 +401,7 @@ namespace MediaPortal.TV.Recording
 			if(m_videoDataFound==false && m_retryCount>=0)
 			{
 				m_retryCount++;
-				if(m_retryCount>=250)//
+				if(m_retryCount>=300)//
 				{
 					m_retryCount=0;
 					CyclePid();
@@ -1842,12 +1842,6 @@ namespace MediaPortal.TV.Recording
 			}
 
 
-//			if(m_performRepaint==true) // redraw vmr9
-//			{
-//				Vmr9.Repaint();
-//				m_performRepaint=false;
-//			}
-			//
 
 
 		}
@@ -1872,7 +1866,6 @@ namespace MediaPortal.TV.Recording
 		}
 		public void Tune(object tuningObject)
 		{
-			int a=0;
 		}
 		public void StoreChannels(int ID,bool radio, bool tv)
 		{
