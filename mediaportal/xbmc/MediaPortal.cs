@@ -108,10 +108,10 @@ public class MediaPortalApp : D3DApp, IRender
 		[STAThread]
     public static void Main()
     {
-			MediaPortal.Video.Database.IMDB imdb = new MediaPortal.Video.Database.IMDB(null);
-			imdb.FindActor("bruce willis");
-			MediaPortal.Video.Database.IMDBActor actor;
-			imdb.GetActorDetails(imdb[0], out actor);
+//			MediaPortal.Video.Database.IMDB imdb = new MediaPortal.Video.Database.IMDB(null);
+//			imdb.FindActor("Joe Perota");
+//			MediaPortal.Video.Database.IMDBActor actor;
+//			imdb.GetActorDetails(imdb[0], out actor);
 
 			/*
 			TranscodeInfo info = new TranscodeInfo();

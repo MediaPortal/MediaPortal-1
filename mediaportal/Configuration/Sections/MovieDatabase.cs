@@ -595,7 +595,11 @@ namespace MediaPortal.Configuration.Sections
 							if (imdb.Count<=0) continue;
 							IMDBActor imdbActor=new IMDBActor();
 							Application.DoEvents();
-							imdb.GetActorDetails(imdb[0],out imdbActor);
+							for (int x=0; x < imdb.Count;++x)
+							{
+								imdb.GetActorDetails(imdb[x],out imdbActor);
+								if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
+							}
 							progressBarFile.Value+=step;
 							Application.DoEvents();
 							if (stopRebuild) return;
