@@ -281,7 +281,7 @@ namespace MediaPortal.Configuration.Sections
 																																"Start Media Portal in fullscreen mode",
 																																"Auto hide mouse cursor when inactive",
 																																"Show special mouse controls (scrollbars, etc)",
-																																"Hide file extensions for known file types",
+																																"Dont show file extensions like .mp3, .avi, .mpg,...",
 																																"Enable animations",
 																																"Autostart Mediaportal when windows starts",
 																																"Disable Windows XP balloon tips",
