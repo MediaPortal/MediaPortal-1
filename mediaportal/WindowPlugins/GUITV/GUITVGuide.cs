@@ -409,7 +409,7 @@ namespace MediaPortal.GUI.TV
 					break;
 
 				case Action.ActionType.ACTION_SHOW_GUI:
-					if (Recorder.View)
+					if (Recorder.IsViewing() || (g_Player.Playing && g_Player.IsTVRecording))
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 					break;
 			}
@@ -1998,7 +1998,7 @@ namespace MediaPortal.GUI.TV
 				dlg.Reset();
 				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
 				
-				if (m_strCurrentChannel.Length>0 && Recorder.View)
+				if (m_strCurrentChannel.Length>0)
 					dlg.AddLocalizedString( 938);// View this channel
 
 				dlg.AddLocalizedString( 939);// Switch mode
@@ -2052,12 +2052,13 @@ namespace MediaPortal.GUI.TV
 					break;
 					
 					case 938: // view channel
-						if (Recorder.View)
-						{  
-							GUITVHome.ViewChannel(m_strCurrentChannel);
+						GUITVHome.IsTVOn=true;
+						GUITVHome.ViewChannel(m_strCurrentChannel);
+						if (Recorder.IsViewing())
+						{
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-							return;
 						}
+						return;
 						break;
 
 					case 939: // switch mode

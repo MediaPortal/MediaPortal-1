@@ -109,14 +109,19 @@ namespace MediaPortal.GUI.TV
           return;
         }
         case Action.ActionType.ACTION_SHOW_GUI:
-          if (Recorder.View)
+          if (Recorder.IsViewing() || (g_Player.Playing && g_Player.IsTVRecording))
           {
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
           }
-          break;
+        break;
+					
+				case Action.ActionType.ACTION_CONTEXT_MENU:
+					ShowContextMenu();
+				break;
       }
       base.OnAction(action);
     }
+
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
@@ -536,6 +541,11 @@ namespace MediaPortal.GUI.TV
         }
       }
     }
+
+		void ShowContextMenu()
+		{
+			OnClick(GetSelectedItemNo());
+		}
 
     void OnClick(int iItem)
 		{

@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.TV
           return;
         }
         case Action.ActionType.ACTION_SHOW_GUI:
-          if (Recorder.View)
+          if (Recorder.IsViewing() || (g_Player.Playing && g_Player.IsTVRecording))
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
           break;
 

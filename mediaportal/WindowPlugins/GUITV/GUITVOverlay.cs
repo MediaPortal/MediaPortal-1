@@ -105,13 +105,13 @@ namespace MediaPortal.GUI.TV
       HideControl( (int)Controls.CONTROL_RW_LOGO); 
 
 
-			if (Recorder.View)
+			if (Recorder.IsViewing())
 			{
 				ShowControl( (int)Controls.CONTROL_PLAYTIME);
 				ShowControl( (int)Controls.CONTROL_PLAY_LOGO); 
 				ShowControl( (int)Controls.CONTROL_VIDEO_WINDOW);
 			}
-			else if (Recorder.IsRecording())
+			if (Recorder.IsRecording())
 			{
 				ShowControl( (int)Controls.CONTROL_PLAYTIME);
 				ShowControl( (int)Controls.CONTROL_REC_LOGO); 

@@ -957,7 +957,8 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
-			if (Recorder.View) return;
+			if (Recorder.IsViewing()) return;
+			if (g_Player.Playing && g_Player.IsTVRecording) return;
 
 			//close window
 			GUIMessage msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);

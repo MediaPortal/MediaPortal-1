@@ -144,8 +144,10 @@ namespace MediaPortal.GUI.TV
           return;
         }
       case Action.ActionType.ACTION_SHOW_GUI:
-          if (Recorder.View)
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				if (Recorder.IsViewing() || (g_Player.Playing && g_Player.IsTVRecording))
+				{
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				}
         break;
 
         case Action.ActionType.ACTION_DELETE_ITEM:  

@@ -154,10 +154,15 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SHOW_GUI:
 					//switch to fullscreen TV
-					//but only if we're watching tv
 					if ( Recorder.IsViewing())
 					{
+						//if we're watching tv
 						StartPlaying(false);
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					}
+					if (g_Player.Playing && g_Player.IsTVRecording)
+					{
+						//if we're watching a tv recording
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 					}
 					break;
