@@ -61,6 +61,7 @@ namespace MediaPortal.GUI.TV
 		public  GUITVHome()
 		{	
 			GetID=(int)GUIWindow.Window.WINDOW_TV;
+			m_util= new TVUtil();
 		}
 		~GUITVHome()
 		{	
@@ -218,7 +219,7 @@ namespace MediaPortal.GUI.TV
 							g_Player.Stop();
 						}
 					}
-					m_util= new TVUtil();
+					
 
 					//set video window position
 					GUIControl cntl = GetControl( (int)Controls.VIDEO_WINDOW);
@@ -242,7 +243,7 @@ namespace MediaPortal.GUI.TV
 				{
 					m_recordings.Clear();
 					base.OnMessage(message);
-					m_util=null;
+					
           
 					SaveSettings();
 					//if we're switching to another plugin
