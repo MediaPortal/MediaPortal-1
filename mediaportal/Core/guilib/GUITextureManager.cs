@@ -1,4 +1,4 @@
-#define DO_RESAMPLE
+//#define DO_RESAMPLE
 using System;
 using System.Net;
 using System.Diagnostics;
