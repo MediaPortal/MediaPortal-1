@@ -516,7 +516,7 @@ namespace MediaPortal.GUI.MSN
         }
         else
         {
-          messenger = new Messenger();
+						messenger = new Messenger();
           // setup the callbacks
           // we log when someone goes online
           messenger.ContactOnline += new Messenger.ContactOnlineHandler(ContactOnline);
@@ -539,7 +539,7 @@ namespace MediaPortal.GUI.MSN
           messenger.SynchronizeList();
         }
       }
-      catch(MSNException )
+      catch(Exception)
       {
         m_bDialogVisible=false;
         dlgProgress.Close();

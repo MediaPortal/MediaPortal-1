@@ -12,16 +12,15 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIFadeLabel:GUIControl
 	{
-    ArrayList       m_vecLabels= new ArrayList();
   	[XMLSkinElement("textcolor")]		protected long  	m_dwTextColor=0xFFFFFFFF;
-	[XMLSkinElement("align")]			Alignment  m_dwTextAlign=Alignment.ALIGN_LEFT;
-	[XMLSkinElement("font")]			protected string	m_strFont="";
-	[XMLSkinElement("label")]			protected string	m_strLabel="";	    
-    int							m_iCurrentLabel=0;
+		[XMLSkinElement("align")]			Alignment  m_dwTextAlign=Alignment.ALIGN_LEFT;
+		[XMLSkinElement("font")]			protected string	m_strFont="";
+		[XMLSkinElement("label")]			protected string	m_strLabel="";	    
+    
+		ArrayList       m_vecLabels= new ArrayList();
+		int							m_iCurrentLabel=0;
     int 						scroll_pos=0;
     int 						iScrollX=0;
-    //int 						iLastItem=-1;
-    //int 						iFrames=0;
     bool						m_bFadeIn=false;
     int							m_iCurrentFrame=0;
 
@@ -33,6 +32,7 @@ namespace MediaPortal.GUI.Library
     DateTime        m_dtTime=DateTime.Now;
     GUILabelControl m_label=null;
     GUIFont								m_pFont=null;
+		
 		public GUIFadeLabel(int dwParentID) : base(dwParentID)
 		{
 		}
@@ -56,6 +56,13 @@ namespace MediaPortal.GUI.Library
        m_dwTextAlign=dwTextAlign;
        FinalizeConstruction();
      }
+		
+		/// <summary> 
+		/// This function is called after all of the XmlSkinnable fields have been filled
+		/// with appropriate data.
+		/// Use this to do any construction work other than simple data member assignments,
+		/// for example, initializing new reference types, extra calculations, etc..
+		/// </summary>
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction();
@@ -79,10 +86,11 @@ namespace MediaPortal.GUI.Library
       }
       m_bScrolling=false;       
 
-      if (m_strLabel.Length > 0 )
+      if (m_strLabel!=null&& m_strLabel.Length > 0 )
       {
         string strText=m_strLabel;
         if (ContainsProperty) strText=GUIPropertyManager.Parse(m_strLabel);
+
 				if (m_strPrevTxt!=strText)
 				{
 					m_iCurrentLabel=0;
@@ -114,10 +122,12 @@ namespace MediaPortal.GUI.Library
 					} while (ipos>=0 && strText.Length>0);
 				}
       }
+			
 			// if there are no labels do not render
       if (m_vecLabels.Count==0) return;
+
 			// reset the current label is index is out of bounds
-      if (m_iCurrentLabel >= m_vecLabels.Count ) m_iCurrentLabel=0;
+      if (m_iCurrentLabel<0||m_iCurrentLabel >= m_vecLabels.Count ) m_iCurrentLabel=0;
       
 			// get the current label
       string strLabel=(string)m_vecLabels[m_iCurrentLabel];
@@ -264,6 +274,7 @@ namespace MediaPortal.GUI.Library
 	    bool	bResult=false;
       float fTextHeight=0,fTextWidth=0;
 			
+			if (m_pFont==null) return true;
       //Get the text width.
       m_pFont.GetTextExtent( wszText, ref fTextWidth,ref fTextHeight);
 
@@ -536,7 +547,10 @@ namespace MediaPortal.GUI.Library
     }
 
     string GetShortenedText(string strLabel, int iMaxWidth)
-    {
+		{
+			if (strLabel==null) return string.Empty;
+			if (strLabel.Length==0) return string.Empty;
+			if (m_pFont==null) return strLabel;
       if (m_dwTextAlign==GUIControl.Alignment.ALIGN_RIGHT)
       {
         if (strLabel.Length>0)

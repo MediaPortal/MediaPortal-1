@@ -9,13 +9,14 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
   public class GUICheckMarkControl: GUIControl
   {
-	[XMLSkinElement("textureCheckmarkNoFocus")] 
-											protected string	m_strCheckMarkNoFocus;
-	[XMLSkinElement("textureCheckmark")]	protected string	m_strCheckMark;
-	[XMLSkinElement("MarkWidth")]			protected int		m_iCheckMarkWidth;
-	[XMLSkinElement("MarkHeight")]			protected int		m_iCheckMarkHeight;
-	[XMLSkinElement("font")]				protected string	m_strFontName;
-	[XMLSkinElement("textcolor")]			protected long  	m_dwTextColor=0xFFFFFFFF;
+		//TODO: make use of GUILabelControl for drawing text
+		[XMLSkinElement("textureCheckmarkNoFocus")] 
+												protected string	m_strCheckMarkNoFocus;
+		[XMLSkinElement("textureCheckmark")]	protected string	m_strCheckMark;
+		[XMLSkinElement("MarkWidth")]			protected int		m_iCheckMarkWidth;
+		[XMLSkinElement("MarkHeight")]			protected int		m_iCheckMarkHeight;
+		[XMLSkinElement("font")]				protected string	m_strFontName;
+		[XMLSkinElement("textcolor")]			protected long  	m_dwTextColor=0xFFFFFFFF;
     [XMLSkinElement("label")]				protected string	m_strLabel="";
     [XMLSkinElement("disabledcolor")]		protected long		m_dwDisabledColor=0xFF606060;
     [XMLSkinElement("align")]				protected Alignment m_dwAlign=Alignment.ALIGN_RIGHT;  
@@ -46,12 +47,17 @@ namespace MediaPortal.GUI.Library
     {
       m_bSelected=false;
       m_dwAlign=dwAlign;
-	  m_iCheckMarkHeight = dwCheckHeight;
-	  m_iCheckMarkWidth = dwCheckWidth;
-	  m_strCheckMark = strTextureCheckMark;
-	  m_strCheckMarkNoFocus = strTextureCheckMarkNF;
-	  FinalizeConstruction();
+			m_iCheckMarkHeight = dwCheckHeight;
+			m_iCheckMarkWidth = dwCheckWidth;
+			m_strCheckMark = strTextureCheckMark;
+			m_strCheckMarkNoFocus = strTextureCheckMarkNF;
+			FinalizeConstruction();
     }
+
+		/// <summary>
+		/// This method gets called when the control is created and all properties has been set
+		/// It allows the control todo any initialization
+		/// </summary>
 	  public override void FinalizeConstruction()
 	  {
 		  base.FinalizeConstruction ();
@@ -121,16 +127,17 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+			
 			// Render the selected checkmark image
       if (m_bSelected)
       {
         m_imgCheckMark.SetPosition(dwCheckMarkPosX, m_dwPosY); 
         m_imgCheckMark.Render();
       }
-			// Render the non-selected checkmark image
       else
       {
-        m_imgCheckMarkNoFocus.SetPosition(dwCheckMarkPosX, m_dwPosY); 
+				// Render the non-selected checkmark image
+				m_imgCheckMarkNoFocus.SetPosition(dwCheckMarkPosX, m_dwPosY); 
         m_imgCheckMarkNoFocus.Render();
       }
     }

@@ -146,6 +146,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="fMaxWidth">The maximum width.</param>
 		public void DrawTextWidth(float xpos,float ypos,long color,string strLabel, float fMaxWidth, GUIControl.Alignment alignment)
 		{
+			if (fMaxWidth<=0) return;
+			if (xpos <=0) return;
+			if (ypos <=0) return;
       if (strLabel==null) return;
       if (strLabel.Length==0) return;
 			float fTextWidth=0,fTextHeight=0;
@@ -180,6 +183,10 @@ namespace MediaPortal.GUI.Library
 		/// <param name="alignment">The alignment of the text.</param>
 		public void DrawText(float xpos, float ypos, long color, string strLabel, GUIControl.Alignment alignment)
 		{
+			if (strLabel==null) return;
+			if (strLabel==String.Empty) return;
+			if (xpos <=0) return;
+			if (ypos <=0) return;
 			int alpha=(int)((color>>24)&0xff);
 			int red=(int)((color>>16)&0xff);
 			int green=(int)((color>>8) &0xff);
@@ -232,10 +239,13 @@ namespace MediaPortal.GUI.Library
       // Set the data for the vertex buffer
       if (dwNumTriangles > 0)
       {
-        if (vertexBuffer==null)
-        {
-          return;
-        }
+				if (vertexBuffer==null) return;
+				if (savedStateBlock==null) return;
+				if (GUIGraphicsContext.DX9Device==null) return;
+				if (vertexBuffer.Disposed) return;
+				if (savedStateBlock.Disposed) return;
+				if (GUIGraphicsContext.DX9Device.Disposed) return;
+				if (fontVertices==null) return;
         savedStateBlock.Apply();
         vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
         //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
@@ -260,11 +270,16 @@ namespace MediaPortal.GUI.Library
       return GetFontCache(xpos, ypos, Color.FromArgb(alpha,red,green,blue), text, out cachedVertices, out triangles);
     }
     public bool GetFontCache(float xpos, float ypos, Color color, string text, out CustomVertex.TransformedColoredTextured[] cachedVertices, out int triangles)
-    {
+		{
+			triangles=0;
+			cachedVertices=null;
+
+			if (text==null) return false;
+			if (text==String.Empty) return false;
+			if (xpos <=0) return false;
+			if (ypos <=0) return false;
       if (GUIGraphicsContext.graphics!=null) 
       {
-        triangles=0;
-        cachedVertices=null;
         return false;
       }
       DrawText(xpos, ypos, color, text, RenderFlags.DontDiscard);
@@ -278,7 +293,7 @@ namespace MediaPortal.GUI.Library
     {
       //return;
       // Set the data for the vertexbuffer
-      if (vertexBuffer!=null)
+      if (vertexBuffer!=null && triangles>0)
       {
         vertexBuffer.SetData(cachedVertices, 0, LockFlags.Discard);
         savedStateBlock.Apply();
@@ -299,9 +314,11 @@ namespace MediaPortal.GUI.Library
 		/// <param name="flags">Font render flags.</param>
 		protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags)
     {
-      
-			if (text == null || text==String.Empty)
-				return;
+			if (text==null) return;
+			if (text==String.Empty) return;
+			if (xpos <=0) return ;
+			if (ypos <=0) return ;
+
 
       GUIGraphicsContext.Correct(ref xpos, ref ypos);
       if (GUIGraphicsContext.graphics!=null)
@@ -311,7 +328,16 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.graphics.DrawString(text,systemFont,new SolidBrush(color),xpos,ypos);
         return;
       }
-
+			if (fontVertices==null) return;
+			if (fontTexture==null) return;
+			if (textureCoords==null) return;
+			if (fontTexture.Disposed) return;
+			if (savedStateBlock==null) return;
+			if (savedStateBlock.Disposed) return;
+			if (vertexBuffer==null) return;
+			if (vertexBuffer.Disposed) return;
+			if (GUIGraphicsContext.DX9Device==null) return;
+			if (GUIGraphicsContext.DX9Device.Disposed) return;
 			// Setup renderstate
 			//savedStateBlock.Capture();
 			//drawTextStateBlock.Apply();

@@ -736,8 +736,9 @@ namespace MediaPortal
 					GC.Collect();
           return;
         }
-        catch (Exception )
+        catch (Exception ex)
         {
+					Log.Write("InitializeDeviceObjects() exception:{0}",ex.ToString());
           // Cleanup before we try again
           //OnDeviceLost(null, null);
           //OnDeviceDisposing(null, null);

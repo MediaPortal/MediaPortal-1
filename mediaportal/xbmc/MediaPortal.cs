@@ -84,11 +84,18 @@ public class MediaPortalApp : D3DApp, IRender
 		[STAThread]
     public static void Main()
     {
-      //
+			//Set current directory
+			Log.Write("Mediaportal is starting up");
+
+			string applicationPath=Application.ExecutablePath;
+			applicationPath=System.IO.Path.GetFullPath(applicationPath);
+			applicationPath=System.IO.Path.GetDirectoryName(applicationPath);
+			System.IO.Directory.SetCurrentDirectory(applicationPath);
+
+			Log.Write("Set current directory to :{0}", applicationPath);
       // Display splash screen
       //
 
-      Log.Write("Mediaportal is starting up");
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 #if DEBUG
 #else

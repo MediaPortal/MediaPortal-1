@@ -13,71 +13,94 @@ namespace MediaPortal.GUI.Library
   public delegate void SendMessageHandler(GUIMessage message);
   public delegate void VideoWindowChangedHandler();
   public delegate void VideoGammaContrastBrightnessHandler();
-  public class GUIGraphicsContext
+
+	/// <summary>
+	/// Singleton class which holds all GFX related settings
+	/// </summary>
+	public class GUIGraphicsContext
   {
+		//enum containing current state of mediaportal
     public enum State
     {
-      STARTING,
-      RUNNING,
-      STOPPING
+      STARTING,		// starting up
+      RUNNING,		// running
+      STOPPING		// stopping
     }
     /// <summary>
     /// Event which will be triggered when a message has arrived
     /// </summary>
     static public event SendMessageHandler     Receivers;
+
+		
+		/// <summary>
+		/// Event which will be triggered when a action has arrived
+		/// </summary>
     static public event OnActionHandler        ActionHandlers;
 		
     /// <summary>
-    /// Event which will be triggered when the video window location/size or AR changes
+    /// Event which will be triggered when the video window location/size or AR have been changed
     /// </summary>
     static public event VideoWindowChangedHandler OnVideoWindowChanged;
+
+		
+		/// <summary>
+		/// Event which will be triggered when contrast,brightness,gamma settings have been changed
+		/// </summary>
     static public event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged;
 
-    static protected Direct3D.Device m_device=null;
-    static private string           m_strSkin="";
-    static private bool             m_bFullScreenVideo=false;
-    static private System.IntPtr    m_ipActiveForm   ;
-    static System.Drawing.Rectangle m_RectVideo;
-    static Geometry.Type            m_ARType=Geometry.Type.Normal;
-    static int                      m_iOSDOffset=0;
-    static int                      m_iOverScanLeft=0;
-    static int                      m_iOverScanTop=0;
-    static int                      m_iOverScanWidth=0;
-    static int                      m_iOverScanHeight=0;
-    static float                    m_fPixelRatio=1.0f;
-    static State                    m_eState;
-    static bool                     m_bOverlay=true;
-    static int                      m_iOffsetX=0;
-    static int                      m_iOffsetY=0;
-    static int                      m_iSubtitles=550;
-    static bool                     m_bCalibrating=false;
-    static bool                     m_bPlaying;
-    static Graphics                 m_graphics=null;
-    static Form                     m_form=null;
-    static int                      m_iBrightness=0;
-    static int                      m_iGamma=0;
-    static int                      m_iContrast=0;
-    static int                      m_iSaturation=0;
-    static int                      m_Sharpness=0;
-    static bool                     m_bMouseSupport=true;
-    static Size                     m_skinSize = new Size(720,576);
-    static bool											m_bShowBackGround=true;
-    static bool											m_bPlayingVideo=false;
-    static int                      m_iScrollSpeed=5;
-    static int                      m_iCharsInCharacterSet=255;
-    static bool                     m_bEditMode=false;
-    static bool                     m_bAnimations=true;
-    // singleton. Dont allow any instance of this class
+    static protected Direct3D.Device m_device=null;								// pointer to current DX9 device
+    static private string           m_strSkin="";									// name of the current skin
+    static private bool             m_bFullScreenVideo=false;			// boolean indicating if we're in GUI or fullscreen video/tv mode
+    static private System.IntPtr    m_ipActiveForm   ;						// pointer to the current GDI window
+    static System.Drawing.Rectangle m_RectVideo;									// rectangle of the video preview window
+    static Geometry.Type            m_ARType=Geometry.Type.Normal;// current video transformation type (see geometry.cs)
+    static int                      m_iOSDOffset=0;								// y-offset of the video/tv OSD
+    static int                      m_iOverScanLeft=0;						// x offset screen calibration
+    static int                      m_iOverScanTop=0;							// y offset screen calibration
+    static int                      m_iOverScanWidth=0;						// width screen calibratoin
+    static int                      m_iOverScanHeight=0;					// height screen calibratoin
+    static float                    m_fPixelRatio=1.0f;						// current pixel ratio correction
+    static State                    m_eState;											// state of application
+    static bool                     m_bOverlay=true;							// boolean indicating if the overlay window is allowed to be shown
+    static int                      m_iOffsetX=0;									// x offset of GUI calibration
+    static int                      m_iOffsetY=0;									// y offset of GUI calibration
+    static int                      m_iSubtitles=550;							// Y position for subtitles
+    static bool                     m_bCalibrating=false;					// boolean indicating if we are in calibration mode or in normal mode
+    static bool                     m_bPlaying;										// boolean indicating if we are playing any media or not
+    static Graphics                 m_graphics=null;							// GDI+ Graphics object
+    static Form                     m_form=null;									// Current GDI form
+    static int                      m_iBrightness=0;							// brightness value
+    static int                      m_iGamma=0;										// gamma value
+    static int                      m_iContrast=0;								// contrast value
+    static int                      m_iSaturation=0;							// saturation value
+    static int                      m_Sharpness=0;								// sharpness value
+    static bool                     m_bMouseSupport=true;					// boolean indicating if we should present mouse controls like scrollbars
+    static Size                     m_skinSize = new Size(720,576);// original width/height for which the skin was designed
+    static bool											m_bShowBackGround=true;				//boolean indicating if we should show the GUI background or if we should show live tv in the background
+    static bool											m_bPlayingVideo=false;				//boolean indicating if we are playing a movie
+    static int                      m_iScrollSpeed=5;							//scroll speed for controls which scroll
+    static int                      m_iCharsInCharacterSet=255;		//number of characters for current fonts
+    static bool                     m_bEditMode=false;						//boolean indicating if we are in skin edit mode
+    static bool                     m_bAnimations=true;						//boolean indicating animiations are turned on or off
+
+		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
     {
     }
 
+		/// <summary>
+		/// Property to enable/disable animations
+		/// </summary>
     static public bool Animations
     {
       get { return m_bAnimations;}
       set { m_bAnimations=value;}
     }
-    static public bool EditMode
+    
+		/// <summary>
+		/// property to enable/disable skin-editting mode
+		/// </summary>
+		static public bool EditMode
     {
       get { return m_bEditMode;}
       set { m_bEditMode=value;}
@@ -206,7 +229,7 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Apply screen calibration.
+		/// Apply screen offset correct 
 		/// </summary>
 		/// <param name="fx">X correction.</param>
 		/// <param name="fy">Y correction.</param>
@@ -253,12 +276,21 @@ namespace MediaPortal.GUI.Library
       y  = (int)Math.Round  ( ((float)y)		 * fPercentY); 
     }
 
+		/// <summary>
+		/// Scale y position for current resolution
+		/// </summary>
+		/// <param name="y">Y coordinate to scale.</param>
 		static public void ScaleVertical(ref int y)
 		{
 			float fSkinHeight=(float)m_skinSize.Height;
 			float fPercentY = ((float)Height) / fSkinHeight;
 			y  = (int)Math.Round  ( ((float)y)		 * fPercentY); 
 		}
+		
+		/// <summary>
+		/// Scale X position for current resolution
+		/// </summary>
+		/// <param name="y">X coordinate to scale.</param>
 		static public void ScaleHorizontal(ref int x)
 		{
 			float fSkinWidth =(float)m_skinSize.Width;
@@ -267,7 +299,7 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Descale a position
+		/// Descale a position from screen->skin resolutions
 		/// </summary>
 		/// <param name="x">X coordinate to descale.</param>
 		/// <param name="y">Y coordinate to descale.</param>
@@ -299,7 +331,7 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Get/set current skin
+		/// Get/set current skin name
 		/// </summary>
     static public string Skin
     {
@@ -625,7 +657,7 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Get/Set the if there is MouseSupport.
+		/// Get/Set  if there is MouseSupport.
 		/// </summary>
     static public bool MouseSupport
     {
@@ -650,16 +682,29 @@ namespace MediaPortal.GUI.Library
     {
       if (ActionHandlers!=null) ActionHandlers(action);
     }
+
+		/// <summary>
+		/// Get/Set whether we should show the GUI as background or 
+		/// live tv as background
+		/// </summary>
 		static public bool ShowBackground
 		{
 			get { return m_bShowBackGround;}
 			set { m_bShowBackGround=value;}
     }
+
+		/// <summary>
+		/// Get/Set the current scroll speed 
+		/// </summary>
     static public int ScrollSpeed
     {
       get { return m_iScrollSpeed;}
       set { m_iScrollSpeed=value;}
     }
+
+		/// <summary>
+		/// Get/Set the number of characters used for the fonts
+		/// </summary>
     static public int CharsInCharacterSet
     {
       get { return m_iCharsInCharacterSet;}

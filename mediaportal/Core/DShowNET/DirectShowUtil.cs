@@ -319,8 +319,13 @@ namespace DShowNET
       return null;
     }
 
-    static public bool RenderOutputPins(IGraphBuilder graphBuilder,IBaseFilter filter)
+		static public bool RenderOutputPins(IGraphBuilder graphBuilder,IBaseFilter filter)
+		{
+			return RenderOutputPins(graphBuilder,filter,100);
+		}
+    static public bool RenderOutputPins(IGraphBuilder graphBuilder,IBaseFilter filter, int maxPinsToRender)
     {
+			int  pinsRendered=0;
       bool bAllConnected=true;
       IEnumPins pinEnum;
       int hr=filter.EnumPins(out pinEnum);
@@ -362,6 +367,7 @@ namespace DShowNET
                     DebugWrite("  render failed:{0:x}",hr);
                     bAllConnected=false;
                   }
+									pinsRendered++;
                 }
                 //else DebugWrite("pin is already connected");
               }
@@ -375,7 +381,7 @@ namespace DShowNET
             }
           }
           else iFetched=0;
-        }while( iFetched==1 );
+        }while( iFetched==1 && pinsRendered < maxPinsToRender);
       }
       return bAllConnected;
     }

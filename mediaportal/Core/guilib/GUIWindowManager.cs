@@ -106,6 +106,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="Window">new window to add</param>
     static public void Add(ref GUIWindow Window)
     {
+			if (Window==null) return;
       foreach (GUIWindow win in m_vecWindows)
       {
         if (win.GetID==Window.GetID)
@@ -393,25 +394,39 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static void PostRender()
     {
-      //render overlay layer 1-10
-      for (int iLayer=1; iLayer <= 2; iLayer++)
-      {
-        for (int x=0; x < m_vecWindows.Count;++x)
-        {
-          if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
-            ((GUIWindow)m_vecWindows[x]).PostRender(iLayer);
-        }
-      }
+			try
+			{
+				//render overlay layer 1-10
+				for (int iLayer=1; iLayer <= 2; iLayer++)
+				{
+					for (int x=0; x < m_vecWindows.Count;++x)
+					{
+						if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
+							((GUIWindow)m_vecWindows[x]).PostRender(iLayer);
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("PostRender exception:{0}", ex.ToString());
+			}
       GUIPropertyManager.Changed=false;
     }
 
     static public void ProcessWindows()
     {
-      if (m_iActiveWindow >=0) 
-      {
-        GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
-        if (null!=pWindow) pWindow.Process();
-      }
+			try
+			{
+				if (m_iActiveWindow >=0) 
+				{
+					GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+					if (null!=pWindow) pWindow.Process();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("ProcessWindows exception:{0}", ex.ToString());
+			}
     }
 
 
@@ -431,7 +446,7 @@ namespace MediaPortal.GUI.Library
 			}
 
       // else render the current active window
-      if (m_iActiveWindow >=0) 
+      if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count) 
       {
         GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
         if (null!=pWindow) pWindow.Render();
@@ -472,7 +487,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>true,false</returns>
     static public bool NeedRefresh()
     {
-      if (m_iActiveWindow < 0) return false;
+      if (m_iActiveWindow < 0 || m_iActiveWindow >=m_vecWindows.Count) return false;
       GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
       bool bRefresh=m_bRefresh;
       m_bRefresh=false;
@@ -530,7 +545,16 @@ namespace MediaPortal.GUI.Library
     {
       for (int x=0; x < m_vecWindows.Count;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).PreInit();
+				GUIWindow window=(GUIWindow)m_vecWindows[x];
+				try
+				{
+					window.PreInit();
+				}
+				catch(Exception ex)
+				{
+					Log.Write("Exception in {0}.Preinit() {1}",
+										window.GetType().ToString(), ex.ToString());
+				}
       }
     }
 
@@ -562,6 +586,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="message">new message to send</param>
     static public void SendThreadMessage(GUIMessage message)
     {
+			if (message!=null)
         m_vecThreadMessages.Add(message);
     }
 

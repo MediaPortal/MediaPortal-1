@@ -20,9 +20,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("width")]			protected int			m_dwWidth = 0;
     [XMLSkinElement("colordiffuse")]	protected long			m_colDiffuse = 0xFFFFFFFF;
     [XMLSkinElement("id")]				protected int			m_dwControlID = 0;
-	[XMLSkinElement("type")]			protected string		m_strControlType = "";
-	[XMLSkinElement("description")]		protected string		m_Description="";
-	[XMLSkinElement("visible")]			protected bool			m_bVisible = true;
+		[XMLSkinElement("type")]			protected string		m_strControlType = "";
+		[XMLSkinElement("description")]		protected string		m_Description="";
+		[XMLSkinElement("visible")]			protected bool			m_bVisible = true;
 										protected int			m_dwParentID = 0;
 										protected bool			m_bHasFocus = false;
 										protected bool			m_bDisabled = false;
@@ -35,6 +35,9 @@ namespace MediaPortal.GUI.Library
                     protected Rectangle m_originalRect;
                     protected bool m_bAnimating=false;
 
+		/// <summary>
+		/// enum to specify the alignment of the control
+		/// </summary>
     public enum Alignment
     {
       ALIGN_LEFT, 
@@ -43,16 +46,20 @@ namespace MediaPortal.GUI.Library
     }
 
     
-	public GUIControl()
-	{
-	}
-	/// <summary>
+		/// <summary>
+		/// empty constructor
+		/// </summary>
+		public GUIControl()
+		{
+		}
+
+		/// <summary>
     /// The basic constructur of the GUIControl class.
     /// </summary>
     public GUIControl(int dwParentID)
     {
-		 m_dwParentID = dwParentID;
-	}
+			m_dwParentID = dwParentID;
+		}
 		
 	
     /// <summary>
@@ -74,40 +81,46 @@ namespace MediaPortal.GUI.Library
       m_dwHeight = dwHeight;
     }
 
-	/// <summary> 
-	/// This function is called after all of the XmlSkinnable fields have been filled
-	/// with appropriate data.
-	/// Use this to do any construction work other than simple data member assignments,
-	/// for example, initializing new reference types, extra calculations, etc..
-	/// </summary>
-	public virtual void FinalizeConstruction()
-	{
-		if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
-		if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
-		if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
-		if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
-	}
-	
-	/// <summary>
-	/// Does any scaling on the inital size\position values to fit them to screen 
-	/// resolution. 
-	/// </summary>
-	public virtual void ScaleToScreenResolution()
-	{
-		GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwPosX, ref m_dwPosY, ref m_dwWidth, ref m_dwHeight);
-	}
+		/// <summary> 
+		/// This function is called after all of the XmlSkinnable fields have been filled
+		/// with appropriate data.
+		/// Use this to do any construction work other than simple data member assignments,
+		/// for example, initializing new reference types, extra calculations, etc..
+		/// </summary>
+		public virtual void FinalizeConstruction()
+		{
+			if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
+			if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
+			if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
+			if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
+		}
+			
+		/// <summary>
+		/// Does any scaling on the inital size\position values to fit them to screen 
+		/// resolution. 
+		/// </summary>
+		public virtual void ScaleToScreenResolution()
+		{
+			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwPosX, ref m_dwPosY, ref m_dwWidth, ref m_dwHeight);
+		}
 
 
     /// <summary>
-    /// The default render method. This needs to be overwritten when inherited to give every control its specific look and feel.
+    /// The default render method. This needs to be overwritten when inherited to give every control 
+    /// its specific look and feel.
     /// </summary>
     public abstract void Render();
 
+		/// <summary>
+		/// Property to get/set the id of the window 
+		/// to which this control belongs
+		/// </summary>
     public virtual int WindowId
     {
       get { return m_iWindowID; }
       set { m_iWindowID = value; }
     }
+
     /// <summary>
     /// OnAction() method. This method gets called when there's a new action like a 
     /// keypress or mousemove or... By overriding this method, the control can respond
@@ -353,11 +366,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position.</param>
     public virtual void SetPosition(int dwPosX, int dwPosY)
     {
-      if (GUIGraphicsContext.graphics!=null)
-      {
-        if (dwPosX < 0 ) return;
-        if (dwPosY < 0 ) return;
-      }
+      if (dwPosX < 0 ) dwPosX=0;
+      if (dwPosY < 0 ) dwPosY=0;
       if (m_dwPosX == dwPosX && m_dwPosY == dwPosY) return;
       m_dwPosX = dwPosX;
       m_dwPosY = dwPosY;
@@ -396,7 +406,10 @@ namespace MediaPortal.GUI.Library
     public virtual int XPosition
     {
       get { return m_dwPosX; }
-      set { m_dwPosX = value; }
+      set { 
+				m_dwPosX = value; 
+				if (m_dwPosX<0) m_dwPosX=0;
+			}
     }
 
     /// <summary>
@@ -405,7 +418,10 @@ namespace MediaPortal.GUI.Library
     public virtual int YPosition
     {
       get { return m_dwPosY; }
-      set { m_dwPosY = value; }
+      set { 
+				m_dwPosY = value; 
+				if (m_dwPosY<0) m_dwPosY=0;
+			}
     }
 
     /// <summary>
@@ -414,7 +430,10 @@ namespace MediaPortal.GUI.Library
     public virtual int Width
     {
       get { return m_dwWidth; }
-      set { m_dwWidth = value; }
+      set { 
+				m_dwWidth = value;
+				if (m_dwWidth<0) m_dwWidth=0;
+			}
     }
 
     /// <summary>
@@ -423,7 +442,10 @@ namespace MediaPortal.GUI.Library
     public virtual int Height
     {
       get { return m_dwHeight; }
-      set { m_dwHeight = value; }
+      set { 
+				m_dwHeight = value; 
+				if (m_dwHeight<0) m_dwHeight=0;
+			}
     }
 
     /// <summary>
@@ -719,6 +741,15 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.SendMessage(msg);
     }
 
+		/// <summary>
+		/// Method which determines of the coordinate(x,y) is within the current control
+		/// </summary>
+		/// <param name="x">x coordinate</param>
+		/// <param name="y">y coordiate </param>
+		/// <param name="controlID">return id of control if coordinate is within control</param>
+		/// <returns>true: point is in control
+		///          false: point is not within control
+		/// </returns>
     public virtual bool InControl(int x, int y, out int controlID)
     {
       controlID=-1;
@@ -739,67 +770,128 @@ namespace MediaPortal.GUI.Library
     }
 
 
+		/// <summary>
+		/// Add an subitem to a control
+		/// </summary>
+		/// <param name="obj">subitem</param>
     public void AddSubItem(object obj)
     {
       m_SubItems.Add(obj);
     }
+		/// <summary>
+		/// Remove an subitem from an control
+		/// </summary>
+		/// <param name="obj">subitem</param>
     public void RemoveSubItem(object obj)
     {
       m_SubItems.Remove(obj);
     }
-    public void RemoveSubItem(int index)
+
+		/// <summary>
+		/// Remove an subitem from an control
+		/// </summary>
+		/// <param name="obj">index</param>
+		public void RemoveSubItem(int index)
     {
+			if (index<=0 || index>= m_SubItems.Count) return;
       m_SubItems.RemoveAt(index);
     }
 
+		/// <summary>
+		/// Property to get the # of subitems for the control
+		/// </summary>
     public int SubItemCount
     {
       get { return m_SubItems.Count;}
     }
 
+		/// <summary>
+		/// Property to get a subitem
+		/// </summary>
+		/// <param name="index">index</param>
+		/// <returns>subitem object</returns>
     public object GetSubItem(int index)
-    {
+		{
+			if (index<=0 || index>= m_SubItems.Count) return null;
       return m_SubItems[index];
     }
+		/// <summary>
+		/// Property to set an subitem
+		/// </summary>
+		/// <param name="index">index</param>
+		/// <param name="o">subitem</param>
     public void SetSubItem(int index, object o)
     { 
       m_SubItems[index]=o;
     }
 
+		/// <summary>
+		/// Property to get/set the current selected subitem
+		/// </summary>
     public virtual int SelectedItem
     {
       get { return m_SelectedItem;}
       set { m_SelectedItem=value;}
     }
 
+		/// <summary>
+		/// Property to get the control for a specific control ID
+		/// </summary>
+		/// <param name="ID">Id of wanted control</param>
+		/// <returns>null if not found or
+		///          GUIControl if found
+		/// </returns>
     public virtual GUIControl GetControlById(int ID)
     {
       if (ID==GetID) return this;
       return null;
     }
+
+		/// <summary>
+		/// Virtual method. This method gets called when the control is initialized
+		/// and allows it to do any initalization
+		/// </summary>
     public virtual void OnInit()
     {
     }
+		
+		/// <summary>
+		/// Virtual method. This method gets called when the control is de-initialized
+		/// and allows it to do any de-initalization
+		/// </summary>
     public virtual void OnDeInit()
     {
     }
+		
+		/// <summary>
+		/// Description (from xml skin file) for control
+		/// </summary>
     public string Description
     {
       get { return m_Description;}
       set { m_Description=value;}
 	  }
 
+		/// <summary>
+		/// Method to store(save) the current control rectangle
+		/// </summary>
     public virtual void StorePosition()
     {
       m_bAnimating=false;
       m_originalRect=new Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_dwHeight);
     }
 
+		/// <summary>
+		/// Property to determine if control is animating
+		/// </summary>
     public bool IsAnimating
     {
       get { return m_bAnimating;}
     }
 
+		/// <summary>
+		/// Method to restore the saved-current control rectangle
+		/// </summary>
     public virtual void ReStorePosition()
     {
       m_dwPosX=m_originalRect.X;
@@ -809,6 +901,10 @@ namespace MediaPortal.GUI.Library
       Update();
       m_bAnimating=false;
     }
+		
+		/// <summary>
+		/// Method to get the rectangle of the current control 
+		/// </summary>
     public virtual void GetRect(out int x, out int y, out int width, out int height)
     {
       x=m_dwPosX;
@@ -817,6 +913,9 @@ namespace MediaPortal.GUI.Library
       height=m_dwHeight;
     }
 
+		/// <summary>
+		/// Method to get animate the current control
+		/// </summary>
     public virtual void Animate(Animator animator)
     {
       m_bAnimating=true;

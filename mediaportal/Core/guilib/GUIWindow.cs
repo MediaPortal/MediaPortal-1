@@ -134,29 +134,36 @@ namespace MediaPortal.GUI.Library
 		{
       lock (this)
       {
-        if (!m_bSkinLoaded)
-        {
-          if (GUIGraphicsContext.IsFullScreenVideo) return;
-          if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
-          if (GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return;
+				try
+				{
+					if (!m_bSkinLoaded)
+					{
+						if (GUIGraphicsContext.IsFullScreenVideo) return;
+						if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
+						if (GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return;
 
-          // Print an error message
-          GUIFont font = GUIFontManager.GetFont(0);
-          if (font != null)
-          {
-            float fW = 0f;
-            float fH = 0f;
-            string strLine = String.Format("Missing or invalid file:{0}", m_strWindowXmlFile);
-            font.GetTextExtent(strLine, ref fW, ref fH);
-            float x = (GUIGraphicsContext.Width - fW) / 2f;
-            float y = (GUIGraphicsContext.Height - fH) / 2f;
-            font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT);
-          }
-        }
-        for (int x = 0; x < m_vecControls.Count; ++x)
-        {
-          ((GUIControl)m_vecControls[x]).Render();
-        }
+						// Print an error message
+						GUIFont font = GUIFontManager.GetFont(0);
+						if (font != null)
+						{
+							float fW = 0f;
+							float fH = 0f;
+							string strLine = String.Format("Missing or invalid file:{0}", m_strWindowXmlFile);
+							font.GetTextExtent(strLine, ref fW, ref fH);
+							float x = (GUIGraphicsContext.Width - fW) / 2f;
+							float y = (GUIGraphicsContext.Height - fH) / 2f;
+							font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT);
+						}
+					}
+					for (int x = 0; x < m_vecControls.Count; ++x)
+					{
+						((GUIControl)m_vecControls[x]).Render();
+					}
+				}
+				catch(Exception ex)
+				{
+					Log.Write("render exception:{0}", ex.ToString());
+				}
       }
 		}
 
@@ -168,9 +175,16 @@ namespace MediaPortal.GUI.Library
 		/// <returns>true or false</returns>
 		public virtual bool NeedRefresh()
     {
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-				if (((GUIControl)((GUIControl)m_vecControls[x])).NeedRefresh()) return true;
+			try
+			{
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					if (((GUIControl)((GUIControl)m_vecControls[x])).NeedRefresh()) return true;
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("NeedRefresh exception:{0}", ex.ToString());
 			}
 			return false;
 		}
@@ -185,60 +199,68 @@ namespace MediaPortal.GUI.Library
 		{
       lock (this)
       {
-        GUIMessage msg;
-        // mouse moved, check which control has the focus
-        if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
-        {
-          for (int i=0; i < m_vecControls.Count;++i)
-          {
-            GUIControl control =(GUIControl )m_vecControls[i];
-            bool bFocus;
-            int controlID;
-            if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
-            {	
-              if (!bFocus)
-              {
-                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlID, 0, 0, null);
-                OnMessage(msg);
-                control.HitTest((int)action.fAmount1, (int)action.fAmount2,out controlID, out bFocus);
-              }
-              control.OnAction(action);
-              return;
-            }
-          }
-          return;
-        }
-        // mouse clicked if there is a hit pass the action
-        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
-        {
-          for (int i=0; i < m_vecControls.Count;++i)
-          {
-            GUIControl control =(GUIControl )m_vecControls[i];
-            bool bFocus;
-            int controlID;
-            if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
-            {	
-              GUIControl cntl=GetControl(controlID);
-              cntl.OnAction(action);
-              return;
-            }
-          }
-          return;
-        }
-  			
+				try
+				{
+					GUIMessage msg;
+					// mouse moved, check which control has the focus
+					if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
+					{
+						for (int i=0; i < m_vecControls.Count;++i)
+						{
+							GUIControl control =(GUIControl )m_vecControls[i];
+							bool bFocus;
+							int controlID;
+							if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
+							{	
+								if (!bFocus)
+								{
+									msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlID, 0, 0, null);
+									OnMessage(msg);
+									control.HitTest((int)action.fAmount1, (int)action.fAmount2,out controlID, out bFocus);
+								}
+								control.OnAction(action);
+								return;
+							}
+						}
+						return;
+					}
+					// mouse clicked if there is a hit pass the action
+					if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
+					{
+						for (int i=0; i < m_vecControls.Count;++i)
+						{
+							GUIControl control =(GUIControl )m_vecControls[i];
+							bool bFocus;
+							int controlID;
+							if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
+							{	
+								GUIControl cntl=GetControl(controlID);
+								cntl.OnAction(action);
+								return;
+							}
+						}
+						return;
+					}
+	  			
 
-        // send the action to the control which has the focus
-        GUIControl cntlFoc = GetControl(GetFocusControlId() );
-        if (cntlFoc!=null)
-        {
-          cntlFoc.OnAction(action);
-          return;
-        }
+					// send the action to the control which has the focus
+					GUIControl cntlFoc = GetControl(GetFocusControlId() );
+					if (cntlFoc!=null)
+					{
+						cntlFoc.OnAction(action);
+						return;
+					}
 
-        // no control has focus?
-        // set focus to the default control then
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
-        OnMessage(msg);
+					// no control has focus?
+					// set focus to the default control then
+					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
+					OnMessage(msg);
+
+				}
+				catch(Exception ex)
+				{
+					Log.Write("OnAction exception:{0}", ex.ToString());
+				}
       }
 		}
 
@@ -259,70 +281,78 @@ namespace MediaPortal.GUI.Library
 		{
       lock (this)
       {
-        switch (message.Message)
-        {
-            // Initialize the window.
-          case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
-          {
+				try
+				{
+					switch (message.Message)
+					{
+							// Initialize the window.
+						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
+						{
 
-            LoadSkin();
-            AllocResources();
-            InitControls();
-            GUIGraphicsContext.Overlay = m_bAllowOverlay;
-            if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
-            {
-              if (message.Param1 != GetID)
-                m_dwPreviousWindowId = message.Param1;
-            }
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
-            OnMessage(msg);
+							LoadSkin();
+							AllocResources();
+							InitControls();
+							GUIGraphicsContext.Overlay = m_bAllowOverlay;
+							if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
+							{
+								if (message.Param1 != GetID)
+									m_dwPreviousWindowId = message.Param1;
+							}
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
+							OnMessage(msg);
 
-            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
+							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
 
-            Log.Write( "window:{0} init", this.ToString());
-          }
-            return true;
-            // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
-      
-            // Cleanup and free resources
-          case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-          {
-            Log.Write( "window:{0} deinit", this.ToString());
-            FreeResources();
-            DeInitControls();
-            GUITextureManager.CleanupThumbs();
-            GC.Collect();
-            return true;
-          }
-  				
-            // Set the focus on the correct control
-          case GUIMessage.MessageType.GUI_MSG_SETFOCUS : 
-          {
-            if (GetFocusControlId() == message.TargetControlId) return true;
+							Log.Write( "window:{0} init", this.ToString());
+						}
+							return true;
+							// TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
+	      
+							// Cleanup and free resources
+						case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
+						{
+							Log.Write( "window:{0} deinit", this.ToString());
+							FreeResources();
+							DeInitControls();
+							GUITextureManager.CleanupThumbs();
+							GC.Collect();
+							return true;
+						}
+	  				
+							// Set the focus on the correct control
+						case GUIMessage.MessageType.GUI_MSG_SETFOCUS : 
+						{
+							if (GetFocusControlId() == message.TargetControlId) return true;
 
-            if (message.TargetControlId > 0)
-            {
-              GUIControl cntlFocused= GetControl(GetFocusControlId());					
-              if (cntlFocused!=null) 
-              {
-                GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID, cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
-                cntlFocused.OnMessage(msgLostFocus);
-              }
-              GUIControl cntTarget=GetControl(message.TargetControlId);
-              if (cntTarget!=null)
-              {
-                cntTarget.OnMessage(message);
-              }
-            }
-            return true;
-          }
-        }
-      
-        GUIControl cntlTarget=GetControl(message.TargetControlId);
-        if (cntlTarget!=null)
-        {
-          return cntlTarget.OnMessage(message);
-        }
+							if (message.TargetControlId > 0)
+							{
+								GUIControl cntlFocused= GetControl(GetFocusControlId());					
+								if (cntlFocused!=null) 
+								{
+									GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID, cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
+									cntlFocused.OnMessage(msgLostFocus);
+								}
+								GUIControl cntTarget=GetControl(message.TargetControlId);
+								if (cntTarget!=null)
+								{
+									cntTarget.OnMessage(message);
+								}
+							}
+							return true;
+						}
+					}
+	      
+					GUIControl cntlTarget=GetControl(message.TargetControlId);
+					if (cntlTarget!=null)
+					{
+						return cntlTarget.OnMessage(message);
+					}
+
+				}
+				catch(Exception ex)
+				{
+					Log.Write("OnMessage exception:{0}", ex.ToString());
+				}
         return false;
       }
 		}
@@ -333,7 +363,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="control">new control to add</param>
 		public void Add(ref GUIControl control)
 		{
-      control.WindowId = GetID;
+      if (control==null) return;
+			control.WindowId = GetID;
 			m_vecControls.Add(control);
 		}
 
@@ -355,7 +386,8 @@ namespace MediaPortal.GUI.Library
         {
           if (control.GetID == dwId)
           {
-            m_vecControls.RemoveAt(index);
+						if (index >=0 && index < m_vecControls.Count)
+							m_vecControls.RemoveAt(index);
             return;
           }
         }
@@ -365,18 +397,32 @@ namespace MediaPortal.GUI.Library
 
     void InitControls()
     {
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-        ((GUIControl)m_vecControls[x]).OnInit();
-      }
+			try
+			{
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					((GUIControl)m_vecControls[x]).OnInit();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("InitControls exception:{0}", ex.ToString());
+			}
     }
     
     protected void DeInitControls()
     {
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-        ((GUIControl)m_vecControls[x]).OnDeInit();
-      }
+			try
+			{
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					((GUIControl)m_vecControls[x]).OnDeInit();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("DeInitControls exception:{0}", ex.ToString());
+			}
     }
 
 		/// <summary>
@@ -406,53 +452,6 @@ namespace MediaPortal.GUI.Library
       GUIControl cntl= GetControl ( GetFocusControlId() );
       if (cntl!=null) cntl.Focus=false;
     }
-/*
-		/// <summary>
-		/// Gives the focus to the next control
-		/// </summary>
-		public void SelectNextControl()
-		{
-			GUIControl control;
-			int i = GetFocusControl() + 1;
-			while (true)
-			{
-				if (i < 0 || i >= m_vecControls.Count)
-				{
-					i = 0;
-				}
-				control = (GUIControl)m_vecControls[i];
-				if (control.CanFocus()) break;
-				else i++;
-			}
-			control = (GUIControl)m_vecControls[i];
-			GUIMessage msgSetFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, control.GetID, 0, 0, null);
-			GUIGraphicsContext.SendMessage(msgSetFocus);
-		}
-
-		/// <summary>
-		/// Gives the focus to the previous control
-		/// </summary>
-		public void SelectPreviousControl()
-		{
-			GUIControl control;
-			int i = GetFocusControl() + 1;
-			while (true)
-			{
-				if (i < 0 || i >= (int)m_vecControls.Count)
-				{
-					i = (int)m_vecControls.Count;
-				}
-
-				control = (GUIControl)m_vecControls[i];
-				if (control.CanFocus()) break;
-				else i--;
-			}
-			control = (GUIControl)m_vecControls[i];
-			GUIMessage msgSetFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, control.GetID, 0, 0, null);
-			GUIGraphicsContext.SendMessage(msgSetFocus);
-		}
-*/
-    
 		/// <summary>
 		/// Return the id of this window
 		/// </summary>
@@ -502,18 +501,25 @@ namespace MediaPortal.GUI.Library
 		// 
 		public virtual void	AllocResources()
 		{
-			// tell every control we're gonna alloc the resources next
-			
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-				((GUIControl)m_vecControls[x]).PreAllocResources();
-			}
+			try
+			{
+				// tell every control we're gonna alloc the resources next
+				
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					((GUIControl)m_vecControls[x]).PreAllocResources();
+				}
 
-			// ask every control to alloc its resources
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-        ((GUIControl)m_vecControls[x]).AllocResources();
-      }
+				// ask every control to alloc its resources
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					((GUIControl)m_vecControls[x]).AllocResources();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("AllocResources exception:{0}", ex.ToString());
+			}
 		}
 
 		/// <summary>
@@ -522,10 +528,17 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void	FreeResources()
 		{
-			// tell every control to free its resources
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-				((GUIControl)m_vecControls[x]).FreeResources();
+			try
+			{
+				// tell every control to free its resources
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					((GUIControl)m_vecControls[x]).FreeResources();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("FreeResources exception:{0}", ex.ToString());
 			}
 		}
 		
@@ -534,9 +547,16 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void	ResetAllControls()
 		{
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-				((GUIControl)m_vecControls[x]).DoUpdate();
+			try
+			{
+				for (int x = 0; x < m_vecControls.Count; ++x)
+				{
+					((GUIControl)m_vecControls[x]).DoUpdate();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("ResetAllControls exception:{0}", ex.ToString());
 			}
 		}
 		
@@ -692,9 +712,9 @@ namespace MediaPortal.GUI.Library
     
     protected void LoadControl(XmlNode node, ArrayList controls)
     {
-		GUIControl newControl = GUIControlFactory.Create(m_dwWindowId, node);
-		newControl.WindowId = GetID;
-		controls.Add(newControl);
+			GUIControl newControl = GUIControlFactory.Create(m_dwWindowId, node);
+			newControl.WindowId = GetID;
+			controls.Add(newControl);
     }
 
 		/// <summary>

@@ -4,14 +4,18 @@ using System.Collections;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
-	/// GUIWindow.RestoreControlPositions
+	/// A class which implements a group
+	/// A group can hold 1 or more controls
+	/// and apply an animation to the entire group
 	/// </summary>
 	public class GUIGroup: GUIControl
 	{
-    protected ArrayList     m_Controls = new ArrayList();
+		//TODO: add comments
+		// Animation type
     [XMLSkinElement("animation")] Animator.AnimationType m_Animation=Animator.AnimationType.None;
-    protected bool          m_bStart=false;
-    protected Animator      m_animator;
+		protected ArrayList     m_Controls = new ArrayList(); //array list holding all controls
+		protected bool          m_bStart=false;								//boolean indicating if a new animation should be started
+    protected Animator      m_animator;										//class which does the animations
 
 		public GUIGroup()
 		{
@@ -20,6 +24,9 @@ namespace MediaPortal.GUI.Library
 		{
 		}
 
+		/// <summary>
+		/// Get/set animation type
+		/// </summary>
     public Animator.AnimationType Animation
     {
       get { return m_Animation;}
@@ -46,7 +53,10 @@ namespace MediaPortal.GUI.Library
 
     public GUIControl this[int index]
     {
-        get { return (GUIControl)m_Controls[index]; }
+        get { 
+					if (index<=0 || index>=m_Controls.Count) return null;
+					return (GUIControl)m_Controls[index]; 
+				}
     }
 
     public override void Render()
@@ -70,8 +80,8 @@ namespace MediaPortal.GUI.Library
           {
             for (int i=0; i < m_Controls.Count;++i)
             {
-              GUIControl cntl=(GUIControl)m_Controls[i];
-              cntl.Animate(m_animator);
+              GUIControl cntl=m_Controls[i] as GUIControl;
+              if (cntl!=null) cntl.Animate(m_animator);
             }
           }
         }
@@ -162,7 +172,8 @@ namespace MediaPortal.GUI.Library
         {
           if (control.GetID == dwId)
           {
-            m_Controls.RemoveAt(index);
+						if (index >=0 && index < m_Controls.Count)
+							m_Controls.RemoveAt(index);
             return;
           }
         }

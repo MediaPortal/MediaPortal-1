@@ -5,10 +5,18 @@ using System.Diagnostics;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
-	/// The class implementing a GUIButton.
+	/// The class implementing a button which consists of 3 parts
+	/// a left part, a middle part and a right part
+	/// These are presented as [ Left Middle Right ]
+	/// Each part has 2 images, 
+	/// 1 for the normal state
+	/// and 1 for the focused state
+	/// Further the button can have an image (icon) which can be positioned 
+	/// 
 	/// </summary>
 	public class GUIButton3PartControl : GUIControl
 	{
+		//TODO: make use of GUILabelControl to draw all text
 		protected GUIImage               m_imgFocusLeft=null;
     protected GUIImage               m_imgNoFocusLeft=null;  
     protected GUIImage               m_imgFocusMid=null;
@@ -84,56 +92,27 @@ namespace MediaPortal.GUI.Library
       m_strText1=GUIPropertyManager.Parse(m_strLabel1);
       m_strText2=GUIPropertyManager.Parse(m_strLabel2);
 
-			// The GUIButton3PartControl has the focus
+			// if the GUIButton3PartControl has the focus
 			if (Focus)
 			{
-				// Calculate the Alpha channel.
-				int dwAlphaCounter = m_dwFrameCounter+2;
-				int dwAlphaChannel;
-				if ((dwAlphaCounter%128)>=64)
-					dwAlphaChannel = dwAlphaCounter%64;
-				else
-					dwAlphaChannel = 63-(dwAlphaCounter%64);
-
-				dwAlphaChannel += 192;
-				// Set the Alpha channel.
-				//SetAlpha(dwAlphaChannel );
-				// Make the correct GUIImage visible
-				m_imgFocusLeft.IsVisible=true;
-        m_imgFocusMid.IsVisible=true;
-        m_imgFocusRight.IsVisible=true;
-        m_imgNoFocusLeft.IsVisible=false;
-        m_imgNoFocusMid.IsVisible=false;
-        m_imgNoFocusRight.IsVisible=false;
+				//render the focused images
+				m_imgFocusLeft.Render();
+				m_imgFocusMid.Render();
+				m_imgFocusRight.Render();
         m_dwFrameCounter++;
 			}
 			else 
 			{
-				// Disable the Alpha channel.
-				//SetAlpha(0xff);
-				// Make the correct GUIImage visible
-				m_imgFocusLeft.IsVisible=false;
-        m_imgFocusMid.IsVisible=false;
-        m_imgFocusRight.IsVisible=false;
-        m_imgNoFocusLeft.IsVisible=true;
-        m_imgNoFocusMid.IsVisible=true;
-        m_imgNoFocusRight.IsVisible=true;
+				//else render the non-focus images
+				m_imgNoFocusLeft.Render();  		
+				m_imgNoFocusMid.Render();  		
+				m_imgNoFocusRight.Render();
       }
-			// render both so the visibility settings cause the frame counter to reset correctly
-      if (Focus)
-      {
-        m_imgFocusLeft.Render();
-        m_imgFocusMid.Render();
-        m_imgFocusRight.Render();
-      }
-      else
-      {
-        m_imgNoFocusLeft.Render();  		
-        m_imgNoFocusMid.Render();  		
-        m_imgNoFocusRight.Render();  		
-      }
-      m_imgIcon.Render();
-      // render the text on the button
+
+			//render the icon
+      if (m_imgIcon!=null) m_imgIcon.Render();
+
+			// render the 1st line of text on the button
       int iWidth=m_imgNoFocusMid.Width;
 			if (m_strText1.Length > 0 && m_pFont1!=null)
 			{
@@ -143,7 +122,9 @@ namespace MediaPortal.GUI.Library
 				else
 					m_pFont1.DrawTextWidth((float)xoff+m_dwPosX, (float)m_iTextOffsetY1+m_dwPosY,m_dwTextColor2,m_strText1,iWidth, GUIControl.Alignment.ALIGN_LEFT);
 			}
-      if (m_strText2.Length > 0 && m_pFont2!=null)
+      
+			// render the 2nd line of text on the button
+			if (m_strText2.Length > 0 && m_pFont2!=null)
       {
         int xoff=m_iTextOffsetX2+m_imgNoFocusLeft.TextureWidth;
         if (Disabled )
@@ -165,13 +146,15 @@ namespace MediaPortal.GUI.Library
 			GUIMessage message ;
       if (Focus)
       {
+				//is the button clicked?
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
-					// If this button contains scriptactions call the scriptactions.
+					// yes,
+					//If this button contains scriptactions call the scriptactions.
           if (m_strApplication.Length!=0)
           {
+							//button should start an external application, so start it
               Process proc = new Process();
-
               string strWorkingDir=System.IO.Path.GetFullPath(m_strApplication);
               string strFileName=System.IO.Path.GetFileName(m_strApplication);
               strWorkingDir=strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length+1) );
@@ -187,9 +170,11 @@ namespace MediaPortal.GUI.Library
 					// If this links to another window go to the window.
           if (m_lHyperLinkWindowID >=0)
           {
+						//then switch to the other window
             GUIWindowManager.ActivateWindow((int)m_lHyperLinkWindowID);
             return;
           }
+
 					// If this button corresponds to an action generate that action.
           if (ActionID >=0)
           {
@@ -197,8 +182,9 @@ namespace MediaPortal.GUI.Library
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
+
           // button selected.
-          // send a message
+          // send a message to the parent window
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID,0,0,null );
           GUIGraphicsContext.SendMessage(message);
         }
@@ -275,34 +261,6 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Sets the position of the control.
-		/// </summary>
-		/// <param name="dwPosX">The X position.</param>
-		/// <param name="dwPosY">The Y position.</param>		
-		public override void SetPosition(int dwPosX, int dwPosY)
-		{
-			base.SetPosition(dwPosX, dwPosY);
-
-      Update();
-      
-    }
-
-		/// <summary>
-		/// Changes the alpha transparency component of the colordiffuse.
-		/// </summary>
-		/// <param name="dwAlpha">The new value of the colordiffuse.</param>
-		public override void SetAlpha(int dwAlpha)
-		{
-			base.SetAlpha(dwAlpha);
-			m_imgFocusLeft.SetAlpha(dwAlpha);
-      m_imgFocusMid.SetAlpha(dwAlpha);
-      m_imgFocusRight.SetAlpha(dwAlpha);
-      m_imgNoFocusLeft.SetAlpha(dwAlpha);
-      m_imgNoFocusMid.SetAlpha(dwAlpha);
-      m_imgNoFocusRight.SetAlpha(dwAlpha);
-    }
-
-		/// <summary>
 		/// Get/set the color of the text when the GUIButton3PartControl is disabled.
 		/// </summary>
 		public long DisabledColor
@@ -348,12 +306,20 @@ namespace MediaPortal.GUI.Library
       get {return m_imgFocusRight.FileName;} 
       set { m_imgFocusRight.SetFileName(value);}
     }
+
+		/// <summary>
+		/// Get/set the filename of the icon texture
+		/// </summary>
     public string TexutureIcon
     {
-      get { return m_imgIcon.FileName;}
+      get { 
+				if (m_imgIcon==null) return String.Empty;
+				return m_imgIcon.FileName;
+			}
       set
       {
-        m_imgIcon.SetFileName(value);
+				if (m_imgIcon!=null)
+					m_imgIcon.SetFileName(value);
       }
     }
 		
@@ -376,13 +342,28 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string FontName1
 		{ 
-			get { return m_pFont1.FontName; }
-			set { m_pFont1 = GUIFontManager.GetFont(value);}
+			get { 
+				if (m_pFont1==null) return String.Empty;
+				return m_pFont1.FontName; 
+			}
+			set { 
+				if (value==null) return;
+				if (value==String.Empty) return;
+				m_pFont1 = GUIFontManager.GetFont(value);
+			}
 		}
+
     public string FontName2
     { 
-      get { return m_pFont2.FontName; }
-      set { m_pFont2 = GUIFontManager.GetFont(value);}
+      get { 
+				if (m_pFont2==null) return String.Empty;
+				return m_pFont2.FontName; 
+			}
+      set { 
+				if (value==null) return;
+				if (value==String.Empty) return;
+				m_pFont2 = GUIFontManager.GetFont(value);
+			}
     }
 
 		/// <summary>
@@ -546,30 +527,33 @@ namespace MediaPortal.GUI.Library
       m_imgNoFocusMid.SetPosition  (m_dwPosX +m_imgFocusLeft.TextureWidth, m_dwPosY);
       m_imgNoFocusRight.SetPosition(m_dwPosX +m_dwWidth-m_imgFocusRight.TextureWidth, m_dwPosY);
 
+			m_imgFocusLeft.DoUpdate();
+			m_imgFocusMid.DoUpdate();
+			m_imgFocusRight.DoUpdate();
+			m_imgNoFocusLeft.DoUpdate();
+			m_imgNoFocusMid.DoUpdate();
+			m_imgNoFocusRight.DoUpdate();
       
 
 
-      if (m_dwWidth<m_imgIcon.TextureWidth)
-        m_imgIcon.IsVisible=false;
-      else
-        m_imgIcon.IsVisible=true;
+			if (m_imgIcon!=null)
+			{
+				if (m_dwWidth<m_imgIcon.TextureWidth)
+					m_imgIcon.IsVisible=false;
+				else
+					m_imgIcon.IsVisible=true;
 
-      if (IconOffsetY<0 || IconOffsetX<0)
-      {
-        m_imgIcon.SetPosition(m_dwPosX+(m_dwWidth)  - (m_imgIcon.TextureWidth + m_imgIcon.TextureWidth/2),
-          m_dwPosY+(m_dwHeight/2) - (m_imgIcon.TextureHeight/2) );
-      }
-      else
-      {
-        m_imgIcon.SetPosition(m_dwPosX+IconOffsetX,m_dwPosY+IconOffsetY );
-      }
-      m_imgFocusLeft.DoUpdate();
-      m_imgFocusMid.DoUpdate();
-      m_imgFocusRight.DoUpdate();
-      m_imgNoFocusLeft.DoUpdate();
-      m_imgNoFocusMid.DoUpdate();
-      m_imgNoFocusRight.DoUpdate();
-      m_imgIcon.DoUpdate();
+				if (IconOffsetY<0 || IconOffsetX<0)
+				{
+					m_imgIcon.SetPosition(m_dwPosX+(m_dwWidth)  - (m_imgIcon.TextureWidth + m_imgIcon.TextureWidth/2),
+																m_dwPosY+(m_dwHeight/2) - (m_imgIcon.TextureHeight/2) );
+				}
+				else
+				{
+					m_imgIcon.SetPosition(m_dwPosX+IconOffsetX,m_dwPosY+IconOffsetY );
+				}
+				m_imgIcon.DoUpdate();
+			}
     }
 
 		public void Refresh()
@@ -577,44 +561,64 @@ namespace MediaPortal.GUI.Library
 			Update();
 		}
 
+		/// <summary>
+		/// Get/Set the the application filename
+		/// which should be launched when this button gets clicked
+		/// </summary>
 	  public string Application
 	  {
 	    get { return m_strApplication; }
 	    set { m_strApplication = value; }
 	  }
 
+		/// <summary>
+		/// Get/Set the arguments for the application
+		/// which should be launched when this button gets clicked
+		/// </summary>
 	  public string Arguments
 	  {
 	    get { return m_strArguments; }
 	    set { m_strArguments = value; }
 	  }
 	
+		/// <summary>
+		/// Get/Set the x-position of the icon
+		/// </summary>
     public int IconOffsetX
     {
       get { return m_iIconOffsetX; }
       set { m_iIconOffsetX = value; }
     }
 	
+		/// <summary>
+		/// Get/Set the y-position of the icon
+		/// </summary>
     public int IconOffsetY
     {
       get { return m_iIconOffsetY; }
       set { m_iIconOffsetY= value; }
     }
 	
+		/// <summary>
+		/// Get/Set the width of the icon
+		/// </summary>
     public int IconWidth
     {
       get { return m_iIconWidth; }
       set { 
         m_iIconWidth= value; 
-        m_imgIcon.Width=m_iIconWidth;
+        if (m_imgIcon!=null) m_imgIcon.Width=m_iIconWidth;
       }
     }
+		/// <summary>
+		/// Get/Set the height of the icon
+		/// </summary>
     public int IconHeight
     {
       get { return m_iIconHeight; }
       set { 
         m_iIconHeight= value; 
-        m_imgIcon.Height=m_iIconHeight;
+        if (m_imgIcon!=null) m_imgIcon.Height=m_iIconHeight;
       }
     }
   }

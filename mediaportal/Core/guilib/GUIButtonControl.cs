@@ -13,8 +13,6 @@ namespace MediaPortal.GUI.Library
 	{
 		[XMLSkinElement("textureFocus")]	protected string	m_strImgFocusTexture="";
 		[XMLSkinElement("textureNoFocus")]	protected string	m_strImgNoFocusTexture="";
-											protected GUIImage	m_imgFocus=null;
-											protected GUIImage  m_imgNoFocus=null;  
 		[XMLSkinElement("font")]			protected string	m_strFontName;
 		[XMLSkinElement("label")]			protected string	m_strLabel="";
 		[XMLSkinElement("textcolor")]		protected long  	m_dwTextColor=0xFFFFFFFF;
@@ -27,9 +25,10 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("application")]		protected string    m_strApplication="";
 		[XMLSkinElement("arguments")]		protected string    m_strArguments="";
     protected int       m_dwFrameCounter=0;
-    
-    
+		protected GUIImage	m_imgFocus=null;
+		protected GUIImage  m_imgNoFocus=null; 
     GUILabelControl     m_label=null;
+
 		public GUIButtonControl(int dwParentID) : base(dwParentID)
 		{
 		}
@@ -52,6 +51,11 @@ namespace MediaPortal.GUI.Library
 			m_strImgNoFocusTexture = strTextureNoFocus;
 			FinalizeConstruction();
 		}
+
+		/// <summary>
+		/// This method gets called when the control is created and all properties has been set
+		/// It allows the control todo any initialization
+		/// </summary>
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction();
@@ -64,11 +68,13 @@ namespace MediaPortal.GUI.Library
       m_imgFocus.Filtering=false;
       m_imgNoFocus.Filtering=false;
 			GUILocalizeStrings.LocalizeLabel(ref m_strLabel);
-      
-      
       m_label = new GUILabelControl(m_dwParentID,0,m_dwPosX,m_dwPosY,m_dwWidth, m_dwHeight,m_strFontName,m_strLabel,m_dwTextColor,GUIControl.Alignment.ALIGN_LEFT,false);
 		}
 
+		/// <summary>
+		/// This method gets called when the control is created and all properties has been set
+		/// It allows the control to scale itself to the current screen resolution
+		/// </summary>
 		public override void ScaleToScreenResolution()
 		{
 			base.ScaleToScreenResolution();
@@ -89,32 +95,16 @@ namespace MediaPortal.GUI.Library
 			// The GUIButtonControl has the focus
 			if (Focus)
 			{
-        /*
-				// Calculate the Alpha channel.
-				int dwAlphaCounter = m_dwFrameCounter+2;
-				int dwAlphaChannel;
-				if ((dwAlphaCounter%128)>=64)
-					dwAlphaChannel = dwAlphaCounter%64;
-				else
-					dwAlphaChannel = 63-(dwAlphaCounter%64);
-
-				dwAlphaChannel += 192;
-				// Set the Alpha channel.
-				SetAlpha(dwAlphaChannel );
-				// Make the correct GUIImage visible
-				m_dwFrameCounter++;
-        */
-        m_imgFocus.Render();
+				//render the focused image
+				m_imgFocus.Render();
       }
 			else 
 			{
-				// Disable the Alpha channel.
-				//SetAlpha(0xff);
+				//render the non-focused image
         m_imgNoFocus.Render();  		
       }
+
 			// render the text on the button
-      
-			
       if (Disabled )
       {
         m_label.TextColor=m_dwDisabledColor;
@@ -146,7 +136,8 @@ namespace MediaPortal.GUI.Library
 					// If this button contains scriptactions call the scriptactions.
           if (m_strApplication.Length!=0)
           {
-              Process proc = new Process();
+							//button should start an external application, so start it
+							Process proc = new Process();
 
               string strWorkingDir=System.IO.Path.GetFullPath(m_strApplication);
               string strFileName=System.IO.Path.GetFileName(m_strApplication);
@@ -175,14 +166,16 @@ namespace MediaPortal.GUI.Library
           }
           
           // button selected.
-          // send a message
           if (SubItemCount>0)
           {
+						// if we got subitems, then change the label of the control to the next
+						//subitem
             SelectedItem++;
             if (SelectedItem >= SubItemCount) SelectedItem=0;
             Label=(string)GetSubItem(SelectedItem);
           }
 
+					// send a message to anyone interested 
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID,0,0,null );
           GUIGraphicsContext.SendMessage(message);
         }
@@ -425,18 +418,33 @@ namespace MediaPortal.GUI.Library
 			Update();
 		}
 
+		/// <summary>
+		/// Get/Set the the application filename
+		/// which should be launched when this button gets clicked
+		/// </summary>
 	  public string Application
 	  {
 	    get { return m_strApplication; }
 	    set { m_strApplication = value; }
 	  }
 
-	  public string Arguments
+		/// <summary>
+		/// Get/Set the arguments for the application
+		/// which should be launched when this button gets clicked
+		/// </summary>
+		public string Arguments
 	  {
 	    get { return m_strArguments; }
 	    set { m_strArguments = value; }
 	  }
 
+		/// <summary>
+		/// get/set the current selected item
+		/// A button can have 1 or more subitems
+		/// each subitem has its own text to render on the button
+		/// When the user presses the button, the next item will be selected
+		/// and shown on the button
+		/// </summary>
     public override int SelectedItem
     {
       get { return m_SelectedItem;}
@@ -444,7 +452,7 @@ namespace MediaPortal.GUI.Library
         if (SubItemCount>0)
         {
           m_SelectedItem=value;
-          if (m_SelectedItem >= SubItemCount) m_SelectedItem=0;
+          if (m_SelectedItem<0 || m_SelectedItem >= SubItemCount) m_SelectedItem=0;
           Label=(string)GetSubItem(m_SelectedItem);
         }
         else m_SelectedItem=0;

@@ -9,13 +9,18 @@ namespace MediaPortal.GUI.Library
 {
   /// <summary>
   /// A datastructure for caching textures.
+  /// This is used by the GUITextureManager which keeps a cache of all textures in use
   /// </summary>
   public class CachedTexture 
   {
+		/// <summary>
+		/// Class which contains a single frame
+		/// A cached texture can contain more then 1 frames for example when its an animated gif
+		/// </summary>
     public class Frame 
     {
-      Texture _Image;
-      int     _Duration;
+      Texture _Image;			//texture of current frame
+      int     _Duration;	//duration of current frame
       
       public Frame(Texture image, int duration)
       {
@@ -23,6 +28,9 @@ namespace MediaPortal.GUI.Library
         _Duration = duration;
       }
 
+			/// <summary>
+			/// Property to get/set the texture
+			/// </summary>
       public Texture Image
       {
         get { return _Image;}
@@ -36,6 +44,10 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+			/// <summary>
+			/// property to get/set the duration for this frame
+			/// (only usefull if the frame belongs to an animation, like an animated gif)
+			/// </summary>
       public int Duration
       {
         get { return _Duration;}
@@ -58,12 +70,12 @@ namespace MediaPortal.GUI.Library
       #endregion
     }
 
-    string    m_strName="";
-    ArrayList m_textures=new ArrayList();
-    int       m_iWidth=0;
-    int       m_iHeight=0;
-    int       m_iFrames=0;
-    Image     m_Image=null;
+    string    m_strName="";								// filename of the texture
+    ArrayList m_Frames=new ArrayList();	  // array to hold all frames
+    int       m_iWidth=0;									// width of the texture
+    int       m_iHeight=0;								// height of the texture
+    int       m_iFrames=0;								// number of frames in the animation
+    Image     m_Image=null;								// GDI image of the texture
 
 		/// <summary>
 		/// The (emtpy) constructor of the CachedTexture class.
@@ -83,20 +95,25 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Get/set the DirectX texture corresponding to the file.
+		/// Get/set the DirectX texture for the 1st frame
 		/// </summary>
     public Frame texture
     {
-      get { return (Frame )m_textures[0];}
-      set { 
+      get 
+			{ 
+				if (m_Frames.Count==0) return null;
+				return (Frame )m_Frames[0];
+			}
+      set 
+			{ 
           Dispose();      // cleanup..
-          m_textures.Clear();
-          m_textures.Add(value);
+          m_Frames.Clear();
+          m_Frames.Add(value);
       }
     }
 
 		/// <summary>
-		/// Get/set the Image containing the texture.
+		/// Get/set the GDI Image 
 		/// </summary>
     public Image image
     {
@@ -139,25 +156,28 @@ namespace MediaPortal.GUI.Library
     }
 
 		/// <summary>
-		/// Get/set textures individual textures.
+		/// indexer to get a Frame or to set a Frame
 		/// </summary>
     public Frame this [int index]
     {
       get 
       {
-        return (Frame)m_textures[index];
+				if (index <0 || index >= m_Frames.Count) return null;
+        return (Frame)m_Frames[index];
       }
       set 
       {
-        if (m_textures.Count <= index)
-          m_textures.Add(value);
+				if (index <0) return;
+
+        if (m_Frames.Count <= index)
+          m_Frames.Add(value);
         else
         {
-          Frame frame=(Frame)m_textures[index];
+          Frame frame=(Frame)m_Frames[index];
           if (frame!=value)
           {
             frame.Dispose();
-            m_textures[index]=value;
+            m_Frames[index]=value;
           }
         }
       }
@@ -169,11 +189,11 @@ namespace MediaPortal.GUI.Library
     public void Dispose()
     {
 
-      foreach (Frame tex in m_textures)
+      foreach (Frame tex in m_Frames)
       {
         tex.Dispose();
       }
-      m_textures.Clear();
+      m_Frames.Clear();
       if (m_Image!=null)
       {
         m_Image.Dispose();

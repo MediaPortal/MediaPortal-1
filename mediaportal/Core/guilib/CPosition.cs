@@ -7,9 +7,9 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class CPosition
 	{
-		private GUIControl m_control=null;
-		private int  m_iPosX=0;
-		private int  m_iPosY=0;
+		private GUIControl m_control=null;		// control to which this structure applies
+		private int  m_iPosX=0;							  // x-coordinate of the control
+		private int  m_iPosY=0;								// y-coordinate of the control
 
 		/// <summary>
 		/// The (empty) constructor of the CPosition class.
