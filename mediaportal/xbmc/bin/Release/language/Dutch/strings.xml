@@ -1223,7 +1223,7 @@
 	</string>
 	<string>
 		<id>377</id>
-		<value>licht</value>
+		<value>lichte</value>
 	</string>
 	<string>
 		<id>378</id>
@@ -2314,8 +2314,12 @@
   	<value>Kan geen verbinding maken met MSN</value>
   </string>
   <string>
-  	<id>906</id>
+  	<id>908</id>
   	<value>is een bericht aan het typen...</value>
+  </string>
+  <string>
+  	<id>909</id>
+  	<value>Verbinding zoeken...</value>
   </string>
   <string>
   	<id>1440</id>
