@@ -86,8 +86,6 @@ new plugins:
   - my TV-series
   
 General:
-  - option to turn plugins on/off
-  - Auto add & Show plugin on mainscreen / home.xml?
 
   - show properties in skin: 
      - tv/recording properties
