@@ -367,29 +367,32 @@ namespace MediaPortal.Player
 
 
 
-				if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
+				if (IsTimeShifting)
 				{
-					Pause();
-				}
+					if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
+					{
+						Pause();
+					}
 
-				if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-				{
-					Speed=1;
-				}
-				if (Speed>1 && CurrentPosition+5d >=Duration) 
-				{
-					Speed=1;
-					SeekAsolutePercentage(99);
-				}
-				if (Speed<0 && CurrentPosition<5d)
-				{
-					Speed=1;
-					SeekAsolutePercentage(0);
-				}
-				if (Speed<0 && CurrentPosition > m_dLastPosition)
-				{
-					Speed=1;
-					SeekAsolutePercentage(0);
+					if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
+					{
+						Speed=1;
+					}
+					if (Speed>1 && CurrentPosition+5d >=Duration) 
+					{
+						Speed=1;
+						SeekAsolutePercentage(99);
+					}
+					if (Speed<0 && CurrentPosition<5d)
+					{
+						Speed=1;
+						SeekAsolutePercentage(0);
+					}
+					if (Speed<0 && CurrentPosition > m_dLastPosition)
+					{
+						Speed=1;
+						SeekAsolutePercentage(0);
+					}
 				}
 				m_dLastPosition=CurrentPosition;
 				
