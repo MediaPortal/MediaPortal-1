@@ -189,11 +189,11 @@ namespace MediaPortal.TV.Recording
 		{
 			if (currentFrequencyIndex >=frequencies.Count) return;
 
-			int[] tmp = (int[])frequencies[currentFrequencyIndex];
+			int[] tmp;
 			if (currentFrequencyIndex<0)
 			{
 				currentOffset=0;
-				currentFrequencyIndex++;
+				currentFrequencyIndex=0;
 				if (currentFrequencyIndex>=frequencies.Count)
 				{
 					timer1.Enabled=false;
@@ -202,8 +202,14 @@ namespace MediaPortal.TV.Recording
 					captureCard.DeleteGraph();
 					return;
 				}
+
+				tmp = (int[])frequencies[currentFrequencyIndex];
+				Log.Write("tune:{0}",tunedFrequency);
+				captureCard.Tune(tunedFrequency);
 				return;
 			}
+
+			tmp = (int[])frequencies[currentFrequencyIndex];
 			tunedFrequency=tmp[0];
 			if (currentOffset==0)
 			{
