@@ -416,6 +416,9 @@ namespace MediaPortal.TV.Database
             }
             string strManual=GUILocalizeStrings.Get(413);
 						if (this.Title.Length==0 || String.Compare(this.Title,strManual,true)==0) return true;
+						
+						strManual=GUILocalizeStrings.Get(736);
+						if (this.Title.Length==0 || String.Compare(this.Title,strManual,true)==0) return true;
             return false;
 					}
 				break;
