@@ -205,10 +205,10 @@ namespace MediaPortal
     private void btnOk_Click(object sender, System.EventArgs e)
     {
      
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-			{
-				xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
-			}
+			//using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			//{
+			//	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
+			//}
 			TVChannels.UpdateList();
       this.Close();
     }
@@ -235,11 +235,11 @@ namespace MediaPortal
 			btnOk.Enabled=false;
 			UpdateList();
 			GUIGraphicsContext.form=this;
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-			{
-				videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
-				xmlreader.SetValue("mytv", "vmr9","0");
-			}
+//			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+//			{
+//				videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
+//				xmlreader.SetValue("mytv", "vmr9","0");
+			//}
       GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
       
 			tuningInterface.AutoTuneTV(captureCard,this);
