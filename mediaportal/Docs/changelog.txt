@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  14-06-2004  my videos   : added : press 0 to remove video from database in my videos/titles
+  14-06-2004  my radio    : fixed : enter frequencies in file->setup in MHz
   14-06-2004  my tv       : fixed : 100% cpu usage in my tv module when no capture cards where installed
   
   13-06-2004  my video    : added : progressbar to video osd

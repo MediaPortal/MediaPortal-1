@@ -3975,7 +3975,12 @@ namespace MediaPortal
         if (station.URL!="") strType="Stream";
         ListViewItem newItem=listViewRadio.Items.Add(strType);
         newItem.SubItems.Add(station.Name);
-        newItem.SubItems.Add(station.Channel.ToString());
+
+        double dFreq=Convert.ToDouble(station.Channel);
+        dFreq /=1000000d;
+        string strFreq=dFreq.ToString();
+
+        newItem.SubItems.Add(strFreq);
         newItem.SubItems.Add(station.Genre);
         newItem.SubItems.Add(station.BitRate.ToString());
         newItem.SubItems.Add(station.URL);
@@ -4013,7 +4018,35 @@ namespace MediaPortal
         ListViewItem item=listViewRadio.Items[i];
         RadioStation station = new RadioStation();
         station.Name=item.SubItems[1].Text;
-        station.Channel=GetInt(item.SubItems[2].Text);
+
+        string strFreq=item.SubItems[2].Text;
+        long lFreq=0;
+        double dTmp=2.50;
+        string strTst=dTmp.ToString();
+        if (strTst.IndexOf(".")>0)
+          strFreq=strFreq.Replace("," , ".");
+        else 
+          strFreq=strFreq.Replace("." , ",");
+        if (strFreq.IndexOf(".") >0  || strFreq.IndexOf(",") >0 )
+        {
+          double dFreq;
+          dFreq=Convert.ToDouble(strFreq);
+          dFreq*= (1000000d);
+          lFreq=(long)dFreq;
+        }
+        else
+        {
+          try
+          {
+            lFreq=Int64.Parse(strFreq);
+            if (lFreq<1000) lFreq *= 1000000L;
+          }
+          catch (Exception)
+          {
+          }
+        }
+
+        station.Channel=(int)lFreq;
         station.Genre=item.SubItems[3].Text;
         station.BitRate=GetInt(item.SubItems[4].Text);
         station.URL=item.SubItems[5].Text;
@@ -4074,7 +4107,11 @@ namespace MediaPortal
 
         ListViewItem newItem=listViewRadio.Items.Add(strType);
         newItem.SubItems.Add(station.Name);
-        newItem.SubItems.Add(station.Channel.ToString());
+        double dFreq=Convert.ToDouble(station.Channel);
+        dFreq /=1000000d;
+        string strFreq=dFreq.ToString();
+
+        newItem.SubItems.Add(strFreq);
         newItem.SubItems.Add(station.Genre);
         newItem.SubItems.Add(station.BitRate.ToString());
         newItem.SubItems.Add(station.URL);
