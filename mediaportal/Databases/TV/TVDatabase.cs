@@ -1910,7 +1910,7 @@ namespace MediaPortal.TV.Database
 					{
 						// doesnt exists, add it
 						strSQL=String.Format("insert into dvbtchannels (idChannel, strChannel , iLCN , frequency , bandwidth , ONID , TSID , SID , Visible) Values( NULL, '{0}', {1}, '{2}',{3},{4},{5},{6},1)",strChannel,idChannel,frequency,0,ONID,TSID,SID);
-						Log.Write("sql:{0}", strSQL);
+						//Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
 						return idChannel;
@@ -1918,7 +1918,7 @@ namespace MediaPortal.TV.Database
 					else
 					{
 						strSQL=String.Format( "update dvbtchannels set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}' where iLCN like '{5}'", frequency,ONID,TSID,SID,strChannel, idChannel);
-						Log.Write("sql:{0}", strSQL);
+					//	Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
 					}

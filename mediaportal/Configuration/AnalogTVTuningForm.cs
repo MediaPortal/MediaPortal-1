@@ -157,7 +157,7 @@ namespace MediaPortal
 			// 
 			this.progressBar1.Location = new System.Drawing.Point(24, 64);
 			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(480, 8);
+			this.progressBar1.Size = new System.Drawing.Size(472, 16);
 			this.progressBar1.TabIndex = 9;
 			// 
 			// AnalogTVTuningForm

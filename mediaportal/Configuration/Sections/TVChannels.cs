@@ -110,10 +110,11 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(456, 432);
+			this.groupBox1.Size = new System.Drawing.Size(464, 440);
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Settings";
+			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
 			// 
 			// btnClear
 			// 
@@ -234,6 +235,7 @@ namespace MediaPortal.Configuration.Sections
 			this.Controls.Add(this.groupBox1);
 			this.Name = "TVChannels";
 			this.Size = new System.Drawing.Size(472, 448);
+			this.Load += new System.EventHandler(this.TVChannels_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -719,6 +721,16 @@ namespace MediaPortal.Configuration.Sections
       LoadTVChannels();
     
     }
+
+		private void groupBox1_Enter(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void TVChannels_Load(object sender, System.EventArgs e)
+		{
+			LoadSettings();		
+		}
 	}
 }
 
