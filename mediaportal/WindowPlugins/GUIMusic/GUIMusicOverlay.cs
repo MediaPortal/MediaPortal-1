@@ -48,13 +48,13 @@ namespace MediaPortal.GUI.Music
     }
 
     public GUIMusicOverlay()
-    {
+		{
+			GetID=(int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
     }
 
     public override bool Init()
     {
       bool bResult=Load (GUIGraphicsContext.Skin+@"\musicOverlay.xml");
-      GetID=(int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
       return bResult;
     }
 

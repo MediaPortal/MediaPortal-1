@@ -91,7 +91,7 @@
 			    <onleft>3</onleft>
 			    <onright>4</onright>
 			    <onup>2</onup>
-			    <ondown>6</ondown>
+			    <ondown>7</ondown>
 		    </control>
 		    <control>
 			    <description>Sort Asc</description>
@@ -108,14 +108,14 @@
 		    <control>
 			    <description>Switch View</description>
 			    <type>selectbutton</type>
-			    <id>6</id>
+			    <id>7</id>
 			    <posX>60</posX>
 			    <posY>165</posY>
 			    <label>457</label>
-			    <onleft>6</onleft>
+			    <onleft>7</onleft>
 			    <onright>50</onright>
 			    <onup>3</onup>
-			    <ondown>7</ondown>
+			    <ondown>8</ondown>
 			    <subitems>
 				    <subitem>134</subitem>
 				    <subitem>132</subitem>
@@ -129,50 +129,38 @@
 		    <control>
 			    <description>Playlists button</description>
 			    <type>button</type>
-			    <id>7</id>
+			    <id>8</id>
 			    <posX>60</posX>
 			    <posY>199</posY>
 			    <label>136</label>
-			    <onleft>7</onleft>
-			    <onright>50</onright>
-			    <onup>6</onup>
-			    <ondown>8</ondown>
-		    </control>
-		    <control>
-			    <description>Search button</description>
-			    <type>button</type>
-			    <id>8</id>
-			    <posX>60</posX>
-			    <posY>233</posY>
-			    <label>137</label>
 			    <onleft>8</onleft>
 			    <onright>50</onright>
 			    <onup>7</onup>
-			    <ondown>19</ondown>
-		    </control>
-		    <control>
-			    <description>Eject Disc</description>
-			    <type>button</type>
-			    <id>19</id>
-			    <posX>60</posX>
-			    <posY>267</posY>
-			    <label>654</label>
-			    <onleft>19</onleft>
-			    <onright>50</onright>
-			    <onup>8</onup>
 			    <ondown>9</ondown>
-			    <action>100</action>
+				<action>33</action>
 		    </control>
 		    <control>
-			    <description>Scan button</description>
+			    <description>Play CD</description>
 			    <type>button</type>
 			    <id>9</id>
 			    <posX>60</posX>
-			    <posY>301</posY>
-			    <label>193</label>
+			    <posY>267</posY>
+			    <label>654</label>
 			    <onleft>9</onleft>
 			    <onright>50</onright>
-			    <onup>19</onup>
+			    <onup>8</onup>
+			    <ondown>10</ondown>
+		    </control>
+		    <control>
+			    <description>My Playlists</description>
+			    <type>button</type>
+			    <id>10</id>
+			    <posX>60</posX>
+			    <posY>301</posY>
+			    <label>983</label>
+			    <onleft>10</onleft>
+			    <onright>50</onright>
+			    <onup>9</onup>
 			    <ondown>2</ondown>
 		    </control>
 		</control>

@@ -40,7 +40,8 @@ namespace MediaPortal.GUI.TV
 
     public GUITVMSNOSD()
     {
-    }
+			GetID=(int)GUIWindow.Window.WINDOW_TVMSNOSD;
+		}
 
     public override bool Init()
     {

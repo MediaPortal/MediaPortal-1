@@ -87,13 +87,13 @@ namespace MediaPortal.GUI.TV
     ArrayList m_channels = new ArrayList();
     public GUITVOSD()
     {
-		TVDatabase.GetChannels(ref m_channels);
+			GetID=(int)GUIWindow.Window.WINDOW_TVOSD;
+			TVDatabase.GetChannels(ref m_channels);
     }
 
     public override bool Init()
     {
       bool bResult=Load (GUIGraphicsContext.Skin+@"\tvOSD.xml");
-      GetID=(int)GUIWindow.Window.WINDOW_TVOSD;
       return bResult;
     }
 

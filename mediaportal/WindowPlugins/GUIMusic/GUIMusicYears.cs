@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.Music
 		protected override bool AllowView(MediaPortal.GUI.Music.GUIMusicBaseWindow.View view)
 		{
 			if (view==View.Albums) return false;
+			if (view==View.FilmStrip) return false;
 			return true;
 		}
 

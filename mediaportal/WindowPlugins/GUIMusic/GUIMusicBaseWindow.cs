@@ -41,7 +41,8 @@ namespace MediaPortal.GUI.Music
 			List = 0, 
 			Icons = 1, 
 			LargeIcons = 2, 
-			Albums= 3
+			Albums= 3,
+			FilmStrip=4
 		}
 
 		protected   View currentView		    = View.List;
@@ -100,7 +101,7 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 		#region Serialisation
-		void LoadSettings()
+		protected virtual void LoadSettings()
 		{
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
@@ -117,7 +118,7 @@ namespace MediaPortal.GUI.Music
 			SwitchView();
 		}
 
-		void SaveSettings()
+		protected virtual void SaveSettings()
 		{
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
@@ -210,6 +211,13 @@ namespace MediaPortal.GUI.Music
 								facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
 							break;
 						case View.Albums: 
+							CurrentView = View.FilmStrip;
+							if (!AllowView(CurrentView) || facadeView.FilmstripView==null)
+								shouldContinue=true;
+							else 
+								facadeView.View=GUIFacadeControl.ViewMode.Filmstrip;
+							break;
+						case View.FilmStrip: 
 							CurrentView = View.List;
 							if (!AllowView(CurrentView) || facadeView.ListView==null)
 								shouldContinue=true;
@@ -369,6 +377,9 @@ namespace MediaPortal.GUI.Music
 					break;
 				case View.Albums: 
 					strLine = GUILocalizeStrings.Get(101);
+					break;
+				case View.FilmStrip: 
+					strLine = GUILocalizeStrings.Get(733);
 					break;
 			}
 			GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
@@ -801,6 +812,9 @@ namespace MediaPortal.GUI.Music
 					break;
 				case View.Albums: 
 					facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
+					break;
+				case View.FilmStrip: 
+					facadeView.View=GUIFacadeControl.ViewMode.Filmstrip;
 					break;
 			}
 		}

@@ -71,7 +71,8 @@ namespace MediaPortal.GUI.Video
 
   public GUIVideoOSD()
   {
-  }
+		GetID=(int)GUIWindow.Window.WINDOW_OSD;
+	}
 
   public override bool Init()
   {

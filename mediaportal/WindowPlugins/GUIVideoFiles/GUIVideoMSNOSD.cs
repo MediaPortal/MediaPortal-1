@@ -40,7 +40,8 @@ namespace MediaPortal.GUI.Video
 
     public GUIVideoMSNOSD()
     {
-    }
+			GetID=(int)GUIWindow.Window.WINDOW_MSNOSD;
+		}
 
     public override bool Init()
     {
