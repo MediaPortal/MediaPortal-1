@@ -186,6 +186,30 @@ namespace DShowNET.BDA
 	};
 
 	[ComImport,
+	Guid("992CF102-49F9-4719-A664-C4F23E2408F4"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IBDA_LNBInfo
+	{
+		[PreserveSig]
+		int put_LocalOscilatorFrequencyLowBand ([In] uint          ulLOFLow);
+
+		[PreserveSig]
+		int get_LocalOscilatorFrequencyLowBand ( [In, Out] ref uint   pulLOFLow);
+
+		[PreserveSig]
+		int put_LocalOscilatorFrequencyHighBand ([In] uint          ulLOFHigh);
+
+		[PreserveSig]
+		int get_LocalOscilatorFrequencyHighBand ([In, Out] ref uint   pulLOFHigh);
+
+		[PreserveSig]
+		int put_HighLowSwitchFrequency ([In] uint          ulSwitchFrequency);
+
+		[PreserveSig]
+		int get_HighLowSwitchFrequency ([In, Out] ref uint   pulSwitchFrequency);
+	}
+
+	[ComImport,
 	Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
 

@@ -2437,6 +2437,7 @@ namespace MediaPortal.TV.Recording
 		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		{
 			if (tuneRequest==null) return;
+			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetLNBSettings()");
 			TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
 			if (space==null)
@@ -2495,8 +2496,29 @@ namespace MediaPortal.TV.Recording
 					space.HighOscillator=0;
 				//space.SpectralInversion=??
 				//space.InputRange=(lnbKhz*1000).ToString();
+
+				if (m_TunerDevice!=null)
+				{
+					IBDA_LNBInfo info = m_TunerDevice as IBDA_LNBInfo;
+					if (info !=null)
+					{
+						int hr=info.put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
+						if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_HighLowSwitchFrequency  hr:0x{0:X}",hr);
+						
+						hr=info.put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
+						if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand  hr:0x{0:X}",hr);
+						
+						hr=info.put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
+						if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand hr:0x{0:X}",hr);
+					}
+					else
+					{
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to get IBDA_LNBInfo interface");
+					}
+				}
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
+		
 		public IBaseFilter Mpeg2DataFilter()
 		{
 			return m_SectionsTables;
