@@ -23,6 +23,7 @@ copy ..\..\..\PictureDatabase\bin\Debug\PictureDatabase.dll .
 copy ..\..\..\VideoDatabase\bin\Debug\VideoDatabase.dll .
 copy ..\..\..\TVDatabase\bin\Debug\TVDatabase.dll .
 copy ..\..\..\TVCapture\bin\Debug\TVCapture.dll .
+copy ..\..\..\GUITopbar\bin\debug\GUITopbar.dll plugins\windows
 copy ..\..\..\TagReader\bin\Debug\TagReader.dll .
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
@@ -60,3 +61,4 @@ copy ..\..\..\DShowNET\bin\Debug\DShowNET.pdb .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.pdb .
 copy ..\..\..\TVCapture\bin\Debug\TVCapture.pdb .
 copy ..\..\..\TagReader\bin\Debug\TagReader.pdb .
+copy ..\..\..\GUITopbar\bin\debug\GUITopbar.pdb plugins\windows
