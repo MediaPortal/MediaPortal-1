@@ -115,6 +115,7 @@ namespace MediaPortal
     bool   m_bWasPlaying=false;
     string m_strCurrentFile="";
     int    m_iActiveWindow=-1;
+		bool   m_bRestore=false;
     double m_dCurrentPos=0;
     
     /// <summary>
@@ -1135,16 +1136,20 @@ namespace MediaPortal
 
       if (!deviceLost &&!m_bNeedReset)
       {
-        if (m_bWasPlaying)
-        {
-          m_bWasPlaying=false;
-          g_Player.Play(m_strCurrentFile);
-          if (g_Player.Playing)
-          {
-            g_Player.SeekAbsolute(m_dCurrentPos);
-            GUIWindowManager.ActivateWindow(m_iActiveWindow);
-          }
-        }
+				if (m_bRestore)
+				{
+					m_bRestore=false;
+					if (m_bWasPlaying)
+					{
+						m_bWasPlaying=false;
+						g_Player.Play(m_strCurrentFile);
+						if (g_Player.Playing)
+						{
+							g_Player.SeekAbsolute(m_dCurrentPos);
+						}
+					}
+					GUIWindowManager.ActivateWindow(m_iActiveWindow);
+				}
       }
       UpdateStats();
 
@@ -1413,6 +1418,7 @@ namespace MediaPortal
 
       if (e.Control==false && e.Alt==true && (e.KeyCode == System.Windows.Forms.Keys.Return))
       {
+				m_bRestore=true;
         m_bWasPlaying =g_Player.Playing;
         m_strCurrentFile=g_Player.CurrentFile;
         m_iActiveWindow=GUIWindowManager.ActiveWindow;

@@ -1,3 +1,4 @@
+13-07-2004  general     : fixed : after alt+enter you return in home
 13-07-2004  general     : fixed : fadelabel didnt worwrap correctly
 13-07-2004  my tv       : fixed : press B when fullscreen TV & osd visible->hangup? (mrmario64)
 13-07-2004  my tv       : fixed : duration
