@@ -1,7 +1,7 @@
 <window>
 	<id>7700</id>
 	<defaultcontrol>502</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
+	<allowoverlay>no</allowoverlay>
 <controls>
 	<control>
 		<description>BG</description>
@@ -18,6 +18,8 @@
 		<id>501</id>
 		<posX>60</posX>
 		<posY>20</posY>
+		<width>397</width> 
+		<height>70</height> 
 		<texture>teletext_logo.png</texture>
 	</control>	
 	<control>
@@ -39,6 +41,17 @@
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
+ 	<control>
+ 		<description>template for program title darkarea </description>
+ 		<type>label</type>
+		<visible>no</visible>
+ 		<posX>300</posX>
+ 		<posY>200</posY>
+ 		<id>27</id>
+ 		<label>-</label>
+ 		<font>font13</font>
+ 		<textcolor>FFFFFFFF</textcolor>
+ 	</control>
 			<control>
 			<type>group</type>
 			<description>group element</description>
