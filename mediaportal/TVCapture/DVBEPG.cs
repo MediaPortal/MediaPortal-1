@@ -77,13 +77,21 @@ namespace MediaPortal.TV.Recording
 				tv.Genre=data.genere_text;
 				tv.Title=data.event_name;
 				tv.Description=data.event_item_text;
+				if(tv.Description==null)
+					tv.Description="";
+
 				if(tv.Description.Length<2)
 				{
 					tv.Description=data.event_text;
 					Log.Write("epg-grab: used short description");
 				}
 
-				Log.Write("epg-grab: language-code={0}",data.languageCode);
+				if(data.eeLanguageCode!=null)
+					Log.Write("epg-grab: language-code={0}",data.eeLanguageCode);
+				
+				if(data.seLanguageCode!=null)
+					Log.Write("epg-grab: language-code={0}",data.seLanguageCode);
+				
 				if(tv.Title=="" || tv.Title=="n.a.") 
 				{
 					Log.Write("epg: entrie without title found");
@@ -173,7 +181,8 @@ namespace MediaPortal.TV.Recording
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			
-			lastTab=0x50;
+			if(lastTab>0x5F)
+				lastTab=0x50;
 
 			if(lastTab>0x50)
 			{
@@ -258,15 +267,35 @@ namespace MediaPortal.TV.Recording
 						string[] langs=m_languagesToGrab.Split(new char[]{'/'});
 						foreach(string lang in langs)
 						{
-							string code=eit.languageCode;
-							if(code==null)
+							string codeEE="";
+							string codeSE="";
+							int lenShort=0;
+							int lenExtended=0;
+
+							if(codeEE==null && codeSE==null)
 								continue;
-							if(code.Length==3)
-								code=code.ToLower();
-							else
+							
+							if(eit.eeLanguageCode!=null)
+							{
+								codeEE=eit.eeLanguageCode;
+								if(codeEE.Length==3)
+									codeEE=codeEE.ToLower();
+								lenExtended=codeEE.Length;
+							}
+
+							if(eit.seLanguageCode!=null)
+							{
+								codeSE=eit.seLanguageCode;
+								if(codeSE.Length==3)
+									codeSE=codeSE.ToLower();
+								lenShort=codeSE.Length;
+
+							}
+
+							if(lenShort!=3 && lenExtended!=3)
 								continue;
 
-							if(lang.ToLower().Equals(code))
+							if(lang.ToLower().Equals(codeEE) || lang.ToLower().Equals(codeSE))
 							{
 								ignoreFlag=false;
 								break;

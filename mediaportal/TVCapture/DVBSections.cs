@@ -80,7 +80,8 @@ namespace MediaPortal.TV.Recording
 			public int lastSection;
 			public int table;
 			public int lastTable;
-			public string languageCode;
+			public string eeLanguageCode;
+			public string seLanguageCode;
 		}
 		public struct EIT_Program_Info
 		{
@@ -757,6 +758,10 @@ namespace MediaPortal.TV.Recording
 								System.Array.Copy(buf,pointer,data,0,x);
 								switch(indicator)
 								{
+									case 0x02: // video
+									case 0x03: // audio
+										Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
+										break;
 									case 0x09:
 										string tmpString=DVB_CADescriptor(data);
 										if(pidText.IndexOf(tmpString,0)==-1)
@@ -1236,13 +1241,17 @@ namespace MediaPortal.TV.Recording
 		{
 			int descriptor_tag;
 			int descriptor_length;
-			//string ISO639_2_language_code="";
 			int event_name_length;
 			int text_length;
 			byte[] b = new byte[4097];
 			
 			descriptor_tag = buf[0];
 			descriptor_length = buf[1];
+			eit.seLanguageCode=System.Text.Encoding.ASCII.GetString(buf,2,3);
+			if(eit.seLanguageCode.Length>0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.seLanguageCode);
+			}
 			eit.event_name = "n.v.";
 			eit.event_text = "n.v.";
 			if (descriptor_tag == 0x4D)
@@ -1253,7 +1262,6 @@ namespace MediaPortal.TV.Recording
 				{
 					System.Array.Copy(buf, pointer, b, 0, event_name_length);
 					eit.event_name = getString468A(b, event_name_length);
-				
 					pointer += event_name_length;
 					text_length = buf[pointer];
 					pointer += 1;
@@ -1473,7 +1481,6 @@ namespace MediaPortal.TV.Recording
 		{
 			int descriptor_tag;
 			int descriptor_length;
-			string ISO639_2_language_code;
 			int descriptor_number;
 			int last_descriptor_number;
 			//int event_name_length;
@@ -1497,13 +1504,12 @@ namespace MediaPortal.TV.Recording
 				descriptor_length = data[1];
 				descriptor_number = (data[1]>>4) & 0xF;
 				last_descriptor_number = data[1] & 0xF;
-				ISO639_2_language_code=System.Text.Encoding.ASCII.GetString(data,3,3);
+				eit.eeLanguageCode=System.Text.Encoding.ASCII.GetString(data,3,3);
 				length_of_items = data[6];
 
-				if(ISO639_2_language_code.Length>0)
+				if(eit.eeLanguageCode.Length>0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", ISO639_2_language_code);
-					eit.languageCode=ISO639_2_language_code;
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.eeLanguageCode);
 				}
 				pointer += 7;
 				lenB = descriptor_length - 5;
@@ -1767,8 +1773,9 @@ namespace MediaPortal.TV.Recording
 		//
 		public void GetMHWData(DShowNET.IBaseFilter filter)
 		{
-			GetStreamData(filter,0xd3,0x90,1,m_timeoutMS);
-			//int a=0;
+			GetStreamData(filter,0xd2,0x90,1,m_timeoutMS);
+			if(m_sectionsList.Count>0)
+				System.Windows.Forms.MessageBox.Show("Sections: ");
 		}
 		// get current/next info
 		//
