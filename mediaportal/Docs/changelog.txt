@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  22-06-2004  my video    : added : show progressbar & time when FF/RW or skip+/-
   22-06-2004  my tv       : fixed : hauppage PVR 350/USB2 doesnt seem to user frequency overrides?
   22-06-2004  setup       : added : My TV: changed country codes to country names for easier setup
   22-06-2004  my TV       : fixed : couldnt seek/skip when viewing a recoring using VMR9
