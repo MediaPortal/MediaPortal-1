@@ -2531,6 +2531,7 @@ namespace MediaPortal
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(632, 405);
       this.Controls.Add(this.tabControl);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SetupForm";
       this.Text = "Setup MediaPortal";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.SetupForm_Closing);

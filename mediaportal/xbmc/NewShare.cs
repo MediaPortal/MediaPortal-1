@@ -56,6 +56,7 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(formNewShare));
       this.label1 = new System.Windows.Forms.Label();
       this.shareName = new System.Windows.Forms.TextBox();
       this.textBox1 = new System.Windows.Forms.TextBox();
@@ -131,6 +132,7 @@ namespace MediaPortal
       this.Controls.Add(this.textBox1);
       this.Controls.Add(this.shareName);
       this.Controls.Add(this.label1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "formNewShare";
       this.Text = "Select folder";
       this.Load += new System.EventHandler(this.formNewShare_Load);

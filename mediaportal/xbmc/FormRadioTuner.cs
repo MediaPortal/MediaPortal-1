@@ -73,6 +73,7 @@ namespace MediaPortal
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FormRadioTuner));
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.label1 = new System.Windows.Forms.Label();
       this.labelCurrentChannel = new System.Windows.Forms.Label();
@@ -156,6 +157,7 @@ namespace MediaPortal
       this.Controls.Add(this.labelCurrentChannel);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.progressBar1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "FormRadioTuner";
       this.Text = "FormRadioTuner";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.FormRadioTuner_Closing);

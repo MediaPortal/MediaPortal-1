@@ -60,6 +60,7 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TVChannelForm));
       this.labelName = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
@@ -152,6 +153,7 @@ namespace MediaPortal
       this.Controls.Add(this.label3);
       this.Controls.Add(this.labelName);
       this.Controls.Add(this.label1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "TVChannelForm";
       this.Text = "TVChannelForm";
       this.Load += new System.EventHandler(this.TVChannelForm_Load);

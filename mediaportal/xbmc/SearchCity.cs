@@ -62,6 +62,7 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SearchCity));
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxCity = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -139,6 +140,7 @@ namespace MediaPortal
       this.Controls.Add(this.label2);
       this.Controls.Add(this.textBoxCity);
       this.Controls.Add(this.label1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SearchCity";
       this.Text = "SearchCity";
       this.Load += new System.EventHandler(this.SearchCity_Load);

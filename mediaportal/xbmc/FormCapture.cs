@@ -141,6 +141,7 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FormCapture));
       this.label1 = new System.Windows.Forms.Label();
       this.comboVideoDevice = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -382,6 +383,7 @@ namespace MediaPortal
       this.Controls.Add(this.label1);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.groupBox2);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "FormCapture";
       this.Text = "FormCapture";
       this.Load += new System.EventHandler(this.FormCapture_Load);

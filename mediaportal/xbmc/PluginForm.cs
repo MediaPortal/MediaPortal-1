@@ -22,6 +22,7 @@ namespace MediaPortal
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+    private System.Windows.Forms.Button btnConfigure;
 
     ArrayList m_plugins = new ArrayList();
 
@@ -59,20 +60,23 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(PluginForm));
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.btnConfigure = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.btnConfigure);
       this.groupBox1.Controls.Add(this.listView1);
       this.groupBox1.Location = new System.Drawing.Point(16, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(504, 272);
+      this.groupBox1.Size = new System.Drawing.Size(504, 304);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Plugins";
@@ -105,11 +109,20 @@ namespace MediaPortal
       this.columnHeader3.Text = "Author";
       this.columnHeader3.Width = 99;
       // 
+      // btnConfigure
+      // 
+      this.btnConfigure.Location = new System.Drawing.Point(16, 264);
+      this.btnConfigure.Name = "btnConfigure";
+      this.btnConfigure.TabIndex = 1;
+      this.btnConfigure.Text = "Configure";
+      this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
+      // 
       // PluginForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(536, 301);
+      this.ClientSize = new System.Drawing.Size(536, 325);
       this.Controls.Add(this.groupBox1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "PluginForm";
       this.Text = "PluginForm";
       this.Load += new System.EventHandler(this.PluginForm_Load);
@@ -202,6 +215,11 @@ namespace MediaPortal
       int iItem=listView1.SelectedIndices[0];
       ISetupForm form = (ISetupForm)m_plugins[iItem];
       form.ShowPlugin();
+    }
+
+    private void btnConfigure_Click(object sender, System.EventArgs e)
+    {
+        listView1_DoubleClick(sender,e);
     }
 	}
 }
