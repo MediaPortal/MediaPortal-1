@@ -223,7 +223,7 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-
+  
       
       Log.Write("  CaptureCard:{0}   select correct channel",ID);
       SelectChannel(iChannelNr,false);
@@ -232,17 +232,22 @@ namespace MediaPortal.TV.Recording
       Log.Write("  CaptureCard:{0}   Setup brightness, contrast, gamma settings",ID);
       SetBrightnessContrastGamma();
 
+      Log.Write("  CaptureCard:{0}   load settings",ID);
       capture.LoadSettings();
 
+      Log.Write("  CaptureCard:{0}   set framesize={1}x{2} & rate={3:00}",ID,m_FrameSize.Width,m_FrameSize.Height, m_FrameRate);
       capture.FrameSize=m_FrameSize;
       capture.FrameRate=m_FrameRate;
+      
       // set filename for capture
+      Log.Write("  CaptureCard:{0}   set filename",ID);
       if (strFileName!=null && strFileName.Length>0)
       {
         capture.Filename=strFileName;
       }
       else capture.Filename="";
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoWindowChanged);
+      Log.Write("  CaptureCard:{0}   made",ID);
       return true;
     }
 
@@ -577,8 +582,8 @@ namespace MediaPortal.TV.Recording
               if (StartCapture("",m_iPreviewChannel))
               {
                 // and set video window position
-                capture.PreviewWindow=GUIGraphicsContext.form;
                 capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+                capture.PreviewWindow=GUIGraphicsContext.form;
                 if (!capture.Running)
                 {
                   capture.Start();
@@ -666,7 +671,7 @@ namespace MediaPortal.TV.Recording
         }
 
         // create new capture
-        Log.Write("  CaptureCard:{0} start capture to {1}",ID, m_strFilenameTmp);
+        Log.Write("  CaptureCard:{0} create capture to {1}",ID, m_strFilenameTmp);
         if ( !StartCapture(m_strFilenameTmp, iChannelNr) )
         {
           // create capture failed
@@ -676,8 +681,13 @@ namespace MediaPortal.TV.Recording
           m_CurrentTVRecording=null;
           return;
         }
+
         // start new capture
+        Log.Write("  CaptureCard:{0} start capture",ID);
         capture.Start();
+        
+        Log.Write("  CaptureCard:{0} capture running",ID);
+        //Utils.StartProcess(@"C:\media\graphedt.exe","",true);
 
 
         // capture is now running

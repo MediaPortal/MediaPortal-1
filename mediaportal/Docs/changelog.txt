@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  13-05-2004  my tv       : added : fixed recording problems
+  13-05-2004  my movies   : added : deinterlace filter for DVD playback
+  13-05-2004  my pictures : added : folder thumbs are not correctly generated for non-rectangler folder icons
+
   12-05-2004  general     : added : check if DirectX 9.0b is installed when starting
   12-05-2004  general     : added : check if Windows Mediaplayer 9 is installed when starting
   12-05-2004  general     : added : if skin misses a .xml file then show which file is missing instead of showing a black screen

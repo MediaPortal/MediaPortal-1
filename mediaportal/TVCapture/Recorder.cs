@@ -393,8 +393,8 @@ namespace MediaPortal.TV.Recording
           if (!dev.IsRecording && dev.UseForTV) 
           {
             Log.Write("Recorder: use capture card:{0} for previewing:{1}", dev.ID,m_strPreviewChannel);
-            dev.Previewing=true;
             dev.PreviewChannel=m_strPreviewChannel;
+            dev.Previewing=true;
           }
         }
         return;
