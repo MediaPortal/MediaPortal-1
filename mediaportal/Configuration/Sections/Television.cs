@@ -119,14 +119,14 @@ namespace MediaPortal.Configuration.Sections
       this.rendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.rendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.rendererComboBox.Location = new System.Drawing.Point(168, 52);
+      this.rendererComboBox.Location = new System.Drawing.Point(168, 53);
       this.rendererComboBox.Name = "rendererComboBox";
       this.rendererComboBox.Size = new System.Drawing.Size(256, 21);
       this.rendererComboBox.TabIndex = 10;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 56);
+      this.label2.Location = new System.Drawing.Point(16, 57);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(150, 23);
       this.label2.TabIndex = 9;
