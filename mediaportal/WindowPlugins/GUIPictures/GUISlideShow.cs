@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Pictures
     string						 			m_strBackgroundSlide="";
     string						 			m_strCurrentSlide="";
     bool                    m_bPause=false;  
-    float 			            m_iZoomWidth=0, m_iZoomHeight=0;
+    float 			            m_fZoomWidth=0, m_fZoomHeight=0;
     int                     m_iRotate=0;
     int                     m_iSpeed=3;
     bool                    m_bPrevOverlay;
@@ -166,7 +166,7 @@ namespace MediaPortal.GUI.Pictures
       int X,Y;
       Texture texture=MediaPortal.Util.Picture.Load(strSlide,m_iRotate,iMaxWidth,iMaxHeight, true, bZoom, out X,out Y);
       dwWidth=X;
-      dwHeight=Y;;
+      dwHeight=Y;
       GC.Collect();
       GC.Collect();
 	    return texture;
@@ -317,7 +317,7 @@ namespace MediaPortal.GUI.Pictures
 
               // Get selected picture (zoomed to full screen)
               m_pTextureCurrent=GetSlide(true, out m_fWidthCurrent,out m_fHeightCurrent, out m_strCurrentSlide);
-              if (m_bKenBurns)
+              if (m_bKenBurns && m_bSlideShow)
               {
                 //Select transition based upon picture width/height
                 m_fBestZoomFactorCurrent = CalculateBestZoom(m_fWidthCurrent, m_fHeightCurrent);
@@ -373,9 +373,9 @@ namespace MediaPortal.GUI.Pictures
       if (m_iTransistionMethod != 9 || m_pTextureCurrent==null)
       {
         GetOutputRect(m_fWidthBackGround, m_fHeightBackGround, m_fZoomFactorBackGround, out x, out y, out width, out height);
-        if (m_fZoomTopBackGround+m_iZoomHeight > m_fHeightBackGround) m_iZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
-        if (m_fZoomLeftBackGround+m_iZoomWidth > m_fWidthBackGround) m_iZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
-        MediaPortal.Util.Picture.RenderImage(ref m_pTextureBackGround, x, y, width, height, m_iZoomWidth, m_iZoomHeight, m_fZoomLeftBackGround, m_fZoomTopBackGround,true);        
+        if (m_fZoomTopBackGround+m_fZoomHeight > m_fHeightBackGround) m_fZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
+        if (m_fZoomLeftBackGround+m_fZoomWidth > m_fWidthBackGround) m_fZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
+        MediaPortal.Util.Picture.RenderImage(ref m_pTextureBackGround, x, y, width, height, m_fZoomWidth, m_fZoomHeight, m_fZoomLeftBackGround, m_fZoomTopBackGround,true);        
       }
 
       //	g_graphicsContext.Get3DDevice()->UpdateOverlay(m_pSurfaceBackGround, &source, &dest, true, 0x00010001);
@@ -442,9 +442,9 @@ namespace MediaPortal.GUI.Pictures
       else
       {
         // Start KenBurns effect
-        if (m_bKenBurns)          
+        if (m_bKenBurns && m_bSlideShow && !m_bPause) 
         {
-          if (m_bPictureZoomed || m_bPause) 
+          if (m_bPictureZoomed) 
             m_iKenBurnsEffect=0;
           else
             KenBurns(m_iKenBurnsEffect, false);
@@ -485,7 +485,11 @@ namespace MediaPortal.GUI.Pictures
       {
         string strFileInfo, strSlideInfo;
         string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
-        strFileInfo=String.Format("{0}x{1} {2}", m_fWidthBackGround, m_fHeightBackGround,strFileName);
+        // Due to zoom the widht/height info isn't correct. So this will give false infomation
+        //strFileInfo=String.Format("{0}x{1} {2}", m_fWidthBackGround, m_fHeightBackGround,strFileName);
+
+        // So only the file name
+        strFileInfo=String.Format("{0}", strFileName);
 
 				GUIControl.SetControlLabel(GetID, LABEL_ROW1,strFileInfo);
 				strSlideInfo=String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count);
@@ -548,8 +552,8 @@ namespace MediaPortal.GUI.Pictures
 
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= width/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -569,8 +573,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= width/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -590,8 +594,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= width/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -611,8 +615,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= height/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -632,8 +636,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= height/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -654,8 +658,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= height/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -675,8 +679,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= width/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -700,8 +704,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStep= height/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -724,8 +728,8 @@ namespace MediaPortal.GUI.Pictures
       bool bResult=false;
       float x,y,width,height;
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       float iStepX= width/m_iSlideShowTransistionFrames;
       float iStepY= height/m_iSlideShowTransistionFrames;
@@ -759,8 +763,8 @@ namespace MediaPortal.GUI.Pictures
 
       float x,y,width,height;
       GetOutputRect(m_fWidthBackGround, m_fHeightBackGround, m_fZoomFactorBackGround, out x, out y, out width, out height);
-      if (m_fZoomTopBackGround+m_iZoomHeight > m_fHeightBackGround) m_iZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
-      if (m_fZoomLeftBackGround+m_iZoomWidth > m_fWidthBackGround) m_iZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
+      if (m_fZoomTopBackGround+m_fZoomHeight > m_fHeightBackGround) m_fZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
+      if (m_fZoomLeftBackGround+m_fZoomWidth > m_fWidthBackGround) m_fZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
 
       float iStep= 0xff/m_iSlideShowTransistionFrames;
       if (0==iStep) iStep=1;
@@ -775,18 +779,18 @@ namespace MediaPortal.GUI.Pictures
       lColorDiffuse<<=24;
       lColorDiffuse |= 0xffffff;
 
-      MediaPortal.Util.Picture.RenderImage(ref m_pTextureBackGround, x, y, width, height, m_iZoomWidth, m_iZoomHeight, m_fZoomLeftBackGround, m_fZoomTopBackGround, lColorDiffuse);
+      MediaPortal.Util.Picture.RenderImage(ref m_pTextureBackGround, x, y, width, height, m_fZoomWidth, m_fZoomHeight, m_fZoomLeftBackGround, m_fZoomTopBackGround, lColorDiffuse);
 
       //next render new image
       GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent, out x, out y, out width, out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       lColorDiffuse=(iAlpha);
       lColorDiffuse<<=24;
       lColorDiffuse |= 0xffffff;
 
-      MediaPortal.Util.Picture.RenderImage(ref m_pTextureCurrent, x, y, width, height, m_iZoomWidth, m_iZoomHeight, m_fZoomLeftCurrent, m_fZoomTopCurrent,lColorDiffuse);
+      MediaPortal.Util.Picture.RenderImage(ref m_pTextureCurrent, x, y, width, height, m_fZoomWidth, m_fZoomHeight, m_fZoomLeftCurrent, m_fZoomTopCurrent,lColorDiffuse);
       return bResult;
     }
 
@@ -798,18 +802,13 @@ namespace MediaPortal.GUI.Pictures
       float ZoomFactorX = (float)GUIGraphicsContext.OverScanWidth/fWidth;
       float ZoomFactorY = (float)GUIGraphicsContext.OverScanHeight/fHeight;
 
-      m_bLandscape = false;
-      if ((fWidth/fPixelRatio)>(fHeight*fPixelRatio))
-      {
-        m_bLandscape=true;
-      }
-
       // Get minimal zoom level (1.0==100%)
-      
       fZoom = ZoomFactorX-ZoomFactorY+1.0f;
+      m_bLandscape = false;
       if (ZoomFactorY > ZoomFactorX)
       {
         fZoom = ZoomFactorY-ZoomFactorX+1.0f;
+        m_bLandscape=true;
       }
 
       // Zoom 100%..150%
@@ -866,15 +865,26 @@ namespace MediaPortal.GUI.Pictures
       }
 
       // Check new rectangle
-      if (m_fZoomTopBackGround > (m_fHeightBackGround - m_iZoomHeight)) m_fZoomTopBackGround = (m_fHeightBackGround - m_iZoomHeight);
-      if (m_fZoomLeftBackGround > (m_fWidthBackGround - m_iZoomWidth)) m_fZoomLeftBackGround = (m_fWidthBackGround - m_iZoomWidth);
+      if (m_fZoomTopBackGround > (m_fHeightBackGround - m_fZoomHeight)) m_fZoomTopBackGround = (m_fHeightBackGround - m_fZoomHeight);
+      if (m_fZoomLeftBackGround > (m_fWidthBackGround - m_fZoomWidth)) m_fZoomLeftBackGround = (m_fWidthBackGround - m_fZoomWidth);
       if (m_fZoomTopBackGround < 0) m_fZoomTopBackGround = 0;
       if (m_fZoomLeftBackGround < 0) m_fZoomLeftBackGround = 0;
 
-
-      if ((iEffect != 0) && !bEnd && !bReset)
+      if (iEffect != 0)
       {
-        m_iFrameNr++;
+        if (!bEnd)
+        {
+          if (!bReset)
+          {
+            m_iFrameNr++;
+          }
+          m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+        }
+        else
+        {
+          // end
+          m_lSlideTime=(int)(DateTime.Now.Ticks/10000) - (m_iSpeed*1000);
+        }
       }
       return bEnd;
     }
@@ -944,8 +954,8 @@ namespace MediaPortal.GUI.Pictures
         switch (iState)
         {
           case 0: // Zoom in
-            m_fZoomFactorBackGround = m_fStartZoomFactor + m_fZoomChange * iFrameNr;
-            ZoomBackGround(m_fZoomFactorBackGround);
+            float m_fZoomFactor = m_fStartZoomFactor + m_fZoomChange * iFrameNr;
+            ZoomBackGround(m_fZoomFactor);
             break;
 
           default:
@@ -967,23 +977,10 @@ namespace MediaPortal.GUI.Pictures
       if (bReset)
       {
         // find start and end points (8 possible points around the rectangle)
-        iRandom = randomizer.Next(2);
+        iRandom = randomizer.Next(14);
         if (m_bLandscape)
         {
           switch(iRandom)
-          {
-            default:
-            case 0:
-              iStartPoint = 8;
-              iEndPoint = 4;
-              break;
-            case 1:
-              iStartPoint = 4;
-              iEndPoint = 8;
-              break;
-          }
-
-/*          switch(iRandom)
           {
             default:
             case 0:
@@ -991,34 +988,58 @@ namespace MediaPortal.GUI.Pictures
               iEndPoint = 4;
               break;
             case 1:
-              iStartPoint = 8;
-              iEndPoint = 3;
+              iStartPoint = 1;
+              iEndPoint = 5;
               break;
             case 2:
               iStartPoint = 8;
-              iEndPoint = 5;
+              iEndPoint = 3;
               break;
             case 3:
-              iStartPoint = 7;
+              iStartPoint = 8;
               iEndPoint = 4;
               break;
             case 4:
+              iStartPoint = 8;
+              iEndPoint = 5;
+              break;
+            case 5:
+              iStartPoint = 7;
+              iEndPoint = 4;
+              break;
+            case 6:
+              iStartPoint = 7;
+              iEndPoint = 3;
+              break;
+            case 7:
               iStartPoint = 5;
               iEndPoint = 8;
               break;
-            case 5:
+            case 8:
+              iStartPoint = 5;
+              iEndPoint = 1;
+              break;
+            case 9:
               iStartPoint = 4;
               iEndPoint = 7;
               break;
-            case 6:
+            case 10:
+              iStartPoint = 4;
+              iEndPoint = 8;
+              break;
+            case 11:
               iStartPoint = 4;
               iEndPoint = 1;
               break;
-            case 7:
+            case 12:
+              iStartPoint = 3;
+              iEndPoint = 7;
+              break;
+            case 13:
               iStartPoint = 3;
               iEndPoint = 8;
               break;
-          }*/
+          }
         }
         else
         {
@@ -1027,23 +1048,11 @@ namespace MediaPortal.GUI.Pictures
           {
             default:
             case 0:
-              iStartPoint = 2;
-              iEndPoint = 6;
-              break;
-            case 1:
-              iStartPoint = 6;
-              iEndPoint = 2;
-              break;
-          }
-/*          switch(iRandom)
-          {
-            default:
-            case 0:
               iStartPoint = 1;
               iEndPoint = 6;
               break;
             case 1:
-              iStartPoint = 2;
+              iStartPoint = 1;
               iEndPoint = 5;
               break;
             case 2:
@@ -1051,33 +1060,57 @@ namespace MediaPortal.GUI.Pictures
               iEndPoint = 7;
               break;
             case 3:
-              iStartPoint = 3;
+              iStartPoint = 2;
               iEndPoint = 6;
               break;
             case 4:
+              iStartPoint = 2;
+              iEndPoint = 5;
+              break;
+            case 5:
+              iStartPoint = 3;
+              iEndPoint = 7;
+              break;
+            case 6:
+              iStartPoint = 3;
+              iEndPoint = 6;
+              break;
+            case 7:
               iStartPoint = 5;
               iEndPoint = 2;
               break;
-            case 5:
-              iStartPoint = 6;
+            case 8:
+              iStartPoint = 5;
               iEndPoint = 1;
               break;
-            case 6:
+            case 9:
               iStartPoint = 6;
               iEndPoint = 3;
               break;
-            case 7:
+            case 10:
+              iStartPoint = 6;
+              iEndPoint = 2;
+              break;
+            case 11:
+              iStartPoint = 6;
+              iEndPoint = 1;
+              break;
+            case 12:
+              iStartPoint = 7;
+              iEndPoint = 3;
+              break;
+            case 13:
               iStartPoint = 7;
               iEndPoint = 2;
               break;
-          }        */
+          }        
         }
 
         Log.Write("Start point: {0}", iStartPoint);
         Log.Write("End Point : {0}", iEndPoint);
 
         // Init 120% top center fixed
-        m_fZoomFactorCurrent = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)
+        m_fZoomFactorCurrent = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)        
         m_iZoomTypeCurrent = iStartPoint;
       }
       else
@@ -1094,40 +1127,40 @@ namespace MediaPortal.GUI.Pictures
               {
                 case 8:
                   iDestY = (float)m_fHeightBackGround/2;
-                  iDestX = (float)m_iZoomWidth/2;
+                  iDestX = (float)m_fZoomWidth/2;
                   break;
                 case 4:
                   iDestY = (float)m_fHeightBackGround/2;
-                  iDestX = (float)m_fWidthBackGround - (float)m_iZoomWidth/2;
+                  iDestX = (float)m_fWidthBackGround - (float)m_fZoomWidth/2;
                   break;
                 case 2:
-                  iDestY = (float)m_iZoomHeight/2;
+                  iDestY = (float)m_fZoomHeight/2;
                   iDestX = (float)m_fWidthBackGround/2;
                   break;
                 case 6:
-                  iDestY = (float)m_fHeightBackGround - (float)m_iZoomHeight/2;
+                  iDestY = (float)m_fHeightBackGround - (float)m_fZoomHeight/2;
                   iDestX = (float)m_fWidthBackGround/2;
                   break;
                 case 1:
-                  iDestY = (float)m_iZoomHeight/2;
-                  iDestX = (float)m_iZoomWidth/2;
+                  iDestY = (float)m_fZoomHeight/2;
+                  iDestX = (float)m_fZoomWidth/2;
                   break;
                 case 3:
-                  iDestY = (float)m_iZoomHeight/2;
-                  iDestX = (float)m_fWidthBackGround - (float)m_iZoomWidth/2;
+                  iDestY = (float)m_fZoomHeight/2;
+                  iDestX = (float)m_fWidthBackGround - (float)m_fZoomWidth/2;
                   break;
                 case 7:
-                  iDestY = (float)m_fHeightBackGround - (float)m_iZoomHeight/2;
-                  iDestX = (float)m_iZoomWidth/2;
+                  iDestY = (float)m_fHeightBackGround - (float)m_fZoomHeight/2;
+                  iDestX = (float)m_fZoomWidth/2;
                   break;
                 case 5:
-                  iDestY = (float)m_fHeightBackGround - (float)m_iZoomHeight/2;
-                  iDestX = (float)m_fWidthBackGround - (float)m_iZoomWidth/2;
+                  iDestY = (float)m_fHeightBackGround - (float)m_fZoomHeight/2;
+                  iDestX = (float)m_fWidthBackGround - (float)m_fZoomWidth/2;
                   break;
               }   
 
-              m_fPanYChange = (iDestY - (m_fZoomTopBackGround+(float)m_iZoomHeight/2))/iNrOfFramesPerEffect; // Travel Y;
-              m_fPanXChange = (iDestX - (m_fZoomLeftBackGround+(float)m_iZoomWidth/2))/iNrOfFramesPerEffect; // Travel Y;
+              m_fPanYChange = (iDestY - (m_fZoomTopBackGround+(float)m_fZoomHeight/2))/iNrOfFramesPerEffect; // Travel Y;
+              m_fPanXChange = (iDestX - (m_fZoomLeftBackGround+(float)m_fZoomWidth/2))/iNrOfFramesPerEffect; // Travel Y;
             }
 
             PanBackGround(m_fPanXChange, m_fPanYChange);
@@ -1158,8 +1191,8 @@ namespace MediaPortal.GUI.Pictures
             
       if (m_fZoomTopBackGround < 0) return false;
       if (m_fZoomLeftBackGround < 0) return false;
-      if (m_fZoomTopBackGround > (m_fHeightBackGround - m_iZoomHeight)) return false;
-      if (m_fZoomLeftBackGround > (m_fWidthBackGround - m_iZoomWidth)) return false;
+      if (m_fZoomTopBackGround > (m_fHeightBackGround - m_fZoomHeight)) return false;
+      if (m_fZoomLeftBackGround > (m_fWidthBackGround - m_fZoomWidth)) return false;
 
       return true;
     }
@@ -1213,14 +1246,14 @@ namespace MediaPortal.GUI.Pictures
           else
           {
             m_fZoomLeftBackGround+=25;
-            if (m_fZoomLeftBackGround > (int)m_fWidthBackGround - m_iZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround - m_iZoomWidth);
+            if (m_fZoomLeftBackGround > (int)m_fWidthBackGround - m_fZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround - m_fZoomWidth);
             m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           }
           break;
 
         case Action.ActionType.ACTION_MOVE_DOWN:
           if (m_bPictureZoomed) m_fZoomTopBackGround+=25;
-          if (m_fZoomTopBackGround > (int)m_fHeightBackGround - m_iZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround - m_iZoomHeight);
+          if (m_fZoomTopBackGround > (int)m_fHeightBackGround - m_fZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround - m_fZoomHeight);
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           break;
 
@@ -1349,8 +1382,8 @@ namespace MediaPortal.GUI.Pictures
               m_fZoomTopBackGround -= (int)fY;
               if (m_fZoomTopBackGround < 0) m_fZoomTopBackGround = 0;
               if (m_fZoomLeftBackGround < 0) m_fZoomLeftBackGround = 0;
-              if (m_fZoomTopBackGround > (int)m_fHeightBackGround - m_iZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround - m_iZoomHeight);
-              if (m_fZoomLeftBackGround > (int)m_fWidthBackGround - m_iZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround - m_iZoomWidth);
+              if (m_fZoomTopBackGround > m_fHeightBackGround - m_fZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround - m_fZoomHeight);
+              if (m_fZoomLeftBackGround > m_fWidthBackGround - m_fZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround - m_fZoomWidth);
             			
               m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
             }
@@ -1388,10 +1421,10 @@ namespace MediaPortal.GUI.Pictures
       if (m_strBackgroundSlide.Length==0) return;
 	    
 
-      float iMaxWidth=GUIGraphicsContext.OverScanWidth;
-      float iMaxHeight=GUIGraphicsContext.OverScanHeight;
+      int iMaxWidth=GUIGraphicsContext.OverScanWidth;
+      int iMaxHeight=GUIGraphicsContext.OverScanHeight;
       int X, Y;
-      m_pTextureCurrent=MediaPortal.Util.Picture.Load(m_strBackgroundSlide, m_iRotate,(int)iMaxWidth,(int)iMaxHeight,  true,true, out X,out Y);
+      m_pTextureCurrent=MediaPortal.Util.Picture.Load(m_strBackgroundSlide, m_iRotate,iMaxWidth, iMaxHeight,  true,true, out X,out Y);
       m_fWidthCurrent = X;
       m_fHeightCurrent = Y;
       m_strCurrentSlide=m_strBackgroundSlide;
@@ -1427,8 +1460,8 @@ namespace MediaPortal.GUI.Pictures
 		    height = iScreenHeight;
 		    width = height * fOutputFrameAR;
 	    }
-	    m_iZoomWidth=iSourceWidth;
-	    m_iZoomHeight=iSourceHeight;
+	    m_fZoomWidth=iSourceWidth;
+	    m_fZoomHeight=iSourceHeight;
 	    // recalculate in case we're zooming
 	    if (fZoomLevel != 1.0f)
 	    {
@@ -1443,8 +1476,8 @@ namespace MediaPortal.GUI.Pictures
 		    else
 			    height=iScreenHeight;
 		    // OK, height and width are as required - now alter our source rectangle
-		    m_iZoomWidth = width/(fZoomLevel*fScaleWidthFactor);
-		    m_iZoomHeight = height/(fZoomLevel*fScaleHeightFactor);
+		    m_fZoomWidth = width/(fZoomLevel*fScaleWidthFactor);
+		    m_fZoomHeight = height/(fZoomLevel*fScaleHeightFactor);
 	    }
 	    x = (iScreenWidth - width)/2 + iOffsetX1;
 	    y = (iScreenHeight - height)/2 + iOffsetY1;
@@ -1456,12 +1489,12 @@ namespace MediaPortal.GUI.Pictures
 		    return;
 	    float x,y,width,height;
 	    GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent,out x,out y,out width,out height);
-      if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-      if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+      if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+      if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
       // Start and End point positions along the picture rectangle
       // Point zoom in/out only works if the selected Point is at the border
-      // example:  "m_dwWidthBackGround == m_iZoomLeft + m_iZoomWidth"  and zooming to the left (iZoomType=4)
+      // example:  "m_dwWidthBackGround == m_iZoomLeft + m_fZoomWidth"  and zooming to the left (iZoomType=4)
       float middlex = m_fWidthCurrent/2;
       float middley = m_fHeightCurrent/2;
       float xstart = 0;
@@ -1469,27 +1502,27 @@ namespace MediaPortal.GUI.Pictures
       float ystart = 0;
       float yend = m_fHeightCurrent;
       
-      //float middlex = m_iZoomLeft + m_iZoomWidth*0.5f;
-      //float middley = m_iZoomTop + m_iZoomHeight*0.5f;
+      //float middlex = m_iZoomLeft + m_fZoomWidth*0.5f;
+      //float middley = m_iZoomTop + m_fZoomHeight*0.5f;
       //float xstart = m_iZoomLeft;
-      //float xend = m_iZoomLeft + m_iZoomWidth;
+      //float xend = m_iZoomLeft + m_fZoomWidth;
       //float ystart = m_iZoomTop;
-      //float yend = m_iZoomTop + m_iZoomHeight;
+      //float yend = m_iZoomTop + m_fZoomHeight;
  
 	    m_fZoomFactorCurrent = fZoom;
 	    if (m_fZoomFactorCurrent == 1.0f)
 	    {
 		    m_fZoomLeftCurrent=0;
 		    m_fZoomTopCurrent=0;
-		    m_iZoomWidth=m_fWidthCurrent;
-		    m_iZoomHeight=m_fHeightCurrent;
+		    m_fZoomWidth=m_fWidthCurrent;
+		    m_fZoomHeight=m_fHeightCurrent;
         m_bShowZoomInfo = false;
 	    }
 	    else
 	    {
 		    GetOutputRect(m_fWidthCurrent, m_fHeightCurrent, m_fZoomFactorCurrent,out x,out y,out width,out height);
-        if (m_fZoomTopCurrent+m_iZoomHeight > m_fHeightCurrent) m_iZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
-        if (m_fZoomLeftCurrent+m_iZoomWidth > m_fWidthCurrent) m_iZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
+        if (m_fZoomTopCurrent+m_fZoomHeight > m_fHeightCurrent) m_fZoomHeight = m_fHeightCurrent-m_fZoomTopCurrent;
+        if (m_fZoomLeftCurrent+m_fZoomWidth > m_fWidthCurrent) m_fZoomWidth = m_fWidthCurrent-m_fZoomLeftCurrent;
 
         switch(m_iZoomTypeCurrent)
         {
@@ -1504,41 +1537,42 @@ namespace MediaPortal.GUI.Pictures
             * 8: // Heigth centered, Left unchanged            
             * */
           case 0: // centered, centered
-            m_fZoomLeftCurrent = middlex - m_iZoomWidth*0.5f;
-            m_fZoomTopCurrent = middley - m_iZoomHeight*0.5f;
+            m_fZoomLeftCurrent = middlex - m_fZoomWidth*0.5f;
+            m_fZoomTopCurrent = middley - m_fZoomHeight*0.5f;
             break;
           case 2: // Width centered, Top unchanged
-            m_fZoomLeftCurrent = middlex - m_iZoomWidth*0.5f;
+            m_fZoomLeftCurrent = middlex - m_fZoomWidth*0.5f;
             break;
           case 8: // Heigth centered, Left unchanged
-            m_fZoomTopCurrent = middley - m_iZoomHeight*0.5f;
+            m_fZoomTopCurrent = middley - m_fZoomHeight*0.5f;
             break;
           case 6: // Widht centered, Bottom unchanged
-            m_fZoomLeftCurrent = middlex - m_iZoomWidth*0.5f;
-            m_fZoomTopCurrent = yend - m_iZoomHeight;
+            m_fZoomLeftCurrent = middlex - m_fZoomWidth*0.5f;
+            m_fZoomTopCurrent = yend - m_fZoomHeight;
             break;
           case 4: // Height centered, Right unchanged
-            m_fZoomTopCurrent = middley - m_iZoomHeight*0.5f;
-            m_fZoomLeftCurrent = xend - m_iZoomWidth;
+            m_fZoomTopCurrent = middley - m_fZoomHeight*0.5f;
+            m_fZoomLeftCurrent = xend - m_fZoomWidth;
             break;
           case 1: // Top Left unchanged
             break;
           case 3: // Top Right unchanged
-            m_fZoomLeftCurrent = xend - m_iZoomWidth;
+            m_fZoomLeftCurrent = xend - m_fZoomWidth;
             break;
           case 7: // Bottom Left unchanged          
-            m_fZoomTopCurrent = yend - m_iZoomHeight;
+            m_fZoomTopCurrent = yend - m_fZoomHeight;
             break;
           case 5: // Bottom Right unchanged
-            m_fZoomTopCurrent = yend - m_iZoomHeight;
-            m_fZoomLeftCurrent = xend - m_iZoomWidth;
+            m_fZoomTopCurrent = yend - m_fZoomHeight;
+            m_fZoomLeftCurrent = xend - m_fZoomWidth;
             break;
 
         }
+		    if (m_fZoomLeftCurrent > m_fWidthCurrent-m_fZoomWidth) m_fZoomLeftCurrent = (m_fWidthCurrent-m_fZoomWidth);
+		    if (m_fZoomTopCurrent > m_fHeightCurrent-m_fZoomHeight) m_fZoomTopCurrent = (m_fHeightCurrent-m_fZoomHeight);
         if (m_fZoomLeftCurrent < 0) m_fZoomLeftCurrent = 0;
-		    if (m_fZoomTopCurrent < 0) m_fZoomTopCurrent = 0;
-		    if (m_fZoomLeftCurrent > m_fWidthCurrent-m_iZoomWidth) m_fZoomLeftCurrent = (m_fWidthCurrent-m_iZoomWidth);
-		    if (m_fZoomTopCurrent > m_fHeightCurrent-m_iZoomHeight) m_fZoomTopCurrent = (m_fHeightCurrent-m_iZoomHeight);
+        if (m_fZoomTopCurrent < 0) m_fZoomTopCurrent = 0;
+
 	    }
     }
 
@@ -1548,40 +1582,38 @@ namespace MediaPortal.GUI.Pictures
         return;
       float x,y,width,height;
       GetOutputRect(m_fWidthBackGround, m_fHeightBackGround, m_fZoomFactorBackGround,out x,out y,out width,out height);
-      if (m_fZoomTopBackGround+m_iZoomHeight > m_fHeightBackGround) m_iZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
-      if (m_fZoomLeftBackGround+m_iZoomWidth > m_fWidthBackGround) m_iZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
 
       // Start and End point positions along the picture rectangle
       // Point zoom in/out only works if the selected Point is at the border
-      // example:  "m_dwWidthBackGround == m_iZoomLeft + m_iZoomWidth"  and zooming to the left (iZoomType=4)
-      float middlex = m_fWidthBackGround/2;
-      float middley = m_fHeightBackGround/2;
+      // example:  "m_dwWidthBackGround == m_iZoomLeft + m_fZoomWidth"  and zooming to the left (iZoomType=4)
+      float middlex = m_fZoomLeftBackGround + m_fZoomWidth/2;
+      float middley = m_fZoomTopBackGround + m_fZoomHeight/2;
       float xstart = 0;
       float xend = m_fWidthBackGround;
       float ystart = 0;
       float yend = m_fHeightBackGround;
       
-      //float middlex = m_iZoomLeft + m_iZoomWidth*0.5f;
-      //float middley = m_iZoomTop + m_iZoomHeight*0.5f;
+      //float middlex = m_iZoomLeft + m_fZoomWidth*0.5f;
+      //float middley = m_iZoomTop + m_fZoomHeight*0.5f;
       //float xstart = m_iZoomLeft;
-      //float xend = m_iZoomLeft + m_iZoomWidth;
+      //float xend = m_iZoomLeft + m_fZoomWidth;
       //float ystart = m_iZoomTop;
-      //float yend = m_iZoomTop + m_iZoomHeight;
+      //float yend = m_iZoomTop + m_fZoomHeight;
  
       m_fZoomFactorBackGround = fZoom;
       if (m_fZoomFactorBackGround == 1.0f)
       {
         m_fZoomLeftBackGround=0;
         m_fZoomTopBackGround=0;
-        m_iZoomWidth=m_fWidthBackGround;
-        m_iZoomHeight=m_fHeightBackGround;
+        m_fZoomWidth=m_fWidthBackGround;
+        m_fZoomHeight=m_fHeightBackGround;
         m_bShowZoomInfo = false;
       }
       else
       {
         GetOutputRect(m_fWidthBackGround, m_fHeightBackGround, m_fZoomFactorBackGround,out x,out y,out width,out height);
-        if (m_fZoomTopBackGround+m_iZoomHeight > m_fHeightBackGround) m_iZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
-        if (m_fZoomLeftBackGround+m_iZoomWidth > m_fWidthBackGround) m_iZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
+
+        if (m_bPictureZoomed) m_iZoomTypeBackGround = 0;
         switch(m_iZoomTypeBackGround)
         {
             /* 0: // centered, centered
@@ -1595,41 +1627,41 @@ namespace MediaPortal.GUI.Pictures
              * 8: // Heigth centered, Left unchanged            
              * */
           case 0: // centered, centered
-            m_fZoomLeftBackGround = middlex - m_iZoomWidth*0.5f;
-            m_fZoomTopBackGround = middley - m_iZoomHeight*0.5f;
+            m_fZoomLeftBackGround = middlex - m_fZoomWidth*0.5f;
+            m_fZoomTopBackGround = middley - m_fZoomHeight*0.5f;
             break;
           case 2: // Width centered, Top unchanged
-            m_fZoomLeftBackGround = middlex - m_iZoomWidth*0.5f;
+            m_fZoomLeftBackGround = middlex - m_fZoomWidth*0.5f;
             break;
           case 8: // Heigth centered, Left unchanged
-            m_fZoomTopBackGround = middley - m_iZoomHeight*0.5f;
+            m_fZoomTopBackGround = middley - m_fZoomHeight*0.5f;
             break;
           case 6: // Widht centered, Bottom unchanged
-            m_fZoomLeftBackGround = middlex - m_iZoomWidth*0.5f;
-            m_fZoomTopBackGround = yend - m_iZoomHeight;
+            m_fZoomLeftBackGround = middlex - m_fZoomWidth*0.5f;
+            m_fZoomTopBackGround = yend - m_fZoomHeight;
             break;
           case 4: // Height centered, Right unchanged
-            m_fZoomTopBackGround = middley - m_iZoomHeight*0.5f;
-            m_fZoomLeftBackGround = xend - m_iZoomWidth;
+            m_fZoomTopBackGround = middley - m_fZoomHeight*0.5f;
+            m_fZoomLeftBackGround = xend - m_fZoomWidth;
             break;
           case 1: // Top Left unchanged
             break;
           case 3: // Top Right unchanged
-            m_fZoomLeftBackGround = xend - m_iZoomWidth;
+            m_fZoomLeftBackGround = xend - m_fZoomWidth;
             break;
           case 7: // Bottom Left unchanged          
-            m_fZoomTopBackGround = yend - m_iZoomHeight;
+            m_fZoomTopBackGround = yend - m_fZoomHeight;
             break;
           case 5: // Bottom Right unchanged
-            m_fZoomTopBackGround = yend - m_iZoomHeight;
-            m_fZoomLeftBackGround = xend - m_iZoomWidth;
+            m_fZoomTopBackGround = yend - m_fZoomHeight;
+            m_fZoomLeftBackGround = xend - m_fZoomWidth;
             break;
 
         }
+        if (m_fZoomLeftBackGround > m_fWidthBackGround-m_fZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround-m_fZoomWidth);
+        if (m_fZoomTopBackGround > m_fHeightBackGround-m_fZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround-m_fZoomHeight);
         if (m_fZoomLeftBackGround < 0) m_fZoomLeftBackGround = 0;
         if (m_fZoomTopBackGround < 0) m_fZoomTopBackGround = 0;
-        if (m_fZoomLeftBackGround > m_fWidthBackGround-m_iZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround-m_iZoomWidth);
-        if (m_fZoomTopBackGround > m_fHeightBackGround-m_iZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround-m_iZoomHeight);
       }
     }
 
