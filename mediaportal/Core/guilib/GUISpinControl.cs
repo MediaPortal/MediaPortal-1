@@ -451,6 +451,7 @@ namespace MediaPortal.GUI.Library
               MoveDown();
             else
               MoveUp();
+            action.wID=Action.ActionType.ACTION_INVALID;
             return;
           }
           if (m_iSelect==SpinSelect.SPIN_BUTTON_DOWN)
@@ -459,6 +460,7 @@ namespace MediaPortal.GUI.Library
               MoveUp();
             else
               MoveDown();
+            action.wID=Action.ActionType.ACTION_INVALID;
             return;
           }
         }

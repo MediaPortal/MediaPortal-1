@@ -522,6 +522,7 @@ namespace MediaPortal.GUI.TV
             m_dtTime=m_dtTime.AddDays(iDay);
             Update();
             SetFocus();
+            return true;
           }
           if (iControl==(int)Controls.SPINCONTROL_TIME_INTERVAL)
           {
@@ -530,6 +531,7 @@ namespace MediaPortal.GUI.TV
             m_iBlockTime=iInterval*15;
             Update();
             SetFocus();
+            return true;
           }
           if (iControl>=100)
           {
