@@ -1,0 +1,1632 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<tv generator-info-url="http://www.o2design.se/o2grabber/" generator-info-name="o2grabber v.1.0.2b">
+  <channel id="21.dagenstv.com">
+    <display-name lang="sv">SVT1</display-name>
+  </channel>
+  <channel id="22.dagenstv.com">
+    <display-name lang="sv">SVT2</display-name>
+  </channel>
+  <channel id="26.dagenstv.com">
+    <display-name lang="sv">TV3</display-name>
+  </channel>
+  <channel id="27.dagenstv.com">
+    <display-name lang="sv">TV4</display-name>
+  </channel>
+  <channel id="10.dagenstv.com">
+    <display-name lang="sv">Kanal 5</display-name>
+  </channel>
+  <channel id="42.dagenstv.com">
+    <display-name lang="sv">ZTV</display-name>
+  </channel>
+  <channel id="14.dagenstv.com">
+    <display-name lang="sv">MTV</display-name>
+  </channel>
+  <channel id="9.dagenstv.com">
+    <display-name lang="sv">Eurosport</display-name>
+  </channel>
+  <channel id="142.dagenstv.com">
+    <display-name lang="sv">TV4 Plus</display-name>
+  </channel>
+  <programme start="20040419060000 +0100" stop="20040419093000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">SVT morgon
+</title>
+    <desc lang="sv">Nyheter och väder varje halvtimme. Sportnyheter 7.15, 7.44, 8.15, 8.44 och 9.15. Ekonominyheter 6.40, 7.40, 8.40 och 9.20. Text-tv 665.
+</desc>
+  </programme>
+  <programme start="20040419093000 +0100" stop="20040419105500" channel="21.dagenstv.com">
+    <title lang="sv">UR-program</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419093000 +0100" stop="20040419100000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Om barn
+</title>
+    <desc lang="sv">15 läxor i veckan eller inga alls? Ska skolan vara läxfri? Möt skolforskaren som pryade som elev och ta del av hans resultat. Vi får träffa Rebecca, 10 år som har fem fritidsaktiviteter varje vecka. Text-tv 199. Repris från 18/4.
+</desc>
+  </programme>
+  <programme start="20040419100000 +0100" stop="20040419105500" channel="21.dagenstv.com">
+    <title lang="sv">UR-Akademins samlade kurser</title>
+    <desc lang="sv">Gustav III:s paviljong på Haga. Göran Alm berättar för Jan-Erik Lustig om paviljongens historia och dess upphovsman Gustav III. Text-tv 199. Repris från 1/3.
+</desc>
+  </programme>
+  <programme start="20040419120000 +0100" stop="20040419121000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Rapport
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419121000 +0100" stop="20040419131000" channel="21.dagenstv.com">
+    <title lang="sv">Gudstjänst</title>
+    <desc lang="sv">Världens Kristus. Mats Hermansson, missionsstrateg inom Svenska kyrkan, reflekterar kring kristusbilder från hela världen. Gudstjänstledare är Stefan Nilsson, kyrkoherde i Sundsvall. Sång av kören Levande Väsen.
+</desc>
+  </programme>
+  <programme start="20040419141500 +0100" stop="20040419160000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Ta hand om Ulla
+</title>
+    <desc lang="sv">Svenskt drama från 1942. Det är slutet av 1930-talet och tiderna är dåliga. När Ulla och Gunnar samtidigt blir uppsagda ser framtiden mörk ut. Ulla upptäcker dessutom att hon är med barn. Gunnar får dock jobb och de kan gifta sig. Men krigsutbrottet 1939 gör att deras äktenskap sätts på hårda prov. Gunnar blir inkallad och framtiden är oviss. I rollerna: Marianne Aminoff, Bengt Logardt, Åke Grönberg. Regi: Ivar Johansson. Text-tv 199.
+</desc>
+  </programme>
+  <programme start="20040419160000 +0100" stop="20040419160500 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Rapport
+</title>
+    <desc lang="sv">Text-tv 199.
+</desc>
+  </programme>
+  <programme start="20040419160500 +0100" stop="20040419163000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Min galna familj
+</title>
+    <desc lang="sv">Amerikansk ungdomskomedi. Del 20 av 22. Molly är 16 år och tvivlar, liksom många i hennes ålder, på att hon verkligen är släkt med människorna hon har omkring sig i hemmet. Mollys familj är helt enkelt ett gäng knäppskallar! I rollerna: Reagan Dale Neis, Patrick Lewis, Julia Sweeney. Repris från 2003.
+</desc>
+  </programme>
+  <programme start="20040419163000 +0100" stop="20040419170000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Gröna rum
+</title>
+    <desc lang="sv">Trädgårdsprogram. Tid för omskolning av småplantor i växthuset och vi lär oss att skilja en krokus från en tidlösa. Textat. Repris från 14/4.
+</desc>
+  </programme>
+  <programme start="20040419170000 +0100" stop="20040419172500 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Extra
+</title>
+    <desc lang="sv">UR. Lättsam såpa på franska. Sam trouve du travail. Nico söker jobb som stuntman och Sam hoppas kunna få jobb som servitör. Fransktextat. Repris från 2003. Även i SVT2 25/4.
+</desc>
+  </programme>
+  <programme start="20040419172500 +0100" stop="20040419173000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Ramp om historia - 5 minuter
+</title>
+    <desc lang="sv">UR. En gång Stasi alltid Stasi. Hagen Koch tvingades in i en kommunistisk barngrupp på grund av sin pappas nazistiska förflutna. När han var 21 år var det han som fick uppdraget att bygga Berlinmuren. Svensktextat. Även 21/4 och 23/4 samt i SVT2 25/4.
+</desc>
+  </programme>
+  <programme start="20040419173000 +0100" stop="20040419180000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Krokodill
+</title>
+    <desc lang="sv">Barnprogram från UR. I 'Världens fest' firar vi barnens dag på turkiska. I 'High Tech' allt som är värt att veta om dammsugare. Programledare: Oliver Pasche. Text-tv 862.
+</desc>
+  </programme>
+  <programme start="20040419180000 +0100" stop="20040419190000" channel="21.dagenstv.com">
+    <title lang="sv">Bolibompa</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419180000 +0100" stop="20040419183000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Björnes magasin
+</title>
+    <desc lang="sv">Del 8 av 12. Björne och Viktor leker affär, men strömmen går och det blir mörkt, så då berättar de spökhistorier för varandra istället. Tillsammans ser de på filmen 'Risto'. Medverkande: Pontus Gustafsson och Viktor Brobacke. Repris från 2002.
+</desc>
+  </programme>
+  <programme start="20040419183000 +0100" stop="20040419190000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Lilla Sportspegeln
+</title>
+    <desc lang="sv">Om sport för och med barn. Gäst i studion är den svenske världssprintern Johan Wissman. Möte med en av världens bästa ryttare, den brasilianske hästhopparen Rodrigo Pessoa.  Programledare: Micke Leijnegard och Marie Lehmann. Text-tv 199. Även 25/4.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419193000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">En ska bort
+</title>
+    <desc lang="sv">Direktsänd musikvideotävling. Del 3 av 7. Tittarna ska lista ut vilken av videorna som inte har någon koppling till veckans gäst, sångerskan Sara Löfgren. Programledare: Henrik Burman. Text-tv 199. Även 24/4.
+</desc>
+  </programme>
+  <programme start="20040419193000 +0100" stop="20040419200000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Rapport
+</title>
+    <desc lang="sv">Text-tv 199.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419220000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Fastighetsskötaren
+</title>
+    <desc lang="sv">Thommy Berggrens uppsättning av Harold Pinters pjäs. Pjäsen hade sin urpremiär på Stockholms Stadsteater 2001. Aston vill ha uteliggaren Davies som fastighetsskötare till sin förfallna fastighet. Men när Astons bror Mick dyker upp börjar ett egendomligt maktspel. I rollerna: Ingvar Hirdwall, Johan Rabaeus, Peter Andersson. Regi: Thommy Berggren. Manus: Harold Pinter. Text-tv 199. Även textat 24/4.
+</desc>
+  </programme>
+  <programme start="20040419220000 +0100" stop="20040419223000 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Plus
+</title>
+    <desc lang="sv">Konsumentmagasin. Del 11 av 15. Tonval som retar kunder. Tips på hur man sätter extra piff på pytt-i-pannan. Programledare: Sverker Olofsson. Text-tv 199. Även 23/4 och textat 24/4.
+</desc>
+  </programme>
+  <programme start="20040419223000 +0100" stop="20040419231500 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Drömmarnas tid
+</title>
+    <desc lang="sv">Amerikansk dramaserie. Del 3 av 25. New frontier. Meg och Roxanne är vänner igen, och båda är åter dansare i tv-showen American Bandstand. Det börjar dock gå rykten om Meg och en viss Jimmy Riley, något som Roxanne tolkar som att Meg börjar få status bland dansarna. I rollerna: Brittany Snow, Vanessa Lengies, Gail O'Grady. Även 21/4.
+</desc>
+  </programme>
+  <programme start="20040419231500 +0100" stop="20040419232500 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Rapport
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419232500 +0100" stop="20040419233500 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Kulturnyheterna
+</title>
+    <desc lang="sv">Repris från SVT2 i kväll.
+</desc>
+  </programme>
+  <programme start="20040419233500 +0100" stop="20040420003500 +0100" channel="21.dagenstv.com">
+    <title lang="sv">Megadrom
+</title>
+    <desc lang="sv">Sportunderhållning för hela familjen. Del 4 av 8. Text-tv 199. Repris från 17/4.
+</desc>
+  </programme>
+  <programme start="20040420003500 +0100" stop="20040420012500" channel="21.dagenstv.com">
+    <title lang="sv">Mannen från Uncle</title>
+    <desc lang="sv">Amerikansk äventyrsserie från 1964. Del 4 av 28. The shark affair. Kapten Shark är övertygad om att jorden står inför en kärnvapenkatastrof. Han kidnappar vetenskapsmän och intellektuella i syfte att skapa en elitspäckad version av Noaks ark. I rollerna: Robert Vaughn, David McCallum, Leo G. Carroll. Repris från 2001.
+</desc>
+  </programme>
+  <programme start="20040419154000 +0100" stop="20040419162500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Sportspegeln
+</title>
+    <desc lang="sv">Repris från 18/4.
+</desc>
+  </programme>
+  <programme start="20040419162500 +0100" stop="20040419172500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Agenda
+</title>
+    <desc lang="sv">Nyhetsfördjupning. Repris från 18/4.
+</desc>
+  </programme>
+  <programme start="20040419172500 +0100" stop="20040419174000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Oddasat
+</title>
+    <desc lang="sv">Samiskspråkiga nyheter. Textas på svenska.
+</desc>
+  </programme>
+  <programme start="20040419174000 +0100" stop="20040419174500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Nyhetstecken
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419174500 +0100" stop="20040419175500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Uutiset
+</title>
+    <desc lang="sv">Finskspråkiga nyheter. Textas på svenska.
+</desc>
+  </programme>
+  <programme start="20040419175500 +0100" stop="20040419180000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Regionala nyheter
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419180000 +0100" stop="20040419181500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Aktuellt
+</title>
+    <desc lang="sv">Text-tv 299.
+</desc>
+  </programme>
+  <programme start="20040419181500 +0100" stop="20040419190000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Fråga doktorn
+</title>
+    <desc lang="sv">Hälsomagasin. Del 15 av 16. överläkare Ing-Marie Wieselgren om schizofreni. Möt Cathrin Larsson som lever med funktionshinder orsakad av en psykisk sjukdom. På Skansen i Stockholm kommer besökare i sommar att få veta hur man förr i tiden såg på hälsa, sjukdom, orsak och bot. Stig Larsson visar en övning som bygger upp muskelstyrkan i armarna. Gunilla Hasselgren svarar på tittarnas frågor. Programledare: Suzanne Axell. Text-tv 299. Även 22/4 och textat 24/4.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419191000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Kulturnyheterna
+</title>
+    <desc lang="sv">Text-tv 299. Även i SVT1 i kväll.
+</desc>
+  </programme>
+  <programme start="20040419191000 +0100" stop="20040419193000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Regionala nyheter
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419193000 +0100" stop="20040419200000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Alan Partridge show
+</title>
+    <desc lang="sv">Brittisk underhållning. Parodi på 'soffprogram' med komikern Steve Coogan som den oerhört dryge och självupptagne programvärden Alan Partridge. Del 3 av 6. Gäst är skådespelerskan Jean Ainslie.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419203000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Vetenskapsmagasinet
+</title>
+    <desc lang="sv">Aktuell vetenskap och ny teknik. Del 6 av 10. Mumierna i Sverige har kartlagts i ny forskning. Kanske döljer sig ännu åtråvärda mumier på okända vindar. Olof bodde vid Ångermanälvens strand för närmare 1 000 år sedan. Nu visar ett tvärvetenskapligt forskarlag vad han åt, hur han mådde och hans sociala liv. Programledare: Rasmus Åkerblom. Text-tv 299. Även 22/4 och textat 24/4.
+</desc>
+  </programme>
+  <programme start="20040419203000 +0100" stop="20040419210000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Kontroll
+</title>
+    <desc lang="sv">Dator- och tv-spelsmagasin. Del 6 av 12. Reportage om spelet som fick pengarna att ta slut i Japan. Radioprofilen och programledaren Kjell Eriksson har testat spelet Teenage Mutant Ninja Turtles. Programledare: Alexander Hammarlöf. Text-tv 299. Även 20/4 och textat 23/4.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419212500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Aktuellt
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419212500 +0100" stop="20040419213000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">A-ekonomi
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419213000 +0100" stop="20040419220000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Fotbollskväll
+</title>
+    <desc lang="sv">Fotbollsmagasin. Del 3 av 10. Tema: Italien! 'Fotbollskvälls' egen Italienexpert Glenn Strömberg finns på plats i studion. Dessutom reportage om Milans anfallsstjärna Filippo Inzaghi. Programledare: Mats Nyström och Thomas Wernerson. Även 20/4
+</desc>
+  </programme>
+  <programme start="20040419220000 +0100" stop="20040419220300 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Nyhetssammanfattning
+</title>
+    <desc lang="sv">Utrikes, inrikes och regionala nyheter.
+</desc>
+  </programme>
+  <programme start="20040419220300 +0100" stop="20040419221500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Sportnytt
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419221500 +0100" stop="20040419222500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Regionala nyheter
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419222500 +0100" stop="20040419223000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Väder
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419223000 +0100" stop="20040419230000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Race
+</title>
+    <desc lang="sv">Motorsportmagasin. Del 1 av 10. Möt 25-årige Mattias Ekström som kör sin fjärde säsong i vad som kallas världens bästa standardvagnsmästerskap. Bilarna är byggda i kolfiber med V8-motorer på närmare 500 hästkrafter. Säsongens alla tio deltävlingar sänds i 'Race'. Även 20/4 och textat 24/4.
+</desc>
+  </programme>
+  <programme start="20040419230000 +0100" stop="20040419234000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Veckans konsert: Grimaud spelar Beethoven
+</title>
+    <desc lang="sv">Konsert från Royal Albert Hall, London. Beethovens pianokonsert nr 4 framförs av pianisten HélÅne Grimaud och dirigenten Christoph Eschenbach. Repris från 17/4. Även 23/4.
+</desc>
+  </programme>
+  <programme start="20040419234000 +0100" stop="20040420000500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Dans: Bebådelsen av Preljocaj
+</title>
+    <desc lang="sv">Dansföreställning. Två dansare gestaltar mötet mellan ängeln Gabriel och Maria. Repris från 17/4.
+</desc>
+  </programme>
+  <programme start="20040420000500 +0100" stop="20040420012000" channel="22.dagenstv.com">
+    <title lang="sv">Kultursöndag</title>
+    <desc lang="sv">Ett samlat grepp om kulturen. Repris från 18/4. Även 23/4.
+</desc>
+  </programme>
+  <programme start="20040420000500 +0100" stop="20040420003000 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Musikspegeln
+</title>
+    <desc lang="sv">Musikmagasin. Möt den mångsidige kontrabasisten Sebastien Dubé. Repris från 18/4. Även 23/4.
+</desc>
+  </programme>
+  <programme start="20040420003000 +0100" stop="20040420005500 +0100" channel="22.dagenstv.com">
+    <title lang="sv">Röda rummet
+</title>
+    <desc lang="sv">Litteraturmagasin. Möt den danska författarinnan Iselin C Hermann. Text-tv 299. Repris från 18/4. Även textat 21/4.
+</desc>
+  </programme>
+  <programme start="20040420005500 +0100" stop="20040420012000" channel="22.dagenstv.com">
+    <title lang="sv">Bildjournalen</title>
+    <desc lang="sv">Konstmagasin. Möte med konstnärer som skriver böcker som bildkonstnärliga projekt. Repris från 18/4. Även 23/4.
+</desc>
+  </programme>
+  <programme start="20040419063000 +0100" stop="20040419073000" channel="26.dagenstv.com">
+    <title lang="sv">Barntrean</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419063000 +0100" stop="20040419070000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Ed, Edd &amp; Eddy
+</title>
+    <desc lang="sv">Amerikansk barnserie.
+</desc>
+  </programme>
+  <programme start="20040419070000 +0100" stop="20040419073000" channel="26.dagenstv.com">
+    <title lang="sv">Disneys frukostklubb</title>
+    <desc lang="sv">Tecknat från Disney.
+</desc>
+  </programme>
+  <programme start="20040419083000 +0100" stop="20040419093000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Lyckochansen
+</title>
+    <desc lang="sv">Direktsänt spelprogram.
+</desc>
+  </programme>
+  <programme start="20040419093000 +0100" stop="20040419100000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Alla älskar Raymond
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2001-02. Del 22 av 25. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419100000 +0100" stop="20040419105000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Våra bästa år
+</title>
+    <desc lang="sv">Amerikansk dramaserie. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419105000 +0100" stop="20040419114000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Ricki Lake
+</title>
+    <desc lang="sv">Amerikansk pratshow. Därför var jag var otrogen.
+</desc>
+  </programme>
+  <programme start="20040419114000 +0100" stop="20040419124000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">På heder och samvete
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 1997-98.
+</desc>
+  </programme>
+  <programme start="20040419124000 +0100" stop="20040419131000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Lyckochansen
+</title>
+    <desc lang="sv">Direktsänt spelprogram.
+</desc>
+  </programme>
+  <programme start="20040419131000 +0100" stop="20040419140000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Våra bästa år
+</title>
+    <desc lang="sv">Amerikansk dramaserie. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419140000 +0100" stop="20040419143000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Alla älskar Raymond
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2001-02. Del 23 av 25. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419143000 +0100" stop="20040419150000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Freaky Finnertys
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2002-03. Brad störs av att Lily inte vill synas med honom så Sean försöker ge honom en ny image.
+</desc>
+  </programme>
+  <programme start="20040419150000 +0100" stop="20040419153000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Sabrina - tonårshäxan
+</title>
+    <desc lang="sv">Amerikansk komediserie. Del 19 av 22.
+</desc>
+  </programme>
+  <programme start="20040419153000 +0100" stop="20040419160000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Just shoot me
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2002. En tom lägenhet i Mayas hus utgör ett perfekt tillfälle för Finch och Kevin att bli sambos.
+</desc>
+  </programme>
+  <programme start="20040419160000 +0100" stop="20040419163000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Simpsons
+</title>
+    <desc lang="sv">Amerikansk tecknad komediserie från 1998-99. Del 22 av 23. Lisa blir erbjuden medlemsskap i MENSA och Homer tillfrågas om han vill medverka på erotiska bilder.
+</desc>
+  </programme>
+  <programme start="20040419163000 +0100" stop="20040419172700 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Smallville
+</title>
+    <desc lang="sv">Amerikanskt äventyrsdrama från 2002-03. Clark blir bekymrad när en mystisk poet, Byron Moore, lämnar kärleksbrev till Lana vid hennes föräldrars grav.
+</desc>
+  </programme>
+  <programme start="20040419172700 +0100" stop="20040419173000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Metronyheter
+</title>
+    <desc lang="sv">Även 18.57, 20.57, 23.02.
+</desc>
+  </programme>
+  <programme start="20040419173000 +0100" stop="20040419182500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Beverly Hills
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 1995. Clare är besviken över att Steve verkar villig att släppa henne så att Carl kan få fritt spelrum. Även i natt.
+</desc>
+  </programme>
+  <programme start="20040419182500 +0100" stop="20040419190000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Nanny
+</title>
+    <desc lang="sv">Amerikansk komediserie från 1995-96. Del 4 av 27. Maggies 16-årsdag närmar sig och Maxwell bokar in dem på Guggenheimmuseet.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419200000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">The Bondi Beach Block
+</title>
+    <desc lang="sv">Australisk realityserie från 2003. Del 5 av 14. En av deltagarna ertappas med att spionera på ett annat pars lägenhet. Domaren är tillbaka, redo att dela ut ett pris.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419210000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Tillsammans
+</title>
+    <desc lang="sv">Svenskt relationsprogram från 2004. övergiven dotter söker sin mamma. I säsongens sista Tillsammans träffar vi Marie och hennes dotter Erica. Erica har blivit mobbad och utsatt för övergrepp och söker kontakt med sin mamma. Men Marie tycker att dottern är stängd och behöver hjälp för att nå henne. Psykoterapeuten Louise Hallin försöker få Marie och Erica att hitta tillbaka till varandra. Dessutom får vi se hur det har gått för några av paren från säsongens första program. Programledare: Hannah Rosander.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419220000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Cityakuten
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 2001. I rollerna: Anthony Edwards, Laura Innes, Alex Kingston.
+</desc>
+  </programme>
+  <programme start="20040419220000 +0100" stop="20040419230500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Avspark: Allsvenskan
+</title>
+    <desc lang="sv">Fotbollsmagasin. De allsvenska matcharenorna, samtliga mål och höjdpunkter, reportage, analyser och intervjuer. I studion: Claes Åkeson och Thomas Nordahl. Experter: Jonas Thern och Glenn Hysen.
+</desc>
+  </programme>
+  <programme start="20040419230500 +0100" stop="20040419233500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Lucky
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2003. I rollerna: John Corbett, Billy Gardell, Craig Robinson.
+</desc>
+  </programme>
+  <programme start="20040419233500 +0100" stop="20040420000500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Första hjälpen
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2003. Del 3 av 2. I rollerna: Zach Braff, Sarah Chalke, Ken Jenkins.
+</desc>
+  </programme>
+  <programme start="20040420000500 +0100" stop="20040420020000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Oz
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 2003.
+</desc>
+  </programme>
+  <programme start="20040420020000 +0100" stop="20040420025500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Baywatch
+</title>
+    <desc lang="sv">Amerikansk serie från 2000-01. Del 17 av 22.
+</desc>
+  </programme>
+  <programme start="20040420025500 +0100" stop="20040420035500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Lyckochansen
+</title>
+    <desc lang="sv">Direktsänt spelprogram.
+</desc>
+  </programme>
+  <programme start="20040420035500 +0100" stop="20040420044500 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Beverly Hills
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 1995. Repris från i dag.
+</desc>
+  </programme>
+  <programme start="20040420044500 +0100" stop="20040420051000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Drömfabriken
+</title>
+    <desc lang="sv">Amerikansk komediserie från 1999.
+</desc>
+  </programme>
+  <programme start="20040420051000 +0100" stop="20040420053000 +0100" channel="26.dagenstv.com">
+    <title lang="sv">Extreme
+</title>
+    <desc lang="sv">Extremsportserie från 1998.
+</desc>
+  </programme>
+  <programme start="20040420053000 +0100" stop="20040420055000" channel="26.dagenstv.com">
+    <title lang="sv">Extreme</title>
+    <desc lang="sv">Extremsportserie från 1998.
+</desc>
+  </programme>
+  <programme start="20040419093000 +0100" stop="20040419103500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Pussel
+</title>
+    <desc lang="sv">Svenskt spelprogram från 2004. Programledare: Anton Körberg.
+</desc>
+  </programme>
+  <programme start="20040419103500 +0100" stop="20040419110500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Hem till gården
+</title>
+    <desc lang="sv">Brittisk dramaserie från 2001. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419110500 +0100" stop="20040419115000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Melrose Place
+</title>
+    <desc lang="sv">Amerikansk dramaserie. Del 33 av 94. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419115000 +0100" stop="20040419121500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Glamour
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 2002. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419121500 +0100" stop="20040419124500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Hem till gården
+</title>
+    <desc lang="sv">Brittisk dramaserie från 2001. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419124500 +0100" stop="20040419125500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Dagens rätt
+</title>
+    <desc lang="sv">Direktsänt trav. Dagens Trio-lopp.
+</desc>
+  </programme>
+  <programme start="20040419125500 +0100" stop="20040419132000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Köket
+</title>
+    <desc lang="sv">Svenskt matprogram från 2001. Chefredaktören Cissi Elwin hälsar på Anders som bjuder på dubbelbiff med grillad sparris. Repris från 2001.
+</desc>
+  </programme>
+  <programme start="20040419132000 +0100" stop="20040419134500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Blossom
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 1990-95. Del 89 av 113. Repris från 2003.
+</desc>
+  </programme>
+  <programme start="20040419134500 +0100" stop="20040419143500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Oprah Winfrey show
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2003-04. Oprah gästas av skådespelarna i 'Sex and the city'.
+</desc>
+  </programme>
+  <programme start="20040419143500 +0100" stop="20040419150000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Glamour
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 2002. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419150000 +0100" stop="20040419155000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Ordjakten
+</title>
+    <desc lang="sv">Svenskt spelprogram från 2004. Programledare: Linda Bengtzing och Therese Ekberg.
+</desc>
+  </programme>
+  <programme start="20040419155000 +0100" stop="20040419162000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">När &amp; fjärran
+</title>
+    <desc lang="sv">Svenskt resemagasin. Del 8 av 12. Text-tv 890. Repris från 17/4.
+</desc>
+  </programme>
+  <programme start="20040419162000 +0100" stop="20040419171000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Melrose Place
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 1992-99. Del 34 av 94. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419171000 +0100" stop="20040419173500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">That '70s show
+</title>
+    <desc lang="sv">Amerikansk komediserie från 1999. Del 11 av 26. Repris från 2002.
+</desc>
+  </programme>
+  <programme start="20040419173500 +0100" stop="20040419180500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Dharma &amp; Greg
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2000. Del 24 av 24.
+</desc>
+  </programme>
+  <programme start="20040419180500 +0100" stop="20040419181000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Keno
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419181000 +0100" stop="20040419190000" channel="27.dagenstv.com">
+    <title lang="sv">Nyheter</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419181000 +0100" stop="20040419182500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Lokala nyheter
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419182500 +0100" stop="20040419183000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Vädret
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419183000 +0100" stop="20040419185400 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Nyheterna
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419185400 +0100" stop="20040419190000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Ekonominyheterna
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419193000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Farmen Afrika
+</title>
+    <desc lang="sv">Svenskt underhållningsprogram från 2004. Del 57 av 61. Programledare: Linda Isacsson. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419193000 +0100" stop="20040419200000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Dårhuset
+</title>
+    <desc lang="sv">Svenskt underhållningsprogram från 2004. Del 9 av 12. Fredde Granberg, Anna Blomberg, Tobias Persson och Martina Haag tävlar mot Kajsa Ingemarsson, Andreas Nilsson, Lena Frisk och Thomas Järvheden. Programledare: Felix Herngren.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419203000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Hem till Midgård
+</title>
+    <desc lang="sv">Svensk komediserie från 2003. Del 6 av 12. Gammelman ligger för döden. I rollerna: Fredde Granberg, Sara Sommerfeld, Marko 'Markoolio' Lehtosalo. Text-tv 890. Bredbild.
+</desc>
+  </programme>
+  <programme start="20040419203000 +0100" stop="20040419210000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">En ängels tålamod
+</title>
+    <desc lang="sv">Svensk komediserie från 2000. Del 6 av 24. Sophie utvecklar ett passionerat förhållande till en centrifug. I rollerna: Peter Settman, Cecilia Ljung, Reuben Sallmander. Text-tv 890. Repris från 2002.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419215500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Kalla fakta
+</title>
+    <desc lang="sv">Svenskt samhällsprogram från 2004. Del 7 av 12. Varje dag pågår hundratals rättegångar i Sverige och vittnenas berättelser är avgörande. Trond Sefastsson tittar närmare på vilka svaga grunder vittnesmålen står på. Programledare: Elisabet Frerot. Även 24/4.
+</desc>
+  </programme>
+  <programme start="20040419215500 +0100" stop="20040419223000" channel="27.dagenstv.com">
+    <title lang="sv">Nyheter</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419215500 +0100" stop="20040419220000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Lokala nyheter
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419220000 +0100" stop="20040419221500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Nyheterna
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419221500 +0100" stop="20040419222600 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Sporten
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419222600 +0100" stop="20040419223000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Vädret
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419223000 +0100" stop="20040419233000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Joe Renato
+</title>
+    <desc lang="sv">Amerikansk kriminaldramaserie från 2003. Del 6 av 16. Joe undersöker en FBI-agents död. I rollerna: Joe Pantoliano, Anna Belknap, Lola Glaudini.
+</desc>
+  </programme>
+  <programme start="20040419233000 +0100" stop="20040419235500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">South Park
+</title>
+    <desc lang="sv">Amerikansk animerad komediserie från 2002. Del 12 av 14.
+</desc>
+  </programme>
+  <programme start="20040419235500 +0100" stop="20040420004500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">MTV up north
+</title>
+    <desc lang="sv">Nordiskt musikprogram. Repris från 17/4.
+</desc>
+  </programme>
+  <programme start="20040420004500 +0100" stop="20040420022500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Bakom järngaller
+</title>
+    <desc lang="sv">Brittisk dramaserie från 2000. Repris från 2003.
+</desc>
+  </programme>
+  <programme start="20040420022500 +0100" stop="20040420031000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Kvinnofängelset
+</title>
+    <desc lang="sv">Australisk dramaserie från 1983. Del 582 av 692. Repris från 1999. Även 4.45.
+</desc>
+  </programme>
+  <programme start="20040420031000 +0100" stop="20040420033500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Golfresan
+</title>
+    <desc lang="sv">Svenskt golfmagasin från 2003. Del 1 av 8. Repris från 2003.
+</desc>
+  </programme>
+  <programme start="20040420033500 +0100" stop="20040420035500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Golfresan
+</title>
+    <desc lang="sv">Svenskt golfmagasin från 2003. Del 2 av 8. Repris från 2003.
+</desc>
+  </programme>
+  <programme start="20040420035500 +0100" stop="20040420042000 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Köket
+</title>
+    <desc lang="sv">Svenskt matprogram från 2001. Repris från 19/1.
+</desc>
+  </programme>
+  <programme start="20040420042000 +0100" stop="20040420044500 +0100" channel="27.dagenstv.com">
+    <title lang="sv">Köket
+</title>
+    <desc lang="sv">Svenskt matprogram från 2001. Repris från 20/1.
+</desc>
+  </programme>
+  <programme start="20040420044500 +0100" stop="20040420053500" channel="27.dagenstv.com">
+    <title lang="sv">Kvinnofängelset</title>
+    <desc lang="sv">Australisk dramaserie från 1983. Del 582 av 692. Repris från 2.25.
+</desc>
+  </programme>
+  <programme start="20040419064000 +0100" stop="20040419074000" channel="10.dagenstv.com">
+    <title lang="sv">Barnprogram</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419064000 +0100" stop="20040419071000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Batman
+</title>
+    <desc lang="sv">Tecknat.
+</desc>
+  </programme>
+  <programme start="20040419071000 +0100" stop="20040419074000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Sailor Moon
+</title>
+    <desc lang="sv">Japansk tecknad serie för barn och ungdom.
+</desc>
+  </programme>
+  <programme start="20040419074000 +0100" stop="20040419081000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Huset fullt
+</title>
+    <desc lang="sv">Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419081000 +0100" stop="20040419084000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Fresh Prince i Bel Air
+</title>
+    <desc lang="sv">Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419084000 +0100" stop="20040419095500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Jay Leno show
+</title>
+    <desc lang="sv">Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419095500 +0100" stop="20040419115000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Dixie
+</title>
+    <desc lang="sv">Direktsänt tävlingsprogram.
+</desc>
+  </programme>
+  <programme start="20040419115000 +0100" stop="20040419121500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Ska du säga!
+</title>
+    <desc lang="sv">Repris från 18/4.
+</desc>
+  </programme>
+  <programme start="20040419121500 +0100" stop="20040419124500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Airline
+</title>
+    <desc lang="sv">Dokumentärserie om livet på flygbolaget Easyjet i Luton. Del 4 av 12.
+</desc>
+  </programme>
+  <programme start="20040419124500 +0100" stop="20040419131500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Entertainment now
+</title>
+    <desc lang="sv">Repris från 18/4.
+</desc>
+  </programme>
+  <programme start="20040419131500 +0100" stop="20040419134000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Andra sidan
+</title>
+    <desc lang="sv">Amerikansk pratshowserie om det övernaturliga. Del 71 av 100.
+</desc>
+  </programme>
+  <programme start="20040419134000 +0100" stop="20040419141500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Stilpoliserna
+</title>
+    <desc lang="sv">Repris från 18/4.
+</desc>
+  </programme>
+  <programme start="20040419141500 +0100" stop="20040419151000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Magnum
+</title>
+    <desc lang="sv">Amerikansk deckarserie från 1986-87. Del 9 av 22. 'Novel Connection'. Gästskådespelare: Angela Lansbury, Jared Martin. Även i natt.
+</desc>
+  </programme>
+  <programme start="20040419151000 +0100" stop="20040419154000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Huset fullt
+</title>
+    <desc lang="sv">Amerikansk komediserie från 1990-91. Del 76 av 192. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419154000 +0100" stop="20040419161000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Fresh Prince i Bel Air
+</title>
+    <desc lang="sv">Amerikansk komediserie från 90-talet. Del 91 av 148. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419161000 +0100" stop="20040419171000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Kultjägarna
+</title>
+    <desc lang="sv">Kanadensisk-fransk äventyrsserie från 2001-02. Sydney och Nigel är på jakt efter en kvinnlig krigsherres hästsadel som sägs ha magiska krafter när Sydney blir kidnappad av en hästtjuv.
+</desc>
+  </programme>
+  <programme start="20040419171000 +0100" stop="20040419173500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Blind date
+</title>
+    <desc lang="sv">Amerikansk dejtingserie. Del 142 av 175. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419173500 +0100" stop="20040419183000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Buffy och vampyrerna
+</title>
+    <desc lang="sv">Amerikansk actionrysarserie från 1998-99. Även i natt.
+</desc>
+  </programme>
+  <programme start="20040419183000 +0100" stop="20040419190000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Vänner
+</title>
+    <desc lang="sv">Amerikansk komediserie från 1998-99. Gänget kommer till BB för Phoebes förlossning. Phoebes läkare är tyvärr mest intresserad av gamla tv-stjärnan Fonzie från Gänget och jag. Gästskådespelare: Giovanni Ribisi.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419200000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Big brother
+</title>
+    <desc lang="sv">Svensk dokusåpa från 2004. Även i natt.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419210000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Motorjournalen
+</title>
+    <desc lang="sv">Svenskt motormagasin från 2004. Del 10 av 12. Även 24/4.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419215500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">CSI
+</title>
+    <desc lang="sv">Amerikansk actiondramaserie från 2003-04. En tonåring hittas död på en byggarbetsplats och CSI-teamet hittar blodspår på en hammare. I rollerna: William Peterson, Marg Helgenberger, Gary Dourdan. Även 21/4.
+</desc>
+  </programme>
+  <programme start="20040419215500 +0100" stop="20040419225500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">High Chaparall
+</title>
+    <desc lang="sv">Svensk underhållning från 2004. Del 6 av 10. Filip och Fredrik träffar Lorenzo Lamas, som satte många flickhjärtan i brand under 80-talet med sin roll som Lance i Falcon Crest. Även 23/4.
+</desc>
+  </programme>
+  <programme start="20040419225500 +0100" stop="20040419232500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Frasier
+</title>
+    <desc lang="sv">Amerikansk komediserie från 1999-00. När radiostationens ägare ber Frasier komma på en blygsam liten vinjettmelodi till sitt radioprogram överarbetar Frasier i sin vanliga pompösa stil och blandar in sångare och orkester. I rollerna: Kelsey Grammer, David Hyde Pierce, Jane Leeves. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419232500 +0100" stop="20040420002000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Jay Leno show
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2004. Gäster: skådespelaren John Travolta, 6-åriga dinosaurieexperten Reiss Hozak. Musik: Robi Draco Rosa. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040420002000 +0100" stop="20040420011500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Buffy och vampyrerna
+</title>
+    <desc lang="sv">Repris från i dag.
+</desc>
+  </programme>
+  <programme start="20040420011500 +0100" stop="20040420021500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Big brother
+</title>
+    <desc lang="sv">Repris från i dag.
+</desc>
+  </programme>
+  <programme start="20040420021500 +0100" stop="20040420031500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">V
+</title>
+    <desc lang="sv">Amerikansk science fiction-serie från 1984-85. Del 3 av 19. Donovan och Tyler blir inlåsta i utomjordingarnas arbetsläger.
+</desc>
+  </programme>
+  <programme start="20040420031500 +0100" stop="20040420041000 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Kärlek på prov 2
+</title>
+    <desc lang="sv">Brittiskt dejtingprogram från 2001. Del 1 av 2.
+</desc>
+  </programme>
+  <programme start="20040420041000 +0100" stop="20040420045500 +0100" channel="10.dagenstv.com">
+    <title lang="sv">Magnum
+</title>
+    <desc lang="sv">Repris från i dag.
+</desc>
+  </programme>
+  <programme start="20040420045500 +0100" stop="20040420062000" channel="10.dagenstv.com">
+    <title lang="sv">Natt 5:an</title>
+    <desc lang="sv">Interaktiv underhållning.
+</desc>
+  </programme>
+  <programme start="20040419065500 +0100" stop="20040419070000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Veckans hitvarning
+</title>
+    <desc lang="sv">Veckans låt. Även 7.55, 8.55, 9.55, 10.55, 11.55, 14.50, 4.35, 5.55.
+</desc>
+  </programme>
+  <programme start="20040419070000 +0100" stop="20040419100000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Morronmix
+</title>
+    <desc lang="sv">Gamla, nya och kommande hits.
+</desc>
+  </programme>
+  <programme start="20040419100000 +0100" stop="20040419120000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Hitparad
+</title>
+    <desc lang="sv">Gamla, nya och kommande hits.
+</desc>
+  </programme>
+  <programme start="20040419120000 +0100" stop="20040419121000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Kaksi
+</title>
+    <desc lang="sv">Två videor med samma artist eller grupp.
+</desc>
+  </programme>
+  <programme start="20040419121000 +0100" stop="20040419134000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Hitparad
+</title>
+    <desc lang="sv">Gamla, nya och kommande hits.
+</desc>
+  </programme>
+  <programme start="20040419134000 +0100" stop="20040419134500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Bubblare
+</title>
+    <desc lang="sv">Även 14.55.
+</desc>
+  </programme>
+  <programme start="20040419134500 +0100" stop="20040419150000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Hitparad
+</title>
+    <desc lang="sv">Gamla, nya och kommande hits.
+</desc>
+  </programme>
+  <programme start="20040419150000 +0100" stop="20040419153000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Veckans färskingar
+</title>
+    <desc lang="sv">En blandning av nya musikvideor.
+</desc>
+  </programme>
+  <programme start="20040419153000 +0100" stop="20040419163000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Hitparad/VJ
+</title>
+    <desc lang="sv">Ingrid Soto presenterar gamla, nya och kommande hits.
+</desc>
+  </programme>
+  <programme start="20040419163000 +0100" stop="20040419170000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Pepsi live
+</title>
+    <desc lang="sv">Musikprogram från 2004. Repris från 18/4. Även 23/4.
+</desc>
+  </programme>
+  <programme start="20040419170000 +0100" stop="20040419173000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Live-listan
+</title>
+    <desc lang="sv">Musikprogram.
+</desc>
+  </programme>
+  <programme start="20040419173000 +0100" stop="20040419182500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">David Letterman show
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2004. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419182500 +0100" stop="20040419183000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">ZTV Nytt
+</title>
+    <desc lang="sv">Nöjesnyheter. Även 19.28, 19.58, 00.43, 01.40.
+</desc>
+  </programme>
+  <programme start="20040419183000 +0100" stop="20040419190000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Simpsons
+</title>
+    <desc lang="sv">Amerikansk animerad komediserie från 1997-1998. Homer och Marge reser bort för att få fart på kärleken igen, men upptäcker att borta är bra men hemma bäst. Del 25 av 25. Även senare i kväll.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419193000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Family Guy
+</title>
+    <desc lang="sv">Animerad serie från USA. Även senare i kväll.
+</desc>
+  </programme>
+  <programme start="20040419193000 +0100" stop="20040419200000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">På riktigt
+</title>
+    <desc lang="sv">Svensk realityserie från 2004. Åtta tjejer och killar skänker sina liv till ZTV:s tittare medan de turnerar runt Sverige i en husbilskaravan. Även 24/4.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419203000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Alla älskar Raymond
+</title>
+    <desc lang="sv">Amerikansk serie från 1998/1999. Ray och familjen söker skydd hos Frank och Marie när deras hus blir invaderat av termiter. Även senare i kväll.
+</desc>
+  </programme>
+  <programme start="20040419203000 +0100" stop="20040419210000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Alla älskar Raymond
+</title>
+    <desc lang="sv">Amerikansk serie från 1998/1999. När Frank krockar med bilen för sjuttioelfte gången bestämmer Debra att barnen inte längre får åka med honom. Även senare i kväll.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419231500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Kampen om Gallien
+</title>
+    <desc lang="sv">(Druids) Franskt-kanadensiskt äventyr från 2001. En tapper krigare kämpar med sin armé för frihet och hämnd. När den unge Vercingétorix ser sin far mördas brutalt, svär han att hämnas. I rollerna: Christopher Lambert, Klaus Maria Brandauer, Max von Sydow. Regi: Jacques Dorfmann. (Druids)
+</desc>
+  </programme>
+  <programme start="20040419231500 +0100" stop="20040419234500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">På riktigt - utan koppel
+</title>
+    <desc lang="sv">Svensk realityserie från 2004. Även senare i kväll.
+</desc>
+  </programme>
+  <programme start="20040419234500 +0100" stop="20040420004500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">David Letterman show
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2004. Gäster: skådespelaren Billy Crystal och basebollspelaren Alex Rodriguez. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040420004500 +0100" stop="20040420014500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Saturday Night Live
+</title>
+    <desc lang="sv">Amerikansk underhållning.
+</desc>
+  </programme>
+  <programme start="20040420014500 +0100" stop="20040420021500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Vinterstad Åre
+</title>
+    <desc lang="sv">Svenskt underhållningsprogram från 2004.
+</desc>
+  </programme>
+  <programme start="20040420021500 +0100" stop="20040420024500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Family Guy
+</title>
+    <desc lang="sv">Repris från kvällen.
+</desc>
+  </programme>
+  <programme start="20040420024500 +0100" stop="20040420031500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Simpsons
+</title>
+    <desc lang="sv">Repris från kvällen.
+</desc>
+  </programme>
+  <programme start="20040420031500 +0100" stop="20040420034500 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Alla älskar Raymond
+</title>
+    <desc lang="sv">Repris från kvällen.
+</desc>
+  </programme>
+  <programme start="20040420034500 +0100" stop="20040420041000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Alla älskar Raymond
+</title>
+    <desc lang="sv">Repris från kvällen.
+</desc>
+  </programme>
+  <programme start="20040420041000 +0100" stop="20040420044000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">På riktigt - utan koppel
+</title>
+    <desc lang="sv">Repris från kvällen.
+</desc>
+  </programme>
+  <programme start="20040420044000 +0100" stop="20040420050000 +0100" channel="42.dagenstv.com">
+    <title lang="sv">Nattmusik
+</title>
+    <desc lang="sv">Musikvideor från världens artister.
+</desc>
+  </programme>
+  <programme start="20040420050000 +0100" stop="20040420065500" channel="42.dagenstv.com">
+    <title lang="sv">Morronmix</title>
+    <desc lang="sv">Gamla, nya och kommande hits.
+</desc>
+  </programme>
+  <programme start="20040419060000 +0100" stop="20040419062500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419062500 +0100" stop="20040419063000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419063000 +0100" stop="20040419065500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419065500 +0100" stop="20040419070000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419070000 +0100" stop="20040419072500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419072500 +0100" stop="20040419073000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419073000 +0100" stop="20040419075500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419075500 +0100" stop="20040419080000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419080000 +0100" stop="20040419082000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419082000 +0100" stop="20040419083000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">3 from 1
+</title>
+    <desc lang="sv">3 videos from one artist or theme.
+</desc>
+  </programme>
+  <programme start="20040419083000 +0100" stop="20040419085500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419085500 +0100" stop="20040419090000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419090000 +0100" stop="20040419092500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419092500 +0100" stop="20040419093000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419093000 +0100" stop="20040419095500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Turn on
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419095500 +0100" stop="20040419100000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419100000 +0100" stop="20040419105500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Top 10 At Ten
+</title>
+    <desc lang="sv">An hour-long themed Top 10 countdown.
+</desc>
+  </programme>
+  <programme start="20040419105500 +0100" stop="20040419110000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419110000 +0100" stop="20040419115500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Tune in
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419115500 +0100" stop="20040419120000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419120000 +0100" stop="20040419122000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Tune in
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419122000 +0100" stop="20040419123000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">3 from 1
+</title>
+    <desc lang="sv">3 videos from one artist or theme.
+</desc>
+  </programme>
+  <programme start="20040419123000 +0100" stop="20040419125500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Tune in
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419125500 +0100" stop="20040419130000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419130000 +0100" stop="20040419133000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Tune in
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419133000 +0100" stop="20040419135500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">MTV: New
+</title>
+    <desc lang="sv">All new, cutting edge videos.
+</desc>
+  </programme>
+  <programme start="20040419135500 +0100" stop="20040419140000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419140000 +0100" stop="20040419145500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Tune in
+</title>
+    <desc lang="sv">A roller coaster ride of all your favourite MTV hits.
+</desc>
+  </programme>
+  <programme start="20040419145500 +0100" stop="20040419150000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419150000 +0100" stop="20040419155500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">MTV Access
+</title>
+    <desc lang="sv">Viewer's choice hour.
+</desc>
+  </programme>
+  <programme start="20040419155500 +0100" stop="20040419160000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">MTV Rush
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419160000 +0100" stop="20040419165500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Re:Action
+</title>
+    <desc lang="sv">Sms show.
+</desc>
+  </programme>
+  <programme start="20040419165500 +0100" stop="20040419170000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419170000 +0100" stop="20040419175500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">TRL
+</title>
+    <desc lang="sv">Megastars pop in to MTV NYC to promote their latest singles, by playing their new videos and perform live.
+</desc>
+  </programme>
+  <programme start="20040419175500 +0100" stop="20040419180000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">MTV Mono
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419180000 +0100" stop="20040419183000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">MTV Supermercado
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419183000 +0100" stop="20040419185500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Ticket to Ride
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419185500 +0100" stop="20040419190000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419193000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Punk'd
+</title>
+    <desc lang="sv">A reality show with a twist where Asthon Kutcher makes superstars suffer for your viewing pleasure.
+</desc>
+  </programme>
+  <programme start="20040419193000 +0100" stop="20040419195500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Dismissed
+</title>
+    <desc lang="sv">Dating Show where the lucky guest has 2 dates at the same time.
+</desc>
+  </programme>
+  <programme start="20040419195500 +0100" stop="20040419200000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419203000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Cribs
+</title>
+    <desc lang="sv">Cribs sees music stas giving the MTV cameras a personal tour of their home!! See where your favourite stars work, rest and play.
+</desc>
+  </programme>
+  <programme start="20040419203000 +0100" stop="20040419205500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">The work of Michael Gondry
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419205500 +0100" stop="20040419210000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419215500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">US Top 20
+</title>
+    <desc lang="sv">US Chart show.
+</desc>
+  </programme>
+  <programme start="20040419215500 +0100" stop="20040419220000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">News
+</title>
+    <desc lang="sv">The latest news in music.
+</desc>
+  </programme>
+  <programme start="20040419220000 +0100" stop="20040419225500 +0100" channel="14.dagenstv.com">
+    <title lang="sv">I want a famous face
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419225500 +0100" stop="20040419230000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">MTV recommends
+</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419230000 +0100" stop="20040419233000 +0100" channel="14.dagenstv.com">
+    <title lang="sv">Doggy Fizzle Televizzle
+</title>
+    <desc lang="sv">Snoop Dogg's off the leash and off the hook in his rambunctious new show Doggy Fizzle Televizzle. The Doggfather plays a dozen different characters, performs pranks, sketches and offers hilarious dogg-on-the-street commentary.
+</desc>
+  </programme>
+  <programme start="20040419233000 +0100" stop="20040419235500" channel="14.dagenstv.com">
+    <title lang="sv">YO!</title>
+    <desc lang="sv">Seminal Hip-Hop show.
+</desc>
+  </programme>
+  <programme start="20040419083000 +0100" stop="20040419093000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Tennis
+</title>
+    <desc lang="sv">ATP-turnering i Estoril, Portugal. Final. Eftersändning.
+</desc>
+  </programme>
+  <programme start="20040419093000 +0100" stop="20040419113000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Curling
+</title>
+    <desc lang="sv">VM direkt från Gävle. Herrar. Sverige-Frankrike. Direkt. Kommentator: Paul Ahlgren och Magnus Nilsson.
+</desc>
+  </programme>
+  <programme start="20040419113000 +0100" stop="20040419140000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Biljard
+</title>
+    <desc lang="sv">Snooker. VM direkt från Sheffield, Storbritannien. Direkt.
+</desc>
+  </programme>
+  <programme start="20040419140000 +0100" stop="20040419170000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Curling
+</title>
+    <desc lang="sv">VM direkt från Gävle. Damer. Sverige-USA. Direkt. Kommentator: Paul Ahlgren och Magnus Nilsson.
+</desc>
+  </programme>
+  <programme start="20040419170000 +0100" stop="20040419180000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Biljard
+</title>
+    <desc lang="sv">Snooker. VM direkt från Sheffield, Storbritannien. Direkt/Eftersändning.
+</desc>
+  </programme>
+  <programme start="20040419180000 +0100" stop="20040419203000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Maraton
+</title>
+    <desc lang="sv">Direkt från Boston Maraton. Boston Maraton hålls idag för 108:e gången vilket gör det till världens äldsta maratonlopp. Direkt. Kommentator: Lorenzo Nesi och Anders Szalkai.
+</desc>
+  </programme>
+  <programme start="20040419203000 +0100" stop="20040419230000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Biljard
+</title>
+    <desc lang="sv">Snooker. VM direkt från Sheffield, Storbritannien. Direkt.
+</desc>
+  </programme>
+  <programme start="20040419230000 +0100" stop="20040419233000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Fotboll
+</title>
+    <desc lang="sv">Champions League-magasinet.
+</desc>
+  </programme>
+  <programme start="20040419233000 +0100" stop="20040420003000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Fotboll
+</title>
+    <desc lang="sv">Eurogoals. Magasin
+</desc>
+  </programme>
+  <programme start="20040420003000 +0100" stop="20040420004500 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Nyheter
+</title>
+    <desc lang="sv">Eurosportnews report.
+</desc>
+  </programme>
+  <programme start="20040420004500 +0100" stop="20040420010000 +0100" channel="9.dagenstv.com">
+    <title lang="sv">Sport
+</title>
+    <desc lang="sv">Veckans gäst: Arsenals och engelska landslagets vänsterback Ashley Cole.
+</desc>
+  </programme>
+  <programme start="20040420010000 +0100" stop="20040420013000" channel="9.dagenstv.com">
+    <title lang="sv">Offroadrally</title>
+    <desc lang="sv">Världscupen - Rallye de Tunisie. 2:a deltävlingen, hölls 2-11 april. Kommentator: Jan Tromark.
+</desc>
+  </programme>
+  <programme start="20040419113500 +0100" stop="20040419122000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Oprah Winfrey
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2003-2004. Om människor som överlevt svåra olyckor. Bland gästerna finns en ung kvinna som fått ena armen avbiten av en haj och en man som blev skjuten fem gånger. Programledare: Oprah Winfrey.
+</desc>
+  </programme>
+  <programme start="20040419122000 +0100" stop="20040419123500" channel="142.dagenstv.com">
+    <title lang="sv">Trav: Förrätten</title>
+    <desc lang="sv" />
+  </programme>
+  <programme start="20040419124500 +0100" stop="20040419130000" channel="142.dagenstv.com">
+    <title lang="sv">Trav: Dagens rätt</title>
+    <desc lang="sv">Direktsänt trav. Dagens Trio-lopp, varje vardag från olika travbanor landet runt.
+</desc>
+  </programme>
+  <programme start="20040419132500 +0100" stop="20040419135500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Det ligger i luften
+</title>
+    <desc lang="sv">Australisk dramaserie från 1999. I rollerna: Ulle Birvé, Colin Moody, Danielle Carter.
+</desc>
+  </programme>
+  <programme start="20040419135500 +0100" stop="20040419145500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Holby City
+</title>
+    <desc lang="sv">Brittisk dramaserie från 1999. I rollerna: George Irving, Michael French, Lisa Faulkner.
+</desc>
+  </programme>
+  <programme start="20040419145500 +0100" stop="20040419152500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Skenet bedrar
+</title>
+    <desc lang="sv">Brittisk komediserie från 1990. Del 11 av 40. Hyacinths problem med de ohyfsade släktingarna avlöser varandra. De verkar göra allt för att förstöra hennes heder och anseende. I rollerna: Patricia Routledge, Clive Swift, Geoffrey Hughes. Repris från 28/2.
+</desc>
+  </programme>
+  <programme start="20040419152500 +0100" stop="20040419155500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">En härlig tid
+</title>
+    <desc lang="sv">Amerikansk dramakomediserie från 1987. I rollerna: Fred Savage, Jason Hervey, Alley Mills.
+</desc>
+  </programme>
+  <programme start="20040419155500 +0100" stop="20040419162000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Mash
+</title>
+    <desc lang="sv">Amerikansk komediserie från 70-talet. Del 37 av 232. I rollerna: Alan Alda, Gary Burghoff, Loretta Swit.
+</desc>
+  </programme>
+  <programme start="20040419162000 +0100" stop="20040419164500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Blossom
+</title>
+    <desc lang="sv">Amerikansk dramaserie från 1990-95. Del 99. Six får separationsångest när det visar sig att hon och Blossom inte kommit in på samma college. Joey får problem med sina slag i basebollen och Nick tar till ett gammalt knep för att hjälpa honom. I rollerna: Ted Wass, Michael Stoyanov, Mayim Bialik.
+</desc>
+  </programme>
+  <programme start="20040419164500 +0100" stop="20040419173000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Conan O'Brien
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2004. Programledare: Conan O'Brien. Repris från 16/4.
+</desc>
+  </programme>
+  <programme start="20040419173000 +0100" stop="20040419180500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Spelbolaget
+</title>
+    <desc lang="sv">Svenskt sport- och spelmagasin.
+</desc>
+  </programme>
+  <programme start="20040419180500 +0100" stop="20040419190000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Kropp &amp; själ
+</title>
+    <desc lang="sv">Svenskt hälsomagasin från 2004. Del 6 av 12. Träningstrender, kroppsfixering och choklad är dagens ämnen i Kropp &amp; själ. Yvonne Lin, som tog aerobics till Sverige, och chokladexperten Magnus Johansson är gäster. Programledare: Christina Hill, kost- och träningsexpert: Camilla Porsman, kock: Karl Ljung, resande reporter: Carina Lidbom. Repris från 17/4.
+</desc>
+  </programme>
+  <programme start="20040419190000 +0100" stop="20040419195500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Doktor Phil
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2003. När doktor Phil bestämde att alla de tretton finalisterna i viktskolan fick vara kvar utfärdade han en varning: vem som helst kan bli utröstad av de andra eller av honom i en omröstning. Men först utmanar deltagarna varandra i ett konditionstävling. Programledare: Phil C McGraw.
+</desc>
+  </programme>
+  <programme start="20040419195500 +0100" stop="20040419200000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Sporten plus
+</title>
+    <desc lang="sv">Senaste nytt från sportarenor runt om i världen.
+</desc>
+  </programme>
+  <programme start="20040419200000 +0100" stop="20040419202500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Sicksack
+</title>
+    <desc lang="sv">Svenskt textilmagasin från 2004. Del 10 av 12. I dag besöker Isabelle och Andreas Livrustkammaren på Stockholms slott för en historielektion i sömnad. Isabelle syr en vårjacka som är inspirerad av figuren Joda i filmen Star Wars och Andreas gör gigantiska sittkuddar. Dessutom träffar Sicksack designergruppen Nakkna, som nyligen tilldelades priset för årets nykomling på Ellegalan. Programledare: Isabelle Halling, Andreas Halldén. Även 22/4.
+</desc>
+  </programme>
+  <programme start="20040419202500 +0100" stop="20040419205500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Sambo
+</title>
+    <desc lang="sv">Svensk inredningsserie från 2004. Del 21 av 26. I Annas och Simons lägenhet på Södermalm ryms många idéer och viljor, men inga fungerande lösningar. Sovrummet har de hyrt ut till en vän och de samsas nu om vardagsrummet. Får Anna bestämma så vill hon bo i en gammaldags miljö med kristallkrona, mörka väggar och många böcker. Simon försöker desperat att få in sina vita möbler och en hemmabio i Annas resonemang. Programledare: Monica Dare, Johannes Carlström Även 22/4.
+</desc>
+  </programme>
+  <programme start="20040419205500 +0100" stop="20040419210000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Sporten plus
+</title>
+    <desc lang="sv">Senaste nytt från sportarenor runt om i världen.
+</desc>
+  </programme>
+  <programme start="20040419210000 +0100" stop="20040419215500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Andarnas makt
+</title>
+    <desc lang="sv">Svensk-dansk ockultserie från 2004. Del 24 av 26. Är det möjligt för ett medium i djup trans att förutsäga framtida händelser? Och är det möjligt att få bord och stolar och människor att sväva fritt med andars hjälp? Det är vad Andarnas makt undersöker i dag. Medverkande: James McQuarry och Anders Åkesson. Programledare: Malin Berghagen-Nilsson. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419215500 +0100" stop="20040419220000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Sporten plus
+</title>
+    <desc lang="sv">Senaste nytt från sportarenor runt om i världen.
+</desc>
+  </programme>
+  <programme start="20040419220000 +0100" stop="20040419222500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Will &amp; Grace
+</title>
+    <desc lang="sv">Amerikansk komediserie från 2000. Del 15 av 25. Grace övertalar Will att sälja hennes farbrors gamla skrothög till bil. Efter att han sålt bilen till en nunna får hon dåligt samvete och ångrar sig. På annat håll ser plötsligt Jack världen med andra ögon, då han är övertygad om att hans far, som han inte träffat, är afro-amerikansk. I rollerna: Debra Messing, Eric McCormack, Megan Mullally. Repris från 2003.
+</desc>
+  </programme>
+  <programme start="20040419222500 +0100" stop="20040419223000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Spelbolaget: Greyhound racing
+</title>
+    <desc lang="sv">Redovisning av dagens hundlopp.
+</desc>
+  </programme>
+  <programme start="20040419223000 +0100" stop="20040419230000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Spelbolaget: Vinnare plus
+</title>
+    <desc lang="sv">Redovisning av kvällens V5-lopp och Dagens Dubbel.
+</desc>
+  </programme>
+  <programme start="20040419230000 +0100" stop="20040419230500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Sporten plus
+</title>
+    <desc lang="sv">Senaste nytt från sportarenor runt om i världen.
+</desc>
+  </programme>
+  <programme start="20040419230500 +0100" stop="20040419235500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Conan O'Brien
+</title>
+    <desc lang="sv">Amerikansk pratshow från 2004. Programledare: Conan O'Brien. Även 20/4.
+</desc>
+  </programme>
+  <programme start="20040419235500 +0100" stop="20040420002000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Man show
+</title>
+    <desc lang="sv">Amerikansk humorshow från 2002. Programledare: Jimmy Kimmel och Adam Carolla.
+</desc>
+  </programme>
+  <programme start="20040420002000 +0100" stop="20040420004000 +0100" channel="142.dagenstv.com">
+    <title lang="sv">Farmen Afrika
+</title>
+    <desc lang="sv">Svensk dokusåpa från 2004. Del 57 av 61. Programledare: Linda Isacsson.
+</desc>
+  </programme>
+  <programme start="20040420004000 +0100" stop="20040420013500 +0100" channel="142.dagenstv.com">
+    <title lang="sv">På liv och död
+</title>
+    <desc lang="sv">Amerikansk reportageserie från 1994. Inslagen bygger på autentiska samtal som inkommit till larmcentraler i USA.
+</desc>
+  </programme>
+  <programme start="20040420013500 +0100" stop="20040420015500" channel="142.dagenstv.com">
+    <title lang="sv">South Park</title>
+    <desc lang="sv">Amerikansk animerad komediserie från 2002. Del 12 av 14. Token känner sig utanför eftersom han är det enda rika barnet i stan. Han bestämmer sig för att locka dit andra rika för att slippa känna sig som en utböling. Han lyckas få flera kändisar att bosätta sig i South Park, men folket i stan blir rädda för de rika och de tar till alla medel för att få dem att flytta.
+</desc>
+  </programme>
+</tv>
