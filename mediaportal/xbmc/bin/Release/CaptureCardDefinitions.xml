@@ -92,11 +92,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
-        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -110,10 +110,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -131,11 +131,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
-        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -149,10 +149,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -170,11 +170,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
-        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -187,10 +187,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -207,11 +207,11 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="false"></filter>
-        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="false"></filter>
-        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="false"></filter>
-        <filter cat="capture"      name="NVTV"                    checkdevice="false"></filter>
-        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
         <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
         <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
       </filters>
@@ -234,11 +234,11 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="false"></filter>
-        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="false"></filter>
-        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="false"></filter>
-        <filter cat="capture"      name="NVTV"                    checkdevice="false"></filter>
-        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
         <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
         <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
       </filters>
@@ -261,10 +261,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR USB2 TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR USB2 TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR USB2 Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR USB2 Encoder"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR USB2 TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR USB2 TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR USB2 Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR USB2 Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
@@ -277,10 +277,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR USB2 TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR USB2 TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR USB2 Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR USB2 Encoder"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR USB2 TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR USB2 TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR USB2 Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR USB2 Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
@@ -297,10 +297,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="1"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -313,10 +313,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -333,10 +333,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -349,10 +349,10 @@
     <radio>
       <interface cat="capture" video="" audio="0" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -635,11 +635,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
-        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -652,10 +652,10 @@
     <radio>
       <interface cat="capture" video="" audio="1" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -672,10 +672,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"                checkdevice="false"></filter>
-        <filter cat="crossbar" name="FusionHDTV, Crossbar"               checkdevice="false"></filter>
-        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"      checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
+        <filter cat="crossbar" name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
+        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -687,10 +687,10 @@
     <radio>
       <interface cat="capture" video="" audio="" mpeg2="1"></interface>
       <filters>
-        <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"                checkdevice="false"></filter>
-        <filter cat="crossbar" name="FusionHDTV, Crossbar"               checkdevice="false"></filter>
-        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"      checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
+        <filter cat="crossbar" name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
+        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -771,8 +771,8 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="crossbar" name="Snazzi*III USB2 Crossbar"	checkdevice="false"></filter>
-        <filter cat="capture"  name="Snazzi*III USB2 Device"	checkdevice="false"></filter>
+        <filter cat="crossbar" name="Snazzi*III USB2 Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="Snazzi*III USB2 Device"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -785,10 +785,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -801,10 +801,10 @@
     <radio>
       <interface cat="capture" video="" audio="0" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -837,11 +837,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="713x BDA Analog TV Tuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="713x BDA Analog TV Audio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="713x BDA Analog Xbar"      checkdevice="false"></filter>
-        <filter cat="capture"  name="713x BDA Analog Capture"   checkdevice="false"></filter>
-        <filter cat="encoder"  name="713x BDA MPEG Encoder"     checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="713x BDA Analog TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="713x BDA Analog TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="713x BDA Analog Xbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="713x BDA Analog Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="713x BDA MPEG Encoder"     checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -856,11 +856,11 @@
     <radio>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="713x BDA Analog TV Tuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="713x BDA Analog TV Audio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="713x BDA Analog Xbar"      checkdevice="false"></filter>
-        <filter cat="capture"  name="713x BDA Analog Capture"   checkdevice="false"></filter>
-        <filter cat="encoder"  name="713x BDA MPEG Encoder"     checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="713x BDA Analog TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="713x BDA Analog TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="713x BDA Analog Xbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="713x BDA Analog Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="713x BDA MPEG Encoder"     checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -879,10 +879,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Pinnacle PCTV Deluxe USB (PAL) TvTuner"  checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Pinnacle PCTV Deluxe USB (PAL) TvAudio"  checkdevice="false"></filter>
-        <filter cat="crossbar" name="Pinnacle PCTV Deluxe USB (PAL) Crossbar" checkdevice="false"></filter>
-        <filter cat="capture"  name="Pinnacle PCTV Deluxe USB (PAL) Device"   checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Pinnacle PCTV Deluxe USB (PAL) TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Pinnacle PCTV Deluxe USB (PAL) TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Pinnacle PCTV Deluxe USB (PAL) Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Pinnacle PCTV Deluxe USB (PAL) Device"   checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
@@ -1059,11 +1059,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Europa BDA Analog TV Tuner" checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Europa BDA Analog TV Audio" checkdevice="false"></filter>
-        <filter cat="crossbar" name="Europa BDA Analog Xbar"	 checkdevice="false"></filter>
-        <filter cat="capture"  name="Europa BDA Analog Capture"  checkdevice="false"></filter>
-        <filter cat="encoder"  name="Europa BDA MPEG Encoder"    checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Europa BDA Analog TV Tuner" checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Europa BDA Analog TV Audio" checkdevice="true"></filter>
+        <filter cat="crossbar" name="Europa BDA Analog Xbar"	 checkdevice="true"></filter>
+        <filter cat="capture"  name="Europa BDA Analog Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Europa BDA MPEG Encoder"    checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -1078,10 +1078,10 @@
     <radio>
       <interface cat="capture" video="" audio="3" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Europa BDA Analog TV Tuner" checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="Europa BDA Analog TV Audio" checkdevice="false"></filter>
-        <filter cat="crossbar" name="Europa BDA Analog Xbar"	 checkdevice="false"></filter>
-        <filter cat="capture"  name="Europa BDA Analog Capture"  checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="Europa BDA Analog TV Tuner" checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Europa BDA Analog TV Audio" checkdevice="true"></filter>
+        <filter cat="crossbar" name="Europa BDA Analog Xbar"	 checkdevice="true"></filter>
+        <filter cat="capture"  name="Europa BDA Analog Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
