@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <strings>
     <characters>255</characters>
     <string>
@@ -1257,13 +1258,13 @@
         <value>Lagom</value>
     </string>
     <string>
-		<id>386</id>
-		<value>Rensa</value>
-	</string>
-	<string>
-		<id>387</id>
-		<value>Tidig</value>
-	</string>
+        <id>386</id>
+        <value>Rensa</value>
+    </string>
+    <string>
+        <id>387</id>
+        <value>Tidig</value>
+    </string>
     <string>
         <id>396</id>
         <value>V&#228;lj plats</value>
@@ -1988,250 +1989,368 @@
         <id>685</id>
         <value>Sortera efter: Status</value>
     </string>
-    <string><id>686</id><value>Född</value></string>
-<string><id>687</id><value>Aktiva År</value></string>
-<string><id>688</id><value>Instrument</value></string>
-<string><id>689</id><value>Bio.</value></string>
-<string><id>690</id><value>Discografi (Albums)</value></string>
-<string><id>691</id><value>Discografi (samlingar, boxar)</value></string>
-<string><id>700</id><value>Discografi (eps, singlar)</value></string>
-<string><id>701</id><value>Discografi (bootlegs, videor, intervjuer)</value></string>
-<string><id>702</id><value>Ingen artist hittades!</value></string>
-<string><id>703</id><value>Inte ansluten till Internet!</value></string>
-<string><id>704</id><value>Tar emot Feed</value></string>
-<string><id>705</id><value>Hämtar RSS Feed för </value></string>
-<string><id>706</id><value>Välj Feed</value></string>
-<string><id>707</id><value>TV På/Av</value></string>
-<string><id>708</id><value>Timeshifting</value></string>
-<string><id>709</id><value>Autouppdatering</value></string>
-<string><id>710</id><value>En ny version finns tillgänglig</value></string>
-<string><id>711</id><value>Upgradera från v#old ->v#new ?</value></string>
-<string><id>712</id><value>Tillbaka</value></string>
-
-    
     <string>
-	<id>713</id>
-	<value>Autoplay</value>
-</string>
-<string>
-	<id>714</id>
-	<value>DVD ilagd vill du spela upp den?</value>
-</string>
-<string>
-	<id>715</id>
-	<value>CD ilagd, dvill du spela upp den?</value>
-</string>
-<string>
-	<id>716</id>
-	<value>Satellit</value>
-</string>
-<string>
-	<id>717</id>
-	<value>Väder</value>
-</string>    
-    <string>
-        <id>10000</id>
-        <value>Hem</value>
+        <id>686</id>
+        <value>Född</value>
     </string>
     <string>
-        <id>10001</id>
-        <value>Mina Program</value>
+        <id>687</id>
+        <value>Aktiva År</value>
     </string>
     <string>
-        <id>10002</id>
-        <value>Mina Bilder</value>
+        <id>688</id>
+        <value>Instrument</value>
     </string>
     <string>
-        <id>10003</id>
-        <value>Mina Filer</value>
+        <id>689</id>
+        <value>Bio.</value>
     </string>
     <string>
-        <id>10004</id>
-        <value>Inställningar</value>
+        <id>690</id>
+        <value>Discografi (Albums)</value>
     </string>
     <string>
-        <id>10005</id>
-        <value>Min Musik</value>
+        <id>691</id>
+        <value>Discografi (samlingar, boxar)</value>
     </string>
     <string>
-        <id>10006</id>
-        <value>Mina Filmer</value>
+        <id>700</id>
+        <value>Discografi (eps, singlar)</value>
     </string>
     <string>
-        <id>10007</id>
-        <value>System information</value>
+        <id>701</id>
+        <value>Discografi (bootlegs, videor, intervjuer)</value>
     </string>
     <string>
-        <id>10008</id>
-        <value>Inställningar->Generella</value>
+        <id>702</id>
+        <value>Ingen artist hittades!</value>
     </string>
     <string>
-        <id>10009</id>
-        <value>Inställningar->Skärm</value>
+        <id>703</id>
+        <value>Inte ansluten till Internet!</value>
     </string>
     <string>
-        <id>10010</id>
-        <value>Inställningar->Skärm->UI Kalibrering</value>
+        <id>704</id>
+        <value>Tar emot Feed</value>
     </string>
     <string>
-        <id>10011</id>
-        <value>Inställningar->Skärm->Skärm Kalibrering</value>
+        <id>705</id>
+        <value>Hämtar RSS Feed för </value>
     </string>
     <string>
-        <id>10012</id>
-        <value>Inställningar->Bildspel</value>
+        <id>706</id>
+        <value>Välj Feed</value>
     </string>
     <string>
-        <id>10013</id>
-        <value>Inställningar->Skärm->Filter</value>
+        <id>707</id>
+        <value>TV På/Av</value>
     </string>
     <string>
-        <id>10014</id>
-        <value>Inställningar->Musik</value>
+        <id>708</id>
+        <value>Timeshifting</value>
     </string>
     <string>
-        <id>10015</id>
-        <value>Inställningar->Skärm->Textning</value>
+        <id>709</id>
+        <value>Autouppdatering</value>
     </string>
     <string>
-        <id>10016</id>
-        <value>Inställningar->Skärm->Skärmsläckare</value>
+        <id>710</id>
+        <value>En ny version finns tillgänglig</value>
     </string>
     <string>
-        <id>10017</id>
-        <value>Inställningar->Väder</value>
+        <id>711</id>
+        <value>Upgradera från v#old ->v#new ?</value>
     </string>
     <string>
-        <id>10020</id>
-        <value>Inställningar->Script</value>
+        <id>712</id>
+        <value>Tillbaka</value>
     </string>
     <string>
-        <id>10021</id>
-        <value>Mina Videor/genre</value>
+        <id>713</id>
+        <value>Autoplay</value>
     </string>
     <string>
-        <id>10022</id>
-        <value>Mina Videor/sk&#229;desp.</value>
+        <id>714</id>
+        <value>DVD ilagd vill du spela upp den?</value>
     </string>
     <string>
-        <id>10023</id>
-        <value>Mina Videor/&#229;r</value>
+        <id>715</id>
+        <value>CD ilagd, dvill du spela upp den?</value>
     </string>
     <string>
-        <id>10024</id>
-        <value>Inställningar->Program</value>
+        <id>716</id>
+        <value>Satellit</value>
     </string>
     <string>
-        <id>10025</id>
-        <value>Mina Videor/titel</value>
+        <id>717</id>
+        <value>Väder</value>
     </string>
     <string>
-        <id>10026</id>
-        <value>Inst&#228;llningar->Generella->Cache</value>
+        <id>718</id>
+        <value>Rensa Top100</value>
     </string>
     <string>
-        <id>10027</id>
-        <value>Inst&#228;llningar->Generella->Autouppsp.</value>
+        <id>719</id>
+        <value>Är det säkert att du vill rensa Top 100?</value>
     </string>
     <string>
-        <id>10028</id>
-        <value>Mina Videor/spellista</value>
+        <id>720</id>
+        <value>Program: Längd</value>
     </string>
     <string>
-        <id>10029</id>
-        <value>Inst&#228;llningar->Generella->LCD</value>
+        <id>721</id>
+        <value>Program: Antal ggr Visad</value>
     </string>
     <string>
-        <id>10030</id>
-        <value>Min Radio</value>
-    </string>
-    <string><id>10031</id><value>Inställningar->Skärm->scroll hastighet</value></string>
-    <string>
-        <id>10100</id>
-        <value>ja/nej dialog</value>
+        <id>722</id>
+        <value>Kan inte spela upp skivan</value>
     </string>
     <string>
-        <id>10101</id>
-        <value>Progress dialog</value>
+        <id>723</id>
+        <value>Satte du i en skiva?</value>
     </string>
     <string>
-        <id>10500</id>
-        <value>Min Musik/spellista</value>
+        <id>800</id>
+        <value>Startar med</value>
     </string>
     <string>
-        <id>10501</id>
-        <value>Min Musik/filer</value>
+        <id>801</id>
+        <value>Innehåller</value>
     </string>
     <string>
-        <id>10502</id>
-        <value>Min Musik/album</value>
+        <id>802</id>
+        <value>Slutar med</value>
     </string>
     <string>
-        <id>10503</id>
-        <value>Min Musik/artister</value>
+        <id>803</id>
+        <value>  Är  </value>
     </string>
     <string>
-        <id>10504</id>
-        <value>Min Musik/genrer</value>
+        <id>804</id>
+        <value>Klar</value>
     </string>
     <string>
-        <id>10505</id>
-        <value>Min Musik/top100</value>
-    </string>
-    <string><id>10600</id><value>Min TV/Guide</value></string>
-<string><id>10601</id><value>Min TV/Schemaläggare</value></string>
-<string><id>10602</id><value>Min TV/Fullskärm</value></string>
-<string><id>10603</id><value>Min TV/Inspelad TV</value></string>
-    <string>
-        <id>11000</id>
-        <value>tangentbord</value>
-    </string>
-    <string>
-        <id>12000</id>
-        <value>V&#228;lj Dialog</value>
-    </string>
-    <string>
-        <id>12001</id>
-        <value>Min Musik/info</value>
-    </string>
-    <string>
-        <id>12002</id>
-        <value>Dialog OK</value>
-    </string>
-    <string>
-        <id>12003</id>
-        <value>Mina Filmer/Info</value>
-    </string>
-    <string>
-        <id>12004</id>
-        <value>Mina Script/Info</value>
-    </string>
-    <string>
-        <id>12005</id>
-        <value>Fullsk&#228;rm video</value>
-    </string>
-    <string>
-        <id>12006</id>
-        <value>Audio Visualisering</value>
-    </string>
-    <string>
-        <id>12007</id>
-        <value>Mina Bilder/bildspel</value>
-    </string>
-    <string>
-        <id>12008</id>
-        <value>Filgruppering dialog</value>
-    </string>
-    <string>
-        <id>12600</id>
-        <value>Mitt V&#228;der</value>
-    </string>
-    <string>
-        <id>12900</id>
-        <value>Sk&#228;rmsl&#228;ckare</value>
-    </string>
-    <string>
-        <id>12901</id>
-        <value>Fullsk&#228;rm OSD</value>
-    </string>
-</strings>
+        <id>805</id>
+        <value>Rensa</value>
+        </string>
+        <string>
+            <id>10000</id>
+            <value>Hem</value>
+        </string>
+        <string>
+            <id>10001</id>
+            <value>Mina Program</value>
+        </string>
+        <string>
+            <id>10002</id>
+            <value>Mina Bilder</value>
+        </string>
+        <string>
+            <id>10003</id>
+            <value>Mina Filer</value>
+        </string>
+        <string>
+            <id>10004</id>
+            <value>Inställningar</value>
+        </string>
+        <string>
+            <id>10005</id>
+            <value>Min Musik</value>
+        </string>
+        <string>
+            <id>10006</id>
+            <value>Mina Filmer</value>
+        </string>
+        <string>
+            <id>10007</id>
+            <value>System information</value>
+        </string>
+        <string>
+            <id>10008</id>
+            <value>Inställningar->Generella</value>
+        </string>
+        <string>
+            <id>10009</id>
+            <value>Inställningar->Skärm</value>
+        </string>
+        <string>
+            <id>10010</id>
+            <value>Inställningar->Skärm->UI Kalibrering</value>
+        </string>
+        <string>
+            <id>10011</id>
+            <value>Inställningar->Skärm->Skärm Kalibrering</value>
+        </string>
+        <string>
+            <id>10012</id>
+            <value>Inställningar->Bildspel</value>
+        </string>
+        <string>
+            <id>10013</id>
+            <value>Inställningar->Skärm->Filter</value>
+        </string>
+        <string>
+            <id>10014</id>
+            <value>Inställningar->Musik</value>
+        </string>
+        <string>
+            <id>10015</id>
+            <value>Inställningar->Skärm->Textning</value>
+        </string>
+        <string>
+            <id>10016</id>
+            <value>Inställningar->Skärm->Skärmsläckare</value>
+        </string>
+        <string>
+            <id>10017</id>
+            <value>Inställningar->Väder</value>
+        </string>
+        <string>
+            <id>10020</id>
+            <value>Inställningar->Script</value>
+        </string>
+        <string>
+            <id>10021</id>
+            <value>Mina Videor/genre</value>
+        </string>
+        <string>
+            <id>10022</id>
+            <value>Mina Videor/sk&#229;desp.</value>
+        </string>
+        <string>
+            <id>10023</id>
+            <value>Mina Videor/&#229;r</value>
+        </string>
+        <string>
+            <id>10024</id>
+            <value>Inställningar->Program</value>
+        </string>
+        <string>
+            <id>10025</id>
+            <value>Mina Videor/titel</value>
+        </string>
+        <string>
+            <id>10026</id>
+            <value>Inst&#228;llningar->Generella->Cache</value>
+        </string>
+        <string>
+            <id>10027</id>
+            <value>Inst&#228;llningar->Generella->Autouppsp.</value>
+        </string>
+        <string>
+            <id>10028</id>
+            <value>Mina Videor/spellista</value>
+        </string>
+        <string>
+            <id>10029</id>
+            <value>Inst&#228;llningar->Generella->LCD</value>
+        </string>
+        <string>
+            <id>10030</id>
+            <value>Min Radio</value>
+        </string>
+        <string>
+            <id>10031</id>
+            <value>Inställningar->Skärm->scroll hastighet</value>
+        </string>
+        <string>
+            <id>10100</id>
+            <value>ja/nej dialog</value>
+        </string>
+        <string>
+            <id>10101</id>
+            <value>Progress dialog</value>
+        </string>
+        <string>
+            <id>10500</id>
+            <value>Min Musik/spellista</value>
+        </string>
+        <string>
+            <id>10501</id>
+            <value>Min Musik/filer</value>
+        </string>
+        <string>
+            <id>10502</id>
+            <value>Min Musik/album</value>
+        </string>
+        <string>
+            <id>10503</id>
+            <value>Min Musik/artister</value>
+        </string>
+        <string>
+            <id>10504</id>
+            <value>Min Musik/genrer</value>
+        </string>
+        <string>
+            <id>10505</id>
+            <value>Min Musik/top100</value>
+        </string>
+        <string>
+            <id>10600</id>
+            <value>Min TV/Guide</value>
+        </string>
+        <string>
+            <id>10601</id>
+            <value>Min TV/Schemaläggare</value>
+        </string>
+        <string>
+            <id>10602</id>
+            <value>Min TV/Fullskärm</value>
+        </string>
+        <string>
+            <id>10603</id>
+            <value>Min TV/Inspelad TV</value>
+        </string>
+        <string>
+            <id>11000</id>
+            <value>tangentbord</value>
+        </string>
+        <string>
+            <id>12000</id>
+            <value>V&#228;lj Dialog</value>
+        </string>
+        <string>
+            <id>12001</id>
+            <value>Min Musik/info</value>
+        </string>
+        <string>
+            <id>12002</id>
+            <value>Dialog OK</value>
+        </string>
+        <string>
+            <id>12003</id>
+            <value>Mina Filmer/Info</value>
+        </string>
+        <string>
+            <id>12004</id>
+            <value>Mina Script/Info</value>
+        </string>
+        <string>
+            <id>12005</id>
+            <value>Fullsk&#228;rm video</value>
+        </string>
+        <string>
+            <id>12006</id>
+            <value>Audio Visualisering</value>
+        </string>
+        <string>
+            <id>12007</id>
+            <value>Mina Bilder/bildspel</value>
+        </string>
+        <string>
+            <id>12008</id>
+            <value>Filgruppering dialog</value>
+        </string>
+        <string>
+            <id>12600</id>
+            <value>Mitt V&#228;der</value>
+        </string>
+        <string>
+            <id>12900</id>
+            <value>Sk&#228;rmsl&#228;ckare</value>
+        </string>
+        <string>
+            <id>12901</id>
+            <value>Fullsk&#228;rm OSD</value>
+        </string>
+    </strings>
