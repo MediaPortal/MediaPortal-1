@@ -2899,6 +2899,7 @@ namespace MediaPortal.TV.Recording
 							                           newchannel.AudioLanguage2,newchannel.AudioLanguage3,
 							                           newchannel.ECMPid,newchannel.PMTPid);
 					}
+					RadioDatabase.MapChannelToCard(channelId,ID);
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
 		}//public void StoreChannels(bool radio, bool tv)

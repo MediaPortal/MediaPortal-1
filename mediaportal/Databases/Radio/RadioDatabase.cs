@@ -58,9 +58,11 @@ namespace MediaPortal.Radio.Database
         m_db.Execute("CREATE INDEX idxStation ON station(idChannel)");
       }
 			DatabaseUtility.AddTable(m_db,"tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
-			DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer)\n");
-			DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer, strChannel text, strProvider text, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer)\n");
-      
+			DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer)\n");
+			DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer, strChannel text, strProvider text, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer)\n");
+
+			//following table specifies which channels can be received by which card
+			DatabaseUtility.AddTable(m_db,"tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer)\n");      
 
       return true;
     }
@@ -210,6 +212,8 @@ namespace MediaPortal.Radio.Database
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblDVBTMapping where idChannel={0}",iChannelId);
 					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from tblChannelCard where idChannel={0}",iChannelId);
+					m_db.Execute(strSQL);
         }
         catch(Exception ex)
         {
@@ -235,6 +239,8 @@ namespace MediaPortal.Radio.Database
 					strSQL = String.Format("delete from tblDVBCMapping");
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblDVBTMapping");
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from tblChannelCard");
 					m_db.Execute(strSQL);
 
         }
@@ -262,6 +268,8 @@ namespace MediaPortal.Radio.Database
 					strSQL = String.Format("delete from tblDVBCMapping");
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblDVBTMapping");
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from tblChannelCard");
 					m_db.Execute(strSQL);
 				}
 				catch(Exception ex)
@@ -500,7 +508,7 @@ namespace MediaPortal.Radio.Database
 	  
 	  
 			if (m_db==null) return false;
-			lock (typeof(TVDatabase))
+			lock (typeof(RadioDatabase))
 			{
 				try
 				{
@@ -560,11 +568,136 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
 			}
+		}
+		static public void MapChannelToCard(int channelId, int card)
+		{
+			lock (typeof(RadioDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from tblChannelCard where idChannel={0} and card={1}", channelId,card);
+
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==0) 
+					{
+						// doesnt exists, add it
+						strSQL=String.Format("insert into tblChannelCard (idChannelCard, idChannel,card) values ( NULL, {0}, {1})", 
+							channelId,card);
+						m_db.Execute(strSQL);
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
+
+		static public void DeleteCard(int card)
+		{
+			lock (typeof(RadioDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return ;
+					//delete this card
+					strSQL=String.Format( "delete from tblChannelCard where card={0}", card);
+					m_db.Execute(strSQL);
+
+					//adjust the mapping for the other cards
+					strSQL=String.Format( "select * from tblChannelCard where card > {0}", card);
+					SQLiteResultSet results;
+					results=m_db.Execute(strSQL);
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						int id    =Int32.Parse(DatabaseUtility.Get(results,i,"idChannelCard") );
+						int cardnr=Int32.Parse(DatabaseUtility.Get(results,i,"card") );	
+						cardnr--;
+						strSQL=String.Format( "update tblChannelCard set card={0} where idChannelCard={1}", 
+							cardnr, id);
+						m_db.Execute(strSQL);
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
+		static public void UnmapChannelFromCard(TVChannel channel, int card)
+		{
+			lock (typeof(RadioDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return ;
+					strSQL=String.Format( "delete from tblChannelCard where idChannel={0} and card={1}", 
+						channel.ID,card);
+
+					m_db.Execute(strSQL);
+				} 
+				catch (Exception ex) 
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// This method returns true if the specified card can receive the specified channel
+		/// else it returns false. Since mediaportal can have multiple cards (analog,digital,cable,antenna)
+		/// its possible that not all channels can be received by each card
+		/// </summary>
+		/// <param name="channelName">channelName name of the tv channel</param>
+		/// <param name="card">card Id</param>
+		/// <returns>
+		/// true: card can receive the channel
+		/// false: card cannot receive the channel
+		/// </returns>
+		static public bool CanCardTuneToStation(string channelName, int card)
+		{
+			string stationName=channelName;
+			DatabaseUtility.RemoveInvalidChars(ref stationName);
+
+			lock (typeof(RadioDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return false;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from tblChannelCard,station where channel.idChannel=tblChannelCard.idChannel and channel.strName like '{0}' and tblChannelCard.card={1}", stationName,card);
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count!=0) 
+					{
+						return true;
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			return false;
 		}
 
   }
