@@ -2052,6 +2052,10 @@
 <string><id>12006</id><value>Audio visisalisation</value></string>
 <string><id>12007</id><value>My Picture/slideshow</value></string>
 <string><id>12008</id><value>Filestacking dialog</value></string>
+<string><id>12010</id><value>Date/Time</value></string>
+<string><id>12011</id><value>Artis info</value></string>
+<string><id>12012</id><value>Context menu</value></string>
+<string><id>12013</id><value>Set Rating</value></string>
 <string><id>12600</id><value>My Weather</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>Fullscreen OSD</value></string>
@@ -2430,6 +2434,10 @@
 <string>
 	<id>933</id>
 	<value>Remove from favorites</value>
+</string>
+<string>
+	<id>934</id>
+	<value>Set rating</value>
 </string>
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
