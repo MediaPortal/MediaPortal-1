@@ -568,11 +568,7 @@ namespace MediaPortal.GUI.TV
 					{
 						if (System.IO.File.Exists(fileName))
 						{
-							FileInfo info = new FileInfo(fileName);
-							if (info.Length >= 100*1024)
-							{
 								StartPlaying(true);
-							}
 						}
 					}
 					catch(Exception){}
