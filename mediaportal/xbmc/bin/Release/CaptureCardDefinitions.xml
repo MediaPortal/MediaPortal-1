@@ -17,56 +17,14 @@
 <!--  2. Define the 0-based index of the pin. This always should work... -->
 <!-- -->
 <capturecards>
-  <capturecard commercialname="General S/W encoding card" capturename="S/W" devid="">
+  <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
-    <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
-      <filters>x
-      </filters>
-      <connections>
-      </connections>
-    </tv>
-    <radio>
-      <interface cat="capture" video="" audio="1" mpeg2=""></interface>
-      <filters>
-      </filters>
-      <connections>
-      </connections>
-    </radio>
+  </capturecard> 
+  <capturecard commercialname="General MCE card" capturename="" devid="MCE">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
   </capturecard>
-  <capturecard commercialname="General MCE card" capturename="MCE" devid="">
+  <capturecard commercialname="General H/W encoding card" capturename="" devid="HW">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
-    <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
-      <filters>x
-      </filters>
-      <connections>
-      </connections>
-    </tv>
-    <radio>
-      <interface cat="capture" video="" audio="1" mpeg2=""></interface>
-      <filters>
-      </filters>
-      <connections>
-      </connections>
-    </radio>
-  </capturecard>
-  <capturecard commercialname="General H/W encoding card" capturename="HW" devid="">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
-    <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
-      <filters>x
-      </filters>
-      <connections>
-      </connections>
-    </tv>
-    <radio>
-      <interface cat="capture" video="" audio="1" mpeg2=""></interface>
-      <filters>
-      </filters>
-      <connections>
-      </connections>
-    </radio>
   </capturecard>
 
   <capturecard commercialname="Hauppauge WinTV PVR150MCE" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&#38;dev_0016&#38;subsys_88010070&#38;rev_01">
