@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(368, 40);
       this.label3.TabIndex = 11;
-      this.label3.Text = "Below you can enter the location of the sattelite image. The image location shoul" +
+      this.label3.Text = "Below you can enter the location of the satellite image. The image location shoul" +
         "d be entered as a normal http-address.";
       // 
       // locationTextBox
@@ -121,7 +121,7 @@ namespace MediaPortal.Configuration
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(168, 23);
       this.label1.TabIndex = 6;
-      this.label1.Text = "Sattelite image";
+      this.label1.Text = "Satellite image";
       // 
       // okButton
       // 

@@ -164,12 +164,12 @@ namespace MediaPortal.Configuration.Sections
       this.temperatureComboBox = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.editButton = new System.Windows.Forms.Button();
       this.searchButton = new System.Windows.Forms.Button();
       this.removeButton = new System.Windows.Forms.Button();
       this.citiesListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.editButton = new System.Windows.Forms.Button();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
@@ -261,6 +261,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Cities";
       // 
+      // editButton
+      // 
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.Enabled = false;
+      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.editButton.Location = new System.Drawing.Point(176, 126);
+      this.editButton.Name = "editButton";
+      this.editButton.TabIndex = 3;
+      this.editButton.Text = "Edit";
+      this.editButton.Click += new System.EventHandler(this.editButton_Click);
+      // 
       // searchButton
       // 
       this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -309,20 +320,9 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader2.Text = "Code";
       this.columnHeader2.Width = 78;
       // 
-      // editButton
-      // 
-      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.editButton.Enabled = false;
-      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.editButton.Location = new System.Drawing.Point(176, 126);
-      this.editButton.Name = "editButton";
-      this.editButton.TabIndex = 3;
-      this.editButton.Text = "Edit";
-      this.editButton.Click += new System.EventHandler(this.editButton_Click);
-      // 
       // columnHeader3
       // 
-      this.columnHeader3.Text = "Sattelite image";
+      this.columnHeader3.Text = "Satellite image";
       this.columnHeader3.Width = 201;
       // 
       // Weather
