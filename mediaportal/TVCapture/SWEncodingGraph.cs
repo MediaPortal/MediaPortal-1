@@ -265,6 +265,28 @@ namespace MediaPortal.TV.Recording
         }
       }
 
+
+      // check if all tvtuner outputs are connected
+      if ( m_TVTuner!=null)
+      {
+        for (int ipin=0; ipin < 10; ipin++)
+        {
+          IPin pin=DirectShowUtil.FindPinNr( (IBaseFilter)m_TVTuner,PinDirection.Output,ipin);
+          if (pin!=null)
+          {
+            IPin pConnectPin=null;
+            hr=pin.ConnectedTo(out pConnectPin);  
+            if (hr!= 0 || pConnectPin==null)
+            {
+              //no? then connect all tvtuner outputs
+              ConnectTVTunerOutputs();
+              break;
+            }
+          }
+          else break;
+        }
+      }
+
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
 
 
@@ -1586,6 +1608,57 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
       GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
       GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
+    }
+
+    void ConnectTVTunerOutputs()
+    {
+      // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
+      // the crossbar outputs are disconnected
+      // same for the winfast pvr 2000
+      DirectShowUtil.DebugWrite("SWGraph:ConnectTVTunerOutputs()");
+      
+      //find crossbar
+      int  hr;
+      Guid cat;
+      Guid iid;
+      object o=null;
+      cat = FindDirection.UpstreamOnly;
+      iid = typeof(IAMCrossbar).GUID;
+      hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,m_filterCaptureVideo, ref iid, out o);
+      if (hr !=0 || o == null) 
+      {
+        DirectShowUtil.DebugWrite("SWGraph:no crossbar found");
+        return; // no crossbar found?
+      }
+    
+      IAMCrossbar crossbar = o as IAMCrossbar;
+      if (crossbar ==null) 
+      {
+        DirectShowUtil.DebugWrite("SWGraph:no crossbar found");
+        return;
+      }
+
+
+      //disconnect the output pins of the crossbar->video capture filter
+      DirectShowUtil.DebugWrite("SWGraph:disconnect crossbar outputs");
+      DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
+
+      //connect the output pins of the tvtuner
+      DirectShowUtil.DebugWrite("SWGraph:connect tvtuner outputs");
+      bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
+      if (bAllConnected)
+        DirectShowUtil.DebugWrite("SWGraph:all connected");
+      else
+        DirectShowUtil.DebugWrite("SWGraph:FAILED, not all pins connected");
+
+      //reconnect the output pins of the crossbar
+      DirectShowUtil.DebugWrite("SWGraph:reconnect crossbar output pins");
+
+      bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
+      if (bAllConnected)
+        DirectShowUtil.DebugWrite("SWGraph:all connected");
+      else
+        DirectShowUtil.DebugWrite("SWGraph:FAILED, not all pins connected");
     }
   }
 }
