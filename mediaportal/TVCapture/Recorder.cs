@@ -734,7 +734,8 @@ namespace MediaPortal.TV.Recording
 								Log.Write("Recorder:StartViewing():start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
 								//yes, check if we're already playing/watching it
 								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
-								g_Player.Play(strTimeShiftFileName);
+								if (g_Player.CurrentFile!=strTimeShiftFileName)
+									g_Player.Play(strTimeShiftFileName);
 								return;
 							}//if  (timeshift || dev.IsRecording)
 							else
@@ -826,7 +827,8 @@ namespace MediaPortal.TV.Recording
 
 					// and play the timeshift file (if its not already playing it)
 					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
-					g_Player.Play(strTimeShiftFileName);
+					if (g_Player.CurrentFile!=strTimeShiftFileName)
+						g_Player.Play(strTimeShiftFileName);
 					return;
 				}//if (dev.SupportsTimeShifting)
 			}//if (timeshift)
