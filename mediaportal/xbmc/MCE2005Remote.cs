@@ -412,20 +412,13 @@ namespace MediaPortal
             break;
 
 					case 0x46://My tv (yellow on USA model)
-						goto case 0x25;
+						//show context menu
+						action = new Action(Action.ActionType.ACTION_CONTEXT_MENU,0,0); 
+					break;
 					
-					case 0x25://My tv (yellow on USA model)
-						if (USAModel)
-						{
-							//show context menu
-							action = new Action(Action.ActionType.ACTION_CONTEXT_MENU,0,0);  
-						}
-						else
-						{
-							
+					case 0x25://My tv (or LiveTV on USA model)
 							GUIMessage msgtv2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TV,0,null);
 							GUIGraphicsContext.SendMessage(msgtv2);
-						}
 						break;
           
           
