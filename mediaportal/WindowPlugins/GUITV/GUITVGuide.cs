@@ -1099,7 +1099,12 @@ namespace MediaPortal.GUI.TV
 					img.FontName2=labelTemplate.FontName;
 					img.TextColor2=labelTemplate.TextColor;
           img.Label2=String.Format("{0} {1}", strTime,program.Genre);
-				}
+        }
+        else
+        {
+          // No genre displayed, display start time as part of the program name
+          img.Label1=String.Format("{0} {1}", program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat), program.Title);
+        }
 
 				if (program.IsRunningAt(dt))
 				{
