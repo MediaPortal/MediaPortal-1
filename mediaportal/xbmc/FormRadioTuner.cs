@@ -349,7 +349,9 @@ namespace MediaPortal
 
     private void trackBar1_ValueChanged(object sender, System.EventArgs e)
     {
-      m_iStep=(11-trackBar1.Value)*10000;   
+      float iWidth= (1000000f - 100000f)/10; //  sensitivity range from .1 MHz->1MHz per step
+      m_iStep=(int)((11f-(float)trackBar1.Value)*iWidth);   
+
       radioChannels.Clear();
       RadioDatabase.GetStations(ref radioChannels);
 
