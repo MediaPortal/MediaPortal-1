@@ -15,6 +15,13 @@
 			<colorkey>0</colorkey>
 			<colordiffuse>ffffffff</colordiffuse>
 		</control>
+		<control> 
+			<type>image</type>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>20</posY>
+			<texture>explorer_logo.png</texture>
+		</control>		
 		<control>
 			<description>My explorer text label</description>
 			<type>label</type>
