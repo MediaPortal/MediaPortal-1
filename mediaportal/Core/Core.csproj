@@ -120,30 +120,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "Microsoft.DirectX"
-                    AssemblyName = "Microsoft.DirectX"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.3900\Microsoft.DirectX.dll"
-                    AssemblyFolderKey = "hklm\current managed directx 9.2"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.Direct3D"
-                    AssemblyName = "Microsoft.DirectX.Direct3D"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.3900\Microsoft.DirectX.Direct3D.dll"
-                    AssemblyFolderKey = "hklm\current managed directx 9.2"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.Direct3DX"
-                    AssemblyName = "Microsoft.DirectX.Direct3DX"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.3900\Microsoft.DirectX.Direct3DX.dll"
-                    AssemblyFolderKey = "hklm\current managed directx 9.2"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.DirectDraw"
-                    AssemblyName = "Microsoft.DirectX.DirectDraw"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.3900\Microsoft.DirectX.DirectDraw.dll"
-                    AssemblyFolderKey = "hklm\current managed directx 9.2"
-                />
-                <Reference
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
@@ -197,6 +173,26 @@
                     Name = "Interop.TunerLib"
                     AssemblyName = "Interop.TunerLib"
                     HintPath = "..\Interop.TunerLib.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX"
+                    AssemblyName = "Microsoft.DirectX"
+                    HintPath = "..\Microsoft.DirectX.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.Direct3D"
+                    AssemblyName = "Microsoft.DirectX.Direct3D"
+                    HintPath = "..\Microsoft.DirectX.Direct3D.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.Direct3DX"
+                    AssemblyName = "Microsoft.DirectX.Direct3DX"
+                    HintPath = "..\Microsoft.DirectX.Direct3DX.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.DirectDraw"
+                    AssemblyName = "Microsoft.DirectX.DirectDraw"
+                    HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
                 />
             </References>
         </Build>
