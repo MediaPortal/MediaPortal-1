@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using DirectDraw=Microsoft.DirectX.DirectDraw;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -118,7 +119,11 @@ namespace MediaPortal
     int    m_iActiveWindow=-1;
 		bool   m_bRestore=false;
     double m_dCurrentPos=0;
-    
+
+    DirectDraw.Device               m_dddevice=null;
+    DirectDraw.SurfaceDescription   m_dddescription=null;
+    DirectDraw.Surface              m_ddfront=null;
+    DirectDraw.Surface              m_ddback=null;
     /// <summary>
     /// Constructor
     /// </summary>
@@ -538,8 +543,11 @@ namespace MediaPortal
       try
       {
         // Create the device
+
         GUIGraphicsContext.DX9Device = new Device(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType, 
           windowed ? ourRenderTarget : this , createFlags| CreateFlags.MultiThreaded, presentParams);
+
+
 
         // Cache our local objects
         renderState = GUIGraphicsContext.DX9Device.RenderState;
@@ -661,7 +669,7 @@ namespace MediaPortal
             return;
         }
       }
-      catch
+      catch (Exception ex)
       {
         // If that failed, fall back to the reference rasterizer
         if (deviceInfo.DevType == DeviceType.Hardware)
@@ -1030,6 +1038,7 @@ namespace MediaPortal
         }
         FullRender();
         System.Windows.Forms.Application.DoEvents();
+        
         if (m_bAutoHideMouse)
         {
           if (!m_bShowCursor) 
@@ -1151,6 +1160,7 @@ namespace MediaPortal
 					GUIWindowManager.ActivateWindow(m_iActiveWindow);
 				}
       }
+      
     }
 
 
@@ -1807,6 +1817,26 @@ namespace MediaPortal
 		}
 
 
+    void CreateDirectDrawSurface()
+    {
+        m_dddescription = new DirectDraw.SurfaceDescription();
+      m_dddevice= new DirectDraw.Device();
+      m_dddevice.SetCooperativeLevel(this,DirectDraw.CooperativeLevelFlags.Exclusive);
+      m_dddevice.SetDisplayMode(presentParams.BackBufferWidth,presentParams.BackBufferHeight,32,0,false);
+
+      m_dddescription.SurfaceCaps.PrimarySurface = true;
+      m_dddescription.SurfaceCaps.Flip = true;
+      m_dddescription.SurfaceCaps.Complex = true;
+      m_dddescription.BackBufferCount = 1;
+      m_ddfront = new DirectDraw.Surface(m_dddescription, m_dddevice);        
+      DirectDraw.SurfaceCaps caps = new DirectDraw.SurfaceCaps();
+      // Yes, we are using a back buffer
+      caps.BackBuffer = true;
+
+      // Associate the front buffer to back buffer with specified caps
+      m_ddback = m_ddfront.GetAttachedSurface(caps);
+
+    }
 	}
 
   #region Enums for D3D Applications
