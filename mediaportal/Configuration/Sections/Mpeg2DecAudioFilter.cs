@@ -322,7 +322,7 @@ namespace MediaPortal.Configuration.Sections
 			// radioButtonDTSSpeakers
 			// 
 			this.radioButtonDTSSpeakers.Checked = true;
-			this.radioButtonDTSSpeakers.Location = new System.Drawing.Point(16, 24);
+			this.radioButtonDTSSpeakers.Location = new System.Drawing.Point(16, 16);
 			this.radioButtonDTSSpeakers.Name = "radioButtonDTSSpeakers";
 			this.radioButtonDTSSpeakers.Size = new System.Drawing.Size(128, 16);
 			this.radioButtonDTSSpeakers.TabIndex = 15;
@@ -332,7 +332,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// checkBoxDTSLFE
 			// 
-			this.checkBoxDTSLFE.Location = new System.Drawing.Point(280, 24);
+			this.checkBoxDTSLFE.Location = new System.Drawing.Point(280, 16);
 			this.checkBoxDTSLFE.Name = "checkBoxDTSLFE";
 			this.checkBoxDTSLFE.Size = new System.Drawing.Size(72, 16);
 			this.checkBoxDTSLFE.TabIndex = 19;
@@ -344,16 +344,12 @@ namespace MediaPortal.Configuration.Sections
 																																	"Mono",
 																																	"Dual Mono",
 																																	"Stereo",
-																																	"Dolby Stereo",
 																																	"3 Front",
 																																	"2 Front + 1 Rear",
 																																	"3 Front + 1 Rear",
 																																	"2 Front + 2 Rear",
-																																	"3 Front + 2 Rear",
-																																	"Channel 1",
-																																	"Channel 2",
-																																	""});
-			this.comboBoxDTSSpeakerConfig.Location = new System.Drawing.Point(152, 24);
+																																	"3 Front + 2 Rear"});
+			this.comboBoxDTSSpeakerConfig.Location = new System.Drawing.Point(152, 16);
 			this.comboBoxDTSSpeakerConfig.Name = "comboBoxDTSSpeakerConfig";
 			this.comboBoxDTSSpeakerConfig.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxDTSSpeakerConfig.TabIndex = 18;
