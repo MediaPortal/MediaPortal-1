@@ -507,6 +507,9 @@ namespace MediaPortal.TV.Recording
       m_graphState=State.Viewing;
       TuneChannel(standard, iChannelNr);
       m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
+
+      DirectShowUtil.EnableDeInterlace(m_graphBuilder);
+
       GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       GUIGraphicsContext_OnVideoWindowChanged();
 
