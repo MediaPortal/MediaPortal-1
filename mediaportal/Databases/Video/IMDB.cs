@@ -296,23 +296,23 @@ namespace MediaPortal.Video.Database
 					// Mars Warrior @ 03-sep-2004.
 					// Check for ' ' and '+' to avoid double or more ' ' and '+' which
 					// mess up the search to the IMDB...
-          if (strTmp.Length==0)
-          {
-            strTmp += kar;
-            ipos++;
-          }
-          else
-          {
-            if	(
-              Char.IsLetterOrDigit(kar)						||
-              (kar == ' ' && strTmp[strTmp.Length -1] != ' ')
-              //|| (kar == '+' && strTmp[strTmp.Length -1] != '+')
-              )
-            {
-              strTmp += kar;
-              ipos++;
-            }
-          }
+					if (strTmp.Length==0)
+					{
+						strTmp += kar;
+						ipos++;
+					}
+					else
+					{
+						if	(
+							Char.IsLetterOrDigit(kar)						||
+							(kar == ' ' && strTmp[strTmp.Length -1] != ' ')
+							//|| (kar == '+' && strTmp[strTmp.Length -1] != '+')
+							)
+						{
+							strTmp += kar;
+							ipos++;
+						}
+					}
 				}
 			}
 
@@ -397,6 +397,14 @@ namespace MediaPortal.Video.Database
 							FindOFDB(strURL,aLimits[i]);
 							// END OFDB support
 							break;
+
+						case "FRDB":
+							// FRDB support
+							strURL = "http://www.dvdfr.com/search/search.php?multiname="+strSearch;
+							FindFRDB(strURL,aLimits[i]);
+							// END FRDB support
+							break;
+
 						default:
 							// unsupported database?
 							Log.Write("Movie database lookup - database not supported: {0}",aDatabases[i].ToUpper());
@@ -427,6 +435,10 @@ namespace MediaPortal.Video.Database
 					return	GetDetailsIMDB(url, ref movieDetails);
 				case "OFDB":
 					return	GetDetailsOFDB(url, ref movieDetails);
+
+				case "FRDB":
+					return	GetDetailsFRDB(url, ref movieDetails);
+
 				default:
 					// Not supported Database / Host
 					Log.Write("Movie DB lookup GetDetails(): Unknown Database {0}",url.Database);
@@ -434,10 +446,8 @@ namespace MediaPortal.Video.Database
 			}
 		} // END GetDetails()
 
-		// --------------------------------------------------------------------------------
-		// Beginning of IMDB support
-		// --------------------------------------------------------------------------------
-
+		
+		#region IMDB
 		private void FindIMDB(string strURL,int iLimit)
 		{
 			int		iCount = 0;
@@ -854,10 +864,9 @@ namespace MediaPortal.Video.Database
 			return strTitle;
 		}
 
-		// --------------------------------------------------------------------------------
-		// END of IMDB support
-		// --------------------------------------------------------------------------------
-
+		#endregion
+		
+		#region OFDB
 		// --------------------------------------------------------------------------------
 		// Beginning of OFDB support
 		// --------------------------------------------------------------------------------
@@ -1032,229 +1041,410 @@ namespace MediaPortal.Video.Database
 		} // END ParseListOFDB()
 
 
-    // this method fetches the search result into movieDetails
-    private bool GetDetailsOFDB(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
-    {
-      try
-      {
+		// this method fetches the search result into movieDetails
+		private bool GetDetailsOFDB(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+		{
+			try
+			{
 
-        // Initialise some helpers
-        string	strTemp = "";
-        int		iStart=0;
-        int		iEnd=0;
-        movieDetails.Reset();
+				// Initialise some helpers
+				string	strTemp = "";
+				int		iStart=0;
+				int		iEnd=0;
+				movieDetails.Reset();
 
-        // add databaseinfo
-        movieDetails.Database = "OFDB";
+				// add databaseinfo
+				movieDetails.Database = "OFDB";
 
-        string strBody = GetPage(url.URL,"iso-8859-1");
+				string strBody = GetPage(url.URL,"iso-8859-1");
 
-        // Read Starting Points of the details
-        //int iTitle = strBody.IndexOf("Originaltitel:");
-        int iDirectedBy = strBody.IndexOf("Regie:");
-        int iCast = strBody.IndexOf("Darsteller:");
-        int iGenre = strBody.IndexOf("Genre(s):");
-        int iYear = strBody.IndexOf("Erscheinungsjahr:");
-        int iPlotOutline = strBody.IndexOf("<b>Inhalt:</b>");
-        int iImage = strBody.IndexOf("<img src=\"images/film/");
-        int iRating = strBody.IndexOf("Note:");
-        int iPlot=strBody.IndexOf("view.php?page=inhalt&");
+				// Read Starting Points of the details
+				//int iTitle = strBody.IndexOf("Originaltitel:");
+				int iDirectedBy = strBody.IndexOf("Regie:");
+				int iCast = strBody.IndexOf("Darsteller:");
+				int iGenre = strBody.IndexOf("Genre(s):");
+				int iYear = strBody.IndexOf("Erscheinungsjahr:");
+				int iPlotOutline = strBody.IndexOf("<b>Inhalt:</b>");
+				int iImage = strBody.IndexOf("<img src=\"images/film/");
+				int iRating = strBody.IndexOf("Note:");
+				int iPlot=strBody.IndexOf("view.php?page=inhalt&");
 
-        // to much information :-)
-        //int iATitle = strBody.IndexOf("Alternativtitel:");
+				// to much information :-)
+				//int iATitle = strBody.IndexOf("Alternativtitel:");
 
-        // Not available in OFDB?
-        //int iCredits=strBody.IndexOf("Writing credits");				
-        //int iCred=strBody.IndexOf("redited cast:"); // Complete credited cast or Credited cast
-        //int iPlotSummary=strBody.IndexOf("Plot Summary:</b>");
-        //int iTagLine=strBody.IndexOf("Tagline:</b>");
+				// Not available in OFDB?
+				//int iCredits=strBody.IndexOf("Writing credits");				
+				//int iCred=strBody.IndexOf("redited cast:"); // Complete credited cast or Credited cast
+				//int iPlotSummary=strBody.IndexOf("Plot Summary:</b>");
+				//int iTagLine=strBody.IndexOf("Tagline:</b>");
                 
-        // Go get the title
-        //iStart = iTitle;
-        //if (iStart >= 0)
-        //	movieDetails.Title = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
-        movieDetails.Title = url.Title.Substring(0,url.Title.Length-7);
+				// Go get the title
+				//iStart = iTitle;
+				//if (iStart >= 0)
+				//	movieDetails.Title = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
+				movieDetails.Title = url.Title.Substring(0,url.Title.Length-7);
 
-        // Add alternative titles - could be to much :-)
-        // it is to much, so comment out
-        /*
-        iStart = iATitle;
-        if (iStart >= 0)
-          movieDetails.Title += " ("+ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ")+")";
-        */
+				// Add alternative titles - could be to much :-)
+				// it is to much, so comment out
+				/*
+				iStart = iATitle;
+				if (iStart >= 0)
+				  movieDetails.Title += " ("+ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ")+")";
+				*/
 
-        // Go get the director
-        iStart = iDirectedBy;
-        if (iStart >= 0)
-          movieDetails.Director = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
+				// Go get the director
+				iStart = iDirectedBy;
+				if (iStart >= 0)
+					movieDetails.Director = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
 
-        // Go get the cast
-        iStart = iCast;
-        if (iStart >= 0)
-          movieDetails.Cast = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart),"\n");
+				// Go get the cast
+				iStart = iCast;
+				if (iStart >= 0)
+					movieDetails.Cast = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart),"\n");
 
-        // Go get the genre
-        iStart = iGenre;
-        if (iStart >= 0)
-          movieDetails.Genre = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
+				// Go get the genre
+				iStart = iGenre;
+				if (iStart >= 0)
+					movieDetails.Genre = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
 
-        // Go get the year
-        iStart = iYear;
-        if (iStart >= 0)
-          movieDetails.Year = System.Int32.Parse(ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," "));
+				// Go get the year
+				iStart = iYear;
+				if (iStart >= 0)
+					movieDetails.Year = System.Int32.Parse(ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," "));
 
-        // Go get the PlotOutline
-        iStart = iPlotOutline;
-        if (iStart >= 0)
-        {
-          iStart += "<b>Inhalt:</b>".Length;
-          strTemp = strBody.Substring(iStart,strBody.Length-iStart);
-          iEnd = strTemp.IndexOf("<a");
-          if (iEnd>=0)
-            movieDetails.PlotOutline = strTemp.Substring(0,iEnd);
-        }
+				// Go get the PlotOutline
+				iStart = iPlotOutline;
+				if (iStart >= 0)
+				{
+					iStart += "<b>Inhalt:</b>".Length;
+					strTemp = strBody.Substring(iStart,strBody.Length-iStart);
+					iEnd = strTemp.IndexOf("<a");
+					if (iEnd>=0)
+						movieDetails.PlotOutline = strTemp.Substring(0,iEnd);
+				}
 
-        // Go get the picture
-        iStart = iImage;
-        if(iStart>=0)
-        {
-          iStart += 10;
-          // found one
-          strTemp = strBody.Substring(iStart,strBody.Length-iStart);
-          iEnd = strTemp.IndexOf("\"");
-          if (iEnd>=0)
-            movieDetails.ThumbURL = "http://www.ofdb.de/"+strTemp.Substring(0,iEnd);
-        }
+				// Go get the picture
+				iStart = iImage;
+				if(iStart>=0)
+				{
+					iStart += 10;
+					// found one
+					strTemp = strBody.Substring(iStart,strBody.Length-iStart);
+					iEnd = strTemp.IndexOf("\"");
+					if (iEnd>=0)
+						movieDetails.ThumbURL = "http://www.ofdb.de/"+strTemp.Substring(0,iEnd);
+				}
 
-        // Go get the rating, votes and position
-        iStart = iRating;
-        if (iStart>=0)
-        {
-          iStart += "Note:".Length;
-          strTemp = strBody.Substring(iStart,strBody.Length-iStart);
-          iEnd = strTemp.IndexOf("&");
+				// Go get the rating, votes and position
+				iStart = iRating;
+				if (iStart>=0)
+				{
+					iStart += "Note:".Length;
+					strTemp = strBody.Substring(iStart,strBody.Length-iStart);
+					iEnd = strTemp.IndexOf("&");
 
-          if (iEnd>=0)
-          {
-            // set rating
-            string strRating = strTemp.Substring(0,iEnd);
-            strRating = strRating.Trim();
-            try
-            {
-              movieDetails.Rating = (float)System.Double.Parse(strRating);
-              if (movieDetails.Rating>10.0f) movieDetails.Rating/=100.0f;
-            }
-            catch(Exception)
-            {
-            }
-          }
-          if(movieDetails.Rating != 0.0f) 
-          {
-            // now, votes
-            movieDetails.Votes = "0";
-            iStart = strTemp.IndexOf("Stimmen:");
-            if(iStart>0)
-            {
-              iEnd = strTemp.IndexOf("&",iStart);
-              if(iEnd>0)
-              {
-                iStart += "Stimmen:".Length;
-                movieDetails.Votes = strTemp.Substring(iStart,iEnd-iStart).Trim();
-              }
-            }
-            // now the postion
-            iStart = strTemp.IndexOf("Platz:");
-            if(iStart>0)
-            {
-              iEnd = strTemp.IndexOf("&",iStart);
-              if(iEnd>0)
-              {
-                iStart += "Platz:".Length;
-                string strTop = strTemp.Substring(iStart,iEnd-iStart).Trim();
-                int	iTop250 = 251;
-                try
-                {
-                  iTop250 = System.Int32.Parse(strTop);
-                }
-                catch(Exception)
-                {
-                }
-                // we have more postions, but only add thos up to 250
-                if (iTop250 <= 250)
-                  movieDetails.Top250 = iTop250;
-              }
-            }
-          }
-        }
+					if (iEnd>=0)
+					{
+						// set rating
+						string strRating = strTemp.Substring(0,iEnd);
+						strRating = strRating.Trim();
+						try
+						{
+							movieDetails.Rating = (float)System.Double.Parse(strRating);
+							if (movieDetails.Rating>10.0f) movieDetails.Rating/=100.0f;
+						}
+						catch(Exception)
+						{
+						}
+					}
+					if(movieDetails.Rating != 0.0f) 
+					{
+						// now, votes
+						movieDetails.Votes = "0";
+						iStart = strTemp.IndexOf("Stimmen:");
+						if(iStart>0)
+						{
+							iEnd = strTemp.IndexOf("&",iStart);
+							if(iEnd>0)
+							{
+								iStart += "Stimmen:".Length;
+								movieDetails.Votes = strTemp.Substring(iStart,iEnd-iStart).Trim();
+							}
+						}
+						// now the postion
+						iStart = strTemp.IndexOf("Platz:");
+						if(iStart>0)
+						{
+							iEnd = strTemp.IndexOf("&",iStart);
+							if(iEnd>0)
+							{
+								iStart += "Platz:".Length;
+								string strTop = strTemp.Substring(iStart,iEnd-iStart).Trim();
+								int	iTop250 = 251;
+								try
+								{
+									iTop250 = System.Int32.Parse(strTop);
+								}
+								catch(Exception)
+								{
+								}
+								// we have more postions, but only add thos up to 250
+								if (iTop250 <= 250)
+									movieDetails.Top250 = iTop250;
+							}
+						}
+					}
+				}
 				
 
-        // Go get the plot
-        iStart = iPlot;
-        if (iStart >= 0)
-        {
-          // extract the path to the detailed description
-          iEnd = strBody.IndexOf("\"",iStart);
-          if(iEnd>=0)
-          {
-            string strPlotURL = strBody.Substring(iStart,iEnd-iStart);
-            strPlotURL = strPlotURL.Trim();
+				// Go get the plot
+				iStart = iPlot;
+				if (iStart >= 0)
+				{
+					// extract the path to the detailed description
+					iEnd = strBody.IndexOf("\"",iStart);
+					if(iEnd>=0)
+					{
+						string strPlotURL = strBody.Substring(iStart,iEnd-iStart);
+						strPlotURL = strPlotURL.Trim();
 
-            try
-            {
-              // Open the new page with detailed description
-              string strPlotHTML = GetPage("http://www.ofdb.de/"+strPlotURL,"iso-8859-1");
+						try
+						{
+							// Open the new page with detailed description
+							string strPlotHTML = GetPage("http://www.ofdb.de/"+strPlotURL,"iso-8859-1");
 
-              if (0!=strPlotHTML.Length)
-              {
-                int iPlotStart = strPlotHTML.IndexOf("Eine Inhaltsangabe");
-                // Verfasser auslassen? Wahrscheinlich besser, wegen der Rechte
-                if (iPlotStart>=0)
-                  iPlotStart = strPlotHTML.IndexOf("<br><br>",iPlotStart);
-                if (iPlotStart>=0)
-                {
-                  // Verfasser auslassen?
-                  iPlotStart += "<br><br>".Length;
-                  // Ende suchen
-                  int iPlotEnd = strPlotHTML.IndexOf("</font>",iPlotStart);
-                  if (iPlotEnd>=0)
-                  {
-                    movieDetails.Plot = strPlotHTML.Substring(iPlotStart, iPlotEnd-iPlotStart);
-                    // Zeilenumbrüche umwandeln
-                    movieDetails.Plot.Replace("<br>","\n");
-                    movieDetails.Plot = Utils.stripHTMLtags(movieDetails.Plot);
-                    movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
-                  }
-                }
-                if (movieDetails.Plot.Length==0)
-                {
-                  // Could not get link to plot description
-                  Log.Write("OFDB: could extract the plot description from {0}","http://www.ofdb.de/"+strPlotURL);
-                }
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Write("Error getting plot: exception for db lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message,ex.StackTrace);
-            }
-          }
-        }
-        else
-        {
-          // Could not get link to plot description
-          Log.Write("OFDB: could not find link to plot description");
-        }
-        return true;
-      }
-      catch(Exception ex) 
-      {
-        Log.Write("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
-      }
-      return false;
-    } // END GetDetailsOFDB()
+							if (0!=strPlotHTML.Length)
+							{
+								int iPlotStart = strPlotHTML.IndexOf("Eine Inhaltsangabe");
+								// Verfasser auslassen? Wahrscheinlich besser, wegen der Rechte
+								if (iPlotStart>=0)
+									iPlotStart = strPlotHTML.IndexOf("<br><br>",iPlotStart);
+								if (iPlotStart>=0)
+								{
+									// Verfasser auslassen?
+									iPlotStart += "<br><br>".Length;
+									// Ende suchen
+									int iPlotEnd = strPlotHTML.IndexOf("</font>",iPlotStart);
+									if (iPlotEnd>=0)
+									{
+										movieDetails.Plot = strPlotHTML.Substring(iPlotStart, iPlotEnd-iPlotStart);
+										// Zeilenumbrüche umwandeln
+										movieDetails.Plot.Replace("<br>","\n");
+										movieDetails.Plot = Utils.stripHTMLtags(movieDetails.Plot);
+										movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
+									}
+								}
+								if (movieDetails.Plot.Length==0)
+								{
+									// Could not get link to plot description
+									Log.Write("OFDB: could extract the plot description from {0}","http://www.ofdb.de/"+strPlotURL);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							Log.Write("Error getting plot: exception for db lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message,ex.StackTrace);
+						}
+					}
+				}
+				else
+				{
+					// Could not get link to plot description
+					Log.Write("OFDB: could not find link to plot description");
+				}
+				return true;
+			}
+			catch(Exception ex) 
+			{
+				Log.Write("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
+			}
+			return false;
+		} // END GetDetailsOFDB()
 
 		// --------------------------------------------------------------------------------
 		// END of OFDB support
 		// --------------------------------------------------------------------------------
+		#endregion
+
+		#region FRDB
+		// --------------------------------------------------------------------------------
+		// Beginning of FRDB support
+		// --------------------------------------------------------------------------------
+		// this method fetches all possible matches in array elements
+		private void FindFRDB(string strURL, int iLimit)
+		{
+			// No results to return!
+			if (iLimit<=0)
+				return;
+
+			int		iStart = 0;
+			int		iStop = -1;
+			int		iCount = 0;
+			string	strTitle = null;
+			string	strMovieId = null;
+
+			try
+			{
+				// Body of the page with the searchresults
+				string strBody = GetPage(strURL,"iso-8859-1");
+			
+				// Get start of Movielist, so search for <b>Titel:</b><br><br>
+				int iStartOfMovieList = strBody.IndexOf("<table class=\"tableSearchResult\"");
+
+				// Nothing found? What to do....?
+				if (iStartOfMovieList<0)
+				{
+					Log.Write("FRDB: Aucun film trouvé");
+					return;
+				}
+				// No matches....
+				//if (strBody.IndexOf("<i>Keine Ergebnisse</i>")>=0)
+				//	return;
+
+				// Find end of list
+				int iEndOfMovieList=strBody.IndexOf("<B>[tout]</B>",iStartOfMovieList);
+				if (iEndOfMovieList<0)
+				{
+					iEndOfMovieList=strBody.Length;
+				}
+
+				strBody = strBody.Substring(iStartOfMovieList,iEndOfMovieList-iStartOfMovieList);
+				while ((true) && (iCount<iLimit))
+				{
+					// 1. <A CLASS="searchText" HREF="../dvd/dvd.php?id=11248">Matrix Revolutions (Edition Double)</A></TD>
+
+					// read movie url
+					iStart = strBody.IndexOf("<A CLASS=\"searchText\" HREF=\"", iStart) + "<A CLASS=\"searchText\" HREF=\"".Length + 3;
+					if( iStart == -1 || iStart == 0 ) throw new ApplicationException("Parsing failed for FRDB !");
+					iStop = strBody.IndexOf("\">", iStart);
+					if( iStop == -1 ) throw new ApplicationException("Parsing failed for FRDB !");
+					strMovieId = strBody.Substring(iStart, iStop-iStart);
+
+					// read movie title
+					iStart = strBody.IndexOf("\">", iStart) + 2;
+					if( iStart == -1 ) throw new ApplicationException("Parsing failed for FRDB !");
+					iStop = strBody.IndexOf("<", iStart);
+					if( iStop == -1 ) throw new ApplicationException("Parsing failed for FRDB !");
+					strTitle = strBody.Substring(iStart, iStop-iStart);
+
+					// build url
+					strURL = String.Format( "http://www.dvd-fr.com/{0}", strMovieId );
+					HTMLUtil htmlUtil= new HTMLUtil();
+					htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+
+					IMDBUrl url = new IMDBUrl( strURL, strTitle+" (frdb)","FRDB");
+					elements.Add(url);
+
+					// count the new element
+					iCount++;
+					// position indexes
+					iStart = iStop + 2;
+				}
+			}
+			catch(Exception ex) 
+			{
+				Log.Write("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
+			}
+
+			return;
+		} // END FindFRDB()
+
+
+		// this method fetches the search result into movieDetails
+		private bool GetDetailsFRDB(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+		{
+			string strBody = string.Empty;
+			int iStart = 0, iStop = 0;
+			int actorStart, actorEnd;
+			bool castEnd = false;
+
+			try
+			{
+				// Initialise some helpers
+				movieDetails.Reset();
+				// add databaseinfo
+				movieDetails.Database = "FRDB";
+				// get page content
+				strBody = GetPage(url.URL,"iso-8859-1");
+				
+				iStart = strBody.IndexOf("<br>", strBody.IndexOf("<div class=\"dvd_titleinfo\">"));
+				movieDetails.Year = int.Parse( strBody.Substring( iStart-4, 4) );
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("../images/vote_dvdfr.gif")) + 1;
+				iStop = strBody.IndexOf( "<", iStart );
+				try
+				{
+					movieDetails.Rating = float.Parse(strBody.Substring( iStart, iStop-iStart));
+				}
+				catch
+				{
+					//movieDetails.Rating = "?";
+				}
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("../images/vote_public.gif")) + 1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.Votes = strBody.Substring( iStart, iStop-iStart);
+				if( movieDetails.Votes == "&nbsp;" ) movieDetails.Votes = "?";
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("dvd_title"))+1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.Title = strBody.Substring( iStart, iStop-iStart);
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("Synopsis</div>")+18)+1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.PlotOutline = strBody.Substring( iStart, iStop-iStart).Replace("\n"," ");
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf( ">", strBody.IndexOf("Réalisation</div>")+20)+1)+1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.Director = strBody.Substring( iStart, iStop-iStart);
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf( ">", strBody.IndexOf("Scénario</div>")+18)+1)+1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.WritingCredits = strBody.Substring( iStart, iStop-iStart);
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("Avec...</div>")+1)+1;
+				iStop = strBody.IndexOf( "</div>", iStart );
+				actorStart = iStart;
+				actorEnd = iStop;
+				while( ! castEnd )
+				{
+					actorStart = strBody.IndexOf( ">", strBody.IndexOf("<a class", actorStart) )+1;
+					actorEnd = strBody.IndexOf( "</a>", actorStart );
+
+					movieDetails.Cast += strBody.Substring( actorStart, actorEnd - actorStart );
+					if( iStop - actorEnd > 10 )
+					{
+						movieDetails.Cast += ", ";
+					}
+					else castEnd = true;
+
+					actorStart = actorEnd;
+				}
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("Référence</div>")+20)+1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.IMDBNumber = strBody.Substring( iStart, iStop-iStart);
+
+				iStart = strBody.IndexOf( ">", strBody.IndexOf("../search/search.php?categorie"))+1;
+				iStop = strBody.IndexOf( "<", iStart );
+				movieDetails.Genre = strBody.Substring(iStart,1) + strBody.Substring( iStart+1, iStop-iStart-1).ToLower();
+
+				iStart = strBody.IndexOf( "/", strBody.IndexOf("../images/dvd"))+1;
+				iStop = strBody.IndexOf( "\"", iStart );
+				movieDetails.ThumbURL = "http://www.dvd-fr.com/" + strBody.Substring( iStart, iStop-iStart);
+			}
+			catch(Exception ex) 
+			{
+				Log.Write("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
+				return false;
+			}
+			return true;
+		} // END GetDetailsFRDB()
+
+		// --------------------------------------------------------------------------------
+		// END of FRDB support
+		// --------------------------------------------------------------------------------
+		#endregion
 	
 	} // END class IMDB
 

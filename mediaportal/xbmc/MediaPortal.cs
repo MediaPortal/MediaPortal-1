@@ -24,6 +24,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
+using MediaPortal.SerialIR;
 using MediaPortal.IR;
 using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.Ripper;
@@ -62,6 +63,7 @@ public class MediaPortalApp : D3DApp, IRender
     Rectangle[]                     region = new Rectangle[1];
     int m_ixpos = 50;
     int m_iFrameCount = 0;
+	private SerialUIR serialuirdevice = null;
     private USBUIRT usbuirtdevice;
 	  private WinLirc winlircdevice;//sd00//
     string m_strNewVersion = "";
@@ -422,6 +424,14 @@ public class MediaPortalApp : D3DApp, IRender
 				Log.Write("done creating the WINLIRC device");
 			}
 			//sd00//
+			inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
+
+			if (inputEnabled == true)
+			{
+				Log.Write("creating the SerialUIR device");
+				this.serialuirdevice = SerialUIR.Create(new SerialUIR.OnRemoteCommand(OnRemoteCommand));
+				Log.Write("done creating the SerialUIR device");
+			}
 		}
 
       //registers the player for video window size notifications
@@ -657,6 +667,8 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     protected override void OnExit() 
     {
+	  if(serialuirdevice != null)
+		serialuirdevice.Close();
       StopUpdater();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
       // stop any file playback

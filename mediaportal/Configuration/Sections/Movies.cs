@@ -118,6 +118,11 @@ namespace MediaPortal.Configuration.Sections
 					this.lvDatabase.Items.Add("OFDB");
 					this.lvDatabase.Items[1].SubItems.Add("german");
 					this.lvDatabase.Items[1].SubItems.Add("25");
+          
+          // create entry for OFDB
+          this.lvDatabase.Items.Add("FRDB");
+          this.lvDatabase.Items[1].SubItems.Add("french");
+          this.lvDatabase.Items[1].SubItems.Add("25");
 				}
 				else
 				{

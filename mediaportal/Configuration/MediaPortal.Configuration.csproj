@@ -578,6 +578,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\SerialUIR.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\SerialUIR.resx"
+                    DependentUpon = "SerialUIR.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Shares.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

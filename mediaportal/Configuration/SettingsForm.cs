@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Runtime;
 using System.Runtime.InteropServices;
-
+using System.Threading;
 using MediaPortal;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.GUI.Library;
@@ -27,6 +27,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TreeView sectionTree;
 		private System.Windows.Forms.Panel holderPanel;
 		private MPGradientLabel headerLabel;
+		private Sections.SerialUIR serialuir;
 
 		//
 		// Hashtable where we store each added tree node/section for faster access
@@ -132,6 +133,9 @@ namespace MediaPortal.Configuration
 
       Log.Write("add USBUIRT section");
       AddSection(new Sections.USBUIRT());
+		Log.Write("add SerialUIR section");
+		serialuir = new Sections.SerialUIR();
+		AddSection(new Sections.SerialUIR());
 			Log.Write("add WINLIRC section");//sd00//
 			AddSection(new Sections.WINLIRC());//sd00//
       Log.Write("add weather section");
@@ -332,6 +336,7 @@ namespace MediaPortal.Configuration
       this.Name = "SettingsForm";
       this.Text = "Settings";
       this.Load += new System.EventHandler(this.SettingsForm_Load);
+      this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.ResumeLayout(false);
 
     }
@@ -365,6 +370,19 @@ namespace MediaPortal.Configuration
 
 			holderPanel.Controls.Clear();
 			holderPanel.Controls.Add(section);
+		}
+
+		private void SettingsForm_Closed(object sender, System.EventArgs e)
+		{
+			try
+			{
+				// stop serial ir receiver thread
+				serialuir.Close();
+  			}
+			catch(Exception )
+			{
+				// Ignore
+			}
 		}
 
 		/// <summary>

@@ -993,6 +993,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SerialUIR\CommBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SerialUIR\SerialUIR.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SubtitleReader\ISUbtitleReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
