@@ -2184,7 +2184,14 @@ namespace MediaPortal
           FrameMove();
           FullRender();
           int SleepingTime=GetSleepingTime();
-          DoSleep(SleepingTime);
+					if (g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+					{
+						//dont sleep
+					}
+					else
+					{
+						DoSleep(SleepingTime);
+					}
           HandleMessage();
         }
         catch(Exception ex)
