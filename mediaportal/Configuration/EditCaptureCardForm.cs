@@ -122,6 +122,9 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.lblRecordingLevel = new System.Windows.Forms.Label();
+      this.label11 = new System.Windows.Forms.Label();
+      this.trackRecording = new System.Windows.Forms.TrackBar();
       this.label10 = new System.Windows.Forms.Label();
       this.comboBoxLineInput = new System.Windows.Forms.ComboBox();
       this.audioDeviceComboBox = new System.Windows.Forms.ComboBox();
@@ -145,9 +148,6 @@ namespace MediaPortal.Configuration
       this.label8 = new System.Windows.Forms.Label();
       this.cancelButton = new System.Windows.Forms.Button();
       this.okButton = new System.Windows.Forms.Button();
-      this.trackRecording = new System.Windows.Forms.TrackBar();
-      this.label11 = new System.Windows.Forms.Label();
-      this.lblRecordingLevel = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
       this.SuspendLayout();
@@ -189,6 +189,31 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Capture Card Settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // lblRecordingLevel
+      // 
+      this.lblRecordingLevel.Location = new System.Drawing.Point(272, 360);
+      this.lblRecordingLevel.Name = "lblRecordingLevel";
+      this.lblRecordingLevel.Size = new System.Drawing.Size(64, 23);
+      this.lblRecordingLevel.TabIndex = 50;
+      // 
+      // label11
+      // 
+      this.label11.Location = new System.Drawing.Point(16, 360);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(88, 32);
+      this.label11.TabIndex = 49;
+      this.label11.Text = "Audio input recording level";
+      // 
+      // trackRecording
+      // 
+      this.trackRecording.Location = new System.Drawing.Point(120, 352);
+      this.trackRecording.Maximum = 100;
+      this.trackRecording.Name = "trackRecording";
+      this.trackRecording.Size = new System.Drawing.Size(136, 42);
+      this.trackRecording.TabIndex = 48;
+      this.trackRecording.TickFrequency = 10;
+      this.trackRecording.ValueChanged += new System.EventHandler(this.trackRecording_ValueChanged);
       // 
       // label10
       // 
@@ -412,31 +437,6 @@ namespace MediaPortal.Configuration
       this.okButton.TabIndex = 2;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
-      // 
-      // trackRecording
-      // 
-      this.trackRecording.Location = new System.Drawing.Point(120, 352);
-      this.trackRecording.Maximum = 100;
-      this.trackRecording.Name = "trackRecording";
-      this.trackRecording.Size = new System.Drawing.Size(136, 42);
-      this.trackRecording.TabIndex = 48;
-      this.trackRecording.TickFrequency = 10;
-      this.trackRecording.ValueChanged += new System.EventHandler(this.trackRecording_ValueChanged);
-      // 
-      // label11
-      // 
-      this.label11.Location = new System.Drawing.Point(16, 360);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(88, 16);
-      this.label11.TabIndex = 49;
-      this.label11.Text = "Recording level:";
-      // 
-      // lblRecordingLevel
-      // 
-      this.lblRecordingLevel.Location = new System.Drawing.Point(272, 360);
-      this.lblRecordingLevel.Name = "lblRecordingLevel";
-      this.lblRecordingLevel.Size = new System.Drawing.Size(64, 23);
-      this.lblRecordingLevel.TabIndex = 50;
       // 
       // EditCaptureCardForm
       // 
