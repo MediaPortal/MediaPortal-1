@@ -27,7 +27,7 @@ My TV:
   - support of external tuners (http://www.usbuirt.com/)
   - picture in picture
   - TV-out through PVR 350
-  - Mix Direct3D & video
+  - Mix Direct3D & video (xbmc-er is working on this)
   
   Recorded tv:
      -
@@ -93,5 +93,5 @@ General:
        - fullscreen: osd
        - mouse wheel for scrolling
   - my files  
-  - my programs
+  - my programs (domifan is working on this)
   - autoplay anything thats in the cd/dvd

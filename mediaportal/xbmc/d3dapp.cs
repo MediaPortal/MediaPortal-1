@@ -92,6 +92,7 @@ namespace MediaPortal
     private System.Windows.Forms.MenuItem menuItem2;
     private System.Windows.Forms.Timer timer1;
     private System.ComponentModel.IContainer components;
+    private System.Windows.Forms.MenuItem menuItem3;
     protected Rectangle   oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -1265,6 +1266,12 @@ namespace MediaPortal
       }
     }
 
+    private void menuItem3_Click(object sender, System.EventArgs e)
+    {
+      PluginForm dlg = new PluginForm();
+      dlg.ShowDialog();
+    }
+
     public virtual void OnTimer()
     {
     }
@@ -1422,6 +1429,7 @@ namespace MediaPortal
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.menuItem3 = new System.Windows.Forms.MenuItem();
       // 
       // mnuMain
       // 
@@ -1459,7 +1467,8 @@ namespace MediaPortal
       // 
       this.menuItem1.Index = 1;
       this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuItem2});
+                                                                              this.menuItem2,
+                                                                              this.menuItem3});
       this.menuItem1.Text = "&Tools";
       // 
       // menuItem2
@@ -1472,6 +1481,12 @@ namespace MediaPortal
       // 
       this.timer1.Enabled = true;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+      // 
+      // menuItem3
+      // 
+      this.menuItem3.Index = 1;
+      this.menuItem3.Text = "Plugins...";
+      this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
       // 
       // D3DApp
       // 

@@ -258,6 +258,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "PluginForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "PluginForm.resx"
+                    DependentUpon = "PluginForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "SearchCity.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
