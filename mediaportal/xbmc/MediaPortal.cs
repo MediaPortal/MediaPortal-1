@@ -29,8 +29,10 @@ using MediaPortal.Dialogs;
 using MediaPortal.IR;
 using MediaPortal.Ripper;
 
+
 public class MediaPortalApp : D3DApp, IRender
 {
+
     private ApplicationUpdateManager _updater = null;
     private Thread _updaterThread = null;
     private const int UPDATERTHREAD_JOIN_TIMEOUT = 3 * 1000;
@@ -48,6 +50,7 @@ public class MediaPortalApp : D3DApp, IRender
     string m_strCurrentVersion = "";
     bool m_bNewVersionAvailable = false;
     bool m_bCancelVersion = false;
+    MCE2005Remote MCE2005Remote = new MCE2005Remote();
 
     const int WM_KEYDOWN = 0x0100;
     const int WM_SYSCOMMAND = 0x0112;
@@ -394,6 +397,8 @@ public class MediaPortalApp : D3DApp, IRender
 			catch(Exception )
 			{
 			}
+      MCE2005Remote.Init();
+
     }
 
     void RenderStats()
@@ -438,7 +443,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void WndProc(ref Message msg)
     {
-
+      if ( MCE2005Remote.WndProc(ref msg) ) return;
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
       {
         // windows wants to activate the screensaver

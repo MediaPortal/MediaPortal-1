@@ -237,6 +237,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "MCE2005Remote.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "MediaPortal.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
