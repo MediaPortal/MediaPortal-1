@@ -1007,6 +1007,10 @@ namespace MediaPortal.TV.Recording
 				if (hr != 0) 
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:put_Visible:0x{0:X}",hr);
 			}
+			else
+			{
+				Vmr9.SetDeinterlace();
+			}
 
 			//start the graph
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: start graph");

@@ -11,7 +11,24 @@
 #define IsInterlaced(x) ((x) & AMINTERLACE_IsInterlaced)
 #define IsSingleField(x) ((x) & AMINTERLACE_1FieldPerSample)
 #define IsField1First(x) ((x) & AMINTERLACE_Field1First)
+void Log(const char *fmt, ...) 
+{
+	va_list ap;
+	va_start(ap,fmt);
 
+	char buffer[1000]; 
+	int tmp;
+	va_start(ap,fmt);
+	tmp=vsprintf(buffer, fmt, ap);
+	va_end(ap); 
+
+	FILE* fp = fopen("log/vmr9.log","a+");
+	if (fp!=NULL)
+	{
+		fprintf(fp,"%s\n",buffer);
+		fclose(fp);
+	}
+};
 VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
 {
     if (IsInterlaced(dwInterlaceFlags)) {
@@ -107,6 +124,18 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 	pins[0]->Release();
 
 	VIDEOINFOHEADER2* vidInfo2 =(VIDEOINFOHEADER2*)pmt.pbFormat;
+	
+	Log("resolution:%dx%d planes:%d bitcount:%d fmt:%d %c%c%c%c",
+		vidInfo2->bmiHeader.biWidth,vidInfo2->bmiHeader.biHeight,
+		vidInfo2->bmiHeader.biPlanes,
+		vidInfo2->bmiHeader.biBitCount,
+		vidInfo2->bmiHeader.biCompression,
+		(char)(vidInfo2->bmiHeader.biCompression&0xff),
+		(char)((vidInfo2->bmiHeader.biCompression>>8)&0xff),
+		(char)((vidInfo2->bmiHeader.biCompression>>16)&0xff),
+		(char)((vidInfo2->bmiHeader.biCompression>>24)&0xff)
+		);
+	VideoDesc.dwSize = sizeof(VMR9VideoDesc);
 	VideoDesc.dwFourCC=vidInfo2->bmiHeader.biCompression;
 	VideoDesc.dwSampleWidth=vidInfo2->bmiHeader.biWidth;
 	VideoDesc.dwSampleHeight=vidInfo2->bmiHeader.biHeight;
@@ -128,6 +157,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 		GUID *pModes = new GUID[dwNumModes];
 		if (pModes)
 		{
+			Log("got %d deinterlacing modes", dwNumModes);
 			// Fill the array.
 			hr = pDeint->GetNumberOfDeinterlaceModes(&VideoDesc, &dwNumModes, pModes);
 			if (SUCCEEDED(hr))
@@ -135,14 +165,14 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 				// Loop through each item and get the capabilities.
 				for (int i = 0; i < dwNumModes; i++)
 				{
-					VMR9DeinterlaceCaps Caps;
-					hr = pDeint->GetDeinterlaceModeCaps(pModes + i, &VideoDesc, &Caps);
-					if (SUCCEEDED(hr))
+					hr=pDeint->SetDeinterlaceMode(0,&pModes[0]);
+					if (SUCCEEDED(hr)) 
 					{
-						// Examine the Caps structure.
-						pDeint->SetDeinterlaceMode(0,&pModes[0]);
+						Log("set deinterlace mode:%d",i);
 						break;
 					}
+					else
+						Log("deinterlace mode:%d failed 0x:%x",i,hr);
 				}
 			}
 			delete [] pModes;

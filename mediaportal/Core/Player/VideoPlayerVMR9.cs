@@ -148,6 +148,7 @@ namespace MediaPortal.Player
 					Cleanup();
 					return base.GetInterfaces();
 				}
+				Vmr9.SetDeinterlace();
         
 				return true;
 			}

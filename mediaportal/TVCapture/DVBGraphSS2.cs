@@ -1318,6 +1318,7 @@ namespace MediaPortal.TV.Recording
 			if(CreateSinkSource(fileName)==true)
 			{
 				m_mediaControl=(IMediaControl)m_graphBuilder;
+				if (Vmr9!=null) Vmr9.SetDeinterlace();
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
 
@@ -1775,6 +1776,7 @@ namespace MediaPortal.TV.Recording
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() start graph");
 
+			if (Vmr9!=null) Vmr9.SetDeinterlace();
 			m_mediaControl.Run();
 				
 			if(setVisFlag)

@@ -850,6 +850,7 @@ namespace MediaPortal.TV.Recording
 
       
       Log.WriteFile(Log.LogType.Capture,"SWGraph:run graph");
+			if (Vmr9!=null) Vmr9.SetDeinterlace();
       m_mediaControl.Run();
       
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
@@ -1337,6 +1338,7 @@ namespace MediaPortal.TV.Recording
 
       TuneChannel(channel);
 
+			if (Vmr9!=null) Vmr9.SetDeinterlace();
       m_mediaControl.Run();
       m_graphState = State.Recording;
 
@@ -1459,6 +1461,7 @@ namespace MediaPortal.TV.Recording
       m_mediaControl = (IMediaControl)m_graphBuilder;
       if (m_mediaControl!=null)
       {
+				if (Vmr9!=null) Vmr9.SetDeinterlace();
         hr=m_mediaControl.Run();
         DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() started mediactl:{0}",hr);
       }
@@ -2009,6 +2012,7 @@ namespace MediaPortal.TV.Recording
 				}
 				if (m_mediaControl != null)
 				{
+					if (Vmr9!=null) Vmr9.SetDeinterlace();
 					m_mediaControl.Run();
 				}
 

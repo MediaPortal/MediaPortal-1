@@ -276,36 +276,41 @@ namespace DShowNET
 			bool useOverlay=true;
 			if (vmr9.IsVMR9Connected && vmr9.UseVMR9inMYTV)
 				useOverlay=false;
-      if (useOverlay)
-      {
-        // get the interfaces of the overlay window
-        m_videoWindow = m_graphBuilder as IVideoWindow;
-        m_basicVideo  = m_graphBuilder as IBasicVideo2;
-        if (m_videoWindow!=null)
-        {
+			if (useOverlay)
+			{
+				// get the interfaces of the overlay window
+				m_videoWindow = m_graphBuilder as IVideoWindow;
+				m_basicVideo  = m_graphBuilder as IBasicVideo2;
+				if (m_videoWindow!=null)
+				{
 					// set window message handler
 					m_videoWindow.put_MessageDrain(GUIGraphicsContext.form.Handle);
 
-          // set the properties of the overlay window
-          hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
-          if( hr != 0 ) 
-            Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window:0x{0:X}",hr);
+					// set the properties of the overlay window
+					hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
+					if( hr != 0 ) 
+						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window:0x{0:X}",hr);
 
-          hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-          if( hr != 0 ) 
-            Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window style:0x{0:X}",hr);
+					hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+					if( hr != 0 ) 
+						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window style:0x{0:X}",hr);
 
-          // make the overlay window visible
-      //    m_bOverlayVisible=true;
-						hr = m_videoWindow.put_Visible( DsHlp.OAFALSE );
-      //    if( hr != 0 ) 
-      //      Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED:put_Visible:0x{0:X}",hr);
-        }
-        else 
-        {
-          Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:could not get IVideoWindow");
-        }
-      }
+					// make the overlay window visible
+					//    m_bOverlayVisible=true;
+					hr = m_videoWindow.put_Visible( DsHlp.OAFALSE );
+					//    if( hr != 0 ) 
+					//      Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED:put_Visible:0x{0:X}",hr);
+				}
+				else 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:could not get IVideoWindow");
+				}
+			}
+			else
+			{
+				if (vmr9!=null)
+					vmr9.SetDeinterlace();
+			}
 
 			Overlay=false;
 
