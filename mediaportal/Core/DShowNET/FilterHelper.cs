@@ -79,7 +79,7 @@ namespace DShowNET
 			foreach(Filter device in filters.BDAReceivers)
 			{
 				if (device.Name.ToLower() =="bda slip de-framer") continue;
-				if (device.Name.ToLower() =="bda mpe-filter") continue;	
+				if (device.Name.ToLower() =="bda mpe filter") continue;	
 				devices.Add(device.MonikerString);
 			}
 			
@@ -107,7 +107,7 @@ namespace DShowNET
 			foreach(Filter device in filters.BDAReceivers)
 			{
 				if (device.Name.ToLower() =="bda slip de-framer") continue;	
-				if (device.Name.ToLower() =="bda mpe-filter") continue;	
+				if (device.Name.ToLower() =="bda mpe filter") continue;	
 				devices.Add(device.Name);
 			}
 			
