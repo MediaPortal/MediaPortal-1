@@ -17,15 +17,18 @@ My Radio:
   
 My TV:
   general
-	- option:show live tv in 'tv gfx' on home
+	- reload tvguide.xml if something in the setup has been changed
 	- option:fade in/out when switching between fullscreen video/tv<->gui
-	- option:show fullscreen TV when going to my tv (instead of windowed)
 	- option:turn timeshifting on/off
+	- option:show fullscreen TV when going to my tv (instead of windowed)
+	- option:show live tv in 'tv gfx' on home
 	- A way to browse and resolve recording conflicts. 
 	- support of external tuners (http://www.usbuirt.com/) (xbmc-er is looking at this)
-	- show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
 	- picture in picture
 	- TV-out through PVR 350
+  
+  Fullscreen TV:
+	- show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
 	- when in FF mode, auto stop when live-point is reached
   
   TV OSD:
@@ -53,20 +56,20 @@ My TV:
      - add screenshot option    
      
 My Music: (int_20h)
+  - store artist info in music databaswe
+  - support for external audio players based on file extension
+  - search songs by genre,artist,album (based on music database)
+  - favorite system to add an album, song, artists to your favorites
+  - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
   - faster start of 1st song played
   - gapless playback
-  - search songs by genre,artist,album (based on music database)
-  - support for external audio players based on file extension
   - FF/RW control
   - crossfading ?
   - repeat none, once, always
-  - query info about artists from www.allmusic.com
-  - refresh/lookup album art
-  - favorite system to add an album, song, artists to your favorites
-  - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
 
 My Video:
   - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
+  - show IMDB info when fullscreen/osd
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - 1st time it takes a long time b4 OSD appears
   - OSD: when submenu is opened, dont use the osd timeout
@@ -74,7 +77,6 @@ My Video:
   - favorite system to add a movie, actor, to your favorites
   - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
   - FF/RW
-  - show IMDB info when fullscreen/osd
   
 My Pictures:
   - exif/picture tag information (excentric is looking at this)
@@ -96,13 +98,10 @@ Skin engine:
   - fade in for controls
   - position text for buttons
   - transitions between windows
-  - property for current module 
   
 General:
   - let user specify scrolling speed
   - setup : add tooltips 
-  - show properties in skin: 
-     - tv/recording properties
      
   - setup:Auto Tune needs some work
       - map S01 /k01 etc -> channel numbers
