@@ -1988,227 +1988,6 @@
         <string>
                 <id>685</id>
                 <value>Järjestä: Tila</value>
-        </string>
-        <string>
-                <id>10000</id>
-                <value>Home</value>
-        </string>
-        <string>
-                <id>10001</id>
-                <value>Omat ohjelmat</value>
-        </string>
-        <string>
-                <id>10002</id>
-                <value>Omat kuvat</value>
-        </string>
-        <string>
-                <id>10003</id>
-                <value>Omat tiedostot</value>
-        </string>
-        <string>
-                <id>10004</id>
-                <value>Asetukset</value>
-        </string>
-        <string>
-                <id>10005</id>
-                <value>Oma Musiikki</value>
-        </string>
-        <string>
-                <id>10006</id>
-                <value>Omat Videot</value>
-        </string>
-        <string>
-                <id>10007</id>
-                <value>Järjestelmätiedot</value>
-        </string>
-        <string>
-                <id>10008</id>
-                <value>Asetukset->Yleiset</value>
-        </string>
-        <string>
-                <id>10009</id>
-                <value>Asetukset->Kuva</value>
-        </string>
-        <string>
-                <id>10010</id>
-                <value>Asetukset->Kuva->UI Säädöt</value>
-        </string>
-        <string>
-                <id>10011</id>
-                <value>Asetukset->Kuva->Ruudun kalibrointi</value>
-        </string>
-        <string>
-                <id>10012</id>
-                <value>Asetukset->Kuvaesitys</value>
-        </string>
-        <string>
-                <id>10013</id>
-                <value>Asetukset->Kuva->Suodattimet</value>
-        </string>
-        <string>
-                <id>10014</id>
-                <value>Asetukset->Musiikki</value>
-        </string>
-        <string>
-                <id>10015</id>
-                <value>Asetukset->Kuva->Tekstitykset</value>
-        </string>
-        <string>
-                <id>10016</id>
-                <value>Asetukset->Kuva->Ruudunsäästäjä</value>
-        </string>
-        <string>
-                <id>10017</id>
-                <value>Asetukset->Säätila</value>
-        </string>
-        <string>
-                <id>10020</id>
-                <value>Asetukset->Skriptit</value>
-        </string>
-        <string>
-                <id>10021</id>
-                <value>Omat Videot/Tyylilaji</value>
-        </string>
-        <string>
-                <id>10022</id>
-                <value>Omat Videot/Näyttelijät</value>
-        </string>
-        <string>
-                <id>10023</id>
-                <value>Omat Videot/Vuosi</value>
-        </string>
-        <string>
-                <id>10024</id>
-                <value>Asetukset->Ohjelmat</value>
-        </string>
-        <string>
-                <id>10025</id>
-                <value>Omat Videot/Nimi</value>
-        </string>
-        <string>
-                <id>10026</id>
-                <value>Asetukset->Yleiset->Välimuisti</value>
-        </string>
-        <string>
-                <id>10027</id>
-                <value>Asetukset->Yleiset->Automaattikäynnistys</value>
-        </string>
-        <string>
-                <id>10028</id>
-                <value>Omat Videot/Soittolista</value>
-        </string>
-        <string>
-                <id>10029</id>
-                <value>Asetukset->Yleiset->LCD</value>
-        </string>
-        <string>
-                <id>10030</id>
-                <value>Oma Radio</value>
-        </string>
-        <string>
-                <id>10031</id>
-                <value>Asetukset->Näyttö->Vieritys nopeus</value>
-        </string>
-        <string>
-                <id>10100</id>
-                <value>Kyllä/ei dialogi</value>
-        </string>
-        <string>
-                <id>10101</id>
-                <value>Progress dialogi</value>
-        </string>
-        <string>
-                <id>10500</id>
-                <value>Oma Musiikki/soittolista</value>
-        </string>
-        <string>
-                <id>10501</id>
-                <value>Oma Musiikki/tiedostot</value>
-        </string>
-        <string>
-                <id>10502</id>
-                <value>Oma Musiikki/albumit</value>
-        </string>
-        <string>
-                <id>10503</id>
-                <value>Oma Musiikki/artistit</value>
-        </string>
-        <string>
-                <id>10504</id>
-                <value>Oma Musiikki/genret</value>
-        </string>
-        <string>
-                <id>10505</id>
-                <value>Oma Musiikki/top100</value>
-        </string>
-        <string>
-                <id>10600</id>
-                <value>Oma TV/Ohjelmaopas</value>
-        </string>
-        <string>
-                <id>10601</id>
-                <value>Oma TV/Ajastukset</value>
-        </string>
-        <string>
-                <id>10602</id>
-                <value>Oma TV/koko ruutu</value>
-        </string>
-        <string>
-                <id>10603</id>
-                <value>Oma TV/Nauhoitukset</value>
-        </string>
-        <string>
-                <id>11000</id>
-                <value>Näppäimistö</value>
-        </string>
-        <string>
-                <id>12000</id>
-                <value>Valitse dialogi</value>
-        </string>
-        <string>
-                <id>12001</id>
-                <value>Musiikkini/Tiedot</value>
-        </string>
-        <string>
-                <id>12002</id>
-                <value>Dialogi OK</value>
-        </string>
-        <string>
-                <id>12003</id>
-                <value>Elokuvat/Tiedot</value>
-        </string>
-        <string>
-                <id>12004</id>
-                <value>Skriptit/Tiedot</value>
-        </string>
-        <string>
-                <id>12005</id>
-                <value>Koko ruudun videotoisto</value>
-        </string>
-        <string>
-                <id>12006</id>
-                <value>äänen visualisointi</value>
-        </string>
-        <string>
-                <id>12007</id>
-                <value>Omat kuvat/slideshow</value>
-        </string>
-        <string>
-                <id>12008</id>
-                <value>Tiedostopino-dialogi</value>
-        </string>
-        <string>
-                <id>12600</id>
-                <value>Säätila</value>
-        </string>
-        <string>
-                <id>12900</id>
-                <value>Ruudunsäästäjä</value>
-        </string>
-        <string>
-                <id>12901</id>
-                <value>Kokoruudun OSD</value>
-        </string>
         <string>
                 <id>686</id>
                 <value>Syntynyt</value>
@@ -2378,6 +2157,10 @@
 	         <value>Käännä</value>
         </string>
         <string>
+	        <id>736</id>
+	        <value>Ei TV opas tietoja saatavilla</value>
+        </string>
+        <string>
 	        <id>800</id>
 	        <value>Alkaa kirjaimella</value>
         </string>
@@ -2411,7 +2194,7 @@
         </string>
         <string>
 	        <id>808</id>
-	        <value>Ingredients</value>
+	        <value>Ainesosat</value>
         </string>
         <string>
 	        <id>809</id>
@@ -2498,42 +2281,200 @@
         	<id>868</id>
          	<value>Reset</value>
         </string>
+
+        <!-- End My Alarm Strings -->
         <string>
         	<id>900</id>
-         	<value>Resume movie from last time ?</value>
+         	<value>Jatketaanko elokuvan katselua?</value>
         </string>
-        <!-- End My Alarm Strings -->
         <string>
         	<id>901</id>
          	<value>MSN Messenger</value>
         </string>
         <string>
         	<id>902</id>
-         	<value>Online contacts</value>
+         	<value>Kontaktit</value>
         </string>
         <string>
         	<id>903</id>
-         	<value>Connect</value>
+         	<value>Yhdistä</value>
         </string>
         <string>
         	<id>904</id>
-         	<value>Disconnect</value>
+         	<value>Katkaise yhteys</value>
         </string>
         <string>
         	<id>905</id>
-         	<value>You need to configure this plugin first</value>
+         	<value>Asetukset puuttuvat</value>
         </string>
         <string>
         	<id>906</id>
-         	<value>Fill in your email adres in the setup</value>
+         	<value>Täytä sähköpostiasetukset</value>
         </string>
         <string>
         	<id>907</id>
-         	<value>Could not connect to MSN</value>
+         	<value>Ei voitu yhdistää MSN palveluun</value>
         </string>
         <string>
-        	<id>906</id>
-         	<value>is typing a message...</value>
+	        <id>908</id>
+	        <value>kirjoittaa viestiä...</value>
+        </string>
+        <string>
+	        <id>909</id>
+	        <value>Yhdistää...</value>
+        </string>
+        <string>
+	         <id>910</id>
+	         <value>Kirjautuu...</value>
+        </string>
+        <string>
+	        <id>911</id>
+	        <value>Ei kanavia</value>
+        </string>
+        <string>
+	        <id>912</id>
+	        <value>Ei uusia uutisia</value>
+        </string>
+        <string>
+	        <id>913</id>
+	        <value>Omat lisäosat</value>
+        </string>
+        <string>
+        	<id>914</id>
+	        <value>Äänitykset</value>
+        </string>
+        <string>
+	        <id>915</id>
+	        <value>TV Kanavat</value>
+        </string>
+        <string>
+	        <id>916</id>
+	        <value>Etä tiedosto</value>
+        </string>
+        <string>
+	        <id>917</id>
+	        <value>Tämä palvelu on etä kansiossa</value>
+        </string>
+        <string>
+	        <id>918</id>
+	        <value>Siirretäänkö tiedosto paikalliseen </value>
+        </string>
+        <string>
+	        <id>919</id>
+	        <value>Paikallinen jako?</value>
+        </string>
+        <string>
+	        <id>920</id>
+	        <value>Etätiedoston lataus epäonnistui</value>
+        </string>
+        <string>
+	        <id>921</id>
+	        <value>Tiedosto latautuu ...</value>
+        </string>
+         	<!-- My Status Strings -->
+	<string>
+                <id>1950</id>
+                <value>Oma Tila</value>
+        </string>
+	<string>
+                <id>1951</id>
+                <value>Kiintolevy</value>
+        </string>
+	<string>
+                <id>1952</id>
+                <value>Tuuletin</value>
+        </string>
+	<string>
+                <id>1953</id>
+                <value>Vapaa</value>
+        </string>
+	<string>
+                <id>1954</id>
+                <value>Lämpötila</value>
+        </string>
+	<string>
+                <id>1955</id>
+                <value>C</value>
+        </string>
+	<string>
+                <id>1956</id>
+                <value>Valitse hälytys ääni</value>
+        </string>
+	<string>
+                <id>1957</id>
+                <value>Preferences</value>
+        </string>
+	<string>
+                <id>1958</id>
+                <value>CPU usage</value>
+        </string>
+	<string>
+                <id>1959</id>
+                <value>Jännite</value>
+        </string>
+	<string>
+                <id>1960</id>
+                <value>Volttia</value>
+        </string>
+	<string>
+                <id>1961</id>
+                <value>Kellotaajuus</value>
+        </string>
+	<string>
+                <id>1962</id>
+                <value>Preferences</value>
+        </string>
+	<string>
+                <id>1963</id>
+                <value>Tunnistimen yksityiskohdat</value>
+        </string>
+	<string>
+                <id>1964</id>
+                <value>Tunnistin hälytys</value>
+        </string>
+	<string>
+                <id>1965</id>
+                <value>Korkein arvo</value>
+        </string>
+	<string>
+                <id>1966</id>
+                <value>Matalin arvo</value>
+        </string>
+	<string>
+                <id>1967</id>
+                <value>Ylin hälytys raja</value>
+        </string>
+	<string>
+                <id>1968</id>
+                <value>Alin hälytys raja</value>
+        </string>
+	<string>
+                <id>1969</id>
+                <value>Testi ääni</value>
+        </string>
+	<string>
+                <id>1970</id>
+                <value>Hälytysten väliaika (sekunttia)</value>
+        </string>
+	<string>
+                <id>1971</id>
+                <value>Sammuta hälytyksen jälkeen</value>
+        </string>
+	<string>
+                <id>1972</id>
+                <value>Yksityiskohdat</value>
+        </string>
+	<string>
+                <id>1973</id>
+                <value>von</value>
+        </string>
+	<string>
+                <id>1974</id>
+                <value>Muisti</value>
+        </string>
+	<string>
+                <id>1975</id>
+                <value>Seuraava</value>
         </string>
         <!-- My Recipie Strings -->
         <string>
@@ -2846,6 +2787,313 @@
         <string>
 	        <id>8033</id>
 	        <value>Tilanne</value>
+        </string>
+        <string>
+	        <id>9000</id>
+	        <value>Kuvan Mitat:</value>
+        </string>
+        <string>
+	        <id>9001</id>
+	        <value>Resoluutio:</value>
+        </string>
+        <string>
+	        <id>9002</id>
+	        <value>Flash:</value>
+        </string>
+        <string>
+	        <id>9003</id>
+	        <value>Mittaus asetus:</value>
+        </string>
+        <string>
+	         <id>9004</id>
+	         <value>Exposure Compensation:</value>
+        </string>
+        <string>
+	         <id>9005</id>
+	         <value>Sulkimen nopeus:</value>
+        </string>
+        <string>
+	        <id>9006</id>
+	        <value>Kuvattu:</value>
+        </string>
+        <string>
+	        <id>9007</id>
+	        <value>Fstop:</value>
+        </string>
+        <string>
+	        <id>9008</id>
+	        <value>Valotus aika:</value>
+        </string>
+        <string>
+	        <id>9009</id>
+	        <value>Kameran malli:</value>
+        </string>
+        <string>
+	        <id>9010</id>
+	        <value>Valmistaja:</value>
+        </string>
+        <string>
+	        <id>9011</id>
+	        <value>Kommentit:</value>
+        </string>
+        <string>
+                <id>10000</id>
+                <value>Home</value>
+        </string>
+        <string>
+                <id>10001</id>
+                <value>Oma TV</value>
+        </string>
+        <string>
+                <id>10002</id>
+                <value>Omat Kuvat</value>
+        </string>
+        <string>
+                <id>10003</id>
+                <value>Omat Tiedostot</value>
+        </string>
+        <string>
+                <id>10004</id>
+                <value>Asetukset</value>
+        </string>
+        <string>
+                <id>10005</id>
+                <value>Oma Musiikki</value>
+        </string>
+        <string>
+                <id>10006</id>
+                <value>Omat Videot</value>
+        </string>
+        <string>
+                <id>10007</id>
+                <value>Järjestelmätiedot</value>
+        </string>
+        <string>
+                <id>10008</id>
+                <value>Asetukset->yleiset</value>
+        </string>
+        <string>
+                <id>10009</id>
+                <value>Asetukset->Näyttö</value>
+        </string>
+        <string>
+                <id>10010</id>
+                <value>Asetukset->Näyttö->KL Kalibrointi</value>
+        </string>
+                <string><id>10011</id>
+                <value>Asetukset->Näyttö->Kalibrointi</value>
+        </string>
+        <string>
+                <id>10012</id>
+                <value>Asetukset->Slideshow</value>
+        </string>
+        <string>
+                <id>10013</id>
+                <value>Asetukset->Näyttö->Suodattimet</value>
+        </string>
+        <string>
+                <id>10014</id>
+                <value>Asetukset->Musiikki</value>
+        </string>
+        <string>
+                <id>10015</id>
+                <value>Asetukset->Näyttö->Tekstitys</value>
+        </string>
+        <string>
+                <id>10016</id>
+                <value>Asetukset->Näyttö->Näytönsäästäjä</value>
+        </string>
+        <string>
+                <id>10017</id>
+                <value>Asetukset->Sää</value>
+        </string>
+        <string>
+                <id>10020</id>
+                <value>Asetukset->Scriptit</value>
+        </string>
+        <string>
+                <id>10021</id>
+                <value>Omat Videot/genre</value>
+        </string>
+        <string>
+                <id>10022</id>
+                <value>Omat Videot/näyttelijä</value>
+        </string>
+        <string>
+                <id>10023</id>
+                <value>Omat Videot/vuosi</value>
+        </string>
+        <string>
+                <id>10024</id>
+                <value>Asetukset->Ohjelmat</value>
+        </string>
+        <string>
+                <id>10025</id>
+                <value>Omat Videot/otsikko</value>
+        </string>
+        <string>
+                <id>10026</id>
+                <value>Asetukset->Yleiset->Cache</value>
+        </string>
+        <string>
+                <id>10027</id>
+                <value>Asetukset->Yleinen->Autorun</value>
+        </string>
+        <string>
+                <id>10028</id>
+                <value>Omat Videot/soittolista</value>
+        </string>
+        <string>
+                <id>10029</id>
+                <value>Asetukset->Yleinen->LCD</value>
+        </string>
+        <string>
+                <id>10030</id>
+                <value>Oma Radio</value>
+        </string>
+        <string>
+                <id>10031</id>
+                <value>Asetukset->Näyttö->Scroll speed</value>
+        </string>
+        <string>
+                <id>10032</id>
+                <value>MSN Messenger</value>
+        </string>
+        <string>
+                <id>10033</id>
+                <value>MSN Messenger chat</value>
+        </string>
+        <string>
+                <id>10034</id>
+                <value>Omat Pluginit</value>
+        </string>
+        <string>
+                <id>10100</id>
+                <value>Kyllä/Ei dialogi</value>
+        </string>
+        <string>
+                <id>10101</id>
+                <value>Progress dialog</value>
+        </string>
+        <string>
+                <id>10500</id>
+                <value>Oma Musiikki/soittolista</value>
+        </string>
+        <string>
+                <id>10501</id>
+                <value>Oma Musiikki/tiedostot</value>
+        </string>
+        <string>
+                <id>10502</id>
+                <value>Oma Musiikki/albumit</value>
+        </string>
+        <string>
+                <id>10503</id>
+                <value>Oma Musiikki/artistit</value>
+        </string>
+        <string>
+                <id>10504</id>
+                <value>Oma Musiikki/genret</value>
+        </string>
+        <string>
+                <id>10505</id>
+                <value>Oma Musiikki/top 100</value>
+        </string>
+        <string>
+                <id>10600</id>
+                <value>Oma TV/Opas</value>
+        </string>
+        <string>
+                <id>10601</id>
+                <value>Oma TV/Ajastus</value>
+        </string>
+        <string>
+                <id>10602</id>
+                <value>Oma TV/Kokoruutu</value>
+        </string>
+        <string>
+                <id>10603</id>
+                <value>Oma TV/Aänitykset</value>
+        </string>
+        <string>
+                <id>10604</id>
+                <value>Oma TV/Haku</value>
+        </string>
+        <string>
+                <id>10605</id>
+                <value>Oma TV/Äänitykset/Genre</value>
+        </string>
+        <string>
+                <id>10606</id>
+                <value>Oma TV/Äänitykset/kanavat</value>
+        </string>
+        <string>
+                <id>10750</id>
+                <value>Omat Reseptit</value>
+        </string>
+        <string>
+                <id>10755</id>
+                <value>Oma Tila</value>
+        </string>
+        <string>
+                <id>10756</id>
+                <value>Oma Tila yksityiskohdat</value>
+        </string>
+        <string>
+                <id>10757</id>
+                <value>Oma Tila asetukset</value>
+        </string>
+        <string>
+                <id>11000</id>
+                <value>näppäimistö</value>
+        </string>
+        <string>
+                <id>12000</id>
+                <value>Valitse dialogi</value>
+        </string>
+        <string>
+                <id>12001</id>
+                <value>Oma Musiikki/info</value>
+        </string>
+        <string>
+                <id>12002</id>
+                <value>Dialog OK</value>
+        </string>
+        <string>
+                <id>12003</id>
+                <value>Omat Videot/Info</value>
+        </string>
+        <string>
+                <id>12004</id>
+                <value>Omat Scriptit/Info</value>
+        </string>
+        <string>
+                <id>12005</id>
+                <value>Kokoruudun video</value>
+        </string>
+        <string>
+                <id>12006</id>
+                <value>Audio visusalisointi</value>
+        </string>
+        <string>
+                <id>12007</id>
+                <value>Omat Kuvat/kuvaesitys</value>
+        </string>
+        <string>
+                <id>12008</id>
+                <value>Tiedostojen käsittely dialogi</value>
+        </string>
+        <string>
+                <id>12600</id>
+                <value>Oma Sää</value>
+        </string>
+        <string>
+                <id>12900</id>
+                <value>Näytönsäästäjä</value>
+        </string>
+        <string>
+                <id>12901</id>
+                <value>Kokoruudun OSD</value>
         </string>
         <string>
 	        <id>13000</id>

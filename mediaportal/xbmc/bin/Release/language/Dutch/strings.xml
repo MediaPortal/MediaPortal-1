@@ -2338,6 +2338,39 @@
   	<value>Meer Plugins...</value>
   </string>
   <string>
+  	<id>914</id>
+  	<value>Opnamen</value>
+  </string>
+  <string>
+  	<id>915</id>
+  	<value>TV Kanalen</value>
+  </string>
+  <string>
+  	<id>916</id>
+  	<value>Remote file</value>
+  </string>
+  <string>
+  	<id>917</id>
+  	<value>Dit bestand staat op een ??????</value>
+  	<value>This file is located on a remote share</value>
+  </string>
+  <string>
+  	<id>918</id>
+  	<value>Dit bestand downloaden naar de standaard</value>
+  </string>
+  <string>
+  	<id>919</id>
+  	<value>lokale map?</value>
+  </string>
+  <string>
+  	<id>920</id>
+  	<value>Bestand kan niet opgehaald worden</value>
+  </string>
+  <string>
+  	<id>921</id>
+  	<value>Bestand wordt opgehaald</value>
+  </string>
+  <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
   </string>
@@ -2454,7 +2487,7 @@
   </string>
 	<string>
     <id>2007</id>
-    <value>Yield</value>
+    <value>Aantal</value>
   </string>
 	<string>
     <id>2008</id>
@@ -2755,6 +2788,54 @@
   <string>
   	<id>8033</id>
   	<value>Voortgang</value>
+  </string>
+  <string>
+  	<id>9000</id>
+  	<value>Afmetingen:</value>
+  </string>
+  <string>
+  	<id>9001</id>
+  	<value>Resolutie:</value>
+  </string>
+  <string>
+  	<id>9002</id>
+  	<value>Flits:</value>
+  </string>
+  <string>
+  	<id>9003</id>
+  	<value>Metering Mode:</value>
+  </string>
+  <string>
+  	<id>9004</id>
+  	<value>Exposure Compensation:</value>
+  </string>
+  <string>
+  	<id>9005</id>
+  	<value>Sluiter snelheid:</value>
+  </string>
+  <string>
+  	<id>9006</id>
+  	<value>Datum:</value>
+  </string>
+  <string>
+  	<id>9007</id>
+  	<value>Fstop:</value>
+  </string>
+  <string>
+  	<id>9008</id>
+  	<value>Exposure time:</value>
+  </string>
+  <string>
+  	<id>9009</id>
+  	<value>Camera type:</value>
+  </string>
+  <string>
+  	<id>9010</id>
+  	<value>Fabrikant:</value>
+  </string>
+  <string>
+  	<id>9011</id>
+  	<value>Opmerkingen:</value>
   </string>
 	<string>
 		<id>10000</id>

@@ -1,5 +1,5 @@
 <window>
-	<id>603</id>
+	<id>606</id>
 	<defaultcontrol>5</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 <controls>
@@ -138,9 +138,20 @@
 		<textureHeight>90</textureHeight>
 		<keepaspectratio>no</keepaspectratio>
 		<onleft>5</onleft>
-		<onright>10</onright>
+		<onright>11</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
+	</control>
+	<control>
+		<description>listcontrol</description>
+		<type>listcontrol</type>
+		<id>11</id>
+		<onleft>2</onleft>
+		<onright>10</onright>
+		<onup>10</onup>
+		<onup>2</onup>
+		<ondown>2</ondown>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
 	<control>
