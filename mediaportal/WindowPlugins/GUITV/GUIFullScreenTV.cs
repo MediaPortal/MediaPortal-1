@@ -122,7 +122,7 @@ namespace MediaPortal.GUI.TV
     }
 		public override void OnAction(Action action)
 		{
-      if (action.wID==Action.ActionType.ACTION_MOUSE_DOUBLECLICK)
+      if ( (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right) || action.wID==Action.ActionType.ACTION_MOUSE_DOUBLECLICK)
       {
         // switch back to the menu
         m_bOSDVisible=false;

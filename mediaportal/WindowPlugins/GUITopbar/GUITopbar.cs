@@ -9,6 +9,7 @@ namespace MediaPortal.Topbar
 	public class GUITopbar: GUIWindow
 	{
     bool m_bFocused=false;
+    bool m_bEnabled=false;
 		public GUITopbar()
 		{
 			// 
@@ -19,6 +20,7 @@ namespace MediaPortal.Topbar
     {
       bool bResult=Load (GUIGraphicsContext.Skin+@"\topbar.xml");
       GetID=(int)GUIWindow.Window.WINDOW_TOPBAR;
+      m_bEnabled=PluginManager.IsPluginNameEnabled("Topbar");
       return bResult;
     }
     public override bool SupportsDelayedLoad
@@ -49,6 +51,7 @@ namespace MediaPortal.Topbar
     }
     public override bool DoesPostRender()
     {
+      if (!m_bEnabled) return false;
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_UI_CALIBRATION) return false;
@@ -61,6 +64,7 @@ namespace MediaPortal.Topbar
     }
     public override void PostRender(int iLayer)
     {
+      if (!m_bEnabled) return ;
       if (iLayer !=1) return;
       CheckFocus();
       base.Render();
