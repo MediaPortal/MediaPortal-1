@@ -424,6 +424,16 @@ namespace MediaPortal.TV.Recording
               {
                 DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
               }
+              hr=mixer.put_MixLevel(1.0d);
+              if (hr !=0)
+              {
+                DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to 100%:0x{0:X}",hr);
+              }
+              else
+              {
+                DirectShowUtil.DebugWrite("SWGraph:set mixing level to 100% of pin:{0}",m_strAudioInputPin);
+              }
+
             }
             else
             {
