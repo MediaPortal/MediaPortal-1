@@ -1876,7 +1876,16 @@ namespace MediaPortal.TV.Recording
 					if (tableExt != - 1)
 					{
 						arr = new byte[dataLen+8 + 1];
-						Marshal.Copy(sectionBuffer, arr, 8, dataLen);
+						try
+						{
+							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
+						}
+						catch
+						{
+							Log.Write("dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							m_sectionsList.Clear();
+							break;
+						}
 						arr[0] = (byte)tid;
 						arr[1] = (byte)((header >> 8) & 255);
 						arr[2] =(byte) (header & 255);
@@ -1892,7 +1901,16 @@ namespace MediaPortal.TV.Recording
 					else
 					{
 						arr = new byte[dataLen+3 + 1];
-						Marshal.Copy(sectionBuffer, arr, 3, dataLen);
+						try
+						{
+							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
+						}
+						catch
+						{
+							Log.Write("dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							m_sectionsList.Clear();
+							break;
+						}
 						arr[0] = System.Convert.ToByte(tid);
 						arr[1] = System.Convert.ToByte((header >> 8) & 255);
 						arr[2] = System.Convert.ToByte(header & 255);
