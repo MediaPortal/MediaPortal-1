@@ -270,7 +270,7 @@ namespace MediaPortal.Configuration.Sections
             selectedItem.SubItems[0].Text = shareData.Name;
             selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
             selectedItem.SubItems[2].Text = shareData.Folder;
-            selectedItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.Folder);
+            selectedItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.RemoteFolder);
 
           }
         }
