@@ -1,14 +1,27 @@
-<?xml version="1.0" ?> 
-<project name="MediaPortal" default="debug"> 
-  <target name="release"> 
-    <solution configuration="debug" solutionfile="MediaPortal.sln"> 
-      <assemblyfolders> 
-        <!-- Reference to System.* assemblies --> 
-        <includes name="C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322" /> 
-        <!-- Reference to Microsoft.DirectX* assemblies --> 
-        <includes name="C:\MediaPortal" /> 
-        <includes name="C:\WINDOWS\Microsoft.NET\Managed DirectX\v4.09.00.0900" /> 
-      </assemblyfolders> 
-    </solution> 
-  </target> 
+<?xml version="1.0" ?>
+<project name="MediaPortal" default="debug">
+
+  <target name="release">
+    <solution configuration="release" solutionfile="MediaPortal.sln">
+      <assemblyfolders>
+        <!-- Reference to System.* assemblies -->
+        <includes name="C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322" />
+        <!-- Reference to Microsoft.DirectX* assemblies -->
+        <includes name="C:\MediaPortal" />
+         <includes name="C:\WINDOWS\Microsoft.NET\Managed DirectX\v4.09.00.0900" />
+      </assemblyfolders>
+    </solution>
+  </target>
+  <target name="debug">
+    <solution configuration="debug" solutionfile="MediaPortal.sln">
+      <assemblyfolders>
+        <!-- Reference to System.* assemblies -->
+        <includes name="C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322" />
+        <!-- Reference to Microsoft.DirectX* assemblies -->
+        <includes name="C:\MediaPortal" />
+        <includes name="C:\WINDOWS\Microsoft.NET\Managed DirectX\v4.09.00.0900" />
+      </assemblyfolders>
+    </solution>
+  </target>
+
 </project>
