@@ -1,3 +1,5 @@
+13-08-2004  My tv       : fixed : TV on/off button: tv was still enabled when re-entering my tv
+
 12-08-2004  My Music    : fixed : cddb doesnt work for some case does not update tags.  The year tag coming from cddb was empty and cased problems when converting it to integer.
 12-08-2004  CD          : fixed : when pressing X during cd playback and then X again will reload the cddb data from the net resulting in a new selection screen when you have multiple hits
 12-08-2004  GUI         : fixed : when aligning a fadelabel 'right' you will not see the beginning of the string.

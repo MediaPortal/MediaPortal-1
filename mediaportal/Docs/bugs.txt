@@ -59,10 +59,3 @@ my tv Svideo=No Sound
 	5/ Reboot and fire up MP again
 	6/ NOW there's sound on SVHS
 	7/ change to antenna channel and back to SVHS-> LOST SOUND 
-	
-my tv :
-	1. Enter TV module.
-	2. press button TV off
-	3. leave TV module
-	4. reenter TV module
-	5. -> Button will show red light (=off) but tv is on.
