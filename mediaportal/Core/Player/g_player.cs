@@ -955,7 +955,16 @@ namespace MediaPortal.Player
         RenderWidth=GUIGraphicsContext.VideoWindow.Width;
         RenderHeight=GUIGraphicsContext.VideoWindow.Height;
       }
-      Visible=(FullScreen||GUIGraphicsContext.Overlay);
+      bool inTV=false;
+      int windowId=GUIWindowManager.ActiveWindow;
+      if (windowId==(int)GUIWindow.Window.WINDOW_TV||
+          windowId==(int)GUIWindow.Window.WINDOW_TVGUIDE||  
+          windowId==(int)GUIWindow.Window.WINDOW_SEARCHTV||  
+          windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||  
+          windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV)
+        inTV=true;
+      Visible=(FullScreen||GUIGraphicsContext.Overlay||
+          windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||inTV);
       SetVideoWindow();
     }
 
