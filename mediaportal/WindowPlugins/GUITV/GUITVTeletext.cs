@@ -120,14 +120,15 @@ namespace MediaPortal.GUI.TV
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
-					m_teleText.GetPage(0x100,0);
-					m_grabPageTimer.Start();
-					if(m_teleText==null)
-						return false;
-					if(m_pictureBox!=null)
-						m_pictureBox.Visible=true;
 					base.OnMessage(message);
 					GUIImage gImg=(GUIImage)this.GetControl(500);
+					if(m_teleText==null)
+					{
+						GUIWindowManager.PreviousWindow();
+						return false;
+					}
+					m_teleText.GetPage(0x100,0);
+					m_grabPageTimer.Start();
 					if(gImg!=null)
 					{	// setting the coordinates from the image-control
 						m_pictureBox.Top=gImg.rect.Y;
@@ -140,6 +141,8 @@ namespace MediaPortal.GUI.TV
 						Graphics g=Graphics.FromImage(m_pictureBox.Image);
 						g.FillRectangle(new System.Drawing.SolidBrush(Color.Black),0,0,gImg.rect.Width,gImg.rect.Height);
 						g.Dispose();
+						if(m_pictureBox!=null)
+							m_pictureBox.Visible=true;
 					}
 
 
