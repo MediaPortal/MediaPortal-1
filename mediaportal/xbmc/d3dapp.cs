@@ -143,7 +143,13 @@ namespace MediaPortal
       minDepthBits = 16;
       minStencilBits = 0;
       showCursorWhenFullscreen = false;
-      
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+//@@@fullscreen
+//       string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
+//        if (strStartFull!=null && strStartFull=="yes") startFullscreen=true;
+//@@@fullscreen
+      }
       //      startFullscreen=true;
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
       // the device window when the app goes fullscreen.  This prevents users
@@ -447,13 +453,12 @@ namespace MediaPortal
     public void BuildPresentParamsFromSettings()
     {
       presentParams.Windowed = graphicsSettings.IsWindowed;
-      presentParams.BackBufferCount = 1;
+      presentParams.BackBufferCount = 2;
       presentParams.MultiSample = graphicsSettings.MultisampleType;
       presentParams.MultiSampleQuality = graphicsSettings.MultisampleQuality;
-      presentParams.SwapEffect = SwapEffect.Discard;
       presentParams.EnableAutoDepthStencil = enumerationSettings.AppUsesDepthBuffer;
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
-      presentParams.PresentFlag = PresentFlag.None;
+      presentParams.PresentFlag = PresentFlag.Video;
 
         if (windowed)
         {
@@ -461,7 +466,8 @@ namespace MediaPortal
             presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.FullScreenRefreshRateInHz = 0;
-            presentParams.PresentationInterval = PresentInterval.Immediate;
+            presentParams.PresentationInterval = PresentInterval.Default;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
             presentParams.DeviceWindow = ourRenderTarget;
         }
         else
@@ -470,7 +476,8 @@ namespace MediaPortal
             presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
-            presentParams.PresentationInterval = graphicsSettings.PresentInterval;
+            presentParams.PresentationInterval = Direct3D.PresentInterval.Default;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
             presentParams.DeviceWindow = this;
       }
     }
@@ -960,6 +967,8 @@ namespace MediaPortal
       storedSize=this.ClientSize;
       storedLocation=this.Location ;
       oldBounds=new Rectangle(Bounds.X,Bounds.Y,Bounds.Width,Bounds.Height);
+
+//@@@fullscreen
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
@@ -987,7 +996,7 @@ namespace MediaPortal
           isMaximized=true;
         }
       }
-
+//@@@fullscreen
       OnStartup();
 
       

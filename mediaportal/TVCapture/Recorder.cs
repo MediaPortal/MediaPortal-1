@@ -133,8 +133,9 @@ namespace MediaPortal.TV.Recording
       {
         // stop timeshifting
         // check each card to see if it is timeshifting
-        foreach (TVCaptureDevice dev in m_tvcards)
+        for (int i=0; i < m_tvcards.Count;++i)
         {
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           if (dev.IsTimeShifting)
           {
             // yes it is, but make sure its not recording
@@ -151,8 +152,9 @@ namespace MediaPortal.TV.Recording
       {
         // start timeshifting
         // check if a card is already timeshifting
-        foreach (TVCaptureDevice dev in m_tvcards)
+        for (int i=0; i < m_tvcards.Count;++i)
         {
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           if (dev.IsTimeShifting)
           {
             dev.TVChannel=m_strPreviewChannel;
@@ -162,8 +164,9 @@ namespace MediaPortal.TV.Recording
         }
 
         // no cards timeshifting? then check if we can start one
-        foreach (TVCaptureDevice dev in m_tvcards)
+        for (int i=0; i < m_tvcards.Count;++i)
         {
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           // can we use this card?
           if (dev.UseForTV && !dev.IsRecording)
           {
@@ -195,8 +198,9 @@ namespace MediaPortal.TV.Recording
       // no TV cards? then we cannot record anything, so just return
       if (m_tvcards.Count==0)  return;
 
-      foreach (TVChannel chan in m_TVChannels)
+      for (int i=0; i < m_TVChannels.Count;++i)
       {
+        TVChannel chan =(TVChannel)m_TVChannels[i];
         // get all programs running for this TV channel
         // between  (now-4 hours) - (now+iPostRecordInterval+3 hours)
         DateTime dtStart=dtCurrentTime.AddHours(-4);
@@ -205,8 +209,9 @@ namespace MediaPortal.TV.Recording
         long iEndTime=Utils.datetolong(dtEnd);
             
         // for each TV recording scheduled
-        foreach (TVRecording rec in m_Recordings)
+        for (int j=0; j < m_Recordings.Count;++j)
         {
+          TVRecording rec =(TVRecording)m_Recordings[j];
           // check which program is running 
           TVProgram prog=m_TVUtil.GetProgramAt(chan.Name,dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
 
@@ -223,8 +228,9 @@ namespace MediaPortal.TV.Recording
       }
    
 
-      foreach (TVRecording rec in m_Recordings)
+      for (int j=0; j < m_Recordings.Count;++j)
       {
+        TVRecording rec =(TVRecording)m_Recordings[j];
         // 1st check if the recording itself should b recorded
         if ( rec.ShouldRecord(DateTime.Now,null,m_iPreRecordInterval, m_iPostRecordInterval) )
         {
@@ -346,8 +352,9 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (m_eState!= State.Initialized) return false;
-        foreach (TVCaptureDevice dev in m_tvcards)
+        for (int i=0; i < m_tvcards.Count;++i)
         {
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           if (dev.IsRecording) return true;
         }
         return false;
@@ -357,8 +364,9 @@ namespace MediaPortal.TV.Recording
     static public bool IsRecordingSchedule(TVRecording rec)
     {
       if (m_eState!= State.Initialized) return false;
-      foreach (TVCaptureDevice dev in m_tvcards)
+      for (int i=0; i < m_tvcards.Count;++i)
       {
+        TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
         if (dev.IsRecording && dev.CurrentTVRecording!=null&&dev.CurrentTVRecording.ID==rec.ID) return true;
       }
       return false;
@@ -369,8 +377,9 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (m_eState!= State.Initialized) return null;
-        foreach (TVCaptureDevice dev in m_tvcards)
+        for (int i=0; i < m_tvcards.Count;++i)
         {
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           if (dev.IsRecording) return dev.CurrentProgramRecording;
         }
         return null;
@@ -382,8 +391,9 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (m_eState!= State.Initialized) return null;
-        foreach (TVCaptureDevice dev in m_tvcards)
+        for (int i=0; i < m_tvcards.Count;++i)
         {
+          TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
           if (dev.IsRecording) return dev.CurrentTVRecording;
         }
         return null;
@@ -443,8 +453,9 @@ namespace MediaPortal.TV.Recording
       if (m_eState!=State.Initialized) return;
       Recorder.HandleTimeShifting();
       Recorder.HandleRecordings();
-      foreach (TVCaptureDevice dev in m_tvcards)
+      for (int i=0; i < m_tvcards.Count;++i)
       {
+        TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
         dev.Process();
       }
       Recorder.SetProperties();
@@ -454,8 +465,10 @@ namespace MediaPortal.TV.Recording
     {
       // for each tv-channel
       if (m_eState!=State.Initialized) return;
-      foreach (TVChannel chan in m_TVChannels)
+
+      for (int i=0; i < m_TVChannels.Count;++i)
       {
+        TVChannel chan =(TVChannel)m_TVChannels[i];
         if (chan.Name.Equals(m_strPreviewChannel))
         {
           TVProgram prog=m_TVUtil.GetCurrentProgram(chan.Name);

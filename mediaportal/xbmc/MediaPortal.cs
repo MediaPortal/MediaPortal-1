@@ -21,10 +21,10 @@ using MediaPortal.Dialogs;
 public class MediaPortalApp : D3DApp, IRender
 {
 
-    int       m_iLastMousePositionX=0;
-    int       m_iLastMousePositionY=0;
-    private System.Threading.Mutex m_Mutex;
-    private string m_UniqueIdentifier;
+    int                             m_iLastMousePositionX=0;
+    int                             m_iLastMousePositionY=0;
+    private System.Threading.Mutex  m_Mutex;
+    private string                  m_UniqueIdentifier;
 
     const int WM_KEYDOWN    =0x0100;
     const int WM_SYSCOMMAND =0x0112;
@@ -325,27 +325,20 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void FrameMove()
   {
-    
-    int iWindow=GUIWindowManager.ActiveWindow;
-    string strModule=GUILocalizeStrings.Get(10000+iWindow);
-    GUIPropertyManager.Properties["#currentmodule"]=strModule;
-
     Recorder.Process();
     g_Player.Process();
     GUIWindowManager.DispatchThreadMessages(); 
-
-
-		if (g_Player.Paused) GUIPropertyManager.Properties["#playlogo"]="logo_pause.png";
-		else if (g_Player.Speed>1) GUIPropertyManager.Properties["#playlogo"]="logo_fastforward.png";
-		else if (g_Player.Speed<1) GUIPropertyManager.Properties["#playlogo"]="logo_rewind.png";
-		else if (g_Player.Playing) GUIPropertyManager.Properties["#playlogo"]="logo_play.png";
-		else GUIPropertyManager.Properties["#playlogo"]="";
 
     // update playing status
     if (g_Player.Playing)
     {
       GUIGraphicsContext.IsPlaying=true;
 			GUIGraphicsContext.IsPlayingVideo=(g_Player.IsVideo || g_Player.IsTV) ;
+
+      if (g_Player.Paused) GUIPropertyManager.Properties["#playlogo"]="logo_pause.png";
+      else if (g_Player.Speed>1) GUIPropertyManager.Properties["#playlogo"]="logo_fastforward.png";
+      else if (g_Player.Speed<1) GUIPropertyManager.Properties["#playlogo"]="logo_rewind.png";
+      else if (g_Player.Playing) GUIPropertyManager.Properties["#playlogo"]="logo_play.png";
 
 			GUIPropertyManager.Properties["#currentplaytime"]=Utils.SecondsToHMSString((int)g_Player.CurrentPosition );
 			GUIPropertyManager.Properties["#shortcurrentplaytime"]=Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition );
