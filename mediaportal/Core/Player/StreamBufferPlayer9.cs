@@ -110,6 +110,13 @@ namespace MediaPortal.Player
         Log.Write("StreamBufferPlayer9: set Deinterlace");
         DirectShowUtil.EnableDeInterlace(graphBuilder);
 
+				if ( !Vmr9.IsVMR9Connected )
+				{
+					//VMR9 is not supported, switch to overlay
+					Cleanup();
+					return base.GetInterfaces(filename);
+				}
+
         return true;
       }
       catch( Exception  ex)
@@ -129,7 +136,21 @@ namespace MediaPortal.Player
 
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
-    {
+		{
+			if (Vmr9!=null)
+			{
+				if (!Vmr9.IsVMR9Connected)
+				{
+					Vmr9.RemoveVMR9();
+					base.CloseInterfaces();
+					return;
+				}
+			}
+			Cleanup();
+		}
+
+		void Cleanup()
+		{
       //lock(this)
       {
         int hr;

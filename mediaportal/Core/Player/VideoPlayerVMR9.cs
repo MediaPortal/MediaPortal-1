@@ -141,6 +141,12 @@ namespace MediaPortal.Player
           Marshal.ReleaseComObject( filter ); filter = null;
 
 
+				if ( !Vmr9.IsVMR9Connected )
+				{
+					//VMR9 is not supported, switch to overlay
+					Cleanup();
+					return base.GetInterfaces();
+				}
         
 				return true;
 			}
@@ -163,6 +169,20 @@ namespace MediaPortal.Player
 
 		/// <summary> do cleanup and release DirectShow. </summary>
 		protected override void CloseInterfaces()
+		{
+			if (Vmr9!=null)
+			{
+				if (!Vmr9.IsVMR9Connected)
+				{
+					Vmr9.RemoveVMR9();
+					base.CloseInterfaces();
+					return;
+				}
+			}
+			Cleanup();
+		}
+
+		void Cleanup()
 		{
       //lock(this)
       {

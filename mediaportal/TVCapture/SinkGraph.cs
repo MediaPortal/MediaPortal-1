@@ -712,6 +712,10 @@ namespace MediaPortal.TV.Recording
     }
 
  
+		/// <summary>
+		/// Add preferred mpeg2 audio/video codecs to the graph
+		/// and if wanted add ffdshow postprocessing to the graph
+		/// </summary>
     void AddPreferredCodecs()
     {				
       // add preferred video & audio codecs
@@ -729,6 +733,14 @@ namespace MediaPortal.TV.Recording
       if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
     }
     
+
+		/// <summary>
+		/// Returns whether the tvtuner is tuned to a tv channel or not
+		/// </summary>
+		/// <returns>
+		/// true: tvtuner is tuned to a tv channel
+		/// false: tvtuner is not tuner to a tv channel 
+		/// </returns>
     public bool SignalPresent()
     {
       if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return false;
@@ -738,6 +750,10 @@ namespace MediaPortal.TV.Recording
       return strength==AMTunerSignalStrength.SignalPresent;
     }
 
+		/// <summary>
+		/// Return video frequency in Hz of current tv channel
+		/// </summary>
+		/// <returns>video frequency in Hz </returns>
     public long VideoFrequency()
     {
       
@@ -748,6 +764,11 @@ namespace MediaPortal.TV.Recording
       return lFreq;
     }
 
+		/// <summary>
+		/// Callback from GUIGraphicsContext
+		/// Will be called when the user changed the gamma, brightness,contrast settings
+		/// This method takes the new settings and applies them to the video amplifier
+		/// </summary>
     protected void OnGammaContrastBrightnessChanged()
     {
       if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return ;
@@ -770,6 +791,10 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
     }
 
+		/// <summary>
+		/// Sets the tv standard used (pal,ntsc,secam,...) for the video decoder
+		/// </summary>
+		/// <param name="standard">TVStandard</param>
     protected void SetVideoStandard(AnalogVideoStandard standard)
     {
       if (standard==AnalogVideoStandard.None) return;
@@ -783,6 +808,14 @@ namespace MediaPortal.TV.Recording
       hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
       if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }
+
+		/// <summary>
+		/// Initializes the TV tuner with the 
+		///		- tuning space
+		///		- country (depends on m_iCountryCode)
+		///		- Sets tuner mode to TV
+		///		- Sets tuner to cable or antenna (depends on m_bUseCable)
+		/// </summary>
     protected void InitializeTuner()
     {
       if (m_TVTuner==null) return;

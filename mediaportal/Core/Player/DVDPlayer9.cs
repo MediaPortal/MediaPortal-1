@@ -176,6 +176,11 @@ namespace MediaPortal.Player
         m_iVideoHeight=Vmr9.VideoHeight;
 
 
+				if (!Vmr9.IsVMR9Connected)
+				{
+					Cleanup();
+					return base.GetInterfaces(strPath);
+				}
         Log.Write("Dvdplayer9:graph created");
         m_bStarted=true;
         return true;
@@ -247,7 +252,21 @@ namespace MediaPortal.Player
     
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
-    {
+		{
+			if (Vmr9!=null)
+			{
+				if (!Vmr9.IsVMR9Connected)
+				{
+					Vmr9.RemoveVMR9();
+					base.CloseInterfaces();
+					return;
+				}
+			}
+			Cleanup();
+		}
+
+		void Cleanup()
+		{
       int hr;
       try 
       {

@@ -148,6 +148,11 @@
                     AssemblyName = "edtftpnet-1.1.3"
                     HintPath = "..\edtftpnet-1.1.3.dll"
                 />
+                <Reference
+                    Name = "Interop.WMEncoderLib"
+                    AssemblyName = "Interop.WMEncoderLib"
+                    HintPath = "..\Interop.WMEncoderLib.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -1029,6 +1034,26 @@
                 />
                 <File
                     RelPath = "TagReader\TagReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Transcoding\Dvrms2Mpeg.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Transcoding\ITranscode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Transcoding\TranscodeFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Transcoding\WMVEncoder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

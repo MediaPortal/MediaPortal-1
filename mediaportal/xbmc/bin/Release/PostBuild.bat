@@ -20,6 +20,7 @@ copy ..\..\..\mbm5.dll .
 copy ..\..\..\edtftpnet-1.1.3.dll .
 copy ..\..\..\dvblib.dll .
 copy ..\..\..\astra.tpl .
+copy ..\..\..\Interop.WMEncoderLib.dll .
 
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .

@@ -4,12 +4,18 @@ using System.Text;
 namespace MediaPortal.Player
 {
 	/// <summary>
-	/// Summary description for IExternalPlayer.
+	/// This file contains an interface description for external audio players
+	/// MP can use its internal player to play audio files or use an external audio player
+	/// like winamp, foobar or,.... to play music
+	/// By implementing this interface you can add support for your own external audio player
 	/// </summary>
 	public abstract class IExternalPlayer : IPlayer, MediaPortal.GUI.Library.ISetupForm
 	{
         private bool m_enabled = false;
- 
+
+				/// <summary>
+				/// Property to enable/disable the external audio player
+				/// </summary>
         public bool Enabled
         {
           get
@@ -21,7 +27,6 @@ namespace MediaPortal.Player
             m_enabled = value;
           }
         }
-
         #region ISetupForm Members
         public string PluginName()
         {
@@ -88,7 +93,6 @@ namespace MediaPortal.Player
         {
           get;
         }
-
         /// <summary>
         /// This method returns the version number of the plugin
         /// </summary>
@@ -96,7 +100,6 @@ namespace MediaPortal.Player
         {
           get;
         }
-
         /// <summary>
         /// This method returns the author of the external player
         /// </summary>
@@ -105,7 +108,6 @@ namespace MediaPortal.Player
         {
           get;
         }
-
         /// <summary>
         /// Returns all the extensions that the external player supports.  
         /// The return value is an array of extensions of the form: .wma, .mp3, etc...

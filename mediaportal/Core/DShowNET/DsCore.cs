@@ -94,7 +94,7 @@ public interface IPin
 		[PreserveSig]
 	int Connect(
 		[In]											IPin		pReceivePin,
-		[In, MarshalAs(UnmanagedType.LPStruct)]			AMMediaType	pmt );
+		[In]	ref		AMMediaType	pmt );
 
 		[PreserveSig]
 	int ReceiveConnection(

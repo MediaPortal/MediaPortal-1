@@ -225,7 +225,26 @@ namespace MediaPortal.Player
 		public void Repaint()
 		{
 			if (allocator==null) return;
+			if (!UseVMR9inMYTV) return;
+			if (VMR9Filter==null) return;
 			allocator.Repaint();
+		}
+
+		public bool IsVMR9Connected
+		{
+			get
+			{
+				if (allocator==null) return false;
+				if (VMR9Filter==null) return false;
+				if (!UseVMR9inMYTV) return false;
+
+				IPin pinIn,pinConnected;
+				DsUtils.GetPin(VMR9Filter, PinDirection.Input,0,out pinIn);
+				if (pinIn==null) return false;
+				pinIn.ConnectedTo(out pinConnected);
+				if (pinConnected==null) return false;
+				return true;
+			}
 		}
 	}
 }

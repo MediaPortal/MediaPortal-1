@@ -37,6 +37,7 @@ namespace MediaPortal.GUI.Library
     DateTime      m_keyTimer=DateTime.Now;
     char          m_CurrentKey=(char)0;
     char          m_PrevKey=(char)0;
+		bool          usingKeyboard=false;
 
 		public GUISMSInputControl(int dwParentID) : base(dwParentID)
 		{
@@ -66,6 +67,7 @@ namespace MediaPortal.GUI.Library
     
     public override void AllocResources()
     {
+			usingKeyboard=false;
       base.AllocResources ();
       m_CaretTimer=DateTime.Now;
       m_keyTimer=DateTime.Now;
@@ -182,111 +184,139 @@ namespace MediaPortal.GUI.Library
         m_keyTimer=DateTime.Now;
         m_iPos++;
       }
-      CheckTimer();
-      if (Key >='0' && Key <='9')
-      {
-        m_PrevKey=Key;
-      }
-      if (Key=='0')
-      {
-        m_keyTimer=DateTime.Now;
-        if (m_iPos>0)
-        {
-          m_strData=m_strData.Remove(m_iPos-1,1);
-          m_iPos--;
-        }
-        m_keyTimer=DateTime.Now;
-        m_PrevKey=(char)0;
-        m_CurrentKey=(char)0;
-      }
-      if (Key=='1')
-      {
-        m_keyTimer=DateTime.Now;
-        if (m_CurrentKey==0) m_CurrentKey=' ';
-        if (m_CurrentKey==' ') m_CurrentKey='!';
-        if (m_CurrentKey=='!') m_CurrentKey='?';
-        if (m_CurrentKey=='?') m_CurrentKey='.';
-        if (m_CurrentKey=='.') m_CurrentKey='0';
-        if (m_CurrentKey=='0') m_CurrentKey='1';
-        if (m_CurrentKey=='1') m_CurrentKey='2';
-        if (m_CurrentKey=='2') m_CurrentKey='3';
-        if (m_CurrentKey=='3') m_CurrentKey='4';
-        if (m_CurrentKey=='4') m_CurrentKey='5';
-        if (m_CurrentKey=='5') m_CurrentKey='6';
-        if (m_CurrentKey=='6') m_CurrentKey='7';
-        if (m_CurrentKey=='7') m_CurrentKey='8';
-        if (m_CurrentKey=='8') m_CurrentKey='9';
-        if (m_CurrentKey=='9') m_CurrentKey='-';
-        if (m_CurrentKey=='-') m_CurrentKey='+';
-        if (m_CurrentKey=='+') m_CurrentKey=' ';
-      }
+			if (!usingKeyboard)
+			{
+				CheckTimer();
+				if (Key >='0' && Key <='9')
+				{
+					m_PrevKey=Key;
+				}
+				if (Key=='0')
+				{
+					m_keyTimer=DateTime.Now;
+					if (m_iPos>0)
+					{
+						m_strData=m_strData.Remove(m_iPos-1,1);
+						m_iPos--;
+					}
+					m_keyTimer=DateTime.Now;
+					m_PrevKey=(char)0;
+					m_CurrentKey=(char)0;
+				}
+				if (Key=='1')
+				{
+					m_keyTimer=DateTime.Now;
+					if (m_CurrentKey==0) m_CurrentKey=' ';
+					if (m_CurrentKey==' ') m_CurrentKey='!';
+					if (m_CurrentKey=='!') m_CurrentKey='?';
+					if (m_CurrentKey=='?') m_CurrentKey='.';
+					if (m_CurrentKey=='.') m_CurrentKey='0';
+					if (m_CurrentKey=='0') m_CurrentKey='1';
+					if (m_CurrentKey=='1') m_CurrentKey='2';
+					if (m_CurrentKey=='2') m_CurrentKey='3';
+					if (m_CurrentKey=='3') m_CurrentKey='4';
+					if (m_CurrentKey=='4') m_CurrentKey='5';
+					if (m_CurrentKey=='5') m_CurrentKey='6';
+					if (m_CurrentKey=='6') m_CurrentKey='7';
+					if (m_CurrentKey=='7') m_CurrentKey='8';
+					if (m_CurrentKey=='8') m_CurrentKey='9';
+					if (m_CurrentKey=='9') m_CurrentKey='-';
+					if (m_CurrentKey=='-') m_CurrentKey='+';
+					if (m_CurrentKey=='+') m_CurrentKey=' ';
+				}
 
-      if (Key=='2')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='a';
-        else if (m_CurrentKey=='a') m_CurrentKey='b';
-        else if (m_CurrentKey=='b') m_CurrentKey='c';
-        else if (m_CurrentKey=='c') m_CurrentKey='a';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='3')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='d';
-        else if (m_CurrentKey=='d') m_CurrentKey='e';
-        else if (m_CurrentKey=='e') m_CurrentKey='f';
-        else if (m_CurrentKey=='f') m_CurrentKey='d';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='4')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='g';
-        else if (m_CurrentKey=='g') m_CurrentKey='h';
-        else if (m_CurrentKey=='h') m_CurrentKey='i';
-        else if (m_CurrentKey=='i') m_CurrentKey='h';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='5')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='j';
-        else if (m_CurrentKey=='j') m_CurrentKey='k';
-        else if (m_CurrentKey=='k') m_CurrentKey='l';
-        else if (m_CurrentKey=='l') m_CurrentKey='j';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='6')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='m';
-        else if (m_CurrentKey=='m') m_CurrentKey='n';
-        else if (m_CurrentKey=='n') m_CurrentKey='o';
-        else if (m_CurrentKey=='o') m_CurrentKey='m';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='7')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='p';
-        else if (m_CurrentKey=='p') m_CurrentKey='q';
-        else if (m_CurrentKey=='q') m_CurrentKey='r';
-        else if (m_CurrentKey=='r') m_CurrentKey='s';
-        else if (m_CurrentKey=='s') m_CurrentKey='p';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='8')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='t';
-        else if (m_CurrentKey=='t') m_CurrentKey='u';
-        else if (m_CurrentKey=='u') m_CurrentKey='v';
-        else if (m_CurrentKey=='v') m_CurrentKey='t';
-        m_keyTimer=DateTime.Now;
-      }
-      if (Key=='9')
-      {
-        if (m_CurrentKey==0) m_CurrentKey='w';
-        else if (m_CurrentKey=='w') m_CurrentKey='x';
-        else if (m_CurrentKey=='x') m_CurrentKey='y';
-        else if (m_CurrentKey=='y') m_CurrentKey='z';
-        else if (m_CurrentKey=='z') m_CurrentKey='w';
-        m_keyTimer=DateTime.Now;
-      }
+				if (Key=='2')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='a';
+					else if (m_CurrentKey=='a') m_CurrentKey='b';
+					else if (m_CurrentKey=='b') m_CurrentKey='c';
+					else if (m_CurrentKey=='c') m_CurrentKey='a';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='3')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='d';
+					else if (m_CurrentKey=='d') m_CurrentKey='e';
+					else if (m_CurrentKey=='e') m_CurrentKey='f';
+					else if (m_CurrentKey=='f') m_CurrentKey='d';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='4')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='g';
+					else if (m_CurrentKey=='g') m_CurrentKey='h';
+					else if (m_CurrentKey=='h') m_CurrentKey='i';
+					else if (m_CurrentKey=='i') m_CurrentKey='h';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='5')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='j';
+					else if (m_CurrentKey=='j') m_CurrentKey='k';
+					else if (m_CurrentKey=='k') m_CurrentKey='l';
+					else if (m_CurrentKey=='l') m_CurrentKey='j';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='6')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='m';
+					else if (m_CurrentKey=='m') m_CurrentKey='n';
+					else if (m_CurrentKey=='n') m_CurrentKey='o';
+					else if (m_CurrentKey=='o') m_CurrentKey='m';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='7')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='p';
+					else if (m_CurrentKey=='p') m_CurrentKey='q';
+					else if (m_CurrentKey=='q') m_CurrentKey='r';
+					else if (m_CurrentKey=='r') m_CurrentKey='s';
+					else if (m_CurrentKey=='s') m_CurrentKey='p';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='8')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='t';
+					else if (m_CurrentKey=='t') m_CurrentKey='u';
+					else if (m_CurrentKey=='u') m_CurrentKey='v';
+					else if (m_CurrentKey=='v') m_CurrentKey='t';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key=='9')
+				{
+					if (m_CurrentKey==0) m_CurrentKey='w';
+					else if (m_CurrentKey=='w') m_CurrentKey='x';
+					else if (m_CurrentKey=='x') m_CurrentKey='y';
+					else if (m_CurrentKey=='y') m_CurrentKey='z';
+					else if (m_CurrentKey=='z') m_CurrentKey='w';
+					m_keyTimer=DateTime.Now;
+				}
+				if (Key<'0' || Key>'9') 
+				{
+					usingKeyboard=true;
+					if (m_iPos==m_strData.Length)
+						m_strData+=m_CurrentKey;
+					else 
+						m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+
+					m_PrevKey=(char)0;
+					m_CurrentKey=(char)0;
+					m_keyTimer=DateTime.Now;
+					m_iPos++;
+				}
+			}
+			else
+			{
+				if (m_iPos==m_strData.Length)
+					m_strData+=m_CurrentKey;
+				else 
+					m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+
+				m_PrevKey=(char)0;
+				m_CurrentKey=(char)0;
+				m_keyTimer=DateTime.Now;
+				m_iPos++;
+			}
     }
     
     public override void Render()

@@ -329,7 +329,7 @@ namespace MediaPortal.GUI.Library
 							OnMessage(msg);
 
 							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
-              GUIGraphicsContext.form.Text="MediaPortal - "+  GUILocalizeStrings.Get(10000 + GetID);
+              GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + GetID);
 							Log.Write( "window:{0} init", this.ToString());
 						}
 							return true;

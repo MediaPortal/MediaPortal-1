@@ -28,7 +28,7 @@ using MediaPortal.SerialIR;
 using MediaPortal.IR;
 using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.Ripper;
-
+using MediaPortal.Core.Transcoding;
 /// <summary>
 /// - fixed issues in tvguide
 /// - fixed possible hangups when 2 threads where accessing onmessage() or onaction()
@@ -90,9 +90,23 @@ public class MediaPortalApp : D3DApp, IRender
 		[STAThread]
     public static void Main()
     {
-			//Set current directory
+
+			/*
+			TranscodeInfo info = new TranscodeInfo();
+			info.file=@"C:\media\movies\Chart Show TV (90)_Manual_200412121542p4224.dvr-ms";
+			info.Title="Circular floor";
+			info.Description="test movie";
+			info.Rating="6";
+			info.Author="i dont know";
+
+			TranscodeFactory factory = new TranscodeFactory();
+			ITranscode transcoder=factory.GetTranscoder(info,VideoFormat.Mpeg2,Quality.High);
+			transcoder.Transcode(info,VideoFormat.Mpeg2,Quality.High);
+			*/
+
 			Log.Write("Mediaportal is starting up");
 
+			//Set current directory
 			string applicationPath=Application.ExecutablePath;
 			applicationPath=System.IO.Path.GetFullPath(applicationPath);
 			applicationPath=System.IO.Path.GetDirectoryName(applicationPath);
