@@ -322,7 +322,7 @@ namespace MediaPortal.TV.Recording
 			if (m_videoWindow != null)
 			{
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
-				m_videoWindow.put_Owner(IntPtr.Zero);
+				//m_videoWindow.put_Owner(IntPtr.Zero);
 				m_videoWindow = null;
 			}
 

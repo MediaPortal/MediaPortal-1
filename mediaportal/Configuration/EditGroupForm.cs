@@ -165,7 +165,11 @@ namespace MediaPortal.Configuration
 			{
 				group=value;
 				textBoxName.Text=group.GroupName;
-				textBoxPincode.Text=group.Pincode.ToString();
+				textBoxPincode.Text="";
+				if (group.Pincode>=1000)
+				{
+					textBoxPincode.Text=group.Pincode.ToString();
+				}
 			}
 		}
 	}
