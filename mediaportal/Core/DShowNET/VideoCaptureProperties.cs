@@ -679,31 +679,21 @@ namespace DShowNET
 			if (PMT==null) return;
 			if (PMT.Length==0) return;
 
-			FIRESAT_CA_DATA caData = new FIRESAT_CA_DATA();
-			caData.uSlot    = 0;
-			caData.uTag     = 2;	
-			caData.uLength  = (ushort)(2 + PMT.Length);
-			byte[] uData    = new byte[1024];
-			
-			uData[0] = 3;	// List Management = ONLY		
-			uData[1] = 1;	// pmt_cmd = OK DESCRAMBLING		
-			for (int i=0; i < PMT.Length;++i)
-				uData[2+i]=PMT[i];
-
+			Log.Write("SendPMTToFireDTV pmt:{0}", PMT.Length);
 			Guid propertyGuid=KSPROPSETID_Firesat;
 			int propId=22;
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
 			uint IsTypeSupported=0;
 			if (propertySet==null) 
 			{
-				Log.Write("SetStructure() properySet=null");
+				Log.Write("SendPMTToFireDTV() properySet=null");
 				return ;
 			}
 
 			int hr=propertySet.QuerySupported( ref propertyGuid, (uint)propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
 			{
-				Log.Write("GetString() GetStructure is not supported");
+				Log.Write("SendPMTToFireDTV() GetStructure is not supported");
 				return ;
 			}
 
@@ -712,28 +702,42 @@ namespace DShowNET
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(1036);
 			int offs=0;
 
-			Marshal.WriteByte(pDataReturned,offs, caData.uSlot); offs++;
-			Marshal.WriteByte(pDataReturned,offs, caData.uTag); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, (byte)(caData.uLength/256)); offs++;
-			Marshal.WriteByte(pDataReturned,offs, (byte)(caData.uLength%256)); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			Marshal.WriteByte(pDataReturned,offs, 0); offs++;
-			for (int i=0; i < 2+PMT.Length;++i)
+			byte[] byData = new byte[1036];
+			uint uLength=(uint)(2+PMT.Length);
+			byData[offs]=0; offs++;			//slot
+			byData[offs]= 2; offs++;			//utag
+			byData[offs]= 0; offs++;     //bmore
+			/*
+			byData[offs]= 0; offs++;
+			byData[offs]= 0; offs++;
+			byData[offs]= 0; offs++;
+			byData[offs]= 0; offs++;
+			byData[offs]= 0; offs++;
+			*/
+			byData[offs]= (byte)(uLength%256); offs++;		//ulength hi
+			byData[offs]= (byte)(uLength/256); offs++;		//ulength lo
+			//byData[offs]= 0; offs++;
+			//byData[offs]= 0; offs++;
+			byData[offs]= 3; offs++;// List Management = ONLY
+			byData[offs]= 1; offs++;// pmt_cmd = OK DESCRAMBLING		
+			for (int i=0; i < PMT.Length;++i)
 			{
-				Marshal.WriteByte(pDataReturned,offs, uData[i]);
+				byData[offs]=PMT[i];
 				offs++;
 			}
+			string log="data:";
+			for (int i=0; i < offs;++i)
+			{
+				Marshal.WriteByte(pDataInstance,byData[i]);
+				Marshal.WriteByte(pDataReturned,byData[i]);
+				log += String.Format("{0:X} ",byData[i]);
+			}
 
+			Log.Write(log);
 			hr=propertySet.RemoteSet(ref propertyGuid,(uint)propId,pDataInstance,(uint)1036, pDataReturned,(uint)1036 );
 			if (hr!=0)
 			{
-				Log.Write("SetStructure() failed 0x{0:X}",hr);
+				Log.Write("SetStructure() failed 0x{0:X} offs:{1}",hr, offs);
 			}
 			Marshal.FreeCoTaskMem(pDataReturned);
 			Marshal.FreeCoTaskMem(pDataInstance);

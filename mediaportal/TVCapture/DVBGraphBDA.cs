@@ -2143,7 +2143,7 @@ namespace MediaPortal.TV.Recording
 					channelInfo.serviceID);
 
 				//First check if channel is scrambled
-				if (channelInfo.scrambled)
+				if (true)//channelInfo.scrambled)
 				{
 					//Tv channels is scrambled. To view them
 					//we need to send the raw PMT table to the FireDTV device
