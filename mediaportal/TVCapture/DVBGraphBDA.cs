@@ -147,13 +147,11 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 			
-			Log.Write("2");
 			if (m_Card.TvFilterDefinitions==null)
 			{
 				Log.Write("DVBGraphBDA:card does not contain filters?");
 				return false;
 			}
-			Log.Write("3");
 			if (m_Card.TvConnectionDefinitions==null)
 			{
 				Log.Write("DVBGraphBDA:card does not contain connections for tv?");
@@ -162,7 +160,6 @@ namespace MediaPortal.TV.Recording
 
 			Vmr9 =new VMR9Util("mytv");
 
-			Log.Write("3");
 			// Make a new filter graph
 			Log.Write("DVBGraphBDA:create new filter graph (IGraphBuilder)");
 			m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
@@ -183,8 +180,6 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA:Add graph to ROT table");
 			DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
-			
-			Log.Write("4");
 
 			// Loop through configured filters for this card, bind them and add them to the graph
 			// Note that while adding filters to a graph, some connections may already be created...
@@ -213,7 +208,6 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA: Adding configured filters...DONE");
 
 			
-			Log.Write("5");
 			if(m_NetworkProvider == null)
 			{
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
@@ -224,7 +218,6 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED capture filter not found");
 			}
 
-			Log.Write("6");
 
 			FilterDefinition sourceFilter;
 			FilterDefinition sinkFilter;
@@ -328,7 +321,6 @@ namespace MediaPortal.TV.Recording
 			}
 			Log.Write("DVBGraphBDA: Adding configured pin connections...DONE");
 
-			Log.Write("7");
 			// Find out which filter & pin is used as the interface to the rest of the graph.
 			// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
 			// We only use the filter, as the software will find the correct pin for now...
@@ -342,7 +334,6 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 			}
-			Log.Write("8");
 			// Initialise Tuning Space (using the setupTuningSpace function)
 			if(!setupTuningSpace()) 
 			{
@@ -350,7 +341,6 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 
-			Log.Write("9");
 			//=========================================================================================================
 			// add the MPEG-2 Demultiplexer 
 			//=========================================================================================================
@@ -598,6 +588,8 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 		{
+			TestTune();
+			return;
 			Log.Write("DVBGraphBDA:TuneChannel() tune to channel:{0}", iChannel);
 			TunerLib.TuneRequest newTuneRequest = null;
 			switch (m_NetworkType)
@@ -708,10 +700,6 @@ namespace MediaPortal.TV.Recording
 			// add VMR9 renderer
 			Vmr9.AddVMR9(m_graphBuilder);
 
-			// tune to the correct channel
-			TuneChannel(standard,iChannel,country);
-			int hr=0;
-
 			// add the preferred video/audio codecs
 			AddPreferredCodecs();
 
@@ -730,6 +718,7 @@ namespace MediaPortal.TV.Recording
 			if(m_mediaControl == null)
 				m_mediaControl = (IMediaControl) m_graphBuilder;
 
+			int hr;
 			//if are using the overlay video renderer
 			if (!Vmr9.UseVMR9inMYTV)
 			{
@@ -770,6 +759,11 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			m_graphState = State.Viewing;
 			GUIGraphicsContext_OnVideoWindowChanged();
+
+
+			// tune to the correct channel
+			TuneChannel(standard,iChannel,country);
+
 			Log.Write("DVBGraphBDA:Viewing..");
 			return true;
 		}
@@ -1098,7 +1092,6 @@ namespace MediaPortal.TV.Recording
 			
 			Log.Write("DVBGraphBDA:StartTimeShifting()");
 
-			TuneChannel(standard, iChannel,country);
 			if(CreateSinkSource(strFileName))
 			{
 				if(m_mediaControl == null) 
@@ -1112,6 +1105,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else return false;
 
+			TuneChannel(standard, iChannel,country);
 			return true;
 		}
 		
@@ -1256,26 +1250,30 @@ namespace MediaPortal.TV.Recording
 			}
 
 			TunerLib.ITuningSpaces myTuningSpaces = null;
-			//string ATSCInputType = "";
+			string uniqueName="";
 
 			switch (m_NetworkType) 
 			{
 				case NetworkType.ATSC:
 				{
-					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref NetworkProviders.CLSID_ATSCNetworkProvider);
+					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_ATSCTuningSpace);
 					//ATSCInputType = "Antenna"; // Need to change to allow cable
+					uniqueName="Mediaportal ATSC";
 				} break;
 				case NetworkType.DVBC:
 				{
-					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref NetworkProviders.CLSID_DVBCNetworkProvider);
+					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_DVBTuningSpace);
+					uniqueName="Mediaportal DVB-C";
 				} break;
 				case NetworkType.DVBS:
 				{
-					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref NetworkProviders.CLSID_DVBSNetworkProvider);
+					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_DVBSTuningSpace);
+					uniqueName="Mediaportal DVB-S";
 				} break;
 				case NetworkType.DVBT:
 				{
-					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref NetworkProviders.CLSID_DVBTNetworkProvider);
+					myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_DVBTuningSpace);
+					uniqueName="Mediaportal DVB-T";
 				} break;
 			}
 
@@ -1293,12 +1291,17 @@ namespace MediaPortal.TV.Recording
 				while(counter <= Count)
 				{
 					TuneEnum.Next(1, out TuningSpace, out ulFetched);
-					m_TuningSpace = TuningSpace;
-					if(m_TuningSpace != null) 
+					if (TuningSpace.UniqueName==uniqueName)
 					{
-						Log.Write("DVBGraphBDA: used tuningspace:{0}", counter);
-						return true;
-					} 
+						m_TuningSpace = TuningSpace;
+						if(m_TuningSpace != null) 
+						{
+							Log.Write("DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, m_TuningSpace.UniqueName,m_TuningSpace.FriendlyName);
+							Marshal.ReleaseComObject(myTuningSpaces);
+							Marshal.ReleaseComObject(TuningSpaceContainer);
+							return true;
+						}
+					}
 				}
 				Marshal.ReleaseComObject(myTuningSpaces);
 				Marshal.ReleaseComObject(TuningSpaceContainer);
@@ -1320,6 +1323,8 @@ namespace MediaPortal.TV.Recording
 						myTuningSpace.MinChannel			= 1;
 						myTuningSpace.MinMinorChannel		= 0;
 						myTuningSpace.MinPhysicalChannel	= 2;
+						myTuningSpace.FriendlyName=uniqueName;
+						myTuningSpace.UniqueName=uniqueName;
 
 						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_ATSCLocator, true));
 						TunerLib.IATSCLocator myLocator = (TunerLib.IATSCLocator) DefaultLocator;
@@ -1335,6 +1340,7 @@ namespace MediaPortal.TV.Recording
 						myLocator.TSID							= -1;
 
 						myTuningSpace.DefaultLocator = DefaultLocator;
+						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
 					} break;
 					case NetworkType.DVBC: 
 					{
@@ -1343,6 +1349,8 @@ namespace MediaPortal.TV.Recording
 						myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Cable;
 						myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBCNetworkProvider);
 
+						myTuningSpace.FriendlyName=uniqueName;
+						myTuningSpace.UniqueName=uniqueName;
 						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBCLocator, true));
 						TunerLib.IDVBCLocator myLocator = (TunerLib.IDVBCLocator) DefaultLocator;
 
@@ -1355,6 +1363,7 @@ namespace MediaPortal.TV.Recording
 						myLocator.SymbolRate				= -1;
 
 						myTuningSpace.DefaultLocator = DefaultLocator;
+						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
 					} break;
 					case NetworkType.DVBS: 
 					{
@@ -1365,6 +1374,8 @@ namespace MediaPortal.TV.Recording
 						myTuningSpace.LNBSwitch = -1;
 						myTuningSpace.HighOscillator = -1;
 						myTuningSpace.LowOscillator = 11250000;
+						myTuningSpace.FriendlyName=uniqueName;
+						myTuningSpace.UniqueName=uniqueName;
 						
 						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBSLocator, true));
 						TunerLib.IDVBSLocator myLocator = (TunerLib.IDVBSLocator) DefaultLocator;
@@ -1383,6 +1394,7 @@ namespace MediaPortal.TV.Recording
 						myLocator.WestPosition				= false;
 
 						m_TuningSpace.DefaultLocator = DefaultLocator;
+						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
 					} break;
 					case NetworkType.DVBT: 
 					{
@@ -1390,6 +1402,8 @@ namespace MediaPortal.TV.Recording
 						TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) m_TuningSpace;
 						myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Terrestrial;
 						myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBTNetworkProvider);
+						myTuningSpace.FriendlyName=uniqueName;
+						myTuningSpace.UniqueName=uniqueName;
 
 						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBTLocator, true));
 						TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) DefaultLocator;
@@ -1410,6 +1424,8 @@ namespace MediaPortal.TV.Recording
 						myLocator.SymbolRate					= -1;
 
 						m_TuningSpace.DefaultLocator = DefaultLocator;
+						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
+
 					} break;
 				}
 
@@ -1474,6 +1490,110 @@ namespace MediaPortal.TV.Recording
 			}
 			device = null;
 			return false;
+		}
+
+		void TestTune()
+		{
+			Log.Write("tune to nl 2");
+
+			TunerLib.TuneRequest newTuneRequest = null;
+			TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) m_TuningSpace;
+
+			newTuneRequest = myTuningSpace.CreateTuneRequest();
+
+			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
+
+			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+
+			myLocator.CarrierFrequency		= 698000;
+			myLocator.Bandwidth						= 8;//8; // in megahertz (7 or 8)
+			myLocator.SymbolRate					= -1;
+			myLocator.OtherFrequencyInUse	= false;
+			myLocator.Guard								= TunerLib.GuardInterval.BDA_GUARD_NOT_SET;
+			myLocator.HAlpha							= TunerLib.HierarchyAlpha.BDA_HALPHA_NOT_SET;
+			myLocator.LPInnerFEC					= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+			myLocator.LPInnerFECRate			= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+			myLocator.Mode								= TunerLib.TransmissionMode.BDA_XMIT_MODE_NOT_SET;
+			myLocator.InnerFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+			myLocator.InnerFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+			myLocator.Modulation					= TunerLib.ModulationType.BDA_MOD_NOT_SET;
+			myLocator.OuterFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+			myLocator.OuterFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+
+			myTuneRequest.ONID	= 8720;					//original network id
+			myTuneRequest.TSID	= 1;						//transport stream id
+			myTuneRequest.SID		= 12;						//service id
+			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+			myTuner.TuneRequest = newTuneRequest;
+
+			Marshal.ReleaseComObject(myTuneRequest);
+
+			//chid=340
+			//TranspID=698000
+			//SID=12
+			//NETID=8720
+			//TSID=1
+			//freq=6980000
+			//symbolrate=6900000
+			//pol=1
+			//fec=0
+		}
+
+		void Scan()
+		{
+			return;
+			Log.Write("Scanning...");
+			try
+			{
+				int Frequency = 698000;
+				for (int channel=0; channel <400; channel++)
+				{
+					TunerLib.TuneRequest newTuneRequest = null;
+					TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) m_TuningSpace;
+					newTuneRequest = myTuningSpace.CreateTuneRequest();
+
+					TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
+
+					TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+
+					myLocator.CarrierFrequency		= Frequency;
+					myLocator.Bandwidth						= 8; // in megahertz (7 or 8)
+					myLocator.SymbolRate				  = -1;
+					myLocator.OtherFrequencyInUse	= false;
+					myLocator.Guard								= TunerLib.GuardInterval.BDA_GUARD_NOT_SET;
+					myLocator.HAlpha							= TunerLib.HierarchyAlpha.BDA_HALPHA_NOT_SET;
+					myLocator.LPInnerFEC					= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.LPInnerFECRate			= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.Mode								= TunerLib.TransmissionMode.BDA_XMIT_MODE_NOT_SET;
+					myLocator.InnerFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.InnerFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.Modulation					= TunerLib.ModulationType.BDA_MOD_NOT_SET;
+					myLocator.OuterFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.OuterFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myTuneRequest.ONID	= -1;								
+					myTuneRequest.TSID	= -1;						  //transport stream id
+					myTuneRequest.SID		= channel;						//service id
+					TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+					myTuner.TuneRequest = newTuneRequest;
+
+					Marshal.ReleaseComObject(myTuneRequest);
+					myTuneRequest = (TunerLib.IDVBTuneRequest) myTuner.TuneRequest;
+
+					if (myTuner.SignalStrength!=0)
+					{
+				///		if (myTuneRequest.ONID!=-1 && myTuneRequest.TSID!=-1)
+						{
+							Log.Write("ONID:{0} TSID:{1} SID:{2} SignalStrength:{3} Frequency:{4} ", 
+										myTuneRequest.ONID,myTuneRequest.TSID,myTuneRequest.SID,myTuner.SignalStrength,Frequency);
+						}
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+			}
+			Log.Write("Scanning done...");
 		}
 	}
 }
