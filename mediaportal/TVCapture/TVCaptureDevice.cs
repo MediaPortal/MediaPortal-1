@@ -24,6 +24,10 @@ namespace MediaPortal.TV.Recording
     Size          m_FrameSize=new Size(720,576);	
     double        m_FrameRate=25.0;
     [NonSerialized]
+    bool          m_bVideoWindowChanged=false;
+    [NonSerialized]
+    bool          m_bGammaContrastChanged=false;
+    [NonSerialized]
     bool          m_bIsRecording=false;        // flag indicating if we are recording or not
     
     [NonSerialized]
@@ -130,6 +134,7 @@ namespace MediaPortal.TV.Recording
 
     void SetBrightnessContrastGamma()
     {
+      m_bGammaContrastChanged=false;
       if (capture==null) return;
       if (capture.VideoAmp==null) return;
 
@@ -156,6 +161,7 @@ namespace MediaPortal.TV.Recording
     bool StartCapture(string strFileName, int iChannelNr)
     {
       StopCapture();
+      m_bGammaContrastChanged=false;
       GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(this.OnGammaContrastChanged);
 
       Log.Write("  CaptureCard:{0} start capture",ID);
@@ -246,6 +252,8 @@ namespace MediaPortal.TV.Recording
         capture.Filename=strFileName;
       }
       else capture.Filename="";
+
+      m_bVideoWindowChanged=false;
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoWindowChanged);
       Log.Write("  CaptureCard:{0}   made",ID);
       return true;
@@ -458,71 +466,22 @@ namespace MediaPortal.TV.Recording
       {
         capture.FixCrossbarRouting();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         Log.Write("  CaptureCard:{0} Failed to set crossbar routing",ID);
+        Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
       }
     }
 
 
     void OnGammaContrastChanged()
     {
-      if (Previewing && capture!=null)
-      {
-        if (capture.VideoAmp!=null)
-        {
-          if (GUIGraphicsContext.Brightness>0)
-          {
-            Log.Write("  CaptureCard:{0} set brightness:{1}",ID, GUIGraphicsContext.Brightness);
-            capture.VideoAmp.Brightness=GUIGraphicsContext.Brightness;
-            GUIGraphicsContext.Save();
-          }
-          if (GUIGraphicsContext.Contrast>0)
-          {
-            Log.Write("  CaptureCard:{0} set Contrast:{1}",ID, GUIGraphicsContext.Contrast);
-            capture.VideoAmp.Contrast=GUIGraphicsContext.Contrast;
-            GUIGraphicsContext.Save();
-          }
-          if (GUIGraphicsContext.Gamma>0)
-          {
-            Log.Write("  CaptureCard:{0} set Gamma:{1}",ID, GUIGraphicsContext.Gamma);
-            capture.VideoAmp.Gamma=GUIGraphicsContext.Gamma;
-            GUIGraphicsContext.Save();
-          }
-          if (GUIGraphicsContext.Saturation>0)
-          {
-            Log.Write("  CaptureCard:{0} set Saturation:{1}",ID, GUIGraphicsContext.Saturation);
-            capture.VideoAmp.Saturation=GUIGraphicsContext.Saturation;
-            GUIGraphicsContext.Save();
-          }
-          if (GUIGraphicsContext.Sharpness>0)
-          {
-            Log.Write("  CaptureCard:{0} set Sharpness:{1}",ID, GUIGraphicsContext.Sharpness);
-            capture.VideoAmp.Sharpness=GUIGraphicsContext.Sharpness;
-            GUIGraphicsContext.Save();
-          }
-
-        }
-      }
+      m_bGammaContrastChanged=true;
     }
 
     void OnVideoWindowChanged()
     {
-      if (Previewing && capture!=null)
-      {
-        Log.Write("OnVideoWindowChanged()");
-        if (GUIGraphicsContext.IsFullScreenVideo)
-        {
-          Log.Write("  fullscreenmode");
-          capture.SetVideoPosition( new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
-        }
-        else
-        {
-          Log.Write("  windowed mode");
-          capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
-        }
-        Log.Write("OnVideoWindowChanged() done");
-      }
+      m_bVideoWindowChanged=true;
     }
 
     /// <summary>
@@ -605,12 +564,9 @@ namespace MediaPortal.TV.Recording
               if (StartCapture("",m_iPreviewChannel))
               {
                 // and set video window position
+                m_bVideoWindowChanged=false;
                 capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
                 capture.PreviewWindow=GUIGraphicsContext.form;
-                if (!capture.Running)
-                {
-                  capture.Start();
-                }
                 m_bPreview=value;
               }
             }
@@ -826,6 +782,33 @@ namespace MediaPortal.TV.Recording
     public void Process()
     {
       // are we recording?
+      if ( Previewing)
+      {
+        if (m_bGammaContrastChanged)
+        {
+          SetBrightnessContrastGamma();
+        }
+
+        if (m_bVideoWindowChanged)
+        {
+          m_bVideoWindowChanged=false;
+          if (capture!=null)
+          {
+            Log.Write("OnVideoWindowChanged()");
+            if (GUIGraphicsContext.IsFullScreenVideo)
+            {
+              Log.Write("  fullscreenmode");
+              capture.SetVideoPosition( new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
+            }
+            else
+            {
+              Log.Write("  windowed mode");
+              capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+            }
+            Log.Write("OnVideoWindowChanged() done");
+          }
+        }
+      }
       if (!IsRecording) return; // no, then just return
 
       //yes, recording still running?

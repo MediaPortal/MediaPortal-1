@@ -225,8 +225,6 @@ namespace MediaPortal.TV.Recording
             }
           }
 
-          Process();
-          
           // wait for the next minute
           TimeSpan ts=DateTime.Now-dtTime;
           while (ts.Minutes==0 && DateTime.Now.Minute==dtTime.Minute)
@@ -238,6 +236,7 @@ namespace MediaPortal.TV.Recording
             if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
             System.Threading.Thread.Sleep(500);
             ts=DateTime.Now-dtTime;
+            Process();
           }
           dtTime=DateTime.Now;
         }
@@ -342,19 +341,24 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      // still no device found. Stop any post-recording
-      Log.Write("check if a capture card is post-recording");
-      foreach (TVCaptureDevice dev in m_tvcards)
+      // still no device found. 
+      // if we skip the pre-record interval should the new recording still be started then?
+      if ( rec.ShouldRecord(DateTime.Now,currentProgram,0,0) )
       {
-        if (dev.UseForRecording)
+        // yes, then find & stop any capture running which is busy post-recording
+        Log.Write("check if a capture card is post-recording");
+        foreach (TVCaptureDevice dev in m_tvcards)
         {
-          if (dev.IsPostRecording)
+          if (dev.UseForRecording)
           {
-            Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
-            dev.StopRecording();
-            dev.Process();dev.Process();dev.Process();
-            dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
-            return true;
+            if (dev.IsPostRecording)
+            {
+              Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
+              dev.StopRecording();
+              dev.Process();dev.Process();dev.Process();
+              dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
+              return true;
+            }
           }
         }
       }
