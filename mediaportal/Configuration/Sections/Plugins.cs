@@ -173,12 +173,16 @@ namespace MediaPortal.Configuration.Sections
 
             foreach(Type type in exportedTypes)
             {
+							// an abstract class cannot be instanciated
+							if( type.IsAbstract ) continue;
               //
               // Try to locate the interface we're interested in
               //
               if(type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
               {
-                //
+								try
+								{
+									//
                 // Create instance of the current type
                 //
                 object pluginObject = (object)Activator.CreateInstance(type);
@@ -193,7 +197,16 @@ namespace MediaPortal.Configuration.Sections
                   loadedPlugins.Add(tag);
                 }
               }
-            }
+								catch(Exception setupFormException)
+								{
+									Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+									Log.Write("Current class is :{0}", type.FullName);
+#if DEBUG
+									Log.Write(setupFormException.StackTrace);
+#endif
+								}
+							}
+						}
             foreach (Type t in exportedTypes)
             {
               try
@@ -216,12 +229,23 @@ namespace MediaPortal.Configuration.Sections
                   }
                 }
               }
-              catch{}
-            }
+							catch(Exception guiWindowException)
+							{
+								Log.Write("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
+								Log.Write("Current class is :{0}", t.FullName);
+#if DEBUG
+								Log.Write(guiWindowException.StackTrace);
+#endif
+							}
+						 }
 					}
 				}
-				catch
+				catch(Exception unknownException)
 				{
+					Log.Write("Exception in plugin loading :{0}", unknownException.Message);
+#if DEBUG
+					Log.Write(unknownException.StackTrace);
+#endif
 				}
 			}
 		}
