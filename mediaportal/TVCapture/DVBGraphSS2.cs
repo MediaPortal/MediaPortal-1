@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
+using MediaPortal;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using DirectX.Capture;
@@ -231,6 +232,7 @@ namespace MediaPortal.TV.Recording
 		bool							m_vmr9Running=false;
 		DVBTeletext						m_teleText=new DVBTeletext();
 		int								m_retryCount=0;
+
 //
 		
 		//
@@ -564,7 +566,7 @@ namespace MediaPortal.TV.Recording
 		}
 
 		//
-		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText)
+		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText,int dvbsubPID)
 		{
 			int hr=0; // the result
 
@@ -668,6 +670,7 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
+					SetPidToPin(m_dataCtrl,0,dvbsubPID);
 					if(pcrPID!=VideoPID)
 						SetPidToPin(m_dataCtrl,0,pcrPID);
 
@@ -705,6 +708,7 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,ttxtPID);
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
+					SetPidToPin(m_dataCtrl,0,dvbsubPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
 					if(pcrPID!=VideoPID)
 						SetPidToPin(m_dataCtrl,0,pcrPID);
@@ -1420,7 +1424,7 @@ namespace MediaPortal.TV.Recording
 				}
 				m_channelFound=true;
 				
-				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3)==false)
+				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3)==false)
 				{
 					m_channelFound=false;
 					return;
@@ -1706,10 +1710,7 @@ namespace MediaPortal.TV.Recording
 
 			}
 
-
-
 			Log.Write("DVBGraphSS2:StartViewing() startviewing done");
-			// show the vid window
 			return true;
 		}
 
