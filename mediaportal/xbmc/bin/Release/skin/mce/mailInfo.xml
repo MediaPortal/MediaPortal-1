@@ -21,13 +21,13 @@
 				<texture>mail_logo.png</texture>
 			</control>
 			<control>
-				<description>Delete Button</description>
+				<description>Show HTML Button</description>
 				<type>button</type>
 				<id>25</id>
 				<posX>20</posX>
 				<posY>97</posY>
 				<width>175</width>
-				<label>8020</label>
+				<label>8034</label>
 				<onleft>25</onleft>
 				<onright>24</onright>
 				<onup>27</onup>

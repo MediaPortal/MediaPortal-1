@@ -216,6 +216,7 @@ namespace MyMail
 					m_recMailData+=strData;
 					
 					double percentDone=m_recMailData.Length*100/m_mailNumberSize;
+					if (percentDone>100f) percentDone=100f;
 					string percentDoneText=" ("+Convert.ToString(percentDone)+"%)";
 					InformUser((int)InformNumber.INFORM_GETTING_MAIL,Convert.ToString((m_imailCount+1)-m_mailNumber)+"/"+Convert.ToString(m_imailCount)+percentDoneText);
 
@@ -1357,6 +1358,22 @@ namespace MyMail
 			m_attachmentsPath=attachmentsFolder;
 			m_mailBoxPath=mailboxFolder;
 			m_lastCheckCount=0;
+
+			// Check if MailboxFolder directory exist
+			System.IO.DirectoryInfo dInfoMail=new System.IO.DirectoryInfo(m_mailBoxPath);
+			if (!dInfoMail.Exists)
+			{
+				dInfoMail.Create(); // Creating the mail directory
+				Log.Write("Mailbox {0} created mail folder: {1}", label, m_mailBoxPath);          
+			}
+
+			// Check if Attachments directory exist
+			System.IO.DirectoryInfo dInfoAtt=new System.IO.DirectoryInfo(m_attachmentsPath);
+			if (!dInfoAtt.Exists)
+			{
+				dInfoAtt.Create(); // Creating the mail directory
+				Log.Write("Mailbox {0} created attachemnts folder: {1}", label, m_attachmentsPath);          
+			}
 		}
 
 		//[Editor(typeof(FolderNameEditor), typeof(System.Drawing.Design.UITypeEditor))]

@@ -37,12 +37,12 @@
   		</control>
 
 			<control>
-				<description>Delete Button</description>
+				<description>Show HTML Button</description>
 				<type>button</type>
 				<id>25</id>
 				<posX>55</posX>
 				<posY>115</posY>
-				<label>8020</label>
+				<label>8034</label>
 				<onleft>25</onleft>
 				<onright>24</onright>
 				<onup>27</onup>
