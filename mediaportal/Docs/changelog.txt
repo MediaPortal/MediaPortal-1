@@ -1,3 +1,4 @@
+15-08-2004  setup       : added : Codec selection for movie player.
 15-08-2004  my music    : fixed : After adding an audio cd to the playlist selecting a different song from the playlist does not work.
 15-08-2004  my music    : fixed : After adding an audio cd (that has been recognized by freedb) to a playlist. It shows, Track 1, ... instead of the freedb info.
 15-08-2004  My Movies   : fixed : pincode was requested too often
