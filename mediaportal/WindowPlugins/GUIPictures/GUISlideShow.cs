@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Pictures
 
       if (m_bUpdate||m_bSlideShow || null==m_pTextureBackGround) 
       {
-
+        m_bUpdate=false;
         if (iSlides > 1 || m_pTextureBackGround==null)
         {
           if (m_pTextureCurrent==null)
