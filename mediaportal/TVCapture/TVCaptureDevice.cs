@@ -348,6 +348,7 @@ namespace MediaPortal.TV.Recording
             {
               g_Player.Stop();
               RebuildGraph();
+              GUIGraphicsContext.IsFullScreenVideo=true;
               return;
             }
             m_graph.TuneChannel(standard, ichannel);
