@@ -29,7 +29,7 @@
 			<type>listcontrol</type>
 			<id>50</id>
 			<posX>80</posX>
-			<posY>80</posy>
+			<posY>80</posY>
 			<width>560</width>
 			<height>300</height>
 			<onleft>51</onleft>
