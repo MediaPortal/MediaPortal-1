@@ -1,0 +1,99 @@
+<window>
+	<id>31</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+<controls>
+	<control>
+		<description>background image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>720</width>
+		<height>576</height>
+		<texture>background.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
+	</control>
+	<control>
+		<description>Settings BG</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>215</posX>
+		<posY>65</posY>
+		<width>450</width>
+		<height>450</height>
+		<colordiffuse>20ffffff</colordiffuse>
+		<texture>home-settings.png</texture>
+	</control>
+	<control>
+		<description>GUI Settings text label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>300</posX>
+		<posY>80</posY>
+		<label>674</label>
+		<font>font14</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
+		<description>Scroll Speed label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>100</posX>
+		<posY>218</posY>
+		<label>673</label>
+		<font>font14</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Speedselect</description>
+		<type>spincontrol</type>
+		<id>2</id>
+		<posX>220</posX>
+		<posY>222</posY>
+		<reverse>yes</reverse>
+		<onup>2</onup>
+		<ondown>2</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+		<buddycontrolid>100</buddycontrolid>
+	</control>
+	<control>
+		<description>Example value</description> 
+		<type>label</type> 
+		<id>0</id> 
+		<posX>100</posX> 
+		<posY>300</posY> 
+		<width>400</width> 
+		<label>675</label> 
+		<font>font13</font> 
+		<textcolor>FFB2D4F5</textcolor> 
+	</control>
+	<control>
+		<description>TagLine value</description> 
+		<type>fadelabel</type> 
+		<id>25</id> 
+		<posX>120</posX> 
+		<posY>320</posY> 
+		<width>300</width> 
+		<label>-</label> 
+		<font>font13</font> 
+		<textcolor>FFB2D4F5</textcolor> 
+	</control>
+	<control>
+		<description>Description1</description>
+		<type>textboxscrollup</type>
+		<id>26</id>
+		<posX>120</posX>
+		<posY>350</posY>
+		<width>300</width> 
+		<height>100</height> 
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+
+</controls>
+</window>

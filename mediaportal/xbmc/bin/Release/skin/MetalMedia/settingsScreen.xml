@@ -65,6 +65,22 @@
 		<onleft>3</onleft>
 		<onright>3</onright>
 		<onup>2</onup>
+		<ondown>4</ondown>
+	</control>
+	<control>
+		<description>Scroll speed button</description>
+		<type>button</type>
+		<id>4</id>
+		<posX>418</posX>
+		<posY>232</posY>
+		<width>197</width>
+		<height>32</height>
+		<font>font14</font>
+		<label>673</label>
+		<hyperlink>31</hyperlink>
+		<onleft>4</onleft>
+		<onright>4</onright>
+		<onup>3</onup>
 		<ondown>2</ondown>
 	</control>
 </controls>
