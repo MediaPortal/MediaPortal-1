@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
 		/// <summary>
 		/// 
 		/// </summary>
-		public MPEG2DecVideoFilter() : this("MPEG/AC3/DTS/LPCM Audio Decoder")
+		public MPEG2DecVideoFilter() : this("MPEG2Dec Video Decoder")
 		{
 		}
 
