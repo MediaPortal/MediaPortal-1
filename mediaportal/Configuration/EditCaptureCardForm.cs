@@ -1871,10 +1871,11 @@ namespace MediaPortal.Configuration
 
 			DVBSections dvbSec =new DVBSections();
 
-			GUIGraphicsContext.VideoWindow = new Rectangle(280,43,90,90);
-			IntPtr prevForm=GUIGraphicsContext.ActiveForm;
+			GUIGraphicsContext.VideoWindow = new Rectangle(300,90,110,110);
+			IntPtr prevFormPtr=GUIGraphicsContext.ActiveForm;
+			Form prevForm=GUIGraphicsContext.form;
 			GUIGraphicsContext.ActiveForm = this.Handle;
-			
+			GUIGraphicsContext.form=this;
 			do
 			{
 				GC.Collect();
@@ -1891,7 +1892,8 @@ namespace MediaPortal.Configuration
 						if (!capture.SignalPresent()) continue;
 
 						DVBChannel dvbChannel =  dvbSec.GetDVBChannel(capture.Mpeg2DataFilter,ch.Number);
-						counter=dvbSec.GrabEIT(dvbChannel,capture.Mpeg2DataFilter);
+						dvbChannel.ServiceName=ch.Name;
+						counter+=dvbSec.GrabEIT(dvbChannel,capture.Mpeg2DataFilter);
 						label17.Text=counter.ToString();
 						try
 						{
@@ -1912,7 +1914,8 @@ namespace MediaPortal.Configuration
 			capture.View=false;
 			capture=null;
 			GC.Collect();
-			GUIGraphicsContext.ActiveForm=prevForm;
+			GUIGraphicsContext.ActiveForm = prevFormPtr;
+			GUIGraphicsContext.form=prevForm;
 		}
 
 		private void button16_Click(object sender, System.EventArgs e)

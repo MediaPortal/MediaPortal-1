@@ -1859,6 +1859,8 @@ namespace MediaPortal.TV.Recording
 				tv.Title=data.event_name;
 				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+				Log.Write("program:{0} {1} {2} {3} {4}-{5}",
+						tv.Channel,tv.Genre,tv.Description,tv.Title,tv.StartTime,tv.EndTime);
 				int ok=TVDatabase.AddProgram(tv);
 			}
 			catch{}
