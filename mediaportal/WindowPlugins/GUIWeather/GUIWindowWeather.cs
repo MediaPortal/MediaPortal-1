@@ -26,7 +26,8 @@ namespace MediaPortal.GUI.Weather
 
 		struct day_forcast
 		{
-			public string		m_szIcon;
+			public string		m_szIconLow;
+			public string		m_szIconHigh;
 			public string		m_szOverview;
 			public string		m_szDay;
 			public string		m_szHigh;
@@ -132,7 +133,8 @@ namespace MediaPortal.GUI.Weather
 			//loop here as well
 			for(int i=0; i<NUM_DAYS; i++)
 			{
-				m_dfForcast[i].m_szIcon= @"weather\64x64\na.png";
+				m_dfForcast[i].m_szIconLow= @"weather\64x64\na.png";
+				m_dfForcast[i].m_szIconHigh= @"weather\128x128\na.png";
 				m_dfForcast[i].m_szOverview= "";
 				m_dfForcast[i].m_szDay= "";
 				m_dfForcast[i].m_szHigh= "";
@@ -605,8 +607,8 @@ namespace MediaPortal.GUI.Weather
 						//Remove(m_dfForcast[i].m_pImage.GetID);
 						GUIImage image=(GUIImage )GetControl((int)Controls.CONTROL_IMAGED0IMG+(i*10));
 						image.ColourDiffuse=0xffffffff;
-						image.SetFileName(m_dfForcast[i].m_szIcon);
-						//				m_dfForcast[i].m_pImage = new GUIImage(GetID, (int)Controls.CONTROL_IMAGED0IMG+(i*10), posX, posY, 64, 64, m_dfForcast[i].m_szIcon, 0);
+						image.SetFileName(m_dfForcast[i].m_szIconLow);
+						//				m_dfForcast[i].m_pImage = new GUIImage(GetID, (int)Controls.CONTROL_IMAGED0IMG+(i*10), posX, posY, 64, 64, m_dfForcast[i].m_szIconLow, 0);
 						//			cntl=(GUIControl)m_dfForcast[i].m_pImage;
 						//		Add(ref cntl);
 					}
@@ -641,7 +643,8 @@ namespace MediaPortal.GUI.Weather
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWDEWP, m_dfForcast[m_iDayNum].m_szPrecipitation);
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWWIND, m_dfForcast[m_iDayNum].m_szWind);
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELUPDATED, m_szForcastUpdated);
-					m_pNowImage.SetFileName(m_dfForcast[iCurrentDayNum].m_szIcon);
+					//					m_pNowImage.SetFileName(m_dfForcast[iCurrentDayNum].m_szIconLow);
+					m_pNowImage.SetFileName(m_dfForcast[iCurrentDayNum].m_szIconHigh);
 				}
 			}
 			else
@@ -1130,7 +1133,8 @@ namespace MediaPortal.GUI.Weather
 						if(null!=pDayTimeElement)
 						{
 							GetInteger(pDayTimeElement, "icon",out iTmpInt);
-							m_dfForcast[i].m_szIcon=String.Format( "weather\\64x64\\{0}.png", iTmpInt);
+							m_dfForcast[i].m_szIconLow=String.Format( "weather\\64x64\\{0}.png", iTmpInt);
+							m_dfForcast[i].m_szIconHigh=String.Format( "weather\\128x128\\{0}.png", iTmpInt);
 							GetString(pDayTimeElement, "t",out  m_dfForcast[i].m_szOverview, "");
 							m_dfForcast[i].m_szOverview=LocalizeOverview(m_dfForcast[i].m_szOverview);
 							SplitLongString(ref m_dfForcast[i].m_szOverview, 6, 15);
