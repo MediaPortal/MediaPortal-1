@@ -1441,23 +1441,26 @@
     </tv>
   </capturecard>
 
-<!--    Not confirmed working yet   -->
-
-  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="ven_093b&amp;pid_a104">
+  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="vid_093b&amp;pid_a104">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="0" audio="2" mpeg2=""></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="Plextor ConvertX TV402U TV Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="Plextor ConvertX TV402U TV Audio"		checkdevice="true"></filter>
         <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"></filter>
         <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  	checkdevice="true"></filter>
+        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="true"></filter>
+        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="3"></connection>
         <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+        <connection sourcefilter="capture"	 sourcepin="2" sinkfilter="encoderaudio"   sinkpin="0"></connection>
+        <connection sourcefilter="capture"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
