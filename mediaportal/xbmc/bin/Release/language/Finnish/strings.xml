@@ -2392,6 +2392,152 @@
 	        <id>926</id>
 	        <value>Lis‰t‰‰n soittolistaan</value>
         </string>
+        <string>
+	        <id>927</id>
+	        <value>Varoitus</value>
+        </string>
+        <string>
+	        <id>928</id>
+	        <value>Etsi kansikuva</value>
+        </string>
+        <string>
+	        <id>929</id>
+	        <value>Sulje valikko</value>
+        </string>
+        <string>
+	        <id>930</id>
+	        <value>Lis‰‰ suosikkeihin</value>
+        </string>
+        <string>
+	        <id>931</id>
+	        <value>Arvostelu</value>
+        </string>
+        <string>
+	        <id>932</id>
+	        <value>Suosikit</value>
+        </string>
+        <string>
+	        <id>933</id>
+	        <value>Poista suosikeista</value>
+        </string>
+        <string>
+	        <id>934</id>
+         	<value>Aseta arvostelu</value>
+        </string>
+        <string>
+	        <id>935</id>
+	        <value>N‰yt‰: Arvostelu</value>
+        </string>
+        <string>
+	        <id>936</id>
+	        <value>Jatka kohdasta:</value>
+        </string>
+        <string>
+	        <id>937</id>
+	        <value>Tuo ohjelmatiedot</value>
+        </string>
+        <string>
+	        <id>938</id>
+	        <value>Katso t‰t‰ kanavaa</value>
+        </string>
+        <string>
+	        <id>939</id>
+	        <value>Vaihda tilaa </value>
+        </string>
+        <string>
+	        <id>940</id>
+	        <value>Asetukset</value>
+        </string>
+        <string>
+	        <id>941</id>
+	        <value>Vaihda sivusuhdetta</value>
+        </string>
+        <string>
+	        <id>942</id>
+	        <value>Venyt‰</value>
+        </string>
+        <string>
+	        <id>943</id>
+	        <value>Normaali</value>
+        </string>
+        <string>
+	        <id>944</id>
+	        <value>Alkuper‰inen</value>
+        </string>
+        <string>
+	        <id>945</id>
+	        <value>Letterbox</value>
+        </string>
+        <string>
+	        <id>946</id>
+	        <value>Pan and Scan</value>
+        </string>
+        <string>
+	        <id>947</id>
+	        <value>Zoom</value>
+        </string>
+        <string>
+	        <id>948</id>
+	        <value>Linjalla</value>
+        </string>
+        <string>
+	        <id>949</id>
+	        <value>Varattu</value>
+        </string>
+        <string>
+	        <id>950</id>
+	        <value>Palaan kohta</value>
+        </string>
+        <string>
+	        <id>951</id>
+	        <value>Poissa</value>
+        </string>
+        <string>
+	        <id>952</id>
+	        <value>Puhelin</value>
+        </string>
+        <string>
+	        <id>953</id>
+	        <value>Lounaalla</value>
+        </string>
+        <string>
+	        <id>954</id>
+	        <value>Piilotettu</value>
+        </string>
+        <string>
+	        <id>955</id>
+	        <value>Idle</value>
+        </string>
+        <string>
+	        <id>956</id>
+	        <value>Linjalla</value>
+        </string>
+        <string>
+	        <id>957</id>
+	        <value>MSN Messenger</value>
+        </string>
+        <string>
+	        <id>958</id>
+	        <value>Keskustelee</value>
+        </string>
+        <string>
+	        <id>959</id>
+	        <value>on liittynyt keskusteluun</value>
+        </string>
+        <string>
+	        <id>960</id>
+	        <value>on poistunut keskustelusta</value>
+        </string>
+        <string>
+	        <id>961</id>
+	        <value>MSN Tila</value>
+        </string>
+
+        <string>
+        	<id>1440</id>
+         	<value>Teksti TV</value>
+        </string>
+
 
         <!-- My Status Strings -->
 	<string>
@@ -2698,6 +2844,144 @@
                 <id>2054</id>
                 <value>Ei tietoja!</value>
         </string>
+
+        	<!-- My Burner Strings -->
+	<string>
+		<id>2100</id>
+		<value>Burn</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Kopioi CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Luo Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Luo Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Luo Video-DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Luo Data-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Luo Data-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Aloita kopiointi</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Aseta tyhj‰ CD/DVD</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>ja paina OK</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Aseta alkuper‰inen CD/DVD</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Valmis</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Odottaa CD/DVD:t‰</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Kopioi kaikki</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Tyhjenn‰ levy</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Aseta CD/DVD RW</value>
+	</string>
+
+
+	<!-- My Explorer Strings -->
+	<string>
+		<id>2200</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Valitse l‰hde</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Valitse kohde</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Kopioi tiedot</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Luo kansio</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Palauta valinnat</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Valitse kaikki</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Haluatko </value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>luoda kansion?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Haluatko kopioida tiedostot?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Tiedostojen kopiointi valmis</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Odota, tiedostoja kopioidaan.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Poista</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Siirr‰</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Haluatko siirt‰‰ tiedostot</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Odota, tiedostoja siirret‰‰n.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Tiedostot siirretty</value>
+	</string>
+
         <string>
 	        <id>8000</id>
 	        <value>Oma Posti</value>
@@ -3022,6 +3306,10 @@
                 <value>Oma Musiikki/top 100</value>
         </string>
         <string>
+                <id>10506</id>
+                <value>Oma Musiikki/Suosikit</value>
+        </string>
+        <string>
                 <id>10600</id>
                 <value>Oma TV/Opas</value>
         </string>
@@ -3066,6 +3354,10 @@
                 <value>Oma Tila asetukset</value>
         </string>
         <string>
+                <id>10770</id>
+                <value>Explorer</value>
+        </string>
+        <string>
                 <id>11000</id>
                 <value>n‰pp‰imistˆ</value>
         </string>
@@ -3099,15 +3391,39 @@
         </string>
         <string>
                 <id>12007</id>
-                <value>Omat Kuvatkuvaesitys</value>
+                <value>Omat Kuvat / kuvaesitys</value>
         </string>
         <string>
                 <id>12008</id>
-                <value>Tiedostojen k‰sittely dialogi</value>
+                <value>Tiedostojen pinoamis dialogi</value>
+        </string>
+        <string>
+                <id>12010</id>
+                <value>Pvm / Aika</value>
+        </string>
+        <string>
+                <id>12011</id>
+                <value>Artisti tiedot</value>
+        </string>
+        <string>
+                <id>12012</id>
+                <value>Context menu</value>
+        </string>
+        <string>
+                <id>12013</id>
+                <value>Anna arvostelu</value>
+        </string>
+        <string>
+                <id>12014</id>
+                <value>Kuvan tiedot</value>
         </string>
         <string>
                 <id>12600</id>
                 <value>Oma S‰‰</value>
+        </string>
+        <string>
+                <id>12700</id>
+                <value>Omat Uutiset</value>
         </string>
         <string>
                 <id>12900</id>
@@ -3116,6 +3432,10 @@
         <string>
                 <id>12901</id>
                 <value>Kokoruudun OSD</value>
+        </string>
+        <string>
+                <id>12902</id>
+                <value>MSN Messenger OSD</value>
         </string>
         <string>
 	        <id>13000</id>
@@ -3149,9 +3469,22 @@
         	<id>13007</id>
          	<value>Iso Kuva</value>
         </string>
+
         <string>
-        	<id>1440</id>
-         	<value>Teksti TV</value>
+	<id>13008</id>
+	<value>Ken Burns effect</value>
+        </string>
+        <string>
+	        <id>13009</id>
+	        <value>Random transitions</value>
+        </string>
+        <string>
+	        <id>13010</id>
+	        <value>X-fade transitions</value>
+        </string>
+        <string>
+	        <id>13011</id>
+	        <value>Ken Burns speed</value>
         </string>
         <string>
         	<id>16001</id>
