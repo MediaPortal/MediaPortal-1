@@ -436,6 +436,7 @@ namespace MediaPortal.Util
             item.Label = file.Name;
             item.Label2 = "";
             item.Path = String.Format("{0}/{1}",strDir,file.Name);
+            item.IsRemote=true;
             Utils.SetDefaultIcons(item);
             Utils.SetThumbnails(ref item);
             items.Add(item);
@@ -447,6 +448,16 @@ namespace MediaPortal.Util
             item.Label = file.Name;
             item.Label2 = "";
             item.Path = String.Format("{0}/{1}",strDir,file.Name);
+            item.IsRemote=true;
+            if (IsRemoteFileDownloaded(item.Path))
+            {
+              item.Path=GetLocalFilename(item.Path);
+              item.IsRemote=false;
+            }
+            else if (FtpConnectionCache.IsDownloading(item.Path))
+            {
+              item.IsDownloading=true;
+            }
             item.FileInfo = new FileInformation();
             DateTime modified=file.LastModified;
             item.FileInfo.CreationTime=modified;
@@ -896,7 +907,7 @@ namespace MediaPortal.Util
       {
         client.ChDir(remotePath);
         string localFile=String.Format(@"{0}\{1}", GetDefaultPath(),remoteFilename);
-        return FtpConnectionCache.Download(client,remoteFilename,localFile);
+        return FtpConnectionCache.Download(client,file,remoteFilename,localFile);
       }
       catch(Exception)
       {

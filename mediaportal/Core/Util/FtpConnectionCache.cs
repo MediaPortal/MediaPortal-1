@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using EnterpriseDT.Net.Ftp;
-
+using MediaPortal.GUI.Library;
 namespace Core.Util
 {
 	/// <summary>
@@ -20,6 +20,8 @@ namespace Core.Util
       public bool      Busy=false;
       public string    remoteFile=String.Empty;
       public string    localFile=String.Empty;
+      public string    originalRemoteFile=String.Empty;
+      public long      BytesTransferred=0;
 
       delegate void OnDownloadHandler(FtpConnection ftp);
       event     OnDownloadHandler OnDownLoad=null;
@@ -32,21 +34,32 @@ namespace Core.Util
 
         OnDownLoad.EndInvoke(ar);
         OnDownLoad -=new OnDownloadHandler(StartDownLoad);
+        Connection.BytesTransferred -=new BytesTransferredHandler(OnBytesTransferred);
+        BytesTransferred=0;
         Busy=false;
       }
       
       void StartDownLoad(FtpConnection ftp)
       {
+        BytesTransferred=0;
         ftp.Connection.TransferComplete += new EventHandler(OnTransferComplete);
+        ftp.Connection.BytesTransferred +=new BytesTransferredHandler(OnBytesTransferred);
         ftp.Connection.TransferType=FTPTransferType.BINARY;
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
+        msg.Label=client.originalRemoteFile;
+        msg.Label2=client.localFile;
+        GUIGraphicsContext.SendMessage(msg);
+
 
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
       }
 
-      public void Download(string remotefile, string localfile)
+      public void Download(string orgremoteFile,string remotefile, string localfile)
       {
         localFile=localfile;
         remoteFile=remotefile;
+        originalRemoteFile=orgremoteFile;
         
         OnDownLoad +=new OnDownloadHandler(StartDownLoad);
         AsyncCallback callback = new AsyncCallback(GetCallback);
@@ -54,6 +67,10 @@ namespace Core.Util
 
       }
 
+      private void OnBytesTransferred(object ftpClient, BytesTransferredEventArgs bytesTransferred)
+      {
+        BytesTransferred=bytesTransferred.ByteCount;
+      }
     }
 
     static ArrayList ftpConnections=new ArrayList();
@@ -109,7 +126,7 @@ namespace Core.Util
       }
     }
 
-    static public bool Download(FTPClient ftpclient,string remotefile,string localfile)
+    static public bool Download(FTPClient ftpclient,string orgremoteFile,string remotefile,string localfile)
     {
       foreach (FtpConnection client in ftpConnections)
       {
@@ -118,7 +135,7 @@ namespace Core.Util
           if (!client.Busy)
           {
             client.Busy=true;
-            client.Download(remotefile,localfile);
+            client.Download(orgremoteFile,remotefile,localfile);
 
             return true;
           }
@@ -147,12 +164,13 @@ namespace Core.Util
         if (client.Connection==ftpclient)
         {
           client.Connection.TransferComplete -= new EventHandler(OnTransferComplete);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED,0,0,0,0,0,null);
+          msg.Label=client.originalRemoteFile;
+          msg.Label2=client.localFile;
+          GUIGraphicsContext.SendMessage(msg);
           return;
         }
       }
     }
-
-    
-
   }
 }

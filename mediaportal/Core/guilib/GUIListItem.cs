@@ -42,6 +42,8 @@ namespace MediaPortal.GUI.Library
     bool                    m_bArtRetrieved=false;
 	  string                  m_PinIcon=String.Empty;
 	  protected GUIImage      m_PinIconImage=null;
+    protected bool          m_isRemote=false;           // indicating if this is a local or remote file
+    protected bool          m_isDownloading=false;            // indicating if this file is being downloaded
 
     /// <summary>
 		/// The (empty) constructor of the GUIListItem.
@@ -476,6 +478,16 @@ namespace MediaPortal.GUI.Library
     private void itemSelectedCallback(IAsyncResult ar)
     {
       OnItemSelected.EndInvoke(ar);
+    }
+    public bool IsRemote
+    {
+      get { return m_isRemote;}
+      set { m_isRemote=value;}
+    }
+    public bool IsDownloading
+    {
+      get { return m_isDownloading;}
+      set { m_isDownloading=value;}
     }
 	}
 }

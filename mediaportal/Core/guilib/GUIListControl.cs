@@ -44,7 +44,9 @@ namespace MediaPortal.GUI.Library
     protected ArrayList             m_labels2 = new ArrayList();
     protected ArrayList             m_labels3 = new ArrayList();
 
-		[XMLSkinElement("shadedColor")] protected long	m_dwShadedColor = 0x20ffffff;
+    [XMLSkinElement("remoteColor")] protected long	m_dwRemoteColor = 0xffff0000;
+    [XMLSkinElement("downloadColor")] protected long	m_dwDownloadColor = 0xff00ff00;
+    [XMLSkinElement("shadedColor")] protected long	m_dwShadedColor = 0x20ffffff;
 		[XMLSkinElement("textvisible1")]protected bool  m_bTextVisible1=true;
 		[XMLSkinElement("textvisible2")]protected bool  m_bTextVisible2=true;
 		[XMLSkinElement("textvisible3")]protected bool  m_bTextVisible3=true;
@@ -313,6 +315,11 @@ namespace MediaPortal.GUI.Library
               {
                 dwColor = m_dwSelectedColor2;
               }
+              if (pItem.IsRemote) 
+              {
+                dwColor=m_dwRemoteColor;
+                if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
+              }
               int xpos=dwPosX;
               int ypos=dwPosY;
               if (0 == m_iTextOffsetX2)
@@ -347,6 +354,12 @@ namespace MediaPortal.GUI.Library
             {
               dwColor = m_dwSelectedColor;
             }
+            
+            if (pItem.IsRemote) 
+            {
+              dwColor=m_dwRemoteColor;
+              if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
+            }
             RenderText(i,(float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY, (float)dMaxWidth, dwColor, m_wszText, bSelected);
           }
 					if (pItem.Label2.Length > 0)
@@ -356,6 +369,13 @@ namespace MediaPortal.GUI.Library
 						{
 							dwColor = m_dwSelectedColor2;
 						}
+            
+            if (pItem.IsRemote) 
+            {
+              dwColor=m_dwRemoteColor;
+              if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
+            }
+
 						if (0 == m_iTextOffsetX2)
 							dwPosX = m_dwPosX + m_dwWidth - 16;
 						else
@@ -390,6 +410,12 @@ namespace MediaPortal.GUI.Library
 						{
 							dwColor = m_dwSelectedColor3;
 						}
+            
+            if (pItem.IsRemote) 
+            {
+              dwColor=m_dwRemoteColor;
+              if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
+            }
 						if (0 == m_iTextOffsetX3)
 							dwPosX = m_dwPosX + m_iTextOffsetX;
 						else
@@ -477,9 +503,9 @@ namespace MediaPortal.GUI.Library
 		protected void RenderText(int Item,float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
 		{
 			// TODO Unify render text methods into one general rendertext method.
-
       if (m_labels1==null) return;
       if (Item<0||Item>=m_labels1.Count) return;
+      
       GUILabelControl label1=m_labels1[Item] as GUILabelControl;
       if (label1==null) return;
       label1.SetPosition((int)fPosX,(int)fPosY);
@@ -872,6 +898,34 @@ namespace MediaPortal.GUI.Library
           }
         }
 			}
+      if (message.Message==GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
+      {
+       foreach (GUIListItem item in m_vecItems)
+       {
+         if (item.IsRemote)
+         {
+           if (message.Label==item.Path)
+           {
+             item.IsDownloading=true;
+           }
+         }
+       }
+      }
+      if (message.Message==GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED)
+      {
+        foreach (GUIListItem item in m_vecItems)
+        {
+          if (item.IsRemote)
+          {
+            if (message.Label==item.Path)
+            {
+              item.Path=message.Label2;
+              item.IsRemote=false;
+              item.IsDownloading=false;
+            }
+          }
+        }
+      }
 
 			if (base.OnMessage(message)) return true;
 

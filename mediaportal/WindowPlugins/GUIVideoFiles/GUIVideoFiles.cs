@@ -378,6 +378,16 @@ namespace MediaPortal.GUI.Video
               }
             }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
+          GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+          pControl.OnMessage(message);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
+          GUIFacadeControl pControl2=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+          pControl2.OnMessage(message);
+          break;
 			}
 			return base.OnMessage(message);
 		}

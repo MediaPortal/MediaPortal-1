@@ -13,6 +13,10 @@ namespace MediaPortal.GUI.Library
 	public class GUIThumbnailPanel : GUIControl
   {
     const int SLEEP_FRAME_COUNT=1;
+    
+    [XMLSkinElement("remoteColor")] protected long	m_dwRemoteColor = 0xffff0000;
+    [XMLSkinElement("downloadColor")] protected long	m_dwDownloadColor = 0xff00ff00;
+
 		[XMLSkinElement("thumbPosX")]			protected int m_iThumbXPos = 8;
 		[XMLSkinElement("thumbPosY")]			protected int m_iThumbYPos = 8;
 		[XMLSkinElement("thumbWidth")]			protected int m_iThumbWidth = 64;
@@ -210,6 +214,12 @@ GUISpinControl m_upDown = null;
 
 			long dwColor = m_dwTextColor;
 			if (pItem.Selected) dwColor = m_dwSelectedColor;
+      
+      if (pItem.IsRemote) 
+      {
+        dwColor=m_dwRemoteColor;
+        if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
+      }
 			if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
 			{
         btn.Focus=true;
@@ -748,7 +758,35 @@ GUISpinControl m_upDown = null;
 					}
           m_bRefresh = true;
 				}
-			}
+      }
+      if (message.Message==GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
+      {
+        foreach (GUIListItem item in m_vecItems)
+        {
+          if (item.IsRemote)
+          {
+            if (message.Label==item.Path)
+            {
+              item.IsDownloading=true;
+            }
+          }
+        }
+      }
+      if (message.Message==GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED)
+      {
+        foreach (GUIListItem item in m_vecItems)
+        {
+          if (item.IsRemote)
+          {
+            if (message.Label==item.Path)
+            {
+              item.Path=message.Label2;
+              item.IsRemote=false;
+              item.IsDownloading=false;
+            }
+          }
+        }
+      }
 
 			if (base.OnMessage(message)) return true;
 

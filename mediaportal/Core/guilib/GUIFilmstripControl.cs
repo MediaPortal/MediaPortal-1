@@ -16,6 +16,8 @@ namespace MediaPortal.GUI.Library
 		//TODO : use GUILabelControl for drawing text
     const int SLEEP_FRAME_COUNT=2;
 
+    [XMLSkinElement("remoteColor")] protected long	m_dwRemoteColor = 0xffff0000;
+    [XMLSkinElement("downloadColor")] protected long	m_dwDownloadColor = 0xff00ff00;
 		[XMLSkinElement("thumbPosXBig")] protected int m_iThumbXPosBig = 0;
 		[XMLSkinElement("thumbPosYBig")] protected int m_iThumbYPosBig = 0;
 		[XMLSkinElement("thumbWidthBig")] protected int m_iThumbWidthBig = 0;
@@ -224,6 +226,12 @@ namespace MediaPortal.GUI.Library
 
       long dwColor = m_dwTextColor;
       if (pItem.Selected) dwColor = m_dwSelectedColor;
+      if (pItem.IsRemote) 
+      {
+        dwColor=m_dwRemoteColor;
+        if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
+      }
+
       if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
       {
         m_imgFolderFocus.SetPosition(dwPosX, dwPosY);
@@ -738,6 +746,36 @@ namespace MediaPortal.GUI.Library
             OnSelectionChanged();
           }
           m_bRefresh = true;
+        }
+      }
+      
+      if (message.Message==GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
+      {
+        foreach (GUIListItem item in m_vecItems)
+        {
+          if (item.IsRemote)
+          {
+            if (message.Label==item.Path)
+            {
+              item.IsDownloading=true;
+            }
+          }
+        }
+      }
+
+      if (message.Message==GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED)
+      {
+        foreach (GUIListItem item in m_vecItems)
+        {
+          if (item.IsRemote)
+          {
+            if (message.Label==item.Path)
+            {
+              item.Path=message.Label2;
+              item.IsRemote=false;
+              item.IsDownloading=false;
+            }
+          }
         }
       }
 

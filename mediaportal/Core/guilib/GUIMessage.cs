@@ -59,9 +59,12 @@ namespace MediaPortal.GUI.Library
         GUI_MSG_REFRESH,
         GUI_MSG_ASKYESNO,
         GUI_MSG_NEW_LINE_ENTERED,
+        GUI_MSG_FILE_DOWNLOADED,
+        GUI_MSG_FILE_DOWNLOADING,
         GUI_MSG_USER};
 
 		private string 				m_strLabel="";
+    private string 				m_strLabel2="";
 		private int 					m_dwSenderControlID=0;
 		private int 					m_dwTargetControlID=0;
 		private MessageType 	m_dwMessage=0;
@@ -165,6 +168,16 @@ namespace MediaPortal.GUI.Library
 			get { return m_strLabel;}
 			set { m_strLabel=value;}
 		}
+
+
+    /// <summary>
+    /// Get/Set a text message that is included in the message.
+    /// </summary>
+    public string Label2
+    {
+      get { return m_strLabel2;}
+      set { m_strLabel2=value;}
+    }
 
 		/// <summary>
 		/// The (empty) contstructor of the GUIMessage class.
