@@ -26,7 +26,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
 using MediaPortal.Dialogs;
 using MediaPortal.IR;
-using MediaPortal.AutoPlay;
+using MediaPortal.Ripper;
 
 public class MediaPortalApp : D3DApp, IRender
 {

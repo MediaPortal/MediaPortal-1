@@ -194,8 +194,8 @@
                     HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
                 />
                 <Reference
-                    Name = "AutoPlay"
-                    Project = "{CA9EB1AD-D239-4770-90CD-A6C9D0416293}"
+                    Name = "Ripper"
+                    Project = "{940015B7-F05D-402E-9330-E616A6CE9D7A}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
