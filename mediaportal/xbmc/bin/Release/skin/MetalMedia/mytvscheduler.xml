@@ -72,8 +72,8 @@
 		<description>Sort Asc</description>
 		<type>togglebutton</type>
 		<id>4</id>
-		<posX>198</posX>
-		<posY>149</posY>
+		<posX>215</posX>
+		<posY>375</posY>
 		<label>-</label>
 		<onleft>3</onleft>
 		<onright>10</onright>

@@ -153,7 +153,7 @@
 		<type>label</type>
 		<id>14</id>
 		<posX>645</posX>
-		<posY>110</posY>
+		<posY>85</posY>
 		<width>100</width> 
 		<label>#TV.View.start-#TV.View.stop</label>
 		<font>font14</font>
@@ -180,7 +180,7 @@
 		<posY>520</posY>
 		<width>400</width>
 		<height>25</height>
-		<texturebg>list_focus.png</texturebg>
+		<texturebg>osd_panel.png</texturebg>
 		<label>#TV.View.Percentage</label>
 		<visible>yes</visible>
 	</control>

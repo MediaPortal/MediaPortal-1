@@ -39,24 +39,24 @@
 		<description>Current program background</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>50</posX>
-		<posY>104</posY>
-		<width>625</width>
-		<height>94</height>
+		<posX>35</posX>
+		<posY>99</posY>
+		<width>655</width>
+		<height>100</height>
 		<colordiffuse>60ffffff</colordiffuse>
-		<texture>blue_rectangle_music.png</texture>
+		<texture>panel.png</texture>
 	</control>
 		
 	<control>
 		<description>TVGUIDE Panel</description>
 		<type>image</type>
 		<id>2</id>
-		<posX>50</posX>
+		<posX>60</posX>
 		<posY>220</posY>
 		<width>605</width>
 		<height>315</height>
 		<colordiffuse>60ffffff</colordiffuse>
-		<texture>blue_rectangle_music.png</texture>
+		<texture>panel2.png</texture>
 	</control>
 	<control>
 		<description>time header label template</description>
@@ -127,7 +127,7 @@
 		<width>100</width>
 		<height>15</height>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	
 	<control>
@@ -148,7 +148,7 @@
 		<posY>105</posY>
 		<label>#TV.Guide.Title</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Current program time</description>
@@ -159,7 +159,7 @@
 		<label>#TV.Guide.Time</label>
 		<align>right</align>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Current program genre</description>
@@ -226,11 +226,11 @@
 		<description>Horizontal scrollbar</description>
 		<type>hscrollbar</type>
 		<id>28</id>
-		<posX>50</posX>
+		<posX>180</posX>
 		<posY>540</posY>
-		<width>605</width>
+		<width>475</width>
 		<height>12</height>
-		<scrollbarbg>bluebar.png</scrollbarbg>
+		<scrollbarbg>bar.png</scrollbarbg>
 		<visible>yes</visible>
 	</control>	
 	<control>
