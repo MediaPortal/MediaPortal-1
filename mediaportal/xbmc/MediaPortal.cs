@@ -916,7 +916,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (iCurrent < iMin) iCurrent = iMin;
 						AudioMixerHelper.SetVolume(iCurrent);
 						return;
-          break;
+          
 
 					case Action.ActionType.ACTION_VOLUME_UP : 
             iCurrent = AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
@@ -1033,7 +1033,7 @@ public class MediaPortalApp : D3DApp, IRender
 						}
 						break;
 					}
-						return;
+						
 				}
 
 				if (g_Player.Playing)

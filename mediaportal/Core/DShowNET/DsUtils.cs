@@ -23,11 +23,13 @@ namespace DShowNET
       static public void FindFilterByClassID(IGraphBuilder m_graphBuilder, Guid classID, out IBaseFilter filterFound)
       {
         filterFound=null;
+        
+        if (m_graphBuilder==null) return;
         try
         {
           IEnumFilters ienumFilt;
           int hr=m_graphBuilder.EnumFilters(out ienumFilt);
-          if (hr==0)
+          if (hr==0 && ienumFilt!=null)
           {
             uint iFetched;
             IBaseFilter filter;
@@ -54,15 +56,16 @@ namespace DShowNET
         return ; 
       }
 		static public void RemoveFilters(IGraphBuilder m_graphBuilder)
-		{
-			while(true)
+    {
+      if (m_graphBuilder==null) return;
+			for (int counter=0; counter < 100; counter++)
 			{
 				bool bFound=false;
 				try
 				{
 					IEnumFilters ienumFilt;
 					int hr=m_graphBuilder.EnumFilters(out ienumFilt);
-					if (hr==0)
+					if (hr==0 && ienumFilt==null)
 					{
 						uint iFetched;
 						IBaseFilter filter;
@@ -88,6 +91,7 @@ namespace DShowNET
 		}
       static public void DumpFilters(IGraphBuilder m_graphBuilder)
       {
+        if (m_graphBuilder==null) return;
         Filters filters = new Filters();
         
         try
@@ -95,7 +99,7 @@ namespace DShowNET
           int iFilter=0;
           IEnumFilters ienumFilt;
           int hr=m_graphBuilder.EnumFilters(out ienumFilt);
-          if (hr==0)
+          if (hr==0 && ienumFilt!=null)
           {
             uint iFetched;
             IBaseFilter filter;
@@ -128,7 +132,10 @@ namespace DShowNET
 			/// <param name="m_captureGraphBuilder">ICaptureGraphBuilder2 </param>
 			/// <param name="captureFilter">IBaseFilter containing the capture device filter</param>
 		static public void ResetCrossbar(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter)
-		{
+    {
+      if (graphbuilder==null) return;
+      if (m_captureGraphBuilder==null) return;
+      if (captureFilter==null) return;
 			FixCrossbarRouting(graphbuilder, m_captureGraphBuilder,  captureFilter, true, false, false, false,false);
 		}
 
@@ -147,7 +154,10 @@ namespace DShowNET
 		///                          false: dont log
 		/// </param>
 		static public void FixCrossbarRouting(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool logActions)
-		{
+    {
+      if (graphbuilder==null) return;
+      if (m_captureGraphBuilder==null) return;
+      if (captureFilter==null) return;
 			bool CvbsWanted= (useCVBS1 || useCVBS2);
 			int iCVBSVideo=0;
 			int iCVBSAudio=0;
@@ -317,14 +327,17 @@ namespace DShowNET
 
 			public static IntPtr GetUnmanagedSurface(Microsoft.DirectX.Direct3D.Surface surface) 
 			{
+        if (surface==null) return IntPtr.Zero;
 				return surface.GetObjectByValue(magicConstant);
 			}
 		public static IntPtr GetUnmanagedDevice(Microsoft.DirectX.Direct3D.Device device) 
-		{
+    {
+      if (device==null) return IntPtr.Zero;
 			return device.GetObjectByValue(magicConstant);
 		}
 			public static string GetFriendlyName( UCOMIMoniker mon )
 			{
+        if (mon==null) return;
 				object bagObj = null;
 				DShowNET.Device.IPropertyBag bag = null;
 				try 
@@ -353,7 +366,9 @@ namespace DShowNET
 				}
 			}
 		public static bool ShowCapPinDialog( ICaptureGraphBuilder2 bld, IBaseFilter flt, IntPtr hwnd )
-		{
+    {
+      if (bld==null) return;
+      if (flt==null) return;
 			int hr;
 			object comObj = null;
 			ISpecifyPropertyPages	spec = null;
@@ -393,7 +408,10 @@ namespace DShowNET
 		}
 
 		public static bool ShowTunerPinDialog( ICaptureGraphBuilder2 bld, IBaseFilter flt, IntPtr hwnd )
-		{
+    {
+      if (bld==null) return;
+      if (flt==null) return;
+
 			int hr;
 			object comObj = null;
 			ISpecifyPropertyPages	spec = null;
@@ -435,7 +453,8 @@ namespace DShowNET
 
 		// from 'DShowUtil.cpp'
 		static public int GetPin( IBaseFilter filter, PinDirection dirrequired, int num, out IPin ppPin )
-		{
+    {
+      if (filter==null) return;
 			ppPin = null;
 			int hr;
 			IEnumPins pinEnum;
@@ -473,9 +492,10 @@ namespace DShowNET
 		}
 
 			public static int GetUnconnectedPin( IBaseFilter filter, PinDirection dirrequired,  out IPin ppPin )
-			{
+      {
 				ppPin = null;
-				int hr;
+        if (filter==null) return;
+        int hr;
 				IEnumPins pinEnum;
 				hr = filter.EnumPins( out pinEnum );
 				if( (hr < 0) || (pinEnum == null) )
@@ -518,13 +538,19 @@ namespace DShowNET
 		public static int RenderFileToVMR9(IGraphBuilder pGB, string wFileName, 
 			IBaseFilter pRenderer)
 		{
-			return RenderFileToVMR9(pGB, wFileName, pRenderer, true);
+      if (pGB==null) return;
+      if (wFileName==null) return;
+      if (pRenderer==null) return;
+      return RenderFileToVMR9(pGB, wFileName, pRenderer, true);
 		}
 
 		public static int RenderFileToVMR9(IGraphBuilder pGB, string wFileName, 
 										   IBaseFilter pRenderer, bool bRenderAudio)
 		{
 
+      if (pGB==null) return;
+      if (wFileName==null) return;
+      if (pRenderer==null) return;
 			int hr;
 			try 
 			{
@@ -602,8 +628,9 @@ public struct DsBITMAPINFOHEADER
 	public class DsROT
 	{
 		public static bool AddGraphToRot( object graph, out int cookie )
-		{
-			cookie = 0;
+    {
+      cookie = 0;
+      if (graph==null) return;
 			int hr = 0;
 			UCOMIRunningObjectTable rot = null;
 			UCOMIMoniker mk = null;

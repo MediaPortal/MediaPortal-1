@@ -1171,7 +1171,7 @@ namespace MediaPortal
 					Render();
 				}
       }
-      catch (Exception ex)
+      catch (Exception )
       {
       }
 
