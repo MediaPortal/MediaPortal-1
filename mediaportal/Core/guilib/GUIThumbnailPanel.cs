@@ -793,7 +793,7 @@ GUISpinControl m_upDown = null;
 		public override void AllocResources()
 		{
       m_iSleeper=0;
-			if (null == m_pFont) return;
+			m_pFont = GUIFontManager.GetFont(m_strFontName);
 			base.AllocResources();
 			m_upDown.AllocResources();
       m_vertScrollbar.AllocResources();
@@ -1316,7 +1316,7 @@ GUISpinControl m_upDown = null;
 
 		public long TextColor { get { return m_dwTextColor; } }
 		public long SelectedColor { get { return m_dwSelectedColor; } }
-		public string FontName { get { return m_pFont.FontName; } }
+		public string FontName { get { return m_strFontName; } }
 		public int SpinWidth { get { return m_upDown.Width / 2; } }
 		public int SpinHeight { get { return m_upDown.Height; } }
 		public string TexutureUpName { get { return m_upDown.TexutureUpName; } }

@@ -805,7 +805,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (splashScreen!=null) splashScreen.SetInformation("Loading fonts...");
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
-      
+      GUIFontManager.RestoreDeviceObjects();
       
       if (splashScreen!=null) splashScreen.SetInformation("Loading skin...");
       Log.Write("Load skin {0}", m_strSkin);

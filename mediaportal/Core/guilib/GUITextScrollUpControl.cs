@@ -279,10 +279,11 @@ namespace MediaPortal.GUI.Library
 
 		public override void PreAllocResources()
 		{
-			if (null==m_pFont) return;
 			base.PreAllocResources();
 			float fWidth=0,fHeight=0;
   
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
+      if (null==m_pFont) return;
 			m_pFont.GetTextExtent( "abcdef", ref fWidth,ref fHeight);
 			try
 			{

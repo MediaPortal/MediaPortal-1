@@ -205,6 +205,7 @@ namespace MediaPortal.GUI.Library
       base.AllocResources();
       m_imgCheckMark.AllocResources();
       m_imgCheckMarkNoFocus.AllocResources();
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
     }
 
 		/// <summary>
@@ -237,7 +238,8 @@ namespace MediaPortal.GUI.Library
       if (strFontName==null || strLabel==null) return;
       m_strLabel=strLabel;
 	    m_dwTextColor=dwColor;
-	    m_pFont=GUIFontManager.GetFont(strFontName);
+      m_strFontName=strFontName;
+	    m_pFont=GUIFontManager.GetFont(m_strFontName);
     }
 
 		/// <summary>
@@ -263,7 +265,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string FontName 
     { 
-      get { return m_pFont.FontName; }
+      get { return m_strFontName; }
     }
    
 		/// <summary>

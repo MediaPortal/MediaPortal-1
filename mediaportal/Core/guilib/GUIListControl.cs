@@ -883,7 +883,6 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void PreAllocResources()
 		{
-			if (null == m_pFont) return;
 			base.PreAllocResources();
 			m_upDown.PreAllocResources();
 			m_vertScrollbar.PreAllocResources();
@@ -894,10 +893,12 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void AllocResources()
 		{
-			if (null == m_pFont) return;
 			base.AllocResources();
       m_upDown.AllocResources();
       m_vertScrollbar.AllocResources();
+      m_pFont = GUIFontManager.GetFont(m_strFontName);
+      m_pFont2 = GUIFontManager.GetFont(m_strFont2Name);
+
 
 
 			float fHeight = (float)m_iItemHeight + (float)m_iSpaceBetweenItems;
@@ -1265,15 +1266,24 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Font2
 		{
-			get { return m_pFont2.FontName; }
+			get { return m_strFont2Name; }
 			set {
         if (value==null) return;
         if (value != "")
         {
+          m_strFont2Name=value;
           m_pFont2 = GUIFontManager.GetFont(value);
-          if (null == m_pFont2) m_pFont2 = m_pFont;
+          if (null == m_pFont2) 
+          {
+            m_strFont2Name=m_strFontName;
+            m_pFont2 = GUIFontManager.GetFont(m_strFontName);
+          }
         }
-        else m_pFont2 = m_pFont;
+        else 
+        {
+          m_strFont2Name=m_strFontName;
+          m_pFont2 = GUIFontManager.GetFont(m_strFontName);
+        }
       }
 		}
 
@@ -1397,8 +1407,7 @@ namespace MediaPortal.GUI.Library
 		{ 
 			get 
 			{
-				if (m_pFont == null) return "";
-				return m_pFont.FontName;
+				return m_strFontName;
 			}
 		}
 		
@@ -1408,8 +1417,7 @@ namespace MediaPortal.GUI.Library
 		public string	FontName2 
 		{ 
 			get {
-				if (m_pFont2 == null) return "";
-				return m_pFont2.FontName;
+				return m_strFont2Name;
 			}
 		}
 

@@ -752,7 +752,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public override void PreAllocResources()
     {
-      if (null == m_pFont) return;
+      
       base.PreAllocResources();
       if (m_upDown!=null) m_upDown.PreAllocResources();
       if (m_imgFolder!=null) m_imgFolder.PreAllocResources();
@@ -810,8 +810,9 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       m_iSleeper=0;
-      if (null == m_pFont) return;
+      
       base.AllocResources();
+      m_pFont = GUIFontManager.GetFont(m_strFontName);
       if (m_backgroundImage!=null) m_backgroundImage.AllocResources();
       if (m_infoImage!=null) m_infoImage.AllocResources();
       if (m_upDown!=null) m_upDown.AllocResources();
@@ -1308,8 +1309,7 @@ namespace MediaPortal.GUI.Library
 		{ 
 			get 
 			{ 
-				if (m_pFont==null) return String.Empty;
-				return m_pFont.FontName; 
+				return m_strFontName; 
 			} 
 		}
 

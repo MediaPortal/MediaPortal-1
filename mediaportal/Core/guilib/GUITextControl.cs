@@ -289,6 +289,7 @@ namespace MediaPortal.GUI.Library
 			base.AllocResources();
 			m_upDown.AllocResources();
 
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
 			Calculate();
 
 		}

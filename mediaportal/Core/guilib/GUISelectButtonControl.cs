@@ -531,6 +531,8 @@ namespace MediaPortal.GUI.Library
       m_imgRight.AllocResources();
       m_imgRightFocus.AllocResources();
 
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
+
       //	Position right arrow
       int dwPosX=(m_dwPosX+m_dwWidth-8) - 16;
       int dwPosY=m_dwPosY+(m_dwHeight-16)/2;

@@ -1064,6 +1064,9 @@ namespace MediaPortal.GUI.Pictures
       {
         foreach (GUIListItem item in itemlist)
         {
+          if (m_strDirectory!=path) return;
+          if (GUIWindowManager.ActiveWindow!=GetID) return;
+          if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
           if (!item.IsFolder)
           {
             if (Utils.IsPicture(item.Path) )

@@ -71,6 +71,14 @@ namespace MediaPortal.GUI.Library
       m_keyTimer=DateTime.Now;
       m_strData="";
       m_iPos=0;
+      if (m_strFontName!="" && m_strFontName!="-")
+        m_pFont=GUIFontManager.GetFont(m_strFontName);
+      
+      if (m_strFontName2!="" && m_strFontName2!="-")
+        m_pFont2=GUIFontManager.GetFont(m_strFontName2);
+      
+      if (m_strTextBoxFontName!="" && m_strTextBoxFontName!="-")
+        m_pTextBoxFont=GUIFontManager.GetFont(m_strTextBoxFontName);
     }
     
     public override void FreeResources()

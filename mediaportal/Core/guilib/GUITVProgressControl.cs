@@ -452,6 +452,7 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources();
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
       m_guiTop.AllocResources();
 			m_guiBottom.AllocResources();
       m_guiMid.AllocResources();
@@ -588,11 +589,12 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string FontName
 		{
-			get { return m_pFont.FontName; }
+			get { return m_strFontName; }
       set 
       {  
         if (value==null) return;
-        m_pFont=GUIFontManager.GetFont(value);
+        m_strFontName=value;
+        m_pFont=GUIFontManager.GetFont(m_strFontName);
       }
 		}
 

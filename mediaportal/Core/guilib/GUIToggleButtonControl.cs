@@ -152,6 +152,7 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources();
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
       m_dwFrameCounter=0;
       m_imgFocus.AllocResources();
       m_imgNoFocus.AllocResources();
@@ -217,16 +218,25 @@ namespace MediaPortal.GUI.Library
 
     public string FontName
     { 
-      get { return m_pFont.FontName; }
-      set { m_pFont.FontName=value;}
+      get { return m_strFontName; }
+      set { 
+        if (value==null) return;
+        m_strFontName=value;
+        m_pFont=GUIFontManager.GetFont(m_strFontName);
+      }
     }
 
     public void SetLabel( string strFontName,string strLabel,long dwColor)
     {
+      if (strFontName==null) return;
+      if (strLabel==null) return;
       m_strLabel=strLabel;
       m_dwTextColor=dwColor;
       if (strFontName!="" && strFontName!="-")
-        m_pFont=GUIFontManager.GetFont(strFontName);
+      {
+        m_strFontName=strFontName;
+        m_pFont=GUIFontManager.GetFont(m_strFontName);
+      }
     }
 
     public string Label

@@ -554,7 +554,6 @@ namespace MediaPortal.GUI.Library
         ((GUIWindow)m_vecWindows[x]).FreeResources();
       }
       m_pRouteWindow=null;
-      m_vecWindows.Clear();
       m_vecThreadMessages.Clear();
 			m_vecThreadActions.Clear();
       GUIWindow.Clear();

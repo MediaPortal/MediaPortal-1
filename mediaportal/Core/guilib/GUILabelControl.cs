@@ -337,8 +337,7 @@ namespace MediaPortal.GUI.Library
 		public string FontName
 		{
 			get { 
-        if (m_pFont==null) return String.Empty;
-        return m_pFont.FontName; 
+        return m_strFontName;
       }
       set 
       { 
@@ -392,6 +391,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
+      m_pFont=GUIFontManager.GetFont(m_strFontName);
       Update();
     }
 
