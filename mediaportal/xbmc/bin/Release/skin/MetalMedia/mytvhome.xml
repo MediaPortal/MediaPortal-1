@@ -31,7 +31,8 @@
 		<posX>50</posX>
 		<posY>100</posY>
 		<width>190</width>
-		<height>272</height>
+<!--		<height>272</height> -->
+		<height>300</height>
 		<texture>panel.png</texture>
 	</control>
 	<control>
@@ -55,7 +56,8 @@
 		<hyperlink>600</hyperlink>
 		<onup>17</onup>
 		<ondown>3</ondown>
-	</control>	
+		<onright>99</onright>
+	</control>
 	<control>
 		<description>Record Now</description>
 		<type>button</type>
@@ -65,6 +67,7 @@
 		<label>601</label>
 		<onup>2</onup>
 		<ondown>4</ondown>
+		<onright>99</onright>
 	</control>
 	<control>
 		<description>Panel Split</description>
@@ -73,7 +76,7 @@
 		<posX>55</posX>
 		<posY>180</posY>
 		<texture>panel_split.png</texture>
-	</control>	
+	</control>
 		<control>
 		<description>card#1 button</description>
 		<type>selectbutton</type>
@@ -83,7 +86,8 @@
 		<label>810</label>
 		<onup>3</onup>
 		<ondown>6</ondown>
-	</control>	
+		<onright>99</onright>
+	</control>
 	<control>
 		<description>Channel button</description>
 		<type>selectbutton</type>
@@ -93,6 +97,7 @@
 		<label>602</label>
 		<onup>4</onup>
 		<ondown>7</ondown>
+		<onright>99</onright>
 	</control>
 	<control>
 		<description>TV On/Off button</description>
@@ -115,6 +120,7 @@
 		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 		<onup>6</onup>
 		<ondown>8</ondown>
+		<onright>99</onright>
 	</control>
 	<control>
 		<description>Timeshifting On/Off button</description>
@@ -137,6 +143,7 @@
 		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 		<onup>7</onup>
 		<ondown>9</ondown>
+		<onright>99</onright>
 	</control>
 	<control>
 		<description>Scheduler</description>
@@ -148,6 +155,7 @@
 		<hyperlink>601</hyperlink>
 		<onup>8</onup>
 		<ondown>10</ondown>
+		<onright>99</onright>
 	</control>
 	<control>
 		<description>Recordings</description>
@@ -158,8 +166,22 @@
 		<label>604</label>
 		<hyperlink>603</hyperlink>
 		<onup>9</onup>
-		<ondown>2</ondown>
+		<ondown>11</ondown>
+		<onright>99</onright>
 	</control>
+	<control>
+		<description>Search</description>
+		<type>button</type>
+		<id>11</id>
+		<posX>55</posX>
+		<posY>357</posY>
+		<label>137</label>
+		<hyperlink>604</hyperlink>
+		<onup>10</onup>
+		<ondown>2</ondown>
+		<onright>99</onright>
+	</control>
+
 	<control>
 		<description>video window</description>
 		<type>videowindow</type>
@@ -168,6 +190,11 @@
 		<posY>215</posY>
 		<width>400</width>
 		<height>300</height>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<ondown>99</ondown>
+		<action>18</action>
+		<textureFocus>video_window_focus.png</textureFocus>
 	</control>
 
 	<control>
@@ -272,7 +299,7 @@
 		<posX>65</posX> 
 		<posY>525</posY>
 		<align>left</align>  
-		<font>font13</font> 
+		<font>font13</font>
 		<textcolor>FFB2D4F5</textcolor>
 		<label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
 		<id>22</id> 

@@ -69,18 +69,16 @@
 		<width>400</width> 
 		<label>675</label> 
 		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
-		<description>TagLine value</description> 
-		<type>fadelabel</type> 
-		<id>25</id> 
-		<posX>120</posX> 
-		<posY>320</posY> 
-		<width>300</width> 
-		<label>-</label> 
-		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor> 
+		<description>TagLine value</description>
+		<type>fadelabel</type>
+		<id>25</id>
+		<posX>120</posX>
+		<posY>320</posY>
+		<width>300</width>
+		<label>-</label>
+		<font>font13</font>
 	</control>
 	<control>
 		<description>Description1</description>
@@ -88,11 +86,10 @@
 		<id>26</id>
 		<posX>120</posX>
 		<posY>350</posY>
-		<width>300</width> 
-		<height>100</height> 
+		<width>300</width>
+		<height>100</height>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
 	</control>
 
 </controls>

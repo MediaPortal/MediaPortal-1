@@ -60,7 +60,7 @@
 		<textcolor>ff000000</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
-	</control> 
+	</control>
  	<control>
 		<description>default togglebutton</description>
 		<type>togglebutton</type>
@@ -77,7 +77,7 @@
 		<AltTextureNoFocus>arrow_down_nofocus.png</AltTextureNoFocus>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>ff000000</textcolor>
+		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
@@ -283,7 +283,7 @@
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
 	<control>
-	      <description>default select button</description>
+	  <description>default select button</description>
 		<type>selectbutton</type>
 		<id>6</id>
 		<posX>55</posX>

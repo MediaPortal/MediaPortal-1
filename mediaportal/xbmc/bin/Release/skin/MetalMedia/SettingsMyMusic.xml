@@ -83,6 +83,8 @@
 		<posY>286</posY>
 		<width>140</width>
 		<height>24</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<onleft>8</onleft>
 		<onright>8</onright>
 		<onup>6</onup>
@@ -107,6 +109,8 @@
 		<posY>320</posY>
 		<width>140</width>
 		<height>24</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<onup>8</onup>
 		<ondown>10</ondown>
 		<onleft>13</onleft>
@@ -131,6 +135,8 @@
 		<posY>354</posY>
 		<width>140</width>
 		<height>24</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<onleft>10</onleft>
 		<onright>10</onright>
 		<onup>13</onup>
