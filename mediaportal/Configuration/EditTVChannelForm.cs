@@ -1417,7 +1417,7 @@ namespace MediaPortal.Configuration
 
 					if (channel.Channel>=0)
 					{
-						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation, audioPid,videoPid,teletextPid;
+						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid;
 						string provider;
 						//DVB-T
 						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid);

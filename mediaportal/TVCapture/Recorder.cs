@@ -339,7 +339,7 @@ namespace MediaPortal.TV.Recording
 					if (!dev.IsRecording)
 					{
 						//an can it receive the channel we want to record?
-						if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) )
+						if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID)  || m_tvcards.Count==1)
 						{
 							// does this card have a higher priority?
 							if (dev.Priority>highestPrio)
@@ -398,7 +398,7 @@ namespace MediaPortal.TV.Recording
 						if (dev.IsPostRecording)
 						{
 							//an can it receive the channel we want to record?
-							if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) )
+							if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID)  || m_tvcards.Count==1)
 							{
 								
 								// does this card have a higher priority?
@@ -713,7 +713,7 @@ namespace MediaPortal.TV.Recording
 				if ( dev.IsTimeShifting || dev.View )
 				{
 					//can card view the new channel we want?
-					if (TVDatabase.CanCardViewTVChannel(channel,dev.ID) )
+					if (TVDatabase.CanCardViewTVChannel(channel,dev.ID)  || m_tvcards.Count==1)
 					{
 						// is it not recording ? or recording on the channel we want?
 						if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
@@ -806,7 +806,7 @@ namespace MediaPortal.TV.Recording
 				dev=(TVCaptureDevice)m_tvcards[i];
 				if (!dev.IsRecording)
 				{
-					if (TVDatabase.CanCardViewTVChannel(channel,dev.ID) )
+					if (TVDatabase.CanCardViewTVChannel(channel,dev.ID) || m_tvcards.Count==1)
 					{
 						if (dev.Priority>prio)
 						{

@@ -177,7 +177,7 @@ namespace MediaPortal.TV.Recording
 							if (!card.IsRecording)
 							{
 								//and can it record the channel
-								if (TVDatabase.CanCardViewTVChannel(rec.Channel,card.ID))
+								if (TVDatabase.CanCardViewTVChannel(rec.Channel,card.ID) || cards.Count==1)
 								{
 									//is its priority higher?
 									if (card.Priority>highestPrio)
