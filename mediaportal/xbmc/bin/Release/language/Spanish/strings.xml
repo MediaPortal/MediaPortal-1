@@ -1937,6 +1937,58 @@
 		<id>672</id>
 		<value>Grabar Lunes-Viernes</value>
 	</string>	
+	<string>
+		<id>673</id>
+		<value>Velocidad del scroll</value>
+	</string>	
+	<string>
+		<id>674</id>
+		<value>Configuracion GUI</value>
+	</string>	
+	<string>
+		<id>675</id>
+		<value>Ejemplo:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Borrar las grabaciones vistas?</value>
+	</string>	
+	<string>
+		<id>677</id>
+		<value>veces</value>
+	</string>	
+	<string>
+		<id>678</id>
+		<value>Ordenar Por: Genero</value>
+	</string>	
+	<string>
+		<id>679</id>
+		<value>Semanal</value>
+	</string>	
+	<string>
+		<id>680</id>
+		<value>Lunes-Viernes</value>
+	</string>	
+	<string>
+		<id>681</id>
+		<value>Esperando</value>
+	</string>	
+	<string>
+		<id>682</id>
+		<value>Grabando</value>
+	</string>	
+	<string>
+		<id>683</id>
+		<value>Terminado</value>
+	</string>	
+	<string>
+		<id>684</id>
+		<value>Cancelado</value>
+	</string>	
+	<string>
+		<id>685</id>
+		<value>Ordernar Por: Estatus</value>
+	</string>		
 <string><id>10000</id><value>Casa</value></string>
 <string><id>10001</id><value>Mis Programas</value></string>
 <string><id>10002</id><value>Mis Fotos</value></string>
@@ -2004,4 +2056,84 @@
 <string><id>709</id><value>Auto actualizar</value></string>
 <string><id>710</id><value>Una version nueva esta disponible</value></string>
 <string><id>711</id><value>Actualizar de v#old ->v#new ?</value></string>
+<string><id>712</id><value>Atras</value></string>
+<string><id>713</id><value>Autocomenzar</value></string>
+<string><id>714</id><value>Disco insertado, quieres correrlo?</value></string>
+<string><id>715</id><value>CD insertado, quieres empezarlo?</value></string>
+<string><id>716</id><value>Satelite</value></string>
+<string><id>717</id><value>Clima</value></string>
+<string><id>718</id><value>Borrar Top 100</value></string>
+<string><id>719</id><value>Estas seguro que quieres borrar la list de Top 100</value></string>
+<string><id>720</id><value>Show: Duración</value></string>
+<string><id>721</id><value>Show: Veces tocada</value></string>
+<string><id>722</id><value>No se puede play el CD</value></string>
+<string><id>723</id><value>Has insertado un CD?</value></string>
+<string><id>724</id><value>Buscar en la Guía de TV</value></string>
+<string><id>725</id><value>Generos</value></string>
+<string><id>726</id><value>Titulo</value></string>
+<string><id>727</id><value>TV vivo en background</value></string>
+<string><id>728</id><value>No se puede comenzar</value></string>
+<string><id>729</id><value>cerciórese de que este usando VMR9 y este tocando</value></string>
+<string><id>730</id><value>Este horario está registrando. Si usted borra</value></string>
+<string><id>731</id><value>el horario, entonces se para la grabación.</value></string>
+<string><id>732</id><value>Estas seguro?</value></string>
+<string><id>733</id><value>Ver: Filmstrip</value></string>
+<string><id>734</id><value>Imagen:</value></string>
+<string><id>735</id><value>Rotar</value></string>
+<string><id>800</id><value>Comienza con</value></string>
+<string><id>801</id><value>Contiene</value></string>
+<string><id>802</id><value>Termina en</value></string>
+<string><id>803</id><value>  Es  </value></string>
+<string><id>804</id><value>Hecho</value></string>
+<string><id>805</id><value>Borrar</value></string>
+<string><id>806</id><value>Titulo</value></string>
+<string><id>807</id><value>Dejar</value></string>
+<string><id>808</id><value>Ingredientes</value></string>
+<string><id>809</id><value>Direcciones</value></string>
+<string><id>810</id><value>Cartas</value></string>
+<string><id>850</id><value>My Alarm</value></string>
+<string><id>851</id><value>List de musica</value></string>
+<string><id>852</id><value>Alarma prendida</value></string>
+<string><id>853</id><value>Seleccione lista de musica</value></string>
+<string><id>854</id><value>Usando estos dias</value></string>
+<string><id>855</id><value>Hora de la alarma</value></string>
+<string><id>856</id><value>Hora de dormir prendido</value></string>
+<string><id>857</id><value>Snooze</value></string>
+<string><id>858</id><value>Hora de Snooze</value></string>
+<string><id>859</id><value>Hara de dormir</value></string>
+<string><id>860</id><value>El volumen fade in/out</value></string>
+<string><id>8000</id><value>My Correo</value></string>
+<string><id>8001</id><value>Revisar Correo</value></string>
+<string><id>8002</id><value>No Auto Revisar</value></string>
+<string><id>8003</id><value>Auto Revisar</value></string>
+<string><id>8004</id><value>Mensaje nuevo</value></string>
+<string><id>8005</id><value>Revisando Correo</value></string>
+<string><id>8007</id><value>Auto Revisar</value></string>
+<string><id>8008</id><value>Devuelta</value></string>
+<string><id>8009</id><value>Marcar todos no leido</value></string>
+<string><id>8010</id><value>Correo no definido</value></string>
+<string><id>8011</id><value>Vaya por favor a setup y a definir</value></string>
+<string><id>8012</id><value>al menos 1 correo para usar el Mail-Plugin.</value></string>
+<string><id>8013</id><value>El servidor no responde</value></string>
+<string><id>8014</id><value>El servidor '{0}' no responde!</value></string>
+<string><id>8015</id><value>Revise la configuracion del correo '{0}'</value></string>
+<string><id>8016</id><value>De</value></string>
+<string><id>8017</id><value>A</value></string>
+<string><id>8018</id><value>Acerca</value></string>
+<string><id>8019</id><value>Mensaje</value></string>
+<string><id>8020</id><value>Dejar ver mensajes en HTML</value></string>
+<string><id>8021</id><value>Marcar Leido</value></string>
+<string><id>8022</id><value>Dejar ver attachment</value></string>
+<string><id>8023</id><value>Un mensaje nuevo ha llegado</value></string>
+<string><id>8024</id><value>Ver Mensaje</value></string>
+<string><id>8025</id><value>Analizando Mensaje</value></string>
+<string><id>8030</id><value>Conectado al servidor</value></string>
+<string><id>8031</id><value>Obteniendo el numero del mensaje</value></string>
+<string><id>8033</id><value>Progreso</value></string>
+<string><id>13000</id><value>Sistema:</value></string>
+<string><id>13001</id><value>Fabricante:</value></string>
+<string><id>13002</id><value>Correr</value></string>
+<string><id>13003</id><value>Importando archivo *.mlf</value></string>
+<string><id>13004</id><value>Importando archivo *.my</value></string>
+<string><id>13005</id><value>Ultimo archivo importado:</value></string>
 </strings>
