@@ -1714,32 +1714,6 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}
 
-		void TestTune()
-		{
-			//Scan();
-			Log.Write("tune to nl 2");
-
-			TunerLib.TuneRequest newTuneRequest = null;
-			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-			TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
-
-			Log.Write("{0}", myTuningSpace.UniqueName, myTuningSpace.FriendlyName);
-			newTuneRequest = myTuningSpace.CreateTuneRequest();
-
-			TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
-
-			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
-
-			myLocator.CarrierFrequency		= 698000;
-			myTuneRequest.ONID	= -1;					//original network id
-			myTuneRequest.TSID	= 1;						//transport stream id
-			myTuneRequest.SID		= 12;						//service id
-			myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-			myTuner.TuneRequest = newTuneRequest;
-			Marshal.ReleaseComObject(myTuneRequest);
-		}
-
-		
 
 		
 		public void Process()

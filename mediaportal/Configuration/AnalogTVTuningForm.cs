@@ -187,7 +187,7 @@ namespace MediaPortal
 			this.Controls.Add(this.btnOk);
 			this.Controls.Add(this.labelStatus);
 			this.Name = "AnalogTVTuningForm";
-			this.Text = "AnalogTVTuningForm";
+			this.Text = "Find all TV channels";
 			this.Load += new System.EventHandler(this.AnalogTVTuningForm_Load);
 			this.ResumeLayout(false);
 

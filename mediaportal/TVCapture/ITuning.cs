@@ -36,6 +36,12 @@ namespace MediaPortal.TV.Recording
 		/// called when tuning has ended
 		/// </summary>
 		void OnEnded();
+
+		
+		/// <summary>
+		/// called when the listview should be refreshed
+		/// </summary>
+		void Update();
 	}
 
 	public interface ITuning

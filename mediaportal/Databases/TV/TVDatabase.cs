@@ -1904,7 +1904,7 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 					int totalchannels=results.Rows.Count;
 
-					strSQL=String.Format( "select * from channel where strChannel like '{0}'", strChannel);
+					strSQL=String.Format( "select * from dvbtchannels where iLCN like {0}", idChannel);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) 
 					{
@@ -1913,15 +1913,14 @@ namespace MediaPortal.TV.Database
 						Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
-						return iNewID;
+						return idChannel;
 					}
 					else
 					{
-						int iNewID=Int32.Parse(Get(results,0,"iChannelNr"));
-						strSQL=String.Format( "update dvbtchannels set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}' where iLCN like '{1}'", frequency,ONID,TSID,SID,idChannel, strChannel);
+						strSQL=String.Format( "update dvbtchannels set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}' where iLCN like '{5}'", frequency,ONID,TSID,SID,strChannel, idChannel);
 						Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
-						return iNewID;
+						return idChannel;
 					}
 				} 
 				catch (SQLiteException ex) 
