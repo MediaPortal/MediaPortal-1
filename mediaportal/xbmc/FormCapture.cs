@@ -161,9 +161,9 @@ namespace MediaPortal
       this.btnCancel = new System.Windows.Forms.Button();
       this.comboFrameSize = new System.Windows.Forms.ComboBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
       this.textBoxFrameRate = new System.Windows.Forms.TextBox();
+      this.label6 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
       this.groupBox11.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
@@ -337,13 +337,13 @@ namespace MediaPortal
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Size/Rate";
       // 
-      // label5
+      // textBoxFrameRate
       // 
-      this.label5.Location = new System.Drawing.Point(16, 16);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(104, 16);
-      this.label5.TabIndex = 0;
-      this.label5.Text = "Framesize:";
+      this.textBoxFrameRate.Location = new System.Drawing.Point(32, 88);
+      this.textBoxFrameRate.Name = "textBoxFrameRate";
+      this.textBoxFrameRate.Size = new System.Drawing.Size(64, 20);
+      this.textBoxFrameRate.TabIndex = 2;
+      this.textBoxFrameRate.Text = "";
       // 
       // label6
       // 
@@ -353,13 +353,13 @@ namespace MediaPortal
       this.label6.TabIndex = 1;
       this.label6.Text = "Framerate:";
       // 
-      // textBoxFrameRate
+      // label5
       // 
-      this.textBoxFrameRate.Location = new System.Drawing.Point(32, 88);
-      this.textBoxFrameRate.Name = "textBoxFrameRate";
-      this.textBoxFrameRate.Size = new System.Drawing.Size(64, 20);
-      this.textBoxFrameRate.TabIndex = 2;
-      this.textBoxFrameRate.Text = "";
+      this.label5.Location = new System.Drawing.Point(16, 16);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(104, 16);
+      this.label5.TabIndex = 0;
+      this.label5.Text = "Framesize:";
       // 
       // FormCapture
       // 
@@ -471,6 +471,8 @@ namespace MediaPortal
         iformat++;
       }
       comboFrameSize.SelectedIndex=isel;
+      this.comboVideoDevice.SelectedIndexChanged += new System.EventHandler(this.comboVideoDevice_SelectedIndexChanged_1);
+
     }
 
 
@@ -557,7 +559,30 @@ namespace MediaPortal
     {
       listFilters.Items.Clear();
       Capture cap=setupgraph();
-      if (cap==null) return;
+      if (cap==null) 
+      {
+        comboVideoCompressor.Enabled=true;
+        comboAudioCompressor.Enabled=true;
+        comboAudioDevice.Enabled=true;
+        comboBoxCaptureFormat.Enabled=true;
+        return;
+      }
+
+      if (cap.SupportsTimeShifting)
+      {
+        comboVideoCompressor.SelectedIndex=0;
+        comboVideoCompressor.Enabled=false;
+
+        comboAudioCompressor.SelectedIndex=0;
+        comboAudioCompressor.Enabled=false;
+
+        comboAudioDevice.SelectedIndex=0;
+        comboAudioDevice.Enabled=false;
+
+        comboBoxCaptureFormat.SelectedIndex=2;
+        comboBoxCaptureFormat.Enabled=false;
+      }
+
       if (cap.PropertyPages!=null)
       {
         foreach (PropertyPage page in cap.PropertyPages)
@@ -690,6 +715,11 @@ namespace MediaPortal
       }
       if (capture!=null) capture.LoadSettings();
       return capture;
+    }
+
+    private void comboVideoDevice_SelectedIndexChanged_1(object sender, System.EventArgs e)
+    {
+      SetupPropertyPageList();
     }
 
 
