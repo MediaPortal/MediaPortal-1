@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using DShowNET;
 using DirectX.Capture;
 using MediaPortal.TV.Database;
+using MediaPortal.Radio.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -219,5 +220,7 @@ namespace MediaPortal.TV.Recording
 		void Tune(object tuningObject, int disecqNo);
 		void StoreChannels(int ID,bool radio, bool tv);
 		IBaseFilter Mpeg2DataFilter();
+
+		void TuneRadioChannel(RadioStation station);
 	}
 }

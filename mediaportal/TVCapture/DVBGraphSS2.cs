@@ -10,6 +10,7 @@ using MediaPortal.GUI.Library;
 using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
+using MediaPortal.Radio.Database;
 
 
 namespace MediaPortal.TV.Recording
@@ -1890,6 +1891,10 @@ namespace MediaPortal.TV.Recording
 		{
 			//return the IBaseFilter interface of the mpeg2 sections & tables filter
 			return null;
+		}
+		
+		public void TuneRadioChannel(RadioStation station)
+		{
 		}
 	}
 }

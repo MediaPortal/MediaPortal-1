@@ -8,6 +8,7 @@ using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using DirectX.Capture;
 using MediaPortal.TV.Database;
+using MediaPortal.Radio.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -1085,6 +1086,10 @@ namespace MediaPortal.TV.Recording
 		public IBaseFilter Mpeg2DataFilter()
 		{
 			return null;
+		}
+		
+		public void TuneRadioChannel(RadioStation station)
+		{
 		}
   }
 }

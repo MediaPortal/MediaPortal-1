@@ -14,6 +14,7 @@ using MediaPortal.TV.Database;
 using TVCapture;
 using System.Xml;
 using DirectX.Capture;
+using MediaPortal.Radio.Database;
 
 namespace MediaPortal.TV.Recording
 {
@@ -2870,6 +2871,10 @@ namespace MediaPortal.TV.Recording
 		public IBaseFilter Mpeg2DataFilter()
 		{
 			return m_SectionsTables;
+		}
+		
+		public void TuneRadioChannel(RadioStation station)
+		{
 		}
 
 	}//public class DVBGraphBDA 
