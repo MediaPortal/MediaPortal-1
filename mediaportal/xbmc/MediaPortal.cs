@@ -466,8 +466,8 @@ public class MediaPortalApp : D3DApp, IRender
                     if (g_Player.Playing && g_Player.IsTV) g_Player.Stop();
                     Recorder.Previewing=false;
                   }
-                  GUIGraphicsContext.ShowBackground =true;
                 }
+                GUIGraphicsContext.ShowBackground =true;
               }
 						}
 					}
