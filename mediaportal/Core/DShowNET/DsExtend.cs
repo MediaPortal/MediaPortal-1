@@ -978,14 +978,14 @@ namespace DShowNET
     DeinterlaceTech9_MotionVectorSteered      = 0x0080
   } ;
 
-  [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+  [StructLayout(LayoutKind.Sequential), ComVisible(true)]
   public struct VMR9Frequency 
   {
     public uint dwNumerator;
     public uint dwDenominator;
   } ;
 
-  public enum VMR9_SampleFormat 
+  public enum VMR9_SampleFormat :int
   {
     VMR9_SampleReserved      = 1,
     VMR9_SampleProgressiveFrame = 2,
@@ -995,7 +995,7 @@ namespace DShowNET
     VMR9_SampleFieldSingleOdd = 6,
   } ;
 
-  [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+  [StructLayout(LayoutKind.Sequential), ComVisible(true)]
   public struct VMR9VideoDesc 
   {
     public uint               dwSize;
@@ -1008,7 +1008,7 @@ namespace DShowNET
   } ;
 
 
-  [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+  [StructLayout(LayoutKind.Sequential), ComVisible(true)]
   public struct VMR9DeinterlaceCaps 
   {
     public uint               dwSize;
@@ -1030,9 +1030,9 @@ namespace DShowNET
   {
     [PreserveSig]
     int GetNumberOfDeinterlaceModes(
-      [In] VMR9VideoDesc lpVideoDescription,
-      [In, Out] ref uint lpdwNumDeinterlaceModes,
-      [Out] [MarshalAs(UnmanagedType.LPArray)] out Guid [] lpDeinterlaceModes
+      [In] IntPtr lpVideoDescription,
+      [In, Out]ref uint lpdwNumDeinterlaceModes,
+      [Out]  IntPtr lpDeinterlaceModes
       );
 
     [PreserveSig]
