@@ -208,6 +208,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
+			//find unique ID for the new card
 			int cardid=1;
 			bool found=false;
 			do
@@ -232,7 +233,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				AddCaptureCard(editCard.CaptureCard);
 
-				editCard.CaptureCard.ID = cardsListView.Items.Count;
+				editCard.CaptureCard.ID = cardid;
 				captureCards.Add(editCard.CaptureCard);
 			}
 			SaveSettings();
