@@ -955,10 +955,10 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				m_osdWindow.UpdateChannelInfo();
-				Action myaction=new Action();
-				myaction.wID = Action.ActionType.ACTION_SHOW_OSD;
-
-				OnAction(myaction);
+				// disalbe until a good channel changing osd is made
+				//Action myaction=new Action();
+				//myaction.wID = Action.ActionType.ACTION_SHOW_OSD;
+				//OnAction(myaction);
 			} 
 		}
 
