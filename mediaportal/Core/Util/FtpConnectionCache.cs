@@ -50,6 +50,7 @@ namespace Core.Util
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
         msg.Label=originalRemoteFile;
         msg.Label2=localFile;
+        msg.Param1=(int)BytesTransferred;
         GUIGraphicsContext.SendMessage(msg);
 
 
@@ -72,6 +73,12 @@ namespace Core.Util
       private void OnBytesTransferred(object ftpClient, BytesTransferredEventArgs bytesTransferred)
       {
         BytesTransferred=bytesTransferred.ByteCount;
+        
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
+        msg.Label=originalRemoteFile;
+        msg.Label2=localFile;
+        msg.Param1=(int)BytesTransferred;
+        GUIGraphicsContext.SendMessage(msg);
       }
     }
 

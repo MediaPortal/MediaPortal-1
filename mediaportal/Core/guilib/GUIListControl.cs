@@ -4,6 +4,7 @@ using System.Collections;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+using MediaPortal.Util;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -907,6 +908,7 @@ namespace MediaPortal.GUI.Library
            if (message.Label==item.Path)
            {
              item.IsDownloading=true;
+             item.Label2=Utils.GetSize(message.Param1);
            }
          }
        }
