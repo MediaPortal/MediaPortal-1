@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  26-06-2004  MY TV       : fixed : framerate / framesize specified in the setup where not working anymore
   24-06-2004  general     : added : RSS Feed plugin (thx 2 Gilthalas)
   24-06-2004  general     : added : skin engine:added option to specify text (x,y) position in button
   24-06-2004  general     : fixed : skin engine:fixed some scaling bugs for large displays (1280x1024 and higher)
