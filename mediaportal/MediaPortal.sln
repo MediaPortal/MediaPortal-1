@@ -213,6 +213,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WmaTagReader", "WmaTagReade
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIAlarm", "GUIAlarm\GUIAlarm.csproj", "{8E2B8288-F074-496E-82BE-9F967A85AD04}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -393,6 +397,10 @@ Global
 		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Debug.Build.0 = Debug|.NET
 		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Release.ActiveCfg = Release|.NET
 		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Release.Build.0 = Release|.NET
+		{8E2B8288-F074-496E-82BE-9F967A85AD04}.Debug.ActiveCfg = Debug|.NET
+		{8E2B8288-F074-496E-82BE-9F967A85AD04}.Debug.Build.0 = Debug|.NET
+		{8E2B8288-F074-496E-82BE-9F967A85AD04}.Release.ActiveCfg = Release|.NET
+		{8E2B8288-F074-496E-82BE-9F967A85AD04}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

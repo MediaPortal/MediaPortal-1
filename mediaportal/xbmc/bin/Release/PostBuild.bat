@@ -23,6 +23,7 @@ copy ..\..\..\GUIVideoFiles\bin\Release\GUIVideoFiles.dll plugins\windows
 copy ..\..\..\GUIVideoFullScreen\bin\Release\GUIVideoFullScreen.dll plugins\windows
 copy ..\..\..\home\bin\Release\home.dll plugins\windows
 copy ..\..\..\SetupScreens\bin\Release\SetupScreens.dll plugins\windows
+copy ..\..\..\GUIWeather\bin\Release\GUIAlarm.dll plugins\windows
 copy ..\..\..\GUIWeather\bin\Release\GUIWeather.dll plugins\windows
 copy ..\..\..\SMIReader\bin\Release\SMIReader.dll plugins\subtitle
 copy ..\..\..\SRTReader\bin\Release\SRTReader.dll plugins\subtitle
