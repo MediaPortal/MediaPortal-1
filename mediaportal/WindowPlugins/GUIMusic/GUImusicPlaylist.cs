@@ -411,18 +411,7 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
-    void OnRetrieveCoverArt(GUIListItem item)
-    {
-      Utils.SetDefaultIcons(item);
-      MusicTag tag = (MusicTag)item.MusicTag;
-      string strThumb=GUIMusicFiles.GetCoverArt(item.IsFolder,item.Path,tag);
-      if (strThumb!=String.Empty)
-      {
-        item.ThumbnailImage = strThumb;
-        item.IconImageBig = strThumb;
-        item.IconImage = strThumb;
-      }
-    }
+
 		void LoadDirectory(string strNewDirectory)
 		{
 			GUIListItem SelectedItem = GetSelectedItem();
@@ -636,20 +625,6 @@ namespace MediaPortal.GUI.Music
       SelectCurrentPlayingSong();
 		}
 		
-		
-    bool GetKeyboard(ref string strLine)
-    {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard) return false;
-      keyboard.Reset();
-      keyboard.DoModal(GetID);
-      if (keyboard.IsConfirmed)
-      {
-        strLine = keyboard.Text;
-        return true;
-      }
-      return false;
-    }
 
 		void SavePlayList()
 		{

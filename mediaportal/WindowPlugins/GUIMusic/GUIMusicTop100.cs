@@ -209,18 +209,6 @@ namespace MediaPortal.GUI.Music
       }
 		}
     
-		void OnRetrieveCoverArt(GUIListItem item)
-		{
-			Utils.SetDefaultIcons(item);
-			MusicTag tag = (MusicTag)item.MusicTag;
-			string strThumb=GUIMusicFiles.GetCoverArt(item.IsFolder,item.Path,tag);
-			if (strThumb!=String.Empty)
-			{
-				item.ThumbnailImage = strThumb;
-				item.IconImageBig = strThumb;
-				item.IconImage = strThumb;
-			}
-		}
 
 		protected override void OnClick(int iItem)
 		{

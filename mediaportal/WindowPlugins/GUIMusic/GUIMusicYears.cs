@@ -195,9 +195,8 @@ namespace MediaPortal.GUI.Music
 					break;
       }
     }
-#endregion
 
-    void OnRetrieveCoverArt(GUIListItem item)
+    protected override void OnRetrieveCoverArt(GUIListItem item)
     {
       if (m_Mode==Mode.ShowYears)
       {
@@ -207,21 +206,87 @@ namespace MediaPortal.GUI.Music
       else if (m_Mode==Mode.ShowSongs)
       {
         // get thumbs...
-        Utils.SetDefaultIcons(item);
-        MusicTag tag = (MusicTag)item.MusicTag;
-        string strThumb=GUIMusicFiles.GetCoverArt(item.IsFolder,item.Path,tag);
-        if (strThumb!=string.Empty)
-        {
-          item.ThumbnailImage=strThumb;
-          item.IconImageBig=strThumb;
-          item.IconImage=strThumb;
-        }
+       base.OnRetrieveCoverArt(item);
       }
       if (ViewByIcon &&!ViewByLargeIcon) 
         item.IconImage=item.IconImageBig;
     }
 
-    void LoadDirectory(string strNewDirectory, Mode newMode)
+		protected override void OnClick(int iItem)
+		{
+			GUIListItem item = GetSelectedItem();
+			if (item==null) return;
+			m_iItemSelected=-1;
+			if (m_Mode==Mode.ShowYears)
+			{
+				m_Year=Int32.Parse(item.Path);
+				LoadDirectory(m_strDirectory,Mode.ShowSongs);
+				SwitchView();
+			}
+			else
+			{
+				if ( item.Label=="..")
+				{
+					m_Year=-1;
+					LoadDirectory(m_strDirectory,Mode.ShowYears);
+					SwitchView();
+					return;
+				}
+
+        
+				// play item
+				//play and add current directory to temporary playlist
+				int nFolderCount=0;
+				PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP ).Clear();
+				PlayListPlayer.Reset();
+				for ( int i = 0; i < (int) GetItemCount(); i++ ) 
+				{
+					GUIListItem pItem=GetItem(i);
+					if ( pItem.IsFolder ) 
+					{
+						nFolderCount++;
+						continue;
+					}
+					PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+					playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+					playlistItem.FileName=pItem.Path;
+					playlistItem.Description=pItem.Label;
+					int iDuration=0;
+					MusicTag tag=(MusicTag)pItem.MusicTag;
+					if (tag!=null) iDuration=tag.Duration;
+					playlistItem.Duration=iDuration;
+					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+				}
+
+
+				//  Save current window and directory to know where the selected item was
+				MusicState.TempPlaylistWindow=GetID;
+				MusicState.TempPlaylistDirectory=m_strDirectory;
+
+				PlayListPlayer.CurrentPlaylist=PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
+				PlayListPlayer.Play(iItem-nFolderCount);
+			}
+		}
+    
+		protected override void OnQueueItem(int iItem)
+		{
+			// add item 2 playlist
+			GUIListItem pItem=GetItem(iItem);
+			if (m_Mode==Mode.ShowYears)
+			{
+				int year=Int32.Parse(pItem.Path);
+				OnQueueYear(year);
+			}
+			else if (m_Mode==Mode.ShowSongs)
+			{
+				AddItemToPlayList(pItem);
+			}
+			//move to next item
+			GUIControl.SelectItemControl(GetID, facadeView.GetID,iItem+1);
+		}
+
+		#endregion
+		void LoadDirectory(string strNewDirectory, Mode newMode)
     {
       Mode oldMode=m_Mode;
       GUIListItem SelectedItem = GetSelectedItem();
@@ -331,64 +396,6 @@ namespace MediaPortal.GUI.Music
 	  }
 
 
-
-    protected override void OnClick(int iItem)
-    {
-      GUIListItem item = GetSelectedItem();
-      if (item==null) return;
-      m_iItemSelected=-1;
-      if (m_Mode==Mode.ShowYears)
-      {
-        m_Year=Int32.Parse(item.Path);
-        LoadDirectory(m_strDirectory,Mode.ShowSongs);
-				SwitchView();
-      }
-      else
-      {
-        if ( item.Label=="..")
-        {
-          m_Year=-1;
-          LoadDirectory(m_strDirectory,Mode.ShowYears);
-					SwitchView();
-          return;
-        }
-
-        
-        // play item
-        //play and add current directory to temporary playlist
-        int nFolderCount=0;
-        PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP ).Clear();
-        PlayListPlayer.Reset();
-        for ( int i = 0; i < (int) GetItemCount(); i++ ) 
-        {
-          GUIListItem pItem=GetItem(i);
-          if ( pItem.IsFolder ) 
-          {
-            nFolderCount++;
-            continue;
-          }
-          PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
-          playlistItem.FileName=pItem.Path;
-          playlistItem.Description=pItem.Label;
-          int iDuration=0;
-          MusicTag tag=(MusicTag)pItem.MusicTag;
-          if (tag!=null) iDuration=tag.Duration;
-          playlistItem.Duration=iDuration;
-          PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
-        }
-
-
-        //  Save current window and directory to know where the selected item was
-        MusicState.TempPlaylistWindow=GetID;
-        MusicState.TempPlaylistDirectory=m_strDirectory;
-
-        PlayListPlayer.CurrentPlaylist=PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
-        PlayListPlayer.Play(iItem-nFolderCount);
-      }
-    }
-    
-
     void OnQueueYear(int year)
     {
       ArrayList songs=new ArrayList();
@@ -408,23 +415,6 @@ namespace MediaPortal.GUI.Music
         PlayListPlayer.CurrentPlaylist =PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
         PlayListPlayer.Play(0);
       }
-    }
-
-    protected override void OnQueueItem(int iItem)
-    {
-      // add item 2 playlist
-      GUIListItem pItem=GetItem(iItem);
-      if (m_Mode==Mode.ShowYears)
-      {
-        int year=Int32.Parse(pItem.Path);
-        OnQueueYear(year);
-      }
-      else if (m_Mode==Mode.ShowSongs)
-      {
-        AddItemToPlayList(pItem);
-      }
-      //move to next item
-      GUIControl.SelectItemControl(GetID, facadeView.GetID,iItem+1);
     }
 
     void AddItemToPlayList(GUIListItem pItem) 
