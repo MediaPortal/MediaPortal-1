@@ -52,8 +52,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.Panel holderPanel;
-		private System.Windows.Forms.Panel panel3;
-		private System.Windows.Forms.Panel panel4;
 		private System.Windows.Forms.Label topicLabel;
 		private System.Windows.Forms.Label infoLabel;
 		private System.Windows.Forms.PictureBox pictureBox1;
@@ -94,13 +92,20 @@ namespace MediaPortal.Configuration
 				//
 				// Build default wizard pages
 				//
-				AddSection(new Sections.Wizard_Welcome(), "", "");
+				AddSection(new Sections.Wizard_Welcome(), "Welcome to Mediaportal", "");
 				AddSection(new Sections.General(), "General", "General information...");
 				AddSection(new Sections.Skin(), "Skin", "Skin settings...");
 				AddSection(new Sections.Wizard_SelectPlugins(), "Plugins", "Please check which plugins you would like to be loaded when MediaPortal starts.");
 				AddSection(new Sections.MusicShares(), "Music Folders", "Music folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Music.", "Plugin Selection.Plugin.MyMusic");
 				AddSection(new Sections.MovieShares(), "Movie Folders", "Movie folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Movies.", "Plugin Selection.Plugin.MyMovies");
 				AddSection(new Sections.PictureShares(), "Picture Folders", "Picture folder information, By checking one of the shares you will make that share the default share, this folder will be automatically shown when you enter My Pictures.", "Plugin Selection.Plugin.MyPictures");
+	
+				AddSection(new Sections.TVCaptureCards() , "Television Capture cards", "TV Capture cards. Add and configure one or more tv capture cards", "");
+				AddSection(new Sections.TVProgramGuide() , "Television Program Guid", "Configure the Electronic Program Guide using XMLTV listings", "");
+				AddSection(new Sections.TVChannels()     , "Television channels", "Configure one or more television channels", "");
+				AddSection(new Sections.TVRecording()    , "Television Recording", "Configure settings for recording tv show", "");
+				AddSection(new Sections.RadioStations()  , "Radio", "Configure local radio and internet radio stations", "");
+				AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
 			}
 		}
@@ -234,157 +239,135 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.nextButton = new System.Windows.Forms.Button();
-      this.backButton = new System.Windows.Forms.Button();
-      this.topPanel = new System.Windows.Forms.Panel();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.infoLabel = new System.Windows.Forms.Label();
-      this.topicLabel = new System.Windows.Forms.Label();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.panel2 = new System.Windows.Forms.Panel();
-      this.holderPanel = new System.Windows.Forms.Panel();
-      this.panel3 = new System.Windows.Forms.Panel();
-      this.panel4 = new System.Windows.Forms.Panel();
-      this.topPanel.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // cancelButton
-      // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(534, 430);
-      this.cancelButton.Name = "cancelButton";
-      this.cancelButton.TabIndex = 1;
-      this.cancelButton.Text = "&Cancel";
-      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-      // 
-      // nextButton
-      // 
-      this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.nextButton.Location = new System.Drawing.Point(449, 430);
-      this.nextButton.Name = "nextButton";
-      this.nextButton.TabIndex = 4;
-      this.nextButton.Text = "&Next >";
-      this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
-      // 
-      // backButton
-      // 
-      this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.backButton.Location = new System.Drawing.Point(371, 430);
-      this.backButton.Name = "backButton";
-      this.backButton.TabIndex = 5;
-      this.backButton.Text = "< &Back";
-      this.backButton.Click += new System.EventHandler(this.backButton_Click);
-      // 
-      // topPanel
-      // 
-      this.topPanel.BackColor = System.Drawing.SystemColors.Window;
-      this.topPanel.Controls.Add(this.pictureBox1);
-      this.topPanel.Controls.Add(this.infoLabel);
-      this.topPanel.Controls.Add(this.topicLabel);
-      this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
-      this.topPanel.Location = new System.Drawing.Point(0, 0);
-      this.topPanel.Name = "topPanel";
-      this.topPanel.Size = new System.Drawing.Size(618, 72);
-      this.topPanel.TabIndex = 6;
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(528, 14);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(70, 48);
-      this.pictureBox1.TabIndex = 2;
-      this.pictureBox1.TabStop = false;
-      // 
-      // infoLabel
-      // 
-      this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.infoLabel.Location = new System.Drawing.Point(8, 26);
-      this.infoLabel.Name = "infoLabel";
-      this.infoLabel.Size = new System.Drawing.Size(512, 40);
-      this.infoLabel.TabIndex = 1;
-      this.infoLabel.Text = "Information information information information information";
-      // 
-      // topicLabel
-      // 
-      this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.topicLabel.Location = new System.Drawing.Point(8, 8);
-      this.topicLabel.Name = "topicLabel";
-      this.topicLabel.Size = new System.Drawing.Size(272, 23);
-      this.topicLabel.TabIndex = 0;
-      this.topicLabel.Text = "Topic";
-      // 
-      // panel1
-      // 
-      this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-      this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-      this.panel1.Location = new System.Drawing.Point(0, 72);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(618, 1);
-      this.panel1.TabIndex = 7;
-      // 
-      // panel2
-      // 
-      this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
-      this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-      this.panel2.Location = new System.Drawing.Point(0, 73);
-      this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(618, 1);
-      this.panel2.TabIndex = 9;
-      // 
-      // holderPanel
-      // 
-      this.holderPanel.Location = new System.Drawing.Point(0, 74);
-      this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(616, 342);
-      this.holderPanel.TabIndex = 10;
-      // 
-      // panel3
-      // 
-      this.panel3.BackColor = System.Drawing.SystemColors.ControlDark;
-      this.panel3.Location = new System.Drawing.Point(0, 416);
-      this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(618, 1);
-      this.panel3.TabIndex = 11;
-      // 
-      // panel4
-      // 
-      this.panel4.BackColor = System.Drawing.SystemColors.ControlLightLight;
-      this.panel4.Location = new System.Drawing.Point(0, 417);
-      this.panel4.Name = "panel4";
-      this.panel4.Size = new System.Drawing.Size(618, 1);
-      this.panel4.TabIndex = 12;
-      // 
-      // WizardForm
-      // 
-      this.AcceptButton = this.nextButton;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(618, 464);
-      this.Controls.Add(this.panel4);
-      this.Controls.Add(this.panel3);
-      this.Controls.Add(this.holderPanel);
-      this.Controls.Add(this.panel2);
-      this.Controls.Add(this.panel1);
-      this.Controls.Add(this.topPanel);
-      this.Controls.Add(this.backButton);
-      this.Controls.Add(this.nextButton);
-      this.Controls.Add(this.cancelButton);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "WizardForm";
-      this.Text = "WizardForm";
-      this.Load += new System.EventHandler(this.WizardForm_Load);
-      this.topPanel.ResumeLayout(false);
-      this.ResumeLayout(false);
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
+			this.cancelButton = new System.Windows.Forms.Button();
+			this.nextButton = new System.Windows.Forms.Button();
+			this.backButton = new System.Windows.Forms.Button();
+			this.topPanel = new System.Windows.Forms.Panel();
+			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.infoLabel = new System.Windows.Forms.Label();
+			this.topicLabel = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.holderPanel = new System.Windows.Forms.Panel();
+			this.topPanel.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// cancelButton
+			// 
+			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.cancelButton.Location = new System.Drawing.Point(534, 518);
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.TabIndex = 2;
+			this.cancelButton.Text = "&Cancel";
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			// 
+			// nextButton
+			// 
+			this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.nextButton.Location = new System.Drawing.Point(449, 518);
+			this.nextButton.Name = "nextButton";
+			this.nextButton.TabIndex = 1;
+			this.nextButton.Text = "&Next >";
+			this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
+			// 
+			// backButton
+			// 
+			this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.backButton.Location = new System.Drawing.Point(371, 518);
+			this.backButton.Name = "backButton";
+			this.backButton.TabIndex = 0;
+			this.backButton.Text = "< &Back";
+			this.backButton.Click += new System.EventHandler(this.backButton_Click);
+			// 
+			// topPanel
+			// 
+			this.topPanel.BackColor = System.Drawing.SystemColors.Window;
+			this.topPanel.Controls.Add(this.pictureBox1);
+			this.topPanel.Controls.Add(this.infoLabel);
+			this.topPanel.Controls.Add(this.topicLabel);
+			this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.topPanel.Location = new System.Drawing.Point(0, 0);
+			this.topPanel.Name = "topPanel";
+			this.topPanel.Size = new System.Drawing.Size(618, 72);
+			this.topPanel.TabIndex = 6;
+			// 
+			// pictureBox1
+			// 
+			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+			this.pictureBox1.Location = new System.Drawing.Point(528, 14);
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(70, 48);
+			this.pictureBox1.TabIndex = 2;
+			this.pictureBox1.TabStop = false;
+			// 
+			// infoLabel
+			// 
+			this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.infoLabel.Location = new System.Drawing.Point(8, 26);
+			this.infoLabel.Name = "infoLabel";
+			this.infoLabel.Size = new System.Drawing.Size(512, 40);
+			this.infoLabel.TabIndex = 1;
+			this.infoLabel.Text = "Information information information information information";
+			// 
+			// topicLabel
+			// 
+			this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.topicLabel.Location = new System.Drawing.Point(8, 8);
+			this.topicLabel.Name = "topicLabel";
+			this.topicLabel.Size = new System.Drawing.Size(272, 23);
+			this.topicLabel.TabIndex = 0;
+			this.topicLabel.Text = "Topic";
+			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panel1.Location = new System.Drawing.Point(0, 72);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(618, 1);
+			this.panel1.TabIndex = 7;
+			// 
+			// panel2
+			// 
+			this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
+			this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panel2.Location = new System.Drawing.Point(0, 73);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(618, 1);
+			this.panel2.TabIndex = 9;
+			// 
+			// holderPanel
+			// 
+			this.holderPanel.Location = new System.Drawing.Point(0, 74);
+			this.holderPanel.Name = "holderPanel";
+			this.holderPanel.Size = new System.Drawing.Size(616, 438);
+			this.holderPanel.TabIndex = 10;
+			// 
+			// WizardForm
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(618, 552);
+			this.Controls.Add(this.holderPanel);
+			this.Controls.Add(this.panel2);
+			this.Controls.Add(this.panel1);
+			this.Controls.Add(this.topPanel);
+			this.Controls.Add(this.backButton);
+			this.Controls.Add(this.nextButton);
+			this.Controls.Add(this.cancelButton);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "WizardForm";
+			this.Text = "WizardForm";
+			this.Load += new System.EventHandler(this.WizardForm_Load);
+			this.topPanel.ResumeLayout(false);
+			this.ResumeLayout(false);
 
-    }
+		}
 		#endregion
 
 		/// <summary>

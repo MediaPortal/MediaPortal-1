@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Collections;
 using System.Reflection;
-
+using MediaPortal.GUI.Library;
 
 namespace AMS.Profile
 {
@@ -114,33 +114,37 @@ namespace AMS.Profile
 		/// <seealso cref="GetValue" />
     public void Save()
     {
-			if (m_doc==null) return;
-			if (m_doc.DocumentElement==null) return;
-			if (m_doc.ChildNodes.Count==0) return;
-			if (m_doc.DocumentElement.ChildNodes==null) return;
-      if (!m_bChanged) return;
-			try
+			lock (typeof(AMS.Profile.Xml))
 			{
+				if (m_doc==null) return;
+				if (m_doc.DocumentElement==null) return;
+				if (m_doc.ChildNodes.Count==0) return;
+				if (m_doc.DocumentElement.ChildNodes==null) return;
+				if (!m_bChanged) return;
 				try
 				{
-					System.IO.File.Delete(m_strFileName+".bak");
-					System.IO.File.Move(m_strFileName, m_strFileName+".bak");
-				}
-				catch (Exception) {}
+					try
+					{
+						System.IO.File.Delete(m_strFileName+".bak");
+						System.IO.File.Move(m_strFileName, m_strFileName+".bak");
+					}
+					catch (Exception) {}
 
-				using (StreamWriter stream = new StreamWriter(m_strFileName, false))
-				{
-					m_doc.Save(stream);		
-					m_doc=null;
-					stream.Flush();
-					stream.Close();
+					using (StreamWriter stream = new StreamWriter(m_strFileName, false))
+					{
+						m_doc.Save(stream);		
+						m_doc=null;
+						stream.Flush();
+						stream.Close();
+					}
+					m_bChanged=false;
 				}
-				m_bChanged=false;
+				catch(Exception ex)
+				{
+					Log.Write("Unable to save {0} {1}",ex.Message);
+				}
+				m_doc=null;
 			}
-			catch(Exception)
-			{
-			}
-			m_doc=null;
     }
 
 		public void SetValue(string section, string entry, object value)

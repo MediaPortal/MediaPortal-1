@@ -23,7 +23,10 @@ namespace MediaPortal.Configuration
 		/// <param name="arguments"></param>
 		public Startup(string[] arguments)
 		{
-			if (arguments!=null)
+			if (!System.IO.File.Exists("mediaportal.xml"))
+				startupMode = StartupMode.Wizard;
+																										
+			else if (arguments!=null)
 			{
 				foreach(string argument in arguments)
 				{
