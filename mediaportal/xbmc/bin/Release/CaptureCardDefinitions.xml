@@ -34,6 +34,7 @@
 <!--    FlyDVB-T DUO                          -->
 <!--    FlyDVB-T DUO Analog			          -->
 <!--    Hauppauge Nova-T                      -->
+<!--    Hauppauge Nova-S                      -->
 <!--    Hauppauge Nova-T 90002                -->
 <!--    Hauppauge WinTV PVR 150               -->
 <!--    Hauppauge WinTV PVR 150MCE            -->
@@ -506,7 +507,23 @@
       </connections>
     </tv>
   </capturecard>
-   
+
+  <capturecard commercialname="Hauppage Nova-S" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100f13c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-S Tuner"        checkdevice="false"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+      
    <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_90020070&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
