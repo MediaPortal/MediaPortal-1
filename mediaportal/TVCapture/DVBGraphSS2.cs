@@ -842,7 +842,7 @@ namespace MediaPortal.TV.Recording
 		}
 
 		//
-		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID)
+		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText)
 		{
 			int hr=0; // the result
 
@@ -915,7 +915,17 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
+					int epid=0;
 					DeleteAllPIDs(m_dataCtrl,0);
+
+					
+					for(int t=1;t<11;t++)
+					{
+						epid=GetPidNumber(pidText,t);
+						if(epid>0)
+							SetPidToPin(m_dataCtrl,0,epid);
+					}
+
 					SetPidToPin(m_dataCtrl,0,18);
 					SetPidToPin(m_dataCtrl,0,0);
 					SetPidToPin(m_dataCtrl,0,1);
@@ -1057,10 +1067,12 @@ namespace MediaPortal.TV.Recording
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			
 			m_iChannelNr=-1;
-			m_sampleInterface.SetCallback(null,0);
 			//m_fileWriter.Close();
 			if(m_pluginsEnabled)
+			{
 				StopGraph();
+				m_sampleInterface.SetCallback(null,0);
+			}
 
 			StopRecording();
 			StopTimeShifting();
@@ -1511,8 +1523,6 @@ namespace MediaPortal.TV.Recording
 				m_mediaControl=(IMediaControl)m_sourceGraph;
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
-				if(m_pluginsEnabled==true)
-					SetAppHandle(GUIGraphicsContext.form.Handle,m_rebuildCB);
 			}
 			else {m_graphState=State.Created;return false;}
 
@@ -1557,7 +1567,7 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public bool StartRecording(int country,AnalogVideoStandard standard,int channel, ref string strFilename, bool bContentRecording, DateTime timeProgStart)
 		{		
-			if (m_graphState != State.TimeShifting || m_pluginsEnabled==true) return false;
+			if (m_graphState != State.TimeShifting ) return false;
 
 			IntPtr recorderObj;
 			if (m_sinkFilter==null) 
@@ -1705,7 +1715,7 @@ namespace MediaPortal.TV.Recording
 				
 				m_channelFound=true;
 				
-				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid)==false)
+				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3)==false)
 				{
 					m_channelFound=false;
 					return;
@@ -1788,9 +1798,6 @@ namespace MediaPortal.TV.Recording
 		/// <returns>boolean indiciating if the graph supports timeshifting</returns>
 		public bool SupportsTimeshifting()
 		{
-			if(m_pluginsEnabled==true)
-				return false;
-			else
 				return true;
 		}
 
@@ -1966,6 +1973,29 @@ namespace MediaPortal.TV.Recording
 			return true;
 		}
 
+		int GetPidNumber(string pidText,int number)
+		{
+			if(pidText=="")
+				return 0;
+			string[] pidSegments;
+
+			pidSegments=pidText.Split(new char[]{';'});
+			if(pidSegments.Length-1<number || pidSegments.Length==0)
+				return 0;
+
+			string[] pid=pidSegments[number-1].Split(new char[]{'/'});
+			if(pid.Length!=2)
+				return 0;
+
+			try
+			{
+				return Convert.ToInt16(pid[0]);
+			}
+			catch
+			{
+				return 0;
+			}
+		}
 
 		/// <summary>
 		/// Stops viewing the TV channel 

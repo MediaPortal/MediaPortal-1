@@ -536,17 +536,15 @@ namespace MediaPortal.TV.Recording
 			int n;
 			ArrayList	tab42=new ArrayList();
 			ArrayList	tab46=new ArrayList();
-			//ArrayList	tab01=new ArrayList();
+			ArrayList	tab01=new ArrayList();
 
 			// check tables
 			AddTSPid(17);
 			//
-			GetStreamData(17, 0x42,0,4500);
+			GetStreamData(17, 0x42,1,4500);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(17, 0x46,0,4500);
+			GetStreamData(17, 0x46,1,4500);
 			tab46=(ArrayList)m_sectionsList.Clone();
-			//GetStreamData(1,1,1,4500);
-			//tab01=(ArrayList)m_sectionsList.Clone();
 
 			bool flag;
 			ChannelInfo pat;
@@ -571,7 +569,7 @@ namespace MediaPortal.TV.Recording
 					
 					// parse pmt
 					int res=0;
-					GetStreamData(pat.network_pmt_PID, 2,0,4500); // get here the pmt
+					GetStreamData(pat.network_pmt_PID, 2,1,4500); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
 						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
 
@@ -584,8 +582,7 @@ namespace MediaPortal.TV.Recording
 						foreach(byte[] wdata in tab46)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 
-						//foreach(byte[] wdata in tab01)
-						//	decodeCATTable(wdata, tpInfo,ref tp,ref pat);
+						//GetStreamData(0x258, 2,0,4500); // get here the pmt
 
 					}
 					tp.channels.Add(pat);
@@ -638,8 +635,17 @@ namespace MediaPortal.TV.Recording
 			int x;
 			while (len2 > 0)
 			{
+				int indicator=buf[pointer];
 				x = 0;
 				x = buf[pointer + 1] + 2;
+				byte[] data=new byte[x];
+				System.Array.Copy(buf,pointer,data,0,x);
+				if(indicator==0x9)
+				{
+					string tmpString=DVB_CADescriptor(data);
+					if(pidText.IndexOf(tmpString,0)==-1)
+						pidText+=tmpString+";";
+				}
 				len2 -= x;
 				pointer += x;
 				len1 -= x;
@@ -690,12 +696,9 @@ namespace MediaPortal.TV.Recording
 								switch(indicator)
 								{
 									case 0x09:
-										if(data.Length>8)
-										{
-											string tmpString=DVB_CADescriptor(data);
-											if(pidText.IndexOf(tmpString,0)==-1)
-												pidText+=tmpString+";";
-										}
+										string tmpString=DVB_CADescriptor(data);
+										if(pidText.IndexOf(tmpString,0)==-1)
+											pidText+=tmpString+";";
 										break;
 									case 0x0A:
 										pmt.data=DVB_GetMPEGISO639Lang(data);
@@ -773,18 +776,31 @@ namespace MediaPortal.TV.Recording
 			int      descriptor_tag;
 			int      descriptor_length;		
 			int      CA_system_ID;
-			int      reserved;
 			int      CA_PID;
 			string   CA_Text="";
 
-			descriptor_tag= b[0];
-			descriptor_length= b[1];
-			if(b[0]==0x9 && b.Length>8)
-			{
-				CA_system_ID= (b[2]<<8)+b[3];
-				CA_PID= (((b[0x4]<<16)+(b[5]<<8)+b[6]) ^ 0xE00000)>>8;
-				CA_Text=CA_PID.ToString()+"/"+CA_system_ID.ToString();
-			}
+			byte[] data=new byte[10]{0,0,0,0,0,0,0,0,0,0};
+
+			if(b==null)
+				return "";
+			if(b.Length==0)
+				return "";
+			if(b[0]!=0x09)
+				return "";
+
+			int dataLen=b.Length;
+
+			if(b.Length>10)
+				dataLen=10;
+
+			System.Array.Copy(b,0,data,0,dataLen);
+
+			descriptor_tag= data[0];
+			descriptor_length= data[1];
+
+			CA_system_ID= (data[2]<<8)+data[3];
+			CA_PID= (((data[0x4]<<16)+(data[5]<<8)+data[6]) ^ 0xE00000)>>8;
+			CA_Text=CA_PID.ToString()+"/"+CA_system_ID.ToString();
 
 			return CA_Text;
 
@@ -893,8 +909,6 @@ namespace MediaPortal.TV.Recording
 		// cat
 		void decodeCATTable (byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
 		{
-			/* IS13818-1  S. 63 */
-			/* see also: ETS 468, ETR 289 */
 
 			int      table_id;
 			int      section_syntax_indicator;		
@@ -1757,7 +1771,7 @@ namespace MediaPortal.TV.Recording
 		{
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
-			GetStreamData(18,tab,1,750);
+			GetStreamData(18,tab,1,200);
 			foreach(byte[] arr in m_sectionsList)
 				decodeEITTable(arr,ref eit);
 
@@ -1787,10 +1801,24 @@ namespace MediaPortal.TV.Recording
 				}
 				if(ch.HasEITSchedule==true)
 				{
+					int lastTable=0x50;
 					eitList=GetEITSchedule(0x50);
+
 					eventsCount+=eitList.Count;
 					foreach(EITDescr eit in eitList)
+					{
+						if(eit.lastTable>lastTable)
+							lastTable=eit.lastTable;
 						SetEITToDatabase(eit);
+					}
+					for(int table=0x51;table<lastTable;table++)
+					{
+						eitList=GetEITSchedule(table);
+						foreach(EITDescr eit in eitList)
+							SetEITToDatabase(eit);
+
+					}
+
 				}
 			}
 			GC.Collect();
@@ -2013,6 +2041,8 @@ namespace MediaPortal.TV.Recording
 			for(int n=0;n<sectLast;n++)
 			{
 				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
+				if((int)sectionBuffer==0)
+					break;
 				if(flag)
 				{
 					if (tableExt != - 1)
@@ -2043,7 +2073,8 @@ namespace MediaPortal.TV.Recording
 
 				}// if(flag)
 			}//for
-			ReleaseSectionsBuffer();
+			if((int)sectionBuffer!=0)
+				ReleaseSectionsBuffer();
 			return true;
 		}
 		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
