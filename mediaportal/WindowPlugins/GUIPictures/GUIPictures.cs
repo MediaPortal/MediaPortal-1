@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Pictures
           string shareLogin = String.Format("sharelogin{0}", i);
           string sharePwd  = String.Format("sharepassword{0}", i);
           string sharePort = String.Format("shareport{0}", i);
-          string remoteFolder = String.Format("shareRemotepath{0}", i);
+          string remoteFolder = String.Format("shareremotepath{0}", i);
 
           Share share=new Share();
           share.Name=xmlreader.GetValueAsString("pictures", strShareName,"");
