@@ -62,6 +62,31 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.CheckBox checkBox3;
 		private System.Windows.Forms.NumericUpDown numericUpDown1;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Label label10;
+		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.ComboBox lnbkind1;
+		private System.Windows.Forms.ComboBox lnbkind2;
+		private System.Windows.Forms.ComboBox lnbkind3;
+		private System.Windows.Forms.ComboBox lnbkind4;
+		private System.Windows.Forms.CheckBox checkBox4;
+		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.TextBox lnb1MHZ;
+		private System.Windows.Forms.Label lnb1;
+		private System.Windows.Forms.TextBox lnbswMHZ;
+		private System.Windows.Forms.Label switchMHZ;
+		private System.Windows.Forms.TextBox lnb0MHZ;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.TextBox circularMHZ;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.TextBox cbandMHZ;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Button button7;
+		private System.Windows.Forms.TreeView treeView3;
+		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.Label label16;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -73,20 +98,6 @@ namespace MediaPortal.Configuration.Sections
 			LoadConfig();
 			TVChannel	tv=new TVChannel();
 			
-		}
-		enum KuBand
-		{
-			Lof1=9750,
-			Switch = 11700,
-			Lof2 = 10600
-		}
-		enum Circular
-		{
-			Lof =10750
-		}
-		enum CBand
-		{
-			Lof=5150
 		}
 
 		// globals
@@ -131,7 +142,16 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label16 = new System.Windows.Forms.Label();
+			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.lnbkind4 = new System.Windows.Forms.ComboBox();
+			this.lnbkind3 = new System.Windows.Forms.ComboBox();
+			this.lnbkind2 = new System.Windows.Forms.ComboBox();
+			this.lnbkind1 = new System.Windows.Forms.ComboBox();
+			this.label11 = new System.Windows.Forms.Label();
+			this.label10 = new System.Windows.Forms.Label();
+			this.label7 = new System.Windows.Forms.Label();
 			this.lnbconfig4 = new System.Windows.Forms.ComboBox();
 			this.lnbconfig3 = new System.Windows.Forms.ComboBox();
 			this.lnbconfig2 = new System.Windows.Forms.ComboBox();
@@ -164,37 +184,87 @@ namespace MediaPortal.Configuration.Sections
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.button7 = new System.Windows.Forms.Button();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.feedback = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.radioButton2 = new System.Windows.Forms.RadioButton();
 			this.radioButton1 = new System.Windows.Forms.RadioButton();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.label15 = new System.Windows.Forms.Label();
+			this.treeView3 = new System.Windows.Forms.TreeView();
 			this.treeView2 = new System.Windows.Forms.TreeView();
 			this.button6 = new System.Windows.Forms.Button();
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.circularMHZ = new System.Windows.Forms.TextBox();
+			this.label13 = new System.Windows.Forms.Label();
+			this.cbandMHZ = new System.Windows.Forms.TextBox();
+			this.label14 = new System.Windows.Forms.Label();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.lnb1MHZ = new System.Windows.Forms.TextBox();
+			this.lnb1 = new System.Windows.Forms.Label();
+			this.lnbswMHZ = new System.Windows.Forms.TextBox();
+			this.switchMHZ = new System.Windows.Forms.Label();
+			this.lnb0MHZ = new System.Windows.Forms.TextBox();
+			this.label12 = new System.Windows.Forms.Label();
 			this.ofd = new System.Windows.Forms.OpenFileDialog();
+			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
+			this.groupBox4.SuspendLayout();
+			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label16);
+			this.groupBox1.Controls.Add(this.checkBox4);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 256);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(424, 128);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "PlugIns:";
+			this.groupBox1.Text = "Plugins:";
+			// 
+			// label16
+			// 
+			this.label16.ForeColor = System.Drawing.Color.Red;
+			this.label16.Location = new System.Drawing.Point(24, 64);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(376, 32);
+			this.label16.TabIndex = 1;
+			this.label16.Text = "There is currently NO Timeshifting/Recording when using Plugins!! This is due to " +
+				"an Exception on the Stream-Buffer-Sink!";
+			this.label16.Visible = false;
+			// 
+			// checkBox4
+			// 
+			this.checkBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkBox4.Location = new System.Drawing.Point(24, 24);
+			this.checkBox4.Name = "checkBox4";
+			this.checkBox4.Size = new System.Drawing.Size(384, 32);
+			this.checkBox4.TabIndex = 0;
+			this.checkBox4.Text = "Load and use MDAPI-Plugins (needs SoftCSA.dll as wrapper in MediaPortal-Folder!)";
+			this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.lnbkind4);
+			this.groupBox2.Controls.Add(this.lnbkind3);
+			this.groupBox2.Controls.Add(this.lnbkind2);
+			this.groupBox2.Controls.Add(this.lnbkind1);
+			this.groupBox2.Controls.Add(this.label11);
+			this.groupBox2.Controls.Add(this.label10);
+			this.groupBox2.Controls.Add(this.label7);
 			this.groupBox2.Controls.Add(this.lnbconfig4);
 			this.groupBox2.Controls.Add(this.lnbconfig3);
 			this.groupBox2.Controls.Add(this.lnbconfig2);
@@ -221,6 +291,74 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "DiSeqC / Satellites ";
 			// 
+			// lnbkind4
+			// 
+			this.lnbkind4.Items.AddRange(new object[] {
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
+			this.lnbkind4.Location = new System.Drawing.Point(344, 136);
+			this.lnbkind4.Name = "lnbkind4";
+			this.lnbkind4.Size = new System.Drawing.Size(72, 21);
+			this.lnbkind4.TabIndex = 26;
+			// 
+			// lnbkind3
+			// 
+			this.lnbkind3.Items.AddRange(new object[] {
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
+			this.lnbkind3.Location = new System.Drawing.Point(344, 112);
+			this.lnbkind3.Name = "lnbkind3";
+			this.lnbkind3.Size = new System.Drawing.Size(72, 21);
+			this.lnbkind3.TabIndex = 25;
+			// 
+			// lnbkind2
+			// 
+			this.lnbkind2.Items.AddRange(new object[] {
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
+			this.lnbkind2.Location = new System.Drawing.Point(344, 88);
+			this.lnbkind2.Name = "lnbkind2";
+			this.lnbkind2.Size = new System.Drawing.Size(72, 21);
+			this.lnbkind2.TabIndex = 24;
+			// 
+			// lnbkind1
+			// 
+			this.lnbkind1.Items.AddRange(new object[] {
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
+			this.lnbkind1.Location = new System.Drawing.Point(344, 64);
+			this.lnbkind1.Name = "lnbkind1";
+			this.lnbkind1.Size = new System.Drawing.Size(72, 21);
+			this.lnbkind1.TabIndex = 23;
+			// 
+			// label11
+			// 
+			this.label11.Location = new System.Drawing.Point(360, 48);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(56, 16);
+			this.label11.TabIndex = 22;
+			this.label11.Text = "LNB:";
+			// 
+			// label10
+			// 
+			this.label10.Location = new System.Drawing.Point(280, 48);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(64, 16);
+			this.label10.TabIndex = 21;
+			this.label10.Text = "LNBSelect:";
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(16, 48);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(80, 16);
+			this.label7.TabIndex = 20;
+			this.label7.Text = "DiSEqC:";
+			// 
 			// lnbconfig4
 			// 
 			this.lnbconfig4.Items.AddRange(new object[] {
@@ -228,9 +366,9 @@ namespace MediaPortal.Configuration.Sections
 															"22 KHz",
 															"33 Khz",
 															"44 KHz"});
-			this.lnbconfig4.Location = new System.Drawing.Point(336, 136);
+			this.lnbconfig4.Location = new System.Drawing.Point(277, 137);
 			this.lnbconfig4.Name = "lnbconfig4";
-			this.lnbconfig4.Size = new System.Drawing.Size(80, 21);
+			this.lnbconfig4.Size = new System.Drawing.Size(59, 21);
 			this.lnbconfig4.TabIndex = 19;
 			// 
 			// lnbconfig3
@@ -240,9 +378,9 @@ namespace MediaPortal.Configuration.Sections
 															"22 KHz",
 															"33 Khz",
 															"44 KHz"});
-			this.lnbconfig3.Location = new System.Drawing.Point(336, 112);
+			this.lnbconfig3.Location = new System.Drawing.Point(277, 113);
 			this.lnbconfig3.Name = "lnbconfig3";
-			this.lnbconfig3.Size = new System.Drawing.Size(80, 21);
+			this.lnbconfig3.Size = new System.Drawing.Size(59, 21);
 			this.lnbconfig3.TabIndex = 18;
 			this.lnbconfig3.SelectedIndexChanged += new System.EventHandler(this.comboBox4_SelectedIndexChanged);
 			// 
@@ -253,9 +391,9 @@ namespace MediaPortal.Configuration.Sections
 															"22 KHz",
 															"33 Khz",
 															"44 KHz"});
-			this.lnbconfig2.Location = new System.Drawing.Point(336, 88);
+			this.lnbconfig2.Location = new System.Drawing.Point(277, 89);
 			this.lnbconfig2.Name = "lnbconfig2";
-			this.lnbconfig2.Size = new System.Drawing.Size(80, 21);
+			this.lnbconfig2.Size = new System.Drawing.Size(59, 21);
 			this.lnbconfig2.TabIndex = 17;
 			// 
 			// lnbconfig1
@@ -265,9 +403,9 @@ namespace MediaPortal.Configuration.Sections
 															"22 KHz",
 															"33 Khz",
 															"44 KHz"});
-			this.lnbconfig1.Location = new System.Drawing.Point(336, 64);
+			this.lnbconfig1.Location = new System.Drawing.Point(277, 65);
 			this.lnbconfig1.Name = "lnbconfig1";
-			this.lnbconfig1.Size = new System.Drawing.Size(80, 21);
+			this.lnbconfig1.Size = new System.Drawing.Size(59, 21);
 			this.lnbconfig1.TabIndex = 16;
 			// 
 			// checkBox1
@@ -332,7 +470,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.sat4.Location = new System.Drawing.Point(128, 138);
 			this.sat4.Name = "sat4";
-			this.sat4.Size = new System.Drawing.Size(168, 20);
+			this.sat4.Size = new System.Drawing.Size(112, 20);
 			this.sat4.TabIndex = 10;
 			this.sat4.Text = "";
 			// 
@@ -340,7 +478,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.sat3.Location = new System.Drawing.Point(128, 114);
 			this.sat3.Name = "sat3";
-			this.sat3.Size = new System.Drawing.Size(168, 20);
+			this.sat3.Size = new System.Drawing.Size(112, 20);
 			this.sat3.TabIndex = 9;
 			this.sat3.Text = "";
 			// 
@@ -348,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.sat2.Location = new System.Drawing.Point(128, 90);
 			this.sat2.Name = "sat2";
-			this.sat2.Size = new System.Drawing.Size(168, 20);
+			this.sat2.Size = new System.Drawing.Size(112, 20);
 			this.sat2.TabIndex = 8;
 			this.sat2.Text = "";
 			// 
@@ -356,7 +494,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.button4.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.button4.Location = new System.Drawing.Point(303, 139);
+			this.button4.Location = new System.Drawing.Point(240, 140);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(24, 16);
 			this.button4.TabIndex = 7;
@@ -367,7 +505,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.button3.Location = new System.Drawing.Point(303, 115);
+			this.button3.Location = new System.Drawing.Point(240, 116);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(24, 16);
 			this.button3.TabIndex = 6;
@@ -378,7 +516,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.button2.Location = new System.Drawing.Point(303, 91);
+			this.button2.Location = new System.Drawing.Point(240, 91);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(24, 16);
 			this.button2.TabIndex = 5;
@@ -389,7 +527,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.sat1.Location = new System.Drawing.Point(128, 66);
 			this.sat1.Name = "sat1";
-			this.sat1.Size = new System.Drawing.Size(168, 20);
+			this.sat1.Size = new System.Drawing.Size(112, 20);
 			this.sat1.TabIndex = 4;
 			this.sat1.Text = "";
 			// 
@@ -397,7 +535,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.button1.Location = new System.Drawing.Point(303, 67);
+			this.button1.Location = new System.Drawing.Point(240, 67);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(24, 16);
 			this.button1.TabIndex = 3;
@@ -406,11 +544,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 48);
+			this.label5.Location = new System.Drawing.Point(128, 48);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(56, 16);
+			this.label5.Size = new System.Drawing.Size(80, 16);
 			this.label5.TabIndex = 2;
-			this.label5.Text = "Satellites:";
+			this.label5.Text = "Transponders:";
 			// 
 			// diseqca
 			// 
@@ -465,18 +603,18 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.comboBox3.Location = new System.Drawing.Point(72, 304);
 			this.comboBox3.Name = "comboBox3";
-			this.comboBox3.Size = new System.Drawing.Size(264, 21);
+			this.comboBox3.Size = new System.Drawing.Size(192, 21);
 			this.comboBox3.TabIndex = 8;
 			this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
 			// 
 			// button5
 			// 
 			this.button5.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button5.Location = new System.Drawing.Point(344, 304);
+			this.button5.Location = new System.Drawing.Point(272, 304);
 			this.button5.Name = "button5";
 			this.button5.Size = new System.Drawing.Size(80, 21);
 			this.button5.TabIndex = 9;
-			this.button5.Text = "Start";
+			this.button5.Text = "Start scan";
 			this.button5.Click += new System.EventHandler(this.button5_Click);
 			// 
 			// label9
@@ -492,6 +630,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -551,6 +690,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// checkBox3
 			// 
+			this.checkBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkBox3.Location = new System.Drawing.Point(24, 192);
 			this.checkBox3.Name = "checkBox3";
 			this.checkBox3.Size = new System.Drawing.Size(104, 16);
@@ -568,6 +708,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage2
 			// 
+			this.tabPage2.Controls.Add(this.button7);
 			this.tabPage2.Controls.Add(this.checkBox2);
 			this.tabPage2.Controls.Add(this.feedback);
 			this.tabPage2.Controls.Add(this.label1);
@@ -585,6 +726,17 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.Size = new System.Drawing.Size(440, 397);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Channels";
+			// 
+			// button7
+			// 
+			this.button7.Enabled = false;
+			this.button7.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button7.Location = new System.Drawing.Point(360, 304);
+			this.button7.Name = "button7";
+			this.button7.Size = new System.Drawing.Size(64, 21);
+			this.button7.TabIndex = 17;
+			this.button7.Text = "Stop scan";
+			this.button7.Click += new System.EventHandler(this.button7_Click);
 			// 
 			// checkBox2
 			// 
@@ -637,6 +789,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.label15);
+			this.tabPage3.Controls.Add(this.treeView3);
 			this.tabPage3.Controls.Add(this.treeView2);
 			this.tabPage3.Controls.Add(this.button6);
 			this.tabPage3.Controls.Add(this.propertyGrid1);
@@ -647,14 +801,32 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Channel-Edit";
 			// 
+			// label15
+			// 
+			this.label15.Location = new System.Drawing.Point(224, 8);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(104, 16);
+			this.label15.TabIndex = 8;
+			this.label15.Text = "Radio-Channels:";
+			// 
+			// treeView3
+			// 
+			this.treeView3.ImageIndex = -1;
+			this.treeView3.Location = new System.Drawing.Point(224, 24);
+			this.treeView3.Name = "treeView3";
+			this.treeView3.SelectedImageIndex = -1;
+			this.treeView3.Size = new System.Drawing.Size(192, 152);
+			this.treeView3.TabIndex = 7;
+			this.treeView3.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView3_AfterSelect);
+			// 
 			// treeView2
 			// 
 			this.treeView2.HideSelection = false;
 			this.treeView2.ImageIndex = -1;
-			this.treeView2.Location = new System.Drawing.Point(24, 32);
+			this.treeView2.Location = new System.Drawing.Point(24, 24);
 			this.treeView2.Name = "treeView2";
 			this.treeView2.SelectedImageIndex = -1;
-			this.treeView2.Size = new System.Drawing.Size(392, 104);
+			this.treeView2.Size = new System.Drawing.Size(192, 152);
 			this.treeView2.TabIndex = 6;
 			this.treeView2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView2_AfterSelect);
 			// 
@@ -674,9 +846,9 @@ namespace MediaPortal.Configuration.Sections
 			this.propertyGrid1.HelpVisible = false;
 			this.propertyGrid1.LargeButtons = false;
 			this.propertyGrid1.LineColor = System.Drawing.SystemColors.ScrollBar;
-			this.propertyGrid1.Location = new System.Drawing.Point(24, 144);
+			this.propertyGrid1.Location = new System.Drawing.Point(24, 184);
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size(392, 216);
+			this.propertyGrid1.Size = new System.Drawing.Size(392, 176);
 			this.propertyGrid1.TabIndex = 2;
 			this.propertyGrid1.Text = "propertyGrid1";
 			this.propertyGrid1.ToolbarVisible = false;
@@ -687,9 +859,129 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.label2.Location = new System.Drawing.Point(24, 8);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(64, 16);
+			this.label2.Size = new System.Drawing.Size(80, 16);
 			this.label2.TabIndex = 1;
-			this.label2.Text = "Channels:";
+			this.label2.Text = "TV-Channels:";
+			// 
+			// tabPage4
+			// 
+			this.tabPage4.Controls.Add(this.groupBox4);
+			this.tabPage4.Controls.Add(this.groupBox3);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Size = new System.Drawing.Size(440, 397);
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "Options";
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.circularMHZ);
+			this.groupBox4.Controls.Add(this.label13);
+			this.groupBox4.Controls.Add(this.cbandMHZ);
+			this.groupBox4.Controls.Add(this.label14);
+			this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox4.Location = new System.Drawing.Point(240, 32);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(176, 112);
+			this.groupBox4.TabIndex = 2;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "C-Band / Circular Config:";
+			// 
+			// circularMHZ
+			// 
+			this.circularMHZ.Location = new System.Drawing.Point(96, 45);
+			this.circularMHZ.Name = "circularMHZ";
+			this.circularMHZ.Size = new System.Drawing.Size(64, 20);
+			this.circularMHZ.TabIndex = 3;
+			this.circularMHZ.Text = "10750";
+			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(16, 48);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(80, 16);
+			this.label13.TabIndex = 2;
+			this.label13.Text = "Circular (MHz)";
+			// 
+			// cbandMHZ
+			// 
+			this.cbandMHZ.Location = new System.Drawing.Point(96, 21);
+			this.cbandMHZ.Name = "cbandMHZ";
+			this.cbandMHZ.Size = new System.Drawing.Size(64, 20);
+			this.cbandMHZ.TabIndex = 1;
+			this.cbandMHZ.Text = "5150";
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(16, 24);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(80, 16);
+			this.label14.TabIndex = 0;
+			this.label14.Text = "C-Band (MHz)";
+			// 
+			// groupBox3
+			// 
+			this.groupBox3.Controls.Add(this.lnb1MHZ);
+			this.groupBox3.Controls.Add(this.lnb1);
+			this.groupBox3.Controls.Add(this.lnbswMHZ);
+			this.groupBox3.Controls.Add(this.switchMHZ);
+			this.groupBox3.Controls.Add(this.lnb0MHZ);
+			this.groupBox3.Controls.Add(this.label12);
+			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox3.Location = new System.Drawing.Point(24, 32);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(176, 112);
+			this.groupBox3.TabIndex = 1;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "Ku-Band Config:";
+			// 
+			// lnb1MHZ
+			// 
+			this.lnb1MHZ.Location = new System.Drawing.Point(104, 69);
+			this.lnb1MHZ.Name = "lnb1MHZ";
+			this.lnb1MHZ.Size = new System.Drawing.Size(56, 20);
+			this.lnb1MHZ.TabIndex = 7;
+			this.lnb1MHZ.Text = "10600";
+			// 
+			// lnb1
+			// 
+			this.lnb1.Location = new System.Drawing.Point(16, 72);
+			this.lnb1.Name = "lnb1";
+			this.lnb1.Size = new System.Drawing.Size(72, 16);
+			this.lnb1.TabIndex = 6;
+			this.lnb1.Text = "LNB1 (Mhz)";
+			// 
+			// lnbswMHZ
+			// 
+			this.lnbswMHZ.Location = new System.Drawing.Point(104, 45);
+			this.lnbswMHZ.Name = "lnbswMHZ";
+			this.lnbswMHZ.Size = new System.Drawing.Size(56, 20);
+			this.lnbswMHZ.TabIndex = 3;
+			this.lnbswMHZ.Text = "11700";
+			// 
+			// switchMHZ
+			// 
+			this.switchMHZ.Location = new System.Drawing.Point(16, 48);
+			this.switchMHZ.Name = "switchMHZ";
+			this.switchMHZ.Size = new System.Drawing.Size(80, 16);
+			this.switchMHZ.TabIndex = 2;
+			this.switchMHZ.Text = "Switch (MHz)";
+			// 
+			// lnb0MHZ
+			// 
+			this.lnb0MHZ.Location = new System.Drawing.Point(104, 21);
+			this.lnb0MHZ.Name = "lnb0MHZ";
+			this.lnb0MHZ.Size = new System.Drawing.Size(56, 20);
+			this.lnb0MHZ.TabIndex = 1;
+			this.lnb0MHZ.Text = "9750";
+			// 
+			// label12
+			// 
+			this.label12.Location = new System.Drawing.Point(16, 24);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(72, 16);
+			this.label12.TabIndex = 0;
+			this.label12.Text = "LNB0 (Mhz)";
 			// 
 			// ofd
 			// 
@@ -701,12 +993,16 @@ namespace MediaPortal.Configuration.Sections
 			this.Controls.Add(this.tabControl1);
 			this.Name = "DVBSSS2";
 			this.Size = new System.Drawing.Size(448, 456);
+			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
+			this.groupBox4.ResumeLayout(false);
+			this.groupBox3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -728,9 +1024,36 @@ namespace MediaPortal.Configuration.Sections
 				comboBox3.Items.Add(sat3.Text);
 			if(sat4.Text.Length>0)
 				comboBox3.Items.Add(sat4.Text);
-			// disable ... 
-			comboBox3.SelectedIndex=-1;
-			button5.Enabled=false;
+			// disable ...
+			if(comboBox3.Text!="")
+			{
+				if(comboBox3.Text.Length<7)
+				{
+					comboBox3.SelectedIndex=-1;
+					comboBox3.Text="";
+					button5.Enabled=false;
+				}
+				else
+				{
+					string fileName=comboBox3.Text;
+					if(System.IO.File.Exists(fileName)==false)
+					{
+						comboBox3.SelectedIndex=-1;
+						comboBox3.Text="";
+						button5.Enabled=false;
+					}
+					else
+						button5.Enabled=true;
+				}
+			}
+			else
+			{
+				comboBox3.SelectedIndex=-1;
+				comboBox3.Text="";
+				button5.Enabled=false;
+			}
+			label16.Visible=checkBox4.Checked;
+
 			if(tabControl1.SelectedIndex==2)
 			{
 				GetChannels();
@@ -769,6 +1092,16 @@ namespace MediaPortal.Configuration.Sections
 					xmlwriter.SetValue("DVBSS2","satd",d);
 					xmlwriter.SetValueAsBool("DVBSS2","grabEPG",checkBox3.Checked);
 					xmlwriter.SetValue("DVBSS2","grabInterval",numericUpDown1.Value);
+					xmlwriter.SetValueAsBool("DVBSS2","enablePlugins",checkBox4.Checked);
+					xmlwriter.SetValue("DVBSS2","lnb0MHZ",lnb0MHZ.Text);
+					xmlwriter.SetValue("DVBSS2","lnb1MHZ",lnb1MHZ.Text);
+					xmlwriter.SetValue("DVBSS2","lnbswitchMHZ",lnbswMHZ.Text);
+					xmlwriter.SetValue("DVBSS2","cbandMHZ",cbandMHZ.Text);
+					xmlwriter.SetValue("DVBSS2","circularMHZ",circularMHZ.Text);
+					xmlwriter.SetValue("DVBSS2","lnbkind1",lnbkind1.SelectedIndex);
+					xmlwriter.SetValue("DVBSS2","lnbkind2",lnbkind2.SelectedIndex);
+					xmlwriter.SetValue("DVBSS2","lnbkind3",lnbkind3.SelectedIndex);
+					xmlwriter.SetValue("DVBSS2","lnbkind4",lnbkind4.SelectedIndex);
 				}
 			}
 			catch (Exception ex)
@@ -790,6 +1123,13 @@ namespace MediaPortal.Configuration.Sections
 					sat1.Text=xmlreader.GetValueAsString("DVBSS2","sata","");
 					checkBox3.Checked=xmlreader.GetValueAsBool("DVBSS2","grabEPG",false);
 					numericUpDown1.Value=xmlreader.GetValueAsInt("DVBSS2","grabInterval",750);
+					checkBox4.Checked=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
+					lnb0MHZ.Text=xmlreader.GetValueAsString("DVBSS2","lnb0MHZ","9750");
+					lnb1MHZ.Text=xmlreader.GetValueAsString("DVBSS2","lnb1MHZ","10600");
+					lnbswMHZ.Text=xmlreader.GetValueAsString("DVBSS2","lnbswitchMHZ","11700");
+					cbandMHZ.Text=xmlreader.GetValueAsString("DVBSS2","cbandMHZ","5150");
+					circularMHZ.Text=xmlreader.GetValueAsString("DVBSS2","circularMHZ","10750");
+					lnbkind1.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbkind1",-1);
 
 					if(checkBox1.Checked==false)
 						DisableSatConfig();
@@ -805,6 +1145,9 @@ namespace MediaPortal.Configuration.Sections
 						sat2.Text=xmlreader.GetValueAsString("DVBSS2","satb","");
 						sat3.Text=xmlreader.GetValueAsString("DVBSS2","satc","");
 						sat4.Text=xmlreader.GetValueAsString("DVBSS2","satd","");
+						lnbkind2.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbkind2",-1);
+						lnbkind3.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbkind3",-1);
+						lnbkind4.SelectedIndex=xmlreader.GetValueAsInt("DVBSS2","lnbkind4",-1);
 
 					}
 				}
@@ -880,9 +1223,12 @@ namespace MediaPortal.Configuration.Sections
 				diseqcd.Enabled=	
 				sat2.Enabled=
 				sat3.Enabled=
-					lnbconfig2.Enabled=
-					lnbconfig3.Enabled=
-					lnbconfig4.Enabled=
+				lnbconfig2.Enabled=
+				lnbconfig3.Enabled=
+				lnbconfig4.Enabled=
+				lnbkind2.Enabled=
+				lnbkind3.Enabled=
+				lnbkind4.Enabled=
 				button2.Enabled=
 				button3.Enabled=
 				button4.Enabled=
@@ -902,6 +1248,9 @@ namespace MediaPortal.Configuration.Sections
 				button2.Enabled=
 				button3.Enabled=
 				button4.Enabled=
+				lnbkind2.Enabled=
+				lnbkind3.Enabled=
+				lnbkind4.Enabled=
 				sat4.Enabled=true;
 
 		}
@@ -909,7 +1258,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void comboBox3_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if(comboBox3.SelectedItem.ToString()!="")
+			if(comboBox3.Text!="")
 				button5.Enabled=true;
 			else
 				button5.Enabled=false;
@@ -925,7 +1274,33 @@ namespace MediaPortal.Configuration.Sections
 			int						lnb_0=0;
 			int						lnb_1=0;
 			int						lnb_switch=0;
+			int						lnb0=0;
+			int						lnb1=0;
+			int						lnbsw=0;
+			int						circ=0;
+			int						cband=0;
+			int						lnbKinds=0;
+			
+			if(comboBox3.Text=="")
+			{
+				button5.Enabled=false;
+				return;
+			}
+			try
+			{
+				lnb0=Convert.ToInt16(lnb0MHZ.Text);
+				lnb1=Convert.ToInt16(lnb1MHZ.Text);
+				lnbsw=Convert.ToInt16(lnbswMHZ.Text);
+				circ=Convert.ToInt16(circularMHZ.Text);
+				cband=Convert.ToInt16(cbandMHZ.Text);
+			}
+			catch
+			{
+				MessageBox.Show("Please correct the Ku-Band/Circular/C-Band settings!");
+				return;
+			}
 
+			button7.Enabled=true;
 			button5.Enabled=false;
 			try
 			{
@@ -935,25 +1310,46 @@ namespace MediaPortal.Configuration.Sections
 					case 0:
 						diseqc=diseqca.SelectedIndex;
 						lnbkhz=lnbconfig1.SelectedIndex;
+						lnbKinds=lnbkind1.SelectedIndex;
 						break;
 					case 1:
 						diseqc=diseqcb.SelectedIndex;
 						lnbkhz=lnbconfig2.SelectedIndex;
+						lnbKinds=lnbkind2.SelectedIndex;
 						break;
 					case 2:
 						diseqc=diseqcc.SelectedIndex;
 						lnbkhz=lnbconfig3.SelectedIndex;
+						lnbKinds=lnbkind3.SelectedIndex;
 						break;
 					case 3:
 						diseqc=diseqcd.SelectedIndex;
 						lnbkhz=lnbconfig4.SelectedIndex;
+						lnbKinds=lnbkind4.SelectedIndex;
 						break;
 
 				}
-
-				lnb_0=9750;
-				lnb_1=10600;
-				lnb_switch=11700;
+				switch(lnbKinds)
+				{
+					case 0:	// ku			
+						lnb_0=lnb0;
+						lnb_1=lnb1;
+						lnb_switch=lnbsw;
+						break;
+					case 1: // circular
+						lnb_0=circ;
+						lnb_1=-1;
+						lnb_switch=-1;
+						break;
+					case 2: // c-band
+						lnb_0=cband;
+						lnb_1=-1;
+						lnb_switch=-1;
+						break;
+					default:
+						MessageBox.Show("Please correct the Ku-Band/Circular/C-Band settings!");
+						return;
+				}
 
 			}
 			catch(Exception ex)
@@ -976,6 +1372,8 @@ namespace MediaPortal.Configuration.Sections
 						// setting up list
 						transpList=(DVBSections.Transponder[])list.Clone();
 						m_dvbSec.CleanUp();
+						feedback.Text="Ready.";
+						progressBar1.Value=progressBar1.Minimum;
 						BuildUpTreeView(treeView1);
 
 					}// dvbsec.run
@@ -983,6 +1381,7 @@ namespace MediaPortal.Configuration.Sections
 				}// file exists
 			}
 			button5.Enabled=true;
+			button7.Enabled=false;
 
 		}
 
@@ -1018,6 +1417,7 @@ namespace MediaPortal.Configuration.Sections
 			// ckeck providers
 			foreach(DVBSections.Transponder transponder in list)
 			{
+				if(transponder.channels!=null)
 				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					string provName=ch.service_provider_name;
@@ -1054,6 +1454,7 @@ namespace MediaPortal.Configuration.Sections
 			// add the cannels
 			foreach(DVBSections.Transponder transponder in list)
 			{
+				if(transponder.channels!=null)
 				foreach(DVBSections.ChannelInfo ch in transponder.channels)
 				{
 					string provName=ch.service_provider_name;
@@ -1192,7 +1593,7 @@ namespace MediaPortal.Configuration.Sections
 
 						ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
 							ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+							audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],ch.network_pmt_PID,teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
 						televisionCounter++;
 					}
 					if(ch.serviceType==2) // for radio
@@ -1213,7 +1614,7 @@ namespace MediaPortal.Configuration.Sections
 						int audioPid=GetAudioPid(ch.pid_list);
 						int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
 							ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,0,0,0,0,0,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+							audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
 						radioCounter++;
 
 					}
@@ -1222,10 +1623,6 @@ namespace MediaPortal.Configuration.Sections
 				}
 
 			}
-		}
-		private void button7_Click(object sender, System.EventArgs e)
-		{
-			SaveChannelList();
 		}
 		//
 		private int GetAudioPid(ArrayList ch)
@@ -1365,13 +1762,18 @@ namespace MediaPortal.Configuration.Sections
 			if(chList==null)
 				return;
 			treeView2.Nodes.Clear();
+			treeView3.Nodes.Clear();
 			foreach(DVBChannel channel in chList)
 			{
 				if(channel.ToString()!="")
 				{
-					TreeNode node=new TreeNode(channel.ServiceName);
+					
+					TreeNode node=new TreeNode(channel.ServiceName+" ("+channel.ServiceProvider+")");
 					node.Tag=channel;
-					treeView2.Nodes.Add(node);
+					if(channel.ServiceType==1)
+						treeView2.Nodes.Add(node);
+					else
+						treeView3.Nodes.Add(node);
 				}
 			}
 		}
@@ -1406,6 +1808,23 @@ namespace MediaPortal.Configuration.Sections
 		{
 			numericUpDown1.Enabled=checkBox3.Checked;
 		}
+
+		private void button7_Click(object sender, System.EventArgs e)
+		{
+			m_dvbSec.InterruptScan();
+			button7.Enabled=false;
+		}
+
+		private void treeView3_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		{
+			propertyGrid1.SelectedObject=e.Node.Tag;
+		}
+
+		private void checkBox4_CheckedChanged(object sender, System.EventArgs e)
+		{
+			label16.Visible=checkBox4.Checked;
+		}
+
 
 
 
