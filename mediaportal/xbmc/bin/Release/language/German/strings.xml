@@ -2935,88 +2935,54 @@
 		<id>2054</id>
 		<value>kein Eintrag!</value>
 	</string>
-	<!-- Begin Burner Strings -->
-	<string>
-		<id>2100</id>
-		<value>CD/DVD-Brenner</value>
-	</string>
-	<string>
-		<id>2101</id>
-		<value>CD/DVD kopieren</value>
-	</string>
-	<string>
-		<id>2102</id>
-		<value>Audio-CD erstellen</value>
-	</string>
-	<string>
-		<id>2103</id>
-		<value>Video-CD erstellen</value>
-	</string>
-	<string>
-		<id>2104</id>
-		<value>Video-DVD erstellen</value>
-	</string>
-	<string>
-		<id>2105</id>
-		<value>Daten-CD erstellen</value>
-	</string>
-	<string>
-		<id>2106</id>
-		<value>Daten-DVD erstellen</value>
-	</string>
-	<string>
-		<id>2107</id>
-		<value>kopieren starten</value>
-	</string>
-	<string>
-		<id>2108</id>
-		<value>leere CD/DVD einlegen</value>
-	</string>
-	<string>
-		<id>2109</id>
-		<value>und mit "ja" betätigen</value>
-	</string>
-	<string>
-		<id>2110</id>
-		<value>zu kopierende CD/DVD einlegen</value>
-	</string>
-	<string>
-		<id>2111</id>
-		<value>Fertig!</value>
-	</string>
-	<string>
-		<id>2112</id>
-		<value>warte auf CD/DVD</value>
-	</string>
-	<string>
-		<id>2113</id>
-		<value>alles kopieren</value>
-	</string>
-	<string>
-		<id>2114</id>
-		<value>CD/DVD-RW löschen</value>
-	</string>
-	<string>
-		<id>2115</id>
-		<value>CD/DVD-RW einlegen</value>
-	</string>
-	<string>
-		<id>2116</id>
-		<value>Laufwerk nicht bereit</value>
-	</string>
-	<string>
-		<id>2117</id>
-		<value>Es ist ein fataler Fehler aufgetreten!</value>
-	</string>
-	<string>
-		<id>2118</id>
-		<value>DVR-MS umwandeln</value>
-	</string>
-	<string>
-		<id>2116</id>
-		<value>Laufwerk nicht bereit</value>
-	</string>
-	<!-- End Burner Strings -->
+	
+	<!-- My Burner Strings -->
+	<string><id>2100</id><value>Brennen</value></string>
+	<string><id>2101</id><value>CD/DVD kopieren</value></string>
+	<string><id>2102</id><value>Audio-CD erstellen</value></string>
+	<string><id>2103</id><value>Video-CD erstellen</value></string>
+	<string><id>2104</id><value>Video-DVD erstellen</value></string>
+	<string><id>2105</id><value>Daten-CD erstellen</value></string>
+	<string><id>2106</id><value>Daten-DVD erstellen</value></string>
+	<string><id>2107</id><value>Kopieren starten</value></string>
+	<string><id>2108</id><value>Leere CD/DVD einlegen</value></string>
+	<string><id>2109</id><value>Anschliessend OK betätigen</value></string>
+	<string><id>2110</id><value>Zu kopierende CD/DVD einlegen</value></string>
+	<string><id>2111</id><value>Fertig!</value></string>
+	<string><id>2112</id><value>Warte auf CD/DVD</value></string>
+	<string><id>2113</id><value>Alles kopieren</value></string>
+	<string><id>2114</id><value>RW löschen</value></string>
+	<string><id>2115</id><value>CD/DVD RW einlegen</value></string>
+	<string><id>2116</id><value>Das Laufwerk ist nicht bereit!</value></string>
+	<string><id>2117</id><value>Ein schwerer Fehler ist aufgetreten!</value></string>
+	<string><id>2118</id><value>DVR-MS -> MPEG2</value></string>
+	<string><id>2119</id><value>Konvertieren starten</value></string>
+	<string><id>2120</id><value>Konvertieren für das File</value></string>
+	<string><id>2121</id><value> kann nicht gestartet werden!</value></string>
+	<string><id>2122</id><value>wird gestartet!</value></string>
+	<string><id>2123</id><value>Disk Info</value></string>
+	<string><id>2124</id><value>Keine RW-CD! Disk kann nicht gelöscht werden.</value></string>
+	<string><id>2125</id><value>Disk wird gelöscht....</value></string>
+	<string><id>2126</id><value>CD Auswerfen</value></string>
+	<string><id>2127</id><value>CD lässt sich nicht beschreiben</value></string>
+	<string><id>2128</id><value>CD wird vorbereitet. Voraussichtliche Dauer:</value></string>
+	<string><id>2129</id><value>CD wird vorbereitet.</value></string>
+	<string><id>2130</id><value>Block</value></string>
+	<string><id>2131</id><value>von</value></string>
+	<string><id>2132</id><value>CD wird geschlossen. Voraussichtliche Dauer:</value></string>
+	<string><id>2133</id><value>TV Aufnahmen</value></string>
+	<string><id>2134</id><value>Video</value></string>
+	<string><id>2135</id><value>Audio</value></string>
+	<string><id>2136</id><value>Daten</value></string>
+	<string><id>2137</id><value>Konvertieren</value></string>
+	<string><id>2138</id><value>Schneiden</value></string>
+	<string><id>2139</id><value>MP3 CD erstellen</value></string>
+	<string><id>2140</id><value>MP3 DVD erstellen</value></string>
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
+	<string><id>2143</id><value>Hauptmenü</value></string>	
+	<!-- End of My Burner Strings -->
+
 	<!-- Begin Explorer Strings -->
 	<string>
 		<id>2200</id>
