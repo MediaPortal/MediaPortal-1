@@ -28,8 +28,8 @@ namespace MediaPortal.GUI.Pictures
     }
     int MAX_RENDER_METHODS =10;
     int MAX_ZOOM_FACTOR    =10;
-    int MAX_PICTURE_WIDTH  = 2048-2;
-    int MAX_PICTURE_HEIGHT = 2048-2;
+    int MAX_PICTURE_WIDTH  = 2040;
+    int MAX_PICTURE_HEIGHT = 2040;
 
     int LABEL_ROW1			=10;
     int LABEL_ROW2			=11;
