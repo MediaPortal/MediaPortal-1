@@ -1771,7 +1771,7 @@
 	</string>
 	<string>
 		<id>631</id>
-		<value>Wilt U uitschakelen?</value>
+		<value>Wilt U de computer uitschakelen?</value>
 	</string>
 	<string>
 		<id>632</id>
@@ -2347,20 +2347,19 @@
   </string>
   <string>
   	<id>916</id>
-  	<value>Remote file</value>
+  	<value>Bestand in internet map</value>
   </string>
   <string>
   	<id>917</id>
-  	<value>Dit bestand staat op een ??????</value>
-  	<value>This file is located on a remote share</value>
+  	<value>Dit bestand staat in een internet map.</value>
   </string>
   <string>
   	<id>918</id>
-  	<value>Dit bestand downloaden naar de standaard</value>
+  	<value>Dit bestand downloaden naar de lokale map?</value>
   </string>
   <string>
   	<id>919</id>
-  	<value>lokale map?</value>
+  	<value></value> <!-- Empty on purpose -->
   </string>
   <string>
   	<id>920</id>
@@ -2369,6 +2368,58 @@
   <string>
   	<id>921</id>
   	<value>Bestand wordt opgehaald</value>
+  </string>
+  <string>
+  	<id>922</id>
+  	<value>Beschrijving</value>
+  </string>
+  <string>
+  	<id>923</id>
+  	<value>Bekijken</value>
+  </string>
+  <string>
+  	<id>924</id>
+  	<value>Menu</value>
+  </string>
+  <string>
+  	<id>925</id>
+  	<value>Deze film verwijderen</value>
+  </string>
+  <string>
+  	<id>926</id>
+  	<value>Toevoegen aan playlist</value>
+  </string>
+  <string>
+  	<id>927</id>
+  	<value>Waarschuwing</value>
+  </string>
+  <string>
+  	<id>928</id>
+  	<value>Find coverart</value>
+  </string>
+  <string>
+  	<id>929</id>
+  	<value>Menu sluitenClose menu</value>
+  </string>
+  <string>
+  	<id>930</id>
+  	<value>Toevoegen aan favorieten</value>
+  </string>
+  <string>
+  	<id>931</id>
+  	<value>Waardering</value>
+  </string>
+  <string>
+  	<id>932</id>
+  	<value>Favorieten</value>
+  </string>
+  <string>
+  	<id>933</id>
+  	<value>Verwijderen uit favorieten</value>
+  </string>
+  <string>
+  	<id>934</id>
+  	<value>Waardering instellen</value>
   </string>
   <string>
   	<id>1440</id>
@@ -2801,7 +2852,7 @@
   	<id>9002</id>
   	<value>Flits:</value>
   </string>
-  <string>
+  <string>                             <!-- TODO: Translate photo stuff to dutch (don't know the correct terms) -->
   	<id>9003</id>
   	<value>Metering Mode:</value>
   </string>
@@ -2957,6 +3008,18 @@
 		<id>10031</id>
 		<value>Instellingen/Scherm/Rol snelheid</value>
 	</string>
+  <string>
+    <id>10032</id>
+    <value>MSN Messenger</value>
+  </string>
+  <string>
+    <id>10033</id>
+    <value>MSN Messenger (chat)</value>
+  </string>
+  <string>
+    <id>10034</id>
+    <value>Mijn Plugins</value>
+  </string>
 	<string>
 		<id>10100</id>
 		<value>Ja/nee dialoog</value>
@@ -2990,6 +3053,10 @@
 		<value>Mijn Muziek/Top100</value>
 	</string>
 	<string>
+		<id>10506</id>
+		<value>Mijn Muziek/Favorieten</value>
+	</string>
+	<string>
 		<id>10600</id>
 		<value>Mijn TV/TV gids</value>
 	</string>
@@ -3005,6 +3072,34 @@
 		<id>10603</id>
 		<value>Mijn TV/TV opnamen</value>
 	</string>
+  <string>
+    <id>10604</id>
+    <value>Mijn TV/Zoeken</value>
+  </string>
+  <string>
+    <id>10605</id>
+    <value>Mijn TV/Opnamen/Genre</value>
+  </string>
+  <string>
+    <id>10606</id>
+    <value>Mijn TV/Opnamen/Kanalen</value>
+  </string>
+  <string>
+    <id>10750</id>
+    <value>Mijn Recepten</value>
+  </string>
+  <string>
+    <id>10755</id>
+    <value>Mijn Status</value>
+  </string>
+  <string>
+    <id>10756</id>
+    <value>Mijn Status/Detail</value>
+  </string>
+  <string>
+    <id>10757</id>
+    <value>Mijn Status/Instellingen</value>
+  </string>
 	<string>
 		<id>11000</id>
 		<value>Toetsenbord</value>
@@ -3045,6 +3140,22 @@
 		<id>12008</id>
 		<value>Bestand stapelen dialoog</value>
 	</string>
+  <string>
+    <id>12010</id>
+    <value>Datum/Tiijd</value>
+  </string>
+  <string>
+    <id>12011</id>
+    <value>Artiest informatie</value>
+  </string>
+  <string>
+    <id>12012</id>
+    <value>Contekst menu</value>
+  </string>
+  <string>
+    <id>12013</id>
+    <value>Waardering instellen</value>
+  </string>
 	<string>
 		<id>12600</id>
 		<value>Mijn Weer</value>

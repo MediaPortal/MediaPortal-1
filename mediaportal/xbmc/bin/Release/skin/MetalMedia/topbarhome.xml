@@ -11,16 +11,16 @@
 		<texture>topbar.png</texture>
 	</control>
 	<control>
-		<description>home button</description>
+		<description>shutdown button</description>
 		<type>button</type>
 		<id>10</id>
 		<posX>50</posX>
 		<posY>30</posY>
 		<width>37</width>
 		<height>37</height>
-		<textureFocus>homefocus.png</textureFocus>
-		<textureNoFocus>homenofocus.png</textureNoFocus>
-		<action>9</action>
+		<textureFocus>powerfocus.png</textureFocus>
+		<textureNoFocus>powernofocus.png</textureNoFocus>
+		<action>99</action>
 		<label>-</label>
 		<onleft>19</onleft>
 		<onright>11</onright>
