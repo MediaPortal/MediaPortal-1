@@ -292,6 +292,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		viewportWholeScreen.Width =m_iScreenWidth;
 		viewportWholeScreen.Height=m_iScreenHeight;
 		m_pDevice->SetViewport(&viewportWholeScreen);
+
 		FontEnginePresentTextures();
 		m_pDevice->SetViewport(&orgViewPort);
 	}
@@ -626,23 +627,27 @@ void FontEnginePresent3D(int fontNumber)
 	try
 	{
 		
-		if (font->updateVertexBuffer)
+		if (font->dwNumTriangles !=0)
 		{
-			m_iFontVertexBuffersUpdated++;
-			CUSTOMVERTEX* pVertices;
-			font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
-			memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
-			font->pVertexBuffer->Unlock();
-		}
+			if (font->updateVertexBuffer)
+			{
+				m_iFontVertexBuffersUpdated++;
+				CUSTOMVERTEX* pVertices;
+				font->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
+				memcpy(pVertices,font->vertices, (font->iv)*sizeof(CUSTOMVERTEX));
+				font->pVertexBuffer->Unlock();
+			}
+			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,1);
 
-		m_pDevice->SetTexture(0, font->pTexture);
-		m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-		m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-		m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, font->dwNumTriangles);
-		m_pDevice->SetTexture(0, NULL);
-		font->dwNumTriangles = 0;
-		font->iv = 0;
-		font->updateVertexBuffer=false;
+			m_pDevice->SetTexture(0, font->pTexture);
+			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+			m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
+			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, font->dwNumTriangles);
+			m_pDevice->SetTexture(0, NULL);
+			font->dwNumTriangles = 0;
+			font->iv = 0;
+			font->updateVertexBuffer=false;
+		}
 	}
 	catch(...)
 	{	
