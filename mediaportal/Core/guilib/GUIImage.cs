@@ -669,7 +669,7 @@ namespace MediaPortal.GUI.Library
         m_strTxt=GUIPropertyManager.Parse(m_strFileName);
           
         // if value changed or if we dont got any textures yet
-        if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Length)
+        if (m_strTextureFileName != m_strTxt || m_vecTextures==null||0==m_vecTextures.Length)
         {
           // then free our resources, and reload the (new) image
           FreeResources();
