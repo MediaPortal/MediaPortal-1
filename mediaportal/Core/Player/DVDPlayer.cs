@@ -141,12 +141,14 @@ namespace MediaPortal.Player
 
 				if( m.Msg==WM_MOUSEMOVE)
 				{
-					mouseMsg.Add(m);
+					if (menuMode!=MenuMode.No)
+						mouseMsg.Add(m);
 				}
 
 				if( m.Msg==WM_LBUTTONUP)
 				{
-					mouseMsg.Add(m);
+					if (menuMode!=MenuMode.No)
+						mouseMsg.Add(m);
 				}
 			}
 			catch(Exception ex)
@@ -1270,7 +1272,7 @@ namespace MediaPortal.Player
 			{
 				if (GUIGraphicsContext.IsFullScreenVideo)
 				{
-					DsPOINT pt;
+					DsPOINT  pt;
 					foreach(Message m in mouseMsg)
 					{
 						long lParam=m.LParam.ToInt32();
@@ -1281,7 +1283,7 @@ namespace MediaPortal.Player
 							pt.Y = (int)((lParam>>16)  & 0xffff); 
 
 							// Select the button at the current position, if it exists
-							dvdCtrl.SelectAtPosition(pt);
+							dvdCtrl.SelectAtPosition(ref pt);
 						}
 
 						if( m.Msg==WM_LBUTTONUP)
@@ -1291,7 +1293,7 @@ namespace MediaPortal.Player
 							pt.Y = (int)((lParam>>16)  & 0xffff); 
 
 							// Highlight the button at the current position, if it exists
-							dvdCtrl.ActivateAtPosition(pt);
+							dvdCtrl.ActivateAtPosition(ref pt);
 						}
 					}
 				}

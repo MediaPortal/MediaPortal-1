@@ -776,7 +776,11 @@ public struct DsPOINT		// POINT
 	public int		X;
 	public int		Y;
 }
-
+	public struct DsPOINTClass		// POINT
+	{
+		public int		X;
+		public int		Y;
+	}
 
 // ---------------------------------------------------------------------------------------
 

@@ -97,7 +97,7 @@ namespace MediaPortal.Player
 
 			// needed to put VMR9 in mixing mode instead of pass-through mode
       
-			hr = FilterConfig9.SetNumberOfStreams(1);
+			hr = FilterConfig9.SetNumberOfStreams(2);
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");

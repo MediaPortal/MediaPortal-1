@@ -78,6 +78,7 @@ namespace MediaPortal.Player
         if( hr != 0 )
           Marshal.ThrowExceptionForHR( hr );
 
+				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
 				Vmr9.AddVMR9(graphBuilder);
 				try
 				{

@@ -291,10 +291,10 @@ public interface IDvdControl2
 		[In, MarshalAs(UnmanagedType.LPWStr)]			string		pszwPath );
 
 		[PreserveSig]
-	int ActivateAtPosition( DsPOINT point );
+	int ActivateAtPosition( ref DsPOINT point );
 
 		[PreserveSig]
-	int SelectAtPosition( DsPOINT point );
+	int SelectAtPosition( ref DsPOINT point );
 
 		[PreserveSig]
 	int PlayChaptersAutoStop( int ulTitle, int ulChapter, int ulChaptersToPlay, DvdCmdFlags dwFlags,
