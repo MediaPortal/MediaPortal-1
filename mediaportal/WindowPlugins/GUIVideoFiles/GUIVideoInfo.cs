@@ -61,9 +61,10 @@ namespace MediaPortal.GUI.Video
     int m_iTextureHeight = 0;
     bool m_bPrevOverlay = false;
     GoogleImageSearch m_search = new GoogleImageSearch();
+    string m_sIMDBThumbURL = "";
 
-		public GUIVideoInfo()
-		{
+    public GUIVideoInfo()
+    {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_INFO;
     }
     public override bool Init()
@@ -135,18 +136,18 @@ namespace MediaPortal.GUI.Video
     {
       switch (message.Message)
       {
-		    case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-		    {
-			    m_movie = null;
-			    if (null != m_pTexture)
-			    {
-				    m_pTexture.Dispose();
-				    m_pTexture = null;
-				    m_movie = null;
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
+        {
+          m_movie = null;
+          if (null != m_pTexture)
+          {
+            m_pTexture.Dispose();
+            m_pTexture = null;
+            m_movie = null;
           }
           GUIGraphicsContext.Overlay = m_bPrevOverlay;
-		    }
-		    break;
+        }
+        break;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
         {
@@ -154,13 +155,40 @@ namespace MediaPortal.GUI.Video
           m_bRefresh = false;
           base.OnMessage(message);
 
+          // Default picture					
+          m_sIMDBThumbURL = m_movie.ThumbURL;
+
+          // Search for more pictures
           m_search.Search(m_movie.Title);
+
+          // Set number of picture URL's (x from Search + 1 from movie database)					
+          int m_iPictureCount = m_search.Count+1;
+          int m_iPictureIndex = 1;
+
+          // Search selected picture in m_search list					
+          int iLoop=0;
+          while (iLoop < m_search.Count)
+          {
+            string url=m_search[iLoop].ToLower();
+            if (url.Equals(m_movie.ThumbURL.ToLower() ) )
+            {
+              // Duplicate URL found in search list
+              m_sIMDBThumbURL = "";
+              m_iPictureCount--;
+              m_iPictureIndex--;
+              break;
+            }
+            iLoop++;
+          }
+
           GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPIN);
           GUISpinControl spin = GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
           if (spin!=null)
           {
             spin.SetReverse(true);
-            spin.SetRange(0,m_search.Count-1);
+            spin.SetRange(1,m_iPictureCount);
+            spin.Value = 1;
+
             spin.ShowRange=true;
             spin.UpDownType =GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
             for (int i=0; i < m_search.Count;++i)
@@ -168,21 +196,22 @@ namespace MediaPortal.GUI.Video
               string url=m_search[i].ToLower();
               if (url.Equals(m_movie.ThumbURL.ToLower() ) )
               {
-                spin.Value=i;
+                spin.Value=m_iPictureIndex+1;								
                 break;
               }
+              m_iPictureIndex++;
             }
           }
         
-			    m_pTexture = null;
+          m_pTexture = null;
           viewmode=ViewMode.Image;			    
           GUIControl.ClearControl(GetID, (int)Controls.CONTROL_DISC);
           GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_DISC, "HD");
-			    for (int i = 0; i < 1000; ++i)
-			    {
-				    string strItem = String.Format("DVD#{0:000}", i);
+          for (int i = 0; i < 1000; ++i)
+          {
+            string strItem = String.Format("DVD#{0:000}", i);
             GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_DISC, strItem);
-			    }
+          }
           
           GUIControl.HideControl(GetID, (int)Controls.CONTROL_DISC);
           GUIControl.DisableControl(GetID, (int)Controls.CONTROL_DISC);
@@ -229,45 +258,65 @@ namespace MediaPortal.GUI.Video
             //2=DVD#001
             GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_DISC, iItem);
           }
-			    Refresh();
-			    return true;
+          Refresh();
+          return true;
         }
-
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED : 
         {
           int iControl = message.SenderControlId;
-			    if (iControl == (int)Controls.CONTROL_BTN_REFRESH)
-			    {
-				    if (m_movie.ThumbURL.Length > 0)
-				    {
-					    string strThumb = "";
+          if (iControl == (int)Controls.CONTROL_BTN_REFRESH)
+          {
+            if (m_movie.ThumbURL.Length > 0)
+            {
+              string strThumb = "";
               string strImage = m_movie.Title;
               strThumb = Utils.GetCoverArt(ThumbsFolder,strImage);
-					    Utils.FileDelete(strThumb);
-				    }
+              Utils.FileDelete(strThumb);
+            }
             m_bRefresh = true;
             Close();
             return true;
-			    }
+          }
 
           if (iControl == (int)Controls.CONTROL_SPIN)
           {
             GUISpinControl spin = (GUISpinControl)GetControl(iControl);
-            int item=spin.Value;
-            m_movie.ThumbURL = m_search[item];
+            int item=spin.Value-1;
+
+            if (m_sIMDBThumbURL == "")
+            {
+              m_movie.ThumbURL = m_search[item];
+            }
+            else
+            {
+              if (item == 0)
+              {
+                m_movie.ThumbURL = m_sIMDBThumbURL;
+              }
+              else
+              {
+                m_movie.ThumbURL = m_search[item-1];
+              }
+            }
+						
             string strThumb = Utils.GetCoverArtName(ThumbsFolder,m_movie.Title);
             string LargeThumb = Utils.GetLargeCoverArtName(ThumbsFolder,m_movie.Title);
             Utils.FileDelete(strThumb);
             Utils.FileDelete(LargeThumb);
             Refresh();            
-            int lMovieId = System.Int32.Parse(m_movie.SearchString);
+            int lMovieId = 0;
+            if (m_movie.SearchString != "")
+            {
+              lMovieId = System.Int32.Parse(m_movie.SearchString);
+            }
+
             VideoDatabase.SetThumbURL(lMovieId,m_movie.ThumbURL);
             return true;
           }
 
-			    if (iControl == (int)Controls.CONTROL_BTN_TRACKS)
-			    {
+          if (iControl == (int)Controls.CONTROL_BTN_TRACKS)
+          {
             switch (viewmode)
             {
               case ViewMode.Image: 
@@ -281,25 +330,25 @@ namespace MediaPortal.GUI.Video
                 viewmode=ViewMode.Image;
                 break;
             }
-				    Update();
-			    }
+            Update();
+          }
 
           if (iControl == (int)Controls.CONTROL_DISC)
           {
             GUISpinControl cntl = (GUISpinControl)GetControl(iControl);
             string strItem = cntl.GetLabel();
-						int lMovieId = System.Int32.Parse(m_movie.SearchString);
-						if (lMovieId > 0)
-						{
-							if (strItem != "HD" && strItem != "share") 
-							{
-								VideoDatabase.SetDVDLabel(lMovieId, strItem);
-							}
-							else
-							{
-								VideoDatabase.SetDVDLabel(lMovieId, "HD");
-							}
-						}
+            int lMovieId = System.Int32.Parse(m_movie.SearchString);
+            if (lMovieId > 0)
+            {
+              if (strItem != "HD" && strItem != "share") 
+              {
+                VideoDatabase.SetDVDLabel(lMovieId, strItem);
+              }
+              else
+              {
+                VideoDatabase.SetDVDLabel(lMovieId, "HD");
+              }
+            }
           }
         }
         break;

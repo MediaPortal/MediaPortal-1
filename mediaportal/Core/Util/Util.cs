@@ -1181,10 +1181,10 @@ namespace MediaPortal.Util
     }
     static public string GetLargeCoverArtName(string strFolder,string strFileName)
     {
-      string strThumb=Utils.GetCoverArt(strFolder,strFileName);
+      string strThumb=String.Format(@"{0}\{1}L.jpg",strFolder,Utils.FilterFileName(strFileName));
       if (strThumb==String.Empty)
       {
-        strThumb=String.Format(@"{0}\{1}L.jpg",strFolder,Utils.FilterFileName(strFileName));
+        strThumb=Utils.GetCoverArt(strFolder,strFileName);
       }
       return strThumb;
     }
