@@ -1124,6 +1124,7 @@ namespace MediaPortal.Video.Database
 
 				// add director
 				int lDirector=AddActor(details.Director);
+				AddActorToMovie(lMovieId,lDirector);
     
 				// add all genres
 				string szGenres=details.Genre;

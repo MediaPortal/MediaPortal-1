@@ -45,7 +45,8 @@ namespace MediaPortal.Configuration.Sections
 
     bool stopRebuild = false;
     ArrayList extractedTags;
-		private System.Windows.Forms.ProgressBar progressBarFile;
+		private System.Windows.Forms.Label labelLine1;
+		private System.Windows.Forms.Label labelLine2;
     ArrayList availableFiles;
 
     public MovieDatabase() :  this("Movie Database")
@@ -69,6 +70,8 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
+			labelLine1.Text="";
+			labelLine2.Text="";
       //
       // Clear any existing entries
       //
@@ -134,12 +137,13 @@ namespace MediaPortal.Configuration.Sections
 			this.sharesListBox = new System.Windows.Forms.CheckedListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.progressBarFile = new System.Windows.Forms.ProgressBar();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.fileLabel = new System.Windows.Forms.Label();
 			this.countLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
+			this.labelLine1 = new System.Windows.Forms.Label();
+			this.labelLine2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -196,7 +200,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox2.Controls.Add(this.progressBarFile);
+			this.groupBox2.Controls.Add(this.labelLine2);
+			this.groupBox2.Controls.Add(this.labelLine1);
 			this.groupBox2.Controls.Add(this.cancelButton);
 			this.groupBox2.Controls.Add(this.fileLabel);
 			this.groupBox2.Controls.Add(this.countLabel);
@@ -205,19 +210,10 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox2.Location = new System.Drawing.Point(8, 184);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(440, 184);
+			this.groupBox2.Size = new System.Drawing.Size(440, 224);
 			this.groupBox2.TabIndex = 1;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Progress";
-			// 
-			// progressBarFile
-			// 
-			this.progressBarFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBarFile.Location = new System.Drawing.Point(16, 160);
-			this.progressBarFile.Name = "progressBarFile";
-			this.progressBarFile.Size = new System.Drawing.Size(408, 16);
-			this.progressBarFile.TabIndex = 4;
 			// 
 			// cancelButton
 			// 
@@ -232,9 +228,9 @@ namespace MediaPortal.Configuration.Sections
 			// fileLabel
 			// 
 			this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.fileLabel.Location = new System.Drawing.Point(16, 92);
+			this.fileLabel.Location = new System.Drawing.Point(16, 72);
 			this.fileLabel.Name = "fileLabel";
-			this.fileLabel.Size = new System.Drawing.Size(408, 23);
+			this.fileLabel.Size = new System.Drawing.Size(408, 8);
 			this.fileLabel.TabIndex = 3;
 			// 
 			// countLabel
@@ -256,10 +252,24 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar.Location = new System.Drawing.Point(16, 128);
+			this.progressBar.Location = new System.Drawing.Point(16, 96);
 			this.progressBar.Name = "progressBar";
 			this.progressBar.Size = new System.Drawing.Size(408, 16);
 			this.progressBar.TabIndex = 0;
+			// 
+			// labelLine1
+			// 
+			this.labelLine1.Location = new System.Drawing.Point(16, 128);
+			this.labelLine1.Name = "labelLine1";
+			this.labelLine1.Size = new System.Drawing.Size(400, 16);
+			this.labelLine1.TabIndex = 4;
+			// 
+			// labelLine2
+			// 
+			this.labelLine2.Location = new System.Drawing.Point(16, 160);
+			this.labelLine2.Name = "labelLine2";
+			this.labelLine2.Size = new System.Drawing.Size(400, 16);
+			this.labelLine2.TabIndex = 5;
 			// 
 			// MovieDatabase
 			// 
@@ -378,7 +388,10 @@ namespace MediaPortal.Configuration.Sections
             SetStatus("Database has been successfully rebuilt");
             stopRebuild = true;
             rebuildState = RebuildState.None;
-						progressBarFile.Value=0;
+
+						
+						labelLine1.Text="";
+						labelLine2.Text="";
             break;
         }
       }
@@ -527,7 +540,6 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="file"></param>
     private void ScanFile(string file)
 		{
-			progressBarFile.Value=0;
 			string ext=System.IO.Path.GetExtension(file.ToLower());
 			if (ext==".ifo") return;
 			if (ext==".vob") return;
@@ -537,10 +549,8 @@ namespace MediaPortal.Configuration.Sections
 			int id=VideoDatabase.GetMovieInfo(file,ref movieDetails);
 			if (id<0) 
 			{
-				progressBarFile.Value=5;
 				Application.DoEvents();
 				imdb.Find( Utils.GetFilename(file));
-				progressBarFile.Value=10;
 				Application.DoEvents();
 				if (imdb.Count<=0) return;
 				if (imdb.Count>0)
@@ -556,7 +566,6 @@ namespace MediaPortal.Configuration.Sections
 				if (stopRebuild) return;
 				if ( imdb.GetDetails(imdb[selectedItem],ref movieDetails))
 				{
-					progressBarFile.Value=20;
 					Application.DoEvents();
 					id=VideoDatabase.AddMovie(file,false);
 					VideoDatabase.SetMovieInfo(file,ref movieDetails);
@@ -566,7 +575,6 @@ namespace MediaPortal.Configuration.Sections
 					DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);
 					
 					if (stopRebuild) return;
-					progressBarFile.Value=30;
 					Application.DoEvents();
 				}
 			}
@@ -681,7 +689,9 @@ namespace MediaPortal.Configuration.Sections
     }
 		public void OnProgress(string line1, string line2, string line3, int percent)
 		{
-
+			labelLine1.Text=line1;
+			labelLine2.Text=line2;
+			Application.DoEvents();
 		}
 
 	}
