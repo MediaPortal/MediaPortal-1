@@ -364,6 +364,13 @@ namespace MediaPortal.GUI.Library
 				//	imageSprite .Dispose();
 				//	imageSprite =null;
 				//}
+				if (m_strTextureFileName!=null && m_strTextureFileName!=String.Empty)
+				{
+					if (GUITextureManager.IsTemporary(m_strTextureFileName))
+					{
+						GUITextureManager.ReleaseTexture(m_strTextureFileName);
+					}
+				}
         m_strTextureFileName="";
         /*if (m_vbBuffer!=null)
         {
@@ -372,6 +379,7 @@ namespace MediaPortal.GUI.Library
         }*/
 
         m_image=null;
+				
         m_vecTextures=null;
         m_iCurrentImage=0;
         m_iCurrentLoop=0;

@@ -665,7 +665,7 @@ namespace MediaPortal.GUI.Library
       }
 		}
 
-    static bool IsTemporary(string strFileName)
+    static public bool IsTemporary(string strFileName)
     {
       if ( strFileName.ToLower().IndexOf("folder.jpg")>0 || 
            strFileName.ToLower().IndexOf(".tbn")>0 || 
