@@ -1531,14 +1531,16 @@ namespace MediaPortal.TV.Recording
 							{
 								myTuner.TuningSpace = tuningSpaceFound;
 								Log.Write("DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, tuningSpaceFound.UniqueName,tuningSpaceFound.FriendlyName);
+								if (myTuningSpaces!=null)
+									Marshal.ReleaseComObject(myTuningSpaces);
+								if (TuningSpaceContainer!=null)
+									Marshal.ReleaseComObject(TuningSpaceContainer);
 								return true;
 							}
 						}
 					}
 					if (myTuningSpaces!=null)
 						Marshal.ReleaseComObject(myTuningSpaces);
-					if (TuningSpaceContainer!=null)
-						Marshal.ReleaseComObject(TuningSpaceContainer);
 				}
 			}
 
