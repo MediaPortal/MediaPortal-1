@@ -74,15 +74,15 @@ namespace MediaPortal
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(48, 16);
       this.label3.TabIndex = 2;
-      this.label3.Text = "Number:";
+      this.label3.Text = "Channel:";
       // 
       // label1
       // 
       this.label1.Location = new System.Drawing.Point(24, 8);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(144, 32);
+      this.label1.Size = new System.Drawing.Size(144, 16);
       this.label1.TabIndex = 0;
-      this.label1.Text = "Please enter TV Channel number for channel";
+      this.label1.Text = "Please enter channel for:";
       // 
       // upDownChannel
       // 

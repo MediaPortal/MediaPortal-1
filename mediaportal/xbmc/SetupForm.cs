@@ -212,6 +212,8 @@ namespace MediaPortal
     private System.Windows.Forms.ComboBox comboBoxDVDDisplayMode;
     private System.Windows.Forms.CheckBox checkBoxMouseSupport;
     private System.Windows.Forms.CheckBox checkBoxHideFileExtensions;
+    private System.Windows.Forms.Button buttonAutoTune;
+    private System.Windows.Forms.Button buttonAutoTune2;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -321,6 +323,7 @@ namespace MediaPortal
       this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
       this.checkStartFullScreen = new System.Windows.Forms.CheckBox();
       this.Skin = new System.Windows.Forms.GroupBox();
+      this.checkBoxHideFileExtensions = new System.Windows.Forms.CheckBox();
       this.checkBoxMouseSupport = new System.Windows.Forms.CheckBox();
       this.groupBox14 = new System.Windows.Forms.GroupBox();
       this.tabPlayers = new System.Windows.Forms.TabPage();
@@ -391,6 +394,22 @@ namespace MediaPortal
       this.HdrAudioName = new System.Windows.Forms.ColumnHeader();
       this.HdrAudioFolder = new System.Windows.Forms.ColumnHeader();
       this.HdrDefault = new System.Windows.Forms.ColumnHeader();
+      this.tabVideoShares = new System.Windows.Forms.TabPage();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.btnPlayListVideo = new System.Windows.Forms.Button();
+      this.textBoxPlayListFolderVideo = new System.Windows.Forms.TextBox();
+      this.label18 = new System.Windows.Forms.Label();
+      this.chkBoxVideoRepeat = new System.Windows.Forms.CheckBox();
+      this.txtboxVideoFiles = new System.Windows.Forms.TextBox();
+      this.label9 = new System.Windows.Forms.Label();
+      this.VideoGroupBox = new System.Windows.Forms.GroupBox();
+      this.btnEditMovieShare = new System.Windows.Forms.Button();
+      this.btnDelVideoShare = new System.Windows.Forms.Button();
+      this.btnAddVideoShare = new System.Windows.Forms.Button();
+      this.listVideoShares = new MediaPortal.WinControls.ListViewEx();
+      this.HdrVideoName = new System.Windows.Forms.ColumnHeader();
+      this.HdrVideoFolder = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.tabTVChannels = new System.Windows.Forms.TabPage();
       this.groupBox20 = new System.Windows.Forms.GroupBox();
       this.btnXMLTVFolder = new System.Windows.Forms.Button();
@@ -439,6 +458,7 @@ namespace MediaPortal
       this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
       this.UpDownPostRecording = new System.Windows.Forms.NumericUpDown();
       this.groupBox13 = new System.Windows.Forms.GroupBox();
+      this.buttonAutoTune = new System.Windows.Forms.Button();
       this.upDownCountry = new System.Windows.Forms.NumericUpDown();
       this.label24 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
@@ -455,22 +475,6 @@ namespace MediaPortal
       this.label31 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.UpDownPreRecording = new System.Windows.Forms.NumericUpDown();
-      this.tabVideoShares = new System.Windows.Forms.TabPage();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.btnPlayListVideo = new System.Windows.Forms.Button();
-      this.textBoxPlayListFolderVideo = new System.Windows.Forms.TextBox();
-      this.label18 = new System.Windows.Forms.Label();
-      this.chkBoxVideoRepeat = new System.Windows.Forms.CheckBox();
-      this.txtboxVideoFiles = new System.Windows.Forms.TextBox();
-      this.label9 = new System.Windows.Forms.Label();
-      this.VideoGroupBox = new System.Windows.Forms.GroupBox();
-      this.btnEditMovieShare = new System.Windows.Forms.Button();
-      this.btnDelVideoShare = new System.Windows.Forms.Button();
-      this.btnAddVideoShare = new System.Windows.Forms.Button();
-      this.listVideoShares = new MediaPortal.WinControls.ListViewEx();
-      this.HdrVideoName = new System.Windows.Forms.ColumnHeader();
-      this.HdrVideoFolder = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.tabWeather = new System.Windows.Forms.TabPage();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -489,7 +493,7 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.checkBoxHideFileExtensions = new System.Windows.Forms.CheckBox();
+      this.buttonAutoTune2 = new System.Windows.Forms.Button();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.Skin.SuspendLayout();
@@ -509,6 +513,9 @@ namespace MediaPortal
       this.tabAudioShares.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.audioGroupBox.SuspendLayout();
+      this.tabVideoShares.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.VideoGroupBox.SuspendLayout();
       this.tabTVChannels.SuspendLayout();
       this.groupBox20.SuspendLayout();
       this.groupBox19.SuspendLayout();
@@ -525,9 +532,6 @@ namespace MediaPortal
       ((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).BeginInit();
       this.groupBox17.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).BeginInit();
-      this.tabVideoShares.SuspendLayout();
-      this.groupBox3.SuspendLayout();
-      this.VideoGroupBox.SuspendLayout();
       this.tabWeather.SuspendLayout();
       this.groupBox7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.cntrlweatherRefresh)).BeginInit();
@@ -674,6 +678,14 @@ namespace MediaPortal
       this.Skin.TabIndex = 0;
       this.Skin.TabStop = false;
       this.Skin.Text = "Skin";
+      // 
+      // checkBoxHideFileExtensions
+      // 
+      this.checkBoxHideFileExtensions.Location = new System.Drawing.Point(16, 80);
+      this.checkBoxHideFileExtensions.Name = "checkBoxHideFileExtensions";
+      this.checkBoxHideFileExtensions.Size = new System.Drawing.Size(232, 16);
+      this.checkBoxHideFileExtensions.TabIndex = 1;
+      this.checkBoxHideFileExtensions.Text = "Hide file extensions";
       // 
       // checkBoxMouseSupport
       // 
@@ -1329,6 +1341,151 @@ namespace MediaPortal
       this.HdrDefault.Text = "Default";
       this.HdrDefault.Width = 89;
       // 
+      // tabVideoShares
+      // 
+      this.tabVideoShares.Controls.Add(this.groupBox3);
+      this.tabVideoShares.Controls.Add(this.VideoGroupBox);
+      this.tabVideoShares.Location = new System.Drawing.Point(4, 22);
+      this.tabVideoShares.Name = "tabVideoShares";
+      this.tabVideoShares.Size = new System.Drawing.Size(616, 374);
+      this.tabVideoShares.TabIndex = 1;
+      this.tabVideoShares.Text = "Movies";
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Controls.Add(this.btnPlayListVideo);
+      this.groupBox3.Controls.Add(this.textBoxPlayListFolderVideo);
+      this.groupBox3.Controls.Add(this.label18);
+      this.groupBox3.Controls.Add(this.chkBoxVideoRepeat);
+      this.groupBox3.Controls.Add(this.txtboxVideoFiles);
+      this.groupBox3.Controls.Add(this.label9);
+      this.groupBox3.Location = new System.Drawing.Point(24, 272);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(496, 88);
+      this.groupBox3.TabIndex = 1;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Movie Settings";
+      // 
+      // btnPlayListVideo
+      // 
+      this.btnPlayListVideo.Location = new System.Drawing.Point(448, 56);
+      this.btnPlayListVideo.Name = "btnPlayListVideo";
+      this.btnPlayListVideo.Size = new System.Drawing.Size(24, 24);
+      this.btnPlayListVideo.TabIndex = 4;
+      this.btnPlayListVideo.Text = "...";
+      this.btnPlayListVideo.Click += new System.EventHandler(this.btnPlayListVideo_Click);
+      // 
+      // textBoxPlayListFolderVideo
+      // 
+      this.textBoxPlayListFolderVideo.Location = new System.Drawing.Point(104, 56);
+      this.textBoxPlayListFolderVideo.Name = "textBoxPlayListFolderVideo";
+      this.textBoxPlayListFolderVideo.Size = new System.Drawing.Size(336, 20);
+      this.textBoxPlayListFolderVideo.TabIndex = 3;
+      this.textBoxPlayListFolderVideo.Text = "";
+      // 
+      // label18
+      // 
+      this.label18.Location = new System.Drawing.Point(16, 56);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(80, 16);
+      this.label18.TabIndex = 2;
+      this.label18.Text = "Playlists folder:";
+      // 
+      // chkBoxVideoRepeat
+      // 
+      this.chkBoxVideoRepeat.Location = new System.Drawing.Point(16, 24);
+      this.chkBoxVideoRepeat.Name = "chkBoxVideoRepeat";
+      this.chkBoxVideoRepeat.TabIndex = 0;
+      this.chkBoxVideoRepeat.Text = "Repeat Playlists";
+      // 
+      // txtboxVideoFiles
+      // 
+      this.txtboxVideoFiles.Location = new System.Drawing.Point(216, 24);
+      this.txtboxVideoFiles.Name = "txtboxVideoFiles";
+      this.txtboxVideoFiles.Size = new System.Drawing.Size(264, 20);
+      this.txtboxVideoFiles.TabIndex = 1;
+      this.txtboxVideoFiles.Text = "";
+      // 
+      // label9
+      // 
+      this.label9.Location = new System.Drawing.Point(144, 32);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(64, 23);
+      this.label9.TabIndex = 0;
+      this.label9.Text = "Movie files:";
+      // 
+      // VideoGroupBox
+      // 
+      this.VideoGroupBox.Controls.Add(this.btnEditMovieShare);
+      this.VideoGroupBox.Controls.Add(this.btnDelVideoShare);
+      this.VideoGroupBox.Controls.Add(this.btnAddVideoShare);
+      this.VideoGroupBox.Controls.Add(this.listVideoShares);
+      this.VideoGroupBox.Location = new System.Drawing.Point(24, 16);
+      this.VideoGroupBox.Name = "VideoGroupBox";
+      this.VideoGroupBox.Size = new System.Drawing.Size(496, 248);
+      this.VideoGroupBox.TabIndex = 0;
+      this.VideoGroupBox.TabStop = false;
+      this.VideoGroupBox.Text = "Movie folders";
+      // 
+      // btnEditMovieShare
+      // 
+      this.btnEditMovieShare.Location = new System.Drawing.Point(136, 216);
+      this.btnEditMovieShare.Name = "btnEditMovieShare";
+      this.btnEditMovieShare.Size = new System.Drawing.Size(48, 23);
+      this.btnEditMovieShare.TabIndex = 3;
+      this.btnEditMovieShare.Text = "Edit";
+      this.btnEditMovieShare.Click += new System.EventHandler(this.btnEditMovieShare_Click);
+      // 
+      // btnDelVideoShare
+      // 
+      this.btnDelVideoShare.Location = new System.Drawing.Point(72, 216);
+      this.btnDelVideoShare.Name = "btnDelVideoShare";
+      this.btnDelVideoShare.Size = new System.Drawing.Size(56, 23);
+      this.btnDelVideoShare.TabIndex = 2;
+      this.btnDelVideoShare.Text = "Delete";
+      this.btnDelVideoShare.Click += new System.EventHandler(this.btnDelVideoShare_Click);
+      // 
+      // btnAddVideoShare
+      // 
+      this.btnAddVideoShare.Location = new System.Drawing.Point(8, 216);
+      this.btnAddVideoShare.Name = "btnAddVideoShare";
+      this.btnAddVideoShare.Size = new System.Drawing.Size(56, 23);
+      this.btnAddVideoShare.TabIndex = 1;
+      this.btnAddVideoShare.Text = "Add";
+      this.btnAddVideoShare.Click += new System.EventHandler(this.btnAddVideoShare_Click);
+      // 
+      // listVideoShares
+      // 
+      this.listVideoShares.AllowDrop = true;
+      this.listVideoShares.AllowRowReorder = true;
+      this.listVideoShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                      this.HdrVideoName,
+                                                                                      this.HdrVideoFolder,
+                                                                                      this.columnHeader5});
+      this.listVideoShares.FullRowSelect = true;
+      this.listVideoShares.HideSelection = false;
+      this.listVideoShares.Location = new System.Drawing.Point(8, 24);
+      this.listVideoShares.MultiSelect = false;
+      this.listVideoShares.Name = "listVideoShares";
+      this.listVideoShares.Size = new System.Drawing.Size(448, 176);
+      this.listVideoShares.TabIndex = 0;
+      this.listVideoShares.View = System.Windows.Forms.View.Details;
+      this.listVideoShares.DoubleClick += new System.EventHandler(this.listVideoShares_DoubleClick);
+      // 
+      // HdrVideoName
+      // 
+      this.HdrVideoName.Text = "Name";
+      this.HdrVideoName.Width = 100;
+      // 
+      // HdrVideoFolder
+      // 
+      this.HdrVideoFolder.Text = "Folder";
+      this.HdrVideoFolder.Width = 284;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Default";
+      // 
       // tabTVChannels
       // 
       this.tabTVChannels.Controls.Add(this.groupBox20);
@@ -1496,12 +1653,12 @@ namespace MediaPortal
       // 
       // columnHeader1
       // 
-      this.columnHeader1.Text = "TV Channel";
+      this.columnHeader1.Text = "TV Channel name";
       this.columnHeader1.Width = 108;
       // 
       // columnHeader2
       // 
-      this.columnHeader2.Text = "Number";
+      this.columnHeader2.Text = "Channel";
       this.columnHeader2.Width = 118;
       // 
       // columnHeader3
@@ -1511,6 +1668,7 @@ namespace MediaPortal
       // 
       // groupBox18
       // 
+      this.groupBox18.Controls.Add(this.buttonAutoTune2);
       this.groupBox18.Controls.Add(this.textEditBox);
       this.groupBox18.Location = new System.Drawing.Point(8, 8);
       this.groupBox18.Name = "groupBox18";
@@ -1797,6 +1955,7 @@ namespace MediaPortal
       // 
       // groupBox13
       // 
+      this.groupBox13.Controls.Add(this.buttonAutoTune);
       this.groupBox13.Controls.Add(this.upDownCountry);
       this.groupBox13.Controls.Add(this.label24);
       this.groupBox13.Controls.Add(this.label23);
@@ -1809,9 +1968,18 @@ namespace MediaPortal
       this.groupBox13.TabStop = false;
       this.groupBox13.Text = "Tuner";
       // 
+      // buttonAutoTune
+      // 
+      this.buttonAutoTune.Location = new System.Drawing.Point(32, 88);
+      this.buttonAutoTune.Name = "buttonAutoTune";
+      this.buttonAutoTune.Size = new System.Drawing.Size(75, 24);
+      this.buttonAutoTune.TabIndex = 4;
+      this.buttonAutoTune.Text = "Auto Tune";
+      this.buttonAutoTune.Click += new System.EventHandler(this.buttonAutoTune_Click);
+      // 
       // upDownCountry
       // 
-      this.upDownCountry.Location = new System.Drawing.Point(64, 64);
+      this.upDownCountry.Location = new System.Drawing.Point(64, 56);
       this.upDownCountry.Name = "upDownCountry";
       this.upDownCountry.Size = new System.Drawing.Size(56, 20);
       this.upDownCountry.TabIndex = 2;
@@ -1831,7 +1999,7 @@ namespace MediaPortal
       // 
       // label23
       // 
-      this.label23.Location = new System.Drawing.Point(8, 64);
+      this.label23.Location = new System.Drawing.Point(8, 56);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(48, 16);
       this.label23.TabIndex = 2;
@@ -1949,151 +2117,6 @@ namespace MediaPortal
       this.UpDownPreRecording.Name = "UpDownPreRecording";
       this.UpDownPreRecording.Size = new System.Drawing.Size(48, 20);
       this.UpDownPreRecording.TabIndex = 0;
-      // 
-      // tabVideoShares
-      // 
-      this.tabVideoShares.Controls.Add(this.groupBox3);
-      this.tabVideoShares.Controls.Add(this.VideoGroupBox);
-      this.tabVideoShares.Location = new System.Drawing.Point(4, 22);
-      this.tabVideoShares.Name = "tabVideoShares";
-      this.tabVideoShares.Size = new System.Drawing.Size(616, 374);
-      this.tabVideoShares.TabIndex = 1;
-      this.tabVideoShares.Text = "Movies";
-      // 
-      // groupBox3
-      // 
-      this.groupBox3.Controls.Add(this.btnPlayListVideo);
-      this.groupBox3.Controls.Add(this.textBoxPlayListFolderVideo);
-      this.groupBox3.Controls.Add(this.label18);
-      this.groupBox3.Controls.Add(this.chkBoxVideoRepeat);
-      this.groupBox3.Controls.Add(this.txtboxVideoFiles);
-      this.groupBox3.Controls.Add(this.label9);
-      this.groupBox3.Location = new System.Drawing.Point(24, 272);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(496, 88);
-      this.groupBox3.TabIndex = 1;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Movie Settings";
-      // 
-      // btnPlayListVideo
-      // 
-      this.btnPlayListVideo.Location = new System.Drawing.Point(448, 56);
-      this.btnPlayListVideo.Name = "btnPlayListVideo";
-      this.btnPlayListVideo.Size = new System.Drawing.Size(24, 24);
-      this.btnPlayListVideo.TabIndex = 4;
-      this.btnPlayListVideo.Text = "...";
-      this.btnPlayListVideo.Click += new System.EventHandler(this.btnPlayListVideo_Click);
-      // 
-      // textBoxPlayListFolderVideo
-      // 
-      this.textBoxPlayListFolderVideo.Location = new System.Drawing.Point(104, 56);
-      this.textBoxPlayListFolderVideo.Name = "textBoxPlayListFolderVideo";
-      this.textBoxPlayListFolderVideo.Size = new System.Drawing.Size(336, 20);
-      this.textBoxPlayListFolderVideo.TabIndex = 3;
-      this.textBoxPlayListFolderVideo.Text = "";
-      // 
-      // label18
-      // 
-      this.label18.Location = new System.Drawing.Point(16, 56);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(80, 16);
-      this.label18.TabIndex = 2;
-      this.label18.Text = "Playlists folder:";
-      // 
-      // chkBoxVideoRepeat
-      // 
-      this.chkBoxVideoRepeat.Location = new System.Drawing.Point(16, 24);
-      this.chkBoxVideoRepeat.Name = "chkBoxVideoRepeat";
-      this.chkBoxVideoRepeat.TabIndex = 0;
-      this.chkBoxVideoRepeat.Text = "Repeat Playlists";
-      // 
-      // txtboxVideoFiles
-      // 
-      this.txtboxVideoFiles.Location = new System.Drawing.Point(216, 24);
-      this.txtboxVideoFiles.Name = "txtboxVideoFiles";
-      this.txtboxVideoFiles.Size = new System.Drawing.Size(264, 20);
-      this.txtboxVideoFiles.TabIndex = 1;
-      this.txtboxVideoFiles.Text = "";
-      // 
-      // label9
-      // 
-      this.label9.Location = new System.Drawing.Point(144, 32);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(64, 23);
-      this.label9.TabIndex = 0;
-      this.label9.Text = "Movie files:";
-      // 
-      // VideoGroupBox
-      // 
-      this.VideoGroupBox.Controls.Add(this.btnEditMovieShare);
-      this.VideoGroupBox.Controls.Add(this.btnDelVideoShare);
-      this.VideoGroupBox.Controls.Add(this.btnAddVideoShare);
-      this.VideoGroupBox.Controls.Add(this.listVideoShares);
-      this.VideoGroupBox.Location = new System.Drawing.Point(24, 16);
-      this.VideoGroupBox.Name = "VideoGroupBox";
-      this.VideoGroupBox.Size = new System.Drawing.Size(496, 248);
-      this.VideoGroupBox.TabIndex = 0;
-      this.VideoGroupBox.TabStop = false;
-      this.VideoGroupBox.Text = "Movie folders";
-      // 
-      // btnEditMovieShare
-      // 
-      this.btnEditMovieShare.Location = new System.Drawing.Point(136, 216);
-      this.btnEditMovieShare.Name = "btnEditMovieShare";
-      this.btnEditMovieShare.Size = new System.Drawing.Size(48, 23);
-      this.btnEditMovieShare.TabIndex = 3;
-      this.btnEditMovieShare.Text = "Edit";
-      this.btnEditMovieShare.Click += new System.EventHandler(this.btnEditMovieShare_Click);
-      // 
-      // btnDelVideoShare
-      // 
-      this.btnDelVideoShare.Location = new System.Drawing.Point(72, 216);
-      this.btnDelVideoShare.Name = "btnDelVideoShare";
-      this.btnDelVideoShare.Size = new System.Drawing.Size(56, 23);
-      this.btnDelVideoShare.TabIndex = 2;
-      this.btnDelVideoShare.Text = "Delete";
-      this.btnDelVideoShare.Click += new System.EventHandler(this.btnDelVideoShare_Click);
-      // 
-      // btnAddVideoShare
-      // 
-      this.btnAddVideoShare.Location = new System.Drawing.Point(8, 216);
-      this.btnAddVideoShare.Name = "btnAddVideoShare";
-      this.btnAddVideoShare.Size = new System.Drawing.Size(56, 23);
-      this.btnAddVideoShare.TabIndex = 1;
-      this.btnAddVideoShare.Text = "Add";
-      this.btnAddVideoShare.Click += new System.EventHandler(this.btnAddVideoShare_Click);
-      // 
-      // listVideoShares
-      // 
-      this.listVideoShares.AllowDrop = true;
-      this.listVideoShares.AllowRowReorder = true;
-      this.listVideoShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                      this.HdrVideoName,
-                                                                                      this.HdrVideoFolder,
-                                                                                      this.columnHeader5});
-      this.listVideoShares.FullRowSelect = true;
-      this.listVideoShares.HideSelection = false;
-      this.listVideoShares.Location = new System.Drawing.Point(8, 24);
-      this.listVideoShares.MultiSelect = false;
-      this.listVideoShares.Name = "listVideoShares";
-      this.listVideoShares.Size = new System.Drawing.Size(448, 176);
-      this.listVideoShares.TabIndex = 0;
-      this.listVideoShares.View = System.Windows.Forms.View.Details;
-      this.listVideoShares.DoubleClick += new System.EventHandler(this.listVideoShares_DoubleClick);
-      // 
-      // HdrVideoName
-      // 
-      this.HdrVideoName.Text = "Name";
-      this.HdrVideoName.Width = 100;
-      // 
-      // HdrVideoFolder
-      // 
-      this.HdrVideoFolder.Text = "Folder";
-      this.HdrVideoFolder.Width = 284;
-      // 
-      // columnHeader5
-      // 
-      this.columnHeader5.Text = "Default";
       // 
       // tabWeather
       // 
@@ -2264,13 +2287,13 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
-      // checkBoxHideFileExtensions
+      // buttonAutoTune2
       // 
-      this.checkBoxHideFileExtensions.Location = new System.Drawing.Point(16, 80);
-      this.checkBoxHideFileExtensions.Name = "checkBoxHideFileExtensions";
-      this.checkBoxHideFileExtensions.Size = new System.Drawing.Size(232, 16);
-      this.checkBoxHideFileExtensions.TabIndex = 1;
-      this.checkBoxHideFileExtensions.Text = "Hide file extensions";
+      this.buttonAutoTune2.Location = new System.Drawing.Point(176, 248);
+      this.buttonAutoTune2.Name = "buttonAutoTune2";
+      this.buttonAutoTune2.TabIndex = 19;
+      this.buttonAutoTune2.Text = "Auto Tune";
+      this.buttonAutoTune2.Click += new System.EventHandler(this.buttonAutoTune2_Click);
       // 
       // SetupForm
       // 
@@ -2300,6 +2323,9 @@ namespace MediaPortal
       this.tabAudioShares.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.audioGroupBox.ResumeLayout(false);
+      this.tabVideoShares.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.VideoGroupBox.ResumeLayout(false);
       this.tabTVChannels.ResumeLayout(false);
       this.groupBox20.ResumeLayout(false);
       this.groupBox19.ResumeLayout(false);
@@ -2316,9 +2342,6 @@ namespace MediaPortal
       ((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).EndInit();
       this.groupBox17.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).EndInit();
-      this.tabVideoShares.ResumeLayout(false);
-      this.groupBox3.ResumeLayout(false);
-      this.VideoGroupBox.ResumeLayout(false);
       this.tabWeather.ResumeLayout(false);
       this.groupBox7.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.cntrlweatherRefresh)).EndInit();
@@ -3624,6 +3647,21 @@ namespace MediaPortal
       dlg.ShowDialog(this);
       if (dlg.SelectedPath==null) return;
       textBoxPlayListFolderVideo.Text=dlg.SelectedPath;
+    }
+
+    private void buttonAutoTune_Click(object sender, System.EventArgs e)
+    {
+      SaveSettings();
+      FormAutoTune autoTuneDlg = new FormAutoTune();
+      autoTuneDlg.ShowDialog(this.Parent);
+      LoadSettings();
+      SetupCapture();
+      UpdateCaptureCardList();
+    }
+
+    private void buttonAutoTune2_Click(object sender, System.EventArgs e)
+    {
+      buttonAutoTune_Click(sender,e);
     }
 	}
 

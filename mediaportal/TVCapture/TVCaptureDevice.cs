@@ -151,6 +151,11 @@ namespace MediaPortal.TV.Recording
       capture.VideoAmp.Sharpness=GUIGraphicsContext.Sharpness;
     }
 
+    public Tuner TVTuner 
+    {
+      get { return capture.Tuner;}
+    }
+    
 
     /// <summary>
     /// Start a new capture/preview graph
@@ -158,7 +163,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="strFileName">Filename where capture should be stored. If empty no capture is started</param>
     /// <param name="iChannelNr">TV Channel number to capture/preview</param>
     /// <returns></returns>
-    bool StartCapture(string strFileName, int iChannelNr)
+    public bool StartCapture(string strFileName, int iChannelNr)
     {
       StopCapture();
       m_bGammaContrastChanged=false;
@@ -262,7 +267,7 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// Stop the current preview/capture graph
     /// </summary>
-    void StopCapture()
+    public void StopCapture()
     {
       if (capture!=null)
       {
@@ -652,7 +657,7 @@ namespace MediaPortal.TV.Recording
 
         // create new capture
         Log.Write("  CaptureCard:{0} create capture to {1}",ID, m_strFilenameTmp);
-        if ( !StartCapture(m_strFilenameTmp, iChannelNr) )
+        if (!StartCapture(m_strFilenameTmp, iChannelNr) )
         {
           // create capture failed
           Log.Write("  CaptureCard:{0} cannot start capture",ID);
@@ -675,7 +680,9 @@ namespace MediaPortal.TV.Recording
         // or user has canceled the recording
         DateTime dtNow = DateTime.Now.AddMinutes(iPreRecordInterval);
         TVUtil util=new TVUtil();
-        TVProgram currentRunningProgram=util.GetProgramAt(rec.Channel, dtNow).Clone();
+        TVProgram currentRunningProgram=null;
+        TVProgram prog=util.GetProgramAt(rec.Channel, dtNow);
+        if (prog!=null) currentRunningProgram=prog.Clone();
         util=null;
         m_newRecordedTV = new TVRecorded();        
         m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);

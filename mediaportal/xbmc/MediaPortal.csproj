@@ -203,6 +203,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "FormAutoTune.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FormAutoTune.resx"
+                    DependentUpon = "FormAutoTune.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "FormCapture.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
