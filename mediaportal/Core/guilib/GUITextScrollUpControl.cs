@@ -294,7 +294,11 @@ namespace MediaPortal.GUI.Library
 				m_iItemHeight			= (int)fHeight;
 				float fTotalHeight= (float)m_dwHeight;
 				m_iItemsPerPage		= (int)Math.Floor(fTotalHeight / fHeight);
-        m_iItemsPerPage++;
+//        m_iItemsPerPage++;  
+				if (m_iItemsPerPage == 0)
+				{
+					m_iItemsPerPage = 1;
+				}
 			}
 			catch(Exception)
 			{
@@ -314,7 +318,11 @@ namespace MediaPortal.GUI.Library
 				float fHeight     = (float)m_iItemHeight;// + (float)m_iSpaceBetweenItems;
 				float fTotalHeight= (float)(m_dwHeight);
 				m_iItemsPerPage		= (int)Math.Floor(fTotalHeight / fHeight );
-        m_iItemsPerPage++;
+//        m_iItemsPerPage++;
+				if (m_iItemsPerPage == 0)
+				{
+					m_iItemsPerPage = 1;
+				}
 				int iPages=1;
 				if (m_vecItems.Count>0)
 				{
