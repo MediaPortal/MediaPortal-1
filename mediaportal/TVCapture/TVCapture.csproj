@@ -164,6 +164,14 @@
                     AssemblyName = "Microsoft.DirectX"
                     HintPath = "..\Microsoft.DirectX.dll"
                 />
+                <Reference
+                    Name = "TunerLib"
+                    Guid = "{9B085638-018E-11D3-9D8E-00C04F72D980}"
+                    VersionMajor = "1"
+                    VersionMinor = "0"
+                    Lcid = "0"
+                    WrapperTool = "tlbimp"
+                />
             </References>
         </Build>
         <Files>
@@ -190,6 +198,11 @@
                 />
                 <File
                     RelPath = "DVB_SECTIONS.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DVBGraphBDA.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -11,6 +11,7 @@ namespace TVCapture
 	{
 		public bool HasTv;
 		public bool HasRadio;
+		public bool IsBDADevice;
 		public bool IsMceDevice;
 		public bool IsMpeg2Device;
 		public bool IsSoftwareDevice;
@@ -304,6 +305,7 @@ namespace TVCapture
 							DirectShowUtil.DebugWrite("  Getting capabilities...");
 							cardConfig.Capabilities.HasTv						 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
 							cardConfig.Capabilities.HasRadio				 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
+							cardConfig.Capabilities.IsBDADevice			 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
 							cardConfig.Capabilities.IsMceDevice			 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
 							cardConfig.Capabilities.IsMpeg2Device    = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
 							cardConfig.Capabilities.IsSoftwareDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"sw").InnerText);
@@ -398,7 +400,7 @@ namespace TVCapture
 			catch (System.Exception e)
 			{
 				DirectShowUtil.DebugWrite(" Error: Error while getting values from CaptureCardDefinitions.xml");
-				DirectShowUtil.DebugWrite(" Error: {0} in {1}", e.Message, e.Source);
+				DirectShowUtil.DebugWrite(" Error: {0} in {1} at {2}", e.Message, e.Source, e.StackTrace);
 				DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor OUT");
 			}
 		}

@@ -68,7 +68,7 @@ public class MediaPortalApp : D3DApp, IRender
     private USBUIRT usbuirtdevice;
 	  private WinLirc winlircdevice;//sd00//
     string m_strNewVersion = "";
-    //string m_strCurrentVersion = "";
+    string m_strCurrentVersion = "";
     bool m_bNewVersionAvailable = false;
     bool m_bCancelVersion = false;
     MCE2005Remote MCE2005Remote = new MCE2005Remote();

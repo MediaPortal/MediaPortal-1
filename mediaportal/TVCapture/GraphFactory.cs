@@ -72,6 +72,8 @@ namespace MediaPortal.TV.Recording
       //	-	Software based cards, ie no hardware MPEG2 encoder
       //	- Hardware MPEG2 encoders
       //	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
+			if(card.IsBDACard)
+				return new DVBGraphBDA(card);
 			
 			if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
 			if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate);

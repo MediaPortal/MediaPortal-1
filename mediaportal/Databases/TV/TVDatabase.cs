@@ -190,7 +190,9 @@ namespace MediaPortal.TV.Database
 
         AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
 		AddTable("satchannels","CREATE TABLE satchannels ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer)\n");
-
+				AddTable("dvbcchannels","CREATE TABLE dvbcchannels ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, symbolrate integer, IFEC text, IFECRate text, OFEC text, OFECRate text, modulation text, ONID integer, TSID integer, SID integer, iSort integer, standard integer, Visible integer)\n");
+				AddTable("dvbschannels","CREATE TABLE dvbschannels ( idChannel integer primary key, strChannel text, iLCN integer, frequency integer, symbolrate integer, IFEC text, IFECRate text, OFEC text, OFECRate text, modulation text, azimuth integer, elevation integer, OPos integer, polarisation text, WPos integer, ONID integer, TSID integer, SID integer, iSort integer, standard integer, Visible integer)\n");
+				AddTable("dvbtchannels","CREATE TABLE dvbtchannels ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, bandwidth integer, symbolrate integer, guard text, halpha text, LPIFEC text, LPIFECRate text, mode text, OFIU integer, IFEC text, IFECRate text, OFEC text, OFECRate text, modulation text, ONID integer, TSID integer, SID integer, iSort integer, standard integer, Visible integer)\n");
         return true;
       }
 
@@ -347,6 +349,101 @@ namespace MediaPortal.TV.Database
 			  return false;
 		  }
 	  }
+		static public TunerLib.TuneRequest GetTuneRequest(int iLCN, string networkType, TunerLib.TuneRequest tuneRequest) 
+		{
+			if (m_db == null) return null;
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null == m_db) return null;
+					string strSQL;
+
+					switch (networkType.ToLower())
+					{
+						case "dvbc":
+							strSQL = String.Format("select * from dvbcchannels where iLCN={0} AND visible=1",iLCN);
+							break;
+						case "dvbs":
+							strSQL = String.Format("select * from dvbschannels where iLCN={0} AND visible=1",iLCN);
+							break;
+						case "dvbt":
+							strSQL = String.Format("select * from dvbtchannels where iLCN={0} AND visible=1",iLCN);
+							break;
+						default:
+							return null;
+					}
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count != 1) return null;
+					else
+					{
+						TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) tuneRequest;
+						switch (networkType.ToLower())
+						{
+							case "dvbc": 
+							{
+								TunerLib.IDVBCLocator myLocator = (TunerLib.IDVBCLocator) myTuneRequest.Locator;
+								myLocator.CarrierFrequency	= Int32.Parse(Get(results,0,"frequency"));
+								myLocator.SymbolRate				= Int32.Parse(Get(results,0,"symbolrate"));
+								myLocator.InnerFEC					= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"IFEC"));
+								myLocator.InnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"IFECRate"));
+								myLocator.Modulation				= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
+								myLocator.OuterFEC					= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
+								myLocator.OuterFECRate			= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
+
+							}	break;
+							case "dvbs": 
+							{
+								TunerLib.IDVBSLocator myLocator = (TunerLib.IDVBSLocator) myTuneRequest.Locator;
+								myLocator.CarrierFrequency		= Int32.Parse(Get(results,0,"frequency"));
+								myLocator.SymbolRate					= Int32.Parse(Get(results,0,"symbolrate"));
+								myLocator.Azimuth							= Int32.Parse(Get(results,0,"azimuth"));
+								myLocator.Elevation						= Int32.Parse(Get(results,0,"elevation"));
+								myLocator.WestPosition				= bool.Parse(Get(results,0,"WPos"));
+								myLocator.SignalPolarisation	= (TunerLib.Polarisation) Int32.Parse(Get(results,0,"polarisation"));
+								myLocator.InnerFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"IFEC"));
+								myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"IFECRate"));
+								myLocator.Modulation					= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
+								myLocator.OuterFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
+								myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
+
+							}	break;
+							case "dvbt": 
+							{
+								TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+								myLocator.CarrierFrequency		= Int32.Parse(Get(results,0,"frequency"));
+								myLocator.Bandwidth						= Int32.Parse(Get(results,0,"bandwidth"));
+								myLocator.SymbolRate					= Int32.Parse(Get(results,0,"symbolrate"));
+								myLocator.OtherFrequencyInUse	= bool.Parse(Get(results,0,"OFIU"));
+								myLocator.Guard								= (TunerLib.GuardInterval) Int32.Parse(Get(results,0,"guard"));
+								myLocator.HAlpha							= (TunerLib.HierarchyAlpha) Int32.Parse(Get(results,0,"halpha"));
+								myLocator.LPInnerFEC					= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"LPIFEC"));
+								myLocator.LPInnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"LPIFECRate"));
+								myLocator.Mode								= (TunerLib.TransmissionMode) Int32.Parse(Get(results,0,"mode"));
+								myLocator.InnerFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"IFEC"));
+								myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"IFECRate"));
+								myLocator.Modulation					= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
+								myLocator.OuterFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
+								myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
+							}	break;
+							default:
+								return null;
+						}
+						myTuneRequest.ONID	= Int32.Parse(Get(results,0,"ONID"));
+						myTuneRequest.TSID	= Int32.Parse(Get(results,0,"TSID"));
+						myTuneRequest.SID		= Int32.Parse(Get(results,0,"SID"));
+					}
+
+					return tuneRequest;
+				}
+				catch(SQLiteException ex)
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+			return null;
+		}
     static string Get(SQLiteResultSet results,int iRecord,string strColum)
     {
       lock (typeof(TVDatabase))

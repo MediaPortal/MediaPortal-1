@@ -34,6 +34,7 @@ namespace MediaPortal.TV.Recording
 		bool    m_bUseForTV							= false;
 		bool    m_bSupportsMPEG2				= false;							// #MW# Should be part of card definition??
 		bool    m_bIsMCECard						= false;							// #MW# Should be part of card definition??
+		bool		m_bIsBDACard						= false;
 		Size    m_FrameSize;
 		double  m_FrameRate							= 0;
 		string  m_strAudioInputPin			= "";
@@ -397,6 +398,11 @@ namespace MediaPortal.TV.Recording
       get { return m_bIsMCECard; }
       set { m_bIsMCECard = value; }
     }
+		public bool IsBDACard
+		{
+			get { return m_bIsBDACard; }
+			set { m_bIsBDACard = value; }
+		}
     /// <summary>
     /// Property which indicates if this card has an onboard mpeg2 encoder or not
     /// </summary>

@@ -356,6 +356,19 @@ namespace MediaPortal.TV.Recording
 				*/
 			}
 		}
+		public bool IsBDACard 
+		{
+			get 
+			{ 
+				// #MW#, must be fetched from CaptureCardDefinitions.xml file
+				// assume card is already loaded...
+				return this.mCard.IsBDACard;
+				/*
+				if (m_videoCaptureDevice==null) return false;
+				return m_videoCaptureDevice.IsMCEDevice;
+				*/
+			}
+		}
 		/// <summary> 
 		///  Name of file to capture to. Initially set to
 		///  a valid temporary file.
