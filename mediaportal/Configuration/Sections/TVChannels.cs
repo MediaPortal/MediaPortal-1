@@ -381,7 +381,7 @@ namespace MediaPortal.Configuration.Sections
               
               channel.External = tvChannel.External;
               channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
-
+              channel.TVStandard = tvChannel.standard;
 							//
 							// Finally add the channel
 							//
@@ -472,7 +472,7 @@ namespace MediaPortal.Configuration.Sections
         tvChannel.External = channel.External;
         tvChannel.ExternalTunerChannel = channel.ExternalTunerChannel;
         tvChannel.VisibleInGuide = channel.VisibleInGuide;
-
+        tvChannel.standard = channel.TVStandard;
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),
 																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz),

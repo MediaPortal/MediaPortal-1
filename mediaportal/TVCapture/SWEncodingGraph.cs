@@ -39,6 +39,7 @@ namespace MediaPortal.TV.Recording
     IBaseFilter             m_filterCompressorVideo = null;
     IBaseFilter             m_filterCompressorAudio = null;
     IAMTVTuner              m_TVTuner = null;
+    IAMAnalogVideoDecoder   m_IAMAnalogVideoDecoder=null;
     int				              m_rotCookie = 0; // Cookie into the Running Object Table
     VideoCaptureDevice      m_videoCaptureDevice = null;
     IVideoWindow            m_videoWindow = null;
@@ -189,6 +190,8 @@ namespace MediaPortal.TV.Recording
       m_videoCaptureDevice.SetFrameSize(m_FrameSize);
       m_videoCaptureDevice.SetFrameRate(m_FrameRate);
 
+      m_IAMAnalogVideoDecoder = m_filterCaptureVideo as IAMAnalogVideoDecoder;
+
       m_graphState = State.Created;
       return true;
     }
@@ -223,6 +226,8 @@ namespace MediaPortal.TV.Recording
         m_videoCaptureDevice.CloseInterfaces();
         m_videoCaptureDevice = null;
       }
+      if (m_IAMAnalogVideoDecoder!=null)
+        Marshal.ReleaseComObject( m_IAMAnalogVideoDecoder ); m_IAMAnalogVideoDecoder = null;
 
       if (m_filterCaptureAudio != null)
         Marshal.ReleaseComObject(m_filterCaptureAudio); m_filterCaptureAudio = null;
@@ -277,7 +282,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartTimeShifting(int iChannelNr, string strFileName)
+    public bool StartTimeShifting(AnalogVideoStandard standard,int iChannelNr, string strFileName)
     {
       return true;
     }
@@ -313,7 +318,7 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState == State.Recording) return true;
       if (m_graphState != State.Created) return false;
@@ -567,7 +572,7 @@ namespace MediaPortal.TV.Recording
       if (m_mediaControl == null)
         m_mediaControl = (IMediaControl)m_graphBuilder;
 
-      TuneChannel(iChannelNr);
+      TuneChannel(standard, iChannelNr);
 
       m_mediaControl.Run();
       m_graphState = State.Recording;
@@ -603,7 +608,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    public void TuneChannel(int iChannel)
+    public void TuneChannel(AnalogVideoStandard standard,int iChannel)
     {
       m_iCurrentChannel = iChannel;
 
@@ -621,6 +626,16 @@ namespace MediaPortal.TV.Recording
             m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
           else
             m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+          if (m_IAMAnalogVideoDecoder!=null)
+          {
+            if (standard != AnalogVideoStandard.None)
+            {
+              DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
+              int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+              if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
+            }
+          }
+          m_TVTuner.get_TVFormat(out standard);
         }
         try
         {
@@ -634,6 +649,10 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception) {} 
       }
+      DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+                                  m_iCountryCode,standard.ToString(),
+                                  m_bUseCable);
+
       DsUtils.FixCrossbarRouting(m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 1000, (iChannel == 1001),(iChannel == 1002),(iChannel == 1000));
     }
 
@@ -664,11 +683,11 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartViewing(int iChannelNr)
+    public bool StartViewing(AnalogVideoStandard standard, int iChannelNr)
     {
       ///@@@todo
       if (m_graphState != State.Created) return false;
-      TuneChannel(iChannelNr);
+      TuneChannel(standard, iChannelNr);
 
       m_videoCaptureDevice.RenderPreview();
 

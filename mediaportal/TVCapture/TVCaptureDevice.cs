@@ -6,7 +6,7 @@ using MediaPortal.Util;
 using MediaPortal.TV.Database;
 //using DirectX.Capture;
 using MediaPortal.Player;
-
+using DShowNET;
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -315,7 +315,9 @@ namespace MediaPortal.TV.Recording
           m_strTVChannel = value;
           if (m_graph != null)
           {
-            m_graph.TuneChannel(GetChannelNr(m_strTVChannel));
+            AnalogVideoStandard standard;
+            int ichannel=GetChannelNr(m_strTVChannel, out standard);
+            m_graph.TuneChannel(standard, ichannel);
             if (IsTimeShifting && !View)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE, 0, 0, 0, 0, 0, null);
@@ -507,14 +509,15 @@ namespace MediaPortal.TV.Recording
       if (IsRecording) return false;
 
       Log.Write("Card:{0} start timeshifting :{1}",ID, m_strTVChannel);
-			int iChannelNr = GetChannelNr(m_strTVChannel);
+      AnalogVideoStandard standard;
+      int iChannelNr = GetChannelNr(m_strTVChannel, out standard);
 
 			if (m_eState == State.Timeshifting) 
 			{
 				if (m_graph.GetChannelNumber() != iChannelNr)
 				{
           m_dtTimeShiftingStarted = DateTime.Now;
-					m_graph.TuneChannel(iChannelNr);
+					m_graph.TuneChannel(standard, iChannelNr);
 				}
 				return true;
 			}
@@ -545,7 +548,7 @@ namespace MediaPortal.TV.Recording
       }
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
-      bool bResult = m_graph.StartTimeShifting(iChannelNr, strFileName);
+      bool bResult = m_graph.StartTimeShifting(standard, iChannelNr, strFileName);
       if ( bResult ==true)
       {
         m_dtTimeShiftingStarted = DateTime.Now;
@@ -640,8 +643,10 @@ namespace MediaPortal.TV.Recording
       string strFileName = String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName));
       Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
 
-      int iChannelNr = GetChannelNr(m_strTVChannel);
-      bool bResult = m_graph.StartRecording(iChannelNr, ref strFileName, bContentRecording, timeProgStart);
+      AnalogVideoStandard standard;
+      int iChannelNr=GetChannelNr(m_strTVChannel, out standard);
+
+      bool bResult = m_graph.StartRecording(standard,iChannelNr, ref strFileName, bContentRecording, timeProgStart);
 
 			m_newRecordedTV = new TVRecorded();
 			m_newRecordedTV.Start = Utils.datetolong(DateTime.Now);
@@ -673,8 +678,9 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Channel names and numbers are stored in the TVDatabase
     /// </remarks>
-    int GetChannelNr(string strChannelName)
+    int GetChannelNr(string strChannelName, out AnalogVideoStandard standard)
     { 
+      standard=AnalogVideoStandard.None;
       ArrayList channels = new ArrayList();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
@@ -686,6 +692,7 @@ namespace MediaPortal.TV.Recording
             Log.Write("error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
               strChannelName, chan.Number, chan.Frequency);
           }
+          standard=chan.TVStandard;
           return chan.Number;
         }
       }
@@ -737,8 +744,9 @@ namespace MediaPortal.TV.Recording
           if (CreateGraph())
           {
             Log.Write("Card:{0} start viewing :{1}",ID, m_strTVChannel);
-            int iChannelNr = GetChannelNr(m_strTVChannel);
-            m_graph.StartViewing(iChannelNr);
+            AnalogVideoStandard standard;
+            int iChannelNr = GetChannelNr(m_strTVChannel, out standard);
+            m_graph.StartViewing(standard, iChannelNr);
             m_eState = State.Viewing;
           }
         }

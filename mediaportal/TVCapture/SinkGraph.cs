@@ -31,6 +31,7 @@ namespace MediaPortal.TV.Recording
     ICaptureGraphBuilder2   m_captureGraphBuilder=null;
     IBaseFilter             m_captureFilter=null;
     IAMTVTuner              m_TVTuner=null;
+    IAMAnalogVideoDecoder   m_IAMAnalogVideoDecoder=null;
 		VideoCaptureDevice      m_videoCaptureDevice=null;
     MPEG2Demux              m_mpeg2Demux=null;
     int				              m_rotCookie = 0;						// Cookie into the Running Object Table
@@ -180,6 +181,8 @@ namespace MediaPortal.TV.Recording
       }
 
 
+      m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
+
       // Retreive the media control interface (for starting/stopping graph)
       ConnectEncoder();
       m_mpeg2Demux.CreateMappings();
@@ -220,6 +223,9 @@ namespace MediaPortal.TV.Recording
       if( m_TVTuner != null )
         Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
 			
+      if (m_IAMAnalogVideoDecoder!=null)
+        Marshal.ReleaseComObject( m_IAMAnalogVideoDecoder ); m_IAMAnalogVideoDecoder = null;
+
       DsUtils.RemoveFilters(m_graphBuilder);
 
 
@@ -251,7 +257,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartTimeShifting(int iChannelNr, string strFileName)
+    public bool StartTimeShifting(AnalogVideoStandard standard,int iChannelNr, string strFileName)
     {
       if (m_graphState!=State.Created && m_graphState!= State.TimeShifting) return false;
       if (m_mpeg2Demux==null) return false;
@@ -260,14 +266,14 @@ namespace MediaPortal.TV.Recording
       {
         if (iChannelNr!=m_iChannelNr)
         {
-          TuneChannel(iChannelNr);
+          TuneChannel(standard, iChannelNr);
         }
         return true;
       }
 
 			DirectShowUtil.DebugWrite("SinkGraph:StartTimeShifting()");
       m_graphState=State.TimeShifting;
-      TuneChannel(iChannelNr);
+      TuneChannel(standard,iChannelNr);
       m_mpeg2Demux.StartTimeshifting(strFileName);
       
       return true;
@@ -341,13 +347,13 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState != State.TimeShifting) return false;
 
       if (iChannelNr != m_iChannelNr)
       {
-        TuneChannel(iChannelNr);
+        TuneChannel(standard,iChannelNr);
       }
       DirectShowUtil.DebugWrite("SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
       m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
@@ -388,7 +394,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    public void TuneChannel(int iChannel)
+    public void TuneChannel(AnalogVideoStandard standard,int iChannel)
     {
       if (m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return;
 
@@ -400,11 +406,19 @@ namespace MediaPortal.TV.Recording
         if (m_TVTuner==null) return;
         if (m_bFirstTune)
         {
-          DShowNET.AnalogVideoStandard standard;
           m_bFirstTune=false;
           m_TVTuner.put_TuningSpace(0);
           m_TVTuner.put_CountryCode(m_iCountryCode);
           m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+          if (m_IAMAnalogVideoDecoder!=null)
+          {
+            if (standard != AnalogVideoStandard.None)
+            {
+              DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+              int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+              if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+            }
+          }
           m_TVTuner.get_TVFormat(out standard);
           if (m_bUseCable)
             m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
@@ -461,7 +475,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartViewing(int iChannelNr)
+    public bool StartViewing(AnalogVideoStandard standard,  int iChannelNr)
     {
       if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
       if (m_mpeg2Demux==null) return false;
@@ -470,15 +484,16 @@ namespace MediaPortal.TV.Recording
       {
         if (iChannelNr!=m_iChannelNr)
         {
-          TuneChannel(iChannelNr);
+          TuneChannel(standard, iChannelNr);
         }
         return true;
       }
 
       DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
+      AddPreferredCodecs();
       ConnectEncoder();
       m_graphState=State.Viewing;
-      TuneChannel(iChannelNr);
+      TuneChannel(standard, iChannelNr);
       m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
       GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       GUIGraphicsContext_OnVideoWindowChanged();
@@ -608,6 +623,23 @@ namespace MediaPortal.TV.Recording
         else
           DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
 
-    } 
+    }
+ 
+    void AddPreferredCodecs()
+    {				
+      // add preferred video & audio codecs
+      string strVideoCodec="";
+      string strAudioCodec="";
+      bool   bAddFFDshow=false;
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
+        strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
+        strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
+      }
+      if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
+      if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
+      if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
+    }
   }
 }
