@@ -36,7 +36,8 @@ namespace MediaPortal.GUI.TV
 		string		m_sZapChannel;
 		long			m_iZapDelay;
 		bool        m_bOSDVisible=false;
-		bool		m_bZapOSDVisible=false;
+		bool        m_bZapOSDVisible=false;
+    bool        m_bLastZapOSDVisible=false;
     bool        m_bMSNChatVisible=false;
 		bool        m_bUpdate=false;
 		bool        m_bShowInput=false;
@@ -646,7 +647,13 @@ namespace MediaPortal.GUI.TV
 							dlg.Add(channel.Name);
 						}
 					}
-					dlg.DoModal( GetID);
+
+          m_bDialogVisible=true;
+          m_bUpdate=true;
+          dlg.DoModal( GetID);
+          m_bDialogVisible=false;
+          m_bUpdate=true;
+
 					if (dlg.SelectedLabel==-1) return;
 					string tvChannel=dlg.SelectedLabelText;
 					GUITVHome.ViewChannel(tvChannel);
@@ -663,7 +670,13 @@ namespace MediaPortal.GUI.TV
 					{
 						dlg.Add(group.GroupName);
 					}
-					dlg.DoModal( GetID);
+
+          m_bDialogVisible=true;
+          m_bUpdate=true;
+          dlg.DoModal( GetID);
+          m_bDialogVisible=false;
+          m_bUpdate=true;
+
 					if (dlg.SelectedLabel==-1) return;
 					foreach (TVGroup group in groups)
 					{
@@ -829,11 +842,20 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
-/*		if (m_bLastMSNChatVisible && !m_bMSNChatVisible)
-			{
-				m_bUpdate=true;
-			}
-*/
+      if (m_bZapOSDVisible && m_iZapTimeOut>0)
+      {
+        TimeSpan ts =DateTime.Now - m_dwZapTimer;
+        if ( ts.TotalMilliseconds > m_iZapTimeOut)
+        {
+          //yes, then remove osd offscreen
+          GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+          m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+          Log.Write("timeout->ZAP OSD:Off");
+          m_bZapOSDVisible=false;
+          m_bUpdate=true;
+        }
+      }      
+
 			if (m_bMSNChatVisible)
 			{
 				if (m_msnWindow.NeedRefresh()) m_bUpdate=true;
@@ -1147,10 +1169,24 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
-			if (m_bMSNChatVisible)
+			if (m_bZapOSDVisible)
 			{
-				m_bLastMSNChatVisible = true;
+				m_bLastZapOSDVisible = true;
 			}
+
+      if (m_bLastZapOSDVisible)
+      {
+        if (!m_bZapOSDVisible)
+        {
+          bClear=true;			
+          m_bLastZapOSDVisible=false;
+        }
+      }
+
+      if (m_bZapOSDVisible)
+      {
+        m_bLastZapOSDVisible = true;
+      }
 
 			// if last time OSD was visible
 			if (m_bLastStatusOSD)
