@@ -15,7 +15,10 @@ namespace MediaPortal.TV.Recording
   [Serializable]
   public class TVCaptureDevice
   {
-		string        m_strVideoDevice="";
+    string        m_strVideoDevice="";
+    string        m_strAudioDevice="";
+    string        m_strVideoCompressor="";
+    string        m_strAudioCompressor="";
     bool          m_bUseForRecording;
     bool          m_bUseForTV;			
     
@@ -95,6 +98,33 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_strVideoDevice;}
       set { m_strVideoDevice=value;}
+    }
+
+    /// <summary>
+    /// Property to get/set the (graphedit) filtername name of the audio capture device 
+    /// </summary>
+    public string AudioDevice
+    {
+      get { return m_strAudioDevice;}
+      set { m_strAudioDevice=value;}
+    }
+
+    /// <summary>
+    /// Property to get/set the (graphedit) filtername name of the video compressor
+    /// </summary>
+    public string VideoCompressor
+    {
+      get { return m_strVideoCompressor;}
+      set { m_strVideoCompressor=value;}
+    }
+
+    /// <summary>
+    /// Property to get/set the (graphedit) filtername name of the audio compressor
+    /// </summary>
+    public string AudioCompressor
+    {
+      get { return m_strAudioCompressor;}
+      set { m_strAudioCompressor=value;}
     }
 
 

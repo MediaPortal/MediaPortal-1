@@ -464,13 +464,21 @@ namespace MediaPortal
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
       
 
+      Caps caps=graphicsSettings.DeviceInfo.Caps;
         if (windowed)
         {
+            presentParams.EnableAutoDepthStencil = false;
+            presentParams.AutoDepthStencilFormat = DepthFormat.D16;
             presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
             presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
-            presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-            //presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
+            presentParams.BackBufferFormat = Format.A8R8G8B8;//graphicsSettings.DeviceCombo.BackBufferFormat;
+            presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
+            presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
+
             presentParams.PresentationInterval = PresentInterval.One;
+           
+            presentParams.BackBufferCount = 1;
+            presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.SwapEffect=Direct3D.SwapEffect.Copy;
             presentParams.PresentFlag = PresentFlag.Video;
             presentParams.DeviceWindow = ourRenderTarget;

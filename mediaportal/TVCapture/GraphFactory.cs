@@ -37,11 +37,8 @@ namespace MediaPortal.TV.Recording
       {
         return new SinkGraph(iTunerCountry,bCable, card.VideoDevice);
       }
-      else
-      {
-        //return new DScalerGraph(...)
-      }
-      return null;
+      return new SWEncodingGraph(iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor);
+      
     }
 	}
 }

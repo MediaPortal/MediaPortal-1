@@ -214,7 +214,7 @@ public class MediaPortalApp : D3DApp, IRender
           region[0].Y=0;
           region[0].Width=4;
           region[0].Height=GUIGraphicsContext.Height;
-          GUIGraphicsContext.DX9Device.Clear( ClearFlags.ZBuffer|ClearFlags.Target, Color.FromArgb(255,255,255,255), 1.0f, 0,region);
+          GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.FromArgb(255,255,255,255), 1.0f, 0,region);
          
           float fStep=(GUIGraphicsContext.Width-100);
           fStep/=(2f*16f);
@@ -357,7 +357,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
  
       // clear the surface
-      GUIGraphicsContext.DX9Device.Clear( ClearFlags.ZBuffer|ClearFlags.Target, Color.Black, 1.0f, 0);
+      GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
 
       // ask the window manager to render the current active window
