@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
 				subkey.SetValue("Use SPDIF for AC3 & DTS",regValue);
 
 				regValue=Int32.Parse(textBoxAudioOffset.Text);
-				subkey.SetValue("Use SPDIF for AC3 & DTS",regValue);
+				subkey.SetValue("SPDIF Audio Time Offset",regValue);
 
 				regValue=comboBoxSpeakerConfig.SelectedIndex;
 				subkey.SetValue("Speaker Config",regValue);
