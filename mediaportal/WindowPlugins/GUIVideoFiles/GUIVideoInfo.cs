@@ -37,6 +37,7 @@ namespace MediaPortal.GUI.Video
       , CONTROL_BTN_TRACKS = 6
       , CONTROL_BTN_REFRESH = 7
       , CONTROL_DISC = 8
+			, CONTROL_STARS=100
     };
     enum ViewMode
     {
@@ -401,6 +402,12 @@ namespace MediaPortal.GUI.Video
 
       string strRating = String.Format("{0}", m_movie.Rating);
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_RATING, strRating);
+
+			for (int i=0; i < 10; ++i)
+			{
+				if ( i >= (int)(m_movie.Rating+0.5f) )
+					GUIControl.HideControl(GetID, (int)Controls.CONTROL_STARS+i);
+			}
 
       strTmp = m_movie.Votes.Trim();
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_VOTES, strTmp);
