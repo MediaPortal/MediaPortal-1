@@ -437,6 +437,7 @@ namespace MediaPortal.Util
             item.Label2 = "";
             item.Path = String.Format("{0}/{1}",strDir,file.Name);
             item.IsRemote=true;
+            item.FileInfo=null;
             Utils.SetDefaultIcons(item);
             Utils.SetThumbnails(ref item);
             items.Add(item);

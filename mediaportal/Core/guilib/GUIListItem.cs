@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.Library
 		protected string        m_strPath="";								// path + filename of the item
 		protected string        m_strDVDLabel="";						// indicates the disc number of movie
 		protected int           m_iDuration=0;							// duration (in seconds) of the movie or song
-    FileInformation         m_info=new FileInformation();								// file info (size, date/time etc.) of the file
+    FileInformation         m_info=null;								// file info (size, date/time etc.) of the file
     bool                    m_bShaded=false;						// indicates if the item needs to be rendered shaded
     float                   m_fRating=0;								// rating of a movie
     int                     m_iYear=0;									// release year of the movie/song
@@ -341,10 +341,7 @@ namespace MediaPortal.GUI.Library
       set { 
         try
         {
-          if (value!=null)
-          {
-            m_info=value;
-          }
+          m_info=value;
         }
         catch(Exception){}
       }
