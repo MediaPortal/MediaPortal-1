@@ -38,6 +38,12 @@ namespace AMS.Profile
       m_strFileName=fileName;
 		}
 
+		public void Clear()
+		{
+			m_doc=null;
+			m_bChanged=false;
+		}
+
 		/// <summary>
 		///   Retrieves an XMLDocument object based on the XML file (Name). </summary>
 		/// <returns>

@@ -1368,7 +1368,12 @@ namespace MediaPortal
         SwitchFullScreenOrWindowed(true,true);
       m_bAutoHideMouse=false;
       Cursor.Show();
-      Invalidate(true);
+			Invalidate(true);
+
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlreader.Clear();
+			}
       Utils.StartProcess("Configuration.exe","",false,false);
     }
     /// <summary>
@@ -2040,6 +2045,10 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
 
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlreader.Clear();
+			}
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
     }
 
@@ -2048,6 +2057,10 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlreader.Clear();
+			}
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
     }
 
@@ -2056,6 +2069,10 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlreader.Clear();
+			}
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
     }
 
@@ -2064,6 +2081,10 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlreader.Clear();
+			}
 
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
     }
@@ -2073,6 +2094,10 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlreader.Clear();
+			}
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
 
