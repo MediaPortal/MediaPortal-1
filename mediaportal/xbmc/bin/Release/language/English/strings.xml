@@ -2358,4 +2358,28 @@
 	<id>8033</id>
 	<value>Progress</value>
 </string>
+<string>
+	<id>13000</id>
+	<value>System:</value>
+</string>
+<string>
+	<id>13001</id>
+	<value>Manufacturer:</value>
+</string>
+<string>
+	<id>13002</id>
+	<value>Launch</value>
+</string>
+<string>
+	<id>13003</id>
+	<value>Importing *.mlf file</value>
+</string>
+<string>
+	<id>13004</id>
+	<value>Importing *.my file</value>
+</string>
+<string>
+	<id>13005</id>
+	<value>Last imported file:</value>
+</string>
 </strings>
