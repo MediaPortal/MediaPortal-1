@@ -37,7 +37,6 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.CheckBox checkBox5;
-		private System.Windows.Forms.Button button4;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.CheckBox checkBox6;
@@ -125,7 +124,6 @@ namespace GUIBurner
 		this.label8 = new System.Windows.Forms.Label();
 		this.label9 = new System.Windows.Forms.Label();
 		this.checkBox5 = new System.Windows.Forms.CheckBox();
-		this.button4 = new System.Windows.Forms.Button();
 		this.label10 = new System.Windows.Forms.Label();
 		this.label11 = new System.Windows.Forms.Label();
 		this.checkBox6 = new System.Windows.Forms.CheckBox();
@@ -278,10 +276,10 @@ namespace GUIBurner
 		// 
 		this.label8.Location = new System.Drawing.Point(8, 320);
 		this.label8.Name = "label8";
-		this.label8.Size = new System.Drawing.Size(608, 24);
+		this.label8.Size = new System.Drawing.Size(424, 24);
 		this.label8.TabIndex = 18;
 		this.label8.Text = "If you want to convert DVR-MS in MPEG Files you must instal the Cyberlink Filters" +
-			".  Push the Help Button for more Infos";
+			". ";
 		// 
 		// label9
 		// 
@@ -298,15 +296,6 @@ namespace GUIBurner
 		this.checkBox5.Size = new System.Drawing.Size(24, 24);
 		this.checkBox5.TabIndex = 19;
 		this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
-		// 
-		// button4
-		// 
-		this.button4.Location = new System.Drawing.Point(416, 352);
-		this.button4.Name = "button4";
-		this.button4.Size = new System.Drawing.Size(88, 24);
-		this.button4.TabIndex = 21;
-		this.button4.Text = "Help DVR-MS";
-		this.button4.Click += new System.EventHandler(this.button4_Click);
 		// 
 		// label10
 		// 
@@ -398,7 +387,6 @@ namespace GUIBurner
 		this.tabPage2.Controls.Add(this.label5);
 		this.tabPage2.Controls.Add(this.checkBox3);
 		this.tabPage2.Controls.Add(this.label8);
-		this.tabPage2.Controls.Add(this.button4);
 		this.tabPage2.Controls.Add(this.button1);
 		this.tabPage2.Location = new System.Drawing.Point(4, 22);
 		this.tabPage2.Name = "tabPage2";
@@ -736,16 +724,6 @@ namespace GUIBurner
 			}
 		}
 
-		private void button4_Click(object sender, System.EventArgs e)
-		{
-			string s="1. Load from this site ftp://ftp.lifeview.com.tw/TV/LR301/ the file: LR301-Ver.1.02.0.600.zip\n";
-			s=s+"2. Do not install this package, we need only two files from the Zip archive.\n";
-			s=s+"    In the archive is a Data1.cab file. You can open it with the unzip program. Copy the\n";
-			s=s+"    following files in the MP Main Folder: CLDump.ax    MpgMux.ax\n";
-			s=s+"3. Start the Batch Program RecCodecs.cmd. You found it in MP Main folder.\n\n";
-			s=s+"    That´s all.\n";
-			MessageBox.Show( s );
-		}
 
 		private void checkBox5_CheckedChanged(object sender, System.EventArgs e)
 		{	
