@@ -377,8 +377,26 @@ namespace MediaPortal.Configuration.Sections
             //
             // Add share
             //
-            string name=String.Format("CD/DVD {0}:",drive.Substring(0, 1).ToUpper());
-            AddShare(new ShareData(name, drive, String.Empty), false);
+						string name="";
+						switch (driveType)
+						{
+							case DriveType.Removable:
+								name=String.Format("Removable {0}:",drive.Substring(0, 1).ToUpper());								
+								break;
+							case DriveType.Fixed:
+								name=String.Format("Fixed {0}:",drive.Substring(0, 1).ToUpper());
+								break;
+							case DriveType.RemoteDisk:
+								name=String.Format("Remote {0}:",drive.Substring(0, 1).ToUpper());
+								break;
+							case DriveType.DVD: // or cd
+								name=String.Format("CD/DVD {0}:",drive.Substring(0, 1).ToUpper());
+								break;
+							case DriveType.RamDisk:
+								name=String.Format("Ram {0}:",drive.Substring(0, 1).ToUpper());
+								break;
+						}
+	          AddShare(new ShareData(name, drive, String.Empty), false);
           }
         }
       }
