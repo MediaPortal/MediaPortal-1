@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  26-04-2004: my music    : added : album mode: queue entire albums with Y
+  26-04-2004: my music    : added : artist mode: queue all songs of an artist with Y
+  26-04-2004: my music    : added : genre mode: queue all songs of a genre with Y
   26-04-2004: my tv       : added : started with fullscreen TV (press X in my tv)
   26-04-2004: tvguide     : added : page up/down = next/previous day
   26-04-2004: setup       : added : tvcapture:edit/add/delete channel

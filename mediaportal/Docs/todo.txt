@@ -20,6 +20,7 @@ My TV:
     - support multiple tuners/capture cards
 
 My Music:
+  - album : press Y on an album->queue all songs of the album
   - search songs by genre,artist,album (based on music database)
   - support for external audio players based on file extension
   - FF/RW/pause/volume control
