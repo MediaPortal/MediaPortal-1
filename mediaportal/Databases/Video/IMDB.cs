@@ -957,6 +957,36 @@ namespace MediaPortal.Video.Database
 						}
 					}
 				}
+				int iRunTime=strBody.IndexOf("Runtime:");
+				if (iRunTime>0)
+				{
+					string runtime="";
+					while ( !Char.IsDigit(strBody[iRunTime]) && iRunTime+1 < strBody.Length) iRunTime++;
+					if (iRunTime < strBody.Length)
+					{
+						while ( Char.IsDigit(strBody[iRunTime]) && iRunTime+1 < strBody.Length) 
+						{
+							runtime += strBody[iRunTime];
+							iRunTime++;
+						}
+						try
+						{
+							movieDetails.RunTime=Int32.Parse(runtime);
+						}
+						catch (Exception){}
+					}
+				}
+				
+				int mpaa=strBody.IndexOf("MPAA</a>:</b>");
+				if (mpaa>0)
+				{
+					mpaa+="MPAA</a>:</b>".Length;
+					int mpaaEnd=strBody.IndexOf("<br>", mpaa);
+					if (mpaaEnd>0)
+					{
+						movieDetails.MPARating=strBody.Substring(mpaa,mpaaEnd-mpaa);
+					}
+				}
 
 
 				return true;

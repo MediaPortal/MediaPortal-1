@@ -222,6 +222,9 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.btnDelete = new System.Windows.Forms.Button();
+			this.tbWritingCredits = new System.Windows.Forms.TextBox();
+			this.label18 = new System.Windows.Forms.Label();
 			this.tbPlotOutline = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.tbVotes = new System.Windows.Forms.TextBox();
@@ -283,9 +286,6 @@ namespace MediaPortal.Configuration.Sections
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.label18 = new System.Windows.Forms.Label();
-			this.tbWritingCredits = new System.Windows.Forms.TextBox();
-			this.btnDelete = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -484,6 +484,31 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.TabIndex = 0;
 			this.tabPage3.Text = "Title";
 			// 
+			// btnDelete
+			// 
+			this.btnDelete.Location = new System.Drawing.Point(344, 328);
+			this.btnDelete.Name = "btnDelete";
+			this.btnDelete.Size = new System.Drawing.Size(48, 23);
+			this.btnDelete.TabIndex = 40;
+			this.btnDelete.Text = "Delete";
+			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+			// 
+			// tbWritingCredits
+			// 
+			this.tbWritingCredits.Location = new System.Drawing.Point(96, 232);
+			this.tbWritingCredits.Name = "tbWritingCredits";
+			this.tbWritingCredits.Size = new System.Drawing.Size(296, 20);
+			this.tbWritingCredits.TabIndex = 39;
+			this.tbWritingCredits.Text = "";
+			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(16, 232);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(88, 16);
+			this.label18.TabIndex = 38;
+			this.label18.Text = "Writing Credits:";
+			// 
 			// tbPlotOutline
 			// 
 			this.tbPlotOutline.Location = new System.Drawing.Point(96, 64);
@@ -552,7 +577,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// cbWatched
 			// 
-			this.cbWatched.Location = new System.Drawing.Point(96, 232);
+			this.cbWatched.Location = new System.Drawing.Point(208, 184);
 			this.cbWatched.Name = "cbWatched";
 			this.cbWatched.Size = new System.Drawing.Size(104, 16);
 			this.cbWatched.TabIndex = 24;
@@ -595,7 +620,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.tbMPAARating.Location = new System.Drawing.Point(96, 208);
 			this.tbMPAARating.Name = "tbMPAARating";
-			this.tbMPAARating.Size = new System.Drawing.Size(56, 20);
+			this.tbMPAARating.Size = new System.Drawing.Size(296, 20);
 			this.tbMPAARating.TabIndex = 19;
 			this.tbMPAARating.Text = "";
 			// 
@@ -1008,31 +1033,6 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.Size = new System.Drawing.Size(432, 398);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scan";
-			// 
-			// label18
-			// 
-			this.label18.Location = new System.Drawing.Point(168, 192);
-			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(88, 16);
-			this.label18.TabIndex = 38;
-			this.label18.Text = "Writing Credits:";
-			// 
-			// tbWritingCredits
-			// 
-			this.tbWritingCredits.Location = new System.Drawing.Point(184, 208);
-			this.tbWritingCredits.Name = "tbWritingCredits";
-			this.tbWritingCredits.Size = new System.Drawing.Size(200, 20);
-			this.tbWritingCredits.TabIndex = 39;
-			this.tbWritingCredits.Text = "";
-			// 
-			// btnDelete
-			// 
-			this.btnDelete.Location = new System.Drawing.Point(344, 328);
-			this.btnDelete.Name = "btnDelete";
-			this.btnDelete.Size = new System.Drawing.Size(48, 23);
-			this.btnDelete.TabIndex = 40;
-			this.btnDelete.Text = "Delete";
-			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
 			// 
 			// MovieDatabase
 			// 
@@ -1458,7 +1458,7 @@ namespace MediaPortal.Configuration.Sections
 
       if(dialogResult == DialogResult.Yes)
       {
-        string database = @"database\VideoDatabaseV4.db";
+        string database = @"database\VideoDatabaseV5.db";
         if(File.Exists(database))
         {
           File.Delete(database);
@@ -1509,6 +1509,8 @@ namespace MediaPortal.Configuration.Sections
 			tbDescription.Text=movie.Plot;
 			textBoxPictureURL.Text=movie.ThumbURL;
 			tbPlotOutline.Text=movie.PlotOutline;
+			tbMPAARating.Text=movie.MPARating;
+			tbDuration.Text=movie.RunTime.ToString();
 			if (pictureBox1.Image!=null)
 			{
 				pictureBox1.Image.Dispose();
@@ -1886,6 +1888,8 @@ namespace MediaPortal.Configuration.Sections
 				{
 					movie.Title=tbTitle.Text;
 					movie.Director=tbDirector.Text;
+					movie.MPARating=tbMPAARating.Text;
+					movie.RunTime=Int32.Parse(tbDuration.Text);
 					movie.WritingCredits=tbDirector.Text;
 					movie.Plot=tbDescription.Text;
 					movie.Rating=(float)Double.Parse(tbRating.Text);

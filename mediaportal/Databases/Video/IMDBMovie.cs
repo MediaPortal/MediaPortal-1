@@ -30,7 +30,8 @@ namespace MediaPortal.Video.Database
     int				 m_iTop250=0;
     int    		 m_iYear=1900;
     float  		 m_fRating=0.0f;
-    
+    string     m_strMPARating="";
+		int        m_iRunTime=0;
     public IMDBMovie()
 		{
 		}
@@ -39,7 +40,17 @@ namespace MediaPortal.Video.Database
 			get { return m_id;}
 			set { m_id=value;}
 		}
-    public string Director
+		public int RunTime
+		{
+			get { return m_iRunTime;}
+			set { m_iRunTime=value;}
+		}
+		public string MPARating
+		{
+			get { return m_strMPARating;}
+			set { m_strMPARating=value;}
+		}
+		public string Director
     {
       get { return m_strDirector;}
       set { m_strDirector=value;}
