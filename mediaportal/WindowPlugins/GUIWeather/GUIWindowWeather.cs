@@ -219,7 +219,11 @@ namespace MediaPortal.GUI.Weather
 				{
 					int iControl=message.SenderControlId;
 					if (iControl == (int)Controls.CONTROL_BTNREFRESH)
+					{
+						m_iDayNum = -2;
+						m_strSelectedDayName="All";
 						RefreshMe(false);	//refresh clicked so do a complete update (not an autoUpdate)
+					}
 					if (iControl == (int)Controls.CONTROL_BTNVIEW)
 					{
 						if (m_Mode == Mode.Satellite)
@@ -277,8 +281,9 @@ namespace MediaPortal.GUI.Weather
 								case -2:
 								{
 									m_strSelectedDayName = m_dfForcast[0].m_szDay;
-									m_iDayNum =1;
+									m_iDayNum =0;
 									UpdateButtons();
+									m_iDayNum =1;
 									break;
 								}
 								case -1:
@@ -380,6 +385,8 @@ namespace MediaPortal.GUI.Weather
 								break;
 							}
 						}
+						m_iDayNum = -2;
+						m_strSelectedDayName="All";
 						RefreshMe(false);	//refresh clicked so do a complete update (not an autoUpdate)
 					}
 					if (iControl==(int)Controls.CONTROL_BTNSWITCH)
@@ -429,6 +436,11 @@ namespace MediaPortal.GUI.Weather
 							//reallocate & load then new image
 							img.FreeResources();
 							img.AllocResources();
+						}
+						if (m_Mode==Mode.Weather)
+						{
+							m_iDayNum = -2;
+							m_strSelectedDayName="All";
 						}
 						UpdateButtons();
 					}
@@ -1161,6 +1173,8 @@ namespace MediaPortal.GUI.Weather
 			TimeSpan ts=DateTime.Now-m_lRefreshTime;
 			if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!="" )
 			{
+				m_strSelectedDayName="All";
+				m_iDayNum=-2;
 				RefreshMe(true);	//refresh clicked so do a complete update (not an autoUpdate)
 			}
 			base.Process ();
