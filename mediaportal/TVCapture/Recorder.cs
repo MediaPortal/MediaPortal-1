@@ -718,9 +718,21 @@ namespace MediaPortal.TV.Recording
 						// is it not recording ? or recording on the channel we want?
 						if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
 						{
-							//yes, we found our card
 							m_iCurrentCard=i;
 							m_strTVChannel=channel;
+
+							//yes, we found our card
+							//stop viewing on any other card
+							foreach (TVCaptureDevice tvcard in m_tvcards)
+							{
+								if (!tvcard.IsRecording && tvcard.ID !=dev.ID)
+								{
+									if (tvcard.IsTimeShifting) tvcard.StopTimeShifting();
+									if (tvcard.View) tvcard.View=false;
+									tvcard.DeleteGraph();
+								}
+							}
+
 							Log.Write("Recorder:card:{0} {1} is watching {2}", dev.ID, dev.FriendlyName,channel);
 							// do we want timeshifting?
 							if  (timeshift || dev.IsRecording)
@@ -735,7 +747,10 @@ namespace MediaPortal.TV.Recording
 								//yes, check if we're already playing/watching it
 								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 								if (g_Player.CurrentFile!=strTimeShiftFileName)
+								{
+									Log.Write(" currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 									g_Player.Play(strTimeShiftFileName);
+								}
 								return;
 							}//if  (timeshift || dev.IsRecording)
 							else
@@ -828,7 +843,10 @@ namespace MediaPortal.TV.Recording
 					// and play the timeshift file (if its not already playing it)
 					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 					if (g_Player.CurrentFile!=strTimeShiftFileName)
+					{
+						Log.Write(" currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 						g_Player.Play(strTimeShiftFileName);
+					}
 					return;
 				}//if (dev.SupportsTimeShifting)
 			}//if (timeshift)
