@@ -10,7 +10,7 @@ using MediaPortal.TV.Recording;
 using System.Xml;
 using System.Runtime.Serialization;
 using MediaPortal.GUI.Library;
-
+using System.Runtime.Serialization.Formatters.Soap;
 
 
 namespace MediaPortal.Configuration.Sections
@@ -2110,7 +2110,27 @@ namespace MediaPortal.Configuration.Sections
 			DVBSections.Transponder[]	list=transpList;
 			int televisionCounter=1;
 			int radioCounter=1;
-
+			int cardID=0;
+			ArrayList tvcards=new ArrayList();
+			using (System.IO.Stream r = System.IO.File.Open(@"capturecards.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read))
+			{
+				SoapFormatter c = new SoapFormatter();
+				tvcards = (ArrayList)c.Deserialize(r);
+				r.Close();
+			} 
+		
+			if (tvcards.Count==0) 
+				return;
+			for (int i=0; i < tvcards.Count;i++)
+			{
+				TVCaptureDevice card=(TVCaptureDevice)tvcards[i];
+				card.ID=(i+1);
+				if(card.VideoDevice=="B2C2 MPEG-2 Source")
+				{
+					cardID=i;
+					break;
+				}
+			}
 			// clear sat database
 			if(m_bIsDirty==true)
 				TVDatabase.RemoveAllSatChannels();
@@ -2144,6 +2164,7 @@ namespace MediaPortal.Configuration.Sections
 								if(dbID==-1)
 									continue;
 							
+								TVDatabase.MapChannelToCard(dbID,cardID);
 								tv.ID=dbID;
 								string langString="";
 								int audioPid=GetAudioPid(ch.pid_list,out langString);
