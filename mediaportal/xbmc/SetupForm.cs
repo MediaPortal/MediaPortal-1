@@ -3060,28 +3060,29 @@ namespace MediaPortal
 				{
 				}
 			}
-			for (int i=0; i < 200; ++i)
+      ArrayList channels=new ArrayList();
+      TVDatabase.GetChannels(ref channels); 
+      int iChan=0;
+			foreach (TVChannel chan in channels)
 			{
-				string strTagChan=String.Format("channel{0}",i);
-				if (i < listTVChannels.Items.Count)
+				string strTagChan=String.Format("channel{0}",iChan);
+				try
 				{
-					string strChan = listTVChannels.Items[i].SubItems[1].Text;
-					string strFreq = listTVChannels.Items[i].SubItems[2].Text;
-					try
+					if (chan.Number <254)
 					{
-						int iChan=Int32.Parse(strChan);
-						if (iChan <254)
-						{
-							UInt32 dwFreq = UInt32.Parse(strFreq);
-							string strKey=strChan;
-							hklm.SetValue(strKey,(Int32)dwFreq);
-							hklm2.SetValue(strKey,(Int32)dwFreq);
-						}
-					}
-					catch (Exception)
-					{
+            if (chan.Frequency>0)
+            {
+              UInt32 dwFreq = (UInt32)chan.Frequency;
+              string strKey=chan.Number.ToString();
+              hklm.SetValue(strKey,(Int32)dwFreq);
+              hklm2.SetValue(strKey,(Int32)dwFreq);
+            }
 					}
 				}
+				catch (Exception)
+				{
+				}
+        ++iChan;
 			}
 			hklm.Close();
 		}

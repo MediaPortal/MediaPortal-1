@@ -1791,6 +1791,10 @@
 		<id>640</id>
 		<value>Saturation</value>
 	</string>
+	<string>
+		<id>641</id>
+		<value>Sharpness</value>
+	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
 <string><id>10002</id><value>My Pictures</value></string>

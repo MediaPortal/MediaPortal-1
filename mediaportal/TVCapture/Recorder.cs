@@ -65,6 +65,12 @@ namespace MediaPortal.TV.Recording
             capture.VideoAmp.Saturation=GUIGraphicsContext.Saturation;
             GUIGraphicsContext.Save();
           }
+          if (GUIGraphicsContext.Sharpness>0)
+          {
+            Log.Write("set Sharpness:{0}", GUIGraphicsContext.Sharpness);
+            capture.VideoAmp.Sharpness=GUIGraphicsContext.Sharpness;
+            GUIGraphicsContext.Save();
+          }
 
         }
       }
@@ -845,11 +851,13 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.Contrast==0) GUIGraphicsContext.Contrast=capture.VideoAmp.ContrastDefault;
       if (GUIGraphicsContext.Gamma==0) GUIGraphicsContext.Gamma=capture.VideoAmp.GammaDefault;
       if (GUIGraphicsContext.Saturation==0) GUIGraphicsContext.Saturation=capture.VideoAmp.SaturationDefault;
+      if (GUIGraphicsContext.Sharpness==0) GUIGraphicsContext.Sharpness=capture.VideoAmp.SharpnessDefault;
 
       capture.VideoAmp.Brightness=GUIGraphicsContext.Brightness;
       capture.VideoAmp.Contrast=GUIGraphicsContext.Contrast;
       capture.VideoAmp.Gamma=GUIGraphicsContext.Gamma;
       capture.VideoAmp.Saturation=GUIGraphicsContext.Saturation;
+      capture.VideoAmp.Sharpness=GUIGraphicsContext.Sharpness;
 
 
     }

@@ -127,7 +127,7 @@ public class MediaPortalApp : D3DApp
 
       // set process priority
       m_MouseTimeOut=DateTime.Now;
-      System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
+      //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
 
       // tell window manager we're gonna start
       // this gives the windows a chance to initialize themselves
@@ -163,7 +163,7 @@ public class MediaPortalApp : D3DApp
       {
         // no refresh needed
         // are we playing a video fullscreen?
-        if(GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing)
+        if(GUIGraphicsContext.IsFullScreenVideo)
         {
           // yes, then just handle the outstanding messages
           GUIWindowManager.DispatchThreadMessages();
