@@ -953,6 +953,16 @@ namespace MediaPortal.Player
 			get {return m_bLive;}
 		}      
 
+    public override bool Visible
+    {
+      get {return m_bIsVisible;}
+      set
+      { 
+        if (value==m_bIsVisible) return;
+        m_bIsVisible=value;
+        m_bUpdateNeeded=true;
+      }
+    }
 
 		#region IDisposable Members
 

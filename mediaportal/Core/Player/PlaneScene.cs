@@ -23,6 +23,7 @@ namespace MediaPortal.Player
     float           m_fV=1.0f;
     Rectangle       previousRect;
     bool            renderTexture=false;
+    bool            lastOverlay=false;
     MediaPortal.GUI.Library.Geometry.Type arType;
 
     System.Drawing.Rectangle rSource, rDest;    
@@ -122,12 +123,14 @@ namespace MediaPortal.Player
         
         if (x ==previousRect.X && y==previousRect.Y && 
             nw==previousRect.Width && nh==previousRect.Height &&
-            GUIGraphicsContext.ARType==arType)
+            GUIGraphicsContext.ARType==arType &&
+          GUIGraphicsContext.Overlay==lastOverlay && renderTexture)
         {
           return renderTexture;
         }
         previousRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
         arType=GUIGraphicsContext.ARType;
+        lastOverlay=GUIGraphicsContext.Overlay;
         
         float fVideoWidth=(float)videoSize.Width;
         fVideoWidth *= m_fU;

@@ -745,11 +745,13 @@ namespace MediaPortal.TV.Recording
     {
       ///@@@todo
       if (m_graphState != State.Created) return false;
+      Log.Write("SWGraph:Start viewing");
       TuneChannel(standard, iChannelNr);
 
       m_videoCaptureDevice.RenderPreview();
 
-      m_videoWindow = (IVideoWindow) m_graphBuilder as IVideoWindow;
+      Log.Write("SWGraph:Get overlay interfaces");
+      m_videoWindow = m_graphBuilder as IVideoWindow;
       if (m_videoWindow==null)
       {
         Log.Write("SWGraph:FAILED:Unable to get IVideoWindow");
@@ -773,6 +775,7 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}",hr);
 
       
+      Log.Write("SWGraph:Show overlay");
       m_bOverlayVisible=true;
       hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
       if (hr != 0) 
@@ -781,6 +784,8 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:enable deinterlace");
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 
+      
+      Log.Write("SWGraph:run graph");
       m_mediaControl.Run();
       
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
@@ -824,12 +829,14 @@ namespace MediaPortal.TV.Recording
         m_bOverlayVisible=value;
         if (!m_bOverlayVisible)
         {
+          Log.Write("SWGraph: hide overlay window");
           if (m_videoWindow!=null)
             m_videoWindow.put_Visible( DsHlp.OAFALSE );
 
         }
         else
         {
+          Log.Write("SWGraph: show overlay window");
           if (m_videoWindow!=null)
             m_videoWindow.put_Visible( DsHlp.OATRUE );
 
@@ -845,15 +852,23 @@ namespace MediaPortal.TV.Recording
       if (m_graphState != State.Viewing) return;
       int iVideoWidth, iVideoHeight;
       m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
-      if (GUIGraphicsContext.Overlay==false)
+      /*if (GUIGraphicsContext.Overlay==false)
       {
-        Overlay=false;
+        if (Overlay!=false)
+        {
+          Log.Write("SWGraph:overlay disabled");
+          Overlay=false;
+        }
         return;
       }
       else
       {
-        Overlay=true;
-      }
+        if (Overlay!=true)
+        {
+          Log.Write("SWGraph:overlay enabled");
+          Overlay=true;
+        }
+      }*/
       
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
