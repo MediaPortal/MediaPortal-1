@@ -2311,15 +2311,21 @@ namespace MediaPortal.TV.Recording
 			ArrayList tvChannels = new ArrayList();
 			TVDatabase.GetChannels(ref tvChannels);
 
+			Log.Write("DVBGraphBDA: StoreChannels()");
 			DVBSections sections = new DVBSections();
 			DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
 			for (int i=0; i < transp.channels.Count;++i)
 			{
+				Log.Write("DVBGraphBDA: found {0} channels", transp.channels.Count);
 				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
 				info.service_name=info.service_name.Trim();
 				info.service_provider_name=info.service_provider_name.Trim();
 				if (info.service_name==String.Empty ||
-					  info.service_provider_name==String.Empty) continue;
+					info.service_provider_name==String.Empty) 
+				{
+					Log.Write("DVBGraphBDA: skip channel:#{0} because it has not details", i);
+					continue;
+				}
 
 				bool hasAudio=false;
 				bool hasVideo=false;
@@ -2360,6 +2366,7 @@ namespace MediaPortal.TV.Recording
 				
 				if (newchannel.IsTv && tv)
 				{
+					Log.Write("DVBGraphBDA: channel {0} is a tv channel",newchannel.ChannelName);
 					//check if this channel already exists in the tv database
 					bool isNewChannel=true;
 					int iChannelNumber=0;
@@ -2378,6 +2385,7 @@ namespace MediaPortal.TV.Recording
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
+						Log.Write("DVBGraphBDA: create new tv channel for {0}",newchannel.ChannelName);
 						TVChannel tvChan = new TVChannel();
 						tvChan.Name=newchannel.ChannelName;
 						tvChan.Number=newchannel.SID;
@@ -2385,23 +2393,32 @@ namespace MediaPortal.TV.Recording
 						iChannelNumber=tvChan.Number;
 						TVDatabase.AddChannel(tvChan);
 					}
+					else
+					{
+						Log.Write("DVBGraphBDA: channel {0} already exists in tv database",newchannel.ChannelName);
+					}
+
 				
 					if (Network() == NetworkType.DVBT)
 					{
+						Log.Write("DVBGraphBDA: map channel {0} to DVBT",newchannel.ChannelName);
 						TVDatabase.MapDVBTChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBC)
 					{
+						Log.Write("DVBGraphBDA: map channel {0} to DVBC",newchannel.ChannelName);
 						TVDatabase.MapDVBCChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.modulation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
+						Log.Write("DVBGraphBDA: map channel {0} to DVBS",newchannel.ChannelName);
 						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 				}
 				else
 				{
 					//todo: radio channels
+					Log.Write("DVBGraphBDA: channel {0} is a radio channel",newchannel.ChannelName);
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
 		}//public void StoreChannels(bool radio, bool tv)
