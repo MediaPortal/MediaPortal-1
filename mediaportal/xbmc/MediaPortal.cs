@@ -436,14 +436,39 @@ public class MediaPortalApp : D3DApp, IRender
 						if (bUseVMR9)
 						{
 							// toggle livetv/video in background on/pff
-							GUIGraphicsContext.ShowBackground = !GUIGraphicsContext.ShowBackground;
-
-							// if on, but we're not playing any video or watching tv
-							if (GUIGraphicsContext.ShowBackground && !GUIGraphicsContext.IsPlaying)
-							{
-								//then start watching live tv in background
-								Recorder.Previewing=true;
-							}
+              if (GUIGraphicsContext.ShowBackground)
+              {
+                Log.Write("Use live TV as background");
+                GUIGraphicsContext.ShowBackground =false;
+                // if on, but we're not playing any video or watching tv
+                if (!GUIGraphicsContext.IsPlaying)
+                {
+                  //then start watching live tv in background
+                  Log.Write("start livetv");
+                  Recorder.Previewing=true;
+                }
+              }
+              else
+              {
+                Log.Write("Use GUI as background");
+                if (g_Player.Playing && g_Player.IsTV)
+                {
+                  Log.Write("stop livetv");
+                  int iWindow=GUIWindowManager.ActiveWindow;
+                  if (iWindow != (int)GUIWindow.Window.WINDOW_TVGUIDE &&
+                      iWindow != (int)GUIWindow.Window.WINDOW_TV &&
+                      iWindow != (int)GUIWindow.Window.WINDOW_SCHEDULER &&
+                      iWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN &&
+                      iWindow != (int)GUIWindow.Window.WINDOW_RECORDEDTV)
+                  {
+                    
+                    GUIGraphicsContext.ShowBackground =true;
+                    if (g_Player.Playing && g_Player.IsTV) g_Player.Stop();
+                    Recorder.Previewing=false;
+                  }
+                  GUIGraphicsContext.ShowBackground =true;
+                }
+              }
 						}
 					}
 				break;

@@ -267,6 +267,12 @@ namespace MediaPortal.TV.Recording
       
       Log.Write("  CaptureCard:{0}   select correct channel",ID);
       SelectChannel(iChannelNr,false);
+      try
+      {
+        Log.Write("  CaptureCard:{0}   set crossbar routing",ID);
+        capture.FixCrossbarRouting( (iChannelNr<254) );
+      }
+      catch(Exception){}
 
       // set brightness, contrast, gamma etc...
       Log.Write("  CaptureCard:{0}   Setup brightness, contrast, gamma settings",ID);
@@ -518,6 +524,7 @@ namespace MediaPortal.TV.Recording
       
       try
       {
+        Log.Write("  CaptureCard:{0}   set crossbar routing",ID);
         capture.FixCrossbarRouting( (iChannelNr<254) );
       }
       catch (Exception ex)

@@ -149,6 +149,7 @@ namespace MediaPortal.TV.Recording
         iPreRecordInterval =xmlreader.GetValueAsInt("capture","prerecord", 5);
         iPostRecordInterval=xmlreader.GetValueAsInt("capture","postrecord", 5);
         m_bAlwaysTimeshift =xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
+        m_strPreviewChannel=xmlreader.GetValueAsString("mytv","channel","");
       }
 
       while (m_eState ==State.Running && GUIGraphicsContext.CurrentState!=GUIGraphicsContext.State.STOPPING)
