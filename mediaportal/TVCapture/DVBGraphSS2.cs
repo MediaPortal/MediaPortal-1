@@ -10,6 +10,7 @@ using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 
+
 namespace MediaPortal.TV.Recording
 {
 	/// <summary>
@@ -228,6 +229,8 @@ namespace MediaPortal.TV.Recording
 		bool							m_vmr9Running=false;
 //		byte[]							m_teleTextBuffer=new byte[188];
 //		ArrayList						m_teleTextStream=new ArrayList();
+		DVBTeletext						m_ttxt=new DVBTeletext();
+		int								m_counterTxT=0;
 //
 		
 		//
@@ -239,6 +242,11 @@ namespace MediaPortal.TV.Recording
 			{
 				m_pluginsEnabled=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
 			}
+			
+
+			GUIWindow win=GUIWindowManager.GetWindow(7700);
+			win.SetObject(m_ttxt);
+
 			try
 			{
 				RegistryKey hkcu = Registry.CurrentUser;
@@ -248,6 +256,13 @@ namespace MediaPortal.TV.Recording
 
 			}
 			catch(Exception){}
+		}
+		public DVBTeletext GetTeletextObject
+		{
+			get
+			{
+				return m_ttxt;
+			}
 		}
 		//
 		public void RebuildTuner(IntPtr data)
@@ -348,10 +363,26 @@ namespace MediaPortal.TV.Recording
 					break;// stop loop if we got or video-packet
 				}
 			}
+
 			//			}
 			if(m_vmr9Running==true && m_videoDataFound==false)
 				Vmr9.Repaint();// repaint vmr9
-
+			
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
+					
+				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
+				if(header.Pid==teleTextPid)
+				{
+					m_ttxt.SaveData((IntPtr)pointer);
+					m_counterTxT+=1;
+					if(m_counterTxT>2000)
+					{
+						//m_ttxt.DecodePage(0x301,0);
+						m_counterTxT=0;
+					}
+				}
+			}
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
 		}
