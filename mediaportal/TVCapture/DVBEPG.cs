@@ -268,11 +268,17 @@ namespace MediaPortal.TV.Recording
 						string[] langs=m_languagesToGrab.Split(new char[]{'/'});
 						foreach(string lang in langs)
 						{
+							Log.Write("epg-grabbing: language selected={0}",lang);
 							string codeEE="";
 							string codeSE="";
-				
+
+							string eitItem=eit.event_item_text;
+							if(eitItem==null)
+								eitItem="";
+
 							if(eit.eeLanguageCode!=null)
 							{
+								Log.Write("epg-grabbing: e-event-lang={0}",eit.eeLanguageCode);
 								codeEE=eit.eeLanguageCode.ToLower();
 								if(codeEE.Length==3)
 								{
@@ -284,8 +290,9 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 
-							if(eit.seLanguageCode!=null)
+							if(eit.seLanguageCode!=null && eitItem=="")
 							{
+								Log.Write("epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
 								codeSE=eit.seLanguageCode.ToLower();
 								if(codeSE.Length==3)
 								{
