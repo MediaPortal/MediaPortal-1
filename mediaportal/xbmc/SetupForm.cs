@@ -3313,6 +3313,8 @@ namespace MediaPortal
         dev.AudioDevice=dlg.AudioDevice;
         dev.VideoDevice=dlg.VideoDevice;
         dev.CaptureFormat=dlg.CaptureFormat;
+        dev.FrameRate=dlg.FrameRate;
+        dev.FrameSize=dlg.FrameSize;
         m_tvcards.Add(dev);
         UpdateCaptureCardList();
       }
@@ -3332,6 +3334,8 @@ namespace MediaPortal
       dlg.AudioDevice=dev.AudioDevice;
       dlg.VideoDevice=dev.VideoDevice;
       dlg.CaptureFormat=dev.CaptureFormat;
+      dlg.FrameRate=dev.FrameRate;
+      dlg.FrameSize=dev.FrameSize;
 
       dlg.ShowDialog(this.Parent);
       if (dlg.VideoDevice!="")
@@ -3343,6 +3347,9 @@ namespace MediaPortal
         dev.AudioDevice=dlg.AudioDevice;
         dev.VideoDevice=dlg.VideoDevice;
         dev.CaptureFormat=dlg.CaptureFormat;
+        dev.FrameRate=dlg.FrameRate;
+        dev.FrameSize=dlg.FrameSize;
+
         UpdateCaptureCardList();
       }
     }

@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  09-05-2004  MY TV       : added : specify capture frame size & frame rate in file->setup
+  09-05-2004  MY TV       : fixed : avsync problems when watching TV. (only when using seperate audio capture device)
   09-05-2004  MY TV       : fixed : recorded TV showed info from previous program. Not recorded program
   09-05-2004  MY TV       : fixed : speeded up going from home->my tv
   09-05-2004  MY TV       : fixed : when recording, tv overlay now shows tv logo

@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -20,6 +21,8 @@ namespace MediaPortal.TV.Recording
     string        m_strCaptureFormat="";
     bool          m_bUseForRecording;
     bool          m_bUseForTV;			
+    Size          m_FrameSize=new Size(720,576);	
+    double        m_FrameRate=25.0;
     [NonSerialized]
     bool          m_bIsRecording=false;        // flag indicating if we are recording or not
     
@@ -61,6 +64,18 @@ namespace MediaPortal.TV.Recording
 
     [NonSerialized]
     int           m_iID=0;
+
+    public Size FrameSize
+    {
+      get { return m_FrameSize;}
+      set {m_FrameSize=value;}
+    }
+
+    public double FrameRate
+    {
+      get { return m_FrameRate;}
+      set {m_FrameRate=value;}
+    }
 
 		public TVCaptureDevice()
 		{
@@ -219,6 +234,8 @@ namespace MediaPortal.TV.Recording
 
       capture.LoadSettings();
 
+      capture.FrameSize=m_FrameSize;
+      capture.FrameRate=m_FrameRate;
       // set filename for capture
       if (strFileName!=null && strFileName.Length>0)
       {
