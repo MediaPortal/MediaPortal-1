@@ -48,8 +48,8 @@
 <!--    FlyDVB-T DUO                          -->
 <!--    FlyDVB-T DUO Analog		      -->
 <!--    Hauppauge Nova-C                      -->
-<!--    Hauppauge Nova-T                      -->
 <!--    Hauppauge Nova-S                      -->
+<!--    Hauppauge Nova-T                      -->
 <!--    Hauppauge Nova-T 90002                -->
 <!--    Hauppauge NOVA-T (Oxford)             -->
 <!--    Hauppauge NOVA-T-USB2 (Soho)          -->
@@ -86,8 +86,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.45                                                               -->
-<!-- changed : 27-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.46                                                               -->
+<!-- changed : 28-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -637,7 +637,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge Nova USB2 DVB-T TV Receiver" devid="vid_2040&amp;pid_9301">
+  <capturecard commercialname="Hauppage Nova-T USB2 (Soho)" capturename="Hauppauge Nova USB2 DVB-T TV Receiver" devid="vid_2040&amp;pid_9301">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -747,7 +747,7 @@
     </tv>
   </capturecard>
    
-  <capturecard commercialname="Dvico Fusion HDTV rev3" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_03">
+  <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
@@ -1651,6 +1651,8 @@
     </tv>
   </capturecard>
 
+<!--    Not confirmed working yet   -->
+
   <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_ffff1002&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -1665,9 +1667,11 @@
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="6" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
