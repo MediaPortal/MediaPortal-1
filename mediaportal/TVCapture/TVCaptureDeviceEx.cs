@@ -674,6 +674,7 @@ namespace MediaPortal.TV.Recording
 
 				if (!IsRecording)
 				{
+					bool bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
 					_mTvChannelName = value;
 					if (_mGraph != null)
 					{
@@ -683,6 +684,9 @@ namespace MediaPortal.TV.Recording
 						if (_mGraph.ShouldRebuildGraph(ichannel))
 						{
 							RebuildGraph();
+							// for ss2: restore full screen
+							if(m_strVideoDevice=="B2C2 MPEG-2 Source")
+								GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
 							return;
 						}/*
             if (IsTimeShifting && !View)
