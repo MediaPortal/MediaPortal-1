@@ -155,6 +155,8 @@ namespace WindowPlugins.GUIPrograms
 						xmlwriter.SetValue("myprograms","viewby","filmstrip");
 						break;
 				}
+				xmlwriter.SetValue("myprograms","lastAppID", _MapSettings.LastAppID.ToString());
+				//Log.Write("dw myPrograms: saving xmlsettings lastappid {0}", _MapSettings.LastAppID);
 			}
 		}
 
@@ -171,6 +173,15 @@ namespace WindowPlugins.GUIPrograms
 					else if (strTmp=="largeicons") _MapSettings.ViewAs = (int)View.VIEW_AS_LARGEICONS;
 					else if (strTmp=="filmstrip") _MapSettings.ViewAs = (int)View.VIEW_AS_FILMSTRIP;
 				}
+				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
+			}
+		}
+
+		void LoadLastAppIDFromSettings()
+		{
+			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
 			}
 		}
 		
@@ -274,10 +285,13 @@ namespace WindowPlugins.GUIPrograms
 //					Log.Write("GUIPrograms: gui_msg_windows_init");
 					base.OnMessage(message);
 					LoadFolderSettings("");
+					LoadLastAppIDFromSettings(); // hacky load back the last app id, otherwise this can get lost from dx resets....
 					lastApp = apps.GetAppByID(_MapSettings.LastAppID);
 					if (lastApp != null)
 					{
 						lastFilepath = lastApp.DefaultFilepath();
+//						Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
+//						Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
 					}
 					else
 					{
@@ -410,6 +424,10 @@ namespace WindowPlugins.GUIPrograms
 			// string strFile = item.Label;
 			if (lastApp != null) 
 			{
+				_MapSettings.LastAppID = lastApp.AppID;
+				lastFilepath = lastApp.DefaultFilepath(); 
+//				Log.Write("dw myPrograms: FileItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+
 				lastApp.LaunchFile(item);
 			}
 		}
@@ -431,6 +449,8 @@ namespace WindowPlugins.GUIPrograms
 						lastApp = candidate;
 						_MapSettings.LastAppID = lastApp.AppID;
 						lastFilepath = lastApp.DefaultFilepath();
+//						Log.Write("dw myPrograms: FolderItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+
 					}
 				}
 				else if (item.MusicTag is FileItem)
@@ -479,12 +499,14 @@ namespace WindowPlugins.GUIPrograms
 					{
 						_MapSettings.LastAppID = lastApp.AppID;
 						lastFilepath = lastApp.DefaultFilepath(); 
+//						Log.Write("dw myPrograms: BackItemClicked 1: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
 					}
 					else
 					{
 						// back to home screen.....
 						_MapSettings.LastAppID = -1;
 						lastFilepath = "";
+//						Log.Write("dw myPrograms: BackItemClicked 2: lastAppID changes to {0}", _MapSettings.LastAppID);
 					}
 				}
 				UpdateListControl();
