@@ -25,7 +25,7 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
-    const int MILLI_SECONDS_TIMER=5;
+    const int MILLI_SECONDS_TIMER=1;
     protected string    m_strSkin="mce";
     protected string    m_strLanguage="english";
 
@@ -1273,7 +1273,7 @@ namespace MediaPortal
       ++frames;
 
       // Update the scene stats once per second
-      if (time - lastTime >= 0.5f)
+      if (time - lastTime >= 0.01f)
       {
         framePerSecond    = frames / (time - lastTime);
 				GUIGraphicsContext.CurrentFPS=framePerSecond;
