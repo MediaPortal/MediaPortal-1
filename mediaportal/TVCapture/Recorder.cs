@@ -328,7 +328,7 @@ namespace MediaPortal.TV.Recording
           if (!dev.IsRecording)
           {
             Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
-            TuneExternalChannel(currentProgram.Channel);
+            TuneExternalChannel(rec.Channel);
             dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
             return true;
           }
@@ -349,7 +349,7 @@ namespace MediaPortal.TV.Recording
             {
               Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
               dev.StopRecording();
-              TuneExternalChannel(currentProgram.Channel);
+              TuneExternalChannel(rec.Channel);
               dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
               return true;
             }
