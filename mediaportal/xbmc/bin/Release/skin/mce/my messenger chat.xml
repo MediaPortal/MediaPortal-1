@@ -36,7 +36,7 @@
 			<type>listcontrol</type>
 			<id>50</id>
 			<posX>80</posX>
-			<posX>80</posX>
+			<posY>85</posY>
 			<width>560</width>
 			<height>300</height>
 			<onleft>51</onleft>
@@ -54,8 +54,8 @@
 			<height>100</height>
 			<onleft>51</onleft>
 			<onright>51</onright>
-			<onup>51</onup>
-			<ondown>51</ondown>
+			<onup>50</onup>
+			<ondown>50</ondown>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<font>font13</font>
