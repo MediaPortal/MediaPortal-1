@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
  <strings>
 	<string>
 		<id>0</id>
@@ -93,7 +94,7 @@
 	</string>
 	<string>
 		<id>28</id>
-		<value>Augusto</value>
+		<value>Agosto</value>
 	</string>
 	<string>
 		<id>29</id>
@@ -149,7 +150,7 @@
 	</string>
 	<string>
 		<id>109</id>
-		<value>Crear Foto Pequeña/value>
+		<value>Crear Foto Pequeña</value>
 	</string>
 	<string>
 		<id>110</id>
@@ -257,11 +258,11 @@
 	</string>
 	<string>
 		<id>136</id>
-		<value>Playlists</value>
+		<value>Lista para tocar</value>
 	</string>
 	<string>
 		<id>137</id>
-		<value>Search</value>
+		<value>Buscar</value>
 	</string>
 	<string>
 		<id>138</id>
@@ -625,7 +626,7 @@
 	</string>
 	<string>
 		<id>228</id>
-		<value>Barajiar el Playlist al cargar</value>
+		<value>Barajiar la lista de tocar al cargar</value>
 	</string>
 	<string>
 		<id>229</id>
@@ -1469,35 +1470,35 @@
 	</string>
 	<string>
 		<id>450</id>
-		<value>Columns</value>
+		<value>Columnas</value>
 	</string>
 	<string>
 		<id>451</id>
-		<value>Row 1 adress:</value>
+		<value>Línea 1:</value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Row 2 adress:</value>
+		<value>Línea 2:</value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Row 3 adress:</value>
+		<value>Línea 3:</value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Row 4 adress:</value>
+		<value>Línea 4:</value>
 	</string>
 	<string>
 		<id>455</id>
-		<value>Rows:</value>
+		<value>Líneas:</value>
 	</string>
 	<string>
 		<id>456</id>
-		<value>Mode:</value>
+		<value>Modo:</value>
 	</string>
 	<string>
 		<id>457</id>
-		<value>Switch Ver</value>
+		<value>Cambiar Selecion</value>
 	</string>
 	<string>
 		<id>458</id>
@@ -1513,7 +1514,7 @@
 	</string>
 	<string>
 		<id>461</id>
-		<value>[active]</value>
+		<value>[activo]</value>
 	</string>
 	<string>
 		<id>462</id>
@@ -1521,7 +1522,7 @@
 	</string>
 	<string>
 		<id>463</id>
-		<value>Backlight</value>
+		<value>Luz tracera</value>
 	</string>
 	<string>
 		<id>464</id>
@@ -1565,7 +1566,7 @@
 	</string>
 	<string>
 		<id>474</id>
-		<value>Off</value>
+		<value>Apagar</value>
 	</string>
 	<string>
 		<id>475</id>
@@ -1621,19 +1622,19 @@
 	</string>
 	<string>
 		<id>488</id>
-		<value>Repeatir el directory playlist</value>
+		<value>Repeatir el directory de listas para tocar</value>
 	</string>
 	<string>
 		<id>489</id>
-		<value>Usar playlist in las canciones</value>
+		<value>Usar listas de tocar en las canciones</value>
 	</string>
 	<string>
 		<id>490</id>
-		<value>Cambio automatico de lista e icons para las canciones</value>
+		<value>Cambio automatico de lista e icones para las canciones</value>
 	</string>
 	<string>
 		<id>491</id>
-		<value>Usar icons grandes</value>
+		<value>Usar icones grandes</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -1964,7 +1965,7 @@
 <string><id>10028</id><value>Mi Videos/playlist</value></string>
 <string><id>10029</id><value>Configuración->General->LCD</value></string>
 <string><id>10100</id><value>Dialogo Sí/No</value></string>
-<string><id>10101</id><value>Progress dialog</value></string>
+<string><id>10101</id><value>Dialogo de Progreso</value></string>
 <string><id>10500</id><value>Mi Música/playlist</value></string>
 <string><id>10501</id><value>Mi Música/archivos</value></string>
 <string><id>10502</id><value>Mi Música/albunes</value></string>
@@ -1992,4 +1993,14 @@
 <string><id>691</id><value>Discografía (compilationes, cajas)</value></string>
 <string><id>700</id><value>Discografía (singles)</value></string>
 <string><id>701</id><value>Discografía (videos, entrevistas)</value></string>
+<string><id>702</id><value>No artistas encontrados!</value></string>
+<string><id>703</id><value>No esta conectado al Internet!</value></string>
+<string><id>704</id><value>Trallendo Feed</value></string>
+<string><id>705</id><value>Trallendo RSS Feed de </value></string>
+<string><id>706</id><value>Elegir Feed</value></string>
+<string><id>707</id><value>TV Prendido/Apagado</value></string>
+<string><id>708</id><value>Timeshifting</value></string>
+<string><id>709</id><value>Auto actualizar</value></string>
+<string><id>710</id><value>Una version nueva esta disponible</value></string>
+<string><id>711</id><value>Actualizar de v#old ->v#new ?</value></string>
 </strings>
