@@ -110,6 +110,9 @@ namespace home
 		private System.Windows.Forms.TextBox DateTest;
 		private System.Windows.Forms.Button TestDate;
 		private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.Button AddSpecial;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.ListBox SpecialFunctions;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -198,6 +201,8 @@ namespace home
 			textBox4.Text="";
 			textBox5.Text="";
 			textBox6.Text="";
+
+			SpecialFunctions.Items.Add("CD EJECT");
 			
 			this.treeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseDown);
 			this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
@@ -272,6 +277,7 @@ namespace home
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.label21 = new System.Windows.Forms.Label();
 			this.TestDate = new System.Windows.Forms.Button();
 			this.DateTest = new System.Windows.Forms.TextBox();
 			this.label20 = new System.Windows.Forms.Label();
@@ -290,7 +296,9 @@ namespace home
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.useMyPlugins = new System.Windows.Forms.RadioButton();
 			this.useMenus = new System.Windows.Forms.RadioButton();
-			this.label21 = new System.Windows.Forms.Label();
+			this.AddSpecial = new System.Windows.Forms.Button();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.SpecialFunctions = new System.Windows.Forms.ListBox();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -299,6 +307,7 @@ namespace home
 			this.groupBox4.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
+			this.tabPage3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox3
@@ -459,7 +468,7 @@ namespace home
 			// 
 			// SaveAll
 			// 
-			this.SaveAll.Location = new System.Drawing.Point(368, 448);
+			this.SaveAll.Location = new System.Drawing.Point(368, 456);
 			this.SaveAll.Name = "SaveAll";
 			this.SaveAll.Size = new System.Drawing.Size(88, 24);
 			this.SaveAll.TabIndex = 25;
@@ -468,7 +477,7 @@ namespace home
 			// 
 			// DeleteItem
 			// 
-			this.DeleteItem.Location = new System.Drawing.Point(368, 256);
+			this.DeleteItem.Location = new System.Drawing.Point(368, 248);
 			this.DeleteItem.Name = "DeleteItem";
 			this.DeleteItem.Size = new System.Drawing.Size(88, 24);
 			this.DeleteItem.TabIndex = 22;
@@ -477,7 +486,7 @@ namespace home
 			// 
 			// AddMenu
 			// 
-			this.AddMenu.Location = new System.Drawing.Point(368, 320);
+			this.AddMenu.Location = new System.Drawing.Point(368, 312);
 			this.AddMenu.Name = "AddMenu";
 			this.AddMenu.Size = new System.Drawing.Size(88, 24);
 			this.AddMenu.TabIndex = 21;
@@ -486,7 +495,7 @@ namespace home
 			// 
 			// CopyItem
 			// 
-			this.CopyItem.Location = new System.Drawing.Point(368, 224);
+			this.CopyItem.Location = new System.Drawing.Point(368, 216);
 			this.CopyItem.Name = "CopyItem";
 			this.CopyItem.Size = new System.Drawing.Size(88, 24);
 			this.CopyItem.TabIndex = 19;
@@ -574,7 +583,7 @@ namespace home
 			// 
 			// AddPicture
 			// 
-			this.AddPicture.Location = new System.Drawing.Point(368, 352);
+			this.AddPicture.Location = new System.Drawing.Point(368, 344);
 			this.AddPicture.Name = "AddPicture";
 			this.AddPicture.Size = new System.Drawing.Size(88, 24);
 			this.AddPicture.TabIndex = 28;
@@ -583,7 +592,7 @@ namespace home
 			// 
 			// deletePicture
 			// 
-			this.deletePicture.Location = new System.Drawing.Point(368, 288);
+			this.deletePicture.Location = new System.Drawing.Point(368, 280);
 			this.deletePicture.Name = "deletePicture";
 			this.deletePicture.Size = new System.Drawing.Size(88, 24);
 			this.deletePicture.TabIndex = 29;
@@ -634,7 +643,7 @@ namespace home
 			// 
 			// addConfig
 			// 
-			this.addConfig.Location = new System.Drawing.Point(368, 384);
+			this.addConfig.Location = new System.Drawing.Point(368, 376);
 			this.addConfig.Name = "addConfig";
 			this.addConfig.Size = new System.Drawing.Size(88, 32);
 			this.addConfig.TabIndex = 35;
@@ -645,6 +654,7 @@ namespace home
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -699,6 +709,14 @@ namespace home
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Date & Time Settings";
 			// 
+			// label21
+			// 
+			this.label21.Location = new System.Drawing.Point(16, 232);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(392, 16);
+			this.label21.TabIndex = 16;
+			this.label21.Text = "* When MP runs the  Date will be converted in your language !";
+			// 
 			// TestDate
 			// 
 			this.TestDate.Location = new System.Drawing.Point(224, 192);
@@ -738,7 +756,7 @@ namespace home
 			this.label19.Name = "label19";
 			this.label19.Size = new System.Drawing.Size(224, 16);
 			this.label19.TabIndex = 11;
-			this.label19.Text = "YYYY = Year as a long number ( e.g. 2005)";
+			this.label19.Text = "Year = Year as a long number ( e.g. 2005)";
 			// 
 			// label18
 			// 
@@ -817,6 +835,7 @@ namespace home
 			// 
 			// tabPage2
 			// 
+			this.tabPage2.Controls.Add(this.AddSpecial);
 			this.tabPage2.Controls.Add(this.listBox);
 			this.tabPage2.Controls.Add(this.groupBox2);
 			this.tabPage2.Controls.Add(this.AddPicture);
@@ -870,13 +889,29 @@ namespace home
 			this.useMenus.TabIndex = 0;
 			this.useMenus.Text = "Use Menus (Gucky62)";
 			// 
-			// label21
+			// AddSpecial
 			// 
-			this.label21.Location = new System.Drawing.Point(16, 232);
-			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(392, 16);
-			this.label21.TabIndex = 16;
-			this.label21.Text = "* When MP runs the  Date will be converted in your language !";
+			this.AddSpecial.Location = new System.Drawing.Point(368, 416);
+			this.AddSpecial.Name = "AddSpecial";
+			this.AddSpecial.Size = new System.Drawing.Size(88, 32);
+			this.AddSpecial.TabIndex = 36;
+			this.AddSpecial.Text = "Add Special Function";
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.SpecialFunctions);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Size = new System.Drawing.Size(832, 494);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "Special Funktions";
+			// 
+			// SpecialFunctions
+			// 
+			this.SpecialFunctions.Location = new System.Drawing.Point(416, 72);
+			this.SpecialFunctions.Name = "SpecialFunctions";
+			this.SpecialFunctions.Size = new System.Drawing.Size(328, 342);
+			this.SpecialFunctions.TabIndex = 0;
 			// 
 			// SetupForm
 			// 
@@ -896,6 +931,7 @@ namespace home
 			this.groupBox4.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1829,7 +1865,14 @@ namespace home
 			{	
 				cown.Remove(inx,2);
 				int sy=cur.Year-2000;
-				cown.Insert(inx,sy.ToString());
+				if (sy<10) 
+				{
+					cown.Insert(inx,"0"+sy.ToString());
+				} 
+				else 
+				{
+					cown.Insert(inx,sy.ToString());
+				}
 			}
 			s=cown.ToString();
 			inx=s.IndexOf("Year",0);
