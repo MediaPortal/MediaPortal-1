@@ -25,6 +25,7 @@
 <!-- Cards supported so far:                                                          -->
 <!--    Aito DVB-T DUO CardBus		      -->
 <!--    Asus PVR 416			      -->
+<!--    ATI eHomeWonder	 		      -->
 <!--    ATI HDTV			      -->
 <!--    ATI TV Wonder Elite		      -->
 <!--    AverMedia 1500MCE                     -->
@@ -87,8 +88,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.47                                                               -->
-<!-- changed : 29-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.48                                                               -->
+<!-- changed : 30-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -1652,8 +1653,6 @@
     </tv>
   </capturecard>
 
-<!--    Not confirmed working yet   -->
-
   <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_ffff1002&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -1668,10 +1667,10 @@
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
-        <connection sourcefilter="capture"  sourcepin="6" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
       </connections>
     </tv>
@@ -1700,6 +1699,121 @@
         <connection sourcefilter="capture"      sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
         <connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"          sinkpin="1"></connection>
         <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"          sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_fffb1002&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+	<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_fffe1002&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+	<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_fffd1002&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+	<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_fffc1002&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+	<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI eHomeWonder" capturename="ATI eHomeWonder Capture" devid="ven_4444&amp;dev_0016&amp;subsys_effb1002&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+	<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
