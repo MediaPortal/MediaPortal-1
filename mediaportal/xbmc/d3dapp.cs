@@ -1282,9 +1282,12 @@ namespace MediaPortal
 			// Render the scene as normal
 			if (GUIGraphicsContext.Vmr9Active) 
 			{
-				// if we're playing a movie with vmr9 then the player will draw the GUI
-				// so we just sleep 50msec here ...
-				return false;
+				if (GUIGraphicsContext.Vmr9FPS>1f)
+				{
+					// if we're playing a movie with vmr9 then the player will draw the GUI
+					// so we just sleep 50msec here ...
+					return false;
+				}
 			}
 			//if we're playing a movie or watching tv (fullscreen)
 			if (GUIGraphicsContext.IsFullScreenVideo)
@@ -1369,7 +1372,7 @@ namespace MediaPortal
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight, 
                                     m_iSleepingTime,strFmt, strDepthFmt, strMultiSample);
 				if (GUIGraphicsContext.Vmr9Active)
-					frameStats += " VMR9";
+					frameStats += String.Format(" VMR9 {0}",GUIGraphicsContext.Vmr9FPS.ToString("f2"));
       }
     }
 

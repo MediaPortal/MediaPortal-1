@@ -30,7 +30,7 @@ namespace MediaPortal.Player
 		public int                  textureCount=0;
 		int												  videoHeight,videoWidth;
 		DirectShowHelperLib.VMR9HelperClass vmr9Helper=null;
-		float                       lastTime;
+		float                       lastTime=0;
 		int													frameCounter=0;
 		/// <summary>
 		/// Constructor
@@ -180,9 +180,10 @@ namespace MediaPortal.Player
 		public void Process()
 		{
 			float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-			if (time - lastTime >= 0.2f)
+			if (time - lastTime >= 1f)
 			{
 				GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
+				//Log.Write("vmr9:{0} {1} {2}", frameCounter, GUIGraphicsContext.Vmr9FPS,(time - lastTime));
 				lastTime=time;
 				frameCounter=0;
 			}
