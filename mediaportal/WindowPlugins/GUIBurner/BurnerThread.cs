@@ -21,6 +21,7 @@ namespace MediaPortal.GUI.GUIBurner
 	public class BurnerThread
 	{
 		protected bool									converting = false;
+		protected bool									deleteDvrSrc = false;
 		protected int										rotCookie = 0;
 		protected IGraphBuilder			  	graphBuilder =null;
 		protected IStreamBufferSource 	bufferSource=null ;
@@ -44,6 +45,14 @@ namespace MediaPortal.GUI.GUIBurner
 			set{ converting = value; }
 		}
 
+		/// <summary>
+		/// Delete DVR-MS after converting?
+		/// </summary>
+		public bool deleteDvrMsSrc
+		{
+			get{ return deleteDvrSrc; }
+			set{ deleteDvrSrc = value; }
+		}
 		/// <summary>
 		/// clear converter file list.
 		/// </summary>
@@ -162,6 +171,16 @@ namespace MediaPortal.GUI.GUIBurner
 							GUIPropertyManager.SetProperty("#convert_info",c4+text);
 							eff=0;
 							break;
+					}
+				}
+				if (deleteDvrSrc==true) //Delete DVR-MS Source File
+				{ 
+					string oName=System.IO.Path.ChangeExtension(f.path+"\\"+f.name,".mpg");
+					FileInfo f1 = new FileInfo(oName);	
+					if (f1.Exists)					// Output file exist
+					{
+						FileInfo f2 = new FileInfo(f.path+"\\"+f.name);
+						f2.Delete();
 					}
 				}
 			}

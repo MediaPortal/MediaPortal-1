@@ -37,6 +37,7 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.CheckBox checkBox5;
+		private System.Windows.Forms.Button button4;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -99,6 +100,7 @@ namespace GUIBurner
 		this.label8 = new System.Windows.Forms.Label();
 		this.label9 = new System.Windows.Forms.Label();
 		this.checkBox5 = new System.Windows.Forms.CheckBox();
+		this.button4 = new System.Windows.Forms.Button();
 		this.SuspendLayout();
 		// 
 		// comboBox1
@@ -201,7 +203,6 @@ namespace GUIBurner
 		// 
 		// checkBox3
 		// 
-		this.checkBox3.Enabled = false;
 		this.checkBox3.Location = new System.Drawing.Point(200, 200);
 		this.checkBox3.Name = "checkBox3";
 		this.checkBox3.Size = new System.Drawing.Size(24, 24);
@@ -224,7 +225,6 @@ namespace GUIBurner
 		// 
 		// textBox2
 		// 
-		this.textBox2.Enabled = false;
 		this.textBox2.Location = new System.Drawing.Point(200, 224);
 		this.textBox2.Name = "textBox2";
 		this.textBox2.Size = new System.Drawing.Size(272, 20);
@@ -250,10 +250,10 @@ namespace GUIBurner
 		// 
 		this.label8.Location = new System.Drawing.Point(8, 272);
 		this.label8.Name = "label8";
-		this.label8.Size = new System.Drawing.Size(432, 40);
+		this.label8.Size = new System.Drawing.Size(384, 40);
 		this.label8.TabIndex = 18;
 		this.label8.Text = "If you want to convert DVR-MS in MPEG Files you must instal the Cyberlink Filters" +
-			". Read the \"Convert DVR-MS.txt\" in Docs folder.";
+			".  Push the Help Button for more Infos";
 		// 
 		// label9
 		// 
@@ -270,10 +270,20 @@ namespace GUIBurner
 		this.checkBox5.Size = new System.Drawing.Size(24, 24);
 		this.checkBox5.TabIndex = 19;
 		// 
+		// button4
+		// 
+		this.button4.Location = new System.Drawing.Point(400, 288);
+		this.button4.Name = "button4";
+		this.button4.Size = new System.Drawing.Size(88, 24);
+		this.button4.TabIndex = 21;
+		this.button4.Text = "Help DVR-MS";
+		this.button4.Click += new System.EventHandler(this.button4_Click);
+		// 
 		// SetupForm
 		// 
 		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 		this.ClientSize = new System.Drawing.Size(608, 326);
+		this.Controls.Add(this.button4);
 		this.Controls.Add(this.label9);
 		this.Controls.Add(this.checkBox5);
 		this.Controls.Add(this.label8);
@@ -411,6 +421,8 @@ namespace GUIBurner
 			checkBox1.Checked=xmlreader.GetValueAsBool("burner","fastformat",true);
 			checkBox4.Checked=xmlreader.GetValueAsBool("burner","convertdvr",true);
 			checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
+			checkBox3.Checked=xmlreader.GetValueAsBool("burner","convertautomatic",false);
+			textBox2.Text=xmlreader.GetValueAsString("burner","dvrms_folder","");
 		}
 	}
 
@@ -424,8 +436,20 @@ namespace GUIBurner
 			xmlwriter.SetValueAsBool("burner","fastformat",checkBox1.Checked);
 			xmlwriter.SetValueAsBool("burner","convertdvr",checkBox4.Checked);
 			xmlwriter.SetValueAsBool("burner","deletedvrsource",checkBox2.Checked);
+			xmlwriter.SetValueAsBool("burner","convertautomatic",checkBox3.Checked);
+			xmlwriter.SetValue("burner","dvrms_folder",textBox2.Text);
 		}
 	}
 
+		private void button4_Click(object sender, System.EventArgs e)
+		{
+			string s="1. Load from this site ftp://ftp.lifeview.com.tw/TV/LR301/ the file: LR301-Ver.1.02.0.600.zip\n";
+			s=s+"2. Do not install this package, we need only two files from the Zip archive.\n";
+			s=s+"    In the archive is a Data1.cab file. You can open it with the unzip program. Copy the\n";
+			s=s+"    following files in the MP Main Folder: CLDump.ax    MpgMux.ax\n";
+			s=s+"3. Start the Batch Program RecCodecs.cmd. You found it in MP Main folder.\n\n";
+			s=s+"    That´s all.\n";
+			MessageBox.Show( s );
+		}
  }
 }
