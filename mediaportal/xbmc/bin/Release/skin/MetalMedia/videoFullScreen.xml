@@ -67,7 +67,7 @@
   <posX>608</posX> 
   <posY>20</posY> 
   <visible>no</visible> 
-  <texture>video-2x.png</texture> 
+  <texture>video+2x.png</texture> 
   <colorkey>0</colorkey> 
   <colordiffuse>ffffffff</colordiffuse> 
   </control>
@@ -78,7 +78,7 @@
   <posX>608</posX> 
   <posY>20</posY> 
   <visible>no</visible> 
-  <texture>video-4x.png</texture> 
+  <texture>video+4x.png</texture> 
   <colorkey>0</colorkey> 
   <colordiffuse>ffffffff</colordiffuse> 
   </control>
@@ -89,7 +89,7 @@
   <posX>608</posX> 
   <posY>20</posY>  
   <visible>no</visible> 
-  <texture>video-8x.png</texture> 
+  <texture>video+8x.png</texture> 
   <colorkey>0</colorkey> 
   <colordiffuse>ffffffff</colordiffuse> 
   </control>
@@ -100,7 +100,7 @@
   <posX>608</posX> 
   <posY>20</posY> 
   <visible>no</visible> 
-  <texture>video-16x.png</texture> 
+  <texture>video+16x.png</texture> 
   <colorkey>0</colorkey> 
   <colordiffuse>ffffffff</colordiffuse> 
   </control>
@@ -111,9 +111,67 @@
   <posX>608</posX> 
   <posY>20</posY>  
   <visible>no</visible> 
-  <texture>video-32x.png</texture> 
+  <texture>video+32x.png</texture> 
   <colorkey>0</colorkey> 
   <colordiffuse>ffffffff</colordiffuse> 
   </control>
+  
+  
+ 
+ <control>
+  <description>- 2x image</description> 
+  <type>image</type> 
+  <id>23</id> 
+  <posX>608</posX> 
+  <posY>20</posY> 
+  <visible>no</visible> 
+  <texture>video-2x.png</texture> 
+  <colorkey>0</colorkey> 
+  <colordiffuse>ffffffff</colordiffuse> 
+  </control>
+ <control>
+  <description>- 4x image</description> 
+  <type>image</type> 
+  <id>24</id> 
+  <posX>608</posX> 
+  <posY>20</posY> 
+  <visible>no</visible> 
+  <texture>video-4x.png</texture> 
+  <colorkey>0</colorkey> 
+  <colordiffuse>ffffffff</colordiffuse> 
+  </control>
+ <control>
+  <description>- 8x image</description> 
+  <type>image</type> 
+  <id>25</id> 
+  <posX>608</posX> 
+  <posY>20</posY>  
+  <visible>no</visible> 
+  <texture>video-8x.png</texture> 
+  <colorkey>0</colorkey> 
+  <colordiffuse>ffffffff</colordiffuse> 
+  </control>
+ <control>
+  <description>- 16x image</description> 
+  <type>image</type> 
+  <id>26</id> 
+  <posX>608</posX> 
+  <posY>20</posY> 
+  <visible>no</visible> 
+  <texture>video-16x.png</texture> 
+  <colorkey>0</colorkey> 
+  <colordiffuse>ffffffff</colordiffuse> 
+  </control>
+ <control>
+  <description>- 32x image</description> 
+  <type>image</type> 
+  <id>27</id> 
+  <posX>608</posX> 
+  <posY>20</posY>  
+  <visible>no</visible> 
+  <texture>video-32x.png</texture> 
+  <colorkey>0</colorkey> 
+  <colordiffuse>ffffffff</colordiffuse> 
+  </control> 
   </controls>
   </window>

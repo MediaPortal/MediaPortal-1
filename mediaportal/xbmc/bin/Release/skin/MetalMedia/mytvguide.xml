@@ -268,8 +268,8 @@
 		<id>6</id>
 		<posX>60</posX>
 		<posY>222</posY>
-		<label>605</label>
 		<font>font13</font>
+		<label>#TV.Guide.Day</label>
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
@@ -303,7 +303,7 @@
 		<posY>108</posY>
 		<width>85</width>
 		<height>85</height>
-		<texture>defaultVideoBig.png</texture>
+		<texture>#TV.Guide.thumb</texture>
 	</control>
 	<control>
 		<description>Current program title</description>
@@ -311,7 +311,7 @@
 		<id>13</id>
 		<posX>150</posX>
 		<posY>105</posY>
-		<label>605</label>
+		<label>#TV.Guide.Title</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
@@ -321,7 +321,7 @@
 		<id>14</id>
 		<posX>670</posX>
 		<posY>105</posY>
-		<label>605</label>
+		<label>#TV.Guide.Time</label>
 		<align>right</align>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -332,7 +332,7 @@
 		<id>27</id>
 		<posX>670</posX>
 		<posY>135</posY>
-		<label>605</label>
+		<label>#TV.Guide.Genre</label>
 		<align>right</align>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -345,7 +345,7 @@
 		<posY>130</posY>
 		<width>400</width> 
 		<height>85</height> 
-		<label>605</label>
+		<label>#TV.Guide.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>	

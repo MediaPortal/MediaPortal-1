@@ -366,6 +366,7 @@
 		<width>400</width>
 		<height>25</height>
 		<texturebg>list_focus.png</texturebg>
+		<label>#TV.View.Percentage</label>
 		<visible>yes</visible>
 	</control>
 	
@@ -390,7 +391,7 @@
 		<posY>450</posY>
 		<width>64</width>
 		<height>64</height>
-		<texture>defaultVideoBig.png</texture>
+		<texture>#TV.Record.thumb</texture>
 	</control>
 	<control>
 		<description>record info label</description> 
@@ -402,6 +403,7 @@
 		<align>left</align>  
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
+		<label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
 		<id>22</id> 
 	</control>
 

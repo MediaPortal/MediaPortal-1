@@ -225,7 +225,7 @@
 		<id>12</id>
 		<posX>370</posX>
 		<posY>50</posY>
-		<label>-</label>
+		<label>#itemcount</label>
 		<font>font10</font>
 		<align>right</align>
 		<textcolor>FF000000</textcolor>
@@ -316,7 +316,7 @@
 		<posY>425</posY>
 		<width>100</width>
 		<height>100</height>
-		<texture>defaultVideoBig.png</texture>
+		<texture>#TV.RecordedTV.thumb</texture>
 	</control>
 	<control>
 		<description>Blue Background box</description>
@@ -335,7 +335,7 @@
 		<id>13</id>
 		<posX>175</posX>
 		<posY>425</posY>
-		<label>605</label>
+		<label>#TV.RecordedTV.Title</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
@@ -345,7 +345,7 @@
 		<id>14</id>
 		<posX>670</posX>
 		<posY>425</posY>
-		<label>605</label>
+		<label>#TV.RecordedTV.Time</label>
 		<align>right</align>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -358,7 +358,7 @@
 		<posY>445</posY>
 		<width>450</width> 
 		<height>80</height> 
-		<label>605</label>
+		<label>#TV.RecordedTV.Description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
@@ -368,7 +368,7 @@
 		<id>17</id>
 		<posX>670</posX>
 		<posY>445</posY>
-		<label>605</label>
+		<label>#TV.RecordedTV.Genre</label>
 		<align>right</align>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
