@@ -272,7 +272,7 @@ namespace MediaPortal.GUI.Music
       string strThumb=(string )GUIPropertyManager.GetProperty("#thumb");
 
 
-      GUIControl AlbumArtPicture = GetControl((int)Controls.CONTROL_LOGO_PIC); 
+      GUIImage AlbumArtPicture = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_PIC); 
       GUIImage SurroundingRectangle = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_RECT); 
       // do we have album art?
       if (strThumb.Length==0)
@@ -327,6 +327,7 @@ namespace MediaPortal.GUI.Music
           
           // make album art visible
           AlbumArtPicture.IsVisible=true;
+          AlbumArtPicture.FixedHeight = AlbumArtPicture.KeepAspectRatio;
           float fXPos=(float)AlbumArtPicture.XPosition;
           float fYPos=(float)AlbumArtPicture.YPosition;
           int iWidth=AlbumArtPicture.Width;
