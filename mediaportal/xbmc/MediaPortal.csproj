@@ -251,6 +251,16 @@
                     DependentUpon = "PluginForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
+                <File
+                    RelPath = "SplashScreen.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SplashScreen.resx"
+                    DependentUpon = "SplashScreen.cs"
+                    BuildAction = "EmbeddedResource"
+                />
             </Include>
         </Files>
     </CSHARP>

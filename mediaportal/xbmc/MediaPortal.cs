@@ -51,9 +51,19 @@ public class MediaPortalApp : D3DApp, IRender
     const int WM_KEYDOWN    =0x0100;
     const int WM_SYSCOMMAND =0x0112;
     const int SC_SCREENSAVE =0xF140;
+
+    static SplashScreen splashScreen;
+
 		[STAThread]
     public static void Main()
     {
+      //
+      // Display splash screen
+      //
+      splashScreen = new SplashScreen();
+      splashScreen.Show();
+      splashScreen.Update();
+
         // CHECK if DirectX 9 if installed
         bool bDirectXInstalled=false;
         bool bWindowsMediaPlayer9=false;
@@ -144,6 +154,9 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
         }
       }
+
+      if(splashScreen != null)
+        splashScreen.Close();
     }
 	  private void OnRemoteCommand(object command)
 	  {
@@ -371,6 +384,16 @@ public class MediaPortalApp : D3DApp, IRender
       //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
 
       Recorder.Start();
+
+      //
+      // Kill the splash screen
+      //
+      if(splashScreen != null)
+      {
+        splashScreen.Close();
+        splashScreen.Dispose();
+        splashScreen = null;
+      }
     } 
 
     /// <summary>
