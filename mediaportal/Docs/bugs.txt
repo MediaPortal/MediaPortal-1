@@ -10,17 +10,15 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  13-07-2004 vmr9       : cannot switch between windowed/fullscreen mode after playing a movie with vmr9  
   
   13-07-2004 my music   : After adding an audio cd to the playlist selecting a different song from the playlist does not work.
   13-07-2004 my music   : After adding an audio cd (that has been recognized by freedb) to a playlist. It shows, Track 1, ... instead of the freedb info.
   10-08-2004 calibration: when calibration pixel ratio and setting a perfect square, calibration is wrong. I need to set a non square to get good AR) (maybe calibrate pic in skin bad?
-  09-08-2004 my video   : vmr9 quality of video turns bad after a GUI element (like pause,ff,rw icon) has been shown
   02-08-2004 my tv      : dual tuner setup: when recording with card#1 you cannot switch tv channels anymore
                           since card#1 is also used for tv viewing instead of card #2
   29-07-2004 DVD player : Settings for AR control and display mode are not respected. It always uses default modes
-  11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
-  19-06-2004 my video   : vmr9: lines/stripes?
   02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. 
                           However, there r albums withds? (MrMario64 )
   02-05-2004 my music   : reorganise datab the same name from different artists. (big change needed in database engine) 
