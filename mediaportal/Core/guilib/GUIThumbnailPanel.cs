@@ -351,7 +351,7 @@ GUISpinControl m_upDown = null;
         }
       }
 
-			int iScrollYOffset = 0;
+			int iScrollYOffset = 50;
 			if (true == m_bScrollDown)
 			{
 				iScrollYOffset = - (m_iItemHeight - m_iScrollCounter);

@@ -237,13 +237,13 @@ namespace MediaPortal.GUI.Video
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
+					LoadSettings();
           if (VideoState.StartWindow != GetID)
           {
             GUIWindowManager.ActivateWindow(VideoState.StartWindow);
             return false;
           }
 					base.OnMessage(message);
-					LoadSettings();
           LoadFolderSettings(m_strDirectory);
 					ShowThumbPanel();
 					LoadDirectory(m_strDirectory);
