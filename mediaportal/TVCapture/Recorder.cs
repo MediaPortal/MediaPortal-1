@@ -815,6 +815,19 @@ namespace MediaPortal.TV.Recording
           dtStarted=Recorder.TimeTimeshiftingStarted;
           Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
         }
+        else
+        {
+          // we dont have any tvguide data. 
+          // so just suppose program started when timeshifting started and ends 2 hours after that
+          DateTime dtStart,dtEnd,dtStarted;
+          dtStart=Recorder.TimeTimeshiftingStarted;
+
+          dtEnd=dtStart;
+          dtEnd=dtEnd.AddHours(2);
+
+          dtStarted=Recorder.TimeTimeshiftingStarted;
+          Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
+        }
       }
     }
     
