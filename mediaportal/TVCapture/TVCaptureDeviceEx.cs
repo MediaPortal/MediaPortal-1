@@ -884,6 +884,11 @@ namespace MediaPortal.TV.Recording
 								Log.WriteFile(Log.LogType.Recorder,false,"editor.SetAttributes() on {0}", rec.fileName);
 								editor.SetAttributes(rec.Properties);
 							}
+							catch(IOException ex)
+							{
+								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} IOException:{1} {2} {3}",
+									rec.fileName,ex.Message,ex.Source,ex.StackTrace);
+							}
 							catch(Exception ex)
 							{
 								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
@@ -945,9 +950,16 @@ namespace MediaPortal.TV.Recording
 			Hashtable propsToSet = new Hashtable();
 
 			propsToSet.Add("channel",new MetadataItem("channel", _mNewRecordedTV.Channel, MetadataItemType.String));
-			propsToSet.Add("title",new MetadataItem("title", _mNewRecordedTV.Title, MetadataItemType.String));
-			propsToSet.Add("genre",new MetadataItem("genre", _mNewRecordedTV.Genre, MetadataItemType.String));
-			propsToSet.Add("description",new MetadataItem("description", _mNewRecordedTV.Description, MetadataItemType.String));
+			
+			if (_mNewRecordedTV.Title!=null && _mNewRecordedTV.Title.Length>0)
+				propsToSet.Add("title",new MetadataItem("title", _mNewRecordedTV.Title, MetadataItemType.String));
+			
+			if (_mNewRecordedTV.Genre!=null && _mNewRecordedTV.Genre.Length>0)
+				propsToSet.Add("genre",new MetadataItem("genre", _mNewRecordedTV.Genre, MetadataItemType.String));
+
+			if (_mNewRecordedTV.Description!=null && _mNewRecordedTV.Description.Length>0)
+				propsToSet.Add("description",new MetadataItem("description", _mNewRecordedTV.Description, MetadataItemType.String));
+
 			propsToSet.Add("id",new MetadataItem("id",  _mNewRecordedTV.ID, MetadataItemType.Dword));
 			propsToSet.Add("cardno",new MetadataItem("cardno", this.ID, MetadataItemType.Dword));
 			propsToSet.Add("duration",new MetadataItem("duration", ts.TotalSeconds, MetadataItemType.Dword));
