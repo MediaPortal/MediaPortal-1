@@ -32,11 +32,21 @@
 		<textcolor>ffffffff</textcolor>
 	</control>
 	<control>
+		<description>Channel name label</description>
+		<type>label</type>
+		<id>12</id>
+		<posX>260</posX>
+		<posY>50</posY>
+		<font>font16</font>
+		<align>left</align>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
 		<description>Number of Files Label</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>260</posX>
-		<posY>530</posY>
+		<posY>306</posY>
 		<label>#itemcount</label>
 		<align>left</align>
 		<textcolor>ffffffff</textcolor>
@@ -91,7 +101,7 @@
 		<description>listcontrol</description>
 		<type>listcontrol</type>
 		<id>50</id>
-		<height>229</height>
+		<height>240</height>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<onup>50</onup>
@@ -105,9 +115,9 @@
 		<type>textboxscrollup</type>
 		<id>506</id>
 		<posX>242</posX>
-		<posY>340</posY>
+		<posY>350</posY>
 		<width>430</width>
-		<height>235</height>
+		<height>180</height>
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>

@@ -105,9 +105,9 @@
 		<type>textboxscrollup</type>
 		<id>506</id>
 		<posX>242</posX>
-		<posY>335</posY>
+		<posY>340</posY>
 		<width>430</width>
-		<height>270</height>
+		<height>190</height>
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
