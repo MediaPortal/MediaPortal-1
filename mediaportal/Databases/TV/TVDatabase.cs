@@ -428,6 +428,12 @@ namespace MediaPortal.TV.Database
 								myLocator.Modulation					= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
 								myLocator.OuterFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
 								myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
+								Log.Write("Carrier frequency:{0} KHz bandwidth:{1} MHz, Symbolrate:{2} OtherFrquencyInUse:{3}",
+														myLocator.CarrierFrequency,myLocator.Bandwidth,myLocator.SymbolRate, myLocator.OtherFrequencyInUse);
+								Log.Write("Guard:{0} HAlpha:{1} LPInnerFec:{2} LPInnerFecRate:{3} Mode:{4}",
+														myLocator.Guard, myLocator.HAlpha, myLocator.LPInnerFEC, myLocator.LPInnerFECRate, myLocator.Mode);
+								Log.Write("Modulation:{0} OuterFEC:{1} OuterFECRate:{2}",
+														myLocator.Modulation, myLocator.OuterFEC, myLocator.OuterFECRate);
 							}	break;
 							default:
 								return null;
@@ -435,6 +441,7 @@ namespace MediaPortal.TV.Database
 						myTuneRequest.ONID	= Int32.Parse(Get(results,0,"ONID"));
 						myTuneRequest.TSID	= Int32.Parse(Get(results,0,"TSID"));
 						myTuneRequest.SID		= Int32.Parse(Get(results,0,"SID"));
+						Log.Write("ONID:{0} TSID:{1} SID:{2}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID);
 					}
 
 					return tuneRequest;
