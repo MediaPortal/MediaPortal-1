@@ -346,9 +346,10 @@ namespace MediaPortal.TV.Recording
             }
             if (IsTimeShifting && !View)
             {
+              bool bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
               g_Player.Stop();
               RebuildGraph();
-              GUIGraphicsContext.IsFullScreenVideo=true;
+              GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
               return;
             }
             m_graph.TuneChannel(standard, ichannel);

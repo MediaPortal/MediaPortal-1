@@ -429,7 +429,7 @@ namespace MediaPortal.GUI.TV
 
     public override void Process()
     {
-      if (g_Player.Playing && g_Player.DoesOwnRendering) return;
+      //if (g_Player.Playing && g_Player.DoesOwnRendering) return;
       System.Threading.Thread.Sleep(50);
       if (!g_Player.Playing)
       {
@@ -437,6 +437,7 @@ namespace MediaPortal.GUI.TV
       }
 
 
+      m_strChannel=Recorder.GetTVChannelName(GetCurrentCard());
       //show/hide 'record pin' if current program is being recorded or not
       bool bRecording=false;
       TVProgram program=m_util.GetCurrentProgram(m_strChannel);
@@ -444,7 +445,7 @@ namespace MediaPortal.GUI.TV
       {
         foreach (TVRecording record in m_recordings)
         {
-          if (record.IsRecordingProgram(program) ) 
+          if (record.Canceled==0 && record.IsRecordingProgram(program) ) 
           {
             bRecording=true;
             break;
