@@ -66,6 +66,8 @@
 		<posY>162</posY>
 		<width>16</width>
 		<height>16</height>
+		<textXOff>10</textXOff>
+		<textYOff>2</textYOff>
 		<textureFocus>arrow_up_focus.png</textureFocus>
 		<textureNoFocus>arrow_up_nofocus.png</textureNoFocus>
 		<AltTextureFocus>arrow_down_focus.png</AltTextureFocus>
