@@ -54,6 +54,7 @@ namespace GUIBurner
 		private System.Windows.Forms.Button button7;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.CheckBox DateTimeFolder;
+		private System.Windows.Forms.Button button8;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -131,6 +132,7 @@ namespace GUIBurner
 		this.button7 = new System.Windows.Forms.Button();
 		this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 		this.DateTimeFolder = new System.Windows.Forms.CheckBox();
+		this.button8 = new System.Windows.Forms.Button();
 		this.tabControl1.SuspendLayout();
 		this.tabPage1.SuspendLayout();
 		this.tabPage2.SuspendLayout();
@@ -382,6 +384,7 @@ namespace GUIBurner
 		// 
 		// tabPage3
 		// 
+		this.tabPage3.Controls.Add(this.button8);
 		this.tabPage3.Controls.Add(this.DateTimeFolder);
 		this.tabPage3.Controls.Add(this.button7);
 		this.tabPage3.Controls.Add(this.textBox2);
@@ -470,11 +473,20 @@ namespace GUIBurner
 		// 
 		// DateTimeFolder
 		// 
-		this.DateTimeFolder.Location = new System.Drawing.Point(40, 312);
+		this.DateTimeFolder.Location = new System.Drawing.Point(40, 344);
 		this.DateTimeFolder.Name = "DateTimeFolder";
 		this.DateTimeFolder.Size = new System.Drawing.Size(408, 32);
 		this.DateTimeFolder.TabIndex = 9;
 		this.DateTimeFolder.Text = "Create new Folder with Date/Time   e.G.     backup 12-03-05 1250";
+		// 
+		// button8
+		// 
+		this.button8.Location = new System.Drawing.Point(40, 296);
+		this.button8.Name = "button8";
+		this.button8.Size = new System.Drawing.Size(104, 24);
+		this.button8.TabIndex = 10;
+		this.button8.Text = "Delete File";
+		this.button8.Click += new System.EventHandler(this.button8_Click);
 		// 
 		// SetupForm
 		// 
@@ -634,8 +646,11 @@ namespace GUIBurner
 			int count=0;
 			foreach (string text in listBox1.Items)
 			{
-				xmlwriter.SetValue("burner","backupline#"+count.ToString(),text);
-				count++;
+				if (text!="") 
+				{
+					xmlwriter.SetValue("burner","backupline#"+count.ToString(),text);
+					count++;
+				}
 			}
 			xmlwriter.SetValue("burner","backuplines",count);
 		}
@@ -677,7 +692,20 @@ namespace GUIBurner
 
 		private void button6_Click(object sender, System.EventArgs e)
 		{
-			listBox1.Items.Add(textBox2.Text);
+			if (textBox2.Text=="") 
+			{
+				MessageBox.Show( "You must enter a valid file name");
+			} 
+			else 
+			{
+				listBox1.Items.Add(textBox2.Text);
+				textBox2.Text="";
+			}
+		}
+
+		private void button8_Click(object sender, System.EventArgs e)
+		{
+			listBox1.Items.RemoveAt(listBox1.SelectedIndex);
 		}
  }
 }
