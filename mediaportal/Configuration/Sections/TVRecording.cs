@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
+using System.Management; 
 namespace MediaPortal.Configuration.Sections
 {
 	public class TVRecording : MediaPortal.Configuration.SectionSettings
@@ -19,6 +20,12 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox endTextBox;
 		private System.Windows.Forms.Button browseButton;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label labelPercent;
+		private System.Windows.Forms.CheckBox cbDeleteWatchedShows;
+		private System.Windows.Forms.TrackBar trackBar1;
+		private System.Windows.Forms.CheckBox checkBoxDeleteLow;
 		private System.ComponentModel.IContainer components = null;
 
 		public TVRecording() : this("Recording")
@@ -66,7 +73,15 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.checkBoxDeleteLow = new System.Windows.Forms.CheckBox();
+			this.cbDeleteWatchedShows = new System.Windows.Forms.CheckBox();
+			this.labelPercent = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
+			this.groupBox2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -85,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 200);
+			this.groupBox1.Size = new System.Drawing.Size(440, 160);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "TV Recording Settings";
@@ -171,12 +186,71 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.TabIndex = 9;
 			this.label1.Text = "Start recording";
 			// 
+			// groupBox2
+			// 
+			this.groupBox2.Controls.Add(this.trackBar1);
+			this.groupBox2.Controls.Add(this.checkBoxDeleteLow);
+			this.groupBox2.Controls.Add(this.cbDeleteWatchedShows);
+			this.groupBox2.Controls.Add(this.labelPercent);
+			this.groupBox2.Controls.Add(this.label5);
+			this.groupBox2.Location = new System.Drawing.Point(8, 176);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(440, 168);
+			this.groupBox2.TabIndex = 1;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Diskspace management";
+			// 
+			// trackBar1
+			// 
+			this.trackBar1.Location = new System.Drawing.Point(144, 24);
+			this.trackBar1.Maximum = 100;
+			this.trackBar1.Name = "trackBar1";
+			this.trackBar1.Size = new System.Drawing.Size(104, 45);
+			this.trackBar1.TabIndex = 5;
+			this.trackBar1.TickFrequency = 10;
+			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+			// 
+			// checkBoxDeleteLow
+			// 
+			this.checkBoxDeleteLow.Location = new System.Drawing.Point(32, 104);
+			this.checkBoxDeleteLow.Name = "checkBoxDeleteLow";
+			this.checkBoxDeleteLow.Size = new System.Drawing.Size(360, 16);
+			this.checkBoxDeleteLow.TabIndex = 4;
+			this.checkBoxDeleteLow.Text = "Automaticly delete oldest recordings when low on free diskspace";
+			// 
+			// cbDeleteWatchedShows
+			// 
+			this.cbDeleteWatchedShows.Location = new System.Drawing.Point(32, 80);
+			this.cbDeleteWatchedShows.Name = "cbDeleteWatchedShows";
+			this.cbDeleteWatchedShows.Size = new System.Drawing.Size(304, 24);
+			this.cbDeleteWatchedShows.TabIndex = 3;
+			this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after you watched them";
+			// 
+			// labelPercent
+			// 
+			this.labelPercent.Location = new System.Drawing.Point(272, 32);
+			this.labelPercent.Name = "labelPercent";
+			this.labelPercent.Size = new System.Drawing.Size(128, 23);
+			this.labelPercent.TabIndex = 2;
+			this.labelPercent.Text = "%";
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(24, 24);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(112, 32);
+			this.label5.TabIndex = 0;
+			this.label5.Text = "Limit diskspace used for recordings to:";
+			// 
 			// TVRecording
 			// 
+			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "TVRecording";
 			this.Size = new System.Drawing.Size(456, 448);
 			this.groupBox1.ResumeLayout(false);
+			this.groupBox2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -189,7 +263,25 @@ namespace MediaPortal.Configuration.Sections
 				folderNameTextBox.Text = xmlreader.GetValueAsString("capture", "recordingpath", "");
 				startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 1));
 				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 1));				
-			}						
+				trackBar1.Value     = xmlreader.GetValueAsInt("capture", "maxsizeallowed", 50);
+				cbDeleteWatchedShows.Checked= xmlreader.GetValueAsBool("capture", "deletewatchedshows", true);
+				checkBoxDeleteLow.Checked   = xmlreader.GetValueAsBool("capture", "deletewhenlowondiskspace", true);
+
+				if (folderNameTextBox.Text=="")
+				{
+					for (int i = 0; i < 20; i++)
+					{
+						string strSharePath = String.Format("sharepath{0}",i);
+						string path=xmlreader.GetValueAsString("movies", strSharePath, "");
+						if (path!="" && Util.Utils.IsHD(path))
+						{
+							folderNameTextBox.Text=path;
+							break;
+						}
+					}
+				}
+			}		
+			Update();	
 		}
 
 		public override void SaveSettings()
@@ -199,6 +291,11 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("capture", "recordingpath", folderNameTextBox.Text);
 				xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
 				xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
+
+				xmlwriter.SetValue("capture", "maxsizeallowed", trackBar1.Value.ToString());
+				xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbDeleteWatchedShows.Checked);
+				xmlwriter.SetValueAsBool("capture", "deletewhenlowondiskspace", checkBoxDeleteLow.Checked);
+				
 			}
 		}
 
@@ -232,6 +329,29 @@ namespace MediaPortal.Configuration.Sections
 					folderNameTextBox.Text = folderBrowserDialog.SelectedPath;
 				}
 			}		
+		}
+
+		private void trackBar1_ValueChanged(object sender, System.EventArgs e)
+		{
+			Update();
+		}
+		void Update()
+		{
+			if (folderNameTextBox.Text.Length<=0) return;
+
+			try
+			{
+				string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , folderNameTextBox.Text[0]);
+				using (ManagementObject disk = new ManagementObject(cmd))
+				{
+					disk.Get();
+					long diskSize=Int64.Parse(disk["Size"].ToString());
+					long size= (long) ( ((float)diskSize) * ( ((float)trackBar1.Value) / 100f ));
+					labelPercent.Text=String.Format("{0}% {1}", trackBar1.Value, Util.Utils.GetSize(size));
+				}
+			}
+			catch(Exception){}
+			
 		}
 	}
 }

@@ -699,7 +699,8 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
       dlgYesNo.SetLine(1, rec.Channel);
       dlgYesNo.SetLine(2, rec.Title);
-      dlgYesNo.SetLine(3, "");
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
@@ -715,7 +716,8 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(676));//delete watched recordings?
       dlgYesNo.SetLine(1, "");
       dlgYesNo.SetLine(2, "");
-      dlgYesNo.SetLine(3, "");
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
