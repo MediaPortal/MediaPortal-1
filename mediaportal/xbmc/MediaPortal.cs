@@ -475,6 +475,8 @@ public class MediaPortalApp : D3DApp, IRender
         msg.Label=strDefault;
         GUIWindowManager.SendThreadMessage(msg);
       }
+      PluginManager.Load();
+      PluginManager.Start();
     } 
 
     /// <summary>
@@ -492,6 +494,8 @@ public class MediaPortalApp : D3DApp, IRender
       Recorder.Stop();
 
       AutoPlay.StopListening();
+      
+      PluginManager.Stop();
     }
 
 
