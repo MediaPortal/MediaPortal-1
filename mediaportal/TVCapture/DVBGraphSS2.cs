@@ -1685,5 +1685,9 @@ namespace MediaPortal.TV.Recording
 		{	
 			return false;
 		}
+		public NetworkType Network()
+		{
+				return NetworkType.DVBS;
+		}
 	}
 }

@@ -18,14 +18,9 @@ namespace MediaPortal.TV.Recording
 #if (!UseCaptureCardDefinitions)
 			return new AnalogTVTuning();
 #else
-			if (card.IsBDACard)
-			{
-				return new BDATVTuning();
-			}
-			else
-			{
-				return new AnalogTVTuning();
-			}
+			if (!card.CreateGraph()) return null;
+			if (card.Network == NetworkType.ATSC) return new AnalogTVTuning();
+			if (card.Network == NetworkType.DVBT) return new DVBTTuning();
 #endif
 			return null;
 		}

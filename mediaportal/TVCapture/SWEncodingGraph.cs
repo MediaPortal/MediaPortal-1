@@ -1758,5 +1758,9 @@ namespace MediaPortal.TV.Recording
 			Size newSize=m_videoCaptureDevice.GetFrameSize();
 			return (newSize==framesize);
 		}
+		public NetworkType Network()
+		{
+				return NetworkType.ATSC;
+		}
   }
 }

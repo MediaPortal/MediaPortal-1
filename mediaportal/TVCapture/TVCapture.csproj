@@ -189,11 +189,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "BDATVTuning.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "CaptureCardDefinitions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -215,6 +210,11 @@
                 />
                 <File
                     RelPath = "DVBGraphSS2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DVBTTuning.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

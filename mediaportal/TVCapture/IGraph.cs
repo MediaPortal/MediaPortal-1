@@ -207,5 +207,6 @@ namespace MediaPortal.TV.Recording
 		bool SupportsFrameSize(Size framesize);
 
 		IBaseFilter AudiodeviceFilter();
+		NetworkType Network();
 	}
 }

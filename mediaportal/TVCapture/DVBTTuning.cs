@@ -8,13 +8,13 @@ namespace MediaPortal.TV.Recording
 {
 
 	/// <summary>
-	/// Summary description for BDATVTuning.
+	/// Summary description for DVBTTuning.
 	/// </summary>
-	public class BDATVTuning : ITuning
+	public class DVBTTuning : ITuning
 	{
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
-		public BDATVTuning()
+		public DVBTTuning()
 		{
 		}
 		#region ITuning Members
@@ -23,39 +23,22 @@ namespace MediaPortal.TV.Recording
 		{
 			captureCard=card;
 			callback=statusCallback;
-			if (!card.CreateGraph())
-			{
-				card.DeleteGraph();
-				callback.OnProgress(100);
-				callback.OnEnded();
-				return;
-			}
-			if (captureCard.Network== NetworkType.DVBT)
-			{
-				// Todo:create DVBT tuning
-				return;
-			}
-
-
-			card.DeleteGraph();
-			callback.OnProgress(100);
-			callback.OnEnded();
 			return;
 		}
 
 		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
 		{
-			// TODO:  Add BDATVTuning.AutoTuneRadio implementation
+			// TODO:  Add DVBTTuning.AutoTuneRadio implementation
 		}
 
 		public void Continue()
 		{
-			// TODO:  Add BDATVTuning.Continue implementation
+			// TODO:  Add DVBTTuning.Continue implementation
 		}
 
 		public int MapToChannel(string channel)
 		{
-			// TODO:  Add BDATVTuning.MapToChannel implementation
+			// TODO:  Add DVBTTuning.MapToChannel implementation
 			return 0;
 		}
 

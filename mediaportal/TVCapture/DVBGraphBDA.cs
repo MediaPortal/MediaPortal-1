@@ -1825,6 +1825,10 @@ namespace MediaPortal.TV.Recording
 		{	
 			return false;
 		}
+		public NetworkType Network()
+		{
+				return m_NetworkType;
+		}
 	}
 }
 //end of file

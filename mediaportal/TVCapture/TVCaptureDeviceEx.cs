@@ -1218,7 +1218,14 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 
-
+		public NetworkType Network
+		{
+			get
+			{
+				if (_mGraph==null) return NetworkType.ATSC;
+				return _mGraph.Network();
+			}
+		}
   }
 }  
 #endif
