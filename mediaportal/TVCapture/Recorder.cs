@@ -406,7 +406,7 @@ namespace MediaPortal.TV.Recording
 				//yes then record
 				cardNo=highestCard;
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[cardNo];
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:  using card:{0} prio:{2}", dev.ID,dev.Priority);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  using card:{0} prio:{1}", dev.ID,dev.Priority);
 				bool viewing=(m_iCurrentCard==cardNo);
 				TuneExternalChannel(rec.Channel);
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
@@ -482,6 +482,21 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
+		static public void StopRecording(TVRecording rec)
+		{
+			if (m_eState!= State.Initialized) return ;
+			if (rec==null) return;
+			foreach (TVCaptureDevice dev in m_tvcards)
+			{
+				if (dev.CurrentTVRecording.ID==rec.ID) 
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
+					rec.Canceled=Utils.datetolong(DateTime.Now);
+					TVDatabase.ChangeRecording(ref rec);
+					dev.Stop();
+				}
+			}
+		}
 		/// <summary>
 		/// Stops all recording on the current channel. 
 		/// </summary>

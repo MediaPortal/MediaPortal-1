@@ -573,10 +573,13 @@ namespace MediaPortal.GUI.TV
               dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));
               dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-              Recorder.StopRecording();
+							if (dlgYesNo.IsConfirmed) 
+							{
+								Recorder.StopRecording(rec);
+								TVDatabase.RemoveRecording(rec);
+							}
             }
           }
-          TVDatabase.RemoveRecording(rec);
           LoadDirectory();
         }
         break;
