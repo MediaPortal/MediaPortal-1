@@ -280,6 +280,7 @@ namespace MediaPortal.GUI.TV
 					Log.Write("ZAP OSD:ON");
 					m_bUpdate=true;
 					m_bZapOSDVisible=true;
+					m_dwZapTimer=DateTime.Now;
 
 				}
 					break;
@@ -561,7 +562,7 @@ namespace MediaPortal.GUI.TV
           m_bUpdate=false;
           m_bLastStatus=false;
           m_UpdateTimer=DateTime.Now;
-		  m_dwZapTimer=DateTime.Now;
+				  m_dwZapTimer=DateTime.Now;
           m_bClear=false;
           m_bShowInfo=false;
           m_bShowStep=false;
@@ -1362,6 +1363,7 @@ namespace MediaPortal.GUI.TV
 
 				m_sZapChannel = chan.Name;
 				UpdateOSD();
+				m_dwZapTimer=DateTime.Now;
 
 			}
 		}
@@ -1378,6 +1380,7 @@ namespace MediaPortal.GUI.TV
 			{
 				strChannel=m_sZapChannel;
 			}
+			m_dwZapTimer=DateTime.Now;
 			if(GUITVHome.CurrentGroup!=null)
 			{
 
@@ -1392,6 +1395,7 @@ namespace MediaPortal.GUI.TV
 						if (iPrev<0)iPrev=GUITVHome.CurrentGroup.tvChannels.Count-1;
 						chan=(TVChannel)GUITVHome.CurrentGroup.tvChannels[iPrev];
 						m_sZapChannel = chan.Name;
+						m_dwZapTimer=DateTime.Now;
 						UpdateOSD();
 						return;
 					}
@@ -1414,6 +1418,7 @@ namespace MediaPortal.GUI.TV
 					chan=(TVChannel)m_channels[iPrev];
 					m_sZapChannel = chan.Name;
 					UpdateOSD();
+					m_dwZapTimer=DateTime.Now;
 					return;
 				}
 				
@@ -1434,6 +1439,7 @@ namespace MediaPortal.GUI.TV
 			{
 				strChannel=m_sZapChannel;
 			}
+			m_dwZapTimer=DateTime.Now;
 			if(GUITVHome.CurrentGroup!=null)
 			{
 				// get current channel name
@@ -1448,6 +1454,7 @@ namespace MediaPortal.GUI.TV
 						chan=(TVChannel)GUITVHome.CurrentGroup.tvChannels[iNext];
 						m_sZapChannel = chan.Name;
 						UpdateOSD();
+						m_dwZapTimer=DateTime.Now;
 						return;
 					}
 
@@ -1469,6 +1476,7 @@ namespace MediaPortal.GUI.TV
 					chan=(TVChannel)m_channels[iNext];
 					m_sZapChannel = chan.Name;
 					UpdateOSD();
+					m_dwZapTimer=DateTime.Now;
 					return;
 				}
 			}
