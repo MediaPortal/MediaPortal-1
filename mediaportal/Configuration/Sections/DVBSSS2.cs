@@ -367,6 +367,7 @@ namespace MediaPortal.Configuration.Sections
 			this.button2.Size = new System.Drawing.Size(24, 16);
 			this.button2.TabIndex = 5;
 			this.button2.Text = "...";
+			this.button2.Click += new System.EventHandler(this.button2_Click_1);
 			// 
 			// sat1
 			// 
@@ -747,18 +748,6 @@ namespace MediaPortal.Configuration.Sections
 			{
 				sat1.Text=ofd.FileName;
 			}
-		}
-
-		private void button2_Click(object sender, System.EventArgs e)
-		{
-			DialogResult res=DialogResult.No;
-
-			res=ofd.ShowDialog();
-			if(res==DialogResult.OK)
-			{
-				sat2.Text=ofd.FileName;
-			}
-
 		}
 
 		private void button3_Click(object sender, System.EventArgs e)
@@ -1316,6 +1305,18 @@ namespace MediaPortal.Configuration.Sections
 		private void treeView2_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
 		{
 			propertyGrid1.SelectedObject=e.Node.Tag;
+		}
+
+		private void button2_Click_1(object sender, System.EventArgs e)
+		{
+			DialogResult res=DialogResult.No;
+
+			res=ofd.ShowDialog();
+			if(res==DialogResult.OK)
+			{
+				sat2.Text=ofd.FileName;
+			}
+
 		}
 
 
