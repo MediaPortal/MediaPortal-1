@@ -8,9 +8,8 @@
 			<type>image</type>
 			<id>0</id>
 			<posX>0</posX>
-			<posY>50</posY>
+			<posY>54</posY>
 			<width>720</width>
-			<height>50</height>
 			<texture>bar.png</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>ffffffff</colordiffuse>
@@ -19,11 +18,11 @@
       <description>row 1 label</description>
       <type>label</type>
       <id>10</id>
-      <posX>100</posX>
-      <posY>60</posY>
+      <posX>70</posX>
+      <posY>61</posY>
       <label>-</label>
       <align>left</align>
-      <font>font13</font>
+      <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -31,10 +30,10 @@
       <type>label</type>
       <id>11</id>
       <posX>100</posX>
-      <posY>80</posY>
+      <posY>61</posY>
       <label>-</label>
       <align>left</align>
-      <font>font13</font>
+      <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -42,10 +41,10 @@
       <type>label</type>
       <id>12</id>
       <posX>250</posX>
-      <posY>80</posY>
+      <posY>61</posY>
       <label>-</label>
       <align>left</align>
-      <font>font13</font>
+      <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
 	</controls>
