@@ -7,9 +7,10 @@
 		<description>bar image</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>0</posX>
+		<posX>18</posX>
 		<posY>33</posY>
-		<width>720</width>
+		<width>684</width>
+		<height>74</height>
 		<texture>calibration_bar.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -19,7 +20,7 @@
 		<type>label</type>
 		<id>10</id>
 		<posX>70</posX>
-		<posY>40</posY>
+		<posY>55</posY>
 		<label>-</label>
 		<align>left</align>
 		<font>font16</font>
@@ -30,7 +31,7 @@
 		<type>label</type>
 		<id>11</id>
 		<posX>600</posX>
-		<posY>40</posY>
+		<posY>55</posY>
 		<label>-</label>
 		<align>left</align>
 		<font>font16</font>
@@ -41,7 +42,7 @@
 		<type>label</type>
 		<id>12</id>
 		<posX>450</posX>
-		<posY>40</posY>
+		<posY>55</posY>
 		<label>-</label>
 		<align>left</align>
 		<font>font16</font>

@@ -26,7 +26,7 @@
 		<description>rectangle image</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>0</posX>
+		<posX>18</posX>
 		<posY>140</posY>
 		<texture>calibration_bar.png</texture>
 	</control>
@@ -35,7 +35,7 @@
 		<type>label</type>
 		<id>2</id>
 		<posX>130</posX>
-		<posY>140</posY>
+		<posY>155</posY>
 		<label>-</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -45,7 +45,7 @@
 		<type>label</type>
 		<id>3</id>
 		<posX>130</posX>
-		<posY>160</posY>
+		<posY>175</posY>
 		<label>-</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
