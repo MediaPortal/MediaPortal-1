@@ -665,7 +665,7 @@ namespace MediaPortal
             return;
         }
       }
-      catch (Exception ex)
+      catch (Exception )
       {
         // If that failed, fall back to the reference rasterizer
         if (deviceInfo.DevType == DeviceType.Hardware)
@@ -1122,8 +1122,7 @@ namespace MediaPortal
       if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
       if (bDoRender) 
       {
-        System.Threading.Thread.Sleep(50);
-        
+        System.Threading.Thread.Sleep(50);  
 
 				try
 				{
