@@ -339,6 +339,17 @@ namespace MediaPortal.TV.Recording
 								highestPrio=dev.Priority;
 								highestCard=cardNo;
 							}
+
+							//if this card has the same priority and is already watching this channel
+							//then we use this card
+							if (dev.Priority==highestPrio)
+							{
+								if (dev.View==true && dev.TVChannel==rec.Channel)
+								{
+									highestPrio=dev.Priority;
+									highestCard=cardNo;
+								}
+							}
 						}
 					}
 				}
