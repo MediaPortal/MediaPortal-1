@@ -42,6 +42,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button bDatabaseUp;
 		private System.Windows.Forms.Button bDatabaseDown;
 		private System.Windows.Forms.ComboBox cbDatabaseLimit;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.TabPage tabPage4;
 
 		string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -241,10 +246,20 @@ namespace MediaPortal.Configuration.Sections
 			this.chDatabaseDB = new System.Windows.Forms.ColumnHeader();
 			this.chDatabaseLanguage = new System.Windows.Forms.ColumnHeader();
 			this.chDatabaseLimit = new System.Windows.Forms.ColumnHeader();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.groupBox1.SuspendLayout();
 			this.mpGroupBox1.SuspendLayout();
 			this.mpGroupBox2.SuspendLayout();
 			this.groupBox2.SuspendLayout();
+			this.tabControl1.SuspendLayout();
+			this.tabPage1.SuspendLayout();
+			this.tabPage2.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -258,9 +273,9 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
 			this.groupBox1.Controls.Add(this.folderNameLabel);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
+			this.groupBox1.Location = new System.Drawing.Point(8, 16);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 128);
+			this.groupBox1.Size = new System.Drawing.Size(360, 280);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "General settings";
@@ -277,16 +292,16 @@ namespace MediaPortal.Configuration.Sections
 																																 "Zoom",
 																																 "4:3 Letterbox",
 																																 "4:3 Pan and scan"});
-			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(128, 83);
+			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(24, 128);
 			this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
 			this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
 			this.defaultZoomModeComboBox.TabIndex = 3;
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 87);
+			this.label1.Location = new System.Drawing.Point(16, 104);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(104, 23);
+			this.label1.Size = new System.Drawing.Size(104, 16);
 			this.label1.TabIndex = 33;
 			this.label1.Text = "Default zoom mode";
 			// 
@@ -294,7 +309,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.fileNameButton.Location = new System.Drawing.Point(366, 53);
+			this.fileNameButton.Location = new System.Drawing.Point(288, 72);
 			this.fileNameButton.Name = "fileNameButton";
 			this.fileNameButton.Size = new System.Drawing.Size(56, 20);
 			this.fileNameButton.TabIndex = 2;
@@ -305,9 +320,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderNameTextBox.Location = new System.Drawing.Point(128, 53);
+			this.folderNameTextBox.Location = new System.Drawing.Point(24, 72);
 			this.folderNameTextBox.Name = "folderNameTextBox";
-			this.folderNameTextBox.Size = new System.Drawing.Size(232, 20);
+			this.folderNameTextBox.Size = new System.Drawing.Size(256, 20);
 			this.folderNameTextBox.TabIndex = 1;
 			this.folderNameTextBox.Text = "";
 			// 
@@ -339,16 +354,16 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox1.Controls.Add(this.subtitlesFontTextBox);
 			this.mpGroupBox1.Controls.Add(this.label6);
 			this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.mpGroupBox1.Location = new System.Drawing.Point(8, 144);
+			this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
 			this.mpGroupBox1.Name = "mpGroupBox1";
-			this.mpGroupBox1.Size = new System.Drawing.Size(440, 120);
+			this.mpGroupBox1.Size = new System.Drawing.Size(352, 216);
 			this.mpGroupBox1.TabIndex = 3;
 			this.mpGroupBox1.TabStop = false;
 			this.mpGroupBox1.Text = "Subtitles";
 			// 
 			// dropShadowTextBox
 			// 
-			this.dropShadowTextBox.Location = new System.Drawing.Point(160, 78);
+			this.dropShadowTextBox.Location = new System.Drawing.Point(32, 120);
 			this.dropShadowTextBox.Name = "dropShadowTextBox";
 			this.dropShadowTextBox.Size = new System.Drawing.Size(40, 20);
 			this.dropShadowTextBox.TabIndex = 4;
@@ -356,7 +371,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(16, 81);
+			this.label4.Location = new System.Drawing.Point(16, 96);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(150, 23);
 			this.label4.TabIndex = 3;
@@ -375,7 +390,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.subtitlesButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.subtitlesButton.Location = new System.Drawing.Point(368, 53);
+			this.subtitlesButton.Location = new System.Drawing.Point(208, 72);
 			this.subtitlesButton.Name = "subtitlesButton";
 			this.subtitlesButton.Size = new System.Drawing.Size(56, 20);
 			this.subtitlesButton.TabIndex = 2;
@@ -386,10 +401,10 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.subtitlesFontTextBox.Location = new System.Drawing.Point(160, 53);
+			this.subtitlesFontTextBox.Location = new System.Drawing.Point(32, 72);
 			this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
 			this.subtitlesFontTextBox.ReadOnly = true;
-			this.subtitlesFontTextBox.Size = new System.Drawing.Size(200, 20);
+			this.subtitlesFontTextBox.Size = new System.Drawing.Size(168, 20);
 			this.subtitlesFontTextBox.TabIndex = 1;
 			this.subtitlesFontTextBox.Text = "";
 			// 
@@ -408,9 +423,9 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox2.Controls.Add(this.displayTimoutTextBox);
 			this.mpGroupBox2.Controls.Add(this.label5);
 			this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.mpGroupBox2.Location = new System.Drawing.Point(232, 272);
+			this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
 			this.mpGroupBox2.Name = "mpGroupBox2";
-			this.mpGroupBox2.Size = new System.Drawing.Size(216, 136);
+			this.mpGroupBox2.Size = new System.Drawing.Size(344, 136);
 			this.mpGroupBox2.TabIndex = 4;
 			this.mpGroupBox2.TabStop = false;
 			this.mpGroupBox2.Text = "OnScreen Display (OSD)";
@@ -438,9 +453,9 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Controls.Add(this.bDatabaseUp);
 			this.groupBox2.Controls.Add(this.lvDatabase);
 			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 272);
+			this.groupBox2.Location = new System.Drawing.Point(16, 16);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(216, 136);
+			this.groupBox2.Size = new System.Drawing.Size(352, 200);
 			this.groupBox2.TabIndex = 5;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "IMDB Database search results";
@@ -454,7 +469,7 @@ namespace MediaPortal.Configuration.Sections
 																												 "15",
 																												 "20",
 																												 "25"});
-			this.cbDatabaseLimit.Location = new System.Drawing.Point(88, 96);
+			this.cbDatabaseLimit.Location = new System.Drawing.Point(88, 160);
 			this.cbDatabaseLimit.Name = "cbDatabaseLimit";
 			this.cbDatabaseLimit.Size = new System.Drawing.Size(48, 21);
 			this.cbDatabaseLimit.TabIndex = 2;
@@ -464,7 +479,7 @@ namespace MediaPortal.Configuration.Sections
 			// bDatabaseDown
 			// 
 			this.bDatabaseDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.bDatabaseDown.Location = new System.Drawing.Point(8, 96);
+			this.bDatabaseDown.Location = new System.Drawing.Point(8, 160);
 			this.bDatabaseDown.Name = "bDatabaseDown";
 			this.bDatabaseDown.Size = new System.Drawing.Size(48, 24);
 			this.bDatabaseDown.TabIndex = 1;
@@ -474,7 +489,7 @@ namespace MediaPortal.Configuration.Sections
 			// bDatabaseUp
 			// 
 			this.bDatabaseUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.bDatabaseUp.Location = new System.Drawing.Point(160, 96);
+			this.bDatabaseUp.Location = new System.Drawing.Point(160, 160);
 			this.bDatabaseUp.Name = "bDatabaseUp";
 			this.bDatabaseUp.Size = new System.Drawing.Size(48, 24);
 			this.bDatabaseUp.TabIndex = 3;
@@ -494,7 +509,7 @@ namespace MediaPortal.Configuration.Sections
 			this.lvDatabase.Location = new System.Drawing.Point(8, 24);
 			this.lvDatabase.MultiSelect = false;
 			this.lvDatabase.Name = "lvDatabase";
-			this.lvDatabase.Size = new System.Drawing.Size(200, 64);
+			this.lvDatabase.Size = new System.Drawing.Size(216, 120);
 			this.lvDatabase.TabIndex = 0;
 			this.lvDatabase.View = System.Windows.Forms.View.Details;
 			this.lvDatabase.SelectedIndexChanged += new System.EventHandler(this.lvDatabase_SelectedIndexChanged);
@@ -514,18 +529,68 @@ namespace MediaPortal.Configuration.Sections
 			this.chDatabaseLimit.Text = "Limit";
 			this.chDatabaseLimit.Width = 55;
 			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage4);
+			this.tabControl1.Location = new System.Drawing.Point(8, 8);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(456, 448);
+			this.tabControl1.TabIndex = 6;
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.groupBox1);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Size = new System.Drawing.Size(448, 422);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "General";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.groupBox2);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(448, 422);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "IMDB";
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.mpGroupBox1);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Size = new System.Drawing.Size(448, 422);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "Subtitles";
+			// 
+			// tabPage4
+			// 
+			this.tabPage4.Controls.Add(this.mpGroupBox2);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Size = new System.Drawing.Size(448, 422);
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "OSD";
+			// 
 			// Movies
 			// 
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.mpGroupBox2);
-			this.Controls.Add(this.mpGroupBox1);
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.tabControl1);
 			this.Name = "Movies";
-			this.Size = new System.Drawing.Size(456, 440);
+			this.Size = new System.Drawing.Size(392, 360);
 			this.groupBox1.ResumeLayout(false);
 			this.mpGroupBox1.ResumeLayout(false);
 			this.mpGroupBox2.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
+			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
