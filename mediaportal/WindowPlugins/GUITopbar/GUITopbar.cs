@@ -37,10 +37,6 @@ namespace MediaPortal.Topbar
 
     public void CheckFocus()
     {
-      if (GUIWindowManager.IsRouted)
-      {
-        m_bFocused=false;
-      }
       if (!m_bFocused)
       {
         foreach (GUIControl control in m_vecControls)
