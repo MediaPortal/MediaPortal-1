@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.GUIStatus
         s=Convert.ToInt64(mo["Size"]);
         f=Convert.ToString(mo["FileSystem"]);
       }
-      str=lw+" "+CalcExt(m)+" "+GUILocalizeStrings.Get(1973)+" "+CalcExt(s)+" "+GUILocalizeStrings.Get(1953)+"    Filesystem: "+" "+f;
+      str=lw+" "+CalcExt(m)+" "+GUILocalizeStrings.Get(1973)+" "+CalcExt(s)+" "+GUILocalizeStrings.Get(1953)+"    "+GUILocalizeStrings.Get(1977)+": "+" "+f;
       return str;
     }
 
@@ -399,7 +399,7 @@ namespace MediaPortal.GUI.GUIStatus
         memoryEnumerator.MoveNext();
         str=str+GUILocalizeStrings.Get(1974)+" "+Convert.ToString(memoryEnumerator.Current.Properties["FreePhysicalMemory"].Value) + " KB ";
         str=str+GUILocalizeStrings.Get(1973)+" "+Convert.ToString(memoryEnumerator.Current.Properties["TotalVisibleMemorySize"].Value)+" KB "+GUILocalizeStrings.Get(1953)+"\n";
-        str=str+"VirtualMem: "+Convert.ToString(memoryEnumerator.Current.Properties["FreeVirtualMemory"].Value)+" KB "+GUILocalizeStrings.Get(1973);
+        str=str+GUILocalizeStrings.Get(1978)+": "+Convert.ToString(memoryEnumerator.Current.Properties["FreeVirtualMemory"].Value)+" KB "+GUILocalizeStrings.Get(1973);
         str=str+" "+Convert.ToString(memoryEnumerator.Current.Properties["TotalVirtualMemorySize"].Value)+" KB "+GUILocalizeStrings.Get(1953)+"\n";
       } 
       catch {}
