@@ -808,7 +808,7 @@ namespace MediaPortal.GUI.Pictures
     void CreateFolderThumb(string path)
     {
       // find first 4 jpegs in this subfolder
-      ArrayList itemlist=m_directory.GetDirectory(path);
+      ArrayList itemlist=m_directory.GetDirectoryUnProtected(path);
       Filter(ref itemlist);
       ArrayList m_pics=new ArrayList();
       foreach (GUIListItem subitem in itemlist)

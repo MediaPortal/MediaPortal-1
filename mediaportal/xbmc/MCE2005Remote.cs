@@ -359,6 +359,7 @@ namespace MediaPortal
             }
           break;
           case 0x25://My tv
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
             break;
           case 0x4B://DVD angle
@@ -387,12 +388,15 @@ namespace MediaPortal
           case 0x4D://DVD subtitle
             break;
           case 0x8D://TV guide
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TVGUIDE);
             break;
           case 0x47://My Music
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
             break;
           case 0x49://My Pictures
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
             break;
           case 0x65://TV
@@ -407,6 +411,7 @@ namespace MediaPortal
             }
             break;
           case 0x4A://My Video
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
             break;
           case 0x80://OEM1
@@ -414,11 +419,13 @@ namespace MediaPortal
           case 0x81://OEM2
             break;
           case 0x48://Recorded TV
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_RECORDEDTV);
             break;
           case 0x82://Standbye
             break;
           case 0x0d:// home
+            GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
             break;
           case 0xB0: //play
