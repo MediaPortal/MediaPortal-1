@@ -62,8 +62,8 @@ namespace MediaPortal.TV.Recording
 		int									m_lnbfreq=0;
 		int									m_selKhz=0;
 		ArrayList							m_sectionsList=new ArrayList();	
-		bool								m_breakScan=false;	
-		
+		bool								m_breakScan=false;
+		System.Windows.Forms.TreeView		m_transponderTV=null;
 
 		// tables
 		public struct EITDescr
@@ -150,6 +150,7 @@ namespace MediaPortal.TV.Recording
 			public ArrayList	pid_list;
 			public int			serviceID;
 			public int			networkID;
+			public string		pidCache;
 
 		}
 		//
@@ -171,15 +172,11 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 
-		private void ListBox1_SelectedIndexChanged (System.Object sender, System.EventArgs e)
-		{
-		}
 		
-		public void OpenTPLFile (string fileName,ref Transponder[] list,int diseqc,int lnbkhz,int lnb0,int lnb1,int lnbsw,System.Windows.Forms.ProgressBar progBar,System.Windows.Forms.TextBox feedbackText)
+		public void OpenTPLFile (ref Transponder[] list,int diseqc,int lnbkhz,int lnb0,int lnb1,int lnbsw,System.Windows.Forms.ProgressBar progBar,System.Windows.Forms.TextBox feedbackText,System.Windows.Forms.TreeView transponderTreeView)
 		{
 			string[] tpdata;
-			string line;
-			System.IO.TextReader tin;
+			string line="";
 			int count = 0;
 			// set diseq & lnb
 			m_diseqc=diseqc;
@@ -190,49 +187,49 @@ namespace MediaPortal.TV.Recording
 			// set dialog feedback
 			m_progress=progBar;
 			m_textBox=feedbackText;
+			m_transponderTV=transponderTreeView;
             // load transponder list and start scan
-			tin = System.IO.File.OpenText(fileName);
-			do
+			foreach(System.Windows.Forms.TreeNode tn in transponderTreeView.Nodes)
 			{
 				line = null;
-				line = tin.ReadLine();
+				line =(string) tn.Tag;
 				if(line!=null)
-				if (line.Length > 0)
-				{
-					if(line.StartsWith(";"))
-						continue;
-					tpdata = line.Split(new char[]{','});
-					if(tpdata.Length!=3)
-						tpdata = line.Split(new char[]{';'});
-					if (tpdata.Length == 3)
+					if (line.Length > 0 && tn.Checked==true)
 					{
-						try
+						if(line.StartsWith(";"))
+							continue;
+						tpdata = line.Split(new char[]{','});
+						if(tpdata.Length!=3)
+							tpdata = line.Split(new char[]{';'});
+						if (tpdata.Length == 3)
 						{
-						
-							transp[count].TPfreq = Convert.ToInt16(tpdata[0]) * 1000;
-							switch (tpdata[1].ToLower())
+							try
 							{
-								case "v":
+						
+								transp[count].TPfreq = Convert.ToInt16(tpdata[0]) * 1000;
+								switch (tpdata[1].ToLower())
+								{
+									case "v":
 									
-									transp[count].TPpol = 1;
-									break;
-								case "h":
+										transp[count].TPpol = 1;
+										break;
+									case "h":
 									
-									transp[count].TPpol = 0;
-									break;
-								default:
+										transp[count].TPpol = 0;
+										break;
+									default:
 									
-									transp[count].TPpol = 0;
-									break;
+										transp[count].TPpol = 0;
+										break;
+								}
+								transp[count].TPsymb = Convert.ToInt16(tpdata[2]);
+								count += 1;
 							}
-							transp[count].TPsymb = Convert.ToInt16(tpdata[2]);
-							count += 1;
+							catch
+							{}
 						}
-						catch
-						{}
 					}
-				}
-			} while (!(line == null));
+			}
 			
 			count -= 1;
 			StartScan(count,ref list);
@@ -286,6 +283,12 @@ namespace MediaPortal.TV.Recording
 		//
 		private void StartScan (int count, ref Transponder[] transplist)
 		{
+
+			// to handle you own scan, you must write an loop
+			// in which you 1. tune to your channel and 2. parse the
+			// data you get back from stream.
+			//
+
 			int t;
 			int lnbFreq;
 			int servCount=0;
@@ -298,6 +301,7 @@ namespace MediaPortal.TV.Recording
 				if(m_breakScan==true)
 					break;
 				DeleteAllPIDsI();
+				AddTSPid(0x10);
 				AddTSPid(17);
 				AddTSPid(0);
 				// feedback
@@ -338,6 +342,7 @@ namespace MediaPortal.TV.Recording
 				}
 				Tune(transp[t].TPfreq, transp[t].TPsymb, 6, transp[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
 				//System.Threading.Thread.Sleep(500);
+					
 				if (IsTunerLocked())
 				{
 					GetStreamData(0, 0,0,5000);
@@ -435,14 +440,17 @@ namespace MediaPortal.TV.Recording
 			int n;
 			ArrayList	tab42=new ArrayList();
 			ArrayList	tab46=new ArrayList();
+			//ArrayList	tab01=new ArrayList();
 
 			// check tables
 			AddTSPid(17);
 			//
-			GetStreamData(17, 0x42,0,5000);
+			GetStreamData(17, 0x42,0,4500);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(17, 0x46,0,5000);
+			GetStreamData(17, 0x46,0,4500);
 			tab46=(ArrayList)m_sectionsList.Clone();
+			//GetStreamData(1,1,1,4500);
+			//tab01=(ArrayList)m_sectionsList.Clone();
 
 			bool flag;
 			ChannelInfo pat;
@@ -467,7 +475,7 @@ namespace MediaPortal.TV.Recording
 					
 					// parse pmt
 					int res=0;
-					GetStreamData(pat.network_pmt_PID, 2,0,5000); // get here the pmt
+					GetStreamData(pat.network_pmt_PID, 2,0,4500); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
 						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
 
@@ -479,6 +487,10 @@ namespace MediaPortal.TV.Recording
 
 						foreach(byte[] wdata in tab46)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+
+						//foreach(byte[] wdata in tab01)
+						//	decodeCATTable(wdata, tpInfo,ref tp,ref pat);
+
 					}
 					tp.channels.Add(pat);
 				
@@ -521,6 +533,7 @@ namespace MediaPortal.TV.Recording
 			
 			pat.pid_list = new ArrayList();
 			pat.pcr_pid = pcr_pid;
+			string pidText="";
 			//
 			int len1 = section_length - 4;
 			int len2 = program_info_length;
@@ -580,6 +593,14 @@ namespace MediaPortal.TV.Recording
 								System.Array.Copy(buf,pointer,data,0,x);
 								switch(indicator)
 								{
+									case 0x09:
+										if(data.Length>8)
+										{
+											string tmpString=DVB_CADescriptor(data);
+											if(pidText.IndexOf(tmpString,0)==-1)
+												pidText+=tmpString+";";
+										}
+										break;
 									case 0x0A:
 										pmt.data=DVB_GetMPEGISO639Lang(data);
 										break;
@@ -608,8 +629,8 @@ namespace MediaPortal.TV.Recording
 				}
 				pat.pid_list.Add(pmt);
 
-			} // kill
-			//tp.channels.Add(ch);
+			}
+			pat.pidCache=pidText;
 			return 1;
 		}
 		//
@@ -647,6 +668,30 @@ namespace MediaPortal.TV.Recording
 			if(ISO_639_language_code.Length>=3)
 				return ISO_639_language_code.Substring(0,3);
 			return "";
+		}
+		// ca
+		//
+		private string DVB_CADescriptor (byte[] b)
+		{
+
+			int      descriptor_tag;
+			int      descriptor_length;		
+			int      CA_system_ID;
+			int      reserved;
+			int      CA_PID;
+			string   CA_Text="";
+
+			descriptor_tag= b[0];
+			descriptor_length= b[1];
+			if(b[0]==0x9 && b.Length>8)
+			{
+				CA_system_ID= (b[2]<<8)+b[3];
+				CA_PID= (((b[0x4]<<16)+(b[5]<<8)+b[6]) ^ 0xE00000)>>8;
+				CA_Text=CA_PID.ToString()+"/"+CA_system_ID.ToString();
+			}
+
+			return CA_Text;
+
 		}
 		//
 		private string DVB_GetMPEGISO639Lang (byte[] b)
@@ -746,6 +791,67 @@ namespace MediaPortal.TV.Recording
 				return true;
 
 			return false;
+
+		}
+		//
+		// cat
+		void decodeCATTable (byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
+		{
+			/* IS13818-1  S. 63 */
+			/* see also: ETS 468, ETR 289 */
+
+			int      table_id;
+			int      section_syntax_indicator;		
+			int      reserved_1;
+			int      section_length;
+			int      reserved_2;
+			int      version_number;
+			int      current_next_indicator;
+			int      section_number;
+			int      last_section_number;
+
+			// private section
+
+
+			int  len1;
+
+ 
+			table_id 			 = buf[0];
+			section_syntax_indicator= BitsFromBArray (buf, 0, 8, 1);
+			reserved_1 			 = BitsFromBArray (buf, 0, 10, 2);
+			section_length		 = BitsFromBArray (buf, 0, 12, 12);
+			reserved_2 			 = BitsFromBArray (buf, 0, 24, 18);
+			version_number 		 = BitsFromBArray (buf, 0, 42, 5);
+			current_next_indicator	 = BitsFromBArray (buf, 0, 47, 1);
+			section_number 		 = BitsFromBArray (buf, 0, 48, 8);
+			last_section_number = BitsFromBArray (buf, 0, 56, 8);
+
+
+			byte[] b=new byte[buf.Length];
+			len1 = section_length - 5;
+			int pointer = 8;
+			int x;
+			string caText="";
+
+			while (len1 > 4) 
+			{
+				x =  buf[pointer+1]+2;
+				try
+				{
+					System.Array.Copy(buf,pointer,b,0,x);
+					caText=DVB_CADescriptor(b);
+					if(caText!=null)
+						if(pat.pidCache.IndexOf(caText)==-1)
+						{
+							pat.pidCache+=caText+";";
+						}
+				}
+				catch
+				{}
+				len1 -= x;
+				pointer += x;
+   
+			}
 
 		}
 		//
@@ -1334,7 +1440,7 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 		//
-		private object decodeNITTable(byte[] buf)
+		private object decodeNITTable(byte[] buf,ref TPList[] transponders)
 		{
 			int table_id;
 			int section_syntax_indicator;
@@ -1388,7 +1494,8 @@ namespace MediaPortal.TV.Recording
 			int x = 0;
 			byte[] b0 = new byte[buf.Length-pointer + 1];
 			//m_transponderData.transp_List = new ArrayList();
-			
+			ArrayList data=new ArrayList();
+
 			while (l1 > 0)
 			{
 				x = buf[pointer + 1] + 2;
@@ -1415,10 +1522,12 @@ namespace MediaPortal.TV.Recording
 				transpCount += 1;
 				while (l2 > 0)
 				{
-					x = buf[pointer + 1] + 2;
+					TPList tp=new TPList();
+					x = buf[pointer + 1] ;
 					byte[] service = new byte[x + 1];
 					System.Array.Copy(buf, pointer, service, 0, x);
-					//m_transponderData.transp_List.Add(DVB_GetSatDelivSys(service, transport_stream_id, original_network_id));
+					DVB_GetSatDelivSys(service, transport_stream_id, original_network_id,ref tp);
+					data.Add(tp);
 					pointer += x;
 					l2 -= x;
 					l1 -= x;
@@ -1427,19 +1536,26 @@ namespace MediaPortal.TV.Recording
 			x = 0;
 			return 0;
 		}
-		private object DVB_GetSatDelivSys(byte[] b, int tr, int onid)
+		private object DVB_GetSatDelivSys(byte[] b, int tr, int onid,ref TPList tp)
 		{
-			int descriptor_tag = b[0];
-			int descriptor_length = b[1];
-			int frequency = BitsFromBArray(b, 0, 16, 32);
-			int orbital_position = BitsFromBArray(b, 0, 48, 16);
-			int west_east_flag = BitsFromBArray(b, 0, 64, 1);
-			int polarisation = BitsFromBArray(b, 0, 65, 2);
-			int modulation = BitsFromBArray(b, 0, 67, 5);
-			int symbol_rate = BitsFromBArray(b, 0, 72, 28);
-			int FEC_inner = BitsFromBArray(b, 0, 100, 4);
-			int org_Network_ID = onid;
-			int transport_Stream_ID = tr;
+			if(b[0]==0x43)
+			{
+				int descriptor_tag = b[0];
+				int descriptor_length = b[1];
+				int frequency = (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+				int orbital_position = BitsFromBArray(b, 0, 48, 16);
+				int west_east_flag = BitsFromBArray(b, 0, 64, 1);
+				int polarisation = BitsFromBArray(b, 0, 65, 2);
+				int modulation = BitsFromBArray(b, 0, 67, 5);
+				int symbol_rate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
+				int FEC_inner = BitsFromBArray(b, 0, 100, 4);
+				int org_Network_ID = onid;
+				int transport_Stream_ID = tr;
+				tp.TPfreq=frequency;
+				tp.TPpol=polarisation;
+				tp.TPsymb=symbol_rate;
+			}
+			
 			return null;
 		}
 		//
@@ -1540,7 +1656,49 @@ namespace MediaPortal.TV.Recording
 				decodeEITTable(arr,ref eit);
 
 			return eit.eitList;
+		}
+		public ArrayList GetEITSchedule(int tab)
+		{
+			EIT_Program_Info eit=new EIT_Program_Info();
+			eit.eitList=new ArrayList();
+			GetStreamData(18,tab,1,750);
+			foreach(byte[] arr in m_sectionsList)
+				decodeEITTable(arr,ref eit);
 
+			return eit.eitList;
+		}
+
+		public int GrabEIT(DVBChannel ch)
+		{
+			int eventsCount=0;
+			bool tuned=Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
+			System.Threading.Thread.Sleep(200);
+			if(tuned==false)
+				return 0;
+			ArrayList eitList=new ArrayList();
+			if(tuned==true)
+			{
+				if(ch.HasEITPresentFollow==true)
+				{
+					eitList=GetEITSchedule(0x4e);
+					eventsCount+=eitList.Count;
+					foreach(EITDescr eit in eitList)
+						SetEITToDatabase(eit);
+					eitList=GetEITSchedule(0x4f);
+					eventsCount+=eitList.Count;
+					foreach(EITDescr eit in eitList)
+						SetEITToDatabase(eit);
+				}
+				if(ch.HasEITSchedule==true)
+				{
+					eitList=GetEITSchedule(0x50);
+					eventsCount+=eitList.Count;
+					foreach(EITDescr eit in eitList)
+						SetEITToDatabase(eit);
+				}
+			}
+			GC.Collect();
+			return 	eventsCount;
 
 		}
 		//
@@ -1583,21 +1741,25 @@ namespace MediaPortal.TV.Recording
 		public void SetEITToDatabase(EITDescr data)
 		{
 			TVProgram tv=new TVProgram();
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
-			System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
-			date=date.ToLocalTime();
-			System.DateTime dur=new DateTime();
-			dur=date;
-			dur=dur.AddHours((double)data.duration_hh);
-			dur=dur.AddMinutes((double)data.duration_mm);
-			dur=dur.AddSeconds((double)data.duration_ss);
-			tv.Channel=chName;
-			tv.Genre=data.genere_text;
-			tv.Description=data.event_item_text;
-			tv.Title=data.event_name;
-			tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
-			tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
-			int ok=TVDatabase.AddProgram(tv);
+			try
+			{
+				string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
+				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
+				date=date.ToLocalTime();
+				System.DateTime dur=new DateTime();
+				dur=date;
+				dur=dur.AddHours((double)data.duration_hh);
+				dur=dur.AddMinutes((double)data.duration_mm);
+				dur=dur.AddSeconds((double)data.duration_ss);
+				tv.Channel=chName;
+				tv.Genre=data.genere_text;
+				tv.Description=data.event_item_text;
+				tv.Title=data.event_name;
+				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
+				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+				int ok=TVDatabase.AddProgram(tv);
+			}
+			catch{}
 
 		}
 		private long GetLongFromDate(int year,int mon,int day,int hour,int min,int sec)
@@ -1729,6 +1891,7 @@ namespace MediaPortal.TV.Recording
 			}
 			DeleteAllPIDsI();
 			AddTSPid(18);
+			AddTSPid(16);
 			m_eitList = new ArrayList();
 			
 			return true;
