@@ -486,48 +486,44 @@ namespace MediaPortal.Configuration.Sections
 				//
 				RadioDatabase.RemoveStations();
 
-				foreach(ListViewItem listItem in stationsListView.Items)
-				{
-					MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
-					RadioStation radioStation = listItem.Tag as RadioStation;
+        string strDefaultStation="";
+        foreach(ListViewItem listItem in stationsListView.Items)
+        {
+          MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+          RadioStation radioStation = listItem.Tag as RadioStation;
 
-					station.Name	= radioStation.Name;
-					station.Genre	= radioStation.Genre;
-					station.BitRate	= radioStation.Bitrate;
-					station.URL		= radioStation.URL;
+          station.Name	= radioStation.Name;
+          station.Genre	= radioStation.Genre;
+          station.BitRate	= radioStation.Bitrate;
+          station.URL		= radioStation.URL;
 
-					//
-					// Calculate the frequency for this station
-					//
-					if(radioStation.Frequency.Herz < 1000)
-						radioStation.Frequency.Herz *= 1000000L;
+          //
+          // Calculate the frequency for this station
+          //
+          if(radioStation.Frequency.Herz < 1000)
+            radioStation.Frequency.Herz *= 1000000L;
 
           station.Frequency = radioStation.Frequency.Herz;
-					station.Channel = listItem.Index;
+          station.Channel = listItem.Index;
 
-					//
-					// Save station
-					//
-					if(station.Frequency != 0 || station.URL.Length > 0)
-					{
-						RadioDatabase.AddStation(ref station);
-					}
+          //
+          // Save station
+          //
+          if(station.Frequency != 0 || station.URL.Length > 0)
+          {
+            RadioDatabase.AddStation(ref station);
+          }
 
           //
           // Save default station
           //
-          using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
-          {
-            if(listItem.Checked == true)
-            {
-              xmlwriter.SetValue("myradio", "default", station.Name);
-            }
-            else
-            {
-              xmlwriter.SetValue("myradio", "default", "");
-            }
-          }
-				}
+          if(listItem.Checked == true)
+            strDefaultStation=station.Name;
+        }
+        using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+        {
+          xmlwriter.SetValue("myradio", "default", strDefaultStation);
+        }
 			}
 		}
 
