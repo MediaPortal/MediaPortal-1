@@ -152,10 +152,10 @@ namespace MediaPortal.GUI.Library
 			//return ;
 			packedTextures=new ArrayList();
 			string[] files1 =System.IO.Directory.GetFiles( String.Format(@"{0}\media",skinName),"*.png" );
-			string[] files2 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
+			string[] files2 =System.IO.Directory.GetFiles( @"thumbs\tv\logos","*.png" );
 			string[] files3 =System.IO.Directory.GetFiles( @"weather\64x64","*.png" );
 			string[] files4 =System.IO.Directory.GetFiles( @"weather\128x128","*.png" );
-			string[] files5 =System.IO.Directory.GetFiles( @"weather\logos","*.png" );
+			string[] files5 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
 			string [] files = new string[files1.Length+files2.Length+files3.Length+files4.Length+files5.Length];
 			
 			int off=0;

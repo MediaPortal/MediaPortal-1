@@ -140,12 +140,12 @@
 				<textYOff>4</textYOff>
 				<textXOff2>420</textXOff2>
 				<textYOff2>55</textYOff2>
-				<textXOff3>100</textXOff3>
+				<textXOff3>130</textXOff3>
 				<textYOff3>55</textYOff3>
 				<IconXOff>12</IconXOff>
 				<IconYOff>8</IconYOff>
-				<PinIconXOff>55</PinIconXOff>
-				<PinIconYOff>50</PinIconYOff>
+				<PinIconXOff>100</PinIconXOff>
+				<PinIconYOff>55</PinIconYOff>
 				<itemWidth>65</itemWidth>
 				<itemHeight>65</itemHeight>
 				<textureFocus>recording_background_focus.png</textureFocus>

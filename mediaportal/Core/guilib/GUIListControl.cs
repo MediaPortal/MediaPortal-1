@@ -426,7 +426,8 @@ namespace MediaPortal.GUI.Library
               if (pItem.IsDownloading) dwColor=m_dwDownloadColor;
             }
             RenderText(i,(float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY, (float)dMaxWidth, dwColor, m_wszText, bSelected);
-          }
+          }//if (m_bTextVisible1)
+
 					if (pItem.Label2.Length > 0)
 					{
 						dwColor = m_dwTextColor2;
@@ -463,11 +464,11 @@ namespace MediaPortal.GUI.Library
                     label2.FontName=m_strFont2Name;
                     label2.Render();
                     //m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
-                  }
-                }
-              }
-            }
-					}	
+                  }//if (label2!=null)
+                }//if (i>=0 && i < m_labels2.Count)
+              }//if (m_labels2!=null)
+            }//if (m_bTextVisible2)
+					}//if (pItem.Label2.Length > 0)	
 					if (pItem.Label3.Length > 0)
 					{
 						dwColor = m_dwTextColor3;
@@ -507,11 +508,11 @@ namespace MediaPortal.GUI.Library
                     label3.FontName=m_strFont2Name;
                     label3.Render();
                     //m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
-                  }
-                }
-              }
-            }
-					}
+                  }//if (label3!=null)
+                }//if (i>=0 && i < m_labels3.Count)
+              }//if (m_labels3!=null)
+            }//if (m_bTextVisible3)
+					}//if (pItem.Label3.Length > 0)
 
           if (pItem.HasPinIcon)
           {
@@ -538,10 +539,10 @@ namespace MediaPortal.GUI.Library
               pinImage.SetPosition(m_dwPosX+PinIconOffsetX,dwPosY+PinIconOffsetY );
             }
             pinImage.Render();
-          }
+          }//if (pItem.HasPinIcon)
 					dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
-				}
-			}
+				}//if (i + m_iOffset < m_vecItems.Count)
+			}//for (int i = 0; i < m_iItemsPerPage; i++)
 
 			if (m_vecItems.Count > m_iItemsPerPage)
 			{
@@ -555,7 +556,7 @@ namespace MediaPortal.GUI.Library
 				// Render the vertical scrollbar
         m_vertScrollbar.Render();
       }
-		}
+		}//public override void Render()
 
 		/// <summary>
 		/// Renders the text.

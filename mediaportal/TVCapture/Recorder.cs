@@ -40,9 +40,6 @@ namespace MediaPortal.TV.Recording
 		static ArrayList     m_tvcards    = new ArrayList();
 		static ArrayList     m_TVChannels = new ArrayList();
 		static ArrayList     m_Recordings = new ArrayList();
-		static TVProgram     m_PrevProg=null;
-		static bool          m_bWasRecording=false;
-		static int           m_RecPrevRecordingId=-1;
 		static string        m_strRecPath="";
 		static DateTime      m_dtStart=DateTime.Now;
 		static int           m_iCurrentCard=-1;
@@ -940,99 +937,80 @@ namespace MediaPortal.TV.Recording
 				if (chan.Name.Equals(m_strTVChannel))
 				{
 					TVProgram prog=m_TVUtil.GetCurrentProgram(chan.Name);
-					if (m_PrevProg!=prog)
+					if (prog!=null)
 					{
-						m_PrevProg=prog;
-						if (prog!=null)
+						if (!GUIPropertyManager.GetProperty("#TV.View.channel").Equals(m_strTVChannel))
 						{
-							if (!GUIPropertyManager.GetProperty("#TV.View.channel").Equals(m_strTVChannel))
-							{
-								OnTVChannelChanged();
-							}
-							GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
-							GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
-							GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
+							OnTVChannelChanged();
+						}
+						GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
+						GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
+						GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
 
-						}
-						else
+					}
+					else
+					{
+						if (!GUIPropertyManager.GetProperty("#TV.View.channel").Equals(m_strTVChannel))
 						{
-							if (!GUIPropertyManager.GetProperty("#TV.View.channel").Equals(m_strTVChannel))
-							{
-								OnTVChannelChanged();
-							}
-							GUIPropertyManager.SetProperty("#TV.View.start","");
-							GUIPropertyManager.SetProperty("#TV.View.stop" ,"");
-							GUIPropertyManager.SetProperty("#TV.View.genre","");
-							GUIPropertyManager.SetProperty("#TV.View.title","");
-							GUIPropertyManager.SetProperty("#TV.View.description","");
+							OnTVChannelChanged();
 						}
-					}//if (m_PrevProg!=prog)
+						GUIPropertyManager.SetProperty("#TV.View.start","");
+						GUIPropertyManager.SetProperty("#TV.View.stop" ,"");
+						GUIPropertyManager.SetProperty("#TV.View.genre","");
+						GUIPropertyManager.SetProperty("#TV.View.title","");
+						GUIPropertyManager.SetProperty("#TV.View.description","");
+					}
 					break;
 				}//if (chan.Name.Equals(m_strTVChannel))
 			}//for (int i=0; i < m_TVChannels.Count;++i)
 
 			// handle properties...
-			if (IsRecording() != m_bWasRecording)
+			if (IsRecording())
 			{
-				m_bWasRecording=IsRecording();
-				if (IsRecording())
+				TVRecording recording = CurrentTVRecording;
+				TVProgram   program   = ProgramRecording;
+				if (program==null)
 				{
-					TVRecording recording = CurrentTVRecording;
-					TVProgram   program   = ProgramRecording;
-					if (m_RecPrevRecordingId != recording.ID)
+					string strLogo=Utils.GetCoverArt(TVChannelCovertArt,recording.Channel);
+					if (!System.IO.File.Exists(strLogo))
 					{
-						m_RecPrevRecordingId=recording.ID;
-
-						if (program==null)
-						{
-							if (!GUIPropertyManager.GetProperty("#TV.Record.channel").Equals(recording.Channel))
-							{
-								string strLogo=Utils.GetCoverArt(TVChannelCovertArt,recording.Channel);
-								if (!System.IO.File.Exists(strLogo))
-								{
-									strLogo="defaultVideoBig.png";
-								}
-								GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
-							}
-							GUIPropertyManager.SetProperty("#TV.Record.start",recording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							GUIPropertyManager.SetProperty("#TV.Record.stop",recording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							GUIPropertyManager.SetProperty("#TV.Record.genre","");
-							GUIPropertyManager.SetProperty("#TV.Record.title",recording.Title);
-							GUIPropertyManager.SetProperty("#TV.Record.description","");
-						}
-						else
-						{
-							if (!GUIPropertyManager.GetProperty("#TV.Record.channel").Equals(program.Channel))
-							{
-								string strLogo=Utils.GetCoverArt(TVChannelCovertArt,program.Channel);
-								if (!System.IO.File.Exists(strLogo))
-								{
-									strLogo="defaultVideoBig.png";
-								}
-								GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
-							}
-							GUIPropertyManager.SetProperty("#TV.Record.channel",program.Channel);
-							GUIPropertyManager.SetProperty("#TV.Record.start",program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							GUIPropertyManager.SetProperty("#TV.Record.stop" ,program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							GUIPropertyManager.SetProperty("#TV.Record.genre",program.Genre);
-							GUIPropertyManager.SetProperty("#TV.Record.title",program.Title);
-							GUIPropertyManager.SetProperty("#TV.Record.description",program.Description);
-						}
-					}//if (m_RecPrevRecordingId != recording.ID)
+						strLogo="defaultVideoBig.png";
+					}
+					GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
+					GUIPropertyManager.SetProperty("#TV.Record.start",recording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.Record.stop",recording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.Record.genre","");
+					GUIPropertyManager.SetProperty("#TV.Record.title",recording.Title);
+					GUIPropertyManager.SetProperty("#TV.Record.description","");
 				}
 				else
 				{
-					GUIPropertyManager.SetProperty("#TV.Record.channel","");
-					GUIPropertyManager.SetProperty("#TV.Record.start","");
-					GUIPropertyManager.SetProperty("#TV.Record.stop" ,"");
-					GUIPropertyManager.SetProperty("#TV.Record.genre","");
-					GUIPropertyManager.SetProperty("#TV.Record.title","");
-					GUIPropertyManager.SetProperty("#TV.Record.description","");
-					GUIPropertyManager.SetProperty("#TV.Record.thumb"  ,"");
+					string strLogo=Utils.GetCoverArt(TVChannelCovertArt,program.Channel);
+					if (!System.IO.File.Exists(strLogo))
+					{
+						strLogo="defaultVideoBig.png";
+					}
+					GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
+					GUIPropertyManager.SetProperty("#TV.Record.channel",program.Channel);
+					GUIPropertyManager.SetProperty("#TV.Record.start",program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.Record.stop" ,program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.Record.genre",program.Genre);
+					GUIPropertyManager.SetProperty("#TV.Record.title",program.Title);
+					GUIPropertyManager.SetProperty("#TV.Record.description",program.Description);
 				}
-			}//if (IsRecording != m_bWasRecording)
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Record.channel","");
+				GUIPropertyManager.SetProperty("#TV.Record.start","");
+				GUIPropertyManager.SetProperty("#TV.Record.stop" ,"");
+				GUIPropertyManager.SetProperty("#TV.Record.genre","");
+				GUIPropertyManager.SetProperty("#TV.Record.title","");
+				GUIPropertyManager.SetProperty("#TV.Record.description","");
+				GUIPropertyManager.SetProperty("#TV.Record.thumb"  ,"");
+			}
 
 			if (IsRecording())
 			{

@@ -8,6 +8,7 @@
 		  <change date="10-2-2005">Added my zap osd gfx and xml</change>
 		  <change date="16-2-2005">updated the alarm xmls</change>
 		  <change date="16-2-2005">updated the music artists and genres xml</change>
+		  <change date="17-2-2005">fixed mytvscheduler.xml</change>
 		</changelog>
 	</skin>
 	<control>
