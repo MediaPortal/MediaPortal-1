@@ -6,3 +6,5 @@ MediaPortal.xml
 PostBuildEvent.bat
 plugins
 database
+MediaPortal.log
+thumbs
