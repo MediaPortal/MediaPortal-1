@@ -810,7 +810,8 @@ namespace MediaPortal.GUI.Video
           {
             if (!m_directory.ShouldWeDownloadFile(item.Path)) return;
             if (!m_directory.DownloadRemoteFile(item.Path,item.FileInfo.Length))
-            {
+            {  
+
               //show message that we are unable to download the file
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
               msg.Param1=916;
@@ -820,6 +821,21 @@ namespace MediaPortal.GUI.Video
               GUIWindowManager.SendMessage(msg);
 
               return;
+            }
+            else
+            {
+              
+              //download subtitle files
+              string[] sub_exts = {  ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss", ".ass", ".idx",".ifo" };
+              // check if movie has subtitles
+              for (int i = 0; i < sub_exts.Length; i++)
+              {
+                string strSubTitleFile = item.Path;
+                strSubTitleFile = System.IO.Path.ChangeExtension(strSubTitleFile, sub_exts[i]);
+                string localSubFile=m_directory.GetLocalFilename(strSubTitleFile);
+                Utils.FileDelete(localSubFile);
+                m_directory.DownloadRemoteFile(item.Path,0);
+              }
             }
           }
         }
