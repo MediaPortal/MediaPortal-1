@@ -909,20 +909,20 @@ namespace MediaPortal.Util
 			return strFName;
 
 		}
-		static public void FileDelete(string strFile)
+		static public bool FileDelete(string strFile)
 		{
-			if (strFile==null) return ;
-			if (strFile.Length==0) return ;
+			if (strFile==null) return true;
+			if (strFile.Length==0) return  true;
 			try
 			{
-				if (System.IO.File.Exists(strFile))
-				{
-					System.IO.File.Delete(strFile);
-				}
+				if (!System.IO.File.Exists(strFile)) return true;
+				System.IO.File.Delete(strFile);
+				return true;
 			}
 			catch(Exception)
 			{
 			}
+			return false;
 		}
     static public void DirectoryDelete(string strDir)
     {

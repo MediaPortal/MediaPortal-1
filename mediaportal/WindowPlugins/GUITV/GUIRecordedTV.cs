@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.TV
 
     SortMethod        currentSortMethod=SortMethod.SORT_DATE;
     bool              m_bSortAscending=true;
-
+		static bool				m_bDeleteWatchedShow=false;
     public  GUIRecordedTV()
     {
       GetID=(int)GUIWindow.Window.WINDOW_RECORDEDTV;
@@ -72,7 +72,8 @@ namespace MediaPortal.GUI.TV
           else if (strTmp=="type") currentSortMethod=SortMethod.SORT_GENRE;
           else if (strTmp=="played") currentSortMethod=SortMethod.SORT_PLAYED;
         }
-        m_bSortAscending=xmlreader.GetValueAsBool("tvrecorded","sortascending",true);
+				m_bSortAscending=xmlreader.GetValueAsBool("tvrecorded","sortascending",true);
+				m_bDeleteWatchedShow= xmlreader.GetValueAsBool("capture", "deletewatchedshows", true);
       }
     }
 
@@ -701,6 +702,12 @@ namespace MediaPortal.GUI.TV
 			int movieid=VideoDatabase.GetMovieId(filename);
       if (movieid<0) return;
       VideoDatabase.DeleteMovieStopTime(movieid);
+			if (m_bDeleteWatchedShow)
+			{
+				Utils.FileDelete(filename);
+				VideoDatabase.DeleteMovieInfo(filename);
+				VideoDatabase.DeleteMovie(filename);
+			}
     }
     private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {

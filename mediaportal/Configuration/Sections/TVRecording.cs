@@ -335,6 +335,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			UpdatePercentageLabel();
 		}
+
 		void UpdatePercentageLabel()
 		{
 			if (folderNameTextBox.Text.Length<=0) return;
