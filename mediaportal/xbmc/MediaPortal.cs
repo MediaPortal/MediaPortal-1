@@ -26,6 +26,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
 using MediaPortal.Dialogs;
 using MediaPortal.IR;
+using MediaPortal.AutoPlay;
 
 public class MediaPortalApp : D3DApp, IRender
 {
@@ -437,7 +438,7 @@ public class MediaPortalApp : D3DApp, IRender
       //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
 
       Recorder.Start();
-
+      AutoPlay.StartListening();
       //
       // Kill the splash screen
       //
@@ -462,6 +463,8 @@ public class MediaPortalApp : D3DApp, IRender
       // tell window manager that application is closing
       // this gives the windows the change to do some cleanup
       Recorder.Stop();
+
+      AutoPlay.StopListening();
     }
 
 

@@ -193,6 +193,11 @@
                     AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater"
                     HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
                 />
+                <Reference
+                    Name = "AutoPlay"
+                    Project = "{CA9EB1AD-D239-4770-90CD-A6C9D0416293}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
