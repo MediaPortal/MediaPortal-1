@@ -248,6 +248,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "MCEDevices.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "MediaPortal.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
