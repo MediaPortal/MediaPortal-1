@@ -349,7 +349,20 @@ namespace MediaPortal.TV.Recording
       // create sink graph
       if (CreateGraph())
       {
-        if (StartTimeShifting())
+        bool bContinue=false;
+        if (m_graph.SupportsTimeshifting() )
+        {
+          if (StartTimeShifting())
+          {
+            bContinue=true;
+          }
+        }
+        else 
+        {
+          bContinue=true;
+        }
+        
+        if (bContinue)
         {
           // start sink graph
           if (StartRecording(/*recording.IsContentRecording*/true))
@@ -583,7 +596,7 @@ namespace MediaPortal.TV.Recording
 
       string strFileName=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
       Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
-      bool bResult=m_graph.StartRecording(strFileName, bContentRecording,timeProgStart);
+      bool bResult=m_graph.StartRecording(ref strFileName, bContentRecording,timeProgStart);
 
 			m_newRecordedTV = new TVRecorded();        
 			m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);
