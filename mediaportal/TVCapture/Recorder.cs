@@ -83,6 +83,7 @@ namespace MediaPortal.TV.Recording
       }
       catch(Exception)
       {
+        Log.Write("Recorder: invalid capturecards.xml found! please delete it");
       }
       if (m_tvcards.Count==0) 
       {
