@@ -207,9 +207,10 @@ namespace MediaPortal.Configuration.Sections
       this.showID3CheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.showID3CheckBox.Location = new System.Drawing.Point(16, 24);
       this.showID3CheckBox.Name = "showID3CheckBox";
-      this.showID3CheckBox.Size = new System.Drawing.Size(200, 24);
+      this.showID3CheckBox.Size = new System.Drawing.Size(352, 24);
       this.showID3CheckBox.TabIndex = 0;
-      this.showID3CheckBox.Text = "Display ID3 information if available";
+      this.showID3CheckBox.Text = "Load ID3 from file instead of database (slow but no database needed)";
+      this.showID3CheckBox.CheckedChanged += new System.EventHandler(this.showID3CheckBox_CheckedChanged);
       // 
       // audioPlayerComboBox
       // 
@@ -285,6 +286,11 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}		
 		}
+
+    private void showID3CheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+    
+    }
 	}
 }
 
