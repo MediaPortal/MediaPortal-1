@@ -242,7 +242,11 @@ namespace MediaPortal.GUI.Pictures
       if ( m_iCurrentSlide >= m_slides.Count ) 
       {
         if ( m_bAutoRepeat )
+        {
           m_iCurrentSlide=0;
+          if ( m_bAutoShuffle )
+            Shuffle();
+        }
         else
           // How to exit back to GUIPictures?
           GUIWindowManager.PreviousWindow();
@@ -348,7 +352,11 @@ namespace MediaPortal.GUI.Pictures
                 if (m_iCurrentSlide >= m_slides.Count) 
                 {
                   if ( m_bAutoRepeat )
+                  {
                     m_iCurrentSlide=0;
+                    if ( m_bAutoShuffle )
+                      Shuffle();
+                  }
                   else
                     // How to exit back to GUIPictures?
                     GUIWindowManager.PreviousWindow();

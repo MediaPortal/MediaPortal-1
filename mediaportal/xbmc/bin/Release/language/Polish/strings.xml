@@ -1673,6 +1673,71 @@
 		<id>491</id>
 		<value>U¿yj du¿ych ikon</value>
 	</string>
+<string>
+		<id>500</id>
+		<value>Menu Plik</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Ustaw jako cel</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Nie mo¿na dokoñczyæ polecenia</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Kasuj ten folder</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Id¼ do celu</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Obliczanie</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Czy na pewno?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>obiektów</value>
+	</string>	
+	<string>
+		<id>508</id>
+		<value>Do</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Plik docelowy istnieje. Czy chcesz go zast±piæ?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Anuluj</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Zawsze</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Nigdy</value>
+	</string>
+	
+	<string>
+		<id>530</id>
+		<value>Wykryto dysk z obrazami, czy chcesz go otworzyæ?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Wykryto dysk z filmem, czy chcesz go otworzyæ?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Wykryto dysk z muzyk±, czy chcesz go otworzyæ?</value>
+	</string>	
 	<string>
 		<id>600</id>
 		<value>Program telewizyjny</value>
@@ -2996,6 +3061,22 @@
 	<id>982</id>
 	<value>Usuñ ca³e nagranie</value>
 </string>
+<string>
+	<id>983</id>
+	<value>Playlisty</value>
+</string>
+<string>
+	<id>984</id>
+	<value>Odczytujê filmy</value>
+</string>
+<string>
+	<id>985</id>
+	<value>Odczytujê w³a¶ciwo¶ci filmów</value>
+</string>
+<string>
+	<id>986</id>
+	<value>Odczytujê informacjê o aktorze</value>
+</string>
 	<!-- My Status Strings -->
 	<string>
 		<id>1950</id>
@@ -3792,6 +3873,10 @@
 		<id>13012</id>
 		<value>Proszê czekaæ, trwa ³adowanie</value>
 	</string>
+<string>
+	<id>13013</id>
+	<value>Proszê czekaæ, trwa ³adowanie filmu</value>
+</string>
 	<string>
 		<id>1440</id>
 		<value>Telegazeta</value>
