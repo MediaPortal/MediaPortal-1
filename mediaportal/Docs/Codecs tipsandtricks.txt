@@ -18,12 +18,12 @@ XVID:
     project which is developed and maintained by lots of people from all over the world. 
     http://www.roeder.goe.net/~koepi/xvid.shtml
 
-Opensource MPEG-1/2 codec
+Opensource MPEG-1&2 codec
     Out of the box windows doesnt play mpeg 2 files. You will have to install an mpeg2 codec
     Most people use an mpeg2 codec which comes with programs like WinDVD , PowerDVD or InterVideo
     However those codecs only seem to work on overlay devices, not on VMR9. 
     If you want a free opensource mpeg2 codec which really works in all cases then look here:
-    GPL MPEG 1/2 codec : http://sourceforge.net/projects/gplmpgdec/
+    GPL MPEG 1&2 codec : http://sourceforge.net/projects/gplmpgdec/
 
 
 RadLight Filter Manager:

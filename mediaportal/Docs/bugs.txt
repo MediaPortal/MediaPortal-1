@@ -1,4 +1,5 @@
 Bugs left:
+  18-06-2004 my video   : page counter goes wrong when > 9 pages
   18-06-2004 my video   : F3 when no inet connection
   18-06-2004 my music   : F3 when no inet connection
   18-06-2004 my weather : problems when no inet connection

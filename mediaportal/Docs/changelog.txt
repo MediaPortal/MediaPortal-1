@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  18-06-2004  general     : fixed : list view:scrolling up(cursor) doesnt change page number
   18-06-2004  my radio    : added : added streamlist folder which can contain .pls/.asx files
   18-06-2004  my TV       : added : option : background live tv or GUI
   18-06-2004  my Music    : added : Artist info from allmusic.com (need to be in Artist mode)
