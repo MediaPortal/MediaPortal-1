@@ -156,6 +156,7 @@
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
+		<thumbZoom>yes</thumbZoom>
 	</control>
 
 	<control>
