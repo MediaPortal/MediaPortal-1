@@ -10,9 +10,9 @@ using DotMSN;
 
 namespace MediaPortal.GUI.MSN
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
+  /// <summary>
+  /// Summary description for Class1.
+  /// </summary>
   public class GUIMSNPlugin : GUIWindow,IComparer, ISetupForm
   {
     enum Controls
@@ -20,20 +20,35 @@ namespace MediaPortal.GUI.MSN
       CONTROL_BTNVIEWASICONS=		2,
       CONTROL_BTNSORTBY		=			3,
       CONTROL_BTNSORTASC	=			4,
-      CONTROL_BTN_CONNECT    =     6,
+      CONTROL_BTNSTATUS		=			5,
+      CONTROL_BTN_CONNECT	=     6,
       CONTROL_BTN_NEXT    =     7,
 			
       CONTROL_LIST				=			50,
       CONTROL_THUMBS			=			51,
-      CONTROL_LABELFILES  =       12,
-      CONTROL_EJECT  =       13
+      CONTROL_LABELFILES  =			12,
+      CONTROL_EJECT				=			13
+    }
 
-    };
+    enum MyMSNStatus
+    {
+      STATUS_ONLINE =0,
+      STATUS_BUSY,      
+      STATUS_BRB,
+      STATUS_AWAY,     
+      STATUS_PHONE,
+      STATUS_LUNCH,
+      STATUS_HIDDEN,
+      STATUS_IDLE
+    }
+      
     // this object will be the interface to the dotMSN library
-    static private DotMSN.Messenger messenger = null;
+    static private DotMSN.Messenger messenger = null;   
     static private Conversation currentconversation = null;
+    static private MyMSNStatus currentStatus = MyMSNStatus.STATUS_ONLINE;
     GUIDialogProgress dlgProgress ;
-    bool           m_bDialogVisible=false;
+    bool						m_bDialogVisible=false;    
+		
     #region Base variabeles
     enum SortMethod
     {
@@ -61,7 +76,7 @@ namespace MediaPortal.GUI.MSN
     }
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\my messenger.xml");
+      return Load(GUIGraphicsContext.Skin + @"\my messenger.xml");     
     }
 
     public override void PreInit()
@@ -81,7 +96,8 @@ namespace MediaPortal.GUI.MSN
     }
     static public Conversation CurrentConversation 
     {
-      get { 
+      get 
+      { 
         try
         {
           return currentconversation;
@@ -126,9 +142,25 @@ namespace MediaPortal.GUI.MSN
     {
       switch (message.Message)
       {
+				case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
+					GUIMessage msg2 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,(int)GUIWindow.Window.WINDOW_MSN_CHAT,GetID, 0,0,0,null );
+					msg2.Label = message.Label;
+					msg2.SendToTargetWindow = true;
+					GUIGraphicsContext.SendMessage(msg2);
+
+					if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT)
+					{																																				
+						GUIMessage msg3 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,GUIWindowManager.ActiveWindow,GetID, 0,0,0,null );
+						msg3.Label = message.Label;
+						msg3.SendToTargetWindow = true;
+						GUIGraphicsContext.SendMessage(msg3);
+					}
+					break;
+
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT :
           m_bDialogVisible=false;
           dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
           base.OnMessage(message);
           if (messenger==null)
           {
@@ -148,6 +180,8 @@ namespace MediaPortal.GUI.MSN
           }
           ShowThumbPanel();
           UpdateButtons();
+          UpdateStatusButton();
+          UpdateSortButton();
           Update();
           return true;
 
@@ -189,7 +223,22 @@ namespace MediaPortal.GUI.MSN
           }
           if (iControl==(int)Controls.CONTROL_BTNVIEWASICONS)
           {
-            currentView = (View) GetControl((int)Controls.CONTROL_BTNVIEWASICONS).SelectedItem;
+            switch (currentView)
+            {
+              case View.VIEW_AS_LIST:
+                currentView=View.VIEW_AS_ICONS;
+                break;
+              case View.VIEW_AS_ICONS:
+                currentView=View.VIEW_AS_LARGEICONS;
+                break;
+              case View.VIEW_AS_LARGEICONS:
+                currentView=View.VIEW_AS_LIST;
+                break;
+              default:
+                currentView=View.VIEW_AS_LIST;
+                break;
+            }
+            UpdateButtons();
             ShowThumbPanel();
             GUIControl.FocusControl(GetID,iControl);
           }
@@ -202,13 +251,23 @@ namespace MediaPortal.GUI.MSN
             GUIControl.FocusControl(GetID,iControl);
           }
 
-
           if (iControl==(int)Controls.CONTROL_BTNSORTBY) // sort by
           {
-            currentSortMethod = (SortMethod)GetControl((int)Controls.CONTROL_BTNSORTBY).SelectedItem;
-            OnSort();
-            GUIControl.FocusControl(GetID,iControl);
+            switch (currentSortMethod)
+            {
+              case SortMethod.SORT_NAME:
+                currentSortMethod = SortMethod.SORT_STATUS;
+                break;
+
+              case SortMethod.SORT_STATUS:
+                currentSortMethod = SortMethod.SORT_NAME;
+                break;
+            }
+  
+            //OnSort();
+            UpdateSortButton();
           }
+
           if (iControl==(int)Controls.CONTROL_THUMBS||iControl==(int)Controls.CONTROL_LIST)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
@@ -220,13 +279,108 @@ namespace MediaPortal.GUI.MSN
               OnClick(iItem);
             }
           }
+
+          if (iControl==(int)Controls.CONTROL_BTNSTATUS) // Set new status
+          {
+            switch (currentStatus)
+            {
+              case MyMSNStatus.STATUS_ONLINE:
+                currentStatus=MyMSNStatus.STATUS_BUSY;
+                break;
+              case MyMSNStatus.STATUS_BUSY:
+                currentStatus=MyMSNStatus.STATUS_BRB;
+                break;
+              case MyMSNStatus.STATUS_BRB:
+                currentStatus=MyMSNStatus.STATUS_AWAY;             
+                break;
+              case MyMSNStatus.STATUS_AWAY:
+                currentStatus=MyMSNStatus.STATUS_PHONE;
+                break;
+              case MyMSNStatus.STATUS_PHONE:
+                currentStatus=MyMSNStatus.STATUS_LUNCH;                
+                break;
+              case MyMSNStatus.STATUS_LUNCH:
+                currentStatus=MyMSNStatus.STATUS_HIDDEN;
+                break;
+              case MyMSNStatus.STATUS_HIDDEN:
+                currentStatus=MyMSNStatus.STATUS_ONLINE;
+                break;
+              default:
+                currentStatus=MyMSNStatus.STATUS_ONLINE;
+                break;
+            }
+            UpdateStatusButton();
+          }
           break;
 
       }
       return base.OnMessage(message);
     }
 
+    void UpdateSortButton()
+    {
+      string strLine="";
+      switch (currentSortMethod)
+      {
+        case SortMethod.SORT_NAME:
+          strLine=GUILocalizeStrings.Get(103);
+          break;
 
+        case SortMethod.SORT_STATUS:
+          strLine=GUILocalizeStrings.Get(685);
+          break;
+      }
+      GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSORTBY,strLine);
+    }
+
+    void UpdateStatusButton()
+    {
+      string strLine="";
+			if (messenger.Connected)
+			{
+				switch (currentStatus)
+				{
+					case MyMSNStatus.STATUS_BUSY:
+						messenger.SetStatus(MSNStatus.Busy);
+						strLine=GUILocalizeStrings.Get(949);
+						break;
+					case MyMSNStatus.STATUS_BRB:
+						messenger.SetStatus(MSNStatus.BRB);
+						strLine=GUILocalizeStrings.Get(950);
+						break;
+					case MyMSNStatus.STATUS_AWAY:
+						messenger.SetStatus(MSNStatus.Away);
+						strLine=GUILocalizeStrings.Get(951);
+						break;
+					case MyMSNStatus.STATUS_PHONE:
+						messenger.SetStatus(MSNStatus.Phone);
+						strLine=GUILocalizeStrings.Get(952);
+						break;
+					case MyMSNStatus.STATUS_LUNCH:
+						messenger.SetStatus(MSNStatus.Lunch);
+						strLine=GUILocalizeStrings.Get(953);
+						break;
+					case MyMSNStatus.STATUS_HIDDEN:
+						messenger.SetStatus(MSNStatus.Hidden);
+						strLine=GUILocalizeStrings.Get(954);
+						break;
+					case MyMSNStatus.STATUS_ONLINE:					
+						messenger.SetStatus(MSNStatus.Online);
+						strLine=GUILocalizeStrings.Get(948);
+						break;
+					default:
+						messenger.SetStatus(MSNStatus.Online);
+						strLine=GUILocalizeStrings.Get(948);
+						break;
+				}
+				
+				GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSTATUS,strLine);
+			}
+			else
+			{
+				GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSTATUS,GUILocalizeStrings.Get(961));
+			}
+    }
 
     bool ViewByIcon
     {
@@ -309,8 +463,24 @@ namespace MediaPortal.GUI.MSN
       int iControl=(int)Controls.CONTROL_LIST;
       if (ViewByIcon)
         iControl=(int)Controls.CONTROL_THUMBS;
+
       GUIControl.ShowControl(GetID,iControl);
-      GUIControl.FocusControl(GetID,iControl);
+//      GUIControl.FocusControl(GetID,iControl);
+
+      string strLine="";
+      switch (currentView)
+      {
+        case View.VIEW_AS_LIST:
+          strLine=GUILocalizeStrings.Get(101);
+          break;
+        case View.VIEW_AS_ICONS:
+          strLine=GUILocalizeStrings.Get(100);
+          break;
+        case View.VIEW_AS_LARGEICONS:
+          strLine=GUILocalizeStrings.Get(417);
+          break;
+      }
+      GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNVIEWASICONS,strLine);
       
 
       bool bAsc=m_bSortAscending;
@@ -360,9 +530,18 @@ namespace MediaPortal.GUI.MSN
       if (CurrentConversation!=null) return;
       if (messenger==null) return;
       if (!messenger.Connected) return;
+//      if (CurrentConversation!=null) return;
+
       GUIListItem item = GetSelectedItem();
       if (item==null) return;
       Contact contact= (Contact)item.AlbumInfoTag;
+
+      //if (CurrentConversation.Users.Contains(contact.GetHashCode()))
+      if (contact.inList)
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
+      }
+
 
       if (dlgProgress != null)
       {
@@ -498,6 +677,17 @@ namespace MediaPortal.GUI.MSN
       {
         emailadres = xmlreader.GetValueAsString("MSNmessenger","email","");
         password = xmlreader.GetValueAsString("MSNmessenger","password","");
+				switch (xmlreader.GetValueAsString("MSNmessenger","initialstatus","Online").ToLower())
+				{
+					case "online": currentStatus = MyMSNStatus.STATUS_ONLINE; break;
+					case "busy": currentStatus = MyMSNStatus.STATUS_BUSY; break;
+		      case "berightback": currentStatus = MyMSNStatus.STATUS_BRB; break;
+				  case "away": currentStatus = MyMSNStatus.STATUS_AWAY; break;     
+		      case "phone": currentStatus = MyMSNStatus.STATUS_PHONE; break;
+				  case "lunch": currentStatus = MyMSNStatus.STATUS_LUNCH; break;
+					case "hidden": currentStatus = MyMSNStatus.STATUS_HIDDEN; break;
+		      case "idle": currentStatus = MyMSNStatus.STATUS_IDLE; break;
+				}
       }
       try
       {				
@@ -511,6 +701,7 @@ namespace MediaPortal.GUI.MSN
           msg.Param1=905;
           msg.Param2=906;
           msg.Param2=-1;
+					msg.SendToTargetWindow = true;
           GUIWindowManager.SendMessage(msg);
           return;
         }
@@ -529,7 +720,8 @@ namespace MediaPortal.GUI.MSN
           // notify us when synchronization is completed
           messenger.SynchronizationCompleted += new Messenger.SynchronizationCompletedHandler(OnSynchronizationCompleted);
           messenger.ConnectionFailure+=new DotMSN.Messenger.ConnectionFailureHandler(ConnectionFailure);
-          // everything is setup, now connect to the messenger service
+
+					// everything is setup, now connect to the messenger service
           messenger.Connect(emailadres, password);					
           
 
@@ -564,8 +756,7 @@ namespace MediaPortal.GUI.MSN
     /// <param name="e"></param>
     private void ConnectionEstablished(Conversation sender, EventArgs e)
     {
-      //Log.Write += "connection established.\r\n";
-
+      Log.Write("connection established.\r\n");
     }
 
     // this is actually just annoying but it proves the concept
@@ -598,6 +789,7 @@ namespace MediaPortal.GUI.MSN
       // they will join _after_ this event. We create another callback to handle this.
       // When user(s) have joined we can start sending messages.
       e.Conversation.ContactJoin += new Conversation.ContactJoinHandler(ContactJoined);			
+			e.Conversation.ContactLeave += new Conversation.ContactLeaveHandler(ContactLeft);			
 
       // log the event when the two clients are connected
       e.Conversation.ConnectionEstablished += new Conversation.ConnectionEstablishedHandler(ConnectionEstablished);
@@ -607,6 +799,7 @@ namespace MediaPortal.GUI.MSN
 
       // we want to be accept filetransfer invitations
       //e.Conversation.FileTransferHandler.InvitationReceived +=new DotMSN.FileTransferHandler.FileTransferInvitationHandler(FileTransferHandler_FileTransferInvitation);
+			UpdateStatusButton();
     }
 
     /// <summary>
@@ -624,8 +817,9 @@ namespace MediaPortal.GUI.MSN
       }
 
       ReFillContactList=true;
-      messenger.SetStatus(MSNStatus.Online);
+      UpdateStatusButton();
     }
+
     /// <summary>
     /// After the first contact has joined you can actually send messages to the
     /// other contact(s)!
@@ -644,9 +838,42 @@ namespace MediaPortal.GUI.MSN
         m_bDialogVisible=false;
         dlgProgress.Close();
       }      
-      currentconversation = sender;
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
+
+      if (currentconversation == null)
+      {
+				// new conversation
+        currentconversation = sender;
+				CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MSNMessageReceived);
+      }			
+
+      if ((!GUIGraphicsContext.IsFullScreenVideo) && (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT))
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
+      }
+
+			// Send message	
+			SendStatusMessage(e.Contact.Name, e.Contact.Mail, GUILocalizeStrings.Get(959));
     }
+
+		private void ContactLeft(Conversation sender, ContactEventArgs e)
+		{
+			// Send message
+			SendStatusMessage(e.Contact.Name, e.Contact.Mail, GUILocalizeStrings.Get(960));
+
+			if (CurrentConversation!=null)
+			{
+				if (CurrentConversation.Users.Count == 0)
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION,GUIWindowManager.ActiveWindow, GetID, 0,0,0,null );
+					msg.SendToTargetWindow = true;
+					GUIGraphicsContext.SendMessage(msg);
+
+					// end conversation
+					CurrentConversation.MessageReceived -=new DotMSN.Conversation.MessageReceivedHandler(MSNMessageReceived);
+					CloseConversation();
+				}
+			}
+		}
 		
 
     #region ISetupForm Members
@@ -723,5 +950,42 @@ namespace MediaPortal.GUI.MSN
         dlgProgress.Close();
       }
     }
+
+		private void MSNMessageReceived(Conversation sender, MessageEventArgs e)
+		{     
+			string FormattedText=String.Format("{0}:{1}", e.Sender.Name, e.Message.Text);
+
+			AddMessage(FormattedText);
+		}
+
+		private void SendStatusMessage(string sName, string sMail, string sText)
+		{		
+			GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE, GUIWindowManager.ActiveWindow,GetID, 0,0,0, null);
+			msg.Label = sName;
+			msg.Label2 = sMail;
+			msg.Label3 = sText;
+			msg.SendToTargetWindow = true;
+			GUIGraphicsContext.SendMessage(msg);
+		}
+
+		private void AddMessage(string text)
+		{
+			// Route to chat window
+			GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE, (int)GUIWindow.Window.WINDOW_MSN_CHAT,GetID, 0,0,0, null);
+			msg.Label = text;
+			msg.SendToTargetWindow = true;
+			GUIGraphicsContext.SendMessage(msg);
+
+			// Route to active window
+			if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT)
+			{																																				
+				GUIMessage msg2= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,GUIWindowManager.ActiveWindow,GetID, 0,0,0,null );
+				msg2.Label = text;
+				msg2.SendToTargetWindow = true;
+				GUIGraphicsContext.SendMessage(msg2);
+			}
+		}
+
+
   }
 }

@@ -61,7 +61,10 @@ namespace MediaPortal.GUI.Library
         GUI_MSG_NEW_LINE_ENTERED,
         GUI_MSG_FILE_DOWNLOADED,
         GUI_MSG_FILE_DOWNLOADING,
-        GUI_MSG_USER};
+        GUI_MSG_USER,
+        GUI_MSG_MSN_MESSAGE,
+		    GUI_MSG_MSN_STATUS_MESSAGE,
+		    GUI_MSG_MSN_CLOSECONVERSATION};
 
 		private string 				m_strLabel="";
 		private string 				m_strLabel2="";

@@ -108,6 +108,7 @@ namespace MediaPortal.GUI.Library
       ,WINDOW_TVOSD = 3003
       ,WINDOW_TOPBARHOME = 3004
       ,WINDOW_TOPBAR = 3005
+      ,WINDOW_TVMSNOSD = 3006
 		}
 
 		private int m_dwWindowId = 0; 

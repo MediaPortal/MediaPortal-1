@@ -17,23 +17,26 @@ namespace MediaPortal.GUI.MSN
       Status=2,
       List=50
     }
+
+    static int MessageIndex=0;
+    static string[] MessageList;
+
 		public GUIMSNChatWindow()
 		{
       GetID = (int)GUIWindow.Window.WINDOW_MSN_CHAT;
     }
+   
     public override bool Init()
     {
+      MessageList = new string[30];
+
       return Load(GUIGraphicsContext.Skin + @"\my messenger chat.xml");
     }
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
+      {      
         Conversation conversation=GUIMSNPlugin.CurrentConversation;
-        if (conversation!=null) 
-        {
-            GUIMSNPlugin.CurrentConversation.MessageReceived -=new DotMSN.Conversation.MessageReceivedHandler(MessageReceived);
-        }            
         GUIMSNPlugin.CloseConversation();
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
         return;
@@ -52,35 +55,43 @@ namespace MediaPortal.GUI.MSN
           base.OnMessage(message);
           GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
           list.WordWrap=true;
-
-          GUIMSNPlugin.CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MessageReceived);
+          
           GUIControl.ClearControl(GetID,(int)Controls.List);
+          int j=MessageIndex-30;
+          if (j<0) 
+            j=0;
           for (int i=0; i < 30;++i)
           {
-            AddToList("");
+            AddToList(MessageList[j]);
+            j++;
+            if (j>MessageList.Length)
+              j=0;
           }
           list.ScrollToEnd();
-          if (g_Player.Playing && !g_Player.Paused)
+/*          if (g_Player.Playing && !g_Player.Paused)
           {
             if (g_Player.IsVideo || g_Player.IsDVD) g_Player.Pause();
           }
-          int activeWindow=(int)GUIWindowManager.ActiveWindow;
+*/          
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-          if (GUIMSNPlugin.CurrentConversation!=null)
-            GUIMSNPlugin.CurrentConversation.MessageReceived -=new DotMSN.Conversation.MessageReceivedHandler(MessageReceived);
-          if (g_Player.Playing && g_Player.Paused)
+/*          if (g_Player.Playing && g_Player.Paused)
           {
             if (g_Player.IsVideo || g_Player.IsDVD) g_Player.Pause();
           }
+*/          
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           int iControl=message.SenderControlId;
         break;
 
-        case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
+				case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
+					AddMessageToList(message.Label);
+					break;
+				
+				case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
           Conversation conversation=GUIMSNPlugin.CurrentConversation;
           if (conversation==null) return true;
           if (conversation.Connected==false) return true;
@@ -88,6 +99,12 @@ namespace MediaPortal.GUI.MSN
 
           string text=String.Format(">{0}", message.Label);
           AddToList(text);
+
+          // Store
+          MessageList[MessageIndex] = text;
+          MessageIndex++;
+          if (MessageIndex >= MessageList.Length) 
+            MessageIndex = 0;
         break;
       }
       return base.OnMessage(message);
@@ -122,10 +139,15 @@ namespace MediaPortal.GUI.MSN
       Update();
     }
 
-    private void MessageReceived(Conversation sender, MessageEventArgs e)
+    private void AddMessageToList(string FormattedText)
     {
-      string text=String.Format("{0}:{1}", e.Sender.Name, e.Message.Text);
-      AddToList(text);
+      AddToList(FormattedText);
+
+      // Store
+      MessageList[MessageIndex] = FormattedText;
+      MessageIndex++;
+      if (MessageIndex >= MessageList.Length) 
+        MessageIndex = 0;
     }
     void AddToList(string text)
     {
@@ -134,8 +156,11 @@ namespace MediaPortal.GUI.MSN
       item.IsFolder=false;
       GUIControl.AddListItemControl(GetID,(int)Controls.List,item);
       GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
-      list.ScrollToEnd();
-      list.Disabled=true;
+			if (list!=null)
+			{
+				list.ScrollToEnd();
+				list.Disabled=true;
+			}
     }
   }
 }

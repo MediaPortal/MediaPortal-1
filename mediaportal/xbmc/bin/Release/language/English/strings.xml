@@ -2464,6 +2464,92 @@
 	<id>940</id>
 	<value>Properties</value>
 </string>
+<string>
+	<id>941</id>
+	<value>Change aspect ratio</value>
+</string>
+<string>
+	<id>942</id>
+	<value>Stretch</value>
+</string>
+<string>
+	<id>943</id>
+	<value>Normal</value>
+</string>
+<string>
+	<id>944</id>
+	<value>Original</value>
+</string>
+<string>
+	<id>945</id>
+	<value>Letterbox</value>
+</string>
+<string>
+	<id>946</id>
+	<value>Pan and Scan</value>
+</string>
+<string>
+	<id>947</id>
+	<value>Zoom</value>
+</string>
+<string>
+	<id>948</id>
+	<value>Online</value>
+</string>
+<string>
+	<id>949</id>
+	<value>Busy</value>
+</string>
+<string>
+	<id>950</id>
+	<value>Be Right Back</value>
+</string>
+<string>
+	<id>951</id>
+	<value>Away</value>
+</string>
+<string>
+	<id>952</id>
+	<value>Phone</value>
+</string>
+<string>
+	<id>953</id>
+	<value>Lunch</value>
+</string>
+<string>
+	<id>954</id>
+	<value>Hidden</value>
+</string>
+<string>
+	<id>955</id>
+	<value>Idle</value>
+</string>
+<string>
+	<id>956</id>
+	<value>Online</value>
+</string>
+<string>
+	<id>957</id>
+	<value>MSN Messenger</value>
+</string>
+<string>
+	<id>958</id>
+	<value>Nr of people</value>
+</string>
+<string>
+	<id>959</id>
+	<value>has joined the conversation</value>
+</string>
+<string>
+	<id>960</id>
+	<value>has left the conversation</value>
+</string>
+<string>
+	<id>961</id>
+	<value>MSN Status</value>
+</string>
+
+
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>

@@ -9,188 +9,211 @@ namespace MediaPortal.GUI.Library
 	/// Summary description for GUISMSInputControl.
 	/// </summary>
 	public class GUISMSInputControl:GUIControl
-  {    
-    // How often (per second) the caret blinks
-    const float fCARET_BLINK_RATE = 1.0f;
-    // During the blink period, the amount the caret is visible. 0.5 equals
-    // half the time, 0.75 equals 3/4ths of the time, etc.
-    const float fCARET_ON_RATIO = 0.75f;
+	{    
+		// How often (per second) the caret blinks
+		const float fCARET_BLINK_RATE = 1.0f;
+		// During the blink period, the amount the caret is visible. 0.5 equals
+		// half the time, 0.75 equals 3/4ths of the time, etc.
+		const float fCARET_ON_RATIO = 0.75f;
 
-    GUIFont								          m_pFont=null;
-    GUIFont								          m_pFont2=null;
-    GUIFont								          m_pTextBoxFont=null;
-    [XMLSkinElement("font")]			  protected string	  m_strFontName="font14";
-    [XMLSkinElement("font2")]			  protected string	  m_strFontName2="font13";
-    [XMLSkinElement("textcolor")]	  protected long  	  m_dwTextColor=0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")]	protected long      m_dwTextColor2=0xFFFFFFFF;
+		GUIFont								          m_pFont=null;
+		GUIFont								          m_pFont2=null;
+		GUIFont								          m_pTextBoxFont=null;
+		[XMLSkinElement("font")]			  protected string	  m_strFontName="font14";
+		[XMLSkinElement("font2")]			  protected string	  m_strFontName2="font13";
+		[XMLSkinElement("textcolor")]	  protected long  	  m_dwTextColor=0xFFFFFFFF;
+		[XMLSkinElement("textcolor2")]	protected long      m_dwTextColor2=0xFFFFFFFF;
 
-    [XMLSkinElement("textboxFont")]			protected string	  m_strTextBoxFontName="font13";
-    [XMLSkinElement("textboxXpos")]	    protected int  	    m_dwTextBoxXpos=200;
-    [XMLSkinElement("textboxYpos")]	    protected int       m_dwTextBoxYpos=300;
-    [XMLSkinElement("textboxWidth")]	  protected int       m_dwTextBoxWidth=100;
-    [XMLSkinElement("textboxHeight")]	  protected int       m_dwTextBoxHeight=30;
-    [XMLSkinElement("textboxColor")]	  protected long      m_dwTextBoxColor=0xFFFFFFFF;
-    [XMLSkinElement("textboxBgColor")]	protected long      m_dwTextBoxBgColor=0xFFFFFFFF;
-    protected string m_strData="";
-    protected int    m_iPos=0;
-    DateTime      m_CaretTimer=DateTime.Now;
-    DateTime      m_keyTimer=DateTime.Now;
-    char          m_CurrentKey=(char)0;
-    char          m_PrevKey=(char)0;
+		[XMLSkinElement("textboxFont")]			protected string	  m_strTextBoxFontName="font13";
+		[XMLSkinElement("textboxXpos")]	    protected int  	    m_dwTextBoxXpos=200;
+		[XMLSkinElement("textboxYpos")]	    protected int       m_dwTextBoxYpos=300;
+		[XMLSkinElement("textboxWidth")]	  protected int       m_dwTextBoxWidth=100;
+		[XMLSkinElement("textboxHeight")]	  protected int       m_dwTextBoxHeight=30;
+		[XMLSkinElement("textboxColor")]	  protected long      m_dwTextBoxColor=0xFFFFFFFF;
+		[XMLSkinElement("textboxBgColor")]	protected long      m_dwTextBoxBgColor=0xFFFFFFFF;
+		protected string m_strData="";
+		protected int    m_iPos=0;
+		DateTime      m_CaretTimer=DateTime.Now;
+		DateTime      m_keyTimer=DateTime.Now;
+		char          m_CurrentKey=(char)0;
+		char          m_PrevKey=(char)0;
 		bool          usingKeyboard=false;
+		bool					m_bNeedRefresh=false;
 
 		public GUISMSInputControl(int dwParentID) : base(dwParentID)
 		{
 		}
 
-    public override void FinalizeConstruction()
-    {
-      base.FinalizeConstruction ();
-      if (m_strFontName!="" && m_strFontName!="-")
-        m_pFont=GUIFontManager.GetFont(m_strFontName);
+		public override void FinalizeConstruction()
+		{
+			base.FinalizeConstruction ();
+			if (m_strFontName!="" && m_strFontName!="-")
+				m_pFont=GUIFontManager.GetFont(m_strFontName);
       
-      if (m_strFontName2!="" && m_strFontName2!="-")
-        m_pFont2=GUIFontManager.GetFont(m_strFontName2);
+			if (m_strFontName2!="" && m_strFontName2!="-")
+				m_pFont2=GUIFontManager.GetFont(m_strFontName2);
       
-      if (m_strTextBoxFontName!="" && m_strTextBoxFontName!="-")
-        m_pTextBoxFont=GUIFontManager.GetFont(m_strTextBoxFontName);
-    }
+			if (m_strTextBoxFontName!="" && m_strTextBoxFontName!="-")
+				m_pTextBoxFont=GUIFontManager.GetFont(m_strTextBoxFontName);
+		}
 
-    public override void ScaleToScreenResolution()
-    {
-      base.ScaleToScreenResolution ();
-      GUIGraphicsContext.ScaleHorizontal(ref m_dwTextBoxXpos);
-      GUIGraphicsContext.ScaleVertical(ref m_dwTextBoxYpos);
-      GUIGraphicsContext.ScaleHorizontal(ref m_dwTextBoxWidth);
-      GUIGraphicsContext.ScaleVertical(ref m_dwTextBoxHeight);
-    }
+		public override void ScaleToScreenResolution()
+		{
+			base.ScaleToScreenResolution ();
+			GUIGraphicsContext.ScaleHorizontal(ref m_dwTextBoxXpos);
+			GUIGraphicsContext.ScaleVertical(ref m_dwTextBoxYpos);
+			GUIGraphicsContext.ScaleHorizontal(ref m_dwTextBoxWidth);
+			GUIGraphicsContext.ScaleVertical(ref m_dwTextBoxHeight);
+		}
     
-    public override void AllocResources()
-    {
+		public override void AllocResources()
+		{
 			usingKeyboard=false;
-      base.AllocResources ();
-      m_CaretTimer=DateTime.Now;
-      m_keyTimer=DateTime.Now;
-      m_strData="";
-      m_iPos=0;
-      if (m_strFontName!="" && m_strFontName!="-")
-        m_pFont=GUIFontManager.GetFont(m_strFontName);
+			base.AllocResources ();
+			m_CaretTimer=DateTime.Now;
+			m_keyTimer=DateTime.Now;
+			m_strData="";
+			m_iPos=0;
+			if (m_strFontName!="" && m_strFontName!="-")
+				m_pFont=GUIFontManager.GetFont(m_strFontName);
       
-      if (m_strFontName2!="" && m_strFontName2!="-")
-        m_pFont2=GUIFontManager.GetFont(m_strFontName2);
+			if (m_strFontName2!="" && m_strFontName2!="-")
+				m_pFont2=GUIFontManager.GetFont(m_strFontName2);
       
-      if (m_strTextBoxFontName!="" && m_strTextBoxFontName!="-")
-        m_pTextBoxFont=GUIFontManager.GetFont(m_strTextBoxFontName);
-    }
+			if (m_strTextBoxFontName!="" && m_strTextBoxFontName!="-")
+				m_pTextBoxFont=GUIFontManager.GetFont(m_strTextBoxFontName);
+		}
     
-    public override void FreeResources()
-    {
-      base.FreeResources ();
-    }
+		public override void FreeResources()
+		{
+			base.FreeResources ();
+		}
     
-    //TODO: add implementation
-    public override bool OnMessage(GUIMessage message)
-    {
-      return base.OnMessage (message);
-    }
-    public override bool CanFocus()
-    {
-      return true;
-    }
+		//TODO: add implementation
+		public override bool OnMessage(GUIMessage message)
+		{
+			return base.OnMessage (message);
+		}
+		public override bool CanFocus()
+		{
+			return true;
+		}
 
-    //TODO: add implementation
-    public override void OnAction(Action action)
-    {
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_MOVE_LEFT : 
-        {
-          if (m_iPos>0) 
-          {
-            m_iPos--;
-          }
-          return;
-        }
-        case Action.ActionType.ACTION_MOVE_RIGHT: 
-        {
-          if (m_iPos < m_strData.Length) 
-          {
-            m_iPos++;
-          }
-          return;
-        }
+		//TODO: add implementation
+		public override void OnAction(Action action)
+		{
+			switch (action.wID)
+			{
+				case Action.ActionType.ACTION_MOVE_LEFT : 
+				{
+					if (m_iPos>0) 
+					{
+						m_iPos--;
+						m_bNeedRefresh=true;
+					}
+					return;
+				}
+				case Action.ActionType.ACTION_MOVE_RIGHT: 
+				{
+					if (m_iPos < m_strData.Length) 
+					{
+						m_iPos++;
+						m_bNeedRefresh=true;
+					}
+					return;
+				}
 
-        case Action.ActionType.ACTION_SELECT_ITEM: 
-        {
-          if (m_CurrentKey!= (char)0)
-          {
-            m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
-          }
-          m_PrevKey=(char)0;
-          m_CurrentKey=(char)0;
-          m_keyTimer=DateTime.Now;
-          m_iPos=0;
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED,WindowId,GetID, ParentID,0,0,null );
-          msg.Label=m_strData;
-          m_strData="";
-          GUIGraphicsContext.SendMessage(msg);
-          return;
-        }
+				case Action.ActionType.ACTION_SELECT_ITEM: 
+				{
+					if (m_CurrentKey!= (char)0)
+					{
+						m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+					}
+					m_PrevKey=(char)0;
+					m_CurrentKey=(char)0;
+					m_keyTimer=DateTime.Now;
+					m_iPos=0;
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED,WindowId,GetID, ParentID,0,0,null );
+					msg.Label=m_strData;
+					m_strData="";
+					GUIGraphicsContext.SendMessage(msg);
+					return;
+				}
 
-        case Action.ActionType.ACTION_KEY_PRESSED:
-          if (action.m_key!=null)
-          {
-            if (action.m_key.KeyChar>=32)
-            {
-              Press((char)action.m_key.KeyChar);
-              return;
-            }
-          }
-          break;
-      }
-      base.OnAction (action);
-    }
+				case Action.ActionType.ACTION_KEY_PRESSED:
+					if (action.m_key!=null)
+					{
+						if ((action.m_key.KeyChar>=32) || (action.m_key.KeyChar==8))
+						{
+							Press((char)action.m_key.KeyChar);
+							return;
+						}
+					}
+					break;
+			}
+			base.OnAction (action);
+		}
 
-    void CheckTimer()
-    {
-      TimeSpan ts=DateTime.Now-m_keyTimer;
-      if (ts.TotalMilliseconds>=800)
-      {
-        if (m_CurrentKey!= (char)0)
-        {
-          if (m_iPos==m_strData.Length)
-            m_strData+=m_CurrentKey;
-          else 
-            m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
-          m_iPos++;
-        }
-        m_PrevKey=(char)0;
-        m_CurrentKey=(char)0;
-        m_keyTimer=DateTime.Now;
-      }
-    }
+		void CheckTimer()
+		{
+			TimeSpan ts=DateTime.Now-m_keyTimer;
+			if (ts.TotalMilliseconds>=800)
+			{
+				if (m_CurrentKey!= (char)0)
+				{
+					if (m_iPos==m_strData.Length)
+						m_strData+=m_CurrentKey;
+					else 
+						m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+					m_iPos++;
+					m_bNeedRefresh=true;
+				}
+				m_PrevKey=(char)0;
+				m_CurrentKey=(char)0;
+				m_keyTimer=DateTime.Now;
+			}
+		}
+
+		public override bool NeedRefresh()
+		{
+			if (m_bNeedRefresh) 
+			{
+				m_bNeedRefresh=false;
+				return true;
+			}
+			return false;
+		}
 
     void Press(char Key)
     {
-      if (Key!=m_PrevKey && m_CurrentKey!=(char)0)
+      // Check keyboard
+      if (Key<'0' || Key>'9')
       {
-        if (m_iPos==m_strData.Length)
-          m_strData+=m_CurrentKey;
-        else 
-          m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
-
-        m_PrevKey=(char)0;
-        m_CurrentKey=(char)0;
-        m_keyTimer=DateTime.Now;
-        m_iPos++;
+        usingKeyboard=true;
       }
+
 			if (!usingKeyboard)
 			{
-				CheckTimer();
-				if (Key >='0' && Key <='9')
+
+				// Check different key pressed
+				if (Key!=m_PrevKey && m_CurrentKey!=(char)0)
 				{
-					m_PrevKey=Key;
+					if (m_iPos==m_strData.Length)
+						m_strData+=m_CurrentKey;
+					else 
+						m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+
+					m_PrevKey=(char)0;
+					m_CurrentKey=(char)0;
+					m_keyTimer=DateTime.Now;
+					m_iPos++;
 				}
+
+				CheckTimer();
+        if (Key >='0' && Key <='9')
+        {
+          m_PrevKey=Key;
+        }
 				if (Key=='0')
 				{
 					m_keyTimer=DateTime.Now;
@@ -205,24 +228,16 @@ namespace MediaPortal.GUI.Library
 				}
 				if (Key=='1')
 				{
-					m_keyTimer=DateTime.Now;
 					if (m_CurrentKey==0) m_CurrentKey=' ';
-					if (m_CurrentKey==' ') m_CurrentKey='!';
-					if (m_CurrentKey=='!') m_CurrentKey='?';
-					if (m_CurrentKey=='?') m_CurrentKey='.';
-					if (m_CurrentKey=='.') m_CurrentKey='0';
-					if (m_CurrentKey=='0') m_CurrentKey='1';
-					if (m_CurrentKey=='1') m_CurrentKey='2';
-					if (m_CurrentKey=='2') m_CurrentKey='3';
-					if (m_CurrentKey=='3') m_CurrentKey='4';
-					if (m_CurrentKey=='4') m_CurrentKey='5';
-					if (m_CurrentKey=='5') m_CurrentKey='6';
-					if (m_CurrentKey=='6') m_CurrentKey='7';
-					if (m_CurrentKey=='7') m_CurrentKey='8';
-					if (m_CurrentKey=='8') m_CurrentKey='9';
-					if (m_CurrentKey=='9') m_CurrentKey='-';
-					if (m_CurrentKey=='-') m_CurrentKey='+';
-					if (m_CurrentKey=='+') m_CurrentKey=' ';
+					else if (m_CurrentKey==' ') m_CurrentKey='!';
+					else if (m_CurrentKey=='!') m_CurrentKey='?';
+					else if (m_CurrentKey=='?') m_CurrentKey='.';
+					else if (m_CurrentKey=='.') m_CurrentKey='0';
+					else if (m_CurrentKey=='0') m_CurrentKey='1';
+					else if (m_CurrentKey=='1') m_CurrentKey='-';
+					else if (m_CurrentKey=='-') m_CurrentKey='+';
+					else if (m_CurrentKey=='+') m_CurrentKey=' ';
+          m_keyTimer=DateTime.Now;
 				}
 
 				if (Key=='2')
@@ -230,7 +245,8 @@ namespace MediaPortal.GUI.Library
 					if (m_CurrentKey==0) m_CurrentKey='a';
 					else if (m_CurrentKey=='a') m_CurrentKey='b';
 					else if (m_CurrentKey=='b') m_CurrentKey='c';
-					else if (m_CurrentKey=='c') m_CurrentKey='a';
+					else if (m_CurrentKey=='c') m_CurrentKey='2';
+          else if (m_CurrentKey=='2') m_CurrentKey='a';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='3')
@@ -238,7 +254,8 @@ namespace MediaPortal.GUI.Library
 					if (m_CurrentKey==0) m_CurrentKey='d';
 					else if (m_CurrentKey=='d') m_CurrentKey='e';
 					else if (m_CurrentKey=='e') m_CurrentKey='f';
-					else if (m_CurrentKey=='f') m_CurrentKey='d';
+					else if (m_CurrentKey=='f') m_CurrentKey='3';
+          else if (m_CurrentKey=='3') m_CurrentKey='d';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='4')
@@ -246,7 +263,8 @@ namespace MediaPortal.GUI.Library
 					if (m_CurrentKey==0) m_CurrentKey='g';
 					else if (m_CurrentKey=='g') m_CurrentKey='h';
 					else if (m_CurrentKey=='h') m_CurrentKey='i';
-					else if (m_CurrentKey=='i') m_CurrentKey='h';
+					else if (m_CurrentKey=='i') m_CurrentKey='4';
+          else if (m_CurrentKey=='4') m_CurrentKey='g';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='5')
@@ -254,7 +272,8 @@ namespace MediaPortal.GUI.Library
 					if (m_CurrentKey==0) m_CurrentKey='j';
 					else if (m_CurrentKey=='j') m_CurrentKey='k';
 					else if (m_CurrentKey=='k') m_CurrentKey='l';
-					else if (m_CurrentKey=='l') m_CurrentKey='j';
+					else if (m_CurrentKey=='l') m_CurrentKey='5';
+          else if (m_CurrentKey=='5') m_CurrentKey='j';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='6')
@@ -262,7 +281,8 @@ namespace MediaPortal.GUI.Library
 					if (m_CurrentKey==0) m_CurrentKey='m';
 					else if (m_CurrentKey=='m') m_CurrentKey='n';
 					else if (m_CurrentKey=='n') m_CurrentKey='o';
-					else if (m_CurrentKey=='o') m_CurrentKey='m';
+					else if (m_CurrentKey=='o') m_CurrentKey='6';
+          else if (m_CurrentKey=='6') m_CurrentKey='m';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='7')
@@ -271,7 +291,8 @@ namespace MediaPortal.GUI.Library
 					else if (m_CurrentKey=='p') m_CurrentKey='q';
 					else if (m_CurrentKey=='q') m_CurrentKey='r';
 					else if (m_CurrentKey=='r') m_CurrentKey='s';
-					else if (m_CurrentKey=='s') m_CurrentKey='p';
+					else if (m_CurrentKey=='s') m_CurrentKey='7';
+          else if (m_CurrentKey=='7') m_CurrentKey='p';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='8')
@@ -279,7 +300,8 @@ namespace MediaPortal.GUI.Library
 					if (m_CurrentKey==0) m_CurrentKey='t';
 					else if (m_CurrentKey=='t') m_CurrentKey='u';
 					else if (m_CurrentKey=='u') m_CurrentKey='v';
-					else if (m_CurrentKey=='v') m_CurrentKey='t';
+					else if (m_CurrentKey=='v') m_CurrentKey='8';
+          else if (m_CurrentKey=='8') m_CurrentKey='t';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key=='9')
@@ -288,7 +310,8 @@ namespace MediaPortal.GUI.Library
 					else if (m_CurrentKey=='w') m_CurrentKey='x';
 					else if (m_CurrentKey=='x') m_CurrentKey='y';
 					else if (m_CurrentKey=='y') m_CurrentKey='z';
-					else if (m_CurrentKey=='z') m_CurrentKey='w';
+					else if (m_CurrentKey=='z') m_CurrentKey='9';
+          else if (m_CurrentKey=='9') m_CurrentKey='w';
 					m_keyTimer=DateTime.Now;
 				}
 				if (Key<'0' || Key>'9') 
@@ -307,16 +330,29 @@ namespace MediaPortal.GUI.Library
 			}
 			else
 			{
-				if (m_iPos==m_strData.Length)
-					m_strData+=m_CurrentKey;
-				else 
-					m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+				if (Key==(char)8) // Backspace
+				{
+					if (m_iPos>0)
+					{
+						m_strData=m_strData.Remove(m_iPos-1,1);
+						m_iPos--;
+					}
+				}
+				else
+				{
+					if (m_iPos>=m_strData.Length)
+						m_strData+=Key;
+					else 
+						m_strData=m_strData.Insert(m_iPos,Key.ToString());
+					m_iPos++;
+				}
 
 				m_PrevKey=(char)0;
 				m_CurrentKey=(char)0;
-				m_keyTimer=DateTime.Now;
-				m_iPos++;
+				m_keyTimer=DateTime.Now;				
 			}
+
+			m_bNeedRefresh=true;
     }
     
     public override void Render()
@@ -374,10 +410,16 @@ namespace MediaPortal.GUI.Library
     void DrawText()
     {
       string line=m_strData;
-      if (m_CurrentKey!=(char)0)
+
+			if (m_CurrentKey!=(char)0)
       {
         line=line.Insert(m_iPos,m_CurrentKey.ToString());
       }
+
+			line=line.Insert(m_iPos, "_");			
+			m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT );
+
+/*
       m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT );
 
 
@@ -385,7 +427,7 @@ namespace MediaPortal.GUI.Library
       TimeSpan ts=DateTime.Now-m_CaretTimer;
       if(  (ts.TotalSeconds % fCARET_BLINK_RATE ) < fCARET_ON_RATIO )
       {
-        string strLine=m_strData.Substring(0,m_iPos );
+        string strLine=m_strData.Substring( 0, m_iPos );
 
         float fCaretWidth = 0.0f;
         float fCaretHeight=0.0f;
@@ -393,6 +435,7 @@ namespace MediaPortal.GUI.Library
         m_pTextBoxFont.DrawText( m_dwTextBoxXpos+(int)fCaretWidth, m_dwTextBoxYpos, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
   
       }
+			*/
     }
 
 

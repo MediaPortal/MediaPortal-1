@@ -762,8 +762,12 @@ namespace MediaPortal.GUI.Library
 					// could be, just enter or f3 for info or 0 to delete or y to queue etc...
 					if (m_iSelect == ListType.CONTROL_LIST) 
 					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)action.wID, 0, null);
-						GUIGraphicsContext.SendMessage(msg);
+            // don't send the messages to a dialog menu
+            if ((WindowId != (int)GUIWindow.Window.WINDOW_DIALOG_MENU) || (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)action.wID, 0, null);
+              GUIGraphicsContext.SendMessage(msg);
+            }
 					}
 					else
 					{
