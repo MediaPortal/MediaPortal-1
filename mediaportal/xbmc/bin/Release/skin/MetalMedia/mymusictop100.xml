@@ -113,12 +113,12 @@
 		<ondown>8</ondown>
 	</control>
 	<control>
-		<description>Search button</description>
+		<description>Clear Top100 button</description>
 		<type>button</type>
 		<id>8</id>
 		<posX>55</posX>
 		<posY>217</posY>
-		<label>137</label>
+		<label>718</label>
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>6</onup>

@@ -2085,6 +2085,14 @@
 	<id>717</id>
 	<value>Weather</value>
 </string>
+<string>
+	<id>718</id>
+	<value>Clear Top100</value>
+</string>
+<string>
+	<id>719</id>
+	<value>Are you sure to reset the top 100 list?</value>
+</string>
 
 
 </strings>
