@@ -61,6 +61,7 @@ namespace MediaPortal.TV.Recording
 			public int    audioPid;
 			public int    AC3Pid;
 			public int    teletextPid;
+			public int    subtitlePid;
 		}
 
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -2300,9 +2301,14 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA: video pid: {0}",data.elementary_PID);
 						currentTuningObject.videoPid=data.elementary_PID;
 					}
+					if (data.isDVBSubtitle)
+					{
+						Log.Write("DVBGraphBDA: DVB subtitle pid: {0}",data.elementary_PID);
+						currentTuningObject.subtitlePid=data.elementary_PID;
+					}
 					if (data.isAC3Audio)
 					{
-						Log.Write("DVBGraphBDA: AC3 pid: {0}",data.elementary_PID);
+						Log.Write("DVBGraphBDA: audio AC3 pid: {0}",data.elementary_PID);
 						currentTuningObject.AC3Pid=data.elementary_PID;
 					}
 					if (data.isTeletext)
