@@ -1294,6 +1294,18 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
 
+				case Action.ActionType.ACTION_MOVE_LEFT:
+					m_fZoomLeftBackGround-=25;
+					if (m_fZoomLeftBackGround < 0) m_fZoomLeftBackGround = 0;
+					m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+					break;
+
+				case Action.ActionType.ACTION_MOVE_RIGHT:
+					m_fZoomLeftBackGround+=25;
+					if (m_fZoomLeftBackGround > (int)m_fWidthBackGround - m_fZoomWidth) m_fZoomLeftBackGround = (m_fWidthBackGround - m_fZoomWidth);
+					m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+					break;
+
         case Action.ActionType.ACTION_MOVE_DOWN:
           if (m_bPictureZoomed) m_fZoomTopBackGround+=25;
           if (m_fZoomTopBackGround > (int)m_fHeightBackGround - m_fZoomHeight) m_fZoomTopBackGround = (m_fHeightBackGround - m_fZoomHeight);
