@@ -41,6 +41,7 @@ namespace MediaPortal.GUI.TV
 
 		};
 		static public string 	TVChannelCovertArt=@"thumbs\tv\logos";
+		static public string 	TVShowCovertArt=@"thumbs\tv\shows";
 		static public string 	m_strChannel="Nederland 1";
 		static public string 	m_strGroup=GUILocalizeStrings.Get(972);
 		static bool     			m_bTVON=true;

@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.TV
 							GUIGraphicsContext.ScaleVertical(ref h);
 							cntlList.Height = h;
 							h=Int32.Parse(subItem.Substring(1));
-							h-=70;
+							h-=55;
 							GUIGraphicsContext.ScaleVertical(ref h);
 							cntlList.SpinY  = cntlList.YPosition+h;
 							cntlList.FreeResources();
@@ -317,7 +317,7 @@ namespace MediaPortal.GUI.TV
 							cntlList.Height = h;
 							
 							h=Int32.Parse(subItem.Substring(1));
-							h-=70;
+							h-=50;
 							GUIGraphicsContext.ScaleVertical(ref h);
 							cntlList.SpinY  = cntlList.YPosition+h;
 							
@@ -445,7 +445,7 @@ namespace MediaPortal.GUI.TV
 									item.PinImage="tvguide_record_button.png";
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program.Channel,ref item);
+              SetChannelLogo(program,ref item);
               GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
               GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
               itemCount++;
@@ -520,7 +520,7 @@ namespace MediaPortal.GUI.TV
 									item.PinImage="tvguide_record_button.png";
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program.Channel,ref item);
+              SetChannelLogo(program,ref item);
               GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
               GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
               itemCount++;
@@ -597,7 +597,7 @@ namespace MediaPortal.GUI.TV
 								item.PinImage="tvguide_record_button.png";
 						}
 						Utils.SetDefaultIcons(item);
-						SetChannelLogo(program.Channel,ref item);
+						SetChannelLogo(program,ref item);
 						GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
 						GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
 						itemCount++;
@@ -771,33 +771,62 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-              TVProgram program = item.MusicTag as TVProgram;
+							TVProgram program = item.MusicTag as TVProgram;
+							if (_FilterShow=="")
+							{
+								_FilterShow=program.Title;
+								Update();
+								return;
+							}
               OnRecord(program);
             }
           }
         break;
 				case SearchMode.Title:
 				{
-					TVProgram prog = item.MusicTag as TVProgram;
-					OnRecord(prog);
+					TVProgram program = item.MusicTag as TVProgram;
+					if (_FilterShow=="")
+					{
+						_FilterShow=program.Title;
+						Update();
+						return;
+					}
+					OnRecord(program);
 				}
 					break;
 				case SearchMode.Description:
 				{
-					TVProgram prog = item.MusicTag as TVProgram;
-					OnRecord(prog);
+					TVProgram program = item.MusicTag as TVProgram;
+					
+					if (_FilterShow=="")
+					{
+						_FilterShow=program.Title;
+						Update();
+						return;
+					}
+					OnRecord(program);
 				}
 					break;
       }
     }
 
-    void SetChannelLogo(string channel, ref GUIListItem item)
+    void SetChannelLogo(TVProgram prog, ref GUIListItem item)
     {
-      string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,channel);
-      if (!System.IO.File.Exists(strLogo))
-      {
-        strLogo="defaultVideoBig.png";
-      }
+			string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,prog.Channel);
+			if (!System.IO.File.Exists(strLogo))
+			{
+				strLogo="defaultVideoBig.png";
+			}			
+			if (_FilterShow=="")
+			{
+				strLogo=Utils.GetCoverArt(GUITVHome.TVShowCovertArt,prog.Title);
+				if (!System.IO.File.Exists(strLogo))
+				{
+					strLogo="defaultVideoBig.png";
+				}
+			}
+
+
       item.ThumbnailImage=strLogo;
       item.IconImageBig=strLogo;
       item.IconImage=strLogo;

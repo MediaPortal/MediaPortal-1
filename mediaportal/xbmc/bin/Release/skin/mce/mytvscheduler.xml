@@ -147,7 +147,9 @@
 				<IconXOff>12</IconXOff>
 				<IconYOff>8</IconYOff>
 				<spinPosX>606</spinPosX>
-				<spinPosY>418</spinPosY>		
+				<spinPosY>418</spinPosY>
+				<PinIconXOff>45</PinIconXOff>
+				<PinIconYOff>19</PinIconYOff>		
 				<itemWidth>35</itemWidth>
 				<itemHeight>35</itemHeight>
 				<textureFocus>recording_background_focus.png</textureFocus>
