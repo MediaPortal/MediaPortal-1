@@ -1768,6 +1768,8 @@ namespace MediaPortal.Configuration.Sections
 			bool CHANNEL_EXPORT = false;
 			bool GROUP_EXPORT = false;
 			bool CARD_EXPORT = false;
+			bool RECORDED_EXPORT = false;
+			bool RECORDINGS_EXPORT = false;
 			
 			//Current version number of this exporter (change when needed)
 			int CURRENT_VERSION = 1;  //<--- Make sure this same number is given to Import_from_XML
@@ -1930,11 +1932,99 @@ namespace MediaPortal.Configuration.Sections
 					}
 					catch{}
 				}
+
+				//Backup recorded shows information
+				ArrayList Recorded = new ArrayList();
+				TVDatabase.GetRecordedTV(ref Recorded);
+
+				if(Recorded.Count==0)
+				{
+					MessageBox.Show("There is no Recorded TV data to export");
+					RECORDED_EXPORT=false;
+				}
+				else
+				{
+					channels.SetValue("RECORDED","TOTAL",Recorded.Count.ToString());
+					RECORDED_EXPORT=true;
+				}
 				
+				for(int i=1;i<Recorded.Count+1;i++)
+				{
+					foreach(TVRecorded show in Recorded)
+					{	
+						//Found one save it
+						if(i==show.ID)
+						{
+							channels.SetValue("Recorded "+i.ToString(),"ID",show.ID.ToString());
+							channels.SetValue("Recorded "+i.ToString(),"TITLE",show.Title);
+							channels.SetValue("Recorded "+i.ToString(),"CHANNEL",show.Channel);
+							channels.SetValue("Recorded "+i.ToString(),"DESC",show.Description);
+							channels.SetValue("Recorded "+i.ToString(),"GENRE",show.Genre);
+							channels.SetValue("Recorded "+i.ToString(),"FILENAME",show.FileName);
+							channels.SetValue("Recorded "+i.ToString(),"STARTTIME",show.Start.ToString());
+							channels.SetValue("Recorded "+i.ToString(),"ENDTIME",show.End.ToString());
+							channels.SetValue("Recorded "+i.ToString(),"PLAYED",show.Played.ToString());
+							break;
+						}
+					}
+				}
+
+				//Backup recording shows information
+				ArrayList Recordings = new ArrayList();
+				TVDatabase.GetRecordings(ref Recordings);
+
+				if(Recordings.Count==0)
+				{
+					MessageBox.Show("There is no Recording TV data to export");
+					RECORDINGS_EXPORT=false;
+				}
+				else
+				{
+					channels.SetValue("RECORDINGS","TOTAL",Recordings.Count.ToString());
+					RECORDINGS_EXPORT=true;
+				}
+
+				for(int i=1;i<Recordings.Count+1;i++)
+				{
+					foreach(MediaPortal.TV.Database.TVRecording show in Recordings)
+					{	
+						//Found one save it
+						if(i==show.ID)
+						{
+							channels.SetValue("Recording "+i.ToString(),"ID",show.ID.ToString());
+							channels.SetValue("Recording "+i.ToString(),"TITLE",show.Title);
+							channels.SetValue("Recording "+i.ToString(),"CHANNEL",show.Channel);
+							channels.SetValue("Recording "+i.ToString(),"STARTTIME",show.Start.ToString());
+							channels.SetValue("Recording "+i.ToString(),"ENDTIME",show.End.ToString());
+							channels.SetValue("Recording "+i.ToString(),"CANCELEDTIME",show.Canceled.ToString());
+							channels.SetValue("Recording "+i.ToString(),"TYPE",show.RecType.ToString());
+							channels.SetValue("Recording "+i.ToString(),"PRIORITY",show.Priority.ToString());
+							channels.SetValue("Recording "+i.ToString(),"QUALITY",show.Quality.ToString());
+							//channels.SetValue("Recording "+i.ToString(),"STATUS",show.Status.ToString());
+							channels.SetValueAsBool("Recording "+i.ToString(),"ISCONTENTREC",show.IsContentRecording);
+							channels.SetValueAsBool("Recording "+i.ToString(),"SERIES",show.Series);
+							
+							//Check if this recording has had any cancels
+							channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES TOTAL",show.CanceledSeries.Count.ToString());
+							if(show.CanceledSeries.Count>0)
+							{	
+								int canx_count = 0;
+								ArrayList get_show = (ArrayList)show.CanceledSeries;
+								foreach(long canx_show in get_show)
+								{
+									channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES CANCELEDTIME "+canx_count.ToString(),canx_show.ToString());
+									canx_count++;
+								}
+							}
+							break;
+						}
+					}
+				}
+
 			}
 
 			//Check to see if we need to delete file
-			if(!CHANNEL_EXPORT&&!GROUP_EXPORT&&!CARD_EXPORT)
+			if(!CHANNEL_EXPORT&&!GROUP_EXPORT&&!CARD_EXPORT&&!RECORDED_EXPORT&&!RECORDINGS_EXPORT)
 			{
 				//Delete file
 				File.Delete(fileStr);
@@ -2401,6 +2491,285 @@ namespace MediaPortal.Configuration.Sections
 						}
 					}
 				}
+
+				//Grab recorded show information
+				int recorded_count=0;
+				
+				//Grab recorded shows saved for referrence
+				recorded_count = channels.GetValueAsInt("RECORDED","TOTAL",-1);
+				if(recorded_count==-1||recorded_count==0)
+				{
+					MessageBox.Show("There is no Recorded TV data to import");
+				}
+				else
+				{
+					MessageBox.Show("There is a total of "+recorded_count.ToString()+" recorded items to import");
+					
+					//Check if required to do anything specific for compatibility reasons
+					switch(VER)
+					{
+							//Do stuff for backward compatibility if needed
+						case 0:
+
+							break;
+							//Do stuff for current version only
+						case 1:
+
+							break;
+							//Do stuff for forward compatibility if needed
+						case 2:
+
+							break;
+					}
+						
+					//This is done for every version regardless
+					if(VER==0||VER==1||VER==2)
+					{
+						for(int i=1;i<recorded_count+1;i++)
+						{
+							//Create temp TVRecorded to hold data to import
+							TVRecorded temp_recorded = new TVRecorded();
+							temp_recorded.ID=channels.GetValueAsInt("Recorded "+i.ToString(),"ID",0);
+							temp_recorded.Title=channels.GetValueAsString("Recorded "+i.ToString(),"TITLE","");
+							temp_recorded.Channel=channels.GetValueAsString("Recorded "+i.ToString(),"CHANNEL","");
+							temp_recorded.Description=channels.GetValueAsString("Recorded "+i.ToString(),"DESC","");
+							temp_recorded.Genre=channels.GetValueAsString("Recorded "+i.ToString(),"GENRE","");
+							temp_recorded.FileName=channels.GetValueAsString("Recorded "+i.ToString(),"FILENAME","");
+							temp_recorded.Start=Convert.ToInt64(channels.GetValueAsString("Recorded "+i.ToString(),"STARTTIME","0"));
+							temp_recorded.End=Convert.ToInt64(channels.GetValueAsString("Recorded "+i.ToString(),"ENDTIME","0"));
+							temp_recorded.Played=channels.GetValueAsInt("Recorded "+i.ToString(),"PLAYED",0);
+							
+							//Add or gathered info to the TVDatabase
+							bool recorded_overwrite = false;
+							ArrayList check_recorded_list = new ArrayList();
+							TVDatabase.GetRecordedTV(ref check_recorded_list);
+							TVRecorded check_recorded = new TVRecorded();
+							foreach(TVRecorded check_me in check_recorded_list)
+							{
+								if(check_me.ID==temp_recorded.ID&&check_me.Start.ToString()==temp_recorded.Start.ToString())
+								{
+									check_recorded = check_me;
+									recorded_overwrite = true;
+									break;
+								}
+							}
+							if(recorded_overwrite)
+							{
+								//Ask if user if overwrite ok
+								if(MessageBox.Show("Would you like to overwrite the entry for "+check_recorded.Title+" - Start Time: "+check_recorded.Start.ToString()+"\nWith the entry "+temp_recorded.Title+" - Start Time: "+temp_recorded.Start.ToString()+"\nProceed with overwrite?",
+								"Overwrite?",MessageBoxButtons.YesNo)==DialogResult.Yes)
+								{
+									//Check if this file exists first, if not ask user to locate it or no update
+									if(File.Exists(temp_recorded.FileName))
+									{
+										TVDatabase.RemoveRecordedTV(check_recorded);
+										TVDatabase.AddRecordedTV(temp_recorded);
+									}
+									else
+									{
+										if(MessageBox.Show("Could not find the file for "+temp_recorded.Title+"\nDo you want to find the file? (No will not add this recorded entry)","Cannot Find File..",MessageBoxButtons.YesNo)==DialogResult.Yes)
+										{
+											bool quit=false;
+											//Build open dialog for user to find file
+											System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+											find_file.DefaultExt = "dvr-ms";
+											find_file.Filter = "dvr-ms|*.dvr-ms";
+											find_file.InitialDirectory = ".";
+											find_file.Title= "Find Recorded File for "+ temp_recorded.Title;
+											while(!quit)
+											{
+												if(find_file.ShowDialog(this)==DialogResult.OK)
+												{
+													temp_recorded.FileName=find_file.FileName;
+													//Add the recorded data to database
+													TVDatabase.RemoveRecordedTV(check_recorded);
+													TVDatabase.AddRecordedTV(temp_recorded);
+												}
+												else
+												{
+													if(MessageBox.Show("Are you positive you don't want to add:\n"+temp_recorded.Title,"Are you sure?",MessageBoxButtons.YesNo)==DialogResult.Yes)
+													{
+														quit=true;
+													}
+													else quit=false;
+												}
+											}
+										}
+									}
+								}
+							}
+							else
+							{
+								//Check if this file exists first, if not ask user to locate it or no update
+								if(File.Exists(temp_recorded.FileName))
+								{
+									TVDatabase.AddRecordedTV(temp_recorded);
+								}
+								else
+								{
+									if(MessageBox.Show("Could not find the file for "+temp_recorded.Title+"\nDo you want to find the file? (No will not add this recorded entry)","Cannot Find File..",MessageBoxButtons.YesNo)==DialogResult.Yes)
+									{
+										bool quit=false;
+										//Build open dialog for user to find file
+										System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+										find_file.DefaultExt = "dvr-ms";
+										find_file.Filter = "dvr-ms|*.dvr-ms";
+										find_file.InitialDirectory = ".";
+										find_file.Title= "Find Recorded File for "+ temp_recorded.Title;
+										while(!quit)
+										{
+											if(find_file.ShowDialog(this)==DialogResult.OK)
+											{
+												temp_recorded.FileName=find_file.FileName;
+												//Add the recorded data to database
+												TVDatabase.AddRecordedTV(temp_recorded);
+											}
+											else
+											{
+												if(MessageBox.Show("Are you positive you don't want to add:\n"+temp_recorded.Title,"Are you sure?",MessageBoxButtons.YesNo)==DialogResult.Yes)
+												{
+													quit=true;
+												}
+												else quit=false;
+											}
+										}
+									}
+								}
+							}
+						}	
+					}
+					
+				}
+				
+
+				//Grab recording shows information
+				int recordings_count=0;
+				
+				//Grab recorded shows saved for referrence
+				recordings_count = channels.GetValueAsInt("RECORDINGS","TOTAL",-1);
+				
+				if(recordings_count==-1||recordings_count==0)
+				{
+					MessageBox.Show("There is no Recording TV data to import");
+				}
+				else
+				{
+					MessageBox.Show("There is "+recordings_count.ToString()+" Recording TV data items to import");
+					
+					//Check if required to do anything specific for compatibility reasons
+					switch(VER)
+					{
+							//Do stuff for backward compatibility if needed
+						case 0:
+
+							break;
+							//Do stuff for current version only
+						case 1:
+
+							break;
+							//Do stuff for forward compatibility if needed
+						case 2:
+
+							break;
+					}
+						
+					//This is done for every version regardless
+					if(VER==0||VER==1||VER==2)
+					{
+						for(int i=1;i<recordings_count+1;i++)
+						{
+							//Create temp TVRecording to hold data to import
+							MediaPortal.TV.Database.TVRecording temp_recording= new MediaPortal.TV.Database.TVRecording();
+							temp_recording.ID=channels.GetValueAsInt("Recording "+i.ToString(),"ID",0);
+							temp_recording.Title=channels.GetValueAsString("Recording "+i.ToString(),"TITLE","");
+							temp_recording.Channel=channels.GetValueAsString("Recording "+i.ToString(),"CHANNEL","");
+							temp_recording.Start=Convert.ToInt64(channels.GetValueAsString("Recording "+i.ToString(),"STARTTIME","0"));
+							temp_recording.End=Convert.ToInt64(channels.GetValueAsString("Recording "+i.ToString(),"ENDTIME","0"));
+							temp_recording.Canceled=Convert.ToInt64(channels.GetValueAsString("Recording "+i.ToString(),"CANCELEDTIME","0"));
+							temp_recording.RecType=Convert_RecordingType(channels.GetValueAsString("Recording "+i.ToString(),"TYPE",""));
+							temp_recording.Priority=channels.GetValueAsInt("Recording "+i.ToString(),"PRIORITY",0);
+							temp_recording.Quality=Convert_QualityType(channels.GetValueAsString("Recording "+i.ToString(),"QUALITY",""));
+							//temp_recording.Status=(MediaPortal.TV.Database.TVRecording.RecordingStatus)channels.GetValue("Recording "+i.ToString(),"STATUS");
+							temp_recording.IsContentRecording=channels.GetValueAsBool("Recording "+i.ToString(),"ISCONTENTREC",false);
+							temp_recording.Series=channels.GetValueAsBool("Recording "+i.ToString(),"SERIES",false);
+							
+							//Add this recording to TVDatabase
+							bool recording_overwrite = false;
+							ArrayList check_recording_list = new ArrayList();
+							TVDatabase.GetRecordings(ref check_recording_list);
+							MediaPortal.TV.Database.TVRecording check_recording = new MediaPortal.TV.Database.TVRecording();
+							foreach(MediaPortal.TV.Database.TVRecording check_me in check_recording_list)
+							{
+								if(check_me.ID==temp_recording.ID&&check_me.Start.ToString()==temp_recording.Start.ToString())
+								{
+									check_recording = check_me;
+									recording_overwrite = true;
+									break;
+								}
+							}
+							if(recording_overwrite)
+							{
+								//Ask if user if overwrite ok
+								if(MessageBox.Show("Would you like to overwrite the entry for "+check_recording.Title+" - Start Time: "+check_recording.Start.ToString()+"\nWith the entry "+temp_recording.Title+" - Start Time: "+temp_recording.Start.ToString()+"\nProceed with overwrite?",
+									"Overwrite?",MessageBoxButtons.YesNo)==DialogResult.Yes)
+								{
+									//Delete Canceled series information
+									foreach(long del_canx in check_recording.CanceledSeries)
+									{
+										TVDatabase.DeleteCanceledSeries(check_recording);
+									}
+									//Check if this recording has had any cancels
+									int canx_count = 0;
+									canx_count=channels.GetValueAsInt("Recording "+i.ToString(),"CANCELED SERIES TOTAL",0);
+									if(canx_count>0)
+									{	
+										temp_recording.CanceledSeries.Clear();
+										long last_canx_time=0;
+										for(int j=0;j<canx_count;j++)
+										{
+											//Add the canceled time to TVDatabase
+											long canx_time=0;
+											canx_time=Convert.ToInt64(channels.GetValueAsString("Recording "+i.ToString(),"CANCELED SERIES CANCELEDTIME "+j.ToString(),"0"));
+											//Check if we had the same time from before if so stop adding
+											if(canx_time==last_canx_time)break;
+											//TVDatabase.AddCanceledSerie(temp_recording,canx_time);
+											temp_recording.CanceledSeries.Add((long)canx_time);
+											last_canx_time=canx_time;
+										}
+									}
+									//Delete old entry
+									TVDatabase.RemoveRecording(check_recording);
+									//Add new overwrite entry
+									TVDatabase.AddRecording(ref temp_recording);
+								}
+							}
+							else
+							{
+								//Check if this recording has had any cancels
+								int canx_count = 0;
+								canx_count=channels.GetValueAsInt("Recording "+i.ToString(),"CANCELED SERIES TOTAL",0);
+								if(canx_count>0)
+								{	
+									temp_recording.CanceledSeries.Clear();
+									long last_canx_time=0;
+									for(int j=0;j<canx_count;j++)
+									{
+										//Add the canceled time to TVDatabase
+										long canx_time=0;
+										canx_time=Convert.ToInt64(channels.GetValueAsString("Recording "+i.ToString(),"CANCELED SERIES CANCELEDTIME "+j.ToString(),"0"));
+										//Check if we had the same time from before if so stop adding
+										if(canx_time==last_canx_time)break;
+										//TVDatabase.AddCanceledSerie(temp_recording,canx_time);
+										temp_recording.CanceledSeries.Add((long)canx_time);
+										last_canx_time=canx_time;
+									}
+								}
+								//Add new entry
+								TVDatabase.AddRecording(ref temp_recording);
+							}
+						}
+					}		
+				}
 			}
 		}
 
@@ -2432,6 +2801,29 @@ namespace MediaPortal.Configuration.Sections
 			return AnalogVideoStandard.None;
 		}
 
+		private TV.Database.TVRecording.QualityType Convert_QualityType(object quality)
+		{
+			if ((string)quality=="NotSet") return TV.Database.TVRecording.QualityType.NotSet;
+			if ((string)quality=="Low") return TV.Database.TVRecording.QualityType.Low;
+			if ((string)quality=="Medium") return TV.Database.TVRecording.QualityType.Medium;
+			if ((string)quality=="High") return TV.Database.TVRecording.QualityType.High;
+			
+			//If nothing return Default
+			return TV.Database.TVRecording.QualityType.NotSet;
+		}
+
+		private TV.Database.TVRecording.RecordingType Convert_RecordingType(object recType)
+		{
+			if ((string)recType=="Once") return TV.Database.TVRecording.RecordingType.Once;
+			if ((string)recType=="EveryTimeOnThisChannel") return TV.Database.TVRecording.RecordingType.EveryTimeOnThisChannel;
+			if ((string)recType=="EveryTimeOnEveryChannel") return TV.Database.TVRecording.RecordingType.EveryTimeOnEveryChannel;
+			if ((string)recType=="Daily") return TV.Database.TVRecording.RecordingType.Daily;
+			if ((string)recType=="Weekly") return TV.Database.TVRecording.RecordingType.Weekly;
+			if ((string)recType=="WeekDays") return TV.Database.TVRecording.RecordingType.WeekDays;
+      
+			//If nothing return Default
+			return TV.Database.TVRecording.RecordingType.Once;
+		}
 		private void xmlExport_Click_1(object sender, System.EventArgs e)
 		{
 			if(XMLSaveDialog.ShowDialog(this)==DialogResult.OK)

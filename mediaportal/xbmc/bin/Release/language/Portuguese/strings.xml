@@ -2395,8 +2395,21 @@
 </string>
 <string>
 	<id>871</id>
-	<value>Acordar pc</value>
+	<value>Acordar PC</value>
 </string>
+<string>
+	<id>872</id>
+	<value>Começa com</value>
+</string>
+<string>
+	<id>873</id>
+	<value>Programa TV</value>
+</string>
+<string>
+	<id>874</id>
+	<value>Episódio</value>
+</string>
+
 <!-- End My Alarm Strings -->
 <string>
 	<id>890</id>
@@ -2689,6 +2702,22 @@
 	<id>978</id>
 	<value>quem pode ver este canal</value>
 </string>
+<string>
+	<id>979</id>
+	<value>Tocar gravação desde início</value>
+</string>
+<string>
+	<id>980</id>
+	<value>Tocar gravação desde live point</value>
+</string>
+<string>
+	<id>981</id>
+	<value>Cancelar este programa</value>
+</string>
+<string>
+	<id>982</id>
+	<value>Apagar toda a gravação</value>
+</string>
 
 
 
@@ -2814,6 +2843,15 @@
   <string><id>2133</id><value>Impossível converter DVR-MS p/ MPG</value></string>
   <string><id>2134</id><value>Os filtros DirectShow necessários são</value></string>
   <string><id>2135</id><value>não istalados</value></string>
+	<string><id>2136</id><value>Data</value></string>
+	<string><id>2137</id><value>Converter</value></string>
+	<string><id>2138</id><value>Cortar</value></string>
+	<string><id>2139</id><value>Fazer MP3-CD</value></string>
+	<string><id>2140</id><value>Fazer MP3-DVD</value></string>
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
+	<string><id>2143</id><value>Topo</value></string>
+
 	<!-- End of My Burner Strings -->
 
 	<!-- My Explorer Strings -->
@@ -3056,6 +3094,10 @@
 <string>
 	<id>13011</id>
 	<value>Vel. Ken Burns</value>
+</string>
+<string>
+	<id>13012</id>
+	<value>Lendo figura, aguarde por favor</value>
 </string>
 <string>
 	<id>1440</id>

@@ -1339,11 +1339,11 @@
 	</string>
 	<string>
 		<id>407</id>
-		<value>kierunek:</value>
+		<value>kier.</value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>prêdko¶æ:</value>
+		<value>prêd.</value>
 	</string>
 	<string>
 		<id>410</id>
@@ -2515,11 +2515,11 @@
 	</string>
 	<string>
 		<id>744</id>
-		<value>Zachód s³oñca</value>
+		<value>Wschód</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>Wschód s³oñca</value>
+		<value>Zachód</value>
 	</string>
 	<string>
 		<id>746</id>
@@ -2671,6 +2671,26 @@
 		<id>871</id>
 		<value>W³±cz PC</value>
 	</string>
+<string>
+	<id>872</id>
+	<value>Rozpocznij z</value>
+</string>
+<string>
+	<id>873</id>
+	<value>Program</value>
+</string>
+<string>
+	<id>874</id>
+	<value>Odcinek</value>
+</string>
+<string>
+	<id>875</id>
+	<value>Obecny program</value>
+</string>
+<string>
+	<id>876</id>
+	<value>Do czasu zatrzymania</value>
+</string>
 	<!-- End My Alarm Strings -->
 	<string>
 		<id>890</id>
@@ -2960,14 +2980,22 @@
 		<id>978</id>
 		<value>aby ogl±daæ ten program</value>
 	</string>
-	<string>
-		<id>980</id>
-		<value>Odtwarzaj nagranie od teraz</value>
-	</string>
-	<string>
-		<id>979</id>
-		<value>Odtwarzaj nagranie od pocz±tku</value>
-	</string>
+<string>
+	<id>979</id>
+	<value>Odtwarzaj nagranie od pocz±tku</value>
+</string>
+<string>
+	<id>980</id>
+	<value>Odtwarzaj nagranie od teraz</value>
+</string>
+<string>
+	<id>981</id>
+	<value>Anuluj wybrany program</value>
+</string>
+<string>
+	<id>982</id>
+	<value>Usuñ ca³e nagranie</value>
+</string>
 	<!-- My Status Strings -->
 	<string>
 		<id>1950</id>
@@ -3433,6 +3461,14 @@
 		<id>2135</id>
 		<value>nie s± zainstalowane</value>
 	</string>
+	<string><id>2136</id><value>Dane</value></string>
+	<string><id>2137</id><value>Konwertuj</value></string>
+	<string><id>2138</id><value>Wytnij</value></string>
+	<string><id>2139</id><value>Stwórz MP3-CD</value></string>
+	<string><id>2140</id><value>Stwórz MP3-DVD</value></string>
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
+	<string><id>2143</id><value>Wstecz</value></string>	
 	<!-- End of My Burner Strings -->
 	<!-- My Explorer Strings -->
 	<string>

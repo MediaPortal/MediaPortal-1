@@ -318,6 +318,48 @@ namespace MediaPortal.Player
       m_bInit=false;
       return bResult;
     }
+	  //Added by juvinious 19/02/2005
+	  public static bool PlayVideoStream(string strURL)
+	  {
+		  m_currentStep=Steps.Sec0;
+		  m_SeekTimer=DateTime.MinValue;
+		  m_bInit=true;
+		  m_subs=null;
+		  Log.Write("g_Player.PlayVideoStream({0})",strURL);
+		  if (m_player!=null)
+		  {
+			  GUIGraphicsContext.ShowBackground=true;
+			  OnStopped();
+			  m_player.Stop();
+			  GUIGraphicsContext.form.Invalidate(true);
+			  m_player=null;
+		  }
+		  int iUseVMR9inMYMovies=0;
+		  using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+		  {
+			  iUseVMR9inMYMovies=xmlreader.GetValueAsInt("movieplayer","vmr9",0);
+		  }
+		  if (iUseVMR9inMYMovies==0) m_player= new Player.VideoPlayerVMR7();
+		  if (iUseVMR9inMYMovies==1) m_player= new Player.VideoPlayerVMR9wl();
+		  if (iUseVMR9inMYMovies==2) m_player= new Player.VideoPlayerVMR9();
+	
+		  bool bResult=m_player.Play(strURL);
+		  if (!bResult)
+		  {
+			  Log.Write("player:ended");
+			  m_player.Release();
+			  m_player=null;
+			  m_subs=null;
+			  GC.Collect();GC.Collect();GC.Collect();
+		  }
+		  else if (m_player.Playing)
+		  {
+			  CurrentFilePlaying=m_player.CurrentFile;
+			  OnStarted();
+		  }
+		  m_bInit=false;
+		  return bResult;
+	  }
 
     public static bool Play(string strFile)
 		{
