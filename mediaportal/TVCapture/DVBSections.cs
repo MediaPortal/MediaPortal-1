@@ -343,11 +343,11 @@ namespace MediaPortal.TV.Recording
 				//
 				
 				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,1);
+				GetStreamData(filter,17, 0x42,0,200);
 				tab42=(ArrayList)m_sectionsList.Clone();
 				
 				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,1);
+				GetStreamData(filter,17, 0x46,0,200);
 				tab46=(ArrayList)m_sectionsList.Clone();
 
 				
@@ -465,11 +465,11 @@ namespace MediaPortal.TV.Recording
 				//
 				
 				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,1);
+				GetStreamData(filter,17, 0x42,0,200);
 				tab42=(ArrayList)m_sectionsList.Clone();
 				
 				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,1);
+				GetStreamData(filter,17, 0x46,0,200);
 				tab46=(ArrayList)m_sectionsList.Clone();
 
 				
@@ -573,9 +573,9 @@ namespace MediaPortal.TV.Recording
 			// check tables
 			//AddTSPid(17);
 			//
-			GetStreamData(filter,17, 0x42,0,1);
+			GetStreamData(filter,17, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,17, 0x46,0,1); // low value, nothing in most of time
+			GetStreamData(filter,17, 0x46,0,200); // low value, nothing in most of time
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//bool flag;
