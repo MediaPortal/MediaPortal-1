@@ -11,8 +11,6 @@ Cosmetic bugs:
 crash/things not working Bugs:
   29-07-2004 DVD player : Settings for AR control and display mode are not respected. It always uses default modes
   
-  29-07-2004 my music   : Big Icons not working in album view
-  29-07-2004 my music   : folder.jpg does not show as albumart in albumview
   28-07-2004 viz        : when song ends in full screen viz, you return to GUI
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen

@@ -169,6 +169,15 @@
 		<textureNoFocus>blue-rectangleNF.png</textureNoFocus>		
 		<spaceBetweenItems>14</spaceBetweenItems>
 		<textureHeight>90</textureHeight>
+		<onleft>52</onleft>
+		<onright>52</onright>
+		<onup>2</onup>
+		<ondown>2</ondown>
+	</control>
+	<control>
+		<description>Thumbnail Panel</description>
+		<type>thumbnailpanel</type>
+		<id>52</id>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<onup>2</onup>
