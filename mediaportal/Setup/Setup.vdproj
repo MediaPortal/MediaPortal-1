@@ -9233,7 +9233,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MusicDatabase, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:MusicDatabase, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_18D13E6A4D9D1981970C10C6C9AE4E30"
@@ -9564,7 +9564,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Ripper, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Ripper, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_1FBC904AC3452D6FFC1853FB88A2FC06"
@@ -10337,7 +10337,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:guilib, Version=1.0.1675.31703, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:guilib, Version=1.0.1675.32175, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_2B8A509C3CE7CCDC62C7428B0ECB43A7"
@@ -11330,7 +11330,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PictureDatabase, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:PictureDatabase, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_3B36805BB3D1B024BF9016B1A86190B8"
@@ -13554,7 +13554,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Util, Version=1.0.1675.31703, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Util, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_62D3D315A20E9856BB7EF53C6AFF5165"
@@ -14085,7 +14085,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:USBUIRT, Version=1.0.1675.31707, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:USBUIRT, Version=1.0.1675.32179, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_6E4EDFCA5706D0C47B5E210B9BEA4D95"
@@ -14976,7 +14976,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_7EEDC139A380D015B29CFB0B89B0041F"
@@ -15087,7 +15087,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:VideoDatabase, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:VideoDatabase, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_7FE9EF6D9C66C809D4AD00CAF943DE46"
@@ -15809,7 +15809,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TagReader, Version=1.0.1675.31703, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TagReader, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_8A0E9487C4D4FCE1050436BEF077D554"
@@ -15940,7 +15940,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DShowNET, Version=1.2.1675.31702, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:DShowNET, Version=1.2.1675.32175, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_8C0076A9212D101F7184AB7EBC9B33B3"
@@ -16351,7 +16351,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Freedb, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Freedb, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_9216ABE441EB6F558F674118271C7E08"
@@ -17582,7 +17582,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Dialogs, Version=1.0.1675.31705, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Dialogs, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_A32173BCA4DDD33C6396CA0B83D83B6D"
@@ -18595,7 +18595,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RadioDatabase, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:RadioDatabase, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_B0F5EA3FD03476C0B3184225DBF9EFD5"
@@ -19906,7 +19906,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PlayList, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:PlayList, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_C9E028AE53D00416D991E311550C5A9F"
@@ -20520,7 +20520,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -20588,7 +20588,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:yeti.wmfsdk, Version=1.0.1675.31705, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:yeti.wmfsdk, Version=1.0.1675.32177, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_D7CD0C941B01DDA6DD7858A737B7ABC2"
@@ -21119,7 +21119,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DirectX.Capture, Version=1.0.1675.31703, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:DirectX.Capture, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_DFB2E4311DDF6CEC6F21F5D1D648AEF1"
@@ -21921,7 +21921,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:VideoPlayer, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:VideoPlayer, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_EC9FFFEED2AB56B30264012B05C6F8D1"
@@ -21992,7 +21992,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:yeti.mmedia, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:yeti.mmedia, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_ED2849DDC7AEE774BB396453C8C1F251"
@@ -22763,7 +22763,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVDatabase, Version=1.0.1675.31704, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVDatabase, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_F79121B9E2E22DA37B465AB3BA1C08B2"
@@ -23016,7 +23016,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SubTitleReader, Version=1.0.1675.31703, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:SubTitleReader, Version=1.0.1675.32176, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_FAA1F9C2451EB84564C603F8642908CD"
@@ -23735,6 +23735,17 @@
                         {
                         }
                     }
+                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_C6E33A20372943C3A08A1CD4A439330C"
+                    {
+                    "Name" = "8:Database"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_F6CF40BDA9934CB5911D776049652FC1"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{78BAF5CE-F2E5-45BE-83BC-DB6AF387E941}:_6A6D58D8D5B54CE3B9D1DC496AD508B4"
@@ -23808,7 +23819,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{EFFD92CF-95A1-4BDF-8601-6373D7D41083}"
+        "PackageCode" = "8:{4D90A8ED-2455-4948-A262-5328EE826FD0}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
