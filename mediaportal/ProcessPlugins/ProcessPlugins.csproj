@@ -152,7 +152,7 @@
                 <Reference
                     Name = "IControl"
                     AssemblyName = "IControl"
-                    HintPath = "..\..\IControl\IControl\bin\Release\IControl.dll"
+                    HintPath = "..\IControl.dll"
                 />
             </References>
         </Build>
