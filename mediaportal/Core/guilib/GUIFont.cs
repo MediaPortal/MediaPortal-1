@@ -381,20 +381,15 @@ namespace MediaPortal.GUI.Library
 
 				if (c != ' ')
 				{
-          fontVertices[iv].X=xpos  ;  fontVertices[iv].Y=ypos+h; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos  ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
-          fontVertices[iv].X=xpos+w;  fontVertices[iv].Y=ypos+h; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos+w;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty1;iv++;
-          fontVertices[iv].X=xpos+w;  fontVertices[iv].Y=ypos+h; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos  ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
-					
+					float xpos2=xpos+w;
+					float ypos2=ypos+h;
+          fontVertices[iv].X=xpos ;  fontVertices[iv].Y=ypos2 ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty2;iv++;
+          fontVertices[iv].X=xpos ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
+          fontVertices[iv].X=xpos2;  fontVertices[iv].Y=ypos2 ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
+          fontVertices[iv].X=xpos2;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty1;iv++;
+          fontVertices[iv].X=xpos2;  fontVertices[iv].Y=ypos2 ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
+          fontVertices[iv].X=xpos ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
 
-          /*fontVertices[iv++] = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+0-0.5f,ypos+h-0.5f,0.9f,1.0f), intColor, tx1, ty2);
-					fontVertices[iv++]   = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+0-0.5f,ypos+0-0.5f,0.9f,1.0f), intColor, tx1, ty1);
-					fontVertices[iv++]   = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+w-0.5f,ypos+h-0.5f,0.9f,1.0f), intColor, tx2, ty2);
-					fontVertices[iv++]   = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+w-0.5f,ypos+0-0.5f,0.9f,1.0f), intColor, tx2, ty1);
-					fontVertices[iv++]   = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+w-0.5f,ypos+h-0.5f,0.9f,1.0f), intColor, tx2, ty2);
-					fontVertices[iv++]   = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+0-0.5f,ypos+0-0.5f,0.9f,1.0f), intColor, tx1, ty1);*/
 					dwNumTriangles += 2;
 
           if (flags!=RenderFlags.DontDiscard)

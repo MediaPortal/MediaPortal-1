@@ -223,7 +223,6 @@ namespace MediaPortal.GUI.Library
         fPercent *= 100.0f;
         m_vertScrollbar.Height=m_iItemsPerPage* ((int)(m_iItemHeight + m_iSpaceBetweenItems));
         m_vertScrollbar.Height-=m_iSpaceBetweenItems;
-        m_vertScrollbar.DoUpdate();
         if ((int)fPercent != (int)m_vertScrollbar.Percentage)
         {
           m_vertScrollbar.Percentage = fPercent;

@@ -1864,8 +1864,11 @@ namespace MediaPortal.TV.Database
 								string sql=String.Format("delete from program where idProgram={0}",program.ID);
 								m_db.Execute(sql);
 							}
-							previousEnd  = program.End;
-							previousStart= program.Start;
+							else
+							{
+								previousEnd  = program.End;
+								previousStart= program.Start;
+							}
 						}
 					}
 				}

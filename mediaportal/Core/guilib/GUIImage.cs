@@ -217,6 +217,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iBitmap"></param>
 		public void Select(int iBitmap)
 		{
+			if (m_iBitmap==iBitmap) return;
 			m_iBitmap=iBitmap;
 			Update();
 		}

@@ -412,8 +412,10 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_dwPosX; }
       set { 
+				if (m_dwPosX==value) return;
 				m_dwPosX = value; 
 				if (m_dwPosX<0) m_dwPosX=0;
+				Update();
 			}
     }
 
@@ -423,9 +425,12 @@ namespace MediaPortal.GUI.Library
     public virtual int YPosition
     {
       get { return m_dwPosY; }
-      set { 
+			set 
+			{ 
+				if (m_dwPosY==value) return;
 				m_dwPosY = value; 
 				if (m_dwPosY<0) m_dwPosY=0;
+				Update();
 			}
     }
 
@@ -435,9 +440,12 @@ namespace MediaPortal.GUI.Library
     public virtual int Width
     {
       get { return m_dwWidth; }
-      set { 
+			set 
+			{ 
+				if (m_dwWidth==value) return;
 				m_dwWidth = value;
 				if (m_dwWidth<0) m_dwWidth=0;
+				Update();
 			}
     }
 
@@ -447,9 +455,12 @@ namespace MediaPortal.GUI.Library
     public virtual int Height
     {
       get { return m_dwHeight; }
-      set { 
+			set 
+			{ 
+				if (m_dwHeight==value) return;
 				m_dwHeight = value; 
 				if (m_dwHeight<0) m_dwHeight=0;
+				Update();
 			}
     }
 

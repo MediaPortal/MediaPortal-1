@@ -197,8 +197,7 @@ namespace MediaPortal.GUI.Library
 			
 			int iWidth=m_dwWidth-(m_guiLeft.TextureWidth+m_guiRight.TextureWidth);
 			m_guiMid.Width=iWidth;
-      m_guiMid.DoUpdate();
-
+      
 			xPos=iWidth+m_dwPosX+m_guiLeft.TextureWidth;
 			m_guiRight.SetPosition(xPos,m_dwPosY);
 
@@ -217,7 +216,6 @@ namespace MediaPortal.GUI.Library
       m_guiFillBackground.Width=iWidth;
       m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
       m_guiFillBackground.SetPosition(xPos,m_dwPosY+m_iFillY);
-      m_guiFillBackground.DoUpdate();
       m_guiFillBackground.Render();
 
       // render first color
@@ -235,7 +233,6 @@ namespace MediaPortal.GUI.Library
         m_guiFill1.Height=m_iFillHeight;
         m_guiFill1.Width=iWidth1;
         m_guiFill1.SetPosition(xPos,yPos);
-        m_guiFill1.DoUpdate();
         m_guiFill1.Render();// red
       }
       iCurPos=iWidth1+xPos;
@@ -256,7 +253,6 @@ namespace MediaPortal.GUI.Library
         m_guiFill2.Width=iWidth2;
         m_guiFill2.Height=m_guiFill1.Height;
         m_guiFill2.SetPosition(iCurPos,m_guiFill1.YPosition);
-        m_guiFill2.DoUpdate();
         m_guiFill2.Render();
       }
       iCurPos=iWidth1+iWidth2+xPos;
@@ -276,7 +272,6 @@ namespace MediaPortal.GUI.Library
         m_guiFill3.Width=iWidth3;
         m_guiFill3.Height=m_guiFill2.Height;
         m_guiFill3.SetPosition(iCurPos,m_guiFill2.YPosition);
-        m_guiFill3.DoUpdate();
         m_guiFill3.Render();
       }
 
@@ -296,7 +291,6 @@ namespace MediaPortal.GUI.Library
         fWidth/=100.0f;
         fWidth*= (float)i;
         m_guiTick.SetPosition( (int)(fpos+fWidth),(int)m_dwPosY+posy1);
-        m_guiTick.DoUpdate();
         m_guiTick.Render();
       }
 
@@ -309,7 +303,6 @@ namespace MediaPortal.GUI.Library
       m_guiTick.Height=m_guiFillBackground.TextureHeight;
       m_guiTick.Width=m_guiTick.TextureWidth*2;
       m_guiTick.SetPosition( (int)(m_guiTop.XPosition+(m_guiTop.TextureWidth/2)-(m_guiTick.Width/2)),(int)m_guiFillBackground.YPosition);
-      m_guiTick.DoUpdate();
       m_guiTick.Render();
       
       // render bottom
@@ -327,7 +320,6 @@ namespace MediaPortal.GUI.Library
       fy += ( ( (float)m_guiBottom.TextureHeight)/2f);
       fy -= ( ( (float)m_guiLogo.TextureHeight)/2f);
       m_guiLogo.SetPosition((int)fx, (int)fy);
-      m_guiLogo.DoUpdate();
       m_guiLogo.Render();
       
 			if (m_pFont!=null)

@@ -391,8 +391,11 @@ namespace MediaPortal.GUI.Library
       {
         if (m_imgIcon!=null)
         {
-          m_imgIcon.SetFileName(value);
-          DoUpdate();
+					if (m_imgIcon.FileName!=value)
+					{
+						m_imgIcon.SetFileName(value);
+						DoUpdate();
+					}
         }
       }
     }
@@ -570,56 +573,45 @@ namespace MediaPortal.GUI.Library
       m_imgFocusMid.ColourDiffuse=ColourDiffuse;
       m_imgFocusRight.ColourDiffuse=ColourDiffuse;
       
+			m_imgFocusLeft.Height =m_dwHeight;
+			m_imgFocusMid.Height  =m_dwHeight;
+			m_imgFocusRight.Height=m_dwHeight;
+      
       int width;
-      m_imgFocusLeft.Width =m_imgFocusLeft.TextureWidth;
-      m_imgFocusMid.Width  =m_dwWidth - (m_imgFocusLeft.TextureWidth+m_imgFocusRight.TextureWidth);
-      m_imgFocusRight.Width=m_imgFocusRight.TextureWidth;
+      int widthLeft =m_imgFocusLeft.TextureWidth;
+      int widthMid  =m_dwWidth - (m_imgFocusLeft.TextureWidth+m_imgFocusRight.TextureWidth);
+      int widthRight=m_imgFocusRight.TextureWidth;
+
       while(true)
       {
   
-        width=m_imgFocusLeft.Width +m_imgFocusMid.Width+m_imgFocusRight.Width;
+				width=widthLeft+widthRight+widthMid;
         if (width > m_dwWidth)
         {
-          if (m_imgFocusMid.Width>0) m_imgFocusMid.Width--;
+          if (widthMid>0) widthMid--;
           else 
           {
-            if (m_imgFocusLeft.Width>0) m_imgFocusLeft.Width--;
-            if (m_imgFocusRight.Width>0) m_imgFocusRight.Width--;
+            if (widthLeft>0) widthLeft--;
+            if (widthRight>0) widthRight--;
           }
         }
         else break;
       } 
-      
-      m_imgFocusLeft.Height =m_dwHeight;
-      m_imgFocusMid.Height  =m_dwHeight;
-      m_imgFocusRight.Height=m_dwHeight;
 
-			m_imgNoFocusLeft.ColourDiffuse =ColourDiffuse;
-      m_imgNoFocusMid.ColourDiffuse  =ColourDiffuse;
-      m_imgNoFocusRight.ColourDiffuse=ColourDiffuse;
+			m_imgFocusLeft.Width=widthLeft;
+			m_imgFocusMid.Width=widthMid;
+			m_imgFocusRight.Width=widthRight;
+			if (widthLeft==0) m_imgFocusLeft.IsVisible=false;
+			if (widthMid==0) m_imgFocusMid.IsVisible=false;
+			if (widthRight==0) m_imgFocusRight.IsVisible=false;
 
-        m_imgNoFocusLeft.Width =m_imgNoFocusLeft.TextureWidth;
-        m_imgNoFocusMid.Width  =m_dwWidth - (m_imgNoFocusLeft.TextureWidth+m_imgNoFocusRight.TextureWidth);
-        m_imgNoFocusRight.Width=m_imgNoFocusRight.TextureWidth;
 
-      while (true)
-      {
-        width=m_imgNoFocusLeft.Width +m_imgNoFocusMid.Width+m_imgNoFocusRight.Width;
-        if (width > m_dwWidth)
-        {
-          if (m_imgNoFocusMid.Width>0) m_imgNoFocusMid.Width--;
-          else 
-          {
-            if (m_imgNoFocusLeft.Width>0) m_imgNoFocusLeft.Width--;
-            if (m_imgNoFocusRight.Width>0) m_imgNoFocusRight.Width--;
-          }
-        }
-        else break;
-      }
-
-      m_imgNoFocusLeft.Height =m_dwHeight;
-      m_imgNoFocusMid.Height  =m_dwHeight;
-      m_imgNoFocusRight.Height=m_dwHeight;
+			m_imgNoFocusLeft.Width=widthLeft;
+			m_imgNoFocusMid.Width=widthMid;
+			m_imgNoFocusRight.Width=widthRight;
+			if (widthLeft==0) m_imgNoFocusLeft.IsVisible=false;
+			if (widthMid==0) m_imgNoFocusMid.IsVisible=false;
+			if (widthRight==0) m_imgNoFocusRight.IsVisible=false;
 
       m_imgFocusLeft.SetPosition (m_dwPosX, m_dwPosY);
       m_imgFocusMid.SetPosition  (m_dwPosX +m_imgFocusLeft.TextureWidth, m_dwPosY);
@@ -630,13 +622,6 @@ namespace MediaPortal.GUI.Library
       m_imgNoFocusMid.SetPosition  (m_dwPosX +m_imgFocusLeft.TextureWidth, m_dwPosY);
       m_imgNoFocusRight.SetPosition(m_dwPosX +m_dwWidth-m_imgFocusRight.TextureWidth, m_dwPosY);
 
-			m_imgFocusLeft.DoUpdate();
-			m_imgFocusMid.DoUpdate();
-			m_imgFocusRight.DoUpdate();
-			m_imgNoFocusLeft.DoUpdate();
-			m_imgNoFocusMid.DoUpdate();
-			m_imgNoFocusRight.DoUpdate();
-      
 
 
 			if (m_imgIcon!=null)
@@ -659,7 +644,6 @@ namespace MediaPortal.GUI.Library
 					m_imgIcon.SetPosition(m_dwPosX+IconOffsetX,m_dwPosY+IconOffsetY );
 				}
         
-				m_imgIcon.DoUpdate();
 			}
     }
 
