@@ -240,8 +240,9 @@ namespace MediaPortal
     }
     
 
-    public bool WndProc(ref Message msg, out Action action,out char key)
+    public bool WndProc(ref Message msg, out Action action,out char key, out Keys keyCode)
     {
+      keyCode=Keys.A;
       key=(char)0;
       action=null;
       if (!RemoteFound) return false;
@@ -257,6 +258,7 @@ namespace MediaPortal
         if (msg.LParam!=IntPtr.Zero) lparam=msg.LParam.ToInt32();
       }
       catch(Exception){}
+/*
       if (msg.Msg==WM_APPCOMMAND)
       {
         action=new Action(Action.ActionType.ACTION_INVALID,0,0);
@@ -313,15 +315,13 @@ namespace MediaPortal
         {
           case 0xd://OK/enter
             break;
-          case 0x1B://erase/delete
-            break;
           case 0x38://*
             break;
           case 0x33://#
             break;
         }
       }
-
+*/
       if (msg.Msg==WM_INPUT)
       {
         RAWINPUTHID header = new RAWINPUTHID ();
@@ -345,14 +345,19 @@ namespace MediaPortal
 
         switch(header.hid.RawData2)
         {
-          case 0:
-            //action = new Action(Action.ActionType.ACTION_SHOW_INFO,0,0);  
-            break;
-          case 0x9:
-            break;
-          //case 0x209://details
-            //  break;
-          case 0x25://live tv
+          case 0x9: // info
+            if (header.hid.RawData3==2)
+            {
+              Log.Write("key=f3");
+              keyCode=Keys.F3;
+            }
+            else
+            {
+              Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+              return false;
+            }
+          break;
+          case 0x25://My tv
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
             break;
           case 0x4B://DVD angle
@@ -362,9 +367,15 @@ namespace MediaPortal
           case 0x24://DVD menu
             if (header.hid.RawData3==0)
               action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
+            else if (header.hid.RawData3==2)
+            {
+              Log.Write("key=27");
+              keyCode=Keys.Escape;
+            }
             else
             {
-              key=(char)27;
+              Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+              return false;
             }
             break;
           case 0x4D://DVD subtitle
@@ -378,8 +389,16 @@ namespace MediaPortal
           case 0x49://My Pictures
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
             break;
-          case 0x46://My TV
-            key='x';//GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+          case 0x65://TV
+            if (header.hid.RawData3==0)
+            {
+              key='x';//GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+            }
+            else
+            {
+              Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+              return false;
+            }
             break;
           case 0x4A://My Video
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);

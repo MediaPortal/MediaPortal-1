@@ -496,20 +496,32 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void WndProc(ref Message msg)
     {
       Action action;
-      char key=(char)0;
-      if ( MCE2005Remote.WndProc(ref msg, out action, out  key) ) 
+      char key;
+      Keys keyCode;
+      if ( MCE2005Remote.WndProc(ref msg, out action, out  key, out keyCode) ) 
       {
+        
         msg.Result = new IntPtr(0);
         if (action!=null && action.wID!=Action.ActionType.ACTION_INVALID)
         {
+          Log.Write("action:{0} ", action.wID);
           OnAction(action);
         }
-        return;
-      }
-      if (key !=0)
-      {
-        System.Windows.Forms.KeyPressEventArgs e= new KeyPressEventArgs(key);
-        keypressed(e);
+        
+        if (keyCode !=Keys.A)
+        {
+          Log.Write("keycode:{0} ", keyCode.ToString());
+          System.Windows.Forms.KeyEventArgs ke= new KeyEventArgs(keyCode);
+          keydown(ke);
+          return;
+        }
+        if (((int)key) !=0)
+        {
+          Log.Write("key:{0} ", key);
+          System.Windows.Forms.KeyPressEventArgs e= new KeyPressEventArgs(key);
+          keypressed(e);
+          return;
+        }
         return;
       }
 
@@ -1066,6 +1078,8 @@ public class MediaPortalApp : D3DApp, IRender
 		protected override void keypressed(System.Windows.Forms.KeyPressEventArgs e)
 		{
 			char keyc = e.KeyChar;
+
+      Log.Write("key:{0} 0x{1:X}", (int)keyc,(int)keyc);
 			Key key = new Key(e.KeyChar, 0);
       if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 			if (key.KeyChar == '?')
