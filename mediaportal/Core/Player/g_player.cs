@@ -96,13 +96,13 @@ namespace MediaPortal.Player
       {
         //yes, then raise event 
         currentMedia=MediaType.Music;
-				if (g_Player.IsTV) 
+				if (m_player.IsTV) 
 				{
 					currentMedia=MediaType.TV;
 					if (!m_player.IsTimeShifting) 
 						currentMedia=MediaType.Recording;
 				}
-				else if (g_Player.IsRadio) 
+				else if (m_player.IsRadio) 
 				{
 					currentMedia=MediaType.Radio;
 				}
