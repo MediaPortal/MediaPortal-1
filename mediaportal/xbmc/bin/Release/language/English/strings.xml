@@ -1847,6 +1847,14 @@
 		<id>654</id>
 		<value>Eject</value>
 	</string>
+	<string>
+		<id>655</id>
+		<value>Play recorded tv</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>delete recorded tv</value>
+	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
 <string><id>10002</id><value>My Pictures</value></string>

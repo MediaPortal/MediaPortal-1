@@ -3,12 +3,12 @@ Bugs:
 - installer: check dx9b
 - MPReader : XCDs dont work anymore
 
-- delete picture
-- recorded tv-> click file -> then ask play or delete!
    
 -dvd        : osd pause doesnt work
 -listcontrol: doesnt adjust x-pos of page counter
 -capture    : CVBS/SVHS in  doesnt work
+-capture    : tuner not found
+
 
 02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
 02-05-2004 my usic	  : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 

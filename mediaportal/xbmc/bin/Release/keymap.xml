@@ -107,11 +107,6 @@
     <action>
       <description>Select Item</description>
       <id>7</id>
-      <key>A</key>
-    </action>
-    <action>
-      <description>Select Item</description>
-      <id>7</id>
       <key>enter</key>
     </action>
     <action>
@@ -295,11 +290,6 @@
       <key>s</key>
     </action>
     <action>
-      <description>Play</description>
-      <id>68</id>
-      <key>a</key>
-    </action>
-    <action>
       <description>Pause</description>
       <id>12</id>
       <key>SPACE</key>
@@ -427,12 +417,12 @@
     <action>
       <description>Zoom Out</description>
       <id>30</id>
-      <key>X</key>
+      <key>PageUp</key>
     </action>
     <action>
       <description>Zoom In</description>
       <id>31</id>
-      <key>A</key>
+      <key>PageDown</key>
     </action>
     <action>
       <description>Zoom Level 1 (normal)</description>
@@ -515,11 +505,6 @@
   <window>
     <description>Movie Calibration specific actions</description>
     <id>11</id>
-    <action>
-      <description>Swap calibration arrows</description>
-      <id>47</id>
-      <key>A</key>
-    </action>
     <action>
       <description>Swap calibration arrows</description>
       <id>47</id>
@@ -662,11 +647,6 @@
       <description>goto current time</description>
       <id>96</id>
       <key>HOME</key>
-    </action>
-    <action>
-      <description>record</description>
-      <id>89</id>
-      <key>A</key>
     </action>
     <action>
       <description>record</description>

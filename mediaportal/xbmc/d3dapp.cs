@@ -1125,6 +1125,7 @@ namespace MediaPortal
         strNewSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
         strNewLanguage=xmlreader.GetValueAsString("skin","language","English");
         m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
+        GUIGraphicsContext.MouseSupport=xmlreader.GetValueAsBool("general","mousesupport",true);
       }
       if (strNewLanguage!=m_strLanguage)
       {

@@ -54,24 +54,30 @@ Video:
   - query info about actors from www.imdb.com
   
 Pictures:
+  - delete picture
   
 Settings:
   - all :-)
 
 General:
-  - Eject CD/DVD button
   - setup:Auto Tune 
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
   - better mouse control 
-     - OSD has no mouse support yet
-     - tvguide has only basic mouse support 
-     - mouse wheel for scrolling
-     - in GUI: slide in OSD when mouse touches bottom of screen
-     - scrollbar
-     - my weather: <> arrows
-     - OSD keyboard 
+     - my tv: 
+         tvguide   : next/prev day, current time/day, scroll up/down, scroll left/right, time interval+/-
+     - my music:
+         queue songs, get/view album info, prev/next song, pause, play, skip+/skip-,ff/rw
+     - my pictures:
+         zoom in/out, rotate,next/prev pic, info
+     - my movies:
+         queue movies, get/view imdb info, prev/next movie, pause, play, skip+/skip-,ff/rw
+     - general:
+       - scrollbar
+       - general   : switch fullscreen<->windowed
+       - fullscreen: osd
+       - mouse wheel for scrolling
   - my files  
   - my programs
   - autoplay anything thats in the cd/dvd

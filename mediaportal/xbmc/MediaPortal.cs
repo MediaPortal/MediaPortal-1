@@ -147,6 +147,7 @@ public class MediaPortalApp : D3DApp
           m_strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
           m_strLanguage=xmlreader.GetValueAsString("skin","language","English");
           m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
+          GUIGraphicsContext.MouseSupport=xmlreader.GetValueAsBool("general","mousesupport",true);
         }
       }
       catch(Exception)
@@ -218,6 +219,7 @@ public class MediaPortalApp : D3DApp
     /// </summary>
     protected override void OnExit() 
     {
+      GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
       // stop any file playback
       g_Player.Stop();
       
@@ -481,6 +483,7 @@ public class MediaPortalApp : D3DApp
       if (window!=null)
       {
         Action action=new Action(Action.ActionType.ACTION_MOUSE_MOVE,x,y);
+        action.MouseButton=e.Button;
         OnAction(action);
         
       }
@@ -511,7 +514,7 @@ public class MediaPortalApp : D3DApp
         OnAction(action);
       }
     }
-
+/*
     //left mouse button = A
     if (e.Button==MouseButtons.Left)
     {
@@ -521,7 +524,7 @@ public class MediaPortalApp : D3DApp
       {
         OnAction(action);
       }
-    }
+    }*/
 
     //middle mouse button=Y
     if (e.Button==MouseButtons.Middle)
@@ -533,6 +536,9 @@ public class MediaPortalApp : D3DApp
         OnAction(action);
       }
     }
+    action=new Action(Action.ActionType.ACTION_MOUSE_CLICK,x,y);
+    action.MouseButton=e.Button;
+    OnAction(action);
 
 	}
 		

@@ -210,6 +210,7 @@ namespace MediaPortal
     private System.Windows.Forms.GroupBox groupBox12;
     private System.Windows.Forms.Label label20;
     private System.Windows.Forms.ComboBox comboBoxDVDDisplayMode;
+    private System.Windows.Forms.CheckBox checkBoxMouseSupport;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -358,6 +359,8 @@ namespace MediaPortal
       this.comboDVDAudioRenderer = new System.Windows.Forms.ComboBox();
       this.label38 = new System.Windows.Forms.Label();
       this.groupBox10 = new System.Windows.Forms.GroupBox();
+      this.comboBoxDVDDisplayMode = new System.Windows.Forms.ComboBox();
+      this.label20 = new System.Windows.Forms.Label();
       this.label19 = new System.Windows.Forms.Label();
       this.comboBoxDVDARCorrectionMode = new System.Windows.Forms.ComboBox();
       this.checkBoxARDVD = new System.Windows.Forms.CheckBox();
@@ -484,10 +487,10 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.label20 = new System.Windows.Forms.Label();
-      this.comboBoxDVDDisplayMode = new System.Windows.Forms.ComboBox();
+      this.checkBoxMouseSupport = new System.Windows.Forms.CheckBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
+      this.Skin.SuspendLayout();
       this.tabPlayers.SuspendLayout();
       this.groupBox9.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarOSDTimeout)).BeginInit();
@@ -538,10 +541,10 @@ namespace MediaPortal
       this.tabControl.Controls.Add(this.tabAudioPlayer);
       this.tabControl.Controls.Add(this.TabDVDPlayer);
       this.tabControl.Controls.Add(this.tabAudioShares);
-      this.tabControl.Controls.Add(this.tabVideoShares);
+      this.tabControl.Controls.Add(this.tabTVChannels);
       this.tabControl.Controls.Add(this.tabPictureShares);
       this.tabControl.Controls.Add(this.tabPageCapture);
-      this.tabControl.Controls.Add(this.tabTVChannels);
+      this.tabControl.Controls.Add(this.tabVideoShares);
       this.tabControl.Controls.Add(this.tabWeather);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
@@ -572,7 +575,7 @@ namespace MediaPortal
       // 
       // label27
       // 
-      this.label27.Location = new System.Drawing.Point(24, 248);
+      this.label27.Location = new System.Drawing.Point(24, 280);
       this.label27.Name = "label27";
       this.label27.Size = new System.Drawing.Size(208, 16);
       this.label27.TabIndex = 12;
@@ -580,7 +583,7 @@ namespace MediaPortal
       // 
       // linkLabel2
       // 
-      this.linkLabel2.Location = new System.Drawing.Point(104, 216);
+      this.linkLabel2.Location = new System.Drawing.Point(104, 248);
       this.linkLabel2.Name = "linkLabel2";
       this.linkLabel2.Size = new System.Drawing.Size(208, 16);
       this.linkLabel2.TabIndex = 7;
@@ -589,7 +592,7 @@ namespace MediaPortal
       // 
       // label26
       // 
-      this.label26.Location = new System.Drawing.Point(24, 216);
+      this.label26.Location = new System.Drawing.Point(24, 248);
       this.label26.Name = "label26";
       this.label26.Size = new System.Drawing.Size(72, 16);
       this.label26.TabIndex = 10;
@@ -597,7 +600,7 @@ namespace MediaPortal
       // 
       // linkLabel1
       // 
-      this.linkLabel1.Location = new System.Drawing.Point(104, 192);
+      this.linkLabel1.Location = new System.Drawing.Point(104, 224);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(224, 16);
       this.linkLabel1.TabIndex = 6;
@@ -606,7 +609,7 @@ namespace MediaPortal
       // 
       // label25
       // 
-      this.label25.Location = new System.Drawing.Point(24, 192);
+      this.label25.Location = new System.Drawing.Point(24, 224);
       this.label25.Name = "label25";
       this.label25.Size = new System.Drawing.Size(72, 16);
       this.label25.TabIndex = 8;
@@ -619,58 +622,59 @@ namespace MediaPortal
       this.checkBoxAutoHideMouse.Location = new System.Drawing.Point(32, 48);
       this.checkBoxAutoHideMouse.Name = "checkBoxAutoHideMouse";
       this.checkBoxAutoHideMouse.Size = new System.Drawing.Size(112, 16);
-      this.checkBoxAutoHideMouse.TabIndex = 2;
+      this.checkBoxAutoHideMouse.TabIndex = 1;
       this.checkBoxAutoHideMouse.Text = "Auto hide mouse";
       // 
       // comboBoxSkins
       // 
-      this.comboBoxSkins.Location = new System.Drawing.Point(96, 104);
+      this.comboBoxSkins.Location = new System.Drawing.Point(96, 128);
       this.comboBoxSkins.Name = "comboBoxSkins";
-      this.comboBoxSkins.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxSkins.TabIndex = 4;
+      this.comboBoxSkins.Size = new System.Drawing.Size(168, 21);
+      this.comboBoxSkins.TabIndex = 3;
       // 
       // label13
       // 
-      this.label13.Location = new System.Drawing.Point(32, 112);
+      this.label13.Location = new System.Drawing.Point(32, 136);
       this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(64, 23);
+      this.label13.Size = new System.Drawing.Size(48, 16);
       this.label13.TabIndex = 3;
       this.label13.Text = "Skin:";
       // 
       // label12
       // 
-      this.label12.Location = new System.Drawing.Point(32, 80);
+      this.label12.Location = new System.Drawing.Point(32, 104);
       this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(64, 23);
+      this.label12.Size = new System.Drawing.Size(64, 16);
       this.label12.TabIndex = 2;
       this.label12.Text = "Language:";
       // 
       // comboBoxLanguage
       // 
-      this.comboBoxLanguage.Location = new System.Drawing.Point(96, 72);
+      this.comboBoxLanguage.Location = new System.Drawing.Point(96, 96);
       this.comboBoxLanguage.Name = "comboBoxLanguage";
-      this.comboBoxLanguage.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxLanguage.TabIndex = 3;
+      this.comboBoxLanguage.Size = new System.Drawing.Size(168, 21);
+      this.comboBoxLanguage.TabIndex = 2;
       // 
       // checkStartFullScreen
       // 
       this.checkStartFullScreen.Location = new System.Drawing.Point(32, 24);
       this.checkStartFullScreen.Name = "checkStartFullScreen";
-      this.checkStartFullScreen.TabIndex = 1;
+      this.checkStartFullScreen.TabIndex = 0;
       this.checkStartFullScreen.Text = "Start fullscreen";
       // 
       // Skin
       // 
+      this.Skin.Controls.Add(this.checkBoxMouseSupport);
       this.Skin.Location = new System.Drawing.Point(16, 8);
       this.Skin.Name = "Skin";
-      this.Skin.Size = new System.Drawing.Size(320, 144);
+      this.Skin.Size = new System.Drawing.Size(320, 168);
       this.Skin.TabIndex = 0;
       this.Skin.TabStop = false;
       this.Skin.Text = "Skin";
       // 
       // groupBox14
       // 
-      this.groupBox14.Location = new System.Drawing.Point(16, 160);
+      this.groupBox14.Location = new System.Drawing.Point(16, 200);
       this.groupBox14.Name = "groupBox14";
       this.groupBox14.Size = new System.Drawing.Size(320, 120);
       this.groupBox14.TabIndex = 5;
@@ -1035,6 +1039,26 @@ namespace MediaPortal
       this.groupBox10.TabIndex = 7;
       this.groupBox10.TabStop = false;
       this.groupBox10.Text = "Aspect Ratio";
+      // 
+      // comboBoxDVDDisplayMode
+      // 
+      this.comboBoxDVDDisplayMode.Items.AddRange(new object[] {
+                                                                "Default",
+                                                                "16:9",
+                                                                "4:3 Pan Scan",
+                                                                "4:3 Letterbox"});
+      this.comboBoxDVDDisplayMode.Location = new System.Drawing.Point(136, 72);
+      this.comboBoxDVDDisplayMode.Name = "comboBoxDVDDisplayMode";
+      this.comboBoxDVDDisplayMode.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxDVDDisplayMode.TabIndex = 18;
+      // 
+      // label20
+      // 
+      this.label20.Location = new System.Drawing.Point(24, 80);
+      this.label20.Name = "label20";
+      this.label20.Size = new System.Drawing.Size(80, 16);
+      this.label20.TabIndex = 17;
+      this.label20.Text = "Display mode:";
       // 
       // label19
       // 
@@ -2229,25 +2253,13 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
-      // label20
+      // checkBoxMouseSupport
       // 
-      this.label20.Location = new System.Drawing.Point(24, 80);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(80, 16);
-      this.label20.TabIndex = 17;
-      this.label20.Text = "Display mode:";
-      // 
-      // comboBoxDVDDisplayMode
-      // 
-      this.comboBoxDVDDisplayMode.Items.AddRange(new object[] {
-                                                                "Default",
-                                                                "16:9",
-                                                                "4:3 Pan Scan",
-                                                                "4:3 Letterbox"});
-      this.comboBoxDVDDisplayMode.Location = new System.Drawing.Point(136, 72);
-      this.comboBoxDVDDisplayMode.Name = "comboBoxDVDDisplayMode";
-      this.comboBoxDVDDisplayMode.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxDVDDisplayMode.TabIndex = 18;
+      this.checkBoxMouseSupport.Location = new System.Drawing.Point(16, 56);
+      this.checkBoxMouseSupport.Name = "checkBoxMouseSupport";
+      this.checkBoxMouseSupport.Size = new System.Drawing.Size(264, 24);
+      this.checkBoxMouseSupport.TabIndex = 0;
+      this.checkBoxMouseSupport.Text = "Show special mouse controls like scrollbars";
       // 
       // SetupForm
       // 
@@ -2260,6 +2272,7 @@ namespace MediaPortal
       this.Load += new System.EventHandler(this.SetupForm_Load);
       this.tabControl.ResumeLayout(false);
       this.tabGeneral.ResumeLayout(false);
+      this.Skin.ResumeLayout(false);
       this.tabPlayers.ResumeLayout(false);
       this.groupBox9.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.trackBarOSDTimeout)).EndInit();
@@ -2441,7 +2454,8 @@ namespace MediaPortal
       {
         checkStartFullScreen.Checked=xmlreader.GetValueAsBool("general","startfullscreen",false);
         checkBoxAutoHideMouse.Checked=xmlreader.GetValueAsBool("general","autohidemouse",false);
-        
+        checkBoxMouseSupport.Checked=xmlreader.GetValueAsBool("general","mousesupport",true);
+
         dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
         dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
@@ -2715,6 +2729,7 @@ namespace MediaPortal
   			
         xmlWriter.SetValueAsBool("general","startfullscreen",checkStartFullScreen.Checked);
         xmlWriter.SetValueAsBool("general","autohidemouse", checkBoxAutoHideMouse.Checked);
+        xmlWriter.SetValueAsBool("general","mousesupport", checkBoxMouseSupport.Checked);
         
         xmlWriter.SetValue("dvdplayer","path",dvdFile.Text);
         xmlWriter.SetValue("dvdplayer","arguments",dvdParams.Text);

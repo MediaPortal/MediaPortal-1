@@ -130,7 +130,7 @@ namespace MediaPortal.TV.Recording
         iPostRecordInterval=xmlreader.GetValueAsInt("capture","postrecord", 5);
       }
 
-      while (m_eState ==State.Running)
+      while (m_eState ==State.Running && GUIGraphicsContext.CurrentState!=GUIGraphicsContext.State.STOPPING)
       {
         try
         {
@@ -157,6 +157,7 @@ namespace MediaPortal.TV.Recording
             if (m_bPreviewChanged) break;
             if (m_bRecordingsChanged) break;
             if (m_bStopRecording) break;
+            if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
             // get all programs running for this TV channel
             // between  (now-iPreRecordInterval) - (now+iPostRecordInterval+3 hours)
 
@@ -176,6 +177,7 @@ namespace MediaPortal.TV.Recording
               if (m_bPreviewChanged) break;
               if (m_bRecordingsChanged) break;
               if (m_bStopRecording) break;
+              if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
               bool bRecorded=false;
               
               // if not, then check each check for each tv program
@@ -208,6 +210,7 @@ namespace MediaPortal.TV.Recording
               if (m_bPreviewChanged) break;
               if (m_bRecordingsChanged) break;
               if (m_bStopRecording) break;
+              if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
               // 1st check if the recording itself should b recorded
               if ( rec.ShouldRecord(DateTime.Now,null,iPreRecordInterval, iPostRecordInterval) )
               {
@@ -232,6 +235,7 @@ namespace MediaPortal.TV.Recording
             if (m_bPreviewChanged) break;
             if (m_bRecordingsChanged) break;
             if (m_bStopRecording) break;
+            if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
             System.Threading.Thread.Sleep(500);
             ts=DateTime.Now-dtTime;
           }

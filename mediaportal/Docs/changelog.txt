@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  14-05-2004  general     : added : mouse support for virtual keyboard
+  14-05-2004  general     : added : add vertical scrollbars for list control/thumbnail panel
+  14-05-2004  general     : added : add option to turn off any mouse control like scrollbars
+  14-05-2004  my tv       : added : recorded tv: select item-> now asks if you want to play or delete the recording
   14-05-2004  my tv       : fixed : recording: if we need to start a new capture and there's no free tuner and a tuner is recording in post recordingtime, then stop it and use that tuner
   14-05-2004  my tv       : fixed : recording: if we're doing a manual recording (user specified date/time) then use those start/end times, not the current programs start/end time
 
