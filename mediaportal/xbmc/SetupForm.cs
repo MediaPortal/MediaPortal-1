@@ -216,6 +216,7 @@ namespace MediaPortal
     private System.Windows.Forms.Button buttonAutoTune2;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.CheckBox checkBoxTVGuideColors;
+    private System.Windows.Forms.TabPage tabPageRadio;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -380,6 +381,55 @@ namespace MediaPortal
       this.dvdbtnSelect = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
       this.dvdParams = new System.Windows.Forms.TextBox();
+      this.tabTVChannels = new System.Windows.Forms.TabPage();
+      this.groupBox20 = new System.Windows.Forms.GroupBox();
+      this.btnXMLTVFolder = new System.Windows.Forms.Button();
+      this.textBoxXMLTVFolder = new System.Windows.Forms.TextBox();
+      this.groupBox19 = new System.Windows.Forms.GroupBox();
+      this.checkBoxTVGuideColors = new System.Windows.Forms.CheckBox();
+      this.label37 = new System.Windows.Forms.Label();
+      this.label36 = new System.Windows.Forms.Label();
+      this.timeZoneCorrection = new System.Windows.Forms.NumericUpDown();
+      this.xmltvTimeZoneCheck = new System.Windows.Forms.CheckBox();
+      this.btnEditChannel = new System.Windows.Forms.Button();
+      this.btnDelChannel = new System.Windows.Forms.Button();
+      this.btnNewChannel = new System.Windows.Forms.Button();
+      this.btnTvChannelDown = new System.Windows.Forms.Button();
+      this.btnTvChannelUp = new System.Windows.Forms.Button();
+      this.listTVChannels = new MediaPortal.WinControls.ListViewEx();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox18 = new System.Windows.Forms.GroupBox();
+      this.buttonAutoTune2 = new System.Windows.Forms.Button();
+      this.textEditBox = new System.Windows.Forms.TextBox();
+      this.tabPageCapture = new System.Windows.Forms.TabPage();
+      this.btnEditCaptureDevice = new System.Windows.Forms.Button();
+      this.btnDelCaptureDevice = new System.Windows.Forms.Button();
+      this.btnAddCaptureDevice = new System.Windows.Forms.Button();
+      this.listCaptureCards = new MediaPortal.WinControls.ListViewEx();
+      this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
+      this.UpDownPostRecording = new System.Windows.Forms.NumericUpDown();
+      this.groupBox13 = new System.Windows.Forms.GroupBox();
+      this.buttonAutoTune = new System.Windows.Forms.Button();
+      this.upDownCountry = new System.Windows.Forms.NumericUpDown();
+      this.label24 = new System.Windows.Forms.Label();
+      this.label23 = new System.Windows.Forms.Label();
+      this.btnradioCable = new System.Windows.Forms.RadioButton();
+      this.btnradioAntenna = new System.Windows.Forms.RadioButton();
+      this.btnRecPath = new System.Windows.Forms.Button();
+      this.textBoxRecPath = new System.Windows.Forms.TextBox();
+      this.groupBox16 = new System.Windows.Forms.GroupBox();
+      this.groupBox17 = new System.Windows.Forms.GroupBox();
+      this.label35 = new System.Windows.Forms.Label();
+      this.label34 = new System.Windows.Forms.Label();
+      this.label33 = new System.Windows.Forms.Label();
+      this.label32 = new System.Windows.Forms.Label();
+      this.label31 = new System.Windows.Forms.Label();
+      this.label21 = new System.Windows.Forms.Label();
+      this.UpDownPreRecording = new System.Windows.Forms.NumericUpDown();
       this.tabAudioShares = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.btnPlayListFolder = new System.Windows.Forms.Button();
@@ -432,55 +482,6 @@ namespace MediaPortal
       this.HdrPictureName = new System.Windows.Forms.ColumnHeader();
       this.HdrPictureFolder = new System.Windows.Forms.ColumnHeader();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-      this.tabTVChannels = new System.Windows.Forms.TabPage();
-      this.groupBox20 = new System.Windows.Forms.GroupBox();
-      this.btnXMLTVFolder = new System.Windows.Forms.Button();
-      this.textBoxXMLTVFolder = new System.Windows.Forms.TextBox();
-      this.groupBox19 = new System.Windows.Forms.GroupBox();
-      this.checkBoxTVGuideColors = new System.Windows.Forms.CheckBox();
-      this.label37 = new System.Windows.Forms.Label();
-      this.label36 = new System.Windows.Forms.Label();
-      this.timeZoneCorrection = new System.Windows.Forms.NumericUpDown();
-      this.xmltvTimeZoneCheck = new System.Windows.Forms.CheckBox();
-      this.btnEditChannel = new System.Windows.Forms.Button();
-      this.btnDelChannel = new System.Windows.Forms.Button();
-      this.btnNewChannel = new System.Windows.Forms.Button();
-      this.btnTvChannelDown = new System.Windows.Forms.Button();
-      this.btnTvChannelUp = new System.Windows.Forms.Button();
-      this.listTVChannels = new MediaPortal.WinControls.ListViewEx();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.groupBox18 = new System.Windows.Forms.GroupBox();
-      this.buttonAutoTune2 = new System.Windows.Forms.Button();
-      this.textEditBox = new System.Windows.Forms.TextBox();
-      this.tabPageCapture = new System.Windows.Forms.TabPage();
-      this.btnEditCaptureDevice = new System.Windows.Forms.Button();
-      this.btnDelCaptureDevice = new System.Windows.Forms.Button();
-      this.btnAddCaptureDevice = new System.Windows.Forms.Button();
-      this.listCaptureCards = new MediaPortal.WinControls.ListViewEx();
-      this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
-      this.UpDownPostRecording = new System.Windows.Forms.NumericUpDown();
-      this.groupBox13 = new System.Windows.Forms.GroupBox();
-      this.buttonAutoTune = new System.Windows.Forms.Button();
-      this.upDownCountry = new System.Windows.Forms.NumericUpDown();
-      this.label24 = new System.Windows.Forms.Label();
-      this.label23 = new System.Windows.Forms.Label();
-      this.btnradioCable = new System.Windows.Forms.RadioButton();
-      this.btnradioAntenna = new System.Windows.Forms.RadioButton();
-      this.btnRecPath = new System.Windows.Forms.Button();
-      this.textBoxRecPath = new System.Windows.Forms.TextBox();
-      this.groupBox16 = new System.Windows.Forms.GroupBox();
-      this.groupBox17 = new System.Windows.Forms.GroupBox();
-      this.label35 = new System.Windows.Forms.Label();
-      this.label34 = new System.Windows.Forms.Label();
-      this.label33 = new System.Windows.Forms.Label();
-      this.label32 = new System.Windows.Forms.Label();
-      this.label31 = new System.Windows.Forms.Label();
-      this.label21 = new System.Windows.Forms.Label();
-      this.UpDownPreRecording = new System.Windows.Forms.NumericUpDown();
       this.tabWeather = new System.Windows.Forms.TabPage();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -498,6 +499,7 @@ namespace MediaPortal
       this.listViewWeather = new System.Windows.Forms.ListView();
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.tabPageRadio = new System.Windows.Forms.TabPage();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
@@ -515,17 +517,6 @@ namespace MediaPortal
       this.groupBox11.SuspendLayout();
       this.groupBox10.SuspendLayout();
       this.DVDPlayerBox.SuspendLayout();
-      this.tabAudioShares.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      this.audioGroupBox.SuspendLayout();
-      this.tabVideoShares.SuspendLayout();
-      this.groupBox3.SuspendLayout();
-      this.VideoGroupBox.SuspendLayout();
-      this.tabPictureShares.SuspendLayout();
-      this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureTransition)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureDuration)).BeginInit();
-      this.PictureGroupBox.SuspendLayout();
       this.tabTVChannels.SuspendLayout();
       this.groupBox20.SuspendLayout();
       this.groupBox19.SuspendLayout();
@@ -537,6 +528,17 @@ namespace MediaPortal
       ((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).BeginInit();
       this.groupBox17.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).BeginInit();
+      this.tabAudioShares.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.audioGroupBox.SuspendLayout();
+      this.tabVideoShares.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.VideoGroupBox.SuspendLayout();
+      this.tabPictureShares.SuspendLayout();
+      this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureTransition)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureDuration)).BeginInit();
+      this.PictureGroupBox.SuspendLayout();
       this.tabWeather.SuspendLayout();
       this.groupBox7.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.cntrlweatherRefresh)).BeginInit();
@@ -548,16 +550,18 @@ namespace MediaPortal
       // tabControl
       // 
       this.tabControl.Controls.Add(this.tabGeneral);
-      this.tabControl.Controls.Add(this.tabPlayers);
-      this.tabControl.Controls.Add(this.tabAudioPlayer);
-      this.tabControl.Controls.Add(this.TabDVDPlayer);
+      this.tabControl.Controls.Add(this.tabTVChannels);
+      this.tabControl.Controls.Add(this.tabPageCapture);
       this.tabControl.Controls.Add(this.tabAudioShares);
       this.tabControl.Controls.Add(this.tabVideoShares);
       this.tabControl.Controls.Add(this.tabPictureShares);
-      this.tabControl.Controls.Add(this.tabTVChannels);
-      this.tabControl.Controls.Add(this.tabPageCapture);
       this.tabControl.Controls.Add(this.tabWeather);
+      this.tabControl.Controls.Add(this.tabPlayers);
+      this.tabControl.Controls.Add(this.tabAudioPlayer);
+      this.tabControl.Controls.Add(this.tabPageRadio);
+      this.tabControl.Controls.Add(this.TabDVDPlayer);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
+      this.tabControl.Multiline = true;
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
       this.tabControl.Size = new System.Drawing.Size(624, 400);
@@ -578,9 +582,9 @@ namespace MediaPortal
       this.tabGeneral.Controls.Add(this.checkStartFullScreen);
       this.tabGeneral.Controls.Add(this.Skin);
       this.tabGeneral.Controls.Add(this.groupBox14);
-      this.tabGeneral.Location = new System.Drawing.Point(4, 22);
+      this.tabGeneral.Location = new System.Drawing.Point(4, 40);
       this.tabGeneral.Name = "tabGeneral";
-      this.tabGeneral.Size = new System.Drawing.Size(616, 374);
+      this.tabGeneral.Size = new System.Drawing.Size(616, 356);
       this.tabGeneral.TabIndex = 5;
       this.tabGeneral.Text = "General";
       // 
@@ -956,9 +960,9 @@ namespace MediaPortal
       this.TabDVDPlayer.Controls.Add(this.groupBox11);
       this.TabDVDPlayer.Controls.Add(this.groupBox10);
       this.TabDVDPlayer.Controls.Add(this.DVDPlayerBox);
-      this.TabDVDPlayer.Location = new System.Drawing.Point(4, 22);
+      this.TabDVDPlayer.Location = new System.Drawing.Point(4, 40);
       this.TabDVDPlayer.Name = "TabDVDPlayer";
-      this.TabDVDPlayer.Size = new System.Drawing.Size(616, 374);
+      this.TabDVDPlayer.Size = new System.Drawing.Size(616, 356);
       this.TabDVDPlayer.TabIndex = 7;
       this.TabDVDPlayer.Text = "DVDPlayer";
       // 
@@ -1191,501 +1195,6 @@ namespace MediaPortal
       this.dvdParams.TabIndex = 2;
       this.dvdParams.Text = "";
       // 
-      // tabAudioShares
-      // 
-      this.tabAudioShares.Controls.Add(this.groupBox2);
-      this.tabAudioShares.Controls.Add(this.audioGroupBox);
-      this.tabAudioShares.Location = new System.Drawing.Point(4, 22);
-      this.tabAudioShares.Name = "tabAudioShares";
-      this.tabAudioShares.Size = new System.Drawing.Size(616, 374);
-      this.tabAudioShares.TabIndex = 0;
-      this.tabAudioShares.Text = "Music";
-      // 
-      // groupBox2
-      // 
-      this.groupBox2.Controls.Add(this.btnPlayListFolder);
-      this.groupBox2.Controls.Add(this.textBoxPlayLists);
-      this.groupBox2.Controls.Add(this.label17);
-      this.groupBox2.Controls.Add(this.checkBoxShufflePlaylists);
-      this.groupBox2.Controls.Add(this.chkBoxRepeatAudioPlaylist);
-      this.groupBox2.Controls.Add(this.txtboxAudioFiles);
-      this.groupBox2.Controls.Add(this.label8);
-      this.groupBox2.Controls.Add(this.chkMusicID3);
-      this.groupBox2.Location = new System.Drawing.Point(24, 256);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(576, 104);
-      this.groupBox2.TabIndex = 1;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Music settings";
-      // 
-      // btnPlayListFolder
-      // 
-      this.btnPlayListFolder.Location = new System.Drawing.Point(488, 72);
-      this.btnPlayListFolder.Name = "btnPlayListFolder";
-      this.btnPlayListFolder.Size = new System.Drawing.Size(24, 23);
-      this.btnPlayListFolder.TabIndex = 2;
-      this.btnPlayListFolder.Text = "...";
-      this.btnPlayListFolder.Click += new System.EventHandler(this.btnPlayListFolder_Click);
-      // 
-      // textBoxPlayLists
-      // 
-      this.textBoxPlayLists.Location = new System.Drawing.Point(88, 72);
-      this.textBoxPlayLists.Name = "textBoxPlayLists";
-      this.textBoxPlayLists.Size = new System.Drawing.Size(392, 20);
-      this.textBoxPlayLists.TabIndex = 1;
-      this.textBoxPlayLists.Text = "";
-      // 
-      // label17
-      // 
-      this.label17.Location = new System.Drawing.Point(16, 80);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(80, 16);
-      this.label17.TabIndex = 4;
-      this.label17.Text = "Playlist folder:";
-      // 
-      // checkBoxShufflePlaylists
-      // 
-      this.checkBoxShufflePlaylists.Location = new System.Drawing.Point(336, 24);
-      this.checkBoxShufflePlaylists.Name = "checkBoxShufflePlaylists";
-      this.checkBoxShufflePlaylists.Size = new System.Drawing.Size(128, 24);
-      this.checkBoxShufflePlaylists.TabIndex = 4;
-      this.checkBoxShufflePlaylists.Text = "Auto shuffle playlist";
-      // 
-      // chkBoxRepeatAudioPlaylist
-      // 
-      this.chkBoxRepeatAudioPlaylist.Location = new System.Drawing.Point(336, 8);
-      this.chkBoxRepeatAudioPlaylist.Name = "chkBoxRepeatAudioPlaylist";
-      this.chkBoxRepeatAudioPlaylist.Size = new System.Drawing.Size(104, 16);
-      this.chkBoxRepeatAudioPlaylist.TabIndex = 3;
-      this.chkBoxRepeatAudioPlaylist.Text = "Repeat playlists";
-      // 
-      // txtboxAudioFiles
-      // 
-      this.txtboxAudioFiles.Location = new System.Drawing.Point(88, 48);
-      this.txtboxAudioFiles.Name = "txtboxAudioFiles";
-      this.txtboxAudioFiles.Size = new System.Drawing.Size(232, 20);
-      this.txtboxAudioFiles.TabIndex = 0;
-      this.txtboxAudioFiles.Text = "";
-      // 
-      // label8
-      // 
-      this.label8.Location = new System.Drawing.Point(16, 56);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(64, 16);
-      this.label8.TabIndex = 1;
-      this.label8.Text = "Audio files:";
-      // 
-      // chkMusicID3
-      // 
-      this.chkMusicID3.Location = new System.Drawing.Point(336, 48);
-      this.chkMusicID3.Name = "chkMusicID3";
-      this.chkMusicID3.Size = new System.Drawing.Size(104, 16);
-      this.chkMusicID3.TabIndex = 5;
-      this.chkMusicID3.Text = "Show ID3 tags";
-      // 
-      // audioGroupBox
-      // 
-      this.audioGroupBox.Controls.Add(this.btnEditMusicShare);
-      this.audioGroupBox.Controls.Add(this.btnDelAudioShare);
-      this.audioGroupBox.Controls.Add(this.btnAddAudioShare);
-      this.audioGroupBox.Controls.Add(this.listAudioShares);
-      this.audioGroupBox.Location = new System.Drawing.Point(24, 16);
-      this.audioGroupBox.Name = "audioGroupBox";
-      this.audioGroupBox.Size = new System.Drawing.Size(576, 240);
-      this.audioGroupBox.TabIndex = 0;
-      this.audioGroupBox.TabStop = false;
-      this.audioGroupBox.Text = "Music folders";
-      // 
-      // btnEditMusicShare
-      // 
-      this.btnEditMusicShare.Location = new System.Drawing.Point(136, 208);
-      this.btnEditMusicShare.Name = "btnEditMusicShare";
-      this.btnEditMusicShare.Size = new System.Drawing.Size(48, 23);
-      this.btnEditMusicShare.TabIndex = 3;
-      this.btnEditMusicShare.Text = "Edit";
-      this.btnEditMusicShare.Click += new System.EventHandler(this.btnEditMusicShare_Click);
-      // 
-      // btnDelAudioShare
-      // 
-      this.btnDelAudioShare.Location = new System.Drawing.Point(72, 208);
-      this.btnDelAudioShare.Name = "btnDelAudioShare";
-      this.btnDelAudioShare.Size = new System.Drawing.Size(56, 23);
-      this.btnDelAudioShare.TabIndex = 2;
-      this.btnDelAudioShare.Text = "Delete";
-      this.btnDelAudioShare.Click += new System.EventHandler(this.btnDelAudioShare_Click);
-      // 
-      // btnAddAudioShare
-      // 
-      this.btnAddAudioShare.Location = new System.Drawing.Point(8, 208);
-      this.btnAddAudioShare.Name = "btnAddAudioShare";
-      this.btnAddAudioShare.Size = new System.Drawing.Size(56, 23);
-      this.btnAddAudioShare.TabIndex = 1;
-      this.btnAddAudioShare.Text = "Add";
-      this.btnAddAudioShare.Click += new System.EventHandler(this.btnAddAudioShare_Click);
-      // 
-      // listAudioShares
-      // 
-      this.listAudioShares.AllowDrop = true;
-      this.listAudioShares.AllowRowReorder = true;
-      this.listAudioShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                      this.HdrAudioName,
-                                                                                      this.HdrAudioFolder,
-                                                                                      this.HdrDefault});
-      this.listAudioShares.FullRowSelect = true;
-      this.listAudioShares.HideSelection = false;
-      this.listAudioShares.Location = new System.Drawing.Point(8, 24);
-      this.listAudioShares.MultiSelect = false;
-      this.listAudioShares.Name = "listAudioShares";
-      this.listAudioShares.Size = new System.Drawing.Size(448, 176);
-      this.listAudioShares.TabIndex = 0;
-      this.listAudioShares.View = System.Windows.Forms.View.Details;
-      this.listAudioShares.DoubleClick += new System.EventHandler(this.listAudioShares_DoubleClick);
-      // 
-      // HdrAudioName
-      // 
-      this.HdrAudioName.Text = "Name";
-      this.HdrAudioName.Width = 100;
-      // 
-      // HdrAudioFolder
-      // 
-      this.HdrAudioFolder.Text = "Folder";
-      this.HdrAudioFolder.Width = 254;
-      // 
-      // HdrDefault
-      // 
-      this.HdrDefault.Text = "Default";
-      this.HdrDefault.Width = 89;
-      // 
-      // tabVideoShares
-      // 
-      this.tabVideoShares.Controls.Add(this.groupBox3);
-      this.tabVideoShares.Controls.Add(this.VideoGroupBox);
-      this.tabVideoShares.Location = new System.Drawing.Point(4, 22);
-      this.tabVideoShares.Name = "tabVideoShares";
-      this.tabVideoShares.Size = new System.Drawing.Size(616, 374);
-      this.tabVideoShares.TabIndex = 1;
-      this.tabVideoShares.Text = "Movies";
-      // 
-      // groupBox3
-      // 
-      this.groupBox3.Controls.Add(this.btnPlayListVideo);
-      this.groupBox3.Controls.Add(this.textBoxPlayListFolderVideo);
-      this.groupBox3.Controls.Add(this.label18);
-      this.groupBox3.Controls.Add(this.chkBoxVideoRepeat);
-      this.groupBox3.Controls.Add(this.txtboxVideoFiles);
-      this.groupBox3.Controls.Add(this.label9);
-      this.groupBox3.Location = new System.Drawing.Point(24, 272);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(496, 88);
-      this.groupBox3.TabIndex = 1;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Movie Settings";
-      // 
-      // btnPlayListVideo
-      // 
-      this.btnPlayListVideo.Location = new System.Drawing.Point(448, 56);
-      this.btnPlayListVideo.Name = "btnPlayListVideo";
-      this.btnPlayListVideo.Size = new System.Drawing.Size(24, 24);
-      this.btnPlayListVideo.TabIndex = 4;
-      this.btnPlayListVideo.Text = "...";
-      this.btnPlayListVideo.Click += new System.EventHandler(this.btnPlayListVideo_Click);
-      // 
-      // textBoxPlayListFolderVideo
-      // 
-      this.textBoxPlayListFolderVideo.Location = new System.Drawing.Point(104, 56);
-      this.textBoxPlayListFolderVideo.Name = "textBoxPlayListFolderVideo";
-      this.textBoxPlayListFolderVideo.Size = new System.Drawing.Size(336, 20);
-      this.textBoxPlayListFolderVideo.TabIndex = 3;
-      this.textBoxPlayListFolderVideo.Text = "";
-      // 
-      // label18
-      // 
-      this.label18.Location = new System.Drawing.Point(16, 56);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(80, 16);
-      this.label18.TabIndex = 2;
-      this.label18.Text = "Playlists folder:";
-      // 
-      // chkBoxVideoRepeat
-      // 
-      this.chkBoxVideoRepeat.Location = new System.Drawing.Point(16, 24);
-      this.chkBoxVideoRepeat.Name = "chkBoxVideoRepeat";
-      this.chkBoxVideoRepeat.TabIndex = 0;
-      this.chkBoxVideoRepeat.Text = "Repeat Playlists";
-      // 
-      // txtboxVideoFiles
-      // 
-      this.txtboxVideoFiles.Location = new System.Drawing.Point(216, 24);
-      this.txtboxVideoFiles.Name = "txtboxVideoFiles";
-      this.txtboxVideoFiles.Size = new System.Drawing.Size(264, 20);
-      this.txtboxVideoFiles.TabIndex = 1;
-      this.txtboxVideoFiles.Text = "";
-      // 
-      // label9
-      // 
-      this.label9.Location = new System.Drawing.Point(144, 32);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(64, 23);
-      this.label9.TabIndex = 0;
-      this.label9.Text = "Movie files:";
-      // 
-      // VideoGroupBox
-      // 
-      this.VideoGroupBox.Controls.Add(this.btnEditMovieShare);
-      this.VideoGroupBox.Controls.Add(this.btnDelVideoShare);
-      this.VideoGroupBox.Controls.Add(this.btnAddVideoShare);
-      this.VideoGroupBox.Controls.Add(this.listVideoShares);
-      this.VideoGroupBox.Location = new System.Drawing.Point(24, 16);
-      this.VideoGroupBox.Name = "VideoGroupBox";
-      this.VideoGroupBox.Size = new System.Drawing.Size(496, 248);
-      this.VideoGroupBox.TabIndex = 0;
-      this.VideoGroupBox.TabStop = false;
-      this.VideoGroupBox.Text = "Movie folders";
-      // 
-      // btnEditMovieShare
-      // 
-      this.btnEditMovieShare.Location = new System.Drawing.Point(136, 216);
-      this.btnEditMovieShare.Name = "btnEditMovieShare";
-      this.btnEditMovieShare.Size = new System.Drawing.Size(48, 23);
-      this.btnEditMovieShare.TabIndex = 3;
-      this.btnEditMovieShare.Text = "Edit";
-      this.btnEditMovieShare.Click += new System.EventHandler(this.btnEditMovieShare_Click);
-      // 
-      // btnDelVideoShare
-      // 
-      this.btnDelVideoShare.Location = new System.Drawing.Point(72, 216);
-      this.btnDelVideoShare.Name = "btnDelVideoShare";
-      this.btnDelVideoShare.Size = new System.Drawing.Size(56, 23);
-      this.btnDelVideoShare.TabIndex = 2;
-      this.btnDelVideoShare.Text = "Delete";
-      this.btnDelVideoShare.Click += new System.EventHandler(this.btnDelVideoShare_Click);
-      // 
-      // btnAddVideoShare
-      // 
-      this.btnAddVideoShare.Location = new System.Drawing.Point(8, 216);
-      this.btnAddVideoShare.Name = "btnAddVideoShare";
-      this.btnAddVideoShare.Size = new System.Drawing.Size(56, 23);
-      this.btnAddVideoShare.TabIndex = 1;
-      this.btnAddVideoShare.Text = "Add";
-      this.btnAddVideoShare.Click += new System.EventHandler(this.btnAddVideoShare_Click);
-      // 
-      // listVideoShares
-      // 
-      this.listVideoShares.AllowDrop = true;
-      this.listVideoShares.AllowRowReorder = true;
-      this.listVideoShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                      this.HdrVideoName,
-                                                                                      this.HdrVideoFolder,
-                                                                                      this.columnHeader5});
-      this.listVideoShares.FullRowSelect = true;
-      this.listVideoShares.HideSelection = false;
-      this.listVideoShares.Location = new System.Drawing.Point(8, 24);
-      this.listVideoShares.MultiSelect = false;
-      this.listVideoShares.Name = "listVideoShares";
-      this.listVideoShares.Size = new System.Drawing.Size(448, 176);
-      this.listVideoShares.TabIndex = 0;
-      this.listVideoShares.View = System.Windows.Forms.View.Details;
-      this.listVideoShares.DoubleClick += new System.EventHandler(this.listVideoShares_DoubleClick);
-      // 
-      // HdrVideoName
-      // 
-      this.HdrVideoName.Text = "Name";
-      this.HdrVideoName.Width = 100;
-      // 
-      // HdrVideoFolder
-      // 
-      this.HdrVideoFolder.Text = "Folder";
-      this.HdrVideoFolder.Width = 284;
-      // 
-      // columnHeader5
-      // 
-      this.columnHeader5.Text = "Default";
-      // 
-      // tabPictureShares
-      // 
-      this.tabPictureShares.Controls.Add(this.groupBox1);
-      this.tabPictureShares.Controls.Add(this.PictureGroupBox);
-      this.tabPictureShares.Location = new System.Drawing.Point(4, 22);
-      this.tabPictureShares.Name = "tabPictureShares";
-      this.tabPictureShares.Size = new System.Drawing.Size(616, 374);
-      this.tabPictureShares.TabIndex = 2;
-      this.tabPictureShares.Text = "Pictures";
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Controls.Add(this.txtBoxPictureFiles);
-      this.groupBox1.Controls.Add(this.label10);
-      this.groupBox1.Controls.Add(this.label7);
-      this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Controls.Add(this.UpDownPictureTransition);
-      this.groupBox1.Controls.Add(this.label5);
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.UpDownPictureDuration);
-      this.groupBox1.Location = new System.Drawing.Point(24, 272);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(496, 88);
-      this.groupBox1.TabIndex = 2;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Slideshow";
-      // 
-      // txtBoxPictureFiles
-      // 
-      this.txtBoxPictureFiles.Location = new System.Drawing.Point(96, 56);
-      this.txtBoxPictureFiles.Name = "txtBoxPictureFiles";
-      this.txtBoxPictureFiles.Size = new System.Drawing.Size(376, 20);
-      this.txtBoxPictureFiles.TabIndex = 2;
-      this.txtBoxPictureFiles.Text = "";
-      // 
-      // label10
-      // 
-      this.label10.Location = new System.Drawing.Point(24, 56);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(72, 24);
-      this.label10.TabIndex = 7;
-      this.label10.Text = "Picture files";
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(320, 24);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(48, 16);
-      this.label7.TabIndex = 6;
-      this.label7.Text = "Frames";
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(120, 24);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(32, 23);
-      this.label6.TabIndex = 5;
-      this.label6.Text = "sec.";
-      // 
-      // UpDownPictureTransition
-      // 
-      this.UpDownPictureTransition.Location = new System.Drawing.Point(256, 24);
-      this.UpDownPictureTransition.Minimum = new System.Decimal(new int[] {
-                                                                            1,
-                                                                            0,
-                                                                            0,
-                                                                            0});
-      this.UpDownPictureTransition.Name = "UpDownPictureTransition";
-      this.UpDownPictureTransition.Size = new System.Drawing.Size(48, 20);
-      this.UpDownPictureTransition.TabIndex = 1;
-      this.UpDownPictureTransition.Value = new System.Decimal(new int[] {
-                                                                          1,
-                                                                          0,
-                                                                          0,
-                                                                          0});
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(192, 24);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(56, 23);
-      this.label5.TabIndex = 3;
-      this.label5.Text = "Transition";
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(24, 24);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(48, 23);
-      this.label4.TabIndex = 1;
-      this.label4.Text = "Duration";
-      // 
-      // UpDownPictureDuration
-      // 
-      this.UpDownPictureDuration.Location = new System.Drawing.Point(80, 24);
-      this.UpDownPictureDuration.Maximum = new System.Decimal(new int[] {
-                                                                          20,
-                                                                          0,
-                                                                          0,
-                                                                          0});
-      this.UpDownPictureDuration.Minimum = new System.Decimal(new int[] {
-                                                                          1,
-                                                                          0,
-                                                                          0,
-                                                                          0});
-      this.UpDownPictureDuration.Name = "UpDownPictureDuration";
-      this.UpDownPictureDuration.Size = new System.Drawing.Size(32, 20);
-      this.UpDownPictureDuration.TabIndex = 0;
-      this.UpDownPictureDuration.Value = new System.Decimal(new int[] {
-                                                                        3,
-                                                                        0,
-                                                                        0,
-                                                                        0});
-      // 
-      // PictureGroupBox
-      // 
-      this.PictureGroupBox.Controls.Add(this.btnEditPictureShare);
-      this.PictureGroupBox.Controls.Add(this.btnDelPictureShare);
-      this.PictureGroupBox.Controls.Add(this.btnAddPictureShare);
-      this.PictureGroupBox.Controls.Add(this.listPictureShares);
-      this.PictureGroupBox.Location = new System.Drawing.Point(24, 16);
-      this.PictureGroupBox.Name = "PictureGroupBox";
-      this.PictureGroupBox.Size = new System.Drawing.Size(496, 248);
-      this.PictureGroupBox.TabIndex = 0;
-      this.PictureGroupBox.TabStop = false;
-      this.PictureGroupBox.Text = "Picture folders";
-      // 
-      // btnEditPictureShare
-      // 
-      this.btnEditPictureShare.Location = new System.Drawing.Point(136, 216);
-      this.btnEditPictureShare.Name = "btnEditPictureShare";
-      this.btnEditPictureShare.Size = new System.Drawing.Size(48, 23);
-      this.btnEditPictureShare.TabIndex = 3;
-      this.btnEditPictureShare.Text = "Edit";
-      this.btnEditPictureShare.Click += new System.EventHandler(this.btnEditPictureShare_Click);
-      // 
-      // btnDelPictureShare
-      // 
-      this.btnDelPictureShare.Location = new System.Drawing.Point(72, 216);
-      this.btnDelPictureShare.Name = "btnDelPictureShare";
-      this.btnDelPictureShare.Size = new System.Drawing.Size(56, 23);
-      this.btnDelPictureShare.TabIndex = 2;
-      this.btnDelPictureShare.Text = "Delete";
-      this.btnDelPictureShare.Click += new System.EventHandler(this.btnDelPictureShare_Click);
-      // 
-      // btnAddPictureShare
-      // 
-      this.btnAddPictureShare.Location = new System.Drawing.Point(8, 216);
-      this.btnAddPictureShare.Name = "btnAddPictureShare";
-      this.btnAddPictureShare.Size = new System.Drawing.Size(56, 23);
-      this.btnAddPictureShare.TabIndex = 1;
-      this.btnAddPictureShare.Text = "Add";
-      this.btnAddPictureShare.Click += new System.EventHandler(this.btnAddPictureShare_Click);
-      // 
-      // listPictureShares
-      // 
-      this.listPictureShares.AllowDrop = true;
-      this.listPictureShares.AllowRowReorder = true;
-      this.listPictureShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                        this.HdrPictureName,
-                                                                                        this.HdrPictureFolder,
-                                                                                        this.columnHeader6});
-      this.listPictureShares.FullRowSelect = true;
-      this.listPictureShares.HideSelection = false;
-      this.listPictureShares.Location = new System.Drawing.Point(0, 24);
-      this.listPictureShares.MultiSelect = false;
-      this.listPictureShares.Name = "listPictureShares";
-      this.listPictureShares.Size = new System.Drawing.Size(448, 176);
-      this.listPictureShares.TabIndex = 0;
-      this.listPictureShares.View = System.Windows.Forms.View.Details;
-      this.listPictureShares.DoubleClick += new System.EventHandler(this.listPictureShares_DoubleClick);
-      // 
-      // HdrPictureName
-      // 
-      this.HdrPictureName.Text = "Name";
-      // 
-      // HdrPictureFolder
-      // 
-      this.HdrPictureFolder.Text = "Folder";
-      this.HdrPictureFolder.Width = 323;
-      // 
-      // columnHeader6
-      // 
-      this.columnHeader6.Text = "Default";
-      // 
       // tabTVChannels
       // 
       this.tabTVChannels.Controls.Add(this.groupBox20);
@@ -1701,7 +1210,7 @@ namespace MediaPortal
       this.tabTVChannels.Name = "tabTVChannels";
       this.tabTVChannels.Size = new System.Drawing.Size(616, 374);
       this.tabTVChannels.TabIndex = 9;
-      this.tabTVChannels.Text = "TVChannels";
+      this.tabTVChannels.Text = "My TVGuide";
       // 
       // groupBox20
       // 
@@ -1917,7 +1426,7 @@ namespace MediaPortal
       this.tabPageCapture.Name = "tabPageCapture";
       this.tabPageCapture.Size = new System.Drawing.Size(616, 374);
       this.tabPageCapture.TabIndex = 6;
-      this.tabPageCapture.Text = "Video Capture";
+      this.tabPageCapture.Text = "My TV";
       // 
       // btnEditCaptureDevice
       // 
@@ -2154,6 +1663,501 @@ namespace MediaPortal
       this.UpDownPreRecording.Size = new System.Drawing.Size(48, 20);
       this.UpDownPreRecording.TabIndex = 0;
       // 
+      // tabAudioShares
+      // 
+      this.tabAudioShares.Controls.Add(this.groupBox2);
+      this.tabAudioShares.Controls.Add(this.audioGroupBox);
+      this.tabAudioShares.Location = new System.Drawing.Point(4, 22);
+      this.tabAudioShares.Name = "tabAudioShares";
+      this.tabAudioShares.Size = new System.Drawing.Size(616, 374);
+      this.tabAudioShares.TabIndex = 0;
+      this.tabAudioShares.Text = "My Music";
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Controls.Add(this.btnPlayListFolder);
+      this.groupBox2.Controls.Add(this.textBoxPlayLists);
+      this.groupBox2.Controls.Add(this.label17);
+      this.groupBox2.Controls.Add(this.checkBoxShufflePlaylists);
+      this.groupBox2.Controls.Add(this.chkBoxRepeatAudioPlaylist);
+      this.groupBox2.Controls.Add(this.txtboxAudioFiles);
+      this.groupBox2.Controls.Add(this.label8);
+      this.groupBox2.Controls.Add(this.chkMusicID3);
+      this.groupBox2.Location = new System.Drawing.Point(24, 256);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(576, 104);
+      this.groupBox2.TabIndex = 1;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Music settings";
+      // 
+      // btnPlayListFolder
+      // 
+      this.btnPlayListFolder.Location = new System.Drawing.Point(488, 72);
+      this.btnPlayListFolder.Name = "btnPlayListFolder";
+      this.btnPlayListFolder.Size = new System.Drawing.Size(24, 23);
+      this.btnPlayListFolder.TabIndex = 2;
+      this.btnPlayListFolder.Text = "...";
+      this.btnPlayListFolder.Click += new System.EventHandler(this.btnPlayListFolder_Click);
+      // 
+      // textBoxPlayLists
+      // 
+      this.textBoxPlayLists.Location = new System.Drawing.Point(88, 72);
+      this.textBoxPlayLists.Name = "textBoxPlayLists";
+      this.textBoxPlayLists.Size = new System.Drawing.Size(392, 20);
+      this.textBoxPlayLists.TabIndex = 1;
+      this.textBoxPlayLists.Text = "";
+      // 
+      // label17
+      // 
+      this.label17.Location = new System.Drawing.Point(16, 80);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(80, 16);
+      this.label17.TabIndex = 4;
+      this.label17.Text = "Playlist folder:";
+      // 
+      // checkBoxShufflePlaylists
+      // 
+      this.checkBoxShufflePlaylists.Location = new System.Drawing.Point(336, 24);
+      this.checkBoxShufflePlaylists.Name = "checkBoxShufflePlaylists";
+      this.checkBoxShufflePlaylists.Size = new System.Drawing.Size(128, 24);
+      this.checkBoxShufflePlaylists.TabIndex = 4;
+      this.checkBoxShufflePlaylists.Text = "Auto shuffle playlist";
+      // 
+      // chkBoxRepeatAudioPlaylist
+      // 
+      this.chkBoxRepeatAudioPlaylist.Location = new System.Drawing.Point(336, 8);
+      this.chkBoxRepeatAudioPlaylist.Name = "chkBoxRepeatAudioPlaylist";
+      this.chkBoxRepeatAudioPlaylist.Size = new System.Drawing.Size(104, 16);
+      this.chkBoxRepeatAudioPlaylist.TabIndex = 3;
+      this.chkBoxRepeatAudioPlaylist.Text = "Repeat playlists";
+      // 
+      // txtboxAudioFiles
+      // 
+      this.txtboxAudioFiles.Location = new System.Drawing.Point(88, 48);
+      this.txtboxAudioFiles.Name = "txtboxAudioFiles";
+      this.txtboxAudioFiles.Size = new System.Drawing.Size(232, 20);
+      this.txtboxAudioFiles.TabIndex = 0;
+      this.txtboxAudioFiles.Text = "";
+      // 
+      // label8
+      // 
+      this.label8.Location = new System.Drawing.Point(16, 56);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(64, 16);
+      this.label8.TabIndex = 1;
+      this.label8.Text = "Audio files:";
+      // 
+      // chkMusicID3
+      // 
+      this.chkMusicID3.Location = new System.Drawing.Point(336, 48);
+      this.chkMusicID3.Name = "chkMusicID3";
+      this.chkMusicID3.Size = new System.Drawing.Size(104, 16);
+      this.chkMusicID3.TabIndex = 5;
+      this.chkMusicID3.Text = "Show ID3 tags";
+      // 
+      // audioGroupBox
+      // 
+      this.audioGroupBox.Controls.Add(this.btnEditMusicShare);
+      this.audioGroupBox.Controls.Add(this.btnDelAudioShare);
+      this.audioGroupBox.Controls.Add(this.btnAddAudioShare);
+      this.audioGroupBox.Controls.Add(this.listAudioShares);
+      this.audioGroupBox.Location = new System.Drawing.Point(24, 16);
+      this.audioGroupBox.Name = "audioGroupBox";
+      this.audioGroupBox.Size = new System.Drawing.Size(576, 240);
+      this.audioGroupBox.TabIndex = 0;
+      this.audioGroupBox.TabStop = false;
+      this.audioGroupBox.Text = "Music folders";
+      // 
+      // btnEditMusicShare
+      // 
+      this.btnEditMusicShare.Location = new System.Drawing.Point(136, 208);
+      this.btnEditMusicShare.Name = "btnEditMusicShare";
+      this.btnEditMusicShare.Size = new System.Drawing.Size(48, 23);
+      this.btnEditMusicShare.TabIndex = 3;
+      this.btnEditMusicShare.Text = "Edit";
+      this.btnEditMusicShare.Click += new System.EventHandler(this.btnEditMusicShare_Click);
+      // 
+      // btnDelAudioShare
+      // 
+      this.btnDelAudioShare.Location = new System.Drawing.Point(72, 208);
+      this.btnDelAudioShare.Name = "btnDelAudioShare";
+      this.btnDelAudioShare.Size = new System.Drawing.Size(56, 23);
+      this.btnDelAudioShare.TabIndex = 2;
+      this.btnDelAudioShare.Text = "Delete";
+      this.btnDelAudioShare.Click += new System.EventHandler(this.btnDelAudioShare_Click);
+      // 
+      // btnAddAudioShare
+      // 
+      this.btnAddAudioShare.Location = new System.Drawing.Point(8, 208);
+      this.btnAddAudioShare.Name = "btnAddAudioShare";
+      this.btnAddAudioShare.Size = new System.Drawing.Size(56, 23);
+      this.btnAddAudioShare.TabIndex = 1;
+      this.btnAddAudioShare.Text = "Add";
+      this.btnAddAudioShare.Click += new System.EventHandler(this.btnAddAudioShare_Click);
+      // 
+      // listAudioShares
+      // 
+      this.listAudioShares.AllowDrop = true;
+      this.listAudioShares.AllowRowReorder = true;
+      this.listAudioShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                      this.HdrAudioName,
+                                                                                      this.HdrAudioFolder,
+                                                                                      this.HdrDefault});
+      this.listAudioShares.FullRowSelect = true;
+      this.listAudioShares.HideSelection = false;
+      this.listAudioShares.Location = new System.Drawing.Point(8, 24);
+      this.listAudioShares.MultiSelect = false;
+      this.listAudioShares.Name = "listAudioShares";
+      this.listAudioShares.Size = new System.Drawing.Size(448, 176);
+      this.listAudioShares.TabIndex = 0;
+      this.listAudioShares.View = System.Windows.Forms.View.Details;
+      this.listAudioShares.DoubleClick += new System.EventHandler(this.listAudioShares_DoubleClick);
+      // 
+      // HdrAudioName
+      // 
+      this.HdrAudioName.Text = "Name";
+      this.HdrAudioName.Width = 100;
+      // 
+      // HdrAudioFolder
+      // 
+      this.HdrAudioFolder.Text = "Folder";
+      this.HdrAudioFolder.Width = 254;
+      // 
+      // HdrDefault
+      // 
+      this.HdrDefault.Text = "Default";
+      this.HdrDefault.Width = 89;
+      // 
+      // tabVideoShares
+      // 
+      this.tabVideoShares.Controls.Add(this.groupBox3);
+      this.tabVideoShares.Controls.Add(this.VideoGroupBox);
+      this.tabVideoShares.Location = new System.Drawing.Point(4, 22);
+      this.tabVideoShares.Name = "tabVideoShares";
+      this.tabVideoShares.Size = new System.Drawing.Size(616, 374);
+      this.tabVideoShares.TabIndex = 1;
+      this.tabVideoShares.Text = "My Movies";
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Controls.Add(this.btnPlayListVideo);
+      this.groupBox3.Controls.Add(this.textBoxPlayListFolderVideo);
+      this.groupBox3.Controls.Add(this.label18);
+      this.groupBox3.Controls.Add(this.chkBoxVideoRepeat);
+      this.groupBox3.Controls.Add(this.txtboxVideoFiles);
+      this.groupBox3.Controls.Add(this.label9);
+      this.groupBox3.Location = new System.Drawing.Point(24, 272);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(496, 88);
+      this.groupBox3.TabIndex = 1;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Movie Settings";
+      // 
+      // btnPlayListVideo
+      // 
+      this.btnPlayListVideo.Location = new System.Drawing.Point(448, 56);
+      this.btnPlayListVideo.Name = "btnPlayListVideo";
+      this.btnPlayListVideo.Size = new System.Drawing.Size(24, 24);
+      this.btnPlayListVideo.TabIndex = 4;
+      this.btnPlayListVideo.Text = "...";
+      this.btnPlayListVideo.Click += new System.EventHandler(this.btnPlayListVideo_Click);
+      // 
+      // textBoxPlayListFolderVideo
+      // 
+      this.textBoxPlayListFolderVideo.Location = new System.Drawing.Point(104, 56);
+      this.textBoxPlayListFolderVideo.Name = "textBoxPlayListFolderVideo";
+      this.textBoxPlayListFolderVideo.Size = new System.Drawing.Size(336, 20);
+      this.textBoxPlayListFolderVideo.TabIndex = 3;
+      this.textBoxPlayListFolderVideo.Text = "";
+      // 
+      // label18
+      // 
+      this.label18.Location = new System.Drawing.Point(16, 56);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(80, 16);
+      this.label18.TabIndex = 2;
+      this.label18.Text = "Playlists folder:";
+      // 
+      // chkBoxVideoRepeat
+      // 
+      this.chkBoxVideoRepeat.Location = new System.Drawing.Point(16, 24);
+      this.chkBoxVideoRepeat.Name = "chkBoxVideoRepeat";
+      this.chkBoxVideoRepeat.TabIndex = 0;
+      this.chkBoxVideoRepeat.Text = "Repeat Playlists";
+      // 
+      // txtboxVideoFiles
+      // 
+      this.txtboxVideoFiles.Location = new System.Drawing.Point(216, 24);
+      this.txtboxVideoFiles.Name = "txtboxVideoFiles";
+      this.txtboxVideoFiles.Size = new System.Drawing.Size(264, 20);
+      this.txtboxVideoFiles.TabIndex = 1;
+      this.txtboxVideoFiles.Text = "";
+      // 
+      // label9
+      // 
+      this.label9.Location = new System.Drawing.Point(144, 32);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(64, 23);
+      this.label9.TabIndex = 0;
+      this.label9.Text = "Movie files:";
+      // 
+      // VideoGroupBox
+      // 
+      this.VideoGroupBox.Controls.Add(this.btnEditMovieShare);
+      this.VideoGroupBox.Controls.Add(this.btnDelVideoShare);
+      this.VideoGroupBox.Controls.Add(this.btnAddVideoShare);
+      this.VideoGroupBox.Controls.Add(this.listVideoShares);
+      this.VideoGroupBox.Location = new System.Drawing.Point(24, 16);
+      this.VideoGroupBox.Name = "VideoGroupBox";
+      this.VideoGroupBox.Size = new System.Drawing.Size(496, 248);
+      this.VideoGroupBox.TabIndex = 0;
+      this.VideoGroupBox.TabStop = false;
+      this.VideoGroupBox.Text = "Movie folders";
+      // 
+      // btnEditMovieShare
+      // 
+      this.btnEditMovieShare.Location = new System.Drawing.Point(136, 216);
+      this.btnEditMovieShare.Name = "btnEditMovieShare";
+      this.btnEditMovieShare.Size = new System.Drawing.Size(48, 23);
+      this.btnEditMovieShare.TabIndex = 3;
+      this.btnEditMovieShare.Text = "Edit";
+      this.btnEditMovieShare.Click += new System.EventHandler(this.btnEditMovieShare_Click);
+      // 
+      // btnDelVideoShare
+      // 
+      this.btnDelVideoShare.Location = new System.Drawing.Point(72, 216);
+      this.btnDelVideoShare.Name = "btnDelVideoShare";
+      this.btnDelVideoShare.Size = new System.Drawing.Size(56, 23);
+      this.btnDelVideoShare.TabIndex = 2;
+      this.btnDelVideoShare.Text = "Delete";
+      this.btnDelVideoShare.Click += new System.EventHandler(this.btnDelVideoShare_Click);
+      // 
+      // btnAddVideoShare
+      // 
+      this.btnAddVideoShare.Location = new System.Drawing.Point(8, 216);
+      this.btnAddVideoShare.Name = "btnAddVideoShare";
+      this.btnAddVideoShare.Size = new System.Drawing.Size(56, 23);
+      this.btnAddVideoShare.TabIndex = 1;
+      this.btnAddVideoShare.Text = "Add";
+      this.btnAddVideoShare.Click += new System.EventHandler(this.btnAddVideoShare_Click);
+      // 
+      // listVideoShares
+      // 
+      this.listVideoShares.AllowDrop = true;
+      this.listVideoShares.AllowRowReorder = true;
+      this.listVideoShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                      this.HdrVideoName,
+                                                                                      this.HdrVideoFolder,
+                                                                                      this.columnHeader5});
+      this.listVideoShares.FullRowSelect = true;
+      this.listVideoShares.HideSelection = false;
+      this.listVideoShares.Location = new System.Drawing.Point(8, 24);
+      this.listVideoShares.MultiSelect = false;
+      this.listVideoShares.Name = "listVideoShares";
+      this.listVideoShares.Size = new System.Drawing.Size(448, 176);
+      this.listVideoShares.TabIndex = 0;
+      this.listVideoShares.View = System.Windows.Forms.View.Details;
+      this.listVideoShares.DoubleClick += new System.EventHandler(this.listVideoShares_DoubleClick);
+      // 
+      // HdrVideoName
+      // 
+      this.HdrVideoName.Text = "Name";
+      this.HdrVideoName.Width = 100;
+      // 
+      // HdrVideoFolder
+      // 
+      this.HdrVideoFolder.Text = "Folder";
+      this.HdrVideoFolder.Width = 284;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Default";
+      // 
+      // tabPictureShares
+      // 
+      this.tabPictureShares.Controls.Add(this.groupBox1);
+      this.tabPictureShares.Controls.Add(this.PictureGroupBox);
+      this.tabPictureShares.Location = new System.Drawing.Point(4, 22);
+      this.tabPictureShares.Name = "tabPictureShares";
+      this.tabPictureShares.Size = new System.Drawing.Size(616, 374);
+      this.tabPictureShares.TabIndex = 2;
+      this.tabPictureShares.Text = "My Pictures";
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.txtBoxPictureFiles);
+      this.groupBox1.Controls.Add(this.label10);
+      this.groupBox1.Controls.Add(this.label7);
+      this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.Controls.Add(this.UpDownPictureTransition);
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.label4);
+      this.groupBox1.Controls.Add(this.UpDownPictureDuration);
+      this.groupBox1.Location = new System.Drawing.Point(24, 272);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(496, 88);
+      this.groupBox1.TabIndex = 2;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Slideshow";
+      // 
+      // txtBoxPictureFiles
+      // 
+      this.txtBoxPictureFiles.Location = new System.Drawing.Point(96, 56);
+      this.txtBoxPictureFiles.Name = "txtBoxPictureFiles";
+      this.txtBoxPictureFiles.Size = new System.Drawing.Size(376, 20);
+      this.txtBoxPictureFiles.TabIndex = 2;
+      this.txtBoxPictureFiles.Text = "";
+      // 
+      // label10
+      // 
+      this.label10.Location = new System.Drawing.Point(24, 56);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(72, 24);
+      this.label10.TabIndex = 7;
+      this.label10.Text = "Picture files";
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(320, 24);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(48, 16);
+      this.label7.TabIndex = 6;
+      this.label7.Text = "Frames";
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(120, 24);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(32, 23);
+      this.label6.TabIndex = 5;
+      this.label6.Text = "sec.";
+      // 
+      // UpDownPictureTransition
+      // 
+      this.UpDownPictureTransition.Location = new System.Drawing.Point(256, 24);
+      this.UpDownPictureTransition.Minimum = new System.Decimal(new int[] {
+                                                                            1,
+                                                                            0,
+                                                                            0,
+                                                                            0});
+      this.UpDownPictureTransition.Name = "UpDownPictureTransition";
+      this.UpDownPictureTransition.Size = new System.Drawing.Size(48, 20);
+      this.UpDownPictureTransition.TabIndex = 1;
+      this.UpDownPictureTransition.Value = new System.Decimal(new int[] {
+                                                                          1,
+                                                                          0,
+                                                                          0,
+                                                                          0});
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(192, 24);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(56, 23);
+      this.label5.TabIndex = 3;
+      this.label5.Text = "Transition";
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(24, 24);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(48, 23);
+      this.label4.TabIndex = 1;
+      this.label4.Text = "Duration";
+      // 
+      // UpDownPictureDuration
+      // 
+      this.UpDownPictureDuration.Location = new System.Drawing.Point(80, 24);
+      this.UpDownPictureDuration.Maximum = new System.Decimal(new int[] {
+                                                                          20,
+                                                                          0,
+                                                                          0,
+                                                                          0});
+      this.UpDownPictureDuration.Minimum = new System.Decimal(new int[] {
+                                                                          1,
+                                                                          0,
+                                                                          0,
+                                                                          0});
+      this.UpDownPictureDuration.Name = "UpDownPictureDuration";
+      this.UpDownPictureDuration.Size = new System.Drawing.Size(32, 20);
+      this.UpDownPictureDuration.TabIndex = 0;
+      this.UpDownPictureDuration.Value = new System.Decimal(new int[] {
+                                                                        3,
+                                                                        0,
+                                                                        0,
+                                                                        0});
+      // 
+      // PictureGroupBox
+      // 
+      this.PictureGroupBox.Controls.Add(this.btnEditPictureShare);
+      this.PictureGroupBox.Controls.Add(this.btnDelPictureShare);
+      this.PictureGroupBox.Controls.Add(this.btnAddPictureShare);
+      this.PictureGroupBox.Controls.Add(this.listPictureShares);
+      this.PictureGroupBox.Location = new System.Drawing.Point(24, 16);
+      this.PictureGroupBox.Name = "PictureGroupBox";
+      this.PictureGroupBox.Size = new System.Drawing.Size(496, 248);
+      this.PictureGroupBox.TabIndex = 0;
+      this.PictureGroupBox.TabStop = false;
+      this.PictureGroupBox.Text = "Picture folders";
+      // 
+      // btnEditPictureShare
+      // 
+      this.btnEditPictureShare.Location = new System.Drawing.Point(136, 216);
+      this.btnEditPictureShare.Name = "btnEditPictureShare";
+      this.btnEditPictureShare.Size = new System.Drawing.Size(48, 23);
+      this.btnEditPictureShare.TabIndex = 3;
+      this.btnEditPictureShare.Text = "Edit";
+      this.btnEditPictureShare.Click += new System.EventHandler(this.btnEditPictureShare_Click);
+      // 
+      // btnDelPictureShare
+      // 
+      this.btnDelPictureShare.Location = new System.Drawing.Point(72, 216);
+      this.btnDelPictureShare.Name = "btnDelPictureShare";
+      this.btnDelPictureShare.Size = new System.Drawing.Size(56, 23);
+      this.btnDelPictureShare.TabIndex = 2;
+      this.btnDelPictureShare.Text = "Delete";
+      this.btnDelPictureShare.Click += new System.EventHandler(this.btnDelPictureShare_Click);
+      // 
+      // btnAddPictureShare
+      // 
+      this.btnAddPictureShare.Location = new System.Drawing.Point(8, 216);
+      this.btnAddPictureShare.Name = "btnAddPictureShare";
+      this.btnAddPictureShare.Size = new System.Drawing.Size(56, 23);
+      this.btnAddPictureShare.TabIndex = 1;
+      this.btnAddPictureShare.Text = "Add";
+      this.btnAddPictureShare.Click += new System.EventHandler(this.btnAddPictureShare_Click);
+      // 
+      // listPictureShares
+      // 
+      this.listPictureShares.AllowDrop = true;
+      this.listPictureShares.AllowRowReorder = true;
+      this.listPictureShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                        this.HdrPictureName,
+                                                                                        this.HdrPictureFolder,
+                                                                                        this.columnHeader6});
+      this.listPictureShares.FullRowSelect = true;
+      this.listPictureShares.HideSelection = false;
+      this.listPictureShares.Location = new System.Drawing.Point(0, 24);
+      this.listPictureShares.MultiSelect = false;
+      this.listPictureShares.Name = "listPictureShares";
+      this.listPictureShares.Size = new System.Drawing.Size(448, 176);
+      this.listPictureShares.TabIndex = 0;
+      this.listPictureShares.View = System.Windows.Forms.View.Details;
+      this.listPictureShares.DoubleClick += new System.EventHandler(this.listPictureShares_DoubleClick);
+      // 
+      // HdrPictureName
+      // 
+      this.HdrPictureName.Text = "Name";
+      // 
+      // HdrPictureFolder
+      // 
+      this.HdrPictureFolder.Text = "Folder";
+      this.HdrPictureFolder.Width = 323;
+      // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "Default";
+      // 
       // tabWeather
       // 
       this.tabWeather.Controls.Add(this.groupBox7);
@@ -2164,7 +2168,7 @@ namespace MediaPortal
       this.tabWeather.Name = "tabWeather";
       this.tabWeather.Size = new System.Drawing.Size(616, 374);
       this.tabWeather.TabIndex = 4;
-      this.tabWeather.Text = "Weather";
+      this.tabWeather.Text = "My Weather";
       // 
       // groupBox7
       // 
@@ -2323,6 +2327,14 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
+      // tabPageRadio
+      // 
+      this.tabPageRadio.Location = new System.Drawing.Point(4, 22);
+      this.tabPageRadio.Name = "tabPageRadio";
+      this.tabPageRadio.Size = new System.Drawing.Size(616, 374);
+      this.tabPageRadio.TabIndex = 10;
+      this.tabPageRadio.Text = "My Radio";
+      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -2348,17 +2360,6 @@ namespace MediaPortal
       this.groupBox11.ResumeLayout(false);
       this.groupBox10.ResumeLayout(false);
       this.DVDPlayerBox.ResumeLayout(false);
-      this.tabAudioShares.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
-      this.audioGroupBox.ResumeLayout(false);
-      this.tabVideoShares.ResumeLayout(false);
-      this.groupBox3.ResumeLayout(false);
-      this.VideoGroupBox.ResumeLayout(false);
-      this.tabPictureShares.ResumeLayout(false);
-      this.groupBox1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureTransition)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureDuration)).EndInit();
-      this.PictureGroupBox.ResumeLayout(false);
       this.tabTVChannels.ResumeLayout(false);
       this.groupBox20.ResumeLayout(false);
       this.groupBox19.ResumeLayout(false);
@@ -2370,6 +2371,17 @@ namespace MediaPortal
       ((System.ComponentModel.ISupportInitialize)(this.upDownCountry)).EndInit();
       this.groupBox17.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).EndInit();
+      this.tabAudioShares.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      this.audioGroupBox.ResumeLayout(false);
+      this.tabVideoShares.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.VideoGroupBox.ResumeLayout(false);
+      this.tabPictureShares.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureTransition)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureDuration)).EndInit();
+      this.PictureGroupBox.ResumeLayout(false);
       this.tabWeather.ResumeLayout(false);
       this.groupBox7.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.cntrlweatherRefresh)).EndInit();
