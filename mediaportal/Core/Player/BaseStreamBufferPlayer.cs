@@ -202,6 +202,7 @@ namespace MediaPortal.Player
         m_dDuration/=10000000d;
         if (m_dDuration<1)
         {
+					Log.Write("StreamBufferPlayer:Duration < 1sec");
           CloseInterfaces();
           return false;
         }

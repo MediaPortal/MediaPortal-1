@@ -32,18 +32,18 @@ namespace MediaPortal.Player
 		static IVMRSurfaceAllocatorNotify9	allocNotify;
     static Size     										m_nativeSize = new Size(0,0);
 		static IntPtr												m_surface1    = IntPtr.Zero;
-		static IntPtr[] 										extraTextures = new IntPtr[10];
+		//static IntPtr[] 										extraTextures = new IntPtr[10];
 		static int													textureCount  = 1;
-		static int												  MaxTextureWidth=1024;
-		static int												  MaxTextureHeight=768;
+		static int												  MaxTextureWidth=1600;
+		static int												  MaxTextureHeight=1200;
     
 		[StructLayout(LayoutKind.Sequential)]
 	  public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
 		{
 			public Allocator()
 			{
-				MaxTextureWidth=1024;
-				MaxTextureHeight=768;
+				MaxTextureWidth=1600;
+				MaxTextureHeight=1200;
 
 			}
 
@@ -72,8 +72,8 @@ namespace MediaPortal.Player
 			public Allocator (Control window, PlaneScene renderScene)
 			{
 				//clear the extra video textures
-				for (int i=0; i < 10; ++i)
-					extraTextures[i]=IntPtr.Zero;
+				//for (int i=0; i < 10; ++i)
+				//	extraTextures[i]=IntPtr.Zero;
 
   			scene = renderScene;
 				scene.Init();
@@ -97,8 +97,19 @@ namespace MediaPortal.Player
 			/// <returns></returns>
 			public int InitializeDevice(Int32 dwUserId, VMR9AllocationInfo allocInfo, IntPtr numBuffers)
       {
+				float fTU ,fTV;
         Log.Write("AllocatorWrapper:InitializeDevice({0:x})",dwUserId);
 				scene.SetSrcRect( 1.0f, 1.0f);
+				if (m_surface1!=IntPtr.Zero) 
+				{
+					Log.Write("AllocatorWrapper: re-use surface {0}x{1}", allocInfo.dwWidth, allocInfo.dwHeight);
+					fTU = (float)(allocInfo.dwWidth ) / ((float)MaxTextureWidth);
+					fTV = (float)(allocInfo.dwHeight) / ((float)MaxTextureHeight);
+					scene.SetSrcRect( fTU, fTV );
+					//scene.SetSurface(m_surface1);
+					return 0;
+				}
+/*
 				if (m_surface1!=IntPtr.Zero)
         {
 					scene.ReleaseSurface(m_surface1);
@@ -128,7 +139,7 @@ namespace MediaPortal.Player
 						}
 					}
 				}
-
+*/
 				Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
 				Int32 numbuff = Marshal.ReadInt32(numBuffers);
         if (numbuff > 1)
@@ -137,25 +148,12 @@ namespace MediaPortal.Player
           throw new Exception("multiple surfaces not supported yet");
         }
         m_nativeSize = new Size(allocInfo.szNativeSize.Width,allocInfo.szNativeSize.Height);
-        
-        if (!d3dcaps.TextureCaps.SupportsNonPower2Conditional) 
-				{
-					Int32 width = 1;
-					Int32 height = 1;
-					while ( width < allocInfo.dwWidth )
-						width = width <<1;
-					while ( height < allocInfo.dwHeight )
-						height = height <<1;
+				allocInfo.dwWidth =MaxTextureWidth;
+				allocInfo.dwHeight=MaxTextureHeight;
+				fTU = (float)(m_nativeSize.Width)  / ((float)MaxTextureWidth);
+				fTV = (float)(m_nativeSize.Height) / ((float)MaxTextureHeight);
+				scene.SetSrcRect( fTU, fTV );
 
-          
-          float fTU = (float)(allocInfo.dwWidth ) / (float)(width);
-          float fTV = (float)(allocInfo.dwHeight) / (float)(height);
-          scene.SetSrcRect( fTU, fTV );
-
-					allocInfo.dwHeight = height;
-					allocInfo.dwWidth = width;
-
-				}
 				allocInfo.dwFlags = allocInfo.dwFlags | VMR9.VMR9AllocFlag_TextureSurface; 
         Log.Write("AllocatorWrapper:{0}x{1} fmt:{2} minbuffers:{3} pool:{4} ar:{5} size:{6} flags:{7} supportsPow2:{8} supportsNonPow2:{9} max:{10}x{11}", 
                         allocInfo.dwWidth, allocInfo.dwHeight, 
@@ -172,35 +170,9 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Write("AllocatorWrapper:AllocateSurface succeeded");
-/*
-					//double check the allocated texture dimensions
-					Surface orig = new Surface(m_surface1);
-					if (orig!=null)
-					{
-						Marshal.AddRef(m_surface1);
-        
-						Texture tex=orig.GetContainer(D3DGuids.Texture) as Texture;
-						if (tex!=null)
-						{
-							SurfaceDescription desc;
-							desc=tex.GetLevelDescription(0);
-							float texWidth = (float)desc.Width;
-							float texHeight = (float)desc.Height;							
-							Log.Write("  texture allocated: {0}x{1}", (int)texWidth, (int)texHeight);
-							if (texWidth != allocInfo.dwWidth || texHeight!=allocInfo.dwHeight)
-							{
-								float fTU = (float)(m_nativeSize.Width ) / (float)(texWidth);
-								float fTV = (float)(m_nativeSize.Height) / (float)(texHeight);
-								scene.SetSrcRect( fTU, fTV );
-							}
-							tex.Dispose();
-						}
-						orig.Dispose();
-						Marshal.Release(m_surface1);
-						Marshal.Release(m_surface1);
-					}
-*/
+					Log.Write("AllocatorWrapper:AllocateSurface succeeded");
+					scene.SetSurface(m_surface1);
+					/*
 					//allocate the extra video textures
 					if (allocInfo.dwWidth>MaxTextureWidth) MaxTextureWidth=allocInfo.dwWidth;
 					if (allocInfo.dwHeight>MaxTextureHeight) MaxTextureHeight=allocInfo.dwHeight;
@@ -219,8 +191,8 @@ namespace MediaPortal.Player
 						if (hr==0) Log.Write("AllocatorWrapper:  allocated extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
 						else Log.Write("AllocatorWrapper:failed:  allocated extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
 					}
+*/
 					hr=0;
-					scene.SetSurface(m_surface1);
         }
         return hr;
 			}
@@ -259,9 +231,9 @@ namespace MediaPortal.Player
         Log.Write("AllocatorWrapper:TerminateDevice({0:x})",dwUserId);
         if (m_surface1!=IntPtr.Zero)
 				{
-					scene.ReleaseSurface(m_surface1);
-          Marshal.Release(m_surface1);
-          m_surface1=IntPtr.Zero;
+					//scene.ReleaseSurface(m_surface1);
+          //Marshal.Release(m_surface1);
+          //m_surface1=IntPtr.Zero;
         }
         return 0;
 			}
@@ -295,7 +267,7 @@ namespace MediaPortal.Player
 					Marshal.Release(m_surface1); 
 					m_surface1= IntPtr.Zero;
 				}
-
+/*
 				//release the extra video textures
 				for (int i=0; i < textureCount;++i)
 				{
@@ -304,7 +276,7 @@ namespace MediaPortal.Player
 						Marshal.Release(extraTextures[i]); 
 					}
 					extraTextures[i]= IntPtr.Zero;				
-				}
+				}*/
 				return 0;
       }
 

@@ -68,6 +68,7 @@ namespace MediaPortal.Player
 			{
 				RemoveVMR9();
 			}
+			Log.Write("VMR9Helper:AddVMR9()");
 
 			Type comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
 			object comobj = Activator.CreateInstance( comtype );
@@ -75,7 +76,7 @@ namespace MediaPortal.Player
 			if (VMR9Filter==null) 
 			{
 				Error.SetError("Unable to play movie","VMR9 is not installed");
-				Log.Write("VMR9:Failed to get instance of VMR9 ");
+				Log.Write("VMR9Helper:Failed to get instance of VMR9 ");
 				return ;
 			}
 			//IVMRFilterConfig9
@@ -83,14 +84,14 @@ namespace MediaPortal.Player
 			if (FilterConfig9==null) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.Write("VMR9:Failed to get IVMRFilterConfig9 ");
+				Log.Write("VMR9Helper:Failed to get IVMRFilterConfig9 ");
 				return ;
 			}
 			int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.Write("VMR9:Failed to set VMR9 to renderless mode");
+				Log.Write("VMR9Helper:Failed to set VMR9 to renderless mode");
 				return ;
 			}
 
@@ -100,7 +101,7 @@ namespace MediaPortal.Player
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.Write("VMR9:Failed to set VMR9 streams to 1");
+				Log.Write("VMR9Helper:Failed to set VMR9 streams to 1");
 				return ;
 			}
 
@@ -109,7 +110,7 @@ namespace MediaPortal.Player
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.Write("VMR9:Failed to set VMR9 allocator/presentor");
+				Log.Write("VMR9Helper:Failed to set VMR9 allocator/presentor");
 				return ;
 			}
 
@@ -117,7 +118,7 @@ namespace MediaPortal.Player
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.Write("VMR9:Failed to add vmr9 to filtergraph");
+				Log.Write("VMR9Helper:Failed to add vmr9 to filtergraph");
 				return ;
 			}
 			GUIGraphicsContext.Vmr9Active=true;
@@ -135,11 +136,12 @@ namespace MediaPortal.Player
 		int SetAllocPresenter(IBaseFilter filter, Control control)
 		{
 			if (!UseVMR9inMYTV) return -1;
+			Log.Write("VMR9Helper:SetAllocPresenter()");
 			IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = filter as IVMRSurfaceAllocatorNotify9;
 
 			if (lpIVMRSurfAllocNotify == null)
 			{
-				Log.Write("VMR9:Failed to get IVMRSurfaceAllocatorNotify9");
+				Log.Write("VMR9Helper:Failed to get IVMRSurfaceAllocatorNotify9");
 				return -1;
 			}
 			m_scene= new PlaneScene(m_renderFrame);
@@ -158,7 +160,7 @@ namespace MediaPortal.Player
 			//Marshal.AddRef(upDevice);
 			if (hr != 0)
 			{
-				Log.Write("VMR9:Failed to get SetD3DDevice()");
+				Log.Write("VMR9Helper:Failed to get SetD3DDevice()");
 				return hr;
 			}
 			// this must be global. If it gets garbage collected, pinning won't exist...
@@ -166,13 +168,13 @@ namespace MediaPortal.Player
 			hr = allocator.AdviseNotify(lpIVMRSurfAllocNotify);
 			if (hr != 0)
 			{
-				Log.Write("VMR9:Failed to AdviseNotify()");
+				Log.Write("VMR9Helper:Failed to AdviseNotify()");
 				return hr;
 			}
 			hr = lpIVMRSurfAllocNotify.AdviseSurfaceAllocator(0xACDCACDC, allocator);
 			if (hr !=0)
 			{
-				Log.Write("VMR9:Failed to AdviseSurfaceAllocator()");
+				Log.Write("VMR9Helper:Failed to AdviseSurfaceAllocator()");
 			}
 			return hr;
 		}
@@ -187,6 +189,7 @@ namespace MediaPortal.Player
 		public void RemoveVMR9()
 		{
 			if (!UseVMR9inMYTV) return;
+			Log.Write("VMR9Helper:RemoveVMR9()");
 			GUIGraphicsContext.Vmr9Active=false;
 			if (allocator!=null)
 			{
