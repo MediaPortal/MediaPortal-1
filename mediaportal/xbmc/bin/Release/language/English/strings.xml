@@ -2154,6 +2154,10 @@
 	<value>Image:</value>
 </string>
 <string>
+	<id>735</id>
+	<value>Rotate</value>
+</string>
+<string>
 	<id>800</id>
 	<value>Starts with</value>
 </string>
