@@ -462,21 +462,31 @@
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
 	</control>	
+	<control>
+		<description>Satellite background</description> 
+		<type>image</type> 
+		<id>1001</id> 
+		<posX>235</posX> 
+		<posY>185</posY> 
+		<width>450</width> 
+		<height>360</height> 
+		<texture>gray_rectangle.png</texture> 
+	</control>
 	<control>		
-		<description>Satelite image</description>
+		<description>Satellite image</description>
 		<type>image</type>
 		<id>1000</id>
-		<posX>60</posX>
-		<posY>200</posY>
-		<width>648</width>
-		<height>316</height>
+		<posX>240</posX>
+		<posY>190</posY>
+		<width>440</width>
+		<height>350</height>
 		<texture></texture>
 		<visible>no</visible>
 		<colorkey>FFFFFFFF</colorkey>
 		<colordiffuse>FFFFFFFF</colordiffuse>
 		<filtered>yes</filtered>
 		<centered>yes</centered>
-		<keepaspectratio>yes</keepaspectratio>
-	</control>	
-</controls>
+		<keepaspectratio>no</keepaspectratio>
+	</control>
+  </controls>
 </window>
