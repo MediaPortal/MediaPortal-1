@@ -1131,7 +1131,7 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"		checkdevice="false"></filter>
         <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"		checkdevice="true"></filter>
       </filters>
