@@ -12,6 +12,8 @@ namespace MediaPortal.GUI.Library
 	{
     static Hashtable m_properties = new Hashtable();
     static bool m_bChanged=false;
+		public delegate void OnPropertyChangedHandler(string tag, string value);
+		static public event OnPropertyChangedHandler     OnPropertyChanged;
 
 		/// <summary>
 		/// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
@@ -107,7 +109,13 @@ namespace MediaPortal.GUI.Library
       if (tag==String.Empty) return;
       if (tag[0]!='#') return;
 
-      m_properties[tag] = tagvalue;
+			if (GetProperty(tag) == tagvalue) return;
+			m_properties[tag] = tagvalue;
+			m_bChanged=true;
+			if (OnPropertyChanged!=null)
+			{
+				OnPropertyChanged(tag, tagvalue);
+			}
     }
 		/// <summary>
 		/// This method returns the value for a given property
@@ -130,32 +138,32 @@ namespace MediaPortal.GUI.Library
     static public void RemovePlayerProperties()
     {
       m_bChanged=true;
-      m_properties["#playlogo"]=String.Empty;
-      m_properties["#title"]=String.Empty;
-      m_properties["#artist"]=String.Empty;
-      m_properties["#album"]=String.Empty;
-      m_properties["#track"]=String.Empty;
-      m_properties["#year"]=String.Empty;
-      m_properties["#comment"]=String.Empty;
-			m_properties["#shortduration"]=String.Empty;
-			m_properties["#duration"]=String.Empty;
-      m_properties["#thumb"]=String.Empty;
-      m_properties["#director"]=String.Empty;
-      m_properties["#genre"]=String.Empty;
-      m_properties["#cast"]=String.Empty;
-      m_properties["#dvdlabel"]=String.Empty;
-      m_properties["#imdbnumber"]=String.Empty;
-      m_properties["#file"]=String.Empty;
-      m_properties["#plot"]=String.Empty;
-      m_properties["#plotoutline"]=String.Empty;
-      m_properties["#rating"]=String.Empty;
-      m_properties["#tagline"]=String.Empty;
-      m_properties["#votes"]=String.Empty;
-      m_properties["#credits"]=String.Empty;
-			m_properties["#currentplaytime"]=String.Empty;
-			m_properties["#shortcurrentplaytime"]=String.Empty;
-      m_properties["#playspeed"]=String.Empty;
-      m_properties["#channel"]=String.Empty;
+      SetProperty("#playlogo",String.Empty);
+      SetProperty("#title",String.Empty);
+      SetProperty("#artist",String.Empty);
+      SetProperty("#album",String.Empty);
+      SetProperty("#track",String.Empty);
+      SetProperty("#year",String.Empty);
+      SetProperty("#comment",String.Empty);
+			SetProperty("#shortduration",String.Empty);
+			SetProperty("#duration",String.Empty);
+      SetProperty("#thumb",String.Empty);
+      SetProperty("#director",String.Empty);
+      SetProperty("#genre",String.Empty);
+      SetProperty("#cast",String.Empty);
+      SetProperty("#dvdlabel",String.Empty);
+      SetProperty("#imdbnumber",String.Empty);
+      SetProperty("#file",String.Empty);
+      SetProperty("#plot",String.Empty);
+      SetProperty("#plotoutline",String.Empty);
+      SetProperty("#rating",String.Empty);
+      SetProperty("#tagline",String.Empty);
+      SetProperty("#votes",String.Empty);
+      SetProperty("#credits",String.Empty);
+			SetProperty("#currentplaytime",String.Empty);
+			SetProperty("#shortcurrentplaytime",String.Empty);
+      SetProperty("#playspeed",String.Empty);
+      SetProperty("#channel",String.Empty);
 
       
       SetProperty("#fileNext",String.Empty);
