@@ -757,7 +757,6 @@ public class MediaPortalApp : D3DApp, IRender
 					GUIGraphicsContext.SendMessage(msg);
 				}
 			}
-
     } 
 
     /// <summary>
@@ -1267,6 +1266,10 @@ public class MediaPortalApp : D3DApp, IRender
 							Log.Write("App.Onaction() stop media");
 							g_Player.Stop();
 							return;
+						}
+						if (Recorder.IsRadio())
+						{
+							Recorder.StopRadio();
 						}
 						break;
 
