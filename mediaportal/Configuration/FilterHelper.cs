@@ -10,6 +10,48 @@ namespace MediaPortal.Configuration
 {
 	public class FilterHelper
 	{
+    public static ArrayList GetVideoCompressors()
+    {
+      ArrayList compressors = new ArrayList();
+
+      Filters filters = new Filters();
+			
+      foreach(Filter compressor in filters.VideoCompressors)
+      {
+        compressors.Add(compressor.Name);
+      }
+
+      return compressors;
+    }
+
+    public static ArrayList GetAudioCompressors()
+    {
+      ArrayList compressors = new ArrayList();
+
+      Filters filters = new Filters();
+			
+      foreach(Filter compressor in filters.AudioCompressors)
+      {
+        compressors.Add(compressor.Name);
+      }
+
+      return compressors;
+    }
+
+    public static ArrayList GetAudioInputDevices()
+    {
+      ArrayList devices = new ArrayList();
+
+      Filters filters = new Filters();
+			
+      foreach(Filter device in filters.AudioInputDevices)
+      {
+        devices.Add(device.Name);
+      }
+
+      return devices;
+    }
+
 		public static ArrayList GetVideoInputDevices()
 		{
 			ArrayList devices = new ArrayList();
