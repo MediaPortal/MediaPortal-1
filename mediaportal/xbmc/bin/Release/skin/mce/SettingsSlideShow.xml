@@ -106,7 +106,7 @@
 		<onright>4</onright>
 		<align>right</align>
 		<textcolor>FFFFFFFF</textcolor>
-		<buddycontrolid>101</buddycontrolid>
+		<buddycontrolid>102</buddycontrolid>
 	</control>	
 	<control>
 		<description>X-fade transitions</description>
