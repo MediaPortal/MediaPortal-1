@@ -246,7 +246,7 @@ public class MediaPortalApp : D3DApp
 
   /// <summary>
   /// The device has been created.  Resources that are not lost on
-  /// Reset() can be created here -- resources in Pool.Managed,
+  /// Reset() can be created here -- resources in Pool.Default,
   /// Pool.Scratch, or Pool.SystemMemory.  Image surfaces created via
   /// CreateImageSurface are never lost and can be created here.  Vertex
   /// shaders and pixel shaders can also be created here as they are not
