@@ -732,8 +732,8 @@ namespace MediaPortal.GUI.Pictures
           SlideShow.Add(item.Path);
         }
       }
-      SlideShow.Select(strFile);
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+      SlideShow.Select(strFile);
     }
 
     void AddDir(GUISlideShow SlideShow ,string strDir)
