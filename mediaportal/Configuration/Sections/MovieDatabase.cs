@@ -1288,7 +1288,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach(string file in availableFiles)
       {
-        ScanFile(file);
+        ScanFile(file,-1);
 
         //
         // Update stats
@@ -1309,7 +1309,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     /// <param name="file"></param>
-    private IMDBMovie ScanFile(string file)
+    private IMDBMovie ScanFile(string file, int ID)
 		{
 			if(stopRebuild)  return null;
 
@@ -1342,7 +1342,14 @@ namespace MediaPortal.Configuration.Sections
 				{
 					if(stopRebuild)  return null;
 					Application.DoEvents();
-					id=VideoDatabase.AddMovie(file,false);
+					if (ID < 0)
+					{
+						id=VideoDatabase.AddMovie(file,false);
+					}
+					else
+					{
+						movieDetails.ID=ID;
+					}
 					VideoDatabase.SetMovieInfo(file,ref movieDetails);
 
 					if (stopRebuild) return null;
@@ -1786,7 +1793,7 @@ namespace MediaPortal.Configuration.Sections
 			btnSave.Enabled=false;
 			tabControl2.Enabled=false;
 			tabControl1.Enabled=false;
-			IMDBMovie movie=ScanFile(tbTitle.Text);
+			IMDBMovie movie=ScanFile(tbTitle.Text, CurrentMovie.ID);
 			if (movie!=null) 
 			{
 				LoadMovies();
