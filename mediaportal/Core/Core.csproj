@@ -318,6 +318,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\PropertySet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DShowNET\QEdit.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

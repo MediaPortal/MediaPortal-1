@@ -10,6 +10,15 @@ using System.Runtime.InteropServices;
 namespace DShowNET
 {
 
+  public class HResult
+  {
+    static public readonly int  S_OK                  =unchecked(0);
+    static public readonly int  E_HANDLE              =unchecked((int)0x80070006);
+    static public readonly int  E_NOTIMPL             =unchecked((int)0x80004001);
+    static public readonly int  E_PROP_ID_UNSUPPORTED =unchecked((int)0x80070490);
+    static public readonly int  E_PROP_SET_UNSUPPORTED=unchecked((int)0x80070492);
+    static public readonly int  E_INSUFFICIENT_BUFFER=unchecked((int)0x8007007A);
+  }
 
 	[ComVisible(false)]
 public class FilterCategory		// uuids.h  :  CLSID_*
@@ -39,7 +48,10 @@ public class FilterCategory		// uuids.h  :  CLSID_*
 		/// #MW# CLSID_ActiveMovieCategory, a superset of all the available filters
 		/// </summary>
 		public static readonly Guid ActiveMovieCategory	= new Guid(0xda4e3da0, 0xd07d, 0x11d0, 0xbd, 0x50, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
-	}
+	
+    public static readonly Guid IID_IKsPropertySet = new Guid(0x31efac30, 0x515c, 0x11d0, 0xa9, 0xaa, 0x00, 0xaa, 0x00, 0x61, 0xbe, 0x93);
+
+  }
 
   [ComVisible(false)]
   public class Deinterlace

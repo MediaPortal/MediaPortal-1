@@ -91,7 +91,10 @@ namespace MediaPortal.TV.Database
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         bUseTimeZone=xmlreader.GetValueAsBool("xmltv", "usetimezone",true);
-        iTimeZoneCorrection=xmlreader.GetValueAsInt("xmltv", "timezonecorrection",0);
+        int hours=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);
+        int mins=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionmins", 0);
+        iTimeZoneCorrection=hours*60+mins;
+
       }
 
       m_stats.Status=GUILocalizeStrings.Get(645);
@@ -343,9 +346,9 @@ namespace MediaPortal.TV.Database
 							  int iMin=iStartTimeOffset-(iHour*100);
 							  iHour -= utcOff.Hours;
 							  iMin -= utcOff.Minutes;
-							  iHour += iTimeZoneCorrection;
 							  dtStart=dtStart.AddHours( iHour);
-							  dtStart=dtStart.AddMinutes( iMin );
+                dtStart=dtStart.AddMinutes( iMin );
+                dtStart=dtStart.AddMinutes( iTimeZoneCorrection );
 							  iStart=Utils.datetolong(dtStart);
 
 							  // correct program endtime
@@ -354,9 +357,9 @@ namespace MediaPortal.TV.Database
 							  iMin=iEndTimeOffset-(iHour*100);
 							  iHour -= utcOff.Hours;
 							  iMin -= utcOff.Minutes;
-							  iHour += iTimeZoneCorrection;
 							  dtEnd=dtEnd.AddHours( iHour);
-							  dtEnd=dtEnd.AddMinutes( iMin );
+                dtEnd=dtEnd.AddMinutes( iMin );
+                dtEnd=dtEnd.AddMinutes( iTimeZoneCorrection );
 							  iStop=Utils.datetolong(dtEnd);
 
 							  int iChannelId=-1;

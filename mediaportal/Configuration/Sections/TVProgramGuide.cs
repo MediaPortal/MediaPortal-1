@@ -27,7 +27,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button browseButton;
     private System.Windows.Forms.TextBox folderNameTextBox;
     private System.Windows.Forms.Label folderNameLabel;
-    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.TextBox compensateTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox useTimeZoneCheckBox;
     private System.Windows.Forms.Label label1;
@@ -53,7 +52,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.ComponentModel.IContainer components = null;
     bool  OldTimeZoneCompensation=false;
     private System.Windows.Forms.Button btnClearTVDatabase;
-    int   OldTimeZoneOffset=0;
+    private System.Windows.Forms.TextBox textBoxMinutes;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label15;
+    int   OldTimeZoneOffsetHours=0;
+    int   OldTimeZoneOffsetMins=0;
 
 		public TVProgramGuide() : this("Program Guide")
 		{
@@ -95,10 +98,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.useColorCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnClearTVDatabase = new System.Windows.Forms.Button();
       this.btnUpdateTvGuide = new System.Windows.Forms.Button();
       this.RunGrabberButton = new System.Windows.Forms.Button();
       this.advancedRadioButton = new System.Windows.Forms.RadioButton();
-      this.label2 = new System.Windows.Forms.Label();
       this.compensateTextBox = new System.Windows.Forms.TextBox();
       this.useTimeZoneCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
@@ -132,7 +135,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label13 = new System.Windows.Forms.Label();
       this.DeleteTaskButton = new System.Windows.Forms.Button();
-      this.btnClearTVDatabase = new System.Windows.Forms.Button();
+      this.textBoxMinutes = new System.Windows.Forms.TextBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label15 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -164,11 +169,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.label15);
+      this.groupBox2.Controls.Add(this.label2);
+      this.groupBox2.Controls.Add(this.textBoxMinutes);
       this.groupBox2.Controls.Add(this.btnClearTVDatabase);
       this.groupBox2.Controls.Add(this.btnUpdateTvGuide);
       this.groupBox2.Controls.Add(this.RunGrabberButton);
       this.groupBox2.Controls.Add(this.advancedRadioButton);
-      this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.compensateTextBox);
       this.groupBox2.Controls.Add(this.useTimeZoneCheckBox);
       this.groupBox2.Controls.Add(this.label1);
@@ -194,6 +201,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "XMLTV Settings";
       this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+      // 
+      // btnClearTVDatabase
+      // 
+      this.btnClearTVDatabase.Location = new System.Drawing.Point(216, 224);
+      this.btnClearTVDatabase.Name = "btnClearTVDatabase";
+      this.btnClearTVDatabase.Size = new System.Drawing.Size(120, 24);
+      this.btnClearTVDatabase.TabIndex = 66;
+      this.btnClearTVDatabase.Text = "Remove all programs";
+      this.btnClearTVDatabase.Click += new System.EventHandler(this.btnClearTVDatabase_Click);
       // 
       // btnUpdateTvGuide
       // 
@@ -226,22 +242,14 @@ namespace MediaPortal.Configuration.Sections
       this.advancedRadioButton.Text = "Advanced Single Day Grabs";
       this.advancedRadioButton.CheckedChanged += new System.EventHandler(this.advancedRadioButton_CheckedChanged);
       // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(216, 84);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(64, 23);
-      this.label2.TabIndex = 53;
-      this.label2.Text = "hour(s)";
-      // 
       // compensateTextBox
       // 
-      this.compensateTextBox.Location = new System.Drawing.Point(168, 81);
+      this.compensateTextBox.Location = new System.Drawing.Point(136, 80);
       this.compensateTextBox.MaxLength = 3;
       this.compensateTextBox.Name = "compensateTextBox";
-      this.compensateTextBox.Size = new System.Drawing.Size(40, 20);
+      this.compensateTextBox.Size = new System.Drawing.Size(24, 20);
       this.compensateTextBox.TabIndex = 52;
-      this.compensateTextBox.Text = "";
+      this.compensateTextBox.Text = "0";
       // 
       // useTimeZoneCheckBox
       // 
@@ -255,9 +263,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 84);
+      this.label1.Location = new System.Drawing.Point(16, 72);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(150, 23);
+      this.label1.Size = new System.Drawing.Size(112, 28);
       this.label1.TabIndex = 50;
       this.label1.Text = "Compensate time zone with";
       // 
@@ -547,14 +555,30 @@ namespace MediaPortal.Configuration.Sections
       this.DeleteTaskButton.Text = "Delete Task";
       this.DeleteTaskButton.Click += new System.EventHandler(this.DeleteTaskButton_Click);
       // 
-      // btnClearTVDatabase
+      // textBoxMinutes
       // 
-      this.btnClearTVDatabase.Location = new System.Drawing.Point(216, 224);
-      this.btnClearTVDatabase.Name = "btnClearTVDatabase";
-      this.btnClearTVDatabase.Size = new System.Drawing.Size(120, 24);
-      this.btnClearTVDatabase.TabIndex = 66;
-      this.btnClearTVDatabase.Text = "Remove all programs";
-      this.btnClearTVDatabase.Click += new System.EventHandler(this.btnClearTVDatabase_Click);
+      this.textBoxMinutes.Location = new System.Drawing.Point(176, 80);
+      this.textBoxMinutes.Name = "textBoxMinutes";
+      this.textBoxMinutes.Size = new System.Drawing.Size(32, 20);
+      this.textBoxMinutes.TabIndex = 67;
+      this.textBoxMinutes.Text = "0";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(160, 80);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(8, 16);
+      this.label2.TabIndex = 68;
+      this.label2.Text = ":";
+      // 
+      // label15
+      // 
+      this.label15.Location = new System.Drawing.Point(224, 80);
+      this.label15.Name = "label15";
+      this.label15.Size = new System.Drawing.Size(56, 16);
+      this.label15.TabIndex = 69;
+      this.label15.Text = "Hours";
+      this.label15.Click += new System.EventHandler(this.label15_Click);
       // 
       // TVProgramGuide
       // 
@@ -599,8 +623,11 @@ namespace MediaPortal.Configuration.Sections
 
 				useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
         OldTimeZoneCompensation=useTimeZoneCheckBox.Checked;
-				compensateTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("xmltv", "timezonecorrection", 0));
-        OldTimeZoneOffset=xmlreader.GetValueAsInt("xmltv", "timezonecorrection", 0);
+        OldTimeZoneOffsetHours=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);
+        OldTimeZoneOffsetMins=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionmins", 0);
+
+        compensateTextBox.Text = OldTimeZoneOffsetHours.ToString();
+        textBoxMinutes.Text = OldTimeZoneOffsetMins.ToString();
 
         string strDir=System.IO.Directory.GetCurrentDirectory();
         strDir+=@"\xmltv";
@@ -646,7 +673,8 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValueAsBool("xmltv", "colors", useColorCheckBox.Checked);
 				xmlwriter.SetValueAsBool("xmltv", "usetimezone", useTimeZoneCheckBox.Checked);
 
-				xmlwriter.SetValue("xmltv", "timezonecorrection", compensateTextBox.Text);
+				xmlwriter.SetValue("xmltv", "timezonecorrectionhours", compensateTextBox.Text);
+        xmlwriter.SetValue("xmltv", "timezonecorrectionmins", textBoxMinutes.Text);
 				xmlwriter.SetValue("xmltv", "folder", folderNameTextBox.Text);
 
 				xmlwriter.SetValue("xmltv", "grabber",GrabbercomboBox.Text);
@@ -921,14 +949,21 @@ namespace MediaPortal.Configuration.Sections
       if (!useTimeZoneCheckBox.Checked ) return;
       try
       {
-        int iNewTimeZoneCompensation=Int32.Parse(compensateTextBox.Text);
-        if (iNewTimeZoneCompensation==OldTimeZoneOffset) return;
-        iNewTimeZoneCompensation-=OldTimeZoneOffset;
+        int iNewTimeZoneCompensationHours=Int32.Parse(compensateTextBox.Text);
+        int iNewTimeZoneCompensationMins=Int32.Parse(textBoxMinutes.Text);
+        if (iNewTimeZoneCompensationHours==OldTimeZoneOffsetHours &&
+            iNewTimeZoneCompensationMins==OldTimeZoneOffsetMins) return;
+        int oldoffset=OldTimeZoneOffsetHours*60 + OldTimeZoneOffsetMins;
+        int newoffset=iNewTimeZoneCompensationHours*60 + iNewTimeZoneCompensationMins;
 
-        TVDatabase.OffsetProgramsByHour(iNewTimeZoneCompensation);
-        OldTimeZoneOffset=iNewTimeZoneCompensation;
+        int offset=newoffset-oldoffset;
+
+        TVDatabase.OffsetProgramsByMinutes(offset);
+        OldTimeZoneOffsetHours=iNewTimeZoneCompensationHours;
+        OldTimeZoneOffsetMins=iNewTimeZoneCompensationMins;
         MessageBox.Show("TVDatabase is updated with new timezone offset",
           "MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Information);
+        SaveSettings();
 
       }
       catch(Exception)
@@ -946,6 +981,11 @@ namespace MediaPortal.Configuration.Sections
       TVDatabase.RemovePrograms();
       MessageBox.Show("All programs are removed from the tv database",
         "MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void label15_Click(object sender, System.EventArgs e)
+    {
+    
     }
 	}
 }

@@ -1503,7 +1503,7 @@ namespace MediaPortal.TV.Database
 		/// OffsetProgramsByHour() will correct the start/end time of all programs in the tvdatabase
 		/// </summary>
 		/// <param name="Hours">Number of hours to correct (can be positive or negative)</param>
-		static public void OffsetProgramsByHour(int Hours)
+		static public void OffsetProgramsByMinutes(int Minutes)
     {
 			lock (typeof(TVDatabase))
 			{
@@ -1517,8 +1517,8 @@ namespace MediaPortal.TV.Database
           {
             DateTime dtStart=program.StartTime;
             DateTime dtEnd=program.EndTime;
-            dtStart=dtStart.AddHours(Hours);
-            dtEnd=dtEnd.AddHours(Hours);
+            dtStart=dtStart.AddMinutes(Minutes);
+            dtEnd=dtEnd.AddMinutes(Minutes);
             program.Start=Utils.datetolong(dtStart);
             program.End=Utils.datetolong(dtEnd);
           

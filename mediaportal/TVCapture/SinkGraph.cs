@@ -194,7 +194,32 @@ namespace MediaPortal.TV.Recording
             m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
           }
       }
+#if DEBUG
+      IPin outPin;
+      DsUtils.GetPin(m_captureFilter,PinDirection.Output,0,out outPin);
+      IKsPropertySet prop= m_captureFilter as IKsPropertySet;
 
+      try
+      {
+        Guid guidTest= IVac.IvacGuid;
+        uint propid=(uint)IVac.PropertyId.IVAC_GOP_SIZE;
+        uint typesupport=0;
+        IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
+        uint uiSize=100;
+        hr=prop.QuerySupported( ref guidTest,propid, out typesupport);
+        hr=prop.RemoteGet(ref guidTest,propid,IntPtr.Zero,0, pDataReturned,100,out uiSize);
+        byte gopsize=Marshal.ReadByte(pDataReturned);
+        
+        propid=(uint)IVac.PropertyId.IVAC_SAMPLING_RATE;        
+        hr=prop.RemoteGet(ref guidTest,propid,IntPtr.Zero,0, pDataReturned,100,out uiSize);
+        int bitrate=Marshal.ReadInt32(pDataReturned);
+        int x=1;
+      }
+      catch (Exception ex)
+      {
+        int x=1;
+      }
+#endif
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
       
 
