@@ -1791,8 +1791,8 @@ namespace MediaPortal.TV.Recording
 											try{ if (item.Name=="title") newRec.Title=(string)item.Value;} catch(Exception){}
 											try{ if (item.Name=="genre") newRec.Genre=(string)item.Value;} catch(Exception){}
 											try{ if (item.Name=="details") newRec.Description=(string)item.Value;} catch(Exception){}
-											try{ if (item.Name=="start") newRec.Start=(long)item.Value;} catch(Exception){}
-											try{ if (item.Name=="end") newRec.End=(long)item.Value;} catch(Exception){}
+											try{ if (item.Name=="start") newRec.Start=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
+											try{ if (item.Name=="end") newRec.End=(long)UInt64.Parse(item.Value.ToString());} catch(Exception){}
 										}
 										if (newRec.Channel==null)
 										{
@@ -1803,6 +1803,9 @@ namespace MediaPortal.TV.Recording
 										}
 										if (newRec.Channel!=null)
 										{
+											TVChannel newChan = new TVChannel();
+											newChan.Name=newRec.Channel;
+											TVDatabase.AddChannel(newChan);
 											int id=TVDatabase.AddRecordedTV(newRec);
 											if (id < 0)
 											{
