@@ -1522,7 +1522,7 @@ namespace MediaPortal.TV.Recording
 					TunerLib.TuningSpace tuningSpaceFound;
 					int counter = 0;
 					TuneEnum.Reset();
-					while(counter < Count)
+					for (counter=0; counter < Count; counter++)
 					{
 						TuneEnum.Next(1, out tuningSpaceFound, out ulFetched);
 						if (ulFetched==1 )
