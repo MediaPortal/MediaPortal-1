@@ -156,34 +156,38 @@
 	</control>
 	<control>
 		<description>System value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>21</id>
 		<posX>380</posX>
 		<posY>100</posY>
+		<width>410</width>
 		<label>-</label>
 	</control>
 	<control>
 		<description>Manufacturer value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>22</id>
 		<posX>380</posX>
 		<posY>120</posY>
+		<width>410</width>
 		<label>-</label>
 	</control>
 	<control>
 		<description>Rating value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>23</id>
 		<posX>380</posX>
 		<posY>140</posY>
+		<width>410</width>
 		<label>-</label>
 	</control>
 	<control>
 		<description>Genre value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>24</id>
 		<posX>380</posX>
 		<posY>160</posY>
+		<width>410</width>
 		<label>-</label>
 	</control>
 	<control>
