@@ -601,7 +601,7 @@ namespace MediaPortal.TV.Recording
                                 dt.Hour,
                                 dt.Minute,
                                 DateTime.Now.Minute,DateTime.Now.Second,
-                                ".sbe");
+                                ".dvr-ms");
 				timeProgStart=currentRunningProgram.StartTime.AddMinutes(-m_iPreRecordInterval);
       }
       else
@@ -613,7 +613,7 @@ namespace MediaPortal.TV.Recording
                                 dt.Hour,
                                 dt.Minute,
                                 DateTime.Now.Minute,DateTime.Now.Second,
-                                ".sbe");
+                                ".dvr-ms");
       }
       
 
