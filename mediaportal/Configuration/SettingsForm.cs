@@ -70,7 +70,7 @@ namespace MediaPortal.Configuration
 			AddSection(general);
 
 			AddChildSection(general, new Sections.KeyboardControl());
-      //AddChildSection(general, new Sections.Keys());
+      AddChildSection(general, new Sections.Keys());
 
       Log.Write("add skins section");
       AddChildSection(general, new Sections.Skin());
