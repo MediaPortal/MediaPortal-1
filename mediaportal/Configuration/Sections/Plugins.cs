@@ -91,6 +91,7 @@ namespace MediaPortal.Configuration.Sections
 			EnumeratePluginDirectory(@"plugins\subtitle");
 			EnumeratePluginDirectory(@"plugins\tagreaders");
       EnumeratePluginDirectory(@"plugins\externalplayers");
+      EnumeratePluginDirectory(@"plugins\process");
     }
 
 		private void LoadPlugins()
