@@ -114,6 +114,7 @@ namespace MediaPortal.IR
 
 		private IntPtr empty = new IntPtr(-1);
 		private bool loaded = false;
+		private string lastchannel;
 
 		private OnRemoteCommand remoteCommandCallback = null;
 
@@ -552,6 +553,14 @@ namespace MediaPortal.IR
 
 		public void ChangeTunerChannel(string channel)
 		{
+			if(!loaded)
+				return;
+
+			Log.Write("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
+
+			// Already tuned to this channel?
+			if(channel == lastchannel)
+				return;
 			int length = channel.Length;
 			if ((!this.is3DigitTuner && length >2) || (length >3))
 				throw new System.Exception("invalid channel length");
@@ -566,6 +575,8 @@ namespace MediaPortal.IR
 			if (this.NeedsEnter)
 				Transmit(this.externalTunerCodes[10], UUIRTDRV_IRFMT_UUIRT, 1);
 
+			// All succeeded, remember last channel
+			lastchannel = channel;
 		}
 
 		public void Transmit(string gIRCode, int gIRCodeFormat, int repeatCount)
