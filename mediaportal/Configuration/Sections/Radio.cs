@@ -37,7 +37,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ComboBox comboBoxAudioDevice;
     private System.Windows.Forms.ComboBox comboBoxLineInput;
 		protected System.ComponentModel.IContainer components = null;
-    bool m_bEvents=false;
 
 		public Radio() : this("Radio")
 		{
