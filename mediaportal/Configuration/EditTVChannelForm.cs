@@ -22,6 +22,14 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox frequencyTextBox;
 		private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Button advancedButton;
+    private System.Windows.Forms.GroupBox advancedGroupBox;
+    private System.Windows.Forms.TextBox externalChannelTextBox;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.ComboBox typeComboBox;
+    private System.Windows.Forms.ComboBox inputComboBox;
+    private System.Windows.Forms.Label label6;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -41,6 +49,13 @@ namespace MediaPortal.Configuration
 			int highestChannelNumber = (int)channelSection.GetSetting("channel.highest");
 
 			channelTextBox.Text = String.Format("{0}", highestChannelNumber + 1);
+
+      //
+      // Set size of window
+      //
+      typeComboBox.Text = "Internal";
+      advancedGroupBox.Visible = false;
+      this.Height = 200;
 		}
 
 		/// <summary>
@@ -74,13 +89,21 @@ namespace MediaPortal.Configuration
       this.label2 = new System.Windows.Forms.Label();
       this.cancelButton = new System.Windows.Forms.Button();
       this.okButton = new System.Windows.Forms.Button();
+      this.advancedButton = new System.Windows.Forms.Button();
+      this.advancedGroupBox = new System.Windows.Forms.GroupBox();
+      this.externalChannelTextBox = new System.Windows.Forms.TextBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
+      this.typeComboBox = new System.Windows.Forms.ComboBox();
+      this.inputComboBox = new System.Windows.Forms.ComboBox();
+      this.label6 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
+      this.advancedGroupBox.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.frequencyTextBox);
       this.groupBox1.Controls.Add(this.label1);
@@ -155,7 +178,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(293, 143);
+      this.cancelButton.Location = new System.Drawing.Point(293, 279);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "Cancel";
@@ -165,18 +188,108 @@ namespace MediaPortal.Configuration
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.okButton.Location = new System.Drawing.Point(213, 143);
+      this.okButton.Location = new System.Drawing.Point(213, 279);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 2;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
+      // 
+      // advancedButton
+      // 
+      this.advancedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.advancedButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.advancedButton.Location = new System.Drawing.Point(8, 280);
+      this.advancedButton.Name = "advancedButton";
+      this.advancedButton.TabIndex = 3;
+      this.advancedButton.Text = "Advanced >>";
+      this.advancedButton.Click += new System.EventHandler(this.advancedButton_Click);
+      // 
+      // advancedGroupBox
+      // 
+      this.advancedGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.advancedGroupBox.Controls.Add(this.inputComboBox);
+      this.advancedGroupBox.Controls.Add(this.label6);
+      this.advancedGroupBox.Controls.Add(this.typeComboBox);
+      this.advancedGroupBox.Controls.Add(this.label5);
+      this.advancedGroupBox.Controls.Add(this.externalChannelTextBox);
+      this.advancedGroupBox.Controls.Add(this.label4);
+      this.advancedGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.advancedGroupBox.Location = new System.Drawing.Point(8, 144);
+      this.advancedGroupBox.Name = "advancedGroupBox";
+      this.advancedGroupBox.Size = new System.Drawing.Size(360, 128);
+      this.advancedGroupBox.TabIndex = 4;
+      this.advancedGroupBox.TabStop = false;
+      this.advancedGroupBox.Text = "Advanced Settings";
+      // 
+      // externalChannelTextBox
+      // 
+      this.externalChannelTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.externalChannelTextBox.Enabled = false;
+      this.externalChannelTextBox.Location = new System.Drawing.Point(120, 80);
+      this.externalChannelTextBox.Name = "externalChannelTextBox";
+      this.externalChannelTextBox.Size = new System.Drawing.Size(224, 20);
+      this.externalChannelTextBox.TabIndex = 7;
+      this.externalChannelTextBox.Text = "";
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(16, 84);
+      this.label4.Name = "label4";
+      this.label4.TabIndex = 8;
+      this.label4.Text = "External channel";
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(16, 32);
+      this.label5.Name = "label5";
+      this.label5.TabIndex = 10;
+      this.label5.Text = "Type";
+      // 
+      // typeComboBox
+      // 
+      this.typeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.typeComboBox.Items.AddRange(new object[] {
+                                                      "Internal",
+                                                      "External"});
+      this.typeComboBox.Location = new System.Drawing.Point(120, 28);
+      this.typeComboBox.Name = "typeComboBox";
+      this.typeComboBox.Size = new System.Drawing.Size(224, 21);
+      this.typeComboBox.TabIndex = 11;
+      this.typeComboBox.SelectedIndexChanged += new System.EventHandler(this.typeComboBox_SelectedIndexChanged);
+      // 
+      // inputComboBox
+      // 
+      this.inputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.inputComboBox.Enabled = false;
+      this.inputComboBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+      this.inputComboBox.Items.AddRange(new object[] {
+                                                       "Composite #1",
+                                                       "Composite #2",
+                                                       "SVHS"});
+      this.inputComboBox.Location = new System.Drawing.Point(120, 54);
+      this.inputComboBox.Name = "inputComboBox";
+      this.inputComboBox.Size = new System.Drawing.Size(224, 21);
+      this.inputComboBox.TabIndex = 13;
+      this.inputComboBox.SelectedIndexChanged += new System.EventHandler(this.inputComboBox_SelectedIndexChanged);
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 58);
+      this.label6.Name = "label6";
+      this.label6.TabIndex = 12;
+      this.label6.Text = "Input";
       // 
       // EditTVChannelForm
       // 
       this.AcceptButton = this.okButton;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(376, 174);
+      this.ClientSize = new System.Drawing.Size(376, 310);
+      this.Controls.Add(this.advancedGroupBox);
+      this.Controls.Add(this.advancedButton);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.groupBox1);
@@ -188,6 +301,7 @@ namespace MediaPortal.Configuration
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "EditTVChannelForm";
       this.groupBox1.ResumeLayout(false);
+      this.advancedGroupBox.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -239,6 +353,61 @@ namespace MediaPortal.Configuration
       {
         int channel = Int32.Parse(channelTextBox.Text);
         frequencyTextBox.Enabled = (channel > 0 && channel < 1000);
+      }
+    }    
+
+    bool advancedShowing = false;
+
+    private void advancedButton_Click(object sender, System.EventArgs e)
+    {
+      if(advancedShowing == false)
+      {
+        //
+        // Change button text
+        //
+        advancedButton.Text = "<< Simple";
+        advancedGroupBox.Visible = true;
+
+        this.Height = 336;
+      }
+      else
+      {
+        //
+        // Change button text
+        //
+        advancedButton.Text = "Advanced >>";
+        advancedGroupBox.Visible = false;
+
+        this.Height = 200;
+      }
+
+      //
+      // Toggle
+      //
+      advancedShowing = !advancedShowing;
+    }
+
+    private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      externalChannelTextBox.Enabled = inputComboBox.Enabled = typeComboBox.Text.Equals("External");
+      channelTextBox.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
+    }
+
+    private void inputComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      switch(inputComboBox.Text)
+      {
+        case "SVHS":
+          channelTextBox.Text = "1000";
+          break;
+
+        case "Composite #1":
+          channelTextBox.Text = "1001";
+          break;
+
+        case "Composite #2":
+          channelTextBox.Text = "1002";
+          break;
       }
     }
 
@@ -300,6 +469,12 @@ namespace MediaPortal.Configuration
 					channel.Frequency = 0;
 				}
 
+        //
+        // Fetch advanced settings
+        //
+        channel.External = typeComboBox.Text.Equals("External");
+        channel.ExternalTunerChannel = externalChannelTextBox.Text;
+
 				return channel;
 			}
 
@@ -312,7 +487,28 @@ namespace MediaPortal.Configuration
 					nameTextBox.Text = channel.Name;
 					channelTextBox.Text = channel.Channel.ToString();
 					frequencyTextBox.Text = channel.Frequency.ToString();
-				}
+
+          typeComboBox.Text = channel.External ? "External" : "Internal";
+          externalChannelTextBox.Text = channel.ExternalTunerChannel;
+
+          if(channel.External == true)
+          {
+            switch(channel.Channel)
+            {
+              case 1000:
+                inputComboBox.Text = "SVHS";
+                break;
+
+              case 1001:
+                inputComboBox.Text = "Composite #1";
+                break;
+
+              case 1002:
+                inputComboBox.Text = "Composite #2";
+                break;
+            }
+          }
+        }
 			}
 		}
 	}
@@ -322,6 +518,8 @@ namespace MediaPortal.Configuration
 		public string Name = String.Empty;
 		public int Channel = 0;
 		public Frequency Frequency = new Frequency(0);
+    public bool External = false;
+    public string ExternalTunerChannel = String.Empty;
 	}
 
 	public class Frequency

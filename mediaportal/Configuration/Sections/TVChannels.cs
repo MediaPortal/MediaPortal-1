@@ -24,6 +24,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.Button downButton;
     private System.Windows.Forms.Button upButton;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
 
 		//
 		// Private members
@@ -72,13 +73,14 @@ namespace MediaPortal.Configuration.Sections
       this.addButton = new System.Windows.Forms.Button();
       this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // columnHeader3
       // 
       this.columnHeader3.Text = "Frequency override (MHz)";
-      this.columnHeader3.Width = 198;
+      this.columnHeader3.Width = 148;
       // 
       // columnHeader2
       // 
@@ -164,7 +166,8 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                        this.columnHeader1,
                                                                                        this.columnHeader2,
-                                                                                       this.columnHeader3});
+                                                                                       this.columnHeader3,
+                                                                                       this.columnHeader4});
       this.channelsListView.FullRowSelect = true;
       this.channelsListView.HideSelection = false;
       this.channelsListView.Location = new System.Drawing.Point(16, 24);
@@ -178,6 +181,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.columnHeader1.Text = "Channel name";
       this.columnHeader1.Width = 146;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Type";
+      this.columnHeader4.Width = 50;
       // 
       // TVChannels
       // 
@@ -204,8 +212,9 @@ namespace MediaPortal.Configuration.Sections
 				TelevisionChannel editedChannel = editChannel.Channel;
 
 				ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
-																		editedChannel.Channel.ToString(),
-																		editedChannel.Frequency.ToString(Frequency.Format.MegaHerz) 
+																		editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
+																		editedChannel.Frequency.ToString(Frequency.Format.MegaHerz),
+                                    editedChannel.External ? "External" : "Internal"
 																	  } );
 				listItem.Tag = editedChannel;
 
@@ -230,8 +239,9 @@ namespace MediaPortal.Configuration.Sections
 					listItem.Tag = editedChannel;
 
 					listItem.SubItems[0].Text = editedChannel.Name;
-					listItem.SubItems[1].Text = editedChannel.Channel.ToString();
+					listItem.SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
 					listItem.SubItems[2].Text = editedChannel.Frequency.ToString(Frequency.Format.MegaHerz);
+          listItem.SubItems[3].Text = editedChannel.External ? "External" : "Internal";
 				}
 			}		
 		}
@@ -360,6 +370,9 @@ namespace MediaPortal.Configuration.Sections
 								tvChannel.Frequency.Herz *= 1000000L;
 
 							channel.Frequency = tvChannel.Frequency.Herz;
+              
+              channel.External = tvChannel.External;
+              channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
 
 							//
 							// Finally add the channel
@@ -446,10 +459,13 @@ namespace MediaPortal.Configuration.Sections
 				tvChannel.Channel	= channel.Number;
 				tvChannel.Name		= channel.Name;
 				tvChannel.Frequency	= channel.Frequency;
+        tvChannel.External = channel.External;
+        tvChannel.ExternalTunerChannel = channel.ExternalTunerChannel;
 
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
-																		tvChannel.Channel.ToString(),
-																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz) 
+																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),
+																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz),
+                                    tvChannel.External ? "External" : "Internal"
 																	  } );
 
 				listItem.Tag = tvChannel;
