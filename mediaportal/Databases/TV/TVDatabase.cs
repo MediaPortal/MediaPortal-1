@@ -1522,7 +1522,7 @@ namespace MediaPortal.TV.Database
             program.Start=Utils.datetolong(dtStart);
             program.End=Utils.datetolong(dtEnd);
           
-            string sql=String.Format("update program set iStartTime={0} and iEndTime={1} where idProgram={2}",
+            string sql=String.Format("update program set iStartTime='{0}' , iEndTime='{1}' where idProgram={2}",
                                       program.Start, program.End, program.ID);
             m_db.Execute(sql);
           }
