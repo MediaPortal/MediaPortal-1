@@ -559,7 +559,7 @@ namespace MediaPortal.GUI.Weather
 			{
 				// show failed dialog...
 				pDlgOK.SetHeading(412);	//"Unable to get weather data"
-				pDlgOK.SetLine(1, "");
+				pDlgOK.SetLine(1, m_szLocation);
 				pDlgOK.SetLine(2, "");
 				pDlgOK.SetLine(3, "");
 				pDlgOK.DoModal(GetID);
@@ -610,7 +610,7 @@ namespace MediaPortal.GUI.Weather
 				// show error dialog...
 				pDlgOK.SetHeading(412);	//"Unable to get weather data"
 				pDlgOK.SetLine(1, szCheckError);
-				pDlgOK.SetLine(2, "");
+				pDlgOK.SetLine(2, m_szLocation);
 				pDlgOK.SetLine(3, "");
 				pDlgOK.DoModal(GetID);
 				return true;	//we got a message so do display a second in refreshme()
