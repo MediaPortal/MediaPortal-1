@@ -9,6 +9,7 @@ namespace MediaPortal.Video.Database
 	public class IMDBMovie
 	{
 
+		int					m_id=-1;
     string 			m_strDirector="";
     string 			m_strWritingCredits="";
     string 			m_strGenre="";
@@ -32,6 +33,11 @@ namespace MediaPortal.Video.Database
     
     public IMDBMovie()
 		{
+		}
+		public int ID
+		{
+			get { return m_id;}
+			set { m_id=value;}
 		}
     public string Director
     {
@@ -156,6 +162,7 @@ namespace MediaPortal.Video.Database
       m_iYear=1900;
       m_fRating=0.0f;
 		m_strDatabase = "";
+			m_id=-1;
     }
 	}
 }

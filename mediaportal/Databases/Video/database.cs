@@ -834,6 +834,7 @@ namespace MediaPortal.Video.Database
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
 					details.SearchString= String.Format("{0}", lMovieId);
           details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
 			}
@@ -896,6 +897,7 @@ namespace MediaPortal.Video.Database
 				 lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,0,"movieinfo.idMovie") );
 				details.SearchString= String.Format("{0}", lMovieId);
         details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+				details.ID=(int)lMovieId;
 			}
 			catch (Exception ex) 
 			{
@@ -941,6 +943,7 @@ namespace MediaPortal.Video.Database
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
 					details.SearchString= String.Format("{0}", lMovieId);
           details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
 			}
@@ -988,6 +991,7 @@ namespace MediaPortal.Video.Database
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
 					details.SearchString= String.Format("{0}", lMovieId);
           details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
 			}
@@ -1034,6 +1038,7 @@ namespace MediaPortal.Video.Database
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
 					details.SearchString= String.Format("{0}", lMovieId);
           details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
 			}
@@ -1078,7 +1083,7 @@ namespace MediaPortal.Video.Database
 					details.IMDBNumber=DatabaseUtility.Get(results,iRow,"movieinfo.IMDBID") ;
           details.Title=DatabaseUtility.Get(results,iRow,"movieinfo.strTitle");
 					details.File=DatabaseUtility.Get(results,iRow,"files.strFilename");
-
+					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
 			}
