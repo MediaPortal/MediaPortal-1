@@ -1019,7 +1019,7 @@ namespace MediaPortal.GUI.TV
           if (program.Start<iStart) bStartsBefore=true;
           if (program.End>iEnd) bEndsAfter=true;
           
-          if( iProgram==m_iCursorX && iChannel==m_iCursorY)
+          if( iProgram==m_iCursorX-1 && iChannel==m_iCursorY)
           {
 
             m_currentProgram=program;
