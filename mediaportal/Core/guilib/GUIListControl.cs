@@ -756,7 +756,9 @@ namespace MediaPortal.GUI.Library
           break;        
         default:
         {
-					if ((m_iSelect == ListType.CONTROL_LIST) && (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
+					// by default send a message to parent window that user has done an action on the selected item
+					// could be, just enter or f3 for info or 0 to delete or y to queue etc...
+					if (m_iSelect == ListType.CONTROL_LIST) 
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)action.wID, 0, null);
 						GUIGraphicsContext.SendMessage(msg);
