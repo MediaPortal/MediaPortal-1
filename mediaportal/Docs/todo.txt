@@ -49,13 +49,14 @@ My TV:
   Scheduled:
      - remove all schedules button
   
-  Capture:
+  Recorder/Capture:
      - add option to directly show fullscreen TV when going to my tv
      - view & record @ same time (optional)
      - add support for digital capture cards (BDA tuners)
      - add screenshot option    
 	 - add current recording properties which can b used in the skin
-	      
+	 - add Record Monday-Friday     
+	 
 My Music:
   - faster start of 1st song played
   - gapless playback
