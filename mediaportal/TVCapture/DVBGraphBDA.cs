@@ -935,6 +935,30 @@ namespace MediaPortal.TV.Recording
 		}//public void StopRecording()
 
 
+		void Pause()
+		{	
+			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			{
+				g_Player.Pause();
+			}
+			if (m_mediaControl!=null && graphRunning)
+			{
+				m_mediaControl.Pause();
+			}
+		}
+
+		void Continue()
+		{
+			if (m_mediaControl!=null && graphRunning)
+			{
+				m_mediaControl.Run();
+			}
+			
+			if (g_Player.Playing && g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			{
+				g_Player.Pause();
+			}
+		}
 
 		/// <summary>
 		/// Switches / tunes to another TV channel
@@ -950,10 +974,7 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				//pause
-				if (m_mediaControl!=null && graphRunning)
-				{
-					m_mediaControl.Pause();
-				}
+				Pause();
 
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Number;
@@ -1185,10 +1206,7 @@ namespace MediaPortal.TV.Recording
 				//unpause
 				pmtVersionNumber= -1;
 				refreshPmtTable	= false;
-				if (m_mediaControl!=null && graphRunning)
-				{
-					m_mediaControl.Run();
-				}
+				Continue();
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -3134,12 +3152,8 @@ namespace MediaPortal.TV.Recording
 			if (m_NetworkProvider==null) return;
 
 			try
-			{
-				
-				if (m_mediaControl!=null && graphRunning)
-				{
-					m_mediaControl.Pause();
-				}
+			{	
+				Pause();
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Channel;
 				m_StartTime				= DateTime.Now;
@@ -3362,10 +3376,7 @@ namespace MediaPortal.TV.Recording
 			{
 				refreshPmtTable=false;
 				pmtVersionNumber=-1;
-				if (m_mediaControl!=null && graphRunning)
-				{
-					m_mediaControl.Run();
-				}
+				Continue();
 			}
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
