@@ -398,6 +398,8 @@ public class MediaPortalApp : D3DApp
 			{
 				OnAction(action);
 			}
+      action = new Action(key,Action.ActionType.ACTION_KEY_PRESSED,0,0);
+      OnAction(action);
 		}
 
 		protected override void keydown(System.Windows.Forms.KeyEventArgs e)

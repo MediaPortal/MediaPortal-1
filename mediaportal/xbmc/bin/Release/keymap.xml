@@ -511,6 +511,11 @@
       <key>A</key>
     </action>
     <action>
+      <description>Swap calibration arrows</description>
+      <id>47</id>
+      <key>enter</key>
+    </action>
+    <action>
       <description>Reset the calibration</description>
       <id>48</id>
       <key>F1</key>
@@ -534,6 +539,11 @@
       <description>Close Window</description>
       <id>51</id>
       <key>A</key>
+    </action>
+    <action>
+      <description>Close Window</description>
+      <id>51</id>
+      <key>enter</key>
     </action>
   </window>
   
@@ -656,6 +666,11 @@
       <description>record</description>
       <id>89</id>
       <key>A</key>
+    </action>
+    <action>
+      <description>record</description>
+      <id>89</id>
+      <key>enter</key>
     </action>
   </window>
   <window>
