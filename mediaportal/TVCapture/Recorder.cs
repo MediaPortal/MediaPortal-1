@@ -300,7 +300,7 @@ namespace MediaPortal.TV.Recording
       tmpRec.Start=Utils.datetolong(DateTime.Now);
       tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(2*60) );
       tmpRec.Channel=strChannel;
-      tmpRec.Title="Manual";
+      tmpRec.Title=GUILocalizeStrings.Get(413);
       tmpRec.RecType=TVRecording.RecordingType.Once;
 			tmpRec.IsContentRecording=false;//make a reference recording!
       TVDatabase.AddRecording(ref tmpRec);
