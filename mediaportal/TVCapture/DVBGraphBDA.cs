@@ -83,6 +83,21 @@ namespace MediaPortal.TV.Recording
 		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
 		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
+		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
+		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+		public static extern void StopGraph();
+		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+		public static extern bool Execute(IntPtr data);
+		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
+		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
+		public static extern void PidCallback([In] IntPtr data);
+		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+		public static extern int MenuItemClick([In] int ptr);
+		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
+		public static extern int SetMenuHandle([In] long menu);
+
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
@@ -146,6 +161,7 @@ namespace MediaPortal.TV.Recording
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
 		bool												refreshPmtTable=false;
+		protected bool							m_pluginsEnabled=false;
 #if DUMP
 		System.IO.FileStream fileout;
 #endif
@@ -207,6 +223,11 @@ namespace MediaPortal.TV.Recording
 				graphRunning=false;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph(). ");
 
+				using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				{
+					m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
+				}
+
 				//no card defined? then we cannot build a graph
 				if (m_Card==null) 
 				{
@@ -242,6 +263,9 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
 				m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
 
+				if(m_pluginsEnabled)
+					GetGraph(m_graphBuilder,false,IntPtr.Zero);
+			
 				// Get the Capture Graph Builder
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
 				Guid clsid = Clsid.CaptureGraphBuilder2;
@@ -747,6 +771,11 @@ namespace MediaPortal.TV.Recording
 			StopRecording();
 			StopViewing();
 
+			if(m_pluginsEnabled)
+			{
+				StopGraph();
+			}
+
 			if (m_TunerStatistics!=null)
 			{
 				for (int i = 0; i < m_TunerStatistics.Length; i++) 
@@ -1164,6 +1193,8 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){}
 
+			if(m_pluginsEnabled==true)
+				ExecTuner();
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		/// <summary>
@@ -2988,6 +3019,13 @@ namespace MediaPortal.TV.Recording
 			if (currentTuningObject==null) return 0;
 			int add=(int)data;
 			int end=(add+len);
+
+			if(m_pluginsEnabled==true)
+			{
+				for(int pointer=add;pointer<end;pointer+=188)
+					PidCallback((IntPtr)pointer);
+			}
+
 			//
 			// here write code to record raw ts or mp3 etc.
 			// the callback needs to return as soon as possible!!
@@ -3275,7 +3313,8 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
 
 			SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
-
+			if(m_pluginsEnabled==true)
+				ExecTuner();
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		public void StartRadio(RadioStation station)
@@ -3342,6 +3381,7 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 		
+		#region teletext
 		public bool HasTeletext()
 		{
 			if (m_graphState!= State.TimeShifting && m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
@@ -3350,6 +3390,59 @@ namespace MediaPortal.TV.Recording
 			if (currentTuningObject.TeletextPid>0) return true;
 			return false;
 		}
+		#endregion
+
+		#region plugins
+		void ExecTuner()
+		{
+			DVBGraphSS2.TunerData tu=new DVBGraphSS2.TunerData();
+			if (Network()==NetworkType.DVBS) tu.tt = (int) DVBGraphSS2.TunerType.ttSat;
+			if (Network()==NetworkType.DVBC) tu.tt = (int) DVBGraphSS2.TunerType.ttCable;
+			if (Network()==NetworkType.DVBT) tu.tt = (int) DVBGraphSS2.TunerType.ttTerrestrical;
+
+			tu.Frequency=(UInt32)(currentTuningObject.Frequency);
+			tu.SymbolRate=(UInt32)(currentTuningObject.Symbolrate);
+			tu.AC3=0;
+			tu.AudioPID=(Int16)currentTuningObject.AudioPid;
+			tu.DiseqC=(Int16)currentTuningObject.DiSEqC;
+			tu.PMT=(Int16)currentTuningObject.PMTPid;
+			tu.ECM_0=(Int16)currentTuningObject.ECMPid;
+			tu.FEC=(Int16)6;
+			tu.LNB=(Int16)currentTuningObject.LNBFrequency;
+			tu.LNBSelection=(Int16)currentTuningObject.LNBKHz;
+			tu.NetworkID=(Int16)currentTuningObject.NetworkID;
+			tu.PCRPID=(Int16)currentTuningObject.PCRPid;
+			tu.Polarity=(Int16)currentTuningObject.Polarity;
+			tu.SID=(Int16)currentTuningObject.ProgramNumber;
+			tu.TelePID=(Int16)currentTuningObject.TeletextPid;
+			tu.TransportStreamID=(Int16)currentTuningObject.TransportStreamID;
+			tu.VideoPID=(Int16)currentTuningObject.VideoPid;
+			tu.Reserved1=0;
+/*
+			tu.ECM_1=(Int16)m_ecmPids[1];
+			tu.ECM_2=(Int16)m_ecmPids[2];
+			tu.CAID_0=(Int16)m_currentChannel.Audio3;
+			tu.CAID_1=(Int16)m_ecmIDs[1];
+			tu.CAID_2=(Int16)m_ecmIDs[2];
+*/
+			IntPtr data=Marshal.AllocHGlobal(50);
+			Marshal.StructureToPtr(tu,data,true);
+
+			bool flag=false;
+			if(m_pluginsEnabled)
+			{
+				try
+				{
+					flag=Execute(data/*,out pids*/);
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Plugins-Exception: {0}",ex.Message);
+				}
+			}
+			Marshal.FreeHGlobal(data);
+		}
+		#endregion
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file
