@@ -184,6 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.browseButton.Size = new System.Drawing.Size(56, 20);
       this.browseButton.TabIndex = 49;
       this.browseButton.Text = "Browse";
+      this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
       // 
       // folderNameTextBox
       // 
