@@ -236,11 +236,11 @@ namespace MediaPortal.GUI.TV
 
         
 				case Action.ActionType.ACTION_PREV_CHANNEL:
-					OnPreviousChannel();
+					GUITVHome.OnPreviousChannel();
 					break;
         
 				case Action.ActionType.ACTION_NEXT_CHANNEL:
-					OnNextChannel();
+					GUITVHome.OnNextChannel();
 					break;
 
 				case Action.ActionType.ACTION_SHOW_GUI:
@@ -422,45 +422,6 @@ namespace MediaPortal.GUI.TV
 			return base.OnMessage(message);;
 		}
 
-		void OnPreviousChannel()
-		{
-			string strChannel=Recorder.TVChannelName;
-			for (int i=0; i < m_channels.Count;++i)
-			{
-				TVChannel chan=(TVChannel)m_channels[i];
-				if (String.Compare(chan.Name,strChannel,true)==0 )
-				{
-					int iPrev=i-1;
-					if (iPrev<0) iPrev=m_channels.Count-1;
-					chan=(TVChannel)m_channels[iPrev];
-					
-          int card=GUITVHome.GetCurrentCard();
-          Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-
-					return;
-				}
-			}
-		}
-    
-		void OnNextChannel()
-		{
-			string strChannel=Recorder.TVChannelName;
-			for (int i=0; i < m_channels.Count;++i)
-			{
-				TVChannel chan=(TVChannel)m_channels[i];
-				if (String.Compare(chan.Name,strChannel,true)==0 )
-				{
-					int iNext=i+1;
-					if (iNext>m_channels.Count-1) iNext=0;
-					chan=(TVChannel)m_channels[iNext];
-
-          int card=GUITVHome.GetCurrentCard();
-					Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-
-					return;
-				}
-			}
-		}
     
 		public bool NeedUpdate()
 		{

@@ -96,7 +96,15 @@ namespace MediaPortal.GUI.TV
 		public override void OnAction(Action action)
 		{
 			switch (action.wID)
-			{
+      {
+        case Action.ActionType.ACTION_PREV_CHANNEL:
+          GUITVHome.OnPreviousChannel();
+        break;
+        
+        case Action.ActionType.ACTION_NEXT_CHANNEL:
+          GUITVHome.OnNextChannel();
+          break;
+
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
           
@@ -532,6 +540,49 @@ namespace MediaPortal.GUI.TV
     static public int GetCurrentCard()
     {
       return m_iCurrentCard;
+    }
+    static public void OnPreviousChannel()
+    {
+      ArrayList       m_channels=new ArrayList();
+      TVDatabase.GetChannels(ref m_channels);
+      string strChannel=Recorder.TVChannelName;
+      for (int i=0; i < m_channels.Count;++i)
+      {
+        TVChannel chan=(TVChannel)m_channels[i];
+        if (String.Compare(chan.Name,strChannel,true)==0 )
+        {
+          int iPrev=i-1;
+          if (iPrev<0) iPrev=m_channels.Count-1;
+          chan=(TVChannel)m_channels[iPrev];
+					
+          int card=GUITVHome.GetCurrentCard();
+          Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+
+          return;
+        }
+      }
+    }
+    
+    static public void OnNextChannel()
+    {
+      ArrayList       m_channels=new ArrayList();
+      TVDatabase.GetChannels(ref m_channels);
+      string strChannel=Recorder.TVChannelName;
+      for (int i=0; i < m_channels.Count;++i)
+      {
+        TVChannel chan=(TVChannel)m_channels[i];
+        if (String.Compare(chan.Name,strChannel,true)==0 )
+        {
+          int iNext=i+1;
+          if (iNext>m_channels.Count-1) iNext=0;
+          chan=(TVChannel)m_channels[iNext];
+
+          int card=GUITVHome.GetCurrentCard();
+          Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+
+          return;
+        }
+      }
     }
       
 		#region ISetupForm Members
