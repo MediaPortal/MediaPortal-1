@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
  <strings>
 	<characters>255</characters>
 	<string>
@@ -14,7 +15,7 @@
 	</string>
 	<string>
 		<id>3</id>
-		<value>Video</value>
+		<value>Filmati</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -30,11 +31,11 @@
 	</string>
 	<string>
 		<id>7</id>
-		<value>Files</value>
+		<value>File</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>Previsioni del tempo</value>
+		<value>Meteo</value>
 	</string>
 	<string>
 		<id>9</id>
@@ -46,23 +47,23 @@
 	</string>
 	<string>
 		<id>11</id>
-		<value>Lunedi'</value>
+		<value>Lunedì</value>
 	</string>
 	<string>
 		<id>12</id>
-		<value>Martedi'</value>
+		<value>Martedì</value>
 	</string>
 	<string>
 		<id>13</id>
-		<value>Mercoledi'</value>
+		<value>Mercoledì</value>
 	</string>
 	<string>
 		<id>14</id>
-		<value>Giovedi'</value>
+		<value>Giovedì</value>
 	</string>
 	<string>
 		<id>15</id>
-		<value>Venerdi'</value>
+		<value>Venerdì</value>
 	</string>
 	<string>
 		<id>16</id>
@@ -150,19 +151,19 @@
 	</string>
 	<string>
 		<id>107</id>
-		<value>Si'</value>
+		<value>Sì</value>
 	</string>
 	<string>
 		<id>108</id>
-		<value>SlideShow</value>
+		<value>Presentazione</value>
 	</string>
 	<string>
 		<id>109</id>
-		<value>Crea Anteprime</value>
+		<value>Crea anteprime</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Crea Anteprime</value>
+		<value>Crea anteprime</value>
 	</string>
 	<string>
 		<id>111</id>
@@ -174,11 +175,11 @@
 	</string>
 	<string>
 		<id>113</id>
-		<value>Miei Files : Origine</value>
+		<value>File : Origine</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Miei Files : Destinazione</value>
+		<value>File : Destinazione</value>
 	</string>
 	<string>
 		<id>115</id>
@@ -198,7 +199,7 @@
 	</string>
 	<string>
 		<id>119</id>
-		<value>Nuova Cartella</value>
+		<value>Nuova cartella</value>
 	</string>
 	<string>
 		<id>120</id>
@@ -222,11 +223,11 @@
 	</string>
 	<string>
 		<id>125</id>
-		<value>Delete questi file?</value>
+		<value>Cancellare questi file?</value>
 	</string>
 	<string>
 		<id>126</id>
-		<value>Status</value>
+		<value>Stato</value>
 	</string>
 	<string>
 		<id>127</id>
@@ -238,11 +239,11 @@
 	</string>
 	<string>
 		<id>129</id>
-		<value>Slideshow</value>
+		<value>Presentazione</value>
 	</string>
 	<string>
 		<id>130</id>
-		<value>Info Sistema</value>
+		<value>Info sul sistema</value>
 	</string>
 	<string>
 		<id>131</id>
@@ -274,11 +275,11 @@
 	</string>
 	<string>
 		<id>138</id>
-		<value>SYSTEM INFORMATION</value>
+		<value>INFORMAZIONI SUL SISTEMA</value>
 	</string>
 	<string>
 		<id>139</id>
-		<value>Temperature:</value>
+		<value>Temperatura:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -350,7 +351,7 @@
 	</string>
 	<string>
 		<id>157</id>
-		<value>Video</value>
+		<value>Filmati</value>
 	</string>
 	<string>
 		<id>158</id>
@@ -358,7 +359,7 @@
 	</string>
 	<string>
 		<id>159</id>
-		<value>No link</value>
+		<value>Nessun collegamento</value>
 	</string>
 	<string>
 		<id>160</id>
@@ -370,7 +371,7 @@
 	</string>
 	<string>
 		<id>162</id>
-		<value>Cassetto aperto</value>
+		<value>Vassoio aperto</value>
 	</string>
 	<string>
 		<id>163</id>
@@ -378,11 +379,11 @@
 	</string>
 	<string>
 		<id>164</id>
-		<value>Nessun Disco</value>
+		<value>Nessun disco</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disco Presente</value>
+		<value>Disco presente</value>
 	</string>
 	<string>
 		<id>166</id>
@@ -394,7 +395,7 @@
 	</string>
 	<string>
 		<id>168</id>
-		<value>Sincronizza Orologio:</value>
+		<value>Sincronizza l'orologio:</value>
 	</string>
 	<string>
 		<id>169</id>
@@ -410,11 +411,11 @@
 	</string>
 	<string>
 		<id>172</id>
-		<value>Data di Rilascio:</value>
+		<value>Data di uscita:</value>
 	</string>
 	<string>
 		<id>173</id>
-		<value>Giuduzio:</value>
+		<value>Giudizio:</value>
 	</string>
 	<string>
 		<id>174</id>
@@ -502,7 +503,7 @@
 	</string>
 	<string>
 		<id>195</id>
-		<value>Info IMDB non trovata!</value>
+		<value>Info IMDB non trovate!</value>
 	</string>
 	<string>
 		<id>196</id>
@@ -510,7 +511,7 @@
 	</string>
 	<string>
 		<id>197</id>
-		<value>Interrogo info IMDB</value>
+		<value>Interrogazione info IMDB</value>
 	</string>
 	<string>
 		<id>198</id>
@@ -562,7 +563,7 @@
 	</string>
 	<string>
 		<id>210</id>
-		<value>Prcedente</value>
+		<value>Precedente</value>
 	</string>
 	<string>
 		<id>211</id>
@@ -570,15 +571,15 @@
 	</string>
 	<string>
 		<id>212</id>
-		<value>applicazioni trovate</value>
+		<value>Applicazioni trovate</value>
 	</string>
 	<string>
 		<id>213</id>
-		<value>Calibrazione IU</value>
+		<value>Calibrazione I. U.</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Calib. Schermo</value>
+		<value>Calibrazione Schermo</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -602,11 +603,11 @@
 	</string>
 	<string>
 		<id>220</id>
-		<value>Condivisione Remota</value>
+		<value>Condivisione remota</value>
 	</string>
 	<string>
 		<id>221</id>
-		<value>La Rete e' disconnessa</value>
+		<value>La Rete è disconnessa</value>
 	</string>
 	<string>
 		<id>222</id>
@@ -618,11 +619,11 @@
 	</string>
 	<string>
 		<id>224</id>
-		<value>Velocita'</value>
+		<value>Velocità</value>
 	</string>
 	<string>
 		<id>225</id>
-		<value>Tempo Transizione</value>
+		<value>Tempo transizione</value>
 	</string>
 	<string>
 		<id>226</id>
@@ -634,7 +635,7 @@
 	</string>
 	<string>
 		<id>228</id>
-		<value>Rimenscola la Playlist in caricamento</value>
+		<value>Rimescola la playlist al caricamento</value>
 	</string>
 	<string>
 		<id>229</id>
@@ -678,7 +679,7 @@
 	</string>
 	<string>
 		<id>240</id>
-		<value>Esecuzione automatica DVD-Video</value>
+		<value>Esecuzione automatica DVD-Filmati</value>
 	</string>
 	<string>
 		<id>241</id>
@@ -694,7 +695,7 @@
 	</string>
 	<string>
 		<id>244</id>
-		<value>Esecuzione automatica Video</value>
+		<value>Esecuzione automatica Filmati</value>
 	</string>
 	<string>
 		<id>245</id>
@@ -782,7 +783,7 @@
 	</string>
 	<string>
 		<id>266</id>
-		<value>Ordina per: Tracia</value>
+		<value>Ordina per: Traccia</value>
 	</string>
 	<string>
 		<id>267</id>
@@ -822,7 +823,7 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>-ATTENZIONE!- Lasciare a 0,0 per il miglior risultato, cambiare per restringere il video.</value>
+		<value>-ATTENZIONE!- Lasciare a 0,0 per il miglior risultato, cambiare per restringere il Filmati.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -882,7 +883,7 @@
 	</string>
 	<string>
 		<id>291</id>
-		<value>Video</value>
+		<value>Filmati</value>
 	</string>
 	<string>
 		<id>292</id>
@@ -954,7 +955,7 @@
 	</string>
 	<string>
 		<id>310</id>
-		<value>Luminosita'/contrasto automatici</value>
+		<value>Luminosità/contrasto automatici</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -1034,7 +1035,7 @@
 	</string>
 	<string>
 		<id>330</id>
-		<value>Questa operazione puo' durare a lungo...</value>
+		<value>Questa operazione può durare a lungo...</value>
 	</string>
 	<string>
 		<id>331</id>
@@ -1098,11 +1099,11 @@
 	</string>
 	<string>
 		<id>346</id>
-		<value>Stack</value>
+		<value>Raggruppa</value>
 	</string>
 	<string>
 		<id>347</id>
-		<value>Unstack</value>
+		<value>Separa</value>
 	</string>
 	<string>
 		<id>348</id>
@@ -1134,15 +1135,15 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Tempo attesa Screensaver</value>
+		<value>Tempo attesa salvaschermo</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Modalita' Screensaver</value>
+		<value>Modalità salvaschermo</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Tempo attesa Shutdown</value>
+		<value>Tempo attesa spegnimento</value>
 	</string>
 	<string>
 		<id>358</id>
@@ -1154,15 +1155,15 @@
 	</string>
 	<string>
 		<id>360</id>
-		<value>Screensaver</value>
+		<value>Salvaschermo</value>
 	</string>
 	<string>
 		<id>361</id>
-		<value>R. SlideShow</value>
+		<value>R. Presentazione</value>
 	</string>
 	<string>
 		<id>362</id>
-		<value>Livello dissolvenza Screensaver (%)</value>
+		<value>Livello dissolvenza salvaschermo (%)</value>
 	</string>
 	<string>
 		<id>363</id>
@@ -1194,7 +1195,7 @@
 	</string>
 	<string>
 		<id>370</id>
-		<value>T-Storms</value>
+		<value>Temporali</value>
 	</string>
 	<string>
 		<id>371</id>
@@ -1202,7 +1203,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>Maggiormente</value>
+		<value>Principalmente</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -1234,7 +1235,7 @@
 	</string>
 	<string>
 		<id>380</id>
-		<value>Temporali</value>
+		<value>Pioggia</value>
 	</string>
 	<string>
 		<id>381</id>
@@ -1254,11 +1255,11 @@
 	</string>
 	<string>
 		<id>385</id>
-		<value>Fair</value>
+		<value>Sostenuto</value>
 	</string>
 	<string>
 		<id>386</id>
-		<value>Pulito</value>
+		<value>Limpido</value>
 	</string>
 	<string>
 		<id>387</id>
@@ -1266,7 +1267,7 @@
 	</string>
 	<string>
 		<id>396</id>
-		<value>Seleziona Localita'</value>
+		<value>Seleziona Località</value>
 	</string>
 	<string>
 		<id>397</id>
@@ -1278,7 +1279,7 @@
 	</string>
 	<string>
 		<id>399</id>
-		<value>Scala Velocita'</value>
+		<value>Scala Velocità</value>
 	</string>
 	<string>
 		<id>400</id>
@@ -1286,11 +1287,11 @@
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temp</value>
+		<value>Temperatura</value>
 	</string>
 	<string>
 		<id>402</id>
-		<value>Sembra come</value>
+		<value>T. apparente</value>
 	</string>
 	<string>
 		<id>403</id>
@@ -1302,11 +1303,11 @@
 	</string>
 	<string>
 		<id>405</id>
-		<value>Punto di rugiada</value>
+		<value>P.to di rugiada</value>
 	</string>
 	<string>
 		<id>406</id>
-		<value>Umidita'</value>
+		<value>Umidità</value>
 	</string>
 	<string>
 		<id>407</id>
@@ -1350,19 +1351,19 @@
 	</string>
 	<string>
 		<id>418</id>
-		<value>Miei Video/Generi</value>
+		<value>Miei Filmati/Generi</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Miei Video/Attori</value>
+		<value>Miei Filmati/Attori</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Miei Video/Anni</value>
+		<value>Miei Filmati/Anni</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Miei Video/Titoli</value>
+		<value>Miei Filmati/Titoli</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1454,7 +1455,7 @@
 	</string>
 	<string>
 		<id>444</id>
-		<value>video</value>
+		<value>Filmati</value>
 	</string>
 	<string>
 		<id>445</id>
@@ -1534,7 +1535,7 @@
 	</string>
 	<string>
 		<id>464</id>
-		<value>Luminosita'</value>
+		<value>Luminosità</value>
 	</string>
 	<string>
 		<id>465</id>
@@ -1570,7 +1571,7 @@
 	</string>
 	<string>
 		<id>473</id>
-		<value>Ricampionamento Alta Qualita'</value>
+		<value>Ricampionamento Alta Qualità</value>
 	</string>
 	<string>
 		<id>474</id>
@@ -1582,7 +1583,7 @@
 	</string>
 	<string>
 		<id>476</id>
-		<value>Musica &amp; Video</value>
+		<value>Musica &amp; Filmati</value>
 	</string>
 	<string>
 		<id>477</id>
@@ -1646,11 +1647,11 @@
 	</string>
 	<string>
 		<id>600</id>
-		<value>GuidaTV</value>
+		<value>Guida TV</value>
 	</string>
 	<string>
 		<id>601</id>
-		<value>Registra Ora</value>
+		<value>Registra ora</value>
 	</string>
 	<string>
 		<id>602</id>
@@ -1658,7 +1659,7 @@
 	</string>
 	<string>
 		<id>603</id>
-		<value>Programmato</value>
+		<value>Programmazione</value>
 	</string>
 	<string>
 		<id>604</id>
@@ -1666,7 +1667,7 @@
 	</string>
 	<string>
 		<id>605</id>
-		<value>Mia TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -1906,7 +1907,7 @@
 	</string>
 	<string>
 		<id>665</id>
-		<value>Mia Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
@@ -1938,7 +1939,7 @@
 	</string>	
 	<string>
 		<id>673</id>
-		<value>Velocita' scorrimento</value>
+		<value>Velocità scorrimento</value>
 	</string>	
 	<string>
 		<id>674</id>
@@ -1986,64 +1987,122 @@
 	</string>	
 	<string>
 		<id>685</id>
-		<value>Ordina per: Status</value>
-	</string>	
-	
+		<value>Ordina per: Stato</value>
+	</string>
+<string><id>724</id><value>Cerca nella Guida TV</value></string>
+<string><id>725</id><value>Generi</value></string>
+<string><id>726</id><value>Titolo</value></string>
+<string><id>727</id><value>TV in diretta sullo sfondo</value></string>
+<string><id>728</id><value>Impossibile iniziare</value></string>
+<string><id>729</id><value>Assicurati di usare VMR9 e che qualcosa sia in riproduzione</value></string>
+<string><id>730</id><value>Questa programmazione è in registrazione. Se cancelli</value></string>
+<string><id>731</id><value>la programmazione la registrazione sarà interrotta</value></string>
+<string><id>732</id><value>Sei sicuro?</value></string>
+<string><id>800</id><value>Comincia con</value></string>
+<string><id>801</id><value>Contiene</value></string>
+<string><id>802</id><value>Finisce con</value></string>
+<string><id>803</id><value>è</value></string>
+<string><id>804</id><value>Fatto</value></string>
+<string><id>805</id><value>Cancella</value></string>
+<string><id>806</id><value>Titolo</value></string>
+<string><id>807</id><value>Resa</value></string>
+<string><id>808</id><value>Ingredienti</value></string>
+<string><id>809</id><value>Istruzioni</value></string>
+<string><id>810</id><value>Carta</value></string>
+<string><id>850</id><value>Allarmi</value></string>
+<string><id>851</id><value>Playlist</value></string>
+<string><id>852</id><value>Allarme attivo</value></string>
+<string><id>853</id><value>Seleziona Playlist</value></string>
+<string><id>854</id><value>Abilitato questi giorni</value></string>
+<string><id>855</id><value>Orario dell'Allarme</value></string>
+<string><id>856</id><value>Sleeptimer Acceso</value></string>
+<string><id>857</id><value>Snooze</value></string>
+<string><id>858</id><value>Snooze Time</value></string>
+<string><id>859</id><value>Sleep Time</value></string>
+<string><id>860</id><value>Aumenta/diminuisci gradualmente il volume</value></string>
+<string><id>8000</id><value>Email</value></string>
+<string><id>8001</id><value>Controlla la Mailbox</value></string>
+<string><id>8002</id><value>Contr. autom. disattivo</value></string>
+<string><id>8003</id><value>Contr. autom. attivo</value></string>
+<string><id>8004</id><value>Nuovi messaggi</value></string>
+<string><id>8005</id><value>Refreshing Mailbox</value></string>
+<string><id>8007</id><value>Contr. autom. attivo</value></string>
+<string><id>8008</id><value>Indietro</value></string>
+<string><id>8009</id><value>Segna tutti da leggere</value></string>
+<string><id>8010</id><value>Nessuna Mailbox definita</value></string>
+<string><id>8011</id><value>Perfavore vai alle impostazioni e definisci</value></string>
+<string><id>8012</id><value>almeno una Mailbox per usare questa funzionalità</value></string>
+<string><id>8013</id><value>Nessuna risposta dal Server</value></string>
+<string><id>8014</id><value>Il Server '{0}' non risponde!</value></string>
+<string><id>8015</id><value>Controlla la configurazione della Mailbox '{0}'</value></string>
+<string><id>8016</id><value>Da</value></string>
+<string><id>8017</id><value>A</value></string>
+<string><id>8018</id><value>Oggetto</value></string>
+<string><id>8019</id><value>Messaggio</value></string>
+<string><id>8020</id><value>Mostra il codice HTML</value></string>
+<string><id>8021</id><value>Segna come letto</value></string>
+<string><id>8022</id><value>Mostra gli allegati</value></string>
+<string><id>8023</id><value>Nuovi messaggi</value></string>
+<string><id>8024</id><value>Mostra il messaggio</value></string>
+<string><id>8025</id><value>Parsing Message</value></string>
+<string><id>8030</id><value>Connesso al Server</value></string>
+<string><id>8031</id><value>Ricevo il numero di Email</value></string>
+<string><id>8033</id><value>Progresso</value></string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>TV</value></string>
 <string><id>10002</id><value>Immagini</value></string>
-<string><id>10003</id><value>Files</value></string>
+<string><id>10003</id><value>File</value></string>
 <string><id>10004</id><value>Impostazioni</value></string>
 <string><id>10005</id><value>Musica</value></string>
-<string><id>10006</id><value>Video</value></string>
-<string><id>10007</id><value>System information</value></string>
-<string><id>10008</id><value>Settings->General</value></string>
-<string><id>10009</id><value>Settings->Screen</value></string>
-<string><id>10010</id><value>Settings->Screen->UI Calibration</value></string>
-<string><id>10011</id><value>Settings->Screen->Screen Calibration</value></string>
-<string><id>10012</id><value>Settings->SlideShow</value></string>
-<string><id>10013</id><value>Settings->Screen->Filters</value></string>
-<string><id>10014</id><value>Settings->Music</value></string>
-<string><id>10015</id><value>Settings->Screen->Subtitles</value></string>
-<string><id>10016</id><value>Settings->Screen->Screensaver</value></string>
-<string><id>10017</id><value>Settings->Weather</value></string>
-<string><id>10020</id><value>Settings->Scripts</value></string>
-<string><id>10021</id><value>My Videos/genre</value></string>
-<string><id>10022</id><value>My Videos/actor</value></string>
-<string><id>10023</id><value>My Videos/year</value></string>
-<string><id>10024</id><value>Settings->Programs</value></string>
-<string><id>10025</id><value>My Videos/title</value></string>
-<string><id>10026</id><value>Settings->General->Cache</value></string>
-<string><id>10027</id><value>Settings->General->Autorun</value></string>
-<string><id>10028</id><value>My Videos/playlist</value></string>
-<string><id>10029</id><value>Settings->General->LCD</value></string>
-<string><id>10030</id><value>My Radio</value></string>
-<string><id>10031</id><value>Settings->Screen->scroll speed</value></string>
-<string><id>10100</id><value>Yes/no dialog</value></string>
-<string><id>10101</id><value>Progress dialog</value></string>
-<string><id>10500</id><value>My Music/playlist</value></string>
-<string><id>10501</id><value>My Music/files</value></string>
-<string><id>10502</id><value>My Music/albums</value></string>
-<string><id>10503</id><value>My Music/artists</value></string>
-<string><id>10504</id><value>My Music/genres</value></string>
-<string><id>10505</id><value>My Music/top100</value></string>
-<string><id>10600</id><value>My TV/Guide</value></string>
-<string><id>10601</id><value>My TV/Scheduler</value></string>
-<string><id>10602</id><value>My TV/fullscreen</value></string>
-<string><id>10603</id><value>My TV/Recorded TV</value></string>
-<string><id>11000</id><value>keyboard</value></string>
-<string><id>12000</id><value>Select dialog</value></string>
-<string><id>12001</id><value>My Music/info</value></string>
-<string><id>12002</id><value>Dialog OK</value></string>
-<string><id>12003</id><value>My Videos/Info</value></string>
-<string><id>12004</id><value>My Scripts/Info</value></string>
-<string><id>12005</id><value>Fullscreen video</value></string>
-<string><id>12006</id><value>Audio visisalisation</value></string>
-<string><id>12007</id><value>My Picture/slideshow</value></string>
-<string><id>12008</id><value>Filestacking dialog</value></string>
-<string><id>12600</id><value>My Weather</value></string>
-<string><id>12900</id><value>Screensaver</value></string>
-<string><id>12901</id><value>Fullscreen OSD</value></string>
+<string><id>10006</id><value>Filmati</value></string>
+<string><id>10007</id><value>Informazioni sul sistema</value></string>
+<string><id>10008</id><value>Impostazioni->Generali</value></string>
+<string><id>10009</id><value>Impostazioni->Schermo</value></string>
+<string><id>10010</id><value>Impostazioni->Schermo->Calibrazione I. U.</value></string>
+<string><id>10011</id><value>Impostazioni->Schermo->Calibrazione dello schermo</value></string>
+<string><id>10012</id><value>Impostazioni->Presentazione</value></string>
+<string><id>10013</id><value>Impostazioni->Schermo->Filtri</value></string>
+<string><id>10014</id><value>Impostazioni->Music</value></string>
+<string><id>10015</id><value>Impostazioni->Schermo->Sottoitoli</value></string>
+<string><id>10016</id><value>Impostazioni->Screen->Salvaschermo</value></string>
+<string><id>10017</id><value>Impostazioni->Meteo</value></string>
+<string><id>10020</id><value>Impostazioni->Script</value></string>
+<string><id>10021</id><value>Filmati/Genere</value></string>
+<string><id>10022</id><value>Filmati/Attore</value></string>
+<string><id>10023</id><value>Filmati/Anno</value></string>
+<string><id>10024</id><value>Impostazioni->Programmi</value></string>
+<string><id>10025</id><value>Filmati/Titolo</value></string>
+<string><id>10026</id><value>Impostazioni->Generali->Cache</value></string>
+<string><id>10027</id><value>Impostazioni->Generali->Autorun</value></string>
+<string><id>10028</id><value>Filmati/Playlist</value></string>
+<string><id>10029</id><value>Impostazioni->Generali->LCD</value></string>
+<string><id>10030</id><value>Radio</value></string>
+<string><id>10031</id><value>Impostazioni->Schermo->Velocità di scorrimento</value></string>
+<string><id>10100</id><value>Dialogo Sì/No</value></string>
+<string><id>10101</id><value>Dialogo di progresso</value></string>
+<string><id>10500</id><value>Musica/Playlist</value></string>
+<string><id>10501</id><value>Musica/File</value></string>
+<string><id>10502</id><value>Musica/Album</value></string>
+<string><id>10503</id><value>Musica/Artisti</value></string>
+<string><id>10504</id><value>Musica/Generi</value></string>
+<string><id>10505</id><value>Musica/Top100</value></string>
+<string><id>10600</id><value>TV/Guida</value></string>
+<string><id>10601</id><value>TV/Programmazione</value></string>
+<string><id>10602</id><value>TV/Schermo intero</value></string>
+<string><id>10603</id><value>TV/Registrazioni</value></string>
+<string><id>11000</id><value>Tastiera</value></string>
+<string><id>12000</id><value>Dialogo di selezione</value></string>
+<string><id>12001</id><value>Musica/Info</value></string>
+<string><id>12002</id><value>Dialogo OK</value></string>
+<string><id>12003</id><value>Filmati/Info</value></string>
+<string><id>12004</id><value>Script/Info</value></string>
+<string><id>12005</id><value>Filmati a schermo intero</value></string>
+<string><id>12006</id><value>Visualizzazione audio</value></string>
+<string><id>12007</id><value>Immagini/Presentazione</value></string>
+<string><id>12008</id><value>Dialogo di raggruppamento</value></string>
+<string><id>12600</id><value>Tempo</value></string>
+<string><id>12900</id><value>Salvaschermo</value></string>
+<string><id>12901</id><value>OSD a schermo intero</value></string>
 
 <string><id>686</id><value>Nato</value></string>
 <string><id>687</id><value>Attivo da anni</value></string>
@@ -2052,16 +2111,16 @@
 <string><id>690</id><value>Discografia (Album)</value></string>
 <string><id>691</id><value>Discografia (compilations, ecc.)</value></string>
 <string><id>700</id><value>Discografia (eps, singoli)</value></string>
-<string><id>701</id><value>Discografia (bootleg, video, intervste)</value></string>
+<string><id>701</id><value>Discografia (bootleg, Filmati, intervste)</value></string>
 <string><id>702</id><value>Artista non trovato!</value></string>
 <string><id>703</id><value>Non connesso a Internet!</value></string>
-<string><id>704</id><value>Recupero Feed</value></string>
+<string><id>704</id><value>Recupero feed</value></string>
 <string><id>705</id><value>Acquisizione feed RSS per </value></string>
-<string><id>706</id><value>Seleziona Feed</value></string>
-<string><id>707</id><value>TV On/Off</value></string>
-<string><id>708</id><value>Timeshifting</value></string>
-<string><id>709</id><value>Auto upData</value></string>
-<string><id>710</id><value>Una nuova versione e' disponibile</value></string>
+<string><id>706</id><value>Seleziona feed</value></string>
+<string><id>707</id><value>TV accesa/spenta</value></string>
+<string><id>708</id><value>Pausa digitale</value></string>
+<string><id>709</id><value>Autoaggiornamento</value></string>
+<string><id>710</id><value>Una nuova versione è disponibile</value></string>
 <string><id>711</id><value>Aggiorna da v#old a v#new ?</value></string>
 <string><id>712</id><value>Indietro</value></string>
 
@@ -2087,11 +2146,11 @@
 </string>
 <string>
 	<id>718</id>
-	<value>Azzera Top100</value>
+	<value>Azzera la Top100</value>
 </string>
 <string>
 	<id>719</id>
-	<value>Sei sicuro di voler azzerare la top 100?</value>
+	<value>Sei sicuro di voler azzerare la Top100?</value>
 </string>
 <string>
 	<id>720</id>
@@ -2103,7 +2162,7 @@
 </string>
 <string>
 	<id>722</id>
-	<value>Impossibhile riprodurre DVD</value>
+	<value>Impossibile riprodurre DVD</value>
 </string>
 <string>
 	<id>723</id>
