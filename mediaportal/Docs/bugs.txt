@@ -2,7 +2,6 @@ Bugs left:
   
   31-05-04 my tv        : PVR350 does not give any image and sound on latest version. (weird huh Frodo? I can't get it to work either while it did at first) we all have the same error log. 
   31-05-04 my music     : remove album info does not delete the thumbnail. 
-  31-05-04 my music     : album art cannot be re-searched like imdb does with the on screen keyboard. 
   02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
   02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
   01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
