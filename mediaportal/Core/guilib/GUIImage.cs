@@ -583,8 +583,8 @@ namespace MediaPortal.GUI.Library
       if (x < GUIGraphicsContext.OffsetX)
       {
         // calc percentage offset
-        iSourceX -= (int)( (float)m_iTextureWidth * (x/nw) );
-        iSourceWidth += (int)( (float)m_iTextureWidth * (x/nw) );
+        iSourceX -= (int)( (float)m_iTextureWidth * ((x-GUIGraphicsContext.OffsetX)/nw) );
+        iSourceWidth += (int)( (float)m_iTextureWidth * ((x-GUIGraphicsContext.OffsetX)/nw) );
 
         nw += x;
         nw -= GUIGraphicsContext.OffsetX;
@@ -599,11 +599,21 @@ namespace MediaPortal.GUI.Library
         nh -= GUIGraphicsContext.OffsetY;
         y = GUIGraphicsContext.OffsetY;
       }
-
       if (x > GUIGraphicsContext.Width) x=GUIGraphicsContext.Width;      
       if (y > GUIGraphicsContext.Height) y=GUIGraphicsContext.Height;
 
-
+      if (nw <0) nw=0;
+      if (nh <0) nh=0;
+      if (x+nw >GUIGraphicsContext.Width) 
+      {
+        iSourceWidth -= (int)( (float)m_iTextureWidth * (x/nw) );        
+        nw=GUIGraphicsContext.Width-x;
+      }
+      if (y+nh >GUIGraphicsContext.Height) 
+      {
+        iSourceHeight -= (int)( (float)m_iTextureHeight * (y/nh) );
+        nh=GUIGraphicsContext.Height-y;
+      }
 
       // copy all coordinates to the vertex buffer
 			// x-offset in texture
@@ -626,16 +636,6 @@ namespace MediaPortal.GUI.Library
 			{
 				uoffs=0;
 				u=1;
-			}
-			if (nw <0) nw=0;
-			if (nh <0) nh=0;
-			if (x+nw >GUIGraphicsContext.Width) 
-			{
-				nw=GUIGraphicsContext.Width-x;
-			}
-			if (y+nh >GUIGraphicsContext.Height) 
-			{
-				nh=GUIGraphicsContext.Height-y;
 			}
 
 			_fx=x; _fy=y; _nw=nw; _nh=nh;
