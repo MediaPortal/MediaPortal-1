@@ -787,6 +787,36 @@
       <sound />
       <description>Previous Chapter</description>
     </action>
+    <action>
+      <id>20</id>
+      <key>right</key>
+      <sound />
+      <description>Step Forward</description>
+    </action>
+    <action>
+      <id>21</id>
+      <key>left</key>
+      <sound />
+      <description>Step Backward</description>
+    </action>
+    <action>
+      <id>76</id>
+      <key>u</key>
+      <sound />
+      <description>Small step back</description>
+    </action>
+    <action>
+      <id>22</id>
+      <key>up</key>
+      <sound />
+      <description>Big Step Forward</description>
+    </action>
+    <action>
+      <id>23</id>
+      <key>down</key>
+      <sound />
+      <description>Big Step Backward</description>
+    </action>
   </window>
   <window>
     <id>602</id>
