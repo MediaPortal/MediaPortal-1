@@ -40,7 +40,7 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
-		class DVBTChannel
+		public class DVBTChannel
 		{
 			public int		ONID;				 //original network id
 			public int		TSID;				 //transport service id
@@ -52,7 +52,7 @@ namespace MediaPortal.TV.Recording
 			public bool		IsRadio;     //if true this is a radio channel
 		}
 		
-		class DVBCChannel
+		public class DVBCChannel
 		{
 			public int		ONID;				 //original network id
 			public int		TSID;				 //transport service id
@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Recording
 			public int    modulation;
 		}
 
-		class DVBSChannel
+		public class DVBSChannel
 		{
 			public int		ONID;				 //original network id
 			public int		TSID;				 //transport service id

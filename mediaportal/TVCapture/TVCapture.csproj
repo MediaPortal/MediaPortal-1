@@ -214,6 +214,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DVBSTuning.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DVBTTuning.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
