@@ -1711,6 +1711,25 @@ namespace MediaPortal.Configuration
 		}
 		#endregion
 
+		void FillInDefaultRecordingPath()
+		{
+			if (tbRecordingFolder.Text!=String.Empty) return;
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				for (int i = 0; i < 20; i++)
+				{
+					string strSharePath = String.Format("sharepath{0}",i);
+					string path=xmlreader.GetValueAsString("movies", strSharePath, "");
+					if (path!="" && Util.Utils.IsHD(path))
+					{
+						tbRecordingFolder.Text=path;
+						UpdatePercentageLabel();
+						break;
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -2114,6 +2133,7 @@ namespace MediaPortal.Configuration
 					checkBox1.Enabled=false;
 			}
 
+			FillInDefaultRecordingPath();
 		}
   
     private void audioDeviceComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -2196,20 +2216,9 @@ namespace MediaPortal.Configuration
 					tbRecordingFolder.Text=card.RecordingPath;
 					if (tbRecordingFolder.Text=="")
 					{
-						using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-						{
-							for (int i = 0; i < 20; i++)
-							{
-								string strSharePath = String.Format("sharepath{0}",i);
-								string path=xmlreader.GetValueAsString("movies", strSharePath, "");
-								if (path!="" && Util.Utils.IsHD(path))
-								{
-									tbRecordingFolder.Text=path;
-									break;
-								}
-							}
-						}
+						FillInDefaultRecordingPath();
 					}
+						
 					UpdatePercentageLabel();	
 					trackBar1.Value						= card.MaxSizeLimit;
 					checkBoxDeleteLow.Checked = card.DeleteOnLowDiskspace;
@@ -2868,6 +2877,7 @@ namespace MediaPortal.Configuration
 				if(dialogResult == DialogResult.OK)
 				{
 					tbRecordingFolder.Text = folderBrowserDialog.SelectedPath;
+					UpdatePercentageLabel();
 				}
 			}
 		}
