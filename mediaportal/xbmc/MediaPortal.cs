@@ -639,7 +639,7 @@ public class MediaPortalApp : D3DApp, IRender
       
       Log.Write("Load skin {0}", m_strSkin);
       GUIWindowManager.Initialize();
-      GUIWindowManager.Load();
+      PluginManager.LoadWindowPlugins();
       Log.Write("initialize skin");
       GUIWindowManager.PreInit();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
