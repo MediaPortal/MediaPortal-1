@@ -27,6 +27,7 @@ namespace MediaPortal.Configuration.Sections
 
 		ArrayList availablePlugins = new ArrayList();
 		ArrayList loadedPlugins = new ArrayList();
+    bool      m_bLoaded=false;
 		
 		public Plugins() : this("Plugins")
 		{
@@ -34,6 +35,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public Plugins(string name) : base(name)
 		{
+      m_bLoaded=false;
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
@@ -51,6 +53,9 @@ namespace MediaPortal.Configuration.Sections
 			// Populate our list
 			//
 			PopulateListView();
+      LoadSettings();
+      
+      m_bLoaded=true;
 		}
 
 		/// <summary>
@@ -332,8 +337,8 @@ namespace MediaPortal.Configuration.Sections
 					}
 					else
 					{
-						//MessageBox.Show("The selected plugin does not support enabling/disabling", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						e.NewValue = e.CurrentValue;
+            if (tag.SetupForm.DefaultEnabled()) e.NewValue = CheckState.Checked;
+						else e.NewValue = CheckState.Unchecked;
 					}
 				}
 			}
