@@ -733,6 +733,7 @@ public class MediaPortalApp : D3DApp, IRender
               if (g_Player.Playing && g_Player.DoesOwnRendering)
               {
                   GUIGraphicsContext.ShowBackground = false;
+                  GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
               }
               else
               {
@@ -768,12 +769,21 @@ public class MediaPortalApp : D3DApp, IRender
                   return;
                 }
                 GUIGraphicsContext.ShowBackground = false;
+                GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
               }
             }
             else
             {
               Log.Write("Use GUI as background");
               GUIGraphicsContext.ShowBackground = true;
+              for (int i=0; i < Recorder.Count;++i)
+              {
+                if (Recorder.IsCardViewing(i) && !Recorder.IsCardRecording(i))
+                {
+                  string channel=Recorder.GetTVChannelName(i);
+                  Recorder.StartViewing(i,String.Empty,false,false);
+                }
+              }
             }
 						break;
 
