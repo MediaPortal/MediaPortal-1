@@ -296,15 +296,23 @@ namespace MediaPortal.Video.Database
 					// Mars Warrior @ 03-sep-2004.
 					// Check for ' ' and '+' to avoid double or more ' ' and '+' which
 					// mess up the search to the IMDB...
-					if	(
-							Char.IsLetterOrDigit(kar)						||
-							(kar == ' ' && strTmp[strTmp.Length -1] != ' ')
-							//|| (kar == '+' && strTmp[strTmp.Length -1] != '+')
-						)
-					{
-						strTmp += kar;
-						ipos++;
-					}
+          if (strTmp.Length==0)
+          {
+            strTmp += kar;
+            ipos++;
+          }
+          else
+          {
+            if	(
+              Char.IsLetterOrDigit(kar)						||
+              (kar == ' ' && strTmp[strTmp.Length -1] != ' ')
+              //|| (kar == '+' && strTmp[strTmp.Length -1] != '+')
+              )
+            {
+              strTmp += kar;
+              ipos++;
+            }
+          }
 				}
 			}
 
