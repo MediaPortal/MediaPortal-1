@@ -52,6 +52,8 @@ namespace WindowPlugins.GUIPrograms
 		private System.ComponentModel.IContainer components;
 
 
+		int mStartTime = 0; // timer stuff
+		int mSecondsRemaining = 0;
 		bool stopSearching = false;
 
 		public AppItem CurApp
@@ -556,12 +558,27 @@ namespace WindowPlugins.GUIPrograms
 			progressBar.Maximum = FileList.CheckedItems.Count - 1;
 			progressBar.Step = 1;
 			progressStatusLabel.Text = msg;
+			mStartTime = (int)(DateTime.Now.Ticks/10000); // reset timer!
+			mSecondsRemaining = -1;
 		}
 
 		void StepProgressBar()
 		{
+			string strTimeRemaining = "";
 			progressBar.PerformStep();
-			progressStatusLabel.Text = String.Format("Searching file {0} of {1}", progressBar.Value, progressBar.Maximum + 1);
+			if (progressBar.Value > 1)
+			{
+				int nTimeElapsed = ((int)(DateTime.Now.Ticks/10000)) - mStartTime;
+				double TimePerItem = nTimeElapsed / progressBar.Value - 1;
+				int nTotalTime = (int)(progressBar.Maximum * TimePerItem);
+				int nTimeRemaining = nTotalTime - nTimeElapsed;
+				int nSecondsRemaining = (int)nTimeRemaining / 1000;
+				int nMinutesRemaining = (int)nSecondsRemaining / 60;
+				nSecondsRemaining = nSecondsRemaining - (nMinutesRemaining * 60);
+				strTimeRemaining = String.Format(" ({0}m {1}s remaining)", nMinutesRemaining, nSecondsRemaining);
+
+			}
+			progressStatusLabel.Text = String.Format("Searching file {0} of {1} ", progressBar.Value, progressBar.Maximum + 1) + strTimeRemaining;
 		}
 
 		void DeInitProgressBar(string msg)
@@ -930,7 +947,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			FileItem curItem = GetSelectedFileItem();
 			if (curItem == null) return;
-			curItem.Title = e.Label;
+			curItem.TitleOptimized = e.Label;
 		}
 
 		private void cancelButton_Click(object sender, System.EventArgs e)

@@ -18,6 +18,7 @@ namespace ProgramsDatabase
 		int mFileID;
 		int mAppID;
 		string mTitle;
+		string mTitleOptimized;
 		string mFilename;
 		string mFilepath;
 		string mImagefile;
@@ -50,6 +51,7 @@ namespace ProgramsDatabase
 			mFileID = -1;
 			mAppID = -1;
 			mTitle = "";
+			mTitleOptimized = "";
 			mFilename = "";
 			mFilepath = "";
 			mImagefile = "";
@@ -97,9 +99,14 @@ namespace ProgramsDatabase
 			get{ return mTitle; }
 			set{ mTitle = value; }
 		}
-		public string NormalizedTitle
+		public string TitleNormalized
 		{
-			get{ return GetNormalizeTitle();}
+			get{ return GetTitleNormalized();}
+		}
+		public string TitleOptimized
+		{
+			get{ return GetTitleOptimized();}
+			set{ mTitleOptimized = value; }
 		}
 		public string Filename
 		{
@@ -443,9 +450,21 @@ namespace ProgramsDatabase
 		}
 
 
-		string GetNormalizeTitle()
+		string GetTitleNormalized()
 		{
 			return ProgramUtils.NormalizedString(mTitle);
+		}
+
+		string GetTitleOptimized()
+		{
+			if (mTitleOptimized == "")
+			{
+				return GetTitleNormalized();
+			}
+			else
+			{
+				return mTitleOptimized;
+			}
 		}
 
 		public void FindFileInfo(myProgScraperType ScraperType)
@@ -457,7 +476,8 @@ namespace ProgramsDatabase
 				case myProgScraperType.ALLGAME:
 				{
 					AllGameInfoScraper scraper = new AllGameInfoScraper();
-					string strTitle = NormalizedTitle;
+					//					string strTitle = TitleNormalized;
+					string strTitle = TitleOptimized;
 					while ((!bSuccess) && (iRetries < 5))
 					{
 						// brute force! Try five times.... sometimes I get
