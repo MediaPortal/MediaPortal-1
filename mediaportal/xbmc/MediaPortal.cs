@@ -105,6 +105,7 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         RegistryKey hklm = Registry.LocalMachine;
+        // windvd6 mpeg2 codec settings
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\AudioDec","DsContinuousRate",1);
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","DsContinuousRate",1);
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","Dxva",1);
@@ -112,6 +113,11 @@ public class MediaPortalApp : D3DApp, IRender
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","ResendOnFamine",0);
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","VgaQuery",1);
         SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","VMR",2);
+        
+        // hauppauge mpeg2 codec settings
+        SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Hwmc",1);
+        SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Dxva",1);
+
         hklm.Close();
       }
       catch(Exception)
