@@ -2303,7 +2303,7 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		/// <param name="radio">if true:Store radio channels found in the database</param>
 		/// <param name="tv">if true:Store tv channels found in the database</param>
-		public void StoreChannels(bool radio, bool tv)
+		public void StoreChannels(int ID, bool radio, bool tv)
 		{	
 			if (m_SectionsTables==null) return;
 
@@ -2419,6 +2419,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("DVBGraphBDA: map channel {0} to DVBS",newchannel.ChannelName);
 						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
+					TVDatabase.MapChannelToCard(iChannelNumber,ID);
 				}
 				else
 				{

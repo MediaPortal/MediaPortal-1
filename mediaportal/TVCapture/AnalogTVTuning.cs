@@ -94,6 +94,7 @@ namespace MediaPortal.TV.Recording
 				{
 					TVDatabase.SetChannelNumber(chan.Name,currentChannel);
 					TVDatabase.SetChannelFrequency(chan.Name,captureCard.VideoFrequency().ToString());
+					TVDatabase.MapChannelToCard(chan.ID,captureCard.ID);
 				}
 			}
 			return currentChannel;
