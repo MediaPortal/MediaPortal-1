@@ -390,6 +390,10 @@ namespace MediaPortal.GUI.Pictures
         if (m_fZoomTopBackGround+m_fZoomHeight > m_fHeightBackGround) m_fZoomHeight = m_fHeightBackGround-m_fZoomTopBackGround;
         if (m_fZoomLeftBackGround+m_fZoomWidth > m_fWidthBackGround) m_fZoomWidth = m_fWidthBackGround-m_fZoomLeftBackGround;
         MediaPortal.Util.Picture.RenderImage(ref m_pTextureBackGround, x, y, width, height, m_fZoomWidth, m_fZoomHeight, m_fZoomLeftBackGround, m_fZoomTopBackGround,true);
+
+				//MediaPortal.Util.Picture.DrawLine(10,10,300,300,0xffffffff);
+				//MediaPortal.Util.Picture.DrawRectangle( new Rectangle(100,100,30,30),0xaaff0000,true);
+				//MediaPortal.Util.Picture.DrawRectangle( new Rectangle(200,100,30,30),0xffffffff,false);
       }
 
       //	g_graphicsContext.Get3DDevice()->UpdateOverlay(m_pSurfaceBackGround, &source, &dest, true, 0x00010001);
@@ -464,9 +468,6 @@ namespace MediaPortal.GUI.Pictures
             KenBurns(m_iKenBurnsEffect, false);
         }
       }
-      MediaPortal.Util.Picture.DrawLine(10,10,300,300,0xffffffff);
-			MediaPortal.Util.Picture.DrawRectangle( new Rectangle(100,100,30,30),0xaaff0000,true);
-			MediaPortal.Util.Picture.DrawRectangle( new Rectangle(200,100,30,30),0xffffffff,false);
 
       if (m_bSlideShow)
       {
