@@ -85,12 +85,20 @@ namespace MediaPortal.Util
 
     public static void ShowStartBar(bool bVisible)
     {
-      Show("Shell_TrayWnd", "", bVisible);
+			try
+			{
+				Show("Shell_TrayWnd", "", bVisible);
+			}
+			catch(Exception){}
     }
 
     public static void EnableStartBar(bool bEnable)
     {
-      Enable("Shell_TrayWnd", "", bEnable);
+			try
+			{
+				Enable("Shell_TrayWnd", "", bEnable);
+			}
+			catch(Exception){}
     }
   }
 }
