@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  01-06-2004  general     : added : MP now disables the screensaver if movie/tv/vis. is fullscreen
   01-06-2004  my tv       : added : fullscreen tv    : skip +/-
   01-06-2004  my tv       : added : fullscreen tv    : ff/RW
   01-06-2004  my tv       : added : fullscreen tvosd : show timeshifting info in progressbar

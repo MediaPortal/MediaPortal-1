@@ -27,6 +27,8 @@ public class MediaPortalApp : D3DApp
     private string m_UniqueIdentifier;
 
   const int WM_KEYDOWN    =0x0100;
+  const int WM_SYSCOMMAND =0x0112;
+  const int SC_SCREENSAVE =0xF140;
 
     [STAThread]
     public static void Main()
@@ -183,6 +185,16 @@ public class MediaPortalApp : D3DApp
     protected override void WndProc( ref Message msg )
     {
       
+      if (msg.Msg==WM_SYSCOMMAND && msg.WParam.ToInt32()==SC_SCREENSAVE)
+      {
+        // windows wants to activate the screensaver
+        if (GUIGraphicsContext.IsFullScreenVideo) 
+        {
+          //disable it when we're watching tv/movies/...
+          msg.Result=new IntPtr(0);
+          return;
+        }
+      }
       if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
       g_Player.WndProc(ref msg);
       base.WndProc( ref msg );
