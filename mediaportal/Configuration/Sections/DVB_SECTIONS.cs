@@ -648,7 +648,9 @@ namespace MediaPortal.Configuration.Sections
 			string  ISO_639_language_code="";
 			int     audio_type;
 			int     len;
-
+			// so we need some more info
+			// we return
+			return "";
 			descriptor_tag= b[0];
 			descriptor_length= b[1];
 			if(descriptor_length<b.Length)
