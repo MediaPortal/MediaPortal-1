@@ -281,6 +281,8 @@ namespace MediaPortal.TV.Recording
 				tmpRec.Start=Utils.datetolong(DateTime.Now);
 				tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(4*60) );
 				tmpRec.Title=GUILocalizeStrings.Get(413);
+				if (program!=null)
+					tmpRec.Title=program.Title;
 				tmpRec.IsContentRecording=true;//make a content recording! (record from now)
 			}
 
