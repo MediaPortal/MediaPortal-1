@@ -1283,6 +1283,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView5.SelectedImageIndex = -1;
 			this.treeView5.Size = new System.Drawing.Size(328, 160);
 			this.treeView5.TabIndex = 7;
+			this.treeView5.BeforeCheck+=new TreeViewCancelEventHandler(treeView5_BeforeCheck);
 			// 
 			// ofd
 			// 
@@ -2296,9 +2297,15 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 		}
+		//
+		//
+
 		private void GetChannels(bool radioTV,TreeView tv)
 		{
-			ArrayList chList=new ArrayList();
+			ArrayList	chList=new ArrayList();
+			ArrayList	provider=new ArrayList();
+			ArrayList	channels=new ArrayList();
+
 			TVDatabase.GetSatChannels(ref chList);
 			if(chList==null)
 				return;
@@ -2314,18 +2321,59 @@ namespace MediaPortal.Configuration.Sections
 			else
 				serviceType=1; // tv on true
 
+			// set providers
+			foreach(DVBChannel channel in chList)
+			{
+				if(channel.ServiceProvider!="")
+				{
+					if(channel.ServiceType!=serviceType)
+						continue;
+					string providerName=channel.ServiceProvider;
+					bool flag=false;
+
+					foreach(TreeNode tn in tv.Nodes)
+					{
+						string provName=(string)tn.Tag;
+						if(provName!=null)
+						{
+							if(provName==providerName)//node exists
+							{
+								flag=true;
+								break;
+							}
+						}
+					}
+					if(flag==false)
+					{
+						TreeNode node=new TreeNode(channel.ServiceProvider);
+						node.Tag=channel.ServiceProvider;
+						node.Checked=true;
+						tv.Nodes.Add(node);
+						provider.Add(node);
+					}
+				}
+			}
+			// services
 			foreach(DVBChannel channel in chList)
 			{
 				if(channel.ToString()!="")
 				{
-					
-					TreeNode node=new TreeNode(channel.ServiceName+" ("+channel.ServiceProvider+")");
-					node.Tag=channel;
-					node.Checked=true;
-					if(channel.ServiceType==serviceType)
-						tv.Nodes.Add(node);
+					TreeNode node=GetNodeByTag(channel.ServiceProvider,provider);
+					if(node!=null)
+					{
+						if(node.Tag!=null)
+						if((string)node.Tag==channel.ServiceProvider)
+						{
+							TreeNode servNode=new TreeNode(channel.ServiceName);
+							servNode.Tag=channel;
+							servNode.Checked=true;
+							if(channel.ServiceType==serviceType)
+								node.Nodes.Add(servNode);
+						}
+					}
 				}
 			}
+
 		}
 		private void button6_Click_2(object sender, System.EventArgs e)
 		{
@@ -2577,19 +2625,19 @@ namespace MediaPortal.Configuration.Sections
 
 		private void button17_Click(object sender, System.EventArgs e)
 		{
-			foreach(TreeNode tn in treeView5.Nodes)
-			{
-				tn.Checked=true;
-			}
+			foreach(TreeNode parentNode in treeView5.Nodes)
+				parentNode.Checked=false;
+			foreach(TreeNode parentNode in treeView5.Nodes)
+				parentNode.Checked=true;
 			
 		}
 
 		private void button18_Click(object sender, System.EventArgs e)
 		{
-			foreach(TreeNode tn in treeView5.Nodes)
-			{
-				tn.Checked=false;
-			}
+			foreach(TreeNode parentNode in treeView5.Nodes)
+				parentNode.Checked=true;
+			foreach(TreeNode parentNode in treeView5.Nodes)
+				parentNode.Checked=false;
 
 		}
 
@@ -2610,7 +2658,8 @@ namespace MediaPortal.Configuration.Sections
 			do
 			{
 				GC.Collect();
-				foreach(TreeNode tn in treeView5.Nodes)
+				foreach(TreeNode parentNode in treeView5.Nodes)
+				foreach(TreeNode tn in parentNode.Nodes)
 				{
 					if(m_stopEPGGrab==true)
 						break;
@@ -2696,6 +2745,24 @@ namespace MediaPortal.Configuration.Sections
 				GetChannels();
 			}
 
+		}
+
+		private void treeView5_BeforeCheck(object sender, TreeViewCancelEventArgs e)
+		{
+			TreeNode node=e.Node;
+
+			if(node.Tag.GetType()!=typeof(DVBChannel))
+			{
+				if(node.Checked==true)
+				{
+					foreach(TreeNode tn in node.Nodes)
+						tn.Checked=false;
+				}
+				else
+					foreach(TreeNode tn in node.Nodes)
+						tn.Checked=true;
+
+			}
 		}
 	}// class
 }// namespace
