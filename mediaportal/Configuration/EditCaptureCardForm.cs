@@ -108,6 +108,15 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.audioDeviceComboBox = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.setupButton = new System.Windows.Forms.Button();
+      this.filterComboBox = new System.Windows.Forms.ComboBox();
+      this.label9 = new System.Windows.Forms.Label();
+      this.audioCompressorComboBox = new System.Windows.Forms.ComboBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.videoCompressorComboBox = new System.Windows.Forms.ComboBox();
+      this.label3 = new System.Windows.Forms.Label();
       this.frameRateTextBox = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.frameSizeComboBox = new System.Windows.Forms.ComboBox();
@@ -119,15 +128,6 @@ namespace MediaPortal.Configuration
       this.label1 = new System.Windows.Forms.Label();
       this.cancelButton = new System.Windows.Forms.Button();
       this.okButton = new System.Windows.Forms.Button();
-      this.videoCompressorComboBox = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.audioCompressorComboBox = new System.Windows.Forms.ComboBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.setupButton = new System.Windows.Forms.Button();
-      this.filterComboBox = new System.Windows.Forms.ComboBox();
-      this.label9 = new System.Windows.Forms.Label();
-      this.audioDeviceComboBox = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -161,6 +161,92 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Capture Card Settings";
+      // 
+      // audioDeviceComboBox
+      // 
+      this.audioDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioDeviceComboBox.ItemHeight = 13;
+      this.audioDeviceComboBox.Location = new System.Drawing.Point(120, 53);
+      this.audioDeviceComboBox.Name = "audioDeviceComboBox";
+      this.audioDeviceComboBox.Size = new System.Drawing.Size(320, 21);
+      this.audioDeviceComboBox.TabIndex = 44;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 56);
+      this.label2.Name = "label2";
+      this.label2.TabIndex = 43;
+      this.label2.Text = "Audio device";
+      // 
+      // setupButton
+      // 
+      this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.setupButton.Enabled = false;
+      this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.setupButton.Location = new System.Drawing.Point(366, 79);
+      this.setupButton.Name = "setupButton";
+      this.setupButton.Size = new System.Drawing.Size(75, 21);
+      this.setupButton.TabIndex = 42;
+      this.setupButton.Text = "Setup";
+      this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
+      // 
+      // filterComboBox
+      // 
+      this.filterComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.filterComboBox.Location = new System.Drawing.Point(120, 79);
+      this.filterComboBox.Name = "filterComboBox";
+      this.filterComboBox.Size = new System.Drawing.Size(240, 21);
+      this.filterComboBox.TabIndex = 41;
+      this.filterComboBox.SelectedIndexChanged += new System.EventHandler(this.filterComboBox_SelectedIndexChanged);
+      // 
+      // label9
+      // 
+      this.label9.Location = new System.Drawing.Point(16, 83);
+      this.label9.Name = "label9";
+      this.label9.TabIndex = 40;
+      this.label9.Text = "Filter";
+      // 
+      // audioCompressorComboBox
+      // 
+      this.audioCompressorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioCompressorComboBox.ItemHeight = 13;
+      this.audioCompressorComboBox.Location = new System.Drawing.Point(120, 147);
+      this.audioCompressorComboBox.Name = "audioCompressorComboBox";
+      this.audioCompressorComboBox.Size = new System.Drawing.Size(320, 21);
+      this.audioCompressorComboBox.TabIndex = 39;
+      this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(16, 150);
+      this.label5.Name = "label5";
+      this.label5.TabIndex = 38;
+      this.label5.Text = "Audio compressor";
+      // 
+      // videoCompressorComboBox
+      // 
+      this.videoCompressorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.videoCompressorComboBox.ItemHeight = 13;
+      this.videoCompressorComboBox.Location = new System.Drawing.Point(120, 120);
+      this.videoCompressorComboBox.Name = "videoCompressorComboBox";
+      this.videoCompressorComboBox.Size = new System.Drawing.Size(320, 21);
+      this.videoCompressorComboBox.TabIndex = 37;
+      this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(16, 123);
+      this.label3.Name = "label3";
+      this.label3.TabIndex = 36;
+      this.label3.Text = "Video compressor";
       // 
       // frameRateTextBox
       // 
@@ -261,91 +347,6 @@ namespace MediaPortal.Configuration
       this.okButton.TabIndex = 2;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
-      // 
-      // videoCompressorComboBox
-      // 
-      this.videoCompressorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.videoCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.videoCompressorComboBox.ItemHeight = 13;
-      this.videoCompressorComboBox.Location = new System.Drawing.Point(120, 120);
-      this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-      this.videoCompressorComboBox.Size = new System.Drawing.Size(320, 21);
-      this.videoCompressorComboBox.TabIndex = 37;
-      this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(16, 123);
-      this.label3.Name = "label3";
-      this.label3.TabIndex = 36;
-      this.label3.Text = "Video compressor";
-      // 
-      // audioCompressorComboBox
-      // 
-      this.audioCompressorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.audioCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCompressorComboBox.ItemHeight = 13;
-      this.audioCompressorComboBox.Location = new System.Drawing.Point(120, 147);
-      this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-      this.audioCompressorComboBox.Size = new System.Drawing.Size(320, 21);
-      this.audioCompressorComboBox.TabIndex = 39;
-      this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(16, 150);
-      this.label5.Name = "label5";
-      this.label5.TabIndex = 38;
-      this.label5.Text = "Audio compressor";
-      // 
-      // setupButton
-      // 
-      this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.setupButton.Enabled = false;
-      this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.setupButton.Location = new System.Drawing.Point(366, 79);
-      this.setupButton.Name = "setupButton";
-      this.setupButton.Size = new System.Drawing.Size(75, 21);
-      this.setupButton.TabIndex = 42;
-      this.setupButton.Text = "Setup";
-      // 
-      // filterComboBox
-      // 
-      this.filterComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.filterComboBox.Location = new System.Drawing.Point(120, 79);
-      this.filterComboBox.Name = "filterComboBox";
-      this.filterComboBox.Size = new System.Drawing.Size(240, 21);
-      this.filterComboBox.TabIndex = 41;
-      this.filterComboBox.SelectedIndexChanged += new System.EventHandler(this.filterComboBox_SelectedIndexChanged);
-      // 
-      // label9
-      // 
-      this.label9.Location = new System.Drawing.Point(16, 83);
-      this.label9.Name = "label9";
-      this.label9.TabIndex = 40;
-      this.label9.Text = "Filter";
-      // 
-      // audioDeviceComboBox
-      // 
-      this.audioDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.audioDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioDeviceComboBox.ItemHeight = 13;
-      this.audioDeviceComboBox.Location = new System.Drawing.Point(120, 53);
-      this.audioDeviceComboBox.Name = "audioDeviceComboBox";
-      this.audioDeviceComboBox.Size = new System.Drawing.Size(320, 21);
-      this.audioDeviceComboBox.TabIndex = 44;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 56);
-      this.label2.Name = "label2";
-      this.label2.TabIndex = 43;
-      this.label2.Text = "Audio device";
       // 
       // EditCaptureCardForm
       // 
