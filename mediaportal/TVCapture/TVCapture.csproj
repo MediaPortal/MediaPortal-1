@@ -129,6 +129,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AIWGraph.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

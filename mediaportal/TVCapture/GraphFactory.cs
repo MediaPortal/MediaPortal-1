@@ -39,6 +39,10 @@ namespace MediaPortal.TV.Recording
           return new MCESinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
         return new SinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
       }
+	  if (card.ToString() == "ATI Rage Theater Video Capture")
+	  {
+		return new AIWGraph(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+	  }
       return new SWEncodingGraph(card.ID,iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
       
     }
