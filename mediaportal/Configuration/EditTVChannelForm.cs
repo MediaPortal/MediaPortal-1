@@ -17,8 +17,6 @@ namespace MediaPortal.Configuration
 	{
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.TextBox channelTextBox;
-		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox nameTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox frequencyTextBox;
@@ -77,6 +75,9 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TextBox tbDVBSSID;
 		private System.Windows.Forms.TextBox tbDVBSONID;
 		private int sortPlace=0;
+		private int channelId=-1;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TextBox channelTextBox;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -140,8 +141,6 @@ namespace MediaPortal.Configuration
 			this.label7 = new System.Windows.Forms.Label();
 			this.frequencyTextBox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.channelTextBox = new System.Windows.Forms.TextBox();
-			this.label3 = new System.Windows.Forms.Label();
 			this.nameTextBox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.cancelButton = new System.Windows.Forms.Button();
@@ -197,6 +196,8 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.label3 = new System.Windows.Forms.Label();
+			this.channelTextBox = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -231,7 +232,7 @@ namespace MediaPortal.Configuration
 																												 "SECAM L",
 																												 "SECAM L1",
 																												 "PAL N COMBO"});
-			this.comboTvStandard.Location = new System.Drawing.Point(128, 64);
+			this.comboTvStandard.Location = new System.Drawing.Point(128, 40);
 			this.comboTvStandard.Name = "comboTvStandard";
 			this.comboTvStandard.Size = new System.Drawing.Size(224, 21);
 			this.comboTvStandard.TabIndex = 3;
@@ -239,50 +240,34 @@ namespace MediaPortal.Configuration
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(24, 72);
+			this.label7.Location = new System.Drawing.Point(24, 48);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(88, 16);
 			this.label7.TabIndex = 11;
 			this.label7.Text = "TV Standard:";
+			this.label7.Click += new System.EventHandler(this.label7_Click);
 			// 
 			// frequencyTextBox
 			// 
 			this.frequencyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.frequencyTextBox.Location = new System.Drawing.Point(128, 40);
+			this.frequencyTextBox.Location = new System.Drawing.Point(128, 16);
 			this.frequencyTextBox.MaxLength = 10;
 			this.frequencyTextBox.Name = "frequencyTextBox";
 			this.frequencyTextBox.Size = new System.Drawing.Size(80, 20);
 			this.frequencyTextBox.TabIndex = 2;
 			this.frequencyTextBox.Text = "0";
 			this.frequencyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frequencyTextBox_KeyPress);
+			this.frequencyTextBox.TextChanged += new System.EventHandler(this.frequencyTextBox_TextChanged);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(24, 48);
+			this.label1.Location = new System.Drawing.Point(24, 8);
 			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(104, 32);
 			this.label1.TabIndex = 10;
-			this.label1.Text = "Frequency";
-			// 
-			// channelTextBox
-			// 
-			this.channelTextBox.Location = new System.Drawing.Point(128, 16);
-			this.channelTextBox.MaxLength = 4;
-			this.channelTextBox.Name = "channelTextBox";
-			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
-			this.channelTextBox.TabIndex = 1;
-			this.channelTextBox.Text = "0";
-			this.channelTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.channelTextBox_KeyPress);
-			this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged);
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(24, 24);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(88, 16);
-			this.label3.TabIndex = 8;
-			this.label3.Text = "Channel";
-			this.label3.Click += new System.EventHandler(this.label3_Click);
+			this.label1.Text = "Frequency (leave 0 for default)";
+			this.label1.Click += new System.EventHandler(this.label1_Click);
 			// 
 			// nameTextBox
 			// 
@@ -293,6 +278,7 @@ namespace MediaPortal.Configuration
 			this.nameTextBox.Size = new System.Drawing.Size(176, 20);
 			this.nameTextBox.TabIndex = 0;
 			this.nameTextBox.Text = "";
+			this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
 			// 
 			// label2
 			// 
@@ -300,6 +286,7 @@ namespace MediaPortal.Configuration
 			this.label2.Name = "label2";
 			this.label2.TabIndex = 6;
 			this.label2.Text = "Name";
+			this.label2.Click += new System.EventHandler(this.label2_Click);
 			// 
 			// cancelButton
 			// 
@@ -343,6 +330,7 @@ namespace MediaPortal.Configuration
 			this.label6.Name = "label6";
 			this.label6.TabIndex = 12;
 			this.label6.Text = "Input";
+			this.label6.Click += new System.EventHandler(this.label6_Click);
 			// 
 			// typeComboBox
 			// 
@@ -362,6 +350,7 @@ namespace MediaPortal.Configuration
 			this.label5.Name = "label5";
 			this.label5.TabIndex = 10;
 			this.label5.Text = "Type";
+			this.label5.Click += new System.EventHandler(this.label5_Click);
 			// 
 			// externalChannelTextBox
 			// 
@@ -373,6 +362,7 @@ namespace MediaPortal.Configuration
 			this.externalChannelTextBox.Size = new System.Drawing.Size(184, 20);
 			this.externalChannelTextBox.TabIndex = 2;
 			this.externalChannelTextBox.Text = "";
+			this.externalChannelTextBox.TextChanged += new System.EventHandler(this.externalChannelTextBox_TextChanged);
 			// 
 			// label4
 			// 
@@ -380,6 +370,7 @@ namespace MediaPortal.Configuration
 			this.label4.Name = "label4";
 			this.label4.TabIndex = 8;
 			this.label4.Text = "External channel";
+			this.label4.Click += new System.EventHandler(this.label4_Click);
 			// 
 			// tabControl1
 			// 
@@ -394,9 +385,12 @@ namespace MediaPortal.Configuration
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(400, 312);
 			this.tabControl1.TabIndex = 4;
+			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.label3);
+			this.tabPage1.Controls.Add(this.channelTextBox);
 			this.tabPage1.Controls.Add(this.label2);
 			this.tabPage1.Controls.Add(this.nameTextBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -404,13 +398,12 @@ namespace MediaPortal.Configuration
 			this.tabPage1.Size = new System.Drawing.Size(392, 286);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
+			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
 			// 
 			// tabPage2
 			// 
 			this.tabPage2.Controls.Add(this.countryComboBox);
 			this.tabPage2.Controls.Add(this.label8);
-			this.tabPage2.Controls.Add(this.label3);
-			this.tabPage2.Controls.Add(this.channelTextBox);
 			this.tabPage2.Controls.Add(this.label1);
 			this.tabPage2.Controls.Add(this.frequencyTextBox);
 			this.tabPage2.Controls.Add(this.label7);
@@ -420,26 +413,29 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Size = new System.Drawing.Size(392, 286);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Analog";
+			this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
 			// 
 			// countryComboBox
 			// 
 			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.countryComboBox.Location = new System.Drawing.Point(128, 96);
+			this.countryComboBox.Location = new System.Drawing.Point(128, 72);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(224, 20);
+			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
+			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(24, 96);
+			this.label8.Location = new System.Drawing.Point(24, 72);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(56, 16);
 			this.label8.TabIndex = 16;
 			this.label8.Text = "Country";
+			this.label8.Click += new System.EventHandler(this.label8_Click);
 			// 
 			// tabPage3
 			// 
@@ -456,6 +452,7 @@ namespace MediaPortal.Configuration
 			this.tabPage3.Size = new System.Drawing.Size(392, 286);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "DVB-T";
+			this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
 			// 
 			// tbDVBTFreq
 			// 
@@ -463,6 +460,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBTFreq.Name = "tbDVBTFreq";
 			this.tbDVBTFreq.TabIndex = 7;
 			this.tbDVBTFreq.Text = "";
+			this.tbDVBTFreq.TextChanged += new System.EventHandler(this.tbDVBTFreq_TextChanged);
 			// 
 			// label12
 			// 
@@ -471,6 +469,7 @@ namespace MediaPortal.Configuration
 			this.label12.Size = new System.Drawing.Size(128, 16);
 			this.label12.TabIndex = 6;
 			this.label12.Text = "Carrier Frequency (KHz)";
+			this.label12.Click += new System.EventHandler(this.label12_Click);
 			// 
 			// tbDVBTTSID
 			// 
@@ -478,6 +477,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBTTSID.Name = "tbDVBTTSID";
 			this.tbDVBTTSID.TabIndex = 5;
 			this.tbDVBTTSID.Text = "";
+			this.tbDVBTTSID.TextChanged += new System.EventHandler(this.tbDVBTTSID_TextChanged);
 			// 
 			// label11
 			// 
@@ -486,6 +486,7 @@ namespace MediaPortal.Configuration
 			this.label11.Size = new System.Drawing.Size(72, 16);
 			this.label11.TabIndex = 4;
 			this.label11.Text = "Transport ID:";
+			this.label11.Click += new System.EventHandler(this.label11_Click);
 			// 
 			// tbDVBTSID
 			// 
@@ -493,6 +494,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBTSID.Name = "tbDVBTSID";
 			this.tbDVBTSID.TabIndex = 3;
 			this.tbDVBTSID.Text = "";
+			this.tbDVBTSID.TextChanged += new System.EventHandler(this.tbDVBTSID_TextChanged);
 			// 
 			// label10
 			// 
@@ -501,6 +503,7 @@ namespace MediaPortal.Configuration
 			this.label10.Size = new System.Drawing.Size(64, 16);
 			this.label10.TabIndex = 2;
 			this.label10.Text = "Service ID:";
+			this.label10.Click += new System.EventHandler(this.label10_Click);
 			// 
 			// tbDVBTONID
 			// 
@@ -508,6 +511,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBTONID.Name = "tbDVBTONID";
 			this.tbDVBTONID.TabIndex = 1;
 			this.tbDVBTONID.Text = "";
+			this.tbDVBTONID.TextChanged += new System.EventHandler(this.tbDVBTONID_TextChanged);
 			// 
 			// label9
 			// 
@@ -516,6 +520,7 @@ namespace MediaPortal.Configuration
 			this.label9.Size = new System.Drawing.Size(64, 16);
 			this.label9.TabIndex = 0;
 			this.label9.Text = "Network ID:";
+			this.label9.Click += new System.EventHandler(this.label9_Click);
 			// 
 			// tabPage4
 			// 
@@ -538,6 +543,7 @@ namespace MediaPortal.Configuration
 			this.tabPage4.Size = new System.Drawing.Size(392, 286);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-C";
+			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
 			// 
 			// cbDVBCModulation
 			// 
@@ -572,6 +578,7 @@ namespace MediaPortal.Configuration
 			this.cbDVBCModulation.Name = "cbDVBCModulation";
 			this.cbDVBCModulation.Size = new System.Drawing.Size(121, 21);
 			this.cbDVBCModulation.TabIndex = 21;
+			this.cbDVBCModulation.SelectedIndexChanged += new System.EventHandler(this.cbDVBCModulation_SelectedIndexChanged);
 			// 
 			// cbDVBCInnerFeq
 			// 
@@ -585,6 +592,7 @@ namespace MediaPortal.Configuration
 			this.cbDVBCInnerFeq.Name = "cbDVBCInnerFeq";
 			this.cbDVBCInnerFeq.Size = new System.Drawing.Size(121, 21);
 			this.cbDVBCInnerFeq.TabIndex = 20;
+			this.cbDVBCInnerFeq.SelectedIndexChanged += new System.EventHandler(this.cbDVBCInnerFeq_SelectedIndexChanged);
 			// 
 			// label19
 			// 
@@ -593,6 +601,7 @@ namespace MediaPortal.Configuration
 			this.label19.Size = new System.Drawing.Size(100, 16);
 			this.label19.TabIndex = 19;
 			this.label19.Text = "Modulation";
+			this.label19.Click += new System.EventHandler(this.label19_Click);
 			// 
 			// label18
 			// 
@@ -601,6 +610,7 @@ namespace MediaPortal.Configuration
 			this.label18.Size = new System.Drawing.Size(100, 16);
 			this.label18.TabIndex = 18;
 			this.label18.Text = "InnerFEC";
+			this.label18.Click += new System.EventHandler(this.label18_Click);
 			// 
 			// tbDVBCSR
 			// 
@@ -608,6 +618,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBCSR.Name = "tbDVBCSR";
 			this.tbDVBCSR.TabIndex = 17;
 			this.tbDVBCSR.Text = "";
+			this.tbDVBCSR.TextChanged += new System.EventHandler(this.tbDVBCSR_TextChanged);
 			// 
 			// label17
 			// 
@@ -616,6 +627,7 @@ namespace MediaPortal.Configuration
 			this.label17.Size = new System.Drawing.Size(100, 16);
 			this.label17.TabIndex = 16;
 			this.label17.Text = "Symbolrate";
+			this.label17.Click += new System.EventHandler(this.label17_Click);
 			// 
 			// tbDVBCFreq
 			// 
@@ -623,6 +635,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBCFreq.Name = "tbDVBCFreq";
 			this.tbDVBCFreq.TabIndex = 15;
 			this.tbDVBCFreq.Text = "";
+			this.tbDVBCFreq.TextChanged += new System.EventHandler(this.tbDVBCFreq_TextChanged);
 			// 
 			// label13
 			// 
@@ -631,6 +644,7 @@ namespace MediaPortal.Configuration
 			this.label13.Size = new System.Drawing.Size(128, 16);
 			this.label13.TabIndex = 14;
 			this.label13.Text = "Carrier Frequency (KHz)";
+			this.label13.Click += new System.EventHandler(this.label13_Click);
 			// 
 			// tbDVBCTSID
 			// 
@@ -638,6 +652,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBCTSID.Name = "tbDVBCTSID";
 			this.tbDVBCTSID.TabIndex = 13;
 			this.tbDVBCTSID.Text = "";
+			this.tbDVBCTSID.TextChanged += new System.EventHandler(this.tbDVBCTSID_TextChanged);
 			// 
 			// label14
 			// 
@@ -646,6 +661,7 @@ namespace MediaPortal.Configuration
 			this.label14.Size = new System.Drawing.Size(72, 16);
 			this.label14.TabIndex = 12;
 			this.label14.Text = "Transport ID:";
+			this.label14.Click += new System.EventHandler(this.label14_Click);
 			// 
 			// tbDVBCSID
 			// 
@@ -653,6 +669,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBCSID.Name = "tbDVBCSID";
 			this.tbDVBCSID.TabIndex = 11;
 			this.tbDVBCSID.Text = "";
+			this.tbDVBCSID.TextChanged += new System.EventHandler(this.tbDVBCSID_TextChanged);
 			// 
 			// label15
 			// 
@@ -661,6 +678,7 @@ namespace MediaPortal.Configuration
 			this.label15.Size = new System.Drawing.Size(64, 16);
 			this.label15.TabIndex = 10;
 			this.label15.Text = "Service ID:";
+			this.label15.Click += new System.EventHandler(this.label15_Click);
 			// 
 			// tbDVBCONID
 			// 
@@ -668,6 +686,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBCONID.Name = "tbDVBCONID";
 			this.tbDVBCONID.TabIndex = 9;
 			this.tbDVBCONID.Text = "";
+			this.tbDVBCONID.TextChanged += new System.EventHandler(this.tbDVBCONID_TextChanged);
 			// 
 			// label16
 			// 
@@ -676,6 +695,7 @@ namespace MediaPortal.Configuration
 			this.label16.Size = new System.Drawing.Size(64, 16);
 			this.label16.TabIndex = 8;
 			this.label16.Text = "Network ID:";
+			this.label16.Click += new System.EventHandler(this.label16_Click);
 			// 
 			// tabPage5
 			// 
@@ -698,6 +718,7 @@ namespace MediaPortal.Configuration
 			this.tabPage5.Size = new System.Drawing.Size(392, 286);
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "DVB-S";
+			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
 			// 
 			// cbDVBSPolarisation
 			// 
@@ -708,6 +729,7 @@ namespace MediaPortal.Configuration
 			this.cbDVBSPolarisation.Name = "cbDVBSPolarisation";
 			this.cbDVBSPolarisation.Size = new System.Drawing.Size(121, 21);
 			this.cbDVBSPolarisation.TabIndex = 35;
+			this.cbDVBSPolarisation.SelectedIndexChanged += new System.EventHandler(this.cbDVBSPolarisation_SelectedIndexChanged);
 			// 
 			// cbDvbSInnerFec
 			// 
@@ -721,6 +743,7 @@ namespace MediaPortal.Configuration
 			this.cbDvbSInnerFec.Name = "cbDvbSInnerFec";
 			this.cbDvbSInnerFec.Size = new System.Drawing.Size(121, 21);
 			this.cbDvbSInnerFec.TabIndex = 34;
+			this.cbDvbSInnerFec.SelectedIndexChanged += new System.EventHandler(this.cbDvbSInnerFec_SelectedIndexChanged);
 			// 
 			// label20
 			// 
@@ -729,6 +752,7 @@ namespace MediaPortal.Configuration
 			this.label20.Size = new System.Drawing.Size(100, 16);
 			this.label20.TabIndex = 33;
 			this.label20.Text = "Polarisation";
+			this.label20.Click += new System.EventHandler(this.label20_Click);
 			// 
 			// label21
 			// 
@@ -737,6 +761,7 @@ namespace MediaPortal.Configuration
 			this.label21.Size = new System.Drawing.Size(100, 16);
 			this.label21.TabIndex = 32;
 			this.label21.Text = "InnerFEC";
+			this.label21.Click += new System.EventHandler(this.label21_Click);
 			// 
 			// tbDVBSSymbolrate
 			// 
@@ -744,6 +769,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSSymbolrate.Name = "tbDVBSSymbolrate";
 			this.tbDVBSSymbolrate.TabIndex = 31;
 			this.tbDVBSSymbolrate.Text = "";
+			this.tbDVBSSymbolrate.TextChanged += new System.EventHandler(this.tbDVBSSymbolrate_TextChanged);
 			// 
 			// label22
 			// 
@@ -752,6 +778,7 @@ namespace MediaPortal.Configuration
 			this.label22.Size = new System.Drawing.Size(100, 16);
 			this.label22.TabIndex = 30;
 			this.label22.Text = "Symbolrate";
+			this.label22.Click += new System.EventHandler(this.label22_Click);
 			// 
 			// tbDVBSFreq
 			// 
@@ -759,6 +786,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSFreq.Name = "tbDVBSFreq";
 			this.tbDVBSFreq.TabIndex = 29;
 			this.tbDVBSFreq.Text = "";
+			this.tbDVBSFreq.TextChanged += new System.EventHandler(this.tbDVBSFreq_TextChanged);
 			// 
 			// label23
 			// 
@@ -767,6 +795,7 @@ namespace MediaPortal.Configuration
 			this.label23.Size = new System.Drawing.Size(128, 16);
 			this.label23.TabIndex = 28;
 			this.label23.Text = "Carrier Frequency (KHz)";
+			this.label23.Click += new System.EventHandler(this.label23_Click);
 			// 
 			// tbDVBSTSID
 			// 
@@ -774,6 +803,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSTSID.Name = "tbDVBSTSID";
 			this.tbDVBSTSID.TabIndex = 27;
 			this.tbDVBSTSID.Text = "";
+			this.tbDVBSTSID.TextChanged += new System.EventHandler(this.tbDVBSTSID_TextChanged);
 			// 
 			// label24
 			// 
@@ -782,6 +812,7 @@ namespace MediaPortal.Configuration
 			this.label24.Size = new System.Drawing.Size(72, 16);
 			this.label24.TabIndex = 26;
 			this.label24.Text = "Transport ID:";
+			this.label24.Click += new System.EventHandler(this.label24_Click);
 			// 
 			// tbDVBSSID
 			// 
@@ -789,6 +820,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSSID.Name = "tbDVBSSID";
 			this.tbDVBSSID.TabIndex = 25;
 			this.tbDVBSSID.Text = "";
+			this.tbDVBSSID.TextChanged += new System.EventHandler(this.tbDVBSSID_TextChanged);
 			// 
 			// label25
 			// 
@@ -797,6 +829,7 @@ namespace MediaPortal.Configuration
 			this.label25.Size = new System.Drawing.Size(64, 16);
 			this.label25.TabIndex = 24;
 			this.label25.Text = "Service ID:";
+			this.label25.Click += new System.EventHandler(this.label25_Click);
 			// 
 			// tbDVBSONID
 			// 
@@ -804,6 +837,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID.Name = "tbDVBSONID";
 			this.tbDVBSONID.TabIndex = 23;
 			this.tbDVBSONID.Text = "";
+			this.tbDVBSONID.TextChanged += new System.EventHandler(this.tbDVBSONID_TextChanged);
 			// 
 			// label26
 			// 
@@ -812,6 +846,7 @@ namespace MediaPortal.Configuration
 			this.label26.Size = new System.Drawing.Size(64, 16);
 			this.label26.TabIndex = 22;
 			this.label26.Text = "Network ID:";
+			this.label26.Click += new System.EventHandler(this.label26_Click);
 			// 
 			// tabPage6
 			// 
@@ -826,6 +861,26 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Size = new System.Drawing.Size(392, 286);
 			this.tabPage6.TabIndex = 5;
 			this.tabPage6.Text = "External";
+			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(24, 48);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(88, 16);
+			this.label3.TabIndex = 10;
+			this.label3.Text = "Channel";
+			this.label3.Click += new System.EventHandler(this.label3_Click_1);
+			// 
+			// channelTextBox
+			// 
+			this.channelTextBox.Location = new System.Drawing.Point(128, 48);
+			this.channelTextBox.MaxLength = 4;
+			this.channelTextBox.Name = "channelTextBox";
+			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
+			this.channelTextBox.TabIndex = 9;
+			this.channelTextBox.Text = "0";
+			this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged_1);
 			// 
 			// EditTVChannelForm
 			// 
@@ -951,6 +1006,7 @@ namespace MediaPortal.Configuration
 			{
 				TelevisionChannel channel = new TelevisionChannel();
 
+				channel.ID=channelId;
 				channel.Name = nameTextBox.Text;
 				channel.Channel = Convert.ToInt32(channelTextBox.Text.Length > 0 ? channelTextBox.Text : "0");
 
@@ -1051,6 +1107,7 @@ namespace MediaPortal.Configuration
 
 				if(channel != null)
 				{
+					channelId=channel.ID;
 					for (int i=0; i < countryComboBox.Items.Count;++i)
 					{
 						TunerCountry tunerCountry = countryComboBox.Items[i] as TunerCountry;
@@ -1290,7 +1347,7 @@ namespace MediaPortal.Configuration
 				SID=Int32.Parse(tbDVBTSID.Text);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,tvchannel.ID,freq,ONID,TSID,SID);
+					TVDatabase.MapDVBTChannel(tvchannel.Name,tvchannel.Number,freq,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
@@ -1301,14 +1358,14 @@ namespace MediaPortal.Configuration
 			{
 				freq=Int32.Parse(tbDVBCFreq.Text);
 				ONID=Int32.Parse(tbDVBCONID.Text);
-				TSID=Int32.Parse(tbDVBCSID.Text);
+				TSID=Int32.Parse(tbDVBCTSID.Text);
 				SID=Int32.Parse(tbDVBCSID.Text);
 				symbolrate=Int32.Parse(tbDVBCSR.Text);
 				innerFec=IndexToFec(cbDVBCInnerFeq.SelectedIndex);
 				modulation=IndexToModulation(cbDVBCModulation.SelectedIndex);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBCChannel(tvchannel.Name,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
+					TVDatabase.MapDVBCChannel(tvchannel.Name,tvchannel.Number,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
@@ -1325,11 +1382,291 @@ namespace MediaPortal.Configuration
 				polarisation=IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBSChannel(tvchannel.Name,tvchannel.ID,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
+					TVDatabase.MapDVBSChannel(tvchannel.Name,tvchannel.Number,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
 
+		}
+
+		private void label23_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBSONID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label22_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBSFreq_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label24_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void channelTextBox_TextChanged_1(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBSSID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label26_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBSTSID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label7_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void frequencyTextBox_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label1_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void nameTextBox_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label2_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label6_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label5_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void externalChannelTextBox_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label4_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage1_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage2_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void countryComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label8_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage3_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBTFreq_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage6_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label12_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBTTSID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label25_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label11_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBTSID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBSSymbolrate_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label10_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBTONID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label9_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage4_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void cbDVBCModulation_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void cbDVBCInnerFeq_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label19_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label18_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBCSR_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label3_Click_1(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label17_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBCFreq_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label13_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBCTSID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label14_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBCSID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label15_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tbDVBCONID_TextChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label16_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage5_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void cbDVBSPolarisation_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void cbDvbSInnerFec_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label20_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label21_Click(object sender, System.EventArgs e)
+		{
+		
 		}
 	}
 
