@@ -51,6 +51,8 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoDatabase", "VideoDatabase\VideoDatabase.csproj", "{C5F79684-B786-43EB-99F2-9F217A6A9BE1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -165,6 +167,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUITopbar", "GUITopbar\GUIT
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIRSSFeed", "GUIRSSFeed\GUIRSSFeed.csproj", "{4AF0DFC6-4CDB-4523-AACF-48836E474824}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinampExternalPlayer", "WinampExternalPlayer\WinampExternalPlayer.csproj", "{FDF9D276-8315-4A4F-99C8-E1D1A423914C}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -312,6 +318,10 @@ Global
 		{4AF0DFC6-4CDB-4523-AACF-48836E474824}.Debug.Build.0 = Debug|.NET
 		{4AF0DFC6-4CDB-4523-AACF-48836E474824}.Release.ActiveCfg = Release|.NET
 		{4AF0DFC6-4CDB-4523-AACF-48836E474824}.Release.Build.0 = Release|.NET
+		{FDF9D276-8315-4A4F-99C8-E1D1A423914C}.Debug.ActiveCfg = Debug|.NET
+		{FDF9D276-8315-4A4F-99C8-E1D1A423914C}.Debug.Build.0 = Debug|.NET
+		{FDF9D276-8315-4A4F-99C8-E1D1A423914C}.Release.ActiveCfg = Release|.NET
+		{FDF9D276-8315-4A4F-99C8-E1D1A423914C}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

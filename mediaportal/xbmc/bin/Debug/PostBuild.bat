@@ -2,6 +2,7 @@ mkdir plugins
 mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
+mkdir plugins\ExternalPlayers
 
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.dll plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.dll plugins\windows
@@ -31,11 +32,15 @@ copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
 
+
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
+
+copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.dll plugins\ExternalPlayers
+copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.pdb plugins\ExternalPlayers
 
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.pdb plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.pdb plugins\windows

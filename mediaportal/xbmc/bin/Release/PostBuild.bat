@@ -3,6 +3,7 @@ mkdir plugins
 mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
+mkdir plugins\ExternalPlayers
 
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
 copy ..\..\..\GUIRSSFeed\bin\Release\GUIRSSFeed.dll plugins\windows
@@ -40,3 +41,5 @@ copy ..\..\..\TagReader\bin\Release\TagReader.dll .
 copy ..\..\..\mp3TagReader\bin\Release\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\release\zlib.dll plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Release\MultiTagReader.dll plugins\TagReaders
+copy ..\..\..\WinampExternalPlayer\bin\Release\WinampExternalPlayer.dll plugins\ExternalPlayers
+
