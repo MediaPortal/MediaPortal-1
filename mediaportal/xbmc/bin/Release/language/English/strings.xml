@@ -1694,9 +1694,42 @@
 		<id>504</id>
 		<value>Goto destination</value>
 	</string>
+	<string>
+		<id>505</id>
+		<value>Calculating</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Are you sure?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>items</value>
+	</string>	
+	<string>
+		<id>508</id>
+		<value>To</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Destination File exists. Overwrite File ?</value>
+	</string>
+	
+	<string>
+		<id>530</id>
+		<value>Photo disc inserted, do you want to open it?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Movie disc inserted, do you want to open it?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audio disc inserted, do you want to open it?</value>
+	</string>
 	
 	
-	
+		
 	<string>
 		<id>600</id>
 		<value>TVGuide</value>

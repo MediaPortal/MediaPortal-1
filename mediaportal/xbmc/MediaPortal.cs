@@ -1,4 +1,4 @@
-//#define AUTOUPDATE
+#define AUTOUPDATE
 using System;
 using System.Drawing;
 using System.Collections;
@@ -147,6 +147,7 @@ public class MediaPortalApp : D3DApp, IRender
         form.ShowDialog();
       }
 
+#if AUTOUPDATE
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 	#if DEBUG
 	#else
@@ -155,6 +156,14 @@ public class MediaPortalApp : D3DApp, IRender
 				splashScreen.Show();
 				splashScreen.Update();
 	#endif
+#else
+	#if DEBUG
+	#else
+				splashScreen = new SplashScreen();
+				splashScreen.Show();
+				splashScreen.Update();
+	#endif
+#endif
       Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
       // Set Intervideo registry keys 
       try
@@ -174,6 +183,7 @@ public class MediaPortalApp : D3DApp, IRender
         SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Hwmc",1);
         SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Dxva",1);
 
+        hklm.Close();
 
 				// windvd6 mpeg2 codec settings
 				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\AudioDec","DsContinuousRate",1);
@@ -441,16 +451,9 @@ public class MediaPortalApp : D3DApp, IRender
       // also set credentials to allow use with firewalls that require them
       // this means we can use the .NET internet objects and not have
       // to worry about proxies elsewhere in the code
-			try
-			{
-				System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
-				if (proxy!=null)
-				{
-					proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
-					System.Net.GlobalProxySelection.Select = proxy;
-				}
-			}
-			catch(Exception){}
+      System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
+      proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+      System.Net.GlobalProxySelection.Select = proxy;
 
       //register the playlistplayer for thread messages (like playback stopped,ended)
       Log.Write("  Init playlist player");
@@ -1253,15 +1256,8 @@ public class MediaPortalApp : D3DApp, IRender
 						if (!GUIGraphicsContext.IsFullScreenVideo)
 						{
 							Log.Write("App.Onaction() stop media");
+							g_Player.Stop();
 							
-							if (g_Player.IsTV && g_Player.Playing && Recorder.IsRecording())
-							{
-								Recorder.StopRecording();
-							}
-							else
-							{
-								g_Player.Stop();
-							}
 							return;
 						}
 						break;
@@ -1760,10 +1756,15 @@ public class MediaPortalApp : D3DApp, IRender
 					GUIGraphicsContext.IsFullScreenVideo=false;
 				}
 			break;
+
       case GUIMessage.MessageType.GUI_MSG_CD_INSERTED:
         AutoPlay.ExamineCD(message.Label);
       break;
 
+			case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
+        AutoPlay.ExamineVolume(message.Label);
+      break;
+				
       case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL : 
 				bool bIsInteger;
 				double retNum;	
