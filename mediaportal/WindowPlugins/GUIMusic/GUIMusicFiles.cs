@@ -475,35 +475,62 @@ namespace MediaPortal.GUI.Music
       int itemNo=GetSelectedItemNo();
       if (item==null) return;
 
+      GUIControl cntl=GetControl((int)Controls.CONTROL_VIEW);
+      if (cntl==null) 
+        return; // Control not found
+
       GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg==null) return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      dlg.Add( GUILocalizeStrings.Get(928)); //find coverart
-      dlg.Add( GUILocalizeStrings.Get(208)); //play
-      dlg.Add( GUILocalizeStrings.Get(926)); //Queue
-			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
-			dlg.Add( GUILocalizeStrings.Get(929)); //close window
+      if (!cntl.Focus)
+      {
+        // control view has no focus
+        dlg.AddLocalizedString(136); //PlayList
+      }
+      else
+      {
+        if ((System.IO.Path.GetFileName(item.Path) != "") || Utils.IsDVD(item.Path))
+        {
+          dlg.AddLocalizedString(928); //find coverart
+          dlg.AddLocalizedString(926); //Queue        
+        }
+        if (!item.IsFolder || Utils.IsDVD(item.Path))
+        {
+          dlg.AddLocalizedString(208); //play
+        }
+
+        dlg.AddLocalizedString(136); //PlayList
+        if (Utils.getDriveType(item.Path) == 5)
+        {
+          dlg.AddLocalizedString(654); //Eject
+        }
+      }
 
       dlg.DoModal( GetID);
-      if (dlg.SelectedLabel==-1) return;
-      switch (dlg.SelectedLabel)
+      if (dlg.SelectedId==-1) return;
+      switch (dlg.SelectedId)
       {
-        case 0: // find coverart
+        case 928: // find coverart
           OnInfo(itemNo);
           break;
 
-        case 1: // play
+        case 208: // play
           OnClick(itemNo);	
           break;
 					
-        case 2: // add to playlist
+        case 926: // add to playlist
           OnQueueItem(itemNo);	
           break;
 					
-        case 3: // show playlist
+        case 136: // show playlist
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+          break;
+
+        case 654: // Eject
+          Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+          LoadDirectory("");
           break;
       }
     }
@@ -1817,9 +1844,15 @@ namespace MediaPortal.GUI.Music
                 string thumb=GetAlbumThumbName(album.Artist, album.Title);
                 if (System.IO.File.Exists(thumb))
                 {
-                  string folderjpg=String.Format(@"{0}\folder.jpg",Utils.RemoveTrailingSlash(pItem.Path));
-                  Utils.FileDelete(folderjpg);
-                  System.IO.File.Copy(thumb, folderjpg);
+                  try
+                  {
+                    string folderjpg=String.Format(@"{0}\folder.jpg",Utils.RemoveTrailingSlash(pItem.Path));
+                    Utils.FileDelete(folderjpg);
+                    System.IO.File.Copy(thumb, folderjpg);
+                  }
+                  catch(Exception)
+                  {
+                  }
                 }
               }
             }
