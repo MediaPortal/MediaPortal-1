@@ -843,7 +843,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Bluebird, BDA DVB-T Tuner/Demod"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"			  checkdevice="false"></filter>
         <filter cat="capture"         name="Bluebird, WDM TsCapture"		  checkdevice="false"></filter>
       </filters>
       <connections>
