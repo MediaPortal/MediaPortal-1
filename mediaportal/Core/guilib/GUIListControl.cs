@@ -311,16 +311,20 @@ namespace MediaPortal.GUI.Library
           if (null != pItem)
           {
 						bool dispose=true;
+						pItem.RetrieveArt=false;
 						for (int x=m_iOffset; x < m_iOffset+m_iItemsPerPage && x < m_vecItems.Count; x++)
 						{
 							GUIListItem pItem2 = (GUIListItem)m_vecItems[x];
+							pItem2.RetrieveArt=false;
 							if ( (pItem.IconImage!="" && pItem.IconImage==pItem2.IconImage) ||
 								   (pItem.IconImageBig!="" && pItem.IconImageBig==pItem2.IconImageBig) )
 							{
 								dispose=false;
 								break;
 							}
+							pItem2.RetrieveArt=true;
 						}
+						pItem.RetrieveArt=true;
 						if (dispose)
 							pItem.FreeMemory();
           }
@@ -330,21 +334,25 @@ namespace MediaPortal.GUI.Library
           GUIListItem pItem = (GUIListItem)m_vecItems[i];
           if (null != pItem)
           {
+						pItem.RetrieveArt=false;
 						bool dispose=true;
 						for (int x=m_iOffset; x < m_iOffset+m_iItemsPerPage && x < m_vecItems.Count; x++)
 						{
 							GUIListItem pItem2 = (GUIListItem)m_vecItems[x];
+							pItem2.RetrieveArt=false;
 							if ( (pItem.IconImageBig!="" && pItem.IconImage==pItem2.IconImageBig) ||
 									 (pItem.IconImageBig!="" && pItem.IconImageBig==pItem2.IconImageBig ) )
 							{
 								dispose=false;
 								break;
 							}
+							pItem2.RetrieveArt=true;
 						}
 						if (dispose)
 							pItem.FreeMemory();
           }
-        }
+					pItem.RetrieveArt=true;
+				}
       }
 
       // Render new item list

@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Library
     protected bool          m_isRemote=false;           // indicating if this is a local or remote file
     protected bool          m_isDownloading=false;            // indicating if this file is being downloaded
     int                     m_iItemId=0;                // General item id
+		bool										m_bRetrieveArt=true;
 
     /// <summary>
 		/// The (empty) constructor of the GUIListItem.
@@ -137,7 +138,7 @@ namespace MediaPortal.GUI.Library
 		{
 			get { 
         
-        RetrieveArt();
+        DoRetrieveArt();
         return m_strThumbnailImage;
       }
       set 
@@ -154,7 +155,7 @@ namespace MediaPortal.GUI.Library
 		{
 			get { 
         
-        RetrieveArt();
+        DoRetrieveArt();
         return m_strIcon;
       }
       set 
@@ -169,7 +170,7 @@ namespace MediaPortal.GUI.Library
       get 
       { 
         
-        RetrieveArt();
+        DoRetrieveArt();
         return m_PinIcon;
       }
       set 
@@ -187,7 +188,7 @@ namespace MediaPortal.GUI.Library
     {
       get { 
         
-        RetrieveArt();
+        DoRetrieveArt();
         return m_strIconBig;
       }
       set 
@@ -220,7 +221,7 @@ namespace MediaPortal.GUI.Library
 		public bool HasIcon
 		{
 			get { 
-        RetrieveArt();
+        DoRetrieveArt();
         return m_strIcon.Length>0;
       }
     }
@@ -233,7 +234,7 @@ namespace MediaPortal.GUI.Library
     {
       get 
       { 
-        RetrieveArt();
+        DoRetrieveArt();
         return m_PinIcon.Length>0;
       }
     }
@@ -245,7 +246,7 @@ namespace MediaPortal.GUI.Library
     {
       get { 
         
-        RetrieveArt();
+        DoRetrieveArt();
         return m_strIconBig.Length>0;
       }
     }
@@ -460,8 +461,9 @@ namespace MediaPortal.GUI.Library
     /// This method will raise the OnRetrieveArt() event to
     /// ask the listener to supply the thumbnail(s) for this item
     /// </summary>
-    void RetrieveArt()
+    void DoRetrieveArt()
     {
+			if (!m_bRetrieveArt) return;
       if (m_bArtRetrieved) return;
       m_bArtRetrieved=true;
       if (OnRetrieveArt!=null) OnRetrieveArt(this);
@@ -497,5 +499,10 @@ namespace MediaPortal.GUI.Library
       get { return m_isDownloading;}
       set { m_isDownloading=value;}
     }
+		public bool RetrieveArt
+		{
+			get { return m_bRetrieveArt;}
+			set { m_bRetrieveArt=value;}
+		}
 	}
 }
