@@ -4012,11 +4012,11 @@ namespace MediaPortal
       {
         ListViewItem item=listViewRadio.Items[i];
         RadioStation station = new RadioStation();
-        station.Name=item.SubItems[0].Text;
-        station.Channel=GetInt(item.SubItems[1].Text);
-        station.Genre=item.SubItems[2].Text;
-        station.BitRate=GetInt(item.SubItems[3].Text);
-        station.URL=item.SubItems[4].Text;
+        station.Name=item.SubItems[1].Text;
+        station.Channel=GetInt(item.SubItems[2].Text);
+        station.Genre=item.SubItems[3].Text;
+        station.BitRate=GetInt(item.SubItems[4].Text);
+        station.URL=item.SubItems[5].Text;
         if (station.Channel!=0 || station.URL.Length>0)
         {
           RadioDatabase.AddStation(ref station);
@@ -4034,11 +4034,11 @@ namespace MediaPortal
 
     private void btnAddRadio_Click(object sender, System.EventArgs e)
     {
-      ListViewItem newItem=listViewRadio.Items.Add("new station");
-      newItem.SubItems.Add("Radio");
-      newItem.SubItems.Add("");
+      ListViewItem newItem=listViewRadio.Items.Add("Radio");
+      newItem.SubItems.Add("New Station");
+      newItem.SubItems.Add("10");
       newItem.SubItems.Add("general");
-      newItem.SubItems.Add("");
+      newItem.SubItems.Add("0");
       newItem.SubItems.Add("");  
     }
 
