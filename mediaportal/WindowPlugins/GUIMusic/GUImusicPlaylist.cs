@@ -103,6 +103,7 @@ namespace MediaPortal.GUI.Music
 						pl.Remove(pl[0].FileName );
 						UpdatePartyShuffle();
 						PlayListPlayer.CurrentSong = 0;
+						LoadDirectory("");
 					}
 					break;
 			}
@@ -258,7 +259,20 @@ namespace MediaPortal.GUI.Music
 					{
 						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
 						PlayListPlayer.Reset();
-						PlayListPlayer.Play(GetSelectedItemNo());
+						if (PShuffleOn == true)
+						{
+							for (int i=0; i<GetSelectedItemNo(); i++)
+							{
+								PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
+							}
+							UpdatePartyShuffle();
+							//LoadDirectory("");
+							PlayListPlayer.Play(0);
+						}
+						else
+						{
+							PlayListPlayer.Play(GetSelectedItemNo());
+						}
 						UpdateButtons();
 					}
 					else if (iControl == (int)Controls.CONTROL_BTNNEXT)
@@ -785,7 +799,7 @@ namespace MediaPortal.GUI.Music
 					}
 					//LoadDirectory("");
 					UpdatePartyShuffle();
-					LoadDirectory("");
+					//LoadDirectory("");
 					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
 					PlayListPlayer.Reset();
 					PlayListPlayer.Play(0);
