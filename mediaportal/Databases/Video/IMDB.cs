@@ -519,6 +519,8 @@ namespace MediaPortal.Video.Database
 								}
 								else strTitle=strAHRef.Substring(iURL);
 								
+								int onclick=strURL.IndexOf(" onclick");
+								if (onclick>=0) strURL=strURL.Substring(0,onclick-1);
 								strURL=String.Format("http://us.imdb.com{0}", strURL);
 								HTMLUtil htmlUtil= new HTMLUtil();
 								htmlUtil.ConvertHTMLToAnsi(strTitle,out strTitle);
