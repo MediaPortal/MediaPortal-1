@@ -68,7 +68,7 @@ namespace MediaPortal.Configuration.Sections
 				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
 				pixelRatioCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
 
-				aspectRatioComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "armode", "stretch");
+				aspectRatioComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "armode", "Stretch");
 				displayModeComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "displaymode", "Default");
 			}
 		}
