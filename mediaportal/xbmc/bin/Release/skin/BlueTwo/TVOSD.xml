@@ -64,21 +64,22 @@
 		<description>TV Logo</description> 
 		<type>image</type> 
 		<id>10</id> 
-		<posX>60</posX> 
-		<posY>450</posY>
+		<posX>65</posX> 
+		<posY>440</posY>
 		<width>80</width>
 		<height>80</height>
 		<texture>#TV.View.thumb</texture>		
-		<visible>yes</visible> 
+		<visible>yes</visible>
+		<keepaspectratio>yes</keepaspectratio> 
 	</control>
 	<control>
 		<description>Plot</description>
 		<type>textboxscrollup</type>
 		<id>0</id>
 		<posX>210</posX> 
-		<posY>415</posY>
+		<posY>450</posY>
 		<width>330</width> 
-		<height>90</height>
+		<height>70</height>
 		<align>left</align> 
 		<label>#TV.View.description</label>
 		<font>font10</font>
@@ -91,7 +92,7 @@
 		<width>500</width>
 		<height>60</height> 
 		<posX>205</posX> 
-		<posY>443</posY>
+		<posY>430</posY>
 		<align>left</align>
 		<font>font10</font> 
 		<textcolor>FFB2D4F5</textcolor>
@@ -103,7 +104,7 @@
 		<width>500</width> 
 		<height>60</height>
 		<posX>205</posX> 
-		<posY>420</posY>
+		<posY>410</posY>
 		<align>left</align> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor>
@@ -113,7 +114,7 @@
 		<type>button</type>
 		<id>33</id>
 		<posX>147</posX>
-		<posY>430</posY>
+		<posY>420</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_up_focus.png</textureFocus>
@@ -129,7 +130,7 @@
 		<type>button</type>
 		<id>34</id>
 		<posX>173</posX>
-		<posY>430</posY>
+		<posY>420</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_down_focus.png</textureFocus>
@@ -145,7 +146,7 @@
 		<type>button</type>
 		<id>31</id>
 		<posX>173</posX>
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_right_focus.png</textureFocus>
@@ -161,7 +162,7 @@
 		<type>button</type>
 		<id>32</id>
 		<posX>147</posX>
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_left_focus.png</textureFocus>
@@ -176,8 +177,8 @@
 		<description>Current channel</description> 
 		<type>label</type> 
 		<id>35</id> 
-		<posX>60</posX> 
-		<posY>540</posY> 
+		<posX>65</posX> 
+		<posY>530</posY> 
 		<label>-</label> 
 		<align>left</align> 
 		<font>font10</font> 
@@ -188,7 +189,7 @@
 		<type>togglebutton</type> 
 		<id>210</id> 
 		<posX>205</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_back_focus.png</AltTextureFocus> 
@@ -207,7 +208,7 @@
 		<type>togglebutton</type> 
 		<id>211</id> 
 		<posX>240</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_rewind_focus.png</AltTextureFocus> 
@@ -226,7 +227,7 @@
 		<type>button</type> 
 		<id>212</id> 
 		<posX>275</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<textureFocus>osd_stop_focus.png</textureFocus> 
@@ -243,7 +244,7 @@
 		<type>togglebutton</type> 
 		<id>213</id> 
 		<posX>310</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_pause_focus.png</AltTextureFocus> 
@@ -262,7 +263,7 @@
 		<type>togglebutton</type> 
 		<id>214</id> 
 		<posX>345</posX> 
-		<posY>530</posY> 
+		<posY>520</posY> 
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_fastforward_focus.png</AltTextureFocus> 
@@ -281,7 +282,7 @@
 		<type>togglebutton</type> 
 		<id>215</id> 
 		<posX>380</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_next_focus.png</AltTextureFocus> 
@@ -300,7 +301,7 @@
 		<type>togglebutton</type> 
 		<id>216</id> 
 		<posX>415</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_mute_focus.png</AltTextureFocus> 
@@ -319,7 +320,7 @@
 		<type>togglebutton</type> 
 		<id>218</id> 
 		<posX>450</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_settings_subs_focus.png</AltTextureFocus> 
@@ -338,7 +339,7 @@
 		<type>togglebutton</type> 
 		<id>219</id> 
 		<posX>485</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_settings_bookmark_focus.png</AltTextureFocus> 
@@ -357,7 +358,7 @@
 		<type>togglebutton</type> 
 		<id>220</id> 
 		<posX>520</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_settings_video_focus.png</AltTextureFocus> 
@@ -376,7 +377,7 @@
 		<type>togglebutton</type> 
 		<id>221</id> 
 		<posX>555</posX> 
-		<posY>530</posY>
+		<posY>520</posY>
 		<width>30</width>
 		<height>26</height> 
 		<AltTextureFocus>osd_settings_audio_focus.png</AltTextureFocus> 

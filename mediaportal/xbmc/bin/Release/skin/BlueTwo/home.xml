@@ -84,7 +84,7 @@
 		<description>Date</description>
 		<type>label</type>
 		<id>200</id>
-		<posX>210</posX>
+		<posX>220</posX>
 		<posY>175</posY>
 		<label>#date</label>
 		<align>right</align>
@@ -95,7 +95,7 @@
 		<description>Time</description>
 		<type>label</type>
 		<id>201</id>
-		<posX>220</posX>
+		<posX>230</posX>
 		<posY>175</posY>
 		<label>#time</label>
 		<align>left</align>
