@@ -23,7 +23,7 @@
 			<posY>70</posY>
 			<label>1950</label>
 			<font>font16</font>
-			<align>left</align>
+			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
@@ -31,7 +31,7 @@
 			<type>textbox</type>
 			<id>9</id>
 			<label>-</label>
-			<posY>120</posY>
+			<posY>97</posY>
 			<posX>260</posX>
 			<height>400</height>
 			<width>410</width>
@@ -68,7 +68,7 @@
 				<onleft>2</onleft>
 				<onright>10</onright>
 				<onup>2</onup>
-				<ondown>3</ondown>
+				<ondown>4</ondown>
 			</control>
 			<control>
 				<description>next page</description>
@@ -96,7 +96,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>21</onup>
 				<ondown>11</ondown>
 			</control>
@@ -109,7 +109,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>10</onup>
 				<ondown>12</ondown>
 			</control>
@@ -122,7 +122,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>11</onup>
 				<ondown>13</ondown>
 			</control>
@@ -135,7 +135,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>12</onup>
 				<ondown>14</ondown>
 			</control>
@@ -148,7 +148,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>13</onup>
 				<ondown>15</ondown>
 			</control>
@@ -161,7 +161,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>14</onup>
 				<ondown>16</ondown>
 			</control>
@@ -174,7 +174,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>15</onup>
 				<ondown>17</ondown>
 			</control>
@@ -187,7 +187,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>16</onup>
 				<ondown>18</ondown>
 			</control>
@@ -200,7 +200,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>17</onup>
 				<ondown>19</ondown>
 			</control>
@@ -213,7 +213,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>18</onup>
 				<ondown>20</ondown>
 			</control>
@@ -226,7 +226,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>19</onup>
 				<ondown>21</ondown>
 			</control>
@@ -239,7 +239,7 @@
 				<width>300</width>
 				<label>1951</label>
 				<onleft>2</onleft>
-				<onright>9</onright>
+				<onright>2</onright>
 				<onup>20</onup>
 				<ondown>10</ondown>
 			</control>
