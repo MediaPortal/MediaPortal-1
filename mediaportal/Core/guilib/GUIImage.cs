@@ -738,7 +738,7 @@ namespace MediaPortal.GUI.Library
         if (savedStateBlock!=null)
         {
           //then finally render the texture
-          savedStateBlock.Apply();
+          //savedStateBlock.Apply();
 
           GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
           GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);

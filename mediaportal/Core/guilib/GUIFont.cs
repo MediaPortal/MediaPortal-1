@@ -17,7 +17,7 @@ namespace MediaPortal.GUI.Library
 	{
 		private string m_strFontName;
 		private string m_strFileName;
-		public const int MaxNumfontVertices = 500*6;
+		public const int MaxNumfontVertices = 200*6;
     
     private int       _StartCharacter=32;
     private int       _EndCharacter=255;
@@ -246,9 +246,9 @@ namespace MediaPortal.GUI.Library
 				if (savedStateBlock.Disposed) return;
 				if (GUIGraphicsContext.DX9Device.Disposed) return;
 				if (fontVertices==null) return;
-        savedStateBlock.Apply();
+//        savedStateBlock.Apply();
         vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
-        //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
+        GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 ///        GUIGraphicsContext.DX9Device.PixelShader = null;
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
@@ -403,8 +403,8 @@ namespace MediaPortal.GUI.Library
               if (vertexBuffer!=null)
               {
                 vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
-                savedStateBlock.Apply();
-                //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
+                //savedStateBlock.Apply();
+                GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
                 GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
                 //GUIGraphicsContext.DX9Device.PixelShader = null;
                 GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
@@ -772,6 +772,7 @@ namespace MediaPortal.GUI.Library
 
 				  savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
 			}
+
 		}
 
 		/// <summary>

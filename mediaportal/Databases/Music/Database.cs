@@ -48,7 +48,7 @@ namespace MediaPortal.Music.Database
     ArrayList m_albumCache = new ArrayList();
 
     static SQLiteClient m_db = null;
-    public Database()
+    static Database()
     {
       Log.Write("Opening music database");
       try 
@@ -91,7 +91,7 @@ namespace MediaPortal.Music.Database
         m_db=null;
       }*/
     }
-    void AddTable(string strTable, string strSQL)
+    static void AddTable(string strTable, string strSQL)
     {
       if (m_db == null) return;
       SQLiteResultSet results;
@@ -123,7 +123,7 @@ namespace MediaPortal.Music.Database
       return;
     }
 
-    bool CreateTables()
+    static bool CreateTables()
     {
       if (m_db == null) return false;
       AddTable("artist","CREATE TABLE artist ( idArtist integer primary key, strArtist text)\n");
