@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-					m_db = new SQLiteClient(@"database\TVDatabaseV13.db");
+					m_db = new SQLiteClient(@"database\TVDatabaseV14.db");
 					CreateTables();
 					UpdateFromPreviousVersion();
 					if (m_db!=null)
