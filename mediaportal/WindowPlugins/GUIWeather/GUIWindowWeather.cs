@@ -850,6 +850,20 @@ namespace MediaPortal.GUI.Weather
 					strLocWord = GUILocalizeStrings.Get(386);
 				else if(String.Compare(szTokenSplit, "Early",true) == 0)
 					strLocWord = GUILocalizeStrings.Get(387);
+				else if(String.Compare(szTokenSplit, "and",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(388);
+				else if(String.Compare(szTokenSplit, "Fog",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(389);
+				else if(String.Compare(szTokenSplit, "Haze",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(390);
+				else if(String.Compare(szTokenSplit, "Windy",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(391);
+				else if(String.Compare(szTokenSplit, "Drizzle",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(392);
+				else if(String.Compare(szTokenSplit, "Freezing",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(393);
+				else if(String.Compare(szTokenSplit, "N/A",true) == 0)
+					strLocWord = GUILocalizeStrings.Get(394);
 
 				if(strLocWord == "")
 					strLocWord = szTokenSplit;	//if not found, let fallback

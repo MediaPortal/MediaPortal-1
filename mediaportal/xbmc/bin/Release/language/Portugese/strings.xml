@@ -263,7 +263,7 @@
 	</string>
 	<string>
 		<id>135</id>
-		<value>Generos</value>
+		<value>Géneros</value>
 	</string>
 	<string>
 		<id>136</id>
@@ -419,7 +419,7 @@
 	</string>
 	<string>
 		<id>174</id>
-		<value>Genero:</value>
+		<value>Género:</value>
 	</string>
 	<string>
 		<id>175</id>
@@ -1003,11 +1003,11 @@
 	</string>
 	<string>
 		<id>322</id>
-		<value>Procurando generos...</value>
+		<value>Procurando géneros...</value>
 	</string>
 	<string>
 		<id>323</id>
-		<value>Erro a reorganizar generos</value>
+		<value>Erro a reorganizar géneros</value>
 	</string>
 	<string>
 		<id>324</id>
@@ -1027,11 +1027,11 @@
 	</string>
 	<string>
 		<id>328</id>
-		<value>Escrevendo alteracoes...</value>
+		<value>Escrevendo alterações...</value>
 	</string>
 	<string>
 		<id>329</id>
-		<value>Erro a escrever alteracoes</value>
+		<value>Erro a escrever alterações</value>
 	</string>
 	<string>
 		<id>330</id>
@@ -1055,7 +1055,7 @@
 	</string>
 	<string>
 		<id>335</id>
-		<value>Comecar</value>
+		<value>Começar</value>
 	</string>
 	<string>
 		<id>336</id>
@@ -1067,7 +1067,7 @@
 	</string>
 	<string>
 		<id>338</id>
-		<value>Analogico</value>
+		<value>Analógico</value>
 	</string>
 	<string>
 		<id>339</id>
@@ -1075,7 +1075,7 @@
 	</string>
 	<string>
 		<id>340</id>
-		<value>Varios Artistas</value>
+		<value>Vários Artistas</value>
 	</string>
 	<string>
 		<id>341</id>
@@ -1107,11 +1107,11 @@
 	</string>
 	<string>
 		<id>348</id>
-		<value>Flatten Directory Hierarchy</value>
+		<value>Hierarquia plana de pastas</value>
 	</string>
 	<string>
 		<id>349</id>
-		<value>Show only Default.xbe</value>
+		<value>Mostrar apenas Default.xbe</value>
 	</string>
 	<string>
 		<id>350</id>
@@ -1195,7 +1195,7 @@
 	</string>
 	<string>
 		<id>370</id>
-		<value>T-Storms</value>
+		<value>Tempestade</value>
 	</string>
 	<string>
 		<id>371</id>
@@ -1223,7 +1223,7 @@
 	</string>
 	<string>
 		<id>377</id>
-		<value>Ligeiro</value>
+		<value>Ligeira</value>
 	</string>
 	<string>
 		<id>378</id>
@@ -1235,7 +1235,7 @@
 	</string>
 	<string>
 		<id>380</id>
-		<value>Showers</value>
+		<value>Aguaceiros</value>
 	</string>
 	<string>
 		<id>381</id>
@@ -1243,7 +1243,7 @@
 	</string>
 	<string>
 		<id>382</id>
-		<value>Scattered</value>
+		<value>Disperso</value>
 	</string>
 	<string>
 		<id>383</id>
@@ -1264,7 +1264,35 @@
 	<string>
 		<id>387</id>
 		<value>Cedo</value>
-	</string>
+	</string>             
+	<string>
+		<id>388</id>
+		<value>e</value>
+	</string>             
+	<string>
+		<id>389</id>
+		<value>Nevoeiro</value>
+	</string>             
+	<string>
+		<id>390</id>
+		<value>Ambaceamento</value>
+	</string>             
+	<string>
+		<id>391</id>
+		<value>Brisa</value>
+	</string>             
+	<string>
+		<id>392</id>
+		<value>Chuviscos</value>
+	</string>             
+	<string>
+		<id>393</id>
+		<value>Gelante</value>
+	</string>             
+	<string>
+		<id>394</id>
+		<value>N/D</value>
+	</string>             
 	<string>
 		<id>396</id>
 		<value>Seleccionar Local</value>
@@ -1283,7 +1311,7 @@
 	</string>
 	<string>
 		<id>400</id>
-		<value>Weather</value>
+		<value>Tempo</value>
 	</string>
 	<string>
 		<id>401</id>
@@ -1303,7 +1331,7 @@
 	</string>
 	<string>
 		<id>405</id>
-		<value>Dew Point</value>
+		<value>Ponto orvalho</value>
 	</string>
 	<string>
 		<id>406</id>
@@ -1311,7 +1339,7 @@
 	</string>
 	<string>
 		<id>407</id>
-		<value>Desde</value>
+		<value>De</value>
 	</string>
 	<string>
 		<id>408</id>
@@ -1339,7 +1367,7 @@
 	</string>
 	<string>
 		<id>415</id>
-		<value>Lendo thumbnail...</value>
+		<value>Lendo breve descrição...</value>
 	</string>
 	<string>
 		<id>416</id>
@@ -1351,7 +1379,7 @@
 	</string>
 	<string>
 		<id>418</id>
-		<value>Videos/Generos</value>
+		<value>Videos/Géneros</value>
 	</string>
 	<string>
 		<id>419</id>
@@ -2009,7 +2037,7 @@
 <string><id>10016</id><value>Acertos->Ecrã->Screensaver</value></string>
 <string><id>10017</id><value>Acertos->Tempo</value></string>
 <string><id>10020</id><value>Acertos->Scripts</value></string>
-<string><id>10021</id><value>Videos/genero</value></string>
+<string><id>10021</id><value>Videos/género</value></string>
 <string><id>10022</id><value>Videos/actor</value></string>
 <string><id>10023</id><value>Videos/ano</value></string>
 <string><id>10024</id><value>Settings->Programas</value></string>
@@ -2029,7 +2057,7 @@
 <string><id>10501</id><value>Music/arquivos</value></string>
 <string><id>10502</id><value>Music/albuns</value></string>
 <string><id>10503</id><value>Music/artistas</value></string>
-<string><id>10504</id><value>Music/generos</value></string>
+<string><id>10504</id><value>Music/géneros</value></string>
 <string><id>10505</id><value>Music/top100</value></string>
 <string><id>10506</id><value>Music/Favoritos</value></string>
 <string><id>10600</id><value>TV/Guide</value></string>
@@ -2314,7 +2342,7 @@
 
 <string>
 	<id>900</id>
-	<value>Ver a partir do último sítio?</value>
+	<value>Ver a partir do ponto onde ficou?</value>
 </string>
 <string>
 	<id>901</id>
@@ -2458,7 +2486,7 @@
 </string>
 <string>
 	<id>936</id>
-	<value>A partir de:</value>
+	<value>Tocar a partir de: </value>
 </string>
 <string>
 	<id>937</id>

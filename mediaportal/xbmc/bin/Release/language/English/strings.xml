@@ -1265,6 +1265,34 @@
 		<value>Early</value>
 	</string>
 	<string>
+		<id>388</id>
+		<value>and</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Fog</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Haze</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Windy</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Drizzle</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Freezing</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>N/A</value>
+	</string>
+	<string>
 		<id>396</id>
 		<value>Select Location</value>
 	</string>

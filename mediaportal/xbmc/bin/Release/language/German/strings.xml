@@ -2284,6 +2284,10 @@
 		<value>Reset</value>
 	</string>
 	<string>
+		<id>869</id>
+		<value>neuer Alarm</value>
+	</string>
+	<string>
 		<id>900</id>
 		<value>Film fortsetzen?</value>
 	</string>
@@ -2651,6 +2655,14 @@
 		<id>1976</id>
 		<value>upm</value>
 	</string>	
+	<string>
+		<id>1977</id>
+		<value>Dateisystem</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>virtueller Speicher</value>
+	</string>
 	<!-- My Recipie Strings -->
 	<string>
 		<id>2005</id>
@@ -3152,6 +3164,10 @@
 		<value>Fortschritt</value>
 	</string>
 	<string>
+		<id>8034</id>
+		<value>html anzeigen</value>
+	</string>
+	<string>
 		<id>9000</id>
 		<value>Bildgröße:</value>
 	</string>
@@ -3412,6 +3428,10 @@
 		<value>Status-Vorzüge</value>
 	</string>
 	<string>
+		<id>10770</id>
+		<value>Datei-Explorer</value>
+	</string>
+	<string>
 		<id>11000</id>
 		<value>Tastatur</value>
 	</string>
@@ -3477,12 +3497,20 @@
 		<value>Wetter</value>
 	</string>
 	<string>
+		<id>12700</id>
+		<value>Neuigkeiten</value>
+	</string>
+	<string>
 		<id>12900</id>
 		<value>Bildschirmschoner</value>
 	</string>
 	<string>
 		<id>12901</id>
 		<value>Vollbild OSD</value>
+	</string>
+	<string>
+		<id>12902</id>
+		<value>MSN Messenger OSD</value>
 	</string>
 	<string>
 		<id>13000</id>
