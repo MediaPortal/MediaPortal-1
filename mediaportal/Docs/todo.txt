@@ -104,6 +104,7 @@ Settings:
 new plugins:
   - my files  
   - my TV-series
+  - my DVD's
   
 DVD player:
   - VMR9

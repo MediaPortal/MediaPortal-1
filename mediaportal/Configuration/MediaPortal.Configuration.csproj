@@ -284,12 +284,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "WeatherChannel.cs"
+                    RelPath = "VideoRenderers.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "VideoRenderers.cs"
+                    RelPath = "WeatherChannel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -173,10 +173,34 @@
                     Project = "{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces"
+                    AssemblyName = "Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces"
+                    HintPath = "..\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
+                />
+                <Reference
+                    Name = "Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces"
+                    AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces"
+                    HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
+                />
+                <Reference
+                    Name = "Microsoft.ApplicationBlocks.ExceptionManagement"
+                    AssemblyName = "Microsoft.ApplicationBlocks.ExceptionManagement"
+                    HintPath = "..\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
+                />
+                <Reference
+                    Name = "Microsoft.ApplicationBlocks.ApplicationUpdater"
+                    AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater"
+                    HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "App.config"
+                    BuildAction = "None"
+                />
                 <File
                     RelPath = "d3dapp.cs"
                     SubType = "Form"
