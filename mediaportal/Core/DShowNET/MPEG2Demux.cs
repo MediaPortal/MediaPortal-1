@@ -200,6 +200,8 @@ namespace DShowNET
 			DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
 			if (m_bRendered)  
 			{
+				if (m_mediaControl==null)
+					m_mediaControl = m_graphBuilder as IMediaControl;
 				if (m_mediaControl!=null && !m_bRunning)
 				{
 					DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
@@ -214,9 +216,11 @@ namespace DShowNET
 			else
 				DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 			m_bRendered=true;
+			if (m_mediaControl==null)
+				m_mediaControl = m_graphBuilder as IMediaControl;
+
 			if (m_mediaControl != null && !m_bRunning)
 			{
-				SetVideoWindow();
 				DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
 				hr=m_mediaControl.Run();
 				m_bRunning=true;

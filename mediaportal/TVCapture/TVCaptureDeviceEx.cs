@@ -1351,6 +1351,20 @@ namespace MediaPortal.TV.Recording
 				_mGraph.TuneRadioChannel(station);
 			}
 		}
+		public void TuneRadioFrequency(int frequency)
+		{
+			if (_mState != State.Radio)
+			{
+				DeleteGraph();
+				CreateGraph();
+				RadioStation station = new RadioStation();
+				_mGraph.StartRadio(station);
+			}
+			else
+			{
+				_mGraph.TuneRadioFrequency(frequency);
+			}
+		}
   }
 }  
 #endif

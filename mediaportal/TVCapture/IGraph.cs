@@ -223,5 +223,6 @@ namespace MediaPortal.TV.Recording
 
 		void StartRadio(RadioStation station);
 		void TuneRadioChannel(RadioStation station);
+		void TuneRadioFrequency(int frequency);
 	}
 }

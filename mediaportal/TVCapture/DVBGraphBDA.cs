@@ -1165,7 +1165,7 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph must be created first with CreateGraph()
 		/// </remarks>
-		void AddPreferredCodecs()
+		void AddPreferredCodecs(bool audio, bool video)
 		{
 			// add preferred video & audio codecs
 			string strVideoCodec="";
@@ -1177,9 +1177,9 @@ namespace MediaPortal.TV.Recording
 				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
 				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
 			}
-			if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
-			if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
-			if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
+			if (video && strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
+			if (audio && strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
+			if (video && bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
 		}//void AddPreferredCodecs()
 		
 		/// <summary>
@@ -1200,7 +1200,7 @@ namespace MediaPortal.TV.Recording
 			Vmr9.AddVMR9(m_graphBuilder);
 
 			// add the preferred video/audio codecs
-			AddPreferredCodecs();
+			AddPreferredCodecs(true,true);
 
 			// render the video/audio pins of the mpeg2 demultiplexer so they get connected to the video/audio codecs
 			if(m_graphBuilder.Render(m_DemuxVideoPin) != 0)
@@ -3190,7 +3190,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBGraphBDA:StartRadio()");
 
 				// add the preferred video/audio codecs
-				AddPreferredCodecs();
+				AddPreferredCodecs(true,false);
 
 
 				Log.Write("DVBGraphBDA:StartRadio() render demux output pin");
@@ -3203,18 +3203,24 @@ namespace MediaPortal.TV.Recording
 				TuneRadioChannel(station);
 				//get the IMediaControl interface of the graph
 				if(m_mediaControl == null)
-					m_mediaControl = (IMediaControl) m_graphBuilder;
+					m_mediaControl = m_graphBuilder as IMediaControl;
 
 				//start the graph
 				Log.Write("DVBGraphBDA: start graph");
-				int hr=m_mediaControl.Run();
-				if (hr<0)
+				if (m_mediaControl!=null)
 				{
-					Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+					int hr=m_mediaControl.Run();
+					if (hr<0)
+					{
+						Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+					}
+				}
+				else
+				{
+					Log.Write("DVBGraphBDA: FAILED cannot get IMediaControl");
 				}
 
 				graphRunning=true;
-				
 				m_graphState = State.Radio;
 				return;
 			}
@@ -3223,6 +3229,10 @@ namespace MediaPortal.TV.Recording
 
 			TuneRadioChannel(station);
 			Log.Write("DVBGraphBDA:Listening to radio..");
+		}
+		
+		public void TuneRadioFrequency(int frequency)
+		{
 		}
 		#endregion
 	}//public class DVBGraphBDA 

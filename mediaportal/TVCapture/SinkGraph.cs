@@ -1125,5 +1125,9 @@ namespace MediaPortal.TV.Recording
 			}
 			TuneRadioChannel(station);
 		}
+		
+		public void TuneRadioFrequency(int frequency)
+		{
+		}
   }
 }
