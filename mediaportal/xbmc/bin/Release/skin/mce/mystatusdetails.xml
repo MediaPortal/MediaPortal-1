@@ -36,14 +36,14 @@
 			<type>statusbar</type> 
 			<id>1</id> 
 			<posX>50</posX> 
-			<posY>545</posY> 
+			<posY>500</posY> 
 			<width>620</width>
-			<height>16</height>
+			<height>22</height>
 			<posYTop>15</posYTop>
-			<texturebg>statusbar_back.png</texturebg> 
-			<lefttexture>statusbar_left.png</lefttexture> 
-			<midtexture>statusbar_mid.png</midtexture> 
-			<righttexture>statusbar_right.png</righttexture> 
+			<texturebg>osd_progress_background.png</texturebg> 
+			<lefttexture>osd_progress_left.png</lefttexture> 
+			<midtexture>osd_progress_mid.png</midtexture> 
+			<righttexture>osd_progress_right.png</righttexture> 
 			<visible>yes</visible> 
 			<label>#statusbar_perc</label>
 		</control>
