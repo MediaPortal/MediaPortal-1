@@ -25,6 +25,7 @@ namespace MediaPortal.TV.Recording
 		int                                 currentFrequencyIndex=0;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
+		DateTime														channelScanTimeOut;
 
 		public DVBTTuning()
 		{
@@ -88,10 +89,15 @@ namespace MediaPortal.TV.Recording
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
 
-			if (captureCard.SignalPresent())
+
+			if (currentState==State.ScanFrequencies)
 			{
-				description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
-				currentState=State.ScanChannels;
+				if (captureCard.SignalPresent())
+				{
+					Log.Write("Found signal at:{0} MHz",frequency);
+					currentState=State.ScanChannels;
+					channelScanTimeOut=DateTime.Now;
+				}
 			}
 
 			if (currentState==State.ScanFrequencies)
@@ -102,6 +108,7 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanChannels)
 			{
+				description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
 				callback.OnStatus(description);
 				ScanChannels();
 			}
@@ -110,6 +117,19 @@ namespace MediaPortal.TV.Recording
 
 		void ScanChannels()
 		{
+			captureCard.Process();
+
+			TimeSpan ts = DateTime.Now-channelScanTimeOut;
+			if (ts.TotalSeconds>=15)
+			{
+				
+				Log.Write("timeout, goto scanning frequencies");
+				currentState=State.ScanFrequencies;
+				ScanNextFrequency();
+				return;
+			}
+
+
 		}
 
 		void ScanNextFrequency()
@@ -125,6 +145,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
+			Log.Write("tune:{0}",frequencies[currentFrequencyIndex]);
 			captureCard.Tune(frequencies[currentFrequencyIndex]);
 		}
 

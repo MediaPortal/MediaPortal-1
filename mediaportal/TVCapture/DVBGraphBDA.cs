@@ -1761,50 +1761,6 @@ namespace MediaPortal.TV.Recording
 
 		
 
-		public void Scan()
-		{
-			Log.Write("Scanning...");
-			XmlDocument doc= new XmlDocument();
-			doc.Load("dvbt.xml");
-			XmlNodeList frequencyList= doc.DocumentElement.SelectNodes("/dvbt/frequencies/frequency");
-			foreach (XmlNode node in frequencyList)
-			{
-				int carrierFrequency= XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"carrier").InnerText);
-
-				TunerLib.TuneRequest newTuneRequest = null;
-				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-				TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
-				newTuneRequest = myTuningSpace.CreateTuneRequest();
-				TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
-				TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
-
-				myLocator.CarrierFrequency		= carrierFrequency;
-				myTuneRequest.ONID	= -1;					//original network id
-				myTuneRequest.TSID	= 1;						//transport stream id
-				myTuneRequest.SID		= 12;						//service id
-				myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-				myTuner.TuneRequest = newTuneRequest;
-				int x=0;
-				while (myTuner.SignalStrength<=0 && x<20)
-				{
-					System.Windows.Forms.Application.DoEvents();
-					System.Threading.Thread.Sleep(50);
-					System.Windows.Forms.Application.DoEvents();
-					x++;
-				}
-				if (myTuner.SignalStrength>0)
-				{
-					myTuneRequest = (TunerLib.IDVBTuneRequest)myTuner.TuneRequest;
-					Log.Write("found signal on carrier:{0} signal strength:{1} ONID:{2} TSID:{3} {4}", 
-							carrierFrequency,myTuner.SignalStrength,myTuneRequest.ONID, myTuneRequest.TSID,x);
-					GetAllPrograms(carrierFrequency);
-				}
-			}
-			Log.Write("Scanning done...");
-		}
-		public void GetAllPrograms(int carrierFrequency)
-		{
-		}
 		
 		public void Process()
 		{
@@ -1865,15 +1821,15 @@ namespace MediaPortal.TV.Recording
 
 			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
 			{
-				//Log.Write("got guide data");
+				Log.Write("DVBGraphBDA: serviced changed");
 				IGuideData data= m_TIF as IGuideData;
 				int iFetched;
 				IEnumTuneRequests varRequests;
-				Log.Write("GetServices");
+				Log.Write("DVBGraphBDA: GetServices");
 				data.GetServices(out varRequests);
 				if (varRequests!=null)
 				{
-					//Log.Write("variant enum");
+					Log.Write("DVBGraphBDA: variant enum");
 					TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
 					while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
 					{
@@ -1884,7 +1840,7 @@ namespace MediaPortal.TV.Recording
 							IGuideDataProperty[] properties = new IGuideDataProperty[1];
 							while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
 							{
-								//Log.Write("got property");
+								Log.Write("DVBGraphBDA: got property");
 								object chanValue;
 								int chanLanguage;
 								string chanName;
