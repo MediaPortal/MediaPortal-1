@@ -523,11 +523,11 @@
 	</string>
 	<string>
 		<id>202</id>
-		<value>Kurzbeschreibung:</value>
+		<value>Beschreibung:</value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Handlungsauszug:</value>
+		<value>Handlung:</value>
 	</string>
 	<string>
 		<id>204</id>
@@ -1925,7 +1925,7 @@
 	</string>	
 	<string>
 		<id>670</id>
-		<value>Gesehene Aufnahmen löschen?</value>
+		<value>Angesehene Aufnahmen löschen?</value>
 	</string>
 	<string>
 		<id>671</id>
