@@ -696,9 +696,9 @@ namespace MediaPortal.TV.Recording
 				TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
 				if (!tvcard.IsRecording)
 				{
-					if (RadioDatabase.CanCardTuneToStation(radioStationName, tvcard.ID))
+					if (RadioDatabase.CanCardTuneToStation(radioStationName, tvcard.ID) || m_tvcards.Count==1)
 					{
-						for (int x=0; x < m_tvcards.Count;++i)
+						for (int x=0; x < m_tvcards.Count;++x)
 						{
 							TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[x];
 							if (i!=x)

@@ -78,7 +78,7 @@ namespace GUIRSSFeed
 			int ID = 0;
 			//find the index of the item in question
 			string tempText;
-			for (int i=0; i<20; i++)
+			for (int i=0; i<100; i++)
 			{
 				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
   				{
@@ -105,7 +105,7 @@ namespace GUIRSSFeed
 			int ID = 0;
 			//find the index of the item in question
 			string tempText;
-			for (int i=0; i<20; i++)
+			for (int i=0; i<100; i++)
 			{
 				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
   				{
@@ -156,7 +156,7 @@ namespace GUIRSSFeed
 		{
 			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
      	{
-				for (int i=0; i < 20; i++)
+				for (int i=0; i < 100; i++)
 				{
 					string strNameTag=String.Format("siteName{0}",i);
 					string strURLTag=String.Format("siteURL{0}",i);

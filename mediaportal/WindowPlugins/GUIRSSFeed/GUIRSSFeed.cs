@@ -65,8 +65,7 @@ namespace MediaPortal.GUI.RSS
 
 		public static string DEFAULT_NEWS_ICON = "news.png";
 
-		const int   	NUM_SITES	=  4;
-		const int 		NUM_STORIES = 10;
+		const int 		NUM_STORIES = 100;
 		ArrayList		m_sites = new ArrayList();
 		string			m_strSiteIcon=DEFAULT_NEWS_ICON;
 		string			m_strSiteName="";
@@ -254,7 +253,7 @@ namespace MediaPortal.GUI.RSS
 			m_sites.Clear();
 			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				for (int i=0; i < 20; i++)
+				for (int i=0; i < NUM_STORIES; i++)
 				{
 					string strNameTag=String.Format("siteName{0}",i);
 					string strURLTag=String.Format("siteURL{0}",i);
@@ -298,9 +297,6 @@ namespace MediaPortal.GUI.RSS
 
 		void SaveSettings()
 		{
-      		using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
-      		{
-      		}
 		}
 		#endregion
 
