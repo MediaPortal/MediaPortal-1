@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  26-04-2004: general     : fixed : several sorting bugs
   26-04-2004: general     : added : B=goto to parent directory/folder
   26-04-2004: general     : fixed : bug with diacritics not showing like german umlaut etc.
   26-04-2004: my music    : added : album mode: queue entire albums with Y
