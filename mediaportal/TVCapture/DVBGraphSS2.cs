@@ -379,12 +379,6 @@ namespace MediaPortal.TV.Recording
 				if(header.Pid==teleTextPid && m_ttxt!=null)
 				{
 					m_ttxt.SaveData((IntPtr)pointer);
-					m_counterTxT+=1;
-					if(m_counterTxT>2000)
-					{
-						//m_ttxt.DecodePage(0x301,0);
-						m_counterTxT=0;
-					}
 				}
 			}
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
@@ -1592,12 +1586,12 @@ namespace MediaPortal.TV.Recording
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
 
-				if (samplePin!=null)
+				if (samplePin==null)
 				{
 					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
 					return false;
 				}
-				if (demuxInPin!=null)
+				if (demuxInPin==null)
 				{
 					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
 					return false;
