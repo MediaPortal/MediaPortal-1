@@ -146,7 +146,7 @@ namespace MediaPortal.TV.Recording
 			int			lastTab=0;
 			int			dummyTab=0;
 
-			m_sections.Timeout=5000;
+			m_sections.Timeout=750;
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			
