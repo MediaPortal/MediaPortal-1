@@ -85,8 +85,8 @@ Fullscreen video:
         esc       = close submenu
    DVD playback:
         m         = menu
-        n         = next chapter
-        p         = previous chapter
+        F8        = next chapter
+        F7        = previous chapter
         
    Watching TV:
         right     = next channel
