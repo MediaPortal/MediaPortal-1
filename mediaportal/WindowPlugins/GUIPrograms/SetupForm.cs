@@ -31,8 +31,6 @@ namespace WindowPlugins.GUIPrograms
 		private AppSettingsGrouper sectionGrouper = new AppSettingsGrouper();
 		private AppSettingsRoot sectionRoot = new AppSettingsRoot();
 		private AppFilesView filesView = new AppFilesView();
-		private System.Windows.Forms.StatusBarPanel StatusPanel;
-		private System.Windows.Forms.StatusBarPanel ActionPanel;
 		private System.Windows.Forms.ToolBar toolBarMenu;
 		private System.Windows.Forms.ToolBarButton buttonAddChild;
 		private System.Windows.Forms.ToolBarButton buttonDelete;
@@ -53,7 +51,6 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.TabPage DetailsPage;
 		private System.Windows.Forms.TabPage FilesPage;
 		private System.Windows.Forms.Panel holderPanel;
-		private System.Windows.Forms.StatusBar StatusBar;
 		private System.Windows.Forms.ToolBarButton sep5;
 		private System.Windows.Forms.ContextMenu popupTools;
 		private System.Windows.Forms.MenuItem MenuItemChangeSourceType;
@@ -150,9 +147,6 @@ namespace WindowPlugins.GUIPrograms
 		private void InitializeComponent()
 		{
 			this.appTree = new System.Windows.Forms.TreeView();
-			this.StatusBar = new System.Windows.Forms.StatusBar();
-			this.StatusPanel = new System.Windows.Forms.StatusBarPanel();
-			this.ActionPanel = new System.Windows.Forms.StatusBarPanel();
 			this.toolBarMenu = new System.Windows.Forms.ToolBar();
 			this.buttonAddChild = new System.Windows.Forms.ToolBarButton();
 			this.popupAddChild = new System.Windows.Forms.ContextMenu();
@@ -182,8 +176,6 @@ namespace WindowPlugins.GUIPrograms
 			this.DetailsPage = new System.Windows.Forms.TabPage();
 			this.holderPanel = new System.Windows.Forms.Panel();
 			this.FilesPage = new System.Windows.Forms.TabPage();
-			((System.ComponentModel.ISupportInitialize)(this.StatusPanel)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.ActionPanel)).BeginInit();
 			this.DetailsTabControl.SuspendLayout();
 			this.DetailsPage.SuspendLayout();
 			this.SuspendLayout();
@@ -205,7 +197,7 @@ namespace WindowPlugins.GUIPrograms
 																				new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
 																																										 new System.Windows.Forms.TreeNode("whazzz up")})});
 			this.appTree.SelectedImageIndex = -1;
-			this.appTree.Size = new System.Drawing.Size(224, 456);
+			this.appTree.Size = new System.Drawing.Size(224, 448);
 			this.appTree.TabIndex = 8;
 			this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
 			this.appTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
@@ -215,27 +207,6 @@ namespace WindowPlugins.GUIPrograms
 			this.appTree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.appTree_ItemDrag);
 			this.appTree.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.appTree_BeforeLabelEdit);
 			this.appTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.appTree_DragDrop);
-			// 
-			// StatusBar
-			// 
-			this.StatusBar.Location = new System.Drawing.Point(0, 502);
-			this.StatusBar.Name = "StatusBar";
-			this.StatusBar.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
-																						 this.StatusPanel,
-																						 this.ActionPanel});
-			this.StatusBar.ShowPanels = true;
-			this.StatusBar.Size = new System.Drawing.Size(666, 24);
-			this.StatusBar.SizingGrip = false;
-			this.StatusBar.TabIndex = 12;
-			// 
-			// StatusPanel
-			// 
-			this.StatusPanel.Text = "Ready";
-			// 
-			// ActionPanel
-			// 
-			this.ActionPanel.AutoSize = System.Windows.Forms.StatusBarPanelAutoSize.Spring;
-			this.ActionPanel.Width = 566;
 			// 
 			// toolBarMenu
 			// 
@@ -412,7 +383,7 @@ namespace WindowPlugins.GUIPrograms
 			this.DetailsTabControl.Location = new System.Drawing.Point(240, 40);
 			this.DetailsTabControl.Name = "DetailsTabControl";
 			this.DetailsTabControl.SelectedIndex = 0;
-			this.DetailsTabControl.Size = new System.Drawing.Size(416, 456);
+			this.DetailsTabControl.Size = new System.Drawing.Size(416, 448);
 			this.DetailsTabControl.TabIndex = 14;
 			this.DetailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
 			// 
@@ -421,7 +392,7 @@ namespace WindowPlugins.GUIPrograms
 			this.DetailsPage.Controls.Add(this.holderPanel);
 			this.DetailsPage.Location = new System.Drawing.Point(4, 22);
 			this.DetailsPage.Name = "DetailsPage";
-			this.DetailsPage.Size = new System.Drawing.Size(408, 430);
+			this.DetailsPage.Size = new System.Drawing.Size(408, 422);
 			this.DetailsPage.TabIndex = 0;
 			this.DetailsPage.Text = "Details";
 			// 
@@ -432,7 +403,7 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.holderPanel.Location = new System.Drawing.Point(3, 3);
 			this.holderPanel.Name = "holderPanel";
-			this.holderPanel.Size = new System.Drawing.Size(397, 424);
+			this.holderPanel.Size = new System.Drawing.Size(397, 416);
 			this.holderPanel.TabIndex = 12;
 			// 
 			// FilesPage
@@ -446,17 +417,14 @@ namespace WindowPlugins.GUIPrograms
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(666, 526);
+			this.ClientSize = new System.Drawing.Size(666, 494);
 			this.Controls.Add(this.DetailsTabControl);
 			this.Controls.Add(this.toolBarMenu);
-			this.Controls.Add(this.StatusBar);
 			this.Controls.Add(this.appTree);
 			this.Name = "SetupForm";
 			this.Text = "my Programs Setup";
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.SetupForm_Closing);
 			this.Load += new System.EventHandler(this.SetupForm_Load);
-			((System.ComponentModel.ISupportInitialize)(this.StatusPanel)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.ActionPanel)).EndInit();
 			this.DetailsTabControl.ResumeLayout(false);
 			this.DetailsPage.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -757,29 +725,21 @@ namespace WindowPlugins.GUIPrograms
 
 
 
-		private void RefreshInfo(string Message)
-		{
-			ActionPanel.Text = Message;
-			StatusBar.Invalidate();
-			StatusBar.Update();
-		}
-
 		private void DoRefresh()
 		{
 			AppItem curApp = GetSelectedAppItem();
 			if (curApp != null) 
 			{
-				StatusPanel.Text = "Import running....";
-				curApp.OnRefreshInfo += new AppItem.RefreshInfoEventHandler(RefreshInfo);
+				ImportStatusForm frmImport = new ImportStatusForm();
+				frmImport.CurApp = curApp;
 				try
 				{
-					curApp.Refresh(false);
+					frmImport.Show();
+					frmImport.RunImport();
 				}
 				finally
 				{
-					curApp.OnRefreshInfo += new AppItem.RefreshInfoEventHandler(RefreshInfo);
-					StatusPanel.Text = "Ready";
-					ActionPanel.Text = "";
+					frmImport.Close();
 				}
 			}
 		}

@@ -613,6 +613,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\ImportStatusForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\ImportStatusForm.resx"
+                    DependentUpon = "ImportStatusForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIPrograms\MyFileIniImporter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
