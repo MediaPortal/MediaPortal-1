@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  26-04-2004: general     : added : more capture card logging
+  26-04-2004: general     : added : dynamic font scaling
   26-04-2004: my TV       : added : scheduler->new/edit recording
   25-04-2004: my music    : added : show both visz & album art
   25-04-2004: my music    : fixed : visz. disappeared when refreshing my weather

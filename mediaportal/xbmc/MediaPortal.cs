@@ -277,7 +277,9 @@ public class MediaPortalApp : D3DApp
       Log.Write("OnDeviceReset()");
       //g_Player.Stop();
       GUIGraphicsContext.Load();
-			GUIFontManager.RestoreDeviceObjects();
+			GUIFontManager.Dispose();
+      GUIFontManager.LoadFonts(@"skin\"+m_strSkin+@"\fonts.xml");
+      GUIFontManager.InitializeDeviceObjects();
       if (GUIGraphicsContext.DX9Device!=null)
       {
         GUIWindowManager.Restore();

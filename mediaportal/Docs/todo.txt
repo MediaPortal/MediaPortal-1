@@ -13,10 +13,7 @@ My TV:
    
   TVGuide:
      - 
-
   Scheduler:
-     - New button     doesnt do anything. Should allow user to create a new recording manually
-     - Edit Date/Time doesnt do anything. Should allow user to change date/time of a recording
 
   Capture:
     - in case of video-in/SVHS-in then use also that audio input (now uses tuner audio input)    
@@ -43,6 +40,7 @@ Settings:
   - all :-)
 
 General:
+  - Auto Tune 
   - setup:specify recording +/- interval
   - caller ID
   - seperate module/database for TV-series
