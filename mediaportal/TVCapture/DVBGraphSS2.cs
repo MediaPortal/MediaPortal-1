@@ -626,8 +626,22 @@ namespace MediaPortal.TV.Recording
 			hr = m_tunerCtrl.SetTunerStatus();
 			if (hr!=0)	
 			{
-				Log.Write("Tune for SkyStar2 FAILED: on SetTunerStatus");
-				return false;	// *** FUNCTION EXIT POINT
+				// some more tries...
+				int retryCount=0;
+				while(1>0)
+				{
+					hr=m_tunerCtrl.SetTunerStatus();
+					if(hr!=0)
+						retryCount++;
+
+					if(retryCount>=20)
+					{
+						Log.Write("Tune for SkyStar2 FAILED: on SetTunerStatus (in loop)");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+				}
+				//
+				
 			}
 
 //			hr=m_tunerCtrl.CheckLock();
