@@ -2488,7 +2488,7 @@ namespace MediaPortal.TV.Recording
 				if (lnb_1>0)
 					space.HighOscillator= lnb_1*1000;
 				//space.SpectralInversion=??
-				//space.InputRange=??;
+				space.InputRange=(lnbKhz*1000).ToString();
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		public IBaseFilter Mpeg2DataFilter()
