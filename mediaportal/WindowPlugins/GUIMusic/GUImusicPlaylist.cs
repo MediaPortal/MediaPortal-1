@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.Music
 
 		//added by Sam
   const int MaxNumPShuffleSongPredict = 12;
+		private bool PShuffleOn = false;
 
 		public GUIMusicPlayList()
 		{
@@ -75,9 +76,38 @@ namespace MediaPortal.GUI.Music
 		public override bool Init()
 		{
 			m_strDirectory = System.IO.Directory.GetCurrentDirectory();
+			//added by Sam
+			 GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
 			return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
 		}
+//added by Sam
+		void OnThreadMessage(GUIMessage message)
+		{
+			switch (message.Message)
+			{
+				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED: 
+					if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC && PShuffleOn==true)
+					{
+						PlayList pl = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
+						pl.Remove(pl[0].FileName );
+						UpdatePartyShuffle();
+						PlayListPlayer.CurrentSong = 0;
+					}
+					break;
 
+				//special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
+				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
+					if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC && PShuffleOn==true && PlayListPlayer.CurrentSong!=0)
+					{
+						PlayList pl = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
+						pl.Remove(pl[0].FileName );
+						UpdatePartyShuffle();
+						PlayListPlayer.CurrentSong = 0;
+					}
+					break;
+			}
+		}
+//end of changes by Sam
 
     #region Serialisation
     void LoadSettings()
@@ -244,15 +274,21 @@ namespace MediaPortal.GUI.Music
 					else if (iControl == (int)Controls.CONTROL_BTNPSHUFFLE )
 					{
 						//get state of button
-						GUIToggleButtonControl btnPShuffle = (GUIToggleButtonControl)GetControl((int)Controls.CONTROL_BTNPSHUFFLE );
+						GUIToggleButtonControl btnPShuffle = GetControl((int)Controls.CONTROL_BTNPSHUFFLE ) as GUIToggleButtonControl;
+            if (btnPShuffle==null) return true;
 						if (btnPShuffle.Selected) 
 						{
+							PShuffleOn = true;
 							UpdatePartyShuffle();
-							GetItem(0).Shaded = false;
+							LoadDirectory("");
+							GUIListItem item=GetItem(0);
+              if (item!=null) item.Shaded = false;
 							PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
 							PlayListPlayer.Reset();
 							PlayListPlayer.Play(0);
 						}
+						else PShuffleOn=false;
+
 						UpdateButtons();
 					}
 					break;
@@ -276,17 +312,12 @@ namespace MediaPortal.GUI.Music
 				case GUIMessage.MessageType.GUI_MSG_PLAYLIST_CHANGED : 
 				{
 					//	global playlist changed outside playlist window
-
 					//added by Sam
-					//get state of button
-					GUIToggleButtonControl btnPShuffle = (GUIToggleButtonControl)GetControl((int)Controls.CONTROL_BTNPSHUFFLE );
-					if (btnPShuffle.Selected) 
+					//if party shuffle...
+					if (PShuffleOn==true) 
 					{
-						if (GetItem(0).Shaded) PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(0).Path );
 						LoadDirectory("");
-						UpdatePartyShuffle();
 						UpdateButtons();
-						PlayListPlayer.CurrentSong = 0;
 					}
 					//ended changes
 
@@ -687,11 +718,10 @@ namespace MediaPortal.GUI.Music
 		void ClearPlayList()
 		{
 			//added/changed by Sam
-			GUIToggleButtonControl btnPShuffle = (GUIToggleButtonControl)GetControl((int)Controls.CONTROL_BTNPSHUFFLE );
 			//if party shuffle
-			if (btnPShuffle.Selected ) 
+			if (PShuffleOn==true) 
 			{
-				if (g_Player.Playing)
+				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC )
 				{
 					for (int i=1; i<GetItemCount(); i++)
 					{
@@ -705,8 +735,9 @@ namespace MediaPortal.GUI.Music
 						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
 					}
 				}
-				LoadDirectory("");
+				//LoadDirectory("");
 				UpdatePartyShuffle();
+				LoadDirectory("");
 			}
 				//otherwise, if not party shuffle...
 			else
@@ -730,17 +761,17 @@ namespace MediaPortal.GUI.Music
       
 			//added/changed by Sam
 			//check if party shuffle is on
-			GUIToggleButtonControl btnPShuffle = (GUIToggleButtonControl)GetControl((int)Controls.CONTROL_BTNPSHUFFLE );
-			if (btnPShuffle.Selected) 
+			if (PShuffleOn==true) 
 			{
-				if (g_Player.Playing) 
+				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC ) 
 				{
 					for (int i=1; i<GetSelectedItemNo(); i++)
 					{
 						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
 					}
-					LoadDirectory("");
+					//LoadDirectory("");
 					UpdatePartyShuffle();
+					LoadDirectory("");
 				}
 				else
 				{
@@ -748,8 +779,9 @@ namespace MediaPortal.GUI.Music
 					{
 						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(GetItem(i).Path );
 					}
-					LoadDirectory("");
+					//LoadDirectory("");
 					UpdatePartyShuffle();
+					LoadDirectory("");
 					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
 					PlayListPlayer.Reset();
 					PlayListPlayer.Play(0);
@@ -775,8 +807,7 @@ namespace MediaPortal.GUI.Music
 		void RemovePlayListItem(int iItem)
 		{
 			//added by Sam
-			GUIToggleButtonControl btnPShuffle = (GUIToggleButtonControl)GetControl((int)Controls.CONTROL_BTNPSHUFFLE );
-			if (btnPShuffle.Selected & g_Player.Playing )
+			if (PShuffleOn==true && g_Player.Playing && PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC )
 			{
 				if (iItem == 0) return;
 			}
@@ -789,7 +820,7 @@ namespace MediaPortal.GUI.Music
       
 			//added by Sam
 			//check if party shuffle is on
-			if (btnPShuffle.Selected) UpdatePartyShuffle();
+			if (PShuffleOn==true) UpdatePartyShuffle();
 
 			LoadDirectory(m_strDirectory);
 			UpdateButtons();
@@ -973,7 +1004,7 @@ namespace MediaPortal.GUI.Music
 					i=list.Count;
 				}
 			}
-				LoadDirectory("");
+				//LoadDirectory(""); - will cause errors when playlist screen is not active
 				dbs.Close();
 		}
 	}
