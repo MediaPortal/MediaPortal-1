@@ -120,7 +120,6 @@
 		<height>28</height>
     <textXOff>10</textXOff>
 		<textYOff>2</textYOff>
-    <font>font14</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -143,7 +142,6 @@
 		<height>28</height>
 		<textXOff>10</textXOff>
 		<textYOff>2</textYOff>
-		<font>font14</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>

@@ -53,11 +53,41 @@
 		<posY>222</posY>
 		<reverse>yes</reverse>
 		<onup>20</onup>
-		<ondown>2</ondown>
+		<ondown>3</ondown>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<buddycontrolid>100</buddycontrolid>
 	</control>
+	<control>
+		<description>FPS label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>100</posX>
+		<posY>240</posY>
+		<label>973</label>
+		<font>font14</font>
+	</control>
+	<control>
+		<description>FPS select</description>
+		<type>spincontrol</type>
+		<id>3</id>
+		<posX>264</posX>
+		<posY>244</posY>
+		<reverse>yes</reverse>
+		<onup>2</onup>
+		<ondown>3</ondown>
+		<onleft>3</onleft>
+		<onright>3</onright>
+	</control>
+	<control>
+		<description>currentFPS count</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>325</posX>
+		<posY>240</posY>
+		<label>#fps</label>
+	</control>
+
 	<control>
 		<description>Example value</description>
 		<type>label</type>
