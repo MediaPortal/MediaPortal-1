@@ -174,7 +174,7 @@ namespace MediaPortal.TV.Recording
       //m_mediaControl=null;
 			if (m_videoCaptureDevice!=null)
 			{
-				//m_videoCaptureDevice.CloseInterfaces();
+				m_videoCaptureDevice.CloseInterfaces();
 				m_videoCaptureDevice=null;
 			}
 			DsUtils.RemoveFilters(m_graphBuilder);

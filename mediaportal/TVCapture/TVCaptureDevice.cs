@@ -50,8 +50,6 @@ namespace MediaPortal.TV.Recording
 
 		[NonSerialized]
     bool					m_bAllocated=false;
-    [NonSerialized]
-    bool					m_bDidRecord=false;
 
     public TVCaptureDevice()
     {
@@ -307,7 +305,6 @@ namespace MediaPortal.TV.Recording
       if (m_graph==null)
       {
         Log.Write("Card:{0} CreateGraph",ID);		
-        m_bDidRecord=false;
         int iTunerCountry=31;
         string strTunerType="Antenna";
         using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -336,7 +333,6 @@ namespace MediaPortal.TV.Recording
 				GC.Collect();
       }
       m_eState=State.Initialized;
-      m_bDidRecord=false;
       return true;
     }
 
@@ -385,10 +381,6 @@ namespace MediaPortal.TV.Recording
       Log.Write("Card:{0} stop timeshifting",ID);
       m_graph.StopTimeShifting();
       m_eState=State.Initialized;
-      if (m_bDidRecord)
-      {
-        DeleteGraph();
-      }
       return true;
     }
 
@@ -457,7 +449,6 @@ namespace MediaPortal.TV.Recording
 				m_newRecordedTV.Description="";
 			}
 
-      m_bDidRecord=true;
       m_eState=State.Recording;
       return bResult;
     }
