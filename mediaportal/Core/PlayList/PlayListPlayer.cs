@@ -241,6 +241,17 @@ namespace MediaPortal.Playlists
       }
     }
 
+    static public void Remove(PlayListType type, string filename)
+    {
+      PlayList playlist=GetPlaylist(type);
+      int itemremoved=playlist.Remove(filename);
+      if (type!=CurrentPlaylist)
+      {
+        return;
+      }
+      if (m_iCurrentSong>=itemremoved) m_iCurrentSong--;
+    }
+
     static public bool			HasChanged
     {
       get { 

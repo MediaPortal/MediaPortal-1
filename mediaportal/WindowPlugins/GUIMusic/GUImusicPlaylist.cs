@@ -785,7 +785,7 @@ namespace MediaPortal.GUI.Music
       if (pItem==null) return;
 			string strFileName = pItem.Path;
 
-			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Remove(strFileName);
+			PlayListPlayer.Remove(PlayListPlayer.PlayListType.PLAYLIST_MUSIC,strFileName);
       
 			//added by Sam
 			//check if party shuffle is on
@@ -794,7 +794,8 @@ namespace MediaPortal.GUI.Music
 			LoadDirectory(m_strDirectory);
 			UpdateButtons();
 			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+      GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+      SelectCurrentPlayingSong();
 		}
 
 		void ShufflePlayList()

@@ -137,7 +137,7 @@ namespace MediaPortal.Playlists
       set { m_strPlayListName=value;}
     }
 
-    public void Remove( string strFileName)
+    public int Remove( string strFileName)
     {
       for (int i=0; i < m_items.Count;++i)
       {
@@ -145,9 +145,10 @@ namespace MediaPortal.Playlists
         if (item.FileName==strFileName)
         {
           m_items.RemoveAt(i);
-          return;
+          return i;
         }
       }
+      return -1;
     }
 
     public void Clear()

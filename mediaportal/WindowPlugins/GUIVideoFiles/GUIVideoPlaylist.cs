@@ -263,15 +263,8 @@ namespace MediaPortal.GUI.Video
 						m_iLastControl = (int)Controls.CONTROL_BTNVIEWASICONS;
 						GUIControl.FocusControl(GetID, m_iLastControl);
           }
-          if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
-          {
-            int iSong = PlayListPlayer.CurrentSong;
-            if (iSong >= 0 && iSong <= GetItemCount())
-            {
-              GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iSong);
-              GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iSong);
-            }
-          }
+          SelectCurrentVideo();
+
 				}
 					break;
 			}
@@ -580,12 +573,14 @@ namespace MediaPortal.GUI.Video
 			GUIListItem pItem = GetItem(iItem);
       if (pItem==null) return;
 			string strFileName = pItem.Path;
-			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Remove(strFileName);
-      
+			
+      PlayListPlayer.Remove(PlayListPlayer.PlayListType.PLAYLIST_VIDEO,strFileName);
+
 			LoadDirectory(m_strDirectory);
 			UpdateButtons();
 			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
 			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+      SelectCurrentVideo();
 		}
 
 		void ShufflePlayList()
@@ -670,5 +665,17 @@ namespace MediaPortal.GUI.Video
 				playlist.Save(strPath);
 			}
 		}
+    void SelectCurrentVideo()
+    {
+      if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
+      {
+        int iSong = PlayListPlayer.CurrentSong;
+        if (iSong >= 0 && iSong <= GetItemCount())
+        {
+          GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iSong);
+          GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iSong);
+        }
+      }
+    }
 	}
 }
