@@ -121,7 +121,9 @@ namespace MediaPortal.Player
             windowId==(int)GUIWindow.Window.WINDOW_TVGUIDE||  
             windowId==(int)GUIWindow.Window.WINDOW_SEARCHTV||  
             windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||  
-            windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV)
+            windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV||
+            windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL||
+            windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
             inTV=true;
 
           if (!inTV)
