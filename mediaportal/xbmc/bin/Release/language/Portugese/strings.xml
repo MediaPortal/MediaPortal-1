@@ -15,7 +15,7 @@
 	</string>
 	<string>
 		<id>3</id>
-		<value>Videos</value>
+		<value>Vídeos</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -51,7 +51,7 @@
 	</string>
 	<string>
 		<id>12</id>
-		<value>Terca-Feira</value>
+		<value>Terça-Feira</value>
 	</string>
 	<string>
 		<id>13</id>
@@ -695,7 +695,7 @@
 	</string>
 	<string>
 		<id>244</id>
-		<value>Autorun Videos</value>
+		<value>Autorun Vídeos</value>
 	</string>
 	<string>
 		<id>245</id>
@@ -979,7 +979,7 @@
 	</string>
 	<string>
 		<id>316</id>
-		<value>procurando músicas...</value>
+		<value>Procurando músicas...</value>
 	</string>
 	<string>
 		<id>317</id>
@@ -1259,7 +1259,7 @@
 	</string>
 	<string>
 		<id>386</id>
-		<value>Claro</value>
+		<value>Limpo</value>
 	</string>
 	<string>
 		<id>387</id>
@@ -1303,7 +1303,7 @@
 	</string>
 	<string>
 		<id>405</id>
-		<value>Dew Point</value>
+		<value>Ponto Orvalho</value>
 	</string>
 	<string>
 		<id>406</id>
@@ -1311,7 +1311,7 @@
 	</string>
 	<string>
 		<id>407</id>
-		<value>Desde</value>
+		<value>Direcção</value>
 	</string>
 	<string>
 		<id>408</id>
@@ -1351,19 +1351,19 @@
 	</string>
 	<string>
 		<id>418</id>
-		<value>Videos/Generos</value>
+		<value>Vídeos/Generos</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Videos/Actores</value>
+		<value>Vídeos/Actores</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Videos/Anos</value>
+		<value>Vídeos/Anos</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Videos/Título</value>
+		<value>Vídeos/Título</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1996,7 +1996,7 @@
 <string><id>10003</id><value>Arquivos</value></string>
 <string><id>10004</id><value>Acertos</value></string>
 <string><id>10005</id><value>Músicas</value></string>
-<string><id>10006</id><value>Videos</value></string>
+<string><id>10006</id><value>Vídeos</value></string>
 <string><id>10007</id><value>Sistema</value></string>
 <string><id>10008</id><value>Acertos->Geral</value></string>
 <string><id>10009</id><value>Acertos->Ecrã</value></string>
@@ -2009,14 +2009,14 @@
 <string><id>10016</id><value>Acertos->Ecrã->Screensaver</value></string>
 <string><id>10017</id><value>Acertos->Tempo</value></string>
 <string><id>10020</id><value>Acertos->Scripts</value></string>
-<string><id>10021</id><value>Videos/genero</value></string>
-<string><id>10022</id><value>Videos/actor</value></string>
-<string><id>10023</id><value>Videos/ano</value></string>
+<string><id>10021</id><value>Vídeos/genero</value></string>
+<string><id>10022</id><value>Vídeos/actor</value></string>
+<string><id>10023</id><value>Vídeos/ano</value></string>
 <string><id>10024</id><value>Settings->Programas</value></string>
-<string><id>10025</id><value>Videos/titulo</value></string>
+<string><id>10025</id><value>Vídeos/titulo</value></string>
 <string><id>10026</id><value>Acertos->Geral->Cache</value></string>
 <string><id>10027</id><value>Acertos->Geral->Autorun</value></string>
-<string><id>10028</id><value>Videos/playlist</value></string>
+<string><id>10028</id><value>Vídeos/playlist</value></string>
 <string><id>10029</id><value>Acertos->Geral->LCD</value></string>
 <string><id>10030</id><value>Radio</value></string>
 <string><id>10031</id><value>Acertos->Ecrã->velocidade scroll</value></string>
@@ -2047,7 +2047,7 @@
 <string><id>12000</id><value>Seleccionar diálogo</value></string>
 <string><id>12001</id><value>Música/info</value></string>
 <string><id>12002</id><value>Diálogo OK</value></string>
-<string><id>12003</id><value>Videos/Info</value></string>
+<string><id>12003</id><value>Vídeos/Info</value></string>
 <string><id>12004</id><value>Scripts/Info</value></string>
 <string><id>12005</id><value>Vídeo em Fullscreen</value></string>
 <string><id>12006</id><value>Audio visisalisation</value></string>
@@ -2068,7 +2068,7 @@
 <string><id>690</id><value>Discografia (Albuns)</value></string>
 <string><id>691</id><value>Discografia (compilacoes, caixas)</value></string>
 <string><id>700</id><value>Discografia (eps, singles)</value></string>
-<string><id>701</id><value>Discography (bootlegs, videos, intervistas)</value></string>
+<string><id>701</id><value>Discografia (bootlegs, vídeos, intervistas)</value></string>
 <string><id>702</id><value>Não foram encontrados artistas!</value></string>
 <string><id>703</id><value>Não ligado à Internet!</value></string>
 <string><id>704</id><value>Feed Retrieval</value></string>
@@ -2490,15 +2490,15 @@
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Remover</value></string>
 	<string><id>2006</id><value>Título</value></string>
-	<string><id>2007</id><value>Rendimento</value></string>
+	<string><id>2007</id><value>Para</value></string>
 	<string><id>2008</id><value>Ingredientes</value></string>
-	<string><id>2009</id><value>Direcções</value></string>
+	<string><id>2009</id><value>Preparação</value></string>
 	<string><id>2010</id><value>Cartão</value></string>
 	<string><id>2011</id><value>Imprimir</value></string>
 	<string><id>2012</id><value>Remover</value></string>
-	<string><id>2013</id><value>Favoritos</value></string>
+	<string><id>2013</id><value>Favoritas</value></string>
 	<string><id>2014</id><value>Desconhecido</value></string>
-	<string><id>2015</id><value>por serviço</value></string>
+	<string><id>2015</id><value>por pessoa</value></string>
 	<string><id>2016</id><value>pequeno</value></string>
 	<string><id>2017</id><value>fluid ounce</value></string>
 	<string><id>2018</id><value>chávena</value></string>
@@ -2510,14 +2510,14 @@
 	<string><id>2024</id><value>pinch</value></string>
 	<string><id>2025</id><value>deixar</value></string>
 	<string><id>2026</id><value>dash</value></string>
-	<string><id>2027</id><value>carton</value></string>
-	<string><id>2028</id><value>bunch</value></string>
+	<string><id>2027</id><value>caixa</value></string>
+	<string><id>2028</id><value>conjunto</value></string>
 	<string><id>2029</id><value>pedaço</value></string>
 	<string><id>2030</id><value>cada</value></string>
 	<string><id>2031</id><value>colher de chá</value></string>
 	<string><id>2032</id><value>colher de chá</value></string>
-	<string><id>2033</id><value>mesa de chá</value></string>
-	<string><id>2034</id><value>mesa de chá</value></string>
+	<string><id>2033</id><value>colher</value></string>
+	<string><id>2034</id><value>colher</value></string>
 	<string><id>2035</id><value>quarto</value></string>
 	<string><id>2036</id><value>galão</value></string>
 	<string><id>2037</id><value>onça</value></string>

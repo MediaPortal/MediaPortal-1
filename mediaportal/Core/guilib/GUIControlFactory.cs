@@ -22,6 +22,7 @@ namespace MediaPortal.GUI.Library
 		/// Contains all of the reference nodes, indexed by control Type.
 		/// </summary>
 		static Hashtable m_referenceNodesByControlType = null;
+		static Hashtable m_hashCustomControls = new Hashtable();
 		
 		public static void LoadReferences(string referenceFile)
 		{
@@ -397,9 +398,21 @@ namespace MediaPortal.GUI.Library
         case ("smsinput"):
           return typeof (GUISMSInputControl);
 				default:
-					Log.Write("ERROR: unknown control:<{0}>",xmlTypeName);
-					return null;
+					Type t = (Type)m_hashCustomControls[xmlTypeName];
+
+					if(t == null)
+					{
+						Log.Write("ERROR: unknown control:<{0}>",xmlTypeName);
+						return null;
+					}
+
+					return t;
 			}
+		}
+
+		public static void RegisterControl(string strName, Type t)
+		{
+			m_hashCustomControls[strName] = t;
 		}
 	}
 }
