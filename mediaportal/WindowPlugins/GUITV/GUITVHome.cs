@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Drawing;
 using System.Globalization;
@@ -582,7 +583,19 @@ namespace MediaPortal.GUI.TV
 				if (ts.TotalMilliseconds>=1000)
 				{
 					dtlastTime=DateTime.Now;
-					StartPlaying(true);
+					string fileName=Recorder.GetTimeShiftFileName();
+					try
+					{
+						if (System.IO.File.Exists(fileName))
+						{
+							FileInfo info = new FileInfo(fileName);
+							if (info.Length >= 100*1024)
+							{
+								StartPlaying(true);
+							}
+						}
+					}
+					catch(Exception){}
 				}
 			}
 
