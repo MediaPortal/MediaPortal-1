@@ -53,11 +53,24 @@ namespace AMS.Profile
 		{
 
 			if (!File.Exists(m_strFileName))
+			{
+				if (File.Exists(m_strFileName+".bak"))
+				{
+					XmlDocument docBak = new XmlDocument();
+					docBak.Load(m_strFileName+".bak");
+					return docBak;
+				}
 				return null;
+			}
 
 			XmlDocument doc = new XmlDocument();
       doc.Load(m_strFileName);
-						
+			if (doc!=null && doc.DocumentElement!=null && doc.DocumentElement.ChildNodes!=null) return doc;
+			if (File.Exists(m_strFileName+".bak"))
+			{
+				doc = new XmlDocument();
+				doc.Load(m_strFileName+".bak");
+			}						
 			return doc;
 		}
 
@@ -101,10 +114,20 @@ namespace AMS.Profile
 		/// <seealso cref="GetValue" />
     public void Save()
     {
-      if (m_doc==null) return;
+			if (m_doc==null) return;
+			if (m_doc.DocumentElement==null) return;
+			if (m_doc.ChildNodes.Count==0) return;
+			if (m_doc.DocumentElement.ChildNodes==null) return;
       if (!m_bChanged) return;
 			try
 			{
+				try
+				{
+					System.IO.File.Delete(m_strFileName+".bak");
+					System.IO.File.Move(m_strFileName, m_strFileName+".bak");
+				}
+				catch (Exception) {}
+
 				using (StreamWriter stream = new StreamWriter(m_strFileName, false))
 				{
 					m_doc.Save(stream);		

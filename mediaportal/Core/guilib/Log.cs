@@ -25,7 +25,8 @@ namespace MediaPortal.GUI.Library
       try
       {
         System.IO.Directory.CreateDirectory("log");
-        System.IO.File.Delete(@"log\MediaPortal.log");
+				System.IO.File.Delete(@"log\MediaPortalold.log");
+				System.IO.File.Move(@"log\MediaPortal.log",@"log\MediaPortalold.log");
       }
       catch(Exception)
       {
