@@ -41,9 +41,7 @@ namespace MediaPortal.GUI.Music
       m_directory.AddDrives();
       m_directory.SetExtensions (Utils.AudioExtensions);
     }
-    ~GUIMusicYears()
-    {
-    }
+
 
 		#region overrides
     public override bool Init()
