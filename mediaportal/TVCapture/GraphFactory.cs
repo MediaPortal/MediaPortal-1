@@ -86,27 +86,27 @@ namespace MediaPortal.TV.Recording
       //	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
 			if(card.IsBDACard)
 				return new DVBGraphBDA(card);
+
 			if (card.ToString() == "B2C2 MPEG-2 Source")
 			{
 				return new DVBGraphSS2(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
 			}
-			
-			if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
-			if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate);
-			if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
-      if (card.SupportsMPEG2)
-      {
-        // #MW#
-        // Use a single call for all MPEG2 cards, also the MCE versions...
-        // NOT tested of course, since I have only MCE versions!
-        // The extra code (3 lines??) found in the MPEG2 SinkGraph is now included in here.
-        return new SinkGraphEx(card);
-      }
 
-      // Special graph building for the ATI AIW cards
-      if (card.ToString() == "ATI Rage Theater Video Capture")
+			// Special graph building for the ATI AIW cards
+			if (card.ToString() == "ATI Rage Theater Video Capture")
+			{
+				return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+			}
+			
+			if (card.DeviceType!=null)
+			{
+				if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
+				if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate);
+				if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+			}
+			if (card.SupportsMPEG2)
       {
-        return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+        return new SinkGraphEx(card);
       }
 
       // Standard call for all other software based cards.

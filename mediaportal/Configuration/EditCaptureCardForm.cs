@@ -18,9 +18,6 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class EditCaptureCardForm : System.Windows.Forms.Form
 	{
-    bool    m_bMPEG2=false;
-    bool    m_bISMCE=false;
-		bool		m_bIsBDA=false;
 #if (UseCaptureCardDefinitions)
 		static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
 #endif
@@ -139,19 +136,19 @@ namespace MediaPortal.Configuration
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
-						((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addEmpty=false;
-
-					//Log.Write("{0}:{1}", (string)(availableVideoDevices[i]), (availableVideoDeviceMonikers[i]).ToString() );
+							((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addEmpty=false;
 				}
 			}
 
-			Log.Write("compare");
+			//enum all cards known in capturedefinitions.xml
 			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
 			{
-
 				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
+
+				//enum all video capture devices on this system
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
+					//treat the SSE2 DVB-S card as a general H/W card
 					if( ((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
 					{
 						if (ccd.CommercialName=="General S/W encoding card" ) continue;
@@ -183,14 +180,27 @@ namespace MediaPortal.Configuration
 						}
 						else
 						{
+							bool bHardware=false;
+							bool bMCE=false;
+							if (ccd.CommercialName.IndexOf("General MCE card")>=0)
+							{
+								bHardware=true;
+								bMCE=true;
+							}
+							if (ccd.CommercialName.IndexOf("General H/W encoding card")>=0)
+								bHardware=true;
 							cd.VideoDevice				= (string)availableVideoDevices[i];
 							cd.CommercialName			= ccd.CommercialName;
 							cd.CaptureName			  = cd.VideoDevice;
 							cd.DeviceId						= ccd.DeviceId;
+							cd.IsBDACard					= false;
+							cd.IsMCECard					= bMCE;
+							cd.SupportsMPEG2			= bMCE|bHardware;
 						}
-						Log.Write("adding {0} id:{1} bda:{2} mce:{3} mpeg2:{4}", cd.CaptureName,cd.IsBDACard,cd.IsMCECard,cd.SupportsMPEG2);
+						Log.Write("Adding {0} bda:{1} mce:{2} mpeg2:{3}", 
+												cd.CaptureName,cd.IsBDACard,cd.IsMCECard,cd.SupportsMPEG2);
 						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
-						cardComboBox.Items.Add(cbcc); //availableVideoDevices[i]);
+						cardComboBox.Items.Add(cbcc); 
 					}
 				}
 			}
@@ -325,7 +335,7 @@ namespace MediaPortal.Configuration
 			this.trackRecording.Location = new System.Drawing.Point(120, 384);
 			this.trackRecording.Maximum = 100;
 			this.trackRecording.Name = "trackRecording";
-			this.trackRecording.Size = new System.Drawing.Size(136, 42);
+			this.trackRecording.Size = new System.Drawing.Size(136, 45);
 			this.trackRecording.TabIndex = 48;
 			this.trackRecording.TickFrequency = 10;
 			this.trackRecording.Value = 80;
@@ -333,7 +343,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(16, 112);
+			this.label10.Location = new System.Drawing.Point(16, 80);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(104, 16);
 			this.label10.TabIndex = 47;
@@ -342,7 +352,7 @@ namespace MediaPortal.Configuration
 			// comboBoxLineInput
 			// 
 			this.comboBoxLineInput.Enabled = false;
-			this.comboBoxLineInput.Location = new System.Drawing.Point(120, 112);
+			this.comboBoxLineInput.Location = new System.Drawing.Point(120, 80);
 			this.comboBoxLineInput.Name = "comboBoxLineInput";
 			this.comboBoxLineInput.Size = new System.Drawing.Size(320, 21);
 			this.comboBoxLineInput.TabIndex = 46;
@@ -354,7 +364,7 @@ namespace MediaPortal.Configuration
 			this.audioDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.audioDeviceComboBox.Enabled = false;
 			this.audioDeviceComboBox.ItemHeight = 13;
-			this.audioDeviceComboBox.Location = new System.Drawing.Point(120, 88);
+			this.audioDeviceComboBox.Location = new System.Drawing.Point(120, 56);
 			this.audioDeviceComboBox.Name = "audioDeviceComboBox";
 			this.audioDeviceComboBox.Size = new System.Drawing.Size(320, 21);
 			this.audioDeviceComboBox.TabIndex = 44;
@@ -362,7 +372,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 88);
+			this.label2.Location = new System.Drawing.Point(16, 56);
 			this.label2.Name = "label2";
 			this.label2.TabIndex = 43;
 			this.label2.Text = "Audio device";
@@ -372,7 +382,7 @@ namespace MediaPortal.Configuration
 			this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.setupButton.Enabled = false;
 			this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.setupButton.Location = new System.Drawing.Point(366, 192);
+			this.setupButton.Location = new System.Drawing.Point(366, 160);
 			this.setupButton.Name = "setupButton";
 			this.setupButton.Size = new System.Drawing.Size(75, 21);
 			this.setupButton.TabIndex = 42;
@@ -385,7 +395,7 @@ namespace MediaPortal.Configuration
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.filterComboBox.Enabled = false;
-			this.filterComboBox.Location = new System.Drawing.Point(120, 192);
+			this.filterComboBox.Location = new System.Drawing.Point(120, 160);
 			this.filterComboBox.Name = "filterComboBox";
 			this.filterComboBox.Size = new System.Drawing.Size(240, 21);
 			this.filterComboBox.TabIndex = 41;
@@ -393,7 +403,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(16, 200);
+			this.label9.Location = new System.Drawing.Point(16, 168);
 			this.label9.Name = "label9";
 			this.label9.TabIndex = 40;
 			this.label9.Text = "Device property";
@@ -405,7 +415,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.audioCompressorComboBox.Enabled = false;
 			this.audioCompressorComboBox.ItemHeight = 13;
-			this.audioCompressorComboBox.Location = new System.Drawing.Point(120, 256);
+			this.audioCompressorComboBox.Location = new System.Drawing.Point(120, 224);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
 			this.audioCompressorComboBox.Size = new System.Drawing.Size(320, 21);
 			this.audioCompressorComboBox.TabIndex = 39;
@@ -413,7 +423,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 256);
+			this.label5.Location = new System.Drawing.Point(16, 224);
 			this.label5.Name = "label5";
 			this.label5.TabIndex = 38;
 			this.label5.Text = "Audio compressor";
@@ -425,7 +435,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.videoCompressorComboBox.Enabled = false;
 			this.videoCompressorComboBox.ItemHeight = 13;
-			this.videoCompressorComboBox.Location = new System.Drawing.Point(120, 224);
+			this.videoCompressorComboBox.Location = new System.Drawing.Point(120, 192);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
 			this.videoCompressorComboBox.Size = new System.Drawing.Size(320, 21);
 			this.videoCompressorComboBox.TabIndex = 37;
@@ -433,7 +443,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(16, 232);
+			this.label3.Location = new System.Drawing.Point(16, 200);
 			this.label3.Name = "label3";
 			this.label3.TabIndex = 36;
 			this.label3.Text = "Video compressor";
@@ -512,7 +522,7 @@ namespace MediaPortal.Configuration
 			this.cardComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.cardComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cardComboBox.Location = new System.Drawing.Point(120, 56);
+			this.cardComboBox.Location = new System.Drawing.Point(120, 24);
 			this.cardComboBox.Name = "cardComboBox";
 			this.cardComboBox.Size = new System.Drawing.Size(320, 21);
 			this.cardComboBox.TabIndex = 1;
@@ -520,14 +530,14 @@ namespace MediaPortal.Configuration
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 64);
+			this.label1.Location = new System.Drawing.Point(16, 32);
 			this.label1.Name = "label1";
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Video device";
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(16, 144);
+			this.label8.Location = new System.Drawing.Point(16, 112);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(424, 40);
 			this.label8.TabIndex = 45;
@@ -712,6 +722,24 @@ namespace MediaPortal.Configuration
       FillInAll();
     }
 
+		bool isBDACard
+		{
+			get
+			{
+				if (cardComboBox.SelectedItem!=null)
+				{
+					TVCaptureDevice card = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
+					if (card!=null)
+					{
+						if (card.IsBDACard )
+							return true;
+					}
+				}
+				return false;
+			}
+		}
+
+
 		/// <summary>
 		/// #MW#
 		/// Fill in all the appropriate fields. The selected card is already checked as a card that
@@ -748,7 +776,7 @@ namespace MediaPortal.Configuration
       //
       if(capture != null)
       {
-        trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=!capture.SupportsTimeShifting;
+        trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=!CaptureCard.SupportsMPEG2;
       }
       else
       {
@@ -946,11 +974,12 @@ namespace MediaPortal.Configuration
 			{
 				if (cardComboBox.SelectedItem==null) return null;
 #if (UseCaptureCardDefinitions)
-				TVCaptureDevice card = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
-				card.DeviceType=card.DeviceId;
-				m_bMPEG2=card.SupportsMPEG2;
-				m_bIsBDA=card.IsBDACard;
-				m_bISMCE=card.IsMCECard;
+				ComboBoxCaptureCard combo = cardComboBox.SelectedItem as ComboBoxCaptureCard;
+				TVCaptureDevice card = (combo).CaptureDevice;
+
+				Log.Write("selected {0} bda:{1} mce:{2} mpeg2:{3}", 
+										card.CommercialName,card.IsBDACard,card.IsMCECard,card.SupportsMPEG2);
+
 #else
 				TVCaptureDevice card = new TVCaptureDevice();
 
@@ -981,10 +1010,6 @@ namespace MediaPortal.Configuration
 				// And mpeg2/mce cards always set to false, ie software cards!!!
 				//#if (UseCaptureCardDefinitions)
 #if (UseCaptureCardDefinitions)
-				if (card.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
-				if (card.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
-				if (card.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
-				card.IsBDACard=m_bIsBDA;
 #else
 				card.SupportsMPEG2 = m_bMPEG2;
 				card.IsMCECard     = m_bISMCE;

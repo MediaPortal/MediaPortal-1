@@ -40,6 +40,7 @@ namespace TVCapture
 		public string VideoPinName;
 		public string AudioPinName;
 		public string Mpeg2PinName;
+		public string SectionsAndTablesPinName;
 	}
 
 	public class CaptureCardDefinition
@@ -310,6 +311,7 @@ namespace TVCapture
 							cardConfig.Capabilities.IsMceDevice			 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
 							cardConfig.Capabilities.IsMpeg2Device    = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
 							cardConfig.Capabilities.IsSoftwareDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"sw").InnerText);
+
 							DirectShowUtil.DebugWrite("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
 												cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
 												cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
@@ -356,6 +358,14 @@ namespace TVCapture
 							cardConfig.Tv.InterfaceDefinition.VideoPinName   = filterInterface.Attributes.GetNamedItem(@"video").InnerText;
 							cardConfig.Tv.InterfaceDefinition.AudioPinName   = filterInterface.Attributes.GetNamedItem(@"audio").InnerText;
 							cardConfig.Tv.InterfaceDefinition.Mpeg2PinName   = filterInterface.Attributes.GetNamedItem(@"mpeg2").InnerText;
+							try 
+							{
+								cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+							}
+							catch 
+							{
+								cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = "";
+							}
 						}
 
 						// Now check if this device also has radio
@@ -396,6 +406,17 @@ namespace TVCapture
 							interfaceDefinition.VideoPinName   = filterInterface.Attributes.GetNamedItem(@"video").InnerText;
 							interfaceDefinition.AudioPinName   = filterInterface.Attributes.GetNamedItem(@"audio").InnerText;
 							interfaceDefinition.Mpeg2PinName   = filterInterface.Attributes.GetNamedItem(@"mpeg2").InnerText;
+														
+							try 
+							{
+								interfaceDefinition.SectionsAndTablesPinName = filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+							}
+							catch 
+							{
+								interfaceDefinition.SectionsAndTablesPinName = "";
+							}
+
+
 						}
 						DirectShowUtil.DebugWrite("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
 							cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);

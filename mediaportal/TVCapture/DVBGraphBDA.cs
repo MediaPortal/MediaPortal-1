@@ -445,8 +445,16 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.Write("DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
 				}
+
 				m_graphBuilder.AddFilter(m_SectionsTables, "MPEG-2 Sections & Tables");
-				if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_SectionsTables)) 
+				int iPreferredOutputPin=0;
+				try
+				{
+					iPreferredOutputPin=Convert.ToInt32(m_Card.TvInterfaceDefinition.SectionsAndTablesPinName);
+				}
+				catch(Exception){}
+
+				if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_SectionsTables, iPreferredOutputPin)) 
 				{
 					Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
 					return false;
@@ -1400,6 +1408,18 @@ namespace MediaPortal.TV.Recording
 		/// <returns>true if succeeded, false if failed</returns>
 		private bool ConnectFilters(ref IBaseFilter UpstreamFilter, ref IBaseFilter DownstreamFilter) 
 		{
+			return ConnectFilters(ref UpstreamFilter, ref DownstreamFilter, 0);
+		}
+
+		/// <summary>
+		/// Finds and connects pins
+		/// </summary>
+		/// <param name="UpstreamFilter">The Upstream filter which has the output pin</param>
+		/// <param name="DownstreamFilter">The downstream filter which has the input filter</param>
+		/// <param name="preferredOutputPin">The one-based index of the preferred output pin to use on the Upstream filter.  This is tried first. Pin 1 = 1, Pin 2 = 2, etc</param>
+		/// <returns>true if succeeded, false if failed</returns>
+		private bool ConnectFilters(ref IBaseFilter UpstreamFilter, ref IBaseFilter DownstreamFilter, int preferredOutputPin) 
+		{
 			if (UpstreamFilter == null || DownstreamFilter == null)
 				return false;
 
@@ -1411,11 +1431,59 @@ namespace MediaPortal.TV.Recording
 			if((hr < 0) || (pinEnum == null))
 				return false;
 
+			#region Attempt to connect preferred output pin first
+			if (preferredOutputPin > 0) 
+			{
+				IPin[] outPin = new IPin[1];
+				int outputPinCounter = 0;
+				while(pinEnum.Next(1, outPin, out ulFetched) == 0) 
+				{    
+					PinDirection pinDir;
+					outPin[0].QueryDirection(out pinDir);
+
+					if (pinDir == PinDirection.Output)
+					{
+						outputPinCounter++;
+						if (outputPinCounter == preferredOutputPin) // Go and find the input pin.
+						{
+							IEnumPins downstreamPins;
+
+							DownstreamFilter.EnumPins(out downstreamPins);
+
+							IPin[] dsPin = new IPin[1];
+							while(downstreamPins.Next(1, dsPin, out ulFetched) == 0) 
+							{
+								PinDirection dsPinDir;
+								dsPin[0].QueryDirection(out dsPinDir);
+								if (dsPinDir == PinDirection.Input)
+								{
+									hr = m_graphBuilder.Connect(outPin[0], dsPin[0]);
+									if(hr != 0) 
+									{
+										Marshal.ReleaseComObject(dsPin[0]);
+										break;
+									} 
+									else 
+									{
+										return true;
+									}
+								}
+							}
+							Marshal.ReleaseComObject(downstreamPins);
+						}
+					}
+					Marshal.ReleaseComObject(outPin[0]);
+				}
+				pinEnum.Reset();        // Move back to start of enumerator
+			}
+			#endregion
+
 			IPin[] testPin = new IPin[1];
 			while(pinEnum.Next(1, testPin, out ulFetched) == 0) 
-			{	
+			{    
 				PinDirection pinDir;
 				testPin[0].QueryDirection(out pinDir);
+
 				if(pinDir == PinDirection.Output) // Go and find the input pin.
 				{
 					IEnumPins downstreamPins;
@@ -1427,7 +1495,7 @@ namespace MediaPortal.TV.Recording
 					{
 						PinDirection dsPinDir;
 						dsPin[0].QueryDirection(out dsPinDir);
-						if(dsPinDir == PinDirection.Input) 
+						if (dsPinDir == PinDirection.Input)
 						{
 							hr = m_graphBuilder.Connect(testPin[0], dsPin[0]);
 							if(hr != 0) 
@@ -1941,7 +2009,9 @@ namespace MediaPortal.TV.Recording
 
 				TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
 
-				TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
+				TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
+				if (myLocator == null)
+					myLocator = (TunerLib.IDVBTLocator)myTuningSpace.DefaultLocator;
 
 				myLocator.CarrierFrequency		= (int)tuningObject;
 				myTuneRequest.ONID	= -1;					//original network id
