@@ -2161,7 +2161,7 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						TVGroup group = new TVGroup();
-						group.Sort     =Int32.Parse(DatabaseUtility.Get(results,i,"idGroup"));
+						group.ID      =Int32.Parse(DatabaseUtility.Get(results,i,"idGroup"));
 						group.Sort     =Int32.Parse(DatabaseUtility.Get(results,i,"iSort"));
 						group.Pincode  =Int32.Parse(DatabaseUtility.Get(results,i,"Pincode"));
 						group.GroupName=DatabaseUtility.Get(results,i,"strName");

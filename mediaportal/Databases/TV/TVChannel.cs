@@ -20,6 +20,12 @@ namespace MediaPortal.TV.Database
 		public int    Sort;
 		public int    Pincode;
 		public ArrayList     tvChannels = new ArrayList();
+
+		public override string ToString()
+		{
+			return GroupName;
+		}
+
 	}
 
   /// <summary>
