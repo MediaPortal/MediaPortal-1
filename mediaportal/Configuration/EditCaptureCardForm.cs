@@ -1982,8 +1982,8 @@ namespace MediaPortal.Configuration
 					return;
 				}
 				if (capture.Network != NetworkType.DVBC &&
-					capture.Network != NetworkType.DVBS &&
-					capture.Network != NetworkType.DVBC)
+					  capture.Network != NetworkType.DVBS &&
+					  capture.Network != NetworkType.DVBT)
 				{
 					capture.DeleteGraph();
 					MessageBox.Show("EPG grabber only supports DVB-T / DVB-S / DVB-T cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
