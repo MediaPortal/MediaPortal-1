@@ -898,6 +898,8 @@ namespace MediaPortal.GUI.Video
 
 			int rating=(int)(item.Rating*10f);
 			GUIPropertyManager.SetProperty("#rating", rating.ToString());
+			GUIPropertyManager.SetProperty("#year", item.Year.ToString());
+			GUIPropertyManager.SetProperty("#title", item.Label);
 
 			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
       if (filmstrip==null) return;

@@ -721,7 +721,7 @@ namespace MediaPortal.Video.Database
 
 				url.Title = url.Title.Trim();
 				// cut of " (imdb)"
-				iEnd = url.Title.IndexOf(" (imdb)");
+				iEnd = url.Title.IndexOf("(");
 				if (iEnd >= 0)
 					movieDetails.Title = url.Title.Substring(0,iEnd);
 				else

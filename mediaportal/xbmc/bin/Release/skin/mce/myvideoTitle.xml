@@ -32,7 +32,7 @@
 		<control>
 			<type>imagelist</type>
 			<id>101</id>
-			<posX>650</posX>
+			<posX>600</posX>
 			<posY>70</posY>
 			<width>100</width>
 			<height>32</height>
@@ -45,6 +45,17 @@
 			<orientation>horizontal</orientation>
 			<align>right</align>
 			<percentage>#rating</percentage>
+		</control>
+		<control>
+			<description>year</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>660</posX>
+			<posY>70</posY>
+			<label>#year</label>
+			<font>font14</font>
+			<align>left</align>
+			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
 			<description>Title text label</description>
@@ -74,7 +85,7 @@
 			<posX>660</posX>
 			<posY>50</posY>
 			<width>400</width>
-			<label>#selecteditem</label>
+			<label>#title</label>
 			<font>font14</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
