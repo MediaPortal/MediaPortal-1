@@ -1248,6 +1248,8 @@ namespace MediaPortal.GUI.TV
             Update();
         }
         SetFocus();
+        
+        UpdateCurrentProgram();
         SetProperties();
         return;
       }
@@ -1361,6 +1363,7 @@ namespace MediaPortal.GUI.TV
           m_iCursorY--;
         }
         SetFocus();
+        UpdateCurrentProgram();
         SetProperties();
         return;
       }
