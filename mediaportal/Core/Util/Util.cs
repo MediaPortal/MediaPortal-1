@@ -418,7 +418,7 @@ namespace MediaPortal.Util
 			if (item==null) return;
 			try
 			{
-				if (!item.IsFolder)
+				if (!item.IsFolder
 				|| ( item.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path).ToLower())))
 				{
 					if (IsPicture(item.Path)) return;
