@@ -1,7 +1,9 @@
 History: (dd-mm-yyyy)
+  28-06-2004  my music    : fixed : play a song in full screen (viz) when the song finishes you get the topbar on screen rest = black
   28-06-2004  DVD Player  : added : user can specify in setup which video & audio codec to use for dvd playback
   28-06-2004  MY TV       : added : user can specify in setup which video & audio codec to use for my tv
   
+  27-06-2004  MY TV       : added : completely rewrote my TV. for now it only supports TV Capture cards with HW mpeg encoding
   27-06-2004  general     : added : external player plugin framework
   27-06-2006  my music    : added : winamp external player sample/working external music plugin
 

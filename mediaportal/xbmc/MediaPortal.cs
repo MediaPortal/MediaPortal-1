@@ -645,25 +645,10 @@ public class MediaPortalApp : D3DApp, IRender
 			char keyc=e.KeyChar;
 			Key key = new Key(e.KeyChar,0);
 #if  DEBUG
-      if (key.KeyChar=='l')
+      if (key.KeyChar=='t')
       {
-        Log.Write("log cur:{0} duration:{1} speed:{2}", g_Player.CurrentPosition,g_Player.Duration, g_Player.Speed);
-      }
-      if (key.KeyChar=='[')
-      {
-        Recorder.RecordNow("RTL 4");
-      }
-      if (key.KeyChar==']')
-      {
-        Recorder.StopRecording();
-      }
-      if (key.KeyChar=='g')
-      {
-        Utils.StartProcess(@"C:\media\graphedt.exe","",true,false);
-      }
-      if (key.KeyChar=='.')
-      {
-        g_Player.Play( @"C:\media\movies\record1.tv");return;
+        //Utils.StartProcess(@"C:\media\graphedt.exe","",true,false);
+				g_Player.SeekAsolutePercentage(99);
       }
 #endif
 			Action action=new Action();
