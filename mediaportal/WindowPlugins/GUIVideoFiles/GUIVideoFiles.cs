@@ -784,6 +784,7 @@ namespace MediaPortal.GUI.Video
 				
 				
         if (!CheckMovie(strFileName)) return;
+        bool bAskResume=true;
 				if (_MapSettings.Stack)
 				{
 					ArrayList movies = new ArrayList();
@@ -793,6 +794,8 @@ namespace MediaPortal.GUI.Video
 
             //check if we can resume 1 of those movies
             int stoptime=0;
+            bool asked=false;
+            ArrayList newItems = new ArrayList();
             for (int i = 0; i < items.Count; ++i)
             {
               GUIListItem pItemTmp = (GUIListItem)items[i];
@@ -802,21 +805,53 @@ namespace MediaPortal.GUI.Video
                 int movieid=VideoDatabase.GetMovieInfo(item.Path, ref movieDetails);
                 if (movieid >=0)
                 {
+                  string title=System.IO.Path.GetFileName(item.Path);
+                  if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
                   stoptime=VideoDatabase.GetMovieStopTime(movieid);
                   if (stoptime>0)
                   {
-                    //yes, then just play that movie
-                    items = new ArrayList();
-                    items.Add(pItemTmp);
-                    break;
+                    if (!asked)
+                    {
+                      asked=true;
+                      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                      if (null == dlgYesNo) return;
+                      dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+                      dlgYesNo.SetLine(1, title);
+                      dlgYesNo.SetLine(2, Utils.SecondsToHMSString(stoptime));
+                      dlgYesNo.SetDefaultToYes(true);
+                      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                      if (dlgYesNo.IsConfirmed) 
+                      {
+                        bAskResume=false;
+                        newItems.Add(pItemTmp);
+                        break;
+                      }
+                      else
+                      {
+                        VideoDatabase.DeleteMovieStopTime(movieid);
+                        newItems.Add(pItemTmp);
+                      }
+                    } //if (!asked)
+                    else
+                    {
+                      newItems.Add(pItemTmp);
+                    }
+                  } //if (stoptime>0)
+                  else
+                  {
+                    newItems.Add(pItemTmp);
                   }
+                } 
+                else //if (movieid >=0)
+                {
+                  newItems.Add(pItemTmp);
                 }
-              }
+              }//if (Utils.ShouldStack(pItemTmp.Path, item.Path))
             }
 
-            for (int i = 0; i < items.Count; ++i)
+            for (int i = 0; i < newItems.Count; ++i)
 						{
-							GUIListItem pItemTmp = (GUIListItem)items[i];
+							GUIListItem pItemTmp = (GUIListItem)newItems[i];
 							if (Utils.IsVideo(pItemTmp.Path) && !PlayListFactory.IsPlayList(pItemTmp.Path))
 							{
                 if (Utils.ShouldStack(pItemTmp.Path, item.Path))
@@ -864,7 +899,7 @@ namespace MediaPortal.GUI.Video
 					}
 
 					// play movie...
-					PlayMovieFromPlayList();
+					PlayMovieFromPlayList(bAskResume);
 					return;
 				}
 
@@ -879,7 +914,7 @@ namespace MediaPortal.GUI.Video
         NewItem.FileName = strFileName;
         NewItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
         newPlayList.Add(NewItem);
-        PlayMovieFromPlayList();
+        PlayMovieFromPlayList(true);
 /*
 				//TODO
         if (g_Player.Play(strFileName))
@@ -1742,7 +1777,7 @@ namespace MediaPortal.GUI.Video
       else filmstrip.InfoImageFileName=Utils.ConvertToLargeCoverArt(item.ThumbnailImage);
     }
 
-    static public void PlayMovieFromPlayList()
+    static public void PlayMovieFromPlayList(bool bAskResume)
     {
       string filename=PlayListPlayer.GetNext();
       IMDBMovie movieDetails = new IMDBMovie();
@@ -1757,15 +1792,18 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.GetMovieInfoById( movieid, ref movieDetails);
           if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
           
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (null == dlgYesNo) return;
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-          dlgYesNo.SetLine(1, title);
-          dlgYesNo.SetLine(2, "");
-          dlgYesNo.SetDefaultToYes(true);
-          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-          
-          if (!dlgYesNo.IsConfirmed) stoptime=0;
+          if (bAskResume)
+          {
+            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+            if (null == dlgYesNo) return;
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+            dlgYesNo.SetLine(1, title);
+            dlgYesNo.SetLine(2, "");
+            dlgYesNo.SetDefaultToYes(true);
+            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+            
+            if (!dlgYesNo.IsConfirmed) stoptime=0;
+          }
         }
       }
       

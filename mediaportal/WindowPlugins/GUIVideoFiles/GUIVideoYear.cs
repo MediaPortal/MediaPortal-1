@@ -677,7 +677,7 @@ namespace MediaPortal.GUI.Video
 				}
 
         // play movie...
-        GUIVideoFiles.PlayMovieFromPlayList();
+        GUIVideoFiles.PlayMovieFromPlayList(true);
 			}
 		}
     

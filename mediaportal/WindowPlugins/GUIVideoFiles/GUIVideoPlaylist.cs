@@ -228,7 +228,7 @@ namespace MediaPortal.GUI.Video
 					{
 						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
 						
-            GUIVideoFiles.PlayMovieFromPlayList();
+            GUIVideoFiles.PlayMovieFromPlayList(true);
 					}
 					else if (iControl == (int)Controls.CONTROL_BTNPREVIOUS)
 					{
