@@ -34,6 +34,17 @@ interface IVMR9Helper : IUnknown{
 	[helpstring("method SetDeinterlaceMode")] HRESULT SetDeinterlaceMode();
 };
 [
+	object,
+	uuid(C5B0E1CE-6BFE-48FC-8EC0-8ABC19C1EBD4),
+	dual,
+	nonextensible,
+	helpstring("IDVD Interface"),
+	pointer_default(unique)
+]
+interface IDVD : IDispatch{
+	[id(1), helpstring("method Reset")] HRESULT Reset([in] BSTR strPath);
+};
+[
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),
 	version(1.0),
 	helpstring("DirectShowHelper 1.0 Type Library")
@@ -56,5 +67,13 @@ library DirectShowHelperLib
 	coclass VMR9Helper
 	{
 		[default] interface IVMR9Helper;
+	};
+	[
+		uuid(EA2F675F-E8A2-4C75-9B04-8A170B2AAC47),
+		helpstring("DVD Class")
+	]
+	coclass DVD
+	{
+		[default] interface IDVD;
 	};
 };

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Sun Mar 13 16:11:04 2005
+/* at Tue Mar 15 21:03:30 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -57,6 +57,12 @@ typedef interface IVMR9Helper IVMR9Helper;
 #endif 	/* __IVMR9Helper_FWD_DEFINED__ */
 
 
+#ifndef __IDVD_FWD_DEFINED__
+#define __IDVD_FWD_DEFINED__
+typedef interface IDVD IDVD;
+#endif 	/* __IDVD_FWD_DEFINED__ */
+
+
 #ifndef __VMR9Callback_FWD_DEFINED__
 #define __VMR9Callback_FWD_DEFINED__
 
@@ -79,6 +85,18 @@ typedef struct VMR9Helper VMR9Helper;
 #endif /* __cplusplus */
 
 #endif 	/* __VMR9Helper_FWD_DEFINED__ */
+
+
+#ifndef __DVD_FWD_DEFINED__
+#define __DVD_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class DVD DVD;
+#else
+typedef struct DVD DVD;
+#endif /* __cplusplus */
+
+#endif 	/* __DVD_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -369,6 +387,138 @@ void __RPC_STUB IVMR9Helper_SetDeinterlaceMode_Stub(
 #endif 	/* __IVMR9Helper_INTERFACE_DEFINED__ */
 
 
+#ifndef __IDVD_INTERFACE_DEFINED__
+#define __IDVD_INTERFACE_DEFINED__
+
+/* interface IDVD */
+/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IDVD;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("C5B0E1CE-6BFE-48FC-8EC0-8ABC19C1EBD4")
+    IDVD : public IDispatch
+    {
+    public:
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Reset( 
+            /* [in] */ BSTR strPath) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IDVDVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IDVD * This,
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IDVD * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IDVD * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IDVD * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IDVD * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IDVD * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IDVD * This,
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Reset )( 
+            IDVD * This,
+            /* [in] */ BSTR strPath);
+        
+        END_INTERFACE
+    } IDVDVtbl;
+
+    interface IDVD
+    {
+        CONST_VTBL struct IDVDVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IDVD_QueryInterface(This,riid,ppvObject)	\
+    (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
+
+#define IDVD_AddRef(This)	\
+    (This)->lpVtbl -> AddRef(This)
+
+#define IDVD_Release(This)	\
+    (This)->lpVtbl -> Release(This)
+
+
+#define IDVD_GetTypeInfoCount(This,pctinfo)	\
+    (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo)
+
+#define IDVD_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo)
+
+#define IDVD_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)
+
+#define IDVD_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)
+
+
+#define IDVD_Reset(This,strPath)	\
+    (This)->lpVtbl -> Reset(This,strPath)
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDVD_Reset_Proxy( 
+    IDVD * This,
+    /* [in] */ BSTR strPath);
+
+
+void __RPC_STUB IDVD_Reset_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+
+#endif 	/* __IDVD_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __DirectShowHelperLib_LIBRARY_DEFINED__
 #define __DirectShowHelperLib_LIBRARY_DEFINED__
@@ -394,9 +544,22 @@ EXTERN_C const CLSID CLSID_VMR9Helper;
 class DECLSPEC_UUID("D23CF2BC-5AD3-407F-B562-A7CB0FD342DB")
 VMR9Helper;
 #endif
+
+EXTERN_C const CLSID CLSID_DVD;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("EA2F675F-E8A2-4C75-9B04-8A170B2AAC47")
+DVD;
+#endif
 #endif /* __DirectShowHelperLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
+
+unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsigned long            , BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
+void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
 
 /* end of Additional Prototypes */
 

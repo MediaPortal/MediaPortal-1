@@ -183,6 +183,9 @@ namespace MediaPortal.Player
       m_iVolume=100;
 			mouseMsg  = new ArrayList();
 
+			DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
+			dvdHelper.Reset(strFile);
+
       bool bResult=FirstPlayDvd(strFile);
       if (!bResult) 
       {

@@ -30,10 +30,16 @@
 #define _ATL_NO_AUTOMATIC_NAMESPACE
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+
+#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#endif
 
 // turns off ATL's hiding of some common and often safely ignored warning messages
 #define _ATL_ALL_WARNINGS
-
+#include <afxwin.h>
+#include <afxdisp.h>
 
 #include "resource.h"
 #include <atlbase.h>

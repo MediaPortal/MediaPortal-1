@@ -15,6 +15,7 @@
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
+			UseOfMFC="2"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
@@ -34,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="strmbased.lib winmm.lib"
+				AdditionalDependencies="strmbased.lib winmm.lib comsupp.lib"
 				OutputFile="$(OutDir)/DirectShowHelper.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\DirectShowHelper.def"
@@ -82,6 +83,7 @@
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
+			UseOfMFC="2"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
@@ -98,9 +100,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="STRMBASE.lib winmm.lib"
+				AdditionalDependencies="STRMBASE.lib winmm.lib comsupp.lib"
 				OutputFile="$(OutDir)/DirectShowHelper.dll"
 				LinkIncremental="1"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\DirectShowHelper.def"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -152,6 +155,12 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\CSSauth.cpp">
+			</File>
+			<File
+				RelativePath=".\CSSscramble.cpp">
+			</File>
+			<File
 				RelativePath=".\DirectShowHelper.cpp">
 			</File>
 			<File
@@ -161,7 +170,13 @@
 				RelativePath=".\DirectShowHelper.idl">
 			</File>
 			<File
+				RelativePath=".\DVD.cpp">
+			</File>
+			<File
 				RelativePath=".\DX9AllocatorPresenter.cpp">
+			</File>
+			<File
+				RelativePath=".\ResetDVD.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -179,6 +194,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\udf.cpp">
+			</File>
+			<File
 				RelativePath=".\Vector.cpp">
 			</File>
 			<File
@@ -193,13 +211,28 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\CSSauth.h">
+			</File>
+			<File
+				RelativePath=".\CSSscramble.h">
+			</File>
+			<File
+				RelativePath=".\DVD.h">
+			</File>
+			<File
 				RelativePath=".\DX9AllocatorPresenter.h">
+			</File>
+			<File
+				RelativePath=".\ResetDVD.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
+			</File>
+			<File
+				RelativePath=".\udf.h">
 			</File>
 			<File
 				RelativePath=".\VMR9Helper.h">
@@ -214,6 +247,9 @@
 			</File>
 			<File
 				RelativePath=".\DirectShowHelper.rgs">
+			</File>
+			<File
+				RelativePath=".\DVD.rgs">
 			</File>
 			<File
 				RelativePath=".\VMR9Callback.rgs">
