@@ -91,12 +91,6 @@ namespace WindowPlugins.GUIPrograms
 					foreach(XmlNode node in NodeList)
 					{
 						XmlNode titleNode = node.SelectSingleNode("title");
-
-						//					taggedMenuItem newMenu = new taggedMenuItem(titleNode.InnerText);
-						//					newMenu.Tag = Convert.ToInt32(idNode.InnerText.Length > 0 ? idNode.InnerText : "0");
-						//					newMenu.XmlTag = node;
-						//					newMenu.Click += new System.EventHandler(this.ProfileItem_Click);
-						//					menuItemReadFromProfile.MenuItems.Add(newMenu);
 					}
 				}
 			}
@@ -169,72 +163,7 @@ namespace WindowPlugins.GUIPrograms
 				iNextValueTagStart = result.IndexOf("[");
 			}
 
-			
-//			// not really a parser.... this can be optimized!
-//			// replace the "old-style tags"
-//			result = result.Replace("[VALUEOFTAG(\"system\")]", curFile.System_);
-//			result = result.Replace("[VALUEOFTAG(\"yearmanu\")]", curFile.YearManu);
-//			result = result.Replace("[VALUEOFTAG(\"rating\")]", curFile.Rating.ToString());
-//			result = result.Replace("[VALUEOFTAG(\"genre\")]", curFile.Genre);
-//			result = result.Replace("[VALUEOFTAG(\"overview\")]", curFile.Overview);
-//
-//			// finished?
-//			result = ParseVALUEOFTAGs(result, curApp, curFile);
-
-
-
 			return result;
-		}
-
-
-		static string ParseVALUEOFTAGs(string strExpression, AppItem curApp, FileItem curFile)
-		{
-			string result = strExpression;
-			// Look for VALUEOFTAGs
-			int iNextValueTagStart = result.IndexOf("[VALUEOFTAG(\"");
-			int iNextValueTagEnd = -1;
-			string Head = "";
-			string Expression = "";
-			string Tail = "";
-			while (iNextValueTagStart >= 0)
-			{
-				iNextValueTagEnd = result.IndexOf("\")]");
-				if (iNextValueTagEnd > iNextValueTagStart)
-				{
-					iNextValueTagEnd = iNextValueTagEnd + 3; // legth of "\")]"
-					if (iNextValueTagStart > 0)
-					{
-						Head = result.Substring(0, iNextValueTagStart);
-					}
-					else
-					{
-						Head = "";
-					}
-					Expression = result.Substring(iNextValueTagStart, iNextValueTagEnd - iNextValueTagStart);
-					if (result.Length - iNextValueTagEnd > 0)
-					{
-						Tail = result.Substring(iNextValueTagEnd, result.Length - iNextValueTagEnd);
-					}
-					else
-					{
-						Tail = "";
-					}
-					result = Head + ParseTag(Expression, curApp, curFile) + Tail;
-				}
-				else
-				{
-					Log.Write("Warning: ProgramContentManager.ParseExpressions: invalid tag-expression! \n{0}", result);
-					result = result.Substring(0, iNextValueTagStart - 1); // cut the rest of the string!
-					break;
-				}
-				iNextValueTagStart = result.IndexOf("[VALUEOFTAG(\"");
-			}
-			return result;
-		}
-
-		static string ParseTag(string strTagExpression, AppItem curApp, FileItem curFile)
-		{
-			return ""; // todo:
 		}
 
 		static string ParseOneExpression(string strTagExpression, AppItem curApp, FileItem curFile)
@@ -318,8 +247,9 @@ namespace WindowPlugins.GUIPrograms
 					}
 				}
 			}
-			return result; // todo:
+			return result; 
 		}
+
 		static string ParseNAMEOFCATEGORY(string strTagExpression, AppItem curApp, FileItem curFile)
 		{
 			string result = "";
@@ -345,6 +275,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 			return result;
 		}
+
 		static string ParseVALUEOFCATEGORY(string strTagExpression, AppItem curApp, FileItem curFile)
 		{
 			string result = "";
@@ -371,9 +302,6 @@ namespace WindowPlugins.GUIPrograms
 			}
 			return result;
 		}
-
-
-
 
 	}
 }
