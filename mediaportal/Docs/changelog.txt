@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  04-07-2004  my tv       : added : option for vmr9 windowless
+  04-07-2004  my videos   : added : option for vmr9 windowless
+  04-07-2004  setup       : added : splitted vmr9 option in seperate options for tv & video
+  
   03-07-2004  my recipies : added : added new plugin: my recipies (thx to domi-fan)
   03-07-2004  skin engine : fixed : focus things
   03-07-2004  my tv       : fixed : my tv recorded wrong channel
