@@ -510,8 +510,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if (radioButtonAC3Speakers.Checked) 
 			{
-				comboBoxAC3SpeakerConfig.Enabled=true;
-				checkBoxAC3LFE.Enabled=true;
+				//comboBoxAC3SpeakerConfig.Enabled=true;
+				//checkBoxAC3LFE.Enabled=true;
 			}
 
 		}
@@ -520,8 +520,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if (radioButtonAC3SPDIF.Checked) 
 			{
-				comboBoxAC3SpeakerConfig.Enabled=false;
-				checkBoxAC3LFE.Enabled=false;
+				//comboBoxAC3SpeakerConfig.Enabled=false;
+				//checkBoxAC3LFE.Enabled=false;
 			}
 		}
 
@@ -529,8 +529,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if (radioButtonDTSSpeakers.Checked) 
 			{
-				comboBoxDTSSpeakerConfig.Enabled=true;
-				checkBoxDTSLFE.Enabled=true;
+				//comboBoxDTSSpeakerConfig.Enabled=true;
+				//checkBoxDTSLFE.Enabled=true;
 			}
 		}
 
@@ -538,8 +538,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if (radioButtonDTSSPDIF.Checked) 
 			{
-				comboBoxDTSSpeakerConfig.Enabled=false;
-				checkBoxDTSLFE.Enabled=false;
+				//comboBoxDTSSpeakerConfig.Enabled=false;
+				//checkBoxDTSLFE.Enabled=false;
 			}
 		}
 
