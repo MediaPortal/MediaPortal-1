@@ -23,6 +23,14 @@ namespace MediaPortal.TV.Database
       WeekDays
 		};
 
+		public enum QualityType
+		{
+			NotSet,
+			Low,
+			Medium,
+			High
+		}
+
     /// <summary>
     /// Current recording status
     /// </summary>
@@ -41,6 +49,9 @@ namespace MediaPortal.TV.Database
 		RecordingType m_eType;
 		int				  m_iRecordId;
 		bool				m_bContentRecording=true;
+		bool        m_bSeries=false;
+		int         m_iPriority=0;
+		QualityType	m_iQuality=QualityType.NotSet;
 
     /// <summary>
     /// Constructor.
@@ -48,6 +59,22 @@ namespace MediaPortal.TV.Database
 		public TVRecording()
 		{
 			m_bContentRecording=true;
+		}
+		
+		public TVRecording(TVRecording rec)
+		{
+			m_iStartTime=rec.m_iStartTime;
+			m_iEndTime=rec.m_iEndTime;
+			m_iCancelTime=rec.m_iCancelTime;
+			m_strTitle=rec.m_strTitle;
+			m_strChannel=rec.m_strChannel;
+			m_eType=rec.m_eType;
+			m_iRecordId=rec.m_iRecordId;
+			m_bContentRecording=rec.m_bContentRecording;
+			m_bSeries=rec.m_bSeries;
+			m_iPriority=rec.m_iPriority;
+			m_iQuality=rec.m_iQuality;
+
 		}
 
     /// <summary>
@@ -670,5 +697,20 @@ namespace MediaPortal.TV.Database
         return RecordingStatus.Waiting;        
       }
     }
+		public bool Series
+		{
+			get { return m_bSeries;}
+			set { m_bSeries=value;}
+		}
+		public int Priority
+		{
+			get { return m_iPriority;}
+			set { m_iPriority=value;}
+		}
+		public QualityType Quality
+		{
+			get { return m_iQuality;}
+			set { m_iQuality=value;}
+		}
 	}
 }

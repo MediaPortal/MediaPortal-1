@@ -15,13 +15,22 @@ namespace MediaPortal.TV.Database
     ArrayList		m_programs = new ArrayList();
     string			m_strChannel="";
 		DateTime   	m_lastDateTime=DateTime.Now;
-
+		int         m_iDays=1;
     /// <summary>
     /// Constructor. 
     /// The constructor will load all programs from the TVDatabase
     /// </summary>
-    public TVUtil()
+    ///
+		public TVUtil()
 		{
+			m_iDays=1;
+			OnProgramsChanged();
+			TVDatabase.OnProgramsChanged +=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
+		}
+
+    public TVUtil(int days)
+		{
+			m_iDays=days;
 			OnProgramsChanged();
 			TVDatabase.OnProgramsChanged +=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
     }
@@ -47,7 +56,7 @@ namespace MediaPortal.TV.Database
 		{
 			m_programs.Clear();
 			DateTime dtNow=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0,0);
-			TVDatabase.GetPrograms(Utils.datetolong(dtNow),Utils.datetolong(dtNow.AddDays(1)),ref m_programs);
+			TVDatabase.GetPrograms(Utils.datetolong(dtNow),Utils.datetolong(dtNow.AddDays(m_iDays)),ref m_programs);
 			m_lastDateTime=DateTime.Now;
 		}
 
@@ -112,6 +121,8 @@ namespace MediaPortal.TV.Database
 
       return GetProgramAt(m_strChannel,DateTime.Now);
 		}
+		
+
 		#region IDisposable Members
 
 		public void Dispose()
@@ -123,5 +134,93 @@ namespace MediaPortal.TV.Database
 		}
 
 		#endregion
+
+	
+
+		public ArrayList GetRecordingTimes(TVRecording rec)
+		{
+			ArrayList recordings = new ArrayList();
+			
+			DateTime dtDay=DateTime.Now;
+			if (rec.RecType==TVRecording.RecordingType.Once)
+			{
+				recordings.Add(rec);
+				return recordings;
+			}
+
+			if (rec.RecType==TVRecording.RecordingType.Daily)
+			{
+				for (int i=0; i < m_iDays;++i)
+				{
+					TVRecording recNew= new TVRecording(rec);
+					recNew.RecType=TVRecording.RecordingType.Once;
+					recNew.Start=Utils.datetolong(new DateTime(dtDay.Year,dtDay.Month,dtDay.Day, rec.StartTime.Hour,rec.StartTime.Minute,0));
+					recNew.End  =Utils.datetolong(new DateTime(dtDay.Year,dtDay.Month,dtDay.Day, rec.EndTime.Hour,rec.EndTime.Minute,0));
+					recNew.Series=true;
+					if (recNew.StartTime>=DateTime.Now)
+					{
+						recordings.Add(recNew);
+					}
+					dtDay=dtDay.AddDays(1);
+				}
+				return recordings;
+			}
+
+			if (rec.RecType==TVRecording.RecordingType.WeekDays)
+			{
+				for (int i=0; i < m_iDays;++i)
+				{
+					if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
+					{
+						TVRecording recNew= new TVRecording(rec);
+						recNew.RecType=TVRecording.RecordingType.Once;
+						recNew.Start=Utils.datetolong(new DateTime(dtDay.Year,dtDay.Month,dtDay.Day, rec.StartTime.Hour,rec.StartTime.Minute,0));
+						recNew.End  =Utils.datetolong(new DateTime(dtDay.Year,dtDay.Month,dtDay.Day, rec.EndTime.Hour,rec.EndTime.Minute,0));
+						recNew.Series=true;
+						if (recNew.StartTime>=DateTime.Now)
+						{
+							recordings.Add(recNew);
+						}
+						dtDay=dtDay.AddDays(1);
+					}
+				}
+				return recordings;
+			}
+			
+			if (rec.RecType==TVRecording.RecordingType.Weekly)
+			{
+				for (int i=0; i < m_iDays;++i)
+				{
+					if (dtDay.DayOfWeek ==rec.StartTime.DayOfWeek)
+					{
+						TVRecording recNew= new TVRecording(rec);
+						recNew.RecType=TVRecording.RecordingType.Once;
+						recNew.Start=Utils.datetolong(new DateTime(dtDay.Year,dtDay.Month,dtDay.Day, rec.StartTime.Hour,rec.StartTime.Minute,0));
+						recNew.End  =Utils.datetolong(new DateTime(dtDay.Year,dtDay.Month,dtDay.Day, rec.EndTime.Hour,rec.EndTime.Minute,0));
+						recNew.Series=true;
+						if (recNew.StartTime>=DateTime.Now)
+						{
+							recordings.Add(recNew);
+						}
+						dtDay=dtDay.AddDays(1);
+					}
+				}
+				return recordings;
+			}
+
+			foreach (TVProgram prog in m_programs)
+			{
+				if (rec.IsRecordingProgram(prog))
+				{
+					TVRecording recNew= new TVRecording(rec);
+					recNew.RecType=TVRecording.RecordingType.Once;
+					recNew.Start=Utils.datetolong(prog.StartTime);
+					recNew.End=Utils.datetolong(prog.EndTime);
+					recNew.Series=true;
+					recordings.Add(recNew);
+				}
+			}
+			return recordings;
+		}	
 	}
 }

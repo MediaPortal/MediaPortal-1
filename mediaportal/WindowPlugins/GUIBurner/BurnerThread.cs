@@ -350,8 +350,8 @@ namespace MediaPortal.GUI.GUIBurner
 					System.IO.Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
-				dbExists = System.IO.File.Exists( @"database\TVDatabaseV15.db" );
-				m_db = new SQLiteClient(@"database\TVDatabaseV15.db");
+				dbExists = System.IO.File.Exists( @"database\TVDatabaseV16.db" );
+				m_db = new SQLiteClient(@"database\TVDatabaseV16.db");
 				if( dbExists )
 				{
  					rSQL = String.Format("SELECT * FROM recorded WHERE strFileName LIKE '{0}'",fileName);

@@ -931,7 +931,7 @@ namespace MediaPortal.TV.Recording
 				if (bContinue)
 				{
 					// start sink graph
-					if (StartRecording(/*recording.IsContentRecording*/true))
+					if (StartRecording(recording))
 					{
 					}
 				}
@@ -1115,9 +1115,10 @@ namespace MediaPortal.TV.Recording
 		/// It will examine the timeshifting files and try to record as much data as is available
 		/// from the start of the current tv program till the moment recording is stopped again
 		/// </remarks>
-		bool StartRecording(bool bContentRecording)
+		bool StartRecording(TVRecording recording)
 		{
-			Log.WriteFile(Log.LogType.Capture,"Card:{0} start recording content:{1}",ID, bContentRecording);
+			recording.IsContentRecording=true;
+			Log.WriteFile(Log.LogType.Capture,"Card:{0} start recording content:{1}",ID, recording.IsContentRecording);
       
       
 
@@ -1160,7 +1161,7 @@ namespace MediaPortal.TV.Recording
 
 			TVChannel channel=GetChannel(_mTvChannelName);
 
-			bool bResult = _mGraph.StartRecording(channel, ref strFileName, bContentRecording, timeProgStart);
+			bool bResult = _mGraph.StartRecording(recording,channel, ref strFileName, recording.IsContentRecording, timeProgStart);
 
 			_mNewRecordedTV = new TVRecorded();
 			_mNewRecordedTV.Start = Utils.datetolong(DateTime.Now);

@@ -35,6 +35,7 @@ namespace MediaPortal.GUI.TV
     SortMethod        currentSortMethod=SortMethod.SORT_DATE;
 		bool              m_bSortAscending=true;
 		int								m_iSelectedItem=0;
+		TVUtil						util =null;
 
     public  GUITVScheduler()
     {
@@ -151,6 +152,11 @@ namespace MediaPortal.GUI.TV
         {
           base.OnMessage(message);
 					
+					if (util==null)
+					{
+						util = new TVUtil(31);
+					}
+					
 					LoadSettings();
           LoadDirectory();
 					
@@ -219,28 +225,63 @@ namespace MediaPortal.GUI.TV
 
       ArrayList itemlist = new ArrayList();
       TVDatabase.GetRecordings(ref itemlist);
+			
       foreach (TVRecording rec in itemlist)
       {
-        GUIListItem item=new GUIListItem();
-        item.Label=rec.Title;
-        item.TVTag=rec;
-        string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
-        if (!System.IO.File.Exists(strLogo))
-        {
-          strLogo="defaultVideoBig.png";
-        }
-        int card;
-        if (Recorder.IsRecordingSchedule(rec,out card))
-        {
-					if (rec.RecType !=TVRecording.RecordingType.Once)
-						item.PinImage="tvguide_recordserie_button.png";
-					else
-						item.PinImage="tvguide_record_button.png";
-        }
-        item.ThumbnailImage=strLogo;
-        item.IconImageBig=strLogo;
-        item.IconImage=strLogo;
-        GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
+				ArrayList recs = util.GetRecordingTimes(rec);
+				if (recs.Count== 0)
+				{
+					GUIListItem item= new GUIListItem();
+					item.Label		  = rec.Title;
+					item.TVTag			= rec;
+					string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
+					if (!System.IO.File.Exists(strLogo))
+					{
+						strLogo="defaultVideoBig.png";
+					}
+					int card;
+					if (Recorder.IsRecordingSchedule(rec,out card))
+					{
+						if (rec.RecType !=TVRecording.RecordingType.Once)
+							item.PinImage="tvguide_recordserie_button.png";
+						else
+							item.PinImage="tvguide_record_button.png";
+					}
+					item.ThumbnailImage=strLogo;
+					item.IconImageBig=strLogo;
+					item.IconImage=strLogo;
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
+				}
+				else
+				{
+					for (int x=0; x < recs.Count;++x)
+					{
+						TVRecording recSeries=(TVRecording )recs[x];
+						GUIListItem item=new GUIListItem();
+						item.Label=recSeries.Title;
+						item.TVTag=recSeries;
+						string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,recSeries.Channel);
+						if (!System.IO.File.Exists(strLogo))
+						{
+							strLogo="defaultVideoBig.png";
+						}
+						int card;
+						if (Recorder.IsRecordingSchedule(recSeries,out card))
+						{
+							if (rec.StartTime<= DateTime.Now && rec.EndTime >= DateTime.Now)
+							{
+								if (rec.RecType !=TVRecording.RecordingType.Once)
+									item.PinImage="tvguide_recordserie_button.png";
+								else
+									item.PinImage="tvguide_record_button.png";
+							}
+						}
+						item.ThumbnailImage=strLogo;
+						item.IconImageBig=strLogo;
+						item.IconImage=strLogo;
+						GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
+					}
+				}
       }
       
       string strObjects=String.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));

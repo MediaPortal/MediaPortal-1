@@ -533,7 +533,7 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(TVRecording recording,TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState != State.TimeShifting) return false;
 			if (m_mpeg2Demux==null) return false;
@@ -543,6 +543,17 @@ namespace MediaPortal.TV.Recording
         TuneChannel(channel);
       }
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
+			if (recording.Quality != TVRecording.QualityType.NotSet)
+			{
+				if (recording.Quality ==TVRecording.QualityType.Low)
+					SetQuality(0);
+
+				if (recording.Quality ==TVRecording.QualityType.Medium)
+					SetQuality(1);
+
+				if (recording.Quality ==TVRecording.QualityType.High)
+					SetQuality(2);
+			}
       m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
       m_graphState=State.Recording;
       return true;
@@ -1162,5 +1173,46 @@ namespace MediaPortal.TV.Recording
 			m_TVTuner.get_AudioFrequency(out frequency);
 			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  tuned to {0} hz", frequency);
 		}
+
+		protected void SetQuality(int Quality)
+		{
+			VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
+			if (props.SupportsHauppaugePVRProperties)
+			{
+					
+				if (Quality>=0)
+				{
+					VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
+					newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
+					switch (Quality)
+					{
+						case 0://low
+							newBitRate.wBitrate     =2*400;  //2 mbps
+							newBitRate.dwPeak       =2200;   //4.5 mbps
+							break;
+						case 1://medium
+							newBitRate.wBitrate     =4*400;  //4 mbps
+							newBitRate.dwPeak       =6*400;  //6 mbps
+							break;
+								
+						case 2://hi
+							newBitRate.wBitrate     =8*400;  //8 mbps
+							newBitRate.dwPeak       =12*400; //12 mbps
+							break;
+								
+						default://medium
+							newBitRate.wBitrate     =4*400;  //6 mbps
+							newBitRate.dwPeak       =6*400; //12 mbps
+							break;
+					}
+					props.VideoBitRate=newBitRate;
+				}//if (Quality>=0)
+				VideoCaptureProperties.versionInfo info = props.VersionInfo;
+				VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
+				Log.WriteFile(Log.LogType.Capture," driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
+				Log.WriteFile(Log.LogType.Capture," encoding:{0} bitrate:{1} MBps peak:{2} MBps", bitrate.bEncodingMode.ToString(),((float)bitrate.wBitrate)/400.0f,((float)bitrate.dwPeak)/400.0f );
+				Log.WriteFile(Log.LogType.Capture," gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
+			}//if (props.SupportsHauppaugePVRProperties)
+		}//protected void SetQuality(int Quality)
   }
 }

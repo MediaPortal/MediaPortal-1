@@ -1357,7 +1357,7 @@ namespace MediaPortal.TV.Recording
 		/// It will examine the timeshifting files and try to record as much data as is available
 		/// from the timeProgStart till the moment recording is stopped again
 		/// </remarks>
-		public bool StartRecording(TVChannel channel, ref string strFilename, bool bContentRecording, DateTime timeProgStart)
+		public bool StartRecording(TVRecording recording,TVChannel channel, ref string strFilename, bool bContentRecording, DateTime timeProgStart)
 		{		
 			if (m_graphState != State.TimeShifting ) return false;
 

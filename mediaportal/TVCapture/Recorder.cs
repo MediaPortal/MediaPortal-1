@@ -994,8 +994,18 @@ namespace MediaPortal.TV.Recording
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
 				if (dev.IsRecording && dev.CurrentTVRecording!=null&&dev.CurrentTVRecording.ID==rec.ID) 
 				{
-					card=i;
-					return true;
+					if (rec.Series==false)
+					{
+						card=i;
+						return true;
+					}
+
+					//check start/end times
+					if ( rec.StartTime <= DateTime.Now && rec.EndTime >= rec.StartTime)
+					{
+						card=i;
+						return true;
+					}
 				}
 			}
 			return false;

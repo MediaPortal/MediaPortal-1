@@ -256,46 +256,7 @@ namespace MediaPortal.TV.Recording
 				FilterDefinition lastFilter = mCard.TvFilterDefinitions[mCard.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
 
 
-
-				VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
-				if (props.SupportsHauppaugePVRProperties)
-				{
-					
-					if (Quality>=0)
-					{
-						VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
-						newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
-						switch (Quality)
-						{
-							case 0://low
-								newBitRate.wBitrate     =2*400;  //2 mbps
-								newBitRate.dwPeak       =2200;   //4.5 mbps
-								break;
-							case 1://medium
-								newBitRate.wBitrate     =4*400;  //4 mbps
-								newBitRate.dwPeak       =6*400;  //6 mbps
-								break;
-								
-							case 2://hi
-								newBitRate.wBitrate     =8*400;  //8 mbps
-								newBitRate.dwPeak       =12*400; //12 mbps
-								break;
-								
-							default://medium
-								newBitRate.wBitrate     =4*400;  //6 mbps
-								newBitRate.dwPeak       =6*400; //12 mbps
-								break;
-						}
-						props.VideoBitRate=newBitRate;
-					}
-					
-
-					VideoCaptureProperties.versionInfo info = props.VersionInfo;
-					VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
-					Log.WriteFile(Log.LogType.Capture," driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
-					Log.WriteFile(Log.LogType.Capture," encoding:{0} bitrate:{1} MBps peak:{2} MBps", bitrate.bEncodingMode.ToString(),((float)bitrate.wBitrate)/400.0f,((float)bitrate.dwPeak)/400.0f );
-					Log.WriteFile(Log.LogType.Capture," gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
-				}
+				SetQuality(Quality);
 
 				// All filters and connections have been made.
 				// Now fix the rest of the graph, add MUX etc.
