@@ -51,7 +51,6 @@ My TV:
      - add screenshot option    
      
 My Music: (int_20h)
-  - store artist info in music database
   - support for external audio players based on file extension
   - search songs by genre,artist,album (based on music database)
   - favorite system to add an album, song, artists to your favorites

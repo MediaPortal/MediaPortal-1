@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  20-06-2004  my music    : added : save artist info to db.  New db table to hold info
+  20-06-2004  my music    : fixed : problem reading some artist info giving exception
+  20-06-2004  my music    : fixed : F3 when not connected to the internet
   20-06-2004  my pictures : added : folder thumbnails are now based on previewbackground.png 
   20-06-2004  my video    : fixed : when VMR9 is enabled there was no pause icon when viewing fullscreen video! 
   20-06-2004  my tv       : fixed : TV overlay doesnt show any info when recording ?
@@ -21,11 +24,13 @@ History: (dd-mm-yyyy)
   18-06-2004  my TV       : added : option : background live tv or GUI
   18-06-2004  my Music    : added : Artist info from allmusic.com (need to be in Artist mode)
   18-06-2004  my TV       : added : start timeshifting tv when MP starts 
-  18-06-2004  my TV       : fixed : 100%CPU usage   17-06-2004  my radio    : added : support for external audio players (like http://www.axife.com/)
+  18-06-2004  my TV       : fixed : 100%CPU usage   
+  17-06-2004  my radio    : added : support for external audio players (like http://www.axife.com/)
   17-06-2004  my video    : fixed : movie & dvd player now check if audio renderer specified in setup actually exists
   17-06-2004  topbar      : fixed : topbar was not shown when dialog is presented
   17-06-2004  my music    : fixed : album art was looked up 2 times
-  17-06-2004  my tv       : fixed : tvguide was broken due to new topbar plugin   16-06-2004  my radio    : fixed : no sound for hauppauge PVR 350
+  17-06-2004  my tv       : fixed : tvguide was broken due to new topbar plugin   
+  16-06-2004  my radio    : fixed : no sound for hauppauge PVR 350
   15-06-2004  general     : added : plugin for topbar (topbar now has seperate .xml skin files and can be turned on/off)
   15-06-2004  general     : added : support for VMR9 (optional, turn it on/off in file setup->general)
   15-06-2004  my tv		  : fixed : some crashes & hangups
