@@ -324,7 +324,7 @@ namespace MediaPortal.GUI.GUIExplorer
 									}
 									selected.Add(fl);
 									fileCount++;
-									tmpStr=fileCount.ToString()+ " Files "+CalcExt(actSize)+" ";
+									tmpStr=fileCount.ToString()+ " Files "+Utils.GetSize(actSize)+" ";
 									GUIPropertyManager.SetProperty("#explorer_size",tmpStr);
 								}
 							}
@@ -489,7 +489,7 @@ namespace MediaPortal.GUI.GUIExplorer
 										selected.Add(fl);
 										fileCount++;
 									}
-									tmpStr=fileCount.ToString()+ " Files "+CalcExt(actSize)+" ";
+									tmpStr=fileCount.ToString()+ " Files "+Utils.GetSize(actSize)+" ";
 									GUIPropertyManager.SetProperty("#explorer_size",tmpStr);
 								}
 							}
@@ -610,29 +610,6 @@ namespace MediaPortal.GUI.GUIExplorer
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 		}
 		
-		/// <summary>
-		/// calculate KB,MB and GB View
-		/// </summary>
-		private string CalcExt(long m)
-		{
-			string lw="";
-			if (m >= 1073741824) 
-			{
-				m = (m / (1024 * 1024 * 1024));
-				lw=m.ToString()+" GB";
-			} 
-			else if (m >= 1048576 ) 
-			{
-				m = (m / (1024 * 1024));
-				lw=m.ToString()+" MB";
-			} 
-			else if (m >= 1024 ) 
-			{
-				m = (m / 1024);
-				lw=m.ToString()+" KB";
-			}
-			return lw;
-		}
  
 		void keyboard_TextChanged(int kindOfSearch,string data)
 		{

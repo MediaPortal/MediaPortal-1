@@ -37,7 +37,6 @@ namespace GUIScript
 				Directory.CreateDirectory(scriptdir);
 				string lines = "#Description: Goes to previous window\n";
 				lines =lines + "#Button: 610\n\n";
-				lines =lines + "Global Back_Button=true\n\n";
 				lines =lines + "IF (InSubMenu==true)   // Go Back Menu only in Submenus\n";
 				lines =lines + "   MP_Action(PREVIOUS_MENU)\n";
 				lines =lines + "EndIf\n\n";
@@ -48,16 +47,22 @@ namespace GUIScript
 				
 				lines        = "#Description: Ejects CD\n";
 				lines =lines + "#Button: 2126\n\n";
-				lines =lines + "Global Eject_Cd=true\n\n";
 				lines =lines + "MP_Action(EJECTCD)\n";
 				lines =lines + "End\n";
 				file = new System.IO.StreamWriter(scriptdir+"\\CD EJECT.MPS");
 				file.WriteLine(lines);
 				file.Close();
 
+				lines        = "#Description: Hibernate PC\n";
+				lines =lines + "#Button: Hibernate\n\n";
+				lines =lines + "MP_Action(hibernate)\n";
+				lines =lines + "End\n";
+				file = new System.IO.StreamWriter(scriptdir+"\\HIBERNATE.MPS");
+				file.WriteLine(lines);
+				file.Close();
+
 				lines        = "#Description: Shut down PC\n";
 				lines =lines + "#Button: 631\n\n";
-				lines =lines + "Global Shut_Down=true\n\n";
 				lines =lines + "MP_Action(SHUTDOWN)\n";
 				lines =lines + "End\n";
 				file = new System.IO.StreamWriter(scriptdir+"\\SHUT DOWN.MPS");
@@ -66,7 +71,6 @@ namespace GUIScript
 
 				lines        = "#Description: Reboot PC\n";
 				lines =lines + "#Button: Reboot\n\n";
-				lines =lines + "Global Reboot=true\n\n";
 				lines =lines + "MP_Action(REBOOT)\n";
 				lines =lines + "End\n";
 				file = new System.IO.StreamWriter(scriptdir+"\\REBOOT.MPS");

@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.GUIBurner
 								perc=Convert.ToInt16(actSize/(max/100d)); 
 							else 
 								perc=0;
-							tmpStr=CalcExt(actSize)+" ";
+							tmpStr=Utils.GetSize(actSize)+" ";
 							GUIPropertyManager.SetProperty("#burner_size",tmpStr);
 							GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
 						}
@@ -553,7 +553,7 @@ namespace MediaPortal.GUI.GUIBurner
 											perc=Convert.ToInt16(actSize/(max/100d)); 
 										else 
 											perc=0;
-										tmpStr=CalcExt(actSize)+" ";
+										tmpStr=Utils.GetSize(actSize)+" ";
 										GUIPropertyManager.SetProperty("#burner_size",tmpStr);
 										GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
 									}
@@ -1021,30 +1021,6 @@ namespace MediaPortal.GUI.GUIBurner
 			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CD_INFO);
 			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
 			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
-		}
-
-		/// <summary>
-		/// calculate KB,MB and GB View
-		/// </summary>
-		private string CalcExt(long m)
-		{
-			string lw="";
-			if (m >= 1073741824) 
-			{
-				m = (m / (1024 * 1024 * 1024));
-				lw=m.ToString()+" GB";
-			} 
-			else if (m >= 1048576 ) 
-			{
-				m = (m / (1024 * 1024));
-				lw=m.ToString()+" MB";
-			} 
-			else if (m >= 1024 ) 
-			{
-				m = (m / 1024);
-				lw=m.ToString()+" KB";
-			}
-			return lw;
 		}
  
 		/// <summary>

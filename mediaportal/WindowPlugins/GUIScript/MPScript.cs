@@ -38,7 +38,9 @@ namespace MediaPortal.GUI.GUIScript
 		private const char tEndFor='m';
 		private const char tCall='n';
 		private const char tDefault='o';
-		
+		private const char tContinue='p';
+		private const char tBreak='q';
+
 		// regular expression 
 		Regex rexStripOp = new Regex(@"\+|-|\*|/|%|&&|\|\||&|\||\^|==|!=|>=|<=|=|<|>|!|\(|\)|\:|true|false|,", RegexOptions.IgnoreCase);
 		Regex rexStripQuote = new Regex("\"", RegexOptions.IgnoreCase);
@@ -54,6 +56,7 @@ namespace MediaPortal.GUI.GUIScript
 
 		private char oper=' '; 
 		private String[] scriptArray;
+		private String[] debugArray;
 		private int progPointer=0;
 		private int ScriptEnd=0;
 		private long BreakTime=5000;
@@ -93,12 +96,15 @@ namespace MediaPortal.GUI.GUIScript
 			tokens.Add("default",tCase);
 			tokens.Add("endswitch",tEndSwitch);
 			tokens.Add("for",tFor);
+			tokens.Add("continue",tContinue);
+			tokens.Add("break",tBreak);
 			tokens.Add("call",tCall);
 			tokens.Add("mp_action",tMp_action);
 			tokens.Add("messagebox",tMessageBox);
 
 			// save functions in hashtable
-			functions.Add("yesnobox",'A');
+			functions.Add("yesnobox",'a');
+			functions.Add("mp_var",'b');
 			functions.Add("sin",'B');
 			functions.Add("cos",'C');
 			functions.Add("tan",'D');
@@ -166,6 +172,7 @@ namespace MediaPortal.GUI.GUIScript
 				String fileContent = sr.ReadToEnd();
 				char[] separator = {'\n'};
 				scriptArray = fileContent.Split(separator);
+				debugArray = fileContent.Split(separator);
 				ScriptName=name;
 				global_variable.Add(ScriptName,"Load");
 
@@ -308,6 +315,12 @@ namespace MediaPortal.GUI.GUIScript
 							case "endwhile" :
 								scriptArray[i]="§"+tokens[tok];
 								break;
+							case "continue" :
+								scriptArray[i]="§"+tokens[tok];
+								break;
+							case "break" :
+								scriptArray[i]="§"+tokens[tok];
+								break;
 							case "switch" :
 								scriptArray[i]="§"+tokens[tok]+changeFunc(strTokenbuffer);
 								break;
@@ -381,7 +394,9 @@ namespace MediaPortal.GUI.GUIScript
 							WriteDebugHeader();
 							debugHeader=true;
 						}
-						WriteDebug("S{0}:  L{1}: ",stack.Count,progPointer);
+						WriteDebug("S:{0:000} L:{1:000}: {2}",stack.Count,progPointer,debugArray[progPointer]);
+						WriteLnDebug(" ");
+						WriteDebug("           > ");
 					}
 					if (BreakTime>0) 
 					{
@@ -396,7 +411,7 @@ namespace MediaPortal.GUI.GUIScript
 					progLine=scriptArray[progPointer];
 					if (progLine.Substring(0,1)=="#") // Nothing to do
 					{
-						if (debuging==true) WriteLnDebug(" ..");
+						if (debuging==true) WriteLnDebug(" NOP");
 						progPointer++;
 						continue;
 					}
@@ -496,6 +511,7 @@ namespace MediaPortal.GUI.GUIScript
 							case tSwitch:
 								eval.Expression = progLine;
 								progLine=eval.Evaluate().ToString();
+								if (debuging==true) WriteLnDebug("SWITCH = {0}",progLine);
 								searchCase(progLine);
 								break;
 								// Case statement  ------------------------------------------------
@@ -507,19 +523,40 @@ namespace MediaPortal.GUI.GUIScript
 							case tEndSwitch:
 								progPointer++;
 								break;								
+								// Continue statement  -------------------------------------------
+							case tContinue:
+								if(stack.Count>0)	
+								{
+									progPointer=Convert.ToInt32(stack.Pop());
+									if (debuging==true) WriteLnDebug("JUMPTO {0:000}",progPointer);
+								} 
+								else
+								{
+									if (debuging==true) WriteLnDebug("ERROR Continue!");
+								}
+								break;								
+								// Break statement  -------------------------------------------
+							case tBreak:
+								progPointer++;
+								jump(tWhile,tWhile,tEndWhile);
+								break;								
 								// EndWhile statement  --------------------------------------------
 							case tEndWhile:
 								progPointer=Convert.ToInt32(stack.Pop());
+								if (debuging==true) WriteLnDebug("JUMPTO {0:000}",progPointer);
 								break;								
 								// End statement  -------------------------------------------------
 							case tEnd:															
 								global_variable[ScriptName]="End";
+								if (debuging==true) WriteLnDebug("Program End!");
 								return true;
 								// Call statement -------------------------------------------------
 							case tCall:
 								ScriptHandler gScript=new ScriptHandler();
 								global_variable[ScriptName]="Call";
+								if (debuging==true) WriteLnDebug("CALL {0}",progLine);
 								gScript.StartScriptName(progLine);
+								if (debuging==true) WriteLnDebug("RET  {0}",progLine);
 								progPointer++;
 								break;
 								// MP_Action statement --------------------------------------------
@@ -534,10 +571,12 @@ namespace MediaPortal.GUI.GUIScript
 								break;
 							case tDebugOn:	
 								debuging=true;
+								if (debuging==true) WriteLnDebug("DEBUG On");
 								progPointer++;
 								break;
 							case tDebugOff:		
 								debuging=false;	
+								if (debuging==true) WriteLnDebug("DEBUG Off");
 								progPointer++;
 								break;
 							default:
@@ -547,6 +586,7 @@ namespace MediaPortal.GUI.GUIScript
 					}		
 					else 
 					{
+						if (debuging==true) WriteLnDebug("ERROR in Line {0:000}",progPointer);
 						Log.Write("MPScript: Syntax error in Line {0}",progPointer);
 						progPointer++;
 					}
@@ -556,8 +596,8 @@ namespace MediaPortal.GUI.GUIScript
 			{
 				global_variable[ScriptName]="ERROR";
 				Log.Write("Syntax Error!", ex.Message);
+				if (debuging==true) WriteLnDebug("ERROR in Line {0:000}",progPointer);
 			}
-
 			return true;
 		}
 		#endregion
@@ -811,6 +851,9 @@ namespace MediaPortal.GUI.GUIScript
 					t=checkText(t);
 					bool yn=YesNoBox(t);
 					return yn;
+				case "mp_var" : t=a_params[0].ToString();
+					t=checkText(t);
+					return null;
 				case "testit"   : return "0";
 				default:
 					return null;
