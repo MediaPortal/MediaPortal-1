@@ -182,6 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 102);
       this.defaultAudioLanguageComboBox.Name = "defaultAudioLanguageComboBox";
       this.defaultAudioLanguageComboBox.Size = new System.Drawing.Size(256, 21);
+      this.defaultAudioLanguageComboBox.Sorted = true;
       this.defaultAudioLanguageComboBox.TabIndex = 11;
       // 
       // defaultSubtitleLanguageComboBox
@@ -192,6 +193,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 77);
       this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
       this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(256, 21);
+      this.defaultSubtitleLanguageComboBox.Sorted = true;
       this.defaultSubtitleLanguageComboBox.TabIndex = 9;
       // 
       // showSubtitlesCheckBox
