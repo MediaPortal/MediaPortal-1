@@ -425,8 +425,8 @@ namespace MediaPortal.TV.Recording
           else
             m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
           DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
-                                        m_iCountryCode,standard.ToString(),
-                                        m_bUseCable);
+            m_iCountryCode,standard.ToString(),
+            m_bUseCable);
         }
         try
         {
@@ -439,6 +439,18 @@ namespace MediaPortal.TV.Recording
           DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuned to {0} MHz.", dFreq);
         }
         catch(Exception){} 
+      }
+      else
+      {
+        if (m_IAMAnalogVideoDecoder!=null)
+        {
+          if (standard != AnalogVideoStandard.None)
+          {
+            DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+            int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+            if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+          }
+        }
       }
 
       bool bFixCrossbar=true;

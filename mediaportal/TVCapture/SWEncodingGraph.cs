@@ -649,6 +649,18 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception) {} 
       }
+      else
+      {
+        if (m_IAMAnalogVideoDecoder!=null)
+        {
+          if (standard != AnalogVideoStandard.None)
+          {
+            DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+            int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+            if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+          }
+        }
+      }
       DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
                                   m_iCountryCode,standard.ToString(),
                                   m_bUseCable);
