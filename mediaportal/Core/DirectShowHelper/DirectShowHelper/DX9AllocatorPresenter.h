@@ -41,7 +41,7 @@ public:
 	void Deinit();
 
 protected:
-	void Paint(bool fAll);
+	void Paint(IDirect3DSurface9* pSurface);
 	void DeleteSurfaces();
 	HRESULT AllocSurfaces();
 

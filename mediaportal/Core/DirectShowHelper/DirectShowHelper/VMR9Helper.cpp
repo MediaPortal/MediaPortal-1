@@ -55,7 +55,8 @@ VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
 }
 
 STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
-{
+{	
+	Log("Vmr9:Init()");
 	HRESULT hr;
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 	m_pVMR9Filter.Attach(vmr9Filter);
@@ -65,11 +66,15 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 		return E_FAIL;
 
 	if(FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Renderless)))
+	{
+		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
 		return E_FAIL;
-	
+	}
 	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
+	{
+		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
 		return E_FAIL;
-	
+	}
 
 	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
 	if(!pSAN)
@@ -78,11 +83,15 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
     g_allocator.Attach(new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor));
 
 	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, g_allocator)))
+	{
+		Log("Vmr9:Init() AdviseSurfaceAllocator() failed 0x:%x",hr);
 		return E_FAIL;
-	
+	}
 	if (FAILED(hr = g_allocator->AdviseNotify(pSAN)))
+	{
+		Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
 		return E_FAIL;
-
+	}
 	return S_OK;
 }
 	
@@ -100,12 +109,15 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 	switch (dwMethod)
 	{
 		case 1:
+			Log("vmr9:SetDeinterlace() preference to BOB");
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_BOB);
 		break;
 		case 2:
+			Log("vmr9:SetDeinterlace() preference to Weave");
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_Weave);
 		break;
 		case 3:
+			Log("vmr9:SetDeinterlace() preference to NextBest");
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
 		break;
 	}
@@ -125,7 +137,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 
 	VIDEOINFOHEADER2* vidInfo2 =(VIDEOINFOHEADER2*)pmt.pbFormat;
 	
-	Log("resolution:%dx%d planes:%d bitcount:%d fmt:%d %c%c%c%c",
+	Log("vmr9:SetDeinterlace() resolution:%dx%d planes:%d bitcount:%d fmt:%d %c%c%c%c",
 		vidInfo2->bmiHeader.biWidth,vidInfo2->bmiHeader.biHeight,
 		vidInfo2->bmiHeader.biPlanes,
 		vidInfo2->bmiHeader.biBitCount,
@@ -157,7 +169,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 		GUID *pModes = new GUID[dwNumModes];
 		if (pModes)
 		{
-			Log("got %d deinterlacing modes", dwNumModes);
+			Log("vmr9:SetDeinterlace() found %d deinterlacing modes", dwNumModes);
 			// Fill the array.
 			hr = pDeint->GetNumberOfDeinterlaceModes(&VideoDesc, &dwNumModes, pModes);
 			if (SUCCEEDED(hr))
@@ -168,11 +180,11 @@ STDMETHODIMP CVMR9Helper::SetDeinterlace(DWORD dwMethod)
 					hr=pDeint->SetDeinterlaceMode(0,&pModes[0]);
 					if (SUCCEEDED(hr)) 
 					{
-						Log("set deinterlace mode:%d",i);
+						Log("vmr9:SetDeinterlace() set deinterlace mode:%d",i);
 						break;
 					}
 					else
-						Log("deinterlace mode:%d failed 0x:%x",i,hr);
+						Log("vmr9:SetDeinterlace() deinterlace mode:%d failed 0x:%x",i,hr);
 				}
 			}
 			delete [] pModes;

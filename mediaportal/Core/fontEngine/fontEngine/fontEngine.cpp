@@ -695,10 +695,16 @@ void PrintStatistics()
 	sprintf(log,"fontengine: Textures InUse:%d VertexBuffer Updates:%d %d\n",m_iTexturesInUse, m_iVertexBuffersUpdated,m_iFontVertexBuffersUpdated);
 	OutputDebugString(log);
 }
-void FontEngineSetTexture(void* texture)
+void FontEngineSetTexture(void* surface)
 {
-	LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)texture;
+
+	LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
+	void *pContainer = NULL;
+	int hr=pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
+
+	LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)pContainer;
 	m_pDevice->SetTexture(0, pTexture);
+	pTexture->Release();
 }
 
 void FontEngineDrawSurface(int fx, int fy, int nw, int nh, 
