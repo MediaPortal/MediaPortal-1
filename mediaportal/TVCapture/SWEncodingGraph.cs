@@ -594,27 +594,36 @@ namespace MediaPortal.TV.Recording
             IAMAudioInputMixer mixer = pinInput as IAMAudioInputMixer;
             if (mixer != null)
             {
-              hr = mixer.put_Enable(true);
-              if (hr != 0)
-              {
-                DirectShowUtil.DebugWrite("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
-              }
-              else
-              {
-                DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
-              }
+							try
+							{
+								hr = mixer.put_Enable(true);
+								if (hr != 0)
+								{
+									DirectShowUtil.DebugWrite("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
+								}
+								else
+								{
+									DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
+								}
+							}
+							catch(Exception){}
 
               double fLevel=((double)_RecordingLevel);
               fLevel /= 100.0d;
-              hr = mixer.put_MixLevel(fLevel);
-              if (hr != 0)
-              {
-                DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
-              }
-              else
-              {
-                DirectShowUtil.DebugWrite("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
-              }
+							try
+							{
+								hr = mixer.put_MixLevel(fLevel);
+								if (hr != 0)
+								{
+									DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
+								}
+								else
+								{
+									DirectShowUtil.DebugWrite("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
+								}
+								
+							}
+							catch(Exception){}
 
             }
             else
