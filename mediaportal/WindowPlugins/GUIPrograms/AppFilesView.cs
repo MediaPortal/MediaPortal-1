@@ -103,7 +103,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnLaunch.Enabled = false;
-			this.btnLaunch.Location = new System.Drawing.Point(304, 120);
+			this.btnLaunch.Location = new System.Drawing.Point(304, 144);
 			this.btnLaunch.Name = "btnLaunch";
 			this.btnLaunch.Size = new System.Drawing.Size(88, 23);
 			this.btnLaunch.TabIndex = 18;
@@ -161,7 +161,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnAddToFavourites.Enabled = false;
-			this.btnAddToFavourites.Location = new System.Drawing.Point(304, 80);
+			this.btnAddToFavourites.Location = new System.Drawing.Point(304, 104);
 			this.btnAddToFavourites.Name = "btnAddToFavourites";
 			this.btnAddToFavourites.Size = new System.Drawing.Size(88, 40);
 			this.btnAddToFavourites.TabIndex = 19;
@@ -273,8 +273,13 @@ namespace WindowPlugins.GUIPrograms
 
 		public void Refresh(AppItem curApp)
 		{
-			mCurApp = curApp;
-			SyncListView();
+			if (curApp != null)
+			{
+				mCurApp = curApp;
+				mCurApp.Files.Load(mCurApp.AppID, "");
+				mCurApp.Filelinks.Load(mCurApp.AppID, "");
+				SyncListView();
+			}
 		}
 
 		private void SyncListView()
@@ -336,7 +341,7 @@ namespace WindowPlugins.GUIPrograms
 
 		private void btnDelete_Click(object sender, System.EventArgs e)
 		{
-			DeleteItem();
+			DeleteItems();
 		}
 
 		private void FileList_DoubleClick(object sender, System.EventArgs e)
@@ -422,7 +427,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void DeleteItem()
+		private void DeleteItems()
 		{
 			if (FileList.SelectedItems.Count > 1)
 			{
@@ -583,6 +588,11 @@ namespace WindowPlugins.GUIPrograms
 					popupFavourites.MenuItems.Add(newMenu);
 				}
 			}
+		}
+
+		private void btnRefresh_Click(object sender, System.EventArgs e)
+		{
+			SyncListView();
 		}
 
 
