@@ -19,6 +19,8 @@ using MediaPortal.WinControls;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using MediaPortal.Radio.Database;
+using MediaPortal.IR;
+
 
 namespace MediaPortal
 {
@@ -2771,7 +2773,6 @@ namespace MediaPortal
 			this.groupBox11.TabIndex = 8;
 			this.groupBox11.TabStop = false;
 			this.groupBox11.Text = "DVD Codec";
-			this.groupBox11.Enter += new System.EventHandler(this.groupBox11_Enter);
 			// 
 			// label42
 			// 
@@ -4852,10 +4853,6 @@ namespace MediaPortal
 			textBoxStreamListFolder.Text=Utils.RemoveTrailingSlash(dlg.SelectedPath);
 		}
 
-		private void groupBox11_Enter(object sender, System.EventArgs e)
-		{
-		
-		}
 		public  void AddAllDecoders(ComboBox box, Guid med, Guid sub , string strDefaultCodec)
 		{
 			box.Items.Clear();
@@ -4927,6 +4924,8 @@ namespace MediaPortal
 			USBUIRT.Instance.ExternalCommandsActive = USBUIRTExternal.Checked;
 		}
 
+		IRLearnFORM irLearnForm = new IRLearnFORM();
+
 		private void IRInternalLearn_Click(object sender, System.EventArgs e)
 		{
 			object[] commands = { 
@@ -4945,9 +4944,10 @@ namespace MediaPortal
 									, Action.ActionType.ACTION_FORWARD                
 									, Action.ActionType.ACTION_REWIND  
 
-                  , Action.ActionType.ACTION_SHOW_GUI
-                  , Action.ActionType.ACTION_QUEUE_ITEM
-      };
+									, Action.ActionType.ACTION_SHOW_GUI
+									, Action.ActionType.ACTION_QUEUE_ITEM
+						};
+
 			string[] buttonNames = {
 									   "LEFT",
 									   "RIGHT",
@@ -4961,33 +4961,53 @@ namespace MediaPortal
 									   "PAUSE",
 									   "STOP",
 									   "FORWARD",
-                     "REWIND",
-                     "FULLSCREEN",
-                     "QUEUE",
-								
+										"REWIND",
+										"FULLSCREEN",
+										"QUEUE",
 								   };
-               
+
+			irLearnForm.Show();
+
+			USBUIRT.Instance.StartLearning += new StartLearningEventHandler(Instance_StartLearning);
 
 			USBUIRT.Instance.BulkLearn(commands, buttonNames);
 			USBUIRT.Instance.SaveInternalValues();
+
+			USBUIRT.Instance.StartLearning -= new StartLearningEventHandler(Instance_StartLearning);
+
+			irLearnForm.Hide();
 		}
 
 		private void IRExternalLearn_Click(object sender, System.EventArgs e)
 		{
-		
+			irLearnForm.Show();
+
+			USBUIRT.Instance.StartLearning += new StartLearningEventHandler(Instance_StartLearning);
+
 			USBUIRT.Instance.LearnTunerCodes();
 			USBUIRT.Instance.SaveTunerValues();
+
+			USBUIRT.Instance.StartLearning -= new StartLearningEventHandler(Instance_StartLearning);
+
+			irLearnForm.Hide();
 		}
 
 		private void is3Digit_CheckedChanged(object sender, System.EventArgs e)
 		{
 			USBUIRT.Instance.Is3Digit = is3Digit.Checked;
-		
 		}
 
 		private void needsEnter_CheckedChanged(object sender, System.EventArgs e)
 		{
 			USBUIRT.Instance.NeedsEnter = needsEnter.Checked;
+		}
+
+		private void Instance_StartLearning(object sender, LearningEventArgs e)
+		{
+			if(irLearnForm != null && irLearnForm.Visible == false)
+			{
+				irLearnForm.SetMessage("Press and hold the '" + e.Button + "' button on your TUNER remote");
+			}
 		}
 	}
 
