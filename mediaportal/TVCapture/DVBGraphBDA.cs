@@ -1109,6 +1109,7 @@ namespace MediaPortal.TV.Recording
 			myTuner.TuneRequest = newTuneRequest;
 			Marshal.ReleaseComObject(myTuneRequest);
 
+			Log.Write("DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 			SetupDemuxer(m_DemuxVideoPin, m_DemuxAudioPin,currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 			shouldDecryptChannel=true;

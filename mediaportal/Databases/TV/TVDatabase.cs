@@ -937,8 +937,8 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return false;
 					string strSQL;
 					strSQL="select * from channel ";
-				  strSQL+="left join tblDVBCMapping on tblDVBCMapping.idChannel=channel.idChannel ";
-					strSQL+="left join tblDVBTMapping on tblDVBTMapping.idChannel=channel.idChannel ";
+				  strSQL+="left join tblDVBCMapping on tblDVBCMapping.iLCN=channel.idChannel ";
+					strSQL+="left join tblDVBTMapping on tblDVBTMapping.iLCN=channel.idChannel ";
 					strSQL+="left join tblDVBSMapping on tblDVBSMapping.idChannel=channel.idChannel ";
 					strSQL+="order by tblDVBCMapping.strProvider, tblDVBTMapping.strProvider, tblDVBSMapping.sProviderName,channel.strChannel";
 					SQLiteResultSet results;
@@ -1114,7 +1114,7 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format("delete from tblGroupMapping where idChannel={0}", iChannelId);
 					m_db.Execute(strSQL);
 
-					strSQL = String.Format("delete from tblDVBSMapping where iLCN={0}",iChannelId);
+					strSQL = String.Format("delete from tblDVBSMapping where idChannel={0}",iChannelId);
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblDVBCMapping where iLCN={0}",iChannelId);
 					m_db.Execute(strSQL);
