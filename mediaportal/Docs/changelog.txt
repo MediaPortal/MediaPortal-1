@@ -1,3 +1,6 @@
+10-08-2004  setup       : fixed : Added pin code support to shares.
+10-08-2004  setup       : fixed : Updated Program Guide with patch from ashtree.
+
 09-08-2004  my news     : fixed : exception if no newsfeeds are configured
 
 07-08-2004  setup     	: fixed : The browse button had didn't work in the Program Guide section.
