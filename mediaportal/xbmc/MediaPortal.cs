@@ -226,7 +226,7 @@ public class MediaPortalApp : D3DApp, IRender
         throw new Exception(strMsg);
       }
 
-      Utils.FileDelete("capture.log");
+      Utils.FileDelete(@"logs\capture.log");
       if (Screen.PrimaryScreen.Bounds.Width > 720)
       {
         this.MinimumSize = new Size(720 + 8, 576 + 27);
@@ -575,13 +575,22 @@ public class MediaPortalApp : D3DApp, IRender
 
 			GUIPropertyManager.SetProperty("#currentplaytime",  Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
 			GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
-			GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
-			GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
-			GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
-
-			double fPercentage = g_Player.CurrentPosition / g_Player.Duration;
-			int iPercent = (int)(100 * fPercentage);
-			GUIPropertyManager.SetProperty("#percentage", iPercent.ToString());
+      if (g_Player.Duration>0)
+      {
+        GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
+        GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
+        
+        double fPercentage = g_Player.CurrentPosition / g_Player.Duration;
+        int iPercent = (int)(100 * fPercentage);
+        GUIPropertyManager.SetProperty("#percentage", iPercent.ToString());
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#duration", String.Empty);
+        GUIPropertyManager.SetProperty("#shortduration", String.Empty);
+        GUIPropertyManager.SetProperty("#percentage", "0");
+      }
+      GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
     }
     else
     {
