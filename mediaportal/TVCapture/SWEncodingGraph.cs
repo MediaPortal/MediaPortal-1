@@ -1440,6 +1440,12 @@ namespace MediaPortal.TV.Recording
       //Cyberlink MPEG Video encoder
       if (monikerVideo==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}") VideoIsMPEG=true;
 
+      //YMPEG audio codec
+      if (monikerAudio==@"@device:cm:{33D9A761-90C8-11D0-BD43-00A0C911CE86}\1792YMPEG Audio Codec") AudioIsMPEG=true;
+
+      //YMPEG video codec
+      if (monikerVideo==@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\ympg") VideoIsMPEG=true;
+
       return (VideoIsMPEG==true && AudioIsMPEG==true);
     }
 
