@@ -18,6 +18,7 @@
   <id>2</id> 
   <posX>190</posX> 
   <posY>230</posY> 
+		<width>370</width> 
   <label>0</label> 
   <font>font13</font> 
   <textcolor>FF484848</textcolor> 
@@ -29,6 +30,7 @@
   <id>3</id> 
   <posX>190</posX> 
   <posY>260</posY> 
+		<width>370</width> 
   <hasPath>yes</hasPath> 
   <label>0</label> 
   <font>font13</font> 
@@ -40,6 +42,7 @@
   <id>4</id> 
   <posX>190</posX> 
   <posY>280</posY> 
+		<width>370</width> 
   <hasPath>yes</hasPath> 
   <label>0</label> 
   <font>font13</font> 
