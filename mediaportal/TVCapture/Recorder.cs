@@ -646,8 +646,8 @@ namespace MediaPortal.TV.Recording
 
 		static public string GetTimeShiftFileName(int card)
 		{
-			if (m_iCurrentCard<0 || m_iCurrentCard>=m_tvcards.Count) return String.Empty;
-			TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[m_iCurrentCard];
+			if (card<0 || card>=m_tvcards.Count) return String.Empty;
+			TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[card];
 			string FileName=String.Format(@"{0}\card{1}\live.tv",dev.RecordingPath, card+1);
 			return FileName;
 		}
