@@ -791,6 +791,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITV\GUIRecordedTVChannel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITV\GUIRecordedTVGenre.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUITV\GUITVGuide.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
