@@ -1002,7 +1002,7 @@ namespace MediaPortal.TV.Recording
 			}
 			// back to timeshifting state
 			_mState = State.Timeshifting;
-
+/*
 			// set the meta data in the dvr-ms or .wmv file
 			TimeSpan ts = (_mNewRecordedTV.EndTime-_mNewRecordedTV.StartTime);
 			Hashtable propsToSet = new Hashtable();
@@ -1036,7 +1036,7 @@ namespace MediaPortal.TV.Recording
 
 			Thread WorkerThread = new Thread(new ThreadStart(OnSetRecordingAttributes));
 			WorkerThread.Start();
-
+*/
 			
 
 			_mNewRecordedTV = null;
