@@ -906,7 +906,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        MessageBox.Show("XMLTV.exe cannot be found in the directory you have setup as the XMLTV folder."+ "\n\n" +"Ensure that you have installed the XMLTV application, and that the XMLTV folder" + "\n" + "setting points to the directory where XMLTV.exe is installed",
+        MessageBox.Show("XMLTV.exe cannot be found in the directory you have setup as the XMLTV folder."+ "\n\n" +"Ensure that you have installed the XMLTV application, and that the XMLTV folder" + "\n" + "setting points to the directory where XMLTV.exe is installed" +"\n"+"XMLTV can be downloaded from http://sourceforge.net/projects/xmltv",
                         "MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
