@@ -1821,9 +1821,9 @@ namespace MediaPortal.TV.Recording
 							}//if (add)
 						}//foreach (string file in files)
 					}
-					catch(Exception)
+					catch(Exception ex)
 					{
-						Log.WriteFile(Log.LogType.Log,true,"Recorder:Exception while importing recordings reason:{0} {1}", file,ex.Message, ex.Source);
+						Log.WriteFile(Log.LogType.Log,true,"Recorder:Exception while importing recordings reason:{0} {1}", ex.Message, ex.Source);
 					}
 				}//for (int i=0; i < Recorder.Count;++i)
 			}
