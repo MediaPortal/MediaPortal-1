@@ -80,16 +80,28 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
+		    <control>
+			    <description>View-As button</description>
+			    <type>button</type>
+			    <id>2</id>
+			    <posX>60</posX>
+			    <posY>97</posY>
+			    <label>100</label>
+			    <onleft>2</onleft>
+			    <onright>50</onright>
+			    <onup>17</onup>
+			    <ondown>3</ondown>
+		    </control>
 			<control>
 				<description>Sort-by button</description>
 				<type>button</type>
-				<id>2</id>
+				<id>3</id>
 				<posX>60</posX>
-				<posY>97</posY>
+				<posY>131</posY>
 				<label>620</label>
 				<onleft>2</onleft>
 				<onright>4</onright>
-				<onup>5</onup>
+				<onup>2</onup>
 				<ondown>5</ondown>
 			</control>
 			<control>
@@ -97,7 +109,7 @@
 				<type>togglebutton</type>
 				<id>4</id>
 				<posX>225</posX>
-				<posY>105</posY>
+				<posY>134</posY>
 				<label>-</label>
 				<onleft>2</onleft>
 				<onright>10</onright>
@@ -109,7 +121,7 @@
 				<type>selectbutton</type>
 				<id>5</id>
 				<posX>60</posX>
-				<posY>131</posY>
+				<posY>165</posY>
 				<label>457</label>
 				<onleft>6</onleft>
 				<onright>50</onright>
@@ -126,7 +138,7 @@
 				<type>button</type>
 				<id>6</id>
 				<posX>60</posX>
-				<posY>165</posY>
+				<posY>199</posY>
 				<label>624</label>
 				<onleft>2</onleft>
 				<onright>10</onright>
@@ -162,9 +174,20 @@
 				<textureHeight>90</textureHeight>
 				<keepaspectratio>no</keepaspectratio>
 				<onleft>2</onleft>
+				<onright>11</onright>
+				<onup>2</onup>
+				<ondown>2</ondown>
+			</control>
+			<control>
+				<description>listcontrol</description>
+				<type>listcontrol</type>
+				<id>11</id>
+				<onleft>10</onleft>
 				<onright>2</onright>
 				<onup>2</onup>
 				<ondown>2</ondown>
+				<spinColor>FFFFFFFF</spinColor>
+				<textcolor>FFFFFFFF</textcolor>
 			</control>
 			<control>
 				<description>Current program title</description>

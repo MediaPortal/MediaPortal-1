@@ -2,7 +2,7 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
-		<version>0.1.0.6</version>
+		<version>0.1.0.7</version>
 		<changelog>
 		  <change date="28-1-2005">Added my tetris gfx,sounds and xml</change>
 		  <change date="10-2-2005">Added my zap osd gfx and xml</change>
@@ -10,6 +10,7 @@
 		  <change date="16-2-2005">updated the music artists and genres xml</change>
 		  <change date="17-2-2005">fixed mytvscheduler.xml</change>
 		  <change date="17-2-2005">Added my tv fullscreen/osd/zaposd record status</change>
+		  <change date="23-2-2005">Added list control to mytvrecordedtv.xml</change>
 		</changelog>
 	</skin>
 	<control>
