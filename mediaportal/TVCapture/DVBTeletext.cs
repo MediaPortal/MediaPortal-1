@@ -174,21 +174,54 @@ namespace MediaPortal.TV.Recording
 		//
 		public System.Drawing.Bitmap GetPage(int page,int subpage)
 		{
-			m_actualPage=page;
-			m_actualSubPage=subpage;
-			if((int)m_cacheTable[page,subpage]!=0)
-				DecodePage(page,subpage);
+			
+			string sPage="0x"+page.ToString();
+			string sSubPage="0x"+subpage.ToString();
+
+			if(sPage==null || sSubPage==null)
+				return null;
+
+			m_actualPage=Convert.ToInt16(sPage,16);
+			m_actualSubPage=Convert.ToInt16(sSubPage,16);
+			
+			if (m_actualPage<0x100)
+				return null;
+
+			if((int)m_cacheTable[m_actualPage,m_actualSubPage]!=0)
+				DecodePage(m_actualPage,m_actualSubPage);
 			else 
 			{
 				for(int sub=0;sub<35;sub++)
-					if((int)m_cacheTable[page,sub]!=0)//return first aval. subpage
+					if((int)m_cacheTable[m_actualPage,sub]!=0)//return first aval. subpage
 					{
-						DecodePage(page,sub);
+						DecodePage(m_actualPage,sub);
 						return m_pageBitmap;
 					}
 				return null; // nothing found
 			}
 			return m_pageBitmap;
+		}
+		//
+		// returns the last subpage in cache
+		public int PageExists(int page)
+		{
+			int maxSubPages=-1;
+			for(int subpage=0;subpage<50;subpage++)
+			{
+				if((int)m_cacheTable[page,subpage]!=0)
+				{
+					maxSubPages=subpage;
+				}
+			}
+			return maxSubPages;
+		}
+		//
+		// returns true if the page and the subpage exists
+		public bool PageSubpageExists(int page,int subpage)
+		{
+			if((int)m_cacheTable[page,subpage]!=0)
+				return true;
+			return false;
 		}
 		//
 		//
