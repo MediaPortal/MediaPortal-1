@@ -518,18 +518,25 @@ namespace MediaPortal.Util
 		}
 		static public string GetShortDayString(DateTime dt)
 		{
-			string day;
-			switch (dt.DayOfWeek)
+			try
 			{
-				case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(657);	break;
-				case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(658);	break;
-				case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(659);	break;
-				case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(660);	break;
-				case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(661);	break;
-				case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(662);	break;
-				default:	day = GUILocalizeStrings.Get(17);	break;
+				string day;
+				switch (dt.DayOfWeek)
+				{
+					case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(657);	break;
+					case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(658);	break;
+					case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(659);	break;
+					case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(660);	break;
+					case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(661);	break;
+					case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(662);	break;
+					default:	day = GUILocalizeStrings.Get(17);	break;
+				}
+				return String.Format("{0} {1}-{2}", day,dt.Day,dt.Month);
 			}
-			return String.Format("{0} {1}-{2}", day,dt.Day,dt.Month);
+			catch(Exception)
+			{
+			}
+			return String.Empty;
 		}
 		static public string SecondsToHMString(int lSeconds)
 		{
@@ -909,34 +916,48 @@ namespace MediaPortal.Util
 
 		static public DateTime longtodate(long ldate)
 		{
-			if (ldate<0) return DateTime.MinValue;
-			int year,month,day,hour,minute,sec;
-			sec=(int)(ldate%100L); ldate /=100L;
-			minute=(int)(ldate%100L); ldate /=100L;
-			hour=(int)(ldate%100L); ldate /=100L;
-			day=(int)(ldate%100L); ldate /=100L;
-			month=(int)(ldate%100L); ldate /=100L;
-			year=(int)ldate;
-			DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
-			return dt;
+			try
+			{
+				if (ldate<0) return DateTime.MinValue;
+				int year,month,day,hour,minute,sec;
+				sec=(int)(ldate%100L); ldate /=100L;
+				minute=(int)(ldate%100L); ldate /=100L;
+				hour=(int)(ldate%100L); ldate /=100L;
+				day=(int)(ldate%100L); ldate /=100L;
+				month=(int)(ldate%100L); ldate /=100L;
+				year=(int)ldate;
+				DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
+				return dt;
+			}
+			catch(Exception)
+			{
+			}
+			return DateTime.Now;
 		}
 
 		static public long datetolong(DateTime dt)
 		{
-			long iSec=0;//(long)dt.Second;
-			long iMin=(long)dt.Minute;
-			long iHour=(long)dt.Hour;
-			long iDay=(long)dt.Day;
-			long iMonth=(long)dt.Month;
-			long iYear=(long)dt.Year;
+			try
+			{
+				long iSec=0;//(long)dt.Second;
+				long iMin=(long)dt.Minute;
+				long iHour=(long)dt.Hour;
+				long iDay=(long)dt.Day;
+				long iMonth=(long)dt.Month;
+				long iYear=(long)dt.Year;
 
-			long lRet=(iYear);
-			lRet=lRet*100L + iMonth;
-			lRet=lRet*100L + iDay;
-			lRet=lRet*100L + iHour;
-			lRet=lRet*100L + iMin;
-			lRet=lRet*100L + iSec;
-			return lRet;
+				long lRet=(iYear);
+				lRet=lRet*100L + iMonth;
+				lRet=lRet*100L + iDay;
+				lRet=lRet*100L + iHour;
+				lRet=lRet*100L + iMin;
+				lRet=lRet*100L + iSec;
+				return lRet;
+			}
+			catch(Exception)
+			{
+			}
+			return 0;
 		}
 		static public string MakeFileName(string strText)
 		{
