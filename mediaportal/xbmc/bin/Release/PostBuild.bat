@@ -6,12 +6,10 @@ mkdir plugins\subtitle
 
 copy ..\..\..\GUIMusic\bin\Release\GUIMusic.dll plugins\windows
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll plugins\windows
-copy ..\..\..\GUIMusicOverlay\bin\Release\GUIMusicOverlay.dll plugins\windows
 copy ..\..\..\GUIPictures\bin\Release\GUIPictures.dll plugins\windows
 copy ..\..\..\GUITV\bin\Release\GUITV.dll plugins\windows
 copy ..\..\..\GUIVideoFiles\bin\Release\GUIVideoFiles.dll plugins\windows
 copy ..\..\..\GUIVideoFullScreen\bin\Release\GUIVideoFullScreen.dll plugins\windows
-copy ..\..\..\GUIVideoOverlay\bin\Release\GUIVideoOverlay.dll plugins\windows
 copy ..\..\..\home\bin\Release\home.dll plugins\windows
 copy ..\..\..\SetupScreens\bin\Release\SetupScreens.dll plugins\windows
 copy ..\..\..\GUIWeather\bin\Release\GUIWeather.dll plugins\windows
@@ -23,6 +21,7 @@ copy ..\..\..\MusicDatabase\bin\release\MusicDatabase.dll .
 copy ..\..\..\PictureDatabase\bin\release\PictureDatabase.dll .
 copy ..\..\..\VideoDatabase\bin\release\VideoDatabase.dll .
 copy ..\..\..\tvdatabase\bin\release\tvdatabase.dll .
+copy ..\..\..\tvcapture\bin\release\tvcapture.dll .
 
 copy ..\..\..\DShowNET\bin\Release\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Release\DirectX.Capture.dll .

@@ -8,9 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 		{FCA18C00-ADFC-455D-BF01-3BBDF4126FF5} = {FCA18C00-ADFC-455D-BF01-3BBDF4126FF5}
 		{407D4406-CEE1-44C1-9D2E-CC9C1A111D81} = {407D4406-CEE1-44C1-9D2E-CC9C1A111D81}
 		{7CC7DE07-9745-4C33-AE0B-E7954D65699C} = {7CC7DE07-9745-4C33-AE0B-E7954D65699C}
-		{3E591820-836E-4849-9C14-DF008DA7324E} = {3E591820-836E-4849-9C14-DF008DA7324E}
 		{CC162228-326C-4BCF-81F6-8A0155193BE9} = {CC162228-326C-4BCF-81F6-8A0155193BE9}
-		{25734033-C233-4F44-AD5E-6D1C99887CF0} = {25734033-C233-4F44-AD5E-6D1C99887CF0}
 		{CE48CE3D-7683-48BF-8BD1-E8C77D4EAF05} = {CE48CE3D-7683-48BF-8BD1-E8C77D4EAF05}
 		{B23C1A5D-3AC5-4CB9-947A-867138C23E29} = {B23C1A5D-3AC5-4CB9-947A-867138C23E29}
 		{9A878E5E-AAE8-4951-A6D5-45FDE0F0AFCE} = {9A878E5E-AAE8-4951-A6D5-45FDE0F0AFCE}
@@ -53,10 +51,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Player", "VideoPlayer\Playe
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIVideoOverlay", "GUIVideoOverlay\GUIVideoOverlay.csproj", "{3E591820-836E-4849-9C14-DF008DA7324E}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIVideoFullScreen", "GUIVideoFullScreen\GUIVideoFullScreen.csproj", "{CC162228-326C-4BCF-81F6-8A0155193BE9}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -70,10 +64,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIMusic", "GUIMusic\GUIMus
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayList", "PlayList\PlayList.csproj", "{49365A9E-B202-4BB7-AB28-B79CEB6199C3}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIMusicOverlay", "GUIMusicOverlay\GUIMusicOverlay.csproj", "{25734033-C233-4F44-AD5E-6D1C99887CF0}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -137,6 +127,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVDatabase", "TVDatabase\TV
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCapture.csproj", "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -173,10 +167,6 @@ Global
 		{88929413-4722-41CE-B763-FC25466CD971}.Debug.Build.0 = Debug|.NET
 		{88929413-4722-41CE-B763-FC25466CD971}.Release.ActiveCfg = Release|.NET
 		{88929413-4722-41CE-B763-FC25466CD971}.Release.Build.0 = Release|.NET
-		{3E591820-836E-4849-9C14-DF008DA7324E}.Debug.ActiveCfg = Debug|.NET
-		{3E591820-836E-4849-9C14-DF008DA7324E}.Debug.Build.0 = Debug|.NET
-		{3E591820-836E-4849-9C14-DF008DA7324E}.Release.ActiveCfg = Release|.NET
-		{3E591820-836E-4849-9C14-DF008DA7324E}.Release.Build.0 = Release|.NET
 		{CC162228-326C-4BCF-81F6-8A0155193BE9}.Debug.ActiveCfg = Debug|.NET
 		{CC162228-326C-4BCF-81F6-8A0155193BE9}.Debug.Build.0 = Debug|.NET
 		{CC162228-326C-4BCF-81F6-8A0155193BE9}.Release.ActiveCfg = Release|.NET
@@ -193,10 +183,6 @@ Global
 		{49365A9E-B202-4BB7-AB28-B79CEB6199C3}.Debug.Build.0 = Debug|.NET
 		{49365A9E-B202-4BB7-AB28-B79CEB6199C3}.Release.ActiveCfg = Release|.NET
 		{49365A9E-B202-4BB7-AB28-B79CEB6199C3}.Release.Build.0 = Release|.NET
-		{25734033-C233-4F44-AD5E-6D1C99887CF0}.Debug.ActiveCfg = Debug|.NET
-		{25734033-C233-4F44-AD5E-6D1C99887CF0}.Debug.Build.0 = Debug|.NET
-		{25734033-C233-4F44-AD5E-6D1C99887CF0}.Release.ActiveCfg = Release|.NET
-		{25734033-C233-4F44-AD5E-6D1C99887CF0}.Release.Build.0 = Release|.NET
 		{5CDE80C5-DC4B-4A1D-AF68-8A2CC5B5EEB6}.Debug.ActiveCfg = Debug|.NET
 		{5CDE80C5-DC4B-4A1D-AF68-8A2CC5B5EEB6}.Debug.Build.0 = Debug|.NET
 		{5CDE80C5-DC4B-4A1D-AF68-8A2CC5B5EEB6}.Release.ActiveCfg = Release|.NET
@@ -257,6 +243,10 @@ Global
 		{CA8C51E1-B600-4AC4-8A84-D654F70646BA}.Debug.Build.0 = Debug|.NET
 		{CA8C51E1-B600-4AC4-8A84-D654F70646BA}.Release.ActiveCfg = Release|.NET
 		{CA8C51E1-B600-4AC4-8A84-D654F70646BA}.Release.Build.0 = Release|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.ActiveCfg = Debug|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.Build.0 = Debug|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.ActiveCfg = Release|.NET
+		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

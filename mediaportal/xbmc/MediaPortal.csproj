@@ -100,16 +100,6 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "TagReader"
-                    Project = "{5CDE80C5-DC4B-4A1D-AF68-8A2CC5B5EEB6}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "SubTitleReader"
-                    Project = "{4D5A225E-42A9-4256-A130-92BF69567CC1}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "System.Data"
                     AssemblyName = "System.Data"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
@@ -127,11 +117,6 @@
                 <Reference
                     Name = "DShowNET"
                     Project = "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "TVDatabase"
-                    Project = "{CA8C51E1-B600-4AC4-8A84-D654F70646BA}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
@@ -157,6 +142,16 @@
                     AssemblyName = "Microsoft.DirectX"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.00.0900\Microsoft.DirectX.dll"
                     AssemblyFolderKey = "hklm\managed directx 9.0"
+                />
+                <Reference
+                    Name = "TVCapture"
+                    Project = "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "TVDatabase"
+                    Project = "{CA8C51E1-B600-4AC4-8A84-D654F70646BA}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>

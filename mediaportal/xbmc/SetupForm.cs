@@ -176,6 +176,12 @@ namespace MediaPortal
 		private System.Windows.Forms.Label label35;
     bool  m_bAscending= true;
     int   iColumn=-1;
+    private System.Windows.Forms.GroupBox groupBox18;
+    private System.Windows.Forms.GroupBox groupBox19;
+    private System.Windows.Forms.CheckBox xmltvTimeZoneCheck;
+    private System.Windows.Forms.Label label36;
+    private System.Windows.Forms.Label label37;
+    private System.Windows.Forms.NumericUpDown timeZoneCorrection;
  
     /// <summary>
 		/// Required designer variable.
@@ -363,7 +369,11 @@ namespace MediaPortal
       this.label21 = new System.Windows.Forms.Label();
       this.UpDownPreRecording = new System.Windows.Forms.NumericUpDown();
       this.tabTVChannels = new System.Windows.Forms.TabPage();
-      this.textEditBox = new System.Windows.Forms.TextBox();
+      this.groupBox19 = new System.Windows.Forms.GroupBox();
+      this.label37 = new System.Windows.Forms.Label();
+      this.label36 = new System.Windows.Forms.Label();
+      this.timeZoneCorrection = new System.Windows.Forms.NumericUpDown();
+      this.xmltvTimeZoneCheck = new System.Windows.Forms.CheckBox();
       this.btnEditChannel = new System.Windows.Forms.Button();
       this.btnDelChannel = new System.Windows.Forms.Button();
       this.btnNewChannel = new System.Windows.Forms.Button();
@@ -373,6 +383,8 @@ namespace MediaPortal
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox18 = new System.Windows.Forms.GroupBox();
+      this.textEditBox = new System.Windows.Forms.TextBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.tabAudioPlayer.SuspendLayout();
@@ -412,6 +424,9 @@ namespace MediaPortal
       this.groupBox17.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).BeginInit();
       this.tabTVChannels.SuspendLayout();
+      this.groupBox19.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
+      this.groupBox18.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl
@@ -1799,30 +1814,78 @@ namespace MediaPortal
       // 
       // tabTVChannels
       // 
-      this.tabTVChannels.Controls.Add(this.textEditBox);
+      this.tabTVChannels.Controls.Add(this.groupBox19);
       this.tabTVChannels.Controls.Add(this.btnEditChannel);
       this.tabTVChannels.Controls.Add(this.btnDelChannel);
       this.tabTVChannels.Controls.Add(this.btnNewChannel);
       this.tabTVChannels.Controls.Add(this.btnTvChannelDown);
       this.tabTVChannels.Controls.Add(this.btnTvChannelUp);
       this.tabTVChannels.Controls.Add(this.listTVChannels);
+      this.tabTVChannels.Controls.Add(this.groupBox18);
       this.tabTVChannels.Location = new System.Drawing.Point(4, 22);
       this.tabTVChannels.Name = "tabTVChannels";
       this.tabTVChannels.Size = new System.Drawing.Size(616, 374);
       this.tabTVChannels.TabIndex = 9;
       this.tabTVChannels.Text = "TVChannels";
       // 
-      // textEditBox
+      // groupBox19
       // 
-      this.textEditBox.Location = new System.Drawing.Point(504, 248);
-      this.textEditBox.Name = "textEditBox";
-      this.textEditBox.TabIndex = 18;
-      this.textEditBox.Text = "textBox1";
-      this.textEditBox.Visible = false;
+      this.groupBox19.Controls.Add(this.label37);
+      this.groupBox19.Controls.Add(this.label36);
+      this.groupBox19.Controls.Add(this.timeZoneCorrection);
+      this.groupBox19.Controls.Add(this.xmltvTimeZoneCheck);
+      this.groupBox19.Location = new System.Drawing.Point(448, 8);
+      this.groupBox19.Name = "groupBox19";
+      this.groupBox19.Size = new System.Drawing.Size(160, 160);
+      this.groupBox19.TabIndex = 20;
+      this.groupBox19.TabStop = false;
+      this.groupBox19.Text = "XMLTV";
+      // 
+      // label37
+      // 
+      this.label37.Location = new System.Drawing.Point(88, 112);
+      this.label37.Name = "label37";
+      this.label37.Size = new System.Drawing.Size(40, 16);
+      this.label37.TabIndex = 3;
+      this.label37.Text = "Hours";
+      // 
+      // label36
+      // 
+      this.label36.Location = new System.Drawing.Point(16, 80);
+      this.label36.Name = "label36";
+      this.label36.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.label36.Size = new System.Drawing.Size(128, 16);
+      this.label36.TabIndex = 2;
+      this.label36.Text = "Timezone compensation";
+      // 
+      // timeZoneCorrection
+      // 
+      this.timeZoneCorrection.Location = new System.Drawing.Point(16, 104);
+      this.timeZoneCorrection.Maximum = new System.Decimal(new int[] {
+                                                                       23,
+                                                                       0,
+                                                                       0,
+                                                                       0});
+      this.timeZoneCorrection.Minimum = new System.Decimal(new int[] {
+                                                                       23,
+                                                                       0,
+                                                                       0,
+                                                                       -2147483648});
+      this.timeZoneCorrection.Name = "timeZoneCorrection";
+      this.timeZoneCorrection.Size = new System.Drawing.Size(56, 20);
+      this.timeZoneCorrection.TabIndex = 1;
+      // 
+      // xmltvTimeZoneCheck
+      // 
+      this.xmltvTimeZoneCheck.Location = new System.Drawing.Point(16, 24);
+      this.xmltvTimeZoneCheck.Name = "xmltvTimeZoneCheck";
+      this.xmltvTimeZoneCheck.Size = new System.Drawing.Size(104, 32);
+      this.xmltvTimeZoneCheck.TabIndex = 0;
+      this.xmltvTimeZoneCheck.Text = "Use Timezone from XMLTV";
       // 
       // btnEditChannel
       // 
-      this.btnEditChannel.Location = new System.Drawing.Point(120, 240);
+      this.btnEditChannel.Location = new System.Drawing.Point(120, 256);
       this.btnEditChannel.Name = "btnEditChannel";
       this.btnEditChannel.Size = new System.Drawing.Size(48, 23);
       this.btnEditChannel.TabIndex = 17;
@@ -1831,7 +1894,7 @@ namespace MediaPortal
       // 
       // btnDelChannel
       // 
-      this.btnDelChannel.Location = new System.Drawing.Point(64, 240);
+      this.btnDelChannel.Location = new System.Drawing.Point(64, 256);
       this.btnDelChannel.Name = "btnDelChannel";
       this.btnDelChannel.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.btnDelChannel.Size = new System.Drawing.Size(48, 23);
@@ -1841,7 +1904,7 @@ namespace MediaPortal
       // 
       // btnNewChannel
       // 
-      this.btnNewChannel.Location = new System.Drawing.Point(24, 240);
+      this.btnNewChannel.Location = new System.Drawing.Point(24, 256);
       this.btnNewChannel.Name = "btnNewChannel";
       this.btnNewChannel.Size = new System.Drawing.Size(32, 24);
       this.btnNewChannel.TabIndex = 15;
@@ -1850,7 +1913,7 @@ namespace MediaPortal
       // 
       // btnTvChannelDown
       // 
-      this.btnTvChannelDown.Location = new System.Drawing.Point(416, 208);
+      this.btnTvChannelDown.Location = new System.Drawing.Point(416, 224);
       this.btnTvChannelDown.Name = "btnTvChannelDown";
       this.btnTvChannelDown.Size = new System.Drawing.Size(16, 23);
       this.btnTvChannelDown.TabIndex = 14;
@@ -1859,7 +1922,7 @@ namespace MediaPortal
       // 
       // btnTvChannelUp
       // 
-      this.btnTvChannelUp.Location = new System.Drawing.Point(416, 184);
+      this.btnTvChannelUp.Location = new System.Drawing.Point(416, 200);
       this.btnTvChannelUp.Name = "btnTvChannelUp";
       this.btnTvChannelUp.Size = new System.Drawing.Size(16, 24);
       this.btnTvChannelUp.TabIndex = 13;
@@ -1876,7 +1939,7 @@ namespace MediaPortal
                                                                                      this.columnHeader3});
       this.listTVChannels.FullRowSelect = true;
       this.listTVChannels.HideSelection = false;
-      this.listTVChannels.Location = new System.Drawing.Point(24, 16);
+      this.listTVChannels.Location = new System.Drawing.Point(24, 32);
       this.listTVChannels.MultiSelect = false;
       this.listTVChannels.Name = "listTVChannels";
       this.listTVChannels.Size = new System.Drawing.Size(384, 216);
@@ -1897,8 +1960,26 @@ namespace MediaPortal
       // 
       // columnHeader3
       // 
-      this.columnHeader3.Text = "Frequency";
-      this.columnHeader3.Width = 75;
+      this.columnHeader3.Text = "Frequency (MHz)";
+      this.columnHeader3.Width = 118;
+      // 
+      // groupBox18
+      // 
+      this.groupBox18.Controls.Add(this.textEditBox);
+      this.groupBox18.Location = new System.Drawing.Point(8, 8);
+      this.groupBox18.Name = "groupBox18";
+      this.groupBox18.Size = new System.Drawing.Size(432, 288);
+      this.groupBox18.TabIndex = 19;
+      this.groupBox18.TabStop = false;
+      this.groupBox18.Text = "TV Channels";
+      // 
+      // textEditBox
+      // 
+      this.textEditBox.Location = new System.Drawing.Point(312, 248);
+      this.textEditBox.Name = "textEditBox";
+      this.textEditBox.TabIndex = 18;
+      this.textEditBox.Text = "textBox1";
+      this.textEditBox.Visible = false;
       // 
       // SetupForm
       // 
@@ -1948,6 +2029,9 @@ namespace MediaPortal
       this.groupBox17.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPreRecording)).EndInit();
       this.tabTVChannels.ResumeLayout(false);
+      this.groupBox19.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
+      this.groupBox18.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -2004,6 +2088,7 @@ namespace MediaPortal
 					newItem=listVideoShares.Items.Add(strName);
 					newItem.SubItems.Add(strPath);
 				}
+        else break;
 
 				strName=xmlreader.GetValueAsString("music", strShareName,"");
 				strPath=xmlreader.GetValueAsString("music", strSharePath,"");
@@ -2058,92 +2143,97 @@ namespace MediaPortal
 
 		void LoadSettings()
 		{
-			AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
-			checkStartFullScreen.Checked=xmlreader.GetValueAsBool("general","startfullscreen",false);
-      checkBoxAutoHideMouse.Checked=xmlreader.GetValueAsBool("general","autohidemouse",false);
-      
-			dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
-			dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
-      checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
-      
-      string strDVDAudioLanguage=xmlreader.GetValueAsString("dvdplayer","audiolanguage","English");
-      string strDVDSubLanguage=xmlreader.GetValueAsString("dvdplayer","subtitlelanguage","English");
-      checkBoxDVDSubtitles.Checked=xmlreader.GetValueAsBool("dvdplayer","showsubtitles",true);
-      AddLanguages(comboBoxAudioLanguage,strDVDAudioLanguage);
-      AddLanguages(comboBoxSubtitleLanguage,strDVDSubLanguage);
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        checkStartFullScreen.Checked=xmlreader.GetValueAsBool("general","startfullscreen",false);
+        checkBoxAutoHideMouse.Checked=xmlreader.GetValueAsBool("general","autohidemouse",false);
+        
+        dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
+        dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
+        checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
+        
+        string strDVDAudioLanguage=xmlreader.GetValueAsString("dvdplayer","audiolanguage","English");
+        string strDVDSubLanguage=xmlreader.GetValueAsString("dvdplayer","subtitlelanguage","English");
+        checkBoxDVDSubtitles.Checked=xmlreader.GetValueAsBool("dvdplayer","showsubtitles",true);
+        AddLanguages(comboBoxAudioLanguage,strDVDAudioLanguage);
+        AddLanguages(comboBoxSubtitleLanguage,strDVDSubLanguage);
 
 
-			movieFile.Text=xmlreader.GetValueAsString("movieplayer","path",@"zplayer\zplayer.exe");
-			movieParameters.Text=xmlreader.GetValueAsString("movieplayer","arguments", @"/PLAY /F /Q");
-			checkBoxMovieInternalPlayer.Checked=xmlreader.GetValueAsBool("movieplayer","internal",true);
-      checkBoxMovieInternalPlayer.Checked=true;
-      
+        movieFile.Text=xmlreader.GetValueAsString("movieplayer","path",@"zplayer\zplayer.exe");
+        movieParameters.Text=xmlreader.GetValueAsString("movieplayer","arguments", @"/PLAY /F /Q");
+        checkBoxMovieInternalPlayer.Checked=xmlreader.GetValueAsBool("movieplayer","internal",true);
+        checkBoxMovieInternalPlayer.Checked=true;
+        
 
-			string strAudioPlayer=xmlreader.GetValueAsString("audioplayer","player", "Windows Media Player 9");
-			comboAudioPlayer.Items.Clear();
-			comboAudioPlayer.Items.Add("Windows Media Player 9");
-			comboAudioPlayer.Items.Add("DirectShow");
-			comboAudioPlayer.Text=strAudioPlayer;
-
-
-			trackBarOSDTimeout.Value=xmlreader.GetValueAsInt("movieplayer","osdtimeout",0);
-
-			LoadShares(xmlreader);
-
-			UpDownPictureDuration.Value=xmlreader.GetValueAsInt("pictures","speed",3);
-			UpDownPictureTransition.Value=xmlreader.GetValueAsInt("pictures","transisition",20);
-			
-      chkBoxRepeatAudioPlaylist.Checked=xmlreader.GetValueAsBool("musicfiles","repeat",true);
-      
-			chkMusicID3.Checked=xmlreader.GetValueAsBool("musicfiles","showid3",true);
-
-      checkBoxShufflePlaylists.Checked=xmlreader.GetValueAsBool("musicfiles","autoshuffle",true);
-      chkBoxVideoRepeat.Checked=xmlreader.GetValueAsBool("movies","repeat",true);
-
-      txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav");
-			txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
-			txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
-
-			LoadWeather(xmlreader);
+        string strAudioPlayer=xmlreader.GetValueAsString("audioplayer","player", "Windows Media Player 9");
+        comboAudioPlayer.Items.Clear();
+        comboAudioPlayer.Items.Add("Windows Media Player 9");
+        comboAudioPlayer.Items.Add("DirectShow");
+        comboAudioPlayer.Text=strAudioPlayer;
 
 
-			string strLanguage=xmlreader.GetValueAsString("skin","language","english");
-			comboBoxLanguage.Items.Clear();
-			int iItem=0;
-			string[] Folders=System.IO.Directory.GetDirectories(@"language\","*.*");
-			foreach (string strFolder in Folders)
-			{
-				string strFile=strFolder.Substring(@"language\".Length);
-				if (strFile.ToLower()!="cvs")
-				{
-					comboBoxLanguage.Items.Add(strFile);
-					if (strFile.ToLower()==strLanguage.ToLower())
-					{
-						comboBoxLanguage.SelectedIndex=iItem;
-					}
-					iItem++;
-				}
-			}
-			
+        trackBarOSDTimeout.Value=xmlreader.GetValueAsInt("movieplayer","osdtimeout",0);
 
-			string strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
-			comboBoxSkins.Items.Clear();
-			iItem=0;
-			Folders=System.IO.Directory.GetDirectories(@"skin\","*.*");
-			foreach (string strFolder in Folders)
-			{
-				string strFile=strFolder.Substring(@"skin\".Length);
-				if (strFile.ToLower()!="cvs")
-				{
-					comboBoxSkins.Items.Add(strFile);
-					if (strFile.ToLower()==strSkin.ToLower())
-					{
-						comboBoxSkins.SelectedIndex=iItem;
-					}
-					iItem++;
-				}
-			}
-      LoadSubtitles(xmlreader);
+        LoadShares(xmlreader);
+
+        UpDownPictureDuration.Value=xmlreader.GetValueAsInt("pictures","speed",3);
+        UpDownPictureTransition.Value=xmlreader.GetValueAsInt("pictures","transisition",20);
+  			
+        chkBoxRepeatAudioPlaylist.Checked=xmlreader.GetValueAsBool("musicfiles","repeat",true);
+        
+        chkMusicID3.Checked=xmlreader.GetValueAsBool("musicfiles","showid3",true);
+
+        checkBoxShufflePlaylists.Checked=xmlreader.GetValueAsBool("musicfiles","autoshuffle",true);
+        chkBoxVideoRepeat.Checked=xmlreader.GetValueAsBool("movies","repeat",true);
+
+        txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav");
+        txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
+        txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
+
+        LoadWeather(xmlreader);
+
+
+        string strLanguage=xmlreader.GetValueAsString("skin","language","english");
+        comboBoxLanguage.Items.Clear();
+        int iItem=0;
+        string[] Folders=System.IO.Directory.GetDirectories(@"language\","*.*");
+        foreach (string strFolder in Folders)
+        {
+          string strFile=strFolder.Substring(@"language\".Length);
+          if (strFile.ToLower()!="cvs")
+          {
+            comboBoxLanguage.Items.Add(strFile);
+            if (strFile.ToLower()==strLanguage.ToLower())
+            {
+              comboBoxLanguage.SelectedIndex=iItem;
+            }
+            iItem++;
+          }
+        }
+  			
+
+        string strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
+        comboBoxSkins.Items.Clear();
+        iItem=0;
+        Folders=System.IO.Directory.GetDirectories(@"skin\","*.*");
+        foreach (string strFolder in Folders)
+        {
+          string strFile=strFolder.Substring(@"skin\".Length);
+          if (strFile.ToLower()!="cvs")
+          {
+            comboBoxSkins.Items.Add(strFile);
+            if (strFile.ToLower()==strSkin.ToLower())
+            {
+              comboBoxSkins.SelectedIndex=iItem;
+            }
+            iItem++;
+          }
+        }
+        LoadSubtitles(xmlreader);
+
+        xmltvTimeZoneCheck.Checked=xmlreader.GetValueAsBool("xmltv", "usetimezone",true);
+        timeZoneCorrection.Value=xmlreader.GetValueAsInt("xmltv", "timezonecorrection",0);
+      }
 		}
 
     void LoadSubtitles(AMS.Profile.Xml xmlreader)
@@ -2195,6 +2285,7 @@ namespace MediaPortal
 					newItem=listViewWeather.Items.Add(strCity);
 					newItem.SubItems.Add(strCode);
 				}
+        else break;
 			}
 			if (listViewWeather.Items.Count==0)
 			{
@@ -2281,52 +2372,57 @@ namespace MediaPortal
     }
     void SaveSettings()
     {
-      AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml");
-			
-			xmlWriter.SetValueAsBool("general","startfullscreen",checkStartFullScreen.Checked);
-      xmlWriter.SetValueAsBool("general","autohidemouse", checkBoxAutoHideMouse.Checked);
-      
-      xmlWriter.SetValue("dvdplayer","path",dvdFile.Text);
-      xmlWriter.SetValue("dvdplayer","arguments",dvdParams.Text);
-      xmlWriter.SetValueAsBool("dvdplayer","internal",checkBoxInternalDVDPlayer.Checked);
-      
-      xmlWriter.SetValue("dvdplayer","audiolanguage",(string)comboBoxAudioLanguage.SelectedItem);
-      xmlWriter.SetValue("dvdplayer","subtitlelanguage",(string)comboBoxSubtitleLanguage.SelectedItem);
+      using (AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+  			
+        xmlWriter.SetValueAsBool("general","startfullscreen",checkStartFullScreen.Checked);
+        xmlWriter.SetValueAsBool("general","autohidemouse", checkBoxAutoHideMouse.Checked);
+        
+        xmlWriter.SetValue("dvdplayer","path",dvdFile.Text);
+        xmlWriter.SetValue("dvdplayer","arguments",dvdParams.Text);
+        xmlWriter.SetValueAsBool("dvdplayer","internal",checkBoxInternalDVDPlayer.Checked);
+        
+        xmlWriter.SetValue("dvdplayer","audiolanguage",(string)comboBoxAudioLanguage.SelectedItem);
+        xmlWriter.SetValue("dvdplayer","subtitlelanguage",(string)comboBoxSubtitleLanguage.SelectedItem);
 
-      xmlWriter.SetValueAsBool("dvdplayer","showsubtitles",checkBoxDVDSubtitles.Checked);
-      xmlWriter.SetValue("movieplayer","path",movieFile.Text);
-      xmlWriter.SetValue("movieplayer","arguments",movieParameters.Text);
+        xmlWriter.SetValueAsBool("dvdplayer","showsubtitles",checkBoxDVDSubtitles.Checked);
+        xmlWriter.SetValue("movieplayer","path",movieFile.Text);
+        xmlWriter.SetValue("movieplayer","arguments",movieParameters.Text);
 
-      xmlWriter.SetValueAsBool("movieplayer","internal",checkBoxMovieInternalPlayer.Checked );
-			xmlWriter.SetValue("movieplayer","osdtimeout",trackBarOSDTimeout.Value.ToString());
+        xmlWriter.SetValueAsBool("movieplayer","internal",checkBoxMovieInternalPlayer.Checked );
+        xmlWriter.SetValue("movieplayer","osdtimeout",trackBarOSDTimeout.Value.ToString());
 
-			xmlWriter.SetValue("audioplayer","player", (string)comboAudioPlayer.SelectedItem);
-			
+        xmlWriter.SetValue("audioplayer","player", (string)comboAudioPlayer.SelectedItem);
+  			
 
 
-      SaveShares(xmlWriter, listAudioShares,"music");
-      SaveShares(xmlWriter, listPictureShares,"pictures");
-      SaveShares(xmlWriter, listVideoShares,"movies");
-      
-      xmlWriter.SetValue("pictures","speed",UpDownPictureDuration.Value.ToString());
-      xmlWriter.SetValue("pictures","transisition",UpDownPictureTransition.Value.ToString());
-      xmlWriter.SetValueAsBool("musicfiles","showid3",chkMusicID3.Checked);
-      xmlWriter.SetValueAsBool("musicfiles","repeat",chkBoxRepeatAudioPlaylist.Checked);
-      xmlWriter.SetValueAsBool("movies","repeat",chkBoxVideoRepeat.Checked);
-      xmlWriter.SetValueAsBool("musicfiles","autoshuffle",checkBoxShufflePlaylists.Checked);
-			
-      xmlWriter.SetValue("music","extensions", txtboxAudioFiles.Text);
-      xmlWriter.SetValue("movies","extensions", txtboxVideoFiles.Text);
-			xmlWriter.SetValue("pictures","extensions",txtBoxPictureFiles.Text);
+        SaveShares(xmlWriter, listAudioShares,"music");
+        SaveShares(xmlWriter, listPictureShares,"pictures");
+        SaveShares(xmlWriter, listVideoShares,"movies");
+        
+        xmlWriter.SetValue("pictures","speed",UpDownPictureDuration.Value.ToString());
+        xmlWriter.SetValue("pictures","transisition",UpDownPictureTransition.Value.ToString());
+        xmlWriter.SetValueAsBool("musicfiles","showid3",chkMusicID3.Checked);
+        xmlWriter.SetValueAsBool("musicfiles","repeat",chkBoxRepeatAudioPlaylist.Checked);
+        xmlWriter.SetValueAsBool("movies","repeat",chkBoxVideoRepeat.Checked);
+        xmlWriter.SetValueAsBool("musicfiles","autoshuffle",checkBoxShufflePlaylists.Checked);
+  			
+        xmlWriter.SetValue("music","extensions", txtboxAudioFiles.Text);
+        xmlWriter.SetValue("movies","extensions", txtboxVideoFiles.Text);
+        xmlWriter.SetValue("pictures","extensions",txtBoxPictureFiles.Text);
 
-			SaveWeather(xmlWriter);
+        SaveWeather(xmlWriter);
 
-      SaveSubtitles(xmlWriter);
-      SaveCapture(xmlWriter);
-			
-			xmlWriter.SetValue("skin","language",comboBoxLanguage.SelectedItem);
-			xmlWriter.SetValue("skin","name",comboBoxSkins.SelectedItem);
-			SaveFrequencies();
+        SaveSubtitles(xmlWriter);
+        SaveCapture(xmlWriter);
+  			
+        xmlWriter.SetValue("skin","language",comboBoxLanguage.SelectedItem);
+        xmlWriter.SetValue("skin","name",comboBoxSkins.SelectedItem);
+        SaveFrequencies();
+          
+        xmlWriter.SetValueAsBool("xmltv","usetimezone",xmltvTimeZoneCheck.Checked);
+        xmlWriter.SetValue("xmltv","timezonecorrection",timeZoneCorrection.Value.ToString() );
+      }
 		}
 
 
@@ -2482,33 +2578,35 @@ namespace MediaPortal
     private void btnChooseSubFont_Click(object sender, System.EventArgs e)
     {
 
-      AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
-      FontDialog dlg = new FontDialog();
-      string strFontName=xmlreader.GetValueAsString("subtitles","fontface","Arial");
-      int iFontSize=xmlreader.GetValueAsInt("subtitles","fontsize",18);
-      bool bBold=xmlreader.GetValueAsBool("subtitles","bold",true);
-      int iDropShadow=xmlreader.GetValueAsInt("subtitles","shadow",5);
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        FontDialog dlg = new FontDialog();
+        string strFontName=xmlreader.GetValueAsString("subtitles","fontface","Arial");
+        int iFontSize=xmlreader.GetValueAsInt("subtitles","fontsize",18);
+        bool bBold=xmlreader.GetValueAsBool("subtitles","bold",true);
+        int iDropShadow=xmlreader.GetValueAsInt("subtitles","shadow",5);
 
-      FontStyle style=FontStyle.Regular;
-      if (bBold)  style=FontStyle.Bold;
-      dlg.Font = new Font(strFontName,iFontSize,style);
-      
-      dlg.Color = txtBoxSubFont.BackColor;
-      dlg.ShowColor=true;
-      dlg.ShowDialog();
-      bBold=dlg.Font.Bold;
-      strFontName=dlg.Font.Name;
-      int iHeight=(int)dlg.Font.Size;
-      txtBoxSubFont.Text=String.Format("{0} {1}", strFontName,iHeight);
-      if (bBold) txtBoxSubFont.Text += ", Bold";
-      txtBoxSubFont.BackColor=dlg.Color;
-      
-      xmlreader.SetValue("subtitles", "fontface", strFontName);
-      xmlreader.SetValue("subtitles", "fontsize", iHeight.ToString());
-      xmlreader.SetValueAsBool("subtitles", "bold", bBold);
-      
-      string strColor=String.Format("{0:X}", dlg.Color.ToArgb());
-      xmlreader.SetValue("subtitles","color",strColor);
+        FontStyle style=FontStyle.Regular;
+        if (bBold)  style=FontStyle.Bold;
+        dlg.Font = new Font(strFontName,iFontSize,style);
+        
+        dlg.Color = txtBoxSubFont.BackColor;
+        dlg.ShowColor=true;
+        dlg.ShowDialog();
+        bBold=dlg.Font.Bold;
+        strFontName=dlg.Font.Name;
+        int iHeight=(int)dlg.Font.Size;
+        txtBoxSubFont.Text=String.Format("{0} {1}", strFontName,iHeight);
+        if (bBold) txtBoxSubFont.Text += ", Bold";
+        txtBoxSubFont.BackColor=dlg.Color;
+        
+        xmlreader.SetValue("subtitles", "fontface", strFontName);
+        xmlreader.SetValue("subtitles", "fontsize", iHeight.ToString());
+        xmlreader.SetValueAsBool("subtitles", "bold", bBold);
+        
+        string strColor=String.Format("{0:X}", dlg.Color.ToArgb());
+        xmlreader.SetValue("subtitles","color",strColor);
+      }
     }
 
     private void numericUpDownSubShadow_ValueChanged(object sender, System.EventArgs e)
@@ -2586,8 +2684,29 @@ namespace MediaPortal
           int iNumber=GetInt(strNumber);
           if (iNumber <254)
           {
+            long lFreq=0;
+            strFreq=strFreq.Replace("," , ".");
+            if (strFreq.IndexOf(".") >0 )
+            {
+              double dFreq;
+              dFreq=Convert.ToDouble(strFreq);
+              if (dFreq>=1000d) dFreq/=100d; 
+              dFreq*= (1000000d);
+              lFreq=(long)dFreq;
+            }
+            else
+            {
+              try
+              {
+                lFreq=Int64.Parse(strFreq);
+                if (lFreq<1000) lFreq *= 1000000L;
+              }
+              catch (Exception)
+              {
+              }
+            }
             TVDatabase.SetChannelNumber(strChannel,iNumber);
-            TVDatabase.SetChannelFrequency(strChannel,strFreq);
+            TVDatabase.SetChannelFrequency(strChannel,lFreq.ToString());
             TVDatabase.SetChannelSort(strChannel,i);
           }
         }
@@ -2599,103 +2718,109 @@ namespace MediaPortal
 
     void SetupCapture()
     {
-      AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
-      string strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-      string strVideoDevice=xmlreader.GetValueAsString("capture","videodevice","none");
-      string strAudioDevice=xmlreader.GetValueAsString("capture","audiodevice","none");
-      string strCompressorAudio=xmlreader.GetValueAsString("capture","audiocompressor","none");
-      string strCompressorVideo=xmlreader.GetValueAsString("capture","videocompressor","none");
-      string strCaptureFormat=xmlreader.GetValueAsString("capture","format",".avi");
-      string strTunerType=xmlreader.GetValueAsString("capture","tuner","Antenna");
-
-			UpDownPreRecording.Value =xmlreader.GetValueAsInt("capture","prerecord", 5);
-			UpDownPostRecording.Value=xmlreader.GetValueAsInt("capture","postrecord", 5);
-
-      upDownCountry.Value=xmlreader.GetValueAsInt("capture","country",31);
-      if (strRecPath=="") 
+      using ( AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        strRecPath=String.Format(@"{0}\My Videos",Environment.GetFolderPath( Environment.SpecialFolder.Personal).ToString());
-      }
-      if (strTunerType=="Antenna") btnradioAntenna.Checked=true;
-      else btnradioCable.Checked=true;
+        string strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+        string strVideoDevice=xmlreader.GetValueAsString("capture","videodevice","none");
+        string strAudioDevice=xmlreader.GetValueAsString("capture","audiodevice","none");
+        string strCompressorAudio=xmlreader.GetValueAsString("capture","audiocompressor","none");
+        string strCompressorVideo=xmlreader.GetValueAsString("capture","videocompressor","none");
+        string strCaptureFormat=xmlreader.GetValueAsString("capture","format",".avi");
+        string strTunerType=xmlreader.GetValueAsString("capture","tuner","Antenna");
 
-      for (int x=0; x < comboBoxCaptureFormat.Items.Count;++x)
-      {
-        if ( ((string)comboBoxCaptureFormat.Items[x]) ==strCaptureFormat)
+        UpDownPreRecording.Value =xmlreader.GetValueAsInt("capture","prerecord", 5);
+        UpDownPostRecording.Value=xmlreader.GetValueAsInt("capture","postrecord", 5);
+
+        upDownCountry.Value=xmlreader.GetValueAsInt("capture","country",31);
+        if (strRecPath=="") 
         {
-          comboBoxCaptureFormat.SelectedIndex=x;
-          break;
+          strRecPath=String.Format(@"{0}\My Videos",Environment.GetFolderPath( Environment.SpecialFolder.Personal).ToString());
         }
-      }
-      textBoxRecPath.Text=strRecPath;
-			int index=0;
+        if (strTunerType=="Antenna") btnradioAntenna.Checked=true;
+        else btnradioCable.Checked=true;
 
-      Filters filters = new Filters();
-      // video capture devices
-      comboVideoDevice.Items.Clear();
-      comboVideoDevice.Items.Add("none");
-      int i=1;
-      foreach (Filter filter in filters.VideoInputDevices)
-      {
-        comboVideoDevice.Items.Add(filter.Name);
-        if (String.Compare(filter.Name,strVideoDevice,true)==0) index=i;
-        ++i;
-      }
-      comboVideoDevice.SelectedIndex=index;
+        for (int x=0; x < comboBoxCaptureFormat.Items.Count;++x)
+        {
+          if ( ((string)comboBoxCaptureFormat.Items[x]) ==strCaptureFormat)
+          {
+            comboBoxCaptureFormat.SelectedIndex=x;
+            break;
+          }
+        }
+        textBoxRecPath.Text=strRecPath;
+        int index=0;
 
-      // audio capture devices
-      comboAudioDevice.Items.Clear();
-      comboAudioDevice.Items.Add("none");
-      i=1;
-      index=0;
-      foreach (Filter filter in filters.AudioInputDevices)
-      {
-        comboAudioDevice.Items.Add(filter.Name);
-        if (String.Compare(filter.Name,strAudioDevice,true)==0) index=i;
-        ++i;
-      }
-      comboAudioDevice.SelectedIndex=index;
+        Filters filters = new Filters();
+        // video capture devices
+        comboVideoDevice.Items.Clear();
+        comboVideoDevice.Items.Add("none");
+        int i=1;
+        foreach (Filter filter in filters.VideoInputDevices)
+        {
+          comboVideoDevice.Items.Add(filter.Name);
+          if (String.Compare(filter.Name,strVideoDevice,true)==0) index=i;
+          ++i;
+        }
+        comboVideoDevice.SelectedIndex=index;
 
-      // audio compressors
-      comboCompressorAudio.Items.Clear();
-      comboCompressorAudio.Items.Add("none");
-      i=1;
-      index=0;
-      foreach (Filter filter in filters.AudioCompressors)
-      {
-        comboCompressorAudio.Items.Add(filter.Name);
-        if (String.Compare(filter.Name,strCompressorAudio,true)==0) index=i;
-        ++i;
-      }
-      comboCompressorAudio.SelectedIndex=index;
+        // audio capture devices
+        comboAudioDevice.Items.Clear();
+        comboAudioDevice.Items.Add("none");
+        i=1;
+        index=0;
+        foreach (Filter filter in filters.AudioInputDevices)
+        {
+          comboAudioDevice.Items.Add(filter.Name);
+          if (String.Compare(filter.Name,strAudioDevice,true)==0) index=i;
+          ++i;
+        }
+        comboAudioDevice.SelectedIndex=index;
 
-      // Video compressors
-      comboCompressorVideo.Items.Clear();
-      comboCompressorVideo.Items.Add("none");
-      i=1;
-      index=0;
-      foreach (Filter filter in filters.VideoCompressors)
-      {
-        comboCompressorVideo.Items.Add(filter.Name);
-        if (String.Compare(filter.Name,strCompressorVideo,true)==0) index=i;
-        ++i;
-      }
-      comboCompressorVideo.SelectedIndex=index;
+        // audio compressors
+        comboCompressorAudio.Items.Clear();
+        comboCompressorAudio.Items.Add("none");
+        i=1;
+        index=0;
+        foreach (Filter filter in filters.AudioCompressors)
+        {
+          comboCompressorAudio.Items.Add(filter.Name);
+          if (String.Compare(filter.Name,strCompressorAudio,true)==0) index=i;
+          ++i;
+        }
+        comboCompressorAudio.SelectedIndex=index;
 
-      // setup tv channel list
-      listTVChannels.Items.Clear();
-      
-      ListViewItem newItem;
-      
-      ArrayList channels = new ArrayList();
-      TVDatabase.GetChannels(ref channels);
-      foreach (TVChannel chan in channels)
-      {
-        newItem = listTVChannels.Items.Add(chan.Name);
-        newItem.SubItems.Add(chan.Number.ToString());
-        newItem.SubItems.Add(chan.Frequency.ToString());
+        // Video compressors
+        comboCompressorVideo.Items.Clear();
+        comboCompressorVideo.Items.Add("none");
+        i=1;
+        index=0;
+        foreach (Filter filter in filters.VideoCompressors)
+        {
+          comboCompressorVideo.Items.Add(filter.Name);
+          if (String.Compare(filter.Name,strCompressorVideo,true)==0) index=i;
+          ++i;
+        }
+        comboCompressorVideo.SelectedIndex=index;
+
+        // setup tv channel list
+        listTVChannels.Items.Clear();
+        
+        ListViewItem newItem;
+        
+        ArrayList channels = new ArrayList();
+        TVDatabase.GetChannels(ref channels);
+        foreach (TVChannel chan in channels)
+        {
+          newItem = listTVChannels.Items.Add(chan.Name);
+          newItem.SubItems.Add(chan.Number.ToString());
+          double dFreq=(double)chan.Frequency;
+          if (chan.Number>=254) dFreq=0;
+          dFreq /=1000000d;
+          string strFreq=dFreq.ToString();
+          newItem.SubItems.Add(strFreq);
+        }
+        SetupPropertyPageList();
       }
-      SetupPropertyPageList();
     }
 
     private void listTVChannels_DoubleClick(object sender, System.EventArgs e)
@@ -3070,6 +3195,10 @@ namespace MediaPortal
         m_bAscending=!m_bAscending;
       iColumn=e.Column;
       listTVChannels.ListViewItemSorter = new ListViewItemComparer(e.Column,m_bAscending);
+      listTVChannels.Sort();
+      listTVChannels.ListViewItemSorter=null;
+
+
     }
 
 	}

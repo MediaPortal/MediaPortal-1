@@ -25,7 +25,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>Media Portal CVS build</value>
+		<value>XBOX Media Center CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -1783,7 +1783,10 @@
 		<id>638</id>
 		<value>New Recording</value>
 	</string>
-
+	<string>
+		<id>639</id>
+		<value>Albums of</value>
+	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
 <string><id>10002</id><value>My Pictures</value></string>

@@ -923,6 +923,12 @@ namespace MediaPortal
           this.Close();
         }
       }
+      else 
+      {
+        // if we dont got the focus, then dont use all the CPU
+        if (System.Windows.Forms.Form.ActiveForm != this)
+          System.Threading.Thread.Sleep(100);
+      }
     }
 
 
@@ -947,21 +953,23 @@ namespace MediaPortal
       storedSize=this.ClientSize;
       storedLocation=this.Location ;
       oldBounds=new Rectangle(Bounds.X,Bounds.Y,Bounds.Width,Bounds.Height);
-      AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
-      string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
-      if (strStartFull!=null && strStartFull=="yes")
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        Log.Write("start fullscreen");
-        this.FormBorderStyle=FormBorderStyle.None;
-        this.MaximizeBox=false;
-        this.MinimizeBox=false;
-        this.Menu=null;
-        this.Location= new System.Drawing.Point(0,0);
-        this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
-        this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+        string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
+        if (strStartFull!=null && strStartFull=="yes")
+        {
+          Log.Write("start fullscreen");
+          this.FormBorderStyle=FormBorderStyle.None;
+          this.MaximizeBox=false;
+          this.MinimizeBox=false;
+          this.Menu=null;
+          this.Location= new System.Drawing.Point(0,0);
+          this.Bounds=new Rectangle(0,0,Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
+          this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width,Screen.PrimaryScreen.Bounds.Height);
 
-        deviceLost=true;
-        isMaximized=true;
+          deviceLost=true;
+          isMaximized=true;
+        }
       }
 
       OnStartup();
@@ -1090,9 +1098,13 @@ namespace MediaPortal
       SetupForm dlg = new SetupForm();
       dlg.ShowDialog(this);
 
-      AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
-      string strNewSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
-      string strNewLanguage=xmlreader.GetValueAsString("skin","language","English");
+      string strNewSkin="";
+      string strNewLanguage="";
+      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      {
+        strNewSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
+        strNewLanguage=xmlreader.GetValueAsString("skin","language","English");
+      }
       if (strNewLanguage!=m_strLanguage)
       {
         m_strLanguage=strNewLanguage;
@@ -1253,11 +1265,13 @@ namespace MediaPortal
 
     private void D3DApp_Click(object sender, MouseEventArgs  e)
     {
+      if (System.Windows.Forms.Form.ActiveForm != this) return;
       mouseclick(e);
     }
 
     private void D3DApp_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
+      if (System.Windows.Forms.Form.ActiveForm != this) return;
       mousemove(e);
     }
 
@@ -1526,7 +1540,7 @@ namespace MediaPortal
       }
 		}
 		protected virtual void mouseclick(MouseEventArgs e)
-		{
+    {
       //this.Text=String.Format("show click");
       System.Windows.Forms.Cursor ourCursor = this.Cursor;
       m_bShowCursor=true;

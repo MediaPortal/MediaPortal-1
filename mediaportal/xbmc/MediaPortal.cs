@@ -8,13 +8,13 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 
-
 using MediaPortal.GUI.Library;
 using MediaPortal;
 
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
+using MediaPortal.TV.Recording;
 
 public class MediaPortalApp : D3DApp
 {
@@ -34,9 +34,6 @@ public class MediaPortalApp : D3DApp
           Log.Write("Start MediaPortal");
           try
           {
-            GC.Collect();
-            GC.Collect();
-            GC.Collect();
             app.Run();
           }
           catch (Exception ex)
@@ -73,11 +70,12 @@ public class MediaPortalApp : D3DApp
       GUIGraphicsContext.graphics=null;
       try
       {
-        AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml");
-        m_strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
-        m_strLanguage=xmlreader.GetValueAsString("skin","language","English");
-        m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
-				xmlreader=null;
+        using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        {
+          m_strSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
+          m_strLanguage=xmlreader.GetValueAsString("skin","language","English");
+          m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
+        }
       }
       catch(Exception)
       {
@@ -85,11 +83,18 @@ public class MediaPortalApp : D3DApp
         m_strLanguage="english";
       }
      
+
       GUIWindowManager.Callbacks+=new GUIWindowManager.OnCallBackHandler(this.Process);
       GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STARTING;
+
+      // load keymapping from keymap.xml
       ActionTranslator.Load();
-			
+
+      //register the playlistplayer for thread messages (like playback stopped,ended)
       PlayListPlayer.Init();
+
+      //registers the player for video window size notifications
+      g_Player.Init();
     }
 
     protected override void WndProc( ref Message m )
@@ -98,80 +103,86 @@ public class MediaPortalApp : D3DApp
       base.WndProc( ref m );
     }
 
-
+    /// <summary>
+    /// Process() gets called when a dialog is presented.
+    /// It contains the message loop 
+    /// </summary>
     public void Process()
     {
       FullRender();
       System.Windows.Forms.Application.DoEvents();
     }
 
+    /// <summary>
+    /// OnStartup() gets called just before the application starts
+    /// </summary>
     protected override void OnStartup() 
     {
+      // set window form styles
+      // these styles enable double buffering, which results in no flickering
       SetStyle(ControlStyles.Opaque, true);
       SetStyle(ControlStyles.UserPaint, true);
       SetStyle(ControlStyles.AllPaintingInWmPaint, true);
       SetStyle(ControlStyles.DoubleBuffer, false);
 
+      // set process priority
       m_MouseTimeOut=DateTime.Now;
       System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
-      GUIWindowManager.OnAppStarting();
 
+      // tell window manager we're gonna start
+      // this gives the windows a chance to initialize themselves
+      GUIWindowManager.OnAppStarting();
     } 
+
+    /// <summary>
+    /// OnExit() Gets called just b4 application stops
+    /// </summary>
     protected override void OnExit() 
     {
+      // stop any file playback
       g_Player.Stop();
+      
+      // tell window manager that application is closing
+      // this gives the windows the change to do some cleanup
       GUIWindowManager.OnAppClosing();
     }
-	
-    public void RenderVideoOverlay()
-    {
-      if (!g_Player.Playing) return;
-      if (!g_Player.HasVideo) return;
-      if (GUIGraphicsContext.IsFullScreenVideo) return;
-      if (GUIGraphicsContext.Calibrating) return;
-      if (!GUIGraphicsContext.Overlay) return;
-      if (Utils.IsAudio(g_Player.CurrentFile)) return;
-      GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
-      if (null!=windowOverlay)
-      {
-        windowOverlay.Render();
-      }
-    }
 
-    public void RenderMusicOverlay()
-    {
-      if (!g_Player.Playing) return;
-      if (GUIGraphicsContext.IsFullScreenVideo) return;
-      if (!GUIGraphicsContext.Overlay) return;
-      if (!Utils.IsAudio(g_Player.CurrentFile)) return;
-      GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
-      if (null!=windowOverlay)
-      {
-        windowOverlay.Render();
-      }
-    }
 
     protected override void Render() 
     { 
+      // sleep 10msec so we dont use 100% cpu time
       System.Threading.Thread.Sleep(10);
+
+      // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device==null) return;
 
+      // Do we need a screen refresh
+      // screen refresh is needed when for example alt+tabbing between programs
+      // when that happens the screen needs to get refreshed
       if (!m_bNeedUpdate)
       {
+        // no refresh needed
+        // are we playing a video fullscreen?
         if(GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing)
         {
+          // yes, then just handle the outstanding messages
           GUIWindowManager.DispatchThreadMessages();
-          SetVideoRect();
           g_Player.Process();
           GUIGraphicsContext.IsPlaying=true;
+          
+          // and return
           return;
         }
       }
+      // we're not playing a video fullscreen
+      // or screen needs a refresh
       m_bNeedUpdate=false;
 
+      // handle any outstanding messages
       GUIWindowManager.DispatchThreadMessages();
       g_Player.Process();
 
+      // update playing status
       if (g_Player.Playing)
       {
         GUIGraphicsContext.IsPlaying=true;
@@ -182,11 +193,12 @@ public class MediaPortalApp : D3DApp
         GUIGraphicsContext.IsPlaying=false;
       }
  
+      // clear the surface
       GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
+
+      // ask the window manager to render the current active window
       GUIWindowManager.Render(); 
-      RenderVideoOverlay();
-      RenderMusicOverlay();
  
       GUIGraphicsContext.DX9Device.EndScene();
       try
@@ -199,25 +211,6 @@ public class MediaPortalApp : D3DApp
         g_Player.Stop();
         deviceLost = true;
       }
-      SetVideoRect();
-       
-    }
-
-    public void SetVideoRect()
-    {
-      if (!g_Player.Playing) return;
-      if (!g_Player.HasVideo) return;
-
-      g_Player.FullScreen=GUIGraphicsContext.IsFullScreenVideo;
-      if (!g_Player.FullScreen)
-      {
-        g_Player.PositionX=GUIGraphicsContext.VideoWindow.Left;
-        g_Player.PositionY=GUIGraphicsContext.VideoWindow.Top;
-        g_Player.RenderWidth=GUIGraphicsContext.VideoWindow.Width;
-        g_Player.RenderHeight=GUIGraphicsContext.VideoWindow.Height;
-        g_Player.ARType=GUIGraphicsContext.ARType;
-      }
-      g_Player.SetVideoWindow();
     }
 
 
@@ -417,7 +410,6 @@ public class MediaPortalApp : D3DApp
     GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
     if (window!=null)
     {
-      int iControl=window.GetFocusControl();
       Action action=new Action(Action.ActionType.ACTION_MOUSE_MOVE,x,y);
       OnAction(action);
       
