@@ -378,6 +378,7 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     protected override void OnExit() 
     {
+      StopUpdater();
       GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
       // stop any file playback
       g_Player.Stop();

@@ -86,7 +86,6 @@ namespace MediaPortal.Configuration
 			frameSizeComboBox.Items.AddRange(captureFormats.ToArray());
 
 
-      SetupPropertyPages();
 		}
 
 		/// <summary>
@@ -165,6 +164,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Capture Card Settings";
+      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
       // 
       // audioDeviceComboBox
       // 
@@ -366,6 +366,7 @@ namespace MediaPortal.Configuration
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "EditCaptureCardForm";
+      this.Load += new System.EventHandler(this.EditCaptureCardForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -567,6 +568,17 @@ namespace MediaPortal.Configuration
         audioCompressorComboBox.SelectedItem = null;
         audioCompressorComboBox.Text = String.Empty;
       }    
+    }
+
+    private void groupBox1_Enter(object sender, System.EventArgs e)
+    {
+    
+    }
+
+    private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
+    {
+
+      SetupPropertyPages();    
     }
 
 		public TVCaptureDevice CaptureCard
