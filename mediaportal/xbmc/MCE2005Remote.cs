@@ -418,6 +418,17 @@ namespace MediaPortal
               return false;
             }
             break;
+          case 0x5D://Show context menu (Yellow button)
+            if (header.hid.RawData3==0)
+            {
+              action = new Action(Action.ActionType.ACTION_CONTEXT_MENU,0,0);  
+            }
+            else
+            {
+              Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+              return false;
+            }
+            break;
           case 0x5E://TV Change aspect ratio (Blue button)
             if (header.hid.RawData3==0)
             {
