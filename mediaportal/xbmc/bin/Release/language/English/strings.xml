@@ -2212,7 +2212,7 @@
 </string>
 <string>
 	<id>852</id>
-	<value>Alarm On</value>
+	<value>Alarm On/Off</value>
 </string>
 <string>
 	<id>853</id>
@@ -2220,7 +2220,7 @@
 </string>
 <string>
 	<id>854</id>
-	<value>Enabled on These Days</value>
+	<value>Enabled on these days</value>
 </string>
 <string>
 	<id>855</id>
@@ -2228,7 +2228,7 @@
 </string>
 <string>
 	<id>856</id>
-	<value>Sleeptimer On</value>
+	<value>Sleep Timer On/Off</value>
 </string>
 <string>
 	<id>857</id>
@@ -2246,6 +2246,23 @@
 	<id>860</id>
 	<value>Volume fade in/out</value>
 </string>
+<string>
+	<id>861</id>
+	<value>Alarm Details</value>
+</string>
+<string>
+	<id>862</id>
+	<value>Radio</value>
+</string>
+<string>
+	<id>863</id>
+	<value>File</value>
+</string>
+<string>
+	<id>864</id>
+	<value>Media type</value>
+</string>
+
 <string>
 	<id>8000</id>
 	<value>My Mail</value>

@@ -51,6 +51,7 @@ copy ..\..\..\wmfsdk\bin\Release\yeti.wmfsdk.dll plugins\TagReaders
 
 copy ..\..\..\TagReader\bin\Release\TagReader.dll .
 
+copy ..\..\..\mp4TagReader\bin\Release\mp4TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\bin\Release\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\release\zlib.dll plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Release\MultiTagReader.dll plugins\TagReaders

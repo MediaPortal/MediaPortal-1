@@ -237,6 +237,8 @@ namespace MediaPortal.TV.Recording
       if (m_TVTuner == null)
       {
         DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED:no tuner found");
+        iid = typeof(IAMTuner).GUID;
+        hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat}, null, m_filterCaptureVideo, ref iid, out o);
       }
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);

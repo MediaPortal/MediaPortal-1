@@ -42,6 +42,7 @@ copy ..\..\..\tag.cfg .
 copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 
+copy ..\..\..\mp4TagReader\bin\Debug\mp4TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.dll plugins\TagReaders
@@ -79,6 +80,7 @@ copy ..\..\..\GUIMyMail\bin\Debug\MyMailPlugin.pdb plugins\windows
 copy ..\..\..\SMIReader\bin\Debug\SMIReader.pdb plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.pdb plugins\subtitle
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.pdb plugins\TagReaders
+copy ..\..\..\mp4TagReader\bin\Debug\mp4TagReader.pdb plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.pdb plugins\TagReaders
 copy ..\..\..\WmaTagReader\bin\Debug\WmaTagReader.pdb plugins\TagReaders
 copy ..\..\..\RadioDatabase\bin\Debug\RadioDatabase.pdb .

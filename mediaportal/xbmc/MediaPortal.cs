@@ -8,6 +8,7 @@ using System.Data;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml;
 using Microsoft.Win32;
 
@@ -51,8 +52,15 @@ public class MediaPortalApp : D3DApp, IRender
     const int WM_KEYDOWN = 0x0100;
     const int WM_SYSCOMMAND = 0x0112;
     const int SC_SCREENSAVE = 0xF140;
+    const int SW_RESTORE = 9;
 
     static SplashScreen splashScreen;
+
+    [DllImport("user32.dll")] private static extern
+        bool SetForegroundWindow(IntPtr hWnd);
+    [DllImport("user32.dll")] private static extern
+        bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
 
 		[STAThread]
     public static void Main()
@@ -223,7 +231,32 @@ public class MediaPortalApp : D3DApp, IRender
       if (!m_Mutex.WaitOne(1, true))
       {
         string strMsg = "Mediaportal is already running!";
-        System.Windows.Forms.MessageBox.Show(strMsg, this.Text, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+
+        // Find the other instance of MP (use System.Diagnostics. because Process is also a method in this class)
+        string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+        Process[] processes = System.Diagnostics.Process.GetProcessesByName(processName);
+
+        // The array returned from the previous call will contain 2 processes, the already running
+        // process and this process. Figure out what process the running one is and focus that window
+
+        int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
+        Process otherProcess;
+
+        if (processes[0].Id == pid)
+        {
+           otherProcess = processes[1];
+        }
+        else
+        {
+           otherProcess = processes[0];
+        }
+
+        // bring the window of the other process to the foreground
+        IntPtr hWnd = otherProcess.MainWindowHandle;
+        ShowWindowAsync(hWnd, SW_RESTORE );
+        SetForegroundWindow(hWnd);
+
+        // Exit this process
         throw new Exception(strMsg);
       }
 

@@ -679,7 +679,7 @@
                 />
                 <File
                     RelPath = "Sections\TVProgramGuide.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
