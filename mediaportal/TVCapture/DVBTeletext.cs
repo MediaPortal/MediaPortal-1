@@ -429,9 +429,9 @@ namespace MediaPortal.TV.Recording
 
 				}// for(line=0
 			}
-			catch(Exception ex)
+			catch(Exception )
 			{ 
-				int a=0;
+				//int a=0;
 			}
 		}
 		bool IsDEC(int i)

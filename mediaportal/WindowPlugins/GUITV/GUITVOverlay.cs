@@ -26,7 +26,7 @@ namespace MediaPortal.GUI.TV
       , CONTROL_RW_LOGO  =8
     };
 
-    TVUtil m_util=null;
+    //TVUtil m_util=null;
     public GUITVOverlay()
 		{
 		}
@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.TV
     }
     public override bool DoesPostRender()
     {
-			return false;
+			return false;/*
       if (Recorder.IsRecording==false && Recorder.View==false) return  false;
 			if (g_Player.Playing && !g_Player.IsTV) return false;
 			if (g_Player.IsTVRecording) return false;
@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.TV
 			if (GUIGraphicsContext.Overlay==false) return false;
 
       return true;
-    }
+*/    }
 
     public override void PostRender(int iLayer)
     {

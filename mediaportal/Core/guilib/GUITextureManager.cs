@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Library
 				}
 #endif
 				
-				Format fmt=Format.A8R8G8B8;
+				//Format fmt=Format.A8R8G8B8;
 				if (IsTemporary(strFileName))
 				{
 					//fmt=Format.Dxt3;

@@ -231,7 +231,7 @@ namespace MediaPortal.TV.Recording
 		int	[]							m_ecmPids=new int[3]{0,0,0};
 		int[]							m_ecmIDs=new int[3]{0,0,0};
 		bool							m_videoDataFound=false;
-		bool							m_vmr9Running=false;
+		//bool							m_vmr9Running=false;
 		DVBTeletext						m_teleText=new DVBTeletext();
 		int								m_retryCount=0;
 		TSHelperTools					m_tsHelper=new TSHelperTools();
@@ -1672,7 +1672,7 @@ namespace MediaPortal.TV.Recording
 			//
 			if(Vmr9.IsVMR9Connected==true && Vmr9.UseVMR9inMYTV==true)// fallback
 			{
-				m_vmr9Running=true;
+				//m_vmr9Running=true;
 			}
 			//
 			//

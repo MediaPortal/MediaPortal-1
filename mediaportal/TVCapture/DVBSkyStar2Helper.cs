@@ -520,7 +520,7 @@ namespace MediaPortal.TV.Recording
 				// call checklock once, the return value dont matter
 	
 				n=m_tunerCtrl.CheckLock();
-				bool b=false;
+				//bool b=false;
 				if(ConnectFilters()==false)
 					return false;
 
