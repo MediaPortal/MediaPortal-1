@@ -2071,7 +2071,7 @@
 </string>
 <string>
 	<id>714</id>
-	<value>DVD inserted, do you want to play it?</value>
+	<value>Disc inserted, do you want to play it?</value>
 </string>
 <string>
 	<id>715</id>
@@ -2103,11 +2103,11 @@
 </string>
 <string>
 	<id>722</id>
-	<value>Unable to play DVD</value>
+	<value>Unable to play Disc</value>
 </string>
 <string>
 	<id>723</id>
-	<value>Did you insert a DVD?</value>
+	<value>Did you insert a Disc?</value>
 </string>
 <string>
 	<id>800</id>
