@@ -840,7 +840,7 @@
   <capturecard commercialname="Dvico Fusion HDTV USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db10">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"			  checkdevice="false"></filter>
