@@ -995,6 +995,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITopbar\TopBarSetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITopbar\TopBarSetupForm.resx"
+                    DependentUpon = "TopBarSetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUITV\FormOSD.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

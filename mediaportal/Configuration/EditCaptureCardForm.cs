@@ -1917,6 +1917,7 @@ namespace MediaPortal.Configuration
 			GC.Collect();
 			GUIGraphicsContext.ActiveForm = prevFormPtr;
 			GUIGraphicsContext.form=prevForm;
+			TVDatabase.RemoveOverlappingPrograms();
 		}
 
 		private void button16_Click(object sender, System.EventArgs e)
