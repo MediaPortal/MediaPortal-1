@@ -155,6 +155,13 @@ namespace MediaPortal.Configuration
 			Log.Write("add RedEye section");//PB00//
 			redeye = new Sections.RedEye();//PB00//
 			AddChildSection(remote, redeye);//PB00//
+
+
+			Sections.FiltersSection filterSection = new Sections.FiltersSection();
+			AddSection(filterSection);
+			AddChildSection(filterSection,new Sections.MPEG2DecAudioFilter());
+
+
       Log.Write("add weather section");
       AddSection(new Sections.Weather());
       Log.Write("add plugins section");
