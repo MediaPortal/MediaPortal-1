@@ -837,7 +837,7 @@ namespace MediaPortal.GUI.TV
 			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
-			if (windowId== 7700) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
 
 			return false;
 		}

@@ -39,6 +39,17 @@
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
+	<control>
+		<description>template for program title darkarea </description>
+		<type>label</type>
+		<visible>no</visible>
+		<posX>300</posX>
+		<posY>200</posY>
+		<id>27</id>
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
 			<control>
 			<type>group</type>
 			<description>group element</description>
