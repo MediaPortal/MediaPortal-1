@@ -2288,6 +2288,34 @@
 	<id>900</id>
 	<value>Resume movie from last time ?</value>
 </string>
+<string>
+	<id>901</id>
+	<value>MSN Messenger</value>
+</string>
+<string>
+	<id>902</id>
+	<value>Online contacts</value>
+</string>
+<string>
+	<id>903</id>
+	<value>Connect</value>
+</string>
+<string>
+	<id>904</id>
+	<value>Disconnect</value>
+</string>
+<string>
+	<id>905</id>
+	<value>You need to configure this plugin first</value>
+</string>
+<string>
+	<id>906</id>
+	<value>Fill in your email adres in the setup</value>
+</string>
+<string>
+	<id>907</id>
+	<value>Could not connect to MSN</value>
+</string>
 
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Delete</value></string>
