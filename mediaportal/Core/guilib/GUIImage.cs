@@ -31,6 +31,7 @@ namespace MediaPortal.GUI.Library
 		private int										  m_iCurrentImage=0;
 		[XMLSkinElement("keepaspectratio")] private bool    m_bKeepAspectRatio=false;
     [XMLSkinElement("zoom")] private bool    m_bZoom=false;
+    [XMLSkinElement("zoomfromtop")] private bool    m_bZoomFromTop=false;
 		private ArrayList								m_vecTextures = new ArrayList();
 
     //TODO GIF PALLETTE
@@ -447,7 +448,7 @@ namespace MediaPortal.GUI.Library
       //adjust image based on current aspect ratio setting
 			float fSourceFrameRatio = 1;
 			float fOutputFrameRatio = 1;
-      if (!m_bZoom && m_bKeepAspectRatio && m_iTextureWidth!=0 && m_iTextureHeight!=0)
+      if (!m_bZoom && !m_bZoomFromTop && m_bKeepAspectRatio && m_iTextureWidth!=0 && m_iTextureHeight!=0)
       {
         // TODO: remove or complete HDTV_1080i code
         //int iResolution=g_stSettings.m_ScreenResolution;
@@ -500,7 +501,7 @@ namespace MediaPortal.GUI.Library
       int iSourceWidth = m_iTextureWidth;
       int iSourceHeight = m_iTextureHeight;
 
-      if (m_bZoom && m_bKeepAspectRatio)
+      if ((m_bZoom || m_bZoomFromTop) && m_bKeepAspectRatio)
       {
         fSourceFrameRatio = ((float)nw) / ((float)nh);       
         fOutputFrameRatio = fSourceFrameRatio * GUIGraphicsContext.PixelRatio; 
@@ -526,7 +527,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        iSourceY = (m_iTextureHeight-iSourceHeight)/2;         
+        if (!m_bZoomFromTop) iSourceY = (m_iTextureHeight-iSourceHeight)/2;         
         iSourceX = (m_iTextureWidth-iSourceWidth)/2;
       }
 			
@@ -849,6 +850,20 @@ namespace MediaPortal.GUI.Library
       set 
       {
         m_bZoom=value;
+        Update();
+      }
+    }
+
+    /// <summary>
+    /// Property which indicates if the image should be zoomed into the
+    /// given rectangle of the control. Zoom with fixed top, center width
+    /// </summary>
+    public bool ZoomFromTop
+    {
+      get { return m_bZoomFromTop;}
+      set 
+      {
+        m_bZoomFromTop=value;
         Update();
       }
     }

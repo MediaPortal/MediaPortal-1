@@ -253,7 +253,7 @@ GUISpinControl m_upDown = null;
         {
           pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.ThumbnailImage, 0x0);
           pImage.KeepAspectRatio = true;
-          pImage.Zoom = !pItem.IsFolder;
+          pImage.ZoomFromTop = !pItem.IsFolder;
           pImage.AllocResources();
 
           pItem.Thumbnail = pImage;
@@ -270,7 +270,7 @@ GUISpinControl m_upDown = null;
             pImage.FreeResources();
             pImage.AllocResources();
           }
-          pImage.Zoom = !pItem.IsFolder;
+          pImage.ZoomFromTop = !pItem.IsFolder;
           pImage.Width = m_iThumbWidth+2*iOverSized;
           pImage.Height = m_iThumbHeight+2*iOverSized;
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
@@ -288,7 +288,7 @@ GUISpinControl m_upDown = null;
           {
             pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.IconImageBig, 0x0);
             pImage.KeepAspectRatio = true;
-            pImage.Zoom = !pItem.IsFolder;
+            pImage.ZoomFromTop = !pItem.IsFolder;
 
             pImage.AllocResources();
             pItem.IconBig = pImage;
@@ -305,7 +305,7 @@ GUISpinControl m_upDown = null;
               pImage.FreeResources();
               pImage.AllocResources();
             }
-            pImage.Zoom = !pItem.IsFolder;
+            pImage.ZoomFromTop = !pItem.IsFolder;
             pImage.Width = m_iThumbWidth+2*iOverSized;
             pImage.Height = m_iThumbHeight+2*iOverSized;
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
