@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices; 
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
@@ -204,21 +205,18 @@ namespace DShowNET
         m_bOverlayVisible=true;
         DirectShowUtil.DebugWrite("mpeg2:StartViewing()");
 
-				//show video overlay window
-        if (!UseVMR9)
-        {
-          if (m_videoWindow!=null)
-            m_videoWindow.put_Visible( DsHlp.OATRUE );
-        }
+				Overlay=false;
 
 				// start graph
         if (m_mediaControl!=null && !m_bRunning)
         {
-          DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
+					DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
+					SetVideoWindow();
           m_mediaControl.Run(); 
           m_bRunning=true;
           DirectShowUtil.DebugWrite("mpeg2:StartViewing() started");
         }
+				Overlay=true;
         return;
       }
 
@@ -257,10 +255,10 @@ namespace DShowNET
             DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window style:0x{0:X}",hr);
 
           // make the overlay window visible
-          m_bOverlayVisible=true;
-          hr = m_videoWindow.put_Visible( DsHlp.OATRUE );
-          if( hr != 0 ) 
-            DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible:0x{0:X}",hr);
+      //    m_bOverlayVisible=true;
+						hr = m_videoWindow.put_Visible( DsHlp.OAFALSE );
+      //    if( hr != 0 ) 
+      //      DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible:0x{0:X}",hr);
         }
         else 
         {
@@ -268,16 +266,63 @@ namespace DShowNET
         }
       }
 
+			Overlay=false;
+
 			// start the graph so we actually get to see the video
       m_bRendered=true;
       if (m_mediaControl != null && !m_bRunning)
       {
+				SetVideoWindow();
         DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
         hr=m_mediaControl.Run();
         m_bRunning=true;
         DirectShowUtil.DebugWrite("mpeg2:StartViewing() started mediactl:0x{0:X}",hr);
       }
+			Overlay=true;
     }
+
+		void SetVideoWindow()
+		{
+			if (m_videoWindow==null) return;
+			
+			int iVideoWidth,iVideoHeight;
+			GetVideoSize( out iVideoWidth, out iVideoHeight );
+			if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
+			{
+				float x=GUIGraphicsContext.OverScanLeft;
+				float y=GUIGraphicsContext.OverScanTop;
+				int  nw=GUIGraphicsContext.OverScanWidth;
+				int  nh=GUIGraphicsContext.OverScanHeight;
+				if (nw <=0 || nh <=0) return;
+
+				System.Drawing.Rectangle rSource,rDest;
+				MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
+				m_geometry.ImageWidth=iVideoWidth;
+				m_geometry.ImageHeight=iVideoHeight;
+				m_geometry.ScreenWidth=nw;
+				m_geometry.ScreenHeight=nh;
+				m_geometry.ARType=GUIGraphicsContext.ARType;
+				m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
+				m_geometry.GetWindow(out rSource, out rDest);
+				rDest.X += (int)x;
+				rDest.Y += (int)y;
+
+				SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
+				SetDestinationPosition(0,0,rDest.Width,rDest.Height );
+				SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
+			}
+			else
+			{
+				if (iVideoWidth>0 && iVideoHeight>0)
+					SetSourcePosition(0,0,iVideoWidth,iVideoHeight);
+  
+				if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
+					SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+  
+				if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
+					SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+			}
+		}
 
 		/// <summary>
 		/// Returns the width/height of the live tv
@@ -471,14 +516,20 @@ namespace DShowNET
       DirectShowUtil.DebugWrite("mpeg2:lock profile");
       hr=m_bSink.LockProfile(strFileName);
       if (hr !=0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set streambuffer filename:0x{0:X}",hr);
-      m_bRendered=true;
+			m_bRendered=true;
+			Overlay=false;
       if (m_mediaControl!=null)
       {
         DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() start mediactl");
-        if (!m_bRunning) m_mediaControl.Run();
+				if (!m_bRunning) 
+				{
+					SetVideoWindow();
+					m_mediaControl.Run();
+				}
         m_bRunning=true;
         DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() started mediactl");
       }
+			Overlay=true;
     }
 
     void Create()
@@ -487,7 +538,7 @@ namespace DShowNET
       try
       {
         m_MPEG2Demuxer=new MPEG2Demultiplexer();
-        m_mpeg2Multiplexer = (IBaseFilter) m_MPEG2Demuxer;
+         m_mpeg2Multiplexer = (IBaseFilter) m_MPEG2Demuxer;
       }
       catch(Exception){}
       //m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
@@ -867,6 +918,7 @@ namespace DShowNET
       set 
       {
         if (value==m_bOverlayVisible) return;
+				if (m_videoWindow==null) return;
         m_bOverlayVisible=value;
         if (!m_bOverlayVisible)
         {

@@ -224,13 +224,6 @@ namespace MediaPortal.GUI.TV
               }
             }
           }
-
-          // start viewing tv... 
-					GUIGraphicsContext.IsFullScreenVideo=false;
-					Recorder.StartViewing(m_iCurrentCard,m_strChannel, m_bTVON, m_bTimeShifting);
-
-          m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
-          m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
 			
 					//set video window position
 					GUIControl cntl = GetControl( (int)Controls.VIDEO_WINDOW);
@@ -238,6 +231,13 @@ namespace MediaPortal.GUI.TV
 					{
 						GUIGraphicsContext.VideoWindow = new Rectangle(cntl.XPosition,cntl.YPosition,cntl.Width,cntl.Height);
 					}
+
+          // start viewing tv... 
+					GUIGraphicsContext.IsFullScreenVideo=false;
+					Recorder.StartViewing(m_iCurrentCard,m_strChannel, m_bTVON, m_bTimeShifting);
+
+          m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
+          m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
           
           UpdateStateOfButtons();
           UpdateProgressPercentageBar();

@@ -705,6 +705,7 @@ namespace MediaPortal.TV.Recording
 				iVideoWidth=Vmr9.VideoWidth;
 				iVideoHeight=Vmr9.VideoHeight;
 			}
+
       DirectShowUtil.DebugWrite("SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
       return true;
 
