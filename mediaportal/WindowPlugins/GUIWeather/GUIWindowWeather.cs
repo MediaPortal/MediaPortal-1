@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Weather
     GUIImage				m_pNowImage=null;
     string          m_strSatelliteURL="";
 		DateTime        m_lRefreshTime=DateTime.Now.AddHours(-1);		//for autorefresh
-
+		
     enum Mode
     {
       Weather,
@@ -197,6 +197,9 @@ namespace MediaPortal.GUI.Weather
                   //img.Centered=true;
                   //img.KeepAspectRatio=true;
                   img.SetFileName(m_strSatelliteURL);
+									//reallocate & load then new image
+									img.FreeResources();
+									img.AllocResources();
                 }
 								break;
 							}
@@ -213,7 +216,10 @@ namespace MediaPortal.GUI.Weather
               //img.Filtering=true;
               //img.Centered=true;
               //img.KeepAspectRatio=true;
-              img.SetFileName(m_strSatelliteURL);
+							img.SetFileName(m_strSatelliteURL);
+							//reallocate & load then new image
+							img.FreeResources();
+							img.AllocResources();
             }
             UpdateButtons();
           }
@@ -567,6 +573,15 @@ namespace MediaPortal.GUI.Weather
 	//			OnMessage(msgRe);
 			}
 
+			// Update sattelite image
+			GUIImage img=GetControl((int)Controls.CONTROL_IMAGE_SAT) as GUIImage;
+			if (img!=null)
+			{
+				img.SetFileName(m_strSatelliteURL);
+				//reallocate & load then new image
+				img.FreeResources();
+				img.AllocResources();
+			}
 			m_lRefreshTime = DateTime.Now;
 		}
 
