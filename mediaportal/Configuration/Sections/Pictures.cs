@@ -38,7 +38,7 @@ namespace MediaPortal.Configuration.Sections
         transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 20));
         kenburnsTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "kenburnsspeed", 20));
         radioButtonRandom.Checked = xmlreader.GetValueAsBool("pictures", "random", false);
-        radioButtonKenBurns.Checked = xmlreader.GetValueAsBool("pictures", "kenburns", true);
+        radioButtonKenBurns.Checked = xmlreader.GetValueAsBool("pictures", "kenburns", true	);
         radioButtonXFade.Checked = !radioButtonRandom.Checked && !radioButtonKenBurns.Checked;
 
 			}			

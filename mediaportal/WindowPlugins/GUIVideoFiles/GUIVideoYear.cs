@@ -84,6 +84,7 @@ namespace MediaPortal.GUI.Video
 		}
     const string ThumbsFolder=@"thumbs\Videos\Title";
 		DirectoryHistory m_history = new DirectoryHistory();
+    static VirtualDirectory  m_directory = new VirtualDirectory();
 		string m_strDirectory = "";
 		int m_iItemSelected = -1;
     MapSettings       _MapSettings = new MapSettings();
@@ -656,7 +657,21 @@ namespace MediaPortal.GUI.Video
 				VideoDatabase.GetFiles(iMovieId, ref movies);
 				if (movies.Count <= 0) return;
 				if (!GUIVideoFiles.CheckMovie(iMovieId)) return;
-				if (movies.Count > 1)
+
+        // Image file handling.
+        // If the only file is an image file, it should be mounted,
+        // allowing autoplay to take over the playing of it.
+        // There should only be one image file in the stack, since
+        // stacking is not currently supported for image files.
+        if (movies.Count == 1 && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension((string)movies[0]).ToLower()))
+        {
+          m_iItemSelected = -1;
+          // GetDirectory mounts the image file
+          ArrayList itemlist = m_directory.GetDirectory((string)movies[0]);
+          return;
+        }
+
+        if (movies.Count > 1)
 				{
 					GUIDialogFileStacking dlg = (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING);
 					if (dlg != null)
