@@ -9,7 +9,8 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
-
+  29-07-2004 my music   : sorting is always z>a initially in album view
+  29-07-2004 my music   : folder.jpg does not show as albumart in albumview
   28-07-2004 viz        : when song ends in full screen viz, you return to GUI
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
