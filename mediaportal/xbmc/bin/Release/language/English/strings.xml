@@ -2348,6 +2348,26 @@
 	<id>915</id>
 	<value>TV Channels</value>
 </string>
+<string>
+	<id>916</id>
+	<value>Remote file</value>
+</string>
+<string>
+	<id>917</id>
+	<value>This file is located on a remote share</value>
+</string>
+<string>
+	<id>918</id>
+	<value>Should I download it to your default</value>
+</string>
+<string>
+	<id>919</id>
+	<value>local share?</value>
+</string>
+<string>
+	<id>921</id>
+	<value>The remote file is being downloaded</value>
+</string>
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>

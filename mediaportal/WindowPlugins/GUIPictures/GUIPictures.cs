@@ -147,8 +147,12 @@ namespace MediaPortal.GUI.Pictures
 
           if (share.Name.Length>0)
           {
-            if (m_strDirectory.Length==0&&strDefault==share.Name)
-              m_strDirectory=share.Path;
+
+            if (strDefault == share.Name)
+            {
+              share.Default=true;
+              if (m_strDirectory.Length==0) m_strDirectory = share.Path;
+            }
             m_directory.Add(share);
           }
           else break;

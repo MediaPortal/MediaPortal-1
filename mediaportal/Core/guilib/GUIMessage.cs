@@ -69,6 +69,7 @@ namespace MediaPortal.GUI.Library
 		private int 					m_dwParam1=0;
     private int 					m_dwParam2=0;
     private int 					m_dwParam3=0;
+    private int 					m_dwParam4=0;
     private int           m_dwTargetWindowId=0;
     private bool          m_bSendTargetWindow=false;
 
@@ -131,6 +132,11 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_dwParam3;}
       set { m_dwParam3=value;}
+    }
+    public int  Param4
+    {
+      get { return m_dwParam4;}
+      set { m_dwParam4=value;}
     }
 
 		/// <summary>

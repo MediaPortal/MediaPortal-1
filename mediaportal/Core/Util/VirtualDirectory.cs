@@ -397,20 +397,12 @@ namespace MediaPortal.Util
       
       if (IsRemote(strDir))
       {
+        FTPClient ftp=GetFtpClient(strDir);
+        if (ftp==null) return items;
+
         string folder=strDir.Substring( "remote:".Length);
         string[] subitems = folder.Split(new char[]{'?'});
         if (subitems[4]==String.Empty) subitems[4]="/";
-        int port=21;
-        unchecked
-        {
-          port=Int32.Parse(subitems[1]);
-        }
-        FTPClient ftp;
-        if (!FtpConnectionCache.InCache(subitems[0],subitems[2],subitems[3], port,out ftp))
-        {
-          ftp=FtpConnectionCache.MakeConnection(subitems[0],subitems[2],subitems[3], port);
-        }
-        if (ftp==null) return items;
 
         FTPFile[] files;
         try
@@ -422,7 +414,7 @@ namespace MediaPortal.Util
         {
           //maybe this socket has timed out, remove it and get a new one
           FtpConnectionCache.Remove(ftp);
-          ftp=FtpConnectionCache.MakeConnection(subitems[0],subitems[2],subitems[3], port);
+          ftp=GetFtpClient(strDir);
           if (ftp==null) return items;
           try
           {
@@ -735,6 +727,195 @@ namespace MediaPortal.Util
 			catch(Exception){}
 
       return false;
+    }
+    
+    /// <summary>
+    /// Returns the path of the default share
+    /// </summary>
+    /// <returns>Returns the path of the default share</returns>
+    public string GetDefaultPath()
+    {
+      foreach (Share share in m_shares)
+      {
+        if (!share.IsFtpShare && share.Default)
+        {
+          return share.Path;
+        }
+      }
+      return String.Empty;
+    }
+
+    /// <summary>
+    /// Function to split get the path and filename for a remote file
+    /// </summary>
+    /// <param name="remotefile">remote file</param>
+    /// <param name="filename">on return contains the filename</param>
+    /// <param name="path">on return contains the path</param>
+    public void GetRemoteFileNameAndPath(string remotefile, out string filename, out string path)
+    {
+      filename=String.Empty;
+      path="/";
+      if (!IsRemote(remotefile)) return ;
+      int slash=remotefile.LastIndexOf("/");
+
+      if (slash>0) 
+      {
+        filename=remotefile.Substring(slash+1);
+        remotefile=remotefile.Substring(0,slash);
+      }
+      int questionMark=remotefile.LastIndexOf("?");
+      if (questionMark>0) path=remotefile.Substring(questionMark+1);
+    }
+
+    /// <summary>
+    /// Returns the local filename for a downloaded file
+    /// </summary>
+    /// <param name="remotefile">remote filename+path</param>
+    /// <returns>local filename+path</returns>
+    public string GetLocalFilename(string remotefile)
+    {
+      //get the default share
+      if (!IsRemote(remotefile)) return remotefile;
+
+      foreach (Share share in m_shares)
+      {
+        if (!share.IsFtpShare && share.Default)
+        {
+          int slash=remotefile.LastIndexOf("/");
+          if (slash>0) remotefile=remotefile.Substring(slash+1);
+          else 
+          {
+            int questionMark=remotefile.LastIndexOf("?");
+            if (questionMark>0) remotefile=remotefile.Substring(questionMark+1);
+          }            
+          
+          string localFile=String.Format(@"{0}\{1}", share.Path,remotefile);
+          return localFile;
+        }
+      }
+      return String.Empty;
+    }
+
+    /// <summary>
+    /// Function to check if a remote file has been downloaded or not
+    /// </summary>
+    /// <param name="file">remote filename + path</param>
+    /// <returns>true: file is downloaded
+    /// false: file is not downloaded or MP is busy downloading</returns>
+    public bool IsRemoteFileDownloaded(string file)
+    {
+      if (!IsRemote(file)) return true;
+
+      //check if we're still downloading
+      string remoteFilename;
+      string remotePath;
+      GetRemoteFileNameAndPath(file, out remoteFilename, out remotePath);
+      if (FtpConnectionCache.IsDownloading(remoteFilename))
+      {
+        return false;
+      }
+      
+      //nop then check if local file exists
+      string localFile=GetLocalFilename(file);
+      if (localFile==String.Empty) return false;
+      if (System.IO.File.Exists(localFile))
+      {
+        //already downloaded
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Function which checks if a remote file has been downloaded and if not
+    /// asks the user whether it should download it
+    /// </summary>
+    /// <param name="file">remote file</param>
+    /// <returns>true: download file
+    /// false: do not download file</returns>
+    public bool ShouldWeDownloadFile(string file)
+    {
+
+      string remoteFilename;
+      string remotePath;
+      GetRemoteFileNameAndPath(file, out remoteFilename, out remotePath);
+      GUIMessage msg ;
+      if (FtpConnectionCache.IsDownloading(remoteFilename))
+      {
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+        msg.Param1=916;
+        msg.Param2=921;
+        msg.Param3=0;
+        msg.Param4=0;
+        GUIWindowManager.SendMessage(msg);
+        return false;
+      }
+
+      //file is remote, ask if user wants to download it
+      //this file is on a remote share, ask if user wants to download it
+      //to the default local share
+      msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,0);
+      msg.Param1=916;
+      msg.Param2=917;
+      msg.Param3=918;
+      msg.Param4=919;
+      GUIWindowManager.SendMessage(msg);
+      if (msg.Param1==1) return true;
+      return false;
+    }
+
+    /// <summary>
+    /// Function to download a remote file
+    /// </summary>
+    /// <param name="file">remote file</param>
+    /// <returns>true: download started,
+    /// false: failed to start download</returns>
+    /// <remarks>file is downloaded to the default share</remarks>
+    public bool DownloadRemoteFile(string file)
+    {
+      if (IsRemoteFileDownloaded(file)) return true;
+
+      //start download...
+      FTPClient client = GetFtpClient(file);
+      if (client ==null) return false;
+
+      string remoteFilename;
+      string remotePath;
+      GetRemoteFileNameAndPath(file, out remoteFilename, out remotePath);
+      try
+      {
+        client.ChDir(remotePath);
+        string localFile=String.Format(@"{0}\{1}", GetDefaultPath(),remoteFilename);
+        return FtpConnectionCache.Download(client,remoteFilename,localFile);
+      }
+      catch(Exception)
+      {
+      }
+      return false;
+    }
+  
+    /// <summary>
+    /// Function which gets an available ftp client 
+    /// if none is available it creates a new one
+    /// </summary>
+    /// <param name="file">remote file/folder</param>
+    /// <returns>FTP client or null</returns>
+    FTPClient GetFtpClient(string file)
+    {
+      string folder=file.Substring( "remote:".Length);
+      string[] subitems = folder.Split(new char[]{'?'});
+      if (subitems[4]==String.Empty) subitems[4]="/";
+      int port=21;
+      unchecked
+      {
+        port=Int32.Parse(subitems[1]);
+      }
+      FTPClient ftp;
+      if (!FtpConnectionCache.InCache(subitems[0],subitems[2],subitems[3], port,out ftp))
+      {
+        ftp=FtpConnectionCache.MakeConnection(subitems[0],subitems[2],subitems[3], port);
+      }
+      return ftp;
     }
   }
 }

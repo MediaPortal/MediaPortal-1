@@ -162,8 +162,11 @@ namespace MediaPortal.GUI.Video
 
           if (share.Name.Length > 0)
           {
-            if (m_strDirectory.Length == 0 && strDefault == share.Name)
-              m_strDirectory = share.Path;
+            if (strDefault == share.Name)
+            {
+              share.Default=true;
+              if (m_strDirectory.Length==0) m_strDirectory = share.Path;
+            }
             m_directory.Add(share);
           }
           else break;
@@ -788,9 +791,32 @@ namespace MediaPortal.GUI.Video
 			}
 			else
 			{
+        if (m_directory.IsRemote(item.Path) )
+        {
+          if (!m_directory.IsRemoteFileDownloaded(item.Path) )
+          {
+            if (!m_directory.ShouldWeDownloadFile(item.Path)) return;
+            if (!m_directory.DownloadRemoteFile(item.Path))
+            {
+              //show message that we are unable to download the file
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+              msg.Param1=916;
+              msg.Param2=920;
+              msg.Param3=0;
+              msg.Param4=0;
+              GUIWindowManager.SendMessage(msg);
+
+              return;
+            }
+          }
+        }
+        
+        if (!m_directory.IsRemoteFileDownloaded(item.Path) ) return;
+        string strFileName = item.Path;
+        strFileName=m_directory.GetLocalFilename(strFileName);
+
 				// Set selected item
 				m_iItemSelected = GetSelectedItemNo();
-				string strFileName = item.Path;
 				if (PlayListFactory.IsPlayList(strFileName))
 				{
 					LoadPlayList(strFileName);

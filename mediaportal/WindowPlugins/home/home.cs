@@ -106,11 +106,12 @@ namespace MediaPortal.GUI.Home
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head="",Line1="",Line2="";
+          string Head="",Line1="",Line2="",Line3="";;
           if (message.Param1!=0) Head=GUILocalizeStrings.Get(message.Param1);
           if (message.Param2!=0) Line1=GUILocalizeStrings.Get(message.Param2);
           if (message.Param3!=0) Line2=GUILocalizeStrings.Get(message.Param3);
-          if ( AskYesNo(Head,Line1,Line2))
+          if (message.Param3!=0) Line3=GUILocalizeStrings.Get(message.Param4);
+          if ( AskYesNo(Head,Line1,Line2,Line3))
             message.Param1=1;
           else
             message.Param1=0;
@@ -165,13 +166,13 @@ namespace MediaPortal.GUI.Home
 
     }
 
-    bool AskYesNo(string strHeading, string strLine1, string strLine2)
+    bool AskYesNo(string strHeading, string strLine1, string strLine2,string strLine3)
     {
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetLine(1,strLine1);
       dlgYesNo.SetLine(2,strLine2);
-      dlgYesNo.SetLine(3,"");
+      dlgYesNo.SetLine(3,strLine3);
       dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
       return dlgYesNo.IsConfirmed;
 
