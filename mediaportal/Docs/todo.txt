@@ -24,9 +24,7 @@ My TV:
      -
      
   TVGuide:
-     - Search function in EPG 
      - add to program favorites (will b highlighted next time)
-     - allow user to specify which channels should be displayed and which not (hide channels)
      - different views like View by : movies, news, Whats playing now... 
      - show multiple red dots when recording series
      - Indicate that recording is already busy when user tries to record something while recording is already started
