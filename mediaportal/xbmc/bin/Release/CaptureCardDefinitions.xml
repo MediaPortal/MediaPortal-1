@@ -733,7 +733,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" checkdevice="false"></filter>
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
@@ -741,7 +741,7 @@
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard> 
 
   <capturecard commercialname="VideoMate DVB-T 300" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c900185b&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
