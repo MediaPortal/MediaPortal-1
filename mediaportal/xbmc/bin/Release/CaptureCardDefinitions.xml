@@ -27,6 +27,7 @@
 <!--    Dvico Fusion HDTV           added by Frodo        (untested)                  -->
 <!--    Dvico Fusion HDTV WDM       added by Frodo        (untested)                  -->
 <!--    Dvico Fusion HDTV Lite      added by Frodo        (untested)                  -->
+<!--    Dvico Fusion HDTV USB2      added by Frodo        ()                          -->
 <!--    FireDTV (BDA DVB-T)         added by Frodo        ()                          -->
 <!--    FlyDVB-T DUO                added by Frodo                                    -->
 <!--    FlyDVB-T DUO Analog			added by Frodo                                    -->
@@ -54,7 +55,7 @@
 <!--    general MCE card            added by Frodo                                    -->
 <!--    general MPEG2 card          added by Frodo                                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.16                                                               -->
+<!-- version : 1.0.0.17                                                               -->
 <!-- changed : 15-jan-2005 by Frodo                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -796,4 +797,21 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Dvico Fusion HDTV USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db10">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Bluebird, BDA DVB-T Tuner/Demod"     checkdevice="false"></filter>
+        <filter cat="capture"         name="Bluebird, WDM TsCapture"   checkdevice="false"></filter>
+      </filters>
+      <connections>
+    <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+    <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+  
 </capturecards>
