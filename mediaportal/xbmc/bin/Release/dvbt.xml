@@ -1,3 +1,6 @@
+<!-- version : 1.0.0.1                                                               -->
+<!-- changed : 8-jan-2005 by Frodo                                                   -->
+<!-- added all european and australian frequencies                                   -->
 <dvbt>
 	<frequencies>
 		<frequency carrier="84500"/>
@@ -8,6 +11,7 @@
 		<frequency carrier="186000"/>
 		<frequency carrier="194500"/>
 		<frequency carrier="191500"/>
+		<frequency carrier="191625"/>
 		<frequency carrier="198500"/>
 		<frequency carrier="203500"/>
 		<frequency carrier="205500"/>
@@ -37,10 +41,11 @@
 		<frequency carrier="578000"/>
 		<frequency carrier="578500"/>
 		<frequency carrier="585500"/>
+		<frequency carrier="585625"/>
 		<frequency carrier="586000"/>
 		<frequency carrier="592500"/>
-		<frequency carrier="599500"/>
 		<frequency carrier="594000"/>
+		<frequency carrier="599500"/>
 		<frequency carrier="602000"/>
 		<frequency carrier="606500"/>
 		<frequency carrier="610000"/>

@@ -613,7 +613,7 @@
       <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="AVerMedia AVerEIT"			    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="AVerMedia AVerEIT"						checkdevice="false"></filter>
         <filter cat="capture"         name="AVerMedia Transport Stream Capture"		checkdevice="false"></filter>
       </filters>
       <connections>
