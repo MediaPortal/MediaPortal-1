@@ -129,6 +129,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GraphFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IGraph.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Recorder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

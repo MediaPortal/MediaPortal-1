@@ -9,7 +9,7 @@ namespace MediaPortal.TV.Recording
 	/// <summary>
 	/// 
 	/// </summary>
-	public class SinkGraph
+	public class SinkGraph : IGraph
 	{
     enum State
     { 
@@ -287,9 +287,9 @@ namespace MediaPortal.TV.Recording
       m_graphState=State.TimeShifting;
     }
 
-		public int ChannelNumber
+		public int GetChannelNumber()
 		{
-			get { return m_iChannelNr;}
+			return m_iChannelNr;
 		}
 
     public void TuneChannel(int iChannel)

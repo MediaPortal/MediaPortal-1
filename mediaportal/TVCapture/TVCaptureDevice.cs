@@ -31,19 +31,28 @@ namespace MediaPortal.TV.Recording
       PostRecording
     }
     [NonSerialized]
+    bool          m_bSupportsMPEG2=true;
+
+    [NonSerialized]
     State         m_eState=State.None;
+    
     [NonSerialized]
     TVRecording   m_CurrentTVRecording=null;
+    
     [NonSerialized]
     TVProgram     m_CurrentProgramRecording=null;
+    
     [NonSerialized]
     string        m_strTVChannel="";
+    
     [NonSerialized]
     int           m_iPreRecordInterval=0;
+    
     [NonSerialized]
     int           m_iPostRecordInterval=0;
+    
     [NonSerialized]
-    SinkGraph     m_graph=null;
+    IGraph      m_graph=null;
 
 		[NonSerialized]
 		TVRecorded    m_newRecordedTV = null;
@@ -60,6 +69,11 @@ namespace MediaPortal.TV.Recording
 			return m_strVideoDevice;
 		}
 
+    public bool SupportsMPEG2
+    {
+      get { return m_bSupportsMPEG2;}
+      set { m_bSupportsMPEG2=value;}
+    }
     /// <summary>
     /// Property to get/set the full name of the TV capture card 
     /// </summary>
@@ -305,17 +319,7 @@ namespace MediaPortal.TV.Recording
       if (m_graph==null)
       {
         Log.Write("Card:{0} CreateGraph",ID);		
-        int iTunerCountry=31;
-        string strTunerType="Antenna";
-        using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-        {
-          strTunerType=xmlreader.GetValueAsString("capture","tuner","Antenna");
-          iTunerCountry=xmlreader.GetValueAsInt("capture","country",31);
-        }
-        bool bCable=false;
-        if (!strTunerType.Equals("Antenna")) bCable=true;
-
-        m_graph=new SinkGraph(iTunerCountry,bCable,m_strVideoDevice);
+        m_graph=GraphFactory.CreateGraph(this);
         return m_graph.CreateGraph();
       }
       return true;
@@ -343,7 +347,7 @@ namespace MediaPortal.TV.Recording
 
 			if (m_eState==State.Timeshifting) 
 			{
-				if (m_graph.ChannelNumber!=iChannelNr)
+				if (m_graph.GetChannelNumber()!=iChannelNr)
 				{
 					m_graph.TuneChannel(iChannelNr);
 				}
