@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices; 
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 
 namespace DShowNET
 {
@@ -196,7 +197,7 @@ namespace DShowNET
 		/// Will start the graph and create a new overlay window to show the live-tv in
 		/// </summary>
 		/// <param name="windowHandle">handle to parent window</param>
-    public void StartViewing(IntPtr windowHandle,bool UseVMR9)
+    public void StartViewing(IntPtr windowHandle,VMR9Util vmr9)
     {
 			// if the video window already has been created, but is hidden right now
 			// then just show it and start the graph
@@ -238,7 +239,10 @@ namespace DShowNET
       else
         DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 
-      if (!UseVMR9)
+			bool useOverlay=true;
+			if (vmr9.IsVMR9Connected && vmr9.UseVMR9inMYTV)
+				useOverlay=false;
+      if (useOverlay)
       {
         // get the interfaces of the overlay window
         m_videoWindow = m_graphBuilder as IVideoWindow;

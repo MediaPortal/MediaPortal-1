@@ -686,7 +686,7 @@ namespace MediaPortal.TV.Recording
 #endif
 			m_graphState=State.Viewing;
 			TuneChannel(standard, iChannelNr, m_iCountryCode);
-				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9.UseVMR9inMYTV);
+				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9);
 
       
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
@@ -696,7 +696,7 @@ namespace MediaPortal.TV.Recording
 
       
 			int iVideoWidth,iVideoHeight;
-			if (!Vmr9.UseVMR9inMYTV)
+			if (!Vmr9.IsVMR9Connected)
 			{
 				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
 			}
@@ -741,7 +741,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return ;
       if (m_mpeg2Demux==null) return ;
 			
-			if (!Vmr9.UseVMR9inMYTV)
+			if (!Vmr9.IsVMR9Connected)
 			{
 				if (GUIGraphicsContext.Overlay==false)
 				{
@@ -757,7 +757,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
       int iVideoWidth,iVideoHeight;
-			if (!Vmr9.UseVMR9inMYTV)
+			if (!Vmr9.IsVMR9Connected)
 			{
 				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
 			}

@@ -817,7 +817,7 @@ namespace MediaPortal.TV.Recording
 
 			int hr;
 			//if are using the overlay video renderer
-			if (!Vmr9.UseVMR9inMYTV)
+			if (!Vmr9.IsVMR9Connected)
 			{
 				//then get the overlay video renderer interfaces
 				m_videoWindow = m_graphBuilder as IVideoWindow;
@@ -902,7 +902,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Viewing) return;
 			int iVideoWidth, iVideoHeight;
-			if (Vmr9.UseVMR9inMYTV)
+			if (Vmr9.IsVMR9Connected)
 			{
 				iVideoWidth=Vmr9.VideoWidth;
 				iVideoHeight=Vmr9.VideoHeight;
@@ -950,7 +950,7 @@ namespace MediaPortal.TV.Recording
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
 
-				if (!Vmr9.UseVMR9inMYTV)
+				if (!Vmr9.IsVMR9Connected)
 				{
 					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
@@ -962,7 +962,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-				if (!Vmr9.UseVMR9inMYTV)
+				if (!Vmr9.IsVMR9Connected)
 				{
 					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
