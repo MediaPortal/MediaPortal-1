@@ -54,6 +54,10 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoDatabase", "VideoDatabase\VideoDatabase.csproj", "{C5F79684-B786-43EB-99F2-9F217A6A9BE1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -188,6 +192,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration",
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBUIRT", "USBUIRT\USBUIRT.csproj", "{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoobarExternalPlayer", "FoobarExternalPlayer\FoobarExternalPlayer.csproj", "{12B0C334-83C4-4762-B699-EB10279502A3}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -355,6 +363,10 @@ Global
 		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Debug.Build.0 = Debug|.NET
 		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Release.ActiveCfg = Release|.NET
 		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Release.Build.0 = Release|.NET
+		{12B0C334-83C4-4762-B699-EB10279502A3}.Debug.ActiveCfg = Debug|.NET
+		{12B0C334-83C4-4762-B699-EB10279502A3}.Debug.Build.0 = Debug|.NET
+		{12B0C334-83C4-4762-B699-EB10279502A3}.Release.ActiveCfg = Release|.NET
+		{12B0C334-83C4-4762-B699-EB10279502A3}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
