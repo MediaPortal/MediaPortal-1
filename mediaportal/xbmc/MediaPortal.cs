@@ -1074,6 +1074,12 @@ public class MediaPortalApp : D3DApp, IRender
                       return;
                     }
                   }
+                  else
+                  {
+                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                    GUIGraphicsContext.IsFullScreenVideo = true;
+                    return;
+                  }
 								}
 							}
 							break;

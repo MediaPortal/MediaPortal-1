@@ -278,6 +278,10 @@ namespace MediaPortal.TV.Recording
       tmpRec.Channel=strChannel;
       tmpRec.RecType=TVRecording.RecordingType.Once;
       tmpRec.IsContentRecording=false;//make a reference recording!
+
+      Log.Write("Recorder: start: {0} {1}",program.StartTime.ToShortDateString(), program.StartTime.ToShortTimeString());
+      Log.Write("Recorder: end  : {0} {1}",program.EndTime.ToShortDateString(), program.EndTime.ToShortTimeString());
+
       TVDatabase.AddRecording(ref tmpRec);
     }
 
