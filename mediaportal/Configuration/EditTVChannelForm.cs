@@ -270,11 +270,18 @@ namespace MediaPortal.Configuration
 					}
 					else
 					{
-						//
-						// Herz
-						//
-						channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
-					}
+            //
+            // Herz
+            //
+            if(frequencyTextBox.Text.Length > 3)
+            {
+              channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+            }
+            else
+            {
+              channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+            }					
+          }
 				}
 				catch
 				{
