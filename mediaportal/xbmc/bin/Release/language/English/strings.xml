@@ -2342,28 +2342,28 @@
 </string>
 
 	<!-- My Status Strings -->
-	<string><id>1950</id><value>Status</value></string>
+	<string><id>1950</id><value>My status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>
 	<string><id>1952</id><value>Fan</value></string>
 	<string><id>1953</id><value>Free</value></string>
 	<string><id>1954</id><value>Temperature</value></string>
 	<string><id>1955</id><value>C</value></string>
 	<string><id>1956</id><value>Select alarm sound</value></string>
-	<string><id>1957</id><value>General preferences></value></string>
+	<string><id>1957</id><value>Preferences</value></string>
 	<string><id>1958</id><value>CPU usage</value></string>
 	<string><id>1959</id><value>Voltage</value></string>
 	<string><id>1960</id><value>Volt</value></string>
 	<string><id>1961</id><value>Clock frequency</value></string>
 	<string><id>1962</id><value>Preferences</value></string>
 	<string><id>1963</id><value>Sensor details</value></string>
-	<string><id>1964</id><value>Sensor alarm on/off</value></string>
+	<string><id>1964</id><value>Sensor alarm</value></string>
 	<string><id>1965</id><value>Highest Value</value></string>
 	<string><id>1966</id><value>Lowest Value</value></string>
 	<string><id>1967</id><value>top alarm threshold</value></string>
 	<string><id>1968</id><value>lower alarm threshold</value></string>
 	<string><id>1969</id><value>Test sound</value></string>
 	<string><id>1970</id><value>Alarm interval (in seconds)</value></string>
-	<string><id>1971</id><value>Shutdown (at temp alert)</value></string>
+	<string><id>1971</id><value>Shutdown on alert</value></string>
 	<string><id>1972</id><value>Status details</value></string>
 	<string><id>1973</id><value>von</value>	</string>
 	<string><id>1974</id><value>Memory</value></string>
