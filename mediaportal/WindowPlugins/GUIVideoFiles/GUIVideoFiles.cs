@@ -333,6 +333,7 @@ namespace MediaPortal.GUI.Video
 				    {
 					    
               VideoState.StartWindow = nNewWindow;
+							SaveSettings();
 					    GUIWindowManager.ActivateWindow(nNewWindow);
 				    }
 

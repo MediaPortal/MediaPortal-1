@@ -298,14 +298,14 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		{
 			float off=viewport.X - xpos;
 			xpos=(float)viewport.X;
-			tx1 += (off / w);
+			tx1 += ((off / w) * (vmax-voff));
 			if (tx1>=1.0f) tx1=1.0f;
 		}
 		if (xpos2 >	viewport.X+viewport.Width)
 		{
 			float off= (viewport.X+viewport.Width) - xpos2;
 			xpos2=(float)viewport.X+(float)viewport.Width;
-			tx2 += (off / w);
+			tx2 += ((off / w) * (vmax-voff)); 
 			if (tx2 >=1.0f) tx2=1.0f;
 		}
 
@@ -317,13 +317,13 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 			//58/108 => ty1= 0.53
 			float off=viewport.Y - ypos;
 			ypos=(float)viewport.Y;
-			ty1 += (off / h);
+			ty1 += ( (off / h) * (vmax-voff) );
 		}
 		if (ypos2 >	viewport.Y+viewport.Height)
 		{
 			float off= (viewport.Y+viewport.Height) - ypos2;
 			ypos2=(float)viewport.Y+(float)viewport.Height;
-			ty2 += (off / h);
+			ty2 += ( (off / h) * (vmax-voff) );
 			if (ty2>=1.0f) ty2=1.0f;
 		}
 	}
