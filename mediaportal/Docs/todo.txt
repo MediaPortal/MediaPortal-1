@@ -9,8 +9,9 @@ Skin, gfx, .xml & media:
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
 	- my tv->fullscreen ->crash?
+	- metal & crystal : toggle button graphics
+	- remeber 'fullscreen tv' state when entering/leaving my tv
 fix:
-	-imdb info gets retrieved from inet every time?
 	-home:nothing selected when returning from a window
 	-home:dont load plugins 3 times
 
