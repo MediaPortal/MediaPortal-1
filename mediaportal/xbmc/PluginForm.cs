@@ -185,7 +185,7 @@ namespace MediaPortal
       {
 				string strEnabled=" ";
         ISetupForm form = (ISetupForm)m_plugins[i];
-				if  (PlugInEnabled(form.PluginName()) ) strEnabled="X";
+				if  (PlugInEnabled(form.PluginName(),form.DefaultEnabled()) ) strEnabled="X";
 
         ListViewItem item = listView1.Items.Add(strEnabled);
 				
@@ -261,10 +261,15 @@ namespace MediaPortal
 		{
 		
 		}
-		private bool PlugInEnabled(string strPlugin)
+		private bool PlugInEnabled(string strPlugin, bool bDefault)
 		{
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
+				string strValue=xmlreader.GetValueAsString("plugins",strPlugin,"");
+				if (strValue.Length==0)
+				{
+					return bDefault;
+				}
 				bool bEnabled=xmlreader.GetValueAsBool("plugins",strPlugin,false);
 				return bEnabled;
 			}
