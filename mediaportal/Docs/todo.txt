@@ -121,6 +121,7 @@ setup:
   - setup deinterlace method (vmr9)
 
 General:
+  - Use Y to play a folder, this for video, music and pictures
   - keymap.xml : add support for support ctrl, shift , alt keys
   - ? button which shows tooltips & keyboard shortcuts
   - Gui renderspeed slider in setup. COntrol how fast the GUI is rendered. Can save CPU, thus Temperature, thus noise.
