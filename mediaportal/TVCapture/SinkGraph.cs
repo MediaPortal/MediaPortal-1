@@ -542,7 +542,10 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartViewing(AnalogVideoStandard standard,  int iChannelNr)
     {
+
+      DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
       if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
+
       if (m_mpeg2Demux==null) return false;
       if (m_videoCaptureDevice==null) return false;
 
@@ -555,18 +558,21 @@ namespace MediaPortal.TV.Recording
         return true;
       }
 
-      DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
       AddPreferredCodecs();
+      
       ConnectVideoCaptureToMPEG2Demuxer();
+      
       m_graphState=State.Viewing;
       TuneChannel(standard, iChannelNr);
       m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
 
+      
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 
       GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       GUIGraphicsContext_OnVideoWindowChanged();
 
+      
       int iVideoWidth,iVideoHeight;
       m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
       DirectShowUtil.DebugWrite("SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
@@ -600,12 +606,15 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     private void GUIGraphicsContext_OnVideoWindowChanged()
     {
-      if (m_graphState!=State.Viewing) return ;
+      if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return ;
       if (m_mpeg2Demux==null) return ;
       if (GUIGraphicsContext.Overlay==false)
       {
-        m_mpeg2Demux.Overlay=false;
-        return;
+        if (m_graphState!=State.Viewing)
+        {
+          m_mpeg2Demux.Overlay=false;
+          return;
+        }
       }
       else
       {

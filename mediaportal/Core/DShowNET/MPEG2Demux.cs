@@ -208,10 +208,10 @@ namespace DShowNET
           m_videoWindow.put_Visible( DsHlp.OATRUE );
 
 				// start graph
-        if (m_mediaControl!=null)
+        if (m_mediaControl!=null && !m_bRunning)
         {
           DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
-          if (!m_bRunning) m_mediaControl.Run(); 
+          m_mediaControl.Run(); 
           m_bRunning=true;
           DirectShowUtil.DebugWrite("mpeg2:StartViewing() started");
         }
@@ -263,12 +263,12 @@ namespace DShowNET
 
 			// start the graph so we actually get to see the video
       m_bRendered=true;
-      if (m_mediaControl != null)
+      if (m_mediaControl != null && !m_bRunning)
       {
         DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
-        if (!m_bRunning) m_mediaControl.Run();
+        hr=m_mediaControl.Run();
         m_bRunning=true;
-        DirectShowUtil.DebugWrite("mpeg2:StartViewing() started mediactl");
+        DirectShowUtil.DebugWrite("mpeg2:StartViewing() started mediactl:0x{0:X}",hr);
       }
     }
 
