@@ -134,12 +134,12 @@ namespace MediaPortal.Configuration.Sections
 			this.sharesListBox = new System.Windows.Forms.CheckedListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.progressBarFile = new System.Windows.Forms.ProgressBar();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.fileLabel = new System.Windows.Forms.Label();
 			this.countLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
-			this.progressBarFile = new System.Windows.Forms.ProgressBar();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(440, 168);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Music Database";
+			this.groupBox1.Text = "Movie Database";
 			// 
 			// startButton
 			// 
@@ -190,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(176, 23);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Music Folders";
+			this.label1.Text = "Movie Folders";
 			// 
 			// groupBox2
 			// 
@@ -209,6 +209,15 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.TabIndex = 1;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Progress";
+			// 
+			// progressBarFile
+			// 
+			this.progressBarFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.progressBarFile.Location = new System.Drawing.Point(16, 160);
+			this.progressBarFile.Name = "progressBarFile";
+			this.progressBarFile.Size = new System.Drawing.Size(408, 16);
+			this.progressBarFile.TabIndex = 4;
 			// 
 			// cancelButton
 			// 
@@ -251,15 +260,6 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar.Name = "progressBar";
 			this.progressBar.Size = new System.Drawing.Size(408, 16);
 			this.progressBar.TabIndex = 0;
-			// 
-			// progressBarFile
-			// 
-			this.progressBarFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBarFile.Location = new System.Drawing.Point(16, 160);
-			this.progressBarFile.Name = "progressBarFile";
-			this.progressBarFile.Size = new System.Drawing.Size(408, 16);
-			this.progressBarFile.TabIndex = 4;
 			// 
 			// MovieDatabase
 			// 
