@@ -53,7 +53,7 @@ namespace MediaPortal.Video.Database
 			DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text)\n");
 			DatabaseUtility.AddTable(m_db,"genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)\n");
 			DatabaseUtility.AddTable(m_db,"movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text)\n");
-			DatabaseUtility.AddTable(m_db,"movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer,watched integer  )\n");
+			DatabaseUtility.AddTable(m_db,"movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer)\n");
 			DatabaseUtility.AddTable(m_db,"actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer )\n");
 			DatabaseUtility.AddTable(m_db,"actors","CREATE TABLE actors ( idActor integer primary key, strActor text )\n");
 			DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text)\n");
@@ -882,7 +882,7 @@ namespace MediaPortal.Video.Database
           details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
-					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.watched"));
+					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
 					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
@@ -948,7 +948,7 @@ namespace MediaPortal.Video.Database
 				details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 				details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 				details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,0,"movieinfo.runtime"));
-				details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,0,"movieinfo.watched"));
+				details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,0,"movieinfo.iswatched"));
 				details.ID=(int)lMovieId;
 			}
 			catch (Exception ex) 
@@ -997,7 +997,7 @@ namespace MediaPortal.Video.Database
 					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
-					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.watched"));
+					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
 					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
@@ -1048,7 +1048,7 @@ namespace MediaPortal.Video.Database
 					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
-					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.watched"));
+					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
 					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
@@ -1098,7 +1098,7 @@ namespace MediaPortal.Video.Database
 					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
-					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.watched"));
+					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
 					details.ID=(int)lMovieId;
 					movies.Add(details);
 				}
@@ -1246,7 +1246,7 @@ namespace MediaPortal.Video.Database
 				results=m_db.Execute(strSQL);
 				if (results.Rows.Count == 0) 
 				{
-					strSQL=String.Format("insert into movieinfo ( idMovie,idDirector,strPlotOutline,strPlot,strTagLine,strVotes,fRating,strCast,strCredits , iYear  ,strGenre, strPictureURL, strTitle,IMDBID,mpaa,runtime,watched) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16})",
+					strSQL=String.Format("insert into movieinfo ( idMovie,idDirector,strPlotOutline,strPlot,strTagLine,strVotes,fRating,strCast,strCredits , iYear  ,strGenre, strPictureURL, strTitle,IMDBID,mpaa,runtime,iswatched) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16})",
 															lMovieId,lDirector, details1.PlotOutline,
 															details1.Plot,details1.TagLine,
 															details1.Votes,strRating,
@@ -1262,7 +1262,7 @@ namespace MediaPortal.Video.Database
 				}
 				else
 				{
-					strSQL=String.Format("update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, watched={15} where idMovie={16}",
+					strSQL=String.Format("update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} where idMovie={16}",
 																		lDirector,details1.PlotOutline,
 																		details1.Plot,details1.TagLine,
 																		details1.Votes,strRating,
@@ -1270,7 +1270,7 @@ namespace MediaPortal.Video.Database
 																		details1.Year,details1.Genre,
 																		details1.ThumbURL,details1.Title,
 																		details1.IMDBNumber,
-																		details1.IMDBNumber, details1.MPARating,details1.RunTime ,
+																		details1.MPARating,details1.RunTime ,
 																		details1.Watched,lMovieId);
 					
 			//		Log.Write("dbs:{0}", strSQL);

@@ -183,7 +183,10 @@ namespace MediaPortal.Video.Database
       m_fRating=0.0f;
 			m_strDatabase = "";
 			m_id=-1;
-    }
+			m_strMPARating="";
+			m_iRunTime=0;
+			m_iWatched=0;
+		}
 		public void SetProperties()
 		{
 			string strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,Title);
