@@ -1,3 +1,4 @@
+13-08-2004  My tv       : fixed : No sound on te SVHS channel
 13-08-2004  My tv       : fixed : TV on/off button: tv was still enabled when re-entering my tv
 
 12-08-2004  My Music    : fixed : cddb doesnt work for some case does not update tags.  The year tag coming from cddb was empty and cased problems when converting it to integer.

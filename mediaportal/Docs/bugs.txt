@@ -50,12 +50,3 @@ Bugs i cannot fix (at the moment)
 						  reason : cannot reproduce it (i tried .txt files with notepad)
   18-06-2004 my video   : page counter goes wrong when > 9 pages
                           reason : unable to reproduce this bug
--------------------------------------------------------------------------------------------
-my tv Svideo=No Sound
-	1/ have 2 channels. One with antenna & one for SVHS
-	2/ Stand on the antenna channel and exit and reboot
-	3/ fire up MP again and switch to SVHS-> NO SOUND
-	4/ leave the channel on SVHS
-	5/ Reboot and fire up MP again
-	6/ NOW there's sound on SVHS
-	7/ change to antenna channel and back to SVHS-> LOST SOUND 
