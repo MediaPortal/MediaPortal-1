@@ -407,6 +407,8 @@ namespace MediaPortal.Util
       {
         if (!item.IsFolder)
         {
+					if (IsPicture(item.Path)) return;
+
           // check for filename.tbn
           string strThumb=System.IO.Path.ChangeExtension(item.Path,".tbn");
           if (System.IO.File.Exists(strThumb))
