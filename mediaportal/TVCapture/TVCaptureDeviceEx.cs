@@ -218,7 +218,7 @@ namespace MediaPortal.TV.Recording
 			if (_mDefinitionLoaded) return (true);
 			_mDefinitionLoaded = true;
 			
-			Log.WriteFile(Log.LogType.Capture,"LoadDefinitions()");
+			Log.WriteFile(Log.LogType.Capture,"LoadDefinitions() card:{0}",ID);
 			CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
 			if (CaptureCardDefinitions.CaptureCards.Count == 0)
 			{
@@ -227,7 +227,11 @@ namespace MediaPortal.TV.Recording
 				return (false);
 			}
 
-			if (m_strVideoDeviceMoniker==null) return true;
+			if (m_strVideoDeviceMoniker==null) 
+			{
+				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinitions: No video device moniker specified");
+				return true;
+			}
 
 			// Determine the deviceid "hidden" in the moniker of the capture device and use that to load
 			// the definitions of the card... The id is between the first and second "#" character
@@ -288,8 +292,10 @@ namespace MediaPortal.TV.Recording
 
 			bool filterFound;
 
+			Log.Write("TVCaptureDevice.LoadDefinition() check video filters");
 			foreach (string friendlyName in _mCaptureCardDefinition.Tv.FilterDefinitions.Keys)
 			{
+				Log.Write("TVCaptureDevice.LoadDefinition()   video filter:{0}",friendlyName);
 				FilterDefinition fd = _mCaptureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
 				filterFound         = false;
 				foreach (string key in AvailableFilters.Filters.Keys)
@@ -360,8 +366,10 @@ namespace MediaPortal.TV.Recording
 			_mCaptureCardDefinition.Radio.ConnectionDefinitions = ccd.Radio.ConnectionDefinitions;
 			_mCaptureCardDefinition.Radio.InterfaceDefinition   = ccd.Radio.InterfaceDefinition;
 
+			Log.Write("TVCaptureDevice.LoadDefinition() check radio filters");
 			foreach (string friendlyName in _mCaptureCardDefinition.Radio.FilterDefinitions.Keys)
 			{
+				Log.Write("TVCaptureDevice.LoadDefinition()   radio filter:{0}",friendlyName);
 				FilterDefinition fd = _mCaptureCardDefinition.Radio.FilterDefinitions[friendlyName] as FilterDefinition;
 				filterFound         = false;
 				foreach (string key in AvailableFilters.Filters.Keys)
@@ -406,7 +414,7 @@ namespace MediaPortal.TV.Recording
 					return (false);
 				}
 			
-			Log.WriteFile(Log.LogType.Capture,"LoadDefinitions() done");}
+			Log.WriteFile(Log.LogType.Capture,"LoadDefinitions() card:{0} done",ID);}
 
 			return (true);
 		}

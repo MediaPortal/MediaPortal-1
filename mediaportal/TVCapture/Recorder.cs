@@ -303,12 +303,12 @@ namespace MediaPortal.TV.Recording
 				tmpRec.Start=program.Start;
 				tmpRec.End=program.End;
 				tmpRec.Title=program.Title;
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: record now:{0} program:{1}",strChannel,program.Title);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:record now:{0} program:{1}",strChannel,program.Title);
 			}
 			else
 			{
 				//no tvguide data, just record the next 2 hours
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: record now:{0} for next 2 hours",strChannel);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:record now:{0} for next 2 hours",strChannel);
 				tmpRec.Start=Utils.datetolong(DateTime.Now);
 				tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(2*60) );
 				tmpRec.Title=GUILocalizeStrings.Get(413);
@@ -317,8 +317,8 @@ namespace MediaPortal.TV.Recording
 			tmpRec.RecType=TVRecording.RecordingType.Once;
 			tmpRec.IsContentRecording=false;//make a reference recording!
 
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: start: {0} {1}",tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:   start: {0} {1}",tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:   end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
 
 			TVDatabase.AddRecording(ref tmpRec);
 		}//static public void RecordNow(string strChannel)

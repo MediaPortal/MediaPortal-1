@@ -92,6 +92,10 @@ namespace MediaPortal.GUI.Library
 				{
 				}
 			}
+
+			//
+			if (type != LogType.Log)
+				WriteFile(LogType.Log,strFormat,arg);
 		}//static public void WriteFile(LogType type, string strFormat, params object[] arg)
 	}
 }
