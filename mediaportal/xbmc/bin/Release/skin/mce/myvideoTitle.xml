@@ -50,7 +50,7 @@
 			<description>year</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>660</posX>
+			<posX>650</posX>
 			<posY>70</posY>
 			<label>#year</label>
 			<font>font14</font>
@@ -83,10 +83,10 @@
 			<type>fadelabel</type>
 			<id>1</id>
 			<posX>660</posX>
-			<posY>50</posY>
+			<posY>40</posY>
 			<width>400</width>
 			<label>#title</label>
-			<font>font14</font>
+			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
