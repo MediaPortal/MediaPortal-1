@@ -683,7 +683,9 @@ void PrintStatistics()
 	char log[128];
 	sprintf(log,"fontengine: Textures InUse:%d VertexBuffer Updates:%d %d\n",m_iTexturesInUse, m_iVertexBuffersUpdated,m_iFontVertexBuffersUpdated);
 	OutputDebugString(log);
-
-
-
+}
+void FontEngineSetTexture(void* texture)
+{
+	LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)texture;
+	m_pDevice->SetTexture(0, pTexture);
 }

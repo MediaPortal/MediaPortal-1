@@ -23,4 +23,5 @@ void FontEngineRemoveFont(int fontNumber);
 void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue);
 void FontEngineDrawText3D(int fontNumber, void* text, int xposStart, int yposStart, DWORD intColor,int maxWidth);
 void FontEnginePresent3D(int fontNumber);
+void FontEngineSetTexture(void* texture);
 void PrintStatistics();

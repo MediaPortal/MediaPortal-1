@@ -1,0 +1,60 @@
+// DirectShowHelper.idl : IDL source for DirectShowHelper
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (DirectShowHelper.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "amstream.idl";
+
+cpp_quote("#if 0")
+typedef DWORD           IDirect3DTexture9;
+cpp_quote ("#endif")
+
+[
+	object,
+	uuid(6BD43BC8-22A3-478C-A571-EA723BD9F019),
+	helpstring("IVMR9Callback Interface"),
+	pointer_default(unique)
+]
+interface IVMR9Callback : IUnknown{
+	[helpstring("method PresentImage")] HRESULT PresentImage([in] int width, [in] int height, [in] DWORD texture);
+};
+[
+	object,
+	uuid(1463CD20-B360-49B8-A81C-47981347FDB5),
+	helpstring("IVMR9Helper Interface"),
+	pointer_default(unique)
+]
+interface IVMR9Helper : IUnknown{
+	[helpstring("method Init")] HRESULT Init([in] IVMR9Callback* callback, [in] DWORD dwD3DDevice, [in] IBaseFilter* vmr9Filter, [in] DWORD monitor);
+	[helpstring("method Deinit")] HRESULT Deinit(void);
+	[helpstring("method Version")] HRESULT Version(void);
+	[helpstring("method GetVideoSize")] HRESULT GetVideoSize([in,out] ULONG* Width, [in,out] ULONG* Height);
+};
+[
+	uuid(935FCAC9-6668-49FB-9706-43B51861F491),
+	version(1.0),
+	helpstring("DirectShowHelper 1.0 Type Library")
+]
+library DirectShowHelperLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(A7D8DDD4-2104-42C0-966C-08B400F5498F),
+		helpstring("VMR9Callback Class")
+	]
+	coclass VMR9Callback
+	{
+		[default] interface IVMR9Callback;
+	};
+	[
+		uuid(D23CF2BC-5AD3-407F-B562-A7CB0FD342DB),
+		helpstring("VMR9Helper Class")
+	]
+	coclass VMR9Helper
+	{
+		[default] interface IVMR9Helper;
+	};
+};
