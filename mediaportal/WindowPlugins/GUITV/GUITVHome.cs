@@ -429,15 +429,17 @@ namespace MediaPortal.GUI.TV
 
     public override void Process()
     {
-      //if (g_Player.Playing && g_Player.DoesOwnRendering) return;
-      System.Threading.Thread.Sleep(50);
+      if (g_Player.Playing && g_Player.DoesOwnRendering) 
+      {
+        System.Threading.Thread.Sleep(50);
+      }
       if (!g_Player.Playing)
       {
         StartPlaying(true);
       }
 
 
-      m_strChannel=Recorder.GetTVChannelName(GetCurrentCard());
+      //m_strChannel=Recorder.GetTVChannelName(GetCurrentCard());
       //show/hide 'record pin' if current program is being recorded or not
       bool bRecording=false;
       TVProgram program=m_util.GetCurrentProgram(m_strChannel);
