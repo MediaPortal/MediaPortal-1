@@ -58,6 +58,7 @@
 <!--    Hauppauge WinTV PVR 500MCE            -->
 <!--    Hauppauge WinTV PVR USB2              -->
 <!--    Kona One TV                           -->
+<!--    KNC ONE TV-Station DVB-T              -->
 <!--    Leadtek LR6650			      -->
 <!--    LifeView DVB-T                        -->
 <!--    LifeView DVB-T Analog                 -->
@@ -82,8 +83,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.38                                                               -->
-<!-- changed : 21-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.42                                                               -->
+<!-- changed : 25-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -286,6 +287,26 @@
   </capturecard>
   
   <capturecard commercialname="Hauppauge PVR 250" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_40090070&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge PVR 250" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0803&amp;subsys_40010070&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
@@ -598,13 +619,13 @@
   <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge Nova USB2 DVB-T TV Receiver" devid="vid_2040&amp;pid_9301">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
-        <filter cat="capture"         name="Hauppauge Nova USB2 DVB-T TV Receiver"      checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge Nova USB2 DVB-T TV Receiver"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1422,7 +1443,7 @@
 
 <!--    Not confirmed working yet   -->
 
-  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="ven_093b&amp;pid_a104&amp;">
+  <capturecard commercialname="Plextor ConvertX TV402U" capturename="Plextor ConvertX TV402U A/V Capture" devid="ven_093b&amp;pid_a104">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="2" mpeg2=""></interface>
@@ -1437,6 +1458,52 @@
         <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="3"></connection>
         <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV USB2" capturename="PCTV USB2 2821 Capture" devid="vid_2304&amp;pid_0208&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="PCTV USB2 2821 TVTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="PCTV USB2 2821 TVAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="PCTV USB2 2821 Crossbar"			checkdevice="true"></filter>
+	<filter cat="capture"		name="PCTV USB2 2821 Capture"			checkdevice="true"></filter>
+	<filter cat="captureaudio"	name="PCTV USB2 2821 Audio"			checkdevice="true"></filter>
+	<filter cat="capturesynch"	name="AVSynChronizer Filter"			checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="InterVideo Video Encoder"			checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"			checkdevice="true"></filter>
+	<filter cat="mux"		name="InterVideo Multiplexer"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="capturesynch"	sinkpin="0"></connection>
+        <connection sourcefilter="captureaudio"	sourcepin="0" sinkfilter="capturesynch"	sinkpin="1"></connection>
+        <connection sourcefilter="capturesynch"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capturesynch"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC ONE TV-Station DVB-T" capturename="TV Station DVB-T MCE (TU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00301894&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="TV Station DVB-T Tuner (TU1216)" checkdevice="true"></filter>
+        <filter cat="capture" name="TV Station DVB-T MCE (TU1216)" checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
