@@ -2762,6 +2762,7 @@ namespace MediaPortal.TV.Recording
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 
 		//
+
 		public int BufferCB(double time,IntPtr data,int len)
 		{
 			if (currentTuningObject==null) return 0;
