@@ -56,19 +56,19 @@
   <description>play time label</description> 
   <type>label</type> 
   <id>2</id> 
-  <posX>370</posX> 
-  <posY>32</posY> 
-  <label>#currentplaytime</label> 
-		<align>right</align> 
-  <font>font10</font> 
-  <textcolor>FF000000</textcolor> 
-  </control> 
+  <posX>375</posX>
+  <posY>32</posY>
+  <label>#currentplaytime</label>
+		<align>right</align>
+  <font>font10</font>
+  <textcolor>FF000000</textcolor>
+  </control>
 <control>
-  <description>album/artist/genre etc info label</description> 
-  <type>fadelabel</type> 
-  <width>140</width> 
+  <description>album/artist/genre etc info label</description>
+  <type>fadelabel</type>
+  <width>165</width>
   <height>30</height>
-  <posX>280</posX> 
+  <posX>305</posX>
   <posY>32</posY>
   <align>right</align>  
   <font>font10</font> 

@@ -2191,7 +2191,7 @@
   </string>
   <string>
   	<id>807</id>
-  	<value>Hoeveelheid</value>
+  	<value>Aantal</value>
   </string>
   <string>
   	<id>808</id>
@@ -2330,10 +2330,121 @@
   	<value>Geen kanalen</value>
   </string>
   <string>
+  	<id>912</id>
+  	<value>Er was een probleem met het ophalen van het laatste nieuws.</value>
+  </string>
+  <string>
+  	<id>913</id>
+  	<value>Meer Plugins...</value>
+  </string>
+  <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
   </string>
 	<string>
+    <id>1950</id>
+    <value>Mijn Status</value>
+    </string>
+	<string>
+    <id>1951</id>
+    <value>Harde schijf</value>
+  </string>
+	<string>
+    <id>1952</id>
+    <value>Ventilator</value>
+  </string>
+	<string>
+    <id>1953</id>
+    <value>vrij</value>
+  </string>
+	<string>
+    <id>1954</id>
+    <value>Temperatuur</value>
+  </string>
+	<string>
+    <id>1955</id>
+    <value>C</value></string>
+	<string>
+    <id>1956</id>
+    <value>Selecteer alarm geluid</value>
+  </string>
+	<string>
+    <id>1957</id>
+    <value>Algemene instellingen</value>
+  </string>
+	<string>
+    <id>1958</id>
+    <value>CPU gebruik</value>
+  </string>
+	<string>
+    <id>1959</id>
+    <value>Voltage</value>
+  </string>
+	<string>
+    <id>1960</id>
+    <value>Volt</value>
+  </string>
+	<string>
+    <id>1961</id>
+    <value>Klok frequentie</value>
+  </string>
+	<string>
+    <id>1962</id>
+    <value>Voorkeuren</value>
+  </string>
+	<string>
+    <id>1963</id>
+    <value>Sensor details</value>
+  </string>
+	<string>
+    <id>1964</id>
+    <value>Sensor alarm aan/uit</value>
+  </string>
+	<string>
+    <id>1965</id>
+    <value>Hoogste waarde</value>
+  </string>
+	<string>
+    <id>1966</id>
+    <value>Laagste Value</value>
+  </string>
+	<string>
+    <id>1967</id>
+    <value>Alarm bovengrens</value>
+  </string>
+	<string>
+    <id>1968</id>
+    <value>Alarm ondergrens</value>
+  </string>
+	<string>
+    <id>1969</id>
+    <value>Test geluid</value>
+  </string>
+	<string>
+    <id>1970</id>
+    <value>Alarm interval in seconden</value>
+  </string>
+	<string>
+    <id>1971</id>
+    <value>Afsluiten bij temperatuur alarm</value>
+  </string>
+	<string>
+    <id>1972</id>
+    <value>Status details</value>
+  </string>
+	<string>
+   <id>1973</id>
+   <value>van</value>
+  </string>
+	<string>
+   <id>1974</id>
+    <value>Geheugen</value>
+  </string>
+	<string>
+    <id>1975</id>
+    <value>Volgende pagina</value>
+  </string>
+  <string>
     <id>2005</id>
     <value>Verwijderen</value>
   </string>

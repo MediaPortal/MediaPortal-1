@@ -76,7 +76,7 @@
 		<posY>180</posY>
 		<texture>panel_split.png</texture>
 	</control>
-		<control>
+	<control>
 		<description>card#1 button</description>
 		<type>selectbutton</type>
 		<id>4</id>
@@ -208,7 +208,7 @@
 		<colordiffuse>FFffffff</colordiffuse>
 		<texture>panel.png</texture>
 	</control>
-			
+
 	<control>
 		<description>Current Channel</description>
 		<type>image</type>
@@ -228,7 +228,7 @@
 		<width>295</width>
 		<label>#TV.View.title</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+    <textcolor>ff484848</textcolor>
 	</control>
 	<control>
 		<description>Current program time</description>
@@ -236,11 +236,11 @@
 		<id>14</id>
 		<posX>645</posX>
 		<posY>85</posY>
-		<width>100</width> 
+		<width>100</width>
 		<label>#TV.View.start-#TV.View.stop</label>
 		<font>font14</font>
 		<align>right</align>
-		<textcolor>FFFFFFFF</textcolor>
+    <textcolor>ff484848</textcolor>
 	</control>
 	<control>
 		<description>Description1</description>
@@ -248,12 +248,12 @@
 		<id>15</id>
 		<posX>350</posX>
 		<posY>132</posY>
-		<width>295</width> 
+		<width>295</width>
 		<height>65</height>
-		<seperator>----------------------------------------------------------------------------------------------</seperator> 
+		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.View.description</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+    <textcolor>ff484848</textcolor>
 	</control>
 	<control>
 		<description>progress</description>
@@ -267,20 +267,20 @@
 		<label>#TV.View.Percentage</label>
 		<visible>yes</visible>
 	</control>
-	
+
 	<control>
-		<description>rectangle</description> 
-		<type>image</type> 
-		<id>23</id> 
-		<posX>60</posX> 
-		<posY>445</posY> 
-		<width>74</width> 
-		<height>74</height> 
-		<texture>blue_rectangle_video.png</texture> 
-		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<description>rectangle</description>
+		<type>image</type>
+		<id>23</id>
+		<posX>60</posX>
+		<posY>445</posY>
+		<width>74</width>
+		<height>74</height>
+		<texture>blue_rectangle_video.png</texture>
+		<colorkey>0</colorkey>
+		<colordiffuse>ffffffff</colordiffuse>
 	</control>
-	 	
+
 	<control>
 		<description>Recording Channel</description>
 		<type>image</type>

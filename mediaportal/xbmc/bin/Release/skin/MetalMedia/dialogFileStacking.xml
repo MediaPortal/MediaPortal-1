@@ -1,14 +1,14 @@
 <window>
-  <id>2008</id> 
-  <defaultcontrol>1</defaultcontrol> 
-  <allowoverlay>no</allowoverlay>
+  <id>2008</id>
+  <defaultcontrol>1</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
   <controls>
 	<control>
 		<description>CD1</description> 
 		<type>button</type> 
 		<id>1</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY>
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -21,8 +21,8 @@
 		<description>CD2</description> 
 		<type>button</type> 
 		<id>2</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -35,8 +35,8 @@
 		<description>CD3</description> 
 		<type>button</type> 
 		<id>3</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -49,8 +49,8 @@
 		<description>CD4</description> 
 		<type>button</type> 
 		<id>4</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -63,8 +63,8 @@
 		<description>CD5</description> 
 		<type>button</type> 
 		<id>5</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -77,8 +77,8 @@
 		<description>CD6</description> 
 		<type>button</type> 
 		<id>6</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -91,8 +91,8 @@
 		<description>CD7</description> 
 		<type>button</type> 
 		<id>7</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -105,8 +105,8 @@
 		<description>CD8</description> 
 		<type>button</type> 
 		<id>8</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -119,8 +119,8 @@
 		<description>CD9</description> 
 		<type>button</type> 
 		<id>9</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -133,8 +133,8 @@
 		<description>CD10</description> 
 		<type>button</type> 
 		<id>10</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -147,8 +147,8 @@
 		<description>CD11</description> 
 		<type>button</type> 
 		<id>11</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -161,8 +161,8 @@
 		<description>CD12</description> 
 		<type>button</type> 
 		<id>12</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -175,8 +175,8 @@
 		<description>CD13</description> 
 		<type>button</type> 
 		<id>13</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -189,8 +189,8 @@
 		<description>CD14</description> 
 		<type>button</type> 
 		<id>14</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -203,8 +203,8 @@
 		<description>CD15</description> 
 		<type>button</type> 
 		<id>15</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -217,8 +217,8 @@
 		<description>CD16</description> 
 		<type>button</type> 
 		<id>16</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -231,8 +231,8 @@
 		<description>CD17</description> 
 		<type>button</type> 
 		<id>17</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -245,8 +245,8 @@
 		<description>CD18</description> 
 		<type>button</type> 
 		<id>18</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -259,8 +259,8 @@
 		<description>CD19</description> 
 		<type>button</type> 
 		<id>19</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY> 
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 
@@ -273,8 +273,8 @@
 		<description>CD20</description> 
 		<type>button</type> 
 		<id>20</id> 
-		<posX>660</posX> 
-		<posY>30</posY> 
+		<posX>660</posX>
+		<posY>90</posY>
 		<width>64</width> 
 		<height>64</height> 
 		<label>-</label> 

@@ -1,6 +1,6 @@
 <window>
 	<id>3004</id>
-	<defaultcontrol>10</defaultcontrol>
+	<defaultcontrol>11</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 <controls>
 	<control>
@@ -189,13 +189,25 @@
 		<onup>29</onup>
 		<ondown>2</ondown>
 	</control>
+
 	<control>
-		<description>text label</description>
+		<description>Current module</description>
 		<type>label</type>
 		<id>0</id>
 		<posX>305</posX>
 		<posY>50</posY>
 		<label>#currentmodule</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
+	</control>
+	<control>
+		<description>Time</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>375</posX>
+		<posY>50</posY>
+		<label>#time</label>
 		<font>font10</font>
 		<align>right</align>
 		<textcolor>FF000000</textcolor>

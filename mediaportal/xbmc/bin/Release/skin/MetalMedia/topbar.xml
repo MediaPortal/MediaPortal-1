@@ -1,6 +1,6 @@
 <window>
 	<id>3005</id>
-	<defaultcontrol>20</defaultcontrol>
+	<defaultcontrol>21</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 <controls>
 	<control>
@@ -76,7 +76,7 @@
 		<id>23</id>
 		<posX>423</posX>
 		<posY>30</posY>
-		<width>35</width> 
+		<width>35</width>
 		<height>37</height> 
 		<textureFocus>osd_rewind_focus.png</textureFocus>
 		<textureNoFocus>osd_rewind_nofocus.png</textureNoFocus>
@@ -189,13 +189,25 @@
 		<onup>29</onup>
 		<ondown>2</ondown>
 	</control>
+
 	<control>
-		<description>text label</description>
+		<description>Current module</description>
 		<type>label</type>
 		<id>0</id>
 		<posX>305</posX>
 		<posY>50</posY>
 		<label>#currentmodule</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
+	</control>
+	<control>
+		<description>Time</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>375</posX>
+		<posY>50</posY>
+		<label>#time</label>
 		<font>font10</font>
 		<align>right</align>
 		<textcolor>FF000000</textcolor>

@@ -3,6 +3,7 @@
 		<width>720</width>
 		<height>576</height>
 	</skin>
+
 	<control>
 		<description>default image</description>
 		<type>image</type>
@@ -16,6 +17,7 @@
 		<centered>no</centered>
 		<keepaspectratio>no</keepaspectratio>
 	</control>
+
 	<control>
 		<description>default label</description>
 		<type>label</type>
@@ -27,6 +29,7 @@
 		<textcolor>FFFFFFFF</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 	</control>
+
 	<control>
 		<description>default button</description>
 		<type>button</type>
@@ -44,23 +47,7 @@
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
-	<control>
-		<description>default buttonm</description>
-		<type>buttonM</type>
-		<id>10</id>
-		<posX>430</posX>
-		<posY>460</posY>
-		<width>16</width>
-		<height>16</height>
-		<textureFocus>button-powerdown.png</textureFocus>
-		<textureNoFocus>button-powerdownNF.png</textureNoFocus>
-		<label>-</label>
-		<bitmaps>2</bitmaps>
-		<font>font14</font>
-		<textcolor>ff000000</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
-		<disabledcolor>60ffffff</disabledcolor>
-	</control>
+
  	<control>
 		<description>default togglebutton</description>
 		<type>togglebutton</type>
@@ -76,11 +63,12 @@
 		<AltTextureFocus>arrow_down_focus.png</AltTextureFocus>
 		<AltTextureNoFocus>arrow_down_nofocus.png</AltTextureNoFocus>
 		<label>-</label>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
+
 	<control>
 		<description>default listcontrol</description>
 		<type>listcontrol</type>
@@ -104,7 +92,7 @@
 		<image>folder_focus.png</image>
 		<font>font14</font>
 		<shadedColor>20484848</shadedColor>
-		<selectedColor>FF000000</selectedColor>
+		<selectedColor>FF8080FF</selectedColor>
 		<textcolor>FF484848</textcolor>
 		<textcolor2>FF484848</textcolor2>
 		<textcolor3>FF484848</textcolor3>
@@ -117,6 +105,7 @@
 		<textvisible2>yes</textvisible2>
 		<textvisible3>yes</textvisible3>
 	</control>
+
 	<control>
 		<description>default thumbnail panel</description>
 		<type>thumbnailpanel</type>
@@ -145,7 +134,7 @@
 		<imageFolder>-</imageFolder>
 		<imageFolderFocus>folder_focus.png</imageFolderFocus>
 		<font>font14</font>
-		<selectedColor>FFF8BC70</selectedColor>
+		<selectedColor>FF8080FF</selectedColor>
 		<textcolor>FFFFFFFF</textcolor>
 		<colordiffuse>ff000000</colordiffuse>
 		<suffix>|</suffix>
@@ -161,6 +150,7 @@
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
 	</control>
+
 	<control>
 		<description>default filmstrip</description>
 		<type>filmstrip</type>
@@ -213,8 +203,8 @@
 		<InfoImagewidth>360</InfoImagewidth>
 		<InfoImageheight>302</InfoImageheight>
 		<InfoImagediffuse>ffffffff</InfoImagediffuse>
-
 	</control>
+
 	<control>
 		<description>default fadelabel</description>
 		<type>fadelabel</type>
@@ -226,6 +216,7 @@
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
+
 	<control>
 		<description>default textarea</description>
 		<type>textbox</type>
@@ -248,6 +239,7 @@
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
+
 	<control>
 		<description>default progress control</description>
 		<type>progress</type>
@@ -260,6 +252,7 @@
 		<righttexture>progress_right.png</righttexture>
 		<visible>no</visible>
 	</control>
+
 	<control>
 		<description>default horizontal scrollbar control</description>
 		<type>hscrollbar</type>
@@ -271,6 +264,7 @@
 		<righttexture>progress_right.png</righttexture>
 		<visible>no</visible>
 	</control>
+
 	<control>
 		<description>default vertical scrollbar control</description>
 		<type>vscrollbar</type>
@@ -282,6 +276,7 @@
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
 		<visible>no</visible>
 	</control>
+
 	<control>
 		<description>default spin control</description>
 		<type>spincontrol</type>
@@ -301,6 +296,7 @@
 		<disabledcolor>80ffffff</disabledcolor>
 		<subtype>text</subtype>
 	</control>
+
 	<control>
 		<description>default checkmark</description>
 		<type>checkmark</type>
@@ -318,24 +314,7 @@
 		<align>left</align>
 		<shadow>no</shadow>
 	</control>
-	<control>
-		<description>default radio button</description>
-		<type>radiobutton</type>
-		<id>4</id>
-		<posX>50</posX>
-		<posY>268</posY>
-		<width>160</width>
-		<height>32</height>
-		<textureRadioFocus>radiobutton-focus.png</textureRadioFocus>
-		<textureRadioNoFocus>radiobutton-nofocus.png</textureRadioNoFocus>
-		<textureFocus>button-focus.png</textureFocus>
-		<textureNoFocus>-</textureNoFocus>
-		<label>215</label>
-		<font>font13</font>
-		<textcolor>ff484848</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
-		<disabledcolor>60ffffff</disabledcolor>
-	</control>
+
 	<control>
 	  <description>default select button</description>
 		<type>selectbutton</type>
@@ -386,6 +365,6 @@
 		<textureNoFocusLeft>tvguide_button_light_left.png</textureNoFocusLeft>
 		<textureNoFocusMid>tvguide_button_light_middle.png</textureNoFocusMid>
 		<textureNoFocusRight>tvguide_button_light_right.png</textureNoFocusRight>
-	</control>	
+	</control>
 </controls>
 
