@@ -288,8 +288,8 @@ namespace MediaPortal.Util
         if (voffs<0 || voffs >1) return;
         if (umax<0 || umax >1) return;
         if (vmax<0 || vmax >1) return;
-        if (umax+uoffs<0 || umax+uoffs >1) return;
-        if (vmax+voffs<0 || vmax+voffs >1) return;
+        if (iTextureWidth+iTextureLeft<0 || iTextureWidth+iTextureLeft >(float)desc.Width) return;
+        if (iTextureHeight+iTextureTop<0 || iTextureHeight+iTextureTop >(float)desc.Height) return;
         if (x <0) x=0;
         if (x > GUIGraphicsContext.Width) x=GUIGraphicsContext.Width;
         if (y <0) y=0;
