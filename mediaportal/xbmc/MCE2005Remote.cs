@@ -418,6 +418,10 @@ namespace MediaPortal
               return false;
             }
             break;
+          case 0x5C: //green home
+            GUIGraphicsContext.IsFullScreenVideo=false;
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+            break;
           case 0x5D://Show context menu (Yellow button)
             if (header.hid.RawData3==0)
             {
