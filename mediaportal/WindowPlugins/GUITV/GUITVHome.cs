@@ -42,7 +42,7 @@ namespace MediaPortal.GUI.TV
 		};
 		static public string 	TVChannelCovertArt=@"thumbs\tv\logos";
 		static public string 	m_strChannel="Nederland 1";
-		static public string 	m_strGroup="";
+		static public string 	m_strGroup=GUILocalizeStrings.Get(972);
 		static bool     			m_bTVON=true;
 		static bool     			m_bTimeShifting=true;
 		ArrayList       			m_channels=new ArrayList();
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.TV
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				m_strChannel=xmlreader.GetValueAsString("mytv","channel","");
-				m_strGroup=xmlreader.GetValueAsString("mytv","group","");
+				m_strGroup=xmlreader.GetValueAsString("mytv","group",GUILocalizeStrings.Get(972));
 				m_bTVON=xmlreader.GetValueAsBool("mytv","tvon",true);
 				m_bTimeShifting=xmlreader.GetValueAsBool("mytv","timeshifting",true);
 				m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
@@ -430,6 +430,13 @@ namespace MediaPortal.GUI.TV
 			if (m_groups.Count>0)
 			{
 				GUIControl.ClearControl(GetID, (int)Controls.BTN_GROUP);
+				TVGroup tvgroup = new TVGroup();
+				tvgroup.GroupName=GUILocalizeStrings.Get(972); //all channels
+					
+				foreach (TVChannel channel in m_channels)
+					tvgroup.tvChannels.Add(channel );
+				m_groups.Add(tvgroup);
+
 				foreach (TVGroup group in m_groups)
 				{
 					GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_GROUP,group.GroupName);
@@ -824,6 +831,7 @@ namespace MediaPortal.GUI.TV
 				currentGroup=value;
 				if (currentGroup!=null)
 					m_strGroup=currentGroup.GroupName;
+				else m_strGroup=GUILocalizeStrings.Get(972);
 			}
 		}
 
