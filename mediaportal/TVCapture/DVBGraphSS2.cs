@@ -18,13 +18,6 @@ namespace MediaPortal.TV.Recording
 	public class DVBGraphSS2 : IGraph
 	
 	{
-		struct VideoInfo
-		{
-			public int	iHSize;			// video data horizontal size in pixels
-			public int	iVSize;			// video data vertical size in pixels
-			public byte	bAspectRatio;
-			public byte	bFrameRate;
-		};
 
 	private System.Collections.Hashtable m_epgTable=new System.Collections.Hashtable(); 
 	// iids 0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b
@@ -471,24 +464,9 @@ namespace MediaPortal.TV.Recording
 		const int WS_CLIPCHILDREN = 0x02000000;
 		const int WS_CLIPSIBLINGS = 0x04000000;
 		//
-		// tuner needed
-		VideoInfoCallback	m_videoCallback=new VideoInfoCallback(SetVideoInfo);
-		static VideoInfo	m_mpegInfo=new VideoInfo();
-		protected int		m_iFrequency=0;//12188; // lnb frequency
-		protected int		m_iSymbolRate=0;//27500; // symbol rate
-		protected int		m_iDiSeqC=0; // diseqc
-		protected int		m_iLNBSelect=0; // lnb selection
-		protected int		m_iFEC=0; // always set to auto for ss2
-		protected int		m_iPolarisation=0; // polarisation 0 - h , 1 - v
-		protected int		m_iLNB0=0; // ku band
-		protected int		m_iLNB2=0; // 
-		protected int		m_iLNBSwitch=0; //
-		protected int		m_audioPid=0;
-		protected int		m_videoPid=0;
-		protected bool      m_bOverlayVisible=false;
-		protected int		m_actualTab=0x50;
-		protected int		m_videoRender=0;
-		protected DVBChannel m_currentChannel=new DVBChannel();
+		// 
+		protected bool			m_bOverlayVisible=false;
+		protected DVBChannel	m_currentChannel=new DVBChannel();
 		//
 
 
@@ -509,7 +487,6 @@ namespace MediaPortal.TV.Recording
 		protected IPin					m_data1=null;
 		protected IPin					m_data2=null;
 		protected IPin					m_data3=null;
-		// for recording set dump.ax filter containd with directx sdk
 		// stream buffer sink filter
 		protected IStreamBufferInitialize		m_streamBufferInit=null; 
 		protected IStreamBufferConfigure		m_config=null;
@@ -535,25 +512,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
-			m_graphState= State.None;
-			m_firstTune=true;
-			m_iFrequency=12188;
-			m_iSymbolRate=27500; // symbol rate
-			m_iDiSeqC=1; // diseqc
-			m_iLNBSelect=1; // lnb selection
-			m_iFEC=6; // always set to auto for ss2
-			m_iPolarisation=0; // polarisation 0 - h , 1 - v
-			m_iLNB0=9750; // ku band
-			m_iLNB2=10600; // 
-			m_iLNBSwitch=11700; //
-			m_audioPid=104;
-			m_videoPid=163;
 			
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-			{
-				m_videoRender=xmlreader.GetValueAsInt("mytv","vmr9",0);
-			}
-
 			try
 			{
 				RegistryKey hkcu = Registry.CurrentUser;
@@ -571,11 +530,6 @@ namespace MediaPortal.TV.Recording
 		/// <summary>
 		/// Callback from Card. Sets an information struct with video settings
 		/// </summary>
-		static int SetVideoInfo(IntPtr data)
-		{
-			m_mpegInfo=(VideoInfo)Marshal.PtrToStructure(data,typeof(VideoInfo));
-			return 0;
-		}
 
 		public bool CreateGraph()
 		{
@@ -1407,6 +1361,7 @@ namespace MediaPortal.TV.Recording
 
 			AddPreferredCodecs();
 
+			
 			// render here for viewing
 			if(m_currentChannel.ServiceType==1)
 			hr=m_sourceGraph.Render(m_videoPin);
@@ -1417,6 +1372,7 @@ namespace MediaPortal.TV.Recording
 			if(hr!=0)
 				return false;
 			int n=0;// 
+
 			m_mediaControl = (IMediaControl)m_sourceGraph;
 			m_videoWindow = (IVideoWindow) m_sourceGraph as IVideoWindow;
 			if (m_videoWindow==null)
@@ -1424,6 +1380,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBSS2:FAILED:Unable to get IVideoWindow");
 				return false;
 			}
+
 
 			m_basicVideo = m_sourceGraph as IBasicVideo2;
 			if (m_basicVideo==null)
@@ -1447,7 +1404,8 @@ namespace MediaPortal.TV.Recording
             //
 			n=m_mediaControl.Run();
 			m_bOverlayVisible=true;
-			
+
+
 			GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			m_graphState = State.Viewing;
 			GUIGraphicsContext_OnVideoWindowChanged();
