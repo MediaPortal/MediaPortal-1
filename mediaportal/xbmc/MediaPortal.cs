@@ -251,6 +251,8 @@ public class MediaPortalApp : D3DApp, IRender
       System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir+@"\xml");
       System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir+@"\log");
 
+      Utils.DeleteFiles(config.Applications[0].Client.BaseDir+@"\log", "*.log");
+      
 
       ClientApplicationInfo clientInfo =ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
       clientInfo.AppFolderName=System.IO.Directory.GetCurrentDirectory();
