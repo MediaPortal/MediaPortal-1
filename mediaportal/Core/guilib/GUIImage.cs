@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.Library
     Vector3                         pntPosition;
     float                           scaleX=1;
     float                           scaleY=1;
+    bool                            m_bZoom=false;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
@@ -80,6 +81,7 @@ namespace MediaPortal.GUI.Library
 			
 			m_iCurrentImage=0;
 			m_bKeepAspectRatio=false;
+      m_bZoom=false;
 			m_iCurrentLoop=0;
 			m_iImageWidth = 0;
 			m_iImageHeight = 0;
@@ -443,12 +445,14 @@ namespace MediaPortal.GUI.Library
       float nh =(float)m_dwHeight;
 
       //adjust image based on current aspect ratio setting
-      if (m_bKeepAspectRatio && m_iTextureWidth!=0 && m_iTextureHeight!=0)
+			float fSourceFrameRatio = 1;
+			float fOutputFrameRatio = 1;
+      if (!m_bZoom && m_bKeepAspectRatio && m_iTextureWidth!=0 && m_iTextureHeight!=0)
       {
         // TODO: remove or complete HDTV_1080i code
         //int iResolution=g_stSettings.m_ScreenResolution;
-        float fSourceFrameRatio = ((float)m_iTextureWidth) / ((float)m_iTextureHeight);
-        float fOutputFrameRatio = fSourceFrameRatio / GUIGraphicsContext.PixelRatio; 
+        fSourceFrameRatio = ((float)m_iTextureWidth) / ((float)m_iTextureHeight);       
+        fOutputFrameRatio = fSourceFrameRatio / GUIGraphicsContext.PixelRatio; 
         //if (iResolution == HDTV_1080i) fOutputFrameRatio *= 2;
 
         // maximize the thumbnails width
@@ -489,16 +493,55 @@ namespace MediaPortal.GUI.Library
         y += ((((float)m_dwHeight)-nh)/2.0f); 
       }
 
-      // copy all coordinates to the vertex buffer
 
+      // Calculate source Texture
+      int iSourceX = 0;
+      int iSourceY = 0;
+      int iSourceWidth = m_iTextureWidth;
+      int iSourceHeight = m_iTextureHeight;
+
+      if (m_bZoom && m_bKeepAspectRatio)
+      {
+        fSourceFrameRatio = ((float)nw) / ((float)nh);       
+        fOutputFrameRatio = fSourceFrameRatio * GUIGraphicsContext.PixelRatio; 
+
+        if (((float)iSourceWidth/(nw*GUIGraphicsContext.PixelRatio)) < ((float)iSourceHeight/nh))
+        {
+          //Calc height
+          iSourceHeight = (int)((float)iSourceWidth/fOutputFrameRatio);          
+          if (iSourceHeight > m_iTextureHeight)
+          {
+            iSourceHeight = m_iTextureHeight;
+            iSourceWidth = (int)((float)iSourceHeight*fOutputFrameRatio);
+          }          
+        }
+        else
+        {
+          //Calc width
+          iSourceWidth = (int)((float)iSourceHeight*fOutputFrameRatio);         
+          if (iSourceWidth > m_iTextureWidth)
+          {
+            iSourceWidth = m_iTextureWidth;
+            iSourceHeight = (int)((float)iSourceWidth/fOutputFrameRatio);          
+          }
+        }
+
+        iSourceY = (m_iTextureHeight-iSourceHeight)/2;         
+        iSourceX = (m_iTextureWidth-iSourceWidth)/2;
+      }
+			
+      // copy all coordinates to the vertex buffer
 			// x-offset in texture
-      float uoffs = ((float)(m_iBitmap * m_dwWidth)) / ((float)m_iImageWidth);
+      float uoffs = ((float)(m_iBitmap * m_dwWidth + iSourceX)) / ((float)m_iImageWidth);
+
+			// y-offset in texture
+			float voffs = ((float)iSourceY) / ((float)m_iImageHeight);
 
 			// width copied from texture
-      float u = ((float)m_iTextureWidth)  / ((float)m_iImageWidth);
+      float u = ((float)iSourceWidth)  / ((float)m_iImageWidth);
 
 			// height copied from texture
-      float v = ((float)m_iTextureHeight) / ((float)m_iImageHeight);
+      float v = ((float)iSourceHeight) / ((float)m_iImageHeight);
 
 			
 			if (uoffs<0 || uoffs >1) uoffs=0;
@@ -528,32 +571,32 @@ namespace MediaPortal.GUI.Library
       verts[0].X= x- 0.5f; verts[0].Y=y+nh- 0.5f; verts[0].Z= 0.0f; verts[0].Rhw=1.0f ;
       verts[0].Color = (int)m_colDiffuse;
       verts[0].Tu = uoffs;
-      verts[0].Tv = v;
+      verts[0].Tv = voffs+v;
 
       verts[1].X= x- 0.5f; verts[1].Y= y- 0.5f; verts[1].Z= 0.0f; verts[1].Rhw= 1.0f;
       verts[1].Color = (int)m_colDiffuse;
       verts[1].Tu = uoffs;
-      verts[1].Tv = 0.0f;
+      verts[1].Tv = voffs;
 
       verts[2].X=  x+nw- 0.5f; verts[2].Y=y+nh- 0.5f;verts[1].Z=  0.0f; verts[2].Rhw= 1.0f;
       verts[2].Color = (int)m_colDiffuse;
       verts[2].Tu = uoffs+u;
-      verts[2].Tv = v;
+      verts[2].Tv = voffs+v;
 
       verts[3].X= x+nw- 0.5f; verts[3].Y= y- 0.5f; verts[3].Z=0.0f; verts[3].Rhw=1.0f ;
       verts[3].Color = (int)m_colDiffuse;
       verts[3].Tu = uoffs+u;
-      verts[3].Tv = 0.0f;
+      verts[3].Tv = voffs;
       m_vbBuffer.Unlock();
        
 
       pntPosition=new Vector3(x,y,0);
-      sourceRect=new Rectangle(m_iBitmap * m_dwWidth,0, m_iTextureWidth,m_iTextureHeight);
+      sourceRect=new Rectangle(m_iBitmap * m_dwWidth + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
       destinationRect=new Rectangle(0,0,(int)nw,(int)nh);
       m_destRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
 
-      scaleX = (float)destinationRect.Width / (float)m_iTextureWidth;
-      scaleY = (float)destinationRect.Height / (float)m_iTextureHeight;
+      scaleX = (float)destinationRect.Width / (float)iSourceWidth;
+      scaleY = (float)destinationRect.Height / (float)iSourceHeight;
       pntPosition.X /= scaleX;
       pntPosition.Y /= scaleY;
 		}
@@ -794,6 +837,20 @@ namespace MediaPortal.GUI.Library
     {
       get { return m_bCentered;}
       set {m_bCentered=value;}
+    }
+
+    /// <summary>
+    /// Property which indicates if the image should be zoomed in the
+    /// given rectangle of the control
+    /// </summary>
+    public bool Zoom
+    {
+      get { return m_bZoom;}
+      set 
+      {
+        m_bZoom=value;
+        Update();
+      }
     }
 
     // recalculate the image dimensions & position

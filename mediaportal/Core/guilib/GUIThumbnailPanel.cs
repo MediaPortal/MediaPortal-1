@@ -13,7 +13,7 @@ namespace MediaPortal.GUI.Library
 	public class GUIThumbnailPanel : GUIControl
   {
     const int SLEEP_FRAME_COUNT=1;
-		const int THUMBNAIL_OVERSIZED_DIVIDER=16;
+		const int THUMBNAIL_OVERSIZED_DIVIDER=32;
 		    
     [XMLSkinElement("remoteColor")] protected long	m_dwRemoteColor = 0xffff0000;
     [XMLSkinElement("downloadColor")] protected long	m_dwDownloadColor = 0xff00ff00;
@@ -241,7 +241,10 @@ GUISpinControl m_upDown = null;
 
 			// Set oversized value
 			int iOverSized=0;
-			if (bFocus && Focus) iOverSized = ((m_iThumbWidth+m_iThumbHeight)/2)/THUMBNAIL_OVERSIZED_DIVIDER;
+			if (bFocus && Focus)
+			{
+				iOverSized = (m_iThumbWidth+m_iThumbHeight)/THUMBNAIL_OVERSIZED_DIVIDER;
+			}
 
       if (pItem.HasThumbnail)
       {
@@ -250,7 +253,9 @@ GUISpinControl m_upDown = null;
         {
           pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.ThumbnailImage, 0x0);
           pImage.KeepAspectRatio = true;
+          pImage.Zoom = (bFocus && Focus);
           pImage.AllocResources();
+
           pItem.Thumbnail = pImage;
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
           int yOff = (m_iThumbHeight+2*iOverSized - pImage.RenderHeight) / 2;
@@ -265,6 +270,7 @@ GUISpinControl m_upDown = null;
             pImage.FreeResources();
             pImage.AllocResources();
           }
+          pImage.Zoom = (bFocus && Focus);
           pImage.Width = m_iThumbWidth+2*iOverSized;
           pImage.Height = m_iThumbHeight+2*iOverSized;
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
@@ -282,6 +288,8 @@ GUISpinControl m_upDown = null;
           {
             pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.IconImageBig, 0x0);
             pImage.KeepAspectRatio = true;
+            pImage.Zoom = (bFocus && Focus);
+
             pImage.AllocResources();
             pItem.IconBig = pImage;
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
@@ -297,6 +305,7 @@ GUISpinControl m_upDown = null;
               pImage.FreeResources();
               pImage.AllocResources();
             }
+            pImage.Zoom = (bFocus && Focus);
             pImage.Width = m_iThumbWidth+2*iOverSized;
             pImage.Height = m_iThumbHeight+2*iOverSized;
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
