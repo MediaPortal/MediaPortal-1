@@ -419,7 +419,7 @@ namespace MediaPortal.TV.Recording
             m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
           else
             m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
-          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 counrty:{0} tv standard:{1} cable:{2}",
+          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
                                         m_iCountryCode,standard.ToString(),
                                         m_bUseCable);
         }

@@ -317,7 +317,9 @@ namespace MediaPortal.Configuration.Sections
 
         if(countryComboBox.Text.Length > 0)
         {
+          TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
           xmlwriter.SetValue("capture", "countryname", countryComboBox.Text);
+          xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
         }
 
 				//
