@@ -205,142 +205,136 @@ namespace MediaPortal.GUI.Library
 			m_guiLeft.Render();
 			m_guiRight.Render();
 			m_guiMid.Render();
-      
+
+      int iWidth1=0,iWidth2=0,iWidth3=0;
 
       iWidth -= 2*m_iFillX;
       float fWidth=iWidth;
       int iCurPos=0;
       // render fillbkg
-    //  if (m_guiFillBackground.Allocated==true && m_guiFill1.Allocated==true)
-      {
-        xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX;
-        m_guiFillBackground.Width=iWidth;
-        m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
-        m_guiFillBackground.SetPosition(xPos,m_dwPosY+m_iFillY);
-        m_guiFillBackground.DoUpdate();
-        m_guiFillBackground.Render();
 
-        // render first color
-        int xoff=5;
-        GUIGraphicsContext.ScaleHorizontal(ref xoff);
-        xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX+xoff;
-        int yPos=m_guiFillBackground.YPosition+(m_guiFillBackground.Height/2)-(m_iFillHeight/2);
+      xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX;
+      m_guiFillBackground.Width=iWidth;
+      m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
+      m_guiFillBackground.SetPosition(xPos,m_dwPosY+m_iFillY);
+      m_guiFillBackground.DoUpdate();
+      m_guiFillBackground.Render();
+
+      // render first color
+      int xoff=5;
+      GUIGraphicsContext.ScaleHorizontal(ref xoff);
+      xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX+xoff;
+      int yPos=m_guiFillBackground.YPosition+(m_guiFillBackground.Height/2)-(m_iFillHeight/2);
+      fWidth=(float)iWidth;
+      fWidth/=100.0f;
+      fWidth*=(float)Percentage1;
+      iWidth1=(int)Math.Floor(fWidth);
+      if (iWidth>0)
+      {
         m_guiFill1.Height=m_iFillHeight;
+        m_guiFill1.Width=iWidth1;
         m_guiFill1.SetPosition(xPos,yPos);
-        fWidth=(float)iWidth;
-        fWidth/=100.0f;
-        fWidth*=(float)Percentage1;
-        m_guiFill1.Width=(int)Math.Floor(fWidth);
-        iCurPos=m_guiFill1.Width+m_guiFill1.XPosition;
         m_guiFill1.DoUpdate();
         m_guiFill1.Render();// red
       }
+      iCurPos=iWidth1+xPos;
 
 			//render 2nd color
       int iPercent;
-     // if (m_guiFill2.Allocated==true)
+      if (Percentage2>=Percentage1)
       {
-        if (Percentage2>=Percentage1)
-        {
-          iPercent=Percentage2-Percentage1;
-        }
-        else iPercent=0;
-        fWidth=(float)iWidth;
-        fWidth/=100.0f;
-        fWidth*=(float)iPercent;
-        m_guiFill2.Width=(int)Math.Floor(fWidth);
+        iPercent=Percentage2-Percentage1;
+      }
+      else iPercent=0;
+      fWidth=(float)iWidth;
+      fWidth/=100.0f;
+      fWidth*=(float)iPercent;
+      iWidth2=(int)Math.Floor(fWidth);
+      if (iWidth2>0)
+      {
+        m_guiFill2.Width=iWidth2;
         m_guiFill2.Height=m_guiFill1.Height;
-        m_guiFill2.SetPosition(m_guiFill1.XPosition+m_guiFill1.Width,m_guiFill1.YPosition);
+        m_guiFill2.SetPosition(iCurPos,m_guiFill1.YPosition);
         m_guiFill2.DoUpdate();
         m_guiFill2.Render();
-        iCurPos=m_guiFill2.Width+m_guiFill2.XPosition;
       }
+      iCurPos=iWidth1+iWidth2+xPos;
 
-     // if (m_guiFill3.Allocated==true)
+      if (Percentage3 >= Percentage2)
       {
-        if (Percentage3 >= Percentage2)
-        {
-          //render 3th color
-          iPercent=Percentage3-Percentage2;
-        }
-        else iPercent=0;
-        fWidth=(float)iWidth;
-        fWidth/=100.0f;
-        fWidth*=(float)iPercent;
-        m_guiFill3.Width=(int)Math.Floor(fWidth);
+        //render 3th color
+        iPercent=Percentage3-Percentage2;
+      }
+      else iPercent=0;
+      fWidth=(float)iWidth;
+      fWidth/=100.0f;
+      fWidth*=(float)iPercent;
+      iWidth3=(int)Math.Floor(fWidth);
+      if (iWidth3>0)
+      {
+        m_guiFill3.Width=iWidth3;
         m_guiFill3.Height=m_guiFill2.Height;
-        m_guiFill3.SetPosition(m_guiFill2.XPosition+m_guiFill2.Width,m_guiFill2.YPosition);
+        m_guiFill3.SetPosition(iCurPos,m_guiFill2.YPosition);
         m_guiFill3.DoUpdate();
         m_guiFill3.Render();
       }
 
 			// render ticks
-      //if (m_guiTick.Allocated==true)
+      m_guiTick.Height=m_guiTick.TextureHeight;
+      m_guiTick.Width=m_guiTick.TextureWidth;
+      int posx1=10;
+      int posx2=20;
+      int posy1=3;
+      GUIGraphicsContext.ScaleHorizontal(ref posx1);
+      GUIGraphicsContext.ScaleHorizontal(ref posx2);
+      GUIGraphicsContext.ScaleVertical(ref posy1);
+      for (int i=0; i <= 100; i+=10)
       {
-        m_guiTick.Height=m_guiTick.TextureHeight;
-        m_guiTick.Width=m_guiTick.TextureWidth;
-        int posx1=10;
-        int posx2=20;
-        int posy1=3;
-        GUIGraphicsContext.ScaleHorizontal(ref posx1);
-        GUIGraphicsContext.ScaleHorizontal(ref posx2);
-        GUIGraphicsContext.ScaleVertical(ref posy1);
-        for (int i=0; i <= 100; i+=10)
-        {
-          float fpos=(float)m_dwPosX+m_guiLeft.TextureWidth+posx1;
-          fWidth=(float)(iWidth-posx2);	
-          fWidth/=100.0f;
-          fWidth*= (float)i;
-          m_guiTick.SetPosition( (int)(fpos+fWidth),(int)m_dwPosY+posy1);
-          m_guiTick.DoUpdate();
-          m_guiTick.Render();
-        }
-      }
-
-			// render top
-      //if (m_guiTop.Allocated==true && m_guiFillBackground.Allocated==true)
-      {
-        xPos=iCurPos - (m_guiTop.TextureWidth/2);
-        /*if (xPos < m_dwPosX+m_guiLeft.TextureWidth) xPos = m_dwPosX+m_guiLeft.TextureWidth;
-        if (xPos + m_guiTop.TextureWidth >= m_dwPosX+m_dwWidth-m_guiRight.TextureWidth)
-        {
-          xPos=m_dwPosX+m_dwWidth-m_guiTop.TextureWidth-m_guiRight.TextureWidth;
-        }*/
-        m_guiTop.SetPosition(xPos, m_dwPosY - m_guiTop.TextureHeight+m_iTopTextureYOffset);
-        m_guiTop.Render();
-
-        m_guiTick.Height=m_guiFillBackground.TextureHeight;
-        m_guiTick.Width=m_guiTick.TextureWidth*2;
-        m_guiTick.SetPosition( (int)(m_guiTop.XPosition+(m_guiTop.TextureWidth/2)-(m_guiTick.Width/2)),(int)m_guiFillBackground.YPosition);
+        float fpos=(float)m_dwPosX+m_guiLeft.TextureWidth+posx1;
+        fWidth=(float)(iWidth-posx2);	
+        fWidth/=100.0f;
+        fWidth*= (float)i;
+        m_guiTick.SetPosition( (int)(fpos+fWidth),(int)m_dwPosY+posy1);
         m_guiTick.DoUpdate();
         m_guiTick.Render();
       }
+
+			// render top
+      xPos=iCurPos - (m_guiTop.TextureWidth/2);
+      m_guiTop.SetPosition(xPos, m_dwPosY - m_guiTop.TextureHeight+m_iTopTextureYOffset);
+      m_guiTop.Render();
+
+      //render tick @ current position
+      m_guiTick.Height=m_guiFillBackground.TextureHeight;
+      m_guiTick.Width=m_guiTick.TextureWidth*2;
+      m_guiTick.SetPosition( (int)(m_guiTop.XPosition+(m_guiTop.TextureWidth/2)-(m_guiTick.Width/2)),(int)m_guiFillBackground.YPosition);
+      m_guiTick.DoUpdate();
+      m_guiTick.Render();
       
-			
-      //if (m_guiBottom.Allocated==true && m_guiLogo.Allocated==true)
-      {
-        // render bottom
-        xPos=m_guiTop.XPosition + (m_guiTop.TextureWidth/2) - (m_guiBottom.TextureWidth/2);
-        m_guiBottom.SetPosition(xPos, m_dwPosY+m_guiMid.TextureHeight);
-        m_guiBottom.Render();
+      // render bottom
+      xPos=m_guiTop.XPosition + (m_guiTop.TextureWidth/2) - (m_guiBottom.TextureWidth/2);
+      m_guiBottom.SetPosition(xPos, m_dwPosY+m_guiMid.TextureHeight);
+      m_guiBottom.Render();
 
-        float fx=(float)m_guiBottom.XPosition;
-        fx += ( ( (float)m_guiBottom.TextureWidth)/2f);
-        fx -= ( ( (float)m_guiLogo.TextureWidth)/2f);
 
-        float fy=(float)m_guiBottom.YPosition;
-        fy += ( ( (float)m_guiBottom.TextureHeight)/2f);
-        fy -= ( ( (float)m_guiLogo.TextureHeight)/2f);
-        m_guiLogo.SetPosition((int)fx, (int)fy);
-        m_guiLogo.DoUpdate();
-        m_guiLogo.Render();
-      }
+      //render logo
+      float fx=(float)m_guiBottom.XPosition;
+      fx += ( ( (float)m_guiBottom.TextureWidth)/2f);
+      fx -= ( ( (float)m_guiLogo.TextureWidth)/2f);
 
+      float fy=(float)m_guiBottom.YPosition;
+      fy += ( ( (float)m_guiBottom.TextureHeight)/2f);
+      fy -= ( ( (float)m_guiLogo.TextureHeight)/2f);
+      m_guiLogo.SetPosition((int)fx, (int)fy);
+      m_guiLogo.DoUpdate();
+      m_guiLogo.Render();
+      
 			if (m_pFont!=null)
 			{
 				float fW=0,fH=0;
 				float fHeight=0;
 				string strText="";
+
 				// render top text
 				if (m_strLabelTop.Length>0)
 				{
