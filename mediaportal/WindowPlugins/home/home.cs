@@ -587,6 +587,12 @@ namespace MediaPortal.GUI.Home
     {
       foreach (ISetupForm setup in plugins)
       {
+        using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+        {
+          bool bHomeDefault=setup.DefaultEnabled();
+          bool inhome=xmlreader.GetValueAsBool("home", setup.PluginName(), bHomeDefault);
+          if (!inhome) continue;
+        }
         Trace.WriteLine(String.Format("plugin:{0}",setup.PluginName()) );
         string strButtonText;
         string strButtonImage;
@@ -952,7 +958,9 @@ namespace MediaPortal.GUI.Home
 			{
 				m_updateTimer=DateTime.Now;
 				GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
-				GUIControl.SetControlLabel(GetID, 201,GetTime());
+        GUIControl.SetControlLabel(GetID, 201,GetTime());
+        GUIPropertyManager.SetProperty("#date",GetDate()); 	 
+        GUIPropertyManager.SetProperty("#time",GetTime()); 	 
 			}
 		}
 

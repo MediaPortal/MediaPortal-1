@@ -58,6 +58,7 @@ namespace MediaPortal.GUI.Library
       ,WINDOW_SETTINGS_GUI = 31
       ,WINDOW_MSN = 32
       ,WINDOW_MSN_CHAT = 33
+      ,WINDOW_MYPLUGINS = 34
 
 			,WINDOW_DIALOG_YES_NO = 100
 			,WINDOW_DIALOG_PROGRESS = 101

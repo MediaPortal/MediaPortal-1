@@ -896,6 +896,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "home\MyPlugins.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "home\SetupForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
