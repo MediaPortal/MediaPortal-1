@@ -181,7 +181,8 @@ namespace MediaPortal.TV.Recording
 
 
       // Retreive the media control interface (for starting/stopping graph)
-
+      ConnectEncoder();
+      m_mpeg2Demux.CreateMappings();
       m_graphState=State.Created;
       return true;
     }
@@ -265,7 +266,6 @@ namespace MediaPortal.TV.Recording
       }
 
 			DirectShowUtil.DebugWrite("SinkGraph:StartTimeShifting()");
-      ConnectEncoder();
       m_graphState=State.TimeShifting;
       TuneChannel(iChannelNr);
       m_mpeg2Demux.StartTimeshifting(strFileName);
