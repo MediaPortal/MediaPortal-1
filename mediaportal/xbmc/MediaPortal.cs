@@ -45,6 +45,8 @@ public class MediaPortalApp : D3DApp
           }
           app.OnExit();
           Log.Write("MediaPortal done");
+          Win32API.EnableStartBar(true);
+          Win32API.ShowStartBar(true);
         }
       }
       catch(Exception ex)
@@ -404,8 +406,8 @@ public class MediaPortalApp : D3DApp
 
 	protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
   {
-    if (!m_bShowCursor) return;
     base.mousemove(e);
+    if (!m_bShowCursor) return;
     if (m_iLastMousePositionX !=e.X || m_iLastMousePositionY!=e.Y)
     {
       //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,m_iLastMousePositionX,m_iLastMousePositionY);
@@ -432,8 +434,8 @@ public class MediaPortalApp : D3DApp
 
 	protected override void mouseclick(MouseEventArgs e)
 	{
-    if (!m_bShowCursor) return;
     base.mouseclick(e);
+    if (!m_bShowCursor) return;
     Action action;
     // right mouse button=back
     if (e.Button==MouseButtons.Right)

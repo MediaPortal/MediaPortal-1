@@ -1524,6 +1524,8 @@ namespace MediaPortal
     /// </summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
+      Win32API.EnableStartBar(true);
+      Win32API.ShowStartBar(true);
       isClosing = true;
       base.OnClosing(e);
     }
@@ -1545,7 +1547,12 @@ namespace MediaPortal
         lastx=e.X;
         lasty=e.Y;
         System.Windows.Forms.Cursor ourCursor = this.Cursor;
-        m_bShowCursor=true;
+        if (!m_bShowCursor)
+        {
+          m_bShowCursor=true;
+          m_bNeedUpdate=true;
+          Invalidate();
+        }
       }
 		}
 		protected virtual void mouseclick(MouseEventArgs e)
