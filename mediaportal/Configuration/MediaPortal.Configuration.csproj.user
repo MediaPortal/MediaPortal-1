@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "D:\Development\MediaPortal\mediaportal\guilib\bin\Release\;D:\Development\MediaPortal\mediaportal\DShowNET\bin\Release\;D:\Development\MediaPortal\mediaportal\DirectX.Capture\bin\Release\;D:\Development\MediaPortal\mediaportal\;D:\Development\MediaPortal\mediaportal\TVDatabase\bin\Release\;D:\Development\MediaPortal\mediaportal\RadioDatabase\bin\Release\;D:\Development\MediaPortal\mediaportal\TVCapture\bin\Release\;C:\mediaportal\mediaportal\TVDatabase\obj\Release\;C:\mediaportal\mediaportal\TVCapture\obj\Release\;C:\mediaportal\mediaportal\" >
+            <Settings ReferencePath = "D:\Development\MediaPortal\mediaportal\guilib\bin\Release\;D:\Development\MediaPortal\mediaportal\DShowNET\bin\Release\;D:\Development\MediaPortal\mediaportal\DirectX.Capture\bin\Release\;D:\Development\MediaPortal\mediaportal\;D:\Development\MediaPortal\mediaportal\TVDatabase\bin\Release\;D:\Development\MediaPortal\mediaportal\RadioDatabase\bin\Release\;D:\Development\MediaPortal\mediaportal\TVCapture\bin\Release\;C:\mediaportal\mediaportal\TVDatabase\obj\Release\;C:\mediaportal\mediaportal\TVCapture\obj\Release\;C:\mediaportal\mediaportal\;D:\Development\SourceForge\mediaportal\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"
@@ -11,7 +11,7 @@
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""
                     StartAction = "Project"
-                    StartArguments = "/wizard /section=wizards\DVD.xml"
+                    StartArguments = "1/wizard 1/section=wizards\DVD.xml"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""

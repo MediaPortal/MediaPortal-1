@@ -90,19 +90,9 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "TVDatabase"
-                    AssemblyName = "TVDatabase"
-                    HintPath = "..\..\MediaPortal\mediaportal\TVDatabase\bin\Release\TVDatabase.dll"
-                />
-                <Reference
                     Name = "System.Runtime.Serialization.Formatters.Soap"
                     AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
-                />
-                <Reference
-                    Name = "TVCapture"
-                    AssemblyName = "TVCapture"
-                    HintPath = "..\..\MediaPortal\mediaportal\TVCapture\bin\Release\TVCapture.dll"
                 />
                 <Reference
                     Name = "DirectX.Capture"
@@ -127,6 +117,21 @@
                 <Reference
                     Name = "RadioDatabase"
                     Project = "{50E428C2-230C-4549-8BB7-F269203C2C3C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "TVCapture"
+                    Project = "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "TVDatabase"
+                    Project = "{CA8C51E1-B600-4AC4-8A84-D654F70646BA}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "USBUIRT"
+                    Project = "{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
@@ -264,12 +269,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "VideoRenderers.cs"
+                    RelPath = "WeatherChannel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "WeatherChannel.cs"
+                    RelPath = "VideoRenderers.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
