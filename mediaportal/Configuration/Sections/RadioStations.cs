@@ -383,7 +383,8 @@ namespace MediaPortal.Configuration.Sections
 			//
 			// Find the selected device
 			//
-			foreach(Filter device in availableVideoDevices)
+      Filters filters = new Filters();
+			foreach(Filter device in filters.VideoInputDevices)
 			{
 				if(device.Name.Equals(selectedDevice))
 				{
@@ -393,6 +394,7 @@ namespace MediaPortal.Configuration.Sections
 
 			if(captureDevice != null)
 			{
+        if (captureDevice.VideoSources==null) return null;
 				//
 				// Lookup available tuners
 				//

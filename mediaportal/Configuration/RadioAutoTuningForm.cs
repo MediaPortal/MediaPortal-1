@@ -33,6 +33,7 @@ namespace MediaPortal.Configuration
 
 		public override void OnStopTuning()
 		{
+      Text=String.Format("Radio tuning");
 		}
 
 		public override void OnPerformTuning(int stepSize)
@@ -42,13 +43,25 @@ namespace MediaPortal.Configuration
 				//
 				// We have found a channel!
 				//
-				AddItem(new RadioStation(currentChannel, captureDevice.Tuner.Channel));
+        RadioStation newStation =new RadioStation(currentChannel, captureDevice.Tuner.Channel);
+        newStation.Name=String.Format("Station{0}", currentChannel++);
+        newStation.Type="Radio";
+        newStation.Frequency=captureDevice.Tuner.Channel;
+				AddItem(newStation);
 			}
 
 			//
 			// Move forward
 			//
-			captureDevice.Tuner.Channel += stepSize;
+      try
+      {
+        captureDevice.Tuner.Channel += stepSize;
+        double dFreq=(double)captureDevice.Tuner.Channel ;
+        dFreq/=1000000d;
+        Text=String.Format("Radio tuning:{0:#,##} MHz", captureDevice.Tuner.Channel );
+      }
+      catch(Exception)
+      {}
 		}
 	}
 }
