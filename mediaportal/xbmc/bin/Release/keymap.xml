@@ -674,12 +674,12 @@
     <action>
       <description>increase time</description>
       <id>86</id>
-      <key>Y</key>
+      <key>F8</key>
     </action> 
     <action>
       <description>decrease time</description>
       <id>87</id>
-      <key>X</key>
+      <key>F7</key>
     </action> 
     <action>
       <description>default time</description>

@@ -8,11 +8,11 @@ Skin, gfx, .xml & media:
   - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
-	- metal & crystal : toggle button graphics
-	- remeber 'fullscreen tv' state when entering/leaving my tv
+	- remember 'fullscreen tv' state when entering/leaving my tv
+	- new preview.png for both skins
+	- xbmc-er's fixes
+	- scrolling : base on time instead of frame
 fix:
-	-home:dont load plugins 3 times
-
 vmr9:
 	- windowless vmr9 / renderless vmr9
 
@@ -55,8 +55,6 @@ My TV:
      - change layout of screen so it becomes more readable
      
   TVGuide:
-     - use 0-9 on remote to select a TV channel
-     - "Watch this channel" in EPG
      - Search function in EPG 
      - special background/color for currently playing program(s)
      - add to program favorites (will b highlighted next time)

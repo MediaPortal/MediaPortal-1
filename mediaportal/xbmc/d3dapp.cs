@@ -112,7 +112,11 @@ namespace MediaPortal
     protected virtual void OnExit() {}
 
 
-
+    bool   m_bWasPlaying=false;
+    string m_strCurrentFile="";
+    int    m_iActiveWindow=-1;
+    double m_dCurrentPos=0;
+    
     /// <summary>
     /// Constructor
     /// </summary>
@@ -988,6 +992,18 @@ namespace MediaPortal
       
       while (mainWindow.Created && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
       {
+            
+        try
+        {
+          FrameMove();
+        }
+        catch (Exception ex)
+        {
+          Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+#if DEBUG
+          throw new Exception("exception occured",ex);
+#endif
+        }
         FullRender();
         System.Windows.Forms.Application.DoEvents();
         if (m_bAutoHideMouse)
@@ -1072,18 +1088,6 @@ namespace MediaPortal
         deviceLost = false;
         m_bNeedUpdate=true;
       }
-            
-			try
-			{
-				FrameMove();
-			}
-			catch (Exception ex)
-			{
-				Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-#if DEBUG
-					throw new Exception("exception occured",ex);
-#endif
-			}
       // Render the scene as normal
       bool bDoRender=true;
       if (g_Player.Playing&& g_Player.DoesOwnRendering &&!g_Player.Paused) bDoRender=false;
@@ -1129,6 +1133,19 @@ namespace MediaPortal
       }
       else System.Threading.Thread.Sleep(50);
 
+      if (!deviceLost &&!m_bNeedReset)
+      {
+        if (m_bWasPlaying)
+        {
+          m_bWasPlaying=false;
+          g_Player.Play(m_strCurrentFile);
+          if (g_Player.Playing)
+          {
+            g_Player.SeekAbsolute(m_dCurrentPos);
+            GUIWindowManager.ActivateWindow(m_iActiveWindow);
+          }
+        }
+      }
       UpdateStats();
 
     }
@@ -1381,14 +1398,27 @@ namespace MediaPortal
       mousemove(e);
     }
 
+    
 
     /// <summary>
     /// Handle system keystrokes (ie, alt-enter)
     /// </summary>
     protected void OnKeyDown(object sender,System.Windows.Forms.KeyEventArgs e)
     {
-      if ((e.Alt) && (e.KeyCode == System.Windows.Forms.Keys.Return))
+      if ((e.Control) && (e.KeyCode == System.Windows.Forms.Keys.F2))
       {
+        menuItem3_Click(null,null);
+        return ;
+      }
+
+      if (e.Control==false && e.Alt==true && (e.KeyCode == System.Windows.Forms.Keys.Return))
+      {
+        m_bWasPlaying =g_Player.Playing;
+        m_strCurrentFile=g_Player.CurrentFile;
+        m_iActiveWindow=GUIWindowManager.ActiveWindow;
+        m_dCurrentPos=g_Player.CurrentPosition;
+        g_Player.Stop();
+
         isMaximized=!isMaximized;
         if (isMaximized)
         {

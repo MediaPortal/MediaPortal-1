@@ -1,37 +1,52 @@
 Bugs left:
-  11-07-2004 general    : disable VMR9 if vga card doesnt support it
-  11-07-2004 my music   : cddb doesnt work for some cds? (MrMario64 has more info)
-  30-06-2004 my programs: returns to home when stopping a game
-  29-06-2004 home       : scroll speed 9 / 10 are the same
-  
-  27-06-2004 general    : The thumbnails for movies and artists are not always shown. 
-                          this happens if the name of the artist in the tag 
-                          or the name of the moviefile is not the same as the information 
-                          that was retrieved from the internet. For example I had the artist Bjork, 
-                          I retrieved the artist information and there the name was Bjo"rk 
-                          Now the thumb gets saved with that name instead of Bjork and since Bjork is 
-                          the name in the database the thumbs don't show up.
-  27-06-2004 general    : The same happens for movies if the filename does not match the name that was 
-                          retrieved from the internet.
-
-  19-06-2004 my tv      : when playing a movie, stop timeshifting?
-  
-  19-06-2004 general    : crash if alt+enter when playing a movie
+  13-07-2004 my tv      : duration of recorded programs is not correct. 
+                          I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
+  12-07-2004 my tv      : press B when fullscreen TV & osd visible->hangup? (mrmario64)
+  12-07-2004 my tv      : home : current program title goes out of box if its 2 long (zipperzip)
+  29-06-2004 general    : scroll speed 9 / 10 are the same
+  11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
+  13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
+  24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   19-06-2004 my video   : vmr9: lines/stripes?
   
-  18-06-2004 my video   : page counter goes wrong when > 9 pages
-  
+  13-07-2004 my music   : press F3 on an artist (a-ha) in artist view and it crashes
+  11-07-2004 my music   : cddb doesnt work for some cds? (MrMario64 )
   02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various 
                           artists first, now only 1 still shows as various artists. 
-  02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
-  24-04-2004 general    : some WM9 visz. like g-force just show a black screen
+  02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. 
+                          However, there r albums with the same name from different artists. (big change needed in database engine) 
+  
 
   
 Bugs i cannot fix (at the moment)
-  23-05-04 general      : when out of focus music won't continue. 
-                          reason : unable to reproduce this bug
-  23-05-04 skin engine  : rescale causes borders to appear on topbar buttons (new topbar) 
+  23-05-2004 skin engine: rescale causes borders to appear on topbar buttons (new topbar) 
                           reason : DirectX scaling causes this. Need to find out if this can b solved
   01-05-2004 my pictures: Quality of pics is degraded since DX9 is used. Slideshow quality is fine 
                           reason : DirectX scaling causes this. Need to find out if this can b solved
-                          
+  30-06-2004 my programs: returns to home when stopping a application
+						  reason : cannot reproduce it (i tried .txt files with notepad)
+  18-06-2004 my video   : page counter goes wrong when > 9 pages
+                          reason : unable to reproduce this bug
+-------------------------------------------------------------------------------------------
+myTV 
+I enter my TV and watch channel 1. 
+I hit the "record now" button. 
+I stop recording, say, after 10 minutes. 
+I am zapping to channel 3. 
+I leave my TV. 
+I enter my TV expecting to see channel 3, but i see the recorded program from channel 1. 
+EPG shows the info of channel 3. 
+
+Same with programmed recording: 
+I enter my TV Guide and select a program for record. 
+I leave my TV and wait until recording is done. 
+I enter my TV and i see the recorded show. Not the normal TV program. 
+-------------------------------------------------------------------------------------------
+my DVD 
+I start DVD playback. 
+I stop DVD playback. 
+Overlay picture resides on screen, i see the last picture before hitting the stop button. 
+I can use MP after that (when i browse "blindly" ). But something seems to hang in the system, because the CPU usage is about 100%. Also the macrovision signal of the Cyberlink codec is still activ. Only a restart of the computer solves the problem. This happens also with ripped DVDs on Harddisk (.IFO). 
+I am using Cyberlink codecs (Video, Audio, Navigator). But i also tested my other codecs with the same result. 
+I am using normal Overlay mode. DVD playback was ok until Build 29062004. With Build 29062004 the problem occured for the first time on my machine.
+-------------------------------------------------------------------------------------------

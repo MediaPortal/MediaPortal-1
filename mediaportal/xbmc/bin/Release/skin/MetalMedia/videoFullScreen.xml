@@ -187,7 +187,7 @@
 		<lefttexture>ProgressBar-Left.png</lefttexture> 
 		<midtexture>ProgressBar-Base.png</midtexture> 
 		<righttexture>ProgressBar-Right.png</righttexture> 
-		
+		<logotexture>#playlogo</logotexture>
 		<fillbackgroundtexture>ProgressBar-inner.png</fillbackgroundtexture>
 		<fillbgxoff>10</fillbgxoff>
 		<fillbgyoff>10</fillbgyoff>

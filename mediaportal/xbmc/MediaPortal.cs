@@ -26,9 +26,9 @@ public class MediaPortalApp : D3DApp, IRender
     private System.Threading.Mutex m_Mutex;
     private string m_UniqueIdentifier;
 
-  const int WM_KEYDOWN    =0x0100;
-  const int WM_SYSCOMMAND =0x0112;
-  const int SC_SCREENSAVE =0xF140;
+    const int WM_KEYDOWN    =0x0100;
+    const int WM_SYSCOMMAND =0x0112;
+    const int SC_SCREENSAVE =0xF140;
 		[STAThread]
     public static void Main()
     {
@@ -83,9 +83,6 @@ public class MediaPortalApp : D3DApp, IRender
           strLine=strLine+ "Mediaportal cannot run without DirectX 9.0b";
           System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
-//TESTTESTTEST
-bWindowsMediaPlayer9=true;
-
         if (!bWindowsMediaPlayer9)
         {
           string strLine="Please install Windows Mediaplayer 9\r\n";
@@ -96,27 +93,30 @@ bWindowsMediaPlayer9=true;
         if (bDirectXInstalled && bWindowsMediaPlayer9)
         {
 
-          MediaPortalApp app = new MediaPortalApp();
-          if( app.CreateGraphicsSample() )
+          try
           {
-            //app.PreRun();
-            Log.Write("Start MediaPortal");
-#if DEBUG
-						app.Run();
-#else
-            try
+            MediaPortalApp app = new MediaPortalApp();
+            if( app.CreateGraphicsSample() )
             {
-              app.Run();
+              //app.PreRun();
+              Log.Write("Start MediaPortal");
+              try
+              {
+                app.Run();
+              }
+              catch (Exception ex)
+              {
+                Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
+              }
+              app.OnExit();
+              Log.Write("MediaPortal done");
+              Win32API.EnableStartBar(true);
+              Win32API.ShowStartBar(true);
             }
-            catch (Exception ex)
-            {
-              Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
-            }
-#endif
-            app.OnExit();
-            Log.Write("MediaPortal done");
-            Win32API.EnableStartBar(true);
-            Win32API.ShowStartBar(true);
+          }
+          catch(Exception ex)
+          {
+            Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message,ex.Source, ex.StackTrace);
           }
         }
     }
@@ -263,19 +263,7 @@ bWindowsMediaPlayer9=true;
 
     protected override void Render() 
     { 
-      if (!g_Player.Playing && !Recorder.IsRecording)
-      {
-        GUIPropertyManager.RemovePlayerProperties();
-      }
-
-      // disable TV preview when playing a movie
-      if ( g_Player.Playing && g_Player.HasVideo )
-      {
-        if (!g_Player.IsTV)
-        {
-          Recorder.Previewing=false;
-        }
-      }
+      
 
       
       // if there's no DX9 device (during resizing for exmaple) then just return
@@ -373,8 +361,20 @@ bWindowsMediaPlayer9=true;
     {
       if (!Recorder.Previewing)
         GUIGraphicsContext.IsFullScreenVideo=false;
-      GUIGraphicsContext.IsPlaying=false;
-				
+      GUIGraphicsContext.IsPlaying=false;			
+    }
+    if (!g_Player.Playing && !Recorder.IsRecording)
+    {
+      GUIPropertyManager.RemovePlayerProperties();
+    }
+
+    // disable TV preview when playing a movie
+    if ( g_Player.Playing && g_Player.HasVideo )
+    {
+      if (!g_Player.IsTV)
+      {
+        Recorder.Previewing=false;
+      }
     }
   }
 
@@ -563,13 +563,13 @@ bWindowsMediaPlayer9=true;
 								GUIWindow win= GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 								if (win.FullScreenVideoAllowed)
 								{
-									if (g_Player.IsTV)
-										GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-									else
-										GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-									GUIGraphicsContext.IsFullScreenVideo=true;
+                  if (!g_Player.IsTV)
+                  {
+                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                    GUIGraphicsContext.IsFullScreenVideo=true;
+                    return;
+                  }
 								}
-								return;
 							}
 							break;
 	          

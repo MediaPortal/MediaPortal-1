@@ -65,9 +65,9 @@
 		<type>textboxscrollup</type>
 		<id>15</id>
 		<posX>65</posX>
-		<posY>451</posY>
+		<posY>436</posY>
 		<width>310</width> 
-		<height>27</height> 
+		<height>70</height> 
 		<label>#TV.View.description</label>
 		<font>font10</font>
 		<textcolor>FF000000</textcolor>
