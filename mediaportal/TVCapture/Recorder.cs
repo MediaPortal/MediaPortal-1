@@ -615,7 +615,15 @@ namespace MediaPortal.TV.Recording
       }
       set
       {
+        if (value==m_strTVChannel) return;
         m_strTVChannel=value;
+        foreach (TVCaptureDevice dev in m_tvcards)
+        {
+          if (!dev.IsRecording)
+          {
+            dev.TVChannel=m_strTVChannel;
+          }
+        }
       }
     }
     
