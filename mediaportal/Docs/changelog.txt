@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  09-05-2004  setup       : fixed : file->setup: tab order was messed up
+  09-05-2004  general     : fixed : numerous skin changes to remove wasted empty space
+  09-05-2004  my tv       : added : support for multiple tuners
   09-05-2004  my music    : fixed : songs with ' character in it where gone after reoganizing the music database
   09-05-2004  my tv       : fixed : video compressor was not used
   

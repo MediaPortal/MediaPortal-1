@@ -18,11 +18,13 @@ My TV:
   - A way to browse and resolve recording conflicts. 
   - full screen TV OSD
      - show info about current & next program
+
   
   Recorded tv:
 	 -     
   TVGuide:
-     - 
+     - in the tv guide, when you select a program, it would be nice to have an option which directly switches to the channel. Of course only if the program currently runs. 
+
   
   Scheduled:
      -
@@ -30,7 +32,6 @@ My TV:
   Capture:
      - time shifting. This allows you to pause/ FF/RW live tv      
      - add support for digital capture cards (BDA tuners)
-     - support multiple tuners/capture cards
      - stutter /avsync ?
     
 My Music:
@@ -38,7 +39,7 @@ My Music:
   - gapless playback
   - search songs by genre,artist,album (based on music database)
   - support for external audio players based on file extension
-  - FF/RW/pause/volume control
+  - FF/RW control
   - crossfading ?
   - repeat none, once, always
   - tag readers for formats like ogg,flac,wma,...

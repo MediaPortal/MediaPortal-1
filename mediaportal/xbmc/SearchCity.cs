@@ -62,89 +62,89 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new System.Windows.Forms.Label();
-			this.textBoxCity = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.labelCode = new System.Windows.Forms.Label();
-			this.btnSearch = new System.Windows.Forms.Button();
-			this.btnAdd = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 16);
-			this.label1.Name = "label1";
-			this.label1.TabIndex = 0;
-			this.label1.Text = "City:";
-			// 
-			// textBoxCity
-			// 
-			this.textBoxCity.Location = new System.Drawing.Point(48, 16);
-			this.textBoxCity.Name = "textBoxCity";
-			this.textBoxCity.Size = new System.Drawing.Size(256, 20);
-			this.textBoxCity.TabIndex = 1;
-			this.textBoxCity.Text = "";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(16, 48);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(72, 16);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "Shortcode:";
-			// 
-			// labelCode
-			// 
-			this.labelCode.Location = new System.Drawing.Point(96, 48);
-			this.labelCode.Name = "labelCode";
-			this.labelCode.Size = new System.Drawing.Size(112, 23);
-			this.labelCode.TabIndex = 3;
-			// 
-			// btnSearch
-			// 
-			this.btnSearch.Location = new System.Drawing.Point(328, 16);
-			this.btnSearch.Name = "btnSearch";
-			this.btnSearch.Size = new System.Drawing.Size(56, 23);
-			this.btnSearch.TabIndex = 4;
-			this.btnSearch.Text = "Search";
-			this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
-			// 
-			// btnAdd
-			// 
-			this.btnAdd.Location = new System.Drawing.Point(352, 64);
-			this.btnAdd.Name = "btnAdd";
-			this.btnAdd.Size = new System.Drawing.Size(48, 23);
-			this.btnAdd.TabIndex = 5;
-			this.btnAdd.Text = "Add";
-			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-			// 
-			// btnCancel
-			// 
-			this.btnCancel.Location = new System.Drawing.Point(288, 64);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(48, 23);
-			this.btnCancel.TabIndex = 6;
-			this.btnCancel.Text = "Cancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
-			// SearchCity
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(416, 101);
-			this.Controls.Add(this.btnCancel);
-			this.Controls.Add(this.btnAdd);
-			this.Controls.Add(this.btnSearch);
-			this.Controls.Add(this.labelCode);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.textBoxCity);
-			this.Controls.Add(this.label1);
-			this.Name = "SearchCity";
-			this.Text = "SearchCity";
-			this.Load += new System.EventHandler(this.SearchCity_Load);
-			this.ResumeLayout(false);
+      this.label1 = new System.Windows.Forms.Label();
+      this.textBoxCity = new System.Windows.Forms.TextBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.labelCode = new System.Windows.Forms.Label();
+      this.btnSearch = new System.Windows.Forms.Button();
+      this.btnAdd = new System.Windows.Forms.Button();
+      this.btnCancel = new System.Windows.Forms.Button();
+      this.SuspendLayout();
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 16);
+      this.label1.Name = "label1";
+      this.label1.TabIndex = 0;
+      this.label1.Text = "City:";
+      // 
+      // textBoxCity
+      // 
+      this.textBoxCity.Location = new System.Drawing.Point(48, 16);
+      this.textBoxCity.Name = "textBoxCity";
+      this.textBoxCity.Size = new System.Drawing.Size(256, 20);
+      this.textBoxCity.TabIndex = 0;
+      this.textBoxCity.Text = "";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 48);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(72, 16);
+      this.label2.TabIndex = 2;
+      this.label2.Text = "Shortcode:";
+      // 
+      // labelCode
+      // 
+      this.labelCode.Location = new System.Drawing.Point(96, 48);
+      this.labelCode.Name = "labelCode";
+      this.labelCode.Size = new System.Drawing.Size(112, 23);
+      this.labelCode.TabIndex = 3;
+      // 
+      // btnSearch
+      // 
+      this.btnSearch.Location = new System.Drawing.Point(328, 16);
+      this.btnSearch.Name = "btnSearch";
+      this.btnSearch.Size = new System.Drawing.Size(56, 23);
+      this.btnSearch.TabIndex = 1;
+      this.btnSearch.Text = "Search";
+      this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+      // 
+      // btnAdd
+      // 
+      this.btnAdd.Location = new System.Drawing.Point(352, 64);
+      this.btnAdd.Name = "btnAdd";
+      this.btnAdd.Size = new System.Drawing.Size(48, 23);
+      this.btnAdd.TabIndex = 3;
+      this.btnAdd.Text = "Add";
+      this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+      // 
+      // btnCancel
+      // 
+      this.btnCancel.Location = new System.Drawing.Point(288, 64);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(48, 23);
+      this.btnCancel.TabIndex = 2;
+      this.btnCancel.Text = "Cancel";
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
+      // SearchCity
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(416, 101);
+      this.Controls.Add(this.btnCancel);
+      this.Controls.Add(this.btnAdd);
+      this.Controls.Add(this.btnSearch);
+      this.Controls.Add(this.labelCode);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.textBoxCity);
+      this.Controls.Add(this.label1);
+      this.Name = "SearchCity";
+      this.Text = "SearchCity";
+      this.Load += new System.EventHandler(this.SearchCity_Load);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 

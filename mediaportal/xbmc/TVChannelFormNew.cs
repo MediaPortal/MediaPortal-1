@@ -94,7 +94,7 @@ namespace MediaPortal
                                                                   0});
       this.upDownChannel.Name = "upDownChannel";
       this.upDownChannel.Size = new System.Drawing.Size(56, 20);
-      this.upDownChannel.TabIndex = 3;
+      this.upDownChannel.TabIndex = 1;
       // 
       // buttonOK
       // 
@@ -110,7 +110,7 @@ namespace MediaPortal
       this.buttonCancel.Location = new System.Drawing.Point(90, 140);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(56, 23);
-      this.buttonCancel.TabIndex = 5;
+      this.buttonCancel.TabIndex = 3;
       this.buttonCancel.Text = "Cancel";
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
@@ -126,7 +126,7 @@ namespace MediaPortal
       // 
       this.txtBoxFreq.Location = new System.Drawing.Point(88, 110);
       this.txtBoxFreq.Name = "txtBoxFreq";
-      this.txtBoxFreq.TabIndex = 7;
+      this.txtBoxFreq.TabIndex = 2;
       this.txtBoxFreq.Text = "";
       // 
       // txtBoxChannel
@@ -134,10 +134,10 @@ namespace MediaPortal
       this.txtBoxChannel.Location = new System.Drawing.Point(32, 48);
       this.txtBoxChannel.Name = "txtBoxChannel";
       this.txtBoxChannel.Size = new System.Drawing.Size(168, 20);
-      this.txtBoxChannel.TabIndex = 8;
+      this.txtBoxChannel.TabIndex = 0;
       this.txtBoxChannel.Text = "textBox1";
       // 
-      // TVChannelForm
+      // TVChannelFormNew
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(240, 173);
@@ -149,7 +149,7 @@ namespace MediaPortal
       this.Controls.Add(this.upDownChannel);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.label1);
-      this.Name = "TVChannelForm";
+      this.Name = "TVChannelFormNew";
       this.Text = "TVChannelForm";
       this.Load += new System.EventHandler(this.TVChannelForm_Load);
       ((System.ComponentModel.ISupportInitialize)(this.upDownChannel)).EndInit();

@@ -105,14 +105,14 @@ namespace MediaPortal
                                                                   0});
       this.upDownChannel.Name = "upDownChannel";
       this.upDownChannel.Size = new System.Drawing.Size(56, 20);
-      this.upDownChannel.TabIndex = 3;
+      this.upDownChannel.TabIndex = 0;
       // 
       // buttonOK
       // 
       this.buttonOK.Location = new System.Drawing.Point(150, 140);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(48, 23);
-      this.buttonOK.TabIndex = 4;
+      this.buttonOK.TabIndex = 3;
       this.buttonOK.Text = "OK";
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
@@ -121,7 +121,7 @@ namespace MediaPortal
       this.buttonCancel.Location = new System.Drawing.Point(90, 140);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(56, 23);
-      this.buttonCancel.TabIndex = 5;
+      this.buttonCancel.TabIndex = 2;
       this.buttonCancel.Text = "Cancel";
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
@@ -137,7 +137,7 @@ namespace MediaPortal
       // 
       this.txtBoxFreq.Location = new System.Drawing.Point(88, 110);
       this.txtBoxFreq.Name = "txtBoxFreq";
-      this.txtBoxFreq.TabIndex = 7;
+      this.txtBoxFreq.TabIndex = 1;
       this.txtBoxFreq.Text = "";
       // 
       // TVChannelForm

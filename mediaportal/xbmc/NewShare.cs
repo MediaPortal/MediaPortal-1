@@ -76,7 +76,7 @@ namespace MediaPortal
       // 
       this.shareName.Location = new System.Drawing.Point(64, 16);
       this.shareName.Name = "shareName";
-      this.shareName.TabIndex = 1;
+      this.shareName.TabIndex = 0;
       this.shareName.Text = "";
       // 
       // textBox1
@@ -84,7 +84,7 @@ namespace MediaPortal
       this.textBox1.Location = new System.Drawing.Point(64, 48);
       this.textBox1.Name = "textBox1";
       this.textBox1.Size = new System.Drawing.Size(264, 20);
-      this.textBox1.TabIndex = 2;
+      this.textBox1.TabIndex = 1;
       this.textBox1.Text = "";
       // 
       // Folder
@@ -100,7 +100,7 @@ namespace MediaPortal
       this.btnSelectFolder.Location = new System.Drawing.Point(344, 48);
       this.btnSelectFolder.Name = "btnSelectFolder";
       this.btnSelectFolder.Size = new System.Drawing.Size(32, 23);
-      this.btnSelectFolder.TabIndex = 4;
+      this.btnSelectFolder.TabIndex = 2;
       this.btnSelectFolder.Text = "...";
       this.btnSelectFolder.Click += new System.EventHandler(this.btnSelectFolder_Click);
       // 
@@ -108,7 +108,7 @@ namespace MediaPortal
       // 
       this.btnCancel.Location = new System.Drawing.Point(208, 88);
       this.btnCancel.Name = "btnCancel";
-      this.btnCancel.TabIndex = 5;
+      this.btnCancel.TabIndex = 3;
       this.btnCancel.Text = "Cancel";
       this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
@@ -116,7 +116,7 @@ namespace MediaPortal
       // 
       this.btnAdd.Location = new System.Drawing.Point(304, 88);
       this.btnAdd.Name = "btnAdd";
-      this.btnAdd.TabIndex = 6;
+      this.btnAdd.TabIndex = 4;
       this.btnAdd.Text = "Add";
       this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
       // 
