@@ -32,6 +32,7 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("keepaspectratio")] private bool    m_bKeepAspectRatio=false;
     [XMLSkinElement("zoom")] private bool    m_bZoom=false;
     [XMLSkinElement("zoomfromtop")] private bool    m_bZoomFromTop=false;
+    [XMLSkinElement("fixedheight")] private bool    m_bFixedHeight=false;    
 		private ArrayList								m_vecTextures = new ArrayList();
 
     //TODO GIF PALLETTE
@@ -530,7 +531,13 @@ namespace MediaPortal.GUI.Library
         if (!m_bZoomFromTop) iSourceY = (m_iTextureHeight-iSourceHeight)/2;         
         iSourceX = (m_iTextureWidth-iSourceWidth)/2;
       }
-			
+
+      if (m_bFixedHeight)
+      {
+        y=(float)m_dwPosY;
+        nh =(float)m_dwHeight;
+      }
+
       // copy all coordinates to the vertex buffer
 			// x-offset in texture
       float uoffs = ((float)(m_iBitmap * m_dwWidth + iSourceX)) / ((float)m_iImageWidth);
@@ -850,6 +857,20 @@ namespace MediaPortal.GUI.Library
       set 
       {
         m_bZoom=value;
+        Update();
+      }
+    }
+
+    /// <summary>
+    /// Property which indicates if the image should retain its height 
+    /// after it has been zoomed or aspectratio adjusted
+    /// </summary>
+    public bool FixedHeight
+    {
+      get { return m_bFixedHeight;}
+      set 
+      {
+        m_bFixedHeight=value;
         Update();
       }
     }
