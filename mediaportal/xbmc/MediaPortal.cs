@@ -767,6 +767,8 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void OnExit() 
     {
 			Log.Write("Mediaportal.OnExit()");
+		if(usbuirtdevice != null)
+			usbuirtdevice.Close();
 			if(serialuirdevice != null)
 				serialuirdevice.Close();
 			if(redeyedevice != null)
