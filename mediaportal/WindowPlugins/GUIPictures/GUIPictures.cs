@@ -312,6 +312,7 @@ namespace MediaPortal.GUI.Pictures
             int iAction=(int)message.Param1;
             if (iAction == (int)Action.ActionType.ACTION_SHOW_INFO) 
             {
+              if (m_directory.IsRemote(m_strDirectory)) return true;
               OnInfo(iItem);
             }
             if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
@@ -320,6 +321,7 @@ namespace MediaPortal.GUI.Pictures
             }
             if (iAction == (int)Action.ActionType.ACTION_QUEUE_ITEM)
             {
+              if (m_directory.IsRemote(m_strDirectory)) return true;
               OnQueueItem(iItem);
             }
 
@@ -334,6 +336,7 @@ namespace MediaPortal.GUI.Pictures
           }
           else if (iControl==(int)Controls.CONTROL_BTNCREATETHUMBS) // Create Thumbs
           {
+            if (m_directory.IsRemote(m_strDirectory)) return true;
             OnCreateThumbs();
           }
           else if (iControl==(int)Controls.CONTROL_BTNROTATE) // Rotate Pic
@@ -346,6 +349,16 @@ namespace MediaPortal.GUI.Pictures
           case GUIMessage.MessageType.GUI_MSG_CD_INSERTED:
             m_strDirectory=message.Label;
             OnSlideShowRecursive();
+            break;
+
+        case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
+          GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+          pControl.OnMessage(message);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
+          GUIFacadeControl pControl2=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+          pControl2.OnMessage(message);
           break;
       }
       return base.OnMessage(message);
@@ -671,6 +684,27 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
+        if (m_directory.IsRemote(item.Path) )
+        {
+          if (!m_directory.IsRemoteFileDownloaded(item.Path) )
+          {
+            if (!m_directory.ShouldWeDownloadFile(item.Path)) return;
+            if (!m_directory.DownloadRemoteFile(item.Path))
+            {
+              //show message that we are unable to download the file
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+              msg.Param1=916;
+              msg.Param2=920;
+              msg.Param3=0;
+              msg.Param4=0;
+              GUIWindowManager.SendMessage(msg);
+
+              return;
+            }
+          }
+          return;
+        }
+
         m_iItemSelected=GetSelectedItemNo();
         OnShowPicture(item.Path);  
       }
@@ -692,6 +726,7 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (!item.IsFolder)
         {
+          if (item.IsRemote) return;
           SlideShow.Add(item.Path);
         }
       }
@@ -710,7 +745,7 @@ namespace MediaPortal.GUI.Pictures
           if (item.Label!="..")
             AddDir(SlideShow,item.Path);
         }
-        else
+        else if (!item.IsRemote)
         {
           SlideShow.Add(item.Path);
         }
@@ -738,7 +773,7 @@ namespace MediaPortal.GUI.Pictures
       for (int i=0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
-        if (!item.IsFolder)
+        if (!item.IsFolder && !item.IsRemote)
         {
           SlideShow.Add(item.Path);
         }
@@ -771,6 +806,7 @@ namespace MediaPortal.GUI.Pictures
         for (int i=0; i < GetItemCount(); ++i)
         {
           GUIListItem item = GetItem(i);
+          if (item.IsRemote) continue;
           if (!item.IsFolder)
           {
             if (Utils.IsPicture(item.Path))
@@ -1047,6 +1083,7 @@ namespace MediaPortal.GUI.Pictures
       GUIListItem item=GetSelectedItem();
       if (item==null) return;
       if (item.IsFolder) return;
+      if (item.IsRemote) return;
       int rotate=0;
       using (PictureDatabase dbs = new PictureDatabase())
       {

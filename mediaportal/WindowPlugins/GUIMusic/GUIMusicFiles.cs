@@ -370,6 +370,7 @@ namespace MediaPortal.GUI.Music
             int iAction = (int)message.Param1;
             if (iAction == (int)Action.ActionType.ACTION_SHOW_INFO) 
             {
+              
               OnInfo(iItem);
               LoadDirectory(m_strDirectory);
             }
@@ -447,6 +448,15 @@ namespace MediaPortal.GUI.Music
               LoadDirectory(m_strDirectory);
             }
           }
+          break;
+        case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
+          GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+          pControl.OnMessage(message);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
+          GUIFacadeControl pControl2=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
+          pControl2.OnMessage(message);
           break;
       }
       return base.OnMessage(message);
@@ -970,6 +980,27 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
+        if (m_directory.IsRemote(item.Path) )
+        {
+          if (!m_directory.IsRemoteFileDownloaded(item.Path) )
+          {
+            if (!m_directory.ShouldWeDownloadFile(item.Path)) return;
+            if (!m_directory.DownloadRemoteFile(item.Path))
+            {
+              //show message that we are unable to download the file
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+              msg.Param1=916;
+              msg.Param2=920;
+              msg.Param3=0;
+              msg.Param4=0;
+              GUIWindowManager.SendMessage(msg);
+
+              return;
+            }
+          }
+          return;
+        }
+
         if (PlayListFactory.IsPlayList(item.Path))
         {
           LoadPlayList(item.Path);
@@ -1018,6 +1049,7 @@ namespace MediaPortal.GUI.Music
       // add item 2 playlist
       GUIListItem pItem = GetItem(iItem);
       if (pItem==null) return;
+      if (pItem.IsRemote) return;
       if (PlayListFactory.IsPlayList(pItem.Path))
       {
         LoadPlayList(pItem.Path);
@@ -1418,6 +1450,7 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < (int)items.Count; ++i)
       {
         GUIListItem pItem = (GUIListItem)items[i];
+        if (pItem.IsRemote) continue;
         if (dlg != null && dlg.IsCanceled)
         {
           bCancel = true;
@@ -1453,7 +1486,9 @@ namespace MediaPortal.GUI.Music
       ArrayList items = new ArrayList();
       for (int i = 0; i < GetItemCount(); ++i)
       {
-        items.Add(GetItem(i));
+        GUIListItem pItem=GetItem(i);
+        if (!pItem.IsRemote) 
+          items.Add(pItem);
       }
       if (null != dlg)
       {
@@ -1493,6 +1528,7 @@ namespace MediaPortal.GUI.Music
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       GUIListItem pItem = GetItem(iItem);
 
+      if (pItem.IsRemote) return;
       string strPath = "";
       if (pItem.IsFolder)
       {
