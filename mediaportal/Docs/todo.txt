@@ -55,7 +55,6 @@ My TV:
      - add support for digital capture cards (BDA tuners)
      - add screenshot option    
 	 - add current recording properties which can b used in the skin
-	 - add Record Monday-Friday     
 	 - FF/RW
 	 
 My Music: (int_20h)
