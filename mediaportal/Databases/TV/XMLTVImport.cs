@@ -160,9 +160,33 @@ namespace MediaPortal.TV.Database
 						  {
 							  TVChannel chan=new TVChannel();
 	                
+								//parse name of channel to see if it contains a channel number
+								string number=String.Empty;
+								for (int i=0; i < nodeName.InnerText.Length;++i)
+								{
+									if (Char.IsDigit(nodeName.InnerText[i]))
+									{
+										number += nodeName.InnerText[i];
+									}
+									else break;
+								}
+								if (number==String.Empty)
+								{
+									for (int i=0; i < nodeId.InnerText.Length;++i)
+									{
+										if (Char.IsDigit(nodeId.InnerText[i]))
+										{
+											number += nodeId.InnerText[i];
+										}
+										else break;
+									}
+								}
+								int channelNo=0;
+								if (number!=String.Empty)
+									channelNo=Int32.Parse(number);
 							  chan.XMLId=nodeId.InnerText;
 							  chan.Name=nodeName.InnerText;
-							  chan.Number=0;
+							  chan.Number=channelNo;
 							  chan.Frequency=0;
 							  TVDatabase.AddChannel(chan);
 
