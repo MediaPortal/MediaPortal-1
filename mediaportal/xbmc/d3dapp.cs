@@ -475,10 +475,10 @@ namespace MediaPortal
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
             presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
-            presentParams.PresentationInterval = PresentInterval.Immediate;
+            presentParams.PresentationInterval = PresentInterval.Default;
             presentParams.BackBufferCount = 0;
             presentParams.FullScreenRefreshRateInHz = 0;
-            presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Copy;
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = ourRenderTarget;
             presentParams.Windowed=true;
