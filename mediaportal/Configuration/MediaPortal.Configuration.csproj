@@ -444,7 +444,7 @@
                 />
                 <File
                     RelPath = "Sections\General.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -534,7 +534,7 @@
                 />
                 <File
                     RelPath = "Sections\MusicExtensions.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
