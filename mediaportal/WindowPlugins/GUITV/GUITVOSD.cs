@@ -225,7 +225,19 @@ namespace MediaPortal.GUI.TV
           OnMessage(msgSet);
           return;
         }
-      }
+
+				case Action.ActionType.ACTION_NEXT_CHANNEL:
+				{
+					OnNextChannel();
+					return;
+				}
+				
+				case Action.ActionType.ACTION_PREV_CHANNEL:
+				{
+					OnPreviousChannel();
+					return;
+				}
+			}
 
       base.OnAction(action);
     }
@@ -261,7 +273,6 @@ namespace MediaPortal.GUI.TV
           m_channels.Clear();
           TVDatabase.GetChannels(ref m_channels);
           SetCurrentChannelLogo();
-          ShowPrograms();
           return true;
         }
       		    
@@ -1141,15 +1152,19 @@ namespace MediaPortal.GUI.TV
           Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
 
           SetCurrentChannelLogo();
-          ShowPrograms();
           return;
         }
       }
     }
 
+		public void UpdateChannelInfo()
+		{
+			SetCurrentChannelLogo();
+		}
+
+
     void SetCurrentChannelLogo()
     {
-
       string strChannel=GetChannelName();
       string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,strChannel);
       if (System.IO.File.Exists(strLogo))

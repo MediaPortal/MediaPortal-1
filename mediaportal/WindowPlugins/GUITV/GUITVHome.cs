@@ -580,9 +580,10 @@ namespace MediaPortal.GUI.TV
     {
       return m_iCurrentCard;
     }
+
     static public void OnPreviousChannel()
-    {
-      ArrayList       m_channels=new ArrayList();
+    {	
+			ArrayList m_channels=new ArrayList();
       TVDatabase.GetChannels(ref m_channels);
       string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
@@ -597,14 +598,19 @@ namespace MediaPortal.GUI.TV
           int card=GUITVHome.GetCurrentCard();
           Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
 
-          return;
+					if (GUIGraphicsContext.IsFullScreenVideo)
+					{
+						GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+						if (TVWindow != null) TVWindow.UpdateOSD();
+					}
+					return;
         }
       }
     }
     
     static public void OnNextChannel()
     {
-      ArrayList       m_channels=new ArrayList();
+      ArrayList m_channels=new ArrayList();
       TVDatabase.GetChannels(ref m_channels);
       string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
@@ -618,7 +624,12 @@ namespace MediaPortal.GUI.TV
 
           int card=GUITVHome.GetCurrentCard();
           Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-
+					
+					if (GUIGraphicsContext.IsFullScreenVideo)
+					{
+						GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+						if (TVWindow != null) TVWindow.UpdateOSD();
+					}
           return;
         }
       }
