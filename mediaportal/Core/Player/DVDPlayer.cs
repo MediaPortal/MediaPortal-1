@@ -13,7 +13,7 @@ using DirectX.Capture;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
+using MediaPortal.Util;
 
 using DShowNET;
 using DShowNET.Dvd;
@@ -377,6 +377,18 @@ namespace MediaPortal.Player
         m_state = PlayState.Playing;
         pendingCmd = false;
         Log.Write("DVDPlayer:Started playing()");
+        if (m_strCurrentFile==String.Empty)
+        {
+          for (int i=0; i <= 26;++i)
+          {
+            string dvd=String.Format("{0}:", (char)('A'+i));
+            if (Utils.IsDVD(dvd))
+            {
+              m_strCurrentFile=String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO",(char)('A'+i));
+              break;
+            }
+          }
+        }
         return true;
       }
       catch( Exception ex)
