@@ -1267,7 +1267,7 @@ namespace MediaPortal.Configuration.Sections
 		private void button5_Click(object sender, System.EventArgs e)
 		{
 			DVBSections.Transponder[] list=null;
-			string					fileName=comboBox3.SelectedItem.ToString();
+			string					fileName="";
 			int						dIndex=comboBox3.SelectedIndex;
 			int						lnbkhz=0;
 			int						diseqc=0;
@@ -1281,6 +1281,11 @@ namespace MediaPortal.Configuration.Sections
 			int						cband=0;
 			int						lnbKinds=0;
 			
+			if(comboBox3.SelectedItem!=null)
+				fileName=comboBox3.SelectedItem.ToString();
+			else
+				return;
+
 			if(comboBox3.Text=="")
 			{
 				button5.Enabled=false;
@@ -1583,17 +1588,24 @@ namespace MediaPortal.Configuration.Sections
 						if(dbID==-1)
 							continue;
 						tv.ID=dbID;
-						int audioPid=GetAudioPid(ch.pid_list);
+						string langString="";
+						int audioPid=GetAudioPid(ch.pid_list,out langString);
 						int videoPid=GetVideoPid(ch.pid_list);
 						int teleTextPid=GetTeletextPid(ch.pid_list);
 						int ac3Pid=GetAC3Pid(ch.pid_list);
-						int[] otherAudio=GetOtherAudioPids(ch.pid_list,audioPid);
-						if(otherAudio==null)
-							otherAudio=new int[]{0,0,0};
+						int[] otherAudio;
+						string[] otherAudioLang;
+						GetOtherAudioPids(ch.pid_list,audioPid,out otherAudio,out otherAudioLang);
+
+						if (otherAudio==null)
+							otherAudio=new int[3]{0,0,0};
+
+						if (otherAudioLang==null)
+							otherAudioLang=new string[3]{"","",""};
 
 						ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
 							ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],ch.network_pmt_PID,teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+							audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],otherAudioLang[2],0,ch.network_pmt_PID);
 						televisionCounter++;
 					}
 					if(ch.serviceType==2) // for radio
@@ -1607,14 +1619,14 @@ namespace MediaPortal.Configuration.Sections
 						rc.URL="";
 						rc.Genre=ch.service_provider_name;
 						rc.Frequency=(radioCounter<< 16);
-						
+						string lang="";
 						int dbID=RadioDatabase.AddStation(ref rc);
 						if(dbID==-1)
 							continue;
-						int audioPid=GetAudioPid(ch.pid_list);
+						int audioPid=GetAudioPid(ch.pid_list,out lang);
 						int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
 							ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-							audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid);
+							audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,lang,"","","",0,ch.network_pmt_PID);
 						radioCounter++;
 
 					}
@@ -1625,13 +1637,17 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 		//
-		private int GetAudioPid(ArrayList ch)
+		private int GetAudioPid(ArrayList ch,out string lang)
 		{
+			lang="";
 			if(ch==null)
 				return -1;
 			foreach(DVBSections.PMTData pids in ch)
 				if(pids.isAudio)
+				{
+					lang=pids.data;
 					return pids.elementary_PID;
+				}
 			return 0;
 
 		}
@@ -1663,22 +1679,28 @@ namespace MediaPortal.Configuration.Sections
 					return pids.elementary_PID;
 			return 0;
 		}
-		private int[] GetOtherAudioPids(ArrayList ch,int audio)
+		private void GetOtherAudioPids(ArrayList ch,int audio,out int[] pidArray,out string[] lang)
 		{
-			int[] pidArray=new int[3]{0,0,0};
+			pidArray=new int[3]{0,0,0};
+			lang=new string[3]{"","",""};
 
 			int n=0;
 			if(ch==null)
-				return null;
+				return;
 			foreach(DVBSections.PMTData pids in ch)
 			{
 				if(pids.isAudio && pids.elementary_PID!=audio)
 				{
+					
 					if(n<3)
-					pidArray[n]=pids.elementary_PID;n++;
+					{
+						pidArray[n]=pids.elementary_PID;
+						lang[n]=pids.data;
+					}
+					n++;
 				}
 			}
-			return null;
+			return ;
 		}
 
 		private void button9_Click(object sender, System.EventArgs e)
