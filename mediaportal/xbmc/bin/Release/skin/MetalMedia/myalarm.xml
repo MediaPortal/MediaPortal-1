@@ -1,374 +1,74 @@
 <window>
 	<id>5000</id>
-	<defaultcontrol>2</defaultcontrol>
+	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 
-<controls>
-	<control>
-		<description>background image</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>0</posX>
-		<posY>0</posY>
-		<width>720</width>
-		<height>576</height>
-		<texture>background.png</texture>
-	</control>
-	<control>
-		<description>MyAlarm BG</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>300</posX>
-		<posY>150</posY>
-		<width>350</width>
-		<height>350</height>
-		<colordiffuse>20ffffff</colordiffuse>
-		<texture>alarm_clock.png</texture>
-	</control>
-	<control>
-		<description>Panel</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>50</posX>
-		<posY>100</posY>
-		<width>190</width>
-		<height>272</height>
-		<texture>panel.png</texture>
-	</control>
-
-	<control>
-		<description>Alarm On/Off button</description>
-		<type>togglebutton</type>
-		<id>2</id>
-		<posX>55</posX>
-		<posY>115</posY>
-		<width>180</width>
-		<height>28</height>
-		<label>852</label>
-		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-		<textureFocus>togglebutton-on-focus.png</textureFocus>
-		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-		<onleft>2</onleft>
-		<onright>7</onright>
-		<onup>20</onup>
-		<ondown>4</ondown>
-	</control>
-	<control>
-		<description>Sleep Timer On/Off button</description>
-		<type>togglebutton</type>
-		<id>4</id>
-		<posX>55</posX>
-		<posY>143</posY>
-		<width>180</width>
-		<height>28</height>
-		<label>856</label>
-		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-		<textureFocus>togglebutton-on-focus.png</textureFocus>
-		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-		<onleft>4</onleft>
-		<onright>7</onright>
-		<onup>2</onup>
-		<ondown>17</ondown>
-	</control>
-	<control>
-		<description>snooze button</description>
-		<type>button</type>
-		<id>17</id>
-		<posX>55</posX>
-		<posY>171</posY>
-		<label>857</label>
-		<onleft>17</onleft>
-		<onright>7</onright>
-		<onup>4</onup>
-		<ondown>2</ondown>
-	</control>
-
-	<control>
-		<description>Alarm Time</description>
-		<type>label</type>
-		<id>0</id>
-		<posX>270</posX>
-		<posY>100</posY>
-		<label>855</label>
-		<align>left</align>
-	</control>
-		<control>
-			<description>alarm time hours</description>
-			<type>spincontrol</type>
-			<subtype>int</subtype>
-			<orientation>vertical</orientation>
-			<digits>2</digits>
-			<id>7</id>
-			<posX>270</posX>
-			<posY>135</posY>
-			<reverse>yes</reverse>
-			<showrange>no</showrange>
-			<onup>7</onup>
-			<ondown>10</ondown>
-			<onleft>2</onleft>
-			<onright>8</onright>
-			<textureUp>arrow_up_nofocus.png</textureUp>
-			<textureDown>arrow_down_nofocus.png</textureDown>
-			<textureUpFocus>arrow_up_focus.png</textureUpFocus>
-			<textureDownFocus>arrow_down_focus.png</textureDownFocus>
-		</control>
-		<control>
-			<description>alarm time minutes</description>
-			<type>spincontrol</type>
-			<subtype>int</subtype>
-			<orientation>vertical</orientation>
-			<digits>2</digits>
-			<id>8</id>
-			<posX>320</posX>
-			<posY>135</posY>
-			<reverse>yes</reverse>
-			<showrange>no</showrange>
-			<onup>8</onup>
-			<ondown>10</ondown>
-			<onleft>7</onleft>
-			<onright>18</onright>
-			<textureUp>arrow_up_nofocus.png</textureUp>
-			<textureDown>arrow_down_nofocus.png</textureDown>
-			<textureUpFocus>arrow_up_focus.png</textureUpFocus>
-			<textureDownFocus>arrow_down_focus.png</textureDownFocus>
-		</control>
-
-		<control>
-			<description>snooze Time</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>400</posX>
-			<posY>100</posY>
-			<label>858</label>
-			<font>font13</font>
-			<align>left</align>
-		</control>
-		<control>
-			<description>snooze time minutes</description>
-			<type>spincontrol</type>
-			<subtype>int</subtype>
-			<orientation>vertical</orientation>
-			<digits>2</digits>
-			<id>18</id>
-			<posX>415</posX>
-			<posY>135</posY>
-			<reverse>yes</reverse>
-			<showrange>no</showrange>
-			<onup>18</onup>
-			<ondown>10</ondown>
-			<onleft>8</onleft>
-			<onright>19</onright>
-			<textureUp>arrow_up_nofocus.png</textureUp>
-			<textureDown>arrow_down_nofocus.png</textureDown>
-			<textureUpFocus>arrow_up_focus.png</textureUpFocus>
-			<textureDownFocus>arrow_down_focus.png</textureDownFocus>
-		</control>
-
-		<control>
-			<description>sleep Time</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>530</posX>
-			<posY>100</posY>
-			<label>859</label>
-			<font>font13</font>
-			<align>left</align>
-		</control>
-		<control>
-			<description>sleep time minutes</description>
-			<type>spincontrol</type>
-			<subtype>int</subtype>
-			<orientation>vertical</orientation>
-			<digits>2</digits>
-			<id>19</id>
-			<posX>545</posX>
-			<posY>135</posY>
-			<reverse>yes</reverse>
-			<showrange>no</showrange>
-			<onup>19</onup>
-			<ondown>10</ondown>
-			<onleft>18</onleft>
-			<onright>19</onright>
-			<textureUp>arrow_up_nofocus.png</textureUp>
-			<textureDown>arrow_down_nofocus.png</textureDown>
-			<textureUpFocus>arrow_up_focus.png</textureUpFocus>
-			<textureDownFocus>arrow_down_focus.png</textureDownFocus>
-		</control>
-
-		<control>
-  		<description>Enabled Days</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>270</posX>
-			<posY>180</posY>
-			<label>854</label>
-			<font>font13</font>
-			<align>left</align>
-		</control>
-		<control>
-			<description>day 1 checkbox</description>
-			<type>checkmark</type>
-			<id>10</id>
-			<posX>270</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>70</height>
-			<label>657</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>2</onleft>
-			<onright>11</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-		<control>
-			<description>day 2 checkbox</description>
-			<type>checkmark</type>
-			<id>11</id>
-			<posX>335</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>70</height>
-			<label>658</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>10</onleft>
-			<onright>12</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-		<control>
-			<description>day 3 checkbox</description>
-			<type>checkmark</type>
-			<id>12</id>
-			<posX>400</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>50</height>
-			<label>659</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>11</onleft>
-			<onright>13</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-		<control>
-			<description>day 4 checkbox</description>
-			<type>checkmark</type>
-			<id>13</id>
-			<posX>465</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>50</height>
-			<label>660</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>12</onleft>
-			<onright>14</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-		<control>
-			<description>day 5 checkbox</description>
-			<type>checkmark</type>
-			<id>14</id>
-			<posX>530</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>50</height>
-			<label>661</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>13</onleft>
-			<onright>15</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-		<control>
-			<description>day 6 checkbox</description>
-			<type>checkmark</type>
-			<id>15</id>
-			<posX>585</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>50</height>
-			<label>662</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>14</onleft>
-			<onright>16</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-		<control>
-			<description>day 7 checkbox</description>
-			<type>checkmark</type>
-			<id>16</id>
-			<posX>645</posX>
-			<posY>210</posY>
-			<width>50</width>
-			<height>50</height>
-			<label>663</label>
-			<onup>7</onup>
-			<ondown>3</ondown>
-			<onleft>15</onleft>
-			<onright>10</onright>
-			<textureFocus>check-box.png</textureFocus>
-			<textureNoFocus>check-boxNF.png</textureNoFocus>
-		</control>
-
-		<control>
-			<description>Playlist label</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>270</posX>
-			<posY>240</posY>
-			<label>851</label>
-			<font>font13</font>
-			<align>left</align>
-		</control>
+  <controls>
   	<control>
-  		<description>playlist selection Button</description>
-  		<type>button</type>
-  		<id>3</id>
-  		<posX>270</posX>
-  		<posY>270</posY>
-  		<width>300</width>
-  		<label>-</label>
-  		<textureFocus>list_focus.png</textureFocus>
-  		<textureNoFocus>list_nofocus.png</textureNoFocus>
-  		<onleft>2</onleft>
-  		<onright>3</onright>
-  		<onup>10</onup>
-  		<ondown>20</ondown>
+  		<description>background image</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>0</posX>
+  		<posY>0</posY>
+  		<width>720</width>
+  		<height>576</height>
+  		<texture>background.png</texture>
   	</control>
+  	<control>
+  		<description>MyAlarm BG</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>300</posX>
+  		<posY>150</posY>
+  		<width>350</width>
+  		<height>350</height>
+  		<colordiffuse>20ffffff</colordiffuse>
+  		<texture>alarm_clock.png</texture>
+  	</control>
+  	<control>
+  		<description>Panel</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>50</posX>
+  		<posY>100</posY>
+  		<width>190</width>
+  		<height>272</height>
+  		<texture>panel.png</texture>
+  	</control>
+
 		<control>
-			<description>Song Title</description>
-			<type>label</type>
-			<id>9</id>
-			<posX>350</posX>
-			<posY>165</posY>
-			<label>-</label>
-			<font>font13</font>
-			<align>left</align>
+			<description>New button</description>
+			<type>button</type>
+			<id>3</id>
+  		<posX>55</posX>
+    	<posY>115</posY>
+			<label>617</label>
+			<onup>20</onup>
+			<ondown>4</ondown>
+      <onleft>3</onleft>
+			<onright>5</onright>
+		</control>
+		<control>
+			<description>Sleep timer Button</description>
+			<type>button</type>
+			<id>4</id>
+			<posX>55</posX>
+			<posY>143</posY>
+			<label>859</label>
+			<onright>5</onright>
+      <onleft>4</onleft>
+			<onup>3</onup>
+			<ondown>3</ondown>
 		</control>
 
-  	<control>
-			<description>fade in volume</description>
-			<type>checkmark</type>
-			<id>20</id>
-			<posX>270</posX>
-			<posY>330</posY>
-			<width>200</width>
-			<height>50</height>
-			<label>860</label>
-			<onup>3</onup>
-			<ondown>20</ondown>
-			<onleft>2</onleft>
-			<onright>20</onright>
-		</control>
-</controls>
+    <control>
+    	<description>alarms listcontrol</description>
+     	<type>listcontrol</type>
+      <id>5</id>
+      <onleft>3</onleft>
+			<onright>5</onright>
+		  <onup>5</onup>
+   	  <ondown>5</ondown>
+	  </control>
+  </controls>
 </window>

@@ -183,7 +183,7 @@
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopieëren</value>
+		<value>KopieÃ«ren</value>
 	</string>
 	<string>
 		<id>116</id>
@@ -203,7 +203,7 @@
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bevestig bestand kopieëren</value>
+		<value>Bevestig bestand kopieÃ«ren</value>
 	</string>
 	<string>
 		<id>121</id>
@@ -215,7 +215,7 @@
 	</string>
 	<string>
 		<id>123</id>
-		<value>Deze bestanden kopieëren?</value>
+		<value>Deze bestanden kopieÃ«ren?</value>
 	</string>
 	<string>
 		<id>124</id>
@@ -1627,7 +1627,7 @@
 	</string>
 	<string>
 		<id>487</id>
-		<value>Herhaal één</value>
+		<value>Herhaal Ã©Ã©n</value>
 	</string>
 	<string>
 		<id>488</id>
@@ -1691,7 +1691,7 @@
 	</string>
 	<string>
 		<id>611</id>
-		<value>Één keer opnemen</value>
+		<value>Ã‰Ã©n keer opnemen</value>
 	</string>
 	<string>
 		<id>612</id>
@@ -1835,7 +1835,7 @@
 	</string>
 	<string>
 		<id>647</id>
-		<value>Één keer</value>
+		<value>Ã‰Ã©n keer</value>
 	</string>
 	<string>
 		<id>648</id>
@@ -2079,7 +2079,7 @@
 	</string>
 	<string>
 		<id>716</id>
-		<value>Sateliet</value>
+		<value>Satelliet</value>
 	</string>
 	<string>
 		<id>717</id>
@@ -2158,6 +2158,10 @@
   	<value>Draaien</value>
   </string>
   <string>
+  	<id>736</id>
+  	<value>Geen informatie voor de TV-gids.</value>
+  </string>
+  <string>
   	<id>800</id>
   	<value>Start met</value>
   </string>
@@ -2211,11 +2215,11 @@
   </string>
   <string>
   	<id>852</id>
-  	<value>Wekker</value>
+  	<value>Wekker Aan/Uit</value>
   </string>
   <string>
   	<id>853</id>
-  	<value>Kies playlist</value>
+  	<value>Naam:</value>
   </string>
   <string>
   	<id>854</id>
@@ -2227,7 +2231,7 @@
   </string>
   <string>
   	<id>856</id>
-  	<value>Sleep timer</value>
+  	<value>Sleep timer Aan/Uit</value>
   </string>
   <string>
   	<id>857</id>
@@ -2239,11 +2243,251 @@
   </string>
   <string>
   	<id>859</id>
-  	<value>Sleep Time</value>
+  	<value>Slaap tijd</value>
   </string>
   <string>
   	<id>860</id>
-  	<value>Volume fade in/out</value>
+  	<value>Volume langzaam verhogen</value>
+  </string>
+  <string>
+  	<id>861</id>
+  	<value>Alarm details</value>
+  </string>
+  <string>
+  	<id>862</id>
+  	<value>Radio</value>
+  </string>
+  <string>
+  	<id>863</id>
+  	<value>Bestand</value>
+  </string>
+  <string>
+  	<id>864</id>
+  	<value>Media type</value>
+  </string>
+  <string>
+  	<id>865</id>
+  	<value>Aantal minuten voor slapen:</value>
+  </string>
+  <string>
+  	<id>866</id>
+  	<value>Verlaag volume</value>
+  </string>
+  <string>
+  	<id>867</id>
+  	<value>Computer uitschakelen</value>
+  </string>
+  <string>
+  	<id>868</id>
+  	<value>Reset</value>
+  </string>
+  <string>
+	<id>900</id>
+  	<value>Afspelen hervatten?</value>
+  </string>
+  <string>
+  	<id>1440</id>
+  	<value>Mijn Teletekst</value>
+  </string>
+	<string>
+    <id>2005</id>
+    <value>Delete</value>
+  </string>
+	<string>
+    <id>2006</id>
+    <value>Titel</value>
+  </string>
+	<string>
+    <id>2007</id>
+    <value>Yield</value>
+  </string>
+	<string>
+    <id>2008</id>
+    <value>Ingrediënten</value>
+  </string>
+	<string>
+    <id>2009</id>
+    <value>Aanwijzingen</value>
+  </string>
+	<string>
+    <id>2010</id>
+    <value>Kaart</value>
+  </string>
+	<string>
+    <id>2011</id>
+    <value>Print</value>
+  </string>
+	<string>
+    <id>2012</id>
+    <value>Verwijder</value>
+  </string>
+	<string>
+    <id>2013</id>
+    <value>Favorieten</value>
+  </string>
+	<string>
+    <id>2014</id>
+    <value>Onbekend</value>
+  </string>
+	<string>
+    <id>2015</id>
+    <value>per portie</value>
+  </string>
+	<string>
+    <id>2016</id>
+    <value>klein</value>
+  </string>
+	<string>
+    <id>2017</id>
+    <value>fluid ounce</value>
+  </string>
+	<string>
+    <id>2018</id>
+    <value>cup</value>
+  </string>
+	<string>
+    <id>2019</id>
+    <value>pint</value>
+  </string>
+	<string>
+    <id>2020</id>
+    <value>medium</value>
+  </string>
+	<string>
+    <id>2021</id>
+    <value>groot</value>
+  </string>
+	<string>
+    <id>2022</id>
+    <value>can</value>
+  </string>
+	<string>
+    <id>2023</id>
+    <value>package</value>
+  </string>
+	<string>
+    <id>2024</id>
+    <value>pinch</value>
+  </string>
+	<string>
+    <id>2025</id>
+    <value>drop</value>
+  </string>
+	<string>
+    <id>2026</id>
+    <value>dash</value>
+  </string>
+	<string>
+    <id>2027</id>
+    <value>carton</value>
+  </string>
+	<string>
+    <id>2028</id>
+    <value>bunch</value>
+  </string>
+	<string>
+    <id>2029</id>
+    <value>slice</value>
+  </string>
+	<string>
+    <id>2030</id>
+    <value>each</value>
+  </string>
+	<string>
+    <id>2031</id>
+    <value>theelepel</value>
+  </string>
+	<string>
+    <id>2032</id>
+    <value>theelepel</value>
+  </string>
+	<string>
+    <id>2033</id>
+    <value>eetlepel</value>
+  </string>
+	<string>
+    <id>2034</id>
+    <value>eeltlepel</value>
+  </string>
+	<string>
+    <id>2035</id>
+    <value>quart</value>
+  </string>
+	<string>
+    <id>2036</id>
+    <value>gallon</value>
+  </string>
+	<string>
+    <id>2037</id>
+    <value>ounce</value>
+  </string>
+	<string>
+    <id>2038</id>
+    <value>pound</value>
+  </string>
+	<string>
+    <id>2039</id>
+    <value>milliliter</value>
+  </string>
+	<string>
+    <id>2040</id>
+    <value>milliliter</value>
+  </string>
+	<string>
+    <id>2041</id>
+    <value>centiliter</value>
+  </string>
+	<string>
+    <id>2042</id>
+    <value>deciliter</value>
+  </string>
+	<string>
+    <id>2043</id>
+    <value>liter</value>
+  </string>
+	<string>
+    <id>2044</id>
+    <value>milligram</value>
+  </string>
+	<string>
+    <id>2045</id>
+    <value>centigram</value>
+  </string>
+	<string>
+    <id>2046</id>
+    <value>decigram</value>
+  </string>
+	<string>
+    <id>2047</id>
+    <value>gram</value>
+  </string>
+	<string>
+    <id>2048</id>
+    <value>kilogram</value>
+  </string>
+	<string>
+    <id>2049</id>
+    <value>Recept verwijderen?</value>
+  </string>
+	<string>
+    <id>2050</id>
+    <value>Categorie verwijderen?</value>
+  </string>
+	<string>
+    <id>2051</id>
+    <value>Zoek op titel</value>
+  </string>
+	<string>
+    <id>2052</id>
+    <value>Zoek in recept</value>
+  </string>
+	<string>
+    <id>2053</id>
+    <value>Categorie</value>
+  </string>
+	<string>
+    <id>2054</id>
+    <value>Geen recepten!</value>
   </string>
   <string>
   	<id>8000</id>
@@ -2267,7 +2511,7 @@
   </string>
   <string>
   	<id>8005</id>
-  	<value>Mail wordt ververst</value>
+  	<value>E-mail wordt opgehaald</value>
   </string>
   <string>
   	<id>8007</id>
@@ -2347,7 +2591,7 @@
   </string>
   <string>
   	<id>8030</id>
-  	<value>Verbonden met de server</value>
+  	<value>Verbinding maken met de server</value>
   </string>
   <string>
   	<id>8031</id>
@@ -2585,5 +2829,34 @@
 		<id>12901</id>
 		<value>Beeldvullend OSD</value>
 	</string>
+  <string>
+  	<id>13000</id>
+  	<value>Systeem:</value>
+  </string>
+  <string>
+  	<id>13001</id>
+  	<value>Fabrikant:</value>
+  </string>
+  <string>
+  	<id>13002</id>
+  	<value>Start</value>
+  </string>
+  <string>
+  	<id>13003</id>
+  	<value>MLF bestand wordt geïmporteerd</value>
+  </string>
+  <string>
+  	<id>13004</id>
+  	<value>MY bestand wordt geïmporteerd</value>
+  </string>
+  <string>
+  	<id>13005</id>
+  	<value>Laatst geïmporteerde bestand:</value>
+  </string>
+  <string>
+  	<id>16001</id>
+  	<value>Party shuffle</value>
+  </string>
 </strings>
+
 

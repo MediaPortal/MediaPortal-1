@@ -18,10 +18,10 @@
 		<id>1</id> 
 		<posX>70</posX> 
 		<posY>425</posY> 
-		<width>120</width> 
+		<width>120</width>
 		<height>100</height> 
 		<texture>#thumb</texture>
-		<keepaspectratio>yes</keepaspectratio> 
+<!--		<keepaspectratio>yes</keepaspectratio> -->
 	</control>
 	<control>
 		<description>lcd display shine</description> 
