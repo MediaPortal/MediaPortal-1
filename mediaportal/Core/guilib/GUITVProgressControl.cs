@@ -228,7 +228,7 @@ namespace MediaPortal.GUI.Library
       fWidth/=100.0f;
       fWidth*=(float)Percentage1;
       iWidth1=(int)Math.Floor(fWidth);
-      if (iWidth>0)
+      if (iWidth1>0)
       {
         m_guiFill1.Height=m_iFillHeight;
         m_guiFill1.Width=iWidth1;
