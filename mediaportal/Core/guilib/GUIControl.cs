@@ -245,7 +245,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Gets the ID of the control.
     /// </summary>
-    public int GetID
+    public virtual int GetID
     {
       get { return m_dwControlID; }
       set { m_dwControlID=value;}

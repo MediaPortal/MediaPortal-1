@@ -133,7 +133,11 @@ namespace GUIRecipies
 			string[] s2 = stunit.Split( ' ' );
 
 			rec.Yield = stunit;
-			rec.CYield = Convert.ToInt16(s2[0]);
+      try
+      {
+        rec.CYield = Convert.ToInt16(s2[0]);
+      }
+      catch(Exception){}
 			en.MoveNext();
 			rec.Directions = (string)en.Current;
 			rec.Ingredients = BuildIngredients( rec.Id );

@@ -1475,5 +1475,19 @@ namespace MediaPortal.GUI.Library
       m_backgroundImage.Animate(animator);
       base.Animate(animator);
     }
+
+
+		/// <summary>
+		/// Gets the ID of the control.
+		/// </summary>
+		public override int GetID
+		{
+			get { return m_dwControlID; }
+			set 
+			{ 
+				m_dwControlID=value;
+				if (m_upDown!=null) m_upDown.ParentID=value;
+			}
+		}
   }
 }

@@ -130,7 +130,14 @@ namespace MediaPortal.GUI.Library
 							m_iFrames=0;
 							m_iOffset++;
 							if (m_iOffset>=m_vecItems.Count)
-								m_iOffset=0;
+							{
+								if (Seperator.Length>0)
+								{
+									if (m_iOffset>=m_vecItems.Count+1)
+										m_iOffset=0;
+								}
+								else m_iOffset=0;
+							}
 						}
 					}
 					else 

@@ -77,6 +77,9 @@ namespace MediaPortal.GUI.Library
             m_ListView.AllocResources();
             m_ThumbnailView.AllocResources();
             m_FilmStripView.AllocResources();
+					  m_ListView.GetID=GetID;
+						m_ThumbnailView.GetID=GetID;
+						m_FilmStripView.GetID=GetID;
         }
 
         public override void PreAllocResources()
@@ -295,6 +298,6 @@ namespace MediaPortal.GUI.Library
         m_FilmStripView.Animate(animator);
         base.Animate(animator);
       }
-    
+		
 	}
 }

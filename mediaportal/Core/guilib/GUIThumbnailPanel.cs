@@ -146,7 +146,7 @@ GUISpinControl m_upDown = null;
 			m_iTextureWidthLow = m_iTextureWidth;
 			m_iTextureHeightLow = m_iTextureHeight;
 			
-			m_upDown = new GUISpinControl(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, 
+			m_upDown = new GUISpinControl(GetID, 0, m_dwSpinX, m_dwSpinY, 
 				m_dwSpinWidth, m_dwSpinHeight, 
 				m_strUp, m_strDown, m_strUpFocus, m_strDownFocus, 
 				m_strFontName, m_dwSpinColor, 
@@ -1468,5 +1468,16 @@ GUISpinControl m_upDown = null;
       m_bRefresh = true;
     }
 
+		/// <summary>
+		/// Gets the ID of the control.
+		/// </summary>
+		public override int GetID
+		{
+			get { return m_dwControlID; }
+			set { 
+				m_dwControlID=value;
+				if (m_upDown!=null) m_upDown.ParentID=value;
+			}
+		}
  }
 }

@@ -1667,5 +1667,19 @@ namespace MediaPortal.GUI.Library
       while (m_iOffset + 1 + m_iCursorY < (int)m_vecItems.Count)
         OnDown();
     }
+		
+
+		/// <summary>
+		/// Gets the ID of the control.
+		/// </summary>
+		public override int GetID
+		{
+			get { return m_dwControlID; }
+			set 
+			{ 
+				m_dwControlID=value;
+				if (m_upDown!=null) m_upDown.ParentID=value;
+			}
+		}
 	}
 }
