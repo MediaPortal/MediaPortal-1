@@ -144,22 +144,22 @@ namespace MediaPortal.GUI.Library
         cntlLabel1.Width=iWidth;
         cntlLabel1.Render();
 			}
-      
+     
 			// render the 2nd line of text on the button
 			if (m_strText2.Length>0)
       {
         int xoff=m_iTextOffsetX2+m_imgNoFocusLeft.TextureWidth;
 
         if (Disabled )
-          cntlLabel1.TextColor=m_dwDisabledColor;
+          cntlLabel2.TextColor=m_dwDisabledColor;
         else
-          cntlLabel1.TextColor=m_dwTextColor2;
-        cntlLabel1.SetPosition(xoff+m_dwPosX,m_iTextOffsetY2+m_dwPosY);
-        cntlLabel1.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
-        cntlLabel1.FontName=fontName1;
-        cntlLabel1.Label=m_strText2;
-        cntlLabel1.Width=iWidth;
-        cntlLabel1.Render();
+          cntlLabel2.TextColor=m_dwTextColor2;
+        cntlLabel2.SetPosition(xoff+m_dwPosX,m_iTextOffsetY2+m_dwPosY);
+        cntlLabel2.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
+        cntlLabel2.FontName=fontName1;
+        cntlLabel2.Label=m_strText2;
+        cntlLabel2.Width=iWidth;
+        cntlLabel2.Render();
       }
 		}
 
@@ -602,16 +602,26 @@ namespace MediaPortal.GUI.Library
 			m_imgFocusMid.Width=widthMid;
 			m_imgFocusRight.Width=widthRight;
 			if (widthLeft==0) m_imgFocusLeft.IsVisible=false;
+			else m_imgFocusLeft.IsVisible=true;
+			
 			if (widthMid==0) m_imgFocusMid.IsVisible=false;
+			else m_imgFocusMid.IsVisible=true;
+
 			if (widthRight==0) m_imgFocusRight.IsVisible=false;
+			else m_imgFocusRight.IsVisible=true;
 
 
 			m_imgNoFocusLeft.Width=widthLeft;
 			m_imgNoFocusMid.Width=widthMid;
 			m_imgNoFocusRight.Width=widthRight;
 			if (widthLeft==0) m_imgNoFocusLeft.IsVisible=false;
+			else m_imgNoFocusLeft.IsVisible=true;
+			
 			if (widthMid==0) m_imgNoFocusMid.IsVisible=false;
+			else m_imgNoFocusMid.IsVisible=true;
+
 			if (widthRight==0) m_imgNoFocusRight.IsVisible=false;
+			else m_imgNoFocusRight.IsVisible=true;
 
       m_imgFocusLeft.SetPosition (m_dwPosX, m_dwPosY);
       m_imgFocusMid.SetPosition  (m_dwPosX +m_imgFocusLeft.TextureWidth, m_dwPosY);

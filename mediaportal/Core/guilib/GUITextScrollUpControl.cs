@@ -153,6 +153,9 @@ namespace MediaPortal.GUI.Library
 				}
 				else
 				{
+					if (m_dwWidth<1) return;
+					if (m_dwHeight<1) return;
+
 					Viewport newviewport=new Viewport();		
 					newviewport.X      = (int)m_dwPosX+GUIGraphicsContext.OffsetX;
 					newviewport.Y			 = (int)m_dwPosY+GUIGraphicsContext.OffsetY;

@@ -543,6 +543,9 @@ namespace MediaPortal.GUI.Library
 
       float fwidth = fMaxWidth - 5.0f;
 
+			if (fwidth<1) return;
+			if (fHeight<1) return;
+
       if (fPosCX<=0) fPosCX=0;
       if (fPosCY<=0) fPosCY=0;
       Viewport newviewport, oldviewport;

@@ -309,6 +309,8 @@ namespace MediaPortal.GUI.Library
 			{
 				Viewport newviewport;
 				newviewport=new Viewport();
+				if (fMaxWidth<1) return true;
+				if (fHeight<1) return true;
 	            
 				newviewport.X      = (int)fPosCX;
 				newviewport.Y			 = (int)fPosCY;

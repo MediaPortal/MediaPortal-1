@@ -182,6 +182,9 @@ namespace MediaPortal.GUI.Library
 
               if (fPosCX<=0) fPosCX=0;
               if (fPosCY<=0) fPosCY=0;
+							if (fwidth<1) return;
+							if (fHeight<1) return;
+
               Viewport newviewport, oldviewport;
               newviewport = new Viewport();
               oldviewport = GUIGraphicsContext.DX9Device.Viewport;
@@ -237,6 +240,8 @@ namespace MediaPortal.GUI.Library
             if (fHeight <= 0) return;
 
             float fwidth = m_dwWidth - 5.0f;
+						if (fwidth<1) return;
+						if (fHeight<1) return;
 
             if (fPosCX<=0) fPosCX=0;
             if (fPosCY<=0) fPosCY=0;

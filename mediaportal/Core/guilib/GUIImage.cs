@@ -741,13 +741,13 @@ namespace MediaPortal.GUI.Library
           //then finally render the texture
           //savedStateBlock.Apply();
 
-          GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
+					GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
           GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
           GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
           GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
         }
         // unset the texture and palette or the texture caching crashes because the runtime still has a reference
-        //GUIGraphicsContext.DX9Device.SetTexture( 0, null);
+        GUIGraphicsContext.DX9Device.SetTexture( 0, null);
       }
 		}
 
