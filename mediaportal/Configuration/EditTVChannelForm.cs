@@ -78,6 +78,12 @@ namespace MediaPortal.Configuration
 		private int channelId=-1;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox channelTextBox;
+		private System.Windows.Forms.Label label27;
+		private System.Windows.Forms.TextBox tbDVBTProvider;
+		private System.Windows.Forms.TextBox tbDVBCProvider;
+		private System.Windows.Forms.Label label28;
+		private System.Windows.Forms.TextBox tbDVBSProvider;
+		private System.Windows.Forms.Label label29;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -143,6 +149,8 @@ namespace MediaPortal.Configuration
 			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label3 = new System.Windows.Forms.Label();
+			this.channelTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
@@ -186,8 +194,12 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.label3 = new System.Windows.Forms.Label();
-			this.channelTextBox = new System.Windows.Forms.TextBox();
+			this.label27 = new System.Windows.Forms.Label();
+			this.tbDVBTProvider = new System.Windows.Forms.TextBox();
+			this.tbDVBCProvider = new System.Windows.Forms.TextBox();
+			this.label28 = new System.Windows.Forms.Label();
+			this.tbDVBSProvider = new System.Windows.Forms.TextBox();
+			this.label29 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -390,6 +402,25 @@ namespace MediaPortal.Configuration
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
 			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(24, 48);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(88, 16);
+			this.label3.TabIndex = 10;
+			this.label3.Text = "Channel";
+			this.label3.Click += new System.EventHandler(this.label3_Click_1);
+			// 
+			// channelTextBox
+			// 
+			this.channelTextBox.Location = new System.Drawing.Point(128, 48);
+			this.channelTextBox.MaxLength = 4;
+			this.channelTextBox.Name = "channelTextBox";
+			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
+			this.channelTextBox.TabIndex = 9;
+			this.channelTextBox.Text = "0";
+			this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged_1);
+			// 
 			// tabPage2
 			// 
 			this.tabPage2.Controls.Add(this.countryComboBox);
@@ -413,7 +444,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Location = new System.Drawing.Point(128, 72);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
+			this.countryComboBox.Size = new System.Drawing.Size(224, 20);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
 			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
@@ -429,6 +460,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.tbDVBTProvider);
+			this.tabPage3.Controls.Add(this.label27);
 			this.tabPage3.Controls.Add(this.tbDVBTFreq);
 			this.tabPage3.Controls.Add(this.label12);
 			this.tabPage3.Controls.Add(this.tbDVBTTSID);
@@ -514,6 +547,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage4
 			// 
+			this.tabPage4.Controls.Add(this.tbDVBCProvider);
+			this.tabPage4.Controls.Add(this.label28);
 			this.tabPage4.Controls.Add(this.cbDVBCModulation);
 			this.tabPage4.Controls.Add(this.cbDVBCInnerFeq);
 			this.tabPage4.Controls.Add(this.label19);
@@ -689,6 +724,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.tbDVBSProvider);
+			this.tabPage5.Controls.Add(this.label29);
 			this.tabPage5.Controls.Add(this.cbDVBSPolarisation);
 			this.tabPage5.Controls.Add(this.cbDvbSInnerFec);
 			this.tabPage5.Controls.Add(this.label20);
@@ -853,24 +890,50 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// label3
+			// label27
 			// 
-			this.label3.Location = new System.Drawing.Point(24, 48);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(88, 16);
-			this.label3.TabIndex = 10;
-			this.label3.Text = "Channel";
-			this.label3.Click += new System.EventHandler(this.label3_Click_1);
+			this.label27.Location = new System.Drawing.Point(16, 152);
+			this.label27.Name = "label27";
+			this.label27.Size = new System.Drawing.Size(100, 16);
+			this.label27.TabIndex = 8;
+			this.label27.Text = "Provider:";
 			// 
-			// channelTextBox
+			// tbDVBTProvider
 			// 
-			this.channelTextBox.Location = new System.Drawing.Point(128, 48);
-			this.channelTextBox.MaxLength = 4;
-			this.channelTextBox.Name = "channelTextBox";
-			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
-			this.channelTextBox.TabIndex = 9;
-			this.channelTextBox.Text = "0";
-			this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged_1);
+			this.tbDVBTProvider.Location = new System.Drawing.Point(152, 152);
+			this.tbDVBTProvider.Name = "tbDVBTProvider";
+			this.tbDVBTProvider.TabIndex = 9;
+			this.tbDVBTProvider.Text = "";
+			// 
+			// tbDVBCProvider
+			// 
+			this.tbDVBCProvider.Location = new System.Drawing.Point(160, 200);
+			this.tbDVBCProvider.Name = "tbDVBCProvider";
+			this.tbDVBCProvider.TabIndex = 23;
+			this.tbDVBCProvider.Text = "";
+			// 
+			// label28
+			// 
+			this.label28.Location = new System.Drawing.Point(24, 200);
+			this.label28.Name = "label28";
+			this.label28.Size = new System.Drawing.Size(100, 16);
+			this.label28.TabIndex = 22;
+			this.label28.Text = "Provider:";
+			// 
+			// tbDVBSProvider
+			// 
+			this.tbDVBSProvider.Location = new System.Drawing.Point(160, 192);
+			this.tbDVBSProvider.Name = "tbDVBSProvider";
+			this.tbDVBSProvider.TabIndex = 37;
+			this.tbDVBSProvider.Text = "";
+			// 
+			// label29
+			// 
+			this.label29.Location = new System.Drawing.Point(24, 192);
+			this.label29.Name = "label29";
+			this.label29.Size = new System.Drawing.Size(100, 16);
+			this.label29.TabIndex = 36;
+			this.label29.Text = "Provider:";
 			// 
 			// EditTVChannelForm
 			// 
@@ -1166,15 +1229,17 @@ namespace MediaPortal.Configuration
 					if (channel.Channel>=0)
 					{
 						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
+						string provider;
 						//DVB-T
-						TVDatabase.GetDVBTTuneRequest(channel.Channel,out freq,out ONID, out TSID,out SID);
+						TVDatabase.GetDVBTTuneRequest(channel.Channel,out provider,out freq,out ONID, out TSID,out SID);
 						tbDVBTFreq.Text=freq.ToString();;
 						tbDVBTONID.Text=ONID.ToString();;
 						tbDVBTTSID.Text=TSID.ToString();;
 						tbDVBTSID.Text=SID.ToString();
+						tbDVBTProvider.Text=provider;
 
 						//DVB-C
-						TVDatabase.GetDVBCTuneRequest(channel.Channel,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID);
+						TVDatabase.GetDVBCTuneRequest(channel.Channel,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID);
 						tbDVBCFreq.Text=freq.ToString();;
 						tbDVBCONID.Text=ONID.ToString();;
 						tbDVBCTSID.Text=TSID.ToString();;
@@ -1182,10 +1247,11 @@ namespace MediaPortal.Configuration
 						tbDVBCSR.Text=symbolrate.ToString();
 						cbDVBCInnerFeq.SelectedIndex=FecToIndex(innerFec);
 						cbDVBCModulation.SelectedIndex=ModulationToIndex(modulation);
+						tbDVBCProvider.Text=provider;
 
 
 						//DVB-S
-						TVDatabase.GetDVBSTuneRequest(channel.Channel,out freq, out symbolrate,out innerFec, out polarisation,out ONID,out TSID, out SID);
+						TVDatabase.GetDVBSTuneRequest(channel.Channel,out provider,out freq, out symbolrate,out innerFec, out polarisation,out ONID,out TSID, out SID);
 						tbDVBSFreq.Text=freq.ToString();;
 						tbDVBSONID.Text=ONID.ToString();;
 						tbDVBSTSID.Text=TSID.ToString();;
@@ -1193,6 +1259,7 @@ namespace MediaPortal.Configuration
 						tbDVBSSymbolrate.Text=symbolrate.ToString();
 						cbDvbSInnerFec.SelectedIndex=FecToIndex(innerFec);
 						cbDVBSPolarisation.SelectedIndex=PolarisationToIndex(polarisation);
+						tbDVBSProvider.Text=provider;
 
 					}
 				}//if(channel != null)
@@ -1351,6 +1418,7 @@ namespace MediaPortal.Configuration
 			}
 
 			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
+			string provider;
 			//dvb-T
 			try
 			{
@@ -1358,9 +1426,10 @@ namespace MediaPortal.Configuration
 				ONID=Int32.Parse(tbDVBTONID.Text);
 				TSID=Int32.Parse(tbDVBTTSID.Text);
 				SID=Int32.Parse(tbDVBTSID.Text);
+				provider=tbDVBTProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,tvchannel.Number,freq,ONID,TSID,SID);
+					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.Number,freq,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
@@ -1376,9 +1445,10 @@ namespace MediaPortal.Configuration
 				symbolrate=Int32.Parse(tbDVBCSR.Text);
 				innerFec=IndexToFec(cbDVBCInnerFeq.SelectedIndex);
 				modulation=IndexToModulation(cbDVBCModulation.SelectedIndex);
+				provider=tbDVBCProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBCChannel(tvchannel.Name,tvchannel.Number,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
+					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.Number,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
@@ -1393,9 +1463,10 @@ namespace MediaPortal.Configuration
 				symbolrate=Int32.Parse(tbDVBSSymbolrate.Text);
 				innerFec=IndexToFec(cbDvbSInnerFec.SelectedIndex);
 				polarisation=IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
+				provider=tbDVBSProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBSChannel(tvchannel.Name,tvchannel.Number,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
+					TVDatabase.MapDVBSChannel(tvchannel.Name,provider,tvchannel.Number,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}

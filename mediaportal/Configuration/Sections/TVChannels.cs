@@ -59,8 +59,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.ListView listViewTVChannels;
-		private System.Windows.Forms.ColumnHeader columnHeader8;
 		private System.Windows.Forms.ListView listViewTVGroupChannels;
 		private System.Windows.Forms.ColumnHeader columnHeader9;
 		private System.Windows.Forms.Button btnUnmap;
@@ -79,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ListView listViewTVChannelsForCard;
 		private System.Windows.Forms.Button btnMapChannelToCard;
 		private System.Windows.Forms.Button btnUnmapChannelFromCard;
+		private System.Windows.Forms.TreeView treeViewChannels;
 
 		//
 		// Private members
@@ -134,14 +133,13 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton = new System.Windows.Forms.Button();
 			this.downButton = new System.Windows.Forms.Button();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.treeViewChannels = new System.Windows.Forms.TreeView();
 			this.btnGrpChnDown = new System.Windows.Forms.Button();
 			this.btnGrpChnUp = new System.Windows.Forms.Button();
 			this.buttonMap = new System.Windows.Forms.Button();
 			this.btnUnmap = new System.Windows.Forms.Button();
 			this.listViewTVGroupChannels = new System.Windows.Forms.ListView();
 			this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
-			this.listViewTVChannels = new System.Windows.Forms.ListView();
-			this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
@@ -353,12 +351,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.treeViewChannels);
 			this.tabPage3.Controls.Add(this.btnGrpChnDown);
 			this.tabPage3.Controls.Add(this.btnGrpChnUp);
 			this.tabPage3.Controls.Add(this.buttonMap);
 			this.tabPage3.Controls.Add(this.btnUnmap);
 			this.tabPage3.Controls.Add(this.listViewTVGroupChannels);
-			this.tabPage3.Controls.Add(this.listViewTVChannels);
 			this.tabPage3.Controls.Add(this.label3);
 			this.tabPage3.Controls.Add(this.label2);
 			this.tabPage3.Controls.Add(this.label1);
@@ -368,6 +366,17 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.Size = new System.Drawing.Size(432, 390);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Map channels";
+			// 
+			// treeViewChannels
+			// 
+			this.treeViewChannels.FullRowSelect = true;
+			this.treeViewChannels.ImageIndex = -1;
+			this.treeViewChannels.Location = new System.Drawing.Point(16, 88);
+			this.treeViewChannels.Name = "treeViewChannels";
+			this.treeViewChannels.SelectedImageIndex = -1;
+			this.treeViewChannels.Size = new System.Drawing.Size(168, 248);
+			this.treeViewChannels.Sorted = true;
+			this.treeViewChannels.TabIndex = 10;
 			// 
 			// btnGrpChnDown
 			// 
@@ -420,22 +429,6 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.columnHeader9.Text = "TV Channel";
 			this.columnHeader9.Width = 161;
-			// 
-			// listViewTVChannels
-			// 
-			this.listViewTVChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																												 this.columnHeader8});
-			this.listViewTVChannels.Location = new System.Drawing.Point(16, 88);
-			this.listViewTVChannels.Name = "listViewTVChannels";
-			this.listViewTVChannels.Size = new System.Drawing.Size(168, 240);
-			this.listViewTVChannels.TabIndex = 4;
-			this.listViewTVChannels.View = System.Windows.Forms.View.Details;
-			this.listViewTVChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVChannels_ColumnClick);
-			// 
-			// columnHeader8
-			// 
-			this.columnHeader8.Text = "TV Channel";
-			this.columnHeader8.Width = 159;
 			// 
 			// label3
 			// 
@@ -1319,27 +1312,17 @@ namespace MediaPortal.Configuration.Sections
 
 		private void buttonMap_Click(object sender, System.EventArgs e)
 		{
-			if (listViewTVChannels.SelectedItems==null) return;
-			
+			if (treeViewChannels.SelectedNode==null) return;
+			TVChannel chan=treeViewChannels.SelectedNode.Tag as TVChannel;
+			if (chan==null) return;
 			TVGroup group = comboBox1.SelectedItem as TVGroup;
-			for(int i=0; i < listViewTVChannels.SelectedItems.Count;++i)
-			{
-				ListViewItem listItem=listViewTVChannels.SelectedItems[i];
-				TVChannel chan=(TVChannel)listItem.Tag;
-				
-				listItem = new ListViewItem(new string[] { chan.Name} );
-				listItem.Tag=chan;
-				listViewTVGroupChannels.Items.Add(listItem);
-				if (group!=null && chan != null)
-					TVDatabase.MapChannelToGroup(group, chan);
-			}
-			
-			for(int i=listViewTVChannels.SelectedItems.Count-1; i >=0 ;i--)
-			{
-				ListViewItem listItem=listViewTVChannels.SelectedItems[i];
+			ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
+			listItem.Tag=chan;
+			listViewTVGroupChannels.Items.Add(listItem);
+			if (group!=null && chan != null)
+			TVDatabase.MapChannelToGroup(group, chan);
 
-				listViewTVChannels.Items.Remove(listItem);
-			}
+			treeViewChannels.Nodes.Remove(treeViewChannels.SelectedNode);
 		}
 
 		private void btnUnmap_Click(object sender, System.EventArgs e)
@@ -1350,9 +1333,15 @@ namespace MediaPortal.Configuration.Sections
 				ListViewItem listItem=listViewTVGroupChannels.SelectedItems[i];
 				TVChannel chan=(TVChannel)listItem.Tag;
 
-				listItem = new ListViewItem(new string[] { chan.Name} );
-				listItem.Tag=chan;
-				listViewTVChannels.Items.Add(listItem);
+				foreach (TreeNode node in treeViewChannels.Nodes)
+				{ 
+					if (node.Text==chan.ProviderName)
+					{
+						TreeNode subnode = new TreeNode(chan.Name);
+						subnode.Tag=chan;
+						node.Nodes.Add(subnode);
+					}
+				}
 			}		
 			TVGroup group = comboBox1.SelectedItem as TVGroup;
 			for(int i=listViewTVGroupChannels.SelectedItems.Count-1; i>=0;--i)
@@ -1373,6 +1362,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void UpdateGroupChannels(TVGroup group, bool reloadgroups)
 		{
+			
 			if (reloadgroups || comboBox1.Items.Count==0)
 			{
 				comboBox1.Items.Clear();
@@ -1403,9 +1393,12 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
-			listViewTVChannels.Items.Clear();
+			//fill in treeview with provider/channels
+			string lastProvider="";
+			TreeNode node=null;
+			treeViewChannels.Nodes.Clear();
 			ArrayList channels = new ArrayList();
-			TVDatabase.GetChannels(ref channels);
+			TVDatabase.GetChannelsByProvider(ref channels);
 			foreach (TVChannel chan in channels)
 			{
 				bool add=true;
@@ -1419,24 +1412,21 @@ namespace MediaPortal.Configuration.Sections
 				}
 				if (add)
 				{
-					ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
-					listItem.Tag=chan;
-					listViewTVChannels.Items.Add(listItem);
+					if (lastProvider!=chan.ProviderName)
+					{
+						lastProvider=chan.ProviderName;
+						if(node!=null)
+							treeViewChannels.Nodes.Add(node);
+						node=new TreeNode(chan.ProviderName);
+						node.Tag="";
+					}
+					TreeNode nodeChan = new TreeNode(chan.Name);
+					nodeChan.Tag=chan;
+					node.Nodes.Add(nodeChan);
 				}
 			}
-		}
-
-		private void listViewTVChannels_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
-		{
-			switch (listViewTVChannels.Sorting)
-			{
-				case SortOrder.Ascending: listViewTVChannels.Sorting = SortOrder.Descending; break;
-				case SortOrder.Descending: listViewTVChannels.Sorting = SortOrder.Ascending; break;
-				case SortOrder.None: listViewTVChannels.Sorting = SortOrder.Ascending; break;
-			}	
-			listViewTVChannels.Sort();
-			listViewTVChannels.Update();
-		
+			if(node!=null && node.Nodes.Count>0)
+				treeViewChannels.Nodes.Add(node);
 		}
 
 		private void listViewTVGroupChannels_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)

@@ -42,6 +42,7 @@ namespace MediaPortal.TV.Database
     string m_strExternalTunerChannel="";
     bool   m_bVisibleInGuide=true;
     int    m_iCountry=-1;
+		string m_strProviderName="";
 
     AnalogVideoStandard _TVStandard;
 
@@ -110,6 +111,15 @@ namespace MediaPortal.TV.Database
       get { return m_strName;}
       set {m_strName=value;}
     }
+ 
+		/// <summary>
+		/// Property to get/set the name of the tvchannel
+		/// </summary>
+		public string ProviderName
+		{
+			get { return m_strProviderName;}
+			set {m_strProviderName=value;}
+		}
  
     /// <summary>
     /// Property to get/set the the tvchannel number
