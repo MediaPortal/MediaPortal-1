@@ -518,6 +518,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\FileMenu.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\FileMenu.resx"
+                    DependentUpon = "FileMenu.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\General.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -74,6 +74,7 @@ namespace MediaPortal.Configuration
 			AddChildSection(general, new Sections.KeyboardControl());
 			AddChildSection(general, new Sections.Keys());
 			AddChildSection(general, new Sections.DeamonTools());
+			AddChildSection(general, new Sections.FileMenu());
 
 
 
