@@ -252,6 +252,10 @@ namespace MediaPortal.GUI.Library
         msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
         pWindow.OnMessage(msg);		
       }
+      catch(Exception ex)
+      {
+        Log.Write("Exception: {0}",ex.ToString());
+      }
       finally
       {
         m_bSwitching=false;
