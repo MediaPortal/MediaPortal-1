@@ -413,22 +413,22 @@ namespace MediaPortal.Configuration.Sections
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
           if (availableAudioFilters.Count>0)
           {
-            bool interVideoFound=true;
-            bool CyberlinkFound=true;
-            audioCodec=(string)availableAudioFilters[0];
+						bool Mpeg2DecFilterFound=true;
+						bool DScalerFilterFound=true;
+						audioCodec=(string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
-            {
-              if (filter.Equals("InterVideo Audio Decoder"))
-              {
-                interVideoFound=true;
-              }
-              if (filter.Equals("CyberLink Audio Decoder"))
-              {
-                CyberlinkFound=true;
-              }
+						{
+							if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
+							{
+								Mpeg2DecFilterFound=true;
+							}
+							if (filter.Equals("DScaler Audio Decoder"))
+							{
+								DScalerFilterFound=true;
+							}
             }
-            if (interVideoFound) audioCodec="InterVideo Audio Decoder";
-            else if (CyberlinkFound) audioCodec="CyberLink Audio Decoder";
+            if (Mpeg2DecFilterFound) audioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+            else if (DScalerFilterFound) audioCodec="DScaler Audio Decoder";
           }
         }
         if (videoCodec==String.Empty)
