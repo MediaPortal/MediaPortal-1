@@ -62,17 +62,6 @@
 				<posY>131</posY>
 				<label>601</label>
 				<onup>2</onup>
-				<ondown>4</ondown>
-				<onright>99</onright>
-			</control>	
-			<control>
-				<description>card#1 button</description>
-				<type>selectbutton</type>
-				<id>4</id>
-				<posX>60</posX>
-				<posY>165</posY>
-				<label>810</label>
-				<onup>3</onup>
 				<ondown>6</ondown>
 				<onright>99</onright>
 			</control>	
@@ -81,9 +70,9 @@
 				<type>selectbutton</type>
 				<id>6</id>
 				<posX>60</posX>
-				<posY>199</posY>
+				<posY>165</posY>
 				<label>971</label>
-				<onup>4</onup>
+				<onup>3</onup>
 				<ondown>7</ondown>
 				<onright>99</onright>
 			</control>
@@ -92,7 +81,7 @@
 				<type>selectbutton</type>
 				<id>7</id>
 				<posX>60</posX>
-				<posY>233</posY>
+				<posY>199</posY>
 				<label>602</label>
 				<onup>6</onup>
 				<ondown>8</ondown>
@@ -103,7 +92,7 @@
 				<type>togglebutton</type>
 				<id>8</id>
 				<posX>60</posX>
-				<posY>267</posY>
+				<posY>233</posY>
 				<width>190</width>
 				<height>32</height>
 				<textXOff>10</textXOff>
@@ -126,7 +115,7 @@
 				<type>togglebutton</type>
 				<id>9</id>
 				<posX>60</posX>
-				<posY>301</posY>
+				<posY>267</posY>
 				<width>190</width>
 				<height>32</height>
 				<textXOff>10</textXOff>
@@ -149,7 +138,7 @@
 				<type>button</type>
 				<id>10</id>
 				<posX>60</posX>
-				<posY>335</posY>
+				<posY>301</posY>
 				<label>603</label>
 				<hyperlink>601</hyperlink>
 				<onup>9</onup>
@@ -161,7 +150,7 @@
 				<type>button</type>
 				<id>11</id>
 				<posX>60</posX>
-				<posY>369</posY>
+				<posY>335</posY>
 				<label>604</label>
 				<hyperlink>603</hyperlink>
 				<onup>10</onup>
@@ -173,7 +162,7 @@
 				<type>button</type>
 				<id>12</id>
 				<posX>60</posX>
-				<posY>403</posY>
+				<posY>369</posY>
 				<label>137</label>
 				<hyperlink>604</hyperlink>
 				<onup>11</onup>
@@ -185,7 +174,7 @@
 				<type>button</type>
 				<id>13</id>
 				<posX>60</posX>
-				<posY>437</posY>
+				<posY>403</posY>
 				<label>Teletext</label>
 				<onup>12</onup>
 				<ondown>2</ondown>
