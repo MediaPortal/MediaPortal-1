@@ -8,10 +8,27 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
-  02-08-2004 osk        : When the On Screen Keyboard is on screen (e.g. entering a movie name for IMDB) and you type with the normal letter keys on your keyboard. MP will still process the keys.
+  02-08-2004 my tv      : When you are -100 sec in the buffer and forward with 32X and it has got to the 
+                          "actual real live tv" (and it can't forward any more, becuse it has got to the end 
+                          of the buffer) it should automaticly go to "normal playup" (1X). 
+  02-08-2004 my tv      : black screen when recording has ended
+  02-08-2004 my tv      : If you press "PLAY" during back- forwarding you want it to play
+  02-08-2004 my tv      : When you go to the "tv guide" it seems like it ment that the tv will pause untill 
+                          you return from the "guide". For me it's not working, becuse it's forwarding 
+                          (>> very fast). and when it has reached the end of the "live" buffer the 
+                          pictures freezes and is not comming back
+  02-08-2004 my music   : The display of the cover art in the OSD is distorted.
+                          I is in form of a rectangle like a DVD Cover and not a square like a CD. 
+  02-08-2004 my tv      : with timeshifting off in fullscreen you will not get an OSD by pressing y. 
+                          After doing this you will not be able to go back to windowed mode by pressing x or Esc. 
+                          Reacts after pressing it a couple of times. Won´t happen with timeshifting on.
+  02-08-2004 keyboard   : When the On Screen Keyboard is on screen (e.g. entering a movie name for IMDB) and 
+                          you type with the normal letter keys on your keyboard. MP will still process the keys.
                           Example:
-                          When music is playing and I type something with a Space then the music will Pause and if I type something with a B the music will Stop. 
+                          When music is playing and I type something with a Space then the music will 
+                          Pause and if I type something with a B the music will Stop. 
   02-08-2004 imdb       : multipage descriptions do not work, example "Liever verliefd"
+  02-08-2004 keyboard   :I can not use the on screen keyboard by clicking on the letters with the mouse. 
   01-08-2004 setup      : cant sort radio channels in setup like you can in tv
   29-07-2004 DVD player : Settings for AR control and display mode are not respected. It always uses default modes
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
