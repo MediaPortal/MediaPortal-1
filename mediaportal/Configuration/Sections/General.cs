@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Collections;
 using System.ComponentModel;
@@ -36,6 +37,12 @@ namespace MediaPortal.Configuration.Sections
 
 		private void LoadLanguages()
 		{
+			// Get system language
+			string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
+			int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
+			string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
+
+			bool bExactLanguageFound = false;
 			if(Directory.Exists(LanguageDirectory))
 			{
 				string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
@@ -53,9 +60,25 @@ namespace MediaPortal.Configuration.Sections
 						{
 							fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
 							languageComboBox.Items.Add(fileName);
+
+							// Check language file to user region language
+							if (fileName.ToLower() == strLongLanguage.ToLower())
+							{
+								languageComboBox.Text = fileName;
+								bExactLanguageFound = true;
+							}
+							else if (!bExactLanguageFound && (fileName.ToLower() == strShortLanguage.ToLower()))
+							{
+								languageComboBox.Text = fileName;
+							}							
 						}
 					}
 				}
+			}
+
+			if (languageComboBox.Text == "")
+			{
+				languageComboBox.Text = "English";
 			}
 		}
 
@@ -107,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
 				//
 				// Set language
 				//
-				languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", "English");
+				languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
 			}
 
 		}

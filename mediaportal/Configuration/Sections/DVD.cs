@@ -25,6 +25,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
 		private System.ComponentModel.IContainer components = null;
 
+		string m_strDefaultRegionLanguage="English";
+
 		public DVD() : this("DVD")
 		{
 		}
@@ -37,8 +39,13 @@ namespace MediaPortal.Configuration.Sections
 			//
 			// Populate combo box with languages
 			//
-			PopulateLanguages(defaultSubtitleLanguageComboBox, "English");
-			PopulateLanguages(defaultAudioLanguageComboBox, "English");
+
+			// set default to english
+			m_strDefaultRegionLanguage = GetCultureRegionLanguage();				
+			defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
+			defaultAudioLanguageComboBox.Text = m_strDefaultRegionLanguage;
+			PopulateLanguages(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
+			PopulateLanguages(defaultAudioLanguageComboBox, m_strDefaultRegionLanguage);
 		}
 
 		/// <summary>
@@ -63,8 +70,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "English");
-				defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "English");
+				defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", m_strDefaultRegionLanguage);
+				defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", m_strDefaultRegionLanguage);
         autoPlayCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "autoplay", true);
 
 				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
@@ -92,6 +99,22 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("dvdplayer", "armode", aspectRatioComboBox.Text);
 				xmlwriter.SetValue("dvdplayer", "displaymode", displayModeComboBox.Text);
 			}			
+		}
+
+		string GetCultureRegionLanguage()
+		{
+			string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
+			int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
+			string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
+
+			foreach(CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures)) 
+			{				
+				if (cultureInformation.EnglishName.ToLower().IndexOf(strShortLanguage.ToLower()) != -1)
+				{
+					return cultureInformation.EnglishName;
+				}
+			}
+			return "English";
 		}
 
 		/// <summary>
