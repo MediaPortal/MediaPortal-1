@@ -104,6 +104,7 @@ new plugins:
   - my DVD's
   
 DVD player:
+  - Diasable the progressbar during non skippable parts of a dvd (loading of the menu, special parts etc)
 
 Skin engine:
   - the possibility for the skinner to change the position of the album art
