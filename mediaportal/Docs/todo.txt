@@ -44,6 +44,7 @@ Settings:
 
 General:
   - setup:specify recording +/- interval
+  - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
   - better mouse control

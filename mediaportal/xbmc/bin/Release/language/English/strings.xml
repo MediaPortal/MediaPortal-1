@@ -1759,6 +1759,30 @@
 		<id>632</id>
 		<value>Objects</value>
 	</string>
+	<string>
+		<id>633</id>
+		<value>Start Date/Time</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>End Date/Time</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Time</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Date</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Edit Recording</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>New Recording</value>
+	</string>
 
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
