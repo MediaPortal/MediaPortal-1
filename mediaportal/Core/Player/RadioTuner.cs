@@ -100,7 +100,11 @@ namespace MediaPortal.Player
             FreeCard(m_strRadioDevice);
             return false;
           }
-          m_dvbCapture.Tune(iChannel);
+			if(m_dvbCapture.Tune(iChannel)==false)
+			{
+				m_dvbCapture.DeleteGraph();
+				return false;
+			}
           Log.Write("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz",  m_dvbCapture.Channel);
         }
         else

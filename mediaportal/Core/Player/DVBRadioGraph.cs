@@ -462,7 +462,7 @@ namespace MediaPortal.Player
 			if (m_graphState != State.None) return false;
 			// create graphs
 			m_sourceGraph=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
-
+			
 			int n=0;
 			m_b2c2Adapter=null;
 			// create filters & interfaces
@@ -677,11 +677,6 @@ namespace MediaPortal.Player
 		public void TuneChannel(int channel)
 		{
 
-			if(m_mediaControl!=null)
-			{
-				m_mediaControl.Stop();
-				
-			}
 
 			int freq=0;int symrate=0;int fec=0;int lnbkhz=0;int diseqc=0;
 			int prognum=0;int servicetype=0;string provider="";string schannel="";int eitsched=0;
@@ -727,7 +722,12 @@ namespace MediaPortal.Player
 						tsid=Int32.Parse(Get(results,i,"sTSID"));
 						pcrpid=Int32.Parse(Get(results,i,"sPCRPid"));
 						m_sCurrentChannel=schannel;
-						TuneCard(freq,symrate,fec,pol,lnbkhz,diseqc,audpid,0,lnbfreq);
+						
+						if(TuneCard(freq,symrate,fec,pol,lnbkhz,diseqc,audpid,0,lnbfreq)==false)
+						{
+							DeleteGraph();
+							return;
+						}
 
 					}
 				}
@@ -770,17 +770,23 @@ namespace MediaPortal.Player
 			int hr=0;
 
 			// render here for listen
-			
-			hr=m_sourceGraph.Render(m_audioPin);
-			if(hr!=0)
+			if(m_tunerCtrl.CheckLock()!=0)
 				return false;
-			int n=0;// 
+			try
+			{
+				hr=m_sourceGraph.Render(m_audioPin);
+				if(hr!=0)
+					return false;
+				int n=0;// 
 
-			m_mediaControl = (IMediaControl)m_sourceGraph;
-			//
-			n=m_mediaControl.Run();
+				m_mediaControl = (IMediaControl)m_sourceGraph;
+				//
+				n=m_mediaControl.Run();
 
-			m_graphState = State.Listening;
+				m_graphState = State.Listening;
+			}
+			catch
+			{}
 			return true;
 		}
 
