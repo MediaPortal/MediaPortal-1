@@ -605,8 +605,11 @@
 	<string><id>867</id><value>Sluk maskinen</value></string>
 	<string><id>868</id><value>Genstart</value></string>
 	<string><id>869</id><value>NyAlarm</value></string>
+	<string><id>870</id><value>Gentagende</value></string>
+	<string><id>871</id><value>Væk pc'en</value></string>
 <!-- End My Alarm Strings -->
 
+	<string><id>890</id><value>Afspil CD</value></string>
 	<string><id>900</id><value>Fortsæt fra sidste afspilning?</value></string>
 
 <!-- MSN Strings -->
@@ -681,8 +684,11 @@
 	<string><id>974</id><value>Hovedmenu</value></string> 
 	<string><id>975</id><value>tidligere kapitel</value></string>
 	<string><id>976</id><value>Næste kapitel</value></string> 
+	<string><id>977</id><value>There is no free card available</value></string>
+	<string><id>978</id><value>which can watch this channel</value></string>
 
 	<string><id>1440</id><value>Tekst-TV</value></string>
+	<string><id>1441</id><value>Tekst-TV</value></string>
 
 <!-- My Status Strings -->
 	<string><id>1950</id><value>Status</value></string>
@@ -767,6 +773,7 @@
 	<string><id>2052</id><value>Søg i opskrifter</value></string>
 	<string><id>2053</id><value>Kategori</value></string>
 	<string><id>2054</id><value>Ingen fundet!</value></string>
+<!-- End of My Recipie Strings -->
 
 <!-- End My Burner Strings -->
 	<string><id>2100</id><value>Brænd</value></string>
@@ -788,6 +795,23 @@
 	<string><id>2116</id><value>Drev ikke parat</value></string>
 	<string><id>2117</id><value>en fatal fejl er opstået!</value></string>
 	<string><id>2118</id><value>Konverter DVR-MS</value></string>
+	<string><id>2119</id><value>Start konvertering</value></string> 
+	<string><id>2120</id><value>Konverterer fil(er)...</value></string> 
+	<string><id>2121</id><value>Kunne ikke konvertere fil!</value></string> 
+	<string><id>2122</id><value>starter!</value></string> 
+	<string><id>2123</id><value>Disk information</value></string> 
+	<string><id>2124</id><value>Kan ikke slette: Medie ikke skrivbart</value></string> 
+	<string><id>2125</id><value>Sletter Disk....</value></string> 
+	<string><id>2126</id><value>Skub ud</value></string> 
+	<string><id>2127</id><value>CD'en er ikke skrivbar</value></string> 
+	<string><id>2128</id><value>Forbereder brænding: estimerer tid:</value></string> 
+	<string><id>2129</id><value>Forbereder brænding</value></string> 
+	<string><id>2130</id><value>Blok</value></string> 
+	<string><id>2131</id><value>af</value></string> 
+	<string><id>2132</id><value>Afslutter disk: forventet tid:</value></string> 
+	<string><id>2133</id><value>Kan ikke konvertere DVR-MS til MPG</value></string> 
+	<string><id>2134</id><value>De krævede DirectShow filtre er</value></string> 
+	<string><id>2135</id><value>ikke installeret!</value></string>
 <!-- End My Burner Strings -->
 
 <!-- My Explorer Strings -->
@@ -842,7 +866,6 @@
 	<string><id>3020</id><value>Episode</value></string>
 	<string><id>3021</id><value>Del</value></string>
 	<string><id>3022</id><value>af</value></string>
-
 
 <!-- My Mail Strings -->
 	<string><id>8000</id><value>Post</value></string>
@@ -993,13 +1016,13 @@
 	<string><id>19001</id><value>Tetris</value></string>
 	<string><id>19002</id><value>Nyt Spil</value></string>
 	<string><id>19003</id><value>Musik</value></string>
-	<string><id>19004</id><value>Lyde</value></string>
+	<string><id>19004</id><value>Lyd</value></string>
 	<string><id>19005</id><value>Score:</value></string>
 	<string><id>19006</id><value>Linier:</value></string>
 	<string><id>19007</id><value>Level:</value></string>
-	<string><id>19008</id><value>Hiscore:</value></string>
+	<string><id>19008</id><value>Hi-Score:</value></string>
 	<string><id>19009</id><value>Næste</value></string>
-	<string><id>19010</id><value>Tryk eller klick for at starte...</value></string>
+	<string><id>19010</id><value>Tryk eller klik for at starte...</value></string>
 	<string><id>19011</id><value>Pause</value></string>
 	<string><id>19012</id><value>Game Over</value></string>
 <!-- End My Tetris Strings -->

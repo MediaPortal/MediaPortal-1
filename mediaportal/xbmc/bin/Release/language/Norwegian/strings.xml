@@ -2359,6 +2359,18 @@
 	<id>869</id>
 	<value>NyAlarm</value>
 </string>
+<string>
+	<id>870</id>
+	<value>Periodisk</value>
+</string>
+<string>
+	<id>871</id>
+	<value>Vekke opp pc</value>
+</string>
+<string>
+	<id>890</id>
+	<value>Spill CD</value>
+</string>
 <!-- End My Alarm Strings -->
 <string>
 	<id>900</id>
@@ -2638,6 +2650,14 @@
 	<id>976</id>
 	<value>Neste kapittel</value>
 </string>
+<string>
+	<id>977</id>
+	<value>Det er ingen ledige kort tilgjengelig</value>
+</string>
+<string>
+	<id>978</id>
+	<value>som kan overv&#229;ke denne kanalenwhich can watch this channel</value>
+</string>
 
 
 	<!-- My Status Strings -->
@@ -2723,82 +2743,43 @@
 	<string><id>2053</id><value>Kategori</value></string>
 	<string><id>2054</id><value>Ingen innslag!</value></string>
 <!-- My Burner Strings -->
-	<string>
-		<id>2100</id>
-		<value>Brenn</value>
-	</string>
-	<string>
-		<id>2101</id>
-		<value>Kopier CD/DVD</value>
-	</string>
-	<string>
-		<id>2102</id>
-		<value>Lag Audio-CD</value>
-	</string>
-	<string>
-		<id>2103</id>
-		<value>Lag Video-CD</value>
-	</string>
-	<string>
-		<id>2104</id>
-		<value>Lag Video-DVD</value>
-	</string>
-	<string>
-		<id>2105</id>
-		<value>Lag Data-CD</value>
-	</string>
-	<string>
-		<id>2106</id>
-		<value>Lag Data-DVD</value>
-	</string>
-	<string>
-		<id>2107</id>
-		<value>Start kopiering</value>
-	</string>
-	<string>
-		<id>2108</id>
-		<value>Sett inn en tom CD/DVD</value>
-	</string>
-	<string>
-		<id>2109</id>
-		<value>press deretter OK</value>
-	</string>
-	<string>
-		<id>2110</id>
-		<value>Sett inn orginal CD/DVD</value>
-	</string>
-	<string>
-		<id>2111</id>
-		<value>Ferdig !</value>
-	</string>
-	<string>
-		<id>2112</id>
-		<value>Venter p&#229; CD/DVD</value>
-	</string>
-	<string>
-		<id>2113</id>
-		<value>Kopier alt</value>
-	</string>
-	<string>
-		<id>2114</id>
-		<value>Slett disk</value>
-	</string>
-	<string>
-		<id>2115</id>
-		<value>Sett inn CD/DVD RW</value>
-	</string>
-	<string>
-		<id>2116</id>
-		<value>Stasjonen er ikke klar</value>
-	</string>
-	<string>
-		<id>2117</id>
-		<value>en kritisk feil har skjedd!</value>
-	</string>
-	<string>
-		<id>2118</id>
-		<value>Konvertere DVR-MS</value>
-	</string>
+	<string><id>2100</id><value>Brenn</value></string>
+	<string><id>2101</id><value>Kopier CD/DVD</value></string>
+	<string><id>2102</id><value>Lag Audio-CD</value></string>
+	<string><id>2103</id><value>Lag Video-CD</value></string>
+	<string><id>2104</id><value>Lag Video-DVD</value></string>
+	<string><id>2105</id><value>Lag Data-CD</value></string>
+	<string><id>2106</id><value>Lag Data-DVD</value></string>
+	<string><id>2107</id><value>Start kopiering</value></string>
+	<string><id>2108</id><value>Sett inn en tom CD/DVD</value></string>
+	<string><id>2109</id><value>press deretter OK</value></string>
+	<string><id>2110</id><value>Sett inn orginal CD/DVD</value></string>
+	<string><id>2111</id><value>Ferdig !</value></string>
+	<string><id>2112</id><value>Venter p&#229; CD/DVD</value></string>
+	<string><id>2113</id><value>Kopier alt</value></string>
+	<string><id>2114</id><value>Slett disk</value></string>
+	<string><id>2115</id><value>Sett inn CD/DVD RW</value></string>
+	<string><id>2116</id><value>Stasjonen er ikke klar</value></string>
+	<string><id>2117</id><value>en kritisk feil har skjedd!</value></string>
+	<string><id>2118</id><value>Konvertere DVR-MS</value></string>
+	<string><id>2119</id><value>Start konvertering</value></string>
+	<string><id>2120</id><value>Konverterer fil(er)...</value></string>
+	<string><id>2121</id><value>Kunne ikke konvertere fil(er)!</value></string>
+	<string><id>2122</id><value>starter!</value></string>
+	<string><id>2123</id><value>Disk info</value></string>
+	<string><id>2124</id><value>Kan ikke slette: Media er ikke skrivbar</value></string>
+	<string><id>2125</id><value>Slett Disk....</value></string>
+	<string><id>2126</id><value>Ta ut CD</value></string>
+	<string><id>2127</id><value>CD er ikke skrivbar</value></string>
+	<string><id>2128</id><value>Forberede brenning: estimert tid:</value></string>
+	<string><id>2129</id><value>Forberede brenning</value></string>
+	<string><id>2130</id><value>Blokkere</value></string>
+	<string><id>2131</id><value>av</value></string>
+	<string><id>2132</id><value>Lukk disk: estimert tid:</value></string>
+	<string><id>2133</id><value>Kan ikke konvertere DVR-MS til MPG</value></string>
+	<string><id>2134</id><value>N&#248;dvendige DirectShow filtere er</value></string>
+	<string><id>2135</id><value>ikke installert</value></string>
+	<!-- End of My Burner Strings -->
 
 
 
@@ -3122,6 +3103,10 @@
 <string>
 	<id>1440</id>
 	<value>Mitt Tekst-TV</value>
+</string>
+<string>
+	<id>1441</id>
+	<value>Tekst-TV</value>
 </string>
 <string>
 	<id>16001</id>

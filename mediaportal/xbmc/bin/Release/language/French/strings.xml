@@ -290,7 +290,7 @@
 	<string><id>358</id><value>Tous les albums</value></string>
 	<string><id>359</id><value>Albums r&#233;cents</value></string>
 	<string><id>360</id><value>Economiseur d'&#233;cran</value></string>
-	<string><id>361</id><value>Diap. en sens inverse</value></string>
+	<string><id>361</id><value>Diap. sous-dossiers</value></string>
 	<string><id>362</id><value>Taux d'affaiblissement de l'&#233;conomiseur d'&#233;cran (%)</value></string>
 	<string><id>363</id><value>Tri par Fichier</value></string>
 	<string><id>364</id><value>Laisser passer le DD/DTS multi-canal</value></string>
@@ -555,7 +555,7 @@
 	<string><id>702</id><value>Aucun artiste trouv&#233;!</value></string>
 	<string><id>703</id><value>D&#233;connect&#233; d'Internet!</value></string>
 	<string><id>860</id><value>Baisser/Monter le volume</value></string>
-	<string><id>859</id><value>Heure de repos</value></string>
+	<string><id>859</id><value>Arr&#234;t programm&#233;</value></string>
 	<string><id>858</id><value>Heure de sieste</value></string>
 	<string><id>857</id><value>Sieste</value></string>
 	<string><id>856</id><value>R&#233;veil On</value></string>
@@ -749,7 +749,7 @@
 	<string><id>910</id><value>Connexion...</value></string>
 	<string><id>1975</id><value>Page Suivante</value></string>
 	<string><id>1974</id><value>M&#233;moire</value></string>
-	<string><id>1973</id><value>von</value></string>
+	<string><id>1973</id><value>sur</value></string>
 	<string><id>1972</id><value>D&#233;tails de l'&#233;tat</value></string>
 	<string><id>1952</id><value>Ventilateur</value></string>
 	<string><id>1951</id><value>Disque dur</value></string>
@@ -921,4 +921,103 @@
 	<string><id>915</id><value>Cha&#238;ne TV</value></string>
 	<string><id>914</id><value>Enregistrements</value></string>
 	<string><id>869</id><value>Nouvelle Alarme</value></string>
+	<string><id>2225</id><value>R&#233;pertoire cr&#233;&#233;</value></string>
+	<string><id>2224</id><value>Le r&#233;pertoire existe!</value></string>
+	<string><id>2223</id><value>Trashcan</value></string>
+	<string><id>2222</id><value>Fichiers supprim&#233;s!</value></string>
+	<string><id>2221</id><value>Voulez-vous supprimer les fichiers s&#233;lectionn&#233;s?</value></string>
+	<string><id>2220</id><value>Copier le fichier s&#233;lectionn&#233;?</value></string>
+	<string><id>2219</id><value>Ne peut pas d&#233;placer depuis ce lecteur!</value></string>
+	<string><id>2218</id><value>Ecraser le fichier?</value></string>
+	<string><id>2217</id><value>Le fichier de destination existe!</value></string>
+	<string><id>2118</id><value>Convertir DVR-MS</value></string>
+	<string><id>2117</id><value>une erreur fatale s'est produite!</value></string>
+	<string><id>2116</id><value>Lecteur non pr&#234;t</value></string>
+	<string><id>19012</id><value>Game Over</value></string>
+	<string><id>19011</id><value>En pause</value></string>
+	<string><id>19010</id><value>Appuye ou cliquez pour commencer...</value></string>
+	<string><id>19009</id><value>Suivant</value></string>
+	<string><id>19008</id><value>Scores</value></string>
+	<string><id>19007</id><value>Lignes</value></string>
+	<string><id>19006</id><value>Niveau</value></string>
+	<string><id>19005</id><value>Score</value></string>
+	<string><id>19004</id><value>Sons</value></string>
+	<string><id>19003</id><value>Musique</value></string>
+	<string><id>19002</id><value>Nouvelle partie</value></string>
+	<string><id>19001</id><value>Tetris</value></string>
+	<string><id>3007</id><value>Minute ago</value></string>
+	<string><id>3006</id><value>Heures ago</value></string>
+	<string><id>3002</id><value>Heures</value></string>
+	<string><id>3001</id><value>Heure</value></string>
+	<string><id>3000</id><value>Options du programme</value></string>
+	<string><id>976</id><value>Chapitre suivant</value></string>
+	<string><id>975</id><value>Chapitre pr&#233;c&#233;dent</value></string>
+	<string><id>974</id><value>Menu racine</value></string>
+	<string><id>973</id><value>FPS maximum</value></string>
+	<string><id>972</id><value>Toutes les cha&#238;nes</value></string>
+	<string><id>971</id><value>Groupe</value></string>
+	<string><id>3010</id><value>Minutes Restant</value></string>
+	<string><id>3009</id><value>D&#233;marre dans</value></string>
+	<string><id>3020</id><value>Episode</value></string>
+	<string><id>3012</id><value>Heures Restant</value></string>
+	<string><id>3022</id><value>de</value></string>
+	<string><id>3021</id><value>Partie</value></string>
+	<string><id>3019</id><value>S&#233;ries</value></string>
+	<string><id>3018</id><value>Minute Restant</value></string>
+	<string><id>3017</id><value>D&#233;marr&#233; </value></string>
+	<string><id>3016</id><value>D&#224;jà Termin&#233;</value></string>
+	<string><id>3015</id><value>Jours</value></string>
+	<string><id>3014</id><value>Jour</value></string>
+	<string><id>3013</id><value>D&#233;marre maintenant</value></string>
+	<string><id>750</id><value>Images</value></string>
+	<string><id>3011</id><value>Heure Restant</value></string>
+	<string><id>748</id><value>Pr&#233;cipitation</value></string>
+	<string><id>747</id><value>Bas</value></string>
+	<string><id>3008</id><value>Minutes avant</value></string>
+	<string><id>3005</id><value>Heure avant</value></string>
+	<string><id>3004</id><value>Minutes</value></string>
+	<string><id>3003</id><value>Minute</value></string>
+	<string><id>739</id><value>Vue: UV Index</value></string>
+	<string><id>738</id><value>Vue: Temp&#233;rature</value></string>
+	<string><id>737</id><value>Vue: Carte</value></string>
+	<string><id>746</id><value>Haut</value></string>
+	<string><id>745</id><value>Couch&#233; Soleil</value></string>
+	<string><id>744</id><value>Lev&#233; Soleil</value></string>
+	<string><id>743</id><value>Pr&#233;visions sur 4 jours</value></string>
+	<string><id>742</id><value>Vue: Pr&#233;cipitations</value></string>
+	<string><id>741</id><value>Vue: Humidit&#233;</value></string>
+	<string><id>740</id><value>Vue: Vents</value></string>
+	<string><id>394</id><value>N/A</value></string>
+	<string><id>393</id><value>Gel</value></string>
+	<string><id>392</id><value>Bruine</value></string>
+	<string><id>391</id><value>Venteux</value></string>
+	<string><id>390</id><value>Brumeux</value></string>
+	<string><id>389</id><value>Brouillard</value></string>
+	<string><id>388</id><value>et</value></string>
+	<string><id>2135</id><value>non install&#233;</value></string>
+	<string><id>2134</id><value>Filtres DirectShow requis</value></string>
+	<string><id>2133</id><value>Impossible de convertir DVR-MS en MPG</value></string>
+	<string><id>2132</id><value>Fermeture du disque: temps estim&#233;:</value></string>
+	<string><id>2131</id><value>de</value></string>
+	<string><id>2130</id><value>Bloc</value></string>
+	<string><id>2129</id><value>Pr&#233;paration gravure</value></string>
+	<string><id>2128</id><value>Pr&#233;paration gravure: temps estim&#233;:</value></string>
+	<string><id>2127</id><value>Le CD n'est pas inscriptible</value></string>
+	<string><id>2126</id><value>Ejecter le CD</value></string>
+	<string><id>2125</id><value>Effacer le CD...</value></string>
+	<string><id>2124</id><value>Impossible d'effacer: Media n'est pas inscriptible</value></string>
+	<string><id>2123</id><value>Infos Disque</value></string>
+	<string><id>2122</id><value>d&#233;marre!</value></string>
+	<string><id>2121</id><value>Ne peut convertir le(s) fichier(s)!</value></string>
+	<string><id>2120</id><value>Conversion du(des) fichier(s)...</value></string>
+	<string><id>2119</id><value>Convertir</value></string>
+	<string><id>1441</id><value>T&#233;l&#233;Texte</value></string>
+	<string><id>13012</id><value>Chargement des images, patientez</value></string>
+	<string><id>980</id><value>Lire l'enregistrement depuis le direct</value></string>
+	<string><id>979</id><value>Lire l'enregistrement depuis le début</value></string>
+	<string><id>978</id><value>pour visionner cette cha&#238;ne</value></string>
+	<string><id>977</id><value>Il n'y a pas de carte disponible</value></string>
+	<string><id>890</id><value>Lire le CD</value></string>
+	<string><id>871</id><value>Réveiller le PC</value></string>
+	<string><id>870</id><value>R&#233;currant</value></string>
 </strings>
