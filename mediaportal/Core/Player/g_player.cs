@@ -175,6 +175,14 @@ namespace MediaPortal.Player
         return m_player.IsTV;
       }
     }
+    public static bool IsTimeShifting
+    {
+      get 
+      {
+        if (m_player==null) return false;
+        return m_player.IsTimeShifting;
+      }
+    }
 
     public static void Release()
     {
