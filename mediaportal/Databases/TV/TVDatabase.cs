@@ -186,7 +186,7 @@ namespace MediaPortal.TV.Database
         AddTable("recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer)\n");
 
         AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
-		AddTable("satchannels","CREATE TABLE satchannels ( idChannel integer primary key,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer)\n");
+		AddTable("satchannels","CREATE TABLE satchannels ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer)\n");
 
         return true;
       }
@@ -213,7 +213,7 @@ namespace MediaPortal.TV.Database
 				  results=m_db.Execute(strSQL);
 				  int totalchannels=results.Rows.Count;
 
-				  strSQL=String.Format( "select * from satchannels where idChannel = {0}", idChannel);
+				  strSQL=String.Format( "select * from satchannels where idChannel = {0} and sServiceType={1}", idChannel,servicetype);
 				  results=m_db.Execute(strSQL);
 				  if (results.Rows.Count==0) 
 				  {
@@ -276,7 +276,7 @@ namespace MediaPortal.TV.Database
 		  }
 	  }
 	  //b2c2
-	  static public bool GetSatChannel(int idChannel,ref DVBChannel retChannel)
+	  static public bool GetSatChannel(int idChannel,int serviceType,ref DVBChannel retChannel)
 	  {
 		  
 		  int freq=0;int symrate=0;int fec=0;int lnbkhz=0;int diseqc=0;
@@ -292,7 +292,7 @@ namespace MediaPortal.TV.Database
 			  {
 				  if (null==m_db) return false;
 				  string strSQL;
-				  strSQL=String.Format("select * from satchannels where idChannel={0}",idChannel);
+				  strSQL=String.Format("select * from satchannels where idChannel={0} and sServiceType={1}",idChannel,serviceType);
 				  SQLiteResultSet results;
 				  results=m_db.Execute(strSQL);
 				  if (results.Rows.Count!=1) return false;
