@@ -129,10 +129,10 @@ namespace ProgramsDatabase
 				return;
 			if(GameURL.Length>0)
 			{
-// this code doesn't work with firefox !?! (launches a 6-tab browser window)
-//				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(GameURL);
-//				System.Diagnostics.Process.Start(sInfo);
-				System.Diagnostics.Process.Start("iexplore.exe", GameURL);
+				string strGameURL = GameURL.Replace("|", ""); 
+				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(strGameURL);
+				System.Diagnostics.Process.Start(sInfo);
+//				System.Diagnostics.Process.Start("iexplore.exe", GameURL);
 			}
 		}
 

@@ -477,10 +477,19 @@ namespace WindowPlugins.GUIPrograms
 		{
 			foreach (ListViewItem curItem in FileList.CheckedItems)
 			{
+				ListViewItem nextItem = null;
 				FileItem file = (FileItem)curItem.Tag;
 				if (file != null)
 				{
-					curItem.EnsureVisible();
+					if (curItem.Index < FileList.Items.Count - 1)
+					{
+						nextItem = FileList.Items[curItem.Index + 1];
+					}
+					else
+					{
+						nextItem = curItem;
+					}
+					nextItem.EnsureVisible();
 					curItem.SubItems[1].Text = String.Format("searching...");
 					Application.DoEvents();
 					file.FindFileInfo(myProgScraperType.ALLGAME);
@@ -647,11 +656,21 @@ namespace WindowPlugins.GUIPrograms
 
 		private void btnSaveSearch_Click(object sender, System.EventArgs e)
 		{
+			ListViewItem nextItem = null;
 			foreach (ListViewItem curItem in FileList.CheckedItems)
 			{
 				FileItem file = (FileItem)curItem.Tag;
 				if (file != null)
 				{
+					if (curItem.Index < FileList.Items.Count - 1)
+					{
+						nextItem = FileList.Items[curItem.Index + 1];
+					}
+					else
+					{
+						nextItem = curItem;
+					}
+					nextItem.EnsureVisible();
 					if (file.FileInfoFavourite != null)
 					{
 						curItem.SubItems[1].Text = String.Format("<searching...>");
@@ -659,7 +678,6 @@ namespace WindowPlugins.GUIPrograms
 						file.FindFileInfoDetail(m_CurApp, file.FileInfoFavourite, myProgScraperType.ALLGAME);
 						file.SaveFromFileInfoFavourite();
 						curItem.SubItems[1].Text = String.Format("<saved>");
-						curItem.EnsureVisible();
 						Application.DoEvents();
 					}
 				}
