@@ -49,7 +49,9 @@ namespace MediaPortal.TV.Recording
 		TVRecorded    m_newRecordedTV = null;
 
 		[NonSerialized]
-		bool					m_bAllocated=false;
+    bool					m_bAllocated=false;
+    [NonSerialized]
+    bool					m_bDidRecord=false;
 
     public TVCaptureDevice()
     {
@@ -305,6 +307,7 @@ namespace MediaPortal.TV.Recording
       if (m_graph==null)
       {
         Log.Write("Card:{0} CreateGraph",ID);		
+        m_bDidRecord=false;
         int iTunerCountry=31;
         string strTunerType="Antenna";
         using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -333,6 +336,7 @@ namespace MediaPortal.TV.Recording
 				GC.Collect();
       }
       m_eState=State.Initialized;
+      m_bDidRecord=false;
       return true;
     }
 
@@ -381,6 +385,10 @@ namespace MediaPortal.TV.Recording
       Log.Write("Card:{0} stop timeshifting",ID);
       m_graph.StopTimeShifting();
       m_eState=State.Initialized;
+      if (m_bDidRecord)
+      {
+        DeleteGraph();
+      }
       return true;
     }
 
@@ -406,21 +414,25 @@ namespace MediaPortal.TV.Recording
       if (currentRunningProgram!=null)
       {
         DateTime dt=currentRunningProgram.StartTime;
-        strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-          currentRunningProgram.Channel,currentRunningProgram.Title,
-          dt.Year,dt.Month,dt.Day,
-          dt.Hour,
-          dt.Minute,".sbe");
+        strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
+                                currentRunningProgram.Channel,currentRunningProgram.Title,
+                                dt.Year,dt.Month,dt.Day,
+                                dt.Hour,
+                                dt.Minute,
+                                DateTime.Now.Minute,DateTime.Now.Second,
+                                ".sbe");
 				timeProgStart=currentRunningProgram.StartTime.AddMinutes(-m_iPreRecordInterval);
       }
       else
       {
         DateTime dt=DateTime.Now;
-        strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-          m_strTVChannel,m_CurrentTVRecording.Title,
-          dt.Year,dt.Month,dt.Day,
-          dt.Hour,
-          dt.Minute,".sbe");
+        strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
+                                m_strTVChannel,m_CurrentTVRecording.Title,
+                                dt.Year,dt.Month,dt.Day,
+                                dt.Hour,
+                                dt.Minute,
+                                DateTime.Now.Minute,DateTime.Now.Second,
+                                ".sbe");
       }
       
 
@@ -445,6 +457,7 @@ namespace MediaPortal.TV.Recording
 				m_newRecordedTV.Description="";
 			}
 
+      m_bDidRecord=true;
       m_eState=State.Recording;
       return bResult;
     }

@@ -33,6 +33,8 @@ namespace MediaPortal.TV.Recording
     int                     m_iChannelNr=-1;
     int                     m_iCountryCode=31;
     bool                    m_bUseCable=false;
+    DateTime                m_StartTime=DateTime.Now;
+
 		public SinkGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter)
 		{
       m_bUseCable=bCable;
@@ -210,12 +212,14 @@ namespace MediaPortal.TV.Recording
       if (m_graphState!=State.Created) return false;
       if (m_mpeg2Demux==null) return false;
 
-      if (iChannelNr!=m_iChannelNr)
+      if (m_graphState==State.TimeShifting) 
       {
-        TuneChannel(iChannelNr);
+        if (iChannelNr!=m_iChannelNr)
+        {
+          TuneChannel(iChannelNr);
+        }
+        return true;
       }
-
-			if (m_graphState==State.TimeShifting) return true;
 
 			DirectShowUtil.DebugWrite("SinkGraph:StartTimeShifting()");
 			if (!m_mpeg2Demux.IsRendered) 
@@ -243,6 +247,7 @@ namespace MediaPortal.TV.Recording
           m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
         }
 			}
+      TuneChannel(iChannelNr);
       m_mpeg2Demux.StartTimeshifting(strFileName);
       
       m_graphState=State.TimeShifting;
@@ -256,6 +261,7 @@ namespace MediaPortal.TV.Recording
 			DirectShowUtil.DebugWrite("SinkGraph:StopTimeShifting()");
 			m_mpeg2Demux.StopTimeShifting();
       m_graphState=State.Created;
+
       return true;
     }
 
@@ -264,7 +270,7 @@ namespace MediaPortal.TV.Recording
       if ( m_graphState!=State.TimeShifting) return false;
 
       DirectShowUtil.DebugWrite("SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
-      m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart);
+      m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
       m_graphState=State.Recording;
       return true;
     }
@@ -309,6 +315,7 @@ namespace MediaPortal.TV.Recording
 			catch(Exception){} 
 
 			DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
+      m_StartTime=DateTime.Now;
     }
 
     void FixAverMediaBug()
