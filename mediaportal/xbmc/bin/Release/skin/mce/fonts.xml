@@ -5,6 +5,11 @@
     <height>10</height>
   </font>
   <font>
+    <name>font12</name>
+    <filename>Arial</filename>
+    <height>12</height>
+  </font>
+  <font>
     <name>font13</name>
     <filename>Arial</filename>
     <height>13</height>

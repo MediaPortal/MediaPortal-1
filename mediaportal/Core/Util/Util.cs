@@ -483,6 +483,8 @@ namespace MediaPortal.Util
 						{
 							// got it
 							item.ThumbnailImage=strThumb;
+							item.IconImage=strThumb;
+							item.IconImageBig=strThumb;
 						}
 					}
 				}
