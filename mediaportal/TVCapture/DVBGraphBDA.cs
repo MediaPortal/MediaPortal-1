@@ -2868,11 +2868,7 @@ namespace MediaPortal.TV.Recording
 				if (info.service_name.Length==0)
 					info.service_name=String.Format("NoName:{0}{1}{2}{3}",info.networkID,info.transportStreamID, info.serviceID,i );
 
-				if (info.serviceID==0) 
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel#{0} has no service id",i);
-					continue;
-				}
+
 				bool hasAudio=false;
 				bool hasVideo=false;
 				info.freq=currentTuningObject.Frequency;
@@ -2910,6 +2906,12 @@ namespace MediaPortal.TV.Recording
 					info.serviceID,
 					hasVideo, ((!hasVideo) && hasAudio),
 					currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid);
+
+				if (info.serviceID==0) 
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel#{0} has no service id",i);
+					continue;
+				}
 				bool IsRadio		  = ((!hasVideo) && hasAudio);
 				bool IsTv   		  = (hasVideo);//some tv channels dont have an audio stream
 		

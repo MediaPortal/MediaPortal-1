@@ -37,6 +37,7 @@ namespace MediaPortal.TV.Recording
 		State                               currentState;
 		DVBCList[]													dvbcChannels=new DVBCList[1000];
 		int																	count = 0;
+		int																	tryAgain=0;
 
 		public DVBCTuning()
 		{
@@ -50,6 +51,7 @@ namespace MediaPortal.TV.Recording
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+			tryAgain=0;
 			captureCard=card;
 			callback=statusCallback;
 
@@ -172,15 +174,19 @@ namespace MediaPortal.TV.Recording
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			DVBCList dvbcChan=dvbcChannels[index];
-			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate, tryAgain);
 			string description=String.Format("Channel:{0}/{1} {2}", index,count,chanDesc);
 
 			if (currentState==State.ScanFrequencies)
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.WriteFile(Log.LogType.Capture,"Found signal for Channel:{0} {1}",currentIndex,chanDesc);
-					currentState=State.ScanChannels;
+					if (tryAgain<=1)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Found signal for Channel:{0} {1} {2}",currentIndex,chanDesc, tryAgain);
+						currentState=State.ScanChannels;
+					}
+					else currentState=State.ScanFrequencies;
 				}
 			}
 
@@ -188,27 +194,34 @@ namespace MediaPortal.TV.Recording
 			{
 				currentState=State.ScanFrequencies ;
 				callback.OnStatus(description);
-				ScanNextDVBCChannel();
+				if (tryAgain!=1)
+				{
+					ScanNextDVBCChannel();
+					tryAgain=1;
+				}
+				else 
+				{
+					ScanDVBCChannel();
+					tryAgain=0;
+				}
 			}
-
 			if (currentState==State.ScanChannels)
 			{
 				description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 				callback.OnStatus(description);
 				ScanChannels();
 			}
-			
 		}
 
 		void ScanChannels()
 		{
-
 			timer1.Enabled=false;
+			Application.DoEvents();
 			captureCard.StoreTunedChannels(false,true);
 			callback.UpdateList();
-			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning channels");
+			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning channels {0}/{1} {2}", currentIndex,count,tryAgain);
 			currentState=State.ScanFrequencies;
-			ScanNextDVBCChannel();
+			tryAgain++;
 			timer1.Enabled=true;
 			return;
 		}
@@ -216,7 +229,13 @@ namespace MediaPortal.TV.Recording
 		void ScanNextDVBCChannel()
 		{
 			currentIndex++;
-			if (currentIndex>=count)
+			ScanDVBCChannel();
+			Application.DoEvents();
+		}
+
+		void ScanDVBCChannel()
+		{
+			if (currentIndex<0 || currentIndex>=count)
 			{
 				timer1.Enabled=false;
 				callback.OnProgress(100);
@@ -224,10 +243,9 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
-
-			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
-												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate);
-			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{2}",
+												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate, tryAgain);
+			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2} {3}",currentIndex ,count,chanDesc, tryAgain);
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;
@@ -238,8 +256,8 @@ namespace MediaPortal.TV.Recording
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan,0);
+			Application.DoEvents();
 		}
-
 		#endregion
 	}
 }
