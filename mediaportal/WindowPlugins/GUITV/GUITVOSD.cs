@@ -1278,8 +1278,8 @@ namespace MediaPortal.GUI.TV
           msg.Label=strTime;
           cntlTime.OnMessage(msg);
         }
-        
-        strTime=String.Format("{0}", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
+        // On TV Now
+        strTime=String.Format("{0} ", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
         if (cntlNow!=null)
         {
           msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNow.GetID,0,0,null); 
