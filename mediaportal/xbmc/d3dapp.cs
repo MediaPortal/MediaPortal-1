@@ -1258,8 +1258,7 @@ namespace MediaPortal
       m_bAutoHideMouse=false;
       Cursor.Show();
       Invalidate(true);
-      SetupForm dlg = new SetupForm();
-      dlg.ShowDialog(this);
+      Utils.StartProcess("Configuration.exe","",true,false);
 
       string strNewSkin="";
       string strNewLanguage="";

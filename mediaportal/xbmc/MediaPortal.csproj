@@ -218,46 +218,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FormAutoTune.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormAutoTune.resx"
-                    DependentUpon = "FormAutoTune.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "FormCapture.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormCapture.resx"
-                    DependentUpon = "FormCapture.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "FormRadioTuner.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FormRadioTuner.resx"
-                    DependentUpon = "FormRadioTuner.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "IRLearnFORM.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IRLearnFORM.resx"
-                    DependentUpon = "IRLearnFORM.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "MediaPortal.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -268,16 +228,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "NewShare.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NewShare.resx"
-                    DependentUpon = "NewShare.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "PluginForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -285,66 +235,6 @@
                 <File
                     RelPath = "PluginForm.resx"
                     DependentUpon = "PluginForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "SearchCity.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SearchCity.resx"
-                    DependentUpon = "SearchCity.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "SetupExternalRadio.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SetupExternalRadio.resx"
-                    DependentUpon = "SetupExternalRadio.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "SetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SetupForm.resx"
-                    DependentUpon = "SetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "SetupInternalRadio.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SetupInternalRadio.resx"
-                    DependentUpon = "SetupInternalRadio.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TVChannelForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TVChannelForm.resx"
-                    DependentUpon = "TVChannelForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "TVChannelFormNew.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TVChannelFormNew.resx"
-                    DependentUpon = "TVChannelFormNew.cs"
                     BuildAction = "EmbeddedResource"
                 />
             </Include>
