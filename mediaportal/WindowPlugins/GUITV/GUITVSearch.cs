@@ -264,7 +264,7 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-				if ( _FilterShow!="")
+				if ( _FilterLetter!="#")
 				{
 					GUIControl.HideControl(GetID,(int)Controls.ListControl);
 					GUIControl.ShowControl(GetID,(int)Controls.TitleControl);
