@@ -54,12 +54,7 @@ namespace MediaPortal.Configuration
       }
       catch(NotSupportedException)
       {
-        //
-        // The device does not support checking the signal strength, thus we can't perform
-        // autotuning.
-        //
-        MessageBox.Show("Failed to perform autotuning, the tuner card does not support reading of signal strength.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        return;
+        // Unable to read signal strength, step to next frequency
       }
 
 			//
