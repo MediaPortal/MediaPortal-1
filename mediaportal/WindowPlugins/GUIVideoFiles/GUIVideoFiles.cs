@@ -1625,7 +1625,7 @@ namespace MediaPortal.GUI.Video
 
       if (!Utils.IsDVD(movieDetails.Path)) return true;
       string cdlabel="";
-      Utils.GetDVDLabel(movieDetails.Path, out cdlabel);
+      cdlabel=Utils.GetDriveSerial(movieDetails.Path);
       if (cdlabel.Equals(movieDetails.CDLabel)) return true;
 
       GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -1639,7 +1639,7 @@ namespace MediaPortal.GUI.Video
 	      dlg.DoModal(GUIWindowManager.ActiveWindow);
         if (dlg.IsConfirmed) 
         {
-          Utils.GetDVDLabel(movieDetails.Path, out cdlabel);
+          cdlabel=Utils.GetDriveSerial(movieDetails.Path);
           if (cdlabel.Equals(movieDetails.CDLabel)) return true;
         }
         else break;

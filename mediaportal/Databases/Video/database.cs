@@ -281,7 +281,7 @@ namespace MediaPortal.Video.Database
       string strCDLabel = "";
       if (Utils.IsDVD(strFile)) 
       {
-        Utils.GetDVDLabel(strFile, out strCDLabel);        
+        strCDLabel=Utils.GetDriveSerial(strFile);        
       }
       string[] sub_exts = {  ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss", ".ass", ".idx",".ifo" };
       // check if movie has subtitles
