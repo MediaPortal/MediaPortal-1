@@ -966,6 +966,46 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "GUIScript\ExpressionEval.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\FunctionEval.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\GUIScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\MPScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\RegexObjects.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\ScriptHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\SetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIScript\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUISettings\GUISettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
