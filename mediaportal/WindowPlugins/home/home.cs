@@ -951,8 +951,8 @@ namespace MediaPortal.GUI.Home
 			if (DateTime.Now.Minute != m_updateTimer.Minute)
 			{
 				m_updateTimer=DateTime.Now;
-				GUIPropertyManager.SetProperty("#date", GetDate());
-				GUIPropertyManager.SetProperty("#time", GetTime());
+				GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
+				GUIControl.SetControlLabel(GetID, 201,GetTime());
 			}
 		}
 

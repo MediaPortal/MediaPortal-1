@@ -829,6 +829,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
 
+      SetupCamera2D();
     }
 
     /// <summary>

@@ -16,6 +16,8 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
+copy ..\..\..\mbm5.dll .
+
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .
 copy ..\..\..\TVGuideScheduler\bin\Release\TVGuideScheduler.exe .

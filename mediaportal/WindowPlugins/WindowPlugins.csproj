@@ -148,6 +148,16 @@
                     AssemblyName = "DotMSN"
                     HintPath = "GUIMSNPlugin\DotMSN.dll"
                 />
+                <Reference
+                    Name = "mbm5"
+                    AssemblyName = "mbm5"
+                    HintPath = "..\mbm5.dll"
+                />
+                <Reference
+                    Name = "System.Management"
+                    AssemblyName = "System.Management"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -719,6 +729,31 @@
                     RelPath = "GUISettings\MusicDatabaseReorg.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIStatus\GUIStatus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIStatus\GUIStatusDetails.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIStatus\GUIStatusPrefs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIStatus\SetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIStatus\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUITopbar\GUITopbar.cs"

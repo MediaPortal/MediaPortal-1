@@ -1048,7 +1048,7 @@
 	</string>
 	<string>
 		<id>333</id>
-		<value>Wollen Sie die Musik-Datenbank reorganisieren?</value>
+		<value>Wollen sie die Musik-Datenbank reorganisieren?</value>
 	</string>
 	<string>
 		<id>334</id>
@@ -1393,7 +1393,7 @@
 	</string> 
 	<string>
 		<id>428</id>
-		<value>Legen Sie die korrekte CD/DVD ein</value>
+		<value>Legen sie die korrekte CD/DVD ein</value>
 	</string> 
 	<string>
 		<id>429</id>
@@ -1413,7 +1413,7 @@
 	</string>  
 	<string>
 		<id>433</id>
-		<value>Löschen! Sind Sie sicher?</value>
+		<value>Löschen! Sind sie sicher?</value>
 	</string>  
 	<string>
 		<id>434</id>
@@ -2236,7 +2236,7 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleeptimer</value>
+		<value>Sleeptimer Ein/Aus</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2292,46 +2292,116 @@
 		<id>900</id>
 		<value>Den letzten Film fortsetzen?</value>
 	</string>
-	<string>
-		<id>901</id>
-		<value>MSN Messenger</value>
-	</string>
-	<string>
-		<id>902</id>
-		<value>Online Kontakte</value>
-	</string>
-	<string>
-		<id>903</id>
-		<value>Anmelden</value>
-	</string>
-	<string>
-		<id>904</id>
-		<value>Abmelden</value>
-	</string>
-	<string>
-		<id>905</id>
-		<value>Sie müssen dieses Plugin zuerst konfigurieren</value>
-	</string>
-	<string>
-		<id>906</id>
-		<value>Ergänzen Sie Ihre Email-Adresse im Setup</value>
-	</string>
-	<string>
-		<id>907</id>
-		<value>Kann nicht zu MSN verbinden</value>
-	</string>
-	<string>
-		<id>908</id>
-		<value>Schreibt eine Nachricht...</value>
-	</string>
-	<string>
-		<id>909</id>
-		<value>Verbinde...</value>
-	</string>
 
 	<string>
 		<id>1440</id>
 		<value>Videotext</value>
+	</string>
+
+	<!-- My Status Strings -->
+	<string>
+		<id>1950</id>
+		<value>Status</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Festplatte</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Lüfter</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Frei</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Temperatur</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>C</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Alarm Sound wählen</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Allgemeine Einstellungen</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>Rechnerauslastung</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Spannung</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Volt</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Taktfrequenz</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Einstellungen</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Sensor Details</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Sensor Alarm Ein/Aus</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Höchster Wert</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Niedrigster Wert</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>Obere Alarmschwelle</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>Untere Alarmschwelle</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Test Sound</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Alarm Interval (in Sekunden)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Shutdown (bei Temp Alarm)</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Status Details</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>von</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Speicher</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Nächste Seite</value>
 	</string>
 
 	<!-- My Recipie Strings -->
@@ -2481,11 +2551,11 @@
 	</string>
 	<string>
 		<id>2041</id>
-		<value>Zentiliter</value>
+		<value>10 ml</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>Deziliter</value>
+		<value>100 ml</value>
 	</string>
 	<string>
 		<id>2043</id>
@@ -2497,11 +2567,11 @@
 	</string>
 	<string>
 		<id>2045</id>
-		<value>Zentigramm</value>
+		<value>1/100 Gramm</value>
 	</string>
 	<string>
 		<id>2046</id>
-		<value>Dezigramm</value>
+		<value>1/10 Gramm</value>
 	</string>
 	<string>
 		<id>2047</id>
@@ -2536,6 +2606,36 @@
 		<value>Kein Eintrag!</value>
 	</string>
 
+	<!-- My Burner Strings -->
+	<string>
+		<id>2100</id>
+		<value>Brennen</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>CD/DVD Kopieren</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Audio CD erstellen</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Video CD erstellen</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Video DVD erstellen</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Daten CD erstellen</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Daten DVD erstellen</value>
+	</string>
+
 	<string>
 		<id>8000</id>
 		<value>Mail</value>
@@ -2562,7 +2662,7 @@
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autocheck</value>
+		<value>Autocheck Ein/Aus</value>
 	</string>
 	<string>
 		<id>8008</id>
@@ -2901,7 +3001,7 @@
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Große Bilder</value>
+		<value>Grosse Bilder</value>
 	</string>
 
 	<string>
