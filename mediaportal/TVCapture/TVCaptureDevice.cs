@@ -70,6 +70,9 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     int           m_iID=0;
 
+    [NonSerialized]
+    bool          m_bIsTimeShiftingThisChannel=false;
+
     public Size FrameSize
     {
       get { return m_FrameSize;}
@@ -270,10 +273,11 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void StopCapture()
     {
-      // stop tv preview....
-      if (g_Player.Playing && g_Player.IsTV)
+      // If we're timeshifting & previewing this capture device, then stop the previewing
+      if (m_bIsTimeShiftingThisChannel && g_Player.Playing && g_Player.IsTV)
       {
         g_Player.Stop();
+        m_bIsTimeShiftingThisChannel=false;
       }
 
       if (capture!=null)
@@ -607,6 +611,7 @@ namespace MediaPortal.TV.Recording
                     try
                     {
                       g_Player.Play( capture.Filename);
+                      m_bIsTimeShiftingThisChannel=true; //remember we're timeshifting/previewing using this capture device
                     }
                     catch (Exception) {}
 

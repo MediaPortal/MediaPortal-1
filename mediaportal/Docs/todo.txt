@@ -54,9 +54,12 @@ Settings:
   - all :-)
 
 General:
+  - setup:Auto Tune needs some work
+      - map S01 /k01 etc -> channel numbers
+      - map autotune <->xmltv
+      
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
-  - setup:Auto Tune needs some work
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
