@@ -1833,7 +1833,7 @@ namespace MediaPortal.TV.Recording
 		public long GetStartDateFromEIT(EITDescr data)
 		{
 			
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.ts_id);
+			string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
 			try
 			{
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
@@ -1849,7 +1849,7 @@ namespace MediaPortal.TV.Recording
 		public long GetEndDateFromEIT(EITDescr data)
 		{
 			
-			string chName=TVDatabase.GetSatChannelName(data.program_number,data.ts_id);
+			string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
 			try
 			{
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
@@ -1881,7 +1881,7 @@ namespace MediaPortal.TV.Recording
 			int n=0;
 			foreach(EITDescr eit in eitList)
 			{
-				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
+				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
 				Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
 				if(progName==null)
 				{
@@ -1902,7 +1902,7 @@ namespace MediaPortal.TV.Recording
 					Log.Write("epg-grabber: got {0} events for this grab",eitList.Count);
 					foreach(EITDescr eit in eitList)
 					{
-						string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
+						string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
 						eventsCount+=SetEITToDatabase(eit,progName,0x50);
 					}
 
