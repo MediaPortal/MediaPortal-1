@@ -70,8 +70,6 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     int           m_iID=0;
 
-    [NonSerialized]
-    bool          m_bIsTimeShiftingThisChannel=false;
 
     public Size FrameSize
     {
@@ -274,10 +272,17 @@ namespace MediaPortal.TV.Recording
     public void StopCapture()
     {
       // If we're timeshifting & previewing this capture device, then stop the previewing
-      if (m_bIsTimeShiftingThisChannel && g_Player.Playing && g_Player.IsTV)
+      if (g_Player.Playing && g_Player.IsTV)
       {
-        g_Player.Stop();
-        m_bIsTimeShiftingThisChannel=false;
+        string strTmp=String.Format("record{0}.",ID);
+        if ( g_Player.CurrentFile.IndexOf(strTmp)>=0) 
+        {
+          Log.Write("Stop previewing...");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE,0,0,0,0,null);
+          GUIWindowManager.SendThreadMessage(msg);
+          while (g_Player.Playing && g_Player.IsTV) System.Threading.Thread.Sleep(100);
+          Log.Write("previewing stopped...");
+        }
       }
 
       if (capture!=null)
@@ -531,7 +536,9 @@ namespace MediaPortal.TV.Recording
                 SelectChannel(iChannel,true);
                 if (g_Player.IsTV && g_Player.Playing && capture.IsTimeShifting)
                 {
-                  g_Player.SeekAsolutePercentage(99);
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE,0,0,0,0,null);
+                  msg.Param1=99;
+                  GUIWindowManager.SendThreadMessage(msg);
                 }
               }
               catch(Exception ex)
@@ -618,7 +625,6 @@ namespace MediaPortal.TV.Recording
                       msg.Label=capture.Filename;
                       GUIWindowManager.SendThreadMessage(msg);
 
-                      m_bIsTimeShiftingThisChannel=true; //remember we're timeshifting/previewing using this capture device
                     }
                     catch (Exception) {}
 

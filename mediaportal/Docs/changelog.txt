@@ -1,5 +1,7 @@
 History: (dd-mm-yyyy)
   15-06-2004  general     : added : plugin for topbar (topbar now has seperate .xml skin files and can be turned on/off)
+  15-06-2004  general     : added : support for VMR9 (optional, turn it on/off in file setup->general)
+  15-06-2004  my tv		  : fixed : some crashes & hangups
   
   14-06-2004  my video    : fixed : OSD: FF or RW button kept focus 
   14-06-2004  my tv       : fixed : crash in OSD when you select volume and then press ESC

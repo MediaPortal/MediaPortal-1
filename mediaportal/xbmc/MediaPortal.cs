@@ -217,28 +217,13 @@ public class MediaPortalApp : D3DApp, IRender
     {
       try
       {
-        bool bIsFullscreen=GUIGraphicsContext.IsFullScreenVideo;
-        GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        // ask the window manager to render the current active window
-        GUIWindowManager.Render(); 
-
-        GUIWindowManager.DispatchThreadMessages();
-        //g_Player.Process();
-
-        // update playing status
-        if (g_Player.Playing)
-        {
-          GUIGraphicsContext.IsPlaying=true;
-        }
-        else
-        {
-          if (!Recorder.Previewing)
-            GUIGraphicsContext.IsFullScreenVideo=false;
-          GUIGraphicsContext.IsPlaying=false;
-        }
+        GUIWindowManager.Render();
 
       }
-      catch(Exception){}
+      catch(Exception ex)
+      {
+        Log.Write("RenderFrame exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+      }
     }
 
     /// <summary>
@@ -305,8 +290,6 @@ public class MediaPortalApp : D3DApp, IRender
         if(GUIGraphicsContext.IsFullScreenVideo)
         {
           // yes, then just handle the outstanding messages
-          GUIWindowManager.DispatchThreadMessages();
-          //g_Player.Process();
           GUIGraphicsContext.IsPlaying=true;
           
           // and return
@@ -318,9 +301,6 @@ public class MediaPortalApp : D3DApp, IRender
       // or screen needs a refresh
       m_bNeedUpdate=false;
 
-      // handle any outstanding messages
-      GUIWindowManager.DispatchThreadMessages();
-      //g_Player.Process();
 
       // update playing status
       if (g_Player.Playing)
@@ -353,6 +333,25 @@ public class MediaPortalApp : D3DApp, IRender
         deviceLost = true;
       }
     }
+
+  protected override void FrameMove()
+  {
+    g_Player.Process();
+    GUIWindowManager.DispatchThreadMessages(); 
+
+
+    // update playing status
+    if (g_Player.Playing)
+    {
+      GUIGraphicsContext.IsPlaying=true;
+    }
+    else
+    {
+      if (!Recorder.Previewing)
+        GUIGraphicsContext.IsFullScreenVideo=false;
+      GUIGraphicsContext.IsPlaying=false;
+    }
+  }
 
 
   /// <summary>
@@ -615,10 +614,6 @@ public class MediaPortalApp : D3DApp, IRender
       
 	  }
 
-  public override void OnTimer()
-  {
-    g_Player.Process();
-  }
 
 
 	protected override void mousemove(System.Windows.Forms.MouseEventArgs e)

@@ -17,6 +17,7 @@ My Radio:
   - AM/FM
 
 My TV:
+  - speed up my tv (takes 2 long b4 picture is shown)
   - A way to browse and resolve recording conflicts. 
   - support of external tuners (http://www.usbuirt.com/)
   - picture in picture
