@@ -1351,7 +1351,6 @@ namespace MediaPortal.Configuration.Sections
 						id=ID;
 						movieDetails.ID=ID;
 					}
-					VideoDatabase.SetMovieInfoById(movieDetails.ID,ref movieDetails);
 
 					AmazonImageSearch search = new AmazonImageSearch();
 					search.Search(movieDetails.Title);
@@ -1359,6 +1358,7 @@ namespace MediaPortal.Configuration.Sections
 					{
 						movieDetails.ThumbURL=search[0];
 					}
+					VideoDatabase.SetMovieInfoById(movieDetails.ID,ref movieDetails);
 					if (stopRebuild) return null;
 					//download thumbnail
 					DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);

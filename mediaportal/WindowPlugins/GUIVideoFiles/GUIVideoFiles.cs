@@ -1706,6 +1706,12 @@ namespace MediaPortal.GUI.Video
                 if (imdb.GetDetails(url, ref movieDetails))
                 {
                   // got all movie details :-)
+									AmazonImageSearch search = new AmazonImageSearch();
+									search.Search(movieDetails.Title);
+									if (search.Count>0)
+									{
+										movieDetails.ThumbURL=search[0];
+									}
 									//get all actors...
 									DownloadActors(movieDetails);
 									DownloadDirector(movieDetails);
