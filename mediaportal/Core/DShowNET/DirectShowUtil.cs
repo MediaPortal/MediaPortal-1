@@ -648,7 +648,7 @@ namespace DShowNET
 							if (DeInterlaceMode==0)
 							{
 								//none
-								Log.Write("VMR9: select deinterlace mode:None");
+								DebugWrite("VMR9: select deinterlace mode:None");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(0,ref guidNone);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNone);
@@ -657,18 +657,18 @@ namespace DShowNET
 							if (DeInterlaceMode==1)
 							{
 								//Bob
-								Log.Write("VMR9: select deinterlace mode:BOB");
+								DebugWrite("VMR9: select deinterlace mode:BOB");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_BOB);
 								return;
 							}
 							if (DeInterlaceMode==2)
 							{
 								//Weave
-								Log.Write("VMR9: select deinterlace mode:Weave");
+								DebugWrite("VMR9: select deinterlace mode:Weave");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
 								return;
 							}
-							Log.Write("VMR9: select deinterlace mode:NextBest");
+							DebugWrite("VMR9: select deinterlace mode:NextBest");
 							DirectShowUtil.DebugWrite("VMR9:got IVMRDeinterlaceControl9");
 							VMR9VideoDesc videodesc=new VMR9VideoDesc();
 							IPin pinIn;
