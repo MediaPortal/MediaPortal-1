@@ -23,14 +23,13 @@ namespace MediaPortal.GUI.Library
 
 
     protected AnimationType animType=AnimationType.None;						//current animation type
-    protected DateTime      m_DateTimeStart=DateTime.MinValue;			//time animation started
     protected bool          m_Animating=false;											//boolean indicating if we're animating
-
+		protected long          lTime;
 
 		public Animator(AnimationType type)
 		{
       animType=type;
-      m_DateTimeStart=DateTime.Now;
+      lTime=0;
       m_Animating=true;
 		}
 
@@ -62,48 +61,48 @@ namespace MediaPortal.GUI.Library
       if ( IsDone() ) return;
       
 			//check if animation should end
-      TimeSpan ts =DateTime.Now-m_DateTimeStart;
-      int iFrame = (int)Math.Floor(ts.TotalMilliseconds/FRAME_DURATION_IN_MSEC);
-      if (iFrame > NUMBEROFFRAMES) 
-      {
+			float fTotalTime=FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES;
+			float fTime=(float)lTime;
+			if (lTime >= fTotalTime)
+			{
 				//yes, then end the animation
         m_Animating=false;
         return;
       }
 
 			//keep copy of original control rectangle
-      int posx=x;
-      int posy=y;
-      int w=width;
-      int h=height;
+      float posx=(float)x;
+      float posy=(float)y;
+      float w=(float)width;
+      float h=(float)height;
 
 			//modify the coordinates,width,height for the current animation type
       switch (animType )
       {
           case AnimationType.FlyInFromLeft:
           {
-            int iStepX= (x+width) / NUMBEROFFRAMES;
+            float iStepX= ( (float)(x+width)) / fTotalTime;
             if (iStepX<=0) iStepX=1;
-            posx = iStepX*iFrame;
-            posx -=width;
+            posx =  iStepX*fTime;
+            posx -= (float)width;
             if (posx > x) posx=x;
           }
           break;
 
         case AnimationType.FlyInFromRight:
         {
-          int iStepX= (GUIGraphicsContext.Width-x) / NUMBEROFFRAMES;
+          float iStepX= ((float)(GUIGraphicsContext.Width-x)) / fTotalTime;
           if (iStepX<=0) iStepX=1;
-          posx = x + GUIGraphicsContext.Width- (iStepX*iFrame);
+          posx = x + GUIGraphicsContext.Width- (iStepX*fTime);
           if (posx < x) posx=x;
         }
           break;
 
         case AnimationType.FlyInFromTop:
         {
-          int iStepy= (y+height) / NUMBEROFFRAMES;
+          float iStepy= ((float)(y+height)) / fTotalTime;
           if (iStepy<=0) iStepy=1;
-          posy = iStepy*iFrame;
+          posy = iStepy*fTime;
           posy -=height;
           if (posy > y) posy=y;
         }
@@ -112,21 +111,21 @@ namespace MediaPortal.GUI.Library
 
         case AnimationType.FlyInFromBottom:
         {
-          int iStepY= (GUIGraphicsContext.Height-y) / NUMBEROFFRAMES;
+          float iStepY= ((float)(GUIGraphicsContext.Height-y)) / fTotalTime;
           if (iStepY<=0) iStepY=1;
-          posy = y + GUIGraphicsContext.Height- (iStepY*iFrame);
+          posy = y + GUIGraphicsContext.Height- (iStepY*fTime);
           if (posy < y) posy=y;
         }
           break;
         case AnimationType.ZoomInFromMiddle:
         {
-          int iStepY= (height/2) / (NUMBEROFFRAMES );
+          float iStepY= ((float)(height/2)) / (fTotalTime );
           if (iStepY<=0) iStepY=1;
-          int iStepX= (width/2) / (NUMBEROFFRAMES );
+          float iStepX= ((float)(width/2)) / (fTotalTime );
           if (iStepX<=0) iStepX=1;
 
-          iStepY*=iFrame;
-          iStepX*=iFrame;
+          iStepY*=fTime;
+          iStepX*=fTime;
 
 
           posy = y+(height/2)-iStepY;
@@ -137,10 +136,16 @@ namespace MediaPortal.GUI.Library
         break;
       }
 			// and return the modified coordinates,with,height
-      x=posx;
-      y=posy;
-      width=w;
-      height=h;
+      x=(int)posx;
+      y=(int)posy;
+      width=(int)w;
+			height=(int)h;
+			
     }
+		public void Advance(long timePassed)
+		{
+			lTime+=timePassed;
+		}
 	}
+	
 }

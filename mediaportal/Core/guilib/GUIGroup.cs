@@ -84,6 +84,7 @@ namespace MediaPortal.GUI.Library
               if (cntl!=null) cntl.Animate(timePassed,m_animator);
             }
           }
+					m_animator.Advance(timePassed);
         }
       }
 

@@ -790,9 +790,9 @@ namespace MediaPortal.GUI.Library
 			get 
 			{
 				float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-				float difftime=lasttime-time;
+				float difftime=time-lasttime;
 				lasttime=time;
-				return ( (long)(time*1000.0f) );
+				return ( (long)(difftime*1000f) );
 			}
 		}
   }
