@@ -1,3 +1,4 @@
+14-08-2004  setup       : fixed : Exception when capture device couldn't be created.
 14-08-2004  setup       : fixed : Sorting of languages in the DVD section.
 14-08-2004  my tv       : fixed : generating thumb for "ketnet/canvas"  wont work
 14-08-2004  setup	: fixed : Fixed problem with Pin codes disappearing.
