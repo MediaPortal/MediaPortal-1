@@ -183,7 +183,6 @@ public class MediaPortalApp : D3DApp, IRender
         SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Hwmc",1);
         SetDWORDRegKey(hklm,@"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec","Dxva",1);
 
-        hklm.Close();
 
 				// windvd6 mpeg2 codec settings
 				SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\AudioDec","DsContinuousRate",1);
@@ -451,9 +450,16 @@ public class MediaPortalApp : D3DApp, IRender
       // also set credentials to allow use with firewalls that require them
       // this means we can use the .NET internet objects and not have
       // to worry about proxies elsewhere in the code
-      System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
-      proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
-      System.Net.GlobalProxySelection.Select = proxy;
+			try
+			{
+				System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
+				if (proxy!=null)
+				{
+					proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+					System.Net.GlobalProxySelection.Select = proxy;
+				}
+			}
+			catch(Exception){}
 
       //register the playlistplayer for thread messages (like playback stopped,ended)
       Log.Write("  Init playlist player");

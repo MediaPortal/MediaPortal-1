@@ -360,14 +360,17 @@ namespace MediaPortal.Player
           if( hr == 0 )
             hr = videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
         }
-        if( hr != 0 )
-        {
-          Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to set options()");
-          CloseInterfaces();
-          return false;
-        }
-        basicVideo.SetDefaultSourcePosition();
-        basicVideo.SetDefaultDestinationPosition();
+				if( hr != 0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to set options()");
+					CloseInterfaces();
+					return false;
+				}
+				if (basicVideo!=null)
+				{
+					basicVideo.SetDefaultSourcePosition();
+					basicVideo.SetDefaultDestinationPosition();
+				}
         if (videoWin!=null)
         {
           videoWin.SetWindowPosition( 0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height);
