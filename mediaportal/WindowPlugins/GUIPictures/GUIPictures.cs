@@ -949,12 +949,12 @@ namespace MediaPortal.GUI.Pictures
       } while (bFound);
 		}
 
-    string GetThumbnail(string strPhoto)
+    static public string GetThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;
       return String.Format(@"{0}\{1}.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
     }
-    string GetLargeThumbnail(string strPhoto)
+    static public string GetLargeThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;
       return String.Format(@"{0}\{1}L.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
@@ -1040,6 +1040,10 @@ namespace MediaPortal.GUI.Pictures
       }
       string strThumb=GetThumbnail(item.Path );
       Util.Picture.CreateThumbnail(item.Path,strThumb,128,128,rotate);
+
+      strThumb=GetLargeThumbnail(item.Path) ;
+      Util.Picture.CreateThumbnail(item.Path,strThumb,512,512,rotate);
+      System.Threading.Thread.Sleep(100);
       GUIControl.RefreshControl(GetID, (int)Controls.CONTROL_VIEW);      
     }
 

@@ -126,7 +126,6 @@ namespace MediaPortal.GUI.Pictures
       {
         m_iRotate=dbs.GetRotation(strSlide);
       }
-      CreateThumb(strSlide);
       int iMaxWidth=MAX_PICTURE_WIDTH;
       int iMaxHeight=MAX_PICTURE_HEIGHT;
       //if (m_bSlideShow)
@@ -164,7 +163,6 @@ namespace MediaPortal.GUI.Pictures
       {
         m_iRotate=dbs.GetRotation(strSlide);
       }
-      CreateThumb(strSlide);
       int iMaxWidth=MAX_PICTURE_WIDTH;
       int iMaxHeight=MAX_PICTURE_HEIGHT;
       //if (m_bSlideShow)
@@ -768,6 +766,7 @@ namespace MediaPortal.GUI.Pictures
             dbs.SetRotation(m_strBackgroundSlide,m_iRotate);
           }
           DoRotate();
+          DeleteThumb(m_strBackgroundSlide);
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         break;
 
@@ -867,7 +866,6 @@ namespace MediaPortal.GUI.Pictures
       m_strCurrentSlide=m_strBackgroundSlide;
       m_iZoomFactor=1;
 	    m_iZoomLeft=m_iZoomTop=0;
-			CreateThumb(m_strBackgroundSlide);
 	    m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
       m_dwFrameCounter=0;
       m_iTransistionMethod=9;
@@ -965,13 +963,12 @@ namespace MediaPortal.GUI.Pictures
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PICTURES);
     }
 
-		void CreateThumb(string strSlide)
+		void DeleteThumb(string strSlide)
 		{
-      return;
-      //if (m_bSlideShow) return;
-
-			//string strThumb=Utils.GetThumb(strSlide);
-			//MediaPortal.Util.Picture.CreateThumbnail(strSlide,strThumb,512,512, m_iRotate);
+			string strThumb=GUIPictures.GetThumbnail(strSlide);
+			Utils.FileDelete(strThumb);
+      strThumb=GUIPictures.GetLargeThumbnail(strSlide) ;
+      Utils.FileDelete(strThumb);
 		}
     public override bool NeedRefresh()
     {
