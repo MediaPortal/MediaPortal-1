@@ -1,3 +1,5 @@
+30-07-2004  my music    : fixed : In album view - second level - sorting by album - artist is not sufficient. Sorting needs to be done by album - artist - title.
+30-07-2004  my music    : fixed : In album view - second level - sorting by artist - album is not sufficient. Sorting needs to be done by artist - album - title.
 30-07-2004  setup       : added : Music Database, allows the user to update the music database with tags from music files
 
 29-07-2004  my music    : fixed : when song ends in full screen viz, you return to GUI
