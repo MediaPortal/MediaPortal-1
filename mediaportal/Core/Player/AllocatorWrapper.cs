@@ -42,7 +42,12 @@ namespace MediaPortal.Player
 		{
 			public Allocator()
 			{
-
+				MaxTextureWidth=1900;
+				MaxTextureHeight=1200;
+				
+				Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
+				if (d3dcaps.MaxTextureWidth  < MaxTextureWidth ) MaxTextureWidth  = d3dcaps.MaxTextureWidth;
+				if (d3dcaps.MaxTextureHeight < MaxTextureHeight) MaxTextureHeight = d3dcaps.MaxTextureHeight;
 			}
 
 			/// <summary>
