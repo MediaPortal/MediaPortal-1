@@ -183,6 +183,12 @@
       <sound>click.wav</sound>
       <description>volume up</description>
     </action>
+    <action>
+      <id>89</id>
+      <key>r</key>
+      <sound>click.wav</sound>
+      <description>record current tv program</description>
+    </action>
   </global>
   <window>
     <id>603</id>
