@@ -43,13 +43,14 @@
 <!--    Typhoon TV PVR (USB)        added by Frodo        (untested)                  -->
 <!--    VA2000                      added by Frodo                                    -->
 <!--    VideoMate DVB-T 300         added by Frodo                                    -->
+<!--    V-Stream Xpert DTV          added by Frodo                                    -->
 <!--    Winfast PVR 2000            added by Hwarmann                                 -->
 <!--    general s/w card            added by Frodo                                    -->
 <!--    general MCE card            added by Frodo                                    -->
 <!--    general MPEG2 card          added by Frodo                                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.12                                                                 -->
-<!-- changed : 9-jan-2005 by Frodo                                                    -->
+<!-- version : 1.0.0.13                                                               -->
+<!-- changed : 11-jan-2005 by Frodo                                                   -->
 <!--                                                                                  -->
 
 <capturecards>
@@ -638,6 +639,22 @@
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="false"></filter>
         <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
+  
+  <capturecard commercialname="V-Stream Xpert DTV" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a617de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"         checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Xpert BDA DVB-T Tuner/Demod"             checkdevice="false"></filter>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture" checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
