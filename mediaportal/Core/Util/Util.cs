@@ -39,6 +39,25 @@ namespace MediaPortal.Util
     [DllImport( "winmm.dll", EntryPoint="mciSendStringA", CharSet=CharSet.Ansi )]
     protected static extern int mciSendString( string lpstrCommand, StringBuilder lpstrReturnString, int uReturnLength, IntPtr hwndCallback );
 
+    [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
+    static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
+      IntPtr lpInBuffer, uint nInBufferSize,
+      IntPtr lpOutBuffer, uint nOutBufferSize,
+      out uint lpBytesReturned, IntPtr lpOverlapped);
+
+    [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    static extern IntPtr CreateFile(
+      string filename,
+      [MarshalAs(UnmanagedType.U4)] FileAccess fileaccess,
+      [MarshalAs(UnmanagedType.U4)] FileShare fileshare,
+      int securityattributes,
+      [MarshalAs(UnmanagedType.U4)] FileMode creationdisposition,
+      int flags, IntPtr template);
+
+
+    [DllImport("kernel32.dll", SetLastError=true)]
+    static extern bool CloseHandle(IntPtr hObject);
+
 
     static ArrayList m_AudioExtensions		=new ArrayList();
     static ArrayList m_VideoExtensions		=new ArrayList();
@@ -656,6 +675,31 @@ namespace MediaPortal.Util
       return strFolderJpg ;
     }
     
+    static public bool EjectCDROM(string strDrive)
+    {
+      bool result = false;
+      strDrive = @"\\.\"+strDrive;
+
+      try 
+      {
+        IntPtr fHandle = CreateFile(strDrive, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite, 0, System.IO.FileMode.Open, 0x80, IntPtr.Zero);
+        if (fHandle.ToInt64() != -1) //INVALID_HANDLE_VALUE)
+        {
+          uint Result;
+          if (DeviceIoControl(fHandle, 0x002d4808, IntPtr.Zero, 0, IntPtr.Zero, 0, out Result, IntPtr.Zero) == true)
+          {
+            result = true;
+          }
+          CloseHandle(fHandle);
+        }
+      }
+      catch(Exception)
+      {
+      }
+
+      return result;
+    }
+
     static public void EjectCDROM()
     {
       mciSendString( "set cdaudio door open", null, 0, IntPtr.Zero );
