@@ -210,6 +210,7 @@ namespace MediaPortal.TV.Recording
 				foreach (string catName in m_Card.TvFilterDefinitions.Keys)
 				{
 					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[catName] as FilterDefinition;
+					Log.Write("DVBGraphBDA:  Adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 					dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
 					hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 					if (hr == 0)
