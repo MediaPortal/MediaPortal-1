@@ -286,27 +286,36 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
     }
 
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			LoadSettings();
+          
+			ShowThumbPanel();
+			LoadDirectory(m_strDirectory,m_Mode);
+		}
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			if (GUIMusicFiles.IsMusicWindow(newWindowId))
+			{
+				MusicState.StartWindow=newWindowId;
+			}
+			m_iItemSelected=GetSelectedItemNo();
+			SaveSettings();
+			base.OnPageDestroy (newWindowId);
+		}
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+		}
+
+
     
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-					base.OnMessage(message);
-					LoadSettings();
-          
-          ShowThumbPanel();
-          LoadDirectory(m_strDirectory,m_Mode);
-          return true;
-
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-					if (GUIMusicFiles.IsMusicWindow(message.Param1))
-					{
-						MusicState.StartWindow=message.Param1;
-					}
-          m_iItemSelected=GetSelectedItemNo();
-          SaveSettings();
-          break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           int iControl=message.SenderControlId;

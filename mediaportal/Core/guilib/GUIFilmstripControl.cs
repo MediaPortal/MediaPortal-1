@@ -2181,5 +2181,45 @@ namespace MediaPortal.GUI.Library
 				if (m_upDown!=null) m_upDown.ParentID=value;
 			}
 		}
+		public int Count
+		{
+			get 
+			{
+				return m_vecItems.Count;
+			}
+		}
+		public GUIListItem this[int index]
+		{
+			get
+			{
+				return (GUIListItem)m_vecItems[index];
+			}
+		}
+		public GUIListItem SelectedListItem
+		{
+			get
+			{
+				int iItem = m_iOffset + m_iCursorX;
+				if (iItem >= 0 && iItem < m_vecItems.Count)
+				{
+					GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+					return pItem;
+				}
+				return null;
+			}
+		}
+		public int SelectedListItemIndex
+		{
+			get
+			{
+				int iItem = m_iOffset + m_iCursorX;
+				if (iItem >= 0 && iItem < m_vecItems.Count)
+				{
+					return iItem;
+				}
+				return -1;
+			}
+		}
+
   }
 }

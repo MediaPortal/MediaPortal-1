@@ -21,36 +21,20 @@ namespace MediaPortal.GUI.Music
       Duration,
       TimesPlayed
     }
-    enum Controls
-    {
-      CONTROL_BTNVIEWASICONS = 2, 
-      CONTROL_BTNSORTBY = 3, 
-      CONTROL_BTNSORTASC = 4, 
-      CONTROL_BTNTYPE = 7,  
-      CONTROL_BTN_CHANGE_INFO=6,
-      CONTROL_BTN_RESETTOP100 = 9, 
 
-      CONTROL_LIST = 50, 
-      CONTROL_THUMBS = 51, 
-      CONTROL_LABELFILES = 12, 
-			CONTROL_LABEL = 15,
-		CONTROL_SEARCH = 11
-    };
-    #region Base variabeles
-
+		#region Base variabeles
 
     DirectoryHistory m_history = new DirectoryHistory();
     int m_iItemSelected = -1;
     VirtualDirectory m_directory = new VirtualDirectory();
-    #endregion
 		Mode              _CurrentMode =Mode.Duration;
 		protected string m_strDirectory = "";
 
-		[SkinControlAttribute(3)]			protected GUIButtonControl btnSortBy;
-		[SkinControlAttribute(4)]			protected GUIButtonControl btnSortAsc;
 		[SkinControlAttribute(6)]			protected GUIButtonControl btnChangeInfo;
 		[SkinControlAttribute(9)]			protected GUIButtonControl btnResetTop100;
 		[SkinControlAttribute(11)]		protected GUIButtonControl btnSearch;
+		
+		#endregion
 
     public GUIMusicTop100()
     {
@@ -59,10 +43,7 @@ namespace MediaPortal.GUI.Music
       m_directory.AddDrives();
       m_directory.SetExtensions(Utils.AudioExtensions);
       LoadSettings();
-    }
-    ~GUIMusicTop100()
-    {
-    }
+    } 
 
     public override bool Init()
     {
@@ -73,7 +54,7 @@ namespace MediaPortal.GUI.Music
 
     #region Serialisation
     void LoadSettings()
-    {
+    {/*
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
         string strTmp = "";
@@ -86,14 +67,14 @@ namespace MediaPortal.GUI.Music
         strTmp = (string)xmlreader.GetValue("musictop100","viewbyroot");
         if (strTmp != null)
         {
-          if (strTmp == "list") currentViewRoot = View.List;
-          else if (strTmp == "icons") currentViewRoot = View.Icons;
+          if (strTmp == "list") currentView = View.List;
+          else if (strTmp == "icons") currentView = View.Icons;
         }
-      }
+      }*/
     }
 
     void SaveSettings()
-    {
+    {/*
       using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
       {
         switch (currentView)
@@ -114,7 +95,7 @@ namespace MediaPortal.GUI.Music
             xmlwriter.SetValue("musictop100","viewbyroot","icons");
             break;
         }
-      }
+      }*/
     }
     #endregion
 
@@ -159,11 +140,6 @@ namespace MediaPortal.GUI.Music
     #region BaseWindow Members
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
-      {
-        //GoParentFolder();
-        return;
-      }
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
@@ -215,7 +191,7 @@ namespace MediaPortal.GUI.Music
 						break;
 				}
 				LoadDirectory(m_strDirectory);
-				GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO);
+				GUIControl.FocusControl(GetID, btnChangeInfo.GetID);
 			}
 
 			base.OnClicked(controlId, control, actionType);
@@ -321,16 +297,14 @@ namespace MediaPortal.GUI.Music
     protected override void UpdateButtonStates()
     {
 			base.UpdateButtonStates();
-      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNSORTBY);
-      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNSORTASC);
-    
+
       switch(_CurrentMode)
       {  
         case Mode.Duration:
-          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO, GUILocalizeStrings.Get(720));
+					btnChangeInfo.Label=GUILocalizeStrings.Get(720);
           break;
-        case Mode.TimesPlayed:
-          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO, GUILocalizeStrings.Get(721));
+				case Mode.TimesPlayed:
+					btnChangeInfo.Label=GUILocalizeStrings.Get(721);
           break;
       }
     }
@@ -363,8 +337,7 @@ namespace MediaPortal.GUI.Music
         }
       }
       m_strDirectory = strNewDirectory;
-      GUIControl.ClearControl(GetID, listViewSmall.GetID);
-      GUIControl.ClearControl(GetID, listViewBig.GetID);
+      GUIControl.ClearControl(GetID, facadeView.GetID);;
             
       string strObjects = "";
 
@@ -399,8 +372,7 @@ namespace MediaPortal.GUI.Music
       int iItem = 0;
       foreach (GUIListItem item in itemlist)
       {
-        GUIControl.AddListItemControl(GetID, listViewBig.GetID, item);
-        GUIControl.AddListItemControl(GetID, listViewSmall.GetID, item);
+        GUIControl.AddListItemControl(GetID, facadeView.GetID, item);
       }
       
       for (int i = 0; i < GetItemCount(); ++i)
@@ -408,8 +380,7 @@ namespace MediaPortal.GUI.Music
         GUIListItem item = GetItem(i);
         if (item.Label == strSelectedItem)
         {
-          GUIControl.SelectItemControl(GetID, listViewBig.GetID, iItem);
-          GUIControl.SelectItemControl(GetID, listViewSmall.GetID, iItem);
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
           break;
         }
         iItem++;
@@ -422,22 +393,18 @@ namespace MediaPortal.GUI.Music
       }
       strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount", strObjects);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL, m_strDirectory);
 			SetLabels();
       SelectCurrentItem();
 
       if (m_iItemSelected >= 0)
       {
-        GUIControl.SelectItemControl(GetID, listViewBig.GetID, m_iItemSelected);
-        GUIControl.SelectItemControl(GetID, listViewSmall.GetID, m_iItemSelected);
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
       }
 		}
 	  
 	  void DisplayTop100List(int searchKind,string searchText)
 	  {
-		  GUIControl.ClearControl(GetID, listViewBig.GetID);
-		  GUIControl.ClearControl(GetID, listViewSmall.GetID);
+		  GUIControl.ClearControl(GetID, facadeView.GetID);
             
 
 		  ArrayList itemlist = new ArrayList();
@@ -490,8 +457,7 @@ namespace MediaPortal.GUI.Music
 
 		  foreach (GUIListItem item in itemlist)
 		  {
-			  GUIControl.AddListItemControl(GetID, listViewBig.GetID, item);
-			  GUIControl.AddListItemControl(GetID, listViewSmall.GetID, item);
+			  GUIControl.AddListItemControl(GetID, facadeView.GetID, item);
 		  }
       
 		  int iTotalItems = itemlist.Count;
@@ -502,8 +468,6 @@ namespace MediaPortal.GUI.Music
 		  }
 		  string strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 		  GUIPropertyManager.SetProperty("#itemcount", strObjects);
-		  GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
-		  GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL, m_strDirectory);
 		  SetLabels();
 		  SelectCurrentItem();
 	  }
@@ -561,8 +525,7 @@ namespace MediaPortal.GUI.Music
       AddItemToPlayList(pItem);
 	
       //move to next item
-      GUIControl.SelectItemControl(GetID, listViewSmall.GetID, iItem + 1);
-      GUIControl.SelectItemControl(GetID, listViewBig.GetID, iItem + 1);
+      GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
 
     }
 
@@ -595,20 +558,6 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
-    
-    protected override void OnInfo(int iItem)
-    {
-    }
-		
-		protected override Level CurrentLevel
-		{
-			get 
-			{
-				if (m_strDirectory==String.Empty) 
-					return Level.Root;
-				else
-					return Level.Sub;
-			}
-		}
+
   }
 }

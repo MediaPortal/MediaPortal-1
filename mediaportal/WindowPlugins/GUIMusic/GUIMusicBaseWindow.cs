@@ -26,63 +26,44 @@ namespace MediaPortal.GUI.Music
 			List = 0, 
 			Icons = 1, 
 			LargeIcons = 2, 
+			Albums= 3
 		}
 		
 		protected View currentView		 = View.List;
-		protected View currentViewRoot = View.List;
 		protected MusicDatabase		      m_database = new MusicDatabase();
-		[SkinControlAttribute(50)]		protected GUIListControl listViewSmall;
-		[SkinControlAttribute(51)]		protected GUIListControl listViewBig;
-		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs;
+		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView;
 		[SkinControlAttribute(7)]			protected GUISelectButtonControl btnType;
+		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs;
 
 		public GUIMusicBaseWindow()
 		{
 		}
 		protected GUIListItem GetSelectedItem()
 		{
-			if (ViewByIcon)
-				return listViewBig.SelectedListItem;
-			else
-				return listViewSmall.SelectedListItem;
+				return facadeView.SelectedListItem;
 		}
 
 		protected GUIListItem GetItem(int iItem)
 		{
-			if (ViewByIcon)
-				return listViewBig[iItem];
-			else
-				return listViewSmall[iItem];
+			return facadeView[iItem];
 		}
 
 		protected int GetSelectedItemNo()
 		{
-			if (ViewByIcon)
-				return listViewBig.SelectedListItemIndex;
-			else
-				return listViewSmall.SelectedListItemIndex;
+			return facadeView.SelectedListItemIndex;
 		}
 
 		protected int GetItemCount()
 		{
-			if (ViewByIcon)
-				return listViewBig.Count;
-			else
-				return listViewSmall.Count;
+			return facadeView.Count;
 		}
 
 		protected bool ViewByIcon
 		{
 			get 
 			{
-				if (CurrentLevel==Level.Root)
-				{
-					if (currentViewRoot != View.List) return true;
-				}
-				else
-				{
-					if (currentView != View.List) return true;
-				}
+				
+				if (currentView != View.List) return true;
 				return false;
 			}
 		}
@@ -91,14 +72,7 @@ namespace MediaPortal.GUI.Music
 		{
 			get
 			{
-				if (CurrentLevel==Level.Root)
-				{
-					if (currentViewRoot == View.LargeIcons) return true;
-				}
-				else
-				{
-					if (currentView == View.LargeIcons) return true;
-				}
+				if (currentView == View.LargeIcons) return true;
 				return false;
 			}
 		}
@@ -108,29 +82,24 @@ namespace MediaPortal.GUI.Music
 		{
 			if (control == btnViewAs)
 			{
-				if (CurrentLevel==Level.Root)
+				switch (currentView)
 				{
-					switch (currentViewRoot)
-					{
-						case View.List : 
-							currentViewRoot = View.Icons;
-							break;
-						case View.Icons : 
-							currentViewRoot = View.List;
-							break;
-					}
-				}
-				else
-				{
-					switch (currentView)
-					{
-						case View.List : 
-							currentView = View.Icons;
-							break;
-						case View.Icons : 
-							currentView = View.List;
-							break;
-					}
+					case View.List : 
+						currentView = View.Icons;
+						facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
+						break;
+					case View.Icons : 
+						currentView = View.LargeIcons;
+						facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
+						break;
+					case View.LargeIcons: 
+						currentView = View.Albums;
+						facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
+						break;
+					case View.Albums: 
+						currentView = View.List;
+						facadeView.View=GUIFacadeControl.ViewMode.List;
+						break;
 				}
 				SelectCurrentItem();
 				GUIControl.FocusControl(GetID, controlId);
@@ -176,7 +145,7 @@ namespace MediaPortal.GUI.Music
 				return ;
 			}
 
-			if (control == listViewBig || control == listViewSmall)
+			if (control == facadeView )
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
 				OnMessage(msg);
@@ -201,37 +170,24 @@ namespace MediaPortal.GUI.Music
 			int iItem = GetSelectedItemNo();
       if (iItem > -1)
 			{
-				GUIControl.SelectItemControl(GetID, listViewSmall.GetID, iItem);
-				GUIControl.SelectItemControl(GetID, listViewSmall.GetID, iItem);
+				GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
 			}
 			UpdateButtonStates();
 		}
-
-		protected virtual Level CurrentLevel
-		{
-			get 
-			{
-				return Level.Root;
-			}
-		}
+ 
 		protected virtual void UpdateButtonStates()
 		{
 			GUIControl.SelectItemControl(GetID, btnType.GetID, MusicState.StartWindow - (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
 
-			GUIControl.HideControl(GetID, listViewBig.GetID);
-			GUIControl.HideControl(GetID, listViewSmall.GetID);
+			GUIControl.HideControl(GetID, facadeView.GetID);
       
-			int iControl = listViewSmall.GetID;
-			if (ViewByIcon)
-				iControl = listViewBig.GetID;
+			int iControl = facadeView.GetID;
 			GUIControl.ShowControl(GetID, iControl);
 			GUIControl.FocusControl(GetID, iControl);
       
 
 			string strLine = "";
 			View view = currentView;
-			if (CurrentLevel==Level.Root) 
-				view = currentViewRoot;
 			switch (view)
 			{
 				case View.List : 
@@ -239,6 +195,12 @@ namespace MediaPortal.GUI.Music
 					break;
 				case View.Icons : 
 					strLine = GUILocalizeStrings.Get(100);
+					break;
+				case View.LargeIcons: 
+					strLine = GUILocalizeStrings.Get(417);
+					break;
+				case View.Albums: 
+					strLine = GUILocalizeStrings.Get(101);
 					break;
 			}
 			GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
