@@ -1186,13 +1186,13 @@ public class MediaPortalApp : D3DApp, IRender
         {
           //switch to fullscreen mode
           if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
-          //SwitchFullScreenOrWindowed(false,true);
+          SwitchFullScreenOrWindowed(false,true);
         }
         else
         {
           //switch to windowed mode
           if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
-          //SwitchFullScreenOrWindowed(true,true);
+          SwitchFullScreenOrWindowed(true,true);
         }
 
       break;
