@@ -47,7 +47,8 @@ namespace MediaPortal.GUI.MSN
     static private Conversation currentconversation = null;
     static private MyMSNStatus currentStatus = MyMSNStatus.STATUS_ONLINE;
     GUIDialogProgress dlgProgress ;
-    bool						m_bDialogVisible=false;    
+    bool m_bDialogVisible=false;    
+    bool m_bConnected=false;
 		
     #region Base variabeles
     enum SortMethod
@@ -142,6 +143,18 @@ namespace MediaPortal.GUI.MSN
     {
       switch (message.Message)
       {
+				case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
+					// Close conversation
+					while (GUIMSNPlugin.Messenger.Conversations.Count > 0)
+					{
+						Conversation conversation=(Conversation)GUIMSNPlugin.Messenger.Conversations[0];
+						if (conversation==null) break;
+						if (conversation.Connected==false) break;
+						conversation.Close();
+					}
+          CloseConversation();
+					break;
+
 				case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
 					GUIMessage msg2 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,(int)GUIWindow.Window.WINDOW_MSN_CHAT,GetID, 0,0,0,null );
 					msg2.Label = message.Label;
@@ -178,6 +191,7 @@ namespace MediaPortal.GUI.MSN
           {
             ReFillContactList=true;
           }
+          
           ShowThumbPanel();
           UpdateButtons();
           UpdateStatusButton();
@@ -501,35 +515,34 @@ namespace MediaPortal.GUI.MSN
     void OnClick(int iItem)
     {
       if (m_bDialogVisible) return;
-      if (CurrentConversation!=null) return;
-      if (messenger==null) return;
-      if (!messenger.Connected) return;
-//      if (CurrentConversation!=null) return;
-
+      
       GUIListItem item = GetSelectedItem();
       if (item==null) return;
+      if ((CurrentConversation!=null) && (ContactName != ((Contact)item.AlbumInfoTag).Name)) return;
+      if (messenger==null) return;
+      if (!messenger.Connected) return;
+
       Contact contact= (Contact)item.AlbumInfoTag;
 
-      //if (CurrentConversation.Users.Contains(contact.GetHashCode()))
-      if (contact.inList)
+      if (ContactName == ((Contact)item.AlbumInfoTag).Name)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
       }
-
-
-      if (dlgProgress != null)
+      else
       {
-        dlgProgress.SetHeading(901);
-        dlgProgress.SetLine(1, GUILocalizeStrings.Get(909) );
-        dlgProgress.SetLine(2, contact.Name);
-        dlgProgress.SetLine(3, "");
-        dlgProgress.StartModal(GetID);
-        dlgProgress.Progress();
+        if (dlgProgress != null)
+        {
+          dlgProgress.SetHeading(901);
+          dlgProgress.SetLine(1, GUILocalizeStrings.Get(909) );
+          dlgProgress.SetLine(2, contact.Name);
+          dlgProgress.SetLine(3, "");
+          dlgProgress.StartModal(GetID);
+          dlgProgress.Progress();
+        }
+
+        m_bDialogVisible=true;
+        messenger.RequestConversation(contact.Mail);
       }
-
-      m_bDialogVisible=true;
-      messenger.RequestConversation(contact.Mail);
-
     }
     #region Sort Members
     void OnSort()
@@ -739,7 +752,7 @@ namespace MediaPortal.GUI.MSN
     private void ContactTyping(Conversation sender, ContactEventArgs e)
     {
       dateLastTyped=DateTime.Now;
-      contactname=e.Contact.Name;
+      //contactname=e.Contact.Name;
       //MessageBox.Show(this, e.Contact.Name + " is typing");
     }
 
@@ -773,6 +786,8 @@ namespace MediaPortal.GUI.MSN
       // notify us when the other contact is typing something
       e.Conversation.UserTyping  += new Conversation.UserTypingHandler(ContactTyping);			
 
+      // notify when a new message is received
+      e.Conversation.MessageReceived +=new Conversation.MessageReceivedHandler(MSNMessageReceived);
       // we want to be accept filetransfer invitations
       //e.Conversation.FileTransferHandler.InvitationReceived +=new DotMSN.FileTransferHandler.FileTransferInvitationHandler(FileTransferHandler_FileTransferInvitation);
 			UpdateStatusButton();
@@ -808,7 +823,6 @@ namespace MediaPortal.GUI.MSN
       // only talking to 1 other person. Log this event.
       //Log.Write += e.Contact.Name + " joined the conversation.\r\n";
 
-
       if (m_bDialogVisible)
       {
         m_bDialogVisible=false;
@@ -817,10 +831,11 @@ namespace MediaPortal.GUI.MSN
 
       if (currentconversation == null)
       {
-				// new conversation
+        // new conversation
         currentconversation = sender;
-				CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MSNMessageReceived);
-      }			
+        contactname=e.Contact.Name;
+      }
+			//CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MSNMessageReceived);		
 
       if ((!GUIGraphicsContext.IsFullScreenVideo) && (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT))
       {

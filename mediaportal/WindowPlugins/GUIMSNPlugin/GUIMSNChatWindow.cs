@@ -36,9 +36,13 @@ namespace MediaPortal.GUI.MSN
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {      
-        Conversation conversation=GUIMSNPlugin.CurrentConversation;
-        GUIMSNPlugin.CloseConversation();
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+				GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION, (int)GUIWindow.Window.WINDOW_MSN, GetID, 0,0,0,null );
+				msg.SendToTargetWindow = true;
+				GUIGraphicsContext.SendMessage(msg);
+				
+				GUIMSNPlugin.CloseConversation();
+
+				GUIWindowManager.PreviousWindow();
         return;
 
       }
@@ -53,8 +57,9 @@ namespace MediaPortal.GUI.MSN
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
           base.OnMessage(message);
+
           GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
-          list.WordWrap=true;
+          list.WordWrap=true;         
           
           GUIControl.ClearControl(GetID,(int)Controls.List);
           int j=MessageIndex-30;
@@ -88,6 +93,10 @@ namespace MediaPortal.GUI.MSN
         break;
 
 				case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
+					if ((GUIWindowManager.ActiveWindow != GetID) && !GUIGraphicsContext.IsFullScreenVideo)
+					{
+						GUIWindowManager.ActivateWindow(GetID);
+					}
 					AddMessageToList(message.Label);
 					break;
 				
@@ -116,13 +125,14 @@ namespace MediaPortal.GUI.MSN
       if (conversation==null) return;
       if (conversation.Connected==false) return;
 
-      if (GUIMSNPlugin.IsTyping)
+/*      if (GUIMSNPlugin.IsTyping)
       {
         string text=String.Format("{0} {1}", GUIMSNPlugin.ContactName, GUILocalizeStrings.Get(908) );
         GUIControl.SetControlLabel(GetID,(int)Controls.Status,text);
       }
       else 
         GUIControl.SetControlLabel(GetID,(int)Controls.Status,"");
+*/
     }
 
     public override void Process()
@@ -130,11 +140,16 @@ namespace MediaPortal.GUI.MSN
       Conversation conversation=GUIMSNPlugin.CurrentConversation;
       if (conversation!=null)
       {
-        if (conversation.Connected==false)
+        if (!conversation.Connected || !conversation.Messenger.Connected)
         {
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
           return;
         }
+      }
+      else
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+        return;
       }
       Update();
     }

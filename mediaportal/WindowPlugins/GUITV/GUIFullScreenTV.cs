@@ -564,7 +564,8 @@ namespace MediaPortal.GUI.TV
       dlg.SetHeading(924); // menu
 
       dlg.AddLocalizedString(941); // Change aspect ratio
-      dlg.AddLocalizedString(957); // MSN Messenger
+      dlg.AddLocalizedString(12902); // MSN Messenger
+      dlg.AddLocalizedString(902); // MSN Online contacts
 			dlg.AddLocalizedString(605); // My TV
 
 			m_bDialogVisible=true;
@@ -579,11 +580,15 @@ namespace MediaPortal.GUI.TV
           ShowAspectRatioMenu();
           break;
 					
-        case 957: // MSN Messenger
+        case 12902: // MSN Messenger
 					Log.Write("MSN CHAT:ON");     
 					m_bMSNChatVisible=true;
 					m_msnWindow.DoModal( GetID, null );
 					m_bMSNChatVisible=false;
+          break;
+
+        case 902: // Online contacts
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
           break;
 
 				case 605:

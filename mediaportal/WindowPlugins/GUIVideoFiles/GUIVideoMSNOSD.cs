@@ -124,6 +124,11 @@ namespace MediaPortal.GUI.Video
 			{
 				GUIWindowManager.Process();
 				System.Threading.Thread.Sleep(100);
+
+        if ((GUIMSNPlugin.CurrentConversation==null) || !GUIMSNPlugin.Messenger.Connected)
+        {
+          Close();
+        }
 			}
 		}
 		#endregion
@@ -183,6 +188,10 @@ namespace MediaPortal.GUI.Video
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
+          GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION, (int)GUIWindow.Window.WINDOW_MSN, GetID, 0,0,0,null );
+          msg.SendToTargetWindow = true;
+          GUIGraphicsContext.SendMessage(msg);
+
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;
 					m_bRunning=false;
 					GUIWindowManager.UnRoute();
@@ -300,7 +309,7 @@ namespace MediaPortal.GUI.Video
 			// Update nr of users
 			if (GUIMSNPlugin.CurrentConversation != null)
 			{
-				string FormattedText=String.Format("{0}: {1}", GUILocalizeStrings.Get(958), GUIMSNPlugin.CurrentConversation.Users.Count.ToString());
+				string FormattedText=String.Format("{0}: {1}", GUILocalizeStrings.Get(958), GUIMSNPlugin.ContactName);
 				GUIControl.SetControlLabel(GetID,(int)Controls.NrOfUsers, FormattedText);
 			}
 		}

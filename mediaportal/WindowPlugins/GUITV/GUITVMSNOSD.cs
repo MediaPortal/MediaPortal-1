@@ -124,6 +124,11 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIWindowManager.Process();
 				System.Threading.Thread.Sleep(100);
+
+        if ((GUIMSNPlugin.CurrentConversation==null) || !GUIMSNPlugin.Messenger.Connected)
+        {
+          Close();
+        }
 			}
 		}
 		#endregion
@@ -176,13 +181,17 @@ namespace MediaPortal.GUI.TV
 					list.ScrollToEnd();
 					list.Disabled=true;
 
-					SetNrOfPersons();
+          SetNrOfPersons();
 					m_bNeedRefresh=true;
 				}
 				break;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION, (int)GUIWindow.Window.WINDOW_MSN, GetID, 0,0,0,null );
+					msg.SendToTargetWindow = true;
+					GUIGraphicsContext.SendMessage(msg);
+
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;
 					m_bRunning=false;
 					GUIWindowManager.UnRoute();
@@ -190,16 +199,15 @@ namespace MediaPortal.GUI.TV
           return true;
         }	    
 
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// fired when OSD is shown
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
         {
 					m_bPrevOverlay=GUIGraphicsContext.Overlay;
 					base.OnMessage(message);
 					GUIGraphicsContext.Overlay=false;
+          GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
+          list.WordWrap=true;
 
-					// following line should stay. Problems with OSD not
-          // appearing are already fixed elsewhere
-          //AllocResources();
-          //ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+          GUIControl.ClearControl(GetID,(int)Controls.List);
 
           m_bNeedRefresh=false;
           m_dateTime=DateTime.Now;
@@ -301,7 +309,7 @@ namespace MediaPortal.GUI.TV
 			// Update nr of users
 			if (GUIMSNPlugin.CurrentConversation != null)
 			{
-				string FormattedText=String.Format("{0}: {1}", GUILocalizeStrings.Get(958), GUIMSNPlugin.CurrentConversation.Users.Count.ToString());
+				string FormattedText=String.Format("{0}: {1}", GUILocalizeStrings.Get(958), GUIMSNPlugin.ContactName);
 				GUIControl.SetControlLabel(GetID,(int)Controls.NrOfUsers, FormattedText);
 			}
 		}
