@@ -664,6 +664,9 @@ namespace MediaPortal.GUI.TV
       switch (_SearchMode)
       {
         case SearchMode.Genre:
+					GUIControl.SelectControl(GetID,(int)Controls.SearchByGenre);
+					GUIControl.DeSelectControl(GetID,(int)Controls.SearchByDescription);
+					GUIControl.DeSelectControl(GetID,(int)Controls.SearchByTitle);
           if (_Level==0)
           {
 						_FilterLetter="#";
@@ -693,12 +696,18 @@ namespace MediaPortal.GUI.TV
         break;
 				case SearchMode.Title:
 				{
+					GUIControl.SelectControl(GetID,(int)Controls.SearchByTitle);
+					GUIControl.DeSelectControl(GetID,(int)Controls.SearchByGenre);
+					GUIControl.DeSelectControl(GetID,(int)Controls.SearchByDescription);
 					TVProgram prog = item.MusicTag as TVProgram;
 					OnRecord(prog);
 				}
 					break;
 				case SearchMode.Description:
 				{
+					GUIControl.SelectControl(GetID,(int)Controls.SearchByDescription);
+					GUIControl.DeSelectControl(GetID,(int)Controls.SearchByTitle);
+					GUIControl.DeSelectControl(GetID,(int)Controls.SearchByGenre);
 					TVProgram prog = item.MusicTag as TVProgram;
 					OnRecord(prog);
 				}
