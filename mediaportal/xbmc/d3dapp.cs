@@ -34,7 +34,6 @@ namespace MediaPortal
     private System.Windows.Forms.Control ourRenderTarget;
     // Should we use the default windows
     protected bool isUsingMenus = true;
-    protected Surface rTarget = null;
 
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
@@ -453,12 +452,12 @@ namespace MediaPortal
     public void BuildPresentParamsFromSettings()
     {
       presentParams.Windowed = graphicsSettings.IsWindowed;
-      presentParams.BackBufferCount = 2;
+      presentParams.BackBufferCount = 1;
       presentParams.MultiSample = graphicsSettings.MultisampleType;
       presentParams.MultiSampleQuality = graphicsSettings.MultisampleQuality;
       presentParams.EnableAutoDepthStencil = enumerationSettings.AppUsesDepthBuffer;
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
-      presentParams.PresentFlag = PresentFlag.Video;
+      presentParams.PresentFlag = PresentFlag.None;
 
         if (windowed)
         {
@@ -467,7 +466,7 @@ namespace MediaPortal
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.PresentationInterval = PresentInterval.Default;
-            presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.DeviceWindow = ourRenderTarget;
         }
         else
@@ -786,7 +785,6 @@ namespace MediaPortal
       RETRY:
         try
         {
-          rTarget=null;
           GUIGraphicsContext.DX9Device.Reset(presentParams);
         }
         catch 
@@ -1104,17 +1102,7 @@ namespace MediaPortal
       if (bDoRender) 
       {
         System.Threading.Thread.Sleep(20);
-        if (GUIGraphicsContext.DX9Device!=null && rTarget!=null)
-        {
-          try
-          {
-            GUIGraphicsContext.DX9Device.SetRenderTarget(0,rTarget);
-          }
-          catch(Exception)
-          {
-            rTarget=null;
-          }
-        }
+        
 
 				try
 				{
@@ -1127,19 +1115,6 @@ namespace MediaPortal
 					throw new Exception("exception occured",ex);
 #endif
 				}
-        {
-          if (GUIGraphicsContext.DX9Device!=null)
-          {
-            try
-            {
-              rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-            }
-            catch(Exception)
-            {
-              rTarget=null;
-            }
-          }
-        }
       }
       else System.Threading.Thread.Sleep(50);
 

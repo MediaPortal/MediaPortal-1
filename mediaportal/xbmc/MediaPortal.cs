@@ -25,6 +25,7 @@ public class MediaPortalApp : D3DApp, IRender
     int                             m_iLastMousePositionY=0;
     private System.Threading.Mutex  m_Mutex;
     private string                  m_UniqueIdentifier;
+    bool                            m_bPlayingState=false;
 
     const int WM_KEYDOWN    =0x0100;
     const int WM_SYSCOMMAND =0x0112;
@@ -358,7 +359,15 @@ public class MediaPortalApp : D3DApp, IRender
     }
     if (!g_Player.Playing && !Recorder.IsRecording)
     {
-      GUIPropertyManager.RemovePlayerProperties();
+      if (m_bPlayingState)
+      {
+        GUIPropertyManager.RemovePlayerProperties();
+      }
+      m_bPlayingState=false;
+    }
+    else 
+    {
+      m_bPlayingState=true;
     }
 
     // disable TV preview when playing a movie
