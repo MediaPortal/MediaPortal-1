@@ -356,6 +356,7 @@ namespace MediaPortal.GUI.Music
 					break;
 				case 3: // add to favorites
 					m_database.RemoveSongFromFavorites(item.Path);
+					LoadDirectory(m_strDirectory);
 					break;
 				case 4:// Rating
 					OnSetRating(item);

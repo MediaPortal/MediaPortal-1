@@ -392,7 +392,7 @@ namespace MediaPortal.Music.Database
 				if (results.Rows.Count == 0)  return;
 				int idSong = Int32.Parse(Get(results, 0, "idSong"));
 
-				strSQL = String.Format("delete from from favorites where idSong={0}", idSong);
+				strSQL = String.Format("delete from favorites where idSong={0}", idSong);
 				results = m_db.Execute(strSQL);
 
 				m_db.Execute(strSQL);
