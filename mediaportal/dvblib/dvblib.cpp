@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include "stdafx.h"
 #include <initguid.h>
-#include <Dshow.h>
+#include <streams.h>
+//#include <Dshow.h>
+#include <bdaiface.h>
 #include "Include\b2c2mpeg2adapter.h"
 #include "mpeg2data.h"
 #include "dvblib.h"
@@ -29,6 +31,11 @@ DEFINE_GUID(CLSID_Demux, 0xAFB6C280, 0x2C41, 0x11D3, 0x8A, 0x60, 0x00, 0x00, 0xF
 DEFINE_GUID(CLSID_MPSECTAB, 0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D, 0x99);
 const IID IID_IMpeg2Data = {0x9B396D40, 0xF380, 0x4e3c, 0xA5, 0x14, 0x1A,0x82, 0xBF, 0x6E, 0xBF, 0xE6};
 DEFINE_GUID(MPEG_SEC_TYPE,0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
+DEFINE_GUID(CLSID_GrabberSample, 
+0x2fa4f053, 0x6d60, 0x4cb0, 0x95, 0x3, 0x8e, 0x89, 0x23, 0x4f, 0x3f, 0x73);
+
+DEFINE_GUID(IID_IGrabberSample, 
+0x6b652fff, 0x11fe, 0x4fce, 0x92, 0xad, 0x02, 0x66, 0xb5, 0xd7, 0xc7, 0x8f);
 
 //
 DeliverSectionData m_callBack;
@@ -581,9 +588,37 @@ BOOL AddPidToTS(long pid)
 	return m_pidArrayCount;
 }
 
+HRESULT SetupDemuxer(IPin *pVideo,IPin *pAudio,int audioPID,int videoPID)
+{
+	IMPEG2PIDMap *pMap;
+	ULONG pid;
 
+	HRESULT hr=0;
+
+	hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	if(FAILED(hr))
+		return 1;
+	pid = (ULONG)videoPID;
+	hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+	if(FAILED(hr))
+		return 2;
+	
+	hr=pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	if(FAILED(hr))
+		return 3;
+	pid = (ULONG)audioPID;
+	hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+	if(FAILED(hr))
+		return 4;
+
+	
+	
+	return S_OK;
+}
+//
 HRESULT LoadGraphFile(IGraphBuilder *pGraph, const WCHAR* wszName)
 {
+	MessageBox(NULL,(LPCTSTR)wszName,NULL,0);
     IStorage *pStorage = 0;
     if (S_OK != StgIsStorageFile(wszName))
     {

@@ -25,3 +25,5 @@ DeleteAllPIDsI			@20
 GetSectionDataI			@21
 GetSectionPtr			@22
 ReleaseSectionsBuffer	@23
+LoadGraphFile			@24
+SetupDemuxer			@25
