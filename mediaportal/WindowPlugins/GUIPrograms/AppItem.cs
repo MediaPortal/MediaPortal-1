@@ -254,6 +254,33 @@ namespace ProgramsDatabase
 			{
 				Total = Total + 1;
 				GUIListItem gli = new GUIListItem( curFile.Title );
+//				if (curFile.Imagefile != "")
+//				{
+//					gli.ThumbnailImage = curFile.Imagefile;
+//					gli.IconImageBig = curFile.Imagefile;
+//					gli.IconImage = curFile.Imagefile;
+//				}
+//				else 
+//				{
+//					gli.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+//					gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+//					gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
+//				}
+				gli.MusicTag = curFile;
+				gli.IsFolder = curFile.IsFolder; 
+				gli.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
+				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
+			}
+			return Total;
+		}
+
+
+		void OnRetrieveCoverArt(GUIListItem gli)
+		{
+			if ((gli.MusicTag != null) && (gli.MusicTag is FileItem))
+			{
+				FileItem curFile = (FileItem)gli.MusicTag;
 				if (curFile.Imagefile != "")
 				{
 					gli.ThumbnailImage = curFile.Imagefile;
@@ -266,14 +293,9 @@ namespace ProgramsDatabase
 					gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
 					gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
 				}
-				gli.MusicTag = curFile;
-				gli.IsFolder = curFile.IsFolder; 
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
 			}
-			return Total;
 		}
-
+		
 		public virtual void OnSort(GUIListControl list, GUIThumbnailPanel panel)
 		{
 			dbPc.updateState();

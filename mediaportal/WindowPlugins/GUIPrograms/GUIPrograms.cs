@@ -606,38 +606,6 @@ namespace WindowPlugins.GUIPrograms
 			return(Total);
 		}
 
-		// todo: obsolete, integrate into UpdateListControl
-		void DisplayApplications()
-		{
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST ); 
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS );
-			foreach(AppItem app in apps.appsOfFatherID(GetCurrentFatherID()))
-			{
-				if (app.Enabled) 
-				{
-					GUIListItem gli = new GUIListItem( app.Title );
-					if (app.Imagefile != "")
-					{
-						gli.ThumbnailImage = app.Imagefile;
-						gli.IconImageBig = app.Imagefile;
-						gli.IconImage = app.Imagefile;
-					}
-					else 
-					{
-						gli.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
-						gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
-						gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
-					}
-					gli.MusicTag = app;
-					gli.IsFolder = true; // pseudo-folder....
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
-				}
-			}
-			string strObjects=String.Format("{0} {1}", apps.Count, GUILocalizeStrings.Get(632));
-			GUIPropertyManager.SetProperty("#itemcount",strObjects);
-		}
-
 
 		private GUIListItem GetSelectedItem()
 		{
