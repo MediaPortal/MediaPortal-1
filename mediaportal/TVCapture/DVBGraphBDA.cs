@@ -148,7 +148,7 @@ namespace MediaPortal.TV.Recording
 		bool												shouldDecryptChannel=false;
 		bool                        m_videoDataFound=false;
 		DVBTeletext									m_teleText=new DVBTeletext();
-
+		TSHelperTools								transportHelper=new TSHelperTools();
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -2762,14 +2762,10 @@ namespace MediaPortal.TV.Recording
 
 			// the following check should takes care of scrambled video-data
 			// and redraw the vmr9 not to hang
-
-			int pid=currentTuningObject.videoPid;
-			int teleTextPid=currentTuningObject.teletextPid;
-			TSHelperTools tools=new TSHelperTools();
 			for(int pointer=add;pointer<end;pointer+=188)
 			{		
-				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-				if(header.Pid==pid)
+				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+				if(header.Pid==currentTuningObject.videoPid)
 				{	
 					if(header.TransportScrambling!=0) // data is scrambled?
 						m_videoDataFound=false;
@@ -2779,15 +2775,13 @@ namespace MediaPortal.TV.Recording
 					break;// stop loop if we got a non-scrambled video-packet 
 				}
 			}
-			//
+			
 			if(GUIGraphicsContext.Vmr9Active  && m_videoDataFound==false)
 				Vmr9.Repaint();// repaint vmr9
 
-
-			for(int pointer=add;pointer<end;pointer+=188)
+			if (currentTuningObject.teletextPid!=0)
 			{
-				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-				if(header.Pid==teleTextPid && m_teleText!=null)
+				for(int pointer=add;pointer<end;pointer+=188)
 				{
 					m_teleText.SaveData((IntPtr)pointer);
 				}
