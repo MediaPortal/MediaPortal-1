@@ -1,9 +1,11 @@
 History: (dd-mm-yyyy)
+  24-06-2004  my TV       : added : scheduled tv: sort & show status (waiting,recording,recorded) of each schedule
+  
   23-06-2004  general     : fixed : installer:dont install default tvguide.xml
-  23-06-2004  my video    : fixed : fullscreen video: new progress bar which is shown when seeking,ff/rw,pause
-  23-06-2004  my TV       : fixed : Recorded tv: added genre
-  23-06-2004  my TV       : fixed : Recorded tv: added sort by watched to see which movies you watched
-  23-06-2004  my TV       : fixed : Recorded tv: show duration of recording instead of begin-end time
+  23-06-2004  my video    : added : fullscreen video: new progress bar which is shown when seeking,ff/rw,pause
+  23-06-2004  my TV       : added : Recorded tv: added genre
+  23-06-2004  my TV       : added : Recorded tv: added sort by watched to see which movies you watched
+  23-06-2004  my TV       : added : Recorded tv: show duration of recording instead of begin-end time
   23-06-2004  my TV       : fixed : 100% cpu usage when entering my tv & capture card was in use by other app.
   
   22-06-2004  my TV       : fixed : tv recording overlay

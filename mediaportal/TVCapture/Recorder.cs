@@ -507,6 +507,14 @@ namespace MediaPortal.TV.Recording
         return false;
       }
     }
+    static public bool IsRecordingSchedule(TVRecording rec)
+    {
+      foreach (TVCaptureDevice dev in m_tvcards)
+      {
+        if (dev.IsRecording && dev.ScheduleRecording!=null&&dev.ScheduleRecording.ID==rec.ID) return true;
+      }
+      return false;
+    }
     
     static public TVProgram ProgramRecording
     {

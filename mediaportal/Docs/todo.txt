@@ -50,7 +50,6 @@ My TV:
      
   Scheduled:
      - remove all schedules button
-     - show status (waiting,recording,recorded)
   
   Recorder/Capture:
      - add support for digital capture cards (BDA tuners)
@@ -100,12 +99,15 @@ Skin engine:
   - position text for buttons
   - transitions between windows
   
-General:
+setup:
   - setup : add tooltips 
-     
   - setup:Auto Tune needs some work
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
+  - setup preferred mpeg2 codec for dvd, tv & video player
+  - setup deinterlace method (vmr9)
+
+General:
   
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs

@@ -1959,6 +1959,27 @@
 		<id>680</id>
 		<value>Mon-Fri</value>
 	</string>	
+	<string>
+		<id>681</id>
+		<value>Waiting</value>
+	</string>	
+	<string>
+		<id>682</id>
+		<value>Recording</value>
+	</string>	
+	<string>
+		<id>683</id>
+		<value>Finished</value>
+	</string>	
+	<string>
+		<id>684</id>
+		<value>Canceled</value>
+	</string>	
+	<string>
+		<id>685</id>
+		<value>Sort by: Status</value>
+	</string>	
+	
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My TV</value></string>
 <string><id>10002</id><value>My Pictures</value></string>
