@@ -909,6 +909,13 @@ namespace MediaPortal.GUI.Library
            {
              item.IsDownloading=true;
              item.Label2=Utils.GetSize(message.Param1);
+             if (item.FileInfo!=null)
+             {
+               double length=(double)item.FileInfo.Length;
+               double percent= ((double)message.Param1) / length;
+               percent *=100.0f;
+               item.Label2=String.Format("{0:#,##}%", percent);
+             }
            }
          }
        }

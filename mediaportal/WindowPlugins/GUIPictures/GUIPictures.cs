@@ -686,10 +686,10 @@ namespace MediaPortal.GUI.Pictures
       {
         if (m_directory.IsRemote(item.Path) )
         {
-          if (!m_directory.IsRemoteFileDownloaded(item.Path) )
+          if (!m_directory.IsRemoteFileDownloaded(item.Path,item.FileInfo.Length) )
           {
             if (!m_directory.ShouldWeDownloadFile(item.Path)) return;
-            if (!m_directory.DownloadRemoteFile(item.Path))
+            if (!m_directory.DownloadRemoteFile(item.Path,item.FileInfo.Length))
             {
               //show message that we are unable to download the file
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using EnterpriseDT.Net.Ftp;
 using MediaPortal.GUI.Library;
@@ -55,6 +56,12 @@ namespace Core.Util
 
 
         Log.Write("ftp download{0}->{1}", ftp.remoteFile, ftp.localFile);
+        if (System.IO.File.Exists(ftp.localFile))
+        {
+          FileInfo info = new FileInfo(ftp.localFile);
+          BytesTransferred=info.Length;
+          ftp.Connection.Resume();
+        }
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
       }
 

@@ -462,7 +462,7 @@ namespace MediaPortal.Util
               item.Label2 = "";
               item.Path = String.Format("{0}/{1}",strDir,file.Name);
               item.IsRemote=true;
-              if (IsRemoteFileDownloaded(item.Path))
+              if (IsRemoteFileDownloaded(item.Path, file.Size))
               {
                 item.Path=GetLocalFilename(item.Path);
                 item.IsRemote=false;
@@ -827,7 +827,7 @@ namespace MediaPortal.Util
     /// <param name="file">remote filename + path</param>
     /// <returns>true: file is downloaded
     /// false: file is not downloaded or MP is busy downloading</returns>
-    public bool IsRemoteFileDownloaded(string file)
+    public bool IsRemoteFileDownloaded(string file, long size)
     {
       if (!IsRemote(file)) return true;
 
@@ -842,8 +842,13 @@ namespace MediaPortal.Util
       if (localFile==String.Empty) return false;
       if (System.IO.File.Exists(localFile))
       {
-        //already downloaded
-        return true;
+        FileInfo info = new FileInfo(localFile);
+        if (info.Length==size) 
+        {
+          //already downloaded
+          return true;
+        }
+        // not completely downloaded yet
       }
       return false;
     }
@@ -890,9 +895,9 @@ namespace MediaPortal.Util
     /// <returns>true: download started,
     /// false: failed to start download</returns>
     /// <remarks>file is downloaded to the default share</remarks>
-    public bool DownloadRemoteFile(string file)
+    public bool DownloadRemoteFile(string file,long size)
     {
-      if (IsRemoteFileDownloaded(file)) return true;
+      if (IsRemoteFileDownloaded(file,size)) return true;
 
       //start download...
       FTPClient client = GetFtpClient(file);
