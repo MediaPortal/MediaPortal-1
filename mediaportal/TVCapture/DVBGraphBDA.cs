@@ -34,6 +34,9 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
+		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
+			class VideoAnalyzer {};
+
 		[ComImport, Guid("AFB6C280-2C41-11D3-8A60-0000F81E0E4A")]
 			class MPEG2Demultiplexer {}
     
@@ -83,8 +86,8 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter							m_MPEG2Demultiplexer		= null;			// Mpeg2 Demultiplexer that connects to Preview pin on Smart Tee (must connect before capture)
 		IBaseFilter							m_TIF										= null;			// Transport Information Filter
 		IBaseFilter							m_SectionsTables				= null;
-		IBaseFilter							m_mpeg2Analyzer					= null;
-		IBaseFilter							m_StreamBufferSink			= null;
+		VideoAnalyzer						m_mpeg2Analyzer					= null;
+		StreamBufferSink				m_StreamBufferSink=null;
 		IGraphBuilder           m_graphBuilder					= null;
 		ICaptureGraphBuilder2   m_captureGraphBuilder		= null;
 		IVideoWindow            m_videoWindow						= null;
@@ -99,7 +102,6 @@ namespace MediaPortal.TV.Recording
 		IPin												m_DemuxAudioPin				= null;
 		IPin												m_pinStreamBufferIn0	= null;
 		IPin												m_pinStreamBufferIn1	= null;
-		IBaseFilter									m_streamBuffer				= null;
 		IStreamBufferRecordControl	m_recControl					= null;
 		IStreamBufferSink						m_IStreamBufferSink		= null;
 		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
@@ -443,8 +445,8 @@ namespace MediaPortal.TV.Recording
 			// Create the streambuffer engine and mpeg2 video analyzer components since we need them for
 			// recording and timeshifting
 			//=========================================================================================================
-			m_StreamBufferSink  = (IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_StreamBufferSink, false ));
-			m_mpeg2Analyzer     = (IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( CLSID_Mpeg2VideoStreamAnalyzer, true ));
+			m_StreamBufferSink  = new StreamBufferSink();
+			m_mpeg2Analyzer     = new VideoAnalyzer();
 			m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 			m_graphState=State.Created;
 
@@ -479,10 +481,9 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_recControl); m_recControl=null;
 			}
 		      
-			if (m_streamBuffer!=null) 
+			if (m_StreamBufferSink!=null) 
 			{
-				m_streamBuffer.Stop();
-				Marshal.ReleaseComObject(m_streamBuffer); m_streamBuffer=null;
+				Marshal.ReleaseComObject(m_StreamBufferSink); m_StreamBufferSink=null;
 			}
 
 			if (m_mediaControl != null)
@@ -494,8 +495,6 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow.put_Owner(IntPtr.Zero);
 				m_videoWindow = null;
 			}
-			if (m_StreamBufferSink != null) 
-				Marshal.ReleaseComObject(m_StreamBufferSink);	m_StreamBufferSink=null;
 
 			if (m_StreamBufferConfig != null) 
 				Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
@@ -923,25 +922,67 @@ namespace MediaPortal.TV.Recording
 
 			Log.Write("DVBGraphBDA:CreateSinkSource()");
 
-			m_graphBuilder.AddFilter(m_streamBuffer,"StreamBufferSink");
-			m_graphBuilder.AddFilter(m_mpeg2Analyzer,"Mpeg2 Analyzer");
-
-			pinObj0=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Input,0);
-			if(pinObj0 != null)
+			Log.Write("DVBGraphBDA:Add streambuffersink()");
+			hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
+			if(hr!=0)
 			{
-				if(m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) == 0)
-				{
-					// render all out pins
-					hr = -1;
-					pinObj1 = DirectShowUtil.FindPinNr(m_mpeg2Analyzer, PinDirection.Output, 0);	
-					hr = m_graphBuilder.Render(pinObj1);
-					if(hr!=0)
-						return false;
-					hr = m_graphBuilder.Render(m_DemuxAudioPin);
-					if(hr != 0)
-						return false;
-				}
-			} // render of sink is ready
+				Log.Write("DVBGraphBDA:FAILED cannot add StreamBufferSink");
+				return false;
+			}			
+			Log.Write("DVBGraphBDA:Add mpeg2 analyzer()");
+			hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
+			if(hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph");
+				return false;
+			}
+
+			Log.Write("DVBGraphBDA:find mpeg2 analyzer input pin()");
+			pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
+			if(pinObj0 == null)
+			{
+				Log.Write("DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
+				return false;
+			}
+			Log.Write("DVBGraphBDA:connect demux video output->mpeg2 analyzer");
+			hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer");
+				return false;
+			}
+
+			Log.Write("DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
+			pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin");
+				return false;
+			}
+			IPin pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED cannot find SBE input pin");
+				return false;
+			}
+			hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink");
+				return false;
+			}
+			pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED cannot find SBE input pin#2");
+				return false;
+			}
+			hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj2) ;
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
+				return false;
+			}
 
 			int ipos=fileName.LastIndexOf(@"\");
 			string strDir=fileName.Substring(0,ipos);
@@ -956,9 +997,14 @@ namespace MediaPortal.TV.Recording
 			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 			hr=pTemp.SetHKEY(subKey);
 			
+			
+			Log.Write("DVBGraphBDA:set timeshift folder to:{0}", strDir);
 			hr = m_IStreamBufferConfig.SetDirectory(strDir);	
 			if(hr != 0)
+			{
+				Log.Write("DVBGraphBDA:FAILED to set timeshift folder to:{0}", strDir);
 				return false;
+			}
 			hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
 			if(hr != 0)
 				return false;
@@ -973,14 +1019,21 @@ namespace MediaPortal.TV.Recording
 
 			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 			hr = pConfig.SetHKEY(subKey);
+
+			
+			Log.Write("DVBGraphBDA:set timeshift file to:{0}", fileName);
 			// lock on the 'filename' file
 			if(m_IStreamBufferSink.LockProfile(fileName) != 0)
+			{
+				Log.Write("DVBGraphBDA:FAILED to set timeshift file to:{0}", fileName);
 				return false;
-
+			}
 			if(pinObj0 != null)
 				Marshal.ReleaseComObject(pinObj0);
 			if(pinObj1 != null)
 				Marshal.ReleaseComObject(pinObj1);
+			if(pinObj2 != null)
+				Marshal.ReleaseComObject(pinObj2);
 			if(outPin != null)
 				Marshal.ReleaseComObject(outPin);
 
@@ -1125,9 +1178,14 @@ namespace MediaPortal.TV.Recording
 				}
 				m_graphState = State.TimeShifting;
 			}
-			else return false;
-
+			else 
+			{
+				Log.Write("DVBGraphBDA:Unable to create sinksource()");
+				return false;
+			}
 			TuneChannel(standard, iChannel,country);
+
+			Log.Write("DVBGraphBDA:timeshifting started");			
 			return true;
 		}
 		
