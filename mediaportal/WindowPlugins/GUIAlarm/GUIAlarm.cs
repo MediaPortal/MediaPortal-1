@@ -185,8 +185,11 @@ namespace MediaPortal.GUI.Alarm
 				item.IsFolder=false;
 				item.MusicTag = true;
 
-				if (objAlarm.Enabled)
-					item.IconImage = "check-box.png";
+				//shade inactive alarms
+				if (!objAlarm.Enabled)
+					item.Shaded= true;
+
+				item.IconImage = GetIcon((Alarm.MediaType)objAlarm.AlarmMediaType);
 				
 				GUIControl.AddListItemControl(GetID,(int)Controls.AlarmList,item);
 			}
@@ -199,6 +202,19 @@ namespace MediaPortal.GUI.Alarm
 			_SelectedItemNumber = iItem;
 
 			GUIWindowManager.ActivateWindow(GUIAlarmDetails.WINDOW_ALARM_DETAILS);				
+		}
+		private string GetIcon(Alarm.MediaType mediaType)
+		{
+			switch(mediaType)
+			{
+				case Alarm.MediaType.File:
+					return "defaultAudio.png";
+				case Alarm.MediaType.PlayList:
+					return "DefaultPlaylist.png";
+				case Alarm.MediaType.Radio:
+					return "DefaultMyradio.png";	
+			}
+			return string.Empty;
 		}
 
 		#endregion

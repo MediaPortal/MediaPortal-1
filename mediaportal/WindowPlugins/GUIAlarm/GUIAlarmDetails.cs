@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Alarm
 					{
 						base.OnMessage(message);
 						GetAlarmId();
-						LoadListControl(_CurrentAlarm.AlarmPlayType);
+						LoadListControl(_CurrentAlarm.AlarmMediaType);
 						return true;
 					}
 					case GUIMessage.MessageType.GUI_MSG_CLICKED:
@@ -137,14 +137,14 @@ namespace MediaPortal.GUI.Alarm
 
 							switch(nSelected)
 							{
-								case (int)Alarm.PlayType.PlayList:
-									LoadListControl(Alarm.PlayType.PlayList);
+								case (int)Alarm.MediaType.PlayList:
+									LoadListControl(Alarm.MediaType.PlayList);
 									break;
-								case (int)Alarm.PlayType.Radio:
-									LoadListControl(Alarm.PlayType.Radio);
+								case (int)Alarm.MediaType.Radio:
+									LoadListControl(Alarm.MediaType.Radio);
 									break;
-								case (int)Alarm.PlayType.Alarm:
-									LoadListControl(Alarm.PlayType.Alarm);
+								case (int)Alarm.MediaType.File:
+									LoadListControl(Alarm.MediaType.File);
 									break;
 
 							}
@@ -171,7 +171,7 @@ namespace MediaPortal.GUI.Alarm
 			/// <summary>
 			/// Loads the list control with the type of sound selected
 			/// </summary>
-			private void LoadListControl(Alarm.PlayType playType)
+			private void LoadListControl(Alarm.MediaType mediaType)
 			{
 				
 				//clear the list
@@ -180,13 +180,13 @@ namespace MediaPortal.GUI.Alarm
 				VirtualDirectory Directory;
 				ArrayList itemlist;
 
-				switch(playType)
+				switch(mediaType)
 				{
-					case Alarm.PlayType.Radio:
+					case Alarm.MediaType.Radio:
 						//set the label
 						GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(862));
 						//load radios
-						_CurrentAlarm.AlarmPlayType = Alarm.PlayType.Radio;
+						_CurrentAlarm.AlarmMediaType = Alarm.MediaType.Radio;
 						ArrayList stations = new ArrayList();
 						RadioDatabase.GetStations(ref stations);
 						foreach (RadioStation station in stations)
@@ -201,10 +201,10 @@ namespace MediaPortal.GUI.Alarm
 							GUIControl.AddListItemControl(GetID,(int)Controls.SoundList,pItem);
 						}
 						break;
-					case Alarm.PlayType.Alarm:
+					case Alarm.MediaType.File:
 						GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(863));
 						//load alarm sounds directory
-						_CurrentAlarm.AlarmPlayType = Alarm.PlayType.Alarm;
+						_CurrentAlarm.AlarmMediaType = Alarm.MediaType.File;
 						Directory = new VirtualDirectory();
 						Directory.SetExtensions(Util.Utils.AudioExtensions);
 						itemlist = Directory.GetDirectory(_AlarmSoundsFolder);
@@ -225,10 +225,10 @@ namespace MediaPortal.GUI.Alarm
 						
 						}
 						break;
-					case Alarm.PlayType.PlayList:
+					case Alarm.MediaType.PlayList:
 						GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(851));
 						//load playlist directory
-						_CurrentAlarm.AlarmPlayType= Alarm.PlayType.PlayList;
+						_CurrentAlarm.AlarmMediaType = Alarm.MediaType.PlayList;
 						Directory = new VirtualDirectory();
 						Directory.AddExtension(".m3u");
 						itemlist = Directory.GetDirectory(_PlayListFolder);
@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Alarm
 					GUIControl.SetControlLabel(GetID,(int)Controls.NameLabel,_CurrentAlarm.Name);
 					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) + @"/" + _CurrentAlarm.Name);
 					
-					((GUISelectButtonControl)GetControl((int)Controls.PlayType)).SelectedItem = (int)_CurrentAlarm.AlarmPlayType;
+					((GUISelectButtonControl)GetControl((int)Controls.PlayType)).SelectedItem = (int)_CurrentAlarm.AlarmMediaType;
 					((GUISpinControl)GetControl((int)Controls.AlarmHour)).Value = _CurrentAlarm.Time.Hour;
 					((GUISpinControl)GetControl((int)Controls.AlarmMinute)).Value = _CurrentAlarm.Time.Minute;
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Monday)).Selected = _CurrentAlarm.Mon;
@@ -327,7 +327,7 @@ namespace MediaPortal.GUI.Alarm
 				_CurrentAlarm.Time = DateTime.Parse(ctlAlarmHour.Value.ToString() + ":" + ctlAlarmMinute.Value.ToString());
 				_CurrentAlarm.Name = ((GUILabelControl)GetControl((int)Controls.NameLabel)).Label;
 				_CurrentAlarm.Enabled = ((GUIToggleButtonControl)GetControl((int)Controls.EnabledButton)).Selected;
-				_CurrentAlarm.AlarmPlayType = (Alarm.PlayType)((GUISelectButtonControl)GetControl((int)Controls.PlayType)).SelectedItem;
+				_CurrentAlarm.AlarmMediaType = (Alarm.MediaType)((GUISelectButtonControl)GetControl((int)Controls.PlayType)).SelectedItem;
 				_CurrentAlarm.Mon = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Monday)).Selected;
 				_CurrentAlarm.Tue = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Tuesday)).Selected;
 				_CurrentAlarm.Wed = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Wednesday)).Selected;

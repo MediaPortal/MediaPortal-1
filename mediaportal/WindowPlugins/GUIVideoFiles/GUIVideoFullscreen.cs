@@ -132,9 +132,9 @@ namespace MediaPortal.GUI.Video
 
     public override void OnAction(Action action)
     {
-      if (action.wID==Action.ActionType.ACTION_MOUSE_DOUBLECLICK)
+      //switch back to menu on right-click
+      if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
       {
-        // switch back to the menu
         m_bOSDVisible=false;
         GUIGraphicsContext.IsFullScreenVideo=false;
         GUIWindowManager.PreviousWindow();

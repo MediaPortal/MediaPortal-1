@@ -136,7 +136,8 @@ namespace MediaPortal.GUI.Library
       //int iHeight=25;
       m_guiBackground.Render();
       //m_guiBackground.SetHeight(iHeight);
-      m_guiBackground.Height=m_dwHeight;
+      m_dwHeight = m_guiBackground.Height;
+      m_dwWidth = m_guiBackground.Width + 60;
 
       float fWidth=(float)(m_guiBackground.TextureWidth - m_guiMid.Width); //-20.0f;
 
@@ -171,6 +172,35 @@ namespace MediaPortal.GUI.Library
         GUIMessage message;
         switch ( action.wID )
 	      {
+          case Action.ActionType.ACTION_MOUSE_CLICK:
+            float x=(float)action.fAmount1-m_guiBackground.XPosition;
+            if (x <0) x=0;
+            if (x >m_guiBackground.RenderWidth) x=m_guiBackground.RenderWidth;
+            x/= (float)m_guiBackground.RenderWidth;
+            float total,pos;
+            switch (m_iType)
+            {
+              case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
+                total=m_fEnd-m_fStart;
+                pos= (x*total) ;
+                m_fValue=m_fStart+pos;
+                m_fValue=(float)Math.Round(m_fValue,1);
+                break;
+
+              case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
+                float start=m_iStart;
+                float end  =m_iEnd;
+                total=end-start;
+                pos= (x* total);
+                m_iValue=m_iStart+(int)pos;
+                break;
+
+              default:
+                m_iPercent = (int) ( 100f *  x);
+                break;
+            }
+          break;
+           
 						// decrease the slider value
 		      case Action.ActionType.ACTION_MOVE_LEFT:
 			      switch (m_iType)

@@ -22,7 +22,7 @@ namespace MediaPortal.GUI.Alarm
 			private bool _Enabled;
 			private string _Name;
 			private DateTime _Time;
-			private AlarmType _Type;
+			//private AlarmType _Type;
 			private bool _Mon;
 			private bool _Tue;
 			private bool _Wed;
@@ -31,34 +31,34 @@ namespace MediaPortal.GUI.Alarm
 			private bool _Sat;
 			private bool _Sun;
 			private string _Sound;
-			private PlayType _PlayType;
+			private MediaType _MediaType;
 			private bool _VolumeFade;
 			private GUIListItem _SelectedItem;
 		#endregion
 
 		#region Public Enumerations
-			public enum AlarmType
-			{
-				Alarm = 1,
-				SleepTimer = 2
-			}
-			public enum PlayType
+//			public enum AlarmType
+//			{
+//				Alarm = 1,
+//				SleepTimer = 2
+//			}
+			public enum MediaType
 			{
 				PlayList =0,
 				Radio = 1,
-				Alarm = 2	
+				File = 2	
 			}
 		#endregion
 
 		#region Constructor
-			public Alarm(int id,string name,int playType, bool enabled,DateTime time,AlarmType type,bool mon,bool tue,bool wed,bool thu,bool fri,bool sat,bool sun,string sound,bool volumeFade)
+			public Alarm(int id,string name,int mediaType, bool enabled,DateTime time,bool mon,bool tue,bool wed,bool thu,bool fri,bool sat,bool sun,string sound,bool volumeFade)
 			{
 				_Id = id;
 				_Name = name;
-				_PlayType = (PlayType)playType;
+				_MediaType = (MediaType)mediaType;
 				_Enabled = enabled;
 				_Time = time;
-				_Type = type;
+				//_Type = type;
 				_Mon = mon;
 				_Tue = tue;
 				_Wed = wed;
@@ -113,10 +113,10 @@ namespace MediaPortal.GUI.Alarm
 				}
 
 			}
-			public PlayType AlarmPlayType
+			public MediaType AlarmMediaType
 			{
-				get{return _PlayType;}
-				set{_PlayType = value;}
+				get{return _MediaType;}
+				set{_MediaType = value;}
 			}
 			public bool Enabled
 			{
@@ -131,11 +131,11 @@ namespace MediaPortal.GUI.Alarm
 				get{return _Time;}
 				set{_Time = value;}
 			}
-			public AlarmType Type
-			{
-				get{return _Type;}
-				set{_Type = value;}
-			}
+//			public AlarmType Type
+//			{
+//				get{return _Type;}
+//				set{_Type = value;}
+//			}
 			public string Sound
 			{
 				get{return _Sound;}
@@ -286,9 +286,9 @@ namespace MediaPortal.GUI.Alarm
 		/// </summary>
 		private void Play()
 		{
-			switch(_PlayType)
+			switch(_MediaType)
 			{
-				case PlayType.PlayList:
+				case MediaType.PlayList:
 					if(PlayListFactory.IsPlayList(_Sound))
 					{
 						PlayList playlist = PlayListFactory.Create(GUIAlarm.PlayListPath + "\\" + _Sound);
@@ -313,15 +313,9 @@ namespace MediaPortal.GUI.Alarm
 						{
 							PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
 							PlayListPlayer.Reset();
-							if(_Sound.Length == 0)
-							{
-								PlayListPlayer.Play(0);
-								g_Player.Volume=99;
-							}
-							else
-							{
-								PlayListPlayer.Play(_Sound);
-							}
+						
+							PlayListPlayer.Play(0);
+							g_Player.Volume=99;
 						
 						}
 					}
@@ -330,20 +324,19 @@ namespace MediaPortal.GUI.Alarm
 						ShowErrorDialog();
 					}
 					break;
-				case PlayType.Radio:
+				case MediaType.Radio:
 					ArrayList stations = new ArrayList();
 					RadioDatabase.GetStations(ref stations);
 					foreach (RadioStation station in stations)
 					{
 						if(station.Name == _Sound)
-						{
-							g_Player.Play(station.URL);
+						{ 	
+							g_Player.Play(GetPlayPath(station));
 							g_Player.Volume=99;
 						}
-						break;
 					}
 					break;
-				case PlayType.Alarm:
+				case MediaType.File:
 					try
 					{
 						g_Player.Play(GUIAlarm.AlarmSoundPath + "\\" +  _Sound);
@@ -357,6 +350,19 @@ namespace MediaPortal.GUI.Alarm
 					break;
 			}
 
+		}
+
+		string GetPlayPath(RadioStation station)
+		{
+			if (station.URL.Length>5)
+			{
+				return station.URL;
+			}
+			else
+			{
+				string strFile=String.Format("{0}.radio",station.Frequency);
+				return strFile;
+			}
 		}
 		/// <summary>
 		/// Shows the Error Dialog
@@ -396,7 +402,7 @@ namespace MediaPortal.GUI.Alarm
 					for (int i=0; i < 20; i++)
 					{
 						string NameTag=String.Format("alarmName{0}",i);
-						string PlayTypeTag=String.Format("alarmPlayType{0}",i);
+						string MediaTypeTag=String.Format("alarmMediaType{0}",i);
 						string TimeTag=String.Format("alarmTime{0}",i);
 						string EnabledTag=String.Format("alarmEnabled{0}",i);
 						string MonTag =  String.Format("alarmMon{0}",i);
@@ -414,7 +420,7 @@ namespace MediaPortal.GUI.Alarm
 						if (AlarmName.Length>0)
 						{
 							bool AlarmEnabled=xmlreader.GetValueAsBool("alarm",EnabledTag,false);
-							int AlarmPlayType =xmlreader.GetValueAsInt("alarm",PlayTypeTag,1);
+							int AlarmMediaType =xmlreader.GetValueAsInt("alarm",MediaTypeTag,1);
 							DateTime AlarmTime =DateTime.Parse(xmlreader.GetValueAsString("alarm",TimeTag,string.Empty));
 							bool AlarmMon = xmlreader.GetValueAsBool("alarm",MonTag,false);
 							bool AlarmTue = xmlreader.GetValueAsBool("alarm",TueTag,false);
@@ -427,8 +433,8 @@ namespace MediaPortal.GUI.Alarm
 							bool AlarmVolumeFade = xmlreader.GetValueAsBool("alarm",VolumeFadeTag,false);
 
 								
-							Alarm objAlarm = new Alarm(i,AlarmName,AlarmPlayType,AlarmEnabled,AlarmTime,
-								Alarm.AlarmType.Alarm,AlarmMon,AlarmTue,AlarmWed,AlarmThu,
+							Alarm objAlarm = new Alarm(i,AlarmName,AlarmMediaType,AlarmEnabled,AlarmTime,
+								AlarmMon,AlarmTue,AlarmWed,AlarmThu,
 								AlarmFri,AlarmSat,AlarmSun,AlarmSound,AlarmVolumeFade);
 
 							Alarms.Add(objAlarm);
@@ -447,7 +453,7 @@ namespace MediaPortal.GUI.Alarm
 					{
 						
 						xmlwriter.SetValue("alarm","alarmName"+id,alarmToSave.Name);
-						xmlwriter.SetValue("alarm","alarmPlayType"+id,(int)alarmToSave.AlarmPlayType);
+						xmlwriter.SetValue("alarm","alarmMediaType"+id,(int)alarmToSave.AlarmMediaType);
 						xmlwriter.SetValueAsBool("alarm","alarmEnabled"+id,alarmToSave.Enabled);
 						xmlwriter.SetValue("alarm","alarmTime"+id,alarmToSave.Time);
 						xmlwriter.SetValueAsBool("alarm","alarmMon"+id,alarmToSave.Mon);   
@@ -483,7 +489,7 @@ namespace MediaPortal.GUI.Alarm
 					xmlwriter.RemoveEntry("alarm","alarmSat"+id); 
 					xmlwriter.RemoveEntry("alarm","alarmSun"+id); 
 					xmlwriter.RemoveEntry("alarm","alarmSound"+id);
-					xmlwriter.RemoveEntry("alarm","alarmPlayType"+id);
+					xmlwriter.RemoveEntry("alarm","alarmMediaType"+id);
 					xmlwriter.RemoveEntry("alarm","alarmVolumeFade"+id);
 				}
 				return true;

@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Alarm
 		#region Overrides
 			public override bool Init()
 			{
+				GUIPropertyManager.SetProperty("#currentsleeptime","00:00");
 				return Load (GUIGraphicsContext.Skin+@"\myalarmsleeptimer.xml");
 			}
 
@@ -74,14 +75,16 @@ namespace MediaPortal.GUI.Alarm
 						if (iControl==(int)Controls.EnableButton)
 						{
 							GUIToggleButtonControl btnEnabled = (GUIToggleButtonControl)GetControl((int)Controls.EnableButton);
+							GUISpinControl ctlMinutes = (GUISpinControl)GetControl((int)Controls.Minutes);
 							
 							if(!btnEnabled.Selected)
 							{
 								_SleepTimer.Enabled = false;
+								GUIPropertyManager.SetProperty("#currentsleeptime","00:00");	
 							}
 							else
 							{
-								GUISpinControl ctlMinutes = (GUISpinControl)GetControl((int)Controls.Minutes);
+
 								_SleepCount = ctlMinutes.Value*60;
 								if(ctlMinutes.Value > 0)
 								{
