@@ -115,6 +115,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.TextBox tbPlotOutline;
 		private System.Windows.Forms.ColumnHeader columnHeader5;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.TextBox tbWritingCredits;
+		private System.Windows.Forms.Button btnDelete;
     ArrayList availableFiles;
 
     public MovieDatabase() :  this("Movie Database")
@@ -266,6 +269,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label14 = new System.Windows.Forms.Label();
 			this.listViewMovieActors = new System.Windows.Forms.ListView();
 			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
 			this.listViewAllActors = new System.Windows.Forms.ListView();
 			this.chName = new System.Windows.Forms.ColumnHeader();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
@@ -279,7 +283,9 @@ namespace MediaPortal.Configuration.Sections
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+			this.label18 = new System.Windows.Forms.Label();
+			this.tbWritingCredits = new System.Windows.Forms.TextBox();
+			this.btnDelete = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -444,6 +450,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.btnDelete);
+			this.tabPage3.Controls.Add(this.tbWritingCredits);
+			this.tabPage3.Controls.Add(this.label18);
 			this.tabPage3.Controls.Add(this.tbPlotOutline);
 			this.tabPage3.Controls.Add(this.label17);
 			this.tabPage3.Controls.Add(this.tbVotes);
@@ -518,7 +527,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// btnSave
 			// 
-			this.btnSave.Location = new System.Drawing.Point(336, 328);
+			this.btnSave.Location = new System.Drawing.Point(280, 328);
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(56, 23);
 			this.btnSave.TabIndex = 32;
@@ -880,6 +889,11 @@ namespace MediaPortal.Configuration.Sections
 			this.columnHeader3.Text = "Name";
 			this.columnHeader3.Width = 87;
 			// 
+			// columnHeader5
+			// 
+			this.columnHeader5.Text = "As";
+			this.columnHeader5.Width = 74;
+			// 
 			// listViewAllActors
 			// 
 			this.listViewAllActors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -995,10 +1009,30 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scan";
 			// 
-			// columnHeader5
+			// label18
 			// 
-			this.columnHeader5.Text = "As";
-			this.columnHeader5.Width = 74;
+			this.label18.Location = new System.Drawing.Point(168, 192);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(88, 16);
+			this.label18.TabIndex = 38;
+			this.label18.Text = "Writing Credits:";
+			// 
+			// tbWritingCredits
+			// 
+			this.tbWritingCredits.Location = new System.Drawing.Point(184, 208);
+			this.tbWritingCredits.Name = "tbWritingCredits";
+			this.tbWritingCredits.Size = new System.Drawing.Size(200, 20);
+			this.tbWritingCredits.TabIndex = 39;
+			this.tbWritingCredits.Text = "";
+			// 
+			// btnDelete
+			// 
+			this.btnDelete.Location = new System.Drawing.Point(344, 328);
+			this.btnDelete.Name = "btnDelete";
+			this.btnDelete.Size = new System.Drawing.Size(48, 23);
+			this.btnDelete.TabIndex = 40;
+			this.btnDelete.Text = "Delete";
+			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
 			// 
 			// MovieDatabase
 			// 
@@ -1471,6 +1505,7 @@ namespace MediaPortal.Configuration.Sections
 			tbVotes.Text=movie.Votes;
 			tbRating.Text=movie.Rating.ToString();
 			tbDirector.Text=movie.Director;
+			tbWritingCredits.Text=movie.WritingCredits;
 			tbDescription.Text=movie.Plot;
 			textBoxPictureURL.Text=movie.ThumbURL;
 			tbPlotOutline.Text=movie.PlotOutline;
@@ -1812,6 +1847,20 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+		private void btnDelete_Click(object sender, System.EventArgs e)
+		{
+			if (CurrentMovie.ID < 0)
+			{
+				return;
+			}
+			DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete this movie?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (dialogResult== DialogResult.Yes)
+			{
+				VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
+				LoadMovies();
+			}
+		}
+
 		IMDBMovie CurrentMovie
 		{
 			get
@@ -1837,6 +1886,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					movie.Title=tbTitle.Text;
 					movie.Director=tbDirector.Text;
+					movie.WritingCredits=tbDirector.Text;
 					movie.Plot=tbDescription.Text;
 					movie.Rating=(float)Double.Parse(tbRating.Text);
 					movie.TagLine=tbTagline.Text;

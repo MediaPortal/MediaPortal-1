@@ -1749,64 +1749,70 @@ namespace MediaPortal.TV.Recording
 		
 		static public void ImportDvrMsFiles()
 		{
-			ArrayList recordings = new ArrayList();
-			TVDatabase.GetRecordedTV(ref recordings);
-			for (int i=0; i < Recorder.Count;++i)
+			try
 			{
-				TVCaptureDevice dev = Recorder.Get(i);
-				try
+				ArrayList recordings = new ArrayList();
+				TVDatabase.GetRecordedTV(ref recordings);
+				for (int i=0; i < Recorder.Count;++i)
 				{
-					string[] files=System.IO.Directory.GetFiles(dev.RecordingPath,"*.dvr-ms");
-					foreach (string file in files)
+					TVCaptureDevice dev = Recorder.Get(i);
+					try
 					{
-						bool add=true;
-						foreach (TVRecorded rec in recordings)
+						string[] files=System.IO.Directory.GetFiles(dev.RecordingPath,"*.dvr-ms");
+						foreach (string file in files)
 						{
-							if (rec.FileName!=null)
+							bool add=true;
+							foreach (TVRecorded rec in recordings)
 							{
-								if (rec.FileName.ToLower()==file.ToLower())
+								if (rec.FileName!=null)
 								{
-									add=false;
-									break;
+									if (rec.FileName.ToLower()==file.ToLower())
+									{
+										add=false;
+										break;
+									}
 								}
 							}
-						}
-						if (add)
-						{
-							using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+							if (add)
 							{
-								TVRecorded newRec = new TVRecorded();
-								newRec.FileName=file;
-								IDictionary dict=editor.GetAttributes();
-								foreach (MetadataItem item in dict.Values)
+								using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
 								{
-									if (item.Name=="channel") newRec.Channel=(string)item.Value;
-									if (item.Name=="title") newRec.Title=(string)item.Value;
-									if (item.Name=="genre") newRec.Genre=(string)item.Value;
-									if (item.Name=="details") newRec.Description=(string)item.Value;
-									if (item.Name=="start") newRec.Start=(long)item.Value;
-									if (item.Name=="end") newRec.End=(long)item.Value;
-								}
-								if (newRec.Channel==null)
-								{
-									string name=Utils.GetFilename(file);
-									string[] parts=name.Split('_');
-									if (parts.Length>0)
-										newRec.Channel=parts[0];
-								}
-								if (newRec.Channel!=null)
-								{
-									TVDatabase.AddRecordedTV(newRec);
-									recordings.Add(newRec);
-								}
-							}//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
-						}//if (add)
-					}//foreach (string file in files)
-				}
-				catch(Exception)
-				{
-				}
-			}//for (int i=0; i < Recorder.Count;++i)
+									TVRecorded newRec = new TVRecorded();
+									newRec.FileName=file;
+									IDictionary dict=editor.GetAttributes();
+									foreach (MetadataItem item in dict.Values)
+									{
+										if (item.Name=="channel") newRec.Channel=(string)item.Value;
+										if (item.Name=="title") newRec.Title=(string)item.Value;
+										if (item.Name=="genre") newRec.Genre=(string)item.Value;
+										if (item.Name=="details") newRec.Description=(string)item.Value;
+										if (item.Name=="start") newRec.Start=(long)item.Value;
+										if (item.Name=="end") newRec.End=(long)item.Value;
+									}
+									if (newRec.Channel==null)
+									{
+										string name=Utils.GetFilename(file);
+										string[] parts=name.Split('_');
+										if (parts.Length>0)
+											newRec.Channel=parts[0];
+									}
+									if (newRec.Channel!=null)
+									{
+										TVDatabase.AddRecordedTV(newRec);
+										recordings.Add(newRec);
+									}
+								}//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+							}//if (add)
+						}//foreach (string file in files)
+					}
+					catch(Exception)
+					{
+					}
+				}//for (int i=0; i < Recorder.Count;++i)
+			}
+			catch(Exception)
+			{
+			}		
 		} //static void ImportDvrMsFiles()
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording
