@@ -1516,15 +1516,13 @@ namespace MediaPortal.Configuration.Sections
 				Tokens f = new Tokens(szGenres, new char[] {'/'} );
 				foreach (string strGenre in f)
 				{ 
-					strGenre=strGenre.Trim();
-					listViewGenres.Items.Add(strGenre);
+					listViewGenres.Items.Add(strGenre.Trim());
 				}
 			}
 			else
 			{
 				string strGenre=movie.Genre; 
-				strGenre=strGenre.Trim();
-				listViewGenres.Items.Add(strGenre);
+				listViewGenres.Items.Add(strGenre.Trim());
 			}
 			
 			listViewGenres.Sort();
