@@ -406,48 +406,53 @@ namespace MediaPortal.Configuration
 
 			string selectedVideoDeviceName = (string)cardComboBox.SelectedItem;
 
-			//
-			// Find the selected video capture device
-			//
-			Filters filters = new Filters();
-			foreach(Filter filter in filters.VideoInputDevices)
-			{
-				if(selectedVideoDeviceName.Equals(filter.Name))
-				{
-					//
-					// The device was found
-					//
-					videoDevice = filter;
-					break;
-				}
-			}
-    
-			//
-			// Create new capture
-			//
-			try
-			{
-				capture = new Capture(videoDevice, null);
-				capture.LoadSettings(cardId);
-        m_bMPEG2=capture.SupportsTimeShifting;
-			}
-			catch
-			{
-				return null;
-			}
-      if (m_bMPEG2)
+      if(selectedVideoDeviceName != null)
       {
-        videoCompressorComboBox.Enabled=false;
-        audioCompressorComboBox.Enabled=false;
-        audioDeviceComboBox.Enabled=false;
+        //
+        // Find the selected video capture device
+        //
+        Filters filters = new Filters();
+        foreach(Filter filter in filters.VideoInputDevices)
+        {
+          if(selectedVideoDeviceName.Equals(filter.Name))
+          {
+            //
+            // The device was found
+            //
+            videoDevice = filter;
+            break;
+          }
+        }
+      
+        //
+        // Create new capture
+        //
+        try
+        {
+          capture = new Capture(videoDevice, null);
+          capture.LoadSettings(cardId);
+          m_bMPEG2=capture.SupportsTimeShifting;
+        }
+        catch
+        {
+          return null;
+        }
+        
+        if (m_bMPEG2)
+        {
+          videoCompressorComboBox.Enabled=false;
+          audioCompressorComboBox.Enabled=false;
+          audioDeviceComboBox.Enabled=false;
+        }
+        else
+        {
+          videoCompressorComboBox.Enabled=true;
+          audioCompressorComboBox.Enabled=true;
+          audioDeviceComboBox.Enabled=true;
+        }
       }
-      else
-      {
-        videoCompressorComboBox.Enabled=true;
-        audioCompressorComboBox.Enabled=true;
-        audioDeviceComboBox.Enabled=true;
-      }
-			return capture;
+
+      return capture;
 		}
 
 		private void SetupPropertyPages()
