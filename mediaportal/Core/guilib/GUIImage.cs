@@ -356,8 +356,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void FreeResources()
 		{
-      lock (this)
-      {
+			lock (this)
+			{
 				//if (imageSprite!=null)
 				//{
 				//	imageSprite .Dispose();
@@ -370,6 +370,11 @@ namespace MediaPortal.GUI.Library
 						GUITextureManager.ReleaseTexture(m_strFileName);
 					}
 				}
+				Cleanup();
+			}
+		}
+		void Cleanup()
+		{
         m_strTextureFileName="";
         /*if (m_vbBuffer!=null)
         {
@@ -388,7 +393,6 @@ namespace MediaPortal.GUI.Library
         m_iTextureHeight=0;
         //if (savedStateBlock!=null) savedStateBlock.Dispose();
         //savedStateBlock=null;
-      }
 		}
 
 		/// <summary>
@@ -823,7 +827,7 @@ namespace MediaPortal.GUI.Library
       else ContainsProperty=false;
 			
       //reallocate & load then new image
-      FreeResources();
+      Cleanup();
       AllocResources();
 		}
     

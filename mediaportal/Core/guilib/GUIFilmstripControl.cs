@@ -346,10 +346,6 @@ namespace MediaPortal.GUI.Library
       {
         m_backgroundImage.Render();
       }
-      if (m_infoImage!=null)
-      {
-        m_infoImage.Render();
-      }
 
       if (m_horzScrollbar != null)
       {
@@ -479,6 +475,10 @@ namespace MediaPortal.GUI.Library
         }
       }
       
+			if (m_infoImage!=null)
+			{
+				m_infoImage.Render();
+			}
 			//free memory
       if (iStartItem < 30000)
       {
