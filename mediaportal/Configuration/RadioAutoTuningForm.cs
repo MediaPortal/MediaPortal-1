@@ -59,6 +59,7 @@ namespace MediaPortal.Configuration
         // autotuning.
         //
         MessageBox.Show("Failed to perform autotuning, the tuner card does not support reading of signal strength.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        return;
       }
 
 			//
