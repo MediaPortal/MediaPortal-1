@@ -2120,7 +2120,7 @@ namespace MediaPortal.GUI.Video
         if (item.Label != "..")
         {
           ArrayList items = new ArrayList();
-          items=m_directory.GetDirectory(item.Path);
+          items=m_directory.GetDirectoryUnProtected(item.Path,false);
           foreach(GUIListItem subItem in items)
           {
             DoDeleteItem(subItem);

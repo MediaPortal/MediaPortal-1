@@ -23,22 +23,25 @@ namespace MediaPortal.Configuration
 		/// <param name="arguments"></param>
 		public Startup(string[] arguments)
 		{
-			foreach(string argument in arguments)
+			if (arguments!=null)
 			{
-				string trimmedArgument = argument.ToLower();
-
-				if(trimmedArgument.StartsWith("/wizard"))
+				foreach(string argument in arguments)
 				{
-					startupMode = StartupMode.Wizard;
-				}
+					string trimmedArgument = argument.ToLower();
 
-				if(trimmedArgument.StartsWith("/section"))
-				{
-					string[] subArguments = argument.Split('=');
-
-					if(subArguments.Length >= 2)
+					if(trimmedArgument.StartsWith("/wizard"))
 					{
-						sectionsConfiguration = subArguments[1];
+						startupMode = StartupMode.Wizard;
+					}
+
+					if(trimmedArgument.StartsWith("/section"))
+					{
+						string[] subArguments = argument.Split('=');
+
+						if(subArguments.Length >= 2)
+						{
+							sectionsConfiguration = subArguments[1];
+						}
 					}
 				}
 			}
@@ -91,7 +94,7 @@ namespace MediaPortal.Configuration
 				Application.EnableVisualStyles();
 				Application.DoEvents();
 
-				new Startup(arguments).Start();
+					new Startup(arguments).Start();
 			}
 			finally
 			{

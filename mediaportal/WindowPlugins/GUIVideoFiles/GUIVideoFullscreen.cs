@@ -1110,7 +1110,7 @@ namespace MediaPortal.GUI.Video
 			    return;
 		    }
 	      bRenderGUI=true;
-        string displaytime="";
+        //string displaytime="";
         string strTmp=m_strTimeStamp;
         if (m_iTimeCodePosition==0) strTmp="??:??";
         if (m_iTimeCodePosition==1) strTmp+="?:??";

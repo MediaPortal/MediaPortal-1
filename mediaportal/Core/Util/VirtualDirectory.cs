@@ -583,7 +583,7 @@ namespace MediaPortal.Util
 		/// <returns>
 		/// returns an arraylist of GUIListItems for the specified folder
 		/// </returns>
-    public ArrayList GetDirectoryUnProtected(string strDir)
+    public ArrayList GetDirectoryUnProtected(string strDir, bool useExtensions)
     {
 			if (strDir==null) return GetRoot();
       if (strDir == "") return GetRoot();
@@ -709,12 +709,13 @@ namespace MediaPortal.Util
               continue;
             }
           }
-          if (IsValidExtension(strFiles[i]))
+          if (IsValidExtension(strFiles[i]) || (!useExtensions))
           {
             // Skip hidden files
             if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
             {
-              continue;
+							if (useExtensions)
+								continue;
             }
 
             item = new GUIListItem();

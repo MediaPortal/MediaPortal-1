@@ -878,7 +878,7 @@ namespace MediaPortal.GUI.Pictures
     void CreateFolderThumb(string path)
     {
       // find first 4 jpegs in this subfolder
-      ArrayList itemlist=m_directory.GetDirectoryUnProtected(path);
+      ArrayList itemlist=m_directory.GetDirectoryUnProtected(path,true);
       Filter(ref itemlist);
       ArrayList m_pics=new ArrayList();
       foreach (GUIListItem subitem in itemlist)
@@ -1123,7 +1123,7 @@ namespace MediaPortal.GUI.Pictures
     void WorkerThreadFunction()
     {
       string path=m_strDirectory;
-      ArrayList itemlist=m_directory.GetDirectoryUnProtected(path);
+      ArrayList itemlist=m_directory.GetDirectoryUnProtected(path,true);
       using (PictureDatabase dbs = new PictureDatabase())
       {
         foreach (GUIListItem item in itemlist)
@@ -1249,7 +1249,7 @@ namespace MediaPortal.GUI.Pictures
         if (item.Label != "..")
         {
           ArrayList items = new ArrayList();
-          items=m_directory.GetDirectory(item.Path);
+          items=m_directory.GetDirectoryUnProtected(item.Path,false);
           foreach(GUIListItem subItem in items)
           {
             DoDeleteItem(subItem);
