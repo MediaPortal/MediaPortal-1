@@ -79,6 +79,10 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button btnMapChannelToCard;
 		private System.Windows.Forms.Button btnUnmapChannelFromCard;
 		private MWTreeView treeViewChannels;
+		private System.Windows.Forms.OpenFileDialog XMLOpenDialog;
+		private System.Windows.Forms.SaveFileDialog XMLSaveDialog;
+		private System.Windows.Forms.Button xmlImport;
+		private System.Windows.Forms.Button xmlExport;
 
 		//
 		// Private members
@@ -122,6 +126,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.xmlImport = new System.Windows.Forms.Button();
+			this.xmlExport = new System.Windows.Forms.Button();
 			this.buttonCVS = new System.Windows.Forms.Button();
 			this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -166,6 +172,8 @@ namespace MediaPortal.Configuration.Sections
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.comboBoxCard = new System.Windows.Forms.ComboBox();
+			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
+			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -208,6 +216,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.xmlImport);
+			this.tabPage1.Controls.Add(this.xmlExport);
 			this.tabPage1.Controls.Add(this.buttonCVS);
 			this.tabPage1.Controls.Add(this.channelsListView);
 			this.tabPage1.Controls.Add(this.btnImport);
@@ -222,6 +232,28 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.Size = new System.Drawing.Size(432, 390);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "TV Channels";
+			// 
+			// xmlImport
+			// 
+			this.xmlImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.xmlImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.xmlImport.Location = new System.Drawing.Point(328, 344);
+			this.xmlImport.Name = "xmlImport";
+			this.xmlImport.Size = new System.Drawing.Size(88, 23);
+			this.xmlImport.TabIndex = 12;
+			this.xmlImport.Text = "Import from XML";
+			this.xmlImport.Click += new System.EventHandler(this.xmlImport_Click_1);
+			// 
+			// xmlExport
+			// 
+			this.xmlExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.xmlExport.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.xmlExport.Location = new System.Drawing.Point(232, 344);
+			this.xmlExport.Name = "xmlExport";
+			this.xmlExport.Size = new System.Drawing.Size(88, 23);
+			this.xmlExport.TabIndex = 11;
+			this.xmlExport.Text = "Export to XML";
+			this.xmlExport.Click += new System.EventHandler(this.xmlExport_Click_1);
 			// 
 			// buttonCVS
 			// 
@@ -239,10 +271,10 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.channelsListView.CheckBoxes = true;
 			this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																											 this.columnHeader1,
-																																											 this.columnHeader2,
-																																											 this.columnHeader5,
-																																											 this.columnHeader4});
+																							   this.columnHeader1,
+																							   this.columnHeader2,
+																							   this.columnHeader5,
+																							   this.columnHeader4});
 			this.channelsListView.FullRowSelect = true;
 			this.channelsListView.HideSelection = false;
 			this.channelsListView.Location = new System.Drawing.Point(8, 8);
@@ -274,7 +306,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.btnImport.Location = new System.Drawing.Point(232, 328);
+			this.btnImport.Location = new System.Drawing.Point(232, 320);
 			this.btnImport.Name = "btnImport";
 			this.btnImport.Size = new System.Drawing.Size(112, 23);
 			this.btnImport.TabIndex = 6;
@@ -332,7 +364,7 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.upButton.Enabled = false;
 			this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.upButton.Location = new System.Drawing.Point(344, 328);
+			this.upButton.Location = new System.Drawing.Point(344, 320);
 			this.upButton.Name = "upButton";
 			this.upButton.Size = new System.Drawing.Size(32, 23);
 			this.upButton.TabIndex = 5;
@@ -344,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
 			this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.downButton.Enabled = false;
 			this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.downButton.Location = new System.Drawing.Point(376, 328);
+			this.downButton.Location = new System.Drawing.Point(376, 320);
 			this.downButton.Name = "downButton";
 			this.downButton.Size = new System.Drawing.Size(40, 23);
 			this.downButton.TabIndex = 4;
@@ -419,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
 			// listViewTVGroupChannels
 			// 
 			this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																															this.columnHeader9});
+																									  this.columnHeader9});
 			this.listViewTVGroupChannels.FullRowSelect = true;
 			this.listViewTVGroupChannels.HideSelection = false;
 			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 88);
@@ -528,8 +560,8 @@ namespace MediaPortal.Configuration.Sections
 			// listViewGroups
 			// 
 			this.listViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																										 this.columnHeader6,
-																																										 this.columnHeader7});
+																							 this.columnHeader6,
+																							 this.columnHeader7});
 			this.listViewGroups.FullRowSelect = true;
 			this.listViewGroups.HideSelection = false;
 			this.listViewGroups.Location = new System.Drawing.Point(8, 8);
@@ -584,7 +616,7 @@ namespace MediaPortal.Configuration.Sections
 			// listViewTVChannelsForCard
 			// 
 			this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																																this.columnHeader10});
+																										this.columnHeader10});
 			this.listViewTVChannelsForCard.Location = new System.Drawing.Point(244, 64);
 			this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
 			this.listViewTVChannelsForCard.Size = new System.Drawing.Size(168, 288);
@@ -599,7 +631,7 @@ namespace MediaPortal.Configuration.Sections
 			// listViewTVChannelsCard
 			// 
 			this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																														 this.columnHeader11});
+																									 this.columnHeader11});
 			this.listViewTVChannelsCard.Location = new System.Drawing.Point(20, 64);
 			this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
 			this.listViewTVChannelsCard.Size = new System.Drawing.Size(168, 288);
@@ -642,6 +674,23 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
 			this.comboBoxCard.TabIndex = 8;
 			this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
+			// 
+			// XMLOpenDialog
+			// 
+			this.XMLOpenDialog.DefaultExt = "xml";
+			this.XMLOpenDialog.FileName = "ChannelList";
+			this.XMLOpenDialog.Filter = "xml|*.xml";
+			this.XMLOpenDialog.InitialDirectory = ".";
+			this.XMLOpenDialog.Title = "Open....";
+			// 
+			// XMLSaveDialog
+			// 
+			this.XMLSaveDialog.CreatePrompt = true;
+			this.XMLSaveDialog.DefaultExt = "xml";
+			this.XMLSaveDialog.FileName = "ChannelList";
+			this.XMLSaveDialog.Filter = "xml|*.xml";
+			this.XMLSaveDialog.InitialDirectory = ".";
+			this.XMLSaveDialog.Title = "Save to....";
 			// 
 			// TVChannels
 			// 
@@ -1711,6 +1760,692 @@ namespace MediaPortal.Configuration.Sections
 		{
 			SaveSettings();
 			LoadSettings();			
+		}
+
+		private void Export_to_XML(string fileStr)
+		{
+			//Create flags to delete file if there is no data to export
+			bool CHANNEL_EXPORT = false;
+			bool GROUP_EXPORT = false;
+			bool CARD_EXPORT = false;
+			
+			//Current version number of this exporter (change when needed)
+			int CURRENT_VERSION = 1;  //<--- Make sure this same number is given to Import_from_XML
+			
+			using(AMS.Profile.Xml channels = new AMS.Profile.Xml(fileStr))
+			{
+				//Channel Data
+				channels.Clear();
+				channels.SetValue("MP channel export list","version",CURRENT_VERSION.ToString());
+				if(channelsListView.Items.Count==0)
+				{
+					MessageBox.Show("No channels to export");
+					CHANNEL_EXPORT=false;
+				}
+				else
+				{
+					foreach(ListViewItem listItem in channelsListView.Items)
+					{
+						TelevisionChannel Selected_Chan = listItem.Tag as TelevisionChannel;
+
+						//Set index
+						channels.SetValue(listItem.Index.ToString(),"INDEX",listItem.Index.ToString());
+				
+						//Channel data
+						channels.SetValue(listItem.Index.ToString(),"ID",Selected_Chan.ID.ToString());
+						channels.SetValue(listItem.Index.ToString(),"Number",Selected_Chan.Channel.ToString());
+						channels.SetValue(listItem.Index.ToString(),"Name",Selected_Chan.Name.ToString());
+						channels.SetValue(listItem.Index.ToString(),"Country",Selected_Chan.Country.ToString());
+						channels.SetValueAsBool(listItem.Index.ToString(),"External",Selected_Chan.External);
+						channels.SetValue(listItem.Index.ToString(),"External Tuner Channel",Selected_Chan.ExternalTunerChannel.ToString());
+						channels.SetValue(listItem.Index.ToString(),"Frequency",Selected_Chan.Frequency.ToString());
+						channels.SetValue(listItem.Index.ToString(),"Analog Standard Index",Selected_Chan.standard.ToString());
+						channels.SetValueAsBool(listItem.Index.ToString(),"Visible in Guide",Selected_Chan.VisibleInGuide);	
+						if (Selected_Chan.Channel>=0)
+						{
+							int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid;
+							string provider;
+						
+							//DVB-T
+							TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
+							channels.SetValue(listItem.Index.ToString(),"DVBTFreq",freq.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTONID",ONID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTTSID",TSID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTSID",SID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTProvider",provider);
+							channels.SetValue(listItem.Index.ToString(),"DVBTAudioPid",audioPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTVideoPid",videoPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTTeletextPid",teletextPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTPmtPid",pmtPid.ToString());
+
+							//DVB-C
+							TVDatabase.GetDVBCTuneRequest(Selected_Chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
+							channels.SetValue(listItem.Index.ToString(),"DVBCFreq",freq.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCONID",ONID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCTSID",TSID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCSID",SID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCSR",symbolrate.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCInnerFeq",innerFec.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCModulation",modulation.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCProvider",provider);
+							channels.SetValue(listItem.Index.ToString(),"DVBCAudioPid",audioPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCVideoPid",videoPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCTeletextPid",teletextPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCPmtPid",pmtPid.ToString());
+
+							//DVB-S
+							DVBChannel ch = new DVBChannel();
+							TVDatabase.GetSatChannel(Selected_Chan.ID,1,ref ch);
+							channels.SetValue(listItem.Index.ToString(),"DVBSFreq",ch.Frequency.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSONID",ch.NetworkID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSTSID",ch.TransportStreamID.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSSID",ch.ProgramNumber.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSSymbolrate",ch.Symbolrate.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DvbSInnerFec",ch.FEC.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSPolarisation",ch.Polarity.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSProvider",ch.ServiceProvider);
+							channels.SetValue(listItem.Index.ToString(),"DVBSAudioPid",ch.AudioPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSVideoPid",ch.VideoPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSTeletextPid",ch.TeletextPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBSECMpid",ch.ECMPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBCPmtPid",ch.PMTPid.ToString());
+
+						}
+					}
+					CHANNEL_EXPORT=true;
+				}
+
+				//Group Data and channel maping
+				ArrayList groups = new ArrayList();
+				TVDatabase.GetGroups(ref groups);
+				//Save total groups for reference
+				if(groups.Count==0)
+				{
+					MessageBox.Show("No groups to export");
+					GROUP_EXPORT=false;
+				}
+				else
+				{
+					channels.SetValue("GROUPS","TOTAL",groups.Count.ToString());
+					GROUP_EXPORT=true;
+				}
+				for(int i = 0;i<groups.Count;i++)
+				{
+					foreach (TVGroup group in groups)
+					{
+						if(group.Sort==i)
+						{
+							channels.SetValue("Group "+i.ToString(),"ID",group.ID.ToString());
+							channels.SetValue("Group "+i.ToString(),"NAME",group.GroupName);
+							channels.SetValue("Group "+i.ToString(),"PINCODE",group.Pincode.ToString());
+							channels.SetValue("Group "+i.ToString(),"SORT",group.Sort.ToString());
+					
+							//Save total channels added to this group
+							TVDatabase.GetTVChannelsForGroup(group);
+							channels.SetValue("Group "+i.ToString(),"TOTAL CHANNELS",group.tvChannels.Count.ToString());
+							
+							//Save current channel ID's under this group
+							int channel_index=0;
+							foreach (TVChannel tvChan in group.tvChannels)
+							{
+								channels.SetValue("Group "+i.ToString(),"CHANNEL "+channel_index.ToString(),tvChan.ID.ToString());
+								channel_index++;
+							}
+							break;
+						}
+					}
+				}
+
+				//Card mapping data
+				ArrayList Cards = new ArrayList();
+				TVDatabase.GetCards(ref Cards);
+				
+				//If we have no cards skip this
+				if(Cards.Count==0)
+				{
+					MessageBox.Show("No card data to export");
+					CARD_EXPORT=false;
+				}
+				else
+				{
+					channels.SetValue("CARDS","TOTAL",Cards.Count.ToString());
+					CARD_EXPORT=true;
+				}
+				for(int i = 1;i<Cards.Count+1;i++)
+				{
+					try
+					{
+						//ArrayList Channels = new ArrayList();
+						//TVDatabase.GetChannels(ref Channels);
+						ArrayList tmpChannels = new ArrayList();
+						TVDatabase.GetChannelsForCard(ref tmpChannels,i);
+						channels.SetValue("Card "+ i.ToString(),"ID",i.ToString());
+						channels.SetValue("Card "+ i.ToString(),"TOTAL CHANNELS",tmpChannels.Count.ToString());
+						int channel_index=0;
+						foreach(TVChannel tmpChan in tmpChannels)
+						{
+							channels.SetValue("Card "+ i.ToString(),"CHANNEL "+channel_index.ToString(),tmpChan.ID.ToString());
+							channel_index++;
+						}
+					}
+					catch{}
+				}
+				
+			}
+
+			//Check to see if we need to delete file
+			if(!CHANNEL_EXPORT&&!GROUP_EXPORT&&!CARD_EXPORT)
+			{
+				//Delete file
+				File.Delete(fileStr);
+				return;
+			}
+		}
+
+		private void Import_From_XML(string fileStr)
+		{
+			//Check if we have a file just in case
+			if(!File.Exists(fileStr))return;
+
+			//Current Version change to reflect the above exporter in order for compatibility
+			int CURRENT_VER=1;   //<--- Make sure that is the same number as in Export_to_XML
+			int VER=1;			 //Set to:  0 = old ; 1 = current ; 2 = newer
+			using(AMS.Profile.Xml channels = new AMS.Profile.Xml(fileStr))
+			{
+				//Check version if not the right version prompt/do stuff/accomodate/change
+				int version_check = channels.GetValueAsInt("MP channel export list","version",-1);
+				if(version_check==-1)
+				{
+					//Not a valid channel list
+					MessageBox.Show("This is not a valid channel list!");
+					return;
+				}
+				else if(version_check>=0&&version_check<CURRENT_VER)
+				{
+					//Older file
+					MessageBox.Show("This is an older channel list file I will attempt to import what I can.");	
+					VER=0;
+				}
+				else if(version_check==CURRENT_VER)
+				{
+					//Current file, this is good stuff
+					VER=1;
+				}
+				else if(version_check>CURRENT_VER)
+				{
+					//Newer? This person lives in a cave
+					MessageBox.Show("This is a newer channel list file I will attempt to get what I can.\nConsider upgrading to a newer version of MP.");	
+					VER=2;
+				}
+
+				//Count how many channels we have to import
+				int counter=0;
+				for(int i=0;;i++)
+				{
+					if(channels.GetValueAsInt(i.ToString(),"INDEX",-1)==-1)
+					{
+						if(counter==0)
+						{
+							MessageBox.Show("No channels found");
+							return;
+						}
+						else break;
+					}
+					else counter++;
+				}
+				MessageBox.Show("There is a total of "+counter.ToString()+" stations to import");
+				
+				for(int i=0;i<counter;i++)
+				{	
+					int overwrite = 0;
+					int overwrite_index=0;
+					TelevisionChannel Import_Chan = new TelevisionChannel();
+					Import_Chan.ID=channels.GetValueAsInt(i.ToString(),"ID",0);
+					Import_Chan.Channel=channels.GetValueAsInt(i.ToString(),"Number",0);
+					Import_Chan.Name=channels.GetValueAsString(i.ToString(),"Name","");
+					Import_Chan.Country=channels.GetValueAsInt(i.ToString(),"Country",0);
+					Import_Chan.External=channels.GetValueAsBool(i.ToString(),"External",false);
+					Import_Chan.ExternalTunerChannel=channels.GetValueAsString(i.ToString(),"External Tuner Channel","");
+					Import_Chan.Frequency=Convert.ToDouble(channels.GetValueAsInt(i.ToString(),"Frequency",0));
+					Import_Chan.standard=Convert_AVS(channels.GetValueAsString(i.ToString(),"Analog Standard Index","None"));
+					Import_Chan.VisibleInGuide=channels.GetValueAsBool(i.ToString(),"Visible in Guide",false);	
+					
+					//Check to see if this channel exists prompt to overwrite
+					foreach(ListViewItem listItem in channelsListView.Items)
+					{
+						TelevisionChannel Check_Chan = listItem.Tag as TelevisionChannel;
+						if(Check_Chan.ID==Import_Chan.ID&&Check_Chan.Name==Import_Chan.Name)
+						{
+							if(MessageBox.Show(Import_Chan.Name+" (Channel "+Import_Chan.Channel.ToString()+") Already exists.\nWould you like to overwrite?","Warning!",MessageBoxButtons.YesNo)==DialogResult.Yes)
+							{
+								overwrite = 1;
+								overwrite_index=listItem.Index;
+							}
+							else 
+							{
+								overwrite = -1;
+							}
+							break;
+						}
+					}
+
+					if(overwrite==0||overwrite==1)
+					{
+						if(overwrite==1)
+						{
+							TelevisionChannel editedChannel = Import_Chan;
+							channelsListView.Items[overwrite_index].Tag = editedChannel;
+
+							channelsListView.Items[overwrite_index].SubItems[0].Text = editedChannel.Name;
+							channelsListView.Items[overwrite_index].SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
+							channelsListView.Items[overwrite_index].SubItems[2].Text = GetStandardName(editedChannel.standard);
+							channelsListView.Items[overwrite_index].SubItems[3].Text = editedChannel.External ? "External" : "Internal";
+						}
+						else 
+						{
+							TelevisionChannel editedChannel = Import_Chan;
+							ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
+																					  editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
+																					  GetStandardName(editedChannel.standard),
+																					  editedChannel.External ? "External" : "Internal"
+																				  } );
+							listItem.Tag = editedChannel;
+
+							channelsListView.Items.Add(listItem);
+							channelsListView.Items[channelsListView.Items.IndexOf(listItem)].Checked = true;
+						}
+
+						//Check if required to do anything specific for compatibility reasons
+						switch(VER)
+						{
+								//Do stuff for backward compatibility if needed
+							case 0:
+
+								break;
+								//Do stuff for current version only
+							case 1:
+
+								break;
+								//Do stuff for forward compatibility if needed
+							case 2:
+
+								break;
+						}
+						
+						//This is done for every version regardless
+						if(VER==0||VER==1||VER==2)
+						{
+							if (Import_Chan.Channel>=0)
+							{
+								int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
+								int pmtPid,audioPid,videoPid,teletextPid;
+								string provider;
+								//dvb-T
+								try
+								{
+									freq=channels.GetValueAsInt(i.ToString(),"DVBTFreq",0);
+									ONID=channels.GetValueAsInt(i.ToString(),"DVBTONID",0);
+									TSID=channels.GetValueAsInt(i.ToString(),"DVBTTSID",0);
+									SID=channels.GetValueAsInt(i.ToString(),"DVBTSID",0);
+									audioPid=channels.GetValueAsInt(i.ToString(),"DVBTAudioPid",0);
+									videoPid=channels.GetValueAsInt(i.ToString(),"DVBTVideoPid",0);
+									teletextPid=channels.GetValueAsInt(i.ToString(),"DVBTTeletextPid",0);
+									pmtPid=channels.GetValueAsInt(i.ToString(),"DVBTPmtPid",0);
+									provider=channels.GetValueAsString(i.ToString(),"DVBTProvider","");
+									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
+									{
+										TVDatabase.MapDVBTChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid);
+									}
+								}
+								catch(Exception)
+								{
+									MessageBox.Show("OOPS! Something odd happened.\nCouldn't import DVB-T data.");
+								}
+
+								//dvb-C
+								try
+								{
+									freq=channels.GetValueAsInt(i.ToString(),"DVBCFreq",0);
+									ONID=channels.GetValueAsInt(i.ToString(),"DVBCONID",0);
+									TSID=channels.GetValueAsInt(i.ToString(),"DVBCTSID",0);
+									SID=channels.GetValueAsInt(i.ToString(),"DVBCSID",0);
+									symbolrate=channels.GetValueAsInt(i.ToString(),"DVBCSR",0);
+									innerFec=channels.GetValueAsInt(i.ToString(),"DVBCInnerFeq",0);
+									modulation=channels.GetValueAsInt(i.ToString(),"DVBCModulation",0);
+									provider=channels.GetValueAsString(i.ToString(),"DVBCProvider","");
+									audioPid=channels.GetValueAsInt(i.ToString(),"DVBCAudioPid",0);
+									videoPid=channels.GetValueAsInt(i.ToString(),"DVBCVideoPid",0);
+									teletextPid=channels.GetValueAsInt(i.ToString(),"DVBCTeletextPid",0);
+									pmtPid=channels.GetValueAsInt(i.ToString(),"DVBCPmtPid",0);
+									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
+									{
+										TVDatabase.MapDVBCChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid);
+									}
+								}
+								catch(Exception)
+								{
+									MessageBox.Show("OOPS! Something odd happened.\nCouldn't import DVB-C data.");
+								}
+								
+								//dvb-S
+								try
+								{
+									DVBChannel ch = new DVBChannel();
+									TVDatabase.GetSatChannel(Import_Chan.ID,1,ref ch);
+
+									freq=channels.GetValueAsInt(i.ToString(),"DVBSFreq",0);
+									ONID=channels.GetValueAsInt(i.ToString(),"DVBSONID",0);
+									TSID=channels.GetValueAsInt(i.ToString(),"DVBSTSID",0);
+									SID=channels.GetValueAsInt(i.ToString(),"DVBSSID",0);
+									symbolrate=channels.GetValueAsInt(i.ToString(),"DVBSSymbolrate",0);
+									innerFec=channels.GetValueAsInt(i.ToString(),"DvbSInnerFec",0);
+									polarisation=channels.GetValueAsInt(i.ToString(),"DVBSPolarisation",0);
+									provider=channels.GetValueAsString(i.ToString(),"DVBSProvider","");
+									audioPid=channels.GetValueAsInt(i.ToString(),"DVBSAudioPid",0);
+									videoPid=channels.GetValueAsInt(i.ToString(),"DVBSVideoPid",0);
+									teletextPid=channels.GetValueAsInt(i.ToString(),"DVBSTeletextPid",0);
+									pmtPid=channels.GetValueAsInt(i.ToString(),"DVBSPmtPid",0);
+									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
+									{
+										ch.ServiceType=1;
+										ch.Frequency=freq;
+										ch.NetworkID=ONID;
+										ch.TransportStreamID=TSID;
+										ch.ProgramNumber=SID;
+										ch.Symbolrate=symbolrate;
+										ch.FEC=innerFec;
+										ch.Polarity=polarisation;
+										ch.ServiceProvider=provider;
+										ch.ServiceName=Import_Chan.Name;
+										ch.ID=Import_Chan.ID;
+										ch.AudioPid=audioPid;
+										ch.VideoPid=videoPid;
+										ch.TeletextPid=teletextPid;
+										ch.ECMPid = channels.GetValueAsInt(i.ToString(),"DVBSECMpid",0);
+										TVDatabase.UpdateSatChannel(ch);
+									}
+								}
+								catch(Exception)
+								{
+									MessageBox.Show("OOPS! Something odd happened.\nCouldn't import DVB-S data.");
+								}
+							}
+						}
+					}
+					else if(overwrite==-1)
+					{
+						//Go to the next channel do nothing
+					}
+				}
+				SaveTVChannels();
+				SaveSettings();
+				UpdateGroupChannels(null,true);
+
+
+				//Grab group Data and channel maping
+				int group_index=0,channel_index=0;
+				
+				//Grab total groups for reference
+				group_index=channels.GetValueAsInt("GROUPS","TOTAL",-1);
+				//Check if we have any groups
+				if(group_index==-1||group_index==0)
+				{
+					MessageBox.Show("There are no groups to import");
+				}
+				else
+				{
+					MessageBox.Show("There is a total of "+group_index.ToString()+" groups to import");
+				
+					for(int i = 0;i<group_index;i++)
+					{
+						int overwrite =0;
+						int overwrite_index= 0;	
+						TVGroup Import_Group = new TVGroup();
+						Import_Group.ID=channels.GetValueAsInt("Group "+i.ToString(),"ID",0);
+						Import_Group.GroupName=channels.GetValueAsString("Group "+i.ToString(),"NAME","");
+						Import_Group.Pincode=channels.GetValueAsInt("Group "+i.ToString(),"PINCODE",0);
+						Import_Group.Sort=channels.GetValueAsInt("Group "+i.ToString(),"SORT",0);
+					
+						//If there are existing groups and are the same prompt for overwrite
+						foreach (ListViewItem listItem in listViewGroups.Items)
+						{
+							TVGroup group = listItem.Tag as TVGroup;
+							//if(group.GroupName==Import_Group.GroupName)
+							if(group.ID==Import_Group.ID)
+							{
+								if(MessageBox.Show(Import_Group.GroupName+" Already exists.\nWould you like to overwrite?","Warning!",MessageBoxButtons.YesNo)==DialogResult.Yes)
+								{
+									overwrite = 1;
+									overwrite_index=listItem.Index;
+								}
+								else 
+								{
+									overwrite = -1;
+								}
+								break;
+							}
+						}
+
+						if(overwrite==0||overwrite==1)
+						{
+							if(overwrite==1)
+							{
+								listViewGroups.Items[overwrite_index].Tag = Import_Group;
+									
+								listViewGroups.Items[overwrite_index].SubItems[0].Text = Import_Group.GroupName;
+								listViewGroups.Items[overwrite_index].SubItems[1].Text = Import_Group.Pincode>0 ? "Yes" : "No";
+							
+								//Add Group to database
+								TVDatabase.AddGroup(Import_Group);
+
+								UpdateGroupChannels(Import_Group,true);
+							}
+							else 
+							{
+								string pincode="No";
+								if (Import_Group.Pincode!=0)
+									pincode="Yes";
+								ListViewItem listItem = new ListViewItem(new string[] { Import_Group.GroupName, pincode,} );
+								listItem.Tag = Import_Group;
+
+								listViewGroups.Items.Add(listItem);
+
+								//Add Group to database
+								TVDatabase.AddGroup(Import_Group);
+							
+								UpdateGroupChannels((TVGroup)listItem.Tag,true);
+							}
+
+							//Check if required to do anything specific for compatibility reasons
+							switch(VER)
+							{
+									//Do stuff for backward compatibility if needed
+								case 0:
+
+									break;
+									//Do stuff for current version only
+								case 1:
+
+									break;
+									//Do stuff for forward compatibility if needed
+								case 2:
+
+									break;
+							}
+						
+							//This is done for every version regardless
+							if(VER==0||VER==1||VER==2)
+							{
+								//Add channels to this group
+								ArrayList Group_Channels = new ArrayList();
+								TVDatabase.GetChannels(ref Group_Channels);
+								channel_index =channels.GetValueAsInt("Group "+i.ToString(),"TOTAL CHANNELS",0);
+								if(channel_index>0)
+								{	
+								
+									for(int j = 0; j<channel_index;j++)
+									{
+										int tmpID = channels.GetValueAsInt("Group "+i.ToString(),"CHANNEL "+j.ToString(),0);
+								
+										//Locate Channel so it can be added to group
+										foreach(TVChannel FindChan in Group_Channels)
+										{
+											if(FindChan.ID==tmpID)
+											{
+												//Add channel to group
+												Import_Group.tvChannels.Add(FindChan);	
+											
+												//Have to re-grab group from database in order to map correctly :|
+												ArrayList GrabGroup = new ArrayList();
+												TVDatabase.GetGroups(ref GrabGroup);
+											
+												TVDatabase.MapChannelToGroup((TVGroup)GrabGroup[i], FindChan);
+											}
+										}
+									}
+								}
+								else
+								{
+									//Add Group to database
+									//TVDatabase.AddGroup(Import_Group);
+								}
+							}	
+						}
+						else if(overwrite==-1)
+						{
+							//Go to the next group do nothing
+						}
+					}	
+					SaveSettings();
+					UpdateGroupChannels(null,true);
+				}
+
+				//Grab Saved Card mapping
+				
+				//Check if we have cards first
+				ArrayList Cards = new ArrayList();
+				TVDatabase.GetCards(ref Cards);
+				if(Cards.Count==0)
+				{
+					MessageBox.Show("There are no cards configured.\nCannot map channels without at least one card.");
+					return;
+				}
+				else
+				{
+					int cards_index=0;
+					channel_index=0;
+				
+					//Grab total cards for reference
+					cards_index=channels.GetValueAsInt("CARDS","TOTAL",-1);
+				
+					//Check if we have any cards
+					if(cards_index==-1||cards_index==0)
+					{
+						MessageBox.Show("No card related data was saved for this listing");
+						return;
+					}
+					
+					if(cards_index>Cards.Count)
+					{
+						MessageBox.Show("There is a total of "+cards_index.ToString()+" card(s) channel mappings to import\nHowever I can only import "+Cards.Count.ToString());
+						cards_index=Cards.Count;
+					}
+					else 
+					{
+						MessageBox.Show("There is a total of "+cards_index.ToString()+" card(s) channel mappings to import");
+					}
+					for(int i=1;i<cards_index+1;i++)
+					{
+						//Check if required to do anything specific for compatibility reasons
+						switch(VER)
+						{
+								//Do stuff for backward compatibility if needed
+							case 0:
+
+								break;
+								//Do stuff for current version only
+							case 1:
+
+								break;
+								//Do stuff for forward compatibility if needed
+							case 2:
+
+								break;
+						}
+						
+						//This is done for every version regardless
+						if(VER==0||VER==1||VER==2)
+						{
+							//Re-Map channels to available cards
+							ArrayList Card_Channels = new ArrayList();
+							TVDatabase.GetChannels(ref Card_Channels);
+							channel_index=channels.GetValueAsInt("Card "+i.ToString(),"TOTAL CHANNELS",0);	
+							
+							if(channel_index>0)
+							{
+								for(int j=0;j<channel_index;j++)
+								{
+									int tmpID = channels.GetValueAsInt("Card "+i.ToString(),"CHANNEL "+j.ToString(),0);
+								
+									//Locate Channel so it can be added to Card
+									foreach(TVChannel FindChan in Card_Channels)
+									{
+										if(FindChan.ID==tmpID)
+										{
+											//Map it
+											TVDatabase.MapChannelToCard(FindChan.ID,i);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private AnalogVideoStandard Convert_AVS(object avs)
+		{
+			if ((string)avs=="None") return AnalogVideoStandard.None;
+			if ((string)avs=="NTSC_M") return AnalogVideoStandard.NTSC_M;
+			if ((string)avs=="NTSC_M_J") return AnalogVideoStandard.NTSC_M_J;
+			if ((string)avs=="NTSC_433") return AnalogVideoStandard.NTSC_433;
+			if ((string)avs=="PAL_B") return AnalogVideoStandard.PAL_B;
+			if ((string)avs=="PAL_D") return AnalogVideoStandard.PAL_D;
+			if ((string)avs=="PAL_G") return AnalogVideoStandard.PAL_G;
+			if ((string)avs=="PAL_H") return AnalogVideoStandard.PAL_H;
+			if ((string)avs=="PAL_I") return AnalogVideoStandard.PAL_I;
+			if ((string)avs=="PAL_M") return AnalogVideoStandard.PAL_M;
+			if ((string)avs=="PAL_N") return AnalogVideoStandard.PAL_N;
+			if ((string)avs=="PAL_60") return AnalogVideoStandard.PAL_60;
+			if ((string)avs=="SECAM_B") return AnalogVideoStandard.SECAM_B;
+			if ((string)avs=="SECAM_D") return AnalogVideoStandard.SECAM_D;
+			if ((string)avs=="SECAM_G") return AnalogVideoStandard.SECAM_G;
+			if ((string)avs=="SECAM_H") return AnalogVideoStandard.SECAM_H;
+			if ((string)avs=="SECAM_K") return AnalogVideoStandard.SECAM_K;
+			if ((string)avs=="SECAM_K1") return AnalogVideoStandard.SECAM_K1;
+			if ((string)avs=="SECAM_L") return AnalogVideoStandard.SECAM_L;
+			if ((string)avs=="SECAM_L1") return AnalogVideoStandard.SECAM_L1;
+			if ((string)avs=="PAL_N_COMBO") return AnalogVideoStandard.PAL_N_COMBO;
+			
+			//If nothing return Default
+			return AnalogVideoStandard.None;
+		}
+
+		private void xmlExport_Click_1(object sender, System.EventArgs e)
+		{
+			if(XMLSaveDialog.ShowDialog(this)==DialogResult.OK)
+			{
+				Export_to_XML(XMLSaveDialog.FileName.ToString());
+			}
+		}
+
+		private void xmlImport_Click_1(object sender, System.EventArgs e)
+		{
+			if(XMLOpenDialog.ShowDialog(this)==DialogResult.OK)
+			{
+				Import_From_XML(XMLOpenDialog.FileName.ToString());
+			}
 		}
 	}
 }
