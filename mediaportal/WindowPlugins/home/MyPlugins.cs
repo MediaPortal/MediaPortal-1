@@ -999,7 +999,7 @@ namespace MediaPortal.GUI.Home
       strButtonText = GUILocalizeStrings.Get(913);
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "";
+      strPictureImage = "plugin_icon.png";
       return true;
     }
 

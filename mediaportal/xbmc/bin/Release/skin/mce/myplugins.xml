@@ -17,8 +17,8 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>85</posX>
-		<posY>160</posY>
-		<texture>hp_start.png</texture>
+		<posY>70</posY>
+		<texture>plugins_logo.png</texture>
 	</control>		
 	<control>
 		<description>template for panel in which all buttons should b fitted</description>
