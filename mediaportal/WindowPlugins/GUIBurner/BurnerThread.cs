@@ -1,0 +1,300 @@
+#region Usings
+using System;
+using System.Collections;
+using System.Threading;
+using System.IO;
+using System.Management;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
+using Core.Util;
+using DShowNET;
+using System.Runtime.InteropServices;
+
+#endregion
+
+namespace MediaPortal.GUI.GUIBurner
+{
+	/// <summary>
+	/// Summary description for BurnerThread.
+	/// </summary>
+	public class BurnerThread
+	{
+		protected bool									converting = false;
+		protected int										rotCookie = 0;
+		protected IGraphBuilder			  	graphBuilder =null;
+		protected IStreamBufferSource 	bufferSource=null ;
+		protected IFileSinkFilter				fileWriterFilter = null;			// DShow Filter: file writer
+		protected IMediaControl					mediaControl=null;
+		protected IBaseFilter						powerDvdMuxer =null;
+
+		private ArrayList cFiles  = new ArrayList();
+		private struct file 
+		{
+			public string name;
+			public string path;
+		}
+
+		/// <summary>
+		/// is converter thread running?
+		/// </summary>
+		public bool isConverting	
+		{
+			get{ return converting; }
+			set{ converting = value; }
+		}
+
+		/// <summary>
+		/// clear converter file list.
+		/// </summary>
+		public void ClearFiles()
+		{
+			cFiles.Clear();
+		}
+
+		/// <summary>
+		/// add a file to converter file list.
+		/// </summary>
+		public void AddFiles(string name,string path)	
+		{
+			file fl = new file();
+			fl.name=name;
+			fl.path=path;
+			cFiles.Add(fl);
+		}
+
+		public BurnerThread()
+		{
+			//
+			// TODO: Add constructor logic here
+			//
+		}
+
+		/// <summary>
+		/// start converting file list.
+		/// </summary>
+		public void TranscodeThread()
+		{
+			bool test=false;
+			byte eff=0;
+			foreach(file f in cFiles) 
+			{
+				converting=true;
+				string outName=System.IO.Path.ChangeExtension(f.path+"\\"+f.name,".mpg");
+				FileInfo fil = new FileInfo(outName);	
+				if (fil.Exists)												// Output file exist
+				{
+					continue;
+				}
+				Log.Write("Convert File {0}",f.path+"\\"+f.name);
+				test=Transcode(f.path+"\\"+f.name);		// Start Converting
+				if (test==false)											// Converting breaks with error
+				{
+					continue;
+				}
+
+				long fl=0;
+				long flO=0;
+				while (IsTranscoding()) 
+				{
+					Thread.Sleep(1000);
+					FileInfo fi = new FileInfo(outName);	// The following Code is a little Hack to detect
+					fl=fi.Length;													// the end of Conversion	
+					string text=f.name;
+					string c1="/ Convert ";
+					string c2="- Convert ";
+					string c3="\\ Convert ";
+					string c4="| Convert ";
+					if (fl>flO) 
+					{
+						flO=fl;
+					} 
+					else if (fl==flO) 
+					{
+						Thread.Sleep(6000);									 // 6 Seconds no Change of File Size
+						FileInfo fi2 = new FileInfo(outName);// converting ends
+						fl=fi2.Length;												
+						if (fl==flO) 
+						{
+							mediaControl.StopWhenReady();			 // stop convert task
+							text=" "; c1=""; c2=""; c3=""; c4="";
+						} 
+						else 
+						{
+							flO=fl;
+						}
+					}
+					switch (eff)
+					{
+						case 0: 
+							GUIPropertyManager.SetProperty("#convert_info",c1+text);
+							eff=1;
+							break;
+						case 1: 
+							GUIPropertyManager.SetProperty("#convert_info",c2+text);
+							eff=2;
+							break;
+						case 2: 
+							GUIPropertyManager.SetProperty("#convert_info",c3+text);
+							eff=3;
+							break;
+						case 3: 
+							GUIPropertyManager.SetProperty("#convert_info",c4+text);
+							eff=0;
+							break;
+					}
+				}
+			}
+			converting=false;
+		}
+
+		public bool CheckEnvironment()
+		{
+			bool powerDvdMuxerFound=false;
+			bool fileWriterFound=false;
+			string monikerPowerDvdMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9}";
+			string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
+			Filters filters = new Filters();
+			foreach (Filter filter in filters.LegacyFilters)
+			{
+				if (filter.MonikerString.Equals(monikerPowerDvdMuxer))
+				{
+					powerDvdMuxerFound=true;
+				}
+				if (filter.MonikerString.Equals(monikerFileWrite))
+				{
+					fileWriterFound=true;
+				}
+			}
+			return (fileWriterFound && powerDvdMuxerFound);
+		}
+
+		private bool Transcode(string file)
+		{
+			Type comtype = null;
+			object comobj = null;
+			try 
+			{
+				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
+				comobj = Activator.CreateInstance( comtype );
+				graphBuilder = (IGraphBuilder) comobj; comobj = null;
+			
+				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+				Guid clsid = Clsid.StreamBufferSource;
+				Guid riid = typeof(IStreamBufferSource).GUID;
+				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
+				bufferSource = (IStreamBufferSource) comObj; comObj = null;
+		
+				IBaseFilter filter = (IBaseFilter) bufferSource;
+				graphBuilder.AddFilter(filter, "SBE SOURCE");
+		
+				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
+				int hr = fileSource.Load(file, IntPtr.Zero);
+				string monikerPowerDvdMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9}";
+				powerDvdMuxer = Marshal.BindToMoniker( monikerPowerDvdMuxer ) as IBaseFilter;
+
+				hr = graphBuilder.AddFilter( powerDvdMuxer, "Cyberlink MPEG Muxer" );
+				string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
+				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerFileWrite ) as IBaseFilter;
+				
+				fileWriterFilter = fileWriterbase as IFileSinkFilter;
+
+				hr = graphBuilder.AddFilter( fileWriterbase , "FileWriter" );
+
+				IPin pinOut0, pinOut1;
+				IPin pinIn0, pinIn1;
+				Log.Write("Get Pins");
+
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
+
+				DsUtils.GetPin(powerDvdMuxer,PinDirection.Input,0,out pinIn0);
+				DsUtils.GetPin(powerDvdMuxer,PinDirection.Input,1,out pinIn1);
+				AMMediaType amAudio= new AMMediaType();
+				amAudio.majorType = MediaType.Audio;
+				amAudio.subType = MediaSubType.MPEG2_Audio;
+				pinOut0.Connect(pinIn1,ref amAudio);
+
+				AMMediaType amVideo= new AMMediaType();
+				amVideo.majorType = MediaType.Video;
+				amVideo.subType = MediaSubType.MPEG2_Video;
+				pinOut1.Connect(pinIn0,ref amVideo);
+
+				IPin pinOut, pinIn;
+				hr=DsUtils.GetPin(powerDvdMuxer,PinDirection.Output,0,out pinOut);
+				hr=DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn);
+
+				AMMediaType mt = new AMMediaType(); 
+				hr=pinOut.Connect(pinIn,ref mt);
+
+				string outputFileName=System.IO.Path.ChangeExtension(file,".mpg");
+				mt.majorType=MediaType.Stream;
+				mt.subType=MediaSubType.MPEG2;
+				Log.Write("Set Filename");
+
+				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
+
+				mediaControl= graphBuilder as IMediaControl;
+				hr=mediaControl.Run();
+			}
+
+			catch(Exception ex)
+			{
+				Log.Write("DVR2MPG:Unable create graph", ex.Message);
+				Cleanup();
+				return false;
+			}
+			return true;
+		}
+
+		private bool IsFinished()
+		{
+			if (mediaControl==null) return true;
+			int state;
+
+			mediaControl.GetState(200, out state);
+			if (state==0)
+			{
+				Cleanup();
+				return true;
+			}
+			return false;
+		}
+
+		private bool IsTranscoding()
+		{
+			if (IsFinished()) return false;
+			return true;
+		}
+
+		private void Cleanup()
+		{
+			if( rotCookie != 0 )
+				DsROT.RemoveGraphFromRot( ref rotCookie );
+
+			if( mediaControl != null )
+			{
+				mediaControl.Stop();
+				mediaControl = null;
+			}
+
+			if ( powerDvdMuxer != null )
+				Marshal.ReleaseComObject( powerDvdMuxer );
+			powerDvdMuxer=null;
+
+			if ( fileWriterFilter != null )
+				Marshal.ReleaseComObject( fileWriterFilter );
+			fileWriterFilter=null;
+
+			if ( bufferSource != null )
+				Marshal.ReleaseComObject( bufferSource );
+			bufferSource = null;
+
+			DsUtils.RemoveFilters(graphBuilder);
+
+			if( graphBuilder != null )
+				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+		}
+
+	}
+}

@@ -26,6 +26,7 @@ copy ..\..\..\dvblib.dll .
 copy ..\..\..\*.tpl .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
+copy ..\..\..\XPBurnComponent.dll .
 
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .

@@ -2327,6 +2327,46 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		/// <summary>
+		/// This method returns true if the specified card can receive the specified channel
+		/// else it returns false. Since mediaportal can have multiple cards (analog,digital,cable,antenna)
+		/// its possible that not all channels can be received by each card
+		/// </summary>
+		/// <param name="channelName">channelName name of the tv channel</param>
+		/// <param name="card">card Id</param>
+		/// <returns>
+		/// true: card can receive the channel
+		/// false: card cannot receive the channel
+		/// </returns>
+		static public bool CanCardViewTVChannel(string channelName, int card)
+		{
+			string tvChannelName=channelName;
+			DatabaseUtility.RemoveInvalidChars(ref tvChannelName);
+
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return false;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from tblChannelCard,channel where channel.idChannel=tblChannelCard.idChannel and channel.strChannel={0} and tblChannelCard.card={1}", tvChannelName,card);
+
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count!=0) 
+					{
+						return true;
+					}
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+			return false;
+		}
+
 		static public void MapChannelToGroup(TVGroup group, TVChannel channel)
 		{
 			lock (typeof(TVDatabase))

@@ -306,7 +306,7 @@ namespace MediaPortal.TV.Recording
       if (iPreRecordInterval<0) iPreRecordInterval=0;
       if (iPostRecordInterval<0) iPostRecordInterval=0;
 
-      // check if we're already recording this...
+      // Check if we're already recording this...
       foreach (TVCaptureDevice dev in m_tvcards)
       {
         if (dev.IsRecording)
@@ -323,17 +323,24 @@ namespace MediaPortal.TV.Recording
 			int cardNo=0;
       foreach (TVCaptureDevice dev in m_tvcards)
       {
+				//is card used for recording tv?
         if (dev.UseForRecording)
         {
+					// and is it not recording already?
           if (!dev.IsRecording)
           {
-            Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
-						bool viewing=IsCardViewing(cardNo);
-            TuneExternalChannel(rec.Channel);
-            dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
-			
-						if (viewing) m_strTVChannel=rec.Channel;
-						return true;
+						//an can it receive the channel we want to record?
+						if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) )
+						{
+							//yes then record
+							Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
+							bool viewing=IsCardViewing(cardNo);
+							TuneExternalChannel(rec.Channel);
+							dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
+				
+							if (viewing) m_strTVChannel=rec.Channel;
+							return true;
+						}
           }
         }
 				cardNo++;
@@ -348,18 +355,24 @@ namespace MediaPortal.TV.Recording
 				cardNo=0;
         foreach (TVCaptureDevice dev in m_tvcards)
         {
+					//is this card used for recording?
           if (dev.UseForRecording)
           {
+						// is it post recording?
             if (dev.IsPostRecording)
-            {
-							bool viewing=IsCardViewing(cardNo);
-              Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
-              dev.StopRecording();
-              TuneExternalChannel(rec.Channel);
-              dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
-							
-							if (viewing) m_strTVChannel=rec.Channel;
-              return true;
+						{
+							//an can it receive the channel we want to record?
+							if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) )
+							{
+								bool viewing=IsCardViewing(cardNo);
+								Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
+								dev.StopRecording();
+								TuneExternalChannel(rec.Channel);
+								dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
+								
+								if (viewing) m_strTVChannel=rec.Channel;
+								return true;
+							}
             }
           }
 					cardNo++;
@@ -388,8 +401,7 @@ namespace MediaPortal.TV.Recording
         {
           TVRecording rec =(TVRecording )m_Recordings[i];
           if (rec.ID==ID)
-          {
-						
+          {	
             rec.Canceled=Utils.datetolong(DateTime.Now);
             TVDatabase.ChangeRecording(ref rec);
             break;
@@ -496,9 +508,14 @@ namespace MediaPortal.TV.Recording
       if (m_eState!= State.Initialized) return ;
       if (card <0 || card >=m_tvcards.Count) return ;
       TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[card];
-      string strFileName=GetTimeShiftFileName(card);
-      
-      Log.Write("Recorder.StartViewing:{0} channel:{1} tvon:{2} timeshift:{3}",card,channel,TVOnOff,timeshift);
+
+      // can card view this channel
+			if ( !TVDatabase.CanCardViewTVChannel(channel,card) )
+				return;	 //no
+
+			string strFileName=GetTimeShiftFileName(card);
+			Log.Write("Recorder.StartViewing:{0} channel:{1} tvon:{2} timeshift:{3}",card,channel,TVOnOff,timeshift);
+
       // is card recording?
       if (dev.IsRecording) 
       {

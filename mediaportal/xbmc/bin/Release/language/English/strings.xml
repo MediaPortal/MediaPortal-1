@@ -2707,6 +2707,7 @@
 	<string><id>1976</id><value>rpm</value></string>	
 	<string><id>1977</id><value>Filesystem</value></string>	
 	<string><id>1978</id><value>VirtualMem</value></string>	
+	<!-- End of My Status Strings -->
 	
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Delete</value></string>
@@ -2759,196 +2760,75 @@
 	<string><id>2052</id><value>Search in Recipie</value></string>
 	<string><id>2053</id><value>Categorie</value></string>
 	<string><id>2054</id><value>No Entry!</value></string>
+	<!-- End of My Recipie Strings -->
 	
 	<!-- My Burner Strings -->
-	<string>
-		<id>2100</id>
-		<value>Burn</value>
-	</string>
-	<string>
-		<id>2101</id>
-		<value>Copy CD/DVD</value>
-	</string>
-	<string>
-		<id>2102</id>
-		<value>Create Audio-CD</value>
-	</string>
-	<string>
-		<id>2103</id>
-		<value>Create Video-CD</value>
-	</string>
-	<string>
-		<id>2104</id>
-		<value>Create Video-DVD</value>
-	</string>
-	<string>
-		<id>2105</id>
-		<value>Create Data-CD</value>
-	</string>
-	<string>
-		<id>2106</id>
-		<value>Create Data-DVD</value>
-	</string>
-	<string>
-		<id>2107</id>
-		<value>Start copy</value>
-	</string>
-	<string>
-		<id>2108</id>
-		<value>Insert empty CD/DVD</value>
-	</string>
-	<string>
-		<id>2109</id>
-		<value>then press OK</value>
-	</string>
-	<string>
-		<id>2110</id>
-		<value>Insert original CD/DVD</value>
-	</string>
-	<string>
-		<id>2111</id>
-		<value>Finished !</value>
-	</string>
-	<string>
-		<id>2112</id>
-		<value>Waiting for CD/DVD</value>
-	</string>
-	<string>
-		<id>2113</id>
-		<value>Copy all</value>
-	</string>
-	<string>
-		<id>2114</id>
-		<value>Erase disc</value>
-	</string>
-	<string>
-		<id>2115</id>
-		<value>Insert CD/DVD RW</value>
-	</string>
-
-
-	<string>
-		<id>2116</id>
-		<value>Drive not ready</value>
-	</string>
-	<string>
-		<id>2117</id>
-		<value>a fatal error has occurred!</value>
-	</string>
-	<string>
-		<id>2118</id>
-		<value>Convert DVR-MS</value>
-	</string>
-
-
+	<string><id>2100</id><value>Burn</value></string>
+	<string><id>2101</id><value>Copy CD/DVD</value></string>
+	<string><id>2102</id><value>Create Audio-CD</value></string>
+	<string><id>2103</id><value>Create Video-CD</value></string>
+	<string><id>2104</id><value>Create Video-DVD</value></string>
+	<string><id>2105</id><value>Create Data-CD</value></string>
+	<string><id>2106</id><value>Create Data-DVD</value></string>
+	<string><id>2107</id><value>Start copy</value></string>
+	<string><id>2108</id><value>Insert empty CD/DVD</value></string>
+	<string><id>2109</id><value>then press OK</value></string>
+	<string><id>2110</id><value>Insert original CD/DVD</value></string>
+	<string><id>2111</id><value>Finished !</value></string>
+	<string><id>2112</id><value>Waiting for CD/DVD</value></string>
+	<string><id>2113</id><value>Copy all</value></string>
+	<string><id>2114</id><value>Erase disc</value></string>
+	<string><id>2115</id><value>Insert CD/DVD RW</value></string>
+	<string><id>2116</id><value>Drive not ready</value></string>
+	<string><id>2117</id><value>a fatal error has occurred!</value></string>
+	<string><id>2118</id><value>Convert DVR-MS</value></string>
+	<string><id>2119</id><value>Start convert</value></string>
+	<string><id>2120</id><value>Converting file(s)...</value></string>
+	<string><id>2121</id><value>Couldn't convert file(s)!</value></string>
+	<string><id>2122</id><value>starts!</value></string>
+	<string><id>2123</id><value>Disk info</value></string>
+	<string><id>2124</id><value>Cannot Erase: Media is not writable</value></string>
+	<string><id>2125</id><value>Erase Disk....</value></string>
+	<string><id>2126</id><value>Eject CD</value></string>
+	<string><id>2127</id><value>The CD is not writable</value></string>
+	<string><id>2128</id><value>Preparing Burn: estimated time:</value></string>
+	<string><id>2129</id><value>Preparing to Burn</value></string>
+	<string><id>2130</id><value>Block</value></string>
+	<string><id>2131</id><value>of</value></string>
+	<string><id>2132</id><value>Closing disc: estimated time:</value></string>
+	<string><id>2133</id><value>Cannot convert DVR-MS to MPG</value></string>
+	<string><id>2134</id><value>Required DirectShow filters are</value></string>
+	<string><id>2135</id><value>not installed</value></string>
+	<!-- End of My Burner Strings -->
 
 	<!-- My Explorer Strings -->
-	<string>
-		<id>2200</id>
-		<value>Explorer</value>
-	</string>
-	<string>
-		<id>2201</id>
-		<value>Select source</value>
-	</string>
-	<string>
-		<id>2202</id>
-		<value>Select destination</value>
-	</string>
-	<string>
-		<id>2203</id>
-		<value>Copy data</value>
-	</string>
-	<string>
-		<id>2204</id>
-		<value>Create folder</value>
-	</string>
-	<string>
-		<id>2205</id>
-		<value>Restore selection</value>
-	</string>
-	<string>
-		<id>2206</id>
-		<value>Select all</value>
-	</string>
-	<string>
-		<id>2207</id>
-		<value>Would you like to</value>
-	</string>
-	<string>
-		<id>2208</id>
-		<value>create the folder?</value>
-	</string>
-	<string>
-		<id>2209</id>
-		<value>Would you like to copy the files?</value>
-	</string>
-	<string>
-		<id>2210</id>
-		<value>Files copied!</value>
-	</string>
-	<string>
-		<id>2211</id>
-		<value>Please wait, files are copied.</value>
-	</string>
-	<string>
-		<id>2212</id>
-		<value>Delete</value>
-	</string>
-	<string>
-		<id>2213</id>
-		<value>Move</value>
-	</string>
-	<string>
-		<id>2214</id>
-		<value>Do you want to move the selected files?</value>
-	</string>
-	<string>
-		<id>2215</id>
-		<value>Please wait, moving files.</value>
-	</string>
-	<string>
-		<id>2216</id>
-		<value>Files moved!</value>
-	</string>
-
-	<string>
-		<id>2217</id>
-		<value>Destination File exists!</value>
-	</string>
-	<string>
-		<id>2218</id>
-		<value>File overwrite?</value>
-	</string>
-	<string>
-		<id>2219</id>
-		<value>From selected drive cant move!</value>
-	</string>
-	<string>
-		<id>2220</id>
-		<value>Copy the selected file?</value>
-	</string>
-	<string>
-		<id>2221</id>
-		<value>Do you want to delete the selected files?</value>
-	</string>
-	<string>
-		<id>2222</id>
-		<value>Files deleted!</value>
-	</string>
-	<string>
-		<id>2223</id>
-		<value>Trashcan</value>
-	</string>
-	<string>
-		<id>2224</id>
-		<value>Folder exists!</value>
-	</string>
-	<string>
-		<id>2225</id>
-		<value>Folder created</value>
-	</string>
-
+	<string><id>2200</id><value>Explorer</value></string>
+	<string><id>2201</id><value>Select source</value></string>
+	<string><id>2202</id><value>Select destination</value></string>
+	<string><id>2203</id><value>Copy data</value></string>
+	<string><id>2204</id><value>Create folder</value></string>
+	<string><id>2205</id><value>Restore selection</value></string>
+	<string><id>2206</id><value>Select all</value></string>
+	<string><id>2207</id><value>Would you like to</value></string>
+	<string><id>2208</id><value>create the folder?</value></string>
+	<string><id>2209</id><value>Would you like to copy the files?</value></string>
+	<string><id>2210</id><value>Files copied!</value></string>
+	<string><id>2211</id><value>Please wait, files are copied.</value></string>
+	<string><id>2212</id><value>Delete</value></string>
+	<string><id>2213</id><value>Move</value></string>
+	<string><id>2214</id><value>Do you want to move the selected files?</value></string>
+	<string><id>2215</id><value>Please wait, moving files.</value></string>
+	<string><id>2216</id><value>Files moved!</value></string>
+	<string><id>2217</id><value>Destination File exists!</value></string>
+	<string><id>2218</id><value>File overwrite?</value></string>
+	<string><id>2219</id><value>From selected drive cant move!</value></string>
+	<string><id>2220</id><value>Copy the selected file?</value></string>
+	<string><id>2221</id><value>Do you want to delete the selected files?</value></string>
+	<string><id>2222</id><value>Files deleted!</value></string>
+	<string><id>2223</id><value>Trashcan</value></string>
+	<string><id>2224</id><value>Folder exists!</value></string>
+	<string><id>2225</id><value>Folder created</value></string>
+	<!-- End of My Explorer Strings -->
 	
 <string>
 	<id>8000</id>

@@ -126,6 +126,10 @@ namespace MediaPortal.GUI.TV
         }
         break;
       }
+			if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+			{
+				ShowContextMenu();
+			}
       base.OnAction(action);
       Update();
     }
@@ -234,7 +238,7 @@ namespace MediaPortal.GUI.TV
             int iAction=(int)message.Param1;
             if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
             {
-              OnClick(iItem);
+              OnPlay(iItem);
             }
           }
           break;
@@ -484,8 +488,9 @@ namespace MediaPortal.GUI.TV
       }
     }
 
-    void OnClick(int iItem)
-    {
+    void ShowContextMenu()
+		{
+			int iItem=GetSelectedItemNo();
       GUIListItem pItem=GetItem(iItem);
       if (pItem==null) return;
       if (pItem.IsFolder) return;
@@ -530,7 +535,8 @@ namespace MediaPortal.GUI.TV
       if (System.IO.File.Exists(rec.FileName))
       {
 				Log.Write("TVRecording:play:{0}",rec.FileName);
-        g_Player.Stop();
+				g_Player.Stop();
+				Recorder.StopViewing();
         
         rec.Played++;
         TVDatabase.PlayedRecordedTV(rec);

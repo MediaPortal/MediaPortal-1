@@ -198,6 +198,11 @@
                     AssemblyName = "System.Management"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
                 />
+                <Reference
+                    Name = "XPBurnComponent"
+                    AssemblyName = "XPBurnComponent"
+                    HintPath = "..\XPBurnComponent.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -296,6 +301,26 @@
                     RelPath = "GUIAlarm\GUISleepTimer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIBurner\BurnerThread.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIBurner\GUIBurner.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIBurner\SetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIBurner\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUIExplorer\GUIExplorer.cs"

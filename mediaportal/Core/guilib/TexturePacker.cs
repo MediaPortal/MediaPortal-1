@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Library
 					//(decide which way to split)
 					int dw = Rect.Width  - img.Width;
 					int dh = Rect.Height - img.Height;
-	        
+
 					if (dw > dh)
 					{
 						ChildLeft.Rect  = new Rectangle(Rect.Left, Rect.Top, img.Width, Rect.Height);
