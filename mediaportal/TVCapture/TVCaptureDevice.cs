@@ -250,7 +250,7 @@ namespace MediaPortal.TV.Recording
         if (StartTimeShifting())
         {
           // start sink graph
-          if (StartRecording(recording.IsContentRecording))
+          if (StartRecording(/*recording.IsContentRecording*/true))
           {
           }
         }
