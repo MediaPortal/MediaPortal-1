@@ -1175,30 +1175,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
 
-				try
-				{
-					string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-						currentTuningObject.NetworkID,
-						currentTuningObject.TransportStreamID,
-						currentTuningObject.ProgramNumber,
-						(int)Network());
-					if (System.IO.File.Exists(pmtName))
-					{
-						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
-						long len=stream.Length;
-						byte[] pmt = new byte[len];
-						stream.Read(pmt,0,(int)len);
-						stream.Close();
-						VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-						if (props.SupportsFireDTVProperties)
-						{
-							//yes, then send the PMT table to the device
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() send PMT to fireDTV device");	
-							props.SendPMTToFireDTV(pmt,(int)len);
-						}//if (props.SupportsFireDTVProperties)
-					}
-				}
-				catch(Exception){}
+				SendPMT();
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
@@ -2394,7 +2371,45 @@ namespace MediaPortal.TV.Recording
 		}//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
 
 
-		
+		// send PMT to firedtv device
+		bool SendPMT()
+		{
+			VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+			if (!props.SupportsFireDTVProperties)
+			{
+				return true;
+			}
+			try
+			{
+				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+					currentTuningObject.NetworkID,
+					currentTuningObject.TransportStreamID,
+					currentTuningObject.ProgramNumber,
+					(int)Network());
+				if (!System.IO.File.Exists(pmtName))
+				{
+					return false;
+				}
+					
+				System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
+				long len=stream.Length;
+				byte[] pmt = new byte[len];
+				stream.Read(pmt,0,(int)len);
+				stream.Close();
+
+				//yes, then send the PMT table to the device
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
+				if (props.SendPMTToFireDTV(pmt, (int)len))
+				{
+					return true;
+				}
+			}
+			catch(Exception)
+			{
+			}
+			return false;
+		}//SendPMT()
+
 		public void Process()
 		{
 			if (m_SectionsTables==null) return;
@@ -2412,33 +2427,9 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
-				VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-				if (!props.SupportsFireDTVProperties)
-				{
-					return;
-				}
-				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-																			currentTuningObject.NetworkID,
-																			currentTuningObject.TransportStreamID,
-																			currentTuningObject.ProgramNumber,
-																			(int)Network());
-				if (!System.IO.File.Exists(pmtName))
+				if (!SendPMT())
 				{
 					pmtVersionNumber=-1;
-					return;
-				}
-				
-				System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
-				long len=stream.Length;
-				byte[] pmt = new byte[len];
-				stream.Read(pmt,0,(int)len);
-				stream.Close();
-
-				//yes, then send the PMT table to the device
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
-				if (!props.SendPMTToFireDTV(pmt, (int)len))
-				{
-					pmtVersionNumber=-1;//lets try again
 					return;
 				}
 			}
@@ -3363,6 +3354,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
 
 				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
+				SendPMT();
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 			}
