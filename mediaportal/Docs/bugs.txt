@@ -1,5 +1,6 @@
 
 Cosmetic bugs:
+  05-08-2004 my recipies: my recipies is not translatable
   05-08-2004 GUI        : mousescrollbars are too long (should be as long as the list/icon view WITHOUT page controls, and in iconview way too far to the left letting it go offscreen
   13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
   13-07-2004 general    : The cancel buttons dont work
@@ -9,6 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  05-08-2004 My Recipies: #itemcount is shown instead of the number of items
   05-08-2004 my radio   : streams with a commercial track stop playing after the commercial. This does work in wmp9. example stream http://www.nwrweb.com/player/asx/199.asx
   02-08-2004 my tv      : dual tuner setup: when recording with card#1 you cannot switch tv channels anymore
                           since card#1 is also used for tv viewing instead of card #2
