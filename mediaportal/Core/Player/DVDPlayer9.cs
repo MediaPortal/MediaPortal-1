@@ -101,11 +101,12 @@ namespace MediaPortal.Player
         }
 
         DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
-        AddVMR9(dvdGraph);
+        VMR9Filter= AddVMR9(dvdGraph);
+        if (VMR9Filter==null) return false;
 
         try
         {
-            hr = SetAllocPresenter(dvdGraph, GUIGraphicsContext.form as Control);
+            hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
             if (hr!=0) 
             {
               Log.Write("Dvdplayer9:Failed to set VMR9 allocator/presentor");
@@ -122,6 +123,7 @@ namespace MediaPortal.Player
         Guid riid ;
 
 			
+        Log.Write("Dvdplayer9:volume rendered, get interfaces");
         if (dvdInfo==null)
         {
           riid = typeof( IDvdInfo2 ).GUID;
@@ -140,6 +142,16 @@ namespace MediaPortal.Player
           dvdCtrl = (IDvdControl2) comobj; comobj = null;
         }
 
+        IBaseFilter dvdbasefilter=dvdInfo as IBaseFilter;
+        if (dvdbasefilter==null)
+        {
+          Log.Write("DVDPlayer9: unable to get dvd base filter");
+          return false;
+        }
+        
+        Log.Write("Dvdplayer9:render output pins");
+        DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
+
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
@@ -149,6 +161,7 @@ namespace MediaPortal.Player
 
       
 
+        Log.Write("Dvdplayer9:disable line 21");
         // disable Closed Captions!
         IBaseFilter basefilter;
         graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
@@ -185,6 +198,7 @@ namespace MediaPortal.Player
         if( VMR9Filter != null )
           Marshal.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
 
+        Log.Write("Dvdplayer9:graph created");
         m_bStarted=true;
         return true;
       }
@@ -201,36 +215,56 @@ namespace MediaPortal.Player
       }
     }
 
-    void AddVMR9(IDvdGraphBuilder dvdBuilder)
+    IBaseFilter AddVMR9(IDvdGraphBuilder dvdBuilder)
     {
-      //IVideoMixingRenderer9
+      Type comtype = null;
+      object comobj = null;
 
+      object objFound;
+      int hr;
       //IVMRFilterConfig9
       Guid guidVMR9FilterConfig = typeof( IVMRFilterConfig9 ).GUID;;
-      object objFound;
-      IVMRFilterConfig9 FilterConfig9;
       dvdBuilder.GetDvdInterface(ref guidVMR9FilterConfig,out objFound);
-      FilterConfig9 = objFound as IVMRFilterConfig9;
-      if (FilterConfig9==null) 
+      IBaseFilter vmr9Filter = objFound as IBaseFilter;
+      if (vmr9Filter==null) 
       {
         Log.Write("Dvdplayer9:Failed to get IVMRFilterConfig9 ");
-        return;
+        return  null;
       }
-      Log.Write("DVDPlayer9:Got IVMRFilterConfig9, set rendering mode");
-      int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
+      graphBuilder.RemoveFilter(vmr9Filter);
+
+      comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
+      comobj = Activator.CreateInstance( comtype );
+      vmr9Filter=(IBaseFilter)comobj; comobj=null;
+      if (vmr9Filter==null) 
+      {
+        Log.Write("Dvdplayer9:Failed to get instance of VMR9 ");
+        return null;
+      }				
+
+      //IVMRFilterConfig9
+      IVMRFilterConfig9 FilterConfig9 = vmr9Filter as IVMRFilterConfig9;
+      if (FilterConfig9==null) 
+      {
+        Log.Write("Dvdplayer9:Failed to get IVMRFilterConfig9");
+        return null;
+      }				
+
+      hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
       if (hr!=0) 
       {
-        Log.Write("Dvdplayer9:Failed to set VMR9 to renderless mode");
-      }
+        Log.Write("Dvdplayer9:Failed to SetRenderingMode()");
+        return null;
+      }				
 
-      // needed to put VMR9 in mixing mode instead of pass-through mode
-        
       hr = FilterConfig9.SetNumberOfStreams(1);
       if (hr!=0) 
       {
-        Log.Write("Dvdplayer9:Failed to set VMR9 streams to 1");
-        return;
-      }
+        Log.Write("Dvdplayer9:Failed to SetNumberOfStreams()");
+        return null;
+      }				
+
+      return vmr9Filter;
     }
     
     /// <summary> do cleanup and release DirectShow. </summary>
@@ -323,13 +357,9 @@ namespace MediaPortal.Player
       }
     }
 
-    int SetAllocPresenter(IDvdGraphBuilder dvdBuilder, Control control)
+    int SetAllocPresenter(IBaseFilter Vmr9Filter, Control control)
     {
-      object objNew;
-      Guid guidIVMRSurfaceAllocatorNotify9=typeof(IVMRSurfaceAllocatorNotify9).GUID;
-
-      dvdBuilder.GetDvdInterface(ref guidIVMRSurfaceAllocatorNotify9, out objNew);
-      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = objNew as IVMRSurfaceAllocatorNotify9;
+      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = Vmr9Filter as IVMRSurfaceAllocatorNotify9;
 
       if (lpIVMRSurfAllocNotify == null)
       {
