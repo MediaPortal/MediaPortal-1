@@ -427,8 +427,8 @@
 		<description>Sub Titles List Control</description> 
 		<type>listcontrol</type> 
 		<id>802</id> 
-		<posX>118</posX> 
-		<posY>340</posY> 
+		<posX>185</posX> 
+		<posY>425</posY> 
 		<width>300</width> 
 		<height>100</height> 
 		<onleft>801</onleft> 
