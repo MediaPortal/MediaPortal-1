@@ -728,14 +728,6 @@ public class MediaPortalApp : D3DApp, IRender
       AutoPlay.StartListening();
 
 
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-			{
-        string strDefault=xmlreader.GetValueAsString("myradio","default","");
-        GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION,(int)GUIWindow.Window.WINDOW_RADIO,GUIWindowManager.ActiveWindow,0,0,0,null);
-        msg.SendToTargetWindow=true;
-        msg.Label=strDefault;
-        GUIWindowManager.SendThreadMessage(msg);
-      }
       if (splashScreen!=null) splashScreen.SetInformation("Starting plugins...");
       PluginManager.Load();
       PluginManager.Start();
@@ -754,6 +746,18 @@ public class MediaPortalApp : D3DApp, IRender
 			tMouseClickTimer.Enabled = false;
 			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(tMouseClickTimer_Elapsed);
 			tMouseClickTimer.SynchronizingObject = this;
+
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				string strDefault=xmlreader.GetValueAsString("myradio","default","");
+				if (strDefault!="")
+				{
+					GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,(int)GUIWindow.Window.WINDOW_RADIO,0,0,0,0,null);
+					msg.Label=strDefault;
+					GUIGraphicsContext.SendMessage(msg);
+				}
+			}
+
     } 
 
     /// <summary>

@@ -3178,46 +3178,51 @@ namespace MediaPortal.TV.Recording
 
 		public void StartRadio(RadioStation station)
 		{
-			if (m_graphState != State.Radio) return ;
-			if (Vmr9!=null)
+			if (m_graphState != State.Radio) 
 			{
-				Vmr9.RemoveVMR9();
-				Vmr9=null;
-			}
-			
-			Log.Write("DVBGraphBDA:StartRadio()");
+				if (m_graphState!=State.Created)  return;
+				if (Vmr9!=null)
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9=null;
+				}
+				
+				Log.Write("DVBGraphBDA:StartRadio()");
 
-			// add the preferred video/audio codecs
-			AddPreferredCodecs();
+				// add the preferred video/audio codecs
+				AddPreferredCodecs();
 
 
-			if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
-			{
-				Log.Write("DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+				Log.Write("DVBGraphBDA:StartRadio() render demux output pin");
+				if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
+				{
+					Log.Write("DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+					return;
+				}
+
+				TuneRadioChannel(station);
+				//get the IMediaControl interface of the graph
+				if(m_mediaControl == null)
+					m_mediaControl = (IMediaControl) m_graphBuilder;
+
+				//start the graph
+				Log.Write("DVBGraphBDA: start graph");
+				int hr=m_mediaControl.Run();
+				if (hr<0)
+				{
+					Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+				}
+
+				graphRunning=true;
+				
+				m_graphState = State.Radio;
 				return;
 			}
 
-			//get the IMediaControl interface of the graph
-			if(m_mediaControl == null)
-				m_mediaControl = (IMediaControl) m_graphBuilder;
-
-			//start the graph
-			Log.Write("DVBGraphBDA: start graph");
-			int hr=m_mediaControl.Run();
-			if (hr<0)
-			{
-				Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
-			}
-
-			graphRunning=true;
-			
-			m_graphState = State.Radio;
-
 			// tune to the correct channel
-			TuneRadioChannel(station);
 
+			TuneRadioChannel(station);
 			Log.Write("DVBGraphBDA:Listening to radio..");
-			return;
 		}
 		#endregion
 	}//public class DVBGraphBDA 

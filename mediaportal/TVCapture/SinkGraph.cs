@@ -1109,6 +1109,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState!=State.Radio) 
 			{
+				if (m_graphState!=State.Created)  return;
 				if (m_mpeg2Demux==null) return ;
 				if (m_videoCaptureDevice==null) return ;
 				if (Vmr9!=null)
