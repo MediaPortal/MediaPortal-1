@@ -509,7 +509,7 @@ namespace MediaPortal.TV.Recording
 				m_graphState=State.Created;
 
 				m_TunerStatistics=GetTunerSignalStatistics();
-				AdviseProgramInfo();
+				//AdviseProgramInfo();
 				return true;
 			}
 			catch(Exception)
@@ -655,7 +655,7 @@ namespace MediaPortal.TV.Recording
 				Vmr9=null;
 			}
 
-			UnAdviseProgramInfo();
+//			UnAdviseProgramInfo();
 			
 			if (m_recControl!=null) 
 			{
