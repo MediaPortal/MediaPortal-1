@@ -142,7 +142,7 @@ namespace MediaPortal.Player
             pt.Y = (int)((lParam>>16)  & 0xffff); 
 
             // Select the button at the current position, if it exists
-            dvdCtrl.SelectAtPosition(pt);
+            if (dvdCtrl!=null) dvdCtrl.SelectAtPosition(pt);
         }
 
        if( m.Msg==WM_LBUTTONUP)
@@ -151,7 +151,7 @@ namespace MediaPortal.Player
             pt.Y = (int)((lParam>>16)  & 0xffff); 
 
             // Highlight the button at the current position, if it exists
-            dvdCtrl.ActivateAtPosition(pt);
+            if (dvdCtrl!=null) dvdCtrl.ActivateAtPosition(pt);
         }
 
     }

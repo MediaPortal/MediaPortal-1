@@ -139,7 +139,7 @@ namespace MediaPortal.Player
         else
         {
           Log.Write("AllocatorWrapper:AllocateSurface succeeded");
-					/*
+					
 					allocInfo.dwWidth=768;
 					allocInfo.dwHeight=576;
 					if (m_surface2!=IntPtr.Zero)
@@ -149,7 +149,7 @@ namespace MediaPortal.Player
 					}
 					hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out m_surface2);
 					if (hr==0) Log.Write("AllocatorWrapper:allocted 768x576");
-					else Log.Write("AllocatorWrapper:failed:allocted 768x576");*/
+					else Log.Write("AllocatorWrapper:failed:allocted 768x576");
 					hr=0;
         }
         return hr;

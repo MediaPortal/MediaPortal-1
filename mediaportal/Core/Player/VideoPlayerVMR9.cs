@@ -206,11 +206,11 @@ namespace MediaPortal.Player
         mediaPos	= null;
         basicAudio	= null;
         mediaCtrl = null;
-		
-        DsUtils.RemoveFilters(graphBuilder);
 
         if( vobSub != null )
-          Marshal.ReleaseComObject( vobSub ); vobSub = null;
+					Marshal.ReleaseComObject( vobSub ); vobSub = null;
+		
+				DsUtils.RemoveFilters(graphBuilder);
 
         if( rotCookie != 0 )
           DsROT.RemoveGraphFromRot( ref rotCookie );

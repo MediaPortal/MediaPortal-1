@@ -1745,6 +1745,7 @@ namespace MediaPortal.TV.Recording
 		public void Process()
 		{
 			if (m_Event==null) return;
+			if (m_TIF==null) return;
 
 			
 /*
@@ -1795,42 +1796,45 @@ namespace MediaPortal.TV.Recording
 			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
 			{
 				IGuideData data= m_TIF as IGuideData;
+				if (data==null) return;
 				int iFetched;
 				IEnumTuneRequests varRequests;
 				data.GetServices(out varRequests);
-				if (varRequests!=null)
-				{
-					DVBTChannel channel = new DVBTChannel();
-					int         gotAll=0;
-					TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
-					while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
-					{
-						IEnumGuideDataProperties enumProgramProperties;
-						data.GetServiceProperties(tunerequests[0],out enumProgramProperties);
-						if (enumProgramProperties!=null)
-						{
-							IGuideDataProperty[] properties = new IGuideDataProperty[1];
-							while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
-							{
-								object chanValue;
-								int chanLanguage;
-								string chanName;
-								properties[0].Name( out chanName);
-								properties[0].Value(out chanValue);
-								properties[0].Language(out chanLanguage);
-								if (Network()==NetworkType.DVBT)
-								{
-									//service name							value						language
-									//Description.ID						ONID:TSID:SID			0
-									//Description.Name					Nederland 1				0
-									//Provider.Name							Digitenne					0
-									//Description.ServiceType		1									0
+				if (varRequests==null) return;
 
-									if (chanName=="Description.ID")
+				DVBTChannel channel = new DVBTChannel();
+				int         gotAll=0;
+				TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
+				while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
+				{
+					IEnumGuideDataProperties enumProgramProperties;
+					data.GetServiceProperties(tunerequests[0],out enumProgramProperties);
+					if (enumProgramProperties!=null)
+					{
+						IGuideDataProperty[] properties = new IGuideDataProperty[1];
+						while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
+						{
+							object chanValue;
+							int chanLanguage;
+							string chanName;
+							properties[0].Name( out chanName);
+							properties[0].Value(out chanValue);
+							properties[0].Language(out chanLanguage);
+							if (Network()==NetworkType.DVBT)
+							{
+								//service name							value						language
+								//Description.ID						ONID:TSID:SID			0
+								//Description.Name					Nederland 1				0
+								//Provider.Name							Digitenne					0
+								//Description.ServiceType		1									0
+
+								if (chanName=="Description.ID")
+								{
+									string[] parts = new string[11];
+									string id=(string)chanValue;
+									parts=id.Split(new char[]{':'},10);
+									if (parts.Length>=3)
 									{
-										string[] parts = new string[11];
-										string id=(string)chanValue;
-										parts=id.Split(new char[]{':'},10);
 										channel.ONID = Int32.Parse(parts[0]);
 										channel.TSID = Int32.Parse(parts[1]);
 										channel.SID  = Int32.Parse(parts[2]);
@@ -1840,42 +1844,42 @@ namespace MediaPortal.TV.Recording
 										channel.IsRadio=true;
 										gotAll++;
 									}
-									if (chanName=="Description.Name")
+								}
+								if (chanName=="Description.Name")
+								{
+									channel.ChannelName=(string)chanValue;
+									gotAll++;
+								}
+								if (chanName=="Provider.Name")
+								{
+									channel.NetworkName=(string)chanValue;
+									gotAll++;
+								}
+								if (chanName=="Description.ServiceType")
+								{
+									channel.NetworkType=Int32.Parse( chanValue.ToString());
+									gotAll++;
+								}
+								if (gotAll==4)
+								{
+									bool add=true;
+									for (int x=0; x < channelList.Count;++x)
 									{
-										channel.ChannelName=(string)chanValue;
-										gotAll++;
-									}
-									if (chanName=="Provider.Name")
-									{
-										channel.NetworkName=(string)chanValue;
-										gotAll++;
-									}
-									if (chanName=="Description.ServiceType")
-									{
-										channel.NetworkType=Int32.Parse( chanValue.ToString());
-										gotAll++;
-									}
-									if (gotAll==4)
-									{
-										bool add=true;
-										for (int x=0; x < channelList.Count;++x)
-										{
-											DVBTChannel chan=(DVBTChannel)channelList[x];
-											if (chan.ONID==channel.ONID && chan.TSID==channel.TSID && chan.SID==channel.SID)
-											{	
-												add=false;
-												break;
-											}
+										DVBTChannel chan=(DVBTChannel)channelList[x];
+										if (chan.ONID==channel.ONID && chan.TSID==channel.TSID && chan.SID==channel.SID)
+										{	
+											add=false;
+											break;
 										}
-		
-										if (add)
-										{
-											Log.Write("Network:{0} channel:{1} ONID:{2} TSID:{3} SID:{4}",channel.NetworkName,channel.ChannelName,channel.ONID,channel.TSID,channel.SID);
-											channelList.Add(channel);
-										}
-										gotAll=0;
-										channel=new DVBTChannel();
 									}
+	
+									if (add)
+									{
+										Log.Write("Network:{0} channel:{1} ONID:{2} TSID:{3} SID:{4}",channel.NetworkName,channel.ChannelName,channel.ONID,channel.TSID,channel.SID);
+										channelList.Add(channel);
+									}
+									gotAll=0;
+									channel=new DVBTChannel();
 								}
 							}
 						}
