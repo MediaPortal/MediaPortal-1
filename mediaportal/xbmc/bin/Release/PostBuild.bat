@@ -27,7 +27,6 @@ copy ..\..\..\DShowNET\bin\Release\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Release\DirectX.Capture.dll .
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
-copy ..\..\..\SQLiteProxy.dll .
 
 copy ..\..\..\mp3TagReader\bin\Release\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\release\zlib.dll plugins\TagReaders

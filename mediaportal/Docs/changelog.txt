@@ -1,5 +1,7 @@
 History: (dd-mm-yyyy)
-
+  07-05-2004  My movies   : fixed : in several views there was no icon for ..
+  07-05-2004  My movies   : fixed : in several views there was no icon when view:list
+  07-05-2004  My movies   : fixed : crash when retrieving IMDB info for Gothika 2003-CD1.avi
   07-05-2004  setup       : fixed : crash when clicking on default column in audio/video/picture shares
   07-05-2004  installer   : added : no need 2 run postsetup/register.bat anymore after installing MP
   07-05-2004  my movies   : added : you can specify which audio renderer to use for movie playback
