@@ -555,11 +555,11 @@ namespace MediaPortal
             break;
           
 					case 0xe9: //volume+
-            action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+//            action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
             break;
           
 					case 0xea: //volume-
-            action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
+//            action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
             break;
           
 					case 0x9c: //channel+
@@ -572,6 +572,23 @@ namespace MediaPortal
           
 					case 0xe2: //mute
             break;
+
+					case 0x5A: //teletext
+						if (g_Player.IsTV)
+						{
+							if (GUIGraphicsContext.IsFullScreenVideo)
+							{
+								// Activate fullscreen teletext
+								GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+							}
+							else
+							{
+								// Activate teletext in window
+								GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TELETEXT);
+							}
+						}
+						break;
+
           
 					default:
             Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
