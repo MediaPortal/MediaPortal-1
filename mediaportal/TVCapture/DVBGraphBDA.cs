@@ -1436,42 +1436,43 @@ namespace MediaPortal.TV.Recording
 			//int hr = 0;
 
 			Log.Write("DVBGraphBDA: setupTuningSpace()");
-			if(m_NetworkProvider != null) 
-			{
-				System.Guid classID;
-				m_NetworkProvider.GetClassID(out classID);
-
-				string strClassID = classID.ToString();
-
-				strClassID = strClassID.ToLower();
-
-				//Log.Write("m_NetworkProvider:{0}", strClassID);
-
-				switch (strClassID) 
-				{
-					case "0dad2fdd-5fd7-11d3-8f50-00c04f7971e2":
-						m_NetworkType = NetworkType.ATSC;
-						break;
-					case "dc0c0fe7-0485-4266-b93f-68fbf80ed834":
-						m_NetworkType = NetworkType.DVBC;
-						break;
-					case "fa4b375a-45b4-4d45-8440-263957b11623":
-						m_NetworkType = NetworkType.DVBS;
-						break;
-					case "216c62df-6d7f-4e9a-8571-05f14edb766a":
-						m_NetworkType = NetworkType.DVBT;
-						break;
-					default:
-						Log.Write("DVBGraphBDA: FAILED:unknown network type:{0} ",classID);
-						return false;
-				}
-			}
-			else 
+			if(m_NetworkProvider == null) 
 			{
 				Log.Write("DVBGraphBDA: FAILED:network provider is null ");
 				return false;
 			}
+			System.Guid classID;
+			int hr=m_NetworkProvider.GetClassID(out classID);
+			if (hr <=0)
+			{
+				Log.Write("DVBGraphBDA: FAILED:cannot get classid of network provider");
+				return false;
+			}
 
+			string strClassID = classID.ToString();
+			strClassID = strClassID.ToLower();
+			switch (strClassID) 
+			{
+				case "0dad2fdd-5fd7-11d3-8f50-00c04f7971e2":
+					Log.Write("DVBGraphBDA: Network=ATSC");
+					m_NetworkType = NetworkType.ATSC;
+					break;
+				case "dc0c0fe7-0485-4266-b93f-68fbf80ed834":
+					Log.Write("DVBGraphBDA: Network=DVB-C");
+					m_NetworkType = NetworkType.DVBC;
+					break;
+				case "fa4b375a-45b4-4d45-8440-263957b11623":
+					Log.Write("DVBGraphBDA: Network=DVB-S");
+					m_NetworkType = NetworkType.DVBS;
+					break;
+				case "216c62df-6d7f-4e9a-8571-05f14edb766a":
+					Log.Write("DVBGraphBDA: Network=DVB-T");
+					m_NetworkType = NetworkType.DVBT;
+					break;
+				default:
+					Log.Write("DVBGraphBDA: FAILED:unknown network type:{0} ",classID);
+					return false;
+			}
 
 			TunerLib.ITuningSpaceContainer TuningSpaceContainer = (TunerLib.ITuningSpaceContainer) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_SystemTuningSpaces, true));
 			if(TuningSpaceContainer == null)
@@ -1482,7 +1483,6 @@ namespace MediaPortal.TV.Recording
 
 			TunerLib.ITuningSpaces myTuningSpaces = null;
 			string uniqueName="";
-
 			switch (m_NetworkType) 
 			{
 				case NetworkType.ATSC:
@@ -1507,6 +1507,7 @@ namespace MediaPortal.TV.Recording
 					uniqueName="Mediaportal DVB-T";
 				} break;
 			}
+			Log.Write("DVBGraphBDA: available check tuningspaces");
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 
 			int Count = 0;
@@ -1515,153 +1516,157 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("DVBGraphBDA: found {0} tuning spaces", Count);
 				TunerLib.IEnumTuningSpaces TuneEnum = myTuningSpaces.EnumTuningSpaces;
-
-				uint ulFetched = 0;
-				TunerLib.TuningSpace TuningSpace;
-				int counter = 0;
-				TuneEnum.Reset();
-				while(counter <= Count)
+				if (TuneEnum !=null)
 				{
-					TuneEnum.Next(1, out TuningSpace, out ulFetched);
-					if (TuningSpace.UniqueName==uniqueName)
+					uint ulFetched = 0;
+					TunerLib.TuningSpace tuningSpaceFound;
+					int counter = 0;
+					TuneEnum.Reset();
+					while(counter < Count)
 					{
-						myTuner.TuningSpace = TuningSpace;
-						Log.Write("DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, TuningSpace.UniqueName,TuningSpace.FriendlyName);
-						return true;
+						TuneEnum.Next(1, out tuningSpaceFound, out ulFetched);
+						if (ulFetched==1 )
+						{
+							if (tuningSpaceFound.UniqueName==uniqueName)
+							{
+								myTuner.TuningSpace = tuningSpaceFound;
+								Log.Write("DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, tuningSpaceFound.UniqueName,tuningSpaceFound.FriendlyName);
+								return true;
+							}
+						}
 					}
+					if (myTuningSpaces!=null)
+						Marshal.ReleaseComObject(myTuningSpaces);
+					if (TuningSpaceContainer!=null)
+						Marshal.ReleaseComObject(TuningSpaceContainer);
 				}
-				Marshal.ReleaseComObject(myTuningSpaces);
-				Marshal.ReleaseComObject(TuningSpaceContainer);
 			}
-			else
+
+			TunerLib.ITuningSpace TuningSpace ;
+			Log.Write("DVBGraphBDA: create new tuningspace");
+			switch (m_NetworkType) 
 			{
-				TunerLib.ITuningSpace TuningSpace ;
-				Log.Write("DVBGraphBDA: create new tuningspace");
-				switch (m_NetworkType) 
+				case NetworkType.ATSC: 
 				{
-					case NetworkType.ATSC: 
-					{
-						TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_ATSCTuningSpace, true));
-						TunerLib.IATSCTuningSpace myTuningSpace = (TunerLib.IATSCTuningSpace) TuningSpace;
-						myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_ATSCNetworkProvider);
-						myTuningSpace.InputType = TunerLib.tagTunerInputType.TunerInputAntenna;
-						myTuningSpace.MaxChannel			= 99;
-						myTuningSpace.MaxMinorChannel		= 999;
-						myTuningSpace.MaxPhysicalChannel	= 69;
-						myTuningSpace.MinChannel			= 1;
-						myTuningSpace.MinMinorChannel		= 0;
-						myTuningSpace.MinPhysicalChannel	= 2;
-						myTuningSpace.FriendlyName=uniqueName;
-						myTuningSpace.UniqueName=uniqueName;
+					TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_ATSCTuningSpace, true));
+					TunerLib.IATSCTuningSpace myTuningSpace = (TunerLib.IATSCTuningSpace) TuningSpace;
+					myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_ATSCNetworkProvider);
+					myTuningSpace.InputType = TunerLib.tagTunerInputType.TunerInputAntenna;
+					myTuningSpace.MaxChannel			= 99;
+					myTuningSpace.MaxMinorChannel		= 999;
+					myTuningSpace.MaxPhysicalChannel	= 69;
+					myTuningSpace.MinChannel			= 1;
+					myTuningSpace.MinMinorChannel		= 0;
+					myTuningSpace.MinPhysicalChannel	= 2;
+					myTuningSpace.FriendlyName=uniqueName;
+					myTuningSpace.UniqueName=uniqueName;
 
-						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_ATSCLocator, true));
-						TunerLib.IATSCLocator myLocator = (TunerLib.IATSCLocator) DefaultLocator;
+					TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_ATSCLocator, true));
+					TunerLib.IATSCLocator myLocator = (TunerLib.IATSCLocator) DefaultLocator;
 
-						myLocator.CarrierFrequency	 = -1;
-						myLocator.InnerFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.InnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.Modulation				= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
-						myLocator.OuterFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.OuterFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.PhysicalChannel		= -1;
-						myLocator.SymbolRate				= -1;
-						myLocator.TSID							= -1;
+					myLocator.CarrierFrequency	 = -1;
+					myLocator.InnerFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.InnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.Modulation				= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
+					myLocator.OuterFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.OuterFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.PhysicalChannel		= -1;
+					myLocator.SymbolRate				= -1;
+					myLocator.TSID							= -1;
 
-						myTuningSpace.DefaultLocator = DefaultLocator;
-						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
-						myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
+					myTuningSpace.DefaultLocator = DefaultLocator;
+					TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
+					myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
 
-					} break;
-					case NetworkType.DVBC: 
-					{
-						TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBTuningSpace, true));
-						TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) TuningSpace;
-						myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Cable;
-						myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBCNetworkProvider);
+				} break;
+				case NetworkType.DVBC: 
+				{
+					TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBTuningSpace, true));
+					TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) TuningSpace;
+					myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Cable;
+					myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBCNetworkProvider);
 
-						myTuningSpace.FriendlyName=uniqueName;
-						myTuningSpace.UniqueName=uniqueName;
-						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBCLocator, true));
-						TunerLib.IDVBCLocator myLocator = (TunerLib.IDVBCLocator) DefaultLocator;
+					myTuningSpace.FriendlyName=uniqueName;
+					myTuningSpace.UniqueName=uniqueName;
+					TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBCLocator, true));
+					TunerLib.IDVBCLocator myLocator = (TunerLib.IDVBCLocator) DefaultLocator;
 
-						myLocator.CarrierFrequency	= -1;
-						myLocator.InnerFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.InnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.Modulation				= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
-						myLocator.OuterFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.OuterFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.SymbolRate				= -1;
+					myLocator.CarrierFrequency	= -1;
+					myLocator.InnerFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.InnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.Modulation				= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
+					myLocator.OuterFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.OuterFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.SymbolRate				= -1;
 
-						myTuningSpace.DefaultLocator = DefaultLocator;
-						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
-						myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
-					} break;
-					case NetworkType.DVBS: 
-					{
-						TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBSTuningSpace, true));
-						TunerLib.IDVBSTuningSpace myTuningSpace = (TunerLib.IDVBSTuningSpace) TuningSpace;
-						myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Satellite;
-						myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBSNetworkProvider);
-						myTuningSpace.LNBSwitch = -1;
-						myTuningSpace.HighOscillator = -1;
-						myTuningSpace.LowOscillator = 11250000;
-						myTuningSpace.FriendlyName=uniqueName;
-						myTuningSpace.UniqueName=uniqueName;
-						
-						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBSLocator, true));
-						TunerLib.IDVBSLocator myLocator = (TunerLib.IDVBSLocator) DefaultLocator;
-						
-						myLocator.CarrierFrequency		= -1;
-						myLocator.InnerFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.OuterFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.Modulation					= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
-						myLocator.SymbolRate					= -1;
-						myLocator.Azimuth							= -1;
-						myLocator.Elevation						= -1;
-						myLocator.OrbitalPosition			= -1;
-						myLocator.SignalPolarisation	= (TunerLib.Polarisation) Polarisation.BDA_POLARISATION_NOT_SET;
-						myLocator.WestPosition				= false;
+					myTuningSpace.DefaultLocator = DefaultLocator;
+					TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
+					myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
+				} break;
+				case NetworkType.DVBS: 
+				{
+					TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBSTuningSpace, true));
+					TunerLib.IDVBSTuningSpace myTuningSpace = (TunerLib.IDVBSTuningSpace) TuningSpace;
+					myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Satellite;
+					myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBSNetworkProvider);
+					myTuningSpace.LNBSwitch = -1;
+					myTuningSpace.HighOscillator = -1;
+					myTuningSpace.LowOscillator = 11250000;
+					myTuningSpace.FriendlyName=uniqueName;
+					myTuningSpace.UniqueName=uniqueName;
+					
+					TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBSLocator, true));
+					TunerLib.IDVBSLocator myLocator = (TunerLib.IDVBSLocator) DefaultLocator;
+					
+					myLocator.CarrierFrequency		= -1;
+					myLocator.InnerFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.OuterFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.Modulation					= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
+					myLocator.SymbolRate					= -1;
+					myLocator.Azimuth							= -1;
+					myLocator.Elevation						= -1;
+					myLocator.OrbitalPosition			= -1;
+					myLocator.SignalPolarisation	= (TunerLib.Polarisation) Polarisation.BDA_POLARISATION_NOT_SET;
+					myLocator.WestPosition				= false;
 
-						myTuningSpace.DefaultLocator = DefaultLocator;
-						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
-						myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
-					} break;
-					case NetworkType.DVBT: 
-					{
-						TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBTuningSpace, true));
-						TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) TuningSpace;
-						myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Terrestrial;
-						myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBTNetworkProvider);
-						myTuningSpace.FriendlyName=uniqueName;
-						myTuningSpace.UniqueName=uniqueName;
+					myTuningSpace.DefaultLocator = DefaultLocator;
+					TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
+					myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
+				} break;
+				case NetworkType.DVBT: 
+				{
+					TuningSpace = (TunerLib.ITuningSpace) Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBTuningSpace, true));
+					TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) TuningSpace;
+					myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Terrestrial;
+					myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBTNetworkProvider);
+					myTuningSpace.FriendlyName=uniqueName;
+					myTuningSpace.UniqueName=uniqueName;
 
-						TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBTLocator, true));
-						TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) DefaultLocator;
+					TunerLib.Locator DefaultLocator = (TunerLib.Locator) Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBTLocator, true));
+					TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) DefaultLocator;
 
-						myLocator.CarrierFrequency		= -1;
-						myLocator.Bandwidth						= -1;
-						myLocator.Guard								= (TunerLib.GuardInterval) GuardInterval.BDA_GUARD_NOT_SET;
-						myLocator.HAlpha							= (TunerLib.HierarchyAlpha) HierarchyAlpha.BDA_HALPHA_NOT_SET;
-						myLocator.InnerFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.LPInnerFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.LPInnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.Mode								= (TunerLib.TransmissionMode) TransmissionMode.BDA_XMIT_MODE_NOT_SET;
-						myLocator.Modulation					= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
-						myLocator.OtherFrequencyInUse	= false;
-						myLocator.OuterFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
-						myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-						myLocator.SymbolRate					= -1;
+					myLocator.CarrierFrequency		= -1;
+					myLocator.Bandwidth						= -1;
+					myLocator.Guard								= (TunerLib.GuardInterval) GuardInterval.BDA_GUARD_NOT_SET;
+					myLocator.HAlpha							= (TunerLib.HierarchyAlpha) HierarchyAlpha.BDA_HALPHA_NOT_SET;
+					myLocator.InnerFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.LPInnerFEC					= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.LPInnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.Mode								= (TunerLib.TransmissionMode) TransmissionMode.BDA_XMIT_MODE_NOT_SET;
+					myLocator.Modulation					= (TunerLib.ModulationType) ModulationType.BDA_MOD_NOT_SET;
+					myLocator.OtherFrequencyInUse	= false;
+					myLocator.OuterFEC						= (TunerLib.FECMethod) FECMethod.BDA_FEC_METHOD_NOT_SET;
+					myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+					myLocator.SymbolRate					= -1;
 
-						myTuningSpace.DefaultLocator = DefaultLocator;
-						TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
-						myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
+					myTuningSpace.DefaultLocator = DefaultLocator;
+					TuningSpaceContainer.Add((TunerLib.TuningSpace)myTuningSpace);
+					myTuner.TuningSpace=(TunerLib.TuningSpace)TuningSpace;
 
-					} break;
-				}
-
+				} break;
 			}
 			return true;
 		}
