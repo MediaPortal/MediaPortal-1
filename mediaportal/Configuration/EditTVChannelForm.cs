@@ -102,6 +102,8 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label36;
 		private System.Windows.Forms.Label label37;
 		private System.Windows.Forms.Label label38;
+		private System.Windows.Forms.Label label39;
+		private System.Windows.Forms.TextBox tbDVBSECMpid;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -173,6 +175,12 @@ namespace MediaPortal.Configuration
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tbDVBTTeletextPid = new System.Windows.Forms.TextBox();
+			this.tbDVBTVideoPid = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudioPid = new System.Windows.Forms.TextBox();
+			this.label32 = new System.Windows.Forms.Label();
+			this.label31 = new System.Windows.Forms.Label();
+			this.label30 = new System.Windows.Forms.Label();
 			this.tbDVBTProvider = new System.Windows.Forms.TextBox();
 			this.label27 = new System.Windows.Forms.Label();
 			this.tbDVBTFreq = new System.Windows.Forms.TextBox();
@@ -184,6 +192,12 @@ namespace MediaPortal.Configuration
 			this.tbDVBTONID = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.tbDVBCTeletextPid = new System.Windows.Forms.TextBox();
+			this.tbDVBCVideoPid = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudioPid = new System.Windows.Forms.TextBox();
+			this.label33 = new System.Windows.Forms.Label();
+			this.label34 = new System.Windows.Forms.Label();
+			this.label35 = new System.Windows.Forms.Label();
 			this.tbDVBCProvider = new System.Windows.Forms.TextBox();
 			this.label28 = new System.Windows.Forms.Label();
 			this.cbDVBCModulation = new System.Windows.Forms.ComboBox();
@@ -201,6 +215,12 @@ namespace MediaPortal.Configuration
 			this.tbDVBCONID = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.tbDVBSTeletextPid = new System.Windows.Forms.TextBox();
+			this.tbDVBSVideoPid = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudioPid = new System.Windows.Forms.TextBox();
+			this.label36 = new System.Windows.Forms.Label();
+			this.label37 = new System.Windows.Forms.Label();
+			this.label38 = new System.Windows.Forms.Label();
 			this.tbDVBSProvider = new System.Windows.Forms.TextBox();
 			this.label29 = new System.Windows.Forms.Label();
 			this.cbDVBSPolarisation = new System.Windows.Forms.ComboBox();
@@ -218,24 +238,8 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.label30 = new System.Windows.Forms.Label();
-			this.label31 = new System.Windows.Forms.Label();
-			this.label32 = new System.Windows.Forms.Label();
-			this.tbDVBTAudioPid = new System.Windows.Forms.TextBox();
-			this.tbDVBTVideoPid = new System.Windows.Forms.TextBox();
-			this.tbDVBTTeletextPid = new System.Windows.Forms.TextBox();
-			this.tbDVBCTeletextPid = new System.Windows.Forms.TextBox();
-			this.tbDVBCVideoPid = new System.Windows.Forms.TextBox();
-			this.tbDVBCAudioPid = new System.Windows.Forms.TextBox();
-			this.label33 = new System.Windows.Forms.Label();
-			this.label34 = new System.Windows.Forms.Label();
-			this.label35 = new System.Windows.Forms.Label();
-			this.tbDVBSTeletextPid = new System.Windows.Forms.TextBox();
-			this.tbDVBSVideoPid = new System.Windows.Forms.TextBox();
-			this.tbDVBSAudioPid = new System.Windows.Forms.TextBox();
-			this.label36 = new System.Windows.Forms.Label();
-			this.label37 = new System.Windows.Forms.Label();
-			this.label38 = new System.Windows.Forms.Label();
+			this.label39 = new System.Windows.Forms.Label();
+			this.tbDVBSECMpid = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -433,7 +437,7 @@ namespace MediaPortal.Configuration
 			this.tabPage1.Controls.Add(this.nameTextBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(392, 286);
+			this.tabPage1.Size = new System.Drawing.Size(392, 342);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
@@ -467,7 +471,7 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Controls.Add(this.comboTvStandard);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(392, 286);
+			this.tabPage2.Size = new System.Drawing.Size(392, 342);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Analog";
 			this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
@@ -514,10 +518,55 @@ namespace MediaPortal.Configuration
 			this.tabPage3.Controls.Add(this.label9);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(392, 286);
+			this.tabPage3.Size = new System.Drawing.Size(392, 342);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "DVB-T";
 			this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
+			// 
+			// tbDVBTTeletextPid
+			// 
+			this.tbDVBTTeletextPid.Location = new System.Drawing.Point(152, 232);
+			this.tbDVBTTeletextPid.Name = "tbDVBTTeletextPid";
+			this.tbDVBTTeletextPid.TabIndex = 15;
+			this.tbDVBTTeletextPid.Text = "";
+			// 
+			// tbDVBTVideoPid
+			// 
+			this.tbDVBTVideoPid.Location = new System.Drawing.Point(152, 208);
+			this.tbDVBTVideoPid.Name = "tbDVBTVideoPid";
+			this.tbDVBTVideoPid.TabIndex = 14;
+			this.tbDVBTVideoPid.Text = "";
+			// 
+			// tbDVBTAudioPid
+			// 
+			this.tbDVBTAudioPid.Location = new System.Drawing.Point(152, 184);
+			this.tbDVBTAudioPid.Name = "tbDVBTAudioPid";
+			this.tbDVBTAudioPid.TabIndex = 13;
+			this.tbDVBTAudioPid.Text = "";
+			// 
+			// label32
+			// 
+			this.label32.Location = new System.Drawing.Point(16, 232);
+			this.label32.Name = "label32";
+			this.label32.Size = new System.Drawing.Size(72, 16);
+			this.label32.TabIndex = 12;
+			this.label32.Text = "Teletext pid:";
+			// 
+			// label31
+			// 
+			this.label31.Location = new System.Drawing.Point(16, 208);
+			this.label31.Name = "label31";
+			this.label31.Size = new System.Drawing.Size(72, 16);
+			this.label31.TabIndex = 11;
+			this.label31.Text = "Video pid:";
+			// 
+			// label30
+			// 
+			this.label30.Location = new System.Drawing.Point(16, 184);
+			this.label30.Name = "label30";
+			this.label30.Size = new System.Drawing.Size(72, 16);
+			this.label30.TabIndex = 10;
+			this.label30.Text = "Audio pid:";
 			// 
 			// tbDVBTProvider
 			// 
@@ -632,6 +681,51 @@ namespace MediaPortal.Configuration
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-C";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
+			// 
+			// tbDVBCTeletextPid
+			// 
+			this.tbDVBCTeletextPid.Location = new System.Drawing.Point(160, 280);
+			this.tbDVBCTeletextPid.Name = "tbDVBCTeletextPid";
+			this.tbDVBCTeletextPid.TabIndex = 29;
+			this.tbDVBCTeletextPid.Text = "";
+			// 
+			// tbDVBCVideoPid
+			// 
+			this.tbDVBCVideoPid.Location = new System.Drawing.Point(160, 256);
+			this.tbDVBCVideoPid.Name = "tbDVBCVideoPid";
+			this.tbDVBCVideoPid.TabIndex = 28;
+			this.tbDVBCVideoPid.Text = "";
+			// 
+			// tbDVBCAudioPid
+			// 
+			this.tbDVBCAudioPid.Location = new System.Drawing.Point(160, 232);
+			this.tbDVBCAudioPid.Name = "tbDVBCAudioPid";
+			this.tbDVBCAudioPid.TabIndex = 27;
+			this.tbDVBCAudioPid.Text = "";
+			// 
+			// label33
+			// 
+			this.label33.Location = new System.Drawing.Point(24, 280);
+			this.label33.Name = "label33";
+			this.label33.Size = new System.Drawing.Size(72, 16);
+			this.label33.TabIndex = 26;
+			this.label33.Text = "Teletext pid:";
+			// 
+			// label34
+			// 
+			this.label34.Location = new System.Drawing.Point(24, 256);
+			this.label34.Name = "label34";
+			this.label34.Size = new System.Drawing.Size(72, 16);
+			this.label34.TabIndex = 25;
+			this.label34.Text = "Video pid:";
+			// 
+			// label35
+			// 
+			this.label35.Location = new System.Drawing.Point(24, 232);
+			this.label35.Name = "label35";
+			this.label35.Size = new System.Drawing.Size(72, 16);
+			this.label35.TabIndex = 24;
+			this.label35.Text = "Audio pid:";
 			// 
 			// tbDVBCProvider
 			// 
@@ -802,6 +896,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.tbDVBSECMpid);
+			this.tabPage5.Controls.Add(this.label39);
 			this.tabPage5.Controls.Add(this.tbDVBSTeletextPid);
 			this.tabPage5.Controls.Add(this.tbDVBSVideoPid);
 			this.tabPage5.Controls.Add(this.tbDVBSAudioPid);
@@ -830,6 +926,51 @@ namespace MediaPortal.Configuration
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "DVB-S";
 			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
+			// 
+			// tbDVBSTeletextPid
+			// 
+			this.tbDVBSTeletextPid.Location = new System.Drawing.Point(160, 272);
+			this.tbDVBSTeletextPid.Name = "tbDVBSTeletextPid";
+			this.tbDVBSTeletextPid.TabIndex = 43;
+			this.tbDVBSTeletextPid.Text = "";
+			// 
+			// tbDVBSVideoPid
+			// 
+			this.tbDVBSVideoPid.Location = new System.Drawing.Point(160, 248);
+			this.tbDVBSVideoPid.Name = "tbDVBSVideoPid";
+			this.tbDVBSVideoPid.TabIndex = 42;
+			this.tbDVBSVideoPid.Text = "";
+			// 
+			// tbDVBSAudioPid
+			// 
+			this.tbDVBSAudioPid.Location = new System.Drawing.Point(160, 224);
+			this.tbDVBSAudioPid.Name = "tbDVBSAudioPid";
+			this.tbDVBSAudioPid.TabIndex = 41;
+			this.tbDVBSAudioPid.Text = "";
+			// 
+			// label36
+			// 
+			this.label36.Location = new System.Drawing.Point(24, 272);
+			this.label36.Name = "label36";
+			this.label36.Size = new System.Drawing.Size(72, 16);
+			this.label36.TabIndex = 40;
+			this.label36.Text = "Teletext pid:";
+			// 
+			// label37
+			// 
+			this.label37.Location = new System.Drawing.Point(24, 248);
+			this.label37.Name = "label37";
+			this.label37.Size = new System.Drawing.Size(72, 16);
+			this.label37.TabIndex = 39;
+			this.label37.Text = "Video pid:";
+			// 
+			// label38
+			// 
+			this.label38.Location = new System.Drawing.Point(24, 224);
+			this.label38.Name = "label38";
+			this.label38.Size = new System.Drawing.Size(72, 16);
+			this.label38.TabIndex = 38;
+			this.label38.Text = "Audio pid:";
 			// 
 			// tbDVBSProvider
 			// 
@@ -984,145 +1125,25 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Controls.Add(this.inputComboBox);
 			this.tabPage6.Location = new System.Drawing.Point(4, 22);
 			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.Size = new System.Drawing.Size(392, 286);
+			this.tabPage6.Size = new System.Drawing.Size(392, 342);
 			this.tabPage6.TabIndex = 5;
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// label30
+			// label39
 			// 
-			this.label30.Location = new System.Drawing.Point(16, 184);
-			this.label30.Name = "label30";
-			this.label30.Size = new System.Drawing.Size(72, 16);
-			this.label30.TabIndex = 10;
-			this.label30.Text = "Audio pid:";
+			this.label39.Location = new System.Drawing.Point(24, 296);
+			this.label39.Name = "label39";
+			this.label39.Size = new System.Drawing.Size(100, 16);
+			this.label39.TabIndex = 44;
+			this.label39.Text = "ECM pid:";
 			// 
-			// label31
+			// tbDVBSECMpid
 			// 
-			this.label31.Location = new System.Drawing.Point(16, 208);
-			this.label31.Name = "label31";
-			this.label31.Size = new System.Drawing.Size(72, 16);
-			this.label31.TabIndex = 11;
-			this.label31.Text = "Video pid:";
-			// 
-			// label32
-			// 
-			this.label32.Location = new System.Drawing.Point(16, 232);
-			this.label32.Name = "label32";
-			this.label32.Size = new System.Drawing.Size(72, 16);
-			this.label32.TabIndex = 12;
-			this.label32.Text = "Teletext pid:";
-			// 
-			// tbDVBTAudioPid
-			// 
-			this.tbDVBTAudioPid.Location = new System.Drawing.Point(152, 184);
-			this.tbDVBTAudioPid.Name = "tbDVBTAudioPid";
-			this.tbDVBTAudioPid.TabIndex = 13;
-			this.tbDVBTAudioPid.Text = "";
-			// 
-			// tbDVBTVideoPid
-			// 
-			this.tbDVBTVideoPid.Location = new System.Drawing.Point(152, 208);
-			this.tbDVBTVideoPid.Name = "tbDVBTVideoPid";
-			this.tbDVBTVideoPid.TabIndex = 14;
-			this.tbDVBTVideoPid.Text = "";
-			// 
-			// tbDVBTTeletextPid
-			// 
-			this.tbDVBTTeletextPid.Location = new System.Drawing.Point(152, 232);
-			this.tbDVBTTeletextPid.Name = "tbDVBTTeletextPid";
-			this.tbDVBTTeletextPid.TabIndex = 15;
-			this.tbDVBTTeletextPid.Text = "";
-			// 
-			// tbDVBCTeletextPid
-			// 
-			this.tbDVBCTeletextPid.Location = new System.Drawing.Point(160, 280);
-			this.tbDVBCTeletextPid.Name = "tbDVBCTeletextPid";
-			this.tbDVBCTeletextPid.TabIndex = 29;
-			this.tbDVBCTeletextPid.Text = "";
-			// 
-			// tbDVBCVideoPid
-			// 
-			this.tbDVBCVideoPid.Location = new System.Drawing.Point(160, 256);
-			this.tbDVBCVideoPid.Name = "tbDVBCVideoPid";
-			this.tbDVBCVideoPid.TabIndex = 28;
-			this.tbDVBCVideoPid.Text = "";
-			// 
-			// tbDVBCAudioPid
-			// 
-			this.tbDVBCAudioPid.Location = new System.Drawing.Point(160, 232);
-			this.tbDVBCAudioPid.Name = "tbDVBCAudioPid";
-			this.tbDVBCAudioPid.TabIndex = 27;
-			this.tbDVBCAudioPid.Text = "";
-			// 
-			// label33
-			// 
-			this.label33.Location = new System.Drawing.Point(24, 280);
-			this.label33.Name = "label33";
-			this.label33.Size = new System.Drawing.Size(72, 16);
-			this.label33.TabIndex = 26;
-			this.label33.Text = "Teletext pid:";
-			// 
-			// label34
-			// 
-			this.label34.Location = new System.Drawing.Point(24, 256);
-			this.label34.Name = "label34";
-			this.label34.Size = new System.Drawing.Size(72, 16);
-			this.label34.TabIndex = 25;
-			this.label34.Text = "Video pid:";
-			// 
-			// label35
-			// 
-			this.label35.Location = new System.Drawing.Point(24, 232);
-			this.label35.Name = "label35";
-			this.label35.Size = new System.Drawing.Size(72, 16);
-			this.label35.TabIndex = 24;
-			this.label35.Text = "Audio pid:";
-			// 
-			// tbDVBSTeletextPid
-			// 
-			this.tbDVBSTeletextPid.Location = new System.Drawing.Point(160, 272);
-			this.tbDVBSTeletextPid.Name = "tbDVBSTeletextPid";
-			this.tbDVBSTeletextPid.TabIndex = 43;
-			this.tbDVBSTeletextPid.Text = "";
-			// 
-			// tbDVBSVideoPid
-			// 
-			this.tbDVBSVideoPid.Location = new System.Drawing.Point(160, 248);
-			this.tbDVBSVideoPid.Name = "tbDVBSVideoPid";
-			this.tbDVBSVideoPid.TabIndex = 42;
-			this.tbDVBSVideoPid.Text = "";
-			// 
-			// tbDVBSAudioPid
-			// 
-			this.tbDVBSAudioPid.Location = new System.Drawing.Point(160, 224);
-			this.tbDVBSAudioPid.Name = "tbDVBSAudioPid";
-			this.tbDVBSAudioPid.TabIndex = 41;
-			this.tbDVBSAudioPid.Text = "";
-			// 
-			// label36
-			// 
-			this.label36.Location = new System.Drawing.Point(24, 272);
-			this.label36.Name = "label36";
-			this.label36.Size = new System.Drawing.Size(72, 16);
-			this.label36.TabIndex = 40;
-			this.label36.Text = "Teletext pid:";
-			// 
-			// label37
-			// 
-			this.label37.Location = new System.Drawing.Point(24, 248);
-			this.label37.Name = "label37";
-			this.label37.Size = new System.Drawing.Size(72, 16);
-			this.label37.TabIndex = 39;
-			this.label37.Text = "Video pid:";
-			// 
-			// label38
-			// 
-			this.label38.Location = new System.Drawing.Point(24, 224);
-			this.label38.Name = "label38";
-			this.label38.Size = new System.Drawing.Size(72, 16);
-			this.label38.TabIndex = 38;
-			this.label38.Text = "Audio pid:";
+			this.tbDVBSECMpid.Location = new System.Drawing.Point(160, 296);
+			this.tbDVBSECMpid.Name = "tbDVBSECMpid";
+			this.tbDVBSECMpid.TabIndex = 45;
+			this.tbDVBSECMpid.Text = "";
 			// 
 			// EditTVChannelForm
 			// 
@@ -1459,6 +1480,7 @@ namespace MediaPortal.Configuration
 						tbDVBSAudioPid.Text=ch.AudioPid.ToString();
 						tbDVBSVideoPid.Text=ch.VideoPid.ToString();
 						tbDVBSTeletextPid.Text=ch.TeletextPid.ToString();
+						tbDVBSECMpid.Text = ch.ECMPid.ToString();
 
 					}
 				}//if(channel != null)
@@ -1692,6 +1714,7 @@ namespace MediaPortal.Configuration
 					ch.AudioPid=audioPid;
 					ch.VideoPid=videoPid;
 					ch.TeletextPid=teletextPid;
+					ch.ECMPid = Int32.Parse(tbDVBSECMpid.Text);
 					TVDatabase.UpdateSatChannel(ch);
 				}
 			}

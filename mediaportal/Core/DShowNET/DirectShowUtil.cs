@@ -652,41 +652,37 @@ namespace DShowNET
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(0,ref guidNone);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNone);
-								return;
+								
 							}
 							if (DeInterlaceMode==1)
 							{
 								//Bob
 								DebugWrite("VMR9: select deinterlace mode:BOB");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_BOB);
-								return;
+								
 							}
 							if (DeInterlaceMode==2)
 							{
 								//Weave
 								DebugWrite("VMR9: select deinterlace mode:Weave");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
-								return;
+								
 							}
-							DebugWrite("VMR9: select deinterlace mode:NextBest");
-							DirectShowUtil.DebugWrite("VMR9:got IVMRDeinterlaceControl9");
+
 							VMR9VideoDesc videodesc=new VMR9VideoDesc();
 							IPin pinIn;
 							pinIn=FindPinNr(pBasefilter,PinDirection.Input,0);
 							if (pinIn!=null)
 							{
-								DirectShowUtil.DebugWrite("VMR9:got pin0");
 								IntPtr ptrPMT=Marshal.AllocCoTaskMem(1000);
 								hr=pinIn.ConnectionMediaType(ptrPMT);
 								if (hr==0)
 								{
-									DirectShowUtil.DebugWrite("VMR9:got mediatype ");
 									AMMediaType mediaType;
 									mediaType=(AMMediaType)Marshal.PtrToStructure(ptrPMT,typeof(AMMediaType));
 									
 									if (mediaType.formatType==FormatType.VideoInfo)
 									{
-										DirectShowUtil.DebugWrite("VMR9:got mediatype :videoInfo");
 										VideoInfoHeader vidInfo;
 										vidInfo=(VideoInfoHeader)Marshal.PtrToStructure(mediaType.formatPtr,typeof(VideoInfoHeader));
 										DirectShowUtil.DebugWrite("VMR9:ok");
@@ -708,9 +704,7 @@ namespace DShowNET
 									if (mediaType.formatType==FormatType.VideoInfo2)
 									{
 										VideoInfoHeader2 vidInfo2;
-										DirectShowUtil.DebugWrite("VMR9:got mediatype :videoInfo2");
 										vidInfo2=(VideoInfoHeader2)Marshal.PtrToStructure(mediaType.formatPtr,typeof(VideoInfoHeader2));
-										DirectShowUtil.DebugWrite("VMR9:ok");
 										videodesc.dwFourCC=vidInfo2.bmpInfoHdr.biCompression;
 										videodesc.dwSampleWidth=(uint)vidInfo2.bmpInfoHdr.biWidth;
 										videodesc.dwSampleHeight=(uint)vidInfo2.bmpInfoHdr.biHeight;
@@ -724,21 +718,21 @@ namespace DShowNET
 										{
 											videodesc.OutputFrameFreq.dwNumerator=2*videodesc.InputSampleFreq.dwNumerator;
 										}
-										DirectShowUtil.DebugWrite("src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10}",
+										DirectShowUtil.DebugWrite("src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11}",
 												vidInfo2.rcsource.left,vidInfo2.rcsource.top,
 												vidInfo2.rcsource.right,vidInfo2.rcsource.bottom,
 												vidInfo2.rctarget.left,vidInfo2.rctarget.top,
 												vidInfo2.rctarget.right,vidInfo2.rctarget.bottom,
 												vidInfo2.AvgTimePerFrame,
-											vidInfo2.dwPictAspectRatioX,vidInfo2.dwPictAspectRatioY);
+												vidInfo2.dwPictAspectRatioX,vidInfo2.dwPictAspectRatioY,
+												IsInterlaced(vidInfo2.dwInterlaceFlags) );
 
 
 									}
 								}
-								else DirectShowUtil.DebugWrite("VMR9:Unable to get media type for pin0");
 								Marshal.FreeCoTaskMem(ptrPMT);
 							}
-							else DirectShowUtil.DebugWrite("VMR9:Unable to get pin0");
+							if (DeInterlaceMode!=3) return;
 
 							Guid guidDeint =Deinterlace.DXVA_DeinterlaceBobDevice;
 							videodesc.dwSize = (uint)Marshal.SizeOf(videodesc);
