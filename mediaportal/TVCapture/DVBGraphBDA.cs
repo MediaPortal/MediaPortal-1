@@ -1527,7 +1527,7 @@ namespace MediaPortal.TV.Recording
 			TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
 
 			myLocator.CarrierFrequency		= 698000;
-			
+	
 			myLocator.Bandwidth						= 8;//8; // in megahertz (7 or 8)
 			myLocator.SymbolRate					= -1;
 			myLocator.OtherFrequencyInUse	= false;
@@ -1542,8 +1542,8 @@ namespace MediaPortal.TV.Recording
 			myLocator.OuterFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			myLocator.OuterFECRate				= TunerLib.BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
 
-			myTuneRequest.ONID	= 8720;					//original network id
-			myTuneRequest.TSID	= 1;						//transport stream id
+			myTuneRequest.ONID	= 1;//8720;					//original network id
+			myTuneRequest.TSID	= 1;//1;						//transport stream id
 			myTuneRequest.SID		= 12;						//service id
 			myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 			
