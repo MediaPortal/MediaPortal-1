@@ -87,13 +87,17 @@ namespace MediaPortal.GUI.Video
 
     void LoadSettings()
     {
+			string key="movieplayer";
+			if (g_Player.IsTV || g_Player.IsTVRecording)
+				key="mytv";
+			else if (g_Player.IsDVD)
+				key="dvdplayer";
+
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
 				m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
         m_iMaxTimeOSDOnscreen=1000*xmlreader.GetValueAsInt("movieplayer","osdtimeout",5);
-        string strValue=xmlreader.GetValueAsString("movieplayer","defaultar","normal");
-        if (g_Player.IsDVD)
-          strValue=xmlreader.GetValueAsString("dvdplayer","defaultar","normal");
+        string strValue=xmlreader.GetValueAsString(key,"defaultar","normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
         if (strValue.Equals("stretch")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
         if (strValue.Equals("normal")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Normal;
@@ -107,9 +111,12 @@ namespace MediaPortal.GUI.Video
     {
       using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        string strKey="movieplayer";
-        if (g_Player.IsDVD)
-          strKey="dvdplayer";
+				string strKey="movieplayer";
+				if (g_Player.IsTV || g_Player.IsTVRecording)
+					strKey="mytv";
+				else if (g_Player.IsDVD)
+					strKey="dvdplayer";
+
         switch (GUIGraphicsContext.ARType)
         {
           case MediaPortal.GUI.Library.Geometry.Type.Zoom:
