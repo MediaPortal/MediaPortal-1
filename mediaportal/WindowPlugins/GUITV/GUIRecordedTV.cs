@@ -280,14 +280,17 @@ namespace MediaPortal.GUI.TV
 
     void AddRecordingToDatabase(TVRecorded rec)
     {
-      VideoDatabase.AddMovieFile(rec.FileName);
+      int movieid=VideoDatabase.AddMovieFile(rec.FileName);
       IMDBMovie movieDetails = new IMDBMovie();
-      int movieid=VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
-      movieDetails.Title=rec.Title;
-      movieDetails.Genre=rec.Genre;
-      movieDetails.Plot=rec.Description;
-      movieDetails.Year=rec.StartTime.Year;
-      VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
+			if (movieid>=0)
+			{
+				movieDetails.Title=rec.Title;
+				movieDetails.Genre=rec.Genre;
+				movieDetails.Plot=rec.Description;
+				movieDetails.Year=rec.StartTime.Year;
+				Log.Write("Set movie details");
+				VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
+			}
     }
 
     void UpdateButtons()
@@ -546,6 +549,7 @@ namespace MediaPortal.GUI.TV
         int stoptime=0;
         if (movieid >=0)
         {
+					Log.Write("play got movie id:{0} for {1}", movieid,rec.FileName);
           stoptime=VideoDatabase.GetMovieStopTime(movieid);
           if (stoptime>0)
           {

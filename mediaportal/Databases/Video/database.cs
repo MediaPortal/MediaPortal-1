@@ -205,7 +205,7 @@ namespace MediaPortal.Video.Database
       return cdlabel;
     }
 
-    static public void AddMovieFile( string strFile)
+    static public int AddMovieFile( string strFile)
     {
       bool bHassubtitles=false;
       if (strFile.ToLower().IndexOf(".ifo")>=0) bHassubtitles=true;
@@ -227,7 +227,7 @@ namespace MediaPortal.Video.Database
           break;
         }
       }  
-      VideoDatabase.AddMovie(strFile, bHassubtitles);
+      return VideoDatabase.AddMovie(strFile, bHassubtitles);
     }
 
     static public int AddMovie( string strFilenameAndPath, bool bHassubtitles)
@@ -248,10 +248,12 @@ namespace MediaPortal.Video.Database
 					string strSQL;
 
 					int lPathId = AddPath(strPath);
+					
 					if (lPathId < 0) return -1;
           int iHasSubs=0;
           if (bHassubtitles) iHasSubs=1;
 					strSQL=String.Format("insert into movie (idMovie, idPath, hasSubtitles, discid) values( NULL, {0}, {1},'')",lPathId,iHasSubs);
+					
 					m_db.Execute(strSQL);
 					lMovieId=m_db.LastInsertID();
 					AddFile(lMovieId,lPathId,strFileName);
@@ -1146,7 +1148,7 @@ namespace MediaPortal.Video.Database
 				strRating=String.Format("{0}", details1.Rating);
 				if (strRating=="") strRating="0.0";
 				strSQL=String.Format("select * from movieinfo where idmovie={0}", lMovieId);
-				
+			//	Log.Write("dbs:{0}", strSQL);
 				SQLiteResultSet results;
 				results=m_db.Execute(strSQL);
 				if (results.Rows.Count == 0) 
@@ -1161,12 +1163,13 @@ namespace MediaPortal.Video.Database
 															details1.ThumbURL,details1.Title,
 															details1.IMDBNumber );
 
+		//			Log.Write("dbs:{0}", strSQL);
 					m_db.Execute(strSQL);
                 
 				}
 				else
 				{
-					strSQL=String.Format("update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}' strPictureURL='{10}', strTitle='{11}' IMDBID='{12}' where idMovie={13}",
+					strSQL=String.Format("update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}' where idMovie={13}",
 																		lDirector,details1.PlotOutline,
 																		details1.Plot,details1.TagLine,
 																		details1.Votes,strRating,
@@ -1175,12 +1178,14 @@ namespace MediaPortal.Video.Database
 																		details1.ThumbURL,details1.Title,
 																		details1.IMDBNumber,
 																		lMovieId);
+					
+			//		Log.Write("dbs:{0}", strSQL);
 					m_db.Execute(strSQL);
 				}
 			}
 			catch (Exception ex) 
 			{
-				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.Write("videodatabase exception err:{0} src:{2}, stack:{1}", ex.Message,ex.Source,ex.StackTrace);
 				Open();
 			}
 		}
