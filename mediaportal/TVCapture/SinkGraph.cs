@@ -298,6 +298,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     void ConnectEncoder()
     {
+      if (m_videoCaptureDevice==null) return;
       if (!m_mpeg2Demux.IsRendered) 
       {
         // connect video capture pin->mpeg2 demux input
@@ -546,6 +547,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
       if (m_mpeg2Demux==null) return false;
+      if (m_videoCaptureDevice==null) return false;
 
       if (m_graphState==State.Viewing) 
       {
