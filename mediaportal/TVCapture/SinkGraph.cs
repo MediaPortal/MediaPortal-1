@@ -874,7 +874,7 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
     public bool SignalPresent()
     {
-      if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return false;
+      if (m_graphState!=State.Radio&&m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return false;
       if (m_TVTuner==null) return true;
       AMTunerSignalStrength strength;
       m_TVTuner.SignalPresent(out strength);
@@ -1117,8 +1117,19 @@ namespace MediaPortal.TV.Recording
 					Vmr9.RemoveVMR9();
 					Vmr9=null;
 				}
+				
 				AddPreferredCodecs(true,false);
+
+				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+					m_captureGraphBuilder,
+					m_captureFilter, 
+					true, 
+					false, 
+					false, 
+					false ,
+					cardName);
 				m_mpeg2Demux.StartListening();
+
 
 				Log.Write("SinkGraph:StartRadio() started");
 				m_graphState=State.Radio;

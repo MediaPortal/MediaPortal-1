@@ -5,6 +5,7 @@ using DShowNET;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.Radio.Database;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration
 {
@@ -30,7 +31,7 @@ namespace MediaPortal.Configuration
 
 		public override void OnStartTuning(int startValue)
 		{
-			
+			Log.Write("Radio:Start scan...");
 			m_graph.TuneRadioFrequency(startValue);
 			currentChannel=startValue;
 			channelNo=1;
@@ -98,7 +99,8 @@ namespace MediaPortal.Configuration
         {
           //
           // We have found a channel!
-          //
+					//
+					Log.Write("Radio:found signal on {0}",currentChannel);
 					MediaPortal.Radio.Database.RadioStation newStation =new MediaPortal.Radio.Database.RadioStation();
           newStation.Name=String.Format("Station{0}", channelNo);
           newStation.Channel=channelNo;
