@@ -132,13 +132,16 @@ namespace MediaPortal.Configuration
       AddChildSection(television, new Sections.TVPostProcessing());
 			AddChildSection(television, new Sections.DVBSSS2());
 
+			SectionSettings remote = new Sections.Remote();
+			AddSection(remote);
+
       Log.Write("add USBUIRT section");
-      AddSection(new Sections.USBUIRT());
-		Log.Write("add SerialUIR section");
-		serialuir = new Sections.SerialUIR();
-		AddSection(new Sections.SerialUIR());
+      AddChildSection(remote, new Sections.USBUIRT());
+			Log.Write("add SerialUIR section");
+			serialuir=new Sections.SerialUIR();
+			AddChildSection(remote, serialuir);
 			Log.Write("add WINLIRC section");//sd00//
-			AddSection(new Sections.WINLIRC());//sd00//
+			AddChildSection(remote, new Sections.WINLIRC());//sd00//
       Log.Write("add weather section");
       AddSection(new Sections.Weather());
       Log.Write("add plugins section");

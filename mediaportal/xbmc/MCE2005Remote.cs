@@ -180,6 +180,7 @@ namespace MediaPortal
                                                       [In] uint cbSize);  
 
     bool RemoteFound=false;
+		bool RemoteEnabled=false;
 		public MCE2005Remote()
 		{
 		}
@@ -187,7 +188,11 @@ namespace MediaPortal
     public void Init(IntPtr hwnd)
     {
       if (RemoteFound) return;// already registered
-
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				RemoteEnabled= xmlreader.GetValueAsBool("remote", "mce2005", false);
+				if (!RemoteEnabled) return;
+			}
       try
       {
         //register device
@@ -248,6 +253,7 @@ namespace MediaPortal
       key=(char)0;
       action=null;
       if (!RemoteFound) return false;
+			if (!RemoteEnabled) return false;
       int wparam=0;
       int lparam=0;
       try

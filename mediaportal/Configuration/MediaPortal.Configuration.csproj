@@ -608,6 +608,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\Remote.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Remote.resx"
+                    DependentUpon = "Remote.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\SerialUIR.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
