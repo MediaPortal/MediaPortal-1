@@ -4163,7 +4163,7 @@ namespace MediaPortal
       Filters filters=new Filters();
       int iSelected=0;
       int i=0;
-      foreach (Filter filter in filters.FileWriters) 
+      foreach (Filter filter in filters.LegacyFilters) 
       {
         if ( String.Compare(filter.Name,"DVD Navigator",true)==0 ||
              String.Compare(filter.Name,"CyberLink DVD Navigator",true)==0)

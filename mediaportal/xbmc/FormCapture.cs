@@ -22,25 +22,18 @@ namespace MediaPortal
 
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ComboBox comboVideoDevice;
-    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.ComboBox comboVideoCompressor;
-    private System.Windows.Forms.ComboBox comboAudioDevice;
+    private System.Windows.Forms.ComboBox comboVideoCodec;
     private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.ComboBox comboAudioCompressor;
+    private System.Windows.Forms.ComboBox comboAudioCodec;
     private System.Windows.Forms.Button buttonOK;
     private System.Windows.Forms.ListView listFilters;
     private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.ComponentModel.IContainer components;
 
-    string m_strAudioCompressor="";
-    string m_strVideoCompressor="";
+    string m_strAudioCodec="";
+    string m_strVideoCodec="";
     string m_strVideoDevice="";
-    string m_strCaptureFormat;
-    private System.Windows.Forms.GroupBox groupBox11;
-    private System.Windows.Forms.Label label22;
-    private System.Windows.Forms.ComboBox comboBoxCaptureFormat;
-    string m_strAudioDevice="";
     bool   m_bUseForRecording;
     private System.Windows.Forms.CheckBox checkBoxTV;
     private System.Windows.Forms.CheckBox checkBoxRecord;
@@ -115,12 +108,10 @@ namespace MediaPortal
 			InitializeComponent();
 
 			toolTip1.SetToolTip(comboVideoDevice,"Select your TV capture card from the list");
-			toolTip1.SetToolTip(comboAudioDevice,"If you have a physical cable from your TV capture card\rto your soundcard then here you should select your soundcard.\rOtherwise leave it to NONE");
-			toolTip1.SetToolTip(comboVideoCompressor,"Select which video compressor to use when recording\rNot needed if your TV capture card has an hardware MPEG2 encoder");
-			toolTip1.SetToolTip(comboAudioCompressor,"Select which audio compressor to use when recording\rNot needed if your TV capture card has an hardware MPEG2 encoder");
+			toolTip1.SetToolTip(comboVideoCodec,"Select which video Codec to use when recording\rNot needed if your TV capture card has an hardware MPEG2 encoder");
+			toolTip1.SetToolTip(comboAudioCodec,"Select which audio Codec to use when recording\rNot needed if your TV capture card has an hardware MPEG2 encoder");
 			toolTip1.SetToolTip(listFilters,"This list shows which filters are running when you watch or record tv.\rYou can configure one by selecting it\rand choose Setup Filter");
 			toolTip1.SetToolTip(buttonSetupFilter,"Setup selected filter");
-			toolTip1.SetToolTip(comboBoxCaptureFormat,"Select which format you want for your recordings\rIf your TV capture card has an onboard MPEG2 encoder then choose .mpg");
 			toolTip1.SetToolTip(checkBoxTV,"Use this TV capture card for watching live TV");
 			toolTip1.SetToolTip(checkBoxRecord,"Use this TV capture card for recording TV");
 			toolTip1.SetToolTip(comboFrameSize,"Select the resolution you want to record/view TV");
@@ -153,18 +144,13 @@ namespace MediaPortal
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FormCapture));
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboVideoDevice = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.comboAudioDevice = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboVideoCompressor = new System.Windows.Forms.ComboBox();
+			this.comboVideoCodec= new System.Windows.Forms.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboAudioCompressor = new System.Windows.Forms.ComboBox();
+			this.comboAudioCodec= new System.Windows.Forms.ComboBox();
 			this.buttonOK = new System.Windows.Forms.Button();
 			this.listFilters = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.groupBox11 = new System.Windows.Forms.GroupBox();
-			this.label22 = new System.Windows.Forms.Label();
-			this.comboBoxCaptureFormat = new System.Windows.Forms.ComboBox();
 			this.checkBoxTV = new System.Windows.Forms.CheckBox();
 			this.checkBoxRecord = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -176,7 +162,6 @@ namespace MediaPortal
 			this.label5 = new System.Windows.Forms.Label();
 			this.buttonSetupFilter = new System.Windows.Forms.Button();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.groupBox11.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -195,35 +180,20 @@ namespace MediaPortal
 			this.comboVideoDevice.Size = new System.Drawing.Size(248, 21);
 			this.comboVideoDevice.TabIndex = 0;
 			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(24, 56);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(40, 23);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "Audio:";
-			// 
-			// comboAudioDevice
-			// 
-			this.comboAudioDevice.Location = new System.Drawing.Point(128, 56);
-			this.comboAudioDevice.Name = "comboAudioDevice";
-			this.comboAudioDevice.Size = new System.Drawing.Size(248, 21);
-			this.comboAudioDevice.TabIndex = 1;
-			// 
 			// label3
 			// 
 			this.label3.Location = new System.Drawing.Point(24, 96);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(104, 23);
 			this.label3.TabIndex = 4;
-			this.label3.Text = "Video Compressor:";
+			this.label3.Text = "Video Codec";
 			// 
-			// comboVideoCompressor
+			// comboVideoCodec
 			// 
-			this.comboVideoCompressor.Location = new System.Drawing.Point(128, 96);
-			this.comboVideoCompressor.Name = "comboVideoCompressor";
-			this.comboVideoCompressor.Size = new System.Drawing.Size(248, 21);
-			this.comboVideoCompressor.TabIndex = 2;
+			this.comboVideoCodec.Location = new System.Drawing.Point(128, 96);
+			this.comboVideoCodec.Name = "comboVideoCodec";
+			this.comboVideoCodec.Size = new System.Drawing.Size(248, 21);
+			this.comboVideoCodec.TabIndex = 2;
 			// 
 			// label4
 			// 
@@ -231,14 +201,14 @@ namespace MediaPortal
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(104, 23);
 			this.label4.TabIndex = 6;
-			this.label4.Text = "Audio Compressor:";
+			this.label4.Text = "Audio Codec";
 			// 
-			// comboAudioCompressor
+			// comboAudioCodec
 			// 
-			this.comboAudioCompressor.Location = new System.Drawing.Point(128, 128);
-			this.comboAudioCompressor.Name = "comboAudioCompressor";
-			this.comboAudioCompressor.Size = new System.Drawing.Size(248, 21);
-			this.comboAudioCompressor.TabIndex = 3;
+			this.comboAudioCodec.Location = new System.Drawing.Point(128, 128);
+			this.comboAudioCodec.Name = "comboAudioCodec";
+			this.comboAudioCodec.Size = new System.Drawing.Size(248, 21);
+			this.comboAudioCodec.TabIndex = 3;
 			// 
 			// buttonOK
 			// 
@@ -265,37 +235,6 @@ namespace MediaPortal
 			// 
 			this.columnHeader1.Text = "Filter";
 			this.columnHeader1.Width = 327;
-			// 
-			// groupBox11
-			// 
-			this.groupBox11.Controls.Add(this.label22);
-			this.groupBox11.Controls.Add(this.comboBoxCaptureFormat);
-			this.groupBox11.Location = new System.Drawing.Point(400, 16);
-			this.groupBox11.Name = "groupBox11";
-			this.groupBox11.Size = new System.Drawing.Size(176, 72);
-			this.groupBox11.TabIndex = 12;
-			this.groupBox11.TabStop = false;
-			this.groupBox11.Text = "Recording format:";
-			// 
-			// label22
-			// 
-			this.label22.Location = new System.Drawing.Point(16, 24);
-			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(40, 16);
-			this.label22.TabIndex = 11;
-			this.label22.Text = "Format:";
-			// 
-			// comboBoxCaptureFormat
-			// 
-			this.comboBoxCaptureFormat.Items.AddRange(new object[] {
-																															 ".avi",
-																															 ".asf",
-																															 ".mpg"});
-			this.comboBoxCaptureFormat.Location = new System.Drawing.Point(64, 24);
-			this.comboBoxCaptureFormat.Name = "comboBoxCaptureFormat";
-			this.comboBoxCaptureFormat.Size = new System.Drawing.Size(88, 21);
-			this.comboBoxCaptureFormat.TabIndex = 0;
-			this.comboBoxCaptureFormat.Text = ".avi";
 			// 
 			// checkBoxTV
 			// 
@@ -391,15 +330,12 @@ namespace MediaPortal
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.checkBoxRecord);
 			this.Controls.Add(this.checkBoxTV);
-			this.Controls.Add(this.groupBox11);
 			this.Controls.Add(this.listFilters);
 			this.Controls.Add(this.buttonOK);
-			this.Controls.Add(this.comboAudioCompressor);
+			this.Controls.Add(this.comboAudioCodec);
 			this.Controls.Add(this.label4);
-			this.Controls.Add(this.comboVideoCompressor);
+			this.Controls.Add(this.comboVideoCodec);
 			this.Controls.Add(this.label3);
-			this.Controls.Add(this.comboAudioDevice);
-			this.Controls.Add(this.label2);
 			this.Controls.Add(this.comboVideoDevice);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.groupBox1);
@@ -408,7 +344,6 @@ namespace MediaPortal
 			this.Name = "FormCapture";
 			this.Text = "FormCapture";
 			this.Load += new System.EventHandler(this.FormCapture_Load);
-			this.groupBox11.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -431,53 +366,32 @@ namespace MediaPortal
       }
       comboVideoDevice.SelectedIndex=index;
 
-      // audio capture devices
-      comboAudioDevice.Items.Clear();
-      comboAudioDevice.Items.Add("none");
-      i=1;
-      index=0;
-      foreach (Filter filter in filters.AudioInputDevices)
-      {
-        comboAudioDevice.Items.Add(filter.Name);
-        if (m_strAudioDevice.Length>0 && String.Compare(filter.Name,m_strAudioDevice,true)==0) index=i;
-        ++i;
-      }
-      comboAudioDevice.SelectedIndex=index;
 
-      // audio compressors
-      comboAudioCompressor.Items.Clear();
-      comboAudioCompressor.Items.Add("none");
+      // audio Codecs
+      comboAudioCodec.Items.Clear();
+      comboAudioCodec.Items.Add("none");
       i=1;
       index=0;
-      foreach (Filter filter in filters.AudioCompressors)
+      foreach (Filter filter in filters.LegacyFilters)
       {           
-        comboAudioCompressor.Items.Add(filter.Name);
-        if (m_strAudioCompressor.Length>0 && String.Compare(filter.Name,m_strAudioCompressor,true)==0) index=i;
+        comboAudioCodec.Items.Add(filter.Name);
+        if (m_strAudioCodec.Length>0 && String.Compare(filter.Name,m_strAudioCodec,true)==0) index=i;
         ++i;
       }
-      comboAudioCompressor.SelectedIndex=index;
+      comboAudioCodec.SelectedIndex=index;
 
-      // Video compressors
-      comboVideoCompressor.Items.Clear();
-      comboVideoCompressor.Items.Add("none");
+      // Video Codecs
+      comboVideoCodec.Items.Clear();
+      comboVideoCodec.Items.Add("none");
       i=1;
       index=0;
-      foreach (Filter filter in filters.VideoCompressors)
+      foreach (Filter filter in filters.LegacyFilters)
       {
-        comboVideoCompressor.Items.Add(filter.Name);
-        if (m_strVideoCompressor.Length>0 && String.Compare(filter.Name,m_strVideoCompressor,true)==0) index=i;
+        comboVideoCodec.Items.Add(filter.Name);
+        if (m_strVideoCodec.Length>0 && String.Compare(filter.Name,m_strVideoCodec,true)==0) index=i;
         ++i;
       }
-      comboVideoCompressor.SelectedIndex=index;
-
-      for (int x=0; x < comboBoxCaptureFormat.Items.Count;++x)
-      {
-        if ( ((string)comboBoxCaptureFormat.Items[x]) ==CaptureFormat)
-        {
-          comboBoxCaptureFormat.SelectedIndex=x;
-          break;
-        }
-      }
+      comboVideoCodec.SelectedIndex=index;
 
       checkBoxRecord.Checked=m_bUseForRecording;
       checkBoxTV.Checked=m_bUseForTV;
@@ -502,10 +416,8 @@ namespace MediaPortal
     private void buttonOK_Click(object sender, System.EventArgs e)
     {
       VideoDevice=(string)comboVideoDevice.SelectedItem;
-      AudioDevice=(string)comboAudioDevice.SelectedItem;
-      AudioCompressor=(string)comboAudioCompressor.SelectedItem;
-      VideoCompressor=(string)comboVideoCompressor.SelectedItem;
-      CaptureFormat=(string)comboBoxCaptureFormat.SelectedItem;
+      AudioCodec=(string)comboAudioCodec.SelectedItem;
+      VideoCodec=(string)comboVideoCodec.SelectedItem;
       m_bUseForRecording=checkBoxRecord.Checked;
       m_bUseForTV=checkBoxTV.Checked;
       string strItem=(string)comboFrameSize.SelectedItem;
@@ -523,9 +435,8 @@ namespace MediaPortal
     private void btnCancel_Click(object sender, System.EventArgs e)
     {
       VideoDevice="";
-      AudioDevice="";
-      AudioCompressor="";
-      VideoCompressor="";
+      AudioCodec="";
+      VideoCodec="";
       this.Close();
     }
 
@@ -541,32 +452,22 @@ namespace MediaPortal
       set {m_FrameRate=value;}
     }
 
-    public string AudioCompressor
+    public string AudioCodec
     {
-      get { return m_strAudioCompressor;}
-      set { m_strAudioCompressor=value;}
+      get { return m_strAudioCodec;}
+      set { m_strAudioCodec=value;}
     }
 
-    public string VideoCompressor
+    public string VideoCodec
     {
-      get { return m_strVideoCompressor;}
-      set { m_strVideoCompressor=value;}
+      get { return m_strVideoCodec;}
+      set { m_strVideoCodec=value;}
     }
 
     public string VideoDevice
     {
       get { return m_strVideoDevice;}
       set { m_strVideoDevice=value;}
-    }
-    public string AudioDevice
-    {
-      get { return m_strAudioDevice;}
-      set { m_strAudioDevice=value;}
-    }
-    public string CaptureFormat
-    {
-      get { return m_strCaptureFormat;}
-      set { m_strCaptureFormat=value;}
     }
     public bool UseForTV
     {
@@ -590,26 +491,19 @@ namespace MediaPortal
       Capture cap=setupgraph();
       if (cap==null) 
       {
-        comboVideoCompressor.Enabled=true;
-        comboAudioCompressor.Enabled=true;
-        comboAudioDevice.Enabled=true;
-        comboBoxCaptureFormat.Enabled=true;
+        comboVideoCodec.Enabled=true;
+        comboAudioCodec.Enabled=true;
         return;
       }
 
       if (cap.SupportsTimeShifting)
       {
-        comboVideoCompressor.SelectedIndex=0;
-        comboVideoCompressor.Enabled=false;
+        comboVideoCodec.SelectedIndex=0;
+        comboVideoCodec.Enabled=false;
 
-        comboAudioCompressor.SelectedIndex=0;
-        comboAudioCompressor.Enabled=false;
+        comboAudioCodec.SelectedIndex=0;
+        comboAudioCodec.Enabled=false;
 
-        comboAudioDevice.SelectedIndex=0;
-        comboAudioDevice.Enabled=false;
-
-        comboBoxCaptureFormat.SelectedIndex=2;
-        comboBoxCaptureFormat.Enabled=false;
       }
 
       if (cap.PropertyPages!=null)
@@ -653,17 +547,12 @@ namespace MediaPortal
       SetupPropertyPageList();
     }
 
-    private void comboAudioDevice_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboVideoCodec_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       SetupPropertyPageList();
     }
 
-    private void comboVideoCompressor_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      SetupPropertyPageList();
-    }
-
-    private void comboAudioCompressor_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboAudioCodec_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       SetupPropertyPageList();
     }
@@ -671,13 +560,11 @@ namespace MediaPortal
     private Capture setupgraph()
     {
       string strVideoDevice=(string )comboVideoDevice.SelectedItem;
-      string strAudioDevice=(string )comboAudioDevice.SelectedItem;
-      string strCompressorAudio=(string)comboAudioCompressor.SelectedItem;
-      string strCompressorVideo=(string)comboVideoCompressor.SelectedItem;
+      string strCodecAudio=(string)comboAudioCodec.SelectedItem;
+      string strCodecVideo=(string)comboVideoCodec.SelectedItem;
 
       
       DShowNET.Filter videoDevice=null;
-      DShowNET.Filter audioDevice=null;
       Filters filters=new Filters();
       // find video capture device
       foreach (Filter filter in filters.VideoInputDevices)
@@ -688,59 +575,16 @@ namespace MediaPortal
           break;
         }
       }
-      // find audio capture device
-      foreach (Filter filter in filters.AudioInputDevices)
-      {
-        if (String.Compare(filter.Name,strAudioDevice)==0)
-        {
-          audioDevice=filter;
-          break;
-        }
-      }
-      
     
       // create new capture!
       Capture capture=null;
       try
       {
-        capture = new Capture(videoDevice,audioDevice);
+        capture = new Capture(videoDevice,null);
       }
       catch(Exception)
       {
         return null;
-      }
-
-      try
-      {
-        // add audio compressor
-        foreach (Filter filter in filters.AudioCompressors)
-        {
-          if (String.Compare(filter.Name,strCompressorAudio)==0)
-          {
-            capture.AudioCompressor=filter;
-            break;
-          }
-        }
-      }
-      catch (Exception)
-      {
-      }
-
-      try
-      {
-        //add video compressor
-        foreach (Filter filter in filters.VideoCompressors)
-        {
-          if (String.Compare(filter.Name,strCompressorVideo)==0)
-          {
-            capture.VideoCompressor=filter;
-            break;
-          }
-        }
-
-      }
-      catch (Exception)
-      {
       }
       if (capture!=null) capture.LoadSettings(ID);
       return capture;
