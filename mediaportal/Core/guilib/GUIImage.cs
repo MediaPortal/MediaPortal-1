@@ -379,12 +379,17 @@ namespace MediaPortal.GUI.Library
 		{
 			lock (this)
 			{
+				string file=m_strFileName;
 				_packedTexture=null;
-				if (m_strFileName!=null && m_strFileName!=String.Empty)
+				if (ContainsProperty)
 				{
-					if (GUITextureManager.IsTemporary(m_strFileName))
+					file=GUIPropertyManager.Parse(m_strFileName);
+				}
+				if (file!=null && file!=String.Empty)
+				{
+					if (GUITextureManager.IsTemporary(file))
 					{
-						GUITextureManager.ReleaseTexture(m_strFileName);
+						GUITextureManager.ReleaseTexture(file);
 					}
 				}
 				Cleanup();
