@@ -144,6 +144,7 @@ public class MediaPortalApp : D3DApp, IRender
         strLine=strLine+ "http://www.microsoft.com/directx";
         System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
       }
+      /*
       if (!bManagedDirectXInstalled)
       {
         string strLine="Please install Managed DirectX 9.0c!\r\n";
@@ -151,7 +152,7 @@ public class MediaPortalApp : D3DApp, IRender
         strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
         strLine=strLine+ "http://www.microsoft.com/directx";
         System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-      }
+      }*/
 
       if (!bWindowsMediaPlayer9)
       {
