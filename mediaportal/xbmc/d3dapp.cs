@@ -1259,21 +1259,26 @@ namespace MediaPortal
 			}
 		}
 
-	  int GetSleepingTime()
+		bool ShouldUseSleepingTime()
 		{
-      // Render the scene as normal
+			// Render the scene as normal
 			if (GUIGraphicsContext.Vmr9Active) 
 			{
 				// if we're playing a movie with vmr9 then the player will draw the GUI
-        // so we just sleep 50msec here ...
-        m_iSleepingTime=30;
-				return 100;
+				// so we just sleep 50msec here ...
+				return false;
 			}
 			//if we're playing a movie or watching tv (fullscreen)
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
-					return 100 ;
+				return false;
 			}
+			return true;
+		}
+
+	  int GetSleepingTime()
+		{
+			if (!ShouldUseSleepingTime()) return 100;
 			return m_iSleepingTime;
 		}
 
@@ -1294,9 +1299,12 @@ namespace MediaPortal
 				GUIGraphicsContext.CurrentFPS=framePerSecond;
         lastTime = time;
         frames  = 0;
-        if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
-        if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
-				if (m_iSleepingTime<0) m_iSleepingTime=0;
+				if ( ShouldUseSleepingTime() )
+				{
+					if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
+					if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
+					if (m_iSleepingTime<0) m_iSleepingTime=0;
+				}
 
         string strFmt;
         Format fmtAdapter = graphicsSettings.DisplayMode.Format;
