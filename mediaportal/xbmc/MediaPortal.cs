@@ -76,6 +76,8 @@ public class MediaPortalApp : D3DApp, IRender
     const int WM_SYSCOMMAND = 0x0112;
     const int SC_SCREENSAVE = 0xF140;
     const int SW_RESTORE = 9;
+		bool supportsFiltering=false;
+		int g_nAnisotropy;
 
     static SplashScreen splashScreen;
 
@@ -845,6 +847,14 @@ public class MediaPortalApp : D3DApp, IRender
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
 
       SetupCamera2D();
+
+			g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+			supportsFiltering=Manager.CheckDeviceFormat(
+				GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
+				GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
+				GUIGraphicsContext.DX9Device.DisplayMode.Format, 
+				Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures, 
+				Format.A8R8G8B8);
     }
 
     /// <summary>
@@ -1563,9 +1573,33 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
 		GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
 		GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-		GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
-		GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
-		GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
+		//GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
+		//GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
+		//GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
+
+		if (supportsFiltering)
+		{
+			GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Linear;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Linear;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
+    	      
+			GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Linear;
+			GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Linear;
+			GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Linear;
+			GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
+		}
+		else
+		{
+			GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Point;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Point;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Point;
+    	      
+			GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Point;
+			GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Point;
+			GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Point;
+		}
+
 	}
 
  
