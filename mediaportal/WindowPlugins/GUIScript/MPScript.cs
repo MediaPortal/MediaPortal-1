@@ -18,6 +18,8 @@ namespace MediaPortal.GUI.GUIScript
 	{
 		#region Private Variables
 		// funktions token
+		private const char tDebugOn='0';
+		private const char tDebugOff='1';
 		private const char tStatic='@';
 		private const char tGlobal='°';
 		private const char tVar='@';
@@ -36,7 +38,7 @@ namespace MediaPortal.GUI.GUIScript
 		private const char tEndFor='m';
 		private const char tCall='n';
 		private const char tDefault='o';
-
+		
 		// regular expression 
 		Regex rexStripOp = new Regex(@"\+|-|\*|/|%|&&|\|\||&|\||\^|==|!=|>=|<=|=|<|>|!|\(|\)|\:|true|false|,", RegexOptions.IgnoreCase);
 		Regex rexStripQuote = new Regex("\"", RegexOptions.IgnoreCase);
@@ -48,6 +50,7 @@ namespace MediaPortal.GUI.GUIScript
 		private static char[] BYPASSCODE = {'\t',' ','(','\"',')','=','%','§','@','$','°' };
 		private static Hashtable global_variable  = new Hashtable();
 		private static int numScripts=0;
+		private static bool		m_bForceShutdown = false;		// Force shutdown
 
 		private char oper=' '; 
 		private String[] scriptArray;
@@ -55,6 +58,8 @@ namespace MediaPortal.GUI.GUIScript
 		private int ScriptEnd=0;
 		private long BreakTime=5000;
 		private string ScriptName="";
+		private bool debuging=false;
+		private string debugName="";
 
 		// hashtables for vars and functions
 		private Hashtable tokens = new Hashtable();
@@ -150,6 +155,7 @@ namespace MediaPortal.GUI.GUIScript
 		public string GetScript(string name)   // Read the MPScript
 		{
 			numScripts++;
+			bool debugInit=false;
 			string work="";
 			string scratch="";
 			string buttonText="";
@@ -185,6 +191,21 @@ namespace MediaPortal.GUI.GUIScript
 						scriptArray[i]="#";
 						continue;
 					}
+					if (work.StartsWith("#debugon") ==true) 
+					{
+						scriptArray[i]="§"+tDebugOn;
+						if(debugInit==false) 
+						{
+							InitDebugLog();
+							debugInit=true;
+						}
+						continue;
+					}
+					if (work.StartsWith("#debugoff") ==true) 
+					{
+						scriptArray[i]="§"+tDebugOff;
+						continue;
+					}
 					if (work.StartsWith("#breaktime:") ==true) 
 					{
 						string tx=work.Substring(11);
@@ -193,7 +214,7 @@ namespace MediaPortal.GUI.GUIScript
 							int bx=Convert.ToInt32(tx);
 							BreakTime=bx*1000;
 						} 
-						catch(Exception ex) 
+						catch(Exception) 
 						{
 							BreakTime=5000;
 						}
@@ -341,9 +362,8 @@ namespace MediaPortal.GUI.GUIScript
 		// TODO: Add more commands and funktions
 		public bool RunScript()
 		{		
-			bool isOper=false;
+			bool debugHeader=false;
 			string progLine="";
-			string scratch="";
 			string leftvar="";
 			long lStartTime = DateTime.Now.Ticks;
 			long lDiff = 0;
@@ -354,19 +374,29 @@ namespace MediaPortal.GUI.GUIScript
 				global_variable[ScriptName]="Run";
 				while (progPointer<ScriptEnd) 
 				{
+					if (debuging==true) 
+					{
+						if(debugHeader==false) 
+						{
+							WriteDebugHeader();
+							debugHeader=true;
+						}
+						WriteDebug("S{0}:  L{1}: ",stack.Count,progPointer);
+					}
 					if (BreakTime>0) 
 					{
 						lDiff = (DateTime.Now.Ticks - lStartTime)/10000;
 						if(lDiff>BreakTime) 
 						{
 							global_variable[ScriptName]="Time Break";
+							if (debuging==true) WriteLnDebug(" Time Break! {0} ms",lDiff);
 							return false;						
 						}
 					}
-					isOper=false;
 					progLine=scriptArray[progPointer];
 					if (progLine.Substring(0,1)=="#") // Nothing to do
 					{
+						if (debuging==true) WriteLnDebug(" ..");
 						progPointer++;
 						continue;
 					}
@@ -389,6 +419,7 @@ namespace MediaPortal.GUI.GUIScript
 									progLine=eval.Evaluate().ToString();
 									variable[leftvar]=progLine;
 								}
+								if (debuging==true) WriteLnDebug("Var {0} = {1}",leftvar,progLine);
 								progPointer++;
 								continue;
 							}
@@ -414,6 +445,7 @@ namespace MediaPortal.GUI.GUIScript
 									progLine=eval.Evaluate().ToString();
 									global_variable[leftvar]=progLine;
 								}
+								if (debuging==true) WriteLnDebug("Global {0} = {1}",leftvar,progLine);
 								progPointer++;
 								continue;
 							}
@@ -427,16 +459,16 @@ namespace MediaPortal.GUI.GUIScript
 						{
 							progLine=progLine.Substring(2);
 							progLine=ChangeVar(progLine);
-						}
+						}						
 						switch (ch)
 						{
 								// If statement  ------------------------------------------------
 							case tIf:
 								eval.Expression = progLine;
 								progLine=eval.Evaluate().ToString();
+								if (debuging==true) WriteLnDebug("IF = {0}",progLine);
 								if(progLine=="True") 
 								{
-
 									progPointer++;
 								} 
 								else 
@@ -449,6 +481,7 @@ namespace MediaPortal.GUI.GUIScript
 							case tWhile:
 								eval.Expression = progLine;
 								progLine=eval.Evaluate().ToString();
+								if (debuging==true) WriteLnDebug("WHILE = {0}",progLine);
 								if(progLine=="True") 
 								{
 									stack.Push(progPointer++);
@@ -497,6 +530,15 @@ namespace MediaPortal.GUI.GUIScript
 								// MessageBox statement -------------------------------------------
 							case tMessageBox:											
 								DialogBox(checkText(progLine.Substring(2)));
+								progPointer++;
+								break;
+							case tDebugOn:	
+								debuging=true;
+								progPointer++;
+								break;
+							case tDebugOff:		
+								debuging=false;	
+								progPointer++;
 								break;
 							default:
 								progPointer++;
@@ -741,6 +783,9 @@ namespace MediaPortal.GUI.GUIScript
 					act = new Action(Action.ActionType.ACTION_SHUTDOWN,0,0);
 					GUIGraphicsContext.OnAction(act);
 					break;
+				case "hibernate" :
+					WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
+					break;
 				case "ejectcd" :
 					act = new Action(Action.ActionType.ACTION_EJECTCD,0,0);
 					GUIGraphicsContext.OnAction(act);
@@ -786,7 +831,7 @@ namespace MediaPortal.GUI.GUIScript
 					conv=GUILocalizeStrings.Get(bx); 
 				} 
 			} 
-			catch(Exception ex) 
+			catch(Exception) 
 			{
 			}
 			return conv;
@@ -806,5 +851,85 @@ namespace MediaPortal.GUI.GUIScript
 		}
 		#endregion
 
+		#region Debug helpers
+
+		private void InitDebugLog()
+		{
+			try
+			{
+				debugName=@"log\script"+ScriptName+".log";
+				System.IO.File.Delete(debugName.Replace(".log",".bak"));
+				System.IO.File.Move(debugName,debugName.Replace(".log",".bak"));
+			}
+			catch(Exception)
+			{
+			}
+		}
+
+		public void WriteDebug(string strFormat, params object[] arg)
+		{
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(debugName,true))
+				{
+					writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+					writer.WriteLine(" ");
+					writer.Write(DateTime.Now.ToLongTimeString()+" ");
+					writer.Write(strFormat,arg);
+					writer.Close();
+				}
+			}
+			catch(Exception)
+			{
+			}
+		}
+
+		public void WriteLnDebug(string strFormat, params object[] arg)
+		{
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(debugName,true))
+				{
+					writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+					writer.Write(strFormat,arg);
+					writer.Close();
+				}
+			}
+			catch(Exception)
+			{
+			}
+		}
+		
+		public void WriteDebugHeader()
+		{
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(debugName,true))
+				{
+					writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+					writer.WriteLine("MPScript V0.1 Debug Output from {0}",debugName);
+					writer.WriteLine(DateTime.Now.ToShortDateString()+ "   "+DateTime.Now.ToLongTimeString()+ " ");
+					writer.WriteLine("\n-------------------------------------");
+					writer.WriteLine("Global Vars:");
+					foreach (DictionaryEntry de in global_variable)
+					{
+						writer.WriteLine("Global Var {0}={1}",de.Key,de.Value);
+					}
+					writer.WriteLine("\n-------------------------------------");
+					writer.WriteLine("Local Vars:");
+					foreach (DictionaryEntry de in variable)
+					{
+						writer.WriteLine("Local Var {0}={1}",de.Key,de.Value);
+					}
+					writer.WriteLine("\n-------------------------------------\n");
+					writer.Close();
+				}
+			}
+			catch(Exception)
+			{
+			}
+		}
+
+		#endregion
 	}
 }
