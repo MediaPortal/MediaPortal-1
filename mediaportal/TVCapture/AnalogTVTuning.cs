@@ -16,6 +16,7 @@ namespace MediaPortal.TV.Recording
 		AutoTuneCallback										callback = null;
 		private System.Windows.Forms.Timer  timer1;
 		TVCaptureDevice											captureCard;
+		float                               lastFrequency=-1f;
 
 		public AnalogTVTuning()
 		{
@@ -34,6 +35,7 @@ namespace MediaPortal.TV.Recording
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+			lastFrequency=-1f;
 			captureCard=card;
 			callback=statusCallback;
 			this.timer1 = new System.Windows.Forms.Timer();
@@ -65,6 +67,16 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 			NextChannel();
+			float freq=captureCard.VideoFrequency();
+			if (freq == lastFrequency) 
+			{
+				timer1.Enabled=false;
+				callback.OnProgress(100);
+				callback.OnEnded();
+				captureCard.DeleteGraph();
+				return;
+			}
+			lastFrequency=freq;
 		}
 		void NextChannel()
 		{
