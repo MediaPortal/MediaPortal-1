@@ -1143,7 +1143,8 @@ namespace MediaPortal.GUI.TV
           int card=GUITVHome.GetCurrentCard();
           Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
 
-          SetCurrentChannelLogo();
+					SetCurrentChannelLogo();
+					m_dateTime = DateTime.Now; 
           return;
         }
       }
@@ -1165,7 +1166,8 @@ namespace MediaPortal.GUI.TV
           int card=GUITVHome.GetCurrentCard();
           Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
 
-          SetCurrentChannelLogo();
+					SetCurrentChannelLogo();
+					m_dateTime = DateTime.Now; 
           return;
         }
       }

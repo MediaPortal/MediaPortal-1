@@ -944,7 +944,17 @@ namespace MediaPortal.GUI.TV
 			if (m_bOSDVisible)
 			{
 				m_osdWindow.UpdateChannelInfo();
+				m_dwOSDTimeOut=DateTime.Now;
+				m_bUpdate = true;
 			}
+			else
+			{
+				m_osdWindow.UpdateChannelInfo();
+				Action myaction=new Action();
+				myaction.wID = Action.ActionType.ACTION_SHOW_OSD;
+
+				OnAction(myaction);
+			} 
 		}
 
 		public void SetFFRWLogos()
