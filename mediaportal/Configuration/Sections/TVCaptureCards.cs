@@ -222,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			foreach(ListViewItem listItem in cardsListView.SelectedItems)
 			{
-				EditCaptureCardForm editCard = new EditCaptureCardForm(listItem.Index);
+				EditCaptureCardForm editCard = new EditCaptureCardForm(listItem.Index+1);
         editCard.CaptureCard = listItem.Tag as TVCaptureDevice;
 
         DialogResult dialogResult = editCard.ShowDialog(this);
