@@ -151,7 +151,7 @@ namespace ProgramsDatabase
 				if (UseQuotes) 
 				{
 					// avoid double quotes around the filename-argument.....
-					curFilename = " \"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
+					curFilename = "\"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
 				}
 				// the fileitem-argument can be positioned anywhere in the argument string...
 				if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
@@ -186,18 +186,17 @@ namespace ProgramsDatabase
 			this.LaunchErrorMsg = "";
 			try
 			{
+				Log.Write("myPrograms: starting process: program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
+					proc.StartInfo.FileName, 
+					proc.StartInfo.Arguments, 
+					proc.StartInfo.WorkingDirectory);
+
 				proc.Start();
 				if (MPGUIMode) 
 				{
 					proc.WaitForExit();
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 				}
-
-
-				//				Log.Write("myPrograms: DEBUG LOG program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
-				//					proc.StartInfo.FileName, 
-				//					proc.StartInfo.Arguments, 
-				//					proc.StartInfo.WorkingDirectory);
 			}
 			catch (Exception ex)
 			{
@@ -659,30 +658,21 @@ namespace ProgramsDatabase
 				m_db.Execute(String.Format("update filteritem set tag = 1234 where appid = {0}", this.AppID));
 
 				// 2) fix all fileids of the newly imported files
-				Log.Write("sqlselect {0}", SQLSelect);
-				Log.Write("1");
 				rows2fix = m_db.Execute(SQLSelect);
-				Log.Write("2");
 				int nOldFileID;
 				int nNewFileID;
 				string strFilename;
 				if (rows2fix.Rows.Count == 0)  return;
 				for (int iRow=0; iRow < rows2fix.Rows.Count;iRow++)
 				{
-					Log.Write("3");
 					nOldFileID = ProgramUtils.GetIntDef(rows2fix, iRow, "oldfileid", -1);
 					nNewFileID = ProgramUtils.GetIntDef(rows2fix, iRow, "newfileid", -1);
 					strFilename = ProgramUtils.Get(rows2fix, iRow, "filename");
-					Log.Write("sqlupdate {0}", String.Format(SQLUpdate, nNewFileID, this.AppID, ProgramUtils.Encode(strFilename)));
 					m_db.Execute(String.Format(SQLUpdate, nNewFileID, this.AppID, ProgramUtils.Encode(strFilename)));
-					Log.Write("4");
-
 				}
 
 				// 3) delete untouched links ( they were not imported anymore )
-				Log.Write("5");
 				m_db.Execute(String.Format("delete from filteritem where appid = {0} and tag = 1234", this.AppID));
-				Log.Write("6");
 
 			}
 			catch (SQLiteException ex) 

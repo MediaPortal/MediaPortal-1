@@ -564,7 +564,12 @@ namespace WindowPlugins.GUIPrograms
 			}
 			if( dialogFolder.ShowDialog( null ) == DialogResult.OK )
 			{
-				txtImageDirs.Text = txtImageDirs.Text + "\r\n" + dialogFolder.SelectedPath;
+				string strSep = "";
+				if (txtImageDirs.Text != "")
+				{
+					strSep = "\r\n";
+				}
+				txtImageDirs.Text = txtImageDirs.Text + strSep + dialogFolder.SelectedPath;
 			}
 		}
 
