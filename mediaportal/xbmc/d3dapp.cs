@@ -20,6 +20,7 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
+    const int MILLI_SECONDS_TIMER=5;
     protected string    m_strSkin="mce";
     protected string    m_strLanguage="english";
 
@@ -51,6 +52,7 @@ namespace MediaPortal
     private bool isChangingFormStyle = false; // Are we changing the forms style?
     private bool isWindowActive = true; // Are we waiting for got focus?
     protected bool m_bShowCursor=true;
+    bool UseMillisecondTiming=true;
 
     static int lastx=0;
     static int lasty=0;
@@ -78,7 +80,7 @@ namespace MediaPortal
     // Variables for timing
     protected float appTime;             // Current time in seconds
     protected float elapsedTime;      // Time elapsed since last frame
-    protected float framePerSecond;              // Instanteous frame rate
+    protected float framePerSecond=25;              // Instanteous frame rate
     protected string deviceStats;// String to hold D3D device stats
     protected string frameStats; // String to hold frame stats
 
@@ -128,17 +130,34 @@ namespace MediaPortal
     int    m_iActiveWindow=-1;
 		bool   m_bRestore=false;
     double m_dCurrentPos=0;
+    int    m_iSleepingTime=34;
 
     DirectDraw.Device               m_dddevice=null;
     DirectDraw.SurfaceDescription   m_dddescription=null;
     DirectDraw.Surface              m_ddfront=null;
     DirectDraw.Surface              m_ddback=null;
-    /// <summary>
+
+    [DllImport("winmm.dll")]
+    internal static extern uint timeBeginPeriod(uint period);
+
+    [DllImport("winmm.dll")]
+    internal static extern uint timeEndPeriod(uint period);
+
     /// Constructor
     /// </summary>
     public D3DApp()
     {
       //GUIGraphicsContext.DX9Device = null;
+      try
+      {
+        int hr=(int)timeBeginPeriod(MILLI_SECONDS_TIMER);
+        if (hr!=0)
+          UseMillisecondTiming=false;
+      }
+      catch(Exception)
+      {
+        UseMillisecondTiming=false;
+      }
       active = false;
       ready = false;
       hasFocus = false;
@@ -147,7 +166,6 @@ namespace MediaPortal
       ourRenderTarget = this;
       frameMoving = true;
       singleStep = false;
-      framePerSecond = 0.0f;
       deviceStats = null;
       frameStats  = null;
 
@@ -505,19 +523,19 @@ namespace MediaPortal
     {
       presentParams.Windowed = graphicsSettings.IsWindowed;
       presentParams.BackBufferCount = 1;
-      presentParams.MultiSample = MultiSampleType.None;//graphicsSettings.MultisampleType;
-      presentParams.MultiSampleQuality = graphicsSettings.MultisampleQuality;
       presentParams.EnableAutoDepthStencil = false;
-      presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
+      presentParams.ForceNoMultiThreadedFlag=false;
       
 
         if (windowed)
-        {
-            presentParams.ForceNoMultiThreadedFlag=false;
+          {
+            presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
+            presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
+            presentParams.AutoDepthStencilFormat = graphicsSettings.WindowedDepthStencilBufferFormat;
             presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
             presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
-            presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-            presentParams.PresentationInterval = PresentInterval.Default;
+            presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
+            presentParams.PresentationInterval = PresentInterval.Immediate;
             presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
@@ -526,12 +544,15 @@ namespace MediaPortal
         }
         else
         {
-            presentParams.ForceNoMultiThreadedFlag=false;
+            presentParams.MultiSample = graphicsSettings.FullscreenMultisampleType;
+            presentParams.MultiSampleQuality = graphicsSettings.FullscreenMultisampleQuality;
+            presentParams.AutoDepthStencilFormat = graphicsSettings.FullscreenDepthStencilBufferFormat;
+
             presentParams.BackBufferWidth  = graphicsSettings.DisplayMode.Width;
             presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-            presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
             presentParams.PresentationInterval = Direct3D.PresentInterval.Default;
+            presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
             presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = this;
@@ -622,8 +643,10 @@ namespace MediaPortal
       {
         // Create the device
 
-        GUIGraphicsContext.DX9Device = new Device(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType, 
-          windowed ? ourRenderTarget : this , createFlags| CreateFlags.MultiThreaded, presentParams);
+        GUIGraphicsContext.DX9Device = new Device(graphicsSettings.AdapterOrdinal, 
+                                                  graphicsSettings.DevType, 
+                                                  windowed ? ourRenderTarget : this , 
+                                                  createFlags| CreateFlags.MultiThreaded, presentParams);
 
 
 
@@ -783,6 +806,15 @@ namespace MediaPortal
     /// <param name="Type">Extra information on how to handle the exception</param>
     public void HandleSampleException(SampleException e, ApplicationMessage Type)
     {
+      try
+      {
+        if (UseMillisecondTiming)
+          timeEndPeriod(MILLI_SECONDS_TIMER);
+      }
+      catch(Exception)
+      {
+      }
+      UseMillisecondTiming=false;
       // Build a message to display to the user
       string strMsg = "";
       string strSource = "";
@@ -1020,11 +1052,7 @@ namespace MediaPortal
             // Yield some CPU time to other processes
             System.Threading.Thread.Sleep(100); // 100 milliseconds
           }
-          // Render a frame during idle time
-          if (active)
-          {
-            Render3DEnvironment();
-          }
+        Render3DEnvironment();
 #if DEBUG
 #else
         }
@@ -1044,7 +1072,38 @@ namespace MediaPortal
       }
     }
 
+    void HandleMessage()
+    {
+    }
 
+
+    void DoSleep(int sleepTime)
+    {
+      if (!UseMillisecondTiming) 
+      {
+        System.Threading.Thread.Sleep(sleepTime);
+        return;
+      }
+
+      int times=sleepTime/MILLI_SECONDS_TIMER;
+      NativeMethods.Message msg;
+      for (int counter=0; counter < times; counter++)
+      {
+        System.Threading.Thread.Sleep(MILLI_SECONDS_TIMER);
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+          return;
+        bool gotMessage = NativeMethods.PeekMessage(out msg, IntPtr.Zero, 0, 0, NativeMethods.PeekMessageFlags.Remove);
+        if (gotMessage)
+        {
+          NativeMethods.TranslateMessage(ref msg);
+          NativeMethods.DispatchMessage(ref msg);
+          if (msg.msg==NativeMethods.WindowMessage.Quit)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+          }
+        }
+      }
+    }
 
 
     /// <summary>
@@ -1067,39 +1126,39 @@ namespace MediaPortal
 
 			// Get the first message
 			
-			NativeMethods.Message msg;
-			NativeMethods.PeekMessage(out msg, IntPtr.Zero, 0, 0, NativeMethods.PeekMessageFlags.NoRemove);
 
-			while(msg.msg != NativeMethods.WindowMessage.Quit)
+			while(true)
 			{
 				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
 					break;
-				bool gotMessage = NativeMethods.PeekMessage(out msg, IntPtr.Zero, 0, 0, NativeMethods.PeekMessageFlags.Remove);
-				if (gotMessage)
+				try
 				{
-					NativeMethods.TranslateMessage(ref msg);
-					NativeMethods.DispatchMessage(ref msg);
+          HandleMessage();
+          FrameMove();
+          HandleMessage();
+          FullRender();
+					int SleepingTime=GetSleepingTime();
+          DoSleep(SleepingTime);
+          HandleMessage();
+          HandleCursor();
 				}
-				else
+				catch(Exception ex)
 				{
-					// Render a frame during idle time (no messages are waiting)
-					try
-					{
-						FrameMove();
-						FullRender();
-						DoSleep();
-						HandleCursor();
-					}
-					catch(Exception ex)
-					{
-						Log.Write("exception:{0}",ex.ToString());
+					Log.Write("exception:{0}",ex.ToString());
 #if DEBUG
-						throw ex;
+					throw ex;
 #endif
-					}
 				}
 			}
       OnExit();
+      try
+      {
+        if (UseMillisecondTiming) timeEndPeriod(MILLI_SECONDS_TIMER);
+      }
+      catch(Exception)
+      {
+      }
+      UseMillisecondTiming=false;
     }
 
 
@@ -1198,8 +1257,6 @@ namespace MediaPortal
 					GUIWindowManager.ActivateWindow(m_iActiveWindow);
 				}
       }
-      System.Windows.Forms.Application.DoEvents();
-      
     }
 
 		void HandleCursor()
@@ -1225,15 +1282,14 @@ namespace MediaPortal
 			}
 		}
 
-	  void DoSleep()
+	  int GetSleepingTime()
 		{
       // Render the scene as normal
 			if (g_Player.Playing&& g_Player.DoesOwnRendering) 
 			{
 				// if we're playing a movie with vmr9 then the player will draw the GUI
 				// so we just sleep 50msec here ...
-				System.Threading.Thread.Sleep(50);
-				return;
+				return 100;
 			}
 			//if we're playing a movie (fullscreen)
 			if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
@@ -1241,11 +1297,10 @@ namespace MediaPortal
 				// We're playing a movie fullscreen , so we dont need 2 draw the gui. so sleep 25 msec
 				if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
 				{
-					System.Threading.Thread.Sleep(25);  
-					return;
+					return 100 ;
 				}
 			}
-			System.Threading.Thread.Sleep(25);
+			return m_iSleepingTime;
 		}
 
 
@@ -1264,18 +1319,16 @@ namespace MediaPortal
         framePerSecond    = frames / (time - lastTime);
         lastTime = time;
         frames  = 0;
+        if (framePerSecond>25) m_iSleepingTime++;
+        if (framePerSecond<25) m_iSleepingTime--;
+        if (m_iSleepingTime<20) m_iSleepingTime=20;
+        if (m_iSleepingTime>200) m_iSleepingTime=200;
+
         string strFmt;
         Format fmtAdapter = graphicsSettings.DisplayMode.Format;
-        if (fmtAdapter == GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat)
-        {
-          strFmt = fmtAdapter.ToString();
-        }
-        else
-        {
           strFmt = String.Format("backbuf {0}, adapter {1}", 
             GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat.ToString(), fmtAdapter.ToString());
-        }
-
+        
         string strDepthFmt;
         if (enumerationSettings.AppUsesDepthBuffer)
         {
@@ -1309,10 +1362,11 @@ namespace MediaPortal
           case Direct3D.MultiSampleType.SixteenSamples: strMultiSample = " (16x Multisample)"; break;
           default: strMultiSample = string.Empty; break;
         }
-        frameStats = String.Format("{0} fps ({1}x{2}), {3}{4}{5}", framePerSecond.ToString("f2"),
+        frameStats = String.Format("{0} fps ({1}x{2}), {3} {4}{5}{6}", 
+                                    framePerSecond.ToString("f2"),
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, 
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight, 
-                                    strFmt, strDepthFmt, strMultiSample);
+                                    m_iSleepingTime,strFmt, strDepthFmt, strMultiSample);
       }
     }
 

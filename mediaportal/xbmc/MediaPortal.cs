@@ -60,9 +60,8 @@ public class MediaPortalApp : D3DApp, IRender
     bool m_bPlayingState = false;
     bool m_bShowStats = false;
     Rectangle[]                     region = new Rectangle[1];
-    int m_ixpos = 50;
-    int m_iFrameCount = 0;
-	  private USBUIRT usbuirtdevice;
+    
+    private USBUIRT usbuirtdevice;
 	  private WinLirc winlircdevice;//sd00//
     string m_strNewVersion = "";
     string m_strCurrentVersion = "";
@@ -488,24 +487,6 @@ public class MediaPortalApp : D3DApp, IRender
         if (font != null)
         {
           font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT);
-          region[0].X = m_ixpos;
-          region[0].Y = 0;
-          region[0].Width = 4;
-          region[0].Height = GUIGraphicsContext.Height;
-          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, region);
-         
-          float fStep = (GUIGraphicsContext.Width - 100);
-          fStep /= (2f * 16f);
-
-          fStep /= framePerSecond;
-          m_iFrameCount++;
-          if (m_iFrameCount >= (int)fStep)
-          {
-            m_iFrameCount = 0;
-            m_ixpos += 12;
-            if (m_ixpos > GUIGraphicsContext.Width - 50) m_ixpos = 50;
-             
-          }
         }
       }
     }
@@ -570,7 +551,7 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     public void Process()
     {
-      
+      Application.DoEvents();
       FrameMove();
       FullRender();
     }
@@ -666,28 +647,6 @@ public class MediaPortalApp : D3DApp, IRender
       // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device == null) return;
 
-      // Do we need a screen refresh
-      // screen refresh is needed when for example alt+tabbing between programs
-      // when that happens the screen needs to get refreshed
-      if (!m_bNeedUpdate)
-      {
-        // no refresh needed
-        // are we playing a video fullscreen or watching TV?
-        if (GUIGraphicsContext.IsFullScreenVideo)
-        {
-          // yes, then just handle the outstanding messages
-          GUIGraphicsContext.IsPlaying = true;
-              
-          // and return
-          return;
-        }
-      }
-
-      // we're not playing a video fullscreen
-      // or screen needs a refresh
-      m_bNeedUpdate = false;
-
-     
       // clear the surface
       //if (prevwindow!=GUIWindowManager.ActiveWindow)
       {
@@ -867,7 +826,6 @@ public class MediaPortalApp : D3DApp, IRender
 			Log.Write(" done");
 			g_Player.PositionX++;
 			g_Player.PositionX--;
-			m_bNeedUpdate = true;
 		}
 	}
 
