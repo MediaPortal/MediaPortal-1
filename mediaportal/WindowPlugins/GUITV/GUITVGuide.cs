@@ -407,6 +407,11 @@ namespace MediaPortal.GUI.TV
 					SetFocus();
 				}
 					break;
+
+				case Action.ActionType.ACTION_SHOW_GUI:
+					if (Recorder.View)
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					break;
 			}
 			base.OnAction(action);
 		}
