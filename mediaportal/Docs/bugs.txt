@@ -10,6 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  15-08-2004 music      : albumart in overlay is not being AR corrected.
   13-07-2004 vmr9       : cannot switch between windowed/fullscreen mode after playing a movie with vmr9  
   
   10-08-2004 calibration: when calibration pixel ratio and setting a perfect square, calibration is wrong. I need to set a non square to get good AR) (maybe calibrate pic in skin bad?
