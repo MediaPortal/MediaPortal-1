@@ -16,6 +16,19 @@
 <!--  1. Define the Name of the pin. This might work and might not as this might be language dependant -->
 <!--  2. Define the 0-based index of the pin. This always should work... -->
 <!-- -->
+<!-- cards supported so far:                                                        -->
+<!--    Hauppauge WinTV PVR150MCE added by Mars                                     -->
+<!--    NVTV Dual Tuner           added by Mars                                     -->
+<!--    Hauppage PVR USB2         added by Frodo                                    -->
+<!--    Hauppage PVR 25/350       added by Frodo                                    -->
+<!--    Winfast PVR 2000          added by Hwarmann                                 -->
+<!--    general s/w card          added by Frodo                                    -->
+<!--    general MCE card          added by Frodo                                    -->
+<!--    general MPEG2 card        added by Frodo                                    -->
+<!-- -->
+<!-- version of this file: 1.0 -->
+<!-- -->
+
 <capturecards>
   <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
