@@ -344,10 +344,12 @@ namespace MediaPortal.TV.Recording
         if (filter.Name.Equals(m_strVideoCompressor))
         {
           filterVideoCompressor = filter;
-          // check for wmv 7,8,9
-          if (filter.MonikerString.Equals("@device:dmo:{3181343B-94A2-4FEB-ADEF-30A1DDE617B4}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") || 
-              filter.MonikerString.Equals("@device:dmo:{BA2F0162-CAA4-48FC-89EA-DB0D1DFF40CA}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") || 
-              filter.MonikerString.Equals("@device:dmo:{96B57CDD-8966-410C-BB1F-C97EEA765C04}{33D9A760-90C8-11D0-BD43-00A0C911CE86}"))
+          // check for wmv 7,8,9 DMP
+          if (filter.MonikerString.Equals(@"@device:dmo:{3181343B-94A2-4FEB-ADEF-30A1DDE617B4}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") || 
+              filter.MonikerString.Equals(@"@device:dmo:{BA2F0162-CAA4-48FC-89EA-DB0D1DFF40CA}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") || 
+              filter.MonikerString.Equals(@"@device:dmo:{96B57CDD-8966-410C-BB1F-C97EEA765C04}{33D9A760-90C8-11D0-BD43-00A0C911CE86}") ||
+            
+              filter.MonikerString.Equals(@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\wmv3")  )
           {
             bRecordWMV = true;
             strFileName = System.IO.Path.ChangeExtension(strFileName, ".wmv");

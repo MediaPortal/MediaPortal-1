@@ -2110,6 +2110,18 @@
         <value>Satte du i en skiva?</value>
     </string>
     <string>
+	<id>724</id>
+	<value>Sök i Tv-Guiden</value>
+</string>
+<string>
+	<id>725</id>
+	<value>Genrer</value>
+</string>
+<string>
+	<id>726</id>
+	<value>Titel</value>
+</string>
+    <string>
         <id>800</id>
         <value>Startar med</value>
     </string>
@@ -2134,6 +2146,168 @@
         <value>Rensa</value>
         </string>
         <string>
+	<id>806</id>
+	<value>Titel</value>
+</string>
+<string>
+	<id>807</id>
+	<value>Göra</value>
+</string>
+<string>
+	<id>808</id>
+	<value>Ingredienser</value>
+</string>
+<string>
+	<id>809</id>
+	<value>Sökvägar</value>
+</string>
+<string>
+	<id>810</id>
+	<value>Kort</value>
+</string>
+<!-- My Alarm Strings -->
+<string>
+	<id>850</id>
+	<value>Mitt Alarm</value>
+</string>
+<string>
+	<id>851</id>
+	<value>Spellista</value>
+</string>
+<string>
+	<id>852</id>
+	<value>Alarm På</value>
+</string>
+<string>
+	<id>853</id>
+	<value>Välj Spellista</value>
+</string>
+<string>
+	<id>854</id>
+	<value>Gäller på Dessa Dagar</value>
+</string>
+<string>
+	<id>855</id>
+	<value>Alarm Tid</value>
+</string>
+<string>
+	<id>856</id>
+	<value>Insomningstimer På</value>
+</string>
+<string>
+	<id>857</id>
+	<value>Snooze</value>
+</string>
+<string>
+	<id>858</id>
+	<value>Snooze Time</value>
+</string>
+<string>
+	<id>859</id>
+	<value>Sovtid</value>
+</string>
+<string>
+	<id>860</id>
+	<value>Volym tona in/ut</value>
+</string>
+<string>
+	<id>8000</id>
+	<value>Min Epost</value>
+</string>
+<string>
+	<id>8001</id>
+	<value>Kolla Brevlådan</value>
+</string>
+<string>
+	<id>8002</id>
+	<value>Autokoll Av</value>
+</string>
+<string>
+	<id>8003</id>
+	<value>Autokoll På</value>
+</string>
+<string>
+	<id>8004</id>
+	<value>Du har nytt Mail!</value>
+</string>
+<string>
+	<id>8005</id>
+	<value>Uppdaterar Brevlådan</value>
+</string>
+<string>
+	<id>8007</id>
+	<value>Autokoll På</value>
+</string>
+<string>
+	<id>8008</id>
+	<value>Back</value>
+</string>
+<string>
+	<id>8009</id>
+	<value>Markera alla olästa</value>
+</string>
+<string>
+	<id>8010</id>
+	<value>Ingen Brevlåda Skapad</value>
+</string>
+<string>
+	<id>8011</id>
+	<value>Gå till Setup och skapa</value>
+</string>
+<string>
+	<id>8012</id>
+	<value>minst 1 brevlåda för att använda Mail-Pluginen.</value>
+</string>
+<string>
+	<id>8013</id>
+	<value>Servern Svarar Ej</value>
+</string>
+<string>
+	<id>8014</id>
+	<value>Servern '{0}' Svarar Ej!</value>
+</string>
+<string>
+	<id>8015</id>
+	<value>Kolla inst. för Brevlådan '{0}'</value>
+</string>
+<string>
+	<id>8016</id>
+	<value>Från</value>
+</string>
+<string>
+	<id>8017</id>
+	<value>Till</value>
+</string>
+<string>
+	<id>8018</id>
+	<value>Ämne</value>
+</string>
+<string>
+	<id>8019</id>
+	<value>Meddelande</value>
+</string>
+<string>
+	<id>8020</id>
+	<value>Ta Bort Mail</value>
+</string>
+<string>
+	<id>8021</id>
+	<value>Markera som Läst</value>
+</string>
+<string>
+	<id>8030</id>
+	<value>Ansluten till Server</value>
+</string>
+<string>
+	<id>8031</id>
+	<value>Tar emot antal brev</value>
+</string>
+<string>
+	<id>8033</id>
+	<value>Hämtar</value>
+</string>
+
+<string>
             <id>10000</id>
             <value>Hem</value>
         </string>
