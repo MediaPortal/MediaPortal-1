@@ -606,13 +606,13 @@ namespace MediaPortal.GUI.Library
       if (nh <0) nh=0;
       if (x+nw >GUIGraphicsContext.Width) 
       {
-        iSourceWidth -= (int)( (float)m_iTextureWidth * (x/nw) );        
-        nw=GUIGraphicsContext.Width-x;
+        iSourceWidth = (int)( (float)m_iTextureWidth * (((float)GUIGraphicsContext.Width-x)/nw) );        
+        nw =GUIGraphicsContext.Width-x;
       }
       if (y+nh >GUIGraphicsContext.Height) 
       {
-        iSourceHeight -= (int)( (float)m_iTextureHeight * (y/nh) );
-        nh=GUIGraphicsContext.Height-y;
+        iSourceHeight = (int)( (float)m_iTextureHeight * (((float)GUIGraphicsContext.Height-y)/nh) );
+        nh = GUIGraphicsContext.Height-y;
       }
 
       // copy all coordinates to the vertex buffer
