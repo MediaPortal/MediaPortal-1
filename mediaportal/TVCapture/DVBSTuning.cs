@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
 							try
 							{
 			
-								transp[count].TPfreq = Convert.ToInt16(tpdata[0]) * 1000;
+								transp[count].TPfreq = Int32.Parse(tpdata[0]) * 1000;
 								switch (tpdata[1].ToLower())
 								{
 									case "v":
@@ -96,7 +96,7 @@ namespace MediaPortal.TV.Recording
 										transp[count].TPpol = 0;
 										break;
 								}
-								transp[count].TPsymb = Convert.ToInt16(tpdata[2]);
+								transp[count].TPsymb = Int32.Parse(tpdata[2]);
 								count += 1;
 							}
 							catch
