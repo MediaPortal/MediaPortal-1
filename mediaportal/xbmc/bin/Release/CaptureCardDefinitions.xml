@@ -510,14 +510,14 @@
     </tv>
   </capturecard>
    
-   <capturecard commercialname="Meedion SAA1734" capturename="MEEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+   <capturecard commercialname="Meedion SAA1734" capturename="MEDION BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="capture" video="3" audio="4" mpeg2="0"></interface>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="MEEDION BDA DVBT Tuner"				checkdevice="false"></filter>
-        <filter cat="capture"         name="MEEDION BDA Digital Capture"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="MEDION BDA DVBT Tuner"				checkdevice="false"></filter>
+        <filter cat="capture"         name="MEDION BDA Digital Capture"		checkdevice="false"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
