@@ -3508,6 +3508,12 @@
         "Entry"
         {
         "MsmKey" = "8:_4C83D62A318B47678A7F8A887AC6B273"
+        "OwnerKey" = "8:_80BFF3E311B44E18A8B41DE4262B10F8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4C83D62A318B47678A7F8A887AC6B273"
         "OwnerKey" = "8:_DB45B7C97621409EAE86FF8C830D03D8"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6142,6 +6148,12 @@
         "Entry"
         {
         "MsmKey" = "8:_80A644FCBA1E4022B55FA500CC61B82C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_80BFF3E311B44E18A8B41DE4262B10F8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -23280,7 +23292,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.1914.33036, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.1916.35285, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_4CA4DDB0DCC88FC09E2911D0E5E4A4A2"
@@ -27126,7 +27138,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.1914.33031, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.1916.35281, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_686AFB9A6A2931395381F9CCC5296202"
@@ -30232,6 +30244,37 @@
             "TargetName" = "8:42.png"
             "Tag" = "8:"
             "Folder" = "8:_B687B337DA3C42BA87AAD42FE9A66D09"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_80BFF3E311B44E18A8B41DE4262B10F8"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:IControl, Version=1.0.1902.24990, Culture=neutral"
+                "ScatterAssemblies"
+                {
+                    "_80BFF3E311B44E18A8B41DE4262B10F8"
+                    {
+                    "Name" = "8:IControl.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:..\\IControl.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -34354,7 +34397,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1914.33037, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1916.35286, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_99B878196FE864FFF5DA9E3582FAD371"
@@ -49922,7 +49965,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{6B2FCFEB-252E-4B48-B257-E00671D86673}"
+        "PackageCode" = "8:{DDB383FD-AD2D-4C4F-AD80-5111B6326DA2}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
