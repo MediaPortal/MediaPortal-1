@@ -1,4 +1,5 @@
 Bugs left:
+
   19-06-2004 general    : crash if alt+enter when playing a movie
   19-06-2004 my video   : vmr9: lines/stripes?
   19-06-2004 my tv      : press the record now button:"setup error": failed to load resources from resource file. please check your setup

@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  21-06-2004  my picture  : fixed : The topbar stays visible during a picture slideshow  and screen calibration ?
+  21-06-2004  my radio    : fixed : When entering MyRadio, the focus seems to be both on the topbar and the menu on the left. It looks that you can press right to go to the list/iconview, but you can't since the topbar has the real focus 
+  21-06-2004  my picture  : fixed : The radio stops when starting a picture slideshow. 
+  21-06-2004  my radio    : fixed : When switching through the different sortings like "Sort by: Genre" the text "Delete watched record..." appears.  
   21-06-2004  my TV       : added : TVguide: added mouse control for prev/next day & timeinterval +/-
   21-06-2004  my TV       : fixed : dont use external movie players for my tv
   21-06-2004  my music    : fixed : refresh artist info didnt work

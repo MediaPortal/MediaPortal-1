@@ -1920,14 +1920,6 @@
 		<value>Sort by: Bitrate</value>
 	</string>	
 	<string>
-		<id>670</id>
-		<value>Delete watched recordings?</value>
-	</string>
-	<string>
-		<id>671</id>
-		<value>Sort by Watched</value>
-	</string>	
-	<string>
 		<id>671</id>
 		<value>Sort by Watched</value>
 	</string>
@@ -1947,6 +1939,10 @@
 		<id>675</id>
 		<value>Example:</value>
 	</string>
+	<string>
+		<id>676</id>
+		<value>Delete watched recordings?</value>
+	</string>	
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My TV</value></string>
 <string><id>10002</id><value>My Pictures</value></string>
