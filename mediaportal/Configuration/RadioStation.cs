@@ -10,7 +10,7 @@ namespace MediaPortal.Configuration
 		public string Genre;
 		public int Bitrate;
 		public string URL;
-		public long	Frequency;
+		public Frequency Frequency;
 
 		public RadioStation()
 		{
@@ -24,9 +24,7 @@ namespace MediaPortal.Configuration
 
 		public override string ToString()
 		{
-			return String.Format("Channel: {0}, Frequency: {1}", Channel, Frequency);
+			return String.Format("Channel: {0}, Frequency: {1}", Channel, Frequency.ToString(Frequency.Format.Herz));
 		}
-
 	}
-
 }

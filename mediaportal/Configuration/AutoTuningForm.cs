@@ -240,7 +240,7 @@ namespace MediaPortal.Configuration
 			cancelButton.Enabled = okButton.Enabled = startButton.Enabled = sensitivityComboBox.Enabled = false;
 			stopButton.Enabled = true;
 
-			OnStartTuning();
+			OnStartTuning(progressBar.Value);
 
 			//
 			// Start timer
@@ -269,7 +269,7 @@ namespace MediaPortal.Configuration
 			}
 		}
 
-		public virtual void OnStartTuning()
+		public virtual void OnStartTuning(int startValue)
 		{
 		}
 
@@ -335,7 +335,7 @@ namespace MediaPortal.Configuration
 
 			Step(stepSize);
 
-			OnPerformTuning();
+			OnPerformTuning(stepSize);
 
 			//
 			// Check if we have reached the end of the tuning
@@ -346,7 +346,7 @@ namespace MediaPortal.Configuration
 			}
 		}
 
-		public virtual void OnPerformTuning()
+		public virtual void OnPerformTuning(int stepSize)
 		{			
 		}
 

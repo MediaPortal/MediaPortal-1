@@ -200,7 +200,19 @@ namespace MediaPortal.Configuration
 
 		private void frequencyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+			//
+			// Make sure we only type one comma or dot
+			//
+			if(e.KeyChar == '.' || e.KeyChar == ',')
+			{
+				if(frequencyTextBox.Text.IndexOfAny(new char[] {',','.'}) >= 0)
+				{
+					e.Handled = true;
+					return;
+				}
+			}
+			
+			if(char.IsNumber(e.KeyChar) == false && (e.KeyChar != 8 && e.KeyChar != '.' && e.KeyChar != ','))
 			{
 				e.Handled = true;
 			}		
@@ -226,7 +238,48 @@ namespace MediaPortal.Configuration
 
 				channel.Name = nameTextBox.Text;
 				channel.Channel = Convert.ToInt32(channelTextBox.Text.Length > 0 ? channelTextBox.Text : "0");
-				channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+
+				try
+				{
+
+					if(frequencyTextBox.Text.IndexOfAny(new char[] { ',','.' }) >= 0)
+					{
+						char[] separators = new char[] {',', '.'};
+
+						for(int index = 0; index < separators.Length; index++)
+						{
+							try
+							{
+								frequencyTextBox.Text = frequencyTextBox.Text.Replace(',', separators[index]);
+								frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
+
+								//
+								// MegaHerz
+								//
+								channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+
+								break;
+							}
+							catch
+							{
+								//
+								// Failed to convert, try next separator
+								//
+							}
+						}
+					}
+					else
+					{
+						//
+						// Herz
+						//
+						channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+					}
+				}
+				catch
+				{
+					channel.Frequency = 0;
+				}
 
 				return channel;
 			}
@@ -249,6 +302,84 @@ namespace MediaPortal.Configuration
 	{
 		public string Name = String.Empty;
 		public int Channel = 0;
-		public long Frequency = 0;
+		public Frequency Frequency = new Frequency(0);
 	}
+
+	public class Frequency
+	{
+		public enum Format
+		{
+			Herz,
+			MegaHerz
+		}
+
+		public Frequency(long herz)
+		{
+			this.herz = herz;
+		}
+
+		private long herz = 0;
+
+		public long Herz
+		{
+			get { return herz; }
+			set { herz = value; 
+				if(herz <= 1000)
+					herz *= (int)1000000d;
+			}
+		}
+
+		public double MegaHerz
+		{
+			get { return (double)herz / 1000000d; }
+		}
+
+		public static implicit operator Frequency(int herz)
+		{
+			return new Frequency(herz);
+		}
+
+		public static implicit operator Frequency(long herz)
+		{
+			return new Frequency(herz);
+		}
+
+		public static implicit operator Frequency(double megaHerz)
+		{
+			return new Frequency((long)(megaHerz * (1000000d)));
+		}
+
+		public string ToString(Format format)
+		{
+			string result = String.Empty;
+
+			try
+			{
+				switch(format)
+				{
+					case Format.Herz:
+						result = String.Format("{0}", Herz);
+						break;
+
+					case Format.MegaHerz:
+						result = String.Format("{0:#,###0.000}", MegaHerz);
+						break;
+				}
+			}
+			catch
+			{
+				//
+				// Failed to convert
+				//
+			}
+
+			return result;
+		}
+
+		public override string ToString()
+		{
+			return ToString(Format.MegaHerz);
+		}
+	}
+
 }

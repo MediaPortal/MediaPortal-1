@@ -24,22 +24,18 @@ namespace MediaPortal.Configuration
 			//
 			SetStep(100000);
 			SetInterval(captureDevice.Tuner.ChanelMinMax[0], captureDevice.Tuner.ChanelMinMax[1]);
-
-			//
-			// Disable start button until we've completed the implementation
-			//
-			startButton.Enabled = false;
 		}
 
-		public override void OnStartTuning()
+		public override void OnStartTuning(int startValue)
 		{
+			captureDevice.Tuner.Channel = startValue;
 		}
 
 		public override void OnStopTuning()
 		{
 		}
 
-		public override void OnPerformTuning()
+		public override void OnPerformTuning(int stepSize)
 		{
 			if(captureDevice.Tuner.SignalPresent == true)
 			{
@@ -47,16 +43,12 @@ namespace MediaPortal.Configuration
 				// We have found a channel!
 				//
 				AddItem(new RadioStation(currentChannel, captureDevice.Tuner.Channel));
+			}
 
-				//
-				// Move forward
-				//
-			}
-			else
-			{
-				//
-				// No match, 
-			}
+			//
+			// Move forward
+			//
+			captureDevice.Tuner.Channel += stepSize;
 		}
 	}
 }
