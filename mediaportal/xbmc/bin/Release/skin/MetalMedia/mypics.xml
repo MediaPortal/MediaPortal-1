@@ -148,7 +148,6 @@
 		<onup>8</onup>
 		<ondown>2</ondown>
 	</control>
-
 	<control>
 		<description>composite control consisting of a list control and a thumbnail panel</description>
     <type>facadeview</type>
