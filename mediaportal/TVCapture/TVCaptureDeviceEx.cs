@@ -909,7 +909,15 @@ namespace MediaPortal.TV.Recording
 			{
 				using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(_mNewRecordedTV.FileName))
 				{
-					editor.SetAttributes(propsToSet);
+					try
+					{
+						editor.SetAttributes(propsToSet);
+					}
+					catch(Exception ex)
+					{
+						Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() Exception:{0} {1} {2}",
+									ex.Message,ex.Source,ex.StackTrace);
+					}
 				}
 			}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
 

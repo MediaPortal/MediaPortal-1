@@ -8,6 +8,7 @@ using System.Text;
 using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
+using MediaPortal.GUI.Library;
 
 namespace Toub.MediaCenter.Dvrms.Metadata
 {
@@ -21,7 +22,11 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 		public DvrmsMetadataEditor(string filepath) : base()
 		{
 			IFileSourceFilter sourceFilter = (IFileSourceFilter)ClassId.CoCreateInstance(ClassId.RecordingAttributes);
-			sourceFilter.Load(filepath, IntPtr.Zero);
+			int hr=sourceFilter.Load(filepath, IntPtr.Zero);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
+			}
 			_editor = (IStreamBufferRecordingAttribute)sourceFilter;
 		}
 
