@@ -15,7 +15,7 @@ namespace MediaPortal.TV.Database
     string m_strRepeat="";
     long   m_iStartTime=0;
     long   m_iEndTime=0;
-
+    int    m_iID=0;
     /// <summary>
     /// Constructor
     /// </summary>
@@ -75,6 +75,16 @@ namespace MediaPortal.TV.Database
     {
       get { return m_strGenre;}
       set { m_strGenre=value;}
+    }
+
+
+    /// <summary>
+    /// Property to get/set the databse ID of this tv program
+    /// </summary>
+    public int ID
+    {
+      get { return m_iID;}
+      set { m_iID=value;}
     }
 
     /// <summary>

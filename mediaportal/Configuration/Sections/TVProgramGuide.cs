@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -48,7 +49,10 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button DeleteTaskButton;
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label label13;
+    private System.Windows.Forms.Button btnUpdateTvGuide;
 		private System.ComponentModel.IContainer components = null;
+    bool  OldTimeZoneCompensation=false;
+    int   OldTimeZoneOffset=0;
 
 		public TVProgramGuide() : this("Program Guide")
 		{
@@ -126,6 +130,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label13 = new System.Windows.Forms.Label();
       this.DeleteTaskButton = new System.Windows.Forms.Button();
+      this.btnUpdateTvGuide = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -157,6 +162,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.btnUpdateTvGuide);
       this.groupBox2.Controls.Add(this.RunGrabberButton);
       this.groupBox2.Controls.Add(this.advancedRadioButton);
       this.groupBox2.Controls.Add(this.label2);
@@ -233,6 +239,7 @@ namespace MediaPortal.Configuration.Sections
       this.useTimeZoneCheckBox.Size = new System.Drawing.Size(240, 24);
       this.useTimeZoneCheckBox.TabIndex = 51;
       this.useTimeZoneCheckBox.Text = "Use time zone information from XMLTV";
+      this.useTimeZoneCheckBox.CheckedChanged += new System.EventHandler(this.useTimeZoneCheckBox_CheckedChanged);
       // 
       // label1
       // 
@@ -528,6 +535,15 @@ namespace MediaPortal.Configuration.Sections
       this.DeleteTaskButton.Text = "Delete Task";
       this.DeleteTaskButton.Click += new System.EventHandler(this.DeleteTaskButton_Click);
       // 
+      // btnUpdateTvGuide
+      // 
+      this.btnUpdateTvGuide.Location = new System.Drawing.Point(288, 56);
+      this.btnUpdateTvGuide.Name = "btnUpdateTvGuide";
+      this.btnUpdateTvGuide.Size = new System.Drawing.Size(120, 48);
+      this.btnUpdateTvGuide.TabIndex = 65;
+      this.btnUpdateTvGuide.Text = "Update TV database with new time zone compensation";
+      this.btnUpdateTvGuide.Click += new System.EventHandler(this.btnUpdateTvGuide_Click);
+      // 
       // TVProgramGuide
       // 
       this.Controls.Add(this.groupBox3);
@@ -570,7 +586,9 @@ namespace MediaPortal.Configuration.Sections
 				useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
 
 				useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
+        OldTimeZoneCompensation=useTimeZoneCheckBox.Checked;
 				compensateTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("xmltv", "timezonecorrection", 0));
+        OldTimeZoneOffset=xmlreader.GetValueAsInt("xmltv", "timezonecorrection", 0);
 
         string strDir=System.IO.Directory.GetCurrentDirectory();
         strDir+=@"\xmltv";
@@ -582,6 +600,7 @@ namespace MediaPortal.Configuration.Sections
 				daysToKeepTextBox.Text = xmlreader.GetValueAsString("xmltv","daystokeep", "7");
 				advancedRadioButton.Checked = xmlreader.GetValueAsBool("xmltv", "advanced", false);
 				basicRadioButton.Checked = !advancedRadioButton.Checked;
+        btnUpdateTvGuide.Enabled =useTimeZoneCheckBox.Checked;
 			}						
       short[] taskSettings = new short[3];
       string userAccount = null;
@@ -876,13 +895,37 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         MessageBox.Show("XMLTV.exe cannot be found in the directory you have setup as the XMLTV folder."+ "\n\n" +"Ensure that you have installed the XMLTV application, and that the XMLTV folder" + "\n" + "setting points to the directory where XMLTV.exe is installed",
-"MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
 
     private void groupBox2_Enter(object sender, System.EventArgs e)
     {
     
+    }
+
+    private void btnUpdateTvGuide_Click(object sender, System.EventArgs e)
+    {
+      if (!useTimeZoneCheckBox.Checked ) return;
+      try
+      {
+        int iNewTimeZoneCompensation=Int32.Parse(compensateTextBox.Text);
+        iNewTimeZoneCompensation-=OldTimeZoneOffset;
+
+        TVDatabase.OffsetProgramsByHour(iNewTimeZoneCompensation);
+        OldTimeZoneOffset=iNewTimeZoneCompensation;
+        MessageBox.Show("TVDatabase is updated with new timezone offset",
+          "MediaPortal Configuration",MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+      }
+      catch(Exception)
+      {
+      }
+    }
+
+    private void useTimeZoneCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+      btnUpdateTvGuide.Enabled=useTimeZoneCheckBox.Checked;
     }
 	}
 }

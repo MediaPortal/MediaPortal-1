@@ -784,6 +784,7 @@ namespace MediaPortal.TV.Database
               prog.Description=Get(results,i,"program.strDescription");
               prog.Episode=Get(results,i,"program.strEpisodeName");
               prog.Repeat=Get(results,i,"program.strRepeat");
+              prog.ID=Int32.Parse(Get(results,i,"program.idProgram"));
               programs.Add(prog);
             }
           }
@@ -836,6 +837,7 @@ namespace MediaPortal.TV.Database
               prog.Description=Get(results,i,"program.strDescription");
               prog.Episode=Get(results,i,"program.strEpisodeName");
               prog.Repeat=Get(results,i,"program.strRepeat");
+              prog.ID=Int32.Parse(Get(results,i,"program.idProgram"));
               programs.Add(prog);
             }
           }
@@ -883,6 +885,7 @@ namespace MediaPortal.TV.Database
               prog.Description=Get(results,i,"program.strDescription");
               prog.Episode=Get(results,i,"program.strEpisodeName");
               prog.Repeat=Get(results,i,"program.strRepeat");
+              prog.ID=Int32.Parse(Get(results,i,"program.idProgram"));
               programs.Add(prog);
             }
           }
@@ -1422,6 +1425,55 @@ namespace MediaPortal.TV.Database
         return;
       }
 		}
+    static public void OffsetProgramsByHour(int Hours)
+    {
+      lock (typeof(TVDatabase))
+      {
+        try
+        {
+          //get all programs
+          if (null==m_db) return ;
+
+          ArrayList programs =new ArrayList();
+          SQLiteResultSet results;
+          results=m_db.Execute("select * from program");
+          if (results.Rows.Count== 0) return ;
+          for (int i=0; i < results.Rows.Count;++i)
+          {
+            long iStart=Int64.Parse(Get(results,i,"iStartTime"));
+            long iEnd=Int64.Parse(Get(results,i,"iEndTime"));
+            TVProgram prog=new TVProgram();
+            prog.Start=iStart;
+            prog.End=iEnd;
+            prog.ID=Int32.Parse(Get(results,i,"idProgram"));
+            programs.Add(prog);
+          }
+
+          //correct time offsets
+          foreach (TVProgram program in programs)
+          {
+            DateTime dtStart=program.StartTime;
+            DateTime dtEnd=program.EndTime;
+            dtStart=dtStart.AddHours(Hours);
+            dtEnd=dtEnd.AddHours(Hours);
+            program.Start=Utils.datetolong(dtStart);
+            program.End=Utils.datetolong(dtEnd);
+          
+            string sql=String.Format("update program set iStartTime={0} and iEndTime={1} where idProgram={2}",
+                                      program.Start, program.End, program.ID);
+            m_db.Execute(sql);
+          }
+
+
+
+
+        }
+        catch(SQLiteException ex)
+        {
+          Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+        }
+      }
+    }
 
   }
 }
