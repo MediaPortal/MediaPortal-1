@@ -1507,7 +1507,7 @@ namespace MediaPortal.TV.Recording
 					uniqueName="Mediaportal DVB-T";
 				} break;
 			}
-			Log.Write("DVBGraphBDA: available check tuningspaces");
+			Log.Write("DVBGraphBDA: check available tuningspaces");
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 
 			int Count = 0;
