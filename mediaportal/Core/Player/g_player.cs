@@ -216,11 +216,11 @@ namespace MediaPortal.Player
 		{
 			//stop playing radio
 			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msgRadio);
+			GUIWindowManager.SendMessage(msgRadio);
 			
 			//stop timeshifting tv
 			GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msgTv);
+			GUIWindowManager.SendMessage(msgTv);
 
 			Log.Write("g_Player.PlayDVD()");
       m_currentStep=Steps.Sec0;
@@ -280,11 +280,11 @@ namespace MediaPortal.Player
 
 			//stop radio
 			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msgRadio);
+			GUIWindowManager.SendMessage(msgRadio);
 			
 			//stop timeshifting tv
 			GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msgTv);
+			GUIWindowManager.SendMessage(msgTv);
 
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
@@ -323,14 +323,14 @@ namespace MediaPortal.Player
 		{
 			//stop radio
 			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIGraphicsContext.SendMessage(msgRadio);
+			GUIWindowManager.SendMessage(msgRadio);
 
 			if (!Utils.IsLiveTv(strFile))
 			{
 				//file is not a live tv file
 				//so tell recorder to stop timeshifting live-tv
 				GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
-				GUIGraphicsContext.SendMessage(msgTv);
+				GUIWindowManager.SendMessage(msgTv);
 			}
 
       m_currentStep=Steps.Sec0;
