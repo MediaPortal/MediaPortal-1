@@ -2842,7 +2842,7 @@ namespace MediaPortal
         i=1;
         index=0;
         foreach (Filter filter in filters.AudioCompressors)
-        {
+        {           
           comboCompressorAudio.Items.Add(filter.Name);
           if (String.Compare(filter.Name,strCompressorAudio,true)==0) index=i;
           ++i;
@@ -3015,6 +3015,7 @@ namespace MediaPortal
       catch (Exception)
       {
       }
+      if (capture!=null) capture.LoadSettings();
       return capture;
     }
 
@@ -3201,9 +3202,12 @@ namespace MediaPortal
       listPropertyPages.Items.Clear();
       Capture cap=setupgraph();
       if (cap==null) return;
-      foreach (PropertyPage page in cap.PropertyPages)
+      if (cap.PropertyPages!=null)
       {
-        listPropertyPages.Items.Add( page.Name);
+        foreach (PropertyPage page in cap.PropertyPages)
+        {
+          listPropertyPages.Items.Add( page.Name);
+        }
       }
       cap.Stop();
       cap.Dispose();
@@ -3216,14 +3220,18 @@ namespace MediaPortal
       int i=0;
       Capture cap=setupgraph();
       if (cap==null) return;
-      foreach (PropertyPage page in cap.PropertyPages)
+      if (cap.PropertyPages!=null)
       {
-        if (i==iItem)
+        foreach (PropertyPage page in cap.PropertyPages)
         {
-          page.Show(this);
-          break;
+          if (i==iItem)
+          {
+            page.Show(this);
+            cap.SaveSettings();
+            break;
+          }
+          i++;
         }
-        i++;
       }
       cap.Stop();
       cap.Dispose();

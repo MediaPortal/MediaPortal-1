@@ -29,7 +29,6 @@ My TV:
      - add support for digital capture cards (BDA tuners)
      - support multiple tuners/capture cards
      - stutter /avsync ?
-     - store property page settings...
     
 My Music:
   - faster start of 1st song played

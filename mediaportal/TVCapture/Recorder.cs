@@ -620,6 +620,8 @@ namespace MediaPortal.TV.Recording
         // set brightness, contrast, gamma etc...
         SetBrightnessContrastGamma();
 
+        capture.LoadSettings();
+
         // set filename for capture
         if (strFileName!=null && strFileName.Length>0)
         {
