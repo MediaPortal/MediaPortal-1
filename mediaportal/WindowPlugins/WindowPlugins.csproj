@@ -433,14 +433,104 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\AppSettings.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettings.resx"
+                    DependentUpon = "AppSettings.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsDirBrowse.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsDirBrowse.resx"
+                    DependentUpon = "AppSettingsDirBrowse.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsDirCache.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsDirCache.resx"
+                    DependentUpon = "AppSettingsDirCache.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsFilelauncher.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsFilelauncher.resx"
+                    DependentUpon = "AppSettingsFilelauncher.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsGrouper.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsGrouper.resx"
+                    DependentUpon = "AppSettingsGrouper.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsMyFileIni.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsMyFileIni.resx"
+                    DependentUpon = "AppSettingsMyFileIni.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsMyFileMeedio.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsMyFileMeedio.resx"
+                    DependentUpon = "AppSettingsMyFileMeedio.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsRoot.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsRoot.resx"
+                    DependentUpon = "AppSettingsRoot.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIPrograms\FileDetailsForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\FileDetailsForm.resx"
+                    DependentUpon = "FileDetailsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIPrograms\FileEditorForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\FileEditorForm.resx"
+                    DependentUpon = "FileEditorForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUIPrograms\GUIProgramInfo.cs"

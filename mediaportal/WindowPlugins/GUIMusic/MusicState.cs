@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
 			// TODO: Add constructor logic here
 			//
     }
-    static public string TempPlaylistDirectory
+    static public string TempPlaylistDirectory 
     {
       get { return m_strTempPlaylistDirectory;}
       set {m_strTempPlaylistDirectory=value;}

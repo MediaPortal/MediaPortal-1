@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicFavorites : GUIWindow
   {
-    enum Mode
+    enum Mode 
     {
       Duration,
       TimesPlayed,

@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
   /// </summary>
 	public class GUIMusicPlayList : GUIWindow
 	{
-		enum Controls
+		enum Controls 
 		{
 			CONTROL_BTNVIEWASICONS = 2, 
 			CONTROL_BTNSHUFFLE = 20, 

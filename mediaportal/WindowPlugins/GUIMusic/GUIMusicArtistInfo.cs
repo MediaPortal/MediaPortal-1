@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
   /// 
   /// </summary>
   public class GUIMusicArtistInfo : GUIWindow
-  {
+  { 
     enum Controls
     {
         CONTROL_ARTIST		      =20

@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
 {
 	/// <summary>
 	/// 
-	/// </summary>
+	/// </summary> 
 	public class GUIMusicInfo : GUIWindow
 	{
     enum Controls

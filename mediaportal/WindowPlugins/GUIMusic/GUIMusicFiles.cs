@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIMusicFiles : GUIWindow, IComparer, ISetupForm
+  public class GUIMusicFiles : GUIWindow, IComparer, ISetupForm 
   {
     [Serializable]
     public class MapSettings

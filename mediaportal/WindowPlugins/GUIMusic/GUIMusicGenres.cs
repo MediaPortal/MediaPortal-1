@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
   /// Summary description for Class1.
   /// </summary>
   public class GUIMusicGenres: GUIWindow, IComparer
-  {
+  { 
     enum Controls
     {
       CONTROL_BTNVIEWASICONS=		2,

@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIMusicAlbums: GUIWindow, IComparer
+  public class GUIMusicAlbums: GUIWindow, IComparer 
   {
     enum Controls
     {

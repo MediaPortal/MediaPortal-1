@@ -16,7 +16,7 @@ using MediaPortal.TagReader;
 namespace MediaPortal.GUI.Music
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Summary description for Class1. 
   /// </summary>
   public class GUIMusicOverlay: GUIWindow
   {
