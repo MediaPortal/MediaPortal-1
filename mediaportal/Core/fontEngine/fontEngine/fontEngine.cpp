@@ -63,6 +63,7 @@ struct TEXTURE_DATA_T
 	int                     iv;
 	int                     dwNumTriangles;
 	D3DSURFACE_DESC			desc;
+	bool                    updateVertexBuffer;
 };
 
 static FONT_DATA_T*			fontData    = new FONT_DATA_T[MAX_FONTS];
@@ -92,6 +93,7 @@ void FontEngineInitialize()
 			textureData[i].pVertexBuffer=NULL;
 			textureData[i].pTexture=NULL;
 			textureData[i].vertices = NULL;
+			textureData[i].updateVertexBuffer=false;
 			textureZ[i]=-1;
 		}
 		initialized=true;
@@ -170,6 +172,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		OutputDebugString("Ran out of texture vertices\n");
 		return;
 	}
+	
 
 	float xpos=x-0.5f;
 	float xpos2=x+nw-0.5f;
@@ -213,8 +216,16 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	float ty1=voff;
 	float ty2=voff+vmax;
 
+	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color)
+		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
+
+	if (texture->vertices[iv].x != xpos || texture->vertices[iv].y !=ypos || texture->vertices[iv].tv!=ty1)
+		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty1;iv++;
+
+	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos2 || texture->vertices[iv].tu!=tx2)
+		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
 	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
 	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
@@ -235,11 +246,14 @@ void FontEnginePresentTextures()
 		TEXTURE_DATA_T* texture = &(textureData[index]);
 		if (texture->dwNumTriangles!=0)
 		{
-			CUSTOMVERTEX* pVertices;
-			
-			texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
-			memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
-			texture->pVertexBuffer->Unlock();
+			if (texture->updateVertexBuffer)
+			{
+				CUSTOMVERTEX* pVertices;
+				
+				texture->pVertexBuffer->Lock( 0, 0, (void**)&pVertices, D3DLOCK_DISCARD ) ;
+				memcpy(pVertices,texture->vertices, (texture->iv)*sizeof(CUSTOMVERTEX));
+				texture->pVertexBuffer->Unlock();
+			}
 
 			m_pDevice->SetTexture(0, texture->pTexture);
 			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
@@ -249,6 +263,7 @@ void FontEnginePresentTextures()
 		}
 		texture->dwNumTriangles = 0;
 		texture->iv = 0;
+		texture->updateVertexBuffer=false;
 		textureZ[i]=0;
 		
 	}

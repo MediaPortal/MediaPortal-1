@@ -676,12 +676,12 @@ namespace MediaPortal.GUI.Video
 					GUIGraphicsContext.OnAction(actionMenu);
 					break;
 				case 975: // DVD previous chapter
-					Action actionMenu = new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
-					GUIGraphicsContext.OnAction(actionMenu);
+					Action actionPrevChapter = new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+					GUIGraphicsContext.OnAction(actionPrevChapter);
 					break;
 				case 976: // DVD next chapter
-					Action actionMenu = new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
-					GUIGraphicsContext.OnAction(actionMenu);
+					Action actionNextChapter = new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+					GUIGraphicsContext.OnAction(actionNextChapter);
 					break;
 				case 941: // Change aspect ratio
 					ShowAspectRatioMenu();
