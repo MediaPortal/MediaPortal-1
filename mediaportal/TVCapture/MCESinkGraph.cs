@@ -171,7 +171,7 @@ namespace MediaPortal.TV.Recording
         m_FrameSize=m_videoCaptureDevice.GetFrameSize();
 
         DirectShowUtil.DebugWrite("MCESinkGraph:capturing:{0}x{1}",m_FrameSize.Width,m_FrameSize.Height);
-        m_mpeg2Demux=null;
+        
         if (m_videoCaptureDevice.MPEG2)
         {
           m_mpeg2Demux = new MPEG2Demux(ref m_graphBuilder,m_FrameSize);
@@ -180,7 +180,8 @@ namespace MediaPortal.TV.Recording
         
         // Connect video capture->mpeg2 demuxer
         ConnectVideoCaptureToMPEG2Demuxer();
-        m_mpeg2Demux.CreateMappings();
+        if (m_mpeg2Demux!=null)
+					m_mpeg2Demux.CreateMappings();
         m_graphState=State.Created;
         return true;
     }
