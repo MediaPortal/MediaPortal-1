@@ -352,6 +352,7 @@ namespace MediaPortal.TV.Database
 		static public TunerLib.TuneRequest GetTuneRequest(int iLCN, string networkType, TunerLib.TuneRequest tuneRequest) 
 		{
 			if (m_db == null) return null;
+			Log.Write("GetTuneRequest for iLCN:{0} networkType:{1}", iLCN, networkType);
 			lock (typeof(TVDatabase))
 			{
 				try
@@ -371,6 +372,7 @@ namespace MediaPortal.TV.Database
 							strSQL = String.Format("select * from dvbtchannels where iLCN={0} AND visible=1",iLCN);
 							break;
 						default:
+							Log.Write("Unknown network type");
 							return null;
 					}
 					SQLiteResultSet results;

@@ -703,7 +703,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Created) return false;
 			
-			Log.Write("DVBSS2:StartViewing()");
+			Log.Write("DVBGraphBDA:StartViewing()");
 
 			// add VMR9 renderer
 			Vmr9.AddVMR9(m_graphBuilder);
@@ -718,12 +718,12 @@ namespace MediaPortal.TV.Recording
 			// render the video/audio pins so they get connected to the video/audio codecs
 			if(m_graphBuilder.Render(m_DemuxVideoPin) != 0)
 			{
-				Log.Write("DVBSS2:Failed to render video out pin MPEG-2 Demultiplexer");
+				Log.Write("DVBGraphBDA:Failed to render video out pin MPEG-2 Demultiplexer");
 				return false;
 			}
 			if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
 			{
-				Log.Write("DVBSS2:Failed to render audio out pin MPEG-2 Demultiplexer");
+				Log.Write("DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
 				return false;
 			}
 
@@ -737,14 +737,14 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow == null)
 				{
-					Log.Write("DVBSS2:FAILED:Unable to get IVideoWindow");
+					Log.Write("DVBGraphBDA:FAILED:Unable to get IVideoWindow");
 					return false;
 				}
 
 				m_basicVideo = m_graphBuilder as IBasicVideo2;
 				if (m_basicVideo == null)
 				{
-					Log.Write("DVBSS2:FAILED:Unable to get IBasicVideo2");
+					Log.Write("DVBGraphBDA:FAILED:Unable to get IBasicVideo2");
 					return false;
 				}
 
@@ -770,7 +770,7 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			m_graphState = State.Viewing;
 			GUIGraphicsContext_OnVideoWindowChanged();
-			Log.Write("DVBSS2:Viewing..");
+			Log.Write("DVBGraphBDA:Viewing..");
 			return true;
 		}
 
@@ -909,7 +909,7 @@ namespace MediaPortal.TV.Recording
 			IPin	pinObj1		= null;
 			IPin	outPin		= null;
 
-			Log.Write("DVBSS2:CreateSinkSource()");
+			Log.Write("DVBGraphBDA:CreateSinkSource()");
 
 			m_graphBuilder.AddFilter(m_streamBuffer,"StreamBufferSink");
 			m_graphBuilder.AddFilter(m_mpeg2Analyzer,"Mpeg2 Analyzer");
@@ -1000,7 +1000,7 @@ namespace MediaPortal.TV.Recording
 			if (m_StreamBufferSink == null) 
 				return false;
 
-			Log.Write("DVBSS2:StartRecording()");
+			Log.Write("DVBGraphBDA:StartRecording()");
 			uint iRecordingType=0;
 			if (bContentRecording) 
 				iRecordingType = 0;
@@ -1015,7 +1015,7 @@ namespace MediaPortal.TV.Recording
 			if (objRecord == null) 
 				if (m_recControl == null) 
 				{
-					Log.Write("DVBSS2:FAILED to get IRecorder");
+					Log.Write("DVBGraphBDA:FAILED to get IRecorder");
 					return false;
 				}
       
@@ -1024,7 +1024,7 @@ namespace MediaPortal.TV.Recording
 			m_recControl = objRecord as IStreamBufferRecordControl;
 			if (m_recControl == null) 
 			{
-				Log.Write("DVBSS2:FAILED to get IStreamBufferRecordControl");
+				Log.Write("DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
 				return false;
 			}
 			long lStartTime = 0;
@@ -1096,7 +1096,7 @@ namespace MediaPortal.TV.Recording
 			if(m_graphState!=State.Created)
 				return false;
 			
-			Log.Write("DVBSS2:StartTimeShifting()");
+			Log.Write("DVBGraphBDA:StartTimeShifting()");
 
 			TuneChannel(standard, iChannel,country);
 			if(CreateSinkSource(strFileName))

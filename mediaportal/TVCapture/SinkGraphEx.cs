@@ -54,7 +54,7 @@ namespace MediaPortal.TV.Recording
       Vmr9 =new VMR9Util("mytv");
       DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() IN");
 			if (m_graphState != State.None) return false;		// If doing something already, return...
-			if (m_Card==null) 
+			if (mCard==null) 
 			{
 				Log.Write("SinkGraphEx:card is not defined");
 				return false;
@@ -172,7 +172,6 @@ namespace MediaPortal.TV.Recording
 					Log.Write("Cannot find source filter for connection:{0}",i);
 					continue;
 				}
-				sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 				if (sinkFilter==null)
 				{
 					Log.Write("Cannot find sink filter for connection:{0}",i);
