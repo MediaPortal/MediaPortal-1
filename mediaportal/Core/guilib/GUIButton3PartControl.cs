@@ -49,6 +49,9 @@ namespace MediaPortal.GUI.Library
     protected int                    m_iIconOffsetY=-1;
     protected int                    m_iIconWidth=-1;
     protected int                    m_iIconHeight=-1;
+    protected bool                   m_bIconKeepAspectRatio=false;
+    protected bool                   m_bIconCentered=false;
+    protected bool                   m_bIconZoom=false;
     GUILabelControl                  cntlLabel1=null;
     GUILabelControl                  cntlLabel2=null;
     bool                             containsProperty1=false;
@@ -131,7 +134,8 @@ namespace MediaPortal.GUI.Library
       int iWidth=m_imgNoFocusMid.Width;
 			if (m_strText1.Length>0 )
 			{
-        int xoff=m_iTextOffsetX1+m_imgNoFocusLeft.TextureWidth;
+        int widthLeft =(int)((float)m_imgFocusLeft.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusLeft.TextureHeight));
+        int xoff=m_iTextOffsetX1+widthLeft ;
 
         if (Disabled )
           cntlLabel1.TextColor=m_dwDisabledColor;
@@ -148,7 +152,8 @@ namespace MediaPortal.GUI.Library
 			// render the 2nd line of text on the button
 			if (m_strText2.Length>0)
       {
-        int xoff=m_iTextOffsetX2+m_imgNoFocusLeft.TextureWidth;
+        int widthLeft =(int)((float)m_imgFocusLeft.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusLeft.TextureHeight));
+        int xoff=m_iTextOffsetX2+widthLeft;
 
         if (Disabled )
           cntlLabel2.TextColor=m_dwDisabledColor;
@@ -582,13 +587,14 @@ namespace MediaPortal.GUI.Library
 			m_imgFocusRight.Height=m_dwHeight;
       
       int width;
-      int widthLeft =m_imgFocusLeft.TextureWidth;
-      int widthMid  =m_dwWidth - (m_imgFocusLeft.TextureWidth+m_imgFocusRight.TextureWidth);
-      int widthRight=m_imgFocusRight.TextureWidth;
+
+      int widthLeft =(int)((float)m_imgFocusLeft.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusLeft.TextureHeight));
+      int widthRight=(int)((float)m_imgFocusRight.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusRight.TextureHeight));
+      int widthMid = m_dwWidth - widthLeft - widthRight;
+      if (widthMid < 0) widthMid=0;
 
       while(true)
       {
-  
 				width=widthLeft+widthRight+widthMid;
         if (width > m_dwWidth)
         {
@@ -614,7 +620,6 @@ namespace MediaPortal.GUI.Library
 			if (widthRight==0) m_imgFocusRight.IsVisible=false;
 			else m_imgFocusRight.IsVisible=true;
 
-
 			m_imgNoFocusLeft.Width=widthLeft;
 			m_imgNoFocusMid.Width=widthMid;
 			m_imgNoFocusRight.Width=widthRight;
@@ -628,18 +633,21 @@ namespace MediaPortal.GUI.Library
 			else m_imgNoFocusRight.IsVisible=true;
 
       m_imgFocusLeft.SetPosition (m_dwPosX, m_dwPosY);
-      m_imgFocusMid.SetPosition  (m_dwPosX +m_imgFocusLeft.TextureWidth, m_dwPosY);
-      m_imgFocusRight.SetPosition(m_dwPosX +m_dwWidth-m_imgFocusRight.TextureWidth, m_dwPosY);
+      m_imgFocusMid.SetPosition  (m_dwPosX + widthLeft, m_dwPosY);
+      m_imgFocusRight.SetPosition(m_dwPosX + m_dwWidth - widthRight, m_dwPosY);
 
 
       m_imgNoFocusLeft.SetPosition (m_dwPosX, m_dwPosY);
-      m_imgNoFocusMid.SetPosition  (m_dwPosX +m_imgFocusLeft.TextureWidth, m_dwPosY);
-      m_imgNoFocusRight.SetPosition(m_dwPosX +m_dwWidth-m_imgFocusRight.TextureWidth, m_dwPosY);
+      m_imgNoFocusMid.SetPosition  (m_dwPosX + widthLeft, m_dwPosY);
+      m_imgNoFocusRight.SetPosition(m_dwPosX + m_dwWidth - widthRight, m_dwPosY);
 
 
 
 			if (m_imgIcon!=null)
 			{
+        m_imgIcon.KeepAspectRatio=m_bIconKeepAspectRatio;
+        m_imgIcon.Centered=m_bIconCentered;
+        m_imgIcon.Zoom=m_bIconZoom;
 				if (IconOffsetY<0 || IconOffsetX<0)
 				{
           int iWidth=m_imgIcon.TextureWidth;
@@ -666,7 +674,31 @@ namespace MediaPortal.GUI.Library
 			Update();
 		}
 
-		/// <summary>
+    /// <summary>
+    /// Get/Set the icon to be zoomed into the dest. rectangle
+    /// </summary>
+    public bool IconZoom
+    {
+      get { return m_bIconZoom; }
+      set { m_bIconZoom = value; }
+    }
+    /// <summary>
+    /// Get/Set the icon to keep it's aspectratio in the dest. rectangle
+    /// </summary>
+    public bool IconKeepAspectRatio
+    {
+      get { return m_bIconKeepAspectRatio; }
+      set { m_bIconKeepAspectRatio = value; }
+    }
+    /// <summary>
+    /// Get/Set the icon centered in the dest. rectangle
+    /// </summary>
+    public bool IconCentered
+    {
+      get { return m_bIconCentered; }
+      set { m_bIconCentered = value; }
+    }
+    /// <summary>
 		/// Get/Set the the application filename
 		/// which should be launched when this button gets clicked
 		/// </summary>

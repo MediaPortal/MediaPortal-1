@@ -50,7 +50,7 @@
 		<type>image</type>
 		<id>90</id>
 		<posX>186</posX>
-		<posY>222</posY>
+		<posY>90</posY>
 		<width>115</width>
 		<height>28</height>
 		<texture>button_small_settings_nofocus.png</texture>
@@ -99,25 +99,37 @@
 		<onright>8</onright>
 	</control>
 	<control>
+		<description>Channel template</description>
+		<type>image</type>
+		<id>20</id>
+		<posX>62</posX>
+		<posY>125</posY>
+		<width>124</width>
+		<height>34</height>
+	</control>
+	<control>
 		<description>Channel image template</description>
 		<type>image</type>
 		<id>7</id>
-		<posX>60</posX>
-		<posY>125</posY>
+		<posX>0</posX>
+		<posY>0</posY>
 		<width>32</width>
 		<height>32</height>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>no</centered>
+		<zoom>yes</zoom>
 		<texture>defaultVideoBig.png</texture>
-	</control>
+	</control> 
 	<control>
 		<description>channel Label template</description>
 		<type>label</type>
 		<id>18</id>
-		<posX>60</posX>
-		<posY>165</posY>
-		<width>95</width>
+		<posX>35</posX>
+		<posY>5</posY>
+		<width>65</width>
 		<height>15</height>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Current program title</description>
@@ -166,14 +178,14 @@
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>	
-	<control>
+<!--	<control>
 		<description>template for program genre light area</description>
 		<type>label</type>
 		<id>23</id>
 		<label>-</label>
 		<font>font10</font>
 		<textcolor>FF101010</textcolor>
-	</control>	
+	</control>	-->
 	<control>
 		<description>template for program title light area</description>
 		<type>label</type>
@@ -189,7 +201,7 @@
 		<id>25</id>
 		<posX>30</posX>
 		<posY>125</posY>
-		<height>273</height>
+		<height>270</height>
 		<colordiffuse>c0ffffff</colordiffuse>
 		<texture>tvguide_slider.png</texture>
 	</control>	
@@ -202,7 +214,7 @@
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
-	<control>
+<!--	<control>
 		<description>template for genre  dark area</description>
 		<type>label</type>
 		<visible>no</visible>
@@ -210,7 +222,7 @@
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
-	</control>
+	</control> -->
 	<control>
 		<description>TV background</description>
 		<type>image</type>

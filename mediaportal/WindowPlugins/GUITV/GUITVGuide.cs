@@ -34,6 +34,7 @@ namespace MediaPortal.GUI.TV
 			VERTICAL_LINE=25,
 			LABEL_TITLE_DARK_TEMPLATE=26,
 			LABEL_GENRE_DARK_TEMPLATE=30,
+      CHANNEL_TEMPLATE=20, // Channel rectangle and row height
       
 			HORZ_SCROLLBAR=28,
 			VERT_SCROLLBAR=29,
@@ -71,6 +72,7 @@ namespace MediaPortal.GUI.TV
 		int                                 m_iTotalPrograms=0;
     int                                 m_iGuideDayRange=10;
     int                                 m_iSingleChannel=0;
+    bool                                m_bUseChannelLogos=false;
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
 		string    m_strInput="";
@@ -485,14 +487,11 @@ namespace MediaPortal.GUI.TV
 					base.OnMessage(message);
           LoadSettings();
 
-					GUIControl cntlPanel   = GetControl((int)Controls.PANEL_BACKGROUND);
-					GUIImage cntlChannelImg = (GUIImage)GetControl((int)Controls.CHANNEL_IMAGE_TEMPLATE);
-					GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
-					GUILabelControl labelTime= (GUILabelControl) GetControl((int)Controls.LABEL_TIME1);
-					GUIImage cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
+					GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
+          GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
 
-					int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelImg.YPosition;
-					int iItemHeight=(cntlChannelLabel.YPosition+cntlChannelLabel.Height) - cntlChannelImg.YPosition;
+          int iHeight=cntlPanel.Height;
+          int iItemHeight=cntlChannelTemplate.Height;
 					m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
 
           UnFocus();
@@ -500,6 +499,7 @@ namespace MediaPortal.GUI.TV
 					m_iCursorY=0;
 					m_iChannelOffset=0;
           m_bSingleChannel=false;
+          m_bUseChannelLogos=false;
 					if (Recorder.IsCardViewing( GUITVHome.GetCurrentCard() ) )
 					{
 						m_strCurrentChannel= Recorder.GetTVChannelName(  GUITVHome.GetCurrentCard() );
@@ -581,6 +581,7 @@ namespace MediaPortal.GUI.TV
 					{
 						GUISpinControl cntlTimeInt=GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
 						int iInterval=(cntlTimeInt.Value)+1;
+            if (iInterval>4) iInterval=4;
 						m_iBlockTime=iInterval*15;
 						Update();
 						SetFocus();
@@ -631,12 +632,14 @@ namespace MediaPortal.GUI.TV
 			GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
 			GUILabelControl labelTime= (GUILabelControl) GetControl((int)Controls.LABEL_TIME1);
 			GUIImage				cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
+      GUIImage        cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
 			
-
-			cntlChannelImg.IsVisible=false;
+      m_bUseChannelLogos = cntlChannelImg!=null;
+      if (m_bUseChannelLogos) cntlChannelImg.IsVisible=false;
 			cntlChannelLabel.IsVisible=false;
 			cntlHeaderBkgImg.IsVisible=false;
 			labelTime.IsVisible=false;
+      cntlChannelTemplate.IsVisible=false;
 			int iLabelWidth=(cntlPanel.XPosition+cntlPanel.Width-labelTime.XPosition)/4; 
 
 			// add labels for time blocks 1-4
@@ -651,8 +654,8 @@ namespace MediaPortal.GUI.TV
 
 			for (int iLabel=0; iLabel <4; iLabel++)
 			{
-				xpos=iLabel*iLabelWidth+labelTime.XPosition;
-				ypos=cntlPanel.YPosition+2;
+				xpos=iLabel*iLabelWidth + labelTime.XPosition;
+				ypos=labelTime.YPosition;
 
 				GUIImage img=GetControl((int)Controls.IMG_TIME1+iLabel) as GUIImage;
 				if (img==null)
@@ -694,45 +697,54 @@ namespace MediaPortal.GUI.TV
 			}
 
 			// add channels...
-			int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelImg.YPosition;
-			int iItemHeight=(cntlChannelLabel.YPosition+cntlChannelLabel.Height) - cntlChannelImg.YPosition;
+      int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelTemplate.YPosition;
+      int iItemHeight=cntlChannelTemplate.Height;
+
 			m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
 			for (int iChan=0; iChan <m_iChannels; ++iChan)
 			{
-				xpos=cntlChannelImg.XPosition;
-				ypos=cntlChannelImg.YPosition+iChan*iItemHeight;
+        xpos=cntlChannelTemplate.XPosition;
+        ypos=cntlChannelTemplate.YPosition + iChan*iItemHeight;
 
 				//this.Remove((int)Controls.IMG_CHAN1+iChan);
 				GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1+iChan) as GUIButton3PartControl;
 				if (imgBut==null)
 				{
+          string strChannelImageFileName="";
+          if (m_bUseChannelLogos) strChannelImageFileName = cntlChannelImg.FileName;
 					imgBut = new GUIButton3PartControl(GetID,(int)Controls.IMG_CHAN1+iChan,xpos,ypos,
-						labelTime.XPosition-cntlChannelImg.XPosition,iItemHeight-2,
+						cntlChannelTemplate.Width-2, cntlChannelTemplate.Height-2,
 						"tvguide_button_selected_left.png",
 						"tvguide_button_selected_middle.png",
 						"tvguide_button_selected_right.png",
 						"tvguide_button_light_left.png",
 						"tvguide_button_light_middle.png",
 						"tvguide_button_light_right.png",
-						cntlChannelImg.FileName);
+						strChannelImageFileName);
 					imgBut.AllocResources();
 					GUIControl cntl=(GUIControl)imgBut;
 					Add(ref cntl);
 				}
 
-				imgBut.TexutureIcon=cntlChannelImg.FileName;
-				imgBut.Width=labelTime.XPosition-cntlChannelImg.XPosition;
-				imgBut.Height=iItemHeight-2;
+				if (m_bUseChannelLogos) imgBut.TexutureIcon=cntlChannelImg.FileName;
+				imgBut.Width=cntlChannelTemplate.Width-2;//labelTime.XPosition-cntlChannelImg.XPosition;
+				imgBut.Height=cntlChannelTemplate.Height-2;//iItemHeight-2;
 				imgBut.SetPosition(xpos,ypos);
 				imgBut.FontName1=cntlChannelLabel.FontName;
 				imgBut.TextColor1=cntlChannelLabel.TextColor;
 				imgBut.Label1="";
-				imgBut.IconOffsetX=0;
-				imgBut.IconOffsetY=0;
-				imgBut.IconWidth=cntlChannelImg.RenderWidth;
-				imgBut.IconHeight=cntlChannelImg.RenderHeight;
-				imgBut.TextOffsetX1=1;
-				imgBut.TextOffsetY1=cntlChannelImg.RenderHeight;
+        if (m_bUseChannelLogos)
+        {
+          imgBut.IconOffsetX=cntlChannelImg.XPosition;
+          imgBut.IconOffsetY=cntlChannelImg.YPosition;
+          imgBut.IconWidth=cntlChannelImg.RenderWidth;
+          imgBut.IconHeight=cntlChannelImg.RenderHeight;
+          imgBut.IconKeepAspectRatio=cntlChannelImg.KeepAspectRatio;
+          imgBut.IconCentered=cntlChannelImg.Centered;
+          imgBut.IconZoom=cntlChannelImg.Zoom;
+        }
+				imgBut.TextOffsetX1=cntlChannelLabel.XPosition;
+				imgBut.TextOffsetY1=cntlChannelLabel.YPosition;
 				imgBut.ColourDiffuse=0xffffffff;
 				imgBut.DoUpdate();
 			}
@@ -762,8 +774,8 @@ namespace MediaPortal.GUI.TV
 				m_dtTime.Year,m_dtTime.Month,m_dtTime.Day,
 				m_dtTime.Hour,m_dtTime.Minute,0);
 			DateTime dtStop=new DateTime();
-			dtStop=m_dtTime;
-			dtStop=dtStop.AddMinutes( (m_iBlocks-1)*m_iBlockTime);
+			dtStop=m_dtTime;			
+      dtStop=dtStop.AddMinutes( m_iBlocks*m_iBlockTime - 1);
 			iMin=dtStop.Minute;
 			string strEnd=String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}", 
 				dtStop.Year,dtStop.Month,dtStop.Day,
@@ -908,7 +920,7 @@ namespace MediaPortal.GUI.TV
 						GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
 						if (img!=null) 
 						{
-							img.TexutureIcon=strLogo;       
+							if (m_bUseChannelLogos) img.TexutureIcon=strLogo;       
 							img.Label1=tvChan.Name;
 							img.IsVisible=true;
 						}
@@ -918,7 +930,7 @@ namespace MediaPortal.GUI.TV
 						GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
 						if (img!=null) 
 						{
-							img.TexutureIcon="defaultVideoBig.png";
+							if (m_bUseChannelLogos) img.TexutureIcon="defaultVideoBig.png";
 							img.Label1=tvChan.Name;
 							img.IsVisible=true;
 						}
@@ -1050,8 +1062,7 @@ namespace MediaPortal.GUI.TV
 				img.TextOffsetX2=5;
 				img.TextOffsetY2=img.Height/2;
 				img.FontName2="font13";
-				img.TextColor2=0xffffffff;
-				img.Label2=String.Format("{0} {1}", strTime,program.Genre);
+				img.TextColor2=0xffffffff;			
 				if (program.IsRunningAt(dt))
 					labelTemplate=GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
 				else 
@@ -1060,6 +1071,7 @@ namespace MediaPortal.GUI.TV
 				{
 					img.FontName2=labelTemplate.FontName;
 					img.TextColor2=labelTemplate.TextColor;
+          img.Label2=String.Format("{0} {1}", strTime,program.Genre);
 				}
 
 				if (program.IsRunningAt(dt))
@@ -1082,7 +1094,7 @@ namespace MediaPortal.GUI.TV
 				GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
 				if (img!=null) 
 				{
-					img.TexutureIcon=strLogo;       
+					if (m_bUseChannelLogos) img.TexutureIcon=strLogo;       
 					img.Label1=channel.Name;
 					img.IsVisible=true;
 				}
@@ -1092,7 +1104,7 @@ namespace MediaPortal.GUI.TV
 				GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
 				if (img!=null) 
 				{
-					img.TexutureIcon="defaultVideoBig.png";
+          if (m_bUseChannelLogos) img.TexutureIcon="defaultVideoBig.png";
 					img.Label1=channel.Name;
 					img.IsVisible=true;
 				}
@@ -1161,26 +1173,24 @@ namespace MediaPortal.GUI.TV
 					for (int iBlok=0; iBlok < m_iBlocks; iBlok++)
 					{
 						float fWidthEnd=(float)width;
-						DateTime dtBlokEnd=dtBlokStart.AddSeconds(m_iBlockTime*60-1);
+						DateTime dtBlokEnd=dtBlokStart.AddSeconds(m_iBlockTime*60);
 						if ( program.RunningAt(dtBlokStart, dtBlokEnd))
 						{
 							dtBlokEnd=dtBlokStart.AddSeconds(m_iBlockTime*60);
 							if (program.EndTime<dtBlokEnd)
 							{
 								TimeSpan dtSpan=dtBlokEnd-program.EndTime;
-								int iEndMin=m_iBlockTime-(dtSpan.Minutes+1);
+								int iEndMin=m_iBlockTime-(dtSpan.Minutes);
                 
 								fWidthEnd=( ((float)iEndMin) / ((float)m_iBlockTime) )*((float)(width));
 								if (bEndsAfter) fWidthEnd=(float)width;
 							}
 
-          
-            
 							if (iStartXPos==0)
 							{
-
 								TimeSpan ts=program.StartTime-dtBlokStart;
 								int iStartMin=ts.Minutes;
+                if (ts.Seconds==59) iStartMin+=1;
 								float fWidth=( ((float)iStartMin) / ((float)m_iBlockTime) )*((float)(width));
 
 								if (bStartsBefore) fWidth=0;
@@ -1203,7 +1213,7 @@ namespace MediaPortal.GUI.TV
 						int iControlId=100+iChannel*100+iProgram*10;
 						GUIButton3PartControl img =(GUIButton3PartControl)GetControl(iControlId);
 						int iWidth=iEndXPos-iStartXPos;
-						if (iWidth >5) iWidth-=5;
+						if (iWidth > 3) iWidth-=3;
 						else iWidth=1;
 						if (img==null)
 						{
@@ -1270,8 +1280,7 @@ namespace MediaPortal.GUI.TV
 						img.TextOffsetX2=5;
 						img.TextOffsetY2=img.Height/2;
 						img.FontName2="font13";
-						img.TextColor2=0xffffffff;
-						img.Label2=program.Genre;
+						img.TextColor2=0xffffffff;						
 						if (program.IsRunningAt(dt))
 							labelTemplate=GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
 						else 
@@ -1280,6 +1289,7 @@ namespace MediaPortal.GUI.TV
 						{
 							img.FontName2=labelTemplate.FontName;
 							img.TextColor2=labelTemplate.TextColor;
+              img.Label2=program.Genre;
 						}
 
 						if (program.IsRunningAt(dt))
