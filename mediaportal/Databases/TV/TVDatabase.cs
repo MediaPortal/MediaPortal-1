@@ -397,6 +397,8 @@ namespace MediaPortal.TV.Database
           {
             if (cache.strChannel==strChannel) return cache.idChannel;
           }
+          
+          RemoveInvalidChars(ref strChannel);
           SQLiteResultSet results;
           strSQL=String.Format( "select * from channel where strChannel like '{0}'", strChannel);
           results=m_db.Execute(strSQL);
@@ -1020,6 +1022,7 @@ namespace MediaPortal.TV.Database
       if (genre1==null) return false;
       string genre=genre1;
       RemoveInvalidChars(ref genre);
+      RemoveInvalidChars(ref SearchCriteria);
       string strSQL=String.Empty;
       switch(SearchKind)
       {
@@ -1199,6 +1202,7 @@ namespace MediaPortal.TV.Database
 
     static public bool SearchPrograms(long iStartTime, long iEndTime,ref ArrayList programs, int SearchKind, string SearchCriteria)
     {
+      RemoveInvalidChars(ref SearchCriteria);
       string strSQL=String.Empty;
       switch (SearchKind)
       {
@@ -1222,7 +1226,8 @@ namespace MediaPortal.TV.Database
     }
 
 		static public bool SearchProgramsByDescription(long iStartTime, long iEndTime,ref ArrayList programs, int SearchKind, string SearchCriteria)
-		{
+    {
+      RemoveInvalidChars(ref SearchCriteria);
 			string strSQL=String.Empty;
 			switch (SearchKind)
 			{
