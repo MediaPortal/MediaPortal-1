@@ -619,7 +619,7 @@ namespace MediaPortal.GUI.Library
 					{
 						if ( cached.Name.Equals(strFileName) )
 						{
-							Log.Write("texturemanager:dispose:"+ cached.Name+ " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
+							Log.Write("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}",cached.Name,cached.Frames,m_cache.Count ,GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
 							m_cache.Remove(cached);
 							cached.Dispose();
 							continueRemoving=true;

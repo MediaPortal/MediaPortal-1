@@ -172,6 +172,7 @@ namespace MediaPortal.GUI.Library
 		public string FileName
 		{
 			get {return m_strFileName;}
+			set { m_strFileName=value;}
 		}
 		
 		/// <summary>
@@ -327,7 +328,10 @@ namespace MediaPortal.GUI.Library
 
       //load the texture
 			int iImages = GUITextureManager.Load(strFile, m_dwColorKey,m_iRenderWidth,m_iTextureHeight);
-			if (0==iImages) return;// unable to load texture
+			if (0==iImages) 
+			{
+				return;// unable to load texture
+			}
 
       //get each frame of the texture
 			m_vecTextures = new CachedTexture.Frame [iImages];
