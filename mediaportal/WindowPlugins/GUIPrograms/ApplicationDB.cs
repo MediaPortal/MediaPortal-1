@@ -325,7 +325,12 @@ namespace ProgramsDatabase
 			proc.StartInfo.WindowStyle = this.WindowStyle;
 			try
 			{
+
 				proc.Start();
+				proc.WaitForExit();
+// notyet!				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+
+
 				//				Log.Write("myPrograms: DEBUG LOG program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
 				//					proc.StartInfo.FileName, 
 				//					proc.StartInfo.Arguments, 
