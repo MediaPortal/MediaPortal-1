@@ -21,6 +21,6 @@
 #
 # For example:
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
-# or
+# or 
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 DEFAULT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} mediaportal-cvs@lists.sourceforge.net
