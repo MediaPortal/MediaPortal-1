@@ -1351,6 +1351,8 @@ namespace MediaPortal
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, 
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight, 
                                     m_iSleepingTime,strFmt, strDepthFmt, strMultiSample);
+				if (GUIGraphicsContext.Vmr9Active)
+					frameStats += " VMR9";
       }
     }
 
@@ -2095,7 +2097,7 @@ namespace MediaPortal
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
 
-    void HandleMessage()
+    public void HandleMessage()
     {
       try
       {

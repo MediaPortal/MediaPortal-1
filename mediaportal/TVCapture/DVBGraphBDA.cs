@@ -2141,6 +2141,21 @@ namespace MediaPortal.TV.Recording
 					channelInfo.networkID,
 					channelInfo.transportStreamID,
 					channelInfo.serviceID);
+				if (channelInfo.pid_list!=null)
+				{
+					for (int pids =0; pids < channelInfo.pid_list.Count;pids++)
+					{
+						DVBSections.PMTData data=(DVBSections.PMTData) channelInfo.pid_list[pids];
+						if (data.isVideo)
+							Log.Write("DVBGraphBDA: video pid: {0:X}",data.elementary_PID);
+						if (data.isAC3Audio)
+							Log.Write("DVBGraphBDA: AC3 pid: {0:X}",data.elementary_PID);
+						if (data.isTeletext)
+							Log.Write("DVBGraphBDA: teletext pid: {0:X}",data.elementary_PID);
+						if (data.isAudio)
+							Log.Write("DVBGraphBDA: audio pid: {0:X}",data.elementary_PID);
+					}
+				}
 
 				//First check if channel is scrambled
 				if (true)//channelInfo.scrambled)

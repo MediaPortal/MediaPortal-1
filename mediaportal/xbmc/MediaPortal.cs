@@ -682,10 +682,10 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     public void Process()
     {
-      Application.DoEvents();
+      HandleMessage();
       FrameMove();
-      FullRender();
-
+			if (!GUIGraphicsContext.Vmr9Active)
+				FullRender();
     }
 
     public void RenderFrame()
