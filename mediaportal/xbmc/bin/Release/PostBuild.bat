@@ -5,6 +5,7 @@ mkdir plugins\TagReaders
 mkdir plugins\subtitle
 
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
+copy ..\..\..\GUIRSSFeed\bin\Release\GUIRSSFeed.dll plugins\windows
 copy ..\..\..\GUIRadio\bin\Release\GUIRadio.dll plugins\windows
 copy ..\..\..\GUIMusic\bin\Release\GUIMusic.dll plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Release\Freedb.dll plugins\windows

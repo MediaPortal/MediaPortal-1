@@ -3,6 +3,7 @@ mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
 
+copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.dll plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.dll plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.dll plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.dll plugins\windows
@@ -36,6 +37,7 @@ copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
 
+copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.pdb plugins\windows
 copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.pdb plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.pdb plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.pdb plugins\windows
