@@ -64,6 +64,7 @@ namespace MediaPortal.Configuration
 		
     bool acceptuserinput=false;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
+		private System.Windows.Forms.Button buttonAudioMapping;
 		private System.Windows.Forms.Button buttonAutotune;
 		
 		/// <summary>
@@ -247,6 +248,7 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.checkBoxHiQuality = new System.Windows.Forms.CheckBox();
 			this.lblRecordingLevel = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.trackRecording = new System.Windows.Forms.TrackBar();
@@ -276,7 +278,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
 			this.buttonAutotune = new System.Windows.Forms.Button();
-			this.checkBoxHiQuality = new System.Windows.Forms.CheckBox();
+			this.buttonAudioMapping = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.SuspendLayout();
@@ -319,6 +321,14 @@ namespace MediaPortal.Configuration
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Capture Card Settings";
 			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+			// 
+			// checkBoxHiQuality
+			// 
+			this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 264);
+			this.checkBoxHiQuality.Name = "checkBoxHiQuality";
+			this.checkBoxHiQuality.Size = new System.Drawing.Size(344, 16);
+			this.checkBoxHiQuality.TabIndex = 51;
+			this.checkBoxHiQuality.Text = "Use Hiquality for Hauppauge PVR cards (VBR 6-12 MBPs)";
 			// 
 			// lblRecordingLevel
 			// 
@@ -585,24 +595,26 @@ namespace MediaPortal.Configuration
 			// 
 			// buttonAutotune
 			// 
-			this.buttonAutotune.Location = new System.Drawing.Point(192, 448);
+			this.buttonAutotune.Location = new System.Drawing.Point(224, 448);
 			this.buttonAutotune.Name = "buttonAutotune";
 			this.buttonAutotune.TabIndex = 3;
 			this.buttonAutotune.Text = "Autotune";
 			this.buttonAutotune.Click += new System.EventHandler(this.buttonAutotune_Click);
 			// 
-			// checkBoxHiQuality
+			// buttonAudioMapping
 			// 
-			this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 264);
-			this.checkBoxHiQuality.Name = "checkBoxHiQuality";
-			this.checkBoxHiQuality.Size = new System.Drawing.Size(344, 16);
-			this.checkBoxHiQuality.TabIndex = 51;
-			this.checkBoxHiQuality.Text = "Use Hiquality for Hauppauge PVR cards (VBR 6-12 MBPs)";
+			this.buttonAudioMapping.Location = new System.Drawing.Point(120, 448);
+			this.buttonAudioMapping.Name = "buttonAudioMapping";
+			this.buttonAudioMapping.Size = new System.Drawing.Size(88, 23);
+			this.buttonAudioMapping.TabIndex = 4;
+			this.buttonAudioMapping.Text = "Audio Mapping";
+			this.buttonAudioMapping.Click += new System.EventHandler(this.buttonAudioMapping_Click);
 			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(474, 482);
+			this.Controls.Add(this.buttonAudioMapping);
 			this.Controls.Add(this.buttonAutotune);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
@@ -993,6 +1005,14 @@ namespace MediaPortal.Configuration
 		private void groupBox1_Enter(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void buttonAudioMapping_Click(object sender, System.EventArgs e)
+		{
+			if (CaptureCard==null) return;
+			FormAudioMapping mapping = new FormAudioMapping();
+			mapping.CardName=CaptureCard.FriendlyName;
+			mapping.ShowDialog(this);
 		}
 
 

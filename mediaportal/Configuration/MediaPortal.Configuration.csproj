@@ -259,6 +259,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "FormAudioMapping.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FormAudioMapping.resx"
+                    DependentUpon = "FormAudioMapping.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "LaunchGuideScheduler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
