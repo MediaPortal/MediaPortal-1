@@ -27,6 +27,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader5;
 		private System.Windows.Forms.ColumnHeader columnHeader6;
 		private System.ComponentModel.IContainer components = null;
+    private System.Windows.Forms.Button upButton;
+    private System.Windows.Forms.Button downButton;
 
 		//
 		// Private members
@@ -90,6 +92,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+      this.upButton = new System.Windows.Forms.Button();
+      this.downButton = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -103,6 +107,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.upButton);
+      this.groupBox1.Controls.Add(this.downButton);
       this.groupBox1.Controls.Add(this.autoTuneButton);
       this.groupBox1.Controls.Add(this.deleteButton);
       this.groupBox1.Controls.Add(this.editButton);
@@ -111,16 +117,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(408, 424);
+      this.groupBox1.Size = new System.Drawing.Size(456, 416);
       this.groupBox1.TabIndex = 2;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
       // autoTuneButton
       // 
-      this.autoTuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.autoTuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.autoTuneButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.autoTuneButton.Location = new System.Drawing.Point(319, 384);
+      this.autoTuneButton.Location = new System.Drawing.Point(256, 376);
       this.autoTuneButton.Name = "autoTuneButton";
       this.autoTuneButton.TabIndex = 4;
       this.autoTuneButton.Text = "Auto Tune";
@@ -130,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.deleteButton.Location = new System.Drawing.Point(176, 384);
+      this.deleteButton.Location = new System.Drawing.Point(176, 376);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.TabIndex = 3;
       this.deleteButton.Text = "Delete";
@@ -140,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.editButton.Location = new System.Drawing.Point(96, 384);
+      this.editButton.Location = new System.Drawing.Point(96, 376);
       this.editButton.Name = "editButton";
       this.editButton.TabIndex = 2;
       this.editButton.Text = "Edit";
@@ -150,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.addButton.Location = new System.Drawing.Point(16, 384);
+      this.addButton.Location = new System.Drawing.Point(16, 376);
       this.addButton.Name = "addButton";
       this.addButton.TabIndex = 1;
       this.addButton.Text = "Add";
@@ -172,7 +178,7 @@ namespace MediaPortal.Configuration.Sections
       this.stationsListView.HideSelection = false;
       this.stationsListView.Location = new System.Drawing.Point(16, 24);
       this.stationsListView.Name = "stationsListView";
-      this.stationsListView.Size = new System.Drawing.Size(376, 352);
+      this.stationsListView.Size = new System.Drawing.Size(424, 344);
       this.stationsListView.TabIndex = 0;
       this.stationsListView.View = System.Windows.Forms.View.Details;
       this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
@@ -200,13 +206,35 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader6
       // 
       this.columnHeader6.Text = "Server";
-      this.columnHeader6.Width = 43;
+      this.columnHeader6.Width = 86;
+      // 
+      // upButton
+      // 
+      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.upButton.Location = new System.Drawing.Point(340, 376);
+      this.upButton.Name = "upButton";
+      this.upButton.Size = new System.Drawing.Size(48, 23);
+      this.upButton.TabIndex = 7;
+      this.upButton.Text = "Up";
+      this.upButton.Click += new System.EventHandler(this.upButton_Click);
+      // 
+      // downButton
+      // 
+      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.downButton.Location = new System.Drawing.Point(392, 376);
+      this.downButton.Name = "downButton";
+      this.downButton.Size = new System.Drawing.Size(48, 23);
+      this.downButton.TabIndex = 6;
+      this.downButton.Text = "Down";
+      this.downButton.Click += new System.EventHandler(this.downButton_Click);
       // 
       // RadioStations
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "RadioStations";
-      this.Size = new System.Drawing.Size(424, 440);
+      this.Size = new System.Drawing.Size(472, 432);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -466,12 +494,13 @@ namespace MediaPortal.Configuration.Sections
 					if(radioStation.Frequency.Herz < 1000)
 						radioStation.Frequency.Herz *= 1000000L;
 
-					station.Channel = (int)radioStation.Frequency.Herz;
+          station.Frequency = radioStation.Frequency.Herz;
+					station.Channel = listItem.Index;
 
 					//
 					// Save station
 					//
-					if(station.Channel != 0 || station.URL.Length > 0)
+					if(station.Frequency != 0 || station.URL.Length > 0)
 					{
 						RadioDatabase.AddStation(ref station);
 					}
@@ -490,7 +519,7 @@ namespace MediaPortal.Configuration.Sections
 
 				radioStation.Type = station.URL.Length == 0 ? "Radio" : "Stream";
 				radioStation.Name = station.Name;
-				radioStation.Frequency = station.Channel;
+				radioStation.Frequency = station.Frequency;
 				radioStation.Genre = station.Genre;
 				radioStation.Bitrate = station.BitRate;
 				radioStation.URL = station.URL;
@@ -513,6 +542,65 @@ namespace MediaPortal.Configuration.Sections
 		{
 			editButton_Click(sender, e);
 		}
-	}
-}
 
+    private void MoveSelectionDown()
+    {
+      isDirty = true;
+
+      for(int index = stationsListView.Items.Count - 1; index >= 0; index--)
+      {
+        if(stationsListView.Items[index].Selected == true)
+        {
+          //
+          // Make sure the current index isn't greater than the highest index in the list view
+          //
+          if(index < stationsListView.Items.Count - 1)
+          {
+            ListViewItem listItem = stationsListView.Items[index];
+            stationsListView.Items.RemoveAt(index);
+
+            if(index + 1 < stationsListView.Items.Count)
+            {
+              stationsListView.Items.Insert(index + 1, listItem);
+            }
+            else
+            {
+              stationsListView.Items.Add(listItem);
+            }
+          }
+        }
+      }
+    }
+
+    private void MoveSelectionUp()
+    {
+      isDirty = true;
+
+      for(int index = 0; index < stationsListView.Items.Count; index++)
+      {
+        if(stationsListView.Items[index].Selected == true)
+        {
+          //
+          // Make sure the current index isn't smaller than the lowest index (0) in the list view
+          //
+          if(index > 0)
+          {
+            ListViewItem listItem = stationsListView.Items[index];
+            stationsListView.Items.RemoveAt(index);
+            stationsListView.Items.Insert(index - 1, listItem);
+          }
+        }
+      }    
+    }
+
+    private void upButton_Click(object sender, System.EventArgs e)
+    {
+      MoveSelectionUp();
+    }
+
+    private void downButton_Click(object sender, System.EventArgs e)
+    {
+      MoveSelectionDown();
+    }
+  }
+}
