@@ -125,7 +125,7 @@
 		<textcolor>FF000000</textcolor> 
 	</control>
 	<control>
-		<description>Genre value</description> 
+		<description>Genres value</description> 
 		<type>label</type> 
 		<id>24</id> 
 		<posX>220</posX> 
@@ -147,10 +147,11 @@
 	</control>
 	<control>
 		<description>Styles value</description> 
-		<type>label</type> 
+		<type>fadelabel</type> 
 		<id>26</id> 
 		<posX>220</posX> 
 		<posY>200</posY> 
+		<width>400</width> 
 		<label>-</label> 
 		<font>font13</font> 
 		<textcolor>FF000000</textcolor> 
@@ -158,7 +159,7 @@
 	<control>
 		<description>Instruments value</description> 
 		<type>label</type> 
-		<id>26</id> 
+		<id>27</id> 
 		<posX>220</posX> 
 		<posY>220</posY> 
 		<label>-</label> 
@@ -200,7 +201,7 @@
 		<height>32</height> 
 		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>list_nofocus.png</textureNoFocus>
-		<label>???</label> 
+		<label>12905</label> 
 		<onleft>4</onleft> 
 		<onright>4</onright> 
 		<onup>21</onup> 

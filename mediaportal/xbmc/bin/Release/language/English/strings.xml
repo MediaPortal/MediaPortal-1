@@ -1988,4 +1988,8 @@
 <string><id>12903</id><value>Years Active</value></string>
 <string><id>12904</id><value>Instruments</value></string>
 <string><id>12905</id><value>Bio.</value></string>
+<string><id>12906</id><value>Discography (Albums)</value></string>
+<string><id>12907</id><value>Discography (compilations, boxes)</value></string>
+<string><id>12908</id><value>Discography (eps, singles)</value></string>
+<string><id>12909</id><value>Discography (bootlegs, videos, interviews)</value></string>
 </strings>
