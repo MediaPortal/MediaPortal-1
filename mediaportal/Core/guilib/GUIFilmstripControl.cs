@@ -526,15 +526,48 @@ namespace MediaPortal.GUI.Library
     {
       switch (action.wID)
       {
-      case Action.ActionType.ACTION_PAGE_UP : 
-        OnPageUp();
-        m_bRefresh = true;
-        break;
+        case Action.ActionType.ACTION_PAGE_UP : 
+          OnPageUp();
+          m_bRefresh = true;
+          break;
 
-      case Action.ActionType.ACTION_PAGE_DOWN : 
-        OnPageDown();
-        m_bRefresh = true;
-        break;
+        case Action.ActionType.ACTION_PAGE_DOWN : 
+          OnPageDown();
+          m_bRefresh = true;
+          break;
+
+        case Action.ActionType.ACTION_HOME :
+        {
+          m_iOffset = 0;
+          m_iCursorX = 0;
+          m_upDown.Value = 1;
+          OnSelectionChanged();
+          
+          m_bRefresh = true;
+        }      
+          break;
+
+        case Action.ActionType.ACTION_END :
+        {
+          int iItem = m_vecItems.Count-1;
+          if (iItem >= 0)
+          {
+            int iPage = 1;
+            m_iCursorX = 0;
+            m_iOffset = 0;
+            while (iItem >= ( m_iColumns))
+            {
+              m_iOffset += ( m_iColumns);
+              iItem -= ( m_iColumns);
+              iPage++;
+            }
+            if (m_upDown!=null) m_upDown.Value = iPage;
+            m_iCursorX = iItem;
+            OnSelectionChanged();
+          }
+          m_bRefresh = true;
+        }      
+          break;
 
 
       case Action.ActionType.ACTION_MOVE_DOWN : 
@@ -568,6 +601,7 @@ namespace MediaPortal.GUI.Library
         m_bRefresh = true;
       }
         break;
+
         case Action.ActionType.ACTION_KEY_PRESSED : 
         {
           if (action.m_key!=null)

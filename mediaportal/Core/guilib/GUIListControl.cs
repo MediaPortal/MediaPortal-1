@@ -719,12 +719,53 @@ namespace MediaPortal.GUI.Library
           m_bRefresh = true;
 				break;
 
-				case Action.ActionType.ACTION_MOVE_DOWN : 
-				{
-					OnDown();
+        case Action.ActionType.ACTION_HOME :
+        {
+          m_iOffset = 0;
+          m_iCursorY = 0;
+          m_upDown.Value = 1;
+          OnSelectionChanged();
+          
           m_bRefresh = true;
-				}
-				break;
+        }      
+          break;
+
+        case Action.ActionType.ACTION_END :
+        {
+          int iItem = m_vecItems.Count-1;
+          if (iItem >= 0)
+          {
+            // update spin controls
+            int iPage = 1;
+            int iSel = iItem;
+            while (iSel >= m_iItemsPerPage)
+            {
+              iPage++;
+              iSel -= m_iItemsPerPage;
+            }
+            m_upDown.Value = iPage;
+
+            // find item
+            m_iOffset = 0;
+            m_iCursorY = 0;
+            while (iItem  >= m_iItemsPerPage) 
+            {
+              iItem  -= m_iItemsPerPage;
+              m_iOffset += m_iItemsPerPage;
+            }
+            m_iCursorY = iItem ;
+            OnSelectionChanged();
+          }
+          m_bRefresh = true;
+        }      
+          break;
+
+        case Action.ActionType.ACTION_MOVE_DOWN : 
+        {
+          OnDown();
+          m_bRefresh = true;
+        }
+          break;
 	    
 				case Action.ActionType.ACTION_MOVE_UP : 
 				{
