@@ -1,3 +1,5 @@
+11-08-2004  my music    : fixed : Wrong discography information for Artists.  allmusic.com keeps changing layout...
+11-08-2004  my music    : added : Default thumb when playing a song with no album art.  This was file as a bug for external players, but this was never done even for built-in player
 11-08-2004  setup       : fixed : Aspect ratio "stretched" wasn't set correctly.
 11-08-2004  setup       : fixed : Music Database section would show wrong share name.
 
