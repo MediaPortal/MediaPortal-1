@@ -24,6 +24,7 @@ namespace MediaPortal.TV.Recording
     bool          m_bSupportsMPEG2;
     Size          m_FrameSize;
     double        m_FrameRate;
+    string        m_strAudioInputPin="";
     
     [NonSerialized]
     int           m_iID;
@@ -112,6 +113,12 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_FrameRate;}
       set { m_FrameRate=value;}
+    }
+
+    public string AudioInputPin
+    {
+      get { return m_strAudioInputPin;}
+      set { m_strAudioInputPin=value;}
     }
 
     /// <summary>

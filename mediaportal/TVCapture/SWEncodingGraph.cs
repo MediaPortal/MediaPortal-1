@@ -28,7 +28,7 @@ namespace MediaPortal.TV.Recording
     string                  m_strAudioCaptureFilter="";
     string                  m_strVideoCompressor="";
     string                  m_strAudioCompressor="";
-
+    string                  m_strAudioInputPin="";
     IGraphBuilder           m_graphBuilder=null;
     ICaptureGraphBuilder2   m_captureGraphBuilder=null;
     IBaseFilter             m_filterCaptureVideo=null;
@@ -51,7 +51,7 @@ namespace MediaPortal.TV.Recording
     const int WS_CLIPCHILDREN	= 0x02000000;
     const int WS_CLIPSIBLINGS	= 0x04000000;
 
-		public SWEncodingGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter,string  strAudioCaptureFilter,string  strVideoCompressor,string  strAudioCompressor, Size frameSize, double frameRate)
+		public SWEncodingGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter,string  strAudioCaptureFilter,string  strVideoCompressor,string  strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin)
     {
       m_bFirstTune=true;             
       m_bUseCable=bCable;
@@ -63,6 +63,8 @@ namespace MediaPortal.TV.Recording
       m_strAudioCompressor=strAudioCompressor;
       m_FrameSize=frameSize;
       m_FrameRate=frameRate;
+      if (strAudioInputPin!=null && strAudioInputPin.Length>0)
+        m_strAudioInputPin=strAudioInputPin;
 		}
 
     /// <summary>
@@ -395,6 +397,40 @@ namespace MediaPortal.TV.Recording
       {
         DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph:0x{0:X}",hr);
         return false;
+      }
+
+      // select the correct audio input pin to capture
+      if (m_filterCaptureAudio!=null)
+      {
+        if (m_strAudioInputPin.Length>0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
+          IPin pinInput=DirectShowUtil.FindPin(m_filterCaptureAudio,PinDirection.Input,m_strAudioInputPin);
+          if (pinInput==null)
+          {
+            DirectShowUtil.DebugWrite("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
+          }
+          else
+          {
+            IAMAudioInputMixer  mixer = pinInput as IAMAudioInputMixer;
+            if (mixer!=null)
+            {
+              hr=mixer.put_Enable(true);
+              if (hr !=0)
+              {
+                DirectShowUtil.DebugWrite("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
+              }
+              else
+              {
+                DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
+              }
+            }
+            else
+            {
+              DirectShowUtil.DebugWrite("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
+            }
+          }
+        }
       }
     
       // set filename
