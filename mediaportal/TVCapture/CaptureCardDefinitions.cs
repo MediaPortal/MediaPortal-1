@@ -297,6 +297,7 @@ namespace TVCapture
 						cardConfig.CommercialName = cc.Attributes.GetNamedItem(@"commercialname").InnerText;
 						cardConfig.CaptureName    = cc.Attributes.GetNamedItem(@"capturename").InnerText;
 						_mCaptureCardDefinitions.Add(cardConfig.DeviceId, cardConfig);
+						DirectShowUtil.DebugWrite("device:{0}", cardConfig.CommercialName);
 
 						// Get the cards capabilities...
 						XmlNode capNode     = cc.SelectSingleNode(@"capabilities");

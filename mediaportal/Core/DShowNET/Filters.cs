@@ -50,6 +50,7 @@ namespace DShowNET
     public FilterCollection WDMEncoders = new FilterCollection( FilterCategory.AM_KSEncoder); 
     public FilterCollection WDMcrossbars = new FilterCollection( FilterCategory.AM_KSCrossBar); 
     public FilterCollection WDMTVTuners = new FilterCollection( FilterCategory.AM_KSTvTuner); 
+		public FilterCollection BDAReceivers = new FilterCollection( FilterCategory.AM_KS_BDA_RECEIVER_COMPONENT); 
 		/// <summary>
 		/// #MW#
 		/// </summary>

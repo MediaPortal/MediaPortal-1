@@ -35,17 +35,17 @@
 
 <capturecards>
   <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
   </capturecard> 
   <capturecard commercialname="General MCE card" capturename="" devid="MCE">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
   </capturecard>
   <capturecard commercialname="General H/W encoding card" capturename="" devid="HW">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="true"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
   </capturecard>
 
   <capturecard commercialname="Hauppauge PVR500MCE" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_e8070070&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -84,7 +84,7 @@
   </capturecard>
 
   <capturecard commercialname="Hauppauge PVR150MCE" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_88010070&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -121,7 +121,7 @@
   </capturecard>
   
   <capturecard commercialname="NVTV Dual Tuner" capturename="NVTV" devid="Ven_123f&amp;dev_8120&amp;subsys_024810de&amp;rev_b1">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -148,7 +148,7 @@
   </capturecard>
   
    <capturecard commercialname="Hauppauge PVR USB2" capturename="Hauppauge WinTV PVR USB2 Encoder" devid="vid_2040&amp;pid_2900">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -184,7 +184,7 @@
   </capturecard>
   
   <capturecard commercialname="Hauppauge PVR 250/350" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0803&amp;subsys_40000070&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="1"></interface>
       <filters>
@@ -220,7 +220,7 @@
   </capturecard>
   
   <capturecard commercialname="Winfast PVR2000" capturename="WinFast PVR2000 WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_663c107d&amp;rev_05">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -259,7 +259,7 @@
   </capturecard>
   
   <capturecard commercialname="Typhoon TV PVR" capturename="Typhoon TV PVR A/V Capture" devid="vid_10fd&amp;pid_de00">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -292,7 +292,7 @@
     </radio>
   </capturecard> 
   
-  <capturecard commercialname="FireDTV" capturename="Firesat BDA Tuner DVBT" devid="ven_14f1&amp;dev_8800&amp;subsys_663c107d&amp;rev_05">
+  <capturecard commercialname="FireDTV" capturename="Firesat BDA Receiver DVBT" devid="digital_everywhere&amp;firedtv_t">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>

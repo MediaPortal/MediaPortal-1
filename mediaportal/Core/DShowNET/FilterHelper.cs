@@ -69,6 +69,18 @@ namespace DShowNET
 			{
 				devices.Add(device.MonikerString);
 			}
+			//b2c2
+			foreach(Filter device in filters.LegacyFilters)
+			{
+				if(device.Name=="B2C2 MPEG-2 Source")
+					devices.Add(device.MonikerString);
+			}
+			
+			foreach(Filter device in filters.BDAReceivers)
+			{
+				devices.Add(device.MonikerString);
+			}
+			
 
 			return devices;
 		}
@@ -89,6 +101,13 @@ namespace DShowNET
 				if(device.Name=="B2C2 MPEG-2 Source")
 					devices.Add(device.Name);
 			}
+			
+			foreach(Filter device in filters.BDAReceivers)
+			{
+				devices.Add(device.Name);
+			}
+			
+			
 			return devices;
 		}
 

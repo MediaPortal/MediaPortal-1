@@ -137,6 +137,7 @@ namespace MediaPortal.Configuration
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
 						((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addEmpty=false;
 
+					Log.Write("{0}:{1}", (string)(availableVideoDevices[i]), (availableVideoDeviceMonikers[i]).ToString() );
 				}
 			}
 
@@ -601,43 +602,46 @@ namespace MediaPortal.Configuration
 #if (UseCaptureCardDefinitions)
     private CaptureEx CreateCaptureDevice()
     {
-      CaptureEx capture = null;
+			try
+			{
+				CaptureEx capture = null;
 #else
 		private Capture CreateCaptureDevice()
 		{
 			Capture capture = null;
 #endif
-      DShowNET.Filter videoDevice = null;
-      DShowNET.Filter audioDevice = null;
-      DShowNET.Filter videoCompressor = null;
-      DShowNET.Filter audioCompressor = null;
+				DShowNET.Filter videoDevice = null;
+				DShowNET.Filter audioDevice = null;
+				DShowNET.Filter videoCompressor = null;
+				DShowNET.Filter audioCompressor = null;
 
 #if (UseCaptureCardDefinitions)
-			string selectedVideoDeviceName = "";
-			if (cardComboBox.SelectedItem != null)
-			{
-				_mTvCaptureDevice = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
-				if (_mTvCaptureDevice != null)
+				string selectedVideoDeviceName = "";
+				if (cardComboBox.SelectedItem != null)
 				{
-					videoDevice = new Filter(_mTvCaptureDevice.VideoDeviceMoniker);
-					videoDevice.Name					= _mTvCaptureDevice.VideoDevice;
-					videoDevice.MonikerString = _mTvCaptureDevice.VideoDeviceMoniker;
-					selectedVideoDeviceName		= videoDevice.Name;
+					_mTvCaptureDevice = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
+					if (_mTvCaptureDevice != null)
+					{
+						videoDevice = new Filter(_mTvCaptureDevice.VideoDeviceMoniker);
+						videoDevice.Name					= _mTvCaptureDevice.VideoDevice;
+						videoDevice.MonikerString = _mTvCaptureDevice.VideoDeviceMoniker;
+						selectedVideoDeviceName		= videoDevice.Name;
+					}
+					else return null;
 				}
-			}
 #else
 			string selectedVideoDeviceName = (string)cardComboBox.SelectedItem;
 #endif
-      string selectedAudioDeviceName = audioDeviceComboBox.SelectedItem as string;
+				string selectedAudioDeviceName = audioDeviceComboBox.SelectedItem as string;
 
-      string selectedVideoCompressor = videoCompressorComboBox.SelectedItem as string;
-      string selectedAudioCompressor = audioCompressorComboBox.SelectedItem as string;
-      if(selectedVideoDeviceName != null)
-      {
-        //
-        // Find the selected video capture device
-        //
-        Filters filters = new Filters();
+				string selectedVideoCompressor = videoCompressorComboBox.SelectedItem as string;
+				string selectedAudioCompressor = audioCompressorComboBox.SelectedItem as string;
+				if(selectedVideoDeviceName != null)
+				{
+					//
+					// Find the selected video capture device
+					//
+					Filters filters = new Filters();
 #if (UseCaptureCardDefinitions)
 #else
         foreach(Filter filter in filters.VideoInputDevices)
@@ -652,86 +656,86 @@ namespace MediaPortal.Configuration
           }
         }
 #endif
-        if (selectedAudioDeviceName!=null)
-        {
-          foreach(Filter filter in filters.AudioInputDevices)
-          {
-            if(selectedAudioDeviceName.Equals(filter.Name))
-            {
-              //
-              // The device was found
-              //
-              audioDevice = filter;
-              break;
-            }
-          }
-        }
+					if (selectedAudioDeviceName!=null)
+					{
+						foreach(Filter filter in filters.AudioInputDevices)
+						{
+							if(selectedAudioDeviceName.Equals(filter.Name))
+							{
+								//
+								// The device was found
+								//
+								audioDevice = filter;
+								break;
+							}
+						}
+					}
         
-        if (selectedAudioCompressor!=null)
-        {
-          foreach(Filter filter in filters.AudioCompressors)
-          {
-            if(selectedAudioCompressor.Equals(filter.Name))
-            {
-              //
-              // The device was found
-              //
-              audioCompressor = filter;
-              break;
-            }
-          }
-          if (audioCompressor==null)
-          {
-            foreach(Filter filter in filters.LegacyFilters)
-            {
-              if(selectedAudioCompressor.Equals(filter.Name))
-              {
-                //
-                // The device was found
-                //
-                audioCompressor = filter;
-                break;
-              }
-            }
-          }
-        }
+					if (selectedAudioCompressor!=null)
+					{
+						foreach(Filter filter in filters.AudioCompressors)
+						{
+							if(selectedAudioCompressor.Equals(filter.Name))
+							{
+								//
+								// The device was found
+								//
+								audioCompressor = filter;
+								break;
+							}
+						}
+						if (audioCompressor==null)
+						{
+							foreach(Filter filter in filters.LegacyFilters)
+							{
+								if(selectedAudioCompressor.Equals(filter.Name))
+								{
+									//
+									// The device was found
+									//
+									audioCompressor = filter;
+									break;
+								}
+							}
+						}
+					}
         
-        if (selectedVideoCompressor!=null)
-        {
-          foreach(Filter filter in filters.VideoCompressors)
-          {
-            if(selectedVideoCompressor.Equals(filter.Name))
-            {
-              //
-              // The device was found
-              //
-              videoCompressor = filter;
-              break;
-            }
-          }
-          if (videoCompressor==null)
-          {
-            foreach(Filter filter in filters.LegacyFilters)
-            {
-              if(selectedVideoCompressor.Equals(filter.Name))
-              {
-                //
-                // The device was found
-                //
-                videoCompressor = filter;
-                break;
-              }
-            }
-          }
-        }
+					if (selectedVideoCompressor!=null)
+					{
+						foreach(Filter filter in filters.VideoCompressors)
+						{
+							if(selectedVideoCompressor.Equals(filter.Name))
+							{
+								//
+								// The device was found
+								//
+								videoCompressor = filter;
+								break;
+							}
+						}
+						if (videoCompressor==null)
+						{
+							foreach(Filter filter in filters.LegacyFilters)
+							{
+								if(selectedVideoCompressor.Equals(filter.Name))
+								{
+									//
+									// The device was found
+									//
+									videoCompressor = filter;
+									break;
+								}
+							}
+						}
+					}
 
-        //
-        // Create new capture
-        //
-        try
-        {
+					//
+					// Create new capture
+					//
+					try
+					{
 #if (UseCaptureCardDefinitions)
-          capture = new CaptureEx(this._mTvCaptureDevice, videoDevice, audioDevice);
+						capture = new CaptureEx(this._mTvCaptureDevice, videoDevice, audioDevice);
 #else
           capture = new Capture(videoDevice, audioDevice);
 #endif	
@@ -740,31 +744,37 @@ namespace MediaPortal.Configuration
 
 						capture.AudioCompressor = audioCompressor;
 
-          capture.LoadSettings(cardId);        
+						capture.LoadSettings(cardId);        
 
-          m_bMPEG2=capture.SupportsTimeShifting;
-          m_bISMCE=capture.IsMCECard;
+						m_bMPEG2=capture.SupportsTimeShifting;
+						m_bISMCE=capture.IsMCECard;
 #if (UseCaptureCardDefinitions)
-					ComboBoxCaptureCard cd = (cardComboBox.SelectedItem as ComboBoxCaptureCard);
-					if (cd!=null)
-					{
-						if (cd.CaptureDevice!=null)
+						ComboBoxCaptureCard cd = (cardComboBox.SelectedItem as ComboBoxCaptureCard);
+						if (cd!=null)
 						{
-							if (cd.CaptureDevice.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
-							if (cd.CaptureDevice.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
-							if (cd.CaptureDevice.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
+							if (cd.CaptureDevice!=null)
+							{
+								if (cd.CaptureDevice.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
+								if (cd.CaptureDevice.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
+								if (cd.CaptureDevice.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
+							}
 						}
-					}
 #endif
-        }
-        catch (Exception ex)
-        {
-          Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-          return null;
-        }        
-      }
+					}
+					catch (Exception ex)
+					{
+						Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+						return null;
+					}        
+				}
 
-      return capture;
+				return capture;
+			}
+			catch(Exception)
+			{
+				Log.Write("Cannot create capture device ");
+			}
+			return null;
 		}
 
 #if (UseCaptureCardDefinitions)
