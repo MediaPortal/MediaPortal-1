@@ -120,7 +120,6 @@ namespace MediaPortal.TV.Recording
       TVDatabase.GetChannels(ref channels);
       
       ArrayList recordings = new ArrayList();
-      ArrayList runningPrograms = new ArrayList();
 
       int iPreRecordInterval =0;
       int iPostRecordInterval=0;
@@ -134,96 +133,11 @@ namespace MediaPortal.TV.Recording
       {
         try
         {
-  				
-          // If the recording schedules have been changed since last time
-          if (m_bRecordingsChanged)
-          {
-            // then get all recordings from the database
-            recordings.Clear();
-            channels.Clear();
-            TVDatabase.GetRecordings(ref recordings);
-            TVDatabase.GetChannels(ref channels);
-            m_bRecordingsChanged=false;
-          }
 
           HandlePreview();
-          
-          int iRec=0;
-          bool bRecorded=false;
-          // for each tv-channel
-          foreach (TVChannel chan in channels)
-          {
-            if (m_eState !=State.Running) break;
-            if (m_bPreviewChanged) break;
-            if (m_bRecordingsChanged) break;
-            if (m_bStopRecording) break;
-            if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
-            // get all programs running for this TV channel
-            // between  (now-iPreRecordInterval) - (now+iPostRecordInterval+3 hours)
 
-            DateTime dtStart=DateTime.Now.AddHours(-4);
-            DateTime dtEnd=DateTime.Now.AddMinutes(iPostRecordInterval+3*60);
-            long iStartTime=Utils.datetolong(dtStart);
-            long iEndTime=Utils.datetolong(dtEnd);
-            
-            runningPrograms.Clear();
-            TVDatabase.GetPrograms(chan.Name,iStartTime,iEndTime,ref runningPrograms);
+          HandleRecordings(DateTime.Now,channels,recordings,iPreRecordInterval,iPostRecordInterval);
 
-            // for each TV recording scheduled
-            iRec=0;
-            foreach (TVRecording rec in recordings)
-            {
-              if (m_eState !=State.Running) break;
-              if (m_bPreviewChanged) break;
-              if (m_bRecordingsChanged) break;
-              if (m_bStopRecording) break;
-              if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
-              
-              // if not, then check each check for each tv program
-              foreach (TVProgram currentProgram in runningPrograms)
-              {
-                if (m_eState !=State.Running) break;
-
-                // if the recording should record the tv program
-                if ( rec.ShouldRecord(DateTime.Now,currentProgram,iPreRecordInterval, iPostRecordInterval) )
-                {
-                  // yes, then record it
-                  if (Record(rec,currentProgram, iPreRecordInterval, iPostRecordInterval))
-                  {
-                    bRecorded=true;
-                    recordings.RemoveAt(iRec);
-                    break;
-                  }
-                }
-              }
-              iRec++;
-              if (bRecorded) break;
-            }
-          }
-   
-
-          iRec=0;
-          if (!bRecorded)
-          {
-            foreach (TVRecording rec in recordings)
-            {
-              if (m_bPreviewChanged) break;
-              if (m_bRecordingsChanged) break;
-              if (m_bStopRecording) break;
-              if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
-              // 1st check if the recording itself should b recorded
-              if ( rec.ShouldRecord(DateTime.Now,null,iPreRecordInterval, iPostRecordInterval) )
-              {
-                // yes, then record it
-                if ( Record(rec,null,iPreRecordInterval, iPostRecordInterval))
-                {
-                  recordings.RemoveAt(iRec);
-                  break;
-                }
-              }
-              iRec++;
-            }
-          }
 
           // wait for the next minute
           TimeSpan ts=DateTime.Now-dtTime;
@@ -261,6 +175,100 @@ namespace MediaPortal.TV.Recording
       m_eState=State.Idle;
       Log.Write("Recorder: thread stopped");
     }
+
+    static void HandleRecordings(DateTime dtCurrentTime, ArrayList channels, ArrayList recordings,int iPreRecordInterval,int iPostRecordInterval)
+    {
+      
+      // If the recording schedules have been changed since last time
+      if (m_bRecordingsChanged)
+      {
+        // then get all recordings from the database
+        recordings.Clear();
+        channels.Clear();
+        TVDatabase.GetRecordings(ref recordings);
+        TVDatabase.GetChannels(ref channels);
+        m_bRecordingsChanged=false;
+      }
+
+      ArrayList runningPrograms = new ArrayList();
+      int iRec=0;
+      bool bRecorded=false;
+      // for each tv-channel
+      foreach (TVChannel chan in channels)
+      {
+        if (m_eState !=State.Running) break;
+        if (m_bPreviewChanged) break;
+        if (m_bRecordingsChanged) break;
+        if (m_bStopRecording) break;
+        if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
+        // get all programs running for this TV channel
+        // between  (now-iPreRecordInterval) - (now+iPostRecordInterval+3 hours)
+
+        DateTime dtStart=dtCurrentTime.AddHours(-4);
+        DateTime dtEnd=dtCurrentTime.AddMinutes(iPostRecordInterval+3*60);
+        long iStartTime=Utils.datetolong(dtStart);
+        long iEndTime=Utils.datetolong(dtEnd);
+            
+        runningPrograms.Clear();
+        TVDatabase.GetPrograms(chan.Name,iStartTime,iEndTime,ref runningPrograms);
+
+        // for each TV recording scheduled
+        iRec=0;
+        foreach (TVRecording rec in recordings)
+        {
+          if (m_eState !=State.Running) break;
+          if (m_bPreviewChanged) break;
+          if (m_bRecordingsChanged) break;
+          if (m_bStopRecording) break;
+          if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
+              
+          // if not, then check each check for each tv program
+          foreach (TVProgram currentProgram in runningPrograms)
+          {
+            if (m_eState !=State.Running) break;
+
+            // if the recording should record the tv program
+            if ( rec.ShouldRecord(dtCurrentTime,currentProgram,iPreRecordInterval, iPostRecordInterval) )
+            {
+              // yes, then record it
+              if (Record(dtCurrentTime,rec,currentProgram, iPreRecordInterval, iPostRecordInterval))
+              {
+                bRecorded=true;
+                break;
+              }
+            }
+          }
+          iRec++;
+          if (bRecorded) break;
+        }
+      }
+   
+
+      iRec=0;
+      if (!bRecorded)
+      {
+        foreach (TVRecording rec in recordings)
+        {
+          if (m_bPreviewChanged) break;
+          if (m_bRecordingsChanged) break;
+          if (m_bStopRecording) break;
+          if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
+          // 1st check if the recording itself should b recorded
+          if ( rec.ShouldRecord(DateTime.Now,null,iPreRecordInterval, iPostRecordInterval) )
+          {
+            // yes, then record it
+            if ( Record(dtCurrentTime,rec,null,iPreRecordInterval, iPostRecordInterval))
+            {
+              break;
+            }
+          }
+          iRec++;
+        }
+      }
+    }
+
+
+
     /// <summary>
     /// When called this method starts an immediate recording on the channel specified
     /// It will record the next 2 hours.
@@ -296,14 +304,14 @@ namespace MediaPortal.TV.Recording
       m_bStopRecording=false;
     }
 
-    static bool Record(TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
+    static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
     {
       // check if we're already recording this...
       foreach (TVCaptureDevice dev in m_tvcards)
       {
         if (dev.IsRecording)
         {
-          if (dev.ScheduleRecording.ID==rec.ID) return true;
+          if (dev.ScheduleRecording.ID==rec.ID) return false;
         }
       }
 
@@ -343,7 +351,7 @@ namespace MediaPortal.TV.Recording
 
       // still no device found. 
       // if we skip the pre-record interval should the new recording still be started then?
-      if ( rec.ShouldRecord(DateTime.Now,currentProgram,0,0) )
+      if ( rec.ShouldRecord(currentTime,currentProgram,0,0) )
       {
         // yes, then find & stop any capture running which is busy post-recording
         Log.Write("check if a capture card is post-recording");
