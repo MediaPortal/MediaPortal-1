@@ -97,6 +97,8 @@ namespace MediaPortal
     protected System.Drawing.Point storedLocation;
     private System.Windows.Forms.MenuItem menuItem1;
     private System.Windows.Forms.MenuItem menuItem2;
+    private System.Windows.Forms.Timer timer1;
+    private System.ComponentModel.IContainer components;
     protected Rectangle   oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -154,10 +156,7 @@ namespace MediaPortal
             clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
-//      SetStyle(ControlStyles.AllPaintingInWmPaint | 
-//        ControlStyles.UserPaint | 
-  //      ControlStyles.DoubleBuffer,
-    //    true);    
+      this.timer1.Start();
 
     }
 
@@ -1272,6 +1271,14 @@ namespace MediaPortal
       }
     }
 
+    public virtual void OnTimer()
+    {
+    }
+    private void timer1_Tick(object sender, System.EventArgs e)
+    {
+      OnTimer();
+    }
+
     private void menuItem2_Click(object sender, System.EventArgs e)
     {
       OnSetup(sender,e);    
@@ -1411,6 +1418,7 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
       this.mnuMain = new System.Windows.Forms.MainMenu();
       this.mnuFile = new System.Windows.Forms.MenuItem();
@@ -1419,6 +1427,7 @@ namespace MediaPortal
       this.mnuExit = new System.Windows.Forms.MenuItem();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
+      this.timer1 = new System.Windows.Forms.Timer(this.components);
       // 
       // mnuMain
       // 
@@ -1464,6 +1473,11 @@ namespace MediaPortal
       this.menuItem2.Index = 0;
       this.menuItem2.Text = "&Options...";
       this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
+      // 
+      // timer1
+      // 
+      this.timer1.Enabled = true;
+      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
       // D3DApp
       // 

@@ -1,10 +1,29 @@
-Skin:
-  -
+Skin, gfx & media:
+  - need good gfx for xmltv/SVHS.png & xmltv/Composite.png (256x128) to show in my tv/home
+  - need logo gdx for rewind 1x, 2x, 4x, 8x, 16x, 32x,
+  - keymap.xml : need to fill in all <sound> tags for all actions/keys
+  - we need .wav files for 
+     - click.wav
+     - cursor.wav
+     - back.wav
+     - and maybe others as well?
+  - my radio 
+     - need my radio gfx in home
+     - need gfx in my radio
+     - .xml for my radio
+  - my programs/emulators/...
+     - need gfx in my programs/emulators/games...
+     - .xml for my programs/emulators/games
+  - need graphics & .xml for 'mouse control OSD' which slides in when cursor hits bottom of window/screen
+  - need new a new .xml (ala DialogAlbumInfo.xml or DialogVideoInfo.xml) to show information about 
+    artists (for audio) or actors (for video)
+     
 My Radio:
   - AM/FM
   - Scan channels
   - Name channels
   - listen to channel
+
 
 My TV:
   - A way to browse and resolve recording conflicts. 
@@ -23,7 +42,6 @@ My TV:
      -
   
   Capture:
-     - FF/RW live TV doesnt work yet ->copy code from xbmc-er
      - add option to directly show fullscreen TV when going to my tv
      - view & record @ same time (optional)
      - add support for digital capture cards (BDA tuners)
@@ -31,7 +49,6 @@ My TV:
      
 My Music:
   - cache freeDB info
-  
   - faster start of 1st song played
   - gapless playback
   - search songs by genre,artist,album (based on music database)
@@ -42,7 +59,6 @@ My Music:
   - tag readers for formats like ogg,flac,wma,... (int20_h is working on this)
   - query info about artists from www.allmusic.com
   - refresh/lookup album art
-  - use folder.jpg for my music/albums album art
 
 My Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
@@ -66,7 +82,6 @@ General:
   - caller ID
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
-  - hide file extensions (option)
   - better mouse control 
      - my tv: 
          tvguide   : next/prev day, current time/day, scroll up/down, scroll left/right, time interval+/-
@@ -83,4 +98,3 @@ General:
   - my files  
   - my programs
   - autoplay anything thats in the cd/dvd
-  

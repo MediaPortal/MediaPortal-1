@@ -6,8 +6,8 @@ mkdir plugins\subtitle
 
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
 copy ..\..\..\GUIMusic\bin\Release\GUIMusic.dll plugins\windows
-copy ..\..\..\GUIMusic\Freedb\bin\Release\Freedb.dll .
-copy ..\..\..\GUIMusic\Ripper\bin\Release\Ripper.dll .
+copy ..\..\..\GUIMusic\Freedb\bin\Release\Freedb.dll plugins\windows
+copy ..\..\..\GUIMusic\Ripper\bin\Release\Ripper.dll plugins\windows
 copy ..\..\..\GUIPictures\bin\Release\GUIPictures.dll plugins\windows
 copy ..\..\..\GUITV\bin\Release\GUITV.dll plugins\windows
 copy ..\..\..\GUIVideoFiles\bin\Release\GUIVideoFiles.dll plugins\windows

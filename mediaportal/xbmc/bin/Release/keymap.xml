@@ -13,141 +13,169 @@
       <description>Remote Button 0</description>
       <id>58</id>
       <key>0</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 1</description>
       <id>59</id>
       <key>1</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 2</description>
       <id>60</id>
       <key>2</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 3</description>
       <id>61</id>
       <key>3</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 4</description>
       <id>62</id>
       <key>4</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 5</description>
       <id>63</id>
       <key>5</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 6</description>
       <id>64</id>
       <key>6</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 7</description>
       <id>65</id>
       <key>7</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 8</description>
       <id>66</id>
       <key>8</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Remote Button 9</description>
       <id>67</id>
       <key>9</key>
+      <sound>click.wav</sound>
     </action>  
     <action>
       <description>play music</description>
       <id>79</id>
       <key>p</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>FastForward music</description>
       <id>77</id>
       <key>F6</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Rewind music</description>
       <id>78</id>
       <key>F5</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Move Left</description>
       <id>1</id>
       <key>left</key>
+      <sound>cursor.wav</sound>
     </action>
     <action>
       <description>Move Right</description>
       <id>2</id>
       <key>right</key>
+      <sound>cursor.wav</sound>
     </action>
     <action>
       <description>Move Up</description>
       <id>3</id>
       <key>up</key>
+      <sound>cursor.wav</sound>
     </action>
     <action>
       <description>Move Down</description>
       <id>4</id>
       <key>down</key>
+      <sound>cursor.wav</sound>
     </action>
     <action>
       <description>Page Up</description>
       <id>5</id>
       <key>pageup</key>
+      <sound>cursor.wav</sound>
     </action>
     <action>
       <description>Page Down</description>
       <id>6</id>
       <key>pagedown</key>
+      <sound>cursor.wav</sound>
     </action>
     <action>
       <description>Select Item</description>
       <id>7</id>
       <key>enter</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Parent Directory</description>
       <id>9</id>
       <key>u</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Previous Menu</description>
       <id>10</id>
       <key>esc</key>
+      <sound>back.wav</sound>
     </action>
     <action>
       <description>Show File Info</description>
       <id>11</id>
       <key>F3</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Pause</description>
       <id>12</id>
       <key>SPACE</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Stop</description>
       <id>13</id>
       <key>B</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Skip Next</description>
       <id>14</id>
       <key>F8</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Skip Previous</description>
       <id>15</id>
       <key>F7</key>
+      <sound>click.wav</sound>
     </action>
     <action>
       <description>Toggle between GUI and fullscreen</description>
       <id>18</id>
       <key>X</key>
+      <sound>click.wav</sound>
     </action>
   </global>   
 

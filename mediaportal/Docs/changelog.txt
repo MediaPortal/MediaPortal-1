@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  03-06-2004  general     : added : sanity checks for setup (channel numbers, folder paths,...)
+  03-06-2004  general     : added : tivo style FF/RW for live tv timeshifting
+  03-06-2004  general     : added : play a sound when a key has been pressed (you can select which sound to play for which action/key in keymap.xml)
+
   02-06-2004  my videos   : fixed : IMDB lookup was broken because www.imdb changed layout a little bit
   02-06-2004  general     : fixed : setup/tvcapture disable not-needed options for mpeg2 capture cards
   02-06-2004  general     : fixed : window uses wrong resolution, 720x569 instead of 720x576 when using other than classic look in XP

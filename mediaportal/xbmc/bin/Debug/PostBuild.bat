@@ -4,8 +4,8 @@ mkdir plugins\TagReaders
 mkdir plugins\subtitle
 
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.dll plugins\windows
-copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.dll .
-copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.dll .
+copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.dll plugins\windows
+copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.dll plugins\windows
 copy ..\..\..\Dialogs\bin\Debug\Dialogs.dll plugins\windows
 copy ..\..\..\GUIPictures\bin\Debug\GUIPictures.dll plugins\windows
 copy ..\..\..\GUITV\bin\Debug\GUITV.dll plugins\windows
@@ -32,8 +32,8 @@ copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
 
 
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.pdb plugins\windows
-copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.pdb .
-copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.pdb .
+copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.pdb plugins\windows
+copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.pdb plugins\windows
 copy ..\..\..\Dialogs\bin\Debug\Dialogs.pdb  plugins\windows
 copy ..\..\..\GUIPictures\bin\Debug\GUIPictures.pdb plugins\windows
 copy ..\..\..\GUITV\bin\Debug\GUITV.pdb plugins\windows

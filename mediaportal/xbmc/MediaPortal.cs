@@ -517,14 +517,14 @@ public class MediaPortalApp : D3DApp
           case Action.ActionType.ACTION_MUSIC_FORWARD:
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
-              g_Player.Speed++;
+              g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
               return;
             }
             break;
           case Action.ActionType.ACTION_MUSIC_REWIND:
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
-              g_Player.Speed--;
+              g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
               return;
             }
             break;
@@ -552,7 +552,9 @@ public class MediaPortalApp : D3DApp
 #endif
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
-			{
+      {
+        if (action.SoundFileName.Length>0)
+          Utils.PlaySound(action.SoundFileName, false, true);
 				OnAction(action);
 			}
       action = new Action(key,Action.ActionType.ACTION_KEY_PRESSED,0,0);
@@ -565,10 +567,17 @@ public class MediaPortalApp : D3DApp
 				Action action=new Action();
 				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
 				{
+          if (action.SoundFileName.Length>0)
+            Utils.PlaySound(action.SoundFileName, false, true);
 					OnAction(action);
 				}
       
 	  }
+
+  public override void OnTimer()
+  {
+    g_Player.Process();
+  }
 
 
 	protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
@@ -618,6 +627,8 @@ public class MediaPortalApp : D3DApp
       action=new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {
+        if (action.SoundFileName.Length>0)
+          Utils.PlaySound(action.SoundFileName, false, true);
         OnAction(action);
       }
     }
@@ -629,6 +640,8 @@ public class MediaPortalApp : D3DApp
       action=new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {
+        if (action.SoundFileName.Length>0)
+            Utils.PlaySound(action.SoundFileName, false, true);
         OnAction(action);
       }
     }*/
@@ -640,11 +653,15 @@ public class MediaPortalApp : D3DApp
       action=new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {
+        if (action.SoundFileName.Length>0)
+          Utils.PlaySound(action.SoundFileName, false, true);
         OnAction(action);
       }
     }
     action=new Action(Action.ActionType.ACTION_MOUSE_CLICK,x,y);
     action.MouseButton=e.Button;
+    if (action.SoundFileName.Length>0)
+      Utils.PlaySound(action.SoundFileName, false, true);
     OnAction(action);
 
 	}

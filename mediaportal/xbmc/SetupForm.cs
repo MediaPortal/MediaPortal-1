@@ -2593,8 +2593,19 @@ namespace MediaPortal
         txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav");
         txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
         txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
-        textBoxPlayLists.Text=xmlreader.GetValueAsString("music","playlists","");
-        textBoxPlayListFolderVideo.Text=xmlreader.GetValueAsString("movies","playlists","");
+        string strDefault="";
+        if (listAudioShares.Items.Count>0)
+        {
+          strDefault=listAudioShares.Items[0].SubItems[1].Text;
+        }
+ 
+        textBoxPlayLists.Text=xmlreader.GetValueAsString("music","playlists",strDefault);
+        strDefault="";
+        if (listVideoShares.Items.Count>0)
+        {
+          strDefault=listVideoShares.Items[0].SubItems[1].Text;
+        }
+        textBoxPlayListFolderVideo.Text=xmlreader.GetValueAsString("movies","playlists",strDefault);
         LoadWeather(xmlreader);
 
 
@@ -2857,6 +2868,48 @@ namespace MediaPortal
 
     private void SetupForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
+      // sanity checks
+      if (!System.IO.Directory.Exists(textBoxPlayListFolderVideo.Text))
+      {
+        MessageBox.Show(this.Parent,"video playlist folder does not exists", "Invalid configuration",MessageBoxButtons.OK);
+        e.Cancel=true;
+        return;
+      }
+      if (!System.IO.Directory.Exists(textBoxPlayLists.Text))
+      {
+        MessageBox.Show(this.Parent,"music playlist folder does not exists", "Invalid configuration",MessageBoxButtons.OK);
+        e.Cancel=true;
+        return;
+      }
+      if (!System.IO.Directory.Exists(textBoxRecPath.Text))
+      {
+        MessageBox.Show(this.Parent,"Movie recording folder does not exists", "Invalid configuration",MessageBoxButtons.OK);
+        e.Cancel=true;
+        return;
+      }
+      //check channel numbers!=0
+      for (int i=0; i < listTVChannels.Items.Count;++i)
+      {
+        try
+        {
+          string strChannel=listTVChannels.Items[i].Text;
+          string strNumber=listTVChannels.Items[i].SubItems[1].Text;
+          string strFreq=listTVChannels.Items[i].SubItems[2].Text;
+          int iNumber=GetInt(strNumber);
+          if (iNumber <254)
+          {
+            int iChanNumber=GetInt(strNumber);
+            if (iChanNumber==0)
+            {
+              MessageBox.Show(this.Parent,"Some tv channels have no channel number assigned", "Invalid configuration",MessageBoxButtons.OK);
+              e.Cancel=true;
+              return;
+            }
+          }
+        }
+        catch(Exception){}
+      }
+
       SaveSettings();
       Recorder.Start();      
       Log.Write("------------leave setup--------");
