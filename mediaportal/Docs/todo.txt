@@ -1,4 +1,4 @@
-todo for 1.0:
+todo for 0.1:
  - tvprogressbar
  - bonkalord's setup
  - A way to solve the OSD look on vmr7 when it is based on transparent graphics.
@@ -71,6 +71,7 @@ My TV:
      - pal/secam/ntsc setup per channel
      
 My Music: (int_20h)
+  - highlight currently playing file somehow
   - foobar plugin (int20h is working on this)
   - search songs by genre,artist,album (based on music database)
   - favorite system to add an album, song, artists to your favorites
@@ -128,6 +129,15 @@ setup:
   - all forms: enter should do same as OK key
 
 General:
+  - better cd/dvd handling like
+    - remove eject and "play DVD" buttons from myVideos
+    - remove eject button from myMusic
+    - the user has to add the desired drive(s) to his shares
+    - when he selects a drive in MP and hits ok a dialogbox appears which asks him:
+      "Play CD /DVD"
+      "Eject Drive"
+      "(Exit)" 
+  - Pincode for xxx-shares :)
   - volume control via remote
   - integrated support for remote controls instead of using girder
   - The ability to search for and download new skins from within MP
@@ -155,4 +165,4 @@ General:
        - general   : switch fullscreen<->windowed
        - fullscreen: osd
        - mouse wheel for scrolling
-  
+       - autohide mouse cursor with no movement, auto show when mouse is moved
