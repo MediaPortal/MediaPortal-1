@@ -76,12 +76,51 @@
 		<posY>256</posY>
 		<reverse>yes</reverse>
 		<onup>2</onup>
-		<ondown>2</ondown>
+		<ondown>4</ondown>
 		<onleft>3</onleft>
 		<onright>3</onright>
 		<align>right</align>
 		<textcolor>FFFFFFFF</textcolor>
 		<buddycontrolid>101</buddycontrolid>
 	</control>	
+	<control>
+		<description>X-fade transitions</description>
+		<type>checkmark</type>
+		<id>4</id>
+		<posX>288</posX>
+		<posY>286</posY>
+		<label>13010</label>
+		<textcolor>FFFFFFFF</textcolor>
+		<onleft>4</onleft>
+		<onright>4</onright>
+		<onup>3</onup>
+		<ondown>5</ondown>
+	</control>
+	<control>
+		<description>Ken Buns transitions</description>
+		<type>checkmark</type>
+		<id>5</id>
+		<posX>288</posX>
+		<posY>320</posY>
+		<label>13008</label>
+		<textcolor>FFFFFFFF</textcolor>
+		<onleft>5</onleft>
+		<onright>5</onright>
+		<onup>4</onup>
+		<ondown>6</ondown>
+	</control>
+	<control>
+		<description>Random transitions</description>
+		<type>checkmark</type>
+		<id>6</id>
+		<posX>288</posX>
+		<posY>354</posY>
+		<label>13009</label>
+		<textcolor>FFFFFFFF</textcolor>
+		<onleft>6</onleft>
+		<onright>6</onright>
+		<onup>5</onup>
+		<ondown>2</ondown>
+	</control>		
 </controls>
 </window>
