@@ -1,19 +1,34 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
 
 using Microsoft.Win32;
 
 using SQLite.NET;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 using DShowNET;
 
 namespace MediaPortal.Configuration.Sections
 {
 	public class TVChannels : MediaPortal.Configuration.SectionSettings
 	{
+		public class ComboCard
+		{
+			public string FriendlyName;
+			public string VideoDevice;
+			public int    ID;
+			public override string ToString()
+			{
+				return String.Format("{0} - {1}", FriendlyName, VideoDevice);
+			}
+		};
+
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -55,6 +70,17 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button buttonCVS;
 		private System.Windows.Forms.Button btnGrpChnUp;
 		private System.Windows.Forms.Button btnGrpChnDown;
+		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.ColumnHeader columnHeader10;
+		private System.Windows.Forms.ColumnHeader columnHeader11;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.ComboBox comboBoxCard;
+		private System.Windows.Forms.ListView listViewTVChannelsCard;
+		private System.Windows.Forms.ListView listViewTVChannelsForCard;
+		private System.Windows.Forms.Button btnMapChannelToCard;
+		private System.Windows.Forms.Button btnUnmapChannelFromCard;
 
 		//
 		// Private members
@@ -120,6 +146,8 @@ namespace MediaPortal.Configuration.Sections
 			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.btnGrpChnDown = new System.Windows.Forms.Button();
+			this.btnGrpChnUp = new System.Windows.Forms.Button();
 			this.buttonMap = new System.Windows.Forms.Button();
 			this.btnUnmap = new System.Windows.Forms.Button();
 			this.listViewTVGroupChannels = new System.Windows.Forms.ListView();
@@ -130,13 +158,23 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.btnGrpChnUp = new System.Windows.Forms.Button();
-			this.btnGrpChnDown = new System.Windows.Forms.Button();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.btnMapChannelToCard = new System.Windows.Forms.Button();
+			this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
+			this.listViewTVChannelsForCard = new System.Windows.Forms.ListView();
+			this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
+			this.listViewTVChannelsCard = new System.Windows.Forms.ListView();
+			this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
+			this.label4 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label6 = new System.Windows.Forms.Label();
+			this.comboBoxCard = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// columnHeader3
@@ -166,8 +204,9 @@ namespace MediaPortal.Configuration.Sections
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(16, 16);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -417,6 +456,24 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Map channels";
 			// 
+			// btnGrpChnDown
+			// 
+			this.btnGrpChnDown.Location = new System.Drawing.Point(304, 344);
+			this.btnGrpChnDown.Name = "btnGrpChnDown";
+			this.btnGrpChnDown.Size = new System.Drawing.Size(56, 23);
+			this.btnGrpChnDown.TabIndex = 9;
+			this.btnGrpChnDown.Text = "Down";
+			this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
+			// 
+			// btnGrpChnUp
+			// 
+			this.btnGrpChnUp.Location = new System.Drawing.Point(264, 344);
+			this.btnGrpChnUp.Name = "btnGrpChnUp";
+			this.btnGrpChnUp.Size = new System.Drawing.Size(32, 23);
+			this.btnGrpChnUp.TabIndex = 8;
+			this.btnGrpChnUp.Text = "Up";
+			this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
+			// 
 			// buttonMap
 			// 
 			this.buttonMap.Location = new System.Drawing.Point(192, 184);
@@ -479,9 +536,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.label2.Location = new System.Drawing.Point(16, 64);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(100, 16);
+			this.label2.Size = new System.Drawing.Size(128, 16);
 			this.label2.TabIndex = 2;
-			this.label2.Text = "TVChannels";
+			this.label2.Text = "TVChannels available";
 			// 
 			// label1
 			// 
@@ -499,23 +556,101 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1.TabIndex = 0;
 			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
-			// btnGrpChnUp
+			// tabPage4
 			// 
-			this.btnGrpChnUp.Location = new System.Drawing.Point(264, 344);
-			this.btnGrpChnUp.Name = "btnGrpChnUp";
-			this.btnGrpChnUp.Size = new System.Drawing.Size(32, 23);
-			this.btnGrpChnUp.TabIndex = 8;
-			this.btnGrpChnUp.Text = "Up";
-			this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
+			this.tabPage4.Controls.Add(this.btnMapChannelToCard);
+			this.tabPage4.Controls.Add(this.btnUnmapChannelFromCard);
+			this.tabPage4.Controls.Add(this.listViewTVChannelsForCard);
+			this.tabPage4.Controls.Add(this.listViewTVChannelsCard);
+			this.tabPage4.Controls.Add(this.label4);
+			this.tabPage4.Controls.Add(this.label5);
+			this.tabPage4.Controls.Add(this.label6);
+			this.tabPage4.Controls.Add(this.comboBoxCard);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Size = new System.Drawing.Size(432, 390);
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "Cards";
 			// 
-			// btnGrpChnDown
+			// btnMapChannelToCard
 			// 
-			this.btnGrpChnDown.Location = new System.Drawing.Point(304, 344);
-			this.btnGrpChnDown.Name = "btnGrpChnDown";
-			this.btnGrpChnDown.Size = new System.Drawing.Size(56, 23);
-			this.btnGrpChnDown.TabIndex = 9;
-			this.btnGrpChnDown.Text = "Down";
-			this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
+			this.btnMapChannelToCard.Location = new System.Drawing.Point(200, 152);
+			this.btnMapChannelToCard.Name = "btnMapChannelToCard";
+			this.btnMapChannelToCard.Size = new System.Drawing.Size(32, 23);
+			this.btnMapChannelToCard.TabIndex = 15;
+			this.btnMapChannelToCard.Text = ">>";
+			this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
+			// 
+			// btnUnmapChannelFromCard
+			// 
+			this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(200, 184);
+			this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
+			this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(32, 23);
+			this.btnUnmapChannelFromCard.TabIndex = 14;
+			this.btnUnmapChannelFromCard.Text = "<<";
+			this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
+			// 
+			// listViewTVChannelsForCard
+			// 
+			this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																																this.columnHeader10});
+			this.listViewTVChannelsForCard.Location = new System.Drawing.Point(244, 64);
+			this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
+			this.listViewTVChannelsForCard.Size = new System.Drawing.Size(168, 288);
+			this.listViewTVChannelsForCard.TabIndex = 13;
+			this.listViewTVChannelsForCard.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader10
+			// 
+			this.columnHeader10.Text = "TV Channel";
+			this.columnHeader10.Width = 161;
+			// 
+			// listViewTVChannelsCard
+			// 
+			this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																														 this.columnHeader11});
+			this.listViewTVChannelsCard.Location = new System.Drawing.Point(20, 64);
+			this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
+			this.listViewTVChannelsCard.Size = new System.Drawing.Size(168, 288);
+			this.listViewTVChannelsCard.TabIndex = 12;
+			this.listViewTVChannelsCard.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader11
+			// 
+			this.columnHeader11.Text = "TV Channel";
+			this.columnHeader11.Width = 159;
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(248, 40);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(156, 16);
+			this.label4.TabIndex = 11;
+			this.label4.Text = "TV channels assigned to card";
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(24, 40);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(136, 16);
+			this.label5.TabIndex = 10;
+			this.label5.Text = "TVChannels available";
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(20, 16);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(36, 16);
+			this.label6.TabIndex = 9;
+			this.label6.Text = "Card:";
+			// 
+			// comboBoxCard
+			// 
+			this.comboBoxCard.Location = new System.Drawing.Point(64, 8);
+			this.comboBoxCard.Name = "comboBoxCard";
+			this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
+			this.comboBoxCard.TabIndex = 8;
+			this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
 			// 
 			// TVChannels
 			// 
@@ -527,6 +662,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -644,6 +780,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			LoadTVChannels();
 			LoadGroups();
+			LoadCards();
 		}
 
 		public override void SaveSettings()
@@ -652,6 +789,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				LoadTVChannels();
 				LoadGroups();
+				LoadCards();
 				reloadList=false;
 				isDirty=true;
 			}
@@ -1024,6 +1162,7 @@ namespace MediaPortal.Configuration.Sections
 				reloadList=false;
 				LoadTVChannels();
 				LoadGroups();
+				LoadCards();
 			}
 			base.OnPaint (e);
 		}
@@ -1111,6 +1250,7 @@ namespace MediaPortal.Configuration.Sections
 				
 				SaveGroups();
 				LoadGroups();
+				LoadCards();
 				SaveTVChannels();
 				UpdateGroupChannels(group,true);
 
@@ -1419,6 +1559,167 @@ namespace MediaPortal.Configuration.Sections
 			SaveTVChannels();
 			SaveGroups();
 		
+		}
+
+		void LoadCards()
+		{
+			comboBoxCard.Items.Clear();
+			if(File.Exists("capturecards.xml"))
+			{
+				using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				{
+					try
+					{
+						//
+						// Create Soap Formatter
+						//
+						SoapFormatter formatter = new SoapFormatter();
+
+						//
+						// Serialize
+						//
+						ArrayList captureCards = new ArrayList();
+						captureCards = (ArrayList)formatter.Deserialize(fileStream);
+						for (int i=0; i < captureCards.Count; i++)
+						{
+							((TVCaptureDevice)captureCards[i]).ID=(i+1);
+							((TVCaptureDevice)captureCards[i]).LoadDefinitions();
+
+
+							TVCaptureDevice device=(TVCaptureDevice)captureCards[i];
+							ComboCard combo = new ComboCard();
+							combo.FriendlyName=device.FriendlyName;
+							combo.VideoDevice=device.VideoDevice;
+							combo.ID=device.ID;
+							comboBoxCard.Items.Add(combo);
+
+						}
+						//
+						// Finally close our file stream
+						//
+						fileStream.Close();
+					}
+					catch
+					{
+						MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					}
+				}
+			}
+
+			
+			if (comboBoxCard.Items.Count!=0)
+				comboBoxCard.SelectedIndex=0;
+			FillInChannelCardMappings();
+		}
+		
+		void FillInChannelCardMappings()
+		{
+			int card=0;
+			int index =comboBoxCard.SelectedIndex;
+			if (index >=0)
+			{
+				ComboCard combo=(ComboCard )comboBoxCard.Items[index];
+				card=combo.ID-1;
+			}
+
+			listViewTVChannelsCard.Items.Clear();
+			listViewTVChannelsForCard.Items.Clear();
+			ArrayList cardChannels = new ArrayList();
+			TVDatabase.GetChannelsForCard(ref cardChannels, card);
+			
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			foreach (TVChannel chan in channels)
+			{
+				bool mapped=false;
+				foreach (TVChannel chanCard in cardChannels)
+				{
+					if (chanCard.Name==chan.Name) 
+					{
+						mapped=true;
+						break;
+					}
+				}
+				if (!mapped)
+				{
+					ListViewItem newItem = new ListViewItem(chan.Name);
+					newItem.Tag=chan;
+					listViewTVChannelsCard.Items.Add(newItem);
+				}
+			}
+
+			foreach (TVChannel chanCard in cardChannels)
+			{
+				ListViewItem newItemCard = new ListViewItem(chanCard.Name);
+				newItemCard.Tag=chanCard;
+				listViewTVChannelsForCard.Items.Add(newItemCard);
+			}
+		}
+
+		private void comboBoxCard_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			FillInChannelCardMappings();
+		}
+
+		private void btnMapChannelToCard_Click(object sender, System.EventArgs e)
+		{
+			if (listViewTVChannelsCard.SelectedItems==null) return;
+			int card=0;
+			int index =comboBoxCard.SelectedIndex;
+			if (index >=0)
+			{
+				ComboCard combo=(ComboCard )comboBoxCard.Items[index];
+				card=combo.ID-1;
+			}
+			
+			for(int i=0; i < listViewTVChannelsCard.SelectedItems.Count;++i)
+			{
+				ListViewItem listItem=listViewTVChannelsCard.SelectedItems[i];
+				TVChannel chan=(TVChannel)listItem.Tag;
+				
+				listItem = new ListViewItem(new string[] { chan.Name} );
+				listItem.Tag=chan;
+				listViewTVChannelsForCard.Items.Add(listItem);
+				if (chan != null)
+					TVDatabase.MapChannelToCard(chan.ID,card);
+			}
+			
+			for(int i=listViewTVChannelsCard.SelectedItems.Count-1; i >=0 ;i--)
+			{
+				ListViewItem listItem=listViewTVChannelsCard.SelectedItems[i];
+
+				listViewTVChannelsCard.Items.Remove(listItem);
+			}		
+		}
+
+		private void btnUnmapChannelFromCard_Click(object sender, System.EventArgs e)
+		{
+			int card=0;
+			int index =comboBoxCard.SelectedIndex;
+			if (index >=0)
+			{
+				ComboCard combo=(ComboCard )comboBoxCard.Items[index];
+				card=combo.ID-1;
+			}
+			if (listViewTVChannelsForCard.SelectedItems==null) return;
+			for(int i=0; i < listViewTVChannelsForCard.SelectedItems.Count;++i)
+			{
+				ListViewItem listItem=listViewTVChannelsForCard.SelectedItems[i];
+				TVChannel chan=(TVChannel)listItem.Tag;
+
+				listItem = new ListViewItem(new string[] { chan.Name} );
+				listItem.Tag=chan;
+				listViewTVChannelsCard.Items.Add(listItem);
+			}		
+
+			for(int i=listViewTVChannelsForCard.SelectedItems.Count-1; i>=0;--i)
+			{
+				ListViewItem listItem=listViewTVChannelsForCard.SelectedItems[i];
+				TVChannel channel=listItem.Tag as TVChannel;
+				if (channel != null)
+					TVDatabase.UnmapChannelFromCard(channel,card);
+				listViewTVChannelsForCard.Items.Remove(listItem);
+			}
 		}
 	}
 }

@@ -238,8 +238,8 @@ namespace MediaPortal.GUI.Music
       }
 
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        GUIWindowManager.PreviousWindow();
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
         return;
       }
 
@@ -2154,5 +2154,17 @@ namespace MediaPortal.GUI.Music
       if (filmstrip==null) return;
       filmstrip.InfoImageFileName=item.ThumbnailImage;
     }
+		static public bool IsMusicWindow(int window)
+		{
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_FILES) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_ALBUM) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_ARTIST) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_TOP100) return true;
+			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES) return true;
+			return false;
+		}
 	}
 }

@@ -135,8 +135,8 @@ namespace MediaPortal.GUI.Video
         return;
       }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        GUIWindowManager.PreviousWindow();
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
         return;
       }
 

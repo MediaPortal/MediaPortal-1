@@ -256,8 +256,8 @@ namespace MediaPortal.GUI.Music
       }
 
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        GUIWindowManager.PreviousWindow();
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
         return;
       }
       if (action.wID==Action.ActionType.ACTION_SHOW_PLAYLIST)
@@ -288,6 +288,10 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           m_iItemSelected=GetSelectedItemNo();
+					if (GUIMusicFiles.IsMusicWindow(message.Param1))
+					{
+						MusicState.StartWindow=message.Param1;
+					}
           SaveSettings();
           break;
 

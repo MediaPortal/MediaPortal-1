@@ -2246,6 +2246,32 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
+		
+		static public void GetCards(ref ArrayList cards)
+		{
+			cards.Clear();
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select distinct card from tblChannelCard ");
+
+					results=m_db.Execute(strSQL);
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						cards.Add( Int32.Parse(DatabaseUtility.Get(results,i,"card")));
+					}
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
 		static public void MapChannelToCard(int channel, int card)
 		{
 			lock (typeof(TVDatabase))
@@ -2508,6 +2534,64 @@ namespace MediaPortal.TV.Database
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 				}
 				return -1;
+			}
+		}
+
+		static public bool GetChannelsForCard(ref ArrayList channels, int card)
+		{
+			if (m_db==null) return false;
+			lock (typeof(TVDatabase))
+			{
+				channels.Clear();
+				try
+				{
+					if (null==m_db) return false;
+					string strSQL;
+					strSQL=String.Format("select * from channel,tblChannelCard where channel.idChannel=tblChannelCard.idChannel and tblChannelCard.card={0} order by channel.iSort",card);
+					SQLiteResultSet results;
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return false;
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						TVChannel chan=new TVChannel();
+						chan.ID=Int32.Parse(DatabaseUtility.Get(results,i,"channel.idChannel"));
+						chan.Number = Int32.Parse(DatabaseUtility.Get(results,i,"channel.iChannelNr"));
+						decimal dFreq=0;
+						try
+						{
+							dFreq = (decimal)Int64.Parse(DatabaseUtility.Get(results,i,"channel.frequency"));
+
+						}
+						catch(Exception)
+						{
+							chan.Frequency =0;
+						}
+						dFreq /= 1000000M;
+						dFreq=Math.Round(dFreq,3);
+						dFreq *=1000000M;
+						chan.Frequency = (long)Math.Round(dFreq,0);
+						chan.Name = DatabaseUtility.Get(results,i,"channel.strChannel");
+						int iExternal=Int32.Parse(DatabaseUtility.Get(results,i,"channel.bExternal"));
+						if (iExternal!=0) chan.External=true;
+						else chan.External=false;
+
+						int iVisible=Int32.Parse(DatabaseUtility.Get(results,i,"channel.Visible"));
+						if (iVisible!=0) chan.VisibleInGuide=true;
+						else chan.VisibleInGuide=false;
+
+						chan.ExternalTunerChannel= DatabaseUtility.Get(results,i,"channel.ExternalChannel");
+						chan.TVStandard = (AnalogVideoStandard)Int32.Parse(DatabaseUtility.Get(results,i,"channel.standard"));
+						chan.Country=Int32.Parse(DatabaseUtility.Get(results,i,"channel.Country"));
+						channels.Add(chan);
+					}
+
+					return true;
+				}
+				catch(SQLiteException ex)
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+				return false;
 			}
 		}
 	}

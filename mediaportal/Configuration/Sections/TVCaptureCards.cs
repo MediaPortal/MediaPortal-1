@@ -219,6 +219,7 @@ namespace MediaPortal.Configuration.Sections
 				editCard.CaptureCard.ID = cardsListView.Items.Count;
 				captureCards.Add(editCard.CaptureCard);
 			}
+			SaveSettings();
 		}
 
 		private void editButton_Click(object sender, System.EventArgs e)
@@ -242,6 +243,7 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[3].Text = captureCard.UseForRecording.ToString();
         }
 			}		
+			SaveSettings();
 		}
 
 		private void deleteButton_Click(object sender, System.EventArgs e)
