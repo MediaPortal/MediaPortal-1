@@ -1239,7 +1239,8 @@ public class MediaPortalApp : D3DApp, IRender
 			Action action = new Action();
       if (GUIWindowManager.IsRouted && 
         (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD ||
-         GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) )
+         GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) ||
+				 GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_TVMSNOSD) 
       {
         action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
         GUIGraphicsContext.OnAction(action);
