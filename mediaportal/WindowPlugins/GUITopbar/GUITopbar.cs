@@ -19,6 +19,7 @@ namespace MediaPortal.Topbar
     bool m_bTopBarHide=false;
     bool m_bTopBarHidden=false;
     bool m_bOverrideSkinAutoHide=false;
+		static bool useTopBarSub=false;
     int m_iMoveUp=0;
     int m_iTopbarRegion=10;
     int m_iAutoHideTimeOut=15;   
@@ -29,6 +30,13 @@ namespace MediaPortal.Topbar
 			// TODO: Add constructor logic here
 			//
     }
+
+		public bool UseTopBarSub	// Use top Bar in Submenu. 
+		{
+			get{ return useTopBarSub; }
+			set{ useTopBarSub = value; }
+		}
+
     public override bool Init()
     {
       bool bResult=Load (GUIGraphicsContext.Skin+@"\topbar.xml");
@@ -91,7 +99,8 @@ namespace MediaPortal.Topbar
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_UI_CALIBRATION) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_SLIDESHOW) return false;
-      if (GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_HOME)
+			if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_HOME && useTopBarSub==true) return true;
+			if (GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_HOME)
       {
         return true;
       }

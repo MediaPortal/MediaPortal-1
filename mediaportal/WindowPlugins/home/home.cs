@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
+using MediaPortal.Topbar;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.DirectX;
@@ -58,6 +59,8 @@ namespace MediaPortal.GUI.Home
 		bool          m_bTopBar=false;
 		bool					fixedScroll=false;
 		bool					backButtons=false;
+		bool					useTopBarSub=false;
+		bool					useMenuShortcuts=false;
 		int[]         m_iButtonIds = new int[60];  
 		DateTime      m_updateTimer=DateTime.MinValue;
 		DateTime      m_updateOwnTimer=DateTime.MinValue;
@@ -87,6 +90,8 @@ namespace MediaPortal.GUI.Home
 		bool					firstDate=false;
 		Viewport      m_newviewport = new Viewport();
 		Viewport      m_oldviewport;
+		GUITopbar topBar = new GUITopbar();
+		GUITopbarHome	topBarHome = new GUITopbarHome();
 
 		//Tracking controls by id
 		System.Collections.ArrayList m_aryPreControlList = new ArrayList();
@@ -135,6 +140,8 @@ namespace MediaPortal.GUI.Home
 				backButtons=xmlreader.GetValueAsBool("home","backbuttons",false);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				ownDate=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
+				useTopBarSub=xmlreader.GetValueAsBool("home","useTopBarSub",false);
+				useMenuShortcuts=xmlreader.GetValueAsBool("home","useMenuShortcuts",false);
 			}
 			if (useMenus==true) 
 			{
@@ -160,6 +167,11 @@ namespace MediaPortal.GUI.Home
 			GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
 			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+			if (useTopBarSub==true) 
+			{
+				topBar.UseTopBarSub=false;
+				topBarHome.UseTopBarSub=false;
+			}
 		}
 		
 		private void OnGlobalMessage(GUIMessage message)
@@ -256,6 +268,12 @@ namespace MediaPortal.GUI.Home
 					}
 					m_iButtons=0;
 					inMyPlugins=false;
+					if (useTopBarSub==true) 
+					{
+						topBar.UseTopBarSub=false;
+						topBarHome.UseTopBarSub=false;
+					}
+
 					for (int iButt=2; iButt < 60; iButt++)
 					{
 						m_iButtonIds[iButt]=0;
@@ -550,6 +568,12 @@ namespace MediaPortal.GUI.Home
 									}
 									m_iButtons=0;
 									inMyPlugins=true;
+									if (useTopBarSub==true) 
+									{
+										topBar.UseTopBarSub=true;
+										topBarHome.UseTopBarSub=true;
+									}
+
 									for (int iButt=2; iButt < 60; iButt++)
 									{
 										m_iButtonIds[iButt]=0;
@@ -580,7 +604,7 @@ namespace MediaPortal.GUI.Home
 									LayoutButtons(0);
 								}
 							}
-							if (useMenus==true) // Call submenu new gucky style
+							if (useMenus==true) // Call submenu new style
 							{
 								GUIButtonControl button = GetControl(bControl) as GUIButtonControl;
 								if (button.HyperLink==-2)
@@ -604,6 +628,12 @@ namespace MediaPortal.GUI.Home
 								{
 									inSubMenu=true;
 								}
+								if (useTopBarSub==true) 
+								{
+									topBar.UseTopBarSub=true;
+									topBarHome.UseTopBarSub=true;
+								}
+
 								GUIButtonControl cButt = GetControl(bControl) as GUIButtonControl;
 								selectedButton=cButt.Label;
 								for (int i=102; i < 160; i++)
@@ -716,6 +746,11 @@ namespace MediaPortal.GUI.Home
 			{
 				inSubMenu=false;
 				inMyPlugins=false;
+				if (useTopBarSub==true) 
+				{
+					topBar.UseTopBarSub=false;
+					topBarHome.UseTopBarSub=false;
+				}
 			}
 			for (int i=102; i < 160; i++)
 			{

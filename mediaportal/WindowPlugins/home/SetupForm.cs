@@ -122,9 +122,10 @@ namespace home
 		private System.Windows.Forms.Label label22;
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.TabPage TopBar;
-		private System.Windows.Forms.CheckBox checkBox1;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.CheckBox useTopBarSub;
+		private System.Windows.Forms.CheckBox useMenuShortcuts;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -290,6 +291,7 @@ namespace home
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.TopBar = new System.Windows.Forms.TabPage();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.useTopBarSub = new System.Windows.Forms.CheckBox();
 			this.BackButtons = new System.Windows.Forms.CheckBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.label21 = new System.Windows.Forms.Label();
@@ -315,16 +317,16 @@ namespace home
 			this.useMyPlugins = new System.Windows.Forms.RadioButton();
 			this.useMenus = new System.Windows.Forms.RadioButton();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.button2 = new System.Windows.Forms.Button();
 			this.SpecialFunctions = new System.Windows.Forms.ListBox();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.button3 = new System.Windows.Forms.Button();
 			this.listView = new System.Windows.Forms.ListView();
 			this.Type = new System.Windows.Forms.ColumnHeader();
 			this.Plugin = new System.Windows.Forms.ColumnHeader();
 			this.Key = new System.Windows.Forms.ColumnHeader();
 			this.Fullscreen = new System.Windows.Forms.ColumnHeader();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.button2 = new System.Windows.Forms.Button();
-			this.button3 = new System.Windows.Forms.Button();
+			this.useMenuShortcuts = new System.Windows.Forms.CheckBox();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -702,7 +704,8 @@ namespace home
 			// 
 			// groupBox5
 			// 
-			this.groupBox5.Controls.Add(this.checkBox1);
+			this.groupBox5.Controls.Add(this.useMenuShortcuts);
+			this.groupBox5.Controls.Add(this.useTopBarSub);
 			this.groupBox5.Controls.Add(this.BackButtons);
 			this.groupBox5.Controls.Add(this.NoScrollSubs);
 			this.groupBox5.Controls.Add(this.chkBoxFixed);
@@ -713,6 +716,15 @@ namespace home
 			this.groupBox5.TabIndex = 28;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Home Settings";
+			// 
+			// useTopBarSub
+			// 
+			this.useTopBarSub.Enabled = false;
+			this.useTopBarSub.Location = new System.Drawing.Point(24, 120);
+			this.useTopBarSub.Name = "useTopBarSub";
+			this.useTopBarSub.Size = new System.Drawing.Size(168, 24);
+			this.useTopBarSub.TabIndex = 8;
+			this.useTopBarSub.Text = "Topbar in Submenus";
 			// 
 			// BackButtons
 			// 
@@ -963,6 +975,15 @@ namespace home
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Special Functions";
 			// 
+			// button2
+			// 
+			this.button2.Location = new System.Drawing.Point(40, 448);
+			this.button2.Name = "button2";
+			this.button2.Size = new System.Drawing.Size(88, 24);
+			this.button2.TabIndex = 27;
+			this.button2.Text = "Save";
+			this.button2.Click += new System.EventHandler(this.SaveAll_Click);
+			// 
 			// SpecialFunctions
 			// 
 			this.SpecialFunctions.Location = new System.Drawing.Point(416, 72);
@@ -979,6 +1000,15 @@ namespace home
 			this.tabPage4.Size = new System.Drawing.Size(832, 494);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "Menu Shortcuts";
+			// 
+			// button3
+			// 
+			this.button3.Location = new System.Drawing.Point(40, 448);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(88, 24);
+			this.button3.TabIndex = 27;
+			this.button3.Text = "Save";
+			this.button3.Click += new System.EventHandler(this.SaveAll_Click);
 			// 
 			// listView
 			// 
@@ -1014,31 +1044,13 @@ namespace home
 			this.Fullscreen.Text = "Full Screen";
 			this.Fullscreen.Width = 72;
 			// 
-			// checkBox1
+			// useMenuShortcuts
 			// 
-			this.checkBox1.Location = new System.Drawing.Point(24, 120);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(168, 24);
-			this.checkBox1.TabIndex = 8;
-			this.checkBox1.Text = "Topbar in Submenus";
-			// 
-			// button2
-			// 
-			this.button2.Location = new System.Drawing.Point(40, 448);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(88, 24);
-			this.button2.TabIndex = 27;
-			this.button2.Text = "Save";
-			this.button2.Click += new System.EventHandler(this.SaveAll_Click);
-			// 
-			// button3
-			// 
-			this.button3.Location = new System.Drawing.Point(40, 448);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(88, 24);
-			this.button3.TabIndex = 27;
-			this.button3.Text = "Save";
-			this.button3.Click += new System.EventHandler(this.SaveAll_Click);
+			this.useMenuShortcuts.Location = new System.Drawing.Point(24, 144);
+			this.useMenuShortcuts.Name = "useMenuShortcuts";
+			this.useMenuShortcuts.Size = new System.Drawing.Size(168, 24);
+			this.useMenuShortcuts.TabIndex = 9;
+			this.useMenuShortcuts.Text = "Use Menu Shortcuts";
 			// 
 			// SetupForm
 			// 
@@ -1158,6 +1170,8 @@ namespace home
 				xmlWriter.SetValueAsBool("home","usemyplugins",useMyPlugins.Checked);
 				xmlWriter.SetValueAsBool("home","noScrollsubs",NoScrollSubs.Checked);		
 				xmlWriter.SetValueAsBool("home","backbuttons",BackButtons.Checked);		
+				xmlWriter.SetValueAsBool("home","useTopBarSub",useTopBarSub.Checked);		
+				xmlWriter.SetValueAsBool("home","useMenuShortcuts",useMenuShortcuts.Checked);		
 				xmlWriter.SetValue("home","ownDate",OwnDate.Text);		
 		}
 			this.Close();
@@ -1177,6 +1191,8 @@ namespace home
 				useMyPlugins.Checked=xmlreader.GetValueAsBool("home","usemyplugins",true);
 				NoScrollSubs.Checked=xmlreader.GetValueAsBool("home","noScrollsubs",false);
 				BackButtons.Checked=xmlreader.GetValueAsBool("home","backbuttons",false);
+				useTopBarSub.Checked=xmlreader.GetValueAsBool("home","useTopBarSub",false);
+				useMenuShortcuts.Checked=xmlreader.GetValueAsBool("home","useMenuShortcuts",false);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				OwnDate.Text=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
 			}
