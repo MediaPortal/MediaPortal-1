@@ -380,6 +380,12 @@ namespace MediaPortal.GUI.Library
 				float w = (tx2-tx1) * fScaleX;
 				float h = (ty2-ty1) * fScaleY;
 
+				if (xpos<0 || xpos+2 > GUIGraphicsContext.Width ||
+					  ypos<0 || ypos+h > GUIGraphicsContext.Height)
+				{
+					c=' ';
+				}
+
 				if (c != ' ')
 				{
 					float xpos2=xpos+w;

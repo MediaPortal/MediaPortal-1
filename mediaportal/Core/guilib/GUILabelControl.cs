@@ -24,6 +24,7 @@ namespace MediaPortal.GUI.Library
     GUIFont								        m_pFont=null;
     Direct3D.VertexBuffer         fontVertexBuffer=null;
     int                           cachedTriangles=0;
+		bool													useViewport=true;
 		/// <summary>
 		/// The constructor of the GUILabelControl class.
 		/// </summary>
@@ -185,16 +186,19 @@ namespace MediaPortal.GUI.Library
 							if (fwidth<1) return;
 							if (fHeight<1) return;
 
-              Viewport newviewport, oldviewport;
-              newviewport = new Viewport();
-              oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-              newviewport.X = (int)fPosCX;
-              newviewport.Y = (int)fPosCY;
-              newviewport.Width = (int)(fwidth);
-              newviewport.Height = (int)(fHeight);
-              newviewport.MinZ = 0.0f;
-              newviewport.MaxZ = 1.0f;
-              GUIGraphicsContext.DX9Device.Viewport = newviewport;
+							Viewport newviewport, oldviewport;
+							oldviewport = GUIGraphicsContext.DX9Device.Viewport;
+							if (useViewport)
+							{
+								newviewport = new Viewport();
+								newviewport.X = (int)fPosCX;
+								newviewport.Y = (int)fPosCY;
+								newviewport.Width = (int)(fwidth);
+								newviewport.Height = (int)(fHeight);
+								newviewport.MinZ = 0.0f;
+								newviewport.MaxZ = 1.0f;
+								GUIGraphicsContext.DX9Device.Viewport = newviewport;
+							}
 
               if (fontVertexBuffer!=null)
               {
@@ -208,7 +212,8 @@ namespace MediaPortal.GUI.Library
                 }
                 else m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT); 
               }
-              GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+							if (useViewport)
+	              GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
             return;
           }
@@ -245,16 +250,19 @@ namespace MediaPortal.GUI.Library
 
             if (fPosCX<=0) fPosCX=0;
             if (fPosCY<=0) fPosCY=0;
-            Viewport newviewport, oldviewport;
-            newviewport = new Viewport();
-            oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-            newviewport.X = (int)fPosCX;
-            newviewport.Y = (int)fPosCY;
-            newviewport.Width = (int)(fwidth);
-            newviewport.Height = (int)(fHeight);
-            newviewport.MinZ = 0.0f;
-            newviewport.MaxZ = 1.0f;
-            GUIGraphicsContext.DX9Device.Viewport = newviewport;
+						Viewport newviewport, oldviewport;
+						oldviewport = GUIGraphicsContext.DX9Device.Viewport;
+						if (useViewport)
+						{
+							newviewport = new Viewport();
+							newviewport.X = (int)fPosCX;
+							newviewport.Y = (int)fPosCY;
+							newviewport.Width = (int)(fwidth);
+							newviewport.Height = (int)(fHeight);
+							newviewport.MinZ = 0.0f;
+							newviewport.MaxZ = 1.0f;
+							GUIGraphicsContext.DX9Device.Viewport = newviewport;
+						}
 
             if (fontVertexBuffer!=null)
             {
@@ -268,12 +276,18 @@ namespace MediaPortal.GUI.Library
               }
               else m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign); 
             }
-            GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+						if (useViewport)
+							GUIGraphicsContext.DX9Device.Viewport = oldviewport;
           }
         }		
 			}
 		}
 
+		public bool UseViewPort
+		{
+			get { return useViewport;}
+			set { useViewport=value;}
+		}
 		/// <summary>
 		/// Checks if the control can focus.
 		/// </summary>

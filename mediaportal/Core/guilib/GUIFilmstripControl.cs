@@ -1046,6 +1046,11 @@ namespace MediaPortal.GUI.Library
       if (fPosCX < 0) fPosCX = 0.0f;
       if (fPosCY < 0) fPosCY = 0.0f;
 
+			int minX=m_dwPosX;
+			if (fPosCX < minX) fPosCX=minX;
+			int maxX=m_dwPosX+m_iColumns*m_iItemWidth;
+			if (fwidth+fPosCX > maxX) 
+				fwidth=((float)maxX) - fPosCX;
       Viewport newviewport = new Viewport();
       Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
       newviewport.X = (int)fPosCX;
@@ -1059,6 +1064,7 @@ namespace MediaPortal.GUI.Library
       if (!bScroll || fTextWidth <= fMaxWidth)
       {
         m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT);
+
         GUIGraphicsContext.DX9Device.Viewport = oldviewport;
         return;
       }
