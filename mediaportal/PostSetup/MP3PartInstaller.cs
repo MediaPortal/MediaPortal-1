@@ -256,7 +256,7 @@ namespace PostSetup
 				labProgressBytes.Visible=false;
 				ButtonAction=BUTTONACTION_INSTALL;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				//Console.WriteLine(e);
 			}
@@ -739,7 +739,7 @@ namespace PostSetup
 				else
 					return true;
 			}
-			catch (Exception e)
+			catch (Exception )
 			{
 				return true;
 			}

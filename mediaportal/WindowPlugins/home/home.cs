@@ -107,10 +107,14 @@ namespace MediaPortal.GUI.Home
       {
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
           string Head="",Line1="",Line2="",Line3="";;
-          if (message.Param1!=0) Head=GUILocalizeStrings.Get(message.Param1);
-          if (message.Param2!=0) Line1=GUILocalizeStrings.Get(message.Param2);
-          if (message.Param3!=0) Line2=GUILocalizeStrings.Get(message.Param3);
-          if (message.Param3!=0) Line3=GUILocalizeStrings.Get(message.Param4);
+					if (message.Param1!=0) Head=GUILocalizeStrings.Get(message.Param1);
+					else if (message.Label!=String.Empty) Head=message.Label;
+					if (message.Param2!=0) Line1=GUILocalizeStrings.Get(message.Param2);
+					else if (message.Label2!=String.Empty) Line1=message.Label2;
+					if (message.Param3!=0) Line2=GUILocalizeStrings.Get(message.Param3);
+					else if (message.Label3!=String.Empty) Line2=message.Label3;
+					if (message.Param4!=0) Line3=GUILocalizeStrings.Get(message.Param4);
+					else if (message.Label4!=String.Empty) Line3=message.Label4;
           if ( AskYesNo(Head,Line1,Line2,Line3))
             message.Param1=1;
           else
@@ -121,8 +125,11 @@ namespace MediaPortal.GUI.Home
         {
           string strHead="",strLine1="",strLine2="";
           if (message.Param1!=0) strHead=GUILocalizeStrings.Get(message.Param1);
-          if (message.Param2!=0) strLine1=GUILocalizeStrings.Get(message.Param2);
+					else if (message.Label!=String.Empty) strHead=message.Label;
+					if (message.Param2!=0) strLine1=GUILocalizeStrings.Get(message.Param2);
+					else if (message.Label2!=String.Empty) strLine2=message.Label2;
           if (message.Param3!=0) strLine2=GUILocalizeStrings.Get(message.Param3);
+					else if (message.Label3!=String.Empty) strLine2=message.Label3;
           ShowInfo(strHead,strLine1,strLine2);
         }
           break;

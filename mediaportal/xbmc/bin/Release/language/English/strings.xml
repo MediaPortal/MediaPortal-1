@@ -2402,6 +2402,14 @@
 	<id>926</id>
 	<value>Add to playlist</value>
 </string>
+<string>
+	<id>927</id>
+	<value>Warning</value>
+</string>
+<string>
+	<id>928</id>
+	<value>File not found:</value>
+</string>
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
