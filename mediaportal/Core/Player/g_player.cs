@@ -46,11 +46,13 @@ namespace MediaPortal.Player
     static IRender                   m_renderFrame;
     static string                    CurrentFilePlaying="";
     
-    public enum MediaType  { Video, TV, Radio, Music };
+    public enum MediaType  { Video, TV, Radio, Music,Recording };
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
     public delegate void EndedHandler(MediaType type, string filename);
+    public delegate void StartedHandler(MediaType type, string filename);
     static public event StoppedHandler PlayBackStopped;
     static public event EndedHandler PlayBackEnded;
+    static public event StartedHandler PlayBackStarted;
 
     // singleton. Dont allow any instance of this class
     private g_Player()
@@ -69,7 +71,12 @@ namespace MediaPortal.Player
       {
         //yes, then raise event 
         MediaType type=MediaType.Music;
-        if (g_Player.IsTV) type=MediaType.TV;
+        if (g_Player.IsTV) 
+        {
+          type=MediaType.TV;
+          if (!m_player.IsTimeShifting) 
+            type=MediaType.Recording;
+        }
         else if (g_Player.IsRadio) type=MediaType.Radio;
         else if (g_Player.IsVideo) type=MediaType.Video;
         PlayBackStopped(type,(int)g_Player.CurrentPosition, g_Player.CurrentFile);
@@ -84,10 +91,36 @@ namespace MediaPortal.Player
       {
         //yes, then raise event 
         MediaType type=MediaType.Music;
-        if (g_Player.IsTV) type=MediaType.TV;
+        if (g_Player.IsTV) 
+        {
+          type=MediaType.TV;
+          if (!m_player.IsTimeShifting) 
+            type=MediaType.Recording;
+        }
         else if (g_Player.IsRadio) type=MediaType.Radio;
         else if (g_Player.IsVideo) type=MediaType.Video;
         PlayBackEnded(type, CurrentFilePlaying);
+      }
+    }
+    //called when starting playing a file
+    static void OnStarted()
+    {
+      //check if we're playing
+      if (m_player==null) return;
+      if (m_player.Playing && PlayBackStarted!=null)
+      {
+        //yes, then raise event 
+        MediaType type=MediaType.Music;
+        if (g_Player.IsTV) 
+        {
+          type=MediaType.TV;
+          if (!m_player.IsTimeShifting) 
+            type=MediaType.Recording;
+        }
+        else if (g_Player.IsRadio) type=MediaType.Radio;
+        else if (g_Player.IsVideo) type=MediaType.Video;
+        if (PlayBackStarted!=null)        
+          PlayBackStarted(type, CurrentFilePlaying);
       }
     }
     public static void Stop()
@@ -154,6 +187,11 @@ namespace MediaPortal.Player
     }
     public static bool PlayDVD()
     {
+      return PlayDVD("");
+    }
+
+    public static bool PlayDVD(string strPath)
+    {
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
       m_subs=null;
@@ -179,7 +217,7 @@ namespace MediaPortal.Player
         m_player = new DVDPlayer();
 
       m_player.RenderFrame=m_renderFrame;
-      bool bResult=m_player.Play("");
+      bool bResult=m_player.Play(strPath);
       if (!bResult)
       {
         Log.Write("dvdplayer:failed to play");
@@ -189,13 +227,15 @@ namespace MediaPortal.Player
         GC.Collect();GC.Collect();GC.Collect();
         Log.Write("dvdplayer:bla");
       }
-      else
+      else if (m_player.Playing)
       {
         if (!m_player.IsTV)
         {
           GUIGraphicsContext.IsFullScreenVideo=true;
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
         }
+        CurrentFilePlaying=m_player.CurrentFile;
+        OnStarted();
         return true;
       }
       Log.Write("dvdplayer:sendmsg");
@@ -230,6 +270,11 @@ namespace MediaPortal.Player
         m_player=null;
         m_subs=null;
         GC.Collect();GC.Collect();GC.Collect();
+      }
+      else if (m_player.Playing)
+      {
+        CurrentFilePlaying=m_player.CurrentFile;
+        OnStarted();
       }
       m_bInit=false;
       return bResult;
@@ -284,8 +329,14 @@ namespace MediaPortal.Player
             m_subs=null;
             GC.Collect();GC.Collect();GC.Collect();
           }
-          GUIGraphicsContext.IsFullScreenVideo=true;
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          else if (m_player.Playing)
+          {
+            CurrentFilePlaying=m_player.CurrentFile;
+            OnStarted();
+
+            GUIGraphicsContext.IsFullScreenVideo=true;
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          }
           m_bInit=false;
           return bResult;
         }
@@ -321,6 +372,11 @@ namespace MediaPortal.Player
           m_player=null;
           m_subs=null;
           GC.Collect();GC.Collect();GC.Collect();
+        }
+        else if (m_player.Playing)
+        {
+          CurrentFilePlaying=m_player.CurrentFile;
+          OnStarted();
         }
         m_bInit=false;
         return bResult;
@@ -780,7 +836,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        CurrentFilePlaying=m_player.CurrentFile;
+
         if (m_currentStep!=Steps.Sec0)
         {
           TimeSpan ts = DateTime.Now-m_SeekTimer;

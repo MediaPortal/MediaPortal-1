@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlDown, (int)action.wID, 0, null);
-            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            GUIWindow window=GUIWindowManager.GetWindow(WindowId);
             if (window!=null) window.OnMessage(msg);
           }
         }
@@ -152,7 +152,7 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlUp, (int)action.wID, 0, null);
-            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            GUIWindow window=GUIWindowManager.GetWindow(WindowId);
             if (window!=null) window.OnMessage(msg);
           }
         }
@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlLeft, (int)action.wID, 0, null);
-            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            GUIWindow window=GUIWindowManager.GetWindow(WindowId);
             if (window!=null) window.OnMessage(msg);
           }
         }
@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Library
           {
             Focus = false;
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlRight, (int)action.wID, 0, null);
-            GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            GUIWindow window=GUIWindowManager.GetWindow(WindowId);
             if (window!=null) window.OnMessage(msg);
           }
         }
@@ -211,7 +211,7 @@ namespace MediaPortal.GUI.Library
               if (dwControl!=GetID)
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, dwControl, message.Param1, 0, null);
-                GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+                GUIWindow window=GUIWindowManager.GetWindow(WindowId);
                 if (window!=null) window.OnMessage(msg);
               }
               return true;

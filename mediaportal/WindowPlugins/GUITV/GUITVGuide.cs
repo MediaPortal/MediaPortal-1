@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.TV
 		bool                                m_bSingleChannel=false;
 		int                                 m_iSingleChannelOffset=0;
 		int                                 m_iTotalPrograms=0;
+    int                                 m_iGuideDayRange=10;
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
 		string    m_strInput="";
@@ -474,6 +475,7 @@ namespace MediaPortal.GUI.TV
 					int iItemHeight=(cntlChannelLabel.YPosition+cntlChannelLabel.Height) - cntlChannelImg.YPosition;
 					m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
 
+          UnFocus();
 					m_iCursorX=0;
 					m_iCursorY=0;
 					m_iChannelOffset=0;
@@ -504,6 +506,7 @@ namespace MediaPortal.GUI.TV
 					if (cntlDay!=null)
 					{
 						cntlDay.Reset();
+            cntlDay.SetRange(0, m_iGuideDayRange-1);
 						for (int iDay=0; iDay < 10; iDay++)
 						{
 							DateTime dtTemp=m_dtTime.AddDays(iDay);
@@ -592,8 +595,18 @@ namespace MediaPortal.GUI.TV
 				return;
 			}
 
-			int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
 			GUISpinControl cntlDay=GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
+
+      // Find first day in TVGuide and set spincontrol position 
+      int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
+      for ( ; iDay<0 ; ++iDay)
+      {
+        m_dtTime = m_dtTime.AddDays(1.0);
+      }
+      for ( ; iDay>=m_iGuideDayRange ; --iDay)
+      {
+        m_dtTime = m_dtTime.AddDays(-1.0);
+      }
 			cntlDay.Value=iDay;
 
 			int xpos,ypos;
@@ -1327,12 +1340,6 @@ namespace MediaPortal.GUI.TV
             m_iChannelOffset++;
             Update();
           }
-          else
-          {
-            m_iCursorY = 0;
-            m_iChannelOffset = 0;
-            Update();
-          }
 				}
 				SetFocus();
 				SetProperties();
@@ -1362,12 +1369,7 @@ namespace MediaPortal.GUI.TV
 						m_iChannelOffset++;
 						Update();
 					}
-          else
-          {
-            m_iCursorY = 0;
-            m_iChannelOffset = 0;
-            Update();
-          }
+					else break;
 				}
 
 				for (int x=1; x < 10; x++)
@@ -1537,6 +1539,10 @@ namespace MediaPortal.GUI.TV
 			if (m_iCursorX==0)
 			{
 				m_dtTime=m_dtTime.AddMinutes(-m_iBlockTime);
+        // Check new day
+        int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
+        if (iDay<0)
+          m_dtTime=m_dtTime.AddMinutes(+m_iBlockTime);
 			}
 			else 
 			{
@@ -1593,6 +1599,10 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				m_dtTime=m_dtTime.AddMinutes(m_iBlockTime);
+        // Check new day
+        int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
+        if (iDay>=m_iGuideDayRange)
+          m_dtTime=m_dtTime.AddMinutes(-m_iBlockTime);
 			}
 			Correct();
 			Update();      

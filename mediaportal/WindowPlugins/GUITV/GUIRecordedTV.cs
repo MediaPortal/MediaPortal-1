@@ -7,6 +7,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Player;
+using MediaPortal.Video.Database;
 namespace MediaPortal.GUI.TV
 {
   /// <summary>
@@ -44,6 +45,10 @@ namespace MediaPortal.GUI.TV
     
     public override bool Init()
     {
+      g_Player.PlayBackStopped +=new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.PlayBackEnded +=new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
+      g_Player.PlayBackStarted +=new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
+
       bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvrecordedtv.xml");
       LoadSettings();
       return bResult;
@@ -215,6 +220,7 @@ namespace MediaPortal.GUI.TV
         {
           strLogo="defaultVideoBig.png";
         }
+        AddRecordingToDatabase(rec);
         item.ThumbnailImage=strLogo;
         item.IconImageBig=strLogo;
         item.IconImage=strLogo;
@@ -227,6 +233,18 @@ namespace MediaPortal.GUI.TV
       OnSort();
       UpdateButtons();
       Update();
+    }
+
+    void AddRecordingToDatabase(TVRecorded rec)
+    {
+      VideoDatabase.AddMovieFile(rec.FileName);
+      IMDBMovie movieDetails = new IMDBMovie();
+      int movieid=VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
+      movieDetails.Title=rec.Title;
+      movieDetails.Genre=rec.Genre;
+      movieDetails.Plot=rec.Description;
+      movieDetails.Year=rec.StartTime.Year;
+      VideoDatabase.SetMovieInfoById(movieid, ref movieDetails);
     }
 
     void UpdateButtons()
@@ -476,13 +494,39 @@ namespace MediaPortal.GUI.TV
         
         rec.Played++;
         TVDatabase.PlayedRecordedTV(rec);
-
+        IMDBMovie movieDetails = new IMDBMovie();
+        int movieid=VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
+        int stoptime=0;
+        if (movieid >=0)
+        {
+          stoptime=VideoDatabase.GetMovieStopTime(movieid);
+          if (stoptime>0)
+          {
+            string title=System.IO.Path.GetFileName(rec.FileName);
+            VideoDatabase.GetMovieInfoById( movieid, ref movieDetails);
+            if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
+          
+            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+            if (null == dlgYesNo) return false;
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+            dlgYesNo.SetLine(1, title);
+            dlgYesNo.SetLine(2, "");
+            dlgYesNo.SetDefaultToYes(true);
+            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+            
+            if (!dlgYesNo.IsConfirmed) stoptime=0;
+          }
+        }
         if ( g_Player.Play(rec.FileName))
         {
           if (Utils.IsVideo(rec.FileName))
           {
             GUIGraphicsContext.IsFullScreenVideo=true;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          }
+          if (stoptime>0)
+          {
+            g_Player.SeekAbsolute(stoptime);
           }
           return true;
         }
@@ -579,7 +623,31 @@ namespace MediaPortal.GUI.TV
 			{
 				Utils.FileDelete(strFiles[i]);
 			}
-
 		}
+    private void OnPlayBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
+    {
+      if (type!=g_Player.MediaType.Recording) return;
+      IMDBMovie movieDetails = new IMDBMovie();
+      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+      if (movieid<0) return;
+      if (stoptime>0)
+        VideoDatabase.SetMovieStopTime(movieid,stoptime);
+      else
+        VideoDatabase.DeleteMovieStopTime(movieid);
+    }
+
+    private void OnPlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
+    {
+      if (type!=g_Player.MediaType.Recording) return;
+      IMDBMovie movieDetails = new IMDBMovie();
+      int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+      if (movieid<0) return;
+      VideoDatabase.DeleteMovieStopTime(movieid);
+    }
+    private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
+    {
+      if (type!=g_Player.MediaType.Recording) return;
+      VideoDatabase.AddMovieFile(filename);
+    }
   }
 }

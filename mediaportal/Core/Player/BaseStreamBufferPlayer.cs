@@ -948,7 +948,7 @@ namespace MediaPortal.Player
 				return true;
 			}
 		}
-		public bool IsTimeShifting
+		public override bool IsTimeShifting
 		{
 			get {return m_bLive;}
 		}      

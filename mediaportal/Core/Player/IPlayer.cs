@@ -290,6 +290,10 @@ namespace MediaPortal.Player
     {
       get { return false;}
     }
+    public virtual bool IsTimeShifting
+    {
+      get { return false;}
+    }
 
     #region IDisposable Members
 

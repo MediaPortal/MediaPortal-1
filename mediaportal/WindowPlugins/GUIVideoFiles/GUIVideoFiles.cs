@@ -122,6 +122,7 @@ namespace MediaPortal.GUI.Video
 		{
       g_Player.PlayBackStopped +=new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded +=new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
+      g_Player.PlayBackStarted +=new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
       m_strDirectory = "";
       System.IO.Directory.CreateDirectory(@"Thumbs\videos");
       System.IO.Directory.CreateDirectory(@"Thumbs\videos\genre");
@@ -1836,6 +1837,11 @@ namespace MediaPortal.GUI.Video
       int movieid=VideoDatabase.GetMovieInfo(filename, ref movieDetails);
       if (movieid<0) return;
       VideoDatabase.DeleteMovieStopTime(movieid);
+    }
+    private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
+    {
+      if (type!=g_Player.MediaType.Video) return;
+      AddFileToDatabase(filename);
     }
   }
 }
