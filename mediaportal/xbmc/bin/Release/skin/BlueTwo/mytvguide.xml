@@ -237,13 +237,13 @@
 	<control>
 		<description>TV preview window</description> 
 		<type>videowindow</type> 
-		<id>1</id> 
+		<id>99</id> 
 		<posX>65</posX> 
 		<posY>425</posY> 
 		<width>170</width> 
 		<height>125</height> 
 		<action>18</action>
-		<textureFocus>video_window_focus.png</textureFocus> 
+		<textureFocus>tv_green_border.png</textureFocus> 
 	</control>
 	<control>
 		<description>Horizontal scrollbar</description>
