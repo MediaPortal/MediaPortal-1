@@ -7,7 +7,7 @@
 		<type>image</type> 
 		<id>0</id> 
 		<posX>167</posX> 
-		<posY>215</posY> 
+		<posY>190</posY> 
 		<width>436</width> 
 		<height>246</height> 
 		<texture>dialog_background.png</texture> 
@@ -17,7 +17,7 @@
 		<type>label</type> 
 		<id>2</id> 
 		<posX>210</posX> 
-		<posY>250</posY> 
+		<posY>225</posY> 
 		<label>0</label> 
 		<font>font13</font> 
 		<textcolor>ffffffff</textcolor> 
@@ -27,7 +27,7 @@
 		<type>label</type> 
 		<id>3</id> 
 		<posX>210</posX> 
-		<posY>280</posY> 
+		<posY>255</posY> 
 		<label>0</label> 
 		<font>font13</font> 
 		<textcolor>ffffffff</textcolor> 
@@ -37,7 +37,7 @@
 		<type>label</type> 
 		<id>4</id> 
 		<posX>210</posX> 
-		<posY>300</posY> 
+		<posY>275</posY> 
 		<label>0</label> 
 		<font>font13</font> 
 		<textcolor>ffffffff</textcolor> 
@@ -47,7 +47,7 @@
 		<type>button</type> 
 		<id>10</id> 
 		<posX>520</posX> 
-		<posY>255</posY>
+		<posY>230</posY>
 		<textXOff>10</textXOff>
 		<textYOff>7</textYOff>  
 		<width>44</width> 

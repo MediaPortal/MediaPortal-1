@@ -114,7 +114,7 @@
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<onright>7</onright>
 			<onleft>7</onleft>
-			<onup>18</onup>
+			<onup>17</onup>
 			<ondown>24</ondown>
 		</control>
 		<control>
