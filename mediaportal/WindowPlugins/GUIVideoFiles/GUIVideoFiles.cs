@@ -952,8 +952,8 @@ namespace MediaPortal.GUI.Video
 					int iSelectedFile = 1;
 					if (movies.Count > 1)
 					{
-            //TODO
-            movies.Sort();
+						//TODO
+						movies.Sort();
 						for (int i = 0; i < movies.Count; ++i)
 						{
 							AddFileToDatabase((string)movies[i]);
@@ -967,6 +967,10 @@ namespace MediaPortal.GUI.Video
 							iSelectedFile = dlg.SelectedFile;
 							if (iSelectedFile < 1) return;
 						}
+					}
+					else if (movies.Count==1)
+					{
+						AddFileToDatabase((string)movies[0]);
 					}
 					PlayListPlayer.Reset();
 					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;

@@ -39,7 +39,7 @@ namespace MediaPortal.Player
     MediaPortal.GUI.Library.Geometry.Type arType;
     System.Drawing.Rectangle							rSource, rDest;    
     MediaPortal.GUI.Library.Geometry			m_geometry = new MediaPortal.GUI.Library.Geometry();
-
+		int							m_iFrameCounter;
 		/// <summary>
 		/// constructor
 		/// </summary>
@@ -134,6 +134,7 @@ namespace MediaPortal.Player
 
       if (rTarget == null)
 			  rTarget = device.GetRenderTarget(0);
+			m_iFrameCounter=0;
 		}
 
     
@@ -294,6 +295,17 @@ namespace MediaPortal.Player
 		{
 			//if we're stopping then just return
       if (m_bStop) return;
+			int speed=g_Player.Speed;
+			if (speed < 0) speed=-speed;
+			if (speed >= 4)
+			{
+				m_iFrameCounter++;
+				if (speed ==4 && m_iFrameCounter<1) return;
+				if (speed ==8 && m_iFrameCounter<2) return;
+				if (speed ==16 && m_iFrameCounter<6) return;
+				if (speed ==32 && m_iFrameCounter<10) return;
+				m_iFrameCounter=0;
+			}
 
       lock(this) 
       {

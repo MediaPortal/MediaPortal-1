@@ -938,6 +938,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Player\BaseStreamBufferPlayer.resx"
+                    DependentUpon = "BaseStreamBufferPlayer.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Player\DVBRadioGraph.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
