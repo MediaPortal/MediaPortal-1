@@ -97,14 +97,20 @@ namespace AMS.Profile
     {
       if (m_doc==null) return;
       if (!m_bChanged) return;
-      using (StreamWriter stream = new StreamWriter(m_strFileName, false))
-      {
-        m_doc.Save(stream);		
-        m_doc=null;
-        stream.Flush();
-        stream.Close();
-      }
-      m_bChanged=false;
+			try
+			{
+				using (StreamWriter stream = new StreamWriter(m_strFileName, false))
+				{
+					m_doc.Save(stream);		
+					m_doc=null;
+					stream.Flush();
+					stream.Close();
+				}
+				m_bChanged=false;
+			}
+			catch(Exception)
+			{
+			}
     }
 
 		public void SetValue(string section, string entry, object value)
