@@ -1204,15 +1204,6 @@ namespace MediaPortal.GUI.Video
         }
 	      base.Render();
 
-				if (m_bDialogVisible)
-				{
-					dlg.Render();
-				}
-
-				if (m_bMSNChatVisible)
-				{
-					m_msnWindow.Render();
-				}
       }
     }
 
