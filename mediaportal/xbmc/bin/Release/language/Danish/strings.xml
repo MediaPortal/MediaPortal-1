@@ -2289,6 +2289,11 @@
 		<id>868</id>
 		<value>Reset</value>
 	</string>
+	<string>
+		<id>869</id>
+		<value>NyAlarm</value>
+	</string>
+
 <!-- End My Alarm Strings -->
 
 	<string>
@@ -2457,6 +2462,99 @@
 		<value>Skift metode</value>
 	</string>
 	<string>
+		<id>940</id>
+		<value>Indstillinger</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Skift størrelsesforhold</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Stræk</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Normal</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Original</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Letterbox</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Pan and Scan</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>Online</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>Optaget</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Er straks tilbage</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Væk</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Telefon</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Frokost</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Skjult</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Væk</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>Online</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Taler med</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>deltager nu i samtalen</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>deltager ikke længere i samtalen</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>MSN Status</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>tilbage</value>
+	</string>
+
+	<string>
 		<id>1440</id>
 		<value>TextTV</value>
 	</string>
@@ -2565,6 +2663,18 @@
 	<string>
 		<id>1975</id>
 		<value>Næste side</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>opm</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>Filsystem</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>Virtuel hukommelse</value>
 	</string>
 <!-- End My Status Strings -->
 
@@ -2769,6 +2879,148 @@
 		<id>2054</id>
 	<value>Ingen fundet!</value>
 	</string>
+
+<!-- End My Burner Strings -->
+	<string>
+		<id>2100</id>
+		<value>Brænd</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Kopier CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Opret Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Opret Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Opret Video-DVD</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Opret Data-CD</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Opret Data-DVD</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Start kopiering</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Insæt tom CD/DVD</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>tryk derefter OK</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Indsæt original CD/DVD</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Fuldført!</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Venter på CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Kopier alt</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Slet disk</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Indsæt CD/DVD RW</value>
+	</string>
+<!-- End My Burner Strings -->
+
+
+<!-- My Explorer Strings -->
+
+	<string>
+		<id>2200</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Vælge kilde</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Vælg destination</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Kopier Data</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Opret folder</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Fjern markeringer</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Marker alle</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Vil du gerne</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>Opret folder?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Vil du kopiere de valgte filer?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Filer kopieret!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Vent venligst, filerne kopieres.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Slet</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Flyt</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Vil du flytte de valgte filer?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Vent venligst, flytter filer.</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Filer flyttet!</value>
+	</string>
+
+<!-- End My Explorer Strings -->
+
 
 <!-- My Mail Strings -->
 	<string>
@@ -3265,4 +3517,25 @@
 		<id>16001</id>
 		<value>Fest afspilning</value>
 	</string>
+	<string>
+		<id>10770</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>8034</id>
+		<value>Vis HTML</value>
+	</string>
+	<string>
+		<id>12902</id>
+		<value>MSN Messenger OSD</value>
+	</string>
+	<string>
+		<id>12014</id>
+		<value>Billed info</value>
+	</string>
+	<string>
+		<id>12700</id>
+		<value>Nyheder</value>
+	</string>
+
 </strings>
