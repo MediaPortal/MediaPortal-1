@@ -67,7 +67,6 @@ namespace MediaPortal.Player
       {
 
         Vmr9=new VMR9Util("dvdplayer");
-				Vmr9.SetTextureCount(4);
         comtype = Type.GetTypeFromCLSID( Clsid.DvdGraphBuilder );
         if( comtype == null )
           throw new NotSupportedException( "DirectX (8.1 or higher) not installed?" );
@@ -195,59 +194,6 @@ namespace MediaPortal.Player
       {
       }
     }
-
-    IBaseFilter AddVMR9(IDvdGraphBuilder dvdBuilder)
-    {
-      Type comtype = null;
-      object comobj = null;
-
-      object objFound;
-      int hr;
-      //IVMRFilterConfig9
-      Guid guidVMR9FilterConfig = typeof( IVMRFilterConfig9 ).GUID;;
-      dvdBuilder.GetDvdInterface(ref guidVMR9FilterConfig,out objFound);
-      IBaseFilter vmr9Filter = objFound as IBaseFilter;
-      if (vmr9Filter==null) 
-      {
-        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to get IVMRFilterConfig9 ");
-        return  null;
-      }
-      graphBuilder.RemoveFilter(vmr9Filter);
-
-      comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
-      comobj = Activator.CreateInstance( comtype );
-      vmr9Filter=(IBaseFilter)comobj; comobj=null;
-      if (vmr9Filter==null) 
-      {
-        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to get instance of VMR9 ");
-        return null;
-      }				
-
-      //IVMRFilterConfig9
-      IVMRFilterConfig9 FilterConfig9 = vmr9Filter as IVMRFilterConfig9;
-      if (FilterConfig9==null) 
-      {
-        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to get IVMRFilterConfig9");
-        return null;
-      }				
-
-      hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
-      if (hr!=0) 
-      {
-        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to SetRenderingMode()");
-        return null;
-      }				
-
-      hr = FilterConfig9.SetNumberOfStreams(1);
-      if (hr!=0) 
-      {
-        Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9:Failed to SetNumberOfStreams()");
-        return null;
-      }				
-
-      return vmr9Filter;
-    }
-    
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
 		{
@@ -343,12 +289,15 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if (Paused || menuMode!=MenuMode.No ||  (GUIGraphicsContext.Vmr9Active && Vmr9!=null))
+      if (Paused || menuMode!=MenuMode.No )
       {
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
+				if (GUIGraphicsContext.Vmr9Active && Vmr9!=null)
 				{
-					Vmr9.Repaint();// repaint vmr9
+					Vmr9.Process();
+					if (GUIGraphicsContext.Vmr9FPS < 1f)
+					{
+						Vmr9.Repaint();// repaint vmr9
+					}
 				}
       }
       //m_SourceRect=m_scene.SourceRect;
