@@ -1424,9 +1424,13 @@ public class MediaPortalApp : D3DApp, IRender
   }
 
 	protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
-  {
-    base.mousemove(e);
-    if (!m_bShowCursor) return;
+  {    
+		// Disable first mouse action when mouse was hidden
+		if (!m_bShowCursor)
+		{
+			base.mousemove(e);
+			return;
+		}
 
     // Calculate Mouse position
     Point ptClientUL = new Point();
@@ -1471,8 +1475,13 @@ public class MediaPortalApp : D3DApp, IRender
 
 	protected override void mouseclick(MouseEventArgs e)
 	{
-    base.mouseclick(e);
-    if (!m_bShowCursor) return;
+		// Disable first mouse action when mouse was hidden
+    if (!m_bShowCursor) 
+		{
+			base.mouseclick(e);
+			return;
+		}
+
     Action actionMove;
 		Action action;
 		bool MouseButtonRightClick = false;
