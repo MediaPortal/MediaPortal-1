@@ -1,3 +1,7 @@
+17-08-2004  wizards     : added : Added DVD, Music, Movie, Pictures and Television wizards to the MediaPortal menu (window mode).
+17-08-2004  setup       : fixed : Controls are enabled/disabled correctly ín the TV Channels section.
+17-08-2004  setup       : fixed : Moved the AutoPlay setting to the DVD-Player section, this to make space for the wizard.
+17-08-2004  setup       : added : Checkboxes to the television channels listview, this to pick which channels should show in the guide in MP.
 17-08-2004  my tv       : added : tvprogressbar
 17-08-2004  general     : fixed : scrolling : base on time instead of frame
 17-08-2004  general     : fixed : scroll speed 9 / 10 are the same
