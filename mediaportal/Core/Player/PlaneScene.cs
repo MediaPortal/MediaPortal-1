@@ -100,6 +100,7 @@ namespace MediaPortal.Player
 		/// <param name="fV">(0-1) Specifies the height to used of the video texture</param>
     public void SetSrcRect(float fU, float fV)
     {
+			previousRect = new Rectangle(0,0,0,0);
       m_fU = fU;
       m_fV = fV;
     }

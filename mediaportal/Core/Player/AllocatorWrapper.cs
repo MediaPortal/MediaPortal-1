@@ -112,7 +112,7 @@ namespace MediaPortal.Player
 				scene.SetSrcRect( 1.0f, 1.0f);
 				if (m_surface1!=IntPtr.Zero) 
 				{
-					Log.Write("AllocatorWrapper: re-use surface {0}x{1}", allocInfo.dwWidth, allocInfo.dwHeight);
+					Log.Write("AllocatorWrapper: re-use surface {0}x{1} AR:{2}", allocInfo.dwWidth, allocInfo.dwHeight,allocInfo.szAspectRation);
 					fTU = (float)(allocInfo.dwWidth ) / ((float)MaxTextureWidth);
 					fTV = (float)(allocInfo.dwHeight) / ((float)MaxTextureHeight);
 					scene.SetSrcRect( fTU, fTV );
