@@ -1,5 +1,4 @@
 Bugs left:
-  10-06-04 general      : switch skin->font colors are wrong
   10-06-04 my music     : some mp3's got an tracknumber like 10/12 which confuses MP
   10-06-04 my TV        : scheduled->New : dialog is messed up
   
