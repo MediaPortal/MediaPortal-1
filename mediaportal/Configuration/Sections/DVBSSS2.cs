@@ -9,6 +9,7 @@ using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using System.Xml;
 using System.Runtime.Serialization;
+using MediaPortal.GUI.Library;
 
 
 
@@ -85,8 +86,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TreeView treeView3;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.TreeView treeView4;
-		private System.Windows.Forms.ComboBox comboBox1;
-		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.GroupBox groupBox5;
 		private System.Windows.Forms.Button button8;
 		private System.Windows.Forms.Button button9;
@@ -223,8 +222,6 @@ namespace MediaPortal.Configuration.Sections
 			this.button12 = new System.Windows.Forms.Button();
 			this.button9 = new System.Windows.Forms.Button();
 			this.button8 = new System.Windows.Forms.Button();
-			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.label18 = new System.Windows.Forms.Label();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.button7 = new System.Windows.Forms.Button();
 			this.feedback = new System.Windows.Forms.TextBox();
@@ -627,7 +624,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView1.Location = new System.Drawing.Point(8, 48);
 			this.treeView1.Name = "treeView1";
 			this.treeView1.SelectedImageIndex = -1;
-			this.treeView1.Size = new System.Drawing.Size(232, 200);
+			this.treeView1.Size = new System.Drawing.Size(232, 224);
 			this.treeView1.Sorted = true;
 			this.treeView1.TabIndex = 5;
 			this.treeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeSelect);
@@ -835,8 +832,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox5.Controls.Add(this.button9);
 			this.groupBox5.Controls.Add(this.button8);
 			this.groupBox5.Controls.Add(this.treeView1);
-			this.groupBox5.Controls.Add(this.comboBox1);
-			this.groupBox5.Controls.Add(this.label18);
 			this.groupBox5.Controls.Add(this.checkBox2);
 			this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox5.Location = new System.Drawing.Point(5, 8);
@@ -871,7 +866,7 @@ namespace MediaPortal.Configuration.Sections
 			// button9
 			// 
 			this.button9.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button9.Location = new System.Drawing.Point(192, 284);
+			this.button9.Location = new System.Drawing.Point(192, 280);
 			this.button9.Name = "button9";
 			this.button9.Size = new System.Drawing.Size(48, 21);
 			this.button9.TabIndex = 23;
@@ -881,35 +876,19 @@ namespace MediaPortal.Configuration.Sections
 			// button8
 			// 
 			this.button8.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button8.Location = new System.Drawing.Point(136, 284);
+			this.button8.Location = new System.Drawing.Point(136, 280);
 			this.button8.Name = "button8";
 			this.button8.Size = new System.Drawing.Size(48, 21);
 			this.button8.TabIndex = 22;
 			this.button8.Text = "All";
 			this.button8.Click += new System.EventHandler(this.button8_Click);
 			// 
-			// comboBox1
-			// 
-			this.comboBox1.Location = new System.Drawing.Point(128, 253);
-			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.Size = new System.Drawing.Size(112, 21);
-			this.comboBox1.TabIndex = 20;
-			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
-			// 
-			// label18
-			// 
-			this.label18.Location = new System.Drawing.Point(8, 256);
-			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(112, 16);
-			this.label18.TabIndex = 21;
-			this.label18.Text = "Select Language:";
-			// 
 			// checkBox2
 			// 
 			this.checkBox2.Checked = true;
 			this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox2.Location = new System.Drawing.Point(8, 286);
+			this.checkBox2.Location = new System.Drawing.Point(8, 280);
 			this.checkBox2.Name = "checkBox2";
 			this.checkBox2.Size = new System.Drawing.Size(88, 16);
 			this.checkBox2.TabIndex = 16;
@@ -1208,7 +1187,7 @@ namespace MediaPortal.Configuration.Sections
 			// button18
 			// 
 			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button18.Location = new System.Drawing.Point(224, 224);
+			this.button18.Location = new System.Drawing.Point(80, 224);
 			this.button18.Name = "button18";
 			this.button18.Size = new System.Drawing.Size(48, 21);
 			this.button18.TabIndex = 15;
@@ -1218,7 +1197,7 @@ namespace MediaPortal.Configuration.Sections
 			// button17
 			// 
 			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button17.Location = new System.Drawing.Point(168, 224);
+			this.button17.Location = new System.Drawing.Point(24, 224);
 			this.button17.Name = "button17";
 			this.button17.Size = new System.Drawing.Size(48, 21);
 			this.button17.TabIndex = 14;
@@ -1285,7 +1264,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView5.Location = new System.Drawing.Point(24, 48);
 			this.treeView5.Name = "treeView5";
 			this.treeView5.SelectedImageIndex = -1;
-			this.treeView5.Size = new System.Drawing.Size(248, 168);
+			this.treeView5.Size = new System.Drawing.Size(184, 168);
 			this.treeView5.TabIndex = 7;
 			// 
 			// ofd
@@ -1899,7 +1878,6 @@ namespace MediaPortal.Configuration.Sections
 				feedback.Text="Ready.";
 				progressBar1.Value=progressBar1.Minimum;
 				BuildUpTreeView(treeView1);
-				FindUsedLangs();
 				tabPage1.Enabled=true;
 			}
 			catch(Exception ex)
@@ -1914,36 +1892,6 @@ namespace MediaPortal.Configuration.Sections
 			m_scanRunning=false;
 		}
 
-		void FindUsedLangs()
-		{
-			comboBox1.Items.Clear();
-			Hashtable langTab=new Hashtable();
-
-			foreach(TreeNode sats in treeView1.Nodes)
-				foreach(TreeNode tn in sats.Nodes)
-				{
-					foreach(TreeNode tnChild in tn.Nodes)
-					{
-						if(tnChild.Tag==null)
-							continue;
-						DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
-						ArrayList	pids=ch.pid_list;
-						foreach(DVBSections.PMTData pid in pids)
-						{
-							if(pid.data!=null)
-							{
-							
-								if(langTab.Contains(pid.data)==false && pid.data!="")
-								{
-									langTab.Add(pid.data,pid.data);
-									comboBox1.Items.Add(pid.data);
-								}
-							}
-						}
-					}
-				}
-
-		}
 
 		private void BuildUpTreeView(TreeView tvObj)
 		{
@@ -1951,8 +1899,7 @@ namespace MediaPortal.Configuration.Sections
 			ArrayList					channels=new ArrayList();
 			string						path=@Application.StartupPath+@"\";
 			DVBSections.Transponder[]	list=transpList;
-			//using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(path+"dvbss_channels.xml"))
-			// clear list
+
 			if(list==null)
 				return;
 
@@ -1969,10 +1916,12 @@ namespace MediaPortal.Configuration.Sections
 				{
 					string provName=ch.service_provider_name;
 					
-					//provName+="("+m_currentSatName+")";
-
 					if(provName==null)
-						continue;
+					{
+						provName="Unknown Provider";
+						Log.Write("BuildTreeView: empty provider renamed");
+					}
+					Log.Write("BuildTreeView: found Provider = {0}",provName);
 					if(provName.Length>0)
 						{
 							bool flag=false;
@@ -1993,6 +1942,7 @@ namespace MediaPortal.Configuration.Sections
 								node.Text=provName;
 								satNode.Nodes.Add(node);
 								provider.Add(node);
+								Log.Write("BuildTreeView: added Provider = {0}",provName);
 							}
 						}
 					
@@ -2002,7 +1952,10 @@ namespace MediaPortal.Configuration.Sections
 
 			// add the cannels
 		
-		
+			Log.Write("BuildTreeView: list contains {0} trnsponder-objects",list.Length);
+
+			int countUnknown=0;
+
 			foreach(DVBSections.Transponder transponder in list)
 			{
 				if(transponder.channels!=null)
@@ -2013,10 +1966,24 @@ namespace MediaPortal.Configuration.Sections
 						string service=(ch.serviceType==1?" (TV)":" (Radio)");
 
 						//service+="("+m_currentSatName+")";
+						if(provName==null)
+						{
 
-						if(provName==null || servName==null)
-							continue;
+							provName="Unknown Provider";
+							countUnknown++;
+							Log.Write("BuildTreeView: provider name renamed");
+							//continue;
+						}
 
+						if(servName==null)
+						{
+
+							servName="Unknown Service "+countUnknown.ToString();
+							countUnknown++;
+							Log.Write("BuildTreeView: service name renamed");
+							//continue;
+						}
+						Log.Write("BuildTreeView: service-name ={0}, provider-name={1}, serive-type={2}",provName,servName,service);
 						if(provName.Length>0 && servName.Length>0)
 						{
 							TreeNode tn=GetNodeByTag(provName,provider);
@@ -2034,6 +2001,8 @@ namespace MediaPortal.Configuration.Sections
 
 								//ChannelToNode(ch,node);
 								tn.Nodes.Add(node);
+								Log.Write("BuildTreeView: added treeNode-object");
+
 								//treeView1.
 							}
 						}
@@ -2053,6 +2022,8 @@ namespace MediaPortal.Configuration.Sections
 				if(tagText==tag)
 					return tn;
 			}
+			if(tag!=null)
+				Log.Write("BuildTreeView: FAILED get treeNode-object: {0}",tag);
 			return null;
 		}
 
@@ -2114,7 +2085,7 @@ namespace MediaPortal.Configuration.Sections
 								standard=DShowNET.AnalogVideoStandard.None;
 								string channelText=ch.service_name;
 								if(channelText==null)
-									channelText="unnamed service "+televisionCounter.ToString();
+									channelText="Unnamed service "+ch.serviceID.ToString()+ch.networkID.ToString()+ch.serviceType.ToString();
 								TVChannel tv=new TVChannel();
 								tv.VisibleInGuide=true;
 								tv.Name=channelText;//+" ("+n.ToString()+")";
@@ -2124,25 +2095,38 @@ namespace MediaPortal.Configuration.Sections
 								int dbID=TVDatabase.AddChannel(tv);
 								if(dbID==-1)
 									continue;
+							
 								tv.ID=dbID;
 								string langString="";
 								int audioPid=GetAudioPid(ch.pid_list,out langString);
 								int videoPid=GetVideoPid(ch.pid_list);
 								int teleTextPid=GetTeletextPid(ch.pid_list);
 								int ac3Pid=GetAC3Pid(ch.pid_list);
+								int subTitlePid=GetSubtitlePid(ch.pid_list);
 								int[] otherAudio;
 								string[] otherAudioLang;
 								GetOtherAudioPids(ch.pid_list,audioPid,out otherAudio,out otherAudioLang);
 
 								if (otherAudio==null)
-									otherAudio=new int[3]{0,0,0};
+									otherAudio=new int[2]{0,0};
 
 								if (otherAudioLang==null)
 									otherAudioLang=new string[3]{"","",""};
 
+								string provider=ch.service_provider_name;
+								if(provider==null)
+									provider="Unknown Provider";
+
+								TVGroup group=new TVGroup();
+								group.GroupName=provider;
+								
+								int groupID=TVDatabase.AddGroup(group);
+								group.ID=groupID;
+								TVDatabase.MapChannelToGroup(group,tv);
+
 								ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-									ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-									audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],ch.pidCache,0,ch.network_pmt_PID);
+									ch.serviceType,provider,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+									audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],subTitlePid,teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],ch.pidCache,0,ch.network_pmt_PID);
 								televisionCounter++;
 							}
 
@@ -2151,19 +2135,23 @@ namespace MediaPortal.Configuration.Sections
 								MediaPortal.Radio.Database.RadioStation rc=new MediaPortal.Radio.Database.RadioStation();
 								string channelText=ch.service_name;
 								if(channelText==null)
-									channelText="unnamed service "+radioCounter.ToString();
+									channelText="Unnamed service "+radioCounter.ToString();
 								rc.Name=channelText;
+								string provider=ch.service_provider_name;
+								if(provider==null)
+									provider="Unknown Provider";
 						
 								rc.URL="";
-								rc.Genre=ch.service_provider_name;
+								rc.Genre=provider;
 								rc.Frequency=(radioCounter<< 16);
 								string lang="";
 								int dbID=RadioDatabase.AddStation(ref rc);
 								if(dbID==-1)
 									continue;
 								int audioPid=GetAudioPid(ch.pid_list,out lang);
+								
 								int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-									ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+									ch.serviceType,provider,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
 									audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,lang,"","",ch.pidCache,0,ch.network_pmt_PID);
 								radioCounter++;
 
@@ -2190,6 +2178,16 @@ namespace MediaPortal.Configuration.Sections
 
 		}
 		//
+		private int GetSubtitlePid(ArrayList ch)
+		{
+			if(ch==null)
+				return -1;
+			foreach(DVBSections.PMTData pids in ch)
+				if(pids.isDVBSubtitle)
+					return pids.elementary_PID;
+			return 0;
+		}
+
 		private int GetVideoPid(ArrayList ch)
 		{
 			if(ch==null)
@@ -2219,8 +2217,8 @@ namespace MediaPortal.Configuration.Sections
 		}
 		private void GetOtherAudioPids(ArrayList ch,int audio,out int[] pidArray,out string[] lang)
 		{
-			pidArray=new int[3]{0,0,0};
-			lang=new string[3]{"","",""};
+			pidArray=new int[2]{0,0};
+			lang=new string[2]{"",""};
 
 			int n=0;
 			if(ch==null)
@@ -2230,7 +2228,7 @@ namespace MediaPortal.Configuration.Sections
 				if(pids.isAudio && pids.elementary_PID!=audio)
 				{
 					
-					if(n<3)
+					if(n<2)
 					{
 						pidArray[n]=pids.elementary_PID;
 						lang[n]=pids.data;
@@ -2458,37 +2456,6 @@ namespace MediaPortal.Configuration.Sections
 			treeView1.Nodes.Clear();
 		}
 
-		private void comboBox1_SelectedIndexChanged_1(object sender, System.EventArgs e)
-		{
-			//button9.PerformClick();
-
-			if(comboBox1.Text.Length>0)
-			{
-				string searchLang=comboBox1.Text;
-				foreach(TreeNode tn in treeView1.Nodes)
-				{
-					foreach(TreeNode tnChild in tn.Nodes)
-					{
-						if(tnChild.Tag==null)
-							continue;
-						DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
-						ArrayList	pids=ch.pid_list;
-						foreach(DVBSections.PMTData pid in pids)
-						{
-							string langCode=(string)pid.data;
-
-							if(langCode==null)
-								continue;
-							
-							if(langCode==searchLang)
-								tnChild.Checked=true;
-
-						}
-					}
-				}
-			}
-			
-		}
 
 		private void button14_Click(object sender, System.EventArgs e)
 		{
