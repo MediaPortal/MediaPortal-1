@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
+using MediaPortal.Radio.Database;
 using MediaPortal.Player;
 
 namespace MediaPortal.TV.Recording
@@ -627,6 +628,46 @@ namespace MediaPortal.TV.Recording
 			return FileName;
 		}
 
+
+		static public void StartRadio(string radioStationName)
+		{
+			if (radioStationName==null) 
+			{
+				Log.Write("Recorder:Start TV viewing radioStation=null?");
+				return ;
+			}
+			if (radioStationName==String.Empty)  
+			{
+				Log.Write("Recorder:Start TV viewing radioStation=empty");
+				return ;
+			}
+			if (m_eState!= State.Initialized)  
+			{
+				Log.Write("Recorder:StartRadio but recorder is not initalised");
+				return ;
+			}
+			RadioStation radiostation;
+			if (!RadioDatabase.GetStation( radioStationName,out radiostation) )
+			{
+				Log.Write("Recorder:StartRadio unknown station:{0}", radioStationName);
+				return ;
+			}
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
+				if (!tvcard.IsTimeShifting && !tvcard.View && !tvcard.IsRecording)
+				{
+					if (RadioDatabase.CanCardTuneToStation(radioStationName, tvcard.ID))
+					{
+						Log.Write("Recorder:Start radio on card:{0} {1} station:{2}",
+											tvcard.ID,tvcard.FriendlyName,radioStationName);
+						tvcard.StartRadio(radiostation);
+						return;
+					}
+				}
+			}
+			Log.Write("Recorder: no free card which can listen to radio channel:{0}", radioStationName);
+		}
 
 		static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
 		{
@@ -1302,6 +1343,10 @@ namespace MediaPortal.TV.Recording
 			if (message==null) return;
 			switch(message.Message)
 			{
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
+					StartRadio(message.Label);
+				break;
+
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD:
 					// somebody wants to allocate a capture card
 					// if possible, lets release it

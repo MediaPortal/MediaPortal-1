@@ -6,6 +6,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
+using MediaPortal.Radio.Database;
 using MediaPortal.Player;
 using DShowNET;
 using TVCapture;
@@ -52,7 +53,8 @@ namespace MediaPortal.TV.Recording
 			PreRecording, 
 			Recording, 
 			PostRecording, 
-			Viewing
+			Viewing,
+			Radio
 		}
 
 		[NonSerialized] private bool				_mIsCableInput;				// #MW# Should be made serializable...??
@@ -661,6 +663,10 @@ namespace MediaPortal.TV.Recording
     {
       get { return _mState == State.PostRecording; }
     }
+		public bool IsRadio
+		{
+			get { return _mState == State.Radio; }
+		}
 
     /// <summary>
     /// Propery to get/set the name of the current TV channel. 
@@ -1317,6 +1323,32 @@ namespace MediaPortal.TV.Recording
 			{
 				if (_mGraph==null) return null;
 				return _mGraph.Mpeg2DataFilter();
+			}
+		}
+		public void StartRadio(RadioStation station)
+		{
+			if (_mState != State.Radio)
+			{
+				DeleteGraph();
+				CreateGraph();
+				_mGraph.StartRadio(station);
+			}
+			else
+			{
+				_mGraph.TuneRadioChannel(station);
+			}
+		}
+		public void TuneRadioChannel(RadioStation station)
+		{
+			if (_mState != State.Radio)
+			{
+				DeleteGraph();
+				CreateGraph();
+				_mGraph.StartRadio(station);
+			}
+			else
+			{
+				_mGraph.TuneRadioChannel(station);
 			}
 		}
   }

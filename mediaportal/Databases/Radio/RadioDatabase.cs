@@ -119,6 +119,60 @@ namespace MediaPortal.Radio.Database
         return ;
       }
     }
+		
+		static public bool GetStation(string radioName, out RadioStation station)
+		{
+			station=new RadioStation();
+			if (m_db==null) return false;
+			lock (m_db)
+			{
+				try
+				{
+					if (null==m_db) return false;
+					string strSQL;
+					strSQL=String.Format("select * from station where strname like '{0}'",radioName);
+					SQLiteResultSet results;
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return false;
+					
+					RadioStation chan=new RadioStation();
+					try
+					{
+						station.ID=Int32.Parse(DatabaseUtility.Get(results,0,"idChannel"));
+					}
+					catch(Exception){}
+					try
+					{
+						station.Channel = Int32.Parse(DatabaseUtility.Get(results,0,"iChannelNr"));
+					}
+					catch(Exception){}
+					try
+					{
+						station.Frequency = Int64.Parse(DatabaseUtility.Get(results,0,"frequency"));
+					}
+					catch(Exception)
+					{}
+					station.Name = DatabaseUtility.Get(results,0,"strName");
+					station.URL = DatabaseUtility.Get(results,0,"URL");
+					if (station.URL.Equals("unknown")) chan.URL ="";
+					try
+					{
+						station.BitRate=Int32.Parse( DatabaseUtility.Get(results,0,"bitrate") );
+					}
+					catch(Exception){}
+
+					station.Genre=DatabaseUtility.Get(results,0,"genre") ;
+
+				}
+				catch(Exception ex)
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+					return false;
+				}
+				return true;
+			}
+		}
 
     
     static public int AddStation(ref RadioStation channel)
