@@ -61,7 +61,7 @@ namespace MediaPortal.TV.Recording
 			string line;
 			string[] tpdata;
 			Log.Write("Opening {0}",ofd.FileName);
-			// load dvbcChannelsonder list and start scan
+			// load dvbcChannelsList list and start scan
 			System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
 			
 			do
@@ -153,14 +153,14 @@ namespace MediaPortal.TV.Recording
 			float percent = ((float)currentIndex) / ((float)count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			DVBCList dvbcChannelsonder=dvbcChannels[currentIndex];
-			string description=String.Format("dvbcChannelsonder:{0}/{1}", currentIndex,count);
+			DVBCList dvbcChan=dvbcChannels[currentIndex];
+			string description=String.Format("dvbcChan:{0}/{1}", currentIndex,count);
 
 			if (currentState==State.ScanFrequencies)
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.Write("Found signal for dvbcChannelsonder:{0}",currentIndex);
+					Log.Write("Found signal for dvbcChan:{0}",currentIndex);
 					currentState=State.ScanChannels;
 				}
 			}
@@ -169,12 +169,12 @@ namespace MediaPortal.TV.Recording
 			{
 				currentState=State.ScanFrequencies ;
 				callback.OnStatus(description);
-				ScanNextdvbcChannelsonder();
+				ScanNextDVBCChannel();
 			}
 
 			if (currentState==State.ScanChannels)
 			{
-				description=String.Format("Found signal for dvbcChannelsonder:{0}, Scanning channels", currentIndex);
+				description=String.Format("Found signal for channel:{0}, Scanning channels", currentIndex);
 				callback.OnStatus(description);
 				ScanChannels();
 			}
@@ -188,14 +188,14 @@ namespace MediaPortal.TV.Recording
 			timer1.Enabled=false;
 			captureCard.StoreTunedChannels(false,true);
 			callback.UpdateList();
-			Log.Write("timeout, goto scanning dvbcChannelsonders");
+			Log.Write("timeout, goto scanning channels");
 			currentState=State.ScanFrequencies;
-			ScanNextdvbcChannelsonder();
+			ScanNextDVBCChannel();
 			timer1.Enabled=true;
 			return;
 		}
 
-		void ScanNextdvbcChannelsonder()
+		void ScanNextDVBCChannel()
 		{
 			currentIndex++;
 			if (currentIndex>=count)

@@ -2262,7 +2262,7 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.TSID						= chan.TSID;	//transport stream id
 				myTuneRequest.SID							= chan.SID;		//service id
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentFrequency=(int)tuningObject;
+				currentFrequency=(int)chan.carrierFrequency;
 			}
 			else if (Network() == NetworkType.DVBS)
 			{
@@ -2286,7 +2286,7 @@ namespace MediaPortal.TV.Recording
 				myTuneRequest.TSID						= chan.TSID;	//transport stream id
 				myTuneRequest.SID							= chan.SID;		//service id
 				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentFrequency=(int)tuningObject;
+				currentFrequency=(int)chan.carrierFrequency;
 			}
 			else if (Network() == NetworkType.ATSC)
 			{

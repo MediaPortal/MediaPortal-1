@@ -426,7 +426,7 @@
     </radio>
   </capturecard> 
   
-  <capturecard commercialname="FireDTV" capturename="Firesat BDA Receiver DVBT" devid="digital_everywhere&amp;firedtv_t">
+  <capturecard commercialname="FireDTV DVB-T" capturename="Firesat BDA Receiver DVBT" devid="digital_everywhere&amp;firedtv_t">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -434,6 +434,22 @@
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBT"          checkdevice="false"></filter>
         <filter cat="capture"         name="Firesat BDA Receiver DVBT"       checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard> 
+  
+  <capturecard commercialname="FireDTV DVB-C" capturename="Firesat BDA Receiver DVBC" devid="digital_everywhere&amp;firedtv_c#ci&amp;typ_5">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBC"          checkdevice="false"></filter>
+        <filter cat="capture"         name="Firesat BDA Receiver DVBC"       checkdevice="false"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>

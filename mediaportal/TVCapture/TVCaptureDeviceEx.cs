@@ -228,7 +228,7 @@ namespace MediaPortal.TV.Recording
 			CaptureCardDefinition ccd =null;
 			foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
 			{
-				if (cd.DeviceId==deviceId && cd.CaptureName == VideoDevice)
+				if (cd.DeviceId.IndexOf(deviceId)==0 && cd.CaptureName == VideoDevice)
 				{
 					ccd = cd;
 					break;
