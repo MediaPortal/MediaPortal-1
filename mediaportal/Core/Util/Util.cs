@@ -594,7 +594,7 @@ namespace MediaPortal.Util
 			if (strPath==null) return false;
 			if (strPath.Length<2) return false;
 			string strDrive=strPath.Substring(0,2);
-			if (getDriveType(strDrive)==2||getDriveType(strDrive)==3) return true;
+			if (getDriveType(strDrive)==3) return true;
 			return false;
 		}
 
@@ -615,6 +615,16 @@ namespace MediaPortal.Util
 			if (getDriveType(strDrive)==5) return true;
 			return false;
 		}
+
+		static public bool IsRemovable(string strFile)
+		{
+			if (strFile==null) return false;
+			if (strFile.Length<2) return false;
+			string strDrive=strFile.Substring(0,2);
+			if (getDriveType(strDrive)==2) return true;
+			return false;
+		}
+
 		static public bool GetDVDLabel(string strFile, out string strLabel)
 		{
 			strLabel="";
