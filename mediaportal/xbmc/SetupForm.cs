@@ -641,10 +641,10 @@ namespace MediaPortal
       // 
       this.linkLabel2.Location = new System.Drawing.Point(104, 264);
       this.linkLabel2.Name = "linkLabel2";
-      this.linkLabel2.Size = new System.Drawing.Size(208, 16);
+      this.linkLabel2.Size = new System.Drawing.Size(320, 16);
       this.linkLabel2.TabIndex = 7;
       this.linkLabel2.TabStop = true;
-      this.linkLabel2.Text = "http://dott.lir.dk/mediaportal/forum";
+      this.linkLabel2.Text = "http://nolanparty.com/mediaportal.sourceforge.net/phpBB2/";
       // 
       // label26
       // 
@@ -759,7 +759,7 @@ namespace MediaPortal
       // 
       this.groupBox14.Location = new System.Drawing.Point(16, 216);
       this.groupBox14.Name = "groupBox14";
-      this.groupBox14.Size = new System.Drawing.Size(320, 120);
+      this.groupBox14.Size = new System.Drawing.Size(416, 120);
       this.groupBox14.TabIndex = 5;
       this.groupBox14.TabStop = false;
       this.groupBox14.Text = "Project info";
