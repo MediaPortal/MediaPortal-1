@@ -1755,7 +1755,7 @@ namespace MediaPortal.TV.Recording
 									if (Network() == NetworkType.DVBT)
 									{
 										//name											value											language
-										//Description.ID						8720:3:32:300							0
+										//Description.ID						ONID:TSID:SID							0
 										//Description.Title					title of program					0
 										//Description.One Sentence	description of program		0
 									}
@@ -1794,11 +1794,11 @@ namespace MediaPortal.TV.Recording
 								properties[0].Language(out chanLanguage);
 								if (Network()==NetworkType.DVBT)
 								{
-									//service name							value				language
-									//Description.ID						8720:1:11			0
-									//Description.Name					Nederland 1		0
-									//Provider.Name							Digitenne			0
-									//Description.ServiceType		1							0
+									//service name							value						language
+									//Description.ID						ONID:TSID:SID			0
+									//Description.Name					Nederland 1				0
+									//Provider.Name							Digitenne					0
+									//Description.ServiceType		1									0
 
 									if (chanName=="Description.ID")
 									{
