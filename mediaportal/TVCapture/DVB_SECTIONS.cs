@@ -354,22 +354,24 @@ namespace MediaPortal.TV.Recording
 
 			}
 		}
+		/// <summary>
+		/// Get all information about channels & services 
+		/// </summary>
+		/// <param name="filter">IBase filter implementing IMpeg2Data</param>
+		/// <returns>Transponder object containg all channels/services found</returns>
 		public Transponder Scan(DShowNET.IBaseFilter filter)
 		{
-			Transponder transplist = new Transponder();
-			transplist.channels = new ArrayList();
-			transplist.PMTTable = new ArrayList();
-			DeleteAllPIDsI();
-			AddTSPid(17);
-			AddTSPid(0);
+			Transponder transponder = new Transponder();
+			transponder.channels = new ArrayList();
+			transponder.PMTTable = new ArrayList();
 			GetStreamData(filter,0, 0,0,5000);
 			// jump to parser
 			foreach(byte[] arr in m_sectionsList)
-				decodePATTable(arr, transp[0], ref transplist);
+				decodePATTable(arr, transp[0], ref transponder);
 
-			LoadPMTTables(filter,transp[0],ref transplist);
-			return transplist;
-		}
+			LoadPMTTables(filter,transp[0],ref transponder);
+			return transponder;
+		}//public Transponder Scan(DShowNET.IBaseFilter filter)
 		
 		private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		{
@@ -423,10 +425,9 @@ namespace MediaPortal.TV.Recording
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 					}
 					tp.channels.Add(pat);
-				
 				}
 			}
-		}
+		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		
 		private void LoadPMTTables (TPList tpInfo, ref Transponder tp)
 		{

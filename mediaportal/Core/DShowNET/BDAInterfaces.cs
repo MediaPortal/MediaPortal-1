@@ -188,39 +188,29 @@ namespace DShowNET.BDA
 	[ComImport,
 	Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IBDA_SignalStatistics 
+
+	public interface IBDA_SignalStatistics
 	{
-		[PreserveSig]
-		int put_SignalStrength( /* [in] */ int  lDbStrength) ;
-        
-		[PreserveSig]
-		int get_SignalStrength( /* [out][in] */ out int  plDbStrength) ;
-        
-		[PreserveSig]
-		int put_SignalQuality( /* [in] */ int  lPercentQuality) ;
-        
-		[PreserveSig]
-		int get_SignalQuality( /* [out][in] */ out int  plPercentQuality) ;
-        
-		[PreserveSig]
-		int put_SignalPresent( /* [in] */ byte fPresent) ;
-        
-		[PreserveSig]
-		int get_SignalPresent( /* [out][in] */ out byte pfPresent) ;
-        
-		[PreserveSig]
-		int put_SignalLocked( /* [in] */ byte fLocked) ;
-        
-		[PreserveSig]
-		int get_SignalLocked( /* [out][in] */ out byte pfLocked) ;
-        
-		[PreserveSig]
-		int put_SampleTime( /* [in] */ int  lmsSampleTime) ;
-        
-		[PreserveSig]
-		int get_SampleTime( /* [out][in] */ out int  plmsSampleTime) ;
-        
-	}	
+		void put_SignalStrength ([In] long lDbStrength);
+    
+		void get_SignalStrength ([In, Out] ref long plDbStrength );
+    
+		void put_SignalQuality ([In] long lPercentQuality);
+    
+		void get_SignalQuality ([In, Out] ref long plPercentQuality);
+    
+		void put_SignalPresent ([In] bool fPresent);
+    
+		void get_SignalPresent ([In, Out] ref bool pfPresent);
+    
+		void put_SignalLocked ([In] bool fLocked);
+    
+		void get_SignalLocked ([In, Out] ref bool pfLocked);
+    
+		void put_SampleTime ([In] long lmsSampleTime);
+    
+		void get_SampleTime ([In, Out] ref long plmsSampleTime);
+	}
 
 	[ComImport,
 	Guid("79B56888-7FEA-4690-B45D-38FD3C7849BE"),

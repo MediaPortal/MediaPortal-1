@@ -33,7 +33,6 @@ namespace MediaPortal.TV.Recording
 		int                                 currentIndex=0;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
-		DateTime														channelScanTimeOut;
 		TPList[]														transp=new TPList[200];
 		int																	count = 0;
 
@@ -149,7 +148,6 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.Write("Found signal for transponder:{0}",currentIndex);
 					currentState=State.ScanChannels;
-					channelScanTimeOut=DateTime.Now;
 				}
 			}
 
@@ -172,18 +170,14 @@ namespace MediaPortal.TV.Recording
 		{
 			captureCard.Process();
 
-			TimeSpan ts = DateTime.Now-channelScanTimeOut;
-			if (ts.TotalSeconds>=15)
-			{
-				timer1.Enabled=false;
-				captureCard.StoreTunedChannels(false,true);
-				callback.UpdateList();
-				Log.Write("timeout, goto scanning transponders");
-				currentState=State.ScanTransponders;
-				ScanNextTransponder();
-				timer1.Enabled=true;
-				return;
-			}
+			timer1.Enabled=false;
+			captureCard.StoreTunedChannels(false,true);
+			callback.UpdateList();
+			Log.Write("timeout, goto scanning transponders");
+			currentState=State.ScanTransponders;
+			ScanNextTransponder();
+			timer1.Enabled=true;
+			return;
 		}
 
 		void ScanNextTransponder()
@@ -199,7 +193,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			Log.Write("tune transponder:{0}",currentIndex);
-			DVBGraphBDA.DVBSChannel newchan = new DVBGraphBDA.DVBSChannel();
+			DVBGraphBDA.DVBChannel newchan = new DVBGraphBDA.DVBChannel();
 			newchan.ONID=-1;
 			newchan.TSID=-1;
 			newchan.SID=-1;

@@ -28,7 +28,6 @@ namespace MediaPortal.TV.Recording
 		int																	scanOffset = 0;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
-		DateTime														channelScanTimeOut;
 		int																	currentOffset=0;
 		int                                 tunedFrequency=0;
 
@@ -145,7 +144,6 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.Write("Found signal at:{0} MHz,scan for channels",frequency);
 					currentState=State.ScanChannels;
-					channelScanTimeOut=DateTime.Now;
 					currentOffset=0;
 				}
 			}
@@ -167,21 +165,14 @@ namespace MediaPortal.TV.Recording
 		void ScanChannels()
 		{
 			captureCard.Process();
-
-			TimeSpan ts = DateTime.Now-channelScanTimeOut;
-			if (ts.TotalSeconds>=5)
-			{
-				timer1.Enabled=false;
-				captureCard.StoreTunedChannels(false,true);
-				callback.UpdateList();
-				Log.Write("timeout, goto scanning frequencies");
-				currentState=State.ScanFrequencies;
-				currentOffset=0;
-				currentFrequencyIndex++;
-				ScanNextFrequency();
-				timer1.Enabled=true;
-				return;
-			}
+			timer1.Enabled=false;
+			captureCard.StoreTunedChannels(false,true);
+			callback.UpdateList();
+			currentState=State.ScanFrequencies;
+			currentOffset=0;
+			currentFrequencyIndex++;
+			ScanNextFrequency();
+			timer1.Enabled=true;
 		}
 
 		void ScanNextFrequency()

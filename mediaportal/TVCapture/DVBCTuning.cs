@@ -34,7 +34,6 @@ namespace MediaPortal.TV.Recording
 		int                                 currentIndex=0;
 		private System.Windows.Forms.Timer  timer1;
 		State                               currentState;
-		DateTime														channelScanTimeOut;
 		DVBCList[]													dvbcChannels=new DVBCList[200];
 		int																	count = 0;
 
@@ -162,7 +161,6 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.Write("Found signal for dvbcChannelsonder:{0}",currentIndex);
 					currentState=State.ScanChannels;
-					channelScanTimeOut=DateTime.Now;
 				}
 			}
 
@@ -185,18 +183,14 @@ namespace MediaPortal.TV.Recording
 		{
 			captureCard.Process();
 
-			TimeSpan ts = DateTime.Now-channelScanTimeOut;
-			if (ts.TotalSeconds>=15)
-			{
-				timer1.Enabled=false;
-				captureCard.StoreTunedChannels(false,true);
-				callback.UpdateList();
-				Log.Write("timeout, goto scanning dvbcChannelsonders");
-				currentState=State.ScanFrequencies;
-				ScanNextdvbcChannelsonder();
-				timer1.Enabled=true;
-				return;
-			}
+			timer1.Enabled=false;
+			captureCard.StoreTunedChannels(false,true);
+			callback.UpdateList();
+			Log.Write("timeout, goto scanning dvbcChannelsonders");
+			currentState=State.ScanFrequencies;
+			ScanNextdvbcChannelsonder();
+			timer1.Enabled=true;
+			return;
 		}
 
 		void ScanNextdvbcChannelsonder()
@@ -212,7 +206,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			Log.Write("tune dvbcChannel:{0}",currentIndex);
-			DVBGraphBDA.DVBCChannel newchan = new DVBGraphBDA.DVBCChannel();
+			DVBGraphBDA.DVBChannel newchan = new DVBGraphBDA.DVBChannel();
 			newchan.ONID=-1;
 			newchan.TSID=-1;
 			newchan.SID=-1;
