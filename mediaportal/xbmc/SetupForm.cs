@@ -4069,7 +4069,11 @@ namespace MediaPortal
       RadioDatabase.GetStations(ref stations);
       foreach (RadioStation station in stations)
       {
-        ListViewItem newItem=listViewRadio.Items.Add(station.Name);
+        string strType="Radio";
+        if (station.URL!="") strType="Stream";
+
+        ListViewItem newItem=listViewRadio.Items.Add(strType);
+        newItem.SubItems.Add(station.Name);
         newItem.SubItems.Add(station.Channel.ToString());
         newItem.SubItems.Add(station.Genre);
         newItem.SubItems.Add(station.BitRate.ToString());

@@ -70,6 +70,11 @@ Settings:
   - all :-)
 
 General:
+  - show properties in skin: 
+     - duration, current time, name, artist, album name,genre , release date
+     - director, tagline,votes,rating,writer,plot outline
+     - radio channel
+     
   - setup:Auto Tune needs some work
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv

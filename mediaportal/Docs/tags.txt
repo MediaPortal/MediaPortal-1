@@ -1,0 +1,59 @@
+In the .xml files of the skin you can use the list of tags (see below) to show info about the current
+playing file. These special tags currently work for the label & fadelabel control.
+These special tags are placed in the <label></label> field of the controls and contain the
+tagname and any other text you want.
+
+example of an label control :
+    <control>
+        <description>example label control showwing the current play time </description> 
+        <type>label</type> 
+        <id>2</id> 
+        <posX>575</posX> 
+        <posY>45</posY> 
+        <label>playtime:#currentplaytime</label> 
+        <align>left</align> 
+        <font>font13</font> 
+        <textcolor>FFB2D4F5</textcolor> 
+    </control> 
+
+example of an fadelabel: 
+(note that \r means a new line in the fadelabel control)
+    <control>
+        <description>example fadelabel control showing & scrolling title, genre, year & director tag</description> 
+        <type>fadelabel</type> 
+        <width>220</width> 
+        <height>30</height>
+        <posX>520</posX> 
+        <posY>45</posY>
+        <align>right</align>  
+        <font>font13</font> 
+        <textcolor>FFB2D4F5</textcolor>
+        <label>#title\r#genre\r#year\r#director</label>
+        <id>5</id> 
+    </control>
+
+List of special tags:
+Tagname             description
+---------------------------------------------------------
+#title              title of current playing song or movie
+#artist             artist of current playing song
+#album              albumname of current playing song 
+#track              tracknumber of current playing song
+#year               release year of current playing song or movie
+#comment            comment of of current playing song 
+#duration           duration in seconds of current playing song or movie
+#thumb              filename to the thumbnail for the current playing song or movie
+#director           Director of current playing movie
+#genre              genre of current playing song/movie
+#cast               cast of current playing movie
+#dvdlabel           dvd# of current playing movie
+#imdbnumber         imdbnumber of current playing movie
+#file               filename of current playing movie
+#plot               plot of current playing movie
+#plotoutline        plotoutline of current playing movie
+#rating             rating of current playing movie
+#tagline            tagline of current playing movie
+#votes              votes of current playing movie
+#credits            credits of current playing movie
+#currentplaytime    current playtime of current playing movie/song
+#playspeed          playspeed (-2x, 1x, 2x, 4x,...) of current playing movie/song

@@ -246,6 +246,11 @@ public class MediaPortalApp : D3DApp
 
     protected override void Render() 
     { 
+      if (!g_Player.Playing)
+      {
+        GUIPropertyManager.RemovePlayerProperties();
+      }
+
       // disable TV preview when playing a movie
       if ( g_Player.Playing && g_Player.HasVideo )
       {
