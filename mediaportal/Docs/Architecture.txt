@@ -1,10 +1,8 @@
 Architectual issues need to be looked at in the future
 
-Folder Settings Manager
-    We need a global manager which can store & retrieve settings for a specific folder
-    Settings could be things like 'sort by', 'view as icons,list' etc
-    there could be 'global' settings for each folder, but also settings specific for a 
-    plugin, window, class,...
+Thumbnails
+    Thumbnail management is done on several places. Would be nice if thumbnails would
+    we managed by 1 global class
 
 PlaylistPlayer
     The playlist player now stores playlist items. These need to be extended with a 
