@@ -569,9 +569,13 @@ namespace MediaPortal.GUI.Library
 		{
 			base.Update();
   
-			m_imgFocusLeft.ColourDiffuse=ColourDiffuse;
+      m_imgFocusLeft.ColourDiffuse=ColourDiffuse;
       m_imgFocusMid.ColourDiffuse=ColourDiffuse;
       m_imgFocusRight.ColourDiffuse=ColourDiffuse;
+
+      m_imgNoFocusLeft.ColourDiffuse=ColourDiffuse;
+      m_imgNoFocusMid.ColourDiffuse=ColourDiffuse;
+      m_imgNoFocusRight.ColourDiffuse=ColourDiffuse;      
       
 			m_imgFocusLeft.Height =m_dwHeight;
 			m_imgFocusMid.Height  =m_dwHeight;
