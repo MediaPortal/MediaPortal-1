@@ -48,6 +48,7 @@
 <!--    Hauppauge Nova-T                      -->
 <!--    Hauppauge Nova-S                      -->
 <!--    Hauppauge Nova-T 90002                -->
+<!--    Hauppauge NOVA-T-USB2 (Soho)          -->
 <!--    Hauppauge WinTV PVR 150               -->
 <!--    Hauppauge WinTV PVR 150MCE            -->
 <!--    Hauppauge WinTV PVR 250               -->
@@ -81,7 +82,7 @@
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
 <!-- version : 1.0.0.35                                                               -->
-<!-- changed : 17-march-2005 by DMAN                                                   -->
+<!-- changed : 20-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -593,7 +594,21 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_90020070&amp;rev_05">
+  <capturecard commercialname="Hauppage Nova-T" capturename="Hauppauge Nova USB2 DVB-T TV Receiver" devid="vid_2040&amp;pid_9301">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="capture"         name="Hauppauge Nova USB2 DVB-T TV Receiver"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge NOVA-T" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_90020070&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -1309,4 +1324,7 @@
       </connections>
     </tv>
   </capturecard>
+
+
+
 </capturecards>
