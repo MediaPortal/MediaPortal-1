@@ -71,6 +71,7 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
 			bool bDirectXInstalled = false;
 			bool bWindowsMediaPlayer9 = false;
+
       /*
 			try 
 			{

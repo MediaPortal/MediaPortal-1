@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using Microsoft.Win32;
 
 namespace MediaPortal.TV.Recording
 {
@@ -65,6 +66,17 @@ namespace MediaPortal.TV.Recording
 
       if (m_FrameSize.Width==0 || m_FrameSize.Height==0)
         m_FrameSize=new Size(720,576);
+
+      
+      try
+      {
+        RegistryKey hkcu = Registry.CurrentUser;
+        hkcu.CreateSubKey(@"Software\MediaPortal");
+        RegistryKey hklm = Registry.LocalMachine;
+        hklm.CreateSubKey(@"Software\MediaPortal");
+
+      }
+      catch(Exception){}
 		}
 
     /// <summary>

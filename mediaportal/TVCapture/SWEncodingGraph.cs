@@ -106,6 +106,17 @@ namespace MediaPortal.TV.Recording
         m_strAudioInputPin = strAudioInputPin;
       _RecordingLevel = RecordingLevel;
       m_bIsUsingMPEG = false;
+
+      
+      try
+      {
+        RegistryKey hkcu = Registry.CurrentUser;
+        hkcu.CreateSubKey(@"Software\MediaPortal");
+        RegistryKey hklm = Registry.LocalMachine;
+        hklm.CreateSubKey(@"Software\MediaPortal");
+
+      }
+      catch(Exception){}
 		}
 
     /// <summary>
