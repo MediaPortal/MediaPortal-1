@@ -349,6 +349,19 @@ namespace MediaPortal.Configuration
 
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
+			if (nameTextBox.Text==String.Empty)
+			{
+				MessageBox.Show("No name specified.Please fill in a name for this share", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;					
+
+			}
+			
+			if (folderTextBox.Text==String.Empty)
+			{
+				MessageBox.Show("No local folder specified.Please choose a local folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;					
+
+			}
 			this.DialogResult = DialogResult.OK;
 			this.Hide();
 		}
