@@ -103,7 +103,7 @@
 				<onleft>10</onleft>
 				<onright>10</onright>
 				<onup>6</onup>
-				<ondown>2</ondown>
+				<ondown>99</ondown>
 			</control>		
 		</control>
 		<control>
@@ -149,11 +149,14 @@
 		<control>
 			<description>TV preview window</description> 
 			<type>videowindow</type> 
-			<id>1</id> 
+			<id>99</id> 
 			<posX>65</posX> 
 			<posY>425</posY> 
 			<width>170</width> 
-			<height>125</height> 
+			<height>125</height>
+			<onup>7</onup>
+			<action>18</action>
+			<textureFocus>video_window_focus.png</textureFocus> 
 		</control>
 	</controls>
 </window>
