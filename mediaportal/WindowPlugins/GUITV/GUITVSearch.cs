@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.TV
             foreach(TVProgram program in titles)
             {
 							//dont show programs which have ended
-							if (program.EndTime >= DateTime.Now) continue;
+							if (program.EndTime < DateTime.Now) continue;
 							
               string strTime=String.Format("{0} {1} - {2}", 
                 program.StartTime.ToShortDateString() , 
