@@ -569,7 +569,7 @@ namespace MediaPortal
             presentParams.PresentationInterval = PresentInterval.Default;
             presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
-            presentParams.PresentFlag = PresentFlag.Video|PresentFlag.LockableBackBuffer;
+            presentParams.PresentFlag = PresentFlag.Video;//|PresentFlag.LockableBackBuffer;
             presentParams.DeviceWindow = ourRenderTarget;
             presentParams.Windowed=true;
             //presentParams.PresentationInterval = PresentInterval.Immediate;
@@ -586,7 +586,7 @@ namespace MediaPortal
             presentParams.PresentationInterval = Direct3D.PresentInterval.Default;
             presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
 						presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
-						presentParams.PresentFlag = PresentFlag.Video|PresentFlag.LockableBackBuffer;
+						presentParams.PresentFlag = PresentFlag.Video;//|PresentFlag.LockableBackBuffer;
             presentParams.DeviceWindow = this;
             presentParams.Windowed=false;
       }

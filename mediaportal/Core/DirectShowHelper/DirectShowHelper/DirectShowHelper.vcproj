@@ -194,6 +194,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\StreamBufferRecorder.cpp">
+			</File>
+			<File
 				RelativePath=".\udf.cpp">
 			</File>
 			<File
@@ -232,6 +235,9 @@
 				RelativePath=".\stdafx.h">
 			</File>
 			<File
+				RelativePath=".\StreamBufferRecorder.h">
+			</File>
+			<File
 				RelativePath=".\udf.h">
 			</File>
 			<File
@@ -250,6 +256,9 @@
 			</File>
 			<File
 				RelativePath=".\DVD.rgs">
+			</File>
+			<File
+				RelativePath=".\StreamBufferRecorder.rgs">
 			</File>
 			<File
 				RelativePath=".\VMR9Callback.rgs">

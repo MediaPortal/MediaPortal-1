@@ -45,6 +45,19 @@ interface IDVD : IDispatch{
 	[id(1), helpstring("method Reset")] HRESULT Reset([in] BSTR strPath);
 };
 [
+	object,
+	uuid(752D4561-E632-4328-8206-9FB5277D8096),
+	dual,
+	nonextensible,
+	helpstring("IStreamBufferRecorder Interface"),
+	pointer_default(unique)
+]
+interface IStreamBufferRecorder : IDispatch{
+	[id(1), helpstring("method Record")] HRESULT Create(IBaseFilter* streamBufferSink, [in] BSTR strPath,DWORD dwRecordingType);
+	[id(2), helpstring("method Record")] HRESULT Start(LONG startTime);
+	[id(3), helpstring("method Stop")] HRESULT Stop(void);
+};
+[
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),
 	version(1.0),
 	helpstring("DirectShowHelper 1.0 Type Library")
@@ -75,5 +88,13 @@ library DirectShowHelperLib
 	coclass DVD
 	{
 		[default] interface IDVD;
+	};
+	[
+		uuid(BBB2551F-E239-41CE-805A-651964BE143E),
+		helpstring("StreamBufferRecorder Class")
+	]
+	coclass StreamBufferRecorder
+	{
+		[default] interface IStreamBufferRecorder;
 	};
 };

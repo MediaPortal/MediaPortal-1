@@ -128,7 +128,6 @@ namespace MediaPortal.TV.Recording
 		IPin												m_DemuxAudioPin				= null;
 		IPin												m_pinStreamBufferIn0	= null;
 		IPin												m_pinStreamBufferIn1	= null;
-		IStreamBufferRecordControl	m_recControl					= null;
 		IStreamBufferSink						m_IStreamBufferSink		= null;
 		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		StreamBufferConfig					m_StreamBufferConfig	= null;
@@ -143,6 +142,8 @@ namespace MediaPortal.TV.Recording
 		bool												refreshPmtTable=false;
 		int                         pmtVersionNumber=-1;
 		protected bool							m_pluginsEnabled=false;
+		
+		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 #if DUMP
 		System.IO.FileStream fileout;
 #endif
@@ -685,10 +686,11 @@ namespace MediaPortal.TV.Recording
 
 //			UnAdviseProgramInfo();
 			
-			if (m_recControl!=null) 
+			if (m_recorder!=null) 
 			{
-				m_recControl.Stop(0);
-				Marshal.ReleaseComObject(m_recControl); m_recControl=null;
+				m_recorder.Stop();
+				m_recorder=null;
+				
 			}
 			if (objRecord!=null)
 				Marshal.ReleaseComObject(objRecord); objRecord=null;
@@ -812,37 +814,11 @@ namespace MediaPortal.TV.Recording
 			else 
 				iRecordingType = 1;										
 
-			IntPtr recorderObj;
 			try
 			{
-				//ask StreamBufferEngine to create a new recorder
-				if (m_IStreamBufferSink.CreateRecorder(strFileName, iRecordingType, out recorderObj) !=0 ) 
-					return false;
-				if (recorderObj == IntPtr.Zero) 
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create recorder");
-					return false;
-				}
+				m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
+				m_recorder.Create(m_IStreamBufferSink as DirectShowHelperLib.IBaseFilter,strFileName,iRecordingType);
 
-				//get IUnknown interface of new recorder
-				objRecord = Marshal.GetObjectForIUnknown(recorderObj);
-				if (objRecord == null) 
-				{
-				Marshal.Release(recorderObj);
-				Marshal.Release(recorderObj);
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
-					return false;
-				}
-	      
-				//now get the IStreamBufferRecordControl interface
-				m_recControl = objRecord as IStreamBufferRecordControl;			
-			Marshal.Release(recorderObj);
-				if (m_recControl == null) 
-				{
-				Marshal.ReleaseComObject(objRecord);
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
-					return false;
-				}
 				long lStartTime = 0;
 
 				// if we're making a reference recording
@@ -878,19 +854,8 @@ namespace MediaPortal.TV.Recording
 
 					lStartTime *= -10000000L;//in reference time 
 				}//if (!bContentRecording)
-				if (m_recControl.Start(ref lStartTime) != 0) 
-				{
-					//could not start recording...
-					if (lStartTime != 0)
-					{
-						// try recording from livepoint instead from the past
-						lStartTime = 0;
-						if (m_recControl.Start(ref lStartTime) != 0)
-							return false;
-					}
-					else
-						return false;
-				}
+				
+				m_recorder.Start((int)lStartTime);
 			}
 			finally
 			{
@@ -911,31 +876,10 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.Recording) return;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:stop recording...");
 
-			if (m_recControl!=null) 
+			if (m_recorder!=null) 
 			{
-				int hr=m_recControl.Stop(0);
-				Marshal.ReleaseComObject(m_recControl); 
-				Marshal.ReleaseComObject(m_recControl); 
-				Marshal.ReleaseComObject(m_recControl); 
-				m_recControl=null;
-				
-				Marshal.ReleaseComObject(objRecord);
-				Marshal.ReleaseComObject(objRecord);
-				Marshal.ReleaseComObject(objRecord);
-				objRecord=null;
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-				if (hr!=0) 
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
-					return;
-				}
+				m_recorder.Stop();
+				m_recorder=null;
 			}
 
 

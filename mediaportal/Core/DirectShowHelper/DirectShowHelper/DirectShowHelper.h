@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Tue Mar 15 21:03:30 2005
+/* at Sat Mar 19 08:51:40 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -63,6 +63,12 @@ typedef interface IDVD IDVD;
 #endif 	/* __IDVD_FWD_DEFINED__ */
 
 
+#ifndef __IStreamBufferRecorder_FWD_DEFINED__
+#define __IStreamBufferRecorder_FWD_DEFINED__
+typedef interface IStreamBufferRecorder IStreamBufferRecorder;
+#endif 	/* __IStreamBufferRecorder_FWD_DEFINED__ */
+
+
 #ifndef __VMR9Callback_FWD_DEFINED__
 #define __VMR9Callback_FWD_DEFINED__
 
@@ -97,6 +103,18 @@ typedef struct DVD DVD;
 #endif /* __cplusplus */
 
 #endif 	/* __DVD_FWD_DEFINED__ */
+
+
+#ifndef __StreamBufferRecorder_FWD_DEFINED__
+#define __StreamBufferRecorder_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class StreamBufferRecorder StreamBufferRecorder;
+#else
+typedef struct StreamBufferRecorder StreamBufferRecorder;
+#endif /* __cplusplus */
+
+#endif 	/* __StreamBufferRecorder_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -519,6 +537,185 @@ void __RPC_STUB IDVD_Reset_Stub(
 #endif 	/* __IDVD_INTERFACE_DEFINED__ */
 
 
+#ifndef __IStreamBufferRecorder_INTERFACE_DEFINED__
+#define __IStreamBufferRecorder_INTERFACE_DEFINED__
+
+/* interface IStreamBufferRecorder */
+/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IStreamBufferRecorder;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("752D4561-E632-4328-8206-9FB5277D8096")
+    IStreamBufferRecorder : public IDispatch
+    {
+    public:
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Create( 
+            IBaseFilter *streamBufferSink,
+            /* [in] */ BSTR strPath,
+            DWORD dwRecordingType) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Start( 
+            LONG startTime) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( void) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IStreamBufferRecorderVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IStreamBufferRecorder * This,
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IStreamBufferRecorder * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IStreamBufferRecorder * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IStreamBufferRecorder * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IStreamBufferRecorder * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IStreamBufferRecorder * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IStreamBufferRecorder * This,
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Create )( 
+            IStreamBufferRecorder * This,
+            IBaseFilter *streamBufferSink,
+            /* [in] */ BSTR strPath,
+            DWORD dwRecordingType);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Start )( 
+            IStreamBufferRecorder * This,
+            LONG startTime);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
+            IStreamBufferRecorder * This);
+        
+        END_INTERFACE
+    } IStreamBufferRecorderVtbl;
+
+    interface IStreamBufferRecorder
+    {
+        CONST_VTBL struct IStreamBufferRecorderVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IStreamBufferRecorder_QueryInterface(This,riid,ppvObject)	\
+    (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
+
+#define IStreamBufferRecorder_AddRef(This)	\
+    (This)->lpVtbl -> AddRef(This)
+
+#define IStreamBufferRecorder_Release(This)	\
+    (This)->lpVtbl -> Release(This)
+
+
+#define IStreamBufferRecorder_GetTypeInfoCount(This,pctinfo)	\
+    (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo)
+
+#define IStreamBufferRecorder_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo)
+
+#define IStreamBufferRecorder_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)
+
+#define IStreamBufferRecorder_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)
+
+
+#define IStreamBufferRecorder_Create(This,streamBufferSink,strPath,dwRecordingType)	\
+    (This)->lpVtbl -> Create(This,streamBufferSink,strPath,dwRecordingType)
+
+#define IStreamBufferRecorder_Start(This,startTime)	\
+    (This)->lpVtbl -> Start(This,startTime)
+
+#define IStreamBufferRecorder_Stop(This)	\
+    (This)->lpVtbl -> Stop(This)
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IStreamBufferRecorder_Create_Proxy( 
+    IStreamBufferRecorder * This,
+    IBaseFilter *streamBufferSink,
+    /* [in] */ BSTR strPath,
+    DWORD dwRecordingType);
+
+
+void __RPC_STUB IStreamBufferRecorder_Create_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IStreamBufferRecorder_Start_Proxy( 
+    IStreamBufferRecorder * This,
+    LONG startTime);
+
+
+void __RPC_STUB IStreamBufferRecorder_Start_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IStreamBufferRecorder_Stop_Proxy( 
+    IStreamBufferRecorder * This);
+
+
+void __RPC_STUB IStreamBufferRecorder_Stop_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+
+#endif 	/* __IStreamBufferRecorder_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __DirectShowHelperLib_LIBRARY_DEFINED__
 #define __DirectShowHelperLib_LIBRARY_DEFINED__
@@ -551,6 +748,14 @@ EXTERN_C const CLSID CLSID_DVD;
 
 class DECLSPEC_UUID("EA2F675F-E8A2-4C75-9B04-8A170B2AAC47")
 DVD;
+#endif
+
+EXTERN_C const CLSID CLSID_StreamBufferRecorder;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("BBB2551F-E239-41CE-805A-651964BE143E")
+StreamBufferRecorder;
 #endif
 #endif /* __DirectShowHelperLib_LIBRARY_DEFINED__ */
 

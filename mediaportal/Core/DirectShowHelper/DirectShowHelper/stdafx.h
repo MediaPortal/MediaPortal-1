@@ -61,6 +61,7 @@ using namespace ATL;
 #include <strsafe.h>
 #include <dshow.h>
 #include <vmr9.h>
+#include <sbe.h>
 #include <windows.h>
 
 #ifndef QI
