@@ -244,9 +244,12 @@ namespace MediaPortal.TV.Recording
 			}
 			
 
-			GUIWindow win=GUIWindowManager.GetWindow(7700);
-			if(win!=null)
-				win.SetObject(m_ttxt);
+			if(m_pluginsEnabled==true)
+			{
+				GUIWindow win=GUIWindowManager.GetWindow(7700);
+				if(win!=null)
+					win.SetObject(m_ttxt);
+			}
 
 			try
 			{
