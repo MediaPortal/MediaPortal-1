@@ -370,12 +370,12 @@ namespace MediaPortal.GUI.Library
       base.ReStorePosition();
     }
 
-    public override void Animate(Animator animator)
+    public override void Animate(long timePassed, Animator animator)
     {
-      if (m_ListView!=null) m_ListView.Animate(animator);
-      if (m_ThumbnailView!=null) m_ThumbnailView.Animate(animator);
-      if (m_FilmStripView!=null) m_FilmStripView.Animate(animator);
-      base.Animate(animator);
+      if (m_ListView!=null) m_ListView.Animate(timePassed, animator);
+      if (m_ThumbnailView!=null) m_ThumbnailView.Animate(timePassed,animator);
+      if (m_FilmStripView!=null) m_FilmStripView.Animate(timePassed,animator);
+      base.Animate(timePassed,animator);
     }
 		
 	}

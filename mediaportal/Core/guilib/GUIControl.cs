@@ -972,7 +972,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Method to get animate the current control
 		/// </summary>
-    public virtual void Animate(Animator animator)
+    public virtual void Animate(long timePassed,Animator animator)
     {
       m_bAnimating=true;
       int x=m_originalRect.X;
@@ -980,7 +980,7 @@ namespace MediaPortal.GUI.Library
       int w=m_originalRect.Width;
       int h=m_originalRect.Height;
 
-      animator.Animate(ref x, ref y, ref w, ref h);
+      animator.Animate( timePassed, ref x, ref y, ref w, ref h);
 
       m_dwPosX=x;
       m_dwPosY=y;

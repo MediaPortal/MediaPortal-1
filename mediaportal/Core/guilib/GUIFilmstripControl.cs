@@ -1949,13 +1949,13 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Method to get animate the current control
 		/// </summary>
-    public override void Animate(Animator animator)
+    public override void Animate(long timePassed,Animator animator)
     {
       if (animator==null) return;
-      if (m_infoImage!=null) m_infoImage.Animate(animator);
-      if (m_upDown!=null) m_upDown.Animate(animator);
-      if (m_backgroundImage!=null) m_backgroundImage.Animate(animator);
-      base.Animate(animator);
+      if (m_infoImage!=null) m_infoImage.Animate(timePassed,animator);
+      if (m_upDown!=null) m_upDown.Animate(timePassed,animator);
+      if (m_backgroundImage!=null) m_backgroundImage.Animate(timePassed,animator);
+      base.Animate(timePassed,animator);
     }
 
 

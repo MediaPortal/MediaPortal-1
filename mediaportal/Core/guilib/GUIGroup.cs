@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Library
             for (int i=0; i < m_Controls.Count;++i)
             {
               GUIControl cntl=m_Controls[i] as GUIControl;
-              if (cntl!=null) cntl.Animate(m_animator);
+              if (cntl!=null) cntl.Animate(timePassed,m_animator);
             }
           }
         }
@@ -235,13 +235,13 @@ namespace MediaPortal.GUI.Library
       base.ReStorePosition();
     }
 
-    public override void Animate(Animator animator)
+    public override void Animate(long timePassed,Animator animator)
     {
       for (int x = 0; x < m_Controls.Count; ++x)
       {
-        ((GUIControl)m_Controls[x]).Animate(animator);
+        ((GUIControl)m_Controls[x]).Animate(timePassed,animator);
       }
-      base.Animate(animator);
+      base.Animate(timePassed,animator);
     }
 
 		/// <summary>

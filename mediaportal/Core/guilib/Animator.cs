@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">y-coordinate of control</param>
 		/// <param name="width">width of control</param>
 		/// <param name="height">height of control</param>
-    public void Animate(ref int x, ref int y, ref int width, ref int height)
+    public void Animate(long timePassed,ref int x, ref int y, ref int width, ref int height)
     {
 			//if animation has ended, then just return
       if ( IsDone() ) return;
