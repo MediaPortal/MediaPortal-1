@@ -97,7 +97,6 @@ namespace MediaPortal
     protected System.Drawing.Size storedSize;
     private System.Windows.Forms.MenuItem mnuSetup;
     protected System.Drawing.Point storedLocation;
-    protected DateTime lMouseTimeOut;
     protected Rectangle   oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -744,7 +743,6 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
         GUIGraphicsContext.DX9Device.ShowCursor(true);
       }
-      m_bNeedUpdate=true;
 
     }
 
@@ -968,7 +966,7 @@ namespace MediaPortal
       }
 
       OnStartup();
-      lMouseTimeOut=DateTime.Now;
+
       
       while (mainWindow.Created && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
       {
@@ -984,12 +982,12 @@ namespace MediaPortal
           Cursor.Hide();
         if (m_bAutoHideMouse)
         {
-          TimeSpan ts=DateTime.Now-lMouseTimeOut;
+          TimeSpan ts=DateTime.Now-m_MouseTimeOut;
           if (ts.TotalSeconds>=3)
           {
             //hide mouse
             m_bShowCursor=false;
-            lMouseTimeOut=DateTime.Now;
+            m_MouseTimeOut=DateTime.Now;
           }
         }
       }
@@ -1251,7 +1249,6 @@ namespace MediaPortal
 
     private void D3DApp_Resize(object sender, System.EventArgs e)
     {
-      m_bNeedUpdate=true;
     }
 
 
@@ -1476,7 +1473,6 @@ namespace MediaPortal
       }
       active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized || this.Visible == false);
       base.OnResize(e);
-      m_bNeedUpdate=true;
     }
 
 
@@ -1538,13 +1534,11 @@ namespace MediaPortal
         lasty=e.Y;
         System.Windows.Forms.Cursor ourCursor = this.Cursor;
         m_bShowCursor=true;
-        lMouseTimeOut=DateTime.Now;
       }
 		}
 		protected virtual void mouseclick(MouseEventArgs e)
 		{
       //this.Text=String.Format("show click");
-      lMouseTimeOut=DateTime.Now;
       System.Windows.Forms.Cursor ourCursor = this.Cursor;
       m_bShowCursor=true;
     }

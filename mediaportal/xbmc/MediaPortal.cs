@@ -21,7 +21,7 @@ public class MediaPortalApp : D3DApp
 
     int       m_iLastMousePositionX=0;
     int       m_iLastMousePositionY=0;
-
+    bool      m_bLastTimePlaying=false;
     [STAThread]
     public static void Main()
     {
@@ -112,10 +112,6 @@ public class MediaPortalApp : D3DApp
       m_MouseTimeOut=DateTime.Now;
       System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
       GUIWindowManager.OnAppStarting();
-      //Clock = new Timer();
-      //Clock.Interval=50;
-      //Clock.Start();
-      //Clock.Tick+=new EventHandler(Timer_Tick);
 
     } 
     protected override void OnExit() 
@@ -131,7 +127,7 @@ public class MediaPortalApp : D3DApp
       if (GUIGraphicsContext.IsFullScreenVideo) return;
       if (GUIGraphicsContext.Calibrating) return;
       if (!GUIGraphicsContext.Overlay) return;
-      if (!Utils.IsVideo(g_Player.CurrentFile)) return;
+      if (Utils.IsAudio(g_Player.CurrentFile)) return;
       GUIWindow windowOverlay= (GUIWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
       if (null!=windowOverlay)
       {
@@ -168,14 +164,6 @@ public class MediaPortalApp : D3DApp
           return;
         }
       }
-      else
-      {
-        // force a refresh
-        if (GUIGraphicsContext.IsFullScreenVideo)
-        {
-          g_Player.PositionX = g_Player.PositionX+1;
-        }
-      }
       m_bNeedUpdate=false;
 
       GUIWindowManager.DispatchThreadMessages();
@@ -183,7 +171,6 @@ public class MediaPortalApp : D3DApp
 
       if (g_Player.Playing)
       {
-        SetVideoRect();
         GUIGraphicsContext.IsPlaying=true;
       }
       else
@@ -207,23 +194,8 @@ public class MediaPortalApp : D3DApp
         g_Player.Stop();
         deviceLost = true;
       }
-        
-      if (m_bAutoHideMouse) 
-      {
-        TimeSpan ts = DateTime.Now - m_MouseTimeOut;
-        if (ts.TotalSeconds>=3)
-        {
-          Cursor.Hide();
-        }
-        else
-        {
-          Cursor.Show();
-        }
-      }
-      else
-      {
-        Cursor.Show();
-      }
+      SetVideoRect();
+       
     }
 
     public void SetVideoRect()
@@ -232,11 +204,14 @@ public class MediaPortalApp : D3DApp
       if (!g_Player.HasVideo) return;
 
       g_Player.FullScreen=GUIGraphicsContext.IsFullScreenVideo;
-      g_Player.PositionX=GUIGraphicsContext.VideoWindow.Left;
-      g_Player.PositionY=GUIGraphicsContext.VideoWindow.Top;
-      g_Player.RenderWidth=GUIGraphicsContext.VideoWindow.Width;
-      g_Player.RenderHeight=GUIGraphicsContext.VideoWindow.Height;
-      g_Player.ARType=GUIGraphicsContext.ARType;
+      if (!g_Player.FullScreen)
+      {
+        g_Player.PositionX=GUIGraphicsContext.VideoWindow.Left;
+        g_Player.PositionY=GUIGraphicsContext.VideoWindow.Top;
+        g_Player.RenderWidth=GUIGraphicsContext.VideoWindow.Width;
+        g_Player.RenderHeight=GUIGraphicsContext.VideoWindow.Height;
+        g_Player.ARType=GUIGraphicsContext.ARType;
+      }
       g_Player.SetVideoWindow();
     }
 
@@ -312,6 +287,9 @@ public class MediaPortalApp : D3DApp
         GUIGraphicsContext.Load();
       }
       Log.Write(" done");
+      g_Player.PositionX++;
+      g_Player.PositionX--;
+      m_bNeedUpdate=true;
 		}
 
     void OnAction(Action action)
