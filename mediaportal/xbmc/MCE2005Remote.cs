@@ -186,6 +186,7 @@ namespace MediaPortal
     
     public void Init(IntPtr hwnd)
     {
+      if (RemoteFound) return;// already registered
 
       try
       {

@@ -547,6 +547,7 @@ namespace MediaPortal.GUI.Library
     static public void Clear()
     {
 			GUIGraphicsContext.Receivers -= new SendMessageHandler(SendMessage);
+      GUIGraphicsContext.OnNewAction  -= new OnActionHandler(OnActionReceived);
       for (int x=0; x < m_vecWindows.Count;++x)
       {
         ((GUIWindow)m_vecWindows[x]).DeInit();

@@ -12,9 +12,10 @@ namespace MediaPortal.GUI.Library
     static ArrayList _NonGUIPlugins = new ArrayList();
     static ArrayList _GUIPlugins = new ArrayList();
     static ArrayList _SetupForms = new ArrayList();
-	static ArrayList _Wakeables = new ArrayList();
+	  static ArrayList _Wakeables = new ArrayList();
 		static bool _Started=false;
-    
+    static bool windowPluginsLoaded=false;
+    static bool nonWindowPluginsLoaded=false;
     private PluginManager()
 		{
 		}
@@ -52,6 +53,9 @@ namespace MediaPortal.GUI.Library
 
     static public void Load()
     {
+      if (nonWindowPluginsLoaded) return;
+      nonWindowPluginsLoaded=true;
+      Log.Write("PlugInManager.Load()");
       System.IO.Directory.CreateDirectory(@"plugins");
       System.IO.Directory.CreateDirectory(@"plugins\process");
       string[] strFiles=System.IO.Directory.GetFiles(@"plugins\process", "*.dll");
@@ -62,6 +66,9 @@ namespace MediaPortal.GUI.Library
     }
     static public void LoadWindowPlugins()
     {
+      if (windowPluginsLoaded) return;
+      windowPluginsLoaded=true;
+      Log.Write("PlugInManager.LoadWindowPlugins()");
       System.IO.Directory.CreateDirectory(@"plugins");
       System.IO.Directory.CreateDirectory(@"plugins\windows");
       string [] strFiles=System.IO.Directory.GetFiles(@"plugins\windows", "*.dll");
@@ -75,6 +82,8 @@ namespace MediaPortal.GUI.Library
     static public void Start()
     {
       if (_Started) return;
+      
+      Log.Write("PlugInManager.Start()");
       foreach (IPlugin plugin in _NonGUIPlugins)
       {
         try
@@ -92,15 +101,22 @@ namespace MediaPortal.GUI.Library
     static public void Stop()
     {
       if (!_Started) return;
+      Log.Write("PlugInManager.Stop()");
       foreach (IPlugin plugin in _NonGUIPlugins)
       {
         plugin.Stop();
       }
+      _Started=false;
     }
     static public void Clear()
     {
+      Log.Write("PlugInManager.Clear()");
       PluginManager.Stop();
       _NonGUIPlugins.Clear();
+      WakeablePlugins.Clear();
+      GUIPlugins.Clear();
+      windowPluginsLoaded=false;
+      nonWindowPluginsLoaded=false;
     }
 
     static bool MyInterfaceFilter(Type typeObj,Object criteriaObj)
