@@ -450,6 +450,7 @@ namespace MediaPortal.TV.Database
 				  }
 			  }
 			  TVDatabase.CommitTransaction();
+				TVDatabase.RemoveOverlappingPrograms();
 			  Programs.Clear();
 			  Programs=null;
 			  xml=null;

@@ -1395,28 +1395,26 @@ namespace MediaPortal.TV.Database
         }
         return "";
       }
-		
 	  }
+
+		/// <summary>
+		/// RemoveOldPrograms()
+		/// Deletes all tv programs from the database which ended more then 1 day ago
+		/// suppose its now 10 november 2004 11:07 am
+		/// then this function will remove all programs which endtime is before 9 november 2004 11:07
+		/// </summary>
     static public void RemoveOldPrograms()
 	  {
       lock (typeof(TVDatabase))
       {
         //delete programs from database that are more than 1 day old
         try
-        {
-  			  
+        { 
           string strSQL;
-          strSQL=String.Format("select * from program");
-          SQLiteResultSet results;
-          results=m_db.Execute(strSQL);
-          if (results.Rows.Count> 0)
-          {
-            System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
-            long longYesterday = Utils.datetolong(yesterday);
-            strSQL=String.Format("DELETE FROM program WHERE iEndTime < {0}",longYesterday);
-            m_db.Execute(strSQL);
-            //          m_db.Execute("VACUUM"); //seems to raise execption, don't know why?
-          }
+          System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
+          long longYesterday = Utils.datetolong(yesterday);
+          strSQL=String.Format("DELETE FROM program WHERE iEndTime < {0}",longYesterday);
+          m_db.Execute(strSQL);
         }
         catch(SQLiteException ex)
         {
@@ -1425,8 +1423,14 @@ namespace MediaPortal.TV.Database
         return;
       }
 		}
-    static public void OffsetProgramsByHour(int Hours)
-    {
+
+		/// <summary>
+		/// GetAllPrograms() returns all tv programs found in the database ordered by channel,starttime
+		/// </summary>
+		/// <param name="programs">Arraylist containing TVProgram instances</param>
+		static public void GetAllPrograms(out ArrayList programs)
+		{
+			programs = new ArrayList();
       lock (typeof(TVDatabase))
       {
         try
@@ -1434,22 +1438,48 @@ namespace MediaPortal.TV.Database
           //get all programs
           if (null==m_db) return ;
 
-          ArrayList programs =new ArrayList();
           SQLiteResultSet results;
-          results=m_db.Execute("select * from program");
+          results=m_db.Execute("select * from program,channel,genre where program.idGenre=genre.idGenre and program.idChannel = channel.idChannel order by program.idChannel, program.iStartTime");
           if (results.Rows.Count== 0) return ;
           for (int i=0; i < results.Rows.Count;++i)
           {
-            long iStart=Int64.Parse(Get(results,i,"iStartTime"));
-            long iEnd=Int64.Parse(Get(results,i,"iEndTime"));
+            long iStart=Int64.Parse(Get(results,i,"program.iStartTime"));
+            long iEnd=Int64.Parse(Get(results,i,"program.iEndTime"));
             TVProgram prog=new TVProgram();
             prog.Start=iStart;
             prog.End=iEnd;
-            prog.ID=Int32.Parse(Get(results,i,"idProgram"));
+            prog.ID=Int32.Parse(Get(results,i,"program.idProgram"));
+
+						prog.Channel=Get(results,i,"channel.strChannel");
+						prog.Genre=Get(results,i,"genre.strGenre");
+						prog.Title=Get(results,i,"program.strTitle");
+						prog.Description=Get(results,i,"program.strDescription");
+						prog.Episode=Get(results,i,"program.strEpisodeName");
+						prog.Repeat=Get(results,i,"program.strRepeat");
             programs.Add(prog);
           }
+				}
+				catch(SQLiteException ex)
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
 
-          //correct time offsets
+		/// <summary>
+		/// OffsetProgramsByHour() will correct the start/end time of all programs in the tvdatabase
+		/// </summary>
+		/// <param name="Hours">Number of hours to correct (can be positive or negative)</param>
+		static public void OffsetProgramsByHour(int Hours)
+    {
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					ArrayList programs;
+					GetAllPrograms(out programs);
+
+					//correct time offsets
           foreach (TVProgram program in programs)
           {
             DateTime dtStart=program.StartTime;
@@ -1463,10 +1493,6 @@ namespace MediaPortal.TV.Database
                                       program.Start, program.End, program.ID);
             m_db.Execute(sql);
           }
-
-
-
-
         }
         catch(SQLiteException ex)
         {
@@ -1475,5 +1501,54 @@ namespace MediaPortal.TV.Database
       }
     }
 
+		/// <summary>
+		/// This function will check all tv programs in the database and
+		/// will remove any overlapping programs
+		/// An overlapping program is a tv program which overlaps with another tv program in time
+		/// for example 
+		///   program A on MTV runs from 20.00-21.00 on 1 november 2004
+		///   program B on MTV runs from 20.55-22.00 on 1 november 2004
+		///   this case, program B will be removed
+		/// </summary>
+		static public void RemoveOverlappingPrograms()
+		{
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					//first get a list of all tv channels
+					ArrayList channels = new ArrayList();
+					GetChannels(ref channels);
+
+					long endTime=Utils.datetolong( new DateTime(2100,1,1,0,0,0,0));
+					foreach (TVChannel channel in channels)
+					{
+						// for each tv channel get all programs
+						ArrayList programs = new ArrayList();
+						GetProgramsPerChannel(channel.Name, 0, endTime, ref programs);
+
+						long previousEnd  =0;
+						long previousStart=0;
+						foreach (TVProgram program in programs)
+						{
+							bool overlap=false;
+							if (previousEnd > program.Start) overlap=true;
+							if (overlap)
+							{
+								//remove this program
+								string sql=String.Format("delete from program where idProgram={0}",program.ID);
+								m_db.Execute(sql);
+							}
+							previousEnd  = program.End;
+							previousStart= program.Start;
+						}
+					}
+				}
+				catch(SQLiteException ex)
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
   }
 }

@@ -163,7 +163,12 @@ namespace DShowNET
     {
       get { return m_bRendered;}
     }
-    
+
+    /// <summary>
+    /// StopViewing() 
+    /// If we're currently in viewing mode 
+    /// then we just close the overlay window and stop the graph
+    /// </summary>
     public void StopViewing()
     {
       if (m_bRendered) 
@@ -184,15 +189,25 @@ namespace DShowNET
       }
     }
     
+		/// <summary>
+		/// StartViewing()
+		/// Will start the graph and create a new overlay window to show the live-tv in
+		/// </summary>
+		/// <param name="windowHandle">handle to parent window</param>
     public void StartViewing(IntPtr windowHandle)
     {
+			// if the video window already has been created, but is hidden right now
+			// then just show it and start the graph
       if (m_bRendered) 
       {
         m_bOverlayVisible=true;
         DirectShowUtil.DebugWrite("mpeg2:StartViewing()");
+
+				//show video overlay window
         if (m_videoWindow!=null)
           m_videoWindow.put_Visible( DsHlp.OATRUE );
 
+				// start graph
         if (m_mediaControl!=null)
         {
           DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
@@ -203,7 +218,10 @@ namespace DShowNET
         return;
       }
 
+			// video window has not been created yet, so create it
       DirectShowUtil.DebugWrite("mpeg2:StartViewing()");
+
+			//render the video output. This will create the overlay render filter
       int hr=m_graphBuilder.Render(m_pinVideoOut);
       if (hr==0) 
         DirectShowUtil.DebugWrite("mpeg2:demux video out connected ");
@@ -211,16 +229,19 @@ namespace DShowNET
         DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux video out:0x{0:X}",hr);
 
       
-      hr=m_graphBuilder.Render(m_pinAudioOut);
+			//render the audio output pin, this will create the audio renderer which plays the audio part
+			hr=m_graphBuilder.Render(m_pinAudioOut);
       if (hr==0) 
         DirectShowUtil.DebugWrite("mpeg2:demux audio out connected ");
       else
         DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 
-      m_videoWindow = m_graphBuilder as IVideoWindow;
+      // get the interfaces of the overlay window
+			m_videoWindow = m_graphBuilder as IVideoWindow;
       m_basicVideo  = m_graphBuilder as IBasicVideo2;
       if (m_videoWindow!=null)
       {
+				// set the properties of the overlay window
         hr = m_videoWindow.put_Owner( windowHandle );
         if( hr != 0 ) 
           DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window:0x{0:X}",hr);
@@ -229,6 +250,7 @@ namespace DShowNET
         if( hr != 0 ) 
           DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window style:0x{0:X}",hr);
 
+				// make the overlay window visible
         m_bOverlayVisible=true;
         hr = m_videoWindow.put_Visible( DsHlp.OATRUE );
         if( hr != 0 ) 
@@ -239,6 +261,7 @@ namespace DShowNET
         DirectShowUtil.DebugWrite("mpeg2:FAILED:could not get IVideoWindow");
       }
 
+			// start the graph so we actually get to see the video
       m_bRendered=true;
       if (m_mediaControl != null)
       {
@@ -249,8 +272,16 @@ namespace DShowNET
       }
     }
 
+		/// <summary>
+		/// Returns the width/height of the live tv
+		/// </summary>
+		/// <param name="iWidth">width in pixels of the live tv</param>
+		/// <param name="iHeight">height in pixels of the live tv</param>
     public void GetVideoSize(out int iWidth, out int iHeight)
     {
+			iWidth=0;
+			iHeight =0;
+			if (m_basicVideo==null) return;
       m_basicVideo.GetVideoSize( out iWidth, out iHeight );
     }
 
@@ -445,8 +476,7 @@ namespace DShowNET
 
     void Create()
     {
-      DirectShowUtil.DebugWrite("mpeg2:Create()");
-      DirectShowUtil.DebugWrite("mpeg2:add demux to graph");
+      DirectShowUtil.DebugWrite("mpeg2:add new MPEG2 Demultiplexer to graph");
       try
       {
         m_MPEG2Demuxer=new MPEG2Demultiplexer();
@@ -520,14 +550,15 @@ namespace DShowNET
       mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mpegAudioOut.formatPtr,mpegAudioOut.formatSize) ;
       
-      hr = m_demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_pinVideoOut);
+			DirectShowUtil.DebugWrite("mpeg2:create video out pin on MPEG2 demuxer");
+			hr = m_demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_pinVideoOut);
       if (hr!=0)
       {
         DirectShowUtil.DebugWrite("mpeg2:FAILED to create videout pin:0x{0:X}",hr);
         return;
       }
 
-      DirectShowUtil.DebugWrite("mpeg2:create audio out pin");
+      DirectShowUtil.DebugWrite("mpeg2:create audio out pin on MPEG2 demuxer");
       hr = m_demuxer.CreateOutputPin(ref mpegAudioOut, "audio", out m_pinAudioOut);
       if (hr!=0)
       {
@@ -539,12 +570,12 @@ namespace DShowNET
       //  Marshal.FreeCoTaskMem(mpegVideoOut.formatPtr);
 
 
-      DirectShowUtil.DebugWrite("mpeg2:find input pin");
+      DirectShowUtil.DebugWrite("mpeg2:find MPEG2 demuxer input pin");
       m_pinInput=DirectShowUtil.FindPinNr(m_mpeg2Multiplexer,PinDirection.Input,0);
       if (m_pinInput!=null)
-        DirectShowUtil.DebugWrite("mpeg2:found input pin");
+        DirectShowUtil.DebugWrite("mpeg2:found MPEG2 demuxer input pin");
       else
-        DirectShowUtil.DebugWrite("mpeg2:FAILED finding input pin");
+        DirectShowUtil.DebugWrite("mpeg2:FAILED finding MPEG2 demuxer input pin");
       
       m_bRunning=false;
       m_mediaControl = m_graphBuilder as IMediaControl;
@@ -557,20 +588,21 @@ namespace DShowNET
     public void CreateMappings()
     {
       IMPEG2StreamIdMap pStreamId;
-      DirectShowUtil.DebugWrite("mpeg2:map stream 0xe0->video");
+      DirectShowUtil.DebugWrite("mpeg2:MPEG2 demuxer map MPG stream 0xe0->video output pin");
       pStreamId = (IMPEG2StreamIdMap) m_pinVideoOut;
       int hr = pStreamId.MapStreamId(224, 1 ,0,0); // hr := pStreamId.MapStreamId( 224, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
       if (hr!=0)
         DirectShowUtil.DebugWrite("mpeg2:FAILED to map stream 0xe0->video:0x{0:X}",hr);
       else
-        DirectShowUtil.DebugWrite("mpeg2:stream 0xe0->video mapped");
+        DirectShowUtil.DebugWrite("mpeg2:mapped MPEG2 demuxer stream 0xe0->video output ");
 
+			DirectShowUtil.DebugWrite("mpeg2:MPEG2 demuxer map MPG stream 0xc0->audio output pin");
       pStreamId = (IMPEG2StreamIdMap) m_pinAudioOut;
       hr = pStreamId.MapStreamId(0xC0, 1 ,0,0); // hr := pStreamId.MapStreamId( 0xC0, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
       if (hr!=0)
         DirectShowUtil.DebugWrite("mpeg2:FAILED to map stream 0xc0->audio:0x{0:X}",hr);
       else
-        DirectShowUtil.DebugWrite("mpeg2:stream 0xc0->audio mapped");
+        DirectShowUtil.DebugWrite("mpeg2:mapped MPEG2 demuxer stream 0xc0->audio output");
     }
 
     void CreateSBESink()

@@ -29,6 +29,28 @@
 			<label>646</label>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
+		</control>	
+		<control>
+			<description>Date</description>
+			<type>label</type>
+			<id>200</id>
+			<posX>690</posX>
+			<posY>30</posY>
+			<label>#date</label>
+			<align>right</align>
+			<font>font13</font>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
+			<description>Time</description>
+			<type>label</type>
+			<id>201</id>
+			<posX>690</posX>
+			<posY>50</posY>
+			<label>#time</label>
+			<align>right</align>
+			<font>font13</font>
+			<textcolor>ffa9d0f7</textcolor>
 		</control>
 		<control>
 			<description>Number of Files Label</description>

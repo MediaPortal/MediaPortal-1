@@ -48,6 +48,8 @@ namespace MediaPortal.GUI.Library
     DateTime                        m_AnimationTime=DateTime.MinValue;
     bool                            ContainsProperty=false;
     StateBlock                      savedStateBlock;
+		Sprite													imageSprite=null;
+
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
 		}
@@ -305,6 +307,8 @@ namespace MediaPortal.GUI.Library
 		public override void AllocResources()
 		{
       CreateStateBlock();
+			imageSprite = new Sprite(GUIGraphicsContext.DX9Device);
+
       g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
 			if (m_strFileName=="-") return;
 
@@ -344,6 +348,11 @@ namespace MediaPortal.GUI.Library
 		{
       lock (this)
       {
+				if (imageSprite!=null)
+				{
+					imageSprite .Dispose();
+					imageSprite =null;
+				}
         m_strTextureFileName="";
         if (m_vbBuffer!=null)
         {
@@ -470,9 +479,13 @@ namespace MediaPortal.GUI.Library
         y += ((((float)m_dwHeight)-nh)/2.0f); 
       }
 
-      int iXOffset=(int)(m_iBitmap*m_dwWidth);
+			// x-offset in texture
       float uoffs = ((float)(m_iBitmap * m_dwWidth)) / ((float)m_iImageWidth);
+
+			// width copied from texture
       float u = ((float)m_iTextureWidth)  / ((float)m_iImageWidth);
+
+			// height copied from texture
       float v = ((float)m_iTextureHeight) / ((float)m_iImageHeight);
 
       CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0);
@@ -497,7 +510,7 @@ namespace MediaPortal.GUI.Library
       verts[3].Tv = 0.0f;
       m_vbBuffer.Unlock();
        
-			// update the destination rectangle
+
       m_destRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
 		}
 
@@ -624,9 +637,11 @@ namespace MediaPortal.GUI.Library
         {
           CreateStateBlock();
         }
+
         if (savedStateBlock!=null)
         {
           savedStateBlock.Apply();
+
           GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
           GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
           GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;

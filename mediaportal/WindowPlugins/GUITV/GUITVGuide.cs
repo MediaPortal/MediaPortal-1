@@ -1625,13 +1625,16 @@ namespace MediaPortal.GUI.TV
         pDlgOK.SetHeading(606);
         pDlgOK.SetLine(1,strChannels+ " "+strPrograms);
         pDlgOK.SetLine(2,import.ImportStats.StartTime.ToShortDateString() + " - " + import.ImportStats.EndTime.ToShortDateString());
-        if (!bSucceeded)
-        {
-          pDlgOK.SetLine(1,608);
-          pDlgOK.SetLine(2,import.ErrorMessage);
-        }
-        else
-          pDlgOK.SetHeading(609);
+				if (!bSucceeded)
+				{
+					pDlgOK.SetLine(1,608);
+					pDlgOK.SetLine(2,import.ErrorMessage);
+				}
+				else
+				{
+					pDlgOK.SetHeading(606);
+					pDlgOK.SetLine(1,609);
+				}
         pDlgOK.DoModal(GetID);
 			}
 			m_iCursorX=0;

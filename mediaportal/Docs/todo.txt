@@ -7,8 +7,8 @@ Frodo's priority list:
   -). find a clean way for multiple threads to access MP's core
   -). Pressing play when fast FF/RW recordings/video should reset to 1x = normal play.
   -). add support for wireless keyboards
-  -). show actual time in scheduled&recordings
-  
+  -). better volume control
+    
 MSN Messenger:
     - add support for wireless keyboards
       

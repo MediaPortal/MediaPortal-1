@@ -89,6 +89,7 @@ namespace MediaPortal.TV.Recording
     public virtual bool CreateGraph()
     {
       if (m_graphState!=State.None) return false;
+			DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
       GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
       m_bFirstTune=true;
@@ -167,6 +168,8 @@ namespace MediaPortal.TV.Recording
       {
         DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found");
       }
+			else
+				DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() TV tuner found");
 
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
@@ -298,6 +301,8 @@ namespace MediaPortal.TV.Recording
     {
       if (m_videoCaptureDevice==null) return;
       if (m_mpeg2Demux.IsRendered) return;
+			DirectShowUtil.DebugWrite("SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
+
       // connect video capture pin->mpeg2 demux input
       if (!m_videoCaptureDevice.IsMCEDevice)
       {
@@ -308,14 +313,14 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
-      DirectShowUtil.DebugWrite("SinkGraph:find mpeg2 demux input pin");
+      DirectShowUtil.DebugWrite("SinkGraph:find MPEG2 demuxer input pin");
       IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
       if (pinIn!=null) 
       {
-        DirectShowUtil.DebugWrite("SinkGraph:found mpeg2 demux input pin");
+        DirectShowUtil.DebugWrite("SinkGraph:found MPEG2 demuxer input pin");
         int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
         if (hr==0)
-          DirectShowUtil.DebugWrite("SinkGraph:connected video capture->mpeg2 demuxer");
+          DirectShowUtil.DebugWrite("SinkGraph:connected video capture out->MPEG2 demuxer input");
         else
           DirectShowUtil.DebugWrite("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
       }
@@ -506,7 +511,7 @@ namespace MediaPortal.TV.Recording
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
+        DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) ,true);
       }
       m_iPrevChannel=iChannel;
       m_StartTime=DateTime.Now;

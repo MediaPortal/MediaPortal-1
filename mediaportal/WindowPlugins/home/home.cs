@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Home
 		const int			MAX_FRAMES=9;
     bool          m_bTopBar=false;
 		int[]         m_iButtonIds = new int[50];
-    DateTime      m_updateTimer=DateTime.Now;
+    DateTime      m_updateTimer=DateTime.MinValue;
     int           m_iMaxHeight;    
     int           m_iMaxWidth ;    
     int           m_iStartXoff;    
@@ -453,14 +453,6 @@ namespace MediaPortal.GUI.Home
 		/// </summary>
 		public override void Render()
 		{
-			// Set the date
-			TimeSpan ts=DateTime.Now-m_updateTimer;
-			if (ts.TotalSeconds>=60)
-			{
-				m_updateTimer=DateTime.Now;
-				GUIControl.SetControlLabel(GetID, 200,GetDate());
-				GUIControl.SetControlLabel(GetID, 201,GetTime());
-			}
 
 			if (m_eState!=State.Idle)
 			{
@@ -953,5 +945,16 @@ namespace MediaPortal.GUI.Home
       if (m_bTopBar) return;
       GUIControl.FocusControl(iWindowID,iControlId);
     }
+		public override void Process()
+		{
+			// Set the date & time
+			if (DateTime.Now.Minute != m_updateTimer.Minute)
+			{
+				m_updateTimer=DateTime.Now;
+				GUIPropertyManager.SetProperty("#date", GetDate());
+				GUIPropertyManager.SetProperty("#time", GetTime());
+			}
+		}
+
 	}
 }
