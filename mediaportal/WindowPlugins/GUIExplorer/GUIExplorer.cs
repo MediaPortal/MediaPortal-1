@@ -115,33 +115,27 @@ namespace MediaPortal.GUI.GUIExplorer
 					int iControl=message.SenderControlId;
 					if (iControl==(int)Controls.CONTROL_SELECT_SOURCE) 
 					{
-						if (currentState==States.STATE_MAIN) 
-						{
-							GUIControl.EnableControl(GetID,(int)Controls.CONTROL_SELECT_DEST);
-							GUIControl.DisableControl(GetID,(int)Controls.CONTROL_SELECT_SOURCE);
-							currentState=States.STATE_SELECT_SOURCE;
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
-							GUIPropertyManager.SetProperty("#explorer_title",GUILocalizeStrings.Get(2201));
-							LoadDriveListControl(true);
-							currentFolder="";
-							actSize=0;
-						} 
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_SELECT_DEST);
+						//GUIControl.DisableControl(GetID,(int)Controls.CONTROL_SELECT_SOURCE);
+						currentState=States.STATE_SELECT_SOURCE;
+						GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
+						GUIPropertyManager.SetProperty("#explorer_title",GUILocalizeStrings.Get(2201));
+						LoadDriveListControl(true);
+						currentFolder="";
+						actSize=0;
 						return true;
 					}
 					if (iControl==(int)Controls.CONTROL_SELECT_DEST)
 					{
-						if (currentState==States.STATE_SELECT_SOURCE) 
-						{
-							GUIControl.EnableControl(GetID,(int)Controls.CONTROL_COPY);
-							GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_DIR);
-							GUIControl.DisableControl(GetID,(int)Controls.CONTROL_SELECT_DEST);
-							currentState=States.STATE_SELECT_DEST;
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
-							GUIPropertyManager.SetProperty("#explorer_title",GUILocalizeStrings.Get(2202));
-							LoadDriveListControl(false);
-							currentFolder="";
-							actSize=0;
-						} 
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_COPY);
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_DIR);
+						//GUIControl.DisableControl(GetID,(int)Controls.CONTROL_SELECT_DEST);
+						currentState=States.STATE_SELECT_DEST;
+						GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
+						GUIPropertyManager.SetProperty("#explorer_title",GUILocalizeStrings.Get(2202));
+						LoadDriveListControl(false);
+						currentFolder="";
+						actSize=0;
 						return true;
 					}
 					if (iControl==(int)Controls.CONTROL_COPY) // copy data
@@ -283,20 +277,24 @@ namespace MediaPortal.GUI.GUIExplorer
 						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM) 
 						{
 							GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST_DIR );
-							if (item.Label.StartsWith("\\.."))  // go back folder
+							if (item.Label.StartsWith(".."))  // go back folder
 							{ 
-								currentFolder=BackFolder(currentFolder);
-								LoadListControl(currentFolder,currentExt);
+								if (item.Path=="") 
+									LoadDriveListControl(true);
+								else
+									LoadListControl(item.Path,currentExt);
 							} 
-							else if (item.Label.StartsWith("\\"))  // is a folder
+							else if (item.IsFolder)  // is a folder
 							{ 
-								currentFolder=currentFolder+item.Label;
-								LoadListControl(currentFolder,currentExt);
+								LoadListControl(item.Path,currentExt);
 							} 
 							else if (item.Label.Substring(1,1)==":")  // is a drive
 							{ 
 								currentFolder=item.Label;
-								LoadListControl(currentFolder,currentExt);
+								if (currentFolder!=String.Empty)
+									LoadListControl(currentFolder,currentExt);
+								else
+									LoadDriveListControl(true);
 							} 
 							else 
 							{
@@ -337,6 +335,7 @@ namespace MediaPortal.GUI.GUIExplorer
 		private void LoadListControl(string folder,ArrayList Exts) 
 		{	
 			//clear the list
+			folder=Utils.RemoveTrailingSlash(folder);
 			file f = new file();
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
 			VirtualDirectory Directory;
@@ -350,6 +349,8 @@ namespace MediaPortal.GUI.GUIExplorer
 				if(!item.IsFolder) 
 				{
 					GUIListItem pItem = new GUIListItem(item.FileInfo.Name);
+					pItem.IsFolder=false;
+					pItem.Path=String.Format(@"{0}\{1}", folder,item.FileInfo.Name);
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 					f.name=item.FileInfo.Name;
 					f.size=item.FileInfo.Length;
@@ -357,16 +358,29 @@ namespace MediaPortal.GUI.GUIExplorer
 				} 
 				else 
 				{
-					GUIListItem pItem = new GUIListItem("\\"+item.Label);
+					GUIListItem pItem = new GUIListItem(item.Label);
+					pItem.IsFolder=true;
+					pItem.Path=String.Format(@"{0}\{1}", folder,item.Label);
+					if (item.Label=="..")
+					{
+							string prevFolder="";
+							int pos=folder.LastIndexOf(@"\");
+							if (pos>=0) prevFolder=folder.Substring(0,pos);
+							pItem.Path=prevFolder;
+					}
+					Utils.SetDefaultIcons(pItem);
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 				}
 			}
 			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+
+			currentFolder=folder;
 		}
 
 		private void LoadDriveListControl(bool cd) 
 		{	
+			currentFolder="";
 			//clear the list
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
 			if (cd==true) 
@@ -374,6 +388,9 @@ namespace MediaPortal.GUI.GUIExplorer
 				for (int i=0; i<driveCdCount; i++) 
 				{
 					GUIListItem pItem = new GUIListItem(drivesCd[i]);
+					pItem.Path=drives[i];
+					pItem.IsFolder=true;
+					Utils.SetDefaultIcons(pItem);
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 				}
 			} 
@@ -382,6 +399,9 @@ namespace MediaPortal.GUI.GUIExplorer
 				for (int i=0; i<driveCount; i++) 
 				{
 					GUIListItem pItem = new GUIListItem(drives[i]);
+					pItem.Path=drives[i];
+					pItem.IsFolder=true;
+					Utils.SetDefaultIcons(pItem);
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 				}
 			}
@@ -389,19 +409,6 @@ namespace MediaPortal.GUI.GUIExplorer
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 		}
 		
-
-		private string BackFolder(string txt) 
-		{
-			int n=txt.LastIndexOf("\\");
-			if (n>1) 
-			{
-				return txt.Substring(0,n);
-			} 
-			else 
-			{
-				return txt;
-			}
-		}
 
 		/// <summary>
 		/// calculate KB,MB and GB View
