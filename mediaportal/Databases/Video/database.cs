@@ -868,6 +868,7 @@ namespace MediaPortal.Video.Database
       int lMovieId=GetMovie(strFilenameAndPath,false);
       if (lMovieId<0) return -1;
 
+			if (!HasMovieInfo(strFilenameAndPath)) return -1;
       GetMovieInfoById(lMovieId, ref details);
       return lMovieId;
     }
