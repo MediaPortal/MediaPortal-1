@@ -15,17 +15,23 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 	/// <summary>Metadata editor for DVR-MS files.</summary>
 	public  class DvrmsMetadataEditor : MetadataEditor
 	{
-		IStreamBufferRecordingAttribute _editor;
+		IStreamBufferRecordingAttribute _editor=null;
 
 		/// <summary>Initializes the editor.</summary>
 		/// <param name="filepath">The path to the file.</param>
 		public DvrmsMetadataEditor(string filepath) : base()
 		{
-			IFileSourceFilter sourceFilter = (IFileSourceFilter)ClassId.CoCreateInstance(ClassId.RecordingAttributes);
+			IFileSourceFilter sourceFilter = ClassId.CoCreateInstance(ClassId.RecordingAttributes) as IFileSourceFilter;
+			if (sourceFilter==null)
+			{
+				Log.WriteFile(Log.LogType.Recorder,true,"Unable to create IFileSourceFilter");
+				return;
+			}
 			int hr=sourceFilter.Load(filepath, IntPtr.Zero);
 			if (hr!=0)
 			{
 				Log.WriteFile(Log.LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
+				return;
 			}
 			_editor = (IStreamBufferRecordingAttribute)sourceFilter;
 		}
