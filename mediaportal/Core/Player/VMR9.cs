@@ -173,8 +173,7 @@ namespace MediaPortal.Player
 		/// </summary>
 		public void Repaint()
 		{
-			if (!UseVMR9inMYTV) return;
-			if (VMR9Filter==null) return;
+			if (m_scene==null||VMR9Filter==null) return;
 			m_scene.Repaint();
 		}
 

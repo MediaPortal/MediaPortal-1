@@ -70,8 +70,10 @@ namespace MediaPortal.Player
 		float							_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
 		VertexBuffer			m_vertexBuffer;
 		uint              m_surfAdr,m_texAdr;
+		bool							m_repaint;
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
+			m_repaint=false;
 			m_surfAdr=0;
 			m_texAdr=0;
 			m_vmr9Util=util;
@@ -420,8 +422,10 @@ namespace MediaPortal.Player
 					GUIGraphicsContext.DX9Device.EndScene();
 					GUIGraphicsContext.DX9Device.Present();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					Log.WriteFile(Log.LogType.Log,true,"Unhandled exception in {0} {1} {2}",
+						ex.Message,ex.Source,ex.StackTrace);
 				}
 				finally
 				{
@@ -538,8 +542,10 @@ namespace MediaPortal.Player
 					GUIGraphicsContext.DX9Device.EndScene();
 					GUIGraphicsContext.DX9Device.Present();
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+					Log.WriteFile(Log.LogType.Log,true,"Unhandled exception in {0} {1} {2}",
+						ex.Message,ex.Source,ex.StackTrace);
 				}
 				finally
 				{
@@ -551,6 +557,7 @@ namespace MediaPortal.Player
 
 		void DrawTexture(uint texAddr, float fx,float fy,float nw,float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
 		{
+			if (texAddr==0) return;
 			CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vertexBuffer.Lock(0,0); // Lock the buffer (which will return our structs)
 			verts[0].X=fx- 0.5f; verts[0].Y=fy+nh- 0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f ;
 			verts[0].Color = (int)lColorDiffuse;
@@ -593,12 +600,14 @@ namespace MediaPortal.Player
 
 				// unset the texture and palette or the texture caching crashes because the runtime still has a reference
 				GUIGraphicsContext.DX9Device.SetTexture( 0, null);
-				m_vmr9Util.FrameCounter++;
+				if (!m_repaint) m_vmr9Util.FrameCounter++;
 			}
 		}
 
 		void DrawSurface(uint texAddr, float fx,float fy,float nw,float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
 		{
+			
+			if (texAddr==0) return;
 			unsafe
 			{
 				GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable,false);
@@ -606,19 +615,36 @@ namespace MediaPortal.Player
 				FontEngineDrawSurface(rSource.Left,rSource.Top,rSource.Width,rSource.Height,
 															rDest.Left,rDest.Top,rDest.Width,rDest.Height,
 																ptr.ToPointer());
-				m_vmr9Util.FrameCounter++;
+				if (!m_repaint) m_vmr9Util.FrameCounter++;
 			}
 		}
 
 		public void Repaint()
 		{
-			if (m_texAdr!=0)
+			try
 			{
-				PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,m_texAdr);
+				m_repaint=true;
+				if (m_texAdr!=0)
+				{
+					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,m_texAdr);
+				}
+				else if (m_surfAdr!=0)
+				{
+					PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,m_surfAdr);
+				}
+				else
+				{
+					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,0);
+				}
 			}
-			else if (m_surfAdr!=0)
+			catch(Exception ex)
 			{
-				PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,m_surfAdr);
+				Log.WriteFile(Log.LogType.Log,true,"Unhandled exception in {0} {1} {2}",
+						ex.Message,ex.Source,ex.StackTrace);
+			}
+			finally
+			{
+				m_repaint=false;
 			}
 		}
 		#endregion
