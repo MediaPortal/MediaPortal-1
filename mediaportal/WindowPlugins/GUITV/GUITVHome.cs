@@ -177,8 +177,11 @@ namespace MediaPortal.GUI.TV
 					TVDatabase.GetRecordings(ref m_recordings);
 					if (g_Player.Playing && !g_Player.IsTV)
 					{
-						Log.Write("TVHome:stop music/video:{0}",g_Player.CurrentFile);
-						g_Player.Stop();
+						if (!g_Player.IsTVRecording)
+						{
+							Log.Write("TVHome:stop music/video:{0}",g_Player.CurrentFile);
+							g_Player.Stop();
+						}
 					}
 					m_util= new TVUtil();
 
@@ -718,6 +721,7 @@ namespace MediaPortal.GUI.TV
 
 		static public void ViewChannelAndCheck(string channel)
 		{
+			if (g_Player.Playing && g_Player.IsTVRecording) return;
 			ViewChannel(channel);
 			if (Recorder.TVChannelName!=channel)
 			{
@@ -733,6 +737,7 @@ namespace MediaPortal.GUI.TV
 		}
 		static public void ViewChannel(string channel)
 		{
+			if (g_Player.Playing && g_Player.IsTVRecording) return;
 			Recorder.StartViewing( channel, m_bTVON, m_bTimeShifting) ;
 			if (Recorder.IsViewing())
 			{

@@ -33,7 +33,8 @@ namespace MediaPortal.GUI.TV
     }
 
     SortMethod        currentSortMethod=SortMethod.SORT_DATE;
-    bool              m_bSortAscending=true;
+		bool              m_bSortAscending=true;
+		int								m_iSelectedItem=0;
 
     public  GUITVScheduler()
     {
@@ -122,7 +123,7 @@ namespace MediaPortal.GUI.TV
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
-          
+          m_iSelectedItem=GetSelectedItemNo();
           SaveSettings();
 					
 					if ( !GUITVHome.IsTVWindow(message.Param1) )
@@ -147,6 +148,9 @@ namespace MediaPortal.GUI.TV
 					
 					LoadSettings();
           LoadDirectory();
+					
+					while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
+					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iSelectedItem);
           return true;
         }
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
@@ -534,7 +538,8 @@ namespace MediaPortal.GUI.TV
     }
 
     void OnClick(int iItem)
-    {
+		{
+			m_iSelectedItem=GetSelectedItemNo();
       GUIListItem item = GetItem(iItem);
       if (item==null) return;
       TVRecording rec=(TVRecording)item.TVTag;
@@ -600,7 +605,9 @@ namespace MediaPortal.GUI.TV
 					GUITVHome.ViewChannel(rec.Channel);
 					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 					break;
-      }
+			}
+			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
+			GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iSelectedItem);
     }
     
     void ChangeType(TVRecording rec)
