@@ -2347,6 +2347,43 @@ namespace MediaPortal.TV.Recording
 						props.SendPMTToFireDTV(pmt);
 					}//if (props.SupportsFireDTVProperties)
 				}//if (channelInfo.scrambled)
+				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
+				if (mpeg2Demuxer!=null)
+				{
+					for (int pin=0; pin < 5; pin++)
+					{	
+						Log.Write("Get pin:{0}",pin);
+						IPin outPin;
+						DsUtils.GetPin(m_MPEG2Demultiplexer ,PinDirection.Output,pin,out outPin);
+						if (outPin!=null)
+						{
+							IMPEG2PIDMap map = outPin as IMPEG2PIDMap;
+							if (map!=null)
+							{
+								IEnumPIDMap enumMap;
+								int hrr=map.EnumPIDMap(out enumMap);
+								if (enumMap!=null)
+								{
+									
+									Log.Write("enum pin:{0}",pin);
+									enumMap.Reset();
+									PidMap[] pidmap = new PidMap[10] ;
+									uint iFetched;
+									
+									Log.Write("enum next:{0}",pin);
+									while (enumMap.Next(1,ref pidmap, out iFetched)==0)
+									{
+										Log.Write("fetched:{0}",iFetched);
+										if (iFetched==1)
+										{
+											Log.Write("  pin:{0} pid:{1} content:{2}",pin ,pidmap[0].ulPID, pidmap[0].content);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}//if (pmt!=null && pmt.Length>0 && channelInfo!=null)
 			
 			Log.Write("DVBGraphBDA:Process() done");	

@@ -730,6 +730,46 @@ public interface IMpeg2Demultiplexer
 
 }
 
+
+	public enum Mpeg2MediaSampleContent
+	{
+		Mpeg2Program_StreamMap           =      0x00000000,
+		Mpeg2Program_ElementaryStream    =      0x00000001,
+		Mpeg2Program_DirectoryPesPacket=       0x00000002,
+		Mpeg2Program_PackHeader    =            0x00000003,
+		Mpeg2Program_PesStream     =            0x00000004,
+		Mpeg2Program_SystemHeader  =            0x00000005,
+		SubStreamFilterValNone=            0x10000000
+	};
+
+	public struct StreamIdMap
+	{
+		public uint			stream_id ;                     //  mpeg-2 stream_id
+		public uint			dwMediaSampleContent ;          //  #define'd above
+		public uint			ulSubstreamFilterValue ;        //  filtering value
+		public int				iDataOffset ;                   //  offset to elementary stream
+	};
+
+	[ComVisible(true), ComImport,
+	Guid("945C1566-6202-46fc-96C7-D87F289C6534"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEnumStreamIdMap
+	{
+		[PreserveSig]
+		int Next(
+			[In]															uint				cFilters,
+			out StreamIdMap			x,
+			[Out]															out uint pcFetched );
+
+
+		[PreserveSig]
+		int Skip( [In] int cFilters );
+		void Reset();
+		void Clone( [Out] out IEnumFilters ppEnum );
+	}
+
+
+
 	[ComVisible(true), ComImport,
 	Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
@@ -745,11 +785,64 @@ public interface IMpeg2Demultiplexer
 	int UnmapStreamId(UInt32 culStreamId, ref UInt32 pulStreamId);
 
 	[PreserveSig]
-	int EnumStreamIdMap(out IntPtr ppIEnumStreamIdMap);
+		int EnumStreamIdMap([Out] out IEnumStreamIdMap map);
 
 	//function EnumStreamIdMap(out ppIEnumStreamIdMap: IEnumStreamIdMap): HResult; stdcall;
 
 }
+	public enum MediaSampleContent:uint
+	{
+		MEDIA_TRANSPORT_PACKET,
+		MEDIA_ELEMENTARY_STREAM,
+		MEDIA_MPEG2_PSI,
+		MEDIA_TRANSPORT_PAYLOAD
+	} 
+
+
+
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode), ComVisible(false)]	
+	public struct PidMap 
+	{
+		public uint  ulPID ;
+		public MediaSampleContent content;
+	} ;
+
+	[ComVisible(true), ComImport,
+	Guid("afb6c2a2-2c41-11d3-8a60-0000f81e0e4a"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEnumPIDMap
+	{
+		[PreserveSig]
+		int Next(
+			[In]			    uint				cFilters,
+			[In,Out,MarshalAs(UnmanagedType.LPArray, ArraySubType= UnmanagedType.LPStruct)] ref PidMap[] maps,
+			[Out]					out uint pcFetched );
+
+
+		[PreserveSig]
+		int Skip( [In] int cRecords );
+		void Reset();
+		void Clone( [Out] out IEnumPIDMap ppEnum );
+	}
+
+
+	[ComVisible(true), ComImport,
+	Guid("afb6c2a1-2c41-11d3-8a60-0000f81e0e4a"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMPEG2PIDMap 
+	{
+		[PreserveSig]
+		int MapPID (  [In]    uint                   culPID,
+									[In]    ref uint               pulPID,
+									[In]    uint									 MediaSampleContent
+									) ;
+
+		[PreserveSig]
+		int  UnmapPID ( [In]    uint   culPID, [In]    ref uint pulPID ) ;
+
+		[PreserveSig]
+		int EnumPIDMap ( [Out]  out IEnumPIDMap  pIEnumPIDMap);
+	} ;
 
 
 	[ComVisible(true), ComImport,
