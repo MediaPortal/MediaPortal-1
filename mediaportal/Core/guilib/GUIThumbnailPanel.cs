@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.Library
 
 		bool m_bShowTexture = true;
 		int m_iOffset = 0;
+    int m_iLastItemPageValues = 0;
 		
 		GUIListControl.ListType m_iSelect = GUIListControl.ListType.CONTROL_LIST;
 		int										m_iCursorX = 0;
@@ -86,10 +87,8 @@ namespace MediaPortal.GUI.Library
 		//    bool                  m_bDrawFocus=true;
 		int										m_iScrollCounter = 0;
 		string m_strSuffix = "|";
-		GUIFont m_pFont = null;
-		
-GUISpinControl m_upDown = null;
-
+		GUIFont m_pFont = null;		
+    GUISpinControl m_upDown = null;
 		
 		ArrayList m_vecItems = new ArrayList();
 		int 									scroll_pos = 0;
@@ -377,8 +376,33 @@ GUISpinControl m_upDown = null;
 			view.MaxZ = 1.0f;
 			GUIGraphicsContext.DX9Device.Viewport = view;
 
-			int iStartItem = 30000;
-			int iEndItem = -1;
+      // Free unused textures if page has changed
+      int iStartItem = m_iOffset;
+			int iEndItem = m_iRows * m_iColumns + m_iOffset;
+      if ((m_iLastItemPageValues != iStartItem+iEndItem) && (iScrollYOffset==0))
+      {
+        m_iLastItemPageValues = iStartItem+iEndItem;
+        if (iStartItem < m_vecItems.Count)
+        {
+          for (int i = 0; i < iStartItem; ++i)
+          {
+            GUIListItem pItem = (GUIListItem)m_vecItems[i];
+            if (null != pItem)
+            {
+              pItem.FreeMemory();
+            }
+          }
+        }
+
+        for (int i = iEndItem + 1; i < m_vecItems.Count; ++i) 
+        {
+          GUIListItem pItem = (GUIListItem)m_vecItems[i];
+          if (null != pItem)
+          {
+            pItem.FreeMemory();
+          }
+        }
+      }
 
 			for (int i=0; i < 2; ++i)
 			{
@@ -474,30 +498,6 @@ GUISpinControl m_upDown = null;
           m_upDown.Value = iPage + 1;
           m_bRefresh = true;
           OnSelectionChanged();
-				}
-			}
-			//free memory
-			if (iScrollYOffset==0)
-			{
-				if (iStartItem < 30000)
-				{
-					for (int i = 0; i < iStartItem; ++i)
-					{
-						GUIListItem pItem = (GUIListItem)m_vecItems[i];
-						if (null != pItem)
-						{
-							pItem.FreeMemory();
-						}
-					}
-				}
-
-				for (int i = iEndItem + 1; i < m_vecItems.Count; ++i) 
-				{
-					GUIListItem pItem = (GUIListItem)m_vecItems[i];
-					if (null != pItem)
-					{
-						pItem.FreeMemory();
-					}
 				}
 			}
       

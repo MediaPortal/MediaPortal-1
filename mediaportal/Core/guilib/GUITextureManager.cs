@@ -545,14 +545,31 @@ namespace MediaPortal.GUI.Library
 
     static public bool IsTemporary(string strFileName)
     {
-      if ( strFileName.ToLower().IndexOf("folder.jpg")>0 || 
-           strFileName.ToLower().IndexOf(".tbn")>0 || 
-           strFileName.ToLower().IndexOf(@"xmltv\") >=0 ||
-           strFileName.ToLower().IndexOf(@"thumbs\") >=0)
+      if (strFileName.Length==0) return false;
+      if (strFileName == "-") return false;
+
+      /* Temporary: (textures that are disposed)
+       * - all not skin images
+       * 
+       * NOT Temporary: (textures that are kept in cache)
+       * - all skin graphics
+       * 
+       */
+      
+      // Get fullpath and file name
+      string strFullName = strFileName;
+      if (!System.IO.File.Exists(strFileName))
       {
-        return true;
+        if (strFileName[1]!=':')
+          strFullName = GUIGraphicsContext.Skin+@"\media\"+strFileName;
       }
-      return false;
+
+      // Check if skin file
+      if ( strFullName.ToLower().IndexOf(@"skin\")>=0 )
+      {
+        return false;
+      }
+      return true;
     }
 
 		static public void Init()
