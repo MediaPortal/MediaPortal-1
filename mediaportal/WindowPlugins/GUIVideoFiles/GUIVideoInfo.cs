@@ -350,6 +350,7 @@ namespace MediaPortal.GUI.Video
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_VOTES, strTmp);
       //GUIControl.SetControlLabel( GetID, (int)Controls.CONTROL_CAST, m_movie.m_strCast );
 
+      //plot->cast
       if (viewmode==ViewMode.Plot)
       {
         strTmp = m_movie.Plot.Trim();
@@ -360,24 +361,26 @@ namespace MediaPortal.GUI.Video
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_SPIN);
       }
+      //cast->image
       if (viewmode==ViewMode.Cast)
       {
         strTmp = m_movie.Cast.Trim();
         GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA, strTmp);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(207));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(734));
         
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_TEXTAREA);
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE);
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_SPIN);
       }
+      //cast->plot
       if (viewmode==ViewMode.Image)
       {
         GUIControl.HideControl(GetID,(int)Controls.CONTROL_TEXTAREA);
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE);
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE_LABEL);
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_SPIN);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(734));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(207));
       }
     }
 

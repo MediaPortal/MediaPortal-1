@@ -527,7 +527,11 @@ namespace MediaPortal
             presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
             presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
+#if DEBUG
+          presentParams.PresentationInterval = PresentInterval.Immediate;
+#else
             presentParams.PresentationInterval = PresentInterval.Default;
+#endif
             presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
@@ -1193,8 +1197,11 @@ namespace MediaPortal
         }
         else
         {
+#if DEBUG
+#else
           //we're not playing a movie in fullscreen mode and we are looking @ the normal GUI
-          System.Threading.Thread.Sleep(25);  
+          System.Threading.Thread.Sleep(25);
+#endif  
         }
 
         try

@@ -264,7 +264,10 @@ namespace MediaPortal
         switch (lparam)
         {
           case 0x1032: //back
-            action.wID=Action.ActionType.ACTION_PREVIOUS_MENU;
+            if (GUIGraphicsContext.IsFullScreenVideo)
+              action.wID=Action.ActionType.ACTION_SHOW_GUI;
+            else
+              action.wID=Action.ActionType.ACTION_PREVIOUS_MENU;
             break;
           case 0x102E: //play
             action.wID=Action.ActionType.ACTION_PLAY;

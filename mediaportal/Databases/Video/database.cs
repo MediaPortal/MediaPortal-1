@@ -1268,7 +1268,7 @@ namespace MediaPortal.Video.Database
         else
         {
 					  sql=String.Format("update resume set stoptime={0} where idMovie={1}",
-                iMovieId,stoptime);
+                stoptime,iMovieId);
         }
         m_db.Execute(sql);
       }

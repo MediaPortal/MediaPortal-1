@@ -697,6 +697,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.DX9Device.BeginStateBlock();
       
         
+      
+
+
       GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
       GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
       GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
