@@ -257,30 +257,14 @@ namespace MediaPortal.TV.Recording
       VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
       if (props.SupportsProperties)
       {
-					//2-1-2005 17:41:46  driver version:1.18.021   fw version:02.05.000 
-					//-1-2005 17:41:46  encoding:Cbr bitrate:4 peak:67108864
-					//2-1-2005 17:41:46  gopsize:0 closedgop:False invtelecine:False format:PAL size:720x576 output:14
 
 				VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
 				newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
 				newBitRate.wBitrate     =6*400;  //6 mbps
 				newBitRate.dwPeak       =12*400; //12 mbps
 
-				Log.Write("Set bitrate");
 				props.VideoBitRate=newBitRate;
 				
-				Log.Write("Set closed gop");
-//				props.ClosedGop=false;
-				
-				Log.Write("Set inverse telecine");
-//				props.InverseTelecine=false;
-				
-				Log.Write("Set gopsize");
-//				props.GopSize=15;
-
-				Log.Write("Set video width/height");
-//				Size size=  new Size(720,576);
-//				props.VideoResolution = size;
 
         VideoCaptureProperties.versionInfo info = props.VersionInfo;
         VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
