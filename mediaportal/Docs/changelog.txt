@@ -1,3 +1,4 @@
+15-08-2004  setup       : added : Configuration for autoplaying audio cd's.
 15-08-2004  my tv       : fixed : spiced up the tvguide. Looks better now
 15-08-2004  setup       : fixed : Default channels were not saved if no other channels were added.
 15-08-2004  general     : added : you can now specify the number of characters for a font (default 255) in
