@@ -110,6 +110,8 @@
 				<textYOff3>55</textYOff3>
 				<IconXOff>12</IconXOff>
 				<IconYOff>8</IconYOff>
+				<PinIconXOff>100</PinIconXOff>
+				<PinIconYOff>55</PinIconYOff>
 				<spinPosX>606</spinPosX>
 				<spinPosY>403</spinPosY>		
 				<itemWidth>65</itemWidth>
