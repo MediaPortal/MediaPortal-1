@@ -163,6 +163,9 @@ namespace MediaPortal.TV.Database
 				DatabaseUtility.AddTable(m_db,"dvbtmapping" ,"CREATE TABLE dvbtmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
 				DatabaseUtility.AddTable(m_db,"groups"      ,"CREATE TABLE groups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)\n");
 				DatabaseUtility.AddTable(m_db,"groupmapping","CREATE TABLE groupmapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)\n");
+
+				//following table specifies which channels can be received by which card
+				DatabaseUtility.AddTable(m_db,"channelcard" ,"CREATE TABLE channelcard( idChannelCard integer primary key, idChannel integer, int card)\n");
 				return true;
 			}
 
@@ -981,6 +984,8 @@ namespace MediaPortal.TV.Database
 					strSQL = String.Format("delete from dvbcmapping where iLCN={0}",iChannelId);
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from dvbtmapping where iLCN={0}",iChannelId);
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from channelcard where idChannel={0}",iChannelId);
 					m_db.Execute(strSQL);
 				}
 				catch(SQLiteException ex)
@@ -2218,6 +2223,86 @@ namespace MediaPortal.TV.Database
 						}
 					}
 				}
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+		static public void MapChannelToCard(int channel, int card)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from channelcard where idChannel={0} and card={1}", channel,card);
+
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==0) 
+					{
+						// doesnt exists, add it
+						strSQL=String.Format("insert into channelcard (idChannelCard, idChannel,card) values ( NULL, {0}, {1})", 
+																	channel,card);
+						m_db.Execute(strSQL);
+					}
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+		static public void DeleteCard(int card)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return ;
+					//delete this card
+					strSQL=String.Format( "delete from channelcard where card={0}", card);
+					m_db.Execute(strSQL);
+
+					//adjust the mapping for the other cards
+					strSQL=String.Format( "select * from channelcard where card > {0}", card);
+					SQLiteResultSet results;
+					results=m_db.Execute(strSQL);
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						int id    =Int32.Parse(DatabaseUtility.Get(results,i,"idChannelCard") );
+						int cardnr=Int32.Parse(DatabaseUtility.Get(results,i,"card") );	
+						cardnr--;
+						strSQL=String.Format( "update channelcard set card={0} where idChannelCard={1}", 
+																cardnr, id);
+						m_db.Execute(strSQL);
+					}
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+		static public void UnmapChannelFromCard(TVChannel channel, int card)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return ;
+					strSQL=String.Format( "delete from channelcard where idChannel={0} and card={1}", 
+						channel.ID,card);
+
+					m_db.Execute(strSQL);
+				} 
 				catch (SQLiteException ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
