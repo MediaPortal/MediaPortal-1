@@ -1,3 +1,4 @@
+11-08-2004  setup       : fixed : Aspect ratio "stretched" wasn't set correctly.
 11-08-2004  setup       : fixed : Music Database section would show wrong share name.
 
 10-08-2004  music       : fixed : "Now playing song" not updated after skipping to next song (previous song stays red).
