@@ -30,6 +30,7 @@ namespace MediaPortal.Player
     const uint  VFW_E_DVD_RENDERFAIL      =0x8004027A;
 
 		VMR9Util Vmr9 = null;
+		IBaseFilter dvdbasefilter=null;
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string strPath)
     {
@@ -41,13 +42,12 @@ namespace MediaPortal.Player
       dvdCtrl=null;
 
       string strDVDAudioRenderer="";
-      string strDVDNavigator="";
+      string strDVDNavigator="DVD Navigator";
       string strARMode="";
       string strDisplayMode="";
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
-        strDVDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","");
         strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( strARMode=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
         if ( strARMode=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;
@@ -79,23 +79,20 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR( hr );
 
 				Vmr9.AddVMR9(graphBuilder);
-				IBaseFilter dvdbasefilter=null;
 				try
 				{
+					Log.Write("DVDPlayer9:Add DVD navigator");
 					dvdbasefilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strDVDNavigator);
 					if (dvdbasefilter!=null)
 					{
-						IDvdControl2 cntl=(IDvdControl2)dvdbasefilter;
-						if (cntl!=null)
+						AddPreferedCodecs(graphBuilder);
+						dvdCtrl=dvdbasefilter as IDvdControl2;
+						if (dvdCtrl!=null)
 						{
-							AddPreferedCodecs(graphBuilder);
-							if (strPath!=null) cntl.SetDVDDirectory(strPath);
+							if (strPath!=null) dvdCtrl.SetDVDDirectory(strPath);
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
-							dvdInfo = (IDvdInfo2) cntl;
-							dvdCtrl = (IDvdControl2)cntl;
-							if (dvdCtrl!=null)
-							Log.Write("Dvdplayer9: got IDvdControl2");
-							//videoWin	= graphBuilder as IVideoWindow;
+							dvdInfo = dvdbasefilter as IDvdInfo2;
+								
 							m_bFreeNavigator=false;
 						}
 
@@ -108,9 +105,9 @@ namespace MediaPortal.Player
 				}
 				Guid riid ;
 
-				Log.Write("Dvdplayer9:volume rendered, get interfaces");
         if (dvdInfo==null)
-        {
+				{
+					Log.Write("Dvdplayer9:volume rendered, get interfaces");
           riid = typeof( IDvdInfo2 ).GUID;
           hr = dvdGraph.GetDvdInterface( ref riid, out comobj );
           if( hr < 0 )
@@ -131,16 +128,6 @@ namespace MediaPortal.Player
 					else
 						Log.Write("Dvdplayer9: FAILED TO get get IDvdControl2");
         }
-
-        dvdbasefilter=dvdInfo as IBaseFilter;
-        if (dvdbasefilter==null)
-        {
-          Log.Write("DVDPlayer9: unable to get dvd base filter");
-          return false;
-        }
-        
-        Log.Write("Dvdplayer9:render output pins");
-        DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
@@ -204,8 +191,6 @@ namespace MediaPortal.Player
       }
       finally
       {
-        if( comobj != null )
-          Marshal.ReleaseComObject( comobj ); comobj = null;
       }
     }
 
@@ -297,6 +282,10 @@ namespace MediaPortal.Player
 				}
 				Vmr9=null;
 
+				
+				if( dvdbasefilter != null )
+				 Marshal.ReleaseComObject( dvdbasefilter); 
+				dvdbasefilter = null;              
 
         if( audioRenderer != null )
           Marshal.ReleaseComObject( audioRenderer); audioRenderer = null;

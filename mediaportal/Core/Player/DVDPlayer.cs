@@ -123,6 +123,7 @@ namespace MediaPortal.Player
     protected const int WM_MOUSEMOVE    =0x0200;
     protected const int WM_LBUTTONUP    =0x0202;
 
+		ArrayList mouseMsg ;
     public DVDPlayer()
     {
     }
@@ -130,35 +131,29 @@ namespace MediaPortal.Player
     {
 			try
 			{
-				DsPOINT pt;
-				long lParam=m.LParam.ToInt32();
 				if( m.Msg == WM_DVD_EVENT )
 				{
+				
 					if( mediaEvt != null )
 						OnDvdEvent();
 					return;
 				}
+
 				if( m.Msg==WM_MOUSEMOVE)
 				{
-					pt.X = (int)(lParam  & 0xffff); 
-					pt.Y = (int)((lParam>>16)  & 0xffff); 
-
-					// Select the button at the current position, if it exists
-					if (dvdCtrl!=null) dvdCtrl.SelectAtPosition(pt);
-					else Log.Write("dvdctrl==null?");
+					mouseMsg.Add(m);
 				}
 
 				if( m.Msg==WM_LBUTTONUP)
 				{
-					pt.X = (int)(lParam  & 0xffff); 
-					pt.Y = (int)((lParam>>16)  & 0xffff); 
-
-					// Highlight the button at the current position, if it exists
-					if (dvdCtrl!=null) dvdCtrl.ActivateAtPosition(pt);
-					else Log.Write("dvdctrl==null?");
+					mouseMsg.Add(m);
 				}
 			}
-			catch(Exception){}
+			catch(Exception ex)
+			{
+
+				Log.Write("DVDPlayer:WndProc() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);			
+			}
     }
 
     public override bool Play(string strFile)
@@ -184,6 +179,7 @@ namespace MediaPortal.Player
       m_bStarted=false;
       rotCookie = 0;
       m_iVolume=100;
+			mouseMsg  = new ArrayList();
 
       bool bResult=FirstPlayDvd(strFile);
       if (!bResult) 
@@ -725,195 +721,193 @@ namespace MediaPortal.Player
     /// <summary> DVD event message handler</summary>
     void OnDvdEvent()
     {
+//			Log.Write("OnDvdEvent()");
       int p1, p2, hr = 0;
       DsEvCode code;
-      do
-      {
-        hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
-        if( hr < 0 )
-          break;
+			try
+			{
+				do
+				{
+					hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
+					if( hr < 0 )
+						break;
 
-        //Log.Write( "DVDPlayer DVD EVT :" + code.ToString() );
-			
-        switch( code )
-        {
-          case DsEvCode.DvdCurrentHmsfTime:
-          {
+//					Log.Write( "DVDPlayer DVD EVT :" + code.ToString() );
+				
+					switch( code )
+					{
+						case DsEvCode.DvdWarning:
+							Log.Write( "DVDPlayer DVD warning :{0}" ,p1,p2 );
+						break;
+						case DsEvCode.DvdCurrentHmsfTime:
+						{
 
-            byte[] ati = BitConverter.GetBytes( p1 );
-            if (ati!=null)
-            {
-              currnTime.bHours	= ati[0];
-              currnTime.bMinutes	= ati[1];
-              currnTime.bSeconds	= ati[2];
-              currnTime.bFrames	= ati[3];
-              m_dCurrentTime=( (double)currnTime.bHours)* 3600d;
-              m_dCurrentTime +=( ( (double)currnTime.bMinutes)* 60d );
-              m_dCurrentTime +=( ( (double)currnTime.bSeconds) );
-            }
+							byte[] ati = BitConverter.GetBytes( p1 );
+							if (ati!=null)
+							{
+								currnTime.bHours	= ati[0];
+								currnTime.bMinutes	= ati[1];
+								currnTime.bSeconds	= ati[2];
+								currnTime.bFrames	= ati[3];
+								m_dCurrentTime=( (double)currnTime.bHours)* 3600d;
+								m_dCurrentTime +=( ( (double)currnTime.bMinutes)* 60d );
+								m_dCurrentTime +=( ( (double)currnTime.bSeconds) );
+							}
 
-            UpdateFrameCaption();
-            break;
-          }
-          case DsEvCode.DvdChaptStart:
-          {
-            Log.Write("EVT:DvdChaptStart:{0}",p1);
-            currnChapter = p1;
-            UpdateFrameCaption();
+							break;
+						}
+						case DsEvCode.DvdChaptStart:
+						{
+							Log.Write("EVT:DvdChaptStart:{0}",p1);
+							currnChapter = p1;
 
-            SelectSubtitleLanguage(m_strSubtitleLanguage);
-            break;
-          }
-          case DsEvCode.DvdTitleChange:
-          {
-            Log.Write("EVT:DvdTitleChange:{0}",p1);
-            currnTitle = p1;
-            UpdateFrameCaption();
-            SelectSubtitleLanguage(m_strSubtitleLanguage);
-            break;
-          }
-          
-			
-          case DsEvCode.DvdCmdStart:
-          {
-            if( pendingCmd )
-              Trace.WriteLine( "  DvdCmdStart with pending" );
-            break;
-          }
-          case DsEvCode.DvdCmdEnd:
-          {
-            OnCmdComplete( p1, p2 );
-            break;
-          }
+							SelectSubtitleLanguage(m_strSubtitleLanguage);
+							break;
+						}
+						case DsEvCode.DvdTitleChange:
+						{
+							Log.Write("EVT:DvdTitleChange:{0}",p1);
+							currnTitle = p1;
+							SelectSubtitleLanguage(m_strSubtitleLanguage);
+							break;
+						}
+	          
+				
+						case DsEvCode.DvdCmdStart:
+						{
+							if( pendingCmd )
+								Log.Write( "  DvdCmdStart with pending" );
+							break;
+						}
+						case DsEvCode.DvdCmdEnd:
+						{
+							OnCmdComplete( p1, p2 );
+							break;
+						}
 
-          case DsEvCode.DvdStillOn:
-          {
-            Log.Write("EVT:DvdStillOn:{0}",p1);
-            if( p1 == 0 )
-              menuMode = MenuMode.Buttons;
-            else
-              menuMode = MenuMode.Still;
-            break;
-          }
-          case DsEvCode.DvdStillOff:
-          {
-            Log.Write("EVT:DvdStillOff:{0}",p1);
-            if( menuMode == MenuMode.Still )
-              menuMode = MenuMode.No;
-            break;
-          }
-          case DsEvCode.DvdButtonChange:
-          {
-            Log.Write("EVT:DvdButtonChange: buttons:#{0}",p1);
-            if( p1 <= 0 )
-              menuMode = MenuMode.No;
-            else
-              menuMode = MenuMode.Buttons;
-            break;
-          }
+						case DsEvCode.DvdStillOn:
+						{
+							Log.Write("EVT:DvdStillOn:{0}",p1);
+							if( p1 == 0 )
+								menuMode = MenuMode.Buttons;
+							else
+								menuMode = MenuMode.Still;
+							break;
+						}
+						case DsEvCode.DvdStillOff:
+						{
+							Log.Write("EVT:DvdStillOff:{0}",p1);
+							if( menuMode == MenuMode.Still )
+								menuMode = MenuMode.No;
+							break;
+						}
+						case DsEvCode.DvdButtonChange:
+						{
+							Log.Write("EVT:DvdButtonChange: buttons:#{0}",p1);
+							if( p1 <= 0 )
+								menuMode = MenuMode.No;
+							else
+								menuMode = MenuMode.Buttons;
+							break;
+						}
 
-          case DsEvCode.DvdNoFpPgc:
-          {
-            Log.Write("EVT:DvdNoFpPgc:{0}",p1);
-            if( dvdCtrl != null )
-              hr = dvdCtrl.PlayTitle( 1, DvdCmdFlags.None, null );
-            break;
-          }
+						case DsEvCode.DvdNoFpPgc:
+						{
+							Log.Write("EVT:DvdNoFpPgc:{0}",p1);
+							if( dvdCtrl != null )
+								hr = dvdCtrl.PlayTitle( 1, DvdCmdFlags.None, null );
+							break;
+						}
 
-          case DsEvCode.DvdAudioStChange:
-            // audio stream changed
-            Log.Write("EVT:DvdAudioStChange:{0}",p1);
-          break;
+						case DsEvCode.DvdAudioStChange:
+							// audio stream changed
+							Log.Write("EVT:DvdAudioStChange:{0}",p1);
+							break;
 
-          case DsEvCode.DvdValidUopsChange:
-            Log.Write("EVT:DvdValidUopsChange:0x{0:X}",p1);
-            m_iUOPs=p1;
-          break;
+						case DsEvCode.DvdValidUopsChange:
+							Log.Write("EVT:DvdValidUopsChange:0x{0:X}",p1);
+							m_iUOPs=p1;
+							break;
 
-          case DsEvCode.DvdDomChange:
-          {
-            currnDomain = (DvdDomain) p1;
-            UpdateFrameCaption();
-            switch ((DvdDomain)p1)
-            {
-              case DvdDomain.FirstPlay:
-                Log.Write("EVT:DVDPlayer:domain=firstplay");
-                break;
-              case DvdDomain.Stop:
-                Log.Write("EVT:DVDPlayer:domain=stop");
-                break;
-              case DvdDomain.VideoManagerMenu:
-                Log.Write("EVT:DVDPlayer:domain=videomanagermenu (menu)");
-                m_bMenuOn=true;
-                break;
-              case DvdDomain.VideoTitleSetMenu:
-                Log.Write("EVT:DVDPlayer:domain=videotitlesetmenu (menu)");
-                m_bMenuOn=true;
-                break;
-              case DvdDomain.Title:
-                Log.Write("EVT:DVDPlayer:domain=title (no menu)");
-                m_bMenuOn=false;
-                break;  
-              default:
-                Log.Write("EVT:DvdDomChange:{0}",p1);
-              break;
-            }
-            break;
-          }
-        }
+						case DsEvCode.DvdDomChange:
+						{
+							currnDomain = (DvdDomain) p1;
+							switch ((DvdDomain)p1)
+							{
+								case DvdDomain.FirstPlay:
+									Log.Write("EVT:DVDPlayer:domain=firstplay");
+									break;
+								case DvdDomain.Stop:
+									Log.Write("EVT:DVDPlayer:domain=stop");
+									break;
+								case DvdDomain.VideoManagerMenu:
+									Log.Write("EVT:DVDPlayer:domain=videomanagermenu (menu)");
+									m_bMenuOn=true;
+									break;
+								case DvdDomain.VideoTitleSetMenu:
+									Log.Write("EVT:DVDPlayer:domain=videotitlesetmenu (menu)");
+									m_bMenuOn=true;
+									break;
+								case DvdDomain.Title:
+									Log.Write("EVT:DVDPlayer:domain=title (no menu)");
+									m_bMenuOn=false;
+									break;  
+								default:
+									Log.Write("EVT:DvdDomChange:{0}",p1);
+									break;
+							}
+							break;
+						}
+					}
 
-        hr = mediaEvt.FreeEventParams( code, p1, p2 );
-      }
-      while( hr == 0 );
-      //Trace.WriteLine("DVDEvent done");
+					hr = mediaEvt.FreeEventParams( code, p1, p2 );
+				}
+				while( hr == 0 );
+			}
+			catch(Exception ex)
+			{
+				Log.Write("DVDPlayer:OnDvdEvent() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
+//      Log.Write("DVDEvent done");
     }
 
-
-    /// <summary> update text of window caption</summary>
-    void UpdateFrameCaption()
-    {
-      if( m_state == PlayState.Init )
-      {
-        //this.Text = "DVD";
-        return;
-      }
-      string ti = String.Format( "{0:00}:{1:00}:{2:00}", currnTime.bHours, currnTime.bMinutes, currnTime.bSeconds );
-      if( m_state == PlayState.Paused )
-        ti = ti + " (Paused)";
-      else if( m_state == PlayState.Stopped )
-        ti = ti + " (Stopped)";
-
-     // this.Text = String.Format( "DVD Chapter:{0} Title:{1}  {2}", currnChapter, currnTitle, ti );
-    }
 
 
     /// <summary> asynchronous command completed </summary>
     void OnCmdComplete( int p1, int hrg )
     {
-      Trace.WriteLine( "DVD OnCmdComplete.........." );
-      if( (pendingCmd == false) || (dvdInfo == null) )
-        return;
+			try
+			{
+//				Log.Write( "DVD OnCmdComplete.........." );
+				if( (pendingCmd == false) || (dvdInfo == null) )
+					return;
 
-      IDvdCmd		cmd;
-      int hr = dvdInfo.GetCmdFromEvent( p1, out cmd );
-      if( (hr != 0) || (cmd == null) )
-      {
-        Trace.WriteLine( "!!!DVD OnCmdComplete GetCmdFromEvent failed!!!" );
-        return;
-      }
+				IDvdCmd		cmd;
+				int hr = dvdInfo.GetCmdFromEvent( p1, out cmd );
+				if( (hr != 0) || (cmd == null) )
+				{
+					Log.Write( "!!!DVD OnCmdComplete GetCmdFromEvent failed!!!" );
+					return;
+				}
 
-      if( cmd != cmdOption.dvdCmd )
-      {
-        Trace.WriteLine( "DVD OnCmdComplete UNKNOWN CMD!!!" );
-        Marshal.ReleaseComObject( cmd ); cmd = null;
-        return;
-      }
+				if( cmd != cmdOption.dvdCmd )
+				{
+					Trace.WriteLine( "DVD OnCmdComplete UNKNOWN CMD!!!" );
+					Marshal.ReleaseComObject( cmd ); cmd = null;
+					return;
+				}
 
-      Marshal.ReleaseComObject( cmd ); cmd = null;
-      Marshal.ReleaseComObject( cmdOption.dvdCmd ); cmdOption.dvdCmd = null;
-      pendingCmd = false;
-      Trace.WriteLine( "DVD OnCmdComplete OK." );
-      UpdateMenu();
+				Marshal.ReleaseComObject( cmd ); cmd = null;
+				Marshal.ReleaseComObject( cmdOption.dvdCmd ); cmdOption.dvdCmd = null;
+				pendingCmd = false;
+//				Log.Write( "DVD OnCmdComplete OK." );
+				UpdateMenu();
+				
+			}
+			catch(Exception ex)
+			{
+				Log.Write("DVDPlayer:OnCmdComplete() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
     }
 
     /// <summary> update menu items to match current playback state </summary>
@@ -1092,7 +1086,6 @@ namespace MediaPortal.Player
       {
         m_state = PlayState.Stopped;
         UpdateMenu();
-        UpdateFrameCaption();
       }
       CloseInterfaces();
       GUIGraphicsContext.IsFullScreenVideo=false;
@@ -1267,8 +1260,49 @@ namespace MediaPortal.Player
       if ( !Playing) return;
       if (!m_bStarted) return;
       OnProcess();
+			HandleMouseMessages();
       
     }
+		
+		void HandleMouseMessages()
+		{
+			try
+			{
+				if (GUIGraphicsContext.IsFullScreenVideo)
+				{
+					DsPOINT pt;
+					foreach(Message m in mouseMsg)
+					{
+						long lParam=m.LParam.ToInt32();
+						if( m.Msg==WM_MOUSEMOVE)
+						{
+							pt=new DsPOINT();
+							pt.X = (int)(lParam  & 0xffff); 
+							pt.Y = (int)((lParam>>16)  & 0xffff); 
+
+							// Select the button at the current position, if it exists
+							dvdCtrl.SelectAtPosition(pt);
+						}
+
+						if( m.Msg==WM_LBUTTONUP)
+						{
+							pt=new DsPOINT();
+							pt.X = (int)(lParam  & 0xffff); 
+							pt.Y = (int)((lParam>>16)  & 0xffff); 
+
+							// Highlight the button at the current position, if it exists
+							dvdCtrl.ActivateAtPosition(pt);
+						}
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+
+				Log.Write("DVDPlayer:HandleMouseMessages() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);			
+			}
+			mouseMsg.Clear();
+		}
 
     protected virtual void OnProcess()
     {
@@ -1382,108 +1416,113 @@ namespace MediaPortal.Player
     }
     public override bool OnAction(Action action)
     {
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_MOVE_LEFT:
-          if( m_bMenuOn )
-          {
-						Log.Write("DVDPlayer: move left");
-            dvdCtrl.SelectRelativeButton( DvdRelButton.Left );
-            return true;
-          }
-          break;
-        case Action.ActionType.ACTION_MOVE_RIGHT:
-          if( m_bMenuOn )
+			try
+			{
+				switch (action.wID)
+				{
+					case Action.ActionType.ACTION_MOVE_LEFT:
+						if( m_bMenuOn )
+						{
+							Log.Write("DVDPlayer: move left");
+							dvdCtrl.SelectRelativeButton( DvdRelButton.Left );
+							return true;
+						}
+						break;
+					case Action.ActionType.ACTION_MOVE_RIGHT:
+						if( m_bMenuOn )
+						{
+							Log.Write("DVDPlayer: move right");
+							dvdCtrl.SelectRelativeButton( DvdRelButton.Right );
+							return true;
+						}
+						break;
+					case Action.ActionType.ACTION_MOVE_UP:
+						if( m_bMenuOn )
+						{
+							
+							Log.Write("DVDPlayer: move up");
+							dvdCtrl.SelectRelativeButton( DvdRelButton.Upper );
+							return true;
+						}
+						break;
+					case Action.ActionType.ACTION_MOVE_DOWN:
+						if( m_bMenuOn )
+						{	
+							Log.Write("DVDPlayer: move down");
+							dvdCtrl.SelectRelativeButton( DvdRelButton.Lower );
+							return true;
+						}
+						break;
+					case Action.ActionType.ACTION_SELECT_ITEM:
+						if( (menuMode == MenuMode.Buttons) && (dvdCtrl != null) )
+						{	
+							Log.Write("DVDPlayer: select");
+							dvdCtrl.ActivateButton();
+							return true;
+						}
+						else if( (menuMode == MenuMode.Still) && (dvdCtrl != null) )
+						{
+							Log.Write("DVDPlayer: still off");
+							dvdCtrl.StillOff();
+							return true;
+						}
+						break;
+
+					case Action.ActionType.ACTION_DVD_MENU:
+						if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
+							return false;
+						dvdCtrl.ShowMenu( DvdMenuID.Root, DvdCmdFlags.Block | DvdCmdFlags.Flush, null );
+						return true;
+
+					case Action.ActionType.ACTION_NEXT_CHAPTER:
 					{
-						Log.Write("DVDPlayer: move right");
-            dvdCtrl.SelectRelativeButton( DvdRelButton.Right );
-            return true;
-          }
-          break;
-        case Action.ActionType.ACTION_MOVE_UP:
-          if( m_bMenuOn )
-          {
-						
-						Log.Write("DVDPlayer: move up");
-            dvdCtrl.SelectRelativeButton( DvdRelButton.Upper );
-            return true;
-          }
-          break;
-        case Action.ActionType.ACTION_MOVE_DOWN:
-          if( m_bMenuOn )
-          {	
-						Log.Write("DVDPlayer: move down");
-            dvdCtrl.SelectRelativeButton( DvdRelButton.Lower );
-            return true;
-          }
-          break;
-        case Action.ActionType.ACTION_SELECT_ITEM:
-          if( (menuMode == MenuMode.Buttons) && (dvdCtrl != null) )
-          {	
-						Log.Write("DVDPlayer: select");
-            dvdCtrl.ActivateButton();
-            return true;
-          }
-          else if( (menuMode == MenuMode.Still) && (dvdCtrl != null) )
+						if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
+							return false;
+
+						int hr = dvdCtrl.PlayNextChapter( DvdCmdFlags.SendEvt, cmdOption );
+						if( hr < 0 )
+						{
+							Trace.WriteLine( "!!! PlayNextChapter error : 0x" + hr.ToString("x") );
+							return false;
+						}
+
+						if( cmdOption.dvdCmd != null )
+						{
+							Trace.WriteLine( "PlayNextChapter cmd pending.........." );
+							pendingCmd = true;
+						}
+
+						UpdateMenu();
+						return true;
+					}
+
+					case Action.ActionType.ACTION_PREV_CHAPTER:
 					{
-						Log.Write("DVDPlayer: still off");
-            dvdCtrl.StillOff();
-            return true;
-          }
-          break;
+						if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
+							return false;
 
-        case Action.ActionType.ACTION_DVD_MENU:
-          if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
-            return false;
-          dvdCtrl.ShowMenu( DvdMenuID.Root, DvdCmdFlags.Block | DvdCmdFlags.Flush, null );
-          return true;
+						int hr = dvdCtrl.PlayPrevChapter( DvdCmdFlags.SendEvt, cmdOption );
+						if( hr < 0 )
+						{
+							Trace.WriteLine( "!!! PlayPrevChapter error : 0x" + hr.ToString("x") );
+							return false;
+						}
 
-        case Action.ActionType.ACTION_NEXT_CHAPTER:
-        {
-          if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
-            return false;
+						if( cmdOption.dvdCmd != null )
+						{
+							Trace.WriteLine( "PlayPrevChapter cmd pending.........." );
+							pendingCmd = true;
+						}
 
-          int hr = dvdCtrl.PlayNextChapter( DvdCmdFlags.SendEvt, cmdOption );
-          if( hr < 0 )
-          {
-            Trace.WriteLine( "!!! PlayNextChapter error : 0x" + hr.ToString("x") );
-            return false;
-          }
-
-          if( cmdOption.dvdCmd != null )
-          {
-            Trace.WriteLine( "PlayNextChapter cmd pending.........." );
-            pendingCmd = true;
-          }
-
-          UpdateMenu();
-          return true;
-        }
-
-        case Action.ActionType.ACTION_PREV_CHAPTER:
-        {
-          if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
-            return false;
-
-          int hr = dvdCtrl.PlayPrevChapter( DvdCmdFlags.SendEvt, cmdOption );
-          if( hr < 0 )
-          {
-            Trace.WriteLine( "!!! PlayPrevChapter error : 0x" + hr.ToString("x") );
-            return false;
-          }
-
-          if( cmdOption.dvdCmd != null )
-          {
-            Trace.WriteLine( "PlayPrevChapter cmd pending.........." );
-            pendingCmd = true;
-          }
-
-          UpdateMenu();
-          return true;
-        }
-
-
-      }
+						UpdateMenu();
+						return true;
+					}
+				}				
+			}
+			catch(Exception ex)
+			{
+				Log.Write("DVDPlayer:OnAction() {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
       return false;
     }
 
