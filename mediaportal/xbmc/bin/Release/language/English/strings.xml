@@ -2714,6 +2714,18 @@
 	<value>Large Picture</value>
 </string>
 <string>
+	<id>13008</id>
+	<value>Ken Burns effect</value>
+</string>
+<string>
+	<id>13009</id>
+	<value>Random transitions</value>
+</string>
+<string>
+	<id>13010</id>
+	<value>X-fade transitions</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
