@@ -581,7 +581,8 @@ namespace MediaPortal.GUI.Video
           if (!GUIGraphicsContext.Vmr9Active)
           {
             m_form = new FormOSD();
-            m_form.Show();
+            m_form.Owner = GUIGraphicsContext.form;
+            m_form.Show();            
             GUIGraphicsContext.form.Focus();
           }
           GUIGraphicsContext.IsFullScreenVideo=true;

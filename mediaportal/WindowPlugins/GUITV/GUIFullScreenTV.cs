@@ -521,11 +521,11 @@ namespace MediaPortal.GUI.TV
 					if (!GUIGraphicsContext.Vmr9Active)
 					{
 						m_form = new FormOSD();
+            m_form.Owner = GUIGraphicsContext.form;
 						m_form.Show();
+            GUIGraphicsContext.form.Focus();
 					}
-          
-          GUIGraphicsContext.form.Focus();
-          
+                            
 					GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
 					try
 					{

@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.TV
       this.ShowInTaskbar = false;
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.Text = "FormOSD";
-      this.TopMost = true;
+      this.TopMost = true;     
       this.TransparencyKey = System.Drawing.Color.Black;
       this.Closing += new System.ComponentModel.CancelEventHandler(this.FormOSD_Closing);
       this.Load += new System.EventHandler(this.FormOSD_Load);
@@ -225,7 +225,7 @@ namespace MediaPortal.GUI.TV
     /// <param name="pevent"></param>
     protected override void OnPaintBackground(PaintEventArgs pevent)
     {
-      Trace.WriteLine("osd:OnPaintBackground");
+      //Trace.WriteLine("osd:OnPaintBackground");
 
 
       //pevent.Graphics.Clear(this.BackColor);
