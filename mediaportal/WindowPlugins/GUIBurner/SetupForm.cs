@@ -39,9 +39,6 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.CheckBox checkBox6;
 		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.TextBox textBox2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.Label label12;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -105,9 +102,6 @@ namespace GUIBurner
 		this.label11 = new System.Windows.Forms.Label();
 		this.checkBox6 = new System.Windows.Forms.CheckBox();
 		this.label6 = new System.Windows.Forms.Label();
-		this.textBox2 = new System.Windows.Forms.TextBox();
-		this.button3 = new System.Windows.Forms.Button();
-		this.label12 = new System.Windows.Forms.Label();
 		this.SuspendLayout();
 		// 
 		// comboBox1
@@ -128,7 +122,7 @@ namespace GUIBurner
 		// 
 		// button1
 		// 
-		this.button1.Location = new System.Drawing.Point(496, 296);
+		this.button1.Location = new System.Drawing.Point(496, 264);
 		this.button1.Name = "button1";
 		this.button1.Size = new System.Drawing.Size(88, 24);
 		this.button1.TabIndex = 2;
@@ -236,7 +230,7 @@ namespace GUIBurner
 		// 
 		// label8
 		// 
-		this.label8.Location = new System.Drawing.Point(8, 296);
+		this.label8.Location = new System.Drawing.Point(8, 264);
 		this.label8.Name = "label8";
 		this.label8.Size = new System.Drawing.Size(384, 40);
 		this.label8.TabIndex = 18;
@@ -261,7 +255,7 @@ namespace GUIBurner
 		// 
 		// button4
 		// 
-		this.button4.Location = new System.Drawing.Point(400, 296);
+		this.button4.Location = new System.Drawing.Point(400, 264);
 		this.button4.Name = "button4";
 		this.button4.Size = new System.Drawing.Size(88, 24);
 		this.button4.TabIndex = 21;
@@ -299,40 +293,12 @@ namespace GUIBurner
 		this.label6.TabIndex = 25;
 		this.label6.Text = "This Option converts automatic all TV-Record Files";
 		// 
-		// textBox2
-		// 
-		this.textBox2.Location = new System.Drawing.Point(216, 256);
-		this.textBox2.Name = "textBox2";
-		this.textBox2.Size = new System.Drawing.Size(272, 20);
-		this.textBox2.TabIndex = 26;
-		this.textBox2.Text = "";
-		// 
-		// button3
-		// 
-		this.button3.Location = new System.Drawing.Point(504, 256);
-		this.button3.Name = "button3";
-		this.button3.Size = new System.Drawing.Size(32, 24);
-		this.button3.TabIndex = 27;
-		this.button3.Text = "...";
-		this.button3.Click += new System.EventHandler(this.button3_Click);
-		// 
-		// label12
-		// 
-		this.label12.Location = new System.Drawing.Point(8, 264);
-		this.label12.Name = "label12";
-		this.label12.Size = new System.Drawing.Size(184, 24);
-		this.label12.TabIndex = 28;
-		this.label12.Text = "TV Recording Path";
-		// 
 		// SetupForm
 		// 
 		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-		this.ClientSize = new System.Drawing.Size(600, 342);
-		this.Controls.Add(this.label12);
-		this.Controls.Add(this.textBox2);
+		this.ClientSize = new System.Drawing.Size(600, 310);
 		this.Controls.Add(this.checkBox1);
 		this.Controls.Add(this.textBox1);
-		this.Controls.Add(this.button3);
 		this.Controls.Add(this.label6);
 		this.Controls.Add(this.label11);
 		this.Controls.Add(this.checkBox6);
@@ -472,7 +438,7 @@ namespace GUIBurner
 			checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
 			checkBox3.Checked=xmlreader.GetValueAsBool("burner","convertautomatic",false);
 			checkBox6.Checked=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
-			textBox2.Text=xmlreader.GetValueAsString("burner","dvrms_folder","");
+			//textBox2.Text=xmlreader.GetValueAsString("burner","dvrms_folder","");
 		}
 	}
 
@@ -491,7 +457,7 @@ namespace GUIBurner
 			xmlwriter.SetValueAsBool("burner","deletedvrsource",checkBox2.Checked);
 			xmlwriter.SetValueAsBool("burner","convertautomatic",checkBox3.Checked);
 			xmlwriter.SetValueAsBool("burner","changetvdatabase",checkBox6.Checked);
-			xmlwriter.SetValue("burner","dvrms_folder",textBox2.Text);
+			//xmlwriter.SetValue("burner","dvrms_folder",textBox2.Text);
 		}
 	}
 
@@ -521,22 +487,6 @@ namespace GUIBurner
 		private void SetupForm_Load(object sender, System.EventArgs e)
 		{
 		
-		}
-
-		private void button3_Click(object sender, System.EventArgs e)
-		{
-			using(folderBrowserDialog1 = new FolderBrowserDialog()) 
-			{
-				folderBrowserDialog1.Description = "Select the folder where TV record files will be stored";
-				folderBrowserDialog1.ShowNewFolderButton = true;
-				folderBrowserDialog1.SelectedPath = textBox2.Text;
-				DialogResult dialogResult = folderBrowserDialog1.ShowDialog(this);
-
-				if(dialogResult == DialogResult.OK) 
-				{
-					textBox2.Text = folderBrowserDialog1.SelectedPath;
-				}
-			}		
 		}
  }
 }

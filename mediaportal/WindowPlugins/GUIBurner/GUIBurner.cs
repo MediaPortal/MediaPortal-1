@@ -1,13 +1,18 @@
 #region Usings
 using System;
-using System.Windows.Forms;
-using System.Collections;
+using System.IO;
 using System.Threading;
-using System.Management;
+using System.Globalization;
+using System.Collections;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization.Formatters.Soap;
+using System.Management; 
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Ripper;
+using MediaPortal.TV.Recording;
 using Core.Util;
 #endregion
 
@@ -116,7 +121,9 @@ namespace MediaPortal.GUI.GUIBurner
 		string[] pictures = new string[20];
 		string[] pname = new string[20];
 
-		private string recordpath="";
+		private string recordpath1="";  // for TV card 1
+		private string recordpath2="";	// for TV card 2
+		private int recordCards=0;
 		private int recorder;
 		private ArrayList files = new ArrayList();
 		private string tmpFolder;
@@ -407,7 +414,7 @@ namespace MediaPortal.GUI.GUIBurner
 								shareName=shareName.Substring(0,shareName.Length-1);
 								if (shareName==GUILocalizeStrings.Get(2133)) 
 								{
-									currentFolder=recordpath;
+									currentFolder=recordpath1;
 									LoadListControl(currentFolder,currentExt);
 								} 
 								else 
@@ -499,40 +506,83 @@ namespace MediaPortal.GUI.GUIBurner
 		/// </summary>
 		private void InitializeConvertTimer() 
 		{
+			ArrayList     m_tvcards    = new ArrayList();
 			dvr_extensions.Clear();
 			dvr_extensions.Add(".dvr-ms");
+		
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 			{
-				recordpath=xmlreader.GetValueAsString("burner","dvrms_folder","");
-				//recordpath=xmlreader.GetValueAsString("capture","recordingpath","c:\\");
 				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
 			}
 			if (convertAuto==true) 
 			{
-				bt.ClearFiles();
-				VirtualDirectory Directory;
-				ArrayList itemlist;
-				Directory = new VirtualDirectory();
-				Directory.SetExtensions(dvr_extensions);
-				itemlist = Directory.GetDirectory(recordpath);
-				maxAutoFiles=0;
-				foreach (GUIListItem item in itemlist) 
+				try
 				{
-					if (item.IsFolder==false)
-					{ 
-						cFiles[maxAutoFiles].name=item.Label;
-						cFiles[maxAutoFiles].path=recordpath;
-						if (item.FileInfo!=null) 
-						{
-							cFiles[maxAutoFiles].size=item.FileInfo.Length;
-						}
-						cFiles[maxAutoFiles++].oldSize=0;
-					}
+					using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
+					{
+						SoapFormatter c = new SoapFormatter();
+						m_tvcards = (ArrayList)c.Deserialize(r);
+						r.Close();
+					} 
 				}
-				convertTimer.Tick += new EventHandler(OnTimer);
-				convertTimer.Interval = 60000;	  //60 sec Intervall
-				convertTimer.Enabled=true;
-				convertTimer.Start();
+				catch(Exception)
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: invalid capturecards.xml found! please delete it");
+				}
+
+				if (m_tvcards.Count==0) 
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: no capture cards found. automatic convert canceled");
+				} 
+				else 
+				{
+					for (int i=0; i < m_tvcards.Count;i++)
+					{
+						TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
+						if(card.UseForRecording==true) 
+						{
+							if (i==0) 
+							{
+								recordpath1=card.RecordingPath;
+								recordCards=1;
+							}
+							if (i==1) 
+							{
+								recordpath2=card.RecordingPath;
+								if (recordpath1!=recordpath2)
+								{
+									recordCards=2;
+								}
+							}
+						}
+						card.ID=(i+1);
+					}
+
+					bt.ClearFiles();
+					VirtualDirectory Directory;
+					ArrayList itemlist;
+					Directory = new VirtualDirectory();
+					Directory.SetExtensions(dvr_extensions);
+					itemlist = Directory.GetDirectory(recordpath1);
+					maxAutoFiles=0;
+					foreach (GUIListItem item in itemlist) 
+					{
+						if (item.IsFolder==false)
+						{ 
+							cFiles[maxAutoFiles].name=item.Label;
+							cFiles[maxAutoFiles].path=recordpath1;
+							if (item.FileInfo!=null) 
+							{
+								cFiles[maxAutoFiles].size=item.FileInfo.Length;
+							}
+							cFiles[maxAutoFiles++].oldSize=0;
+						}
+					}
+					convertTimer.Tick += new EventHandler(OnTimer);
+					convertTimer.Interval = 60000;	  //60 sec Intervall
+					convertTimer.Enabled=true;
+					convertTimer.Start();
+				}
 			}
 		}
 
@@ -545,7 +595,7 @@ namespace MediaPortal.GUI.GUIBurner
 				ArrayList itemlist;
 				Directory = new VirtualDirectory();
 				Directory.SetExtensions(dvr_extensions);
-				itemlist = Directory.GetDirectory(recordpath);
+				itemlist = Directory.GetDirectory(recordpath1);
 
 				foreach (GUIListItem item in itemlist) 
 				{
@@ -572,7 +622,7 @@ namespace MediaPortal.GUI.GUIBurner
 												bt.ClearFiles();
 												bt.deleteDvrMsSrc=true;
 												bt.changeDatabase=true;
-												bt.AddFiles(item.Label+".dvr-ms",recordpath);
+												bt.AddFiles(item.Label+".dvr-ms",recordpath1);
 												ThreadStart ts = new ThreadStart(bt.TranscodeThread);
 												Thread t = new Thread(ts);
 												t.IsBackground=true;
