@@ -1,6 +1,8 @@
 //#define DO_RESAMPLE
 using System;
 using System.Net;
+using System.Text;
+using System.IO;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -431,29 +433,28 @@ namespace MediaPortal.GUI.Library
 					imgResampled=null;
 				}
 #endif
-        if (IsTemporary(strFileName))
-        {
-          iMaxWidth=MAX_THUMB_WIDTH;
-          iMaxHeight=MAX_THUMB_HEIGHT;
-          if (imgSrc.Width >= iMaxWidth || imgSrc.Height>=iMaxHeight)
-          {
-            Image imgResampled=Resample(imgSrc,iMaxWidth, iMaxHeight);
-            imgSrc.Dispose();
-            imgSrc=imgResampled;
-            imgResampled=null;
-          }
-        }
+				
+				Format fmt=Format.A8R8G8B8;
+				if (IsTemporary(strFileName))
+				{
+					iMaxWidth=MAX_THUMB_WIDTH;
+					iMaxHeight=MAX_THUMB_HEIGHT;
+					if (imgSrc.Width >= iMaxWidth || imgSrc.Height>=iMaxHeight)
+					{
+						Image imgResampled=Resample(imgSrc,iMaxWidth, iMaxHeight);
+						imgSrc.Dispose();
+						imgSrc=imgResampled;
+						imgResampled=null;
+					}
+				}
+				else
+				{
+					fmt=GetCompression(strFileName);
+				}
 
         //load jpg or png into texture
         using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
         {
-					Format fmt=Format.A8R8G8B8;
-					if (imgSrc.Width < (GUIGraphicsContext.Width/4)) 
-						fmt=Format.Dxt3;
-					if (imgSrc.Height < (GUIGraphicsContext.Height/4)) 
-						fmt=Format.Dxt3;
-
-
           imgSrc.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
           ImageInformation info2 = new ImageInformation();
           stream.Flush();
@@ -632,5 +633,40 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
+		static Direct3D.Format GetCompression(string filename)
+		{
+			try
+			{
+				int pos = filename.LastIndexOf(@"\");
+				if (pos >=0) filename=filename.Substring(pos+1);
+				string line;
+				string textureInfo=String.Format(@"{0}\media\textures.info", GUIGraphicsContext.Skin);
+				Encoding fileEncoding = Encoding.Default;
+				FileStream stream = File.Open(textureInfo,FileMode.Open,FileAccess.Read,FileShare.Read);
+				if (stream==null) return Direct3D.Format.A8R8G8B8;
+				StreamReader file = new StreamReader(stream, fileEncoding, true);
+				do
+				{
+					line=file.ReadLine();
+					if (line==null) break;
+					string[] parts=line.Split( new char[]{'='});
+					if (parts!=null && parts.Length==2)
+					{
+						if (parts[0] == filename)
+						{
+							file.Close();
+							int fmt=Int32.Parse(parts[1]);
+							return (Direct3D.Format)fmt;
+						}
+					}
+				} while (line!=null);
+
+				file.Close();
+			}
+			catch(Exception)
+			{}
+
+			return Direct3D.Format.A8R8G8B8;
+		}
 	}
 }
