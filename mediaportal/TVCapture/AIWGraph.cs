@@ -238,10 +238,6 @@ namespace MediaPortal.TV.Recording
 
 			m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
 
-			// AIW Support starts here
-			SwapOverlayMixerForOverlayMixer2(m_filterCaptureVideo, m_captureGraphBuilder, m_graphBuilder, true);
-			AddATIFilters();
-	
 
 			//set the frame size
 			m_videoCaptureDevice.SetFrameSize(m_FrameSize);
@@ -947,7 +943,10 @@ namespace MediaPortal.TV.Recording
 
 			if (m_graphState != State.Created) return false;
 			m_iCountryCode=channel.Country;
-			TuneChannel(channel);
+
+      SwapOverlayMixerForOverlayMixer2(m_filterCaptureVideo, m_captureGraphBuilder, m_graphBuilder, false);
+      
+      TuneChannel(channel);
 
 			m_videoCaptureDevice.RenderPreview();
 
@@ -1289,7 +1288,10 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Radio)  
 			{
-				if (m_graphState != State.Created)  return;
+        SwapOverlayMixerForOverlayMixer2(m_filterCaptureVideo, m_captureGraphBuilder, m_graphBuilder, true);
+        AddATIFilters();
+        
+        if (m_graphState != State.Created)  return;
 				if (m_videoCaptureDevice == null) return ;
 				
 				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
