@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration.Sections
 					{
 						foreach(string invalidDirectory in invalidDirectoryNames)
 						{
-							if(invalidDirectory.Equals(directoryName))
+							if(invalidDirectory.Equals(directoryName.ToLower()))
 							{
 								isInvalidDirectory = true;
 								break;
@@ -57,7 +57,14 @@ namespace MediaPortal.Configuration.Sections
 
 						if(isInvalidDirectory == false)
 						{
-							availableSkinsListBox.Items.Add(directoryName);
+              //
+              // Check if we have a home.xml located in the directory, if so we consider it as a
+              // valid skin directory
+              //
+              if(File.Exists(Path.Combine(SkinDirectory, Path.Combine(directoryName, "home.xml"))))
+              {
+                availableSkinsListBox.Items.Add(directoryName);
+              }
 						}
 					}
 				}
