@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
@@ -58,12 +59,19 @@ namespace MediaPortal.GUI.Video
     DateTime    m_dwOSDTimeOut;
     long        m_iMaxTimeOSDOnscreen;    
     GUIVideoOSD m_osdWindow=null;
+		GUIVideoMSNOSD m_msnWindow=null;
+		bool				m_bLastMSNChatVisible=false;
+		bool        m_bMSNChatVisible=false;
     FormOSD     m_form=null;
     bool        m_bUpdate=false;
     bool        m_bLastStatus=false;
     bool        m_bLastStatusOSD=false;
     bool        m_bLastStatusFullScreen=true;
-    DateTime    m_UpdateTimer=DateTime.Now;    
+    DateTime    m_UpdateTimer=DateTime.Now;  
+		bool				m_bDialogVisible=false;
+		bool				m_bLastDialogVisible=false;
+		bool				m_bMSNChatPopup=false;
+		GUIDialogMenu dlg;
     
     public GUIVideoFullscreen()
     {
@@ -81,6 +89,7 @@ namespace MediaPortal.GUI.Video
     {
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
+				m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
         m_iMaxTimeOSDOnscreen=1000*xmlreader.GetValueAsInt("movieplayer","osdtimeout",5);
         string strValue=xmlreader.GetValueAsString("movieplayer","defaultar","normal");
         if (g_Player.IsDVD)
@@ -133,7 +142,7 @@ namespace MediaPortal.GUI.Video
     public override void OnAction(Action action)
     {
       //switch back to menu on right-click
-      if ( (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right) || action.wID==Action.ActionType.ACTION_MOUSE_DOUBLECLICK)
+      if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
       {
         m_bOSDVisible=false;
         GUIGraphicsContext.IsFullScreenVideo=false;
@@ -141,90 +150,120 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (m_bOSDVisible)
-      {
-        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !m_osdWindow.SubMenuVisible) // hide the OSD
-        {
-          lock(this)
-          { 
-            GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
-            m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            m_bOSDVisible=false;
-            m_bUpdate=true;
-          }
-        }
-        else
-        {
-          m_dwOSDTimeOut=DateTime.Now;
-          if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE || action.wID==Action.ActionType.ACTION_MOUSE_CLICK)
-          {
-            int x=(int)action.fAmount1;
-            int y=(int)action.fAmount2;
-            if (!GUIGraphicsContext.MouseSupport)
-            {
-              m_osdWindow.OnAction(action);	// route keys to OSD window
-              m_bUpdate=true;
-              return;
-            }
-            else
-            {
-              if ( m_osdWindow.InWindow(x,y))
-              {
-                m_osdWindow.OnAction(action);	// route keys to OSD window
-                m_bUpdate=true;
-                return;
-              }
-              else
-              {
-                GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
-                m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-                m_bOSDVisible=false;
-                m_bUpdate=true;
-              }
-            }
-          }
-          Action newAction=new Action();
-          if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_OSD,action.m_key,ref newAction))
-          {
-            m_osdWindow.OnAction(newAction);	// route keys to OSD window
-            m_bUpdate=true;
-          }
-          else
-          {
-            // route unhandled actions to OSD window
-            if (!m_osdWindow.SubMenuVisible)
-            {
-              m_osdWindow.OnAction(action);	
-              m_bUpdate=true;
-            }
-          }
-        }
-        return;
-      }
-      else if (g_Player.IsDVD)
-      {
+			if (m_bOSDVisible)
+			{
+				if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !m_osdWindow.SubMenuVisible) // hide the OSD
+				{
+					lock(this)
+					{ 
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+						m_bOSDVisible=false;
+						m_bUpdate=true;
+					}
+				}
+				else
+				{
+					m_dwOSDTimeOut=DateTime.Now;
+					if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE || action.wID==Action.ActionType.ACTION_MOUSE_CLICK)
+					{
+						int x=(int)action.fAmount1;
+						int y=(int)action.fAmount2;
+						if (!GUIGraphicsContext.MouseSupport)
+						{
+							m_osdWindow.OnAction(action);	// route keys to OSD window
+							m_bUpdate=true;
+							return;
+						}
+						else
+						{
+							if ( m_osdWindow.InWindow(x,y))
+							{
+								m_osdWindow.OnAction(action);	// route keys to OSD window
+								m_bUpdate=true;
+								return;
+							}
+							else
+							{
+								GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+								m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+								m_bOSDVisible=false;
+								m_bUpdate=true;
+							}
+						}
+					}
+					Action newAction=new Action();
+					if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_OSD,action.m_key,ref newAction))
+					{
+						m_osdWindow.OnAction(newAction);	// route keys to OSD window
+						m_bUpdate=true;
+					}
+					else
+					{
+						// route unhandled actions to OSD window
+						if (!m_osdWindow.SubMenuVisible)
+						{
+							m_osdWindow.OnAction(action);	
+							m_bUpdate=true;
+						}
+					}
+				}
+				return;
+			}
+			else if (m_bMSNChatVisible)
+			{
+				if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI))) // hide the OSD
+				{
+					lock(this)
+					{ 
+						GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+						m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+						m_bMSNChatVisible=false;
+						m_bUpdate=true;
+					}
+					return;
+				}
+				if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+				{
+					m_msnWindow.OnAction(action);
+					m_bUpdate=true;
+					return;
+				}		
+			}
+			else if (g_Player.IsDVD)
+			{
 
-        Action newAction=new Action();
-        if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_DVD,action.m_key,ref newAction))
-        {
-          if ( g_Player.OnAction(newAction)) return;
-        }
+				Action newAction=new Action();
+				if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_DVD,action.m_key,ref newAction))
+				{
+					if ( g_Player.OnAction(newAction)) return;
+				}
 			}
 			else if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport )
 			{
-        int y =(int)action.fAmount2;
-        if (y > GUIGraphicsContext.Height-100)
-        {
-          m_dwOSDTimeOut=DateTime.Now;
-          GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,0,0,null);
-          m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
-          m_bOSDVisible=true;
-          m_bUpdate=true;
-        }
+				int y =(int)action.fAmount2;
+				if (y > GUIGraphicsContext.Height-100)
+				{
+					m_dwOSDTimeOut=DateTime.Now;
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,0,0,null);
+					m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
+					m_bOSDVisible=true;
+					m_bUpdate=true;
+				}
 			}
       
       switch (action.wID)
       {
+				case Action.ActionType.ACTION_SHOW_MSN_OSD:
+					if (m_bMSNChatPopup)
+					{
+						Log.Write("MSN CHAT:ON");     
+						m_bUpdate=true;  
+						m_bMSNChatVisible=true;
+						m_msnWindow.DoModal( GetID, null );
+						m_bMSNChatVisible=false;
+					}
+					break;
         
           // previous : play previous song from playlist
         case Action.ActionType.ACTION_PREV_ITEM:
@@ -394,7 +433,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
-          if (action.m_key!=null)
+					if ((action.m_key!=null) && (!m_bMSNChatVisible))
             ChangetheTimeCode((char)action.m_key.KeyChar);
           break;
 
@@ -422,7 +461,12 @@ namespace MediaPortal.GUI.Video
           m_bUpdate=true;
         }
           break;
+
+				case Action.ActionType.ACTION_CONTEXT_MENU:
+					ShowContextMenu();
+					break;
       }
+
       base.OnAction(action);
       m_bUpdate=true;
     }
@@ -457,11 +501,40 @@ namespace MediaPortal.GUI.Video
 
       switch (message.Message)
       {
+				case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
+					if (m_bMSNChatVisible)
+					{
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+						m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+					}
+					m_bMSNChatVisible=false;
+					break;
+
+				case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
+				case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
+					if (m_bOSDVisible && m_bMSNChatPopup)
+					{
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+						m_bOSDVisible=false;
+						m_bUpdate=true;
+					}
+
+					if (!m_bMSNChatVisible && m_bMSNChatPopup && (m_msnWindow != null))
+					{
+						Log.Write("MSN CHAT:ON");     
+						m_bMSNChatVisible=true;											
+						m_msnWindow.DoModal( GetID, message );
+						m_bMSNChatVisible=false;
+						m_bUpdate=true;         
+					}
+					break;
+
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
         {
           base.OnMessage(message);
           m_osdWindow=(GUIVideoOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD);
-
+					m_msnWindow=(GUIVideoMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MSNOSD);
           
 					HideControl(GetID,(int)Control.LABEL_ROW1);
 					HideControl(GetID,(int)Control.LABEL_ROW2);
@@ -521,8 +594,14 @@ namespace MediaPortal.GUI.Video
               GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
               m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
             }
+						m_bOSDVisible=false;
 
-            m_bOSDVisible=false;
+						if (m_bMSNChatVisible)
+						{
+							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+							m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+						}
+						m_bMSNChatVisible=false;
             base.OnMessage(message);
             /*
             CUtil::RestoreBrightnessContrastGamma();
@@ -553,10 +632,114 @@ namespace MediaPortal.GUI.Video
           if (message.SenderControlId != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return true;
           break;
       }
+
+			if (m_bMSNChatVisible)
+			{
+				m_msnWindow.OnMessage(message);	// route messages to MSNChat window
+			}
+
       return base.OnMessage(message);
     }
 
+		void ShowContextMenu()
+		{
+			if (dlg==null)
+				dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(924); // menu
 
+			dlg.AddLocalizedString(941); // Change aspect ratio
+			dlg.AddLocalizedString(957); // MSN Messenger
+			dlg.AddLocalizedString(3); // My Movies
+
+			m_bDialogVisible=true;
+			m_bUpdate=true;
+			dlg.DoModal( GetID);
+			m_bDialogVisible=false;
+			m_bUpdate=true;
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 941: // Change aspect ratio
+					ShowAspectRatioMenu();
+					break;
+					
+				case 957: // MSN Messenger
+					Log.Write("MSN CHAT:ON");     
+					m_bMSNChatVisible=true;
+					m_msnWindow.DoModal( GetID, null );
+					m_bMSNChatVisible=false;
+					break;
+
+				case 3:
+					// switch back to MyMovies window
+					m_bOSDVisible=false;
+					m_bMSNChatVisible=false;
+					GUIGraphicsContext.IsFullScreenVideo=false;
+					GUIWindowManager.PreviousWindow();
+					break;
+			}
+		}
+    
+		void ShowAspectRatioMenu()
+		{
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(941); // Change aspect ratio
+
+			dlg.AddLocalizedString(942); // Stretch
+			dlg.AddLocalizedString(943); // Normal
+			dlg.AddLocalizedString(944); // Original
+			dlg.AddLocalizedString(945); // Letterbox
+			dlg.AddLocalizedString(946); // Pan and scan
+			dlg.AddLocalizedString(947); // Zoom
+
+			m_bDialogVisible=true;
+			m_bUpdate=true;
+			dlg.DoModal( GetID);
+			m_bDialogVisible=false;
+			m_bUpdate=true;
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 942: // Stretch
+					GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
+					m_bUpdate=true;
+					SaveSettings();
+					break;
+
+				case 943: // Normal
+					GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Normal;
+					m_bUpdate=true;
+					SaveSettings();
+					break;
+
+				case 944: // Original
+					GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Original;
+					m_bUpdate=true;
+					SaveSettings();
+					break;
+
+				case 945: // Letterbox
+					GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+					m_bUpdate=true;
+					SaveSettings();
+					break;
+
+				case 946: // Pan and scan
+					GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+					m_bUpdate=true;
+					SaveSettings();
+					break;
+      
+				case 947: // Zoom
+					GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
+					m_bUpdate=true;
+					SaveSettings();
+					break;
+			}
+		}
 
     public bool NeedUpdate()
     {
@@ -592,7 +775,17 @@ namespace MediaPortal.GUI.Video
 				}
 			}
 
-      if ( m_bUpdate)
+			if (m_bMSNChatVisible)
+			{
+				if (m_msnWindow.NeedRefresh()) m_bUpdate=true;
+			}
+
+			if (m_bDialogVisible)
+			{
+				if (dlg.NeedRefresh()) m_bUpdate=true;
+			}
+			
+			if ( m_bUpdate)
       {
         m_bUpdate=false;
         return true;
@@ -627,6 +820,8 @@ namespace MediaPortal.GUI.Video
         if (m_bShowStatus) return true;
         if (m_bShowInfo) return true;
         if (m_bShowStep) return true;
+				if (m_bDialogVisible) return true;
+				if (m_bMSNChatVisible) return true;
         
         
         return false;
@@ -924,7 +1119,8 @@ namespace MediaPortal.GUI.Video
 	    SetFFRWLogos();
 
       int iSpeed=g_Player.Speed;
-      if (iSpeed!=1) bRenderGUI=true;
+      if ((iSpeed!=1) || m_bDialogVisible || m_bMSNChatVisible) bRenderGUI=true;
+
       if ( bRenderGUI)
       {
 	      if (g_Player.Paused || iSpeed != 1)
@@ -973,6 +1169,16 @@ namespace MediaPortal.GUI.Video
             HideControl(GetID,i);
         }
 	      base.Render();
+
+				if (m_bDialogVisible)
+				{
+					dlg.Render();
+				}
+
+				if (m_bMSNChatVisible)
+				{
+					m_msnWindow.Render();
+				}
       }
     }
 
@@ -1035,8 +1241,39 @@ namespace MediaPortal.GUI.Video
     {
       if (!g_Player.Playing) return;
 
+			bool bClear=false;
 
-      bool bClear=false;
+			if (m_bDialogVisible)
+			{
+				if (!m_bLastDialogVisible)
+				{
+					m_bLastDialogVisible=true;
+					bClear=true;			
+				}
+			}
+			else
+			{
+				if (m_bLastDialogVisible)
+				{
+					m_bLastDialogVisible=false;
+					bClear=true;
+				}
+			}
+
+			if (m_bLastMSNChatVisible)
+			{
+				if (!m_bMSNChatVisible)
+				{
+					bClear=true;			
+					m_bLastMSNChatVisible=false;
+				}
+			}
+
+			if (m_bMSNChatVisible)
+			{
+				m_bLastMSNChatVisible = true;
+			}
+
       // if last time fullscreen window was visible
       if (m_bLastStatusFullScreen )
       {
@@ -1141,6 +1378,11 @@ namespace MediaPortal.GUI.Video
       {
         return m_osdWindow.GetFocusControlId();
       }
+			if (m_bMSNChatVisible)
+			{
+				return m_msnWindow.GetFocusControlId();
+			}
+
       return base.GetFocusControlId();
     }
 
@@ -1150,6 +1392,11 @@ namespace MediaPortal.GUI.Video
       {
         return m_osdWindow.GetControl(iControlId);
       }
+			if (m_bMSNChatVisible)
+			{
+				return m_msnWindow.GetControl(iControlId);
+			}
+
       return base.GetControl(iControlId);
     }
   }
