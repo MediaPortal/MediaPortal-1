@@ -55,6 +55,7 @@ My TV:
   Recorder/Capture:
      - add support for digital capture cards (BDA tuners)
      - add screenshot option    
+     - reference recordings
      
 My Music: (int_20h)
   - support for external audio players based on file extension
