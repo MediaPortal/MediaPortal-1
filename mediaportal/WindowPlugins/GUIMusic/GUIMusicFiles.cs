@@ -612,14 +612,14 @@ namespace MediaPortal.GUI.Music
     {
       if (strDirectory=="") strDirectory="root";
       object o;
-      FolderSettings.GetFolderSetting(strDirectory,"MusicFiles",typeof(MapSettings), out o);
+      FolderSettings.GetFolderSetting(strDirectory,"MusicFiles",typeof(GUIMusicFiles.MapSettings), out o);
       if (o!=null) _MapSettings = o as MapSettings;
       if (_MapSettings==null) _MapSettings  = new MapSettings();
     }
     void SaveFolderSettings(string strDirectory)
     {
       if (strDirectory=="") strDirectory="root";
-      FolderSettings.AddFolderSetting(strDirectory,"MusicFiles",typeof(MapSettings), _MapSettings);
+      FolderSettings.AddFolderSetting(strDirectory,"MusicFiles",typeof(GUIMusicFiles.MapSettings), _MapSettings);
     }
 
     void OnRetrieveCoverArt(GUIListItem item)

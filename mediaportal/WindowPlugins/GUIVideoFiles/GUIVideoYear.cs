@@ -422,14 +422,14 @@ namespace MediaPortal.GUI.Video
     {
       if (strDirectory=="") strDirectory="root";
       object o;
-      FolderSettings.GetFolderSetting(strDirectory,"VideoYear",typeof(MapSettings), out o);
+      FolderSettings.GetFolderSetting(strDirectory,"VideoYear",typeof(GUIVideoYear.MapSettings), out o);
       if (o!=null) _MapSettings = o as MapSettings;
       if (_MapSettings==null) _MapSettings  = new MapSettings();
     }
     void SaveFolderSettings(string strDirectory)
     {
       if (strDirectory=="") strDirectory="root";
-      FolderSettings.AddFolderSetting(strDirectory,"VideoYear",typeof(MapSettings), _MapSettings);
+      FolderSettings.AddFolderSetting(strDirectory,"VideoYear",typeof(GUIVideoYear.MapSettings), _MapSettings);
     }
 
 		void LoadDirectory(string strNewDirectory)
