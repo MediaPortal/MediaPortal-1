@@ -105,30 +105,65 @@
 			<ondown>6</ondown>
 		</control>
 		<control>
-			<description>reset selection</description>
+			<description>delete files</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>55</posX>
 			<posY>245</posY>
-			<label>2205</label>
-			<onleft>6</onleft>
+			<label>2212</label>
+			<onleft>2</onleft>
 			<onright>20</onright>
 			<onup>5</onup>
 			<ondown>7</ondown>
 		</control>
 		<control>
-			<description>mark all</description>
+			<description>make dir</description>
 			<type>button</type>
 			<id>7</id>
 			<posX>55</posX>
 			<posY>273</posY>
-			<label>2206</label>
-			<onleft>7</onleft>
+			<label>2204</label>
+			<onleft>5</onleft>
 			<onright>20</onright>
 			<onup>6</onup>
+			<ondown>8</ondown>
+		</control>
+		<control>
+			<description>reset selection</description>
+			<type>button</type>
+			<id>8</id>
+			<posX>55</posX>
+			<posY>301</posY>
+			<label>2205</label>
+			<onleft>5</onleft>
+			<onright>20</onright>
+			<onup>7</onup>
+			<ondown>9</ondown>
+		</control>
+		<control>
+			<description>mark all</description>
+			<type>button</type>
+			<id>9</id>
+			<posX>55</posX>
+			<posY>329</posY>
+			<label>2206</label>
+			<onleft>6</onleft>
+			<onright>20</onright>
+			<onup>8</onup>
 			<ondown>2</ondown>
 		</control>
-
+		<control>
+			<description>trashcan</description>
+			<type>button</type>
+			<id>10</id>
+			<posX>55</posX>
+			<posY>357</posY>
+			<label>2223</label>
+			<onleft>6</onleft>
+			<onright>20</onright>
+			<onup>8</onup>
+			<ondown>2</ondown>
+		</control>
 		<control>
 			<description>My explorer text label</description>
 			<type>label</type>
@@ -143,11 +178,10 @@
 			<description>My explorer File Size label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>670</posX>
-			<posY>90</posY>
+			<posX>238</posX>
+			<posY>530</posY>
 			<label>#explorer_size</label>
 			<font>font14</font>
-			<align>right</align>
 		</control>
 		<control>
 			<description>file listcontrol</description>

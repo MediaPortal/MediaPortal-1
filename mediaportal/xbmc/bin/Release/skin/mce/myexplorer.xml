@@ -37,14 +37,12 @@
 			<description>My explorer File Size label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>40</posX>
+			<posX>260</posX>
 			<posY>530</posY>
 			<label>#explorer_size</label>
-			<font>font16</font>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
-
 		<control>
 			<type>group</type>
 			<description>group element</description>
@@ -146,7 +144,7 @@
 				<ondown>2</ondown>
 			</control>
 			<control>
-				<description>traschcan</description>
+				<description>trashcan</description>
 				<type>button</type>
 				<id>10</id>
 				<posX>60</posX>
