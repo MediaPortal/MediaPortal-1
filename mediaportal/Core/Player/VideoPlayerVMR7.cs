@@ -54,6 +54,7 @@ namespace MediaPortal.Player
     protected IMediaPosition			      mediaPos;
     /// <summary> video preview window interface. </summary>
     protected IVideoWindow			        videoWin;
+		protected FormOverlay 							overlayWin =null;
     /// <summary> interface to get information and control video. </summary>
     protected IBasicVideo2			        basicVideo;
     /// <summary> interface to single-step video. </summary>
@@ -106,9 +107,18 @@ namespace MediaPortal.Player
         }
 				if (videoWin!=null)
 				{
+					if ((overlayWin==null) && (!GUIGraphicsContext.Vmr9Active))
+					{
+						overlayWin=new FormOverlay();
+					}					
 					videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 					videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-          videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
+					if (overlayWin!=null)
+						// Overlay message hander
+						videoWin.put_MessageDrain(overlayWin.Handle);
+					else
+						// VMR9 handler
+						videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
 				}
 				if (basicVideo!=null)
 				{
@@ -233,6 +243,9 @@ namespace MediaPortal.Player
 			if (videoWin!=null)
 			{
 				videoWin.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
+
+				// update video window
+				if (overlayWin != null) overlayWin.rVideoWindow = rDest;
 			}
 		}
 
