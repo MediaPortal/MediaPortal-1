@@ -55,6 +55,11 @@ namespace MediaPortal.TV.Recording
     {
     }
 
+		public override string ToString()
+		{
+			return m_strVideoDevice;
+		}
+
     /// <summary>
     /// Property to get/set the full name of the TV capture card 
     /// </summary>

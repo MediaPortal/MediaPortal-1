@@ -651,6 +651,13 @@ public class MediaPortalApp : D3DApp, IRender
 				g_Player.SeekAsolutePercentage(99);
       }
 #endif
+			if (key.KeyChar=='?')
+			{
+				GC.Collect();
+				GC.Collect();
+				GC.Collect();
+				GC.Collect();
+			}
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {

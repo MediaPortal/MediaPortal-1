@@ -474,20 +474,9 @@ namespace MediaPortal
       Capture cap=setupgraph();
       if (cap==null) 
       {
-        comboVideoCodec.Enabled=true;
-        comboAudioCodec.Enabled=true;
         return;
       }
 
-      if (cap.SupportsTimeShifting)
-      {
-        comboVideoCodec.SelectedIndex=0;
-        comboVideoCodec.Enabled=false;
-
-        comboAudioCodec.SelectedIndex=0;
-        comboAudioCodec.Enabled=false;
-
-      }
 
       if (cap.PropertyPages!=null)
       {
