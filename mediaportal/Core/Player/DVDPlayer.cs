@@ -348,8 +348,6 @@ namespace MediaPortal.Player
         }
         
 
-        
-        
         hr = dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
         if( hr == 0 )
           hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
@@ -386,12 +384,22 @@ namespace MediaPortal.Player
         DvdDiscSide side;
         int iTitles,iNumOfVolumes,iVolume;
         hr=dvdInfo.GetDVDVolumeInfo(out iNumOfVolumes, out iVolume, out side, out iTitles);
-        if (hr < 0) return false;
-        if (iTitles<=0) return false;
+				if (hr < 0) 
+				{
+					Log.Write("DVDPlayer:Unable to get dvdvolumeinfo 0x{0:X}",hr);
+					//return false;
+				}
+				else
+				{
+					if (iTitles<=0) 
+					{
+						Log.Write("DVDPlayer:DVD does not contain any titles? {0}",iTitles);
+						//return false;
+					}
+				}
         
         if (videoWin!=null)
         {
-          if( hr == 0 )
             hr = videoWin.put_MessageDrain( GUIGraphicsContext.ActiveForm );
         }
 
