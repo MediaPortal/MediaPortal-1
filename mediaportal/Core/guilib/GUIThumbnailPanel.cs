@@ -212,7 +212,6 @@ namespace MediaPortal.GUI.Library
 			
 			float fTextPosY = (float)dwPosY + (float)m_iTextureHeight;
 
-
 			long dwColor = m_dwTextColor;
 			if (pItem.Selected) dwColor = m_dwSelectedColor;
       
@@ -230,7 +229,7 @@ namespace MediaPortal.GUI.Library
 					if (true == m_bShowTexture) btn.Render();
 					return;
 				}
-				RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, true);
+				if (fTextPosY >= m_dwPosY) RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, true);
 			}
 			else
       {
@@ -241,7 +240,7 @@ namespace MediaPortal.GUI.Library
 					if (true == m_bShowTexture) btn.Render();
 					return;
 				}
-				RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, false);
+				if (fTextPosY >= m_dwPosY) RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, false);
 			}
 
 			// Set oversized value
@@ -854,20 +853,16 @@ namespace MediaPortal.GUI.Library
 
 
 		void Calculate()
-		{
-			
+		{	
 			float fWidth = 0, fHeight = 0;
 
 			// height of 1 item = folder image height + text row height + space in between
 			m_pFont.GetTextExtent("y",ref fWidth, ref fHeight);
 
-
 			fWidth = (float)m_iItemWidth;
 			fHeight = (float)m_iItemHeight;
 			float fTotalHeight = (float)(m_dwHeight - 5);
 			m_iRows = (int)(fTotalHeight / fHeight);
-
-
 			m_iColumns = (int)(m_dwWidth / fWidth);
 
 			int iItemsPerPage = m_iRows * m_iColumns;
@@ -876,6 +871,25 @@ namespace MediaPortal.GUI.Library
 			m_upDown.SetRange(1, iPages);
 			m_upDown.Value = 1;
 
+      // Dispose used buttoncontrols
+      if (m_button!=null)
+      {
+        for (int i=0; i < m_button.Count;++i)
+        {
+          GUIButtonControl cntl=(GUIButtonControl)m_button[i];
+          cntl.FreeResources();
+        }
+      }
+      m_button=null;
+
+      // Create new buttoncontrols
+      m_button=new ArrayList(m_iColumns*m_iRows);
+      for (int i=0; i < m_iColumns*m_iRows;++i)
+      {
+        GUIButtonControl btn= new GUIButtonControl(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY, m_iTextureWidth , m_iTextureHeight, m_strImageFolderFocus, m_strImageFolder);
+        btn.AllocResources();
+        m_button.Add(btn);
+      }
 		}
 
 		public override void AllocResources()
@@ -886,15 +900,6 @@ namespace MediaPortal.GUI.Library
 			m_upDown.AllocResources();
       m_vertScrollbar.AllocResources();
 			Calculate();
-      m_button=new ArrayList(m_iColumns*m_iRows);
-      for (int i=0; i < m_iColumns*m_iRows;++i)
-      {
-        GUIButtonControl btn= new GUIButtonControl(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY, m_iTextureWidth , m_iTextureHeight, m_strImageFolderFocus, m_strImageFolder);
-        btn.AllocResources();
-        m_button.Add(btn);
-      }
-
-
 		}
 
 		public override void FreeResources()
