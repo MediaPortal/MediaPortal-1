@@ -340,6 +340,7 @@ namespace MediaPortal.PowerScheduler
 					Recorder.StopViewing();
 					Recorder.Stop();
 				}
+				g_Player.Stop();
 
 				if (m_shutdownMode.StartsWith("None"))
 				{
@@ -349,18 +350,21 @@ namespace MediaPortal.PowerScheduler
 				if (m_shutdownMode.StartsWith("Suspend"))
 				{
 					Log.Write("PowerScheduler: Suspend system");
+					ResetShutdownTimer(0);
 					WindowsController.ExitWindows(RestartOptions.Suspend, m_bForceShutdown);
 				}
 
 				if (m_shutdownMode.StartsWith("Hibernate"))
 				{
 					Log.Write("PowerScheduler: Hibernate system");
+					ResetShutdownTimer(0);
 					WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
 				}
 						
 				if (m_shutdownMode.StartsWith("Shutdown"))
 				{
 					Log.Write("PowerScheduler: System shutdown");
+					ResetShutdownTimer(0);
 					WindowsController.ExitWindows(RestartOptions.ShutDown, m_bForceShutdown);
 				}
 			}
