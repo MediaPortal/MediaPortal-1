@@ -1834,6 +1834,7 @@ namespace MediaPortal.GUI.Video
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GUIWindowManager.ActiveWindow);
+			strLine = "";
       if (keyboard.IsConfirmed)
       {
         strLine = keyboard.Text;
