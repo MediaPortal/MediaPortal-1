@@ -1,10 +1,3 @@
-//-----------------------------------------------------------------------------
-// File: D3DSettingsForm.cs
-//
-// Desc: Application form for setting up user defined display settings
-//
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
 using System;
 using System.Collections;
 using System.Windows.Forms;

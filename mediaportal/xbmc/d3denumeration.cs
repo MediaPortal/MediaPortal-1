@@ -1,10 +1,3 @@
-//-----------------------------------------------------------------------------
-// File: D3DEnumeration.cs
-//
-// Desc: Enumerates D3D adapters, devices, modes, etc.
-//
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
 using System;
 using System.Collections;
 using Microsoft.DirectX;

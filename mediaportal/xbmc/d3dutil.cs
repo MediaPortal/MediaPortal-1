@@ -1,10 +1,3 @@
-//-----------------------------------------------------------------------------
-// File: D3DUtil.cs
-//
-// Desc: Shortcut functions for using DX objects
-//
-// Copyright (c) Microsoft Corporation. All rights reserved
-//-----------------------------------------------------------------------------
 using System;
 using System.Windows.Forms;
 using System.Drawing;
