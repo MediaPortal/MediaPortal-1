@@ -113,7 +113,6 @@ namespace MediaPortal.GUI.Video
       //m_directory.AddExtension(".pls");
       //m_directory.AddExtension(".b4s");
 
-      LoadSettings();
     }
     ~GUIVideoFiles()
     {
@@ -138,7 +137,9 @@ namespace MediaPortal.GUI.Video
 			}
 			catch(Exception){}
 			LoadSettings();
-			return Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
+			bool result=Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
+			LoadSettings();
+			return result;
 		}
 
     #region Serialisation

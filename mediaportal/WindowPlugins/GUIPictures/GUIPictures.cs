@@ -101,7 +101,6 @@ namespace MediaPortal.GUI.Pictures
       
       m_directory.AddDrives();
       m_directory.SetExtensions (Utils.PictureExtensions);
-      LoadSettings();
     }
     ~GUIPictures()
     {
@@ -116,7 +115,9 @@ namespace MediaPortal.GUI.Pictures
       System.IO.Directory.CreateDirectory(ThumbsFolder);
 			}
 			catch(Exception){}
-      return Load (GUIGraphicsContext.Skin+@"\mypics.xml");
+			bool result= Load (GUIGraphicsContext.Skin+@"\mypics.xml");
+			LoadSettings();
+			return result;
     }
 
     #region Serialisation

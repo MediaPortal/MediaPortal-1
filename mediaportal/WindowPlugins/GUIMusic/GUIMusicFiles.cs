@@ -125,7 +125,6 @@ namespace MediaPortal.GUI.Music
       //m_directory.AddExtension(".pls");
       //m_directory.AddExtension(".b4s");
       // set the eventhandler for the virt keyboard
-      LoadSettings();
     }
     ~GUIMusicFiles()
     {
@@ -155,6 +154,7 @@ namespace MediaPortal.GUI.Music
 			}
 			catch(Exception){}
 			bool bResult = Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
+			LoadSettings();
       return bResult;
     }
 
