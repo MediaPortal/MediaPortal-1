@@ -71,6 +71,7 @@ namespace MediaPortal.Configuration.Sections
 			// Add static shares
 			//
 			AddStaticShares(DriveType.DVD, "DVD");
+			AddStaticShares(DriveType.Removable, "Removable");
 		}
 
 		public override void SaveSettings()
