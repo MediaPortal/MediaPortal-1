@@ -62,9 +62,9 @@ namespace MediaPortal
     protected bool singleStep;
     // Main objects used for creating and rendering the 3D scene
     protected PresentParameters presentParams = new PresentParameters(); // Parameters for CreateDevice/Reset
-    protected RenderStates renderState;
-    protected SamplerStates sampleState;
-    protected TextureStates textureStates;
+    //protected RenderStates renderState;
+    //protected SamplerStates sampleState;
+    //protected TextureStates textureStates;
     private Caps graphicsCaps;           // Caps for the device
     protected Caps Caps { get { return graphicsCaps; } }
     private CreateFlags behavior;     // Indicate sw or hw vertex processing
@@ -546,9 +546,9 @@ namespace MediaPortal
 
 
         // Cache our local objects
-        renderState = GUIGraphicsContext.DX9Device.RenderState;
-        sampleState = GUIGraphicsContext.DX9Device.SamplerState;
-        textureStates = GUIGraphicsContext.DX9Device.TextureState;
+        //renderState = GUIGraphicsContext.DX9Device.RenderState;
+        //sampleState = GUIGraphicsContext.DX9Device.SamplerState;
+        //textureStates = GUIGraphicsContext.DX9Device.TextureState;
         // When moving from fullscreen to windowed mode, it is important to
         // adjust the window size after recreating the device rather than
         // beforehand to ensure that you get the window size you want.  For

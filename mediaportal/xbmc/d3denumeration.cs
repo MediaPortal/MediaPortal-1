@@ -371,7 +371,8 @@ namespace MediaPortal
         int result;
         int qualityLevels = 0;
         if (Manager.CheckDeviceMultiSampleType(deviceCombo.AdapterOrdinal, deviceCombo.DevType, 
-          deviceCombo.BackBufferFormat, deviceCombo.IsWindowed, msType, out result, ref qualityLevels))
+                                               deviceCombo.BackBufferFormat, deviceCombo.IsWindowed, msType, 
+                                               out result, out qualityLevels))
         {
           deviceCombo.MultiSampleTypeList.Add(msType);
           deviceCombo.MultiSampleQualityList.Add(qualityLevels);
