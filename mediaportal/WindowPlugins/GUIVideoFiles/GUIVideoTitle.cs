@@ -649,6 +649,13 @@ namespace MediaPortal.GUI.Video
 			{
 				m_iItemSelected = GetSelectedItemNo();
 				int iMovieId = System.Int32.Parse(item.Path);
+				m_iItemSelected = -1;
+				PlayMovie(iMovieId);
+			}
+		}
+		
+		static public void PlayMovie(int iMovieId)
+		{
 				int iSelectedFile = 1;
 				ArrayList movies = new ArrayList();
 				VideoDatabase.GetFiles(iMovieId, ref movies);
@@ -661,7 +668,6 @@ namespace MediaPortal.GUI.Video
         // stacking is not currently supported for image files.
         if (movies.Count == 1 && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension((string)movies[0]).ToLower()))
         {
-          m_iItemSelected = -1;
           
           bool askBeforePlayingDVDImage = false;
 
@@ -672,7 +678,7 @@ namespace MediaPortal.GUI.Video
 
           if (!askBeforePlayingDVDImage)
           {
-						GUIVideoFiles.PlayMountedImageFile(GetID, (string)movies[0]);
+						GUIVideoFiles.PlayMountedImageFile(GUIWindowManager.ActiveWindow, (string)movies[0]);
 					}
           else
           {
@@ -777,7 +783,7 @@ namespace MediaPortal.GUI.Video
             if (null != dlg)
             {
               dlg.SetNumberOfFiles(movies.Count);
-              dlg.DoModal(GetID);
+              dlg.DoModal(GUIWindowManager.ActiveWindow);
               iSelectedFile = dlg.SelectedFile;
               if (iSelectedFile < 1) return;
             }
@@ -799,7 +805,6 @@ namespace MediaPortal.GUI.Video
 
         // play movie...
         GUIVideoFiles.PlayMovieFromPlayList(bAskResume);
-			}
 		}
     
     void OnDelete(int iItem)

@@ -352,6 +352,13 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
+
+					if (iControl==(int)Controls.CONTROL_PLAY)
+					{
+						Close();
+						GUIVideoTitle.PlayMovie(m_movie.ID);
+						return;
+					}
         }
         break;
       }
