@@ -226,6 +226,7 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     public void Process()
     {
+      FrameMove();
       FullRender();
       System.Windows.Forms.Application.DoEvents();
     }

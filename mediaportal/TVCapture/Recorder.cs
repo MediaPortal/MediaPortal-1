@@ -635,6 +635,16 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 					break;
+
+        case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT:
+          foreach (TVCaptureDevice card in m_tvcards)
+          {
+            if (!card.IsRecording)
+            {
+              card.Stop();
+            }
+          }
+          break;
 			}
 		}
   }
