@@ -2,7 +2,7 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
-		<version>0.1.0.11</version>
+		<version>0.1.0.12</version>
 		<changelog>
 		  <change date="28-1-2005">Added my tetris gfx,sounds and xml</change>
 		  <change date="10-2-2005">Added my zap osd gfx and xml</change>
@@ -19,6 +19,7 @@
 		  <change date="28-2-2005">changed mytvscheduler.xml</change>
 		  <change date="03-3-2005">changed mytvsearch.xml</change>
 		  <change date="08-3-2005">added DialogMenuBottomRight.xml</change>
+		  <change date="10-3-2005">added my playlists button to mymusicsongs.xml</change>
 		</changelog>
 	</skin>
 	<control>

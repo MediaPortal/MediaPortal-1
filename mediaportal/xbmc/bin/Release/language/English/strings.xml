@@ -2726,6 +2726,10 @@
 	<value>Delete this entire recording</value>
 </string>
 
+<string>
+	<id>983</id>
+	<value>My Playlists</value>
+</string>
 
 
 	<!-- My Status Strings -->

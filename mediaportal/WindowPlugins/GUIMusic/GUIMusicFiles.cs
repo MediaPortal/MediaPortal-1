@@ -68,6 +68,7 @@ namespace MediaPortal.GUI.Music
       CONTROL_BTNPLAYLISTS = 7, 
       CONTROL_BTNSCAN = 9, 
 			CONTROL_BTNPLAYCD = 10,
+			CONTROL_BTNPLAYLIST_FOLDER = 11,
 			
       CONTROL_VIEW = 50, 
       CONTROL_LABELFILES = 12, 
@@ -111,7 +112,8 @@ namespace MediaPortal.GUI.Music
     bool              m_bUseID3 = true;
     bool              m_bAutoShuffle = true;
     string            m_strDiscId="";    
-    int               m_iSelectedAlbum=-1;
+		string						m_strPlayListPath = "";
+		int               m_iSelectedAlbum=-1;
     static Freedb.CDInfoDetail m_musicCD = null;
 
     #endregion
@@ -165,6 +167,8 @@ namespace MediaPortal.GUI.Music
     {
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
+				m_strPlayListPath = xmlreader.GetValueAsString("music","playlists","");
+				m_strPlayListPath = Utils.RemoveTrailingSlash(m_strPlayListPath);
 
 				MusicState.StartWindow=xmlreader.GetValueAsInt("music","startWindow", GetID);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles","showid3",true);
@@ -428,6 +432,11 @@ namespace MediaPortal.GUI.Music
                 break;
               }
             }
+					}
+					if (iControl==(int)Controls.CONTROL_BTNPLAYLIST_FOLDER)
+					{
+						m_strDirectory=m_strPlayListPath;
+						LoadDirectory(m_strDirectory);
 					}
 					
           // search-button handling
