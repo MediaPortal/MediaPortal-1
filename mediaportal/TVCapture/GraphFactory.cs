@@ -86,6 +86,10 @@ namespace MediaPortal.TV.Recording
       //	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
 			if(card.IsBDACard)
 				return new DVBGraphBDA(card);
+			if (card.ToString() == "B2C2 MPEG-2 Source")
+			{
+				return new DVBGraphSS2(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+			}
 			
 			if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
 			if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate);
