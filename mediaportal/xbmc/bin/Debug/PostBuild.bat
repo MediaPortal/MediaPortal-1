@@ -47,6 +47,9 @@ copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 copy ..\..\..\NVPPowerScheduler\bin\debug\NVPPowerScheduler.dll plugins\windows
 copy ..\..\..\NVPPowerScheduler\bin\debug\NVPPowerScheduler.pdb plugins\windows
+copy ..\..\..\GUIMSNPlugin\bin\debug\GUIMSNPlugin.dll plugins\windows
+copy ..\..\..\GUIMSNPlugin\bin\debug\GUIMSNPlugin.pdb plugins\windows
+copy ..\..\..\GUIMSNPlugin\DotMSN.dll plugins\windows
 
 copy ..\..\..\mp4TagReader\bin\Debug\mp4TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders

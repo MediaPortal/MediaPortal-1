@@ -42,6 +42,8 @@ copy ..\..\..\tvdatabase\bin\release\tvdatabase.dll .
 copy ..\..\..\tvcapture\bin\release\tvcapture.dll .
 copy ..\..\..\GUITopbar\bin\release\GUITopbar.dll plugins\windows
 copy ..\..\..\NVPPowerScheduler\bin\release\NVPPowerScheduler.dll plugins\windows
+copy ..\..\..\GUIMSNPlugin\bin\release\GUIMSNPlugin.dll plugins\windows
+copy ..\..\..\GUIMSNPlugin\DotMSN.dll plugins\windows
 
 copy ..\..\..\DShowNET\bin\Release\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Release\DirectX.Capture.dll .

@@ -2316,6 +2316,10 @@
 	<id>907</id>
 	<value>Could not connect to MSN</value>
 </string>
+<string>
+	<id>906</id>
+	<value>is typing a message...</value>
+</string>
 
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Delete</value></string>
