@@ -47,6 +47,7 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.ComboBox cbRating;
 		private System.Windows.Forms.TextBox txtFilepath;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Button buttonViewImg;
 		private System.ComponentModel.IContainer components;
 
 		public AppItem CurApp
@@ -94,6 +95,7 @@ namespace WindowPlugins.GUIPrograms
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FileDetailsForm));
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.gbFileDetails = new System.Windows.Forms.GroupBox();
@@ -123,6 +125,7 @@ namespace WindowPlugins.GUIPrograms
 			this.btnFilename = new System.Windows.Forms.Button();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.buttonViewImg = new System.Windows.Forms.Button();
 			this.gbFileDetails.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -150,6 +153,7 @@ namespace WindowPlugins.GUIPrograms
 			this.gbFileDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.gbFileDetails.Controls.Add(this.buttonViewImg);
 			this.gbFileDetails.Controls.Add(this.txtFilepath);
 			this.gbFileDetails.Controls.Add(this.label1);
 			this.gbFileDetails.Controls.Add(this.cbRating);
@@ -349,11 +353,11 @@ namespace WindowPlugins.GUIPrograms
 			// btnImageFile
 			// 
 			this.btnImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnImageFile.Image = ((System.Drawing.Image)(resources.GetObject("btnImageFile.Image")));
 			this.btnImageFile.Location = new System.Drawing.Point(466, 96);
 			this.btnImageFile.Name = "btnImageFile";
 			this.btnImageFile.Size = new System.Drawing.Size(20, 20);
 			this.btnImageFile.TabIndex = 4;
-			this.btnImageFile.Text = "...";
 			this.btnImageFile.Click += new System.EventHandler(this.btnImageFile_Click);
 			// 
 			// txtFilename
@@ -372,7 +376,7 @@ namespace WindowPlugins.GUIPrograms
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.txtImageFile.Location = new System.Drawing.Point(88, 96);
 			this.txtImageFile.Name = "txtImageFile";
-			this.txtImageFile.Size = new System.Drawing.Size(366, 20);
+			this.txtImageFile.Size = new System.Drawing.Size(344, 20);
 			this.txtImageFile.TabIndex = 3;
 			this.txtImageFile.Text = "";
 			// 
@@ -405,12 +409,23 @@ namespace WindowPlugins.GUIPrograms
 			// btnFilename
 			// 
 			this.btnFilename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnFilename.Image = ((System.Drawing.Image)(resources.GetObject("btnFilename.Image")));
 			this.btnFilename.Location = new System.Drawing.Point(466, 48);
 			this.btnFilename.Name = "btnFilename";
 			this.btnFilename.Size = new System.Drawing.Size(20, 20);
 			this.btnFilename.TabIndex = 2;
-			this.btnFilename.Text = "...";
 			this.btnFilename.Click += new System.EventHandler(this.btnFilename_Click);
+			// 
+			// buttonViewImg
+			// 
+			this.buttonViewImg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonViewImg.Image = ((System.Drawing.Image)(resources.GetObject("buttonViewImg.Image")));
+			this.buttonViewImg.Location = new System.Drawing.Point(433, 96);
+			this.buttonViewImg.Name = "buttonViewImg";
+			this.buttonViewImg.Size = new System.Drawing.Size(20, 20);
+			this.buttonViewImg.TabIndex = 64;
+			this.toolTip1.SetToolTip(this.buttonViewImg, "View the default image for this file");
+			this.buttonViewImg.Click += new System.EventHandler(this.buttonViewImg_Click);
 			// 
 			// FileDetailsForm
 			// 
@@ -515,6 +530,22 @@ namespace WindowPlugins.GUIPrograms
 				this.Close();
 			}
 		
+		}
+
+		private void buttonViewImg_Click(object sender, System.EventArgs e)
+		{
+			try
+			{
+				if (System.IO.File.Exists(txtImageFile.Text))
+				{
+					System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(txtImageFile.Text);
+					System.Diagnostics.Process.Start(sInfo);
+				}
+			}
+			catch
+			{
+				// do nothing! 
+			}
 		}
 
 

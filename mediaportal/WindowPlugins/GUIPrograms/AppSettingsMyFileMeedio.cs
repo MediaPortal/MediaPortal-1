@@ -73,6 +73,7 @@ namespace WindowPlugins.GUIPrograms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsMyFileMeedio));
 			this.label3 = new System.Windows.Forms.Label();
 			this.lblImgDirectories = new System.Windows.Forms.Label();
 			this.txtImageDirs = new System.Windows.Forms.TextBox();
@@ -132,11 +133,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnImageDirs
 			// 
+			this.btnImageDirs.Image = ((System.Drawing.Image)(resources.GetObject("btnImageDirs.Image")));
 			this.btnImageDirs.Location = new System.Drawing.Point(376, 312);
 			this.btnImageDirs.Name = "btnImageDirs";
 			this.btnImageDirs.Size = new System.Drawing.Size(20, 20);
 			this.btnImageDirs.TabIndex = 26;
-			this.btnImageDirs.Text = "...";
 			this.btnImageDirs.Click += new System.EventHandler(this.btnImageDirs_Click);
 			// 
 			// chkbUseShellExecute
@@ -159,11 +160,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnStartup
 			// 
+			this.btnStartup.Image = ((System.Drawing.Image)(resources.GetObject("btnStartup.Image")));
 			this.btnStartup.Location = new System.Drawing.Point(376, 208);
 			this.btnStartup.Name = "btnStartup";
 			this.btnStartup.Size = new System.Drawing.Size(20, 20);
 			this.btnStartup.TabIndex = 18;
-			this.btnStartup.Text = "...";
 			this.btnStartup.Click += new System.EventHandler(this.btnStartup_Click);
 			// 
 			// txtStartupDir
@@ -185,10 +186,10 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.cbWindowStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbWindowStyle.Items.AddRange(new object[] {
-															   "Normal",
-															   "Minimized",
-															   "Maximized",
-															   "Hidden"});
+																											 "Normal",
+																											 "Minimized",
+																											 "Maximized",
+																											 "Hidden"});
 			this.cbWindowStyle.Location = new System.Drawing.Point(120, 184);
 			this.cbWindowStyle.Name = "cbWindowStyle";
 			this.cbWindowStyle.Size = new System.Drawing.Size(250, 21);
@@ -226,11 +227,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// buttonImageFile
 			// 
+			this.buttonImageFile.Image = ((System.Drawing.Image)(resources.GetObject("buttonImageFile.Image")));
 			this.buttonImageFile.Location = new System.Drawing.Point(376, 136);
 			this.buttonImageFile.Name = "buttonImageFile";
 			this.buttonImageFile.Size = new System.Drawing.Size(20, 20);
 			this.buttonImageFile.TabIndex = 11;
-			this.buttonImageFile.Text = "...";
 			this.buttonImageFile.Click += new System.EventHandler(this.buttonImageFile_Click);
 			// 
 			// txtImageFile
@@ -284,11 +285,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// buttonLaunchingApp
 			// 
+			this.buttonLaunchingApp.Image = ((System.Drawing.Image)(resources.GetObject("buttonLaunchingApp.Image")));
 			this.buttonLaunchingApp.Location = new System.Drawing.Point(376, 64);
 			this.buttonLaunchingApp.Name = "buttonLaunchingApp";
 			this.buttonLaunchingApp.Size = new System.Drawing.Size(20, 20);
 			this.buttonLaunchingApp.TabIndex = 5;
-			this.buttonLaunchingApp.Text = "...";
 			this.buttonLaunchingApp.Click += new System.EventHandler(this.buttonLaunchingApp_Click);
 			// 
 			// chkbValidImagesOnly
@@ -301,11 +302,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// buttonSourceFile
 			// 
+			this.buttonSourceFile.Image = ((System.Drawing.Image)(resources.GetObject("buttonSourceFile.Image")));
 			this.buttonSourceFile.Location = new System.Drawing.Point(376, 256);
 			this.buttonSourceFile.Name = "buttonSourceFile";
 			this.buttonSourceFile.Size = new System.Drawing.Size(20, 20);
 			this.buttonSourceFile.TabIndex = 22;
-			this.buttonSourceFile.Text = "...";
 			this.buttonSourceFile.Click += new System.EventHandler(this.buttonSourceFile_Click);
 			// 
 			// txtSource

@@ -222,7 +222,7 @@ namespace ProgramsDatabase
 
 
 
-		public bool FindGameinfoDetail(AppItem curApp, FileItem curItem, FileInfo curGame)
+		public bool FindGameinfoDetail(AppItem curApp, FileItem curItem, FileInfo curGame, ScraperSaveType saveType)
 		{
 			if (curItem == null) return false;
 			if (curGame == null) return false;
@@ -354,8 +354,10 @@ namespace ProgramsDatabase
 				bGoOn = (iStartOfImg != -1);
 			}
 
-			
-			curGame.DownloadImages(curApp, curItem);
+			if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Images))
+			{
+				curGame.DownloadImages(curApp, curItem);
+			}
 			return true;
 		}
 

@@ -494,20 +494,20 @@ namespace ProgramsDatabase
 			}
 		}
 
-		public void FindFileInfoDetail(AppItem curApp, FileInfo curInfo, myProgScraperType ScraperType)
+		public void FindFileInfoDetail(AppItem curApp, FileInfo curInfo, myProgScraperType scraperType, ScraperSaveType saveType)
 		{
 			int iRetries = 0;
 			bool bSuccess = false;
-			switch (ScraperType)
+			switch (scraperType)
 			{
 				case myProgScraperType.ALLGAME:
 				{
 					AllGameInfoScraper scraper = new AllGameInfoScraper();
 					while ((!bSuccess) && (iRetries < 5))
 					{
-						// brute force! Try three times.... sometimes I get
+						// brute force! Try five times.... sometimes I get
 						// a PostHTTP false result... don't know why!
-						bSuccess = scraper.FindGameinfoDetail(curApp, this, curInfo);
+						bSuccess = scraper.FindGameinfoDetail(curApp, this, curInfo, saveType);
 						if (!bSuccess)
 						{
 							iRetries++;

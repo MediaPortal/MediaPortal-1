@@ -52,6 +52,7 @@ namespace WindowPlugins.GUIPrograms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsGrouper));
 			this.LabelTitle = new System.Windows.Forms.Label();
 			this.LabelHint = new System.Windows.Forms.Label();
 			this.lblImageFile = new System.Windows.Forms.Label();
@@ -92,11 +93,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// buttonImagefile
 			// 
+			this.buttonImagefile.Image = ((System.Drawing.Image)(resources.GetObject("buttonImagefile.Image")));
 			this.buttonImagefile.Location = new System.Drawing.Point(376, 92);
 			this.buttonImagefile.Name = "buttonImagefile";
 			this.buttonImagefile.Size = new System.Drawing.Size(20, 20);
 			this.buttonImagefile.TabIndex = 7;
-			this.buttonImagefile.Text = "...";
 			this.buttonImagefile.Click += new System.EventHandler(this.buttonImagefile_Click);
 			// 
 			// txtImageFile

@@ -34,6 +34,13 @@ namespace Programs.Utils
 		// VGMUSEUM / AMAZON etc. etc. etc. :)
 	}
 
+	public enum ScraperSaveType
+	{
+		Data = 0,
+		Images = 1,
+		DataAndImages = 2
+	}
+
 
 	/// <summary>
 	/// Summary description for ProgramUtils.

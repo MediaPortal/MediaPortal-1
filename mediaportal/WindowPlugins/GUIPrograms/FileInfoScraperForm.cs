@@ -53,7 +53,11 @@ namespace WindowPlugins.GUIPrograms
 
 
 		int mStartTime = 0; // timer stuff
-		int mSecondsRemaining = 0;
+		private System.Windows.Forms.ContextMenu menuSaveDetails;
+		private System.Windows.Forms.MenuItem menuItem4;
+		private System.Windows.Forms.MenuItem menuDataAndImages;
+		private System.Windows.Forms.MenuItem menuData;
+		private System.Windows.Forms.MenuItem menuImages;
 		bool stopSearching = false;
 
 		public AppItem CurApp
@@ -99,6 +103,10 @@ namespace WindowPlugins.GUIPrograms
 			this.components = new System.ComponentModel.Container();
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FileInfoScraperForm));
 			this.bottomPanel = new System.Windows.Forms.Panel();
+			this.progressPanel = new System.Windows.Forms.Panel();
+			this.cancelButton = new System.Windows.Forms.Button();
+			this.progressStatusLabel = new System.Windows.Forms.Label();
+			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.label1 = new System.Windows.Forms.Label();
 			this.MinRelevanceNum = new System.Windows.Forms.NumericUpDown();
 			this.ResetFilterButton = new System.Windows.Forms.Button();
@@ -127,15 +135,16 @@ namespace WindowPlugins.GUIPrograms
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.progressPanel = new System.Windows.Forms.Panel();
-			this.progressBar = new System.Windows.Forms.ProgressBar();
-			this.progressStatusLabel = new System.Windows.Forms.Label();
-			this.cancelButton = new System.Windows.Forms.Button();
+			this.menuSaveDetails = new System.Windows.Forms.ContextMenu();
+			this.menuDataAndImages = new System.Windows.Forms.MenuItem();
+			this.menuData = new System.Windows.Forms.MenuItem();
+			this.menuImages = new System.Windows.Forms.MenuItem();
+			this.menuItem4 = new System.Windows.Forms.MenuItem();
 			this.bottomPanel.SuspendLayout();
+			this.progressPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).BeginInit();
 			this.leftPanel.SuspendLayout();
 			this.rightPanel.SuspendLayout();
-			this.progressPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// bottomPanel
@@ -157,6 +166,41 @@ namespace WindowPlugins.GUIPrograms
 			this.bottomPanel.Name = "bottomPanel";
 			this.bottomPanel.Size = new System.Drawing.Size(752, 112);
 			this.bottomPanel.TabIndex = 0;
+			// 
+			// progressPanel
+			// 
+			this.progressPanel.Controls.Add(this.cancelButton);
+			this.progressPanel.Controls.Add(this.progressStatusLabel);
+			this.progressPanel.Controls.Add(this.progressBar);
+			this.progressPanel.Enabled = false;
+			this.progressPanel.Location = new System.Drawing.Point(8, 69);
+			this.progressPanel.Name = "progressPanel";
+			this.progressPanel.Size = new System.Drawing.Size(480, 40);
+			this.progressPanel.TabIndex = 27;
+			// 
+			// cancelButton
+			// 
+			this.cancelButton.Location = new System.Drawing.Point(392, 16);
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.Size = new System.Drawing.Size(88, 23);
+			this.cancelButton.TabIndex = 29;
+			this.cancelButton.Text = "Cancel Search";
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			// 
+			// progressStatusLabel
+			// 
+			this.progressStatusLabel.Location = new System.Drawing.Point(0, 20);
+			this.progressStatusLabel.Name = "progressStatusLabel";
+			this.progressStatusLabel.Size = new System.Drawing.Size(392, 16);
+			this.progressStatusLabel.TabIndex = 28;
+			this.progressStatusLabel.Text = "Progress status";
+			// 
+			// progressBar
+			// 
+			this.progressBar.Location = new System.Drawing.Point(0, 0);
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(480, 16);
+			this.progressBar.TabIndex = 27;
 			// 
 			// label1
 			// 
@@ -456,40 +500,36 @@ namespace WindowPlugins.GUIPrograms
 			this.columnHeader2.Text = "Relevance";
 			this.columnHeader2.Width = 80;
 			// 
-			// progressPanel
+			// menuSaveDetails
 			// 
-			this.progressPanel.Controls.Add(this.cancelButton);
-			this.progressPanel.Controls.Add(this.progressStatusLabel);
-			this.progressPanel.Controls.Add(this.progressBar);
-			this.progressPanel.Enabled = false;
-			this.progressPanel.Location = new System.Drawing.Point(8, 69);
-			this.progressPanel.Name = "progressPanel";
-			this.progressPanel.Size = new System.Drawing.Size(480, 40);
-			this.progressPanel.TabIndex = 27;
+			this.menuSaveDetails.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																										this.menuDataAndImages,
+																																										this.menuItem4,
+																																										this.menuData,
+																																										this.menuImages});
 			// 
-			// progressBar
+			// menuDataAndImages
 			// 
-			this.progressBar.Location = new System.Drawing.Point(0, 0);
-			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(480, 16);
-			this.progressBar.TabIndex = 27;
+			this.menuDataAndImages.Index = 0;
+			this.menuDataAndImages.Text = "Save Data and download images";
+			this.menuDataAndImages.Click += new System.EventHandler(this.menuDataAndImages_Click);
 			// 
-			// progressStatusLabel
+			// menuData
 			// 
-			this.progressStatusLabel.Location = new System.Drawing.Point(0, 20);
-			this.progressStatusLabel.Name = "progressStatusLabel";
-			this.progressStatusLabel.Size = new System.Drawing.Size(392, 16);
-			this.progressStatusLabel.TabIndex = 28;
-			this.progressStatusLabel.Text = "Progress status";
+			this.menuData.Index = 2;
+			this.menuData.Text = "Save Data only";
+			this.menuData.Click += new System.EventHandler(this.menuData_Click);
 			// 
-			// cancelButton
+			// menuImages
 			// 
-			this.cancelButton.Location = new System.Drawing.Point(392, 16);
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.Size = new System.Drawing.Size(88, 23);
-			this.cancelButton.TabIndex = 29;
-			this.cancelButton.Text = "Cancel Search";
-			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			this.menuImages.Index = 3;
+			this.menuImages.Text = "Download images only";
+			this.menuImages.Click += new System.EventHandler(this.menuImages_Click);
+			// 
+			// menuItem4
+			// 
+			this.menuItem4.Index = 1;
+			this.menuItem4.Text = "-";
 			// 
 			// FileInfoScraperForm
 			// 
@@ -504,14 +544,15 @@ namespace WindowPlugins.GUIPrograms
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Search fileinfo";
 			this.bottomPanel.ResumeLayout(false);
+			this.progressPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).EndInit();
 			this.leftPanel.ResumeLayout(false);
 			this.rightPanel.ResumeLayout(false);
-			this.progressPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
+
 
 		public void Setup()
 		{
@@ -559,7 +600,6 @@ namespace WindowPlugins.GUIPrograms
 			progressBar.Step = 1;
 			progressStatusLabel.Text = msg;
 			mStartTime = (int)(DateTime.Now.Ticks/10000); // reset timer!
-			mSecondsRemaining = -1;
 		}
 
 		void StepProgressBar()
@@ -612,11 +652,11 @@ namespace WindowPlugins.GUIPrograms
 					file.FindFileInfo(myProgScraperType.ALLGAME);
 					curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
 					StepProgressBar();
+					buttonSelectBestMatch.Enabled = true;
 					Application.DoEvents();
 				}
 			}
 			ChangeFileSelection();
-			buttonSelectBestMatch.Enabled = true;
 			if (stopSearching)
 			{
 				DeInitProgressBar("Search aborted");
@@ -787,6 +827,11 @@ namespace WindowPlugins.GUIPrograms
 
 		private void btnSaveSearch_Click(object sender, System.EventArgs e)
 		{
+			menuSaveDetails.Show(btnSaveSearch, new System.Drawing.Point(0, btnSaveSearch.Height));
+		}
+
+		void SaveSearch(ScraperSaveType saveType)
+		{
 			InitProgressBar("Starting search");
 			ListViewItem nextItem = null;
 			foreach (ListViewItem curItem in FileList.CheckedItems)
@@ -809,8 +854,11 @@ namespace WindowPlugins.GUIPrograms
 					{
 						curItem.SubItems[1].Text = String.Format("<searching...>");
 						Application.DoEvents();
-						file.FindFileInfoDetail(m_CurApp, file.FileInfoFavourite, myProgScraperType.ALLGAME);
-						file.SaveFromFileInfoFavourite();
+						file.FindFileInfoDetail(m_CurApp, file.FileInfoFavourite, myProgScraperType.ALLGAME, saveType);
+						if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Data))
+						{
+							file.SaveFromFileInfoFavourite();
+						}
 						curItem.SubItems[1].Text = String.Format("<saved>");
 						Application.DoEvents();
 					}
@@ -953,6 +1001,21 @@ namespace WindowPlugins.GUIPrograms
 		private void cancelButton_Click(object sender, System.EventArgs e)
 		{
 			stopSearching = true;
+		}
+
+		private void menuDataAndImages_Click(object sender, System.EventArgs e)
+		{
+			SaveSearch(ScraperSaveType.DataAndImages);
+		}
+
+		private void menuData_Click(object sender, System.EventArgs e)
+		{
+			SaveSearch(ScraperSaveType.Data);
+		}
+
+		private void menuImages_Click(object sender, System.EventArgs e)
+		{
+			SaveSearch(ScraperSaveType.Images);
 		}
 
 

@@ -40,26 +40,54 @@ namespace ProgramsDatabase
 			pDlgProgress.Close();
 		}
 
-		private string GetThumbsFile(GUIListItem guiFile)
+		private string GetThumbsFile(GUIListItem guiFile, string fileTitle)
 		{
 			string strFolderThumb = "";
 			if (ImageDirs.Length > 0)
 			{
+
 				string strMainImgDir = ImageDirs[0];
-				strFolderThumb= strMainImgDir + "\\" + guiFile.Label;
-				strFolderThumb = Path.ChangeExtension(strFolderThumb, ".jpg");
-				if (!System.IO.File.Exists(strFolderThumb))
+
+				string strDir = strMainImgDir + "\\";
+				string strFilenameNoExt = strMainImgDir + "\\" + guiFile.Label;
+				strFilenameNoExt = Path.ChangeExtension(strFilenameNoExt, null);
+				strFilenameNoExt = Path.GetFileNameWithoutExtension(strFilenameNoExt);
+
+				string[] strExactMatchesJPG = System.IO.Directory.GetFiles(strDir, strFilenameNoExt+"*.jpg");
+				string[] strExactMatchesGIF = System.IO.Directory.GetFiles(strDir, strFilenameNoExt+"*.gif");
+				string[] strExactMatchesPNG = System.IO.Directory.GetFiles(strDir, strFilenameNoExt+"*.png");
+				if (strExactMatchesJPG.Length > 0)
 				{
-					strFolderThumb = Path.ChangeExtension(strFolderThumb, ".gif");
+					strFolderThumb = strExactMatchesJPG[0];
 				}
-				if( !System.IO.File.Exists(strFolderThumb) )
+				else if (strExactMatchesGIF.Length > 0)
 				{
-					strFolderThumb = Path.ChangeExtension(strFolderThumb, ".png");
+					strFolderThumb = strExactMatchesGIF[0];
 				}
-				if( !System.IO.File.Exists(strFolderThumb) )
+				else if (strExactMatchesPNG.Length > 0)
 				{
-					strFolderThumb = "";
+					strFolderThumb = strExactMatchesPNG[0];
 				}
+				else 
+				{
+					// no exact match found! Redo with near matches!
+					string[] strNearMatchesJPG = System.IO.Directory.GetFiles(strDir, fileTitle+"*.jpg");
+					string[] strNearMatchesGIF = System.IO.Directory.GetFiles(strDir, fileTitle+"*.gif");
+					string[] strNearMatchesPNG = System.IO.Directory.GetFiles(strDir, fileTitle+"*.png");
+					if (strNearMatchesJPG.Length > 0)
+					{
+						strFolderThumb = strNearMatchesJPG[0];
+					}
+					else if (strNearMatchesGIF.Length > 0)
+					{
+						strFolderThumb = strNearMatchesGIF[0];
+					}
+					else if (strNearMatchesPNG.Length > 0)
+					{
+						strFolderThumb = strNearMatchesPNG[0];
+					}
+				}
+				
 			}
 			return strFolderThumb;
 		}
@@ -68,7 +96,6 @@ namespace ProgramsDatabase
 
 		private void ImportFileItem(GUIListItem guiFile)
 		{
-			string strImageFile = GetThumbsFile(guiFile);
 			FileItem curFile = new FileItem(m_db);
 			curFile.FileID = -1; // to force an INSERT statement when writing the item
 			curFile.AppID = this.AppID;
@@ -80,7 +107,7 @@ namespace ProgramsDatabase
 				curFile.Filename = "\"" + curFile.Filename + "\"";
 			}
 			curFile.Filepath = System.IO.Path.GetDirectoryName(guiFile.Path);
-			curFile.Imagefile = strImageFile;
+			curFile.Imagefile = GetThumbsFile(guiFile, curFile.TitleNormalized);
 			// not imported properties => set default values
 			curFile.ManualFilename = "";
 			curFile.LastTimeLaunched = DateTime.MinValue;
@@ -96,7 +123,6 @@ namespace ProgramsDatabase
 			curFile.Filename = directoryPath;
 			curFile.Title = System.IO.Path.GetFileNameWithoutExtension(directoryPath);
 			curFile.Filepath = System.IO.Path.GetDirectoryName(directoryPath);
-			//todo:			curFile.FilePath = curFile.ExtractDirectory(directoryPath);
 			curFile.IsFolder = true;
 			curFile.ManualFilename = "";
 			curFile.LastTimeLaunched = DateTime.MinValue;
