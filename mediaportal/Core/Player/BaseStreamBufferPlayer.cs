@@ -644,8 +644,15 @@ namespace MediaPortal.Player
           if (dTime>Duration) dTime=Duration;
           Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
           dTime*=10000000d;
-					long lTime=(long)dTime;
 					long pStop=0;
+          long lContentStart,lContentEnd;
+          double fContentStart,fContentEnd;
+          m_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+          fContentStart=lContentStart;
+          fContentEnd=lContentEnd;
+
+          dTime+=fContentStart;
+          long lTime=(long)dTime;
           
 					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
           if (hr !=0)
