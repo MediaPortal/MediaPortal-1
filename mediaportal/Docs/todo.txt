@@ -91,6 +91,9 @@ new plugins:
   - my TV-series
   
 General:
+  - option to turn plugins on/off
+  - auto add plugin to home.xml?
+  
   - support for VFD/LCD displays
   - show properties in skin: 
      - tv/recording properties
