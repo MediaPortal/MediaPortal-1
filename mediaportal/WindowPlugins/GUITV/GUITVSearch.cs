@@ -138,12 +138,18 @@ namespace MediaPortal.GUI.TV
           {
             _SearchMode=SearchMode.Genre;
             _Level=0;
+						_FilterEpsiode="";
+						_FilterLetter="#";
+						_FilterShow="";
             _SearchKind=-1;
             _SearchCriteria=String.Empty;
             Update();
           }
           if (iControl==(int)Controls.SearchByTitle)
-          {
+					{
+						_FilterEpsiode="";
+						_FilterLetter="#";
+						_FilterShow="";
             _SearchMode=SearchMode.Title;
             _Level=0;
             _SearchKind=-1;
@@ -152,6 +158,9 @@ namespace MediaPortal.GUI.TV
 					}
 					if (iControl==(int)Controls.SearchByDescription)
 					{
+						_FilterEpsiode="";
+						_FilterLetter="#";
+						_FilterShow="";
 						_SearchMode=SearchMode.Description;
 						_Level=0;
 						_SearchKind=-1;
