@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.TV
 
 			if (m_bOSDVisible)
 			{
-				if (action.wID == Action.ActionType.ACTION_SHOW_OSD && !m_osdWindow.SubMenuVisible)	// hide the OSD
+				if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !m_osdWindow.SubMenuVisible) // hide the OSD
 				{
 					lock(this)
 					{ 
@@ -179,6 +179,15 @@ namespace MediaPortal.GUI.TV
 						m_osdWindow.OnAction(newAction);	// route keys to OSD window
 						m_bUpdate=true;
 					}
+          else
+          {
+            // route unhandled actions to OSD window
+            if (!m_osdWindow.SubMenuVisible)
+            {
+              m_osdWindow.OnAction(action);	
+              m_bUpdate=true;
+            }
+          }
 				}
 				return;
 			}
@@ -248,6 +257,7 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_REWIND:
 				{
 					g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
+          if (g_Player.Paused) g_Player.Pause();
 					m_bUpdate=true;
 				}
 					break;
@@ -255,6 +265,7 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_FORWARD:
 				{
 					g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
+          if (g_Player.Paused) g_Player.Pause();
 					m_bUpdate=true;
 				}
 					break;
@@ -322,6 +333,7 @@ namespace MediaPortal.GUI.TV
 					break;
 
 
+        case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
           g_Player.StepNow();
           g_Player.Speed=1;
@@ -455,6 +467,15 @@ namespace MediaPortal.GUI.TV
 			{
 				m_iLastSpeed=g_Player.Speed;
 				if (m_iLastSpeed==1) m_bClear=true;
+
+        if (m_bOSDVisible && (m_iLastSpeed==1))
+        {        
+          //Send play action to reset pressed buttons
+          Action action=new Action();
+          action.wID = Action.ActionType.ACTION_PLAY;
+          m_osdWindow.OnAction(action);	// Route action to OSD window
+        }
+        m_bUpdate=true;
 			}
 			if (m_bLastPause!=g_Player.Paused)
 			{
