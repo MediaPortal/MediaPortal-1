@@ -131,6 +131,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCa
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freedb", "GUIMusic\Freedb\Freedb.csproj", "{78C88858-223E-4D96-AE26-65DD1380B4AC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ripper", "GUIMusic\Ripper\Ripper.csproj", "{940015B7-F05D-402E-9330-E616A6CE9D7A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -247,6 +255,14 @@ Global
 		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Debug.Build.0 = Debug|.NET
 		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.ActiveCfg = Release|.NET
 		{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}.Release.Build.0 = Release|.NET
+		{78C88858-223E-4D96-AE26-65DD1380B4AC}.Debug.ActiveCfg = Debug|.NET
+		{78C88858-223E-4D96-AE26-65DD1380B4AC}.Debug.Build.0 = Debug|.NET
+		{78C88858-223E-4D96-AE26-65DD1380B4AC}.Release.ActiveCfg = Release|.NET
+		{78C88858-223E-4D96-AE26-65DD1380B4AC}.Release.Build.0 = Release|.NET
+		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Debug.ActiveCfg = Debug|.NET
+		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Debug.Build.0 = Debug|.NET
+		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Release.ActiveCfg = Release|.NET
+		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

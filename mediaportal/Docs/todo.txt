@@ -23,8 +23,7 @@ My TV:
      -
   
   Capture:
-     - TVOSD: FF/RW live TV, skip commercial (pause already works)
-     - TVOSD: show progress bar where we are in time
+     - FF/RW live TV doesnt work yet?
      - view & record @ same time (optional)
      - add support for digital capture cards (BDA tuners)
     
