@@ -12,12 +12,27 @@ namespace GUIExplorer
 	/// </summary>
   public class SetupForm : System.Windows.Forms.Form, ISetupForm 
   {
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.CheckBox checkBox2;
+		private System.Windows.Forms.CheckBox checkBox3;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.CheckBox checkBox4;
+		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.CheckBox checkBox1;
  
 	public SetupForm()
 	{
 	  //
 	  // Required for Windows Form Designer support
 	  //
+		InitializeComponent();
+		LoadSettings();
 		//
 	  // TODO: Add any constructor code after InitializeComponent call
 	  //
@@ -41,13 +56,134 @@ namespace GUIExplorer
 	/// </summary>
 	private void InitializeComponent()
 	{
+		this.label1 = new System.Windows.Forms.Label();
+		this.checkBox1 = new System.Windows.Forms.CheckBox();
+		this.label2 = new System.Windows.Forms.Label();
+		this.checkBox2 = new System.Windows.Forms.CheckBox();
+		this.checkBox3 = new System.Windows.Forms.CheckBox();
+		this.label3 = new System.Windows.Forms.Label();
+		this.label4 = new System.Windows.Forms.Label();
+		this.checkBox4 = new System.Windows.Forms.CheckBox();
+		this.textBox1 = new System.Windows.Forms.TextBox();
+		this.label5 = new System.Windows.Forms.Label();
+		this.button1 = new System.Windows.Forms.Button();
+		this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+		this.button2 = new System.Windows.Forms.Button();
+		this.SuspendLayout();
+		// 
+		// label1
+		// 
+		this.label1.Location = new System.Drawing.Point(16, 16);
+		this.label1.Name = "label1";
+		this.label1.Size = new System.Drawing.Size(168, 16);
+		this.label1.TabIndex = 0;
+		this.label1.Text = "Show only Shares (Destination)";
+		// 
+		// checkBox1
+		// 
+		this.checkBox1.Location = new System.Drawing.Point(264, 8);
+		this.checkBox1.Name = "checkBox1";
+		this.checkBox1.Size = new System.Drawing.Size(24, 24);
+		this.checkBox1.TabIndex = 1;
+		// 
+		// label2
+		// 
+		this.label2.Location = new System.Drawing.Point(16, 40);
+		this.label2.Name = "label2";
+		this.label2.Size = new System.Drawing.Size(152, 23);
+		this.label2.TabIndex = 2;
+		this.label2.Text = "Enable Delete Funktion";
+		// 
+		// checkBox2
+		// 
+		this.checkBox2.Location = new System.Drawing.Point(264, 32);
+		this.checkBox2.Name = "checkBox2";
+		this.checkBox2.Size = new System.Drawing.Size(24, 24);
+		this.checkBox2.TabIndex = 3;
+		// 
+		// checkBox3
+		// 
+		this.checkBox3.Location = new System.Drawing.Point(264, 56);
+		this.checkBox3.Name = "checkBox3";
+		this.checkBox3.Size = new System.Drawing.Size(24, 24);
+		this.checkBox3.TabIndex = 4;
+		// 
+		// label3
+		// 
+		this.label3.Location = new System.Drawing.Point(16, 64);
+		this.label3.Name = "label3";
+		this.label3.Size = new System.Drawing.Size(160, 24);
+		this.label3.TabIndex = 5;
+		this.label3.Text = "Delete Files immediately ";
+		// 
+		// label4
+		// 
+		this.label4.Location = new System.Drawing.Point(16, 88);
+		this.label4.Name = "label4";
+		this.label4.Size = new System.Drawing.Size(256, 23);
+		this.label4.TabIndex = 6;
+		this.label4.Text = "Delete moves files to Temp Folder (like Trashcan)";
+		// 
+		// checkBox4
+		// 
+		this.checkBox4.Location = new System.Drawing.Point(264, 80);
+		this.checkBox4.Name = "checkBox4";
+		this.checkBox4.Size = new System.Drawing.Size(24, 24);
+		this.checkBox4.TabIndex = 7;
+		// 
+		// textBox1
+		// 
+		this.textBox1.Location = new System.Drawing.Point(264, 112);
+		this.textBox1.Name = "textBox1";
+		this.textBox1.Size = new System.Drawing.Size(216, 20);
+		this.textBox1.TabIndex = 8;
+		this.textBox1.Text = "";
+		// 
+		// label5
+		// 
+		this.label5.Location = new System.Drawing.Point(16, 112);
+		this.label5.Name = "label5";
+		this.label5.Size = new System.Drawing.Size(176, 23);
+		this.label5.TabIndex = 9;
+		this.label5.Text = "Temp Folder";
+		// 
+		// button1
+		// 
+		this.button1.Location = new System.Drawing.Point(496, 112);
+		this.button1.Name = "button1";
+		this.button1.Size = new System.Drawing.Size(32, 24);
+		this.button1.TabIndex = 10;
+		this.button1.Text = "...";
+		this.button1.Click += new System.EventHandler(this.button1_Click);
+		// 
+		// button2
+		// 
+		this.button2.Location = new System.Drawing.Point(472, 160);
+		this.button2.Name = "button2";
+		this.button2.Size = new System.Drawing.Size(56, 24);
+		this.button2.TabIndex = 11;
+		this.button2.Text = "OK";
+		this.button2.Click += new System.EventHandler(this.button2_Click);
 		// 
 		// SetupForm
 		// 
 		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-		this.ClientSize = new System.Drawing.Size(184, 54);
+		this.ClientSize = new System.Drawing.Size(552, 198);
+		this.Controls.Add(this.button2);
+		this.Controls.Add(this.button1);
+		this.Controls.Add(this.label5);
+		this.Controls.Add(this.textBox1);
+		this.Controls.Add(this.checkBox4);
+		this.Controls.Add(this.label4);
+		this.Controls.Add(this.label3);
+		this.Controls.Add(this.checkBox3);
+		this.Controls.Add(this.checkBox2);
+		this.Controls.Add(this.label2);
+		this.Controls.Add(this.checkBox1);
+		this.Controls.Add(this.label1);
 		this.Name = "SetupForm";
 		this.Text = "SetupForm";
+		this.ResumeLayout(false);
 
 	}
 	#endregion
@@ -86,7 +222,7 @@ namespace GUIExplorer
 
 	public bool HasSetup() 
 	{
-	  return false;
+	  return true;
 	}
 
 	public int GetWindowId() 
@@ -107,7 +243,6 @@ namespace GUIExplorer
 	///          false : plugin does not need its own button on home</returns>
 	public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage) 
 	{
-
 	  strButtonText = GUILocalizeStrings.Get(2200);
 	  strButtonImage = "";
 	  strButtonImageFocus = "";
@@ -116,5 +251,87 @@ namespace GUIExplorer
 	}
 	#endregion
 
+		private void button1_Click(object sender, System.EventArgs e)
+		{
+			using(folderBrowserDialog1 = new FolderBrowserDialog()) 
+			{
+				folderBrowserDialog1.Description = "Select the folder where delete file will be stored";
+				folderBrowserDialog1.ShowNewFolderButton = true;
+				folderBrowserDialog1.SelectedPath = textBox1.Text;
+				DialogResult dialogResult = folderBrowserDialog1.ShowDialog(this);
+
+				if(dialogResult == DialogResult.OK) 
+				{
+					textBox1.Text = folderBrowserDialog1.SelectedPath;
+				}
+			}		
+		}
+
+		private void LoadSettings() 
+		{
+			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			{
+				textBox1.Text=xmlreader.GetValueAsString("myexplorer","temp_folder","");
+				checkBox1.Checked=xmlreader.GetValueAsBool("myexplorer","show_only_shares",false);
+				checkBox2.Checked=xmlreader.GetValueAsBool("myexplorer","enable_delete",false);
+				checkBox3.Checked=xmlreader.GetValueAsBool("myexplorer","delete_immediately",false);
+				checkBox4.Checked=xmlreader.GetValueAsBool("myexplorer","delete_temp",false);
+ 			}
+		}
+
+		private void SaveSettings() 
+		{
+			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
+			{
+				xmlwriter.SetValue("myexplorer","temp_folder",textBox1.Text);
+				xmlwriter.SetValueAsBool("myexplorer","show_only_shares",checkBox1.Checked);
+				xmlwriter.SetValueAsBool("myexplorer","enable_delete",checkBox2.Checked);
+				if (checkBox2.Checked==true)
+				{
+					xmlwriter.SetValueAsBool("myexplorer","delete_immediately",checkBox3.Checked);
+					if(checkBox3.Checked==true)
+					{
+						xmlwriter.SetValueAsBool("myexplorer","delete_temp",false);
+					} 
+					else 
+					{
+						xmlwriter.SetValueAsBool("myexplorer","delete_temp",checkBox4.Checked);
+					}
+				} 
+				else 
+				{
+					xmlwriter.SetValueAsBool("myexplorer","delete_immediately",false);
+					xmlwriter.SetValueAsBool("myexplorer","delete_temp",false);
+				}
+			}
+		}
+
+		private void button2_Click(object sender, System.EventArgs e)
+		{
+			if (checkBox4.Checked==true) 
+			{
+				if (textBox1.Text=="") 
+				{
+					MessageBox.Show( "Please select a temp path!" );
+				} 
+				else 
+				{
+					SaveSettings();
+					this.Visible = false;
+				}
+			} 
+			else 
+			{
+				if (checkBox2.Checked==true && checkBox3.Checked==false && checkBox4.Checked==false) 
+				{
+					MessageBox.Show( "Please a Option: \n(Delete Files immediately)\n or \n(Delete moves files to Temp Folder)" );
+				} 
+				else 
+				{
+					SaveSettings();
+					this.Visible = false;
+				}
+			}
+		}
   }
 }

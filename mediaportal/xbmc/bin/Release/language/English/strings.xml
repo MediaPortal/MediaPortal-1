@@ -2718,6 +2718,21 @@
 	</string>
 
 
+	<string>
+		<id>2116</id>
+		<value>Drive not ready</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>a fatal error has occurred!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Convert DVR-MS</value>
+	</string>
+
+
+
 	<!-- My Explorer Strings -->
 	<string>
 		<id>2200</id>
@@ -2787,6 +2802,44 @@
 		<id>2216</id>
 		<value>Files moved!</value>
 	</string>
+
+	<string>
+		<id>2217</id>
+		<value>Destination File exists!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>File overwrite?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>From selected drive can´t move!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Copy the selected file?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Do you want to delete the selected files?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Files deleted!</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Trashcan</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Folder exists!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Folder created</value>
+	</string>
+
 	
 <string>
 	<id>8000</id>
