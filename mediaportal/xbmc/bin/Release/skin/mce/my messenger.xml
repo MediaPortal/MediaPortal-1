@@ -95,7 +95,7 @@
 			</control>
 			<control>
 				<description>Status button</description>
-				<type>button</type>
+				<type>selectbutton</type>
 				<id>5</id>
 				<posX>60</posX>
 				<posY>165</posY>
@@ -104,6 +104,15 @@
 				<onright>50</onright>
 				<onup>3</onup>
 				<ondown>6</ondown>
+				<subitems>
+					<subitem>948</subitem>
+					<subitem>949</subitem>
+					<subitem>950</subitem>
+					<subitem>951</subitem>
+					<subitem>952</subitem>
+					<subitem>953</subitem>
+					<subitem>954</subitem>
+				</subitems>
 			</control>					
 			<control>
 				<description>Connect button</description>

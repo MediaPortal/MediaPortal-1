@@ -282,33 +282,7 @@ namespace MediaPortal.GUI.MSN
 
           if (iControl==(int)Controls.CONTROL_BTNSTATUS) // Set new status
           {
-            switch (currentStatus)
-            {
-              case MyMSNStatus.STATUS_ONLINE:
-                currentStatus=MyMSNStatus.STATUS_BUSY;
-                break;
-              case MyMSNStatus.STATUS_BUSY:
-                currentStatus=MyMSNStatus.STATUS_BRB;
-                break;
-              case MyMSNStatus.STATUS_BRB:
-                currentStatus=MyMSNStatus.STATUS_AWAY;             
-                break;
-              case MyMSNStatus.STATUS_AWAY:
-                currentStatus=MyMSNStatus.STATUS_PHONE;
-                break;
-              case MyMSNStatus.STATUS_PHONE:
-                currentStatus=MyMSNStatus.STATUS_LUNCH;                
-                break;
-              case MyMSNStatus.STATUS_LUNCH:
-                currentStatus=MyMSNStatus.STATUS_HIDDEN;
-                break;
-              case MyMSNStatus.STATUS_HIDDEN:
-                currentStatus=MyMSNStatus.STATUS_ONLINE;
-                break;
-              default:
-                currentStatus=MyMSNStatus.STATUS_ONLINE;
-                break;
-            }
+						currentStatus = (MyMSNStatus)GetControl((int)Controls.CONTROL_BTNSTATUS).SelectedItem;          
             UpdateStatusButton();
           }
           break;
