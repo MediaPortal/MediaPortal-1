@@ -79,6 +79,7 @@ namespace MediaPortal.GUI.TV
     {
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
+				m_iCurrentCard=xmlreader.GetValueAsInt("mytv","card",0);
 				m_strChannel=xmlreader.GetValueAsString("mytv","channel","");
 				m_strGroup=xmlreader.GetValueAsString("mytv","group","");
         m_bTVON=xmlreader.GetValueAsBool("mytv","tvon",true);
@@ -95,6 +96,7 @@ namespace MediaPortal.GUI.TV
         xmlwriter.SetValueAsBool("mytv","tvon",m_bTVON);
         xmlwriter.SetValueAsBool("mytv","timeshifting",m_bTimeShifting);
 				xmlwriter.SetValue("mytv","group",m_strGroup);
+				xmlwriter.SetValue("mytv","card",m_iCurrentCard.ToString());
 			}
     }
     #endregion
