@@ -31,6 +31,8 @@ namespace MediaPortal.TV.Recording
 		DVBSections		m_sections=new DVBSections();
 		int				m_cardType=0;
 		string			m_channelName="";
+		string			m_languagesToGrab="";
+
 		NetworkType m_networkType;
 		
 		public enum EPGCard
@@ -42,8 +44,22 @@ namespace MediaPortal.TV.Recording
 			ChannelName
 		}
 		//
+		//
+		public string Languages
+		{
+			get
+			{
+				return m_languagesToGrab;
+			}
+			set
+			{
+				m_languagesToGrab=value;
+			}
+		}
+		//
 		// commits epg-data to database
 		//
+
 		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind)
 		{
 			try
@@ -230,6 +246,32 @@ namespace MediaPortal.TV.Recording
 					{
 						Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
 						continue;
+					}
+					if(m_languagesToGrab!="")
+					{
+						bool ignoreFlag=true;
+						string[] langs=m_languagesToGrab.Split(new char[]{'/'});
+						foreach(string lang in langs)
+						{
+							string code=eit.languageCode;
+							if(code==null)
+								continue;
+							if(code.Length==3)
+								code=code.ToLower();
+							else
+								continue;
+
+							if(lang.ToLower().Equals(code))
+							{
+								ignoreFlag=false;
+								break;
+							}
+						}
+						if(ignoreFlag==true)
+						{
+							Log.Write("epg-grab: IGNORED no matching language selected");
+							continue;
+						}
 					}
 
 					if(serviceID!=0)

@@ -2310,7 +2310,10 @@ namespace MediaPortal.TV.Recording
 			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0)==true)
 				Log.Write("DVBGraphSS2: Radio tune ok");
 			else
+			{
 				Log.Write("DVBGraphSS2: FAILED cannot tune");
+				return;
+			}
 
 			m_currentChannel=ch;
 			
