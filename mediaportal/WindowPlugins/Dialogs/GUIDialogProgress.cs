@@ -87,7 +87,7 @@ namespace MediaPortal.Dialogs
       GUIWindowManager.RouteToWindow( GetID );
 
       // active this window...
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
+      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
       OnMessage(msg);
       ShowProgressBar(false);
       SetPercentage(0);
@@ -125,7 +125,7 @@ namespace MediaPortal.Dialogs
       GUIWindowManager.RouteToWindow( GetID );
 
       // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
       OnMessage(msg);
 
       m_bRunning=true;
@@ -143,7 +143,8 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
           m_pParentWindow=null;
-          GUIGraphicsContext.Overlay=m_bOverlay;				
+          GUIGraphicsContext.Overlay=m_bOverlay;
+				  base.OnMessage(message);
           FreeResources();
           DeInitControls();
 
