@@ -805,7 +805,7 @@
 	</string>
 	<string>
 		<id>274</id>
-		<value>Posicion de los Subtitulos</value>
+		<value>Posición de los Subtítulos</value>
 	</string>
 	<string>
 		<id>275</id>
@@ -817,7 +817,7 @@
 	</string>
 	<string>
 		<id>277</id>
-		<value>Mover la barra para cambia la posición de los subtitulos</value>
+		<value>Mover la barra para cambia la posición de los subtítulos</value>
 	</string>
 	<string>
 		<id>278</id>
@@ -857,7 +857,7 @@
 	</string>
 	<string>
 		<id>287</id>
-		<value>Subtitulos</value>
+		<value>Subtítulos</value>
 	</string>
 	<string>
 		<id>288</id>
@@ -869,7 +869,7 @@
 	</string>
 	<string>
 		<id>290</id>
-		<value>Amplificacion de volumen (dB)</value>
+		<value>Amplificación de volumen (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
@@ -881,7 +881,7 @@
 	</string>
 	<string>
 		<id>293</id>
-		<value>Subtitulos</value>
+		<value>Subtítulos</value>
 	</string>
 	<string>
 		<id>294</id>
@@ -1517,7 +1517,7 @@
 	</string>
 	<string>
 		<id>462</id>
-		<value>Subtitulo</value>
+		<value>Subtítulo</value>
 	</string>
 	<string>
 		<id>463</id>
@@ -1753,7 +1753,7 @@
 	</string>
 	<string>
 		<id>629</id>
-		<value>Para Grabacion</value>
+		<value>Para Grabación</value>
 	</string>
 	<string>
 		<id>630</id>
@@ -1821,7 +1821,7 @@
 	</string>
 	<string>
 		<id>646</id>
-		<value>Horarios de Grabacion</value>
+		<value>Horarios de Grabación</value>
 	</string>
 	<string>
 		<id>647</id>
@@ -1950,7 +1950,7 @@
 <string><id>10012</id><value>Configuración->SlideShow</value></string>
 <string><id>10013</id><value>Configuración->Screen->Filtros</value></string>
 <string><id>10014</id><value>Configuración->Música</value></string>
-<string><id>10015</id><value>Configuración->Pantalla->Subtitulos</value></string>
+<string><id>10015</id><value>Configuración->Pantalla->Subtítulos</value></string>
 <string><id>10016</id><value>Configuración->Pantalla->Screensaver</value></string>
 <string><id>10017</id><value>Configuración->Clima</value></string>
 <string><id>10020</id><value>Configuración->Scripts</value></string>
@@ -1963,7 +1963,7 @@
 <string><id>10027</id><value>Ajustes->General->Autorun</value></string>
 <string><id>10028</id><value>Mi Videos/playlist</value></string>
 <string><id>10029</id><value>Configuración->General->LCD</value></string>
-<string><id>10100</id><value>Dialogo Si/No</value></string>
+<string><id>10100</id><value>Dialogo Sí/No</value></string>
 <string><id>10101</id><value>Progress dialog</value></string>
 <string><id>10500</id><value>Mi Música/playlist</value></string>
 <string><id>10501</id><value>Mi Música/archivos</value></string>
@@ -1984,4 +1984,12 @@
 <string><id>12600</id><value>Mi Clima</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>OSD de toda la pantalla</value></string>
+<string><id>12902</id><value>Nacido(a)</value></string>
+<string><id>12903</id><value>Años Activos</value></string>
+<string><id>12904</id><value>Instrumentos</value></string>
+<string><id>12905</id><value>Biografía</value></string>
+<string><id>12906</id><value>Discografía (albunes)</value></string>
+<string><id>12907</id><value>Discografía (compilationes, cajas)</value></string>
+<string><id>12908</id><value>Discografía (singles)</value></string>
+<string><id>12909</id><value>Discografía (videos, entrevistas)</value></string>
 </strings>
