@@ -753,10 +753,10 @@ namespace MediaPortal.GUI.Library
             m_bRefresh = true;
           }
         }
-          break;
-				default : 
-				{
-					if (m_iSelect == ListType.CONTROL_LIST)
+          break;        
+        default:
+        {
+					if ((m_iSelect == ListType.CONTROL_LIST) && (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)action.wID, 0, null);
 						GUIGraphicsContext.SendMessage(msg);

@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Library
 	  protected GUIImage      m_PinIconImage=null;
     protected bool          m_isRemote=false;           // indicating if this is a local or remote file
     protected bool          m_isDownloading=false;            // indicating if this file is being downloaded
+    int                     m_iItemId=0;                // General item id
 
     /// <summary>
 		/// The (empty) constructor of the GUIListItem.
@@ -74,6 +75,7 @@ namespace MediaPortal.GUI.Library
 			m_info=item.m_info;
 			m_fRating=item.m_fRating;
 			m_iYear=item.m_iYear;
+      m_iItemId=item.m_iItemId;
       m_musicTag=item.m_musicTag;
       m_TVTag=item.m_TVTag;
       m_AlbumInfoTag=item.m_AlbumInfoTag;
@@ -363,6 +365,15 @@ namespace MediaPortal.GUI.Library
     {
 			get { return m_iYear;}
       set {m_iYear=value;}
+    }
+
+    /// <summary>
+    /// Get/set the general item id.
+    /// </summary>
+    public int ItemId
+    {
+      get { return m_iItemId;}
+      set {m_iItemId=value;}
     }
 
 		/// <summary>
