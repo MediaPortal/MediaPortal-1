@@ -1215,8 +1215,8 @@ namespace MediaPortal.Player
               else if ( ((uint)hr)==VFW_E_DVD_INVALIDDOMAIN) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain",iHours,iMins,iSecs);
               else Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}",iHours,iMins,iSecs,hr); 
             }
-            SetDefaultLanguages();
-            dvdCtrl.Pause(false);
+            //SetDefaultLanguages();
+            //dvdCtrl.Pause(false);
           }
         }
       }
