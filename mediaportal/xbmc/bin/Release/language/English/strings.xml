@@ -3057,6 +3057,10 @@
 	<value>Ken Burns speed</value>
 </string>
 <string>
+	<id>13012</id>
+	<value>Loading picture, please wait</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
