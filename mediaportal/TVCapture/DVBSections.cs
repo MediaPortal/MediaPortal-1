@@ -1768,7 +1768,7 @@ namespace MediaPortal.TV.Recording
 		public void GetMHWData(DShowNET.IBaseFilter filter)
 		{
 			GetStreamData(filter,0xd3,0x90,1,m_timeoutMS);
-			int a=0;
+			//int a=0;
 		}
 		// get current/next info
 		//

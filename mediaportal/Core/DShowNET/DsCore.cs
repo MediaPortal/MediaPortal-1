@@ -295,6 +295,49 @@ public interface IFilterGraph
 		int GetRenderingMode([Out] int Mode);
    
 	}
+	public enum VMR9MixerPrefs
+	{
+		NoDecimation            = 0x00000001,
+		DecimateOutput          = 0x00000002,
+		ARAdjustXorY            = 0x00000004,
+		NonSquareMixing         = 0x00000008,
+		DecimateMask            = 0x0000000F,
+		BiLinearFiltering       = 0x00000010,
+		PointFiltering          = 0x00000020,
+		AnisotropicFiltering    = 0x00000040,
+		PyramidalQuadFiltering  = 0x00000080,
+		GaussianQuadFiltering   = 0x00000100,
+		FilteringReserved       = 0x00000E00,
+		FilteringMask           = 0x00000FF0,
+		RenderTargetRGB         = 0x00001000,
+		RenderTargetYUV         = 0x00002000,
+		RenderTargetReserved    = 0x000FC000,
+		RenderTargetMask        = 0x000FF000,
+		DynamicSwitchToBOB      = 0x00100000,
+		DynamicDecimateBy2      = 0x00200000,
+		DynamicReserved         = 0x00C00000,
+		DynamicMask             = 0x00F00000
+	} 
+	public enum VMR9DeinterlacePrefs
+	{
+		DeinterlacePref9_NextBest = 0x01,
+		DeinterlacePref9_BOB      = 0x02,
+		DeinterlacePref9_Weave    = 0x04,
+		DeinterlacePref9_Mask     = 0x07
+	} 
+
+	public enum VMR9DeinterlaceTech:uint
+	{
+		Unknown             = 0x0000,
+		BOBLineReplicate    = 0x0001,
+		BOBVerticalStretch  = 0x0002,
+		MedianFiltering     = 0x0004,
+		EdgeFiltering       = 0x0010,
+		FieldAdaptive       = 0x0020,
+		PixelAdaptive       = 0x0040,
+		MotionVectorSteered = 0x0080
+	} ;
+
 
 	public enum VMR9AspectRatioMode  
 	{
@@ -324,6 +367,34 @@ public interface IFilterGraph
 
 	}
 
+	public enum VMR9ProcAmpControlFlags:uint
+	{
+		ProcAmpControl9_Brightness            = 0x00000001,
+		ProcAmpControl9_Contrast              = 0x00000002,
+		ProcAmpControl9_Hue                   = 0x00000004,
+		ProcAmpControl9_Saturation            = 0x00000008,
+		ProcAmpControl9_Mask                  = 0x0000000F
+	} ;
+
+	public struct VMR9ProcAmpControl
+	{
+		public uint       dwSize;
+		public uint       dwFlags;
+		public float       Brightness;
+		public float       Contrast;
+		public float       Hue;
+		public float       Saturation;
+	} ;
+
+	public struct VMR9ProcAmpControlRange
+	{
+		public uint                       dwSize;
+		public VMR9ProcAmpControlFlags     dwProperty; // see VMR9ProcAmpControlFlags above
+		public float                       MinValue;
+		public float                       MaxValue;
+		public float                       DefaultValue;
+		public float                       StepSize;
+	} ;
 	public struct RGB 
 	{
 		public byte red;
@@ -503,8 +574,22 @@ public interface IFilterGraph
 		[PreserveSig]
 		int GetBackgroundColor(int streamID,[Out] RGB color);
 	
+		[PreserveSig]
+		int SetMixingPrefs([In] VMR9MixerPrefs dwMixerPrefs  );
 
-		
+		[PreserveSig]
+		int GetMixingPrefs([Out] VMR9MixerPrefs pdwMixerPrefs);
+
+		[PreserveSig]
+		int SetProcAmpControl([In] uint dwStreamID,[In] ref VMR9ProcAmpControl lpClrControl);
+
+		[PreserveSig]
+		int GetProcAmpControl([In] uint dwStreamID,
+													[In, Out] ref VMR9ProcAmpControl lpClrControl);
+
+		[PreserveSig]
+		int GetProcAmpControlRange([In] uint dwStreamID,
+															 [In, Out] ref VMR9ProcAmpControlRange lpClrControl);
 	}
 
 	[ComVisible(true), ComImport,

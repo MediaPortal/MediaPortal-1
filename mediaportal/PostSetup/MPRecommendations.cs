@@ -21,7 +21,7 @@ namespace PostSetup
 		private PictureBox pictureBox2;
 		private Button btnAction;
 		private Panel MP3PartPanel;
-		private IContainer components;
+		//private IContainer components;
 		private string mpTargetDir;
 		private int currentPackageIndex = 0;
 
@@ -120,13 +120,7 @@ namespace PostSetup
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
-			{
-				if (components != null)
-				{
-					components.Dispose();
-				}
-			}
+			
 			base.Dispose(disposing);
 		}
 

@@ -47,7 +47,7 @@ namespace MediaPortal.Configuration.Sections
 		//
 		// Private members
 		//
-		bool isDirty = false;
+		//bool isDirty = false;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
@@ -378,7 +378,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void addButton_Click(object sender, EventArgs e)
 		{
-			isDirty = true;
+//			isDirty = true;
 
 			EditRadioStationForm editStation = new EditRadioStationForm();
 
@@ -415,7 +415,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void editButton_Click(object sender, System.EventArgs e)
 		{
-			isDirty = true;
+//			isDirty = true;
 
 			foreach(ListViewItem listItem in stationsListView.SelectedItems)
 			{
@@ -459,7 +459,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void deleteButton_Click(object sender, System.EventArgs e)
 		{
-			isDirty = true;
+//			isDirty = true;
 
 			int itemCount = stationsListView.SelectedItems.Count;
 
@@ -556,7 +556,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void MoveSelectionDown()
     {
-      isDirty = true;
+//      isDirty = true;
 
       for(int index = stationsListView.Items.Count - 1; index >= 0; index--)
       {
@@ -585,7 +585,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void MoveSelectionUp()
     {
-      isDirty = true;
+//      isDirty = true;
 
       for(int index = 0; index < stationsListView.Items.Count; index++)
       {
@@ -621,7 +621,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void stationsListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
     {
-      isDirty = true;
+//      isDirty = true;
 
       if(e.NewValue == CheckState.Checked)
       {

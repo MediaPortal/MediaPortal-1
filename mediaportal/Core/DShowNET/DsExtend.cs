@@ -955,29 +955,6 @@ namespace DShowNET
 
   }
 
-
-
-
-  public enum VMR9DeinterlacePrefs
-  {
-    DeinterlacePref9_NextBest = 0x01,
-    DeinterlacePref9_BOB = 0x02,
-    DeinterlacePref9_Weave = 0x04,
-    DeinterlacePref9_Mask = 0x07
-  } ;
-
-  public enum VMR9DeinterlaceTech
-  {
-    DeinterlaceTech9_Unknown                = 0x0000,
-    DeinterlaceTech9_BOBLineReplicate       = 0x0001,
-    DeinterlaceTech9_BOBVerticalStretch     = 0x0002,
-    DeinterlaceTech9_MedianFiltering        = 0x0004,
-    DeinterlaceTech9_EdgeFiltering          = 0x0010,
-    DeinterlaceTech9_FieldAdaptive          = 0x0020,
-    DeinterlaceTech9_PixelAdaptive          = 0x0040,
-    DeinterlaceTech9_MotionVectorSteered      = 0x0080
-  } ;
-
   [StructLayout(LayoutKind.Sequential), ComVisible(true)]
   public struct VMR9Frequency 
   {

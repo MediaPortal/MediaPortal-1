@@ -126,8 +126,8 @@ namespace MediaPortal.GUI.GUIBurner
 		private bool isBurner=true;
 		private	bool convertDVR;
 		private	bool deleteDVRSrc;
-		private string soundFolder="";
-		private string videoFolder="";
+		//private string soundFolder="";
+		//private string videoFolder="";
 		private	BurnerThread bt = new BurnerThread();
 		static ArrayList dvr_extensions	= new ArrayList();
 		private bool convertAuto;
