@@ -91,6 +91,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			if (CurApp != null)
 			{
+				ProgressText.Text = "";
 				Application.DoEvents(); // make sure the title caption appears....
 				CurApp.OnRefreshInfo += new AppItem.RefreshInfoEventHandler(RefreshInfo);
 				try
