@@ -134,6 +134,21 @@
                     Project = "{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "PlayList"
+                    Project = "{49365A9E-B202-4BB7-AB28-B79CEB6199C3}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "TagReader"
+                    Project = "{5CDE80C5-DC4B-4A1D-AF68-8A2CC5B5EEB6}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "MusicDatabase"
+                    Project = "{46847F6F-7AEC-4CBB-B6D5-78C18FCDD2C0}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -438,6 +453,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\MusicDatabase.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MusicDatabase.resx"
+                    DependentUpon = "MusicDatabase.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\MusicExtensions.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -642,7 +667,54 @@
                     DependentUpon = "Wizard_Welcome.cs"
                     BuildAction = "EmbeddedResource"
                 />
-                <Folder RelPath = "Wizards\" />
+                <File
+                    RelPath = "Wizards\DVD.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\FirstTimeSetup.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\Movies.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\Music.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\Pictures.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\Television.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\wizard_dvd.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\wizard_fts.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\wizard_movie.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\wizard_music.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\wizard_picture.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Wizards\wizard_television.png"
+                    BuildAction = "Content"
+                />
             </Include>
         </Files>
     </CSHARP>

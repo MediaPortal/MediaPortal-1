@@ -35,6 +35,14 @@
     	</section>
     	
     	<section>
+      		<description></description>
+      		<name>MusicDatabase</name>
+      		<topic>Music Database</topic>
+      		<information></information>
+      		<dependency>MusicShares.Shares.Available</dependency>
+    	</section>
+    	
+    	<section>
       		<description>Wizard done screen</description>
       		<name>Wizard_Finished</name>
       		<topic>Congratulations!</topic>

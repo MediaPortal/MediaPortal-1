@@ -37,7 +37,12 @@ namespace MediaPortal.Configuration
 		//
 		// Private members
 		//
-		ArrayList wizardPages = new ArrayList();
+    public static ArrayList WizardPages
+    {
+      get { return wizardPages; }
+    }
+		static ArrayList wizardPages = new ArrayList();
+    
     string wizardCaption = String.Empty;
     
     private System.Windows.Forms.Button cancelButton;

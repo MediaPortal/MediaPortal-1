@@ -57,6 +57,14 @@
       		<information>Music share information, yada yada. By checking one of the shares you will make that share the default share, this share will be automatically shown when you enter My Music.</information>
       		<dependency>Wizard_SelectPlugins.Plugin.MyMusic</dependency>
     	</section>
+
+    	<section>
+      		<description></description>
+      		<name>MusicDatabase</name>
+      		<topic>Music Database</topic>
+      		<information></information>
+      		<dependency>MusicShares.Shares.Available</dependency>
+    	</section>
     	
     	<section>
       		<description>Wizard done screen</description>

@@ -73,6 +73,27 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+    public override object GetSetting(string name)
+    {
+      switch(name.ToLower())
+      {
+        case "shares.available":
+          return CurrentShares.Count > 0;
+        
+        case "shares":
+          ArrayList shares = new ArrayList();
+
+          foreach(ListViewItem listItem in CurrentShares)
+          {
+            shares.Add(listItem.SubItems[1].Text);
+          }
+          return shares;
+      }
+
+      return null;
+    }
+
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -32,7 +33,7 @@ namespace MediaPortal.Configuration
 
     }
 
-		/// <summary> 
+    /// <summary> 
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
@@ -106,6 +107,24 @@ namespace MediaPortal.Configuration
 						}
 					}
 				}
+
+        //
+        // If we didn't find what we were looking for it might be due to the fact that
+        // we're running in wizard mode. Check with the loaded wizard pages too.
+        //
+        if(sectionSettings == null)
+        {
+          foreach(WizardForm.SectionHolder holder in WizardForm.WizardPages)
+          {
+            Type sectionType = holder.Section.GetType();
+
+            if(sectionType.Name.Equals(name))
+            {
+              sectionSettings = holder.Section;
+              break;
+            }
+          }
+        }
 			}
 
 			return sectionSettings;

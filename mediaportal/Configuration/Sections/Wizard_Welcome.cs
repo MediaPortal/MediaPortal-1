@@ -3,12 +3,18 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace MediaPortal.Configuration.Sections
 {
 	public class Wizard_Welcome : MediaPortal.Configuration.SectionSettings
 	{
-		private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.PictureBox pictureBox;
+    private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.Panel panel2;
+    private System.Windows.Forms.PictureBox itemPictureBox;
+    private System.Windows.Forms.Label headerLabel;
+    private System.Windows.Forms.Label bodyLabel;
 		private System.ComponentModel.IContainer components = null;
 
 		public Wizard_Welcome() : this("Wizard Welcome")
@@ -22,6 +28,50 @@ namespace MediaPortal.Configuration.Sections
 
 			// TODO: Add any initialization after the InitializeComponent call
 		}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="image"></param>
+    public void SetImage(Image image)
+    {
+      itemPictureBox.Image = image;
+    }
+
+    public void SetHeader(string header)
+    {
+      headerLabel.Text = header;
+    }
+
+    public void SetBody(string body)
+    {
+      bodyLabel.Text = body;
+    }
+
+    public override void LoadWizardSettings(System.Xml.XmlNode node)
+    {
+      //
+      // Fetch section information
+      //
+      XmlNode headerNode = node.SelectSingleNode("header");
+      XmlNode bodyNode = node.SelectSingleNode("body");
+      XmlNode imageNode = node.SelectSingleNode("image");
+      
+      if(headerNode != null && headerNode.InnerText.Length > 0)
+      {
+        SetHeader(headerNode.InnerText);
+      }
+
+      if(bodyNode != null && bodyNode.InnerText.Length > 0)
+      {
+        SetBody(bodyNode.InnerText);
+      }
+
+      if(imageNode != null && imageNode.InnerText.Length > 0)
+      {
+        SetImage(Image.FromFile(imageNode.InnerText));
+      }
+    }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -45,24 +95,88 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(96, 168);
-			this.label1.Name = "label1";
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Welcome!";
-			// 
-			// Wizard_Welcome
-			// 
-			this.Controls.Add(this.label1);
-			this.Name = "Wizard_Welcome";
-			this.Size = new System.Drawing.Size(384, 384);
-			this.ResumeLayout(false);
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Wizard_Welcome));
+      this.headerLabel = new System.Windows.Forms.Label();
+      this.pictureBox = new System.Windows.Forms.PictureBox();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.panel2 = new System.Windows.Forms.Panel();
+      this.itemPictureBox = new System.Windows.Forms.PictureBox();
+      this.bodyLabel = new System.Windows.Forms.Label();
+      this.SuspendLayout();
+      // 
+      // headerLabel
+      // 
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.headerLabel.Location = new System.Drawing.Point(192, 8);
+      this.headerLabel.Name = "headerLabel";
+      this.headerLabel.Size = new System.Drawing.Size(360, 23);
+      this.headerLabel.TabIndex = 0;
+      this.headerLabel.Text = "Header";
+      // 
+      // pictureBox
+      // 
+      this.pictureBox.Dock = System.Windows.Forms.DockStyle.Left;
+      this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
+      this.pictureBox.Location = new System.Drawing.Point(0, 0);
+      this.pictureBox.Name = "pictureBox";
+      this.pictureBox.Size = new System.Drawing.Size(184, 326);
+      this.pictureBox.TabIndex = 1;
+      this.pictureBox.TabStop = false;
+      // 
+      // panel1
+      // 
+      this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
+      this.panel1.Location = new System.Drawing.Point(184, 0);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(1, 326);
+      this.panel1.TabIndex = 2;
+      // 
+      // panel2
+      // 
+      this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
+      this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
+      this.panel2.Location = new System.Drawing.Point(185, 0);
+      this.panel2.Name = "panel2";
+      this.panel2.Size = new System.Drawing.Size(1, 326);
+      this.panel2.TabIndex = 3;
+      // 
+      // itemPictureBox
+      // 
+      this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
+      this.itemPictureBox.Location = new System.Drawing.Point(30, 192);
+      this.itemPictureBox.Name = "itemPictureBox";
+      this.itemPictureBox.Size = new System.Drawing.Size(128, 128);
+      this.itemPictureBox.TabIndex = 4;
+      this.itemPictureBox.TabStop = false;
+      // 
+      // bodyLabel
+      // 
+      this.bodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.bodyLabel.Location = new System.Drawing.Point(192, 48);
+      this.bodyLabel.Name = "bodyLabel";
+      this.bodyLabel.Size = new System.Drawing.Size(360, 264);
+      this.bodyLabel.TabIndex = 5;
+      this.bodyLabel.Text = "Body";
+      // 
+      // Wizard_Welcome
+      // 
+      this.Controls.Add(this.bodyLabel);
+      this.Controls.Add(this.itemPictureBox);
+      this.Controls.Add(this.panel2);
+      this.Controls.Add(this.panel1);
+      this.Controls.Add(this.pictureBox);
+      this.Controls.Add(this.headerLabel);
+      this.Name = "Wizard_Welcome";
+      this.Size = new System.Drawing.Size(560, 326);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 	}
 }

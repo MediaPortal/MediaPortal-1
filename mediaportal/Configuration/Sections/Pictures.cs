@@ -23,8 +23,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
 		}
 
 		public override void LoadSettings()
