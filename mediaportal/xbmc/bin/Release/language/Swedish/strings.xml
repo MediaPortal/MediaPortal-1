@@ -2247,6 +2247,10 @@
         <value>Volym tona in/ut</value>
     </string>
     <string>
+        <id>1440</id>
+        <value>Min SVT Text</value>
+    </string>
+    <string>
         <id>8000</id>
         <value>Min Epost</value>
     </string>
