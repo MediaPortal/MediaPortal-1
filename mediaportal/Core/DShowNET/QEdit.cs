@@ -29,7 +29,7 @@ public interface ISampleGrabber
 
 		[PreserveSig]
 	int SetMediaType(
-		[In, MarshalAs(UnmanagedType.LPStruct)]			AMMediaType	pmt );
+		[In ]ref		AMMediaType	pmt );
 
 		[PreserveSig]
 	int GetConnectedMediaType(
