@@ -110,6 +110,9 @@
 		<scrollbartop>progress_left.png</scrollbartop>
 		<scrollbarbottom>progress_right.png</scrollbarbottom>
 		<suffix>|</suffix>
+		<textvisible1>yes</textvisible1>
+		<textvisible2>yes</textvisible2>
+		<textvisible3>yes</textvisible3>
 	</control>
 	<control>
 		<description>default thumbnail panel</description>
