@@ -80,7 +80,7 @@
 		<reverse>yes</reverse>
 		<onleft>6</onleft>
 		<onright>8</onright>
-		<textureUp>arrow_round_right_nofocus.png</textureUp>
+		<textureUp>arrow_round_right_focus.png</textureUp>
 		<textureDown>arrow_round_left_nofocus.png</textureDown>
 		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
 		<textureDownFocus>arrow_round_left_nofocus.png</textureDownFocus>
