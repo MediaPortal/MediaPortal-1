@@ -2529,18 +2529,22 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < transp.channels.Count;++i)
 			{
 				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
-				if (info.service_name == null || info.service_provider_name == null ) 
+				if (info.service_name == null )
+					info.service_name=String.Format("NoName:{0}", info.serviceID);
+				if (info.service_provider_name == null ) 
 				{
 					Log.Write("DVBGraphBDA: skip channel:#{0} because it has no service provider?", i);
 					continue;
 				}
 				info.service_name=info.service_name.Trim();
 				info.service_provider_name=info.service_provider_name.Trim();
-				if (info.service_name==String.Empty || info.service_provider_name==String.Empty) 
+				if (info.service_provider_name==String.Empty) 
 				{
 					Log.Write("DVBGraphBDA: skip channel:#{0} because it has not service is empty?", i);
 					continue;
 				}
+				if (info.service_name.Length==0)
+					info.service_name=String.Format("NoName:{0}", info.serviceID);
 
 				bool hasAudio=false;
 				bool hasVideo=false;
