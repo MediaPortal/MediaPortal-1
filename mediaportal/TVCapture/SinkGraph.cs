@@ -43,7 +43,7 @@ namespace MediaPortal.TV.Recording
     bool                    m_bUseCable=false;
     DateTime                m_StartTime=DateTime.Now;
     int                     m_iPrevChannel=-1;
-
+    bool                    m_bFirstTune=true;
     /// <summary>
     /// Constructor
     /// </summary>
@@ -52,6 +52,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="strVideoCaptureFilter">Filter name of the capture device</param>
 		public SinkGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter)
 		{
+      m_bFirstTune=true;
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
@@ -66,6 +67,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.None) return false;
       m_iPrevChannel=-1;
+      m_bFirstTune=true;
       DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
@@ -273,10 +275,10 @@ namespace MediaPortal.TV.Recording
 
 			DirectShowUtil.DebugWrite("SinkGraph:StartTimeShifting()");
       ConnectEncoder();
+      m_graphState=State.TimeShifting;
       TuneChannel(iChannelNr);
       m_mpeg2Demux.StartTimeshifting(strFileName);
       
-      m_graphState=State.TimeShifting;
       return true;
     }
 
@@ -393,19 +395,25 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public void TuneChannel(int iChannel)
     {
+      if (m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return;
+
       m_iChannelNr=iChannel;
     
       DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
       if (iChannel <1000)
       {
         if (m_TVTuner==null) return;
-        m_TVTuner.put_TuningSpace(0);
-        m_TVTuner.put_CountryCode(m_iCountryCode);
-        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
-        if (m_bUseCable)
-          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
-        else
-          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+        if (m_bFirstTune)
+        {
+          m_bFirstTune=false;
+          m_TVTuner.put_TuningSpace(0);
+          m_TVTuner.put_CountryCode(m_iCountryCode);
+          m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+          if (m_bUseCable)
+            m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
+          else
+            m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+        }
         try
         {
           m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
@@ -469,10 +477,10 @@ namespace MediaPortal.TV.Recording
 
       DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
       ConnectEncoder();
+      m_graphState=State.Viewing;
       TuneChannel(iChannelNr);
       m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
       GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      m_graphState=State.Viewing;
       GUIGraphicsContext_OnVideoWindowChanged();
       return true;
 

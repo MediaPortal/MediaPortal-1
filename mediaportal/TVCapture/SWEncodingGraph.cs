@@ -44,13 +44,14 @@ namespace MediaPortal.TV.Recording
     IMediaControl					  m_mediaControl=null;		
     Size                    m_FrameSize;
     double                  m_FrameRate;
-             
+    bool                    m_bFirstTune=true;             
     const int WS_CHILD			= 0x40000000;	
     const int WS_CLIPCHILDREN	= 0x02000000;
     const int WS_CLIPSIBLINGS	= 0x04000000;
 
 		public SWEncodingGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter,string  strAudioCaptureFilter,string  strVideoCompressor,string  strAudioCompressor, Size frameSize, double frameRate)
     {
+      m_bFirstTune=true;             
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
@@ -72,6 +73,7 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:CreateGraph()");
 
       // find the video capture device
+      m_bFirstTune=true;             
       Filters filters = new Filters();
       Filter   filterVideoCaptureDevice=null;
       Filter   filterAudioCaptureDevice=null;
@@ -334,13 +336,17 @@ namespace MediaPortal.TV.Recording
       if (iChannel<1000)
       {
         if (m_TVTuner==null) return;
-        m_TVTuner.put_TuningSpace(0);
-        m_TVTuner.put_CountryCode(m_iCountryCode);
-        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
-        if (m_bUseCable)
-          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
-        else
-          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+        if (m_bFirstTune)
+        {
+          m_bFirstTune=false;
+          m_TVTuner.put_TuningSpace(0);
+          m_TVTuner.put_CountryCode(m_iCountryCode);
+          m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+          if (m_bUseCable)
+            m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
+          else
+            m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+        }
         try
         {
           m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
