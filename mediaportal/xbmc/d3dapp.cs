@@ -1,4 +1,8 @@
 using System;
+using System.Diagnostics;
+using System.Runtime;
+using System.Runtime.InteropServices;
+
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.DirectX;
@@ -1311,7 +1315,7 @@ namespace MediaPortal
 
     public void OnSetup(object sender, EventArgs e)
     {
-      processName="Configuration.exe";
+      string processName="Configuration.exe";
       foreach(Process process in Process.GetProcesses())
       {
         if(process.ProcessName.Equals(processName)) return;
