@@ -198,10 +198,10 @@
 			<type>tvprogress</type> 
 			<id>100</id> 
 			<posX>158</posX> 
-			<posY>402</posY> 
+			<posY>392</posY> 
 			<width>400</width>
 			<toptexture>osd_progress_indicator.png</toptexture> 
-			<TextureOffsetY>11</TextureOffsetY>
+			<TextureOffsetY>22</TextureOffsetY>
 			<bottomtexture>-</bottomtexture>
 			<texturetick>-</texturetick>
 			<lefttexture>-</lefttexture> 

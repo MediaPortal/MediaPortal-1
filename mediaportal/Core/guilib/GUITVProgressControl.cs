@@ -225,6 +225,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleHorizontal(ref xoff);
       xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX+xoff;
       int yPos=m_guiFillBackground.YPosition+(m_guiFillBackground.Height/2)-(m_iFillHeight/2);
+      if (yPos < m_dwPosY) yPos=m_dwPosY;
       fWidth=(float)iWidth;
       fWidth/=100.0f;
       fWidth*=(float)Percentage1;
