@@ -166,6 +166,7 @@ namespace MediaPortal.Topbar
 
       if (m_bTopBarHidden && m_bTopBarEffect) return;     
 
+			GUIFontManager.Present();
       base.Render();
     }
 
