@@ -1,3 +1,5 @@
+25-07-2004  my music    : fixed : visualisations in fullscreenmode where slow
+
 24-07-2004  setup       : added : Settings for audio device and video/audio compression for capture cards.
 24-07-2004  skin engine : fixed : icon view: big icons where not scaled correctly
 24-07-2004  my music    : fixed : fixed bad albumart position
