@@ -211,7 +211,7 @@ namespace MediaPortal.TV.Recording
 
 				if (hr != 0)
 				{
-					DirectShowUtil.DebugWrite("SinkGraphEx:  Error: Unable to connect Pins {0}", hr.ToString());
+					DirectShowUtil.DebugWrite("SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
 					if (hr == -2147220969)
 					{
 						DirectShowUtil.DebugWrite("SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
