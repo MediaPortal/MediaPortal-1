@@ -448,200 +448,210 @@ bWindowsMediaPlayer9=true;
 
     void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-				case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
-					//show livetv or video as background instead of the static GUI background
-					using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						// only works when VMR9 is enabled, so check that
-						bool bUseVMR9=xmlreader.GetValueAsBool("general","vmr9",true);
-						if (bUseVMR9)
+			try
+			{
+				switch (action.wID)
+				{
+					case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
+						//show livetv or video as background instead of the static GUI background
+						using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 						{
-							// toggle livetv/video in background on/pff
-              if (GUIGraphicsContext.ShowBackground)
-              {
-                Log.Write("Use live TV as background");
-                GUIGraphicsContext.ShowBackground =false;
-                // if on, but we're not playing any video or watching tv
-                if (!GUIGraphicsContext.IsPlaying)
-                {
-                  //then start watching live tv in background
-                  Log.Write("start livetv");
-                  Recorder.Previewing=true;
-									
-									string strRecPath;
-									strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-									strRecPath=Utils.RemoveTrailingSlash(strRecPath);
-									string strFileName=String.Format(@"{0}\live.tv",strRecPath);
-									g_Player.Play(strFileName);
-                }
-              }
-              else
-              {
-                Log.Write("Use GUI as background");
-                if (g_Player.Playing && g_Player.IsTV)
-                {
-                  Log.Write("stop livetv");
-                  int iWindow=GUIWindowManager.ActiveWindow;
-                  if (iWindow != (int)GUIWindow.Window.WINDOW_TVGUIDE &&
-                      iWindow != (int)GUIWindow.Window.WINDOW_TV &&
-                      iWindow != (int)GUIWindow.Window.WINDOW_SCHEDULER &&
-                      iWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN &&
-                      iWindow != (int)GUIWindow.Window.WINDOW_RECORDEDTV)
-                  {
-                    
-                    GUIGraphicsContext.ShowBackground =true;
-                    if (g_Player.Playing && g_Player.IsTV) g_Player.Stop();
-                    Recorder.Previewing=false;
-                  }
-                }
-                GUIGraphicsContext.ShowBackground =true;
-              }
+							// only works when VMR9 is enabled, so check that
+							bool bUseVMR9=xmlreader.GetValueAsBool("general","vmr9",true);
+							if (bUseVMR9)
+							{
+								// toggle livetv/video in background on/pff
+								if (GUIGraphicsContext.ShowBackground)
+								{
+									Log.Write("Use live TV as background");
+									GUIGraphicsContext.ShowBackground =false;
+									// if on, but we're not playing any video or watching tv
+									if (!GUIGraphicsContext.IsPlaying)
+									{
+										//then start watching live tv in background
+										Log.Write("start livetv");
+										Recorder.Previewing=true;
+										
+										string strRecPath;
+										strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+										strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+										string strFileName=String.Format(@"{0}\live.tv",strRecPath);
+										g_Player.Play(strFileName);
+									}
+								}
+								else
+								{
+									Log.Write("Use GUI as background");
+									if (g_Player.Playing && g_Player.IsTV)
+									{
+										Log.Write("stop livetv");
+										int iWindow=GUIWindowManager.ActiveWindow;
+										if (iWindow != (int)GUIWindow.Window.WINDOW_TVGUIDE &&
+											iWindow != (int)GUIWindow.Window.WINDOW_TV &&
+											iWindow != (int)GUIWindow.Window.WINDOW_SCHEDULER &&
+											iWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN &&
+											iWindow != (int)GUIWindow.Window.WINDOW_RECORDEDTV)
+										{
+	                    
+											GUIGraphicsContext.ShowBackground =true;
+											if (g_Player.Playing && g_Player.IsTV) g_Player.Stop();
+											Recorder.Previewing=false;
+										}
+									}
+									GUIGraphicsContext.ShowBackground =true;
+								}
+							}
+						}
+						break;
+
+					case Action.ActionType.ACTION_EXIT:
+						GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
+						break;
+
+					case Action.ActionType.ACTION_REBOOT:
+					{
+						//reboot
+						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+						if (null!=dlgYesNo)
+						{
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(630));
+							dlgYesNo.SetLine(0, "");
+							dlgYesNo.SetLine(1, "");
+							dlgYesNo.SetLine(2, "");
+							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+							if (dlgYesNo.IsConfirmed)
+							{
+								WindowsController.ExitWindows(RestartOptions.Reboot,true);
+								GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
+							}
 						}
 					}
-				break;
+						break;
 
-        case Action.ActionType.ACTION_EXIT:
-          GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
-          break;
+					case Action.ActionType.ACTION_EJECTCD:
+						Utils.EjectCDROM();
+						break;
 
-        case Action.ActionType.ACTION_REBOOT:
-        {
-          //reboot
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (null!=dlgYesNo)
-          {
-            dlgYesNo.SetHeading(GUILocalizeStrings.Get(630));
-            dlgYesNo.SetLine(0, "");
-            dlgYesNo.SetLine(1, "");
-            dlgYesNo.SetLine(2, "");
-            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-            if (dlgYesNo.IsConfirmed)
-            {
-              WindowsController.ExitWindows(RestartOptions.Reboot,true);
-              GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
-            }
-          }
-        }
-          break;
-
-        case Action.ActionType.ACTION_EJECTCD:
-          Utils.EjectCDROM();
-        break;
-
-        case Action.ActionType.ACTION_SHUTDOWN:
-        {
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (null!=dlgYesNo)
-          {
-            dlgYesNo.SetHeading(GUILocalizeStrings.Get(631));
-            dlgYesNo.SetLine(0, "");
-            dlgYesNo.SetLine(1, "");
-            dlgYesNo.SetLine(2, "");
-            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-            if (dlgYesNo.IsConfirmed)
-            {
-              WindowsController.ExitWindows(RestartOptions.PowerOff,true);
-              GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
-            }
-          }
-          break;
-        }
-      }
-      if (g_Player.Playing)
-      {
-        switch (action.wID)
-        {
-          case Action.ActionType.ACTION_SHOW_GUI:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              GUIWindow win= GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-              if (win.FullScreenVideoAllowed)
-              {
-                if (g_Player.IsTV)
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                else
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-                GUIGraphicsContext.IsFullScreenVideo=true;
-              }
-              return;
-            }
-          break;
-          
-          case Action.ActionType.ACTION_PREV_ITEM:
-            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
-            {
-              PlayListPlayer.PlayPrevious();
-              return;
-            }
-            break;
-
-          case Action.ActionType.ACTION_NEXT_ITEM:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              PlayListPlayer.PlayNext(true);
-              return;
-            }
-          break;
-
-          case Action.ActionType.ACTION_STOP:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              g_Player.Stop();
-              return;
-            }
-            break;
-
-					case Action.ActionType.ACTION_MUSIC_PLAY:
-						if (!GUIGraphicsContext.IsFullScreenVideo)
+					case Action.ActionType.ACTION_SHUTDOWN:
+					{
+						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+						if (null!=dlgYesNo)
 						{
-							if (g_Player.Paused) g_Player.Pause();
-              return;
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(631));
+							dlgYesNo.SetLine(0, "");
+							dlgYesNo.SetLine(1, "");
+							dlgYesNo.SetLine(2, "");
+							dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+							if (dlgYesNo.IsConfirmed)
+							{
+								WindowsController.ExitWindows(RestartOptions.PowerOff,true);
+								GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
+							}
 						}
-					break;
-          
-          case Action.ActionType.ACTION_PAUSE:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              g_Player.Pause();
-              return;
-            }
-          break;
+						break;
+					}
+				}
+				if (g_Player.Playing)
+				{
+					switch (action.wID)
+					{
+						case Action.ActionType.ACTION_SHOW_GUI:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								GUIWindow win= GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+								if (win.FullScreenVideoAllowed)
+								{
+									if (g_Player.IsTV)
+										GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+									else
+										GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+									GUIGraphicsContext.IsFullScreenVideo=true;
+								}
+								return;
+							}
+							break;
+	          
+						case Action.ActionType.ACTION_PREV_ITEM:
+							if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+							{
+								PlayListPlayer.PlayPrevious();
+								return;
+							}
+							break;
 
-          case Action.ActionType.ACTION_PLAY:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              if (g_Player.Speed!=1)
-              {
-                g_Player.Speed=1;
-              }
-							if (g_Player.Paused) g_Player.Pause();
-              return;
-            }
-          break;
+						case Action.ActionType.ACTION_NEXT_ITEM:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								PlayListPlayer.PlayNext(true);
+								return;
+							}
+							break;
 
-          
-          case Action.ActionType.ACTION_MUSIC_FORWARD:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
-              return;
-            }
-            break;
-          case Action.ActionType.ACTION_MUSIC_REWIND:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
-              return;
-            }
-            break;
-        }
-      }
-      GUIWindowManager.OnAction(action);
+						case Action.ActionType.ACTION_STOP:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								g_Player.Stop();
+								return;
+							}
+							break;
+
+						case Action.ActionType.ACTION_MUSIC_PLAY:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								if (g_Player.Paused) g_Player.Pause();
+								return;
+							}
+							break;
+	          
+						case Action.ActionType.ACTION_PAUSE:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								g_Player.Pause();
+								return;
+							}
+							break;
+
+						case Action.ActionType.ACTION_PLAY:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								if (g_Player.Speed!=1)
+								{
+									g_Player.Speed=1;
+								}
+								if (g_Player.Paused) g_Player.Pause();
+								return;
+							}
+							break;
+
+	          
+						case Action.ActionType.ACTION_MUSIC_FORWARD:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
+								return;
+							}
+							break;
+						case Action.ActionType.ACTION_MUSIC_REWIND:
+							if (!GUIGraphicsContext.IsFullScreenVideo)
+							{
+								g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
+								return;
+							}
+							break;
+					}
+				}
+				GUIWindowManager.OnAction(action);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("exception occured",ex);
+				Log.Write("  exception: {0} {1} {2}", ex.Message, ex.Source,ex.StackTrace);
+
+			}
     }
+
 		protected override void keypressed(System.Windows.Forms.KeyPressEventArgs e)
 		{
 			char keyc=e.KeyChar;

@@ -1073,9 +1073,17 @@ namespace MediaPortal
         m_bNeedUpdate=true;
       }
             
-      
-      FrameMove();
-
+			try
+			{
+				FrameMove();
+			}
+			catch (Exception ex)
+			{
+				Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+#if DEBUG
+					throw new Exception("exception occured",ex);
+#endif
+			}
       // Render the scene as normal
       bool bDoRender=true;
       if (g_Player.Playing&& g_Player.DoesOwnRendering &&!g_Player.Paused) bDoRender=false;
@@ -1094,8 +1102,17 @@ namespace MediaPortal
           }
         }
 
-        Render();
-        if (rTarget==null)
+				try
+				{
+					Render();
+				}
+				catch (Exception ex)
+				{
+					Log.Write("Exception: {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+#if DEBUG
+					throw new Exception("exception occured",ex);
+#endif
+				}
         {
           if (GUIGraphicsContext.DX9Device!=null)
           {
