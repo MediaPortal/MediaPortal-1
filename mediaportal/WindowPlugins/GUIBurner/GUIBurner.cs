@@ -162,7 +162,6 @@ namespace MediaPortal.GUI.GUIBurner
 		private System.Windows.Forms.Timer convertTimer = new System.Windows.Forms.Timer();
 		private static long lStartTime=0;
 
-		#endregion
 
 		// Convert to short pathnames
 		// (madlldlib)
@@ -177,8 +176,8 @@ namespace MediaPortal.GUI.GUIBurner
 			StringBuilder outputFilePath,
 			[MarshalAs(UnmanagedType.U4)] 
 			int bufferSize);
+		#endregion
 		
-
 		#region Constructor
 		public GUIBurner()
 		{
@@ -1193,6 +1192,7 @@ namespace MediaPortal.GUI.GUIBurner
 							try 
 							{
 								burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
+								Log.Write("Add File: {0}",cItem.Path+"\\"+cItem.Label);
 							}
 							catch(Exception ex)
 							{
@@ -1203,6 +1203,7 @@ namespace MediaPortal.GUI.GUIBurner
 					if (bTyp == BurnTypes.AUDIO_CD) 
 					{
 						burnClass.ActiveFormat = XPBurn.RecordType.afMusic;
+						Log.Write("Burn Audio");
 					} 
 					else 
 					{
