@@ -25,11 +25,14 @@ namespace MediaPortal.GUI.Video
       // Required for Windows Form Designer support
       //
       InitializeComponent();
+#if DEBUG
+			//this.TopMost = false;
+#endif
       SetPositionAndSize();
       GUIGraphicsContext.form.LocationChanged +=new EventHandler(form_LocationChanged);
       GUIGraphicsContext.form.Resize += new EventHandler(form_Resize);
       Clock = new Timer();
-      Clock.Interval=100;
+      Clock.Interval=1000;
       Clock.Start();
       
       Clock.Tick+=new EventHandler(Timer_Tick);
