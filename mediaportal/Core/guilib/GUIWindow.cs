@@ -120,6 +120,7 @@ namespace MediaPortal.GUI.Library
 		protected ArrayList m_vecControls = new ArrayList();
 		protected string m_strWindowXmlFile = "";
 		protected bool m_bAllowOverlay = true;
+    protected bool m_bAutoHide = false;
 		bool m_bSkinLoaded = false;
 
 		/// <summary>
@@ -759,6 +760,20 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 
+        // Configure the autohide setting
+        XmlNode nodeAutoHide = doc.DocumentElement.SelectSingleNode("/window/autohide");
+        if (nodeAutoHide != null) 
+        {
+          if (nodeAutoHide.InnerText != null)
+          {
+            string strAllow = nodeAutoHide.InnerText.ToLower();
+            if (strAllow == "yes" || strAllow == "true")
+              m_bAutoHide = true;
+            if (strAllow == "no" || strAllow == "false")
+              m_bAutoHide = false;
+          }
+        } 
+
 				// Load the list of the Controls that are used in the window
 				XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/control");
 				foreach (XmlNode node in nodeList)
@@ -871,6 +886,14 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return m_bAllowOverlay; }
 		}
+    
+    /// <summary>
+    /// Returns whether autohide is allowed on this screen
+    /// </summary>
+    public virtual bool AutoHide 
+    {
+      get { return m_bAutoHide ; }
+    }
 
 		/// <summary>
 		/// Returns whether the user can goto full screen video,tv,visualisation from this window
