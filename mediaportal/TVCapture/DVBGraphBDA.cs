@@ -92,6 +92,9 @@ namespace MediaPortal.TV.Recording
 		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
 		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
+		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
+
 		enum State
 		{ 
 			None, 
@@ -2350,37 +2353,16 @@ namespace MediaPortal.TV.Recording
 				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 				if (mpeg2Demuxer!=null)
 				{
+					Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
 					for (int pin=0; pin < 5; pin++)
 					{	
-						Log.Write("Get pin:{0}",pin);
 						IPin outPin;
+						uint pid=0,  sampletype=0;
 						DsUtils.GetPin(m_MPEG2Demultiplexer ,PinDirection.Output,pin,out outPin);
 						if (outPin!=null)
 						{
-							IMPEG2PIDMap map = outPin as IMPEG2PIDMap;
-							if (map!=null)
-							{
-								IEnumPIDMap enumMap;
-								int hrr=map.EnumPIDMap(out enumMap);
-								if (enumMap!=null)
-								{
-									
-									Log.Write("enum pin:{0}",pin);
-									enumMap.Reset();
-									PidMap[] pidmap = new PidMap[10] ;
-									uint iFetched;
-									
-									Log.Write("enum next:{0}",pin);
-									while (enumMap.Next(1,ref pidmap, out iFetched)==0)
-									{
-										Log.Write("fetched:{0}",iFetched);
-										if (iFetched==1)
-										{
-											Log.Write("  pin:{0} pid:{1} content:{2}",pin ,pidmap[0].ulPID, pidmap[0].content);
-										}
-									}
-								}
-							}
+							GetPidMap(outPin,ref pid, ref sampletype);
+							Log.Write("DVBGraphBDA:  Pin:{0} is mapped to pid:{1}", pin,pid);
 						}
 					}
 				}
