@@ -123,18 +123,13 @@ namespace ProgramsDatabase
 			set{ bLoaded = value; }
 		}
 
-		public virtual bool ParseAllGame(string strHTML)
-		{
-			// todo:
-			return false;
-		}
-
 		public void LaunchURL()
 		{
 			if(GameURL==null)
 				return;
 			if(GameURL.Length>0)
 			{
+				Log.Write("allgamescraper launches URL \n{0}", GameURL);
 				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(GameURL);
 				System.Diagnostics.Process.Start(sInfo);
 			}
