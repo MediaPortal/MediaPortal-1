@@ -1,4 +1,5 @@
 Bugs left:
+  11-07-2004 general    : disable VMR9 if vga card doesnt support it
   11-07-2004 my music   : cddb doesnt work for some cds? (MrMario64 has more info)
   11-07-2004 my music   : View by artists->select artist->takes 13 mins (musicdatabase line 669 takes sooo long)
   11-07-2004 my music   : When you now enter the Album view there will be 2 (or more) times the album 'unknown'.  
