@@ -156,186 +156,186 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.intervalTextBox = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.windSpeedComboBox = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.temperatureComboBox = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.editButton = new System.Windows.Forms.Button();
-      this.searchButton = new System.Windows.Forms.Button();
-      this.removeButton = new System.Windows.Forms.Button();
-      this.citiesListView = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.groupBox1.SuspendLayout();
-      this.mpGroupBox1.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.intervalTextBox);
-      this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Controls.Add(this.windSpeedComboBox);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.temperatureComboBox);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 128);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "General settings";
-      // 
-      // intervalTextBox
-      // 
-      this.intervalTextBox.Location = new System.Drawing.Point(168, 77);
-      this.intervalTextBox.Name = "intervalTextBox";
-      this.intervalTextBox.Size = new System.Drawing.Size(40, 20);
-      this.intervalTextBox.TabIndex = 5;
-      this.intervalTextBox.Text = "";
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(16, 80);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(150, 23);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "Refresh interval (minutes)";
-      // 
-      // windSpeedComboBox
-      // 
-      this.windSpeedComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.windSpeedComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.windSpeedComboBox.Location = new System.Drawing.Point(168, 52);
-      this.windSpeedComboBox.Name = "windSpeedComboBox";
-      this.windSpeedComboBox.Size = new System.Drawing.Size(256, 21);
-      this.windSpeedComboBox.TabIndex = 3;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 55);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(150, 23);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "Wind speed shown as";
-      // 
-      // temperatureComboBox
-      // 
-      this.temperatureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.temperatureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.temperatureComboBox.Location = new System.Drawing.Point(168, 27);
-      this.temperatureComboBox.Name = "temperatureComboBox";
-      this.temperatureComboBox.Size = new System.Drawing.Size(256, 21);
-      this.temperatureComboBox.TabIndex = 1;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(16, 30);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(150, 23);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Temperature shown in";
-      // 
-      // mpGroupBox1
-      // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.editButton);
-      this.mpGroupBox1.Controls.Add(this.searchButton);
-      this.mpGroupBox1.Controls.Add(this.removeButton);
-      this.mpGroupBox1.Controls.Add(this.citiesListView);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox1.Location = new System.Drawing.Point(8, 144);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(440, 160);
-      this.mpGroupBox1.TabIndex = 1;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Cities";
-      // 
-      // editButton
-      // 
-      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.editButton.Enabled = false;
-      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.editButton.Location = new System.Drawing.Point(176, 126);
-      this.editButton.Name = "editButton";
-      this.editButton.TabIndex = 3;
-      this.editButton.Text = "Edit";
-      this.editButton.Click += new System.EventHandler(this.editButton_Click);
-      // 
-      // searchButton
-      // 
-      this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.searchButton.Location = new System.Drawing.Point(16, 126);
-      this.searchButton.Name = "searchButton";
-      this.searchButton.TabIndex = 2;
-      this.searchButton.Text = "Search";
-      this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
-      // 
-      // removeButton
-      // 
-      this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.removeButton.Enabled = false;
-      this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.removeButton.Location = new System.Drawing.Point(96, 126);
-      this.removeButton.Name = "removeButton";
-      this.removeButton.TabIndex = 1;
-      this.removeButton.Text = "Remove";
-      this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
-      // 
-      // citiesListView
-      // 
-      this.citiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                     this.columnHeader1,
-                                                                                     this.columnHeader2,
-                                                                                     this.columnHeader3});
-      this.citiesListView.FullRowSelect = true;
-      this.citiesListView.Location = new System.Drawing.Point(16, 24);
-      this.citiesListView.Name = "citiesListView";
-      this.citiesListView.Size = new System.Drawing.Size(408, 96);
-      this.citiesListView.TabIndex = 0;
-      this.citiesListView.View = System.Windows.Forms.View.Details;
-      this.citiesListView.SelectedIndexChanged += new System.EventHandler(this.citiesListView_SelectedIndexChanged);
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "City";
-      this.columnHeader1.Width = 125;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Code";
-      this.columnHeader2.Width = 78;
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Satellite image";
-      this.columnHeader3.Width = 201;
-      // 
-      // Weather
-      // 
-      this.Controls.Add(this.mpGroupBox1);
-      this.Controls.Add(this.groupBox1);
-      this.Name = "Weather";
-      this.Size = new System.Drawing.Size(456, 448);
-      this.groupBox1.ResumeLayout(false);
-      this.mpGroupBox1.ResumeLayout(false);
-      this.ResumeLayout(false);
+			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.intervalTextBox = new System.Windows.Forms.TextBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.windSpeedComboBox = new System.Windows.Forms.ComboBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.temperatureComboBox = new System.Windows.Forms.ComboBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.editButton = new System.Windows.Forms.Button();
+			this.searchButton = new System.Windows.Forms.Button();
+			this.removeButton = new System.Windows.Forms.Button();
+			this.citiesListView = new MediaPortal.UserInterface.Controls.MPListView();
+			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.groupBox1.SuspendLayout();
+			this.mpGroupBox1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.intervalTextBox);
+			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this.windSpeedComboBox);
+			this.groupBox1.Controls.Add(this.label2);
+			this.groupBox1.Controls.Add(this.temperatureComboBox);
+			this.groupBox1.Controls.Add(this.label1);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(8, 8);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(440, 128);
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "General settings";
+			// 
+			// intervalTextBox
+			// 
+			this.intervalTextBox.Location = new System.Drawing.Point(168, 77);
+			this.intervalTextBox.Name = "intervalTextBox";
+			this.intervalTextBox.Size = new System.Drawing.Size(40, 20);
+			this.intervalTextBox.TabIndex = 5;
+			this.intervalTextBox.Text = "";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(16, 80);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(150, 23);
+			this.label3.TabIndex = 4;
+			this.label3.Text = "Refresh interval (minutes)";
+			// 
+			// windSpeedComboBox
+			// 
+			this.windSpeedComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.windSpeedComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.windSpeedComboBox.Location = new System.Drawing.Point(168, 52);
+			this.windSpeedComboBox.Name = "windSpeedComboBox";
+			this.windSpeedComboBox.Size = new System.Drawing.Size(256, 21);
+			this.windSpeedComboBox.TabIndex = 3;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(16, 55);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(150, 23);
+			this.label2.TabIndex = 2;
+			this.label2.Text = "Wind speed shown as";
+			// 
+			// temperatureComboBox
+			// 
+			this.temperatureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.temperatureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.temperatureComboBox.Location = new System.Drawing.Point(168, 27);
+			this.temperatureComboBox.Name = "temperatureComboBox";
+			this.temperatureComboBox.Size = new System.Drawing.Size(256, 21);
+			this.temperatureComboBox.TabIndex = 1;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(16, 30);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(150, 23);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Temperature shown in";
+			// 
+			// mpGroupBox1
+			// 
+			this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.mpGroupBox1.Controls.Add(this.editButton);
+			this.mpGroupBox1.Controls.Add(this.searchButton);
+			this.mpGroupBox1.Controls.Add(this.removeButton);
+			this.mpGroupBox1.Controls.Add(this.citiesListView);
+			this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.mpGroupBox1.Location = new System.Drawing.Point(8, 144);
+			this.mpGroupBox1.Name = "mpGroupBox1";
+			this.mpGroupBox1.Size = new System.Drawing.Size(440, 160);
+			this.mpGroupBox1.TabIndex = 1;
+			this.mpGroupBox1.TabStop = false;
+			this.mpGroupBox1.Text = "Cities";
+			// 
+			// editButton
+			// 
+			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.editButton.Enabled = false;
+			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.editButton.Location = new System.Drawing.Point(176, 126);
+			this.editButton.Name = "editButton";
+			this.editButton.TabIndex = 3;
+			this.editButton.Text = "Edit";
+			this.editButton.Click += new System.EventHandler(this.editButton_Click);
+			// 
+			// searchButton
+			// 
+			this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.searchButton.Location = new System.Drawing.Point(16, 126);
+			this.searchButton.Name = "searchButton";
+			this.searchButton.TabIndex = 2;
+			this.searchButton.Text = "Add";
+			this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
+			// 
+			// removeButton
+			// 
+			this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.removeButton.Enabled = false;
+			this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.removeButton.Location = new System.Drawing.Point(96, 126);
+			this.removeButton.Name = "removeButton";
+			this.removeButton.TabIndex = 1;
+			this.removeButton.Text = "Remove";
+			this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
+			// 
+			// citiesListView
+			// 
+			this.citiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+																																										 this.columnHeader1,
+																																										 this.columnHeader2,
+																																										 this.columnHeader3});
+			this.citiesListView.FullRowSelect = true;
+			this.citiesListView.Location = new System.Drawing.Point(16, 24);
+			this.citiesListView.Name = "citiesListView";
+			this.citiesListView.Size = new System.Drawing.Size(408, 96);
+			this.citiesListView.TabIndex = 0;
+			this.citiesListView.View = System.Windows.Forms.View.Details;
+			this.citiesListView.SelectedIndexChanged += new System.EventHandler(this.citiesListView_SelectedIndexChanged);
+			// 
+			// columnHeader1
+			// 
+			this.columnHeader1.Text = "City";
+			this.columnHeader1.Width = 125;
+			// 
+			// columnHeader2
+			// 
+			this.columnHeader2.Text = "Code";
+			this.columnHeader2.Width = 78;
+			// 
+			// columnHeader3
+			// 
+			this.columnHeader3.Text = "Satellite image";
+			this.columnHeader3.Width = 201;
+			// 
+			// Weather
+			// 
+			this.Controls.Add(this.mpGroupBox1);
+			this.Controls.Add(this.groupBox1);
+			this.Name = "Weather";
+			this.Size = new System.Drawing.Size(456, 448);
+			this.groupBox1.ResumeLayout(false);
+			this.mpGroupBox1.ResumeLayout(false);
+			this.ResumeLayout(false);
 
-    }
+		}
 		#endregion
 
 		/// <summary>
