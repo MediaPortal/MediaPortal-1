@@ -37,7 +37,11 @@ namespace MediaPortal
     int     m_iChannelEnd=0;
     Capture m_capture=null;
     private System.Windows.Forms.Label labelFreq;
+    private System.Windows.Forms.TrackBar trackBar1;
+    private System.Windows.Forms.Label label3;
     ArrayList radioChannels = new ArrayList();
+    int     m_iStep=100000;
+    
     public FormRadioTuner()
     {
       //
@@ -82,6 +86,9 @@ namespace MediaPortal
       this.btnCancel = new System.Windows.Forms.Button();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.labelFreq = new System.Windows.Forms.Label();
+      this.trackBar1 = new System.Windows.Forms.TrackBar();
+      this.label3 = new System.Windows.Forms.Label();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
       this.SuspendLayout();
       // 
       // progressBar1
@@ -89,7 +96,7 @@ namespace MediaPortal
       this.progressBar1.Location = new System.Drawing.Point(16, 56);
       this.progressBar1.Maximum = 300;
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(352, 16);
+      this.progressBar1.Size = new System.Drawing.Size(424, 16);
       this.progressBar1.Step = 1;
       this.progressBar1.TabIndex = 0;
       // 
@@ -127,7 +134,7 @@ namespace MediaPortal
       // 
       // btnCancel
       // 
-      this.btnCancel.Location = new System.Drawing.Point(304, 80);
+      this.btnCancel.Location = new System.Drawing.Point(384, 128);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(64, 23);
       this.btnCancel.TabIndex = 5;
@@ -146,10 +153,30 @@ namespace MediaPortal
       this.labelFreq.TabIndex = 6;
       this.labelFreq.Text = "label3";
       // 
+      // trackBar1
+      // 
+      this.trackBar1.Location = new System.Drawing.Point(80, 104);
+      this.trackBar1.Minimum = 1;
+      this.trackBar1.Name = "trackBar1";
+      this.trackBar1.Size = new System.Drawing.Size(208, 42);
+      this.trackBar1.TabIndex = 8;
+      this.trackBar1.Value = 1;
+      this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(16, 104);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(64, 16);
+      this.label3.TabIndex = 9;
+      this.label3.Text = "Sensitivity:";
+      // 
       // FormRadioTuner
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(400, 109);
+      this.ClientSize = new System.Drawing.Size(464, 165);
+      this.Controls.Add(this.label3);
+      this.Controls.Add(this.trackBar1);
       this.Controls.Add(this.labelFreq);
       this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.labelTotal);
@@ -162,6 +189,7 @@ namespace MediaPortal
       this.Text = "FormRadioTuner";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.FormRadioTuner_Closing);
       this.Load += new System.EventHandler(this.FormRadioTuner_Load);
+      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -175,14 +203,16 @@ namespace MediaPortal
         {
           AddChannel(m_iChannel,m_capture.Tuner.Channel);
           m_iChannelsFound++;
+          m_iChannel+=m_iStep*2;
         }
       }
       catch(Exception)
       {
       }
-      m_iChannel+=100000;
+      m_iChannel+=m_iStep;
       if (m_iChannel>m_iChannelEnd)
       {
+        SaveStations();
         this.Close();
       }
       else
@@ -200,6 +230,16 @@ namespace MediaPortal
         }
       }
     }
+    void SaveStations()
+    {
+      RadioDatabase.RemoveStations();
+      for (int i=0; i < radioChannels.Count;++i)
+      {
+        RadioStation station=(RadioStation)radioChannels[i];
+        RadioDatabase.AddStation(ref station);
+      }
+    }
+
     void AddChannel(int Channel, int Frequency)
     {
       foreach (RadioStation station in radioChannels)
@@ -212,13 +252,14 @@ namespace MediaPortal
       NewStation.Channel=Channel;
       NewStation.Genre="General";
       radioChannels.Add(NewStation);
-      RadioDatabase.AddStation(ref NewStation);
     }
 
     private void FormRadioTuner_Load(object sender, System.EventArgs e)
     {
       radioChannels.Clear();
       RadioDatabase.GetStations(ref radioChannels);
+
+      trackBar1.Value=5;
 
       Filters filters = new Filters();
       if (filters.VideoInputDevices==null) return ;
@@ -304,6 +345,29 @@ namespace MediaPortal
         m_capture.Dispose();
         m_capture=null;
       }
+    }
+
+    private void trackBar1_ValueChanged(object sender, System.EventArgs e)
+    {
+      m_iStep=(11-trackBar1.Value)*10000;   
+      radioChannels.Clear();
+      RadioDatabase.GetStations(ref radioChannels);
+
+      if (m_capture!=null)
+      {
+        int[] minmaxchan=m_capture.Tuner.ChanelMinMax;
+        m_iChannelStart=minmaxchan[0];
+        m_iChannelEnd=minmaxchan[1];
+        m_iChannel=m_iChannelStart;
+        progressBar1.Minimum=m_iChannelStart;
+        progressBar1.Maximum=m_iChannelEnd;
+        progressBar1.Value=m_iChannel;
+        progressBar1.Step=100000;
+        m_iChannelsFound=0;
+        
+        m_capture.Tuner.Channel=m_iChannel;
+      }
+      System.Threading.Thread.Sleep(1000);
     }
 
     public ArrayList RadioChannels

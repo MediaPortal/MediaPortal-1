@@ -3065,6 +3065,7 @@ namespace MediaPortal
         xmlWriter.SetValue(strTag,strSharePath,strPath);
       }
     }
+
     void SaveSettings()
     {
       using (AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -3126,11 +3127,14 @@ namespace MediaPortal
         xmlWriter.SetValue("skin","language",comboBoxLanguage.SelectedItem);
         xmlWriter.SetValue("skin","name",comboBoxSkins.SelectedItem);
         SaveFrequencies();
-          
+        
+        //xmltv
         xmlWriter.SetValueAsBool("xmltv", "colors",checkBoxTVGuideColors.Checked);
         xmlWriter.SetValueAsBool("xmltv","usetimezone",xmltvTimeZoneCheck.Checked);
         xmlWriter.SetValue("xmltv","timezonecorrection",timeZoneCorrection.Value.ToString() );
         xmlWriter.SetValue("xmltv","folder",textBoxXMLTVFolder.Text);
+        xmlWriter.SetValue("tvguide","date","");
+
         SaveRadioStations(xmlWriter);
       }
 		}

@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  20-06-2004  My Radio    : added : support for more tvcapture cards
+  20-06-2004  My Radio    : added : when autotuning my radio in setup you can specify the sensitivity 
+  
   19-06-2004  My TV       : added : tvguide.xml will be reloaded when exiting setup in case user changed something
   19-06-2004  settings    : added : setup of scrolling speed
   19-06-2004  My TV       : fixed : record1.mpg didnt always get renamed to final filename
