@@ -528,7 +528,7 @@ namespace MediaPortal.TV.Recording
     public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState != State.TimeShifting) return false;
-
+			if (m_mpeg2Demux==null) return false;
 			m_iCountryCode=country;
       if (iChannelNr != m_iChannelNr)
       {
@@ -552,7 +552,7 @@ namespace MediaPortal.TV.Recording
       if ( m_graphState!=State.Recording) return;
 
       Log.Write("SinkGraph:StopRecording()");
-      m_mpeg2Demux.StopRecording();
+      if (m_mpeg2Demux!=null) m_mpeg2Demux.StopRecording();
       m_graphState=State.TimeShifting;
     }
 

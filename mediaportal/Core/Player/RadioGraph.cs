@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
-
+using MediaPortal.GUI.Library;
 namespace MediaPortal.Player
 {
 	/// <summary>
@@ -165,9 +165,17 @@ namespace MediaPortal.Player
         {
           if (filters.AudioRenderers[i].MonikerString.IndexOf(strDefault)>=0)
           {
-            bAdded=true;
             DirectShowUtil.DebugWrite("RadioGraph:adding {0} to graph",filters.AudioRenderers[i].Name);
-            m_audioFilter=DirectShowUtil.AddAudioRendererToGraph( m_graphBuilder, filters.AudioRenderers[i].Name);
+						try
+						{
+							m_audioFilter=DirectShowUtil.AddAudioRendererToGraph( m_graphBuilder, filters.AudioRenderers[i].Name);
+							bAdded=true;
+						}
+						catch(Exception)
+						{ 
+							Log.Write("RadioGraph:Cannot add default audio renderer to graph");
+							return false;
+						}
             break;
           }
         }

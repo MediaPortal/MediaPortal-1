@@ -62,9 +62,7 @@ namespace MediaPortal.Configuration
       try
       {
         m_graph.Tune(m_graph.Channel + stepSize);
-        double dFreq=(double)m_graph.Channel ;
-        dFreq/=1000000d;
-        Text=String.Format("Radio tuning:{0:#,##} MHz", m_graph.Channel );
+        Text=String.Format("Radio tuning:{0:} Hz", (int)m_graph.Channel );
       }
       catch(Exception)
       {
