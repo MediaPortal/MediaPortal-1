@@ -329,7 +329,7 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>301</posX>
-		<posY>181</posY>
+		<posY>180</posY>
 		<texture>mytvsmall.png</texture>
 	</control>
 	<control>
