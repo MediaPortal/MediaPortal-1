@@ -14,18 +14,21 @@ My TV:
   
   Recorded tv:
      -
-	 
+     
   TVGuide:
      - in the tv guide, when you select a program, it would be nice to have an option 
      - which directly switches to the channel. Of course only if the program currently runs. 
+     
   Scheduled:
      -
   
   Capture:
-     - FF/RW live TV doesnt work yet?
+     - FF/RW live TV doesnt work yet ->copy code from xbmc-er
+     - add option to directly show fullscreen TV when going to my tv
      - view & record @ same time (optional)
      - add support for digital capture cards (BDA tuners)
-    
+     - add screenshot option    
+     
 My Music:
   - cache freeDB info
   
@@ -36,7 +39,7 @@ My Music:
   - FF/RW control
   - crossfading ?
   - repeat none, once, always
-  - tag readers for formats like ogg,flac,wma,...
+  - tag readers for formats like ogg,flac,wma,... (int20_h is working on this)
   - query info about artists from www.allmusic.com
   - refresh/lookup album art
   - use folder.jpg for my music/albums album art

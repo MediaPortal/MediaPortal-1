@@ -536,6 +536,7 @@ public class MediaPortalApp : D3DApp
 		{
 			char keyc=e.KeyChar;
 			Key key = new Key(e.KeyChar,0);
+#if DEBUG
       if (key.KeyChar=='l')
       {
         Log.Write("log cur:{0} duration:{1} speed:{2}", g_Player.CurrentPosition,g_Player.Duration, g_Player.Speed);
@@ -548,6 +549,7 @@ public class MediaPortalApp : D3DApp
       {
         Recorder.StopRecording("RTL 4");
       }
+#endif
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
 			{
