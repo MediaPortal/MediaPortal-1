@@ -1247,6 +1247,11 @@ namespace MediaPortal
       base.OnKeyPress(e);
     }
 
+    private void D3DApp_Load(object sender, System.EventArgs e)
+    {
+    
+    }
+
     private void D3DApp_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       g_Player.Stop();
@@ -1421,6 +1426,7 @@ namespace MediaPortal
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(292, 273);
+      this.KeyPreview = true;
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
@@ -1428,6 +1434,7 @@ namespace MediaPortal
       this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
       this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
+      this.Load += new System.EventHandler(this.D3DApp_Load);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
     }
