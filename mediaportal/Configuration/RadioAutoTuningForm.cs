@@ -44,7 +44,9 @@ namespace MediaPortal.Configuration
 
 		private new void InitializeComponent()
 		{
+			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).BeginInit();
+			this.SuspendLayout();
 			// 
 			// cancelButton
 			// 
@@ -87,7 +89,10 @@ namespace MediaPortal.Configuration
 			this.ClientSize = new System.Drawing.Size(440, 222);
 			this.Name = "RadioAutoTuningForm";
 			this.Text = "Scan for radio channels";
+			this.Closed += new System.EventHandler(this.RadioAutoTuningForm_Closed);
+			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).EndInit();
+			this.ResumeLayout(false);
 
 		}
 
@@ -132,6 +137,11 @@ namespace MediaPortal.Configuration
       {
         MessageBox.Show("Failed to perform autotuning, the tuner card did not supply the data needed.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
+		}
+
+		private void RadioAutoTuningForm_Closed(object sender, System.EventArgs e)
+		{
+			m_graph.DeleteGraph();
 		}
 	}
 }

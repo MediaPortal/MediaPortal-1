@@ -1152,6 +1152,8 @@ namespace MediaPortal.TV.Recording
 				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
 			}
 			m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			m_TVTuner.get_AudioFrequency(out frequency);
+			Log.Write("SinkGraphEx:  tuned to {0} hz", frequency);
 		}
   }
 }

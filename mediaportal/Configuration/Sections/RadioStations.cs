@@ -62,12 +62,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void OnSectionActivated()
 		{
-			//
-			// Fetch radio settings
-			//
-			SectionSettings radioSection = SectionSettings.GetSection("Radio");
 
-			bool internalRadioEnabled = (bool)radioSection.GetSetting("radio.internal");
 
 		}
 
