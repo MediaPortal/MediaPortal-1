@@ -1,6 +1,7 @@
 25-07-2004  setup       : fixed : Support for four (4) digits in channel number
 25-07-2004  setup       : fixed : Support for negative values in time zone correction (Program Guide)
 25-07-2004  my music    : fixed : visualisations in fullscreenmode where slow
+25-07-2004  my music    : fixed : F3 album lookup was broken cause www.allmusic.com changed its website
 
 24-07-2004  setup       : added : Settings for audio device and video/audio compression for capture cards.
 24-07-2004  skin engine : fixed : icon view: big icons where not scaled correctly
