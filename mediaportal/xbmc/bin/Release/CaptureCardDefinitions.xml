@@ -23,6 +23,7 @@
 <!--  2. Define the 0-based index of the pin. This always should work...                                -->
 <!--                                                                                                    -->
 <!-- Cards supported so far:                                                          -->
+<!--    ATI HDTV							  -->
 <!--    AVerTV DVB-T 771                      -->
 <!--    AverMedia 1500MCE                     -->
 <!--    Dvico Fusion HDTV                     -->
@@ -926,6 +927,22 @@
       </connections>
     </tv>
   </capturecard> 
+
+  <capturecard commercialname="ATI HDTV" capturename="ATI DTV Wonder Digital BDA Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a1011002&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="ATI DTV Wonder Digital BDA Tuner"		checkdevice="false"></filter>
+        <filter cat="capture"         name="ATI DTV Wonder Digital BDA Capture"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard> 
   
   <capturecard commercialname="Pinnacle 300i Analog" capturename="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_002d11bd&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -962,5 +979,7 @@
       </connections>
     </radio>
   </capturecard>
+ 
+  
    
 </capturecards>
