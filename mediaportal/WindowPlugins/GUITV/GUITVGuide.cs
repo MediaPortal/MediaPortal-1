@@ -25,8 +25,6 @@ namespace MediaPortal.GUI.TV
 		enum Controls
 		{
 			PANEL_BACKGROUND=2,
-			LABEL_TIME_HEADER_TEMPLATE=3,
-			IMG_TIME_HEADER_TEMPLATE=4,
 			SPINCONTROL_DAY=6,
 			SPINCONTROL_TIME_INTERVAL=8,
 			CHANNEL_IMAGE_TEMPLATE=7,
@@ -39,10 +37,10 @@ namespace MediaPortal.GUI.TV
       
 			HORZ_SCROLLBAR=28,
 			VERT_SCROLLBAR=29,
-			LABEL_TIME1=40,
-			IMG_CHAN1=50,
+			LABEL_TIME1=40, // first and template
+			IMG_CHAN1=50, 
 			IMG_CHAN1_LABEL=70,
-			IMG_TIME1=90,
+			IMG_TIME1=90, // first and template
 			IMG_REC_PIN=31
 		};
 
@@ -217,7 +215,10 @@ namespace MediaPortal.GUI.TV
 					break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
-					ShowContextMenu();
+          if (GetFocusControlId() == 1)
+          {
+            ShowContextMenu();
+          }
 					break;
 
 				case Action.ActionType.ACTION_MOUSE_MOVE:
@@ -482,7 +483,7 @@ namespace MediaPortal.GUI.TV
 					GUIImage cntlChannelImg = (GUIImage)GetControl((int)Controls.CHANNEL_IMAGE_TEMPLATE);
 					GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
 					GUILabelControl labelTime= (GUILabelControl) GetControl((int)Controls.LABEL_TIME1);
-					GUIImage cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME_HEADER_TEMPLATE);
+					GUIImage cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
 
 					int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelImg.YPosition;
 					int iItemHeight=(cntlChannelLabel.YPosition+cntlChannelLabel.Height) - cntlChannelImg.YPosition;
@@ -627,7 +628,7 @@ namespace MediaPortal.GUI.TV
 			GUIImage				cntlChannelImg = (GUIImage)GetControl((int)Controls.CHANNEL_IMAGE_TEMPLATE);
 			GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
 			GUILabelControl labelTime= (GUILabelControl) GetControl((int)Controls.LABEL_TIME1);
-			GUIImage				cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME_HEADER_TEMPLATE);
+			GUIImage				cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
 			
 
 			cntlChannelImg.IsVisible=false;
@@ -650,7 +651,8 @@ namespace MediaPortal.GUI.TV
 			{
 				xpos=iLabel*iLabelWidth+labelTime.XPosition;
 				ypos=cntlPanel.YPosition+2;
-				GUIImage img= GetControl((int)Controls.IMG_TIME1+iLabel) as GUIImage;
+
+				GUIImage img=GetControl((int)Controls.IMG_TIME1+iLabel) as GUIImage;
 				if (img==null)
 				{
 					img = new GUIImage(GetID,(int)Controls.IMG_TIME1+iLabel,xpos,ypos,iLabelWidth-4,cntlHeaderBkgImg.RenderHeight,cntlHeaderBkgImg.FileName,0x0);
@@ -658,6 +660,7 @@ namespace MediaPortal.GUI.TV
 					GUIControl cntl2=(GUIControl)img;
 					Add(ref cntl2);
 				}
+        
 				img.IsVisible=!m_bSingleChannel;
 				img.Width=iLabelWidth-4;
 				img.Height=cntlHeaderBkgImg.RenderHeight;

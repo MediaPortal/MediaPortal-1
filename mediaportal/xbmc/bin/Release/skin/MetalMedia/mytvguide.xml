@@ -115,6 +115,19 @@
 		<colordiffuse>ffffffff</colordiffuse>
 		<texture>panel2.png</texture>
 	</control>
+
+	<!-- Timeheader background must be dedfined before Timeheader label template -->
+	<!-- b/c Timeheader is on the background and will be rendered first -->	
+	<control>
+		<description>time header background image template</description>
+		<type>image</type>
+		<id>90</id>
+		<posX>186</posX>
+		<posY>222</posY>
+		<width>115</width>
+		<height>28</height>
+		<texture>bar.png</texture>
+	</control>
 	<control>
 		<description>time header label template</description>
 		<type>label</type>
@@ -123,17 +136,6 @@
 		<posY>220</posY>
 		<font>font13</font>
 	</control>
-	<control>
-		<description>time header background image template</description>
-		<type>image</type>
-		<id>4</id>
-		<posX>60</posX>
-		<posY>255</posY>
-		<width>32</width>
-		<height>28</height>
-		<texture>bar.png</texture>
-	</control>
-
 	<control>
 		<description>day spin control</description>
 		<type>spincontrol</type>

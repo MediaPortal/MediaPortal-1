@@ -42,13 +42,16 @@
 		<colordiffuse>60ffffff</colordiffuse>
 		<texture>-</texture>
 	</control>
+
+	<!-- Timeheader background must be dedfined before Timeheader label template -->
+	<!-- b/c Timeheader is on the background and will be rendered first -->	
 	<control>
 		<description>time header background image template</description>
 		<type>image</type>
-		<id>4</id>
-		<posX>60</posX>
-		<posY>250</posY>
-		<width>32</width>
+		<id>90</id>
+		<posX>186</posX>
+		<posY>222</posY>
+		<width>115</width>
 		<height>28</height>
 		<texture>button_small_settings_nofocus.png</texture>
 	</control>
