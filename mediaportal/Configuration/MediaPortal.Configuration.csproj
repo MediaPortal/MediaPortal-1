@@ -319,6 +319,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "SearchSHOUTcast.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SectionSettings.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

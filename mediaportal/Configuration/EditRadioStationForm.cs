@@ -27,11 +27,12 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.ComboBox typeComboBox;
     private System.Windows.Forms.TextBox frequencyTextBox;
-		RadioStation station;
+		private System.Windows.Forms.Button searchButton;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+		RadioStation station = new RadioStation();
 
 		public EditRadioStationForm()
 		{
@@ -83,6 +84,7 @@ namespace MediaPortal.Configuration
 			this.label1 = new System.Windows.Forms.Label();
 			this.closeButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
+			this.searchButton = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -117,8 +119,8 @@ namespace MediaPortal.Configuration
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.typeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.typeComboBox.Items.AddRange(new object[] {
-																											"Radio",
-																											"Stream"});
+															  "Radio",
+															  "Stream"});
 			this.typeComboBox.Location = new System.Drawing.Point(121, 27);
 			this.typeComboBox.Name = "typeComboBox";
 			this.typeComboBox.Size = new System.Drawing.Size(224, 21);
@@ -224,7 +226,7 @@ namespace MediaPortal.Configuration
 			this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.closeButton.Location = new System.Drawing.Point(292, 213);
 			this.closeButton.Name = "closeButton";
-			this.closeButton.TabIndex = 1;
+			this.closeButton.TabIndex = 2;
 			this.closeButton.Text = "Close";
 			this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
 			// 
@@ -234,16 +236,29 @@ namespace MediaPortal.Configuration
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.okButton.Location = new System.Drawing.Point(211, 213);
 			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 0;
+			this.okButton.TabIndex = 1;
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
+			// searchButton
+			// 
+			this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.searchButton.Enabled = false;
+			this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.searchButton.Location = new System.Drawing.Point(16, 214);
+			this.searchButton.Name = "searchButton";
+			this.searchButton.Size = new System.Drawing.Size(104, 22);
+			this.searchButton.TabIndex = 0;
+			this.searchButton.Text = "Search SHOUTcast";
+			this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
 			// 
 			// EditRadioStationForm
 			// 
 			this.AcceptButton = this.okButton;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.CancelButton = this.closeButton;
-			this.ClientSize = new System.Drawing.Size(376, 246);
+			this.ClientSize = new System.Drawing.Size(376, 248);
+			this.Controls.Add(this.searchButton);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.closeButton);
 			this.Controls.Add(this.groupBox1);
@@ -285,8 +300,8 @@ namespace MediaPortal.Configuration
 			if(typeComboBox.SelectedItem == null)
 				typeComboBox.SelectedItem = "Radio";
 
-			bitrateTextBox.Enabled = urlTextBox.Enabled = typeComboBox.SelectedItem.Equals("Stream");
-      frequencyTextBox.Enabled = !urlTextBox.Enabled;
+			bitrateTextBox.Enabled = urlTextBox.Enabled  = searchButton.Enabled = typeComboBox.SelectedItem.Equals("Stream");
+      frequencyTextBox.Enabled = !urlTextBox.Enabled && !searchButton.Enabled;
 		}
 
 		private void frequencyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -317,6 +332,15 @@ namespace MediaPortal.Configuration
 			}
 		}
 
+		private void searchButton_Click(object sender, System.EventArgs e)
+		{
+			SearchSHOUTcast fm = new SearchSHOUTcast();
+			DialogResult dialogResult = fm.ShowDialog(this);
+			if(fm.Station==null)return;
+			nameTextBox.Text = fm.Station.Name;
+			bitrateTextBox.Text = fm.Station.Bitrate.ToString();
+			urlTextBox.Text = fm.Station.URL;
+		}
 		public RadioStation Station
 		{
 			get { 
