@@ -159,6 +159,7 @@
    		<onright>2</onright>
    		<onup>2</onup>
    		<ondown>2</ondown>
+   		<thumbZoom>yes</thumbZoom>
    	</control>
     <control>
       <description>Filmstrip view</description>

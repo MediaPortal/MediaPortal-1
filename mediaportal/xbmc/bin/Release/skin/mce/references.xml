@@ -165,7 +165,7 @@
 		<thumbHeightBig>84</thumbHeightBig>
 		<thumbPosXBig>12</thumbPosXBig>
 		<thumbPosYBig>12</thumbPosYBig>	
-		<thumbZoom>yes</thumbZoom>
+		<thumbZoom>no</thumbZoom>
 	</control>
 	<control>
 		<description>default filmstrip</description>
