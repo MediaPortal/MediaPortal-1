@@ -146,9 +146,14 @@ namespace MediaPortal.TV.Recording
 			int			lastTab=0;
 			int			dummyTab=0;
 
-			m_sections.Timeout=750;
+			m_sections.Timeout=5000;
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
+			
+			if (m_networkType==NetworkType.DVBC ||
+					m_networkType==NetworkType.DVBT)
+				lastTab=0x50;
+
 			if(lastTab>0x50)
 			{
 				for(int tab=0x51;tab<lastTab;tab++)
@@ -167,7 +172,6 @@ namespace MediaPortal.TV.Recording
 					// the progName must be get from the database
 					// to submitt to correct channel
 					string progName="";
-					Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} ",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
 				
 					switch(m_cardType)
 					{

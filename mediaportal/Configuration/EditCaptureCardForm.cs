@@ -1901,7 +1901,6 @@ namespace MediaPortal.Configuration
 					return;
 				}
 
-				DVBSections dvbSec =new DVBSections();
 
 				DVBEPG	ssEPG=new DVBEPG((int)DVBEPG.EPGCard.BDACards, capture.Network);
 				GUIGraphicsContext.VideoWindow = new Rectangle(300,90,110,110);
@@ -1938,6 +1937,7 @@ namespace MediaPortal.Configuration
 						Application.DoEvents();
 					}
 				}while(m_stopEPGGrab==false);
+				Log.Write("EPG Stopped...");
 				chName.Text="Stopped.";
 				button15.Enabled=true;
 				button16.Enabled=false;

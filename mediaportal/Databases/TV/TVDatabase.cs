@@ -2080,7 +2080,7 @@ namespace MediaPortal.TV.Database
 			TSID=-1;
 			SID=-1;
 			if (m_db == null) return ;
-			Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
+			//Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
 			{
 				try
@@ -2113,7 +2113,7 @@ namespace MediaPortal.TV.Database
 			TSID=-1;
 			SID=-1;
 			if (m_db == null) return ;
-			Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
+			//Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
 			{
 				try
@@ -2150,7 +2150,7 @@ namespace MediaPortal.TV.Database
 			TSID=-1;
 			SID=-1;
 			if (m_db == null) return ;
-			Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
+			//Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
 			{
 				try
