@@ -319,11 +319,14 @@ namespace Programs.Utils
 				foreach(string fileName in fileEntries)
 				{
 					string curExtension = System.IO.Path.GetExtension(fileName).ToLower();
-					if (Checker.IndexOf("#" + curExtension + "#") == -1)
+					if (curExtension.Trim() != "")
 					{
-						Result = Result + sep + curExtension;
-						Checker = Checker + curExtension + "#";
-						sep = ",";
+						if (Checker.IndexOf("#" + curExtension + "#") == -1)
+						{
+							Result = Result + sep + curExtension;
+							Checker = Checker + curExtension + "#";
+							sep = ",";
+						}
 					}
 				}
 			}
