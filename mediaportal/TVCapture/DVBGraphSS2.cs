@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Win32;
 using System.Drawing;
+using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.Util;
@@ -468,8 +469,9 @@ namespace MediaPortal.TV.Recording
 		protected bool			m_bOverlayVisible=false;
 		protected DVBChannel	m_currentChannel=new DVBChannel();
 		//
-
-
+		protected Hashtable				m_eitPresentFollowTable=null;
+		protected Hashtable				m_eitScheduleTable=null;
+		protected System.Timers.Timer	m_eitTimer=null;
 		//
 		protected bool					m_firstTune=false;
 		//
@@ -512,10 +514,24 @@ namespace MediaPortal.TV.Recording
 		StreamBufferConfig				m_streamBufferConfig=null;
 		protected VMR9Util				Vmr9=null; 
 		protected string				m_filename="";
+		protected DVBSections			m_sections=new DVBSections();
+		protected int					m_currentTable=0;
+		protected bool					m_grabEPG=false;
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
+			int epgInterval=0;
+			m_eitPresentFollowTable=new Hashtable();
+			m_eitScheduleTable=new Hashtable();
 			
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				m_grabEPG=xmlreader.GetValueAsBool("DVBSS2","grabEPG",false);
+				epgInterval=xmlreader.GetValueAsInt("DVBSS2","grabInterval",750);
+			}
+			m_eitTimer=new System.Timers.Timer(epgInterval);
+			m_eitTimer.AutoReset=false;
+			m_eitTimer.Elapsed+=new System.Timers.ElapsedEventHandler(GetEITData);
 			try
 			{
 				RegistryKey hkcu = Registry.CurrentUser;
@@ -541,7 +557,7 @@ namespace MediaPortal.TV.Recording
 			Vmr9 =new VMR9Util("mytv");
 
 			m_sourceGraph=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
-
+			
 			int n=0;
 			m_b2c2Adapter=null;
 			// create filters & interfaces
@@ -594,7 +610,6 @@ namespace MediaPortal.TV.Recording
 				if(b==false)
 					return false;
 
-
 			}
 			catch(Exception ex)
 			{
@@ -604,6 +619,51 @@ namespace MediaPortal.TV.Recording
 			
 			m_graphState=State.Created;
 			return true;
+		}
+		void GetEITData(object obj,System.Timers.ElapsedEventArgs args)
+		{
+			ArrayList eitList=new ArrayList();
+
+			if(m_currentTable<0x4E)
+				m_currentTable=0x4E;
+
+			eitList=m_sections.GetEITSchedule(m_currentTable,m_mpeg2Data);
+			m_eitTimer.Stop();
+			try
+			{
+				foreach(DVBSections.EITDescr eitData in eitList)
+				{
+					if(m_eitScheduleTable.ContainsKey(eitData))
+					{
+						m_eitScheduleTable.Remove(eitData);
+						m_eitScheduleTable.Add(eitData,null);
+					}
+					else
+						m_eitScheduleTable.Add(eitData,eitData);
+				
+					GC.Collect();
+				}
+			}
+			catch(Exception ex)
+			{string text=ex.Message;}
+			// change table
+
+			switch(m_currentTable)
+			{
+				case 0x50:
+					m_currentTable=0x60;
+					break;
+				case 0x60:
+					m_currentTable=0x4e;
+					break;
+				case 0x4E:
+					m_currentTable=0x50;
+					break;
+			}
+			//
+			//
+			if(m_grabEPG==true)
+				m_eitTimer.Start();
 		}
 		//
 		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq)
@@ -665,6 +725,11 @@ namespace MediaPortal.TV.Recording
 
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
+				
+				DeleteAllPIDs(m_dataCtrl,0);
+				SetPidToPin(m_dataCtrl,0,18);
+				SetPidToPin(m_dataCtrl,0,0);
+				SetPidToPin(m_dataCtrl,0,2);
 				hr = m_avCtrl.SetAudioVideoPIDs (AudioPID, VideoPID);
 				if (hr!=0)
 				{
@@ -801,6 +866,7 @@ namespace MediaPortal.TV.Recording
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			
 			m_iChannelNr=-1;
+			CommitDataToEPG();
 
 			StopRecording();
 			StopTimeShifting();
@@ -947,8 +1013,20 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext.form.Invalidate(true);
 			GC.Collect();
 
+			//add collected stuff into programs database
+
 			m_graphState = State.None;
 			return;		
+		}
+		//
+		//
+		void CommitDataToEPG()
+		{
+			foreach(DVBSections.EITDescr eit in m_eitScheduleTable.Keys)
+					m_sections.SetEITToDatabase(eit);
+			
+			m_eitScheduleTable.Clear();
+
 		}
 		void AddPreferredCodecs()
 		{				
@@ -1185,6 +1263,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.TimeShifting) return false;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:StopTimeShifting()");
 			m_mediaControl.Stop();
+			CommitDataToEPG();
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
@@ -1341,7 +1420,7 @@ namespace MediaPortal.TV.Recording
 			{
 				
 				DVBChannel ch=new DVBChannel();
-
+				CommitDataToEPG();
 				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
 				{
 					m_channelFound=false;
@@ -1366,6 +1445,10 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 				m_currentChannel=ch;
+				//
+				//
+				if(m_grabEPG==true)
+					m_eitTimer.Start();
 				
 				if(m_mediaControl!=null && m_graphState!=State.TimeShifting )
 					m_mediaControl.Run();
@@ -1418,16 +1501,49 @@ namespace MediaPortal.TV.Recording
 			{
 				Vmr9.AddVMR9(m_sourceGraph);
 			}
-			
-			
-			// render here for viewing
-				hr=m_sourceGraph.Render(m_videoPin);
-				if(hr!=0)
-					return false;
 
-				hr=m_sourceGraph.Render(m_audioPin);
-				if(hr!=0)
-					return false;
+			// render vid & aud
+			hr=m_sourceGraph.Render(m_videoPin);
+			if(hr!=0)
+				return false;
+
+			hr=m_sourceGraph.Render(m_audioPin);
+			if(hr!=0)
+				return false;
+
+			//
+			// mpeg2data and demux connection
+			hr=m_sourceGraph.AddFilter(m_mpeg2Data,"Sections-Filter");
+			hr=m_sourceGraph.AddFilter(m_demux,"Demuxer-Filter");
+			m_demuxInterface=(IMpeg2Demultiplexer)m_demux;
+			if(m_demuxInterface==null)
+				return false;
+			IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);
+			IPin demuxOutPin=null;
+			IPin m2dIn=DirectShowUtil.FindPinNr(m_mpeg2Data,PinDirection.Input,0);
+			AMMediaType mt=new AMMediaType();
+			mt.majorType=MEDIATYPE_MPEG2_SECTIONS;
+			mt.subType=MEDIASUBTYPE_MPEG2_DATA;
+			hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2DATA",out demuxOutPin);
+			if(hr!=0)
+				return false;
+			hr=m_sourceGraph.Connect(m_data0,demuxInPin);
+			if(hr!=0)
+				return false;
+			hr=m_sourceGraph.Connect(demuxOutPin,m2dIn);
+			if(hr!=0)
+				return false;
+			//DsROT.AddGraphToRot(m_sourceGraph,out m_myCookie);
+			if(demuxOutPin!=null)
+				Marshal.ReleaseComObject(demuxOutPin);
+			if(m2dIn!=null)
+				Marshal.ReleaseComObject(m2dIn);
+			if(demuxInPin!=null)
+				Marshal.ReleaseComObject(demuxInPin);
+			demuxOutPin=null;
+			demuxInPin=null;
+			m2dIn=null;
+
 			int n=0;// 
 			
 			if(Vmr9.IsVMR9Connected==false && Vmr9.UseVMR9inMYTV==true)// fallback
@@ -1503,7 +1619,8 @@ namespace MediaPortal.TV.Recording
 			if(m_videoWindow!=null)
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_bOverlayVisible=false;
-			
+			CommitDataToEPG();
+
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
@@ -1512,10 +1629,10 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool ShouldRebuildGraph(int iChannel)
 		{
-			if(m_graphState==State.TimeShifting)
+			//if(m_graphState==State.TimeShifting)
 				return true;
 
-			return false;
+			//return false;
 		}
 
 		/// <summary>
