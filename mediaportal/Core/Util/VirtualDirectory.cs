@@ -443,28 +443,31 @@ namespace MediaPortal.Util
           }
           else
           {
-            item = new GUIListItem();
-            item.IsFolder = false;
-            item.Label = file.Name;
-            item.Label2 = "";
-            item.Path = String.Format("{0}/{1}",strDir,file.Name);
-            item.IsRemote=true;
-            if (IsRemoteFileDownloaded(item.Path))
+            if (IsValidExtension(file.Name))
             {
-              item.Path=GetLocalFilename(item.Path);
-              item.IsRemote=false;
+              item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = file.Name;
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}",strDir,file.Name);
+              item.IsRemote=true;
+              if (IsRemoteFileDownloaded(item.Path))
+              {
+                item.Path=GetLocalFilename(item.Path);
+                item.IsRemote=false;
+              }
+              else if (FtpConnectionCache.IsDownloading(item.Path))
+              {
+                item.IsDownloading=true;
+              }
+              item.FileInfo = new FileInformation();
+              DateTime modified=file.LastModified;
+              item.FileInfo.CreationTime=modified;
+              item.FileInfo.Length=file.Size;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
             }
-            else if (FtpConnectionCache.IsDownloading(item.Path))
-            {
-              item.IsDownloading=true;
-            }
-            item.FileInfo = new FileInformation();
-            DateTime modified=file.LastModified;
-            item.FileInfo.CreationTime=modified;
-            item.FileInfo.Length=file.Size;
-            Utils.SetDefaultIcons(item);
-            Utils.SetThumbnails(ref item);
-            items.Add(item);
           }
         }
       }

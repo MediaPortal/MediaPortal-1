@@ -1187,7 +1187,7 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < (int)items.Count; ++i)
       {
         GUIListItem pItem = (GUIListItem)items[i];
-
+        if (pItem.IsRemote) continue;
         if (pItem.IsFolder) continue;
         if (pItem.Path.Length == 0) continue;
         string strFilePath = System.IO.Path.GetFullPath(pItem.Path);

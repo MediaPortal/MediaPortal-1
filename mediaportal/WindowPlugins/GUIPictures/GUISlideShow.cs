@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Pictures
 
     int               			m_dwFrameCounter=0;
     int								 			m_iCurrentSlide=0;
-    int                     m_iLastShownSlide=0;
+    int                     m_iLastShownSlide=-1;
     int                			m_iTransistionMethod=0;
     bool               			m_bSlideShow=false ;
     bool							 			m_bShowInfo=false;
@@ -87,6 +87,8 @@ namespace MediaPortal.GUI.Pictures
           base.OnMessage(message);
           GUIGraphicsContext.Overlay=false;
           m_bUpdate=false;
+          m_iLastShownSlide=-1;
+          m_iCurrentSlide=-1;
           LoadSettings();
 					return true;
 

@@ -726,7 +726,7 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (!item.IsFolder)
         {
-          if (item.IsRemote) return;
+          if (item.IsRemote) continue;
           SlideShow.Add(item.Path);
         }
       }
