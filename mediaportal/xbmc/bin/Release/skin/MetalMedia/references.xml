@@ -305,5 +305,26 @@
 		<onright>50</onright>
 		<onup>3</onup>
 		<ondown>7</ondown>
+	</control>
+	
+	<control>
+		<description>template for 3part button</description>
+		<type>button3part</type>
+		<id>5000</id>
+		<posX>600</posX>
+		<posY>100</posY>
+		<width>197</width>
+		<textXOff>7</textXOff>
+		<textYOff>2</textYOff>
+		<height>32</height>
+		<label>605</label>
+		<font>font16</font>
+		<visible>yes</visible>
+		<textureFocusLeft>tvguide_button_selected_left.png</textureFocusLeft>
+		<textureFocusMid>tvguide_button_selected_middle.png</textureFocusMid>
+		<textureFocusRight>tvguide_button_selected_right.png</textureFocusRight>
+		<textureNoFocusLeft>tvguide_button_light_left.png</textureNoFocusLeft>
+		<textureNoFocusMid>tvguide_button_light_middle.png</textureNoFocusMid>
+		<textureNoFocusRight>tvguide_button_light_right.png</textureNoFocusRight>
 	</control>	
 </controls>
