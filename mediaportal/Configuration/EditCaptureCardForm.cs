@@ -20,6 +20,7 @@ namespace MediaPortal.Configuration
 	public class EditCaptureCardForm : System.Windows.Forms.Form
 	{
     bool    m_bMPEG2=false;
+    bool    m_bISMCE=false;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox cardComboBox;
@@ -634,6 +635,7 @@ namespace MediaPortal.Configuration
           capture.LoadSettings(cardId);        
 
           m_bMPEG2=capture.SupportsTimeShifting;
+          m_bISMCE=capture.IsMCECard;
         }
         catch (Exception ex)
         {
@@ -927,6 +929,7 @@ namespace MediaPortal.Configuration
         card.AudioDevice = audioDeviceComboBox.Text;
         card.AudioInputPin = comboBoxLineInput.Text;
         card.SupportsMPEG2 = m_bMPEG2;
+        card.IsMCECard     = m_bISMCE;
         card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;
 				return card;

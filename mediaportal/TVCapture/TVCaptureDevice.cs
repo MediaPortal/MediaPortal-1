@@ -22,6 +22,7 @@ namespace MediaPortal.TV.Recording
     bool    m_bUseForRecording;
     bool    m_bUseForTV;
     bool    m_bSupportsMPEG2;
+    bool    m_bIsMCECard;
     Size    m_FrameSize;
     double  m_FrameRate;
     string  m_strAudioInputPin = "";
@@ -90,6 +91,11 @@ namespace MediaPortal.TV.Recording
       return m_strVideoDevice;
     }
 
+    public bool IsMCECard
+    {
+      get { return m_bIsMCECard; }
+      set { m_bIsMCECard = value; }
+    }
     /// <summary>
     /// Property which indicates if this card has an onboard mpeg2 encoder or not
     /// </summary>

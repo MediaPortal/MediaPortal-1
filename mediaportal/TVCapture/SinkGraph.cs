@@ -19,7 +19,7 @@ namespace MediaPortal.TV.Recording
   /// </summary>
 	public class SinkGraph : IGraph
 	{
-    enum State
+    protected enum State
     { 
       None,
       Created,
@@ -27,25 +27,25 @@ namespace MediaPortal.TV.Recording
       Recording,
       Viewing
     };
-    int                     m_cardID=-1;
-    string                  m_strVideoCaptureFilter="";
-    IGraphBuilder           m_graphBuilder=null;
-    ICaptureGraphBuilder2   m_captureGraphBuilder=null;
-    IBaseFilter             m_captureFilter=null;
-    IAMTVTuner              m_TVTuner=null;
-    IAMAnalogVideoDecoder   m_IAMAnalogVideoDecoder=null;
-		VideoCaptureDevice      m_videoCaptureDevice=null;
-    MPEG2Demux              m_mpeg2Demux=null;
-    int				              m_rotCookie = 0;						// Cookie into the Running Object Table
-    State                   m_graphState=State.None;
-    int                     m_iChannelNr=-1;
-    int                     m_iCountryCode=31;
-    bool                    m_bUseCable=false;
-    DateTime                m_StartTime=DateTime.Now;
-    int                     m_iPrevChannel=-1;
-    bool                    m_bFirstTune=true;
-    Size                    m_FrameSize;
-    double                  m_FrameRate;
+    protected int                     m_cardID=-1;
+    protected string                  m_strVideoCaptureFilter="";
+    protected IGraphBuilder           m_graphBuilder=null;
+    protected ICaptureGraphBuilder2   m_captureGraphBuilder=null;
+    protected IBaseFilter             m_captureFilter=null;
+    protected IAMTVTuner              m_TVTuner=null;
+    protected IAMAnalogVideoDecoder   m_IAMAnalogVideoDecoder=null;
+		protected VideoCaptureDevice      m_videoCaptureDevice=null;
+    protected MPEG2Demux              m_mpeg2Demux=null;
+    protected int				              m_rotCookie = 0;						// Cookie into the Running Object Table
+    protected State                   m_graphState=State.None;
+    protected int                     m_iChannelNr=-1;
+    protected int                     m_iCountryCode=31;
+    protected bool                    m_bUseCable=false;
+    protected DateTime                m_StartTime=DateTime.Now;
+    protected int                     m_iPrevChannel=-1;
+    protected bool                    m_bFirstTune=true;
+    protected Size                    m_FrameSize;
+    protected double                  m_FrameRate;
 
     /// <summary>
     /// Constructor
@@ -83,7 +83,7 @@ namespace MediaPortal.TV.Recording
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    public bool CreateGraph()
+    public virtual bool CreateGraph()
     {
       if (m_graphState!=State.None) return false;
       m_iPrevChannel=-1;
@@ -164,24 +164,6 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found");
       }
 
-      if ( m_TVTuner!=null)
-      {
-        for (int ipin=0; ipin < 10; ipin++)
-        {
-          IPin pin=DirectShowUtil.FindPinNr( (IBaseFilter)m_TVTuner,PinDirection.Output,ipin);
-          if (pin!=null)
-          {
-            IPin pConnectPin=null;
-            hr=pin.ConnectedTo(out pConnectPin);  
-            if (hr!= 0 || pConnectPin==null)
-            {
-              FixAverMediaBug();
-              break;
-            }
-          }
-          else break;
-        }
-      }
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
       
@@ -199,7 +181,7 @@ namespace MediaPortal.TV.Recording
       m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
 
       // Retreive the media control interface (for starting/stopping graph)
-      ConnectEncoder();
+      ConnectVideoCaptureToMPEG2Demuxer();
       m_mpeg2Demux.CreateMappings();
       m_graphState=State.Created;
       return true;
@@ -295,33 +277,22 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// Connects the videocapture->WDM Encoder for MCE devices
+    /// Connects the videocapture->MPEG2 Demuxer
     /// </summary>
-    void ConnectEncoder()
+    protected void ConnectVideoCaptureToMPEG2Demuxer()
     {
       if (m_videoCaptureDevice==null) return;
-      if (!m_mpeg2Demux.IsRendered) 
+      if (m_mpeg2Demux.IsRendered) return;
+      // connect video capture pin->mpeg2 demux input
+      if (!m_videoCaptureDevice.IsMCEDevice)
       {
-        // connect video capture pin->mpeg2 demux input
-        if (m_videoCaptureDevice.IsMCEDevice)
+        Guid cat = PinCategory.Capture;
+        int hr=m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
+        if (hr==0)
         {
-          ConnectMCEEncoder();
-        }
-        else
-        {
-          Guid cat = PinCategory.Capture;
-          int hr=m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
-          if (hr!=0)
-          {
-            ConnectMCEEncoder();
-          }
+          return;
         }
       }
-    }
-    void ConnectMCEEncoder()
-    {
-      DirectShowUtil.DebugWrite("SinkGraph:connect video capture->mpeg2 demuxer");
- 
       DirectShowUtil.DebugWrite("SinkGraph:find mpeg2 demux input pin");
       IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
       if (pinIn!=null) 
@@ -329,7 +300,7 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SinkGraph:found mpeg2 demux input pin");
         int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
         if (hr==0)
-          DirectShowUtil.DebugWrite("SinkGraph:connected Encoder->mpeg2 demuxer");
+          DirectShowUtil.DebugWrite("SinkGraph:connected video capture->mpeg2 demuxer");
         else
           DirectShowUtil.DebugWrite("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
       }
@@ -561,7 +532,7 @@ namespace MediaPortal.TV.Recording
 
       DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
       AddPreferredCodecs();
-      ConnectEncoder();
+      ConnectVideoCaptureToMPEG2Demuxer();
       m_graphState=State.Viewing;
       TuneChannel(standard, iChannelNr);
       m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
@@ -646,57 +617,6 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-
-    void FixAverMediaBug()
-    {
-        // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
-        // the crossbar outputs are disconnected
-        // same for the winfast pvr 2000
-        DirectShowUtil.DebugWrite("Sinkgraph:FixAverMediaBug()");
-        //find crossbar
-        int  hr;
-        Guid cat;
-        Guid iid;
-        object o=null;
-        cat = FindDirection.UpstreamOnly;
-        iid = typeof(IAMCrossbar).GUID;
-        hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,m_captureFilter, ref iid, out o);
-        if (hr !=0 || o == null) 
-        {
-          DirectShowUtil.DebugWrite("Sinkgraph:no crossbar found");
-          return; // no crossbar found?
-        }
-    
-        IAMCrossbar crossbar = o as IAMCrossbar;
-        if (crossbar ==null) 
-        {
-          DirectShowUtil.DebugWrite("Sinkgraph:no crossbar found");
-          return;
-        }
-
-
-        //disconnect the output pins of the crossbar
-        DirectShowUtil.DebugWrite("Sinkgraph:disconnect crossbar outputs");
-        DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
-      //DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
-
-        //render the output pins of the tvtuner
-        DirectShowUtil.DebugWrite("Sinkgraph:connect tvtuner outputs");
-        bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
-        if (bAllConnected)
-          DirectShowUtil.DebugWrite("Sinkgraph:all connected");
-        else
-          DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
-
-        //reconnect the output pins of the crossbar
-        DirectShowUtil.DebugWrite("Sinkgraph:reconnect crossbar output pins");
-
-        bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
-        if (bAllConnected)
-          DirectShowUtil.DebugWrite("Sinkgraph:all connected");
-        else
-          DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
-    }
  
     void AddPreferredCodecs()
     {				
