@@ -236,10 +236,28 @@ namespace MediaPortal.GUI.TV
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
             OnMessage(msg);         
             int iItem=(int)msg.Param1;
-            int iAction=(int)message.Param1;
+						int iAction=(int)message.Param1;
+						GUIListItem item=GetSelectedItem();
             if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
             {
-              OnPlay(iItem);
+							if (showRoot)
+							{
+								currentChannel=item.Label;
+								showRoot=false;
+								LoadDirectory();
+							}
+							else
+							{
+								if (item.Label=="..")
+								{
+									showRoot=true;
+									LoadDirectory();
+								}
+								else
+								{
+									OnPlay(iItem);
+								}
+							}
             }
           }
           break;
