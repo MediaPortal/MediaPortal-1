@@ -896,7 +896,7 @@ namespace MediaPortal.TV.Database
 					strSQL="select * from channel ";
 				  strSQL+="left join tblDVBCMapping on tblDVBCMapping.idChannel=channel.idChannel ";
 					strSQL+="left join tblDVBTMapping on tblDVBTMapping.idChannel=channel.idChannel ";
-					strSQL+="left join tblDVBSMapping on tblDVBCMapping.idChannel=channel.idChannel ";
+					strSQL+="left join tblDVBSMapping on tblDVBSMapping.idChannel=channel.idChannel ";
 					strSQL+="order by tblDVBCMapping.strProvider, tblDVBTMapping.strProvider, tblDVBSMapping.strProvider,channel.strChannel";
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
