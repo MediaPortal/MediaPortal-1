@@ -910,6 +910,7 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         int iNewTimeZoneCompensation=Int32.Parse(compensateTextBox.Text);
+        if (iNewTimeZoneCompensation==OldTimeZoneOffset) return;
         iNewTimeZoneCompensation-=OldTimeZoneOffset;
 
         TVDatabase.OffsetProgramsByHour(iNewTimeZoneCompensation);
