@@ -163,6 +163,11 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Managed DirectX\v9.00.1126\Microsoft.DirectX.DirectDraw.dll"
                     AssemblyFolderKey = "hklm\current managed directx 9.1"
                 />
+                <Reference
+                    Name = "RadioDatabase"
+                    Project = "{50E428C2-230C-4549-8BB7-F269203C2C3C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
