@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Library
         }
         catch(Exception ex)
         {
-          Log.Write("Unable to start plugin:{0} exception:{1}", plugin.ToString(), ex.ToString());
+          Log.WriteFile(Log.LogType.Log,true,"Unable to start plugin:{0} exception:{1}", plugin.ToString(), ex.ToString());
         }
       }
       _Started=true;
@@ -170,10 +170,10 @@ namespace MediaPortal.GUI.Library
 								}
 								catch( Exception iPluginException )
 								{
-									Log.Write("Exception while loading IPlugin instances: {0}", t.FullName);
+									Log.WriteFile(Log.LogType.Log,true,"Exception while loading IPlugin instances: {0}", t.FullName);
 
-									Log.Write(iPluginException.Message);
-									Log.Write(iPluginException.StackTrace);
+									Log.WriteFile(Log.LogType.Log,true,iPluginException.Message);
+									Log.WriteFile(Log.LogType.Log,true,iPluginException.StackTrace);
 								}
 								try
 								{
@@ -191,9 +191,9 @@ namespace MediaPortal.GUI.Library
 								}
 								catch( Exception iSetupFormException )
 								{
-									Log.Write("Exception while loading ISetupForm instances: {0}", t.FullName);
-									Log.Write(iSetupFormException.Message);
-									Log.Write(iSetupFormException.StackTrace);
+									Log.WriteFile(Log.LogType.Log,true,"Exception while loading ISetupForm instances: {0}", t.FullName);
+									Log.WriteFile(Log.LogType.Log,true,iSetupFormException.Message);
+									Log.WriteFile(Log.LogType.Log,true,iSetupFormException.StackTrace);
 								}
 
 								try
@@ -211,9 +211,9 @@ namespace MediaPortal.GUI.Library
 								}
 								catch( Exception iWakeableException )
 								{
-									Log.Write("Exception while loading IWakeable instances: {0}", t.FullName);
-									Log.Write(iWakeableException.Message);
-									Log.Write(iWakeableException.StackTrace);
+									Log.WriteFile(Log.LogType.Log,true,"Exception while loading IWakeable instances: {0}", t.FullName);
+									Log.WriteFile(Log.LogType.Log,true,iWakeableException.Message);
+									Log.WriteFile(Log.LogType.Log,true,iWakeableException.StackTrace);
 								}
 							}
 						}
@@ -264,7 +264,7 @@ namespace MediaPortal.GUI.Library
 											}
 											catch(Exception ex)
 											{
-												Log.Write("Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message,ex.Source,ex.StackTrace);
+												Log.WriteFile(Log.LogType.Log,true,"Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message,ex.Source,ex.StackTrace);
 											}
 											GUIWindowManager.Add(ref win);
 										}
@@ -272,9 +272,9 @@ namespace MediaPortal.GUI.Library
 									}
 									catch( Exception guiWindowsException )
 									{
-										Log.Write("Exception while loading GUIWindows instances: {0}", t.FullName);
-										Log.Write(guiWindowsException.Message);
-										Log.Write(guiWindowsException.StackTrace);
+										Log.WriteFile(Log.LogType.Log,true,"Exception while loading GUIWindows instances: {0}", t.FullName);
+										Log.WriteFile(Log.LogType.Log,true,guiWindowsException.Message);
+										Log.WriteFile(Log.LogType.Log,true,guiWindowsException.StackTrace);
 									}
 								}
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
@@ -293,10 +293,10 @@ namespace MediaPortal.GUI.Library
 									}
 									catch( Exception iSetupFormException )
 									{
-										Log.Write("Exception while loading ISetupForm instances: {0}", t.FullName);
+										Log.WriteFile(Log.LogType.Log,true,"Exception while loading ISetupForm instances: {0}", t.FullName);
 
-									Log.Write(iSetupFormException.Message);
-									Log.Write(iSetupFormException.StackTrace);
+									Log.WriteFile(Log.LogType.Log,true,iSetupFormException.Message);
+									Log.WriteFile(Log.LogType.Log,true,iSetupFormException.StackTrace);
 								}
 
 								try
@@ -314,10 +314,10 @@ namespace MediaPortal.GUI.Library
 								}
 								catch( Exception iWakeableException )
 								{
-									Log.Write("Exception while loading IWakeable instances: {0}", t.FullName);
+									Log.WriteFile(Log.LogType.Log,true,"Exception while loading IWakeable instances: {0}", t.FullName);
 
-									Log.Write(iWakeableException.Message);
-									Log.Write(iWakeableException.StackTrace);
+									Log.WriteFile(Log.LogType.Log,true,iWakeableException.Message);
+									Log.WriteFile(Log.LogType.Log,true,iWakeableException.StackTrace);
 								}
 							}
 						}
@@ -331,7 +331,7 @@ namespace MediaPortal.GUI.Library
       catch (Exception ex)
       {
         string strEx=ex.Message;
-				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
       }
     }
 

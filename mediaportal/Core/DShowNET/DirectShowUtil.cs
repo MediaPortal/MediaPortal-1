@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices; 
+using MediaPortal.GUI.Library;
 using DShowNET;
 namespace DShowNET
 {
@@ -16,7 +17,7 @@ namespace DShowNET
     static public IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
       IBaseFilter NewFilter=null;
-      DebugWrite("add filter:{0} to graph", strFilterName);
+      Log.WriteFile(Log.LogType.Capture,"add filter:{0} to graph", strFilterName);
       Filters filters = new Filters();
       foreach (Filter filter in filters.LegacyFilters)
       {
@@ -26,19 +27,19 @@ namespace DShowNET
           int hr = graphBuilder.AddFilter( NewFilter, strFilterName );
           if( hr < 0 ) 
           {
-            DebugWrite("failed:unable to add filter:{0} to graph", strFilterName);
+            Log.WriteFile(Log.LogType.Capture,true,"failed:unable to add filter:{0} to graph", strFilterName);
             NewFilter=null;
           }
           else
           {
-            DebugWrite("added filter:{0} to graph", strFilterName);
+            Log.WriteFile(Log.LogType.Capture,"added filter:{0} to graph", strFilterName);
           }
           break;
         }
       }
       if (NewFilter==null)
       {
-        DebugWrite("failed filter:{0} not found", strFilterName);
+        Log.WriteFile(Log.LogType.Capture,true,"failed filter:{0} not found", strFilterName);
       }
       return NewFilter;
     }
@@ -75,7 +76,7 @@ namespace DShowNET
 
             if (classId1.Equals(classId2))
             { 
-              DebugWrite("remove "+ filter.Name + " from graph");
+              Log.WriteFile(Log.LogType.Capture,"remove "+ filter.Name + " from graph");
               graphBuilder.RemoveFilter(pBasefilter);
               bAllRemoved=true;
               break;
@@ -92,7 +93,7 @@ namespace DShowNET
 				int hr;
 				IPin pinOut=null;
 				IBaseFilter NewFilter=null;
-				DebugWrite("add filter:{0} to graph", strFilterName);
+				Log.WriteFile(Log.LogType.Capture,"add filter:{0} to graph", strFilterName);
 				Filters filters = new Filters();
 	      
 				//check first if audio renderer exists!
@@ -106,7 +107,7 @@ namespace DShowNET
 				}
 				if (!bRendererExists) 
 				{
-					DirectShowUtil.DebugWrite("FAILED: audio renderer:{0} doesnt exists", strFilterName);
+					Log.WriteFile(Log.LogType.Capture,true,"FAILED: audio renderer:{0} doesnt exists", strFilterName);
 					return null;
 				}
 
@@ -139,14 +140,14 @@ namespace DShowNET
 							{ 
 								if (filter.Name== strFilterName)
 								{
-									DebugWrite("filter already in graph");
+									Log.WriteFile(Log.LogType.Capture,"filter already in graph");
 									Marshal.ReleaseComObject( pBasefilter );
 									bNeedAdd=false;
 									break;
 								}
 								else
 								{
-									DebugWrite("remove "+ filter.Name + " from graph");
+									Log.WriteFile(Log.LogType.Capture,"remove "+ filter.Name + " from graph");
 									pinOut=FindSourcePinOf(pBasefilter);
 									graphBuilder.RemoveFilter(pBasefilter);
 									bAllRemoved=true;
@@ -168,17 +169,17 @@ namespace DShowNET
 						hr = graphBuilder.AddFilter( NewFilter, strFilterName );
 						if( hr < 0 ) 
 						{
-							DebugWrite("failed:unable to add filter:{0} to graph", strFilterName);
+							Log.WriteFile(Log.LogType.Capture,true,"failed:unable to add filter:{0} to graph", strFilterName);
 							NewFilter=null;
 						}
 						else
 						{
-							DebugWrite("added filter:{0} to graph", strFilterName);
+							Log.WriteFile(Log.LogType.Capture,"added filter:{0} to graph", strFilterName);
 							if (pinOut!=null)
 							{
 								hr=graphBuilder.Render(pinOut);
-								if (hr==0) DebugWrite(" pinout rendererd");
-								else DebugWrite(" failed: pinout render");
+								if (hr==0) Log.WriteFile(Log.LogType.Capture," pinout rendererd");
+								else Log.WriteFile(Log.LogType.Capture,true," failed: pinout render");
 							}
 							return NewFilter;
 						}
@@ -186,12 +187,12 @@ namespace DShowNET
 				}
 				if (NewFilter==null)
 				{
-					DebugWrite("failed filter:{0} not found", strFilterName);
+					Log.WriteFile(Log.LogType.Capture,true,"failed filter:{0} not found", strFilterName);
 				}
 			}
 			catch(Exception ex)
 			{
-				DebugWrite("DirectshowUtil. Failed to add filter:{0} to graph :{0} {1} [2}", 
+				Log.WriteFile(Log.LogType.Capture,true,"DirectshowUtil. Failed to add filter:{0} to graph :{0} {1} [2}", 
 							strFilterName,ex.Message,ex.Source,ex.StackTrace);
 			}
       return null;
@@ -340,7 +341,7 @@ namespace DShowNET
       int hr=filter.EnumPins(out pinEnum);
       if( (hr == 0) && (pinEnum != null) )
       {
-        DebugWrite("got pins");
+        Log.WriteFile(Log.LogType.Capture,"got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
         int iFetched;
@@ -348,7 +349,7 @@ namespace DShowNET
         do
         {
           // Get the next pin
-          //DebugWrite("  get pin:{0}",iPinNo);
+          //Log.WriteFile(Log.LogType.Capture,"  get pin:{0}",iPinNo);
           iPinNo++;
           hr = pinEnum.Next( 1, pins, out iFetched );
           if( hr == 0 )
@@ -358,9 +359,9 @@ namespace DShowNET
               PinInfo pinInfo = new PinInfo();
               hr=pins[0].QueryPinInfo(out pinInfo);
               if (hr>=0)
-                DebugWrite("  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
+                Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
               else
-                DebugWrite("  got pin:?");
+                Log.WriteFile(Log.LogType.Capture,"  got pin:?");
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
               if (pinDir==PinDirection.Output)
@@ -370,22 +371,22 @@ namespace DShowNET
                 if (hr< 0 || pConnectPin==null)
                 {
                   hr=graphBuilder.Render(pins[0]);
-                  if (hr==0) DebugWrite("  render ok");
+                  if (hr==0) Log.WriteFile(Log.LogType.Capture,"  render ok");
                   else 
                   {
-                    DebugWrite("  render failed:{0:x}",hr);
+                    Log.WriteFile(Log.LogType.Capture,true,"  render failed:{0:x}",hr);
                     bAllConnected=false;
                   }
 									pinsRendered++;
                 }
-                //else DebugWrite("pin is already connected");
+                //else Log.WriteFile(Log.LogType.Capture,"pin is already connected");
               }
               Marshal.ReleaseComObject( pins[0] );
             }
             else 
             {
               iFetched=0;
-              DebugWrite("no pins?");
+              Log.WriteFile(Log.LogType.Capture,"no pins?");
               break;
             }
           }
@@ -401,7 +402,7 @@ namespace DShowNET
       int hr=filter.EnumPins(out pinEnum);
       if( (hr == 0) && (pinEnum != null) )
       {
-        //DebugWrite("got pins");
+        //Log.WriteFile(Log.LogType.Capture,"got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
         int iFetched;
@@ -409,45 +410,45 @@ namespace DShowNET
         do
         {
           // Get the next pin
-          //DebugWrite("  get pin:{0}",iPinNo);
+          //Log.WriteFile(Log.LogType.Capture,"  get pin:{0}",iPinNo);
           iPinNo++;
           hr = pinEnum.Next( 1, pins, out iFetched );
           if( hr == 0 )
           {
             if (iFetched==1 && pins[0]!=null) 
             {
-              //DebugWrite("  find pin info");
+              //Log.WriteFile(Log.LogType.Capture,"  find pin info");
               PinInfo pinInfo = new PinInfo();
               hr=pins[0].QueryPinInfo(out pinInfo);
               if (hr>=0)
-                DebugWrite("  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
+                Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
               else
-                DebugWrite("  got pin:?");
+                Log.WriteFile(Log.LogType.Capture,"  got pin:?");
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
               if (pinDir==PinDirection.Output)
               {
-                //DebugWrite("  is output");
+                //Log.WriteFile(Log.LogType.Capture,"  is output");
                 IPin pConnectPin=null;
                 hr=pins[0].ConnectedTo(out pConnectPin);  
                 if (hr==0 && pConnectPin!=null)
                 {
-                  //DebugWrite("  pin is connected ");
+                  //Log.WriteFile(Log.LogType.Capture,"  pin is connected ");
                   hr=pins[0].Disconnect();
-                  if (hr==0) DebugWrite("  disconnected ok");
+                  if (hr==0) Log.WriteFile(Log.LogType.Capture,"  disconnected ok");
                   else 
                   {
-                    DebugWrite("  disconnected failed");
+                    Log.WriteFile(Log.LogType.Capture,true,"  disconnected failed");
                   }
                 }
-                //else DebugWrite("pin is already connected");
+                //else Log.WriteFile(Log.LogType.Capture,"pin is already connected");
               }
               Marshal.ReleaseComObject( pins[0] );
             }
             else 
             {
               iFetched=0;
-              DebugWrite("no pins?");
+              Log.WriteFile(Log.LogType.Capture,"no pins?");
               break;
             }
           }
@@ -599,7 +600,7 @@ namespace DShowNET
 				//Best
 				DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
 			}
-			DirectShowUtil.DebugWrite("EnableDeInterlace()");
+			Log.WriteFile(Log.LogType.Capture,"EnableDeInterlace()");
       int hr;
       IBaseFilter overlay;
       graphBuilder.FindFilterByName("Overlay Mixer2",out overlay);
@@ -617,7 +618,7 @@ namespace DShowNET
       }
         
 
-			DirectShowUtil.DebugWrite("EnableDeInterlace() enum filters");
+			Log.WriteFile(Log.LogType.Capture,"EnableDeInterlace() enum filters");
       IEnumFilters enumFilters;
       hr=graphBuilder.EnumFilters(out enumFilters);
       if (hr>=0 && enumFilters!=null)
@@ -631,14 +632,14 @@ namespace DShowNET
           hr=enumFilters.Next(1,out pBasefilter,out iFetched);
 					if (hr==0 && iFetched==1 &&  pBasefilter!=null)
 					{
-						//DirectShowUtil.DebugWrite("got filter");
+						//Log.WriteFile(Log.LogType.Capture,"got filter");
 
 						IAMOverlayFX overlayFX = pBasefilter as IAMOverlayFX;
 						if (overlayFX!=null)
 						{
-							DirectShowUtil.DebugWrite("enable overlay deinterlace");
+							Log.WriteFile(Log.LogType.Capture,"enable overlay deinterlace");
 							hr=overlayFX.SetOverlayFX((uint)AMOVERLAYFX.DEINTERLACE);
-							if (hr!=0) DirectShowUtil.DebugWrite("Unable to set overlay deinterlace ");
+							if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"Unable to set overlay deinterlace ");
 						}
           
 						IVMRDeinterlaceControl9 vmrdeinterlace9 = pBasefilter as IVMRDeinterlaceControl9;
@@ -648,7 +649,7 @@ namespace DShowNET
 							if (DeInterlaceMode==0)
 							{
 								//none
-								DebugWrite("VMR9: select deinterlace mode:None");
+								Log.WriteFile(Log.LogType.Capture,"VMR9: select deinterlace mode:None");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(0,ref guidNone);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNone);
@@ -657,14 +658,14 @@ namespace DShowNET
 							if (DeInterlaceMode==1)
 							{
 								//Bob
-								DebugWrite("VMR9: select deinterlace mode:BOB");
+								Log.WriteFile(Log.LogType.Capture,"VMR9: select deinterlace mode:BOB");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_BOB);
 								
 							}
 							if (DeInterlaceMode==2)
 							{
 								//Weave
-								DebugWrite("VMR9: select deinterlace mode:Weave");
+								Log.WriteFile(Log.LogType.Capture,"VMR9: select deinterlace mode:Weave");
 								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
 								
 							}
@@ -685,7 +686,7 @@ namespace DShowNET
 									{
 										VideoInfoHeader vidInfo;
 										vidInfo=(VideoInfoHeader)Marshal.PtrToStructure(mediaType.formatPtr,typeof(VideoInfoHeader));
-										DirectShowUtil.DebugWrite("VMR9:ok");
+										Log.WriteFile(Log.LogType.Capture,"VMR9:ok");
 										videodesc.dwFourCC=(uint)vidInfo.BmiHeader.Compression;
 										videodesc.dwSampleWidth=(uint)vidInfo.BmiHeader.Width;
 										videodesc.dwSampleHeight=(uint)vidInfo.BmiHeader.Height;
@@ -718,7 +719,7 @@ namespace DShowNET
 										{
 											videodesc.OutputFrameFreq.dwNumerator=2*videodesc.InputSampleFreq.dwNumerator;
 										}
-										DirectShowUtil.DebugWrite("src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11}",
+										Log.WriteFile(Log.LogType.Capture,"src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11}",
 												vidInfo2.rcsource.left,vidInfo2.rcsource.top,
 												vidInfo2.rcsource.right,vidInfo2.rcsource.bottom,
 												vidInfo2.rctarget.left,vidInfo2.rctarget.top,
@@ -745,19 +746,19 @@ namespace DShowNET
 							if (strFormat=="DXVA")
 							{
 								//de-interlacing is done by DXCA
-								DirectShowUtil.DebugWrite("VMR9 uses DXVA. turning off any software de-interlacing");
+								Log.WriteFile(Log.LogType.Capture,"VMR9 uses DXVA. turning off any software de-interlacing");
 								Guid guidNull = new Guid(0,0,0,0,0,0,0,0,0,0,0);
 								hr=vmrdeinterlace9.SetDeinterlaceMode(0,ref guidNull);
 								if (hr!=0 ) 
 									vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNull);
 								if (hr!=0 ) 
-									DirectShowUtil.DebugWrite("VMR9 Unable to get off s/w deinterlacing :0x{0:X}",hr);
+									Log.WriteFile(Log.LogType.Capture,true,"VMR9 Unable to get off s/w deinterlacing :0x{0:X}",hr);
 								else
-									DirectShowUtil.DebugWrite("VMR9 s/w deinterlacing is turned off");
+									Log.WriteFile(Log.LogType.Capture,"VMR9 s/w deinterlacing is turned off");
 							}
 							else
 							{
-								DirectShowUtil.DebugWrite("VMR9 Get best deinterlace mode for {0}x{1} format:{2} 4cc:{3} size:{4}", 
+								Log.WriteFile(Log.LogType.Capture,"VMR9 Get best deinterlace mode for {0}x{1} format:{2} 4cc:{3} size:{4}", 
 									videodesc.dwSampleWidth, videodesc.dwSampleHeight, 
 									videodesc.SampleFormat.ToString(),
 									strFormat,
@@ -766,38 +767,38 @@ namespace DShowNET
 								try
 								{
 
-									DirectShowUtil.DebugWrite("set VMR9 deinterlace preferences to next best");
+									Log.WriteFile(Log.LogType.Capture,"set VMR9 deinterlace preferences to next best");
 									hr=vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_NextBest);
-									if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace preferences to next best:0x{0:X}",hr);
+									if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"Unable to set deinterlace preferences to next best:0x{0:X}",hr);
 
 
 									IntPtr guids=Marshal.AllocCoTaskMem(100*Marshal.SizeOf(guidDeint));
 									hr=vmrdeinterlace9.GetNumberOfDeinterlaceModes( ref videodesc, ref uiNumberOfDeinterlaceModes,guids);
 									if (hr==0)
 									{
-										DirectShowUtil.DebugWrite("VMR9 supports {0} interlace modes",uiNumberOfDeinterlaceModes);
+										Log.WriteFile(Log.LogType.Capture,"VMR9 supports {0} interlace modes",uiNumberOfDeinterlaceModes);
 										guidDeint = (Guid)Marshal.PtrToStructure(guids,typeof(Guid));
-										DirectShowUtil.DebugWrite("Set VMR9 deinterlace mode to:{0}", guidDeint.ToString());
+										Log.WriteFile(Log.LogType.Capture,"Set VMR9 deinterlace mode to:{0}", guidDeint.ToString());
 										hr=vmrdeinterlace9.SetDeinterlaceMode(0xFFFFFFFF,ref guidDeint);
-										if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace mode:0x{0:X}",hr);
+										if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"Unable to set deinterlace mode:0x{0:X}",hr);
 
 										hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
 										if (hr!=0 ) 
 											hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
 										if (hr!=0 ) 
-											DirectShowUtil.DebugWrite("VMR9 Unable to get current deinterlace mode:0x{0:X}",hr);
+											Log.WriteFile(Log.LogType.Capture,"VMR9 Unable to get current deinterlace mode:0x{0:X}",hr);
 										else
-											DirectShowUtil.DebugWrite("VMR9 uses deinterlace guid:{0}",guidDeint.ToString());
+											Log.WriteFile(Log.LogType.Capture,"VMR9 uses deinterlace guid:{0}",guidDeint.ToString());
 									}
 									else
 									{
-										DirectShowUtil.DebugWrite("unable to get VMR9 interlace modes:0x{0:X}",hr);
+										Log.WriteFile(Log.LogType.Capture,"unable to get VMR9 interlace modes:0x{0:X}",hr);
 									}
 									Marshal.FreeCoTaskMem(guids);
 								}
 								catch(Exception ex)
 								{
-									DirectShowUtil.DebugWrite("{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+									Log.WriteFile(Log.LogType.Capture,true,"{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 								}
 							}
 						}
@@ -812,7 +813,7 @@ namespace DShowNET
       Guid cat = PinCategory.VideoPort;
       int hr = captureGraphBuilder.FindPin(videoDeviceFilter,(int)PinDirection.Output,ref cat,ref mediaType,false,0,out pPin);
       if (hr>=0 && pPin!=null)
-        DebugWrite("Found videoport pin");
+        Log.WriteFile(Log.LogType.Capture,"Found videoport pin");
       return pPin;
     }
 
@@ -822,7 +823,7 @@ namespace DShowNET
       Guid cat = PinCategory.Preview;
       int hr = captureGraphBuilder.FindPin(videoDeviceFilter,(int)PinDirection.Output,ref cat,ref mediaType,false,0,out pPin);
       if (hr>=0 && pPin!=null)
-        DebugWrite("Found preview pin");
+        Log.WriteFile(Log.LogType.Capture,"Found preview pin");
       return pPin;
     }
 
@@ -832,7 +833,7 @@ namespace DShowNET
       Guid cat = PinCategory.Capture;
       int hr = captureGraphBuilder.FindPin(videoDeviceFilter,(int)PinDirection.Output,ref cat,ref mediaType,false,0,out pPin);
       if (hr>=0 && pPin!=null)
-        DebugWrite("Found capture pin");
+        Log.WriteFile(Log.LogType.Capture,"Found capture pin");
       return pPin;
     }
 
@@ -841,7 +842,7 @@ namespace DShowNET
       int hr = 0;
       uint hardRev, pRom;
 
-      DebugWrite("ResetHardware()");
+      Log.WriteFile(Log.LogType.Capture,"ResetHardware()");
       //hr = pHardware.reset_Msp4448G();
       hr = pHardware.put_Msp4448G(0x100030,0x2003);  //modus
       hr = pHardware.get_Msp4448G(0x13001E,out hardRev);  //modus
@@ -858,7 +859,7 @@ namespace DShowNET
 
     public static void SetDvdQuality(IAMVacCtrlProp pHardware)
     {
-      DebugWrite("SetDVDQuality()");
+      Log.WriteFile(Log.LogType.Capture,"SetDVDQuality()");
       int hr;
       VideoBitRate bitrate;
 

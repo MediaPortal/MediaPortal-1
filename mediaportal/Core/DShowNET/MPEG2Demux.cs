@@ -175,7 +175,7 @@ namespace DShowNET
     {
       if (m_bRendered) 
       {
-        DirectShowUtil.DebugWrite("mpeg2:StopViewing()");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:StopViewing()");
 
         m_bOverlayVisible=false;
 				if (m_videoWindow!=null)
@@ -185,11 +185,11 @@ namespace DShowNET
 				}
         if (m_mediaControl!=null)
         {
-          DirectShowUtil.DebugWrite("mpeg2:StopViewing() stop mediactl");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:StopViewing() stop mediactl");
           if (m_bRunning) m_mediaControl.Stop(); 
 
           m_bRunning=false;
-          DirectShowUtil.DebugWrite("mpeg2:StopViewing() stopped");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:StopViewing() stopped");
         }
         return;
       }
@@ -197,14 +197,14 @@ namespace DShowNET
     
 		public void StartListening()
 		{
-			DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
+			Log.WriteFile(Log.LogType.Capture,"mpeg2:StartListening() start mediactl");
 			if (m_bRendered)  
 			{
 				if (m_mediaControl==null)
 					m_mediaControl = m_graphBuilder as IMediaControl;
 				if (m_mediaControl!=null && !m_bRunning)
 				{
-					DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
+					Log.WriteFile(Log.LogType.Capture,"mpeg2:StartListening() start mediactl");
 					m_mediaControl.Run(); 
 					m_bRunning=true;
 				}
@@ -212,16 +212,16 @@ namespace DShowNET
 			}
 			int hr=m_graphBuilder.Render(m_pinAudioOut);
 			if (hr==0) 
-				DirectShowUtil.DebugWrite("mpeg2:demux audio out connected ");
+				Log.WriteFile(Log.LogType.Capture,"mpeg2:demux audio out connected ");
 			else
-				DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
+				Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 			m_bRendered=true;
 			if (m_mediaControl==null)
 				m_mediaControl = m_graphBuilder as IMediaControl;
 
 			if (m_mediaControl != null && !m_bRunning)
 			{
-				DirectShowUtil.DebugWrite("mpeg2:StartListening() start mediactl");
+				Log.WriteFile(Log.LogType.Capture,"mpeg2:StartListening() start mediactl");
 				hr=m_mediaControl.Run();
 				m_bRunning=true;
 			}
@@ -238,40 +238,40 @@ namespace DShowNET
       if (m_bRendered) 
       {
         m_bOverlayVisible=true;
-        DirectShowUtil.DebugWrite("mpeg2:StartViewing()");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:StartViewing()");
 
 				Overlay=false;
 
 				// start graph
         if (m_mediaControl!=null && !m_bRunning)
         {
-					DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
+					Log.WriteFile(Log.LogType.Capture,"mpeg2:StartViewing() start mediactl");
 					SetVideoWindow();
           m_mediaControl.Run(); 
           m_bRunning=true;
-          DirectShowUtil.DebugWrite("mpeg2:StartViewing() started");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:StartViewing() started");
         }
 				Overlay=true;
         return;
       }
 
 			// video window has not been created yet, so create it
-      DirectShowUtil.DebugWrite("mpeg2:StartViewing()");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:StartViewing()");
 
 			//render the video output. This will create the overlay render filter
       int hr=m_graphBuilder.Render(m_pinVideoOut);
       if (hr==0) 
-        DirectShowUtil.DebugWrite("mpeg2:demux video out connected ");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:demux video out connected ");
       else
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux video out:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to render mpeg2demux video out:0x{0:X}",hr);
 
       
 			//render the audio output pin, this will create the audio renderer which plays the audio part
 			hr=m_graphBuilder.Render(m_pinAudioOut);
       if (hr==0) 
-        DirectShowUtil.DebugWrite("mpeg2:demux audio out connected ");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:demux audio out connected ");
       else
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 
 			bool useOverlay=true;
 			if (vmr9.IsVMR9Connected && vmr9.UseVMR9inMYTV)
@@ -289,21 +289,21 @@ namespace DShowNET
           // set the properties of the overlay window
           hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
           if( hr != 0 ) 
-            DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window:0x{0:X}",hr);
+            Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window:0x{0:X}",hr);
 
           hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
           if( hr != 0 ) 
-            DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window style:0x{0:X}",hr);
+            Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window style:0x{0:X}",hr);
 
           // make the overlay window visible
       //    m_bOverlayVisible=true;
 						hr = m_videoWindow.put_Visible( DsHlp.OAFALSE );
       //    if( hr != 0 ) 
-      //      DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible:0x{0:X}",hr);
+      //      Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED:put_Visible:0x{0:X}",hr);
         }
         else 
         {
-          DirectShowUtil.DebugWrite("mpeg2:FAILED:could not get IVideoWindow");
+          Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:could not get IVideoWindow");
         }
       }
 
@@ -314,10 +314,10 @@ namespace DShowNET
       if (m_mediaControl != null && !m_bRunning)
       {
 				SetVideoWindow();
-        DirectShowUtil.DebugWrite("mpeg2:StartViewing() start mediactl");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:StartViewing() start mediactl");
         hr=m_mediaControl.Run();
         m_bRunning=true;
-        DirectShowUtil.DebugWrite("mpeg2:StartViewing() started mediactl:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:StartViewing() started mediactl:0x{0:X}",hr);
       }
 			Overlay=true;
     }
@@ -386,7 +386,7 @@ namespace DShowNET
       if (x<0 || y<0) return;
       int hr=m_basicVideo.SetDestinationPosition(x,y, width, height);
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:SetDestinationPosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:SetDestinationPosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
     }
 
     public void SetSourcePosition( int x,int y, int width, int height)
@@ -397,7 +397,7 @@ namespace DShowNET
       if (m_basicVideo==null) return;
       int hr=m_basicVideo.SetSourcePosition(x,y, width, height);
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:SetSourcePosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:SetSourcePosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
     }
 
     public void SetWindowPosition( int x,int y, int width, int height)
@@ -408,7 +408,7 @@ namespace DShowNET
       if (m_videoWindow==null) return;
       int hr=m_videoWindow.SetWindowPosition(x,y, width, height);
       if( hr != 0 ) 
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:SetWindowPosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:SetWindowPosition:0x{0:X} ({1},{2})-{3},{4})",hr,x,y,width,height);
     }
 
 
@@ -419,31 +419,31 @@ namespace DShowNET
         if (m_bRendered) 
         {
           int hr;
-          DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting()");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:StopTimeShifting()");
           if (m_bSink!=null)
           {
             IStreamBufferSink3 sink3=m_bSink as IStreamBufferSink3;
             if (sink3!=null)
             {
-              DirectShowUtil.DebugWrite("mpeg2:unlock profile");
+              Log.WriteFile(Log.LogType.Capture,"mpeg2:unlock profile");
               hr=sink3.UnlockProfile();
-              if (hr !=0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set unlock profile:0x{0:X}",hr);
+              //if (hr !=0) Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED to set unlock profile:0x{0:X}",hr);
             }
           }
           if (m_mediaControl!=null)
           {
-            DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting()  stop mediactl");
+            Log.WriteFile(Log.LogType.Capture,"mpeg2:StopTimeShifting()  stop mediactl");
             if (m_bRunning) m_mediaControl.Stop(); 
             m_bRunning=false;
-            DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting()  mediactl stopped");
+            Log.WriteFile(Log.LogType.Capture,"mpeg2:StopTimeShifting()  mediactl stopped");
           }
-          DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting() stopped");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:StopTimeShifting() stopped");
           return;
         }
       }
       catch(Exception ex)
       {
-        DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting() exception:"+ex.ToString() );
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:StopTimeShifting() exception:"+ex.ToString() );
       }
     }
 
@@ -455,70 +455,70 @@ namespace DShowNET
         CreateSBESink();
       }
       strFileName=System.IO.Path.ChangeExtension(strFileName,".tv" );
-      DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting({0})", strFileName);
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:StartTimeshifting({0})", strFileName);
       int ipos=strFileName.LastIndexOf(@"\");
       string strDir=strFileName.Substring(0,ipos);
       if (!m_bRendered) 
       {
         //DeleteOldTimeShiftFiles(strDir);
-        DirectShowUtil.DebugWrite("mpeg2:render graph");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:render graph");
         /// [               ]    [              ]    [                ]
         /// [mpeg2 demux vid] -> [video analyzer] -> [#0              ]
         /// [               ]    [              ]    [  streambuffer  ]
         /// [            aud] ---------------------> [#1              ]
 				
 	      
-        DirectShowUtil.DebugWrite("mpeg2:render to :{0}",strFileName);
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:render to :{0}",strFileName);
         if (m_pinVideoOut==null) return;
         if (m_pinAnalyserInput==null) return;
         if (m_pinStreamBufferIn0==null) return;
 	    
         //mpeg2 demux vid->analyzer in
-        DirectShowUtil.DebugWrite("mpeg2:connect demux video out->analyzer in");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:connect demux video out->analyzer in");
         hr=m_graphBuilder.Connect(m_pinVideoOut, m_pinAnalyserInput);
         if (hr==0) 
-          DirectShowUtil.DebugWrite("mpeg2:demux video out connected to analyzer");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:demux video out connected to analyzer");
         else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect video out to analyzer:0x{0:X}",hr);
+          Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to connect video out to analyzer:0x{0:X}",hr);
 	      
         //find analyzer out pin
         m_pinAnalyserOutput=DirectShowUtil.FindPinNr(m_VidAnalyzer,PinDirection.Output,0);
         if (m_pinAnalyserOutput==null) 
         {
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to find analyser output pin");
+          Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to find analyser output pin");
           return;
         }
 	  
         //analyzer out ->streambuffer in#0
-        DirectShowUtil.DebugWrite("mpeg2:analyzer out->stream buffer");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:analyzer out->stream buffer");
         hr=m_graphBuilder.Connect(m_pinAnalyserOutput, m_pinStreamBufferIn0);
         if (hr==0) 
-          DirectShowUtil.DebugWrite("mpeg2:connected to streambuffer");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:connected to streambuffer");
         else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect analyzer output to streambuffer:0x{0:X}",hr);
+          Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to connect analyzer output to streambuffer:0x{0:X}",hr);
 
 
         //find streambuffer in#1 pin
         m_pinStreamBufferIn1=DirectShowUtil.FindPinNr(m_streamBuffer,PinDirection.Input,1);
         if (m_pinStreamBufferIn1==null) 
         {
-          DirectShowUtil.DebugWrite("mpeg2: FAILED to find input pin#1 of streambuffersink");
+          Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to find input pin#1 of streambuffersink");
           return; 
         }
         //mpeg2 demux audio out->streambuffer in#1
-        DirectShowUtil.DebugWrite("mpeg2:demux audio out->stream buffer");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:demux audio out->stream buffer");
         hr=m_graphBuilder.Connect(m_pinAudioOut, m_pinStreamBufferIn1);
         if (hr==0) 
-          DirectShowUtil.DebugWrite("mpeg2:audio out connected to streambuffer");
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:audio out connected to streambuffer");
         else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}",hr);
+          Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}",hr);
 
         //set mpeg2 demux as reference clock 
         //(m_graphBuilder as IMediaFilter).SetSyncSource(m_mpeg2Multiplexer as IReferenceClock);
 
         //set filename
         m_bSink = m_streamBuffer as IStreamBufferSink;
-        if (m_bSink ==null) DirectShowUtil.DebugWrite("mpeg2:FAILED to get IStreamBufferSink interface");
+        if (m_bSink ==null) Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED to get IStreamBufferSink interface");
 
 				int iTimeShiftBuffer=30;
 				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
@@ -529,7 +529,7 @@ namespace DShowNET
 				iTimeShiftBuffer*=60; //in seconds
 				int iFileDuration = iTimeShiftBuffer/6;
 
-        DirectShowUtil.DebugWrite("mpeg2:Set folder:{0} filecount 6-8, fileduration:{1} sec",strDir,iFileDuration);
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:Set folder:{0} filecount 6-8, fileduration:{1} sec",strDir,iFileDuration);
 
 
         // set streambuffer backing file configuration
@@ -542,49 +542,49 @@ namespace DShowNET
 
         RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
         hr=pTemp.SetHKEY(subKey);
-        if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set hkey:0x{0:X}",hr);
+        if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set hkey:0x{0:X}",hr);
 
         hr=m_pConfig.SetDirectory(strDir);
-        if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile folder:0x{0:X}",hr);
+        if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set backingfile folder:0x{0:X}",hr);
 	      
 #if DEBUG				
         hr=m_pConfig.SetBackingFileCount(4, 6);    //4-6 files
-				if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
+				if (hr!=0) Log.WriteFile(Log.LogType.Capture,"mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
 
         hr=m_pConfig.SetBackingFileDuration( 60); // 60sec * 4 files= 4 mins
-        if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
+        if (hr!=0) Log.WriteFile(Log.LogType.Capture,"mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
 #else
         hr=m_pConfig.SetBackingFileCount(6, 8);    //6-8 files
-        if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
+        if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
 
         hr=m_pConfig.SetBackingFileDuration( (uint)iFileDuration); 
-        if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
+        if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
 #endif
       }
 
       // lock profile
-      DirectShowUtil.DebugWrite("mpeg2:lock profile");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:lock profile");
       hr=m_bSink.LockProfile(strFileName);
-      if (hr !=0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set streambuffer filename:0x{0:X}",hr);
+      if (hr !=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to set streambuffer filename:0x{0:X}",hr);
 			m_bRendered=true;
 			Overlay=false;
       if (m_mediaControl!=null)
       {
-        DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() start mediactl");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:StartTimeshifting() start mediactl");
 				if (!m_bRunning) 
 				{
 					SetVideoWindow();
 					m_mediaControl.Run();
 				}
         m_bRunning=true;
-        DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() started mediactl");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:StartTimeshifting() started mediactl");
       }
 			Overlay=true;
     }
 
     void Create()
     {
-      DirectShowUtil.DebugWrite("mpeg2:add new MPEG2 Demultiplexer to graph");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:add new MPEG2 Demultiplexer to graph");
       try
       {
         m_MPEG2Demuxer=new MPEG2Demultiplexer();
@@ -594,13 +594,13 @@ namespace DShowNET
       //m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
       if (m_mpeg2Multiplexer==null) 
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to create mpeg2 demuxer");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create mpeg2 demuxer");
         return ;
       }
       int hr=m_graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
       if (hr!=0)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
         return ;
       }
 
@@ -658,19 +658,19 @@ namespace DShowNET
       mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mpegAudioOut.formatPtr,mpegAudioOut.formatSize) ;
       
-			DirectShowUtil.DebugWrite("mpeg2:create video out pin on MPEG2 demuxer");
+			Log.WriteFile(Log.LogType.Capture,"mpeg2:create video out pin on MPEG2 demuxer");
 			hr = m_demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_pinVideoOut);
       if (hr!=0)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to create videout pin:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create videout pin:0x{0:X}",hr);
         return;
       }
 
-      DirectShowUtil.DebugWrite("mpeg2:create audio out pin on MPEG2 demuxer");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:create audio out pin on MPEG2 demuxer");
       hr = m_demuxer.CreateOutputPin(ref mpegAudioOut, "audio", out m_pinAudioOut);
       if (hr!=0)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to create audioout pin:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create audioout pin:0x{0:X}",hr);
         return;
       }
 
@@ -678,44 +678,44 @@ namespace DShowNET
       //  Marshal.FreeCoTaskMem(mpegVideoOut.formatPtr);
 
 
-      DirectShowUtil.DebugWrite("mpeg2:find MPEG2 demuxer input pin");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:find MPEG2 demuxer input pin");
       m_pinInput=DirectShowUtil.FindPinNr(m_mpeg2Multiplexer,PinDirection.Input,0);
       if (m_pinInput!=null)
-        DirectShowUtil.DebugWrite("mpeg2:found MPEG2 demuxer input pin");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:found MPEG2 demuxer input pin");
       else
-        DirectShowUtil.DebugWrite("mpeg2:FAILED finding MPEG2 demuxer input pin");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED finding MPEG2 demuxer input pin");
       
       m_bRunning=false;
       m_mediaControl = m_graphBuilder as IMediaControl;
       if (m_mediaControl==null)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to get IMediaControl interface");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to get IMediaControl interface");
       }
     }
 
     public void CreateMappings()
     {
       IMPEG2StreamIdMap pStreamId;
-      DirectShowUtil.DebugWrite("mpeg2:MPEG2 demuxer map MPG stream 0xe0->video output pin");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:MPEG2 demuxer map MPG stream 0xe0->video output pin");
       pStreamId = (IMPEG2StreamIdMap) m_pinVideoOut;
       int hr = pStreamId.MapStreamId(224, 1 ,0,0); // hr := pStreamId.MapStreamId( 224, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
       if (hr!=0)
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to map stream 0xe0->video:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to map stream 0xe0->video:0x{0:X}",hr);
       else
-        DirectShowUtil.DebugWrite("mpeg2:mapped MPEG2 demuxer stream 0xe0->video output ");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:mapped MPEG2 demuxer stream 0xe0->video output ");
 
-			DirectShowUtil.DebugWrite("mpeg2:MPEG2 demuxer map MPG stream 0xc0->audio output pin");
+			Log.WriteFile(Log.LogType.Capture,"mpeg2:MPEG2 demuxer map MPG stream 0xc0->audio output pin");
       pStreamId = (IMPEG2StreamIdMap) m_pinAudioOut;
       hr = pStreamId.MapStreamId(0xC0, 1 ,0,0); // hr := pStreamId.MapStreamId( 0xC0, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
       if (hr!=0)
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to map stream 0xc0->audio:0x{0:X}",hr);
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to map stream 0xc0->audio:0x{0:X}",hr);
       else
-        DirectShowUtil.DebugWrite("mpeg2:mapped MPEG2 demuxer stream 0xc0->audio output");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2:mapped MPEG2 demuxer stream 0xc0->audio output");
     }
 
     void CreateSBESink()
     {
-      DirectShowUtil.DebugWrite("mpeg2:add Videoanalyzer");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:add Videoanalyzer");
       try
       {
 
@@ -725,20 +725,20 @@ namespace DShowNET
       catch (Exception) {}
       if (m_VidAnalyzer ==null)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to add Videoanalyzer (You need at least Windows XP SP1!!)");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add Videoanalyzer (You need at least Windows XP SP1!!)");
         return;
       }
       m_graphBuilder.AddFilter(m_VidAnalyzer, "MPEG-2 Video Analyzer");
       
       m_pinAnalyserInput=DirectShowUtil.FindPinNr(m_VidAnalyzer,PinDirection.Input,0);
-      if (m_pinAnalyserInput==null) DirectShowUtil.DebugWrite("mpeg2:FAILED to find analyser input pin");
+      if (m_pinAnalyserInput==null) Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED to find analyser input pin");
 
-      DirectShowUtil.DebugWrite("mpeg2:add streambuffersink");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2:add streambuffersink");
       m_StreamBufferSink=new StreamBufferSink();
       m_streamBuffer = (IBaseFilter) m_StreamBufferSink;
       if (m_streamBuffer ==null)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to add streambuffer");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add streambuffer");
         return;
       }
 
@@ -752,11 +752,11 @@ namespace DShowNET
       //  int result = pConfig.SetSIDs(1, sids);
       RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
       int hr=pConfig.SetHKEY(subKey);
-      if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set hkey:0x{0:X}",hr);
+      if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set hkey:0x{0:X}",hr);
       
 
       m_pinStreamBufferIn0=DirectShowUtil.FindPinNr(m_streamBuffer,PinDirection.Input,0);
-      if (m_pinStreamBufferIn0==null) DirectShowUtil.DebugWrite("mpeg2: FAILED to find input pin#0 of streambuffersink");
+      if (m_pinStreamBufferIn0==null) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to find input pin#0 of streambuffersink");
     }
 
     public IBaseFilter BaseFilter
@@ -774,11 +774,11 @@ namespace DShowNET
     public void Record(string strFilename, bool bContentRecording,DateTime timeProgStart, DateTime timeFirstMoment)
     {		
       //      strFilename=@"C:\media\movies\test.dvr-ms";
-      DirectShowUtil.DebugWrite("mpeg2: Record : {0} {1} {2}",strFilename,m_bRendered,bContentRecording);
+      Log.WriteFile(Log.LogType.Capture,"mpeg2: Record : {0} {1} {2}",strFilename,m_bRendered,bContentRecording);
       IntPtr recorderObj;
       if (m_bSink==null) 
       {
-        DirectShowUtil.DebugWrite("mpeg2: CreateRecorder : no sink!");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: CreateRecorder : no sink!");
         return;
       }
       uint iRecordingType=0;
@@ -788,13 +788,13 @@ namespace DShowNET
       int hr=m_bSink.CreateRecorder(strFilename, iRecordingType, out recorderObj);
       if (hr!=0) 
       {
-        DirectShowUtil.DebugWrite("mpeg2: CreateRecorder FAILED:0x{0:x}",hr );
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: CreateRecorder FAILED:0x{0:x}",hr );
         return;
       }
       object objRecord=Marshal.GetObjectForIUnknown(recorderObj);
       if (objRecord==null) 
       {
-        DirectShowUtil.DebugWrite("mpeg2: FAILED getting Inknown of recorder");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED getting Inknown of recorder");
         return;
       }
       
@@ -803,7 +803,7 @@ namespace DShowNET
       m_recControl=objRecord as IStreamBufferRecordControl;
       if (m_recControl==null) 
       {
-        DirectShowUtil.DebugWrite("mpeg2: FAILED getting IStreamBufferRecordControl");
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED getting IStreamBufferRecordControl");
         return;
       }
 
@@ -825,13 +825,13 @@ namespace DShowNET
         if (timeProgStart.Year>2000)
         {
           TimeSpan ts = DateTime.Now-timeProgStart;
-          DirectShowUtil.DebugWrite("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+          Log.WriteFile(Log.LogType.Capture,"mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
             timeProgStart.Hour,timeProgStart.Minute,timeProgStart.Second,
             ts.TotalHours,ts.TotalMinutes,ts.TotalSeconds);
 															
           lStartTime = (long)ts.TotalSeconds;
         }
-        else DirectShowUtil.DebugWrite("mpeg2:record entire timeshift buffer");
+        else Log.WriteFile(Log.LogType.Capture,"mpeg2:record entire timeshift buffer");
       
         TimeSpan tsMaxTimeBack=DateTime.Now-timeFirstMoment;
         if (lStartTime > tsMaxTimeBack.TotalSeconds )
@@ -847,7 +847,7 @@ namespace DShowNET
       if (hr!=0) 
       {
         //could not start recording...
-        DirectShowUtil.DebugWrite("mpeg2: FAILED to start recording:0x{0:x}",hr );
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to start recording:0x{0:x}",hr );
         if (lStartTime!=0)
         {
           // try recording from livepoint instead from the past
@@ -856,13 +856,13 @@ namespace DShowNET
           if (hr!=0)
           {
             //still fails
-            DirectShowUtil.DebugWrite("mpeg2: FAILED to start recording now:0x{0:x}",hr );
+            Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to start recording now:0x{0:x}",hr );
             return;
           }
           else
           {
             //that worked!
-            DirectShowUtil.DebugWrite("mpeg2: FAILED to record now succeeded");
+            Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to record now succeeded");
           }
         }
         else
@@ -877,18 +877,18 @@ namespace DShowNET
       long iMin =lStartTime/60;
       lStartTime -= (iMin*60);
       long iSec =lStartTime;
-      DirectShowUtil.DebugWrite("mpeg2: recording started from {0:00}:{1:00}:{2:00} ago",iHour,iMin,iSec);
+      Log.WriteFile(Log.LogType.Capture,"mpeg2: recording started from {0:00}:{1:00}:{2:00} ago",iHour,iMin,iSec);
 
     }
 
     public void StopRecording()
     {
-      DirectShowUtil.DebugWrite("mpeg2: stop recording");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2: stop recording");
       if (m_recControl==null) return;
       int hr=m_recControl.Stop(0);
       if (hr!=0) 
       {
-        DirectShowUtil.DebugWrite("mpeg2: FAILED to stop recording:0x{0:x}",hr );
+        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to stop recording:0x{0:x}",hr );
         return;
       }
       if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
@@ -898,7 +898,7 @@ namespace DShowNET
     public void CloseInterfaces()
     {
       
-      DirectShowUtil.DebugWrite("mpeg2: close interfaces");
+      Log.WriteFile(Log.LogType.Capture,"mpeg2: close interfaces");
       
       if (m_recControl!=null) 
       {
@@ -912,10 +912,10 @@ namespace DShowNET
       }
       if (m_mediaControl!=null)
       {
-        DirectShowUtil.DebugWrite("mpeg2: stop mediactl");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2: stop mediactl");
         if (m_bRunning) m_mediaControl.Stop(); 
         m_bRunning=false;
-        DirectShowUtil.DebugWrite("mpeg2: stopped mediactl");
+        Log.WriteFile(Log.LogType.Capture,"mpeg2: stopped mediactl");
         m_mediaControl=null;
       }
 

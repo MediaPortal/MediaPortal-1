@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.Library
 				}
 				catch(Exception ex)
 				{
-					Log.Write("render exception:{0}", ex.ToString());
+					Log.WriteFile(Log.LogType.Log,true,"render exception:{0}", ex.ToString());
 				}
       }
 		}
@@ -222,7 +222,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("NeedRefresh exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"NeedRefresh exception:{0}", ex.ToString());
 			}
 			return false;
 		}
@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Library
 				}
 				catch(Exception ex)
 				{
-					Log.Write("OnAction exception:{0}", ex.ToString());
+					Log.WriteFile(Log.LogType.Log,true,"OnAction exception:{0}", ex.ToString());
 				}
       }
 		}
@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.Library
 				}
 				catch(Exception ex)
 				{
-					Log.Write("OnMessage exception:{0}", ex.ToString());
+					Log.WriteFile(Log.LogType.Log,true,"OnMessage exception:{0}", ex.ToString());
 				}
         return false;
       }
@@ -483,7 +483,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("InitControls exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"InitControls exception:{0}", ex.ToString());
 			}
     }
 
@@ -500,7 +500,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DeInitControls exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"DeInitControls exception:{0}", ex.ToString());
 			}
     }
 
@@ -602,7 +602,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("AllocResources exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"AllocResources exception:{0}", ex.ToString());
 			}
 		}
 
@@ -622,7 +622,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("FreeResources exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"FreeResources exception:{0}", ex.ToString());
 			}
 		}
 		
@@ -640,7 +640,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("ResetAllControls exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"ResetAllControls exception:{0}", ex.ToString());
 			}
 		}
 		
@@ -734,7 +734,7 @@ namespace MediaPortal.GUI.Library
 			
 			if (!System.IO.File.Exists(m_strWindowXmlFile))
 			{
-				Log.Write("SKIN: Missing {0}", m_strWindowXmlFile);
+				Log.WriteFile(Log.LogType.Log,true,"SKIN: Missing {0}", m_strWindowXmlFile);
 				return false;
 			}
 			try
@@ -812,7 +812,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch (Exception ex)
 			{
-				Log.Write("exception loading window {0} err:{1}", m_strWindowXmlFile, ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"exception loading window {0} err:{1}", m_strWindowXmlFile, ex.Message);
 				return false;
 			}
 		}
@@ -843,7 +843,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("Unable to load control. exception:{0}",ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"Unable to load control. exception:{0}",ex.ToString());
 			}
     }
 

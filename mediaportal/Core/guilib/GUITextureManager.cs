@@ -396,7 +396,7 @@ namespace MediaPortal.GUI.Library
       }
       catch(Exception ex)
       {
-        Log.Write("TextureManage:LoadGraphic({0}) failed:{1}", strFileName,ex.ToString());
+        Log.WriteFile(Log.LogType.Log,true,"TextureManage:LoadGraphic({0}) failed:{1}", strFileName,ex.ToString());
       }
       finally
       {
@@ -429,7 +429,7 @@ namespace MediaPortal.GUI.Library
 						}
 						catch(Exception ex)
             {
-              Log.Write("TextureManage:GetImage({0}) failed:{1}", strFileName,ex.ToString());
+              Log.WriteFile(Log.LogType.Log,true,"TextureManage:GetImage({0}) failed:{1}", strFileName,ex.ToString());
               return null;
             }
             return cached.image;
@@ -444,7 +444,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
       {
-        Log.Write("TextureManage:GetImage({0}) failed:{1}", strFileName,ex.ToString());
+        Log.WriteFile(Log.LogType.Log,true,"TextureManage:GetImage({0}) failed:{1}", strFileName,ex.ToString());
         return null;
       }
       if (img!=null)
@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Library
       }
       catch(Exception ex)
       {
-          Log.Write("TextureManage:ReleaseTexture({0}) failed:{1}", strFileName,ex.ToString());
+          Log.WriteFile(Log.LogType.Log,true,"TextureManage:ReleaseTexture({0}) failed:{1}", strFileName,ex.ToString());
       }
 		}
 		

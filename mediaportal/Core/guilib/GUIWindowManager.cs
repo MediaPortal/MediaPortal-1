@@ -127,7 +127,7 @@ namespace MediaPortal.GUI.Library
       {
         if (m_vecWindows[i].GetID==Window.GetID)
         {
-          Log.Write("Window:{0} and window {1} have the same id's!!!", Window,m_vecWindows[i]);
+          Log.WriteFile(Log.LogType.Log,true,"Window:{0} and window {1} have the same id's!!!", Window,m_vecWindows[i]);
           return;
         }
       }
@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Library
       }
       catch(Exception ex)
       {
-        Log.Write("Exception: {0}",ex.ToString());
+        Log.WriteFile(Log.LogType.Log,true,"Exception: {0}",ex.ToString());
       }
       finally
       {
@@ -523,7 +523,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("PostRender exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"PostRender exception:{0}", ex.ToString());
 			}
       GUIPropertyManager.Changed=false;
     }
@@ -545,7 +545,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-				Log.Write("ProcessWindows exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"ProcessWindows exception:{0}", ex.ToString());
 			}
     }
 
@@ -674,7 +674,7 @@ namespace MediaPortal.GUI.Library
 				}
 				catch(Exception ex)
 				{
-					Log.Write("Exception in {0}.Preinit() {1}",
+					Log.WriteFile(Log.LogType.Log,true,"Exception in {0}.Preinit() {1}",
 										window.GetType().ToString(), ex.ToString());
 				}
       }
