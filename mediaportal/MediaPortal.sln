@@ -42,6 +42,8 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoDatabase", "VideoDatabase\VideoDatabase.csproj", "{C5F79684-B786-43EB-99F2-9F217A6A9BE1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -144,6 +146,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIRadio", "GUIRadio\GUIRad
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioDatabase", "RadioDatabase\RadioDatabase.csproj", "{50E428C2-230C-4549-8BB7-F269203C2C3C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTagReader", "MultiTagReader\MultiTagReader.csproj", "{CB574DAA-55D0-4662-B3DA-B39DCD2CB7BF}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -279,6 +285,10 @@ Global
 		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Debug.Build.0 = Debug|.NET
 		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Release.ActiveCfg = Release|.NET
 		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Release.Build.0 = Release|.NET
+		{CB574DAA-55D0-4662-B3DA-B39DCD2CB7BF}.Debug.ActiveCfg = Debug|.NET
+		{CB574DAA-55D0-4662-B3DA-B39DCD2CB7BF}.Debug.Build.0 = Debug|.NET
+		{CB574DAA-55D0-4662-B3DA-B39DCD2CB7BF}.Release.ActiveCfg = Release|.NET
+		{CB574DAA-55D0-4662-B3DA-B39DCD2CB7BF}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
