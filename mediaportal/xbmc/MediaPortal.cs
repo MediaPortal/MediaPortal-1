@@ -865,13 +865,6 @@ public class MediaPortalApp : D3DApp, IRender
 		{
 			char keyc=e.KeyChar;
 			Key key = new Key(e.KeyChar,0);
-#if  DEBUG
-      if (key.KeyChar=='t')
-      {
-        //Utils.StartProcess(@"C:\media\graphedt.exe","",true,false);
-				g_Player.SeekAsolutePercentage(99);
-      }
-#endif
       if (key.KeyChar=='!') m_bShowStats=!m_bShowStats;
 			if (key.KeyChar=='?')
 			{
@@ -885,6 +878,13 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Write("Memory used after GC:{0}", GC.GetTotalMemory(true));
 			}
 			Action action=new Action();
+      if (GUIWindowManager.IsRouted && GUIWindowManager.RoutedWindow==(int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD)
+      {
+        action = new Action(key,Action.ActionType.ACTION_KEY_PRESSED,0,0);
+        OnAction(action);
+        return;
+      }
+
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
       {
         if (action.SoundFileName.Length>0)
