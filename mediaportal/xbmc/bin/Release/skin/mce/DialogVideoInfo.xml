@@ -293,7 +293,7 @@
 		<posX>200</posX> 
 		<posY>100</posY> 
 		<width>180</width> 
-		<height>400</height>
+		<height>275</height>
 		<texture>#thumb</texture> 
 		<colorkey>FFFF00FF</colorkey> 
 		<colordiffuse>FFFFFFFF</colordiffuse>
