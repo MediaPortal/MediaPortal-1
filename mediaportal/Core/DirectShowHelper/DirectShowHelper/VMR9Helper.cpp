@@ -13,7 +13,6 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 	HRESULT hr;
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 	m_pVMR9Filter.Attach(vmr9Filter);
-	UINT mem=m_pDevice->GetAvailableTextureMem();
 
 	CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
 	if(!pConfig)

@@ -728,7 +728,7 @@ namespace DShowNET
 										format +=k;
 										k=(char)((videodesc.dwFourCC>>24)&0xff);
 										format +=k;
-										Log.WriteFile(Log.LogType.Capture,"vmr9:src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11} format:{12}",
+										Log.WriteFile(Log.LogType.Capture,"vmr9:src {0},{1}-{2},{3} dst {4},{5}-{6},{7} avgt:{8} ar {9}:{10} interlaced:{11} format:{12} {13} {14:X}",
 												vidInfo2.rcsource.left,vidInfo2.rcsource.top,
 												vidInfo2.rcsource.right,vidInfo2.rcsource.bottom,
 												vidInfo2.rctarget.left,vidInfo2.rctarget.top,
@@ -736,7 +736,30 @@ namespace DShowNET
 												vidInfo2.AvgTimePerFrame,
 												vidInfo2.dwPictAspectRatioX,vidInfo2.dwPictAspectRatioY,
 												IsInterlaced(vidInfo2.dwInterlaceFlags),
-												format);
+												format, videodesc.dwFourCC, videodesc.dwFourCC);
+											if (mediaType.majorType==MediaType.Video) Log.WriteFile(Log.LogType.Capture,"vmr9:  major=video");
+											else if (mediaType.majorType==MediaType.Stream) Log.WriteFile(Log.LogType.Capture,"vmr9:  major=stream");
+											else if (mediaType.majorType==MediaType.AnalogVideo) Log.WriteFile(Log.LogType.Capture,"vmr9:  major=analog video");
+											else Log.WriteFile(Log.LogType.Capture,"vmr9:  major={0}",mediaType.majorType.ToString());
+
+											if (mediaType.subType==MediaSubType.YUYV) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=YUYV");
+											else if (mediaType.subType==MediaSubType.MPEG2Transport) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg2 transport");
+											else if (mediaType.subType==MediaSubType.MPEG2Program) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg2 program");
+											else if (mediaType.subType==MediaSubType.MPEG2_Video) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg2 video");
+											else if (mediaType.subType==MediaSubType.MPEG2) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg2");
+											else if (mediaType.subType==MediaSubType.MPEG1_VideoCD) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg1 videocd");
+											else if (mediaType.subType==MediaSubType.MPEG1_Video) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg1 video");
+											else if (mediaType.subType==MediaSubType.MPEG1_System) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=mpeg1 system");
+											else if (mediaType.subType==MediaSubType.IYUV) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=IYUV");
+											else if (mediaType.subType==MediaSubType.ARGB32) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=ARGB32");
+											else if (mediaType.subType==MediaSubType.YUY2) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=YUY2");
+											else if (mediaType.subType==MediaSubType.YVYU) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=YVYU");
+											else if (mediaType.subType==MediaSubType.UYVY) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=UYVY");
+											else if (mediaType.subType==MediaSubType.DVSD) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=DVDSD");
+											else if (mediaType.subType==MediaSubType.DVB_SI) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=DVB_SI");
+											else if (mediaType.subType==MediaSubType.Avi) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=avi");
+											else if (mediaType.subType==MediaSubType.Asf) Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype=asf");
+											else Log.WriteFile(Log.LogType.Capture,"vmr9:  subtype={0}",mediaType.subType.ToString());
 									}
 								}
 								Marshal.FreeCoTaskMem(ptrPMT);
