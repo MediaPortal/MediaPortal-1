@@ -973,6 +973,7 @@ namespace MediaPortal.TV.Recording
 					}
 					//set the properties on the new tuning request
 					
+					
 					Log.Write("DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= frequency;
 					myLocator.SymbolRate				  = symbolrate;

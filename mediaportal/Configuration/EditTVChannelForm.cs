@@ -15,7 +15,6 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class EditTVChannelForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button okButton;
 		private System.Windows.Forms.TextBox channelTextBox;
@@ -24,18 +23,59 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox frequencyTextBox;
 		private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Button advancedButton;
-    private System.Windows.Forms.GroupBox advancedGroupBox;
-    private System.Windows.Forms.TextBox externalChannelTextBox;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.ComboBox typeComboBox;
-    private System.Windows.Forms.ComboBox inputComboBox;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.ComboBox comboTvStandard;
+		private System.Windows.Forms.TextBox externalChannelTextBox;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.ComboBox typeComboBox;
+		private System.Windows.Forms.ComboBox inputComboBox;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.ComboBox comboTvStandard;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.TabPage tabPage5;
+		private System.Windows.Forms.TabPage tabPage6;
 		private System.Windows.Forms.ComboBox countryComboBox;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.Label label10;
+		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.TextBox tbDVBTONID;
+		private System.Windows.Forms.TextBox tbDVBTSID;
+		private System.Windows.Forms.TextBox tbDVBTTSID;
+		private System.Windows.Forms.TextBox tbDVBTFreq;
+		private System.Windows.Forms.TextBox tbDVBCFreq;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.TextBox tbDVBCTSID;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.TextBox tbDVBCSID;
+		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.TextBox tbDVBCONID;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.TextBox tbDVBCSR;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.ComboBox cbDVBCInnerFeq;
+		private System.Windows.Forms.ComboBox cbDVBCModulation;
+		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.Label label22;
+		private System.Windows.Forms.Label label23;
+		private System.Windows.Forms.Label label24;
+		private System.Windows.Forms.Label label25;
+		private System.Windows.Forms.Label label26;
+		private System.Windows.Forms.ComboBox cbDVBSPolarisation;
+		private System.Windows.Forms.ComboBox cbDvbSInnerFec;
+		private System.Windows.Forms.TextBox tbDVBSSymbolrate;
+		private System.Windows.Forms.TextBox tbDVBSFreq;
+		private System.Windows.Forms.TextBox tbDVBSTSID;
+		private System.Windows.Forms.TextBox tbDVBSSID;
+		private System.Windows.Forms.TextBox tbDVBSONID;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -52,19 +92,17 @@ namespace MediaPortal.Configuration
 			// Fetch highest channel number
 			//
 			SectionSettings channelSection = SectionSettings.GetSection("Channels");
-      if(channelSection!=null)
-      {
-        int highestChannelNumber = (int)channelSection.GetSetting("channel.highest");
-        channelTextBox.Text = String.Format("{0}", highestChannelNumber + 1);
-      }
-      else channelTextBox.Text="23";
-      //
-      // Set size of window
-      //
-      typeComboBox.Text = "Internal";
-      comboTvStandard.Text = "Default";
-      advancedGroupBox.Visible = false;
-      this.Height = 208;
+			if(channelSection!=null)
+			{
+				int highestChannelNumber = (int)channelSection.GetSetting("channel.highest");
+				channelTextBox.Text = String.Format("{0}", highestChannelNumber + 1);
+			}
+			else channelTextBox.Text="23";
+			//
+			// Set size of window
+			//
+			typeComboBox.Text = "Internal";
+			comboTvStandard.Text = "Default";
 			TunerCountry country = new TunerCountry(-1,"Default");
 			countryComboBox.Items.Add(country);
 			countryComboBox.Items.AddRange(TunerCountries.Countries);
@@ -92,7 +130,6 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.comboTvStandard = new System.Windows.Forms.ComboBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.frequencyTextBox = new System.Windows.Forms.TextBox();
@@ -103,39 +140,65 @@ namespace MediaPortal.Configuration
 			this.label2 = new System.Windows.Forms.Label();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
-			this.advancedButton = new System.Windows.Forms.Button();
-			this.advancedGroupBox = new System.Windows.Forms.GroupBox();
-			this.countryComboBox = new System.Windows.Forms.ComboBox();
-			this.label8 = new System.Windows.Forms.Label();
 			this.inputComboBox = new System.Windows.Forms.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.typeComboBox = new System.Windows.Forms.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.externalChannelTextBox = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.advancedGroupBox.SuspendLayout();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.countryComboBox = new System.Windows.Forms.ComboBox();
+			this.label8 = new System.Windows.Forms.Label();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tbDVBTFreq = new System.Windows.Forms.TextBox();
+			this.label12 = new System.Windows.Forms.Label();
+			this.tbDVBTTSID = new System.Windows.Forms.TextBox();
+			this.label11 = new System.Windows.Forms.Label();
+			this.tbDVBTSID = new System.Windows.Forms.TextBox();
+			this.label10 = new System.Windows.Forms.Label();
+			this.tbDVBTONID = new System.Windows.Forms.TextBox();
+			this.label9 = new System.Windows.Forms.Label();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.cbDVBCModulation = new System.Windows.Forms.ComboBox();
+			this.cbDVBCInnerFeq = new System.Windows.Forms.ComboBox();
+			this.label19 = new System.Windows.Forms.Label();
+			this.label18 = new System.Windows.Forms.Label();
+			this.tbDVBCSR = new System.Windows.Forms.TextBox();
+			this.label17 = new System.Windows.Forms.Label();
+			this.tbDVBCFreq = new System.Windows.Forms.TextBox();
+			this.label13 = new System.Windows.Forms.Label();
+			this.tbDVBCTSID = new System.Windows.Forms.TextBox();
+			this.label14 = new System.Windows.Forms.Label();
+			this.tbDVBCSID = new System.Windows.Forms.TextBox();
+			this.label15 = new System.Windows.Forms.Label();
+			this.tbDVBCONID = new System.Windows.Forms.TextBox();
+			this.label16 = new System.Windows.Forms.Label();
+			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.cbDVBSPolarisation = new System.Windows.Forms.ComboBox();
+			this.cbDvbSInnerFec = new System.Windows.Forms.ComboBox();
+			this.label20 = new System.Windows.Forms.Label();
+			this.label21 = new System.Windows.Forms.Label();
+			this.tbDVBSSymbolrate = new System.Windows.Forms.TextBox();
+			this.label22 = new System.Windows.Forms.Label();
+			this.tbDVBSFreq = new System.Windows.Forms.TextBox();
+			this.label23 = new System.Windows.Forms.Label();
+			this.tbDVBSTSID = new System.Windows.Forms.TextBox();
+			this.label24 = new System.Windows.Forms.Label();
+			this.tbDVBSSID = new System.Windows.Forms.TextBox();
+			this.label25 = new System.Windows.Forms.Label();
+			this.tbDVBSONID = new System.Windows.Forms.TextBox();
+			this.label26 = new System.Windows.Forms.Label();
+			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.tabControl1.SuspendLayout();
+			this.tabPage1.SuspendLayout();
+			this.tabPage2.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
+			this.tabPage5.SuspendLayout();
+			this.tabPage6.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.comboTvStandard);
-			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Controls.Add(this.frequencyTextBox);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.channelTextBox);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this.nameTextBox);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(360, 136);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Channel Settings";
 			// 
 			// comboTvStandard
 			// 
@@ -162,7 +225,7 @@ namespace MediaPortal.Configuration
 																												 "SECAM L",
 																												 "SECAM L1",
 																												 "PAL N COMBO"});
-			this.comboTvStandard.Location = new System.Drawing.Point(120, 93);
+			this.comboTvStandard.Location = new System.Drawing.Point(128, 64);
 			this.comboTvStandard.Name = "comboTvStandard";
 			this.comboTvStandard.Size = new System.Drawing.Size(224, 21);
 			this.comboTvStandard.TabIndex = 3;
@@ -170,7 +233,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(16, 96);
+			this.label7.Location = new System.Drawing.Point(24, 72);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(88, 16);
 			this.label7.TabIndex = 11;
@@ -180,24 +243,24 @@ namespace MediaPortal.Configuration
 			// 
 			this.frequencyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.frequencyTextBox.Location = new System.Drawing.Point(120, 69);
+			this.frequencyTextBox.Location = new System.Drawing.Point(128, 40);
 			this.frequencyTextBox.MaxLength = 10;
 			this.frequencyTextBox.Name = "frequencyTextBox";
-			this.frequencyTextBox.Size = new System.Drawing.Size(224, 20);
+			this.frequencyTextBox.Size = new System.Drawing.Size(80, 20);
 			this.frequencyTextBox.TabIndex = 2;
 			this.frequencyTextBox.Text = "0";
 			this.frequencyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frequencyTextBox_KeyPress);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 72);
+			this.label1.Location = new System.Drawing.Point(24, 48);
 			this.label1.Name = "label1";
 			this.label1.TabIndex = 10;
 			this.label1.Text = "Frequency";
 			// 
 			// channelTextBox
 			// 
-			this.channelTextBox.Location = new System.Drawing.Point(120, 45);
+			this.channelTextBox.Location = new System.Drawing.Point(128, 16);
 			this.channelTextBox.MaxLength = 4;
 			this.channelTextBox.Name = "channelTextBox";
 			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
@@ -208,25 +271,26 @@ namespace MediaPortal.Configuration
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(16, 48);
+			this.label3.Location = new System.Drawing.Point(24, 24);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(88, 16);
 			this.label3.TabIndex = 8;
 			this.label3.Text = "Channel";
+			this.label3.Click += new System.EventHandler(this.label3_Click);
 			// 
 			// nameTextBox
 			// 
 			this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.nameTextBox.Location = new System.Drawing.Point(120, 21);
+			this.nameTextBox.Location = new System.Drawing.Point(128, 16);
 			this.nameTextBox.Name = "nameTextBox";
-			this.nameTextBox.Size = new System.Drawing.Size(224, 20);
+			this.nameTextBox.Size = new System.Drawing.Size(176, 20);
 			this.nameTextBox.TabIndex = 0;
 			this.nameTextBox.Text = "";
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 24);
+			this.label2.Location = new System.Drawing.Point(24, 16);
 			this.label2.Name = "label2";
 			this.label2.TabIndex = 6;
 			this.label2.Text = "Name";
@@ -236,7 +300,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cancelButton.Location = new System.Drawing.Point(293, 313);
+			this.cancelButton.Location = new System.Drawing.Point(333, 327);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.TabIndex = 3;
 			this.cancelButton.Text = "Cancel";
@@ -246,62 +310,11 @@ namespace MediaPortal.Configuration
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.okButton.Location = new System.Drawing.Point(213, 313);
+			this.okButton.Location = new System.Drawing.Point(253, 327);
 			this.okButton.Name = "okButton";
 			this.okButton.TabIndex = 2;
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
-			// 
-			// advancedButton
-			// 
-			this.advancedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.advancedButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.advancedButton.Location = new System.Drawing.Point(8, 314);
-			this.advancedButton.Name = "advancedButton";
-			this.advancedButton.TabIndex = 1;
-			this.advancedButton.Text = "Advanced >>";
-			this.advancedButton.Click += new System.EventHandler(this.advancedButton_Click);
-			// 
-			// advancedGroupBox
-			// 
-			this.advancedGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.advancedGroupBox.Controls.Add(this.countryComboBox);
-			this.advancedGroupBox.Controls.Add(this.label8);
-			this.advancedGroupBox.Controls.Add(this.inputComboBox);
-			this.advancedGroupBox.Controls.Add(this.label6);
-			this.advancedGroupBox.Controls.Add(this.typeComboBox);
-			this.advancedGroupBox.Controls.Add(this.label5);
-			this.advancedGroupBox.Controls.Add(this.externalChannelTextBox);
-			this.advancedGroupBox.Controls.Add(this.label4);
-			this.advancedGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.advancedGroupBox.Location = new System.Drawing.Point(8, 152);
-			this.advancedGroupBox.Name = "advancedGroupBox";
-			this.advancedGroupBox.Size = new System.Drawing.Size(360, 154);
-			this.advancedGroupBox.TabIndex = 1;
-			this.advancedGroupBox.TabStop = false;
-			this.advancedGroupBox.Text = "Advanced Settings";
-			// 
-			// countryComboBox
-			// 
-			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.countryComboBox.Location = new System.Drawing.Point(120, 104);
-			this.countryComboBox.MaxDropDownItems = 16;
-			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(224, 21);
-			this.countryComboBox.Sorted = true;
-			this.countryComboBox.TabIndex = 3;
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(16, 106);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(56, 16);
-			this.label8.TabIndex = 14;
-			this.label8.Text = "Country";
 			// 
 			// inputComboBox
 			// 
@@ -312,7 +325,7 @@ namespace MediaPortal.Configuration
 																											 "Composite #1",
 																											 "Composite #2",
 																											 "SVHS"});
-			this.inputComboBox.Location = new System.Drawing.Point(120, 54);
+			this.inputComboBox.Location = new System.Drawing.Point(128, 56);
 			this.inputComboBox.Name = "inputComboBox";
 			this.inputComboBox.Size = new System.Drawing.Size(224, 21);
 			this.inputComboBox.TabIndex = 1;
@@ -320,7 +333,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(16, 58);
+			this.label6.Location = new System.Drawing.Point(24, 56);
 			this.label6.Name = "label6";
 			this.label6.TabIndex = 12;
 			this.label6.Text = "Input";
@@ -331,7 +344,7 @@ namespace MediaPortal.Configuration
 			this.typeComboBox.Items.AddRange(new object[] {
 																											"Internal",
 																											"External"});
-			this.typeComboBox.Location = new System.Drawing.Point(120, 28);
+			this.typeComboBox.Location = new System.Drawing.Point(128, 24);
 			this.typeComboBox.Name = "typeComboBox";
 			this.typeComboBox.Size = new System.Drawing.Size(224, 21);
 			this.typeComboBox.TabIndex = 0;
@@ -339,7 +352,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 32);
+			this.label5.Location = new System.Drawing.Point(24, 32);
 			this.label5.Name = "label5";
 			this.label5.TabIndex = 10;
 			this.label5.Text = "Type";
@@ -349,30 +362,474 @@ namespace MediaPortal.Configuration
 			this.externalChannelTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.externalChannelTextBox.Enabled = false;
-			this.externalChannelTextBox.Location = new System.Drawing.Point(120, 80);
+			this.externalChannelTextBox.Location = new System.Drawing.Point(128, 88);
 			this.externalChannelTextBox.Name = "externalChannelTextBox";
-			this.externalChannelTextBox.Size = new System.Drawing.Size(224, 20);
+			this.externalChannelTextBox.Size = new System.Drawing.Size(184, 20);
 			this.externalChannelTextBox.TabIndex = 2;
 			this.externalChannelTextBox.Text = "";
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(16, 84);
+			this.label4.Location = new System.Drawing.Point(24, 88);
 			this.label4.Name = "label4";
 			this.label4.TabIndex = 8;
 			this.label4.Text = "External channel";
+			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage4);
+			this.tabControl1.Controls.Add(this.tabPage5);
+			this.tabControl1.Controls.Add(this.tabPage6);
+			this.tabControl1.Location = new System.Drawing.Point(8, 8);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(400, 312);
+			this.tabControl1.TabIndex = 4;
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.label2);
+			this.tabPage1.Controls.Add(this.nameTextBox);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Size = new System.Drawing.Size(392, 286);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "General";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.countryComboBox);
+			this.tabPage2.Controls.Add(this.label8);
+			this.tabPage2.Controls.Add(this.label3);
+			this.tabPage2.Controls.Add(this.channelTextBox);
+			this.tabPage2.Controls.Add(this.label1);
+			this.tabPage2.Controls.Add(this.frequencyTextBox);
+			this.tabPage2.Controls.Add(this.label7);
+			this.tabPage2.Controls.Add(this.comboTvStandard);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(392, 286);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "Analog";
+			// 
+			// countryComboBox
+			// 
+			this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.countryComboBox.Location = new System.Drawing.Point(128, 96);
+			this.countryComboBox.MaxDropDownItems = 16;
+			this.countryComboBox.Name = "countryComboBox";
+			this.countryComboBox.Size = new System.Drawing.Size(224, 20);
+			this.countryComboBox.Sorted = true;
+			this.countryComboBox.TabIndex = 15;
+			// 
+			// label8
+			// 
+			this.label8.Location = new System.Drawing.Point(24, 96);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(56, 16);
+			this.label8.TabIndex = 16;
+			this.label8.Text = "Country";
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.tbDVBTFreq);
+			this.tabPage3.Controls.Add(this.label12);
+			this.tabPage3.Controls.Add(this.tbDVBTTSID);
+			this.tabPage3.Controls.Add(this.label11);
+			this.tabPage3.Controls.Add(this.tbDVBTSID);
+			this.tabPage3.Controls.Add(this.label10);
+			this.tabPage3.Controls.Add(this.tbDVBTONID);
+			this.tabPage3.Controls.Add(this.label9);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Size = new System.Drawing.Size(392, 286);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "DVB-T";
+			// 
+			// tbDVBTFreq
+			// 
+			this.tbDVBTFreq.Location = new System.Drawing.Point(152, 120);
+			this.tbDVBTFreq.Name = "tbDVBTFreq";
+			this.tbDVBTFreq.TabIndex = 7;
+			this.tbDVBTFreq.Text = "";
+			// 
+			// label12
+			// 
+			this.label12.Location = new System.Drawing.Point(16, 120);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(128, 16);
+			this.label12.TabIndex = 6;
+			this.label12.Text = "Carrier Frequency (KHz)";
+			// 
+			// tbDVBTTSID
+			// 
+			this.tbDVBTTSID.Location = new System.Drawing.Point(152, 88);
+			this.tbDVBTTSID.Name = "tbDVBTTSID";
+			this.tbDVBTTSID.TabIndex = 5;
+			this.tbDVBTTSID.Text = "";
+			// 
+			// label11
+			// 
+			this.label11.Location = new System.Drawing.Point(16, 88);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(72, 16);
+			this.label11.TabIndex = 4;
+			this.label11.Text = "Transport ID:";
+			// 
+			// tbDVBTSID
+			// 
+			this.tbDVBTSID.Location = new System.Drawing.Point(152, 56);
+			this.tbDVBTSID.Name = "tbDVBTSID";
+			this.tbDVBTSID.TabIndex = 3;
+			this.tbDVBTSID.Text = "";
+			// 
+			// label10
+			// 
+			this.label10.Location = new System.Drawing.Point(16, 56);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(64, 16);
+			this.label10.TabIndex = 2;
+			this.label10.Text = "Service ID:";
+			// 
+			// tbDVBTONID
+			// 
+			this.tbDVBTONID.Location = new System.Drawing.Point(152, 24);
+			this.tbDVBTONID.Name = "tbDVBTONID";
+			this.tbDVBTONID.TabIndex = 1;
+			this.tbDVBTONID.Text = "";
+			// 
+			// label9
+			// 
+			this.label9.Location = new System.Drawing.Point(16, 24);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(64, 16);
+			this.label9.TabIndex = 0;
+			this.label9.Text = "Network ID:";
+			// 
+			// tabPage4
+			// 
+			this.tabPage4.Controls.Add(this.cbDVBCModulation);
+			this.tabPage4.Controls.Add(this.cbDVBCInnerFeq);
+			this.tabPage4.Controls.Add(this.label19);
+			this.tabPage4.Controls.Add(this.label18);
+			this.tabPage4.Controls.Add(this.tbDVBCSR);
+			this.tabPage4.Controls.Add(this.label17);
+			this.tabPage4.Controls.Add(this.tbDVBCFreq);
+			this.tabPage4.Controls.Add(this.label13);
+			this.tabPage4.Controls.Add(this.tbDVBCTSID);
+			this.tabPage4.Controls.Add(this.label14);
+			this.tabPage4.Controls.Add(this.tbDVBCSID);
+			this.tabPage4.Controls.Add(this.label15);
+			this.tabPage4.Controls.Add(this.tbDVBCONID);
+			this.tabPage4.Controls.Add(this.label16);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Size = new System.Drawing.Size(392, 286);
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "DVB-C";
+			// 
+			// cbDVBCModulation
+			// 
+			this.cbDVBCModulation.Items.AddRange(new object[] {
+																													"Not Set",
+																													"1024QAM",
+																													"112QAM",
+																													"128QAM",
+																													"160QAM",
+																													"16QAM",
+																													"16VSB",
+																													"192QAM",
+																													"224QAM",
+																													"256QAM",
+																													"320QAM",
+																													"384QAM",
+																													"448QAM",
+																													"512QAM",
+																													"640QAM",
+																													"64QAM",
+																													"768QAM",
+																													"80QAM",
+																													"896QAM",
+																													"8VSB",
+																													"96QAM",
+																													"ANALOG_AMPLITUDE",
+																													"ANALOG_FREQUENCY",
+																													"BPSK",
+																													"OQPSK",
+																													"QPSK"});
+			this.cbDVBCModulation.Location = new System.Drawing.Point(160, 168);
+			this.cbDVBCModulation.Name = "cbDVBCModulation";
+			this.cbDVBCModulation.Size = new System.Drawing.Size(121, 21);
+			this.cbDVBCModulation.TabIndex = 21;
+			// 
+			// cbDVBCInnerFeq
+			// 
+			this.cbDVBCInnerFeq.Items.AddRange(new object[] {
+																												"Max",
+																												"Not Defined",
+																												"Not set",
+																												"RS 204/188",
+																												"ViterBi"});
+			this.cbDVBCInnerFeq.Location = new System.Drawing.Point(160, 144);
+			this.cbDVBCInnerFeq.Name = "cbDVBCInnerFeq";
+			this.cbDVBCInnerFeq.Size = new System.Drawing.Size(121, 21);
+			this.cbDVBCInnerFeq.TabIndex = 20;
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(24, 168);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(100, 16);
+			this.label19.TabIndex = 19;
+			this.label19.Text = "Modulation";
+			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(24, 144);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(100, 16);
+			this.label18.TabIndex = 18;
+			this.label18.Text = "InnerFEC";
+			// 
+			// tbDVBCSR
+			// 
+			this.tbDVBCSR.Location = new System.Drawing.Point(160, 120);
+			this.tbDVBCSR.Name = "tbDVBCSR";
+			this.tbDVBCSR.TabIndex = 17;
+			this.tbDVBCSR.Text = "";
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(24, 120);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(100, 16);
+			this.label17.TabIndex = 16;
+			this.label17.Text = "Symbolrate";
+			// 
+			// tbDVBCFreq
+			// 
+			this.tbDVBCFreq.Location = new System.Drawing.Point(160, 96);
+			this.tbDVBCFreq.Name = "tbDVBCFreq";
+			this.tbDVBCFreq.TabIndex = 15;
+			this.tbDVBCFreq.Text = "";
+			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(24, 96);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(128, 16);
+			this.label13.TabIndex = 14;
+			this.label13.Text = "Carrier Frequency (KHz)";
+			// 
+			// tbDVBCTSID
+			// 
+			this.tbDVBCTSID.Location = new System.Drawing.Point(160, 72);
+			this.tbDVBCTSID.Name = "tbDVBCTSID";
+			this.tbDVBCTSID.TabIndex = 13;
+			this.tbDVBCTSID.Text = "";
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(24, 72);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(72, 16);
+			this.label14.TabIndex = 12;
+			this.label14.Text = "Transport ID:";
+			// 
+			// tbDVBCSID
+			// 
+			this.tbDVBCSID.Location = new System.Drawing.Point(160, 48);
+			this.tbDVBCSID.Name = "tbDVBCSID";
+			this.tbDVBCSID.TabIndex = 11;
+			this.tbDVBCSID.Text = "";
+			// 
+			// label15
+			// 
+			this.label15.Location = new System.Drawing.Point(24, 48);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(64, 16);
+			this.label15.TabIndex = 10;
+			this.label15.Text = "Service ID:";
+			// 
+			// tbDVBCONID
+			// 
+			this.tbDVBCONID.Location = new System.Drawing.Point(160, 24);
+			this.tbDVBCONID.Name = "tbDVBCONID";
+			this.tbDVBCONID.TabIndex = 9;
+			this.tbDVBCONID.Text = "";
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(24, 24);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(64, 16);
+			this.label16.TabIndex = 8;
+			this.label16.Text = "Network ID:";
+			// 
+			// tabPage5
+			// 
+			this.tabPage5.Controls.Add(this.cbDVBSPolarisation);
+			this.tabPage5.Controls.Add(this.cbDvbSInnerFec);
+			this.tabPage5.Controls.Add(this.label20);
+			this.tabPage5.Controls.Add(this.label21);
+			this.tabPage5.Controls.Add(this.tbDVBSSymbolrate);
+			this.tabPage5.Controls.Add(this.label22);
+			this.tabPage5.Controls.Add(this.tbDVBSFreq);
+			this.tabPage5.Controls.Add(this.label23);
+			this.tabPage5.Controls.Add(this.tbDVBSTSID);
+			this.tabPage5.Controls.Add(this.label24);
+			this.tabPage5.Controls.Add(this.tbDVBSSID);
+			this.tabPage5.Controls.Add(this.label25);
+			this.tabPage5.Controls.Add(this.tbDVBSONID);
+			this.tabPage5.Controls.Add(this.label26);
+			this.tabPage5.Location = new System.Drawing.Point(4, 22);
+			this.tabPage5.Name = "tabPage5";
+			this.tabPage5.Size = new System.Drawing.Size(392, 286);
+			this.tabPage5.TabIndex = 4;
+			this.tabPage5.Text = "DVB-S";
+			// 
+			// cbDVBSPolarisation
+			// 
+			this.cbDVBSPolarisation.Items.AddRange(new object[] {
+																														"Horizontal",
+																														"Vertical"});
+			this.cbDVBSPolarisation.Location = new System.Drawing.Point(160, 160);
+			this.cbDVBSPolarisation.Name = "cbDVBSPolarisation";
+			this.cbDVBSPolarisation.Size = new System.Drawing.Size(121, 21);
+			this.cbDVBSPolarisation.TabIndex = 35;
+			// 
+			// cbDvbSInnerFec
+			// 
+			this.cbDvbSInnerFec.Items.AddRange(new object[] {
+																												"Max",
+																												"Not Defined",
+																												"Not Set",
+																												"RS 204/188",
+																												"ViterBi"});
+			this.cbDvbSInnerFec.Location = new System.Drawing.Point(160, 136);
+			this.cbDvbSInnerFec.Name = "cbDvbSInnerFec";
+			this.cbDvbSInnerFec.Size = new System.Drawing.Size(121, 21);
+			this.cbDvbSInnerFec.TabIndex = 34;
+			// 
+			// label20
+			// 
+			this.label20.Location = new System.Drawing.Point(24, 160);
+			this.label20.Name = "label20";
+			this.label20.Size = new System.Drawing.Size(100, 16);
+			this.label20.TabIndex = 33;
+			this.label20.Text = "Polarisation";
+			// 
+			// label21
+			// 
+			this.label21.Location = new System.Drawing.Point(24, 136);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(100, 16);
+			this.label21.TabIndex = 32;
+			this.label21.Text = "InnerFEC";
+			// 
+			// tbDVBSSymbolrate
+			// 
+			this.tbDVBSSymbolrate.Location = new System.Drawing.Point(160, 112);
+			this.tbDVBSSymbolrate.Name = "tbDVBSSymbolrate";
+			this.tbDVBSSymbolrate.TabIndex = 31;
+			this.tbDVBSSymbolrate.Text = "";
+			// 
+			// label22
+			// 
+			this.label22.Location = new System.Drawing.Point(24, 112);
+			this.label22.Name = "label22";
+			this.label22.Size = new System.Drawing.Size(100, 16);
+			this.label22.TabIndex = 30;
+			this.label22.Text = "Symbolrate";
+			// 
+			// tbDVBSFreq
+			// 
+			this.tbDVBSFreq.Location = new System.Drawing.Point(160, 88);
+			this.tbDVBSFreq.Name = "tbDVBSFreq";
+			this.tbDVBSFreq.TabIndex = 29;
+			this.tbDVBSFreq.Text = "";
+			// 
+			// label23
+			// 
+			this.label23.Location = new System.Drawing.Point(24, 88);
+			this.label23.Name = "label23";
+			this.label23.Size = new System.Drawing.Size(128, 16);
+			this.label23.TabIndex = 28;
+			this.label23.Text = "Carrier Frequency (KHz)";
+			// 
+			// tbDVBSTSID
+			// 
+			this.tbDVBSTSID.Location = new System.Drawing.Point(160, 64);
+			this.tbDVBSTSID.Name = "tbDVBSTSID";
+			this.tbDVBSTSID.TabIndex = 27;
+			this.tbDVBSTSID.Text = "";
+			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(24, 64);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(72, 16);
+			this.label24.TabIndex = 26;
+			this.label24.Text = "Transport ID:";
+			// 
+			// tbDVBSSID
+			// 
+			this.tbDVBSSID.Location = new System.Drawing.Point(160, 40);
+			this.tbDVBSSID.Name = "tbDVBSSID";
+			this.tbDVBSSID.TabIndex = 25;
+			this.tbDVBSSID.Text = "";
+			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(24, 40);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(64, 16);
+			this.label25.TabIndex = 24;
+			this.label25.Text = "Service ID:";
+			// 
+			// tbDVBSONID
+			// 
+			this.tbDVBSONID.Location = new System.Drawing.Point(160, 16);
+			this.tbDVBSONID.Name = "tbDVBSONID";
+			this.tbDVBSONID.TabIndex = 23;
+			this.tbDVBSONID.Text = "";
+			// 
+			// label26
+			// 
+			this.label26.Location = new System.Drawing.Point(24, 16);
+			this.label26.Name = "label26";
+			this.label26.Size = new System.Drawing.Size(64, 16);
+			this.label26.TabIndex = 22;
+			this.label26.Text = "Network ID:";
+			// 
+			// tabPage6
+			// 
+			this.tabPage6.Controls.Add(this.typeComboBox);
+			this.tabPage6.Controls.Add(this.label4);
+			this.tabPage6.Controls.Add(this.externalChannelTextBox);
+			this.tabPage6.Controls.Add(this.label5);
+			this.tabPage6.Controls.Add(this.label6);
+			this.tabPage6.Controls.Add(this.inputComboBox);
+			this.tabPage6.Location = new System.Drawing.Point(4, 22);
+			this.tabPage6.Name = "tabPage6";
+			this.tabPage6.Size = new System.Drawing.Size(392, 286);
+			this.tabPage6.TabIndex = 5;
+			this.tabPage6.Text = "External";
 			// 
 			// EditTVChannelForm
 			// 
 			this.AcceptButton = this.okButton;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(376, 344);
-			this.Controls.Add(this.advancedGroupBox);
-			this.Controls.Add(this.advancedButton);
+			this.ClientSize = new System.Drawing.Size(416, 358);
+			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
-			this.Controls.Add(this.groupBox1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
 			this.MinimumSize = new System.Drawing.Size(384, 208);
 			this.Name = "EditTVChannelForm";
@@ -381,8 +838,13 @@ namespace MediaPortal.Configuration
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit properties of TV channel";
 			this.Load += new System.EventHandler(this.EditTVChannelForm_Load);
-			this.groupBox1.ResumeLayout(false);
-			this.advancedGroupBox.ResumeLayout(false);
+			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
+			this.tabPage5.ResumeLayout(false);
+			this.tabPage6.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -428,78 +890,53 @@ namespace MediaPortal.Configuration
 			this.Hide();
 		}
 
-    private void channelTextBox_TextChanged(object sender, System.EventArgs e)
-    {
-      if(channelTextBox.Text.Length > 0)
-      {
-        int channel = Int32.Parse(channelTextBox.Text);
-        frequencyTextBox.Enabled = (channel > 0 && channel < (int)ExternalInputs.svhs);
-      }
-    }    
+		private void channelTextBox_TextChanged(object sender, System.EventArgs e)
+		{
+			if(channelTextBox.Text.Length > 0)
+			{
+				int channel = Int32.Parse(channelTextBox.Text);
+				frequencyTextBox.Enabled = (channel > 0 && channel < (int)ExternalInputs.svhs);
+			}
+		}    
 
-    bool advancedShowing = false;
+		private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			externalChannelTextBox.Enabled = inputComboBox.Enabled = typeComboBox.Text.Equals("External");
+			channelTextBox.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
+		}
 
-    private void advancedButton_Click(object sender, System.EventArgs e)
-    {
-      if(advancedShowing == false)
-      {
-        //
-        // Change button text
-        //
-        advancedButton.Text = "<< Simple";
-        advancedGroupBox.Visible = true;
+		private void inputComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			switch(inputComboBox.Text)
+			{
+				case "SVHS":
+					channelTextBox.Text = ((int)ExternalInputs.svhs).ToString();
+					break;
 
-        this.Height = 360;
-      }
-      else
-      {
-        //
-        // Change button text
-        //
-        advancedButton.Text = "Advanced >>";
-        advancedGroupBox.Visible = false;
+				case "Composite #1":
+					channelTextBox.Text = ((int)ExternalInputs.cvbs1).ToString();
+					break;
 
-        this.Height = 208;
-      }
+				case "Composite #2":
+					channelTextBox.Text = ((int)ExternalInputs.cvbs2).ToString();
+					break;
+			}
+		}
 
-      //
-      // Toggle
-      //
-      advancedShowing = !advancedShowing;
-    }
+		private void comboTvStandard_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+		}
 
-    private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      externalChannelTextBox.Enabled = inputComboBox.Enabled = typeComboBox.Text.Equals("External");
-      channelTextBox.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
-    }
-
-    private void inputComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      switch(inputComboBox.Text)
-      {
-        case "SVHS":
-          channelTextBox.Text = ((int)ExternalInputs.svhs).ToString();
-          break;
-
-        case "Composite #1":
-          channelTextBox.Text = ((int)ExternalInputs.cvbs1).ToString();
-          break;
-
-        case "Composite #2":
-          channelTextBox.Text = ((int)ExternalInputs.cvbs2).ToString();
-          break;
-      }
-    }
-
-    private void comboTvStandard_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-    }
-
-    private void EditTVChannelForm_Load(object sender, System.EventArgs e)
-    {
+		private void EditTVChannelForm_Load(object sender, System.EventArgs e)
+		{
     
-    }
+		}
+
+
+		private void label3_Click(object sender, System.EventArgs e)
+		{
+		
+		}
 
 		public TelevisionChannel Channel
 		{
@@ -541,57 +978,57 @@ namespace MediaPortal.Configuration
 					}
 					else
 					{
-            //
-            // Herz
-            //
-            if(frequencyTextBox.Text.Length > 3)
-            {
-              channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
-            }
-            else
-            {
-              channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
-            }					
-          }
+						//
+						// Herz
+						//
+						if(frequencyTextBox.Text.Length > 3)
+						{
+							channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+						}
+						else
+						{
+							channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+						}					
+					}
 				}
 				catch
 				{
 					channel.Frequency = 0;
 				}
 
-        //
-        // Fetch advanced settings
-        //
-        channel.External = typeComboBox.Text.Equals("External");
-        channel.ExternalTunerChannel = externalChannelTextBox.Text;
+				//
+				// Fetch advanced settings
+				//
+				channel.External = typeComboBox.Text.Equals("External");
+				channel.ExternalTunerChannel = externalChannelTextBox.Text;
 
-        if(channel.External)
-        {
-          channel.Frequency = 0;
-        }
+				if(channel.External)
+				{
+					channel.Frequency = 0;
+				}
 
-        string standard=comboTvStandard.Text;
-        if (standard=="Default") channel.standard = AnalogVideoStandard.None;
-        if (standard=="NTSC M") channel.standard = AnalogVideoStandard.NTSC_M;
-        if (standard=="NTSC M J") channel.standard = AnalogVideoStandard.NTSC_M_J;
-        if (standard=="NTSC 433") channel.standard = AnalogVideoStandard.NTSC_433;
-        if (standard=="PAL B") channel.standard = AnalogVideoStandard.PAL_B;
-        if (standard=="PAL D") channel.standard = AnalogVideoStandard.PAL_D;
-        if (standard=="PAL G") channel.standard = AnalogVideoStandard.PAL_G;
-        if (standard=="PAL H") channel.standard = AnalogVideoStandard.PAL_H;
-        if (standard=="PAL I") channel.standard = AnalogVideoStandard.PAL_I;
-        if (standard=="PAL M") channel.standard = AnalogVideoStandard.PAL_M;
-        if (standard=="PAL N") channel.standard = AnalogVideoStandard.PAL_N;
-        if (standard=="PAL 60") channel.standard = AnalogVideoStandard.PAL_60;
-        if (standard=="SECAM B") channel.standard = AnalogVideoStandard.SECAM_B;
-        if (standard=="SECAM D") channel.standard = AnalogVideoStandard.SECAM_D;
-        if (standard=="SECAM G") channel.standard = AnalogVideoStandard.SECAM_G;
-        if (standard=="SECAM H") channel.standard = AnalogVideoStandard.SECAM_H;
-        if (standard=="SECAM K") channel.standard = AnalogVideoStandard.SECAM_K;
-        if (standard=="SECAM K1") channel.standard = AnalogVideoStandard.SECAM_K1;
-        if (standard=="SECAM L") channel.standard = AnalogVideoStandard.SECAM_L;
-        if (standard=="SECAM L1") channel.standard = AnalogVideoStandard.SECAM_L1;
-        if (standard=="PAL N COMBO") channel.standard = AnalogVideoStandard.PAL_N_COMBO;
+				string standard=comboTvStandard.Text;
+				if (standard=="Default") channel.standard = AnalogVideoStandard.None;
+				if (standard=="NTSC M") channel.standard = AnalogVideoStandard.NTSC_M;
+				if (standard=="NTSC M J") channel.standard = AnalogVideoStandard.NTSC_M_J;
+				if (standard=="NTSC 433") channel.standard = AnalogVideoStandard.NTSC_433;
+				if (standard=="PAL B") channel.standard = AnalogVideoStandard.PAL_B;
+				if (standard=="PAL D") channel.standard = AnalogVideoStandard.PAL_D;
+				if (standard=="PAL G") channel.standard = AnalogVideoStandard.PAL_G;
+				if (standard=="PAL H") channel.standard = AnalogVideoStandard.PAL_H;
+				if (standard=="PAL I") channel.standard = AnalogVideoStandard.PAL_I;
+				if (standard=="PAL M") channel.standard = AnalogVideoStandard.PAL_M;
+				if (standard=="PAL N") channel.standard = AnalogVideoStandard.PAL_N;
+				if (standard=="PAL 60") channel.standard = AnalogVideoStandard.PAL_60;
+				if (standard=="SECAM B") channel.standard = AnalogVideoStandard.SECAM_B;
+				if (standard=="SECAM D") channel.standard = AnalogVideoStandard.SECAM_D;
+				if (standard=="SECAM G") channel.standard = AnalogVideoStandard.SECAM_G;
+				if (standard=="SECAM H") channel.standard = AnalogVideoStandard.SECAM_H;
+				if (standard=="SECAM K") channel.standard = AnalogVideoStandard.SECAM_K;
+				if (standard=="SECAM K1") channel.standard = AnalogVideoStandard.SECAM_K1;
+				if (standard=="SECAM L") channel.standard = AnalogVideoStandard.SECAM_L;
+				if (standard=="SECAM L1") channel.standard = AnalogVideoStandard.SECAM_L1;
+				if (standard=="PAL N COMBO") channel.standard = AnalogVideoStandard.PAL_N_COMBO;
 
 				TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
 				if (tunerCountry!=null)
@@ -620,71 +1057,156 @@ namespace MediaPortal.Configuration
 					channelTextBox.Text = channel.Channel.ToString();
 					frequencyTextBox.Text = channel.Frequency.ToString();
 
-          typeComboBox.Text = channel.External ? "External" : "Internal";
-          externalChannelTextBox.Text = channel.ExternalTunerChannel;
+					typeComboBox.Text = channel.External ? "External" : "Internal";
+					externalChannelTextBox.Text = channel.ExternalTunerChannel;
 
-          if(channel.External == true)
-          {
-            switch(channel.Channel)
-            {
-              case (int)ExternalInputs.svhs:
-                inputComboBox.Text = "SVHS";
-                break;
+					if(channel.External == true)
+					{
+						switch(channel.Channel)
+						{
+							case (int)ExternalInputs.svhs:
+								inputComboBox.Text = "SVHS";
+								break;
 
-              case (int)ExternalInputs.cvbs1:
-                inputComboBox.Text = "Composite #1";
-                break;
+							case (int)ExternalInputs.cvbs1:
+								inputComboBox.Text = "Composite #1";
+								break;
 
-              case (int)ExternalInputs.cvbs2:
-                inputComboBox.Text = "Composite #2";
-                break;
-            }
-          }
+							case (int)ExternalInputs.cvbs2:
+								inputComboBox.Text = "Composite #2";
+								break;
+						}
+					}
 
-          //
-          // Disable boxes for static channels
-          //
-          if(channel.Name.Equals("Composite #1") || channel.Name.Equals("Composite #2") || channel.Name.Equals("SVHS"))
-          {
-            comboTvStandard.Enabled = true;
-            nameTextBox.Enabled = channelTextBox.Enabled = frequencyTextBox.Enabled = advancedButton.Enabled = false;
-          }
-          comboTvStandard.SelectedIndex=0;
-          if ( channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex=0;
-          if ( channel.standard == AnalogVideoStandard.NTSC_M) comboTvStandard.SelectedIndex=1;
-          if ( channel.standard == AnalogVideoStandard.NTSC_M_J) comboTvStandard.SelectedIndex=2;
-          if ( channel.standard == AnalogVideoStandard.NTSC_433) comboTvStandard.SelectedIndex=3;
-          if ( channel.standard == AnalogVideoStandard.PAL_B) comboTvStandard.SelectedIndex=4;
-          if ( channel.standard == AnalogVideoStandard.PAL_D) comboTvStandard.SelectedIndex=5;
-          if ( channel.standard == AnalogVideoStandard.PAL_G) comboTvStandard.SelectedIndex=6;
-          if ( channel.standard == AnalogVideoStandard.PAL_H) comboTvStandard.SelectedIndex=7;
-          if ( channel.standard == AnalogVideoStandard.PAL_I) comboTvStandard.SelectedIndex=8;
-          if ( channel.standard == AnalogVideoStandard.PAL_M) comboTvStandard.SelectedIndex=9;
-          if ( channel.standard == AnalogVideoStandard.PAL_N) comboTvStandard.SelectedIndex=10;
-          if ( channel.standard == AnalogVideoStandard.PAL_60) comboTvStandard.SelectedIndex=11;
-          if ( channel.standard == AnalogVideoStandard.SECAM_B) comboTvStandard.SelectedIndex=12;
-          if ( channel.standard == AnalogVideoStandard.SECAM_D) comboTvStandard.SelectedIndex=13;
-          if ( channel.standard == AnalogVideoStandard.SECAM_G) comboTvStandard.SelectedIndex=14;
-          if ( channel.standard == AnalogVideoStandard.SECAM_H) comboTvStandard.SelectedIndex=15;
-          if ( channel.standard == AnalogVideoStandard.SECAM_K) comboTvStandard.SelectedIndex=16;
-          if ( channel.standard == AnalogVideoStandard.SECAM_K1) comboTvStandard.SelectedIndex=17;
-          if ( channel.standard == AnalogVideoStandard.SECAM_L) comboTvStandard.SelectedIndex=18;
-          if ( channel.standard == AnalogVideoStandard.SECAM_L1) comboTvStandard.SelectedIndex=19;
-          if ( channel.standard == AnalogVideoStandard.PAL_N_COMBO) comboTvStandard.SelectedIndex=20;
-        }
+					//
+					// Disable boxes for static channels
+					//
+					if(channel.Name.Equals("Composite #1") || channel.Name.Equals("Composite #2") || channel.Name.Equals("SVHS"))
+					{
+						comboTvStandard.Enabled = true;
+						nameTextBox.Enabled = channelTextBox.Enabled = frequencyTextBox.Enabled =false;
+					}
+					comboTvStandard.SelectedIndex=0;
+					if ( channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex=0;
+					if ( channel.standard == AnalogVideoStandard.NTSC_M) comboTvStandard.SelectedIndex=1;
+					if ( channel.standard == AnalogVideoStandard.NTSC_M_J) comboTvStandard.SelectedIndex=2;
+					if ( channel.standard == AnalogVideoStandard.NTSC_433) comboTvStandard.SelectedIndex=3;
+					if ( channel.standard == AnalogVideoStandard.PAL_B) comboTvStandard.SelectedIndex=4;
+					if ( channel.standard == AnalogVideoStandard.PAL_D) comboTvStandard.SelectedIndex=5;
+					if ( channel.standard == AnalogVideoStandard.PAL_G) comboTvStandard.SelectedIndex=6;
+					if ( channel.standard == AnalogVideoStandard.PAL_H) comboTvStandard.SelectedIndex=7;
+					if ( channel.standard == AnalogVideoStandard.PAL_I) comboTvStandard.SelectedIndex=8;
+					if ( channel.standard == AnalogVideoStandard.PAL_M) comboTvStandard.SelectedIndex=9;
+					if ( channel.standard == AnalogVideoStandard.PAL_N) comboTvStandard.SelectedIndex=10;
+					if ( channel.standard == AnalogVideoStandard.PAL_60) comboTvStandard.SelectedIndex=11;
+					if ( channel.standard == AnalogVideoStandard.SECAM_B) comboTvStandard.SelectedIndex=12;
+					if ( channel.standard == AnalogVideoStandard.SECAM_D) comboTvStandard.SelectedIndex=13;
+					if ( channel.standard == AnalogVideoStandard.SECAM_G) comboTvStandard.SelectedIndex=14;
+					if ( channel.standard == AnalogVideoStandard.SECAM_H) comboTvStandard.SelectedIndex=15;
+					if ( channel.standard == AnalogVideoStandard.SECAM_K) comboTvStandard.SelectedIndex=16;
+					if ( channel.standard == AnalogVideoStandard.SECAM_K1) comboTvStandard.SelectedIndex=17;
+					if ( channel.standard == AnalogVideoStandard.SECAM_L) comboTvStandard.SelectedIndex=18;
+					if ( channel.standard == AnalogVideoStandard.SECAM_L1) comboTvStandard.SelectedIndex=19;
+					if ( channel.standard == AnalogVideoStandard.PAL_N_COMBO) comboTvStandard.SelectedIndex=20;
+
+					if (channel.Channel>=0)
+					{
+						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
+						//DVB-T
+						TVDatabase.GetDVBTTuneRequest(channel.Channel,out freq,out ONID, out TSID,out SID);
+						tbDVBTFreq.Text=freq.ToString();;
+						tbDVBTONID.Text=ONID.ToString();;
+						tbDVBTTSID.Text=TSID.ToString();;
+						tbDVBTSID.Text=SID.ToString();
+
+						//DVB-C
+						TVDatabase.GetDVBCTuneRequest(channel.Channel,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID);
+						tbDVBCFreq.Text=freq.ToString();;
+						tbDVBCONID.Text=ONID.ToString();;
+						tbDVBCTSID.Text=TSID.ToString();;
+						tbDVBCSID.Text=SID.ToString();
+						tbDVBCSR.Text=symbolrate.ToString();
+						cbDVBCInnerFeq.SelectedIndex=FecToIndex(innerFec);
+						cbDVBCModulation.SelectedIndex=ModulationToIndex(modulation);
+
+
+						//DVB-S
+						TVDatabase.GetDVBSTuneRequest(channel.Channel,out freq, out symbolrate,out innerFec, out polarisation,out ONID,out TSID, out SID);
+						tbDVBSFreq.Text=freq.ToString();;
+						tbDVBSONID.Text=ONID.ToString();;
+						tbDVBSTSID.Text=TSID.ToString();;
+						tbDVBSSID.Text=SID.ToString();
+						tbDVBSSymbolrate.Text=symbolrate.ToString();
+						cbDvbSInnerFec.SelectedIndex=FecToIndex(innerFec);
+						cbDVBSPolarisation.SelectedIndex=PolarisationToIndex(polarisation);
+
+					}
+				}//if(channel != null)
+			}//set
+		}//public TelevisionChannel Channel
+		
+		int FecToIndex(int fec)
+		{
+			switch ( (TunerLib.FECMethod)fec)
+			{
+				case TunerLib.FECMethod.BDA_FEC_MAX: return 0; 
+				case TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED: return 1; 
+				case TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET: return 2; 
+				case TunerLib.FECMethod.BDA_FEC_RS_204_188: return 3; 
+				case TunerLib.FECMethod.BDA_FEC_VITERBI: return 4; 
 			}
+			return 2;
+		}
+		int ModulationToIndex(int modulation)
+		{
+			switch ( (TunerLib.ModulationType)modulation )
+			{
+				case TunerLib.ModulationType.BDA_MOD_NOT_SET : return 0; 
+				case TunerLib.ModulationType.BDA_MOD_1024QAM: return 1; 
+				case TunerLib.ModulationType.BDA_MOD_112QAM: return 2; 
+				case TunerLib.ModulationType.BDA_MOD_128QAM: return 3; 
+				case TunerLib.ModulationType.BDA_MOD_160QAM: return 4; 
+				case TunerLib.ModulationType.BDA_MOD_16QAM: return 5; 
+				case TunerLib.ModulationType.BDA_MOD_16VSB: return 6; 
+				case TunerLib.ModulationType.BDA_MOD_192QAM: return 7; 
+				case TunerLib.ModulationType.BDA_MOD_224QAM: return 8; 
+				case TunerLib.ModulationType.BDA_MOD_256QAM: return 9; 
+				case TunerLib.ModulationType.BDA_MOD_320QAM: return 10; 
+				case TunerLib.ModulationType.BDA_MOD_384QAM: return 11; 
+				case TunerLib.ModulationType.BDA_MOD_448QAM: return 12; 
+				case TunerLib.ModulationType.BDA_MOD_512QAM: return 13; 
+				case TunerLib.ModulationType.BDA_MOD_640QAM: return 14; 
+				case TunerLib.ModulationType.BDA_MOD_64QAM: return 15; 
+				case TunerLib.ModulationType.BDA_MOD_768QAM: return 16; 
+				case TunerLib.ModulationType.BDA_MOD_80QAM: return 17; 
+				case TunerLib.ModulationType.BDA_MOD_896QAM: return 18; 
+				case TunerLib.ModulationType.BDA_MOD_8VSB: return 19; 
+				case TunerLib.ModulationType.BDA_MOD_96QAM: return 20; 
+				case TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE: return 21; 
+				case TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY: return 22; 
+				case TunerLib.ModulationType.BDA_MOD_BPSK: return 23; 
+				case TunerLib.ModulationType.BDA_MOD_OQPSK: return 24; 
+				case TunerLib.ModulationType.BDA_MOD_QPSK: return 25; 
+			}
+			return 0;
+		}
+		int PolarisationToIndex(int polarisation)
+		{
+			if (polarisation< 0 || polarisation> 1) return 0;
+			return polarisation;
 		}
 	}
 
 	public class TelevisionChannel
 	{
+		public int ID;
 		public string Name = String.Empty;
 		public int Channel = 0;
 		public Frequency Frequency = new Frequency(0);
-    public bool External = false;
-    public string ExternalTunerChannel = String.Empty;
-    public bool VisibleInGuide = true;
-    public AnalogVideoStandard standard=AnalogVideoStandard.None;
+		public bool External = false;
+		public string ExternalTunerChannel = String.Empty;
+		public bool VisibleInGuide = true;
+		public AnalogVideoStandard standard=AnalogVideoStandard.None;
 		public int Country;
 	}
 
@@ -706,7 +1228,9 @@ namespace MediaPortal.Configuration
 		public long Herz
 		{
 			get { return herz; }
-			set { herz = value; 
+			set 
+			{
+				herz = value; 
 				if(herz <= 1000)
 					herz *= (int)1000000d;
 			}

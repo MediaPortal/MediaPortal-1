@@ -692,7 +692,7 @@ namespace MediaPortal.Configuration.Sections
 				channelsListView.Items.Add(listItem);
 				SaveSettings();
 				UpdateGroupChannels(null,true);
-			}		
+			}
 		}
 
     private string GetStandardName(AnalogVideoStandard standard)
@@ -872,6 +872,7 @@ namespace MediaPortal.Configuration.Sections
 							channel.Number = tvChannel.Channel;
               channel.VisibleInGuide = tvChannel.VisibleInGuide;
 							channel.Country=tvChannel.Country;
+							channel.ID=tvChannel.ID;
 							
 							//
 							// Calculate frequency
@@ -969,6 +970,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				TelevisionChannel tvChannel = new TelevisionChannel();
 
+				tvChannel.ID=channel.ID;
 				tvChannel.Channel	= channel.Number;
 				tvChannel.Name		= channel.Name;
 				tvChannel.Frequency	= channel.Frequency;

@@ -169,6 +169,11 @@
                     AssemblyName = "mbm5"
                     HintPath = "..\mbm5.dll"
                 />
+                <Reference
+                    Name = "Interop.TunerLib"
+                    AssemblyName = "Interop.TunerLib"
+                    HintPath = "..\Interop.TunerLib.dll"
+                />
             </References>
         </Build>
         <Files>
