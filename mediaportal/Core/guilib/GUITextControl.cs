@@ -558,7 +558,7 @@ namespace MediaPortal.GUI.Library
 
     void SetText(string strText)
     {
-      if (text==null) return;
+      if (strText==null) return;
 	    m_vecItems.Clear();
 	    // start wordwrapping
       // Set a flag so we can determine initial justification effects
