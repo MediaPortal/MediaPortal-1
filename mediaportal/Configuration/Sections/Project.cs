@@ -60,16 +60,16 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.linkLabel4 = new System.Windows.Forms.LinkLabel();
+			this.label7 = new System.Windows.Forms.Label();
+			this.linkLabel3 = new System.Windows.Forms.LinkLabel();
+			this.label6 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
 			this.label3 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label2 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.linkLabel3 = new System.Windows.Forms.LinkLabel();
-			this.label7 = new System.Windows.Forms.Label();
-			this.linkLabel4 = new System.Windows.Forms.LinkLabel();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -119,6 +119,42 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Contact";
 			// 
+			// linkLabel4
+			// 
+			this.linkLabel4.Location = new System.Drawing.Point(24, 160);
+			this.linkLabel4.Name = "linkLabel4";
+			this.linkLabel4.Size = new System.Drawing.Size(320, 16);
+			this.linkLabel4.TabIndex = 21;
+			this.linkLabel4.TabStop = true;
+			this.linkLabel4.Text = "http://sourceforge.net/projects/mediaportal";
+			this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(16, 144);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(100, 15);
+			this.label7.TabIndex = 20;
+			this.label7.Text = "Sourceforge:";
+			// 
+			// linkLabel3
+			// 
+			this.linkLabel3.Location = new System.Drawing.Point(24, 120);
+			this.linkLabel3.Name = "linkLabel3";
+			this.linkLabel3.Size = new System.Drawing.Size(320, 16);
+			this.linkLabel3.TabIndex = 19;
+			this.linkLabel3.TabStop = true;
+			this.linkLabel3.Text = "http://www.maisenbachers.de/dokuw/";
+			this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(16, 105);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(100, 15);
+			this.label6.TabIndex = 18;
+			this.label6.Text = "Wiki:";
+			// 
 			// label5
 			// 
 			this.label5.Location = new System.Drawing.Point(24, 200);
@@ -144,6 +180,7 @@ namespace MediaPortal.Configuration.Sections
 			this.linkLabel2.TabIndex = 15;
 			this.linkLabel2.TabStop = true;
 			this.linkLabel2.Text = "http://nolanparty.com/mediaportal.sourceforge.net/phpBB2/";
+			this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
 			// 
 			// label3
 			// 
@@ -162,6 +199,7 @@ namespace MediaPortal.Configuration.Sections
 			this.linkLabel1.TabIndex = 13;
 			this.linkLabel1.TabStop = true;
 			this.linkLabel1.Text = "http://mediaportal.sourceforge.net";
+			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
 			// 
 			// label2
 			// 
@@ -170,40 +208,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label2.Size = new System.Drawing.Size(152, 16);
 			this.label2.TabIndex = 12;
 			this.label2.Text = "Homepage:";
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(16, 105);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(100, 15);
-			this.label6.TabIndex = 18;
-			this.label6.Text = "Wiki:";
-			// 
-			// linkLabel3
-			// 
-			this.linkLabel3.Location = new System.Drawing.Point(24, 120);
-			this.linkLabel3.Name = "linkLabel3";
-			this.linkLabel3.Size = new System.Drawing.Size(320, 16);
-			this.linkLabel3.TabIndex = 19;
-			this.linkLabel3.TabStop = true;
-			this.linkLabel3.Text = "http://nolanparty.com/mediaportal.sourceforge.net/phpBB2/";
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(16, 144);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(100, 15);
-			this.label7.TabIndex = 20;
-			this.label7.Text = "Sourceforge:";
-			// 
-			// linkLabel4
-			// 
-			this.linkLabel4.Location = new System.Drawing.Point(24, 160);
-			this.linkLabel4.Name = "linkLabel4";
-			this.linkLabel4.Size = new System.Drawing.Size(320, 16);
-			this.linkLabel4.TabIndex = 21;
-			this.linkLabel4.TabStop = true;
-			this.linkLabel4.Text = "http://sourceforge.net/projects/mediaportal";
 			// 
 			// Project
 			// 
@@ -232,6 +236,52 @@ namespace MediaPortal.Configuration.Sections
 		{
 		
 		}
+
+		private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		{
+			if(linkLabel1.Text==null)
+				return;
+			if(linkLabel1.Text.Length>0)
+			{
+				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel1.Text);
+				System.Diagnostics.Process.Start(sInfo);
+			}
+		}
+
+		private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		{
+			if(linkLabel2.Text==null)
+				return;
+			if(linkLabel2.Text.Length>0)
+			{
+				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel2.Text);
+				System.Diagnostics.Process.Start(sInfo);
+			}
+		}
+
+		private void linkLabel3_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		{
+			if(linkLabel3.Text==null)
+				return;
+			if(linkLabel3.Text.Length>0)
+			{
+				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel3.Text);
+				System.Diagnostics.Process.Start(sInfo);
+			}
+		}
+
+			private void linkLabel4_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+			{
+				if(linkLabel4.Text==null)
+					return;
+				if(linkLabel4.Text.Length>0)
+				{
+					System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel4.Text);
+					System.Diagnostics.Process.Start(sInfo);
+
+				}
+			}
+
 	}
 }
 
