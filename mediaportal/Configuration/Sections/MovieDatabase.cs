@@ -1353,6 +1353,12 @@ namespace MediaPortal.Configuration.Sections
 					}
 					VideoDatabase.SetMovieInfoById(movieDetails.ID,ref movieDetails);
 
+					AmazonImageSearch search = new AmazonImageSearch();
+					search.Search(movieDetails.Title);
+					if (search.Count>0)
+					{
+						movieDetails.ThumbURL=search[0];
+					}
 					if (stopRebuild) return null;
 					//download thumbnail
 					DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);

@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Video
     bool m_bRefresh = false;
     IMDBMovie m_movie = null;
     bool m_bPrevOverlay = false;
-    GoogleImageSearch m_search = new GoogleImageSearch();
+    AmazonImageSearch m_search = new AmazonImageSearch();
     string m_sIMDBThumbURL = "";
 
     public GUIVideoInfo()

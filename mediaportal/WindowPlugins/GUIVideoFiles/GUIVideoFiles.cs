@@ -1384,6 +1384,12 @@ namespace MediaPortal.GUI.Video
           if (imdb.GetDetails(url, ref movieDetails))
           {
             // get & save thumbnail
+						AmazonImageSearch search = new AmazonImageSearch();
+						search.Search(movieDetails.Title);
+						if (search.Count>0)
+						{
+							movieDetails.ThumbURL=search[0];
+						}
             VideoDatabase.SetMovieInfo(strFileName, ref movieDetails);
             string strThumb = "";
             string strImage = movieDetails.ThumbURL;

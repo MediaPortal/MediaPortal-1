@@ -199,6 +199,11 @@
                     AssemblyName = "Interop.DirectShowHelperLib"
                     HintPath = "..\Interop.DirectShowHelperLib.dll"
                 />
+                <Reference
+                    Name = "System.Web.Services"
+                    AssemblyName = "System.Web.Services"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -1176,6 +1181,16 @@
                 <File
                     RelPath = "USBUIRT\USBUIRT.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\AmazonLookup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\AmazonReference.cs"
+                    SubType = "code"
                     BuildAction = "Compile"
                 />
                 <File
