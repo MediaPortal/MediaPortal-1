@@ -15,13 +15,13 @@
          <description></description>
          <name>DVD</name>
          <topic>General DVD Settings</topic>
-         <information>Please select the default language and subtitle settings for the DVD playback. Note that these settings only affect the internal DVD player.</information>
+         <information>Please select the default language and subtitle settings for the DVD-playback. Note that these settings only affect the internal DVD player.</information>
       </section>
       <section>
          <description></description>
          <name>DVDCodec</name>
          <topic>DVD CODEC Settings</topic>
-         <information>Please select the desired CODECS used for the DVD playback with the internal player.</information>
+         <information>Please select the desired CODECS used for the DVD-playback with the internal player.</information>
       </section>
       <section>
          <description></description>
