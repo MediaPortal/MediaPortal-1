@@ -402,14 +402,6 @@ namespace MediaPortal.TV.Recording
 			else m_retryCount=-1;
 
 
-			if(m_performTeletext==false)
-			{
-				m_dataLen=len;
-				if(m_dataLen>65535)
-					m_dataLen=65535;
-				Marshal.Copy(data,m_streamBufferArray,0,m_dataLen);
-				m_performTeletext=true;
-			}
 			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
 		}
@@ -1844,21 +1836,6 @@ namespace MediaPortal.TV.Recording
 				ExecTuner();
 				Log.Write("Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
 			}
-			//
-			// actions for streamBufferPtr
-//			if(m_performTeletext==true)
-//			{
-//				for(int pointer=0;pointer<m_dataLen;pointer+=188)
-//				{
-//					TSHelperTools.TSHeader header=m_tsHelper.GetHeader(m_streamBufferArray,pointer);
-//					if(header.Pid==m_currentChannel.TeletextPid && m_teleText!=null)
-//					{
-//						m_teleText.SaveData(m_streamBufferArray,pointer);
-//					}
-//				}
-//				m_performTeletext=false;
-//			}
-			//
 
 		}
 		

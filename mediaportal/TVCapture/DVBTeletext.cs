@@ -457,22 +457,8 @@ namespace MediaPortal.TV.Recording
 			else
 				boxed = 0;
 
-			if (IsDEC(mPage))
-			{
-				int i;
-				string pageNumber=Convert.ToString(mPage,16);
-				string subpageNumber=Convert.ToString(sPage,16);
-				byte[] mpText=System.Text.Encoding.ASCII.GetBytes("MediaPortal P."+pageNumber+"/"+subpageNumber);
-				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
-				for (i = 0; i < 11; i++)
-					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.Yellow);
-				for (i = 12; i < 40; i++)
-					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.White);
 
-
-			}
-
-			for (row = 1; row < 24; row++)
+			for (row = 0; row < 24; row++)
 			{
 				foreground   = (int)TextColors.White;
 				background   = (int)TextColors.Black;
@@ -700,6 +686,21 @@ namespace MediaPortal.TV.Recording
 				}
 
 			}
+			
+			if (IsDEC(mPage))
+			{
+				int i;
+				string pageNumber=Convert.ToString(mPage,16);
+				string subpageNumber=Convert.ToString(sPage,16);
+				byte[] mpText=System.Text.Encoding.ASCII.GetBytes("MediaPortal P."+pageNumber+"/"+subpageNumber);
+				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
+				for (i = 0; i < 11; i++)
+					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.Yellow);
+				for (i = 12; i < 40; i++)
+					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.White);
+
+			}
+
 			// render
 			int y = 0;
 			int x;
