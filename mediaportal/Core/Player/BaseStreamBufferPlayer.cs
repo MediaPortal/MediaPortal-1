@@ -169,7 +169,7 @@ namespace MediaPortal.Player
 				return false;
 			}
 
-      DsUtils.DumpFilters(graphBuilder);
+      //DsUtils.DumpFilters(graphBuilder);
 
       m_iPositionX=GUIGraphicsContext.VideoWindow.X;
       m_iPositionY=GUIGraphicsContext.VideoWindow.Y;

@@ -137,7 +137,7 @@ namespace MediaPortal.Player
         DirectShowUtil.SetARMode(graphBuilder, AmAspectRatioMode.AM_ARMODE_STRETCHED);
         DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
 
-        DsUtils.DumpFilters(graphBuilder);
+       // DsUtils.DumpFilters(graphBuilder);
         hr = mediaCtrl.Run();
         if (hr < 0)
         {

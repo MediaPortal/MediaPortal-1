@@ -214,8 +214,8 @@ namespace MediaPortal.Player
 						}
 						//and alloc
 						hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out extraTextures[i]);
-						if (hr==0) Log.Write("AllocatorWrapper:  allocted extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
-						else Log.Write("AllocatorWrapper:failed:  allocted extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
+						if (hr==0) Log.Write("AllocatorWrapper:  allocated extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
+						else Log.Write("AllocatorWrapper:failed:  allocated extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
 					}
 					hr=0;
         }

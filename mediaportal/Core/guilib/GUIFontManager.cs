@@ -1,4 +1,4 @@
-#define USE_NEW_TEXTURE_ENGINE
+//#define USE_NEW_TEXTURE_ENGINE
 using System;
 using System.Collections;
 using System.Xml;
