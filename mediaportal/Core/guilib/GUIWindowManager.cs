@@ -16,12 +16,12 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
   public class GUIWindowManager
   {
-
+		static int					 windowCount=0;
 		public delegate void OnCallBackHandler();
 		static public event  SendMessageHandler Receivers;
 		static public event  OnActionHandler	  OnNewAction;
 		static public event  OnCallBackHandler  Callbacks;
-    static ArrayList		 m_vecWindows				= new ArrayList();
+    static GUIWindow[]	 m_vecWindows				= new GUIWindow[100];
 		static ArrayList		 m_vecThreadMessages	= new ArrayList();
 		static ArrayList		 m_vecThreadActions	= new ArrayList();
     static int					 m_iActiveWindow=-1;
@@ -45,12 +45,13 @@ namespace MediaPortal.GUI.Library
       if (message.Message==GUIMessage.MessageType.GUI_MSG_LOSTFOCUS||
           message.Message==GUIMessage.MessageType.GUI_MSG_SETFOCUS)
       {
-        for (int x=0; x < m_vecWindows.Count;++x)
+				//SLOW
+        for (int x=0; x < windowCount;++x)
         {
-          if ( ((GUIWindow)m_vecWindows[x]).DoesPostRender() && ((GUIWindow)m_vecWindows[x]).Focused)
+          if ( m_vecWindows[x].DoesPostRender() && m_vecWindows[x].Focused)
           {
-            ((GUIWindow)m_vecWindows[x]).OnMessage(message);
-            if (((GUIWindow)m_vecWindows[x]).Focused) return;
+            m_vecWindows[x].OnMessage(message);
+            if ( m_vecWindows[x].Focused) return;
           }
         }
       }
@@ -73,14 +74,14 @@ namespace MediaPortal.GUI.Library
 
       GUIWindow pWindow=null;
       GUIWindow activewindow=null;
-      if (m_iActiveWindow >= 0 && m_iActiveWindow < m_vecWindows.Count) 
+      if (m_iActiveWindow >= 0 && m_iActiveWindow < windowCount) 
       {
-        activewindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+        activewindow=m_vecWindows[m_iActiveWindow];
         if (message.SendToTargetWindow==true)
         {
-          for (int i=0; i < m_vecWindows.Count;++i)
+          for (int i=0; i < windowCount;++i)
           {
-            pWindow=(GUIWindow)m_vecWindows[i];
+            pWindow=m_vecWindows[i];
             if (pWindow.GetID==message.TargetWindowId)
             {
               pWindow.OnMessage(message);
@@ -118,17 +119,19 @@ namespace MediaPortal.GUI.Library
     static public void Add(ref GUIWindow Window)
     {
 			if (Window==null) return;
-      foreach (GUIWindow win in m_vecWindows)
+      for (int i=0; i < windowCount; ++i)
       {
-        if (win.GetID==Window.GetID)
+        if (m_vecWindows[i].GetID==Window.GetID)
         {
-          Log.Write("Window:{0} and window {1} have the same id's!!!", Window,win);
+          Log.Write("Window:{0} and window {1} have the same id's!!!", Window,m_vecWindows[i]);
           return;
         }
       }
 			//Log.Write("Add window :{0} id:{1}", Window.ToString(), Window.GetID);
-			m_vecWindows.Add(Window);
+			m_vecWindows[windowCount]=Window;
+			windowCount++;
     }
+
     static public bool IsSwitchingToNewWindow
     {
       get { return m_bSwitching;}
@@ -141,9 +144,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void ResetAllControls()
     {
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).ResetAllControls();
+        m_vecWindows[x].ResetAllControls();
       }
     }
 
@@ -153,9 +156,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void OnDeviceRestored()
     {
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).OnDeviceRestored();
+        m_vecWindows[x].OnDeviceRestored();
       }
     }
 
@@ -165,9 +168,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void OnDeviceLost()
     {
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).OnDeviceLost();
+        m_vecWindows[x].OnDeviceLost();
       }
     }
 
@@ -181,20 +184,20 @@ namespace MediaPortal.GUI.Library
       m_bSwitching=true;
       try
       {
-        for (int x=0; x < m_vecWindows.Count;++x)
+        for (int x=0; x < windowCount;++x)
         {
-          if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
+          if (m_vecWindows[x].DoesPostRender() )
           {
-            ((GUIWindow)m_vecWindows[x]).Focused=false;
+            m_vecWindows[x].Focused=false;
           }
         }      
         // deactivate any window
         GUIMessage msg;
         GUIWindow pWindow;
         int iPrevActiveWindow=m_iActiveWindow;
-        if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count)
+        if (m_iActiveWindow >=0 && m_iActiveWindow < windowCount)
         {
-          pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+          pWindow=m_vecWindows[m_iActiveWindow];
           msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iWindowID,0,null);
           pWindow.OnMessage(msg);
           m_iActiveWindow=-1;
@@ -203,18 +206,18 @@ namespace MediaPortal.GUI.Library
 				UnRoute();
 
         // activate the new window
-        for (int i=0; i < m_vecWindows.Count; i++)
+        for (int i=0; i < windowCount; i++)
         {
-          pWindow=(GUIWindow )m_vecWindows[i];
+          pWindow=m_vecWindows[i];
           if (pWindow.GetID == iWindowID) 
           {
             m_iActiveWindow=i;
             m_iActiveWindowID=iWindowID;
 
             // Check to see that this window is not our previous window
-            if (iPrevActiveWindow>=0 && iPrevActiveWindow < m_vecWindows.Count)
+            if (iPrevActiveWindow>=0 && iPrevActiveWindow < windowCount)
             {
-              GUIWindow prevWindow=(GUIWindow)m_vecWindows[iPrevActiveWindow];
+              GUIWindow prevWindow=m_vecWindows[iPrevActiveWindow];
               if (prevWindow.PreviousWindowID == iWindowID)
               {	// we are going to the lsat window - don't update it's previous window id
                 msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
@@ -247,9 +250,9 @@ namespace MediaPortal.GUI.Library
         // new window doesnt exists. (maybe .xml file is invalid or doesnt exists)
         // so we go back to the previous window
         m_iActiveWindow=iPrevActiveWindow;
-        if (m_iActiveWindow<0 || m_iActiveWindow>=m_vecWindows.Count)
+        if (m_iActiveWindow<0 || m_iActiveWindow>=windowCount)
           m_iActiveWindow=0;
-        pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+        pWindow=m_vecWindows[m_iActiveWindow];
         m_iActiveWindowID=pWindow.GetID;
         msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
         pWindow.OnMessage(msg);		
@@ -273,11 +276,11 @@ namespace MediaPortal.GUI.Library
       m_bSwitching=true;
       try
       {
-        for (int x=0; x < m_vecWindows.Count;++x)
+        for (int x=0; x < windowCount;++x)
         {
-          if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
+          if (m_vecWindows[x].DoesPostRender() )
           {
-            ((GUIWindow)m_vecWindows[x]).Focused=false;
+            m_vecWindows[x].Focused=false;
           }
         }
 
@@ -286,9 +289,9 @@ namespace MediaPortal.GUI.Library
         GUIWindow pWindow;
         int iPrevActiveWindow=m_iActiveWindow;
         int iPrevActiveWindowID=0;
-        if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count)
+        if (m_iActiveWindow >=0 && m_iActiveWindow < windowCount)
         {
-          pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+          pWindow=m_vecWindows[m_iActiveWindow];
           iPrevActiveWindowID = pWindow.PreviousWindowID;
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iPrevActiveWindowID,0,null);
           pWindow.OnMessage(msg);
@@ -299,9 +302,9 @@ namespace MediaPortal.GUI.Library
 				UnRoute();
 
         // activate the new window
-        for (int i=0; i < m_vecWindows.Count; i++)
+        for (int i=0; i < windowCount; i++)
         {
-          pWindow=(GUIWindow)m_vecWindows[i];
+          pWindow=m_vecWindows[i];
           if (pWindow.GetID == iPrevActiveWindowID) 
           {
             m_iActiveWindow=i;
@@ -315,7 +318,7 @@ namespace MediaPortal.GUI.Library
         // previous window doesnt exists. (maybe .xml file is invalid or doesnt exists)
         // so we go back to the previous window
         m_iActiveWindow=0;
-        pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+        pWindow=m_vecWindows[m_iActiveWindow];
         m_iActiveWindowID=pWindow.GetID;
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
         pWindow.OnMessage(msg);
@@ -354,24 +357,24 @@ namespace MediaPortal.GUI.Library
           action.wID == Action.ActionType.ACTION_MOVE_DOWN ||
           action.wID == Action.ActionType.ACTION_SELECT_ITEM)
       {
-        for (int x=0; x < m_vecWindows.Count;++x)
+        for (int x=0; x < windowCount;++x)
         {
-          if (((GUIWindow)m_vecWindows[x]).DoesPostRender() && ((GUIWindow)m_vecWindows[x]).Focused)
+          if ( m_vecWindows[x].Focused && m_vecWindows[x].DoesPostRender()  )
           {
             int iActiveWindow=ActiveWindow;
-            ((GUIWindow)m_vecWindows[x]).OnAction(action);
-            if (((GUIWindow)m_vecWindows[x]).Focused || iActiveWindow!=ActiveWindow) return;
+            m_vecWindows[x].OnAction(action);
+            if ( m_vecWindows[x].Focused || iActiveWindow!=ActiveWindow) return;
           }
         }
       }
 
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
       {
-        for (int x=0; x < m_vecWindows.Count;++x)
+        for (int x=0; x < windowCount;++x)
         {
-          if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
+          if ( m_vecWindows[x].DoesPostRender() )
           {
-            ((GUIWindow)m_vecWindows[x]).OnAction(action);
+            m_vecWindows[x].OnAction(action);
           }
         }
       }
@@ -394,8 +397,8 @@ namespace MediaPortal.GUI.Library
 			}
 
       // else send it to the current active window
-			if (m_iActiveWindow < 0 || m_iActiveWindow >= m_vecWindows.Count) return;
-			GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+			if (m_iActiveWindow < 0 || m_iActiveWindow >= windowCount) return;
+			GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
       if (null!=pWindow) 
       {
         pWindow.OnAction(action);
@@ -404,11 +407,11 @@ namespace MediaPortal.GUI.Library
         {
           if (pWindow.GetFocusControlId()<0)
           {
-            for (int x=0; x < m_vecWindows.Count;++x)
+            for (int x=0; x < windowCount;++x)
             {
-              if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
+              if ( m_vecWindows[x].DoesPostRender() )
               {
-                ((GUIWindow)m_vecWindows[x]).Focused=true;
+                m_vecWindows[x].Focused=true;
               }
             }
           }
@@ -436,10 +439,10 @@ namespace MediaPortal.GUI.Library
 				//render overlay layer 1-10
 				for (int iLayer=1; iLayer <= 2; iLayer++)
 				{
-					for (int x=0; x < m_vecWindows.Count;++x)
+					for (int x=0; x < windowCount;++x)
 					{
-						if (((GUIWindow)m_vecWindows[x]).DoesPostRender() )
-							((GUIWindow)m_vecWindows[x]).PostRender(iLayer);
+						if ( m_vecWindows[x].DoesPostRender() )
+							m_vecWindows[x].PostRender(iLayer);
 					}
 				}
 			}
@@ -461,7 +464,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (m_iActiveWindow >=0) 
 				{
-					GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+					GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
 					if (null!=pWindow) pWindow.Process();
 				}
 			}
@@ -488,9 +491,9 @@ namespace MediaPortal.GUI.Library
 			}
 
       // else render the current active window
-      if (m_iActiveWindow >=0 && m_iActiveWindow < m_vecWindows.Count) 
+      if (m_iActiveWindow >=0 && m_iActiveWindow < windowCount) 
       {
-        GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+        GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
         if (null!=pWindow) pWindow.Render();
       }
 
@@ -505,9 +508,9 @@ namespace MediaPortal.GUI.Library
     /// <returns>window found or null if not found</returns>
     static public GUIWindow GetWindow(int dwID)
     {
-			for (int x=0; x < m_vecWindows.Count;++x)
+			for (int x=0; x < windowCount;++x)
 			{
-				if (((GUIWindow)m_vecWindows[x]).GetID==dwID) return (GUIWindow)m_vecWindows[x];
+				if ( m_vecWindows[x].GetID==dwID) return m_vecWindows[x];
 			}
 			return null;
     }
@@ -529,8 +532,8 @@ namespace MediaPortal.GUI.Library
     /// <returns>true,false</returns>
     static public bool NeedRefresh()
     {
-      if (m_iActiveWindow < 0 || m_iActiveWindow >=m_vecWindows.Count) return false;
-      GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+      if (m_iActiveWindow < 0 || m_iActiveWindow >=windowCount) return false;
+      GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
       bool bRefresh=m_bRefresh;
       m_bRefresh=false;
       return (bRefresh|pWindow.NeedRefresh());
@@ -543,9 +546,9 @@ namespace MediaPortal.GUI.Library
     static public void Restore()
     {
       // reload all controls from the xml file
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).Restore();
+        m_vecWindows[x].Restore();
       }
     }
 
@@ -556,10 +559,10 @@ namespace MediaPortal.GUI.Library
     {
 			GUIGraphicsContext.Receivers -= new SendMessageHandler(SendThreadMessage);
       GUIGraphicsContext.OnNewAction  -= new OnActionHandler(OnActionReceived);
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).DeInit();
-        ((GUIWindow)m_vecWindows[x]).FreeResources();
+        m_vecWindows[x].DeInit();
+        m_vecWindows[x].FreeResources();
       }
       m_pRouteWindow=null;
       m_vecThreadMessages.Clear();
@@ -572,9 +575,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void Dispose()
     {
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-        ((GUIWindow)m_vecWindows[x]).FreeResources();
+        m_vecWindows[x].FreeResources();
       }
     }
 
@@ -587,9 +590,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void PreInit()
     {
-      for (int x=0; x < m_vecWindows.Count;++x)
+      for (int x=0; x < windowCount;++x)
       {
-				GUIWindow window=(GUIWindow)m_vecWindows[x];
+				GUIWindow window=m_vecWindows[x];
 				try
 				{
 					window.PreInit();
@@ -705,7 +708,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public bool Initalized
     {
-      get { return (m_vecWindows.Count>0);}
+      get { return (windowCount>0);}
     }
     
     

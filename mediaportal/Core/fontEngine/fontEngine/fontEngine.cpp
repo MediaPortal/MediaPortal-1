@@ -22,6 +22,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 #define MaxNumfontVertices 600
 #define MAX_FONTS			20
+#define MAX_FONT_CACHE      40
 
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
@@ -48,9 +49,84 @@ struct FONT_DATA_T
 	LPDIRECT3DVERTEXBUFFER9	pVertexBuffer;
 	float					textureCoord[MaxNumfontVertices][4];
 } ;
+struct FONT_CACHE_T
+{
+	int						fontNumber;
+	int						color;
+	int						xpos;
+	int						ypos;
+	LPDIRECT3DVERTEXBUFFER9	pVertexBuffer;
+	int                     dwNumTriangles;
+	DWORD                   drawn;
+	char*                   text;
+};
 
 static FONT_DATA_T*			fontData = new FONT_DATA_T[MAX_FONTS];
 static LPDIRECT3DDEVICE9	m_pDevice=NULL;	
+static FONT_CACHE_T*		fontCache=NULL;
+
+void AddToCache(int fontNumber, int color, int xpos, int ypos, LPDIRECT3DVERTEXBUFFER9 pVertexBuffer, int Triangles,char* text)
+{
+	DWORD minDrawn=9999999;
+	int   selected=0;
+	for (int i=0; i < MAX_FONT_CACHE; ++i)
+	{
+		if (fontCache[i].fontNumber==-1)
+		{
+			selected=i;
+			break;
+		}
+		if (fontCache[i].drawn < minDrawn)
+		{
+			selected=i;
+			minDrawn=fontCache[i].drawn;
+		}
+	}
+
+	fontCache[selected].fontNumber=fontNumber;
+	fontCache[selected].color=color;
+	fontCache[selected].xpos=xpos;
+	fontCache[selected].ypos=ypos;
+	fontCache[selected].pVertexBuffer=pVertexBuffer; // copy this!
+	fontCache[selected].dwNumTriangles=Triangles;
+	fontCache[selected].drawn=0;
+}
+
+LPDIRECT3DVERTEXBUFFER9 GetCache(int fontNumber,int color, int xpos, int ypos,char* text, int *Triangles)
+{
+	for (int i=0; i < MAX_FONT_CACHE; ++i)
+	{
+		if (fontCache[i].fontNumber==fontNumber &&
+			fontCache[i].xpos==xpos &&
+			fontCache[i].ypos==ypos &&
+			fontCache[i].color==color)
+		{
+			if (strcmp(fontCache[i].text,text)==0)
+			{
+				fontCache[i].drawn++;
+				*Triangles = fontCache[i].dwNumTriangles;
+				return fontCache[i].pVertexBuffer;
+			}
+		}
+	}
+	return NULL;
+}
+
+void AllocFontCache()
+{
+	if (fontCache!=NULL) return;
+	fontCache = new FONT_CACHE_T[MAX_FONT_CACHE];
+	for (int i=0; i < MAX_FONT_CACHE; ++i)
+	{
+		fontCache[i].fontNumber=-1;
+		fontCache[i].color=-1;
+		fontCache[i].xpos=-1;
+		fontCache[i].ypos=-1;
+		fontCache[i].pVertexBuffer=NULL;
+		fontCache[i].dwNumTriangles=0;
+		fontCache[i].drawn=0;
+	}
+}
 
 void AddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices)
 {
@@ -88,6 +164,11 @@ void SetCoordinate(int fontNumber, int index, int subindex, float fValue)
 	if (index < 0     || index > MaxNumfontVertices) return;
 	if (subindex < 0  || subindex > 3) return;
 	fontData[fontNumber].textureCoord[index][subindex]=fValue;
+}
+
+void Present3D()
+{
+	m_pDevice->Present(NULL,NULL,NULL,NULL);
 }
 
 void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, DWORD intColor)

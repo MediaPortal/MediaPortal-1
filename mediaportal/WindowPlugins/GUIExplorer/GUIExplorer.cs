@@ -29,7 +29,7 @@ namespace MediaPortal.GUI.GUIExplorer
 		CONTROL_MAKE_DIR				= 7,	 
 	  CONTROL_RESET_SELECT		= 8,
 		CONTROL_MARK_ALL				= 9,
-	  CONTROL_TRASHCAN				= 10,
+		CONTROL_TRASHCAN				= 10,
 		CONTROL_LIST_DIR				= 20
 	};
 
@@ -63,6 +63,10 @@ namespace MediaPortal.GUI.GUIExplorer
 	string[] pictures = new string[20]; // pictures shares folder
 	string[] pname = new string[20];		// pictures shares names
 
+	static ArrayList m_extensions	= new ArrayList();
+	private bool useVideo=false;
+	private bool useMusic=false;
+	private bool usePics =false;
 	private string tempFolder="";				// trashcan folder
 	private bool showOnlyShares=false;	// shows only shares in destination folder
 	private bool enableDelete=false;		// shows delete button
@@ -100,7 +104,6 @@ namespace MediaPortal.GUI.GUIExplorer
 
 	public override bool Init() 
 	{
-	  //Log.Write("Start My Explorer");
 	  return Load (GUIGraphicsContext.Skin+@"\myexplorer.xml");
 	}
 
@@ -120,17 +123,19 @@ namespace MediaPortal.GUI.GUIExplorer
 			{  
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// MyExplorer starts
 					base.OnMessage(message);
-					LoadShareSettings();										// loads showShares settings from XML
-					GetDrives();														// loads all drives
-					LoadSettings();													// loads all settings from XML
-
 					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(2200));
 					GUIPropertyManager.SetProperty("#explorer_title",GUILocalizeStrings.Get(2200));
 					GUIPropertyManager.SetProperty("#explorer_size"," ");
-					currentExt=Util.Utils.AudioExtensions;
-					currentExt.AddRange(Util.Utils.PictureExtensions);
-					currentExt.AddRange(Util.Utils.VideoExtensions);
+					LoadShareSettings();										// loads showShares settings from XML
+					driveCount=0;
+					driveCdCount=0;
+					GetDrives();														// loads all drives
+					LoadSettings();													// loads all settings from XML
 					ResetValues();																
+					currentExt=m_extensions;
+					if (useMusic==true) currentExt.AddRange(Util.Utils.AudioExtensions);
+					if (usePics==true) currentExt.AddRange(Util.Utils.PictureExtensions);
+					if (useVideo==true) currentExt.AddRange(Util.Utils.VideoExtensions);
 					return true;
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					//get sender control
@@ -291,6 +296,11 @@ namespace MediaPortal.GUI.GUIExplorer
 					{
 						if (currentState==States.STATE_SELECT_SOURCE) 
 						{
+							GUIControl.EnableControl(GetID,(int)Controls.CONTROL_SELECT_DEST); // you can select destination only when a file is selected
+							if(enableDelete==true)	
+							{
+								GUIControl.EnableControl(GetID,(int)Controls.CONTROL_DELETE);	// you can delete files only when a file is selected
+							}
 							int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR);
 							for (int i=0; i<count; i++) 
 							{
@@ -352,7 +362,7 @@ namespace MediaPortal.GUI.GUIExplorer
 										}
 										catch (Exception)
 										{
-											Log.Write("MyExplorer Delete Error: {0}  | {1}",f.fullpath,tempFolder);
+											Log.Write("MyExplorer Delete Error: {0} | {1}",f.fullpath,tempFolder);
 										}
 									}
 								}
@@ -675,7 +685,7 @@ namespace MediaPortal.GUI.GUIExplorer
 
 		/// <summary>
 		/// Moves or Copy a file
-		/// if mc==true copy a file otherwise move a file
+		/// if mc==false copy a file otherwise move a file
 		/// </summary>
 		
 		void Move(bool mc, string source, string name, string destination) 
@@ -687,8 +697,9 @@ namespace MediaPortal.GUI.GUIExplorer
 				{
 					GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 					dlgYesNo.SetHeading(GUILocalizeStrings.Get(2200)); 
-					dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2217));
-					dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2218));
+					dlgYesNo.SetLine(1,name);
+					dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2217));
+					dlgYesNo.SetLine(3,GUILocalizeStrings.Get(2218));
 					dlgYesNo.DoModal(GetID);
 					if (dlgYesNo.IsConfirmed) 
 					{
@@ -705,27 +716,11 @@ namespace MediaPortal.GUI.GUIExplorer
 					FileInfo fi = new FileInfo(source);
 					if (mc)
 					{
-						fi.CopyTo(destination+name,false);
+						fi.MoveTo(destination+name);
 					} 
 					else 
 					{
-						int d=Utils.getDriveType(source.Substring(0,2));
-						if (d==5) 
-						{
-							GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2200)); 
-							dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2219));
-							dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2220));
-							dlgYesNo.DoModal(GetID);
-							if (dlgYesNo.IsConfirmed) 
-							{
-								fi.CopyTo(destination+name,false);
-							}
-						} 
-						else 
-						{
-							fi.MoveTo(destination+name);
-						}
+						fi.CopyTo(destination+name,false);
 					}
 				}
 			}
@@ -736,7 +731,7 @@ namespace MediaPortal.GUI.GUIExplorer
 		}
 
 		/// <summary>
-		/// Loads only the ShowOnyShare status
+		/// Loads only the ShowOnlyShare status
 		/// </summary>
 		private void LoadShareSettings() 
 		{
@@ -754,9 +749,25 @@ namespace MediaPortal.GUI.GUIExplorer
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 			{
 				tempFolder=xmlreader.GetValueAsString("myexplorer","temp_folder","");
+				string strTmp=xmlreader.GetValueAsString("myexplorer","extensions","");
+				try 
+				{
+					Tokens tok = new Tokens(strTmp, new char[] {','} );
+					foreach (string strExt in tok)
+					{
+						m_extensions.Add(strExt.ToLower());
+					}
+				}
+				catch (Exception) 
+				{
+					m_extensions.Clear();
+				}
 				enableDelete=xmlreader.GetValueAsBool("myexplorer","enable_delete",false);
 				deleteImmed=xmlreader.GetValueAsBool("myexplorer","delete_immediately",false);
 				deleteTemp=xmlreader.GetValueAsBool("myexplorer","delete_temp",false);
+				useVideo=xmlreader.GetValueAsBool("myexplorer","use_video",false);
+				useMusic=xmlreader.GetValueAsBool("myexplorer","use_music",false);
+				usePics =xmlreader.GetValueAsBool("myexplorer","use_pic",false);
 				for (int i=0; i<20; i++) 
 				{
 					sound[i]=xmlreader.GetValueAsString("music","sharepath"+i.ToString()," ").Trim();		

@@ -114,7 +114,7 @@
 				<posX>60</posX>
 				<posY>267</posY>
 				<label>2204</label>
-				<onleft>5</onleft>
+				<onleft>2</onleft>
 				<onright>20</onright>
 				<onup>6</onup>
 				<ondown>8</ondown>
@@ -126,7 +126,7 @@
 				<posX>60</posX>
 				<posY>301</posY>
 				<label>2205</label>
-				<onleft>5</onleft>
+				<onleft>2</onleft>
 				<onright>20</onright>
 				<onup>7</onup>
 				<ondown>9</ondown>
@@ -138,10 +138,10 @@
 				<posX>60</posX>
 				<posY>335</posY>
 				<label>2206</label>
-				<onleft>6</onleft>
+				<onleft>2</onleft>
 				<onright>20</onright>
 				<onup>8</onup>
-				<ondown>2</ondown>
+				<ondown>10</ondown>
 			</control>
 			<control>
 				<description>trashcan</description>
@@ -150,9 +150,9 @@
 				<posX>60</posX>
 				<posY>369</posY>
 				<label>2223</label>
-				<onleft>6</onleft>
+				<onleft>2</onleft>
 				<onright>20</onright>
-				<onup>8</onup>
+				<onup>9</onup>
 				<ondown>2</ondown>
 			</control>
 		</control>

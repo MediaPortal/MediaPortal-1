@@ -2181,6 +2181,58 @@
 	<value>No TVGuide data available</value>
 </string>
 <string>
+	<id>737</id>
+	<value>View: Satellite</value>
+</string>
+<string>
+	<id>738</id>
+	<value>View: Temperature</value>
+</string>
+<string>
+	<id>739</id>
+	<value>View: UV Index</value>
+</string>
+<string>
+	<id>740</id>
+	<value>View: Winds</value>
+</string>
+<string>
+	<id>741</id>
+	<value>View: Humidity</value>
+</string>
+<string>
+	<id>742</id>
+	<value>View: Precipitation</value>
+</string>
+<string>
+	<id>743</id>
+	<value>4 Day Forecast</value>
+</string>
+<string>
+	<id>744</id>
+	<value>Sun Rise</value>
+</string>
+<string>
+	<id>745</id>
+	<value>Sun Set</value>
+</string>
+<string>
+	<id>746</id>
+	<value>High</value>
+</string>
+<string>
+	<id>747</id>
+	<value>Low</value>
+</string>
+<string>
+	<id>748</id>
+	<value>Precipitation</value>
+</string>
+<string>
+	<id>750</id>
+	<value>Images</value>
+</string>
+<string>
 	<id>800</id>
 	<value>Starts with</value>
 </string>
