@@ -44,6 +44,7 @@ namespace MediaPortal.TV.Recording
     static bool          m_bWasRecording=false;
     static int           m_RecPrevRecordingId=-1;
     static string        m_strRecPath="";
+    static DateTime      m_dtStart=DateTime.Now;
 
     /// <summary>
     /// singleton. Dont allow any instance of this class so make the constructor private
@@ -661,7 +662,8 @@ namespace MediaPortal.TV.Recording
     static public void Process()
     {
       if (m_eState!=State.Initialized) return;
-      //Recorder.HandleTimeShifting();
+      TimeSpan ts=DateTime.Now-m_dtStart;
+      if (ts.TotalMilliseconds<1000) return;
       Recorder.HandleRecordings();
       for (int i=0; i < m_tvcards.Count;++i)
       {
@@ -669,6 +671,7 @@ namespace MediaPortal.TV.Recording
         dev.Process();
       }
       Recorder.SetProperties();
+      m_dtStart=DateTime.Now;
     }
 
     /// <summary>
