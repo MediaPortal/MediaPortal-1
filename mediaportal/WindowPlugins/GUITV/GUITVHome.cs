@@ -119,25 +119,33 @@ namespace MediaPortal.GUI.TV
 						//yes, are we recording this channel already ?
 						if (!Recorder.IsRecordingChannel(channel))
 						{
-							GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-							if (pDlgOK!=null)
+							TVProgram prog=m_util.GetCurrentProgram(channel);
+							if (prog!=null)
 							{
-								pDlgOK.SetHeading(605);//my tv
-								pDlgOK.AddLocalizedString(875); //current program
-								pDlgOK.AddLocalizedString(876); //till manual stop
-								pDlgOK.DoModal(this.GetID);
-								switch (pDlgOK.SelectedId)
+								GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+								if (pDlgOK!=null)
 								{
-									case 875:
-										//record current program
-										Recorder.RecordNow(channel,false);
-										break;
+									pDlgOK.SetHeading(605);//my tv
+									pDlgOK.AddLocalizedString(875); //current program
+									pDlgOK.AddLocalizedString(876); //till manual stop
+									pDlgOK.DoModal(this.GetID);
+									switch (pDlgOK.SelectedId)
+									{
+										case 875:
+											//record current program
+											Recorder.RecordNow(channel,false);
+											break;
 
-									case 876:
-										//manual record
-										Recorder.RecordNow(channel,true);
-										break;
+										case 876:
+											//manual record
+											Recorder.RecordNow(channel,true);
+											break;
+									}
 								}
+							}
+							else
+							{
+								Recorder.RecordNow(channel,true);
 							}
 						}
 					}
@@ -340,25 +348,34 @@ namespace MediaPortal.GUI.TV
 						if (!Recorder.IsRecordingChannel(Navigator.CurrentChannel))
 						{
 							//no then start recording
-							GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-							if (pDlgOK!=null)
+							TVProgram prog=m_util.GetCurrentProgram(Navigator.CurrentChannel);
+							if (prog!=null)
 							{
-								pDlgOK.SetHeading(605);//my tv
-								pDlgOK.AddLocalizedString(875); //current program
-								pDlgOK.AddLocalizedString(876); //till manual stop
-								pDlgOK.DoModal(this.GetID);
-								switch (pDlgOK.SelectedId)
+								GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+								if (pDlgOK!=null)
 								{
-									case 875:
-										//record current program
-										Recorder.RecordNow(Navigator.CurrentChannel,false);
-										break;
+									pDlgOK.SetHeading(605);//my tv
+									pDlgOK.AddLocalizedString(875); //current program
+									pDlgOK.AddLocalizedString(876); //till manual stop
+									pDlgOK.DoModal(this.GetID);
+									switch (pDlgOK.SelectedId)
+									{
+										case 875:
+											//record current program
+											Recorder.RecordNow(Navigator.CurrentChannel,false);
+											break;
 
-									case 876:
-										//manual record
-										Recorder.RecordNow(Navigator.CurrentChannel,true);
-										break;
+										case 876:
+											//manual record
+											Recorder.RecordNow(Navigator.CurrentChannel,true);
+											break;
+									}
 								}
+							}
+							else
+							{
+								//manual record
+								Recorder.RecordNow(Navigator.CurrentChannel,true);
 							}
 						}
 						else
