@@ -272,8 +272,8 @@ namespace MediaPortal.TV.Recording
 								newBitRate.dwPeak       =2200;   //4.5 mbps
 								break;
 							case 1://medium
-								newBitRate.wBitrate     =4*400;  //6 mbps
-								newBitRate.dwPeak       =6*400; //12 mbps
+								newBitRate.wBitrate     =4*400;  //4 mbps
+								newBitRate.dwPeak       =6*400;  //6 mbps
 								break;
 								
 							case 2://hi

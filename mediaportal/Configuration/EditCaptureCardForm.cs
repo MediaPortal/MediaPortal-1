@@ -1085,9 +1085,9 @@ namespace MediaPortal.Configuration
 			// comboBoxQuality
 			// 
 			this.comboBoxQuality.Items.AddRange(new object[] {
-																												 "Low",
-																												 "Medium",
-																												 "High"});
+																												 "Low (VBR 2-4.5 MBPS)",
+																												 "Medium (VBR 4-6 MBPS)",
+																												 "High (VBR 8-12 MBPS)"});
 			this.comboBoxQuality.Location = new System.Drawing.Point(96, 48);
 			this.comboBoxQuality.Name = "comboBoxQuality";
 			this.comboBoxQuality.Size = new System.Drawing.Size(121, 21);
