@@ -266,8 +266,11 @@ namespace MediaPortal.TV.Recording
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
 
-			Vmr9.RemoveVMR9();
-			Vmr9=null;
+      if (Vmr9!=null)
+      {
+        Vmr9.RemoveVMR9();
+        Vmr9=null;
+      }
 
       if (m_videoprocamp!=null)
       {
@@ -593,8 +596,7 @@ namespace MediaPortal.TV.Recording
       
 			m_graphState=State.Viewing;
 			TuneChannel(standard, iChannelNr);
-			if (!Vmr9.UseVMR9inMYTV)
-				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
+				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9.UseVMR9inMYTV);
 
       
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);

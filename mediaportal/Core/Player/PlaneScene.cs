@@ -113,9 +113,21 @@ namespace MediaPortal.Player
           nw = GUIGraphicsContext.OverScanWidth;
           nh = GUIGraphicsContext.OverScanHeight;
         }
-        else if (!g_Player.IsTV)
+        else 
         {
-          if (!GUIGraphicsContext.Overlay) return false;
+          bool inTV=false;
+          int windowId=GUIWindowManager.ActiveWindow;
+          if (windowId==(int)GUIWindow.Window.WINDOW_TV||
+            windowId==(int)GUIWindow.Window.WINDOW_TVGUIDE||  
+            windowId==(int)GUIWindow.Window.WINDOW_SEARCHTV||  
+            windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||  
+            windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV)
+            inTV=true;
+
+          if (!inTV)
+          {
+            if (!GUIGraphicsContext.Overlay) return false;
+          }
         }
         if (nw <= 10 || nh <= 10) return false;
         if (x < 0 || y < 0) return false;

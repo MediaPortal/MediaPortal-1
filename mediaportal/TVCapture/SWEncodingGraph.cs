@@ -332,8 +332,11 @@ namespace MediaPortal.TV.Recording
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
 
-			Vmr9.RemoveVMR9();
-			Vmr9=null;
+      if (Vmr9!=null)
+      {
+        Vmr9.RemoveVMR9();
+        Vmr9=null;
+      }
 
       if (m_videoprocamp!=null)
       {

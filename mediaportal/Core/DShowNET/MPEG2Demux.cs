@@ -194,7 +194,7 @@ namespace DShowNET
 		/// Will start the graph and create a new overlay window to show the live-tv in
 		/// </summary>
 		/// <param name="windowHandle">handle to parent window</param>
-    public void StartViewing(IntPtr windowHandle)
+    public void StartViewing(IntPtr windowHandle,bool UseVMR9)
     {
 			// if the video window already has been created, but is hidden right now
 			// then just show it and start the graph
@@ -204,8 +204,11 @@ namespace DShowNET
         DirectShowUtil.DebugWrite("mpeg2:StartViewing()");
 
 				//show video overlay window
-        if (m_videoWindow!=null)
-          m_videoWindow.put_Visible( DsHlp.OATRUE );
+        if (!UseVMR9)
+        {
+          if (m_videoWindow!=null)
+            m_videoWindow.put_Visible( DsHlp.OATRUE );
+        }
 
 				// start graph
         if (m_mediaControl!=null && !m_bRunning)
@@ -236,29 +239,32 @@ namespace DShowNET
       else
         DirectShowUtil.DebugWrite("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 
-      // get the interfaces of the overlay window
-			m_videoWindow = m_graphBuilder as IVideoWindow;
-      m_basicVideo  = m_graphBuilder as IBasicVideo2;
-      if (m_videoWindow!=null)
+      if (!UseVMR9)
       {
-				// set the properties of the overlay window
-        hr = m_videoWindow.put_Owner( windowHandle );
-        if( hr != 0 ) 
-          DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window:0x{0:X}",hr);
+        // get the interfaces of the overlay window
+        m_videoWindow = m_graphBuilder as IVideoWindow;
+        m_basicVideo  = m_graphBuilder as IBasicVideo2;
+        if (m_videoWindow!=null)
+        {
+          // set the properties of the overlay window
+          hr = m_videoWindow.put_Owner( windowHandle );
+          if( hr != 0 ) 
+            DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window:0x{0:X}",hr);
 
-        hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-        if( hr != 0 ) 
-          DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window style:0x{0:X}",hr);
+          hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+          if( hr != 0 ) 
+            DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window style:0x{0:X}",hr);
 
-				// make the overlay window visible
-        m_bOverlayVisible=true;
-        hr = m_videoWindow.put_Visible( DsHlp.OATRUE );
-        if( hr != 0 ) 
-          DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible:0x{0:X}",hr);
-      }
-      else 
-      {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED:could not get IVideoWindow");
+          // make the overlay window visible
+          m_bOverlayVisible=true;
+          hr = m_videoWindow.put_Visible( DsHlp.OATRUE );
+          if( hr != 0 ) 
+            DirectShowUtil.DebugWrite("mpeg2:FAILED:put_Visible:0x{0:X}",hr);
+        }
+        else 
+        {
+          DirectShowUtil.DebugWrite("mpeg2:FAILED:could not get IVideoWindow");
+        }
       }
 
 			// start the graph so we actually get to see the video
