@@ -94,6 +94,8 @@ namespace MediaPortal.TV.Recording
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
+		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
+		public static extern int SetupDemuxer(IPin videoPin,IPin audioPin,int audio,int video);
 
 		enum State
 		{ 
@@ -2350,6 +2352,7 @@ namespace MediaPortal.TV.Recording
 				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 				if (mpeg2Demuxer!=null)
 				{
+					SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
 					Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
 					for (int pin=0; pin < 5; pin++)
 					{	
