@@ -1,17 +1,6 @@
 Skin, gfx & media:
-  - need logo gfx for (fullscreen video) rewind 1x, 2x, 4x, 8x, 16x, 32x,
-  - keymap.xml : need to fill in all <sound> tags for all actions/keys
-  - my radio 
-     - need my radio gfx in home
-     - need gfx in my radio
-     - .xml for my radio
-     - need new default icons for normal & internet radio streams (both small & big)
-  - my programs/emulators/...
-     - need gfx in my programs/emulators/games...
-     - .xml for my programs/emulators/games
-  - need graphics & .xml for 'mouse control OSD' which slides in when cursor hits bottom of window/screen
-  - need new a new .xml (ala DialogAlbumInfo.xml or DialogVideoInfo.xml) to show information about 
-    artists (for audio) or actors (for video)
+  - my tv    : need new progress bar to show all timeshifting info (we need new .xml & graphics)
+  - my videos: show IMDB info in video OSD. (we need new .xml & graphics) 
 --------------------------------------------------------------------------------------------------------------     
 My Radio:
   
