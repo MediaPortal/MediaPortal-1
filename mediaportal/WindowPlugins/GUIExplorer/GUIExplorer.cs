@@ -77,8 +77,7 @@ namespace MediaPortal.GUI.GUIExplorer
 	public override bool Init() 
 	{
 	  Log.Write("Start My Explorer");
-		GetDrives(true);
-		GetDrives(false);
+		GetDrives();
 	  return Load (GUIGraphicsContext.Skin+@"\myexplorer.xml");
 	}
 
@@ -442,50 +441,14 @@ namespace MediaPortal.GUI.GUIExplorer
 		/// <summary>
 		/// fills the drive array. 3=HD 5=CD
 		/// </summary>
-		private void GetDrives(bool cd) 
+		private void GetDrives() 
 		{
-			ManagementObjectSearcher query;
-			ManagementObjectCollection queryCollection;
-			System.Management.ObjectQuery oq;
-			string stringMachineName = "localhost";
-			string lw;
-			int m;
-			char d='C';
-			for (int i=0; i<10; i++) 
+			driveCdCount=0;
+			string[] drives = Environment.GetLogicalDrives();
+			foreach(string drive in drives)
 			{
-				m=0;
-				lw=d+":";
-				//Connect to the remote computer
-				ConnectionOptions co = new ConnectionOptions();
-
-				//Point to machine
-				System.Management.ManagementScope ms = new System.Management.ManagementScope("\\\\" + stringMachineName + "\\root\\cimv2", co);
-
-				oq = new System.Management.ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID = '"+lw+"'");
-				query = new ManagementObjectSearcher(ms,oq);
-				queryCollection = query.Get();
-				foreach ( ManagementObject mo in queryCollection) 
-				{
-					m=Convert.ToInt32(mo["DriveType"]);
-				}
-				if (cd==true) 
-				{
-					if (m==5) m=3;
-					if (m==3 || m==4 || m==2) 
-					{
-						drivesCd[driveCdCount]=d+":\\";
-						driveCdCount++;
-					}
-				} 
-				else 
-				{
-					if (m==3 || m==4 || m==2) 
-					{
-						drives[driveCount]=d+":\\";
-						driveCount++;
-					}
-				}
-				d++;
+				drivesCd[driveCdCount]=drive;
+				driveCdCount++;
 			}
 		}
 
