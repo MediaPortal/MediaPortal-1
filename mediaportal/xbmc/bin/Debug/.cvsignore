@@ -8,3 +8,10 @@ plugins
 database
 MediaPortal.log
 thumbs
+language
+skin
+weather
+xmltv
+capturecards.xml
+keymap.xml
+mplogo.gif
