@@ -2692,7 +2692,6 @@ namespace MediaPortal.TV.Recording
 					m_teleText.SaveData((IntPtr)pointer);
 				}
 			}
-			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
 		}
 
