@@ -10,7 +10,7 @@ Cosmetic bugs:
 crash/things not working Bugs:
   21-08-2004 Pictures	: Streaming radio station stops when viewing a picture
   21-08-2004 Pictures	: single picture view is not AR compensated
-  19-08-2004 GUI	: progressbar is not moved with OSD calibration (#percentage tag)
+  19-08-2004 GUI		: progressbar is not moved with OSD calibration (#percentage tag)
   18-08-2004 my tv      : duration of recordings is wrong
   18-08-2004 my tv      : unable to view/record SECAM?
   18-08-2004 GUI        : textboxscrollup shows the first line briefly on the last line when using cursorkeys. Easy to see in the TVhome when you have a program description on screen.

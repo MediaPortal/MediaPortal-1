@@ -1,3 +1,5 @@
+22-07-2004  my video    : fixed : video with vmr9 was blocky until you did pause
+
 21-07-2004  my tv       : added : SW encoding cards: select audio input of your soundcard
 21-07-2004  my tv       : fixed : SW encoding cards: Recording to WMV 7,8 or 9 format didnt not work
 21-07-2004  my tv       : fixed : SW encoding cards: disabled tvcard AUDIO AUX inputs in favor of the AUDIO Line In inputs
