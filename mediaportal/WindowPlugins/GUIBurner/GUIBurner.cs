@@ -123,7 +123,7 @@ namespace MediaPortal.GUI.GUIBurner
 
 		private string recordpath1="";  // for TV card 1
 		private string recordpath2="";	// for TV card 2
-		//private int recordCards=0;
+		private int recordCards=0;
 		private int recorder;
 		private ArrayList files = new ArrayList();
 		private string tmpFolder;
@@ -417,6 +417,16 @@ namespace MediaPortal.GUI.GUIBurner
 									currentFolder=recordpath1;
 									LoadListControl(currentFolder,currentExt);
 								} 
+								if (shareName==GUILocalizeStrings.Get(2144)) // if two tv cards installed
+	 							{
+									currentFolder=recordpath1;
+									LoadListControl(currentFolder,currentExt);
+								} 
+								if (shareName==GUILocalizeStrings.Get(2145)) 
+								{
+									currentFolder=recordpath2;
+									LoadListControl(currentFolder,currentExt);
+								} 
 								else 
 								{
 									for (int i=0; i<20; i++) 
@@ -509,6 +519,7 @@ namespace MediaPortal.GUI.GUIBurner
 			ArrayList     m_tvcards    = new ArrayList();
 			dvr_extensions.Clear();
 			dvr_extensions.Add(".dvr-ms");
+			recordCards=0;
 		
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 			{
@@ -544,14 +555,14 @@ namespace MediaPortal.GUI.GUIBurner
 							if (i==0) 
 							{
 								recordpath1=card.RecordingPath;
-//								recordCards=1;
+								recordCards=1;
 							}
 							if (i==1) 
 							{
 								recordpath2=card.RecordingPath;
 								if (recordpath1!=recordpath2)
 								{
-//									recordCards=2;
+									recordCards=2;
 								}
 							}
 						}
@@ -1075,8 +1086,15 @@ namespace MediaPortal.GUI.GUIBurner
 					burnClass= new XPBurn.XPBurnCD();
 					burnClass.BurnerDrive = burnClass.RecorderDrives[recorder].ToString();
 				}
-				drives[driveCount++]="["+GUILocalizeStrings.Get(2133)+"]";
-
+				if(recordCards==1) 
+				{
+					drives[driveCount++]="["+GUILocalizeStrings.Get(2133)+"]";
+				} 
+				else if (recordCards==2) 
+				{
+					drives[driveCount++]="["+GUILocalizeStrings.Get(2144)+"]";
+					drives[driveCount++]="["+GUILocalizeStrings.Get(2145)+"]";
+				}
 				for (int i=0; i<20; i++) 
 				{
 					sound[i]=xmlreader.GetValueAsString("music","sharepath"+i.ToString()," ").Trim();		
