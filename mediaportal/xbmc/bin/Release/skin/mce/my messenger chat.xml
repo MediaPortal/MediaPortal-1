@@ -14,6 +14,13 @@
 			<texture>background.png</texture>
 		</control>
 		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>20</posY>
+			<texture>messenger_logo.png</texture>
+		</control>
+		<control>
 			<description>status</description>
 			<type>label</type>
 			<id>2</id>
@@ -36,6 +43,30 @@
 			<onright>51</onright>
 			<onup>2</onup>
 			<ondown>2</ondown>
-			</control>
+		</control>
+		<control>
+			<description>sms input</description>
+			<type>smsinput</type>
+			<id>51</id>
+			<posX>490</posX>
+			<posY>350</posY>
+			<width>200</width>
+			<height>100</height>
+			<onleft>51</onleft>
+			<onright>51</onright>
+			<onup>2</onup>
+			<ondown>2</ondown>
+			<font>font14</font>
+			<textcolor>ffffffff</textcolor>
+			<font>font13</font>
+			<textcolor2>ffAAAAAA</textcolor2>
+			<textboxFont>font13</textboxFont>
+			<textboxXpos>80</textboxXpos>
+			<textboxYpos>350</textboxYpos>
+			<textboxWidth>400</textboxWidth>
+			<textboxHeight>22</textboxHeight>
+			<textboxColor>FF000000</textboxColor>
+			<textboxBgColor>ffffffff</textboxBgColor>
+		</control>
 	</controls>
 </window>

@@ -45,6 +45,14 @@ namespace MediaPortal.GUI.MSN
           base.OnMessage(message);
           GUIMSNPlugin.CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MessageReceived);
           GUIControl.ClearControl(GetID,(int)Controls.List);
+          for (int i=0; i < 30;++i)
+          {
+            GUIListItem item=new GUIListItem("");
+            item.IsFolder=false;
+            GUIControl.AddListItemControl(GetID,(int)Controls.List,item);
+          }
+          GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
+          list.ScrollToEnd();
           if (g_Player.Playing && !g_Player.Paused)
           {
             if (g_Player.IsVideo || g_Player.IsDVD) g_Player.Pause();
