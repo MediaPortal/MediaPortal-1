@@ -349,6 +349,12 @@ namespace MediaPortal.GUI.Library
 							// Cleanup and free resources
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 						{
+              if (m_dwPreviousWindowId != -1)
+              {
+                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId));
+                GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId);
+              }
+
 							Log.Write( "window:{0} deinit", this.ToString());
 							FreeResources();
 							DeInitControls();
