@@ -148,9 +148,16 @@ namespace MediaPortal.Configuration
 			Log.Write("compare");
 			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
 			{
+
 				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
+					if( ((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
+					{
+						if (ccd.CommercialName=="General S/W encoding card" ) continue;
+						if (ccd.CommercialName=="General MCE card" ) continue;
+					}
+
 					bool add=false;
 					if (ccd.CaptureName==String.Empty) 
 					{
