@@ -434,24 +434,24 @@ namespace MediaPortal.Configuration.Sections
         if (videoCodec==String.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
-          bool interVideoFound=true;
-          bool CyberlinkFound=true;
+          bool Mpeg2DecFilterFound=true;
+					bool DScalerFilterFound=true;
           if (availableVideoFilters.Count>0)
           {
             videoCodec=(string)availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
-              if (filter.Equals("InterVideo Video Decoder"))
+              if (filter.Equals("Mpeg2Dec Filter"))
               {
-                interVideoFound=true;
+                Mpeg2DecFilterFound=true;
               }
-              if (filter.Equals("CyberLink Video/SP Decoder"))
+              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
               {
-                CyberlinkFound=true;
+                DScalerFilterFound=true;
               }
             }
-            if (interVideoFound) videoCodec="InterVideo Video Decoder";
-            else if (CyberlinkFound) videoCodec="CyberLink Video/SP Decoder";
+            if (Mpeg2DecFilterFound) videoCodec="Mpeg2Dec Filter";
+            else if (DScalerFilterFound) videoCodec="DScaler Mpeg2 Video Decoder";
           }
         }
 				audioCodecComboBox.SelectedItem = audioCodec;
