@@ -1,10 +1,110 @@
 using System;
 using System.Runtime.InteropServices;
+using DShowNET;
 
-
-namespace DShowNET
+namespace DShowNET.BDA
 {
-/*	public struct CONNECTDATA
+
+	[ComImport,
+	Guid("00020404-0000-0000-C000-000000000046"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEnumVARIANT 
+	{
+		[PreserveSig]
+		int Next( [In] int celt,
+						  [Out] out object rgVar, //, size_is(celt), length_is(*pCeltFetched)] VARIANT * rgVar,
+							[Out] out int pCeltFetched
+																																			);
+
+		[PreserveSig]
+		int RemoteNext([In] int celt,
+									 [Out] out object rgVar,//size_is(celt), length_is(*pCeltFetched)] VARIANT * rgVar,
+									 [Out] out int pCeltFetched);
+
+		[PreserveSig]
+		int Skip([In] int celt);
+
+		[PreserveSig]
+		int Reset();
+
+		[PreserveSig]
+		int Clone([Out] out IEnumVARIANT ppEnum);
+	}
+
+
+	[ComImport,
+	Guid("88EC5E58-BB73-41d6-99CE-66C524B8B591"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IGuideDataProperty 
+	{
+		[PreserveSig]
+		int Name([Out] out object pbstrName);
+		[PreserveSig]
+		int Language([Out] out int idLang);
+		[PreserveSig]
+		int Value([Out] out object pvar);
+	}
+
+	[ComImport,
+	Guid("AE44423B-4571-475c-AD2C-F40A771D80EF"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEnumGuideDataProperties 
+	{
+		[PreserveSig]
+		int Next([In] int celt, [Out] out IGuideDataProperty ppprop, [Out] out int pcelt);
+		[PreserveSig]
+		int Skip([In] int celt);
+		[PreserveSig]
+		int Reset();
+		[PreserveSig]
+		int Clone([Out] out IEnumGuideDataProperties ppenum);
+	}
+
+	[ComImport,
+	Guid("1993299C-CED6-4788-87A3-420067DCE0C7"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEnumTuneRequests 
+	{
+		[PreserveSig]
+		int Next([In] int celt, [Out] out TunerLib.ITuneRequest ppprop, [Out] out int pcelt);
+		[PreserveSig]
+		int Skip([In] int celt);
+		[PreserveSig]
+		int Reset();
+		[PreserveSig]
+		int Clone([Out] out IEnumTuneRequests ppenum);
+	}
+
+	[ComImport,
+	Guid("61571138-5B01-43cd-AEAF-60B784A0BF93"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IGuideData 
+	{
+		[PreserveSig]
+		int GetServices ([Out]  out IEnumTuneRequests ppEnumTuneRequests);
+		
+		[PreserveSig]
+		int GetServiceProperties ([In]       TunerLib.ITuneRequest							pTuneRequest,
+														  [Out]  out IEnumGuideDataProperties ppEnumProperties);
+		
+		[PreserveSig]
+		int GetGuideProgramIDs ([Out]  out IEnumVARIANT pEnumPrograms);
+
+		
+		[PreserveSig]
+		int GetProgramProperties ([In]   object varProgramDescriptionID,
+															[Out]  out IEnumGuideDataProperties ppEnumProperties);
+		
+		[PreserveSig]
+		int GetScheduleEntryIDs ( [Out]  out IEnumVARIANT pEnumScheduleEntries);
+		
+		[PreserveSig]
+		int GetScheduleEntryProperties ( [In]   object varScheduleEntryDescriptionID,
+																		 [Out]  out IEnumGuideDataProperties ppEnumProperties);
+	}
+	
+	
+	/*	public struct CONNECTDATA
 	{
 		IUnknown *  pUnk;
 		int       dwCookie;
@@ -13,7 +113,6 @@ namespace DShowNET
 	[ComImport,
 	Guid("B196B287-BAB4-101A-B69C-00AA00341D07"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-
 	public interface IEnumConnections 
 	{
 		[PreserveSig]

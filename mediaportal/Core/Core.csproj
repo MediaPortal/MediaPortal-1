@@ -193,6 +193,14 @@
                     AssemblyName = "Interop.WMEncoderLib"
                     HintPath = "..\Interop.WMEncoderLib.dll"
                 />
+                <Reference
+                    Name = "TunerLib"
+                    Guid = "{9B085638-018E-11D3-9D8E-00C04F72D980}"
+                    VersionMajor = "1"
+                    VersionMinor = "0"
+                    Lcid = "0"
+                    WrapperTool = "tlbimp"
+                />
             </References>
         </Build>
         <Files>
