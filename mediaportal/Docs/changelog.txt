@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  02-06-2004  general     : fixed : setup/tvcapture disable not-needed options for mpeg2 capture cards
   02-06-2004  general     : fixed : window uses wrong resolution, 720x569 instead of 720x576 when using other than classic look in XP
   02-06-2004  my tv       : added : tvguide colors/genre are now optional (set on/off in the setup)
   02-06-2004  my music    : fixed : eject cd button
