@@ -107,7 +107,6 @@ namespace MediaPortal.Player
 								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
 								dvdHelper.Reset(path);
 							}
-							Marshal.FreeCoTaskMem(ptrFolder);
 
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 								
