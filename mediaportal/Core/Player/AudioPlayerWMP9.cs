@@ -234,7 +234,7 @@ namespace MediaPortal.Player
 
     private void OnPlayStateChange(object sender, AxMicrosoft.MediaPlayer.Interop._WMPOCXEvents_PlayStateChangeEvent e)
     {
-      Debug.WriteLine(m_player.playState.ToString());
+      if (m_player==null) return;
       switch (m_player.playState)
       {
         case Microsoft.MediaPlayer.Interop.WMPPlayState.wmppsStopped:
@@ -250,9 +250,11 @@ namespace MediaPortal.Player
       
       Log.Write("Audioplayer:ended {0} {1}", m_strCurrentFile,bManualStop);
       m_strCurrentFile="";
-      m_player.Visible=false;
-      m_player.PlayStateChange -= new AxMicrosoft.MediaPlayer.Interop._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
-
+      if (m_player!=null)
+      {
+        m_player.Visible=false;
+        m_player.PlayStateChange -= new AxMicrosoft.MediaPlayer.Interop._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+      }
       //GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying=false;
       if (!bManualStop)

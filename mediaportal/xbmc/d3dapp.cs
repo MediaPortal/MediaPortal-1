@@ -1990,7 +1990,14 @@ namespace MediaPortal
 
     void HandleMessage()
     {
-      System.Windows.Forms.Application.DoEvents();
+      try
+      {
+        System.Windows.Forms.Application.DoEvents();
+      }
+      catch (Exception ex)
+      {
+          Log.Write("exception:{0}",ex.ToString());
+      }
     }
 
     /// <summary>

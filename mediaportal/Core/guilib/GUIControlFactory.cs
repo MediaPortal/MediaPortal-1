@@ -122,65 +122,117 @@ namespace MediaPortal.GUI.Library
 		{
 			try
 			{
-				if (type == typeof (string))
-					return valueText;
-				if (type == typeof (int))
-					return System.Int32.Parse(valueText);
-				if (type == typeof (long))
-					return System.Int64.Parse(valueText, NumberStyles.HexNumber);
-				if (type == typeof (bool))
-					if (valueText == "off" || valueText == "no" || valueText == "disabled") 
-						return false;
-					else 
-						return true;
-				if (type == typeof (GUIControl.Alignment))
-				{
-					switch (valueText)
-					{
-						case "right" :
-							return GUIControl.Alignment.ALIGN_RIGHT;
-						case "center" :
-							return GUIControl.Alignment.ALIGN_CENTER;
-						default:
-							return GUIControl.Alignment.ALIGN_LEFT;
-					}
-				}
-				if (type == typeof (Animator.AnimationType))
-				{
-					switch (valueText.ToLower())
-					{
-						case "flyinfromleft":
-							return Animator.AnimationType.FlyInFromLeft;
-						case "flyinfromright":
-							return Animator.AnimationType.FlyInFromRight;
-						case "flyinfromtop":
-							return Animator.AnimationType.FlyInFromTop;
-						case "flyinfrombottom":
-              return Animator.AnimationType.FlyInFromBottom;
-            case "zoominfrommiddle":
-            return Animator.AnimationType.ZoomInFromMiddle;
-					}
-				}
-				if (type == typeof(GUISpinControl.SpinType))
-				{
-					switch (valueText.ToLower())
-					{
-						case "int": 
-							return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-						case "float":
-							return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
-						default: 
-							return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
-					}
-				}
-				if (type == typeof(GUISpinControl.eOrientation))
-				{
-					switch (valueText.ToLower())
-					{
-						case "vertical": return GUISpinControl.eOrientation.Vertical;
-						default: return GUISpinControl.eOrientation.Horizontal;
-					}
-				}
+        try
+        {
+          if (type == typeof (string))
+            return valueText;
+        }
+        catch (Exception) 
+        { 
+          return String.Empty;
+        }
+        try
+        {
+          if (type == typeof (int))
+            return System.Int32.Parse(valueText);
+          if (type == typeof (long))
+            return System.Int64.Parse(valueText, NumberStyles.HexNumber);
+        }
+        catch(Exception)
+        {
+          return 0;
+        }
+        try
+        {
+          if (type == typeof (bool))
+            if (valueText == "off" || valueText == "no" || valueText == "disabled") 
+              return false;
+            else 
+              return true;
+        }
+        catch(Exception)
+        {
+          return false;
+        }
+        try
+        {
+          if (type == typeof (GUIControl.Alignment))
+          {
+            switch (valueText)
+            {
+              case "right" :
+                return GUIControl.Alignment.ALIGN_RIGHT;
+              case "center" :
+                return GUIControl.Alignment.ALIGN_CENTER;
+              default:
+                return GUIControl.Alignment.ALIGN_LEFT;
+            }
+          }
+        }
+        catch(Exception)
+        {
+          return GUIControl.Alignment.ALIGN_LEFT;
+        }
+
+
+        try
+        {
+          if (type == typeof (Animator.AnimationType))
+          {
+            switch (valueText.ToLower())
+            {
+              case "flyinfromleft":
+                return Animator.AnimationType.FlyInFromLeft;
+              case "flyinfromright":
+                return Animator.AnimationType.FlyInFromRight;
+              case "flyinfromtop":
+                return Animator.AnimationType.FlyInFromTop;
+              case "flyinfrombottom":
+                return Animator.AnimationType.FlyInFromBottom;
+              case "zoominfrommiddle":
+                return Animator.AnimationType.ZoomInFromMiddle;
+            }
+          }
+        }
+        catch(Exception)
+        {
+          return Animator.AnimationType.FlyInFromLeft;
+        }
+        try
+        {
+          if (type == typeof(GUISpinControl.SpinType))
+          {
+            switch (valueText.ToLower())
+            {
+              case "int": 
+                return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+              case "float":
+                return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+              default: 
+                return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+            }
+          }
+        }
+        catch(Exception)
+        {
+          return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+        }
+
+        try
+        {
+          if (type == typeof(GUISpinControl.eOrientation))
+          {
+            switch (valueText.ToLower())
+            {
+              case "vertical": return GUISpinControl.eOrientation.Vertical;
+              default: return GUISpinControl.eOrientation.Horizontal;
+            }
+          }
+        }
+        catch(Exception)
+        {
+          return GUISpinControl.eOrientation.Horizontal;
+        }
 			
 				return null;
 			}
