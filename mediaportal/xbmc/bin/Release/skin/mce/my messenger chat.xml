@@ -24,5 +24,18 @@
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
+		<control>
+			<description>listcontrol</description>
+			<type>listcontrol</type>
+			<id>50</id>
+			<posX>80</posX>
+			<posX>80</posX>
+			<width>560</width>
+			<height>300</height>
+			<onleft>51</onleft>
+			<onright>51</onright>
+			<onup>2</onup>
+			<ondown>2</ondown>
+			</control>
 	</controls>
 </window>
