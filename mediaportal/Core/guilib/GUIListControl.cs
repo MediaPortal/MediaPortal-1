@@ -914,7 +914,7 @@ namespace MediaPortal.GUI.Library
                double length=(double)item.FileInfo.Length;
                double percent= ((double)message.Param1) / length;
                percent *=100.0f;
-               item.Label2=String.Format("{0:#,##}%", percent);
+               item.Label2=String.Format("{0:N}%", percent);
              }
            }
          }

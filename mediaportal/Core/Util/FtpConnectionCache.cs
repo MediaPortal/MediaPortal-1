@@ -23,6 +23,7 @@ namespace Core.Util
       public string    localFile=String.Empty;
       public string    originalRemoteFile=String.Empty;
       public long      BytesTransferred=0;
+      public long      BytesOffset=0;
 
       delegate void OnDownloadHandler(FtpConnection ftp);
       event     OnDownloadHandler OnDownLoad=null;
@@ -37,6 +38,7 @@ namespace Core.Util
         OnDownLoad -=new OnDownloadHandler(StartDownLoad);
         Connection.BytesTransferred -=new BytesTransferredHandler(OnBytesTransferred);
         BytesTransferred=0;
+        BytesOffset=0;
         Busy=false;
         Log.Write("ftp download finished {0}->{1}", remoteFile, localFile);
       }
@@ -44,6 +46,7 @@ namespace Core.Util
       void StartDownLoad(FtpConnection ftp)
       {
         BytesTransferred=0;
+        BytesOffset=0;
         ftp.Connection.TransferComplete += new EventHandler(OnTransferComplete);
         ftp.Connection.BytesTransferred +=new BytesTransferredHandler(OnBytesTransferred);
         ftp.Connection.TransferType=FTPTransferType.BINARY;
@@ -51,7 +54,7 @@ namespace Core.Util
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
         msg.Label=originalRemoteFile;
         msg.Label2=localFile;
-        msg.Param1=(int)BytesTransferred;
+        msg.Param1=(int)(BytesTransferred+BytesOffset);
         GUIGraphicsContext.SendMessage(msg);
 
 
@@ -59,7 +62,7 @@ namespace Core.Util
         if (System.IO.File.Exists(ftp.localFile))
         {
           FileInfo info = new FileInfo(ftp.localFile);
-          BytesTransferred=info.Length;
+          BytesOffset=info.Length;
           ftp.Connection.Resume();
         }
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
@@ -84,7 +87,7 @@ namespace Core.Util
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
         msg.Label=originalRemoteFile;
         msg.Label2=localFile;
-        msg.Param1=(int)BytesTransferred;
+        msg.Param1=(int)(BytesTransferred+BytesOffset);
         GUIGraphicsContext.SendMessage(msg);
       }
     }
