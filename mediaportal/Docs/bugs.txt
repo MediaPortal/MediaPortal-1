@@ -10,6 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  10-09-2004 GUI	: when aligning a fadelabel 'right' you will not see the beginning of the string.
   10-08-2004 viz	: after a new songs start to play while being in full screen viz, you can't exit the viz anymore with X or ESC
   10-08-2004 pictures   : slideshow should halt when zooning and resume when original size is selected again
   10-08-2004 calibration: when calibration pixel ratio and setting a perfect square, calibration is wrong. I need to set a non square to get good AR) (maybe calibrate pic in skin bad?
