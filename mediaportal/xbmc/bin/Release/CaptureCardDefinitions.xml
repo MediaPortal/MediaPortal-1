@@ -17,24 +17,25 @@
 <!--  2. Define the 0-based index of the pin. This always should work... -->
 <!-- -->
 <!-- cards supported so far:                                                          -->
+<!--    Dvico Fusion HDTV			added by Frodo        (untested)                  -->
+<!--    FireDTV (BDA DVB-T)			added by Frodo        ()						  -->
+<!--    Hauppauge Nova-T			added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 150MCE	added by Mars                                     -->
-<!--    Hauppauge WinTV PVR USB2    added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 250		added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 350		added by Frodo                                    -->
 <!--    Hauppauge WinTV PVR 500MCE  added by Frodo        (untested)                  -->
+<!--    Hauppauge WinTV PVR USB2    added by Frodo                                    -->
 <!--    NVTV Dual Tuner				added by Mars                                     -->
-<!--    Winfast PVR 2000			added by Hwarmann                                 -->
-<!--    FireDTV (BDA DVB-T)			added by Frodo        ()                  -->
+<!--    LifeView DVB-T			    added by Frodo                                    -->
 <!--    Twinhan VisionDTV Ter		added by Frodo        (untested)                  -->
 <!--    Typhoon TV PVR (USB)		added by Frodo        (untested)                  -->
-<!--    Hauppauge Nova-T			added by Frodo                                    -->
-<!--    LifeView DVB-T			    added by Frodo                                    -->
+<!--    Winfast PVR 2000			added by Hwarmann                                 -->
 <!--    general s/w card			added by Frodo                                    -->
 <!--    general MCE card			added by Frodo                                    -->
 <!--    general MPEG2 card			added by Frodo                                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.6                                                                -->
-<!-- changed : 31-dec-2004 by Frodo                                                   -->
+<!-- version : 1.0.0.7                                                                -->
+<!-- changed : 1-jan-2005 by Frodo                                                   -->
 <!--                                                                                  -->
 
 <capturecards>
@@ -389,6 +390,22 @@
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="false"></filter>
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+   
+   <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db1018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Fusion HDTV, BDA DVB-T Tuner/Demod"		checkdevice="false"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="false"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
