@@ -447,12 +447,16 @@ namespace MediaPortal.Configuration
           videoCompressorComboBox.Enabled=false;
           audioCompressorComboBox.Enabled=false;
           audioDeviceComboBox.Enabled=false;
+          frameRateTextBox.Enabled=false;
+          frameSizeComboBox.Enabled=false;
         }
         else
         {
           videoCompressorComboBox.Enabled=true;
           audioCompressorComboBox.Enabled=true;
           audioDeviceComboBox.Enabled=true;
+          frameRateTextBox.Enabled=true;
+          frameSizeComboBox.Enabled=true;
         }
       }
 
