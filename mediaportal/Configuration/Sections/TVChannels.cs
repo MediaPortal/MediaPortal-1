@@ -666,6 +666,7 @@ namespace MediaPortal.Configuration.Sections
 
 			EditTVChannelForm editChannel = new EditTVChannelForm();
 
+			editChannel.SortingPlace=channelsListView.Items.Count;
 			DialogResult dialogResult = editChannel.ShowDialog(this);
 
 			if(dialogResult == DialogResult.OK)
@@ -700,6 +701,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				EditTVChannelForm editChannel = new EditTVChannelForm();
 				editChannel.Channel = listItem.Tag as TelevisionChannel;
+				editChannel.SortingPlace=listItem.Index;;
 
 				DialogResult dialogResult = editChannel.ShowDialog(this);
 

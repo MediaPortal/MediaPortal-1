@@ -76,6 +76,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TextBox tbDVBSTSID;
 		private System.Windows.Forms.TextBox tbDVBSSID;
 		private System.Windows.Forms.TextBox tbDVBSONID;
+		private int sortPlace=0;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -108,6 +109,11 @@ namespace MediaPortal.Configuration
 			countryComboBox.Items.AddRange(TunerCountries.Countries);
 		}
 
+		public int SortingPlace
+		{
+			get { return sortPlace;}
+			set { sortPlace=value;}
+		}
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -880,6 +886,7 @@ namespace MediaPortal.Configuration
 
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
+			SaveChannel();
 			this.DialogResult = DialogResult.OK;
 			this.Hide();
 		}
@@ -1157,6 +1164,18 @@ namespace MediaPortal.Configuration
 			}
 			return 2;
 		}
+		int IndexToFec(int index)
+		{
+			switch ( index )
+			{
+				case 0: return (int)TunerLib.FECMethod.BDA_FEC_MAX;
+				case 1: return (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
+				case 2: return (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+				case 3: return (int)TunerLib.FECMethod.BDA_FEC_RS_204_188;
+				case 4: return (int)TunerLib.FECMethod.BDA_FEC_VITERBI;
+			}
+			return 2;
+		}
 		int ModulationToIndex(int modulation)
 		{
 			switch ( (TunerLib.ModulationType)modulation )
@@ -1190,10 +1209,127 @@ namespace MediaPortal.Configuration
 			}
 			return 0;
 		}
+
+		int IndexToModulation(int index)
+		{
+			switch ( index )
+			{
+				case 0: return (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+				case 1: return (int)TunerLib.ModulationType.BDA_MOD_1024QAM; 
+				case 2: return (int)TunerLib.ModulationType.BDA_MOD_112QAM;
+				case 3: return (int)TunerLib.ModulationType.BDA_MOD_128QAM;
+				case 4: return (int)TunerLib.ModulationType.BDA_MOD_160QAM;
+				case 5: return (int)TunerLib.ModulationType.BDA_MOD_16QAM; 
+				case 6: return (int)TunerLib.ModulationType.BDA_MOD_16VSB; 
+				case 7: return (int)TunerLib.ModulationType.BDA_MOD_192QAM;
+				case 8: return (int)TunerLib.ModulationType.BDA_MOD_224QAM;
+				case 9: return (int)TunerLib.ModulationType.BDA_MOD_256QAM;
+				case 10: return (int)TunerLib.ModulationType.BDA_MOD_320QAM;
+				case 11: return (int)TunerLib.ModulationType.BDA_MOD_384QAM;
+				case 12: return (int)TunerLib.ModulationType.BDA_MOD_448QAM;
+				case 13: return (int)TunerLib.ModulationType.BDA_MOD_512QAM;
+				case 14: return (int)TunerLib.ModulationType.BDA_MOD_640QAM;
+				case 15: return (int)TunerLib.ModulationType.BDA_MOD_64QAM; 
+				case 16: return (int)TunerLib.ModulationType.BDA_MOD_768QAM;
+				case 17: return (int)TunerLib.ModulationType.BDA_MOD_80QAM; 
+				case 18: return (int)TunerLib.ModulationType.BDA_MOD_896QAM;
+				case 19: return (int)TunerLib.ModulationType.BDA_MOD_8VSB; 
+				case 20: return (int)TunerLib.ModulationType.BDA_MOD_96QAM;
+				case 21: return (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE; 
+				case 22: return (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY; 
+				case 23: return (int)TunerLib.ModulationType.BDA_MOD_BPSK; 
+				case 24: return (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
+				case 25: return (int)TunerLib.ModulationType.BDA_MOD_QPSK; 
+			}
+			return 0;
+		}
 		int PolarisationToIndex(int polarisation)
 		{
 			if (polarisation< 0 || polarisation> 1) return 0;
 			return polarisation;
+		}
+		int IndexToPolarisation(int index)
+		{
+			if (index< 0 || index> 1) return 0;
+			return index;
+		}
+		
+		void SaveChannel()
+		{
+			TelevisionChannel chan = Channel;
+			TVChannel tvchannel = new TVChannel();
+			tvchannel.ID=chan.ID;
+			tvchannel.Name=chan.Name;
+			tvchannel.Number=chan.Channel;
+			tvchannel.Country=chan.Country;
+			tvchannel.External=chan.External;
+			tvchannel.ExternalTunerChannel=chan.ExternalTunerChannel;
+			tvchannel.TVStandard=chan.standard;
+			tvchannel.VisibleInGuide=chan.VisibleInGuide;
+
+			tvchannel.Frequency=chan.Frequency.Herz;
+			if(chan.Frequency.Herz < 1000)
+				tvchannel.Frequency = chan.Frequency.Herz* 1000000L;
+
+			if (tvchannel.ID<0)
+			{
+				tvchannel.ID=TVDatabase.AddChannel(tvchannel);
+			}
+			else
+			{
+				TVDatabase.UpdateChannel(tvchannel,SortingPlace);
+			}
+
+			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
+			//dvb-T
+			try
+			{
+				freq=Int32.Parse(tbDVBTFreq.Text);
+				ONID=Int32.Parse(tbDVBTONID.Text);
+				TSID=Int32.Parse(tbDVBTTSID.Text);
+				SID=Int32.Parse(tbDVBTSID.Text);
+				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
+				{
+					TVDatabase.MapDVBTChannel(tvchannel.Name,tvchannel.ID,freq,ONID,TSID,SID);
+				}
+			}
+			catch(Exception){}
+
+
+			//dvb-C
+			try
+			{
+				freq=Int32.Parse(tbDVBCFreq.Text);
+				ONID=Int32.Parse(tbDVBCONID.Text);
+				TSID=Int32.Parse(tbDVBCSID.Text);
+				SID=Int32.Parse(tbDVBCSID.Text);
+				symbolrate=Int32.Parse(tbDVBCSR.Text);
+				innerFec=IndexToFec(cbDVBCInnerFeq.SelectedIndex);
+				modulation=IndexToModulation(cbDVBCModulation.SelectedIndex);
+				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
+				{
+					TVDatabase.MapDVBCChannel(tvchannel.Name,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
+				}
+			}
+			catch(Exception){}
+
+			//dvb-S
+			try
+			{
+				freq=Int32.Parse(tbDVBSFreq.Text);
+				ONID=Int32.Parse(tbDVBSONID.Text);
+				TSID=Int32.Parse(tbDVBSTSID.Text);
+				SID=Int32.Parse(tbDVBSSID.Text);
+				symbolrate=Int32.Parse(tbDVBSSymbolrate.Text);
+				innerFec=IndexToFec(cbDvbSInnerFec.SelectedIndex);
+				polarisation=IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
+				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
+				{
+					TVDatabase.MapDVBSChannel(tvchannel.Name,tvchannel.ID,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
+				}
+			}
+			catch(Exception){}
+
 		}
 	}
 
