@@ -299,9 +299,9 @@ namespace MediaPortal
     {
       if (m_capture!=null)
       {
+        m_capture.Dispose();
         m_capture=null;
       }
-
     }
 
     public ArrayList RadioChannels

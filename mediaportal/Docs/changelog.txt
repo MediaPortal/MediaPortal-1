@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  07-06-2004  general     : fixed : left/right alignment for fadelabel
+  
   05-06-2004  my Radio    : added : started with my radio...
   05-06-2004  my music    : added : save CDPlayer / freedb info in musicdatabase
   
