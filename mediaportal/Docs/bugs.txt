@@ -1,7 +1,6 @@
 Bugs left:
   30-06-2004 my programs: returns to home when stopping a game
   29-06-2004 home       : scroll speed 9 / 10 are the same
-  29-06-2004 home       : The selection bar on Home is transparent on plugins like My News so stand on My News and it's transparent
   27-06-2004 my TV      : some cards have 2 CVBS inputs
   
   27-06-2004 general    : The thumbnails for movies and artists are not always shown. 
