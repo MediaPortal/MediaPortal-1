@@ -45,14 +45,6 @@ namespace MediaPortal.GUI.TV
     
 		public override bool Init()
 		{
-			//
-			try
-			{
-				System.IO.Directory.CreateDirectory("temp");
-			}
-			catch
-			{
-			}
 			return Load (GUIGraphicsContext.Skin+@"\myfsteletext.xml");
 		}
 		
@@ -346,10 +338,10 @@ namespace MediaPortal.GUI.TV
 				pictureBox.FileName="";
 				pictureBox.FreeResources();
 				pictureBox.IsVisible=false;
-				Utils.FileDelete(@"temp\teletext.jpg");
-				GUITextureManager.ReleaseTexture(@"temp\teletext.jpg");
-				m_pageBitmap.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
-				pictureBox.FileName=@"temp\teletext.jpg";
+				Utils.FileDelete(@"teletext.jpg");
+				GUITextureManager.ReleaseTexture(@"teletext.jpg");
+				m_pageBitmap.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+				pictureBox.FileName=@"teletext.jpg";
 				pictureBox.AllocResources();
 				pictureBox.IsVisible=true;
 			}
