@@ -521,6 +521,7 @@ namespace MediaPortal.Player
       string strDVDNavigator="";
       string strARMode="";
       string strDisplayMode="";
+      bool  bUseAC3Filter=false;
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
@@ -530,7 +531,7 @@ namespace MediaPortal.Player
         if ( strARMode=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;
         if ( strARMode=="stretch") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED;
         if ( strARMode=="follow stream") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED_AS_PRIMARY;
-
+        bUseAC3Filter= xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
         strDisplayMode=xmlreader.GetValueAsString("dvdplayer","displaymode","").ToLower();
         if (strDisplayMode=="default") m_iVideoPref=0;
         if (strDisplayMode=="16:9") m_iVideoPref=1;
@@ -580,6 +581,25 @@ namespace MediaPortal.Player
 				Guid riid ;
 
         
+        if (bUseAC3Filter)
+        {
+          string ac3filterMonikerString =@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A753A1EC-973E-4718-AF8E-A3F554D45C44}";
+          Log.Write("DVDPlayer:Adding AC3 filter to graph");
+          IBaseFilter filter = Marshal.BindToMoniker( ac3filterMonikerString ) as IBaseFilter;
+          if (filter!=null)
+          {
+            hr = graphBuilder.AddFilter( filter, "AC3 Filter" );
+            if( hr < 0 ) 
+            {
+              DirectShowUtil.DebugWrite("DVDPlayer:FAILED:could not add AC3 filter to graph");
+            }
+          }
+          else
+          {
+            DirectShowUtil.DebugWrite("DVDPlayer:FAILED:AC3 filter not installed");
+          }
+
+        }
         if (strDVDAudioRenderer!="")
         {
           audioRenderer=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strDVDAudioRenderer);
