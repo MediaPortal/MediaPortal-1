@@ -1,7 +1,7 @@
 Bugs left:
-
-  The thumbnails for movies and artists are not always shown. This happens if the name of the artist in the tag or the name of the moviefile is not the same as the information that was retrieved from the internet. For example I had the artist Bjork, I retrieved the artist information and there the name was Bjo"rk (the O should have dots on it, but I don't know how to type that). Now the thumb gets saved with that name instead of Bjork and since Bjork is the name in the database the thumbs don't show up.
-  The same happens for movies if the filename does not match the name that was retrieved from the internet.
+  27-06-2004 my music   : play a song in full screen (viz) when the song finishes you get the topbar on screen rest = black
+  27-06-2004 general    : The thumbnails for movies and artists are not always shown. This happens if the name of the artist in the tag or the name of the moviefile is not the same as the information that was retrieved from the internet. For example I had the artist Bjork, I retrieved the artist information and there the name was Bjo"rk (the O should have dots on it, but I don't know how to type that). Now the thumb gets saved with that name instead of Bjork and since Bjork is the name in the database the thumbs don't show up.
+  27-06-2004 general    : The same happens for movies if the filename does not match the name that was retrieved from the internet.
 
   20-06-2004 my music   : no thumbnail in mymusic/artists:if artist name retrieved from www.allmusic.com differs from the one in id3tag
   20-06-2004 my music   : songs without an album name dont show up in my music->arists
