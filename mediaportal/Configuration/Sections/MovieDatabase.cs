@@ -1869,16 +1869,17 @@ namespace MediaPortal.Configuration.Sections
 		private void btnLookupImage_Click(object sender, System.EventArgs e)
 		{
 			if (textBoxPictureURL.Text==String.Empty) return;
+			if (pictureBox1.Image!=null)
+			{
+				pictureBox1.Image.Dispose();
+				pictureBox1.Image=null;
+			}			
 			string strThumb = Utils.GetCoverArtName(TitleThumbsFolder,tbTitle.Text);
 			string LargeThumb = Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
 			Utils.FileDelete(strThumb);
 			Utils.FileDelete(LargeThumb);
 			DownloadThumnail(TitleThumbsFolder,textBoxPictureURL.Text, tbTitle.Text);
-			if (pictureBox1.Image!=null)
-			{
-				pictureBox1.Image.Dispose();
-				pictureBox1.Image=null;
-			}
+
 			string file=Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
 			if (System.IO.File.Exists(file))
 			{
