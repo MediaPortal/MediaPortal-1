@@ -133,9 +133,9 @@ namespace MediaPortal.GUI.Library
 //      sprite.End();
 
 			// render the 1st line of text on the button
-      int iWidth=m_imgNoFocusMid.Width-10;
+      int iWidth=m_imgNoFocusMid.Width-10-m_iTextOffsetX1;
 			if (iWidth<=0) iWidth=1;
-			if (m_strText1.Length>0 )
+			if (m_imgNoFocusMid.IsVisible && m_strText1.Length>0 )
 			{
         int widthLeft =(int)((float)m_imgFocusLeft.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusLeft.TextureHeight));
         int xoff=m_iTextOffsetX1+widthLeft ;
@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Library
 			}
      
 			// render the 2nd line of text on the button
-			if (m_strText2.Length>0)
+			if (m_imgNoFocusMid.IsVisible && m_strText2.Length>0)
       {
         int widthLeft =(int)((float)m_imgFocusLeft.TextureWidth * ((float)m_dwHeight/(float)m_imgFocusLeft.TextureHeight));
         int xoff=m_iTextOffsetX2+widthLeft;
