@@ -31,6 +31,7 @@
 			<posY>230</posY>
 			<reverse>yes</reverse>
 			<showrange>no</showrange>
+			<digits>3</digits>
 			<onup>12</onup>
 			<ondown>2</ondown>
 			<onleft>1</onleft>
@@ -153,6 +154,7 @@
 			<description>YYYY</description>
 			<type>spincontrol</type>
 			<subtype>int</subtype>
+			<digits>4</digits>
 			<orientation>vertical</orientation>
 			<id>6</id>
 			<posX>270</posX>

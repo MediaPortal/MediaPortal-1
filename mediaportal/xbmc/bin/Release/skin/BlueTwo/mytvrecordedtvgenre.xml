@@ -1,5 +1,5 @@
 <window>
-	<id>603</id>
+	<id>605</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
@@ -20,14 +20,7 @@
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
 		</control>	
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
-			<texture>hover_my tv.png</texture>
-		</control>		
-		<control>
+			<control>
 			<description>My Recorded TV Text Label</description>
 			<type>label</type>
 			<id>1</id>
@@ -87,28 +80,16 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-		    <control>
-			    <description>View-As button</description>
-			    <type>button</type>
-			    <id>2</id>
-			    <posX>60</posX>
-			    <posY>97</posY>
-			    <label>100</label>
-			    <onleft>2</onleft>
-			    <onright>50</onright>
-			    <onup>17</onup>
-			    <ondown>3</ondown>
-		    </control>
 			<control>
 				<description>Sort-by button</description>
 				<type>button</type>
-				<id>3</id>
+				<id>2</id>
 				<posX>60</posX>
-				<posY>131</posY>
+				<posY>97</posY>
 				<label>620</label>
 				<onleft>2</onleft>
 				<onright>4</onright>
-				<onup>2</onup>
+				<onup>5</onup>
 				<ondown>5</ondown>
 			</control>
 			<control>
@@ -116,7 +97,7 @@
 				<type>togglebutton</type>
 				<id>4</id>
 				<posX>225</posX>
-				<posY>134</posY>
+				<posY>105</posY>
 				<label>-</label>
 				<onleft>2</onleft>
 				<onright>10</onright>
@@ -128,7 +109,7 @@
 				<type>selectbutton</type>
 				<id>5</id>
 				<posX>60</posX>
-				<posY>165</posY>
+				<posY>131</posY>
 				<label>457</label>
 				<onleft>6</onleft>
 				<onright>50</onright>
@@ -145,7 +126,7 @@
 				<type>button</type>
 				<id>6</id>
 				<posX>60</posX>
-				<posY>199</posY>
+				<posY>165</posY>
 				<label>624</label>
 				<onleft>2</onleft>
 				<onright>10</onright>
@@ -191,13 +172,14 @@
 				<description>listcontrol</description>
 				<type>listcontrol</type>
 				<id>11</id>
-				<onleft>10</onleft>
-				<onright>2</onright>
+				<onleft>2</onleft>
+				<onright>10</onright>
+				<onup>10</onup>
 				<onup>2</onup>
 				<ondown>2</ondown>
-				<spinColor>FFFFFFFF</spinColor>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>
+	
 			<control>
 				<description>Current program title</description>
 				<type>fadelabel</type>
@@ -249,20 +231,21 @@
 			<description>Current program background</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX> 
-			<posY>419</posY> 
-			<width>161</width> 
-			<height>134</height> 
-			<texture>playback_background.png</texture>
+			<posX>60</posX>
+			<posY>420</posY>
+			<width>180</width>
+			<height>135</height>
+			<colordiffuse>60ffffff</colordiffuse>
+			<texture>previewbackground.png</texture>
 		</control>
 		<control>
 			<description>TV preview window</description> 
 			<type>videowindow</type> 
 			<id>99</id> 
-			<posX>86</posX> 
-			<posY>431</posY> 
-			<width>135</width> 
-			<height>108</height> 
+			<posX>65</posX> 
+			<posY>425</posY> 
+			<width>170</width> 
+			<height>125</height> 
 			<onup>5</onup>
 			<action>18</action>
 			<textureFocus>video_window_focus.png</textureFocus> 
