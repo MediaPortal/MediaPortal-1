@@ -2149,12 +2149,14 @@ namespace MediaPortal.GUI.Video
       //get all movies belonging to each other
       if (_MapSettings.Stack)
       {           
+        bool bStackedFile=false;
         ArrayList items = m_directory.GetDirectory(m_strDirectory);
         for (int i = 0; i < items.Count; ++i)
         {
           GUIListItem pItemTmp = (GUIListItem)items[i];
           if (Utils.ShouldStack(pItemTmp.Path, item.Path))
           {   
+            bStackedFile=true;
             strFileName=System.IO.Path.GetFileName(pItemTmp.Path);
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             if (null==dlgYesNo) return;
@@ -2167,6 +2169,21 @@ namespace MediaPortal.GUI.Video
             if (!dlgYesNo.IsConfirmed) break;
             DoDeleteItem(pItemTmp);
           }
+        }
+
+        if (!bStackedFile)
+        {
+          // delete single file
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+          if (null==dlgYesNo) return;
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
+          dlgYesNo.SetLine(1,strFileName);
+          dlgYesNo.SetLine(2, "");
+          dlgYesNo.SetLine(3, "");
+          dlgYesNo.DoModal(GetID);
+
+          if (!dlgYesNo.IsConfirmed) return;
+          DoDeleteItem(item);
         }
       }
       else
