@@ -467,6 +467,12 @@ public class MediaPortalApp : D3DApp, IRender
                   //then start watching live tv in background
                   Log.Write("start livetv");
                   Recorder.Previewing=true;
+									
+									string strRecPath;
+									strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
+									strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+									string strFileName=String.Format(@"{0}\live.tv",strRecPath);
+									g_Player.Play(strFileName);
                 }
               }
               else
