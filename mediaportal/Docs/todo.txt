@@ -1,6 +1,5 @@
 Skin, gfx & media:
-  - need good gfx for xmltv/SVHS.png & xmltv/Composite.png (256x128) to show in my tv/home
-  - need logo gdx for rewind 1x, 2x, 4x, 8x, 16x, 32x,
+  - need logo gfx for (fullscreen video) rewind 1x, 2x, 4x, 8x, 16x, 32x,
   - keymap.xml : need to fill in all <sound> tags for all actions/keys
   - we need .wav files for 
      - click.wav
@@ -21,9 +20,6 @@ Skin, gfx & media:
      
 My Radio:
   - AM/FM
-  - Scan channels
-  - Name channels
-  - listen to channel
 
 
 My TV:
@@ -31,6 +27,7 @@ My TV:
   - support of external tuners (http://www.usbuirt.com/)
   - picture in picture
   - TV-out through PVR 350
+  - Mix Direct3D & video
   
   Recorded tv:
      -
@@ -49,7 +46,6 @@ My TV:
      - add screenshot option    
      
 My Music:
-  - cache freeDB info
   - faster start of 1st song played
   - gapless playback
   - search songs by genre,artist,album (based on music database)

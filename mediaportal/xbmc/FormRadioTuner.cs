@@ -178,7 +178,7 @@ namespace MediaPortal
       catch(Exception)
       {
       }
-      m_iChannel+=250000;
+      m_iChannel+=100000;
       if (m_iChannel>m_iChannelEnd)
       {
         this.Close();
@@ -207,7 +207,10 @@ namespace MediaPortal
       RadioStation NewStation = new RadioStation();
       NewStation.Name = String.Format("Channel{0}", radioChannels.Count+1);
       NewStation.Frequency=Channel;
+      NewStation.Channel=Channel;
+      NewStation.Genre="Radio";
       radioChannels.Add(NewStation);
+      RadioDatabase.AddStation(ref NewStation);
     }
 
     private void FormRadioTuner_Load(object sender, System.EventArgs e)
@@ -278,7 +281,7 @@ namespace MediaPortal
       progressBar1.Minimum=m_iChannelStart;
       progressBar1.Maximum=m_iChannelEnd;
       progressBar1.Value=m_iChannel;
-      progressBar1.Step=250000;
+      progressBar1.Step=100000;
       
       m_capture.Tuner.Channel=m_iChannel;
       System.Threading.Thread.Sleep(1000);

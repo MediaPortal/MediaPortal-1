@@ -1,5 +1,6 @@
 History: (dd-mm-yyyy)
   05-06-2004  my Radio    : added : started with my radio...
+  05-06-2004  my music    : added : save CDPlayer / freedb info in musicdatabase
   
   04-06-2004  my tv       : added : record & view at the same time
   
