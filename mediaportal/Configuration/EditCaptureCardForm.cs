@@ -2223,8 +2223,15 @@ namespace MediaPortal.Configuration
         card.FriendlyName   = textBoxName.Text;
 
 				
-				if (comboBoxQuality.SelectedIndex<0 ) card.Quality=-1;
-				else card.Quality=comboBoxQuality.SelectedIndex;
+				if (!checkBoxHiQuality.Checked) 
+				{
+					card.Quality=-1;
+				}
+				else
+				{
+					if (comboBoxQuality.SelectedIndex<0 ) card.Quality=-1;
+					else card.Quality=comboBoxQuality.SelectedIndex;
+				}
 				return card;
 			}
 

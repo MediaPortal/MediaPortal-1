@@ -856,6 +856,7 @@ namespace MediaPortal.TV.Recording
 							// do we want timeshifting?
 							if  (timeshift || dev.IsRecording)
 							{
+								TuneExternalChannel(channel);
 								dev.TVChannel=channel;
 								if (!dev.IsRecording  && !dev.IsTimeShifting && dev.SupportsTimeShifting)
 								{
@@ -883,6 +884,7 @@ namespace MediaPortal.TV.Recording
 								if (dev.IsTimeShifting)
 									dev.StopTimeShifting();
 								
+								TuneExternalChannel(channel);
 								dev.TVChannel=channel;
 								dev.View=true;
 								return;

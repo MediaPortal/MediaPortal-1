@@ -2481,12 +2481,18 @@ namespace MediaPortal.TV.Recording
 				}
 				if (lnb_switch>0)
 					space.LNBSwitch     = lnb_switch*1000;
-				
+				else 
+					space.LNBSwitch     =0;
+
 				if (lnb_0>0)
 					space.LowOscillator = lnb_0*1000;
-				
+				else
+					space.LowOscillator =0;
+
 				if (lnb_1>0)
 					space.HighOscillator= lnb_1*1000;
+				else
+					space.HighOscillator=0;
 				//space.SpectralInversion=??
 				//space.InputRange=(lnbKhz*1000).ToString();
 			}
