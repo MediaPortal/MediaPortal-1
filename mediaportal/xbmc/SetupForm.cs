@@ -131,18 +131,6 @@ namespace MediaPortal
     private System.Windows.Forms.GroupBox groupBox14;
     private System.Windows.Forms.TabControl tabControl;
     private System.Windows.Forms.TabPage TabDVDPlayer;
-    private System.Windows.Forms.GroupBox DVDPlayerBox;
-    private System.Windows.Forms.CheckBox checkBoxInternalDVDPlayer;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox dvdFile;
-    private System.Windows.Forms.Button dvdbtnSelect;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox dvdParams;
-    private System.Windows.Forms.Label label28;
-    private System.Windows.Forms.Label label29;
-    private System.Windows.Forms.ComboBox comboBoxAudioLanguage;
-    private System.Windows.Forms.ComboBox comboBoxSubtitleLanguage;
-    private System.Windows.Forms.CheckBox checkBoxDVDSubtitles;
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.Button btnTvChannelUp;
     private System.Windows.Forms.Button btnTvChannelDown;
@@ -180,13 +168,9 @@ namespace MediaPortal
     private System.Windows.Forms.GroupBox groupBox20;
     private System.Windows.Forms.TextBox textBoxXMLTVFolder;
     private System.Windows.Forms.Button btnXMLTVFolder;
-    private System.Windows.Forms.Label label38;
-    private System.Windows.Forms.ComboBox comboDVDAudioRenderer;
     private System.Windows.Forms.Label label39;
     private System.Windows.Forms.ComboBox comboMovieAudioRenderer;
     private System.Windows.Forms.ToolTip toolTip1;
-    private System.Windows.Forms.Label label40;
-    private System.Windows.Forms.ComboBox comboDVDNavigator;
     private System.Windows.Forms.Button btnEditCaptureDevice;
     private System.Windows.Forms.Button btnDelCaptureDevice;
     private System.Windows.Forms.Button btnAddCaptureDevice;
@@ -195,10 +179,36 @@ namespace MediaPortal
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private System.Windows.Forms.ColumnHeader columnHeader9;
     private System.ComponentModel.IContainer components;
-    private System.Windows.Forms.CheckBox checkBoxARDVD;
     private System.Windows.Forms.Label label17;
     private System.Windows.Forms.TextBox textBoxPlayLists;
     private System.Windows.Forms.Button btnPlayListFolder;
+    private System.Windows.Forms.Label label18;
+    private System.Windows.Forms.TextBox textBoxPlayListFolderVideo;
+    private System.Windows.Forms.Button btnPlayListVideo;
+    private System.Windows.Forms.CheckBox checkBoxARDVD;
+    private System.Windows.Forms.ComboBox comboDVDNavigator;
+    private System.Windows.Forms.Label label40;
+    private System.Windows.Forms.ComboBox comboDVDAudioRenderer;
+    private System.Windows.Forms.Label label38;
+    private System.Windows.Forms.CheckBox checkBoxDVDSubtitles;
+    private System.Windows.Forms.ComboBox comboBoxSubtitleLanguage;
+    private System.Windows.Forms.ComboBox comboBoxAudioLanguage;
+    private System.Windows.Forms.Label label29;
+    private System.Windows.Forms.Label label28;
+    private System.Windows.Forms.CheckBox checkBoxInternalDVDPlayer;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox dvdFile;
+    private System.Windows.Forms.Button dvdbtnSelect;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox dvdParams;
+    private System.Windows.Forms.GroupBox DVDPlayerBox;
+    private System.Windows.Forms.Label label19;
+    private System.Windows.Forms.ComboBox comboBoxDVDARCorrectionMode;
+    private System.Windows.Forms.GroupBox groupBox10;
+    private System.Windows.Forms.GroupBox groupBox11;
+    private System.Windows.Forms.GroupBox groupBox12;
+    private System.Windows.Forms.Label label20;
+    private System.Windows.Forms.ComboBox comboBoxDVDDisplayMode;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -261,6 +271,11 @@ namespace MediaPortal
       toolTip1.SetToolTip(comboDVDAudioRenderer       ,"Select audio renderer to be used for DVD playback. For DD/DTS you may have to try each to find out which gives the best result");
       toolTip1.SetToolTip(comboDVDNavigator           ,"Select which DVD navigator codec to use for DVD playback");
     
+      //DVDplayer:AR mode
+      toolTip1.SetToolTip(comboBoxDVDARCorrectionMode,"Sets the aspect ratio correction mode");
+      toolTip1.SetToolTip(checkBoxARDVD              ,"Use pixel ratio correction for DVD or not");
+      toolTip1.SetToolTip(comboBoxDVDDisplayMode     ,"Specify the preffered display mode");
+
       UpdateCaptureCardList();
     }
 
@@ -329,17 +344,22 @@ namespace MediaPortal
       this.label30 = new System.Windows.Forms.Label();
       this.comboAudioPlayer = new System.Windows.Forms.ComboBox();
       this.TabDVDPlayer = new System.Windows.Forms.TabPage();
-      this.DVDPlayerBox = new System.Windows.Forms.GroupBox();
-      this.checkBoxARDVD = new System.Windows.Forms.CheckBox();
-      this.comboDVDNavigator = new System.Windows.Forms.ComboBox();
-      this.label40 = new System.Windows.Forms.Label();
-      this.comboDVDAudioRenderer = new System.Windows.Forms.ComboBox();
-      this.label38 = new System.Windows.Forms.Label();
+      this.groupBox12 = new System.Windows.Forms.GroupBox();
       this.checkBoxDVDSubtitles = new System.Windows.Forms.CheckBox();
       this.comboBoxSubtitleLanguage = new System.Windows.Forms.ComboBox();
       this.comboBoxAudioLanguage = new System.Windows.Forms.ComboBox();
       this.label29 = new System.Windows.Forms.Label();
       this.label28 = new System.Windows.Forms.Label();
+      this.groupBox11 = new System.Windows.Forms.GroupBox();
+      this.comboDVDNavigator = new System.Windows.Forms.ComboBox();
+      this.label40 = new System.Windows.Forms.Label();
+      this.comboDVDAudioRenderer = new System.Windows.Forms.ComboBox();
+      this.label38 = new System.Windows.Forms.Label();
+      this.groupBox10 = new System.Windows.Forms.GroupBox();
+      this.label19 = new System.Windows.Forms.Label();
+      this.comboBoxDVDARCorrectionMode = new System.Windows.Forms.ComboBox();
+      this.checkBoxARDVD = new System.Windows.Forms.CheckBox();
+      this.DVDPlayerBox = new System.Windows.Forms.GroupBox();
       this.checkBoxInternalDVDPlayer = new System.Windows.Forms.CheckBox();
       this.label1 = new System.Windows.Forms.Label();
       this.dvdFile = new System.Windows.Forms.TextBox();
@@ -348,6 +368,9 @@ namespace MediaPortal
       this.dvdParams = new System.Windows.Forms.TextBox();
       this.tabAudioShares = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.btnPlayListFolder = new System.Windows.Forms.Button();
+      this.textBoxPlayLists = new System.Windows.Forms.TextBox();
+      this.label17 = new System.Windows.Forms.Label();
       this.checkBoxShufflePlaylists = new System.Windows.Forms.CheckBox();
       this.chkBoxRepeatAudioPlaylist = new System.Windows.Forms.CheckBox();
       this.txtboxAudioFiles = new System.Windows.Forms.TextBox();
@@ -363,6 +386,9 @@ namespace MediaPortal
       this.HdrDefault = new System.Windows.Forms.ColumnHeader();
       this.tabVideoShares = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.btnPlayListVideo = new System.Windows.Forms.Button();
+      this.textBoxPlayListFolderVideo = new System.Windows.Forms.TextBox();
+      this.label18 = new System.Windows.Forms.Label();
       this.chkBoxVideoRepeat = new System.Windows.Forms.CheckBox();
       this.txtboxVideoFiles = new System.Windows.Forms.TextBox();
       this.label9 = new System.Windows.Forms.Label();
@@ -456,9 +482,8 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.label17 = new System.Windows.Forms.Label();
-      this.textBoxPlayLists = new System.Windows.Forms.TextBox();
-      this.btnPlayListFolder = new System.Windows.Forms.Button();
+      this.label20 = new System.Windows.Forms.Label();
+      this.comboBoxDVDDisplayMode = new System.Windows.Forms.ComboBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.tabPlayers.SuspendLayout();
@@ -470,6 +495,9 @@ namespace MediaPortal
       this.tabAudioPlayer.SuspendLayout();
       this.groupBox15.SuspendLayout();
       this.TabDVDPlayer.SuspendLayout();
+      this.groupBox12.SuspendLayout();
+      this.groupBox11.SuspendLayout();
+      this.groupBox10.SuspendLayout();
       this.DVDPlayerBox.SuspendLayout();
       this.tabAudioShares.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -880,6 +908,9 @@ namespace MediaPortal
       // 
       // TabDVDPlayer
       // 
+      this.TabDVDPlayer.Controls.Add(this.groupBox12);
+      this.TabDVDPlayer.Controls.Add(this.groupBox11);
+      this.TabDVDPlayer.Controls.Add(this.groupBox10);
       this.TabDVDPlayer.Controls.Add(this.DVDPlayerBox);
       this.TabDVDPlayer.Location = new System.Drawing.Point(4, 22);
       this.TabDVDPlayer.Name = "TabDVDPlayer";
@@ -887,97 +918,50 @@ namespace MediaPortal
       this.TabDVDPlayer.TabIndex = 7;
       this.TabDVDPlayer.Text = "DVDPlayer";
       // 
-      // DVDPlayerBox
+      // groupBox12
       // 
-      this.DVDPlayerBox.Controls.Add(this.checkBoxARDVD);
-      this.DVDPlayerBox.Controls.Add(this.comboDVDNavigator);
-      this.DVDPlayerBox.Controls.Add(this.label40);
-      this.DVDPlayerBox.Controls.Add(this.comboDVDAudioRenderer);
-      this.DVDPlayerBox.Controls.Add(this.label38);
-      this.DVDPlayerBox.Controls.Add(this.checkBoxDVDSubtitles);
-      this.DVDPlayerBox.Controls.Add(this.comboBoxSubtitleLanguage);
-      this.DVDPlayerBox.Controls.Add(this.comboBoxAudioLanguage);
-      this.DVDPlayerBox.Controls.Add(this.label29);
-      this.DVDPlayerBox.Controls.Add(this.label28);
-      this.DVDPlayerBox.Controls.Add(this.checkBoxInternalDVDPlayer);
-      this.DVDPlayerBox.Controls.Add(this.label1);
-      this.DVDPlayerBox.Controls.Add(this.dvdFile);
-      this.DVDPlayerBox.Controls.Add(this.dvdbtnSelect);
-      this.DVDPlayerBox.Controls.Add(this.label2);
-      this.DVDPlayerBox.Controls.Add(this.dvdParams);
-      this.DVDPlayerBox.Location = new System.Drawing.Point(8, 16);
-      this.DVDPlayerBox.Name = "DVDPlayerBox";
-      this.DVDPlayerBox.Size = new System.Drawing.Size(592, 344);
-      this.DVDPlayerBox.TabIndex = 6;
-      this.DVDPlayerBox.TabStop = false;
-      this.DVDPlayerBox.Text = "DVD Player";
-      // 
-      // checkBoxARDVD
-      // 
-      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 288);
-      this.checkBoxARDVD.Name = "checkBoxARDVD";
-      this.checkBoxARDVD.Size = new System.Drawing.Size(224, 24);
-      this.checkBoxARDVD.TabIndex = 14;
-      this.checkBoxARDVD.Text = "Use PixelRatio correction for DVD\'s";
-      // 
-      // comboDVDNavigator
-      // 
-      this.comboDVDNavigator.Location = new System.Drawing.Point(160, 248);
-      this.comboDVDNavigator.Name = "comboDVDNavigator";
-      this.comboDVDNavigator.Size = new System.Drawing.Size(184, 21);
-      this.comboDVDNavigator.TabIndex = 8;
-      // 
-      // label40
-      // 
-      this.label40.Location = new System.Drawing.Point(24, 248);
-      this.label40.Name = "label40";
-      this.label40.Size = new System.Drawing.Size(88, 16);
-      this.label40.TabIndex = 13;
-      this.label40.Text = "DVD Navigator:";
-      // 
-      // comboDVDAudioRenderer
-      // 
-      this.comboDVDAudioRenderer.Location = new System.Drawing.Point(160, 216);
-      this.comboDVDAudioRenderer.Name = "comboDVDAudioRenderer";
-      this.comboDVDAudioRenderer.Size = new System.Drawing.Size(152, 21);
-      this.comboDVDAudioRenderer.TabIndex = 7;
-      // 
-      // label38
-      // 
-      this.label38.Location = new System.Drawing.Point(24, 216);
-      this.label38.Name = "label38";
-      this.label38.Size = new System.Drawing.Size(88, 16);
-      this.label38.TabIndex = 11;
-      this.label38.Text = "Audio renderer:";
+      this.groupBox12.Controls.Add(this.checkBoxDVDSubtitles);
+      this.groupBox12.Controls.Add(this.comboBoxSubtitleLanguage);
+      this.groupBox12.Controls.Add(this.comboBoxAudioLanguage);
+      this.groupBox12.Controls.Add(this.label29);
+      this.groupBox12.Controls.Add(this.label28);
+      this.groupBox12.Location = new System.Drawing.Point(8, 96);
+      this.groupBox12.Name = "groupBox12";
+      this.groupBox12.Size = new System.Drawing.Size(600, 88);
+      this.groupBox12.TabIndex = 9;
+      this.groupBox12.TabStop = false;
+      this.groupBox12.Text = "Languages";
       // 
       // checkBoxDVDSubtitles
       // 
-      this.checkBoxDVDSubtitles.Location = new System.Drawing.Point(328, 184);
+      this.checkBoxDVDSubtitles.Location = new System.Drawing.Point(320, 56);
       this.checkBoxDVDSubtitles.Name = "checkBoxDVDSubtitles";
       this.checkBoxDVDSubtitles.Size = new System.Drawing.Size(104, 16);
-      this.checkBoxDVDSubtitles.TabIndex = 6;
+      this.checkBoxDVDSubtitles.TabIndex = 5;
       this.checkBoxDVDSubtitles.Text = "Show Subtitles";
       this.checkBoxDVDSubtitles.CheckedChanged += new System.EventHandler(this.checkBoxDVDSubtitles_CheckedChanged);
       // 
       // comboBoxSubtitleLanguage
       // 
-      this.comboBoxSubtitleLanguage.Location = new System.Drawing.Point(160, 184);
+      this.comboBoxSubtitleLanguage.ItemHeight = 13;
+      this.comboBoxSubtitleLanguage.Location = new System.Drawing.Point(152, 56);
       this.comboBoxSubtitleLanguage.Name = "comboBoxSubtitleLanguage";
       this.comboBoxSubtitleLanguage.Size = new System.Drawing.Size(152, 21);
       this.comboBoxSubtitleLanguage.Sorted = true;
-      this.comboBoxSubtitleLanguage.TabIndex = 5;
+      this.comboBoxSubtitleLanguage.TabIndex = 4;
       // 
       // comboBoxAudioLanguage
       // 
-      this.comboBoxAudioLanguage.Location = new System.Drawing.Point(160, 152);
+      this.comboBoxAudioLanguage.ItemHeight = 13;
+      this.comboBoxAudioLanguage.Location = new System.Drawing.Point(152, 24);
       this.comboBoxAudioLanguage.Name = "comboBoxAudioLanguage";
       this.comboBoxAudioLanguage.Size = new System.Drawing.Size(152, 21);
       this.comboBoxAudioLanguage.Sorted = true;
-      this.comboBoxAudioLanguage.TabIndex = 4;
+      this.comboBoxAudioLanguage.TabIndex = 3;
       // 
       // label29
       // 
-      this.label29.Location = new System.Drawing.Point(24, 184);
+      this.label29.Location = new System.Drawing.Point(16, 56);
       this.label29.Name = "label29";
       this.label29.Size = new System.Drawing.Size(136, 16);
       this.label29.TabIndex = 7;
@@ -985,11 +969,113 @@ namespace MediaPortal
       // 
       // label28
       // 
-      this.label28.Location = new System.Drawing.Point(24, 152);
+      this.label28.Location = new System.Drawing.Point(16, 24);
       this.label28.Name = "label28";
       this.label28.Size = new System.Drawing.Size(128, 16);
       this.label28.TabIndex = 6;
       this.label28.Text = "Default Audio language:";
+      // 
+      // groupBox11
+      // 
+      this.groupBox11.Controls.Add(this.comboDVDNavigator);
+      this.groupBox11.Controls.Add(this.label40);
+      this.groupBox11.Controls.Add(this.comboDVDAudioRenderer);
+      this.groupBox11.Controls.Add(this.label38);
+      this.groupBox11.Location = new System.Drawing.Point(8, 184);
+      this.groupBox11.Name = "groupBox11";
+      this.groupBox11.Size = new System.Drawing.Size(600, 72);
+      this.groupBox11.TabIndex = 8;
+      this.groupBox11.TabStop = false;
+      this.groupBox11.Text = "DVD Codec";
+      // 
+      // comboDVDNavigator
+      // 
+      this.comboDVDNavigator.ItemHeight = 13;
+      this.comboDVDNavigator.Location = new System.Drawing.Point(104, 40);
+      this.comboDVDNavigator.Name = "comboDVDNavigator";
+      this.comboDVDNavigator.Size = new System.Drawing.Size(184, 21);
+      this.comboDVDNavigator.TabIndex = 7;
+      // 
+      // label40
+      // 
+      this.label40.Location = new System.Drawing.Point(8, 48);
+      this.label40.Name = "label40";
+      this.label40.Size = new System.Drawing.Size(88, 16);
+      this.label40.TabIndex = 13;
+      this.label40.Text = "DVD Navigator:";
+      // 
+      // comboDVDAudioRenderer
+      // 
+      this.comboDVDAudioRenderer.ItemHeight = 13;
+      this.comboDVDAudioRenderer.Location = new System.Drawing.Point(104, 16);
+      this.comboDVDAudioRenderer.Name = "comboDVDAudioRenderer";
+      this.comboDVDAudioRenderer.Size = new System.Drawing.Size(152, 21);
+      this.comboDVDAudioRenderer.TabIndex = 6;
+      // 
+      // label38
+      // 
+      this.label38.Location = new System.Drawing.Point(8, 24);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(88, 16);
+      this.label38.TabIndex = 11;
+      this.label38.Text = "Audio renderer:";
+      // 
+      // groupBox10
+      // 
+      this.groupBox10.Controls.Add(this.comboBoxDVDDisplayMode);
+      this.groupBox10.Controls.Add(this.label20);
+      this.groupBox10.Controls.Add(this.label19);
+      this.groupBox10.Controls.Add(this.comboBoxDVDARCorrectionMode);
+      this.groupBox10.Controls.Add(this.checkBoxARDVD);
+      this.groupBox10.Location = new System.Drawing.Point(8, 256);
+      this.groupBox10.Name = "groupBox10";
+      this.groupBox10.Size = new System.Drawing.Size(600, 112);
+      this.groupBox10.TabIndex = 7;
+      this.groupBox10.TabStop = false;
+      this.groupBox10.Text = "Aspect Ratio";
+      // 
+      // label19
+      // 
+      this.label19.Location = new System.Drawing.Point(24, 40);
+      this.label19.Name = "label19";
+      this.label19.Size = new System.Drawing.Size(96, 24);
+      this.label19.TabIndex = 16;
+      this.label19.Text = "Aspect Ratio Correction mode:";
+      // 
+      // comboBoxDVDARCorrectionMode
+      // 
+      this.comboBoxDVDARCorrectionMode.Items.AddRange(new object[] {
+                                                                     "Crop",
+                                                                     "Letterbox",
+                                                                     "Stretched",
+                                                                     "Follow stream"});
+      this.comboBoxDVDARCorrectionMode.Location = new System.Drawing.Point(136, 40);
+      this.comboBoxDVDARCorrectionMode.Name = "comboBoxDVDARCorrectionMode";
+      this.comboBoxDVDARCorrectionMode.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxDVDARCorrectionMode.TabIndex = 9;
+      // 
+      // checkBoxARDVD
+      // 
+      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 16);
+      this.checkBoxARDVD.Name = "checkBoxARDVD";
+      this.checkBoxARDVD.Size = new System.Drawing.Size(224, 16);
+      this.checkBoxARDVD.TabIndex = 8;
+      this.checkBoxARDVD.Text = "Use PixelRatio correction for DVD\'s";
+      // 
+      // DVDPlayerBox
+      // 
+      this.DVDPlayerBox.Controls.Add(this.checkBoxInternalDVDPlayer);
+      this.DVDPlayerBox.Controls.Add(this.label1);
+      this.DVDPlayerBox.Controls.Add(this.dvdFile);
+      this.DVDPlayerBox.Controls.Add(this.dvdbtnSelect);
+      this.DVDPlayerBox.Controls.Add(this.label2);
+      this.DVDPlayerBox.Controls.Add(this.dvdParams);
+      this.DVDPlayerBox.Location = new System.Drawing.Point(8, 8);
+      this.DVDPlayerBox.Name = "DVDPlayerBox";
+      this.DVDPlayerBox.Size = new System.Drawing.Size(600, 88);
+      this.DVDPlayerBox.TabIndex = 6;
+      this.DVDPlayerBox.TabStop = false;
+      this.DVDPlayerBox.Text = "DVD Player";
       // 
       // checkBoxInternalDVDPlayer
       // 
@@ -1002,43 +1088,43 @@ namespace MediaPortal
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(32, 40);
+      this.label1.Location = new System.Drawing.Point(24, 40);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 16);
+      this.label1.Size = new System.Drawing.Size(56, 16);
       this.label1.TabIndex = 0;
       this.label1.Text = "Filename";
       // 
       // dvdFile
       // 
-      this.dvdFile.Location = new System.Drawing.Point(48, 56);
+      this.dvdFile.Location = new System.Drawing.Point(88, 32);
       this.dvdFile.Name = "dvdFile";
       this.dvdFile.Size = new System.Drawing.Size(392, 20);
-      this.dvdFile.TabIndex = 1;
+      this.dvdFile.TabIndex = 0;
       this.dvdFile.Text = "";
       // 
       // dvdbtnSelect
       // 
-      this.dvdbtnSelect.Location = new System.Drawing.Point(448, 56);
+      this.dvdbtnSelect.Location = new System.Drawing.Point(488, 32);
       this.dvdbtnSelect.Name = "dvdbtnSelect";
       this.dvdbtnSelect.Size = new System.Drawing.Size(24, 23);
-      this.dvdbtnSelect.TabIndex = 2;
+      this.dvdbtnSelect.TabIndex = 1;
       this.dvdbtnSelect.Text = "...";
       this.dvdbtnSelect.Click += new System.EventHandler(this.dvdbtnSelect_Click);
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(32, 80);
+      this.label2.Location = new System.Drawing.Point(24, 64);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(72, 16);
+      this.label2.Size = new System.Drawing.Size(64, 16);
       this.label2.TabIndex = 3;
       this.label2.Text = "Parameters";
       // 
       // dvdParams
       // 
-      this.dvdParams.Location = new System.Drawing.Point(48, 96);
+      this.dvdParams.Location = new System.Drawing.Point(88, 56);
       this.dvdParams.Name = "dvdParams";
       this.dvdParams.Size = new System.Drawing.Size(160, 20);
-      this.dvdParams.TabIndex = 3;
+      this.dvdParams.TabIndex = 2;
       this.dvdParams.Text = "";
       // 
       // tabAudioShares
@@ -1067,6 +1153,31 @@ namespace MediaPortal
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Music settings";
+      // 
+      // btnPlayListFolder
+      // 
+      this.btnPlayListFolder.Location = new System.Drawing.Point(488, 72);
+      this.btnPlayListFolder.Name = "btnPlayListFolder";
+      this.btnPlayListFolder.Size = new System.Drawing.Size(24, 23);
+      this.btnPlayListFolder.TabIndex = 2;
+      this.btnPlayListFolder.Text = "...";
+      this.btnPlayListFolder.Click += new System.EventHandler(this.btnPlayListFolder_Click);
+      // 
+      // textBoxPlayLists
+      // 
+      this.textBoxPlayLists.Location = new System.Drawing.Point(88, 72);
+      this.textBoxPlayLists.Name = "textBoxPlayLists";
+      this.textBoxPlayLists.Size = new System.Drawing.Size(392, 20);
+      this.textBoxPlayLists.TabIndex = 1;
+      this.textBoxPlayLists.Text = "";
+      // 
+      // label17
+      // 
+      this.label17.Location = new System.Drawing.Point(16, 80);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(80, 16);
+      this.label17.TabIndex = 4;
+      this.label17.Text = "Playlist folder:";
       // 
       // checkBoxShufflePlaylists
       // 
@@ -1193,6 +1304,9 @@ namespace MediaPortal
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.btnPlayListVideo);
+      this.groupBox3.Controls.Add(this.textBoxPlayListFolderVideo);
+      this.groupBox3.Controls.Add(this.label18);
       this.groupBox3.Controls.Add(this.chkBoxVideoRepeat);
       this.groupBox3.Controls.Add(this.txtboxVideoFiles);
       this.groupBox3.Controls.Add(this.label9);
@@ -1202,6 +1316,31 @@ namespace MediaPortal
       this.groupBox3.TabIndex = 1;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Movie Settings";
+      // 
+      // btnPlayListVideo
+      // 
+      this.btnPlayListVideo.Location = new System.Drawing.Point(448, 56);
+      this.btnPlayListVideo.Name = "btnPlayListVideo";
+      this.btnPlayListVideo.Size = new System.Drawing.Size(24, 24);
+      this.btnPlayListVideo.TabIndex = 4;
+      this.btnPlayListVideo.Text = "...";
+      this.btnPlayListVideo.Click += new System.EventHandler(this.btnPlayListVideo_Click);
+      // 
+      // textBoxPlayListFolderVideo
+      // 
+      this.textBoxPlayListFolderVideo.Location = new System.Drawing.Point(104, 56);
+      this.textBoxPlayListFolderVideo.Name = "textBoxPlayListFolderVideo";
+      this.textBoxPlayListFolderVideo.Size = new System.Drawing.Size(336, 20);
+      this.textBoxPlayListFolderVideo.TabIndex = 3;
+      this.textBoxPlayListFolderVideo.Text = "";
+      // 
+      // label18
+      // 
+      this.label18.Location = new System.Drawing.Point(16, 56);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(80, 16);
+      this.label18.TabIndex = 2;
+      this.label18.Text = "Playlists folder:";
       // 
       // chkBoxVideoRepeat
       // 
@@ -2088,30 +2227,25 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
-      // label17
+      // label20
       // 
-      this.label17.Location = new System.Drawing.Point(16, 80);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(80, 16);
-      this.label17.TabIndex = 4;
-      this.label17.Text = "Playlist folder:";
+      this.label20.Location = new System.Drawing.Point(24, 80);
+      this.label20.Name = "label20";
+      this.label20.Size = new System.Drawing.Size(80, 16);
+      this.label20.TabIndex = 17;
+      this.label20.Text = "Display mode:";
       // 
-      // textBoxPlayLists
+      // comboBoxDVDDisplayMode
       // 
-      this.textBoxPlayLists.Location = new System.Drawing.Point(88, 72);
-      this.textBoxPlayLists.Name = "textBoxPlayLists";
-      this.textBoxPlayLists.Size = new System.Drawing.Size(392, 20);
-      this.textBoxPlayLists.TabIndex = 1;
-      this.textBoxPlayLists.Text = "";
-      // 
-      // btnPlayListFolder
-      // 
-      this.btnPlayListFolder.Location = new System.Drawing.Point(488, 72);
-      this.btnPlayListFolder.Name = "btnPlayListFolder";
-      this.btnPlayListFolder.Size = new System.Drawing.Size(24, 23);
-      this.btnPlayListFolder.TabIndex = 2;
-      this.btnPlayListFolder.Text = "...";
-      this.btnPlayListFolder.Click += new System.EventHandler(this.btnPlayListFolder_Click);
+      this.comboBoxDVDDisplayMode.Items.AddRange(new object[] {
+                                                                "Default",
+                                                                "16:9",
+                                                                "4:3 Pan Scan",
+                                                                "4:3 Letterbox"});
+      this.comboBoxDVDDisplayMode.Location = new System.Drawing.Point(136, 72);
+      this.comboBoxDVDDisplayMode.Name = "comboBoxDVDDisplayMode";
+      this.comboBoxDVDDisplayMode.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxDVDDisplayMode.TabIndex = 18;
       // 
       // SetupForm
       // 
@@ -2133,6 +2267,9 @@ namespace MediaPortal
       this.tabAudioPlayer.ResumeLayout(false);
       this.groupBox15.ResumeLayout(false);
       this.TabDVDPlayer.ResumeLayout(false);
+      this.groupBox12.ResumeLayout(false);
+      this.groupBox11.ResumeLayout(false);
+      this.groupBox10.ResumeLayout(false);
       this.DVDPlayerBox.ResumeLayout(false);
       this.tabAudioShares.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
@@ -2307,6 +2444,32 @@ namespace MediaPortal
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);
         checkBoxARDVD.Checked=xmlreader.GetValueAsBool("dvdplayer","pixelratiocorrection",false);
         string strDVDAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
+        string strARMode=xmlreader.GetValueAsString("dvdplayer","armode","Stretched");
+        int iSel=0;
+        comboBoxDVDARCorrectionMode.SelectedIndex=0;
+        foreach (string strItem in comboBoxDVDARCorrectionMode.Items)
+        {
+          if (strItem==strARMode)
+          {
+            comboBoxDVDARCorrectionMode.SelectedIndex=iSel;
+            break;
+          }
+          iSel++;
+        }
+
+        string strDisplayMode=xmlreader.GetValueAsString("dvdplayer","displaymode","");
+        iSel=0;
+        comboBoxDVDDisplayMode.SelectedIndex=0;
+        foreach (string strItem in comboBoxDVDDisplayMode.Items)
+        {
+          if (strItem==strDisplayMode)
+          {
+            comboBoxDVDDisplayMode.SelectedIndex=iSel;
+            break;
+          }
+          iSel++;
+        }
+
         SetupAudioRenderer(comboDVDAudioRenderer,strDVDAudioRenderer);
         
         string strDVDAudioLanguage=xmlreader.GetValueAsString("dvdplayer","audiolanguage","English");
@@ -2351,6 +2514,7 @@ namespace MediaPortal
         txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
         txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
         textBoxPlayLists.Text=xmlreader.GetValueAsString("music","playlists","");
+        textBoxPlayListFolderVideo.Text=xmlreader.GetValueAsString("movies","playlists","");
         LoadWeather(xmlreader);
 
 
@@ -2558,6 +2722,8 @@ namespace MediaPortal
         xmlWriter.SetValue("dvdplayer","audiorenderer",(string)comboDVDAudioRenderer.SelectedItem);
         xmlWriter.SetValue("dvdplayer","navigator",(string)comboDVDNavigator.SelectedItem);
 
+        xmlWriter.SetValue("dvdplayer","armode",(string)comboBoxDVDARCorrectionMode.SelectedItem);
+        xmlWriter.SetValue("dvdplayer","displaymode",(string)comboBoxDVDDisplayMode.SelectedItem);
         xmlWriter.SetValueAsBool("dvdplayer","showsubtitles",checkBoxDVDSubtitles.Checked);
         xmlWriter.SetValue("movieplayer","path",movieFile.Text);
         xmlWriter.SetValue("movieplayer","arguments",movieParameters.Text);
@@ -2581,8 +2747,9 @@ namespace MediaPortal
         xmlWriter.SetValueAsBool("musicfiles","repeat",chkBoxRepeatAudioPlaylist.Checked);
         xmlWriter.SetValueAsBool("movies","repeat",chkBoxVideoRepeat.Checked);
         xmlWriter.SetValueAsBool("musicfiles","autoshuffle",checkBoxShufflePlaylists.Checked);
-  		  xmlWriter.SetValue("music","playlists",textBoxPlayLists.Text);
-
+  		  xmlWriter.SetValue("music" ,"playlists",textBoxPlayLists.Text);
+        xmlWriter.SetValue("movies","playlists",textBoxPlayListFolderVideo.Text);
+        
         xmlWriter.SetValue("music","extensions", txtboxAudioFiles.Text);
         xmlWriter.SetValue("movies","extensions", txtboxVideoFiles.Text);
         xmlWriter.SetValue("pictures","extensions",txtBoxPictureFiles.Text);
@@ -3415,6 +3582,15 @@ namespace MediaPortal
       if (dlg.SelectedPath==null) return;
       textBoxPlayLists.Text=dlg.SelectedPath;
     }
+
+    private void btnPlayListVideo_Click(object sender, System.EventArgs e)
+    {
+      FolderBrowserDialog dlg=new FolderBrowserDialog();
+      dlg.ShowNewFolderButton=true;
+      dlg.ShowDialog(this);
+      if (dlg.SelectedPath==null) return;
+      textBoxPlayListFolderVideo.Text=dlg.SelectedPath;
+    }
 	}
 
   // Implements the manual sorting of items by columns.
@@ -3435,22 +3611,29 @@ namespace MediaPortal
     public int Compare(object x, object y)
     {
 			
-      if (m_bAscending)
+      try
       {
-        int i1=Convert.ToInt32(((ListViewItem)x).SubItems[col].Text);
-        int i2=Convert.ToInt32(((ListViewItem)y).SubItems[col].Text);
-        if (i1>i2) return 1;
-        if (i1<i2) return -1;
-        return 0;
+        if (m_bAscending)
+        {
+          int i1=Convert.ToInt32(((ListViewItem)x).SubItems[col].Text);
+          int i2=Convert.ToInt32(((ListViewItem)y).SubItems[col].Text);
+          if (i1>i2) return 1;
+          if (i1<i2) return -1;
+          return 0;
+        }
+        else
+        {
+          int i2=Convert.ToInt32(((ListViewItem)x).SubItems[col].Text);
+          int i1=Convert.ToInt32(((ListViewItem)y).SubItems[col].Text);
+          if (i1>i2) return 1;
+          if (i1<i2) return -1;
+          return 0;
+        }
       }
-      else
+      catch(Exception)
       {
-        int i2=Convert.ToInt32(((ListViewItem)x).SubItems[col].Text);
-        int i1=Convert.ToInt32(((ListViewItem)y).SubItems[col].Text);
-        if (i1>i2) return 1;
-        if (i1<i2) return -1;
-        return 0;
       }
+      return 0;
     }
   }
 

@@ -1,4 +1,14 @@
 History: (dd-mm-yyyy)
+  12-05-2004  general     : added : check if DirectX 9.0b is installed when starting
+  12-05-2004  general     : added : check if Windows Mediaplayer 9 is installed when starting
+  12-05-2004  general     : added : if skin misses a .xml file then show which file is missing instead of showing a black screen
+  12-05-2004  general     : added : use english text for those lines which the current language has no translation for
+  12-05-2004  my movies   : added : dvd: added option to specify aspect ratio correction mode
+  12-05-2004  my movies   : added : dvd: added option to specify preferred display mode
+  12-05-2004  my music    : added : playlists view: play status is now reset when all songs are played
+  12-05-2004  my music    : added : playlists like .m3u/.b4s/.pls are now shown with a different icon
+  12-05-2004  my movies   : added : seperate playlist folder (video playlists gets saved here). 
+
   11-05-2004  my music    : added : playlist folder (playlists gets saved here). 
   11-05-2004  general     : added : space before & after | character when scrolling
   11-05-2004  OSD keyboard: added : cursor keys & blinking caret

@@ -3,11 +3,8 @@ Bugs:
 - installer: check dx9b
 - MPReader : XCDs dont work anymore
 
--xml        : tag to specify whether music overlay should b visible or not
 -dvd        : osd pause doesnt work
 -listcontrol: doesnt adjust x-pos of page counter
-
--capture : missing audio capture device for pinnacle!!
 -capture : CVBS/SVHS in  doesnt work
 
 02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
