@@ -183,6 +183,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIRecipies", "GUIRecipies\
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -339,6 +343,10 @@ Global
 		{98398376-AFF9-4C79-A012-85823CF50596}.Debug.Build.0 = Debug|.NET
 		{98398376-AFF9-4C79-A012-85823CF50596}.Release.ActiveCfg = Release|.NET
 		{98398376-AFF9-4C79-A012-85823CF50596}.Release.Build.0 = Release|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Debug.ActiveCfg = Debug|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Debug.Build.0 = Debug|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Release.ActiveCfg = Release|.NET
+		{68168FAA-A363-4F64-981C-32629A537900}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

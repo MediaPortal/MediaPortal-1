@@ -4,6 +4,7 @@ mkdir plugins\TagReaders
 mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 
+copy ..\..\..\Configuration\bin\Debug\Configuration.exe .
 copy ..\..\..\GUIRSSFeed\bin\Debug\GUIRSSFeed.dll plugins\windows
 copy ..\..\..\GUIRecipies\bin\Debug\GUIRecipies.dll plugins\windows
 copy ..\..\..\GUIPrograms\bin\Debug\GUIPrograms.dll plugins\windows

@@ -90,34 +90,9 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "guilib"
-                    AssemblyName = "guilib"
-                    HintPath = "..\..\MediaPortal\mediaportal\guilib\bin\Release\guilib.dll"
-                />
-                <Reference
-                    Name = "DShowNET"
-                    AssemblyName = "DShowNET"
-                    HintPath = "..\..\MediaPortal\mediaportal\DShowNET\bin\Release\DShowNET.dll"
-                />
-                <Reference
-                    Name = "DirectX.Capture"
-                    AssemblyName = "DirectX.Capture"
-                    HintPath = "..\..\MediaPortal\mediaportal\DirectX.Capture\bin\Release\DirectX.Capture.dll"
-                />
-                <Reference
-                    Name = "SQLiteClient"
-                    AssemblyName = "SQLiteClient"
-                    HintPath = "..\..\MediaPortal\mediaportal\SQLiteClient.dll"
-                />
-                <Reference
                     Name = "TVDatabase"
                     AssemblyName = "TVDatabase"
                     HintPath = "..\..\MediaPortal\mediaportal\TVDatabase\bin\Release\TVDatabase.dll"
-                />
-                <Reference
-                    Name = "RadioDatabase"
-                    AssemblyName = "RadioDatabase"
-                    HintPath = "..\..\MediaPortal\mediaportal\RadioDatabase\bin\Release\RadioDatabase.dll"
                 />
                 <Reference
                     Name = "System.Runtime.Serialization.Formatters.Soap"
@@ -128,6 +103,31 @@
                     Name = "TVCapture"
                     AssemblyName = "TVCapture"
                     HintPath = "..\..\MediaPortal\mediaportal\TVCapture\bin\Release\TVCapture.dll"
+                />
+                <Reference
+                    Name = "DirectX.Capture"
+                    Project = "{8C0015DB-69E1-46E7-8705-3A4F8BE2E5E7}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "DShowNET"
+                    Project = "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "guilib"
+                    Project = "{346B477C-7F86-4F53-86E8-DDB26DBE72AA}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "SQLiteClient"
+                    AssemblyName = "SQLiteClient"
+                    HintPath = "..\SQLiteClient.dll"
+                />
+                <Reference
+                    Name = "RadioDatabase"
+                    Project = "{50E428C2-230C-4549-8BB7-F269203C2C3C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -264,12 +264,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "WeatherChannel.cs"
+                    RelPath = "VideoRenderers.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "VideoRenderers.cs"
+                    RelPath = "WeatherChannel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
