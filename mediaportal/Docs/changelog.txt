@@ -1,4 +1,6 @@
 26-07-2004  setup       : added : Ability to arrange the order of the television channels.
+26-07-2004  setup       : fixed : radio autotune
+26-07-2004  my radio    : fixed : some .pls files where not read correctly
 
 25-07-2004  setup       : added : Key actions are now selectable from a dropdown list instead of manually entering the values.
 25-07-2004  setup       : fixed : Support for four (4) digits in channel number
