@@ -339,7 +339,8 @@ namespace MediaPortal.Configuration.Sections
             //
             // Add share
             //
-            AddShare(new ShareData(driveName, drive, String.Empty), false);
+            string name=String.Format("CD/DVD {0}:",drive.Substring(0, 1).ToUpper());
+            AddShare(new ShareData(name, drive, String.Empty), false);
           }
         }
       }
