@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  22-04-2004: my music    : added : visualisations when playing music
   22-04-2004: tvguide     : fixed : Mediaportal didnt use the timezone settings specified in tvguide.xml
   21-04-2004: setup       : fixed : made dvd language lists a bit shorter
   21-04-2004: setup       : added : file setup->setup channelnumbers/frequencies in 1 place

@@ -50,6 +50,7 @@ namespace D3D
     protected System.Drawing.Size storedSize;
     private System.Windows.Forms.MenuItem mnuSetup;
     protected System.Drawing.Point storedLocation;
+    private AxMicrosoft.MediaPlayer.Interop.AxWindowsMediaPlayer axWindowsMediaPlayer1;
     protected Rectangle   oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -94,6 +95,7 @@ namespace D3D
         ControlStyles.UserPaint | 
         ControlStyles.DoubleBuffer,
         true);    
+      GUIGraphicsContext.WMP=axWindowsMediaPlayer1;
 
     }
 
@@ -375,12 +377,16 @@ namespace D3D
     /// </summary>
     private void InitializeComponent()
     {
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
       this.mnuMain = new System.Windows.Forms.MainMenu();
       this.mnuFile = new System.Windows.Forms.MenuItem();
       this.mnuSetup = new System.Windows.Forms.MenuItem();
       this.mnuBreak1 = new System.Windows.Forms.MenuItem();
       this.mnuBreak2 = new System.Windows.Forms.MenuItem();
       this.mnuExit = new System.Windows.Forms.MenuItem();
+      this.axWindowsMediaPlayer1 = new AxMicrosoft.MediaPlayer.Interop.AxWindowsMediaPlayer();
+      ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+      this.SuspendLayout();
       // 
       // mnuMain
       // 
@@ -412,18 +418,35 @@ namespace D3D
       // 
       this.mnuBreak2.Index = 2;
       this.mnuBreak2.Text = "-";
-      
+      // 
+      // mnuExit
+      // 
+      this.mnuExit.Index = 3;
+      this.mnuExit.Text = "";
+      // 
+      // axWindowsMediaPlayer1
+      // 
+      this.axWindowsMediaPlayer1.Enabled = true;
+      this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(8, 16);
+      this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+      this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+      this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(264, 240);
+      this.axWindowsMediaPlayer1.TabIndex = 0;
+      this.axWindowsMediaPlayer1.Visible = false;
       // 
       // D3DApp
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(292, 273);
+      this.Controls.Add(this.axWindowsMediaPlayer1);
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
       this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
+      ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+      this.ResumeLayout(false);
 
     }
 
