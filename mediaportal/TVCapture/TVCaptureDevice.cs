@@ -25,7 +25,8 @@ namespace MediaPortal.TV.Recording
     Size m_FrameSize;
     double m_FrameRate;
     string m_strAudioInputPin = "";
-    
+    int    _RecordingLevel=100;
+
     [NonSerialized]
     int m_iID;
 
@@ -113,6 +114,15 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_FrameRate; }
       set { m_FrameRate = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the recording level
+    /// </summary>
+    public int RecordingLevel
+    {
+      get { return _RecordingLevel;}
+      set { _RecordingLevel=value;}
     }
 
     public string AudioInputPin

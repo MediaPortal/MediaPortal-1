@@ -36,22 +36,24 @@ namespace MediaPortal.TV.Recording
     
     IFileSinkFilter	        m_fileWriterFilter = null; // DShow Filter: file writer
     IBaseFilter		          m_muxFilter = null; // DShow Filter: multiplexor (combine video and audio streams)
-    IBaseFilter m_filterCompressorVideo = null;
-    IBaseFilter m_filterCompressorAudio = null;
-    IAMTVTuner m_TVTuner = null;
+    IBaseFilter             m_filterCompressorVideo = null;
+    IBaseFilter             m_filterCompressorAudio = null;
+    IAMTVTuner              m_TVTuner = null;
     int				              m_rotCookie = 0; // Cookie into the Running Object Table
-    VideoCaptureDevice m_videoCaptureDevice = null;
-    IVideoWindow m_videoWindow = null;
-    IBasicVideo2 m_basicVideo = null;
+    VideoCaptureDevice      m_videoCaptureDevice = null;
+    IVideoWindow            m_videoWindow = null;
+    IBasicVideo2            m_basicVideo = null;
     IMediaControl					  m_mediaControl = null;
-    Size m_FrameSize;
-    double m_FrameRate;
-    bool m_bFirstTune = true;
+    Size                    m_FrameSize;
+    double                  m_FrameRate;
+    int                     _RecordingLevel=100;
+    bool                    m_bFirstTune = true;
+
     const int WS_CHILD = 0x40000000;
     const int WS_CLIPCHILDREN = 0x02000000;
     const int WS_CLIPSIBLINGS = 0x04000000;
 
-		public SWEncodingGraph(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin)
+		public SWEncodingGraph(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
     {
       m_bFirstTune = true;
       m_bUseCable = bCable;
@@ -65,6 +67,7 @@ namespace MediaPortal.TV.Recording
       m_FrameRate = frameRate;
       if (strAudioInputPin != null && strAudioInputPin.Length > 0)
         m_strAudioInputPin = strAudioInputPin;
+      _RecordingLevel = RecordingLevel;
 		}
 
     /// <summary>
@@ -424,14 +427,17 @@ namespace MediaPortal.TV.Recording
               {
                 DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
               }
-              hr = mixer.put_MixLevel(1.0d);
+
+              double fLevel=((double)_RecordingLevel);
+              fLevel /= 100.0d;
+              hr = mixer.put_MixLevel(fLevel);
               if (hr != 0)
               {
-                DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to 100%:0x{0:X}",hr);
+                DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
               }
               else
               {
-                DirectShowUtil.DebugWrite("SWGraph:set mixing level to 100% of pin:{0}",m_strAudioInputPin);
+                DirectShowUtil.DebugWrite("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
               }
 
             }
