@@ -354,8 +354,11 @@ namespace MediaPortal.Player
     {
       if (Paused || menuMode!=MenuMode.No || GUIGraphicsContext.Vmr9FPS<1f)
       {
-        //repaint
-        if (Vmr9!=null) Vmr9.Repaint();
+				if (GUIGraphicsContext.Vmr9Active)
+				{
+					//repaint
+					if (Vmr9!=null) Vmr9.Repaint();
+				}
       }
       //m_SourceRect=m_scene.SourceRect;
       //m_VideoRect=m_scene.DestRect;

@@ -325,6 +325,7 @@ namespace MediaPortal.Player
 				{
 					GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
 					lastTime=time;
+					frameCounter=0;
 				}
         return 0;
       }
