@@ -436,8 +436,8 @@ namespace MediaPortal.GUI.Library
           else
           {
             m_label.Label=szText;
-            m_label.Width=(int)fMaxWidth-50;
-            m_label.TextColor=m_dwTextColor;
+						m_label.Width=(int)fMaxWidth;
+						m_label.TextColor=m_dwTextColor;
             m_label.SetPosition((int)fPosX-iScrollX,(int)fPosY);
             m_label.Render(timePassed);
           }

@@ -897,7 +897,7 @@ namespace MediaPortal.GUI.Home
 			while (enumControls.MoveNext())
 			{
 				GUIControl cntl=((GUIControl)enumControls.Current);
-				if (cntl.YPosition>=y1 && cntl.YPosition <y1+m_iMaxHeight)
+				if (cntl.YPosition + cntl.Height >= y1 && cntl.YPosition <y1+m_iMaxHeight)
 				{
 					cntl.Render(timePassed);
 				}

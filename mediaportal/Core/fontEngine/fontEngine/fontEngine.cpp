@@ -511,6 +511,19 @@ void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fVal
 	fontData[fontNumber].textureCoord[index][subindex]=fValue;
 }
 
+// Updates a vertex in the memory buffer if needed
+void UpdateVertex(FONT_DATA_T* pFont, CUSTOMVERTEX* pVertex, float x, float y, float tu, float tv, DWORD color)
+{
+	if(pVertex->x != x || pVertex->y != y || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
+	{
+		pVertex->x = x;
+		pVertex->y = y;
+		pVertex->tu = tu;
+		pVertex->tv = tv;
+		pVertex->color = color;
+		pFont->updateVertexBuffer = true;		// We need to update gfx card vertex buffer
+	}
+}
 
 //*******************************************************************************************************************
 void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth)
@@ -538,20 +551,15 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	m_pDevice->GetViewport(&viewport);
 	memcpy(&orgViewPort,&viewport, sizeof(orgViewPort));
 	unsigned int off=(int)(fontData[fontNumber].fSpacingPerChar+1);
-	if (viewport.X>=off)
-	{
-		viewport.X -= (int)(fontData[fontNumber].fSpacingPerChar+1);
-		viewport.Width+=(int)((fontData[fontNumber].fSpacingPerChar+1)*2);
-	}
-	if (viewport.Y>0)
-	{
-		viewport.Y--;
-		viewport.Height+=2;
-	}
 
-	float totalWidth=0;
 	if (maxWidth <=0) maxWidth=2000;
 	
+	float totalWidth = 0;
+	float minX = viewport.X;
+	float minY = viewport.Y;
+	float maxX = viewport.X + viewport.Width;
+	float maxY = viewport.Y + viewport.Height;
+
 	for (int i=0; i < (int)wcslen(text);++i)
 	{
         WCHAR c=text[i];
@@ -560,10 +568,12 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 			totalWidth=0;
 			xpos = fStartX;
 			ypos += yoff;
-		}
-
-		if (c < font->iFirstChar || c >= font->iEndChar )
 			continue;
+		}
+		else if (c < font->iFirstChar || c >= font->iEndChar)
+			continue;
+		else if (totalWidth >= maxWidth)		// Reached max width?
+			continue;							// Skip until row break or end of text
 
         int index=c-font->iFirstChar;
 		float tx1 = font->textureCoord[index][0];
@@ -574,57 +584,66 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 		float w = (tx2-tx1) * fScaleX;
 		float h = (ty2-ty1) * fScaleY;
 
-		if (xpos<0 || ypos<0)
-		{
-			c=' ';
-		}
+		// Will hold clipped coordinates
+		float xpos1 = xpos;
+		float ypos1 = ypos;
+		float xpos2 = xpos + w;
+		float ypos2 = ypos + h;
 
-		totalWidth += (w - fSpacing);
-		if (totalWidth>= maxWidth) break;
-
-		if (c != ' ' && xpos >= viewport.X && ypos >= viewport.Y)
+		// Inside viewport?
+		if(xpos1 < maxX && xpos2 >= minX &&
+			ypos1 < maxY && ypos2 >= minY)
 		{
-			float xpos2=xpos+w;
-			float ypos2=ypos+h;
-			if (xpos2 <= viewport.X+viewport.Width && ypos2 <=viewport.Y+viewport.Height)
+			// Perform clipping
+			if(xpos1 < minX)
 			{
-				if (font->vertices[font->iv].tu != tx1 || font->vertices[font->iv].tv !=ty2 || font->vertices[font->iv].color!=intColor)
-					font->updateVertexBuffer=true;
-				font->vertices[font->iv].x=xpos ;  font->vertices[font->iv].y=ypos2 ; font->vertices[font->iv].color=intColor;font->vertices[font->iv].tu=tx1; font->vertices[font->iv].tv=ty2;font->iv++;
+				tx1 += (minX - xpos1) / fScaleX;
+				xpos1 += minX - xpos1;
+			}
+			if(xpos2 > maxX)
+			{
+				tx2 -= (xpos2 - maxX) / fScaleX;
+				xpos2 -= xpos2 - maxX;
+			}
+			if(ypos1 < minY)
+			{
+				ty1 += (minY - ypos1) / fScaleY;
+				ypos1 += minY - ypos1;
+			}
+			if(ypos2 > maxY)
+			{
+				ty2 -= (ypos2 - maxY) / fScaleY;
+				ypos2 -= ypos2 - maxY;
+			}
 
-				if (font->vertices[font->iv].x != xpos || font->vertices[font->iv].y !=ypos || font->vertices[font->iv].tv!=ty1)
-					font->updateVertexBuffer=true;
-				font->vertices[font->iv].x=xpos ;  font->vertices[font->iv].y=ypos  ; font->vertices[font->iv].color=intColor;font->vertices[font->iv].tu=tx1; font->vertices[font->iv].tv=ty1;font->iv++;
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, intColor);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, intColor);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, intColor);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, intColor);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, intColor);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, intColor);
 
-				if (font->vertices[font->iv].x != xpos2 || font->vertices[font->iv].y!=ypos2 || font->vertices[font->iv].tu!=tx2)
-					font->updateVertexBuffer=true;
-				font->vertices[font->iv].x=xpos2;  font->vertices[font->iv].y=ypos2 ; font->vertices[font->iv].color=intColor;font->vertices[font->iv].tu=tx2; font->vertices[font->iv].tv=ty2;font->iv++;
-				font->vertices[font->iv].x=xpos2;  font->vertices[font->iv].y=ypos  ; font->vertices[font->iv].color=intColor;font->vertices[font->iv].tu=tx2; font->vertices[font->iv].tv=ty1;font->iv++;
-				font->vertices[font->iv].x=xpos2;  font->vertices[font->iv].y=ypos2 ; font->vertices[font->iv].color=intColor;font->vertices[font->iv].tu=tx2; font->vertices[font->iv].tv=ty2;font->iv++;
-				font->vertices[font->iv].x=xpos ;  font->vertices[font->iv].y=ypos  ; font->vertices[font->iv].color=intColor;font->vertices[font->iv].tu=tx1; font->vertices[font->iv].tv=ty1;font->iv++;
+			font->dwNumTriangles += 2;
+			if (font->iv > (MaxNumfontVertices-12))
+			{
+				//reset viewport
+				D3DVIEWPORT9 viewportWholeScreen;
+				viewportWholeScreen.X=0;
+				viewportWholeScreen.Y=0;
+				viewportWholeScreen.Width =m_iScreenWidth;
+				viewportWholeScreen.Height=m_iScreenHeight;
+				m_pDevice->SetViewport(&viewportWholeScreen);
 
-				font->dwNumTriangles += 2;
-				if (font->iv > (MaxNumfontVertices-12))
-				{
-					//reset viewport
-					D3DVIEWPORT9 viewportWholeScreen;
-					viewportWholeScreen.X=0;
-					viewportWholeScreen.Y=0;
-					viewportWholeScreen.Width =m_iScreenWidth;
-					viewportWholeScreen.Height=m_iScreenHeight;
-					m_pDevice->SetViewport(&viewportWholeScreen);
-
-					FontEnginePresentTextures();
-					FontEnginePresent3D(fontNumber);
-					font->dwNumTriangles = 0;
-					font->iv = 0;
-					//restore viewport
-					m_pDevice->SetViewport(&orgViewPort);
-				}
+				FontEnginePresentTextures();
+				FontEnginePresent3D(fontNumber);
+				font->dwNumTriangles = 0;
+				font->iv = 0;
+				//restore viewport
+				m_pDevice->SetViewport(&orgViewPort);
 			}
 		}
-
-		xpos += w - fSpacing;
+		totalWidth += (w - fSpacing);
+		xpos += (w - fSpacing);
 	}
 }
 
