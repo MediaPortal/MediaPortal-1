@@ -49,28 +49,31 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static TVDatabase()
     {
-      try 
+      lock (typeof(TVDatabase))
       {
-        // Open database
-        Log.Write("opening tvdatabase");
-        System.IO.Directory.CreateDirectory("database");
-        //Upgrade();
-        m_db = new SQLiteClient(@"database\TVDatabaseV9.db");
-        CreateTables();
-
-        if (m_db!=null)
+        try 
         {
-          m_db.Execute("PRAGMA cache_size=8192\n");
-          m_db.Execute("PRAGMA synchronous='OFF'\n");
-          m_db.Execute("PRAGMA count_changes='OFF'\n");
-        }
+          // Open database
+          Log.Write("opening tvdatabase");
+          System.IO.Directory.CreateDirectory("database");
+          //Upgrade();
+          m_db = new SQLiteClient(@"database\TVDatabaseV9.db");
+          CreateTables();
 
-      } 
-      catch (Exception ex) 
-      {
-        Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+          if (m_db!=null)
+          {
+            m_db.Execute("PRAGMA cache_size=8192\n");
+            m_db.Execute("PRAGMA synchronous='OFF'\n");
+            m_db.Execute("PRAGMA count_changes='OFF'\n");
+          }
+
+        } 
+        catch (Exception ex) 
+        {
+          Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+        }
+        Log.Write("tvdatabase opened");
       }
-      Log.Write("tvdatabase opened");
     }
   
     /// <summary>
@@ -90,67 +93,70 @@ namespace MediaPortal.TV.Database
     /// <returns>true if table is created</returns>
     static bool AddTable( string strTable, string strSQL)
     {
-      if (m_db==null) 
+      lock (typeof(TVDatabase))
       {
-        Log.Write("AddTable: database not opened");
-        return false;
-      }
-      if (strSQL==null) 
-      {
-        Log.Write("AddTable: no sql?");
-        return false;
-      }
-      if (strTable==null) 
-      {
-        Log.Write("AddTable: No table?");
-        return false;
-      }
-      if (strTable.Length==0) 
-      {
-        Log.Write("AddTable: empty table?");
-        return false;
-      }
-      if (strSQL.Length==0) 
-      {
-        Log.Write("AddTable: empty sql?");
-        return false;
-      }
-
-      //Log.Write("check for  table:{0}", strTable);
-      SQLiteResultSet results;
-      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
-      if (results!=null)
-      {
-        //Log.Write("  results:{0}", results.Rows.Count);
-        if (results.Rows.Count==1) 
+        if (m_db==null) 
         {
-          //Log.Write(" check result:0");
-          ArrayList arr = (ArrayList)results.Rows[0];
-          if (arr.Count==1)
-          {
-
-            if ( (string)arr[0] == strTable) 
-            {
-              //Log.Write(" table exists");
-              return false;
-            }
-            //Log.Write(" table has different name:{0}", (string)arr[0]);
-          }
-          //else Log.Write(" array contains:{0} items?", arr.Count);
+          Log.Write("AddTable: database not opened");
+          return false;
         }
-      }
+        if (strSQL==null) 
+        {
+          Log.Write("AddTable: no sql?");
+          return false;
+        }
+        if (strTable==null) 
+        {
+          Log.Write("AddTable: No table?");
+          return false;
+        }
+        if (strTable.Length==0) 
+        {
+          Log.Write("AddTable: empty table?");
+          return false;
+        }
+        if (strSQL.Length==0) 
+        {
+          Log.Write("AddTable: empty sql?");
+          return false;
+        }
 
-      try 
-      {
-        //Log.Write("create table:{0}", strSQL);
-        m_db.Execute(strSQL);
-        //Log.Write("table created");
+        //Log.Write("check for  table:{0}", strTable);
+        SQLiteResultSet results;
+        results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+        if (results!=null)
+        {
+          //Log.Write("  results:{0}", results.Rows.Count);
+          if (results.Rows.Count==1) 
+          {
+            //Log.Write(" check result:0");
+            ArrayList arr = (ArrayList)results.Rows[0];
+            if (arr.Count==1)
+            {
+
+              if ( (string)arr[0] == strTable) 
+              {
+                //Log.Write(" table exists");
+                return false;
+              }
+              //Log.Write(" table has different name:{0}", (string)arr[0]);
+            }
+            //else Log.Write(" array contains:{0} items?", arr.Count);
+          }
+        }
+
+        try 
+        {
+          //Log.Write("create table:{0}", strSQL);
+          m_db.Execute(strSQL);
+          //Log.Write("table created");
+        }
+        catch (SQLiteException ex) 
+        {
+          Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+        }
+        return true;
       }
-      catch (SQLiteException ex) 
-      {
-        Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-      }
-      return true;
     }
 
     /// <summary>
@@ -159,44 +165,50 @@ namespace MediaPortal.TV.Database
     /// <returns>true : tables created</returns>
     static bool CreateTables()
     {
-      if (m_db==null) return false;
-      if ( AddTable("channel","CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer)\n"))
+      lock (typeof(TVDatabase))
       {
-        m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr)");
+        if (m_db==null) return false;
+        if ( AddTable("channel","CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer)\n"))
+        {
+          m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr)");
+        }
+        
+        if ( AddTable("program","CREATE TABLE program ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime text, iEndTime text, strDescription text,strEpisodeName text,strRepeat text)\n"))
+        {
+          m_db.Execute("CREATE INDEX idxProgram ON program(idChannel,iStartTime,iEndTime)");
+        }
+
+        if ( AddTable("genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text)\n"))
+        {
+          m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre)");
+        }
+
+        AddTable("recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer)\n");
+
+        AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
+
+        return true;
       }
-      
-      if ( AddTable("program","CREATE TABLE program ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime text, iEndTime text, strDescription text,strEpisodeName text,strRepeat text)\n"))
-      {
-        m_db.Execute("CREATE INDEX idxProgram ON program(idChannel,iStartTime,iEndTime)");
-      }
-
-      if ( AddTable("genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text)\n"))
-      {
-        m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre)");
-      }
-
-      AddTable("recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer)\n");
-
-      AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
-
-      return true;
     }
 
     static string Get(SQLiteResultSet results,int iRecord,string strColum)
     {
-      if (null==results) return "";
-      if (results.Rows.Count<iRecord) return "";
-      ArrayList arr=(ArrayList)results.Rows[iRecord];
-      int iCol=0;
-      foreach (string columnName in results.ColumnNames)
+      lock (typeof(TVDatabase))
       {
-        if (strColum==columnName)
+        if (null==results) return "";
+        if (results.Rows.Count<iRecord) return "";
+        ArrayList arr=(ArrayList)results.Rows[iRecord];
+        int iCol=0;
+        foreach (string columnName in results.ColumnNames)
         {
-          return ((string)arr[iCol]).Trim();
+          if (strColum==columnName)
+          {
+            return ((string)arr[iCol]).Trim();
+          }
+          iCol++;
         }
-        iCol++;
+        return "";
       }
-      return "";
     }
 
     
@@ -221,7 +233,7 @@ namespace MediaPortal.TV.Database
 
     static public int GetChannelId(string strChannel)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -255,7 +267,7 @@ namespace MediaPortal.TV.Database
 
     static public int GetChannelId(int iChannelNr)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -289,7 +301,7 @@ namespace MediaPortal.TV.Database
 
     static public void SetChannelNumber(string strChannel,int iNumber)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -308,7 +320,7 @@ namespace MediaPortal.TV.Database
     }
     static public void SetChannelFrequency(string strChannel,string strFreq)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -328,7 +340,7 @@ namespace MediaPortal.TV.Database
 
     static public void SetChannelSort(string strChannel,int iPlace)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -349,7 +361,7 @@ namespace MediaPortal.TV.Database
 
     static public int AddChannel(TVChannel channel)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -415,7 +427,7 @@ namespace MediaPortal.TV.Database
 
     static public int AddGenre(string strGenre1)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -468,7 +480,7 @@ namespace MediaPortal.TV.Database
     static public int AddProgram(TVProgram program)
     {
       int lRetId=-1;
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -508,7 +520,7 @@ namespace MediaPortal.TV.Database
 	  static public int UpdateProgram(TVProgram program)
 	  {
 			int lRetId=-1;
-//			lock (m_db)
+			lock (typeof(TVDatabase))
 			{
 				string strSQL;
 				try
@@ -575,7 +587,7 @@ namespace MediaPortal.TV.Database
     static public bool GetChannels(ref ArrayList channels)
     {
       if (m_db==null) return false;
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         channels.Clear();
         try
@@ -631,7 +643,7 @@ namespace MediaPortal.TV.Database
     
     static public bool GetGenres(ref ArrayList genres)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         genres.Clear();
         try
@@ -659,7 +671,7 @@ namespace MediaPortal.TV.Database
 
     static public void RemoveChannel(string strChannel)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         if (null==m_db) return ;
         int iChannelId=GetChannelId(strChannel);
@@ -689,7 +701,7 @@ namespace MediaPortal.TV.Database
 
     static public void RemovePrograms()
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         m_genreCache.Clear();
         m_channelCache.Clear();
@@ -745,7 +757,7 @@ namespace MediaPortal.TV.Database
 
     static bool GetTVProgramsByGenre(string strSQL, ArrayList programs)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         try
         {
@@ -789,7 +801,7 @@ namespace MediaPortal.TV.Database
 
     static public bool GetProgramsPerChannel(string strChannel1,long iStartTime, long iEndTime,ref ArrayList programs)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         programs.Clear();
         try
@@ -842,7 +854,7 @@ namespace MediaPortal.TV.Database
 
     static bool GetTVPrograms(long iStartTime, long iEndTime,string strSQL, ref ArrayList programs)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         programs.Clear();
         try
@@ -917,7 +929,7 @@ namespace MediaPortal.TV.Database
 
     static public void ChangeRecording(ref TVRecording recording)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -956,7 +968,7 @@ namespace MediaPortal.TV.Database
     static public int AddRecording(ref TVRecording recording)
     {
       int lNewId=-1;
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -993,7 +1005,7 @@ namespace MediaPortal.TV.Database
 
     static public void RemoveRecording(TVRecording record)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         try
         {
@@ -1011,7 +1023,7 @@ namespace MediaPortal.TV.Database
 
     static public void RemoveRecordingByTime(TVRecording record)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         try
         {
@@ -1032,7 +1044,7 @@ namespace MediaPortal.TV.Database
     }
     static public bool GetRecordingsForChannel(string strChannel1,long iStartTime, long iEndTime,ref ArrayList recordings)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         recordings.Clear();
         try
@@ -1083,7 +1095,7 @@ namespace MediaPortal.TV.Database
 
     static public bool GetRecordings(ref ArrayList recordings)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         recordings.Clear();
         try
@@ -1124,26 +1136,31 @@ namespace MediaPortal.TV.Database
 
     static public void BeginTransaction()
     {
-      try
+      lock (typeof(TVDatabase))
       {
-        m_db.Execute("begin");
-      }
-      catch (Exception ex)
-      {
-        Log.Write("tvdatabase begin transaction failed exception err:{0} ", ex.Message);		
+        try
+        {
+          m_db.Execute("begin");
+        }
+        catch (Exception ex)
+        {
+          Log.Write("tvdatabase begin transaction failed exception err:{0} ", ex.Message);		
+        }
       }
     }
     
     static public void CommitTransaction()
     {
-      
-      try
+      lock (typeof(TVDatabase))
       {
-        m_db.Execute("commit");
-      }
-      catch (Exception ex)
-      {
-        Log.Write("tvdatabase commit failed exception err:{0} ", ex.Message);		
+        try
+        {
+          m_db.Execute("commit");
+        }
+        catch (Exception ex)
+        {
+          Log.Write("tvdatabase commit failed exception err:{0} ", ex.Message);		
+        }
       }
     }
     
@@ -1161,7 +1178,7 @@ namespace MediaPortal.TV.Database
 
     static public void PlayedRecordedTV( TVRecorded record)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         try
         {
@@ -1179,7 +1196,7 @@ namespace MediaPortal.TV.Database
     static public int AddRecordedTV( TVRecorded recording)
     {
       int lNewId=-1;
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         string strSQL;
         try
@@ -1222,7 +1239,7 @@ namespace MediaPortal.TV.Database
 
     static public void RemoveRecordedTV(TVRecorded record)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         try
         {
@@ -1240,7 +1257,7 @@ namespace MediaPortal.TV.Database
 
     static public bool GetRecordedTV(ref ArrayList recordings)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         recordings.Clear();
         try
@@ -1287,7 +1304,7 @@ namespace MediaPortal.TV.Database
     /// <seealso>MediaPortal.TV.Database.TVRecorded</seealso>
     static public bool GetRecordedTVByFilename(string strFile,ref TVRecorded recording)
     {
-      lock (m_db)
+      lock (typeof(TVDatabase))
       {
         try
         {
@@ -1355,49 +1372,55 @@ namespace MediaPortal.TV.Database
 
 	  static public string GetLastProgramEntry()
 	  {
-		  try
-		  {	// for single thread multi day grab establish last guide data in db
-			  if (m_db==null) return "";
-			  string strSQL;
-			  strSQL=String.Format("select iendtime from program order by iendtime desc limit 1");
-			  SQLiteResultSet results;
-			  results=m_db.Execute(strSQL);
-			  if (results.Rows.Count== 0) return "";
-					
-			  ArrayList arr=(ArrayList)results.Rows[0];
-			  return ((string)arr[0]).Trim();
-		  }
-		  catch(SQLiteException ex)
-		  {
-			  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-		  }
-		  return "";
+      lock (typeof(TVDatabase))
+      {
+        try
+        {	// for single thread multi day grab establish last guide data in db
+          if (m_db==null) return "";
+          string strSQL;
+          strSQL=String.Format("select iendtime from program order by iendtime desc limit 1");
+          SQLiteResultSet results;
+          results=m_db.Execute(strSQL);
+          if (results.Rows.Count== 0) return "";
+  					
+          ArrayList arr=(ArrayList)results.Rows[0];
+          return ((string)arr[0]).Trim();
+        }
+        catch(SQLiteException ex)
+        {
+          Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+        }
+        return "";
+      }
 		
 	  }
     static public void RemoveOldPrograms()
 	  {
-		  //delete programs from database that are more than 1 day old
-		  try
-		  {
-			  
-        string strSQL;
-        strSQL=String.Format("select * from program");
-        SQLiteResultSet results;
-        results=m_db.Execute(strSQL);
-        if (results.Rows.Count> 0)
+      lock (typeof(TVDatabase))
+      {
+        //delete programs from database that are more than 1 day old
+        try
         {
-          System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
-          long longYesterday = Utils.datetolong(yesterday);
-          strSQL=String.Format("DELETE FROM program WHERE iEndTime < {0}",longYesterday);
-          m_db.Execute(strSQL);
-//          m_db.Execute("VACUUM"); //seems to raise execption, don't know why?
+  			  
+          string strSQL;
+          strSQL=String.Format("select * from program");
+          SQLiteResultSet results;
+          results=m_db.Execute(strSQL);
+          if (results.Rows.Count> 0)
+          {
+            System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
+            long longYesterday = Utils.datetolong(yesterday);
+            strSQL=String.Format("DELETE FROM program WHERE iEndTime < {0}",longYesterday);
+            m_db.Execute(strSQL);
+            //          m_db.Execute("VACUUM"); //seems to raise execption, don't know why?
+          }
         }
-		  }
-		  catch(SQLiteException ex)
-		  {
-			  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-		  }
-		  return;
+        catch(SQLiteException ex)
+        {
+          Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+        }
+        return;
+      }
 		}
 
   }
