@@ -197,6 +197,7 @@
 		<id>20</id>
 		<posX>100</posX>
 		<posY>325</posY>
+		<height>25</height>
 		<texturebg>progress_back.png</texturebg>
 		<lefttexture>osd_progress_left.png</lefttexture>
 		<midtexture>osd_progress_mid.png</midtexture>

@@ -222,6 +222,7 @@
 		<posX>289</posX>
 		<posY>376</posY>
 		<width>348</width>
+		<height>25</height>
 		<label>#TV.View.Percentage</label>
 		<visible>yes</visible>
 	</control>
