@@ -181,6 +181,17 @@ namespace MediaPortal.GUI.TV
               ++i;
             }
           }
+          if (m_strChannel==String.Empty && m_channels.Count>0)
+          {
+            foreach (TVChannel channel in m_channels)
+            {
+              if (channel.Number<1000)
+              {
+                m_strChannel=channel.Name;
+                break;
+              }
+            }
+          }
           // start viewing... 
           Recorder.StartViewing(m_iCurrentCard,m_strChannel, m_bTVON, m_bTimeShifting);
           m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
