@@ -187,7 +187,7 @@ namespace WindowPlugins.GUIPrograms
 			{
 				// <ESC> keypress in some myProgram Menu => jump to main menu
 				SaveFolderSettings("");
-				GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+				GUIWindowManager.PreviousWindow();
 				return;
 			}
 		

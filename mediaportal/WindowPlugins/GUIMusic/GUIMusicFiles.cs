@@ -67,6 +67,7 @@ namespace MediaPortal.GUI.Music
       CONTROL_BTNTYPE = 6, 
       CONTROL_BTNPLAYLISTS = 7, 
       CONTROL_BTNSCAN = 9, 
+			CONTROL_BTNPLAYCD = 10,
 			
       CONTROL_VIEW = 50, 
       CONTROL_LABELFILES = 12, 
@@ -238,7 +239,7 @@ namespace MediaPortal.GUI.Music
 
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+        GUIWindowManager.PreviousWindow();
         return;
       }
 
@@ -408,10 +409,17 @@ namespace MediaPortal.GUI.Music
               OnQueueItem(iItem);
             }
           }
-          if (iControl == (int)Controls.CONTROL_BTNSCAN)
+
+					if (iControl == (int)Controls.CONTROL_BTNSCAN)
           {
             OnScan();
           }
+					
+					if (iControl == (int)Controls.CONTROL_BTNPLAYCD)
+					{
+						//ToDo: Find the first cd/dvd drive
+						OnPlayCD("D:");
+					}
 					
           // search-button handling
           if (iControl == (int)Controls.CONTROL_SEARCH)
@@ -438,25 +446,7 @@ namespace MediaPortal.GUI.Music
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
-          // start playing current CD
-          string strDriveLetter=message.Label;
-          
-          PlayList list=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP);
-          list.Clear();
-
-          list=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
-          list.Clear();
-
-          GUIListItem pItem=new GUIListItem();
-          pItem.Path=strDriveLetter;
-          pItem.IsFolder=true;
-          AddItemToPlayList(pItem) ;
-          if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 &&  !g_Player.Playing)
-          {
-            PlayListPlayer.Reset();
-            PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-            PlayListPlayer.Play(0);
-          }
+          OnPlayCD(message.Label);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
@@ -505,7 +495,9 @@ namespace MediaPortal.GUI.Music
       if (!cntl.Focus)
       {
         // control view has no focus
-        dlg.AddLocalizedString(136); //PlayList
+				dlg.AddLocalizedString(368); //IMDB
+				if (!m_directory.IsRemote(m_strDirectory)) dlg.AddLocalizedString(102); //Scan
+				dlg.AddLocalizedString(654); //Eject
       }
       else
       {
@@ -524,11 +516,7 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(208); //play
         }
 
-        dlg.AddLocalizedString(136); //PlayList
-        if (Utils.getDriveType(item.Path) == 5)
-        {
-          dlg.AddLocalizedString(654); //Eject
-        }
+        if (Utils.getDriveType(item.Path) == 5) dlg.AddLocalizedString(654); //Eject
       }
 
       dlg.DoModal( GetID);
@@ -552,14 +540,22 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 654: // Eject
-          Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+					if (Utils.getDriveType(item.Path) != 5) Utils.EjectCDROM();
+					else Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
           LoadDirectory("");
           break;
+
 				case 930: // add to favorites
 					m_database.AddSongToFavorites(item.Path);
 					break;
+
 				case 931:// Rating
 					OnSetRating(GetSelectedItemNo());
+					break;
+
+				case 102: //Scan
+					OnScan();
+					LoadDirectory(m_strDirectory);
 					break;
       }
     }
@@ -672,6 +668,27 @@ namespace MediaPortal.GUI.Music
       else
         GUIControl.SelectControl(GetID, (int)Controls.CONTROL_BTNSORTASC);
     }
+
+		void OnPlayCD(string strDriveLetter)
+		{
+			// start playing current CD        
+			PlayList list=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP);
+			list.Clear();
+
+			list=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
+			list.Clear();
+
+			GUIListItem pItem=new GUIListItem();
+			pItem.Path=strDriveLetter;
+			pItem.IsFolder=true;
+			AddItemToPlayList(pItem) ;
+			if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 &&  !g_Player.Playing)
+			{
+				PlayListPlayer.Reset();
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.Play(0);
+			}
+		}
 
     void ShowThumbPanel()
     {
