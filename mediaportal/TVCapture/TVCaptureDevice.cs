@@ -323,6 +323,9 @@ namespace MediaPortal.TV.Recording
       {
         m_graph.DeleteGraph();
         m_graph=null;
+				GC.Collect();
+				GC.Collect();
+				GC.Collect();
       }
       m_eState=State.Initialized;
       return true;
