@@ -157,10 +157,12 @@ namespace MediaPortal.TV.Database
 
 				DatabaseUtility.AddTable(m_db,"recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
 		
-				DatabaseUtility.AddTable(m_db,"satchannels","CREATE TABLE satchannels ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
-				DatabaseUtility.AddTable(m_db,"dvbcmapping","CREATE TABLE dvbcmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
-				DatabaseUtility.AddTable(m_db,"dvbsmapping","CREATE TABLE dvbsmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, symbolrate integer, innerFec integer, polarisation integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
-				DatabaseUtility.AddTable(m_db,"dvbtmapping","CREATE TABLE dvbtmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
+				DatabaseUtility.AddTable(m_db,"satchannels" ,"CREATE TABLE satchannels ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
+				DatabaseUtility.AddTable(m_db,"dvbcmapping" ,"CREATE TABLE dvbcmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
+				DatabaseUtility.AddTable(m_db,"dvbsmapping" ,"CREATE TABLE dvbsmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, symbolrate integer, innerFec integer, polarisation integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
+				DatabaseUtility.AddTable(m_db,"dvbtmapping" ,"CREATE TABLE dvbtmapping ( idChannel integer primary key, strChannel text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
+				DatabaseUtility.AddTable(m_db,"groups"      ,"CREATE TABLE groups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)\n");
+				DatabaseUtility.AddTable(m_db,"groupmapping","CREATE TABLE groupmapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)\n");
 				return true;
 			}
 
@@ -2140,6 +2142,199 @@ namespace MediaPortal.TV.Database
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 				}
+			}
+		}
+
+		static public void GetGroups(ref ArrayList groups)
+		{
+			groups=new ArrayList();
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+					strSQL=String.Format( "select * from groups order by iSort");
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return ;
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						TVGroup group = new TVGroup();
+						group.Sort     =Int32.Parse(DatabaseUtility.Get(results,i,"idGroup"));
+						group.Sort     =Int32.Parse(DatabaseUtility.Get(results,i,"iSort"));
+						group.Pincode  =Int32.Parse(DatabaseUtility.Get(results,i,"Pincode"));
+						group.GroupName=DatabaseUtility.Get(results,i,"strName");
+						groups.Add(group);
+					}
+					foreach (TVGroup group in groups)
+					{
+						GetTVChannelsForGroup(group);
+					}
+				}
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+		
+		static public void GetTVChannelsForGroup(TVGroup group)
+		{
+			group.tvChannels.Clear();
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					ArrayList tvchannels = new ArrayList();
+					GetChannels(ref tvchannels);
+
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+					strSQL=String.Format( "select * from groupmapping,groups where groups.idGroup=groupmapping.idGroup and groupmapping.idGroup={0}", group.ID);
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return ;
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						int channelid=Int32.Parse(DatabaseUtility.Get(results,i,"groupmapping.idChannel"));
+						foreach (TVChannel chan in tvchannels)
+						{
+							if (chan.ID==channelid)
+							{
+								group.tvChannels.Add(chan);
+								break;
+							}
+						}
+					}
+				}
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+
+		static public void MapChannelToGroup(TVGroup group, TVChannel channel)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					string strgroupName=group.GroupName;
+					DatabaseUtility.RemoveInvalidChars(ref strgroupName);
+
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from groupmapping where idGroup={0} and idChannel={1}", 
+																	group.ID,channel.ID);
+
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==0) 
+					{
+						// doesnt exists, add it
+						strSQL=String.Format("insert into groupmapping (idGroupMapping, idGroup,idChannel) values ( NULL, {0}, {1})", 
+																		group.ID,channel.ID);
+						m_db.Execute(strSQL);
+					}
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+
+		static public void UnmapChannelFromGroup(TVGroup group, TVChannel channel)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return ;
+
+					strSQL=String.Format( "delete from groupmapping where idGroup={0} and idChannel={1}", 
+						group.ID,channel.ID);
+
+					m_db.Execute(strSQL);
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+
+		static public int AddGroup(TVGroup group)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					string strgroupName=group.GroupName;
+					DatabaseUtility.RemoveInvalidChars(ref strgroupName);
+
+					if (null==m_db) return -1;
+					SQLiteResultSet results;
+					strSQL=String.Format( "select * from groups");
+					results=m_db.Execute(strSQL);
+					int totalgroups=results.Rows.Count;
+
+					strSQL=String.Format( "select * from groups where strName like '{0}'", strgroupName);
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==0) 
+					{
+						// doesnt exists, add it
+						strSQL=String.Format("insert into groups (idGroup, strName,iSort ,Pincode) values ( NULL, '{0}', {1}, {2})", 
+																											strgroupName,totalgroups+1,group.Pincode);
+						m_db.Execute(strSQL);
+						int iNewID=m_db.LastInsertID();
+						return iNewID;
+					}
+					else
+					{
+						//exists, update it
+						int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idGroup"));
+						strSQL=String.Format( "update groups set strName='{0}', iSort={1}, Pincode={2} where idGroup={3}", 
+																   strgroupName, group.Sort,group.Pincode, iNewID);
+						results=m_db.Execute(strSQL);
+						return iNewID;
+					}
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+
+				return -1;
+			}
+		}
+
+		static public int DeleteGroup(TVGroup group)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return -1;
+
+					strSQL=String.Format( "delete from groupmapping where idGroup={0}", group.ID);
+					m_db.Execute(strSQL);
+					strSQL=String.Format( "delete from groups where idGroup={0}", group.ID);
+					m_db.Execute(strSQL);
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+				return -1;
 			}
 		}
 

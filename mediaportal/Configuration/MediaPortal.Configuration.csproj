@@ -209,6 +209,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "EditGroupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditGroupForm.resx"
+                    DependentUpon = "EditGroupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "editName.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

@@ -12,6 +12,16 @@ namespace MediaPortal.TV.Database
 		cvbs1=10001,
 		cvbs2=10002,
 	}
+
+	public class TVGroup
+	{
+		public int    ID;
+		public string GroupName;
+		public int    Sort;
+		public int    Pincode;
+		public ArrayList     tvChannels = new ArrayList();
+	}
+
   /// <summary>
   /// Class which holds all information about a tv channel
   /// </summary>
