@@ -278,6 +278,7 @@ namespace MediaPortal.TV.Recording
 
 		public void SaveData(IntPtr dataPtr)
 		{
+			if (dataPtr==IntPtr.Zero) return;
 			byte[] txtRow=new byte[42];
 			int line=0;
 			int b=0,b1=0, b2=0, b3=0, b4=0;
