@@ -329,6 +329,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIBurner\MadlldlibWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIBurner\SetupForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
