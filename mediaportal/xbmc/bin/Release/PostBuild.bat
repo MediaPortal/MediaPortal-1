@@ -14,7 +14,10 @@ del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
+copy ..\..\..\Core\bin\Release\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\mfc71.dll .
+copy ..\..\..\msvcp71.dll .
+copy ..\..\..\msvcr71.dll .
 copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .

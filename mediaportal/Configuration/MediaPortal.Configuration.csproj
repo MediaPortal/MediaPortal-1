@@ -179,6 +179,14 @@
                     AssemblyName = "System.Management"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
                 />
+                <Reference
+                    Name = "DirectShowHelperLib"
+                    Guid = "{935FCAC9-6668-49FB-9706-43B51861F491}"
+                    VersionMajor = "1"
+                    VersionMinor = "0"
+                    Lcid = "0"
+                    WrapperTool = "tlbimp"
+                />
             </References>
         </Build>
         <Files>

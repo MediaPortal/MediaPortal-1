@@ -207,7 +207,12 @@ namespace MediaPortal.Player
 		}
 
     protected override void OnProcess()
-    {
+		{
+			if (Vmr9!=null)
+			{
+				m_iVideoWidth=Vmr9.VideoWidth;
+				m_iVideoHeight=Vmr9.VideoHeight;
+			}
 			if(Paused  || (GUIGraphicsContext.Vmr9Active && Vmr9!=null))
 			{
 				Vmr9.Process();

@@ -6,7 +6,7 @@
                     Name = "Debug"
                     EnableASPDebugging = "false"
                     EnableASPXDebugging = "false"
-                    EnableUnmanagedDebugging = "false"
+                    EnableUnmanagedDebugging = "true"
                     EnableSQLServerDebugging = "false"
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""

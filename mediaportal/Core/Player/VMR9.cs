@@ -23,13 +23,15 @@ namespace MediaPortal.Player
 	/// </summary>
 	public class VMR9Util
 	{
-		GCHandle										myHandle;
-		AllocatorWrapper.Allocator	allocator;
 		public PlaneScene						m_scene=null;
 		public bool									UseVMR9inMYTV=false;
 		IRender											m_renderFrame;
 		public IBaseFilter          VMR9Filter=null;
 		public int                  textureCount=0;
+		int												  videoHeight,videoWidth;
+		DirectShowHelperLib.VMR9HelperClass vmr9Helper=null;
+		float                       lastTime;
+		int													frameCounter=0;
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -79,66 +81,19 @@ namespace MediaPortal.Player
 				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to get instance of VMR9 ");
 				return ;
 			}
-			//IVMRFilterConfig9
-			IVMRFilterConfig9 FilterConfig9 = VMR9Filter as IVMRFilterConfig9;
-			if (FilterConfig9==null) 
-			{
-				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to get IVMRFilterConfig9 ");
-				return ;
-			}
-			int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
-			if (hr!=0) 
-			{
-				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to set VMR9 to renderless mode");
-				return ;
-			}
 
-			// needed to put VMR9 in mixing mode instead of pass-through mode
-      
-			hr = FilterConfig9.SetNumberOfStreams(1);
-			if (hr!=0) 
-			{
-				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to set VMR9 streams to 1");
-				return ;
-			}
-			IVMRMixerControl9 mixer = VMR9Filter as IVMRMixerControl9;
-			if (mixer!=null)
-			{
-				uint dwPrefs;
-				mixer.GetMixingPrefs(out dwPrefs);
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:mixer preferences :0x{0:X}",dwPrefs);
-				
-				dwPrefs= (uint)VMR9MixerPrefs.NoDecimation;
-				dwPrefs|= (uint)VMR9MixerPrefs.ARAdjustXorY;
-				dwPrefs|= (uint)VMR9MixerPrefs.AnisotropicFiltering;
-				dwPrefs|= (uint)VMR9MixerPrefs.RenderTargetYUV;
-				hr=mixer.SetMixingPrefs(dwPrefs);
-				if (hr !=0)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:unable to set vmr9 mixer preference to YUV :0x{0:X}",hr);
-					dwPrefs= (uint)VMR9MixerPrefs.NoDecimation;
-					dwPrefs|= (uint)VMR9MixerPrefs.ARAdjustXorY;
-					dwPrefs|= (uint)VMR9MixerPrefs.AnisotropicFiltering;
-					dwPrefs|= (uint)VMR9MixerPrefs.RenderTargetRGB;
-					hr=mixer.SetMixingPrefs(dwPrefs);
-					if (hr!=0)
-						Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:unable to set vmr9 dynamic switch to bob :0x{0:X}",hr);
-				}
-			}
+			IntPtr hMonitor;
+			AdapterInformation ai = Manager.Adapters.Default;
+			hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
+			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
+			m_scene = new PlaneScene(m_renderFrame,this);
+			vmr9Helper = new DirectShowHelperLib.VMR9HelperClass();
+			DirectShowHelperLib.IBaseFilter baseFilter = VMR9Filter as DirectShowHelperLib.IBaseFilter;
 
-			hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
-			if (hr!=0) 
-			{
-				Error.SetError("Unable to play movie","Unable to initialize VMR9");
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to set VMR9 allocator/presentor");
-				return ;
-			}
+			vmr9Helper.Init(m_scene,  (uint)upDevice.ToInt32(), baseFilter,(uint)hMonitor.ToInt32());
 
-			hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
+			int hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
 			if (hr!=0) 
 			{
 				Error.SetError("Unable to play movie","Unable to initialize VMR9");
@@ -147,62 +102,6 @@ namespace MediaPortal.Player
 			}
 			GUIGraphicsContext.Vmr9Active=true;
 		}
-
-		/// <summary>
-		/// Set the allocator/presentor for the vmr9 filter
-		/// </summary>
-		/// <param name="filter">VMR9 filter</param>
-		/// <param name="control">Winform control which handles all notifications</param>
-		/// <returns>
-		/// 0 : allocator/presenter added
-		/// -1: failed to set allocator/presenter 
-		/// </returns>
-		int SetAllocPresenter(IBaseFilter filter, Control control)
-		{
-			if (!UseVMR9inMYTV) return -1;
-			Log.Write("VMR9Helper:SetAllocPresenter()");
-			IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = filter as IVMRSurfaceAllocatorNotify9;
-
-			if (lpIVMRSurfAllocNotify == null)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to get IVMRSurfaceAllocatorNotify9");
-				return -1;
-			}
-			m_scene= new PlaneScene(m_renderFrame);
-			allocator = new AllocatorWrapper.Allocator(control, m_scene);
-			if (textureCount>0)
-			{
-				allocator.SetTextureCount(textureCount);
-			}
-			IntPtr hMonitor;
-			AdapterInformation ai = Manager.Adapters.Default;
-
-			hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
-			IntPtr upDevice = DsUtils.GetUnmanagedDevice(allocator.Device);
-					
-			int hr = lpIVMRSurfAllocNotify.SetD3DDevice(upDevice, hMonitor);
-			//Marshal.AddRef(upDevice);
-			if (hr != 0)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to get SetD3DDevice()");
-				return hr;
-			}
-			// this must be global. If it gets garbage collected, pinning won't exist...
-			myHandle = GCHandle.Alloc(allocator, GCHandleType.Pinned);
-			hr = allocator.AdviseNotify(lpIVMRSurfAllocNotify);
-			if (hr != 0)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to AdviseNotify()");
-				return hr;
-			}
-			hr = lpIVMRSurfAllocNotify.AdviseSurfaceAllocator(0xACDCACDC, allocator);
-			if (hr !=0)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"VMR9Helper:Failed to AdviseSurfaceAllocator()");
-			}
-			return hr;
-		}
-
 		public void Release()
 		{
 		}
@@ -215,16 +114,12 @@ namespace MediaPortal.Player
 			if (!UseVMR9inMYTV) return;
 			Log.Write("VMR9Helper:RemoveVMR9()");
 			GUIGraphicsContext.Vmr9Active=false;
-			if (allocator!=null)
+			if (vmr9Helper!=null)
 			{
-				allocator.UnAdviseNotify();
+				vmr9Helper.Deinit();
+				vmr9Helper=null;
 			}
-			if (myHandle.IsAllocated)
-			{
-				myHandle.Free();
-			}
-			allocator=null;
-          
+			
 			if (m_scene!=null)
 			{
 				m_scene.Stop();
@@ -236,6 +131,11 @@ namespace MediaPortal.Player
 
 		}
 
+		public int FrameCounter
+		{
+			get { return frameCounter;}
+			set { frameCounter=value;}
+		}
 
 		/// <summary>
 		/// returns the width of the video
@@ -244,8 +144,11 @@ namespace MediaPortal.Player
 		{
 			get 
 			{
-				if (allocator==null) return 0;
-				return allocator.NativeSize.Width;;
+				return videoWidth;
+			}
+			set
+			{
+				videoWidth=value;
 			}
 		}      
 
@@ -256,8 +159,11 @@ namespace MediaPortal.Player
 		{
 			get 
 			{
-				if (allocator==null) return 0;
-				return allocator.NativeSize.Height;;
+				return videoHeight;
+			}
+			set
+			{
+				videoHeight=value;
 			}
 		}
 		
@@ -266,16 +172,20 @@ namespace MediaPortal.Player
 		/// </summary>
 		public void Repaint()
 		{
-			if (allocator==null) return;
 			if (!UseVMR9inMYTV) return;
 			if (VMR9Filter==null) return;
-			allocator.Repaint();
+			m_scene.Repaint();
 		}
 
 		public void Process()
 		{
-			if (allocator==null) return;
-			allocator.Process();
+			float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+			if (time - lastTime >= 0.2f)
+			{
+				GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
+				lastTime=time;
+				frameCounter=0;
+			}
 		}
 
 		/// <summary>
@@ -288,7 +198,7 @@ namespace MediaPortal.Player
 			get
 			{
 				// check if vmr9 is enabled and if initialized
-				if (allocator==null ||VMR9Filter==null ||!UseVMR9inMYTV) 
+				if (VMR9Filter==null ||!UseVMR9inMYTV) 
 				{
 					GUIGraphicsContext.Vmr9Active=false;
 					return false;
@@ -303,6 +213,7 @@ namespace MediaPortal.Player
 					GUIGraphicsContext.Vmr9Active=false;
 					return false;
 				}
+				//Marshal.ReleaseComObject(pinIn);
 
 				//check if the input is connected to a video decoder
 				pinIn.ConnectedTo(out pinConnected);
@@ -312,6 +223,7 @@ namespace MediaPortal.Player
 					GUIGraphicsContext.Vmr9Active=false;
 					return false;
 				}
+				//Marshal.ReleaseComObject(pinConnected);
 				//all is ok, vmr9 is working
 				return true;
 			}//get {

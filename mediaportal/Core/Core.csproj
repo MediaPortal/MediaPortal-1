@@ -194,6 +194,14 @@
                     AssemblyName = "Microsoft.DirectX.DirectDraw"
                     HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
                 />
+                <Reference
+                    Name = "DirectShowHelperLib"
+                    Guid = "{935FCAC9-6668-49FB-9706-43B51861F491}"
+                    VersionMajor = "1"
+                    VersionMinor = "0"
+                    Lcid = "0"
+                    WrapperTool = "tlbimp"
+                />
             </References>
         </Build>
         <Files>
@@ -940,11 +948,6 @@
                 />
                 <File
                     RelPath = "nzlib\Zip\ZipOutputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\AllocatorWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
