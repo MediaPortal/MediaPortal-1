@@ -465,7 +465,6 @@ namespace MediaPortal
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
       
 
-      Caps caps=graphicsSettings.DeviceInfo.Caps;
         if (windowed)
         {
             presentParams.EnableAutoDepthStencil = false;
@@ -475,14 +474,12 @@ namespace MediaPortal
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
             presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
-
             presentParams.PresentationInterval = PresentInterval.One;
-           
             presentParams.BackBufferCount = 1;
             presentParams.FullScreenRefreshRateInHz = 0;
-            presentParams.SwapEffect=Direct3D.SwapEffect.Copy;
+            presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
-            presentParams.DeviceWindow = ourRenderTarget;
+            presentParams.DeviceWindow = this;
             presentParams.Windowed=true;
         }
         else
@@ -501,18 +498,35 @@ namespace MediaPortal
 
     public bool SwitchFullScreenOrWindowed(bool bWindowed)
     {
+      GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
+      if (bWindowed) 
+        Log.Write("Switch to windowed mode ");
+      else 
+        Log.Write("Switch to fullscreen mode ");
       windowed=bWindowed;
       BuildPresentParamsFromSettings();
       try
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
+        
+        GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
         return true;
       }
       catch(Exception ex)
       {
+        if (windowed) 
+          Log.Write("Switch to windowed mode failed:{0}", ex.ToString());
+        else 
+          Log.Write("Switch to fullscreen mode failed:{0}", ex.ToString());
         windowed=!bWindowed;
         BuildPresentParamsFromSettings();
-        GUIGraphicsContext.DX9Device.Reset(presentParams);
+        try
+        {
+          GUIGraphicsContext.DX9Device.Reset(presentParams);
+        }
+        catch(Exception ){}
+
+        GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
         return false;
       }
     }

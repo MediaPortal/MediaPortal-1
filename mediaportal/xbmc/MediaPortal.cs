@@ -884,14 +884,8 @@ public class MediaPortalApp : D3DApp, IRender
       if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 			if (key.KeyChar == '?')
 			{
-        Log.Write("Memory used before GC:{0}", GC.GetTotalMemory(false));
-        GC.WaitForPendingFinalizers();
-				GC.Collect();
-				GC.Collect();
-				GC.Collect();
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        Log.Write("Memory used after GC:{0}", GC.GetTotalMemory(true));
+        bool bWindowed=!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed;
+        SwitchFullScreenOrWindowed(bWindowed);        
 			}
 			Action action = new Action();
       if (GUIWindowManager.IsRouted && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD)
@@ -1181,14 +1175,14 @@ public class MediaPortalApp : D3DApp, IRender
         if (message.Param1 != 0)
         {
           //switch to fullscreen mode
-          if (isMaximized) return;
-          SwitchFullScreenOrWindowed(true);
+          if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
+          SwitchFullScreenOrWindowed(false);
         }
         else
         {
           //switch to windowed mode
-          if (!isMaximized) return;
-          SwitchFullScreenOrWindowed(false);
+          if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
+          SwitchFullScreenOrWindowed(true);
         }
       break;
     }
