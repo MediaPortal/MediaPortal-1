@@ -121,7 +121,6 @@ namespace MediaPortal.GUI.Library
       // Log.Write("save {0}" ,strFileName);
       using (Xml xmlWriter= new Xml(strFileName))
       {
-				xmlWriter.SetValue("screen","maxfps",m_iMaxFPS.ToString());
         xmlWriter.SetValue("screen","offsetx",m_iOffsetX.ToString() );
         xmlWriter.SetValue("screen","offsety",m_iOffsetY.ToString() );
         xmlWriter.SetValue("screen","offsetosd",m_iOSDOffset.ToString());
@@ -153,7 +152,6 @@ namespace MediaPortal.GUI.Library
       Log.Write("  load {0}" ,strFileName);
       using (Xml xmlReader= new Xml(strFileName))
       {
-				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",20);
         m_iOffsetX=xmlReader.GetValueAsInt("screen","offsetx",0);
         m_iOffsetY=xmlReader.GetValueAsInt("screen","offsety",0);
         m_iOSDOffset=xmlReader.GetValueAsInt("screen","offsetosd",0);
@@ -166,7 +164,8 @@ namespace MediaPortal.GUI.Library
       }
 
       using (AMS.Profile.Xml xmlReader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
+			{
+				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",20);
         m_iScrollSpeed=xmlReader.GetValueAsInt("general","scrollspeed",5);
         m_bAnimations=xmlReader.GetValueAsBool("general","animations",true);
       }
