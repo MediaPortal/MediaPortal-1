@@ -41,7 +41,7 @@ namespace MediaPortal.TV.Recording
 		/// <summary>
 		/// called when the listview should be refreshed
 		/// </summary>
-		void Update();
+		void UpdateList();
 	}
 
 	public interface ITuning

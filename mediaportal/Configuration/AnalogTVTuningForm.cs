@@ -268,7 +268,7 @@ namespace MediaPortal
 			labelStatus.Text=description;
 		}
 
-		public void Update()
+		public void UpdateList()
 		{
 			listView1.Items.Clear();
       

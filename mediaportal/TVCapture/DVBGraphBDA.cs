@@ -222,7 +222,17 @@ namespace MediaPortal.TV.Recording
 
 				// Support the "legacy" member variables. This could be done different using properties
 				// through which the filters are accessable. More implementation independent...
-				if (dsFilter.Category == "networkprovider") m_NetworkProvider       = dsFilter.DSFilter;
+				if (dsFilter.Category == "networkprovider") 
+				{
+					m_NetworkProvider       = dsFilter.DSFilter;
+					
+					// Initialise Tuning Space (using the setupTuningSpace function)
+					if(!setupTuningSpace()) 
+					{
+						Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
+						return false;
+					}
+				}
 				if (dsFilter.Category == "tunerdevice") m_TunerDevice	 							= dsFilter.DSFilter;
 				if (dsFilter.Category == "capture")			m_CaptureDevice							= dsFilter.DSFilter;
 			}
@@ -450,12 +460,6 @@ namespace MediaPortal.TV.Recording
 			}
 
 
-			// Initialise Tuning Space (using the setupTuningSpace function)
-			if(!setupTuningSpace()) 
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
-				return false;
-			}
 
 			//=========================================================================================================
 			// Create the streambuffer engine and mpeg2 video analyzer components since we need them for
@@ -1926,7 +1930,7 @@ namespace MediaPortal.TV.Recording
 				if (Network() == NetworkType.DVBT)
 				{
 					DVBTChannel channel=(DVBTChannel)channelList[x];
-					if ( (channel.IsRadio && radio) || (channel.IsTv && tv))
+					if ( (channel.IsTv && tv))
 					{
 						bool newChannel=true;
 						int iChannelNumber=0;
@@ -1949,6 +1953,10 @@ namespace MediaPortal.TV.Recording
 							TVDatabase.AddChannel(tvChan);
 						}
 						TVDatabase.MapDVBTChannel(channel.ChannelName,iChannelNumber, currentFrequency, channel.ONID,channel.TSID,channel.SID);
+					}
+					if (channel.IsRadio && radio)
+					{
+						//todo store radio channels
 					}
 				}
 			}

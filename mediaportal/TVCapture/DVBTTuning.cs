@@ -123,7 +123,7 @@ namespace MediaPortal.TV.Recording
 			if (ts.TotalSeconds>=15)
 			{
 				captureCard.StoreTunedChannels(false,true);
-				callback.Update();
+				callback.UpdateList();
 				Log.Write("timeout, goto scanning frequencies");
 				currentState=State.ScanFrequencies;
 				ScanNextFrequency();
