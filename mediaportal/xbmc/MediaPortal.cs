@@ -1,4 +1,4 @@
-#define AUTOUPDATE
+//#define AUTOUPDATE
 using System;
 using System.Drawing;
 using System.Collections;
@@ -573,10 +573,10 @@ public class MediaPortalApp : D3DApp, IRender
 				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
 				ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
-				m_strCurrentVersion = clientInfo.InstalledVersion;
-				Text += (" - [v" + m_strCurrentVersion + "]");
 
 #if AUTOUPDATE
+				m_strCurrentVersion = clientInfo.InstalledVersion;
+				Text += (" - [v" + m_strCurrentVersion + "]");
 				//  make an Updater for use in-process with us
 				_updater = new ApplicationUpdateManager();
 
