@@ -264,7 +264,28 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	//sprintf(log,"FontEngineDrawTexture(%d) (%d,%d) (%dx%d) %03.3f %03.3f\n", textureNo,x,y,nw,nh,umax,vmax);
 	//Log(log);
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
-	TEXTURE_DATA_T* texture=&textureData[textureNo];
+	TEXTURE_DATA_T* texture;
+	
+	//1-2-1
+	bool needRedraw=false;
+	bool textureAlreadyDrawn=false;
+	for (int i=0; i < textureCount; ++i)
+	{
+		if (textureZ[i] == textureNo)
+		{
+			textureAlreadyDrawn=true;
+		}
+		if (textureAlreadyDrawn && textureZ[i] != textureNo)
+		{
+			needRedraw=true;
+		}
+	}
+
+	if (needRedraw)
+	{
+		FontEnginePresentTextures();
+	}
+	texture=&textureData[textureNo];
 	if (texture->iv==0)
 	{
 		textureZ[textureCount]=textureNo;
