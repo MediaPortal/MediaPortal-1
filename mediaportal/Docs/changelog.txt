@@ -1,6 +1,8 @@
-02-08-2004  keyboard     fixed : When the On Screen Keyboard is on screen (e.g. entering a movie name for IMDB) and 
+03-08-2004  imdb        : fixed : multipage descriptions do not work, example "Liever verliefd"
+03-08-2004  keyboard    : fixed : When the On Screen Keyboard is on screen (e.g. entering a movie name for IMDB) and 
 								  you type with the normal letter keys on your keyboard. MP will still process the keys.
-02-08-2004  keyboard    : fixed : I can not use the on screen keyboard by clicking on the letters with the mouse. 
+03-08-2004  keyboard    : fixed : I can not use the on screen keyboard by clicking on the letters with the mouse. 
+
 02-08-2004  foobar      : fixed : lost of focus from MP when foobar is started
 02-08-2004  winamp      : fixed : lost of focus from MP when winamp is started
 02-08-2004  my tv       : fixed : crashed if user pressed Record Now and there's no xmltv tvguide present

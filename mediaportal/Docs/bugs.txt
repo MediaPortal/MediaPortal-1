@@ -22,7 +22,6 @@ crash/things not working Bugs:
   02-08-2004 my tv      : with timeshifting off in fullscreen you will not get an OSD by pressing y. 
                           After doing this you will not be able to go back to windowed mode by pressing x or Esc. 
                           Reacts after pressing it a couple of times. Won´t happen with timeshifting on.
-  02-08-2004 imdb       : multipage descriptions do not work, example "Liever verliefd"
   01-08-2004 setup      : cant sort radio channels in setup like you can in tv
   29-07-2004 DVD player : Settings for AR control and display mode are not respected. It always uses default modes
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
