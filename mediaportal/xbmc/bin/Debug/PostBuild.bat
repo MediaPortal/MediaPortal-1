@@ -5,6 +5,10 @@ mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 mkdir Wizards
 
+copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
+copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
+copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
+copy ..\..\..\Microsoft.DirectX.dll .
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\USBUIRT\bin\Debug\USBUIRT.dll .
 copy ..\..\..\Configuration\bin\Debug\Configuration.exe .
