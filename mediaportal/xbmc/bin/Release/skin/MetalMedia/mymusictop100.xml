@@ -66,31 +66,19 @@
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>21</onup>
-		<ondown>3</ondown>
+		<ondown>6</ondown>
 	</control>	
 	<control>
-		<description>Sort-by button</description>
+		<description>Change Info button</description>
 		<type>button</type>
-		<id>3</id>
+		<id>6</id>
 		<posX>55</posX>
 		<posY>143</posY>
 		<label>103</label>
 		<onleft>50</onleft>
 		<onright>4</onright>
 		<onup>2</onup>
-		<ondown>6</ondown>
-	</control>
-	<control>
-		<description>Sort Asc</description>
-		<type>togglebutton</type>
-		<id>4</id>
-		<posX>200</posX>
-		<posY>149</posY>
-		<label>-</label>
-		<onleft>3</onleft>
-		<onright>50</onright>
-		<onup>4</onup>
-		<ondown>4</ondown>
+		<ondown>7</ondown>
 	</control>
 	<control>
 		<description>Panel Split</description>
@@ -103,25 +91,25 @@
 	<control>
 		<description>Albums/Artists/Songs/Genres button</description>
 		<type>selectbutton</type>
-		<id>6</id>
+		<id>7</id>
 		<posX>55</posX>
 		<posY>189</posY>
 		<label>457</label>
 		<onleft>50</onleft>
 		<onright>50</onright>
-		<onup>2</onup>
-		<ondown>8</ondown>
+		<onup>6</onup>
+		<ondown>9</ondown>
 	</control>
 	<control>
 		<description>Clear Top100 button</description>
 		<type>button</type>
-		<id>8</id>
+		<id>9</id>
 		<posX>55</posX>
 		<posY>217</posY>
 		<label>718</label>
 		<onleft>50</onleft>
 		<onright>50</onright>
-		<onup>6</onup>
+		<onup>7</onup>
 		<ondown>2</ondown>
 	</control>
 	<control>

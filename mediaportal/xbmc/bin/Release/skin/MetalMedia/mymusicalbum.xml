@@ -120,18 +120,6 @@
 		<onleft>50</onleft>
 		<onright>50</onright>
 		<onup>3</onup>
-		<ondown>8</ondown>
-	</control>
-	<control>
-		<description>Search button</description>
-		<type>button</type>
-		<id>8</id>
-		<posX>55</posX>
-		<posY>217</posY>
-		<label>137</label>
-		<onleft>50</onleft>
-		<onright>50</onright>
-		<onup>6</onup>
 		<ondown>9</ondown>
 	</control>
 	<control>
@@ -139,11 +127,11 @@
 		<type>button</type>
 		<id>9</id>
 		<posX>55</posX>
-		<posY>245</posY>
+		<posY>217</posY>
 		<label>358</label>
 		<onleft>50</onleft>
 		<onright>50</onright>
-		<onup>8</onup>
+		<onup>6</onup>
 		<ondown>2</ondown>
 	</control>
 	<control>
