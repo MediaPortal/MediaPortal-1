@@ -164,6 +164,7 @@ namespace MediaPortal
     public string Channel
     {
       set { m_strChannel=value;}
+      get { return m_strChannel;}
     }
     public int Number
     { 

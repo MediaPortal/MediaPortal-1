@@ -21,7 +21,6 @@ public class MediaPortalApp : D3DApp
 
     int       m_iLastMousePositionX=0;
     int       m_iLastMousePositionY=0;
-    bool      m_bLastTimePlaying=false;
     [STAThread]
     public static void Main()
     {

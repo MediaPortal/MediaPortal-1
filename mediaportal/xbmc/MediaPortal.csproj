@@ -247,6 +247,16 @@
                     DependentUpon = "TVChannelForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
+                <File
+                    RelPath = "TVChannelFormNew.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TVChannelFormNew.resx"
+                    DependentUpon = "TVChannelFormNew.cs"
+                    BuildAction = "EmbeddedResource"
+                />
             </Include>
         </Files>
     </CSHARP>
