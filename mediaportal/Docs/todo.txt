@@ -8,7 +8,7 @@ Skin, gfx, .xml & media:
 --------------------------------------------------------------------------------------------------------------     
 My Radio:
     - add support for more cards
-      
+    - prev/next buttons dont work yet      
 My TV:
   general
 	- option:fade in/out when switching between fullscreen video/tv<->gui

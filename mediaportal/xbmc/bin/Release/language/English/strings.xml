@@ -1717,19 +1717,19 @@
 	</string>
 	<string>
 		<id>620</id>
-		<value>Sort by channel</value>
+		<value>Sort by: Channel</value>
 	</string>
 	<string>
 		<id>621</id>
-		<value>Sort by date</value>
+		<value>Sort by: Date</value>
 	</string>
 	<string>
 		<id>622</id>
-		<value>Sort by name</value>
+		<value>Sort by: Name</value>
 	</string>
 	<string>
 		<id>623</id>
-		<value>Sort by Type</value>
+		<value>Sort by: Type</value>
 	</string>
 	<string>
 		<id>624</id>
@@ -1861,7 +1861,7 @@
 	</string>
 	<string>
 		<id>656</id>
-		<value>delete recorded tv</value>
+		<value>Delete recorded tv</value>
 	</string>
 	<string>
 		<id>657</id>
@@ -1921,7 +1921,7 @@
 	</string>	
 	<string>
 		<id>671</id>
-		<value>Sort by Watched</value>
+		<value>Sort by: Watched</value>
 	</string>
 	<string>
 		<id>672</id>
@@ -1942,6 +1942,22 @@
 	<string>
 		<id>676</id>
 		<value>Delete watched recordings?</value>
+	</string>	
+	<string>
+		<id>677</id>
+		<value>times</value>
+	</string>	
+	<string>
+		<id>678</id>
+		<value>Sort by: Genre</value>
+	</string>	
+	<string>
+		<id>679</id>
+		<value>Weekly</value>
+	</string>	
+	<string>
+		<id>680</id>
+		<value>Mon-Fri</value>
 	</string>	
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My TV</value></string>
