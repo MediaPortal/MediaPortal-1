@@ -4668,9 +4668,8 @@ namespace MediaPortal
 				count++;
 			}
 			while(true);
-			box.SelectedIndex=iSelected;
-
-			
+			if (box.Items.Count>0)
+				box.SelectedIndex=iSelected;
 		}
 
 	}

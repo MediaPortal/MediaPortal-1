@@ -16,6 +16,7 @@ vmr9:
 My Radio:
     - add support for more cards
     - prev/next buttons dont work yet 
+    - Timeshifting & recording
          
 My TV:
   general

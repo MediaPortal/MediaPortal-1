@@ -1,5 +1,6 @@
 History: (dd-mm-yyyy)
   02-07-2004  my tv       : fixed : MP uses 100% cpu when recording due to TVUtil.GetProgramAt()
+  02-07-2004  setup       : fixed : setup crashed if no mpeg2 codecs where installed
   
   30-06-2004  winamp      : added : configuration to what extensions to enable it to play
   30-06-2004  general     : added : configuration for external player as plugin.  External players 
