@@ -1,3 +1,7 @@
+12-07-2004  my music    : fixed : View by artists->select artist->takes 13 mins (musicdatabase line 669 takes sooo long)
+12-07-2004  my music    : fixed : When you now enter the Album view there will be 2 (or more) times the album 'unknown'.  
+12-07-2004  my music    : fixed : Long names show when sorting by file for music cds in my music instead of Track01.cda, Track02.cda, etc... 
+
 11-07-2004  my TV       : fixed : some cards have 2 CVBS inputs
 11-07-2004  my TV       : fixed : max was 253 channels, is now 1000 channels
 11-07-2004  my music    : fixed : ape/ogg/flac tag reader
