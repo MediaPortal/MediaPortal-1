@@ -1761,64 +1761,6 @@ namespace MediaPortal.TV.Recording
 		}
 
 
-
-		
-//		private bool GetStreamData(int pid, int tid,int tableSection,int timeout)
-//		{
-//			bool flag;
-//			int dataLen=0;
-//			int header=0;
-//			int tableExt=0;
-//			int sectNum=0;
-//			int sectLast=0;
-//			int version=0;
-//			byte[] arr = new byte[1];
-//			IntPtr sectionBuffer=IntPtr.Zero;
-//
-//			m_sectionsList=new ArrayList();
-//			DeleteAllPIDsI();
-//			AddTSPid(pid);
-//			flag = GetSectionDataI(pid, tid,ref sectLast,tableSection,timeout);
-//
-//			for(int n=0;n<sectLast;n++)
-//			{
-//				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
-//				if((int)sectionBuffer==0)
-//					break;
-//				if(flag)
-//				{
-//					if (tableExt != - 1)
-//					{
-//						arr = new byte[dataLen+8 + 1];
-//						Marshal.Copy(sectionBuffer, arr, 8, dataLen);
-//						arr[0] = (byte)tid;
-//						arr[1] = (byte)((header >> 8) & 255);
-//						arr[2] =(byte) (header & 255);
-//						arr[3] = (byte)((tableExt >> 8) & 255);
-//						arr[4] = (byte)(tableExt & 255);
-//						arr[5] =(byte) version;
-//						arr[6] = (byte)sectNum;
-//						arr[7] = (byte)sectLast;
-//						m_sectionsList.Add(arr);
-//						if(tableSection!=0)
-//							break;
-//					}
-//					else
-//					{
-//						arr = new byte[dataLen+3 + 1];
-//						Marshal.Copy(sectionBuffer, arr, 3, dataLen);
-//						arr[0] = System.Convert.ToByte(tid);
-//						arr[1] = System.Convert.ToByte((header >> 8) & 255);
-//						arr[2] = System.Convert.ToByte(header & 255);
-//						m_sectionsList.Add(arr);
-//					}// else
-//
-//				}// if(flag)
-//			}//for
-//			if((int)sectionBuffer!=0)
-//				ReleaseSectionsBuffer();
-//			return true;
-//		}
 		public bool ProcessPATSections(DShowNET.IBaseFilter filter,int pid,int tid,int tableSections,int timeout,TPList tp,ref Transponder transponder)
 		{
 			GetStreamData(filter,pid, tid,tableSections,timeout);
