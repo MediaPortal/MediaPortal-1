@@ -1676,7 +1676,7 @@ namespace MediaPortal.Configuration
 			// button1
 			// 
 			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button1.Location = new System.Drawing.Point(200, 450);
+			this.button1.Location = new System.Drawing.Point(192, 450);
 			this.button1.Name = "button1";
 			this.button1.TabIndex = 6;
 			this.button1.Text = "Autotune";
@@ -1684,7 +1684,8 @@ namespace MediaPortal.Configuration
 			// 
 			// btnRadio
 			// 
-			this.btnRadio.Location = new System.Drawing.Point(104, 448);
+			this.btnRadio.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.btnRadio.Location = new System.Drawing.Point(80, 450);
 			this.btnRadio.Name = "btnRadio";
 			this.btnRadio.Size = new System.Drawing.Size(96, 23);
 			this.btnRadio.TabIndex = 7;
