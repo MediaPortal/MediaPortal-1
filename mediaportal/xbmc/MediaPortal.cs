@@ -461,6 +461,15 @@ public class MediaPortalApp : D3DApp, IRender
         splashScreen.Dispose();
         splashScreen = null;
       }
+
+      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+        string strDefault=xmlreader.GetValueAsString("myradio","default","");
+        GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION,(int)GUIWindow.Window.WINDOW_RADIO,GUIWindowManager.ActiveWindow,0,0,0,null);
+        msg.SendToTargetWindow=true;
+        msg.Label=strDefault;
+        GUIWindowManager.SendThreadMessage(msg);
+      }
     } 
 
     /// <summary>
