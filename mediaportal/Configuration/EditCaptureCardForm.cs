@@ -1744,6 +1744,12 @@ namespace MediaPortal.Configuration
 		/// <param name="e"></param>
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
+			if (tbRecordingFolder.Text==String.Empty)
+			{
+				tabControl1.SelectedTab=tabPage7;
+				MessageBox.Show("No recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				return;
+			}
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
@@ -1769,6 +1775,7 @@ namespace MediaPortal.Configuration
 			{
 				if (audioCompressorComboBox.Items.Count>0 && audioCompressorComboBox.SelectedItem==null)
 				{
+					tabControl1.SelectedTab=tabPage2;
 					MessageBox.Show("No audio compressor selected.Please choose an audio compressor", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
 				}
@@ -1777,6 +1784,7 @@ namespace MediaPortal.Configuration
 			{
 				if (audioDeviceComboBox.Items.Count>0 && audioDeviceComboBox.SelectedItem==null)
 				{
+					tabControl1.SelectedTab=tabPage1;
 					MessageBox.Show("No audio device selected.Please choose an audio device", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
 				}
@@ -1785,6 +1793,7 @@ namespace MediaPortal.Configuration
 			{
 				if (comboBoxLineInput.Items.Count>0 && comboBoxLineInput.SelectedItem==null)
 				{
+					tabControl1.SelectedTab=tabPage1;
 					MessageBox.Show("No line input selected.Please choose a line input", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
 				}
