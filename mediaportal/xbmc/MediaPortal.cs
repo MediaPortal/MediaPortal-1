@@ -20,12 +20,11 @@ using Microsoft.ApplicationBlocks.ApplicationUpdater;
 
 using MediaPortal.GUI.Library;
 using MediaPortal;
-
+using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
-using MediaPortal.Dialogs;
 using MediaPortal.IR;
 using MediaPortal.Ripper;
 
@@ -1347,6 +1346,17 @@ public class MediaPortalApp : D3DApp, IRender
         AutoPlay.ExamineCD(message.Label);
       break;
 
+      case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
+        
+        string Head=GUILocalizeStrings.Get(message.Param1);
+        string Line1=GUILocalizeStrings.Get(message.Param2);
+        string Line2=GUILocalizeStrings.Get(message.Param3);
+        if ( AskYesNo(Head,Line1,Line2))
+          message.Param1=1;
+        else
+          message.Param1=0;
+      break;
+
       case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
       {
         string strHead=GUILocalizeStrings.Get(message.Param1);
@@ -1429,6 +1439,7 @@ public class MediaPortalApp : D3DApp, IRender
       break;
     }
   }
+
   void ShowInfo(string strHeading, string strLine1, string strLine2)
   {
     GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
@@ -1436,6 +1447,17 @@ public class MediaPortalApp : D3DApp, IRender
     pDlgOK.SetLine(1,strLine1);
     pDlgOK.SetLine(2,strLine2);
     pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
+
+  }
+
+  bool AskYesNo(string strHeading, string strLine1, string strLine2)
+  {
+    GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+    dlgYesNo.SetHeading(strHeading);
+    dlgYesNo.SetLine(1,strLine1);
+    dlgYesNo.SetLine(2,strLine2);
+    dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
+    return dlgYesNo.IsConfirmed;
 
   }
 }

@@ -18,6 +18,7 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicFiles : GUIWindow, IComparer, ISetupForm
   {
+    [Serializable]
     public class MapSettings
     {
       protected int   _SortBy;

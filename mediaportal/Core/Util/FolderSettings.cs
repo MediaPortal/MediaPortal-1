@@ -247,7 +247,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }

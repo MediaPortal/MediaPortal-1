@@ -124,6 +124,16 @@
                     AssemblyFolderKey = "hklm\current managed directx 9.1"
                 />
                 <Reference
+                    Name = "Databases"
+                    Project = "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Core"
+                    Project = "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
                     Name = "Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces"
                     AssemblyName = "Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces"
                     HintPath = "..\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
@@ -144,13 +154,8 @@
                     HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
                 />
                 <Reference
-                    Name = "Databases"
-                    Project = "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Core"
-                    Project = "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
+                    Name = "WindowPlugins"
+                    Project = "{B282C55B-A37B-4CEC-A4FC-00791069BF00}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>

@@ -57,6 +57,7 @@ namespace MediaPortal.GUI.Library
         GUI_MSG_RESUME_TV,
         GUI_MSG_SEEK_FILE_END,
         GUI_MSG_REFRESH,
+        GUI_MSG_ASKYESNO,
         GUI_MSG_USER};
 
 		private string 				m_strLabel="";

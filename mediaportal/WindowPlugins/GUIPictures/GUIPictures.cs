@@ -17,6 +17,7 @@ namespace MediaPortal.GUI.Pictures
   /// </summary>
   public class GUIPictures: GUIWindow, IComparer, ISetupForm
   {
+    [Serializable]
     public class MapSettings
     {
       protected int   _SortBy;
@@ -465,14 +466,14 @@ namespace MediaPortal.GUI.Pictures
     {
       if (strDirectory=="") strDirectory="root";
       object o;
-      FolderSettings.GetFolderSetting(strDirectory,"Pictures",typeof(MapSettings), out o);
+      FolderSettings.GetFolderSetting(strDirectory,"Pictures",typeof(GUIPictures.MapSettings), out o);
       if (o!=null) _MapSettings = o as MapSettings;
       if (_MapSettings==null) _MapSettings  = new MapSettings();
     }
     void SaveFolderSettings(string strDirectory)
     {
       if (strDirectory=="") strDirectory="root";
-      FolderSettings.AddFolderSetting(strDirectory,"Pictures",typeof(MapSettings), _MapSettings);
+      FolderSettings.AddFolderSetting(strDirectory,"Pictures",typeof(GUIPictures.MapSettings), _MapSettings);
     }
 
     void OnRetrieveCoverArt(GUIListItem item)

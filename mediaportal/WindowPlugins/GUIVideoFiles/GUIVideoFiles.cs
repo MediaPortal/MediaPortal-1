@@ -19,6 +19,7 @@ namespace MediaPortal.GUI.Video
 	public class GUIVideoFiles : GUIWindow, IComparer, ISetupForm
 	{
     
+    [Serializable]
     public class MapSettings
     {
       protected int   _SortBy;

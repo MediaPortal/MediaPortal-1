@@ -1,7 +1,6 @@
 using System;
 using System.IO;  
 using System.Collections;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -238,16 +237,12 @@ namespace MediaPortal.Ripper
     static bool ShouldWeAutoPlay()
     {
       if (GUIWindowManager.IsRouted) return false;
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      if (null!=dlgYesNo) 
-      {
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(713));
-        dlgYesNo.SetLine(0, GUILocalizeStrings.Get(714));
-        dlgYesNo.SetLine(1, "");
-        dlgYesNo.SetLine(2, "");
-        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-        return (dlgYesNo.IsConfirmed) ;
-      }
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,null);
+      msg.Param1=713;
+      msg.Param2=714;
+      msg.Param3=0;
+      GUIWindowManager.SendMessage(msg);
+      if (msg.Param1!=0) return true;
       return false;
     }
     

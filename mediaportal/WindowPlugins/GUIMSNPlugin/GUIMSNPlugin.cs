@@ -483,7 +483,7 @@ namespace MediaPortal.GUI.MSN
           */
         }
       }
-      catch(MSNException e)
+      catch(MSNException )
       {
         // in case of an error, report this to the user (or developer)
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
