@@ -231,6 +231,7 @@ namespace MediaPortal
     {
       buttonMap.Enabled=false;
       buttonSkip.Enabled=false;
+			buttonAdd.Enabled=false;
 
       tuningInterface.Continue();
     }
@@ -258,6 +259,7 @@ namespace MediaPortal
 		{
 			buttonMap.Enabled=true;
 			buttonSkip.Enabled=true;
+			buttonAdd.Enabled=true;
 		}
 
 		public void OnProgress(int percentDone)
