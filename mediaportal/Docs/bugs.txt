@@ -45,12 +45,3 @@ Same with programmed recording:
 I enter my TV Guide and select a program for record. 
 I leave my TV and wait until recording is done. 
 I enter my TV and i see the recorded show. Not the normal TV program. 
--------------------------------------------------------------------------------------------
-my DVD 
-I start DVD playback. 
-I stop DVD playback. 
-Overlay picture resides on screen, i see the last picture before hitting the stop button. 
-I can use MP after that (when i browse "blindly" ). But something seems to hang in the system, because the CPU usage is about 100%. Also the macrovision signal of the Cyberlink codec is still activ. Only a restart of the computer solves the problem. This happens also with ripped DVDs on Harddisk (.IFO). 
-I am using Cyberlink codecs (Video, Audio, Navigator). But i also tested my other codecs with the same result. 
-I am using normal Overlay mode. DVD playback was ok until Build 29062004. With Build 29062004 the problem occured for the first time on my machine.
--------------------------------------------------------------------------------------------
