@@ -91,7 +91,8 @@ namespace MediaPortal.Configuration.Sections
                         new string[] { "general", "animations", "true" },
 												new string[] { "general", "autostart", "false" },
 												new string[] { "general", "baloontips", "false" },
-												new string[] { "general", "dblclickasrightclick", "false" }
+												new string[] { "general", "dblclickasrightclick", "false" },
+												new string[] { "general", "hidetaskbar", "true" }
 												};
 
 		/// <summary>
@@ -265,7 +266,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 88);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 152);
+			this.groupBox1.Size = new System.Drawing.Size(440, 176);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "General Settings";
@@ -283,10 +284,11 @@ namespace MediaPortal.Configuration.Sections
 																																"Enable animations",
 																																"Autostart Mediaportal when windows starts",
 																																"Disable Windows XP balloon tips",
-																																"Use mouse left double click as right click"});
+																																"Use mouse left double click as right click",
+																																"Hide taskbar in fullscreen mode"});
 			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
 			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-			this.settingsCheckedListBox.Size = new System.Drawing.Size(408, 109);
+			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 139);
 			this.settingsCheckedListBox.TabIndex = 0;
 			// 
 			// groupBox2
@@ -302,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Controls.Add(this.textBoxDaemonTools);
 			this.groupBox2.Controls.Add(this.checkBoxDaemonTools);
 			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 248);
+			this.groupBox2.Location = new System.Drawing.Point(8, 272);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(440, 152);
 			this.groupBox2.TabIndex = 3;

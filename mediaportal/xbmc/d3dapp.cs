@@ -140,7 +140,7 @@ namespace MediaPortal
 		bool   m_bRestore=false;
     double m_dCurrentPos=0;
     int    m_iSleepingTime=50;
-
+		bool	 autoHideTaskbar=true;
     DirectDraw.Device               m_dddevice=null;
     DirectDraw.SurfaceDescription   m_dddescription=null;
     DirectDraw.Surface              m_ddfront=null;
@@ -189,12 +189,7 @@ namespace MediaPortal
 
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-//@@@fullscreen
-/*
-       string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
-        if (strStartFull!=null && strStartFull=="yes") startFullscreen=true;
-*/        
-//@@@fullscreen
+				autoHideTaskbar=xmlreader.GetValueAsBool("general","hidetaskbar",true);
       }
       //      startFullscreen=true;
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -265,8 +260,11 @@ namespace MediaPortal
           string strStartFull=(string)xmlreader.GetValue("general","startfullscreen");
           if (strStartFull!=null && strStartFull=="yes")
           {
-            Win32API.EnableStartBar(false);
-            Win32API.ShowStartBar(false);
+						if (autoHideTaskbar)
+						{
+							Win32API.EnableStartBar(false);
+							Win32API.ShowStartBar(false);
+						}
 
             Log.Write("start fullscreen");
             this.FormBorderStyle=FormBorderStyle.None;
@@ -1481,8 +1479,11 @@ namespace MediaPortal
         this.notifyIcon1.Dispose(); //we dispose our tray icon here
       base.Dispose(disposing);
 
-      Win32API.EnableStartBar(true);
-      Win32API.ShowStartBar(true);
+			if (autoHideTaskbar)
+			{
+				Win32API.EnableStartBar(true);
+				Win32API.ShowStartBar(true);
+			}
     }
 
 
@@ -1601,8 +1602,11 @@ namespace MediaPortal
       if (isMaximized)
       {
         Log.Write("windowed->fullscreen");
-        Win32API.EnableStartBar(false);
-        Win32API.ShowStartBar(false);
+				if (autoHideTaskbar)
+				{
+					Win32API.EnableStartBar(false);
+					Win32API.ShowStartBar(false);
+				}
         this.FormBorderStyle=FormBorderStyle.None;
         this.MaximizeBox=false;
         this.MinimizeBox=false;
@@ -1622,8 +1626,11 @@ namespace MediaPortal
       else
       {
         Log.Write("fullscreen->windowed");
-        Win32API.EnableStartBar(true);
-        Win32API.ShowStartBar(true);
+				if (autoHideTaskbar)
+				{
+					Win32API.EnableStartBar(true);
+					Win32API.ShowStartBar(true);
+				}
 
         this.WindowState = FormWindowState.Normal;
         this.FormBorderStyle=FormBorderStyle.Sizable;
@@ -1953,8 +1960,11 @@ namespace MediaPortal
     /// </summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-      Win32API.EnableStartBar(true);
-      Win32API.ShowStartBar(true);
+			if (autoHideTaskbar)
+			{
+				Win32API.EnableStartBar(true);
+				Win32API.ShowStartBar(true);
+			}
       isClosing = true;
       base.OnClosing(e);
     }
