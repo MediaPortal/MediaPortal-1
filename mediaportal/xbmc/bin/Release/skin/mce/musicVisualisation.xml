@@ -11,7 +11,7 @@
 		<posY>50</posY>
 		<width>720</width>
 		<height>65</height>
-		<texture>bar.png</texture>
+		<texture>calibration_bar.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
