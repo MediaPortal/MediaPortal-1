@@ -732,7 +732,7 @@ namespace MediaPortal.Radio.Database
 				}
 			}
 		}
-		static public void UnmapChannelFromCard(TVChannel channel, int card)
+		static public void UnmapChannelFromCard(RadioStation channel, int card)
 		{
 			lock (typeof(RadioDatabase))
 			{
@@ -794,6 +794,71 @@ namespace MediaPortal.Radio.Database
 			}
 			return false;
 		}
+
+		static public void GetStationsForCard( ref ArrayList stations, int card)
+		{
+			stations.Clear();
+			if (m_db==null) return ;
+			lock (m_db)
+			{
+				try
+				{
+					if (null==m_db) return ;
+					string strSQL;
+					strSQL=String.Format("select * from station,tblChannelCard where station.idChannel=tblChannelCard.idChannel and tblChannelCard.card={0} order by iChannelNr",card);
+					SQLiteResultSet results;
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return ;
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						RadioStation chan=new RadioStation();
+						try
+						{
+							chan.ID=Int32.Parse(DatabaseUtility.Get(results,i,"station.idChannel"));
+						}
+						catch(Exception){}
+						try
+						{
+							chan.Channel = Int32.Parse(DatabaseUtility.Get(results,i,"station.iChannelNr"));
+						}
+						catch(Exception){}
+						try
+						{
+							chan.Frequency = Int64.Parse(DatabaseUtility.Get(results,i,"station.frequency"));
+						}
+						catch(Exception)
+						{}
+						
+						int scrambled=Int32.Parse( DatabaseUtility.Get(results,i,"station.scrambled"));
+						if (scrambled!=0)
+							chan.Scrambled=true;
+						else
+							chan.Scrambled=false;
+
+						chan.Name = DatabaseUtility.Get(results,i,"station.strName");
+						chan.URL = DatabaseUtility.Get(results,i,"station.URL");
+						if (chan.URL.Equals("unknown")) chan.URL ="";
+						try
+						{
+							chan.BitRate=Int32.Parse( DatabaseUtility.Get(results,i,"station.bitrate") );
+						}
+						catch(Exception){}
+
+						chan.Genre=DatabaseUtility.Get(results,i,"station.genre") ;
+						stations.Add(chan);
+					}
+
+					return ;
+				}
+				catch(Exception ex)
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+				return ;
+			}
+		}
+
 
   }
 }

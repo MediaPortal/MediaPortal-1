@@ -11,7 +11,6 @@ using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using TVCapture;
 using MediaPortal.TV.Database;
-using MediaPortal.TV.Recording;
 
 namespace MediaPortal.Configuration
 {
