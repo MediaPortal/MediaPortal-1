@@ -41,6 +41,7 @@ My TV:
      - change layout of screen so it becomes more readable
      
   TVGuide:
+     - special background/color for currently playing program(s)
      - in the tv guide, when you select a program, it would be nice to have an option 
      - which directly switches to the channel. Of course only if the program currently runs. 
      - add to program favorites (will b highlighted next time)
@@ -49,6 +50,7 @@ My TV:
      
   Scheduled:
      - remove all schedules button
+     - show status (waiting,recording,recorded)
   
   Recorder/Capture:
      - add support for digital capture cards (BDA tuners)
