@@ -1869,6 +1869,10 @@ namespace MediaPortal.Configuration.Sections
 		private void btnLookupImage_Click(object sender, System.EventArgs e)
 		{
 			if (textBoxPictureURL.Text==String.Empty) return;
+			string strThumb = Utils.GetCoverArtName(TitleThumbsFolder,tbTitle.Text);
+			string LargeThumb = Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
+			Utils.FileDelete(strThumb);
+			Utils.FileDelete(LargeThumb);
 			DownloadThumnail(TitleThumbsFolder,textBoxPictureURL.Text, tbTitle.Text);
 			if (pictureBox1.Image!=null)
 			{
