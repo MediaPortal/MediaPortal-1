@@ -226,7 +226,7 @@ public class MediaPortalApp : D3DApp, IRender
         throw new Exception(strMsg);
       }
 
-      Utils.FileDelete(@"logs\capture.log");
+      Utils.FileDelete(@"log\capture.log");
       if (Screen.PrimaryScreen.Bounds.Width > 720)
       {
         this.MinimumSize = new Size(720 + 8, 576 + 27);
