@@ -21,11 +21,19 @@ namespace MediaPortal.Configuration
         if (t.Name.StartsWith("MPGuideScheduler"))
         {
           taskfound = true;
-          userAccount= t.AccountName;
+          try
+          {
+            userAccount= t.AccountName;
+          }
+          catch(Exception)
+          {
+            userAccount="";
+          }
+
 
           foreach (Trigger tr in t.Triggers) 
           {
-            Console.WriteLine("    " + tr.ToString());
+            //Console.WriteLine("    " + tr.ToString());
             if (tr is DailyTrigger) 
             {
               taskSettings[0] = (tr as DailyTrigger).StartHour;

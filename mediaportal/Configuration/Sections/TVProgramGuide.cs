@@ -625,22 +625,30 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("xmltv", "days",AdvancedDaystextBox.Text);
 				xmlwriter.SetValue("xmltv", "args",parametersTextBox.Text);
 			}
+
       if (createScheduleCheckBox.Checked)
       {
+        int hours=0,minutes=0,days=1;
         try
         {
-          if (System.Convert.ToInt32(hoursTextBox.Text) > 23) hoursTextBox.Text="23";
+          hours=System.Convert.ToInt32(hoursTextBox.Text);
+          minutes=System.Convert.ToInt32(minutesTextBox.Text);
+          days=System.Convert.ToInt32(dayIntervalTextBox.Text);
 
-          if (System.Convert.ToInt32(minutesTextBox.Text) > 59) minutesTextBox.Text="59";
-          if (System.Convert.ToInt32(dayIntervalTextBox.Text) < 1) dayIntervalTextBox.Text="1";
-          TaskScheduler.CreateTask(System.Convert.ToInt16(hoursTextBox.Text),
-            System.Convert.ToInt16(minutesTextBox.Text),
-            System.Convert.ToInt16(dayIntervalTextBox.Text),
-            UserTextBox.Text,PasswordTextBox.Text);
         }
         catch(Exception)
         {
         }
+        if (hours>23) hours=23;
+        if (hours<0) hours=0;
+        if (minutes>59) minutes=59;
+        if (minutes<0) minutes=0;
+        if (days < 1) days=1;
+
+        TaskScheduler.CreateTask( (short)hours,
+                                  (short)minutes,
+                                  (short)days,
+                                  UserTextBox.Text,PasswordTextBox.Text);
       }
 		}
 

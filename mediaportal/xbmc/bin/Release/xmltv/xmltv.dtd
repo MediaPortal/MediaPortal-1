@@ -15,6 +15,9 @@ listing.  This 'lang' should be the two-letter code such as 'en' or
 'fr_FR'.  Or you can just leave it out and let your reader take a
 guess.
 
+Unless otherwise specified, an element containing CDATA must have some
+text if it is written.
+
 An example XML file for this DTD might look like this:
 
 <tv generator-info-name="my listings generator">
@@ -163,8 +166,7 @@ elements sorted by ASCII order of their ids.
 
 <!-- A user-friendly name for the channel - maybe even a channel
 number.  List the most canonical / common ones first and the most
-obscure names last.  The lang attribute corresponds to abbreviations
-mentioned in ISO 3316.
+obscure names last.  The lang attribute follows RFC 1766.
 -->
 <!ELEMENT display-name (#PCDATA)>
 <!ATTLIST display-name lang CDATA #IMPLIED>
@@ -215,7 +217,7 @@ Perhaps there is some better XML syntax we could use for that.
 -->
 <!ELEMENT programme (title+, sub-title*, desc*, credits?, date?,
                      category*, language?, orig-language?, length?,
-                     icon*, url*, country*, episode-num?, video?, audio?,
+                     icon*, url*, country*, episode-num*, video?, audio?,
                      previously-shown?, premiere?, last-chance?, new?,
                      subtitles*, rating*, star-rating? )>
 <!ATTLIST programme start     CDATA #REQUIRED
