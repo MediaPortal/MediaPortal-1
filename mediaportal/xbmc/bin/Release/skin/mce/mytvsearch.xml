@@ -58,27 +58,52 @@
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
 			<control>
-				<description>Search by Genres</description>
+				<description>Sort-by button</description>
 				<type>button</type>
 				<id>2</id>
 				<posX>60</posX>
 				<posY>97</posY>
+				<label>620</label>
+				<onleft>10</onleft>
+				<onright>3</onright>
+				<onup>17</onup>
+				<ondown>4</ondown>
+			</control>
+			<control>
+				<description>Sort Asc</description>
+				<type>togglebutton</type>
+				<id>3</id>
+				<posX>225</posX>
+				<posY>105</posY>
+				<label>-</label>
+				<onleft>2</onleft>
+				<onright>10</onright>
+				<onup>2</onup>
+				<ondown>2</ondown>
+			</control>
+	
+			<control>
+				<description>Search by Genres</description>
+				<type>button</type>
+				<id>4</id>
+				<posX>60</posX>
+				<posY>131</posY>
 				<label>725</label>
 				<onleft>10</onleft>
 				<onright>10</onright>
-				<onup>17</onup>
-				<ondown>3</ondown>
+				<onup>2</onup>
+				<ondown>5</ondown>
 			</control>
 			<control>
 				<description>Search by Title</description>
 				<type>button</type>
-				<id>3</id>
+				<id>5</id>
 				<posX>60</posX>
-				<posY>131</posY>
+				<posY>165</posY>
 				<label>726</label>
 				<onleft>3</onleft>
 				<onright>10</onright>
-				<onup>2</onup>
+				<onup>4</onup>
 				<ondown>2</ondown>
 			</control>		
 		</control>
