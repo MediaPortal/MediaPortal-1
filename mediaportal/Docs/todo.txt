@@ -107,7 +107,7 @@ General:
   - caller ID
   - better mouse control 
      - my tv: 
-         tvguide   : next/prev day, current time/day, scroll up/down, scroll left/right, time interval+/-
+         tvguide   : current time/day, scroll up/down, scroll left/right
      - my music:
          queue songs, get/view album info, prev/next song, pause, play, skip+/skip-,ff/rw
      - my pictures:

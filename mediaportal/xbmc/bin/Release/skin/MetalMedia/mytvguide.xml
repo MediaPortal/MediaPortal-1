@@ -75,17 +75,37 @@
 		<posY>255</posY>
 		<width>32</width>
 		<height>28</height>
-		<texture>bluebar.png</texture>
+		<texture>bar.png</texture>
 	</control>
 	<control>
-		<description>Day Label</description>
-		<type>label</type>
+		<description>day spin control</description>
+		<type>spincontrol</type>
 		<id>6</id>
 		<posX>60</posX>
 		<posY>222</posY>
-		<font>font13</font>
-		<label>#TV.Guide.Day</label>
-		<textcolor>FFB2D4F5</textcolor>
+		<showrange>no</showrange>
+		<orientation>horizontal</orientation>
+		<align>center</align>
+		<reverse>yes</reverse>
+		<onleft>6</onleft>
+		<onright>8</onright>
+	</control>
+	<control>
+		<description>time interval spin control</description>
+		<type>spincontrol</type>
+		<id>8</id>
+		<posX>165</posX>
+		<posY>230</posY>
+		<showrange>no</showrange>
+		<orientation>vertical</orientation>
+		<align>center</align>
+		<reverse>yes</reverse>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
+		<onleft>6</onleft>
+		<onright>8</onright>
 	</control>
 	<control>
 		<description>Channel image template</description>
