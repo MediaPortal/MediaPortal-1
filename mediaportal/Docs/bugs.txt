@@ -1,4 +1,7 @@
 Bugs left:
+  19-06-2004 my tv      :  press the record now button:"setup error": failed to load resources from resource file. please check your setup
+  19-06-2004 my tv      :  stopped recording. my tv picture hangs up. channel switching doesn't change anything. the temp file is not renamed (still record1.mpg)
+  
   18-06-2004 topbar     : the topbar buttons keep focus even when cursor is in the rest of the GUI
   18-06-2004 my video   : page counter goes wrong when > 9 pages
   18-06-2004 my video   : F3 when no inet connection
@@ -19,4 +22,35 @@ Bugs i cannot fix (at the moment)
                           reason : DirectX scaling causes this. Need to find out if this can b solved
   01-05-2004 my pictures: Quality of pics is degraded since DX9 is used. Slideshow quality is fine 
                           reason : DirectX scaling causes this. Need to find out if this can b solved
+                          
+---- stop recording                          
+19.06.2004 11:38:10 Recorder: Stop recording on channel:ZDF capture card:1
+19.06.2004 11:38:10   CaptureCard:1 Stop recording
+19.06.2004 11:38:10   CaptureCard:1 user canceled recording:Record once Manual on ZDF from 19.06.2004 11:37 - 19.06.2004 13:37
+
+---- tvcapture card stops previewing
+19.06.2004 11:38:10   CaptureCard:1 Stop preview
+19.06.2004 11:38:10   CaptureCard:1 Stop previewing...
+19.06.2004 11:38:10 Playlistplayer.Stopfile
+19.06.2004 11:38:10 RecordingPlayer9:stop
+19.06.2004 11:38:10 RecordingPlayer:ended D:\Eigene Dateien\My Videos\record1.mpg
+19.06.2004 11:38:10 RecordingPlayer:cleanup DShow graph
+19.06.2004 11:38:11 player:ended
+19.06.2004 11:38:11 RecordingPlayer:cleanup DShow graph
+19.06.2004 11:38:11   CaptureCard:1 previewing stopped...
+19.06.2004 11:38:11   CaptureCard:1 Stop capture
+19.06.2004 11:38:11 RecordingPlayer9:stopped
+---- previewing is stopped, but its started again!!!!
+
+19.06.2004 11:38:11 Player.Play(D:\Eigene Dateien\My Videos\record1.mpg)
+19.06.2004 11:38:11 RecordingPlayer:play D:\Eigene Dateien\My Videos\record1.mpg
+19.06.2004 11:38:11 RecordingPlayer:cleanup DShow graph
+19.06.2004 11:38:11 RecordingPlayer:add mp reader filter
+19.06.2004 11:38:11 RecordingPlayer:get IFileSourceFilter interface
+19.06.2004 11:38:11 RecordingPlayer:set source
+
+----- capture card tries to move the file
+19.06.2004 11:38:11   CaptureCard:1 stop capture to D:\Eigene Dateien\My Videos\record1.mpg
+19.06.2004 11:38:11   CaptureCard:1 move D:\Eigene Dateien\My Videos\record1.mpg->D:\Eigene Dateien\My Videos\ZDF_Tabaluga_200406191040.mpg
+19.06.2004 11:38:11   CaptureCard:1 unable to move file D:\Eigene Dateien\My Videos\record1.mpg-D:\Eigene Dateien\My Videos\ZDF_Tabaluga_200406191040.mpg Der Prozess kann nicht auf die Datei "D:\Eigene Dateien\My Videos\ZDF_Tabaluga_200406191040.mpg" zugreifen, da sie von einem anderen Prozess verwendet wird.
                           

@@ -903,7 +903,13 @@ namespace MediaPortal.TV.Recording
     public string TempRecordingFileName
     {
       get { 
+        // if we're in the process of stopping the recording then dont return the temp. filename anymore
+        if (m_bStopRecording) return "";
+
+        // if we're recording return the temp. recording filename
         if (IsRecording) return m_strFilenameTmp;
+
+        // not recording? then there's no temp. recording filename
         return "";
       }
     }
