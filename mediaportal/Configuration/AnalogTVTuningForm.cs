@@ -43,21 +43,7 @@ namespace MediaPortal
 			//
 			InitializeComponent();
 
-      listView1.Items.Clear();
-      
-      ArrayList channels=new ArrayList();
-			TVDatabase.GetChannels(ref channels);
-      foreach (TVChannel channel in channels)
-      {
-        if (channel.Number<1000)
-        {
-          ListViewItem item = new ListViewItem();
-          item.Text=channel.Name;
-          item.SubItems.Add(channel.Number.ToString());
-          listView1.Items.Add(item);
-        }
-      }
-
+			Update();
       
 		}
 
@@ -282,6 +268,23 @@ namespace MediaPortal
 			labelStatus.Text=description;
 		}
 
+		public void Update()
+		{
+			listView1.Items.Clear();
+      
+			ArrayList channels=new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			foreach (TVChannel channel in channels)
+			{
+				if (channel.Number<1000)
+				{
+					ListViewItem item = new ListViewItem();
+					item.Text=channel.Name;
+					item.SubItems.Add(channel.Number.ToString());
+					listView1.Items.Add(item);
+				}
+			}
+		}
 		#endregion
 	}
 }
