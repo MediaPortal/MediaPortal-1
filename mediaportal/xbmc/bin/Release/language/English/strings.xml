@@ -1712,6 +1712,18 @@
 		<id>509</id>
 		<value>Destination File exists. Overwrite File ?</value>
 	</string>
+	<string>
+		<id>510</id>
+		<value>Cancel</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Always</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Never</value>
+	</string>
 	
 	<string>
 		<id>530</id>

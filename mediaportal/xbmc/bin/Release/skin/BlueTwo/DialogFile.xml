@@ -107,7 +107,7 @@
 		<height>38</height>
 		<textureFocus>small_button_focus.png</textureFocus>
 		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
-		<label>Always</label> 
+		<label>511</label> 
 		<onleft>13</onleft> 
 		<onright>13</onright> 
 		<onup>11</onup> 
@@ -123,7 +123,7 @@
 		<height>38</height>
 		<textureFocus>small_button_focus.png</textureFocus>
 		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
-		<label>Never</label> 
+		<label>512</label> 
 		<onleft>12</onleft> 
 		<onright>12</onright> 
 		<onup>10</onup> 
@@ -139,7 +139,7 @@
 		<height>38</height>
 		<textureFocus>small_button_focus.png</textureFocus>
 		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
-		<label>Cancel</label> 
+		<label>510</label> 
 		<onleft>10</onleft> 
 		<onright>11</onright> 
 		<onup>14</onup> 
