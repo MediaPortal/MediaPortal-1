@@ -181,7 +181,7 @@ namespace MediaPortal.TV.Database
 									  if (nodeSrc !=null)
 									  {
 										  string strURL = nodeSrc.InnerText;
-										  string strLogoPng=Utils.GetCoverArtName(@"tv\logos",chan.Name);
+										  string strLogoPng=Utils.GetCoverArtName(@"thumbs\tv\logos",chan.Name);
 										  if (!System.IO.File.Exists(strLogoPng) )
 										  {
 											  Utils.DownLoadImage(strURL,strLogoPng,System.Drawing.Imaging.ImageFormat.Png);
