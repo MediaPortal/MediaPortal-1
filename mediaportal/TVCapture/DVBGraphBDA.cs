@@ -120,6 +120,7 @@ namespace MediaPortal.TV.Recording
 		NetworkType							m_NetworkType;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
+		object									objRecord=null;
 		TVCaptureDevice					m_Card;
 		
 		//streambuffer interfaces
@@ -689,6 +690,8 @@ namespace MediaPortal.TV.Recording
 				m_recControl.Stop(0);
 				Marshal.ReleaseComObject(m_recControl); m_recControl=null;
 			}
+			if (objRecord!=null)
+				Marshal.ReleaseComObject(objRecord); objRecord=null;
 		      
 			if (m_StreamBufferSink!=null) 
 			{
@@ -809,8 +812,7 @@ namespace MediaPortal.TV.Recording
 			else 
 				iRecordingType = 1;										
 
-			IntPtr recorderObj=IntPtr.Zero;
-			object objRecord = null;
+			IntPtr recorderObj;
 			try
 			{
 				//ask StreamBufferEngine to create a new recorder
@@ -826,14 +828,18 @@ namespace MediaPortal.TV.Recording
 				objRecord = Marshal.GetObjectForIUnknown(recorderObj);
 				if (objRecord == null) 
 				{
+				Marshal.Release(recorderObj);
+				Marshal.Release(recorderObj);
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
 					return false;
 				}
 	      
 				//now get the IStreamBufferRecordControl interface
 				m_recControl = objRecord as IStreamBufferRecordControl;			
+			Marshal.Release(recorderObj);
 				if (m_recControl == null) 
 				{
+				Marshal.ReleaseComObject(objRecord);
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
 					return false;
 				}
@@ -888,8 +894,6 @@ namespace MediaPortal.TV.Recording
 			}
 			finally
 			{
-				if (recorderObj != IntPtr.Zero)
-					Marshal.Release(recorderObj);
 			}
 			m_graphState = State.Recording;
 			return true;
@@ -915,6 +919,10 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_recControl); 
 				m_recControl=null;
 				
+				Marshal.ReleaseComObject(objRecord);
+				Marshal.ReleaseComObject(objRecord);
+				Marshal.ReleaseComObject(objRecord);
+				objRecord=null;
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
 				GC.Collect();
@@ -1670,7 +1678,6 @@ namespace MediaPortal.TV.Recording
 			IPin	pinObj2		= null;
 			IPin	pinObj3		= null;
 			IPin	outPin		= null;
-			IStreamBufferInitialize streamBufferInitialize =null;
 
 			try
 			{
@@ -1756,11 +1763,11 @@ namespace MediaPortal.TV.Recording
 				
 				// setting the StreamBufferEngine registry key
 				IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
-				streamBufferInitialize = (IStreamBufferInitialize) m_IStreamBufferConfig;
-				IntPtr subKey = IntPtr.Zero;
+			IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
+			IntPtr subKey = IntPtr.Zero;
 
-				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-				hr=streamBufferInitialize.SetHKEY(subKey);
+			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+			hr=pTemp.SetHKEY(subKey);
 				
 				//set timeshifting folder
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
@@ -1781,6 +1788,12 @@ namespace MediaPortal.TV.Recording
 				if(hr != 0)
 					return false;
 
+			subKey = IntPtr.Zero;
+			HKEY = (IntPtr) unchecked ((int)0x80000002L);
+			IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
+
+			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+			hr = pConfig.SetHKEY(subKey);
 				//set timeshifting filename
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
 				
@@ -1804,8 +1817,8 @@ namespace MediaPortal.TV.Recording
 				if(outPin != null)
 					Marshal.ReleaseComObject(outPin);
 
-				if ( streamBufferInitialize !=null)
-					Marshal.ReleaseComObject(streamBufferInitialize );
+				//if ( streamBufferInitialize !=null)
+					//Marshal.ReleaseComObject(streamBufferInitialize );
 				
 			}
 			return true;
