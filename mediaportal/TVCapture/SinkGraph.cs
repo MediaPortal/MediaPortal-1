@@ -111,18 +111,6 @@ namespace MediaPortal.TV.Recording
         m_videoStreamConfig = o as IAMStreamConfig;
       }
 */
-      // Retrieve Tuner if available
-      IAMTuner amTuner=null;
-      DirectShowUtil.DebugWrite("SinkGraph:Find Tuner");
-      o = null;
-      cat = FindDirection.UpstreamOnly;
-      iid = typeof(IAMTuner).GUID;
-      hr = m_captureGraphBuilder.FindInterface( new Guid[1]{ cat}, null, m_captureFilter, ref iid, out o );
-      if (hr==0) 
-      {
-        amTuner = o as IAMTuner;
-      }
-
       // Retrieve TV Tuner if available
       DirectShowUtil.DebugWrite("SinkGraph:Find TV Tuner");
       o = null;
@@ -132,15 +120,14 @@ namespace MediaPortal.TV.Recording
       if (hr==0) 
       {
         m_TVTuner = o as IAMTVTuner;
-      }
-
-      if (amTuner!=null)
-      {
-        DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)amTuner);
-      }
-      if (m_TVTuner!=null)
-      {
-        DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
+        if (m_TVTuner!=null)
+        {
+          bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
+          if (!bAllConnected)
+          {
+            FixAverMediaBug();
+          }
+        }
       }
 			if (m_TVTuner==null)
 			{
@@ -323,5 +310,58 @@ namespace MediaPortal.TV.Recording
 
 			DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
     }
+
+    void FixAverMediaBug()
+    {
+/*
+      // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
+      // the crossbar outputs are disconnected
+      DirectShowUtil.DebugWrite("Sinkgraph:FixAverMediaBug()");
+      //find crossbar
+      int  hr;
+      Guid cat;
+      Guid iid;
+      object o=null;
+      cat = FindDirection.UpstreamOnly;
+      iid = typeof(IAMCrossbar).GUID;
+      hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,m_captureFilter, ref iid, out o);
+      if (hr !=0 || o == null) 
+      {
+        DirectShowUtil.DebugWrite("Sinkgraph:no crossbar found");
+        return; // no crossbar found?
+      }
+        
+      IAMCrossbar crossbar = o as IAMCrossbar;
+      if (crossbar ==null) 
+      {
+        DirectShowUtil.DebugWrite("Sinkgraph:no crossbar found");
+        return;
+      }
+
+
+      //disconnect the output pins of the crossbar
+      DirectShowUtil.DebugWrite("Sinkgraph:disconnect crossbar outputs");
+      DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
+      DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
+
+      //render the output pins of the tvtuner
+      DirectShowUtil.DebugWrite("Sinkgraph:connect tvtuner outputs");
+      bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
+      if (bAllConnected)
+        DirectShowUtil.DebugWrite("Sinkgraph:all connected");
+      else
+        DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
+
+      //reconnect the output pins of the crossbar
+      DirectShowUtil.DebugWrite("Sinkgraph:reconnect crossbar output pins");
+    
+      bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
+      if (bAllConnected)
+        DirectShowUtil.DebugWrite("Sinkgraph:all connected");
+      else
+        DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
+
+   */
+    } 
 	}
 }
