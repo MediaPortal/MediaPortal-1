@@ -519,7 +519,7 @@ namespace DShowNET
           Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}",hr);
 
         //set mpeg2 demux as reference clock 
-        //(m_graphBuilder as IMediaFilter).SetSyncSource(m_mpeg2Multiplexer as IReferenceClock);
+        (m_graphBuilder as IMediaFilter).SetSyncSource(m_mpeg2Multiplexer as IReferenceClock);
 
         //set filename
         m_bSink = m_streamBuffer as IStreamBufferSink;

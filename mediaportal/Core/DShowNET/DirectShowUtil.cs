@@ -141,6 +141,8 @@ namespace DShowNET
 								if (filter.Name== strFilterName)
 								{
 									Log.WriteFile(Log.LogType.Capture,"filter already in graph");
+									
+									(graphBuilder as IMediaFilter).SetSyncSource(pBasefilter as IReferenceClock);
 									Marshal.ReleaseComObject( pBasefilter );
 									bNeedAdd=false;
 									break;
@@ -181,6 +183,7 @@ namespace DShowNET
 								if (hr==0) Log.WriteFile(Log.LogType.Capture," pinout rendererd");
 								else Log.WriteFile(Log.LogType.Capture,true," failed: pinout render");
 							}
+							(graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock);
 							return NewFilter;
 						}
 					}

@@ -1824,6 +1824,7 @@ namespace MediaPortal.TV.Recording
 					//Marshal.ReleaseComObject(streamBufferInitialize );
 				
 			}
+			(m_graphBuilder as IMediaFilter).SetSyncSource(m_MPEG2Demultiplexer as IReferenceClock);
 			return true;
 		}//private bool CreateSinkSource(string fileName)
 
