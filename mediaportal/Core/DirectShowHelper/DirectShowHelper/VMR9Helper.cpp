@@ -70,11 +70,11 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
 		return E_FAIL;
 	}
-	if(FAILED(hr = pConfig->SetNumberOfStreams(4)))
+	/*if(FAILED(hr = pConfig->SetNumberOfStreams(4)))
 	{
 		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
 		return E_FAIL;
-	}
+	}*/
 
 	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
 	if(!pSAN)
@@ -93,7 +93,7 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 		return E_FAIL;
 	}
 
-	
+/*	
 	Log("Vmr9:Init() set YUV mixing mode");
 	CComQIPtr<IVMRMixerControl9> pMixControl = m_pVMR9Filter;
 	DWORD dwPrefs;
@@ -111,7 +111,7 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 	{
 		Log("Vmr9:Init() cannot use YUV mixing mode 0x:%x",hr);
 	}
-
+*/
 	return S_OK;
 }
 	
@@ -123,7 +123,7 @@ STDMETHODIMP CVMR9Helper::Deinit(void)
 	return S_OK;
 }
 STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
-{
+{/*
 	int hr;
 	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
 	switch (dwMethod)
@@ -140,12 +140,12 @@ STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
 			Log("vmr9:SetDeinterlace() preference to NextBest");
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
 		break;
-	}
+	}*/
 	return S_OK;
 }
 
 STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
-{
+{/*
 	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
 	VMR9VideoDesc VideoDesc; 
 	DWORD dwNumModes = 0;
@@ -296,6 +296,6 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
 		}
 	}
 
-
+*/
 	return S_OK;
 }

@@ -27,7 +27,7 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 {
 	Log("-------------------------------------");
 	m_hMonitor=monitor;
-	m_pD3DDev.Attach(direct3dDevice);
+	m_pD3DDev=direct3dDevice;
 	m_pCallback=callback;
 	m_surfaceCount=0;
 	m_bfirstFrame=true;
@@ -108,11 +108,12 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 			((char)(lpAllocInfo->Format>>24)&0xff));
 	// StretchRect's yv12 -> rgb conversion looks horribly bright compared to the result of yuy2 -> rgb
 
-	/*	if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y')
+		if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y')
 	{
 		Log("InitializeDevice()   invalid format");
 		return E_FAIL;
 	}
+	/*
 	if (lpAllocInfo->Format!=D3DFMT_A8R8G8B8 &&
 		lpAllocInfo->Format!=D3DFMT_R5G6B5 &&
 		lpAllocInfo->Format!=D3DFMT_R8G8B8 &&
@@ -126,7 +127,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
     HRESULT hr;
 
 	m_pSurfaces.resize(*lpNumBuffers);
-	lpAllocInfo->dwFlags |=VMR9AllocFlag_TextureSurface;
+	//lpAllocInfo->dwFlags |=VMR9AllocFlag_TextureSurface;
 	hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, & m_pSurfaces.at(0) );
 	if(FAILED(hr))
 	{
@@ -138,7 +139,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 	m_AspectRatio = m_NativeVideoSize;
 	int arx = lpAllocInfo->szAspectRatio.cx, ary = lpAllocInfo->szAspectRatio.cy;
 	if(arx > 0 && ary > 0) m_AspectRatio.SetSize(arx, ary);
-/*
+
 	if(FAILED(hr = AllocSurfaces()))
 	{
 		Log("vmr9:InitializeDevice()   AllocSurfaces returned:0x%x",hr);
@@ -153,7 +154,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 	}
 
 	hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
-*/
+
 	Log("vmr9:InitializeDevice() done()");
 	return hr;
 }
@@ -228,7 +229,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 
 		CAutoLock cAutoLock(this);
 
-//		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE);
+		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE);
 
 		m_fps = 10000000.0 / (lpPresInfo->rtEnd - lpPresInfo->rtStart);
 
@@ -241,8 +242,9 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 		}
 		VideoSize=GetVideoSize(false);
 
-		DWORD dwPtr=(DWORD)(lpPresInfo->lpSurf);
-		m_pCallback->PresentImage(VideoSize.cx, VideoSize.cy, dwPtr);
+		//DWORD dwPtr=(DWORD)(lpPresInfo->lpSurf);
+		//m_pCallback->PresentImage(VideoSize.cx, VideoSize.cy, dwPtr);
+		Paint(NULL);
 		if (m_bfirstFrame)
 		{
 			m_bfirstFrame=false;
@@ -380,8 +382,9 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 		CSize videoSize = GetVideoSize(false);
 		if (m_pVideoTexture!=NULL)
 		{
-			//IDirect3DTexture9* tex=m_pVideoTexture;
-			DWORD dwPtr=(DWORD)(pSurface);
+			//DWORD dwPtr=(DWORD)(pSurface);
+			IDirect3DTexture9* tex=m_pVideoTexture;
+			DWORD dwPtr=(DWORD)(tex);
 			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, dwPtr);
 			if (m_bfirstFrame)
 			{

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Sun Mar 13 09:13:12 2005
+/* at Sun Mar 13 16:11:04 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

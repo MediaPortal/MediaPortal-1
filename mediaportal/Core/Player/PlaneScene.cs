@@ -52,7 +52,7 @@ namespace MediaPortal.Player
 																														void* surface);
 
 		bool					  m_bStop = false;
-		static Surface	rTarget = null;
+		//static Surface	rTarget = null;
 		//VertexBuffer		vertexBuffer = null;
 		IRender				  m_renderer;
 		long					  m_lColorDiffuse = 0xFFFFFFFF;
@@ -92,8 +92,8 @@ namespace MediaPortal.Player
 			m_bStop = true;
 			try
 			{
-				if (rTarget != null)
-					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+				//if (rTarget != null)
+				//	GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 			}
 			catch(Exception ex)
 			{
@@ -142,11 +142,11 @@ namespace MediaPortal.Player
 				//if (vertexBuffer != null) vertexBuffer.Dispose();
 				//vertexBuffer = null;
 
-				if (rTarget!=null)
-				{
-					rTarget.Dispose();
-					rTarget=null;
-				}
+				//if (rTarget!=null)
+				//{
+				//	rTarget.Dispose();
+				//	rTarget=null;
+				//}
 				if (m_vertexBuffer!=null)
 				{
 					m_vertexBuffer.Dispose();
@@ -163,8 +163,8 @@ namespace MediaPortal.Player
 		/// <param name="device">Direct3d devices</param>
 		public void Init() 
 		{
-			if (rTarget == null)
-				rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+			//if (rTarget == null)
+			//	rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 			//m_iFrameCounter=0;
 		}
 
@@ -328,7 +328,7 @@ namespace MediaPortal.Player
 					//sanity checks
 					if (GUIGraphicsContext.DX9Device==null) return;
 					if (GUIGraphicsContext.DX9Device.Disposed) return;
-					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+					//if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 					if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
 					//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
@@ -446,7 +446,7 @@ namespace MediaPortal.Player
 					//sanity checks
 					if (GUIGraphicsContext.DX9Device==null) return;
 					if (GUIGraphicsContext.DX9Device.Disposed) return;
-					if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+					//if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 					if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
 					//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
