@@ -481,6 +481,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       PluginManager.Load();
       PluginManager.Start();
+
     } 
 
     /// <summary>
