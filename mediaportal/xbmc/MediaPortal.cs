@@ -675,6 +675,7 @@ public class MediaPortalApp : D3DApp
     }
     action=new Action(Action.ActionType.ACTION_MOUSE_CLICK,x,y);
     action.MouseButton=e.Button;
+    action.SoundFileName="click.wav";
     if (action.SoundFileName.Length>0)
       Utils.PlaySound(action.SoundFileName, false, true);
     OnAction(action);
