@@ -25,7 +25,7 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
-    const int MILLI_SECONDS_TIMER=10;
+    const int MILLI_SECONDS_TIMER=5;
     protected string    m_strSkin="mce";
     protected string    m_strLanguage="english";
 

@@ -62,9 +62,9 @@ namespace MediaPortal.Player
         if (rTarget != null)
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
       }
-      catch(Exception)
+      catch(Exception ex)
       {
-        Log.Write("exception in planescene.cs Stop()");
+        Log.Write("exception in planescene.cs Stop()"+ex.ToString());
       }
     }
 
