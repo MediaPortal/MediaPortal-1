@@ -74,36 +74,35 @@ namespace MediaPortal.Player
         if( hr != 0 )
           Marshal.ThrowExceptionForHR( hr );
 
-        
-        DvdRenderStatus status;
-        if (strPath.Length==0) strPath=null;
-        hr=dvdGraph.RenderDvdVideoVolume(strPath,DvdGraphFlags.SwDecPrefer|DvdGraphFlags.VMR9Only,out status);
-        if( hr != 0 )
-        {
-          if (((uint)hr)==VFW_E_DVD_DECNOTENOUGH)
-            Log.Write("FAILED:Unable to DVD. Missing codecs which support VMR9");
-          else if (((uint)hr)==VFW_E_DVD_RENDERFAIL)
-            Log.Write("FAILED:Unable to DVD. Some basic error occurred in building the graph");
-          else
-            Log.Write("FAILED:Unable to render volume:{0} error:0x{1:X}", strPath,hr);
-          if (status.vpeStatus!=0) Log.Write("  overlay error :{0:x}", status.vpeStatus);
-          if (status.volInvalid) Log.Write("  invalid volume:{0}", strPath);
-          if (status.volUnknown) Log.Write("  NO DVD found at :{0}", strPath);
-          if (status.noLine21In) Log.Write("  The video decoder doesn't produce line21 data");
-          if (status.noLine21Out) Log.Write("  the video decoder can't be shown as closed captioning on video due to a problem with graph building");
-          if (status.numStreamsFailed>0) Log.Write("  streams failed:{0} of {1}",status.numStreamsFailed,status.numStreams);
-          if ((status.failedStreams & DvdStreamFlags.Audio)!=0) Log.Write("  audio stream failed");
-          if ((status.failedStreams & DvdStreamFlags.Video)!=0) Log.Write("  video stream failed");
-          if ((status.failedStreams & DvdStreamFlags.SubPic)!=0) Log.Write("  subpic stream failed");
-          //  Marshal.ThrowExceptionForHR( hr );
-        }
+				Vmr9.AddVMR9(graphBuilder);
+				IBaseFilter dvdbasefilter=null;
+				try
+				{
+					dvdbasefilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strDVDNavigator);
+					if (dvdbasefilter!=null)
+					{
+						IDvdControl2 cntl=(IDvdControl2)dvdbasefilter;
+						if (cntl!=null)
+						{
+							AddPreferedCodecs(graphBuilder);
+							if (strPath!=null) cntl.SetDVDDirectory(strPath);
+							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
+							dvdInfo = (IDvdInfo2) cntl;
+							dvdCtrl = (IDvdControl2)cntl;
+							//videoWin	= graphBuilder as IVideoWindow;
+							m_bFreeNavigator=false;
+						}
 
-        DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
-        Vmr9.AddVMR9(graphBuilder);
-        Guid riid ;
+						//Marshal.ReleaseComObject( dvdbasefilter); dvdbasefilter = null;              
+					}
+				}
+				catch(Exception ex)
+				{
+					string strEx=ex.Message;
+				}
+				Guid riid ;
 
-			
-        Log.Write("Dvdplayer9:volume rendered, get interfaces");
+				Log.Write("Dvdplayer9:volume rendered, get interfaces");
         if (dvdInfo==null)
         {
           riid = typeof( IDvdInfo2 ).GUID;
@@ -122,7 +121,7 @@ namespace MediaPortal.Player
           dvdCtrl = (IDvdControl2) comobj; comobj = null;
         }
 
-        IBaseFilter dvdbasefilter=dvdInfo as IBaseFilter;
+        dvdbasefilter=dvdInfo as IBaseFilter;
         if (dvdbasefilter==null)
         {
           Log.Write("DVDPlayer9: unable to get dvd base filter");
@@ -287,7 +286,7 @@ namespace MediaPortal.Player
           mediaEvt = null;
         }
 
-				Vmr9.RemoveVMR9();
+				if (Vmr9!=null) Vmr9.RemoveVMR9();
 				Vmr9=null;
 
 
