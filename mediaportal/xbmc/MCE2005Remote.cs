@@ -368,7 +368,7 @@ namespace MediaPortal
               Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
               return false;
             }
-          break;
+          //break;
           case 0x25://My tv
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);

@@ -2057,10 +2057,13 @@ namespace MediaPortal
       {
         System.Windows.Forms.Application.DoEvents();
       }
+#if DEBUG
       catch (Exception ex)
       {
-#if DEBUG
           Log.Write("exception:{0}",ex.ToString());
+#else
+      catch (Exception)
+      {
 #endif
       }
     }
