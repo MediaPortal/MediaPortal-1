@@ -11,7 +11,6 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
 
-
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -19,135 +18,13 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
   public class GUITextureManager 
   {
-    class DownloadedImage
-    {
-      string    _FileName;
-      string    _URL;
-      DateTime  _DateDownloaded=DateTime.MinValue;
-      int       _CacheTime = 60*30; //30minutes
+    static ArrayList 			m_cache = new ArrayList();
+    static ArrayList 			_DownloadCache = new ArrayList();
+    static bool      			_Disposed=false;
+    const int        			MAX_THUMB_WIDTH=512;
+    const int        			MAX_THUMB_HEIGHT=512;
+		static TexturePacker _packer = new TexturePacker();
 
-      public DownloadedImage(string url)
-      {
-        URL=url;
-        int pos=url.LastIndexOf("/");
-        
-        _FileName=GetTempFileName();
-      }
-
-      string GetTempFileName()
-      {
-        int x=0;
-        while (true)
-        {
-          string tempFile=String.Format(@"thumbs\MPTemp{0}.gif",x);
-          string tempFile2=String.Format(@"thumbs\MPTemp{0}.jpg",x);
-          string tempFile3=String.Format(@"thumbs\MPTemp{0}.bmp",x);
-          if (!System.IO.File.Exists(tempFile) && 
-              !System.IO.File.Exists(tempFile2) &&
-              !System.IO.File.Exists(tempFile3))
-          {
-            return tempFile;
-          }
-          ++x;
-        }
-      }
-      
-      
-      public string FileName
-      {
-        get {return _FileName;}
-        set {_FileName=value;}
-      }
-      
-      public string URL
-      {
-        get { return _URL;}
-        set {_URL=value;}
-      }
-
-      public int CacheTime
-      {
-        get { return _CacheTime;}
-        set { _CacheTime=value;}
-      }
-
-      public bool ShouldDownLoad
-      {
-        get 
-        {
-          TimeSpan ts=DateTime.Now - _DateDownloaded;
-          if (ts.TotalSeconds > CacheTime)
-          {
-            return true;
-          }
-          return false;
-        }
-      }
-
-      public bool Download()
-      {
-        using (WebClient client = new WebClient())
-        {
-          try
-          {
-            try
-            {
-              System.IO.File.Delete(FileName);
-            }
-            catch(Exception)
-            {
-              Log.Write("DownloadedImage:Download() Delete failed:{0}", FileName);
-            }
-
-            client.DownloadFile(URL, FileName);
-            try
-            {
-              string strExt="";
-              string strContentType=client.ResponseHeaders["Content-type"].ToLower();
-              if (strContentType.IndexOf("gif")>=0) strExt=".gif";
-              if (strContentType.IndexOf("jpg")>=0) strExt=".jpg";
-              if (strContentType.IndexOf("jpeg")>=0) strExt=".jpg";
-              if (strContentType.IndexOf("bmp")>=0) strExt=".bmp";
-              if (strExt.Length>0)
-              {
-                string strNewFile=System.IO.Path.ChangeExtension(FileName,strExt);
-                if (!strNewFile.ToLower().Equals(FileName.ToLower()))
-                {
-                  try
-                  {
-                    System.IO.File.Delete(strNewFile);
-                  }
-                  catch(Exception)
-                  {
-                    Log.Write("DownloadedImage:Download() Delete failed:{0}", strNewFile);
-                  }
-                  System.IO.File.Move(FileName,strNewFile);
-                  FileName=strNewFile;
-                }
-              }
-            }
-            catch(Exception)
-            {
-              Log.Write("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL,FileName);
-
-            }
-            _DateDownloaded=DateTime.Now;
-            return true;
-          } 
-          catch(Exception ex)
-          {
-            Log.Write("download failed:{0}", ex.Message);
-          }
-        }
-        return false;
-      }
-    }
-
-    static ArrayList m_cache = new ArrayList();
-    static ArrayList _DownloadCache = new ArrayList();
-    static bool      _Disposed=false;
-    const int        MAX_THUMB_WIDTH=512;
-    const int        MAX_THUMB_HEIGHT=512;
     // singleton. Dont allow any instance of this class
     private GUITextureManager()
     {
@@ -161,11 +38,11 @@ namespace MediaPortal.GUI.Library
     static public void Dispose()
     {
       dispose(true);
-      //GC.SuppressFinalize(this);
     }
     
     static void dispose(bool disposing)
     {
+			_packer.Dispose();
       if ( !_Disposed)
       {
         if (disposing)
@@ -677,40 +554,15 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
-		static Direct3D.Format GetCompression(string filename)
+
+		static public void Init()
 		{
-			try
-			{
-				int pos = filename.LastIndexOf(@"\");
-				if (pos >=0) filename=filename.Substring(pos+1);
-				string line;
-				string textureInfo=String.Format(@"{0}\media\textures.info", GUIGraphicsContext.Skin);
-				Encoding fileEncoding = Encoding.Default;
-				FileStream stream = File.Open(textureInfo,FileMode.Open,FileAccess.Read,FileShare.Read);
-				if (stream==null) return Direct3D.Format.A8R8G8B8;
-				StreamReader file = new StreamReader(stream, fileEncoding, true);
-				do
-				{
-					line=file.ReadLine();
-					if (line==null) break;
-					string[] parts=line.Split( new char[]{'='});
-					if (parts!=null && parts.Length==2)
-					{
-						if (parts[0] == filename)
-						{
-							file.Close();
-							int fmt=Int32.Parse(parts[1]);
-							return (Direct3D.Format)fmt;
-						}
-					}
-				} while (line!=null);
+			_packer.PackSkinGraphics(GUIGraphicsContext.Skin);
+		}
 
-				file.Close();
-			}
-			catch(Exception)
-			{}
-
-			return Direct3D.Format.A8R8G8B8;
+		static public bool GetPackedTexture(string strFileName,out float uoff, out float voff, out float umax, out float vmax, out int textureWidth, out int textureHeight, out Texture tex, out int _packedTextureNo)
+		{
+			return _packer.Get(strFileName,out uoff,out voff,out umax,out vmax,out textureWidth, out textureHeight,out tex,out _packedTextureNo);
 		}
 	}
 }

@@ -941,6 +941,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.ActiveForm = this.Handle;
       GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
       
+			GUITextureManager.Init();
       if (splashScreen!=null) splashScreen.SetInformation("Loading fonts...");
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();

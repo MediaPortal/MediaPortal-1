@@ -16,7 +16,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class CachedTexture 
   {
-#if USE_NEW_TEXTURE_ENGINE
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
 
@@ -31,7 +30,6 @@ namespace MediaPortal.GUI.Library
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresentTextures();
-#endif
 
 		/// <summary>
 		/// Class which contains a single frame

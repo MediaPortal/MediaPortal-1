@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 using System.Collections;
 using Microsoft.DirectX;
@@ -16,6 +17,20 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIImage :  GUIControl
 	{
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern int  FontEngineAddTexture(int hasCode,bool useAlphaBlend,void* fontTexture);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern int  FontEngineAddSurface(int hasCode,bool useAlphaBlend,void* fontTexture);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEnginePresentTextures();
 
 		[XMLSkinElement("colorkey")] private long                    m_dwColorKey=0;
 		//private VertexBuffer						m_vbBuffer=null;
@@ -57,8 +72,12 @@ namespace MediaPortal.GUI.Library
     Vector3                         pntPosition;
     float                           scaleX=1;
     float                           scaleY=1;
-		float _fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
-		int   _color;
+		float														_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
+		int															_color;
+		float														_texUoff,_texVoff,_texUmax,_texVmax;
+		Texture													_packedTexture=null;
+		int															_packedTextureNo;
+
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
 		}
@@ -315,8 +334,7 @@ namespace MediaPortal.GUI.Library
 			//imageSprite = new Sprite(GUIGraphicsContext.DX9Device);
 
       g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-			if (m_strFileName=="-") return;
-
+			
       //reset animation
 			m_iCurrentImage=0;
 			m_iCurrentLoop=0;
@@ -325,6 +343,14 @@ namespace MediaPortal.GUI.Library
       string strFile=m_strFileName;
       if (ContainsProperty)
         strFile=GUIPropertyManager.Parse(m_strFileName);
+			if (m_strFileName=="-") return;
+			if (m_strFileName=="") return;
+			
+			if (GUITextureManager.GetPackedTexture(strFile,out _texUoff,out _texVoff,out _texUmax,out _texVmax,out m_iTextureWidth, out m_iTextureHeight, out _packedTexture, out _packedTextureNo))
+			{
+				Update();
+				return;
+			}
 
       //load the texture
 			int iImages = GUITextureManager.Load(strFile, m_dwColorKey,m_iRenderWidth,m_iTextureHeight);
@@ -340,19 +366,9 @@ namespace MediaPortal.GUI.Library
 				m_vecTextures[i]=GUITextureManager.GetTexture(strFile,i, out m_iTextureWidth,out m_iTextureHeight);//,m_pPalette);
 			}
 
-  		
-      // Create a vertex buffer for rendering the image
-/*
- *		m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-                                    4, GUIGraphicsContext.DX9Device, 
-                                    Usage.WriteOnly, CustomVertex.TransformedColoredTextured.Format, 
-                                    Pool.Managed);
-*/
-			// Set state to render the image
+  		// Set state to render the image
       Update();
 
-      //create a directx9 stateblock
-      //CreateStateBlock();
 		}
 
 		/// <summary>
@@ -362,11 +378,7 @@ namespace MediaPortal.GUI.Library
 		{
 			lock (this)
 			{
-				//if (imageSprite!=null)
-				//{
-				//	imageSprite .Dispose();
-				//	imageSprite =null;
-				//}
+				_packedTexture=null;
 				if (m_strFileName!=null && m_strFileName!=String.Empty)
 				{
 					if (GUITextureManager.IsTemporary(m_strFileName))
@@ -404,34 +416,44 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     protected override void Update()
     {
-      //if (m_vbBuffer==null) return;
-      if (m_vecTextures==null) return;
-      float x=(float)m_dwPosX;
-      float y=(float)m_dwPosY;
+			float x=(float)m_dwPosX;
+			float y=(float)m_dwPosY;
+			if (_packedTexture!=null)
+			{
+				if (0==m_iImageWidth|| 0==m_iImageHeight)
+				{
+					m_iImageWidth = m_iTextureWidth;
+					m_iImageHeight = m_iTextureHeight;
+				}
+			}
+			else
+			{
+				if (m_vecTextures==null) return;
 
-      CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
-      Direct3D.Texture texture=frame.Image;
-      if (texture==null)
-      {
-        //no texture? then nothing todo
-        return;
-      }
+				CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
+				Direct3D.Texture texture=frame.Image;
+				if (texture==null)
+				{
+					//no texture? then nothing todo
+					return;
+				}
 
-      // if texture is disposed then free its resources and return
-      if (texture.Disposed)
-      {
-        FreeResources();
-        return;
-      }
+				// if texture is disposed then free its resources and return
+				if (texture.Disposed)
+				{
+					FreeResources();
+					return;
+				}
 
-      // on first run, get the image width/height of the texture
-      if (0==m_iImageWidth|| 0==m_iImageHeight)
-      {
-        Direct3D.SurfaceDescription desc;
-        desc=texture.GetLevelDescription(0);
-        m_iImageWidth = desc.Width;
-        m_iImageHeight = desc.Height;
-      }
+				// on first run, get the image width/height of the texture
+				if (0==m_iImageWidth|| 0==m_iImageHeight)
+				{
+					Direct3D.SurfaceDescription desc;
+					desc=texture.GetLevelDescription(0);
+					m_iImageWidth = desc.Width;
+					m_iImageHeight = desc.Height;
+				}
+			}
 
       // Calculate the m_iTextureWidth and m_iTextureHeight 
       // based on the m_iImageWidth and m_iImageHeight
@@ -594,40 +616,23 @@ namespace MediaPortal.GUI.Library
 				nh=GUIGraphicsContext.Height-y;
 			}
 
-			_fx=x;
-			_fy=y;
-			_nw=nw;
-			_nh=nh;
+			_fx=x; _fy=y; _nw=nw; _nh=nh;
+			_color=(int)m_colDiffuse;
+
 			_uoff=uoffs;
 			_voff=voffs;
 			_umax=u;
 			_vmax=v;
-			_color=(int)m_colDiffuse;
-			/*
-      CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,LockFlags.Discard);
-      verts[0].X= x- 0.5f; verts[0].Y=y+nh- 0.5f; verts[0].Z= 0.0f; verts[0].Rhw=1.0f ;
-      verts[0].Color = (int)m_colDiffuse;
-      verts[0].Tu = uoffs;
-      verts[0].Tv = voffs+v;
 
-      verts[1].X= x- 0.5f; verts[1].Y= y- 0.5f; verts[1].Z= 0.0f; verts[1].Rhw= 1.0f;
-      verts[1].Color = (int)m_colDiffuse;
-      verts[1].Tu = uoffs;
-      verts[1].Tv = voffs;
+			if ( _packedTexture!=null )
+			{
+				_uoff = _texUoff + (uoffs * _texUmax);
+				_voff = _texVoff + (voffs * _texVmax);
+				_umax = _umax * _texUmax;
+				_vmax = _vmax * _texVmax;
+			}
 
-      verts[2].X=  x+nw- 0.5f; verts[2].Y=y+nh- 0.5f;verts[1].Z=  0.0f; verts[2].Rhw= 1.0f;
-      verts[2].Color = (int)m_colDiffuse;
-      verts[2].Tu = uoffs+u;
-      verts[2].Tv = voffs+v;
-
-      verts[3].X= x+nw- 0.5f; verts[3].Y= y- 0.5f; verts[3].Z=0.0f; verts[3].Rhw=1.0f ;
-      verts[3].Color = (int)m_colDiffuse;
-      verts[3].Tu = uoffs+u;
-      verts[3].Tv = voffs;
-      m_vbBuffer.Unlock();
-*/       
-
-      pntPosition=new Vector3(x,y,0);
+			pntPosition=new Vector3(x,y,0);
       sourceRect=new Rectangle(m_iBitmap * m_dwWidth + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
       destinationRect=new Rectangle(0,0,(int)nw,(int)nh);
       m_destRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
@@ -656,6 +661,7 @@ namespace MediaPortal.GUI.Library
         m_bWasVisible = false;
         return false;
       }
+			if (_packedTexture!=null) return true;
 
       // if filename contains a property, then get the value of the property
       if (ContainsProperty)
@@ -795,6 +801,11 @@ namespace MediaPortal.GUI.Library
         if (!PreRender()) return;
 				
         //get the current frame
+				if (_packedTexture!=null)
+				{
+					FontEngineDrawTexture(_packedTextureNo,_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
+					return;
+				}
         CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
         if (frame==null) return ; // no frame? then return
 
