@@ -440,16 +440,6 @@
 		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
 	</control>
-	<control>
-		<description>Satellite background</description> 
-		<type>image</type> 
-		<id>1001</id> 
-		<posX>235</posX> 
-		<posY>185</posY> 
-		<width>450</width> 
-		<height>360</height> 
-		<texture>mytv_bg.png</texture> 
-	</control>
 	<control>		
 		<description>Satellite image</description>
 		<type>image</type>
@@ -464,7 +454,7 @@
 		<colordiffuse>FFFFFFFF</colordiffuse>
 		<filtered>yes</filtered>
 		<centered>yes</centered>
-		<keepaspectratio>no</keepaspectratio>
+		<keepaspectratio>yes</keepaspectratio>
 	</control>	
 </controls>
 </window>
