@@ -630,16 +630,23 @@ namespace MediaPortal.TV.Recording
 
       // get the channel number
       int iChannelNr=GetChannelNr(rec.Channel);
+
+      DateTime dtNow = DateTime.Now.AddMinutes(iPreRecordInterval);
+      TVUtil util=new TVUtil();
+      TVProgram currentRunningProgram=null;
+      TVProgram prog=util.GetProgramAt(rec.Channel, dtNow);
+      if (prog!=null) currentRunningProgram=prog.Clone();
+      util=null;
       
       // compose the filename in format [channel][date][time].mpg
       try
       {
         string strName;
-        if (currentProgram!=null)
+        if (currentRunningProgram!=null)
         {
-          DateTime dt=currentProgram.StartTime;
+          DateTime dt=currentRunningProgram.StartTime;
           strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}{7}", 
-                                currentProgram.Channel,currentProgram.Title,
+                                currentRunningProgram.Channel,currentRunningProgram.Title,
                                 dt.Year,dt.Month,dt.Day,
                                 dt.Hour,
                                 dt.Minute,CaptureFormat);
@@ -687,12 +694,6 @@ namespace MediaPortal.TV.Recording
         // capture is now running
         // now just wait till recording has ended
         // or user has canceled the recording
-        DateTime dtNow = DateTime.Now.AddMinutes(iPreRecordInterval);
-        TVUtil util=new TVUtil();
-        TVProgram currentRunningProgram=null;
-        TVProgram prog=util.GetProgramAt(rec.Channel, dtNow);
-        if (prog!=null) currentRunningProgram=prog.Clone();
-        util=null;
         m_newRecordedTV = new TVRecorded();        
         m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);
         m_newRecordedTV.Channel=rec.Channel;

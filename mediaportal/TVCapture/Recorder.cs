@@ -183,6 +183,7 @@ namespace MediaPortal.TV.Recording
               foreach (TVProgram currentProgram in runningPrograms)
               {
                 if (m_eState !=State.Running) break;
+
                 // if the recording should record the tv program
                 if ( rec.ShouldRecord(DateTime.Now,currentProgram,iPreRecordInterval, iPostRecordInterval) )
                 {

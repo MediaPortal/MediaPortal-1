@@ -284,8 +284,10 @@ namespace MediaPortal
       graphicsSettings.WindowedHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
       if (enumerationSettings.AppUsesDepthBuffer)
         graphicsSettings.WindowedDepthStencilBufferFormat = (DepthFormat)bestDeviceCombo.DepthStencilFormatList[0];
-      graphicsSettings.WindowedMultisampleType = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[0];
-      graphicsSettings.WindowedMultisampleQuality = 0;
+      int iQuality=0;//bestDeviceCombo.MultiSampleTypeList.Count-1;
+      graphicsSettings.WindowedMultisampleType = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[iQuality];
+      graphicsSettings.WindowedMultisampleQuality = 0;//(int)bestDeviceCombo.MultiSampleQualityList[iQuality];
+
       graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
       graphicsSettings.WindowedPresentInterval = (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
 

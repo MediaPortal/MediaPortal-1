@@ -327,6 +327,7 @@ namespace MediaPortal
       this.Skin = new System.Windows.Forms.GroupBox();
       this.checkBoxHideFileExtensions = new System.Windows.Forms.CheckBox();
       this.checkBoxMouseSupport = new System.Windows.Forms.CheckBox();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.groupBox14 = new System.Windows.Forms.GroupBox();
       this.tabPlayers = new System.Windows.Forms.TabPage();
       this.comboMovieAudioRenderer = new System.Windows.Forms.ComboBox();
@@ -496,7 +497,6 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.Skin.SuspendLayout();
@@ -698,6 +698,15 @@ namespace MediaPortal
       this.checkBoxMouseSupport.Size = new System.Drawing.Size(248, 24);
       this.checkBoxMouseSupport.TabIndex = 0;
       this.checkBoxMouseSupport.Text = "Show special mouse controls like scrollbars";
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(264, 16);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(320, 144);
+      this.pictureBox1.TabIndex = 13;
+      this.pictureBox1.TabStop = false;
       // 
       // groupBox14
       // 
@@ -1992,6 +2001,11 @@ namespace MediaPortal
       // upDownCountry
       // 
       this.upDownCountry.Location = new System.Drawing.Point(64, 56);
+      this.upDownCountry.Maximum = new System.Decimal(new int[] {
+                                                                  999,
+                                                                  0,
+                                                                  0,
+                                                                  0});
       this.upDownCountry.Name = "upDownCountry";
       this.upDownCountry.Size = new System.Drawing.Size(56, 20);
       this.upDownCountry.TabIndex = 2;
@@ -2298,15 +2312,6 @@ namespace MediaPortal
       // 
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
-      // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(264, 16);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(320, 144);
-      this.pictureBox1.TabIndex = 13;
-      this.pictureBox1.TabStop = false;
       // 
       // SetupForm
       // 

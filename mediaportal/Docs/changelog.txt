@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  26-05-2004  my tv       : added : support for GMT + /- time offsets
+  26-05-2004  my tv       : fixed : recording. When using a pre-record interval the filename was using the name of the previous program
+  26-05-2004  setup       : fixed : crash when entering country code > 100
   26-05-2004  my video's  : fixed : movie sometimes didnt start if STACK was enabled
   26-05-2004  general     : added : logo
   26-05-2004  general     : added : ESC now switches from fullscreen video/tv->GUI

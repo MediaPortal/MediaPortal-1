@@ -1,3 +1,4 @@
+Bugs:
 
 - page view does not listen to the coordinates you give in references.xml
 - rescale causes borders to appear on topbar buttons (new topbar)
@@ -8,7 +9,6 @@
 - Guide cannot be limited in width,should be skinnable
 - Guide always holds 5 channels, should be definable in skin. 
 
-Bugs:
 - installer: remove need for uninstall
 - installer: check dx9b
 - MPReader : XCDs dont work anymore
