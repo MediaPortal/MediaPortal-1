@@ -704,20 +704,24 @@ namespace DShowNET
 
 			byte[] byData = new byte[1036];
 			uint uLength=(uint)(2+PMT.Length);
-			byData[offs]=0; offs++;			//slot
-			byData[offs]= 2; offs++;			//utag
-			byData[offs]= 0; offs++;     //bmore
-			/*
-			byData[offs]= 0; offs++;
-			byData[offs]= 0; offs++;
-			byData[offs]= 0; offs++;
-			byData[offs]= 0; offs++;
-			byData[offs]= 0; offs++;
-			*/
+			byData[offs]= 0; offs++;//slot
+			byData[offs]= 2; offs++;//utag
+
+			byData[offs]= 0; offs++;//padding
+			byData[offs]= 0; offs++;//padding
+
+			byData[offs]= 0; offs++;//bmore
+			
+			byData[offs]= 0; offs++;//padding
+			byData[offs]= 0; offs++;//padding
+			byData[offs]= 0; offs++;//padding
+			
 			byData[offs]= (byte)(uLength%256); offs++;		//ulength hi
 			byData[offs]= (byte)(uLength/256); offs++;		//ulength lo
+			
 			//byData[offs]= 0; offs++;
 			//byData[offs]= 0; offs++;
+			
 			byData[offs]= 3; offs++;// List Management = ONLY
 			byData[offs]= 1; offs++;// pmt_cmd = OK DESCRAMBLING		
 			for (int i=0; i < PMT.Length;++i)
@@ -728,9 +732,9 @@ namespace DShowNET
 			string log="data:";
 			for (int i=0; i < offs;++i)
 			{
-				Marshal.WriteByte(pDataInstance,byData[i]);
-				Marshal.WriteByte(pDataReturned,byData[i]);
-				log += String.Format("{0:X} ",byData[i]);
+				Marshal.WriteByte(pDataInstance,i,byData[i]);
+				Marshal.WriteByte(pDataReturned,i,byData[i]);
+				log += String.Format("0x{0:X} ",byData[i]);
 			}
 
 			Log.Write(log);

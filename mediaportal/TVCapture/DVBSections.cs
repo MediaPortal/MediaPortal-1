@@ -272,7 +272,7 @@ namespace MediaPortal.TV.Recording
 					//Log.Write("dvbSections:Got channel:{0} {1}",chanInfo.service_name, chanInfo.serviceID);
 					if (chanInfo.serviceID==serviceId)
 					{
-						Log.Write("dvbSections:GetRAWPMT() found channel:{0} {1} {2}",chanInfo.service_name,chanInfo.serviceID,chanInfo.network_pmt_PID);
+						Log.Write("dvbSections:GetRAWPMT() found channel:{0} service id:{1} network PMT pid:{2:X} program:{3}",chanInfo.service_name,chanInfo.serviceID,chanInfo.network_pmt_PID,chanInfo.program_number);
 						found=true;
 						info=chanInfo;
 						break;
@@ -301,12 +301,13 @@ namespace MediaPortal.TV.Recording
 				tab46=(ArrayList)m_sectionsList.Clone();
 
 				
-				Debug.WriteLine("find PMT");
 				//bool flag=false;
 				ChannelInfo pat;
 				ArrayList pmtList = transponder.PMTTable;
 				int pmtScans;
 				pmtScans = (pmtList.Count / 20) + 1;
+				
+				Log.Write("dvbSections: PMT table list:{0} pmtScans:{1}", pmtList.Count,pmtScans);
 				for (t = 1; t <= pmtScans; t++)
 				{
 					//flag = DeleteAllPIDsI();
@@ -320,12 +321,13 @@ namespace MediaPortal.TV.Recording
 						
 						// parse pmt
 						int res=0;
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,100); // get here the pmt
+						Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
 						foreach(byte[] wdata in m_sectionsList)
 						{
 							if (pat.program_number==serviceId)
 							{
-								Log.Write("dvbsection:Got PMT pid:{0:X}",pat.network_pmt_PID);
+								Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
 								for (int l=0; l < wdata.Length;++l)
 									pmtTable.Add(wdata[l]);
 							}
