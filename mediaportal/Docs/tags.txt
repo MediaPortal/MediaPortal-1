@@ -1,5 +1,5 @@
 In the .xml files of the skin you can use the list of tags (see below) to show info about the current
-playing file. These special tags currently work for the label & fadelabel control.
+playing file. These special tags currently work for the button, label & fadelabel control.
 These special tags are placed in the <label></label> field of the controls and contain the
 tagname and any other text you want.
 
@@ -57,3 +57,7 @@ Tagname             description
 #credits            credits of current playing movie
 #currentplaytime    current playtime of current playing movie/song
 #playspeed          playspeed (-2x, 1x, 2x, 4x,...) of current playing movie/song
+#channel            current TV channel
+#selecteditem		text of selected item
+#selecteditem2		2nd text of selected item
+#selectedthumb		filename of thumbnail of selected item
