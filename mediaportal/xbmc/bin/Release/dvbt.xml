@@ -6,6 +6,7 @@
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="184500" bandwidth="7" />
 		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="191625" bandwidth="7" />
 		<carrier frequency="198500" bandwidth="7" />
 		<carrier frequency="205500" bandwidth="7" />
 		<carrier frequency="212500" bandwidth="7" />
