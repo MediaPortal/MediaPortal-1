@@ -1304,6 +1304,7 @@ namespace MediaPortal
 					if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
 					if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
 					if (m_iSleepingTime<0) m_iSleepingTime=0;
+					if (m_iSleepingTime>100) m_iSleepingTime=100;
 				}
 
         string strFmt;
