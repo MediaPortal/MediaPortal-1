@@ -230,6 +230,7 @@ namespace MediaPortal.TV.Recording
 		bool							m_videoDataFound=false;
 		bool							m_vmr9Running=false;
 		DVBTeletext						m_teleText=new DVBTeletext();
+		int								m_retryCount=0;
 //
 		
 		//
@@ -361,13 +362,29 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			//
-
 			if(m_vmr9Running==true  && m_videoDataFound==false)
 				Vmr9.Repaint();// repaint vmr9
-			
+
+			// call the plugins tuner
+			if(m_videoDataFound==false && m_retryCount>=0)
+			{
+				m_retryCount++;
+				if(m_retryCount>=250)//
+				{
+					lock(typeof(DVBGraphSS2))
+					{
+						m_retryCount=0;
+						CyclePid();
+						ExecTuner();
+						Log.Write("Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
+					}
+				}
+			}
+			else m_retryCount=-1;
+
+
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
-					
 				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
 				if(header.Pid==teleTextPid && m_teleText!=null)
 				{
@@ -389,6 +406,45 @@ namespace MediaPortal.TV.Recording
 		/// Callback from Card. Sets an information struct with video settings
 		/// </summary>
 
+		void CyclePid()
+		{
+			int		currentPid=m_currentChannel.ECMPid;
+			int		nextPid=0;
+			int		startCheck=1;
+			int		tmpPid=0;
+			string	pidString=m_currentChannel.AudioLanguage3;
+
+			// get actual pid position
+			for(int t=1;t<20;t++)
+			{
+				if(GetPidNumber(pidString,t+1)==-1)
+				{
+					startCheck=1;
+					break;
+				}
+				if(GetPidNumber(pidString,t)==currentPid)
+				{
+					startCheck=t;
+					break;
+				}
+			}
+			// get next pid
+			for(int t=startCheck;t<20;t++)
+			{
+				nextPid=GetPidNumber(pidString,t);
+				if(nextPid==-1)
+					break;
+				if(nextPid!=currentPid && nextPid>0)
+				{
+					m_currentChannel.ECMPid=nextPid;
+					TVDatabase.UpdateSatChannel(m_currentChannel);
+					break;
+				}
+			}
+			
+		}
+		//
+		//
 		public bool CreateGraph()
 		{
 			if (m_graphState != State.None) return false;
@@ -1371,6 +1427,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 
+				m_retryCount=0;
 				m_videoDataFound=false;
 				m_StartTime=DateTime.Now;
 
@@ -1393,7 +1450,7 @@ namespace MediaPortal.TV.Recording
 			mpegVideoOut.majorType = MediaType.Video;
 			mpegVideoOut.subType = MediaSubType.MPEG2_Video;
 
-			Size FrameSize=new Size(720,576);
+			Size FrameSize=new Size(100,100);
 			mpegVideoOut.unkPtr = IntPtr.Zero;
 			mpegVideoOut.sampleSize = 0;
 			mpegVideoOut.temporalCompression = false;
@@ -1650,11 +1707,11 @@ namespace MediaPortal.TV.Recording
 
 			pidSegments=pidText.Split(new char[]{';'});
 			if(pidSegments.Length-1<number || pidSegments.Length==0)
-				return 0;
+				return -1;
 
 			string[] pid=pidSegments[number-1].Split(new char[]{'/'});
 			if(pid.Length!=2)
-				return 0;
+				return -1;
 
 			try
 			{
@@ -1662,7 +1719,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch
 			{
-				return 0;
+				return -1;
 			}
 		}
 		int GetPidID(string pidText,int number)
