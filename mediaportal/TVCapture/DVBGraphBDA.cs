@@ -151,333 +151,341 @@ namespace MediaPortal.TV.Recording
 		/// <returns>bool indicating if graph is created or not</returns>
 		public bool CreateGraph()
 		{
-			if (m_graphState != State.None) 
-				return false;
-	      
-			graphRunning=false;
-			Log.Write("DVBGraphBDA:CreateGraph(). ");
-
-			if (m_Card==null) 
+			try
 			{
-				Log.Write("DVBGraphBDA:card is not defined");
-				return false;
-			}
-			if (!m_Card.LoadDefinitions())											// Load configuration for this card
-			{
-				DirectShowUtil.DebugWrite("DVBGraphBDA: Loading card definitions for card {0} failed", m_Card.CaptureName);
-				return false;
-			}
-			
-			if (m_Card.TvFilterDefinitions==null)
-			{
-				Log.Write("DVBGraphBDA:card does not contain filters?");
-				return false;
-			}
-			if (m_Card.TvConnectionDefinitions==null)
-			{
-				Log.Write("DVBGraphBDA:card does not contain connections for tv?");
-				return false;
-			}
+				if (m_graphState != State.None) 
+					return false;
+		      
+				graphRunning=false;
+				Log.Write("DVBGraphBDA:CreateGraph(). ");
 
-			Vmr9 =new VMR9Util("mytv");
-
-			// Make a new filter graph
-			Log.Write("DVBGraphBDA:create new filter graph (IGraphBuilder)");
-			m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
-
-			// Get the Capture Graph Builder
-			Log.Write("DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-			Guid clsid = Clsid.CaptureGraphBuilder2;
-			Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-			m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance(ref clsid, ref riid);
-
-			Log.Write("DVBGraphBDA:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
-			int hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
-			if (hr < 0) 
-			{
-				Log.Write("DVBGraphBDA:link FAILED:0x{0:X}",hr);
-				return false;
-			}
-			Log.Write("DVBGraphBDA:Add graph to ROT table");
-			DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
-
-
-			// Loop through configured filters for this card, bind them and add them to the graph
-			// Note that while adding filters to a graph, some connections may already be created...
-			Log.Write("DVBGraphBDA: Adding configured filters...");
-			foreach (string catName in m_Card.TvFilterDefinitions.Keys)
-			{
-				FilterDefinition dsFilter = m_Card.TvFilterDefinitions[catName] as FilterDefinition;
-				dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
-				hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
-				if (hr == 0)
+				if (m_Card==null) 
 				{
-					Log.Write("DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+					Log.Write("DVBGraphBDA:card is not defined");
+					return false;
 				}
-				else
+				if (!m_Card.LoadDefinitions())											// Load configuration for this card
 				{
-					Log.Write("DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-					Log.Write("DVBGraphBDA:  Error! Result code = {0}", hr);
+					DirectShowUtil.DebugWrite("DVBGraphBDA: Loading card definitions for card {0} failed", m_Card.CaptureName);
+					return false;
+				}
+				
+				if (m_Card.TvFilterDefinitions==null)
+				{
+					Log.Write("DVBGraphBDA:card does not contain filters?");
+					return false;
+				}
+				if (m_Card.TvConnectionDefinitions==null)
+				{
+					Log.Write("DVBGraphBDA:card does not contain connections for tv?");
+					return false;
 				}
 
-				// Support the "legacy" member variables. This could be done different using properties
-				// through which the filters are accessable. More implementation independent...
-				if (dsFilter.Category == "networkprovider") 
+				Vmr9 =new VMR9Util("mytv");
+
+				// Make a new filter graph
+				Log.Write("DVBGraphBDA:create new filter graph (IGraphBuilder)");
+				m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+
+				// Get the Capture Graph Builder
+				Log.Write("DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+				Guid clsid = Clsid.CaptureGraphBuilder2;
+				Guid riid = typeof(ICaptureGraphBuilder2).GUID;
+				m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance(ref clsid, ref riid);
+
+				Log.Write("DVBGraphBDA:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+				int hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
+				if (hr < 0) 
 				{
-					m_NetworkProvider       = dsFilter.DSFilter;
-					
-					// Initialise Tuning Space (using the setupTuningSpace function)
-					if(!setupTuningSpace()) 
-					{
-						Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
-						return false;
-					}
+					Log.Write("DVBGraphBDA:link FAILED:0x{0:X}",hr);
+					return false;
 				}
-				if (dsFilter.Category == "tunerdevice") m_TunerDevice	 							= dsFilter.DSFilter;
-				if (dsFilter.Category == "capture")			m_CaptureDevice							= dsFilter.DSFilter;
-			}
-			Log.Write("DVBGraphBDA: Adding configured filters...DONE");
-
-			
-			if(m_NetworkProvider == null)
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
-				return false;
-			}
-			if(m_CaptureDevice == null)
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED capture filter not found");
-			}
+				Log.Write("DVBGraphBDA:Add graph to ROT table");
+				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 
-			FilterDefinition sourceFilter;
-			FilterDefinition sinkFilter;
-			IPin sourcePin;
-			IPin sinkPin;
-
-			// Create pin connections. These connections are also specified in the definitions file.
-			// Note that some connections might fail due to the fact that the connection is already made,
-			// probably during the addition of filters to the graph (checked with GraphEdit...)
-			//
-			// Pin connections can be defined in two ways:
-			// 1. Using the name of the pin.
-			//		This method does work, but might be language dependent, meaning the connection attempt
-			//		will fail because the pin cannot be found...
-			// 2.	Using the 0-based index number of the input or output pin.
-			//		This method is save. It simply tells to connect output pin #0 to input pin #1 for example.
-			//
-			// The code assumes method 1 is used. If that fails, method 2 is tried...
-
-			Log.Write("DVBGraphBDA: Adding configured pin connections...");
-			for (int i = 0; i < m_Card.TvConnectionDefinitions.Count; i++)
-			{
-				Log.Write(" {0}", i);
-				sourceFilter = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
-				if (sourceFilter==null)
+				// Loop through configured filters for this card, bind them and add them to the graph
+				// Note that while adding filters to a graph, some connections may already be created...
+				Log.Write("DVBGraphBDA: Adding configured filters...");
+				foreach (string catName in m_Card.TvFilterDefinitions.Keys)
 				{
-					Log.Write("Cannot find source filter for connection:{0}",i);
-					continue;
-				}
-				sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
-				if (sinkFilter==null)
-				{
-					Log.Write("Cannot find sink filter for connection:{0}",i);
-					continue;
-				}
-
-				Log.Write("DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}", 
-					sourceFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName,
-					sinkFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
-				//sourceFilter.DSFilter.FindPin(((ConnectionDefinition)m_Card.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
-				sourcePin    = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
-				if (sourcePin == null)
-				{
-					String strPinName = ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName;
-					if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
-					{
-						sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
-						if (sourcePin==null)
-							Log.Write("DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
-						else
-							Log.Write("DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
-					}
-				}
-				else
-					Log.Write("DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
-
-				//sinkFilter.DSFilter.FindPin(((ConnectionDefinition)m_Card.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
-				sinkPin      = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
-				if (sinkPin == null)
-				{
-					String strPinName = ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName;
-					if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
-					{
-						sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
-						if (sinkPin==null)
-							Log.Write("DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
-						else
-							Log.Write("DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
-					}
-				}
-				else
-					Log.Write("DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
-
-				if (sourcePin!=null && sinkPin!=null)
-				{
-					IPin conPin;
-					hr      = sourcePin.ConnectedTo(out conPin);
-					if (hr != 0)
-						hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[catName] as FilterDefinition;
+					dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
+					hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 					if (hr == 0)
-						Log.Write("DVBGraphBDA:   Pins connected...");
-
-					// Give warning and release pin...
-					if (conPin != null)
 					{
-						Log.Write("DVBGraphBDA:   (Pin was already connected...)");
-						Marshal.ReleaseComObject(conPin as Object);
-						conPin = null;
-						hr     = 0;
+						Log.Write("DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 					}
-				}
+					else
+					{
+						Log.Write("DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+						Log.Write("DVBGraphBDA:  Error! Result code = {0}", hr);
+					}
 
-				if (hr != 0)
+					// Support the "legacy" member variables. This could be done different using properties
+					// through which the filters are accessable. More implementation independent...
+					if (dsFilter.Category == "networkprovider") 
+					{
+						m_NetworkProvider       = dsFilter.DSFilter;
+						
+						// Initialise Tuning Space (using the setupTuningSpace function)
+						if(!setupTuningSpace()) 
+						{
+							Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
+							return false;
+						}
+					}
+					if (dsFilter.Category == "tunerdevice") m_TunerDevice	 							= dsFilter.DSFilter;
+					if (dsFilter.Category == "capture")			m_CaptureDevice							= dsFilter.DSFilter;
+				}
+				Log.Write("DVBGraphBDA: Adding configured filters...DONE");
+
+				
+				if(m_NetworkProvider == null)
 				{
-					Log.Write("DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
-					if (hr == -2147220969)
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
+					return false;
+				}
+				if(m_CaptureDevice == null)
+				{
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED capture filter not found");
+				}
+
+
+				FilterDefinition sourceFilter;
+				FilterDefinition sinkFilter;
+				IPin sourcePin;
+				IPin sinkPin;
+
+				// Create pin connections. These connections are also specified in the definitions file.
+				// Note that some connections might fail due to the fact that the connection is already made,
+				// probably during the addition of filters to the graph (checked with GraphEdit...)
+				//
+				// Pin connections can be defined in two ways:
+				// 1. Using the name of the pin.
+				//		This method does work, but might be language dependent, meaning the connection attempt
+				//		will fail because the pin cannot be found...
+				// 2.	Using the 0-based index number of the input or output pin.
+				//		This method is save. It simply tells to connect output pin #0 to input pin #1 for example.
+				//
+				// The code assumes method 1 is used. If that fails, method 2 is tried...
+
+				Log.Write("DVBGraphBDA: Adding configured pin connections...");
+				for (int i = 0; i < m_Card.TvConnectionDefinitions.Count; i++)
+				{
+					Log.Write(" {0}", i);
+					sourceFilter = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
+					if (sourceFilter==null)
 					{
-						Log.Write("DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+						Log.Write("Cannot find source filter for connection:{0}",i);
+						continue;
+					}
+					sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
+					if (sinkFilter==null)
+					{
+						Log.Write("Cannot find sink filter for connection:{0}",i);
+						continue;
+					}
+
+					Log.Write("DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}", 
+						sourceFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName,
+						sinkFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
+					//sourceFilter.DSFilter.FindPin(((ConnectionDefinition)m_Card.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
+					sourcePin    = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
+					if (sourcePin == null)
+					{
+						String strPinName = ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName;
+						if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
+						{
+							sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
+							if (sourcePin==null)
+								Log.Write("DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
+							else
+								Log.Write("DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+						}
+					}
+					else
+						Log.Write("DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
+
+					//sinkFilter.DSFilter.FindPin(((ConnectionDefinition)m_Card.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
+					sinkPin      = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
+					if (sinkPin == null)
+					{
+						String strPinName = ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName;
+						if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
+						{
+							sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+							if (sinkPin==null)
+								Log.Write("DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
+							else
+								Log.Write("DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+						}
+					}
+					else
+						Log.Write("DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
+
+					if (sourcePin!=null && sinkPin!=null)
+					{
+						IPin conPin;
+						hr      = sourcePin.ConnectedTo(out conPin);
+						if (hr != 0)
+							hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+						if (hr == 0)
+							Log.Write("DVBGraphBDA:   Pins connected...");
+
+						// Give warning and release pin...
+						if (conPin != null)
+						{
+							Log.Write("DVBGraphBDA:   (Pin was already connected...)");
+							Marshal.ReleaseComObject(conPin as Object);
+							conPin = null;
+							hr     = 0;
+						}
+					}
+
+					if (hr != 0)
+					{
+						Log.Write("DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
+						if (hr == -2147220969)
+						{
+							Log.Write("DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+						}
 					}
 				}
+				Log.Write("DVBGraphBDA: Adding configured pin connections...DONE");
+
+				// Find out which filter & pin is used as the interface to the rest of the graph.
+				// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
+				// We only use the filter, as the software will find the correct pin for now...
+				// This should be changed in the future, to allow custom graph endings (mux/no mux) using the
+				// video and audio pins to connect to the rest of the graph (SBE, overlay etc.)
+				// This might be needed by the ATI AIW cards (waiting for ob2 to release...)
+				FilterDefinition lastFilter = m_Card.TvFilterDefinitions[m_Card.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
+
+				
+				if(lastFilter == null)
+				{
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED interface filter not found");
+				}
+
+				//=========================================================================================================
+				// add the MPEG-2 Demultiplexer 
+				//=========================================================================================================
+				// Use CLSID_Mpeg2Demultiplexer to create the filter
+				m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
+				if(m_MPEG2Demultiplexer== null) 
+				{
+					Log.Write("DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
+					return false;
+				}
+
+				// Add the Demux to the graph
+				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
+				
+				// The preview pin must be connected first so it can be registed with the network provider
+				if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
+				{
+					Log.Write("DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
+					return false;
+				}
+				/*
+				IMPEG2StreamIdMap map;
+				IPin pin;
+				m_MPEG2Demultiplexer.FindPin("1", out pin);
+				map = (IMPEG2StreamIdMap) pin;
+				map.MapStreamId(0x12,1,0,0);
+				map.MapStreamId(0x11,1,0,0);
+				map.MapStreamId(0x10,1,0,0);
+				map.MapStreamId(0x1 ,1,0,0);
+	*/
+				//=========================================================================================================
+				// Add the BDA MPEG2 Transport Information Filter
+				//=========================================================================================================
+				object tmpObject;
+				if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "BDA MPEG2 Transport Information Filter", out tmpObject)) 
+				{
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
+					return false;
+				}
+				m_TIF = (IBaseFilter) tmpObject;
+				tmpObject = null;
+				if(m_TIF == null)
+				{
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
+					return false;
+				}
+				m_graphBuilder.AddFilter(m_TIF, "BDA MPEG2 Transport Information Filter");
+				if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_TIF)) 
+				{
+					Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer->BDA MPEG2 Transport Information Filter");
+					return false;
+				}
+
+				//=========================================================================================================
+				// Add the MPEG-2 Sections and Tables filter
+				//=========================================================================================================
+				if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "MPEG-2 Sections and Tables", out tmpObject)) 
+				{
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED Failed to find MPEG-2 Sections and Tables Filter");
+					return false;
+				}
+				m_SectionsTables = (IBaseFilter) tmpObject;
+				tmpObject = null;
+				if(m_SectionsTables == null)
+				{
+					Log.Write("DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
+				}
+				m_graphBuilder.AddFilter(m_SectionsTables, "MPEG-2 Sections & Tables");
+				if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_SectionsTables)) 
+				{
+					Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
+					return false;
+				}
+				
+				// MPEG-2 demultiplexer '1' -> BDA MPEG2 Transport Information Filter
+				// MPEG-2 demultiplexer '2' -> MPEG-2 Sections and tables
+				// MPEG-2 demultiplexer '3' -> video decoder
+				// MPEG-2 demultiplexer '4' -> audio decoder
+				// MPEG-2 demultiplexer '5' -> 
+
+				m_MPEG2Demultiplexer.FindPin("3", out m_DemuxVideoPin);
+				m_MPEG2Demultiplexer.FindPin("4", out m_DemuxAudioPin);
+				if (m_DemuxVideoPin==null)
+				{
+					Log.Write("DVBGraphBDA:Failed to get pin '3' (video out) from MPEG-2 Demultiplexer");
+					return false;
+				}
+				if (m_DemuxAudioPin==null)
+				{
+					Log.Write("DVBGraphBDA:Failed to get pin '4' (audio out)  from MPEG-2 Demultiplexer");
+					return false;
+				}
+
+
+
+				//=========================================================================================================
+				// Create the streambuffer engine and mpeg2 video analyzer components since we need them for
+				// recording and timeshifting
+				//=========================================================================================================
+				m_StreamBufferSink  = new StreamBufferSink();
+				m_mpeg2Analyzer     = new VideoAnalyzer();
+				m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
+				m_graphState=State.Created;
+
+				m_TunerStatistics=GetTunerSignalStatistics();
+				AdviseProgramInfo();
+				return true;
 			}
-			Log.Write("DVBGraphBDA: Adding configured pin connections...DONE");
-
-			// Find out which filter & pin is used as the interface to the rest of the graph.
-			// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
-			// We only use the filter, as the software will find the correct pin for now...
-			// This should be changed in the future, to allow custom graph endings (mux/no mux) using the
-			// video and audio pins to connect to the rest of the graph (SBE, overlay etc.)
-			// This might be needed by the ATI AIW cards (waiting for ob2 to release...)
-			FilterDefinition lastFilter = m_Card.TvFilterDefinitions[m_Card.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
-
-			
-			if(lastFilter == null)
+			catch(Exception ex)
 			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED interface filter not found");
-			}
-
-			//=========================================================================================================
-			// add the MPEG-2 Demultiplexer 
-			//=========================================================================================================
-			// Use CLSID_Mpeg2Demultiplexer to create the filter
-			m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
-			if(m_MPEG2Demultiplexer== null) 
-			{
-				Log.Write("DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
+				Log.Write("DVBGraphBDA: Unable to create graph");
 				return false;
 			}
-
-			// Add the Demux to the graph
-			m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
-			
-			// The preview pin must be connected first so it can be registed with the network provider
-			if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
-			{
-				Log.Write("DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
-				return false;
-			}
-			/*
-			IMPEG2StreamIdMap map;
-			IPin pin;
-			m_MPEG2Demultiplexer.FindPin("1", out pin);
-			map = (IMPEG2StreamIdMap) pin;
-			map.MapStreamId(0x12,1,0,0);
-			map.MapStreamId(0x11,1,0,0);
-			map.MapStreamId(0x10,1,0,0);
-			map.MapStreamId(0x1 ,1,0,0);
-*/
-			//=========================================================================================================
-			// Add the BDA MPEG2 Transport Information Filter
-			//=========================================================================================================
-			object tmpObject;
-			if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "BDA MPEG2 Transport Information Filter", out tmpObject)) 
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
-				return false;
-			}
-			m_TIF = (IBaseFilter) tmpObject;
-			tmpObject = null;
-			if(m_TIF == null)
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
-				return false;
-			}
-			m_graphBuilder.AddFilter(m_TIF, "BDA MPEG2 Transport Information Filter");
-			if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_TIF)) 
-			{
-				Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer->BDA MPEG2 Transport Information Filter");
-				return false;
-			}
-
-			//=========================================================================================================
-			// Add the MPEG-2 Sections and Tables filter
-			//=========================================================================================================
-			if(!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "MPEG-2 Sections and Tables", out tmpObject)) 
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED Failed to find MPEG-2 Sections and Tables Filter");
-				return false;
-			}
-			m_SectionsTables = (IBaseFilter) tmpObject;
-			tmpObject = null;
-			if(m_SectionsTables == null)
-			{
-				Log.Write("DVBGraphBDA:CreateGraph() FAILED MPEG-2 Sections and Tables Filter is null");
-			}
-			m_graphBuilder.AddFilter(m_SectionsTables, "MPEG-2 Sections & Tables");
-			if(!ConnectFilters(ref m_MPEG2Demultiplexer, ref m_SectionsTables)) 
-			{
-				Log.Write("DVBGraphBDA:Failed to connect MPEG-2 Demultiplexer to MPEG-2 Sections and Tables Filter");
-				return false;
-			}
-			
-			// MPEG-2 demultiplexer '1' -> BDA MPEG2 Transport Information Filter
-			// MPEG-2 demultiplexer '2' -> MPEG-2 Sections and tables
-			// MPEG-2 demultiplexer '3' -> video decoder
-			// MPEG-2 demultiplexer '4' -> audio decoder
-			// MPEG-2 demultiplexer '5' -> 
-
-			m_MPEG2Demultiplexer.FindPin("3", out m_DemuxVideoPin);
-			m_MPEG2Demultiplexer.FindPin("4", out m_DemuxAudioPin);
-			if (m_DemuxVideoPin==null)
-			{
-				Log.Write("DVBGraphBDA:Failed to get pin '3' (video out) from MPEG-2 Demultiplexer");
-				return false;
-			}
-			if (m_DemuxAudioPin==null)
-			{
-				Log.Write("DVBGraphBDA:Failed to get pin '4' (audio out)  from MPEG-2 Demultiplexer");
-				return false;
-			}
-
-
-
-			//=========================================================================================================
-			// Create the streambuffer engine and mpeg2 video analyzer components since we need them for
-			// recording and timeshifting
-			//=========================================================================================================
-			m_StreamBufferSink  = new StreamBufferSink();
-			m_mpeg2Analyzer     = new VideoAnalyzer();
-			m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
-			m_graphState=State.Created;
-
-			m_TunerStatistics=GetTunerSignalStatistics();
-			AdviseProgramInfo();
-			return true;
 		}
 		
 		void AdviseProgramInfo()
 		{
-			Log.Write("AdivseProgramInfo()");
+			Log.Write("DVBGraphBDA:AdivseProgramInfo()");
 			if (m_TIF==null) return;
 
 			m_Event= new GuideDataEvent();

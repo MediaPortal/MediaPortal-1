@@ -201,15 +201,31 @@ namespace MediaPortal.Player
         }
       }
 
-      if (m_bLive)
-      {
-        UpdateCurrentPosition();
-        if (m_dCurrentPos+5 < m_dDuration)
-        {
-          Log.Write("StreamBufferPlayer:Seek to 99%");
-          SeekAsolutePercentage(99);
-        }
-      }
+			if (m_bLive)
+			{
+				UpdateCurrentPosition();
+				if (m_dCurrentPos+5 < m_dDuration)
+				{
+					Log.Write("StreamBufferPlayer:Seek to 99%");
+					SeekAsolutePercentage(99);
+				}
+			}
+			else
+			{
+				//seek to end of file
+				long lTime=5*60*60;
+				lTime*=10000000;
+				long pStop=0;
+				hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				if (hr==0)
+				{
+					long lStreamPos;
+					m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+					m_dDuration=lStreamPos;
+					m_dDuration/=10000000d;
+					SeekAsolutePercentage(0);
+				}
+			}
 
 			Log.Write("StreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)m_dDuration) );
 			m_state=PlayState.Playing;
