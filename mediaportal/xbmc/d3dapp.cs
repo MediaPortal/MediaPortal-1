@@ -467,6 +467,7 @@ namespace MediaPortal
 
         if (windowed)
         {
+            presentParams.ForceNoMultiThreadedFlag=false;
             presentParams.EnableAutoDepthStencil = false;
             presentParams.AutoDepthStencilFormat = DepthFormat.D16;
             presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
@@ -474,16 +475,17 @@ namespace MediaPortal
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
             presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
             presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
-            presentParams.PresentationInterval = PresentInterval.One;
-            presentParams.BackBufferCount = 1;
+            presentParams.PresentationInterval = PresentInterval.Immediate;
+            presentParams.BackBufferCount = 0;
             presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
-            presentParams.DeviceWindow = this;
+            presentParams.DeviceWindow = ourRenderTarget;
             presentParams.Windowed=true;
         }
         else
         {
+            presentParams.ForceNoMultiThreadedFlag=false;
             presentParams.BackBufferWidth  = graphicsSettings.DisplayMode.Width;
             presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
