@@ -103,21 +103,13 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         RegistryKey hklm = Registry.LocalMachine;
-        RegistryKey subkey = hklm.CreateSubKey(@"SOFTWARE\InterVideo\MediaPortal\AudioDec");
-        if (subkey != null)
-        {
-          Int32 iValue=1;
-          subkey.SetValue("DsContinuousRate",iValue);
-          //iValue=6;
-          //subkey.SetValue("AUDIO",iValue);
-        }
-        subkey = hklm.CreateSubKey(@"SOFTWARE\InterVideo\MediaPortal\VideoDec");
-        if (subkey != null)
-        {
-          Int32 iValue=1;
-          subkey.SetValue("DsContinuousRate",iValue);
-        }
-        subkey.Close();
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\AudioDec","DsContinuousRate",1);
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","DsContinuousRate",1);
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","Dxva",1);
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","DxvaFetchSample",0);
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","ResendOnFamine",0);
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","VgaQuery",1);
+        SetDWORDRegKey(hklm,@"SOFTWARE\InterVideo\MediaPortal\VideoDec","VMR",2);
         hklm.Close();
       }
       catch(Exception)
@@ -264,6 +256,16 @@ public class MediaPortalApp : D3DApp, IRender
         splashScreen.Close();
 #endif
     }
+    public static void SetDWORDRegKey(RegistryKey hklm,string Key,string Value,Int32 iValue)
+    {      
+      RegistryKey subkey = hklm.CreateSubKey(Key);
+      if (subkey != null)
+      {
+        subkey.SetValue(Value,iValue);
+        subkey.Close();
+      }
+    }
+
 	  private void OnRemoteCommand(object command)
 	  {
 		  OnAction(new Action((Action.ActionType) command, 0, 0));
