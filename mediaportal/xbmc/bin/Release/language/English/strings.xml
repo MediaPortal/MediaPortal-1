@@ -2146,6 +2146,10 @@
 	<value>Are you sure?</value>
 </string>
 <string>
+	<id>733</id>
+	<value>View: Filmstrip</value>
+</string>
+<string>
 	<id>800</id>
 	<value>Starts with</value>
 </string>
