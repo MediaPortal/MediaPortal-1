@@ -3,7 +3,87 @@ using System.Runtime.InteropServices;
 
 namespace DShowNET.BDA
 {
+	
+	public struct MPEG_STREAM_BUFFER
+	{
+		int hr;
+		uint   dwDataBufferSize;
+		uint   dwSizeOfDataRead;
+		byte[]  pDataBuffer;
+	} ;
 
+
+	public enum MPEG_REQUEST_TYPE:int
+	{
+		MPEG_RQST_UNKNOWN = 0, 
+		MPEG_RQST_GET_SECTION,
+		MPEG_RQST_GET_SECTION_ASYNC,
+		MPEG_RQST_GET_TABLE,
+		MPEG_RQST_GET_TABLE_ASYNC,
+		MPEG_RQST_GET_SECTIONS_STREAM,
+		MPEG_RQST_GET_PES_STREAM,
+		MPEG_RQST_GET_TS_STREAM,
+		MPEG_RQST_START_MPE_STREAM,
+	} ;
+
+	[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
+	public struct ATSC_FILTER_OPTIONS
+	{
+		bool fSpecifyEtmId;          // If true, EtmId should be set to desired value
+		uint EtmId;
+	} ;
+	// 8 BYTES
+ 
+
+	[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
+	public  struct DSMCC_FILTER_OPTIONS
+	{
+		bool  fSpecifyProtocol;       // If true, Protocol should be set to desired value
+		byte  Protocol;
+		bool  fSpecifyType;           // If true, Type should be set to desired value
+		byte  Type;
+		bool  fSpecifyMessageId;      // If true, MessageId should be set to desired value
+		ushort  MessageId;
+		bool  fSpecifyTransactionId;  // If true, TransactionId (or DownloadId for DDB msgs) should be set to desired value
+		bool  fUseTrxIdMessageIdMask; // If false, TransactionId is filtered as is.
+		// If true, TransactionId is masked to look
+		// for any version of message with associated
+		// message identifier. See DVB - Data
+		// Broadcasting Guidlines 4.6.5. (Assignment
+		// and use of transactionId values).
+		uint TransactionId;
+		bool  fSpecifyModuleVersion;  // If true, ModuleVersion should be set to the desired value
+		byte  ModuleVersion;
+		bool  fSpecifyBlockNumber;    // If true, BlockNumber should be set to desired value
+		ushort  BlockNumber;
+		bool  fGetModuleCall;         // If true, NumberOfBlocksInModule should be set
+		ushort  NumberOfBlocksInModule; 
+	} ;
+	// 45 BYTES
+/*
+	[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
+	public struct MPEG2_FILTER
+	{
+		byte  bVersionNumber;           // Must be set to 1 or more to match filter definition
+		ushort  wFilterSize;              // Size of total filter structure. Version 1 filter is 73 bytes.
+		bool  fUseRawFilteringBits;     // If true, Filter and Mask fields should be set to desired value, all other
+		// fields with be ignored.
+		byte[16]  Filter ;               // Bits with values to compare against for a match.
+		byte[16]  Mask ;                 // Bits set to 0 are bits that are compared to those in the filter, those
+		// bits set to 1 are ignored.
+		bool  fSpecifyTableIdExtension; // If true, TableIdExtension should be set to desired value (false = don't care)
+		ushort  TableIdExtension;
+		bool  fSpecifyVersion;          // If true, Version should be set to desired value (false = don't care)
+		byte  Version;
+		bool  fSpecifySectionNumber;    // If true, SectionNumber should be set to desired value (false = don't care)
+		byte  SectionNumber;
+		bool  fSpecifyCurrentNext;      // If true, fNext should be set to desired value (false = don't care)
+		bool  fNext;                    // If true, next table is queried. Else, current
+		bool  fSpecifyDsmccOptions;     // If true, Dsmcc should be set with desired filter options
+		DSMCC_FILTER_OPTIONS Dsmcc;
+		bool  fSpecifyAtscOptions;      // If true, Atsc should be set with desired filter options
+		ATSC_FILTER_OPTIONS Atsc;
+	} */
 	/// <summary>
 	/// KSProperty Set Structure Definitions for BDA
 	/// </summary>

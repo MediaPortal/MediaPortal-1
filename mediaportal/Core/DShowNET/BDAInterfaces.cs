@@ -5,6 +5,83 @@ using DShowNET;
 
 namespace DShowNET.BDA
 {
+	/*
+	[ComImport,
+	Guid("AFEC1EB5-2A64-46c6-BF4B-AE3CCB6AFDB0"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface ISectionList 
+	{
+		HRESULT Initialize([In]  MPEG_REQUEST_TYPE requestType,
+											[In]  IMpeg2Data *      pMpeg2Data,
+											[In]  PMPEG_CONTEXT     pContext,
+											[In]  PID               pid,
+											[In]  TID               tid,
+											[In]  PMPEG2_FILTER     pFilter,                   // OPTIONAL
+											[In]  DWORD             timeout,
+											[In]  HANDLE            hDoneEvent);               // OPTIONAL
+
+		HRESULT InitializeWithRawSections([In]  PMPEG_PACKET_LIST pmplSections);
+
+		HRESULT CancelPendingRequest();
+
+		HRESULT GetNumberOfSections([Out] WORD * pCount);
+
+		HRESULT GetSectionData([In]  WORD          sectionNumber,
+													 [Out] DWORD *       pdwRawPacketLength,
+													 [Out] PSECTION *    ppSection);
+
+		HRESULT GetProgramIdentifier(PID * pPid);
+
+		HRESULT GetTableIdentifier(TID * pTableId);
+	};
+
+
+	[ComImport,
+	Guid("CC286-32A0-4ce4-9041-39571125A635"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMpeg2Stream 
+	{
+		[PreserveSig]
+		int  Initialize([In]  MPEG_REQUEST_TYPE         requestType,
+											 [In]  ref IMpeg2Data						 pMpeg2Data,
+											 [In]  ref MPEG2_FILTER          pContext,
+											 [In]  ushort                    pid,
+											 [In]  byte                      tid,
+											 [In]  ref MPEG2_FILTER          pFilter,           // OPTIONAL
+											 [In]  int                    hDataReadyEvent);
+
+		[PreserveSig]
+		int  SupplyDataBuffer([In]  ref  MPEG_STREAM_BUFFER pStreamBuffer);
+	};
+
+	[ComImport,
+	Guid("9B396D40-F380-4e3c-A514-1A82BF6EBFE6"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMpeg2Data 
+	{
+		[PreserveSig]
+		int GetSection([In]  ushort                   pid,
+									 [In]  byte                     tid,
+									 [In]  ref MPEG2_FILTER         pFilter,            // OPTIONAL
+									 [In]  uint                     dwTimeout,
+									 [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ISectionList[]          ppSectionList);
+
+		[PreserveSig]
+		int GetTable([In]  ushort                     pid,
+								 [In]  byte                       tid,
+								 [In]  ref MPEG2_FILTER           pFilter,            // OPTIONAL
+								 [In]  uint                       dwTimeout,
+								 [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]  ISectionList []            ppSectionList);
+
+		[PreserveSig]
+		int GetStreamOfSections([In]  ushort						 pid,
+														[In]  byte							 tid,
+														[In]  ref MPEG2_FILTER   pFilter,            // OPTIONAL
+														[In]  int								 hDataReadyEvent,
+														[Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] IMpeg2Stream[]  ppMpegStream);
+	};
+	*/
+
 	[ComImport,
 	Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
