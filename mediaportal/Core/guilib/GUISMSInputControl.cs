@@ -383,6 +383,7 @@ namespace MediaPortal.GUI.Library
     void DrawTextBox() 
     {
       long lColor=m_dwTextBoxBgColor;
+			int oldTextureFactor=GUIGraphicsContext.DX9Device.RenderState.TextureFactor;
       GUIGraphicsContext.DX9Device.SetTexture( 0, null );
       GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.SelectArg1;
       GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TFactor;
@@ -394,10 +395,10 @@ namespace MediaPortal.GUI.Library
       int y1=m_dwTextBoxYpos,  y2=y1+m_dwTextBoxHeight;
 
       CustomVertex.TransformedColored[] verts = (CustomVertex.TransformedColored[])vertexBuffer.Lock(0,0);
-      verts[0].X=x1-0.5f  ;verts[0].Y= y2-0.5f;verts[0].Z= 1.0f;verts[0].Rhw=1.0f;
-      verts[1].X=x1-0.5f  ;verts[1].Y= y1-0.5f;verts[1].Z= 1.0f;verts[1].Rhw=1.0f;
-      verts[2].X=x2- 0.5f;verts[2].Y= y2-0.5f;verts[2].Z= 1.0f;verts[2].Rhw=1.0f;
-      verts[3].X=x2-0.5f ;verts[3].Y= y1-0.5f;verts[3].Z= 1.0f;verts[3].Rhw=1.0f;
+      verts[0].X=x1-0.5f  ;verts[0].Y= y2-0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f;
+      verts[1].X=x1-0.5f  ;verts[1].Y= y1-0.5f;verts[1].Z= 0.0f;verts[1].Rhw=1.0f;
+      verts[2].X=x2- 0.5f;verts[2].Y= y2-0.5f;verts[2].Z= 0.0f;verts[2].Rhw=1.0f;
+      verts[3].X=x2-0.5f ;verts[3].Y= y1-0.5f;verts[3].Z= 0.0f;verts[3].Rhw=1.0f;
       verts[0].Color=(int)lColor;
       verts[1].Color=(int)lColor;
       verts[2].Color=(int)lColor;
@@ -405,7 +406,15 @@ namespace MediaPortal.GUI.Library
       vertexBuffer.Unlock();
       GUIGraphicsContext.DX9Device.SetStreamSource( 0, vertexBuffer, 0);
       GUIGraphicsContext.DX9Device.RenderState.TextureFactor=(int)0xe0e0e0 ;
-      GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip,0,2);
+			GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip,0,2);
+			
+			vertexBuffer.Dispose();
+
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =TextureOperation.Modulate;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =TextureArgument.TextureColor;
+			GUIGraphicsContext.DX9Device.VertexFormat=CustomVertex.TransformedColored.Format;
+			GUIGraphicsContext.DX9Device.RenderState.TextureFactor=oldTextureFactor;
+			GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
     }
     void DrawText()
     {

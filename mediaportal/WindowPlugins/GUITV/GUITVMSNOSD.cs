@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.TV
 
     public override void Render()
     {
-      base.Render();		// render our controls to the screen
+			RenderDlg();
     }
 
     void HideControl (int dwSenderId, int dwControlID) 
@@ -82,8 +82,9 @@ namespace MediaPortal.GUI.TV
 			// render the parent window
 			if (null!=m_pParentWindow) 
 				m_pParentWindow.Render();
+			
 
-			GUIFontManager.Present();
+			//GUIFontManager.Present();
 			// render this dialog box
 		
 			base.Render();
@@ -197,8 +198,8 @@ namespace MediaPortal.GUI.TV
 
 					// following line should stay. Problems with OSD not
           // appearing are already fixed elsewhere
-          AllocResources();
-          ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+          //AllocResources();
+          //ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
 
           m_bNeedRefresh=false;
           m_dateTime=DateTime.Now;

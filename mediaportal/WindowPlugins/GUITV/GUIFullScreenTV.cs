@@ -778,13 +778,13 @@ namespace MediaPortal.GUI.TV
 				// do we need 2 render the dialog window
 				if (m_bDialogVisible)
 				{
-					dlg.Render();
+					//dlg.Render();
 				}
 
 				// do we need 2 render the msn chat window
         if (m_bMSNChatVisible)
         {
-          m_msnWindow.Render();
+          //m_msnWindow.Render();
         }
 
 				// do we need 2 render the OSD?
