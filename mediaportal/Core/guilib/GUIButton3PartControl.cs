@@ -24,11 +24,10 @@ namespace MediaPortal.GUI.Library
     protected GUIImage               m_imgFocusRight=null;
     protected GUIImage               m_imgNoFocusRight=null;
     protected GUIImage               m_imgIcon=null;  
-		protected int                    m_dwFrameCounter=0;
     protected string								 m_strLabel1="";
     protected string								 m_strLabel2="";
-    protected GUIFont 							 m_pFont1=null;
-    protected GUIFont 							 m_pFont2=null;
+    protected string                 fontName1=String.Empty;
+    protected string    						 fontName2=String.Empty;
     protected long  								 m_dwTextColor1=(long)0xFFFFFFFF;
     protected long  								 m_dwTextColor2=(long)0xFFFFFFFF;
 		protected long  								 m_dwDisabledColor=(long)0xFF606060;
@@ -47,6 +46,10 @@ namespace MediaPortal.GUI.Library
     protected int                    m_iIconOffsetY=-1;
     protected int                    m_iIconWidth=-1;
     protected int                    m_iIconHeight=-1;
+    GUILabelControl                  cntlLabel1=null;
+    GUILabelControl                  cntlLabel2=null;
+    bool                             containsProperty1=false;
+    bool                             containsProperty2=false;
     
 		/// <summary>
 		/// The constructor of the GUIButton3PartControl class.
@@ -77,6 +80,8 @@ namespace MediaPortal.GUI.Library
       m_imgNoFocusMid  =new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight, strTextureNoFocusMid,0);
       m_imgNoFocusRight=new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight, strTextureNoFocusRight,0);
       m_bSelected=false;
+      cntlLabel1 = new GUILabelControl(dwParentID);
+      cntlLabel2 = new GUILabelControl(dwParentID);
 		}
   
 		/// <summary>
@@ -89,8 +94,10 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible ) return;
       }
-      m_strText1=GUIPropertyManager.Parse(m_strLabel1);
-      m_strText2=GUIPropertyManager.Parse(m_strLabel2);
+      m_strText1=m_strLabel1;
+      m_strText2=m_strLabel2;
+      if (containsProperty1) m_strText1=GUIPropertyManager.Parse(m_strLabel1);
+      if (containsProperty2) m_strText2=GUIPropertyManager.Parse(m_strLabel2);
 
 			// if the GUIButton3PartControl has the focus
 			if (Focus)
@@ -99,7 +106,6 @@ namespace MediaPortal.GUI.Library
 				m_imgFocusLeft.Render();
 				m_imgFocusMid.Render();
 				m_imgFocusRight.Render();
-        m_dwFrameCounter++;
 			}
 			else 
 			{
@@ -114,23 +120,37 @@ namespace MediaPortal.GUI.Library
 
 			// render the 1st line of text on the button
       int iWidth=m_imgNoFocusMid.Width;
-			if (m_strText1.Length > 0 && m_pFont1!=null)
+			if (m_strText1.Length>0 )
 			{
         int xoff=m_iTextOffsetX1+m_imgNoFocusLeft.TextureWidth;
-				if (Disabled )
-					m_pFont1.DrawTextWidth((float)xoff+m_dwPosX, (float)m_iTextOffsetY1+m_dwPosY,m_dwDisabledColor,m_strText1,iWidth, GUIControl.Alignment.ALIGN_LEFT);
-				else
-					m_pFont1.DrawTextWidth((float)xoff+m_dwPosX, (float)m_iTextOffsetY1+m_dwPosY,m_dwTextColor2,m_strText1,iWidth, GUIControl.Alignment.ALIGN_LEFT);
+
+        if (Disabled )
+          cntlLabel1.TextColor=m_dwDisabledColor;
+        else
+          cntlLabel1.TextColor=m_dwTextColor1;
+        cntlLabel1.SetPosition(xoff+m_dwPosX,m_iTextOffsetY1+m_dwPosY);
+        cntlLabel1.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
+        cntlLabel1.FontName=fontName1;
+        cntlLabel1.Label=m_strText1;
+        cntlLabel1.Width=iWidth;
+        cntlLabel1.Render();
 			}
       
 			// render the 2nd line of text on the button
-			if (m_strText2.Length > 0 && m_pFont2!=null)
+			if (m_strText2.Length>0)
       {
         int xoff=m_iTextOffsetX2+m_imgNoFocusLeft.TextureWidth;
+
         if (Disabled )
-          m_pFont2.DrawTextWidth((float)xoff+m_dwPosX, (float)m_iTextOffsetY2+m_dwPosY,m_dwDisabledColor,m_strText2,iWidth, GUIControl.Alignment.ALIGN_LEFT);
+          cntlLabel1.TextColor=m_dwDisabledColor;
         else
-          m_pFont2.DrawTextWidth((float)xoff+m_dwPosX, (float)m_iTextOffsetY2+m_dwPosY,m_dwTextColor2,m_strText2,iWidth, GUIControl.Alignment.ALIGN_LEFT);
+          cntlLabel1.TextColor=m_dwTextColor2;
+        cntlLabel1.SetPosition(xoff+m_dwPosX,m_iTextOffsetY2+m_dwPosY);
+        cntlLabel1.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
+        cntlLabel1.FontName=fontName1;
+        cntlLabel1.Label=m_strText2;
+        cntlLabel1.Width=iWidth;
+        cntlLabel1.Render();
       }
 		}
 
@@ -206,7 +226,10 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
           if (message.Label!=null)
-					  m_strLabel1=message.Label;
+          {
+            m_strLabel1=message.Label;
+            containsProperty1=ContainsProperty(m_strLabel1);
+          }
 					return true;
 				}
 			}
@@ -236,7 +259,6 @@ namespace MediaPortal.GUI.Library
 		public override void AllocResources()
 		{
 			base.AllocResources();
-			m_dwFrameCounter=0;
 			m_imgFocusLeft.AllocResources();
       m_imgFocusMid.AllocResources();
       m_imgFocusRight.AllocResources();
@@ -244,6 +266,9 @@ namespace MediaPortal.GUI.Library
       m_imgNoFocusMid.AllocResources();
       m_imgNoFocusRight.AllocResources();
       m_imgIcon.AllocResources();
+
+      cntlLabel1.AllocResources();
+      cntlLabel2.AllocResources();
 		}
 
 		/// <summary>
@@ -259,6 +284,10 @@ namespace MediaPortal.GUI.Library
       m_imgNoFocusMid.FreeResources();
       m_imgNoFocusRight.FreeResources();
       m_imgIcon.FreeResources();
+
+      
+      cntlLabel1.FreeResources();
+      cntlLabel2.FreeResources();
     }
 
 		/// <summary>
@@ -373,26 +402,22 @@ namespace MediaPortal.GUI.Library
 		public string FontName1
 		{ 
 			get { 
-				if (m_pFont1==null) return String.Empty;
-				return m_pFont1.FontName; 
+        return fontName1;
 			}
 			set { 
 				if (value==null) return;
-				if (value==String.Empty) return;
-				m_pFont1 = GUIFontManager.GetFont(value);
+				fontName1=value;
 			}
 		}
 
     public string FontName2
     { 
       get { 
-				if (m_pFont2==null) return String.Empty;
-				return m_pFont2.FontName; 
+				return fontName2; 
 			}
       set { 
 				if (value==null) return;
-				if (value==String.Empty) return;
-				m_pFont2 = GUIFontManager.GetFont(value);
+				fontName2=value;
 			}
     }
 
@@ -408,8 +433,8 @@ namespace MediaPortal.GUI.Library
       if (strLabel==null) return;
 			m_strLabel1=strLabel;
 			m_dwTextColor1=dwColor;
-      if (strFontName!="" && strFontName!="-")
-			  m_pFont1=GUIFontManager.GetFont(strFontName);
+      fontName1=strFontName;
+      containsProperty1=ContainsProperty(m_strLabel1);
 		}
     public void SetLabel2( string strFontName,string strLabel,long dwColor)
     {
@@ -417,8 +442,8 @@ namespace MediaPortal.GUI.Library
       if (strLabel==null) return;
       m_strLabel2=strLabel;
       m_dwTextColor2=dwColor;
-      if (strFontName!="" && strFontName!="-")
-        m_pFont2=GUIFontManager.GetFont(strFontName);
+      fontName2=strFontName;
+      containsProperty2=ContainsProperty(m_strLabel2);
     }
 
 		/// <summary>
@@ -431,6 +456,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (value==null) return;
         m_strLabel1=value;
+        containsProperty1=ContainsProperty(m_strLabel1);
       }
     }
     public string Label2
@@ -440,6 +466,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (value==null) return;
         m_strLabel2=value;
+        containsProperty2=ContainsProperty(m_strLabel2);
       }
     }
 
@@ -694,6 +721,12 @@ namespace MediaPortal.GUI.Library
         m_iIconHeight= value; 
         if (m_imgIcon!=null) m_imgIcon.Height=m_iIconHeight;
       }
+    }
+    bool ContainsProperty(string text)
+    {
+      if (text==null) return false;
+      if (text.IndexOf("#")>=0) return true;
+      return false;
     }
   }
 }
