@@ -5,6 +5,102 @@ using DShowNET;
 
 namespace DShowNET.BDA
 {
+	[ComImport,
+	Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IBDA_SignalStatistics 
+	{
+		[PreserveSig]
+		int put_SignalStrength( /* [in] */ int  lDbStrength) ;
+        
+		[PreserveSig]
+		int get_SignalStrength( /* [out][in] */ out int  plDbStrength) ;
+        
+		[PreserveSig]
+		int put_SignalQuality( /* [in] */ int  lPercentQuality) ;
+        
+		[PreserveSig]
+		int get_SignalQuality( /* [out][in] */ out int  plPercentQuality) ;
+        
+		[PreserveSig]
+		int put_SignalPresent( /* [in] */ bool fPresent) ;
+        
+		[PreserveSig]
+		int get_SignalPresent( /* [out][in] */ out bool pfPresent) ;
+        
+		[PreserveSig]
+		int put_SignalLocked( /* [in] */ bool fLocked) ;
+        
+		[PreserveSig]
+		int get_SignalLocked( /* [out][in] */ out bool pfLocked) ;
+        
+		[PreserveSig]
+		int put_SampleTime( /* [in] */ int  lmsSampleTime) ;
+        
+		[PreserveSig]
+		int get_SampleTime( /* [out][in] */ out int  plmsSampleTime) ;
+        
+	}	
+
+	[ComImport,
+	Guid("79B56888-7FEA-4690-B45D-38FD3C7849BE"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public	interface IBDA_Topology 
+	{
+		[PreserveSig]
+		int GetNodeTypes (
+									[In, Out] ref int                         pulcNodeTypes,
+									[In]  int                                 ulcNodeTypesMax,
+									[In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] int [] rgulNodeTypes);
+        
+		[PreserveSig]
+		int GetNodeDescriptors (
+													[In, Out] ref int    ulcNodeDescriptors,
+													[In]  int         ulcNodeDescriptorsMax,
+													[In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] BDANODE_DESCRIPTOR[]   rgNodeDescriptors);
+
+		[PreserveSig]
+		int GetNodeInterfaces (
+													[In]  int                                     ulNodeType,
+													[In, Out] ref int                               pulcInterfaces,
+													[In]  int                                     ulcInterfacesMax,
+													[In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] Guid[]      rgguidInterfaces);
+
+		[PreserveSig]
+		int GetPinTypes ([In, Out] ref int                           pulcPinTypes,
+										 [In]  int                                 ulcPinTypesMax,
+										 [In, Out,MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] int[]   rgulPinTypes);
+
+		[PreserveSig]
+		int  GetTemplateConnections ([In, Out] ref int                       pulcConnections,
+																 [In]  int                             ulcConnectionsMax,
+																 [In, Out,MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] BDA_TEMPLATE_CONNECTION[]    rgConnections);
+
+		[PreserveSig]
+		int  CreatePin ([In]  int         ulPinType,
+										[In, Out] ref int   pulPinId);
+
+		[PreserveSig]
+		int  DeletePin ([In] int      ulPinId);
+
+		[PreserveSig]
+		int  SetMediaType ([In]  int             ulPinId,
+											 [In]  ref		AMMediaType   pMediaType);
+
+		[PreserveSig]
+		int  SetMedium ([In] int          ulPinId,
+										[In] ref object  pMedium);
+
+		[PreserveSig]
+		int CreateTopology ([In] int ulInputPinId,
+												[In] int ulOutputPinId);
+
+	  [PreserveSig]
+		int GetControlNode ([In] int              ulInputPinId,
+												[In] int              ulOutputPinId,
+												[In] int              ulNodeType,
+												[Out, MarshalAs(UnmanagedType.IUnknown) ] out object ppControlNode);
+	}
 
 	[ComImport,
 	Guid("00020404-0000-0000-C000-000000000046"),

@@ -899,7 +899,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (Overlay!=false)
 				{
-					Log.Write("SWGraph:overlay disabled");
+					Log.Write("DVBGraphBDA:overlay disabled");
 					Overlay=false;
 				}
 				return;
@@ -908,7 +908,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (Overlay!=true)
 				{
-					Log.Write("SWGraph:overlay enabled");
+					Log.Write("DVBGraphBDA:overlay enabled");
 					Overlay=true;
 				}
 			}*/
@@ -939,9 +939,9 @@ namespace MediaPortal.TV.Recording
 					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
 					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-					Log.Write("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					Log.Write("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-					Log.Write("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
+					Log.Write("DVBGraphBDA: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+					Log.Write("DVBGraphBDA: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
+					Log.Write("DVBGraphBDA: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
 				}
 			}
 			else
@@ -951,9 +951,9 @@ namespace MediaPortal.TV.Recording
 					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-					Log.Write("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					Log.Write("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
-					Log.Write("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
+					Log.Write("DVBGraphBDA: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+					Log.Write("DVBGraphBDA: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
+					Log.Write("DVBGraphBDA: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
 				}
 
 			}
@@ -977,8 +977,69 @@ namespace MediaPortal.TV.Recording
 
 			if(m_graphState==State.Created || m_graphState==State.None)
 				return false;
-			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-			return (myTuner.SignalStrength>0);
+			IBDA_Topology topology = m_TunerDevice as IBDA_Topology;
+			if (topology==null)
+			{
+				Log.Write("DVBGraphBDA: could not get IBDA_Topology from tuner");
+				return false;
+			}
+			int nodeTypeCount=0;
+			int interfaceCount=0;
+			int[] nodeTypes = new int[33];
+			Guid[] guidInterfaces = new Guid[33];
+			int hr=topology.GetNodeTypes(ref nodeTypeCount,32, nodeTypes);
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA: FAILED could not get node types from tuner");
+				return false;
+			}
+			for (int i=0; i < nodeTypeCount;++i)
+			{
+				hr=topology.GetNodeInterfaces(i,ref interfaceCount,32,guidInterfaces);
+				if (hr!=0)
+				{
+					Log.Write("DVBGraphBDA: FAILED could not GetNodeInterfaces for node:{0}",hr);
+					return false;
+				}
+				else
+				{
+					for (int j=0; j < interfaceCount; ++j)
+					{
+						if ( guidInterfaces[i]== typeof(IBDA_SignalStatistics).GUID)
+						{
+							object objectNode;
+							hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
+							if (hr!=0)
+							{
+								Log.Write("DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
+								return false;
+							}
+							IBDA_SignalStatistics signal = objectNode as IBDA_SignalStatistics;
+							if (signal==null)
+							{
+								Log.Write("DVBGraphBDA: FAILED could not IBDA_SignalStatistics for node:{0}",hr);
+								return false;
+							}
+							int strength=0;
+							int quality=0;
+							bool locked=false;
+							bool present=false;
+							hr=signal.get_SignalStrength(out strength);
+							hr=signal.get_SignalQuality(out quality);
+							hr=signal.get_SignalLocked(out locked);
+							hr=signal.get_SignalPresent(out present);
+							Marshal.ReleaseComObject(objectNode);
+							if (locked || quality>0)
+							{
+								Marshal.ReleaseComObject(topology);
+								return true;
+							}
+						}
+					}
+				}
+			}
+			Marshal.ReleaseComObject(topology);
+			return false;
 		}
 
 		public long VideoFrequency()

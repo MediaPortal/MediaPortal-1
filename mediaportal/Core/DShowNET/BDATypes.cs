@@ -12,17 +12,17 @@ namespace DShowNET.BDA
 
 	public struct BDA_TEMPLATE_CONNECTION
 	{
-		public ulong   FromNodeType;
-		public ulong   FromNodePinType;
-		public ulong   ToNodeType;
-		public ulong   ToNodePinType;
+		public int   FromNodeType;
+		public int   FromNodePinType;
+		public int   ToNodeType;
+		public int   ToNodePinType;
 	}
 
 
 	public struct BDA_TEMPLATE_PIN_JOINT
 	{
-		public ulong   uliTemplateConnection;
-		public ulong   ulcInstancesMax;
+		public int   uliTemplateConnection;
+		public int   ulcInstancesMax;
 	}
 
 
