@@ -337,6 +337,7 @@ namespace MediaPortal.GUI.Music
           // if we also have video or visualsation
           if (g_Player.HasVideo)
           {
+            AlbumArtPicture.YPosition=(int)fYPos;
             int iStep=iWidth /15;
             if (m_iFrame < 15)
             {
