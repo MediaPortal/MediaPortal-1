@@ -468,11 +468,11 @@ namespace MediaPortal.GUI.Library
       m_imgFocusRight.ColourDiffuse=ColourDiffuse;
       
       int width;
+      m_imgFocusLeft.Width =m_imgFocusLeft.TextureWidth;
+      m_imgFocusMid.Width  =m_dwWidth - (m_imgFocusLeft.TextureWidth+m_imgFocusRight.TextureWidth);
+      m_imgFocusRight.Width=m_imgFocusRight.TextureWidth;
       while(true)
       {
-        m_imgFocusLeft.Width =m_imgFocusLeft.TextureWidth;
-        m_imgFocusMid.Width  =m_dwWidth - (m_imgFocusLeft.TextureWidth+m_imgFocusRight.TextureWidth);
-        m_imgFocusRight.Width=m_imgFocusRight.TextureWidth;
   
         width=m_imgFocusLeft.Width +m_imgFocusMid.Width+m_imgFocusRight.Width;
         if (width > m_dwWidth)
@@ -495,12 +495,12 @@ namespace MediaPortal.GUI.Library
       m_imgNoFocusMid.ColourDiffuse  =ColourDiffuse;
       m_imgNoFocusRight.ColourDiffuse=ColourDiffuse;
 
-      while (true)
-      {
         m_imgNoFocusLeft.Width =m_imgNoFocusLeft.TextureWidth;
         m_imgNoFocusMid.Width  =m_dwWidth - (m_imgNoFocusLeft.TextureWidth+m_imgNoFocusRight.TextureWidth);
         m_imgNoFocusRight.Width=m_imgNoFocusRight.TextureWidth;
 
+      while (true)
+      {
         width=m_imgNoFocusLeft.Width +m_imgNoFocusMid.Width+m_imgNoFocusRight.Width;
         if (width > m_dwWidth)
         {

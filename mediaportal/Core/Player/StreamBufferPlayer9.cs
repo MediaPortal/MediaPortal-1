@@ -218,7 +218,7 @@ namespace MediaPortal.Player
         Log.Write("StreamBufferPlayer9:cleanup DShow graph");
         try 
         {
-//          Log.Write("StreamBufferPlayer9:stop graph");
+          //          Log.Write("StreamBufferPlayer9:stop graph");
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();

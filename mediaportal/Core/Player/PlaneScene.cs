@@ -183,110 +183,118 @@ namespace MediaPortal.Player
 		{
       if (m_bStop) return;
 
-			lock(this) 
-			{
-				if (rTarget!=null) device.SetRenderTarget(0, rTarget);
-        if (GUIWindowManager.IsSwitchingToNewWindow) return;
-
-				
-				int iMaxSteps = 12;
-				// fade in
-				if (m_iFrame < iMaxSteps)
-				{
-					int iStep = 0xff / iMaxSteps;
-					if (m_bFadeIn)
-					{
-						m_lColorDiffuse = iStep * m_iFrame;
-						m_lColorDiffuse <<= 24;
-						m_lColorDiffuse |= 0xffffff;
-					}
-					else
-					{
-						m_lColorDiffuse = (iMaxSteps - iStep) * m_iFrame;
-						m_lColorDiffuse <<= 24;
-						m_lColorDiffuse |= 0xffffff;
-					}
-					m_iFrame++;
-				}
-				else 
-				{
-					m_lColorDiffuse = 0xFFffffff;
-				}
-
-        bool bPresent = SetVideoWindow(nativeSize);
-
-				device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-
-
-				device.BeginScene();
-
-				
-				bool bRenderGUIFirst = false;
-				if (!GUIGraphicsContext.IsFullScreenVideo)
-				{
-					if (GUIGraphicsContext.ShowBackground)
-					{
-						bRenderGUIFirst = true;
-					}
-				}
-				if (bRenderGUIFirst)
-				{
-          if (m_renderer != null) m_renderer.RenderFrame();
-        }
-  
-        if (bPresent)
+      lock(this) 
+      {
+        try
         {
-          device.SetTexture(0, tex);
-/*
-          device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
-          device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
-          device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
-				
-          device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
-				
-          device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
-          device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
-          device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
-          device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-				
-	      */
-          int g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-          //      float g_fMipMapLodBias=0.0f;
-          device.SamplerState[0].MinFilter=TextureFilter.Linear;
-          device.SamplerState[0].MagFilter=TextureFilter.Linear;
-          device.SamplerState[0].MipFilter=TextureFilter.Linear;
-          device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
+          if (device==null) return;
+          if (device.Disposed) return;
+          if (rTarget!=null) device.SetRenderTarget(0, rTarget);
+          if (GUIWindowManager.IsSwitchingToNewWindow) return;
 
-          //      device.SamplerState[0].MipMapLevelOfDetailBias=g_fMipMapLodBias;
-	      
-          device.SamplerState[1].MinFilter=TextureFilter.Linear;
-          device.SamplerState[1].MagFilter=TextureFilter.Linear;
-          device.SamplerState[1].MipFilter=TextureFilter.Linear;
-          device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
-/*
-          device.RenderState.ZBufferEnable=false;
-          device.RenderState.FogEnable=false;
-          device.RenderState.FogTableMode=Direct3D.FogMode.None;
-          device.RenderState.FillMode=Direct3D.FillMode.Solid;
-          device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-          device.RenderState.AlphaBlendEnable=true;
-          device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-          device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-*/
-          device.SetStreamSource(0, vertexBuffer, 0);
-          device.VertexFormat = CustomVertex.TransformedTextured.Format;
-          device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-          device.SetTexture(0, null);
+  				
+          int iMaxSteps = 12;
+          // fade in
+          if (m_iFrame < iMaxSteps)
+          {
+            int iStep = 0xff / iMaxSteps;
+            if (m_bFadeIn)
+            {
+              m_lColorDiffuse = iStep * m_iFrame;
+              m_lColorDiffuse <<= 24;
+              m_lColorDiffuse |= 0xffffff;
+            }
+            else
+            {
+              m_lColorDiffuse = (iMaxSteps - iStep) * m_iFrame;
+              m_lColorDiffuse <<= 24;
+              m_lColorDiffuse |= 0xffffff;
+            }
+            m_iFrame++;
+          }
+          else 
+          {
+            m_lColorDiffuse = 0xFFffffff;
+          }
+
+          bool bPresent = SetVideoWindow(nativeSize);
+
+          device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+
+
+          device.BeginScene();
+
+  				
+          bool bRenderGUIFirst = false;
+          if (!GUIGraphicsContext.IsFullScreenVideo)
+          {
+            if (GUIGraphicsContext.ShowBackground)
+            {
+              bRenderGUIFirst = true;
+            }
+          }
+          if (bRenderGUIFirst)
+          {
+            if (m_renderer != null) m_renderer.RenderFrame();
+          }
+    
+          if (bPresent)
+          {
+            device.SetTexture(0, tex);
+            /*
+                      device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
+                      device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
+                      device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
+  				
+                      device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
+  				
+                      device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
+                      device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
+                      device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
+                      device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
+  				
+                    */
+            int g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+            //      float g_fMipMapLodBias=0.0f;
+            device.SamplerState[0].MinFilter=TextureFilter.Linear;
+            device.SamplerState[0].MagFilter=TextureFilter.Linear;
+            device.SamplerState[0].MipFilter=TextureFilter.Linear;
+            device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
+
+            //      device.SamplerState[0].MipMapLevelOfDetailBias=g_fMipMapLodBias;
+  	      
+            device.SamplerState[1].MinFilter=TextureFilter.Linear;
+            device.SamplerState[1].MagFilter=TextureFilter.Linear;
+            device.SamplerState[1].MipFilter=TextureFilter.Linear;
+            device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
+            /*
+                      device.RenderState.ZBufferEnable=false;
+                      device.RenderState.FogEnable=false;
+                      device.RenderState.FogTableMode=Direct3D.FogMode.None;
+                      device.RenderState.FillMode=Direct3D.FillMode.Solid;
+                      device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
+                      device.RenderState.AlphaBlendEnable=true;
+                      device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
+                      device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
+            */
+            device.SetStreamSource(0, vertexBuffer, 0);
+            device.VertexFormat = CustomVertex.TransformedTextured.Format;
+            device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            device.SetTexture(0, null);
+          }
+
+          if (!bRenderGUIFirst)
+          {
+            if (m_renderer != null) m_renderer.RenderFrame();
+          }
+
+          device.EndScene();
+          device.Present();
         }
-
-        if (!bRenderGUIFirst)
+        catch (Exception)
         {
-          if (m_renderer != null) m_renderer.RenderFrame();
         }
-
-        device.EndScene();
-				device.Present();
-			}
+      }
 
 		}
 

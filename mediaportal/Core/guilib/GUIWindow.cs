@@ -197,7 +197,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="action">action : contains the action</param>
 		public virtual void OnAction(Action action)
 		{
-      lock (this)
+      //lock (this)
       {
 				try
 				{
@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>true if the message was handled, false if it wasnt</returns>
 		public virtual bool OnMessage(GUIMessage message)
 		{
-      lock (this)
+      //lock (this)
       {
 				try
 				{
