@@ -1,4 +1,13 @@
 History: (dd-mm-yyyy)
+  03-05-2004  my video    : added : fullscreen video: you can now enter time (hhmm) to jump to that part of the movie
+  03-05-2004  my video    : added : backspace: jump 5 secs back
+  03-05-2004  my video    : fixed : s=zoom/stretch/normal didnt work the 1st time
+  03-05-2004  general     : added : better mouse support for several GUI controls
+  03-05-2004  tvguide     : added : mouse support 
+  03-05-2004  tvguide     : added : show status while loading tvguide.xml
+  03-05-2004  tvguide     : added : press home to go back to current time
+  03-05-2004  tvguide     : added : now remembers current channel
+  
   02-05-2004  my music    : added : in folder view: folder.jpg is used for mp3s without album art
   02-05-2004  mytv        : added : stack/unstack setting was not saved
   02-05-2004  general     : added : tvcapture property settings are saved for filters which support it
@@ -15,7 +24,7 @@ History: (dd-mm-yyyy)
   02-05-2004  my tv       : fixed : scheduler->edit recording: dialog showed 'albums of'
   
   01-05-2004  my pictures : fixed : left/right didnt work anymore in zoom mode
-  01-05-2004  my pictures : fixed : pic >3.2 megs where tiled 
+  01-05-2004  my pictures : fixed : pics >3.2 megs where tiled 
   01-05-2004: general     : fixed : page number didnt show total pages
   01-05-2004: setup       : fixed : sorting channels in setup is 1,10,11,2,
   01-05-2004: my tv       : fixed : timezone correction corrected minutes instead of hours

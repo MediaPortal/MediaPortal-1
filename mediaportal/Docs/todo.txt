@@ -1,6 +1,6 @@
 Skin:
   - we need another version of music-play.png which will be shown when we're recording so
-    instead of the play symbol it should show the recording symbol (red filled rectangle)
+    instead of the play symbol it should show the recording symbol (red filled circle)
   - Home  : need special gfx for my tv
   - My Tv : need special gfx for my tv
 
@@ -40,13 +40,13 @@ My Music:
   - repeat none, once, always
   - tag readers for formats like ogg,flac,wma,...
   - CDDA playback with CDDB text
-  - use folder.jpg for album art
 
 Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - bookmarks
   - 1st time it takes a long time b4 OSD appears
   - OSD: when submenu is opened, dont use the osd timeout
+  - directvobsub interface
   
 Pictures:
   

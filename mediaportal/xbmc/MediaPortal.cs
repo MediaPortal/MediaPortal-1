@@ -437,6 +437,15 @@ public class MediaPortalApp : D3DApp
     base.mouseclick(e);
     if (!m_bShowCursor) return;
     Action action;
+
+    // first move mouse
+    float fX= ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
+    float fY= ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
+    float x =(fX*((float)m_iLastMousePositionX)) - GUIGraphicsContext.OffsetX;
+    float y =(fY*((float)m_iLastMousePositionY)) - GUIGraphicsContext.OffsetY;;
+    action=new Action(Action.ActionType.ACTION_MOUSE_MOVE,x,y);
+    OnAction(action);
+
     // right mouse button=back
     if (e.Button==MouseButtons.Right)
     {

@@ -647,6 +647,11 @@
       <description>default time</description>
       <id>88</id>
       <key>F1</key>
+    </action> 
+    <action>
+      <description>goto current time</description>
+      <id>96</id>
+      <key>HOME</key>
     </action>
     <action>
       <description>record</description>
@@ -757,5 +762,5 @@
       <key>F5</key>
     </action>
   </window>
- 
+
 </keymap>
