@@ -154,6 +154,16 @@
                     Project = "{3049EF7D-BE85-40E9-9EA4-81900BC543ED}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "System.DirectoryServices"
+                    AssemblyName = "System.DirectoryServices"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.DirectoryServices.dll"
+                />
+                <Reference
+                    Name = "TaskScheduler"
+                    AssemblyName = "TaskScheduler"
+                    HintPath = "..\TaskScheduler.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -239,6 +249,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "LaunchGuideScheduler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ParameterForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -300,6 +315,11 @@
                 />
                 <File
                     RelPath = "Startup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TaskScheduler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

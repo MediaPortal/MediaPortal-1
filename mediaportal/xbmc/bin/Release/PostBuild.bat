@@ -28,6 +28,7 @@ copy ..\..\..\GUIWeather\bin\Release\GUIWeather.dll plugins\windows
 copy ..\..\..\GUIMyMail\bin\Release\MyMailPlugin.dll plugins\windows
 copy ..\..\..\SMIReader\bin\Release\SMIReader.dll plugins\subtitle
 copy ..\..\..\SRTReader\bin\Release\SRTReader.dll plugins\subtitle
+copy ..\..\..\TVGuideScheduler\bin\Release\TVGuideScheduler.exe .
 
 copy ..\..\..\RadioDatabase\bin\release\RadioDatabase.dll .
 copy ..\..\..\MusicDatabase\bin\release\MusicDatabase.dll .
@@ -43,6 +44,7 @@ copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
+copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\mmedia\bin\Release\yeti.mmedia.dll plugins\TagReaders
 copy ..\..\..\wmfsdk\bin\Release\yeti.wmfsdk.dll plugins\TagReaders
 

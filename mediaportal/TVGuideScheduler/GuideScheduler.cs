@@ -1,0 +1,179 @@
+using System;
+using System.Text;
+using System.IO;
+using System.Xml;
+using System.Diagnostics;
+using System.Threading;
+using System.Collections;
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Database;
+using MediaPortal.Util;
+
+
+namespace MediaPortal.TVGuideScheduler
+{
+	class GetGuideData
+	{
+		public static void Main(string[] options)
+		{
+			string grabber=null;
+			int grabberDays;
+			string multiGrab;
+			string dayString;
+      string path;
+			string[] grabberSingleDays=null;
+			bool LoadFromFile=false;
+			string FileToImport=null;
+			bool RunConfig=false;
+			
+			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				grabber=xmlreader.GetValueAsString("xmltv", "grabber","tv_grab_uk_rt");
+				multiGrab=xmlreader.GetValueAsString("xmltv", "advanced","yes");
+				dayString=xmlreader.GetValueAsString("xmltv", "days","1,2,3,5,10");
+        path=xmlreader.GetValueAsString("xmltv", "folder","xmltv");
+      }
+			//check any command line arguments:
+			// /file (filename) - import xmltv data from file, and don't run grabber
+			// /configure - run the grabber with the --configure option
+			bool FileNext=false;
+			foreach(string s in options)
+			{
+				if (FileNext)
+				{
+					if (File.Exists(s)) 
+					{	
+						FileToImport=s;
+					}
+					else
+					{
+						//LoadFromFile=false;
+						Log.Write("TVGuideScheduler: /file option but invalid file name "+ s);
+					}
+					FileNext=false;
+				}
+
+				if (s.ToUpper()=="/FILE")
+				{
+					LoadFromFile=true;
+					FileNext=true;
+				}
+				if (s.ToUpper()=="/CONFIGURE") RunConfig=true;
+			}
+			
+			if (LoadFromFile)
+			{
+				if(File.Exists(FileToImport))
+				{
+					XMLTVImport importMulti= new XMLTVImport();
+					importMulti.Import(FileToImport,false);
+				}
+				else Log.Write("TVGuideScheduler: /file option but no filename ");
+
+			}
+			else
+			{
+        //for users not using XMLTV so they can import their listings into database 
+        if(grabber.ToLower()=="tvguide.xml file")
+        {
+          //check file is not empty then import file into database
+          FileInfo file = new FileInfo(path + "\\TVguide.xml");
+          if (file.Length >250) //to indicate that it contains some data
+          {
+            XMLTVImport importFile= new XMLTVImport();
+            importFile.Import(path + "\\TVGuide.xml",false);
+          }
+          else
+          {
+            Log.Write("TVGuideScheduler: XML file is empty - "+file);
+          }
+        }
+        else
+        {
+          Grabber grab = new Grabber(grabber.ToLower());
+				  string strEXEpath=System.IO.Path.GetFullPath(grab.Output);
+  				
+				  //check if there is a .conf file for the grabber, or /configure on command line
+				  //if not found run xmltv.exe with the --configure to set channels
+          if (grab.GrabberName != "tv_grab_nl_wolf")
+          {
+            if ((!File.Exists(grab.Output + "\\" + grab.GrabberName + ".conf"))||(RunConfig)) 
+              XMLTVgrab.GrabberConfigure(grab.GrabberName,grab.Output);
+          }
+            if (multiGrab == "yes")
+            {
+              grabberSingleDays = dayString.Split(new Char[] {','});
+              XMLTVgrab.BuildThreads(grabberSingleDays,grab.GrabberName,grab.ConfigFile,strEXEpath,grab.Output,grab.Options);
+              // check file is not empty then import single day files into database
+              foreach (string s in grabberSingleDays)
+              {
+                FileInfo file = new FileInfo(grab.Output+ "\\TVguide" + System.Convert.ToInt32(s)+".xml");
+                if (file.Length >250) //to indicate that it contains some data
+                {
+                  XMLTVImport importSingle= new XMLTVImport();
+                  importSingle.Import(grab.Output+ "\\TVguide" + System.Convert.ToInt32(s)+".xml",false);
+                }
+                else
+                {
+                  Log.Write("TVGuideScheduler: XML file is empty - "+file);
+                }
+              }
+            }
+            else
+            {
+              TimeSpan daysInGuide;
+              string lastGuideDate=TVDatabase.GetLastProgramEntry();
+              if (lastGuideDate =="")
+              {
+                grabberDays = grab.GuideDays;
+                daysInGuide= DateTime.Now - DateTime.Now;
+              }
+              else 
+              {
+                DateTime lastProg=Utils.longtodate(System.Convert.ToInt64(lastGuideDate));
+                daysInGuide= lastProg - DateTime.Now;
+                grabberDays= grab.GuideDays - System.Convert.ToInt32(daysInGuide.Days);
+              }
+              int offset = 0;
+              if (System.Convert.ToInt32(daysInGuide.Days) < 0)
+              {
+                Log.Write("TVGuideScheduler: /already more days in guide than configured, exiting");
+                return;
+              }
+              if (System.Convert.ToInt32(daysInGuide.Days)==0)
+              {
+                offset = System.Convert.ToInt32(daysInGuide.Days);
+              }
+              else
+              {
+                offset = System.Convert.ToInt32(daysInGuide.Days)+1;
+              }
+
+              if (grab.GrabberName == "tv_grab_nl_wolf")
+              {
+                XMLTVgrab.RunGrabber(grab.GrabberName,strEXEpath,grab.Output,grabberDays,offset);
+              }
+              else
+              {
+                XMLTVgrab.RunGrabber(grab.GrabberName,grab.ConfigFile,strEXEpath,grab.Output,grabberDays,offset,grab.Options);
+              }
+              //check file is not empty then import multi day file into database
+              FileInfo file = new FileInfo(grab.Output+ "\\TVguide.xml");
+              if (file.Length >250) //to indicate that it contains some data
+              {
+                XMLTVImport importMulti= new XMLTVImport();
+                importMulti.Import(grab.Output+ "\\TVGuide.xml",false);
+              }
+              else
+              {
+                Log.Write("TVGuideScheduler: XML file is empty - "+file);
+              }
+          } 
+            TVDatabase.RemoveOldPrograms();
+        }
+			}
+		}
+
+	}
+
+}

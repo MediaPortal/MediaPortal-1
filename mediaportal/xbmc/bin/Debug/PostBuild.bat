@@ -39,7 +39,8 @@ copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
-
+copy ..\..\..\TaskScheduler.dll .
+copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders

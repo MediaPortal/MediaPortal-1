@@ -9,8 +9,9 @@ namespace MediaPortal.Configuration.Sections
 	public class TVProgramGuide : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-		private MediaPortal.UserInterface.Controls.MPCheckBox useColorCheckBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useColorCheckBox;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.ComboBox GrabbercomboBox;
@@ -30,6 +31,22 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label1;
 		protected System.Windows.Forms.RadioButton advancedRadioButton;
 		protected System.Windows.Forms.RadioButton basicRadioButton;
+    private MediaPortal.UserInterface.Controls.MPCheckBox createScheduleCheckBox;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.Label label10;
+    private System.Windows.Forms.TextBox hoursTextBox;
+    private System.Windows.Forms.TextBox dayIntervalTextBox;
+    private System.Windows.Forms.TextBox minutesTextBox;
+    private System.Windows.Forms.Button RunGrabberButton;
+    private System.Windows.Forms.TextBox UserTextBox;
+    private System.Windows.Forms.TextBox PasswordTextBox;
+    private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.Label label12;
+    private System.Windows.Forms.Button DeleteTaskButton;
+    private System.Windows.Forms.Label label14;
+    private System.Windows.Forms.Label label13;
 		private System.ComponentModel.IContainer components = null;
 
 		public TVProgramGuide() : this("Program Guide")
@@ -72,6 +89,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.useColorCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.RunGrabberButton = new System.Windows.Forms.Button();
       this.advancedRadioButton = new System.Windows.Forms.RadioButton();
       this.label2 = new System.Windows.Forms.Label();
       this.compensateTextBox = new System.Windows.Forms.TextBox();
@@ -90,9 +108,26 @@ namespace MediaPortal.Configuration.Sections
       this.GrabbercomboBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
       this.basicRadioButton = new System.Windows.Forms.RadioButton();
+      this.label14 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
+      this.dayIntervalTextBox = new System.Windows.Forms.TextBox();
+      this.minutesTextBox = new System.Windows.Forms.TextBox();
+      this.label8 = new System.Windows.Forms.Label();
+      this.hoursTextBox = new System.Windows.Forms.TextBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.createScheduleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.UserTextBox = new System.Windows.Forms.TextBox();
+      this.PasswordTextBox = new System.Windows.Forms.TextBox();
+      this.label11 = new System.Windows.Forms.Label();
+      this.label12 = new System.Windows.Forms.Label();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label13 = new System.Windows.Forms.Label();
+      this.DeleteTaskButton = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
+      this.groupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -103,7 +138,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 64);
+      this.groupBox1.Size = new System.Drawing.Size(440, 48);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
@@ -111,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
       // useColorCheckBox
       // 
       this.useColorCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.useColorCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.useColorCheckBox.Location = new System.Drawing.Point(16, 16);
       this.useColorCheckBox.Name = "useColorCheckBox";
       this.useColorCheckBox.Size = new System.Drawing.Size(308, 24);
       this.useColorCheckBox.TabIndex = 0;
@@ -121,6 +156,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.RunGrabberButton);
       this.groupBox2.Controls.Add(this.advancedRadioButton);
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.compensateTextBox);
@@ -139,23 +175,36 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.GrabbercomboBox);
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.basicRadioButton);
+      this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 80);
+      this.groupBox2.Location = new System.Drawing.Point(8, 56);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 288);
+      this.groupBox2.Size = new System.Drawing.Size(440, 256);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "XMLTV Settings";
+      this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+      // 
+      // RunGrabberButton
+      // 
+      this.RunGrabberButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.RunGrabberButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.RunGrabberButton.Location = new System.Drawing.Point(344, 224);
+      this.RunGrabberButton.Name = "RunGrabberButton";
+      this.RunGrabberButton.Size = new System.Drawing.Size(80, 20);
+      this.RunGrabberButton.TabIndex = 64;
+      this.RunGrabberButton.Text = "Run Grabber";
+      this.RunGrabberButton.Click += new System.EventHandler(this.RunGrabberButton_Click);
       // 
       // advancedRadioButton
       // 
       this.advancedRadioButton.Enabled = false;
       this.advancedRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.advancedRadioButton.Location = new System.Drawing.Point(16, 219);
+      this.advancedRadioButton.Location = new System.Drawing.Point(16, 200);
       this.advancedRadioButton.Name = "advancedRadioButton";
-      this.advancedRadioButton.Size = new System.Drawing.Size(184, 24);
+      this.advancedRadioButton.Size = new System.Drawing.Size(160, 24);
       this.advancedRadioButton.TabIndex = 55;
-      this.advancedRadioButton.Text = "Advanced Single Day Grab";
+      this.advancedRadioButton.Text = "Advanced Single Day Grabs";
       this.advancedRadioButton.CheckedChanged += new System.EventHandler(this.advancedRadioButton_CheckedChanged);
       // 
       // label2
@@ -223,16 +272,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(32, 247);
+      this.label6.Location = new System.Drawing.Point(184, 204);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(136, 16);
+      this.label6.Size = new System.Drawing.Size(104, 16);
       this.label6.TabIndex = 44;
-      this.label6.Text = "Advanced days";
+      this.label6.Text = "Days to download";
       // 
       // daysToKeepTextBox
       // 
       this.daysToKeepTextBox.Enabled = false;
-      this.daysToKeepTextBox.Location = new System.Drawing.Point(168, 194);
+      this.daysToKeepTextBox.Location = new System.Drawing.Point(312, 176);
       this.daysToKeepTextBox.MaxLength = 3;
       this.daysToKeepTextBox.Name = "daysToKeepTextBox";
       this.daysToKeepTextBox.Size = new System.Drawing.Size(40, 20);
@@ -265,9 +314,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(16, 140);
+      this.label7.Location = new System.Drawing.Point(16, 139);
       this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(80, 23);
+      this.label7.Size = new System.Drawing.Size(80, 16);
       this.label7.TabIndex = 37;
       this.label7.Text = "Parameters";
       // 
@@ -276,16 +325,16 @@ namespace MediaPortal.Configuration.Sections
       this.AdvancedDaystextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.AdvancedDaystextBox.Enabled = false;
-      this.AdvancedDaystextBox.Location = new System.Drawing.Point(168, 245);
+      this.AdvancedDaystextBox.Location = new System.Drawing.Point(312, 200);
       this.AdvancedDaystextBox.Name = "AdvancedDaystextBox";
-      this.AdvancedDaystextBox.Size = new System.Drawing.Size(192, 20);
+      this.AdvancedDaystextBox.Size = new System.Drawing.Size(112, 20);
       this.AdvancedDaystextBox.TabIndex = 36;
       this.AdvancedDaystextBox.Text = "";
       this.AdvancedDaystextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AdvancedDaystextBox_KeyPress);
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(32, 198);
+      this.label4.Location = new System.Drawing.Point(184, 178);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(144, 16);
       this.label4.TabIndex = 30;
@@ -315,21 +364,181 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.basicRadioButton.Enabled = false;
       this.basicRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.basicRadioButton.Location = new System.Drawing.Point(16, 170);
+      this.basicRadioButton.Location = new System.Drawing.Point(16, 174);
       this.basicRadioButton.Name = "basicRadioButton";
       this.basicRadioButton.Size = new System.Drawing.Size(192, 24);
       this.basicRadioButton.TabIndex = 54;
       this.basicRadioButton.Text = "Basic Multiday Grab";
       this.basicRadioButton.CheckedChanged += new System.EventHandler(this.basicRadioButton_CheckedChanged);
       // 
+      // label14
+      // 
+      this.label14.Location = new System.Drawing.Point(184, 176);
+      this.label14.Name = "label14";
+      this.label14.Size = new System.Drawing.Size(144, 16);
+      this.label14.TabIndex = 30;
+      this.label14.Text = "Days to keep in guide";
+      // 
+      // label10
+      // 
+      this.label10.Location = new System.Drawing.Point(312, 26);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(40, 16);
+      this.label10.TabIndex = 63;
+      this.label10.Text = "day(s)";
+      // 
+      // label9
+      // 
+      this.label9.Location = new System.Drawing.Point(244, 26);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(34, 16);
+      this.label9.TabIndex = 62;
+      this.label9.Text = "Every";
+      // 
+      // dayIntervalTextBox
+      // 
+      this.dayIntervalTextBox.Location = new System.Drawing.Point(279, 24);
+      this.dayIntervalTextBox.Name = "dayIntervalTextBox";
+      this.dayIntervalTextBox.Size = new System.Drawing.Size(32, 20);
+      this.dayIntervalTextBox.TabIndex = 61;
+      this.dayIntervalTextBox.Text = "";
+      this.dayIntervalTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dayIntervalTextBox_KeyPress);
+      // 
+      // minutesTextBox
+      // 
+      this.minutesTextBox.Location = new System.Drawing.Point(211, 24);
+      this.minutesTextBox.Name = "minutesTextBox";
+      this.minutesTextBox.Size = new System.Drawing.Size(32, 20);
+      this.minutesTextBox.TabIndex = 60;
+      this.minutesTextBox.Text = "";
+      this.minutesTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.minutesTextBox_KeyPress);
+      // 
+      // label8
+      // 
+      this.label8.Location = new System.Drawing.Point(170, 26);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(40, 16);
+      this.label8.TabIndex = 59;
+      this.label8.Text = "Minute";
+      // 
+      // hoursTextBox
+      // 
+      this.hoursTextBox.Location = new System.Drawing.Point(137, 24);
+      this.hoursTextBox.Name = "hoursTextBox";
+      this.hoursTextBox.Size = new System.Drawing.Size(32, 20);
+      this.hoursTextBox.TabIndex = 58;
+      this.hoursTextBox.Text = "";
+      this.hoursTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.hoursTextBox_KeyPress);
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(104, 26);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(32, 16);
+      this.label5.TabIndex = 57;
+      this.label5.Text = "Hours";
+      // 
+      // createScheduleCheckBox
+      // 
+      this.createScheduleCheckBox.Checked = true;
+      this.createScheduleCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.createScheduleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.createScheduleCheckBox.Location = new System.Drawing.Point(16, 26);
+      this.createScheduleCheckBox.Name = "createScheduleCheckBox";
+      this.createScheduleCheckBox.Size = new System.Drawing.Size(88, 16);
+      this.createScheduleCheckBox.TabIndex = 56;
+      this.createScheduleCheckBox.Text = "Create Task";
+      this.createScheduleCheckBox.CheckedChanged += new System.EventHandler(this.createScheduleCheckBox_CheckedChanged);
+      // 
+      // UserTextBox
+      // 
+      this.UserTextBox.Location = new System.Drawing.Point(168, 56);
+      this.UserTextBox.Name = "UserTextBox";
+      this.UserTextBox.Size = new System.Drawing.Size(96, 20);
+      this.UserTextBox.TabIndex = 65;
+      this.UserTextBox.Text = "";
+      // 
+      // PasswordTextBox
+      // 
+      this.PasswordTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.PasswordTextBox.Location = new System.Drawing.Point(328, 56);
+      this.PasswordTextBox.Name = "PasswordTextBox";
+      this.PasswordTextBox.Size = new System.Drawing.Size(96, 20);
+      this.PasswordTextBox.TabIndex = 66;
+      this.PasswordTextBox.Text = "";
+      // 
+      // label11
+      // 
+      this.label11.Location = new System.Drawing.Point(88, 57);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(72, 18);
+      this.label11.TabIndex = 67;
+      this.label11.Text = "User account";
+      // 
+      // label12
+      // 
+      this.label12.Location = new System.Drawing.Point(272, 58);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(56, 16);
+      this.label12.TabIndex = 68;
+      this.label12.Text = "Password";
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.label13);
+      this.groupBox3.Controls.Add(this.DeleteTaskButton);
+      this.groupBox3.Controls.Add(this.createScheduleCheckBox);
+      this.groupBox3.Controls.Add(this.label5);
+      this.groupBox3.Controls.Add(this.label10);
+      this.groupBox3.Controls.Add(this.label9);
+      this.groupBox3.Controls.Add(this.dayIntervalTextBox);
+      this.groupBox3.Controls.Add(this.minutesTextBox);
+      this.groupBox3.Controls.Add(this.label8);
+      this.groupBox3.Controls.Add(this.hoursTextBox);
+      this.groupBox3.Controls.Add(this.label11);
+      this.groupBox3.Controls.Add(this.label12);
+      this.groupBox3.Controls.Add(this.PasswordTextBox);
+      this.groupBox3.Controls.Add(this.UserTextBox);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox3.Location = new System.Drawing.Point(8, 312);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(440, 104);
+      this.groupBox3.TabIndex = 69;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Windows Task Scheduler Settings";
+      // 
+      // label13
+      // 
+      this.label13.Location = new System.Drawing.Point(16, 80);
+      this.label13.Name = "label13";
+      this.label13.Size = new System.Drawing.Size(415, 16);
+      this.label13.TabIndex = 70;
+      this.label13.Text = "NOTE: Windows will not run a task if the user does not have a password assigned";
+      // 
+      // DeleteTaskButton
+      // 
+      this.DeleteTaskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.DeleteTaskButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.DeleteTaskButton.Location = new System.Drawing.Point(352, 24);
+      this.DeleteTaskButton.Name = "DeleteTaskButton";
+      this.DeleteTaskButton.Size = new System.Drawing.Size(74, 20);
+      this.DeleteTaskButton.TabIndex = 69;
+      this.DeleteTaskButton.Text = "Delete Task";
+      this.DeleteTaskButton.Click += new System.EventHandler(this.DeleteTaskButton_Click);
+      // 
       // TVProgramGuide
       // 
+      this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "TVProgramGuide";
       this.Size = new System.Drawing.Size(456, 448);
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -345,11 +554,14 @@ namespace MediaPortal.Configuration.Sections
       GrabbercomboBox.Items.Add("tv_grab_fr");
       GrabbercomboBox.Items.Add("tv_grab_huro");
       GrabbercomboBox.Items.Add("tv_grab_it");
+      GrabbercomboBox.Items.Add("tv_grab_na_dd");
       GrabbercomboBox.Items.Add("tv_grab_nl");
+      GrabbercomboBox.Items.Add("tv_grab_nl_wolf");
       GrabbercomboBox.Items.Add("tv_grab_no");
       GrabbercomboBox.Items.Add("tv_grab_pt");
       GrabbercomboBox.Items.Add("tv_grab_se");
       GrabbercomboBox.Items.Add("tv_grab_uk_rt");
+      GrabbercomboBox.Items.Add("TVguide.xml File");
     }
 
 		public override void LoadSettings()
@@ -369,8 +581,30 @@ namespace MediaPortal.Configuration.Sections
 				daysToKeepTextBox.Text = xmlreader.GetValueAsString("xmltv","daystokeep", "7");
 				advancedRadioButton.Checked = xmlreader.GetValueAsBool("xmltv", "advanced", false);
 				basicRadioButton.Checked = !advancedRadioButton.Checked;
-
 			}						
+      short[] taskSettings = new short[3];
+      string userAccount = null;
+      int index = 0;
+      bool taskExists = TaskScheduler.GetTask(ref taskSettings, ref userAccount);
+      hoursTextBox.Text = taskSettings[0].ToString();
+      if (hoursTextBox.Text.Length==1) hoursTextBox.Text="0"+taskSettings[0];
+      minutesTextBox.Text = taskSettings[1].ToString();
+      if (minutesTextBox.Text.Length==1) minutesTextBox.Text="0"+taskSettings[1];
+      dayIntervalTextBox.Text = taskSettings[2].ToString();
+      if (userAccount != null && userAccount != "")
+      {  
+        index = userAccount.IndexOf(@"\");
+        if (index > 0) index++;
+        UserTextBox.Text=userAccount.Substring(index);
+      }
+      if (taskExists)
+      {
+        DeleteTaskButton.Enabled=true;
+      }
+      else
+      {
+        DeleteTaskButton.Enabled=false;
+      }
 		}
 
 		public override void SaveSettings()
@@ -389,6 +623,16 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("xmltv", "days",AdvancedDaystextBox.Text);
 				xmlwriter.SetValue("xmltv", "args",parametersTextBox.Text);
 			}
+      if (createScheduleCheckBox.Checked)
+        {
+        if (System.Convert.ToInt32(hoursTextBox.Text) > 23) hoursTextBox.Text="23";
+        if (System.Convert.ToInt32(minutesTextBox.Text) > 59) minutesTextBox.Text="59";
+        if (System.Convert.ToInt32(dayIntervalTextBox.Text) < 1) dayIntervalTextBox.Text="1";
+        TaskScheduler.CreateTask(System.Convert.ToInt16(hoursTextBox.Text),
+          System.Convert.ToInt16(minutesTextBox.Text),
+          System.Convert.ToInt16(dayIntervalTextBox.Text),
+          UserTextBox.Text,PasswordTextBox.Text);
+      }
 		}
 
 		private void compensateTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -450,6 +694,15 @@ namespace MediaPortal.Configuration.Sections
         AdvancedDaystextBox.Enabled = advancedRadioButton.Checked;
         daysToKeepTextBox.Enabled = basicRadioButton.Checked;
       }
+      if(GrabbercomboBox.Text=="TVguide.xml File")
+      {
+        advancedRadioButton.Enabled = false;
+        basicRadioButton.Enabled = false;
+        AdvancedDaystextBox.Enabled = false;
+        daysToKeepTextBox.Enabled = false;
+        parametersTextBox.Enabled = false;
+        parametersButton.Enabled =false;
+      }    
     }
 
     private void GrabbercomboBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -468,7 +721,7 @@ namespace MediaPortal.Configuration.Sections
 			
       if(GrabbercomboBox.Text==("tv_grab_dk") | GrabbercomboBox.Text==("tv_grab_es") | GrabbercomboBox.Text==("tv_grab_es_digital")
         | GrabbercomboBox.Text==("tv_grab_fi") | GrabbercomboBox.Text==("tv_grab_huro") | GrabbercomboBox.Text==("tv_grab_no")
-        | GrabbercomboBox.Text==("tv_grab_pt") | GrabbercomboBox.Text==("tv_grab_se"))
+        | GrabbercomboBox.Text==("tv_grab_pt") | GrabbercomboBox.Text==("tv_grab_se") | GrabbercomboBox.Text==("tv_grab_nl_wolf"))
       {
         parameters.AddParameter("", "No options available for this grabber");
       }
@@ -486,6 +739,14 @@ namespace MediaPortal.Configuration.Sections
       {
         parameters.AddParameter("--slow", "Fetch full program details (but takes longer)");
         parameters.AddParameter("--slow --get-categories", "Fetch full program details and categories (but takes even longer)");
+      }
+      else if(GrabbercomboBox.Text=="tv_grab_na_dd")
+      {
+        parameters.AddParameter("--auto-config add", "Appends new channels to the config file");
+        parameters.AddParameter("--auto-config ignore", "Ignore new channels");
+        parameters.AddParameter("--old-chan-id", "Use old tv_grab_na style channel ids");
+        parameters.AddParameter("--old-chan-id --auto-config add", "Old tv_grab_na style channel ids and append new channels");
+        parameters.AddParameter("--old-chan-id --auto-config ignore", "Old tv_grab_na style channel ids and ignore new channels");
       }
 
       if(parameters.ShowDialog(parametersButton) == DialogResult.OK)
@@ -527,6 +788,77 @@ namespace MediaPortal.Configuration.Sections
         AdvancedDaystextBox.Enabled = true;
         daysToKeepTextBox.Enabled = false;
       }
+    }
+    protected void createScheduleCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (createScheduleCheckBox.Checked)
+      {
+        hoursTextBox.Enabled = true;
+        minutesTextBox.Enabled = true;
+        dayIntervalTextBox.Enabled = true;
+        UserTextBox.Enabled = true;
+        PasswordTextBox.Enabled = true;
+      }
+      else
+      {
+        hoursTextBox.Enabled = false;
+        minutesTextBox.Enabled = false;
+        dayIntervalTextBox.Enabled = false;
+        UserTextBox.Enabled = false;
+        PasswordTextBox.Enabled = false;
+      }
+    }
+    private void DeleteTaskButton_Click(object sender, System.EventArgs e)
+    {
+      TaskScheduler.DeleteTask();
+      hoursTextBox.Text="01";
+      minutesTextBox.Text="00";
+      dayIntervalTextBox.Text="1";
+      UserTextBox.Text="";
+      PasswordTextBox.Text="";
+      createScheduleCheckBox.Checked=false;
+      DeleteTaskButton.Enabled=false;
+    }
+    private void dayIntervalTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      //
+      // Allow only numbers, and backspace.
+      //
+      if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+    private void hoursTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      //
+      // Allow only numbers, and backspace.
+      //
+      if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+    private void minutesTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      //
+      // Allow only numbers, and backspace.
+      //
+      if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+
+    private void RunGrabberButton_Click(object sender, System.EventArgs e)
+    {
+      SaveSettings();
+			SetupGrabber.LaunchGuideScheduler();				
+    }
+
+    private void groupBox2_Enter(object sender, System.EventArgs e)
+    {
+    
     }
 	}
 }
