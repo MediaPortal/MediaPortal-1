@@ -146,6 +146,7 @@ namespace MediaPortal.Player
 			{
 				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+				videoWin.put_MessageDrain(GUIGraphicsContext.ActiveForm);
 			}
 			if (basicVideo!=null)
 			{
