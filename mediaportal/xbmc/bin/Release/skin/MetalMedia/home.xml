@@ -55,6 +55,8 @@
 		<height>32</height>
 		<label>605</label>
 		<font>font16</font>
+		<textureFocus>button_empty.png</textureFocus>
+		<textureNoFocus>buttonNF_empty.png</textureNoFocus>
 		<visible>no</visible>
 	</control>
 	<control>

@@ -2,6 +2,7 @@
 	<id>3004</id>
 	<defaultcontrol>11</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+  <autohidetopbar>no</autohidetopbar>
 <controls>
 	<control>
 		<type>image</type>

@@ -151,7 +151,7 @@
 				<width>410</width>
 				<height>300</height>
 				<onleft>26</onleft>
-				<onright>24</onright>
+				<onright>51</onright>
 				<onup>24</onup>
 				<ondown>24</ondown>
 			</control>
@@ -164,7 +164,7 @@
 				<posY>200</posY>
 				<width>410</width>
 				<height>300</height>
-				<onleft>26</onleft>
+				<onleft>24</onleft>
 				<onright>51</onright>
 				<onup>27</onup>
 				<ondown>51</ondown>

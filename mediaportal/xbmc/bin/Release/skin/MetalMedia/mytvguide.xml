@@ -229,7 +229,7 @@
 		<visible>no</visible>
 		<id>30</id>
 		<label>-</label>
-		<font>font13</font>
+		<font>font10</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 

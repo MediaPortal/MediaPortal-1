@@ -63,7 +63,7 @@
 			<posX>55</posX>
 			<posY>143</posY>
 			<label>103</label>
-			<onleft>50</onleft>
+			<onleft>3</onleft>
 			<onright>4</onright>
 			<onup>2</onup>
 			<ondown>6</ondown>
@@ -96,7 +96,7 @@
 			<posX>55</posX>
 			<posY>189</posY>
 			<label>457</label>
-			<onleft>50</onleft>
+			<onleft>6</onleft>
 			<onright>50</onright>
 			<onup>3</onup>
 			<ondown>7</ondown>
@@ -116,7 +116,7 @@
 			<posX>55</posX>
 			<posY>217</posY>
 			<label>136</label>
-			<onleft>50</onleft>
+			<onleft>7</onleft>
 			<onright>50</onright>
 			<onup>6</onup>
 			<ondown>8</ondown>
@@ -128,7 +128,7 @@
 			<posX>55</posX>
 			<posY>273</posY>
 			<label>193</label>
-			<onleft>50</onleft>
+			<onleft>9</onleft>
 			<onright>50</onright>
 			<onup>8</onup>
 			<ondown>10</ondown>
@@ -140,21 +140,33 @@
 			<posX>55</posX>
 			<posY>245</posY>
 			<label>137</label>
-			<onleft>50</onleft>
+			<onleft>8</onleft>
 			<onright>50</onright>
 			<onup>7</onup>
 			<ondown>9</ondown>
 		</control>
 		<control>
-			<description>Eject Disc</description>
+			<description>Play Disc</description>
 			<type>button</type>
 			<id>10</id>
 			<posX>55</posX>
 			<posY>301</posY>
-			<label>654</label>
-			<onleft>50</onleft>
+			<label>890</label>
+			<onleft>10</onleft>
 			<onright>50</onright>
 			<onup>9</onup>
+			<ondown>11</ondown>
+		</control>
+		<control>
+			<description>Eject Disc</description>
+			<type>button</type>
+			<id>11</id>
+			<posX>55</posX>
+			<posY>329</posY>
+			<label>654</label>
+			<onleft>11</onleft>
+			<onright>50</onright>
+			<onup>10</onup>
 			<ondown>2</ondown>
 			<action>100</action>
 		</control>

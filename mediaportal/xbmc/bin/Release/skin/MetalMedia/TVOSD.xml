@@ -77,29 +77,30 @@
 		<label>#TV.View.description</label>
 		<font>font10</font>
 		<textcolor>FF000000</textcolor>
+		<seperator>----------------------------------------</seperator>
 	</control>
 	<control>
 		<description>On tv NOW</description>
 		<id>36</id>
 		<type>textbox</type>
-		<width>500</width>
+		<width>285</width>
 		<height>60</height>
 		<posX>370</posX>
 		<posY>439</posY>
 		<align>left</align>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>On tv NEXT</description>
 		<id>37</id>
 		<type>textbox</type>
-		<width>500</width>
+		<width>285</width>
 		<height>60</height>
 		<posX>370</posX>
 		<posY>456</posY>
 		<align>left</align>
-		<font>font20</font>
+		<font>font13</font>
 		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
@@ -779,10 +780,10 @@
 		<description>TV Logo</description>
 		<type>image</type>
 		<id>10</id>
-		<posX>60</posX>
-		<posY>60</posY>
-		<width>60</width>
-		<height>60</height>
+		<posX>612</posX>
+		<posY>518</posY>
+		<width>35</width>
+		<height>35</height>
 		<texture>-</texture>
 		<visible>yes</visible>
 	</control>
