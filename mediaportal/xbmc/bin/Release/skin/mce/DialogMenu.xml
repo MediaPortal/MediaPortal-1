@@ -10,7 +10,7 @@
 	<posY>195</posY> 
 	<width>489</width> 
 	<height>320</height> 
-	<texture>dialog_background.png</texture> 
+	<texture>context_background.png</texture> 
   </control>
 	<control>
 		<description>Heading text label</description> 
