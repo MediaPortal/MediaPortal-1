@@ -24,7 +24,7 @@
 				<description>Show HTML Button</description>
 				<type>button</type>
 				<id>25</id>
-				<posX>20</posX>
+				<posX>60</posX>
 				<posY>97</posY>
 				<width>175</width>
 				<label>8034</label>
@@ -37,7 +37,7 @@
 				<description>Mail Read Button</description>
 				<type>button</type>
 				<id>26</id>
-				<posX>20</posX>
+				<posX>60</posX>
 				<posY>131</posY>
 				<width>175</width>
 				<label>8021</label>
@@ -50,7 +50,7 @@
 				<description>Attachments</description>
 				<type>button</type>
 				<id>27</id>
-				<posX>20</posX>
+				<posX>60</posX>
 				<posY>165</posY>
 				<width>175</width>
 				<label>8022</label>
@@ -63,7 +63,7 @@
 				<description>Message label</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>20</posX>
+				<posX>60</posX>
 				<posY>205</posY>
 				<label>8019</label>
 				<font>font13</font>
@@ -73,9 +73,9 @@
 				<description>From value</description>
 				<type>label</type>
 				<id>20</id>
-				<posX>300</posX>
+				<posX>340</posX>
 				<posY>100</posY>
-				<width>340</width>
+				<width>300</width>
 				<label>-</label>
 				<font>font13</font>
 				<align>left</align>
@@ -85,7 +85,7 @@
 				<description>From</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>220</posX>
+				<posX>260</posX>
 				<posY>100</posY>
 				<label>8016</label>
 				<font>font13</font>
@@ -95,7 +95,7 @@
 				<description>To</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>220</posX>
+				<posX>260</posX>
 				<posY>120</posY>
 				<label>8017</label>
 				<font>font13</font>
@@ -105,7 +105,7 @@
 				<description>Subject</description>
 				<type>label</type>
 				<id>1</id>
-				<posX>220</posX>
+				<posX>260</posX>
 				<posY>140</posY>
 				<label>8018</label>
 				<font>font13</font>
@@ -115,9 +115,9 @@
 				<description>To value</description>
 				<type>label</type>
 				<id>21</id>
-				<posX>300</posX>
+				<posX>340</posX>
 				<posY>120</posY>
-				<width>340</width>
+				<width>300</width>
 				<label>-</label>
 				<font>font13</font>
 				<textcolor>FFFFFFFF</textcolor>
@@ -126,9 +126,9 @@
 				<description>Subject value</description>
 				<type>fadelabel</type>
 				<id>22</id>
-				<posX>300</posX>
+				<posX>340</posX>
 				<posY>140</posY>
-				<width>340</width>
+				<width>300</width>
 				<label>-</label>
 				<font>font13</font>
 				<textcolor>FFFFFFFF</textcolor>
@@ -150,9 +150,9 @@
 				<description>pic tumbview</description>
 				<type>thumbnailpanel</type>
 				<id>51</id>
-				<posX>20</posX>
+				<posX>60</posX>
 				<posY>225</posY>
-				<width>640</width>
+				<width>600</width>
 				<height>350</height>
 				<onup>27</onup>
 			</control>
