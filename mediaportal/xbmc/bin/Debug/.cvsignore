@@ -1,0 +1,8 @@
+*.dll
+*.exe
+*.cfg
+*.pdb
+MediaPortal.xml
+PostBuildEvent.bat
+plugins
+database
