@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Library
     DateTime                        m_AnimationTime=DateTime.MinValue;
     bool                            ContainsProperty=false;
     StateBlock                      savedStateBlock;
-		Sprite													imageSprite=null;
+		//Sprite													imageSprite=null;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
@@ -306,8 +306,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void AllocResources()
 		{
-      CreateStateBlock();
-			imageSprite = new Sprite(GUIGraphicsContext.DX9Device);
+			//imageSprite = new Sprite(GUIGraphicsContext.DX9Device);
 
       g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
 			if (m_strFileName=="-") return;
@@ -348,11 +347,11 @@ namespace MediaPortal.GUI.Library
 		{
       lock (this)
       {
-				if (imageSprite!=null)
-				{
-					imageSprite .Dispose();
-					imageSprite =null;
-				}
+				//if (imageSprite!=null)
+				//{
+				//	imageSprite .Dispose();
+				//	imageSprite =null;
+				//}
         m_strTextureFileName="";
         if (m_vbBuffer!=null)
         {
@@ -540,7 +539,6 @@ namespace MediaPortal.GUI.Library
             m_strTextureFileName =m_strTxt;
             if (m_strTxt.Length==0)
             {
-              IsVisible=false;
               return;
             }
             IsVisible=true;

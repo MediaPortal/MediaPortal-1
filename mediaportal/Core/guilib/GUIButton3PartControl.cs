@@ -318,8 +318,11 @@ namespace MediaPortal.GUI.Library
 			}
       set
       {
-				if (m_imgIcon!=null)
-					m_imgIcon.SetFileName(value);
+        if (m_imgIcon!=null)
+        {
+          m_imgIcon.SetFileName(value);
+          DoUpdate();
+        }
       }
     }
 		
@@ -538,20 +541,24 @@ namespace MediaPortal.GUI.Library
 
 			if (m_imgIcon!=null)
 			{
-				if (m_dwWidth<m_imgIcon.TextureWidth)
-					m_imgIcon.IsVisible=false;
-				else
-					m_imgIcon.IsVisible=true;
-
 				if (IconOffsetY<0 || IconOffsetX<0)
 				{
-					m_imgIcon.SetPosition(m_dwPosX+(m_dwWidth)  - (m_imgIcon.TextureWidth + m_imgIcon.TextureWidth/2),
+          int iWidth=m_imgIcon.TextureWidth;
+          if (iWidth>=m_dwWidth)
+          {
+            m_imgIcon.Width=m_dwWidth;
+            iWidth=m_dwWidth;
+          }
+          int offset=(iWidth + iWidth/2);
+          if (offset > m_dwWidth) offset=m_dwWidth;
+					m_imgIcon.SetPosition(m_dwPosX+(m_dwWidth)  - offset,
 																m_dwPosY+(m_dwHeight/2) - (m_imgIcon.TextureHeight/2) );
 				}
 				else
 				{
 					m_imgIcon.SetPosition(m_dwPosX+IconOffsetX,m_dwPosY+IconOffsetY );
 				}
+        
 				m_imgIcon.DoUpdate();
 			}
     }

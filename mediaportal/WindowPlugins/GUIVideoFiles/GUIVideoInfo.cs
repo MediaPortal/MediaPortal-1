@@ -305,13 +305,20 @@ namespace MediaPortal.GUI.Video
             Utils.FileDelete(strThumb);
             Utils.FileDelete(LargeThumb);
             Refresh();            
-            int lMovieId = 0;
+            int lMovieId = -1;
             if (m_movie.SearchString != "")
             {
-              lMovieId = System.Int32.Parse(m_movie.SearchString);
+              try
+              {
+                lMovieId = System.Int32.Parse(m_movie.SearchString);
+              }
+              catch(Exception)
+              {
+              }
             }
 
-            VideoDatabase.SetThumbURL(lMovieId,m_movie.ThumbURL);
+            if (lMovieId>=0)
+              VideoDatabase.SetThumbURL(lMovieId,m_movie.ThumbURL);
             return true;
           }
 
