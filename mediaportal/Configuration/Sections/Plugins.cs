@@ -297,11 +297,11 @@ namespace MediaPortal.Configuration.Sections
 			{
 				foreach(ListViewItem listItem in pluginsListView.SelectedItems)
 				{
-					ISetupForm setupForm = listItem.Tag as ISetupForm;
+          ItemTag tag = listItem.Tag as ItemTag;
 
-					if(setupForm != null)
+					if(tag.SetupForm != null)
 					{
-						setupForm.ShowPlugin();
+						tag.SetupForm.ShowPlugin();
 					}
 				}
 			}
@@ -317,12 +317,12 @@ namespace MediaPortal.Configuration.Sections
 			ListViewItem listItem = pluginsListView.Items[e.Index];
 
 			if(listItem != null)
-			{
-				ISetupForm setupForm = listItem.Tag as ISetupForm;
+      {
+        ItemTag tag = listItem.Tag as ItemTag;
 
-				if(setupForm != null)
+				if(tag.SetupForm != null)
 				{
-					if(setupForm.CanEnable())
+					if(tag.SetupForm.CanEnable())
 					{
 						//
 						// Do nothing
@@ -330,7 +330,7 @@ namespace MediaPortal.Configuration.Sections
 					}
 					else
 					{
-						MessageBox.Show("The selected plugin does not support enabling/disabling", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						//MessageBox.Show("The selected plugin does not support enabling/disabling", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 						e.NewValue = e.CurrentValue;
 					}
 				}
