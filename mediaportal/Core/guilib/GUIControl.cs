@@ -45,7 +45,13 @@ namespace MediaPortal.GUI.Library
       ALIGN_RIGHT, 
       ALIGN_CENTER
     }
+		
 
+		public enum eOrientation
+		{
+			Horizontal,
+			Vertical
+		};
     
 		/// <summary>
 		/// empty constructor

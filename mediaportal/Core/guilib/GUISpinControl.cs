@@ -20,12 +20,6 @@ namespace MediaPortal.GUI.Library
 			SPIN_BUTTON_DOWN,
 			SPIN_BUTTON_UP
 		};
-
-		public enum eOrientation
-		{
-			Horizontal,
-			Vertical
-		};
 		[XMLSkinElement("showrange")]		protected bool			m_bShowRange=true;
 		[XMLSkinElement("digits")]			protected int			m_iDigits=-1;
 		[XMLSkinElement("reverse")]			protected bool			m_bReverse=false;

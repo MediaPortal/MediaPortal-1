@@ -216,11 +216,17 @@ namespace MediaPortal.GUI.Library
       string strSelected = "";
       string strSelected2 = "";
       string strThumb = "";
-      GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
+      int item=GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
       GUIPropertyManager.SetProperty("#selecteditem", strSelected);
       GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
       GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
 
+			
+			if (item>=0 && item < m_vecItems.Count)
+			{
+				GUIListItem listitem=m_vecItems[item] as GUIListItem;
+				if (listitem!=null) listitem.ItemSelected(this);
+			}
 			// ToDo: add searchstring property
 			if (m_strSearchString.Length>0)
 				GUIPropertyManager.SetProperty("#selecteditem", "{"+m_strSearchString.ToLower()+"}");

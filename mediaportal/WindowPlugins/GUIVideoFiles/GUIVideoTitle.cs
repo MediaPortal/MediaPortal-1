@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.Video
 
 			CONTROL_VIEW = 10, 
 			CONTROL_LABELFILES = 12, 
-			CONTROL_LABEL_GENRE = 100
+			CONTROL_LABEL_GENRE = 100,
 		};
 		#region Base variabeles
 		enum SortMethod
@@ -439,8 +439,10 @@ namespace MediaPortal.GUI.Video
       FolderSettings.AddFolderSetting(strDirectory,"VideoTitle",typeof(GUIVideoTitle.MapSettings), _MapSettings);
     }
 
+
 		void LoadDirectory(string strNewDirectory)
 		{
+
 			strNewDirectory.Trim();
 			GUIListItem SelectedItem = GetSelectedItem();
 			if (SelectedItem != null) 
@@ -893,7 +895,11 @@ namespace MediaPortal.GUI.Video
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
+
+			int rating=(int)(item.Rating*10f);
+			GUIPropertyManager.SetProperty("#rating", rating.ToString());
+
+			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
       if (filmstrip==null) return;
       if (item.IsFolder) filmstrip.InfoImageFileName=item.ThumbnailImage;
       else filmstrip.InfoImageFileName=Utils.ConvertToLargeCoverArt(item.ThumbnailImage);

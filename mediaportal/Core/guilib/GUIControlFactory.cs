@@ -175,6 +175,26 @@ namespace MediaPortal.GUI.Library
           return GUIControl.Alignment.ALIGN_LEFT;
         }
 
+				try
+				{
+					if (type == typeof (GUIControl.eOrientation))
+					{
+						switch (valueText)
+						{
+							case "horizontal" :
+								return GUIControl.eOrientation.Horizontal;
+							case "vertical" :
+								return GUIControl.eOrientation.Vertical;
+							default:
+								return GUIControl.eOrientation.Horizontal;
+						}
+					}
+				}
+				catch(Exception)
+				{
+					return GUIControl.Alignment.ALIGN_LEFT;
+				}
+
 
         try
         {
@@ -218,22 +238,6 @@ namespace MediaPortal.GUI.Library
         {
           return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
         }
-
-        try
-        {
-          if (type == typeof(GUISpinControl.eOrientation))
-          {
-            switch (valueText.ToLower())
-            {
-              case "vertical": return GUISpinControl.eOrientation.Vertical;
-              default: return GUISpinControl.eOrientation.Horizontal;
-            }
-          }
-        }
-        catch(Exception)
-        {
-          return GUISpinControl.eOrientation.Horizontal;
-        }
 			
 				return null;
 			}
@@ -263,9 +267,9 @@ namespace MediaPortal.GUI.Library
 			UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode);
 			
 			control.ScaleToScreenResolution();
+			AddSubitemsToControl(pControlNode,control);
 			control.FinalizeConstruction();
 			
-			AddSubitemsToControl(pControlNode,control);
 
 			if (typeOfControlToCreate == typeof(GUIGroup))
 			{
@@ -354,6 +358,8 @@ namespace MediaPortal.GUI.Library
 			{
 				case ("image"):
 					return typeof (GUIImage);
+				case ("imagelist"):
+					return typeof (GUIImageList);
 				case ("slider"):
 					return typeof (GUISliderControl);
 				case ("fadelabel"):
