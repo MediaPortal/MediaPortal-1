@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  17-05-2004  general     : fixed : %filename% for external movie player
+  
   16-05-2004  general     : added : auto tune option
   16-05-2004  general     : added : SKIN xmls: added <action> tag for buttons. 
   16-05-2004  my tv       : fixed : no audio when watching TV for hauppauge PVR USB2/250/350
