@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
@@ -35,7 +36,6 @@ namespace home
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ListBox listBox;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox chkBoxScrolling;
 		private System.Windows.Forms.RadioButton radioButton2;
 		private System.Windows.Forms.RadioButton radioButton1;
@@ -55,6 +55,7 @@ namespace home
 		class ItemTag
 		{
 			public string				DLLName;
+			public string				FullPath;
 			public string				author;
 			public string				buttonText;
 			public string				pluginName;
@@ -81,14 +82,35 @@ namespace home
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.Button deletePicture;
 		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.RadioButton useMenus;
-		private System.Windows.Forms.RadioButton useMyPlugins;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.PictureBox pictureBox2;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.PictureBox pictureBox3;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.RadioButton useMyPlugins;
+		private System.Windows.Forms.RadioButton useMenus;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.RadioButton radioButton3;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.TextBox OwnDate;
+		private System.Windows.Forms.GroupBox groupBox5;
+		private System.Windows.Forms.TextBox DateTest;
+		private System.Windows.Forms.Button TestDate;
+		private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
 		public bool	CanEnable()		// Indicates whether plugin can be enabled/disabled
@@ -231,10 +253,6 @@ namespace home
 			this.label2 = new System.Windows.Forms.Label();
 			this.listBox = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.groupBox4 = new System.Windows.Forms.GroupBox();
-			this.useMyPlugins = new System.Windows.Forms.RadioButton();
-			this.useMenus = new System.Windows.Forms.RadioButton();
 			this.NoScrollSubs = new System.Windows.Forms.CheckBox();
 			this.chkBoxFixed = new System.Windows.Forms.CheckBox();
 			this.chkBoxScrolling = new System.Windows.Forms.CheckBox();
@@ -249,10 +267,38 @@ namespace home
 			this.label10 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.pictureBox3 = new System.Windows.Forms.PictureBox();
+			this.addConfig = new System.Windows.Forms.Button();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.TestDate = new System.Windows.Forms.Button();
+			this.DateTest = new System.Windows.Forms.TextBox();
+			this.label20 = new System.Windows.Forms.Label();
+			this.label17 = new System.Windows.Forms.Label();
+			this.label19 = new System.Windows.Forms.Label();
+			this.label18 = new System.Windows.Forms.Label();
+			this.label16 = new System.Windows.Forms.Label();
+			this.label15 = new System.Windows.Forms.Label();
+			this.label14 = new System.Windows.Forms.Label();
+			this.label13 = new System.Windows.Forms.Label();
+			this.label12 = new System.Windows.Forms.Label();
+			this.OwnDate = new System.Windows.Forms.TextBox();
+			this.radioButton3 = new System.Windows.Forms.RadioButton();
+			this.button1 = new System.Windows.Forms.Button();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.useMyPlugins = new System.Windows.Forms.RadioButton();
+			this.useMenus = new System.Windows.Forms.RadioButton();
+			this.label21 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
-			this.groupBox1.SuspendLayout();
+			this.tabControl1.SuspendLayout();
+			this.tabPage1.SuspendLayout();
+			this.groupBox5.SuspendLayout();
 			this.groupBox4.SuspendLayout();
+			this.tabPage2.SuspendLayout();
+			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox3
@@ -260,7 +306,7 @@ namespace home
 			this.groupBox3.Controls.Add(this.pictureBox1);
 			this.groupBox3.Location = new System.Drawing.Point(248, 8);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(216, 208);
+			this.groupBox3.Size = new System.Drawing.Size(216, 192);
 			this.groupBox3.TabIndex = 27;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Button Image (for Menu Items)";
@@ -269,7 +315,7 @@ namespace home
 			// 
 			this.pictureBox1.Location = new System.Drawing.Point(8, 16);
 			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.Size = new System.Drawing.Size(208, 192);
+			this.pictureBox1.Size = new System.Drawing.Size(200, 168);
 			this.pictureBox1.TabIndex = 0;
 			this.pictureBox1.TabStop = false;
 			// 
@@ -289,9 +335,9 @@ namespace home
 			this.groupBox2.Controls.Add(this.textBox4);
 			this.groupBox2.Controls.Add(this.textBox2);
 			this.groupBox2.Controls.Add(this.textBox1);
-			this.groupBox2.Location = new System.Drawing.Point(480, 8);
+			this.groupBox2.Location = new System.Drawing.Point(472, 8);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(344, 208);
+			this.groupBox2.Size = new System.Drawing.Size(344, 192);
 			this.groupBox2.TabIndex = 26;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Tag Info";
@@ -413,7 +459,7 @@ namespace home
 			// 
 			// SaveAll
 			// 
-			this.SaveAll.Location = new System.Drawing.Point(376, 488);
+			this.SaveAll.Location = new System.Drawing.Point(368, 448);
 			this.SaveAll.Name = "SaveAll";
 			this.SaveAll.Size = new System.Drawing.Size(88, 24);
 			this.SaveAll.TabIndex = 25;
@@ -422,7 +468,7 @@ namespace home
 			// 
 			// DeleteItem
 			// 
-			this.DeleteItem.Location = new System.Drawing.Point(376, 288);
+			this.DeleteItem.Location = new System.Drawing.Point(368, 256);
 			this.DeleteItem.Name = "DeleteItem";
 			this.DeleteItem.Size = new System.Drawing.Size(88, 24);
 			this.DeleteItem.TabIndex = 22;
@@ -431,7 +477,7 @@ namespace home
 			// 
 			// AddMenu
 			// 
-			this.AddMenu.Location = new System.Drawing.Point(376, 352);
+			this.AddMenu.Location = new System.Drawing.Point(368, 320);
 			this.AddMenu.Name = "AddMenu";
 			this.AddMenu.Size = new System.Drawing.Size(88, 24);
 			this.AddMenu.TabIndex = 21;
@@ -440,7 +486,7 @@ namespace home
 			// 
 			// CopyItem
 			// 
-			this.CopyItem.Location = new System.Drawing.Point(376, 256);
+			this.CopyItem.Location = new System.Drawing.Point(368, 224);
 			this.CopyItem.Name = "CopyItem";
 			this.CopyItem.Size = new System.Drawing.Size(88, 24);
 			this.CopyItem.TabIndex = 19;
@@ -449,7 +495,7 @@ namespace home
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(480, 224);
+			this.label2.Location = new System.Drawing.Point(640, 248);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(104, 16);
 			this.label2.TabIndex = 18;
@@ -457,67 +503,23 @@ namespace home
 			// 
 			// listBox
 			// 
-			this.listBox.Location = new System.Drawing.Point(480, 240);
+			this.listBox.Location = new System.Drawing.Point(472, 216);
 			this.listBox.Name = "listBox";
-			this.listBox.Size = new System.Drawing.Size(344, 277);
+			this.listBox.Size = new System.Drawing.Size(344, 264);
 			this.listBox.TabIndex = 17;
 			this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 224);
+			this.label1.Location = new System.Drawing.Point(8, 200);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(104, 16);
 			this.label1.TabIndex = 16;
 			this.label1.Text = "Menu Structure";
 			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.groupBox4);
-			this.groupBox1.Controls.Add(this.NoScrollSubs);
-			this.groupBox1.Controls.Add(this.chkBoxFixed);
-			this.groupBox1.Controls.Add(this.chkBoxScrolling);
-			this.groupBox1.Controls.Add(this.radioButton2);
-			this.groupBox1.Controls.Add(this.radioButton1);
-			this.groupBox1.Location = new System.Drawing.Point(16, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(200, 208);
-			this.groupBox1.TabIndex = 15;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Home settings";
-			// 
-			// groupBox4
-			// 
-			this.groupBox4.Controls.Add(this.useMyPlugins);
-			this.groupBox4.Controls.Add(this.useMenus);
-			this.groupBox4.Location = new System.Drawing.Point(0, 144);
-			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(200, 64);
-			this.groupBox4.TabIndex = 7;
-			this.groupBox4.TabStop = false;
-			// 
-			// useMyPlugins
-			// 
-			this.useMyPlugins.Checked = true;
-			this.useMyPlugins.Location = new System.Drawing.Point(24, 16);
-			this.useMyPlugins.Name = "useMyPlugins";
-			this.useMyPlugins.Size = new System.Drawing.Size(168, 24);
-			this.useMyPlugins.TabIndex = 1;
-			this.useMyPlugins.TabStop = true;
-			this.useMyPlugins.Text = "Use MyPlugins (Frodo)";
-			// 
-			// useMenus
-			// 
-			this.useMenus.Location = new System.Drawing.Point(24, 40);
-			this.useMenus.Name = "useMenus";
-			this.useMenus.Size = new System.Drawing.Size(168, 16);
-			this.useMenus.TabIndex = 0;
-			this.useMenus.Text = "Use Menus (Gucky62)";
-			// 
 			// NoScrollSubs
 			// 
-			this.NoScrollSubs.Enabled = false;
-			this.NoScrollSubs.Location = new System.Drawing.Point(24, 112);
+			this.NoScrollSubs.Location = new System.Drawing.Point(24, 72);
 			this.NoScrollSubs.Name = "NoScrollSubs";
 			this.NoScrollSubs.Size = new System.Drawing.Size(168, 24);
 			this.NoScrollSubs.TabIndex = 6;
@@ -525,7 +527,7 @@ namespace home
 			// 
 			// chkBoxFixed
 			// 
-			this.chkBoxFixed.Location = new System.Drawing.Point(24, 88);
+			this.chkBoxFixed.Location = new System.Drawing.Point(24, 48);
 			this.chkBoxFixed.Name = "chkBoxFixed";
 			this.chkBoxFixed.Size = new System.Drawing.Size(168, 24);
 			this.chkBoxFixed.TabIndex = 3;
@@ -535,7 +537,7 @@ namespace home
 			// 
 			this.chkBoxScrolling.Checked = true;
 			this.chkBoxScrolling.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkBoxScrolling.Location = new System.Drawing.Point(24, 64);
+			this.chkBoxScrolling.Location = new System.Drawing.Point(24, 24);
 			this.chkBoxScrolling.Name = "chkBoxScrolling";
 			this.chkBoxScrolling.Size = new System.Drawing.Size(168, 24);
 			this.chkBoxScrolling.TabIndex = 2;
@@ -543,34 +545,36 @@ namespace home
 			// 
 			// radioButton2
 			// 
-			this.radioButton2.Location = new System.Drawing.Point(24, 40);
+			this.radioButton2.Location = new System.Drawing.Point(16, 56);
 			this.radioButton2.Name = "radioButton2";
 			this.radioButton2.TabIndex = 1;
 			this.radioButton2.Text = "MM-DD-YYYY";
+			this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
 			// 
 			// radioButton1
 			// 
-			this.radioButton1.Location = new System.Drawing.Point(24, 16);
+			this.radioButton1.Location = new System.Drawing.Point(16, 24);
 			this.radioButton1.Name = "radioButton1";
 			this.radioButton1.Size = new System.Drawing.Size(112, 24);
 			this.radioButton1.TabIndex = 0;
 			this.radioButton1.Text = "DD-MM-YYYY";
+			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
 			// 
 			// treeView
 			// 
 			this.treeView.AllowDrop = true;
 			this.treeView.ImageIndex = -1;
 			this.treeView.LabelEdit = true;
-			this.treeView.Location = new System.Drawing.Point(16, 240);
+			this.treeView.Location = new System.Drawing.Point(8, 216);
 			this.treeView.Name = "treeView";
 			this.treeView.SelectedImageIndex = -1;
-			this.treeView.Size = new System.Drawing.Size(344, 280);
+			this.treeView.Size = new System.Drawing.Size(344, 264);
 			this.treeView.TabIndex = 14;
 			this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
 			// 
 			// AddPicture
 			// 
-			this.AddPicture.Location = new System.Drawing.Point(376, 384);
+			this.AddPicture.Location = new System.Drawing.Point(368, 352);
 			this.AddPicture.Name = "AddPicture";
 			this.AddPicture.Size = new System.Drawing.Size(88, 24);
 			this.AddPicture.TabIndex = 28;
@@ -579,7 +583,7 @@ namespace home
 			// 
 			// deletePicture
 			// 
-			this.deletePicture.Location = new System.Drawing.Point(376, 320);
+			this.deletePicture.Location = new System.Drawing.Point(368, 288);
 			this.deletePicture.Name = "deletePicture";
 			this.deletePicture.Size = new System.Drawing.Size(88, 24);
 			this.deletePicture.TabIndex = 29;
@@ -588,7 +592,7 @@ namespace home
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(16, 528);
+			this.label9.Location = new System.Drawing.Point(8, 96);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(160, 32);
 			this.label9.TabIndex = 30;
@@ -597,7 +601,7 @@ namespace home
 			// pictureBox2
 			// 
 			this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-			this.pictureBox2.Location = new System.Drawing.Point(184, 528);
+			this.pictureBox2.Location = new System.Drawing.Point(8, 136);
 			this.pictureBox2.Name = "pictureBox2";
 			this.pictureBox2.Size = new System.Drawing.Size(16, 24);
 			this.pictureBox2.TabIndex = 31;
@@ -605,59 +609,293 @@ namespace home
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(208, 528);
+			this.label10.Location = new System.Drawing.Point(32, 136);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(160, 16);
+			this.label10.Size = new System.Drawing.Size(168, 16);
 			this.label10.TabIndex = 32;
-			this.label10.Text = "is a Menu Item";
+			this.label10.Text = "is a Menu Item    (MENU NAME)";
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(208, 552);
+			this.label11.Location = new System.Drawing.Point(32, 160);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(160, 16);
+			this.label11.Size = new System.Drawing.Size(184, 16);
 			this.label11.TabIndex = 34;
-			this.label11.Text = "is a Plugin Item";
+			this.label11.Text = "is a Plugin Item   {PICTURE NAME}";
 			// 
 			// pictureBox3
 			// 
 			this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-			this.pictureBox3.Location = new System.Drawing.Point(184, 552);
+			this.pictureBox3.Location = new System.Drawing.Point(8, 160);
 			this.pictureBox3.Name = "pictureBox3";
 			this.pictureBox3.Size = new System.Drawing.Size(16, 24);
 			this.pictureBox3.TabIndex = 33;
 			this.pictureBox3.TabStop = false;
 			// 
+			// addConfig
+			// 
+			this.addConfig.Location = new System.Drawing.Point(368, 384);
+			this.addConfig.Name = "addConfig";
+			this.addConfig.Size = new System.Drawing.Size(88, 32);
+			this.addConfig.TabIndex = 35;
+			this.addConfig.Text = "Add Configuration";
+			this.addConfig.Click += new System.EventHandler(this.addConfig_Click);
+			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Location = new System.Drawing.Point(8, 8);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(840, 520);
+			this.tabControl1.TabIndex = 36;
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.groupBox5);
+			this.tabPage1.Controls.Add(this.groupBox4);
+			this.tabPage1.Controls.Add(this.button1);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Size = new System.Drawing.Size(832, 494);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "Home Design";
+			// 
+			// groupBox5
+			// 
+			this.groupBox5.Controls.Add(this.NoScrollSubs);
+			this.groupBox5.Controls.Add(this.chkBoxFixed);
+			this.groupBox5.Controls.Add(this.chkBoxScrolling);
+			this.groupBox5.Location = new System.Drawing.Point(16, 24);
+			this.groupBox5.Name = "groupBox5";
+			this.groupBox5.Size = new System.Drawing.Size(272, 192);
+			this.groupBox5.TabIndex = 28;
+			this.groupBox5.TabStop = false;
+			this.groupBox5.Text = "Home Settings";
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.label21);
+			this.groupBox4.Controls.Add(this.TestDate);
+			this.groupBox4.Controls.Add(this.DateTest);
+			this.groupBox4.Controls.Add(this.label20);
+			this.groupBox4.Controls.Add(this.label17);
+			this.groupBox4.Controls.Add(this.label19);
+			this.groupBox4.Controls.Add(this.label18);
+			this.groupBox4.Controls.Add(this.label16);
+			this.groupBox4.Controls.Add(this.label15);
+			this.groupBox4.Controls.Add(this.label14);
+			this.groupBox4.Controls.Add(this.label13);
+			this.groupBox4.Controls.Add(this.label12);
+			this.groupBox4.Controls.Add(this.OwnDate);
+			this.groupBox4.Controls.Add(this.radioButton3);
+			this.groupBox4.Controls.Add(this.radioButton2);
+			this.groupBox4.Controls.Add(this.radioButton1);
+			this.groupBox4.Location = new System.Drawing.Point(312, 24);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(456, 256);
+			this.groupBox4.TabIndex = 27;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Date & Time Settings";
+			// 
+			// TestDate
+			// 
+			this.TestDate.Location = new System.Drawing.Point(224, 192);
+			this.TestDate.Name = "TestDate";
+			this.TestDate.Size = new System.Drawing.Size(120, 24);
+			this.TestDate.TabIndex = 15;
+			this.TestDate.Text = "Test selected Date *";
+			this.TestDate.Click += new System.EventHandler(this.TestDate_Click);
+			// 
+			// DateTest
+			// 
+			this.DateTest.Location = new System.Drawing.Point(16, 192);
+			this.DateTest.Name = "DateTest";
+			this.DateTest.Size = new System.Drawing.Size(184, 20);
+			this.DateTest.TabIndex = 14;
+			this.DateTest.Text = "";
+			// 
+			// label20
+			// 
+			this.label20.Location = new System.Drawing.Point(224, 168);
+			this.label20.Name = "label20";
+			this.label20.Size = new System.Drawing.Size(216, 16);
+			this.label20.TabIndex = 13;
+			this.label20.Text = "shows-> Monday 1. March";
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(224, 152);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(216, 16);
+			this.label17.TabIndex = 12;
+			this.label17.Text = "e.g.  Day DD. Month";
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(224, 128);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(224, 16);
+			this.label19.TabIndex = 11;
+			this.label19.Text = "YYYY = Year as a long number ( e.g. 2005)";
+			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(224, 112);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(208, 16);
+			this.label18.TabIndex = 9;
+			this.label18.Text = "YY = Year as a short number ( e.g.  05)";
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(224, 88);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(192, 16);
+			this.label16.TabIndex = 8;
+			this.label16.Text = "Month = Month as a text ( e.g.  July)";
+			// 
+			// label15
+			// 
+			this.label15.Location = new System.Drawing.Point(224, 72);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(192, 16);
+			this.label15.TabIndex = 7;
+			this.label15.Text = "MM = Month as a number ( e.g.  10)";
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(224, 48);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(192, 16);
+			this.label14.TabIndex = 6;
+			this.label14.Text = "Day = Day as a text ( e.g.  Monday)";
+			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(224, 32);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(192, 16);
+			this.label13.TabIndex = 5;
+			this.label13.Text = "DD = Day as a number  ( e.g. 23)";
+			// 
+			// label12
+			// 
+			this.label12.Location = new System.Drawing.Point(224, 16);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(192, 16);
+			this.label12.TabIndex = 4;
+			this.label12.Text = "You can use the following tags:";
+			// 
+			// OwnDate
+			// 
+			this.OwnDate.Enabled = false;
+			this.OwnDate.Location = new System.Drawing.Point(16, 160);
+			this.OwnDate.Name = "OwnDate";
+			this.OwnDate.Size = new System.Drawing.Size(184, 20);
+			this.OwnDate.TabIndex = 3;
+			this.OwnDate.Text = "Day DD. Month";
+			// 
+			// radioButton3
+			// 
+			this.radioButton3.Location = new System.Drawing.Point(16, 88);
+			this.radioButton3.Name = "radioButton3";
+			this.radioButton3.Size = new System.Drawing.Size(136, 24);
+			this.radioButton3.TabIndex = 2;
+			this.radioButton3.Text = "Build your own Format";
+			this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(24, 448);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(88, 24);
+			this.button1.TabIndex = 26;
+			this.button1.Text = "Save";
+			this.button1.Click += new System.EventHandler(this.SaveAll_Click);
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.listBox);
+			this.tabPage2.Controls.Add(this.groupBox2);
+			this.tabPage2.Controls.Add(this.AddPicture);
+			this.tabPage2.Controls.Add(this.CopyItem);
+			this.tabPage2.Controls.Add(this.DeleteItem);
+			this.tabPage2.Controls.Add(this.AddMenu);
+			this.tabPage2.Controls.Add(this.deletePicture);
+			this.tabPage2.Controls.Add(this.addConfig);
+			this.tabPage2.Controls.Add(this.groupBox3);
+			this.tabPage2.Controls.Add(this.treeView);
+			this.tabPage2.Controls.Add(this.groupBox1);
+			this.tabPage2.Controls.Add(this.label1);
+			this.tabPage2.Controls.Add(this.SaveAll);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(832, 494);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "Menu Structure";
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.useMyPlugins);
+			this.groupBox1.Controls.Add(this.useMenus);
+			this.groupBox1.Controls.Add(this.label9);
+			this.groupBox1.Controls.Add(this.pictureBox2);
+			this.groupBox1.Controls.Add(this.label10);
+			this.groupBox1.Controls.Add(this.label11);
+			this.groupBox1.Controls.Add(this.pictureBox3);
+			this.groupBox1.Location = new System.Drawing.Point(8, 8);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(224, 192);
+			this.groupBox1.TabIndex = 15;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Menu settings";
+			// 
+			// useMyPlugins
+			// 
+			this.useMyPlugins.Checked = true;
+			this.useMyPlugins.Location = new System.Drawing.Point(16, 16);
+			this.useMyPlugins.Name = "useMyPlugins";
+			this.useMyPlugins.Size = new System.Drawing.Size(168, 24);
+			this.useMyPlugins.TabIndex = 1;
+			this.useMyPlugins.TabStop = true;
+			this.useMyPlugins.Text = "Use MyPlugins (Frodo)";
+			// 
+			// useMenus
+			// 
+			this.useMenus.Location = new System.Drawing.Point(16, 48);
+			this.useMenus.Name = "useMenus";
+			this.useMenus.Size = new System.Drawing.Size(168, 16);
+			this.useMenus.TabIndex = 0;
+			this.useMenus.Text = "Use Menus (Gucky62)";
+			// 
+			// label21
+			// 
+			this.label21.Location = new System.Drawing.Point(16, 232);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(392, 16);
+			this.label21.TabIndex = 16;
+			this.label21.Text = "* When MP runs the  Date will be converted in your language !";
+			// 
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(840, 574);
-			this.Controls.Add(this.label11);
-			this.Controls.Add(this.pictureBox3);
-			this.Controls.Add(this.label10);
-			this.Controls.Add(this.pictureBox2);
-			this.Controls.Add(this.label9);
-			this.Controls.Add(this.deletePicture);
-			this.Controls.Add(this.AddPicture);
-			this.Controls.Add(this.groupBox3);
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.SaveAll);
-			this.Controls.Add(this.DeleteItem);
-			this.Controls.Add(this.AddMenu);
-			this.Controls.Add(this.CopyItem);
+			this.ClientSize = new System.Drawing.Size(856, 526);
+			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.listBox);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.treeView);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "SetupForm";
 			this.Text = "Home Setup";
 			this.Load += new System.EventHandler(this.SetupForm_Load);
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
-			this.groupBox1.ResumeLayout(false);
+			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.groupBox5.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -748,13 +986,15 @@ namespace home
 			{
 				int iLayout=0;
 				if (radioButton2.Checked) iLayout=1;
+				if (radioButton3.Checked) iLayout=2;
 				xmlWriter.SetValue("home","datelayout",iLayout.ToString());
 				xmlWriter.SetValueAsBool("home","scroll",chkBoxScrolling.Checked);
 				xmlWriter.SetValueAsBool("home","scrollfixed",chkBoxFixed.Checked);
 				xmlWriter.SetValueAsBool("home","usemenus",useMenus.Checked);
 				xmlWriter.SetValueAsBool("home","usemyplugins",useMyPlugins.Checked);
-				xmlWriter.SetValueAsBool("home","noScrollsubs",NoScrollSubs.Checked);			
-			}
+				xmlWriter.SetValueAsBool("home","noScrollsubs",NoScrollSubs.Checked);		
+				xmlWriter.GetValueAsString("home","ownDate",OwnDate.Text);		
+		}
 			this.Close();
 		}
 
@@ -764,14 +1004,15 @@ namespace home
 			{
 				int iLayout = xmlreader.GetValueAsInt("home","datelayout",0);
 				if (iLayout==0) radioButton1.Checked=true;
-				else radioButton2.Checked=true;
-
+				if (iLayout==1) radioButton2.Checked=true;
+				if (iLayout==2) radioButton3.Checked=true;
 				chkBoxScrolling.Checked=xmlreader.GetValueAsBool("home","scroll",true);
 				chkBoxFixed.Checked=xmlreader.GetValueAsBool("home","scrollfixed",false);
 				useMenus.Checked=xmlreader.GetValueAsBool("home","usemenus",false);
 				useMyPlugins.Checked=xmlreader.GetValueAsBool("home","usemyplugins",true);
 				NoScrollSubs.Checked=xmlreader.GetValueAsBool("home","noScrollsubs",true);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
+				OwnDate.Text=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
 			}
 			loadTree(treeView, Application.StartupPath + @"\menu.bin");
 		}
@@ -913,6 +1154,7 @@ namespace home
 										{
 											ItemTag tag = new ItemTag();
 											tag.pluginName=pluginForm.PluginName();
+											tag.FullPath=pluginFile;
 											tag.author=pluginForm.Author();
 											pluginForm.GetHome(out buttontxt, out buttonimage,out buttonimagefocus,out picture);
 											tag.buttonText=buttontxt;
@@ -1126,8 +1368,92 @@ namespace home
 
 		private void SetupForm_Load(object sender, System.EventArgs e)
 		{
-		
 		}
+
+		private void addConfig_Click(object sender, System.EventArgs e)
+		{
+			TreeNode tn = new TreeNode();
+			if (treeView.SelectedNode!=null) 
+			{
+				tn=treeView.SelectedNode;		
+				if (tn.Text.StartsWith("("))
+				{
+					MessageBox.Show( "You can attach configurations only to a Plugin Item" );
+				}
+				else 
+				{
+					foreach (ItemTag tag	in loadedPlugins) 
+					{	
+						if (tag.pluginName==tn.Text) 
+						{
+							try
+							{
+								Assembly pluginAssembly = Assembly.LoadFrom(tag.FullPath);
+								if(pluginAssembly != null)
+								{
+									Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+									foreach(Type type in exportedTypes)
+									{
+										// an abstract class cannot be instanciated
+										if( type.IsAbstract ) continue;
+										//
+										// Try to locate the interface we're interested in
+										//
+										if(type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+										{
+											if (type.FullName!="GUIHomeMenu.SetupForm" && type.FullName!="home.SetupForm")
+											{
+												try
+												{
+													//
+													// Create instance of the current type
+													//
+													object pluginObject = (object)Activator.CreateInstance(type);
+													ISetupForm pluginForm = pluginObject as ISetupForm;
+
+													if(pluginForm != null)
+													{
+														if (pluginForm.PluginName()==tn.Text) 
+														{
+															if (pluginForm.CanEnable() || pluginForm.DefaultEnabled()) 
+															{
+																if (pluginForm.HasSetup()==false) 
+																{
+																	MessageBox.Show( "Plugin has no Setup!" );
+																} 
+																else 
+																{
+																	pluginForm.ShowPlugin();
+																}
+															}
+														}
+													}
+												}
+												catch(Exception setupFormException)
+												{
+													Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+													Log.Write("Current class is :{0}", type.FullName);
+												}
+											}
+										}
+									}
+								}
+							}
+							catch(Exception unknownException)
+							{
+								Log.Write("Exception in plugin loading :{0}", unknownException.Message);
+							}
+							
+						}
+					}
+				}
+			} 
+			else 
+			{
+				MessageBox.Show( "Please select a Menu Item in the Menu Structure!" );
+			}
+		}	
+
 		#region Drag and Drop TreeView
 
 		private void treeView_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -1447,6 +1773,124 @@ namespace home
 			}
 		}
 		#endregion
-	
+
+		private void radioButton3_CheckedChanged(object sender, System.EventArgs e)
+		{
+			OwnDate.Enabled=true;
+		}
+
+		private void radioButton2_CheckedChanged(object sender, System.EventArgs e)
+		{
+			OwnDate.Enabled=false;
+		}
+
+		private void radioButton1_CheckedChanged(object sender, System.EventArgs e)
+		{
+			OwnDate.Enabled=false;
+		}
+
+		protected string ConvertOwnDate(string own,string day,string month)
+		{
+			StringBuilder cown = new StringBuilder(own);
+			string s;
+
+			DateTime cur=DateTime.Now;
+			s=cown.ToString();
+			int inx=s.IndexOf("MM",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,2);
+				cown.Insert(inx,cur.Month.ToString());
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("DD",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,2);
+				cown.Insert(inx,cur.Day.ToString());
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("Month",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,5);
+				cown.Insert(inx,month);
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("Day",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,3);
+				cown.Insert(inx,day);
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("YY",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,2);
+				int sy=cur.Year-2000;
+				cown.Insert(inx,sy.ToString());
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("Year",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,4);
+				cown.Insert(inx,cur.Year.ToString());
+			}
+			return(cown.ToString());
+		}		
+		protected string GetDate()
+		{
+			string strDate="";
+			DateTime cur=DateTime.Now;
+			string day;
+			switch (cur.DayOfWeek)
+			{
+				case DayOfWeek.Monday :	day = "Monday";	break;
+				case DayOfWeek.Tuesday :	day = "Tuesday";	break;
+				case DayOfWeek.Wednesday :	day = "Wednesday";	break;
+				case DayOfWeek.Thursday :	day = "Thursday";	break;
+				case DayOfWeek.Friday :	day = "Friday";	break;
+				case DayOfWeek.Saturday :	day = "Saturday";	break;
+				default:	day = "Sunday";	break;
+			}
+
+			string month;
+			switch (cur.Month)
+			{
+				case 1 :	month= "January";	break;
+				case 2 :	month= "February";	break;
+				case 3 :	month= "March";	break;
+				case 4 :	month= "April";	break;
+				case 5 :	month= "May";	break;
+				case 6 :	month= "June";	break;
+				case 7 :	month= "July";	break;
+				case 8 :	month= "August";	break;
+				case 9 :	month= "September";	break;
+				case 10:	month= "October";	break;
+				case 11:	month= "November";	break;
+				default:	month= "December";	break;
+			}
+
+			if (radioButton1.Checked==true) 
+			{
+				strDate=String.Format("{0} {1}. {2}",day, cur.Day, month);
+			}
+			if (radioButton2.Checked==true)
+			{
+				strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
+			}
+			if (radioButton3.Checked==true)
+			{
+				strDate=ConvertOwnDate(OwnDate.Text,day, month);
+			}
+			return strDate;
+		}
+
+		private void TestDate_Click(object sender, System.EventArgs e)
+		{
+			DateTest.Text=GetDate();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 #region Usings
 using System;
+using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
@@ -58,6 +59,7 @@ namespace MediaPortal.GUI.Home
 		bool					fixedScroll=false;
 		int[]         m_iButtonIds = new int[60];  
 		DateTime      m_updateTimer=DateTime.MinValue;
+		DateTime      m_updateOwnTimer=DateTime.MinValue;
 		int           m_iMaxHeight;    
 		int           m_iMaxWidth ;    
 		int           m_iStartXoff;    
@@ -73,14 +75,17 @@ namespace MediaPortal.GUI.Home
 		bool					inSubMenu=false;
 		bool					inSecondMenu=false;
 		bool					noScrollSubs=false;
-		Viewport      m_newviewport = new Viewport();
-		Viewport      m_oldviewport;
 		bool          m_bSkipFirstMouseMove=true;
 		TreeView			treeView = new TreeView();
 		string				selectedButton="";
 		string				subButton="";
-		string				selectedTexture="";
-		string				skinName;
+		string				skinName="";
+		string				ownDate="";
+		string				currentDate="";
+		int						menuView=0;
+		bool					firstDate=false;
+		Viewport      m_newviewport = new Viewport();
+		Viewport      m_oldviewport;
 
 		//Tracking controls by id
 		System.Collections.ArrayList m_aryPreControlList = new ArrayList();
@@ -125,8 +130,9 @@ namespace MediaPortal.GUI.Home
 				fixedScroll= xmlreader.GetValueAsBool("home","scrollfixed",false);		// fix scrollbar in the middle of menu
 				useMenus=xmlreader.GetValueAsBool("home","usemenus",false);						// use new menu handling
 				useMyPlugins=xmlreader.GetValueAsBool("home","usemyplugins",true);		// use previous menu handling
-				noScrollSubs=xmlreader.GetValueAsBool("home","noScrollsubs",true);	
+				noScrollSubs=xmlreader.GetValueAsBool("home","noScrollsubs",false);	
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
+				ownDate=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
 			}
 			if (useMenus==true) 
 			{
@@ -149,7 +155,7 @@ namespace MediaPortal.GUI.Home
 			plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			LayoutButtons(0);
-			GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
+			GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
 			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 		}
@@ -580,7 +586,8 @@ namespace MediaPortal.GUI.Home
 							if(useMyPlugins==true) 
 							{	
 								bool isplugin=false;
-								for(int i=0;i<myPluginsCount;i++) {
+								for(int i=0;i<myPluginsCount;i++) 
+								{
 									if(bControl==myPlugins[i])
 									{ 
 										isplugin=true;
@@ -665,10 +672,37 @@ namespace MediaPortal.GUI.Home
 								ResetButtons();
 								ArrayList plugins=PluginManager.SetupForms;
 								ProcessPlugins(ref plugins);
-								if (m_iButtons>0)
+								if (menuView > m_iButtons && noScrollSubs==true) 
 								{
-									while (m_iButtons<10)
-										ProcessPlugins(ref plugins);
+									for (int iButt=2; iButt < 60; iButt++)
+									{
+										m_iButtonIds[iButt]=0;
+										GUIControl bCntl = GetControl(iButt) as GUIControl;
+										if (bCntl!=null) 
+										{
+											Remove(iButt);
+										}
+									}
+									for (int iButt=102; iButt < 160; iButt++)
+									{
+										GUIControl bCntl = GetControl(iButt) as GUIControl;
+										if (bCntl!=null) 
+										{
+											Remove(iButt);
+										}
+									}	
+									AddEmptyButtons(5);
+									m_iButtons=0;
+									ProcessPlugins(ref plugins);
+									AddEmptyButtons(5);
+								} 
+								else 
+								{
+									if (m_iButtons>0)
+									{
+										while (m_iButtons<10)
+											ProcessPlugins(ref plugins);
+									}
 								}
 								plugins=null;
 								m_iCurrentButton=m_iButtons/2;
@@ -753,7 +787,7 @@ namespace MediaPortal.GUI.Home
 					}
 					LayoutButtons(0);
 
-          if (m_bTopBar) m_keepState=State.Idle;
+					if (m_bTopBar) m_keepState=State.Idle;
 					m_eState = m_keepState;
 					m_iFrame = 0;
 				}
@@ -772,10 +806,10 @@ namespace MediaPortal.GUI.Home
 			}
 
 			IEnumerator enumControls = m_aryPreControlList.GetEnumerator();
-      while (enumControls.MoveNext())
-      {
-        ((GUIControl)enumControls.Current).Render();  
-      }
+			while (enumControls.MoveNext())
+			{
+				((GUIControl)enumControls.Current).Render();  
+			}
 			int x1=m_iStartXoff+GUIGraphicsContext.OffsetX;
 			int y1=m_iStartYoff+GUIGraphicsContext.OffsetY;
 
@@ -787,32 +821,34 @@ namespace MediaPortal.GUI.Home
 			m_newviewport.MinZ   = 0.0f;
 			m_newviewport.MaxZ   = 1.0f;
 			GUIGraphicsContext.DX9Device.Viewport=m_newviewport;
-      if (m_aryPostControlList.Count==0) 
-      {	
-        for (int x=0; x < m_vecControls.Count;++x)
-        {
-          GUIControl control=(GUIControl)m_vecControls[x];
-          if (control.GetID>=2 && control.GetID<=60)
-          {
-            m_aryPostControlList.Add(control);
-          }
-        }
-      }
+			if (m_aryPostControlList.Count==0) 
+			{	
+				for (int x=0; x < m_vecControls.Count;++x)
+				{
+					GUIControl control=(GUIControl)m_vecControls[x];
+					if (control.GetID>=2 && control.GetID<=60)
+					{
+						m_aryPostControlList.Add(control);
+					}
+				}
+			}
 			enumControls = m_aryPostControlList.GetEnumerator();
-      while (enumControls.MoveNext())
-      {
-        GUIControl cntl=((GUIControl)enumControls.Current);
+			while (enumControls.MoveNext())
+			{
+				GUIControl cntl=((GUIControl)enumControls.Current);
 				if (cntl.YPosition>=y1 && cntl.YPosition <y1+m_iMaxHeight)
 				{
-          cntl.Render();
-        }
-      }
+					cntl.Render();
+				}
+			}
 			GUIGraphicsContext.DX9Device.Viewport=m_oldviewport;
 		}
 
-		//-----------------------------------------------------------------------------------------------
-    void ProcessPlugins(ref ArrayList plugins)
-    {
+		/// <summary>
+		/// Reads all plugins for a Menu
+		/// </summary>
+		void ProcessPlugins(ref ArrayList plugins)
+		{
 			string tnText="";
 			int mainnodes=treeView.Nodes.Count;
 
@@ -938,7 +974,7 @@ namespace MediaPortal.GUI.Home
 					AddPluginButton(34,GUILocalizeStrings.Get(913), "",  "", strBtnPic);	
 				}
 			}
-    }
+		}
 
 		void addMenu(TreeNode tnMain,ArrayList plugins) 
 		{
@@ -1009,7 +1045,10 @@ namespace MediaPortal.GUI.Home
 			}
 		}
 
-		public void AddScrollBar() // Creates a dummy button for fixed scroll bar
+		/// <summary>
+		/// Creates a dummy button for fixed scroll bar
+		/// </summary>
+		public void AddScrollBar() 
 		{
 			string strButtonImage= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureNoFocusName;
 			string strButtonImageFocus= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureFocusName;
@@ -1036,6 +1075,45 @@ namespace MediaPortal.GUI.Home
 				button.AllocResources();
 				GUIControl btnControl = (GUIControl) button;
 				Add(ref btnControl);
+			}
+		}
+
+
+		/// <summary>
+		/// Creates empty buttons for no scroll sub menu
+		/// </summary>
+		public void AddEmptyButtons(int count)
+		{
+			string strButtonImage= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureNoFocusName;
+			string strButtonImageFocus= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TexutureFocusName;
+			string strFontName= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).FontName;
+			long   lFontColor = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextColor;
+			long   lDisabledColor = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).DisabledColor;
+			int xpos  =GetControl( (int)Controls.TemplateButton).XPosition;
+			int width =GetControl( (int)Controls.TemplateButton).Width;
+			int height=GetControl( (int)Controls.TemplateButton).Height;
+			int ypos  =GetControl( (int)Controls.TemplateButton).YPosition;
+			for (int i=0; i<count; i++) 
+			{
+				for (int iButtonId=2; iButtonId < 60; iButtonId++)
+				{
+					GUIControl cntl = GetControl(iButtonId) as GUIControl;
+					if (cntl==null)
+					{
+						GUIButtonControl button= new GUIButtonControl(GetID,61,xpos,ypos,width,height,strButtonImageFocus,strButtonImage);
+						button.Label="";
+						button.HyperLink=-1;
+						button.FontName=strFontName;
+						button.DisabledColor=lDisabledColor;
+						button.TextColor=lFontColor;
+						button.TextOffsetX= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetX;
+						button.TextOffsetY= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetY;
+						button.ColourDiffuse= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).ColourDiffuse;			
+						button.AllocResources();
+						GUIControl btnControl = (GUIControl) button;
+						Add(ref btnControl);
+					}
+				}
 			}
 		}
 
@@ -1078,12 +1156,12 @@ namespace MediaPortal.GUI.Home
 					button.FontName=strFontName;
 					button.DisabledColor=lDisabledColor;
 					button.TextColor=lFontColor;
-          button.TextOffsetX= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetX;
+					button.TextOffsetX= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetX;
 					button.TextOffsetY= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetY;
 					button.ColourDiffuse= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).ColourDiffuse;
 					button.SetNavigation(iButtonId-1,2,iButtonId,iButtonId);
 
-          //Trace.WriteLine(String.Format("id:{0} btn:{1}", iButtonId,strButtonText));
+					//Trace.WriteLine(String.Format("id:{0} btn:{1}", iButtonId,strButtonText));
 					
 					button.AllocResources();
 					GUIControl btnControl = (GUIControl) button;
@@ -1091,19 +1169,19 @@ namespace MediaPortal.GUI.Home
 
 					xpos = GetControl((int)Controls.TemplateHoverImage).XPosition;
 					ypos = GetControl((int)Controls.TemplateHoverImage).YPosition;
-          GUIImage hoverimg=GetControl((int)Controls.TemplateHoverImage) as GUIImage;
+					GUIImage hoverimg=GetControl((int)Controls.TemplateHoverImage) as GUIImage;
 
 					img = new GUIImage(GetID,iButtonId+100,xpos,ypos,width,height,strPictureImage,0);
 					img.AllocResources();
-          width = GetControl( (int)Controls.TemplateHoverImage).Width;
-          if (width == 0) width = img.TextureWidth; 
-          height = GetControl( (int)Controls.TemplateHoverImage).Height;
-          if (height == 0) height = img.TextureHeight;
-          GUIGraphicsContext.ScaleHorizontal(ref width);
-          GUIGraphicsContext.ScaleVertical(ref height);
-          img.Width=width;
-          img.Height=height;
-          btnControl = (GUIControl) img;
+					width = GetControl( (int)Controls.TemplateHoverImage).Width;
+					if (width == 0) width = img.TextureWidth; 
+					height = GetControl( (int)Controls.TemplateHoverImage).Height;
+					if (height == 0) height = img.TextureHeight;
+					GUIGraphicsContext.ScaleHorizontal(ref width);
+					GUIGraphicsContext.ScaleVertical(ref height);
+					img.Width=width;
+					img.Height=height;
+					btnControl = (GUIControl) img;
 					Add(ref btnControl);
 					m_iButtons++;
 					return;
@@ -1149,6 +1227,7 @@ namespace MediaPortal.GUI.Home
 			lTextColor		= lTextColor & 0x00FFFFFF;
 			lDiffuseColor = lDiffuseColor& 0x00FFFFFF;
 			int iMaxItems = (m_iMaxHeight+iSpaceBetween)/(m_iButtonHeight+iSpaceBetween);
+			if (menuView==0) menuView=iMaxItems;
 
 			int iMid=(m_iMaxHeight/2) - ((m_iButtonHeight)/2);
 			int iScMid=iMid+m_iStartYoff;
@@ -1313,7 +1392,7 @@ namespace MediaPortal.GUI.Home
 				int iBut=m_iCurrentButton;
 				VerifyButtonIndex(ref iBut);
 				if (m_iOffset==0)
-			  {
+				{
 					FocusControl(GetID,iBut+2);
 				}
 				else
@@ -1355,11 +1434,11 @@ namespace MediaPortal.GUI.Home
 			return -1;
 		}
 
-    protected void FocusControl(int iWindowID, int iControlId)
-    {
-      if (m_bTopBar) return;
-      GUIControl.FocusControl(iWindowID,iControlId);
-    }
+		protected void FocusControl(int iWindowID, int iControlId)
+		{
+			if (m_bTopBar) return;
+			GUIControl.FocusControl(iWindowID,iControlId);
+		}
 
 		protected void UnFocusControl(int iWindowID, int iControlId)
 		{
@@ -1372,9 +1451,9 @@ namespace MediaPortal.GUI.Home
 			// Set the date & time
 			if (DateTime.Now.Minute != m_updateTimer.Minute)
 			{
-				m_updateTimer=DateTime.Now;
-				GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
-        GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
+				m_updateTimer=DateTime.Now;	 
+				GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
+				GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 			}
 		}
 
@@ -1455,6 +1534,116 @@ namespace MediaPortal.GUI.Home
 			}
 		}
 		#endregion
+
+		protected string ConvertOwnDate(string own,string day,string month)
+		{
+			StringBuilder cown = new StringBuilder(own);
+			string s;
+
+			DateTime cur=DateTime.Now;
+			s=cown.ToString();
+			int inx=s.IndexOf("MM",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,2);
+				cown.Insert(inx,cur.Month.ToString());
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("DD",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,2);
+				cown.Insert(inx,cur.Day.ToString());
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("Month",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,5);
+				cown.Insert(inx,month);
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("Day",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,3);
+				cown.Insert(inx,day);
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("YY",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,2);
+				int sy=cur.Year-2000;
+				cown.Insert(inx,sy.ToString());
+			}
+			s=cown.ToString();
+			inx=s.IndexOf("Year",0);
+			if (inx>=0) 
+			{	
+				cown.Remove(inx,4);
+				cown.Insert(inx,cur.Year.ToString());
+			}
+			return(cown.ToString());
+		}
+
+		/// <summary>
+		/// Get the current date from the system and localize it based on the user preferences.
+		/// </summary>
+		/// <returns>A string containing the localized version of the date.</returns>
+		protected string GetDate()
+		{
+			if (DateTime.Now.Day != m_updateOwnTimer.Day || firstDate==false)
+			{
+				firstDate=true;
+				m_updateOwnTimer=DateTime.Now;	 
+				string strDate="";
+				DateTime cur=DateTime.Now;
+				string day;
+				switch (cur.DayOfWeek)
+				{
+					case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(11);	break;
+					case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(12);	break;
+					case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(13);	break;
+					case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(14);	break;
+					case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(15);	break;
+					case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(16);	break;
+					default:	day = GUILocalizeStrings.Get(17);	break;
+				}
+
+				string month;
+				switch (cur.Month)
+				{
+					case 1 :	month= GUILocalizeStrings.Get(21);	break;
+					case 2 :	month= GUILocalizeStrings.Get(22);	break;
+					case 3 :	month= GUILocalizeStrings.Get(23);	break;
+					case 4 :	month= GUILocalizeStrings.Get(24);	break;
+					case 5 :	month= GUILocalizeStrings.Get(25);	break;
+					case 6 :	month= GUILocalizeStrings.Get(26);	break;
+					case 7 :	month= GUILocalizeStrings.Get(27);	break;
+					case 8 :	month= GUILocalizeStrings.Get(28);	break;
+					case 9 :	month= GUILocalizeStrings.Get(29);	break;
+					case 10:	month= GUILocalizeStrings.Get(30);	break;
+					case 11:	month= GUILocalizeStrings.Get(31);	break;
+					default:	month= GUILocalizeStrings.Get(32);	break;
+				}
+
+				if (m_iDateLayout==0) 
+				{
+					strDate=String.Format("{0} {1}. {2}",day, cur.Day, month);
+				}
+				if (m_iDateLayout==1)
+				{
+					strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
+				}
+				if (m_iDateLayout==2)
+				{
+					strDate=ConvertOwnDate(ownDate,day, month);
+				}
+				currentDate=strDate;
+			}
+			return currentDate;
+		}
 
 	}
 }
