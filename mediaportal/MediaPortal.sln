@@ -187,6 +187,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration",
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBUIRT", "USBUIRT\USBUIRT.csproj", "{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -347,6 +351,10 @@ Global
 		{68168FAA-A363-4F64-981C-32629A537900}.Debug.Build.0 = Debug|.NET
 		{68168FAA-A363-4F64-981C-32629A537900}.Release.ActiveCfg = Release|.NET
 		{68168FAA-A363-4F64-981C-32629A537900}.Release.Build.0 = Release|.NET
+		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Debug.ActiveCfg = Debug|.NET
+		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Debug.Build.0 = Debug|.NET
+		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Release.ActiveCfg = Release|.NET
+		{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
