@@ -2101,6 +2101,38 @@
 		<id>721</id>
 		<value>Toon: Keer gespeeld</value>
 	</string>
+  <string>
+  	<id>722</id>
+  	<value>DVD kan niet afgespeeld worden</value>
+  </string>
+  <string>
+  	<id>723</id>
+  	<value>Zit er een DVD in de speler?</value>
+  </string>
+  <string>
+  	<id>800</id>
+  	<value>Start met</value>
+  </string>
+  <string>
+  	<id>801</id>
+  	<value>Bevat</value>
+  </string>
+  <string>
+  	<id>802</id>
+  	<value>Einde is</value>
+  </string>
+  <string>
+  	<id>803</id>
+  	<value>  Is  </value>
+  </string>
+  <string>
+  	<id>804</id>
+  	<value>Klaar</value>
+  </string>
+  <string>
+  	<id>805</id>
+  	<value>Leegmaken</value>
+  </string>
 	<string>
 		<id>10000</id>
 		<value>Startscherm</value>

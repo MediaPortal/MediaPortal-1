@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
+	<characters>255</characters>
 	<string>
 		<id>0</id>
 		<value>Anwendungen</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Eigene Bilder</value>
+		<value>Bilder</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Eigene Musik</value>
+		<value>Musik</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Eigene Filme</value>
+		<value>Filme</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -34,7 +35,15 @@
 	</string>
 	<string>
 		<id>8</id>
-		<value>Wettervorhersage</value>
+		<value>Wetter</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>News</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Rezepte</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -815,7 +824,7 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>Bewege den Pfeil um den Overscanbereich einzustellen</value>
+		<value>ACHTUNG! Für beste Qualität 0,0 lassen. Verändern, um verkleinertes Video einzupassen.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -823,7 +832,7 @@
 	</string>
 	<string>
 		<id>278</id>
-		<value>Ändere das Rechteck so das es ein perfektes Quadrat ergibt</value>
+		<value>WICHTIG! Ändere das Rechteck so, das es ein perfektes Quadrat ergibt</value>
 	</string>
 	<string>
 		<id>279</id>
@@ -1653,11 +1662,11 @@
 	</string>
 	<string>
 		<id>603</id>
-		<value>Zeitplan</value>
+		<value>Geplant</value>
 	</string>
 	<string>
 		<id>604</id>
-		<value>TV-Aufnahmen</value>
+		<value>Aufnahmen</value>
 	</string>
 	<string>
 		<id>605</id>
@@ -1741,7 +1750,7 @@
 	</string>
 	<string>
 		<id>625</id>
-		<value>Zeitpläne gelöscht:</value>
+		<value>Aufnahmen gelöscht: </value>
 	</string>
 	<string>
 		<id>626</id>
@@ -1825,7 +1834,7 @@
 	</string>
 	<string>
 		<id>646</id>
-		<value>Programmierte Aufnahmen</value>
+		<value>Geplante Aufnahmen</value>
 	</string>
 	<string>
 		<id>647</id>
@@ -1849,7 +1858,7 @@
 	</string>
 	<string>
 		<id>652</id>
-		<value>TV-Aufnahmen</value>
+		<value>Aufnahmen</value>
 	</string>
 	<string>
 		<id>653</id>
@@ -1869,31 +1878,31 @@
 	</string>
 	<string>
 		<id>657</id>
-		<value>Mon</value>
+		<value>Mo</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Die</value>
+		<value>Di</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Mit</value>
+		<value>Mi</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Don</value>
+		<value>Do</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Fre</value>
+		<value>Fr</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Sam</value>
+		<value>Sa</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Son</value>
+		<value>So</value>
 	</string>
 	<string>
 		<id>664</id>
@@ -1929,7 +1938,7 @@
 	</string>	
 	<string>
 		<id>672</id>
-		<value>Aufnahme Mon-Fre</value>
+		<value>Aufnahme Mo-Fr</value>
 	</string>	
 	<string>
 		<id>673</id>
@@ -1961,7 +1970,7 @@
 	</string>	
 	<string>
 		<id>680</id>
-		<value>Mon-Fre</value>
+		<value>Mo-Fr</value>
 	</string>	
 	<string>
 		<id>681</id>
@@ -1983,6 +1992,313 @@
 		<id>685</id>
 		<value>nach Status</value>
 	</string>	
+	<string>
+		<id>686</id>
+		<value>geboren</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>aktive Jahre</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumente</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Bio.</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Discografie (Alben)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Discografie (Kompilationen, Boxen)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Discografie (EPs, Singles)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Discografie (Bootlegs, Videos, Interviews)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Keine Interpreten gefunden!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Nicht mit dem Internet verbunden!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Datenabfrage</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Empfange RSS Feed für </value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Feed auswählen</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV Ein</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Auto Update</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Eine neue Version ist verfügbar</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Update von v#old ->v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Zurück</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Autoplay</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disc eingelegt! Soll sie abgespielt werden?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD eingelegt! Soll sie abgespielt werden?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satellit</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Wetter</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Top100 löschen</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Sicher, das die Top100 Liste gelöscht werden soll?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Anzeige: Laufzeit</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Anzeige: Häufigkeit</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Die Disc kann nicht abgespielt werden</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Ist eine Disc eingelegt?</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Fängt an mit</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Enthält</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Endet mit</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>  Ist  </value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Fertig</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Löschen</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Titel</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Menge</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Zutaten</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Anweisungen</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Karte</value>
+	</string>
+	<!-- My Alarm Strings -->
+	<string>
+		<id>850</id>
+		<value>Alarm</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Wiedergabeliste</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Alarm Ein</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Wiedergabeliste auswählen</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>An diesen Tagen aktiv</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Alarm Zeit</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Sleeptimer Ein</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Snooze</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Snooze Zeit</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Sleep Zeit</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Lautstärke ein/ausblenden</value>
+	</string>
+
+	<string>
+		<id>8000</id>
+		<value>Mail</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Mailbox abrufen</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Autocheck aus</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Autocheck ein</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>Sie haben neue Mails!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Mailbox aktualisieren</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Autocheck Ein</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Zurück</value>
+	</string>
+	<string>
+		<id>8009</id>
+		<value>Alle als neu markieren</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>Keine Mailbox eingegeben</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Bitte ins Setup gehen und mindestens eine</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>Mailbox eingeben, um das Mail-Plugin zu nutzen.</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>Server reagiert nicht</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>Der Server '{0}' reagiert nicht!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Überprüfen Sie das Setup für Mailbox '{0}'</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>Von</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>An</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Betreff</value>
+	</string>
+	<string>
+		<id>8019</id>
+		<value>Nachricht</value>
+	</string>
+	<string>
+		<id>8020</id>
+		<value>Mail löschen</value>
+	</string>
+	<string>
+		<id>8021</id>
+		<value>Mail gelesen</value>
+	</string>
+
+	<string>
+		<id>8030</id>
+		<value>Mit dem Server verbunden</value>
+	</string>
+	<string>
+		<id>8031</id>
+		<value>Hole Mailanzahl</value>
+	</string>
+	<string>
+		<id>8033</id>
+		<value>Fortschritt</value>
+	</string>
 
 	<string>
 		<id>10000</id>
@@ -1990,7 +2306,7 @@
 	</string>
 	<string>
 		<id>10001</id>
-		<value>Programme</value>
+		<value>Fernsehen</value>
 	</string>
 	<string>
 		<id>10002</id>
@@ -2151,7 +2467,7 @@
 	</string>
 	<string>
 		<id>10603</id>
-		<value>Fernsehen/TV-Aufnahmen</value>
+		<value>Fernsehen/Aufnahmen</value>
 	</string>
 	<string>
 		<id>11000</id>
@@ -2206,304 +2522,7 @@
 		<value>Vollbild OSD</value>
 	</string>
 
-	<string>
-		<id>686</id>
-		<value>geboren</value>
-	</string>
-	<string>
-		<id>687</id>
-		<value>aktive Jahre</value>
-	</string>
-	<string>
-		<id>688</id>
-		<value>Instrumente</value>
-	</string>
-	<string>
-		<id>689</id>
-		<value>Bio.</value>
-	</string>
-	<string>
-		<id>690</id>
-		<value>Discografie (Alben)</value>
-	</string>
-	<string>
-		<id>691</id>
-		<value>Discografie (Kompilationen, Boxen)</value>
-	</string>
-	<string>
-		<id>700</id>
-		<value>Discografie (EPs, Singles)</value>
-	</string>
-	<string>
-		<id>701</id>
-		<value>Discografie (Bootlegs, Videos, Interviews)</value>
-	</string>
-	<string>
-		<id>702</id>
-		<value>Keine Interpreten gefunden!</value>
-	</string>
-	<string>
-		<id>703</id>
-		<value>Nicht mit dem Internet verbunden!</value>
-	</string>
-	<string>
-		<id>704</id>
-		<value>Datenabfrage</value>
-	</string>
-	<string>
-		<id>705</id>
-		<value>Empfange RSS Feed für </value>
-	</string>
-	<string>
-		<id>706</id>
-		<value>Feed auswählen</value>
-	</string>
-	<string>
-		<id>707</id>
-		<value>TV An/Aus</value>
-	</string>
-	<string>
-		<id>708</id>
-		<value>Timeshifting</value>
-	</string>
-	<string>
-		<id>709</id>
-		<value>Auto Update</value>
-	</string>
-	<string>
-		<id>710</id>
-		<value>Eine neue Version ist verfügbar</value>
-	</string>
-	<string>
-		<id>711</id>
-		<value>Update von v#old ->v#new ?</value>
-	</string>
-	<string>
-		<id>800</id>
-		<value>Beginnt mit</value>
-	</string>
-	<string>
-		<id>801</id>
-		<value>Enthält</value>
-	</string>
-	<string>
-		<id>802</id>
-		<value>Endet mit</value>
-	</string>
-	<string>
-		<id>803</id>
-		<value>  Ist  </value>
-	</string>
-	<string>
-		<id>804</id>
-		<value>Fertig</value>
-	</string>
-	<string>
-		<id>805</id>
-		<value>Löschen</value>
-	</string>
-	<string>
-		<id>860</id>
-		<value>Lautstärke ein-/ausblenden</value>
-	</string>
-	<string>
-		<id>859</id>
-		<value>Einschlafzeit</value>
-	</string>
-	<string>
-		<id>858</id>
-		<value>Schlummerzeit</value>
-	</string>
-	<string>
-		<id>857</id>
-		<value>Schlummern</value>
-	</string>
-	<string>
-		<id>856</id>
-		<value>Schlafmodus an/aus</value>
-	</string>
-	<string>
-		<id>855</id>
-		<value>Weckzeit</value>
-	</string>
-	<string>
-		<id>854</id>
-		<value>An diesen Tagen aktiv</value>
-	</string>
-	<string>
-		<id>853</id>
-		<value>Playlist auswählen</value>
-	</string>
-	<string>
-		<id>852</id>
-		<value>Wecker an/aus</value>
-	</string>
-	<string>
-		<id>851</id>
-		<value>Playlist</value>
-	</string>
-	<string>
-		<id>850</id>
-		<value>Wecker</value>
-	</string>
-	<string>
-		<id>808</id>
-		<value>Zutaten</value>
-	</string>
-	<string>
-		<id>807</id>
-		<value>Ergibt</value>
-	</string>
-	<string>
-		<id>810</id>
-		<value>Karte</value>
-	</string>
-	<string>
-		<id>809</id>
-		<value>Richtung</value>
-	</string>
-	<string>
-		<id>806</id>
-		<value>Titel</value>
-	</string>
-	<string>
-		<id>723</id>
-		<value>Haben Sie eine Disk eingelegt?</value>
-	</string>
-	<string>
-		<id>722</id>
-		<value>Disk kann nicht abgespielt werden</value>
-	</string>
-	<string>
-		<id>721</id>
-		<value>Show: gespielt</value>
-	</string>
-	<string>
-		<id>720</id>
-		<value>Show: Dauer</value>
-	</string>
-	<string>
-		<id>719</id>
-		<value>Sollen die Top100 wirklich zurückgesetzt werden?</value>
-	</string>
-	<string>
-		<id>718</id>
-		<value>Top100 zurück setzen</value>
-	</string>
-	<string>
-		<id>717</id>
-		<value>Wetter</value>
-	</string>
-	<string>
-		<id>716</id>
-		<value>Satellit</value>
-	</string>
-	<string>
-		<id>715</id>
-		<value>CD eingelegt, soll sie abgespielt werden?</value>
-	</string>
-	<string>
-		<id>714</id>
-		<value>Disk eingelegt, soll sie abgespielt werden?</value>
-	</string>
-	<string>
-		<id>713</id>
-		<value>Autoplay</value>
-	</string>
-	<string>
-		<id>712</id>
-		<value>Zurück</value>
-	</string>
-	<string>
-		<id>8021</id>
-		<value>Als gelesen markieren</value>
-	</string>
-	<string>
-		<id>8019</id>
-		<value>Nachricht</value>
-	</string>
-	<string>
-		<id>8018</id>
-		<value>Betreff</value>
-	</string>
-	<string>
-		<id>8017</id>
-		<value>An</value>
-	</string>
-	<string>
-		<id>8016</id>
-		<value>Von</value>
-	</string>
-	<string>
-		<id>8015</id>
-		<value>Konfiguration für Mailbox '{0}' prüfen</value>
-	</string>
-	<string>
-		<id>8014</id>
-		<value>Der Server '{0}' hat nicht geantwortet!</value>
-	</string>
-	<string>
-		<id>8013</id>
-		<value>Kein Serverantwort</value>
-	</string>
-	<string>
-		<id>8012</id>
-		<value>mindestens eine Mailbox um das Mail-Plugin zu nutzen.</value>
-	</string>
-	<string>
-		<id>8011</id>
-		<value>Bitte gehen Sie in das Setup und definieren Sie</value>
-	</string>
-	<string>
-		<id>8010</id>
-		<value>Keine Mailbox definiert</value>
-	</string>
-	<string>
-		<id>8009</id>
-		<value>Alle als gelesen markieren</value>
-	</string>
-	<string>
-		<id>8008</id>
-		<value>Zurück</value>
-	</string>
-	<string>
-		<id>8007</id>
-		<value>Autocheck an/aus</value>
-	</string>
-	<string>
-		<id>8005</id>
-		<value>Mailbox aktualisieren</value>
-	</string>
-	<string>
-		<id>8004</id>
-		<value>Sie haben neue Mail!</value>
-	</string>
-	<string>
-		<id>8003</id>
-		<value>Autocheck an</value>
-	</string>
-	<string>
-		<id>8002</id>
-		<value>Autocheck aus</value>
-	</string>
-	<string>
-		<id>8001</id>
-		<value>Mailbox prüfen</value>
-	</string>
-	<string>
-		<id>8000</id>
-		<value>Email</value>
-	</string>
-	<string>
-		<id>8020</id>
-		<value>Mail löschen</value>
-	</string>
-	<string>
-		<id>10</id>
-		<value>Rezepte</value>
-	</string>
-	<string>
-		<id>9</id>
-		<value>News</value>
-	</string>
 </strings>
+
+
+
