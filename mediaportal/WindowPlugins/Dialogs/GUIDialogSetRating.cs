@@ -14,6 +14,7 @@ namespace MediaPortal.Dialogs
 		{
 				ID_BUTTON_MIN   =11
 			, ID_BUTTON_PLUS  =10
+			, ID_BUTTON_OK = 12
 			,	CONTROL_STARS=100
 		};
 
@@ -128,6 +129,11 @@ namespace MediaPortal.Dialogs
 				{
 					int iControl=message.SenderControlId;
         
+					if (iControl==(int)Controls.ID_BUTTON_OK)
+					{
+						Close();
+						return true;
+					}
 					if (iControl==(int)Controls.ID_BUTTON_MIN)
 					{
 						if (m_iRating >=1) m_iRating--;
