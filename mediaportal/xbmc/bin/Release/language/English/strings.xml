@@ -1641,11 +1641,11 @@
 	</string>
 	<string>
 		<id>603</id>
-		<value>Scheduler</value>
+		<value>Scheduled</value>
 	</string>
 	<string>
 		<id>604</id>
-		<value>Recordings</value>
+		<value>Recorded TV</value>
 	</string>
 	<string>
 		<id>605</id>
@@ -1810,6 +1810,30 @@
 	<string>
 		<id>645</id>
 		<value>Loading XML file</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Scheduled recordings</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Once</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Daily</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Every</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Everytime on this channel</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Everytime on any channel</value>
 	</string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
