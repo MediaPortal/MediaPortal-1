@@ -1382,7 +1382,6 @@ namespace MediaPortal
     protected override void Dispose(bool disposing)
     {
       CleanupEnvironment();
-      mnuMain.Dispose();
       base.Dispose(disposing);
 
       Win32API.EnableStartBar(true);

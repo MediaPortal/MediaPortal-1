@@ -494,26 +494,32 @@ public class MediaPortalApp : D3DApp, IRender
     /// avoid redundant state setting during Render() or FrameMove().
     /// </summary>
     protected override void OnDeviceReset(System.Object sender, System.EventArgs e) 
+	{
+		//
+		// Only perform the device reset if we're not shutting down MediaPortal.
+		//
+		if(GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
 		{
-      Log.Write("OnDeviceReset()");
-      //g_Player.Stop();
-      GUIGraphicsContext.Load();
+			Log.Write("OnDeviceReset()");
+			//g_Player.Stop();
+			GUIGraphicsContext.Load();
 			GUIFontManager.Dispose();
-      GUIFontManager.LoadFonts(@"skin\"+m_strSkin+@"\fonts.xml");
-      GUIFontManager.InitializeDeviceObjects();
-      if (GUIGraphicsContext.DX9Device!=null)
-      {
-        GUIWindowManager.Restore();
-        GUIWindowManager.PreInit();
-        GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
-        GUIWindowManager.OnDeviceRestored();
-        GUIGraphicsContext.Load();
-      }
-      Log.Write(" done");
-      g_Player.PositionX++;
-      g_Player.PositionX--;
-      m_bNeedUpdate=true;
+			GUIFontManager.LoadFonts(@"skin\"+m_strSkin+@"\fonts.xml");
+			GUIFontManager.InitializeDeviceObjects();
+			if (GUIGraphicsContext.DX9Device!=null)
+			{
+				GUIWindowManager.Restore();
+				GUIWindowManager.PreInit();
+				GUIWindowManager.ActivateWindow( GUIWindowManager.ActiveWindow );
+				GUIWindowManager.OnDeviceRestored();
+				GUIGraphicsContext.Load();
+			}
+			Log.Write(" done");
+			g_Player.PositionX++;
+			g_Player.PositionX--;
+			m_bNeedUpdate=true;
 		}
+	}
 
     void OnAction(Action action)
     {
