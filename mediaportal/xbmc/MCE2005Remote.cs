@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -212,6 +214,22 @@ namespace MediaPortal
         {
           Log.Write("Registered#2");
           RemoteFound=true;
+        }
+        Process[] myProcesses;
+        
+        // kill ehtray.exe since that program catches the mce remote keys
+        // and will start mce 2005
+        myProcesses = Process.GetProcesses();
+        foreach(Process myProcess in myProcesses)
+        {
+          if (myProcess.ProcessName.ToLower().Equals("ehtray"))
+          {
+            try
+            {
+              myProcess.Kill();
+            }
+            catch(Exception){}
+          }
         }
         if (RemoteFound) return;
       }
