@@ -38,6 +38,14 @@
 		<value>Mijn Weer</value>
 	</string>
 	<string>
+		<id>9</id>
+		<value>Mijn Nieuws</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Mijn Recepten</value>
+	</string>
+	<string>
 		<id>11</id>
 		<value>maandag</value>
 	</string>
@@ -155,7 +163,7 @@
 	</string>
 	<string>
 		<id>110</id>
-		<value>Aanmaken miniweergaven</value>
+		<value>Aanmaken miniatuurweergaven</value>
 	</string>
 	<string>
 		<id>111</id>
@@ -1151,7 +1159,7 @@
 	</string>
 	<string>
 		<id>361</id>
-		<value>Start Diav.</value>
+		<value>Diav. met mappen</value>
 	</string>
 	<string>
 		<id>362</id>
@@ -1982,6 +1990,94 @@
 		<value>Sorteer: Status</value>
 	</string>
 	<string>
+		<id>686</id>
+		<value>Geb. datum:</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Jaren aktief:</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumenten:</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Biografie</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Discografie (albums)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Discografie (compilaties, boxes)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Discografie (eps, singles)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Discografie (bootlegs, videos, interviews)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Geen artiesten gevonden!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Niet verbonden met het Internet!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Kies kanaal</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Nieuws ophalen voor</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Kies kanaal</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV Aan/Uit</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Automatisch bijwerken</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Er is een nieuwe versie beschikbaar</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Opwaarderen van v#old naar v#new?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Terug</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Automatisch afspelen</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>DVD gevonden, nu afspelen?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>Audio CD gevonden, nu afspelen?</value>
+	</string>
+	<string>
 		<id>10000</id>
 		<value>Startscherm</value>
 	</string>
@@ -2208,45 +2304,5 @@
 	<string>
 		<id>12901</id>
 		<value>Beeldvullend OSD</value>
-	</string>
-	<string>
-		<id>686</id>
-		<value>Geb. datum:</value>
-	</string>
-	<string>
-		<id>687</id>
-		<value>Jaren aktief:</value>
-	</string>
-	<string>
-		<id>688</id>
-		<value>Instrumenten:</value>
-	</string>
-	<string>
-		<id>689</id>
-		<value>Biografie</value>
-	</string>
-	<string>
-		<id>690</id>
-		<value>Discografie (albums)</value>
-	</string>
-	<string>
-		<id>691</id>
-		<value>Discografie (compilaties, boxes)</value>
-	</string>
-	<string>
-		<id>700</id>
-		<value>Discografie (eps, singles)</value>
-	</string>
-	<string>
-		<id>701</id>
-		<value>Discografie (bootlegs, videos, interviews)</value>
-	</string>
-	<string>
-		<id>702</id>
-		<value>Geen artiesten gevonden!</value>
-	</string>
-	<string>
-		<id>703</id>
-		<value>Niet verbonden met het Internet!</value>
 	</string>
 </strings>

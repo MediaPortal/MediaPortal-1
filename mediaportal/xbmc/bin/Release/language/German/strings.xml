@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
-	<characters>255</characters>
 	<string>
 		<id>0</id>
 		<value>Anwendungen</value>
@@ -1658,7 +1657,7 @@
 	</string>
 	<string>
 		<id>604</id>
-		<value>Aufnahmen</value>
+		<value>TV-Aufnahmen</value>
 	</string>
 	<string>
 		<id>605</id>
@@ -1925,16 +1924,64 @@
 		<value>nach Bitrate</value>
 	</string>	
 	<string>
-		<id>670</id>
-		<value>Angesehene Aufnahmen löschen?</value>
-	</string>
-	<string>
 		<id>671</id>
 		<value>nach Ansicht</value>
 	</string>	
 	<string>
 		<id>672</id>
 		<value>Aufnahme Mon-Fre</value>
+	</string>	
+	<string>
+		<id>673</id>
+		<value>Scroll-Geschwindighkeit</value>
+	</string>	
+	<string>
+		<id>674</id>
+		<value>GUI-Einstellungen</value>
+	</string>	
+	<string>
+		<id>675</id>
+		<value>Beispiel:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Angesehene Aufnahmen löschen?</value>
+	</string>	
+	<string>
+		<id>677</id>
+		<value>Zeiten</value>
+	</string>	
+	<string>
+		<id>678</id>
+		<value>nach Genre</value>
+	</string>	
+	<string>
+		<id>679</id>
+		<value>wöchentlich</value>
+	</string>	
+	<string>
+		<id>680</id>
+		<value>Mon-Fre</value>
+	</string>	
+	<string>
+		<id>681</id>
+		<value>Warte</value>
+	</string>	
+	<string>
+		<id>682</id>
+		<value>Aufnahme</value>
+	</string>	
+	<string>
+		<id>683</id>
+		<value>Fertig</value>
+	</string>	
+	<string>
+		<id>684</id>
+		<value>Abgebrochen</value>
+	</string>	
+	<string>
+		<id>685</id>
+		<value>nach Status</value>
 	</string>	
 
 	<string>
@@ -2009,6 +2056,7 @@
 		<id>10017</id>
 		<value>Einstellungen->Wetter</value>
 	</string>
+
 	<string>
 		<id>10020</id>
 		<value>Einstellungen->Skripte</value>
@@ -2050,6 +2098,14 @@
 		<value>Einstellungen->Allgemein->LCD</value>
 	</string>
 	<string>
+		<id>10030</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>10031</id>
+		<value>Einstellungen->Bildschirm->Scroll-Geschwindigkeit</value>
+	</string>
+	<string>
 		<id>10100</id>
 		<value>Ja/Nein Dialog</value>
 	</string>
@@ -2080,6 +2136,22 @@
 	<string>
 		<id>10505</id>
 		<value>Musik/Top100</value>
+	</string>
+	<string>
+		<id>10600</id>
+		<value>Fernsehen/Programm</value>
+	</string>
+	<string>
+		<id>10601</id>
+		<value>Fernsehen/Zeitplan</value>
+	</string>
+	<string>
+		<id>10602</id>
+		<value>Fernsehen/Vollbild</value>
+	</string>
+	<string>
+		<id>10603</id>
+		<value>Fernsehen/TV-Aufnahmen</value>
 	</string>
 	<string>
 		<id>11000</id>
@@ -2133,6 +2205,80 @@
 		<id>12901</id>
 		<value>Vollbild OSD</value>
 	</string>
+
+	<string>
+		<id>686</id>
+		<value>geboren</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>aktive Jahre</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instrumente</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Bio.</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Discografie (Alben)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Discografie (Kompilationen, Boxen)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Discografie (EPs, Singles)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Discografie (Bootlegs, Videos, Interviews)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Keine Interpreten gefunden!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Nicht mit dem Internet verbunden!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Datenabfrage</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Empfange RSS Feed für </value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Feed auswählen</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>TV An/Aus</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Auto Update</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Eine neue Version ist verfügbar</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Update von v#old ->v#new ?</value>
+	</string>
 </strings>
+
 
 
