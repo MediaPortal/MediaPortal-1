@@ -450,12 +450,24 @@ namespace MediaPortal.GUI.Library
       }
 
 			line=line.Insert(m_iPos, "_");			
-			m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT ,-1);
+
+      float fCaretWidth = 0.0f;
+      float fCaretHeight=0.0f;
+
+      m_pTextBoxFont.GetTextExtent( line, ref fCaretWidth, ref fCaretHeight );
+      if (GUIGraphicsContext.graphics!=null) fCaretWidth+=line.Length;
+      while (fCaretWidth>m_dwTextBoxWidth)
+      {
+        line=line.Remove(0,3);
+        line=line.Insert(0, ".");
+        line=line.Insert(0, ".");
+        m_pTextBoxFont.GetTextExtent( line, ref fCaretWidth, ref fCaretHeight );
+        if (GUIGraphicsContext.graphics!=null) fCaretWidth+=line.Length;
+      }
+
+			m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT, -1);
 
 /*
-      m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT );
-
-
       // Draw blinking caret using line primitives.
       TimeSpan ts=DateTime.Now-m_CaretTimer;
       if(  (ts.TotalSeconds % fCARET_BLINK_RATE ) < fCARET_ON_RATIO )
@@ -465,10 +477,10 @@ namespace MediaPortal.GUI.Library
         float fCaretWidth = 0.0f;
         float fCaretHeight=0.0f;
         m_pTextBoxFont.GetTextExtent( strLine, ref fCaretWidth, ref fCaretHeight );
-        m_pTextBoxFont.DrawText( m_dwTextBoxXpos+(int)fCaretWidth, m_dwTextBoxYpos, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
-  
+        if (GUIGraphicsContext.graphics!=null) fCaretWidth+=strLine.Length;
+        m_pTextBoxFont.DrawText( m_dwTextBoxXpos+(int)fCaretWidth, m_dwTextBoxYpos, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1 ); 
       }
-			*/
+*/			
     }
 
 
