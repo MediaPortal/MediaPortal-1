@@ -316,7 +316,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Size = new System.Drawing.Size(440, 96);
       this.groupBox3.TabIndex = 3;
       this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Codec Settings";
+      this.groupBox3.Text = "MPEG2 Codec Settings";
       // 
       // audioCodecComboBox
       // 
