@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.TV
 
       ArrayList itemlist = new ArrayList();
       TVDatabase.GetRecordings(ref itemlist);
-			
+			int total=0;
       foreach (TVRecording rec in itemlist)
       {
 				ArrayList recs = util.GetRecordingTimes(rec);
@@ -257,6 +257,7 @@ namespace MediaPortal.GUI.TV
 					item.IconImageBig=strLogo;
 					item.IconImage=strLogo;
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
+					total++;
 				}
 				else
 				{
@@ -289,11 +290,12 @@ namespace MediaPortal.GUI.TV
 						item.IconImageBig=strLogo;
 						item.IconImage=strLogo;
 						GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,item);
+						total++;
 					}
 				}
       }
       
-      string strObjects=String.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));
+      string strObjects=String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
       OnSort();
@@ -384,6 +386,22 @@ namespace MediaPortal.GUI.TV
       TimeSpan ts;
       TVRecording rec1=(TVRecording)item1.TVTag;
       TVRecording rec2=(TVRecording)item2.TVTag;
+ 
+			//0=Recording->1=Finished->2=Waiting->3=Canceled
+			int type1=2,type2=2;
+			if (item1.Label3==GUILocalizeStrings.Get(682)) type1=0;
+			else if (item1.Label3==GUILocalizeStrings.Get(683)) type1=1;
+			else if (item1.Label3==GUILocalizeStrings.Get(681)) type1=2;
+			else if (item1.Label3==GUILocalizeStrings.Get(684)) type1=3;
+
+					
+			if (item2.Label3==GUILocalizeStrings.Get(682)) type2=0;
+			else if (item2.Label3==GUILocalizeStrings.Get(683)) type2=1;
+			else if (item2.Label3==GUILocalizeStrings.Get(681)) type2=2;
+			else if (item2.Label3==GUILocalizeStrings.Get(684)) type2=3;
+			if (type1==0 && type2!=0) return -1;
+			if (type2==0 && type1!=0) return 1;
+
       switch (currentSortMethod)
       {
         case SortMethod.SORT_NAME:
@@ -402,17 +420,6 @@ namespace MediaPortal.GUI.TV
         
         case SortMethod.SORT_STATUS:
 					// sort by: 0=Recording->1=Finished->2=Waiting->3=Canceled
-					int type1=2,type2=2;
-					if (item1.Label3==GUILocalizeStrings.Get(682)) type1=0;
-					else if (item1.Label3==GUILocalizeStrings.Get(683)) type1=1;
-					else if (item1.Label3==GUILocalizeStrings.Get(681)) type1=2;
-					else if (item1.Label3==GUILocalizeStrings.Get(684)) type1=3;
-
-					
-					if (item2.Label3==GUILocalizeStrings.Get(682)) type2=0;
-					else if (item2.Label3==GUILocalizeStrings.Get(683)) type2=1;
-					else if (item2.Label3==GUILocalizeStrings.Get(681)) type2=2;
-					else if (item2.Label3==GUILocalizeStrings.Get(684)) type2=3;
           if (m_bSortAscending)
           {
 						if (type1 < type2) return -1;
