@@ -8,6 +8,7 @@ using Microsoft.Win32;
 
 using SQLite.NET;
 using MediaPortal.TV.Database;
+using DShowNET;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -25,6 +26,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button downButton;
     private System.Windows.Forms.Button upButton;
     private System.Windows.Forms.ColumnHeader columnHeader4;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
 
 		//
 		// Private members
@@ -74,18 +76,19 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // columnHeader3
       // 
-      this.columnHeader3.Text = "Frequency override (MHz)";
-      this.columnHeader3.Width = 148;
+      this.columnHeader3.Text = "Frequency (MHz)";
+      this.columnHeader3.Width = 94;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Channel";
-      this.columnHeader2.Width = 76;
+      this.columnHeader2.Width = 57;
       // 
       // groupBox1
       // 
@@ -172,6 +175,7 @@ namespace MediaPortal.Configuration.Sections
                                                                                        this.columnHeader1,
                                                                                        this.columnHeader2,
                                                                                        this.columnHeader3,
+                                                                                       this.columnHeader5,
                                                                                        this.columnHeader4});
       this.channelsListView.FullRowSelect = true;
       this.channelsListView.HideSelection = false;
@@ -192,7 +196,11 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader4
       // 
       this.columnHeader4.Text = "Type";
-      this.columnHeader4.Width = 50;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Standard";
+      this.columnHeader5.Width = 63;
       // 
       // TVChannels
       // 
@@ -221,6 +229,7 @@ namespace MediaPortal.Configuration.Sections
 				ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
 																		editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
 																		editedChannel.Frequency.ToString(Frequency.Format.MegaHerz),
+                                    GetStandardName(editedChannel.standard),
                                     editedChannel.External ? "External" : "Internal"
 																	  } );
 				listItem.Tag = editedChannel;
@@ -228,6 +237,13 @@ namespace MediaPortal.Configuration.Sections
 				channelsListView.Items.Add(listItem);
 			}		
 		}
+
+    private string GetStandardName(AnalogVideoStandard standard)
+    {
+      string name = standard.ToString();
+      name = name.Replace("_", " ");
+      return name == "None" ? "Default" : name;
+    }
 
 		private void editButton_Click(object sender, System.EventArgs e)
 		{
@@ -248,7 +264,8 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[0].Text = editedChannel.Name;
 					listItem.SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
 					listItem.SubItems[2].Text = editedChannel.Frequency.ToString(Frequency.Format.MegaHerz);
-          listItem.SubItems[3].Text = editedChannel.External ? "External" : "Internal";
+          listItem.SubItems[4].Text = GetStandardName(editedChannel.standard);
+          listItem.SubItems[4].Text = editedChannel.External ? "External" : "Internal";
 				}
 			}		
 		}
@@ -476,6 +493,7 @@ namespace MediaPortal.Configuration.Sections
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),
 																		tvChannel.Frequency.ToString(Frequency.Format.MegaHerz),
+                                    GetStandardName(tvChannel.standard),
                                     tvChannel.External ? "External" : "Internal"
 																	  } );
 
