@@ -1212,6 +1212,13 @@ public class MediaPortalApp : D3DApp, IRender
 					}
 					break;
 				}
+				
+				case Action.ActionType.ACTION_STOP:
+					if (Recorder.IsRadio())
+					{
+						Recorder.StopRadio();
+					}
+				break;
 						
 			}
 
@@ -1265,11 +1272,8 @@ public class MediaPortalApp : D3DApp, IRender
 						{
 							Log.Write("App.Onaction() stop media");
 							g_Player.Stop();
+							
 							return;
-						}
-						if (Recorder.IsRadio())
-						{
-							Recorder.StopRadio();
 						}
 						break;
 
