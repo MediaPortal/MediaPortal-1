@@ -113,7 +113,7 @@ namespace MediaPortal.Player
 				if ( !Vmr9.IsVMR9Connected )
 				{
 					//VMR9 is not supported, switch to overlay
-					Cleanup();
+					Cleanup(false);
 					return base.GetInterfaces(filename);
 				}
 
@@ -146,10 +146,10 @@ namespace MediaPortal.Player
 					return;
 				}
 			}
-			Cleanup();
+			Cleanup(true );
 		}
 
-		void Cleanup()
+		void Cleanup(bool switchToWindowedMode)
 		{
       //lock(this)
       {
@@ -202,9 +202,13 @@ namespace MediaPortal.Player
         {
           Log.Write("StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
         }
+
         //switch back to directx windowed mode
-        //GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-        //GUIWindowManager.SendMessage(msg);
+				if (switchToWindowedMode)
+				{
+					GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+					GUIWindowManager.SendMessage(msg);
+				}
       }
     }
 
