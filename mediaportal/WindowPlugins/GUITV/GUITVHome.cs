@@ -716,8 +716,10 @@ namespace MediaPortal.GUI.TV
 		static public void ViewChannel(string channel)
 		{
 			Recorder.StartViewing( channel, m_bTVON, m_bTimeShifting) ;
-					
-			m_strChannel=Recorder.GetTVChannelName();
+			if (Recorder.IsViewing())
+			{
+				m_strChannel=Recorder.GetTVChannelName();
+			}
 			m_bTimeShifting=Recorder.IsTimeShifting();
 			m_bTVON=m_bTimeShifting||Recorder.IsViewing();
 

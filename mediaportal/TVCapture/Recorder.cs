@@ -588,10 +588,23 @@ namespace MediaPortal.TV.Recording
 
     static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
     {
-      if (channel==null) return ;
-      if (channel==String.Empty) return ;
-      if (m_eState!= State.Initialized) return ;
+      if (channel==null) 
+			{
+				Log.Write("Recorder:Start TV viewing channel=null?");
+				return ;
+			}
+			if (channel==String.Empty)  
+			{
+				Log.Write("Recorder:Start TV viewing channel=empty");
+				return ;
+			}
+			if (m_eState!= State.Initialized)  
+			{
+				Log.Write("Recorder:Start TV viewing but recorder is not initalised");
+				return ;
+			}
 	
+			Log.Write("Recorder:Start TV viewing:{0} {1} {2}", channel,TVOnOff,timeshift);
 			TVCaptureDevice dev;
 			if (TVOnOff==false)
 			{
