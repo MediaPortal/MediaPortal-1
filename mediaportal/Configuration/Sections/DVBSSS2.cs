@@ -2690,6 +2690,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(m_b2c2Helper.Run()==false)
 				return;
+			DVBEPG	ssEPG=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 			progressBar2.Maximum=CountSelectedNodes();
 			progressBar2.Minimum=0;
 			progressBar2.Value=0;
@@ -2734,7 +2735,7 @@ namespace MediaPortal.Configuration.Sections
 							if(tuned==false)
 								continue ;
 							currChannel.Text=ch.ServiceName;
-							counter+=m_dvbSec.GrabEIT(m_b2c2Helper.Mpeg2DataFilter,ch.ProgramNumber);
+							counter+=ssEPG.GetEPG(m_b2c2Helper.Mpeg2DataFilter,0/*all services*/);
 							totalDBcount.Text=counter.ToString();
 							Application.DoEvents();
 							if(m_stopEPGGrab==true)
