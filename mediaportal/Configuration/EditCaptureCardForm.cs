@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration
 			// Setup combo boxes and controls
 			//
 			ArrayList availableVideoDevices = FilterHelper.GetVideoInputDevices();
-      ArrayList availableAudioDevices = FilterHelper.GetVideoInputDevices();
+      ArrayList availableAudioDevices = FilterHelper.GetAudioInputDevices();
       ArrayList availableVideoCompressors = FilterHelper.GetVideoCompressors();
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
         
