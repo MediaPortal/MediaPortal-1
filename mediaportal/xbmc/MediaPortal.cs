@@ -1202,6 +1202,14 @@ public class MediaPortalApp : D3DApp, IRender
   {
     switch (message.Message)
     {
+      case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
+      {
+        string strHead=GUILocalizeStrings.Get(message.Param1);
+        string strLine1=GUILocalizeStrings.Get(message.Param2);
+        string strLine2=GUILocalizeStrings.Get(message.Param3);
+        ShowInfo(strHead,strLine1,strLine2);
+      }
+      break;
       case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL : 
         try
         {

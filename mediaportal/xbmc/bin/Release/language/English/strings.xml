@@ -2101,6 +2101,14 @@
 	<id>721</id>
 	<value>Show: Times played</value>
 </string>
+<string>
+	<id>722</id>
+	<value>Unable to play DVD</value>
+</string>
+<string>
+	<id>723</id>
+	<value>Did you insert a DVD?</value>
+</string>
 
 
 
