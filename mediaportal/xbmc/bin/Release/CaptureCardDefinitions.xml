@@ -33,6 +33,7 @@
 <!--    LifeView DVB-T			    added by Frodo                                    -->
 <!--    Twinhan VisionDTV Ter		added by Frodo        (untested)                  -->
 <!--    Typhoon TV PVR (USB)		added by Frodo        (untested)                  -->
+<!--    VA2000						added by Frodo									  -->
 <!--    Winfast PVR 2000			added by Hwarmann                                 -->
 <!--    general s/w card			added by Frodo                                    -->
 <!--    general MCE card			added by Frodo                                    -->
@@ -130,6 +131,33 @@
   </capturecard>
   
   <capturecard commercialname="NVTV Dual Tuner" capturename="NVTV" devid="Ven_123f&amp;dev_8120&amp;subsys_024810de&amp;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
+        <filter cat="encoderaudio" name="NVTV Audio Encoder"      checkdevice="false"></filter>
+        <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"      sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"     sinkpin="2"></connection>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"     sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"      sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"      sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"          sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"          sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="VA2000" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e310de&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
