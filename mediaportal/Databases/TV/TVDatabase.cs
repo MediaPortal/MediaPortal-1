@@ -350,111 +350,7 @@ namespace MediaPortal.TV.Database
 			  return false;
 		  }
 	  }
-		static public TunerLib.TuneRequest GetTuneRequest(int iLCN, string networkType, TunerLib.TuneRequest tuneRequest) 
-		{
-			if (m_db == null) return null;
-			Log.Write("GetTuneRequest for iLCN:{0} networkType:{1}", iLCN, networkType);
-			lock (typeof(TVDatabase))
-			{
-				try
-				{
-					if (null == m_db) return null;
-					string strSQL;
 
-					switch (networkType.ToLower())
-					{
-						case "dvbc":
-							strSQL = String.Format("select * from dvbcchannels where iLCN={0} AND visible=1",iLCN);
-							break;
-						case "dvbs":
-							strSQL = String.Format("select * from dvbschannels where iLCN={0} AND visible=1",iLCN);
-							break;
-						case "dvbt":
-							strSQL = String.Format("select * from dvbtchannels where iLCN={0} AND visible=1",iLCN);
-							break;
-						default:
-							Log.Write("Unknown network type");
-							return null;
-					}
-					SQLiteResultSet results;
-					results = m_db.Execute(strSQL);
-					if (results.Rows.Count != 1) return null;
-					else
-					{
-						TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) tuneRequest;
-						switch (networkType.ToLower())
-						{
-							case "dvbc": 
-							{
-								TunerLib.IDVBCLocator myLocator = (TunerLib.IDVBCLocator) myTuneRequest.Locator;
-								myLocator.CarrierFrequency	= Int32.Parse(Get(results,0,"frequency"));
-								myLocator.SymbolRate				= Int32.Parse(Get(results,0,"symbolrate"));
-								myLocator.InnerFEC					= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"IFEC"));
-								myLocator.InnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"IFECRate"));
-								myLocator.Modulation				= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
-								myLocator.OuterFEC					= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
-								myLocator.OuterFECRate			= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
-
-							}	break;
-							case "dvbs": 
-							{
-								TunerLib.IDVBSLocator myLocator = (TunerLib.IDVBSLocator) myTuneRequest.Locator;
-								myLocator.CarrierFrequency		= Int32.Parse(Get(results,0,"frequency"));
-								myLocator.SymbolRate					= Int32.Parse(Get(results,0,"symbolrate"));
-								myLocator.Azimuth							= Int32.Parse(Get(results,0,"azimuth"));
-								myLocator.Elevation						= Int32.Parse(Get(results,0,"elevation"));
-								myLocator.WestPosition				= bool.Parse(Get(results,0,"WPos"));
-								myLocator.SignalPolarisation	= (TunerLib.Polarisation) Int32.Parse(Get(results,0,"polarisation"));
-								myLocator.InnerFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"IFEC"));
-								myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"IFECRate"));
-								myLocator.Modulation					= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
-								myLocator.OuterFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
-								myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
-
-							}	break;
-							case "dvbt": 
-							{
-								TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator) myTuneRequest.Locator;	
-								myLocator.CarrierFrequency		= Int32.Parse(Get(results,0,"frequency"));
-								/*
-								myLocator.Bandwidth						= Int32.Parse(Get(results,0,"bandwidth"));
-								myLocator.SymbolRate					= Int32.Parse(Get(results,0,"symbolrate"));
-								myLocator.OtherFrequencyInUse	= bool.Parse(Get(results,0,"OFIU"));
-								myLocator.Guard								= (TunerLib.GuardInterval) Int32.Parse(Get(results,0,"guard"));
-								myLocator.HAlpha							= (TunerLib.HierarchyAlpha) Int32.Parse(Get(results,0,"halpha"));
-								myLocator.LPInnerFEC					= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"LPIFEC"));
-								myLocator.LPInnerFECRate			= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"LPIFECRate"));
-								myLocator.Mode								= (TunerLib.TransmissionMode) Int32.Parse(Get(results,0,"mode"));
-								myLocator.InnerFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"IFEC"));
-								myLocator.InnerFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"IFECRate"));
-								myLocator.Modulation					= (TunerLib.ModulationType) Int32.Parse(Get(results,0,"modulation"));
-								myLocator.OuterFEC						= (TunerLib.FECMethod) Int32.Parse(Get(results,0,"OFEC"));
-								myLocator.OuterFECRate				= (TunerLib.BinaryConvolutionCodeRate) Int32.Parse(Get(results,0,"OFECRate"));
-								Log.Write("Carrier frequency:{0} KHz bandwidth:{1} MHz, Symbolrate:{2} OtherFrquencyInUse:{3}",
-														myLocator.CarrierFrequency,myLocator.Bandwidth,myLocator.SymbolRate, myLocator.OtherFrequencyInUse);
-								Log.Write("Guard:{0} HAlpha:{1} LPInnerFec:{2} LPInnerFecRate:{3} Mode:{4}",
-														myLocator.Guard, myLocator.HAlpha, myLocator.LPInnerFEC, myLocator.LPInnerFECRate, myLocator.Mode);
-								Log.Write("Modulation:{0} OuterFEC:{1} OuterFECRate:{2}",
-														myLocator.Modulation, myLocator.OuterFEC, myLocator.OuterFECRate);*/
-							}	break;
-							default:
-								return null;
-						}
-						myTuneRequest.ONID	= Int32.Parse(Get(results,0,"ONID"));
-						myTuneRequest.TSID	= Int32.Parse(Get(results,0,"TSID"));
-						myTuneRequest.SID		= Int32.Parse(Get(results,0,"SID"));
-						Log.Write("ONID:{0} TSID:{1} SID:{2}", myTuneRequest.ONID, myTuneRequest.TSID, myTuneRequest.SID);
-					}
-
-					return tuneRequest;
-				}
-				catch(SQLiteException ex)
-				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-				}
-			}
-			return null;
-		}
     static string Get(SQLiteResultSet results,int iRecord,string strColum)
     {
       lock (typeof(TVDatabase))
@@ -2021,8 +1917,8 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						int iNewID=Int32.Parse(Get(results,0,"idChannel"));
-						strSQL=String.Format( "update dvbtchannels set frequency='{0}' ONID={1} TSID={2} SID={3} where iLCN like '{1}'", frequency,ONID,TSID,SID,idChannel);
+						int iNewID=Int32.Parse(Get(results,0,"iChannelNr"));
+						strSQL=String.Format( "update dvbtchannels set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}' where iLCN like '{1}'", frequency,ONID,TSID,SID,idChannel, strChannel);
 						Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return iNewID;

@@ -837,7 +837,7 @@ namespace MediaPortal.TV.Recording
 			//start the graph
 			Log.Write("DVBGraphBDA: start graph");
 			hr=m_mediaControl.Run();
-			if (hr!=0)
+			if (hr<0)
 			{
 				Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 			}
@@ -1329,7 +1329,7 @@ namespace MediaPortal.TV.Recording
 				//now start the graph
 				Log.Write("DVBGraphBDA: start graph");
 				int hr=m_mediaControl.Run();
-				if (hr!=0)
+				if (hr<0)
 				{
 					Log.Write("DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
 				}
@@ -1409,19 +1409,6 @@ namespace MediaPortal.TV.Recording
 							} 
 							else 
 							{
-								//								try 
-								//								{
-								//									if(m_MediaControl.Run() == 0) 
-								//									{
-								//										m_MediaControl.Stop();
-								//										return true;
-								//									}
-								//								} 
-								//								catch 
-								//								{
-								//									Marshal.ReleaseComObject(dsPin[0]);
-								//									continue;
-								//								}
 								return true;
 							}
 						}
