@@ -417,6 +417,20 @@ namespace MediaPortal.GUI.Video
           GUIFacadeControl pControl2=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
           pControl2.OnMessage(message);
           break;
+
+				case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
+					m_strDirectory=message.Label;
+					LoadDirectory(m_strDirectory);
+					break;
+
+				case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
+				case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+					if (m_strDirectory == "" || m_strDirectory.Substring(0,2)==message.Label)
+					{
+						m_strDirectory = "";
+						LoadDirectory(m_strDirectory);
+					}
+					break;
 			}
 			return base.OnMessage(message);
 		}

@@ -482,6 +482,11 @@ namespace MediaPortal.GUI.Music
             }
           }
           break;
+
+				case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+					OnPlayCD(message.Label);
+					break;
+
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
           GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
           pControl.OnMessage(message);
@@ -491,6 +496,20 @@ namespace MediaPortal.GUI.Music
           GUIFacadeControl pControl2=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
           pControl2.OnMessage(message);
           break;
+
+				case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
+					m_strDirectory=message.Label;
+					LoadDirectory(m_strDirectory);
+					break;
+
+				case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
+				case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+					if (m_strDirectory == "" || m_strDirectory.Substring(0,2)==message.Label)
+					{
+						m_strDirectory = "";
+						LoadDirectory(m_strDirectory);
+					}
+					break;
       }
       return base.OnMessage(message);
     }

@@ -30,7 +30,7 @@ namespace MediaPortal.GUI.Pictures
       public MapSettings()
       {
 				// Set default view
-				_SortBy= (int)SortMethod.SORT_NAME;
+        _SortBy= (int)SortMethod.SORT_NAME;
 				_ViewAs = (int)View.VIEW_AS_ICONS;
         _SortAscending=true;
       }
@@ -97,11 +97,6 @@ namespace MediaPortal.GUI.Pictures
     MapSettings       _MapSettings = new MapSettings();
 		bool							m_bFileMenuEnabled=false;
 		string						m_strFileMenuPinCode="";
-		bool							m_bFileRecurrentAbourt=false;
-		bool							m_bRootPathChanged=false;
-		GUIDialogProgress	m_dlgProgress=null;
-		int								m_iNrOfFile=0;
-		int								m_iFileNr=0;
 		    
     #endregion
     
@@ -224,7 +219,6 @@ namespace MediaPortal.GUI.Pictures
 					if (item.IsFolder==false)
 					{
 						OnDeleteItem(item);
-
 					}
 				}
 			}		
@@ -232,7 +226,6 @@ namespace MediaPortal.GUI.Pictures
       base.OnAction(action);
     }
 
-		
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
@@ -248,7 +241,7 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
           }
-          return true;
+										return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           m_iItemSelected=GetSelectedItemNo();
@@ -354,10 +347,15 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
 
-          case GUIMessage.MessageType.GUI_MSG_CD_INSERTED:
-            m_strDirectory=message.Label;
-            OnSlideShowRecursive();
-            break;
+				case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+					m_strDirectory=message.Label;
+					OnSlideShowRecursive();
+					break;
+
+				case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
+					m_strDirectory=message.Label;
+					LoadDirectory(m_strDirectory);
+					break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
           GUIFacadeControl pControl=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
@@ -368,6 +366,16 @@ namespace MediaPortal.GUI.Pictures
           GUIFacadeControl pControl2=(GUIFacadeControl)GetControl((int)Controls.CONTROL_VIEW);
           pControl2.OnMessage(message);
           break;
+
+				case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
+				case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+					if (m_strDirectory == "" || m_strDirectory.Substring(0,2)==message.Label)
+					{
+						m_strDirectory = "";
+						LoadDirectory(m_strDirectory);
+					}
+					break;
+
       }
       return base.OnMessage(message);
     }
@@ -500,14 +508,14 @@ namespace MediaPortal.GUI.Pictures
       UpdateButtons();
     }
 
-    void LoadFolderSettings(string strDirectory)
-    {
-      if (strDirectory=="") strDirectory="root";
-      object o;
-      FolderSettings.GetFolderSetting(strDirectory,"Pictures",typeof(GUIPictures.MapSettings), out o);
-      if (o!=null) _MapSettings = o as MapSettings;
-      if (_MapSettings==null) _MapSettings  = new MapSettings();
-    }
+		void LoadFolderSettings(string strDirectory)
+		{
+			if (strDirectory=="") strDirectory="root";
+			object o;
+			FolderSettings.GetFolderSetting(strDirectory,"Pictures",typeof(GUIPictures.MapSettings), out o);
+			if (o!=null) _MapSettings = o as MapSettings;
+			if (_MapSettings==null) _MapSettings  = new MapSettings();				
+		}
     void SaveFolderSettings(string strDirectory)
     {
       if (strDirectory=="") strDirectory="root";
@@ -1339,27 +1347,13 @@ namespace MediaPortal.GUI.Pictures
 
 				case 115: // copy				
 					{
-						m_bFileRecurrentAbourt=false;
-						m_bRootPathChanged = false;
 						FileItemMove(false, item);
-						if (m_bRootPathChanged == true)
-						{
-							m_bRootPathChanged = false;
-							m_strDirectory = "";
-						}
 					}
 					break;
 
 				case 116: // move
 					{
-						m_bFileRecurrentAbourt=false;
-						m_bRootPathChanged = false;
 						FileItemMove(true, item);
-						if (m_bRootPathChanged == true)
-						{
-							m_bRootPathChanged = false;
-							m_strDirectory = "";
-						}
 						bReload = true;
 					}
 					break;
@@ -1455,180 +1449,22 @@ namespace MediaPortal.GUI.Pictures
 		void FileItemMove(bool bMove, GUIListItem item) 
 		{
 			// init
-			m_bFileRecurrentAbourt = false;
-			m_bRootPathChanged = false;
-			if (m_dlgProgress == null) 
-				m_dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-			if (null!=m_dlgProgress)
-			{
-				m_dlgProgress.StartModal(GetID);
-				m_dlgProgress.ShowProgressBar(true);
-				if (bMove) m_dlgProgress.SetHeading(116);
-				else m_dlgProgress.SetHeading(115);
-				GUIWindowManager.Process();
-			}	
-
-			// calc nr of files
-			m_iNrOfFile=0;
-			m_iFileNr=0;
-			FileItemGetNrOfFiles(item);
-
-			// set number of objects
-			m_dlgProgress.SetLine(1, m_iNrOfFile.ToString()+" "+GUILocalizeStrings.Get(632));										
-			GUIWindowManager.Process();
-
+			GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILE);
+			if (dlgFile == null) return;
+			
+			// File operation settings
+			if (bMove) dlgFile.SetMode(1); // move
+			else dlgFile.SetMode(0); // copy
+			dlgFile.SetSourceItem(item);
+			dlgFile.SetDestinationDir(m_strDestination);
+			
 			// move
-			FileItemMC(bMove, item);
+			dlgFile.DoModal(GetID);
 
 			//final
-			if (null!=m_dlgProgress) m_dlgProgress.Close();
+			if (null!=dlgFile) dlgFile.Close();
 		}
-		void FileItemMC(bool bMove, GUIListItem item) 
-		{
-			// Handle messages
-			GUIWindowManager.Process();
-
-			if (m_dlgProgress.IsCanceled) m_bFileRecurrentAbourt=true;
-			if (m_bFileRecurrentAbourt) return;			
-      
-			string strItemFileName = item.Path;
-			if (m_strDirectory == "") 
-			{
-				m_bRootPathChanged = true;
-				m_strDirectory = item.Path;
-			}
-
-			if (m_strDirectory != "")
-			{
-				strItemFileName = item.Path.Replace(m_strDirectory, "");
-				if (strItemFileName.StartsWith("\\") == true)
-				{
-					strItemFileName = strItemFileName.Remove(0, 1);
-				}
-			}
-
-			if (item.IsFolder)
-			{
-				if (item.Label != "..")
-				{
-					string path = m_strDestination+strItemFileName;
-					try
-					{
-						DirectoryInfo di = Directory.CreateDirectory(path);
-					}
-					catch (Exception)
-					{
-					  ShowError(119, path);
-						m_bFileRecurrentAbourt=true;
-						return;
-					}					
-						
-					ArrayList items = new ArrayList();
-					items=m_directory.GetDirectoryUnProtected(item.Path,false);
-					foreach(GUIListItem subItem in items)
-					{
-						FileItemMC(bMove, subItem);
-						if (m_bFileRecurrentAbourt) return;
-					}
-					
-					// Move?
-					if (bMove && strItemFileName!="")
-					{
-						try
-						{
-							Directory.Delete(item.Path);
-						}
-						catch (Exception)
-						{
-							ShowError(503, item.Path);
-							m_bFileRecurrentAbourt=true;
-							return;
-						}
-					}
-				}
-			}
-			else if (!item.IsRemote)
-			{			
-				// update progress bar
-				m_iFileNr++;
-				m_dlgProgress.SetPercentage((m_iFileNr*100)/m_iNrOfFile);
-				m_dlgProgress.SetLine(2, strItemFileName);				
-				GUIWindowManager.Process();
-
-				// Move/Copy
-				string soucre=item.Path;
-				bool doNot=false;
-				try 
-				{
-					if (File.Exists(m_strDestination+strItemFileName))
-					{
-						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-						dlgYesNo.SetHeading(GetID); 
-						dlgYesNo.SetLine(1, m_strDestination+strItemFileName);
-						dlgYesNo.SetLine(2, 2217);
-						dlgYesNo.SetLine(3, 2218);
-						dlgYesNo.DoModal(GetID);
-						
-						// restore progress dialog
-						m_dlgProgress.ContinueModal();
-						GUIWindowManager.Process();
-
-						if (dlgYesNo.IsConfirmed) 
-						{
-							doNot=false;
-							try
-							{
-								File.Delete(m_strDestination+strItemFileName);
-							}
-							catch (Exception) 
-							{
-								ShowError(117, m_strDestination+strItemFileName);
-								doNot=true;
-							}
-						}
-						else 
-						{
-							doNot=true;
-						}
-					}
-					if (doNot==false) 
-					{
-						FileInfo fi = new FileInfo(item.Path);
-						if (bMove)
-						{
-							fi.MoveTo(m_strDestination+strItemFileName);
-						} 
-						else 
-						{
-							fi.CopyTo(m_strDestination+strItemFileName,false);
-						}
-					}
-				}
-				catch (Exception) 
-				{
-					if (bMove) ShowError(116, item.Path);
-					else ShowError(115, item.Path);
-					m_bFileRecurrentAbourt=true;
-
-					Log.Write("FileMenu Error: from {0} to {1} MC:{2}",item.Path, m_strDestination+strItemFileName, bMove);
-				}
-			}		
-		}
-
-		void FileItemGetNrOfFiles(GUIListItem item) 
-		{
-			if (item.IsFolder)
-			{
-				if (item.Label != "..")
-				{
-					ArrayList items = new ArrayList();
-					items=m_directory.GetDirectoryUnProtected(item.Path,false);
-					foreach(GUIListItem subItem in items) FileItemGetNrOfFiles(subItem);
-				}
-			}
-			else if (!item.IsRemote) m_iNrOfFile++;
-		}
-
+		
 		void OnDeleteItem(GUIListItem item)
 		{
 			if (item.IsRemote) return;
