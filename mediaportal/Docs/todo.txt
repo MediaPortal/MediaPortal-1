@@ -109,6 +109,7 @@ Skin engine:
   
 setup:
   - custom zoommode, let people enter a zoom number (+ or -) and make this accessable using S
+  - set a default zoommode for TV and Video seperately.
   - advanced filter manager, let people make custom graphs for certain filetypes. See ZoomPlayer.
   - Update paths of the setup project in CVS to point to the new location of the girder files.
   - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
