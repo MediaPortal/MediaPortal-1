@@ -615,7 +615,8 @@ namespace MediaPortal.GUI.TV
 
 			dlg.AddLocalizedString(915); // TV Channels
 			if (GUITVHome.CurrentGroup != null) dlg.AddLocalizedString(971); // Group
-			dlg.AddLocalizedString(1441); // Fullscreen teletext
+			if (Recorder.HasTeletext())
+				dlg.AddLocalizedString(1441); // Fullscreen teletext
 			dlg.AddLocalizedString(941); // Change aspect ratio
 			if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
 			{

@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.TV
 		static public string 	m_strGroup=GUILocalizeStrings.Get(972);
 		static bool     			m_bTVON=true;
 		static bool     			m_bTimeShifting=true;
-		static bool     			m_bTeletext=false;
+		
 		ArrayList       			m_channels=new ArrayList();
 		ArrayList       			m_groups=new ArrayList();
 		TVUtil          			m_util =null;
@@ -445,6 +445,14 @@ namespace MediaPortal.GUI.TV
 		// updates the channel button so it shows the currently selected tv channel
 		void UpdateChannelButton()
 		{
+			if (Recorder.HasTeletext())
+			{
+				GUIControl.ShowControl(GetID,(int)Controls.BTN_TELETEXT);
+			}
+			else
+			{
+				GUIControl.HideControl(GetID,(int)Controls.BTN_TELETEXT);
+			}
 			int i=0;
 			int iSelected=-1;
 			currentGroup=null;
@@ -759,12 +767,6 @@ namespace MediaPortal.GUI.TV
 			}
 			StartPlaying(false);
 
-			//Get Teletext state
-			GUITVTeletext win=(GUITVTeletext)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
-			if(win!=null && win.HasTeletext()) 
-				m_bTeletext=true;
-			else
-				m_bTeletext=false;
 		}
 
 		/// <summary>

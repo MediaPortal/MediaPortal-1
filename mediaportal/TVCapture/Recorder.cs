@@ -556,6 +556,9 @@ namespace MediaPortal.TV.Recording
 			return dev.IsRecording;
 		}//static public bool IsRecording()
 
+		/// <summary>
+		/// Property which returns if current channel has teletext or not
+		/// </summary>
 		static public bool HasTeletext()
 		{
 			if (m_eState!= State.Initialized) return false;
@@ -564,6 +567,7 @@ namespace MediaPortal.TV.Recording
 			TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			return dev.HasTeletext;
 		}
+
 		/// <summary>
 		/// Property which returns if current card supports timeshifting
 		/// </summary>
