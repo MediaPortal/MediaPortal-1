@@ -6,7 +6,7 @@
 	<control>
 		<description>Panel</description> 
 		<type>image</type> 
-		<id>1</id> 
+		<id>0</id> 
 		<posX>0</posX> 
 		<posY>495</posY>
 		<texture>osd_panel.png</texture>		
@@ -15,7 +15,7 @@
 	<control>
 		<description>LCD</description> 
 		<type>image</type> 
-		<id>1</id> 
+		<id>0</id> 
 		<posX>400</posX> 
 		<posY>510</posY>
 		<texture>lcd_display.png</texture> 
@@ -24,13 +24,15 @@
 		<description>Progress Bar</description> 
 		<type>progress</type> 
 		<id>1</id> 
-		<posX>495</posX> 
-		<posY>501</posY> 
+		<posX>470</posX> 
+		<posY>512</posY> 
+		<width>190</width>
+		<height>20</height>
 		<texturebg>osd_progress_back.png</texturebg> 
 		<lefttexture>osd_progress_left.png</lefttexture> 
 		<midtexture>osd_progress_mid.png</midtexture> 
 		<righttexture>osd_progress_right.png</righttexture> 
-		<visible>no</visible> 
+		<visible>yes</visible> 
 	</control>
 	<control>
 		<description>Skip Bwd</description> 

@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  13-06-2004  my video    : added : progressbar to video osd
   13-06-2004  my tv       : added : record program on weekdays only (Mon-Fri)
   13-06-2004  my music    : fixed : when scanning rename artist with name 'VA' to 'Various Artists'
   13-06-2004  my music    : fixed : accept tags with track numbers like 10/12
