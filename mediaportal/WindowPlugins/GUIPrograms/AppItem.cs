@@ -339,19 +339,19 @@ namespace ProgramsDatabase
 		
 		public virtual void OnSort(GUIFacadeControl view, bool bDoSwitch)
 		{
-			Log.Write(" dw onsort: ENTER");
+//			Log.Write(" dw onsort: ENTER");
 			if (!bFilesLoaded)
 			{
-				Log.Write(" dw onsort: loadfiles");
+//				Log.Write(" dw onsort: loadfiles");
 				LoadFiles();
 			} 
 
 			if (bDoSwitch)
 			{
-				Log.Write(" dw onsort: updatestate");
+//				Log.Write(" dw onsort: updatestate");
 				dbPc.updateState();
 			}
-			Log.Write(" dw onsort: sort");
+//			Log.Write(" dw onsort: sort");
 			view.Sort(dbPc);
 		}
 
