@@ -3126,7 +3126,7 @@ namespace MediaPortal
         chkBoxVideoRepeat.Checked=xmlreader.GetValueAsBool("movies","repeat",true);
 
         txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav,.cda");
-        txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
+        txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.png");
         txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
         string strDefault="";
         if (listAudioShares.Items.Count>0)
