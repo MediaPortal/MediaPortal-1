@@ -60,8 +60,8 @@ namespace MediaPortal
     protected bool m_bLastShowCursor=true;
     bool UseMillisecondTiming=true;
 
-    static int lastx=0;
-    static int lasty=0;
+    static int lastx=-1;
+    static int lasty=-1;
     // Internal variables for the state of the app
     protected bool windowed;
     protected bool active;
@@ -1213,6 +1213,16 @@ namespace MediaPortal
       }
     }
 
+		public void HideCursor()
+		{
+			if (m_bShowCursor)
+			{
+				m_bShowCursor=false;
+				m_bLastShowCursor=false;
+				Cursor.Hide();
+			}
+		}
+
 		void HandleCursor()
 		{
 			if (m_bAutoHideMouse)
@@ -1984,7 +1994,12 @@ namespace MediaPortal
     }
     protected virtual void mousemove(System.Windows.Forms.MouseEventArgs e)
     {
-      if (lastx !=e.X || lasty!=e.Y)
+			if (lastx == -1 || lasty == -1)
+			{
+				lastx=e.X;
+				lasty=e.Y;
+			}
+			else if (lastx !=e.X || lasty!=e.Y)
       {
         //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,lastx,lasty);
         lastx=e.X;

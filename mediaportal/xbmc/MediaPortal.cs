@@ -423,6 +423,11 @@ public class MediaPortalApp : D3DApp, IRender
           GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general","mousesupport",true);
 					GUIGraphicsContext.DBLClickAsRightClick = xmlreader.GetValueAsBool("general","dblclickasrightclick",false);
         }
+
+				if (m_bAutoHideMouse)
+				{
+					HideCursor();
+				}
       }
       catch (Exception)
       {
