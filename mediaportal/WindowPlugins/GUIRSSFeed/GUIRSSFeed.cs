@@ -193,6 +193,10 @@ namespace MediaPortal.GUI.RSS
     {
       try
       {
+				if (m_strSiteURL.ToLower().StartsWith("http://") ==false)
+				{
+					m_strSiteURL="http://"+m_strSiteURL;
+				}
         Uri newURL=new Uri(m_strSiteURL);
         Download(newURL);
         UpdateButtons();
@@ -203,6 +207,7 @@ namespace MediaPortal.GUI.RSS
         msg.Param1=9;//my news
         msg.Param2=912;//Unable to download latest news
         msg.Param3=0;
+				msg.Label3=m_strSiteURL;
         GUIWindowManager.SendMessage(msg);
       }
     }

@@ -1497,9 +1497,9 @@ namespace MediaPortal.GUI.Pictures
       // example:  "m_dwWidthBackGround == m_iZoomLeft + m_fZoomWidth"  and zooming to the left (iZoomType=4)
       float middlex = m_fWidthCurrent/2;
       float middley = m_fHeightCurrent/2;
-      float xstart = 0;
+      //float xstart = 0;
       float xend = m_fWidthCurrent;
-      float ystart = 0;
+      //float ystart = 0;
       float yend = m_fHeightCurrent;
       
       //float middlex = m_iZoomLeft + m_fZoomWidth*0.5f;
@@ -1588,9 +1588,9 @@ namespace MediaPortal.GUI.Pictures
       // example:  "m_dwWidthBackGround == m_iZoomLeft + m_fZoomWidth"  and zooming to the left (iZoomType=4)
       float middlex = m_fZoomLeftBackGround + m_fZoomWidth/2;
       float middley = m_fZoomTopBackGround + m_fZoomHeight/2;
-      float xstart = 0;
+      //float xstart = 0;
       float xend = m_fWidthBackGround;
-      float ystart = 0;
+      //float ystart = 0;
       float yend = m_fHeightBackGround;
       
       //float middlex = m_iZoomLeft + m_fZoomWidth*0.5f;

@@ -377,7 +377,7 @@ namespace MediaPortal.GUI.Music
 			if (item.MusicTag!=null) 
 			{
 				dialog.Rating=((MusicTag)item.MusicTag).Rating;
-				dialog.SetTitle(((MusicTag)item.MusicTag).Title);
+				dialog.SetTitle(String.Format("{0}-{1}", ((MusicTag)item.MusicTag).Artist, ((MusicTag)item.MusicTag).Title) );
 			}
 			dialog.FileName=item.Path;
 			dialog.DoModal(GetID);

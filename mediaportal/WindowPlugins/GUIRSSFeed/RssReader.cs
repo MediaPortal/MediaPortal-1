@@ -76,9 +76,9 @@ namespace Rss
 				reader = new XmlTextReader(url);
 				InitReader();
 			}
-			catch
+			catch (Exception e)
 			{
-				throw new ArgumentException("Unable to retrieve file containing the RSS data.");
+				throw new ArgumentException("Unable to retrieve file containing the RSS data.", e);
 			}
 		}
 
@@ -92,9 +92,9 @@ namespace Rss
 				reader = new XmlTextReader(textReader);
 				InitReader();
 			}
-			catch
+			catch (Exception e)
 			{
-				throw new ArgumentException("Unable to retrieve file containing the RSS data.");
+				throw new ArgumentException("Unable to retrieve file containing the RSS data.", e);
 			}
 		}
 
@@ -108,9 +108,9 @@ namespace Rss
 				reader = new XmlTextReader(stream);
 				InitReader();
 			}
-			catch
+			catch (Exception e)
 			{
-				throw new ArgumentException("Unable to retrieve file containing the RSS data.");
+				throw new ArgumentException("Unable to retrieve file containing the RSS data.", e);
 			}
 		}
 
@@ -470,7 +470,16 @@ namespace Rss
 										}				
 										catch (Exception e)
 										{
+											try {
+											string tmp = elementText.ToString ();
+											tmp = tmp.Substring (0, tmp.Length - 5);
+											tmp += "GMT";
+											item.PubDate = DateTime.Parse (tmp);
+											}
+											catch 
+											{
 											exceptions.Add(e);
+											}
 										}
 										break;
 								}

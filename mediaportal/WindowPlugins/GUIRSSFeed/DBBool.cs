@@ -159,11 +159,11 @@ namespace Rss
 			switch (value) 
 			{
 				case -1:
-					return "DBBool.False";
+					return "false";
 				case 0:
 					return "DBBool.Null";
 				case 1:
-					return "DBBool.True";
+					return "true";
 				default:
 					throw new InvalidOperationException();
 			}

@@ -217,12 +217,7 @@ namespace MediaPortal.GUI.TV
 					break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
-					int card=GUITVHome.GetCurrentCard();
-					if (Recorder.View)
-					{  
-						Recorder.StartViewing(card,m_strCurrentChannel,Recorder.IsCardViewing(card),Recorder.IsCardTimeShifting(card) );
-						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-					}
+					ShowContextMenu();
 					break;
 
 				case Action.ActionType.ACTION_MOUSE_MOVE:

@@ -368,7 +368,9 @@ namespace Rss
 				if ((item.Guid != null) && (item.Guid.Name != RssDefault.String))
 				{
 					writer.WriteStartElement("guid");
+					try {
 					WriteAttribute("isPermaLink", (bool)item.Guid.PermaLink, false);
+					} catch {}
 					writer.WriteString(item.Guid.Name);
 					writer.WriteEndElement();
 				}
