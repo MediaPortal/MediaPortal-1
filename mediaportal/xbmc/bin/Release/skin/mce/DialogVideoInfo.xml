@@ -211,9 +211,9 @@
 		<type>label</type> 
 		<id>30</id> 
 		<posX>100</posX>
-		<posY>360</posY>
+		<posY>365</posY>
 		<label>734</label> 
-		<font>font16</font>
+		<font>font13</font>
 		<align>left</align> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
@@ -221,7 +221,7 @@
 		<description>spin control</description>
 		<type>spincontrol</type>
 		<id>4</id>
-		<posX>110</posX>
+		<posX>105</posX>
 		<posY>393</posY>
 		<onup>17</onup>
 		<ondown>6</ondown> 
@@ -233,7 +233,7 @@
 		<posX>220</posX> 
 		<posY>265</posY> 
 		<width>410</width> 
-		<height>300</height> 
+		<height>280</height> 
 		<onleft>4</onleft> 
 		<onright>4</onright> 
 		<onup>5</onup> 
@@ -244,7 +244,7 @@
 		<type>button</type> 
 		<id>6</id> 
 		<posX>100</posX> 
-		<posY>410</posY> 
+		<posY>413</posY> 
 		<width>101</width> 
 		<height>32</height> 
 		<textureFocus>button_small_imdb_focus.png</textureFocus>
@@ -261,7 +261,7 @@
 		<type>button</type> 
 		<id>7</id> 
 		<posX>100</posX> 
-		<posY>446</posY> 
+		<posY>449</posY> 
 		<width>101</width> 
 		<height>32</height> 
 		<textureFocus>button_small_imdb_focus.png</textureFocus>

@@ -25,10 +25,21 @@
 		<control>
 			<description>My programs text label</description>
 			<type>label</type>
-			<id>1</id>
+			<id>9</id>
 			<posX>250</posX>
 			<posY>70</posY>
 			<label>0</label>
+			<font>font16</font>
+			<align>right</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>Game Title label</description>
+			<type>label</type>
+			<id>10</id>
+			<posX>250</posX>
+			<posY>70</posY>
+			<label>-</label>
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
@@ -96,12 +107,12 @@
 				<ondown>3</ondown>
 			</control>
 			<control>
-				<description>Scan Button</description>
+				<description>Refresh Button</description>
 				<type>button</type>
 				<id>3</id>
 				<posX>60</posX>
 				<posY>165</posY>
-				<label>102</label>
+				<label>184</label>
 				<onleft>3</onleft>
 				<onright>7</onright>
 				<onup>4</onup>
