@@ -146,7 +146,13 @@ namespace MediaPortal.Configuration
 							((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addGeneral[i]=false;
 				}
 			}
-
+			for (int i = 0; i < availableVideoDevices.Count; i++)
+			{
+				Log.Write("Found capture #{0} card:{1} moniker:{2}",
+										i,
+										((string)(availableVideoDevices[i])),
+										((string)(availableVideoDeviceMonikers[i])) );
+			}
 			//enum all cards known in capturedefinitions.xml
 			foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
 			{
@@ -206,8 +212,11 @@ namespace MediaPortal.Configuration
 							cd.IsMCECard					= bMCE;
 							cd.SupportsMPEG2			= bMCE|bHardware;
 						}
-						Log.Write("Adding {0} bda:{1} mce:{2} mpeg2:{3}", 
-												cd.CaptureName,cd.IsBDACard,cd.IsMCECard,cd.SupportsMPEG2);
+						Log.Write("Adding name:{0} capture:{1} id:{2} bda:{3} mce:{4} mpeg2:{5}", 
+												cd.CommercialName,
+												cd.CaptureName,
+												cd.DeviceId,
+												cd.IsBDACard,cd.IsMCECard,cd.SupportsMPEG2);
 						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
 						cardComboBox.Items.Add(cbcc); 
 					}

@@ -910,14 +910,14 @@
       </connections>
     </tv>
   </capturecard> 
- 
-  <capturecard commercialname="Leadtek LR6650" capturename="Conexant 2388xx Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05">
+
+  <capturecard commercialname="Leadtek LR6650" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant 2388xx Transport Stream Capture"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Conexant 2388x Transport Stream Capture"	checkdevice="false"></filter>
         <filter cat="capture"         name="Conexant BDA DVB Tuner/Demod"				checkdevice="false"></filter>
       </filters>
       <connections>
