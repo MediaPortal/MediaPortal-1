@@ -454,7 +454,7 @@ namespace MediaPortal.Player
 		public DVBRadioGraph(string strDevice,string strAudioDevice,string strLineInput)
 		{
 			m_strAudioDevice=strAudioDevice;
-			m_db = new SQLiteClient(@"database\TVDatabaseV9.db");
+			m_db = new SQLiteClient(@"database\TVDatabaseV11.db");
 		}
 
 		public bool Create()
@@ -572,6 +572,7 @@ namespace MediaPortal.Player
 			hr=m_tunerCtrl.CheckLock();
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
+				DeleteAllPIDs(m_dataCtrl,0);
 				hr = m_avCtrl.SetAudioVideoPIDs (AudioPID, 0);
 				if (hr!=0)
 				{
@@ -731,8 +732,9 @@ namespace MediaPortal.Player
 
 					}
 				}
-				catch
+				catch(Exception ex)
 				{
+					int a=0;
 					return;
 				}
 			}
