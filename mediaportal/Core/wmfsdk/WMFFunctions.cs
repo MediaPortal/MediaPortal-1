@@ -346,7 +346,7 @@ namespace Yeti.WMFSdk
     public const string g_wszWMDRM_LASignatureLicSrvCert = "DRM_LASignatureLicSrvCert";
     public const string g_wszWMDRM_LASignatureRootCert = "DRM_LASignatureRootCert";
     public const string g_wszWMAlbumTitle = "WM/AlbumTitle";
-    public const string g_wszWMTrack = "WM/Track";
+    public const string g_wszWMTrack = "WM/TrackNumber";
     public const string g_wszWMPromotionURL = "WM/PromotionURL";
     public const string g_wszWMAlbumCoverURL = "WM/AlbumCoverURL";
     public const string g_wszWMGenre = "WM/Genre";

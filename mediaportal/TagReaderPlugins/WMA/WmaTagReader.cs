@@ -111,7 +111,7 @@ namespace MediaPortal.TagReader.WmaTagReader
         // handle track number; even if it is 3/16
         try
         {
-          m_tag.Track = 1+Convert.ToInt32(track);
+          m_tag.Track = Convert.ToInt32(track);
         }
         catch
         {
@@ -130,9 +130,9 @@ namespace MediaPortal.TagReader.WmaTagReader
           if (l < k)
           {
             if (k == track.Length)
-              m_tag.Track = 1+Convert.ToInt32(track.Substring(l));
+              m_tag.Track = Convert.ToInt32(track.Substring(l));
             else
-              m_tag.Track = 1+Convert.ToInt32(track.Substring(l, k - l));
+              m_tag.Track = Convert.ToInt32(track.Substring(l, k - l));
           }
         }
         // convert the year string to int
