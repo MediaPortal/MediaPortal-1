@@ -98,8 +98,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.57                                                               -->
-<!-- changed : 01-april-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.58                                                               -->
+<!-- changed : 03-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -1198,7 +1198,7 @@
   <capturecard commercialname="ATI TV Wonder Elite" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d52&amp;subsys_a3461002&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"    name="ATI AVStream Analog TV Audio"	checkdevice="true"></filter>
@@ -2135,7 +2135,7 @@
   <capturecard commercialname="ATI TV Wonder Elite PCIe" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d53">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"    name="ATI AVStream Analog TV Audio"	checkdevice="true"></filter>
