@@ -121,7 +121,7 @@ namespace MediaPortal.TV.Recording
 		NetworkType							m_NetworkType;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
-		object									objRecord=null;
+		
 		TVCaptureDevice					m_Card;
 		
 		//streambuffer interfaces
@@ -693,9 +693,7 @@ namespace MediaPortal.TV.Recording
 				m_recorder=null;
 				
 			}
-			if (objRecord!=null)
-				Marshal.ReleaseComObject(objRecord); objRecord=null;
-		      
+			    
 			if (m_StreamBufferSink!=null) 
 			{
 				Marshal.ReleaseComObject(m_StreamBufferSink); m_StreamBufferSink=null;

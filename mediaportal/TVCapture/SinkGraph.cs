@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
+using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace MediaPortal.TV.Recording
 {
@@ -59,7 +60,6 @@ namespace MediaPortal.TV.Recording
     protected VideoProcAmp            m_videoAmp=null;
 		protected VMR9Util							  Vmr9=null; 
 		protected string                     cardName;
-
 
 
     /// <summary>
@@ -555,7 +555,7 @@ namespace MediaPortal.TV.Recording
 				if (recording.Quality ==TVRecording.QualityType.High)
 					SetQuality(2);
 			}
-      m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
+      m_mpeg2Demux.Record(attribtutes,strFileName, bContentRecording, timeProgStart,m_StartTime);
       m_graphState=State.Recording;
       return true;
     }

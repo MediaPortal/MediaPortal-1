@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices; 
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace DShowNET
 {
@@ -50,7 +52,7 @@ namespace DShowNET
     IPin                  m_pinStreamBufferIn0=null;
     IPin                  m_pinStreamBufferIn1=null;
     IBaseFilter           m_mpeg2Multiplexer=null;
-    IStreamBufferRecordControl m_recControl=null;
+    
     IStreamBufferSink     m_bSink=null;
     IStreamBufferConfigure m_pConfig=null;
     bool                  m_bRendered=false;
@@ -64,6 +66,8 @@ namespace DShowNET
     IBasicVideo2          m_basicVideo=null;
     Size                  m_FrameSize;
     bool                  m_bOverlayVisible=false;
+		
+		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
     /// @@@TODO : capture width/height = hardcoded to 720x576
     /// @@@TODO : capture framerate = hardcoded to 25 fps
     static byte[] Mpeg2ProgramVideo = 
@@ -776,41 +780,16 @@ namespace DShowNET
     /// <param name="bContentRecording">
     /// when true it will make a content recording. A content recording writes the data to a new permanent file. 
     /// when false it will make a reference recording. A reference recording creates a stub file that refers to the existing backing files, which are made permanent. Create a reference recording if you want to save data that has already been captured.</param>
-    public void Record(string strFilename, bool bContentRecording,DateTime timeProgStart, DateTime timeFirstMoment)
+    public void Record(Hashtable attribtutes,string strFilename, bool bContentRecording,DateTime timeProgStart, DateTime timeFirstMoment)
     {		
       //      strFilename=@"C:\media\movies\test.dvr-ms";
       Log.WriteFile(Log.LogType.Capture,"mpeg2: Record : {0} {1} {2}",strFilename,m_bRendered,bContentRecording);
-      IntPtr recorderObj;
-      if (m_bSink==null) 
-      {
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: CreateRecorder : no sink!");
-        return;
-      }
-      uint iRecordingType=0;
-      if (bContentRecording) iRecordingType=0;
-      else iRecordingType=1;										
-					 
-      int hr=m_bSink.CreateRecorder(strFilename, iRecordingType, out recorderObj);
-      if (hr!=0) 
-      {
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: CreateRecorder FAILED:0x{0:x}",hr );
-        return;
-      }
-      object objRecord=Marshal.GetObjectForIUnknown(recorderObj);
-      if (objRecord==null) 
-      {
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED getting Inknown of recorder");
-        return;
-      }
+			uint iRecordingType=0;
+			if (bContentRecording) iRecordingType=0;
+			else iRecordingType=1;										
       
-      Marshal.Release(recorderObj);
-
-      m_recControl=objRecord as IStreamBufferRecordControl;
-      if (m_recControl==null) 
-      {
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED getting IStreamBufferRecordControl");
-        return;
-      }
+			m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
+			m_recorder.Create(m_bSink as DirectShowHelperLib.IBaseFilter,strFilename,iRecordingType);
 
       long lStartTime=0;
 
@@ -848,56 +827,30 @@ namespace DShowNET
         lStartTime*=-10000000L;//in reference time 
       }
 
-      hr=m_recControl.Start(ref lStartTime);
-      if (hr!=0) 
-      {
-        //could not start recording...
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to start recording:0x{0:x}",hr );
-        if (lStartTime!=0)
-        {
-          // try recording from livepoint instead from the past
-          lStartTime=0;
-          hr=m_recControl.Start(ref lStartTime);
-          if (hr!=0)
-          {
-            //still fails
-            Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to start recording now:0x{0:x}",hr );
-            return;
-          }
-          else
-          {
-            //that worked!
-            Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to record now succeeded");
-          }
-        }
-        else
-        {
-          //record fails
-          return;
-        }
-      }
-      lStartTime/=-10000000L;
-      long iHour=lStartTime/3600;
-      lStartTime -= (iHour*3600);
-      long iMin =lStartTime/60;
-      lStartTime -= (iMin*60);
-      long iSec =lStartTime;
-      Log.WriteFile(Log.LogType.Capture,"mpeg2: recording started from {0:00}:{1:00}:{2:00} ago",iHour,iMin,iSec);
 
+			foreach (MetadataItem item in attribtutes.Values)
+			{
+				try
+				{
+					if (item.Type == MetadataItemType.String)
+						m_recorder.SetAttributeString(item.Name,item.Value.ToString());
+					if (item.Type == MetadataItemType.Dword)
+						m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
+				}
+				catch(Exception){}
+			}
+			m_recorder.Start((int)lStartTime);
     }
 
     public void StopRecording()
     {
       Log.WriteFile(Log.LogType.Capture,"mpeg2: stop recording");
-      if (m_recControl==null) return;
-      int hr=m_recControl.Stop(0);
-      if (hr!=0) 
-      {
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to stop recording:0x{0:x}",hr );
-        return;
-      }
-      if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
-
+      if (m_recorder!=null) 
+			{
+				m_recorder.Stop();
+				m_recorder=null;
+				
+			}
     }
 
     public void CloseInterfaces()
@@ -905,11 +858,12 @@ namespace DShowNET
       
       Log.WriteFile(Log.LogType.Capture,"mpeg2: close interfaces");
       
-      if (m_recControl!=null) 
-      {
-        m_recControl.Stop(0);
-        Marshal.ReleaseComObject(m_recControl); m_recControl=null;
-      }
+			if (m_recorder!=null) 
+			{
+				m_recorder.Stop();
+				m_recorder=null;
+				
+			}
       if (m_streamBuffer!=null) 
       {
         m_streamBuffer.Stop();

@@ -11,6 +11,7 @@ using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Radio.Database;
+using Toub.MediaCenter.Dvrms.Metadata;
 
 
 namespace MediaPortal.TV.Recording
@@ -208,7 +209,6 @@ namespace MediaPortal.TV.Recording
 		// stream buffer sink filter
 		protected IStreamBufferInitialize		m_streamBufferInit=null; 
 		protected IStreamBufferConfigure		m_config=null;
-		protected IStreamBufferRecordControl	m_recControl=null;
 		protected IStreamBufferSink				m_sinkInterface=null;
 		protected IBaseFilter					m_sinkFilter=null;
 		protected IBaseFilter					m_mpeg2Analyzer=null;
@@ -242,6 +242,7 @@ namespace MediaPortal.TV.Recording
 		string							m_cardFilename="";
 		DVBChannel						m_currentTuningObject;
 
+		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 //
 		
 		//
@@ -1000,11 +1001,6 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_config);
 				m_config=null;
 			}
-			if(m_recControl!=null)
-			{
-				Marshal.ReleaseComObject(m_recControl);
-				m_recControl=null;
-			}
 			if(m_sinkInterface!=null)
 			{
 				Marshal.ReleaseComObject(m_sinkInterface);
@@ -1370,7 +1366,6 @@ namespace MediaPortal.TV.Recording
 		{		
 			if (m_graphState != State.TimeShifting ) return false;
 
-			IntPtr recorderObj;
 			if (m_sinkFilter==null) 
 			{
 				return false;
@@ -1380,25 +1375,8 @@ namespace MediaPortal.TV.Recording
 			if (bContentRecording) iRecordingType=0;
 			else iRecordingType=1;										
 		 
-			int hr=m_sinkInterface.CreateRecorder(strFilename, iRecordingType, out recorderObj);
-			if (hr!=0) 
-			{
-				return false;
-			}
-			object objRecord=Marshal.GetObjectForIUnknown(recorderObj);
-			if (objRecord==null) 
-			{
-				return false;
-			}
-      
-			Marshal.Release(recorderObj);
-
-			m_recControl=objRecord as IStreamBufferRecordControl;
-			if (m_recControl==null) 
-			{
-				return false;
-			}
-			
+			m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
+			m_recorder.Create(m_sinkInterface as DirectShowHelperLib.IBaseFilter,strFilename,iRecordingType);
 			long lStartTime=0;
 
 			// if we're making a reference recording
@@ -1434,25 +1412,19 @@ namespace MediaPortal.TV.Recording
 
 				lStartTime*=-10000000L;//in reference time 
 			}
-			hr=m_recControl.Start(ref lStartTime);
-			if (hr!=0) 
+			foreach (MetadataItem item in attribtutes.Values)
 			{
-				//could not start recording...
-				if (lStartTime!=0)
+				try
 				{
-					// try recording from livepoint instead from the past
-					lStartTime=0;
-					hr=m_recControl.Start(ref lStartTime);
-					if (hr!=0)
-					{
-						return false;
-					}
+					if (item.Type == MetadataItemType.String)
+						m_recorder.SetAttributeString(item.Name,item.Value.ToString());
+					if (item.Type == MetadataItemType.Dword)
+						m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
 				}
-				else
-				{
-					return false;
-				}
+				catch(Exception){}
 			}
+			m_recorder.Start((int)lStartTime);
+
 			m_graphState=State.Recording;
 			return true;
 		}
@@ -1467,18 +1439,15 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void StopRecording()
 		{
-			if (m_recControl==null || m_graphState!=State.Recording)
+			if (m_recorder==null || m_graphState!=State.Recording)
 				return ;
 			
-			int hr=m_recControl.Stop(0);
-			if (hr!=0) 
+
+			if (m_recorder!=null) 
 			{
-				return ;
+				m_recorder.Stop();
+				m_recorder=null;
 			}
-			if (m_recControl!=null) 
-				Marshal.ReleaseComObject(m_recControl);
-			
-			m_recControl=null;
 
 			m_graphState=State.TimeShifting;
 			return ;

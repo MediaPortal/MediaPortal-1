@@ -935,7 +935,9 @@ namespace MediaPortal.TV.Recording
 			Hashtable propsToSet = new Hashtable();
 
 			propsToSet.Add("channel",new MetadataItem("channel", StripIllegalChars(_mNewRecordedTV.Channel), MetadataItemType.String));
-			
+
+			propsToSet.Add("RecordedBy",new MetadataItem("RecordedBy", "Mediaportal", MetadataItemType.String));
+
 			if (_mNewRecordedTV.Title!=null && _mNewRecordedTV.Title.Length>0)
 				propsToSet.Add("title",new MetadataItem("title", StripIllegalChars(_mNewRecordedTV.Title), MetadataItemType.String));
 			
