@@ -87,8 +87,15 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public string DeviceId
 		{
-			get {return _mCaptureCardDefinition.DeviceId;}
-			set {_mCaptureCardDefinition.DeviceId=value;}
+			get {
+				if (_mCaptureCardDefinition==null) return "";
+				return _mCaptureCardDefinition.DeviceId;
+			}
+			set 
+			{
+				if (_mCaptureCardDefinition==null) return ;
+				_mCaptureCardDefinition.DeviceId=value;
+			}
 		}
 
 		public string DeviceType
