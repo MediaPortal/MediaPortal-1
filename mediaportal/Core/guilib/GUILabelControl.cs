@@ -88,12 +88,21 @@ namespace MediaPortal.GUI.Library
 
 			if (null!=m_pFont)
 			{
+        
+      if (GUIGraphicsContext.graphics!=null)
+      {
+        if (m_dwWidth>0)
+          m_pFont.DrawTextWidth(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwWidth,m_dwTextAlign);
+        else
+          m_pFont.DrawText(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwTextAlign);
+        return;
+      }
 
         if (m_dwTextAlign==GUIControl.Alignment.ALIGN_CENTER)
         {
           if (m_cachedFontVertices!=null)
           {
-            m_pFont.DrawFontCache(m_cachedFontVertices,m_iFontTriangles);
+            m_pFont.DrawFontCache(ref m_cachedFontVertices,m_iFontTriangles);
             return;
           }          
           float fW=textwidth;
@@ -129,7 +138,7 @@ namespace MediaPortal.GUI.Library
             {
               if (m_cachedFontVertices!=null)
               {
-                m_pFont.DrawFontCache(m_cachedFontVertices,m_iFontTriangles);
+                m_pFont.DrawFontCache(ref m_cachedFontVertices,m_iFontTriangles);
                 return;
               }
               if (m_bUseFontCache)
@@ -168,7 +177,7 @@ namespace MediaPortal.GUI.Library
 
               if (m_cachedFontVertices!=null)
               {
-                m_pFont.DrawFontCache(m_cachedFontVertices,m_iFontTriangles);
+                m_pFont.DrawFontCache(ref m_cachedFontVertices,m_iFontTriangles);
               }
               else
               {
@@ -187,7 +196,7 @@ namespace MediaPortal.GUI.Library
           {
             if (m_cachedFontVertices!=null)
             {
-              m_pFont.DrawFontCache(m_cachedFontVertices,m_iFontTriangles);
+              m_pFont.DrawFontCache(ref m_cachedFontVertices,m_iFontTriangles);
               return;
             }
             if (m_bUseFontCache)
@@ -226,7 +235,7 @@ namespace MediaPortal.GUI.Library
 
             if (m_cachedFontVertices!=null)
             {
-              m_pFont.DrawFontCache(m_cachedFontVertices,m_iFontTriangles);
+              m_pFont.DrawFontCache(ref m_cachedFontVertices,m_iFontTriangles);
             }
             else
             {
@@ -234,8 +243,8 @@ namespace MediaPortal.GUI.Library
               {
                 m_pFont.GetFontCache((float)m_dwPosX, (float)m_dwPosY, m_dwTextColor, m_strText, out m_cachedFontVertices , out m_iFontTriangles);
               }
+              m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,m_strText,m_dwTextAlign); 
             }
-            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,m_strText,m_dwTextAlign); 
             GUIGraphicsContext.DX9Device.Viewport = oldviewport;
           }
         }		
@@ -316,10 +325,17 @@ namespace MediaPortal.GUI.Library
 			get { return m_pFont.FontName; }
       set 
       { 
-        if (value != m_pFont.FontName)
+        if (value==null) return;
+        if (value==String.Empty) return;
+        if (m_pFont==null)
         {
           m_pFont=GUIFontManager.GetFont(value);
-          
+          m_cachedFontVertices=null;
+          m_iFontTriangles=0;
+        }
+        else if (value != m_pFont.FontName)
+        {
+          m_pFont=GUIFontManager.GetFont(value);
           m_cachedFontVertices=null;
           m_iFontTriangles=0;
         }
@@ -370,13 +386,47 @@ namespace MediaPortal.GUI.Library
     public bool CacheFont
     {
       get { return m_bUseFontCache;}
-      set { m_bUseFontCache=false;}
+      set { m_bUseFontCache=value;}
     }
 
     protected override void Update()
     {
       m_cachedFontVertices=null;
       m_iFontTriangles=0;      
+    }
+    public int TextWidth
+    {
+      get 
+      {
+        if (textwidth==0 || textheight==0)
+        {
+          if (m_pFont==null) return 0;
+          m_strText=GUIPropertyManager.Parse(m_strLabel);
+          float fW=textwidth;
+          float fH=textheight;
+          m_pFont.GetTextExtent(m_strText,ref fW, ref fH);
+          textwidth=(int)fW;
+          textheight=(int)fH;
+        }
+        return textwidth;
+      }
+    }
+    public int TextHeight
+    {
+      get 
+      {
+        if (textwidth==0 || textheight==0)
+        {
+          if (m_pFont==null) return 0;
+          m_strText=GUIPropertyManager.Parse(m_strLabel);
+          float fW=textwidth;
+          float fH=textheight;
+          m_pFont.GetTextExtent(m_strText,ref fW, ref fH);
+          textwidth=(int)fW;
+          textheight=(int)fH;
+        }
+        return textheight;
+      }
     }
 	}
 }

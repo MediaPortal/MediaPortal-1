@@ -238,7 +238,7 @@ namespace MediaPortal.GUI.Library
         }
         savedStateBlock.Apply();
         vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
-        GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
+        //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 ///        GUIGraphicsContext.DX9Device.PixelShader = null;
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
@@ -274,16 +274,17 @@ namespace MediaPortal.GUI.Library
       iv=0;
       return true;
     }
-    public void DrawFontCache(CustomVertex.TransformedColoredTextured[] cachedVertices, int triangles)
+    public void DrawFontCache(ref CustomVertex.TransformedColoredTextured[] cachedVertices, int triangles)
     {
+      //return;
       // Set the data for the vertexbuffer
       if (vertexBuffer!=null)
       {
         vertexBuffer.SetData(cachedVertices, 0, LockFlags.Discard);
         savedStateBlock.Apply();
-        GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
+        //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-        GUIGraphicsContext.DX9Device.PixelShader = null;
+        //GUIGraphicsContext.DX9Device.PixelShader = null;
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, triangles);
       }
@@ -371,9 +372,9 @@ namespace MediaPortal.GUI.Library
               {
                 vertexBuffer.SetData(fontVertices, 0, LockFlags.Discard);
                 savedStateBlock.Apply();
-                GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
+                //GUIGraphicsContext.DX9Device.SetTexture(0, fontTexture);
                 GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-                GUIGraphicsContext.DX9Device.PixelShader = null;
+                //GUIGraphicsContext.DX9Device.PixelShader = null;
                 GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
                 GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, dwNumTriangles);
               }
@@ -536,6 +537,14 @@ namespace MediaPortal.GUI.Library
         }
         if (bExists)
         {
+          bool SupportsCompressedTextures=Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
+                                                                    GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
+                                                                    GUIGraphicsContext.DX9Device.DisplayMode.Format, 
+                                                                    Usage.None, 
+                                                                    ResourceType.Textures, 
+                                                                    Format.Dxt3 );
+          Format fmt=Format.Unknown;
+          if (SupportsCompressedTextures) fmt=Format.Dxt3;
           spacingPerChar=(int)textureCoords[_EndCharacter-_StartCharacter,0];
 
           // load coords
@@ -545,7 +554,7 @@ namespace MediaPortal.GUI.Library
             0,0, //width/height
             1,//miplevels
             0,
-            Format.Unknown,
+            fmt,
             Pool.Managed,
             Filter.None,
             Filter.None,
@@ -555,8 +564,8 @@ namespace MediaPortal.GUI.Library
           textureHeight=info.Height;
           textureWidth=info.Width;
           RestoreDeviceObjects();
-          Log.Write("Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}]",
-              m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter);
+          Log.Write("Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] memleft:{6}",
+              m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
           return;
         }
       }
@@ -701,18 +710,18 @@ namespace MediaPortal.GUI.Library
 				{
 					GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = false;
 				}
-				GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-				GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
-				GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
+				//GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
+				//GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
+				//GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
 				GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
 				GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
 				GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
-				GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
+				//GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
 				GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
 				GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
 				GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
 				GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
-				GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
+				//GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
 				GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
 				GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
 				GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
@@ -723,8 +732,8 @@ namespace MediaPortal.GUI.Library
 				GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
 				GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
 				GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-				GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Point;
-				GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Point;
+				GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
+				GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
 				GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
 
 				  savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();

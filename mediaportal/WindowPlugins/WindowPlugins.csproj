@@ -76,7 +76,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
@@ -157,6 +157,7 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <Folder RelPath = "Dialogs\" />
                 <File
                     RelPath = "GUIAlarm\Alarm.cs"
                     SubType = "Code"
@@ -164,7 +165,7 @@
                 />
                 <File
                     RelPath = "GUIAlarm\AlarmSetupForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -199,7 +200,7 @@
                 />
                 <File
                     RelPath = "GUIMSNPlugin\MessengerSetup.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -279,7 +280,7 @@
                 />
                 <File
                     RelPath = "GUIMyMail\MailSetupFrom.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -339,12 +340,12 @@
                 />
                 <File
                     RelPath = "GUIPrograms\FileDetailsForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "GUIPrograms\FileEditorForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -394,7 +395,7 @@
                 />
                 <File
                     RelPath = "GUIPrograms\ProgramDetailsForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -409,7 +410,7 @@
                 />
                 <File
                     RelPath = "GUIPrograms\SetupForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -449,7 +450,7 @@
                 />
                 <File
                     RelPath = "GUIRecipies\SetupForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -464,7 +465,7 @@
                 />
                 <File
                     RelPath = "GUIRSSFeed\DetailsForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -612,7 +613,7 @@
                 />
                 <File
                     RelPath = "GUIRSSFeed\SetupForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -672,7 +673,7 @@
                 />
                 <File
                     RelPath = "GUITV\FormOSD.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -722,7 +723,7 @@
                 />
                 <File
                     RelPath = "GUIVideoFiles\FormOSD.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -797,7 +798,7 @@
                 />
                 <File
                     RelPath = "home\SetupForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -822,7 +823,7 @@
                 />
                 <File
                     RelPath = "PowerScheduler\PowerSchedulerSetupForm.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File

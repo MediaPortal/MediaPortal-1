@@ -178,6 +178,7 @@ namespace MediaPortal.Player
       m_bUpdateNeeded=true;
 
       GUIGraphicsContext.IsFullScreenVideo=true;
+      /*
       GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
       try
       {
@@ -186,7 +187,7 @@ namespace MediaPortal.Player
       }
       catch(DeviceLostException)
       {
-      }
+      }*/
       SetVideoWindow();
 
       return true;

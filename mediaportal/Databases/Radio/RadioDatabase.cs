@@ -21,6 +21,7 @@ namespace MediaPortal.Radio.Database
       {
         // Open database
         Log.Write("open radiodatabase");
+        System.IO.Directory.CreateDirectory("database");
         m_db = new SQLiteClient(@"database\RadioDatabase.db");
         CreateTables();
 
@@ -32,10 +33,11 @@ namespace MediaPortal.Radio.Database
         }
 
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
+      Log.Write("Radio database opened");
     }
   
     static bool AddTable( string strTable, string strSQL)

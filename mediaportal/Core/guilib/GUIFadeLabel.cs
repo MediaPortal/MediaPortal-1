@@ -127,6 +127,8 @@ namespace MediaPortal.GUI.Library
       m_label.SetPosition(m_dwPosX,m_dwPosY);
       m_label.TextAlignment=m_dwTextAlign;
       m_label.TextColor=m_dwTextColor;
+      if (m_label.TextWidth < m_dwWidth) m_label.CacheFont=true;
+      else m_label.CacheFont=false;
       if (GUIGraphicsContext.graphics!=null)
       {
         m_label.Render();

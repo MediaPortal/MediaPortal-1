@@ -52,7 +52,8 @@ namespace MediaPortal.TV.Database
       try 
       {
         // Open database
-        Log.Write("open tvdatabase");
+        Log.Write("opening tvdatabase");
+        System.IO.Directory.CreateDirectory("database");
         //Upgrade();
         m_db = new SQLiteClient(@"database\TVDatabaseV9.db");
         CreateTables();
@@ -65,10 +66,11 @@ namespace MediaPortal.TV.Database
         }
 
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
+      Log.Write("tvdatabase opened");
     }
   
     /// <summary>

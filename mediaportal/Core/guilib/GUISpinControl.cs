@@ -61,12 +61,9 @@ namespace MediaPortal.GUI.Library
 	  
     
 		protected GUIFont  m_pFont=null;
-    
-	  
-		
-    
 		protected string   m_szTyped="";
 		protected  int       m_iTypedPos=0;
+    GUILabelControl      m_label=null;
 	
 		public GUISpinControl (int dwParentID) : base(dwParentID)
 		{
@@ -99,6 +96,8 @@ namespace MediaPortal.GUI.Library
       m_imgspinDown.Filtering=false;
       m_imgspinUpFocus.Filtering=false;
       m_imgspinDownFocus.Filtering=false;
+      m_label = new GUILabelControl(m_dwParentID);
+      m_label.CacheFont=true;
 	  }
 
     public override void 	Render()
@@ -272,25 +271,30 @@ namespace MediaPortal.GUI.Library
 			if (m_pFont!=null)
 			{
 
-				if ( m_dwAlign!= GUIControl.Alignment.ALIGN_CENTER)
+        m_label.FontName=m_strFont;
+        m_label.TextColor=m_dwTextColor;
+        m_label.Label=wszText;
+        
+        if ( m_dwAlign!= GUIControl.Alignment.ALIGN_CENTER)
 				{
 					if (wszText!=null && wszText.Length>0)
 					{
-						float fWidth=0,fHeight=0;
-						m_pFont.GetTextExtent( wszText, ref fWidth,ref fHeight);
+            m_label.TextAlignment=m_dwAlign;
+            float fHeight=(float)m_label.TextHeight;
 						fHeight/=2.0f;
 						float fPosY = ((float)m_dwHeight)/2.0f;
 						fPosY-=fHeight;
 						fPosY+=(float)m_dwPosY;
 
-
-						m_pFont.DrawText((float)m_dwPosX-3, (float)fPosY,m_dwTextColor,wszText,m_dwAlign);
-					}
+						m_label.SetPosition(m_dwPosX-3,(int)fPosY);
+          }
 				}
 				else
 				{
-					m_pFont.DrawText((float)iTextXPos, (float)iTextYPos,m_dwTextColor,wszText,GUIControl.Alignment.ALIGN_LEFT);
+          m_label.SetPosition(iTextXPos,iTextYPos);
+          m_label.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
 				}
+        m_label.Render();
       }
 
 

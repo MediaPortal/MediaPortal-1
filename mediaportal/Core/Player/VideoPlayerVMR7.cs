@@ -121,6 +121,7 @@ namespace MediaPortal.Player
 				}
         GetFrameStepInterface();
 
+        /*
         GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
         try
         {
@@ -129,7 +130,7 @@ namespace MediaPortal.Player
         }
         catch(DeviceLostException)
         {
-        }
+        }*/
 
         DirectShowUtil.SetARMode(graphBuilder, AmAspectRatioMode.AM_ARMODE_STRETCHED);
         DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph

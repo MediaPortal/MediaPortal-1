@@ -812,10 +812,13 @@ GUISpinControl m_upDown = null;
       {
         item.FreeIcons();
       }
-      for (int i=0; i < m_button.Count;++i)
+      if (m_button!=null)
       {
-        GUIButtonControl cntl=(GUIButtonControl)m_button[i];
-        cntl.FreeResources();
+        for (int i=0; i < m_button.Count;++i)
+        {
+          GUIButtonControl cntl=(GUIButtonControl)m_button[i];
+          cntl.FreeResources();
+        }
       }
       m_button=null;
       m_vecItems.Clear();

@@ -49,6 +49,7 @@ namespace MediaPortal.Music.Database
     static SQLiteClient m_db = null;
     public Database()
     {
+      Log.Write("Opening music database");
       try 
       {
         // Open database
@@ -60,10 +61,11 @@ namespace MediaPortal.Music.Database
         m_db.Execute("PRAGMA synchronous='OFF'\n");
 				m_db.Execute("PRAGMA count_changes='OFF'\n");
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
+      Log.Write("music database opened");
     }
     ~Database()
     {

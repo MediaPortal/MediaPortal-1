@@ -20,6 +20,10 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
+#if DEBUG
+    protected PerformanceCounter cpuPerformance=null;
+    protected int iPerformance=0;
+#endif
     protected string    m_strSkin="mce";
     protected string    m_strLanguage="english";
 
@@ -158,6 +162,14 @@ namespace MediaPortal
       minDepthBits = 16;
       minStencilBits = 0;
       showCursorWhenFullscreen = false;
+#if DEBUG
+      cpuPerformance= new PerformanceCounter();
+      cpuPerformance.MachineName=".";
+      cpuPerformance.CategoryName="Processor";
+      cpuPerformance.CounterName="% Processor Time";
+      cpuPerformance.InstanceName="_Total";
+#endif
+
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
 //@@@fullscreen
@@ -1176,7 +1188,8 @@ namespace MediaPortal
         if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
         {
           // We're playing a movie fullscreen , so we dont need 2 draw the gui. so sleep 25 msec
-          System.Threading.Thread.Sleep(25);  
+          if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+            System.Threading.Thread.Sleep(25);  
         }
         else
         {
@@ -1236,7 +1249,16 @@ namespace MediaPortal
         framePerSecond    = frames / (time - lastTime);
         lastTime = time;
         frames  = 0;
-
+#if DEBUG
+        try
+        {
+          iPerformance=(int)cpuPerformance.NextValue();
+        }
+        catch(Exception)
+        {
+          cpuPerformance=null;
+        }
+#endif
         string strFmt;
         Format fmtAdapter = graphicsSettings.DisplayMode.Format;
         if (fmtAdapter == GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferFormat)

@@ -20,6 +20,7 @@ namespace MediaPortal.Picture.Database
 
     static PictureDatabase()
 		{
+      Log.Write("opening picture database");
 			try 
 			{
 				// Open database
@@ -28,10 +29,11 @@ namespace MediaPortal.Picture.Database
 				CreateTables();
 
 			} 
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 			}
+      Log.Write("picture database opened");
 		}
 
 		

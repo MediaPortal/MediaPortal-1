@@ -32,13 +32,21 @@ using MediaPortal.Ripper;
 /// <summary>
 /// performance issues:
 /// guilib
-///   spincontrol : Calls GetTextExtent() for every frame rendered
-///   listcontrol : better to use an array of GUILabelControls
-///   
+///   thumbpanel     : better to use an array of GUILabelControls
+///   autoplay&dialogs subproject is gone.
+/// 
+/// performance enhancements made:
+///   - re-packaged all subprojects into 10 assemblies
+///   - added font caching to guilabelcontrol
+///   - Tuned the following controls:button, selectbutton, spin, label 
+///   - WMP9 now gets cleaned-up when playing music has ended
+///   - don't clear DX9 device anymore
+///   - use of DX9 compressed textures for fonts
+///   - use of DX9 saved renderstate state blocks
+///   - debug build now shows cpu performance after pressing the character ! 
 /// </summary>
 public class MediaPortalApp : D3DApp, IRender
-{
-
+{ 
     private ApplicationUpdateManager _updater = null;
     private Thread _updaterThread = null;
     private const int UPDATERTHREAD_JOIN_TIMEOUT = 3 * 1000;
@@ -71,6 +79,8 @@ public class MediaPortalApp : D3DApp, IRender
         bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
 
+    //NProf doesnt work if the [STAThread] attribute is set
+    //but is needed when you want to play music or video
 		[STAThread]
     public static void Main()
     {
@@ -78,6 +88,7 @@ public class MediaPortalApp : D3DApp, IRender
       // Display splash screen
       //
 
+      Log.Write("Mediaportal is starting up");
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 #if DEBUG
 #else
@@ -89,6 +100,7 @@ public class MediaPortalApp : D3DApp, IRender
 			bool bDirectXInstalled = false;
 			bool bWindowsMediaPlayer9 = false;
 
+      Log.Write("Set registry keys for intervideo codecs");
       // Set Intervideo registry keys 
       try
       {
@@ -215,6 +227,7 @@ public class MediaPortalApp : D3DApp, IRender
 				bWindowsMediaPlayer9=true;
 			}
 */
+      
       bDirectXInstalled =true;
       bWindowsMediaPlayer9=true;
       if (bDirectXInstalled && bWindowsMediaPlayer9)
@@ -261,10 +274,12 @@ public class MediaPortalApp : D3DApp, IRender
     public MediaPortalApp()
 		{
       // check if MediaPortal is already running...
+      Log.Write("Check if mediaportal is already started");
       m_UniqueIdentifier = Application.ExecutablePath.Replace("\\","_");
       m_Mutex = new System.Threading.Mutex(false, m_UniqueIdentifier);
       if (!m_Mutex.WaitOne(1, true))
       {
+        Log.Write("Check if mediaportal is already running...");
         string strMsg = "Mediaportal is already running!";
 
         // Find the other instance of MP (use System.Diagnostics. because Process is also a method in this class)
@@ -295,6 +310,7 @@ public class MediaPortalApp : D3DApp, IRender
         throw new Exception(strMsg);
       }
 
+      Log.Write(@"delete old log\capture.log file...");
       Utils.FileDelete(@"log\capture.log");
       if (Screen.PrimaryScreen.Bounds.Width > 720)
       {
@@ -396,7 +412,9 @@ public class MediaPortalApp : D3DApp, IRender
 			try
 			{
         System.IO.Directory.CreateDirectory("thumbs");
-				UpdaterConfiguration config = UpdaterConfiguration.Instance;
+#if DEBUG
+#else
+        UpdaterConfiguration config = UpdaterConfiguration.Instance;
 				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
 				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
 				config.Applications[0].Client.TempDir = System.IO.Directory.GetCurrentDirectory() + @"\temp";
@@ -406,7 +424,6 @@ public class MediaPortalApp : D3DApp, IRender
 				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
 				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
 				System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
-
 				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
 				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
@@ -425,6 +442,7 @@ public class MediaPortalApp : D3DApp, IRender
 				//  start the updater on a separate thread so that our UI remains responsive
 				_updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
 				_updaterThread.Start();
+#endif
 			}
 			catch(Exception )
 			{
@@ -440,10 +458,14 @@ public class MediaPortalApp : D3DApp, IRender
         GUIFont font = GUIFontManager.GetFont(0);
         if (font != null)
         {
-          font.DrawText(80, 80, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT);
-          string tmp=String.Format("{0},{1}",m_iLastMousePositionX,m_iLastMousePositionY);
-          font.DrawText(80, 50, 0xffffffff, tmp, GUIControl.Alignment.ALIGN_LEFT);
-          
+          font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT);
+#if DEBUG
+          if (cpuPerformance!=null)
+          {
+            string tmp=String.Format("cpu:{0:000}%",(int)iPerformance);
+            font.DrawText(80, 55, 0xffffffff, tmp, GUIControl.Alignment.ALIGN_LEFT);
+          }
+#endif          
           region[0].X = m_ixpos;
           region[0].Y = 0;
           region[0].Width = 4;
@@ -460,6 +482,7 @@ public class MediaPortalApp : D3DApp, IRender
             m_iFrameCount = 0;
             m_ixpos += 12;
             if (m_ixpos > GUIGraphicsContext.Width - 50) m_ixpos = 50;
+             
           }
         }
       }
@@ -588,11 +611,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
 
-    protected override void Render() 
+  static int prevwindow=0;
+  protected override void Render() 
     { 
-      
-
-      
       // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device == null) return;
 
@@ -619,7 +640,11 @@ public class MediaPortalApp : D3DApp, IRender
 
  
       // clear the surface
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+      if (prevwindow!=GUIWindowManager.ActiveWindow)
+      {
+        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+        prevwindow=GUIWindowManager.ActiveWindow;
+      }
       GUIGraphicsContext.DX9Device.BeginScene();
 
       // ask the window manager to render the current active window
@@ -754,6 +779,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
+
     }
 
     /// <summary>
@@ -1297,6 +1323,7 @@ public class MediaPortalApp : D3DApp, IRender
 		
   private void StopUpdater()
   {
+    if (_updater==null) return;
     //  tell updater to stop
     _updater.StopUpdater();
     if (null != _updaterThread)
@@ -1384,6 +1411,7 @@ public class MediaPortalApp : D3DApp, IRender
             return;
           }
           SwitchFullScreenOrWindowed(false,true);
+          GUIFontManager.RestoreDeviceObjects();
           if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) 
           {
             message.Param1=1;
@@ -1395,6 +1423,7 @@ public class MediaPortalApp : D3DApp, IRender
           //switch to windowed mode
           if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
           SwitchFullScreenOrWindowed(true,true);
+          GUIFontManager.RestoreDeviceObjects();
         }
 
       break;

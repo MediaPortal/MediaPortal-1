@@ -342,8 +342,9 @@ namespace MediaPortal.Player
       {
         m_player.Ctlcontrols.stop();
         m_player.Visible=false;
-        SongEnded(true);        
+        SongEnded(true);       
       }
+      Release();
     }
 
     public override int Volume
@@ -369,7 +370,12 @@ namespace MediaPortal.Player
 
     public override void Release()
     {
+      if (m_player==null) return;
       m_player.Visible=false;
+      
+      GUIGraphicsContext.form.Controls.Remove(m_player);
+      m_player.Dispose();
+      m_player=null;
     }
     #endregion 
 

@@ -304,6 +304,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void AllocResources()
 		{
+      CreateStateBlock();
       g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
 			if (m_strFileName=="-") return;
 
@@ -356,6 +357,8 @@ namespace MediaPortal.GUI.Library
       m_iImageHeight=0;
       m_iTextureWidth=0;
       m_iTextureHeight=0;
+      if (savedStateBlock!=null) savedStateBlock.Dispose();
+      savedStateBlock=null;
 		}
 
 		/// <summary>
@@ -584,8 +587,8 @@ namespace MediaPortal.GUI.Library
           return;        
         }
       }
-
-			Process();
+      if (m_vecTextures.Count != 1)
+			  Process();
       CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
 			Direct3D.Texture texture=frame.Image;
       if (texture==null)
@@ -601,13 +604,18 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
       
 			// Render the image
+      if (savedStateBlock.Disposed) savedStateBlock=null;
+      if (savedStateBlock==null)
+      {
+        CreateStateBlock();
+      }
       savedStateBlock.Apply();
 			GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
 			GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 			GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
 
 			// unset the texture and palette or the texture caching crashes because the runtime still has a reference
-			GUIGraphicsContext.DX9Device.SetTexture( 0, null);
+			//GUIGraphicsContext.DX9Device.SetTexture( 0, null);
 
 		}
 
@@ -667,6 +675,12 @@ namespace MediaPortal.GUI.Library
     }
     void CreateStateBlock()
     {
+      
+      if (savedStateBlock!=null)
+      {
+        savedStateBlock.Dispose();
+      }
+      savedStateBlock=null;
       bool supportsAlphaBlend = Manager.CheckDeviceFormat(
                         GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
                         GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 

@@ -156,6 +156,7 @@ namespace MediaPortal.GUI.Library
     static public void LoadWindowPlugin(string strFile)
     {
       if (!IsPlugInEnabled(strFile)) return;
+
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
@@ -203,6 +204,8 @@ namespace MediaPortal.GUI.Library
 
     static public bool IsPlugInEnabled(string strDllname)
     {
+      if (strDllname.IndexOf("WindowPlugins.dll")>=0) return true;
+
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         // from the assembly name check the reference to plugin name

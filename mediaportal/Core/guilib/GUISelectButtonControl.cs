@@ -47,6 +47,7 @@ namespace MediaPortal.GUI.Library
 		protected long										m_dwTicks=0;
 		protected bool                    m_bUpdateNeeded=false;
 		protected bool                    m_bAutoHide=true;
+    protected GUILabelControl         m_label=null;
 
 	
 
@@ -112,6 +113,8 @@ namespace MediaPortal.GUI.Library
       m_imgLeftFocus.Filtering=false;
       m_imgRight.Filtering=false;
       m_imgRightFocus.Filtering=false;
+      m_label=new GUILabelControl(m_dwParentID);
+      m_label.CacheFont=true;
 	  }
 		public override void ScaleToScreenResolution()
 		{
@@ -208,8 +211,13 @@ namespace MediaPortal.GUI.Library
 
         //	Render text if a current item is available
         if (SelectedItem>=0 && null!=m_pFont && SelectedItem < m_SubItems.Count)
-          m_pFont.DrawText((float)m_dwPosX+m_imgLeft.Width+m_iTextOffsetX, (float)m_iTextOffsetY+m_dwPosY, dwTextColor, (string)m_SubItems[SelectedItem],GUIControl.Alignment.ALIGN_LEFT);
-
+        {
+          m_label.FontName=m_pFont.FontName;
+          m_label.SetPosition(m_dwPosX+m_imgLeft.Width+m_iTextOffsetX,m_iTextOffsetY+m_dwPosY);
+          m_label.TextColor=dwTextColor;
+          m_label.Label=(string)m_SubItems[SelectedItem];
+          m_label.Render();
+        }
 
         //	Select current item, if user doesn't 
         //	move left or right for 1.5 sec.
@@ -259,10 +267,14 @@ namespace MediaPortal.GUI.Library
 
         if (m_strLabel!=null&&m_strLabel.Length > 0 && m_pFont!=null)
         {
+          m_label.FontName=m_pFont.FontName;
+          m_label.SetPosition(m_iTextOffsetX2+m_dwPosX,m_iTextOffsetY2+m_dwPosY);
           if (Disabled )
-            m_pFont.DrawText((float)m_iTextOffsetX2+m_dwPosX, (float)m_iTextOffsetY2+m_dwPosY,m_dwDisabledColor,m_strLabel,GUIControl.Alignment.ALIGN_LEFT);
+            m_label.TextColor=m_dwDisabledColor;
           else
-            m_pFont.DrawText((float)m_iTextOffsetX2+m_dwPosX, (float)m_iTextOffsetY2+m_dwPosY,m_dwTextColor,m_strLabel,GUIControl.Alignment.ALIGN_LEFT);
+              m_label.TextColor=m_dwTextColor;
+          m_label.Label=m_strLabel;
+          m_label.Render();
         }
       }
     }
@@ -469,6 +481,8 @@ namespace MediaPortal.GUI.Library
 			m_imgRight.FreeResources();
 			m_imgRightFocus.FreeResources();
 
+      
+      m_label.FreeResources();
 			m_bShowSelect=false;
 		}
 
@@ -526,6 +540,8 @@ namespace MediaPortal.GUI.Library
       dwPosX=m_dwPosX+8;
       m_imgLeft.SetPosition(dwPosX, dwPosY);
       m_imgLeftFocus.SetPosition(dwPosX, dwPosY);
+
+      m_label.AllocResources();
     }
 
 		/// <summary>

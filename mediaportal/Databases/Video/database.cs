@@ -17,6 +17,8 @@ namespace MediaPortal.Video.Database
     }
     static VideoDatabase()
     {
+      
+      Log.Write("opening video database");
       try 
       {
         // Open database
@@ -25,10 +27,12 @@ namespace MediaPortal.Video.Database
         CreateTables();
 
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
         Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
+      
+      Log.Write("video database opened");
     }
 		static void AddTable( string strTable, string strSQL)
 		{

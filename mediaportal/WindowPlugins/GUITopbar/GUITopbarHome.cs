@@ -31,18 +31,14 @@ namespace MediaPortal.Topbar
     }
     public override bool DoesPostRender()
     {
-      
+      if (GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_HOME)  return false;
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
-      if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_HOME) 
-      {
-        CheckFocus();
-        return true;
-      }
-      return false;
+      return true;
     }
     public override void PostRender(int iLayer)
     {
       if (iLayer !=1) return;
+      CheckFocus();
       base.Render();
     }
 

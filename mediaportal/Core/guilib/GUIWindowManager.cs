@@ -16,6 +16,7 @@ namespace MediaPortal.GUI.Library
     static ArrayList		 m_vecWindows				= new ArrayList();
     static ArrayList		 m_vecThreadMessages	= new ArrayList();
     static int					 m_iActiveWindow=-1;
+    static int					 m_iActiveWindowID=-1;
     static GUIWindow     m_pRouteWindow=null;
     static bool          m_bRefresh=false;
     static bool          m_bSwitching=false;
@@ -92,6 +93,7 @@ namespace MediaPortal.GUI.Library
     {
       //no active window yet
 			m_iActiveWindow=-1;
+      m_iActiveWindowID=-1;
       m_bSwitching=false;
       
       //register ourselves for the messages from the GUIGraphicsContext 
@@ -181,6 +183,7 @@ namespace MediaPortal.GUI.Library
           msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iWindowID,0,null);
           pWindow.OnMessage(msg);
           m_iActiveWindow=-1;
+          m_iActiveWindowID=-1;
         }
 
         // activate the new window
@@ -190,6 +193,7 @@ namespace MediaPortal.GUI.Library
           if (pWindow.GetID == iWindowID) 
           {
             m_iActiveWindow=i;
+            m_iActiveWindowID=iWindowID;
 
             // Check to see that this window is not our previous window
             if (iPrevActiveWindow>=0)
@@ -230,6 +234,7 @@ namespace MediaPortal.GUI.Library
         if (m_iActiveWindow<0 || m_iActiveWindow>m_vecWindows.Count)
           m_iActiveWindow=0;
         pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+        m_iActiveWindowID=pWindow.GetID;
         msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
         pWindow.OnMessage(msg);		
       }
@@ -271,6 +276,7 @@ namespace MediaPortal.GUI.Library
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iPrevActiveWindowID,0,null);
             pWindow.OnMessage(msg);
             m_iActiveWindow=-1;
+            m_iActiveWindowID=-1;
           }
         }
 
@@ -281,6 +287,7 @@ namespace MediaPortal.GUI.Library
           if (pWindow.GetID == iPrevActiveWindowID) 
           {
             m_iActiveWindow=i;
+            m_iActiveWindowID=pWindow.GetID;
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
             pWindow.OnMessage(msg);
             return;
@@ -291,6 +298,7 @@ namespace MediaPortal.GUI.Library
         // so we go back to the previous window
         m_iActiveWindow=0;
         pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
+        m_iActiveWindowID=pWindow.GetID;
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
         pWindow.OnMessage(msg);
       }
@@ -386,7 +394,7 @@ namespace MediaPortal.GUI.Library
     static void PostRender()
     {
       //render overlay layer 1-10
-      for (int iLayer=1; iLayer < 10; iLayer++)
+      for (int iLayer=1; iLayer <= 2; iLayer++)
       {
         for (int x=0; x < m_vecWindows.Count;++x)
         {
@@ -580,9 +588,8 @@ namespace MediaPortal.GUI.Library
     {
 			get
 			{
-				if (m_iActiveWindow < 0) return 0;
-				GUIWindow pWindow=(GUIWindow)m_vecWindows[m_iActiveWindow];
-				return pWindow.GetID;
+				if (m_iActiveWindowID < 0) return 0;
+				else return m_iActiveWindowID;
 			}
     }
 

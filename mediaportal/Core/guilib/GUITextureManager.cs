@@ -322,6 +322,7 @@ namespace MediaPortal.GUI.Library
               theImage.SelectActiveFrame(oDimension,i);
 
 
+              //load gif into texture
               using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
               {
                 theImage.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
@@ -329,17 +330,17 @@ namespace MediaPortal.GUI.Library
                 stream.Flush();
                 stream.Seek(0,System.IO.SeekOrigin.Begin);
                 Direct3D.Texture texture=TextureLoader.FromStream(
-                  GUIGraphicsContext.DX9Device,
-                  stream,
-                  0,0,//width/height
-                  1,//mipslevels
-                  0,//Usage.Dynamic,
-                  Format.A8R8G8B8,
-                  Pool.Managed,
-                  Filter.None,
-                  Filter.None,
-                  (int)lColorKey,
-                  ref info2);
+                                                                  GUIGraphicsContext.DX9Device,
+                                                                  stream,
+                                                                  0,0,//width/height
+                                                                  1,//mipslevels
+                                                                  0,//Usage.Dynamic,
+                                                                  Format.Dxt3,
+                                                                  Pool.Managed,
+                                                                  Filter.None,
+                                                                  Filter.None,
+                                                                  (int)lColorKey,
+                                                                  ref info2);
                 newCache.Width=info2.Width;
                 newCache.Height=info2.Height;
                 newCache[i]=new CachedTexture.Frame(texture, (frameDelay[i]/5)*50);
@@ -404,6 +405,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
+        //load jpg or png into texture
         using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
         {
           imgSrc.Save(stream,System.Drawing.Imaging.ImageFormat.Png);

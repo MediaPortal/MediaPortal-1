@@ -55,7 +55,6 @@ namespace MediaPortal.Topbar
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_SLIDESHOW) return false;
       if (GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_HOME)
       {
-        CheckFocus();
         return true;
       }
       return false;
@@ -63,6 +62,7 @@ namespace MediaPortal.Topbar
     public override void PostRender(int iLayer)
     {
       if (iLayer !=1) return;
+      CheckFocus();
       base.Render();
     }
 
