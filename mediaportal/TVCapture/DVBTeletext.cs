@@ -19,7 +19,7 @@ namespace MediaPortal.TV.Recording
 		int						m_actualSubPage=0;
 		int						m_pageCount=0;
 		//Hashtable				pages=new Hashtable();
-		System.Drawing.Bitmap	m_pageBitmap=new System.Drawing.Bitmap(720,576);
+		System.Drawing.Bitmap	m_pageBitmap=new System.Drawing.Bitmap(1920,1080);
 		System.Drawing.Graphics m_renderGraphics;
 		int						m_txtLanguage=4;// german
 		public delegate void PageUpdated();
@@ -125,8 +125,8 @@ namespace MediaPortal.TV.Recording
 
 		public DVBTeletext()
 		{
-			m_pageWidth=720;
-			m_pageHeight=576;
+			m_pageWidth=1920;
+			m_pageHeight=1080;
 			m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
 			m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
 			//
@@ -135,8 +135,14 @@ namespace MediaPortal.TV.Recording
 		}
 		~DVBTeletext()
 		{
-			// release the allocated memory
+			// free graphics and bitmap object
 			//
+			if(m_renderGraphics!=null)
+				m_renderGraphics.Dispose();
+			if(m_pageBitmap!=null)
+				m_pageBitmap.Dispose();
+
+			// free alloctated memory
 			for(int t=0;t<0x900;t++)
 				for(int n=0;n<0x80;n++)
 					if((int)m_cacheTable[t,n]!=0)
@@ -206,7 +212,7 @@ namespace MediaPortal.TV.Recording
 
 		//
 
-		public void SetPageDimensions(int width,int height)
+		public void SetPageSize(int width,int height)
 		{
 			m_pageWidth=width;
 			m_pageHeight=height;
@@ -414,8 +420,16 @@ namespace MediaPortal.TV.Recording
 				for(int loop1=5;loop1<(5+pageNumber.Length);loop1++)
 					pageChars[loop1]=Convert.ToByte(pageNumber.Substring(loop1-5,1));
 
+				pageChars[0]=(byte)'M';
+				pageChars[1]=(byte)'P';
+				pageChars[2]=(byte)'-';
+				pageChars[3]=(byte)'T';
+				pageChars[4]=(byte)'x';
+				pageChars[5]=(byte)'T';
 
-				for (i = 0; i < 11; i++)
+
+
+				for (i = 0; i < 40; i++)
 					pageAttribs[i] = (((int)TextColors.Black<<4) | (int)TextColors.White);
 
 
@@ -515,7 +529,7 @@ namespace MediaPortal.TV.Recording
 										for(int loop1=0;loop1<col;loop1++)
 											pageChars[(row*40)+loop1]=32;
 									for (int clear = 0; clear < col; clear++)
-										pageAttribs[row*40 + clear] = doubleheight<<10 |(int)TextColors.Trans1<<4 | (int)TextColors.Trans1;
+										pageAttribs[row*40 + clear] = doubleheight<<10 |charset<<8|(int)TextColors.Trans1<<4 | (int)TextColors.Trans1;
 								}
 								break;
 
@@ -527,12 +541,6 @@ namespace MediaPortal.TV.Recording
 							case double_height:
 								if (row < 23)
 									doubleheight = 1;
-								break;
-
-							case double_width:
-								break;
-
-							case double_size:
 								break;
 
 							case mosaic_black:
@@ -662,6 +670,7 @@ namespace MediaPortal.TV.Recording
 			int height=m_pageHeight/24;
 			int fontSize=10;
 
+			m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
 			for (row = 0; row < 24; row++)
 			{
 				x = 0;
@@ -737,7 +746,7 @@ namespace MediaPortal.TV.Recording
 			}
 			int factor=0;
 
-			if (((attrib & 1)<<10)>0)
+			if ((attrib & 1<<10)>0)
 				factor = 2;
 			else
 				factor = 1;
@@ -749,6 +758,8 @@ namespace MediaPortal.TV.Recording
 				case 0x00:
 				case 0x20:
 					graph.FillRectangle(backBrush,x,y, w, h);
+					if(factor==2)
+						graph.FillRectangle(backBrush,x,y+h, w, h);
 					x+=w;
 					charReady=true;
 					break;
@@ -884,6 +895,41 @@ namespace MediaPortal.TV.Recording
 				graph.FillRectangle(backBrush,x, y, w, h);
 				System.Drawing.SizeF width=graph.MeasureString(text,new System.Drawing.Font("Arial",w-2,System.Drawing.FontStyle.Bold));
 				graph.DrawString(text,new System.Drawing.Font("Arial",w-2,System.Drawing.FontStyle.Bold),foreBrush,new System.Drawing.PointF((float)x+((w-((int)width.Width))/2),(float)y));
+				if(factor==2)
+				{
+					graph.FillRectangle(backBrush,x, y+h, w, h);
+					System.Drawing.Color[,] pixelColor=new System.Drawing.Color[w+1,h+1];
+					// save char
+					for(int ypos=0;ypos<h;ypos++)
+					{
+						for(int xpos=0;xpos<w;xpos++)
+						{
+							pixelColor[xpos,ypos]=m_pageBitmap.GetPixel(xpos+x,ypos+y); // backup old line
+						}
+					}
+					// draw doubleheight
+					for(int ypos=0;ypos<h;ypos++)
+					{
+						
+						for(int xpos=0;xpos<w;xpos++)
+						{
+						
+							try
+							{
+								if(y+(ypos*2)+1<m_pageBitmap.Height)
+								{
+									m_pageBitmap.SetPixel(x+xpos,y+(ypos*2),pixelColor[xpos,ypos]); // backup old line
+									m_pageBitmap.SetPixel(x+xpos,y+(ypos*2)+1,pixelColor[xpos,ypos]);
+								}
+								}
+							catch
+							{
+								int a=0;
+							}
+						}
+					}
+
+				}
 				x+=w;
 			}
 			foreBrush.Dispose();
