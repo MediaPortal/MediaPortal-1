@@ -56,6 +56,8 @@ interface IStreamBufferRecorder : IDispatch{
 	[id(1), helpstring("method Record")] HRESULT Create(IBaseFilter* streamBufferSink, [in] BSTR strPath,DWORD dwRecordingType);
 	[id(2), helpstring("method Record")] HRESULT Start(LONG startTime);
 	[id(3), helpstring("method Stop")] HRESULT Stop(void);
+	[id(4), helpstring("method SetAttributeString")] HRESULT SetAttributeString([in] BSTR strName, [in] BSTR strValue);
+	[id(5), helpstring("method SetAttributeDWORD")] HRESULT SetAttributeDWORD([in] BSTR strName, ULONG dwValue);
 };
 [
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),

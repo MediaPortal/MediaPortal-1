@@ -53,7 +53,6 @@ namespace MediaPortal.TV.Recording
 		class RecordingFinished
 		{
 			public string    fileName=String.Empty;
-			public Hashtable Properties=null;
 		}
 		string  m_strVideoDevice        = "";
 		string  m_strVideoDeviceMoniker = "";//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
@@ -921,59 +920,39 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} rebuild graph done",ID);
 		}
 
-		void OnSetRecordingAttributes()
+		string StripIllegalChars(string recordingAttribute)
 		{
-			System.Threading.Thread.Sleep(10000);
-			lock (m_finishedRecordings)
-			{
-				while (m_finishedRecordings.Count>0)
-				{
-					RecordingFinished rec =(RecordingFinished) m_finishedRecordings[0];
-					m_finishedRecordings.RemoveAt(0);
+			if (recordingAttribute==null) return String.Empty;
+			if (recordingAttribute.Length==0) return String.Empty;
+			recordingAttribute=recordingAttribute.Replace(":"," ");
+			recordingAttribute=recordingAttribute.Replace(";"," ");
+			return recordingAttribute;
+		}
+		Hashtable GetRecordingAttributes()
+		{
+			// set the meta data in the dvr-ms or .wmv file
+			TimeSpan ts = (_mNewRecordedTV.EndTime-_mNewRecordedTV.StartTime);
+			Hashtable propsToSet = new Hashtable();
 
-					Log.WriteFile(Log.LogType.Capture,"Card:{0} set {1} attributes on {2}",ID,rec.Properties.Count,rec.fileName);
+			propsToSet.Add("channel",new MetadataItem("channel", StripIllegalChars(_mNewRecordedTV.Channel), MetadataItemType.String));
+			
+			if (_mNewRecordedTV.Title!=null && _mNewRecordedTV.Title.Length>0)
+				propsToSet.Add("title",new MetadataItem("title", StripIllegalChars(_mNewRecordedTV.Title), MetadataItemType.String));
+			
+			if (_mNewRecordedTV.Genre!=null && _mNewRecordedTV.Genre.Length>0)
+				propsToSet.Add("genre",new MetadataItem("genre", StripIllegalChars(_mNewRecordedTV.Genre), MetadataItemType.String));
 
-					if (rec.fileName.ToLower().IndexOf(".dvr-ms")>=0)
-					{
-						using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(rec.fileName))
-						{
-							try
-							{
-								Log.WriteFile(Log.LogType.Recorder,false,"editor.SetAttributes() on {0}", rec.fileName);
-								editor.SetAttributes(rec.Properties);
-							}
-							catch(IOException ex)
-							{
-								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} IOException:{1} {2} {3}",
-									rec.fileName,ex.Message,ex.Source,ex.StackTrace);
-							}
-							catch(Exception ex)
-							{
-								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
-									rec.fileName,ex.Message,ex.Source,ex.StackTrace);
-							}
-						}
-					}//if (_mNewRecordedTV.FileName.IndexOf(".dvr-ms")>=0)
+			if (_mNewRecordedTV.Description!=null && _mNewRecordedTV.Description.Length>0)
+				propsToSet.Add("description",new MetadataItem("details", StripIllegalChars(_mNewRecordedTV.Description), MetadataItemType.String));
 
-					if (rec.fileName.ToLower().IndexOf(".wmv")>=0)
-					{
-						using (AsfMetadataEditor editor = new AsfMetadataEditor(rec.fileName))
-						{
-							try
-							{
-								Log.WriteFile(Log.LogType.Recorder,false,"editor.SetAttributes() on {0}", rec.fileName);
-								editor.SetAttributes(rec.Properties);
-							}
-							catch(Exception ex)
-							{
-								Log.WriteFile(Log.LogType.Recorder,true,"editor.SetAttributes() on {0} Exception:{1} {2} {3}",
-									rec.fileName,ex.Message,ex.Source,ex.StackTrace);
-							}
-						}
-					}//if (_mNewRecordedTV.FileName.IndexOf(".wmv")>=0)
-				}//while (m_finishedRecordings.Count>0)
-			}//lock (m_finishedRecordings)
-		}//void OnSetRecordingAttributes()
+			propsToSet.Add("id",new MetadataItem("id",  (uint)_mNewRecordedTV.ID, MetadataItemType.Dword));
+			propsToSet.Add("cardno",new MetadataItem("cardno", (uint)this.ID, MetadataItemType.Dword));
+			propsToSet.Add("duration",new MetadataItem("seconds", (uint)ts.TotalSeconds, MetadataItemType.Dword));
+			propsToSet.Add("start",new MetadataItem("start", _mNewRecordedTV.Start.ToString(), MetadataItemType.String));
+			propsToSet.Add("end",new MetadataItem("end", _mNewRecordedTV.End.ToString(), MetadataItemType.String));
+
+			return propsToSet;
+		}//void GetRecordingAttributes()
 
 		/// <summary>
 		/// This method can be used to stop the current recording.
@@ -1003,39 +982,6 @@ namespace MediaPortal.TV.Recording
 			// back to timeshifting state
 			_mState = State.Timeshifting;
 
-			// set the meta data in the dvr-ms or .wmv file
-			TimeSpan ts = (_mNewRecordedTV.EndTime-_mNewRecordedTV.StartTime);
-			Hashtable propsToSet = new Hashtable();
-
-			propsToSet.Add("channel",new MetadataItem("channel", _mNewRecordedTV.Channel, MetadataItemType.String));
-			
-			if (_mNewRecordedTV.Title!=null && _mNewRecordedTV.Title.Length>0)
-				propsToSet.Add("title",new MetadataItem("title", _mNewRecordedTV.Title, MetadataItemType.String));
-			
-			if (_mNewRecordedTV.Genre!=null && _mNewRecordedTV.Genre.Length>0)
-				propsToSet.Add("genre",new MetadataItem("genre", _mNewRecordedTV.Genre, MetadataItemType.String));
-
-			if (_mNewRecordedTV.Description!=null && _mNewRecordedTV.Description.Length>0)
-				propsToSet.Add("description",new MetadataItem("description", _mNewRecordedTV.Description, MetadataItemType.String));
-
-			propsToSet.Add("id",new MetadataItem("id",  _mNewRecordedTV.ID, MetadataItemType.Dword));
-			propsToSet.Add("cardno",new MetadataItem("cardno", this.ID, MetadataItemType.Dword));
-			propsToSet.Add("duration",new MetadataItem("duration", ts.TotalSeconds, MetadataItemType.Dword));
-			propsToSet.Add("start",new MetadataItem("start", _mNewRecordedTV.Start, MetadataItemType.Dword));
-			propsToSet.Add("end",new MetadataItem("end", _mNewRecordedTV.End, MetadataItemType.Dword));
-			
-			if (m_finishedRecordings==null) 
-				m_finishedRecordings=new ArrayList();
-			lock (m_finishedRecordings)
-			{
-				RecordingFinished finishedRec = new RecordingFinished();
-				finishedRec.Properties=propsToSet;
-				finishedRec.fileName=_mNewRecordedTV.FileName;
-				m_finishedRecordings.Add(finishedRec);
-			}
-
-			Thread WorkerThread = new Thread(new ThreadStart(OnSetRecordingAttributes));
-			WorkerThread.Start();
 
 			
 
@@ -1325,7 +1271,6 @@ namespace MediaPortal.TV.Recording
 
 			TVChannel channel=GetChannel(_mTvChannelName);
 
-			bool bResult = _mGraph.StartRecording(recording,channel, ref strFileName, recording.IsContentRecording, timeProgStart);
 
 			_mNewRecordedTV = new TVRecorded();
 			_mNewRecordedTV.Start = Utils.datetolong(DateTime.Now);
@@ -1336,13 +1281,19 @@ namespace MediaPortal.TV.Recording
 				_mNewRecordedTV.Title = currentRunningProgram.Title;
 				_mNewRecordedTV.Genre = currentRunningProgram.Genre;
 				_mNewRecordedTV.Description = currentRunningProgram.Description;
+				_mNewRecordedTV.End = currentRunningProgram.End;
 			}
 			else
 			{
 				_mNewRecordedTV.Title = "";
 				_mNewRecordedTV.Genre = "";
 				_mNewRecordedTV.Description = "";
+				
+				_mNewRecordedTV.End=Utils.datetolong(DateTime.Now.AddHours(2));
 			}
+
+			Hashtable attribtutes=GetRecordingAttributes();
+			bool bResult = _mGraph.StartRecording(attribtutes,recording,channel, ref strFileName, recording.IsContentRecording, timeProgStart);
 
 			_mRecordingStartTime = DateTime.Now;
 			_mState = State.Recording;

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Sat Mar 19 08:51:40 2005
+/* at Sun Mar 20 09:28:25 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -562,6 +562,14 @@ EXTERN_C const IID IID_IStreamBufferRecorder;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( void) = 0;
         
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE SetAttributeString( 
+            /* [in] */ BSTR strName,
+            /* [in] */ BSTR strValue) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE SetAttributeDWORD( 
+            /* [in] */ BSTR strName,
+            ULONG dwValue) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -623,6 +631,16 @@ EXTERN_C const IID IID_IStreamBufferRecorder;
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
             IStreamBufferRecorder * This);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *SetAttributeString )( 
+            IStreamBufferRecorder * This,
+            /* [in] */ BSTR strName,
+            /* [in] */ BSTR strValue);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *SetAttributeDWORD )( 
+            IStreamBufferRecorder * This,
+            /* [in] */ BSTR strName,
+            ULONG dwValue);
+        
         END_INTERFACE
     } IStreamBufferRecorderVtbl;
 
@@ -668,6 +686,12 @@ EXTERN_C const IID IID_IStreamBufferRecorder;
 #define IStreamBufferRecorder_Stop(This)	\
     (This)->lpVtbl -> Stop(This)
 
+#define IStreamBufferRecorder_SetAttributeString(This,strName,strValue)	\
+    (This)->lpVtbl -> SetAttributeString(This,strName,strValue)
+
+#define IStreamBufferRecorder_SetAttributeDWORD(This,strName,dwValue)	\
+    (This)->lpVtbl -> SetAttributeDWORD(This,strName,dwValue)
+
 #endif /* COBJMACROS */
 
 
@@ -706,6 +730,32 @@ void __RPC_STUB IStreamBufferRecorder_Start_Stub(
 
 
 void __RPC_STUB IStreamBufferRecorder_Stop_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IStreamBufferRecorder_SetAttributeString_Proxy( 
+    IStreamBufferRecorder * This,
+    /* [in] */ BSTR strName,
+    /* [in] */ BSTR strValue);
+
+
+void __RPC_STUB IStreamBufferRecorder_SetAttributeString_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IStreamBufferRecorder_SetAttributeDWORD_Proxy( 
+    IStreamBufferRecorder * This,
+    /* [in] */ BSTR strName,
+    ULONG dwValue);
+
+
+void __RPC_STUB IStreamBufferRecorder_SetAttributeDWORD_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,

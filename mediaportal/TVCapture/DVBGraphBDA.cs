@@ -15,6 +15,7 @@ using TVCapture;
 using System.Xml;
 using DirectX.Capture;
 using MediaPortal.Radio.Database;
+using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace MediaPortal.TV.Recording
 {
@@ -799,7 +800,7 @@ namespace MediaPortal.TV.Recording
 		/// It will examine the timeshifting files and try to record as much data as is available
 		/// from the timeProgStart till the moment recording is stopped again
 		/// </remarks>
-		public bool StartRecording(TVRecording recording,TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+		public bool StartRecording(Hashtable attributes,TVRecording recording,TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
 		{
 			if (m_graphState != State.TimeShifting) 
 				return false;
@@ -854,7 +855,18 @@ namespace MediaPortal.TV.Recording
 
 					lStartTime *= -10000000L;//in reference time 
 				}//if (!bContentRecording)
-				
+		
+				foreach (MetadataItem item in attributes.Values)
+				{
+					try
+					{
+						if (item.Type == MetadataItemType.String)
+							m_recorder.SetAttributeString(item.Name,item.Value.ToString());
+						if (item.Type == MetadataItemType.Dword)
+							m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
+					}
+					catch(Exception){}
+				}
 				m_recorder.Start((int)lStartTime);
 			}
 			finally
