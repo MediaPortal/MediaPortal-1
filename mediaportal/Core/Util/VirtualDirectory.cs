@@ -262,7 +262,8 @@ namespace MediaPortal.Util
           }
           else
           {
-            if (System.IO.Path.GetFullPath(share.Path) == strRoot)
+						string strFullPath = System.IO.Path.GetFullPath(share.Path);
+            if (strFullPath.ToLower() == strRoot.ToLower())
             {
               iPincode = share.Pincode;
               if (share.Pincode >= 0)
