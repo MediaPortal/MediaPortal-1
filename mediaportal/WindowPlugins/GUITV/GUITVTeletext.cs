@@ -309,8 +309,25 @@ namespace MediaPortal.GUI.TV
 		{
 			m_teleText=(DVBTeletext)obj;
 			m_teleText.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(m_teleText_PageUpdatedEvent);
-
 		}
+		//
+		//
+		void ShowMessage(int page,int subpage)
+		{
+			
+			if(m_pictureBox==null)
+				return;
+			Graphics g=Graphics.FromImage(m_pictureBox.Image);
+			if(g==null)
+				return;
+
+			g.FillRectangle(new SolidBrush(Color.Black),0,0,m_pictureBox.Width,m_pictureBox.Height);
+			g.DrawString("waiting for Page "+Convert.ToString(page,16)+"/"+subpage.ToString()+"...",new Font("Arial",16),new SolidBrush(Color.White),0,0);
+			m_pageBitmap=(Bitmap)m_pictureBox.Image.Clone();
+			m_pictureBox.Refresh();
+		}
+		//
+		//
 		private void m_teleText_PageUpdatedEvent()
 		{
 			// make sure the callback returns as soon as possible!!
@@ -338,6 +355,11 @@ namespace MediaPortal.GUI.TV
 		{
 			try
 			{
+				if(m_pageBitmap==null)
+				{
+					ShowMessage(m_actualPage,m_actualSubPage);
+					return;
+				}
 				Graphics g=System.Drawing.Graphics.FromImage(m_pictureBox.Image);
 				g.DrawImage(m_pageBitmap,0,0);
 				g.Dispose();

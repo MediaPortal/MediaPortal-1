@@ -178,9 +178,20 @@ namespace MediaPortal.TV.Recording
 			m_actualSubPage=subpage;
 			if((int)m_cacheTable[page,subpage]!=0)
 				DecodePage(page,subpage);
-
+			else 
+			{
+				for(int sub=0;sub<35;sub++)
+					if((int)m_cacheTable[page,sub]!=0)//return first aval. subpage
+					{
+						DecodePage(page,sub);
+						return m_pageBitmap;
+					}
+				return null; // nothing found
+			}
 			return m_pageBitmap;
 		}
+		//
+		//
 		public System.Drawing.Bitmap PageBitmap
 		{
 			get
@@ -364,7 +375,8 @@ namespace MediaPortal.TV.Recording
 							int offset=packetNumber*40;
 							adr=(IntPtr)(((int)adr)+offset);
 							Marshal.Copy(tmpBuffer,2,adr,40);
-							if (m_currentPage[magazine] == m_actualPage)
+							if (m_currentPage[magazine]==m_actualPage &&
+								m_currentSubPage[magazine]==m_actualSubPage)
 							{
 								//DecodePage(m_actualPage,0);
 								PageUpdatedEvent();
@@ -964,7 +976,6 @@ namespace MediaPortal.TV.Recording
 					return System.Drawing.Color.Transparent;
 				case (int)TextColors.Trans2:
 					return System.Drawing.Color.Transparent;
-					return System.Drawing.Color.LightGreen;
 			}
 			return System.Drawing.Color.Black;
 		}
