@@ -405,14 +405,19 @@ namespace MediaPortal.TV.Recording
         if (m_TVTuner==null) return;
         if (m_bFirstTune)
         {
+          DShowNET.AnalogVideoStandard standard;
           m_bFirstTune=false;
           m_TVTuner.put_TuningSpace(0);
           m_TVTuner.put_CountryCode(m_iCountryCode);
           m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+          m_TVTuner.get_TVFormat(out standard);
           if (m_bUseCable)
             m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
           else
             m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 counrty:{0} tv standard:{1} cable:{2}",
+                                        m_iCountryCode,standard.ToString(),
+                                        m_bUseCable);
         }
         try
         {
