@@ -119,6 +119,7 @@ Skin engine:
   - make onscreen keyboard skinnable (at least x,y position)
   
 setup:
+  - Update paths of the setup project in CVS to point to the new location of the girder files.
   - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
   - Setup Wizard for the first run (see Sceneo / Meedio Beta)
   - setup : add tooltips 
