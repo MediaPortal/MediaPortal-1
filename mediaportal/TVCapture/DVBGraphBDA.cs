@@ -2535,14 +2535,15 @@ namespace MediaPortal.TV.Recording
 				info.service_provider_name=info.service_provider_name.Trim();
 				info.service_name=info.service_name.Trim();
 				if (info.service_provider_name.Length==0 ) 
-				{
-						info.service_provider_name="Unknown";
-				}
+					info.service_provider_name="Unknown";
 				if (info.service_name.Length==0)
 					info.service_name=String.Format("NoName:{0}{1}{2}{3}",info.networkID,info.transportStreamID, info.serviceID,i );
 
-
-				if (info.serviceID==0) continue;
+				if (info.serviceID==0) 
+				{
+					Log.Write("DVBGraphBDA: channel#{0} has no service id",i);
+					continue;
+				}
 				bool hasAudio=false;
 				bool hasVideo=false;
 				info.freq=currentTuningObject.carrierFrequency;
