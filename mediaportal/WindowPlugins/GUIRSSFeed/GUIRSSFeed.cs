@@ -130,12 +130,8 @@ namespace MediaPortal.GUI.RSS
 // Disabled for now to avoid downloading twice. Until refesh is implemented.
 //			        Download(new Uri(m_strSiteURL));
 			    }
-          try 
-          {
-            Download(new Uri(m_strSiteURL));
-          }
-          catch(Exception){}
-	  			UpdateButtons();
+          
+          UpdateNews();
 
 					return true;
 				}
@@ -149,9 +145,11 @@ namespace MediaPortal.GUI.RSS
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 				{
 					int iControl=message.SenderControlId;
-					if (iControl == (int)Controls.CONTROL_BTNREFRESH)
-						Download(new Uri(m_strSiteURL));
-
+          if (iControl == (int)Controls.CONTROL_BTNREFRESH)
+          {
+            
+            UpdateNews();
+          }
 					if (iControl==(int)Controls.CONTROL_LIST)
          	{
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
@@ -181,8 +179,7 @@ namespace MediaPortal.GUI.RSS
        						m_strDescription = ((Site)m_sites[nSelected]).m_Name;
  						}
 
-						Download(new Uri(m_strSiteURL));
-						UpdateButtons();
+            UpdateNews();
 
 						return true;
 					}
@@ -192,6 +189,23 @@ namespace MediaPortal.GUI.RSS
 			}
 			return base.OnMessage(message);
 		}
+    void UpdateNews()
+    {
+      try
+      {
+        Uri newURL=new Uri(m_strSiteURL);
+        Download(newURL);
+        UpdateButtons();
+      }
+      catch(Exception)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+        msg.Param1=9;//my news
+        msg.Param2=912;//Unable to download latest news
+        msg.Param3=0;
+        GUIWindowManager.SendMessage(msg);
+      }
+    }
 
 		#region Serialisation
 		void LoadSettings()
@@ -209,8 +223,8 @@ namespace MediaPortal.GUI.RSS
 
 		          	string strName=xmlreader.GetValueAsString("rss",strNameTag,"");
 		          	string strURL=xmlreader.GetValueAsString("rss",strURLTag,"");
-					string strImage = xmlreader.GetValueAsString("rss", strImageTag, "");
-        			string strDescription = xmlreader.GetValueAsString("rss", strDescriptionTag, "");
+					      string strImage = xmlreader.GetValueAsString("rss", strImageTag, "");
+        			  string strDescription = xmlreader.GetValueAsString("rss", strDescriptionTag, "");
 
 		          	if (strName.Length>0 && strURL.Length>0)
 		          	{
@@ -266,8 +280,7 @@ namespace MediaPortal.GUI.RSS
        	UpdateButtons();
       }
 
-      Download(new Uri(m_strSiteURL));
-     	UpdateButtons();
+      UpdateNews();
 		}
 
 		void UpdateButtons()
@@ -434,12 +447,13 @@ namespace MediaPortal.GUI.RSS
         }
 
         UpdateButtons();
+        m_lRefreshTime = DateTime.Now;
       }
       catch (WebException ex)
       {
-        Log.Write("webexception: cannot download rss feed from {0} {1}",location.ToString(), ex.Message);
+        m_lRefreshTime = DateTime.Now;
+        throw ex;
       }
-			  m_lRefreshTime = DateTime.Now;
 
 			return true;
 		}

@@ -2332,6 +2332,10 @@
 	<id>911</id>
 	<value>No channels</value>
 </string>
+<string>
+	<id>912</id>
+	<value>Unable to download latest news</value>
+</string>
 
 	<!-- My Recipie Strings -->
 	<string><id>2005</id><value>Delete</value></string>

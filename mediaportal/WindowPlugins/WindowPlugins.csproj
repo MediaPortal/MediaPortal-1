@@ -518,6 +518,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIRSSFeed\DetailsForm.resx"
+                    DependentUpon = "DetailsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIRSSFeed\ExceptionCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -664,6 +669,11 @@
                     RelPath = "GUIRSSFeed\SetupForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIRSSFeed\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUISettings\GUISettings.cs"
