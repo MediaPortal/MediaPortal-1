@@ -190,10 +190,22 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("Init playlist player");
       PlayListPlayer.Init();
 
-		Log.Write("creating the USBUIRT device");
-		this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
+		//
+		// Only load the USBUIRT device if it has been enabled in the configuration
+		//
+		using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+		{
+			bool inputEnabled = xmlreader.GetValueAsString("USBUIRT", "internal", "false") == "true";
+			bool outputEnabled = xmlreader.GetValueAsString("USBUIRT", "external", "false") == "true";
 
-		Log.Write("done creating the USBUIRT device");
+			if(inputEnabled == true || outputEnabled == true)
+			{
+				Log.Write("creating the USBUIRT device");
+				this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
+				Log.Write("done creating the USBUIRT device");
+			}
+		}
+
       //registers the player for video window size notifications
       Log.Write("Init players");
       g_Player.Init(this);
