@@ -25,6 +25,8 @@ namespace MediaPortal.Dialogs
 		bool m_bConfirmed = false;
     bool m_bPrevOverlay=true;
     bool m_DefaultYes=false;
+    int iYesKey=-1;
+    int iNoKey=-1;
 
 		public GUIDialogYesNo()
 		{
@@ -54,6 +56,29 @@ namespace MediaPortal.Dialogs
         m_DefaultYes=false;
 				return;
 			}
+
+      if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+      {
+        if (action.m_key!=null)
+        {
+          // Yes or No key
+          if (action.m_key.KeyChar==iYesKey)
+          {
+            m_bConfirmed=true;
+            Close();
+            m_DefaultYes=false;
+            return;
+          }
+
+          if (action.m_key.KeyChar==iNoKey)
+          {
+            m_bConfirmed=false;
+            Close();
+            m_DefaultYes=false;
+            return;
+          }
+        }
+      }
 			base.OnAction(action);
 		}
 
@@ -127,6 +152,12 @@ namespace MediaPortal.Dialogs
           {
             GUIControl.FocusControl(GetID,(int)Controls.ID_BUTTON_YES);
           }
+          
+          GUIButtonControl btnYes = (GUIButtonControl)GetControl((int)Controls.ID_BUTTON_YES);
+          iYesKey = (int)btnYes.Label.ToLower()[0];
+
+          GUIButtonControl btnNo = (GUIButtonControl)GetControl((int)Controls.ID_BUTTON_NO);
+          iNoKey = (int)btnNo.Label.ToLower()[0];
 				}
 					return true;
 
