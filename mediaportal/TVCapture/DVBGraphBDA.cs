@@ -2440,7 +2440,7 @@ namespace MediaPortal.TV.Recording
 				if (!graphRunning)
 				{
 					TVChannel chan = new TVChannel();
-					chan.Number=0;
+					chan.Number=-1;
 					chan.ID=0;
 					StartViewing(chan);
 				}
@@ -2651,7 +2651,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-				Log.Write("DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8}", 
+				Log.Write("DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11}", 
 										info.service_provider_name,
 										info.service_name,
 										info.scrambled,
@@ -2659,7 +2659,8 @@ namespace MediaPortal.TV.Recording
 										info.networkID,
 										info.transportStreamID,
 										info.serviceID,
-										hasVideo, ((!hasVideo) && hasAudio));
+										hasVideo, ((!hasVideo) && hasAudio),
+										currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid);
 				bool IsRadio		  = ((!hasVideo) && hasAudio);
 				bool IsTv   		  = (hasVideo);//some tv channels dont have an audio stream
 		
