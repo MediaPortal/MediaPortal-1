@@ -78,11 +78,11 @@ namespace MediaPortal.Dialogs
       "Back",
       "Help",
       "SPACE",
-      "<-",
+      "BKSP",
       "SHIFT",
       "CAPS",
       "ALPHABET",
-      "SYMBOLS",
+      "SYMB",
       "ACEENTS",
       "DONE",
       "Select",
@@ -395,7 +395,7 @@ namespace MediaPortal.Dialogs
             strName = "ALPHABET";
             break;
           case Xkey.XK_SYMBOLS:
-            strName = "SYMBOLS";
+            strName = "SYMB";
             break;
           case Xkey.XK_ACCENTS:
             strName = "ACCENTS";
@@ -475,12 +475,12 @@ namespace MediaPortal.Dialogs
     {
       m_Font12=new GUIFont("font12", "Arial",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
       m_Font18=new GUIFont("font18", "Arial",FONTSIZE_BUTTONCHARS,FontStyle.Bold);
-	  m_FontButtons=new GUIFont("font24", "dingbats",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
-	  m_FontSearchText=new GUIFont("font18", "Arial",FONTSIZE_SEARCHTEXT,FontStyle.Bold);
+			m_FontButtons=new GUIFont("font24", "dingbats",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
+			m_FontSearchText=new GUIFont("font18", "Arial",FONTSIZE_SEARCHTEXT,FontStyle.Bold);
       m_Font12.Load();m_Font12.InitializeDeviceObjects();m_Font12.RestoreDeviceObjects();
       m_Font18.Load();m_Font18.InitializeDeviceObjects();m_Font18.RestoreDeviceObjects();
       m_FontButtons.Load();m_FontButtons.InitializeDeviceObjects();m_FontButtons.RestoreDeviceObjects();
-	  m_FontSearchText.Load();m_FontSearchText.InitializeDeviceObjects();m_FontSearchText.RestoreDeviceObjects();
+			m_FontSearchText.Load();m_FontSearchText.InitializeDeviceObjects();m_FontSearchText.RestoreDeviceObjects();
 
       int iTextureWidth,iTextureHeight;
       int iImages=GUITextureManager.Load("keyNF.bmp",0,0,0);
@@ -706,67 +706,9 @@ namespace MediaPortal.Dialogs
     {
 			if (null!=m_pParentWindow) 
 				m_pParentWindow.Render();
-			GUIFontManager.Present();
-
-      GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = false;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-      GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
-      GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-      GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
-      GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
-      GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
-      GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
-      GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
-      GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
-      GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
-      GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
-      GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
-      GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
-      GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
-      GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
-
+		
       // render the parent window
       RenderKeyboardLatin();    
-
-
-			GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
-			GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
-			GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
-			GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
-			//GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-			GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-			GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
-			GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
-			//GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
-			GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
-			GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
-			GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
-			GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
-			//GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
-			GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
-			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
-			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
-			GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
-			GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
-			GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
-			GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
-			GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
-			GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
-			GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
-			GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
-			GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
-			GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     }
 
     void InitBoard()
@@ -1414,7 +1356,6 @@ namespace MediaPortal.Dialogs
       float uoffs=0;
       float v=1.0f;
       float u=1.0f;
-      long m_colDiffuse=0xffffffff;
       VertexBuffer m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                         4, GUIGraphicsContext.DX9Device, 
                                         0, CustomVertex.TransformedColoredTextured.Format, 
@@ -1422,53 +1363,29 @@ namespace MediaPortal.Dialogs
 
       CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0);
       verts[0].X=x- 0.5f; verts[0].Y=y+nh- 0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f ;
-      verts[0].Color = (int)m_colDiffuse;
+      verts[0].Color = (int)KeyColor;
       verts[0].Tu = uoffs;
       verts[0].Tv = v;
 
       verts[1].X= x- 0.5f; verts[1].Y=y- 0.5f;verts[1].Z= 0.0f; verts[1].Rhw=1.0f ;
-      verts[1].Color = (int)m_colDiffuse;
+      verts[1].Color = (int)KeyColor;
       verts[1].Tu = uoffs;
       verts[1].Tv = 0.0f;
 
       verts[2].X= x+nw- 0.5f; verts[2].Y=y+nh- 0.5f;verts[2].Z= 0.0f;verts[2].Rhw=1.0f;
-      verts[2].Color = (int)m_colDiffuse;
+      verts[2].Color = (int)KeyColor;
       verts[2].Tu = uoffs+u;
       verts[2].Tv = v;
 
       verts[3].X=  x+nw- 0.5f;verts[3].Y=  y- 0.5f;verts[3].Z=   0.0f;verts[3].Rhw=  1.0f ;
-      verts[3].Color = (int)m_colDiffuse;
+      verts[3].Color = (int)KeyColor;
       verts[3].Tu = uoffs+u;
       verts[3].Tv = 0.0f;
 
 
       m_vbBuffer.Unlock();
       GUIGraphicsContext.DX9Device.SetTexture( 0, m_pKeyTexture);
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.TFactor;
-			
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
-			
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
-      GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
-      GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-			
-      GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-      GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-      GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-      GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-      GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=false;
-      GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-      GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-		
-      if( KeyColor !=0)
-        GUIGraphicsContext.DX9Device.RenderState.TextureFactor=(int)(KeyColor &0xffffff);
-      else
-        GUIGraphicsContext.DX9Device.RenderState.TextureFactor=0xffffff ;
-			
+
       // Render the image
       GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
       GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
@@ -1478,50 +1395,7 @@ namespace MediaPortal.Dialogs
       // unset the texture and palette or the texture caching crashes because the runtime still has a reference
       GUIGraphicsContext.DX9Device.SetTexture( 0, null);
       m_vbBuffer.Dispose();
-      /*
-      struct KEYVERTEX
-      {
-        D3DXVECTOR4 p;
-        D3DXVECTOR2 t;
-      };
 
-      KEYVERTEX pVertices[16];
-      pVertices[0].p  = D3DXVECTOR4( x-0.5f, y-0.5f, 1.0f, 1.0f );     pVertices[0].t  = D3DXVECTOR2( 0.0f, 0.0f );
-      pVertices[1].p  = D3DXVECTOR4( x+17-0.5f, y-0.5f, 1.0f, 1.0f );  pVertices[1].t  = D3DXVECTOR2( 0.5f, 0.0f );
-      pVertices[2].p  = D3DXVECTOR4( x+17-0.5f, w-0.5f, 1.0f, 1.0f );  pVertices[2].t  = D3DXVECTOR2( 0.5f, 1.0f );
-      pVertices[3].p  = D3DXVECTOR4( x-0.5f, w-0.5f, 1.0f, 1.0f );     pVertices[3].t  = D3DXVECTOR2( 0.0f, 1.0f );
-
-      pVertices[4].p  = D3DXVECTOR4( x+17-0.5f, y-0.5f, 1.0f, 1.0f );  pVertices[4].t  = D3DXVECTOR2( 0.5f, 0.0f );
-      pVertices[5].p  = D3DXVECTOR4( z-17-0.5f, y-0.5f, 1.0f, 1.0f );  pVertices[5].t  = D3DXVECTOR2( 0.5f, 0.0f );
-      pVertices[6].p  = D3DXVECTOR4( z-17-0.5f, w-0.5f, 1.0f, 1.0f );  pVertices[6].t  = D3DXVECTOR2( 0.5f, 1.0f );
-      pVertices[7].p  = D3DXVECTOR4( x+17-0.5f, w-0.5f, 1.0f, 1.0f );  pVertices[7].t  = D3DXVECTOR2( 0.5f, 1.0f );
-
-      pVertices[8].p  = D3DXVECTOR4( z-17-0.5f, y-0.5f, 1.0f, 1.0f );  pVertices[8].t  = D3DXVECTOR2( 0.5f, 0.0f );
-      pVertices[9].p  = D3DXVECTOR4( z-0.5f, y-0.5f, 1.0f, 1.0f );     pVertices[9].t  = D3DXVECTOR2( 1.0f, 0.0f );
-      pVertices[10].p = D3DXVECTOR4( z-0.5f, w-0.5f, 1.0f, 1.0f );     pVertices[10].t = D3DXVECTOR2( 1.0f, 1.0f );
-      pVertices[11].p = D3DXVECTOR4( z-17-0.5f, w-0.5f, 1.0f, 1.0f );  pVertices[11].t = D3DXVECTOR2( 0.5f, 1.0f );
-
-      pVertices[12].p  = D3DXVECTOR4( x-0.5f, y-0.5f, 1.0f, 1.0f );
-      pVertices[13].p  = D3DXVECTOR4( z-0.5f, y-0.5f, 1.0f, 1.0f );
-      pVertices[14].p  = D3DXVECTOR4( z-0.5f, w-0.5f, 1.0f, 1.0f );
-      pVertices[15].p  = D3DXVECTOR4( x-0.5f, w-0.5f, 1.0f, 1.0f );
-
-
-      GUIGraphicsContext.DX9Device.SetVertexShader( D3DFVF_XYZRHW | D3DFVF_TEX1 );
-
-      // Draw the key background
-      GUIGraphicsContext.DX9Device.SetTexture( 0, m_pKeyTexture );
-      GUIGraphicsContext.DX9Device.SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-      GUIGraphicsContext.DX9Device.SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-      GUIGraphicsContext.DX9Device.SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_TFACTOR );
-        
-      if( KeyColor )
-        GUIGraphicsContext.DX9Device.SetRenderState( D3DRS_TEXTUREFACTOR, KeyColor );
-      else
-        GUIGraphicsContext.DX9Device.SetRenderState( D3DRS_TEXTUREFACTOR, 0xffffffff );
-
-      GUIGraphicsContext.DX9Device.DrawVerticesUP( D3DPT_QUADLIST, 12, pVertices, sizeof(KEYVERTEX) );
-    */
       // Draw the key text. If key name is, use a slightly smaller font.
       float fW=0;
       float fH=0;
@@ -1545,19 +1419,9 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void DrawTextBox() 
+    void DrawTextBox(int x1,int y1, int x2, int y2) 
     {
-
-      long lColor=0xffffffff;
-      GUIGraphicsContext.DX9Device.SetTexture( 0, null );
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.SelectArg1;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TFactor;
-      GUIGraphicsContext.DX9Device.VertexFormat=CustomVertex.TransformedColored.Format;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=false;
-      VertexBuffer vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColored),4, GUIGraphicsContext.DX9Device, 0, CustomVertex.TransformedColored.Format, Pool.Managed);
-
-      int x1=64, x2=576;
-      int y1=208,  y2=248;
+      long lColor=0xaaffffff;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x2,ref y2);
 
@@ -1565,38 +1429,29 @@ namespace MediaPortal.Dialogs
       x2+=GUIGraphicsContext.OffsetX;
       y1+=GUIGraphicsContext.OffsetY;
       y2+=GUIGraphicsContext.OffsetY;
-      CustomVertex.TransformedColored[] verts = (CustomVertex.TransformedColored[])vertexBuffer.Lock(0,0);
-      verts[0].X=x1-0.5f  ;verts[0].Y= y2-0.5f;verts[0].Z= 1.0f;verts[0].Rhw=1.0f;
-      verts[1].X=x1-0.5f  ;verts[1].Y= y1-0.5f;verts[1].Z= 1.0f;verts[1].Rhw=1.0f;
-      verts[2].X=x2- 0.5f;verts[2].Y= y2-0.5f;verts[2].Z= 1.0f;verts[2].Rhw=1.0f;
-      verts[3].X=x2-0.5f ;verts[3].Y= y1-0.5f;verts[3].Z= 1.0f;verts[3].Rhw=1.0f;
-      verts[0].Color=(int)lColor;
-      verts[1].Color=(int)lColor;
-      verts[2].Color=(int)lColor;
-      verts[3].Color=(int)lColor;
-      vertexBuffer.Unlock();
-      GUIGraphicsContext.DX9Device.SetStreamSource( 0, vertexBuffer, 0);
-      GUIGraphicsContext.DX9Device.RenderState.TextureFactor=(int)0xe0e0e0 ;
-      GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip,0,2);
 
-//      GUIGraphicsContext.DX9Device.DrawVerticesUP( D3DPT_QUADLIST, 4, avRect, sizeof(D3DXVECTOR4) );
-    //  GUIGraphicsContext.DX9Device.SetStreamSource( 0, vertexBuffer, 0);
-    //  GUIGraphicsContext.DX9Device.RenderState.TextureFactor=(int)0x808080 ;
-    //  GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip,0,2);
-//      GUIGraphicsContext.DX9Device.DrawVerticesUP( D3DPT_LINELOOP, 4, avRect, sizeof(D3DXVECTOR4) );
+			Rectangle[] rect = new Rectangle[1];
+			rect[0].X=x1;
+			rect[0].Y=y1;
+			rect[0].Width=x2-x1;
+			rect[0].Height=y2-y1;
+			GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, (int)lColor, 1.0f, 0, rect );
 
     }
 
-    void DrawText( float x, float y ) 
+    void DrawText( int x, int y ) 
     {
-      string strTxt=m_strData;
+			GUIGraphicsContext.ScalePosToScreenResolution(ref x,ref y);
+			x+=GUIGraphicsContext.OffsetX;
+			y+=GUIGraphicsContext.OffsetY;
+			string strTxt=m_strData;
       if (_Password)
       {
         strTxt="";
         for (int i=0; i < m_strData.Length;++i) strTxt+="*";
       }
 	
-      m_FontSearchText.DrawText( x, y, COLOR_SEARCHTEXT, strTxt, GUIControl.Alignment.ALIGN_LEFT );
+      m_FontSearchText.DrawText( (float)x, (float)y, COLOR_SEARCHTEXT, strTxt, GUIControl.Alignment.ALIGN_LEFT );
 
       
       // Draw blinking caret using line primitives.
@@ -1608,8 +1463,8 @@ namespace MediaPortal.Dialogs
         float fCaretWidth = 0.0f;
         float fCaretHeight=0.0f;
         m_FontSearchText.GetTextExtent( strLine, ref fCaretWidth, ref fCaretHeight );
-        x += fCaretWidth;
-        m_FontSearchText.DrawText( x, y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
+        x += (int)fCaretWidth;
+        m_FontSearchText.DrawText( (float)x, (float)y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
         
       }
     }
@@ -1617,21 +1472,12 @@ namespace MediaPortal.Dialogs
     void RenderKeyboardLatin() 
     {
       // Show text and caret
-      int x1=68;
-      int y1=212;
-      GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
-      x1+=GUIGraphicsContext.OffsetX;
-      y1+=GUIGraphicsContext.OffsetY;
-      DrawTextBox();
-
-      x1=68;
-      y1=212;
-      GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
-      DrawText( (float)x1, (float)y1);
+      DrawTextBox(64,208,576,248);
+      DrawText( 68,208);
 
       
-      x1=64;
-      y1=250;
+      int x1=64;
+      int y1=250;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
       x1+=GUIGraphicsContext.OffsetX;
       y1+=GUIGraphicsContext.OffsetY;
@@ -1648,7 +1494,7 @@ namespace MediaPortal.Dialogs
         {
           // Determine key name
           Key key =(Key)keyRow[i];
-          long selKeyColor = 0x00000000;
+          long selKeyColor = 0xffffffff;
           long selTextColor = COLOR_NORMAL;
 
           // Handle special key coloring
@@ -1690,7 +1536,7 @@ namespace MediaPortal.Dialogs
 
           // Highlight the current key
           if( row == m_iCurrRow && dwIndex == m_iCurrKey )
-              selKeyColor |= COLOR_HIGHLIGHT;
+              selKeyColor =COLOR_HIGHLIGHT;
 
           RenderKey( fX + fWidthSum, fY, key, selKeyColor, selTextColor );
 
