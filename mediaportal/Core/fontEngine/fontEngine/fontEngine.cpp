@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 
 #define MAX_TEXTURES			200
-#define MAX_TEXTURE_COORDS		500
+#define MAX_TEXTURE_COORDS		5000
 #define MaxNumfontVertices		5000
 #define MAX_FONTS				20
 #define MaxNumTextureVertices	3000
@@ -388,7 +388,7 @@ void FontEnginePresentTextures()
 					m_pDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 					m_pDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 					m_pDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);*/
-					dwValueAlphaBlend!=dwValue;
+					dwValueAlphaBlend=dwValue;
 				}
 				m_pDevice->SetTexture(0, texture->pTexture);
 				m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
@@ -494,11 +494,11 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	D3DVIEWPORT9 viewport,orgViewPort;
 	m_pDevice->GetViewport(&viewport);
 	memcpy(&orgViewPort,&viewport, sizeof(orgViewPort));
-	int off=(int)(fontData[fontNumber].fSpacingPerChar+1);
+	unsigned int off=(int)(fontData[fontNumber].fSpacingPerChar+1);
 	if (viewport.X>=off)
 	{
-		viewport.X -= (fontData[fontNumber].fSpacingPerChar+1);
-		viewport.Width+=((fontData[fontNumber].fSpacingPerChar+1)*2);
+		viewport.X -= (int)(fontData[fontNumber].fSpacingPerChar+1);
+		viewport.Width+=(int)((fontData[fontNumber].fSpacingPerChar+1)*2);
 	}
 	if (viewport.Y>0)
 	{
