@@ -1,3 +1,8 @@
+//enable to following line for profiling
+//this will cause Mediaportal to draw the maxium number of FPS. It will use 100% cpu time 
+//because it wont do any Sleeps(). This is usefull for the profile so it can see which methods/classes take up the most CPU %
+#define PROFILING 
+
 using System;
 using System.Diagnostics;
 using System.Runtime;
@@ -562,6 +567,9 @@ namespace MediaPortal
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = ourRenderTarget;
             presentParams.Windowed=true;
+#if PROFILING
+            presentParams.PresentationInterval = PresentInterval.Immediate;
+#endif
         }
         else
         {
@@ -957,7 +965,9 @@ namespace MediaPortal
             {
               // Device still needs to be Reset. Try again.
               // Yield some CPU time to other processes
+#if !PROFILING
               System.Threading.Thread.Sleep(100); // 100 milliseconds
+#endif
               goto RETRY;
             }
           }
@@ -1073,7 +1083,9 @@ namespace MediaPortal
           if ((deviceLost) || (System.Windows.Forms.Form.ActiveForm != this))
           {
             // Yield some CPU time to other processes
+#if !PROFILING
             System.Threading.Thread.Sleep(100); // 100 milliseconds
+#endif
           }
         Render3DEnvironment();
 #if DEBUG
@@ -1089,15 +1101,18 @@ namespace MediaPortal
       }
       else 
       {
+#if !PROFILING
         // if we dont got the focus, then dont use all the CPU
         if (System.Windows.Forms.Form.ActiveForm != this)
           System.Threading.Thread.Sleep(100);
+#endif
       }
     }
 
 
     void DoSleep(int sleepTime)
     {
+#if !PROFILING
       if (!UseMillisecondTiming) 
       {
         System.Threading.Thread.Sleep(sleepTime);
@@ -1119,6 +1134,7 @@ namespace MediaPortal
       {
         Log.Write("exception:{0}",ex.ToString());
       }
+#endif
     }
 
 

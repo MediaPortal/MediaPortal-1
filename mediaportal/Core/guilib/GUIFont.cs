@@ -349,13 +349,15 @@ namespace MediaPortal.GUI.Library
 			//drawTextStateBlock.Apply();
 			// Adjust for character spacing
 			xpos -= spacingPerChar;
+			xpos-=0.5f;
 			float fStartX = xpos;
-
+			ypos -=0.5f;
 
       int intColor = color.ToArgb();
       float yoff=(textureCoords[0,3]-textureCoords[0,1])*textureHeight;
       float fScaleX=textureWidth / textureScale;
       float fScaleY=textureHeight / textureScale;
+			float fSpacing=2 * spacingPerChar;
 			for (int i=0; i < text.Length;++i)
 			{
         char c=text[i];
@@ -379,12 +381,12 @@ namespace MediaPortal.GUI.Library
 
 				if (c != ' ')
 				{
-          fontVertices[iv].X=xpos  -0.5f;  fontVertices[iv].Y=ypos+h-0.5f; fontVertices[iv].Color=intColor;fontVertices[iv].Z=0.9f;fontVertices[iv].Rhw=1.0f;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos  -0.5f;  fontVertices[iv].Y=ypos  -0.5f; fontVertices[iv].Color=intColor;fontVertices[iv].Z=0.9f;fontVertices[iv].Rhw=1.0f;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
-          fontVertices[iv].X=xpos+w-0.5f;  fontVertices[iv].Y=ypos+h-0.5f; fontVertices[iv].Color=intColor;fontVertices[iv].Z=0.9f;fontVertices[iv].Rhw=1.0f;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos+w-0.5f;  fontVertices[iv].Y=ypos  -0.5f; fontVertices[iv].Color=intColor;fontVertices[iv].Z=0.9f;fontVertices[iv].Rhw=1.0f;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty1;iv++;
-          fontVertices[iv].X=xpos+w-0.5f;  fontVertices[iv].Y=ypos+h-0.5f; fontVertices[iv].Color=intColor;fontVertices[iv].Z=0.9f;fontVertices[iv].Rhw=1.0f;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
-          fontVertices[iv].X=xpos  -0.5f;  fontVertices[iv].Y=ypos  -0.5f; fontVertices[iv].Color=intColor;fontVertices[iv].Z=0.9f;fontVertices[iv].Rhw=1.0f;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
+          fontVertices[iv].X=xpos  ;  fontVertices[iv].Y=ypos+h; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty2;iv++;
+          fontVertices[iv].X=xpos  ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
+          fontVertices[iv].X=xpos+w;  fontVertices[iv].Y=ypos+h; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
+          fontVertices[iv].X=xpos+w;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty1;iv++;
+          fontVertices[iv].X=xpos+w;  fontVertices[iv].Y=ypos+h; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx2; fontVertices[iv].Tv=ty2;iv++;
+          fontVertices[iv].X=xpos  ;  fontVertices[iv].Y=ypos  ; fontVertices[iv].Color=intColor;fontVertices[iv].Tu=tx1; fontVertices[iv].Tv=ty1;iv++;
 					
 
           /*fontVertices[iv++] = new CustomVertex.TransformedColoredTextured(new Vector4(xpos+0-0.5f,ypos+h-0.5f,0.9f,1.0f), intColor, tx1, ty2);
@@ -416,7 +418,7 @@ namespace MediaPortal.GUI.Library
           }
 				}
 
-				xpos += w - (2 * spacingPerChar);
+				xpos += w - fSpacing;
 			}
 
 
@@ -541,6 +543,12 @@ namespace MediaPortal.GUI.Library
       textureScale  = 1.0f; // Draw fonts into texture without scaling
 
       fontVertices = new CustomVertex.TransformedColoredTextured[MaxNumfontVertices];
+			for (int i=0; i < fontVertices.Length; ++i) 
+			{
+				fontVertices[i].Rhw=1.0f;
+				fontVertices[i].Z=0.9f;
+			}
+
 			// Create a directory to cache the font bitmaps
       string strCache=String.Format(@"{0}\fonts\",GUIGraphicsContext.Skin);
       System.IO.Directory.CreateDirectory(strCache);
