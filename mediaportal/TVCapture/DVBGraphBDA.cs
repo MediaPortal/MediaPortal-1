@@ -2536,18 +2536,12 @@ namespace MediaPortal.TV.Recording
 				info.service_name=info.service_name.Trim();
 				if (info.service_provider_name.Length==0 ) 
 				{
-					if (info.service_name.Length==0)
-					{
-						Log.Write("DVBGraphBDA: skip channel:#{0} because it has no service provider?", i);
-						continue;
-					}
-					else
-					{
+					
 						info.service_provider_name="NoName";
-					}
+					
 				}
 				if (info.service_name.Length==0)
-					info.service_name=String.Format("NoName:{0}", info.serviceID);
+					info.service_name=String.Format("NoName:{0}{1}{2}",info.networkID,info.transportStreamID, info.serviceID );
 
 				bool hasAudio=false;
 				bool hasVideo=false;
