@@ -1090,7 +1090,7 @@ namespace MediaPortal
       }
       // Render the scene as normal
       bool bDoRender=true;
-      if (g_Player.Playing&& g_Player.DoesOwnRendering &&!g_Player.Paused) bDoRender=false;
+      if (g_Player.Playing&& g_Player.DoesOwnRendering) bDoRender=false;
       if (bDoRender) 
       {
         System.Threading.Thread.Sleep(20);

@@ -1,7 +1,6 @@
 Bugs left:
   13-07-2004 my tv      : duration of recorded programs is not correct. 
                           I programmed a show of 30 minutes. In the playback the duration is shown with 5 hours. 
-  12-07-2004 my tv      : press B when fullscreen TV & osd visible->hangup? (mrmario64)
   12-07-2004 my tv      : home : current program title goes out of box if its 2 long (zipperzip)
   29-06-2004 general    : scroll speed 9 / 10 are the same
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)

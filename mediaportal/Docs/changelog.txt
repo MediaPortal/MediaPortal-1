@@ -1,3 +1,5 @@
+13-07-2004  my tv       : fixed : press B when fullscreen TV & osd visible->hangup? (mrmario64)
+13-07-2004  my tv       : fixed : duration
 13-07-2004  my video    : fixed : when starting a movie you shortly see a blue line with XBOXMEDIACENTER
 13-07-2004  my tv/video : fixed : buttons like rw and ff keep down state when OSD is exitted by ending the movie.
 13-07-2004  general     : fixed : Create playlist and play it,Minimize MP,Wait for the song to end,
