@@ -57,7 +57,7 @@ My TV:
 	 - add current recording properties which can b used in the skin
 	 - add Record Monday-Friday     
 	 
-My Music:
+My Music: (int_20h)
   - faster start of 1st song played
   - gapless playback
   - search songs by genre,artist,album (based on music database)
@@ -79,11 +79,17 @@ My Video:
   - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
   
 My Pictures:
-  - exif/picture tag information
+  - exif/picture tag information (excentric is looking at this)
   
 Settings:
   - all :-)
 
+new plugins:
+  - RSS feed reader
+  - my files  
+  - my programs/emulators/games (domifan is working on this)
+  - my TV-series
+  
 General:
   - show properties in skin: 
      - tv/recording properties
@@ -95,7 +101,6 @@ General:
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
   - caller ID
-  - seperate module/database for TV-series
   - remember 'view as' setting per folder
   - better mouse control 
      - my tv: 
@@ -110,6 +115,4 @@ General:
        - general   : switch fullscreen<->windowed
        - fullscreen: osd
        - mouse wheel for scrolling
-  - my files  
-  - my programs (domifan is working on this)
   - autoplay anything thats in the cd/dvd
