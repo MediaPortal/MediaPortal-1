@@ -565,20 +565,20 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.IsPlaying = true;
 			GUIGraphicsContext.IsPlayingVideo = (g_Player.IsVideo || g_Player.IsTV);
 
-      if (g_Player.Paused) GUIPropertyManager.Properties["#playlogo"] = "logo_pause.png";
-      else if (g_Player.Speed > 1) GUIPropertyManager.Properties["#playlogo"] = "logo_fastforward.png";
-      else if (g_Player.Speed < 1) GUIPropertyManager.Properties["#playlogo"] = "logo_rewind.png";
-      else if (g_Player.Playing) GUIPropertyManager.Properties["#playlogo"] = "logo_play.png";
+      if (g_Player.Paused) GUIPropertyManager.SetProperty("#playlogo","logo_pause.png");
+      else if (g_Player.Speed > 1) GUIPropertyManager.SetProperty("#playlogo", "logo_fastforward.png");
+      else if (g_Player.Speed < 1) GUIPropertyManager.SetProperty("#playlogo", "logo_rewind.png");
+      else if (g_Player.Playing) GUIPropertyManager.SetProperty("#playlogo", "logo_play.png");
 
-			GUIPropertyManager.Properties["#currentplaytime"] = Utils.SecondsToHMSString((int)g_Player.CurrentPosition);
-			GUIPropertyManager.Properties["#shortcurrentplaytime"] = Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition);
-			GUIPropertyManager.Properties["#duration"] = Utils.SecondsToHMSString((int)g_Player.Duration);
-			GUIPropertyManager.Properties["#shortduration"] = Utils.SecondsToShortHMSString((int)g_Player.Duration);
-			GUIPropertyManager.Properties["#playspeed"] = g_Player.Speed.ToString();
+			GUIPropertyManager.SetProperty("#currentplaytime",  Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
+			GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
+			GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
+			GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
+			GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
 
 			double fPercentage = g_Player.CurrentPosition / g_Player.Duration;
 			int iPercent = (int)(100 * fPercentage);
-			GUIPropertyManager.Properties["#percentage"] = iPercent.ToString();
+			GUIPropertyManager.SetProperty("#percentage", iPercent.ToString());
     }
     else
     {
@@ -1255,15 +1255,30 @@ public class MediaPortalApp : D3DApp, IRender
 
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED : 
-        if (isMaximized == false) return;
-#if DEBUG
-        return;
-#endif
-        if (message.Param1 != 0)
+        bool fullscreen=false;
+        if (message.Param1!=0) fullscreen=true;
+        message.Param1=0;//not full screen
+        if (isMaximized == false) 
+        {
+          return;
+        }
+
+
+        if (fullscreen)
         {
           //switch to fullscreen mode
-          if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
+
+          if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) 
+          {
+            message.Param1=1;
+            return;
+          }
           SwitchFullScreenOrWindowed(false,true);
+          if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) 
+          {
+            message.Param1=1;
+            return;
+          }
         }
         else
         {
