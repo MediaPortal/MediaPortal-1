@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Library
       else
       {
         wszText="";
-        if (m_iValue < m_vecLabels.Count )
+        if (m_iValue>=0 && m_iValue < m_vecLabels.Count )
         {
           if (m_bShowRange)
           {

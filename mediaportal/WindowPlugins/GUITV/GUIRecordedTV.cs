@@ -357,13 +357,15 @@ namespace MediaPortal.GUI.TV
         case SortMethod.SORT_DATE:
           if (m_bSortAscending)
           {
-            ts=rec1.StartTime - rec2.StartTime;
-            return (int)(ts.Minutes);
+            if (rec1.StartTime==rec2.StartTime) return 0;
+            if (rec1.StartTime>rec2.StartTime) return 1;
+            return -1;
           }
           else
           {
-            ts=rec2.StartTime - rec1.StartTime;
-            return (int)(ts.Minutes);
+            if (rec2.StartTime==rec1.StartTime) return 0;
+            if (rec2.StartTime>rec1.StartTime) return 1;
+            return -1;
           }
 
         case SortMethod.SORT_GENRE:
