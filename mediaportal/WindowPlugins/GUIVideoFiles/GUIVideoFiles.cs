@@ -1991,38 +1991,51 @@ namespace MediaPortal.GUI.Video
 			int itemNo=GetSelectedItemNo();
 			if (item==null) return;
 
+      GUIControl cntl=GetControl((int)Controls.CONTROL_VIEW);
+      if (cntl==null) return; // Control not found
+
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg==null) return;
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
-			dlg.Add( GUILocalizeStrings.Get(925)); //delete
-			dlg.Add( GUILocalizeStrings.Get(368)); //IMDB
-			dlg.Add( GUILocalizeStrings.Get(208)); //play
-			dlg.Add( GUILocalizeStrings.Get(926)); //Queue
+			dlg.AddLocalizedString(925); //delete
+			dlg.AddLocalizedString(368); //IMDB
+			dlg.AddLocalizedString(208); //play
+			dlg.AddLocalizedString(926); //Queue
+      dlg.AddLocalizedString(136); //Playlist
+      if (Utils.getDriveType(item.Path) == 5)
+      {
+        dlg.AddLocalizedString(654); //Eject
+      }
 
 			dlg.DoModal( GetID);
-			if (dlg.SelectedLabel==-1) return;
-			switch (dlg.SelectedLabel)
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
 			{
-				case 0: // Delete
+				case 925: // Delete
 					OnDeleteItem(item);
 					break;
 
-				case 1: // IMDB
+				case 368: // IMDB
 					OnInfo(itemNo);
 					break;
 
-				case 2: // play
+				case 208: // play
 					OnClick(itemNo);	
 					break;
 					
-				case 3: // add to playlist
+				case 926: // add to playlist
 					OnQueueItem(itemNo);	
 					break;
 					
-				case 4: // show playlist
+				case 136: // show playlist
 					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
 					break;
+
+        case 654: // Eject
+          Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+          LoadDirectory("");
+          break;
 			}
 		}
 
@@ -2057,19 +2070,23 @@ namespace MediaPortal.GUI.Video
 			}
 		}
 
-		void DoDeleteItem(GUIListItem item)
-		{
-			if (item.IsFolder && item.Label!="..")
-			{
-				ArrayList items = new ArrayList();
-				items=m_directory.GetDirectory(item.Path);
-				foreach(GUIListItem subItem in items)
-				{
-					DoDeleteItem(subItem);
-				}
-			}
-			else if (!item.IsRemote)
-			{
+    void DoDeleteItem(GUIListItem item)
+    {
+      if (item.IsFolder)
+      {
+        if (item.Label != "..")
+        {
+          ArrayList items = new ArrayList();
+          items=m_directory.GetDirectory(item.Path);
+          foreach(GUIListItem subItem in items)
+          {
+            DoDeleteItem(subItem);
+          }
+          Utils.DirectoryDelete(item.Path);
+        }
+      }
+      else		
+      {
 				VideoDatabase.DeleteMovie(item.Path);
 				Utils.FileDelete(item.Path);
 			}
