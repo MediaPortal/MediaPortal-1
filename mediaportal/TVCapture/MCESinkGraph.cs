@@ -122,9 +122,7 @@ namespace MediaPortal.TV.Recording
 
       if (m_TVTuner!=null )
       {
-        m_TVTuner.put_TuningSpace(0);
-        m_TVTuner.put_CountryCode(m_iCountryCode);
-        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+        InitializeTuner();
 
         m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
         if (m_IAMAnalogVideoDecoder!=null)

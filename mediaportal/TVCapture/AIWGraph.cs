@@ -694,23 +694,19 @@ namespace MediaPortal.TV.Recording
         if (m_bFirstTune)
         {
           m_bFirstTune = false;
-          m_TVTuner.put_TuningSpace(0);
-          m_TVTuner.put_CountryCode(m_iCountryCode);
-          m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
-          if (m_bUseCable)
-            m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
-          else
-            m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
-          if (m_IAMAnalogVideoDecoder!=null)
-          {
-            SetVideoStandard(standard);
-          }
+          InitializeTuner(); 
+          SetVideoStandard(standard);
+          
           m_TVTuner.get_TVFormat(out standard);
         }
         try
         {
-          m_TVTuner.put_Channel(iChannel, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
-
+          int iCurrentChannel,iVideoSubChannel,iAudioSubChannel;
+          m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+          if (iCurrentChannel!=iChannel)
+          {
+            m_TVTuner.put_Channel(iChannel, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+          }
           int iFreq;
           double dFreq;
           m_TVTuner.get_VideoFrequency(out iFreq);
@@ -933,5 +929,36 @@ namespace MediaPortal.TV.Recording
       hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
       if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }
+    protected void InitializeTuner()
+    {
+      if (m_TVTuner==null) return;
+      int iTuningSpace,iCountry;
+      DShowNET.AMTunerModeType mode;
+
+      m_TVTuner.get_TuningSpace(out iTuningSpace);
+      if (iTuningSpace!=0) m_TVTuner.put_TuningSpace(0);
+
+      m_TVTuner.get_CountryCode(out iCountry);
+      if (iCountry!=m_iCountryCode)
+        m_TVTuner.put_CountryCode(m_iCountryCode);
+
+      m_TVTuner.get_Mode(out mode);
+      if (mode!=DShowNET.AMTunerModeType.TV)
+        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+
+      DShowNET.TunerInputType inputType;
+      m_TVTuner.get_InputType(0, out inputType);
+      if (m_bUseCable)
+      {
+        if (inputType!=DShowNET.TunerInputType.Cable)
+          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Cable);
+      }
+      else
+      {
+        if (inputType!=DShowNET.TunerInputType.Antenna)
+          m_TVTuner.put_InputType(0,DShowNET.TunerInputType.Antenna);
+      }
+    }
+
 	}
 }
