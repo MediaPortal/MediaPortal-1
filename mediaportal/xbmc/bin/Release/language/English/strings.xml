@@ -1248,6 +1248,14 @@
 		<value>Fair</value>
 	</string>
 	<string>
+		<id>386</id>
+		<value>Clear</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Early</value>
+	</string>
+	<string>
 		<id>396</id>
 		<value>Select Location</value>
 	</string>

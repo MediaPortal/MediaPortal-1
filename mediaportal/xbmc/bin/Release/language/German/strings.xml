@@ -1195,7 +1195,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>weitgehend</value>
+		<value>überwiegend</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -1203,7 +1203,7 @@
 	</string>
 	<string>
 		<id>374</id>
-		<value>wolkig</value>
+		<value>bewölkt</value>
 	</string>
 	<string>
 		<id>375</id>
@@ -1219,11 +1219,11 @@
 	</string>
 	<string>
 		<id>378</id>
-		<value>VM</value>
+		<value>vormittags</value>
 	</string>
 	<string>
 		<id>379</id>
-		<value>NM</value>
+		<value>nachmittags</value>
 	</string>
 	<string>
 		<id>380</id>
@@ -1247,8 +1247,17 @@
 	</string>
 	<string>
 		<id>385</id>
-		<value>schönes</value>
+		<value>trocken</value>
 	</string>
+	<string>
+		<id>386</id>
+		<value>heiter</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>morgens</value>
+	</string>
+
 	<string>
 		<id>396</id> 
 		<value>Ortsauswahl</value> 
@@ -1793,6 +1802,70 @@
 	<string>
 		<id>640</id> 
 		<value>Ausnutzung</value> 
+	</string>
+	<string>
+		<id>641</id>
+		<value>Schärfe</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Lade TV Kanäle</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Lade TV Programme</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Sortiere TV Programme</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Lade XML-Datei</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Programmierte Aufnahmen</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>einmal</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>täglich</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>alle</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>immer auf diesem Kanal</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>immer auf allen Kanälen</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>TV-Aufnahmen</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Diese Aufnahme löschen?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Auswerfen</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Aufnahme abspielen</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Aufnahme löschen</value>
 	</string>
 
 	<string>
