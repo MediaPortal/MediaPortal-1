@@ -29,8 +29,9 @@ namespace MediaPortal.GUI.Pictures
 
       public MapSettings()
       {
-        _SortBy=0;//name
-        _ViewAs=0;//list
+				// Set default view
+				_SortBy= (int)SortMethod.SORT_NAME;
+				_ViewAs = (int)View.VIEW_AS_ICONS;
         _SortAscending=true;
       }
 
