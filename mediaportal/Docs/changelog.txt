@@ -1,7 +1,7 @@
 History: (dd-mm-yyyy)
-  07-05-2004  my movies   : added : support for vobsub filter (switch subtitle, turn subtitle on/off, colors, font,...)
-  07-05-2004  my tv       : fixed : TV viewing/recording:MP now renders all output pins of crossbars. Hopefully solves the no-audio problems some have
-  07-05-2004  setup       : fixed : TV channels:frequencies got messed up
+  08-05-2004  my movies   : added : support for vobsub filter (switch subtitle, turn subtitle on/off, colors, font,...)
+  08-05-2004  my tv       : fixed : TV viewing/recording:MP now renders all output pins of crossbars. Hopefully solves the no-audio problems some have
+  08-05-2004  setup       : fixed : TV channels:frequencies got messed up
   
   07-05-2004  general     : fixed : startup problems due to old SQLite version
   07-05-2004  my music    : added : OSD: skip+/ skip- 
