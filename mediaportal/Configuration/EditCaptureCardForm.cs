@@ -194,6 +194,7 @@ namespace MediaPortal.Configuration
 							cd.CommercialName			= ccd.CommercialName;
 							cd.CaptureName			  = cd.VideoDevice;
 							cd.DeviceId						= ccd.DeviceId;
+							cd.DeviceType					= ccd.DeviceId;
 							cd.IsBDACard					= false;
 							cd.IsMCECard					= bMCE;
 							cd.SupportsMPEG2			= bMCE|bHardware;
