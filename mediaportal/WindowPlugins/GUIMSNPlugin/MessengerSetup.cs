@@ -146,9 +146,9 @@ namespace MediaPortal.GUI.MSN
 			// 
 			this.chkPopupWindow.Location = new System.Drawing.Point(24, 200);
 			this.chkPopupWindow.Name = "chkPopupWindow";
-			this.chkPopupWindow.Size = new System.Drawing.Size(232, 24);
+			this.chkPopupWindow.Size = new System.Drawing.Size(256, 24);
 			this.chkPopupWindow.TabIndex = 8;
-			this.chkPopupWindow.Text = "Popup chat window while watching TV";
+			this.chkPopupWindow.Text = "Popup chat window while watching TV/Video";
 			// 
 			// MessengerSetup
 			// 

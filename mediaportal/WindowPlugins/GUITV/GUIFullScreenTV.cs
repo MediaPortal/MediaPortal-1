@@ -374,11 +374,9 @@ namespace MediaPortal.GUI.TV
 					if (g_Player.Paused) g_Player.Pause();
 					break;
 
-			}
-
-			if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-			{
-				ShowContextMenu();
+				case Action.ActionType.ACTION_CONTEXT_MENU:
+					ShowContextMenu();
+					break;
 			}
 
 			base.OnAction(action);
