@@ -75,23 +75,13 @@
                     HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "guilib"
-                    Project = "{346B477C-7F86-4F53-86E8-DDB26DBE72AA}"
+                    Name = "Core"
+                    Project = "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "GUITV"
-                    Project = "{7F1AC9E2-3332-4152-8FCA-853C010AA808}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "TVDatabase"
-                    Project = "{CA8C51E1-B600-4AC4-8A84-D654F70646BA}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Util"
-                    Project = "{3049EF7D-BE85-40E9-9EA4-81900BC543ED}"
+                    Name = "Databases"
+                    Project = "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>

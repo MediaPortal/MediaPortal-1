@@ -503,7 +503,7 @@ namespace MediaPortal
     {
       presentParams.Windowed = graphicsSettings.IsWindowed;
       presentParams.BackBufferCount = 1;
-      presentParams.MultiSample = graphicsSettings.MultisampleType;
+      presentParams.MultiSample = MultiSampleType.None;//graphicsSettings.MultisampleType;
       presentParams.MultiSampleQuality = graphicsSettings.MultisampleQuality;
       presentParams.EnableAutoDepthStencil = false;
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
@@ -512,15 +512,10 @@ namespace MediaPortal
         if (windowed)
         {
             presentParams.ForceNoMultiThreadedFlag=false;
-            presentParams.EnableAutoDepthStencil = false;
-            presentParams.AutoDepthStencilFormat = DepthFormat.D16;
             presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
             presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
             presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-            presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
-            presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
             presentParams.PresentationInterval = PresentInterval.Default;
-            presentParams.BackBufferCount = 0;
             presentParams.FullScreenRefreshRateInHz = 0;
             presentParams.SwapEffect=Direct3D.SwapEffect.Discard;
             presentParams.PresentFlag = PresentFlag.None;
@@ -739,7 +734,7 @@ namespace MediaPortal
 					GC.Collect();
           return;
         }
-        catch (Exception )
+        catch (Exception ex )
         {
           // Cleanup before we try again
           //OnDeviceLost(null, null);
@@ -1084,7 +1079,6 @@ namespace MediaPortal
         }
         System.Windows.Forms.Application.DoEvents();
         FullRender();
-        System.Windows.Forms.Application.DoEvents();
         
         if (m_bAutoHideMouse)
         {
@@ -1181,11 +1175,12 @@ namespace MediaPortal
         //if we're playing a movie (fullscreen)
         if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
         {
-          // then we dont need 2 draw the gui. so sleep 25 msec
+          // We're playing a movie fullscreen , so we dont need 2 draw the gui. so sleep 25 msec
           System.Threading.Thread.Sleep(25);  
         }
         else
         {
+          //we're not playing a movie in fullscreen mode and we are looking @ the normal GUI
           System.Threading.Thread.Sleep(25);  
         }
 

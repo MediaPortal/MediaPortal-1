@@ -80,26 +80,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "DShowNET"
-                    Project = "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Util"
-                    Project = "{3049EF7D-BE85-40E9-9EA4-81900BC543ED}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "guilib"
-                    Project = "{346B477C-7F86-4F53-86E8-DDB26DBE72AA}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "TVDatabase"
-                    Project = "{CA8C51E1-B600-4AC4-8A84-D654F70646BA}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
@@ -115,13 +95,13 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
                 <Reference
-                    Name = "Player"
-                    Project = "{88929413-4722-41CE-B763-FC25466CD971}"
+                    Name = "Core"
+                    Project = "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "DirectX.Capture"
-                    Project = "{8C0015DB-69E1-46E7-8705-3A4F8BE2E5E7}"
+                    Name = "Databases"
+                    Project = "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>

@@ -1,0 +1,1584 @@
+using System;
+using System.Drawing;
+using System.Collections;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Direct3D = Microsoft.DirectX.Direct3D;
+namespace MediaPortal.GUI.Library
+{
+	/// <summary>
+	/// The implementation of a GUIListControl
+	/// </summary>
+	public class GUIListControl : GUIControl
+	{
+		public enum ListType
+		{
+			CONTROL_LIST, 
+			CONTROL_UPDOWN
+		};
+		[XMLSkinElement("spaceBetweenItems")] protected int	m_iSpaceBetweenItems = 2;
+		protected int m_iOffset = 0;
+		protected int m_iItemsPerPage = 10;
+		[XMLSkinElement("textureHeight")]	protected int m_iItemHeight = 10;
+		protected ListType m_iSelect = ListType.CONTROL_LIST;
+		protected int										m_iCursorY = 0;
+		[XMLSkinElement("textXOff")]		protected int       m_iTextOffsetX;
+		[XMLSkinElement("textYOff")]		protected int       m_iTextOffsetY;
+		[XMLSkinElement("textXOff2")]		protected int       m_iTextOffsetX2;
+		[XMLSkinElement("textYOff2")]		protected int       m_iTextOffsetY2;
+		[XMLSkinElement("textXOff3")]		protected int       m_iTextOffsetX3;
+		[XMLSkinElement("textYOff3")]		protected int       m_iTextOffsetY3;
+		
+		[XMLSkinElement("itemWidth")]		protected int		m_iImageWidth = 16;
+		[XMLSkinElement("itemHeight")]		protected int		m_iImageHeight = 16;
+		protected bool									m_bUpDownVisible = true;
+		
+		protected GUIFont								m_pFont = null;
+		protected GUIFont								m_pFont2 = null;
+		protected GUISpinControl				m_upDown = null;
+		protected ArrayList		          m_imgButton = null;
+		protected GUIverticalScrollbar m_vertScrollbar = null;
+		
+		protected ArrayList							m_vecItems = new ArrayList();
+		[XMLSkinElement("shadedColor")] protected long	m_dwShadedColor = 0x20ffffff;
+		[XMLSkinElement("textvisible1")]protected bool  m_bTextVisible1=true;
+		[XMLSkinElement("textvisible2")]protected bool  m_bTextVisible2=true;
+		[XMLSkinElement("textvisible3")]protected bool  m_bTextVisible3=true;
+		[XMLSkinElement("PinIconXOff")]	protected int   m_iPinIconOffsetX=100;
+		[XMLSkinElement("PinIconYOff")]	protected int   m_iPinIconOffsetY=10;
+		protected int                    m_iPinIconWidth=0;
+		protected int                    m_iPinIconHeight=0;
+		protected bool m_bRefresh = false;
+		protected string m_wszText;
+		protected string m_wszText2;
+		protected string m_strBrackedText;
+		[XMLSkinElement("IconXOff")]	protected int m_iIconOffsetX = 8;
+		[XMLSkinElement("IconYOff")]	protected int m_iIconOffsetY = 5;
+
+		protected int scroll_pos = 0;
+		protected int iScrollX = 0;
+		protected int iLastItem = -1;
+		protected int iFrames = 0;
+		protected int iStartFrame = 0;
+		[XMLSkinElement("keepaspectratio")] protected bool m_bKeepAspectRatio = false;
+		protected bool m_bDrawFocus = true;
+		protected int m_iDelayFrame = 0;
+		[XMLSkinElement("suffix")]			protected string	m_strSuffix = "|";
+		[XMLSkinElement("font")]			protected string	m_strFontName="";
+		[XMLSkinElement("font2")]			protected string	m_strFont2Name="";
+		[XMLSkinElement("textcolor")]		protected long  m_dwTextColor=0xFFFFFFFF;
+		[XMLSkinElement("textcolor2")]		protected long  m_dwTextColor2=0xFFFFFFFF;
+		[XMLSkinElement("textcolor3")]		protected long  m_dwTextColor3=0xFFFFFFFF;
+		[XMLSkinElement("selectedColor")]	protected long  m_dwSelectedColor=0xFFFFFFFF;
+		[XMLSkinElement("selectedColor2")]	protected long  m_dwSelectedColor2=0xFFFFFFFF;
+		[XMLSkinElement("selectedColor3")]	protected long  m_dwSelectedColor3=0xFFFFFFFF;
+
+		[XMLSkinElement("textureUp")]		protected string	m_strUp="";
+		[XMLSkinElement("textureDown")]		protected string	m_strDown="";
+		[XMLSkinElement("textureUpFocus")]	protected string	m_strUpFocus=""; 
+		[XMLSkinElement("textureDownFocus")]protected string	m_strDownFocus="";
+		[XMLSkinElement("textureNoFocus")]	protected string	m_strButtonUnfocused="";
+		[XMLSkinElement("textureFocus")]	protected string	m_strButtonFocused="";
+
+		[XMLSkinElement("scrollbarbg")]		protected string	m_strScrollBarBG="";
+		[XMLSkinElement("scrollbartop")]	protected string	m_strScrollBarTop="";
+		[XMLSkinElement("scrollbarbottom")]	protected string	m_strScrollBarBottom="";
+
+		[XMLSkinElement("spinColor")]		protected long		m_dwSpinColor;
+		[XMLSkinElement("spinHeight")]		protected int		m_dwSpinHeight;
+		[XMLSkinElement("spinWidth")]		protected int		m_dwSpinWidth;
+		[XMLSkinElement("spinPosX")]		protected int		m_dwSpinX;
+		[XMLSkinElement("spinPosY")]		protected int		m_dwSpinY;
+    
+		public GUIListControl(int dwParentID) : base(dwParentID)
+		{
+		}
+		/// <summary>
+    /// The constructor of the GUIListControl.
+    /// </summary>
+		/// <param name="dwParentID">The parent of this control.</param>
+		/// <param name="dwControlId">The ID of this control.</param>
+		/// <param name="dwPosX">The X position of this control.</param>
+		/// <param name="dwPosY">The Y position of this control.</param>
+		/// <param name="dwWidth">The width of this control.</param>
+		/// <param name="dwHeight">The height of this control.</param>
+    /// <param name="dwSpinWidth">TODO </param>
+    /// <param name="dwSpinHeight">TODO</param>
+    /// <param name="strUp">The name of the scroll up unfocused texture.</param>
+    /// <param name="strDown">The name of the scroll down unfocused texture.</param>
+    /// <param name="strUpFocus">The name of the scroll up focused texture.</param>
+    /// <param name="strDownFocus">The name of the scroll down unfocused texture.</param>
+    /// <param name="dwSpinColor">TODO </param>
+    /// <param name="dwSpinX">TODO </param>
+    /// <param name="dwSpinY">TODO </param>
+    /// <param name="strFont">The font used in the spin control.</param>
+    /// <param name="dwTextColor">The color of the text.</param>
+    /// <param name="dwSelectedColor">The color of the text when it is selected.</param>
+    /// <param name="strButton">The name of the unfocused button texture.</param>
+    /// <param name="strButtonFocus">The name of the focused button texture.</param>
+    /// <param name="strScrollbarBackground">The name of the background of the scrollbar texture.</param>
+    /// <param name="strScrollbarTop">The name of the top of the scrollbar texture.</param>
+    /// <param name="strScrollbarBottom">The name of the bottom of the scrollbar texture.</param>
+		public GUIListControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, 
+									int dwSpinWidth, int dwSpinHeight, 
+									string strUp, string strDown, 
+									string strUpFocus, string strDownFocus, 
+									long dwSpinColor, int dwSpinX, int dwSpinY, 
+									string strFont, long dwTextColor, long dwSelectedColor, 
+									string strButton, string strButtonFocus, 
+                  string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom)
+		: base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+		{
+			m_dwSpinWidth = dwSpinWidth;
+			m_dwSpinHeight = dwSpinHeight;
+			m_strUp = strUp;
+			m_strDown = strDown;
+			m_strUpFocus = strUpFocus;
+			m_strDownFocus = strDownFocus;
+			m_dwSpinColor = dwSpinColor;
+			m_dwSpinX = dwSpinX;
+			m_dwSpinY = dwSpinY;
+			m_strFontName = strFont;
+			m_dwSelectedColor = dwSelectedColor;
+			m_dwSelectedColor2 = dwSelectedColor;
+			m_dwSelectedColor3 = dwSelectedColor;
+			m_dwTextColor = dwTextColor;
+			m_dwTextColor2 = dwTextColor;
+			m_dwTextColor3 = dwTextColor;
+			m_strButtonUnfocused = strButton;
+			m_strButtonFocused = strButtonFocus;
+			m_strScrollBarBG = strScrollbarBackground;
+			m_strScrollBarTop = strScrollbarTop;
+			m_strScrollBarBottom = strScrollbarBottom;
+			
+			FinalizeConstruction();
+		}		
+		public override void FinalizeConstruction()
+		{
+			base.FinalizeConstruction();
+			m_pFont = GUIFontManager.GetFont(m_strFontName);
+			Font2 = m_strFont2Name;
+			m_upDown = new GUISpinControl(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwSpinWidth, m_dwSpinHeight, m_strUp, m_strDown, m_strUpFocus, m_strDownFocus, m_strFontName, m_dwSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
+			m_vertScrollbar = new GUIverticalScrollbar(m_dwControlID, 0, 5 + m_dwPosX + m_dwWidth, m_dwPosY, 15, m_dwHeight, m_strScrollBarBG, m_strScrollBarTop, m_strScrollBarBottom);
+			m_vertScrollbar.SendNotifies = false;
+		}
+		public override void ScaleToScreenResolution()
+		{
+			base.ScaleToScreenResolution ();
+			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwSpinX, ref m_dwSpinY, ref m_dwSpinWidth, ref m_dwSpinHeight);
+			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX, ref m_iTextOffsetY);
+			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX2, ref m_iTextOffsetY2);
+			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX3, ref m_iTextOffsetY3);
+			GUIGraphicsContext.ScaleVertical	(ref m_iSpaceBetweenItems);
+			GUIGraphicsContext.ScaleVertical	(ref m_iItemHeight);
+			GUIGraphicsContext.ScaleHorizontal	(ref m_iIconOffsetX);
+			GUIGraphicsContext.ScaleVertical	(ref m_iIconOffsetY);
+			GUIGraphicsContext.ScaleHorizontal	(ref m_iPinIconOffsetX);
+			GUIGraphicsContext.ScaleVertical	(ref m_iPinIconOffsetY);
+			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iImageWidth, ref m_iImageHeight);
+		}
+
+
+    protected void OnSelectionChanged()
+    {
+      if (!IsVisible) return;
+      string strSelected = "";
+      string strSelected2 = "";
+      string strThumb = "";
+      GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
+      GUIPropertyManager.SetProperty("#selecteditem", strSelected);
+      GUIPropertyManager.SetProperty("#selecteditem2",strSelected2);
+      GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+    }
+		/// <summary>
+		/// Renders the control.
+		/// </summary>
+		public override void Render()
+		{
+			// If there is no font do not render.
+			if (null == m_pFont) return;
+			// If the control is not visible do not render.
+      if (GUIGraphicsContext.EditMode==false)
+      {
+        if (!IsVisible) return;
+      }
+			// set the percentage of the the vertical scrollbar
+			
+			int dwPosY = m_dwPosY;
+      if (m_vertScrollbar != null)
+      {
+        float fPercent = (float)m_iCursorY + m_iOffset;
+        fPercent /= (float)(m_vecItems.Count);
+        fPercent *= 100.0f;
+        if ((int)fPercent != (int)m_vertScrollbar.Percentage)
+        {
+          m_vertScrollbar.Percentage = fPercent;
+        }
+      }
+			// Render the items.
+			for (int i = 0; i < m_iItemsPerPage; i++)
+			{
+				int dwPosX = m_dwPosX;
+				if (i + m_iOffset < m_vecItems.Count)
+				{
+					// render item
+          GUIButtonControl btn=(GUIButtonControl)m_imgButton[i];
+					GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
+					if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+					{
+						// render focused line
+						btn.Focus = true;
+					}
+					else
+					{
+						// render no-focused line
+						btn.Focus = false;
+					}
+					btn.SetPosition(m_dwPosX, dwPosY);
+					btn.Render();
+
+					// render the icon
+					if (pItem.HasIcon)
+					{
+						// show icon
+						GUIImage pImage = pItem.Icon;
+						if (null == pImage)
+						{
+							pImage = new GUIImage(0, 0, 0, 0, m_iImageWidth, m_iImageHeight, pItem.IconImage, 0x0);
+							pImage.KeepAspectRatio = m_bKeepAspectRatio;
+							pImage.AllocResources();
+							pItem.Icon = pImage;
+
+						}
+            if (pImage.TextureHeight==0&&pImage.TextureWidth==0)
+            {
+              pImage.FreeResources();
+              pImage.AllocResources();
+            }
+						pImage.KeepAspectRatio = m_bKeepAspectRatio;
+						pImage.Width = m_iImageWidth;
+						pImage.Height = m_iImageHeight;
+						pImage.SetPosition(dwPosX + m_iIconOffsetX, dwPosY + m_iIconOffsetY);
+						pImage.Render();
+					}
+					dwPosX += (m_iImageWidth + 10);
+
+					// render the text
+					long dwColor = m_dwTextColor;
+          if (pItem.Shaded)
+          {
+            dwColor = ShadedColor;
+          }
+					if (pItem.Selected)
+					{
+						dwColor = m_dwSelectedColor;
+					}
+
+					dwPosX += m_iTextOffsetX;
+					bool bSelected = false;
+					if (i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+					{
+						bSelected = true;
+					}
+
+					
+
+					int dMaxWidth = (m_dwWidth - m_iImageWidth - 16);
+					if (pItem.Label2.Length > 0)
+					{
+						if (m_iTextOffsetY == m_iTextOffsetY2) 
+						{
+							float fTextHeight = 0, fTextWidth = 0;
+							m_wszText = pItem.Label2;
+							m_pFont2.GetTextExtent(m_wszText, ref fTextWidth, ref fTextHeight);
+							dMaxWidth -= (int)(fTextWidth + 20);
+						}
+					}
+
+					m_wszText = pItem.Label;
+          if (m_bTextVisible1)
+            RenderText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY, (float)dMaxWidth, dwColor, m_wszText, bSelected);
+
+					if (pItem.Label2.Length > 0)
+					{
+						dwColor = m_dwTextColor2;
+						if (pItem.Selected)
+						{
+							dwColor = m_dwSelectedColor2;
+						}
+						if (0 == m_iTextOffsetX2)
+							dwPosX = m_dwPosX + m_dwWidth - 16;
+						else
+							dwPosX = m_dwPosX + m_iTextOffsetX2;
+
+						m_wszText = pItem.Label2;
+            if (m_bTextVisible2)
+              m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
+					}	
+					if (pItem.Label3.Length > 0)
+					{
+						dwColor = m_dwTextColor3;
+						if (pItem.Selected)
+						{
+							dwColor = m_dwSelectedColor3;
+						}
+						if (0 == m_iTextOffsetX3)
+							dwPosX = m_dwPosX + m_iTextOffsetX;
+						else
+							dwPosX = m_dwPosX + m_iTextOffsetX3;
+						
+						int ypos = dwPosY;
+						if (0 == m_iTextOffsetY3)
+							ypos += m_iTextOffsetY2;
+						else
+							ypos += m_iTextOffsetY3;
+            if (m_bTextVisible3)
+						  m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
+					}
+
+          if (pItem.HasPinIcon)
+          {
+            GUIImage pinImage = pItem.PinIcon;
+            if (null == pinImage)
+            {
+              pinImage = new GUIImage(0, 0, 0, 0, 0, 0, pItem.PinImage, 0x0);
+              pinImage.KeepAspectRatio = m_bKeepAspectRatio;
+              pinImage.AllocResources();
+              pItem.PinIcon= pinImage;
+            }
+            pinImage.KeepAspectRatio = m_bKeepAspectRatio;
+            pinImage.Width=PinIconWidth;
+            pinImage.Height=PinIconHeight;
+          
+
+            if (PinIconOffsetY<0 || PinIconOffsetX<0)
+            {
+              pinImage.SetPosition(dwPosX+(m_dwWidth)    - (pinImage.TextureWidth + pinImage.TextureWidth/2),
+                                   dwPosY+(m_dwHeight/2) - (pinImage.TextureHeight/2) );
+            }
+            else
+            {
+              pinImage.SetPosition(m_dwPosX+PinIconOffsetX,dwPosY+PinIconOffsetY );
+            }
+            pinImage.Render();
+          }
+					dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
+				}
+			}
+			// Render the spin control
+      if (m_bUpDownVisible) 
+      {
+        dwPosY = m_dwPosY + m_iItemsPerPage * (m_iItemHeight + m_iSpaceBetweenItems) - m_iSpaceBetweenItems - 5;
+        //m_upDown.SetPosition(m_upDown.XPosition,dwPosY+10);
+        m_upDown.Render();
+      }
+			// Render the vertical scrollbar
+      if (m_vecItems.Count > m_iItemsPerPage)
+      {
+        m_vertScrollbar.Render();
+      }
+		}
+
+		/// <summary>
+		/// Renders the text.
+		/// </summary>
+		/// <param name="fPosX">The X position of the text.</param>
+		/// <param name="fPosY">The Y position of the text.</param>
+		/// <param name="fMaxWidth">The maximum render width.</param>
+		/// <param name="dwTextColor">The color of the text.</param>
+		/// <param name="strTextToRender">The actual text.</param>
+		/// <param name="bScroll">A bool indication if there is scrolling or not.</param>
+		protected void RenderText(float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
+		{
+			// TODO Unify render text methods into one general rendertext method.
+			float fWidth = 0;
+
+			float fPosCX = fPosX;
+			float fPosCY = fPosY;
+			GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
+			if (fPosCX < 0) fPosCX = 0.0f;
+			if (fPosCY < 0) fPosCY = 0.0f;
+			if (fPosCY > GUIGraphicsContext.Height) fPosCY = (float)GUIGraphicsContext.Height;
+			float fHeight = 60.0f;
+			if (fHeight + fPosCY >= GUIGraphicsContext.Height)
+				fHeight = GUIGraphicsContext.Height - fPosCY - 1;
+			if (fHeight <= 0) return;
+
+			float fwidth = fMaxWidth - 5.0f;
+
+      if (fPosCX<=0) fPosCX=0;
+      if (fPosCY<=0) fPosCY=0;
+			Viewport newviewport, oldviewport;
+			newviewport = new Viewport();
+			oldviewport = GUIGraphicsContext.DX9Device.Viewport;
+			newviewport.X = (int)fPosCX;
+			newviewport.Y = (int)fPosCY;
+			newviewport.Width = (int)(fwidth);
+			newviewport.Height = (int)(fHeight);
+			newviewport.MinZ = 0.0f;
+			newviewport.MaxZ = 1.0f;
+			GUIGraphicsContext.DX9Device.Viewport = newviewport;
+
+			if (false == bScroll )
+			{
+				m_pFont.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT);
+				GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+
+				return;
+			}
+        
+      float fTextHeight = 0, fTextWidth = 0;
+      m_pFont.GetTextExtent(strTextToRender, ref fTextWidth, ref fTextHeight);
+      if (fTextWidth <= fMaxWidth)
+      {
+        m_pFont.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT);
+        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+
+        return;
+      }
+      else
+      {
+        // scroll
+        int iItem = m_iCursorY + m_iOffset;
+        m_strBrackedText = strTextToRender;
+        m_strBrackedText += (" " + m_strSuffix + " ");
+        m_pFont.GetTextExtent(m_strBrackedText, ref fTextWidth, ref fTextHeight);
+
+        if (fTextWidth > fMaxWidth)
+        {
+          fMaxWidth += 50.0f;
+          m_wszText2 = "";
+          if (iLastItem != iItem)
+          {
+            scroll_pos = 0;
+            iLastItem = iItem;
+            iStartFrame = 0;
+            iScrollX = 1;
+            m_iDelayFrame = 0;
+          }
+          if (iStartFrame > 25)
+          {
+            char wTmp;
+            if (scroll_pos >= m_strBrackedText.Length)
+              wTmp = ' ';
+            else
+              wTmp = m_strBrackedText[scroll_pos];
+							
+            m_pFont.GetTextExtent(wTmp.ToString(),ref fWidth, ref fHeight);
+            if (iScrollX >= fWidth)
+            {
+              ++scroll_pos;
+              if (scroll_pos > m_strBrackedText.Length)
+                scroll_pos = 0;
+              iFrames = 0;
+              iScrollX = 1;
+            }
+            else 
+            {
+              m_iDelayFrame++;
+              if (true || m_iDelayFrame > 2)
+              {
+                m_iDelayFrame = 0;
+                iScrollX++;
+              }
+            }
+						
+            int ipos = 0;
+            for (int i = 0; i < m_strBrackedText.Length; i++)
+            {
+              if (i + scroll_pos < m_strBrackedText.Length)
+                m_wszText2 += m_strBrackedText[i + scroll_pos];
+              else
+              {
+                if (ipos == 0) m_wszText2 += ' ';
+                else m_wszText2 += m_strBrackedText[ipos - 1];
+                ipos++;
+              }
+            }
+            if (fPosY >= 0.0)
+              m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_wszText2, GUIControl.Alignment.ALIGN_LEFT);
+							
+          }
+          else
+          {
+            iStartFrame++;
+            if (fPosY >= 0.0)
+              m_pFont.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT);
+          }
+        }
+      }
+			GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+      
+		}
+	
+		/// <summary>
+		/// OnAction() method. This method gets called when there's a new action like a 
+		/// keypress or mousemove or... By overriding this method, the control can respond
+		/// to any action
+		/// </summary>
+		/// <param name="action">action : contains the action</param>
+		public override void OnAction(Action action)
+		{
+			switch (action.wID)
+			{
+				case Action.ActionType.ACTION_PAGE_UP : 
+					OnPageUp();
+          m_bRefresh = true;
+				break;
+
+				case Action.ActionType.ACTION_PAGE_DOWN : 
+					OnPageDown();
+          m_bRefresh = true;
+				break;
+
+				case Action.ActionType.ACTION_MOVE_DOWN : 
+				{
+					OnDown();
+          m_bRefresh = true;
+				}
+				break;
+	    
+				case Action.ActionType.ACTION_MOVE_UP : 
+				{
+					OnUp();
+          m_bRefresh = true;
+				}
+				break;
+
+				case Action.ActionType.ACTION_MOVE_LEFT : 
+				{
+					OnLeft();
+          m_bRefresh = true;
+				}
+				break;
+
+				case Action.ActionType.ACTION_MOVE_RIGHT : 
+				{
+					OnRight();
+          m_bRefresh = true;
+				}
+				break;
+
+        case Action.ActionType.ACTION_KEY_PRESSED : 
+        break;
+        case Action.ActionType.ACTION_MOUSE_MOVE : 
+        {
+          int id;
+          bool focus;
+          if (m_vertScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2,out id, out focus))
+          {
+            m_bDrawFocus = false;
+            m_vertScrollbar.OnAction(action);
+            float fPercentage = m_vertScrollbar.Percentage;
+            fPercentage /= 100.0f;
+            fPercentage *= (float)m_vecItems.Count;
+            int iChan = (int)fPercentage;
+            if (iChan != m_iOffset + m_iCursorY)
+            {
+              m_iOffset = 0;
+              m_iCursorY = 0;
+              while (iChan >= m_iItemsPerPage) 
+              {
+                iChan -= m_iItemsPerPage;
+                m_iOffset += m_iItemsPerPage;
+              }
+              m_iCursorY = iChan;
+              OnSelectionChanged();
+            }
+            return;
+          }
+          m_bDrawFocus = true;
+        } 
+        break;
+        case Action.ActionType.ACTION_MOUSE_CLICK : 
+        {
+          int id;
+          bool focus;
+          if (m_vertScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
+          {
+            m_bDrawFocus = false;
+            m_vertScrollbar.OnAction(action);
+            float fPercentage = m_vertScrollbar.Percentage;
+            fPercentage /= 100.0f;
+            fPercentage *= (float)m_vecItems.Count;
+            int iChan = (int)fPercentage;
+            if (iChan != m_iOffset + m_iCursorY)
+            {
+              m_iOffset = 0;
+              m_iCursorY = 0;
+              while (iChan >= m_iItemsPerPage) 
+              {
+                iChan -= m_iItemsPerPage;
+                m_iOffset += m_iItemsPerPage;
+              }
+              m_iCursorY = iChan;
+              OnSelectionChanged();
+            }
+            return;
+          }
+          else
+          {
+            int idtmp;
+            bool bUpDown=m_upDown.InControl((int)action.fAmount1, (int)action.fAmount2, out idtmp);
+            m_bDrawFocus = true;
+            if (!bUpDown && m_iSelect == ListType.CONTROL_LIST)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)Action.ActionType.ACTION_SELECT_ITEM, 0, null);
+              GUIGraphicsContext.SendMessage(msg);
+            }
+            else
+            {
+              m_upDown.OnAction(action);
+            }
+            m_bRefresh = true;
+          }
+        }
+          break;
+				default : 
+				{
+					if (m_iSelect == ListType.CONTROL_LIST)
+					{
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)action.wID, 0, null);
+						GUIGraphicsContext.SendMessage(msg);
+					}
+					else
+					{
+						m_upDown.OnAction(action);
+					}
+          m_bRefresh = true;
+				}
+					break;
+			}
+		}
+
+		/// <summary>
+		/// OnMessage() This method gets called when there's a new message. 
+		/// Controls send messages to notify their parents about their state (changes)
+		/// By overriding this method a control can respond to the messages of its controls
+		/// </summary>
+		/// <param name="message">message : contains the message</param>
+		/// <returns>true if the message was handled, false if it wasnt</returns>
+		public override bool OnMessage(GUIMessage message)
+		{
+			if (message.TargetControlId == GetID)
+			{
+				if (message.SenderControlId == 0)
+				{
+					if (message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
+					{
+						m_iOffset = (m_upDown.Value - 1) * m_iItemsPerPage;
+						while (m_iOffset + m_iCursorY >= m_vecItems.Count) m_iCursorY--;
+          }
+          OnSelectionChanged();
+          m_bRefresh = true;
+				}
+        if (message.Message == GUIMessage.MessageType.GUI_MSG_GET_ITEM)
+        {
+          int iItem = message.Param1;
+          if (iItem >= 0 && iItem < m_vecItems.Count)
+          {
+            message.Object = m_vecItems[iItem];
+          }
+          else 
+          {
+            message.Object = null;
+          }
+          return true;
+        }
+
+        if (message.Message == GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM)
+        {
+          int iItem = m_iCursorY + m_iOffset;
+
+          if (iItem >= 0 && iItem < m_vecItems.Count)
+          {
+            message.Object = m_vecItems[iItem];
+          }
+          else 
+          {
+            message.Object = null;
+          }
+          return true;
+        }
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS || 
+						message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS)
+				{
+					if (Disabled || !IsVisible || !CanFocus())
+					{
+						base.OnMessage(message);
+						return true;
+					}
+					m_iSelect = ListType.CONTROL_LIST;
+          m_bRefresh = true;
+				}
+        if (message.Message== GUIMessage.MessageType.GUI_MSG_REFRESH)
+        {
+          GUITextureManager.CleanupThumbs();
+          foreach (GUIListItem item in m_vecItems)
+          {
+            item.FreeMemory();
+          }
+          m_bRefresh = true;
+          return true;
+        }
+
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
+				{
+					GUIListItem pItem = (GUIListItem)message.Object;
+					m_vecItems.Add(pItem);
+					int iPages = m_vecItems.Count / m_iItemsPerPage;
+					if ((m_vecItems.Count % m_iItemsPerPage) != 0) iPages++;
+					m_upDown.SetRange(1, iPages);
+					m_upDown.Value = 1;
+          m_bRefresh = true;
+				}
+
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
+				{
+					m_iCursorY = 0;
+					m_iOffset = 0;
+          m_vecItems.Clear();
+          //GUITextureManager.CleanupThumbs();
+					m_upDown.SetRange(1, 1);
+					m_upDown.Value = 1;
+          m_bRefresh = true;
+          OnSelectionChanged();
+				}
+        if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEMS)
+        {
+          message.Param1 = m_vecItems.Count;
+        }
+
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED)
+				{
+					message.Param1 = m_iCursorY + m_iOffset;
+				}
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
+				{
+					if (message.Param1 >= 0 && message.Param1 < m_vecItems.Count)
+					{
+						int iPage = 1;
+						m_iOffset = 0;
+						m_iCursorY = (int)message.Param1;
+						while (m_iCursorY >= m_iItemsPerPage)
+						{
+							iPage++;
+							m_iOffset += m_iItemsPerPage;
+							m_iCursorY -= m_iItemsPerPage;
+						}
+            m_upDown.Value = iPage;
+            OnSelectionChanged();
+					}
+          m_bRefresh = true;
+				}
+        if (message.Message==GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+        {
+          foreach (GUIListItem item in m_vecItems)
+          {
+            item.Selected=false;
+          }
+          if (message.Param1 >= 0 && message.Param1 < m_vecItems.Count)
+          {
+            GUIListItem focusedItem=(GUIListItem)m_vecItems[message.Param1];
+            focusedItem.Selected=true;
+          }
+        }
+			}
+
+			if (base.OnMessage(message)) return true;
+
+			return false;
+		}
+
+		/// <summary>
+		/// Preallocates the control its DirectX resources.
+		/// </summary>
+		public override void PreAllocResources()
+		{
+			if (null == m_pFont) return;
+			base.PreAllocResources();
+			m_upDown.PreAllocResources();
+			m_vertScrollbar.PreAllocResources();
+		}
+
+		/// <summary>
+		/// Allocates the control its DirectX resources.
+		/// </summary>
+		public override void AllocResources()
+		{
+			if (null == m_pFont) return;
+			base.AllocResources();
+      m_upDown.AllocResources();
+      m_vertScrollbar.AllocResources();
+
+
+			float fHeight = (float)m_iItemHeight + (float)m_iSpaceBetweenItems;
+			float fTotalHeight = (float)(m_dwHeight - m_upDown.Height - 5);
+			m_iItemsPerPage = (int)(fTotalHeight / fHeight);
+
+      m_imgButton= new ArrayList();
+      for (int i=0; i < m_iItemsPerPage;++i)
+      {
+        GUIButtonControl cntl = new GUIButtonControl(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwWidth, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused);
+        cntl.AllocResources();
+        m_imgButton.Add(cntl);
+      }
+			int iPages = 1;
+			if (m_vecItems.Count > 0)
+			{
+				iPages = m_vecItems.Count / m_iItemsPerPage;
+				if ((m_vecItems.Count % m_iItemsPerPage) != 0) iPages++;
+			}
+			m_upDown.SetRange(1, iPages);
+			m_upDown.Value = 1;
+		}
+
+		/// <summary>
+		/// Frees the control its DirectX resources.
+		/// </summary>
+		public override void FreeResources()
+    {
+      foreach (GUIListItem item in m_vecItems)
+      {
+        item.FreeIcons();
+      }
+      m_vecItems.Clear();
+			base.FreeResources();
+			m_upDown.FreeResources();
+      for (int i=0; i < m_iItemsPerPage;++i)
+      {
+        ((GUIButtonControl)m_imgButton[i]).FreeResources();
+      }
+      m_imgButton=null;
+      m_vertScrollbar.FreeResources();
+		}
+		
+		/// <summary>
+		/// Implementation of the OnRight action.
+		/// </summary>
+		protected void OnRight()
+		{
+			Action action = new Action();
+			action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
+			if (m_iSelect == ListType.CONTROL_LIST) 
+			{
+				if (m_upDown.GetMaximum() > 1)
+				{
+					m_iSelect = ListType.CONTROL_UPDOWN;
+					m_upDown.Focus = true;
+					if (!m_upDown.Focus) 
+					{
+						m_iSelect = ListType.CONTROL_LIST;
+					}
+				}
+			}
+			else
+			{
+				m_upDown.OnAction(action);
+				if (!m_upDown.Focus) 
+				{
+					m_iSelect = ListType.CONTROL_LIST;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Implementation of the OnLeft action.
+		/// </summary>
+		protected void OnLeft()
+		{
+			Action action = new Action();
+			action.wID = Action.ActionType.ACTION_MOVE_LEFT;
+			if (m_iSelect == ListType.CONTROL_LIST) 
+			{
+				base.OnAction(action);
+				if (!m_upDown.Focus) 
+				{
+					m_iSelect = ListType.CONTROL_LIST;
+				}
+			}
+			else
+			{
+				m_upDown.OnAction(action);
+				if (!m_upDown.Focus) 
+				{
+					m_iSelect = ListType.CONTROL_LIST;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Implementation of the OnUp action.
+		/// </summary>
+		protected void OnUp()
+		{
+			Action action = new Action();
+			action.wID = Action.ActionType.ACTION_MOVE_UP;
+			if (m_iSelect == ListType.CONTROL_LIST) 
+			{
+				if (m_iCursorY > 0) 
+				{
+          m_iCursorY--;
+          OnSelectionChanged();
+				}
+				else if (m_iCursorY == 0 && m_iOffset != 0)
+				{
+          m_iOffset--;
+
+          int iPage = 1;
+          int iSel = m_iOffset + m_iCursorY;
+          while (iSel >= m_iItemsPerPage)
+          {
+            iPage++;
+            iSel -= m_iItemsPerPage;
+          }
+          m_upDown.Value = iPage;
+          OnSelectionChanged();
+				}
+				else
+				{
+					// move 2 last item in list
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, m_vecItems.Count - 1, 0, null);
+					OnMessage(msg);
+				}
+			}
+			else
+			{
+				m_upDown.OnAction(action);
+				if (!m_upDown.Focus) 
+				{
+					m_iSelect = ListType.CONTROL_LIST;
+				}  
+			}
+		}
+
+		/// <summary>
+		/// Implementation of the OnDown action.
+		/// </summary>
+		protected void OnDown()
+		{
+			Action action = new Action();
+			action.wID = Action.ActionType.ACTION_MOVE_DOWN;
+			if (m_iSelect == ListType.CONTROL_LIST) 
+			{
+				if (m_iCursorY + 1 < m_iItemsPerPage)
+				{
+					if (m_iOffset + 1 + m_iCursorY < (int)m_vecItems.Count)
+					{
+            m_iCursorY++;
+            OnSelectionChanged();
+					}
+					else
+					{
+						// move first item in list
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+						OnMessage(msg);
+					}
+				}
+				else 
+				{
+					if (m_iOffset + 1 + m_iCursorY < (int)m_vecItems.Count)
+					{
+						m_iOffset++;
+
+						int iPage = 1;
+						int iSel = m_iOffset + m_iCursorY;
+						while (iSel >= m_iItemsPerPage)
+						{
+							iPage++;
+							iSel -= m_iItemsPerPage;
+						}
+            m_upDown.Value = iPage;
+            OnSelectionChanged();
+					}
+					else
+					{
+						// move first item in list
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+						OnMessage(msg);
+					}
+				}
+			}
+			else
+			{
+				m_upDown.OnAction(action);
+				if (!m_upDown.Focus) 
+				{
+					base.OnAction(action);
+				}  
+			}
+		}
+
+		/// <summary>
+		/// Get/set the scroll suffic
+		/// </summary>
+		public String ScrollySuffix
+		{
+			get { return m_strSuffix; }
+			set { m_strSuffix = value; }
+		}
+
+		/// <summary>
+		/// Implementation of the OnPageUp action.
+		/// </summary>
+		protected void OnPageUp()
+		{
+			int iPage = m_upDown.Value;
+			if (iPage > 1)
+			{
+				iPage--;
+				m_upDown.Value = iPage;
+				m_iOffset = (m_upDown.Value - 1) * m_iItemsPerPage;
+			}
+			else 
+			{
+				// already on page 1, then select the 1st item
+        m_iCursorY = 0;
+			}
+      OnSelectionChanged();
+    }
+
+		/// <summary>
+		/// Implementation of the OnPageDown action.
+		/// </summary>
+		protected void OnPageDown()
+		{
+			int iPages = m_vecItems.Count / m_iItemsPerPage;
+			if ((m_vecItems.Count % m_iItemsPerPage) != 0) iPages++;
+
+			int iPage = m_upDown.Value;
+			if (iPage + 1 <= iPages)
+			{
+				iPage++;
+				m_upDown.Value = iPage;
+				m_iOffset = (m_upDown.Value - 1) * m_iItemsPerPage;
+			}
+			else
+			{
+				// already on last page, move 2 last item in list
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, WindowId, GetID, m_vecItems.Count - 1, 0, null);
+				OnMessage(msg);
+			}
+			if (m_iOffset + m_iCursorY >= (int)m_vecItems.Count)
+			{
+				m_iCursorY = (m_vecItems.Count - m_iOffset) - 1;
+      }
+      OnSelectionChanged();
+		}
+
+		/// <summary>
+		/// Sets the offsets of the text.
+		/// </summary>
+		/// <param name="iXoffset">The X offset of the first label.</param>
+		/// <param name="iYOffset">The Y offset of the first label.</param>
+		/// <param name="iXoffset2">The X offset of the second label.</param>
+		/// <param name="iYOffset2">The Y offset of the second label.</param>
+		/// <param name="iXoffset2">The X offset of the third label.</param>
+		/// <param name="iYOffset2">The Y offset of the third label.</param>
+		public void SetTextOffsets(int iXoffset, int iYOffset, int iXoffset2, int iYOffset2, int iXoffset3, int iYOffset3)
+		{
+			m_iTextOffsetX = iXoffset;
+			m_iTextOffsetY = iYOffset;
+			m_iTextOffsetX2 = iXoffset2;
+			m_iTextOffsetY2 = iYOffset2;
+			m_iTextOffsetX3 = iXoffset3;
+			m_iTextOffsetY3 = iYOffset3;
+		}
+		
+		/// <summary>
+		/// Sets the dimension of the images of the items.
+		/// </summary>
+		/// <param name="iWidth">The width.</param>
+		/// <param name="iHeight">The height.</param>
+		public void SetImageDimensions(int iWidth, int iHeight)
+		{
+			m_iImageWidth = iWidth;
+			m_iImageHeight = iHeight;
+		}
+
+		/// <summary>
+		/// Get/set the height of an item.
+		/// </summary>
+		public int ItemHeight
+		{
+			get { return m_iItemHeight; }
+			set { m_iItemHeight = value; }
+		}
+		
+		/// <summary>
+		/// Get/set the space between items.
+		/// </summary>
+		public int Space
+		{
+			get { return m_iSpaceBetweenItems; }
+			set { m_iSpaceBetweenItems = value; }
+		}
+
+		/// <summary>
+		/// Get/set the font for the second label.
+		/// </summary>
+		public string Font2
+		{
+			get { return m_pFont2.FontName; }
+			set {
+        if (value != "")
+        {
+          m_pFont2 = GUIFontManager.GetFont(value);
+          if (null == m_pFont2) m_pFont2 = m_pFont;
+        }
+        else m_pFont2 = m_pFont;
+      }
+		}
+
+		/// <summary>
+		/// Set the colors of the second label.
+		/// </summary>
+		/// <param name="dwTextColor"></param>
+		/// <param name="dwSelectedColor"></param>
+		public void SetColors2(long dwTextColor, long dwSelectedColor)
+		{
+			m_dwTextColor2 = dwTextColor;
+			m_dwSelectedColor2 = dwSelectedColor;
+		}
+
+		/// <summary>
+		/// Set the colors of the second label.
+		/// </summary>
+		/// <param name="dwTextColor"></param>
+		/// <param name="dwSelectedColor"></param>
+		public void SetColors3(long dwTextColor, long dwSelectedColor)
+		{
+			m_dwTextColor3 = dwTextColor;
+			m_dwSelectedColor3 = dwSelectedColor;
+		}
+
+		/// <summary>
+		/// Get the selected item
+		/// </summary>
+		/// <param name="strLabel"></param>
+		/// <returns></returns>
+		public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumb)
+		{
+      strLabel = "";
+      strLabel2 = "";
+      strThumb = "";
+			int iItem = m_iCursorY + m_iOffset;
+			if (iItem >= 0 && iItem < m_vecItems.Count)
+			{
+				GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+				strLabel = pItem.Label;
+        strLabel2 = pItem.Label2;
+        strThumb = pItem.ThumbnailImage;
+				if (pItem.IsFolder)
+				{
+					strLabel = String.Format("[{0}]", pItem.Label);
+				}
+			}
+			return iItem;
+		}
+
+		/// <summary>
+		/// Set the visibility of the page control.
+		/// </summary>
+		/// <param name="bVisible">true if visible false otherwise</param>
+		public void SetPageControlVisible(bool bVisible)
+		{
+			m_bUpDownVisible = bVisible;
+		}
+
+		/// <summary>
+		/// Get/set the shaded color.
+		/// </summary>
+    public long ShadedColor
+    {
+      get { return m_dwShadedColor; }
+      set { m_dwShadedColor = value; }
+    }
+
+		/// <summary>
+		/// Get the color of the first label.
+		/// </summary>
+		public long	TextColor
+		{ 
+			get { return m_dwTextColor; }
+		}
+
+		/// <summary>
+		/// Get the color of the second label.
+		/// </summary>
+		public long	TextColor2 
+		{ 
+			get { return m_dwTextColor2; }
+		}
+
+		/// <summary>
+		/// Get the color of the third label.
+		/// </summary>
+		public long	TextColor3 
+		{ 
+			get { return m_dwTextColor3; }
+		}
+
+		/// <summary>
+		/// Get the color of the text of the first label of a selected item.
+		/// </summary>
+		public long	SelectedColor 
+		{ 
+			get { return m_dwSelectedColor; }
+		}
+
+		/// <summary>
+		/// Get the color of the text of the second label of a selected item.
+		/// </summary>
+		public long	SelectedColor2 
+		{ 
+			get { return m_dwSelectedColor2; }
+		}
+
+		/// <summary>
+		/// Get the color of the text of the second label of a third item.
+		/// </summary>
+		public long	SelectedColor3 
+		{ 
+			get { return m_dwSelectedColor3; }
+		}
+
+		/// <summary>
+		/// Get the fontname of the first label.
+		/// </summary>
+		public string	FontName 
+		{ 
+			get 
+			{
+				if (m_pFont == null) return "";
+				return m_pFont.FontName;
+			}
+		}
+		
+		/// <summary>
+		/// Get the fontname of the second label.
+		/// </summary>
+		public string	FontName2 
+		{ 
+			get {
+				if (m_pFont2 == null) return "";
+				return m_pFont2.FontName;
+			}
+		}
+
+		// TODO
+		public int	SpinWidth 
+		{ 
+			get { return m_upDown.Width / 2; }
+		}
+
+		// TODO
+		public int	SpinHeight 
+		{ 
+			get { return m_upDown.Height; }
+		}
+
+		/// <summary>
+		/// Gets the name of the unfocused up texture.
+		/// </summary>
+		public string	TexutureUpName 
+		{ 
+			get { return m_upDown.TexutureUpName; }
+		}
+
+		/// <summary>
+		/// Gets the name of the unfocused down texture.
+		/// </summary>
+		public string	TexutureDownName 
+		{ 
+			get { return m_upDown.TexutureDownName; }
+		}
+
+		/// <summary>
+		/// Gets the name of the focused up texture.
+		/// </summary>
+		public string	TexutureUpFocusName 
+		{ 
+			get { return m_upDown.TexutureUpFocusName; }
+		}
+
+		/// <summary>
+		/// Gets the name of the focused down texture.
+		/// </summary>
+		public string	TexutureDownFocusName 
+		{ 
+			get { return m_upDown.TexutureDownFocusName; }
+		}
+
+		// TODO
+		public long		SpinTextColor 
+		{ 
+			get { return m_upDown.TextColor; }
+		}
+
+		// TODO
+		public int		SpinX 
+		{ 
+			get { return m_upDown.XPosition; }
+		}
+
+		// TODO
+		public int		SpinY 
+		{ 
+			get { return m_upDown.YPosition; }
+		}
+
+		/// <summary>
+		/// Gets the X offset of the first label.
+		/// </summary>
+		public int TextOffsetX 
+		{ 
+			get { return m_iTextOffsetX; }
+		}
+
+		/// <summary>
+		/// Gets they Y offset of the first label.
+		/// </summary>
+		public int TextOffsetY 
+		{ 
+			get { return m_iTextOffsetY; }
+		}
+
+		/// <summary>
+		/// Gets the X offset of the second label.
+		/// </summary>
+		public int TextOffsetX2 
+		{ 
+			get { return m_iTextOffsetX2; }
+		}
+
+		/// <summary>
+		/// Gets the X offset of the third label.
+		/// </summary>
+		public int TextOffsetX3 
+		{ 
+			get { return m_iTextOffsetX3; }
+		}
+
+		/// <summary>
+		/// Gets they Y offset of the third label.
+		/// </summary>
+		public int TextOffsetY3 
+		{ 
+			get { return m_iTextOffsetY3; }
+		}
+
+		/// <summary>
+		/// Gets they Y offset of the first label.
+		/// </summary>
+		public int TextOffsetY2 
+		{ 
+			get { return m_iTextOffsetY2; }
+		}
+
+    /// <summary>
+    /// Gets they X offset of the icon.
+    /// </summary>
+    public int IconOffsetX 
+    { 
+      get { return m_iIconOffsetX; }
+      set { m_iIconOffsetX = value; }
+    }
+
+    /// <summary>
+    /// Gets they Y offset of the icon.
+    /// </summary>
+    public int IconOffsetY 
+    { 
+      get { return m_iIconOffsetY; }
+      set { m_iIconOffsetY = value; }
+    }
+
+    public bool TextVisible1
+    {
+      get { return m_bTextVisible1;}
+      set { m_bTextVisible1=value;}
+    }
+    public bool TextVisible2
+    {
+      get { return m_bTextVisible2;}
+      set { m_bTextVisible2=value;}
+    }
+    public bool TextVisible3
+    {
+      get { return m_bTextVisible3;}
+      set { m_bTextVisible3=value;}
+    }
+		/// <summary>
+		/// Gets the width of the images of the items. 
+		/// </summary>
+		public int ImageWidth 
+		{ 
+			get { return m_iImageWidth; }
+		}
+
+		/// <summary>
+		/// Gets the height of the images of the items. 
+		/// </summary>
+		public int ImageHeight 
+		{ 
+			get { return m_iImageHeight; }
+		}
+
+		/// <summary>
+		/// Gets the name of the texture for the focused item.
+		/// </summary>
+		public string	ButtonFocusName 
+		{ 
+			get { return m_strButtonFocused; }
+		}
+
+		/// <summary>
+		/// Gets the name of the texture for the unfocused item.
+		/// </summary>
+		public string	ButtonNoFocusName 
+		{ 
+			get { return m_strButtonUnfocused; }
+		}
+
+		/// <summary>
+		/// Checks if the x and y coordinates correspond to the current control.
+		/// </summary>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <returns>True if the control was hit.</returns>
+    public override bool HitTest(int x,int y,out int controlID, out bool focused)
+    {
+      controlID=GetID;
+      focused=Focus;
+      int id;
+      bool focus;
+      if (m_vertScrollbar.HitTest(x, y,out id, out focus)) return true;
+
+			if (m_upDown.HitTest(x, y,out id, out focus))
+			{
+				if (m_upDown.GetMaximum() > 1)
+				{
+					m_iSelect = ListType.CONTROL_UPDOWN;
+					m_upDown.Focus = true;
+					if (!m_upDown.Focus) 
+					{
+						m_iSelect = ListType.CONTROL_LIST;
+					}
+					return true;
+				}
+				return true;
+			}
+      if (!base.HitTest(x, y,out id, out focus)) 
+      {
+        return false;
+      }
+			m_iSelect = ListType.CONTROL_LIST;
+			y -= (int)m_dwPosY;
+			m_iCursorY = (y / (m_iItemHeight + m_iSpaceBetweenItems));
+			while (m_iOffset + m_iCursorY >= m_vecItems.Count) m_iCursorY--;
+      if (m_iCursorY >= m_iItemsPerPage)
+        m_iCursorY = m_iItemsPerPage - 1;
+      OnSelectionChanged();
+
+			return true;
+		}
+
+		/// <summary>
+		/// Sorts the list of items in this control.
+		/// </summary>
+		/// <param name="comparer">The comparer on which the sort is based.</param>
+    public void Sort(System.Collections.IComparer comparer)
+    {
+      m_vecItems.Sort(comparer);
+      m_bRefresh = true;
+    }
+
+		/// <summary>
+		/// NeedRefresh() can be called to see if the control needs 2 redraw itself or not.
+		/// </summary>
+		/// <returns>true or false</returns>
+    public override bool NeedRefresh()
+    {
+      bool bRefresh = m_bRefresh;
+      m_bRefresh = false;
+      return bRefresh;
+    }
+
+		/// <summary>
+		/// Get/set if the aspectration of the images of the items needs to be kept.
+		/// </summary>
+    public bool KeepAspectRatio
+    {
+      get { return m_bKeepAspectRatio; }
+      set { m_bKeepAspectRatio = value; }
+    }
+
+		/// <summary>
+		/// Gets the vertical scrollbar.
+		/// </summary>
+    public GUIverticalScrollbar Scrollbar
+    {
+      get { return m_vertScrollbar; }
+    }
+
+    /// <summary>
+    /// Get/set if the control has the focus.
+    /// </summary>
+    public override bool Focus
+    {
+      get { return m_bHasFocus; }
+      set 
+      { 
+        if (m_bHasFocus != value)
+        {
+          m_bHasFocus = value;
+          m_bDrawFocus = true;
+        }
+      }
+    }
+    public void Add(GUIListItem item)
+    {
+      m_vecItems.Add(item);
+      int iPages = m_vecItems.Count / m_iItemsPerPage;
+      if ((m_vecItems.Count % m_iItemsPerPage) != 0) iPages++;
+      m_upDown.SetRange(1, iPages);
+      m_upDown.Value = 1;
+      m_bRefresh = true;
+    }
+    
+    public int PinIconOffsetX
+    {
+      get { return m_iPinIconOffsetX; }
+      set { m_iPinIconOffsetX = value; }
+    }
+	
+    public int PinIconOffsetY
+    {
+      get { return m_iPinIconOffsetY; }
+      set { m_iPinIconOffsetY= value; }
+    }
+	
+    public int PinIconWidth
+    {
+      get { return m_iPinIconWidth; }
+      set 
+      { 
+        m_iPinIconWidth= value; 
+      }
+    }
+    public int PinIconHeight
+    {
+      get { return m_iPinIconHeight; }
+      set 
+      { 
+        m_iPinIconHeight= value; 
+      }
+    }
+    public void ScrollToEnd()
+    {
+      while (m_iOffset + 1 + m_iCursorY < (int)m_vecItems.Count)
+        OnDown();
+    }
+	}
+}

@@ -29,7 +29,13 @@ using MediaPortal.Dialogs;
 using MediaPortal.IR;
 using MediaPortal.Ripper;
 
-
+/// <summary>
+/// performance issues:
+/// guilib
+///   spincontrol : Calls GetTextExtent() for every frame rendered
+///   listcontrol : better to use an array of GUILabelControls
+///   
+/// </summary>
 public class MediaPortalApp : D3DApp, IRender
 {
 
@@ -216,7 +222,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         try
         {
-					
+					if (splashScreen!=null) splashScreen.SetInformation("Initializing DirectX...");
           MediaPortalApp app = new MediaPortalApp();
           if (app.CreateGraphicsSample())
           {
@@ -535,15 +541,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       Recorder.Start();
       AutoPlay.StartListening();
-      //
-      // Kill the splash screen
-      //
-      if (splashScreen != null)
-      {
-        splashScreen.Close();
-        splashScreen.Dispose();
-        splashScreen = null;
-      }
+
 
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
@@ -553,9 +551,19 @@ public class MediaPortalApp : D3DApp, IRender
         msg.Label=strDefault;
         GUIWindowManager.SendThreadMessage(msg);
       }
+      if (splashScreen!=null) splashScreen.SetInformation("Starting plugins...");
       PluginManager.Load();
       PluginManager.Start();
-
+      
+      //
+      // Kill the splash screen
+      //
+      if (splashScreen != null)
+      {
+        splashScreen.Close();
+        splashScreen.Dispose();
+        splashScreen = null;
+      }
     } 
 
     /// <summary>
@@ -714,17 +722,25 @@ public class MediaPortalApp : D3DApp, IRender
       GUITextureManager.Dispose();
       GUIFontManager.Dispose();
 
+      
+      if (splashScreen!=null) splashScreen.SetInformation("Loading strings...");
       GUIGraphicsContext.Skin = @"skin\" + m_strSkin;
       GUIGraphicsContext.ActiveForm = this.Handle;
       GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
       
+      if (splashScreen!=null) splashScreen.SetInformation("Loading fonts...");
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
       
       
+      if (splashScreen!=null) splashScreen.SetInformation("Loading skin...");
       Log.Write("Load skin {0}", m_strSkin);
       GUIWindowManager.Initialize();
+      
+      if (splashScreen!=null) splashScreen.SetInformation("Loading window plugins...");
       PluginManager.LoadWindowPlugins();
+      
+      if (splashScreen!=null) splashScreen.SetInformation("Initializing skin...");
       Log.Write("initialize skin");
       GUIWindowManager.PreInit();
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
