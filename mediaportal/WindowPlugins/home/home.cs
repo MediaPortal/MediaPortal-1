@@ -266,6 +266,7 @@ namespace MediaPortal.GUI.Home
 					plugins=null;
 					m_iCurrentButton=m_iButtons/2;
 					LayoutButtons(0);
+					return;
 				}
 
 				if(useMenus==true && inSubMenu==true) // if gucky´s menu style handling load sub menu tree
@@ -324,15 +325,13 @@ namespace MediaPortal.GUI.Home
 						VerifyButtonIndex(ref buttonIndex);
 						FocusControl(GetID, buttonIndex + 2);
 					}
+					return;
 				}
-				return;
-			}
-			/*	// mouse moved, check which control has the focus
-			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
-			{
 				GUIWindowManager.PreviousWindow();
 				return;
-			}*/
+			}
+			
+			// mouse moved, check which control has the focus
 			if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE )
 			{
 				if (m_bSkipFirstMouseMove) 
