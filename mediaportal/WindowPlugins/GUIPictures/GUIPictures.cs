@@ -1319,11 +1319,12 @@ namespace MediaPortal.GUI.Pictures
 						else
 						{
 							// file rename
-							if (File.Exists(m_strDirectory+"\\"+strSourceName+"."+strExtension))
+							if (File.Exists(item.Path))
 							{
+								string strDestinationFile = m_strDirectory+"\\"+strDestinationName+strExtension;
 								try
-								{
-									File.Move(m_strDirectory+"\\"+strSourceName+"."+strExtension, m_strDirectory+"\\"+strDestinationName+"."+strExtension);
+								{									
+									File.Move(item.Path, strDestinationFile);
 								}
 								catch(Exception) 
 								{
