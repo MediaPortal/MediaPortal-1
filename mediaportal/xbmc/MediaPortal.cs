@@ -281,8 +281,9 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 			}
 
-			Log.Write("  Stop any known recording processes");
-			Utils.KillExternalTVProcesses();
+			//following crashes on some pc's, dunno why
+			//Log.Write("  Stop any known recording processes");
+			//Utils.KillExternalTVProcesses();
       try
       {
 				if (splashScreen!=null) splashScreen.SetInformation("Initializing DirectX...");
