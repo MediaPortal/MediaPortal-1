@@ -123,9 +123,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			LoadConfig();
 			TVChannel	tv=new TVChannel();
-
-			
-			
 		}
 
 		// globals
@@ -134,7 +131,8 @@ namespace MediaPortal.Configuration.Sections
 		private DVBSections.Transponder[]	transpList=null;
 		private bool						m_bIsDirty=false;
 		private bool						m_stopEPGGrab=false;
-//		string								m_currentSatName="";
+		string								m_currentSatName="";
+		string[]							m_satNames=new string[4]{"Unknown Sat 1","Unknown Sat 2","Unknown Sat 3","Unknown Sat 4"};
 
 		//
 
@@ -146,10 +144,10 @@ namespace MediaPortal.Configuration.Sections
 			LoadConfig();
 			m_dvbSec=new DVBSections();
 			m_b2c2Helper=new DVBSkyStar2Helper();
-
+			// create graph+run it
 			// TODO: Initialisierungen nach dem Aufruf von InitializeComponent hinzufügen
-
 		}
+
 
 		/// <summary> 
 		/// Die verwendeten Ressourcen bereinigen.
@@ -161,7 +159,6 @@ namespace MediaPortal.Configuration.Sections
 				if(components != null)
 				{
 					components.Dispose();
-					m_b2c2Helper.CleanUp();
 				}
 			}
 			base.Dispose( disposing );
@@ -630,6 +627,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView1.Name = "treeView1";
 			this.treeView1.SelectedImageIndex = -1;
 			this.treeView1.Size = new System.Drawing.Size(232, 200);
+			this.treeView1.Sorted = true;
 			this.treeView1.TabIndex = 5;
 			this.treeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeSelect);
 			this.treeView1.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeCheck);
@@ -1329,14 +1327,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			
 			comboBox3.Items.Clear();
-			if(sat1.Text.Length>0)
-				comboBox3.Items.Add(sat1.Text);
-			if(sat2.Text.Length>0)
-				comboBox3.Items.Add(sat2.Text);
-			if(sat3.Text.Length>0)
-				comboBox3.Items.Add(sat3.Text);
-			if(sat4.Text.Length>0)
-				comboBox3.Items.Add(sat4.Text);
 			// disable ...
 			if(comboBox3.Text!="")
 			{
@@ -1366,6 +1356,27 @@ namespace MediaPortal.Configuration.Sections
 				button5.Enabled=false;
 			}
 			//label16.Visible=checkBox4.Checked;
+			if(tabControl1.SelectedIndex==1)
+			{
+				if(sat1.Text!="")
+					m_satNames[0]=ReadTPList(sat1.Text);
+				if(sat2.Text!="")
+					m_satNames[1]=ReadTPList(sat2.Text);
+				if(sat3.Text!="")
+					m_satNames[2]=ReadTPList(sat3.Text);
+				if(sat4.Text!="")
+					m_satNames[3]=ReadTPList(sat4.Text);
+			}
+			treeView4.Nodes.Clear();
+			if(sat1.Text.Length>0)
+				comboBox3.Items.Add(m_satNames[0]);
+			if(sat2.Text.Length>0)
+				comboBox3.Items.Add(m_satNames[1]);
+			if(sat3.Text.Length>0)
+				comboBox3.Items.Add(m_satNames[2]);
+			if(sat4.Text.Length>0)
+				comboBox3.Items.Add(m_satNames[3]);
+
 
 			if(tabControl1.SelectedIndex==2)
 			{
@@ -1485,6 +1496,8 @@ namespace MediaPortal.Configuration.Sections
 			if(res==DialogResult.OK)
 			{
 				sat1.Text=ofd.FileName;
+				m_satNames[0]=ReadTPList(ofd.FileName);
+
 			}
 		}
 
@@ -1496,6 +1509,7 @@ namespace MediaPortal.Configuration.Sections
 			if(res==DialogResult.OK)
 			{
 				sat3.Text=ofd.FileName;
+				m_satNames[2]=ReadTPList(ofd.FileName);
 			}
 
 		}
@@ -1508,6 +1522,7 @@ namespace MediaPortal.Configuration.Sections
 			if(res==DialogResult.OK)
 			{
 				sat4.Text=ofd.FileName;
+				m_satNames[3]=ReadTPList(ofd.FileName);
 			}
 
 		}
@@ -1518,6 +1533,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			SaveConfig();
 			SaveChannelList();
+			m_b2c2Helper.CleanUp();
+
 		}
 
 
@@ -1691,17 +1708,19 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 		//
-		public void ReadTPList (string fileName)
+		public string ReadTPList (string fileName)
 		{
 			string[] tpdata;
 			string line;
+			string satNameFromFile="";
 			System.IO.TextReader tin;
 			int count = 0;
 			// set diseq & lnb
 			if(System.IO.File.Exists(fileName)==false)
-				return;
+				return "";
 			tin = System.IO.File.OpenText(fileName);
 			treeView4.Nodes.Clear();
+			m_currentSatName="";
 			do
 			{
 				line = null;
@@ -1709,13 +1728,13 @@ namespace MediaPortal.Configuration.Sections
 				if(line!=null)
 					if (line.Length > 0)
 					{
-//						if(line.IndexOf("=")>0)
-//						{
-//							string[] satName=line.Split(new char[]{'='});
-//							if(satName.Length==2)
-//								if(satName[0].ToLower()=="satname")
-//									m_currentSatName=satName[1];
-//						}
+						if(line.IndexOf("=")>0)
+						{
+							string[] satName=line.Split(new char[]{'='});
+							if(satName.Length==2)
+								if(satName[0].ToLower()=="satname")
+									satNameFromFile=satName[1];
+						}
 						if(line.StartsWith(";"))
 							continue;
 						tpdata = line.Split(new char[]{','});
@@ -1732,15 +1751,37 @@ namespace MediaPortal.Configuration.Sections
 					}
 			} while (!(line == null));
 			
-			count -= 1;
+			if(satNameFromFile=="")
+				return "Unknown Sat";
+			return satNameFromFile;
 		}
 
 		private void comboBox3_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboBox3.Text!="")
 			{
-				ReadTPList(comboBox3.Text);
-				button5.Enabled=true;
+				string fileName="";
+				int index=comboBox3.SelectedIndex;
+				switch(index)
+				{
+					case 0:
+						fileName=sat1.Text;
+						break;
+					case 1:
+						fileName=sat2.Text;
+						break;
+					case 2:
+						fileName=sat3.Text;
+						break;
+					case 3:
+						fileName=sat4.Text;
+						break;
+				}
+				if(System.IO.File.Exists(fileName)==true)
+				{
+					ReadTPList(fileName);
+					button5.Enabled=true;
+				}
 			}
 			else
 				button5.Enabled=false;
@@ -1748,8 +1789,9 @@ namespace MediaPortal.Configuration.Sections
 
 		private void button5_Click(object sender, System.EventArgs e)
 		{
+			m_b2c2Helper.Run();
+
 			DVBSections.Transponder[] list=null;
-			string					fileName="";
 			int						dIndex=comboBox3.SelectedIndex;
 			int						lnbkhz=0;
 			int						diseqc=0;
@@ -1763,11 +1805,6 @@ namespace MediaPortal.Configuration.Sections
 			int						cband=0;
 			int						lnbKinds=0;
             			
-			if(comboBox3.SelectedItem!=null)
-				fileName=comboBox3.SelectedItem.ToString();
-			else
-				return;
-
 			if(comboBox3.Text=="")
 			{
 				button5.Enabled=false;
@@ -1847,30 +1884,32 @@ namespace MediaPortal.Configuration.Sections
 
 			//int lnbkhz=lnbselect.SelectedIndex;
 
+			if(comboBox3.Text!=null)
+				m_currentSatName=comboBox3.Text;
 
-			if(comboBox3.SelectedItem.ToString()!="")
+			try
 			{
-				if(System.IO.File.Exists(fileName)==true)
-				{
-					if(m_b2c2Helper.Run()==true)
-					{
-						m_b2c2Helper.OpenTPLFile(ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback,treeView4);
-						m_bIsDirty=true;
-						// setting up list
-						transpList=(DVBSections.Transponder[])list.Clone();
-						m_b2c2Helper.CleanUp();
-						feedback.Text="Ready.";
-						progressBar1.Value=progressBar1.Minimum;
-						BuildUpTreeView(treeView1);
-						FindUsedLangs();
-
-					}// dvbsec.run
-
-				}// file exists
+				tabPage1.Enabled=false;
+				m_b2c2Helper.OpenTPLFile(ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback,treeView4);
+				m_bIsDirty=true;
+				// setting up list
+				transpList=(DVBSections.Transponder[])list.Clone();
+				feedback.Text="Ready.";
+				progressBar1.Value=progressBar1.Minimum;
+				BuildUpTreeView(treeView1);
+				FindUsedLangs();
+				tabPage1.Enabled=true;
 			}
+			catch(Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+
+
 			button5.Enabled=true;
 			button7.Enabled=false;
 
+			m_b2c2Helper.CleanUp();
 		}
 
 		void FindUsedLangs()
@@ -1878,28 +1917,29 @@ namespace MediaPortal.Configuration.Sections
 			comboBox1.Items.Clear();
 			Hashtable langTab=new Hashtable();
 
-			foreach(TreeNode tn in treeView1.Nodes)
-			{
-				foreach(TreeNode tnChild in tn.Nodes)
+			foreach(TreeNode sats in treeView1.Nodes)
+				foreach(TreeNode tn in sats.Nodes)
 				{
-					if(tnChild.Tag==null)
-						continue;
-					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
-					ArrayList	pids=ch.pid_list;
-					foreach(DVBSections.PMTData pid in pids)
+					foreach(TreeNode tnChild in tn.Nodes)
 					{
-						if(pid.data!=null)
+						if(tnChild.Tag==null)
+							continue;
+						DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+						ArrayList	pids=ch.pid_list;
+						foreach(DVBSections.PMTData pid in pids)
 						{
-							
-							if(langTab.Contains(pid.data)==false && pid.data!="")
+							if(pid.data!=null)
 							{
-								langTab.Add(pid.data,pid.data);
-								comboBox1.Items.Add(pid.data);
+							
+								if(langTab.Contains(pid.data)==false && pid.data!="")
+								{
+									langTab.Add(pid.data,pid.data);
+									comboBox1.Items.Add(pid.data);
+								}
 							}
 						}
 					}
 				}
-			}
 
 		}
 
@@ -1917,11 +1957,9 @@ namespace MediaPortal.Configuration.Sections
 			if(list.Length==0)
 				return;
 
-			//tvObj.Nodes.Clear();
-			
-			// radio television
-			
-			// ckeck providers
+			TreeNode satNode=new TreeNode(m_currentSatName);
+			tvObj.Nodes.Add(satNode);
+
 			foreach(DVBSections.Transponder transponder in list)
 			{
 				if(transponder.channels!=null)
@@ -1936,7 +1974,7 @@ namespace MediaPortal.Configuration.Sections
 					if(provName.Length>0)
 						{
 							bool flag=false;
-							foreach(TreeNode tn in tvObj.Nodes)
+							foreach(TreeNode tn in satNode.Nodes)
 							{
 								string tagText=(string)tn.Tag;
 
@@ -1951,7 +1989,7 @@ namespace MediaPortal.Configuration.Sections
 								TreeNode node=new TreeNode();
 								node.Tag=provName;
 								node.Text=provName;
-								tvObj.Nodes.Add(node);
+								satNode.Nodes.Add(node);
 								provider.Add(node);
 							}
 						}
@@ -2056,82 +2094,83 @@ namespace MediaPortal.Configuration.Sections
 			if(m_bIsDirty==true)
 				TVDatabase.RemoveAllSatChannels();
 
-			foreach(TreeNode tn in treeView1.Nodes)
-			{
-				foreach(TreeNode tnChild in tn.Nodes)
+			foreach(TreeNode sats in treeView1.Nodes)
+				foreach(TreeNode tn in sats.Nodes)
 				{
-					if(tnChild.Tag==null)
-						continue;
-
-					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
-					if(tnChild.Checked==true)
+					foreach(TreeNode tnChild in tn.Nodes)
 					{
-						if(ch.serviceType==1) // television
+						if(tnChild.Tag==null)
+							continue;
+
+						DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+						if(tnChild.Checked==true)
 						{
-							int ret=-1;
-							DShowNET.AnalogVideoStandard standard=new DShowNET.AnalogVideoStandard();
-							standard=DShowNET.AnalogVideoStandard.None;
-							string channelText=ch.service_name;
-							if(channelText==null)
-								channelText="unnamed service "+televisionCounter.ToString();
-							TVChannel tv=new TVChannel();
-							tv.VisibleInGuide=true;
-							tv.Name=channelText;//+" ("+n.ToString()+")";
-							tv.Frequency=0;
-							tv.Number=televisionCounter;
-							tv.XMLId="";
-							int dbID=TVDatabase.AddChannel(tv);
-							if(dbID==-1)
-								continue;
-							tv.ID=dbID;
-							string langString="";
-							int audioPid=GetAudioPid(ch.pid_list,out langString);
-							int videoPid=GetVideoPid(ch.pid_list);
-							int teleTextPid=GetTeletextPid(ch.pid_list);
-							int ac3Pid=GetAC3Pid(ch.pid_list);
-							int[] otherAudio;
-							string[] otherAudioLang;
-							GetOtherAudioPids(ch.pid_list,audioPid,out otherAudio,out otherAudioLang);
+							if(ch.serviceType==1) // television
+							{
+								int ret=-1;
+								DShowNET.AnalogVideoStandard standard=new DShowNET.AnalogVideoStandard();
+								standard=DShowNET.AnalogVideoStandard.None;
+								string channelText=ch.service_name;
+								if(channelText==null)
+									channelText="unnamed service "+televisionCounter.ToString();
+								TVChannel tv=new TVChannel();
+								tv.VisibleInGuide=true;
+								tv.Name=channelText;//+" ("+n.ToString()+")";
+								tv.Frequency=0;
+								tv.Number=televisionCounter;
+								tv.XMLId="";
+								int dbID=TVDatabase.AddChannel(tv);
+								if(dbID==-1)
+									continue;
+								tv.ID=dbID;
+								string langString="";
+								int audioPid=GetAudioPid(ch.pid_list,out langString);
+								int videoPid=GetVideoPid(ch.pid_list);
+								int teleTextPid=GetTeletextPid(ch.pid_list);
+								int ac3Pid=GetAC3Pid(ch.pid_list);
+								int[] otherAudio;
+								string[] otherAudioLang;
+								GetOtherAudioPids(ch.pid_list,audioPid,out otherAudio,out otherAudioLang);
 
-							if (otherAudio==null)
-								otherAudio=new int[3]{0,0,0};
+								if (otherAudio==null)
+									otherAudio=new int[3]{0,0,0};
 
-							if (otherAudioLang==null)
-								otherAudioLang=new string[3]{"","",""};
+								if (otherAudioLang==null)
+									otherAudioLang=new string[3]{"","",""};
 
-							ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-								ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-								audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],ch.pidCache,0,ch.network_pmt_PID);
-							televisionCounter++;
-						}
+								ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+									ch.serviceType,ch.service_provider_name,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+									audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],otherAudio[2],teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],ch.pidCache,0,ch.network_pmt_PID);
+								televisionCounter++;
+							}
 
-						if(ch.serviceType==2) // for radio
-						{
-							MediaPortal.Radio.Database.RadioStation rc=new MediaPortal.Radio.Database.RadioStation();
-							string channelText=ch.service_name;
-							if(channelText==null)
-								channelText="unnamed service "+radioCounter.ToString();
-							rc.Name=channelText;
+							if(ch.serviceType==2) // for radio
+							{
+								MediaPortal.Radio.Database.RadioStation rc=new MediaPortal.Radio.Database.RadioStation();
+								string channelText=ch.service_name;
+								if(channelText==null)
+									channelText="unnamed service "+radioCounter.ToString();
+								rc.Name=channelText;
 						
-							rc.URL="";
-							rc.Genre=ch.service_provider_name;
-							rc.Frequency=(radioCounter<< 16);
-							string lang="";
-							int dbID=RadioDatabase.AddStation(ref rc);
-							if(dbID==-1)
-								continue;
-							int audioPid=GetAudioPid(ch.pid_list,out lang);
-							int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
-								ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
-								audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,lang,"","",ch.pidCache,0,ch.network_pmt_PID);
-							radioCounter++;
+								rc.URL="";
+								rc.Genre=ch.service_provider_name;
+								rc.Frequency=(radioCounter<< 16);
+								string lang="";
+								int dbID=RadioDatabase.AddStation(ref rc);
+								if(dbID==-1)
+									continue;
+								int audioPid=GetAudioPid(ch.pid_list,out lang);
+								int ret=TVDatabase.AddSatChannel(radioCounter,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
+									ch.serviceType,ch.service_provider_name,rc.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
+									audioPid,0,0,0,0,ch.network_pmt_PID,0,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,lang,"","",ch.pidCache,0,ch.network_pmt_PID);
+								radioCounter++;
 
-						}
-					}	
+							}
+						}	
+
+					}
 
 				}
-
-			}
 		}
 		//
 		private int GetAudioPid(ArrayList ch,out string lang)
@@ -2276,6 +2315,7 @@ namespace MediaPortal.Configuration.Sections
 			if(res==DialogResult.OK)
 			{
 				sat2.Text=ofd.FileName;
+				m_satNames[1]=ReadTPList(ofd.FileName);
 			}
 
 		}
@@ -2303,8 +2343,9 @@ namespace MediaPortal.Configuration.Sections
 
 		void DeselectScrambledChannels()
 		{
-			foreach(TreeNode tn in treeView1.Nodes)
-			{
+			foreach(TreeNode sats in treeView1.Nodes)
+				foreach(TreeNode tn in sats.Nodes)
+				{
 				foreach(TreeNode tnChild in tn.Nodes)
 				{
 					if(tnChild.Tag==null)
@@ -2318,17 +2359,20 @@ namespace MediaPortal.Configuration.Sections
 		}
 		void SelectScrambledChannels()
 		{
-			foreach(TreeNode tn in treeView1.Nodes)
-			{
-				foreach(TreeNode tnChild in tn.Nodes)
+			
+			foreach(TreeNode sats in treeView1.Nodes)
+				foreach(TreeNode tn in sats.Nodes)
 				{
-					if(tnChild.Tag==null)
-						continue;
-					DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
-					if(ch.scrambled==true)
-						tnChild.Checked=true;
+				
+					foreach(TreeNode tnChild in tn.Nodes)
+					{
+						if(tnChild.Tag==null)
+							continue;
+						DVBSections.ChannelInfo ch=(DVBSections.ChannelInfo)tnChild.Tag;
+						if(ch.scrambled==true)
+							tnChild.Checked=true;
+					}
 				}
-			}
 
 		}
 		private void button10_Click(object sender, System.EventArgs e)
@@ -2550,7 +2594,6 @@ namespace MediaPortal.Configuration.Sections
 			m_stopEPGGrab=false;
 			button16.Enabled=true;
 			button15.Enabled=false;
-			DVBSkyStar2Helper b2c2Helper=new DVBSkyStar2Helper();
 			int counter=0;
 			bool tuned=false;
 			if(m_b2c2Helper.Run()==false)
@@ -2570,7 +2613,6 @@ namespace MediaPortal.Configuration.Sections
 						//System.Threading.Thread.Sleep(200);
 						if(tuned==false)
 							return ;
-						m_b2c2Helper.ClearPids();
 						counter=m_dvbSec.GrabEIT(ch,m_b2c2Helper.Mpeg2DataFilter);
 						label17.Text=counter.ToString();
 						try
