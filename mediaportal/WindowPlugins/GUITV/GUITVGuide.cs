@@ -1670,6 +1670,15 @@ namespace MediaPortal.GUI.TV
         {
           vertLine.IsVisible=true;
         
+          DateTime dateNow=DateTime.Now.Date;
+          DateTime datePrev=m_dtTime.Date;
+          TimeSpan ts=dateNow-datePrev;
+          if (ts.TotalDays==1)
+          {
+              m_dtTime=DateTime.Now;
+          }
+          
+          
           if (m_dtTime.Date.Equals(DateTime.Now.Date) )
           {
             int iStartX = GetControl((int)Controls.LABEL_TIME1).XPosition;
@@ -1679,7 +1688,7 @@ namespace MediaPortal.GUI.TV
             int iMin=m_dtTime.Minute;
             int iStartTime=m_dtTime.Hour*60+iMin;
             int iCurTime=DateTime.Now.Hour*60+DateTime.Now.Minute;
-            if (iCurTime>iStartTime)
+            if (iCurTime>=iStartTime)
               iCurTime-=iStartTime;
             else
               iCurTime=24*60+iCurTime-iStartTime;
