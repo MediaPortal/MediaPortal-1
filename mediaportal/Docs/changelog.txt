@@ -1,3 +1,5 @@
+
+------------- 0.0.0.4 ------------
 18-08-2004  my music    : fixed : F3 on music artists hangs
 18-08-2004  my pictures : fixed : out of virtual memory
 18-08-2004  general     : added : Option to switch between full/windowed mode
