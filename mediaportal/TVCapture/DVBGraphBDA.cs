@@ -1001,7 +1001,6 @@ namespace MediaPortal.TV.Recording
 					//get the DVB-S tuning details from the tv database
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
 					Log.Write("DVBGraphBDA:TuneChannel() get DVBS tuning details");
-					int polarisation=0,symbolrate=0,innerFec=0;
 					DVBChannel ch=new DVBChannel();
 					if(TVDatabase.GetSatChannel(channel.ID,1,ref ch)==false)//only television
 					{
@@ -1026,29 +1025,29 @@ namespace MediaPortal.TV.Recording
 					}
 					//set the properties on the new tuning request
 					Log.Write("DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
-					myLocator.CarrierFrequency		= frequency;
-					if (polarisation==0) 
+					myLocator.CarrierFrequency		= ch.Frequency;
+					if (ch.Polarity==0) 
 						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
 					else
 						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
 
-					myLocator.SymbolRate				  = symbolrate;
-					myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
-					myTuneRequest.ONID	= ONID;		//original network id
-					myTuneRequest.TSID	= TSID;		//transport stream id
-					myTuneRequest.SID		= SID;		//service id
+					myLocator.SymbolRate= ch.Symbolrate;
+					myLocator.InnerFEC	= (TunerLib.FECMethod)ch.FEC;
+					myTuneRequest.ONID	= ch.NetworkID;		//original network id
+					myTuneRequest.TSID	= ch.TransportStreamID;		//transport stream id
+					myTuneRequest.SID		= ch.ProgramNumber;		//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					SetLNBSettings(myTuneRequest);
 					
 
 					currentTuningObject=new DVBChannel();
-					currentTuningObject.Frequency=frequency;
-					currentTuningObject.Symbolrate=symbolrate;
-					currentTuningObject.FEC=innerFec;
-					currentTuningObject.Polarity=polarisation;
-					currentTuningObject.NetworkID=ONID;
-					currentTuningObject.TransportStreamID=TSID;
-					currentTuningObject.ProgramNumber=SID;
+					currentTuningObject.Frequency=ch.Frequency;
+					currentTuningObject.Symbolrate=ch.Symbolrate;
+					currentTuningObject.FEC=ch.FEC;
+					currentTuningObject.Polarity=ch.Polarity;
+					currentTuningObject.NetworkID=ch.NetworkID;
+					currentTuningObject.TransportStreamID=ch.TransportStreamID;
+					currentTuningObject.ProgramNumber=ch.ProgramNumber;
 				} break;
 
 				case NetworkType.DVBT: 
