@@ -2303,6 +2303,7 @@
 	<value>Reset</value>
 </string>
 <!-- End My Alarm Strings -->
+
 <string>
 	<id>900</id>
 	<value>Resume movie from last time ?</value>
@@ -2555,7 +2556,7 @@
 
 <string>
 	<id>970</id>
-	<value>End show</value>
+	<value>Previous window</value>
 </string>
 
 
