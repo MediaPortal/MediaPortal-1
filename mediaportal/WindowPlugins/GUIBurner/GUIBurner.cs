@@ -1034,6 +1034,7 @@ namespace MediaPortal.GUI.GUIBurner
 					{
 						try 
 						{
+							DateTime cur=DateTime.Now;
 							foreach (string file in backupFiles) 
 							{
 								burnClass.AddFile(file,file);
@@ -1314,32 +1315,6 @@ namespace MediaPortal.GUI.GUIBurner
 			}
 		}
 
-/*
-		private void ParseFolder(DirectoryInfo source, string ext) 
-		{
-			foreach(FileInfo fi in source.GetFiles()) 
-			{
-				if (ext!="") 
-				{
-					if (fi.Extension==ext) 
-					{
-						backupFiles.Add( fi.FullName);
-					}
-				} 
-				else 
-				{
-					backupFiles.Add( fi.FullName);
-				}
-			}
-			if (ext=="") 
-			{
-				foreach(DirectoryInfo subDir in source.GetDirectories())
-				{
-					ParseFolder(subDir,ext);
-				}
-			}
-		}
-		*/
 		#endregion
 
 		#region Timer Functions		
