@@ -86,6 +86,7 @@ namespace ProgramsDatabase
 			base.Refresh(bGUIMode);
 			DeleteFiles();
 			DoMyFileIniImport(bGUIMode);
+			FixFileLinks();
 			LoadFiles();
 		}
 

@@ -3,13 +3,23 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Diagnostics;
+
+using ProgramsDatabase;
+using Programs.Utils;
+using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.GUIPrograms
 {
 	public class AppSettingsRoot : WindowPlugins.GUIPrograms.AppSettings
 	{
 		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label rootItemLabel;
+		private System.Windows.Forms.TextBox PluginTitle;
+		private System.Windows.Forms.Button ResetButton;
 		private System.ComponentModel.IContainer components = null;
+
+		bool Loaded = false;
 
 		public AppSettingsRoot()
 		{
@@ -42,6 +52,9 @@ namespace WindowPlugins.GUIPrograms
 		private void InitializeComponent()
 		{
 			this.label3 = new System.Windows.Forms.Label();
+			this.rootItemLabel = new System.Windows.Forms.Label();
+			this.PluginTitle = new System.Windows.Forms.TextBox();
+			this.ResetButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// label3
@@ -53,15 +66,89 @@ namespace WindowPlugins.GUIPrograms
 			this.label3.TabIndex = 81;
 			this.label3.Text = "my Programs root";
 			// 
+			// rootItemLabel
+			// 
+			this.rootItemLabel.Location = new System.Drawing.Point(8, 51);
+			this.rootItemLabel.Name = "rootItemLabel";
+			this.rootItemLabel.Size = new System.Drawing.Size(64, 16);
+			this.rootItemLabel.TabIndex = 82;
+			this.rootItemLabel.Text = "Plugin title";
+			// 
+			// PluginTitle
+			// 
+			this.PluginTitle.Location = new System.Drawing.Point(72, 48);
+			this.PluginTitle.Name = "PluginTitle";
+			this.PluginTitle.Size = new System.Drawing.Size(171, 20);
+			this.PluginTitle.TabIndex = 85;
+			this.PluginTitle.Text = "";
+			this.toolTip.SetToolTip(this.PluginTitle, "This text will appear in the MP home screen.");
+			// 
+			// ResetButton
+			// 
+			this.ResetButton.Location = new System.Drawing.Point(249, 46);
+			this.ResetButton.Name = "ResetButton";
+			this.ResetButton.Size = new System.Drawing.Size(72, 24);
+			this.ResetButton.TabIndex = 86;
+			this.ResetButton.Text = "Reset";
+			this.toolTip.SetToolTip(this.ResetButton, "Reset to the default localized plugin title");
+			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+			// 
 			// AppSettingsRoot
 			// 
+			this.Controls.Add(this.ResetButton);
+			this.Controls.Add(this.PluginTitle);
+			this.Controls.Add(this.rootItemLabel);
 			this.Controls.Add(this.label3);
 			this.Name = "AppSettingsRoot";
-			this.Size = new System.Drawing.Size(256, 248);
+			this.Size = new System.Drawing.Size(336, 248);
+			this.Load += new System.EventHandler(this.AppSettingsRoot_Load);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
+
+
+
+		public override bool AppObj2Form(AppItem curApp)
+		{
+			PluginTitle.Text = ProgramSettings.ReadSetting(ProgramUtils.cPLUGINTITLE);
+			if (PluginTitle.Text == "")
+			{
+				// doesn't work! PluginTitle.Text = GUILocalizeStrings.Get(0);
+				PluginTitle.Text = "My Programs";
+			}
+			return true;
+		}
+
+
+		public override void Form2AppObj(AppItem curApp)
+		{
+			// curApp is null!
+			if (Loaded)
+			{
+				if ((PluginTitle.Text != "") && (PluginTitle.Text != "My Programs"))
+				{
+					ProgramSettings.WriteSetting(ProgramUtils.cPLUGINTITLE, PluginTitle.Text);
+				}
+				else
+				{
+					ProgramSettings.DeleteSetting(ProgramUtils.cPLUGINTITLE);
+				}
+			}
+		}
+
+		private void ResetButton_Click(object sender, System.EventArgs e)
+		{
+			PluginTitle.Text = "My Programs";
+		}
+
+		private void AppSettingsRoot_Load(object sender, System.EventArgs e)
+		{
+			AppObj2Form(null);
+			Loaded = true;
+		}
+
+
 	}
 }
 

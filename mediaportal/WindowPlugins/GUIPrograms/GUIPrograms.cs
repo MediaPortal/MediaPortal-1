@@ -34,12 +34,13 @@ namespace WindowPlugins.GUIPrograms
 	{
 
 		[Serializable]
-		public class MapSettings
+			public class MapSettings
 		{
 			protected int   _SortBy;
 			protected int   _ViewAs;
 			protected bool _SortAscending;
 			protected int _LastAppID;
+			protected int _LastFileID;
 
 			public MapSettings()
 			{
@@ -47,6 +48,7 @@ namespace WindowPlugins.GUIPrograms
 				_ViewAs=0;//list
 				_SortAscending=true;
 				_LastAppID=-1;
+				_LastFileID=-1;
 			}
 
 
@@ -78,6 +80,13 @@ namespace WindowPlugins.GUIPrograms
 				set { _LastAppID=value;}
 			}
 
+			[XmlElement("LastFileID")]
+			public int LastFileID
+			{
+				get { return _LastFileID;}
+				set { _LastFileID=value;}
+			}
+
 		}
 
 		enum View
@@ -90,6 +99,7 @@ namespace WindowPlugins.GUIPrograms
 
 		static Applist apps = ProgramsDatabase.ProgramDatabase.AppList;
 		AppItem lastApp = null;
+		string lastFilepath = "";
 		MapSettings       _MapSettings = new MapSettings();
 
 		/// <summary>
@@ -172,7 +182,8 @@ namespace WindowPlugins.GUIPrograms
 
 		public override void OnAction(Action action)
 		{
-			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			//			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
 				// <ESC> keypress in some myProgram Menu => jump to main menu
 				SaveFolderSettings("");
@@ -207,20 +218,20 @@ namespace WindowPlugins.GUIPrograms
 					base.OnMessage(message);
 					LoadFolderSettings("");
 					lastApp = apps.GetAppByID(_MapSettings.LastAppID);
-					if (lastApp != null) 
+					if (lastApp != null)
 					{
-						lastApp.DisplayFiles(null); 
+						lastFilepath = lastApp.DefaultFilepath();
 					}
 					else
 					{
-						DisplayApplications();
+						lastFilepath = "";
 					}
+					UpdateListControl();
 					UpdateButtons();
 					ShowThumbPanel();
 					return true;
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-//					lastApp = null;
 					SaveSettings();
 					break;
 
@@ -257,56 +268,24 @@ namespace WindowPlugins.GUIPrograms
 						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
 						{
 							GUIListItem item = GetSelectedItem();
-							if( item.IsFolder )
+							if( !item.IsFolder )
 							{
-								if( item.Label.Equals( ProgramUtils.cBackLabel ) )
-								{
-									// "back" - item was clicked
-									if (lastApp != null)
-									{
-										// in filescreen....
-										bool bTopLevel = lastApp.BackItemClick(item);
-										if (bTopLevel)
-										{
-											lastApp = null;
-											_MapSettings.LastAppID = -1;
-											DisplayApplications();
-										}
-										UpdateButtons();
-									}
-									else
-									{
-										// in appscreen.... (disabled because back button is not visible anymore...)
-										GUIWindowManager.PreviousWindow(); 
-									}
-								}
-								else
-								{
-									if (lastApp == null)
-									{
-										// application-item clicked
-										if (item.MusicTag != null)
-										{
-											lastApp = (AppItem)item.MusicTag;
-											_MapSettings.LastAppID = lastApp.AppID;
-											lastApp.DisplayFiles(null); 
-										}
-									}
-									else 
-									{
-										// subfolder clicked
-										lastApp.DisplayFiles(item); 
-									}
-									UpdateButtons();
-								}
+								// non-folder item clicked => always a fileitem!
+								FileItemClicked(item);
 							}
 							else
 							{
-								// file item was clicked => launch it!
-								// string strFile = item.Label;
-								if (lastApp != null) 
+								// folder-item clicked.... 
+								if( item.Label.Equals( ProgramUtils.cBackLabel ) )
 								{
-									lastApp.LaunchFile(item);
+									BackItemClicked(item);
+									UpdateButtons();
+								}
+								else
+								{
+									// application-item or subfolder
+									FolderItemClicked(item);
+									UpdateButtons();
 								}
 							}
 						}
@@ -339,7 +318,8 @@ namespace WindowPlugins.GUIPrograms
 						if (lastApp != null)
 						{
 							lastApp.Refresh(true);
-							lastApp.DisplayFiles(null);
+							lastFilepath = lastApp.DefaultFilepath();
+							UpdateListControl();
 						}
 					}
 					break;
@@ -352,8 +332,106 @@ namespace WindowPlugins.GUIPrograms
 			if (lastApp == null) 
 			{return false;}
 			else
-			{return lastApp.RefreshButtonVisible();}
+			{
+				return (lastApp.RefreshButtonVisible() && lastApp.GUIRefreshPossible && lastApp.EnableGUIRefresh);
+			}
 		}
+
+		void FileItemClicked(GUIListItem item)
+		{
+			// file item was clicked => launch it!
+			// string strFile = item.Label;
+			if (lastApp != null) 
+			{
+				lastApp.LaunchFile(item);
+			}
+		}
+
+		void FolderItemClicked(GUIListItem item)
+		{
+			if (item.MusicTag != null)
+			{
+				if (item.MusicTag is AppItem)
+				{
+					bool bPinOk = true;
+					AppItem candidate = (AppItem)item.MusicTag;
+					if (candidate.Pincode > 0)
+					{
+						bPinOk = candidate.CheckPincode();
+					}
+					if (bPinOk)
+					{
+						lastApp = candidate;
+						_MapSettings.LastAppID = lastApp.AppID;
+						lastFilepath = lastApp.DefaultFilepath();
+					}
+				}
+				else if (item.MusicTag is FileItem)
+				{
+					// example: subfolder in directory-cache mode
+					// => set filepath which will be a search criteria for sql / browse
+					if (lastFilepath == "")
+					{
+						// first subfolder
+						lastFilepath = lastApp.FileDirectory + "\\" + item.Label;
+					}
+					else
+					{
+						// subsequent subfolder
+						lastFilepath = lastFilepath + "\\" + item.Label;
+					}
+				}
+				UpdateListControl();
+			}
+			else
+			{
+				// tag is null
+				// example: subfolder in directory-browse mode
+				lastFilepath = item.Path;
+				UpdateListControl();
+			}
+		}
+
+		void BackItemClicked(GUIListItem item)
+		{
+			if (lastApp != null)
+			{
+				// debug: Log.Write("lastFilepath {0} / lastApp.FileDirectory {1} / lastApp.Title {2}", this.lastFilepath, lastApp.FileDirectory, lastApp.Title);
+				if ((lastFilepath != null) && (lastFilepath != "") && (lastFilepath != lastApp.FileDirectory))
+				{
+					// back item in flielist clicked
+					string strNewPath = System.IO.Path.GetDirectoryName(lastFilepath);
+					lastFilepath = strNewPath;
+				}
+				else
+				{
+					// back item in application list clicked
+					// go to father item
+					lastApp = apps.GetAppByID(lastApp.FatherID);
+					if (lastApp != null)
+					{
+						_MapSettings.LastAppID = lastApp.AppID;
+						lastFilepath = lastApp.DefaultFilepath(); 
+					}
+					else
+					{
+						// back to home screen.....
+						_MapSettings.LastAppID = -1;
+						lastFilepath = "";
+					}
+				}
+
+				UpdateListControl();
+			}
+			else
+			{
+				// from root.... go back to main menu
+				GUIWindowManager.PreviousWindow(); 
+			}
+
+
+		}
+
 
 		void UpdateButtons()
 		{
@@ -370,7 +448,7 @@ namespace WindowPlugins.GUIPrograms
 				GUIControl.HideControl(GetID, (int)Controls.CONTROL_BTNREFRESH);
 			}
 
-		    // display apptitle if available.....
+			// display apptitle if available.....
 			if (lastApp != null)
 			{
 				GUIControl.HideControl(GetID, (int)Controls.CONTROL_LBLMYPROGRAMS);
@@ -429,29 +507,132 @@ namespace WindowPlugins.GUIPrograms
 			pControl.ShowBigIcons( currentView == View.VIEW_AS_LARGEICONS );
 		}
 
+		int GetCurrentFatherID()
+		{
+			if (lastApp != null)
+			{
+				return lastApp.AppID;
+			}
+			else
+			{
+				return -1; // root
+			}
+		}
+
+
+		bool thereAreAppsToDisplay()
+		{
+			if (lastApp == null)
+			{
+				return true; // root has apps
+			}
+			else
+			{
+				return lastApp.SubItemsAllowed(); // grouper items for example
+			}
+		}
+
+		bool thereAreFilesOrLinksToDisplay()
+		{
+			return(lastApp != null); // all apps can have files except the root
+		}
+
+		bool isBackButtonNecessary()
+		{
+			return(lastApp != null); // always show back button except for root
+		}
+
+		void UpdateListControl()
+		{
+			int TotalItems = 0;
+			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST ); 
+			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS );
+			if (isBackButtonNecessary())
+			{
+				ProgramUtils.AddBackButton();
+			}
+
+			if (thereAreAppsToDisplay())
+			{
+				TotalItems = TotalItems + DisplayApps();
+			}
+			
+			if (thereAreFilesOrLinksToDisplay())
+			{
+				TotalItems = TotalItems + DisplayFiles();
+			}
+
+			string strObjects=String.Format("{0} {1}", TotalItems, GUILocalizeStrings.Get(632));
+			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+
+		}
+
+
+		int DisplayFiles()
+		{
+			int Total = 0;
+			if (lastApp == null) {return Total;}
+			Total = lastApp.DisplayFiles(this.lastFilepath);
+			return(Total);
+		}
+
+		int DisplayApps()
+		{
+			int Total = 0;
+			foreach(AppItem app in apps.appsOfFatherID(GetCurrentFatherID()))
+			{
+				if (app.Enabled)
+				{
+					Total = Total + 1;
+					GUIListItem gli = new GUIListItem( app.Title );
+					if (app.Imagefile != "")
+					{
+						gli.ThumbnailImage = app.Imagefile;
+						gli.IconImageBig = app.Imagefile;
+						gli.IconImage = app.Imagefile;
+					}
+					else 
+					{
+						gli.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+						gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+						gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
+					}
+					gli.MusicTag = app;
+					gli.IsFolder = true; // pseudo-folder....
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
+				}
+			}
+			return(Total);
+		}
+
+		// todo: obsolete, integrate into UpdateListControl
 		void DisplayApplications()
 		{
 			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST ); 
 			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS );
-			foreach(AppItem app in apps )
+			foreach(AppItem app in apps.appsOfFatherID(GetCurrentFatherID()))
 			{
-				GUIListItem gli = new GUIListItem( app.Title );
-				if (app.Imagefile != "")
+				if (app.Enabled) 
 				{
-					gli.ThumbnailImage = app.Imagefile;
-					gli.IconImageBig = app.Imagefile;
-					gli.IconImage = app.Imagefile;
+					GUIListItem gli = new GUIListItem( app.Title );
+					if (app.Imagefile != "")
+					{
+						gli.ThumbnailImage = app.Imagefile;
+						gli.IconImageBig = app.Imagefile;
+						gli.IconImage = app.Imagefile;
+					}
+					else 
+					{
+						gli.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+						gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+						gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
+					}
+					gli.MusicTag = app;
+					gli.IsFolder = true; // pseudo-folder....
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
 				}
-				else 
-				{
-					gli.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
-					gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
-					gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
-				}
-				gli.MusicTag = app;
-				gli.IsFolder = true; // pseudo-folder....
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gli);
 			}
 			string strObjects=String.Format("{0} {1}", apps.Count, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);

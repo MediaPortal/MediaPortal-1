@@ -178,7 +178,7 @@ namespace WindowPlugins.GUIPrograms
 					{
 						if (m_pApp != null)
 						{
-							m_pApp.LaunchFile(m_pFile);
+							m_pApp.LaunchFile(m_pFile, true);
 							Refresh();
 						}
 						return true;
@@ -325,7 +325,7 @@ namespace WindowPlugins.GUIPrograms
 
 
 			SetLabel((int)Controls.CONTROL_TITLE, m_pFile.Title);
-			SetLabel((int)Controls.CONTROL_SYSTEM, m_pFile.System);
+			SetLabel((int)Controls.CONTROL_SYSTEM, m_pFile.System_);
 			SetLabel((int)Controls.CONTROL_YEARMANU, m_pFile.YearManu);
 		    string strRating="";
 			if (m_pFile.Rating > 0)

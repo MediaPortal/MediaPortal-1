@@ -448,12 +448,32 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIPrograms\ApplicationDB.cs"
+                    RelPath = "GUIPrograms\AppFilesView.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppFilesView.resx"
+                    DependentUpon = "AppFilesView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\appGrouper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "GUIPrograms\ApplicationFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -563,14 +583,24 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "GUIPrograms\FileEditorForm.cs"
-                    SubType = "Form"
+                    RelPath = "GUIPrograms\FileItem.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIPrograms\FileEditorForm.resx"
-                    DependentUpon = "FileEditorForm.cs"
-                    BuildAction = "EmbeddedResource"
+                    RelPath = "GUIPrograms\FilelinkItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\FilelinkList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\FileList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "GUIPrograms\GUIProgramInfo.cs"
@@ -618,14 +648,9 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIPrograms\ProgramDetailsForm.cs"
-                    SubType = "Form"
+                    RelPath = "GUIPrograms\ProgramSettings.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIPrograms\ProgramDetailsForm.resx"
-                    DependentUpon = "ProgramDetailsForm.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUIPrograms\ProgramUtils.cs"
@@ -640,6 +665,16 @@
                 <File
                     RelPath = "GUIPrograms\SetupForm.resx"
                     DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\taggedMenuItem.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\taggedMenuItem.resx"
+                    DependentUpon = "taggedMenuItem.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

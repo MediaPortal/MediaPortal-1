@@ -91,7 +91,7 @@ namespace ProgramsDatabase
 				strTemp = strLine.Remove(0, cSYSTEM.Length+1);
 				strTemp = strTemp.TrimStart('"');
 				strTemp = strTemp.TrimEnd('"');
-				curFile.System = strTemp;
+				curFile.System_ = strTemp;
 			}
 			else if (strLowerLine.StartsWith(cGENRE))
 			{

@@ -16,13 +16,11 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class appItemDirBrowse: ProgramsDatabase.AppItem
 	{
-		Stack mDirectories = new Stack();
 		VirtualDirectory  m_directory = new VirtualDirectory();
 		ProgramComparer pc = new ProgramComparer(); // slightly hacky: pc replaces the base.dbPc object....
 
 		public appItemDirBrowse(SQLiteClient paramDB): base(paramDB)
 		{
-			mDirectories.Clear();
 		}
 
 		override protected void LoadFiles()
@@ -35,6 +33,16 @@ namespace ProgramsDatabase
 		override public bool FileEditorAllowed()
 		{
 			return false;  // no editor allowed!
+		}
+
+		override public bool FileAddAllowed()
+		{
+			return false;  // and of course, no file adding allowed!
+		}
+
+		override public bool FilesCanBeFavourites()
+		{
+			return false;  // no files, no links!
 		}
 
 		String GetFolderThumb( String fileName )
@@ -70,27 +78,23 @@ namespace ProgramsDatabase
 		}
 
 
-		void LoadDirectory(string strNewDirectory)
+		int LoadDirectory(string strNewDirectory)
 		{
 			ValidExtensions = ValidExtensions.Replace(" ", "");
 			ArrayList mExtensions = new ArrayList( this.ValidExtensions.Split( ',' ) );
 			// allow spaces between extensions...
 			m_directory.SetExtensions(mExtensions);
-			mDirectories.Push( strNewDirectory );
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST ); 
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS );
 			ArrayList arrFiles = m_directory.GetDirectory( strNewDirectory );
 
 			int  iTotalItems=0;
 			foreach (GUIListItem file in arrFiles)
 			{
 				Utils.SetDefaultIcons( file );
-				
-				if (file.Label == ProgramUtils.cBackLabel)
+				if (file.IsFolder)
 				{
-					file.ThumbnailImage=GUIGraphicsContext.Skin+@"\media\DefaultFolderBackBig.png";
-					file.IconImageBig=GUIGraphicsContext.Skin+@"\media\DefaultFolderBack.png";
-					file.IconImage=GUIGraphicsContext.Skin+@"\media\DefaultFolderBack.png";
+					file.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+					file.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
+					file.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
 				}
 				else
 				{
@@ -100,47 +104,39 @@ namespace ProgramsDatabase
 					file.IconImage=strFolderThumb;
 				}
 				
-
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,file);
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,file);
-				iTotalItems++;
+				if (file.Label != ProgramUtils.cBackLabel)
+				{
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST,file);
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,file);
+					iTotalItems++;
+				}
 			}
 
-			string strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+			return iTotalItems;
 		}
 
 
-		override public void DisplayFiles(GUIListItem itemParent)
+		override public int DisplayFiles(string Filepath)
 		{
-			if (itemParent == null) 
+			int Total = 0;
+			if (Filepath == "")
 			{
-				// display the "root" filelist of the application
-				LoadDirectory(this.FileDirectory);
-			}
-			else 
-			{
-				// display the filelist of a subfolder
-				LoadDirectory(itemParent.Path); 
-			}
-		}
-
-
-		override public bool BackItemClick(GUIListItem itemBack)
-		{
-			if (mDirectories.Count > 1)
-			{
-				mDirectories.Pop();
-				LoadDirectory( (string) mDirectories.Pop() );
-				return false; // display parent directory
+				// normal: load the main filelist of the application
+				Total = LoadDirectory(this.FileDirectory);
 			}
 			else
 			{
-				mDirectories.Clear();
-				return true; // return to toplevel (=> applicationlist)
+				// subfolder is activated: load the filelist of the subfolder
+				Total = LoadDirectory(Filepath);
 			}
+			return Total;
 		}
-		
+
+
+		override public string DefaultFilepath()
+		{
+			return this.FileDirectory ; 
+		}
 
 		override public void LaunchFile(GUIListItem item)
 		{

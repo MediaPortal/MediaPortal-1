@@ -23,7 +23,8 @@ namespace Programs.Utils
 		MYFILEINI = 3,
 		MYFILEMEEDIO = 4,
 		MYGAMESDIRECT = 5,
-		FILELAUNCHER = 6
+		FILELAUNCHER = 6,
+		GROUPER = 7
 	};
 
 
@@ -42,7 +43,10 @@ namespace Programs.Utils
 		public const string cDIRBROWSE = "DIR_BROWSE";
 		public const string cDIRCACHE = "DIR_CACHE";
 		public const string cFILELAUNCHER = "FILELAUNCHER";
+		public const string cGROUPER = "GROUPER";
 
+		public const string cMIGRATIONKEY = "V1_V2MIGRATION";
+	    public const string cPLUGINTITLE = "PLUGINTITLE";
 
 		// singleton. Dont allow any instance of this class
 		private ProgramUtils()
@@ -225,6 +229,9 @@ namespace Programs.Utils
 				case myProgSourceType.FILELAUNCHER:
 					res = cFILELAUNCHER;
 					break;
+				case myProgSourceType.GROUPER:
+					res = cGROUPER;
+					break;
 			}
 			return res;
 		}
@@ -264,6 +271,10 @@ namespace Programs.Utils
 			{
 				return myProgSourceType.FILELAUNCHER;
 			}
+			else if (strValue == cGROUPER)
+			{
+				return myProgSourceType.GROUPER;
+			}
 			else
 				return myProgSourceType.UNKNOWN;
 		}
@@ -296,8 +307,6 @@ namespace Programs.Utils
 			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gliBack);
 			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,gliBack);
 		}
-
-
 
 	}
 }

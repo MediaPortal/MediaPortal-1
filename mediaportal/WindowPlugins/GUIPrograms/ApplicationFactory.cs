@@ -50,6 +50,9 @@ namespace ProgramsDatabase
 				case myProgSourceType.FILELAUNCHER:
 					res = new appFilesEdit(m_db);
 					break;
+				case myProgSourceType.GROUPER:
+					res = new appGrouper(m_db);
+					break;
 			}
 			return res;
 		}

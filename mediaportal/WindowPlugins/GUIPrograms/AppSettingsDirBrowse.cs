@@ -39,15 +39,15 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.Button buttonLaunchingApp;
 		private System.Windows.Forms.Button buttonFiledir;
 		private System.Windows.Forms.Button buttonImageDirs;
-		private System.Windows.Forms.ToolTip toolTip;
+		private System.Windows.Forms.TextBox txtPinCode;
+		private System.Windows.Forms.Label LblPinCode;
 		private System.ComponentModel.IContainer components = null;
 
 		public AppSettingsDirBrowse()
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
+			this.txtPinCode.PasswordChar = (char)0x25CF;
 		}
 
 		/// <summary>
@@ -72,7 +72,6 @@ namespace WindowPlugins.GUIPrograms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			this.chkbUseShellExecute = new System.Windows.Forms.CheckBox();
 			this.chkbUseQuotes = new System.Windows.Forms.CheckBox();
 			this.btnStartup = new System.Windows.Forms.Button();
@@ -100,49 +99,50 @@ namespace WindowPlugins.GUIPrograms
 			this.label2 = new System.Windows.Forms.Label();
 			this.buttonImageDirs = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.txtPinCode = new System.Windows.Forms.TextBox();
+			this.LblPinCode = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// chkbUseShellExecute
 			// 
-			this.chkbUseShellExecute.Location = new System.Drawing.Point(120, 118);
+			this.chkbUseShellExecute.Location = new System.Drawing.Point(120, 88);
 			this.chkbUseShellExecute.Name = "chkbUseShellExecute";
 			this.chkbUseShellExecute.Size = new System.Drawing.Size(176, 24);
-			this.chkbUseShellExecute.TabIndex = 61;
+			this.chkbUseShellExecute.TabIndex = 9;
 			this.chkbUseShellExecute.Text = "Startup using ShellExecute";
 			// 
 			// chkbUseQuotes
 			// 
 			this.chkbUseQuotes.Checked = true;
 			this.chkbUseQuotes.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkbUseQuotes.Location = new System.Drawing.Point(120, 240);
+			this.chkbUseQuotes.Location = new System.Drawing.Point(120, 232);
 			this.chkbUseQuotes.Name = "chkbUseQuotes";
 			this.chkbUseQuotes.Size = new System.Drawing.Size(184, 24);
-			this.chkbUseQuotes.TabIndex = 60;
+			this.chkbUseQuotes.TabIndex = 21;
 			this.chkbUseQuotes.Text = "Quotes around Filenames";
 			// 
 			// btnStartup
 			// 
-			this.btnStartup.Location = new System.Drawing.Point(376, 216);
+			this.btnStartup.Location = new System.Drawing.Point(376, 208);
 			this.btnStartup.Name = "btnStartup";
 			this.btnStartup.Size = new System.Drawing.Size(20, 20);
-			this.btnStartup.TabIndex = 59;
+			this.btnStartup.TabIndex = 20;
 			this.btnStartup.Text = "...";
 			this.btnStartup.Click += new System.EventHandler(this.btnStartup_Click);
 			// 
 			// txtStartupDir
 			// 
-			this.txtStartupDir.Location = new System.Drawing.Point(120, 216);
+			this.txtStartupDir.Location = new System.Drawing.Point(120, 208);
 			this.txtStartupDir.Name = "txtStartupDir";
 			this.txtStartupDir.Size = new System.Drawing.Size(250, 20);
-			this.txtStartupDir.TabIndex = 58;
+			this.txtStartupDir.TabIndex = 19;
 			this.txtStartupDir.Text = "";
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(0, 216);
+			this.label5.Location = new System.Drawing.Point(0, 208);
 			this.label5.Name = "label5";
-			this.label5.TabIndex = 69;
+			this.label5.TabIndex = 18;
 			this.label5.Text = "Startup Directory:";
 			// 
 			// cbWindowStyle
@@ -153,56 +153,56 @@ namespace WindowPlugins.GUIPrograms
 															   "Minimized",
 															   "Maximized",
 															   "Hidden"});
-			this.cbWindowStyle.Location = new System.Drawing.Point(120, 192);
+			this.cbWindowStyle.Location = new System.Drawing.Point(120, 184);
 			this.cbWindowStyle.Name = "cbWindowStyle";
 			this.cbWindowStyle.Size = new System.Drawing.Size(250, 21);
-			this.cbWindowStyle.TabIndex = 57;
+			this.cbWindowStyle.TabIndex = 17;
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(0, 192);
+			this.label1.Location = new System.Drawing.Point(0, 184);
 			this.label1.Name = "label1";
-			this.label1.TabIndex = 68;
+			this.label1.TabIndex = 16;
 			this.label1.Text = "Window-Style:";
 			// 
 			// txtArguments
 			// 
-			this.txtArguments.Location = new System.Drawing.Point(120, 168);
+			this.txtArguments.Location = new System.Drawing.Point(120, 160);
 			this.txtArguments.Name = "txtArguments";
 			this.txtArguments.Size = new System.Drawing.Size(250, 20);
-			this.txtArguments.TabIndex = 56;
+			this.txtArguments.TabIndex = 15;
 			this.txtArguments.Text = "";
 			// 
 			// lblArg
 			// 
-			this.lblArg.Location = new System.Drawing.Point(0, 168);
+			this.lblArg.Location = new System.Drawing.Point(0, 160);
 			this.lblArg.Name = "lblArg";
-			this.lblArg.TabIndex = 67;
+			this.lblArg.TabIndex = 14;
 			this.lblArg.Text = "Arguments:";
 			// 
 			// lblImageFile
 			// 
-			this.lblImageFile.Location = new System.Drawing.Point(0, 144);
+			this.lblImageFile.Location = new System.Drawing.Point(0, 136);
 			this.lblImageFile.Name = "lblImageFile";
 			this.lblImageFile.Size = new System.Drawing.Size(80, 20);
-			this.lblImageFile.TabIndex = 66;
+			this.lblImageFile.TabIndex = 11;
 			this.lblImageFile.Text = "Imagefile:";
 			// 
 			// buttonImagefile
 			// 
-			this.buttonImagefile.Location = new System.Drawing.Point(376, 144);
+			this.buttonImagefile.Location = new System.Drawing.Point(376, 136);
 			this.buttonImagefile.Name = "buttonImagefile";
 			this.buttonImagefile.Size = new System.Drawing.Size(20, 20);
-			this.buttonImagefile.TabIndex = 55;
+			this.buttonImagefile.TabIndex = 13;
 			this.buttonImagefile.Text = "...";
 			this.buttonImagefile.Click += new System.EventHandler(this.buttonImagefile_Click);
 			// 
 			// txtImageFile
 			// 
-			this.txtImageFile.Location = new System.Drawing.Point(120, 144);
+			this.txtImageFile.Location = new System.Drawing.Point(120, 136);
 			this.txtImageFile.Name = "txtImageFile";
 			this.txtImageFile.Size = new System.Drawing.Size(250, 20);
-			this.txtImageFile.TabIndex = 54;
+			this.txtImageFile.TabIndex = 12;
 			this.txtImageFile.Text = "";
 			// 
 			// chkbEnabled
@@ -210,127 +210,149 @@ namespace WindowPlugins.GUIPrograms
 			this.chkbEnabled.Checked = true;
 			this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.chkbEnabled.Location = new System.Drawing.Point(8, 40);
+			this.chkbEnabled.Location = new System.Drawing.Point(320, 8);
 			this.chkbEnabled.Name = "chkbEnabled";
-			this.chkbEnabled.TabIndex = 63;
+			this.chkbEnabled.Size = new System.Drawing.Size(72, 24);
+			this.chkbEnabled.TabIndex = 30;
 			this.chkbEnabled.Text = "Enabled";
+			this.chkbEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// txtFilename
 			// 
-			this.txtFilename.Location = new System.Drawing.Point(120, 96);
+			this.txtFilename.Location = new System.Drawing.Point(120, 64);
 			this.txtFilename.Name = "txtFilename";
 			this.txtFilename.Size = new System.Drawing.Size(250, 20);
-			this.txtFilename.TabIndex = 52;
+			this.txtFilename.TabIndex = 6;
 			this.txtFilename.Text = "";
 			// 
 			// txtTitle
 			// 
-			this.txtTitle.Location = new System.Drawing.Point(120, 72);
+			this.txtTitle.Location = new System.Drawing.Point(120, 40);
 			this.txtTitle.Name = "txtTitle";
-			this.txtTitle.Size = new System.Drawing.Size(250, 20);
-			this.txtTitle.TabIndex = 51;
+			this.txtTitle.Size = new System.Drawing.Size(248, 20);
+			this.txtTitle.TabIndex = 4;
 			this.txtTitle.Text = "";
 			// 
 			// lblTitle
 			// 
-			this.lblTitle.Location = new System.Drawing.Point(0, 72);
+			this.lblTitle.Location = new System.Drawing.Point(0, 40);
 			this.lblTitle.Name = "lblTitle";
-			this.lblTitle.TabIndex = 65;
+			this.lblTitle.TabIndex = 3;
 			this.lblTitle.Text = "Title:";
 			// 
 			// lblFilename
 			// 
-			this.lblFilename.Location = new System.Drawing.Point(0, 96);
+			this.lblFilename.Location = new System.Drawing.Point(0, 64);
 			this.lblFilename.Name = "lblFilename";
 			this.lblFilename.Size = new System.Drawing.Size(120, 20);
-			this.lblFilename.TabIndex = 64;
+			this.lblFilename.TabIndex = 5;
 			this.lblFilename.Text = "Launching Application:";
 			// 
 			// buttonLaunchingApp
 			// 
-			this.buttonLaunchingApp.Location = new System.Drawing.Point(376, 96);
+			this.buttonLaunchingApp.Location = new System.Drawing.Point(376, 64);
 			this.buttonLaunchingApp.Name = "buttonLaunchingApp";
 			this.buttonLaunchingApp.Size = new System.Drawing.Size(20, 20);
-			this.buttonLaunchingApp.TabIndex = 53;
+			this.buttonLaunchingApp.TabIndex = 7;
 			this.buttonLaunchingApp.Text = "...";
 			this.buttonLaunchingApp.Click += new System.EventHandler(this.buttonLaunchingApp_Click);
 			// 
 			// lblImgDirectories
 			// 
-			this.lblImgDirectories.Location = new System.Drawing.Point(0, 320);
+			this.lblImgDirectories.Location = new System.Drawing.Point(0, 312);
 			this.lblImgDirectories.Name = "lblImgDirectories";
-			this.lblImgDirectories.TabIndex = 77;
+			this.lblImgDirectories.TabIndex = 27;
 			this.lblImgDirectories.Text = "Image directories:";
 			// 
 			// buttonFiledir
 			// 
-			this.buttonFiledir.Location = new System.Drawing.Point(376, 272);
+			this.buttonFiledir.Location = new System.Drawing.Point(376, 264);
 			this.buttonFiledir.Name = "buttonFiledir";
 			this.buttonFiledir.Size = new System.Drawing.Size(20, 20);
-			this.buttonFiledir.TabIndex = 72;
+			this.buttonFiledir.TabIndex = 24;
 			this.buttonFiledir.Text = "...";
 			this.buttonFiledir.Click += new System.EventHandler(this.buttonFiledir_Click);
 			// 
 			// txtExtensions
 			// 
-			this.txtExtensions.Location = new System.Drawing.Point(120, 296);
+			this.txtExtensions.Location = new System.Drawing.Point(120, 288);
 			this.txtExtensions.Name = "txtExtensions";
 			this.txtExtensions.Size = new System.Drawing.Size(250, 20);
-			this.txtExtensions.TabIndex = 74;
+			this.txtExtensions.TabIndex = 26;
 			this.txtExtensions.Text = "";
 			// 
 			// txtImageDirs
 			// 
-			this.txtImageDirs.Location = new System.Drawing.Point(120, 320);
+			this.txtImageDirs.Location = new System.Drawing.Point(120, 312);
 			this.txtImageDirs.Multiline = true;
 			this.txtImageDirs.Name = "txtImageDirs";
 			this.txtImageDirs.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			this.txtImageDirs.Size = new System.Drawing.Size(250, 64);
-			this.txtImageDirs.TabIndex = 71;
+			this.txtImageDirs.TabIndex = 28;
 			this.txtImageDirs.Text = "txtImageDirs";
 			// 
 			// txtFiles
 			// 
-			this.txtFiles.Location = new System.Drawing.Point(120, 272);
+			this.txtFiles.Location = new System.Drawing.Point(120, 264);
 			this.txtFiles.Name = "txtFiles";
 			this.txtFiles.Size = new System.Drawing.Size(250, 20);
-			this.txtFiles.TabIndex = 70;
+			this.txtFiles.TabIndex = 23;
 			this.txtFiles.Text = "";
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(0, 296);
+			this.label4.Location = new System.Drawing.Point(0, 288);
 			this.label4.Name = "label4";
-			this.label4.TabIndex = 76;
+			this.label4.TabIndex = 25;
 			this.label4.Text = "File-Extensions:";
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(0, 272);
+			this.label2.Location = new System.Drawing.Point(0, 264);
 			this.label2.Name = "label2";
-			this.label2.TabIndex = 75;
+			this.label2.TabIndex = 22;
 			this.label2.Text = "File Directory:";
 			// 
 			// buttonImageDirs
 			// 
-			this.buttonImageDirs.Location = new System.Drawing.Point(376, 320);
+			this.buttonImageDirs.Location = new System.Drawing.Point(376, 312);
 			this.buttonImageDirs.Name = "buttonImageDirs";
 			this.buttonImageDirs.Size = new System.Drawing.Size(20, 20);
-			this.buttonImageDirs.TabIndex = 73;
+			this.buttonImageDirs.TabIndex = 29;
 			this.buttonImageDirs.Text = "...";
 			this.buttonImageDirs.Click += new System.EventHandler(this.buttonImageDirs_Click);
 			// 
 			// label3
 			// 
 			this.label3.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label3.Location = new System.Drawing.Point(8, 8);
+			this.label3.Location = new System.Drawing.Point(0, 0);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(184, 32);
-			this.label3.TabIndex = 78;
+			this.label3.TabIndex = 1;
 			this.label3.Text = "Directory-Browse";
+			// 
+			// txtPinCode
+			// 
+			this.txtPinCode.Location = new System.Drawing.Point(120, 112);
+			this.txtPinCode.MaxLength = 4;
+			this.txtPinCode.Name = "txtPinCode";
+			this.txtPinCode.Size = new System.Drawing.Size(64, 20);
+			this.txtPinCode.TabIndex = 10;
+			this.txtPinCode.Text = "";
+			this.txtPinCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPinCode_KeyPress);
+			// 
+			// LblPinCode
+			// 
+			this.LblPinCode.Location = new System.Drawing.Point(0, 112);
+			this.LblPinCode.Name = "LblPinCode";
+			this.LblPinCode.Size = new System.Drawing.Size(96, 16);
+			this.LblPinCode.TabIndex = 8;
+			this.LblPinCode.Text = "Pin-Code";
 			// 
 			// AppSettingsDirBrowse
 			// 
+			this.Controls.Add(this.LblPinCode);
+			this.Controls.Add(this.txtPinCode);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.lblImgDirectories);
 			this.Controls.Add(this.buttonFiledir);
@@ -359,7 +381,7 @@ namespace WindowPlugins.GUIPrograms
 			this.Controls.Add(this.lblFilename);
 			this.Controls.Add(this.buttonLaunchingApp);
 			this.Name = "AppSettingsDirBrowse";
-			this.Size = new System.Drawing.Size(408, 416);
+			this.Size = new System.Drawing.Size(408, 384);
 			this.Load += new System.EventHandler(this.AppSettingsDirBrowse_Load);
 			this.ResumeLayout(false);
 
@@ -380,6 +402,15 @@ namespace WindowPlugins.GUIPrograms
 			this.txtFiles.Text = curApp.FileDirectory;
 			this.txtImageDirs.Text = curApp.ImageDirectory;
 			this.txtExtensions.Text = curApp.ValidExtensions;
+			if (curApp.Pincode > 0)
+			{
+				this.txtPinCode.Text = String.Format("{0}", curApp.Pincode);
+			}
+			else
+			{
+				this.txtPinCode.Text = "";
+			}
+
 			return true;
 		}
 
@@ -399,6 +430,7 @@ namespace WindowPlugins.GUIPrograms
 			curApp.FileDirectory = this.txtFiles.Text;
 			curApp.ImageDirectory = this.txtImageDirs.Text;
 			curApp.ValidExtensions = this.txtExtensions.Text;
+			curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
 		}
 
 		public override bool EntriesOK(AppItem curApp)
@@ -414,7 +446,9 @@ namespace WindowPlugins.GUIPrograms
 
 			if (!m_Checker.IsOk)
 			{
-				System.Windows.Forms.MessageBox.Show(m_Checker.Problems);
+				string strHeader = "The following entries are invalid: \r\n\r\n";
+				string strFooter = "\r\n\r\n(Click DELETE to remove this item)";
+				System.Windows.Forms.MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
 			}
 			else
 			{
@@ -535,6 +569,17 @@ namespace WindowPlugins.GUIPrograms
 			if( dialogFolder.ShowDialog( null ) == DialogResult.OK )
 			{
 				txtImageDirs.Text = txtImageDirs.Text + "\r\n" + dialogFolder.SelectedPath;
+			}
+		}
+
+		private void txtPinCode_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+		{
+			//
+			// Allow only numbers, and backspace.
+			//
+			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+			{
+				e.Handled = true;
 			}
 		}
 

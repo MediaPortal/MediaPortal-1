@@ -18,5 +18,7 @@ namespace ProgramsDatabase
 		public appFilesEdit(SQLiteClient paramDB): base(paramDB)
 		{
 		}
+
 	}
+
 }

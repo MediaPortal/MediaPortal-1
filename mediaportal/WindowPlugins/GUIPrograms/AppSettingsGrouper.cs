@@ -5,21 +5,29 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using ProgramsDatabase;
+using Programs.Utils;
 
 namespace WindowPlugins.GUIPrograms
 {
 	public class AppSettingsGrouper : WindowPlugins.GUIPrograms.AppSettings
 	{
-		private System.Windows.Forms.ListView listApps;
-		private System.Windows.Forms.ColumnHeader TitleColumn;
+		private System.Windows.Forms.Label lblImageFile;
+		private System.Windows.Forms.Button buttonImagefile;
+		private System.Windows.Forms.TextBox txtImageFile;
+		private System.Windows.Forms.CheckBox chkbEnabled;
+		private System.Windows.Forms.TextBox txtTitle;
+		private System.Windows.Forms.Label lblTitle;
+		private System.Windows.Forms.Label LabelTitle;
+		private System.Windows.Forms.Label LabelHint;
+		private System.Windows.Forms.Label LblPinCode;
+		private System.Windows.Forms.TextBox txtPinCode;
 		private System.ComponentModel.IContainer components = null;
 
 		public AppSettingsGrouper()
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
+			this.txtPinCode.PasswordChar = (char)0x25CF;
 		}
 
 		/// <summary>
@@ -44,33 +52,121 @@ namespace WindowPlugins.GUIPrograms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.listApps = new System.Windows.Forms.ListView();
-			this.TitleColumn = new System.Windows.Forms.ColumnHeader();
+			this.LabelTitle = new System.Windows.Forms.Label();
+			this.LabelHint = new System.Windows.Forms.Label();
+			this.lblImageFile = new System.Windows.Forms.Label();
+			this.buttonImagefile = new System.Windows.Forms.Button();
+			this.txtImageFile = new System.Windows.Forms.TextBox();
+			this.chkbEnabled = new System.Windows.Forms.CheckBox();
+			this.txtTitle = new System.Windows.Forms.TextBox();
+			this.lblTitle = new System.Windows.Forms.Label();
+			this.LblPinCode = new System.Windows.Forms.Label();
+			this.txtPinCode = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
-			// listApps
+			// LabelTitle
 			// 
-			this.listApps.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.listApps.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																					   this.TitleColumn});
-			this.listApps.Location = new System.Drawing.Point(0, 0);
-			this.listApps.Name = "listApps";
-			this.listApps.Size = new System.Drawing.Size(456, 320);
-			this.listApps.TabIndex = 0;
-			this.listApps.View = System.Windows.Forms.View.Details;
+			this.LabelTitle.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.LabelTitle.Location = new System.Drawing.Point(0, 0);
+			this.LabelTitle.Name = "LabelTitle";
+			this.LabelTitle.Size = new System.Drawing.Size(184, 32);
+			this.LabelTitle.TabIndex = 0;
+			this.LabelTitle.Text = "Grouper";
 			// 
-			// TitleColumn
+			// LabelHint
 			// 
-			this.TitleColumn.Text = "Title";
-			this.TitleColumn.Width = 300;
+			this.LabelHint.Location = new System.Drawing.Point(120, 124);
+			this.LabelHint.Name = "LabelHint";
+			this.LabelHint.Size = new System.Drawing.Size(248, 40);
+			this.LabelHint.TabIndex = 8;
+			this.LabelHint.Text = "This item can hold subitems. Use drag and drop in the treeview to add / move node" +
+				"s.";
+			// 
+			// lblImageFile
+			// 
+			this.lblImageFile.Location = new System.Drawing.Point(0, 92);
+			this.lblImageFile.Name = "lblImageFile";
+			this.lblImageFile.Size = new System.Drawing.Size(80, 20);
+			this.lblImageFile.TabIndex = 5;
+			this.lblImageFile.Text = "Imagefile:";
+			// 
+			// buttonImagefile
+			// 
+			this.buttonImagefile.Location = new System.Drawing.Point(376, 92);
+			this.buttonImagefile.Name = "buttonImagefile";
+			this.buttonImagefile.Size = new System.Drawing.Size(20, 20);
+			this.buttonImagefile.TabIndex = 7;
+			this.buttonImagefile.Text = "...";
+			this.buttonImagefile.Click += new System.EventHandler(this.buttonImagefile_Click);
+			// 
+			// txtImageFile
+			// 
+			this.txtImageFile.Location = new System.Drawing.Point(120, 92);
+			this.txtImageFile.Name = "txtImageFile";
+			this.txtImageFile.Size = new System.Drawing.Size(250, 20);
+			this.txtImageFile.TabIndex = 6;
+			this.txtImageFile.Text = "";
+			// 
+			// chkbEnabled
+			// 
+			this.chkbEnabled.Checked = true;
+			this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.chkbEnabled.Location = new System.Drawing.Point(320, 8);
+			this.chkbEnabled.Name = "chkbEnabled";
+			this.chkbEnabled.Size = new System.Drawing.Size(72, 24);
+			this.chkbEnabled.TabIndex = 9;
+			this.chkbEnabled.Text = "Enabled";
+			this.chkbEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// txtTitle
+			// 
+			this.txtTitle.Location = new System.Drawing.Point(120, 40);
+			this.txtTitle.Name = "txtTitle";
+			this.txtTitle.Size = new System.Drawing.Size(250, 20);
+			this.txtTitle.TabIndex = 2;
+			this.txtTitle.Text = "";
+			// 
+			// lblTitle
+			// 
+			this.lblTitle.Location = new System.Drawing.Point(0, 40);
+			this.lblTitle.Name = "lblTitle";
+			this.lblTitle.Size = new System.Drawing.Size(100, 16);
+			this.lblTitle.TabIndex = 1;
+			this.lblTitle.Text = "Title:";
+			// 
+			// LblPinCode
+			// 
+			this.LblPinCode.Location = new System.Drawing.Point(0, 64);
+			this.LblPinCode.Name = "LblPinCode";
+			this.LblPinCode.Size = new System.Drawing.Size(96, 16);
+			this.LblPinCode.TabIndex = 3;
+			this.LblPinCode.Text = "Pin-Code";
+			// 
+			// txtPinCode
+			// 
+			this.txtPinCode.Location = new System.Drawing.Point(120, 64);
+			this.txtPinCode.MaxLength = 4;
+			this.txtPinCode.Name = "txtPinCode";
+			this.txtPinCode.Size = new System.Drawing.Size(64, 20);
+			this.txtPinCode.TabIndex = 4;
+			this.txtPinCode.Text = "";
+			this.txtPinCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPinCode_KeyPress);
 			// 
 			// AppSettingsGrouper
 			// 
-			this.Controls.Add(this.listApps);
+			this.Controls.Add(this.LblPinCode);
+			this.Controls.Add(this.txtPinCode);
+			this.Controls.Add(this.lblImageFile);
+			this.Controls.Add(this.buttonImagefile);
+			this.Controls.Add(this.txtImageFile);
+			this.Controls.Add(this.chkbEnabled);
+			this.Controls.Add(this.txtTitle);
+			this.Controls.Add(this.lblTitle);
+			this.Controls.Add(this.LabelHint);
+			this.Controls.Add(this.LabelTitle);
 			this.Name = "AppSettingsGrouper";
-			this.Size = new System.Drawing.Size(464, 320);
+			this.Size = new System.Drawing.Size(400, 320);
 			this.ResumeLayout(false);
 
 		}
@@ -86,30 +182,71 @@ namespace WindowPlugins.GUIPrograms
 			DownButtonClicked();
 		}
 
-		private void SyncListView(Applist apps)
+
+		public override bool AppObj2Form(AppItem curApp)
 		{
-			listApps.BeginUpdate();
-			try
+			this.chkbEnabled.Checked = curApp.Enabled;
+			this.txtTitle.Text = curApp.Title;
+			this.txtImageFile.Text = curApp.Imagefile;
+			if (curApp.Pincode > 0)
 			{
-				listApps.Items.Clear();
-				foreach(AppItem app in apps)
-				{
-					ListViewItem curItem = new ListViewItem(app.Title);
-					curItem.Tag = app;
-					listApps.Items.Add(curItem);
-				}
+				this.txtPinCode.Text = String.Format("{0}", curApp.Pincode);
 			}
-			finally
+			else
 			{
-				listApps.EndUpdate();
+				this.txtPinCode.Text = "";
+			}
+			return true;
+		}
+
+		public override void Form2AppObj(AppItem curApp)
+		{
+			curApp.Enabled = this.chkbEnabled.Checked;
+			curApp.Title = this.txtTitle.Text;
+			curApp.SourceType = myProgSourceType.GROUPER;
+			curApp.Imagefile = this.txtImageFile.Text;
+			curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
+		}
+
+		public override bool EntriesOK(AppItem curApp)
+		{
+			m_Checker.Clear();
+			m_Checker.DoCheck(txtTitle.Text != "", "No title entered!");
+			if (!m_Checker.IsOk)
+			{
+				string strHeader = "The following entries are invalid: \r\n\r\n";
+				string strFooter = "\r\n\r\n(Click DELETE to remove this item)";
+				System.Windows.Forms.MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
+			}
+			else
+			{
+			}
+			return m_Checker.IsOk;
+		}
+
+
+
+		private void buttonImagefile_Click(object sender, System.EventArgs e)
+		{
+			dialogFile.FileName = txtImageFile.Text;
+			dialogFile.RestoreDirectory = true;
+			if( dialogFile.ShowDialog(null) == DialogResult.OK )
+			{
+				txtImageFile.Text = dialogFile.FileName;
 			}
 		}
 
-		public override bool Applist2Form(Applist apps)
+		private void txtPinCode_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			SyncListView(apps);
-			return true;
+			//
+			// Allow only numbers, and backspace.
+			//
+			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+			{
+				e.Handled = true;
+			}
 		}
+
 
 	}
 }

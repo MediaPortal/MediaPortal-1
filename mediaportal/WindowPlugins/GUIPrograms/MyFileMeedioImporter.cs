@@ -68,7 +68,7 @@ namespace ProgramsDatabase
 				curFile.Year = ProgramUtils.GetIntDef(results, iRecord, "tag_8", -1);
 				curFile.Rating = ProgramUtils.GetIntDef(results, iRecord, "tag_9", 5);
 				curFile.Overview = ProgramUtils.Get(results,iRecord,"tag_10");
-				curFile.System = ProgramUtils.Get(results,iRecord,"tag_11");
+				curFile.System_ = ProgramUtils.Get(results,iRecord,"tag_11");
 				curFile.ExtFileID = ProgramUtils.GetIntDef(results,iRecord, "tag_12", -1);
 				// not imported properties => set default values
 				curFile.ManualFilename = "";

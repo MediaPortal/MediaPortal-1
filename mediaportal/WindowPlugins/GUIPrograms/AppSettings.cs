@@ -16,16 +16,12 @@ namespace WindowPlugins.GUIPrograms
 	/// </summary>
 	public class AppSettings : System.Windows.Forms.UserControl
 	{
-		/// <summary> 
-		/// Required designer variable.	
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private System.ComponentModel.IContainer components;
 		protected System.Windows.Forms.OpenFileDialog dialogFile;
 		protected System.Windows.Forms.FolderBrowserDialog dialogFolder;
+		public System.Windows.Forms.ToolTip toolTip;
 		protected ProgramConditionChecker m_Checker = new ProgramConditionChecker();
 
-		public event EventHandler OnFileEditClick;
-		public event EventHandler OnRefreshClick;
 		public event EventHandler OnUpClick;
 		public event EventHandler OnDownClick;
 
@@ -61,8 +57,10 @@ namespace WindowPlugins.GUIPrograms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.dialogFile = new System.Windows.Forms.OpenFileDialog();
 			this.dialogFolder = new System.Windows.Forms.FolderBrowserDialog();
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			// 
 			// AppSettings
 			// 
@@ -91,22 +89,6 @@ namespace WindowPlugins.GUIPrograms
 		public virtual bool EntriesOK(AppItem curApp)
 		{
 			return true;
-		}
-
-		protected void FileButtonClicked()
-		{
-			if (this.OnFileEditClick != null)
-			{
-				OnFileEditClick(this, null);
-			}
-		}
-
-		protected void RefreshButtonClicked()
-		{
-			if (this.OnRefreshClick != null)
-			{
-				OnRefreshClick(this, null);
-			}
 		}
 
 		protected void UpButtonClicked()

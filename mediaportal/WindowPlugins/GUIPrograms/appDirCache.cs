@@ -19,7 +19,6 @@ namespace ProgramsDatabase
 	{
 
 		GUIDialogProgress pDlgProgress = null;
-		VirtualDirectory  m_directory = new VirtualDirectory();
 		
 		public appItemDirCache(SQLiteClient paramDB): base(paramDB)
 		{
@@ -71,6 +70,7 @@ namespace ProgramsDatabase
 			curFile.AppID = this.AppID;
 			curFile.Title = guiFile.Label;
 			curFile.Filename = guiFile.Path;
+			curFile.Filepath = System.IO.Path.GetDirectoryName(guiFile.Path);
 			curFile.Imagefile = strImageFile;
 			// not imported properties => set default values
 			curFile.ManualFilename = "";
@@ -78,6 +78,25 @@ namespace ProgramsDatabase
 			curFile.LaunchCount = 0;
 			curFile.Write();
 		}
+
+		private void WriteFolderItem(string directoryPath)
+		{
+			FileItem curFile = new FileItem(m_db);
+			curFile.FileID = -1;
+			curFile.AppID = this.AppID;
+			curFile.Filename = directoryPath;
+			curFile.Title = System.IO.Path.GetFileNameWithoutExtension(directoryPath);
+			curFile.Filepath = System.IO.Path.GetDirectoryName(directoryPath);
+			//todo:			curFile.FilePath = curFile.ExtractDirectory(directoryPath);
+			curFile.IsFolder = true;
+			curFile.ManualFilename = "";
+			curFile.LastTimeLaunched = DateTime.MinValue;
+			curFile.LaunchCount = 0;
+			curFile.Write();
+		}
+
+
+
 
 
 		private void UpdateProgressDialog(GUIListItem guiFile, bool bGUIMode)
@@ -88,6 +107,41 @@ namespace ProgramsDatabase
 				pDlgProgress.Progress();
 			}
 			SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label));
+		}
+
+		private void ImportDirectory(string curPath, bool bGUIMode)
+		{
+			VirtualDirectory  m_directory = new VirtualDirectory();
+			ArrayList mExtensions = new ArrayList( this.ValidExtensions.Split( ',' ) );
+			m_directory.SetExtensions(mExtensions);
+
+			// read files
+			ArrayList arrFiles = m_directory.GetDirectory( curPath );
+			foreach (GUIListItem file in arrFiles)
+			{
+				if (!file.IsFolder)
+				{
+					ImportFileItem(file);
+					UpdateProgressDialog(file, bGUIMode);
+				}
+			}
+
+			//read subdirectories
+			try
+			{
+				string[] directories = Directory.GetDirectories(curPath);
+				foreach(string directory in directories)
+				{
+					WriteFolderItem(directory);
+					// recursively call importer for every subdirectory
+					ImportDirectory(directory, bGUIMode);
+				}
+			}
+			catch
+			{
+				// Ignore
+			}
+
 		}
 
 		private void DoDirCacheImport(bool bGUIMode)
@@ -102,19 +156,7 @@ namespace ProgramsDatabase
 			try
 			{
 				ValidExtensions = ValidExtensions.Replace(" ", "");
-				ArrayList mExtensions = new ArrayList( this.ValidExtensions.Split( ',' ) );
-				// allow spaces between extensions...
-				m_directory.SetExtensions(mExtensions);
-				ArrayList arrFiles = m_directory.GetDirectory( this.FileDirectory );
-
-				foreach (GUIListItem file in arrFiles)
-				{
-					if (!file.IsFolder)
-					{
-						ImportFileItem(file);
-						UpdateProgressDialog(file, bGUIMode);
-					}
-				}
+				ImportDirectory(this.FileDirectory, bGUIMode);
 			}
 			finally
 			{
@@ -127,10 +169,49 @@ namespace ProgramsDatabase
 		}
 
 
+		override protected void LoadFiles()
+		{
+			// load Files and fill Files-arraylist here!
+			if (mFiles == null) 
+			{
+				mFiles = new Filelist(m_db);}
+			else 
+			{ 
+				mFiles.Clear();
+			}
+			mFiles.Load(AppID, FileDirectory);
+			bFilesLoaded = true;
+		}
+
+
+
+		override public string CurrentFilePath()
+		{
+			if (Files.Filepath != "")
+			{
+				return Files.Filepath;
+			}
+			else 
+			{
+				return base.CurrentFilePath();
+			}
+		}
+
+
+		override public string DefaultFilepath()
+		{
+			return this.FileDirectory; 
+		}
 
 		override public bool RefreshButtonVisible()
 		{
 			return true;
+		}
+
+
+		override public bool FileBrowseAllowed()
+		{
+			return true;  
 		}
 
 		override public void Refresh(bool bGUIMode)
@@ -138,6 +219,7 @@ namespace ProgramsDatabase
 			base.Refresh(bGUIMode);
 			DeleteFiles();
 			DoDirCacheImport(bGUIMode);
+			FixFileLinks();
 			LoadFiles();
 		}
     }
