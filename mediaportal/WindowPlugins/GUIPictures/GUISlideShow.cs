@@ -151,6 +151,7 @@ namespace MediaPortal.GUI.Pictures
       m_iZoomTop=0;
       m_dwFrameCounter=0;
       m_iCurrentSlide=-1;
+      m_iLastShownSlide=-1;
       m_strBackgroundSlide="";
       m_strCurrentSlide="";
       m_lSlideTime=0;
@@ -168,26 +169,64 @@ namespace MediaPortal.GUI.Pictures
 
     void  ShowNext()
     {
-      if (!m_bSlideShow) 
+      if (!m_bSlideShow)
         m_bUpdate=true;
+
+      // Check image transition
+      if (m_pTextureCurrent != null)
+        return;
+
+      // Reset slide time
+      m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+
+      // Get next picture
       m_iCurrentSlide++;
       if ( m_iCurrentSlide >= m_slides.Count ) 
       {
         m_iCurrentSlide=0;
-      }     
+      }
+
+      // Change image
+      if (null!=m_pTextureBackGround)
+      {
+        m_pTextureBackGround.Dispose();
+        m_pTextureBackGround=null;
+      }
+      m_pTextureBackGround=GetSlide(out m_dwWidthCurrent,out m_dwHeightCurrent, out m_strCurrentSlide);
+      m_iLastShownSlide=m_iCurrentSlide;
+      m_strBackgroundSlide=m_strCurrentSlide;
+      m_dwFrameCounter=0;
 		}
 
     void  ShowPrevious()
     {
-      if (!m_bSlideShow) 
+      if (!m_bSlideShow)
         m_bUpdate=true;
-			m_iCurrentSlide--;
-			if ( m_iCurrentSlide < 0 ) 
-			{
-				m_iCurrentSlide=m_slides.Count-1;
-			}
-			return;
-			
+
+      // Check image transition
+      if (m_pTextureCurrent != null)
+        return;
+      
+      // Reset slide time
+      m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+
+      // Get previous picture
+      m_iCurrentSlide--;
+      if ( m_iCurrentSlide < 0 ) 
+      {
+        m_iCurrentSlide=m_slides.Count-1;
+      }
+
+      // Change image
+      if (null!=m_pTextureBackGround)
+      {
+        m_pTextureBackGround.Dispose();
+        m_pTextureBackGround=null;
+      }
+      m_pTextureBackGround=GetSlide(out m_dwWidthCurrent,out m_dwHeightCurrent, out m_strCurrentSlide);
+      m_iLastShownSlide=m_iCurrentSlide;
+      m_strBackgroundSlide=m_strCurrentSlide;
+      m_dwFrameCounter=0;
     }
 
     public void Add(string strPicture)
