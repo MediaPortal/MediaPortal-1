@@ -2237,7 +2237,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (!shouldDecryptChannel) return;
 			if (m_SectionsTables==null) return;
-			if (m_videoDataFound==false) return;
+
 			//check if tuner is locked to a tv channel
 			if (!SignalPresent()) return;
 			

@@ -343,11 +343,11 @@ namespace MediaPortal.TV.Recording
 				//
 				
 				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,200);
+				GetStreamData(filter,17, 0x42,0,1);
 				tab42=(ArrayList)m_sectionsList.Clone();
 				
 				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,200);
+				GetStreamData(filter,17, 0x46,0,1);
 				tab46=(ArrayList)m_sectionsList.Clone();
 
 				
@@ -371,32 +371,35 @@ namespace MediaPortal.TV.Recording
 						
 						// parse pmt
 						int res=0;
-						Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
-						foreach(byte[] wdata in m_sectionsList)
+						if (pat.program_number==serviceId)
 						{
-							if (pat.program_number==serviceId)
+							Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
+							GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
+							foreach(byte[] wdata in m_sectionsList)
 							{
-								Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
-								for (int l=0; l < wdata.Length;++l)
-									sectionTable.Add(wdata[l]);
+								if (pat.program_number==serviceId)
+								{
+									Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
+									for (int l=0; l < wdata.Length;++l)
+										sectionTable.Add(wdata[l]);
+								}
+								Debug.WriteLine("decode PMT:"+n.ToString());
+								res=decodePMTTable(wdata, transp[0], transponder,ref pat);
 							}
-							Debug.WriteLine("decode PMT:"+n.ToString());
-							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
+
+							if(res>0)
+							{
+
+								Debug.WriteLine("decode SDT table42");
+								foreach(byte[] wdata in tab42)
+									decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+
+								Debug.WriteLine("decode SDT table46");
+								foreach(byte[] wdata in tab46)
+									decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+							}
+							transponder.channels.Add(pat);
 						}
-
-						if(res>0)
-						{
-
-							Debug.WriteLine("decode SDT table42");
-							foreach(byte[] wdata in tab42)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-
-							Debug.WriteLine("decode SDT table46");
-							foreach(byte[] wdata in tab46)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-						}
-						transponder.channels.Add(pat);
 					}
 				}
 
@@ -462,11 +465,11 @@ namespace MediaPortal.TV.Recording
 				//
 				
 				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,5000);
+				GetStreamData(filter,17, 0x42,0,1);
 				tab42=(ArrayList)m_sectionsList.Clone();
 				
 				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,5000);
+				GetStreamData(filter,17, 0x46,0,1);
 				tab46=(ArrayList)m_sectionsList.Clone();
 
 				
@@ -570,9 +573,9 @@ namespace MediaPortal.TV.Recording
 			// check tables
 			//AddTSPid(17);
 			//
-			GetStreamData(filter,17, 0x42,0,m_timeoutMS);
+			GetStreamData(filter,17, 0x42,0,1);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,17, 0x46,0,250); // low value, nothing in most of time
+			GetStreamData(filter,17, 0x46,0,1); // low value, nothing in most of time
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//bool flag;
