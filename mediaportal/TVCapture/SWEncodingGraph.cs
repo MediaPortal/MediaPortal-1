@@ -756,7 +756,13 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartViewing(AnalogVideoStandard standard, int iChannelNr, int country)
     {
-      ///@@@todo
+			if (m_graphState == State.Viewing)
+			{
+				m_iCountryCode=country;
+				TuneChannel(standard, iChannelNr,country);
+				return true;
+			}
+
       if (m_graphState != State.Created) return false;
       Log.Write("SWGraph:Start viewing");
 			m_iCountryCode=country;
