@@ -2062,4 +2062,5 @@
 <string><id>709</id><value>Auto update</value></string>
 <string><id>710</id><value>A new version is available</value></string>
 <string><id>711</id><value>Upgrade from v#old ->v#new ?</value></string>
+<string><id>712</id><value>Back</value></string>
 </strings>
