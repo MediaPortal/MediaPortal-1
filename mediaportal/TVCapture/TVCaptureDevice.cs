@@ -246,7 +246,7 @@ namespace MediaPortal.TV.Recording
         if (StartTimeShifting())
         {
           // start sink graph
-          if (StartRecording())
+          if (StartRecording(recording.IsContentRecording))
           {
           }
         }
@@ -359,7 +359,7 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
-     bool StartRecording()
+     bool StartRecording(bool bContentRecording)
      {
       string strRecPath;
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -397,7 +397,7 @@ namespace MediaPortal.TV.Recording
       
 
       string strFileName=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
-      bool bResult=m_graph.StartRecording(strFileName);
+      bool bResult=m_graph.StartRecording(strFileName, bContentRecording);
 
 			m_newRecordedTV = new TVRecorded();        
 			m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);

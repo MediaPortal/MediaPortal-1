@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  29-06-2004  my news     : fixed : cursor disappeared when you only got 1 newsfeed
+  29-06-2004  My TV       : added : reference recording (when you press record now)
+  29-06-2004  general     : added : skin updates voor MetalMedia & CrystalCenter (thx MrMario64/Aurora13)
+  
   28-06-2004  my music    : fixed : play a song in full screen (viz) when the song finishes you get the topbar on screen rest = black
   28-06-2004  DVD Player  : added : user can specify in setup which video & audio codec to use for dvd playback
   28-06-2004  MY TV       : added : user can specify in setup which video & audio codec to use for my tv

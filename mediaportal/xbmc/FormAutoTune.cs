@@ -33,8 +33,8 @@ namespace MediaPortal
     private System.Windows.Forms.Timer timer1;
     private System.ComponentModel.IContainer components;
     int     m_iChannel=0;
-    int     m_iChannelsFound=0;
-    int     m_iChannelStart=0;
+    //int     m_iChannelsFound=0;
+    //int     m_iChannelStart=0;
     int     m_iChannelEnd=0;
     TVCaptureDevice m_card=null;
     private System.Windows.Forms.Label labelFreq;

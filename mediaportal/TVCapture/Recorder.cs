@@ -254,6 +254,7 @@ namespace MediaPortal.TV.Recording
       tmpRec.Channel=strChannel;
       tmpRec.Title="Manual";
       tmpRec.RecType=TVRecording.RecordingType.Once;
+			tmpRec.IsContentRecording=false;//make a reference recording!
       TVDatabase.AddRecording(ref tmpRec);
     }
 
