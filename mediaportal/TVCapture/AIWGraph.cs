@@ -861,7 +861,8 @@ namespace MediaPortal.TV.Recording
        
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			DirectShowUtil.DebugWrite("AIWGraph:StopViewing()");
-			m_videoWindow.put_Visible(DsHlp.OAFALSE);
+			if (m_videoWindow!=null)
+				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();

@@ -1071,6 +1071,7 @@ namespace MediaPortal.Configuration.Sections
 				listViewGroups.Items.Add(listItem);
 				
 				SaveGroups();
+				LoadGroups();
 				SaveTVChannels();
 				UpdateGroupChannels(group,true);
 
