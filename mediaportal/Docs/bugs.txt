@@ -3,7 +3,8 @@ Bugs:
 - installer: check dx9b
 - MPReader : XCDs dont work anymore
 
-06-05-2004 my videos  : Disc number cannot be entered in the database 
+imdb : tagline=gone?
+
 02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
 02-05-2004 my usic	  : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
 01-05-2004 my pictures: Quality of pics is degraded since DX9 is used. 
@@ -11,7 +12,6 @@ Bugs:
 29-04-2004 my tv      : desync audio while viewing tv 
 28-04-2004 my tv      : crossbar Failed to set crossbar routing 
 28-04-2004 my tv      : tuner not found 
-26-04-2004 my music   : F3 on a song -> the cursor gets set at the beginning of the list 
 26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3 
 24-04-2004 general    : some WM9 visz. like g-force just show a black screen
 

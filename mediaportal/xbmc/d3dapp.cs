@@ -628,7 +628,7 @@ namespace MediaPortal
 					GC.Collect();
           return;
         }
-        catch (Exception )
+        catch (Exception ex)
         {
           // Cleanup before we try again
           OnDeviceLost(null, null);

@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  08-05-2004  general     : fixed : lowered usage of video ram. Solved a number of problems for ppl with low memory memory & high resolutions
   08-05-2004  my movies   : fixed : entering dvd# now works
   08-05-2004  my movies   : added : support for vobsub filter (switch subtitle, turn subtitle on/off, colors, font,...)
   08-05-2004  my tv       : fixed : TV viewing/recording:MP now renders all output pins of crossbars. Hopefully solves the no-audio problems some have

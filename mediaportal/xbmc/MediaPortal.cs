@@ -278,6 +278,7 @@ public class MediaPortalApp : D3DApp
       if (GUIGraphicsContext.DX9Device!=null)
       {
         Log.Write("DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
+        Log.Write("video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory/1024);
       }
     }
 

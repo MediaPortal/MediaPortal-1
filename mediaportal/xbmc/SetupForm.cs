@@ -1015,6 +1015,7 @@ namespace MediaPortal
       this.dvdbtnSelect.Size = new System.Drawing.Size(24, 23);
       this.dvdbtnSelect.TabIndex = 2;
       this.dvdbtnSelect.Text = "...";
+      this.dvdbtnSelect.Click += new System.EventHandler(this.dvdbtnSelect_Click);
       // 
       // label2
       // 
