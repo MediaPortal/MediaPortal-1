@@ -18,7 +18,7 @@ crash/things not working Bugs:
   10-08-2004 Music      : When using winamp or foobar no default audio icon is displayed when no album art is available
 
   09-08-2004 my video   : vmr9 quality of video turns bad after a GUI element (like pause,ff,rw icon) has been shown
-  09-08-2004 music      : "Now playing song" not updated after skipping to next song (previous song stays red).
+  
   02-08-2004 my tv      : dual tuner setup: when recording with card#1 you cannot switch tv channels anymore
                           since card#1 is also used for tv viewing instead of card #2
   02-08-2004 my tv      : When you are -100 sec in the buffer and forward with 32X and it has got to the 

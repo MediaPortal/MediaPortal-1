@@ -1,3 +1,4 @@
+10-08-2004  music       : fixed : "Now playing song" not updated after skipping to next song (previous song stays red).
 10-08-2004  GUI         : fixed : icons in listview do not listen to x and y offsets. Best way is to have the icon have it's own x and y offsets.
 10-08-2004  GUI	        : fixed : When having "allow overlay" off on a page, the video overlay keeps being shown
 10-08-2004  My Video    : fixed : Playlist only accessable in My video main, not on a different view (using F1)
