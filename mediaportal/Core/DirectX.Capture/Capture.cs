@@ -804,7 +804,7 @@ namespace DirectX.Capture
                   {
                     bAdded=true;
                     DirectShowUtil.DebugWrite("adding {0} to graph",filters.AudioRenderers[i].Name);
-                    audioFilter=DirectShowUtil.AddAudioRendererToGraph( graphBuilder, filters.AudioRenderers[i].Name);
+                    audioFilter=DirectShowUtil.AddAudioRendererToGraph( graphBuilder, filters.AudioRenderers[i].Name,true);
                     break;
                   }
                 }

@@ -168,7 +168,7 @@ namespace MediaPortal.Player
             DirectShowUtil.DebugWrite("RadioGraph:adding {0} to graph",filters.AudioRenderers[i].Name);
 						try
 						{
-							m_audioFilter=DirectShowUtil.AddAudioRendererToGraph( m_graphBuilder, filters.AudioRenderers[i].Name);
+							m_audioFilter=DirectShowUtil.AddAudioRendererToGraph( m_graphBuilder, filters.AudioRenderers[i].Name,true);
 							bAdded=true;
 						}
 						catch(Exception)
