@@ -899,24 +899,7 @@ namespace MediaPortal.GUI.Video
 			IMDBMovie movie = item.MusicTag as IMDBMovie;
 			if (movie!=null)
 			{
-				string strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,movie.Title);
-				GUIPropertyManager.SetProperty("#director",movie.Director);
-				GUIPropertyManager.SetProperty("#genre",movie.Genre);
-				GUIPropertyManager.SetProperty("#cast",movie.Cast);
-				GUIPropertyManager.SetProperty("#dvdlabel",movie.DVDLabel);
-				GUIPropertyManager.SetProperty("#imdbnumber",movie.IMDBNumber);
-				GUIPropertyManager.SetProperty("#file",movie.File);
-				GUIPropertyManager.SetProperty("#plot",movie.Plot);
-				GUIPropertyManager.SetProperty("#plotoutline",movie.PlotOutline);
-				GUIPropertyManager.SetProperty("#rating",movie.Rating.ToString());
-				GUIPropertyManager.SetProperty("#tagline",movie.TagLine);
-				GUIPropertyManager.SetProperty("#votes",movie.Votes);
-				GUIPropertyManager.SetProperty("#credits",movie.WritingCredits);
-				GUIPropertyManager.SetProperty("#thumb",strThumb);
-				GUIPropertyManager.SetProperty("#title",movie.Title);
-				GUIPropertyManager.SetProperty("#year",movie.Year.ToString());
-				GUIPropertyManager.SetProperty("#runtime",movie.RunTime.ToString());
-				GUIPropertyManager.SetProperty("#mpaarating",movie.MPARating.ToString());
+				movie.SetProperties();
 			}
 
 			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
