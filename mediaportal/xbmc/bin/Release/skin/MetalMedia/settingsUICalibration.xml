@@ -21,7 +21,7 @@
 		<posY>270</posY>
 		<width>720</width>
 		<height>40</height>
-		<texture>bar.png</texture>
+		<texture>osd_panel.png</texture>
 	</control>
 	<control>
 		<description>settings label</description>
@@ -41,7 +41,7 @@
 		<posY>280</posY>
 		<label>5</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF484848</textcolor>
 	</control>
 </controls>
 </window>

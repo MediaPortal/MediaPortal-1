@@ -10,8 +10,8 @@
     <posX>0</posX>
     <posY>54</posY>
     <width>720</width>
-    <height>65</height>
-    <texture>bluebar.png</texture>
+   	<height>40</height>
+    <texture>osd_panel.png</texture>
     <colorkey>0</colorkey>
     <colordiffuse>ffffffff</colordiffuse>
     <visible>no</visible>
@@ -21,11 +21,11 @@
     <type>label</type>
     <id>10</id>
     <posX>70</posX>
-    <posY>52</posY>
+    <posY>61</posY>
     <label>-</label>
     <align>left</align>
-    <font>font13</font>
-    <textcolor>FFFFFFFF</textcolor>
+    <font>font16</font>
+		<textcolor>FF484848</textcolor>
     <visible>no</visible>
   </control>
   <control>
@@ -35,9 +35,8 @@
     <posX>70</posX>
     <posY>72</posY>
     <label>-</label>
+		<textcolor>FF484848</textcolor>
     <align>left</align>
-    <font>font13</font>
-    <textcolor>FFFFFFFF</textcolor>
     <visible>no</visible>
   </control>
   <control>
@@ -47,9 +46,8 @@
     <posX>70</posX>
     <posY>92</posY>
     <label>-</label>
+		<textcolor>FF484848</textcolor>
     <align>left</align>
-    <font>font13</font>
-    <textcolor>FFFFFFFF</textcolor>
     <visible>no</visible>
   </control>
   <control>

@@ -11,7 +11,7 @@
     <posY>54</posY>
     <width>720</width>
    	<height>40</height>
-    <texture>bar.png</texture>
+    <texture>osd_panel.png</texture>
     <colorkey>0</colorkey>
     <colordiffuse>ffffffff</colordiffuse>
     <visible>no</visible>
@@ -25,6 +25,7 @@
     <label>-</label>
     <align>left</align>
     <font>font16</font>
+		<textcolor>FF484848</textcolor>
     <visible>no</visible>
   </control>
   <control>
@@ -34,6 +35,7 @@
     <posX>70</posX>
     <posY>72</posY>
     <label>-</label>
+		<textcolor>FF484848</textcolor>
     <align>left</align>
     <visible>no</visible>
   </control>
@@ -44,6 +46,7 @@
     <posX>70</posX>
     <posY>92</posY>
     <label>-</label>
+		<textcolor>FF484848</textcolor>
     <align>left</align>
     <visible>no</visible>
   </control>
@@ -212,14 +215,14 @@
 
 		<filltexture1>ProgressBar-Recorded.png</filltexture1>
 		<fillheight>30</fillheight>
-		<visible>yes</visible> 
+		<visible>yes</visible>
 		<label>#percentage</label>
 		<startlabel>0:00</startlabel>
 		<endlabel>#shortduration</endlabel>
 		<toplabel>#shortcurrentplaytime</toplabel>
-		<font>font13</font> 
-		<textcolor>FF000000</textcolor> 
-	</control> 
-	
+		<font>font13</font>
+		<textcolor>FF000000</textcolor>
+	</control>
+
   </controls>
   </window>

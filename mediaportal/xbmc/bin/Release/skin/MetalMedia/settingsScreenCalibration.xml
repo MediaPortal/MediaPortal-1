@@ -29,10 +29,10 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>0</posX>
-		<posY>130</posY>
+		<posY>123</posY>
 		<width>720</width>
-		<height>60</height>
-		<texture>bar.png</texture>
+		<height>74</height>
+		<texture>osd_panel.png</texture>
 	</control>
 	<control>
 		<description>coordinates label</description>
@@ -42,7 +42,7 @@
 		<posY>140</posY>
 		<label>-</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF484848</textcolor>
 	</control>
 	<control>
 		<description>help information</description>
@@ -52,7 +52,7 @@
 		<posY>160</posY>
 		<label>-</label>
 		<font>font14</font>
-		<textcolor>FFFFFFFF</textcolor>
+		<textcolor>FF484848</textcolor>
 	</control>
 	<control>
 		<description>top left logo</description>

@@ -259,7 +259,7 @@
 	</string>
 	<string>
 		<id>134</id>
-		<value>Liedjes</value>
+		<value>Bestanden</value>
 	</string>
 	<string>
 		<id>135</id>
@@ -1083,7 +1083,7 @@
 	</string>
 	<string>
 		<id>342</id>
-		<value>Films</value>
+		<value>Bestanden</value>
 	</string>
 	<string>
 		<id>343</id>
@@ -1672,6 +1672,70 @@
 	<string>
 		<id>491</id>
 		<value>Gebruik gr.iconen</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Bestand menu</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Markeer als bestemming</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Handeling kan niet voltooid worden</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Verwijder deze map</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Ga naar bestemming</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Berekenen</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Bent U hier zeker van?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>items</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>Naar</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Doel bestand bestaat al. Bestand overschrijven?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Annuleren</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Altijd</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Nooit</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>CD met afbeeldingen gevonden, wilt U de CD bekijken?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>CD met films gevonden, wilt U de CD bekijken?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audio CD gevonden, wilt U de CD luisteren?</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -2706,6 +2770,14 @@
   <string>
   	<id>983</id>
   	<value>Ga naar playlists</value>
+  </string>
+  <string>
+  	<id>984</id>
+  	<value>Lijst van films ophalen</value>
+  </string>
+  <string>
+  	<id>985</id>
+  	<value>Informatie over film ophalen</value>
   </string>
 
   <string>

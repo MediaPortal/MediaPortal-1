@@ -11,7 +11,7 @@
 			<posY>54</posY>
 			<width>720</width>
      	<height>40</height>
-			<texture>bar.png</texture>
+			<texture>osd_panel.png</texture>
 			<colorkey>0</colorkey>
 			<colordiffuse>ffffffff</colordiffuse>
 		</control>
@@ -24,7 +24,7 @@
       <label>-</label>
       <align>left</align>
       <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FF484848</textcolor>
     </control>
     <control>
       <description>row 2 label</description>
@@ -35,7 +35,7 @@
       <label>-</label>
       <align>left</align>
       <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FF484848</textcolor>
     </control>
     <control>
       <description>row 2 extra label</description>
@@ -46,7 +46,7 @@
       <label>-</label>
       <align>left</align>
       <font>font16</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FF484848</textcolor>
     </control>
 	</controls>
 </window>
