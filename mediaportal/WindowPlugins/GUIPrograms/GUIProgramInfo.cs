@@ -146,6 +146,14 @@ namespace WindowPlugins.GUIPrograms
 					m_pTexture=null;
 					m_iThumbIndex = 0;
 					m_iThumbFolderIndex = -1;
+					// if there is no overview text, default to bigger pictures
+					if (m_pFile != null)
+					{
+						if (m_pFile.Overview == "")
+						{
+							this.m_bOverviewVisible = false;
+						}
+					}
 					Refresh();
 					return true;
 				}
@@ -189,8 +197,6 @@ namespace WindowPlugins.GUIPrograms
 						Refresh();
 						return true;
 					}
-
-					
 
 				}
 					break;

@@ -196,6 +196,7 @@ namespace ProgramsDatabase
 				if (MPGUIMode) 
 				{
 					proc.WaitForExit();
+					Log.Write("GUIPrograms: DX9Device.Reset");
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 				}
 			}
@@ -254,18 +255,6 @@ namespace ProgramsDatabase
 			{
 				Total = Total + 1;
 				GUIListItem gli = new GUIListItem( curFile.Title );
-//				if (curFile.Imagefile != "")
-//				{
-//					gli.ThumbnailImage = curFile.Imagefile;
-//					gli.IconImageBig = curFile.Imagefile;
-//					gli.IconImage = curFile.Imagefile;
-//				}
-//				else 
-//				{
-//					gli.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
-//					gli.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBig.png";
-//					gli.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderNF.png";
-//				}
 				gli.MusicTag = curFile;
 				gli.IsFolder = curFile.IsFolder; 
 				gli.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);

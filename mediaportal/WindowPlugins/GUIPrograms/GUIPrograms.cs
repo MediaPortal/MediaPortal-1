@@ -101,6 +101,8 @@ namespace WindowPlugins.GUIPrograms
 		AppItem lastApp = null;
 		string lastFilepath = "";
 		MapSettings       _MapSettings = new MapSettings();
+		int m_iItemSelected=-1;   
+
 
 		/// <summary>
 		/// Constructor used to specify to the MediaPortal Core the window that we 
@@ -196,11 +198,13 @@ namespace WindowPlugins.GUIPrograms
 				// <F3> keypress
 				if (null != lastApp) 
 				{
+					m_iItemSelected=GetSelectedItemNo();
 					GUIListItem item = GetSelectedItem();
 					if (!item.Label.Equals( ProgramUtils.cBackLabel ))
 					{
 						// show file info but only if the selected item is not the back button
 						lastApp.OnInfo(item);
+						UpdateListControl();
 					}
 				}
 				return;
@@ -215,6 +219,7 @@ namespace WindowPlugins.GUIPrograms
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					// display application list
+//					Log.Write("GUIPrograms: gui_msg_windows_init");
 					base.OnMessage(message);
 					LoadFolderSettings("");
 					lastApp = apps.GetAppByID(_MapSettings.LastAppID);
@@ -227,14 +232,21 @@ namespace WindowPlugins.GUIPrograms
 						lastFilepath = "";
 					}
 					UpdateListControl();
-					UpdateButtons();
 					ShowThumbPanel();
 					return true;
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
+//					Log.Write("GUIPrograms: gui_msg_windows_deinit");
 					SaveSettings();
+					// make sure the selected index wasn't reseted already
+					// and save the index only if it's non-zero
+					// otherwise: DXDevice.Reset clears selection 
+					int iItemIndex = GetSelectedItemNo();
+					if (iItemIndex > 0)
+					{
+						m_iItemSelected=GetSelectedItemNo();
+					}
 					break;
-
 			
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					int iControl=message.SenderControlId;
@@ -253,7 +265,6 @@ namespace WindowPlugins.GUIPrograms
 								currentView=View.VIEW_AS_LIST;
 								break;
 						}
-						UpdateButtons();
 						ShowThumbPanel();
 						GUIControl.FocusControl(GetID,iControl);
 					}
@@ -270,12 +281,15 @@ namespace WindowPlugins.GUIPrograms
 							GUIListItem item = GetSelectedItem();
 							if( !item.IsFolder )
 							{
+								m_iItemSelected=GetSelectedItemNo();
+//								Log.Write("GUIPrograms: ACTION_SELECT_ITEM writes itemsel: {0}", m_iItemSelected);
 								// non-folder item clicked => always a fileitem!
 								FileItemClicked(item);
 							}
 							else
 							{
 								// folder-item clicked.... 
+								m_iItemSelected=-1;
 								if( item.Label.Equals( ProgramUtils.cBackLabel ) )
 								{
 									BackItemClicked(item);
@@ -420,7 +434,6 @@ namespace WindowPlugins.GUIPrograms
 						lastFilepath = "";
 					}
 				}
-
 				UpdateListControl();
 			}
 			else
@@ -503,8 +516,15 @@ namespace WindowPlugins.GUIPrograms
 
 		void ShowThumbPanel()
 		{
+			int iItem=GetSelectedItemNo(); 
 			GUIThumbnailPanel pControl=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
 			pControl.ShowBigIcons( currentView == View.VIEW_AS_LARGEICONS );
+			if (iItem>-1)
+			{
+				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST,iItem);
+				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS,iItem);
+			}
+			UpdateButtons();
 		}
 
 		int GetCurrentFatherID()
@@ -565,6 +585,11 @@ namespace WindowPlugins.GUIPrograms
 			string strObjects=String.Format("{0} {1}", TotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
+			if (m_iItemSelected>=0)
+			{
+				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LIST,m_iItemSelected);
+				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_THUMBS,m_iItemSelected);
+			}
 		}
 
 
@@ -619,6 +644,24 @@ namespace WindowPlugins.GUIPrograms
 			GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
 			return item;
 		}
+
+
+		int GetSelectedItemNo()
+		{
+			int iControl;
+			if (currentView != View.VIEW_AS_LIST )
+			{
+				iControl=(int)Controls.CONTROL_THUMBS;
+			}
+			else
+				iControl=(int)Controls.CONTROL_LIST;
+
+			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
+			OnMessage(msg);         
+			int iItem=(int)msg.Param1;
+			return iItem;
+		}
+
 
 	}
 }
