@@ -8,7 +8,7 @@ Skin, gfx, .xml & media:
   - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
-vmr:
+vmr9:
 	- no vmr
 	- windowless vmr
 	- renderless vmr
@@ -19,6 +19,7 @@ My Radio:
          
 My TV:
   general
+    - support for simple tvcards (watch tv only)
 	- option:fade in/out when switching between fullscreen video/tv<->gui
 	- option:turn timeshifting on/off
 	- option:show fullscreen TV when going to my tv (instead of windowed)
@@ -58,7 +59,6 @@ My TV:
   Recorder/Capture:
      - add support for digital capture cards (BDA tuners)
      - add screenshot option    
-     - reference recordings
      
 My Music: (int_20h)
   - search songs by genre,artist,album (based on music database)
@@ -71,7 +71,6 @@ My Music: (int_20h)
   - repeat none, once, always
 
 My Video:
-  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
   - show IMDB info when fullscreen/osd
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - 1st time it takes a long time b4 OSD appears
@@ -89,32 +88,29 @@ Settings:
 
 new plugins:
   - my files  
-  - my programs/emulators/games (domifan is working on this)
   - my TV-series
   
 DVD player:
-  - show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
   - VMR9
 
 Skin engine:
   - fade in for controls
-  - position text for buttons
   - transitions between windows
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
+
 setup:
   - setup : add tooltips 
-  - setup:Auto Tune needs some work
+  - setup :Auto Tune needs some work
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
-  - setup preferred mpeg2 codec for dvd, tv & video player
   - setup deinterlace method (vmr9)
 
 General:
-  
+  - autoplay anything thats in the cd/dvd
+  - support for VFD/LCD displays
   - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
   - remember 'view as' setting per folder
-  - support for VFD/LCD displays
   - caller ID
   - better mouse control 
      - my tv: 
@@ -129,5 +125,4 @@ General:
        - general   : switch fullscreen<->windowed
        - fullscreen: osd
        - mouse wheel for scrolling
-  - autoplay anything thats in the cd/dvd
   
