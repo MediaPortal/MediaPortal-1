@@ -19,6 +19,8 @@ namespace MediaPortal.GUI.TV
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+    int m_iLastMousePositionX = 0;
+    int m_iLastMousePositionY = 0;
     Timer   Clock;
     public FormOSD()
     {
@@ -33,9 +35,78 @@ namespace MediaPortal.GUI.TV
       Clock.Interval=250;
       Clock.Start();
       
-      Clock.Tick+=new EventHandler(Timer_Tick);
+      Clock.Tick+=new EventHandler(Timer_Tick);      
     }
-    
+
+    private void OnMouseDown(object sender, MouseEventArgs  e)
+    {
+      Action action;
+
+      // first move mouse
+      float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
+      float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
+      float x = (fX * ((float)m_iLastMousePositionX)) - GUIGraphicsContext.OffsetX;
+      float y = (fY * ((float)m_iLastMousePositionY)) - GUIGraphicsContext.OffsetY; ;
+      action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+      GUIGraphicsContext.OnAction(action);
+
+      // right mouse button=back
+      if (e.Button == MouseButtons.Right)
+      {
+        Key key = new Key(0, (int)Keys.Escape);
+        action = new Action();
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          return;
+        }
+        return;
+      }
+
+      //middle mouse button=Y
+      if (e.Button == MouseButtons.Middle)
+      {
+        Key key = new Key('y',0);
+        action = new Action();
+        if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+        {
+          GUIGraphicsContext.OnAction(action);
+          return;
+        }
+      }
+	
+      if (e.Button == MouseButtons.Left)
+      {			
+        action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
+      }
+
+      action.MouseButton = e.Button;
+      action.SoundFileName = "click.wav";
+
+      GUIGraphicsContext.OnAction(action);
+    }
+
+    private void OnMouseMove(object sender, MouseEventArgs  e)
+    {
+      if (m_iLastMousePositionX != e.X || m_iLastMousePositionY != e.Y)
+      {
+        m_iLastMousePositionX = e.X;
+        m_iLastMousePositionY = e.Y;
+
+        float fX = ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
+        float fY = ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
+        float x = (fX * ((float)e.X)) - GUIGraphicsContext.OffsetX;
+        float y = (fY * ((float)e.Y)) - GUIGraphicsContext.OffsetY; ;
+        GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        if (window != null)
+        {
+          Action action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+          action.MouseButton = e.Button;
+          GUIGraphicsContext.OnAction(action);       
+        }
+      }
+    }
+      
     /// <summary>
     /// Set position & size of the OSD form
     /// based on position&size of the main form
@@ -135,7 +206,8 @@ namespace MediaPortal.GUI.TV
       this.TransparencyKey = System.Drawing.Color.Black;
       this.Closing += new System.ComponentModel.CancelEventHandler(this.FormOSD_Closing);
       this.Load += new System.EventHandler(this.FormOSD_Load);
-
+      this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
+      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
     }
 		#endregion
 
