@@ -1,6 +1,6 @@
 <window>
   <id>2003</id> 
-  <defaultcontrol>5</defaultcontrol> 
+  <defaultcontrol>6</defaultcontrol>
   <allowoverlay>no</allowoverlay>
     <controls>
 	<control>
@@ -22,7 +22,7 @@
 		<label>-</label> 
 		<font>font10</font>
 		<align>right</align> 
-		<textcolor>FF000000</textcolor> 
+		<textcolor>FF000000</textcolor>
 	</control>
 	<control>
 		<description>Director txt</description> 
@@ -187,88 +187,113 @@
 		<textcolor>FF000000</textcolor> 
 	</control>
 	<control>
-		<description>Movie logo</description> 
-		<type>image</type> 
-		<id>3</id> 
-		<posX>100</posX> 
-		<posY>270</posY> 
-		<width>100</width> 
-		<height>140</height> 
-		<texture>-</texture> 
-		<colorkey>FFFF00FF</colorkey> 
+		<description>Movie logo</description>
+		<type>image</type>
+		<id>3</id>
+		<posX>220</posX>
+		<posY>270</posY>
+		<width>410</width>
+		<height>280</height>
+		<texture>-</texture>
+		<colorkey>FFFF00FF</colorkey>
 		<colordiffuse>20FFFFFF</colordiffuse>
-		<keepaspectratio>yes</keepaspectratio> 
+		<keepaspectratio>yes</keepaspectratio>
+	</control>
+
+	<control>
+		<description>image title:</description>
+		<type>label</type>
+		<id>30</id>
+		<posX>100</posX>
+		<posY>365</posY>
+		<label>734</label>
+		<font>font13</font>
+		<align>left</align>
+		<textcolor>FFFFFFF</textcolor>
 	</control>
 	<control>
-		<description>textarea</description> 
-		<type>textbox</type> 
-		<id>4</id> 
-		<posX>220</posX> 
-		<posY>265</posY> 
-		<width>410</width> 
-		<height>290</height> 
-		<onleft>5</onleft> 
-		<onright>5</onright> 
-		<onup>5</onup> 
-		<ondown>5</ondown> 
+		<description>spin control</description>
+		<type>spincontrol</type>
+		<id>4</id>
+		<posX>105</posX>
+		<posY>393</posY>
+		<onup>7</onup>
+		<ondown>6</ondown>
 	</control>
+
 	<control>
-		<description>Tracks/Review</description> 
-		<type>button</type> 
-		<id>5</id> 
-		<posX>100</posX> 
-		<posY>420</posY> 
-		<width>90</width> 
-		<height>32</height> 
+		<description>Tracks/Review</description>
+		<type>button</type>
+		<id>6</id>
+		<posX>100</posX>
+		<posY>420</posY>
+		<width>90</width>
+		<height>32</height>
 		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>list_nofocus.png</textureNoFocus>
-		<label>206</label> 
-		<font>font13</font> 
-		<onleft>4</onleft> 
-		<onright>4</onright> 
-		<onup>17</onup> 
-		<ondown>6</ondown> 
+		<label>206</label>
+		<font>font13</font>
+		<onleft>5</onleft>
+		<onright>5</onright>
+		<onup>4</onup>
+		<ondown>7</ondown>
 	</control>
 	<control>
-		<description>Refresh</description> 
-		<type>button</type> 
-		<id>6</id> 
-		<posX>100</posX> 
-		<posY>456</posY> 
-		<width>90</width> 
-		<height>32</height> 
-		<label>184</label> 
+		<description>Refresh</description>
+		<type>button</type>
+		<id>7</id>
+		<posX>100</posX>
+		<posY>456</posY>
+		<width>90</width>
+		<height>32</height>
+		<label>184</label>
 		<textureFocus>list_focus.png</textureFocus>
 		<textureNoFocus>list_nofocus.png</textureNoFocus>
-		<onleft>4</onleft> 
-		<onright>4</onright> 
-		<onup>5</onup> 
-		<ondown>7</ondown> 
+		<onleft>4</onleft>
+		<onright>4</onright>
+		<onup>6</onup>
+		<ondown>8</ondown>
 	</control>
 	<control>
-		<description>disc:</description> 
-		<type>label</type> 
-		<id>100</id> 
-		<posX>100</posX> 
-		<posY>495</posY> 
-		<label>427</label> 
-		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<description>disc:</description>
+		<type>label</type>
+		<id>100</id>
+		<posX>100</posX>
+		<posY>495</posY>
+		<label>427</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
-		<description>disc select</description> 
-		<type>spincontrol</type> 
-		<id>7</id> 
-		<posX>105</posX> 
-		<posY>530</posY> 
-		<reverse>yes</reverse> 
-		<onup>6</onup> 
-		<ondown>5</ondown> 
-		<onleft>4</onleft> 
-		<onright>4</onright> 
+		<description>disc select</description>
+		<type>spincontrol</type>
+		<id>8</id>
+		<posX>105</posX>
+		<posY>530</posY>
+		<reverse>yes</reverse>
+		<onup>7</onup>
+		<ondown>4</ondown>
+		<onleft>5</onleft>
+		<onright>6</onright>
 		<textcolor>FFFFFFFF</textcolor>
 		<buddycontrolid>100</buddycontrolid>
 		<showrange>no</showrange>
 	</control>
-    </controls>
+
+	<control>
+		<description>textarea</description>
+		<type>textbox</type>
+		<id>5</id>
+		<posX>220</posX>
+		<posY>265</posY>
+		<width>410</width>
+		<height>290</height>
+		<onleft>5</onleft>
+		<onright>5</onright>
+		<onup>5</onup>
+		<ondown>5</ondown>
+	</control>
+
+  </controls>
 </window>
+

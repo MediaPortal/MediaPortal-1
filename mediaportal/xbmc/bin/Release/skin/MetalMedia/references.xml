@@ -165,7 +165,7 @@
 		<description>default filmstrip</description>
 		<type>filmstrip</type>
 		<id>11</id>
-		<posX>220</posX>
+		<posX>250</posX>
 		<posY>420</posY>
 		<width>500</width>
 		<height>100</height>
@@ -174,34 +174,34 @@
 		<spinPosX>590</spinPosX>
 		<spinPosY>530</spinPosY>
 		<spinColor>ffffffff</spinColor>
-		<textureUp>arrow_round_right_nofocus.png</textureUp>
-		<textureDown>arrow_round_left_nofocus.png</textureDown>
-		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
-		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+		<textureUp>arrow_right_nofocus.png</textureUp>
+		<textureDown>arrow_left_nofocus.png</textureDown>
+		<textureUpFocus>arrow_right_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_left_focus.png</textureDownFocus>
 		<itemWidth>108</itemWidth>
 		<itemHeight>108</itemHeight>
 		<textureWidth>80</textureWidth>
-		<textureHeight>80</textureHeight> 
+		<textureHeight>80</textureHeight>
 		<thumbWidth>62</thumbWidth>
 		<thumbHeight>62</thumbHeight>
 		<thumbPosX>9</thumbPosX>
-		<thumbPosY>9</thumbPosY>		
-		<imageFolder>icon_empty_nofocus.png</imageFolder>
-		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
+		<thumbPosY>9</thumbPosY>
+		<imageFolder>folder_nofocus.png</imageFolder>
+		<imageFolderFocus>folder_focus.png</imageFolderFocus>
 		<font>font14</font>
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<suffix>|</suffix>
 		<textureWidthBig>108</textureWidthBig>
-		<textureHeightBig>108</textureHeightBig> 
+		<textureHeightBig>108</textureHeightBig>
 		<itemWidthBig>136</itemWidthBig>
 		<itemHeightBig>134</itemHeightBig>
 		<thumbWidthBig>84</thumbWidthBig>
 		<thumbHeightBig>84</thumbHeightBig>
 		<thumbPosXBig>12</thumbPosXBig>
-		<thumbPosYBig>12</thumbPosYBig>	
-		<background>previewbackground.png</background>
+		<thumbPosYBig>12</thumbPosYBig>
+		<background>default_picture_big.png</background>
 		<backgroundx>290</backgroundx>
 		<backgroundy>97</backgroundy>
 		<backgroundwidth>370</backgroundwidth>
@@ -388,3 +388,4 @@
 		<textureNoFocusRight>tvguide_button_light_right.png</textureNoFocusRight>
 	</control>	
 </controls>
+

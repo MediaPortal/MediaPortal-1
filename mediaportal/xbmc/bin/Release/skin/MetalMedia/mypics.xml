@@ -63,7 +63,7 @@
 		<posX>55</posX>
 		<posY>115</posY>
 		<label>100</label>
-		<onleft>10</onleft>
+		<onleft>2</onleft>
 		<onright>10</onright>
 		<onup>21</onup>
 		<ondown>3</ondown>
@@ -75,7 +75,7 @@
 		<posX>55</posX>
 		<posY>143</posY>
 		<label>103</label>
-		<onleft>10</onleft>
+		<onleft>3</onleft>
 		<onright>4</onright>
 		<onup>2</onup>
 		<ondown>6</ondown>
@@ -99,7 +99,7 @@
 		<posX>55</posX>
 		<posY>180</posY>
 		<texture>panel_split.png</texture>
-	</control>	
+	</control>
 	<control>
 		<description>SlideShow button</description>
 		<type>button</type>
@@ -107,7 +107,7 @@
 		<posX>55</posX>
 		<posY>189</posY>
 		<label>108</label>
-		<onleft>10</onleft>
+		<onleft>6</onleft>
 		<onright>10</onright>
 		<onup>3</onup>
 		<ondown>7</ondown>
@@ -119,7 +119,7 @@
 		<posX>55</posX>
 		<posY>217</posY>
 		<label>361</label>
-		<onleft>10</onleft>
+		<onleft>7</onleft>
 		<onright>10</onright>
 		<onup>6</onup>
 		<ondown>8</ondown>
@@ -131,42 +131,56 @@
 		<posX>55</posX>
 		<posY>245</posY>
 		<label>109</label>
-		<onleft>10</onleft>
+		<onleft>8</onleft>
 		<onright>10</onright>
 		<onup>7</onup>
-		<ondown>2</ondown>
-	</control>
-			<control>
-				<description>composite control consisting of a list control and a thumbnail panel</description>
-			    <type>facadeview</type>
-			    <id>10</id>
-	<control>
-		<description>listcontrol</description>
-		<type>listcontrol</type>
-		<id>10</id>
-		<onleft>11</onleft>
-		<onright>11</onright>
-		<onup>2</onup>
-		<ondown>2</ondown>
+		<ondown>9</ondown>
 	</control>
 	<control>
-		<description>Thumbnail Panel</description>
-		<type>thumbnailpanel</type>
-		<id>11</id>
-		<onleft>2</onleft>
-		<onright>2</onright>
-		<onup>2</onup>
+		<description>Rotate</description>
+		<type>button</type>
+		<id>9</id>
+		<posX>55</posX>
+		<posY>273</posY>
+		<label>735</label>
+		<onleft>9</onleft>
+		<onright>10</onright>
+		<onup>8</onup>
 		<ondown>2</ondown>
 	</control>
-			    <control>
-				    <description>Filmstrip view</description>
-				    <type>filmstrip</type>
-				    <id>11</id>
-				    <onleft>2</onleft>
-				    <onright>2</onright>
-				    <onup>2</onup>
-				    <ondown>2</ondown>
-			    </control>
-			</control>
+
+	<control>
+		<description>composite control consisting of a list control and a thumbnail panel</description>
+    <type>facadeview</type>
+    <id>10</id>
+   	<control>
+   		<description>listcontrol</description>
+   		<type>listcontrol</type>
+   		<id>10</id>
+   		<onleft>2</onleft>
+   		<onright>2</onright>
+   		<onup>2</onup>
+   		<ondown>2</ondown>
+   	</control>
+   	<control>
+   		<description>Thumbnail Panel</description>
+   		<type>thumbnailpanel</type>
+   		<id>11</id>
+   		<onleft>2</onleft>
+   		<onright>2</onright>
+   		<onup>2</onup>
+   		<ondown>2</ondown>
+   	</control>
+    <control>
+      <description>Filmstrip view</description>
+      <type>filmstrip</type>
+      <id>11</id>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
+      <ondown>2</ondown>
+    </control>
+  </control>
 </controls>
 </window>
+
