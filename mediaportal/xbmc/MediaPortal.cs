@@ -205,15 +205,15 @@ public class MediaPortalApp : D3DApp, IRender
 								if (Char.IsDigit(strVersionMng[i])) strTmp += strVersionMng[i];
 							}
 							long lVersion = System.Convert.ToInt64(strTmp);
-							if (lVersion < 409001126)
-							{
-                string strLine="Please install Managed DirectX 9.0c!\r\n";
-                strLine=strLine+ "Current version installed:"+strVersionMng+"\r\n\r\n";
-                strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
-                strLine=strLine+ "http://www.microsoft.com/directx";
-                System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                return;
-							}
+//							if (lVersion < 409001126)
+//							{
+//                string strLine="Please install Managed DirectX 9.0c!\r\n";
+//                strLine=strLine+ "Current version installed:"+strVersionMng+"\r\n\r\n";
+//                strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
+//                strLine=strLine+ "http://www.microsoft.com/directx";
+//                System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+//                return;
+//							}
 						}
 					}
 					subkey.Close();
