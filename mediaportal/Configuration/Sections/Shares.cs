@@ -219,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (shareData.IsRemote)
       {
-        listItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.Folder);
+        listItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.RemoteFolder);
       }
       listItem.Tag = shareData;
 			listItem.Checked = check;
