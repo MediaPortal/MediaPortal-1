@@ -212,7 +212,7 @@ namespace MediaPortal.GUI.GUIExplorer
 								DirectoryInfo di = Directory.CreateDirectory(path);
 								Log.Write("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
 							}
-							catch (Exception e)
+							catch (Exception )
 							{
 								Log.Write("Error Make Dir");
 							}

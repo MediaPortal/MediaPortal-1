@@ -73,7 +73,8 @@ namespace MediaPortal.Configuration.Sections
         {
           if(aspectRatio[index].Equals(defaultAspectRatio))
           {
-            defaultZoomModeComboBox.SelectedIndex = index;
+						if (index<defaultZoomModeComboBox.Items.Count)
+							defaultZoomModeComboBox.SelectedIndex = index;
             break;
           }
         }
@@ -99,6 +100,7 @@ namespace MediaPortal.Configuration.Sections
           if(VideoRenderersShort.List[index].Equals(videoRendererComboBox.Text))
           {
 						xmlwriter.SetValue("dvdplayer", "vmr9", index);
+						break;
           }
         }
       }

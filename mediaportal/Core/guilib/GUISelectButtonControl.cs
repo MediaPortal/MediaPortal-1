@@ -152,6 +152,9 @@ namespace MediaPortal.GUI.Library
       }
 
 
+			if (Focus) m_bShowSelect=true;
+			else m_bShowSelect=false;
+
       //	Are we in selection mode
       if (m_bShowSelect)
       {
@@ -172,7 +175,10 @@ namespace MediaPortal.GUI.Library
           {
             m_iStartFrame=0;
             m_bLeftSelected=false;
-          }
+						GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
+						GUIWindowManager.SendThreadMessage(message);
+						m_bUpdateNeeded=true;
+					}
           m_imgLeftFocus.Render();
 
           //	If we are moving left
@@ -195,7 +201,10 @@ namespace MediaPortal.GUI.Library
           {
             m_iStartFrame=0;
             m_bRightSelected=false;
-          }
+						GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
+						GUIWindowManager.SendThreadMessage(message);
+						m_bUpdateNeeded=true;
+					}
           m_imgRightFocus.Render();
 
           //	If we are moving right
@@ -218,7 +227,7 @@ namespace MediaPortal.GUI.Library
           m_label.Label=(string)m_SubItems[SelectedItem];
           m_label.Render();
         }
-
+/*
         //	Select current item, if user doesn't 
         //	move left or right for 1.5 sec.
         long dwTicksSpan=DateTime.Now.Ticks-m_dwTicks;
@@ -235,6 +244,7 @@ namespace MediaPortal.GUI.Library
           GUIWindowManager.SendThreadMessage(message);
           m_bUpdateNeeded=true;
         }
+*/					
         
       }	//	if (m_bShowSelect)
       else
@@ -307,17 +317,30 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+				if (action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+				{
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
+					GUIWindowManager.SendThreadMessage(msg);
+					return;
+				}
+        if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK)
         {
           if (m_bRightSelected)
           {
             action.wID=Action.ActionType.ACTION_MOVE_RIGHT;
             OnAction(action);
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
+						GUIWindowManager.SendThreadMessage(msg);
+						m_bUpdateNeeded=true;
+						return;
           }
           else if (m_bLeftSelected)
           {
-            action.wID=Action.ActionType.ACTION_MOVE_LEFT;
             OnAction(action);
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
+						GUIWindowManager.SendThreadMessage(msg);
+						m_bUpdateNeeded=true;
+						return;
           }
           else
           {
@@ -746,9 +769,7 @@ namespace MediaPortal.GUI.Library
 
       //yes it is
       // check if control is selected
-      if (!m_bShowSelect) return true; // not yet, wait for selection first
 
-      
       m_bAutoHide=false;
       // control is selected
       // first check left button
@@ -786,7 +807,7 @@ namespace MediaPortal.GUI.Library
         else m_bRightSelected=false;
 			}
 			else m_bRightSelected=false;
-			return false;
+			return true;
 		}
     /// <summary>
     /// Get/set the X-offset of the label.
