@@ -1226,6 +1226,9 @@ namespace MediaPortal.TV.Recording
 						case 0x54:
 							DVB_ContentDescription(descrEIT,ref eit);
 							break;
+						case 0x50:
+							DVB_ComponentDescription(descrEIT,ref eit);
+							break;
 							
 					}
 
@@ -1467,6 +1470,14 @@ namespace MediaPortal.TV.Recording
 				}
 		}
 		//
+		void DVB_ComponentDescription(byte[] buf,ref EITDescr eit)
+		{
+			if(buf[4]>=0x20 && buf[4]<=0x23)
+			{
+				System.Windows.Forms.MessageBox.Show("Gefunden");
+			}
+			int a=0;
+		}
 		//
 		private object DVB_ExtendedEvent(byte[] buf, ref EITDescr eit)
 		{
@@ -1757,11 +1768,11 @@ namespace MediaPortal.TV.Recording
 				eitList=GetEITSchedule(0x4e,filter);
 				eventsCount+=eitList.Count;
 				foreach(EITDescr eit in eitList)
-					SetEITToDatabase(eit);
+					SetEITToDatabase(eit,ch.ServiceName);
 				eitList=GetEITSchedule(0x4f,filter);
 				eventsCount+=eitList.Count;
 				foreach(EITDescr eit in eitList)
-					SetEITToDatabase(eit);
+					SetEITToDatabase(eit,ch.ServiceName);
 			}
 			if(ch.HasEITSchedule==true)
 			{
@@ -1773,13 +1784,13 @@ namespace MediaPortal.TV.Recording
 				{
 					if(eit.lastTable>lastTable)
 						lastTable=eit.lastTable;
-					SetEITToDatabase(eit);
+					SetEITToDatabase(eit,ch.ServiceName);
 				}
 				for(int table=0x51;table<lastTable;table++)
 				{
 					eitList=GetEITSchedule(table,filter);
 					foreach(EITDescr eit in eitList)
-						SetEITToDatabase(eit);
+						SetEITToDatabase(eit,ch.ServiceName);
 
 				}
 
@@ -1826,20 +1837,23 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
-		public void SetEITToDatabase(EITDescr data)
+		public void SetEITToDatabase(EITDescr data, string channelName)
 		{
-			TVProgram tv=new TVProgram();
 			try
 			{
-				string chName=TVDatabase.GetSatChannelName(data.program_number,data.org_network_id,data.ts_id);
+				TVProgram tv=new TVProgram();
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 				date=date.ToLocalTime();
+				if(date<System.DateTime.Now)
+					return;
 				System.DateTime dur=new DateTime();
 				dur=date;
 				dur=dur.AddHours((double)data.duration_hh);
 				dur=dur.AddMinutes((double)data.duration_mm);
 				dur=dur.AddSeconds((double)data.duration_ss);
-				tv.Channel=chName;
+				if(dur<date)
+					return;
+				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
 				tv.Description=data.event_item_text;
 				tv.Title=data.event_name;
