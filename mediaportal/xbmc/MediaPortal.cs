@@ -892,7 +892,8 @@ public class MediaPortalApp : D3DApp, IRender
 			Key key = new Key(e.KeyChar, 0);
       if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 			if (key.KeyChar == '?')
-			{
+      {
+
         GC.Collect();GC.Collect();GC.Collect();
         GC.WaitForPendingFinalizers();
         GC.Collect();GC.Collect();GC.Collect();
