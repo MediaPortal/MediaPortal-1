@@ -3979,8 +3979,12 @@ namespace MediaPortal
 			}
 			RegistryKey hklm =Registry.LocalMachine;
 			RegistryKey hklm2 =Registry.LocalMachine;
-			hklm=hklm.CreateSubKey(String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1",iTunerCountry));//cable
+      RegistryKey hklm3 =Registry.LocalMachine;
+      RegistryKey hklm4 =Registry.LocalMachine;
+      hklm=hklm.CreateSubKey(String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1",iTunerCountry));//cable
 			hklm2=hklm2.CreateSubKey(String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0",iTunerCountry));//broadcast
+      hklm3=hklm3.CreateSubKey(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-1");//cable
+      hklm4=hklm4.CreateSubKey(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-0");//broadcast
       
 
 			for (int i=0; i < 200; ++i)
@@ -3999,7 +4003,22 @@ namespace MediaPortal
 				catch(Exception)
 				{
 				}
-			}
+        try
+        {
+          hklm3.DeleteValue(i.ToString());
+        }
+        catch(Exception)
+        {
+        }
+        try
+        {
+          hklm4.DeleteValue(i.ToString());
+        }
+        catch(Exception)
+        {
+        }
+
+      }
       ArrayList channels=new ArrayList();
       TVDatabase.GetChannels(ref channels); 
       int iChan=0;
@@ -4016,6 +4035,8 @@ namespace MediaPortal
               string strKey=chan.Number.ToString();
               hklm.SetValue(strKey,(Int32)dwFreq);
               hklm2.SetValue(strKey,(Int32)dwFreq);
+              hklm3.SetValue(strKey,(Int32)dwFreq);
+              hklm4.SetValue(strKey,(Int32)dwFreq);
             }
 					}
 				}

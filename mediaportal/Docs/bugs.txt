@@ -1,7 +1,6 @@
 Bugs left:
   19-06-2004 my tv      : when recording channel A on tuner 1, then dont timeshift channel A on tuner 2?
   19-06-2004 my tv      : when playing a movie, stop timeshifting?
-  19-06-2004 my tv      : hauppage PVR 350/USB2 doesnt seem to user frequency overrides?
   
   19-06-2004 general    : crash if alt+enter when playing a movie
   19-06-2004 my video   : vmr9: lines/stripes?
