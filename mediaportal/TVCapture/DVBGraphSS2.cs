@@ -7,6 +7,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using DirectX.Capture;
 using MediaPortal.TV.Database;
+using MediaPortal.Player;
 
 
 namespace MediaPortal.TV.Recording
@@ -508,6 +509,8 @@ namespace MediaPortal.TV.Recording
 		protected int					m_iChannelNr=-1;
 		
 		StreamBufferConfig				m_streamBufferConfig=null;
+		protected VMR9Util				Vmr9=null; 
+
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
@@ -534,6 +537,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.None) return false;
 			// create graphs
+			Vmr9 =new VMR9Util("mytv");
+
 			m_sourceGraph=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
 
 			int n=0;
@@ -702,22 +707,36 @@ namespace MediaPortal.TV.Recording
 		private void GUIGraphicsContext_OnVideoWindowChanged()
 		{
 			if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return;
-			int iVideoWidth, iVideoHeight;
-			m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
-			if (GUIGraphicsContext.Overlay==false)
+			
+			if (!Vmr9.UseVMR9inMYTV)
 			{
-				if(m_graphState!=State.Viewing)
+
+				if (GUIGraphicsContext.Overlay==false)
 				{
-					Overlay=false;
-					return;
+					if(m_graphState!=State.Viewing)
+					{
+						Overlay=false;
+						return;
+					}
 				}
+				else
+				{
+					Overlay=true;
+				}
+			}
+			int iVideoWidth=0;
+			int iVideoHeight=0;
+			if (!Vmr9.UseVMR9inMYTV)
+			{
+				m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);	
 			}
 			else
 			{
-				Overlay=true;
+				iVideoWidth=Vmr9.VideoWidth;
+				iVideoHeight=Vmr9.VideoHeight;
 			}
-      
-			if (GUIGraphicsContext.IsFullScreenVideo)
+
+			if (GUIGraphicsContext.IsFullScreenVideo || GUIGraphicsContext.ShowBackground==false)
 			{
 				float x = GUIGraphicsContext.OverScanLeft;
 				float y = GUIGraphicsContext.OverScanTop;
@@ -738,18 +757,26 @@ namespace MediaPortal.TV.Recording
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
 
-				m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-				m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
-				m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+				if(m_basicVideo!=null)
+				{
+					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+				}
+				if(m_videoWindow!=null)
+					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
 				DirectShowUtil.DebugWrite("DVBGraphSS2: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
 				DirectShowUtil.DebugWrite("DVBGraphSS2: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
 				DirectShowUtil.DebugWrite("DVBGraphSS2: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
 			}
 			else
 			{
-				m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
-				m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-				m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+				if(m_basicVideo!=null)
+				{
+					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
+					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+				}
+				if(m_videoWindow!=null)
+					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 				DirectShowUtil.DebugWrite("DVBGraphSS2: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
 				DirectShowUtil.DebugWrite("DVBGraphSS2: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
 				DirectShowUtil.DebugWrite("DVBGraphSS2: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
@@ -768,8 +795,17 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
+
 			StopRecording();
+			StopTimeShifting();
 			StopViewing();
+
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9=null;
+			}
+
 			if (m_mediaControl != null)
 			{
 				m_mediaControl.Stop();
@@ -1286,24 +1322,24 @@ namespace MediaPortal.TV.Recording
 			if(m_graphState==State.Recording)
 				return;
 			int channelID=TVDatabase.GetChannelId(channel);
-			if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
-			{
-				m_mediaControl.Stop();
-				
-			}
 			m_iChannelNr=channel;
 			if(channelID!=-1)
 			{
 				DVBChannel ch=new DVBChannel();
 				TVDatabase.GetSatChannel(channelID,1,ref ch);//only television
+				if(ch.IsScrambled==true)
+					return;
+				if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
+					m_mediaControl.Stop();
+				
 				m_currentChannel=ch;
 				Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency);
 
 				if(m_mediaControl!=null && m_graphState!=State.TimeShifting)
 					m_mediaControl.Run();
+				m_StartTime=DateTime.Now;
 			}
 			
-			m_StartTime=DateTime.Now;
 		}
 
 		/// <summary>
@@ -1338,6 +1374,8 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.Created) return false;
 			TuneChannel(standard,channel);
 			int hr=0;
+			
+			Vmr9.AddVMR9(m_sourceGraph);
 
 			AddPreferredCodecs();
 
@@ -1351,35 +1389,40 @@ namespace MediaPortal.TV.Recording
 			if(hr!=0)
 				return false;
 			int n=0;// 
+			
 
 			m_mediaControl = (IMediaControl)m_sourceGraph;
-			m_videoWindow = (IVideoWindow) m_sourceGraph as IVideoWindow;
-			if (m_videoWindow==null)
+			
+			if (!Vmr9.UseVMR9inMYTV)
 			{
-				Log.Write("DVBGraphSS2:FAILED:Unable to get IVideoWindow");
-				return false;
-			}
+
+				m_videoWindow = (IVideoWindow) m_sourceGraph as IVideoWindow;
+				if (m_videoWindow==null)
+				{
+					Log.Write("DVBGraphSS2:FAILED:Unable to get IVideoWindow");
+					return false;
+				}
 
 
-			m_basicVideo = m_sourceGraph as IBasicVideo2;
-			if (m_basicVideo==null)
-			{
-				Log.Write("DVBGraphSS2:FAILED:Unable to get IBasicVideo2");
-				return false;
-			}
-			hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
-			if (hr != 0) 
-				DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window:0x{0:X}",hr);
+				m_basicVideo = m_sourceGraph as IBasicVideo2;
+				if (m_basicVideo==null)
+				{
+					Log.Write("DVBGraphSS2:FAILED:Unable to get IBasicVideo2");
+					return false;
+				}
+				hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+				if (hr != 0) 
+					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window:0x{0:X}",hr);
 
-			hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-			if (hr != 0) 
-				DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}",hr);
+				hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+				if (hr != 0) 
+					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}",hr);
 
       
-			hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
-			if (hr != 0) 
-				DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}",hr);
-
+				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
+				if (hr != 0) 
+					DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}",hr);
+			}
             //
 			n=m_mediaControl.Run();
 			m_bOverlayVisible=true;
@@ -1405,8 +1448,10 @@ namespace MediaPortal.TV.Recording
 				return false;
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
-			m_videoWindow.put_Visible(DsHlp.OAFALSE);
+			if(m_videoWindow!=null)
+				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_bOverlayVisible=false;
+			
 			m_mediaControl.Stop();
 			m_mediaControl=null;
 			m_graphState = State.Created;
