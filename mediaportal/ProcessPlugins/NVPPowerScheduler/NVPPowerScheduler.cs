@@ -4,6 +4,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.Player;
 
 namespace MediaPortal.PowerScheduler
 {
@@ -259,7 +260,20 @@ namespace MediaPortal.PowerScheduler
 
 				if (m_iActiveWindow == (int) GUIWindow.Window.WINDOW_HOME)
 				{
-					if (!m_bShutdownEnabled)
+          bool enableShutdown=true;
+          //are we playing something
+          if (g_Player.Playing)
+          {
+            //yes, if its not TV
+            //or its a recorded tv
+            if (!g_Player.IsTV || (g_Player.IsTV && !g_Player.IsTimeShifting) )
+            {
+              // then disable shutdown
+              ResetShutdownTimer(0);	
+              enableShutdown=false;
+            }
+          }
+					if (!m_bShutdownEnabled && enableShutdown)
 					{
 						// Entered HOME - enable shutdown
 						ResetShutdownTimer(m_iShutdownInterval);
