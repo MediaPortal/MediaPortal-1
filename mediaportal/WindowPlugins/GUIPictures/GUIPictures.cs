@@ -504,6 +504,7 @@ namespace MediaPortal.GUI.Pictures
 
     void OnRetrieveCoverArt(GUIListItem item)
     {
+			if (item.IsRemote) return;
       Utils.SetDefaultIcons(item);
       Utils.SetThumbnails(ref item);
       if (!item.IsFolder)
@@ -516,8 +517,10 @@ namespace MediaPortal.GUI.Pictures
         if (item.Label!="..")
         {
           string strThumb=item.Path+@"\folder.jpg" ;
-
-          item.ThumbnailImage=strThumb;
+					if (System.IO.File.Exists(strThumb))
+					{
+						item.ThumbnailImage=strThumb;
+					}
         }
       }
     }
@@ -999,12 +1002,17 @@ namespace MediaPortal.GUI.Pictures
     static public string GetThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;
-      return String.Format(@"{0}\{1}.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
+      string thumb= String.Format(@"{0}\{1}.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
+			if (System.IO.File.Exists(thumb)) return thumb;
+			return String.Empty;
     }
     static public string GetLargeThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;
-      return String.Format(@"{0}\{1}L.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
+			string thumb= String.Format(@"{0}\{1}L.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
+			if (System.IO.File.Exists(thumb)) return thumb;
+			
+			return String.Empty;
     }
 
 		#region ISetupForm Members
