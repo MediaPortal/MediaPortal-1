@@ -70,6 +70,10 @@ namespace ProgramsDatabase
 			curFile.AppID = this.AppID;
 			curFile.Title = guiFile.Label;
 			curFile.Filename = guiFile.Path;
+			if (this.UseQuotes)
+			{
+				curFile.Filename = "\"" + curFile.Filename + "\"";
+			}
 			curFile.Filepath = System.IO.Path.GetDirectoryName(guiFile.Path);
 			curFile.Imagefile = strImageFile;
 			// not imported properties => set default values

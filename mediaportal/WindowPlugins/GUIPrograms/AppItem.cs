@@ -180,7 +180,7 @@ namespace ProgramsDatabase
 				proc.StartInfo.FileName = strCurFilename;
 				proc.StartInfo.Arguments = curFile.ExtractArguments();
 				proc.StartInfo.WorkingDirectory  = curFile.ExtractDirectory(strCurFilename);
-				proc.StartInfo.UseShellExecute = UseShellExecute; // todo: check if a file is executable
+				proc.StartInfo.UseShellExecute = UseShellExecute; 
 			}
 			proc.StartInfo.WindowStyle = this.WindowStyle;
 			this.LaunchErrorMsg = "";
