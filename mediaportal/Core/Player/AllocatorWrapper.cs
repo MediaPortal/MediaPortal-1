@@ -139,7 +139,34 @@ namespace MediaPortal.Player
         else
         {
           Log.Write("AllocatorWrapper:AllocateSurface succeeded");
-					
+
+					//double check the allocated texture dimensions
+					Surface orig = new Surface(m_surface1);
+					if (orig!=null)
+					{
+						Marshal.AddRef(m_surface1);
+        
+						Texture tex=orig.GetContainer(D3DGuids.Texture) as Texture;
+						if (tex!=null)
+						{
+							SurfaceDescription desc;
+							desc=tex.GetLevelDescription(0);
+							float texWidth = (float)desc.Width;
+							float texHeight = (float)desc.Height;							
+							Log.Write("  texture allocated: {0}x{1}", (int)texWidth, (int)texHeight);
+							if (texWidth != allocInfo.dwWidth || texHeight!=allocInfo.dwHeight)
+							{
+								float fTU = (float)(m_nativeSize.Width ) / (float)(texWidth);
+								float fTV = (float)(m_nativeSize.Height) / (float)(texHeight);
+								scene.SetSrcRect( fTU, fTV );
+							}
+							tex.Dispose();
+						}
+						orig.Dispose();
+						Marshal.Release(m_surface1);
+						Marshal.Release(m_surface1);
+					}
+
 					allocInfo.dwWidth=768;
 					allocInfo.dwHeight=576;
 					if (m_surface2!=IntPtr.Zero)

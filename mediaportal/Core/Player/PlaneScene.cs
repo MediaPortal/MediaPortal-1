@@ -129,7 +129,7 @@ namespace MediaPortal.Player
             if (!GUIGraphicsContext.Overlay) return false;
           }
         }
-        if (nw <= 10 || nh <= 10) return false;
+        if (nw <= 180 || nh <= 10) return false;
         if (x < 0 || y < 0) return false;
 
         
