@@ -2223,7 +2223,16 @@ namespace MediaPortal.GUI.TV
 			}
 			else
 			{
-				TVDatabase.GetChannels(ref m_channels); 
+				m_channels= new ArrayList();
+				ArrayList chans = new ArrayList();
+				TVDatabase.GetChannels(ref chans); 
+				foreach (TVChannel chan in chans)
+				{
+					if (chan.VisibleInGuide)
+					{
+						m_channels.Add(chan);
+					}
+				}
 			}
 
 			bool bRemoved;
