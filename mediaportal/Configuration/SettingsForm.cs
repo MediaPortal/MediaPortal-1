@@ -96,6 +96,9 @@ namespace MediaPortal.Configuration
 			// Select first item in the section tree
 			//
 			sectionTree.SelectedNode = sectionTree.Nodes[0];
+
+      // make sure window is in front of mediaportal
+      this.BringToFront();
 		}
 
 		/// <summary>
