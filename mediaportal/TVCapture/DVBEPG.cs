@@ -58,6 +58,7 @@ namespace MediaPortal.TV.Recording
 					return 0;
 				}
 
+				//
 				// for check
 				//
 				long chStart=0;
@@ -67,6 +68,8 @@ namespace MediaPortal.TV.Recording
 				System.DateTime chEndDate=new DateTime((long)dur.Ticks-60000);
 				chStart=GetLongFromDate(chStartDate.Year,chStartDate.Month,chStartDate.Day,chStartDate.Hour,chStartDate.Minute,chStartDate.Second);
 				chEnd=GetLongFromDate(chEndDate.Year,chEndDate.Month,chEndDate.Day,chEndDate.Hour,chEndDate.Minute,chEndDate.Second);
+				//
+				//
 				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				ArrayList programsInDatabase = new ArrayList();
@@ -111,7 +114,7 @@ namespace MediaPortal.TV.Recording
 			
 			string longStringA=String.Format("{0:0000}{1:00}{2:00}",year,mon,day);
 			string longStringB=String.Format("{0:00}{1:00}{2:00}",hour,min,sec);
-			Log.Write("epg-grab: string-value={0}",longStringA+longStringB);
+			//Log.Write("epg-grab: string-value={0}",longStringA+longStringB);
 			return (long)Convert.ToUInt64(longStringA+longStringB);
 		}
 		//
@@ -133,6 +136,7 @@ namespace MediaPortal.TV.Recording
 			int			lastTab=0;
 			int			dummyTab=0;
 
+			m_sections.Timeout=750;
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			if(lastTab>0x50)

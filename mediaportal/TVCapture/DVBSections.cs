@@ -1745,7 +1745,7 @@ namespace MediaPortal.TV.Recording
 			while(1!=0)
 			{
 				System.Windows.Forms.Application.DoEvents();
-				GetStreamData(filter,18,tab,1,1500);
+				GetStreamData(filter,18,tab,1,m_timeoutMS);
 				
 				foreach(byte[] arr in m_sectionsList)
 					ret=decodeEITTable(arr,ref eit,ret,startFlag);
