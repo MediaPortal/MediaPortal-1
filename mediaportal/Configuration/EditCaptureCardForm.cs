@@ -114,6 +114,12 @@ namespace MediaPortal.Configuration
 			}
       else
         acceptuserinput=true;
+
+#if (UseCaptureCardDefinitions)
+			Log.Write("UseCaptureCardDefinitions");
+#else
+			Log.Write("not using UseCaptureCardDefinitions");
+#endif
 #if (UseCaptureCardDefinitions)
 			// #MW#
 			// Load capture card definitions, and only display those cards that are supported by MP
@@ -935,11 +941,10 @@ namespace MediaPortal.Configuration
 				if (card.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
 				if (card.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
 				if (card.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
-#endif
-					card.SupportsMPEG2 = m_bMPEG2;
-				card.IsMCECard     = m_bISMCE;
-#if (UseCaptureCardDefinitions)
 				card.IsBDACard=m_bIsBDA;
+#else
+				card.SupportsMPEG2 = m_bMPEG2;
+				card.IsMCECard     = m_bISMCE;
 #endif
 				card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;

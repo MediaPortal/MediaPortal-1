@@ -90,6 +90,7 @@ namespace MediaPortal.TV.Recording
 		IVideoWindow            m_videoWindow						= null;
 		IBasicVideo2            m_basicVideo						= null;
 		IMediaControl						m_mediaControl					= null;
+		IBDA_SignalStatistics   m_TunerStatistics       = null;
 		NetworkType							m_NetworkType;
 		
 		TVCaptureDevice					m_Card;
@@ -451,6 +452,7 @@ namespace MediaPortal.TV.Recording
 			m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 			m_graphState=State.Created;
 
+			m_TunerStatistics=GetTunerSignalStatistics();
 			AdviseProgramInfo();
 			return true;
 		}
@@ -535,6 +537,10 @@ namespace MediaPortal.TV.Recording
 			StopRecording();
 			StopViewing();
 
+			if (m_TunerStatistics!=null)
+			{
+				Marshal.ReleaseComObject(m_TunerStatistics); m_TunerStatistics=null;
+			}
 			if (Vmr9!=null)
 			{
 				Vmr9.RemoveVMR9();
@@ -972,17 +978,20 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}
 
-		public bool SignalPresent()
+		IBDA_SignalStatistics GetTunerSignalStatistics()
 		{
-
-			if(m_graphState==State.Created || m_graphState==State.None)
-				return false;
+			if (m_TunerDevice==null) 
+				return null;
+			
+			Log.Write("DVBGraphBDA: get IBDA_Topology");
 			IBDA_Topology topology = m_TunerDevice as IBDA_Topology;
 			if (topology==null)
 			{
 				Log.Write("DVBGraphBDA: could not get IBDA_Topology from tuner");
-				return false;
+				return null;
 			}
+
+			Log.Write("DVBGraphBDA: GetNodeTypes");
 			int nodeTypeCount=0;
 			int interfaceCount=0;
 			int[] nodeTypes = new int[33];
@@ -991,54 +1000,73 @@ namespace MediaPortal.TV.Recording
 			if (hr!=0)
 			{
 				Log.Write("DVBGraphBDA: FAILED could not get node types from tuner");
-				return false;
+				return null;
 			}
+			Log.Write("DVBGraphBDA: got {0} node types", nodeTypeCount);
 			for (int i=0; i < nodeTypeCount;++i)
 			{
-				hr=topology.GetNodeInterfaces(i,ref interfaceCount,32,guidInterfaces);
+				Log.Write("DVBGraphBDA: get interfaces for node:{0}", i);
+				hr=topology.GetNodeInterfaces(nodeTypes[i],ref interfaceCount,32,guidInterfaces);
 				if (hr!=0)
 				{
 					Log.Write("DVBGraphBDA: FAILED could not GetNodeInterfaces for node:{0}",hr);
-					return false;
+					return null;
 				}
-				else
+				Log.Write("DVBGraphBDA: got {0} interfaces", interfaceCount);
+				for (int j=0; j < interfaceCount; ++j)
 				{
-					for (int j=0; j < interfaceCount; ++j)
+					if ( guidInterfaces[j]== typeof(IBDA_SignalStatistics).GUID)
 					{
-						if ( guidInterfaces[i]== typeof(IBDA_SignalStatistics).GUID)
+						Log.Write("DVBGraphBDA: found IBDA_SignalStatistics for interface:{0}. Get Node:{1}", j,i);
+						object objectNode;
+						hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
+						if (hr!=0)
 						{
-							object objectNode;
-							hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
-							if (hr!=0)
-							{
-								Log.Write("DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
-								return false;
-							}
-							IBDA_SignalStatistics signal = objectNode as IBDA_SignalStatistics;
-							if (signal==null)
-							{
-								Log.Write("DVBGraphBDA: FAILED could not IBDA_SignalStatistics for node:{0}",hr);
-								return false;
-							}
-							int strength=0;
-							int quality=0;
-							bool locked=false;
-							bool present=false;
-							hr=signal.get_SignalStrength(out strength);
-							hr=signal.get_SignalQuality(out quality);
-							hr=signal.get_SignalLocked(out locked);
-							hr=signal.get_SignalPresent(out present);
-							Marshal.ReleaseComObject(objectNode);
-							if (locked || quality>0)
-							{
-								Marshal.ReleaseComObject(topology);
-								return true;
-							}
+							Log.Write("DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
+							return null;
 						}
+						Log.Write("DVBGraphBDA: got node");
+						IBDA_SignalStatistics signal = objectNode as IBDA_SignalStatistics;
+						if (signal==null)
+						{
+							Log.Write("DVBGraphBDA: FAILED could not IBDA_SignalStatistics for node:{0}",hr);
+							return null;
+						}
+						Marshal.ReleaseComObject(topology);
+						return signal;
 					}
 				}
 			}
 			Marshal.ReleaseComObject(topology);
+			return null;
+		}
+
+
+		public bool SignalPresent()
+		{
+
+			if (m_TunerStatistics==null) return false;
+			int strength=0;
+			int quality=0;
+			byte locked=0;
+			byte present=0;
+			int hr=m_TunerStatistics.get_SignalStrength(out strength);
+			if (hr!=0) strength=0;
+			
+			hr=m_TunerStatistics.get_SignalQuality(out quality);
+			if (hr!=0) quality=0;
+			
+			hr=m_TunerStatistics.get_SignalLocked(out locked);
+			if (hr!=0) locked=0;
+
+			hr=m_TunerStatistics.get_SignalPresent(out present);
+			if (hr!=0) present=0;
+
+
+			if (locked>0 || quality>0)
+			{
+				return true;
+			}
 			return false;
 		}
 
@@ -1792,7 +1820,7 @@ namespace MediaPortal.TV.Recording
 				TunerLib.Component comp=myTuneRequest.Components[i];
 				Log.Write("component:{0} lang:{1} desc:{2} status:{3} type:{4}",
 					          i,comp.DescLangID,comp.Description,comp.Status.ToString(),comp.Type.Category.ToString());
-			}*/
+			}
 
 			if (GuideDataEvent.mutexProgramChanged.WaitOne(1,true))
 			{
@@ -1833,7 +1861,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-			}
+			}*/
 
 			if (GuideDataEvent.mutexServiceChanged.WaitOne(1,true))
 			{
@@ -1869,6 +1897,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+
 		}
 		public void TuneFrequency(int frequency)
 		{

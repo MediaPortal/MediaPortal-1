@@ -23,16 +23,16 @@ namespace DShowNET.BDA
 		int get_SignalQuality( /* [out][in] */ out int  plPercentQuality) ;
         
 		[PreserveSig]
-		int put_SignalPresent( /* [in] */ bool fPresent) ;
+		int put_SignalPresent( /* [in] */ byte fPresent) ;
         
 		[PreserveSig]
-		int get_SignalPresent( /* [out][in] */ out bool pfPresent) ;
+		int get_SignalPresent( /* [out][in] */ out byte pfPresent) ;
         
 		[PreserveSig]
-		int put_SignalLocked( /* [in] */ bool fLocked) ;
+		int put_SignalLocked( /* [in] */ byte fLocked) ;
         
 		[PreserveSig]
-		int get_SignalLocked( /* [out][in] */ out bool pfLocked) ;
+		int get_SignalLocked( /* [out][in] */ out byte pfLocked) ;
         
 		[PreserveSig]
 		int put_SampleTime( /* [in] */ int  lmsSampleTime) ;

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
 using MediaPortal.TV.Database;
+using MediaPortal.GUI.Library;
 using System.Xml;
 
 namespace MediaPortal.TV.Recording
@@ -38,6 +39,8 @@ namespace MediaPortal.TV.Recording
 			currentState=State.ScanFrequencies;
 			frequencies.Clear();
 			currentFrequencyIndex=0;
+
+			Log.Write("Opening dvbt.xml");
 			XmlDocument doc= new XmlDocument();
 			doc.Load("dvbt.xml");
 			XmlNodeList frequencyList= doc.DocumentElement.SelectNodes("/dvbt/frequencies/frequency");
@@ -45,7 +48,10 @@ namespace MediaPortal.TV.Recording
 			{
 				int carrierFrequency= XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"carrier").InnerText);
 				frequencies.Add(carrierFrequency);
+				//Log.Write("added:{0}", carrierFrequency);
 			}
+			
+			Log.Write("loaded:{0} frequencies", frequencies.Count);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -72,10 +78,13 @@ namespace MediaPortal.TV.Recording
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
+			if (currentFrequencyIndex > frequencies.Count)
+				return;
+			
 			float percent = ((float)currentFrequencyIndex) / ((float)frequencies.Count);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
-			float frequency=(float)frequencies[currentFrequencyIndex];
+			float frequency=(float)((int)frequencies[currentFrequencyIndex]);
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
 
@@ -96,6 +105,7 @@ namespace MediaPortal.TV.Recording
 				callback.OnStatus(description);
 				ScanChannels();
 			}
+			
 		}
 
 		void ScanChannels()
