@@ -185,8 +185,8 @@ namespace MediaPortal.TV.Database
 						{
 							recordings.Add(recNew);
 						}
-						dtDay=dtDay.AddDays(1);
 					}
+					dtDay=dtDay.AddDays(1);
 				}
 				return recordings;
 			}
@@ -208,8 +208,8 @@ namespace MediaPortal.TV.Database
 						{
 							recordings.Add(recNew);
 						}
-						dtDay=dtDay.AddDays(1);
 					}
+					dtDay=dtDay.AddDays(1);
 				}
 				return recordings;
 			}

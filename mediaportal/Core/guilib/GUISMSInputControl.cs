@@ -91,7 +91,10 @@ namespace MediaPortal.GUI.Library
     
 		public override void FreeResources()
 		{
-			image.FreeResources();
+			if (image!=null)
+			{
+				image.FreeResources();
+			}
 			image=null;
 
 			base.FreeResources ();
