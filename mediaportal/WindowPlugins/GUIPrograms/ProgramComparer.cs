@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for ProgramComparer.

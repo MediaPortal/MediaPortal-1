@@ -2,14 +2,16 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Programs.Utils;
 using ProgramsDatabase;
 
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
+
 	enum Controls
 	{
 		CONTROL_BTNVIEWASICONS  =    2,
@@ -22,6 +24,7 @@ namespace GUIPrograms
 		CONTROL_LBLCURAPP        =   10,
 	};
 
+
 	/// <summary>
 	/// The GUIPrograms plugin is used to list a collection of arbitrary files
 	/// and use them as arguments when launching external applications.
@@ -29,6 +32,53 @@ namespace GUIPrograms
 	/// 
 	public class GUIPrograms : GUIWindow
 	{
+
+		[Serializable]
+		public class MapSettings
+		{
+			protected int   _SortBy;
+			protected int   _ViewAs;
+			protected bool _SortAscending;
+			protected int _LastAppID;
+
+			public MapSettings()
+			{
+				_SortBy=0;//name
+				_ViewAs=0;//list
+				_SortAscending=true;
+				_LastAppID=-1;
+			}
+
+
+			[XmlElement("SortBy")]
+			public int SortBy
+			{
+				get { return _SortBy;}
+				set { _SortBy=value;}
+			}
+      
+			[XmlElement("ViewAs")]
+			public int ViewAs
+			{
+				get { return _ViewAs;}
+				set { _ViewAs=value;}
+			}
+      
+			[XmlElement("SortAscending")]
+			public bool SortAscending
+			{
+				get { return _SortAscending;}
+				set { _SortAscending=value;}
+			}
+
+			[XmlElement("LastAppID")]
+			public int LastAppID
+			{
+				get { return _LastAppID;}
+				set { _LastAppID=value;}
+			}
+
+		}
 
 		enum View
 		{
@@ -38,8 +88,9 @@ namespace GUIPrograms
 		}
 		View currentView = View.VIEW_AS_LARGEICONS;
 
-		static Applist apps = ProgramsDatabase.ProgamDatabase.AppList;
+		static Applist apps = ProgramsDatabase.ProgramDatabase.AppList;
 		AppItem lastApp = null;
+		MapSettings       _MapSettings = new MapSettings();
 
 		/// <summary>
 		/// Constructor used to specify to the MediaPortal Core the window that we 
@@ -48,9 +99,16 @@ namespace GUIPrograms
 		public GUIPrograms()
 		{
 			GetID = (int)GUIWindow.Window.WINDOW_FILES;
-			apps = ProgramsDatabase.ProgamDatabase.AppList;			
+			apps = ProgramsDatabase.ProgramDatabase.AppList;			
 			LoadSettings();
 		}
+
+		~GUIPrograms()
+		{
+			SaveSettings();
+			FolderSettings.DeleteFolderSetting("root","Programs");
+		}
+
 
 		/// <summary>
 		/// Overridden in order to load the skin we are going to use.
@@ -96,6 +154,20 @@ namespace GUIPrograms
 			}
 		}
 		
+		void LoadFolderSettings(string strDirectory)
+		{
+			if (strDirectory=="") strDirectory="root";
+			object o;
+			FolderSettings.GetFolderSetting(strDirectory,"Programs",typeof(GUIPrograms.MapSettings), out o);
+			if (o!=null) _MapSettings = o as MapSettings;
+			if (_MapSettings==null) _MapSettings  = new MapSettings();
+		}
+
+		void SaveFolderSettings(string strDirectory)
+		{
+			if (strDirectory=="") strDirectory="root";
+			FolderSettings.AddFolderSetting(strDirectory,"Programs",typeof(GUIPrograms.MapSettings), _MapSettings);
+		}
 
 
 		public override void OnAction(Action action)
@@ -103,6 +175,7 @@ namespace GUIPrograms
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
 				// <ESC> keypress in some myProgram Menu => jump to main menu
+				SaveFolderSettings("");
 				GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
 				return;
 			}
@@ -132,13 +205,22 @@ namespace GUIPrograms
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					// display application list
 					base.OnMessage(message);
-					DisplayApplications();
+					LoadFolderSettings("");
+					lastApp = apps.GetAppByID(_MapSettings.LastAppID);
+					if (lastApp != null) 
+					{
+						lastApp.DisplayFiles(null); 
+					}
+					else
+					{
+						DisplayApplications();
+					}
 					UpdateButtons();
 					ShowThumbPanel();
 					return true;
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-					lastApp = null;
+//					lastApp = null;
 					SaveSettings();
 					break;
 
@@ -187,6 +269,7 @@ namespace GUIPrograms
 										if (bTopLevel)
 										{
 											lastApp = null;
+											_MapSettings.LastAppID = -1;
 											DisplayApplications();
 										}
 										UpdateButtons();
@@ -205,6 +288,7 @@ namespace GUIPrograms
 										if (item.MusicTag != null)
 										{
 											lastApp = (AppItem)item.MusicTag;
+											_MapSettings.LastAppID = lastApp.AppID;
 											lastApp.DisplayFiles(null); 
 										}
 									}
@@ -254,7 +338,7 @@ namespace GUIPrograms
 					{
 						if (lastApp != null)
 						{
-							lastApp.Refresh();
+							lastApp.Refresh(true);
 							lastApp.DisplayFiles(null);
 						}
 					}

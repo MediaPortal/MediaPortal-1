@@ -8,7 +8,7 @@ using MediaPortal.GUI.Library;
 using ProgramsDatabase;
 using Programs.Utils;
 
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for FileDetailsForm.

@@ -7,7 +7,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using ProgramsDatabase;
 
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for ProgramDBComparer.

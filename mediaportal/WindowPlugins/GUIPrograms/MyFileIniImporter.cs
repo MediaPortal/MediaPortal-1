@@ -3,7 +3,7 @@ using System.IO;
 using SQLite.NET;
 
 using MediaPortal.GUI.Library;		
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 using Programs.Utils;
 
 namespace ProgramsDatabase

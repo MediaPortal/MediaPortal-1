@@ -6,7 +6,7 @@ using SQLite.NET;
 using Programs.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 
 
 namespace ProgramsDatabase

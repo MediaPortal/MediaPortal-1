@@ -7,7 +7,7 @@ using Programs.Utils;
 
 
 	
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// 

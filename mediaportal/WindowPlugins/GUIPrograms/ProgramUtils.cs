@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 using MediaPortal.GUI.Library;
 using SQLite.NET;
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 
 namespace Programs.Utils
 {

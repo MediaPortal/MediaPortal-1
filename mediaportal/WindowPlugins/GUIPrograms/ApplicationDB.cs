@@ -5,7 +5,7 @@ using System.Diagnostics;
 using SQLite.NET;
 
 using MediaPortal.GUI.Library;		
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 using Programs.Utils;
 
 
@@ -219,6 +219,18 @@ namespace ProgramsDatabase
 		protected bool bChildrenLoaded = false; // load on demand....
 		protected Filelist mFiles = null;
 
+		// event: read new file
+		public delegate void RefreshInfoEventHandler (string strLine);
+		public event RefreshInfoEventHandler OnRefreshInfo = null;
+
+		protected void SendRefreshInfo(string Message)
+		{
+			if (OnRefreshInfo != null)
+			{
+				OnRefreshInfo(Message);
+			}
+		}
+
 		protected int GetID = ProgramUtils.GetID;
 
 		public AppItem(SQLiteClient paramDB)
@@ -334,7 +346,7 @@ namespace ProgramsDatabase
 
 				proc.Start();
 				proc.WaitForExit();
-// notyet!				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 
 
 				//				Log.Write("myPrograms: DEBUG LOG program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
@@ -435,7 +447,7 @@ namespace ProgramsDatabase
 			return true;  // otherwise, override this in child class
 		}
 
-		public virtual void Refresh()
+		public virtual void Refresh(bool bGUIMode)
 		{
 			// descendant classes do that!
 		}

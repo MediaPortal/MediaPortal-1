@@ -7,7 +7,7 @@ using Programs.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -34,12 +34,15 @@ namespace ProgramsDatabase
 			pDlgProgress.Progress();
 		}
 
-		private void DoMyFileIniImport()
+		private void DoMyFileIniImport(bool bGUIMode)
 		{
 			if (m_db==null) return;
 			if (this.AppID < 0) return;
 			if ((this.SourceType != myProgSourceType.MYFILEINI) || (Source == "") || (!System.IO.File.Exists(Source))) return;
-			ShowProgressDialog();
+			if (bGUIMode)
+			{
+				ShowProgressDialog();
+			}
 			try
 			{
 				MyFileIniImporter objImporter = new MyFileIniImporter(this, m_db);
@@ -55,7 +58,10 @@ namespace ProgramsDatabase
 			}
 			finally
 			{
-				pDlgProgress.Close();
+				if (bGUIMode)
+				{
+					pDlgProgress.Close();
+				}
 			}
 
 		}
@@ -67,6 +73,7 @@ namespace ProgramsDatabase
 				pDlgProgress.SetLine(2, String.Format("{0} {1}", GUILocalizeStrings.Get(13005), strFileName)); // "last imported file {0}"
 				pDlgProgress.Progress();
 			}
+			SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), strFileName));
 		}
 
 		override public bool RefreshButtonVisible()
@@ -74,11 +81,11 @@ namespace ProgramsDatabase
 			return true;
 		}
 
-		override public void Refresh()
+		override public void Refresh(bool bGUIMode)
 		{
-			base.Refresh();
+			base.Refresh(bGUIMode);
 			DeleteFiles();
-			DoMyFileIniImport();
+			DoMyFileIniImport(bGUIMode);
 			LoadFiles();
 		}
 

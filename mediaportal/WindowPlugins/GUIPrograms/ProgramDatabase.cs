@@ -11,17 +11,17 @@ namespace ProgramsDatabase
 	/// <summary>
 	/// Summary description for DBPrograms.
 	/// </summary>
-	public class ProgamDatabase
+	public class ProgramDatabase
 	{
 		public static SQLiteClient m_db = null;
 		static Applist mAppList = null;
 
 		// singleton. Dont allow any instance of this class
-		private ProgamDatabase()
+		private ProgramDatabase()
 		{
 		}
 
-		static ProgamDatabase()
+		static ProgramDatabase()
 		{
 			try 
 			{

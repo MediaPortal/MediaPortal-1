@@ -1,6 +1,6 @@
 using System;
 
-namespace GUIPrograms
+namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for ProgramConditionChecker.

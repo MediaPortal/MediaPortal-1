@@ -8,7 +8,7 @@ using Programs.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -36,6 +36,10 @@ namespace ProgramsDatabase
 			pDlgProgress.Progress();
 		}
 
+		private void CloseProgressDialog()
+		{
+			pDlgProgress.Close();
+		}
 
 		private string GetThumbsFile(GUIListItem guiFile)
 		{
@@ -57,6 +61,8 @@ namespace ProgramsDatabase
 			return strFolderThumb;
 		}
 
+		
+
 		private void ImportFileItem(GUIListItem guiFile)
 		{
 			string strImageFile = GetThumbsFile(guiFile);
@@ -71,16 +77,28 @@ namespace ProgramsDatabase
 			curFile.LastTimeLaunched = DateTime.MinValue;
 			curFile.LaunchCount = 0;
 			curFile.Write();
-			pDlgProgress.SetLine(2, String.Format("{0} {1}", GUILocalizeStrings.Get(13005), curFile.Title)); // "last imported file {0}"
-			pDlgProgress.Progress();
 		}
 
-		private void DoDirCacheImport()
+
+		private void UpdateProgressDialog(GUIListItem guiFile, bool bGUIMode)
+		{
+			if (bGUIMode)
+			{
+				pDlgProgress.SetLine(2, String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label)); // "last imported file {0}"
+				pDlgProgress.Progress();
+			}
+			SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label));
+		}
+
+		private void DoDirCacheImport(bool bGUIMode)
 		{
 			if (m_db==null) return;
 			if (this.AppID < 0) return;
 			if (this.SourceType != myProgSourceType.DIRCACHE) return;
-			ShowProgressDialog();
+			if (bGUIMode)
+			{
+				ShowProgressDialog();
+			}
 			try
 			{
 				ValidExtensions = ValidExtensions.Replace(" ", "");
@@ -94,12 +112,16 @@ namespace ProgramsDatabase
 					if (!file.IsFolder)
 					{
 						ImportFileItem(file);
+						UpdateProgressDialog(file, bGUIMode);
 					}
 				}
 			}
 			finally
 			{
-				pDlgProgress.Close();
+				if (bGUIMode)
+				{
+					CloseProgressDialog();
+				}
 			}
 
 		}
@@ -111,11 +133,11 @@ namespace ProgramsDatabase
 			return true;
 		}
 
-		override public void Refresh()
+		override public void Refresh(bool bGUIMode)
 		{
-			base.Refresh();
+			base.Refresh(bGUIMode);
 			DeleteFiles();
-			DoDirCacheImport();
+			DoDirCacheImport(bGUIMode);
 			LoadFiles();
 		}
     }

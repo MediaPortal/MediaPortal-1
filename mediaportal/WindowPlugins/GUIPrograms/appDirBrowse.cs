@@ -7,7 +7,7 @@ using SQLite.NET;
 using Programs.Utils;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using GUIPrograms;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -181,7 +181,7 @@ namespace ProgramsDatabase
 			{
 				proc.Start(); // start the app
 				proc.WaitForExit(); // stop MP
-// not yet				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
+				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
 
 //				Log.Write("myPrograms: DEBUG LOG program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
 //					proc.StartInfo.FileName, 
