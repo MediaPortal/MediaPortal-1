@@ -192,6 +192,10 @@ namespace MediaPortal.GUI.Music
 						m_iLastControl = (int)Controls.CONTROL_BTNVIEWASICONS;
 						GUIControl.FocusControl(GetID, m_iLastControl);
 					}
+          if (GetItemCount() <=0)
+          {
+            GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTNVIEWASICONS);
+          }
           SelectCurrentPlayingSong();
 					return true;
 
