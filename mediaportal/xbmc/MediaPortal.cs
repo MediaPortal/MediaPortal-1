@@ -528,6 +528,14 @@ public class MediaPortalApp : D3DApp
       {
         Log.Write("log cur:{0} duration:{1} speed:{2}", g_Player.CurrentPosition,g_Player.Duration, g_Player.Speed);
       }
+      if (key.KeyChar=='[')
+      {
+        Recorder.RecordNow("RTL 4");
+      }
+      if (key.KeyChar==']')
+      {
+        Recorder.StopRecording("RTL 4");
+      }
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
 			{

@@ -270,9 +270,16 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void StopCapture()
     {
+      // stop tv preview....
+      if (g_Player.Playing && g_Player.IsTV)
+      {
+        g_Player.Stop();
+      }
+
       if (capture!=null)
       {
         Log.Write("  CaptureCard:{0} Stop capture",ID);
+        
         GUIGraphicsContext.OnGammaContrastBrightnessChanged -= new VideoGammaContrastBrightnessHandler(this.OnGammaContrastChanged);
         GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoWindowChanged);
         m_iPreviewChannel=0;
@@ -295,11 +302,6 @@ namespace MediaPortal.TV.Recording
         }
         capture=null;
 
-        // stop tv preview....
-        if (g_Player.Playing && g_Player.IsTV)
-        {
-          g_Player.Stop();
-        }
       }
     }
 
@@ -666,6 +668,7 @@ namespace MediaPortal.TV.Recording
       if (prog!=null) currentRunningProgram=prog.Clone();
       util=null;
       
+      CaptureFormat=".sbe";
       // compose the filename in format [channel][date][time].mpg
       try
       {
@@ -840,10 +843,8 @@ namespace MediaPortal.TV.Recording
           m_bVideoWindowChanged=false;
           if (capture!=null)
           {
-            Log.Write("OnVideoWindowChanged()");
             if (capture.IsTimeShifting)
             {
-              g_Player.SetVideoWindow();
             }
             else
             {
@@ -858,7 +859,6 @@ namespace MediaPortal.TV.Recording
                 capture.SetVideoPosition(GUIGraphicsContext.VideoWindow);
               }
             }
-            Log.Write("OnVideoWindowChanged() done");
 
           }
         }
