@@ -2383,146 +2383,155 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void Tune(object tuningObject)
 		{
-			//if no network provider then return;
-			if (m_NetworkProvider==null) return;
-			if (tuningObject		 ==null) return;
 
-			m_iRetyCount=0;
-			//start viewing if we're not yet viewing
-			if (!graphRunning)
+			try
 			{
-				StartViewing(AnalogVideoStandard.None,-1,-1);
-			}
-			//get the ITuner from the network provider
-			TunerLib.TuneRequest newTuneRequest = null;
-			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-			if (myTuner ==null)
-			{
-				Log.Write("DVBGraphBDA: failed Tune() tuner=null");
-				return;
-			}
+				//if no network provider then return;
+				if (m_NetworkProvider==null) return;
+				if (tuningObject		 ==null) return;
 
-			//get the IDVBTuningSpace2 from the tuner
-			TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
-			if (myTuningSpace ==null)
-			{
-				Log.Write("DVBGraphBDA: failed Tune() tuningspace=null");
-				return;
-			}
-
-			//create a new tuning request
-			newTuneRequest = myTuningSpace.CreateTuneRequest();
-			if (newTuneRequest ==null)
-			{
-				Log.Write("DVBGraphBDA: failed Tune() could not create new tuningrequest");
-				return;
-			}
-				
-			TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
-			if (myTuneRequest ==null)
-			{
-				Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
-				return;
-			}
-
-			// for DVB-T
-			if (Network() == NetworkType.DVBT)
-			{
-				int frequency=0;
-				try
+				m_iRetyCount=0;
+				//start viewing if we're not yet viewing
+				if (!graphRunning)
 				{
-					frequency=(int)tuningObject;
+					StartViewing(AnalogVideoStandard.None,-1,-1);
 				}
-				catch( Exception )
+				//get the ITuner from the network provider
+				TunerLib.TuneRequest newTuneRequest = null;
+				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+				if (myTuner ==null)
 				{
-					return;
-				}
-				
-				//get the IDVBTLocator interface
-				TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
-				if (myLocator == null)
-					myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBTLocator;
-				if (myLocator ==null)
-				{
-					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTLocator");
-					return;
-				}
-				//set the properties for the new tuning request. For DVB-T we only set the frequency
-				myLocator.CarrierFrequency		= frequency;
-				myTuneRequest.ONID						= -1;					//original network id
-				myTuneRequest.TSID						= -1;					//transport stream id
-				myTuneRequest.SID							= -1;					//service id
-				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentTuningObject = new DVBChannel();
-				currentTuningObject.carrierFrequency=frequency;
-				currentTuningObject.ONID=-1;
-				currentTuningObject.TSID=-1;
-				currentTuningObject.SID=-1;
-
-			}//if (Network() == NetworkType.DVBT)
-			else if (Network() == NetworkType.DVBC)
-			{
-				//get the IDVBCLocator interface
-				TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
-				if (myLocator == null)
-					myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
-				if (myLocator ==null)
-				{
-					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBCLocator");
+					Log.Write("DVBGraphBDA: failed Tune() tuner=null");
 					return;
 				}
 
-				//set the properties for the new tuning request. For DVB-C we only set the frequency
-				DVBChannel chan=(DVBChannel)tuningObject;
-				myLocator.CarrierFrequency		= chan.carrierFrequency;
-				myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
-				myLocator.SymbolRate					= chan.symbolRate;
-				myLocator.Modulation					= (TunerLib.ModulationType)chan.modulation;
-				
-				myTuneRequest.ONID						= chan.ONID;	//original network id
-				myTuneRequest.TSID						= chan.TSID;	//transport stream id
-				myTuneRequest.SID							= chan.SID;		//service id
-				
-				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				currentTuningObject = chan;
-			}
-			else if (Network() == NetworkType.DVBS)
-			{
-				//get the IDVBSLocator interface
-				TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
-				if (myLocator == null)
-					myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
-				if (myLocator ==null)
+				//get the IDVBTuningSpace2 from the tuner
+				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+				if (myTuningSpace ==null)
 				{
-					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBSLocator");
+					Log.Write("DVBGraphBDA: failed Tune() tuningspace=null");
 					return;
 				}
 
-				DVBChannel chan=(DVBChannel)tuningObject;
-				//set the properties for the new tuning request. 
-				myLocator.CarrierFrequency		= chan.carrierFrequency;
-				myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
-				if (chan.polarisation==0) 
-					myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
-				else
-					myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
-				myLocator.SymbolRate					= chan.symbolRate;
-				myTuneRequest.ONID						= chan.ONID;	//original network id
-				myTuneRequest.TSID						= chan.TSID;	//transport stream id
-				myTuneRequest.SID							= chan.SID;		//service id
-				myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-				SetLNBSettings(myTuneRequest);
-				
-				currentTuningObject = chan;
-			}
-			else if (Network() == NetworkType.ATSC)
-			{
-				//todo: add tuning for ATSC
-			}
+				//create a new tuning request
+				newTuneRequest = myTuningSpace.CreateTuneRequest();
+				if (newTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not create new tuningrequest");
+					return;
+				}
+					
+				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
+				if (myTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
+					return;
+				}
 
-			//and submit the tune request
-			myTuner.TuneRequest  = newTuneRequest;
-			Marshal.ReleaseComObject(myTuneRequest);
+				// for DVB-T
+				if (Network() == NetworkType.DVBT)
+				{
+					int frequency=0;
+					try
+					{
+						frequency=(int)tuningObject;
+					}
+					catch( Exception )
+					{
+						return;
+					}
+					
+					//get the IDVBTLocator interface
+					TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
+					if (myLocator == null)
+						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBTLocator;
+					if (myLocator ==null)
+					{
+						Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTLocator");
+						return;
+					}
+					//set the properties for the new tuning request. For DVB-T we only set the frequency
+					myLocator.CarrierFrequency		= frequency;
+					myTuneRequest.ONID						= -1;					//original network id
+					myTuneRequest.TSID						= -1;					//transport stream id
+					myTuneRequest.SID							= -1;					//service id
+					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+					currentTuningObject = new DVBChannel();
+					currentTuningObject.carrierFrequency=frequency;
+					currentTuningObject.ONID=-1;
+					currentTuningObject.TSID=-1;
+					currentTuningObject.SID=-1;
+
+				}//if (Network() == NetworkType.DVBT)
+				else if (Network() == NetworkType.DVBC)
+				{
+					//get the IDVBCLocator interface
+					TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
+					if (myLocator == null)
+						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
+					if (myLocator ==null)
+					{
+						Log.Write("DVBGraphBDA: failed Tune() could not get IDVBCLocator");
+						return;
+					}
+
+					//set the properties for the new tuning request. For DVB-C we only set the frequency
+					DVBChannel chan=(DVBChannel)tuningObject;
+					myLocator.CarrierFrequency		= chan.carrierFrequency;
+					myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
+					myLocator.SymbolRate					= chan.symbolRate;
+					myLocator.Modulation					= (TunerLib.ModulationType)chan.modulation;
+					
+					myTuneRequest.ONID						= chan.ONID;	//original network id
+					myTuneRequest.TSID						= chan.TSID;	//transport stream id
+					myTuneRequest.SID							= chan.SID;		//service id
+					
+					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+					currentTuningObject = chan;
+				}
+				else if (Network() == NetworkType.DVBS)
+				{
+					//get the IDVBSLocator interface
+					TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
+					if (myLocator == null)
+						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
+					if (myLocator ==null)
+					{
+						Log.Write("DVBGraphBDA: failed Tune() could not get IDVBSLocator");
+						return;
+					}
+
+					DVBChannel chan=(DVBChannel)tuningObject;
+					//set the properties for the new tuning request. 
+					myLocator.CarrierFrequency		= chan.carrierFrequency;
+					myLocator.InnerFEC						= (TunerLib.FECMethod)chan.innerFec;
+					if (chan.polarisation==0) 
+						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
+					else
+						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
+					myLocator.SymbolRate					= chan.symbolRate;
+					myTuneRequest.ONID						= chan.ONID;	//original network id
+					myTuneRequest.TSID						= chan.TSID;	//transport stream id
+					myTuneRequest.SID							= chan.SID;		//service id
+					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+					SetLNBSettings(myTuneRequest);
+					
+					currentTuningObject = chan;
+				}
+				else if (Network() == NetworkType.ATSC)
+				{
+					//todo: add tuning for ATSC
+				}
+
+				//and submit the tune request
+				myTuner.TuneRequest  = newTuneRequest;
+				Marshal.ReleaseComObject(myTuneRequest);
+			}
+			catch(Exception ex)
+			{
+				Log.Write("DVBGraphBDA:Tune() exception {0} {1} {2}",
+										ex.Message,ex.Source,ex.StackTrace);
+			}
 		}//public void Tune(object tuningObject)
 		
 		/// <summary>
