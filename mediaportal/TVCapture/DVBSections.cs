@@ -1741,7 +1741,7 @@ namespace MediaPortal.TV.Recording
 			{
 				System.Windows.Forms.Application.DoEvents();
 				GetStreamData(filter,18,tab,1,1500);
-
+				
 				foreach(byte[] arr in m_sectionsList)
 					ret=decodeEITTable(arr,ref eit,ret,startFlag);
 				
@@ -1784,12 +1784,6 @@ namespace MediaPortal.TV.Recording
 			return eit.eitList;
 		}
 
-		public ArrayList DeliverRAWEPGSection(int tab,DShowNET.IBaseFilter filter)
-		{
-			GetStreamData(filter,18,tab,1,200);
-			return (ArrayList)m_sectionsList.Clone();
-
-		}
 		public int GrabEIT(DVBChannel ch,DShowNET.IBaseFilter filter)
 		{
 			// there must be an ts (card tuned) to get eit
@@ -1833,7 +1827,6 @@ namespace MediaPortal.TV.Recording
 			
 			GC.Collect();
 			return 	eventsCount;
-			return 0;
 
 		}
 		//
