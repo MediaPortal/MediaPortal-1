@@ -66,16 +66,16 @@ namespace MediaPortal.GUI.Video
 					return false;
 				}
 			}
+
+      if (g_Player.CurrentFile != m_strFile)
+      {
+        m_strFile = g_Player.CurrentFile;
+        SetCurrentFile(m_strFile);
+      }
+
 			if (GUIGraphicsContext.IsFullScreenVideo) return false;
 			if (GUIGraphicsContext.Calibrating) return false;
 			if (!GUIGraphicsContext.Overlay) return false;
-
-			if (g_Player.CurrentFile != m_strFile)
-			{
-				m_strFile = g_Player.CurrentFile;
-				SetCurrentFile(m_strFile);
-			}
-
 
       return true;
     }
