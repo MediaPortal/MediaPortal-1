@@ -1136,7 +1136,7 @@ namespace MediaPortal.GUI.TV
     
     void OnPreviousChannel()
     {
-      if (!Recorder.IsViewing()) return;
+      if (!Recorder.View) return;
       string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
       {
@@ -1157,7 +1157,7 @@ namespace MediaPortal.GUI.TV
     
     void OnNextChannel()
     {
-      if (!Recorder.IsViewing()) return;
+      if (!Recorder.View) return;
       string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
       {
@@ -1210,7 +1210,7 @@ namespace MediaPortal.GUI.TV
 		  string strChannel=Recorder.TVChannelName;
 		  GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 		  
-		  if (!Recorder.IsViewing() && Recorder.IsRecording())
+		  if (!Recorder.View && Recorder.IsRecording())
 		  {
 			  strChannel=Recorder.CurrentTVRecording.Channel;
 		  }
