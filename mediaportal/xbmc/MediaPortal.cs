@@ -383,7 +383,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
       {
         // windows wants to activate the screensaver
-        if (GUIGraphicsContext.IsFullScreenVideo) 
+        if (GUIGraphicsContext.IsFullScreenVideo || GUIWindowManager.ActiveWindow==GUIWindow.Window.WINDOW_SLIDESHOW) 
         {
           //disable it when we're watching tv/movies/...
           msg.Result = new IntPtr(0);
