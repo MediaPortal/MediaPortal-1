@@ -88,7 +88,7 @@
 			    <posY>97</posY>
 			    <label>100</label>
 			    <onleft>2</onleft>
-			    <onright>50</onright>
+			    <onright>10</onright>
 			    <onup>17</onup>
 			    <ondown>3</ondown>
 		    </control>
@@ -124,7 +124,7 @@
 				<posY>165</posY>
 				<label>457</label>
 				<onleft>6</onleft>
-				<onright>50</onright>
+				<onright>10</onright>
 				<onup>2</onup>
 				<ondown>6</ondown>
 				<subitems>
