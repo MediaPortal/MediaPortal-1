@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-					m_db = new SQLiteClient(@"database\TVDatabaseV14.db");
+					m_db = new SQLiteClient(@"database\TVDatabaseV15.db");
 					CreateTables();
 					UpdateFromPreviousVersion();
 					if (m_db!=null)
@@ -130,8 +130,8 @@ namespace MediaPortal.TV.Database
 				DatabaseUtility.AddTable(m_db,"recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
 		
 				DatabaseUtility.AddTable(m_db,"tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
-				DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
-				DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer)\n");
+				DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer)\n");
+				DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer)\n");
 				DatabaseUtility.AddTable(m_db,"tblGroups"      ,"CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)\n");
 				DatabaseUtility.AddTable(m_db,"tblGroupMapping","CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)\n");
 
@@ -2062,7 +2062,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID)
+		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -2085,8 +2085,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},1)",
-									strChannel,strProvider,idChannel,frequency,0,ONID,TSID,SID);
+						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},1)",
+									strChannel,strProvider,idChannel,frequency,0,ONID,TSID,SID,audioPid,videoPid,teletextPid);
 						//Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -2094,8 +2094,8 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5} where iLCN like '{6}'", 
-							frequency,ONID,TSID,SID,strChannel, strProvider, idChannel);
+						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8} where iLCN like '{9}'", 
+							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid, idChannel);
 						//	Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
@@ -2111,7 +2111,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 		
-		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID)
+		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -2134,8 +2134,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},1)"
-																	,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID);
+						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},1)"
+																	,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid);
 						//Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -2143,8 +2143,8 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}' where iLCN like '{9}'", 
-																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,idChannel);
+						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11} where iLCN like '{12}'", 
+																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid,idChannel);
 						//Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
@@ -2161,8 +2161,9 @@ namespace MediaPortal.TV.Database
 		}
 
 		
-		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID) 
+		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid) 
 		{
+			audioPid=videoPid=teletextPid=0;
 			strProvider="";
 			frequency=-1;
 			ONID=-1;
@@ -2185,6 +2186,9 @@ namespace MediaPortal.TV.Database
 					TSID=Int32.Parse(DatabaseUtility.Get(results,0,"TSID"));
 					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
+					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
+					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
+					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
 					return ;
 				}
 				catch(Exception ex)
@@ -2194,8 +2198,9 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
-		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID) 
+		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid) 
 		{
+			audioPid=videoPid=teletextPid=0;
 			strProvider="";
 			frequency=-1;
 			symbolrate=-1;
@@ -2224,6 +2229,9 @@ namespace MediaPortal.TV.Database
 					TSID=Int32.Parse(DatabaseUtility.Get(results,0,"TSID"));
 					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
+					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
+					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
+					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
 					return ;
 				}
 				catch(Exception ex)

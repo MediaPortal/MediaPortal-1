@@ -454,7 +454,7 @@ namespace MediaPortal.Player
 		public DVBRadioGraph(string strDevice,string strAudioDevice,string strLineInput)
 		{
 			m_strAudioDevice=strAudioDevice;
-			m_db = new SQLiteClient(@"database\TVDatabaseV14.db");
+			m_db = new SQLiteClient(@"database\TVDatabaseV15.db");
 		}
 
 		public bool Create()
