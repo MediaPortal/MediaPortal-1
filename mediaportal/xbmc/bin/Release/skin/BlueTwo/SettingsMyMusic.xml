@@ -91,7 +91,7 @@
 		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>		
 		<onleft>8</onleft>
 		<onright>8</onright>
-		<onup>6</onup>
+		<onup>17</onup>
 		<ondown>13</ondown>
 	</control>
 	<control>

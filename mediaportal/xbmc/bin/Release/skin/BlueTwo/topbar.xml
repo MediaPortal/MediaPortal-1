@@ -158,9 +158,8 @@
 		<height>42</height>
 		<textureFocus>minimize_enabled.png</textureFocus>
 		<textureNoFocus>minimize_disabled.png</textureNoFocus>
-		<action>-</action>
 		<label>-</label>
-		<action>97</action>
+		<action>-</action>
 		<onleft>29</onleft>
 		<onright>31</onright>
 		<onup>30</onup>

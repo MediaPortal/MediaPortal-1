@@ -103,7 +103,7 @@
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<onright>7</onright>
 			<onleft>7</onleft>
-			<onup>18</onup>
+			<onup>17</onup>
 			<ondown>4</ondown>
 		</control>
 		 <control>
@@ -336,7 +336,7 @@
 		<control>
 			<description>fade in volume</description>
 			<type>checkmark</type>
-			<id>20</id>
+			<id>16</id>
 			<posX>270</posX>
 			<posY>250</posY>
 			<width>200</width>
