@@ -711,49 +711,64 @@ namespace DShowNET
 							strFormat+=(char)((videodesc.dwFourCC>>8)&0xff);
 							strFormat+=(char)((videodesc.dwFourCC>>16)&0xff);
 							strFormat+=(char)((videodesc.dwFourCC>>24)&0xff);
-							DirectShowUtil.DebugWrite("VMR9 Get best deinterlace mode for {0}x{1} format:{2} 4cc:{3} size:{4}", 
-								videodesc.dwSampleWidth, videodesc.dwSampleHeight, 
-								videodesc.SampleFormat.ToString(),
-								strFormat,
-								videodesc.dwSize);
-							uint uiNumberOfDeinterlaceModes=100;
-							try
+							if (strFormat=="DXVA")
 							{
-
-								DirectShowUtil.DebugWrite("set VMR9 deinterlace preferences to next best");
-								hr=vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_NextBest);
-								if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace preferences to next best:0x{0:X}",hr);
-
-
-								IntPtr guids=Marshal.AllocCoTaskMem(100*Marshal.SizeOf(guidDeint));
-								hr=vmrdeinterlace9.GetNumberOfDeinterlaceModes( ref videodesc, ref uiNumberOfDeinterlaceModes,guids);
-								if (hr==0)
-								{
-									DirectShowUtil.DebugWrite("VMR9 supports {0} interlace modes",uiNumberOfDeinterlaceModes);
-									guidDeint = (Guid)Marshal.PtrToStructure(guids,typeof(Guid));
-									DirectShowUtil.DebugWrite("Set VMR9 deinterlace mode to:{0}", guidDeint.ToString());
-									hr=vmrdeinterlace9.SetDeinterlaceMode(0xFFFFFFFF,ref guidDeint);
-									if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace mode:0x{0:X}",hr);
-
-									hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
-									if (hr!=0 ) 
-										hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
-									if (hr!=0 ) 
-										DirectShowUtil.DebugWrite("VMR9 Unable to get current deinterlace mode:0x{0:X}",hr);
-									else
-										DirectShowUtil.DebugWrite("VMR9 uses deinterlace guid:{0}",guidDeint.ToString());
-								}
+								//de-interlacing is done by DXCA
+								DirectShowUtil.DebugWrite("VMR9 uses DXVA. turning off any software de-interlacing");
+								Guid guidNull = new Guid(0,0,0,0,0,0,0,0,0,0,0);
+								hr=vmrdeinterlace9.SetDeinterlaceMode(0,ref guidNull);
+								if (hr!=0 ) 
+									vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNull);
+								if (hr!=0 ) 
+									DirectShowUtil.DebugWrite("VMR9 Unable to get turn off s/w deinterlacing :0x{0:X}",hr);
 								else
-								{
-									DirectShowUtil.DebugWrite("unable to get VMR9 interlace modes:0x{0:X}",hr);
-								}
-								Marshal.FreeCoTaskMem(guids);
+									DirectShowUtil.DebugWrite("VMR9 s/w deinterlacing is turned off");
 							}
-							catch(Exception ex)
+							else
 							{
-								DirectShowUtil.DebugWrite("{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
-							}
+								DirectShowUtil.DebugWrite("VMR9 Get best deinterlace mode for {0}x{1} format:{2} 4cc:{3} size:{4}", 
+									videodesc.dwSampleWidth, videodesc.dwSampleHeight, 
+									videodesc.SampleFormat.ToString(),
+									strFormat,
+									videodesc.dwSize);
+								uint uiNumberOfDeinterlaceModes=100;
+								try
+								{
 
+									DirectShowUtil.DebugWrite("set VMR9 deinterlace preferences to next best");
+									hr=vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_NextBest);
+									if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace preferences to next best:0x{0:X}",hr);
+
+
+									IntPtr guids=Marshal.AllocCoTaskMem(100*Marshal.SizeOf(guidDeint));
+									hr=vmrdeinterlace9.GetNumberOfDeinterlaceModes( ref videodesc, ref uiNumberOfDeinterlaceModes,guids);
+									if (hr==0)
+									{
+										DirectShowUtil.DebugWrite("VMR9 supports {0} interlace modes",uiNumberOfDeinterlaceModes);
+										guidDeint = (Guid)Marshal.PtrToStructure(guids,typeof(Guid));
+										DirectShowUtil.DebugWrite("Set VMR9 deinterlace mode to:{0}", guidDeint.ToString());
+										hr=vmrdeinterlace9.SetDeinterlaceMode(0xFFFFFFFF,ref guidDeint);
+										if (hr!=0) DirectShowUtil.DebugWrite("Unable to set deinterlace mode:0x{0:X}",hr);
+
+										hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
+										if (hr!=0 ) 
+											hr=vmrdeinterlace9.GetActualDeinterlaceMode (0,out guidDeint);
+										if (hr!=0 ) 
+											DirectShowUtil.DebugWrite("VMR9 Unable to get current deinterlace mode:0x{0:X}",hr);
+										else
+											DirectShowUtil.DebugWrite("VMR9 uses deinterlace guid:{0}",guidDeint.ToString());
+									}
+									else
+									{
+										DirectShowUtil.DebugWrite("unable to get VMR9 interlace modes:0x{0:X}",hr);
+									}
+									Marshal.FreeCoTaskMem(guids);
+								}
+								catch(Exception ex)
+								{
+									DirectShowUtil.DebugWrite("{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+								}
+							}
 						}
 					}
         } while (iFetched==1 && pBasefilter!=null);
