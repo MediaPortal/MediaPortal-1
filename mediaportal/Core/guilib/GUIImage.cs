@@ -30,6 +30,7 @@ namespace MediaPortal.GUI.Library
 		private int                     m_iCurrentLoop=0;
 		private int										  m_iCurrentImage=0;
 		[XMLSkinElement("keepaspectratio")] private bool    m_bKeepAspectRatio=false;
+    [XMLSkinElement("zoom")] private bool    m_bZoom=false;
 		private ArrayList								m_vecTextures = new ArrayList();
 
     //TODO GIF PALLETTE
@@ -53,7 +54,6 @@ namespace MediaPortal.GUI.Library
     Vector3                         pntPosition;
     float                           scaleX=1;
     float                           scaleY=1;
-    bool                            m_bZoom=false;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
