@@ -3111,9 +3111,8 @@ namespace MediaPortal
             int iChanNumber=GetInt(strNumber);
             if (iChanNumber==0)
             {
-              MessageBox.Show(this.Parent,"Some tv channels have no channel number assigned", "Invalid configuration",MessageBoxButtons.OK);
-              e.Cancel=true;
-              return;
+              MessageBox.Show(this.Parent,"Some tv channels have no channel number assigned\rYou wont be able to record & view them", "Invalid configuration",MessageBoxButtons.OK);
+              break;
             }
           }
         }
