@@ -355,11 +355,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="true"></filter>
-        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="true"></filter>
-        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="true"></filter>
-        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="false"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="false"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="false"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="false"></filter>
+        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="false"></filter>
       </filters>
       <connections>
     <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
