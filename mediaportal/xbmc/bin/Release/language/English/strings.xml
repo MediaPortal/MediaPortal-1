@@ -2042,6 +2042,7 @@
 <string><id>10755</id><value>My Status</value></string>
 <string><id>10756</id><value>My Status details</value></string>
 <string><id>10757</id><value>My Status preferences</value></string>
+<string><id>10770</id><value>Explorer</value></string>
 <string><id>11000</id><value>keyboard</value></string>
 <string><id>12000</id><value>Select dialog</value></string>
 <string><id>12001</id><value>My Music/info</value></string>
@@ -2058,8 +2059,10 @@
 <string><id>12013</id><value>Set Rating</value></string>
 <string><id>12014</id><value>Picture info</value></string>
 <string><id>12600</id><value>My Weather</value></string>
+<string><id>12700</id><value>My News</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>Fullscreen OSD</value></string>
+<string><id>12902</id><value>MSN Messenger OSD</value></string>
 
 <string><id>686</id><value>Born</value></string>
 <string><id>687</id><value>Years Active</value></string>
