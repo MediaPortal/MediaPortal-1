@@ -1144,6 +1144,20 @@ namespace MediaPortal.GUI.TV
 					break;
 				}
 			}
+			if (m_currentgroup<0)  
+				m_currentgroup=0;
+			
+			if (m_currentchannel=="")
+			{
+				if (m_currentgroup>=0 && m_currentgroup < m_groups.Count)
+				{
+					TVGroup group=(TVGroup)m_groups[m_currentgroup];
+					if (group.tvChannels.Count>0)
+					{
+						m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
+					}
+				}
+			}
 		}
 
 		public void SaveSettings(Xml xmlwriter)
