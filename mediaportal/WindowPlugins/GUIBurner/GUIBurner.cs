@@ -705,6 +705,8 @@ namespace MediaPortal.GUI.GUIBurner
 					}
 					break;
 				case States.STATE_VIDEO : // Video Menu
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_DATA);
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CONVERT,GUILocalizeStrings.Get(2137));
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CUT,GUILocalizeStrings.Get(2138));

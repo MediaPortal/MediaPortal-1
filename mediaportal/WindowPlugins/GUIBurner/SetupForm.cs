@@ -13,8 +13,8 @@ namespace GUIBurner
 	/// </summary>
   public class SetupForm : System.Windows.Forms.Form, ISetupForm 
   {
-	private	XPBurn.XPBurnCD burnClass = new XPBurn.XPBurnCD(); 
- 
+	private	XPBurn.XPBurnCD burnClass; 
+	private int selIndx=0; 
 	private System.Windows.Forms.ComboBox comboBox1;
 	private System.Windows.Forms.Label label1;
 	private System.Windows.Forms.Button button1;
@@ -49,7 +49,6 @@ namespace GUIBurner
 	  // Required for Windows Form Designer support
 	  //
 	  InitializeComponent();
-	  GetRecorder();
 		LoadSettings();
 	  //
 	  // TODO: Add any constructor code after InitializeComponent call
@@ -105,6 +104,7 @@ namespace GUIBurner
 		// 
 		// comboBox1
 		// 
+		this.comboBox1.Enabled = false;
 		this.comboBox1.Location = new System.Drawing.Point(200, 48);
 		this.comboBox1.Name = "comboBox1";
 		this.comboBox1.Size = new System.Drawing.Size(272, 21);
@@ -129,6 +129,7 @@ namespace GUIBurner
 		// 
 		// textBox1
 		// 
+		this.textBox1.Enabled = false;
 		this.textBox1.Location = new System.Drawing.Point(200, 80);
 		this.textBox1.Name = "textBox1";
 		this.textBox1.Size = new System.Drawing.Size(272, 20);
@@ -145,6 +146,7 @@ namespace GUIBurner
 		// 
 		// button2
 		// 
+		this.button2.Enabled = false;
 		this.button2.Location = new System.Drawing.Point(504, 80);
 		this.button2.Name = "button2";
 		this.button2.Size = new System.Drawing.Size(32, 24);
@@ -156,6 +158,7 @@ namespace GUIBurner
 		// 
 		this.checkBox1.Checked = true;
 		this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+		this.checkBox1.Enabled = false;
 		this.checkBox1.Location = new System.Drawing.Point(200, 112);
 		this.checkBox1.Name = "checkBox1";
 		this.checkBox1.Size = new System.Drawing.Size(16, 16);
@@ -269,6 +272,7 @@ namespace GUIBurner
 		this.checkBox5.Name = "checkBox5";
 		this.checkBox5.Size = new System.Drawing.Size(24, 24);
 		this.checkBox5.TabIndex = 19;
+		this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
 		// 
 		// button4
 		// 
@@ -416,8 +420,7 @@ namespace GUIBurner
 		using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 		{
 			textBox1.Text=xmlreader.GetValueAsString("burner","temp_folder","");
-			comboBox1.SelectedIndex=xmlreader.GetValueAsInt("burner","recorder",0);
-			checkBox5.Checked=xmlreader.GetValueAsBool("burner","burn",true);
+			selIndx=xmlreader.GetValueAsInt("burner","recorder",0);
 			checkBox1.Checked=xmlreader.GetValueAsBool("burner","fastformat",true);
 			checkBox4.Checked=xmlreader.GetValueAsBool("burner","convertdvr",true);
 			checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
@@ -431,7 +434,10 @@ namespace GUIBurner
 	  using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
 	  {
 			xmlwriter.SetValue("burner","temp_folder",textBox1.Text);
-			xmlwriter.SetValue("burner","recorder",comboBox1.SelectedIndex);
+			if(checkBox5.Checked==true) 
+			{
+				xmlwriter.SetValue("burner","recorder",comboBox1.SelectedIndex);
+			}
 			xmlwriter.SetValueAsBool("burner","burn",checkBox5.Checked);
 			xmlwriter.SetValueAsBool("burner","fastformat",checkBox1.Checked);
 			xmlwriter.SetValueAsBool("burner","convertdvr",checkBox4.Checked);
@@ -450,6 +456,18 @@ namespace GUIBurner
 			s=s+"3. Start the Batch Program RecCodecs.cmd. You found it in MP Main folder.\n\n";
 			s=s+"    That´s all.\n";
 			MessageBox.Show( s );
+		}
+
+		private void checkBox5_CheckedChanged(object sender, System.EventArgs e)
+		{	
+			checkBox5.Checked=true;
+			comboBox1.Enabled=true;
+			textBox1.Enabled=true;
+			button2.Enabled=true;
+			checkBox1.Enabled=true;
+			burnClass= new XPBurn.XPBurnCD();
+			GetRecorder();
+			comboBox1.SelectedIndex=selIndx;
 		}
  }
 }
