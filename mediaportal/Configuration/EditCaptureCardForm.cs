@@ -1353,7 +1353,11 @@ namespace MediaPortal.Configuration
       if (!acceptuserinput) return;
 			SetDefaultCodecs();
 			SetDefaultAudioDevice();
-			FillInAll();
+
+			if (!FillInAll()) 
+			{
+				MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 		}
 
 		bool isBDACard
@@ -1390,8 +1394,9 @@ namespace MediaPortal.Configuration
 		/// 
 		/// Display should give the descriptive name, ie PVR150MCE, PVR350 etc.
 		/// </summary>
-    void FillInAll()
+    bool FillInAll()
     {
+			bool result=true;
       //
       // Setup frame sizes
       //
@@ -1482,6 +1487,7 @@ namespace MediaPortal.Configuration
 					
 					capture.DeleteGraph();
 				}
+				else result=false;
       }
 
       // select the correct framesize
@@ -1497,6 +1503,7 @@ namespace MediaPortal.Configuration
           break;
         }
       }
+			return result;
     }
 
 		private void setupButton_Click(object sender, System.EventArgs e)
@@ -1560,7 +1567,7 @@ namespace MediaPortal.Configuration
 
     private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
     {
-      FillInAll();    
+      bool result=FillInAll();    
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				checkBoxHiQuality.Checked=xmlreader.GetValueAsBool("tv", "hiquality", false);
@@ -1574,7 +1581,10 @@ namespace MediaPortal.Configuration
 				comboBox3Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "Video3", 0);
 			}
 			LoadDVBSSettings();
-
+			if (!result) 
+			{
+				MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
     }
   
     private void audioDeviceComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
