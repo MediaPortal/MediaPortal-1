@@ -10,7 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
-  13-07-2004 my tv      : generating thumb for "ketnet/canvas"  wont work
+  
   13-07-2004 my music   : After adding an audio cd to the playlist selecting a different song from the playlist does not work.
   13-07-2004 my music   : After adding an audio cd (that has been recognized by freedb) to a playlist. It shows, Track 1, ... instead of the freedb info.
   10-08-2004 calibration: when calibration pixel ratio and setting a perfect square, calibration is wrong. I need to set a non square to get good AR) (maybe calibrate pic in skin bad?
