@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -8,77 +9,11 @@ using MediaPortal.Player;
 
 namespace MediaPortal
 {
-	/// <summary>
-  ///
-  //  terug 
-  //  appcommand:3013C 10320000
-  //
-  //  play 
-  //  appcommand:3013C 102E0000
-  //
-  //  vooruit 
-  //  appcommand:3013C 10310000
-  //
-  //  pause 
-  //  appcommand:3013C 102F0000
-  //
-  //  stoppen
-  //  appcommand:3013C D0000
-  //  wm_keydown:B2 1000001
-  //
-  //  herhalen
-  //  appcommand:3013C C0000
-  //  wm_keydown:B1 1000001
-  //
-  //  overslaan
-  //  appcommand:3013C B0000
-  //  wm_keydown:B0 1000001
-  //
-  //  vorige
-  //  appcommand:3013C 10000
-  //  wm_keydown:A6 1000001
-  //
-  //  meer info ??
-  //
-  //  OK:
-  //  wm_keydown:D 1C0001
-  //
-  //  kanaal +
-  //  appcommand:3013C 10330000
-  //
-  //  kanaal -
-  //  appcommand:3013C 10340000
-  //
-  //  dempen:
-  //  appcommand:3013C 80000
-  //  wm_keydown:AD 1000001
-  //
-  //  wis:
-  //  wm_keydown:1B 10001
-  //
-  //  enter:
-  //  wm_keydown:D 1C0001
-  //
-  //
-  //  *
-  //  wm_keydown:10 2A0001
-  //  wm_keydown:38 90001
-  //
-  //  #
-  //  wm_keydown:10 2A0001
-  //  wm_keydown:33 40001
-  //
-  //
-  //  dempen:
-  //  appcommand:3013C 80000
-  //  wm_keydown:AD 1000001
-  //
-  //  opnemen:
-  //  appcommand:3013C 10300000
    
 	/// </summary>
 	public class MCE2005Remote
 	{
+		#region constants
     const int WM_INPUT                       = 0x00FF;
     const int WM_KEYDOWN                     =0x0100;
     const int WM_APPCOMMAND                   =0x0319;
@@ -141,7 +76,36 @@ namespace MediaPortal
  
     const int RID_INPUT               =0x10000003;
     const int RID_HEADER              =0x10000005;
-    
+		#endregion
+		#region structures
+
+		[StructLayout(LayoutKind.Sequential)]
+			struct DeviceInfoData
+		{
+			public int				Size;
+			public Guid				guidClass;
+			public uint				DevInst;
+			public uint				Reserved;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+			struct DeviceInterfaceData
+		{
+			public int				Size;
+			public Guid				guidClass;
+			public uint				Flags;
+			public uint				Reserved;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+			struct DeviceInterfaceDetailData 
+		{
+			public int				Size;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=256)]
+			public string			DevicePath;
+		}
+
     public struct RAWINPUTDEVICE 
     {
       public ushort usUsagePage;
@@ -170,6 +134,29 @@ namespace MediaPortal
       public RAWINPUTHEADER    header; 
       public RAWHID      hid; 
     } 
+		#endregion
+		#region imports
+
+
+		[DllImport("hid", SetLastError=true)]
+		static extern void HidD_GetHidGuid(ref Guid guid);
+
+		[DllImport("setupapi", SetLastError=true)]
+		static extern IntPtr SetupDiGetClassDevs(ref Guid guid, int Enumerator, int hwndParent, int Flags);
+
+		[DllImport("setupapi", SetLastError=true)]
+		static extern bool SetupDiEnumDeviceInfo(IntPtr handle, int Index, ref DeviceInfoData deviceInfoData);
+
+		[DllImport("setupapi", SetLastError=true)]
+		static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData, ref Guid guidClass, int MemberIndex, ref DeviceInterfaceData deviceInterfaceData);
+
+		[DllImport("setupapi", SetLastError=true)]
+		static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, int unused1, int unused2, ref uint requiredSize, int unused3);
+		
+		[DllImport("setupapi", SetLastError=true)]
+		static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, ref DeviceInterfaceDetailData deviceInterfaceDetailData, uint detailSize, int unused1, int unused2);
+		
+
     [DllImport("user32.dll", SetLastError=true)]
     extern static int GetRawInputData(IntPtr rawInput, int uiCmd, IntPtr pData, ref int dwSize, int dwHdrSize);
     
@@ -179,9 +166,56 @@ namespace MediaPortal
                                                       [In] uint uiNumDevices,
                                                       [In] uint cbSize);  
 
+		[DllImport("kernel32", SetLastError=true)]
+		static extern unsafe IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
+
+		[DllImport("kernel32", SetLastError=true)]
+		static extern unsafe bool CloseHandle(IntPtr hObject);
+
+		[DllImport("kernel32", SetLastError=true)]
+		static extern int GetLastError();
+
+		[DllImport("user32")]
+		private static extern bool SetForegroundWindow(IntPtr hWnd);
+		
+		[DllImport("user32")]
+		private static extern IntPtr GetForegroundWindow();
+
+		[DllImport("user32")]
+		private static extern bool BringWindowToTop(IntPtr hWnd);
+
+		[DllImport("user32")] 
+		private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
+		[DllImport("user32")]
+		private static extern bool AttachThreadInput(int nThreadId, int nThreadIdTo, bool bAttach);
+		
+		[DllImport("user32")]
+		private static extern int GetWindowThreadProcessId(IntPtr hWnd, int unused);
+
+		[DllImport("user32")]
+		private static extern IntPtr FindWindow(string strWindowClass, string strWindowName);
+
+		[DllImport("user32")]
+		static extern bool IsWindowVisible(IntPtr hWnd);
+
+		[DllImport("user32")]
+		static extern bool IsIconic(IntPtr hWnd);
+
+		#endregion
+
+		enum FileFlag
+		{
+			Overlapped = 0x40000000,
+		}
+
+		const int					SW_RESTORE = 9;
     bool RemoteFound=false;
 		bool RemoteEnabled=false;
 		bool USAModel=false;
+		FileStream					m_streamRead;
+		byte[]						m_bufferRead = new byte[128];
+
 		public MCE2005Remote()
 		{
 		}
@@ -197,8 +231,10 @@ namespace MediaPortal
 				if (USAModel) Log.Write("Using USA MCE 2005 remote");
 				else  Log.Write("Using European MCE 2005 remote");
 			}
+
       try
       {
+				Start();
         //register device
         RAWINPUTDEVICE[] rid1= new RAWINPUTDEVICE[1];
 
@@ -333,8 +369,8 @@ namespace MediaPortal
             break;
         }
       }
-*/
-      if (msg.Msg==WM_INPUT)
+*/ 
+			if (msg.Msg==WM_INPUT)
       {
         RAWINPUTHID header = new RAWINPUTHID ();
         int uiSize=0;
@@ -598,5 +634,135 @@ namespace MediaPortal
       }
       return false;
     }
+		#region greenbutton
+
+		public void Start()
+		{
+			Log.Write("MyGreenButton.Start: Starting");
+
+			string strDevice = FindDevice();
+
+			if(strDevice == null)
+			{
+				// an appropriate error message will have been placed in the log by FindDevice
+				Log.Write("MyGreenButton.Start: Failed to find device");
+				return;
+			}
+
+			IntPtr handle = CreateFile(strDevice, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+
+			if(handle.ToInt32() == -1)
+			{
+				Log.Write("MyGreenButton.Start: Failed to open device ({0})", GetLastError());
+				return;
+			}
+
+			// open a stream from the device and begin an asynchronous read
+			m_streamRead = new FileStream(handle, FileAccess.ReadWrite, true, 128, true);
+			m_streamRead.BeginRead(m_bufferRead, 0, m_bufferRead.Length, new AsyncCallback(OnReadComplete), m_bufferRead);
+
+			Log.Write("MyGreenButton.Start: Started");
+		}
+
+		public void DeInit()
+		{
+			Log.Write("MyGreenButton.Stop: Stopping");
+
+			if(m_streamRead != null)
+			{
+				m_streamRead.Close();
+			}
+
+			Log.Write("MyGreenButton.Stop: Stopped");
+		}
+
+		string FindDevice()
+		{
+			Guid guidHid = new Guid();
+
+			// ask the OS for the guid that represents human input devices
+			HidD_GetHidGuid(ref guidHid);
+
+			IntPtr handle = SetupDiGetClassDevs(ref guidHid, 0, 0, 0x12);
+
+			if(handle.ToInt32() == -1)
+			{
+				Console.WriteLine("MyGreenButton.FindDevice: Failed in call to SetupDiGetClassDevs ({0})", GetLastError());
+				return null;
+			}
+
+			for(int nIndex = 0; ; nIndex++)
+			{
+				DeviceInfoData deviceInfoData = new DeviceInfoData();
+				deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
+
+				if(SetupDiEnumDeviceInfo(handle, nIndex, ref deviceInfoData) == false)
+				{
+					Console.WriteLine("MyGreenButton.FindDevice: Failed in call to SetupDiEnumDeviceInfo ({0})", GetLastError());
+					return null;
+				}
+
+				DeviceInterfaceData deviceInterfaceData = new DeviceInterfaceData();
+				deviceInterfaceData.Size = Marshal.SizeOf(deviceInterfaceData);
+
+				if(SetupDiEnumDeviceInterfaces(handle, ref deviceInfoData, ref guidHid, 0, ref deviceInterfaceData) == false)
+				{
+					Console.WriteLine("MyGreenButton.FindDevice: Failed in call to SetupDiEnumDeviceInterfaces ({0})", GetLastError());
+					return null;
+				}
+
+				uint cbData = 0;
+
+				if(SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false && cbData == 0)
+				{
+					Console.WriteLine("MyGreenButton.FindDevice: Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError());
+					return null;
+				}
+
+				DeviceInterfaceDetailData deviceInterfaceDetailData = new DeviceInterfaceDetailData();
+				deviceInterfaceDetailData.Size = 5;
+
+				if(SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) == false)
+				{
+					Console.WriteLine("MyGreenButton.FindDevice: Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError());
+					return null;
+				}
+
+				// is this device a 2005 MCE receiver?
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815&col01#") != -1)
+				{
+					return deviceInterfaceDetailData.DevicePath;
+				}
+
+				// is this device a 2004 MCE receiver?
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d&col01#") != -1)
+				{
+					return deviceInterfaceDetailData.DevicePath;
+				}
+			}
+
+			return null;
+		}
+		
+		void OnReadComplete(IAsyncResult asyncResult)
+		{
+			int bytesRead = m_streamRead.EndRead(asyncResult);
+
+			if(bytesRead == 13 && m_bufferRead[5] == 13)
+			{
+				OnGreenButton();
+			}
+
+			// begin another asynchronous read from the device
+			m_streamRead.BeginRead(m_bufferRead, 0, m_bufferRead.Length, new AsyncCallback(OnReadComplete), m_bufferRead);
+		}
+
+		void OnGreenButton()
+		{
+			// only the main thread can correctly handle switching to the home window
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+			GUIWindowManager.SendThreadMessage(msg);
+		}
+		#endregion
 	}
 }

@@ -799,6 +799,8 @@ public class MediaPortalApp : D3DApp, IRender
       // this gives the windows the change to do some cleanup
       Recorder.Stop();
 
+			MCE2005Remote.DeInit();
+
       AutoPlay.StopListening();
       
       PluginManager.Stop();
