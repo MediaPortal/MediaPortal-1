@@ -146,7 +146,7 @@
 		<height>28</height>
 		<textXOff>10</textXOff>
 		<textYOff>2</textYOff>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -187,7 +187,7 @@
 		<posX>250</posX>
 		<posY>530</posY>
 		<label>-</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 
 </controls>

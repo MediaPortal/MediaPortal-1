@@ -61,7 +61,7 @@
 			<posY>70</posY>
 			<width>400</width>
 			<label>#selecteditem</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -170,7 +170,7 @@
 				<description>big listcontrol</description>
 				<type>listcontrol</type>
 				<id>51</id>
-				<font>font14</font>
+				<font>font13</font>
 				<font2>font13</font2>
 				<selectedColor>FFFF6600</selectedColor>
 				<textcolor>FFB2D4F5</textcolor>

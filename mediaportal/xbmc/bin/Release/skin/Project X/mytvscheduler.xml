@@ -71,7 +71,7 @@
 			<posX>260</posX>
 			<posY>530</posY>
 			<label>#itemcount</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -83,7 +83,7 @@
 			<posY>70</posY>
 			<width>400</width>
 			<label>#selecteditem</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>

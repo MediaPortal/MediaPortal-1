@@ -65,7 +65,7 @@
 		<posY>105</posY>
 		<width>375</width>
 		<label>#TV.Guide.Title</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -76,7 +76,7 @@
 		<posY>105</posY>
 		<label>#TV.Guide.Time</label>
 		<align>right</align>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -87,7 +87,7 @@
 		<posY>132</posY>
 		<label>#TV.Guide.Genre</label>
 		<align>right</align>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -100,7 +100,7 @@
 		<height>65</height>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.Guide.Description</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 	</control>
 

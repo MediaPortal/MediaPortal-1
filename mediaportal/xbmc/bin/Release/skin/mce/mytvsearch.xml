@@ -37,7 +37,7 @@
 			<posX>260</posX>
 			<posY>530</posY>
 			<label>#itemcount</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -49,7 +49,7 @@
 			<posY>70</posY>
 			<width>400</width>
 			<label>#selecteditem</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -91,7 +91,7 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font14</font>
+				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -115,7 +115,7 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font14</font>
+				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -140,7 +140,7 @@
 				<label>922</label>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font14</font>
+				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -251,7 +251,7 @@
 			<posY>440</posY>
 			<width>250</width>
 			<label>#TV.Search.Title</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -263,7 +263,7 @@
 			<posY>460</posY>
 			<label>#TV.Search.Time</label>
 			<align>left</align>
-			<font>font14</font>
+			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
@@ -275,7 +275,7 @@
 			<width>430</width> 
 			<height>65</height> 
 			<label>#TV.Search.Description</label>
-			<font>font14</font>
+			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
@@ -286,7 +286,7 @@
 			<posY>460</posY>
 			<label>#TV.Search.Genre</label>
 			<align>right</align>
-			<font>font14</font>
+			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>

@@ -53,7 +53,7 @@
 		<posX>85</posX> 
 		<posY>530</posY>
 		<align>left</align>  
-		<font>font14</font> 
+		<font>font13</font> 
 		<label>#title\r#genre\r#year\r#director</label>
 		<id>5</id> 
 	</control>

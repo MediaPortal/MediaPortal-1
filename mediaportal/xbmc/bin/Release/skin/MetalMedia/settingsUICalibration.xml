@@ -30,7 +30,7 @@
 		<posX>210</posX>
 		<posY>70</posY>
 		<label>213</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -40,7 +40,7 @@
 		<posX>360</posX>
 		<posY>280</posY>
 		<label>5</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FF484848</textcolor>
 	</control>
 </controls>

@@ -37,7 +37,7 @@
 		<posX>130</posX>
 		<posY>140</posY>
 		<label>-</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -47,7 +47,7 @@
 		<posX>130</posX>
 		<posY>160</posY>
 		<label>-</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>

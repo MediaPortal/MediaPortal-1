@@ -40,7 +40,7 @@
 		<posX>250</posX>
 		<posY>199</posY>
 		<label>673</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -64,7 +64,7 @@
 		<posX>250</posX>
 		<posY>233</posY>
 		<label>973</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>

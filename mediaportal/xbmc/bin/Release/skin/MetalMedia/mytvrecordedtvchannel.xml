@@ -151,7 +151,7 @@
 		<posX>250</posX>
 		<posY>414</posY>
 		<label>#itemcount</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 
 	<control>
@@ -183,7 +183,7 @@
 		<posY>445</posY>
 		<width>255</width>
 		<label>#TV.RecordedTV.Title</label>
-		<font>font14</font>
+		<font>font13</font>
     <textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -194,7 +194,7 @@
 		<posY>445</posY>
 		<label>#TV.RecordedTV.Time</label>
 		<align>right</align>
-		<font>font14</font>
+		<font>font13</font>
     <textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -206,7 +206,7 @@
 		<posY>465</posY>
 		<label>#TV.RecordedTV.Genre</label>
 		<align>right</align>
-		<font>font14</font>
+		<font>font13</font>
     <textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -219,7 +219,7 @@
 		<height>65</height>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.RecordedTV.Description</label>
-		<font>font14</font>
+		<font>font13</font>
     <textcolor>ff484848</textcolor>
 	</control>
 

@@ -173,7 +173,7 @@
 			<posX>250</posX>
 			<posY>90</posY>
 			<label>#explorer_title</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 		</control>
 		<control>
@@ -183,7 +183,7 @@
 			<posX>238</posX>
 			<posY>530</posY>
 			<label>#explorer_size</label>
-			<font>font14</font>
+			<font>font13</font>
 		</control>
 		<control>
 			<description>file listcontrol</description>

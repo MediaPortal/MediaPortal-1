@@ -43,7 +43,7 @@
 		<posX>100</posX>
 		<posY>218</posY>
 		<label>673</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 	<control>
 		<description>Speedselect</description>
@@ -65,7 +65,7 @@
 		<posX>100</posX>
 		<posY>240</posY>
 		<label>973</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 	<control>
 		<description>FPS select</description>

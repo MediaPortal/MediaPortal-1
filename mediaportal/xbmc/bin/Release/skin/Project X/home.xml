@@ -88,7 +88,7 @@
 		<posY>540</posY>
 		<label>#date</label>
 		<align>right</align>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ffffffff</textcolor>
 	</control>
 	<control>

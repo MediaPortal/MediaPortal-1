@@ -44,7 +44,7 @@
 		<textYOff>2</textYOff>
 		<textureFocus>button_focus.png</textureFocus>
 		<textureNoFocus>button_nofocus.png</textureNoFocus>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -65,7 +65,7 @@
 		<AltTextureFocus>arrow_down_focus.png</AltTextureFocus>
 		<AltTextureNoFocus>arrow_down_nofocus.png</AltTextureNoFocus>
 		<label>-</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -92,7 +92,7 @@
 		<textureNoFocus>list_nofocus.png</textureNoFocus>
 		<textureHeight>30</textureHeight>
 		<image>folder_focus.png</image>
-		<font>font14</font>
+		<font>font13</font>
 		<shadedColor>20484848</shadedColor>
 		<selectedColor>FF8080FF</selectedColor>
 		<textcolor>FF484848</textcolor>
@@ -137,7 +137,7 @@
 		<thumbPosY>8</thumbPosY>
 		<imageFolder>-</imageFolder>
 		<imageFolderFocus>folder_focus.png</imageFolderFocus>
-		<font>font14</font>
+		<font>font13</font>
 		<selectedColor>FF8080FF</selectedColor>
 		<textcolor>FFFFFFFF</textcolor>
 		<colordiffuse>ff000000</colordiffuse>
@@ -185,7 +185,7 @@
 		<thumbPosY>9</thumbPosY>
 		<imageFolder>folder_nofocus.png</imageFolder>
 		<imageFolderFocus>folder_focus.png</imageFolderFocus>
-		<font>font14</font>
+		<font>font13</font>
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -333,7 +333,7 @@
 		<width>180</width>
 		<height>28</height>
 		<label>457</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textXOff>15</textXOff>
 		<textYOff>2</textYOff>
 		<textXOff2>10</textXOff2>

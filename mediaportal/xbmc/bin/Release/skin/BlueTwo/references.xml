@@ -40,7 +40,7 @@
 		<textYOff>5</textYOff>
 		<textureFocus>menu_list_focus.png</textureFocus>
 		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -57,7 +57,7 @@
 		<textureNoFocus>button-powerdownNF.png</textureNoFocus>
 		<label>-</label>
 		<bitmaps>2</bitmaps>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -103,7 +103,7 @@
 		<textureNoFocus>list_sub_nofocus.png</textureNoFocus>
 		<textureHeight>32</textureHeight>
 		<image>folder_focus.png</image>
-		<font>font14</font>
+		<font>font13</font>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
 		<textcolor>ffffffff</textcolor>
@@ -147,7 +147,7 @@
 		<thumbPosY>9</thumbPosY>		
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
-		<font>font14</font>
+		<font>font13</font>
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -191,7 +191,7 @@
 		<thumbPosY>9</thumbPosY>		
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
-		<font>font14</font>
+		<font>font13</font>
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -351,7 +351,7 @@
 		<width>190</width>
 		<height>32</height>
 		<label>457</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textXOff>15</textXOff>
 		<textYOff>5</textYOff>
 		<textXOff2>10</textXOff2>

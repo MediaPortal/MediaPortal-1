@@ -43,7 +43,7 @@
 		<posY>165</posY>
 		<width>197</width>
 		<height>32</height>
-		<font>font14</font>
+		<font>font13</font>
 		<label>213</label>
 		<hyperlink>10</hyperlink>
 		<onleft>2</onleft>
@@ -59,7 +59,7 @@
 		<posY>197</posY>
 		<width>197</width>
 		<height>32</height>
-		<font>font14</font>
+		<font>font13</font>
 		<label>214</label>
 		<hyperlink>11</hyperlink>
 		<onleft>3</onleft>
@@ -75,7 +75,7 @@
 		<posY>232</posY>
 		<width>197</width>
 		<height>32</height>
-		<font>font14</font>
+		<font>font13</font>
 		<label>673</label>
 		<hyperlink>31</hyperlink>
 		<onleft>4</onleft>

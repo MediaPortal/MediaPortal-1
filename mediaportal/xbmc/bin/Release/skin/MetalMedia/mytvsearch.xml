@@ -235,7 +235,7 @@
   		<posX>250</posX>
   		<posY>530</posY>
   		<label>#itemcount</label>
-  		<font>font14</font>
+  		<font>font13</font>
   	</control>
   
   	<control>
@@ -257,7 +257,7 @@
   		<posY>414</posY>
   		<label>#TV.Search.Time</label>
   		<align>right</align>
-  		<font>font14</font>
+  		<font>font13</font>
   <!--    <textcolor>ff484848</textcolor> -->
   	</control>
   <!--	<control>
@@ -269,7 +269,7 @@
   		<posY>465</posY>
   		<label>#TV.Search.Genre</label>
   		<align>right</align>
-  		<font>font14</font>
+  		<font>font13</font>
       <textcolor>ff484848</textcolor>
   	</control> -->
   	<control>

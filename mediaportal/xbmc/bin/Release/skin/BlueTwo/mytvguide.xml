@@ -182,7 +182,7 @@
 		<height>65</height>
 <seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.Guide.Description</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>	
 <!--	<control>

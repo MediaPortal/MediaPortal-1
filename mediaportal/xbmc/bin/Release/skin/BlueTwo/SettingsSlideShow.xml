@@ -47,7 +47,7 @@
 		<posX>288</posX>
 		<posY>218</posY>
 		<label>224</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -72,7 +72,7 @@
 		<posX>288</posX>
 		<posY>252</posY>
 		<label>225</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -97,7 +97,7 @@
 		<posX>288</posX>
 		<posY>286</posY>
 		<label>13011</label>
-		<font>font14</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>

@@ -46,7 +46,7 @@
 		<posY>492</posY> 
 		<label>#TV.View.start</label> 
 		<align>right</align> 
-		<font>font14</font> 
+		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
 	<control>
@@ -57,7 +57,7 @@
 		<posY>492</posY> 
 		<label>#TV.View.stop</label> 
 		<align>left</align> 
-		<font>font14</font> 
+		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
 	<control>
@@ -102,7 +102,7 @@
 		<posX>211</posX> 
 		<posY>533</posY>
 		<align>left</align> 
-		<font>font14</font> 
+		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>

@@ -45,7 +45,7 @@
 			<posX>190</posX>
 			<posY>290</posY>
 			<label>633</label>
-			<font>font14</font>
+			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>
@@ -178,7 +178,7 @@
 			<posX>400</posX>
 			<posY>290</posY>
 			<label>634</label>
-			<font>font14</font>
+			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
 		<control>

@@ -135,7 +135,7 @@
 			<description>big listcontrol</description>
 			<type>listcontrol</type>
 			<id>51</id>
-			<font>font14</font>
+			<font>font13</font>
 			<font2>font13</font2>
 			<selectedColor>FFFF6600</selectedColor>
 			<textcolor>FFB2D4F5</textcolor>
@@ -163,7 +163,7 @@
 			<posX>250</posX>
 			<posY>530</posY>
 			<label>-</label>
-			<font>font14</font>
+			<font>font13</font>
 		</control>
 	</controls>
 </window>

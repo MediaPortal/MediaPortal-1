@@ -90,7 +90,7 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font14</font>
+				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -113,7 +113,7 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font14</font>
+				<font>font13</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -206,7 +206,7 @@
 			<posY>415</posY>
 			<width>250</width>
 			<label>#TV.View.title</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -217,7 +217,7 @@
 			<posX>660</posX>
 			<posY>415</posY>
 			<label>Channel</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -228,7 +228,7 @@
 			<posX>290</posX>
 			<posY>435</posY>
 			<label>#TV.View.start-#TV.View.stop</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
@@ -240,7 +240,7 @@
 			<posY>435</posY>
 			<width>90</width>
 			<label>#TV.View.channel</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
@@ -254,7 +254,7 @@
 			<height>90</height>
 			<seperator>----------------------------------------------------------------------------------------------</seperator> 
 			<label>#TV.View.description</label>
-			<font>font14</font>
+			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
@@ -309,7 +309,7 @@
 			<posY>530</posY>
 			<label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
 			<align>left</align>  
-			<font>font14</font> 
+			<font>font13</font> 
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>

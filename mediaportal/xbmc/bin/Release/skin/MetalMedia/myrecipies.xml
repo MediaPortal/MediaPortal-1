@@ -148,7 +148,7 @@
 		<posX>66</posX>
 		<posY>301</posY>
 		<label>807</label>
-		<font>font14</font>
+		<font>font13</font>
 		<align>left</align>
 		<textcolor>ff484848</textcolor>
 	</control>
@@ -200,7 +200,7 @@
 		<posX>250</posX>
 		<posY>530</posY>
 		<label>-</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 
 </controls>

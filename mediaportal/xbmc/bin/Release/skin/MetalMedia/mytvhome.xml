@@ -248,7 +248,7 @@
 		<posY>110</posY>
 		<width>295</width>
 		<label>#TV.View.title</label>
-		<font>font14</font>
+		<font>font13</font>
     <textcolor>ff484848</textcolor>
 	</control>
 	<control>
@@ -259,7 +259,7 @@
 		<posY>110</posY>
 		<width>100</width>
 		<label>#TV.View.start-#TV.View.stop</label>
-		<font>font14</font>
+		<font>font13</font>
 		<align>right</align>
     <textcolor>ff484848</textcolor>
 	</control>
@@ -273,7 +273,7 @@
 		<height>65</height>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.View.description</label>
-		<font>font14</font>
+		<font>font13</font>
     <textcolor>ff484848</textcolor>
 	</control>
 	<control>

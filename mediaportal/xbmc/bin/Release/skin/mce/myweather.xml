@@ -202,7 +202,7 @@
 			<posX>660</posX>
 			<posY>70</posY>
 			<label>-</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>

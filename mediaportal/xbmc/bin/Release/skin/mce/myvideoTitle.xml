@@ -44,7 +44,7 @@
 			<posX>650</posX>
 			<posY>70</posY>
 			<label>#year</label>
-			<font>font14</font>
+			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>

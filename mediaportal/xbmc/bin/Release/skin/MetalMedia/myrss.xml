@@ -130,7 +130,7 @@
 		<posX>250</posX>
 		<posY>306</posY>
 		<label>#itemcount</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 </controls>
 </window>

@@ -42,7 +42,7 @@
 		<posX>675</posX>
 		<posY>65</posY>
 		<label>3</label>
-		<font>font14</font>
+		<font>font13</font>
 		<align>right</align>
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
@@ -184,7 +184,7 @@
   	<posX>60</posX>
   	<posY>378</posY>
   	<label>#year</label>
-  	<font>font14</font>
+  	<font>font13</font>
   	<align>left</align>
   </control>
 
@@ -228,7 +228,7 @@
 		<posX>250</posX>
 		<posY>530</posY>
 		<label>-</label>
-		<font>font14</font>
+		<font>font13</font>
 	</control>
 
 </controls>
