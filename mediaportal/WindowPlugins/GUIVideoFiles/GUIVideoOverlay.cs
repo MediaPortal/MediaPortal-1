@@ -65,6 +65,7 @@ namespace MediaPortal.GUI.Video
       }
       if (Utils.IsAudio(g_Player.CurrentFile)) return false;
       if (Utils.IsCDDA(g_Player.CurrentFile)) return false;
+      if (g_Player.IsRadio) return false;
 
 
 			if (g_Player.CurrentFile != m_strFile)
