@@ -2960,25 +2960,27 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//if the tv channel found is not yet in the tv database
+					TVChannel tvChan = new TVChannel();
+					tvChan.Name=newchannel.ServiceName;
+					tvChan.Number=newchannel.ProgramNumber;
+					tvChan.VisibleInGuide=true;
+					tvChan.Scrambled=newchannel.IsScrambled;
+					iChannelNumber=tvChan.Number;
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}",newchannel.ServiceName);
-						TVChannel tvChan = new TVChannel();
-						tvChan.Name=newchannel.ServiceName;
-						tvChan.Number=newchannel.ProgramNumber;
-						tvChan.VisibleInGuide=true;
-						iChannelNumber=tvChan.Number;
 						int id=TVDatabase.AddChannel(tvChan);
 						channelId=id;
 						newChannels++;
 					}
 					else
 					{
+						tvChan.ID=channelId;
+						TVDatabase.UpdateChannel(tvChan,tvChan.Sort);
 						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
-
 				
 					if (Network() == NetworkType.DVBT)
 					{

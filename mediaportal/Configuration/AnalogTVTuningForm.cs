@@ -37,6 +37,8 @@ namespace MediaPortal
 		private System.Windows.Forms.Button buttonAdd;
 		private System.Windows.Forms.Label labelStatus2;
 		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.ImageList imageList1;
+		private System.ComponentModel.IContainer components;
 		TVCaptureDevice captureCard;
 
 		public AnalogTVTuningForm()
@@ -58,6 +60,8 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AnalogTVTuningForm));
 			this.labelStatus = new System.Windows.Forms.Label();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -71,6 +75,7 @@ namespace MediaPortal
 			this.buttonAdd = new System.Windows.Forms.Button();
 			this.labelStatus2 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
 			// 
 			// labelStatus
@@ -133,6 +138,7 @@ namespace MediaPortal
 			this.listView1.MultiSelect = false;
 			this.listView1.Name = "listView1";
 			this.listView1.Size = new System.Drawing.Size(216, 168);
+			this.listView1.SmallImageList = this.imageList1;
 			this.listView1.TabIndex = 5;
 			this.listView1.View = System.Windows.Forms.View.Details;
 			// 
@@ -176,6 +182,12 @@ namespace MediaPortal
 			this.button1.TabIndex = 11;
 			this.button1.Text = "Stop";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// imageList1
+			// 
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// AnalogTVTuningForm
 			// 
@@ -312,6 +324,9 @@ namespace MediaPortal
 				if (channel.Number<(int)ExternalInputs.svhs)
 				{
 					ListViewItem item = new ListViewItem();
+					item.ImageIndex=0;
+					if (channel.Scrambled)
+						item.ImageIndex=1;
 					item.Text=channel.Name;
 					item.SubItems.Add(channel.Number.ToString());
 					listView1.Items.Add(item);

@@ -2159,6 +2159,7 @@ namespace MediaPortal.Configuration
 		public bool VisibleInGuide = true;
 		public AnalogVideoStandard standard=AnalogVideoStandard.None;
 		public int Country;
+		public bool Scrambled=false;
 	}
 
 	public class Frequency

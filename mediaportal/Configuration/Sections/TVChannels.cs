@@ -83,6 +83,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.SaveFileDialog XMLSaveDialog;
 		private System.Windows.Forms.Button xmlImport;
 		private System.Windows.Forms.Button xmlExport;
+		private System.Windows.Forms.ImageList imageList1;
 
 		//
 		// Private members
@@ -122,6 +123,8 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TVChannels));
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -174,6 +177,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxCard = new System.Windows.Forms.ComboBox();
 			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
 			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -271,15 +275,16 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.channelsListView.CheckBoxes = true;
 			this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																							   this.columnHeader1,
-																							   this.columnHeader2,
-																							   this.columnHeader5,
-																							   this.columnHeader4});
+																																											 this.columnHeader1,
+																																											 this.columnHeader2,
+																																											 this.columnHeader5,
+																																											 this.columnHeader4});
 			this.channelsListView.FullRowSelect = true;
 			this.channelsListView.HideSelection = false;
 			this.channelsListView.Location = new System.Drawing.Point(8, 8);
 			this.channelsListView.Name = "channelsListView";
 			this.channelsListView.Size = new System.Drawing.Size(416, 304);
+			this.channelsListView.SmallImageList = this.imageList1;
 			this.channelsListView.TabIndex = 0;
 			this.channelsListView.View = System.Windows.Forms.View.Details;
 			this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
@@ -451,7 +456,7 @@ namespace MediaPortal.Configuration.Sections
 			// listViewTVGroupChannels
 			// 
 			this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																									  this.columnHeader9});
+																																															this.columnHeader9});
 			this.listViewTVGroupChannels.FullRowSelect = true;
 			this.listViewTVGroupChannels.HideSelection = false;
 			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 88);
@@ -560,8 +565,8 @@ namespace MediaPortal.Configuration.Sections
 			// listViewGroups
 			// 
 			this.listViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																							 this.columnHeader6,
-																							 this.columnHeader7});
+																																										 this.columnHeader6,
+																																										 this.columnHeader7});
 			this.listViewGroups.FullRowSelect = true;
 			this.listViewGroups.HideSelection = false;
 			this.listViewGroups.Location = new System.Drawing.Point(8, 8);
@@ -616,7 +621,7 @@ namespace MediaPortal.Configuration.Sections
 			// listViewTVChannelsForCard
 			// 
 			this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																										this.columnHeader10});
+																																																this.columnHeader10});
 			this.listViewTVChannelsForCard.Location = new System.Drawing.Point(244, 64);
 			this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
 			this.listViewTVChannelsForCard.Size = new System.Drawing.Size(168, 288);
@@ -631,7 +636,7 @@ namespace MediaPortal.Configuration.Sections
 			// listViewTVChannelsCard
 			// 
 			this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																									 this.columnHeader11});
+																																														 this.columnHeader11});
 			this.listViewTVChannelsCard.Location = new System.Drawing.Point(20, 64);
 			this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
 			this.listViewTVChannelsCard.Size = new System.Drawing.Size(168, 288);
@@ -692,6 +697,12 @@ namespace MediaPortal.Configuration.Sections
 			this.XMLSaveDialog.InitialDirectory = ".";
 			this.XMLSaveDialog.Title = "Save to....";
 			// 
+			// imageList1
+			// 
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			// 
 			// TVChannels
 			// 
 			this.Controls.Add(this.groupBox1);
@@ -728,6 +739,9 @@ namespace MediaPortal.Configuration.Sections
                                     editedChannel.External ? "External" : "Internal"
 																	  } );
 				listItem.Tag = editedChannel;
+				listItem.ImageIndex=0;
+				if (editedChannel.Scrambled)
+					listItem.ImageIndex=1;
 
 				channelsListView.Items.Add(listItem);
 				SaveSettings();
@@ -763,6 +777,10 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
           listItem.SubItems[2].Text = GetStandardName(editedChannel.standard);
           listItem.SubItems[3].Text = editedChannel.External ? "External" : "Internal";
+					listItem.ImageIndex=0;
+					if (editedChannel.Scrambled)
+						listItem.ImageIndex=1;
+
 					SaveSettings();
 					UpdateGroupChannels(null,true);
 				}
@@ -925,6 +943,7 @@ namespace MediaPortal.Configuration.Sections
               channel.External = tvChannel.External;
               channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
               channel.TVStandard = tvChannel.standard;
+							channel.Scrambled=tvChannel.Scrambled;
 
 							//does channel already exists in database?
 							bool exists=false;
@@ -1019,6 +1038,7 @@ namespace MediaPortal.Configuration.Sections
         tvChannel.VisibleInGuide = channel.VisibleInGuide;
 				tvChannel.Country=channel.Country;
         tvChannel.standard = channel.TVStandard;
+				tvChannel.Scrambled=channel.Scrambled;
 				ListViewItem listItem = new ListViewItem(new string[] { tvChannel.Name, 
 																		tvChannel.External ? String.Format("{0}/{1}", tvChannel.Channel, tvChannel.ExternalTunerChannel) : tvChannel.Channel.ToString(),
                                     GetStandardName(tvChannel.standard),
@@ -1026,6 +1046,9 @@ namespace MediaPortal.Configuration.Sections
 																	  } );
 
         listItem.Checked = tvChannel.VisibleInGuide;
+				listItem.ImageIndex=0;
+				if (tvChannel.Scrambled)
+					listItem.ImageIndex=1;
 
 				listItem.Tag = tvChannel;
 

@@ -20,7 +20,6 @@ namespace MediaPortal.TV.Database
 		public int    Sort;
 		public int    Pincode;
 		public ArrayList     tvChannels = new ArrayList();
-
 		public override string ToString()
 		{
 			return GroupName;
@@ -43,8 +42,18 @@ namespace MediaPortal.TV.Database
     bool   m_bVisibleInGuide=true;
     int    m_iCountry=-1;
 		string m_strProviderName="";
+		public bool   m_scrambled=false;
+		public int    m_iSort=-1;
 
     AnalogVideoStandard _TVStandard;
+		/// <summary> 
+		/// Property to indicate if this channel is scrambled or not
+		/// </summary>
+		public bool Scrambled
+		{
+			get { return m_scrambled;}
+			set {m_scrambled=value;}
+		}
 
     /// <summary> 
     /// Property to indicate if this is an internal or external (USB-UIRT) channel
@@ -54,6 +63,14 @@ namespace MediaPortal.TV.Database
       get { return m_bExternal;}
       set {m_bExternal=value;}
     }
+		public int Sort
+		{
+			get 
+			{
+				return m_iSort;
+			}
+			set { m_iSort=value;}
+		}
 
     /// <summary>
     /// Property to specify the TV standard
