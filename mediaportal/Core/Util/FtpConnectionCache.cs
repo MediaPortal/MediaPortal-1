@@ -47,8 +47,8 @@ namespace Core.Util
         ftp.Connection.TransferType=FTPTransferType.BINARY;
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
-        msg.Label=client.originalRemoteFile;
-        msg.Label2=client.localFile;
+        msg.Label=originalRemoteFile;
+        msg.Label2=localFile;
         GUIGraphicsContext.SendMessage(msg);
 
 
@@ -105,6 +105,7 @@ namespace Core.Util
         newConnection.Busy=false;
         newConnection.Connection = new FTPClient(hostname,port);
         newConnection.Connection.Login(login,password);
+        newConnection.Connection.ConnectMode=FTPConnectMode.PASV;
         ftpConnections.Add(newConnection);
         return newConnection.Connection;
       }
