@@ -35,7 +35,8 @@ namespace MediaPortal.Video.Database
     float  		 m_fRating=0.0f;
     string     m_strMPARating="";
 		int        m_iRunTime=0;
-    public IMDBMovie()
+		int        m_iWatched=0;
+		public IMDBMovie()
 		{
 		}
 		public int ID
@@ -47,6 +48,11 @@ namespace MediaPortal.Video.Database
 		{
 			get { return m_iRunTime;}
 			set { m_iRunTime=value;}
+		}
+		public int Watched
+		{
+			get { return m_iWatched;}
+			set { m_iWatched=value;}
 		}
 		public string MPARating
 		{

@@ -1511,6 +1511,8 @@ namespace MediaPortal.Configuration.Sections
 			tbPlotOutline.Text=movie.PlotOutline;
 			tbMPAARating.Text=movie.MPARating;
 			tbDuration.Text=movie.RunTime.ToString();
+			if (movie.Watched>0) cbWatched.Checked=true;
+			else cbWatched.Checked=false;
 			if (pictureBox1.Image!=null)
 			{
 				pictureBox1.Image.Dispose();
@@ -1886,6 +1888,10 @@ namespace MediaPortal.Configuration.Sections
 				//movie.SearchString=
 				unchecked
 				{
+					if (cbWatched.Checked)
+						movie.Watched=1;
+					else
+						movie.Watched=0;
 					movie.Title=tbTitle.Text;
 					movie.Director=tbDirector.Text;
 					movie.MPARating=tbMPAARating.Text;
