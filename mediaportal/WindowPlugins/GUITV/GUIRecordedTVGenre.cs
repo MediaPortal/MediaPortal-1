@@ -738,6 +738,13 @@ namespace MediaPortal.GUI.TV
 					VideoDatabase.DeleteMovieInfo(rec.FileName);
 					VideoDatabase.DeleteMovie(rec.FileName);
         }
+				else if (!System.IO.File.Exists(rec.FileName))
+				{
+					TVDatabase.RemoveRecordedTV(rec);
+					VideoDatabase.DeleteMovieInfo(rec.FileName);
+					VideoDatabase.DeleteMovie(rec.FileName);
+				}
+
       }
 
       LoadDirectory();
