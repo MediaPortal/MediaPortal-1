@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Library
 			,WINDOW_FULLSCREEN_TELETEXT = 7701
 		}
 
-		private int m_dwWindowId = 0; 
+		private int m_dwWindowId = -1; 
 		private int m_dwPreviousWindowId = 0;
 		protected int m_dwDefaultFocusControlID = 0;
 		protected ArrayList m_vecPositions = new ArrayList();
