@@ -1284,6 +1284,7 @@ namespace MediaPortal
 			this.buttonAutoTune2.Name = "buttonAutoTune2";
 			this.buttonAutoTune2.TabIndex = 19;
 			this.buttonAutoTune2.Text = "Auto Tune";
+			this.buttonAutoTune2.Visible = false;
 			this.buttonAutoTune2.Click += new System.EventHandler(this.buttonAutoTune2_Click);
 			// 
 			// textEditBox
@@ -1425,6 +1426,7 @@ namespace MediaPortal
 			this.buttonAutoTune.Size = new System.Drawing.Size(75, 24);
 			this.buttonAutoTune.TabIndex = 4;
 			this.buttonAutoTune.Text = "Auto Tune";
+			this.buttonAutoTune.Visible = false;
 			this.buttonAutoTune.Click += new System.EventHandler(this.buttonAutoTune_Click);
 			// 
 			// label24
@@ -3098,7 +3100,7 @@ namespace MediaPortal
         checkBoxHideFileExtensions.Checked=xmlreader.GetValueAsBool("general","hideextensions",true);
         checkBoxAlwaysTimeShift.Checked=xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
 
-        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",true);
+        checkBoxVMR9.Checked=xmlreader.GetValueAsBool("general","vmr9",false);
         dvdFile.Text=xmlreader.GetValueAsString("dvdplayer","path",@"C:\program files\cyberlink\powerdvd\powerdvd.exe");
         dvdParams.Text=xmlreader.GetValueAsString("dvdplayer","arguments","");
         checkBoxInternalDVDPlayer.Checked=xmlreader.GetValueAsBool("dvdplayer","internal",true);

@@ -239,7 +239,7 @@ namespace MediaPortal.TV.Recording
       m_iPreRecordInterval      = iPreRecordInterval;
       m_iPostRecordInterval     = iPostRecordInterval;
       m_strTVChannel            = recording.Channel;
-
+		
       // create sink graph
       if (CreateGraph())
       {
@@ -375,6 +375,7 @@ namespace MediaPortal.TV.Recording
       if (prog!=null) currentRunningProgram=prog.Clone();
       util=null;
 
+			DateTime timeProgStart=new DateTime(1971,11,6,20,0,0,0);
       string strName;
       if (currentRunningProgram!=null)
       {
@@ -384,6 +385,7 @@ namespace MediaPortal.TV.Recording
           dt.Year,dt.Month,dt.Day,
           dt.Hour,
           dt.Minute,".sbe");
+				timeProgStart=currentRunningProgram.StartTime.AddMinutes(-m_iPreRecordInterval);
       }
       else
       {
@@ -397,7 +399,7 @@ namespace MediaPortal.TV.Recording
       
 
       string strFileName=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
-      bool bResult=m_graph.StartRecording(strFileName, bContentRecording);
+      bool bResult=m_graph.StartRecording(strFileName, bContentRecording,timeProgStart);
 
 			m_newRecordedTV = new TVRecorded();        
 			m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);

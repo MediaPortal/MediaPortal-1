@@ -225,12 +225,12 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
-    public bool StartRecording(string strFileName, bool bContentRecording)
+    public bool StartRecording(string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if ( m_graphState!=State.TimeShifting) return false;
 
       DirectShowUtil.DebugWrite("Capture.StartRecording({0} {1})",strFileName,bContentRecording);
-      m_mpeg2Demux.Record(strFileName, bContentRecording);
+      m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart);
       m_graphState=State.Recording;
       return true;
     }
