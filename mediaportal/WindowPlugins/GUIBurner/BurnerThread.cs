@@ -289,10 +289,10 @@ namespace MediaPortal.GUI.GUIBurner
 		private bool IsFinished()
 		{
 			if (mediaControl==null) return true;
-			int state;
+			FilterState state;
 
 			mediaControl.GetState(200, out state);
-			if (state==0)
+			if (state==FilterState.Stopped)
 			{
 				Cleanup();
 				return true;

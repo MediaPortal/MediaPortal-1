@@ -1472,7 +1472,12 @@ namespace MediaPortal.TV.Recording
 			//pause recording/timeshifting graph
 			if (m_mediaControl!=null && graphRunning)
 			{
-				m_mediaControl.Pause();
+				FilterState state;
+				m_mediaControl.GetState(10,out  state);
+				if (state==FilterState.Running)
+				{
+					m_mediaControl.Pause();
+				}
 			}
 		}
 
@@ -1481,7 +1486,12 @@ namespace MediaPortal.TV.Recording
 			//continue recording/timeshifting graph
 			if (m_mediaControl!=null && graphRunning)
 			{
-				m_mediaControl.Pause();
+				FilterState state;
+				m_mediaControl.GetState(10,out  state);
+				if (state==FilterState.Paused)
+				{
+					m_mediaControl.Pause();
+				}
 			}
 			
 			//continue playing graph

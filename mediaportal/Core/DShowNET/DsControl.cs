@@ -19,7 +19,12 @@ namespace DShowNET
 	};
 
 // ---------------------------------------------------------------------------------------
-
+	public enum FilterState : int
+	{
+		Stopped,
+		Paused,
+		Running
+	}
 	[ComVisible(true), ComImport,
 	Guid("56a868b1-0ad4-11ce-b03a-0020af0ba770"),
 	InterfaceType( ComInterfaceType.InterfaceIsDual)]
@@ -35,7 +40,7 @@ public interface IMediaControl
 	int Stop();
 
 		[PreserveSig]
-	int GetState( int msTimeout, out int pfs );
+	int GetState( int msTimeout, out FilterState state );
 
 		[PreserveSig]
 	int RenderFile( string strFilename );
