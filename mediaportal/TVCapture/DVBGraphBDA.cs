@@ -1125,7 +1125,7 @@ namespace MediaPortal.TV.Recording
 					if (props.SupportsFireDTVProperties)
 					{
 						//yes, then send the PMT table to the device
-						Log.Write("DVBGraphBDA:Process() send PMT to fireDTV device");	
+						Log.Write("DVBGraphBDA:TuneChannel() send PMT to fireDTV device");	
 						props.SendPMTToFireDTV(pmt);
 					}//if (props.SupportsFireDTVProperties)
 				}
@@ -2365,7 +2365,10 @@ namespace MediaPortal.TV.Recording
 				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 				if (mpeg2Demuxer!=null)
 				{
-					SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
+					if (currentTuningObject.VideoPid>0)
+						SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
+					else
+						SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,channelInfo.pcr_pid);
 					Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
 					for (int pin=0; pin < 5; pin++)
 					{	
@@ -2946,7 +2949,7 @@ namespace MediaPortal.TV.Recording
 			m_StartTime				= DateTime.Now;
 			m_iRetyCount=0;
 
-			Log.Write("DVBGraphBDA:TuneChannel() tune to radio station:{0}", channel.Name);
+			Log.Write("DVBGraphBDA:TuneRadioChannel() tune to radio station:{0}", channel.Name);
 
 			//get the ITuner interface from the network provider filter
 			TunerLib.TuneRequest newTuneRequest = null;
@@ -2954,7 +2957,7 @@ namespace MediaPortal.TV.Recording
 			if (myTuner==null) return;
 
 			//get the IDVBTuningSpace2 from the tuner
-			Log.Write("DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+			Log.Write("DVBGraphBDA:TuneRadioChannel() get IDVBTuningSpace2");
 			TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 			if (myTuningSpace==null)
 			{
@@ -2963,7 +2966,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//create a new tuning request
-			Log.Write("DVBGraphBDA:TuneChannel() create new tuningrequest");
+			Log.Write("DVBGraphBDA:TuneRadioChannel() create new tuningrequest");
 			newTuneRequest = myTuningSpace.CreateTuneRequest();
 			if (newTuneRequest ==null)
 			{
@@ -2972,7 +2975,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			
-			Log.Write("DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
+			Log.Write("DVBGraphBDA:TuneRadioChannel() cast new tuningrequest to IDVBTuneRequest");
 			TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 			if (myTuneRequest ==null)
 			{
@@ -2994,7 +2997,7 @@ namespace MediaPortal.TV.Recording
 				case NetworkType.DVBC: 
 				{
 					//get the DVB-C tuning details from the tv database
-					Log.Write("DVBGraphBDA:TuneChannel() get DVBC tuning details");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() get DVBC tuning details");
 					int symbolrate=0,innerFec=0,modulation=0;
 					RadioDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid);
 					if (frequency<=0) 
@@ -3006,7 +3009,7 @@ namespace MediaPortal.TV.Recording
 						frequency,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
 
 					//get the IDVBCLocator interface from the new tuning request
-					Log.Write("DVBGraphBDA:TuneChannel() get IDVBCLocator interface");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() get IDVBCLocator interface");
 					TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
 					if (myLocator==null)
 					{
@@ -3021,7 +3024,7 @@ namespace MediaPortal.TV.Recording
 					//set the properties on the new tuning request
 					
 					
-					Log.Write("DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= frequency;
 					myLocator.SymbolRate				  = symbolrate;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
@@ -3049,7 +3052,7 @@ namespace MediaPortal.TV.Recording
 				{					
 					//get the DVB-S tuning details from the tv database
 					//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
-					Log.Write("DVBGraphBDA:TuneChannel() get DVBS tuning details");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() get DVBS tuning details");
 					DVBChannel ch=new DVBChannel();
 					if(RadioDatabase.GetDVBSTuneRequest(channel.ID,0,ref ch)==false)//only radio
 					{
@@ -3060,7 +3063,7 @@ namespace MediaPortal.TV.Recording
 						ch.Frequency,ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID,ch.ProgramNumber,ch.ServiceProvider);
 
 					//get the IDVBSLocator interface from the new tuning request
-					Log.Write("DVBGraphBDA:TuneChannel() get IDVBSLocator");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() get IDVBSLocator");
 					TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
 					if (myLocator==null)
 					{
@@ -3073,7 +3076,7 @@ namespace MediaPortal.TV.Recording
 						return ;
 					}
 					//set the properties on the new tuning request
-					Log.Write("DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= ch.Frequency;
 					if (ch.Polarity==0) 
 						myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
@@ -3106,7 +3109,7 @@ namespace MediaPortal.TV.Recording
 				{
 					//get the DVB-T tuning details from the tv database
 					//for DVB-T this is the frequency, ONID , TSID and SID
-					Log.Write("DVBGraphBDA:TuneChannel() get DVBT tuning details");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() get DVBT tuning details");
 					RadioDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid);
 					if (frequency<=0) 
 					{
@@ -3116,7 +3119,7 @@ namespace MediaPortal.TV.Recording
 					Log.Write("DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
 					//get the IDVBTLocator interface from the new tuning request
 
-					Log.Write("DVBGraphBDA:TuneChannel() get IDVBTLocator");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() get IDVBTLocator");
 					TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
 					if (myLocator==null)
 					{
@@ -3129,7 +3132,7 @@ namespace MediaPortal.TV.Recording
 						return ;
 					}
 					//set the properties on the new tuning request
-					Log.Write("DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
+					Log.Write("DVBGraphBDA:TuneRadioChannel() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= frequency;
 					myTuneRequest.ONID	= ONID;					//original network id
 					myTuneRequest.TSID	= TSID;					//transport stream id
@@ -3148,11 +3151,11 @@ namespace MediaPortal.TV.Recording
 			}	//switch (m_NetworkType)
 			//submit tune request to the tuner
 			
-			Log.Write("DVBGraphBDA:TuneChannel() submit tuning request");
+			Log.Write("DVBGraphBDA:TuneRadioChannel() submit tuning request");
 			myTuner.TuneRequest = newTuneRequest;
 			Marshal.ReleaseComObject(myTuneRequest);
 			shouldDecryptChannel=true;
-			Log.Write("DVBGraphBDA:TuneChannel() done");
+			Log.Write("DVBGraphBDA:TuneRadioChannel() done");
 
 			SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
 			try
@@ -3173,7 +3176,7 @@ namespace MediaPortal.TV.Recording
 					if (props.SupportsFireDTVProperties)
 					{
 						//yes, then send the PMT table to the device
-						Log.Write("DVBGraphBDA:Process() send PMT to fireDTV device");	
+						Log.Write("DVBGraphBDA:TuneRadioChannel() send PMT to fireDTV device");	
 						props.SendPMTToFireDTV(pmt);
 					}//if (props.SupportsFireDTVProperties)
 				}
