@@ -368,7 +368,10 @@ namespace MediaPortal.GUI.TV
             }
             //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
             Log.Write("TVOSD:stop");
-            g_Player.Stop();						// close our media
+						if (Recorder.IsRecording())
+						{
+							Recorder.StopRecording();
+						}
             //GUIWindowManager.PreviousWindow();							// go back to the previous window
           }
           if (iControl == (int)Controls.OSD_REWIND)

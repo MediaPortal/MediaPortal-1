@@ -1256,8 +1256,15 @@ public class MediaPortalApp : D3DApp, IRender
 						if (!GUIGraphicsContext.IsFullScreenVideo)
 						{
 							Log.Write("App.Onaction() stop media");
-							g_Player.Stop();
 							
+							if (g_Player.IsTV && g_Player.Playing && Recorder.IsRecording())
+							{
+								Recorder.StopRecording();
+							}
+							else
+							{
+								g_Player.Stop();
+							}
 							return;
 						}
 						break;
