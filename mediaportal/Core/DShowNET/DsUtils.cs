@@ -433,6 +433,7 @@ namespace DShowNET
 											if (CvbsWanted && PhysicalTypeIn==PhysicalConnectorType.Video_Composite)  
 											{
 												iCVBSVideo++;
+												if (useCVBS1 && iCVBSVideo == 1) bRoute=true;
 												if (useCVBS1 && iCVBSVideo == videoCVBS1) bRoute=true;
 												if (useCVBS2 && iCVBSVideo == videoCVBS2) bRoute=true;
 											}
@@ -441,6 +442,7 @@ namespace DShowNET
 											if (useSVHS && PhysicalTypeIn==PhysicalConnectorType.Video_SVideo)
 											{
 												iSVHSVideo++;
+												if (iSVHSVideo==1) bRoute=true;
 												if (iSVHSVideo==videoSVHS) bRoute=true;
 											}
                     
@@ -459,6 +461,10 @@ namespace DShowNET
 												{
 													// if this is the first audio input then connect
 													iCVBSAudio++;
+													if (useCVBS1 && iCVBSAudio==1) bRoute=true;
+													if (useCVBS2 && iCVBSAudio==1) bRoute=true;
+													if (useSVHS  && iCVBSAudio==1) bRoute=true;
+
 													if (useCVBS1 && iCVBSAudio==audioCVBS1) bRoute=true;
 													if (useCVBS2 && iCVBSAudio==audioCVBS2) bRoute=true;
 													if (useSVHS  && iCVBSAudio==audioSVHS) bRoute=true;
