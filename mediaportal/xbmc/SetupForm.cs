@@ -235,6 +235,7 @@ namespace MediaPortal
     private System.Windows.Forms.ComboBox comboBoxRadioDevice;
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.Label label41;
+    private System.Windows.Forms.ColumnHeader columnHeader14;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -496,10 +497,13 @@ namespace MediaPortal
       this.tabPageRadio = new System.Windows.Forms.TabPage();
       this.groupBox21 = new System.Windows.Forms.GroupBox();
       this.groupBox22 = new System.Windows.Forms.GroupBox();
+      this.label41 = new System.Windows.Forms.Label();
+      this.label22 = new System.Windows.Forms.Label();
       this.comboBoxRadioDevice = new System.Windows.Forms.ComboBox();
       this.radioButtonAntenna = new System.Windows.Forms.RadioButton();
       this.radioButtonCable = new System.Windows.Forms.RadioButton();
       this.listViewRadio = new MediaPortal.WinControls.ListViewEx();
+      this.columnHeader14 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader12 = new System.Windows.Forms.ColumnHeader();
@@ -535,8 +539,6 @@ namespace MediaPortal
       this.label2 = new System.Windows.Forms.Label();
       this.dvdParams = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.label22 = new System.Windows.Forms.Label();
-      this.label41 = new System.Windows.Forms.Label();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.Skin.SuspendLayout();
@@ -2163,6 +2165,22 @@ namespace MediaPortal
       this.groupBox22.TabStop = false;
       this.groupBox22.Text = "Radio Tuner";
       // 
+      // label41
+      // 
+      this.label41.Location = new System.Drawing.Point(16, 24);
+      this.label41.Name = "label41";
+      this.label41.Size = new System.Drawing.Size(40, 23);
+      this.label41.TabIndex = 4;
+      this.label41.Text = "Source:";
+      // 
+      // label22
+      // 
+      this.label22.Location = new System.Drawing.Point(16, 104);
+      this.label22.Name = "label22";
+      this.label22.Size = new System.Drawing.Size(48, 16);
+      this.label22.TabIndex = 3;
+      this.label22.Text = "Device:";
+      // 
       // comboBoxRadioDevice
       // 
       this.comboBoxRadioDevice.Location = new System.Drawing.Point(16, 128);
@@ -2192,6 +2210,7 @@ namespace MediaPortal
       this.listViewRadio.AllowDrop = true;
       this.listViewRadio.AllowRowReorder = true;
       this.listViewRadio.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                    this.columnHeader14,
                                                                                     this.columnHeader4,
                                                                                     this.columnHeader10,
                                                                                     this.columnHeader12,
@@ -2200,12 +2219,15 @@ namespace MediaPortal
       this.listViewRadio.FullRowSelect = true;
       this.listViewRadio.LabelEdit = true;
       this.listViewRadio.Location = new System.Drawing.Point(16, 24);
-      this.listViewRadio.MultiSelect = false;
       this.listViewRadio.Name = "listViewRadio";
       this.listViewRadio.Size = new System.Drawing.Size(408, 256);
       this.listViewRadio.TabIndex = 0;
       this.listViewRadio.View = System.Windows.Forms.View.Details;
       this.listViewRadio.DoubleClick += new System.EventHandler(this.listViewRadio_DoubleClick);
+      // 
+      // columnHeader14
+      // 
+      this.columnHeader14.Text = "Type";
       // 
       // columnHeader4
       // 
@@ -2503,22 +2525,6 @@ namespace MediaPortal
       this.dvdParams.Size = new System.Drawing.Size(160, 20);
       this.dvdParams.TabIndex = 2;
       this.dvdParams.Text = "";
-      // 
-      // label22
-      // 
-      this.label22.Location = new System.Drawing.Point(16, 104);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(48, 16);
-      this.label22.TabIndex = 3;
-      this.label22.Text = "Device:";
-      // 
-      // label41
-      // 
-      this.label41.Location = new System.Drawing.Point(16, 24);
-      this.label41.Name = "label41";
-      this.label41.Size = new System.Drawing.Size(40, 23);
-      this.label41.TabIndex = 4;
-      this.label41.Text = "Source:";
       // 
       // SetupForm
       // 
@@ -3965,7 +3971,10 @@ namespace MediaPortal
       RadioDatabase.GetStations(ref stations);
       foreach (RadioStation station in stations)
       {
-        ListViewItem newItem=listViewRadio.Items.Add(station.Name);
+        string strType="Radio";
+        if (station.URL!="") strType="Stream";
+        ListViewItem newItem=listViewRadio.Items.Add(strType);
+        newItem.SubItems.Add(station.Name);
         newItem.SubItems.Add(station.Channel.ToString());
         newItem.SubItems.Add(station.Genre);
         newItem.SubItems.Add(station.BitRate.ToString());
@@ -4017,7 +4026,8 @@ namespace MediaPortal
 
     private void listViewRadio_SubItemClicked(object sender, ListViewEx.SubItemClickEventArgs e)
     {
-      Control[] Editors = new Control[] { textBoxRadio, textBoxRadio, textBoxRadio , textBoxRadio , textBoxRadio };
+      if (e.SubItem==0) return;
+      Control[] Editors = new Control[] { null,textBoxRadio, textBoxRadio, textBoxRadio , textBoxRadio , textBoxRadio };
       listViewRadio.StartEditing(Editors[e.SubItem], e.Item, e.SubItem);
     }
 
@@ -4025,6 +4035,7 @@ namespace MediaPortal
     private void btnAddRadio_Click(object sender, System.EventArgs e)
     {
       ListViewItem newItem=listViewRadio.Items.Add("new station");
+      newItem.SubItems.Add("Radio");
       newItem.SubItems.Add("");
       newItem.SubItems.Add("general");
       newItem.SubItems.Add("");
@@ -4033,24 +4044,26 @@ namespace MediaPortal
 
     private void btnEditRadio_Click(object sender, System.EventArgs e)
     {
-    
     }
 
     private void btnDelRadio_Click(object sender, System.EventArgs e)
     {
       if (listViewRadio.SelectedItems.Count==0) return;
-      int iItem=listViewRadio.SelectedIndices[0];
       DialogResult result=MessageBox.Show(this.Parent,"Are you sure to delete this Radio Station?", "Delete Station",MessageBoxButtons.YesNo);
       if (result==DialogResult.Yes)
       {
-        listViewRadio.Items.RemoveAt(iItem);
+        while( listViewRadio.SelectedIndices.Count>0)
+        {
+          int iItem=listViewRadio.SelectedIndices[0];
+          listViewRadio.Items.RemoveAt(iItem);
+        }
       }
     }
 
     private void btnTuneRadio_Click(object sender, System.EventArgs e)
     {
       FormRadioTuner form=new FormRadioTuner();
-      form.ShowDialog(this.Parent);
+      form.ShowDialog(this);
       listViewRadio.Items.Clear();
       ArrayList stations = new ArrayList();
       RadioDatabase.GetStations(ref stations);

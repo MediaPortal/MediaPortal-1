@@ -208,7 +208,7 @@ namespace MediaPortal
       NewStation.Name = String.Format("Channel{0}", radioChannels.Count+1);
       NewStation.Frequency=Channel;
       NewStation.Channel=Channel;
-      NewStation.Genre="Radio";
+      NewStation.Genre="General";
       radioChannels.Add(NewStation);
       RadioDatabase.AddStation(ref NewStation);
     }
