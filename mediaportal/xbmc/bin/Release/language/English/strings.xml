@@ -913,6 +913,10 @@
 		<value>Slider</value>
 	</string>
 	<string>
+		<id>299</id>
+		<value>Runtime</value>
+	</string>
+	<string>
 		<id>300</id>
 		<value>1. Language</value>
 	</string>
