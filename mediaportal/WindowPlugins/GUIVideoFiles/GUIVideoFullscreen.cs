@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Video
 
       if (m_bOSDVisible)
       {
-        if (action.wID == Action.ActionType.ACTION_SHOW_OSD && !m_osdWindow.SubMenuVisible)	// hide the OSD
+        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !m_osdWindow.SubMenuVisible) // hide the OSD
         {
           lock(this)
           { 
@@ -188,6 +188,15 @@ namespace MediaPortal.GUI.Video
           {
             m_osdWindow.OnAction(newAction);	// route keys to OSD window
             m_bUpdate=true;
+          }
+          else
+          {
+            // route unhandled actions to OSD window
+            if (!m_osdWindow.SubMenuVisible)
+            {
+              m_osdWindow.OnAction(action);	
+              m_bUpdate=true;
+            }
           }
         }
         return;
@@ -369,14 +378,6 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
           //g_application.m_pPlayer.AudioOffset(false);
           break;
-        case Action.ActionType.ACTION_PLAY:
-  			  
-          g_Player.Speed=1;
-          if (g_Player.Paused) g_Player.Pause();
-          
-          //m_dwTimeCodeTimeout=DateTime.Now.Ticks;
-          m_bUpdate=true;
-          break;
 
           case Action.ActionType.ACTION_REWIND:
           {
@@ -412,11 +413,13 @@ namespace MediaPortal.GUI.Video
         }
         break;
 
+        case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
         {
           g_Player.StepNow();
-          if (g_Player.Paused) g_Player.Pause();
           g_Player.Speed=1;
+          if (g_Player.Paused) g_Player.Pause();
+          m_bUpdate=true;
         }
           break;
       }

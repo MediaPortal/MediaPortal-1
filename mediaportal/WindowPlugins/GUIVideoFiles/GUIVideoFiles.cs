@@ -1139,11 +1139,11 @@ namespace MediaPortal.GUI.Video
             movieDetails.DVDLabel = Utils.GetDriveName(System.IO.Path.GetPathRoot(strFile));
             movieDetails.Title = movieDetails.DVDLabel;
           }
-          else if (strFile.ToLower().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >=0)
+          else if (strFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >=0)
           {
             //DVD folder
-            strFile = strFile.Substring(0,strFile.ToLower().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO")-1);
-            movieDetails.DVDLabel = Utils.GetDriveName(System.IO.Path.GetFileName(strFile));
+            strFile = strFile.Substring(0,strFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
+            movieDetails.DVDLabel = System.IO.Path.GetFileName(strFile);
             movieDetails.Title = movieDetails.DVDLabel;
           }
           else
