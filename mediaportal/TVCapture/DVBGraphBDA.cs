@@ -31,30 +31,8 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph, ISampleGrabberCB
 	{
-/*
-		public class DVBChannel
-		{
-			public int		ONID;							//original network id
-			public int		TSID;							//transport service id
-			public int		SID;							//service id
-			public string ChannelName;			//name of channel
-			public string NetworkName;			//name of network provide
-			public int    NetworkType;			//type of network
-			public bool		IsTv;							//if true this is a TV channel
-			public bool		IsRadio;					//if true this is a radio channel
-			public bool		IsScrambled;			//if true then channel is scrambled/encrypted
-			public int    polarisation;			//polarisation
-			public int    symbolRate;				//symbolrate
-			public int    innerFec;					//innerFec
-			public int    carrierFrequency;	//polarisation
-			public int    modulation;				//modulation
-			public int    videoPid;
-			public int    audioPid;
-			public int    AC3Pid;
-			public int    teletextPid;
-			public int    subtitlePid;
-		}
-*/
+
+		#region imports
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
 			class VideoAnalyzer {};
 
@@ -75,13 +53,6 @@ namespace MediaPortal.TV.Recording
 
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
-		const int WS_CHILD				= 0x40000000;	
-		const int WS_CLIPCHILDREN	= 0x02000000;
-		const int WS_CLIPSIBLINGS	= 0x04000000;
-
-		private static Guid CLSID_StreamBufferSink					= new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9, 0x46, 0xf4);
-		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
-		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
@@ -103,6 +74,9 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetupDemuxer(IPin videoPin,IPin audioPin,int audio,int video);
 
+		#endregion
+
+		#region class member variables
 		enum State
 		{ 
 			None, 
@@ -112,6 +86,13 @@ namespace MediaPortal.TV.Recording
 			Viewing,
 			Radio
 		};
+		const int WS_CHILD				= 0x40000000;	
+		const int WS_CLIPCHILDREN	= 0x02000000;
+		const int WS_CLIPSIBLINGS	= 0x04000000;
+
+		private static Guid CLSID_StreamBufferSink					= new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9, 0x46, 0xf4);
+		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
+		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
 		int                     m_cardID								= -1;
 		int                     m_iCurrentChannel				= 28;
@@ -139,7 +120,6 @@ namespace MediaPortal.TV.Recording
 		NetworkType							m_NetworkType;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
-		object									objRecord=null;
 		TVCaptureDevice					m_Card;
 		
 		//streambuffer interfaces
@@ -165,6 +145,9 @@ namespace MediaPortal.TV.Recording
 #if DUMP
 		System.IO.FileStream fileout;
 #endif
+		#endregion
+
+		#region constructor
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -207,6 +190,10 @@ namespace MediaPortal.TV.Recording
 
 		}
 
+		#endregion
+
+		#region create/view/timeshift/record
+		#region createGraph/DeleteGraph()
 		/// <summary>
 		/// Creates a new DirectShow graph for the TV capturecard.
 		/// This graph can be a DVB-T, DVB-C or DVB-S graph
@@ -637,7 +624,6 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
 
 				m_TunerStatistics=GetTunerSignalStatistics();
-				//AdviseProgramInfo();
 				return true;
 			}
 			catch(Exception)
@@ -646,105 +632,6 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 		}//public bool CreateGraph()
-
-		/// <summary>
-		/// This method asks the Transport Information filter to send us notifies 
-		/// about program & service changes which we need for auto-scanning channels
-		/// and EPG data
-		/// </summary>
-		/// <remarks>
-		/// assumes that graph is created 
-		/// </remarks>
-		void AdviseProgramInfo()
-		{
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:AdivseProgramInfo()");
-			//No TIF? then return;
-			if (m_TIF==null) return;
-
-			//creat a new callback object. The TIF will call members on this
-			//object when it has new information about services/programs
-			m_Event= new GuideDataEvent();
-			myHandle = GCHandle.Alloc(m_Event, GCHandleType.Pinned);
-
-			//get IConnectionPointContainer interface from TIF
-			IConnectionPointContainer container = m_TIF as IConnectionPointContainer;
-			if (container==null)
-			{
-				//no IConnectionPointContainer ? then return
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
-				return ;
-			}
-			//Find connection point of the IGuideDataEvent interface
-			Guid iid=typeof(IGuideDataEvent).GUID;
-			IConnectionPoint    connectPoint;      
-			container.FindConnectionPoint( ref iid, out connectPoint);
-			if (connectPoint==null)
-			{
-				// IGuideDataEvent connection point not found? then return
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
-				return ;
-			}
-
-			//ask the IGuideDataEvent to call the m_Event when it has information about services / programs
-			int hr=connectPoint.Advise( m_Event, out adviseCookie);
-			if (hr!=0)
-			{
-				// error
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
-				return ;
-			}
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:AdivseProgramInfo() done");
-		}//void AdviseProgramInfo()
-
-		/// <summary>
-		///  UnAdviseProgramInfo()
-		///  This will ask the TIF to stop giving us information about service/program events
-		/// </summary>
-		/// <remarks>
-		/// assumes that graph is created and AdviseProgramInfo() has been called in the past
-		/// </remarks>
-		void UnAdviseProgramInfo()
-		{
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:UnAdviseProgramInfo()");
-			// if not registered then return
-			if (adviseCookie==0) return;
-
-			// if no TIF then return
-			if (m_TIF==null) return;
-
-			//get the IConnectionPointContainer of the TIF
-			IConnectionPointContainer container = m_TIF as IConnectionPointContainer;
-			if (container==null)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IConnectionPointContainer");
-				return ;
-			}
-
-			//Get the IGuideDataEvent connection point
-			Guid iid=typeof(IGuideDataEvent).GUID;
-			IConnectionPoint    connectPoint;      
-			container.FindConnectionPoint( ref iid, out connectPoint);
-			if (connectPoint==null)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt get IGuideDataEvent");
-				return ;
-			}
-
-			//tell IGuideDataEvent to stop giving info about services/program changes
-			int hr=connectPoint.Unadvise(adviseCookie);
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
-			}
-			adviseCookie=0;
-			
-			//free handle to m_event
-			if (myHandle.IsAllocated)
-			{
-				myHandle.Free();
-			}
-			m_Event=null;
-		}//void UnAdviseProgramInfo()
 
 		/// <summary>
 		/// Deletes the current DirectShow graph created with CreateGraph()
@@ -802,8 +689,6 @@ namespace MediaPortal.TV.Recording
 				m_recControl.Stop(0);
 				Marshal.ReleaseComObject(m_recControl); m_recControl=null;
 			}
-			if (objRecord!=null)
-				Marshal.ReleaseComObject(objRecord); objRecord=null;
 		      
 			if (m_StreamBufferSink!=null) 
 			{
@@ -889,6 +774,127 @@ namespace MediaPortal.TV.Recording
 			return;
 		}//public void DeleteGraph()
 		
+		#endregion
+		#region Start/Stop Recording
+		/// <summary>
+		/// Starts recording live TV to a file
+		/// <param name="strFileName">filename for the new recording</param>
+		/// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
+		/// <param name="timeProgStart">Contains the starttime of the current tv program</param>
+		/// </summary>
+		/// <returns>boolean indicating if recorded is started or not</returns> 
+		/// <remarks>
+		/// Graph should be timeshifting. When Recording is started the graph is still 
+		/// timeshifting
+		/// 
+		/// A content recording will start recording from the moment this method is called
+		/// and ignores any data left/present in the timeshifting buffer files
+		/// 
+		/// A reference recording will start recording from the moment this method is called
+		/// It will examine the timeshifting files and try to record as much data as is available
+		/// from the timeProgStart till the moment recording is stopped again
+		/// </remarks>
+		public bool StartRecording(TVRecording recording,TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+		{
+			if (m_graphState != State.TimeShifting) 
+				return false;
+			
+			if (m_StreamBufferSink == null) 
+				return false;
+
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
+			uint iRecordingType=0;
+			if (bContentRecording) 
+				iRecordingType = 0;
+			else 
+				iRecordingType = 1;										
+
+			IntPtr recorderObj=IntPtr.Zero;
+			object objRecord = null;
+			try
+			{
+				//ask StreamBufferEngine to create a new recorder
+				if (m_IStreamBufferSink.CreateRecorder(strFileName, iRecordingType, out recorderObj) !=0 ) 
+					return false;
+				if (recorderObj == IntPtr.Zero) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create recorder");
+					return false;
+				}
+
+				//get IUnknown interface of new recorder
+				objRecord = Marshal.GetObjectForIUnknown(recorderObj);
+				if (objRecord == null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
+					return false;
+				}
+	      
+				//now get the IStreamBufferRecordControl interface
+				m_recControl = objRecord as IStreamBufferRecordControl;			
+				if (m_recControl == null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
+					return false;
+				}
+				long lStartTime = 0;
+
+				// if we're making a reference recording
+				// then record all content from the past as well
+				if (!bContentRecording)
+				{
+					// so set the startttime...
+					uint uiSecondsPerFile;
+					uint uiMinFiles, uiMaxFiles;
+					m_IStreamBufferConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
+					m_IStreamBufferConfig.GetBackingFileDuration(out uiSecondsPerFile);
+					lStartTime = uiSecondsPerFile;
+					lStartTime *= (long)uiMaxFiles;
+
+					// if start of program is given, then use that as our starttime
+					if (timeProgStart.Year > 2000)
+					{
+						TimeSpan ts = DateTime.Now - timeProgStart;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+							timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
+							ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
+																
+						lStartTime = (long)ts.TotalSeconds;
+					}
+					else Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: record entire timeshift buffer");
+	      
+					TimeSpan tsMaxTimeBack = DateTime.Now - m_StartTime;
+					if (lStartTime > tsMaxTimeBack.TotalSeconds)
+					{
+						lStartTime = (long)tsMaxTimeBack.TotalSeconds;
+					}
+	        
+
+					lStartTime *= -10000000L;//in reference time 
+				}//if (!bContentRecording)
+				if (m_recControl.Start(ref lStartTime) != 0) 
+				{
+					//could not start recording...
+					if (lStartTime != 0)
+					{
+						// try recording from livepoint instead from the past
+						lStartTime = 0;
+						if (m_recControl.Start(ref lStartTime) != 0)
+							return false;
+					}
+					else
+						return false;
+				}
+			}
+			finally
+			{
+				if (recorderObj != IntPtr.Zero)
+					Marshal.Release(recorderObj);
+			}
+			m_graphState = State.Recording;
+			return true;
+		}//public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+	    
 		/// <summary>
 		/// Stops recording 
 		/// </summary>
@@ -904,16 +910,11 @@ namespace MediaPortal.TV.Recording
 			if (m_recControl!=null) 
 			{
 				int hr=m_recControl.Stop(0);
-				
 				Marshal.ReleaseComObject(m_recControl); 
 				Marshal.ReleaseComObject(m_recControl); 
 				Marshal.ReleaseComObject(m_recControl); 
 				m_recControl=null;
 				
-				Marshal.ReleaseComObject(objRecord);
-				Marshal.ReleaseComObject(objRecord);
-				Marshal.ReleaseComObject(objRecord);
-				objRecord=null;
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
 				GC.Collect();
@@ -934,326 +935,8 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:stopped recording...");
 		}//public void StopRecording()
 
-
-		void Pause()
-		{	
-			return;
-			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
-			{
-				g_Player.Pause();
-			}
-			if (m_mediaControl!=null && graphRunning)
-			{
-				m_mediaControl.Pause();
-			}
-		}
-
-		void Continue()
-		{
-			return;
-			if (m_mediaControl!=null && graphRunning)
-			{
-				m_mediaControl.Run();
-			}
-			
-			if (g_Player.Playing && g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
-			{
-				g_Player.Pause();
-			}
-		}
-
-		/// <summary>
-		/// Switches / tunes to another TV channel
-		/// </summary>
-		/// <param name="iChannel">New channel</param>
-		/// <remarks>
-		/// Graph should be viewing or timeshifting. 
-		/// </remarks>
-		public void TuneChannel(TVChannel channel)
-		{
-			if (m_NetworkProvider==null) return;
-
-			try
-			{
-				//pause
-				Pause();
-
-				m_iPrevChannel		= m_iCurrentChannel;
-				m_iCurrentChannel = channel.Number;
-				m_StartTime				= DateTime.Now;
-				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.Number);
-
-				//get the ITuner interface from the network provider filter
-				TunerLib.TuneRequest newTuneRequest = null;
-				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-				if (myTuner==null) return;
-
-				//get the IDVBTuningSpace2 from the tuner
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
-				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
-				if (myTuningSpace==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
-					return ;
-				}
-
-				//create a new tuning request
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
-				newTuneRequest = myTuningSpace.CreateTuneRequest();
-				if (newTuneRequest ==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
-					return ;
-				}
-
-				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
-				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
-				if (myTuneRequest ==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
-					return ;
-				}
-
-				
-				int frequency=-1,ONID=-1,TSID=-1,SID=-1;
-				int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1;
-				string providerName;
-				switch (m_NetworkType)
-				{
-					case NetworkType.ATSC: 
-					{
-						//todo: add tuning for analog tv cards
-					} break;
-					
-					case NetworkType.DVBC: 
-					{
-						//get the DVB-C tuning details from the tv database
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBC tuning details");
-						int symbolrate=0,innerFec=0,modulation=0;
-						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
-						if (frequency<=0) 
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
-							return;
-						}
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
-							frequency,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
-
-						//get the IDVBCLocator interface from the new tuning request
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBCLocator interface");
-						TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
-						if (myLocator==null)
-						{
-							myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
-						}
-						
-						if (myLocator ==null)
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
-							return ;
-						}
-						//set the properties on the new tuning request
-						
-						
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
-						myLocator.CarrierFrequency		= frequency;
-						myLocator.SymbolRate				  = symbolrate;
-						myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
-						myLocator.Modulation					= (TunerLib.ModulationType)modulation;
-						myTuneRequest.ONID	= ONID;					//original network id
-						myTuneRequest.TSID	= TSID;					//transport stream id
-						myTuneRequest.SID		= SID;					//service id
-						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-						currentTuningObject=new DVBChannel();
-						currentTuningObject.Frequency=frequency;
-						currentTuningObject.Symbolrate=symbolrate;
-						currentTuningObject.FEC=innerFec;
-						currentTuningObject.Modulation=modulation;
-						currentTuningObject.NetworkID=ONID;
-						currentTuningObject.TransportStreamID=TSID;
-						currentTuningObject.ProgramNumber=SID;
-						currentTuningObject.AudioPid=audioPid;
-						currentTuningObject.VideoPid=videoPid;
-						currentTuningObject.TeletextPid=teletextPid;
-						currentTuningObject.PMTPid=pmtPid;
-
-
-					} break;
-
-					case NetworkType.DVBS: 
-					{					
-						//get the DVB-S tuning details from the tv database
-						//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBS tuning details");
-						DVBChannel ch=new DVBChannel();
-						if(TVDatabase.GetSatChannel(channel.ID,1,ref ch)==false)//only television
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
-							return;
-						}
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
-							ch.Frequency,ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID,ch.ProgramNumber,ch.ServiceProvider);
-
-						//get the IDVBSLocator interface from the new tuning request
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBSLocator");
-						TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
-						if (myLocator==null)
-						{
-							myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
-						}
-						
-						if (myLocator ==null)
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
-							return ;
-						}
-						//set the properties on the new tuning request
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
-						myLocator.CarrierFrequency		= ch.Frequency;
-						if (ch.Polarity==0) 
-							myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
-						else
-							myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
-
-						myLocator.SymbolRate= ch.Symbolrate;
-						myLocator.InnerFEC	= (TunerLib.FECMethod)ch.FEC;
-						myTuneRequest.ONID	= ch.NetworkID;		//original network id
-						myTuneRequest.TSID	= ch.TransportStreamID;		//transport stream id
-						myTuneRequest.SID		= ch.ProgramNumber;		//service id
-						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-						SetLNBSettings(myTuneRequest);
-						
-
-						currentTuningObject=new DVBChannel();
-						currentTuningObject.Frequency=ch.Frequency;
-						currentTuningObject.Symbolrate=ch.Symbolrate;
-						currentTuningObject.FEC=ch.FEC;
-						currentTuningObject.Polarity=ch.Polarity;
-						currentTuningObject.NetworkID=ch.NetworkID;
-						currentTuningObject.TransportStreamID=ch.TransportStreamID;
-						currentTuningObject.ProgramNumber=ch.ProgramNumber;
-						currentTuningObject.AudioPid=ch.AudioPid;
-						currentTuningObject.VideoPid=ch.VideoPid;
-						currentTuningObject.TeletextPid=ch.TeletextPid;
-						currentTuningObject.PMTPid=ch.PMTPid;
-					} break;
-
-					case NetworkType.DVBT: 
-					{
-						//get the DVB-T tuning details from the tv database
-						//for DVB-T this is the frequency, ONID , TSID and SID
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBT tuning details");
-						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
-						if (frequency<=0) 
-						{
-							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
-							return;
-						}
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
-						//get the IDVBTLocator interface from the new tuning request
-
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTLocator");
-						TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
-						if (myLocator==null)
-						{
-							myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBTLocator;
-						}
-						
-						if (myLocator ==null)
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", frequency,ONID,TSID,SID);
-							return ;
-						}
-						//set the properties on the new tuning request
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
-						myLocator.CarrierFrequency		= frequency;
-						myTuneRequest.ONID	= ONID;					//original network id
-						myTuneRequest.TSID	= TSID;					//transport stream id
-						myTuneRequest.SID		= SID;					//service id
-						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-
-						currentTuningObject=new DVBChannel();
-						currentTuningObject.Frequency=frequency;
-						currentTuningObject.NetworkID=ONID;
-						currentTuningObject.TransportStreamID=TSID;
-						currentTuningObject.ProgramNumber=SID;
-						currentTuningObject.AudioPid=audioPid;
-						currentTuningObject.VideoPid=videoPid;
-						currentTuningObject.TeletextPid=teletextPid;
-						currentTuningObject.PMTPid=pmtPid;
-					} break;
-				}	//switch (m_NetworkType)
-				//submit tune request to the tuner
-			
-
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
-				myTuner.TuneRequest = newTuneRequest;
-				Marshal.ReleaseComObject(myTuneRequest);
-
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
-				SetupDemuxer(m_DemuxVideoPin, m_DemuxAudioPin,currentTuningObject.AudioPid, currentTuningObject.VideoPid);
-				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
-
-
-				SendPMT();
-
-				if(m_pluginsEnabled==true)
-					ExecTuner();
-			}
-			finally
-			{
-				//unpause
-				pmtVersionNumber= -1;
-				refreshPmtTable	= false;
-				Continue();
-			}
-		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
-
-		/// <summary>
-		/// Returns the current tv channel
-		/// </summary>
-		/// <returns>Current channel</returns>
-		public int GetChannelNumber()
-		{
-			return m_iCurrentChannel;
-		}
-
-		/// <summary>
-		/// Property indiciating if the graph supports timeshifting
-		/// </summary>
-		/// <returns>boolean indiciating if the graph supports timeshifting</returns>
-		public bool SupportsTimeshifting()
-		{
-			return m_bIsUsingMPEG;
-		}
-
-		/// <summary>
-		/// Add preferred mpeg video/audio codecs to the graph
-		/// the user has can specify these codecs in the setup
-		/// </summary>
-		/// <remarks>
-		/// Graph must be created first with CreateGraph()
-		/// </remarks>
-		void AddPreferredCodecs(bool audio, bool video)
-		{
-			// add preferred video & audio codecs
-			string strVideoCodec="";
-			string strAudioCodec="";
-			bool   bAddFFDshow=false;
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-			{
-				bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
-				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
-				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
-			}
-			if (video && strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
-			if (audio && strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
-			if (video && bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
-		}//void AddPreferredCodecs()
-		
+		#endregion		
+		#region Start/Stop Viewing
 		/// <summary>
 		/// Starts viewing the TV channel 
 		/// </summary>
@@ -1319,7 +1002,7 @@ namespace MediaPortal.TV.Recording
 				if (hr != 0) 
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:set Video window style:0x{0:X}",hr);
 
-	      //show overlay window
+				//show overlay window
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:put_Visible:0x{0:X}",hr);
@@ -1373,7 +1056,166 @@ namespace MediaPortal.TV.Recording
 			DeleteGraph();
 			return true;
 		}
+				
+		#endregion
+		#region Start/Stop Timeshifting
+		/// <summary>
+		/// Starts timeshifting the TV channel and stores the timeshifting 
+		/// files in the specified filename
+		/// </summary>
+		/// <param name="iChannelNr">TV channel to which card should be tuned</param>
+		/// <param name="strFileName">Filename for the timeshifting buffers</param>
+		/// <returns>boolean indicating if timeshifting is running or not</returns>
+		/// <remarks>
+		/// Graph must be created first with CreateGraph()
+		/// </remarks>
+		public bool StartTimeShifting(TVChannel channel, string strFileName)
+		{
+			if(m_graphState!=State.Created)
+				return false;
+			
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
+
+			if(CreateSinkSource(strFileName))
+			{
+				if(m_mediaControl == null) 
+				{
+					m_mediaControl = (IMediaControl) m_graphBuilder;
+				}
+				//now start the graph
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: start graph");
+				int hr=m_mediaControl.Run();
+				if (hr<0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+				}
+				graphRunning=true;
+				m_graphState = State.TimeShifting;
+			}
+			else 
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Unable to create sinksource()");
+				return false;
+			}
+			TuneChannel(channel);
+
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:timeshifting started");			
+			return true;
+		}//public bool StartTimeShifting(int country,AnalogVideoStandard standard, int iChannel, string strFileName)
 		
+		/// <summary>
+		/// Stops timeshifting and cleans up the timeshifting files
+		/// </summary>
+		/// <returns>boolean indicating if timeshifting is stopped or not</returns>
+		/// <remarks>
+		/// Graph should be timeshifting 
+		/// </remarks>
+		public bool StopTimeShifting()
+		{
+			if (m_graphState != State.TimeShifting) return false;
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StopTimeShifting()");
+			m_mediaControl.Stop();
+			graphRunning=false;
+			m_graphState = State.Created;
+			DeleteGraph();
+			return true;
+		}//public bool StopTimeShifting()
+		
+		#endregion
+		#endregion
+
+		#region helper functions
+		#region SampleGrabberCallback
+		public int BufferCB(double time,IntPtr data,int len)
+		{
+			if (currentTuningObject==null) return 0;
+			int add=(int)data;
+			int end=(add+len);
+
+			if(m_pluginsEnabled==true)
+			{
+				for(int pointer=add;pointer<end;pointer+=188)
+					PidCallback((IntPtr)pointer);
+			}
+
+			//
+			// here write code to record raw ts or mp3 etc.
+			// the callback needs to return as soon as possible!!
+			//
+			if (currentTuningObject.TeletextPid!=0)
+			{
+				for(int pointer=add;pointer<end;pointer+=188)
+				{
+					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+					if (header.Pid==currentTuningObject.TeletextPid)
+					{
+						m_teleText.SaveData((IntPtr)pointer);
+					}
+				}
+			}
+
+			if (currentTuningObject.PMTPid>=0 && !refreshPmtTable )
+			{
+				for(int pointer=add;pointer<end;pointer+=188)
+				{
+					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+					if (header.Pid==currentTuningObject.PMTPid )
+					{
+						//copy pmt pid...
+						byte[] pmtTable=new byte[188];
+						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
+						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
+						if (section_length>0 && section_length < 183)
+						{
+							int version_number = ((pmtTable[5]>>1)&0x1F);
+							if (version_number != pmtVersionNumber)
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}->{1}", pmtVersionNumber,version_number);
+								try
+								{
+									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+										currentTuningObject.NetworkID,
+										currentTuningObject.TransportStreamID,
+										currentTuningObject.ProgramNumber,
+										(int)Network());
+									System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+									stream.Write(pmtTable,0,section_length);
+									stream.Close();
+									pmtVersionNumber=version_number;
+									refreshPmtTable=true;
+								}
+								catch(Exception)
+								{
+								}
+							}
+						}
+						break;
+					}
+				}
+			}
+#if DUMP
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
+				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+				if (header.Pid==currentTuningObject.AudioPid)
+				{
+					byte[] tmpBuffer=new byte[188];
+					Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
+					fileout.Write(tmpBuffer,0,tmpBuffer.Length);
+				}
+			}
+#endif
+			return 0;
+		}
+
+		public int SampleCB(double time,IMediaSample sample)
+		{
+			return 0;
+		
+		}
+		#endregion
+
+		#region overrides
 		/// <summary>
 		/// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
 		/// </summary>
@@ -1448,7 +1290,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
 						GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
-				  if (iVideoHeight<=0 || iVideoWidth<=0) return;
+					if (iVideoHeight<=0 || iVideoWidth<=0) return;
 					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
@@ -1472,6 +1314,197 @@ namespace MediaPortal.TV.Recording
 		{
 			return false;
 		}
+
+
+		public bool HasTeletext()
+		{
+			if (m_graphState!= State.TimeShifting && m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
+			if (currentTuningObject==null) return false;
+			if (m_NetworkProvider==null) return false;
+			if (currentTuningObject.TeletextPid>0) return true;
+			return false;
+		}
+		/// <summary>
+		/// Returns the current tv channel
+		/// </summary>
+		/// <returns>Current channel</returns>
+		public int GetChannelNumber()
+		{
+			return m_iCurrentChannel;
+		}
+
+		/// <summary>
+		/// Property indiciating if the graph supports timeshifting
+		/// </summary>
+		/// <returns>boolean indiciating if the graph supports timeshifting</returns>
+		public bool SupportsTimeshifting()
+		{
+			return m_bIsUsingMPEG;
+		}
+
+		/// <summary>
+		/// Add preferred mpeg video/audio codecs to the graph
+		/// the user has can specify these codecs in the setup
+		/// </summary>
+		/// <remarks>
+		/// Graph must be created first with CreateGraph()
+		/// </remarks>
+		/// <summary>
+		/// returns true if tuner is locked to a frequency and signalstrength/quality is > 0
+		/// </summary>
+		/// <returns>
+		/// true: tuner has a signal and is locked
+		/// false: tuner is not locked
+		/// </returns>
+		/// <remarks>
+		/// Graph should be created and GetTunerSignalStatistics() should be called
+		/// </remarks>
+		public bool SignalPresent()
+		{
+			//if we dont have an IBDA_SignalStatistics interface then return
+			if (m_TunerStatistics==null) return false;
+			bool isTunerLocked		= false;
+			bool isSignalPresent	= false;
+			long signalQuality=0;
+
+			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			{
+				bool isLocked=false;
+				bool isPresent=false;
+				try
+				{
+					//is the tuner locked?
+					m_TunerStatistics[i].get_SignalLocked(ref isLocked);
+					isTunerLocked |= isLocked;
+				}
+				catch (COMException)
+				{
+				}
+				try
+				{
+					//is a signal present?
+					m_TunerStatistics[i].get_SignalPresent(ref isPresent);
+					isSignalPresent |= isPresent;
+				}
+				catch (COMException)
+				{
+				}
+				try
+				{
+					//is a signal quality ok?
+					long quality=0;
+					m_TunerStatistics[i].get_SignalQuality(ref quality);
+					if (quality>0) signalQuality += quality;
+				}
+				catch (COMException)
+				{
+				}
+			}
+
+			//some devices give different results about signal status
+			//on some signalpresent is only true when tuned to a channel
+			//on others  signalpresent is true when tuned to a transponder
+			//so we just look if any variables returns true
+			//	Log.WriteFile(Log.LogType.Capture,"  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
+
+			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
+			{
+				return true;
+			}
+			return false;
+		}//public bool SignalPresent()
+
+		/// <summary>
+		/// not used
+		/// </summary>
+		/// <returns>-1</returns>
+		public long VideoFrequency()
+		{
+			if (currentTuningObject!=null) return currentTuningObject.Frequency*1000;
+			return -1;
+		}
+		
+		public PropertyPageCollection PropertyPages()
+		{
+			return null;
+		}
+		
+		//not used
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
+		}
+
+		//not used
+		public bool SupportsFrameSize(Size framesize)
+		{	
+			return false;
+		}
+
+		/// <summary>
+		/// return the network type (DVB-T, DVB-C, DVB-S)
+		/// </summary>
+		/// <returns>network type</returns>
+		public NetworkType Network()
+		{
+			return m_NetworkType;
+		}
+		
+		/// <summary>
+		/// Set the LNB settings for a DVB-S tune request
+		/// </summary>
+		/// <remarks>Only needed for DVB-S</remarks>
+		/// <param name="tuneRequest">IDVBTuneRequest tunerequest for a DVB-S channel</param>
+		public IBaseFilter Mpeg2DataFilter()
+		{
+			return m_SectionsTables;
+		}
+
+		#endregion
+
+		void Pause()
+		{	
+			return;
+			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			{
+				g_Player.Pause();
+			}
+			if (m_mediaControl!=null && graphRunning)
+			{
+				m_mediaControl.Pause();
+			}
+		}
+
+		void Continue()
+		{
+			return;
+			if (m_mediaControl!=null && graphRunning)
+			{
+				m_mediaControl.Run();
+			}
+			
+			if (g_Player.Playing && g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			{
+				g_Player.Pause();
+			}
+		}
+		#region graph building helper functions
+		void AddPreferredCodecs(bool audio, bool video)
+		{
+			// add preferred video & audio codecs
+			string strVideoCodec="";
+			string strAudioCodec="";
+			bool   bAddFFDshow=false;
+			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
+				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
+				strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
+			}
+			if (video && strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
+			if (audio && strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
+			if (video && bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
+		}//void AddPreferredCodecs()
 
 		/// <summary>
 		/// This method gets the IBDA_SignalStatistics interface from the tuner
@@ -1591,385 +1624,158 @@ namespace MediaPortal.TV.Recording
 		}//IBDA_LNBInfo[] GetBDALNBInfoInterface()
 
 
-		/// <summary>
-		/// returns true if tuner is locked to a frequency and signalstrength/quality is > 0
-		/// </summary>
-		/// <returns>
-		/// true: tuner has a signal and is locked
-		/// false: tuner is not locked
-		/// </returns>
-		/// <remarks>
-		/// Graph should be created and GetTunerSignalStatistics() should be called
-		/// </remarks>
-		public bool SignalPresent()
-		{
-			//if we dont have an IBDA_SignalStatistics interface then return
-			if (m_TunerStatistics==null) return false;
-			bool isTunerLocked		= false;
-			bool isSignalPresent	= false;
-			long signalQuality=0;
-
-			for (int i = 0; i < m_TunerStatistics.Length; i++) 
-			{
-				bool isLocked=false;
-				bool isPresent=false;
-				try
-				{
-					//is the tuner locked?
-					m_TunerStatistics[i].get_SignalLocked(ref isLocked);
-					isTunerLocked |= isLocked;
-				}
-				catch (COMException)
-				{
-				}
-				try
-				{
-					//is a signal present?
-					m_TunerStatistics[i].get_SignalPresent(ref isPresent);
-					isSignalPresent |= isPresent;
-				}
-				catch (COMException)
-				{
-				}
-				try
-				{
-					//is a signal quality ok?
-					long quality=0;
-					m_TunerStatistics[i].get_SignalQuality(ref quality);
-					if (quality>0) signalQuality += quality;
-				}
-				catch (COMException)
-				{
-				}
-			}
-
-			//some devices give different results about signal status
-			//on some signalpresent is only true when tuned to a channel
-			//on others  signalpresent is true when tuned to a transponder
-			//so we just look if any variables returns true
-		//	Log.WriteFile(Log.LogType.Capture,"  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
-
-			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
-			{
-				return true;
-			}
-			return false;
-		}//public bool SignalPresent()
-
-		/// <summary>
-		/// not used
-		/// </summary>
-		/// <returns>-1</returns>
-		public long VideoFrequency()
-		{
-			if (currentTuningObject!=null) return currentTuningObject.Frequency*1000;
-			return -1;
-		}
-		
 		private bool CreateSinkSource(string fileName)
 		{
 			if(m_graphState!=State.Created)
 				return false;
+			
 			int		hr				= 0;
 			IPin	pinObj0		= null;
 			IPin	pinObj1		= null;
+			IPin	pinObj2		= null;
+			IPin	pinObj3		= null;
 			IPin	outPin		= null;
+			IStreamBufferInitialize streamBufferInitialize =null;
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
+			try
+			{
+				//create StreamBufferSink filter
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
+				hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add StreamBufferSink");
+					return false;
+				}			
+				//create MPEG2 Analyzer filter
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
+				hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph");
+					return false;
+				}
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add streambuffersink()");
-			hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
-			if(hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add StreamBufferSink");
-				return false;
-			}			
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
-			hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
-			if(hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph");
-				return false;
+				//get input pin of MPEG2 Analyzer filter
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
+				pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
+				if(pinObj0 == null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
+					return false;
+				}
+				
+				//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
+				hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer");
+					return false;
+				}
+
+				//get output pin #0 from MPEG2 analyzer Filter
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
+				pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin");
+					return false;
+				}
+				
+				//get input pin #0 from StreamBufferSink Filter
+				pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin");
+					return false;
+				}
+
+				//connect MPEG2 analyzer output pin->StreamBufferSink Filter input pin
+				hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink");
+					return false;
+				}
+
+				//Get StreamBufferSink InputPin #1
+				pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+					return false;
+				}
+				//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
+				hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj3) ;
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
+					return false;
+				}
+
+				int ipos=fileName.LastIndexOf(@"\");
+				string strDir=fileName.Substring(0,ipos);
+				m_StreamBufferConfig	= new StreamBufferConfig();
+				m_IStreamBufferConfig	= (IStreamBufferConfigure) m_StreamBufferConfig;
+				
+				// setting the StreamBufferEngine registry key
+				IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
+				streamBufferInitialize = (IStreamBufferInitialize) m_IStreamBufferConfig;
+				IntPtr subKey = IntPtr.Zero;
+
+				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+				hr=streamBufferInitialize.SetHKEY(subKey);
+				
+				//set timeshifting folder
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
+				hr = m_IStreamBufferConfig.SetDirectory(strDir);	
+				if(hr != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift folder to:{0}", strDir);
+					return false;
+				}
+
+				//set number of timeshifting files
+				hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
+				if(hr != 0)
+					return false;
+				
+				//set duration of each timeshift file
+				hr = m_IStreamBufferConfig.SetBackingFileDuration(300); // 60sec * 4 files= 4 mins
+				if(hr != 0)
+					return false;
+
+				//set timeshifting filename
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
+				
+				// lock on the 'filename' file
+				if(m_IStreamBufferSink.LockProfile(fileName) != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift file to:{0}", fileName);
+					return false;
+				}
 			}
-
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
-			pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
-			if(pinObj0 == null)
+			finally
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
-				return false;
-			}
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
-			hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer");
-				return false;
-			}
+				if(pinObj0 != null)
+					Marshal.ReleaseComObject(pinObj0);
+				if(pinObj1 != null)
+					Marshal.ReleaseComObject(pinObj1);
+				if(pinObj2 != null)
+					Marshal.ReleaseComObject(pinObj2);
+				if(pinObj3 != null)
+					Marshal.ReleaseComObject(pinObj3);
+				if(outPin != null)
+					Marshal.ReleaseComObject(outPin);
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
-			pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin");
-				return false;
+				if ( streamBufferInitialize !=null)
+					Marshal.ReleaseComObject(streamBufferInitialize );
+				
 			}
-			IPin pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin");
-				return false;
-			}
-			hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink");
-				return false;
-			}
-			pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
-				return false;
-			}
-			hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj2) ;
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
-				return false;
-			}
-
-			int ipos=fileName.LastIndexOf(@"\");
-			string strDir=fileName.Substring(0,ipos);
-
-			m_StreamBufferConfig	= new StreamBufferConfig();
-			m_IStreamBufferConfig	= (IStreamBufferConfigure) m_StreamBufferConfig;
-			// setting the timeshift behaviors
-			IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
-			IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
-			IntPtr subKey = IntPtr.Zero;
-
-			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-			hr=pTemp.SetHKEY(subKey);
-			
-			
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
-			hr = m_IStreamBufferConfig.SetDirectory(strDir);	
-			if(hr != 0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift folder to:{0}", strDir);
-				return false;
-			}
-			hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
-			if(hr != 0)
-				return false;
-			
-			hr = m_IStreamBufferConfig.SetBackingFileDuration(300); // 60sec * 4 files= 4 mins
-			if(hr != 0)
-				return false;
-
-			subKey = IntPtr.Zero;
-			HKEY = (IntPtr) unchecked ((int)0x80000002L);
-			IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
-
-			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-			hr = pConfig.SetHKEY(subKey);
-
-			
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
-			// lock on the 'filename' file
-			if(m_IStreamBufferSink.LockProfile(fileName) != 0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift file to:{0}", fileName);
-				return false;
-			}
-			if(pinObj0 != null)
-				Marshal.ReleaseComObject(pinObj0);
-			if(pinObj1 != null)
-				Marshal.ReleaseComObject(pinObj1);
-			if(pinObj2 != null)
-				Marshal.ReleaseComObject(pinObj2);
-			if(outPin != null)
-				Marshal.ReleaseComObject(outPin);
-
 			return true;
 		}//private bool CreateSinkSource(string fileName)
-		
-		/// <summary>
-		/// Starts recording live TV to a file
-		/// <param name="strFileName">filename for the new recording</param>
-		/// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
-		/// <param name="timeProgStart">Contains the starttime of the current tv program</param>
-		/// </summary>
-		/// <returns>boolean indicating if recorded is started or not</returns> 
-		/// <remarks>
-		/// Graph should be timeshifting. When Recording is started the graph is still 
-		/// timeshifting
-		/// 
-		/// A content recording will start recording from the moment this method is called
-		/// and ignores any data left/present in the timeshifting buffer files
-		/// 
-		/// A reference recording will start recording from the moment this method is called
-		/// It will examine the timeshifting files and try to record as much data as is available
-		/// from the timeProgStart till the moment recording is stopped again
-		/// </remarks>
-		public bool StartRecording(TVRecording recording,TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
-		{
-			if (m_graphState != State.TimeShifting) 
-				return false;
-			if (m_StreamBufferSink == null) 
-				return false;
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
-			uint iRecordingType=0;
-			if (bContentRecording) 
-				iRecordingType = 0;
-			else 
-				iRecordingType = 1;										
-
-			IntPtr recorderObj;
-			if (m_IStreamBufferSink.CreateRecorder(strFileName, iRecordingType, out recorderObj) !=0 ) 
-				return false;
-			if (recorderObj == IntPtr.Zero) 
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create recorder");
-				return false;
-			}
-
-			objRecord = Marshal.GetObjectForIUnknown(recorderObj);
-			if (objRecord == null) 
-			{
-					Marshal.Release(recorderObj);
-					Marshal.Release(recorderObj);
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
-					return false;
-			}
-      
-			m_recControl = objRecord as IStreamBufferRecordControl;			
-			Marshal.Release(recorderObj);
-
-			if (m_recControl == null) 
-			{
-				Marshal.ReleaseComObject(objRecord);
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
-				return false;
-			}
-			long lStartTime = 0;
-
-			// if we're making a reference recording
-			// then record all content from the past as well
-			if (!bContentRecording)
-			{
-				// so set the startttime...
-				uint uiSecondsPerFile;
-				uint uiMinFiles, uiMaxFiles;
-				m_IStreamBufferConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
-				m_IStreamBufferConfig.GetBackingFileDuration(out uiSecondsPerFile);
-				lStartTime = uiSecondsPerFile;
-				lStartTime *= (long)uiMaxFiles;
-
-				// if start of program is given, then use that as our starttime
-				if (timeProgStart.Year > 2000)
-				{
-					TimeSpan ts = DateTime.Now - timeProgStart;
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
-						timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
-						ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
-															
-					lStartTime = (long)ts.TotalSeconds;
-				}
-				else Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: record entire timeshift buffer");
-      
-				TimeSpan tsMaxTimeBack = DateTime.Now - m_StartTime;
-				if (lStartTime > tsMaxTimeBack.TotalSeconds)
-				{
-					lStartTime = (long)tsMaxTimeBack.TotalSeconds;
-				}
-        
-
-				lStartTime *= -10000000L;//in reference time 
-			}//if (!bContentRecording)
-			if (m_recControl.Start(ref lStartTime) != 0) 
-			{
-				//could not start recording...
-				if (lStartTime != 0)
-				{
-					// try recording from livepoint instead from the past
-					lStartTime = 0;
-					if (m_recControl.Start(ref lStartTime) != 0)
-						return false;
-				}
-				else
-					return false;
-			}
-			m_graphState = State.Recording;
-			return true;
-		}//public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
-	    
-
-
-		/// <summary>
-		/// Starts timeshifting the TV channel and stores the timeshifting 
-		/// files in the specified filename
-		/// </summary>
-		/// <param name="iChannelNr">TV channel to which card should be tuned</param>
-		/// <param name="strFileName">Filename for the timeshifting buffers</param>
-		/// <returns>boolean indicating if timeshifting is running or not</returns>
-		/// <remarks>
-		/// Graph must be created first with CreateGraph()
-		/// </remarks>
-		public bool StartTimeShifting(TVChannel channel, string strFileName)
-		{
-			if(m_graphState!=State.Created)
-				return false;
-			
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
-
-			if(CreateSinkSource(strFileName))
-			{
-				if(m_mediaControl == null) 
-				{
-					m_mediaControl = (IMediaControl) m_graphBuilder;
-				}
-				//now start the graph
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: start graph");
-				int hr=m_mediaControl.Run();
-				if (hr<0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
-				}
-				graphRunning=true;
-				m_graphState = State.TimeShifting;
-			}
-			else 
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Unable to create sinksource()");
-				return false;
-			}
-			TuneChannel(channel);
-
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:timeshifting started");			
-			return true;
-		}//public bool StartTimeShifting(int country,AnalogVideoStandard standard, int iChannel, string strFileName)
-		
-		/// <summary>
-		/// Stops timeshifting and cleans up the timeshifting files
-		/// </summary>
-		/// <returns>boolean indicating if timeshifting is stopped or not</returns>
-		/// <remarks>
-		/// Graph should be timeshifting 
-		/// </remarks>
-		public bool StopTimeShifting()
-		{
-			if (m_graphState != State.TimeShifting) return false;
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StopTimeShifting()");
-			m_mediaControl.Stop();
-			graphRunning=false;
-			m_graphState = State.Created;
-			DeleteGraph();
-			return true;
-		}//public bool StopTimeShifting()
-		
 		/// <summary>
 		/// Finds and connects pins
 		/// </summary>
@@ -2103,11 +1909,11 @@ namespace MediaPortal.TV.Recording
 			}
 			System.Guid classID;
 			int hr=m_NetworkProvider.GetClassID(out classID);
-//			if (hr <=0)
-//			{
-//				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:cannot get classid of network provider");
-//				return false;
-//			}
+			//			if (hr <=0)
+			//			{
+			//				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:cannot get classid of network provider");
+			//				return false;
+			//			}
 
 			string strClassID = classID.ToString();
 			strClassID = strClassID.ToLower();
@@ -2390,7 +2196,8 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
 
-
+		#endregion
+		#region process helper functions
 		// send PMT to firedtv device
 		bool SendPMT()
 		{
@@ -2430,76 +2237,6 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}//SendPMT()
 
-		public void Process()
-		{
-			if (m_SectionsTables==null) return;
-			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
-			{
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					Vmr9.Repaint();// repaint vmr9
-				}
-			}
-			
-			if (!refreshPmtTable) return;
-
-			try
-			{
-				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
-				if (!SendPMT())
-				{
-					pmtVersionNumber=-1;
-					return;
-				}
-			}
-			catch(Exception)
-			{
-			}
-			finally
-			{
-				refreshPmtTable=false;
-			}
-		}//public void Process()
-
-		//not used
-		public void TuneFrequency(int frequency)
-		{
-		}
-
-		
-		//not used
-		public PropertyPageCollection PropertyPages()
-		{
-			return null;
-		}
-		
-		//not used
-		public IBaseFilter AudiodeviceFilter()
-		{
-			return null;
-		}
-
-		//not used
-		public bool SupportsFrameSize(Size framesize)
-		{	
-			return false;
-		}
-
-		/// <summary>
-		/// return the network type (DVB-T, DVB-C, DVB-S)
-		/// </summary>
-		/// <returns>network type</returns>
-		public NetworkType Network()
-		{
-				return m_NetworkType;
-		}
-		
-		/// <summary>
-		/// Set the LNB settings for a DVB-S tune request
-		/// </summary>
-		/// <remarks>Only needed for DVB-S</remarks>
-		/// <param name="tuneRequest">IDVBTuneRequest tunerequest for a DVB-S channel</param>
 		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		{
 			if (tuneRequest==null) return;
@@ -2562,69 +2299,355 @@ namespace MediaPortal.TV.Recording
 					space.HighOscillator=0;
 				//space.SpectralInversion=??
 				//space.InputRange=(lnbKhz*1000).ToString();
-/*
-				if (m_TunerDevice!=null)
-				{
-					IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
-					if (info==null)
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to get IBDA_LNBInfo");
-					}
-					else
-					{
-						if (lnb_1 < 0) lnb_1=0;
-						if (lnb_0 < 0) lnb_0=0;
-						if (lnbKhz < 0) lnbKhz=0;
-						for (int i=0; i < info.Length;++i)
-						{
-							if (info[i] !=null)
-							{
-								bool ok=true;
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
-								int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
-								if (hr!=0) 
+				/*
+								if (m_TunerDevice!=null)
 								{
-									Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
-									ok=false;
-								}
-								else 
-								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  put_HighLowSwitchFrequency ({0}) ok",lnbKhz);
-								}
-								hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
-								if (hr!=0) 
-								{
-									Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
-									ok=false;
-								}
-								else
-								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: put_LocalOscilatorFrequencyLowBand({0}) ok",lnb_0);
-								}
-								hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
-								if (hr!=0) 
-								{
-									Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
-									ok=false;
-								}
-								else
-								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: set put_LocalOscilatorFrequencyHighBand({0}) ok",lnb_1);
-								}
-								if (ok) break;
-							}//if (info[i] !=null)
-						}//for (int i=0; i < info.Length;++i)
-					}
-				}//if (m_TunerDevice!=null)
-				*/
+									IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
+									if (info==null)
+									{
+										Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to get IBDA_LNBInfo");
+									}
+									else
+									{
+										if (lnb_1 < 0) lnb_1=0;
+										if (lnb_0 < 0) lnb_0=0;
+										if (lnbKhz < 0) lnbKhz=0;
+										for (int i=0; i < info.Length;++i)
+										{
+											if (info[i] !=null)
+											{
+												bool ok=true;
+												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
+												int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
+												if (hr!=0) 
+												{
+													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
+													ok=false;
+												}
+												else 
+												{
+													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  put_HighLowSwitchFrequency ({0}) ok",lnbKhz);
+												}
+												hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
+												if (hr!=0) 
+												{
+													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
+													ok=false;
+												}
+												else
+												{
+													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: put_LocalOscilatorFrequencyLowBand({0}) ok",lnb_0);
+												}
+												hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
+												if (hr!=0) 
+												{
+													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
+													ok=false;
+												}
+												else
+												{
+													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: set put_LocalOscilatorFrequencyHighBand({0}) ok",lnb_1);
+												}
+												if (ok) break;
+											}//if (info[i] !=null)
+										}//for (int i=0; i < info.Length;++i)
+									}
+								}//if (m_TunerDevice!=null)
+								*/
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
-		public IBaseFilter Mpeg2DataFilter()
+		public void Process()
 		{
-			return m_SectionsTables;
+			if (m_SectionsTables==null) return;
+			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
+			{
+				Vmr9.Process();
+				if (GUIGraphicsContext.Vmr9FPS < 1f)
+				{
+					Vmr9.Repaint();// repaint vmr9
+				}
+			}
+			
+			if (!refreshPmtTable) return;
+
+			try
+			{
+				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
+				if (!SendPMT())
+				{
+					pmtVersionNumber=-1;
+					return;
+				}
+			}
+			catch(Exception)
+			{
+			}
+			finally
+			{
+				refreshPmtTable=false;
+			}
+		}//public void Process()
+
+#endregion
+
+		#endregion
+
+		#region Tuning
+		/// <summary>
+		/// Switches / tunes to another TV channel
+		/// </summary>
+		/// <param name="iChannel">New channel</param>
+		/// <remarks>
+		/// Graph should be viewing or timeshifting. 
+		/// </remarks>
+		public void TuneChannel(TVChannel channel)
+		{
+			if (m_NetworkProvider==null) return;
+
+			try
+			{
+				//pause
+				Pause();
+
+				m_iPrevChannel		= m_iCurrentChannel;
+				m_iCurrentChannel = channel.Number;
+				m_StartTime				= DateTime.Now;
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.Number);
+
+				//get the ITuner interface from the network provider filter
+				TunerLib.TuneRequest newTuneRequest = null;
+				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
+				if (myTuner==null) return;
+
+				//get the IDVBTuningSpace2 from the tuner
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+				if (myTuningSpace==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
+					return ;
+				}
+
+				//create a new tuning request
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
+				newTuneRequest = myTuningSpace.CreateTuneRequest();
+				if (newTuneRequest ==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+					return ;
+				}
+
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
+				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
+				if (myTuneRequest ==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+					return ;
+				}
+
+				
+				int frequency=-1,ONID=-1,TSID=-1,SID=-1;
+				int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1;
+				string providerName;
+				switch (m_NetworkType)
+				{
+					case NetworkType.ATSC: 
+					{
+						//todo: add tuning for analog tv cards
+					} break;
+					
+					case NetworkType.DVBC: 
+					{
+						//get the DVB-C tuning details from the tv database
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBC tuning details");
+						int symbolrate=0,innerFec=0,modulation=0;
+						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+						if (frequency<=0) 
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+							return;
+						}
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
+							frequency,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
+
+						//get the IDVBCLocator interface from the new tuning request
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBCLocator interface");
+						TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
+						if (myLocator==null)
+						{
+							myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBCLocator;
+						}
+						
+						if (myLocator ==null)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
+							return ;
+						}
+						//set the properties on the new tuning request
+						
+						
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
+						myLocator.CarrierFrequency		= frequency;
+						myLocator.SymbolRate				  = symbolrate;
+						myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
+						myLocator.Modulation					= (TunerLib.ModulationType)modulation;
+						myTuneRequest.ONID	= ONID;					//original network id
+						myTuneRequest.TSID	= TSID;					//transport stream id
+						myTuneRequest.SID		= SID;					//service id
+						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+						currentTuningObject=new DVBChannel();
+						currentTuningObject.Frequency=frequency;
+						currentTuningObject.Symbolrate=symbolrate;
+						currentTuningObject.FEC=innerFec;
+						currentTuningObject.Modulation=modulation;
+						currentTuningObject.NetworkID=ONID;
+						currentTuningObject.TransportStreamID=TSID;
+						currentTuningObject.ProgramNumber=SID;
+						currentTuningObject.AudioPid=audioPid;
+						currentTuningObject.VideoPid=videoPid;
+						currentTuningObject.TeletextPid=teletextPid;
+						currentTuningObject.PMTPid=pmtPid;
+
+
+					} break;
+
+					case NetworkType.DVBS: 
+					{					
+						//get the DVB-S tuning details from the tv database
+						//for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBS tuning details");
+						DVBChannel ch=new DVBChannel();
+						if(TVDatabase.GetSatChannel(channel.ID,1,ref ch)==false)//only television
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+							return;
+						}
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
+							ch.Frequency,ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID,ch.ProgramNumber,ch.ServiceProvider);
+
+						//get the IDVBSLocator interface from the new tuning request
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBSLocator");
+						TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
+						if (myLocator==null)
+						{
+							myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
+						}
+						
+						if (myLocator ==null)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", frequency);
+							return ;
+						}
+						//set the properties on the new tuning request
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
+						myLocator.CarrierFrequency		= ch.Frequency;
+						if (ch.Polarity==0) 
+							myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
+						else
+							myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
+
+						myLocator.SymbolRate= ch.Symbolrate;
+						myLocator.InnerFEC	= (TunerLib.FECMethod)ch.FEC;
+						myTuneRequest.ONID	= ch.NetworkID;		//original network id
+						myTuneRequest.TSID	= ch.TransportStreamID;		//transport stream id
+						myTuneRequest.SID		= ch.ProgramNumber;		//service id
+						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+						SetLNBSettings(myTuneRequest);
+						
+
+						currentTuningObject=new DVBChannel();
+						currentTuningObject.Frequency=ch.Frequency;
+						currentTuningObject.Symbolrate=ch.Symbolrate;
+						currentTuningObject.FEC=ch.FEC;
+						currentTuningObject.Polarity=ch.Polarity;
+						currentTuningObject.NetworkID=ch.NetworkID;
+						currentTuningObject.TransportStreamID=ch.TransportStreamID;
+						currentTuningObject.ProgramNumber=ch.ProgramNumber;
+						currentTuningObject.AudioPid=ch.AudioPid;
+						currentTuningObject.VideoPid=ch.VideoPid;
+						currentTuningObject.TeletextPid=ch.TeletextPid;
+						currentTuningObject.PMTPid=ch.PMTPid;
+					} break;
+
+					case NetworkType.DVBT: 
+					{
+						//get the DVB-T tuning details from the tv database
+						//for DVB-T this is the frequency, ONID , TSID and SID
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBT tuning details");
+						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+						if (frequency<=0) 
+						{
+							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+							return;
+						}
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
+						//get the IDVBTLocator interface from the new tuning request
+
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTLocator");
+						TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
+						if (myLocator==null)
+						{
+							myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBTLocator;
+						}
+						
+						if (myLocator ==null)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", frequency,ONID,TSID,SID);
+							return ;
+						}
+						//set the properties on the new tuning request
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
+						myLocator.CarrierFrequency		= frequency;
+						myTuneRequest.ONID	= ONID;					//original network id
+						myTuneRequest.TSID	= TSID;					//transport stream id
+						myTuneRequest.SID		= SID;					//service id
+						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+
+						currentTuningObject=new DVBChannel();
+						currentTuningObject.Frequency=frequency;
+						currentTuningObject.NetworkID=ONID;
+						currentTuningObject.TransportStreamID=TSID;
+						currentTuningObject.ProgramNumber=SID;
+						currentTuningObject.AudioPid=audioPid;
+						currentTuningObject.VideoPid=videoPid;
+						currentTuningObject.TeletextPid=teletextPid;
+						currentTuningObject.PMTPid=pmtPid;
+					} break;
+				}	//switch (m_NetworkType)
+				//submit tune request to the tuner
+			
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
+				myTuner.TuneRequest = newTuneRequest;
+				Marshal.ReleaseComObject(myTuneRequest);
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
+				SetupDemuxer(m_DemuxVideoPin, m_DemuxAudioPin,currentTuningObject.AudioPid, currentTuningObject.VideoPid);
+				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
+
+
+				SendPMT();
+
+				if(m_pluginsEnabled==true)
+					ExecTuner();
+			}
+			finally
+			{
+				//unpause
+				pmtVersionNumber= -1;
+				refreshPmtTable	= false;
+				Continue();
+			}
+		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
+
+		public void TuneFrequency(int frequency)
+		{
 		}
-		
+
 
 		#region AutoTuning
 		/// <summary>
@@ -2766,7 +2789,7 @@ namespace MediaPortal.TV.Recording
 					DVBChannel chan=(DVBChannel)tuningObject;
 					
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-S freq:{0} fec:{1} pol:{2} sr:{3} ONID:{4}, TSID:{5} SID:{6}",
-																		chan.Frequency,chan.FEC,chan.Polarity,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber);
+						chan.Frequency,chan.FEC,chan.Polarity,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber);
 					//set the properties for the new tuning request. 
 					myLocator.CarrierFrequency		= chan.Frequency;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)chan.FEC;
@@ -2799,7 +2822,7 @@ namespace MediaPortal.TV.Recording
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Tune() exception {0} {1} {2}",
-										ex.Message,ex.Source,ex.StackTrace);
+					ex.Message,ex.Source,ex.StackTrace);
 			}
 		}//public void Tune(object tuningObject)
 		
@@ -2872,15 +2895,15 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11}", 
-										info.service_provider_name,
-										info.service_name,
-										info.scrambled,
-										info.freq,
-										info.networkID,
-										info.transportStreamID,
-										info.serviceID,
-										hasVideo, ((!hasVideo) && hasAudio),
-										currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid);
+					info.service_provider_name,
+					info.service_name,
+					info.scrambled,
+					info.freq,
+					info.networkID,
+					info.transportStreamID,
+					info.serviceID,
+					hasVideo, ((!hasVideo) && hasAudio),
+					currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid);
 				bool IsRadio		  = ((!hasVideo) && hasAudio);
 				bool IsTv   		  = (hasVideo);//some tv channels dont have an audio stream
 		
@@ -3043,15 +3066,15 @@ namespace MediaPortal.TV.Recording
 						int scrambled=0;
 						if (newchannel.IsScrambled) scrambled=1;
 						RadioDatabase.MapDVBSChannel(newchannel.ID,newchannel.Frequency,newchannel.Symbolrate,
-							                           newchannel.FEC,newchannel.LNBKHz,0,newchannel.ProgramNumber,
-							                           0,newchannel.ServiceProvider,newchannel.ServiceName,
-							                           0,0,newchannel.AudioPid,newchannel.VideoPid,newchannel.AC3Pid,
-																				 0,0,0,0,scrambled,
-							                           newchannel.Polarity,newchannel.LNBFrequency
-																				,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.PCRPid,
-							                           newchannel.AudioLanguage,newchannel.AudioLanguage1,
-							                           newchannel.AudioLanguage2,newchannel.AudioLanguage3,
-							                           newchannel.ECMPid,newchannel.PMTPid);
+							newchannel.FEC,newchannel.LNBKHz,0,newchannel.ProgramNumber,
+							0,newchannel.ServiceProvider,newchannel.ServiceName,
+							0,0,newchannel.AudioPid,newchannel.VideoPid,newchannel.AC3Pid,
+							0,0,0,0,scrambled,
+							newchannel.Polarity,newchannel.LNBFrequency
+							,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.PCRPid,
+							newchannel.AudioLanguage,newchannel.AudioLanguage1,
+							newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+							newchannel.ECMPid,newchannel.PMTPid);
 					}
 					RadioDatabase.MapChannelToCard(channelId,ID);
 				}
@@ -3059,95 +3082,8 @@ namespace MediaPortal.TV.Recording
 		}//public void StoreChannels(bool radio, bool tv)
 		#endregion
 
-		#region SampleGrabberCallback
-		public int BufferCB(double time,IntPtr data,int len)
-		{
-			if (currentTuningObject==null) return 0;
-			int add=(int)data;
-			int end=(add+len);
-
-			if(m_pluginsEnabled==true)
-			{
-				for(int pointer=add;pointer<end;pointer+=188)
-					PidCallback((IntPtr)pointer);
-			}
-
-			//
-			// here write code to record raw ts or mp3 etc.
-			// the callback needs to return as soon as possible!!
-			//
-			if (currentTuningObject.TeletextPid!=0)
-			{
-				for(int pointer=add;pointer<end;pointer+=188)
-				{
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-					if (header.Pid==currentTuningObject.TeletextPid)
-					{
-						m_teleText.SaveData((IntPtr)pointer);
-					}
-				}
-			}
-
-			if (currentTuningObject.PMTPid>=0 && !refreshPmtTable )
-			{
-				for(int pointer=add;pointer<end;pointer+=188)
-				{
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-					if (header.Pid==currentTuningObject.PMTPid )
-					{
-						//copy pmt pid...
-						byte[] pmtTable=new byte[188];
-						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
-						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
-						if (section_length>0 && section_length < 183)
-						{
-							int version_number = ((pmtTable[5]>>1)&0x1F);
-							if (version_number != pmtVersionNumber)
-							{
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}->{1}", pmtVersionNumber,version_number);
-								try
-								{
-									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-																								currentTuningObject.NetworkID,
-																								currentTuningObject.TransportStreamID,
-																								currentTuningObject.ProgramNumber,
-																								(int)Network());
-									System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-									stream.Write(pmtTable,0,section_length);
-									stream.Close();
-									pmtVersionNumber=version_number;
-									refreshPmtTable=true;
-								}
-								catch(Exception)
-								{
-								}
-							}
-						}
-						break;
-					}
-				}
-			}
-#if DUMP
-			for(int pointer=add;pointer<end;pointer+=188)
-			{
-				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-				if (header.Pid==currentTuningObject.AudioPid)
-				{
-					byte[] tmpBuffer=new byte[188];
-					Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
-					fileout.Write(tmpBuffer,0,tmpBuffer.Length);
-				}
-			}
-#endif
-			return 0;
-		}
-
-		public int SampleCB(double time,IMediaSample sample)
-		{
-			return 0;
-		
-		}
 		#endregion
+
 		#region Radio
 		public void TuneRadioChannel(RadioStation channel)
 		{	
@@ -3446,17 +3382,6 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 		
-		#region teletext
-		public bool HasTeletext()
-		{
-			if (m_graphState!= State.TimeShifting && m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
-			if (currentTuningObject==null) return false;
-			if (m_NetworkProvider==null) return false;
-			if (currentTuningObject.TeletextPid>0) return true;
-			return false;
-		}
-		#endregion
-
 		#region plugins
 		void ExecTuner()
 		{
