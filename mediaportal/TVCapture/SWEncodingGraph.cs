@@ -662,13 +662,13 @@ namespace MediaPortal.TV.Recording
         {
           if (standard != AnalogVideoStandard.None)
           {
-            DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+            DirectShowUtil.DebugWrite("SWGraph:Select tvformat:{0}", standard.ToString());
             int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-            if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+            if (hr!=0) DirectShowUtil.DebugWrite("SWGraph:Unable to select tvformat:{0}", standard.ToString());
           }
         }
       }
-      DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+      DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
                                   m_iCountryCode,standard.ToString(),
                                   m_bUseCable);
 
@@ -710,8 +710,20 @@ namespace MediaPortal.TV.Recording
 
       m_videoCaptureDevice.RenderPreview();
 
-      m_videoWindow = (IVideoWindow) m_graphBuilder;
-      m_basicVideo = (IBasicVideo2) m_graphBuilder;
+      m_videoWindow = (IVideoWindow) m_graphBuilder as IVideoWindow;
+      if (m_videoWindow==null)
+      {
+        Log.Write("SWGraph:FAILED:Unable to get IVideoWindow");
+        return false;
+      }
+
+      m_basicVideo = m_graphBuilder as IBasicVideo2;
+      if (m_basicVideo==null)
+      {
+        Log.Write("SWGraph:FAILED:Unable to get IBasicVideo2");
+        return false;
+      }
+
       m_mediaControl = (IMediaControl)m_graphBuilder;
       int hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
       if (hr != 0) 
